@@ -4,19 +4,27 @@
 
 int main(int argc, char** argv)
 {
-    enum result_enum res;
-    char* buf;
+    enum result_enum r;
     int last_line = 0;
+    struct string s;
+    char* a;
 
+    string_init(&s);
     while(!last_line) {
-        res = next_line(&buf, 0, &last_line);
-        if (res == error_result) {
+        r = next_line(&s, 0, &last_line);
+        if (r == error_result) {
             fprintf(stderr, "%s\n", error_message);
             return 1;
         }
-        printf("%s\n", buf);
+        r = string2array(&s, &a);
+        if (r == error_result) {
+            fprintf(stderr, "%s\n", error_message);
+            return 1;
+        }
+        printf("%s\n", a);
         fflush(stdout);
-        free(buf);
+        string_clear(&s);
+        free(a);
     }
     return 0;
 }
