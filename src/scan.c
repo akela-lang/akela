@@ -22,7 +22,7 @@ enum result_enum num_bytes(unsigned char c, int* count)
     }
 
     /* 2 byte: 110x xxxx */
-    if ((c & 0x80) == 0x80 && (c & 0x40) == 0x40 && (c & 0x20) == 0x00) {
+    if ((c & 0xd0) == 0xb0) {
         *count = 2;
         return ok_result;
     }
@@ -39,10 +39,20 @@ enum result_enum num_bytes(unsigned char c, int* count)
         return ok_result;
     }
 
-    return set_error("Not utf8");
+    return set_error("Not utf8: could not detect number bytes in character");
 }
 
-enum result_enum next_line(char** buf, int* last_line)
+enum result_enum check_extra_byte(char c)
+{
+    /* 10xx xxxx */
+    if ((c & 0x80) == 0x80 && (c & 0x40) == 0x00) {
+        return ok_result;
+    }
+
+    return set_error("Not utf8: extra byte in character not encoded as utf8");
+}
+
+enum result_enum next_line(char** buf, int is_utf8, int* last_line)
 {
     enum result_enum result = malloc_safe(buf, BUFFER_SIZE);
     if (result == error_result) {
@@ -57,7 +67,7 @@ enum result_enum next_line(char** buf, int* last_line)
     int count;
     enum result_enum res;
     while (1) {
-        int c = getc(stdin);
+        int c = getchar();
 
         if (c == EOF) {
             *last_line = 1;
@@ -68,14 +78,30 @@ enum result_enum next_line(char** buf, int* last_line)
             break;
         }
 
-        res = num_bytes(c, &count);
+        if (is_utf8) {
+            res = num_bytes(c, &count);
+            if (res == error_result) {
+                return res;
+            }
 
-        if (i < BUFFER_SIZE) {
-            (*buf)[i] = c;
+            for (int j = 0; j < count; j++) {
+                if (j >= 1) {
+                    res = check_extra_byte(c);
+                    if (res == error_result) {
+                        return res;
+                    }
+                }
+                if (i < BUFFER_SIZE) {
+                    (*buf)[i++] = c;
+                }
+            }
+        } else {
+            if (i < BUFFER_SIZE) {
+                (*buf)[i++] = c;
+            }
         }
-
-        i++;
     }
+
     if (i >= BUFFER_SIZE) {
         i = BUFFER_SIZE - 1;
     }

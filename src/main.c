@@ -9,7 +9,7 @@ int main(int argc, char** argv)
     int last_line = 0;
 
     while(!last_line) {
-        res = next_line(&buf, &last_line);
+        res = next_line(&buf, 0, &last_line);
         if (res == error_result) {
             fprintf(stderr, "%s\n", error_message);
             return 1;
@@ -20,4 +20,3 @@ int main(int argc, char** argv)
     }
     return 0;
 }
-

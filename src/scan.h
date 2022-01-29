@@ -26,6 +26,6 @@ struct string {
     char* buf;
 };
 
-enum result_enum next_line(char** buf, int* last_line);
+enum result_enum next_line(char** buf, int is_utf8, int* last_line);
 
 #endif
