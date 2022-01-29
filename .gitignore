@@ -1,4 +1,6 @@
 build
 external
+.vs
+.vscode
 out
 *.opendb
