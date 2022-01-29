@@ -1,5 +1,8 @@
 # Todo
-* initialize string
-* add char to string
+* check extra byte
+* init_string
+* add_char
+* next_char
+* string_length
 * scanner
 * parser
