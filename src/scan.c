@@ -248,39 +248,29 @@ enum result_enum scan(struct string* line)
     struct string s;
     string_init(&s);
 
-    // plus
-    struct string plus;
-    string_init(&plus);
-    r = array2string("+", &plus);
-    if (r == error_result) {
-        return r;
-    }
-
-    // space
-    struct string space;
-    string_init(&space);
-    r = array2string(" ", &space);
-    if (r == error_result) {
-        return r;
-    }
-
     while (pos < line->size) {
         r = next_char(line, &pos, &s);
+        char c = s.buf[0];
+        size_t size = s.size;
         if (r == error_result) {
             return r;
         }
 
-        if (string_compare(&s, &plus)) {
+        if (size == 1 && c == '+') {
             printf("found plus\n");
-        }
-
-        if (string_compare(&s, &space)) {
+        } else if (size == 1 && c == ' ') {
             printf("found space\n");
+        } else {
+            char* a;
+            r = string2array(&s, &a);
+            if (r == error_result) {
+                return r;
+            }
+            printf("unrecogized: %s\n", a);
+            free(a);
         }
     }
 
     string_reset(&s);
-    string_reset(&plus);
-    string_reset(&space);
     return ok_result;
 }
