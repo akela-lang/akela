@@ -14,30 +14,31 @@ enum result_enum num_bytes(unsigned char c, int* count)
     }
 
     /* 2 byte: 110x xxxx */
-    if ((c & 0xd0) == 0xb0) {
+    if ((c & 0xe0) == 0xc0) {
         *count = 2;
         return ok_result;
     }
 
     /* 3 byte: 1110 xxxx */
-    if ((c & 0x80) == 0x80 && (c & 0x40) == 0x40 && (c & 0x20) == 0x20 && (c & 0x10) == 0x00) {
+    if ((c & 0xf0) == 0xe0) {
         *count = 3;
         return ok_result;
     }
 
     /* 4 byte: 1111 0xxx */
-    if ((c & 0x80) == 0x80 && (c & 0x40) == 0x40 && (c & 0x20) == 0x20 && (c & 0x10) == 0x10 && (c & 0x08) == 0x00) {
+    if ((c & 0xf8) == 0xf0) {
         *count = 3;
         return ok_result;
     }
 
+    *count = 0;
     return set_error("Not utf8: could not detect number bytes in character");
 }
 
 enum result_enum check_extra_byte(char c)
 {
     /* 10xx xxxx */
-    if ((c & 0x80) == 0x80 && (c & 0x40) == 0x00) {
+    if ((c & 0xc0) == 0x80) {
         return ok_result;
     }
 
@@ -55,26 +56,34 @@ enum result_enum next_line(FILE* f, struct string* s, int is_utf8, int* last_lin
         int c = getc(f);
 
         if (c == EOF) {
+            printf("EOF\n");
             *last_line = 1;
             break;
         }
 
-        if (c == '\n' || c== '\r') {
+        if (c == '\n' || c == '\r') {
+            printf("line break\n");
             break;
         }
 
         if (is_utf8) {
             r = num_bytes(c, &count);
             if (r == error_result) {
+                fprintf(stderr, "%s\n", error_message);
+                return r;
+            }
+            printf("%c - %0x - %d byte\n", c, c, count);
+            r = string_add_char(s, c);
+            if (r == error_result) {
                 return r;
             }
 
-            for (int j = 0; j < count; j++) {
-                if (j >= 1) {
-                    r = check_extra_byte(c);
-                    if (r == error_result) {
-                        return r;
-                    }
+            for (int j = 1; j < count; j++) {
+                c = getc(f);
+                printf("%c - %0x\n", c, c);
+                r = check_extra_byte(c);
+                if (r == error_result) {
+                    return r;
                 }
                 r = string_add_char(s, c);
                 if (r == error_result) {

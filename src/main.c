@@ -26,7 +26,7 @@ int main(int argc, char** argv)
 
     string_init(&s);
     while(!last_line) {
-        r = next_line(f, &s, 0, &last_line);
+        r = next_line(f, &s, 1, &last_line);
         if (r == error_result) {
             fprintf(stderr, "%s\n", error_message);
             return 1;
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
             fprintf(stderr, "%s\n", error_message);
             return 1;
         }
-        printf("%s\n", a);
+        printf("line: %s\n", a);
         fflush(stdout);
         string_clear(&s);
         free(a);
