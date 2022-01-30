@@ -20,6 +20,17 @@ struct token {
     char* value;
 };
 
+struct token_node {
+    struct token* t;
+    struct token_node* prev;
+    struct token_node* next;
+};
+
+struct token_list {
+    struct token_node* head;
+    struct token_node* tail;
+};
+
 #define STRING_CHUNK 64
 
 struct string {
@@ -28,7 +39,7 @@ struct string {
     char* buf;
 };
 
-enum result_enum next_line(struct string* s, int is_utf8, int* last_line);
+enum result_enum next_line(FILE* f, struct string* s, int is_utf8, int* last_line);
 void string_init(struct string* s);
 enum result_enum string_add_char(struct string* s, char c);
 void string_clear(struct string* s);

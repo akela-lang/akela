@@ -44,7 +44,7 @@ enum result_enum check_extra_byte(char c)
     return set_error("Not utf8: extra byte in character not encoded as utf8");
 }
 
-enum result_enum next_line(struct string* s, int is_utf8, int* last_line)
+enum result_enum next_line(FILE* f, struct string* s, int is_utf8, int* last_line)
 {
     *last_line = 0;
 
@@ -52,7 +52,7 @@ enum result_enum next_line(struct string* s, int is_utf8, int* last_line)
     int count;
     enum result_enum r;
     while (1) {
-        int c = getchar();
+        int c = getc(f);
 
         if (c == EOF) {
             *last_line = 1;
@@ -164,4 +164,9 @@ enum result_enum string2array(struct string* s, char** a)
     }
     (*a)[s->size] = '\0';
     return ok_result;
+}
+
+enum result_enum scan(struct string* s)
+{
+
 }
