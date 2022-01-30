@@ -182,6 +182,20 @@ enum result_enum string2array(struct string* s, char** a)
     return ok_result;
 }
 
+enum result_enum array2string(char* a, struct string* s)
+{
+    enum result_enum r;
+    char* p = a;
+    while (*p != '\0') {
+        r = string_add_char(s, *p);
+        if (r == error_result) {
+            return r;
+        }
+        p++;
+    }
+    return ok_result;
+}
+
 enum result_enum next_char(struct string* s, size_t* pos, struct string* s2)
 {
     char c = s->buf[(*pos)++];
@@ -209,25 +223,64 @@ enum result_enum next_char(struct string* s, size_t* pos, struct string* s2)
     return ok_result;
 }
 
+/*
+* if strings are equal, return 1
+* otherwise, return 0
+*/
+int string_compare(struct string* a, struct string* b)
+{
+    if (a->size != b->size) {
+        return 0;
+    }
+
+    for (int i = 0; i < a->size; i++) {
+        if (a->buf[i] != b->buf[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 enum result_enum scan(struct string* line)
 {
     enum result_enum r;
     size_t pos = 0;
     struct string s;
     string_init(&s);
+
+    // plus
+    struct string plus;
+    string_init(&plus);
+    r = array2string("+", &plus);
+    if (r == error_result) {
+        return r;
+    }
+
+    // space
+    struct string space;
+    string_init(&space);
+    r = array2string(" ", &space);
+    if (r == error_result) {
+        return r;
+    }
+
     while (pos < line->size) {
         r = next_char(line, &pos, &s);
         if (r == error_result) {
             return r;
         }
-        char* a;
-        r = string2array(&s, &a);
-        if (r == error_result) {
-            return r;
+
+        if (string_compare(&s, &plus)) {
+            printf("found plus\n");
         }
-        printf("%s\n", a);
-        fflush(stdout);
-        free(a);
+
+        if (string_compare(&s, &space)) {
+            printf("found space\n");
+        }
     }
+
+    string_reset(&s);
+    string_reset(&plus);
+    string_reset(&space);
     return ok_result;
 }

@@ -45,6 +45,8 @@ enum result_enum string_add_char(struct string* s, char c);
 void string_reset(struct string* s);
 void string_clear(struct string* s);
 enum result_enum string2array(struct string* s, char** array);
+enum result_enum array2string(char* a, struct string* s);
+int string_compare(struct string* a, struct string* b);
 enum result_enum scan(struct string* line);
 
 #endif
