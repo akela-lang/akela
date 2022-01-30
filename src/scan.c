@@ -152,13 +152,20 @@ enum result_enum string_add_char(struct string* s, char c)
     return ok_result;
 }
 
-void string_clear(struct string* s)
+void string_reset(struct string* s)
 {
     if (s != NULL) {
         if (s->buf != NULL) {
             free(s->buf);
             string_init(s);
         }
+    }
+}
+
+void string_clear(struct string* s)
+{
+    if (s != NULL) {
+        s->size = 0;
     }
 }
 
@@ -175,7 +182,52 @@ enum result_enum string2array(struct string* s, char** a)
     return ok_result;
 }
 
-enum result_enum scan(struct string* s)
+enum result_enum next_char(struct string* s, size_t* pos, struct string* s2)
 {
+    char c = s->buf[(*pos)++];
+    int count;
+    enum result_enum r = num_bytes(c, &count);
+    if (r == error_result) {
+        return r;
+    }
+    string_clear(s2);
+    r = string_add_char(s2, c);
+    if (r == error_result) {
+        return r;
+    }
+    for (int i = 1; i < count; i++) {
+        c = s->buf[(*pos)++];
+        r = check_extra_byte(c);
+        if (r == error_result) {
+            return r;
+        }
+        r = string_add_char(s2, c);
+        if (r == error_result) {
+            return r;
+        }
+    }
+    return ok_result;
+}
 
+enum result_enum scan(struct string* line)
+{
+    enum result_enum r;
+    size_t pos = 0;
+    struct string s;
+    string_init(&s);
+    while (pos < line->size) {
+        r = next_char(line, &pos, &s);
+        if (r == error_result) {
+            return r;
+        }
+        char* a;
+        r = string2array(&s, &a);
+        if (r == error_result) {
+            return r;
+        }
+        printf("%s\n", a);
+        fflush(stdout);
+        free(a);
+    }
+    return ok_result;
 }

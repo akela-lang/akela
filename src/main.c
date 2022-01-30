@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 {
     enum result_enum r;
     int last_line = 0;
-    struct string s;
+    struct string line;
     char* a;
 
     char* filename;
@@ -24,22 +24,29 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    string_init(&s);
+    string_init(&line);
     while(!last_line) {
-        r = next_line(f, &s, 1, &last_line);
+        r = next_line(f, &line, 1, &last_line);
         if (r == error_result) {
             fprintf(stderr, "%s\n", error_message);
             return 1;
         }
-        r = string2array(&s, &a);
+        r = string2array(&line, &a);
         if (r == error_result) {
             fprintf(stderr, "%s\n", error_message);
+            string_clear(&line);
             return 1;
         }
         printf("line: %s\n", a);
         fflush(stdout);
-        string_clear(&s);
         free(a);
+        r = scan(&line);
+        if (r == error_result) {
+            fprintf(stderr, "%s\n", error_message);
+            string_clear(&line);
+            return 1;
+        }
+        string_clear(&line);
     }
 
     fclose(f);

@@ -1,5 +1,5 @@
 # Todo
-* next_char
-* string_length
+* array2string
+* string_compare
 * scanner
 * parser
