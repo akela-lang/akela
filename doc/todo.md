@@ -1,5 +1,4 @@
 # Todo
-* create ustring file
 * defer calls to exit of function
 * scan word
 * scan number

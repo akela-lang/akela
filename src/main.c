@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scan.h"
+#include "ustring.h"
 
 int main(int argc, char** argv)
 {
