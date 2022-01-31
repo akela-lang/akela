@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <unicode/uchar.h>
+#include <unicode/ucnv.h>
 #include "result.h"
 #include "scan.h"
 
@@ -248,6 +251,12 @@ enum result_enum scan(struct string* line)
     struct string s;
     string_init(&s);
 
+    UErrorCode err;
+    UConverter* conv = ucnv_open("utf8", &err);
+    if (U_FAILURE(err)) {
+        return set_error("utf error");
+    }
+
     while (pos < line->size) {
         r = next_char(line, &pos, &s);
         char c = s.buf[0];
@@ -256,7 +265,25 @@ enum result_enum scan(struct string* line)
             return r;
         }
 
-        if (size == 1 && c == '+') {
+        char* a;
+        r = string2array(&s, &a);
+        if (r == error_result) {
+            return r;
+        }
+        UChar32 c2;
+        UChar dest[10];
+        int32_t len = ucnv_toUChars(conv, dest, 10, a, s.size, &err);
+        int i = 0;
+        U16_NEXT(dest, i, len, c2);
+        free(a);
+
+        if (size > 1 && u_isalpha(c2)) {
+            printf("found alpha\n");
+        } else if (size == 1 && isalpha(c)) {
+            printf("found alpha\n");
+        } else if (size == 1 && isdigit(c)) {
+            printf("found digit\n");
+        } else if (size == 1 && c == '+') {
             printf("found plus\n");
         } else if (size == 1 && c == ' ') {
             printf("found space\n");
@@ -272,5 +299,7 @@ enum result_enum scan(struct string* line)
     }
 
     string_reset(&s);
+    ucnv_close(conv);
+
     return ok_result;
 }
