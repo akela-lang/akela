@@ -103,26 +103,6 @@ enum result_enum next_line(FILE* f, struct string* s, int is_utf8, int* last_lin
     return ok_result;
 }
 
-enum result_enum malloc_safe(void** buf, size_t size)
-{
-    *buf = malloc(size);
-    if (*buf == NULL) {
-        return set_error("Out of memory");
-    }
-    return ok_result;
-}
-
-enum result_enum realloc_safe(void** buf, size_t size)
-{
-    void* new_buf;
-    new_buf = realloc(*buf, size);
-    if (new_buf == NULL) {
-        return set_error("Out of memory");
-    }
-    *buf = new_buf;
-    return ok_result;
-}
-
 void string_init(struct string* s)
 {
     s->buf = NULL;

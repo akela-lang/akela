@@ -1,5 +1,5 @@
 # Todo
-* defer calls to exit of function
+* use defer in main
 * scan word
 * scan number
 * scanner

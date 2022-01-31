@@ -5,6 +5,8 @@ set(source_files
     src/scan.c
     src/result.c
     src/ustring.c
+    src/memory.c
+    src/defer.c
 )
 include_directories("external/icu4c/include")
 add_executable(alba ${source_files})
