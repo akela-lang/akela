@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
+#include <unicode/ustring.h>
 #include "result.h"
 #include "scan.h"
 
@@ -104,7 +105,7 @@ enum result_enum next_line(FILE* f, struct string* s, int is_utf8, int* last_lin
     return ok_result;
 }
 
-enum result_enum malloc_safe(char** buf, size_t size)
+enum result_enum malloc_safe(void** buf, size_t size)
 {
     *buf = malloc(size);
     if (*buf == NULL) {
@@ -113,9 +114,9 @@ enum result_enum malloc_safe(char** buf, size_t size)
     return ok_result;
 }
 
-enum result_enum realloc_safe(char** buf, size_t size)
+enum result_enum realloc_safe(void** buf, size_t size)
 {
-    char* new_buf;
+    void* new_buf;
     new_buf = realloc(*buf, size);
     if (new_buf == NULL) {
         return set_error("Out of memory");
@@ -244,6 +245,20 @@ int string_compare(struct string* a, struct string* b)
     return 1;
 }
 
+enum result_enum char2uchar(UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len)
+{
+    enum result_enum r = malloc_safe(dest, sizeof(UChar) * dest_size);
+    if (r == error_result) {
+        return r;
+    }
+    UErrorCode err;
+    *len = ucnv_toUChars(conv, *dest, dest_size, src, src_size, &err);
+    if (U_FAILURE(err)) {
+        return set_error("utf error");
+    }
+    return ok_result;
+}
+
 enum result_enum scan(struct string* line)
 {
     enum result_enum r;
@@ -257,49 +272,55 @@ enum result_enum scan(struct string* line)
         return set_error("utf error");
     }
 
-    while (pos < line->size) {
-        r = next_char(line, &pos, &s);
-        char c = s.buf[0];
-        size_t size = s.size;
-        if (r == error_result) {
-            return r;
-        }
+    UChar* dest;
+    size_t dest_len;
+    r = char2uchar(conv, line->buf, line->size, &dest, line->size, &dest_len);
+    if (r == error_result) {
+        return r;
+    }
 
-        char* a;
-        r = string2array(&s, &a);
-        if (r == error_result) {
-            return r;
-        }
+    size_t len;
+
+    UChar* space;
+    r = char2uchar(conv, " ", 1, &space, 1, &len);
+    if (r == error_result) {
+        return r;
+    }
+
+    UChar* plus;
+    r = char2uchar(conv, "+", 1, &plus, 1, &len);
+    if (r == error_result) {
+        return r;
+    }
+
+    while (pos < dest_len) {
         UChar32 c2;
-        UChar dest[10];
-        int32_t len = ucnv_toUChars(conv, dest, 10, a, s.size, &err);
-        int i = 0;
-        U16_NEXT(dest, i, len, c2);
-        free(a);
+        U16_NEXT(dest, pos, line->size, c2);
 
-        if (size > 1 && u_isalpha(c2)) {
+        if (u_isalpha(c2)) {
             printf("found alpha\n");
-        } else if (size == 1 && isalpha(c)) {
-            printf("found alpha\n");
-        } else if (size == 1 && isdigit(c)) {
+        } else if (u_isdigit(c2)) {
             printf("found digit\n");
-        } else if (size == 1 && c == '+') {
+        } else if (u_strFindFirst(dest + pos - 1, 1, plus, 1) != NULL) {
             printf("found plus\n");
-        } else if (size == 1 && c == ' ') {
+        } else if (u_strFindFirst(dest + pos - 1, 1, space, 1) != NULL) {
             printf("found space\n");
         } else {
-            char* a;
-            r = string2array(&s, &a);
-            if (r == error_result) {
-                return r;
+            char a[10];
+            UChar c3;
+            c3 = (UChar)c2;
+            int32_t len2 = ucnv_fromUChars(conv, a, 10, &c3, 1, &err);
+            if (U_FAILURE(err)) {
+                return set_error("utf error");
             }
             printf("unrecogized: %s\n", a);
-            free(a);
         }
     }
 
     string_reset(&s);
     ucnv_close(conv);
+    free(dest);
+    free(space);
 
     return ok_result;
 }

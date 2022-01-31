@@ -1,6 +1,5 @@
 # Todo
-* is_alpha
-* is_number
+* uchar2char
 * scan name
 * scan number
 * scanner
