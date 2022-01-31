@@ -259,6 +259,21 @@ enum result_enum char2uchar(UConverter* conv, char* src, size_t src_size, UChar*
     return ok_result;
 }
 
+enum result_enum uchar2char(UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len)
+{
+    enum result_enum r = malloc_safe(dest, dest_size + 1);
+    if (r == error_result) {
+        return r;
+    }
+    UErrorCode err;
+    *len = ucnv_fromUChars(conv, *dest, dest_size, src, src_size, &err);
+    if (U_FAILURE(err)) {
+        return set_error("utf error");
+    }
+    (*dest)[dest_size] = '\0';
+    return ok_result;
+}
+
 enum result_enum scan(struct string* line)
 {
     enum result_enum r;
@@ -306,14 +321,13 @@ enum result_enum scan(struct string* line)
         } else if (u_strFindFirst(dest + pos - 1, 1, space, 1) != NULL) {
             printf("found space\n");
         } else {
-            char a[10];
-            UChar c3;
-            c3 = (UChar)c2;
-            int32_t len2 = ucnv_fromUChars(conv, a, 10, &c3, 1, &err);
-            if (U_FAILURE(err)) {
-                return set_error("utf error");
+            char* a;
+            r = uchar2char(conv, dest + pos - 1, 1, &a, 1, &len);
+            if (r == error_result) {
+                return r;
             }
             printf("unrecogized: %s\n", a);
+            free(a);
         }
     }
 

@@ -1,6 +1,5 @@
 # Todo
-* uchar2char
-* scan name
+* scan word
 * scan number
 * scanner
 * parser
