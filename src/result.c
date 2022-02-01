@@ -1,10 +1,42 @@
 #include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include "result.h"
 
 char error_message[ERROR_SIZE];
 
-enum result_enum set_error(char* error)
+enum result_enum set_error(const char* fmt, ...)
 {
-    strncpy(error_message, error, ERROR_SIZE);
+    va_list args;
+    va_start(args, fmt);
+    char buf[ERROR_SIZE] = "";
+    int len;
+
+    char last = 0;
+    int i = 0;
+    while (*fmt != '\0') {
+        if (last == '%' && *fmt == '%') {
+            if (i < ERROR_SIZE) error_message[i++] = '%';
+        } else if (*fmt == '%') {
+            // nothing
+        } else if (last == '%' && *fmt == 'd') {
+            len = snprintf(buf, ERROR_SIZE, "%d", va_arg(args, int));
+            for (int j = 0; j < len; j++) {
+                if (i < ERROR_SIZE) error_message[i++] = buf[j];
+            }
+        } else if (last == '%' && *fmt == 's') {
+            len = snprintf(buf, ERROR_SIZE, "%s", va_arg(args, char*));
+            for (int j = 0; j < len; j++) {
+                if (i < ERROR_SIZE) error_message[i++] = buf[j];
+            }
+        } else {
+            if (i < ERROR_SIZE) error_message[i++] = *fmt;
+        }
+        last = *fmt;
+        fmt++;
+    }
+
+    va_end(args);
+
     return error_result;
 }

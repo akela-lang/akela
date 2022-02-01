@@ -10,8 +10,12 @@
 
 char* token_name[token_count];
 
-void token_name_init()
+enum result_enum token_name_init()
 {
+    for (int i = 0; i < token_count; i++) {
+        token_name[i] = NULL;
+    }
+
     token_name[token_none] = "none";
     token_name[token_number] = "number";
     token_name[token_word] = "word";
@@ -22,6 +26,13 @@ void token_name_init()
     token_name[token_divide] = "divide";
     token_name[token_left_paren] = "left parenthesis";
     token_name[token_right_paren] = "right parenthesis";
+
+    for (int i = 0; i < token_count; i++) {
+        if (token_name[i] == NULL) {
+            return set_error("token name missing: %d\n", i);
+        }
+    }
+    return ok_result;
 }
 
 void token_init(struct token* t)
@@ -114,6 +125,7 @@ enum result_enum token_list_print(struct token_list* tl)
         free(a);
         tn = tn->next;
     }
+    return ok_result;
 }
 
 enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)

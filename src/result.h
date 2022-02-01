@@ -9,6 +9,6 @@ enum result_enum {
 
 extern char error_message[ERROR_SIZE];
 
-enum result_enum set_error(char* error);
+enum result_enum set_error(const char* fmt, ...);
 
 #endif

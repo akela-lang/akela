@@ -47,6 +47,6 @@ void token_list_init(struct token_list* tl);
 void token_list_reset(struct token_list* tl);
 enum result_enum scan(struct string* line, struct token_list* tl);
 enum result_enum token_list_print(struct token_list* tl);
-void token_name_init();
+enum result_enum token_name_init();
 
 #endif
