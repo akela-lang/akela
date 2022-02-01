@@ -15,7 +15,7 @@ enum token_enum {
     token_divide,
     token_left_paren,
     token_right_paren,
-    token_count
+    token_count     /* keep at end */
 };
 
 struct token {
