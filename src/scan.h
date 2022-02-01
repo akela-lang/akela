@@ -5,7 +5,7 @@
 
 enum token_enum {
     number_token,
-    variable_token,
+    word_token,
     equal_token,
     plus_token,
     minus_token,
@@ -29,6 +29,12 @@ struct token_node {
 struct token_list {
     struct token_node* head;
     struct token_node* tail;
+};
+
+enum state_enum {
+    start_state,
+    word_state,
+    number_state
 };
 
 enum result_enum scan(struct string* line);
