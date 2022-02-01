@@ -14,8 +14,12 @@ enum token_enum {
     token_mult,
     token_divide,
     token_left_paren,
-    token_right_paren
+    token_right_paren,
+    token_count
 };
+
+#define TOKEN_NAME_SIZE 20
+extern char* token_name[token_count];
 
 struct token {
     enum token_enum type;
@@ -43,5 +47,6 @@ void token_list_init(struct token_list* tl);
 void token_list_reset(struct token_list* tl);
 enum result_enum scan(struct string* line, struct token_list* tl);
 enum result_enum token_list_print(struct token_list* tl);
+void token_name_init();
 
 #endif

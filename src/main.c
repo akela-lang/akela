@@ -50,6 +50,7 @@ int main(int argc, char** argv)
         cleanup(stack);
         return 1;
     }
+    token_name_init();
 
     while(!last_line) {
         r = next_line(f, &line, 1, &last_line);

@@ -8,6 +8,22 @@
 #include "defer.h"
 #include "memory.h"
 
+char* token_name[token_count];
+
+void token_name_init()
+{
+    token_name[token_none] = "none";
+    token_name[token_number] = "number";
+    token_name[token_word] = "word";
+    token_name[token_equal] = "equal";
+    token_name[token_plus] = "plus";
+    token_name[token_minus] = "minus";
+    token_name[token_mult] = "mult";
+    token_name[token_divide] = "divide";
+    token_name[token_left_paren] = "left parenthesis";
+    token_name[token_right_paren] = "right parenthesis";
+}
+
 void token_init(struct token* t)
 {
     t->type = token_none;
@@ -94,7 +110,7 @@ enum result_enum token_list_print(struct token_list* tl)
         if (r == error_result) {
             return r;
         }
-        printf("token: %d, value: %s\n", tn->t->type, a);
+        printf("token: %s, value: %s\n", token_name[tn->t->type], a);
         free(a);
         tn = tn->next;
     }
