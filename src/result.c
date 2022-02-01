@@ -18,7 +18,7 @@ enum result_enum set_error(const char* fmt, ...)
         if (last == '%' && *fmt == '%') {
             if (i < ERROR_SIZE) error_message[i++] = '%';
         } else if (*fmt == '%') {
-            // nothing
+            /* nothing */
         } else if (last == '%' && *fmt == 'd') {
             len = snprintf(buf, ERROR_SIZE, "%d", va_arg(args, int));
             for (int j = 0; j < len; j++) {
