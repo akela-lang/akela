@@ -18,9 +18,6 @@ enum token_enum {
     token_count
 };
 
-#define TOKEN_NAME_SIZE 20
-extern char* token_name[token_count];
-
 struct token {
     enum token_enum type;
     struct string value;
@@ -46,7 +43,7 @@ enum state_enum {
 void token_list_init(struct token_list* tl);
 void token_list_reset(struct token_list* tl);
 enum result_enum scan(struct string* line, struct token_list* tl);
-enum result_enum token_list_print(struct token_list* tl);
-enum result_enum token_name_init();
+enum result_enum token_list_print(struct token_list* tl, char** token_name);
+enum result_enum token_name_init(char** token_name);
 
 #endif

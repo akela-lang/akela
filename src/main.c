@@ -13,6 +13,7 @@ int main(int argc, char** argv)
     char* filename;
     struct defer_node* stack = NULL;
     struct token_list tl;
+    char* token_name[token_count];
 
     if (argc != 2) {
         fprintf(stderr, "Usage: alba <filename>\n");
@@ -50,7 +51,7 @@ int main(int argc, char** argv)
         cleanup(stack);
         return 1;
     }
-    r = token_name_init();
+    r = token_name_init(token_name);
     if (r == error_result) {
         fprintf(stderr, "%s\n", error_message);
         cleanup(stack);
@@ -79,7 +80,7 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        r = token_list_print(&tl);
+        r = token_list_print(&tl, token_name);
         if (r == error_result) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);

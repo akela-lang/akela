@@ -8,9 +8,7 @@
 #include "defer.h"
 #include "memory.h"
 
-char* token_name[token_count];
-
-enum result_enum token_name_init()
+enum result_enum token_name_init(char** token_name)
 {
     for (int i = 0; i < token_count; i++) {
         token_name[i] = NULL;
@@ -111,7 +109,7 @@ void token_list_reset(struct token_list* tl)
     token_list_init(tl);
 }
 
-enum result_enum token_list_print(struct token_list* tl)
+enum result_enum token_list_print(struct token_list* tl, char** token_name)
 {
     enum result_enum r;
     struct token_node* tn = tl->head;
