@@ -1,3 +1,5 @@
+#define _SCAN_C
+
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
@@ -7,31 +9,6 @@
 #include "ustring.h"
 #include "defer.h"
 #include "memory.h"
-
-enum result_enum token_name_init(char** token_name)
-{
-    for (int i = 0; i < token_count; i++) {
-        token_name[i] = NULL;
-    }
-
-    token_name[token_none] = "none";
-    token_name[token_number] = "number";
-    token_name[token_word] = "word";
-    token_name[token_equal] = "equal";
-    token_name[token_plus] = "plus";
-    token_name[token_minus] = "minus";
-    token_name[token_mult] = "mult";
-    token_name[token_divide] = "divide";
-    token_name[token_left_paren] = "left parenthesis";
-    token_name[token_right_paren] = "right parenthesis";
-
-    for (int i = 0; i < token_count; i++) {
-        if (token_name[i] == NULL) {
-            return set_error("token name missing: %d\n", i);
-        }
-    }
-    return ok_result;
-}
 
 void token_init(struct token* t)
 {
