@@ -2,22 +2,24 @@
 #define _SCAN_H
 
 #include "result.h"
+#include "ustring.h"
 
 enum token_enum {
-    number_token,
-    word_token,
-    equal_token,
-    plus_token,
-    minus_token,
-    mult_token,
-    divide_token,
-    left_paren_token,
-    right_paren_token
+    token_none,
+    token_number,
+    token_word,
+    token_equal,
+    token_plus,
+    token_minus,
+    token_mult,
+    token_divide,
+    token_left_paren,
+    token_right_paren
 };
 
 struct token {
     enum token_enum type;
-    char* value;
+    struct string value;
 };
 
 struct token_node {
@@ -32,11 +34,14 @@ struct token_list {
 };
 
 enum state_enum {
-    start_state,
-    word_state,
-    number_state
+    state_start,
+    state_word,
+    state_number
 };
 
-enum result_enum scan(struct string* line);
+void token_list_init(struct token_list* tl);
+void token_list_reset(struct token_list* tl);
+enum result_enum scan(struct string* line, struct token_list* tl);
+enum result_enum token_list_print(struct token_list* tl);
 
 #endif

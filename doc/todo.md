@@ -1,7 +1,5 @@
 # Todo
-* add token
-* destroy token_list
-* scan word
+* print token word
 * scan number
-* scanner
+* only generate scan search characters once
 * parser

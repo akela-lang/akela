@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <unicode/uchar.h>
@@ -58,23 +57,19 @@ enum result_enum next_line(FILE* f, struct string* s, int is_utf8, int* last_lin
         int c = getc(f);
 
         if (c == EOF) {
-            printf("EOF\n");
             *last_line = 1;
             break;
         }
 
         if (c == '\n' || c == '\r') {
-            printf("line break\n");
             break;
         }
 
         if (is_utf8) {
             r = num_bytes(c, &count);
             if (r == error_result) {
-                fprintf(stderr, "%s\n", error_message);
                 return r;
             }
-            printf("%c - %0x - %d byte\n", c, c, count);
             r = string_add_char(s, c);
             if (r == error_result) {
                 return r;
@@ -82,7 +77,6 @@ enum result_enum next_line(FILE* f, struct string* s, int is_utf8, int* last_lin
 
             for (int j = 1; j < count; j++) {
                 c = getc(f);
-                printf("%c - %0x\n", c, c);
                 r = check_extra_byte(c);
                 if (r == error_result) {
                     return r;
@@ -148,6 +142,16 @@ void string_clear(struct string* s)
 {
     if (s != NULL) {
         s->size = 0;
+    }
+}
+
+/*
+* assumes that a and b are initialized
+*/
+void string_copy(struct string* a, struct string* b)
+{
+    for (int i = 0; i < a->size; i++) {
+        string_add_char(b, a->buf[i]);
     }
 }
 
@@ -248,6 +252,6 @@ enum result_enum uchar2char(UConverter* conv, UChar* src, size_t src_size, char*
     if (U_FAILURE(err)) {
         return set_error("utf error");
     }
-    (*dest)[dest_size] = '\0';
+    (*dest)[*len] = '\0';
     return ok_result;
 }
