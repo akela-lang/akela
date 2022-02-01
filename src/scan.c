@@ -170,8 +170,7 @@ enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_
     } else if (c2 == space_char) {
         printf("found space\n");
     } else {
-        printf("unrecogized: %s\n", a);
-        return set_error("scan error");
+        return set_error("unrecogized: %s", a);
     }
     return ok_result;
 }
@@ -235,8 +234,7 @@ enum result_enum process_char_word(UChar32 c2, char* a, size_t len, enum state_e
         }
         return process_char_start(c2, a, len, state, tl, t);
     } else {
-        printf("unexpected token in word: %s\n", a);
-        return set_error("scan error");
+        return set_error("unexpected token in word: %s", a);
     }
     return ok_result;
 }
