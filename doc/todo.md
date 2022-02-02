@@ -1,2 +1,3 @@
 # Todo
-* parser
+* DAG data structure
+* recursive decent parsing
