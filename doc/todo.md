@@ -1,3 +1,4 @@
 # Todo
-* DAG data structure
+* dag_add_child
+* dag_destroy
 * recursive decent parsing
