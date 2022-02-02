@@ -9,5 +9,6 @@ struct defer_node {
 
 enum result_enum defer(void (*f)(void*), void* d, struct defer_node** stack);
 void cleanup(struct defer_node* stack);
+void cleanup_stack(struct defer_node* stack);
 
 #endif

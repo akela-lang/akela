@@ -81,6 +81,7 @@ enum result_enum token_list_add(struct token_list* tl, struct token* t)
     }
     tl->tail = tn;
 
+    cleanup_stack(ds);
     return ok_result;
 }
 

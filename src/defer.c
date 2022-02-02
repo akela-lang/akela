@@ -27,3 +27,14 @@ void cleanup(struct defer_node* stack)
 	}
 
 }
+
+void cleanup_stack(struct defer_node* stack)
+{
+	struct defer_node* p = stack;
+	while (p) {
+		struct defer_node* temp = p;
+		p = p->below;
+		free(temp);
+	}
+
+}
