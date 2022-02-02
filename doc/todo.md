@@ -1,4 +1,5 @@
 # Todo
-* dag_add_child
-* dag_destroy
+* destroy dag
+* parse function
+* print dag
 * recursive decent parsing
