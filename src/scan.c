@@ -28,6 +28,9 @@ void token_list_init(struct token_list* tl)
     tl->tail = NULL;
 }
 
+/*
+* Append the new token to the end of the token list
+*/
 enum result_enum token_list_add(struct token_list* tl, struct token* t)
 {
     enum result_enum r;
@@ -61,12 +64,22 @@ enum result_enum token_list_add(struct token_list* tl, struct token* t)
     string_init(&new_t->value);
     string_copy(&t->value, &new_t->value);
     tn->t = new_t;
+
+    /* update previous */
+    struct token_node* tn_prev = tl->tail;
+    if (tn_prev != NULL) {
+        tn_prev->next = tn;
+    }
+
+    /* update new node */
     tn->next = NULL;
-    tn->prev = tl->tail;
-    tl->tail = tn;
+    tn->prev = tn_prev;
+
+    /* update list */
     if (tl->head == NULL) {
         tl->head = tn;
     }
+    tl->tail = tn;
 
     return ok_result;
 }
@@ -133,20 +146,27 @@ enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_
     set_char_values(&cv);
 
     if (u_isalpha(c2)) {
-        printf("found word\n");
         *state = state_word;
         t->type = token_word;
         for (int i = 0; i < len; i++) {
             string_add_char(&t->value, a[i]);
         }
     } else if (u_isdigit(c2)) {
-        printf("found number\n");
+        *state = state_number;
+        t->type = token_number;
+        for (int i = 0; i < len; i++) {
+            string_add_char(&t->value, a[i]);
+        }
     } else if (c2 == cv.plus) {
-        printf("found plus\n");
+        t->type = token_plus;
+        token_list_add(tl, t);
+        token_reset(t);
     } else if (c2 == cv.minus) {
-        printf("found minus\n");
+        t->type = token_minus;
+        token_list_add(tl, t);
+        token_reset(t);
     } else if (c2 == cv.space) {
-        printf("found space\n");
+        /* nothing */
     } else {
         return set_error("unrecogized: %s", a);
     }
@@ -160,12 +180,10 @@ enum result_enum process_char_word(UChar32 c2, char* a, size_t len, enum state_e
     set_char_values(&cv);
 
     if (u_isalpha(c2)) {
-        printf("add to word\n");
         for (int i = 0; i < len; i++) {
             string_add_char(&t->value, a[i]);
         }
     } else if (u_isdigit(c2)) {
-        printf("add to word\n");
         for (int i = 0; i < len; i++) {
             string_add_char(&t->value, a[i]);
         }
@@ -175,6 +193,29 @@ enum result_enum process_char_word(UChar32 c2, char* a, size_t len, enum state_e
         if (r == error_result) {
             return r;
         }
+        token_reset(t);
+        return process_char_start(c2, a, len, state, tl, t);
+    }
+    return ok_result;
+}
+
+enum result_enum process_char_number(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+{
+    enum result_enum r;
+    struct char_value cv;
+    set_char_values(&cv);
+
+    if (u_isdigit(c2)) {
+        for (int i = 0; i < len; i++) {
+            string_add_char(&t->value, a[i]);
+        }
+    } else {
+        *state = state_start;
+        r = token_list_add(tl, t);
+        if (r == error_result) {
+            return r;
+        }
+        token_reset(t);
         return process_char_start(c2, a, len, state, tl, t);
     }
     return ok_result;
@@ -251,10 +292,21 @@ enum result_enum scan(struct string* line, struct token_list* tl)
             r = process_char_start(c2, a, len, &state, tl, &t);
         } else if (state == state_word) {
             r = process_char_word(c2, a, len, &state, tl, &t);
+        } else if (state == state_number) {
+            r = process_char_word(c2, a, len, &state, tl, &t);
         } else {
             cleanup(ds);
             r = set_error("unexpected state");
         }
+        if (r == error_result) {
+            cleanup(ds);
+            return r;
+        }
+    }
+
+    if (state != state_start && t.type != token_none) {
+        state = state_start;
+        r = token_list_add(tl, &t);
         if (r == error_result) {
             cleanup(ds);
             return r;

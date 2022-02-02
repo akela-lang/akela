@@ -1,3 +1,2 @@
 # Todo
-* scan number
 * parser
