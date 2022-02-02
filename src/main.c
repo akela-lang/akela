@@ -3,6 +3,8 @@
 #include "scan.h"
 #include "ustring.h"
 #include "defer.h"
+#include "parse.h"
+#include "dag.h"
 
 int main(int argc, char** argv)
 {
@@ -14,6 +16,7 @@ int main(int argc, char** argv)
     struct defer_node* stack = NULL;
     struct token_list tl;
     char* token_name[token_count];
+    struct dag_node* root;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: alba <filename>\n");
@@ -90,6 +93,14 @@ int main(int argc, char** argv)
         string_clear(&line);
         token_list_reset(&tl);
     }
+
+    r = parse(&tl, &root);
+    if (r == error_result) {
+        cleanup(stack);
+        fprintf(stderr, "%s\n", error_message);
+        return 1;
+    }
+    defer(dag_destroy, root, &stack);
 
     cleanup(stack);
     return 0;
