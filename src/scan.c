@@ -169,29 +169,13 @@ enum result_enum process_char_word(UChar32 c2, char* a, size_t len, enum state_e
         for (int i = 0; i < len; i++) {
             string_add_char(&t->value, a[i]);
         }
-    } else if (c2 == cv.space) {
-        *state = state_start;
-        r = token_list_add(tl, t);
-        if (r == error_result) {
-            return r;
-        }
-        return process_char_start(c2, a, len, state, tl, t);
-    } else if (c2 == cv.plus) {
-        *state = state_start;
-        r = token_list_add(tl, t);
-        if (r == error_result) {
-            return r;
-        }
-        return process_char_start(c2, a, len, state, tl, t);
-    } else if (c2 == cv.minus) {
-        *state = state_start;
-        r = token_list_add(tl, t);
-        if (r == error_result) {
-            return r;
-        }
-        return process_char_start(c2, a, len, state, tl, t);
     } else {
-        return set_error("unexpected token in word: %s", a);
+        *state = state_start;
+        r = token_list_add(tl, t);
+        if (r == error_result) {
+            return r;
+        }
+        return process_char_start(c2, a, len, state, tl, t);
     }
     return ok_result;
 }
