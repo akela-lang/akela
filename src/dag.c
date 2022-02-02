@@ -54,5 +54,6 @@ void dag_destroy(struct dag_node* r)
 		string_reset(&temp->value);
 		free(temp);
 	}
+	string_reset(&r->value);
 	free(r);
 }
