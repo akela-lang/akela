@@ -61,6 +61,12 @@ struct token_list {
     struct token_node* tail;
 };
 
+struct char_value {
+    UChar32 plus;
+    UChar32 minus;
+    UChar32 space;
+};
+
 enum state_enum {
     state_start,
     state_word,

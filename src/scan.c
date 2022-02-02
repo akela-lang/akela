@@ -103,31 +103,34 @@ enum result_enum token_list_print(struct token_list* tl, char** token_name)
     return ok_result;
 }
 
-enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+void set_char_values(struct char_value* cv)
 {
     size_t pos2;
     size_t size;
 
     U_STRING_DECL(plus, "+", 1);
     U_STRING_INIT(plus, "+", 1);
-    UChar32 plus_char;
     pos2 = 0;
     size = u_strlen(plus);
-    U16_NEXT(plus, pos2, size, plus_char);
+    U16_NEXT(plus, pos2, size, cv->plus);
 
     U_STRING_DECL(space, " ", 1);
     U_STRING_INIT(space, " ", 1);
-    UChar32 space_char;
     pos2 = 0;
     size = u_strlen(plus);
-    U16_NEXT(space, pos2, size, space_char);
+    U16_NEXT(space, pos2, size, cv->space);
 
     U_STRING_DECL(minus, "-", 1);
     U_STRING_INIT(minus, "-", 1);
-    UChar32 minus_char;
     pos2 = 0;
     size = u_strlen(plus);
-    U16_NEXT(minus, pos2, size, minus_char);
+    U16_NEXT(minus, pos2, size, cv->minus);
+}
+
+enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+{
+    struct char_value cv;
+    set_char_values(&cv);
 
     if (u_isalpha(c2)) {
         printf("found word\n");
@@ -138,11 +141,11 @@ enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_
         }
     } else if (u_isdigit(c2)) {
         printf("found number\n");
-    } else if (c2 == plus_char) {
+    } else if (c2 == cv.plus) {
         printf("found plus\n");
-    } else if (c2 == minus_char) {
+    } else if (c2 == cv.minus) {
         printf("found minus\n");
-    } else if (c2 == space_char) {
+    } else if (c2 == cv.space) {
         printf("found space\n");
     } else {
         return set_error("unrecogized: %s", a);
@@ -153,29 +156,8 @@ enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_
 enum result_enum process_char_word(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
 {
     enum result_enum r;
-    size_t pos2;
-    size_t size;
-    
-    U_STRING_DECL(plus, "+", 1);
-    U_STRING_INIT(plus, "+", 1);
-    UChar32 plus_char;
-    pos2 = 0;
-    size = u_strlen(plus);
-    U16_NEXT(plus, pos2, size, plus_char);
-
-    U_STRING_DECL(space, " ", 1);
-    U_STRING_INIT(space, " ", 1);
-    UChar32 space_char;
-    pos2 = 0;
-    size = u_strlen(plus);
-    U16_NEXT(space, pos2, size, space_char);
-
-    U_STRING_DECL(minus, "-", 1);
-    U_STRING_INIT(minus, "-", 1);
-    UChar32 minus_char;
-    pos2 = 0;
-    size = u_strlen(plus);
-    U16_NEXT(minus, pos2, size, minus_char);
+    struct char_value cv;
+    set_char_values(&cv);
 
     if (u_isalpha(c2)) {
         printf("add to word\n");
@@ -187,21 +169,21 @@ enum result_enum process_char_word(UChar32 c2, char* a, size_t len, enum state_e
         for (int i = 0; i < len; i++) {
             string_add_char(&t->value, a[i]);
         }
-    } else if (c2 == space_char) {
+    } else if (c2 == cv.space) {
         *state = state_start;
         r = token_list_add(tl, t);
         if (r == error_result) {
             return r;
         }
         return process_char_start(c2, a, len, state, tl, t);
-    } else if (c2 == plus_char) {
+    } else if (c2 == cv.plus) {
         *state = state_start;
         r = token_list_add(tl, t);
         if (r == error_result) {
             return r;
         }
         return process_char_start(c2, a, len, state, tl, t);
-    } else if (c2 == minus_char) {
+    } else if (c2 == cv.minus) {
         *state = state_start;
         r = token_list_add(tl, t);
         if (r == error_result) {
