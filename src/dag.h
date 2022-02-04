@@ -34,5 +34,6 @@ enum result_enum dag_create_node(struct dag_node** n);
 void dag_init_node(struct dag_node* n);
 void dag_add_child(struct dag_node* p, struct dag_node* c);
 void dag_destroy(struct dag_node* r);
+struct dag_node* dag_get_child(struct dag_node* p, size_t pos);
 
 #endif

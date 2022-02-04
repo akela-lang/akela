@@ -66,7 +66,7 @@ void teardown()
 	token_list_reset(&tl);
 }
 
-static void test_scan()
+void test_scan()
 {
 	test_name("scan");
 

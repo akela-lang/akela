@@ -59,3 +59,15 @@ void dag_destroy(struct dag_node* r)
 	string_reset(&r->value);
 	free(r);
 }
+
+struct dag_node* dag_get_child(struct dag_node* p, size_t pos)
+{
+	int i = 0;
+	for (struct dag_node* n = p->head; n; n = n->next) {
+		if (i == pos) {
+			return n;
+		}
+		i++;
+	}
+	return NULL;
+}
