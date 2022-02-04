@@ -3,6 +3,7 @@
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
+#include <string.h>
 #include "result.h"
 #include "ustring.h"
 
@@ -221,6 +222,25 @@ int string_compare(struct string* a, struct string* b)
 
     for (int i = 0; i < a->size; i++) {
         if (a->buf[i] != b->buf[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/*
+* if strings are equal, return 1
+* otherwise, return 0
+*/
+int str_compare(struct string* a, char* b)
+{
+    size_t size = strlen(b);
+    if (a->size != size) {
+        return 0;
+    }
+
+    for (int i = 0; i < a->size; i++) {
+        if (a->buf[i] != b[i]) {
             return 0;
         }
     }

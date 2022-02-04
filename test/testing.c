@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "../src/result.h"
+#include "../src/ustring.h"
 
 int test_count = 0;
 int error_count = 0;
@@ -95,6 +96,21 @@ void expect_ok(enum result_enum r, char* message)
 	test_count++;
 	if (r == ok_result) return;
 	printf("%d is ok error: %s\n", r, message);
+	error_count++;
+}
+
+void expect_str(struct string* a, char* b, char* message)
+{
+	test_count++;
+	if (str_compare(a, b)) return;
+	char* temp;
+	enum result_enum r = string2array(a, &temp);
+	if (r == error_result) {
+		printf("<string> equals %s error: %s\n", b, message);
+	} else {
+		printf("%s equals %s error: %s\n", temp, b, message);
+		free(temp);
+	}
 	error_count++;
 }
 

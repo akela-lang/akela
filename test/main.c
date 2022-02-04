@@ -35,18 +35,18 @@ void test_scan()
 
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
-	assert_int_equal(t0->type, token_word, "is word");
+	expect_int_equal(t0->type, token_word, "is word");
 
 	struct token* t1 = get_token(tl.head, 1);
 	assert_ptr(t1, "get token");
-	assert_int_equal(t1->type, token_plus, "is plus");
+	expect_int_equal(t1->type, token_plus, "is plus");
 
 	struct token* t2 = get_token(tl.head, 2);
 	assert_ptr(t2, "get token");
-	assert_int_equal(t2->type, token_number, "is number");
+	expect_int_equal(t2->type, token_number, "is number");
 
 	struct token* t3 = get_token(tl.head, 3);
-	assert_null(t3, "no 3rd argument");
+	expect_null(t3, "no 3rd argument");
 }
 
 void test_parse()
@@ -55,11 +55,12 @@ void test_parse()
 	assert_ok(r, "parse");
 	
 	assert_ptr(root, "root");
-	assert_int_equal(root->type, dag_type_plus, "plus");
+	expect_int_equal(root->type, dag_type_plus, "plus");
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, dag_type_word, "word");
+	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
 	assert_ptr(right, "right");

@@ -11,7 +11,8 @@ void expect_true(int value, char* message);
 void expect_ptr(void* p, char* message);
 void expect_null(void* p, char* message);
 void expect_ok(enum result_enum r, char* message);
-void set_name(const char* fmt, ...);
+void expect_str(struct string* a, char* b, char* message);
+void test_name(const char* fmt, ...);
 void print_results();
 
 #endif
