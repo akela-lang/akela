@@ -1,3 +1,3 @@
 # Todo
-* test expression2
+* expression2
 * recursive decent parsing
