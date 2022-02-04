@@ -39,17 +39,31 @@ void assert_null(void* p, char* message)
 	error_count++;
 }
 
+void assert_ok(enum result_enum r, char* message)
+{
+	test_count++;
+	if (r == ok_result) return;
+	printf("%d is ok error: %s\n", r, message);
+	error_count++;
+}
+
 void test_name(char* name)
 {
 	printf("%s\n", name);
 }
 
-static void setup()
+void setup()
 {
 	string_init(&s);
 	enum result_enum r = array2string("speed + 1", &s);
-	assert_int_equal(r, ok_result, "array2string ok");
+	assert_ok(r, "array2string");
 	token_list_init(&tl);
+}
+
+void teardown()
+{
+	string_reset(&s);
+	token_list_reset(&tl);
 }
 
 static void test_scan()
@@ -58,7 +72,7 @@ static void test_scan()
 
 	enum result_enum r;
 	r = scan(&s, &tl);
-	assert_int_equal(r, ok_result, "scan ok");
+	assert_ok(r, "scan");
 
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
@@ -79,6 +93,7 @@ static void test_scan()
 int main(void) {
 	setup();
 	test_scan();
+	teardown();
 	printf("tests: %d\n", test_count);
 	printf("errors: %d\n", error_count);
 	return 0;
