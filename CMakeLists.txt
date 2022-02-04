@@ -49,6 +49,7 @@ set(test_files
     src/defer.c
     src/dag.c
     src/parse.c
+    test/testing.c
     test/main.c
 )
 
