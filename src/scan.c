@@ -317,3 +317,15 @@ enum result_enum scan(struct string* line, struct token_list* tl)
     cleanup(ds);
     return ok_result;
 }
+
+struct token* get_token(struct token_node* head, size_t pos)
+{
+    int i = 0;
+    for (struct token_node* tn = head; tn; tn = tn->next) {
+        if (i == pos) {
+            return tn->t;
+        }
+        i++;
+    }
+    return NULL;
+}

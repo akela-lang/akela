@@ -44,6 +44,8 @@ void dag_add_child(struct dag_node* p, struct dag_node* c)
 
 void dag_destroy(struct dag_node* r)
 {
+	if (r == NULL) return;
+
 	struct dag_node* c = r->head;
 	while (c) {
 		if (c->head) {

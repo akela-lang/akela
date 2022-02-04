@@ -75,7 +75,8 @@ enum state_enum {
 
 void token_list_init(struct token_list* tl);
 void token_list_reset(struct token_list* tl);
-enum result_enum scan(struct string* line, struct token_list* tl);
 enum result_enum token_list_print(struct token_list* tl, char** token_name);
+enum result_enum scan(struct string* line, struct token_list* tl);
+struct token* get_token(struct token_node* head, size_t pos);
 
 #endif

@@ -40,3 +40,18 @@ set_target_properties(alba PROPERTIES
     VS_DEBUGGER_COMMAND "${BINARY_DIR}/alba"
     VS_DEBUGGER_COMMAND_ARGUMENTS "file1"
 )
+
+set(test_files
+    src/scan.c
+    src/result.c
+    src/ustring.c
+    src/memory.c
+    src/defer.c
+    src/dag.c
+    src/parse.c
+    test/main.c
+)
+
+
+add_executable(test ${test_files})
+target_link_libraries(test icudt icuin icuio icutest icutu icuuc)

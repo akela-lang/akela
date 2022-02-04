@@ -103,5 +103,6 @@ int main(int argc, char** argv)
     defer(dag_destroy, root, &stack);
 
     cleanup(stack);
+    printf("end\n");
     return 0;
 }
