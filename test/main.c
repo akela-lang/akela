@@ -31,6 +31,14 @@ void assert_ptr(void* p, char* message)
 	error_count++;
 }
 
+void assert_null(void* p, char* message)
+{
+	test_count++;
+	if (p == NULL) return;
+	printf("%p == null error: %s\n", p, message);
+	error_count++;
+}
+
 void test_name(char* name)
 {
 	printf("%s\n", name);
@@ -44,9 +52,9 @@ static void setup()
 	token_list_init(&tl);
 }
 
-static void test_scanning()
+static void test_scan()
 {
-	test_name("scanning");
+	test_name("scan");
 
 	enum result_enum r;
 	r = scan(&s, &tl);
@@ -63,11 +71,14 @@ static void test_scanning()
 	struct token* t2 = get_token(tl.head, 2);
 	assert_ptr(t2, "get token");
 	assert_int_equal(t2->type, token_number, "is number");
+
+	struct token* t3 = get_token(tl.head, 3);
+	assert_null(t3, "no 3rd argument");
 }
 
 int main(void) {
 	setup();
-	test_scanning();
+	test_scan();
 	printf("tests: %d\n", test_count);
 	printf("errors: %d\n", error_count);
 	return 0;
