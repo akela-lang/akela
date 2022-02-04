@@ -20,7 +20,7 @@ enum result_enum expression(struct token_node* head, struct dag_node** root)
 	if (t0 != NULL && (t0->type == token_word || t0->type == token_number)) {
 		if (t1 != NULL && (t1->type == token_plus || t1->type == token_minus)) {
 			r = dag_create_node(&p);
-			if (r = error_result) {
+			if (r == error_result) {
 				return r;
 			}
 			if (t1->type == token_plus) {
