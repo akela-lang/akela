@@ -15,7 +15,7 @@ enum dag_type {
 	dag_type_assign,
 	dag_type_plus,
 	dag_type_minus,
-	dag_type_multiply,
+	dag_type_mult,
 	dag_type_divide,
 	dag_type_left_parenthesis,
 	dag_type_right_parenthesis

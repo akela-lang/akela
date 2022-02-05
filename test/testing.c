@@ -54,7 +54,7 @@ void assert_ok(enum result_enum r, char* message)
 {
 	test_count++;
 	if (r == ok_result) return;
-	printf("%d is ok assertion error: %s\n", r, message);
+	printf("%d is ok assertion error: %s: %s\n", r, message, error_message);
 	error_count++;
 	panic();
 }
@@ -95,7 +95,7 @@ void expect_ok(enum result_enum r, char* message)
 {
 	test_count++;
 	if (r == ok_result) return;
-	printf("%d is ok error: %s\n", r, message);
+	printf("%d is ok error: %s: %s\n", r, message, error_message);
 	error_count++;
 }
 

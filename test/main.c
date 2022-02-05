@@ -64,11 +64,11 @@ void test_parse_1()
 	expect_int_equal(left->type, dag_type_word, "word");
 	expect_str(&left->value, "speed", "speed");
 
-	/*
 	struct dag_node* right = dag_get_child(root, 1);
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, dag_type_number, "number");
-	*/
+
+	assert_null(dag_get_child(root, 2), "only 2 children");
 }
 
 void test_scan_2()
@@ -110,11 +110,11 @@ void test_parse_2()
 	expect_int_equal(left->type, dag_type_number, "number");
 	expect_str(&left->value, "100", "100");
 
-	/*
 	struct dag_node* right = dag_get_child(root, 1);
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, dag_type_word, "word");
-	*/
+
+	assert_null(dag_get_child(root, 2), "only 2 children");
 }
 
 int main(void) {

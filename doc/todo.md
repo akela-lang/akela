@@ -1,3 +1,5 @@
 # Todo
-* expression2
-
+* test mult
+* test divide
+* test 3 additions
+* test 3 mult
