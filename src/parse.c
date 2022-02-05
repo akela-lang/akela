@@ -4,9 +4,9 @@
 #include "defer.h"
 #include "scan.h"
 
-enum result_enum expression(struct token_node* head, struct dag_node** root)
+enum result expression(struct token_node* head, struct dag_node** root)
 {
-	enum result_enum r;
+	enum result r;
 
 	struct token* t0;
 	struct token* t1;
@@ -20,7 +20,7 @@ enum result_enum expression(struct token_node* head, struct dag_node** root)
 	if (t0 != NULL && (t0->type == token_word || t0->type == token_number)) {
 		if (t1 != NULL && (t1->type == token_plus || t1->type == token_minus)) {
 			r = dag_create_node(&p);
-			if (r == error_result) {
+			if (r == result_error) {
 				return r;
 			}
 			if (t1->type == token_plus) {
@@ -30,7 +30,7 @@ enum result_enum expression(struct token_node* head, struct dag_node** root)
 			}
 
 			r = dag_create_node(&first);
-			if (r == error_result) {
+			if (r == result_error) {
 				return r;
 			}
 			if (t0->type == token_word) {
@@ -42,7 +42,7 @@ enum result_enum expression(struct token_node* head, struct dag_node** root)
 
 			dag_add_child(p, first);
 			r = expression2(head->next->next, &second);
-			if (r == error_result) {
+			if (r == result_error) {
 				return r;
 			}
 			if (second) {
@@ -57,12 +57,12 @@ enum result_enum expression(struct token_node* head, struct dag_node** root)
 
 	*root = p;
 
-	return ok_result;
+	return result_ok;
 }
 
-enum result_enum expression2(struct token_node* head, struct dag_node** root)
+enum result expression2(struct token_node* head, struct dag_node** root)
 {
-	enum result_enum r;
+	enum result r;
 	struct dag_node* p = NULL;
 	struct token* t0 = get_token(head, 0);
 	struct token* t1 = get_token(head, 1);
@@ -71,7 +71,7 @@ enum result_enum expression2(struct token_node* head, struct dag_node** root)
 		if (t0->type == token_word || t0->type == token_number) {
 			if (t1->type == token_mult || t1->type == token_divide) {
 				r = dag_create_node(&p);
-				if (r == error_result) {
+				if (r == result_error) {
 					return r;
 				}
 				if (t1->type == token_mult) {
@@ -82,7 +82,7 @@ enum result_enum expression2(struct token_node* head, struct dag_node** root)
 
 				struct dag_node* first;
 				r = dag_create_node(&first);
-				if (r == error_result) {
+				if (r == result_error) {
 					return r;
 				}
 				if (t0->type == token_word) {
@@ -94,7 +94,7 @@ enum result_enum expression2(struct token_node* head, struct dag_node** root)
 
 				struct dag_node* second;
 				r = expression2(head, &second);
-				if (r == error_result) {
+				if (r == result_error) {
 					return r;
 				}
 
@@ -105,7 +105,7 @@ enum result_enum expression2(struct token_node* head, struct dag_node** root)
 	} else if (t0) {
 		if (t0->type == token_word || t0->type == token_number) {
 			r = dag_create_node(&p);
-			if (r == error_result) {
+			if (r == result_error) {
 				return r;
 			}
 			if (t0->type == token_word) {
@@ -121,15 +121,15 @@ enum result_enum expression2(struct token_node* head, struct dag_node** root)
 	}
 
 	*root = p;
-	return ok_result;
+	return result_ok;
 }
 
-enum result_enum parse(struct token_list* tl, struct dag_node** root)
+enum result parse(struct token_list* tl, struct dag_node** root)
 {
 	*root = NULL;
-	enum result_enum r = expression(tl->head, root);
-	if (r == error_result) {
+	enum result r = expression(tl->head, root);
+	if (r == result_error) {
 		return r;
 	}
-	return ok_result;
+	return result_ok;
 }

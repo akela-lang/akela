@@ -2,13 +2,13 @@
 #define _RESULT_H
 
 #define ERROR_SIZE 100
-enum result_enum {
-    ok_result,
-    error_result
+enum result {
+    result_ok,
+    result_error
 };
 
 extern char error_message[ERROR_SIZE];
 
-enum result_enum set_error(const char* fmt, ...);
+enum result set_error(const char* fmt, ...);
 
 #endif

@@ -11,7 +11,7 @@ void setup(char* line)
 {
 	test_name("setup: %s", line);
 	string_init(&s);
-	enum result_enum r = array2string(line, &s);
+	enum result r = array2string(line, &s);
 	assert_ok(r, "array2string");
 	token_list_init(&tl);
 	root = NULL;
@@ -29,7 +29,7 @@ void test_scan_1()
 {
 	test_name(__func__);
 
-	enum result_enum r;
+	enum result r;
 	r = scan(&s, &tl);
 	assert_ok(r, "scan");
 
@@ -53,7 +53,7 @@ void test_parse_1()
 {
 	test_name(__func__);
 
-	enum result_enum r = parse(&tl, &root);
+	enum result r = parse(&tl, &root);
 	assert_ok(r, "parse");
 	
 	assert_ptr(root, "root");
@@ -75,7 +75,7 @@ void test_scan_2()
 {
 	test_name(__func__);
 
-	enum result_enum r;
+	enum result r;
 	r = scan(&s, &tl);
 	assert_ok(r, "scan");
 
@@ -99,7 +99,7 @@ void test_parse_2()
 {
 	test_name(__func__);
 
-	enum result_enum r = parse(&tl, &root);
+	enum result r = parse(&tl, &root);
 	assert_ok(r, "parse");
 
 	assert_ptr(root, "root");
@@ -117,6 +117,11 @@ void test_parse_2()
 	assert_null(dag_get_child(root, 2), "only 2 children");
 }
 
+void test_parse_3()
+{
+	test_name(__func__);
+}
+
 int main(void) {
 	setup("speed + 1");
 	test_scan_1();
@@ -128,6 +133,11 @@ int main(void) {
 	setup("100 - delta");
 	test_scan_2();
 	test_parse_2();
+	teardown();
+
+	printf("\n");
+	setup("5 * 2");
+	test_parse_3();
 	teardown();
 
 	printf("\n");

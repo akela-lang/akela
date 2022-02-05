@@ -19,7 +19,7 @@ enum token_enum {
 };
 
 #ifdef _SCAN_C
-enum result_enum token_name_init(char** token_name)
+enum result token_name_init(char** token_name)
 {
     for (int i = 0; i < token_count; i++) {
         token_name[i] = NULL;
@@ -41,7 +41,7 @@ enum result_enum token_name_init(char** token_name)
             return set_error("token name missing: %d\n", i);
         }
     }
-    return ok_result;
+    return result_ok;
 }
 #endif
 
@@ -75,8 +75,8 @@ enum state_enum {
 
 void token_list_init(struct token_list* tl);
 void token_list_reset(struct token_list* tl);
-enum result_enum token_list_print(struct token_list* tl, char** token_name);
-enum result_enum scan(struct string* line, struct token_list* tl);
+enum result token_list_print(struct token_list* tl, char** token_name);
+enum result scan(struct string* line, struct token_list* tl);
 struct token* get_token(struct token_node* head, size_t pos);
 
 #endif

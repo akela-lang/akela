@@ -3,14 +3,14 @@
 #include "result.h"
 #include "memory.h"
 
-enum result_enum dag_create_node(struct dag_node** n)
+enum result dag_create_node(struct dag_node** n)
 {
-	enum result_enum r = malloc_safe(n, sizeof(struct dag_node));
-	if (r == error_result) {
+	enum result r = malloc_safe(n, sizeof(struct dag_node));
+	if (r == result_error) {
 		return r;
 	}
 	dag_init_node(*n);
-	return ok_result;
+	return result_ok;
 }
 
 void dag_init_node(struct dag_node* n)

@@ -30,7 +30,7 @@ struct dag_node {
 	struct dag_node* tail;
 };
 
-enum result_enum dag_create_node(struct dag_node** n);
+enum result dag_create_node(struct dag_node** n);
 void dag_init_node(struct dag_node* n);
 void dag_add_child(struct dag_node* p, struct dag_node* c);
 void dag_destroy(struct dag_node* r);

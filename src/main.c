@@ -8,7 +8,7 @@
 
 int main(int argc, char** argv)
 {
-    enum result_enum r;
+    enum result r;
     int last_line = 0;
     struct string line;
     char* a;
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
         return 1;
     }
     r = defer(fclose, f, &stack);
-    if (r == error_result) {
+    if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         cleanup(stack);
         return 1;
@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 
     string_init(&line);
     r = defer(string_reset, &line, &stack);
-    if (r == error_result) {
+    if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         cleanup(stack);
         return 1;
@@ -49,13 +49,13 @@ int main(int argc, char** argv)
 
     token_list_init(&tl);
     r = defer(token_list_reset, &tl, &stack);
-    if (r == error_result) {
+    if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         cleanup(stack);
         return 1;
     }
     r = token_name_init(token_name);
-    if (r == error_result) {
+    if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         cleanup(stack);
         return 1;
@@ -63,13 +63,13 @@ int main(int argc, char** argv)
 
     while(!last_line) {
         r = next_line(f, &line, 1, &last_line);
-        if (r == error_result) {
+        if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);
             return 1;
         }
         r = string2array(&line, &a);
-        if (r == error_result) {
+        if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);
             return 1;
@@ -77,14 +77,14 @@ int main(int argc, char** argv)
         printf("line: %s\n", a);
         free(a);
         r = scan(&line, &tl);
-        if (r == error_result) {
+        if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);
             return 1;
         }
 
         r = token_list_print(&tl, token_name);
-        if (r == error_result) {
+        if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);
             return 1;
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
     }
 
     r = parse(&tl, &root);
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(stack);
         fprintf(stderr, "%s\n", error_message);
         return 1;

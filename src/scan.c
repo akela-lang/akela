@@ -31,31 +31,31 @@ void token_list_init(struct token_list* tl)
 /*
 * Append the new token to the end of the token list
 */
-enum result_enum token_list_add(struct token_list* tl, struct token* t)
+enum result token_list_add(struct token_list* tl, struct token* t)
 {
-    enum result_enum r;
+    enum result r;
     struct defer_node* ds = NULL;
 
     struct token* new_t;
     r = malloc_safe(&new_t, sizeof(struct token));
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
     r = defer(free, new_t, &ds);
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
 
     struct token_node* tn;
     r = malloc_safe(&tn, sizeof(struct token_node));
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
     r = defer(free, tn, &ds);
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
@@ -82,7 +82,7 @@ enum result_enum token_list_add(struct token_list* tl, struct token* t)
     tl->tail = tn;
 
     cleanup_stack(ds);
-    return ok_result;
+    return result_ok;
 }
 
 /*
@@ -100,21 +100,21 @@ void token_list_reset(struct token_list* tl)
     token_list_init(tl);
 }
 
-enum result_enum token_list_print(struct token_list* tl, char** token_name)
+enum result token_list_print(struct token_list* tl, char** token_name)
 {
-    enum result_enum r;
+    enum result r;
     struct token_node* tn = tl->head;
     while (tn) {
         char* a;
         r = string2array(&tn->t->value, &a);
-        if (r == error_result) {
+        if (r == result_error) {
             return r;
         }
         printf("token: %s, value: %s\n", token_name[tn->t->type], a);
         free(a);
         tn = tn->next;
     }
-    return ok_result;
+    return result_ok;
 }
 
 void set_char_values(struct char_value* cv)
@@ -141,7 +141,7 @@ void set_char_values(struct char_value* cv)
     U16_NEXT(minus, pos2, size, cv->minus);
 }
 
-enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
 {
     struct char_value cv;
     set_char_values(&cv);
@@ -171,12 +171,12 @@ enum result_enum process_char_start(UChar32 c2, char* a, size_t len, enum state_
     } else {
         return set_error("unrecogized: %s", a);
     }
-    return ok_result;
+    return result_ok;
 }
 
-enum result_enum process_char_word(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_word(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
 {
-    enum result_enum r;
+    enum result r;
     struct char_value cv;
     set_char_values(&cv);
 
@@ -191,18 +191,18 @@ enum result_enum process_char_word(UChar32 c2, char* a, size_t len, enum state_e
     } else {
         *state = state_start;
         r = token_list_add(tl, t);
-        if (r == error_result) {
+        if (r == result_error) {
             return r;
         }
         token_reset(t);
         return process_char_start(c2, a, len, state, tl, t);
     }
-    return ok_result;
+    return result_ok;
 }
 
-enum result_enum process_char_number(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_number(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
 {
-    enum result_enum r;
+    enum result r;
     struct char_value cv;
     set_char_values(&cv);
 
@@ -213,18 +213,18 @@ enum result_enum process_char_number(UChar32 c2, char* a, size_t len, enum state
     } else {
         *state = state_start;
         r = token_list_add(tl, t);
-        if (r == error_result) {
+        if (r == result_error) {
             return r;
         }
         token_reset(t);
         return process_char_start(c2, a, len, state, tl, t);
     }
-    return ok_result;
+    return result_ok;
 }
 
-enum result_enum scan(struct string* line, struct token_list* tl)
+enum result scan(struct string* line, struct token_list* tl)
 {
-    enum result_enum r;
+    enum result r;
     size_t pos = 0;
     struct string s;
     struct defer_node* ds = NULL;
@@ -233,14 +233,14 @@ enum result_enum scan(struct string* line, struct token_list* tl)
 
     string_init(&s);
     r = defer(string_reset, &s, &ds);
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
 
     token_init(&t);
     r = defer(token_reset, &t, &ds);
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
@@ -252,7 +252,7 @@ enum result_enum scan(struct string* line, struct token_list* tl)
         return set_error("utf error");
     }
     r = defer(ucnv_close, conv, &ds);
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
@@ -260,12 +260,12 @@ enum result_enum scan(struct string* line, struct token_list* tl)
     UChar* dest;
     size_t dest_len;
     r = char2uchar(conv, line->buf, line->size, &dest, line->size, &dest_len);
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
     r = defer(free, dest, &ds);
-    if (r == error_result) {
+    if (r == result_error) {
         cleanup(ds);
         return r;
     }
@@ -278,17 +278,17 @@ enum result_enum scan(struct string* line, struct token_list* tl)
         char* a;
         size_t len;
         r = uchar2char(conv, dest + old_pos, char_len, &a, 4, &len);
-        if (r == error_result) {
+        if (r == result_error) {
             cleanup(ds);
             return r;
         }
         r = defer(free, a, &ds);
-        if (r == error_result) {
+        if (r == result_error) {
             cleanup(ds);
             return r;
         }
 
-        r = ok_result;
+        r = result_ok;
         if (state == state_start) {
             r = process_char_start(c2, a, len, &state, tl, &t);
         } else if (state == state_word) {
@@ -299,7 +299,7 @@ enum result_enum scan(struct string* line, struct token_list* tl)
             cleanup(ds);
             r = set_error("unexpected state");
         }
-        if (r == error_result) {
+        if (r == result_error) {
             cleanup(ds);
             return r;
         }
@@ -308,14 +308,14 @@ enum result_enum scan(struct string* line, struct token_list* tl)
     if (state != state_start && t.type != token_none) {
         state = state_start;
         r = token_list_add(tl, &t);
-        if (r == error_result) {
+        if (r == result_error) {
             cleanup(ds);
             return r;
         }
     }
 
     cleanup(ds);
-    return ok_result;
+    return result_ok;
 }
 
 struct token* get_token(struct token_node* head, size_t pos)

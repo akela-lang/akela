@@ -50,10 +50,10 @@ void assert_null(void* p, char* message)
 	panic();
 }
 
-void assert_ok(enum result_enum r, char* message)
+void assert_ok(enum result r, char* message)
 {
 	test_count++;
-	if (r == ok_result) return;
+	if (r == result_ok) return;
 	printf("%d is ok assertion error: %s: %s\n", r, message, error_message);
 	error_count++;
 	panic();
@@ -91,10 +91,10 @@ void expect_null(void* p, char* message)
 	error_count++;
 }
 
-void expect_ok(enum result_enum r, char* message)
+void expect_ok(enum result r, char* message)
 {
 	test_count++;
-	if (r == ok_result) return;
+	if (r == result_ok) return;
 	printf("%d is ok error: %s: %s\n", r, message, error_message);
 	error_count++;
 }
@@ -104,8 +104,8 @@ void expect_str(struct string* a, char* b, char* message)
 	test_count++;
 	if (str_compare(a, b)) return;
 	char* temp;
-	enum result_enum r = string2array(a, &temp);
-	if (r == error_result) {
+	enum result r = string2array(a, &temp);
+	if (r == result_error) {
 		printf("<string> equals %s error: %s\n", b, message);
 	} else {
 		printf("%s equals %s error: %s\n", temp, b, message);

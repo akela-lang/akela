@@ -7,7 +7,7 @@ struct defer_node {
 	struct defer_node* below;
 };
 
-enum result_enum defer(void (*f)(void*), void* d, struct defer_node** stack);
+enum result defer(void (*f)(void*), void* d, struct defer_node** stack);
 void cleanup(struct defer_node* stack);
 void cleanup_stack(struct defer_node* stack);
 

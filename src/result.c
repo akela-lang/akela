@@ -5,7 +5,7 @@
 
 char error_message[ERROR_SIZE];
 
-enum result_enum set_error(const char* fmt, ...)
+enum result set_error(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -38,5 +38,5 @@ enum result_enum set_error(const char* fmt, ...)
 
     va_end(args);
 
-    return error_result;
+    return result_error;
 }
