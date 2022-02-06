@@ -45,6 +45,14 @@ enum result token_name_init(char** token_name)
 }
 #endif
 
+struct char_value {
+    UChar32 plus;
+    UChar32 minus;
+    UChar32 space;
+    UChar32 mult;
+    UChar32 divide;
+};
+
 struct token {
     enum token_enum type;
     struct string value;
@@ -59,12 +67,6 @@ struct token_node {
 struct token_list {
     struct token_node* head;
     struct token_node* tail;
-};
-
-struct char_value {
-    UChar32 plus;
-    UChar32 minus;
-    UChar32 space;
 };
 
 enum state_enum {

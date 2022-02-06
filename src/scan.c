@@ -62,7 +62,11 @@ enum result token_list_add(struct token_list* tl, struct token* t)
 
     new_t->type = t->type;
     string_init(&new_t->value);
-    string_copy(&t->value, &new_t->value);
+    r = string_copy(&t->value, &new_t->value);
+    if (r == result_error) {
+        cleanup(&ds);
+        return r;
+    }
     tn->t = new_t;
 
     /* update previous */
@@ -139,6 +143,18 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(plus);
     U16_NEXT(minus, pos2, size, cv->minus);
+
+    U_STRING_DECL(mult, "*", 1);
+    U_STRING_INIT(mult, "*", 1);
+    pos2 = 0;
+    size = u_strlen(mult);
+    U16_NEXT(mult, pos2, size, cv->mult);
+
+    U_STRING_DECL(divide, "/", 1);
+    U_STRING_INIT(divide, "/", 1);
+    pos2 = 0;
+    size = u_strlen(divide);
+    U16_NEXT(divide, pos2, size, cv->divide);
 }
 
 enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
@@ -164,6 +180,14 @@ enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum*
         token_reset(t);
     } else if (c2 == cv.minus) {
         t->type = token_minus;
+        token_list_add(tl, t);
+        token_reset(t);
+    } else if (c2 == cv.mult) {
+        t->type = token_mult;
+        token_list_add(tl, t);
+        token_reset(t);
+    } else if (c2 == cv.mult) {
+        t->type = token_divide;
         token_list_add(tl, t);
         token_reset(t);
     } else if (c2 == cv.space) {

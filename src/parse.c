@@ -17,38 +17,51 @@ enum result expression(struct token_node* head, struct dag_node** root)
 	t0 = get_token(head, 0);
 	t1 = get_token(head, 1);
 
-	if (t0 != NULL && (t0->type == token_word || t0->type == token_number)) {
-		if (t1 != NULL && (t1->type == token_plus || t1->type == token_minus)) {
-			r = dag_create_node(&p);
-			if (r == result_error) {
-				return r;
-			}
-			if (t1->type == token_plus) {
-				p->type = dag_type_plus;
-			} else if (t1->type == token_minus) {
-				p->type = dag_type_minus;
-			}
+	if (t0 && t1) {
+		if (t0->type == token_word || t0->type == token_number) {
+			if (t1 != NULL && (t1->type == token_plus || t1->type == token_minus)) {
+				r = dag_create_node(&p);
+				if (r == result_error) {
+					return r;
+				}
+				if (t1->type == token_plus) {
+					p->type = dag_type_plus;
+				} else if (t1->type == token_minus) {
+					p->type = dag_type_minus;
+				}
 
-			r = dag_create_node(&first);
-			if (r == result_error) {
-				return r;
-			}
-			if (t0->type == token_word) {
-				first->type = dag_type_word;
-			} else if (t0->type == token_number) {
-				first->type = dag_type_number;
-			}
-			string_copy(&t0->value, &first->value);
+				r = dag_create_node(&first);
+				if (r == result_error) {
+					return r;
+				}
+				if (t0->type == token_word) {
+					first->type = dag_type_word;
+				} else if (t0->type == token_number) {
+					first->type = dag_type_number;
+				}
+				r = string_copy(&t0->value, &first->value);
+				if (r == result_error) {
+					return r;
+				}
 
-			dag_add_child(p, first);
-			r = expression2(head->next->next, &second);
-			if (r == result_error) {
-				return r;
-			}
-			if (second) {
-				dag_add_child(p, second);
+				dag_add_child(p, first);
+				r = expression2(head->next->next, &second);
+				if (r == result_error) {
+					return r;
+				}
+				if (second) {
+					dag_add_child(p, second);
+				}
 			}
 		}
+	}
+	
+	if (!p) {
+		r = expression2(head, &p);
+		if (r == result_error) {
+			return r;
+		}
+
 	}
 
 	if (!p) {
@@ -90,10 +103,13 @@ enum result expression2(struct token_node* head, struct dag_node** root)
 				} else if (t0->type == token_number) {
 					first->type = dag_type_number;
 				}
-				string_copy(&first->value, &t0->value);
+				r = string_copy(&t0->value, &first->value);
+				if (r == result_error) {
+					return r;
+				}
 
 				struct dag_node* second;
-				r = expression2(head, &second);
+				r = expression2(head->next->next, &second);
 				if (r == result_error) {
 					return r;
 				}
@@ -112,6 +128,10 @@ enum result expression2(struct token_node* head, struct dag_node** root)
 				p->type = dag_type_word;
 			} else if (t0->type == token_number) {
 				p->type = dag_type_number;
+			}
+			r = string_copy(&t0->value, &p->value);
+			if (r == result_error) {
+				return r;
 			}
 		}
 	}

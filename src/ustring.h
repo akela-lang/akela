@@ -19,7 +19,7 @@ void string_init(struct string* s);
 enum result string_add_char(struct string* s, char c);
 void string_reset(struct string* s);
 void string_clear(struct string* s);
-void string_copy(struct string* a, struct string* b);
+enum result string_copy(struct string* a, struct string* b);
 enum result string2array(struct string* s, char** array);
 enum result array2string(char* a, struct string* s);
 int string_compare(struct string* a, struct string* b);

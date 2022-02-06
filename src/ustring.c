@@ -149,11 +149,16 @@ void string_clear(struct string* s)
 /*
 * assumes that a and b are initialized
 */
-void string_copy(struct string* a, struct string* b)
+enum result string_copy(struct string* a, struct string* b)
 {
+    enum result r;
     for (int i = 0; i < a->size; i++) {
-        string_add_char(b, a->buf[i]);
+        r = string_add_char(b, a->buf[i]);
+        if (r == result_error) {
+            return r;
+        }
     }
+    return result_ok;
 }
 
 enum result string2array(struct string* s, char** a)
