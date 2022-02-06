@@ -16,6 +16,24 @@ void setup(char* line)
 	root = NULL;
 }
 
+void setup_scan(char* line)
+{
+	setup(line);
+	enum result r;
+	r = scan(&s, &tl);
+	assert_ok(r, "scan");
+}
+
+void setup_parse(char* line)
+{
+	setup(line);
+	enum result r;
+	r = scan(&s, &tl);
+	assert_ok(r, "scan");
+	r = parse(&tl, &root);
+	assert_ok(r, "parse");
+}
+
 void teardown()
 {
 	string_reset(&s);
@@ -27,11 +45,7 @@ void test_scan_addition()
 {
 	test_name(__func__);
 
-	setup("speed + 1");
-
-	enum result r;
-	r = scan(&s, &tl);
-	assert_ok(r, "scan");
+	setup_scan("speed + 1");
 
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
@@ -57,11 +71,7 @@ void test_scan_subtraction()
 {
 	test_name(__func__);
 
-	setup("100 - delta");
-
-	enum result r;
-	r = scan(&s, &tl);
-	assert_ok(r, "scan");
+	setup_scan("100 - delta");
 
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
@@ -87,11 +97,7 @@ void test_scan_multiplication()
 {
 	test_name(__func__);
 
-	setup("100 * 20");
-
-	enum result r;
-	r = scan(&s, &tl);
-	assert_ok(r, "scan");
+	setup_scan("100 * 20");
 
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
@@ -117,15 +123,7 @@ void test_parse_addition()
 {
 	test_name(__func__);
 
-	setup("speed + 1");
-
-	enum result r;
-
-	r = scan(&s, &tl);
-	assert_ok(r, "scan");
-
-	r = parse(&tl, &root);
-	assert_ok(r, "parse");
+	setup_parse("speed + 1");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -149,13 +147,7 @@ void test_parse_subtraction()
 {
 	test_name(__func__);
 
-	setup("100 - delta");
-
-	enum result r = scan(&s, &tl);
-	assert_ok(r, "scan");
-	
-	r = parse(&tl, &root);
-	assert_ok(r, "parse");
+	setup_parse("100 - delta");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_minus, "minus");
@@ -179,13 +171,7 @@ void test_parse_multiplication()
 {
 	test_name(__func__);
 
-	setup("5 * 2");
-
-	enum result r = scan(&s, &tl);
-	assert_ok(r, "scan");
-
-	r = parse(&tl, &root);
-	assert_ok(r, "parse");
+	setup_parse("5 * 2");
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_mult, "mult");
