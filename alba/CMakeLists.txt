@@ -1,6 +1,6 @@
 
 set(source_files
-    main.c
+    alba.c
     scan.c
     result.c
     ustring.c

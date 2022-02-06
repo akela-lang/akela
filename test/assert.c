@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-#include "result.h"
-#include "ustring.h"
+#include "alba/result.h"
+#include "alba/ustring.h"
 
 int test_count = 0;
 int error_count = 0;

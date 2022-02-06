@@ -7,11 +7,12 @@ set(test_files
     ${alba_dir}/defer.c
     ${alba_dir}/dag.c
     ${alba_dir}/parse.c
-    testing.c
-    main.c
+    assert.c
+    setup.c
+    test.c
 )
 
-include_directories("../external/icu4c/include" "${alba_dir}")
+include_directories("../external/icu4c/include" "..")
 add_executable(test ${test_files})
 target_link_libraries(test icudt icuin icuio icutest icutu icuuc)
 
