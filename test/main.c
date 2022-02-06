@@ -214,6 +214,28 @@ void test_parse_multiplication()
 	teardown();
 }
 
+void test_parse_divide()
+{
+	test_name(__func__);
+
+	setup_parse("52 / 2");
+
+	assert_ptr(root, "root");
+	assert_int_equal(root->type, dag_type_divide, "divide");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_number, "number");
+	expect_str(&left->value, "52", "52");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_number, "number");
+	expect_str(&right->value, "2", "2");
+
+	teardown();
+}
+
 int main(void) {
 	test_scan_addition();
 	test_scan_subtraction();
@@ -223,6 +245,7 @@ int main(void) {
 	test_parse_addition();
 	test_parse_subtraction();
 	test_parse_multiplication();
+	test_parse_divide();
 
 	print_results();
 	return 0;

@@ -1,4 +1,6 @@
 # Todo
-* test divide
-* test 3 additions
-* test 3 mult
+* test 2 additions
+* test 2 mult
+* add, multiply
+* multiply, add
+* parenthesis
