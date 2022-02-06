@@ -1,17 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
 project(alba)
-set(source_files
-    src/main.c
-    src/scan.c
-    src/result.c
-    src/ustring.c
-    src/memory.c
-    src/defer.c
-    src/dag.c
-    src/parse.c
-)
-include_directories("external/icu4c/include")
-add_executable(alba ${source_files})
 
 add_library(icudt STATIC IMPORTED)
 set_target_properties(icudt PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icudt.lib")
@@ -25,28 +13,6 @@ add_library(icutu STATIC IMPORTED)
 set_target_properties(icutu PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icutu.lib")
 add_library(icuuc STATIC IMPORTED)
 set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icuuc.lib")
-target_link_libraries(alba icudt icuin icuio icutest icutu icuuc)
 
-file(GLOB icu_dll "${CMAKE_SOURCE_DIR}/external/icu4c/bin64/*.dll")
-file(COPY ${icu_dll} DESTINATION "${CMAKE_BINARY_DIR}")
-file(COPY "${CMAKE_SOURCE_DIR}/examples/addition.alba" DESTINATION "${CMAKE_BINARY_DIR}")
-set_target_properties(alba PROPERTIES
-    VS_DEBUGGER_COMMAND "${BINARY_DIR}/alba"
-    VS_DEBUGGER_COMMAND_ARGUMENTS "file1"
-)
-
-set(test_files
-    src/scan.c
-    src/result.c
-    src/ustring.c
-    src/memory.c
-    src/defer.c
-    src/dag.c
-    src/parse.c
-    test/testing.c
-    test/main.c
-)
-
-
-add_executable(test ${test_files})
-target_link_libraries(test icudt icuin icuio icutest icutu icuuc)
+add_subdirectory(alba)
+add_subdirectory(test)

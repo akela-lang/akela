@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-#include "../src/result.h"
-#include "../src/ustring.h"
+#include "result.h"
+#include "ustring.h"
 
 int test_count = 0;
 int error_count = 0;

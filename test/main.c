@@ -1,6 +1,7 @@
-#include "../src/scan.h"
-#include "../src/parse.h"
-#include "../src/dag.h"
+#include <stdlib.h>
+#include "scan.h"
+#include "parse.h"
+#include "dag.h"
 #include "testing.h"
 
 struct token_list tl;
