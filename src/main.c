@@ -90,17 +90,18 @@ int main(int argc, char** argv)
             return 1;
         }
 
+        r = parse(&tl, &root);
+        if (r == result_error) {
+            cleanup(stack);
+            fprintf(stderr, "%s\n", error_message);
+            return 1;
+        }
+
         string_clear(&line);
         token_list_reset(&tl);
+        dag_destroy(root, & stack);
     }
 
-    r = parse(&tl, &root);
-    if (r == result_error) {
-        cleanup(stack);
-        fprintf(stderr, "%s\n", error_message);
-        return 1;
-    }
-    defer(dag_destroy, root, &stack);
 
     cleanup(stack);
     printf("end\n");
