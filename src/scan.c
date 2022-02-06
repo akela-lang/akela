@@ -64,7 +64,7 @@ enum result token_list_add(struct token_list* tl, struct token* t)
     string_init(&new_t->value);
     r = string_copy(&t->value, &new_t->value);
     if (r == result_error) {
-        cleanup(&ds);
+        cleanup(ds);
         return r;
     }
     tn->t = new_t;
@@ -186,7 +186,7 @@ enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum*
         t->type = token_mult;
         token_list_add(tl, t);
         token_reset(t);
-    } else if (c2 == cv.mult) {
+    } else if (c2 == cv.divide) {
         t->type = token_divide;
         token_list_add(tl, t);
         token_reset(t);
