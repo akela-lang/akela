@@ -2,7 +2,10 @@
 #define _TEST_PARSE_H
 
 #include "setup.h"
+#include "assert.h"
 #include "alba/dag.h"
+#include "alba/scan.h"
+#include "alba/parse.h"
 
 void setup_parse(char* line)
 {

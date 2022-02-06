@@ -2,6 +2,7 @@
 #define _TEST_SCAN_H
 
 #include "setup.h"
+#include "assert.h"
 #include "alba/scan.h"
 
 void setup_scan(char* line)
