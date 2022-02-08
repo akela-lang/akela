@@ -210,6 +210,7 @@ void test_parse()
 	test_parse_divide();
 	test_parse_add_3();
 	test_parse_mult_3();
+	test_parse_add_mult();
 }
 
 #endif
