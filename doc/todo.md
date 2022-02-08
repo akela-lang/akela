@@ -1,5 +1,4 @@
 # Todo
-* mult, mult
-* add, multiply
-* multiply, add
+* add, mult
+* mult, add
 * parenthesis
