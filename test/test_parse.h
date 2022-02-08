@@ -171,6 +171,37 @@ void test_parse_mult_3()
 	teardown();
 }
 
+void test_parse_add_mult()
+{
+	test_name(__func__);
+
+	setup_parse("5 + 3 * 2");
+
+	assert_ptr(root, "root");
+	assert_int_equal(root->type, dag_type_plus, "plus");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_number, "number");
+	expect_str(&left->value, "5", "5");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_mult, "mult");
+
+	struct dag_node* left2 = dag_get_child(right, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_number, "number 2");
+	expect_str(&left2->value, "3", "3");
+
+	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_int_equal(right2->type, dag_type_number, "number 3");
+	expect_str(&right2->value, "2", "2");
+
+	teardown();
+}
+
 void test_parse()
 {
 	test_parse_addition();
