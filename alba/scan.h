@@ -75,12 +75,16 @@ enum state_enum {
     state_number
 };
 
+enum result token_name_init(char** token_name);
 void token_list_init(struct token_list* tl);
+enum result token_list_make(struct token_list** tl);
 void token_list_reset(struct token_list* tl);
+void token_list_destroy(struct token_list* tl);
 enum result token_list_print(struct token_list* tl, char** token_name);
 enum result scan(struct string* line, struct token_list* tl);
 struct token* get_token(struct token_node* head, size_t pos);
 int token_find_first(struct token_node* head, enum token_enum type);
 int token_find_last(struct token_node* tail, enum token_enum type);
+enum result token_list_slice(struct token_list* tl, int start, int end, struct token_list** slice);
 
 #endif

@@ -28,6 +28,17 @@ void token_list_init(struct token_list* tl)
     tl->tail = NULL;
 }
 
+enum result token_list_make(struct token_list** tl)
+{
+    enum result r;
+    r = malloc_safe(tl, sizeof(**tl));
+    if (r == result_error) {
+        return r;
+    }
+    token_list_init(*tl);
+    return result_ok;
+}
+
 /*
 * Append the new token to the end of the token list
 */
@@ -102,6 +113,12 @@ void token_list_reset(struct token_list* tl)
         free(temp);
     }
     token_list_init(tl);
+}
+
+void token_list_destroy(struct token_list* tl)
+{
+    token_list_reset(tl);
+    free(tl);
 }
 
 enum result token_list_print(struct token_list* tl, char** token_name)
@@ -376,4 +393,34 @@ int token_find_last(struct token_node* tail, enum token_enum type)
         i++;
     }
     return -1;
+}
+
+enum result token_list_slice(struct token_list* tl, int start, int end, struct token_list** slice)
+{
+    struct defer_node* cleanup_on_error = NULL;
+
+    enum result r = token_list_make(slice);
+    if (r == result_error) {
+        return r;
+    }
+    r = defer(token_list_destroy, slice, &cleanup_on_error);
+    if (r == result_error) {
+        token_list_destroy(*slice);
+        return r;
+    }
+    int i = 0;
+    for (struct token_node* tn = tl->head; tn; tn = tn->next) {
+        if (i >= start || start == -1) {
+            if (i <= end || end == -1) {
+                r = token_list_add(*slice, tn->t);
+                if (r == result_error) {
+                    cleanup(cleanup_on_error);
+                    return r;
+                }
+            }
+        }
+        i++;
+    }
+    cleanup_stack(cleanup_on_error);
+    return result_ok;
 }
