@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 
         string_clear(&line);
         token_list_reset(&tl);
-        dag_destroy(root, & stack);
+        dag_destroy(root);
     }
 
 

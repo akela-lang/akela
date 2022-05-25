@@ -80,5 +80,7 @@ void token_list_reset(struct token_list* tl);
 enum result token_list_print(struct token_list* tl, char** token_name);
 enum result scan(struct string* line, struct token_list* tl);
 struct token* get_token(struct token_node* head, size_t pos);
+int token_find_first(struct token_node* head, enum token_enum type);
+int token_find_last(struct token_node* tail, enum token_enum type);
 
 #endif
