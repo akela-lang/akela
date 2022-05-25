@@ -1,4 +1,4 @@
 # Todo
-* pop token
-* mult, add
-* parenthesis
+* get slice of token list
+* expr
+* term
