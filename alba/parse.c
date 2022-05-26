@@ -194,9 +194,11 @@ enum result factor(struct token_list* tl, struct dag_node** root)
 			}
 			goto function_success;
 		}
+	} else {
+		r = set_error("expected a factor");
+		goto function_error;
 	}
 
-	goto function_error;
 
 function_success:
 	*root = n;
