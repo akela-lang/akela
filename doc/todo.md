@@ -1,3 +1,4 @@
 # Todo
-* expr
-* term
+* multiply
+* divide
+* addition and multiplication

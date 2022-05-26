@@ -13,18 +13,30 @@
 enum result expr(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
-	int i = -1;
+	int pos = -1;
+	int add_pos = -1;
+	int sub_pos = -1;
+	enum dag_type op;
 	struct defer_node* stack_error = NULL;
 	struct defer_node* stack_temp = NULL;
 	struct dag_node* n = NULL;
 
 	/* expr + term */
-	i = token_find_last(tl->tail, token_plus);
-	if (i >= 0) {
+	/* expr - term */
+	add_pos = token_find_last(tl->tail, token_plus);
+	sub_pos = token_find_last(tl->tail, token_minus);
+	if (add_pos >= sub_pos) {
+		pos = add_pos;
+		op = dag_type_plus;
+	} else {
+		pos = sub_pos;
+		op = dag_type_minus;
+	}
+	if (pos >= 0) {
 		struct token_list* before;
 		struct token_list* after;
 
-		r = token_list_slice(tl, -1, i - 1, &before);
+		r = token_list_slice(tl, -1, pos - 1, &before);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -34,7 +46,7 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 			goto function_error;
 		}
 
-		r = token_list_slice(tl, i + 1, -1, &after);
+		r = token_list_slice(tl, pos + 1, -1, &after);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -66,7 +78,7 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 			dag_add_child(n, left);
 
 			// operator
-			n->type = dag_type_plus;
+			n->type = op;
 
 			// right child
 			struct dag_node* right = NULL;
@@ -85,13 +97,6 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 			cleanup(stack_error);
 			stack_error = NULL;
 		}
-	}
-
-	/* expr - term */
-	i = token_find_last(tl->tail, token_minus);
-	if (i >= 0) {
-		printf("minus: %d\n", i);
-		return result_ok;
 	}
 
 	/* term */
