@@ -424,3 +424,12 @@ enum result token_list_slice(struct token_list* tl, int start, int end, struct t
     cleanup_stack(cleanup_on_error);
     return result_ok;
 }
+
+int token_list_count(struct token_list* tl)
+{
+    int i = 0;
+    for (struct token_node* tn = tl->head; tn; tn = tn->next) {
+        i++;
+    }
+    return i;
+}
