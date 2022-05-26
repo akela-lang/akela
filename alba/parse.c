@@ -66,17 +66,11 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 			dag_add_child(n, left);
 
 			// operator
-			struct dag_node* op;
-			r = dag_create_node(&op);
-			if (r == result_error) {
-				goto function_error;
-			}
-			op->type = dag_type_plus;
-			dag_add_child(n, op);
+			n->type = dag_type_plus;
 
 			// right child
 			struct dag_node* right = NULL;
-			r = term(after, &n);
+			r = term(after, &right);
 			if (r == result_error) {
 				goto function_error;
 			}
@@ -122,25 +116,75 @@ enum result term(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
+	struct defer_node* stack_error = NULL;
+	struct defer_node* stack_temp = NULL;
 
 	if (token_list_count(tl) > 0) {
 		r = factor(tl, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
+		goto function_success;
 	}
 
+	goto function_error;
+
 function_success:
+	*root = n;
+	cleanup(stack_temp);
+	cleanup_stack(stack_error);
 	return r;
 
 function_error:
+	cleanup(stack_error);
+	cleanup(stack_temp);
 	return r;
 }
 
 enum result factor(struct token_list* tl, struct dag_node** root)
 {
-	enum result r;
-	return result_error;
+	enum result r = result_ok;
+	struct dag_node* n = NULL;
+	struct defer_node* stack_error = NULL;
+	struct defer_node* stack_temp = NULL;
+
+	if (token_list_count(tl) == 1) {
+		struct token* t = get_token(tl->head, 0);
+		if (t->type == token_number || t->type == token_word) {
+			r = dag_create_node(&n);
+			if (r == result_error) {
+				goto function_error;
+			}
+			r = defer(dag_destroy, n, &stack_error);
+			if (r == result_error) {
+				dag_destroy(n);
+				goto function_error;
+			}
+			if (t->type == token_word) {
+				n->type = dag_type_word;
+			} else {
+				n->type = dag_type_number;
+			}
+			r = string_copy(&t->value, &n->value);
+			if (r == result_error) {
+				goto function_error;
+			}
+			goto function_success;
+		}
+	}
+
+	goto function_error;
+
+function_success:
+	*root = n;
+	cleanup(stack_temp);
+	cleanup_stack(stack_error);
+	return r;
+
+function_error:
+	cleanup(stack_error);
+	cleanup(stack_temp);
+	return r;
 }
 
 enum result parse(struct token_list* tl, struct dag_node** root)
