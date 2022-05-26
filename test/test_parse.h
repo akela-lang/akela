@@ -120,19 +120,19 @@ void test_parse_add_3()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_number, "number");
-	expect_str(&left->value, "45", "45");
+	expect_int_equal(left->type, dag_type_plus, "plus2");
 
-	struct dag_node* right = dag_get_child(root, 1);
-	assert_ptr(right, "right");
-	expect_int_equal(right->type, dag_type_plus, "plus 2");
-
-	struct dag_node* left2 = dag_get_child(right, 0);
+	struct dag_node* left2 = dag_get_child(left, 0);
 	assert_ptr(left2, "left2");
-	expect_int_equal(left2->type, dag_type_number, "number 2");
-	expect_str(&left2->value, "22", "22");
+	expect_int_equal(left2 ->type, dag_type_number, "number");
+	expect_str(&left2->value, "45", "45");
 
-	struct dag_node* right2 = dag_get_child(right, 1);
+	struct dag_node* right = dag_get_child(left, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_number, "number 2");
+	expect_str(&right->value, "22", "22");
+
+	struct dag_node* right2 = dag_get_child(root, 1);
 	assert_ptr(right2, "right2");
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "30", "30");

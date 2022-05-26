@@ -371,10 +371,10 @@ struct token* get_token(struct token_node* head, size_t pos)
     return NULL;
 }
 
-int token_find_first(struct token_node* head, enum token_enum type)
+int token_find_first(struct token_list* tl, enum token_enum type)
 {
     int i = 0;
-    for (struct token_node* tn = head; tn; tn = tn->next) {
+    for (struct token_node* tn = tl->head; tn; tn = tn->next) {
         if (tn->t->type == type) {
             return i;
         }
@@ -383,12 +383,13 @@ int token_find_first(struct token_node* head, enum token_enum type)
     return -1;
 }
 
-int token_find_last(struct token_node* tail, enum token_enum type)
+int token_find_last(struct token_list* tl, enum token_enum type)
 {
+    int count = token_list_count(tl);
     int i = 0;
-    for (struct token_node* tn = tail; tn; tn = tn->prev) {
+    for (struct token_node* tn = tl->tail; tn; tn = tn->prev) {
         if (tn->t->type == type) {
-            return i;
+            return count - 1 - i;
         }
         i++;
     }

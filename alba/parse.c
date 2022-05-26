@@ -23,8 +23,8 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 
 	/* expr + term */
 	/* expr - term */
-	add_pos = token_find_last(tl->tail, token_plus);
-	sub_pos = token_find_last(tl->tail, token_minus);
+	add_pos = token_find_last(tl, token_plus);
+	sub_pos = token_find_last(tl, token_minus);
 	if (add_pos >= sub_pos) {
 		pos = add_pos;
 		op = dag_type_plus;
@@ -140,8 +140,8 @@ enum result term(struct token_list* tl, struct dag_node** root)
 
 	/* term * factor */
 	/* term / factor */
-	mul_pos = token_find_last(tl->tail, token_mult);
-	div_pos = token_find_last(tl->tail, token_divide);
+	mul_pos = token_find_last(tl, token_mult);
+	div_pos = token_find_last(tl, token_divide);
 	if (mul_pos >= div_pos) {
 		pos = mul_pos;
 		op = dag_type_mult;
