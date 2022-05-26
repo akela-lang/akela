@@ -103,6 +103,8 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 	r = term(tl, &n);
 	if (r == result_error) {
 		goto function_error;
+	} else {
+		goto function_success;
 	}
 
 function_success:
