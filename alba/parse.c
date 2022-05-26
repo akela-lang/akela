@@ -105,6 +105,7 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 		goto function_error;
 	}
 	if (n == NULL) {
+		r = set_error("expected an expr");
 		goto function_error;
 	}
 
@@ -120,6 +121,12 @@ function_error:
 	return r;
 }
 
+/*
+* term ->
+*	term * factor
+*	term / factor
+*	factor
+*/
 enum result term(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
@@ -127,12 +134,20 @@ enum result term(struct token_list* tl, struct dag_node** root)
 	struct defer_node* stack_error = NULL;
 	struct defer_node* stack_temp = NULL;
 
+	/* factor */
 	if (token_list_count(tl) > 0) {
 		r = factor(tl, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
+		if (n == NULL) {
+			r = set_error("expected a term");
+			goto function_error;
+		}
 		goto function_success;
+	} else {
+		r = set_error("expected a term");
+		goto function_error;
 	}
 
 	goto function_error;
