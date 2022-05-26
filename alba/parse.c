@@ -14,22 +14,20 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 {
 	enum result r;
 	int i;
-	struct defer_node* cleanup_stack = NULL;
-	char* token_name[token_count];
-	token_name_init(token_name);
+	struct defer_node* stack_error = NULL;
+	struct defer_node* stack_temp = NULL;
 
 	/* expr + term */
 	i = token_find_last(tl->tail, token_plus);
 	if (i >= 0) {
 		struct token_list* before;
 		struct token_list* after;
-		printf("plus: %d\n", i);
 
 		r = token_list_slice(tl, -1, i - 1, &before);
 		if (r == result_error) {
 			return r;
 		}
-		r = defer(token_list_destroy, before, &cleanup_stack);
+		r = defer(token_list_destroy, before, &stack_temp);
 		if (r == result_error) {
 			token_list_destroy(before);
 			return r;
@@ -37,28 +35,74 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 
 		r = token_list_slice(tl, i + 1, -1, &after);
 		if (r == result_error) {
-			cleanup(cleanup_stack);
+			cleanup(stack_error);
 			return r;
 		}
-		r = defer(token_list_destroy, after, &cleanup_stack);
+		r = defer(token_list_destroy, after, &stack_temp);
 		if (r == result_error) {
 			token_list_destroy(after);
+			cleanup(stack_error);
 			return r;
 		}
 
-		r = token_list_print(before, token_name);
+		// new node
+		struct dag_node* n;
+		r = dag_create_node(&n);
 		if (r == result_error) {
-			cleanup(cleanup_stack);
+			cleanup(stack_error);
+			cleanup_stack(stack_temp);
 			return r;
 		}
-		r = token_list_print(after, token_name);
+		r = defer(dag_destroy, n, &stack_error);
 		if (r == result_error) {
-			cleanup(cleanup_stack);
+			cleanup(stack_error);
+			cleanup_stack(stack_temp);
 			return r;
 		}
 
-		cleanup(cleanup_stack);
-		return result_ok;
+		// left child
+		struct dag_node* left = NULL;
+		r = expr(before, &left);
+		if (r == result_error)
+		{
+			cleanup(stack_error);
+			cleanup_stack(stack_temp);
+			return r;
+		}
+		if (left) {
+			dag_add_child(n, left);
+
+			// operator
+			struct dag_node* op;
+			r = dag_create_node(&op);
+			if (r == result_error) {
+				cleanup(stack_error);
+				cleanup_stack(stack_temp);
+				return r;
+			}
+			op->type = dag_type_plus;
+			dag_add_child(n, op);
+
+			// right child
+			struct dag_node* right = NULL;
+			r = term(after, &n);
+			if (r == result_error) {
+				cleanup(stack_error);
+				cleanup_stack(stack_temp);
+				return r;
+			}
+			if (right) {
+				dag_add_child(n, right);
+				*root = n;
+				cleanup(stack_temp);
+				cleanup_stack(stack_error);
+				return result_ok;
+			} else {
+				dag_destroy(n);
+			}
+		} else {
+			dag_destroy(n);
+		}
 	}
 
 	/* expr - term */
@@ -69,12 +113,17 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 	}
 
 	/* term */
-	printf("term: %d\n", i);
 	r = term(tl, root);
 	return r;
 }
 
 enum result term(struct token_list* tl, struct dag_node** root)
+{
+	enum result r;
+	return result_ok;
+}
+
+enum result factor(struct token_list* tl, struct dag_node** root)
 {
 	enum result r;
 	return result_ok;
