@@ -237,9 +237,9 @@ void test_parse()
 {
 	test_parse_addition();
 	test_parse_subtraction();
-	/*
 	test_parse_multiplication();
 	test_parse_divide();
+	/*
 	test_parse_add_3();
 	test_parse_mult_3();
 	test_parse_add_mult();

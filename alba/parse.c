@@ -270,10 +270,12 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 	struct token* t0 = get_token(tl->head, 0);
 	enum dag_type type = dag_type_none;
 
+	/* e */
 	if (t0 == NULL) {
 		goto function_success;
 	}
 	
+	/* operator */
 	if (t0->type == token_mult) {
 		type = dag_type_mult;
 	} else if (t0->type == token_divide) {
@@ -285,6 +287,22 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 		goto function_error;
 	}
 
+	r = dag_create_node(&n);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	r = defer(dag_destroy, n, &stack_error);
+	if (r == result_error) {
+		dag_destroy(n);
+		goto function_error;
+	}
+
+	n->type = type;
+	struct token* t_op = token_list_pop(tl);
+	token_destroy(t_op);
+
+	/* factor */
 	r = factor(tl, &a);
 	if (r == result_error) {
 		goto function_error;
@@ -298,6 +316,7 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 		}
 	}
 
+	/* term' */
 	r = term_prime(tl, &b);
 	if (r == result_error) {
 		goto function_error;
@@ -314,23 +333,6 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 	if (a == NULL && b == NULL) {
 		set_error("expecting expr'");
 		goto function_error;
-	}
-
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		goto function_error;
-	}
-
-	r = defer(dag_destroy, n, &stack_error);
-	if (r == result_error) {
-		dag_destroy(n);
-		goto function_error;
-	}
-
-	if (is_binary_operator(b)) {
-		n = b;
-		dag_push(n, a);
-		goto function_success;
 	}
 
 	if (a) {
