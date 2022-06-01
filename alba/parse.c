@@ -60,7 +60,7 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 		n = a;
 		goto function_success;
 	}
-	if (is_binary_operator(b)) {
+	if (b && is_binary_operator(b)) {
 		n = b;
 		dag_push(n, a);
 		goto function_success;
@@ -162,6 +162,12 @@ enum result expr_prime(struct token_list* tl, struct dag_node** root)
 	if (a == NULL && b == NULL) {
 		set_error("expecting expr'");
 		goto function_error;
+	}
+
+	if (b && is_binary_operator(b)) {
+		dag_push(b, a);
+		dag_add_child(n, b);
+		goto function_success;
 	}
 
 	if (a) {
