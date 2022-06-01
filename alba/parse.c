@@ -330,7 +330,7 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 
 	if (b) {
 		r = defer(dag_destroy, b, &stack_error);
-		if (r = result_error) {
+		if (r == result_error) {
 			dag_destroy(b);
 			goto function_error;
 		}
