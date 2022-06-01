@@ -42,6 +42,19 @@ void dag_add_child(struct dag_node* p, struct dag_node* c)
 	p->tail = c;
 }
 
+/*
+* assume parent and child are not NULL
+*/
+void dag_push(struct dag_node* parent, struct dag_node* child)
+{
+	struct dag_node* old_head = parent->head;
+	if (old_head) {
+		old_head->prev = child;
+	}
+	child->next = old_head;
+	parent->head = child;
+}
+
 void dag_destroy(struct dag_node* r)
 {
 	if (r == NULL) return;

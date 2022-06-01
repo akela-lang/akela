@@ -7,6 +7,7 @@ set(source_files
     memory.c
     defer.c
     dag.c
+    old_parse.c
     parse.c
 )
 include_directories("../external/icu4c/include")

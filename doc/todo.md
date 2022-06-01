@@ -1,2 +1,3 @@
 # Todo
-* review tests
+* change left recursion to right recursion
+* minus and plus unary operations

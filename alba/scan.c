@@ -22,6 +22,12 @@ void token_reset(struct token* t)
     string_reset(&t->value);
 }
 
+void token_destroy(struct token* t)
+{
+    token_reset(t);
+    free(t);
+}
+
 void token_list_init(struct token_list* tl)
 {
     tl->head = NULL;
@@ -98,6 +104,27 @@ enum result token_list_add(struct token_list* tl, struct token* t)
 
     cleanup_stack(ds);
     return result_ok;
+}
+
+struct token* token_list_pop(struct token_list* tl)
+{
+    struct token_node* tn;
+    struct token_node* first;
+    struct token* t = NULL;
+    tn = tl->head;
+    if (tn) {
+        first = tn->next;
+        if (first) {
+            first->prev = NULL;
+        }
+        tl->head = first;
+    }
+    if (tn) {
+        t = tn->t;
+        free(tn);
+        return t;
+    }
+    return NULL;
 }
 
 /*

@@ -11,6 +11,7 @@ enum dag_type {
 	dag_type_word,
 	dag_type_value,
 	dag_type_expression2,
+	dag_type_sign,
 	dag_type_number,
 	dag_type_assign,
 	dag_type_plus,
@@ -33,6 +34,7 @@ struct dag_node {
 enum result dag_create_node(struct dag_node** n);
 void dag_init_node(struct dag_node* n);
 void dag_add_child(struct dag_node* p, struct dag_node* c);
+void dag_push(struct dag_node* parent, struct dag_node* child);
 void dag_destroy(struct dag_node* r);
 struct dag_node* dag_get_child(struct dag_node* p, size_t pos);
 

@@ -90,7 +90,7 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        r = parse(&tl, &root);
+        r = old_parse(&tl, &root);
         if (r == result_error) {
             cleanup(stack);
             fprintf(stderr, "%s\n", error_message);
