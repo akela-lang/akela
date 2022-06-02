@@ -485,6 +485,31 @@ enum result factor(struct token_list *tl, struct dag_node** root)
 		if (tx) {
 			token_destroy(tx);
 		}
+
+	/* parenthesis */
+	} else if (t0 && t0->type == token_left_paren) {
+		struct token* lp = token_list_pop(tl);
+		token_destroy(lp);
+
+		r = expr(tl, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = defer(dag_destroy, n, &stack_error);
+		if (r == result_error) {
+			dag_destroy(n);
+			goto function_error;
+		}
+
+		struct token* rp = get_token(tl->head, 0);
+		if (!rp || rp->type != token_right_paren) {
+			set_error("expecting right parenthesis");
+			goto function_error;
+		}
+
+		rp = token_list_pop(tl);
+		goto function_success;
 	}
 
 function_success:
