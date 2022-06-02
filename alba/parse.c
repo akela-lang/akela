@@ -341,6 +341,12 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 		goto function_error;
 	}
 
+	if (b && is_binary_operator(b)) {
+		dag_push(b, a);
+		dag_add_child(n, b);
+		goto function_success;
+	}
+
 	if (a) {
 		dag_add_child(n, a);
 	}
