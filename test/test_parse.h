@@ -109,6 +109,70 @@ void test_parse_add()
 	teardown();
 }
 
+void test_parse_add_positive()
+{
+	test_name(__func__);
+
+	setup_parse("speed + +1");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_plus, "plus");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_word, "word");
+	expect_str(&left->value, "speed", "speed");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_sign, "sign");
+	
+	assert_null(dag_get_child(root, 2), "only 2 children");
+
+	struct dag_node* left2 = dag_get_child(right, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_plus, "plus2");
+
+	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_str(&right2->value, "1", "1");
+
+
+	teardown();
+}
+
+void test_parse_add_negative()
+{
+	test_name(__func__);
+
+	setup_parse("speed + -1");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_plus, "plus");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_word, "word");
+	expect_str(&left->value, "speed", "speed");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_sign, "sign");
+
+	assert_null(dag_get_child(root, 2), "only 2 children");
+
+	struct dag_node* left2 = dag_get_child(right, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_minus, "minus");
+
+	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_str(&right2->value, "1", "1");
+
+
+	teardown();
+}
+
 void test_parse_sub()
 {
 	test_name(__func__);
@@ -133,6 +197,71 @@ void test_parse_sub()
 	teardown();
 }
 
+void test_parse_sub_positive()
+{
+	test_name(__func__);
+
+	setup_parse("speed - +1");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_minus, "minus");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_word, "word");
+	expect_str(&left->value, "speed", "speed");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_sign, "sign");
+
+	assert_null(dag_get_child(root, 2), "only 2 children");
+
+	struct dag_node* left2 = dag_get_child(right, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_plus, "plus");
+
+	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_str(&right2->value, "1", "1");
+
+
+	teardown();
+}
+
+void test_parse_sub_negative()
+{
+	test_name(__func__);
+
+	setup_parse("speed - -1");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_minus, "minus");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_word, "word");
+	expect_str(&left->value, "speed", "speed");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_sign, "sign");
+
+	assert_null(dag_get_child(root, 2), "only 2 children");
+
+	struct dag_node* left2 = dag_get_child(right, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_minus, "minus2");
+
+	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_str(&right2->value, "1", "1");
+
+
+	teardown();
+}
+
+
 void test_parse_mult()
 {
 	test_name(__func__);
@@ -154,6 +283,71 @@ void test_parse_mult()
 
 	teardown();
 }
+
+void test_parse_mult_positive()
+{
+	test_name(__func__);
+
+	setup_parse("speed * +1");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_mult, "mult");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_word, "word");
+	expect_str(&left->value, "speed", "speed");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_sign, "sign");
+
+	assert_null(dag_get_child(root, 2), "only 2 children");
+
+	struct dag_node* left2 = dag_get_child(right, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_plus, "plus");
+
+	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_str(&right2->value, "1", "1");
+
+
+	teardown();
+}
+
+void test_parse_mult_negative()
+{
+	test_name(__func__);
+
+	setup_parse("speed * -1");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_mult, "mult");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_word, "word");
+	expect_str(&left->value, "speed", "speed");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_sign, "sign");
+
+	assert_null(dag_get_child(root, 2), "only 2 children");
+
+	struct dag_node* left2 = dag_get_child(right, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_minus, "minus2");
+
+	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_str(&right2->value, "1", "1");
+
+
+	teardown();
+}
+
 
 void test_parse_divide()
 {
@@ -310,8 +504,14 @@ void test_parse()
 	test_parse_num_negative();
 	test_parse_num_positive();
 	test_parse_add();
+	test_parse_add_positive();
+	test_parse_add_negative();
 	test_parse_sub();
+	test_parse_sub_positive();
+	test_parse_sub_negative();
 	test_parse_mult();
+	test_parse_mult_positive();
+	test_parse_mult_negative();
 	test_parse_divide();
 	test_parse_add_add();
 	test_parse_mult_mult();
