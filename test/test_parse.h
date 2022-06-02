@@ -497,6 +497,19 @@ void test_parse_mult_add()
 	teardown();
 }
 
+void test_parse_paren_num()
+{
+	test_name(__func__);
+
+	setup_parse("(32)");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_number, "number");
+	expect_str(&root->value, "32", "32");
+
+	teardown();
+}
+
 void test_parse()
 {
 	test_parse_num();
@@ -517,6 +530,7 @@ void test_parse()
 	test_parse_mult_mult();
 	test_parse_add_mult();
 	test_parse_mult_add();
+	test_parse_paren_num();
 }
 
 #endif

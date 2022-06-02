@@ -199,6 +199,18 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(divide);
     U16_NEXT(divide, pos2, size, cv->divide);
+
+    U_STRING_DECL(left_paren, "(", 1);
+    U_STRING_INIT(left_paren, "(", 1);
+    pos2 = 0;
+    size = u_strlen(left_paren);
+    U16_NEXT(left_paren, pos2, size, cv->left_paren);
+
+    U_STRING_DECL(right_paren, ")", 1);
+    U_STRING_INIT(right_paren, ")", 1);
+    pos2 = 0;
+    size = u_strlen(right_paren);
+    U16_NEXT(right_paren, pos2, size, cv->right_paren);
 }
 
 enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
@@ -232,6 +244,14 @@ enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum*
         token_reset(t);
     } else if (c2 == cv.divide) {
         t->type = token_divide;
+        token_list_add(tl, t);
+        token_reset(t);
+    } else if (c2 == cv.left_paren) {
+        t->type = token_left_paren;
+        token_list_add(tl, t);
+        token_reset(t);
+    } else if (c2 == cv.right_paren) {
+        t->type = token_right_paren;
         token_list_add(tl, t);
         token_reset(t);
     } else if (c2 == cv.space) {

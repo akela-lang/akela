@@ -51,6 +51,8 @@ struct char_value {
     UChar32 space;
     UChar32 mult;
     UChar32 divide;
+    UChar32 left_paren;
+    UChar32 right_paren;
 };
 
 struct token {
