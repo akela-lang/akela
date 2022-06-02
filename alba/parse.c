@@ -444,7 +444,7 @@ enum result factor(struct token_list *tl, struct dag_node** root)
 			goto function_error;
 		}
 
-		if (t1->type == token_plus) {
+		if (t0->type == token_plus) {
 			left->type = dag_type_plus;
 		} else {
 			left->type = dag_type_minus;

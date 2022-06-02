@@ -25,6 +25,7 @@ void test_parse_num()
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_number, "number");
+	expect_str(&root->value, "32", "32");
 
 	teardown();
 }
@@ -37,6 +38,49 @@ void test_parse_word()
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_word, "word");
+	expect_str(&root->value, "lot", "lot");
+
+	teardown();
+}
+
+void test_parse_num_negative()
+{
+	test_name(__func__);
+
+	setup_parse("-30");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_sign, "sign");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	assert_int_equal(left->type, dag_type_minus, "minus");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	assert_int_equal(right->type, dag_type_number, "number");
+	expect_str(&right->value, "30", "30");
+
+	teardown();
+}
+
+void test_parse_num_positive()
+{
+	test_name(__func__);
+
+	setup_parse("+30");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_sign, "sign");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	assert_int_equal(left->type, dag_type_plus, "plus");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	assert_int_equal(right->type, dag_type_number, "number");
+	expect_str(&right->value, "30", "30");
 
 	teardown();
 }
@@ -263,6 +307,8 @@ void test_parse()
 {
 	test_parse_num();
 	test_parse_word();
+	test_parse_num_negative();
+	test_parse_num_positive();
 	test_parse_add();
 	test_parse_sub();
 	test_parse_mult();
