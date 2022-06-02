@@ -17,6 +17,30 @@ void setup_parse(char* line)
 	assert_ok(r, "parse");
 }
 
+void test_parse_num()
+{
+	test_name(__func__);
+
+	setup_parse("32");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_number, "number");
+
+	teardown();
+}
+
+void test_parse_word()
+{
+	test_name(__func__);
+
+	setup_parse("lot");
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_word, "word");
+
+	teardown();
+}
+
 void test_parse_add()
 {
 	test_name(__func__);
@@ -237,6 +261,8 @@ void test_parse_mult_add()
 
 void test_parse()
 {
+	test_parse_num();
+	test_parse_word();
 	test_parse_add();
 	test_parse_sub();
 	test_parse_mult();
