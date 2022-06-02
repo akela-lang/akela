@@ -17,7 +17,7 @@ void setup_parse(char* line)
 	assert_ok(r, "parse");
 }
 
-void test_parse_addition()
+void test_parse_add()
 {
 	test_name(__func__);
 
@@ -41,7 +41,7 @@ void test_parse_addition()
 	teardown();
 }
 
-void test_parse_subtraction()
+void test_parse_sub()
 {
 	test_name(__func__);
 
@@ -65,7 +65,7 @@ void test_parse_subtraction()
 	teardown();
 }
 
-void test_parse_multiplication()
+void test_parse_mult()
 {
 	test_name(__func__);
 
@@ -109,7 +109,7 @@ void test_parse_divide()
 	teardown();
 }
 
-void test_parse_add_3()
+void test_parse_add_add()
 {
 	test_name(__func__);
 
@@ -142,7 +142,7 @@ void test_parse_add_3()
 	teardown();
 }
 
-void test_parse_mult_3()
+void test_parse_mult_mult()
 {
 	test_name(__func__);
 
@@ -237,12 +237,12 @@ void test_parse_mult_add()
 
 void test_parse()
 {
-	test_parse_addition();
-	test_parse_subtraction();
-	test_parse_multiplication();
+	test_parse_add();
+	test_parse_sub();
+	test_parse_mult();
 	test_parse_divide();
-	test_parse_add_3();
-	test_parse_mult_3();
+	test_parse_add_add();
+	test_parse_mult_mult();
 	test_parse_add_mult();
 	test_parse_mult_add();
 }
