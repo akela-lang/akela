@@ -586,7 +586,7 @@ void test_parse_paren_add_add()
 {
 	test_name(__func__);
 
-	setup_parse("(1 + 2) + 3");
+	setup_parse("1 + (2 + 3)");
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -608,6 +608,37 @@ void test_parse_paren_add_add()
 	expect_str(&left2->value, "2", "2");
 
 	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_int_equal(right2->type, dag_type_number, "number 3");
+	expect_str(&right2->value, "3", "3");
+
+	teardown();
+}
+
+void test_parse_paren_add_add2()
+{
+	test_name(__func__);
+
+	setup_parse("(1 + 2) + 3");
+
+	assert_ptr(root, "root");
+	assert_int_equal(root->type, dag_type_plus, "plus");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_plus, "plus 2");
+
+	struct dag_node* left2 = dag_get_child(left, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_number, "number");
+	expect_str(&left2->value, "1", "1");
+
+	struct dag_node* right = dag_get_child(left, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_number, "number 2");
+	expect_str(&right->value, "2", "2");
+
+	struct dag_node* right2 = dag_get_child(root, 1);
 	assert_ptr(right2, "right2");
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
@@ -637,6 +668,68 @@ void test_parse_paren_mult()
 	teardown();
 }
 
+void test_parse_paren_mult_mult()
+{
+	test_name(__func__);
+
+	setup_parse("1 * (2 * 3)");
+
+	assert_ptr(root, "root");
+	assert_int_equal(root->type, dag_type_mult, "mult");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_number, "number");
+	expect_str(&left->value, "1", "1");
+
+	struct dag_node* right = dag_get_child(root, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_mult, "mult 2");
+
+	struct dag_node* left2 = dag_get_child(right, 0);
+	assert_ptr(left2, "left 2");
+	expect_int_equal(left2->type, dag_type_number, "number 2");
+	expect_str(&left2->value, "2", "2");
+
+	struct dag_node* right2 = dag_get_child(right, 1);
+	assert_ptr(right2, "right2");
+	expect_int_equal(right2->type, dag_type_number, "number 3");
+	expect_str(&right2->value, "3", "3");
+
+	teardown();
+}
+
+void test_parse_paren_mult_mult2()
+{
+	test_name(__func__);
+
+	setup_parse("(1 * 2) * 3");
+
+	assert_ptr(root, "root");
+	assert_int_equal(root->type, dag_type_mult, "mult");
+
+	struct dag_node* left = dag_get_child(root, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, dag_type_mult, "mult 2");
+	
+	struct dag_node* left2 = dag_get_child(left, 0);
+	assert_ptr(left2, "left2");
+	expect_int_equal(left2->type, dag_type_number, "number");
+	expect_str(&left2->value, "1", "1");
+
+	struct dag_node* right = dag_get_child(left, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, dag_type_number, "number 2");
+	expect_str(&right->value, "2", "2");
+
+	struct dag_node* right2 = dag_get_child(root, 1);
+	assert_ptr(right2, "right2");
+	expect_int_equal(right2->type, dag_type_number, "number 3");
+	expect_str(&right2->value, "3", "3");
+
+	teardown();
+}
+
 void test_parse()
 {
 	test_parse_num();
@@ -662,7 +755,10 @@ void test_parse()
 	test_parse_paren_add2();
 	test_parse_paren_add3();
 	test_parse_paren_add_add();
+	test_parse_paren_add_add2();
 	test_parse_paren_mult();
+	test_parse_paren_mult_mult();
+	test_parse_paren_mult_mult2();
 }
 
 #endif
