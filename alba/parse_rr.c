@@ -4,13 +4,23 @@
 #include "defer.h"
 #include "scan.h"
 
+enum result parse_rr(struct token_list* tl, struct dag_node** root)
+{
+	*root = NULL;
+	enum result r = expr_rr(tl, root);
+	if (r == result_error) {
+		return r;
+	}
+	return result_ok;
+}
+
 /*
 * expr ->
 *	expr + term
 *	expr - term
 *	term
 */
-enum result old_expr(struct token_list* tl, struct dag_node** root)
+enum result expr_rr(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	int pos = -1;
@@ -69,7 +79,7 @@ enum result old_expr(struct token_list* tl, struct dag_node** root)
 
 		// left child
 		struct dag_node* left = NULL;
-		r = old_expr(before, &left);
+		r = expr_rr(before, &left);
 		if (r == result_error)
 		{
 			goto function_error;
@@ -82,7 +92,7 @@ enum result old_expr(struct token_list* tl, struct dag_node** root)
 
 			// right child
 			struct dag_node* right = NULL;
-			r = old_term(after, &right);
+			r = term_rr(after, &right);
 			if (r == result_error) {
 				goto function_error;
 			}
@@ -100,7 +110,7 @@ enum result old_expr(struct token_list* tl, struct dag_node** root)
 	}
 
 	/* term */
-	r = old_term(tl, &n);
+	r = term_rr(tl, &n);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -127,7 +137,7 @@ function_error:
 *	term / factor
 *	factor
 */
-enum result old_term(struct token_list* tl, struct dag_node** root)
+enum result term_rr(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -186,7 +196,7 @@ enum result old_term(struct token_list* tl, struct dag_node** root)
 
 		// left child
 		struct dag_node* left = NULL;
-		r = old_term(before, &left);
+		r = term_rr(before, &left);
 		if (r == result_error)
 		{
 			goto function_error;
@@ -199,7 +209,7 @@ enum result old_term(struct token_list* tl, struct dag_node** root)
 
 			// right child
 			struct dag_node* right = NULL;
-			r = old_factor(after, &right);
+			r = factor_rr(after, &right);
 			if (r == result_error) {
 				goto function_error;
 			}
@@ -218,7 +228,7 @@ enum result old_term(struct token_list* tl, struct dag_node** root)
 
 	/* factor */
 	if (token_list_count(tl) > 0) {
-		r = old_factor(tl, &n);
+		r = factor_rr(tl, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -246,7 +256,7 @@ function_error:
 	return r;
 }
 
-enum result old_factor(struct token_list* tl, struct dag_node** root)
+enum result factor_rr(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -289,14 +299,4 @@ function_error:
 	cleanup(stack_error);
 	cleanup(stack_temp);
 	return r;
-}
-
-enum result old_parse(struct token_list* tl, struct dag_node** root)
-{
-	*root = NULL;
-	enum result r = old_expr(tl, root);
-	if (r == result_error) {
-		return r;
-	}
-	return result_ok;
 }

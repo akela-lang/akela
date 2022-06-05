@@ -7,7 +7,7 @@ set(test_files
     ${alba_dir}/defer.c
     ${alba_dir}/dag.c
     ${alba_dir}/parse.c
-    ${alba_dir}/old_parse.c
+    ${alba_dir}/parse_rr.c
     assert.c
     setup.c
     test.c

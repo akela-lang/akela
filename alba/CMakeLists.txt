@@ -7,7 +7,7 @@ set(source_files
     memory.c
     defer.c
     dag.c
-    old_parse.c
+    parse_rr.c
     parse.c
     allocator.c
 )
