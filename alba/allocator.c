@@ -8,7 +8,7 @@ void allocator_init(struct allocator* al)
 	al->tail = NULL;
 }
 
-enum result allocator_make(struct allocator* al, void** buf, size_t size)
+enum result allocator_malloc(struct allocator* al, void** buf, size_t size)
 {
 	enum result r;
 	struct allocator_node* aln;
@@ -27,6 +27,36 @@ enum result allocator_make(struct allocator* al, void** buf, size_t size)
 	aln->p = *buf;
 	aln->next = al->head;
 	al->head = aln;
+	return result_ok;
+}
+
+struct allocator_node* allocator_find(struct allocator* al, void* p)
+{
+	for (struct allocator_node* aln = al->head; aln; aln = aln->next) {
+		if (aln->p == p) {
+			return aln;
+		}
+	}
+	return NULL;
+}
+
+enum result allocator_realloc(struct allocator* al, void** buf, size_t size)
+{
+	enum result r;
+	struct allocator_node* aln;
+
+	r = realloc_safe(buf, size);
+	if (r == result_error) {
+		return r;
+	}
+
+	aln = allocator_find(al, *buf);
+	if (!aln) {
+		free(*buf);
+		return set_error("pointer not found in allocator");
+	}
+	aln->p = *buf;
+
 	return result_ok;
 }
 

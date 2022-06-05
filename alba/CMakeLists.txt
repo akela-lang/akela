@@ -1,7 +1,7 @@
 
 set(source_files
     alba.c
-    scan.c
+    scan_defer.c
     result.c
     ustring.c
     memory.c

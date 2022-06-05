@@ -15,7 +15,9 @@ struct allocator {
 };
 
 void allocator_init(struct allocator* al);
-enum result allocator_make(struct allocator* al, void** buf, size_t size);
+enum result allocator_malloc(struct allocator* al, void** buf, size_t size);
+struct allocator_node* allocator_find(struct allocator* al, void* p);
+enum result allocator_realloc(struct allocator* al, void** buf, size_t size);
 void allocator_destroy(struct allocator* al);
 void allocator_transfer(struct allocator* src, struct allocator* dest);
 struct allocator_node* allocator_remove(struct allocator* al, void* p);
