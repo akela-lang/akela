@@ -9,6 +9,7 @@ set(source_files
     dag.c
     old_parse.c
     parse.c
+    allocator.c
 )
 include_directories("../external/icu4c/include")
 add_executable(alba ${source_files})
