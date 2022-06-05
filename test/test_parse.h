@@ -6,6 +6,7 @@
 #include "alba/dag.h"
 #include "alba/scan.h"
 #include "alba/parse.h"
+#include "alba/allocator.h"
 
 void setup_parse(char* line)
 {
@@ -13,7 +14,10 @@ void setup_parse(char* line)
 	enum result r;
 	r = scan(&s, &tl);
 	assert_ok(r, "scan");
-	r = parse(&tl, &root);
+	struct allocator al;
+	allocator_init(&al);
+	r = parse_al(&al, &tl, &root);
+	allocator_destroy(&al);
 	assert_ok(r, "parse");
 }
 

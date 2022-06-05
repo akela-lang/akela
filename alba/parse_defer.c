@@ -2,26 +2,12 @@
 #include "scan.h"
 #include "dag.h"
 #include "defer.h"
-
-int is_binary_operator(struct dag_node* n)
-{
-	if (n->type == dag_type_plus) {
-		return 1;
-	} else if (n->type == dag_type_minus) {
-		return 1;
-	} else if (n->type == dag_type_mult) {
-		return 1;
-	} else if (n->type == dag_type_divide) {
-		return 1;
-	}
-
-	return 0;
-}
+#include "parse_misc.h"
 
 /*
 * expr -> term expr'
 */
-enum result expr(struct token_list* tl, struct dag_node** root)
+enum result expr_defer(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -30,7 +16,7 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 	struct dag_node* b = NULL;
 	struct dag_node* n = NULL;
 
-	r = term(tl, &a);
+	r = term_defer(tl, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -41,7 +27,7 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 		goto function_error;
 	}
 
-	r = expr_prime(tl, &b);
+	r = expr_prime_defer(tl, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -87,7 +73,7 @@ function_error:
 *	     | - term expr'
 *	     | e
 */
-enum result expr_prime(struct token_list* tl, struct dag_node** root)
+enum result expr_prime_defer(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -132,7 +118,7 @@ enum result expr_prime(struct token_list* tl, struct dag_node** root)
 	token_destroy(tx);
 
 	/* term */
-	r = term(tl, &a);
+	r = term_defer(tl, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -146,7 +132,7 @@ enum result expr_prime(struct token_list* tl, struct dag_node** root)
 	}
 
 	/* expr' */
-	r = expr_prime(tl, &b);
+	r = expr_prime_defer(tl, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -193,7 +179,7 @@ function_error:
 /*
 * term -> factor term_prime
 */
-enum result term(struct token_list* tl, struct dag_node** root)
+enum result term_defer(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -202,7 +188,7 @@ enum result term(struct token_list* tl, struct dag_node** root)
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 
-	r = factor(tl, &a);
+	r = factor_term(tl, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -213,7 +199,7 @@ enum result term(struct token_list* tl, struct dag_node** root)
 		goto function_error;
 	}
 
-	r = term_prime(tl, &b);
+	r = term_prime_defer(tl, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -265,7 +251,7 @@ function_error:
 *	     | / factor term'
 *	     | e
 */
-enum result term_prime(struct token_list* tl, struct dag_node** root)
+enum result term_prime_defer(struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -309,7 +295,7 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 	token_destroy(t_op);
 
 	/* factor */
-	r = factor(tl, &a);
+	r = factor_term(tl, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -323,7 +309,7 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 	}
 
 	/* term' */
-	r = term_prime(tl, &b);
+	r = term_prime_defer(tl, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -376,7 +362,7 @@ function_error:
 *	| - word
 *	| (expr)
 */
-enum result factor(struct token_list *tl, struct dag_node** root)
+enum result factor_term(struct token_list *tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -491,7 +477,7 @@ enum result factor(struct token_list *tl, struct dag_node** root)
 		struct token* lp = token_list_pop(tl);
 		token_destroy(lp);
 
-		r = expr(tl, &n);
+		r = expr_defer(tl, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -524,10 +510,10 @@ function_error:
 	return r;
 }
 
-enum result parse(struct token_list* tl, struct dag_node** root)
+enum result parse_defer(struct token_list* tl, struct dag_node** root)
 {
 	*root = NULL;
-	enum result r = expr(tl, root);
+	enum result r = expr_defer(tl, root);
 	if (r == result_error) {
 		return r;
 	}
