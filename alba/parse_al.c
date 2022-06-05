@@ -7,7 +7,7 @@
 /*
 * expr -> term expr'
 */
-enum result expr(struct token_list* tl, struct dag_node** root)
+enum result expr(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -16,7 +16,7 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 	struct dag_node* b = NULL;
 	struct dag_node* n = NULL;
 
-	r = term(tl, &a);
+	r = term(al, tl, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -27,7 +27,7 @@ enum result expr(struct token_list* tl, struct dag_node** root)
 		goto function_error;
 	}
 
-	r = expr_prime(tl, &b);
+	r = expr_prime(al, tl, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -73,7 +73,7 @@ function_error:
 *	     | - term expr'
 *	     | e
 */
-enum result expr_prime(struct token_list* tl, struct dag_node** root)
+enum result expr_prime(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -118,7 +118,7 @@ enum result expr_prime(struct token_list* tl, struct dag_node** root)
 	token_destroy(tx);
 
 	/* term */
-	r = term(tl, &a);
+	r = term(al, tl, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -132,7 +132,7 @@ enum result expr_prime(struct token_list* tl, struct dag_node** root)
 	}
 
 	/* expr' */
-	r = expr_prime(tl, &b);
+	r = expr_prime(al, tl, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -179,7 +179,7 @@ function_error:
 /*
 * term -> factor term_prime
 */
-enum result term(struct token_list* tl, struct dag_node** root)
+enum result term(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -188,7 +188,7 @@ enum result term(struct token_list* tl, struct dag_node** root)
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 
-	r = factor(tl, &a);
+	r = factor(al, tl, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -199,7 +199,7 @@ enum result term(struct token_list* tl, struct dag_node** root)
 		goto function_error;
 	}
 
-	r = term_prime(tl, &b);
+	r = term_prime(al, tl, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -251,7 +251,7 @@ function_error:
 *	     | / factor term'
 *	     | e
 */
-enum result term_prime(struct token_list* tl, struct dag_node** root)
+enum result term_prime(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -295,7 +295,7 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 	token_destroy(t_op);
 
 	/* factor */
-	r = factor(tl, &a);
+	r = factor(al, tl, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -309,7 +309,7 @@ enum result term_prime(struct token_list* tl, struct dag_node** root)
 	}
 
 	/* term' */
-	r = term_prime(tl, &b);
+	r = term_prime(al, tl, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -362,7 +362,7 @@ function_error:
 *	| - word
 *	| (expr)
 */
-enum result factor(struct token_list *tl, struct dag_node** root)
+enum result factor(struct allocator* al, struct token_list *tl, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -477,7 +477,7 @@ enum result factor(struct token_list *tl, struct dag_node** root)
 		struct token* lp = token_list_pop(tl);
 		token_destroy(lp);
 
-		r = expr(tl, &n);
+		r = expr(al, tl, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -513,7 +513,7 @@ function_error:
 enum result parse_al(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	*root = NULL;
-	enum result r = expr(tl, root);
+	enum result r = expr(al, tl, root);
 	if (r == result_error) {
 		return r;
 	}
