@@ -22,6 +22,7 @@ void string_clear(struct string* s);
 enum result string_copy(struct string* a, struct string* b);
 enum result string2array(struct string* s, char** array);
 enum result array2string(char* a, struct string* s);
+enum result next_char(struct string* s, size_t* pos, struct string* s2);
 int string_compare(struct string* a, struct string* b);
 int str_compare(struct string* a, char* b);
 enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len);
