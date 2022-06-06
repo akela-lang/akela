@@ -10,7 +10,7 @@ void setup_scan(char* line)
 {
 	setup(line);
 	enum result r;
-	r = scan(&s, &tl);
+	r = scan(&al, &s, &tl);
 	assert_ok(r, "scan");
 }
 

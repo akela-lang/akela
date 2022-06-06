@@ -7,6 +7,7 @@
 #include "defer.h"
 #include "parse.h"
 #include "dag.h"
+#include "allocator.h"
 
 int main(int argc, char** argv)
 {
@@ -64,6 +65,9 @@ int main(int argc, char** argv)
     }
 
     while(!last_line) {
+        struct allocator al;
+        allocator_init(&al);
+
         r = next_line(f, &line, 1, &last_line);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
@@ -78,7 +82,7 @@ int main(int argc, char** argv)
         }
         printf("line: %s\n", a);
         free(a);
-        r = scan(&line, &tl);
+        r = scan(&al, &line, &tl);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);
@@ -102,6 +106,8 @@ int main(int argc, char** argv)
         string_clear(&line);
         token_list_reset_defer(&tl);
         dag_destroy(root);
+
+        allocator_destroy(&al);
     }
 
 

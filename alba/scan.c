@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "result.h"
 #include "token.h"
+#include "token_defer.h"
 #include "scan.h"
 #include "ustring.h"
 #include "defer.h"
@@ -153,7 +154,7 @@ enum result process_char_number(UChar32 c2, char* a, size_t len, enum state_enum
     return result_ok;
 }
 
-enum result scan(struct string* line, struct token_list* tl)
+enum result scan(struct allocator *al, struct string* line, struct token_list* tl)
 {
     enum result r;
     size_t pos = 0;

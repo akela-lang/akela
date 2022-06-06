@@ -61,6 +61,7 @@ struct token_list {
     struct token_node* tail;
 };
 
+void token_init(struct token* t);
 enum result token_name_init(char** token_name);
 void token_reset(struct token* t);
 void token_list_init(struct token_list* tl);

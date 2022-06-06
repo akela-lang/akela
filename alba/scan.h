@@ -19,6 +19,6 @@ enum state_enum {
     state_number
 };
 
-enum result scan(struct string* line, struct token_list* tl);
+enum result scan(struct allocator *al, struct string* line, struct token_list* tl);
 
 #endif
