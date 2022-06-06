@@ -82,7 +82,7 @@ enum result token_list_make(struct allocator *al, struct token_list** tl)
 /*
 * Append the new token to the end of the token list
 */
-enum result token_list_add(struct token_list* tl, struct token* t)
+enum result token_list_add(struct allocator* al, struct token_list* tl, struct token* t)
 {
     enum result r;
     struct defer_node* ds = NULL;
@@ -157,7 +157,7 @@ enum result token_list_slice(struct allocator *al, struct token_list* tl, int st
     for (struct token_node* tn = tl->head; tn; tn = tn->next) {
         if (i >= start || start == -1) {
             if (i <= end || end == -1) {
-                r = token_list_add(*slice, tn->t);
+                r = token_list_add(al, *slice, tn->t);
                 if (r == result_error) {
                     cleanup(cleanup_on_error);
                     return r;

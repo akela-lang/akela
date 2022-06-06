@@ -70,7 +70,7 @@ int token_find_first(struct token_list* tl, enum token_enum type);
 int token_find_last(struct token_list* tl, enum token_enum type);
 int token_list_count(struct token_list* tl);
 enum result token_list_make(struct allocator* al, struct token_list** tl);
-enum result token_list_add(struct token_list* tl, struct token* t);
+enum result token_list_add(struct allocator* al, struct token_list* tl, struct token* t);
 enum result token_list_slice(struct allocator *al, struct token_list* tl, int start, int end, struct token_list** slice);
 void token_list_reset(struct token_list* tl);
 void token_list_destroy(struct token_list* tl);
