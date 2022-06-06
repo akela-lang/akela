@@ -16,7 +16,7 @@ void setup_parse(char* line)
 	assert_ok(r, "scan");
 	struct allocator al;
 	allocator_init(&al);
-	r = parse_al(&al, &tl, &root);
+	r = parse(&al, &tl, &root);
 	allocator_destroy(&al);
 	assert_ok(r, "parse");
 }

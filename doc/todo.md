@@ -1,4 +1,7 @@
 # Todo
+* pass allocator to scan helper functions
+* pass allocator to parse helper functions
+* pass allocator to string helper functions
 * use allocator in ustring
 * use allocator in token functions
 * use allocator in scanner

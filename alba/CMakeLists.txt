@@ -12,7 +12,7 @@ set(source_files
     parse_misc.c
     parse_rr.c
     parse_defer.c
-    parse_al.c
+    parse.c
     allocator.c
 )
 include_directories("../external/icu4c/include")

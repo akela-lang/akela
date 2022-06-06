@@ -70,6 +70,7 @@ void allocator_destroy(struct allocator* al)
 		aln = aln->next;
 		free(temp);
 	}
+	allocator_init(al);
 }
 
 void allocator_transfer(struct allocator* src, struct allocator* dest)
