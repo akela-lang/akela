@@ -19,7 +19,7 @@ enum result allocator_malloc(struct allocator* al, void** buf, size_t size)
 	}
 
 	r = malloc_safe(&aln, sizeof(struct allocator_node));
-	if (r = result_error) {
+	if (r == result_error) {
 		free(*buf);
 		return r;
 	}

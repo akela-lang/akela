@@ -7,6 +7,7 @@
 #include "result.h"
 #include "ustring.h"
 #include "memory.h"
+#include "allocator.h"
 
 enum result num_bytes(unsigned char c, int* count)
 {
