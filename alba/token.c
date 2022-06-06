@@ -1,5 +1,6 @@
 #define _TOKEN_C
 
+#include <stdlib.h>
 #include "token.h"
 
 void token_init(struct token* t)
