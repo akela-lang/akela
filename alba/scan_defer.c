@@ -75,27 +75,27 @@ enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum*
         }
     } else if (c2 == cv.plus) {
         t->type = token_plus;
-        token_list_add(tl, t);
+        token_list_add_defer(tl, t);
         token_reset(t);
     } else if (c2 == cv.minus) {
         t->type = token_minus;
-        token_list_add(tl, t);
+        token_list_add_defer(tl, t);
         token_reset(t);
     } else if (c2 == cv.mult) {
         t->type = token_mult;
-        token_list_add(tl, t);
+        token_list_add_defer(tl, t);
         token_reset(t);
     } else if (c2 == cv.divide) {
         t->type = token_divide;
-        token_list_add(tl, t);
+        token_list_add_defer(tl, t);
         token_reset(t);
     } else if (c2 == cv.left_paren) {
         t->type = token_left_paren;
-        token_list_add(tl, t);
+        token_list_add_defer(tl, t);
         token_reset(t);
     } else if (c2 == cv.right_paren) {
         t->type = token_right_paren;
-        token_list_add(tl, t);
+        token_list_add_defer(tl, t);
         token_reset(t);
     } else if (c2 == cv.space) {
         /* nothing */
@@ -121,7 +121,7 @@ enum result process_char_word(UChar32 c2, char* a, size_t len, enum state_enum* 
         }
     } else {
         *state = state_start;
-        r = token_list_add(tl, t);
+        r = token_list_add_defer(tl, t);
         if (r == result_error) {
             return r;
         }
@@ -143,7 +143,7 @@ enum result process_char_number(UChar32 c2, char* a, size_t len, enum state_enum
         }
     } else {
         *state = state_start;
-        r = token_list_add(tl, t);
+        r = token_list_add_defer(tl, t);
         if (r == result_error) {
             return r;
         }
@@ -238,7 +238,7 @@ enum result scan(struct string* line, struct token_list* tl)
 
     if (state != state_start && t.type != token_none) {
         state = state_start;
-        r = token_list_add(tl, &t);
+        r = token_list_add_defer(tl, &t);
         if (r == result_error) {
             cleanup(ds);
             return r;

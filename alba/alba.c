@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "token.h"
+#include "token_defer.h"
 #include "scan.h"
 #include "ustring.h"
 #include "defer.h"
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
     }
 
     token_list_init(&tl);
-    r = defer(token_list_reset, &tl, &stack);
+    r = defer(token_list_reset_defer, &tl, &stack);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         cleanup(stack);
@@ -84,7 +85,7 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        r = token_list_print(&tl, token_name);
+        r = token_list_print_defer(&tl, token_name);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);
@@ -99,7 +100,7 @@ int main(int argc, char** argv)
         }
 
         string_clear(&line);
-        token_list_reset(&tl);
+        token_list_reset_defer(&tl);
         dag_destroy(root);
     }
 

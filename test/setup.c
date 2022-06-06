@@ -18,6 +18,6 @@ void setup(char* line)
 void teardown()
 {
 	string_reset(&s);
-	token_list_reset(&tl);
+	token_list_reset_defer(&tl);
 	dag_destroy(root);
 }

@@ -3,6 +3,7 @@
 #include "result.h"
 #include "defer.h"
 #include "token.h"
+#include "token_defer.h"
 #include "scan.h"
 
 enum result parse_rr(struct token_list* tl, struct dag_node** root)
@@ -47,23 +48,23 @@ enum result expr_rr(struct token_list* tl, struct dag_node** root)
 		struct token_list* before;
 		struct token_list* after;
 
-		r = token_list_slice(tl, -1, pos - 1, &before);
+		r = token_list_slice_defer(tl, -1, pos - 1, &before);
 		if (r == result_error) {
 			goto function_error;
 		}
-		r = defer(token_list_destroy, before, &stack_temp);
+		r = defer(token_list_destroy_defer, before, &stack_temp);
 		if (r == result_error) {
-			token_list_destroy(before);
+			token_list_destroy_defer(before);
 			goto function_error;
 		}
 
-		r = token_list_slice(tl, pos + 1, -1, &after);
+		r = token_list_slice_defer(tl, pos + 1, -1, &after);
 		if (r == result_error) {
 			goto function_error;
 		}
-		r = defer(token_list_destroy, after, &stack_temp);
+		r = defer(token_list_destroy_defer, after, &stack_temp);
 		if (r == result_error) {
-			token_list_destroy(after);
+			token_list_destroy_defer(after);
 			goto function_error;
 		}
 
@@ -164,23 +165,23 @@ enum result term_rr(struct token_list* tl, struct dag_node** root)
 		struct token_list* before;
 		struct token_list* after;
 
-		r = token_list_slice(tl, -1, pos - 1, &before);
+		r = token_list_slice_defer(tl, -1, pos - 1, &before);
 		if (r == result_error) {
 			goto function_error;
 		}
-		r = defer(token_list_destroy, before, &stack_temp);
+		r = defer(token_list_destroy_defer, before, &stack_temp);
 		if (r == result_error) {
-			token_list_destroy(before);
+			token_list_destroy_defer(before);
 			goto function_error;
 		}
 
-		r = token_list_slice(tl, pos + 1, -1, &after);
+		r = token_list_slice_defer(tl, pos + 1, -1, &after);
 		if (r == result_error) {
 			goto function_error;
 		}
-		r = defer(token_list_destroy, after, &stack_temp);
+		r = defer(token_list_destroy_defer, after, &stack_temp);
 		if (r == result_error) {
-			token_list_destroy(after);
+			token_list_destroy_defer(after);
 			goto function_error;
 		}
 

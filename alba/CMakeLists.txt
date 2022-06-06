@@ -3,6 +3,7 @@ set(source_files
     alba.c
     scan_defer.c
     token.c
+    token_defer.c
     result.c
     ustring.c
     memory.c

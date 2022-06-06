@@ -1,5 +1,6 @@
 #include "result.h"
 #include "token.h"
+#include "token_defer.h"
 #include "scan.h"
 #include "dag.h"
 #include "defer.h"
@@ -115,8 +116,8 @@ enum result expr_prime_defer(struct token_list* tl, struct dag_node** root)
 	}
 
 	n->type = type;
-	struct token* tx = token_list_pop(tl);
-	token_destroy(tx);
+	struct token* tx = token_list_pop_defer(tl);
+	token_destroy_defer(tx);
 
 	/* term */
 	r = term_defer(tl, &a);
@@ -292,8 +293,8 @@ enum result term_prime_defer(struct token_list* tl, struct dag_node** root)
 	}
 
 	n->type = type;
-	struct token* t_op = token_list_pop(tl);
-	token_destroy(t_op);
+	struct token* t_op = token_list_pop_defer(tl);
+	token_destroy_defer(t_op);
 
 	/* factor */
 	r = factor_term(tl, &a);
@@ -398,9 +399,9 @@ enum result factor_term(struct token_list *tl, struct dag_node** root)
 			goto function_error;
 		}
 
-		struct token* tx = token_list_pop(tl);
+		struct token* tx = token_list_pop_defer(tl);
 		if (tx) {
-			token_destroy(tx);
+			token_destroy_defer(tx);
 		}
 	}
 
@@ -463,20 +464,20 @@ enum result factor_term(struct token_list *tl, struct dag_node** root)
 
 		dag_add_child(n, right);
 
-		struct token* tx = token_list_pop(tl);
+		struct token* tx = token_list_pop_defer(tl);
 		if (tx) {
-			token_destroy(tx);
+			token_destroy_defer(tx);
 		}
 
-		tx = token_list_pop(tl);
+		tx = token_list_pop_defer(tl);
 		if (tx) {
-			token_destroy(tx);
+			token_destroy_defer(tx);
 		}
 
 	/* parenthesis */
 	} else if (t0 && t0->type == token_left_paren) {
-		struct token* lp = token_list_pop(tl);
-		token_destroy(lp);
+		struct token* lp = token_list_pop_defer(tl);
+		token_destroy_defer(lp);
 
 		r = expr_defer(tl, &n);
 		if (r == result_error) {
@@ -495,7 +496,7 @@ enum result factor_term(struct token_list *tl, struct dag_node** root)
 			goto function_error;
 		}
 
-		rp = token_list_pop(tl);
+		rp = token_list_pop_defer(tl);
 		goto function_success;
 	}
 
