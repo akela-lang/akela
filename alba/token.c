@@ -68,7 +68,7 @@ int token_list_count(struct token_list* tl)
     return i;
 }
 
-enum result token_list_make(struct token_list** tl)
+enum result token_list_make(struct allocator *al, struct token_list** tl)
 {
     enum result r;
     r = malloc_safe(tl, sizeof(**tl));
@@ -140,11 +140,11 @@ enum result token_list_add(struct token_list* tl, struct token* t)
     return result_ok;
 }
 
-enum result token_list_slice(struct token_list* tl, int start, int end, struct token_list** slice)
+enum result token_list_slice(struct allocator *al, struct token_list* tl, int start, int end, struct token_list** slice)
 {
     struct defer_node* cleanup_on_error = NULL;
 
-    enum result r = token_list_make(slice);
+    enum result r = token_list_make(al, slice);
     if (r == result_error) {
         return r;
     }
