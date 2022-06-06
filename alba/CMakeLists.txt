@@ -10,8 +10,7 @@ set(source_files
     defer.c
     dag.c
     parse_misc.c
-    parse_rr.c
-    parse_defer.c
+    parse.c
     parse.c
     allocator.c
 )

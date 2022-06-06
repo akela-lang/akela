@@ -104,7 +104,7 @@ enum result expr_prime(struct allocator* al, struct token_list* tl, struct dag_n
 		goto function_error;
 	}
 
-	r = dag_create_node(&n);
+	r = dag_create_node(al, &n);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -281,7 +281,7 @@ enum result term_prime(struct allocator* al, struct token_list* tl, struct dag_n
 		goto function_error;
 	}
 
-	r = dag_create_node(&n);
+	r = dag_create_node(al, &n);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -378,7 +378,7 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 
 	/* number or word */
 	if (t0->type == token_number || t0->type == token_word) {
-		r = dag_create_node(&n);
+		r = dag_create_node(al, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -407,7 +407,7 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 
 	/* sign and number or word */
 	else if ((t0->type == token_plus || t0->type == token_minus) && (t1->type == token_number || t1->type == token_word)) {
-		r = dag_create_node(&n);
+		r = dag_create_node(al, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -421,7 +421,7 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 		n->type = dag_type_sign;
 
 		struct dag_node* left;
-		r = dag_create_node(&left);
+		r = dag_create_node(al, &left);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -441,7 +441,7 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 		dag_add_child(n, left);
 
 		struct dag_node* right;
-		r = dag_create_node(&right);
+		r = dag_create_node(al, &right);
 		if (r == result_error) {
 			goto function_error;
 		}

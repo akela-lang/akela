@@ -3,7 +3,7 @@
 #include "result.h"
 #include "memory.h"
 
-enum result dag_create_node(struct dag_node** n)
+enum result dag_create_node(struct allocator* al, struct dag_node** n)
 {
 	enum result r = malloc_safe(n, sizeof(struct dag_node));
 	if (r == result_error) {
