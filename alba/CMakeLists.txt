@@ -2,6 +2,7 @@
 set(source_files
     alba.c
     scan_defer.c
+    token.c
     result.c
     ustring.c
     memory.c

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "alba/token.h"
 #include "alba/scan.h"
 
 struct token_list tl;

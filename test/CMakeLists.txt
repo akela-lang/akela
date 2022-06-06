@@ -1,5 +1,6 @@
 set(alba_dir ../alba)
 set(test_files
+    ${alba_dir}/token.c
     ${alba_dir}/scan_defer.c
     ${alba_dir}/result.c
     ${alba_dir}/ustring.c

@@ -3,6 +3,7 @@
 
 #include "setup.h"
 #include "assert.h"
+#include "alba/token.h"
 #include "alba/scan.h"
 
 void setup_scan(char* line)

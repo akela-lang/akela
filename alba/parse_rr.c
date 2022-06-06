@@ -2,6 +2,7 @@
 #include "dag.h"
 #include "result.h"
 #include "defer.h"
+#include "token.h"
 #include "scan.h"
 
 enum result parse_rr(struct token_list* tl, struct dag_node** root)

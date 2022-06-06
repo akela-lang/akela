@@ -1,5 +1,4 @@
 # Todo
-* move token functions to seperate file
 * use allocator in token functions
 * use allocator in scanner
 * use allocator in dag functions

@@ -1,4 +1,5 @@
 #include "result.h"
+#include "token.h"
 #include "scan.h"
 #include "dag.h"
 #include "defer.h"
