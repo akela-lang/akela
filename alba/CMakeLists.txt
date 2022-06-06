@@ -9,7 +9,6 @@ set(source_files
     memory.c
     defer.c
     dag.c
-    parse_misc.c
     parse.c
     parse.c
     allocator.c

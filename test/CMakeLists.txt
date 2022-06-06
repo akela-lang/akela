@@ -9,8 +9,6 @@ set(test_files
     ${alba_dir}/defer.c
     ${alba_dir}/dag.c
     ${alba_dir}/parse.c
-    ${alba_dir}/parse.c
-    ${alba_dir}/parse_misc.c
     ${alba_dir}/allocator.c
     assert.c
     setup.c
