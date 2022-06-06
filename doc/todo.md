@@ -1,5 +1,4 @@
 # Todo
-* move token helper functions into one file
 * pass allocator to token helper functions
 * pass allocator to string helper functions
 * use allocator in ustring

@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "alba/token.h"
-#include "alba/token_defer.h"
 #include "alba/scan.h"
 #include "alba/allocator.h"
 #include "alba/dag.h"
@@ -23,7 +22,7 @@ void setup(char* line)
 void teardown()
 {
 	string_reset(&s);
-	token_list_reset_defer(&tl);
+	token_list_reset(&tl);
 	dag_destroy(root);
 	allocator_destroy(&al);
 }
