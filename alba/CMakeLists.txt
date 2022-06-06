@@ -1,7 +1,7 @@
 
 set(source_files
     alba.c
-    scan_defer.c
+    scan.c
     token.c
     token_defer.c
     result.c
