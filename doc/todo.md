@@ -1,5 +1,4 @@
 # Todo
-* pass allocator to parse helper functions
 * pass allocator to token helper functions
 * pass allocator to dag helper functions
 * pass allocator to string helper functions
