@@ -57,7 +57,7 @@ void set_char_values(struct char_value* cv)
     U16_NEXT(right_paren, pos2, size, cv->right_paren);
 }
 
-enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_start(struct allocator* al, UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
 {
     struct char_value cv;
     set_char_values(&cv);
@@ -106,7 +106,7 @@ enum result process_char_start(UChar32 c2, char* a, size_t len, enum state_enum*
     return result_ok;
 }
 
-enum result process_char_word(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_word(struct allocator *al, UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
 {
     enum result r;
     struct char_value cv;
@@ -127,12 +127,12 @@ enum result process_char_word(UChar32 c2, char* a, size_t len, enum state_enum* 
             return r;
         }
         token_reset(t);
-        return process_char_start(c2, a, len, state, tl, t);
+        return process_char_start(al, c2, a, len, state, tl, t);
     }
     return result_ok;
 }
 
-enum result process_char_number(UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_number(struct allocator *al, UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
 {
     enum result r;
     struct char_value cv;
@@ -149,7 +149,7 @@ enum result process_char_number(UChar32 c2, char* a, size_t len, enum state_enum
             return r;
         }
         token_reset(t);
-        return process_char_start(c2, a, len, state, tl, t);
+        return process_char_start(al, c2, a, len, state, tl, t);
     }
     return result_ok;
 }
@@ -222,11 +222,11 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
 
         r = result_ok;
         if (state == state_start) {
-            r = process_char_start(c2, a, len, &state, tl, &t);
+            r = process_char_start(al, c2, a, len, &state, tl, &t);
         } else if (state == state_word) {
-            r = process_char_word(c2, a, len, &state, tl, &t);
+            r = process_char_word(al, c2, a, len, &state, tl, &t);
         } else if (state == state_number) {
-            r = process_char_word(c2, a, len, &state, tl, &t);
+            r = process_char_word(al, c2, a, len, &state, tl, &t);
         } else {
             cleanup(ds);
             r = set_error("unexpected state");
