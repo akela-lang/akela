@@ -1,7 +1,9 @@
 #define _TOKEN_C
 
 #include <stdlib.h>
+#include "memory.h"
 #include "token.h"
+#include "defer.h"
 
 void token_init(struct token* t)
 {

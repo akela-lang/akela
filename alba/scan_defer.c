@@ -7,7 +7,6 @@
 #include "scan.h"
 #include "ustring.h"
 #include "defer.h"
-#include "memory.h"
 
 void set_char_values(struct char_value* cv)
 {
