@@ -131,7 +131,9 @@ void allocator_add(struct allocator* al, struct allocator_node* n)
 {
 	struct allocator_node* temp = al->head;
 
-	temp->prev = n;
+	if (temp) {
+		temp->prev = n;
+	}
 	
 	n->next = temp;
 	n->prev = NULL;

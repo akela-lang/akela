@@ -145,6 +145,87 @@ void test_allocator_remove()
 	allocator_destroy(&al);
 }
 
+void test_allocator_add()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	int* buf;
+	enum result r;
+
+	allocator_init(&al);
+	r = allocator_malloc(&al, &buf, sizeof(int));
+	assert_ok(r, "r");
+	*buf = 10;
+
+	struct allocator_node* aln = allocator_find(&al, buf);
+	assert_ptr(aln, "ptr");
+	struct allocator_node* aln2 = allocator_remove(&al, buf);
+	assert_true(aln == aln2, "equal");
+	struct allocator_node* aln3 = allocator_find(&al, buf);
+	assert_null(aln3, "null");
+
+	struct allocator al2;
+	allocator_init(&al2);
+	allocator_add(&al2, aln2);
+	struct allocator_node* aln4 = allocator_find(&al2, buf);
+	assert_ptr(aln4, "ptr2");
+	assert_true(aln4 == aln2, "equal2");
+
+	allocator_destroy(&al);
+	allocator_destroy(&al2);
+}
+
+void test_allocator_transfer_item()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct allocator al2;
+	int* buff;
+	enum result r;
+
+	allocator_init(&al);
+	allocator_init(&al2);
+	allocator_init(&al);
+	r = allocator_malloc(&al, &buff, sizeof(int));
+	assert_ok(r, "r");
+	*buff = 10;
+
+	struct allocator_node* aln = allocator_find(&al, buff);
+	assert_ptr(aln, "ptr");
+	assert_true((int*)aln->p == buff, "equal");
+
+	allocator_transfer_item(&al, &al2, buff);
+
+	struct allocator_node* aln2 = allocator_find(&al2, buff);
+	assert_ptr(aln2, "ptr");
+	assert_true((int*)aln2->p == buff, "equal");
+
+	allocator_destroy(&al);
+	allocator_destroy(&al2);
+}
+
+void test_allocator_destroy_item()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	int* buff;
+	enum result r;
+	allocator_init(&al);
+	r = allocator_malloc(&al, &buff, sizeof(int));
+	assert_ok(r, "r");
+	*buff = 10;
+	struct allocator_node* aln = allocator_find(&al, buff);
+	assert_ptr(aln, "ptr");
+	assert_true((int*)aln->p == buff, "equal");
+	allocator_destroy_item(&al, buff);
+	struct allocator_node* aln2 = allocator_find(&al, buff);
+	assert_null(aln2, "ptr");
+	allocator_destroy(&al);
+}
+
 void test_allocator()
 {
 	test_allocator_init();
@@ -153,6 +234,9 @@ void test_allocator()
 	test_allocator_realloc();
 	test_allocator_transfer();
 	test_allocator_remove();
+	test_allocator_add();
+	test_allocator_transfer_item();
+	test_allocator_destroy_item();
 }
 
 #endif
