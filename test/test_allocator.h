@@ -124,6 +124,27 @@ void test_allocator_transfer()
 	allocator_destroy(&al2);
 }
 
+void test_allocator_remove()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	int* buf;
+	enum result r;
+
+	allocator_init(&al);
+	r = allocator_malloc(&al, &buf, sizeof(int));
+	assert_ok(r, "r");
+	*buf = 10;
+	struct allocator_node* aln = allocator_find(&al, buf);
+	assert_ptr(aln, "ptr");
+	struct allocator_node* aln2 = allocator_remove(&al, buf);
+	assert_true(aln == aln2, "equal");
+	struct allocator_node* aln3 = allocator_find(&al, buf);
+	assert_null(aln3, "null");
+	allocator_destroy(&al);
+}
+
 void test_allocator()
 {
 	test_allocator_init();
@@ -131,6 +152,7 @@ void test_allocator()
 	test_allocator_find();
 	test_allocator_realloc();
 	test_allocator_transfer();
+	test_allocator_remove();
 }
 
 #endif
