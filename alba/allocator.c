@@ -45,16 +45,16 @@ enum result allocator_realloc(struct allocator* al, void** buf, size_t size)
 	enum result r;
 	struct allocator_node* aln;
 
+	aln = allocator_find(al, *buf);
+	if (!aln) {
+		return set_error("pointer not found in allocator");
+	}
+
 	r = realloc_safe(buf, size);
 	if (r == result_error) {
 		return r;
 	}
 
-	aln = allocator_find(al, *buf);
-	if (!aln) {
-		free(*buf);
-		return set_error("pointer not found in allocator");
-	}
 	aln->p = *buf;
 
 	return result_ok;
