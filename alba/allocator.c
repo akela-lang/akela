@@ -26,7 +26,11 @@ enum result allocator_malloc(struct allocator* al, void** buf, size_t size)
 
 	aln->p = *buf;
 	aln->next = al->head;
+	aln->prev = NULL;
 	al->head = aln;
+	if (!al->tail) {
+		al->tail = aln;
+	}
 	return result_ok;
 }
 
@@ -75,20 +79,17 @@ void allocator_destroy(struct allocator* al)
 
 void allocator_transfer(struct allocator* src, struct allocator* dest)
 {
-	struct allocator_node* aln1;
-	struct allocator_node* aln2;
-	aln1 = src->tail;
-	aln2 = dest->head;
-	if (aln1) {
-		aln1->next = aln2;
-	}
+	struct allocator_node* aln1 = src->head;
+	struct allocator_node* aln2 = src->tail;
+	struct allocator_node* aln3 = dest->head;
+	struct allocator_node* aln4 = dest->tail;
 	if (aln2) {
-		aln2->prev = aln1;
+		aln2->next = aln3;
 	}
-	dest->head = src->head;
-	if (!dest->tail) {
-		dest->tail = src->tail;
+	if (aln3) {
+		aln3->prev = aln2;
 	}
+	dest->head = aln1;
 	allocator_init(src);
 }
 

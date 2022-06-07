@@ -80,12 +80,57 @@ void test_allocator_realloc()
 	allocator_destroy(&al);
 }
 
+void test_allocator_transfer()
+{
+	test_name(__func__);
+
+	enum result r;
+
+	struct allocator al;
+	int* buff;
+	allocator_init(&al);
+	r = allocator_malloc(&al, &buff, sizeof(int));
+	assert_ok(r, "r");
+	*buff = 15;
+
+	struct allocator al2;
+	int* buff2;
+	allocator_init(&al2);
+	r = allocator_malloc(&al2, &buff2, sizeof(int));
+	assert_ok(r, "r");
+	*buff2 = 20;
+
+	struct allocator_node* aln = allocator_find(&al, buff);
+	assert_ptr(aln, "ptr");
+	expect_true(aln->p == buff, "p");
+
+	struct allocator_node* aln2 = allocator_find(&al2, buff2);
+	assert_ptr(aln2, "ptr2");
+	expect_true(aln2->p == buff2, "p2");
+
+	allocator_transfer(&al, &al2);
+
+	struct allocator_node* aln3 = allocator_find(&al2, buff);
+	assert_ptr(aln3, "ptr3");
+	expect_true(aln3->p == buff, "p3");
+
+	struct allocator_node* aln4 = allocator_find(&al2, buff2);
+	assert_ptr(aln4, "ptr4");
+	expect_true(aln4->p == buff2, "p4");
+
+	expect_null(al.head, "head");
+	expect_null(al.tail, "tail");
+
+	allocator_destroy(&al2);
+}
+
 void test_allocator()
 {
 	test_allocator_init();
 	test_allocator_malloc();
 	test_allocator_find();
 	test_allocator_realloc();
+	test_allocator_transfer();
 }
 
 #endif
