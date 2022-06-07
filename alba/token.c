@@ -90,24 +90,12 @@ enum result token_list_add(struct allocator* al, struct token_list* tl, struct t
     struct token* new_t;
     r = malloc_safe(&new_t, sizeof(struct token));
     if (r == result_error) {
-        cleanup(ds);
-        return r;
-    }
-    r = defer(free, new_t, &ds);
-    if (r == result_error) {
-        cleanup(ds);
         return r;
     }
 
     struct token_node* tn;
     r = malloc_safe(&tn, sizeof(struct token_node));
     if (r == result_error) {
-        cleanup(ds);
-        return r;
-    }
-    r = defer(free, tn, &ds);
-    if (r == result_error) {
-        cleanup(ds);
         return r;
     }
 
@@ -115,7 +103,6 @@ enum result token_list_add(struct allocator* al, struct token_list* tl, struct t
     string_init(&new_t->value);
     r = string_copy(al, &t->value, &new_t->value);
     if (r == result_error) {
-        cleanup(ds);
         return r;
     }
     tn->t = new_t;
@@ -136,21 +123,13 @@ enum result token_list_add(struct allocator* al, struct token_list* tl, struct t
     }
     tl->tail = tn;
 
-    cleanup_stack(ds);
     return result_ok;
 }
 
 enum result token_list_slice(struct allocator *al, struct token_list* tl, int start, int end, struct token_list** slice)
 {
-    struct defer_node* cleanup_on_error = NULL;
-
     enum result r = token_list_make(al, slice);
     if (r == result_error) {
-        return r;
-    }
-    r = defer(token_list_destroy, slice, &cleanup_on_error);
-    if (r == result_error) {
-        token_list_destroy(*slice);
         return r;
     }
     int i = 0;
@@ -159,21 +138,13 @@ enum result token_list_slice(struct allocator *al, struct token_list* tl, int st
             if (i <= end || end == -1) {
                 r = token_list_add(al, *slice, tn->t);
                 if (r == result_error) {
-                    cleanup(cleanup_on_error);
                     return r;
                 }
             }
         }
         i++;
     }
-    cleanup_stack(cleanup_on_error);
     return result_ok;
-}
-
-void token_destroy(struct token* t)
-{
-    token_reset(t);
-    free(t);
 }
 
 struct token* token_list_pop(struct token_list* tl)
@@ -191,7 +162,6 @@ struct token* token_list_pop(struct token_list* tl)
     }
     if (tn) {
         t = tn->t;
-        free(tn);
         return t;
     }
     return NULL;
@@ -202,20 +172,7 @@ struct token* token_list_pop(struct token_list* tl)
 */
 void token_list_reset(struct token_list* tl)
 {
-    struct token_node* tn = tl->head;
-    while (tn) {
-        token_reset(tn->t);
-        struct token_node* temp = tn;
-        tn = tn->next;
-        free(temp);
-    }
     token_list_init(tl);
-}
-
-void token_list_destroy(struct token_list* tl)
-{
-    token_list_reset(tl);
-    free(tl);
 }
 
 enum result token_list_print(struct allocator* al, struct token_list* tl, char** token_name)
@@ -224,7 +181,7 @@ enum result token_list_print(struct allocator* al, struct token_list* tl, char**
     struct token_node* tn = tl->head;
     while (tn) {
         char* a;
-        r = string2array(&al, &tn->t->value, &a);
+        r = string2array(al, &tn->t->value, &a);
         if (r == result_error) {
             return r;
         }

@@ -6,7 +6,6 @@ set(source_files
     result.c
     ustring.c
     memory.c
-    defer.c
     dag.c
     parse.c
     parse.c

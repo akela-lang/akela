@@ -135,7 +135,6 @@ void string_reset(struct string* s)
 {
     if (s != NULL) {
         if (s->buf != NULL) {
-            free(s->buf);
             string_init(s);
         }
     }

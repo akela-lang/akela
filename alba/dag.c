@@ -55,24 +55,6 @@ void dag_push(struct dag_node* parent, struct dag_node* child)
 	parent->head = child;
 }
 
-void dag_destroy(struct dag_node* r)
-{
-	if (r == NULL) return;
-
-	struct dag_node* c = r->head;
-	while (c) {
-		if (c->head) {
-			dag_destroy(c->head);
-		}
-		struct dag_node* temp = c;
-		c = c->next;
-		string_reset(&temp->value);
-		free(temp);
-	}
-	string_reset(&r->value);
-	free(r);
-}
-
 struct dag_node* dag_get_child(struct dag_node* p, size_t pos)
 {
 	int i = 0;

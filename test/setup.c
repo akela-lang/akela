@@ -23,6 +23,5 @@ void teardown()
 {
 	string_reset(&s);
 	token_list_reset(&tl);
-	dag_destroy(root);
 	allocator_destroy(&al);
 }

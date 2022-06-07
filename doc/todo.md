@@ -1,5 +1,5 @@
 # Todo
-* remove free from functions that are not in memory and allocator
+* write tests for allocator
 * use allocator in ustring
 * use allocator in token functions
 * use allocator in scanner

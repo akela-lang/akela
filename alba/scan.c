@@ -6,7 +6,6 @@
 #include "token.h"
 #include "scan.h"
 #include "ustring.h"
-#include "defer.h"
 
 void set_char_values(struct char_value* cv)
 {
@@ -158,46 +157,22 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
     enum result r;
     size_t pos = 0;
     struct string s;
-    struct defer_node* ds = NULL;
     enum state_enum state = state_start;
     struct token t;
 
     string_init(&s);
-    r = defer(string_reset, &s, &ds);
-    if (r == result_error) {
-        cleanup(ds);
-        return r;
-    }
-
     token_init(&t);
-    r = defer(token_reset, &t, &ds);
-    if (r == result_error) {
-        cleanup(ds);
-        return r;
-    }
 
     UErrorCode err;
     UConverter* conv = ucnv_open("utf8", &err);
     if (U_FAILURE(err)) {
-        cleanup(ds);
         return set_error("utf error");
-    }
-    r = defer(ucnv_close, conv, &ds);
-    if (r == result_error) {
-        cleanup(ds);
-        return r;
     }
 
     UChar* dest;
     size_t dest_len;
     r = char2uchar(al, conv, line->buf, line->size, &dest, line->size, &dest_len);
     if (r == result_error) {
-        cleanup(ds);
-        return r;
-    }
-    r = defer(free, dest, &ds);
-    if (r == result_error) {
-        cleanup(ds);
         return r;
     }
 
@@ -210,12 +185,6 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
         size_t len;
         r = uchar2char(al, conv, dest + old_pos, char_len, &a, 4, &len);
         if (r == result_error) {
-            cleanup(ds);
-            return r;
-        }
-        r = defer(free, a, &ds);
-        if (r == result_error) {
-            cleanup(ds);
             return r;
         }
 
@@ -227,11 +196,9 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
         } else if (state == state_number) {
             r = process_char_word(al, c2, a, len, &state, tl, &t);
         } else {
-            cleanup(ds);
             r = set_error("unexpected state");
         }
         if (r == result_error) {
-            cleanup(ds);
             return r;
         }
     }
@@ -240,11 +207,9 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
         state = state_start;
         r = token_list_add(al, tl, &t);
         if (r == result_error) {
-            cleanup(ds);
             return r;
         }
     }
 
-    cleanup(ds);
     return result_ok;
 }

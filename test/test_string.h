@@ -84,7 +84,6 @@ void test_string_string2array()
 	expect_true(strcmp(a, "xyz") == 0, "array");
 
 	string_reset(&s);
-	free(a);
 }
 
 void test_string_array2string()

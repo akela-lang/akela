@@ -21,20 +21,8 @@ enum result expr(struct allocator* al, struct token_list* tl, struct dag_node** 
 		goto function_error;
 	}
 
-	r = defer(dag_destroy, a, &stack_error);
-	if (r == result_error) {
-		dag_destroy(a);
-		goto function_error;
-	}
-
 	r = expr_prime(al, tl, &b);
 	if (r == result_error) {
-		goto function_error;
-	}
-
-	r = defer(dag_destroy, b, &stack_error);
-	if (r == result_error) {
-		dag_destroy(b);
 		goto function_error;
 	}
 
@@ -51,20 +39,14 @@ enum result expr(struct allocator* al, struct token_list* tl, struct dag_node** 
 		dag_push(n, a);
 		goto function_success;
 	} else {
-		dag_destroy(a);
-		dag_destroy(b);
 		goto function_error;
 	}
 
 function_success:
 	*root = n;
-	cleanup(stack_temp);
-	cleanup_stack(stack_error);
 	return r;
 
 function_error:
-	cleanup(stack_error);
-	cleanup(stack_temp);
 	return r;
 }
 
@@ -76,8 +58,6 @@ function_error:
 enum result expr_prime(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
-	struct defer_node* stack_error = NULL;
-	struct defer_node* stack_temp = NULL;
 	struct dag_node* n = NULL;
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
@@ -107,15 +87,8 @@ enum result expr_prime(struct allocator* al, struct token_list* tl, struct dag_n
 		goto function_error;
 	}
 
-	r = defer(dag_destroy, n, &stack_error);
-	if (r == result_error) {
-		dag_destroy(n);
-		goto function_error;
-	}
-
 	n->type = type;
 	struct token* tx = token_list_pop(tl);
-	token_destroy(tx);
 
 	/* term */
 	r = term(al, tl, &a);
@@ -123,26 +96,10 @@ enum result expr_prime(struct allocator* al, struct token_list* tl, struct dag_n
 		goto function_error;
 	}
 
-	if (a) {
-		r = defer(dag_destroy, a, &stack_error);
-		if (r == result_error) {
-			dag_destroy(a);
-			goto function_error;
-		}
-	}
-
 	/* expr' */
 	r = expr_prime(al, tl, &b);
 	if (r == result_error) {
 		goto function_error;
-	}
-
-	if (b) {
-		r = defer(dag_destroy, b, &stack_error);
-		if (r == result_error) {
-			dag_destroy(b);
-			goto function_error;
-		}
 	}
 
 	if (a == NULL && b == NULL) {
@@ -166,13 +123,9 @@ enum result expr_prime(struct allocator* al, struct token_list* tl, struct dag_n
 	
 function_success:
 	*root = n;
-	cleanup(stack_temp);
-	cleanup_stack(stack_error);
 	return r;
 
 function_error:
-	cleanup(stack_error);
-	cleanup(stack_temp);
 	return r;
 }
 
@@ -182,8 +135,6 @@ function_error:
 enum result term(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
-	struct defer_node* stack_error = NULL;
-	struct defer_node* stack_temp = NULL;
 	struct dag_node* n = NULL;
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
@@ -193,20 +144,8 @@ enum result term(struct allocator* al, struct token_list* tl, struct dag_node** 
 		goto function_error;
 	}
 
-	r = defer(dag_destroy, a, &stack_error);
-	if (r == result_error) {
-		dag_destroy(a);
-		goto function_error;
-	}
-
 	r = term_prime(al, tl, &b);
 	if (r == result_error) {
-		goto function_error;
-	}
-
-	r = defer(dag_destroy, b, &stack_error);
-	if (r == result_error) {
-		dag_destroy(b);
 		goto function_error;
 	}
 
@@ -236,13 +175,9 @@ enum result term(struct allocator* al, struct token_list* tl, struct dag_node** 
 
 function_success:
 	*root = n;
-	cleanup(stack_temp);
-	cleanup_stack(stack_error);
 	return r;
 
 function_error:
-	cleanup(stack_error);
-	cleanup(stack_temp);
 	return r;
 }
 
@@ -254,8 +189,6 @@ function_error:
 enum result term_prime(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	enum result r = result_ok;
-	struct defer_node* stack_error = NULL;
-	struct defer_node* stack_temp = NULL;
 	struct dag_node* n = NULL;
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
@@ -284,15 +217,8 @@ enum result term_prime(struct allocator* al, struct token_list* tl, struct dag_n
 		goto function_error;
 	}
 
-	r = defer(dag_destroy, n, &stack_error);
-	if (r == result_error) {
-		dag_destroy(n);
-		goto function_error;
-	}
-
 	n->type = type;
 	struct token* t_op = token_list_pop(tl);
-	token_destroy(t_op);
 
 	/* factor */
 	r = factor(al, tl, &a);
@@ -300,26 +226,10 @@ enum result term_prime(struct allocator* al, struct token_list* tl, struct dag_n
 		goto function_error;
 	}
 
-	if (a) {
-		r = defer(dag_destroy, a, &stack_error);
-		if (r == result_error) {
-			dag_destroy(a);
-			goto function_error;
-		}
-	}
-
 	/* term' */
 	r = term_prime(al, tl, &b);
 	if (r == result_error) {
 		goto function_error;
-	}
-
-	if (b) {
-		r = defer(dag_destroy, b, &stack_error);
-		if (r == result_error) {
-			dag_destroy(b);
-			goto function_error;
-		}
 	}
 
 	if (a == NULL && b == NULL) {
@@ -343,13 +253,9 @@ enum result term_prime(struct allocator* al, struct token_list* tl, struct dag_n
 
 function_success:
 	*root = n;
-	cleanup(stack_temp);
-	cleanup_stack(stack_error);
 	return r;
 
 function_error:
-	cleanup(stack_error);
-	cleanup(stack_temp);
 	return r;
 }
 
@@ -381,12 +287,6 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 			goto function_error;
 		}
 
-		r = defer(dag_destroy, n, &stack_error);
-		if (r == result_error) {
-			dag_destroy(n);
-			goto function_error;
-		}
-
 		if (t0->type == token_number) {
 			n->type = dag_type_number;
 		} else if (t0->type == token_word) {
@@ -398,9 +298,6 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 		}
 
 		struct token* tx = token_list_pop(tl);
-		if (tx) {
-			token_destroy(tx);
-		}
 	}
 
 	/* sign and number or word */
@@ -410,23 +307,11 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 			goto function_error;
 		}
 
-		r = defer(dag_destroy, n, &stack_error);
-		if (r == result_error) {
-			dag_destroy(n);
-			goto function_error;
-		}
-
 		n->type = dag_type_sign;
 
 		struct dag_node* left;
 		r = dag_create_node(al, &left);
 		if (r == result_error) {
-			goto function_error;
-		}
-
-		r = defer(dag_destroy, left, &stack_error);
-		if (r == result_error) {
-			dag_destroy(left);
 			goto function_error;
 		}
 
@@ -444,11 +329,6 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 			goto function_error;
 		}
 
-		r = defer(dag_destroy, right, &stack_error);
-		if (r == result_error) {
-			dag_destroy(right);
-		}
-
 		if (t1->type == token_number) {
 			right->type = dag_type_number;
 		} else {
@@ -463,28 +343,15 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 		dag_add_child(n, right);
 
 		struct token* tx = token_list_pop(tl);
-		if (tx) {
-			token_destroy(tx);
-		}
 
 		tx = token_list_pop(tl);
-		if (tx) {
-			token_destroy(tx);
-		}
 
 	/* parenthesis */
 	} else if (t0 && t0->type == token_left_paren) {
 		struct token* lp = token_list_pop(tl);
-		token_destroy(lp);
 
 		r = expr(al, tl, &n);
 		if (r == result_error) {
-			goto function_error;
-		}
-
-		r = defer(dag_destroy, n, &stack_error);
-		if (r == result_error) {
-			dag_destroy(n);
 			goto function_error;
 		}
 
@@ -500,13 +367,9 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 
 function_success:
 	*root = n;
-	cleanup(stack_temp);
-	cleanup_stack(stack_error);
 	return r;
 
 function_error:
-	cleanup(stack_error);
-	cleanup(stack_temp);
 	return r;
 }
 
