@@ -74,7 +74,7 @@ enum result token_list_add(struct allocator* al, struct token_list* tl, struct t
 enum result token_list_slice(struct allocator *al, struct token_list* tl, int start, int end, struct token_list** slice);
 void token_list_reset(struct token_list* tl);
 void token_list_destroy(struct token_list* tl);
-enum result token_list_print(struct token_list* tl, char** token_name);
+enum result token_list_print(struct allocator* al, struct token_list* tl, char** token_name);
 struct token* token_list_pop(struct token_list* tl);
 void token_destroy(struct token* t);
 

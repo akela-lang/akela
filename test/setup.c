@@ -13,7 +13,7 @@ void setup(char* line)
 {
 	allocator_init(&al);
 	string_init(&s);
-	enum result r = array2string(line, &s);
+	enum result r = array2string(&al, line, &s);
 	assert_ok(r, "array2string");
 	token_list_init(&tl);
 	root = NULL;

@@ -67,20 +67,19 @@ int main(int argc, char** argv)
         struct allocator al;
         allocator_init(&al);
 
-        r = next_line(f, &line, 1, &last_line);
+        r = next_line(&al, f, &line, 1, &last_line);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);
             return 1;
         }
-        r = string2array(&line, &a);
+        r = string2array(&al, &line, &a);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);
             return 1;
         }
         printf("line: %s\n", a);
-        free(a);
         r = scan(&al, &line, &tl);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
@@ -88,7 +87,7 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        r = token_list_print(&tl, token_name);
+        r = token_list_print(&al, &tl, token_name);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             cleanup(stack);

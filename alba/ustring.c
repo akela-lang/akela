@@ -49,7 +49,7 @@ enum result check_extra_byte(char c)
     return set_error("Not utf8: extra byte in character not encoded as utf8");
 }
 
-enum result next_line(FILE* f, struct string* s, int is_utf8, int* last_line)
+enum result next_line(struct allocator* al, FILE* f, struct string* s, int is_utf8, int* last_line)
 {
     *last_line = 0;
 
@@ -73,7 +73,7 @@ enum result next_line(FILE* f, struct string* s, int is_utf8, int* last_line)
             if (r == result_error) {
                 return r;
             }
-            r = string_add_char(s, c);
+            r = string_add_char(al, s, c);
             if (r == result_error) {
                 return r;
             }
@@ -84,13 +84,13 @@ enum result next_line(FILE* f, struct string* s, int is_utf8, int* last_line)
                 if (r == result_error) {
                     return r;
                 }
-                r = string_add_char(s, c);
+                r = string_add_char(al, s, c);
                 if (r == result_error) {
                     return r;
                 }
             }
         } else {
-            r = string_add_char(s, c);
+            r = string_add_char(al, s, c);
             if (r == result_error) {
                 return r;
             }
@@ -107,7 +107,7 @@ void string_init(struct string* s)
     s->size = 0;
 }
 
-enum result string_add_char(struct string* s, char c)
+enum result string_add_char(struct allocator* al, struct string* s, char c)
 {
     if (s == NULL) {
         return set_error("adding char to a string that is not allocated");
@@ -151,11 +151,11 @@ void string_clear(struct string* s)
 /*
 * assumes that a and b are initialized
 */
-enum result string_copy(struct string* a, struct string* b)
+enum result string_copy(struct allocator* al, struct string* a, struct string* b)
 {
     enum result r;
     for (int i = 0; i < a->size; i++) {
-        r = string_add_char(b, a->buf[i]);
+        r = string_add_char(al, b, a->buf[i]);
         if (r == result_error) {
             return r;
         }
@@ -163,7 +163,7 @@ enum result string_copy(struct string* a, struct string* b)
     return result_ok;
 }
 
-enum result string2array(struct string* s, char** a)
+enum result string2array(struct allocator* al, struct string* s, char** a)
 {
     enum result r = malloc_safe(a, s->size + 1);
     if (r == result_error) {
@@ -176,12 +176,12 @@ enum result string2array(struct string* s, char** a)
     return result_ok;
 }
 
-enum result array2string(char* a, struct string* s)
+enum result array2string(struct allocator* al, char* a, struct string* s)
 {
     enum result r;
     char* p = a;
     while (*p != '\0') {
-        r = string_add_char(s, *p);
+        r = string_add_char(al, s, *p);
         if (r == result_error) {
             return r;
         }
@@ -190,7 +190,7 @@ enum result array2string(char* a, struct string* s)
     return result_ok;
 }
 
-enum result next_char(struct string* s, size_t* pos, struct string* s2)
+enum result next_char(struct allocator* al, struct string* s, size_t* pos, struct string* s2)
 {
     char c = s->buf[(*pos)++];
     int count;
@@ -199,7 +199,7 @@ enum result next_char(struct string* s, size_t* pos, struct string* s2)
         return r;
     }
     string_clear(s2);
-    r = string_add_char(s2, c);
+    r = string_add_char(al, s2, c);
     if (r == result_error) {
         return r;
     }
@@ -209,7 +209,7 @@ enum result next_char(struct string* s, size_t* pos, struct string* s2)
         if (r == result_error) {
             return r;
         }
-        r = string_add_char(s2, c);
+        r = string_add_char(al, s2, c);
         if (r == result_error) {
             return r;
         }
@@ -254,7 +254,7 @@ int str_compare(struct string* a, char* b)
     return 1;
 }
 
-enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len)
+enum result char2uchar(struct allocator* al, UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len)
 {
     enum result r = malloc_safe(dest, sizeof(UChar) * dest_size);
     if (r == result_error) {
@@ -268,7 +268,7 @@ enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** des
     return result_ok;
 }
 
-enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len)
+enum result uchar2char(struct allocator* al, UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len)
 {
     enum result r = malloc_safe(dest, dest_size + 1);
     if (r == result_error) {

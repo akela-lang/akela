@@ -392,7 +392,7 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 		} else if (t0->type == token_word) {
 			n->type = dag_type_word;
 		}
-		r = string_copy(&t0->value, &n->value);
+		r = string_copy(al, &t0->value, &n->value);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -455,7 +455,7 @@ enum result factor(struct allocator* al, struct token_list *tl, struct dag_node*
 			right->type = dag_type_word;
 		}
 
-		r = string_copy(&t1->value, &right->value);
+		r = string_copy(al, &t1->value, &right->value);
 		if (r == result_error) {
 			goto function_error;
 		}

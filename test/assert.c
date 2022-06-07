@@ -103,14 +103,16 @@ void expect_str(struct string* a, char* b, char* message)
 {
 	test_count++;
 	if (str_compare(a, b)) return;
+	struct allocator al;
+	allocator_init(&al);
 	char* temp;
-	enum result r = string2array(a, &temp);
+	enum result r = string2array(&al, a, &temp);
 	if (r == result_error) {
 		printf("<string> equals %s error: %s\n", b, message);
 	} else {
 		printf("%s equals %s error: %s\n", temp, b, message);
-		free(temp);
 	}
+	allocator_destroy(&al);
 	error_count++;
 }
 

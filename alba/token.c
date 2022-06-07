@@ -113,7 +113,7 @@ enum result token_list_add(struct allocator* al, struct token_list* tl, struct t
 
     new_t->type = t->type;
     string_init(&new_t->value);
-    r = string_copy(&t->value, &new_t->value);
+    r = string_copy(al, &t->value, &new_t->value);
     if (r == result_error) {
         cleanup(ds);
         return r;
@@ -218,18 +218,17 @@ void token_list_destroy(struct token_list* tl)
     free(tl);
 }
 
-enum result token_list_print(struct token_list* tl, char** token_name)
+enum result token_list_print(struct allocator* al, struct token_list* tl, char** token_name)
 {
     enum result r;
     struct token_node* tn = tl->head;
     while (tn) {
         char* a;
-        r = string2array(&tn->t->value, &a);
+        r = string2array(&al, &tn->t->value, &a);
         if (r == result_error) {
             return r;
         }
         printf("token: %s, value: %s\n", token_name[tn->t->type], a);
-        free(a);
         tn = tn->next;
     }
     return result_ok;

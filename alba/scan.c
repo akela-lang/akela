@@ -65,13 +65,13 @@ enum result process_char_start(struct allocator* al, UChar32 c2, char* a, size_t
         *state = state_word;
         t->type = token_word;
         for (int i = 0; i < len; i++) {
-            string_add_char(&t->value, a[i]);
+            string_add_char(al, &t->value, a[i]);
         }
     } else if (u_isdigit(c2)) {
         *state = state_number;
         t->type = token_number;
         for (int i = 0; i < len; i++) {
-            string_add_char(&t->value, a[i]);
+            string_add_char(al, &t->value, a[i]);
         }
     } else if (c2 == cv.plus) {
         t->type = token_plus;
@@ -113,11 +113,11 @@ enum result process_char_word(struct allocator *al, UChar32 c2, char* a, size_t 
 
     if (u_isalpha(c2)) {
         for (int i = 0; i < len; i++) {
-            string_add_char(&t->value, a[i]);
+            string_add_char(al, &t->value, a[i]);
         }
     } else if (u_isdigit(c2)) {
         for (int i = 0; i < len; i++) {
-            string_add_char(&t->value, a[i]);
+            string_add_char(al, &t->value, a[i]);
         }
     } else {
         *state = state_start;
@@ -139,7 +139,7 @@ enum result process_char_number(struct allocator *al, UChar32 c2, char* a, size_
 
     if (u_isdigit(c2)) {
         for (int i = 0; i < len; i++) {
-            string_add_char(&t->value, a[i]);
+            string_add_char(al, &t->value, a[i]);
         }
     } else {
         *state = state_start;
@@ -190,7 +190,7 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
 
     UChar* dest;
     size_t dest_len;
-    r = char2uchar(conv, line->buf, line->size, &dest, line->size, &dest_len);
+    r = char2uchar(al, conv, line->buf, line->size, &dest, line->size, &dest_len);
     if (r == result_error) {
         cleanup(ds);
         return r;
@@ -208,7 +208,7 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
         size_t char_len = pos - old_pos;
         char* a;
         size_t len;
-        r = uchar2char(conv, dest + old_pos, char_len, &a, 4, &len);
+        r = uchar2char(al, conv, dest + old_pos, char_len, &a, 4, &len);
         if (r == result_error) {
             cleanup(ds);
             return r;
