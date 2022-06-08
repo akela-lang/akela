@@ -2,10 +2,11 @@
 #include "dag.h"
 #include "result.h"
 #include "memory.h"
+#include "allocator.h"
 
 enum result dag_create_node(struct allocator* al, struct dag_node** n)
 {
-	enum result r = malloc_safe(n, sizeof(struct dag_node));
+	enum result r = allocator_malloc(al, n, sizeof(struct dag_node));
 	if (r == result_error) {
 		return r;
 	}
