@@ -71,7 +71,7 @@ int token_list_count(struct token_list* tl)
 enum result token_list_make(struct allocator *al, struct token_list** tl)
 {
     enum result r;
-    r = malloc_safe(tl, sizeof(**tl));
+    r = allocator_malloc(al, tl, sizeof(**tl));
     if (r == result_error) {
         return r;
     }
@@ -88,13 +88,13 @@ enum result token_list_add(struct allocator* al, struct token_list* tl, struct t
     struct defer_node* ds = NULL;
 
     struct token* new_t;
-    r = malloc_safe(&new_t, sizeof(struct token));
+    r = allocator_malloc(al, &new_t, sizeof(struct token));
     if (r == result_error) {
         return r;
     }
 
     struct token_node* tn;
-    r = malloc_safe(&tn, sizeof(struct token_node));
+    r = allocator_malloc(al, &tn, sizeof(struct token_node));
     if (r == result_error) {
         return r;
     }
