@@ -1,24 +1,37 @@
 #ifndef _TEST_SCAN_H
 #define _TEST_SCAN_H
 
-#include "setup.h"
 #include "assert.h"
 #include "alba/token.h"
 #include "alba/scan.h"
+#include "alba/allocator.h"
 
-void setup_scan(char* line)
+void scan_setup(struct allocator* al, char* line, struct token_list *tl)
 {
-	setup(line);
 	enum result r;
-	r = scan(&al, &s, &tl);
+	struct string s;
+	allocator_init(al);
+	token_list_init(tl);
+	string_init(&s);
+	r = array2string(al, line, &s);
+	assert_ok(r, "ok");
+	r = scan(al, &s, tl);
 	assert_ok(r, "scan");
 }
+
+void scan_teardown(struct allocator* al)
+{
+	allocator_destroy(al);
+}
+
 
 void test_scan_addition()
 {
 	test_name(__func__);
 
-	setup_scan("speed + 1");
+	struct allocator al;
+	struct token_list tl;
+	scan_setup(&al, "speed + 1", &tl);
 
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
@@ -37,14 +50,16 @@ void test_scan_addition()
 	struct token* t3 = get_token(tl.head, 3);
 	expect_null(t3, "no 3rd argument");
 
-	teardown();
+	scan_teardown(&al);
 }
 
 void test_scan_subtraction()
 {
 	test_name(__func__);
 
-	setup_scan("100 - delta");
+	struct allocator al;
+	struct token_list tl;
+	scan_setup(&al, "100 - delta", &tl);
 
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
@@ -63,14 +78,16 @@ void test_scan_subtraction()
 	struct token* t3 = get_token(tl.head, 3);
 	expect_null(t3, "no 3rd argument");
 
-	teardown();
+	scan_teardown(&al);
 }
 
 void test_scan_multiplication()
 {
 	test_name(__func__);
 
-	setup_scan("100 * 20");
+	struct allocator al;
+	struct token_list tl;
+	scan_setup(&al, "100 * 20", &tl);
 
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
@@ -89,14 +106,17 @@ void test_scan_multiplication()
 	struct token* t3 = get_token(tl.head, 3);
 	expect_null(t3, "no 3rd argument");
 
-	teardown();
+	scan_teardown(&al);
 }
 
 void test_scan_divide()
 {
 	test_name(__func__);
 
-	setup_scan("45 / 11");
+	struct allocator al;
+	struct token_list tl;
+
+	scan_setup(&al, "45 / 11", &tl);
 	struct token* t0 = get_token(tl.head, 0);
 	assert_ptr(t0, "get token");
 	expect_int_equal(t0->type, token_number, "is number");
@@ -114,7 +134,7 @@ void test_scan_divide()
 	struct token* t3 = get_token(tl.head, 3);
 	expect_null(t3, "no 3rd argument");
 
-	teardown();
+	scan_teardown(&al);
 }
 
 void test_scan()

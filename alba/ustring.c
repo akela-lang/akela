@@ -117,9 +117,9 @@ enum result string_add_char(struct allocator* al, struct string* s, char c)
 
     if (s->size <= s->buf_size) {
         if (s->buf == NULL) {
-            r = malloc_safe(&s->buf, STRING_CHUNK);
+            r = allocator_malloc(al, &s->buf, STRING_CHUNK);
         } else {
-            r = realloc_safe(&s->buf, s->buf_size + STRING_CHUNK);
+            r = allocator_realloc(al, &s->buf, s->buf_size + STRING_CHUNK);
         }
         if (r == result_error) {
             return r;
@@ -164,7 +164,7 @@ enum result string_copy(struct allocator* al, struct string* a, struct string* b
 
 enum result string2array(struct allocator* al, struct string* s, char** a)
 {
-    enum result r = malloc_safe(a, s->size + 1);
+    enum result r = allocator_malloc(al, a, s->size + 1);
     if (r == result_error) {
         return r;
     }
@@ -255,7 +255,7 @@ int str_compare(struct string* a, char* b)
 
 enum result char2uchar(struct allocator* al, UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len)
 {
-    enum result r = malloc_safe(dest, sizeof(UChar) * dest_size);
+    enum result r = allocator_malloc(al, dest, sizeof(UChar) * dest_size);
     if (r == result_error) {
         return r;
     }
@@ -269,7 +269,7 @@ enum result char2uchar(struct allocator* al, UConverter* conv, char* src, size_t
 
 enum result uchar2char(struct allocator* al, UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len)
 {
-    enum result r = malloc_safe(dest, dest_size + 1);
+    enum result r = allocator_malloc(al, dest, dest_size + 1);
     if (r == result_error) {
         return r;
     }

@@ -2,8 +2,8 @@
 #define _TEST_ALLOCATOR_H
 
 #include "assert.h"
-#include "setup.h"
 #include "alba/allocator.h"
+#include "alba/result.h"
 
 void test_allocator_init()
 {

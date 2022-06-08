@@ -9,7 +9,6 @@ set(test_files
     ${alba_dir}/parse.c
     ${alba_dir}/allocator.c
     assert.c
-    setup.c
     test.c
 )
 

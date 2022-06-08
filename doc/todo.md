@@ -1,5 +1,4 @@
 # Todo
-* use allocator in ustring
 * use allocator in token functions
 * use allocator in scanner
 * use allocator in dag functions
