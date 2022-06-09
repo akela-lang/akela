@@ -4,6 +4,7 @@
 #include "ustring.h"
 
 struct char_value {
+    UChar32 equal;
     UChar32 plus;
     UChar32 minus;
     UChar32 space;

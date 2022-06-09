@@ -12,6 +12,12 @@ void set_char_values(struct char_value* cv)
     size_t pos2;
     size_t size;
 
+    U_STRING_DECL(equal, "=", 1);
+    U_STRING_INIT(equal, "=", 1);
+    pos2 = 0;
+    size = u_strlen(equal);
+    U16_NEXT(equal, pos2, size, cv->equal);
+
     U_STRING_DECL(plus, "+", 1);
     U_STRING_INIT(plus, "+", 1);
     pos2 = 0;
@@ -72,6 +78,10 @@ enum result process_char_start(struct allocator* al, UChar32 c2, char* a, size_t
         for (int i = 0; i < len; i++) {
             string_add_char(al, &t->value, a[i]);
         }
+    } else if (c2 == cv.equal) {
+        t->type = token_equal;
+        token_list_add(al, tl, t);
+        token_reset(t);
     } else if (c2 == cv.plus) {
         t->type = token_plus;
         token_list_add(al, tl, t);
@@ -194,7 +204,7 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
         } else if (state == state_word) {
             r = process_char_word(al, c2, a, len, &state, tl, &t);
         } else if (state == state_number) {
-            r = process_char_word(al, c2, a, len, &state, tl, &t);
+            r = process_char_number(al, c2, a, len, &state, tl, &t);
         } else {
             r = set_error("unexpected state");
         }

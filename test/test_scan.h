@@ -6,7 +6,7 @@
 #include "alba/scan.h"
 #include "alba/allocator.h"
 
-void scan_setup(struct allocator* al, char* line, struct token_list *tl)
+enum result scan_setup(struct allocator* al, char* line, struct token_list *tl)
 {
 	enum result r;
 	struct string s;
@@ -17,6 +17,7 @@ void scan_setup(struct allocator* al, char* line, struct token_list *tl)
 	assert_ok(r, "ok");
 	r = scan(al, &s, tl);
 	assert_ok(r, "scan");
+	return r;
 }
 
 void scan_teardown(struct allocator* al)
@@ -24,6 +25,30 @@ void scan_teardown(struct allocator* al)
 	allocator_destroy(al);
 }
 
+void test_scan_assign()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct token_list tl;
+	scan_setup(&al, "a = 1", &tl);
+	scan_teardown(&al);
+}
+
+void test_scan_num()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct token_list tl;
+	scan_setup(&al, "11", &tl);
+
+	struct token* t0 = get_token(tl.head, 0);
+	assert_ptr(t0, "get token");
+	expect_int_equal(t0->type, token_number, "number");
+
+	scan_teardown(&al);
+}
 
 void test_scan_addition()
 {
@@ -139,6 +164,8 @@ void test_scan_divide()
 
 void test_scan()
 {
+	test_scan_assign();
+	test_scan_num();
 	test_scan_addition();
 	test_scan_subtraction();
 	test_scan_multiplication();

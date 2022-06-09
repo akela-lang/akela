@@ -5,8 +5,6 @@
 
 enum dag_type {
 	dag_type_none,
-	dag_type_statement,
-	dag_type_assignment,
 	dag_type_expression,
 	dag_type_word,
 	dag_type_value,

@@ -6,6 +6,7 @@ set(test_files
     ${alba_dir}/ustring.c
     ${alba_dir}/memory.c
     ${alba_dir}/dag.c
+    ${alba_dir}/stmt.c
     "${alba_dir}/expr.c"
     ${alba_dir}/parse.c
     ${alba_dir}/allocator.c
