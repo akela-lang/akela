@@ -7,7 +7,7 @@ set(source_files
     ustring.c
     memory.c
     dag.c
-    stmt.c
+    stmts.c
     "expr.c"
     parse.c
     allocator.c

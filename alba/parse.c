@@ -3,7 +3,7 @@
 #include "allocator.h"
 #include "token.h"
 #include "dag.h"
-#include "stmt.h"
+#include "stmts.h"
 
 enum result parse(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
