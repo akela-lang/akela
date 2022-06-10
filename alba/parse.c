@@ -8,7 +8,7 @@
 enum result parse(struct allocator* al, struct token_list* tl, struct dag_node** root)
 {
 	*root = NULL;
-	enum result r = stmt(al, tl, root);
+	enum result r = stmts(al, tl, root);
 	if (r == result_error) {
 		return r;
 	}

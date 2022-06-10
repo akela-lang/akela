@@ -15,7 +15,8 @@ enum token_enum {
     token_divide,
     token_left_paren,
     token_right_paren,
-    token_count     /* keep at end */
+    token_newline,
+    token_count     /* keep at the end */
 };
 
 #ifdef _TOKEN_C

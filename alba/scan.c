@@ -27,13 +27,19 @@ void set_char_values(struct char_value* cv)
     U_STRING_DECL(space, " ", 1);
     U_STRING_INIT(space, " ", 1);
     pos2 = 0;
-    size = u_strlen(plus);
+    size = u_strlen(space);
     U16_NEXT(space, pos2, size, cv->space);
+
+    U_STRING_DECL(newline, "\n", 1);
+    U_STRING_INIT(newline, "\n", 1);
+    pos2 = 0;
+    size = u_strlen(newline);
+    U16_NEXT(newline, pos2, size, cv->newline);
 
     U_STRING_DECL(minus, "-", 1);
     U_STRING_INIT(minus, "-", 1);
     pos2 = 0;
-    size = u_strlen(plus);
+    size = u_strlen(minus);
     U16_NEXT(minus, pos2, size, cv->minus);
 
     U_STRING_DECL(mult, "*", 1);
@@ -108,6 +114,10 @@ enum result process_char_start(struct allocator* al, UChar32 c2, char* a, size_t
         token_reset(t);
     } else if (c2 == cv.space) {
         /* nothing */
+    } else if (c2 == cv.newline) {
+        t->type = token_newline;
+        token_list_add(al, tl, t);
+        token_reset(t);
     } else {
         return set_error("unrecogized: %s", a);
     }

@@ -5,10 +5,7 @@
 
 enum dag_type {
 	dag_type_none,
-	dag_type_expression,
 	dag_type_word,
-	dag_type_value,
-	dag_type_expression2,
 	dag_type_sign,
 	dag_type_number,
 	dag_type_assign,
@@ -17,7 +14,8 @@ enum dag_type {
 	dag_type_mult,
 	dag_type_divide,
 	dag_type_left_parenthesis,
-	dag_type_right_parenthesis
+	dag_type_right_parenthesis,
+	dag_type_stmts
 };
 
 struct dag_node {

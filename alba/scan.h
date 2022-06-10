@@ -8,6 +8,7 @@ struct char_value {
     UChar32 plus;
     UChar32 minus;
     UChar32 space;
+    UChar32 newline;
     UChar32 mult;
     UChar32 divide;
     UChar32 left_paren;
