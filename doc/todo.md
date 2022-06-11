@@ -1,4 +1,6 @@
 # Todo
+* update scanner to one char at a time
+* update parser to get one token at a time
 * function declarations
 * return statement
 * function calling

@@ -11,6 +11,8 @@ set(source_files
     "expr.c"
     parse.c
     allocator.c
+    io.c
+    os_win.c
 )
 include_directories("../external/icu4c/include")
 add_executable(alba ${source_files})

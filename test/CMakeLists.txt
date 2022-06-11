@@ -10,6 +10,8 @@ set(test_files
     "${alba_dir}/expr.c"
     ${alba_dir}/parse.c
     ${alba_dir}/allocator.c
+    ${alba_dir}/io.c
+    ${alba_dir}/os_win.c
     assert.c
     test.c
 )
