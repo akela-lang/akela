@@ -67,7 +67,7 @@ void set_char_values(struct char_value* cv)
     U16_NEXT(right_paren, pos2, size, cv->right_paren);
 }
 
-enum result process_char_start(struct allocator* al, UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_start(struct allocator* al, struct string* s, UChar32 c2, enum state_enum* state, struct token_list* tl, struct token* t)
 {
     struct char_value cv;
     set_char_values(&cv);
@@ -75,15 +75,11 @@ enum result process_char_start(struct allocator* al, UChar32 c2, char* a, size_t
     if (u_isalpha(c2)) {
         *state = state_word;
         t->type = token_word;
-        for (int i = 0; i < len; i++) {
-            string_add_char(al, &t->value, a[i]);
-        }
+        string_copy(al, s, &t->value);
     } else if (u_isdigit(c2)) {
         *state = state_number;
         t->type = token_number;
-        for (int i = 0; i < len; i++) {
-            string_add_char(al, &t->value, a[i]);
-        }
+        string_copy(al, s, &t->value);
     } else if (c2 == cv.equal) {
         t->type = token_equal;
         token_list_add(al, tl, t);
@@ -119,25 +115,26 @@ enum result process_char_start(struct allocator* al, UChar32 c2, char* a, size_t
         token_list_add(al, tl, t);
         token_reset(t);
     } else {
+        char* a;
+        enum result r = string2array(al, s, &a);
+        if (r == result_error) {
+            return set_error("unrecogized character");
+        }
         return set_error("unrecogized: %s", a);
     }
     return result_ok;
 }
 
-enum result process_char_word(struct allocator *al, UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_word(struct allocator *al, struct string* s, UChar32 c2, enum state_enum* state, struct token_list* tl, struct token* t)
 {
     enum result r;
     struct char_value cv;
     set_char_values(&cv);
 
     if (u_isalpha(c2)) {
-        for (int i = 0; i < len; i++) {
-            string_add_char(al, &t->value, a[i]);
-        }
+        string_copy(al, s, &t->value);
     } else if (u_isdigit(c2)) {
-        for (int i = 0; i < len; i++) {
-            string_add_char(al, &t->value, a[i]);
-        }
+        string_copy(al, s, &t->value);
     } else {
         *state = state_start;
         r = token_list_add(al, tl, t);
@@ -145,21 +142,19 @@ enum result process_char_word(struct allocator *al, UChar32 c2, char* a, size_t 
             return r;
         }
         token_reset(t);
-        return process_char_start(al, c2, a, len, state, tl, t);
+        return process_char_start(al, s, c2, state, tl, t);
     }
     return result_ok;
 }
 
-enum result process_char_number(struct allocator *al, UChar32 c2, char* a, size_t len, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_number(struct allocator *al, struct string* s, UChar32 c2, enum state_enum* state, struct token_list* tl, struct token* t)
 {
     enum result r;
     struct char_value cv;
     set_char_values(&cv);
 
     if (u_isdigit(c2)) {
-        for (int i = 0; i < len; i++) {
-            string_add_char(al, &t->value, a[i]);
-        }
+        string_copy(al, s, &t->value);
     } else {
         *state = state_start;
         r = token_list_add(al, tl, t);
@@ -167,54 +162,43 @@ enum result process_char_number(struct allocator *al, UChar32 c2, char* a, size_
             return r;
         }
         token_reset(t);
-        return process_char_start(al, c2, a, len, state, tl, t);
+        return process_char_start(al, s, c2, state, tl, t);
     }
     return result_ok;
 }
 
 enum result scan(struct allocator *al, struct string* line, struct token_list* tl)
 {
-    enum result r;
+    enum result r = result_ok;
     size_t pos = 0;
-    struct string s;
     enum state_enum state = state_start;
     struct token t;
 
-    string_init(&s);
     token_init(&t);
 
-    UErrorCode err;
-    UConverter* conv = ucnv_open("utf8", &err);
-    if (U_FAILURE(err)) {
-        return set_error("utf error");
-    }
-
-    UChar* dest;
-    size_t dest_len;
-    r = char2uchar(al, conv, line->buf, line->size, &dest, line->size, &dest_len);
+    UConverter* conv = NULL;
+    r = conv_open(&conv);
     if (r == result_error) {
-        return r;
+        goto cleanup;
     }
 
-    while (pos < dest_len) {
-        UChar32 c2;
-        size_t old_pos = pos;
-        U16_NEXT(dest, pos, line->size, c2);
-        size_t char_len = pos - old_pos;
-        char* a;
-        size_t len;
-        r = uchar2char(al, conv, dest + old_pos, char_len, &a, 4, &len);
-        if (r == result_error) {
-            return r;
-        }
+    struct string_data sd;
+    string_data_init(line, &sd);
+    io_getchar f = string_getchar;
+    io_data d = &sd;
 
-        r = result_ok;
+    UChar32 uc;
+    int done;
+    struct string s;
+    string_init(&s);
+
+    while (get_uchar(al, f, d, &s, conv, &uc, &done) != result_error && !done) {
         if (state == state_start) {
-            r = process_char_start(al, c2, a, len, &state, tl, &t);
+            r = process_char_start(al, &s, uc, &state, tl, &t);
         } else if (state == state_word) {
-            r = process_char_word(al, c2, a, len, &state, tl, &t);
+            r = process_char_word(al, &s, uc, &state, tl, &t);
         } else if (state == state_number) {
-            r = process_char_number(al, c2, a, len, &state, tl, &t);
+            r = process_char_number(al, &s, uc, &state, tl, &t);
         } else {
             r = set_error("unexpected state");
         }
@@ -231,5 +215,7 @@ enum result scan(struct allocator *al, struct string* line, struct token_list* t
         }
     }
 
-    return result_ok;
+cleanup:
+    conv_close(conv);
+    return r;
 }

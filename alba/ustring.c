@@ -116,7 +116,7 @@ enum result string_add_char(struct allocator* al, struct string* s, char c)
 
     enum result r;
 
-    if (s->size <= s->buf_size) {
+    if (s->size + 1 > s->buf_size) {
         if (s->buf == NULL) {
             r = allocator_malloc(al, &s->buf, STRING_CHUNK);
         } else {
@@ -295,19 +295,18 @@ enum result conv_open(UConverter** conv)
 
 void conv_close(UConverter* conv)
 {
-    ucnv_close(conv);
+    if (conv) {
+        ucnv_close(conv);
+    }
 }
 
-enum result get_uchar(io_getchar f, io_data d, UConverter* conv, UChar32* uc, int* done)
+enum result get_uchar(struct allocator *al, io_getchar f, io_data d, struct string* s, UConverter* conv, UChar32* uc, int* done)
 {
     int count;
     enum result r = result_ok;
-    struct string s;
     int c;
-    struct allocator al;
 
-    string_init(&s);
-    allocator_init(&al);
+    string_clear(s);
     *done = 0;
 
     c = f(d);
@@ -321,7 +320,7 @@ enum result get_uchar(io_getchar f, io_data d, UConverter* conv, UChar32* uc, in
         goto cleanup;
     }
 
-    r = string_add_char(&al, &s, c);
+    r = string_add_char(al, s, c);
     if (r == result_error) {
         goto cleanup;
     }
@@ -338,7 +337,7 @@ enum result get_uchar(io_getchar f, io_data d, UConverter* conv, UChar32* uc, in
             goto cleanup;
         }
 
-        r = string_add_char(&al, &s, c);
+        r = string_add_char(al, s, c);
         if (r == result_error) {
             goto cleanup;
         }
@@ -346,7 +345,7 @@ enum result get_uchar(io_getchar f, io_data d, UConverter* conv, UChar32* uc, in
 
     UChar* dest;
     size_t dest_len;
-    r = char2uchar(&al, conv, s.buf, s.size, &dest, s.size, &dest_len);
+    r = char2uchar(al, conv, s->buf, s->size, &dest, s->size, &dest_len);
     if (r == result_error) {
         goto cleanup;
     }
@@ -355,6 +354,5 @@ enum result get_uchar(io_getchar f, io_data d, UConverter* conv, UChar32* uc, in
     U16_NEXT(dest, pos, dest_len, *uc);
 
 cleanup:
-    allocator_destroy(&al);
     return r;
 }

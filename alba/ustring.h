@@ -31,6 +31,6 @@ enum result char2uchar(struct allocator* al, UConverter* conv, char* src, size_t
 enum result uchar2char(struct allocator* al, UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len);
 enum result conv_open(UConverter** conv);
 void conv_close(UConverter* conv);
-enum result get_uchar(io_getchar f, io_data d, UConverter* conv, UChar32* uc, int* done);
+enum result get_uchar(struct allocator* al, io_getchar f, io_data d, struct string* s, UConverter* conv, UChar32* uc, int* done);
 
 #endif
