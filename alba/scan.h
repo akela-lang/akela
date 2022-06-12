@@ -22,5 +22,6 @@ enum state_enum {
 };
 
 enum result scan(struct allocator *al, struct string* line, struct token_list* tl);
+void set_char_values(struct char_value* cv);
 
 #endif

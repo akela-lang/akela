@@ -6,6 +6,7 @@
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 #include "allocator.h"
+#include "io.h"
 
 #define STRING_CHUNK 64
 
@@ -28,5 +29,8 @@ int string_compare(struct string* a, struct string* b);
 int str_compare(struct string* a, char* b);
 enum result char2uchar(struct allocator* al, UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len);
 enum result uchar2char(struct allocator* al, UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len);
+enum result conv_open(UConverter** conv);
+void conv_close(UConverter* conv);
+enum result get_uchar(io_getchar f, io_data d, UConverter* conv, UChar32* uc, int* done);
 
 #endif

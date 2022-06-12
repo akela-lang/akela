@@ -8,6 +8,7 @@
 #include "ustring.h"
 #include "memory.h"
 #include "allocator.h"
+#include "io.h"
 
 enum result num_bytes(unsigned char c, int* count)
 {
@@ -280,4 +281,80 @@ enum result uchar2char(struct allocator* al, UConverter* conv, UChar* src, size_
     }
     (*dest)[*len] = '\0';
     return result_ok;
+}
+
+enum result conv_open(UConverter** conv)
+{
+    UErrorCode err;
+    *conv = ucnv_open("utf8", &err);
+    if (U_FAILURE(err)) {
+        return set_error("utf conversion: %d", err);
+    }
+    return result_ok;
+}
+
+void conv_close(UConverter* conv)
+{
+    ucnv_close(conv);
+}
+
+enum result get_uchar(io_getchar f, io_data d, UConverter* conv, UChar32* uc, int* done)
+{
+    int count;
+    enum result r = result_ok;
+    struct string s;
+    int c;
+    struct allocator al;
+
+    string_init(&s);
+    allocator_init(&al);
+    *done = 0;
+
+    c = f(d);
+    if (c == EOF) {
+        *done = 1;
+        goto cleanup;
+    }
+
+    r = num_bytes(c, &count);
+    if (r == result_error) {
+        goto cleanup;
+    }
+
+    r = string_add_char(&al, &s, c);
+    if (r == result_error) {
+        goto cleanup;
+    }
+
+    for (int i = 1; i < count; i++) {
+        c = f(d);
+        if (c == EOF) {
+            *done = 1;
+            goto cleanup;
+        }
+
+        r = check_extra_byte(c);
+        if (r == result_error) {
+            goto cleanup;
+        }
+
+        r = string_add_char(&al, &s, c);
+        if (r == result_error) {
+            goto cleanup;
+        }
+    }
+
+    UChar* dest;
+    size_t dest_len;
+    r = char2uchar(&al, conv, s.buf, s.size, &dest, s.size, &dest_len);
+    if (r == result_error) {
+        goto cleanup;
+    }
+
+    size_t pos = 0;
+    U16_NEXT(dest, pos, dest_len, *uc);
+
+cleanup:
+    allocator_destroy(&al);
+    return r;
 }

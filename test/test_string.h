@@ -3,6 +3,7 @@
 
 #include "assert.h"
 #include "alba/ustring.h"
+#include "alba/scan.h"
 #include <string.h>
 
 void test_string_init()
@@ -198,6 +199,87 @@ test_string_str_compare()
 	allocator_destroy(&al);
 }
 
+void test_string_get_uchar()
+{
+	test_name(__func__);
+
+	enum result r;
+
+	UConverter* conv;
+	r = conv_open(&conv);
+	assert_ok(r, "converter open");
+
+	struct allocator al;
+	allocator_init(&al);
+
+	struct string s;
+	string_init(&s);
+
+	struct char_value cv;
+	set_char_values(&cv);
+	
+	r = array2string(&al, "=+- \n*/()", &s);
+	assert_ok(r, "array2string");
+
+	struct string_data sd;
+	string_data_init(&s, &sd);
+
+	UChar32 uc;
+	int done;
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar equal");
+	assert_int_equal(uc, cv.equal, "equal");
+	assert_true(!done, "done equal");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar plus");
+	assert_int_equal(uc, cv.plus, "plus");
+	assert_true(!done, "done plus");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar minus");
+	assert_int_equal(uc, cv.minus, "minus");
+	assert_true(!done, "done minus");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar space");
+	assert_int_equal(uc, cv.space, "space");
+	assert_true(!done, "done space");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar newline");
+	assert_int_equal(uc, cv.newline, "newline");
+	assert_true(!done, "done newline");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar mult");
+	assert_int_equal(uc, cv.mult, "mult");
+	assert_true(!done, "done mult");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar divide");
+	assert_int_equal(uc, cv.divide, "divide");
+	assert_true(!done, "done divide");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar left_paren");
+	assert_int_equal(uc, cv.left_paren, "left_paren");
+	assert_true(!done, "done left_paren");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar right_paren");
+	assert_int_equal(uc, cv.right_paren, "right_paren");
+	assert_true(!done, "done right_paren");
+
+	r = get_uchar(string_getchar, &sd, conv, &uc, &done);
+	assert_ok(r, "get_uchar done");
+	assert_true(done, "done done");
+
+	allocator_destroy(&al);
+	conv_close(conv);
+}
+
 void test_string()
 {
 	test_string_init();
@@ -209,6 +291,7 @@ void test_string()
 	test_string_next_char();
 	test_string_string_compare();
 	test_string_str_compare();
+	test_string_get_uchar();
 }
 
 #endif
