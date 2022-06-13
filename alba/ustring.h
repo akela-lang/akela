@@ -16,7 +16,6 @@ struct string {
     char* buf;
 };
 
-enum result next_line(struct allocator* al, FILE* f, struct string* s, int is_utf8, int* last_line);
 void string_init(struct string* s);
 enum result string_add_char(struct allocator* al, struct string* s, char c);
 void string_reset(struct string* s);

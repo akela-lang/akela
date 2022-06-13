@@ -31,5 +31,6 @@ void input_state_init(io_getchar f, io_data d, UConverter* conv, struct input_st
 void input_state_push_uchar(struct input_state* is);
 void input_state_pop_uchar(struct input_state* is);
 enum result get_uchar(struct allocator* al, struct input_state* is);
+enum result next_line(struct allocator* al, FILE* f, struct string* s, int is_utf8, int* last_line);
 
 #endif

@@ -5,6 +5,7 @@
 #include "ustring.h"
 #include "input.h"
 #include "result.h"
+#include "uconv.h"
 
 int file_getchar(FILE* fp)
 {
@@ -49,6 +50,57 @@ void input_state_pop_uchar(struct input_state* is)
     is->s = is->next_s;
     is->uc = is->next_uc;
     is->has_next = 0;
+}
+
+enum result next_line(struct allocator* al, FILE* f, struct string* s, int is_utf8, int* last_line)
+{
+    *last_line = 0;
+
+    int i = 0;
+    int count;
+    enum result r;
+    while (1) {
+        int c = getc(f);
+
+        if (c == EOF) {
+            *last_line = 1;
+            break;
+        }
+
+        if (c == '\n' || c == '\r') {
+            break;
+        }
+
+        if (is_utf8) {
+            r = num_bytes(c, &count);
+            if (r == result_error) {
+                return r;
+            }
+            r = string_add_char(al, s, c);
+            if (r == result_error) {
+                return r;
+            }
+
+            for (int j = 1; j < count; j++) {
+                c = getc(f);
+                r = check_extra_byte(c);
+                if (r == result_error) {
+                    return r;
+                }
+                r = string_add_char(al, s, c);
+                if (r == result_error) {
+                    return r;
+                }
+            }
+        } else {
+            r = string_add_char(al, s, c);
+            if (r == result_error) {
+                return r;
+            }
+        }
+    }
+
+    return result_ok;
 }
 
 enum result get_uchar(struct allocator* al, struct input_state* is)
