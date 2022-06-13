@@ -21,7 +21,7 @@ enum state_enum {
     state_number
 };
 
-enum result scan(struct allocator *al, struct string* line, struct token_list* tl);
+enum result scan_get_token(struct allocator* al, struct input_state* is, struct token* t);
 void set_char_values(struct char_value* cv);
 
 #endif

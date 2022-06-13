@@ -1,5 +1,5 @@
 # Todo
-* update scanner to one char at a time
+* add have_token to scanner output
 * update parser to get one token at a time
 * change struct string to struct buffer
 * function declarations

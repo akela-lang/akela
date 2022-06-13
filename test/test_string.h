@@ -205,10 +205,6 @@ void test_string_get_uchar()
 
 	enum result r;
 
-	UConverter* conv;
-	r = conv_open(&conv);
-	assert_ok(r, "converter open");
-
 	struct allocator al;
 	allocator_init(&al);
 
@@ -224,59 +220,61 @@ void test_string_get_uchar()
 	struct string_data sd;
 	string_data_init(&s, &sd);
 
-	UChar32 uc;
-	int done;
-	struct string s2;
-	string_init(&s2);
+	UConverter* conv;
+	r = conv_open(&conv);
+	assert_ok(r, "conv_open");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	struct input_state is;
+	input_state_init(string_getchar, &sd, conv, &is);
+
+	r = get_uchar(&al,&is);
 	assert_ok(r, "get_uchar equal");
-	assert_int_equal(uc, cv.equal, "equal");
-	assert_true(!done, "done equal");
+	assert_int_equal(is.uc, cv.equal, "equal");
+	assert_true(!is.done, "done equal");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar plus");
-	assert_int_equal(uc, cv.plus, "plus");
-	assert_true(!done, "done plus");
+	assert_int_equal(is.uc, cv.plus, "plus");
+	assert_true(!is.done, "done plus");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar minus");
-	assert_int_equal(uc, cv.minus, "minus");
-	assert_true(!done, "done minus");
+	assert_int_equal(is.uc, cv.minus, "minus");
+	assert_true(!is.done, "done minus");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar space");
-	assert_int_equal(uc, cv.space, "space");
-	assert_true(!done, "done space");
+	assert_int_equal(is.uc, cv.space, "space");
+	assert_true(!is.done, "done space");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar newline");
-	assert_int_equal(uc, cv.newline, "newline");
-	assert_true(!done, "done newline");
+	assert_int_equal(is.uc, cv.newline, "newline");
+	assert_true(!is.done, "done newline");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar mult");
-	assert_int_equal(uc, cv.mult, "mult");
-	assert_true(!done, "done mult");
+	assert_int_equal(is.uc, cv.mult, "mult");
+	assert_true(!is.done, "done mult");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar divide");
-	assert_int_equal(uc, cv.divide, "divide");
-	assert_true(!done, "done divide");
+	assert_int_equal(is.uc, cv.divide, "divide");
+	assert_true(!is.done, "done divide");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar left_paren");
-	assert_int_equal(uc, cv.left_paren, "left_paren");
-	assert_true(!done, "done left_paren");
+	assert_int_equal(is.uc, cv.left_paren, "left_paren");
+	assert_true(!is.done, "done left_paren");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar right_paren");
-	assert_int_equal(uc, cv.right_paren, "right_paren");
-	assert_true(!done, "done right_paren");
+	assert_int_equal(is.uc, cv.right_paren, "right_paren");
+	assert_true(!is.done, "done right_paren");
 
-	r = get_uchar(&al, string_getchar, &sd, &s2, conv, &uc, &done);
+	r = get_uchar(&al, &is);
 	assert_ok(r, "get_uchar done");
-	assert_true(done, "done done");
+	assert_true(is.done, "done done");
 
 	allocator_destroy(&al);
 	conv_close(conv);

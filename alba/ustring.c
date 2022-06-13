@@ -300,59 +300,88 @@ void conv_close(UConverter* conv)
     }
 }
 
-enum result get_uchar(struct allocator *al, io_getchar f, io_data d, struct string* s, UConverter* conv, UChar32* uc, int* done)
+void input_state_init(io_getchar f, io_data d, UConverter* conv, struct input_state* is)
+{
+    is->f = f;
+    is->d = d;
+    is->conv = conv;
+    is->done = 0;
+    string_init(&is->s);
+    is->has_next = 0;
+    string_init(&is->next_s);
+}
+
+void input_state_push_uchar(struct input_state* is)
+{
+    is->next_s = is->s;
+    is->next_uc = is->uc;
+    is->has_next = 1;
+}
+
+void input_state_pop_uchar(struct input_state* is)
+{
+    is->s = is->next_s;
+    is->uc = is->next_uc;
+    is->has_next = 0;
+}
+
+enum result get_uchar(struct allocator *al, struct input_state* is)
 {
     int count;
     enum result r = result_ok;
     int c;
 
-    string_clear(s);
-    *done = 0;
+    if (is->has_next) {
+        input_state_pop_uchar(is);
+        return r;
+    }
 
-    c = f(d);
+    string_clear(&is->s);
+    is->done = 0;
+
+    c = is->f(is->d);
     if (c == EOF) {
-        *done = 1;
-        goto cleanup;
+        is->done = 1;
+        return r;
     }
 
     r = num_bytes(c, &count);
     if (r == result_error) {
-        goto cleanup;
+        return r;
     }
 
-    r = string_add_char(al, s, c);
+    r = string_add_char(al, &is->s, c);
     if (r == result_error) {
-        goto cleanup;
+        return r;
     }
 
     for (int i = 1; i < count; i++) {
-        c = f(d);
+        c = is->f(is->d);
         if (c == EOF) {
-            *done = 1;
-            goto cleanup;
+            is->done = 1;
+            return r;
         }
 
         r = check_extra_byte(c);
         if (r == result_error) {
-            goto cleanup;
+            return r;
         }
 
-        r = string_add_char(al, s, c);
+        r = string_add_char(al, &is->s, c);
         if (r == result_error) {
-            goto cleanup;
+            return r;
         }
     }
 
     UChar* dest;
     size_t dest_len;
-    r = char2uchar(al, conv, s->buf, s->size, &dest, s->size, &dest_len);
+    r = char2uchar(al, is->conv, is->s.buf, is->s.size, &dest, is->s.size, &dest_len);
     if (r == result_error) {
-        goto cleanup;
+        return r;
     }
 
     size_t pos = 0;
-    U16_NEXT(dest, pos, dest_len, *uc);
+    U16_NEXT(dest, pos, dest_len, is->uc);
 
-cleanup:
     return r;
 }

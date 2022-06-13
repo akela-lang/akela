@@ -67,56 +67,49 @@ void set_char_values(struct char_value* cv)
     U16_NEXT(right_paren, pos2, size, cv->right_paren);
 }
 
-enum result process_char_start(struct allocator* al, struct string* s, UChar32 c2, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, struct token* t, int* done)
 {
     struct char_value cv;
     set_char_values(&cv);
+    *done = 0;
 
-    if (u_isalpha(c2)) {
+    if (u_isalpha(is->uc)) {
         *state = state_word;
         t->type = token_word;
-        string_copy(al, s, &t->value);
-    } else if (u_isdigit(c2)) {
+        string_copy(al, &is->s, &t->value);
+    } else if (u_isdigit(is->uc)) {
         *state = state_number;
         t->type = token_number;
-        string_copy(al, s, &t->value);
-    } else if (c2 == cv.equal) {
+        string_copy(al, &is->s, &t->value);
+    } else if (is->uc == cv.equal) {
         t->type = token_equal;
-        token_list_add(al, tl, t);
-        token_reset(t);
-    } else if (c2 == cv.plus) {
+        *done = 1;
+    } else if (is->uc == cv.plus) {
         t->type = token_plus;
-        token_list_add(al, tl, t);
-        token_reset(t);
-    } else if (c2 == cv.minus) {
+        *done = 1;
+    } else if (is->uc == cv.minus) {
         t->type = token_minus;
-        token_list_add(al, tl, t);
-        token_reset(t);
-    } else if (c2 == cv.mult) {
+        *done = 1;
+    } else if (is->uc == cv.mult) {
         t->type = token_mult;
-        token_list_add(al, tl, t);
-        token_reset(t);
-    } else if (c2 == cv.divide) {
+        *done = 1;
+    } else if (is->uc == cv.divide) {
         t->type = token_divide;
-        token_list_add(al, tl, t);
-        token_reset(t);
-    } else if (c2 == cv.left_paren) {
+        *done = 1;
+    } else if (is->uc == cv.left_paren) {
         t->type = token_left_paren;
-        token_list_add(al, tl, t);
-        token_reset(t);
-    } else if (c2 == cv.right_paren) {
+        *done = 1;
+    } else if (is->uc == cv.right_paren) {
         t->type = token_right_paren;
-        token_list_add(al, tl, t);
-        token_reset(t);
-    } else if (c2 == cv.space) {
+        *done = 1;
+    } else if (is->uc == cv.space) {
         /* nothing */
-    } else if (c2 == cv.newline) {
+    } else if (is->uc == cv.newline) {
         t->type = token_newline;
-        token_list_add(al, tl, t);
-        token_reset(t);
+        *done = 1;
     } else {
         char* a;
-        enum result r = string2array(al, s, &a);
+        enum result r = string2array(al, &is->s, &a);
         if (r == result_error) {
             return set_error("unrecogized character");
         }
@@ -125,97 +118,79 @@ enum result process_char_start(struct allocator* al, struct string* s, UChar32 c
     return result_ok;
 }
 
-enum result process_char_word(struct allocator *al, struct string* s, UChar32 c2, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_word(struct allocator *al, struct input_state* is, enum state_enum* state, struct token* t, int* done)
 {
     enum result r;
     struct char_value cv;
     set_char_values(&cv);
 
-    if (u_isalpha(c2)) {
-        string_copy(al, s, &t->value);
-    } else if (u_isdigit(c2)) {
-        string_copy(al, s, &t->value);
-    } else {
-        *state = state_start;
-        r = token_list_add(al, tl, t);
+    if (u_isalpha(is->uc)) {
+        r = string_copy(al, &is->s, &t->value);
         if (r == result_error) {
             return r;
         }
-        token_reset(t);
-        return process_char_start(al, s, c2, state, tl, t);
+    } else if (u_isdigit(is->uc)) {
+        r = string_copy(al, &is->s, &t->value);
+        if (r == result_error) {
+            return r;
+        }
+    } else {
+        *state = state_start;
+        *done = 1;
+        input_state_push_uchar(is);
     }
     return result_ok;
 }
 
-enum result process_char_number(struct allocator *al, struct string* s, UChar32 c2, enum state_enum* state, struct token_list* tl, struct token* t)
+enum result process_char_number(struct allocator *al, struct input_state* is, enum state_enum* state, struct token* t, int* done)
 {
-    enum result r;
     struct char_value cv;
     set_char_values(&cv);
 
-    if (u_isdigit(c2)) {
-        string_copy(al, s, &t->value);
+    if (u_isdigit(is->uc)) {
+        string_copy(al, &is->s, &t->value);
     } else {
         *state = state_start;
-        r = token_list_add(al, tl, t);
-        if (r == result_error) {
-            return r;
-        }
-        token_reset(t);
-        return process_char_start(al, s, c2, state, tl, t);
+        *done = 1;
+        input_state_push_uchar(is);
     }
     return result_ok;
 }
 
-enum result scan(struct allocator *al, struct string* line, struct token_list* tl)
+enum result scan_get_token(struct allocator *al, struct input_state* is, struct token* t)
 {
     enum result r = result_ok;
-    size_t pos = 0;
     enum state_enum state = state_start;
-    struct token t;
 
-    token_init(&t);
+    token_init(t);
 
-    UConverter* conv = NULL;
-    r = conv_open(&conv);
-    if (r == result_error) {
-        goto cleanup;
-    }
-
-    struct string_data sd;
-    string_data_init(line, &sd);
-    io_getchar f = string_getchar;
-    io_data d = &sd;
-
-    UChar32 uc;
-    int done;
-    struct string s;
-    string_init(&s);
-
-    while (get_uchar(al, f, d, &s, conv, &uc, &done) != result_error && !done) {
+    int have_token = 0;
+    while (get_uchar(al, is) != result_error && !is->done) {
         if (state == state_start) {
-            r = process_char_start(al, &s, uc, &state, tl, &t);
+            r = process_char_start(al, is, &state, t, &have_token);
         } else if (state == state_word) {
-            r = process_char_word(al, &s, uc, &state, tl, &t);
+            r = process_char_word(al, is, &state, t, &have_token);
         } else if (state == state_number) {
-            r = process_char_number(al, &s, uc, &state, tl, &t);
+            r = process_char_number(al, is, &state, t, &have_token);
         } else {
             r = set_error("unexpected state");
         }
         if (r == result_error) {
             return r;
         }
-    }
-
-    if (state != state_start && t.type != token_none) {
-        state = state_start;
-        r = token_list_add(al, tl, &t);
-        if (r == result_error) {
-            return r;
+        if (have_token) {
+            break;
         }
     }
 
-cleanup:
-    conv_close(conv);
+    if (r == result_error) {
+        return r;
+    }
+
+    if (state != state_start && t->type != token_none) {
+        state = state_start;
+        have_token = 1;
+    }
+
     return r;
 }
