@@ -1,7 +1,7 @@
 #include "assert.h"
 #include "alba/allocator.h"
 #include "alba/ustring.h"
-#include "alba/io.h"
+#include "alba/input.h"
 #include "alba/os_win.h"
 #include <windows.h>
 

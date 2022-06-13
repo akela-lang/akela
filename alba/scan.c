@@ -6,6 +6,7 @@
 #include "token.h"
 #include "scan.h"
 #include "ustring.h"
+#include "input.h"
 
 void set_char_values(struct char_value* cv)
 {

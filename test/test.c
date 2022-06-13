@@ -1,6 +1,6 @@
 #include "assert.h"
 #include "test_allocator.h"
-#include "test_io.h"
+#include "test_input.h"
 #include "test_string.h"
 #include "test_scan.h"
 /*
