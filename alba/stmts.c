@@ -114,6 +114,7 @@ function_error:
 
 /*
 * stmt -> word = expr
+*		| function word (seq) \n stmts end
 *       | expr
 *       | e
 */
@@ -177,6 +178,10 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		dag_add_child(n, b);
 		goto function_success;
 
+	/* function word (seq) \n stmts end */
+	} else if (t0 && t0->type == token_function) {
+
+
 	/* expr */
 	} else {
 		r = expr(al, ts, &n);
@@ -202,4 +207,9 @@ function_success:
 
 function_error:
 	return r;
+}
+
+enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** root)
+{
+	return result_ok;
 }

@@ -119,6 +119,17 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     return result_ok;
 }
 
+void check_reserved_words(struct token* t)
+{
+    if (buffer_str_compare(&t->value, "function")) {
+        t->type = token_function;
+        buffer_clear(&t->value);
+    } else if (buffer_str_compare(&t->value, "end")) {
+        t->type = token_end;
+        buffer_clear(&t->value);
+    }
+}
+
 enum result process_char_word(struct allocator *al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
@@ -136,6 +147,7 @@ enum result process_char_word(struct allocator *al, struct input_state* is, enum
             return r;
         }
     } else {
+        check_reserved_words(t);
         *state = state_start;
         *got_token = 1;
         input_state_push_uchar(is);
@@ -195,6 +207,9 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
     }
 
     if (state != state_start && tf->type != token_none) {
+        if (state == state_word) {
+            check_reserved_words(tf);
+        }
         state = state_start;
         *got_token = 1;
     }

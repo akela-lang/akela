@@ -16,6 +16,8 @@ enum token_enum {
     token_left_paren,
     token_right_paren,
     token_newline,
+    token_function,
+    token_end,
     token_count     /* keep at the end */
 };
 
@@ -37,6 +39,8 @@ enum result token_name_init(char** token_name)
     token_name[token_left_paren] = "left parenthesis";
     token_name[token_right_paren] = "right parenthesis";
     token_name[token_newline] = "newline";
+    token_name[token_function] = "function";
+    token_name[token_end] = "end";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

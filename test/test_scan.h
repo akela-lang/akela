@@ -425,6 +425,56 @@ void test_scan_stmts_assign()
 	scan_teardown(&al, &is);
 }
 
+void test_scan_function()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "function foo () \n end", &is);
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 0");
+	assert_true(got_token, "got token 0");
+	expect_int_equal(t->type, token_function, "function");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 1");
+	assert_true(got_token, "got token 1");
+	expect_int_equal(t->type, token_word, "word");
+	expect_str(&t->value, "foo", "foo");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 2");
+	assert_true(got_token, "got token 2");
+	expect_int_equal(t->type, token_left_paren, "left paren");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 3");
+	assert_true(got_token, "got token 3");
+	expect_int_equal(t->type, token_right_paren, "right paren");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 4");
+	assert_true(got_token, "got token 4");
+	expect_int_equal(t->type, token_newline, "newline");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 5");
+	assert_true(got_token, "got token 5");
+	expect_int_equal(t->type, token_end, "end");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 6");
+	assert_true(!got_token, "no token 6");
+
+	scan_teardown(&al, &is);
+}
+
 void test_scan()
 {
 	test_scan_assign();
@@ -436,6 +486,7 @@ void test_scan()
 	test_scan_stmts_expr();
 	test_scan_stmts_expr2();
 	test_scan_stmts_assign();
+	test_scan_function();
 }
 
 #endif
