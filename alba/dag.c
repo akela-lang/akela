@@ -1,3 +1,5 @@
+#define _DAG_C
+
 #include <stdlib.h>
 #include "dag.h"
 #include "result.h"
@@ -81,4 +83,29 @@ int is_binary_operator(struct dag_node* n)
 	}
 
 	return 0;
+}
+
+void dag_print(struct allocator *al, struct dag_node* root, char** names)
+{
+	if (root == NULL) return;
+
+	printf("%s:", names[root->type]);
+
+	for (struct dag_node* p = root->head; p; p = p->next) {
+		printf(" %s", names[p->type]);
+		if (p->value.size > 0) {
+			char* a;
+			enum result r;
+			r = string2array(al, &p->value, &a);
+			printf(":%s", a);
+		}
+	}
+
+	printf("\n");
+
+	for (struct dag_node* p = root->head; p; p = p->next) {
+		if (p->head != NULL) {
+			dag_print(al, p, names);
+		}
+	}
 }

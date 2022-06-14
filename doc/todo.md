@@ -1,5 +1,4 @@
 # Todo
-* output dag in breadth first order
 * change struct string to struct buffer
 * clear token not reset in scan
 * function declarations

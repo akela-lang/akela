@@ -48,9 +48,15 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    fclose(fp);
+
+    char* names[dag_type_count];
+    dag_set_names(names);
+    dag_print(&al, root, names);
+
     allocator_destroy(&al);
     conv_close(conv);
-    fclose(fp);
     printf("end\n");
+
     return 0;
 }
