@@ -163,7 +163,7 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
     enum result r = result_ok;
     enum state_enum state = state_start;
     *got_token = 0;
-    struct token* tf;       /* token for function */
+    struct token* tf;
 
     r = allocator_malloc(al, &tf, sizeof(struct token));
     if (r == result_error) {

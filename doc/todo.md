@@ -1,6 +1,4 @@
 # Todo
-* change struct string to struct buffer
-* clear token not reset in scan
 * function declarations
 * return statement
 * function calling
