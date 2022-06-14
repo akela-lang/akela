@@ -102,7 +102,7 @@ void expect_ok(enum result r, char* message)
 void expect_str(struct buffer* a, char* b, char* message)
 {
 	test_count++;
-	if (str_compare(a, b)) return;
+	if (buffer_str_compare(a, b)) return;
 	struct allocator al;
 	allocator_init(&al);
 	char* temp;

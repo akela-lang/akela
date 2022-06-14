@@ -8,50 +8,50 @@
 #include "io.h"
 #include "uconv.h"
 
-void buffer_init(struct buffer* s)
+void buffer_init(struct buffer* bf)
 {
-    s->buf = NULL;
-    s->buf_size = 0;
-    s->size = 0;
+    bf->buf = NULL;
+    bf->buf_size = 0;
+    bf->size = 0;
 }
 
-enum result buffer_add_char(struct allocator* al, struct buffer* s, char c)
+enum result buffer_add_char(struct allocator* al, struct buffer* bf, char c)
 {
-    if (s == NULL) {
+    if (bf == NULL) {
         return set_error("adding char to a string that is not allocated");
     }
 
     enum result r;
 
-    if (s->size + 1 > s->buf_size) {
-        if (s->buf == NULL) {
-            r = allocator_malloc(al, &s->buf, BUFFER_CHUNK);
+    if (bf->size + 1 > bf->buf_size) {
+        if (bf->buf == NULL) {
+            r = allocator_malloc(al, &bf->buf, BUFFER_CHUNK);
         } else {
-            r = allocator_realloc(al, &s->buf, s->buf_size + BUFFER_CHUNK);
+            r = allocator_realloc(al, &bf->buf, bf->buf_size + BUFFER_CHUNK);
         }
         if (r == result_error) {
             return r;
         }
-        s->buf_size += BUFFER_CHUNK;
+        bf->buf_size += BUFFER_CHUNK;
     }
-    s->buf[s->size++] = c;
+    bf->buf[bf->size++] = c;
 
     return result_ok;
 }
 
-void buffer_reset(struct buffer* s)
+void buffer_reset(struct buffer* bf)
 {
-    if (s != NULL) {
-        if (s->buf != NULL) {
-            buffer_init(s);
+    if (bf != NULL) {
+        if (bf->buf != NULL) {
+            buffer_init(bf);
         }
     }
 }
 
-void buffer_clear(struct buffer* s)
+void buffer_clear(struct buffer* bf)
 {
-    if (s != NULL) {
-        s->size = 0;
+    if (bf != NULL) {
+        bf->size = 0;
     }
 }
 
@@ -70,25 +70,25 @@ enum result buffer_copy(struct allocator* al, struct buffer* a, struct buffer* b
     return result_ok;
 }
 
-enum result buffer2array(struct allocator* al, struct buffer* s, char** a)
+enum result buffer2array(struct allocator* al, struct buffer* bf, char** a)
 {
-    enum result r = allocator_malloc(al, a, s->size + 1);
+    enum result r = allocator_malloc(al, a, bf->size + 1);
     if (r == result_error) {
         return r;
     }
-    for (int i = 0; i < s->size; i++) {
-        (*a)[i] = s->buf[i];
+    for (int i = 0; i < bf->size; i++) {
+        (*a)[i] = bf->buf[i];
     }
-    (*a)[s->size] = '\0';
+    (*a)[bf->size] = '\0';
     return result_ok;
 }
 
-enum result array2buffer(struct allocator* al, char* a, struct buffer* s)
+enum result array2buffer(struct allocator* al, char* a, struct buffer* bf)
 {
     enum result r;
     char* p = a;
     while (*p != '\0') {
-        r = buffer_add_char(al, s, *p);
+        r = buffer_add_char(al, bf, *p);
         if (r == result_error) {
             return r;
         }
@@ -97,26 +97,26 @@ enum result array2buffer(struct allocator* al, char* a, struct buffer* s)
     return result_ok;
 }
 
-enum result next_char(struct allocator* al, struct buffer* s, size_t* pos, struct buffer* s2)
+enum result next_char(struct allocator* al, struct buffer* bf, size_t* pos, struct buffer* bf2)
 {
-    char c = s->buf[(*pos)++];
+    char c = bf->buf[(*pos)++];
     int count;
     enum result r = num_bytes(c, &count);
     if (r == result_error) {
         return r;
     }
-    buffer_clear(s2);
-    r = buffer_add_char(al, s2, c);
+    buffer_clear(bf2);
+    r = buffer_add_char(al, bf2, c);
     if (r == result_error) {
         return r;
     }
     for (int i = 1; i < count; i++) {
-        c = s->buf[(*pos)++];
+        c = bf->buf[(*pos)++];
         r = check_extra_byte(c);
         if (r == result_error) {
             return r;
         }
-        r = buffer_add_char(al, s2, c);
+        r = buffer_add_char(al, bf2, c);
         if (r == result_error) {
             return r;
         }
@@ -146,7 +146,7 @@ int buffer_compare(struct buffer* a, struct buffer* b)
 * if strings are equal, return 1
 * otherwise, return 0
 */
-int str_compare(struct buffer* a, char* b)
+int buffer_str_compare(struct buffer* a, char* b)
 {
     size_t size = strlen(b);
     if (a->size != size) {
