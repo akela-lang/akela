@@ -27,6 +27,9 @@ enum result allocator_malloc(struct allocator* al, void** buf, size_t size)
 	aln->p = *buf;
 	aln->next = al->head;
 	aln->prev = NULL;
+	if (al->head) {
+		al->head->prev = aln;
+	}
 	al->head = aln;
 	if (!al->tail) {
 		al->tail = aln;
@@ -89,7 +92,12 @@ void allocator_transfer(struct allocator* src, struct allocator* dest)
 	if (aln3) {
 		aln3->prev = aln2;
 	}
-	dest->head = aln1;
+	if (aln1) {
+		dest->head = aln1;
+	}
+	if (!dest->tail) {
+		dest->tail = src->tail;
+	}
 	allocator_init(src);
 }
 

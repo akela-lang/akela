@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "allocator.h"
 #include "io.h"
+#include "uconv.h"
 
 void string_init(struct string* s)
 {

@@ -68,11 +68,11 @@ void set_char_values(struct char_value* cv)
     U16_NEXT(right_paren, pos2, size, cv->right_paren);
 }
 
-enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* have_token, struct token* t)
+enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
 {
     struct char_value cv;
     set_char_values(&cv);
-    *have_token = 0;
+    *got_token = 0;
 
     if (u_isalpha(is->uc)) {
         *state = state_word;
@@ -84,30 +84,30 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         string_copy(al, &is->s, &t->value);
     } else if (is->uc == cv.equal) {
         t->type = token_equal;
-        *have_token = 1;
+        *got_token = 1;
     } else if (is->uc == cv.plus) {
         t->type = token_plus;
-        *have_token = 1;
+        *got_token = 1;
     } else if (is->uc == cv.minus) {
         t->type = token_minus;
-        *have_token = 1;
+        *got_token = 1;
     } else if (is->uc == cv.mult) {
         t->type = token_mult;
-        *have_token = 1;
+        *got_token = 1;
     } else if (is->uc == cv.divide) {
         t->type = token_divide;
-        *have_token = 1;
+        *got_token = 1;
     } else if (is->uc == cv.left_paren) {
         t->type = token_left_paren;
-        *have_token = 1;
+        *got_token = 1;
     } else if (is->uc == cv.right_paren) {
         t->type = token_right_paren;
-        *have_token = 1;
+        *got_token = 1;
     } else if (is->uc == cv.space) {
         /* nothing */
     } else if (is->uc == cv.newline) {
         t->type = token_newline;
-        *have_token = 1;
+        *got_token = 1;
     } else {
         char* a;
         enum result r = string2array(al, &is->s, &a);
@@ -119,7 +119,7 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     return result_ok;
 }
 
-enum result process_char_word(struct allocator *al, struct input_state* is, enum state_enum* state, int* have_token, struct token* t)
+enum result process_char_word(struct allocator *al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
     struct char_value cv;
@@ -137,13 +137,13 @@ enum result process_char_word(struct allocator *al, struct input_state* is, enum
         }
     } else {
         *state = state_start;
-        *have_token = 1;
+        *got_token = 1;
         input_state_push_uchar(is);
     }
     return result_ok;
 }
 
-enum result process_char_number(struct allocator *al, struct input_state* is, enum state_enum* state, int* have_token, struct token* t)
+enum result process_char_number(struct allocator *al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
 {
     struct char_value cv;
     set_char_values(&cv);
@@ -152,34 +152,40 @@ enum result process_char_number(struct allocator *al, struct input_state* is, en
         string_copy(al, &is->s, &t->value);
     } else {
         *state = state_start;
-        *have_token = 1;
+        *got_token = 1;
         input_state_push_uchar(is);
     }
     return result_ok;
 }
 
-enum result scan_get_token(struct allocator *al, struct input_state* is, int* have_token, struct token* t)
+enum result scan_get_token(struct allocator *al, struct input_state* is, int* got_token, struct token** t)
 {
     enum result r = result_ok;
     enum state_enum state = state_start;
-    *have_token = 0;
+    *got_token = 0;
+    struct token* tf;       /* token for function */
 
-    token_init(t);
+    r = allocator_malloc(al, &tf, sizeof(struct token));
+    if (r == result_error) {
+        return r;
+    }
+
+    token_init(tf);
 
     while (get_uchar(al, is) != result_error && !is->done) {
         if (state == state_start) {
-            r = process_char_start(al, is, &state, have_token, t);
+            r = process_char_start(al, is, &state, got_token, tf);
         } else if (state == state_word) {
-            r = process_char_word(al, is, &state, have_token, t);
+            r = process_char_word(al, is, &state, got_token, tf);
         } else if (state == state_number) {
-            r = process_char_number(al, is, &state, have_token, t);
+            r = process_char_number(al, is, &state, got_token, tf);
         } else {
             r = set_error("unexpected state");
         }
         if (r == result_error) {
             return r;
         }
-        if (*have_token) {
+        if (*got_token) {
             break;
         }
     }
@@ -188,10 +194,15 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* ha
         return r;
     }
 
-    if (state != state_start && t->type != token_none) {
+    if (state != state_start && tf->type != token_none) {
         state = state_start;
-        *have_token = 1;
+        *got_token = 1;
     }
 
+function_success:
+    *t = tf;
+    return r;
+
+function_error:
     return r;
 }

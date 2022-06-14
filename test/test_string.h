@@ -4,6 +4,7 @@
 #include "assert.h"
 #include "alba/ustring.h"
 #include "alba/scan.h"
+#include "alba/uconv.h"
 #include <string.h>
 
 void test_string_init()

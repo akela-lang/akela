@@ -36,6 +36,7 @@ enum result token_name_init(char** token_name)
     token_name[token_divide] = "divide";
     token_name[token_left_paren] = "left parenthesis";
     token_name[token_right_paren] = "right parenthesis";
+    token_name[token_newline] = "newline";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {
@@ -74,9 +75,7 @@ enum result token_list_make(struct allocator* al, struct token_list** tl);
 enum result token_list_add(struct allocator* al, struct token_list* tl, struct token* t);
 enum result token_list_slice(struct allocator *al, struct token_list* tl, int start, int end, struct token_list** slice);
 void token_list_reset(struct token_list* tl);
-void token_list_destroy(struct token_list* tl);
 enum result token_list_print(struct allocator* al, struct token_list* tl, char** token_name);
 struct token* token_list_pop(struct token_list* tl);
-void token_destroy(struct token* t);
 
 #endif

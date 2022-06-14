@@ -87,36 +87,52 @@ void test_allocator_transfer()
 	enum result r;
 
 	struct allocator al;
-	int* buff;
+	int* buff[3];
 	allocator_init(&al);
-	r = allocator_malloc(&al, &buff, sizeof(int));
-	assert_ok(r, "r");
-	*buff = 15;
+	for (int i = 0; i < 3; i++) {
+		r = allocator_malloc(&al, &buff[i], sizeof(int));
+		assert_ok(r, "r");
+		*buff[i] = i;
+	}
 
 	struct allocator al2;
-	int* buff2;
+	int* buff2[3];
 	allocator_init(&al2);
-	r = allocator_malloc(&al2, &buff2, sizeof(int));
-	assert_ok(r, "r");
-	*buff2 = 20;
+	for (int i = 0; i < 3; i++) {
+		r = allocator_malloc(&al2, &buff2[i], sizeof(int));
+		assert_ok(r, "r");
+		*buff2[i] = i + 3;
+	}
 
-	struct allocator_node* aln = allocator_find(&al, buff);
-	assert_ptr(aln, "ptr");
-	expect_true(aln->p == buff, "p");
+	for (int i = 0; i < 3; i++) {
+		struct allocator_node* aln = allocator_find(&al, buff[i]);
+		assert_ptr(aln, "ptr");
+		expect_true(aln->p == buff[i], "p");
+		expect_int_equal(*(int*)aln->p, i, "int");
+	}
 
-	struct allocator_node* aln2 = allocator_find(&al2, buff2);
-	assert_ptr(aln2, "ptr2");
-	expect_true(aln2->p == buff2, "p2");
+	for (int i = 0; i < 3; i++) {
+		struct allocator_node* aln2 = allocator_find(&al2, buff2[i]);
+		assert_ptr(aln2, "ptr2");
+		expect_true(aln2->p == buff2[i], "p2");
+		expect_int_equal(*(int*)aln2->p, i+3, "int2");
+	}
 
 	allocator_transfer(&al, &al2);
 
-	struct allocator_node* aln3 = allocator_find(&al2, buff);
-	assert_ptr(aln3, "ptr3");
-	expect_true(aln3->p == buff, "p3");
+	for (int i = 0; i < 3; i++) {
+		struct allocator_node* aln3 = allocator_find(&al2, buff[i]);
+		assert_ptr(aln3, "ptr3");
+		expect_true(aln3->p == buff[i], "p3");
+		expect_int_equal(*(int*)aln3->p, i, "int3");
+	}
 
-	struct allocator_node* aln4 = allocator_find(&al2, buff2);
-	assert_ptr(aln4, "ptr4");
-	expect_true(aln4->p == buff2, "p4");
+	for (int i = 0; i < 3; i++) {
+		struct allocator_node* aln4 = allocator_find(&al2, buff2[i]);
+		assert_ptr(aln4, "ptr4");
+		expect_true(aln4->p == buff2[i], "p4");
+		expect_int_equal(*(int*)aln4->p, i+3, "int4");
+	}
 
 	expect_null(al.head, "head");
 	expect_null(al.tail, "tail");

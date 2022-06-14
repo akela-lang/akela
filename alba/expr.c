@@ -2,11 +2,12 @@
 #include "token.h"
 #include "dag.h"
 #include "allocator.h"
+#include "parse.h"
 
 /*
 * expr -> term expr'
 */
-enum result expr(struct allocator* al, struct token_list* tl, struct dag_node** root)
+enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -15,12 +16,12 @@ enum result expr(struct allocator* al, struct token_list* tl, struct dag_node** 
 	struct dag_node* b = NULL;
 	struct dag_node* n = NULL;
 
-	r = term(al, tl, &a);
+	r = term(al, ts, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = expr_prime(al, tl, &b);
+	r = expr_prime(al, ts, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -54,15 +55,20 @@ function_error:
 *	     | - term expr'
 *	     | e
 */
-enum result expr_prime(struct allocator* al, struct token_list* tl, struct dag_node** root)
+enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 	enum dag_type type = dag_type_none;
+	int num;
 
-	struct token* t0 = get_token(tl->head, 0);
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
+	struct token* t0 = get_token(ts->lookahead.head, 0);
 
 	/* e */
 	if (t0 == NULL) {
@@ -87,16 +93,19 @@ enum result expr_prime(struct allocator* al, struct token_list* tl, struct dag_n
 	}
 
 	n->type = type;
-	struct token* tx = token_list_pop(tl);
+	r = match(al, ts, type, "expecting + or -");
+	if (r == result_error) {
+		goto function_error;
+	}
 
 	/* term */
-	r = term(al, tl, &a);
+	r = term(al, ts, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
 
 	/* expr' */
-	r = expr_prime(al, tl, &b);
+	r = expr_prime(al, ts, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -131,19 +140,19 @@ function_error:
 /*
 * term -> factor term_prime
 */
-enum result term(struct allocator* al, struct token_list* tl, struct dag_node** root)
+enum result term(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 
-	r = factor(al, tl, &a);
+	r = factor(al, ts, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = term_prime(al, tl, &b);
+	r = term_prime(al, ts, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -185,14 +194,20 @@ function_error:
 *	     | / factor term'
 *	     | e
 */
-enum result term_prime(struct allocator* al, struct token_list* tl, struct dag_node** root)
+enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
-	struct token* t0 = get_token(tl->head, 0);
 	enum dag_type type = dag_type_none;
+
+	int num;
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
+	struct token* t0 = get_token(ts->lookahead.head, 0);
 
 	/* e */
 	if (t0 == NULL) {
@@ -217,16 +232,19 @@ enum result term_prime(struct allocator* al, struct token_list* tl, struct dag_n
 	}
 
 	n->type = type;
-	struct token* t_op = token_list_pop(tl);
+	r = match(al, ts, type, "expecting * or /");
+	if (r == result_error) {
+		goto function_error;
+	}
 
 	/* factor */
-	r = factor(al, tl, &a);
+	r = factor(al, ts, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
 
 	/* term' */
-	r = term_prime(al, tl, &b);
+	r = term_prime(al, ts, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -267,17 +285,22 @@ function_error:
 *	| - word
 *	| (expr)
 */
-enum result factor(struct allocator* al, struct token_list* tl, struct dag_node** root)
+enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
 	struct defer_node* stack_temp = NULL;
 	struct dag_node* n = NULL;
 
+	int num;
+	r = get_lookahead(al, ts, 2, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
 	struct token* t0;
 	struct token* t1;
-	t0 = get_token(tl->head, 0);
-	t1 = get_token(tl->head, 1);
+	t0 = get_token(ts->lookahead.head, 0);
+	t1 = get_token(ts->lookahead.head, 1);
 
 	/* number or word */
 	if (t0->type == token_number || t0->type == token_word) {
@@ -296,7 +319,10 @@ enum result factor(struct allocator* al, struct token_list* tl, struct dag_node*
 			goto function_error;
 		}
 
-		struct token* tx = token_list_pop(tl);
+		r = match(al, ts, t0->type, "expecting number or word");
+		if (r == result_error) {
+			goto function_error;
+		}
 	}
 
 	/* sign and number or word */
@@ -320,6 +346,11 @@ enum result factor(struct allocator* al, struct token_list* tl, struct dag_node*
 			left->type = dag_type_minus;
 		}
 
+		r = match(al, ts, t0->type, "expecting unary plus or minus");
+		if (r == result_error) {
+			goto function_error;
+		}
+
 		dag_add_child(n, left);
 
 		struct dag_node* right;
@@ -334,6 +365,11 @@ enum result factor(struct allocator* al, struct token_list* tl, struct dag_node*
 			right->type = dag_type_word;
 		}
 
+		r = match(al, ts, t1->type, "expecting number or word");
+		if (r == result_error) {
+			goto function_error;
+		}
+
 		r = string_copy(al, &t1->value, &right->value);
 		if (r == result_error) {
 			goto function_error;
@@ -341,26 +377,23 @@ enum result factor(struct allocator* al, struct token_list* tl, struct dag_node*
 
 		dag_add_child(n, right);
 
-		struct token* tx = token_list_pop(tl);
-
-		tx = token_list_pop(tl);
-
 		/* parenthesis */
 	} else if (t0 && t0->type == token_left_paren) {
-		struct token* lp = token_list_pop(tl);
-
-		r = expr(al, tl, &n);
+		r = match(al, ts, t0->type, "expecting left parenthesis");
 		if (r == result_error) {
 			goto function_error;
 		}
 
-		struct token* rp = get_token(tl->head, 0);
-		if (!rp || rp->type != token_right_paren) {
-			set_error("expecting right parenthesis");
+		r = expr(al, ts, &n);
+		if (r == result_error) {
 			goto function_error;
 		}
 
-		rp = token_list_pop(tl);
+		r = match(al, ts, token_right_paren, "expecting right parenthesis");
+		if (r == result_error) {
+			goto function_error;
+		}
+
 		goto function_success;
 	}
 
