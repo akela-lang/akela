@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "token.h"
 #include "scan.h"
-#include "ustring.h"
+#include "buffer.h"
 #include "parse.h"
 #include "dag.h"
 #include "allocator.h"

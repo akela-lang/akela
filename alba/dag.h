@@ -1,7 +1,7 @@
 #ifndef _DAG_H
 #define _DAG_H
 
-#include "ustring.h"
+#include "buffer.h"
 #include "result.h"
 #include "allocator.h"
 
@@ -55,7 +55,7 @@ void dag_set_names(char** names);
 
 struct dag_node {
 	enum dag_type type;
-	struct string value;
+	struct buffer value;
 	struct dag_node* next;
 	struct dag_node* prev;
 	struct dag_node* head;

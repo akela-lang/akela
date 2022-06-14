@@ -4,7 +4,7 @@ set(source_files
     scan.c
     token.c
     result.c
-    ustring.c
+    buffer.c
     memory.c
     dag.c
     stmts.c

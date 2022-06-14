@@ -2,116 +2,116 @@
 #define _TEST_STRING_H
 
 #include "assert.h"
-#include "alba/ustring.h"
+#include "alba/buffer.h"
 #include "alba/scan.h"
 #include "alba/uconv.h"
 #include <string.h>
 
-void test_string_init()
+void test_buffer_init()
 {
 	test_name(__func__);
 
-	struct string s;
-	string_init(&s);
+	struct buffer s;
+	buffer_init(&s);
 	expect_int_equal(s.size, 0, "size");
 	expect_int_equal(s.buf_size, 0, "buf_size");
 	expect_null(s.buf, "buf");
 }
 
-void test_string_add_char()
+void test_buffer_add_char()
 {
 	test_name(__func__);
 
 	struct allocator al;
-	struct string s;	
+	struct buffer s;	
 	allocator_init(&al);
-	string_init(&s);
-	string_add_char(&al, &s, 'x');
-	string_add_char(&al, &s, 'y');
-	string_add_char(&al, &s, 'z');
+	buffer_init(&s);
+	buffer_add_char(&al, &s, 'x');
+	buffer_add_char(&al, &s, 'y');
+	buffer_add_char(&al, &s, 'z');
 	expect_str(&s, "xyz", "str");
-	string_reset(&s);
+	buffer_reset(&s);
 	allocator_destroy(&al);
 }
 
-void test_string_clear()
+void test_buffer_clear()
 {
 	test_name(__func__);
 
 	struct allocator al;
-	struct string s;
+	struct buffer s;
 	allocator_init(&al);
-	string_init(&s);
-	string_add_char(&al, &s, 'x');
-	string_add_char(&al, &s, 'y');
-	string_add_char(&al, &s, 'z');
+	buffer_init(&s);
+	buffer_add_char(&al, &s, 'x');
+	buffer_add_char(&al, &s, 'y');
+	buffer_add_char(&al, &s, 'z');
 	expect_str(&s, "xyz", "str");
-	string_clear(&s);
+	buffer_clear(&s);
 	expect_str(&s, "", "clear");
-	string_reset(&s);
+	buffer_reset(&s);
 	allocator_destroy(&al);
 }
 
-void test_string_copy()
+void test_buffer_copy()
 {
 	test_name(__func__);
 
 	struct allocator al;
-	struct string s;
-	struct string s2;
+	struct buffer s;
+	struct buffer s2;
 
 	allocator_init(&al);
-	string_init(&s);
-	string_add_char(&al, &s, 'x');
-	string_add_char(&al, &s, 'y');
-	string_add_char(&al, &s, 'z');
+	buffer_init(&s);
+	buffer_add_char(&al, &s, 'x');
+	buffer_add_char(&al, &s, 'y');
+	buffer_add_char(&al, &s, 'z');
 	expect_str(&s, "xyz", "str");
 
-	string_init(&s2);
-	string_copy(&al, &s, &s2);
+	buffer_init(&s2);
+	buffer_copy(&al, &s, &s2);
 
 	expect_str(&s2, "xyz", "copy");
 
-	string_reset(&s);
-	string_reset(&s2);
+	buffer_reset(&s);
+	buffer_reset(&s2);
 	allocator_destroy(&al);
 }
 
-void test_string_string2array()
+void test_string_buffer2array()
 {
 	test_name(__func__);
 
 	struct allocator al;
-	struct string s;
+	struct buffer s;
 	char *a;
 
 	allocator_init(&al);
-	string_init(&s);
-	string_add_char(&al, &s, 'x');
-	string_add_char(&al, &s, 'y');
-	string_add_char(&al, &s, 'z');
+	buffer_init(&s);
+	buffer_add_char(&al, &s, 'x');
+	buffer_add_char(&al, &s, 'y');
+	buffer_add_char(&al, &s, 'z');
 	expect_str(&s, "xyz", "str");
 	
-	string2array(&al, &s, &a);
+	buffer2array(&al, &s, &a);
 	expect_true(strcmp(a, "xyz") == 0, "array");
 
-	string_reset(&s);
+	buffer_reset(&s);
 	allocator_destroy(&al);
 }
 
-void test_string_array2string()
+void test_string_array2buffer()
 {
 	test_name(__func__);
 
 	struct allocator al;
 	char a[] = "xyz";
-	struct string s;
+	struct buffer s;
 
 	allocator_init(&al);
-	string_init(&s);
-	array2string(&al, a, &s);
+	buffer_init(&s);
+	array2buffer(&al, a, &s);
 	expect_str(&s, "xyz", "str");
-	string_reset(&s);
+	buffer_reset(&s);
 	allocator_destroy(&al);
 }
 
@@ -120,15 +120,15 @@ void test_string_next_char()
 	test_name(__func__);
 
 	struct allocator al;
-	struct string s;
+	struct buffer s;
 	allocator_init(&al);
-	string_init(&s);
-	string_add_char(&al, &s, 'x');
-	string_add_char(&al, &s, 'y');
-	string_add_char(&al, &s, 'z');
+	buffer_init(&s);
+	buffer_add_char(&al, &s, 'x');
+	buffer_add_char(&al, &s, 'y');
+	buffer_add_char(&al, &s, 'z');
 
-	struct string x;
-	string_init(&x);
+	struct buffer x;
+	buffer_init(&x);
 	size_t pos = 0;
 	enum result r;
 
@@ -144,40 +144,40 @@ void test_string_next_char()
 	assert_ok(r, "r3");
 	expect_str(&x, "z", "z");
 
-	string_reset(&s);
-	string_reset(&x);
+	buffer_reset(&s);
+	buffer_reset(&x);
 	allocator_destroy(&al);
 }
 
-test_string_string_compare()
+test_string_buffer_compare()
 {
 	test_name(__func__);
 
 	struct allocator al;
-	struct string s;
+	struct buffer s;
 	allocator_init(&al);
-	string_init(&s);
-	string_add_char(&al, &s, 'x');
-	string_add_char(&al, &s, 'y');
-	string_add_char(&al, &s, 'z');
+	buffer_init(&s);
+	buffer_add_char(&al, &s, 'x');
+	buffer_add_char(&al, &s, 'y');
+	buffer_add_char(&al, &s, 'z');
 
-	struct string s2;
-	string_init(&s2);
-	string_add_char(&al, &s2, 'x');
-	string_add_char(&al, &s2, 'y');
-	string_add_char(&al, &s2, 'z');
+	struct buffer s2;
+	buffer_init(&s2);
+	buffer_add_char(&al, &s2, 'x');
+	buffer_add_char(&al, &s2, 'y');
+	buffer_add_char(&al, &s2, 'z');
 
-	expect_true(string_compare(&s, &s2), "equal");
+	expect_true(buffer_compare(&s, &s2), "equal");
 
-	string_clear(&s2);
-	string_add_char(&al, &s2, 'x');
-	string_add_char(&al, &s2, 'y');
-	string_add_char(&al, &s2, '1');
+	buffer_clear(&s2);
+	buffer_add_char(&al, &s2, 'x');
+	buffer_add_char(&al, &s2, 'y');
+	buffer_add_char(&al, &s2, '1');
 
-	expect_true(string_compare(&s, &s2) == 0, "not equal");
+	expect_true(buffer_compare(&s, &s2) == 0, "not equal");
 
-	string_reset(&s);
-	string_reset(&s2);
+	buffer_reset(&s);
+	buffer_reset(&s2);
 	allocator_destroy(&al);
 }
 
@@ -186,17 +186,17 @@ test_string_str_compare()
 	test_name(__func__);
 
 	struct allocator al;
-	struct string s;
+	struct buffer s;
 	allocator_init(&al);
-	string_init(&s);
-	string_add_char(&al, &s, 'x');
-	string_add_char(&al, &s, 'y');
-	string_add_char(&al, &s, 'z');
+	buffer_init(&s);
+	buffer_add_char(&al, &s, 'x');
+	buffer_add_char(&al, &s, 'y');
+	buffer_add_char(&al, &s, 'z');
 
 	expect_true(str_compare(&s, "xyz") == 1, "equal");
 	expect_true(str_compare(&s, "xy1") == 0, "not equal");
 
-	string_reset(&s);
+	buffer_reset(&s);
 	allocator_destroy(&al);
 }
 
@@ -209,14 +209,14 @@ void test_string_get_uchar()
 	struct allocator al;
 	allocator_init(&al);
 
-	struct string s;
-	string_init(&s);
+	struct buffer s;
+	buffer_init(&s);
 
 	struct char_value cv;
 	set_char_values(&cv);
 	
-	r = array2string(&al, "=+- \n*/()", &s);
-	assert_ok(r, "array2string");
+	r = array2buffer(&al, "=+- \n*/()", &s);
+	assert_ok(r, "array2buffer");
 
 	struct string_data sd;
 	string_data_init(&s, &sd);
@@ -283,14 +283,14 @@ void test_string_get_uchar()
 
 void test_string()
 {
-	test_string_init();
-	test_string_add_char();
-	test_string_clear();
-	test_string_copy();
-	test_string_string2array();
-	test_string_array2string();
+	test_buffer_init();
+	test_buffer_add_char();
+	test_buffer_clear();
+	test_buffer_copy();
+	test_string_buffer2array();
+	test_string_array2buffer();
 	test_string_next_char();
-	test_string_string_compare();
+	test_string_buffer_compare();
 	test_string_str_compare();
 	test_string_get_uchar();
 }

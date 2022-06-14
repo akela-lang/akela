@@ -3,7 +3,7 @@ set(test_files
     ${alba_dir}/token.c
     ${alba_dir}/scan.c
     ${alba_dir}/result.c
-    ${alba_dir}/ustring.c
+    ${alba_dir}/buffer.c
     ${alba_dir}/memory.c
     ${alba_dir}/dag.c
     ${alba_dir}/stmts.c

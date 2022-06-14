@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "alba/result.h"
-#include "alba/ustring.h"
+#include "alba/buffer.h"
 
 int test_count = 0;
 int error_count = 0;
@@ -99,14 +99,14 @@ void expect_ok(enum result r, char* message)
 	error_count++;
 }
 
-void expect_str(struct string* a, char* b, char* message)
+void expect_str(struct buffer* a, char* b, char* message)
 {
 	test_count++;
 	if (str_compare(a, b)) return;
 	struct allocator al;
 	allocator_init(&al);
 	char* temp;
-	enum result r = string2array(&al, a, &temp);
+	enum result r = buffer2array(&al, a, &temp);
 	if (r == result_error) {
 		printf("<string> equals %s error: %s\n", b, message);
 	} else {

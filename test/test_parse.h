@@ -16,11 +16,11 @@ void parse_setup(struct allocator* al, char* line, struct token_state* ts, struc
 
 	allocator_init(al);
 
-	struct string* s;
-	r = allocator_malloc(al, &s, sizeof(struct string));
+	struct buffer* s;
+	r = allocator_malloc(al, &s, sizeof(struct buffer));
 	assert_ok(r, "allocator malloc string");
-	string_init(s);
-	r = array2string(al, line, s);
+	buffer_init(s);
+	r = array2buffer(al, line, s);
 	assert_ok(r, "ok");
 
 	struct string_data* sd;

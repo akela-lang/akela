@@ -2,7 +2,7 @@
 #include "allocator.h"
 #include "token.h"
 #include "dag.h"
-#include "ustring.h"
+#include "buffer.h"
 #include "expr.h"
 #include "input.h"
 #include "scan.h"
@@ -159,7 +159,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 			goto function_error;
 		}
 		a->type = dag_type_word;
-		r = string_copy(al, &t0->value, &a->value);
+		r = buffer_copy(al, &t0->value, &a->value);
 		if (r == result_error) {
 			goto function_error;
 		}

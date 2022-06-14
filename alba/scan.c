@@ -5,7 +5,7 @@
 #include "result.h"
 #include "token.h"
 #include "scan.h"
-#include "ustring.h"
+#include "buffer.h"
 #include "input.h"
 
 void set_char_values(struct char_value* cv)
@@ -77,11 +77,11 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     if (u_isalpha(is->uc)) {
         *state = state_word;
         t->type = token_word;
-        string_copy(al, &is->s, &t->value);
+        buffer_copy(al, &is->s, &t->value);
     } else if (u_isdigit(is->uc)) {
         *state = state_number;
         t->type = token_number;
-        string_copy(al, &is->s, &t->value);
+        buffer_copy(al, &is->s, &t->value);
     } else if (is->uc == cv.equal) {
         t->type = token_equal;
         *got_token = 1;
@@ -110,7 +110,7 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         *got_token = 1;
     } else {
         char* a;
-        enum result r = string2array(al, &is->s, &a);
+        enum result r = buffer2array(al, &is->s, &a);
         if (r == result_error) {
             return set_error("unrecogized character");
         }
@@ -126,12 +126,12 @@ enum result process_char_word(struct allocator *al, struct input_state* is, enum
     set_char_values(&cv);
 
     if (u_isalpha(is->uc)) {
-        r = string_copy(al, &is->s, &t->value);
+        r = buffer_copy(al, &is->s, &t->value);
         if (r == result_error) {
             return r;
         }
     } else if (u_isdigit(is->uc)) {
-        r = string_copy(al, &is->s, &t->value);
+        r = buffer_copy(al, &is->s, &t->value);
         if (r == result_error) {
             return r;
         }
@@ -149,7 +149,7 @@ enum result process_char_number(struct allocator *al, struct input_state* is, en
     set_char_values(&cv);
 
     if (u_isdigit(is->uc)) {
-        string_copy(al, &is->s, &t->value);
+        buffer_copy(al, &is->s, &t->value);
     } else {
         *state = state_start;
         *got_token = 1;

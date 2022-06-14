@@ -7,13 +7,13 @@
 void token_init(struct token* t)
 {
     t->type = token_none;
-    string_init(&t->value);
+    buffer_init(&t->value);
 }
 
 void token_reset(struct token* t)
 {
     t->type = token_none;
-    string_reset(&t->value);
+    buffer_reset(&t->value);
 }
 
 void token_list_init(struct token_list* tl)
@@ -100,8 +100,8 @@ enum result token_list_add(struct allocator* al, struct token_list* tl, struct t
     }
 
     new_t->type = t->type;
-    string_init(&new_t->value);
-    r = string_copy(al, &t->value, &new_t->value);
+    buffer_init(&new_t->value);
+    r = buffer_copy(al, &t->value, &new_t->value);
     if (r == result_error) {
         return r;
     }
@@ -181,7 +181,7 @@ enum result token_list_print(struct allocator* al, struct token_list* tl, char**
     struct token_node* tn = tl->head;
     while (tn) {
         char* a;
-        r = string2array(al, &tn->t->value, &a);
+        r = buffer2array(al, &tn->t->value, &a);
         if (r == result_error) {
             return r;
         }

@@ -1,7 +1,7 @@
 #ifndef _SCAN_H
 #define _SCAN_H
 
-#include "ustring.h"
+#include "buffer.h"
 
 struct char_value {
     UChar32 equal;

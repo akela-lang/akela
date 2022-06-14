@@ -2,20 +2,20 @@
 #include <ctype.h>
 #include <string.h>
 #include "result.h"
-#include "ustring.h"
+#include "buffer.h"
 #include "memory.h"
 #include "allocator.h"
 #include "io.h"
 #include "uconv.h"
 
-void string_init(struct string* s)
+void buffer_init(struct buffer* s)
 {
     s->buf = NULL;
     s->buf_size = 0;
     s->size = 0;
 }
 
-enum result string_add_char(struct allocator* al, struct string* s, char c)
+enum result buffer_add_char(struct allocator* al, struct buffer* s, char c)
 {
     if (s == NULL) {
         return set_error("adding char to a string that is not allocated");
@@ -25,30 +25,30 @@ enum result string_add_char(struct allocator* al, struct string* s, char c)
 
     if (s->size + 1 > s->buf_size) {
         if (s->buf == NULL) {
-            r = allocator_malloc(al, &s->buf, STRING_CHUNK);
+            r = allocator_malloc(al, &s->buf, BUFFER_CHUNK);
         } else {
-            r = allocator_realloc(al, &s->buf, s->buf_size + STRING_CHUNK);
+            r = allocator_realloc(al, &s->buf, s->buf_size + BUFFER_CHUNK);
         }
         if (r == result_error) {
             return r;
         }
-        s->buf_size += STRING_CHUNK;
+        s->buf_size += BUFFER_CHUNK;
     }
     s->buf[s->size++] = c;
 
     return result_ok;
 }
 
-void string_reset(struct string* s)
+void buffer_reset(struct buffer* s)
 {
     if (s != NULL) {
         if (s->buf != NULL) {
-            string_init(s);
+            buffer_init(s);
         }
     }
 }
 
-void string_clear(struct string* s)
+void buffer_clear(struct buffer* s)
 {
     if (s != NULL) {
         s->size = 0;
@@ -58,11 +58,11 @@ void string_clear(struct string* s)
 /*
 * assumes that a and b are initialized
 */
-enum result string_copy(struct allocator* al, struct string* a, struct string* b)
+enum result buffer_copy(struct allocator* al, struct buffer* a, struct buffer* b)
 {
     enum result r;
     for (int i = 0; i < a->size; i++) {
-        r = string_add_char(al, b, a->buf[i]);
+        r = buffer_add_char(al, b, a->buf[i]);
         if (r == result_error) {
             return r;
         }
@@ -70,7 +70,7 @@ enum result string_copy(struct allocator* al, struct string* a, struct string* b
     return result_ok;
 }
 
-enum result string2array(struct allocator* al, struct string* s, char** a)
+enum result buffer2array(struct allocator* al, struct buffer* s, char** a)
 {
     enum result r = allocator_malloc(al, a, s->size + 1);
     if (r == result_error) {
@@ -83,12 +83,12 @@ enum result string2array(struct allocator* al, struct string* s, char** a)
     return result_ok;
 }
 
-enum result array2string(struct allocator* al, char* a, struct string* s)
+enum result array2buffer(struct allocator* al, char* a, struct buffer* s)
 {
     enum result r;
     char* p = a;
     while (*p != '\0') {
-        r = string_add_char(al, s, *p);
+        r = buffer_add_char(al, s, *p);
         if (r == result_error) {
             return r;
         }
@@ -97,7 +97,7 @@ enum result array2string(struct allocator* al, char* a, struct string* s)
     return result_ok;
 }
 
-enum result next_char(struct allocator* al, struct string* s, size_t* pos, struct string* s2)
+enum result next_char(struct allocator* al, struct buffer* s, size_t* pos, struct buffer* s2)
 {
     char c = s->buf[(*pos)++];
     int count;
@@ -105,8 +105,8 @@ enum result next_char(struct allocator* al, struct string* s, size_t* pos, struc
     if (r == result_error) {
         return r;
     }
-    string_clear(s2);
-    r = string_add_char(al, s2, c);
+    buffer_clear(s2);
+    r = buffer_add_char(al, s2, c);
     if (r == result_error) {
         return r;
     }
@@ -116,7 +116,7 @@ enum result next_char(struct allocator* al, struct string* s, size_t* pos, struc
         if (r == result_error) {
             return r;
         }
-        r = string_add_char(al, s2, c);
+        r = buffer_add_char(al, s2, c);
         if (r == result_error) {
             return r;
         }
@@ -128,7 +128,7 @@ enum result next_char(struct allocator* al, struct string* s, size_t* pos, struc
 * if strings are equal, return 1
 * otherwise, return 0
 */
-int string_compare(struct string* a, struct string* b)
+int buffer_compare(struct buffer* a, struct buffer* b)
 {
     if (a->size != b->size) {
         return 0;
@@ -146,7 +146,7 @@ int string_compare(struct string* a, struct string* b)
 * if strings are equal, return 1
 * otherwise, return 0
 */
-int str_compare(struct string* a, char* b)
+int str_compare(struct buffer* a, char* b)
 {
     size_t size = strlen(b);
     if (a->size != size) {

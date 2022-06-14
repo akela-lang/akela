@@ -1,6 +1,6 @@
 #include "assert.h"
 #include "alba/allocator.h"
-#include "alba/ustring.h"
+#include "alba/buffer.h"
 #include "alba/input.h"
 #include "alba/os_win.h"
 #include <windows.h>
@@ -10,29 +10,29 @@ void test_io_string()
 	test_name(__func__);
 
 	struct allocator al;
-	struct string s;
+	struct buffer s;
 	struct string_data sd;
 	enum result r;
 	io_getchar f;
 	io_data d;
 
 	allocator_init(&al);
-	string_init(&s);
-	r = array2string(&al, "hello", &s);
-	assert_ok(r, "array2string");
+	buffer_init(&s);
+	r = array2buffer(&al, "hello", &s);
+	assert_ok(r, "array2buffer");
 	string_data_init(&s, &sd);
 
 	f = string_getchar;
 	d = &sd;
 
-	struct string s2;
-	string_init(&s2);
+	struct buffer s2;
+	buffer_init(&s2);
 	int c;
 	while ((c = f(d)) != EOF) {
-		string_add_char(&al, &s2, c);
+		buffer_add_char(&al, &s2, c);
 	}
 
-	expect_true(string_compare(&s, &s2), "string_compare");
+	expect_true(buffer_compare(&s, &s2), "buffer_compare");
 
 	allocator_destroy(&al);
 }
@@ -65,12 +65,12 @@ void test_io_file()
 
 	io_getchar f = file_getchar;
 	io_data d = fp;
-	struct string s;
+	struct buffer s;
 
-	string_init(&s);
+	buffer_init(&s);
 	int c;
 	while ((c = f(d)) != EOF) {
-		string_add_char(&al, &s, c);
+		buffer_add_char(&al, &s, c);
 	}
 
 	fclose(fp);

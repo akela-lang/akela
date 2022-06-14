@@ -2,7 +2,7 @@
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
-#include "ustring.h"
+#include "buffer.h"
 #include "input.h"
 #include "result.h"
 #include "uconv.h"
@@ -12,7 +12,7 @@ int file_getchar(FILE* fp)
 	return getc(fp);
 }
 
-void string_data_init(struct string* s, struct string_data* sd)
+void string_data_init(struct buffer* s, struct string_data* sd)
 {
 	sd->s = s;
 	sd->pos = 0;
@@ -33,9 +33,9 @@ void input_state_init(io_getchar f, io_data d, UConverter* conv, struct input_st
     is->d = d;
     is->conv = conv;
     is->done = 0;
-    string_init(&is->s);
+    buffer_init(&is->s);
     is->has_next = 0;
-    string_init(&is->next_s);
+    buffer_init(&is->next_s);
 }
 
 void input_state_push_uchar(struct input_state* is)
@@ -52,7 +52,7 @@ void input_state_pop_uchar(struct input_state* is)
     is->has_next = 0;
 }
 
-enum result next_line(struct allocator* al, FILE* f, struct string* s, int is_utf8, int* last_line)
+enum result next_line(struct allocator* al, FILE* f, struct buffer* s, int is_utf8, int* last_line)
 {
     *last_line = 0;
 
@@ -76,7 +76,7 @@ enum result next_line(struct allocator* al, FILE* f, struct string* s, int is_ut
             if (r == result_error) {
                 return r;
             }
-            r = string_add_char(al, s, c);
+            r = buffer_add_char(al, s, c);
             if (r == result_error) {
                 return r;
             }
@@ -87,13 +87,13 @@ enum result next_line(struct allocator* al, FILE* f, struct string* s, int is_ut
                 if (r == result_error) {
                     return r;
                 }
-                r = string_add_char(al, s, c);
+                r = buffer_add_char(al, s, c);
                 if (r == result_error) {
                     return r;
                 }
             }
         } else {
-            r = string_add_char(al, s, c);
+            r = buffer_add_char(al, s, c);
             if (r == result_error) {
                 return r;
             }
@@ -114,7 +114,7 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
         return r;
     }
 
-    string_clear(&is->s);
+    buffer_clear(&is->s);
     is->done = 0;
 
     c = is->f(is->d);
@@ -128,7 +128,7 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
         return r;
     }
 
-    r = string_add_char(al, &is->s, c);
+    r = buffer_add_char(al, &is->s, c);
     if (r == result_error) {
         return r;
     }
@@ -145,7 +145,7 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
             return r;
         }
 
-        r = string_add_char(al, &is->s, c);
+        r = buffer_add_char(al, &is->s, c);
         if (r == result_error) {
             return r;
         }

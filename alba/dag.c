@@ -19,7 +19,7 @@ enum result dag_create_node(struct allocator* al, struct dag_node** n)
 void dag_init_node(struct dag_node* n)
 {
 	n->type = dag_type_none;
-	string_init(&n->value);
+	buffer_init(&n->value);
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;
@@ -96,7 +96,7 @@ void dag_print(struct allocator *al, struct dag_node* root, char** names)
 		if (p->value.size > 0) {
 			char* a;
 			enum result r;
-			r = string2array(al, &p->value, &a);
+			r = buffer2array(al, &p->value, &a);
 			printf(":%s", a);
 		}
 	}

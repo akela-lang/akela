@@ -2,7 +2,7 @@
 #define _TOKEN_H
 
 #include "result.h"
-#include "ustring.h"
+#include "buffer.h"
 
 enum token_enum {
     token_none,
@@ -49,7 +49,7 @@ enum result token_name_init(char** token_name)
 
 struct token {
     enum token_enum type;
-    struct string value;
+    struct buffer value;
 };
 
 struct token_node {
