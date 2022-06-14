@@ -93,7 +93,7 @@ enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_
 	}
 
 	n->type = type;
-	r = match(al, ts, type, "expecting + or -");
+	r = match(al, ts, t0->type, "expecting + or -");
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -232,7 +232,7 @@ enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_
 	}
 
 	n->type = type;
-	r = match(al, ts, type, "expecting * or /");
+	r = match(al, ts, t0->type, "expecting * or /");
 	if (r == result_error) {
 		goto function_error;
 	}

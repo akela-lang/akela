@@ -6,16 +6,13 @@
 #include "parse.h"
 #include "dag.h"
 #include "allocator.h"
+#include "input.h"
+#include "uconv.h"
 
 int main(int argc, char** argv)
 {
     enum result r;
-    int last_line = 0;
-    struct string line;
-    char* a;
     char* filename;
-    struct token_list tl;
-    char* token_name[token_count];
     struct dag_node* root;
 
     if (argc != 2) {
@@ -24,61 +21,36 @@ int main(int argc, char** argv)
     }
 
     filename = argv[1];
-    FILE* f;
-    f = fopen(filename, "r");
-    if (f == NULL) {
+    FILE* fp;
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
         fprintf(stderr, "Could not open file: %s\n", filename);
         return 1;
     }
 
-    string_init(&line);
+    struct allocator al;
+    UConverter* conv;
+    struct input_state is;
+    struct token_state ts;
 
-    token_list_init(&tl);
+    allocator_init(&al);
+    r = conv_open(&conv);
+    if (r == result_error) {
+        fprintf(stderr, "%s\n", error_message);
+        return 1;
+    }
+    input_state_init(file_getchar, fp, conv, &is);
+    token_state_init(&is, &ts);
 
-    r = token_name_init(token_name);
+    r = parse(&al, &ts, &root);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         return 1;
     }
 
-    while(!last_line) {
-        struct allocator al;
-        allocator_init(&al);
-
-        r = next_line(&al, f, &line, 1, &last_line);
-        if (r == result_error) {
-            fprintf(stderr, "%s\n", error_message);
-            return 1;
-        }
-        r = string2array(&al, &line, &a);
-        if (r == result_error) {
-            fprintf(stderr, "%s\n", error_message);
-            return 1;
-        }
-        printf("line: %s\n", a);
-        r = scan(&al, &line, &tl);
-        if (r == result_error) {
-            fprintf(stderr, "%s\n", error_message);
-            return 1;
-        }
-
-        r = token_list_print(&al, &tl, token_name);
-        if (r == result_error) {
-            fprintf(stderr, "%s\n", error_message);
-            return 1;
-        }
-
-        r = parse(&al, &tl, &root);
-        if (r == result_error) {
-            fprintf(stderr, "%s\n", error_message);
-            return 1;
-        }
-
-        string_clear(&line);
-        token_list_reset(&tl);
-        allocator_destroy(&al);
-    }
-
+    allocator_destroy(&al);
+    conv_close(conv);
+    fclose(fp);
     printf("end\n");
     return 0;
 }

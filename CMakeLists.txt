@@ -14,5 +14,5 @@ set_target_properties(icutu PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/ex
 add_library(icuuc STATIC IMPORTED)
 set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icuuc.lib")
 
-# add_subdirectory(alba)
+add_subdirectory(alba)
 add_subdirectory(test)

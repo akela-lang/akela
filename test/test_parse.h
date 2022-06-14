@@ -83,14 +83,15 @@ void test_parse_word()
 	parse_teardown(&al, &ts);
 }
 
-/*
 void test_parse_num_negative()
 {
 	test_name(__func__);
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "-30", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "-30", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_sign, "sign");
@@ -104,7 +105,7 @@ void test_parse_num_negative()
 	assert_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "30", "30");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_num_positive()
@@ -113,7 +114,9 @@ void test_parse_num_positive()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "+30", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "+30", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_sign, "sign");
@@ -127,7 +130,7 @@ void test_parse_num_positive()
 	assert_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "30", "30");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_add()
@@ -136,7 +139,9 @@ void test_parse_add()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "speed + 1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "speed + 1", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -153,7 +158,7 @@ void test_parse_add()
 
 	assert_null(dag_get_child(root, 2), "only 2 children");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_add_positive()
@@ -162,7 +167,9 @@ void test_parse_add_positive()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "speed + +1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "speed + +1", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -187,7 +194,7 @@ void test_parse_add_positive()
 	expect_str(&right2->value, "1", "1");
 
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_add_negative()
@@ -196,7 +203,9 @@ void test_parse_add_negative()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "speed + -1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "speed + -1", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -221,7 +230,7 @@ void test_parse_add_negative()
 	expect_str(&right2->value, "1", "1");
 
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_sub()
@@ -230,7 +239,9 @@ void test_parse_sub()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "100 - delta", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "100 - delta", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_minus, "minus");
@@ -247,7 +258,7 @@ void test_parse_sub()
 
 	assert_null(dag_get_child(root, 2), "only 2 children");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_sub_positive()
@@ -256,7 +267,9 @@ void test_parse_sub_positive()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "speed - +1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "speed - +1", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_minus, "minus");
@@ -281,7 +294,7 @@ void test_parse_sub_positive()
 	expect_str(&right2->value, "1", "1");
 
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_sub_negative()
@@ -290,7 +303,9 @@ void test_parse_sub_negative()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "speed - -1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "speed - -1", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_minus, "minus");
@@ -315,7 +330,7 @@ void test_parse_sub_negative()
 	expect_str(&right2->value, "1", "1");
 
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 
@@ -325,7 +340,9 @@ void test_parse_mult()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "5 * 2", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "5 * 2", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_mult, "mult");
@@ -340,7 +357,7 @@ void test_parse_mult()
 	expect_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "2", "2");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_mult_positive()
@@ -349,7 +366,9 @@ void test_parse_mult_positive()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "speed * +1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "speed * +1", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_mult, "mult");
@@ -374,7 +393,7 @@ void test_parse_mult_positive()
 	expect_str(&right2->value, "1", "1");
 
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_mult_negative()
@@ -383,7 +402,9 @@ void test_parse_mult_negative()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "speed * -1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "speed * -1", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_mult, "mult");
@@ -408,7 +429,7 @@ void test_parse_mult_negative()
 	expect_str(&right2->value, "1", "1");
 
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 
@@ -418,7 +439,9 @@ void test_parse_divide()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "52 / 2", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "52 / 2", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_divide, "divide");
@@ -433,7 +456,7 @@ void test_parse_divide()
 	expect_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "2", "2");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_add_add()
@@ -442,7 +465,9 @@ void test_parse_add_add()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "1 + 2 + 3", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "1 + 2 + 3", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -468,7 +493,7 @@ void test_parse_add_add()
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_mult_mult()
@@ -477,7 +502,9 @@ void test_parse_mult_mult()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "1 * 2 * 3", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "1 * 2 * 3", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_mult, "mult");
@@ -501,7 +528,7 @@ void test_parse_mult_mult()
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_add_mult()
@@ -510,7 +537,9 @@ void test_parse_add_mult()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "5 + 3 * 2", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "5 + 3 * 2", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -534,7 +563,7 @@ void test_parse_add_mult()
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "2", "2");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_mult_add()
@@ -543,7 +572,9 @@ void test_parse_mult_add()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "4 * 3 + 2", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "4 * 3 + 2", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -567,7 +598,7 @@ void test_parse_mult_add()
 	expect_int_equal(right->type, dag_type_number, "number 2");
 	expect_str(&right->value, "2", "2");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_num()
@@ -576,13 +607,15 @@ void test_parse_paren_num()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "(32)", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "(32)", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_number, "number");
 	expect_str(&root->value, "32", "32");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_add()
@@ -591,7 +624,9 @@ void test_parse_paren_add()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "(speed + 1)", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "(speed + 1)", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -608,7 +643,7 @@ void test_parse_paren_add()
 
 	assert_null(dag_get_child(root, 2), "only 2 children");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_add2()
@@ -617,7 +652,9 @@ void test_parse_paren_add2()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "(speed) + 1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "(speed) + 1", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -634,7 +671,7 @@ void test_parse_paren_add2()
 
 	assert_null(dag_get_child(root, 2), "only 2 children");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_add3()
@@ -643,7 +680,9 @@ void test_parse_paren_add3()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "speed + (1)", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "speed + (1)", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -660,7 +699,7 @@ void test_parse_paren_add3()
 
 	assert_null(dag_get_child(root, 2), "only 2 children");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_add_add()
@@ -669,7 +708,9 @@ void test_parse_paren_add_add()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "1 + (2 + 3)", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "1 + (2 + 3)", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -695,7 +736,7 @@ void test_parse_paren_add_add()
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_add_add2()
@@ -704,7 +745,9 @@ void test_parse_paren_add_add2()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "(1 + 2) + 3", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "(1 + 2) + 3", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -728,7 +771,7 @@ void test_parse_paren_add_add2()
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_mult()
@@ -737,7 +780,9 @@ void test_parse_paren_mult()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "(5 * 2)", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "(5 * 2)", &ts, &root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_mult, "mult");
@@ -752,7 +797,7 @@ void test_parse_paren_mult()
 	expect_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "2", "2");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_mult_mult()
@@ -761,7 +806,9 @@ void test_parse_paren_mult_mult()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "1 * (2 * 3)", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "1 * (2 * 3)", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_mult, "mult");
@@ -785,7 +832,7 @@ void test_parse_paren_mult_mult()
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_paren_mult_mult2()
@@ -794,7 +841,9 @@ void test_parse_paren_mult_mult2()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "(1 * 2) * 3", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "(1 * 2) * 3", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_mult, "mult");
@@ -818,7 +867,7 @@ void test_parse_paren_mult_mult2()
 	expect_int_equal(right2->type, dag_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_assign()
@@ -827,7 +876,9 @@ void test_parse_assign()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "a = 1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "a = 1", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_assign, "assign");
@@ -842,7 +893,7 @@ void test_parse_assign()
 	expect_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "1", "1");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_assign2()
@@ -851,7 +902,9 @@ void test_parse_assign2()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "a = 1 + 2", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "a = 1 + 2", &ts, &root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_assign, "assign");
@@ -875,7 +928,7 @@ void test_parse_assign2()
 	expect_int_equal(right2->type, dag_type_number, "number2");
 	expect_str(&right2->value, "2", "2");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
 
 void test_parse_stmts()
@@ -884,7 +937,9 @@ void test_parse_stmts()
 
 	struct allocator al;
 	struct dag_node* root;
-	parse_setup(&al, "i + 1\nx * 1", &root);
+	struct token_state ts;
+
+	parse_setup(&al, "i + 1\nx * 1", &ts, &root);
 
 	assert_ptr(root, "ptr1");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
@@ -917,15 +972,14 @@ void test_parse_stmts()
 	expect_int_equal(right3->type, dag_type_number, "number2");
 	expect_str(&right3->value, "1", "1");
 
-	parse_teardown(&al);
+	parse_teardown(&al, &ts);
 }
-*/
+
 
 void test_parse()
 {
 	test_parse_num();
 	test_parse_word();
-	/*
 	test_parse_num_negative();
 	test_parse_num_positive();
 	test_parse_add();
@@ -954,7 +1008,6 @@ void test_parse()
 	test_parse_assign();
 	test_parse_assign2();
 	test_parse_stmts();
-	*/
 }
 
 #endif

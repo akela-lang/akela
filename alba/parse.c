@@ -36,7 +36,7 @@ enum result get_lookahead(struct allocator* al, struct token_state* ts, int coun
 		return r;
 	}
 
-	for (int i = *num; i <= count; i++) {
+	for (; *num < count; (*num)++) {
 		if (ts->is->done) {
 			break;
 		}
@@ -52,7 +52,6 @@ enum result get_lookahead(struct allocator* al, struct token_state* ts, int coun
 		if (r == result_error) {
 			return r;
 		}
-		(*num)++;
 	}
 
 	return r;
