@@ -70,7 +70,7 @@ enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_
 	if (r == result_error) {
 		goto function_error;
 	}
-	struct token* t0 = get_token(ts->lookahead.head, 0);
+	struct token* t0 = get_token(&ts->lookahead, 0);
 
 	/* e */
 	if (t0 == NULL) {
@@ -201,7 +201,7 @@ enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_
 	if (r == result_error) {
 		goto function_error;
 	}
-	struct token* t0 = get_token(ts->lookahead.head, 0);
+	struct token* t0 = get_token(&ts->lookahead, 0);
 
 	/* e */
 	if (t0 == NULL) {
@@ -295,8 +295,8 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 	}
 	struct token* t0;
 	struct token* t1;
-	t0 = get_token(ts->lookahead.head, 0);
-	t1 = get_token(ts->lookahead.head, 1);
+	t0 = get_token(&ts->lookahead, 0);
+	t1 = get_token(&ts->lookahead, 1);
 
 	/* number or word */
 	if (t0->type == token_number || t0->type == token_word) {

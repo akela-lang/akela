@@ -88,7 +88,7 @@ enum parse_result stmts_prime(struct allocator* al, struct token_state* ts, stru
 	}
 
 	/* \n stmts */
-	struct token* t = get_token(ts->lookahead.head, 0);
+	struct token* t = get_token(&ts->lookahead, 0);
 	if (t->type == token_newline) {
 		r = match(al, ts, token_newline, "expecting newline");
 		if (r == result_error) {
@@ -134,8 +134,8 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 
 	/* word = expr */
-	struct token* t0 = get_token(ts->lookahead.head, 0);
-	struct token* t1 = get_token(ts->lookahead.head, 1);
+	struct token* t0 = get_token(&ts->lookahead, 0);
+	struct token* t1 = get_token(&ts->lookahead, 1);
 	if (t0 && t0->type == token_word && t1 && t1->type == token_equal) {
 		r = match(al, ts, token_word, "expected word");
 		if (r == result_error) {
@@ -277,7 +277,7 @@ enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** 
 		goto function_error;
 	}
 
-	struct token* t0 = get_token(ts->lookahead.head, 0);
+	struct token* t0 = get_token(&ts->lookahead, 0);
 
 	if (t0 && t0->type == token_word) {
 		r = match(al, ts, token_word, "expecting word");
@@ -329,8 +329,8 @@ enum result seq_prime(struct allocator* al, struct token_state* ts, struct dag_n
 	int num;
 
 	r = get_lookahead(al, ts, 2, &num);
-	struct token* t0 = get_token(ts->lookahead.head, 0);
-	struct token* t1 = get_token(ts->lookahead.head, 1);
+	struct token* t0 = get_token(&ts->lookahead, 0);
+	struct token* t1 = get_token(&ts->lookahead, 1);
 
 	if (t0 && t0->type == token_comma && t1 && t1->type == token_word) {
 		r = match(al, ts, token_comma, "expecting comma");

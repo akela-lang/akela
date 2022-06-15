@@ -73,7 +73,7 @@ void token_init(struct token* t);
 enum result token_name_init(char** token_name);
 void token_reset(struct token* t);
 void token_list_init(struct token_list* tl);
-struct token* get_token(struct token_node* head, size_t pos);
+struct token* get_token(struct token_list* tl, size_t pos);
 int token_find_first(struct token_list* tl, enum token_enum type);
 int token_find_last(struct token_list* tl, enum token_enum type);
 int token_list_count(struct token_list* tl);
