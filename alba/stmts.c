@@ -41,11 +41,12 @@ enum parse_result stmts(struct allocator* al, struct token_state* ts, struct dag
 		dag_add_child(n, a);
 	}
 
-	if (b && b->type == dag_type_stmts) {
-		for (struct dag_node* x = b->head; x; x = x->next) {
-			dag_add_child(n, b);
-		}
-	}	else if (b) {
+	if (a && b && b->type == dag_type_stmts && b->head) {
+		a->next = b->head;
+		b->head->prev = a;
+		n->tail = b->tail;
+
+	} else if (b) {
 		dag_add_child(n, b);
 	}
 
