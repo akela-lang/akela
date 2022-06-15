@@ -280,6 +280,7 @@ function_error:
 *	| + word
 *	| - word
 *	| (expr)
+*	| word(cseq)
 */
 enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
@@ -298,8 +299,49 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 	t0 = get_token(&ts->lookahead, 0);
 	t1 = get_token(&ts->lookahead, 1);
 
-	/* number or word */
-	if (t0->type == token_number || t0->type == token_id) {
+	/* function call*/
+	if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
+		r = match(al, ts, token_id, "expecting id");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = match(al, ts, token_left_paren, "expecting left parenthesis");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+		n->type = dag_type_call;
+
+		struct dag_node* a = NULL;
+		r = dag_create_node(al, &a);
+		if (r == result_error) {
+			goto function_error;
+		}
+		a->type = dag_type_id;
+		buffer_copy(al, &t0->value, &a->value);
+		dag_add_child(n, a);
+
+		struct dag_node* b = NULL;
+		r = cseq(al, ts, &b, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (b) {
+			dag_add_child(n, b);
+		}
+
+		r = match(al, ts, token_right_paren, "expecting right parenthesis");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		/* number or word */
+	} else if (t0 && (t0->type == token_number || t0->type == token_id)) {
 		r = dag_create_node(al, &n);
 		if (r == result_error) {
 			goto function_error;
@@ -322,7 +364,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 	}
 
 	/* sign and number or word */
-	else if ((t0->type == token_plus || t0->type == token_minus) && (t1->type == token_number || t1->type == token_id)) {
+	else if (t0 && (t0->type == token_plus || t0->type == token_minus) && t1 && (t1->type == token_number || t1->type == token_id)) {
 		r = dag_create_node(al, &n);
 		if (r == result_error) {
 			goto function_error;
@@ -395,6 +437,92 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 
 function_success:
 	*root = n;
+	return r;
+
+function_error:
+	return r;
+}
+
+/*
+* cseq -> factor cseq'
+*		| e
+*/
+enum result cseq(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+{
+	enum result r = result_ok;
+	struct dag_node* n = NULL;
+
+	struct dag_node* a = NULL;
+	r = factor(al, ts, &a, message);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	if (a) {
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+		n->type = dag_type_cseq;
+
+		dag_add_child(n, a);
+
+		r = cseq_prime(al, ts, n, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+	}
+
+function_success:
+	*root = n;
+	return r;
+
+function_error:
+	return r;
+}
+
+/*
+* cseq' -> , factor cseq'
+*		 | e
+*/
+enum result cseq_prime(struct allocator* al, struct token_state* ts, struct dag_node* parent, char** message)
+{
+	enum result r = result_ok;
+	int num;
+
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	struct token* t0 = get_token(&ts->lookahead, 0);
+
+	if (t0 && t0->type == token_comma) {
+		r = match(al, ts, token_comma, "expecting comma");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		struct dag_node* a = NULL;
+		r = factor(al, ts, &a, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		if (!a) {
+			r = set_error("expected factor");
+			goto function_error;
+		}
+
+		dag_add_child(parent, a);
+
+		r = cseq_prime(al, ts, parent, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+	}
+
+function_success:
 	return r;
 
 function_error:

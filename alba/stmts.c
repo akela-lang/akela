@@ -207,7 +207,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 
 		struct dag_node* b;
-		r = seq(al, ts, &b, message);
+		r = dseq(al, ts, &b, message);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -263,10 +263,10 @@ function_error:
 }
 
 /*
-* seq -> word seq'
+* dseq -> word dseq'
 *	   | e
 */
-enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result dseq(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -290,7 +290,7 @@ enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** 
 			goto function_error;
 		}
 
-		n->type = dag_type_seq;
+		n->type = dag_type_dseq;
 
 		struct dag_node* a = NULL;
 		r = dag_create_node(al, &a);
@@ -299,11 +299,11 @@ enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** 
 		dag_add_child(n, a);
 
 		struct dag_node* b = NULL;
-		r = seq_prime(al, ts, &b, message);
+		r = dseq_prime(al, ts, &b, message);
 		if (r == result_error) {
 			goto function_error;
 		}
-		if (b && b->type == dag_type_seq && b->head) {
+		if (b && b->type == dag_type_dseq && b->head) {
 			a->next = b->head;
 			b->head->prev = a;
 			n->tail = b->tail;
@@ -319,10 +319,10 @@ function_error:
 }
 
 /*
-* seq' -> , word seq'
+* dseq' -> , word dseq'
 *		| e
 */
-enum result seq_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result dseq_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	struct dag_node* n = NULL;
 	enum result r = result_ok;
@@ -347,7 +347,7 @@ enum result seq_prime(struct allocator* al, struct token_state* ts, struct dag_n
 		if (r == result_error) {
 			goto function_error;
 		}
-		n->type = dag_type_seq;
+		n->type = dag_type_dseq;
 
 		struct dag_node* a = NULL;
 		r = dag_create_node(al, &a);
@@ -359,11 +359,11 @@ enum result seq_prime(struct allocator* al, struct token_state* ts, struct dag_n
 		dag_add_child(n, a);
 
 		struct dag_node* b = NULL;
-		r = seq_prime(al, ts, &b, message);
+		r = dseq_prime(al, ts, &b, message);
 		if (r == result_error) {
 			goto function_error;
 		}
-		if (b && b->type == dag_type_seq && b->head) {
+		if (b && b->type == dag_type_dseq && b->head) {
 			a->next = b->head;
 			b->head->prev = a;
 			n->tail = b->tail;

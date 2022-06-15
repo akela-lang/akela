@@ -1152,7 +1152,7 @@ void test_parse_function2()
 
 	struct dag_node* seq = dag_get_child(root, 1);
 	assert_ptr(seq, "ptr seq");
-	expect_int_equal(seq->type, dag_type_seq, "seq");
+	expect_int_equal(seq->type, dag_type_dseq, "seq");
 
 	struct dag_node* seq_a = dag_get_child(seq, 0);
 	assert_ptr(seq_a, "ptr seq a");
@@ -1216,7 +1216,7 @@ void test_parse_function3()
 
 	struct dag_node* seq = dag_get_child(root, 1);
 	assert_ptr(seq, "ptr seq");
-	expect_int_equal(seq->type, dag_type_seq, "seq");
+	expect_int_equal(seq->type, dag_type_dseq, "seq");
 
 	struct dag_node* seq_a = dag_get_child(seq, 0);
 	assert_ptr(seq_a, "ptr seq a");
@@ -1285,7 +1285,7 @@ void test_parse_function4()
 
 	struct dag_node* seq = dag_get_child(root, 1);
 	assert_ptr(seq, "ptr seq");
-	expect_int_equal(seq->type, dag_type_seq, "seq");
+	expect_int_equal(seq->type, dag_type_dseq, "seq");
 
 	struct dag_node* seq_a = dag_get_child(seq, 0);
 	assert_ptr(seq_a, "ptr seq a");
@@ -1340,6 +1340,201 @@ void test_parse_function4()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_call()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "foo() + 10", &ts, &root);
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_plus, "plus");
+
+	struct dag_node* a = dag_get_child(root, 0);
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_call, "call");
+
+	struct dag_node* b = dag_get_child(a, 0);
+	assert_ptr(b, "ptr b");
+	expect_int_equal(b->type, dag_type_id, "id");
+	expect_str(&b->value, "foo", "foo");
+
+	struct dag_node* c = dag_get_child(a, 1);
+	assert_null(c, "null c");
+
+	struct dag_node* d = dag_get_child(root, 1);
+	assert_ptr(d, "ptr d");
+	expect_int_equal(d->type, dag_type_number, "number");
+	expect_str(&d->value, "10", "10");
+
+	struct dag_node* e = dag_get_child(root, 2);
+	assert_null(e, "null e");
+
+	parse_teardown(&al, &ts);
+}
+
+void test_parse_call2()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "foo(x) + 10", &ts, &root);
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_plus, "plus");
+
+	struct dag_node* a = dag_get_child(root, 0);
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_call, "call");
+
+	struct dag_node* b = dag_get_child(a, 0);
+	assert_ptr(b, "ptr b");
+	expect_int_equal(b->type, dag_type_id, "id");
+	expect_str(&b->value, "foo", "foo");
+
+	struct dag_node* cseq = dag_get_child(a, 1);
+	assert_ptr(cseq, "ptr cseq");
+	expect_int_equal(cseq->type, dag_type_cseq, "cseq");
+
+	struct dag_node* cseq_a = dag_get_child(cseq, 0);
+	assert_ptr(cseq_a, "ptr cseq_a");
+	expect_int_equal(cseq_a->type, dag_type_id, "cseq_a");
+	expect_str(&cseq_a->value, "x", "x cseq_a");
+
+	struct dag_node* cseq_b = dag_get_child(cseq, 1);
+	assert_null(cseq_b, "null cseq_b");
+
+	struct dag_node* c = dag_get_child(a, 2);
+	assert_null(c, "null c");
+
+	struct dag_node* d = dag_get_child(root, 1);
+	assert_ptr(d, "ptr d");
+	expect_int_equal(d->type, dag_type_number, "number");
+	expect_str(&d->value, "10", "10");
+
+	struct dag_node* e = dag_get_child(root, 2);
+	assert_null(e, "null e");
+
+	parse_teardown(&al, &ts);
+}
+
+void test_parse_call3()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "foo(x,y) + 10", &ts, &root);
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_plus, "plus");
+
+	struct dag_node* a = dag_get_child(root, 0);
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_call, "call");
+
+	struct dag_node* b = dag_get_child(a, 0);
+	assert_ptr(b, "ptr b");
+	expect_int_equal(b->type, dag_type_id, "id");
+	expect_str(&b->value, "foo", "foo");
+
+	struct dag_node* cseq = dag_get_child(a, 1);
+	assert_ptr(cseq, "ptr cseq");
+	expect_int_equal(cseq->type, dag_type_cseq, "cseq");
+
+	struct dag_node* cseq_a = dag_get_child(cseq, 0);
+	assert_ptr(cseq_a, "ptr cseq_a");
+	expect_int_equal(cseq_a->type, dag_type_id, "cseq_a");
+	expect_str(&cseq_a->value, "x", "x cseq_a");
+
+	struct dag_node* cseq_b = dag_get_child(cseq, 1);
+	assert_ptr(cseq_b, "ptr cseq_b");
+	expect_int_equal(cseq_b->type, dag_type_id, "cseq_b");
+	expect_str(&cseq_b->value, "y", "y cseq_b");
+
+	struct dag_node* cseq_c = dag_get_child(cseq, 2);
+	assert_null(cseq_c, "null cseq_c");
+
+	struct dag_node* c = dag_get_child(a, 2);
+	assert_null(c, "null c");
+
+	struct dag_node* d = dag_get_child(root, 1);
+	assert_ptr(d, "ptr d");
+	expect_int_equal(d->type, dag_type_number, "number");
+	expect_str(&d->value, "10", "10");
+
+	struct dag_node* e = dag_get_child(root, 2);
+	assert_null(e, "null e");
+
+	parse_teardown(&al, &ts);
+}
+
+void test_parse_call4()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "foo(x,y,1) + 10", &ts, &root);
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_plus, "plus");
+
+	struct dag_node* a = dag_get_child(root, 0);
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_call, "call");
+
+	struct dag_node* b = dag_get_child(a, 0);
+	assert_ptr(b, "ptr b");
+	expect_int_equal(b->type, dag_type_id, "id");
+	expect_str(&b->value, "foo", "foo");
+
+	struct dag_node* cseq = dag_get_child(a, 1);
+	assert_ptr(cseq, "ptr cseq");
+	expect_int_equal(cseq->type, dag_type_cseq, "cseq");
+
+	struct dag_node* cseq_a = dag_get_child(cseq, 0);
+	assert_ptr(cseq_a, "ptr cseq_a");
+	expect_int_equal(cseq_a->type, dag_type_id, "cseq_a");
+	expect_str(&cseq_a->value, "x", "x cseq_a");
+
+	struct dag_node* cseq_b = dag_get_child(cseq, 1);
+	assert_ptr(cseq_b, "ptr cseq_b");
+	expect_int_equal(cseq_b->type, dag_type_id, "cseq_b");
+	expect_str(&cseq_b->value, "y", "y cseq_b");
+
+	struct dag_node* cseq_c = dag_get_child(cseq, 2);
+	assert_ptr(cseq_c, "ptr cseq_c");
+	expect_int_equal(cseq_c->type, dag_type_number, "cseq_c");
+	expect_str(&cseq_c->value, "1", "1 cseq_c");
+
+	struct dag_node* cseq_d = dag_get_child(cseq, 3);
+	assert_null(cseq_d, "null cseq_d");
+
+	struct dag_node* c = dag_get_child(a, 2);
+	assert_null(c, "null c");
+
+	struct dag_node* d = dag_get_child(root, 1);
+	assert_ptr(d, "ptr d");
+	expect_int_equal(d->type, dag_type_number, "number");
+	expect_str(&d->value, "10", "10");
+
+	struct dag_node* e = dag_get_child(root, 2);
+	assert_null(e, "null e");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse()
 {
 	test_parse_num();
@@ -1378,6 +1573,10 @@ void test_parse()
 	test_parse_function2();
 	test_parse_function3();
 	test_parse_function4();
+	test_parse_call();
+	test_parse_call2();
+	test_parse_call3();
+	test_parse_call4();
 }
 
 #endif
