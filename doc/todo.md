@@ -1,5 +1,4 @@
 # Todo
-* count unit test cases and checks
 * function calling
 * if statement
 * elseif statement
