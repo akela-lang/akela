@@ -136,8 +136,8 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 	/* word = expr */
 	struct token* t0 = get_token(&ts->lookahead, 0);
 	struct token* t1 = get_token(&ts->lookahead, 1);
-	if (t0 && t0->type == token_word && t1 && t1->type == token_equal) {
-		r = match(al, ts, token_word, "expected word");
+	if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
+		r = match(al, ts, token_id, "expected word");
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -157,7 +157,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		if (r == result_error) {
 			goto function_error;
 		}
-		a->type = dag_type_word;
+		a->type = dag_type_id;
 		r = buffer_copy(al, &t0->value, &a->value);
 		if (r == result_error) {
 			goto function_error;
@@ -188,7 +188,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 		n->type = dag_type_function;
 
-		r = match(al, ts, token_word, "expecting word");
+		r = match(al, ts, token_id, "expecting word");
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -197,7 +197,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		if (r == result_error) {
 			goto function_error;
 		}
-		a->type = dag_type_word;
+		a->type = dag_type_id;
 		buffer_copy(al, &a->value, &t1->value);
 		dag_add_child(n, a);
 
@@ -279,8 +279,8 @@ enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** 
 
 	struct token* t0 = get_token(&ts->lookahead, 0);
 
-	if (t0 && t0->type == token_word) {
-		r = match(al, ts, token_word, "expecting word");
+	if (t0 && t0->type == token_id) {
+		r = match(al, ts, token_id, "expecting word");
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -294,7 +294,7 @@ enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** 
 
 		struct dag_node* a = NULL;
 		r = dag_create_node(al, &a);
-		a->type = dag_type_word;
+		a->type = dag_type_id;
 		buffer_copy(al, &t0->value, &a->value);
 		dag_add_child(n, a);
 
@@ -332,13 +332,13 @@ enum result seq_prime(struct allocator* al, struct token_state* ts, struct dag_n
 	struct token* t0 = get_token(&ts->lookahead, 0);
 	struct token* t1 = get_token(&ts->lookahead, 1);
 
-	if (t0 && t0->type == token_comma && t1 && t1->type == token_word) {
+	if (t0 && t0->type == token_comma && t1 && t1->type == token_id) {
 		r = match(al, ts, token_comma, "expecting comma");
 		if (r == result_error) {
 			goto function_error;
 		}
 
-		r = match(al, ts, token_word, "expecting word");
+		r = match(al, ts, token_id, "expecting word");
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -354,7 +354,7 @@ enum result seq_prime(struct allocator* al, struct token_state* ts, struct dag_n
 		if (r == result_error) {
 			goto function_error;
 		}
-		a->type = dag_type_word;
+		a->type = dag_type_id;
 		buffer_copy(al, &t1->value, &a->value);
 		dag_add_child(n, a);
 

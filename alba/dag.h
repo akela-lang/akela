@@ -7,7 +7,7 @@
 
 enum dag_type {
 	dag_type_none,
-	dag_type_word,
+	dag_type_id,
 	dag_type_sign,
 	dag_type_number,
 	dag_type_assign,
@@ -30,7 +30,7 @@ enum result dag_set_names(char** names)
 	}
 
 	names[dag_type_none] = "none";
-	names[dag_type_word] = "word";
+	names[dag_type_id] = "word";
 	names[dag_type_sign] = "sign";
 	names[dag_type_number] = "number";
 	names[dag_type_assign] = "assign";

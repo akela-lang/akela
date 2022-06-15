@@ -81,8 +81,8 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     *got_token = 0;
 
     if (u_isalpha(is->uc)) {
-        *state = state_word;
-        t->type = token_word;
+        *state = state_id;
+        t->type = token_id;
         buffer_copy(al, &is->bf, &t->value);
     } else if (u_isdigit(is->uc)) {
         *state = state_number;
@@ -196,7 +196,7 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
     while (get_uchar(al, is) != result_error && !is->done) {
         if (state == state_start) {
             r = process_char_start(al, is, &state, got_token, tf);
-        } else if (state == state_word) {
+        } else if (state == state_id) {
             r = process_char_word(al, is, &state, got_token, tf);
         } else if (state == state_number) {
             r = process_char_number(al, is, &state, got_token, tf);
@@ -216,7 +216,7 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
     }
 
     if (state != state_start && tf->type != token_none) {
-        if (state == state_word) {
+        if (state == state_id) {
             check_reserved_words(tf);
         }
         state = state_start;

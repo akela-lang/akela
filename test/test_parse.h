@@ -67,7 +67,7 @@ void test_parse_num()
 	parse_teardown(&al, &ts);
 }
 
-void test_parse_word()
+void test_parse_id()
 {
 	test_name(__func__);
 
@@ -78,7 +78,7 @@ void test_parse_word()
 	parse_setup(&al, "lot", &ts, &root);
 
 	assert_ptr(root, "root");
-	expect_int_equal(root->type, dag_type_word, "word");
+	expect_int_equal(root->type, dag_type_id, "id");
 	expect_str(&root->value, "lot", "lot");
 
 	parse_teardown(&al, &ts);
@@ -149,7 +149,7 @@ void test_parse_add()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -177,7 +177,7 @@ void test_parse_add_positive()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -213,7 +213,7 @@ void test_parse_add_negative()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -254,7 +254,7 @@ void test_parse_sub()
 
 	struct dag_node* right = dag_get_child(root, 1);
 	assert_ptr(right, "right");
-	expect_int_equal(right->type, dag_type_word, "word");
+	expect_int_equal(right->type, dag_type_id, "id");
 	expect_str(&right->value, "delta", "delta");
 
 	assert_null(dag_get_child(root, 2), "only 2 children");
@@ -277,7 +277,7 @@ void test_parse_sub_positive()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -313,7 +313,7 @@ void test_parse_sub_negative()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -376,7 +376,7 @@ void test_parse_mult_positive()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -412,7 +412,7 @@ void test_parse_mult_negative()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -634,7 +634,7 @@ void test_parse_paren_add()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -662,7 +662,7 @@ void test_parse_paren_add2()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -690,7 +690,7 @@ void test_parse_paren_add3()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "speed", "speed");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -886,7 +886,7 @@ void test_parse_assign()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "a", "a");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -912,7 +912,7 @@ void test_parse_assign2()
 
 	struct dag_node* left = dag_get_child(root, 0);
 	assert_ptr(left, "left");
-	expect_int_equal(left->type, dag_type_word, "word");
+	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "a", "a");
 
 	struct dag_node* right = dag_get_child(root, 1);
@@ -951,7 +951,7 @@ void test_parse_stmts()
 
 	struct dag_node* left2 = dag_get_child(left, 0);
 	assert_ptr(left2, "left2");
-	expect_int_equal(left2->type, dag_type_word, "word");
+	expect_int_equal(left2->type, dag_type_id, "id");
 	expect_str(&left2->value, "i", "i");
 
 	struct dag_node* right = dag_get_child(left, 1);
@@ -965,7 +965,7 @@ void test_parse_stmts()
 
 	struct dag_node* left3 = dag_get_child(right2, 0);
 	assert_ptr(left3, "left3");
-	expect_int_equal(left3->type, dag_type_word, "word");
+	expect_int_equal(left3->type, dag_type_id, "id");
 	expect_str(&left3->value, "x", "x");
 
 	struct dag_node* right3 = dag_get_child(right2, 1);
@@ -995,7 +995,7 @@ void test_parse_stmts2()
 
 	struct dag_node* b = dag_get_child(a, 0);
 	assert_ptr(b, "ptr b");
-	expect_int_equal(b->type, dag_type_word, "word b");
+	expect_int_equal(b->type, dag_type_id, "id b");
 	expect_str(&b->value, "x", "x b");
 
 	struct dag_node* c = dag_get_child(a, 1);
@@ -1039,7 +1039,7 @@ void test_parse_stmts3()
 
 	struct dag_node* b = dag_get_child(a, 0);
 	assert_ptr(b, "ptr b");
-	expect_int_equal(b->type, dag_type_word, "word b");
+	expect_int_equal(b->type, dag_type_id, "id b");
 	expect_str(&b->value, "x", "x b");
 
 	struct dag_node* c = dag_get_child(a, 1);
@@ -1067,12 +1067,12 @@ void test_parse_stmts3()
 
 	struct dag_node* h = dag_get_child(g, 0);
 	assert_ptr(h, "ptr h");
-	expect_int_equal(h->type, dag_type_word, "word h");
+	expect_int_equal(h->type, dag_type_id, "id h");
 	expect_str(&h->value, "y", "y h");
 
 	struct dag_node* i = dag_get_child(g, 1);
 	assert_ptr(i, "ptr i");
-	expect_int_equal(i->type, dag_type_word, "word i");
+	expect_int_equal(i->type, dag_type_id, "id i");
 	expect_str(&i->value, "z", "z c");
 
 	parse_teardown(&al, &ts);
@@ -1093,7 +1093,7 @@ void test_parse_function()
 
 	struct dag_node* a = dag_get_child(root, 0);
 	assert_ptr(a, "ptr a");
-	expect_int_equal(a->type, dag_type_word, "word");
+	expect_int_equal(a->type, dag_type_id, "id");
 
 	struct dag_node* b = dag_get_child(root, 1);
 	assert_ptr(b, "ptr b");
@@ -1108,7 +1108,7 @@ void test_parse_function()
 
 	struct dag_node* e = dag_get_child(d, 0);
 	assert_ptr(e, "ptr e");
-	expect_int_equal(e->type, dag_type_word, "word e");
+	expect_int_equal(e->type, dag_type_id, "id e");
 	expect_str(&e->value, "x", "x");
 
 	struct dag_node* f = dag_get_child(d, 1);
@@ -1148,7 +1148,7 @@ void test_parse_function2()
 
 	struct dag_node* a = dag_get_child(root, 0);
 	assert_ptr(a, "ptr a");
-	expect_int_equal(a->type, dag_type_word, "word");
+	expect_int_equal(a->type, dag_type_id, "id");
 
 	struct dag_node* seq = dag_get_child(root, 1);
 	assert_ptr(seq, "ptr seq");
@@ -1156,7 +1156,7 @@ void test_parse_function2()
 
 	struct dag_node* seq_a = dag_get_child(seq, 0);
 	assert_ptr(seq_a, "ptr seq a");
-	expect_int_equal(seq_a->type, dag_type_word, "word seq_a");
+	expect_int_equal(seq_a->type, dag_type_id, "id seq_a");
 	expect_str(&seq_a->value, "x", "x seq_a");
 
 	struct dag_node* b = dag_get_child(root, 2);
@@ -1172,7 +1172,7 @@ void test_parse_function2()
 
 	struct dag_node* e = dag_get_child(d, 0);
 	assert_ptr(e, "ptr e");
-	expect_int_equal(e->type, dag_type_word, "word e");
+	expect_int_equal(e->type, dag_type_id, "id e");
 	expect_str(&e->value, "x", "x");
 
 	struct dag_node* f = dag_get_child(d, 1);
@@ -1212,7 +1212,7 @@ void test_parse_function3()
 
 	struct dag_node* a = dag_get_child(root, 0);
 	assert_ptr(a, "ptr a");
-	expect_int_equal(a->type, dag_type_word, "word");
+	expect_int_equal(a->type, dag_type_id, "id");
 
 	struct dag_node* seq = dag_get_child(root, 1);
 	assert_ptr(seq, "ptr seq");
@@ -1220,12 +1220,12 @@ void test_parse_function3()
 
 	struct dag_node* seq_a = dag_get_child(seq, 0);
 	assert_ptr(seq_a, "ptr seq a");
-	expect_int_equal(seq_a->type, dag_type_word, "word seq_a");
+	expect_int_equal(seq_a->type, dag_type_id, "id seq_a");
 	expect_str(&seq_a->value, "x", "x seq_a");
 
 	struct dag_node* seq_b = dag_get_child(seq, 1);
 	assert_ptr(seq_b, "ptr seq b");
-	expect_int_equal(seq_b->type, dag_type_word, "word seq_b");
+	expect_int_equal(seq_b->type, dag_type_id, "id seq_b");
 	expect_str(&seq_b->value, "y", "y seq_b");
 
 	struct dag_node* b = dag_get_child(root, 2);
@@ -1241,7 +1241,7 @@ void test_parse_function3()
 
 	struct dag_node* e = dag_get_child(d, 0);
 	assert_ptr(e, "ptr e");
-	expect_int_equal(e->type, dag_type_word, "word e");
+	expect_int_equal(e->type, dag_type_id, "id e");
 	expect_str(&e->value, "x", "x");
 
 	struct dag_node* f = dag_get_child(d, 1);
@@ -1281,7 +1281,7 @@ void test_parse_function4()
 
 	struct dag_node* a = dag_get_child(root, 0);
 	assert_ptr(a, "ptr a");
-	expect_int_equal(a->type, dag_type_word, "word");
+	expect_int_equal(a->type, dag_type_id, "id");
 
 	struct dag_node* seq = dag_get_child(root, 1);
 	assert_ptr(seq, "ptr seq");
@@ -1289,17 +1289,17 @@ void test_parse_function4()
 
 	struct dag_node* seq_a = dag_get_child(seq, 0);
 	assert_ptr(seq_a, "ptr seq a");
-	expect_int_equal(seq_a->type, dag_type_word, "word seq_a");
+	expect_int_equal(seq_a->type, dag_type_id, "id seq_a");
 	expect_str(&seq_a->value, "x", "x seq_a");
 
 	struct dag_node* seq_b = dag_get_child(seq, 1);
 	assert_ptr(seq_b, "ptr seq b");
-	expect_int_equal(seq_b->type, dag_type_word, "word seq_b");
+	expect_int_equal(seq_b->type, dag_type_id, "id seq_b");
 	expect_str(&seq_b->value, "y", "y seq_b");
 
 	struct dag_node* seq_c = dag_get_child(seq, 2);
 	assert_ptr(seq_c, "ptr seq c");
-	expect_int_equal(seq_c->type, dag_type_word, "word seq_c");
+	expect_int_equal(seq_c->type, dag_type_id, "id seq_c");
 	expect_str(&seq_c->value, "z", "z seq_c");
 
 	struct dag_node* b = dag_get_child(root, 2);
@@ -1315,7 +1315,7 @@ void test_parse_function4()
 
 	struct dag_node* e = dag_get_child(d, 0);
 	assert_ptr(e, "ptr e");
-	expect_int_equal(e->type, dag_type_word, "word e");
+	expect_int_equal(e->type, dag_type_id, "id e");
 	expect_str(&e->value, "x", "x");
 
 	struct dag_node* f = dag_get_child(d, 1);
@@ -1343,7 +1343,7 @@ void test_parse_function4()
 void test_parse()
 {
 	test_parse_num();
-	test_parse_word();
+	test_parse_id();
 	test_parse_num_negative();
 	test_parse_num_positive();
 	test_parse_add();

@@ -299,7 +299,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 	t1 = get_token(&ts->lookahead, 1);
 
 	/* number or word */
-	if (t0->type == token_number || t0->type == token_word) {
+	if (t0->type == token_number || t0->type == token_id) {
 		r = dag_create_node(al, &n);
 		if (r == result_error) {
 			goto function_error;
@@ -307,8 +307,8 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 
 		if (t0->type == token_number) {
 			n->type = dag_type_number;
-		} else if (t0->type == token_word) {
-			n->type = dag_type_word;
+		} else if (t0->type == token_id) {
+			n->type = dag_type_id;
 		}
 		r = buffer_copy(al, &t0->value, &n->value);
 		if (r == result_error) {
@@ -322,7 +322,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 	}
 
 	/* sign and number or word */
-	else if ((t0->type == token_plus || t0->type == token_minus) && (t1->type == token_number || t1->type == token_word)) {
+	else if ((t0->type == token_plus || t0->type == token_minus) && (t1->type == token_number || t1->type == token_id)) {
 		r = dag_create_node(al, &n);
 		if (r == result_error) {
 			goto function_error;
@@ -358,7 +358,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 		if (t1->type == token_number) {
 			right->type = dag_type_number;
 		} else {
-			right->type = dag_type_word;
+			right->type = dag_type_id;
 		}
 
 		r = match(al, ts, t1->type, "expecting number or word");

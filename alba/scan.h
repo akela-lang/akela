@@ -18,7 +18,7 @@ struct char_value {
 
 enum state_enum {
     state_start,
-    state_word,
+    state_id,
     state_number
 };
 

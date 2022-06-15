@@ -52,7 +52,7 @@ void test_scan_assign()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "scan_get_token 0");
-	expect_int_equal(t->type, token_word, "word");
+	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "a", "a");
 	assert_true(got_token, "got token 0");
 
@@ -112,7 +112,7 @@ void test_scan_addition()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 0");
-	expect_int_equal(t->type, token_word, "word");
+	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "speed", "speed");
 	assert_true(got_token, "got token 0");
 
@@ -159,7 +159,7 @@ void test_scan_subtraction()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 2");
-	expect_int_equal(t->type, token_word, "word");
+	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "delta", "delta");
 	assert_true(got_token, "got token 2");
 
@@ -256,7 +256,7 @@ void test_scan_stmts_expr()
 	
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 0");
-	expect_int_equal(t->type, token_word, "word");
+	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
 	assert_true(got_token, "got token 0");
 
@@ -278,7 +278,7 @@ void test_scan_stmts_expr()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 4");
-	expect_int_equal(t->type, token_word, "word2");
+	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
 	assert_true(got_token, "got token 4");
 
@@ -314,7 +314,7 @@ void test_scan_stmts_expr2()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 0");
-	expect_int_equal(t->type, token_word, "word");
+	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
 	assert_true(got_token, "got token 0");
 
@@ -336,7 +336,7 @@ void test_scan_stmts_expr2()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 4");
-	expect_int_equal(t->type, token_word, "word2");
+	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
 	assert_true(got_token, "got token 4");
 
@@ -381,7 +381,7 @@ void test_scan_stmts_assign()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 0");
-	expect_int_equal(t->type, token_word, "word");
+	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
 	assert_true(got_token, "got token 0");
 
@@ -403,7 +403,7 @@ void test_scan_stmts_assign()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 4");
-	expect_int_equal(t->type, token_word, "word2");
+	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
 	assert_true(got_token, "got token 4");
 
@@ -445,7 +445,7 @@ void test_scan_function()
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
-	expect_int_equal(t->type, token_word, "word");
+	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "foo", "foo");
 
 	r = scan_get_token(&al, &is, &got_token, &t);
