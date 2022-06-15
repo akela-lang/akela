@@ -18,6 +18,7 @@ enum token_enum {
     token_newline,
     token_function,
     token_end,
+    token_comma,
     token_count     /* keep at the end */
 };
 
@@ -41,6 +42,7 @@ enum result token_name_init(char** token_name)
     token_name[token_newline] = "newline";
     token_name[token_function] = "function";
     token_name[token_end] = "end";
+    token_name[token_comma] = "comma";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

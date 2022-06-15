@@ -66,6 +66,12 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(right_paren);
     U16_NEXT(right_paren, pos2, size, cv->right_paren);
+
+    U_STRING_DECL(comma, ",", 1);
+    U_STRING_INIT(comma, ",", 1);
+    pos2 = 0;
+    size = u_strlen(comma);
+    U16_NEXT(comma, pos2, size, cv->comma);
 }
 
 enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
@@ -107,6 +113,9 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         /* nothing */
     } else if (is->uc == cv.newline) {
         t->type = token_newline;
+        *got_token = 1;
+    } else if (is->uc == cv.comma) {
+        t->type = token_comma;
         *got_token = 1;
     } else {
         char* a;

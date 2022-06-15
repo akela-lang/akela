@@ -17,6 +17,7 @@ enum dag_type {
 	dag_type_divide,
 	dag_type_stmts,
 	dag_type_function,
+	dag_type_seq,
 	dag_type_count		/* keep at end */
 };
 

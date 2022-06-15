@@ -13,6 +13,7 @@ struct char_value {
     UChar32 divide;
     UChar32 left_paren;
     UChar32 right_paren;
+    UChar32 comma;
 };
 
 enum state_enum {

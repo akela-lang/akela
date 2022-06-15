@@ -1,5 +1,5 @@
-#ifndef _IO_H
-#define _IO_H
+#ifndef _INPUT_H
+#define _INPUT_H
 
 #include <stdio.h>
 #include "buffer.h"

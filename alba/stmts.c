@@ -261,8 +261,118 @@ function_error:
 	return r;
 }
 
+/*
+* seq -> word seq'
+*	   | e
+*/
 enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
-	*root = NULL;
-	return result_ok;
+	enum result r = result_ok;
+	struct dag_node* n = NULL;
+	int num;
+
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	struct token* t0 = get_token(ts->lookahead.head, 0);
+
+	if (t0 && t0->type == token_word) {
+		r = match(al, ts, token_word, "expecting word");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		n->type = dag_type_seq;
+
+		struct dag_node* a = NULL;
+		r = dag_create_node(al, &a);
+		a->type = dag_type_word;
+		buffer_copy(al, &t0->value, &a->value);
+		dag_add_child(n, a);
+
+		struct dag_node* b = NULL;
+		r = seq_prime(al, ts, &b, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (b && b->type == dag_type_seq && b->head) {
+			a->next = b->head;
+			b->head->prev = a;
+			n->tail = b->tail;
+		}
+	}
+
+function_success:
+	*root = n;
+	return r;
+
+function_error:
+	return r;
+}
+
+/*
+* seq' -> , word seq'
+*		| e
+*/
+enum result seq_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+{
+	struct dag_node* n = NULL;
+	enum result r = result_ok;
+	int num;
+
+	r = get_lookahead(al, ts, 2, &num);
+	struct token* t0 = get_token(ts->lookahead.head, 0);
+	struct token* t1 = get_token(ts->lookahead.head, 1);
+
+	if (t0 && t0->type == token_comma && t1 && t1->type == token_word) {
+		r = match(al, ts, token_comma, "expecting comma");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = match(al, ts, token_word, "expecting word");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+		n->type = dag_type_seq;
+
+		struct dag_node* a = NULL;
+		r = dag_create_node(al, &a);
+		if (r == result_error) {
+			goto function_error;
+		}
+		a->type = dag_type_word;
+		buffer_copy(al, &t1->value, &a->value);
+		dag_add_child(n, a);
+
+		struct dag_node* b = NULL;
+		r = seq_prime(al, ts, &b, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (b && b->type == dag_type_seq && b->head) {
+			a->next = b->head;
+			b->head->prev = a;
+			n->tail = b->tail;
+		}
+	}
+
+function_success:
+	*root = n;
+	return r;
+
+function_error:
+	return r;
 }

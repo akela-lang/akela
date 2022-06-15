@@ -6,7 +6,6 @@
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 #include "allocator.h"
-#include "io.h"
 
 #define BUFFER_CHUNK 64
 
