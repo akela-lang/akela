@@ -1,7 +1,6 @@
 # Todo
-* parse function declaration
+* seq in function declaration
 * change word type to id type
-* return statement
 * function calling
 * if statement
 * elseif statement

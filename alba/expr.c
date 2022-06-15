@@ -2,12 +2,12 @@
 #include "token.h"
 #include "dag.h"
 #include "allocator.h"
-#include "parse.h"
+#include "parse_tools.h"
 
 /*
 * expr -> term expr'
 */
-enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -16,25 +16,27 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 	struct dag_node* b = NULL;
 	struct dag_node* n = NULL;
 
-	r = term(al, ts, &a);
+	r = term(al, ts, &a, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = expr_prime(al, ts, &b);
+	r = expr_prime(al, ts, &b, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	if (a == NULL) {
-		set_error("expecting an expression");
-		goto function_error;
-	}
-	if (b == NULL) {
+	if (a && !b) {
 		n = a;
 		goto function_success;
 	}
-	if (b && is_binary_operator(b)) {
+
+	if (b && !a) {
+		n = b;
+		goto function_success;
+	}
+
+	if (a && b && is_binary_operator(b)) {
 		n = b;
 		dag_push(n, a);
 		goto function_success;
@@ -55,7 +57,7 @@ function_error:
 *	     | - term expr'
 *	     | e
 */
-enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -80,11 +82,9 @@ enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_
 		type = dag_type_plus;
 	} else if (t0->type == token_minus) {
 		type = dag_type_minus;
-	}
-
-	if (type == dag_type_none) {
-		set_error("expecting expr'");
-		goto function_error;
+	} else {
+		/* e */
+		goto function_success;
 	}
 
 	r = dag_create_node(al, &n);
@@ -99,19 +99,19 @@ enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_
 	}
 
 	/* term */
-	r = term(al, ts, &a);
+	r = term(al, ts, &a, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
 	/* expr' */
-	r = expr_prime(al, ts, &b);
+	r = expr_prime(al, ts, &b, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
 	if (a == NULL && b == NULL) {
-		set_error("expecting expr'");
+		r = set_error("expecting expr'");
 		goto function_error;
 	}
 
@@ -140,46 +140,40 @@ function_error:
 /*
 * term -> factor term_prime
 */
-enum result term(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result term(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 
-	r = factor(al, ts, &a);
+	r = factor(al, ts, &a, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = term_prime(al, ts, &b);
+	r = term_prime(al, ts, &b, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	if (a == NULL && b == NULL) {
-		set_error("expected term");
-		goto function_error;
-	}
-
-	if (b == NULL) {
+	if (a && !b) {
 		n = a;
 		goto function_success;
 	}
 
-	if (a == NULL) {
+	if (b && !a) {
 		n = b;
 		goto function_success;
 	}
 
-	if (is_binary_operator(b)) {
+	if (a && b && is_binary_operator(b)) {
 		n = b;
 		dag_push(n, a);
 		goto function_success;
 	}
 
-	set_error("expected term");
-	goto function_error;
+	goto function_success;
 
 function_success:
 	*root = n;
@@ -194,7 +188,7 @@ function_error:
 *	     | / factor term'
 *	     | e
 */
-enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -219,10 +213,12 @@ enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_
 		type = dag_type_mult;
 	} else if (t0->type == token_divide) {
 		type = dag_type_divide;
+	} else {
+		goto function_success;
 	}
 
 	if (type == dag_type_none) {
-		set_error("expecting expr'");
+		r = set_error("expecting expr'");
 		goto function_error;
 	}
 
@@ -238,19 +234,19 @@ enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_
 	}
 
 	/* factor */
-	r = factor(al, ts, &a);
+	r = factor(al, ts, &a, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
 	/* term' */
-	r = term_prime(al, ts, &b);
+	r = term_prime(al, ts, &b, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
 	if (a == NULL && b == NULL) {
-		set_error("expecting expr'");
+		r = set_error("expecting expr'");
 		goto function_error;
 	}
 
@@ -285,7 +281,7 @@ function_error:
 *	| - word
 *	| (expr)
 */
-enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -384,7 +380,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 			goto function_error;
 		}
 
-		r = expr(al, ts, &n);
+		r = expr(al, ts, &n, message);
 		if (r == result_error) {
 			goto function_error;
 		}

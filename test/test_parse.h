@@ -9,6 +9,7 @@
 #include "alba/result.h"
 #include "alba/uconv.h"
 #include "alba/input.h"
+#include "alba/buffer.h"
 
 void parse_setup(struct allocator* al, char* line, struct token_state* ts, struct dag_node** root)
 {
@@ -975,6 +976,75 @@ void test_parse_stmts()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_stmts2()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "x+1\n5+4\n", &ts, &root);
+
+	assert_ptr(root, "root");
+
+	parse_teardown(&al, &ts);
+}
+
+void test_parse_function()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "function foo()\nx+1\n5+4\nend", &ts, &root);
+
+	assert_ptr(root, "root");
+	expect_int_equal(root->type, dag_type_function, "function");
+
+	struct dag_node* a = dag_get_child(root, 0);
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_word, "word");
+
+	struct dag_node* b = dag_get_child(root, 1);
+	assert_ptr(b, "ptr b");
+	expect_int_equal(b->type, dag_type_stmts, "stmts");
+
+	struct dag_node* c = dag_get_child(root, 2);
+	assert_null(c, "ptr c");
+
+	struct dag_node* d = dag_get_child(b, 0);
+	assert_ptr(d, "ptr d");
+	expect_int_equal(d->type, dag_type_plus, "plus");
+
+	struct dag_node* e = dag_get_child(d, 0);
+	assert_ptr(e, "ptr e");
+	expect_int_equal(e->type, dag_type_word, "word e");
+	expect_str(&e->value, "x", "x");
+
+	struct dag_node* f = dag_get_child(d, 1);
+	assert_ptr(f, "ptr f");
+	expect_int_equal(f->type, dag_type_number, "number f");
+	expect_str(&f->value, "1", "1");
+
+	struct dag_node* g = dag_get_child(b, 1);
+	assert_ptr(g, "ptr g");
+	expect_int_equal(g->type, dag_type_plus, "plus");
+
+	struct dag_node* h = dag_get_child(g, 0);
+	assert_ptr(h, "ptr h");
+	expect_int_equal(h->type, dag_type_number, "number h");
+	expect_str(&h->value, "5", "5");
+
+	struct dag_node* i = dag_get_child(g, 1);
+	assert_ptr(i, "ptr i");
+	expect_int_equal(i->type, dag_type_number, "number i");
+	expect_str(&i->value, "4", "4");
+
+	parse_teardown(&al, &ts);
+}
 
 void test_parse()
 {
@@ -1008,6 +1078,8 @@ void test_parse()
 	test_parse_assign();
 	test_parse_assign2();
 	test_parse_stmts();
+	test_parse_stmts2();
+	test_parse_function();
 }
 
 #endif

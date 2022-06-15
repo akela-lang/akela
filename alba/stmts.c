@@ -6,13 +6,13 @@
 #include "expr.h"
 #include "input.h"
 #include "scan.h"
-#include "parse.h"
+#include "parse_tools.h"
 
 /*
 * stmts -> stmt stmts'
 *		 | e
 */
-enum result stmts(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum parse_result stmts(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -26,13 +26,13 @@ enum result stmts(struct allocator* al, struct token_state* ts, struct dag_node*
 	n->type = dag_type_stmts;
 
 	struct dag_node* a = NULL;
-	r = stmt(al, ts, &a);
+	r = stmt(al, ts, &a, message);
 	if (r == result_error) {
 		goto function_error;
 	}
 
 	struct dag_node* b = NULL;
-	r = stmts_prime(al, ts, &b);
+	r = stmts_prime(al, ts, &b, message);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -70,9 +70,9 @@ function_error:
 * stmts' -> \n stmts
 *		  | e
 */
-enum result stmts_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum parse_result stmts_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
-	enum result r;
+	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
 
@@ -94,19 +94,16 @@ enum result stmts_prime(struct allocator* al, struct token_state* ts, struct dag
 			return r;
 		}
 
-		r = stmts(al, ts, &n);
+		r = stmts(al, ts, &n, message);
 		if (r == result_error) {
 			goto function_error;
 		}
 		goto function_success;
 	}
 
-	r = set_error("expected stmts");
-	goto function_error;
-
 function_success:
 	*root = n;
-	return result_ok;
+	return r;
 
 function_error:
 	return r;
@@ -118,7 +115,7 @@ function_error:
 *       | expr
 *       | e
 */
-enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
 	enum result r;
 	struct dag_node* n = NULL;
@@ -167,7 +164,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		dag_add_child(n, a);
 
 		struct dag_node* b;
-		r = expr(al, ts, &b);
+		r = expr(al, ts, &b, message);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -180,20 +177,75 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 	/* function word (seq) \n stmts end */
 	} else if (t0 && t0->type == token_function) {
-
-
-	/* expr */
-	} else {
-		r = expr(al, ts, &n);
+		r = match(al, ts, token_function, "expecting function");
 		if (r == result_error) {
 			goto function_error;
 		}
-		if (n == NULL) {
-			r = set_error("expected expression");
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+		n->type = dag_type_function;
+
+		r = match(al, ts, token_word, "expecting word");
+		if (r == result_error) {
+			goto function_error;
+		}
+		struct dag_node* a;
+		r = dag_create_node(al, &a);
+		if (r == result_error) {
+			goto function_error;
+		}
+		a->type = dag_type_word;
+		buffer_copy(al, &a->value, &t1->value);
+		dag_add_child(n, a);
+
+		r = match(al, ts, token_left_paren, "expecting left parenthesis");
+		if (r == result_error) {
 			goto function_error;
 		}
 
+		struct dag_node* b;
+		r = seq(al, ts, &b, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (b) {
+			dag_add_child(n, b);
+		}
 		
+		r = match(al, ts, token_right_paren, "expecting right parenthesis");
+		if (r == result_error) {
+			goto function_error;
+		}
+		
+		r = match(al, ts, token_newline, "expecting newline");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		struct dag_node* c;
+		r = stmts(al, ts, &c, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (c) {
+			dag_add_child(n, c);
+		}
+
+		r = match(al, ts, token_end, "end");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		goto function_success;
+
+		/* expr */
+	} else {
+		r = expr(al, ts, &n, message);
+		if (r == result_error) {
+			goto function_error;
+		}
 
 		goto function_success;
 	}
@@ -209,7 +261,8 @@ function_error:
 	return r;
 }
 
-enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result seq(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
 {
+	*root = NULL;
 	return result_ok;
 }

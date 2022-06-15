@@ -9,6 +9,7 @@ set(test_files
     ${alba_dir}/stmts.c
     "${alba_dir}/expr.c"
     ${alba_dir}/parse.c
+    ${alba_dir}/parse_tools.c
     ${alba_dir}/allocator.c
     "${alba_dir}/input.c"
     ${alba_dir}/os_win.c

@@ -10,6 +10,7 @@ set(source_files
     stmts.c
     "expr.c"
     parse.c
+    parse_tools.c
     allocator.c
     "input.c"
     os_win.c
