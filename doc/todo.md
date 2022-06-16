@@ -1,4 +1,5 @@
 # Todo
+* put tests in c files
 * if statement
 * elseif statement
 * else statement

@@ -15,7 +15,12 @@ set(test_files
     ${alba_dir}/os_win.c
     ${alba_dir}/uconv.c
     assert.c
-    test.c
+    "test.c"
+    test_parse.c
+    test_scan.c
+    test_input.c
+    test_buffer.c
+    test_allocator.c
 )
 
 include_directories("../external/icu4c/include" "..")
