@@ -297,6 +297,10 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 
 		/* else_stmt */
+		r = else_stmt(al, ts, n);
+		if (r == result_error) {
+			goto function_error;
+		}
 
 		/* end */
 		r = match(al, ts, token_end, "expected end");
@@ -517,5 +521,50 @@ function_error:
 */
 enum result else_stmt(struct allocator* al, struct token_state* ts, struct dag_node* parent)
 {
+	enum result r = result_ok;
+	int num;
 
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	struct token* t0 = get_token(&ts->lookahead, 0);
+	if (t0 && t0->type == token_else) {
+		/* else */
+		r = match(al, ts, token_else, "expected else");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = match(al, ts, token_newline, "expected newline");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		struct dag_node* cb = NULL;
+		r = dag_create_node(al, &cb);
+		if (r == result_error) {
+			goto function_error;
+		}
+		cb->type = dag_type_default_branch;
+
+		/* stmts */
+		struct dag_node* node = NULL;
+		r = stmts(al, ts, &node, NULL);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (node) {
+			dag_add_child(cb, node);
+		}
+
+		dag_add_child(parent, cb);
+	}
+
+function_error:
+	return r;
+
+function_success:
+	return r;
 }

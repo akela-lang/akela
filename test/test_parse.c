@@ -1775,6 +1775,120 @@ void test_parse_elseif2()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_else()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "if false\n10\nelse\nx\ny\nend", &ts, &root);
+
+	assert_ptr(root, "ptr root");
+	assert_int_equal(root->type, dag_type_if, "if");
+
+	struct dag_node* cb0 = dag_get_child(root, 0);
+	assert_ptr(cb0, "ptr cb0");
+	expect_int_equal(cb0->type, dag_type_conditional_branch, "conditional branch cb0");
+
+	struct dag_node* cond = dag_get_child(cb0, 0);
+	assert_ptr(cond, "ptr cond");
+	expect_int_equal(cond->type, dag_type_id, "id cond");
+	expect_str(&cond->value, "false", "false cond");
+
+	struct dag_node* stmts0 = dag_get_child(cb0, 1);
+	assert_ptr(stmts0, "ptr stmts 0");
+	expect_int_equal(stmts0->type, dag_type_number, "number stmts0");
+	expect_str(&stmts0->value, "10", "10 stmts0");
+
+	struct dag_node* cb1 = dag_get_child(root, 1);
+	assert_ptr(cb1, "ptr cb1");
+	expect_int_equal(cb1->type, dag_type_default_branch, "default branch cb1");
+
+	struct dag_node* stmts1 = dag_get_child(cb1, 0);
+	assert_ptr(stmts1, "ptr stmts1");
+	expect_int_equal(stmts1->type, dag_type_stmts, "stmts stmts1");
+
+	struct dag_node* x = dag_get_child(stmts1, 0);
+	assert_ptr(x, "ptr x");
+	expect_int_equal(x->type, dag_type_id, "id x");
+	expect_str(&x->value, "x", "x");
+
+	struct dag_node* y = dag_get_child(stmts1, 1);
+	assert_ptr(y, "ptr y");
+	expect_int_equal(y->type, dag_type_id, "id y");
+	expect_str(&y->value, "y", "y");
+
+	parse_teardown(&al, &ts);
+}
+
+void test_parse_else2()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "if false\n10\nelseif false\n20\nelse\nx\ny\nend", &ts, &root);
+
+	/* top */
+	assert_ptr(root, "ptr root");
+	assert_int_equal(root->type, dag_type_if, "if");
+
+	/* if */
+	struct dag_node* cb0 = dag_get_child(root, 0);
+	assert_ptr(cb0, "ptr cb0");
+	expect_int_equal(cb0->type, dag_type_conditional_branch, "conditional branch cb0");
+
+	struct dag_node* cond0 = dag_get_child(cb0, 0);
+	assert_ptr(cond0, "ptr cond0");
+	expect_int_equal(cond0->type, dag_type_id, "id cond0");
+	expect_str(&cond0->value, "false", "false cond0");
+
+	struct dag_node* stmts0 = dag_get_child(cb0, 1);
+	assert_ptr(stmts0, "ptr stmts 0");
+	expect_int_equal(stmts0->type, dag_type_number, "number stmts0");
+	expect_str(&stmts0->value, "10", "10 stmts0");
+
+	/* elseif */
+	struct dag_node* cb1 = dag_get_child(root, 1);
+	assert_ptr(cb1, "ptr cb1");
+	expect_int_equal(cb1->type, dag_type_conditional_branch, "conditional branch cb1");
+
+	struct dag_node* cond1 = dag_get_child(cb1, 0);
+	assert_ptr(cond1, "ptr cond");
+	expect_int_equal(cond1->type, dag_type_id, "id cond1");
+	expect_str(&cond1->value, "false", "false cond1");
+
+	struct dag_node* stmts1 = dag_get_child(cb1, 1);
+	assert_ptr(stmts1, "ptr stmts1");
+	expect_int_equal(stmts1->type, dag_type_number, "number stmts1");
+	expect_str(&stmts1->value, "20", "20 stmts1");
+
+	/* else */
+	struct dag_node* db = dag_get_child(root, 2);
+	assert_ptr(db, "ptr db");
+	expect_int_equal(db->type, dag_type_default_branch, "default branch db");
+
+	struct dag_node* stmts2 = dag_get_child(db, 0);
+	assert_ptr(stmts2, "ptr stmts2");
+	expect_int_equal(stmts2->type, dag_type_stmts, "stmts stmts2");
+
+	struct dag_node* x = dag_get_child(stmts2, 0);
+	assert_ptr(x, "ptr x");
+	expect_int_equal(x->type, dag_type_id, "id x");
+	expect_str(&x->value, "x", "x");
+
+	struct dag_node* y = dag_get_child(stmts2, 1);
+	assert_ptr(y, "ptr y");
+	expect_int_equal(y->type, dag_type_id, "id y");
+	expect_str(&y->value, "y", "y");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse()
 {
 	test_parse_num();
@@ -1820,4 +1934,6 @@ void test_parse()
 	test_parse_if();
 	test_parse_elseif();
 	test_parse_elseif2();
+	test_parse_else();
+	test_parse_else2();
 }

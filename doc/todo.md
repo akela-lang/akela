@@ -1,5 +1,4 @@
 # Todo
-* else statement
 * logical operators
 * while statement
 * for statement
