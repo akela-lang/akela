@@ -497,6 +497,37 @@ void test_scan_comma()
 	scan_teardown(&al, &is);
 }
 
+void test_scan_if() {
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "if elseif else", &is);
+	
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token");
+	assert_true(got_token, "got token");
+	expect_int_equal(t->type, token_if, "if");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token");
+	assert_true(got_token, "got token");
+	expect_int_equal(t->type, token_elseif, "elseif");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token");
+	assert_true(got_token, "got token");
+	expect_int_equal(t->type, token_else, "else");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token");
+	assert_true(!got_token, "no token");
+}
+
 void test_scan()
 {
 	test_scan_assign();
@@ -510,4 +541,5 @@ void test_scan()
 	test_scan_stmts_assign();
 	test_scan_function();
 	test_scan_comma();
+	test_scan_if();
 }

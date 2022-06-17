@@ -1,8 +1,11 @@
 # Todo
-* put tests in c files
-* if statement
 * elseif statement
 * else statement
+* logical operators
 * while statement
 * for statement
+* error test cases
+* types
+* arrays
 * foreach statement
+* strings

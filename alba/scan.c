@@ -132,10 +132,14 @@ void check_reserved_words(struct token* t)
 {
     if (buffer_str_compare(&t->value, "function")) {
         t->type = token_function;
-        buffer_clear(&t->value);
     } else if (buffer_str_compare(&t->value, "end")) {
         t->type = token_end;
-        buffer_clear(&t->value);
+    } else if (buffer_str_compare(&t->value, "if")) {
+        t->type = token_if;
+    } else if (buffer_str_compare(&t->value, "elseif")) {
+        t->type = token_elseif;
+    } else if (buffer_str_compare(&t->value, "else")) {
+        t->type = token_else;
     }
 }
 

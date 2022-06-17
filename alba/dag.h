@@ -20,6 +20,9 @@ enum dag_type {
 	dag_type_dseq,
 	dag_type_call,
 	dag_type_cseq,
+	dag_type_if,
+	dag_type_conditional_branch,
+	dag_type_default_branch,
 	dag_type_count		/* keep at end */
 };
 

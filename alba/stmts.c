@@ -214,12 +214,12 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		if (b) {
 			dag_add_child(n, b);
 		}
-		
+
 		r = match(al, ts, token_right_paren, "expecting right parenthesis");
 		if (r == result_error) {
 			goto function_error;
 		}
-		
+
 		r = match(al, ts, token_newline, "expecting newline");
 		if (r == result_error) {
 			goto function_error;
@@ -241,7 +241,67 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 		goto function_success;
 
-		/* expr */
+	} else if (t0 && t0->type == token_if) {
+		/* if */
+		r = match(al, ts, token_if, "expecting if");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+		n->type = dag_type_if;
+
+		struct dag_node* cb = NULL;
+		r = dag_create_node(al, &cb);
+		if (r == result_error) {
+			goto function_error;
+		}
+		cb->type = dag_type_conditional_branch;
+		dag_add_child(n, cb);
+
+		/* condition */
+		struct dag_node* cond = NULL;
+		r = expr(al, ts, &cond, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (cond == NULL) {
+			r = set_error("expecting a condition");
+			goto function_error;
+		}
+		dag_add_child(cb, cond);
+
+		r = match(al, ts, token_newline, "expecting newline");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		/* body */
+		struct dag_node* body = NULL;
+		r = stmts(al, ts, &body, message);
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		if (body) {
+			dag_add_child(cb, body);
+		}
+
+		/* elseifstmts */
+		/* elsestmts */
+
+		/* end */
+		r = match(al, ts, token_end, "expected end");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		goto function_success;
+
+	/* expr */
 	} else {
 		r = expr(al, ts, &n, message);
 		if (r == result_error) {
