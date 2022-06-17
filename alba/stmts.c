@@ -296,7 +296,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 			goto function_error;
 		}
 
-		/* elsestmts */
+		/* else_stmt */
 
 		/* end */
 		r = match(al, ts, token_end, "expected end");
@@ -515,7 +515,7 @@ function_error:
 * else_stmt -> else \n stmts
 *			 | e
 */
-enum result else_stmts(struct allocator* al, struct token_state* ts, struct dag_node* parent)
+enum result else_stmt(struct allocator* al, struct token_state* ts, struct dag_node* parent)
 {
 
 }
