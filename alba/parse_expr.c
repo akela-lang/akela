@@ -5,9 +5,17 @@
 #include "parse_tools.h"
 
 /*
-* expr -> term expr'
+* expr -> add
 */
 enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root)
+{
+	return add(al, ts, root);
+}
+
+/*
+* add -> mult add'
+*/
+inline enum result add(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -17,12 +25,12 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 	struct dag_node* c = NULL;
 	struct dag_node* n = NULL;
 
-	r = term(al, ts, &a);
+	r = mult(al, ts, &a);
 	if (r == result_error) {
 		return r;
 	}
 
-	r = expr_prime(al, ts, &b, &c);
+	r = add_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
@@ -39,11 +47,11 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 }
 
 /*
-* expr' -> + term expr'
-*	     | - term expr'
-*	     | e
+* add' -> + mult add'
+*	    | - mult add'
+*	    | e
 */
-enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point)
+enum result add_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -86,13 +94,13 @@ enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_
 	}
 
 	/* term */
-	r = term(al, ts, &a);
+	r = mult(al, ts, &a);
 	if (r == result_error) {
 		return r;
 	}
 
-	/* expr' */
-	r = expr_prime(al, ts, &b, &c);
+	/* add' */
+	r = add_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
@@ -114,9 +122,9 @@ enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_
 }
 
 /*
-* term -> factor term_prime
+* mult -> factor mult_prime
 */
-enum result term(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result mult(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -129,7 +137,7 @@ enum result term(struct allocator* al, struct token_state* ts, struct dag_node**
 		return r;
 	}
 
-	r = term_prime(al, ts, &b, &c);
+	r = mult_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
@@ -146,11 +154,11 @@ enum result term(struct allocator* al, struct token_state* ts, struct dag_node**
 }
 
 /*
-* term' -> * factor term'
-*	     | / factor term'
+* term' -> * factor mult'
+*	     | / factor mult'
 *	     | e
 */
-enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point)
+enum result mult_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -202,8 +210,8 @@ enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_
 		return r;
 	}
 
-	/* term' */
-	r = term_prime(al, ts, &b, &c);
+	/* mult' */
+	r = mult_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
