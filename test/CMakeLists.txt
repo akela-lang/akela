@@ -17,6 +17,8 @@ set(test_files
     assert.c
     "test.c"
     test_parse.c
+    test_parse_expr.c
+    test_parse_stmts.c
     test_scan.c
     test_input.c
     test_buffer.c
