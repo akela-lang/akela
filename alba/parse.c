@@ -12,10 +12,9 @@
 enum result parse(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	*root = NULL;
-	char* message = NULL;
 	enum result r;
 
-	r = stmts(al, ts, root, &message);
+	r = stmts(al, ts, root);
 
 	if (r == result_error) {
 		return r;

@@ -1,4 +1,5 @@
 # Todo
+* group parsing files
 * comparison operators
 * boolean operators
 * while statement

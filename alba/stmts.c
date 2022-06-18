@@ -12,7 +12,7 @@
 * stmts -> stmt stmts'
 *		 | e
 */
-enum parse_result stmts(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum parse_result stmts(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -26,13 +26,13 @@ enum parse_result stmts(struct allocator* al, struct token_state* ts, struct dag
 	n->type = dag_type_stmts;
 
 	struct dag_node* a = NULL;
-	r = stmt(al, ts, &a, message);
+	r = stmt(al, ts, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
 
 	struct dag_node* b = NULL;
-	r = stmts_prime(al, ts, &b, message);
+	r = stmts_prime(al, ts, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -71,7 +71,7 @@ function_error:
 * stmts' -> \n stmts
 *		  | e
 */
-enum parse_result stmts_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum parse_result stmts_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -95,7 +95,7 @@ enum parse_result stmts_prime(struct allocator* al, struct token_state* ts, stru
 			return r;
 		}
 
-		r = stmts(al, ts, &n, message);
+		r = stmts(al, ts, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -116,7 +116,7 @@ function_error:
 *       | expr
 *       | e
 */
-enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r;
 	struct dag_node* n = NULL;
@@ -165,7 +165,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		dag_add_child(n, a);
 
 		struct dag_node* b;
-		r = expr(al, ts, &b, message);
+		r = expr(al, ts, &b);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -207,7 +207,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 
 		struct dag_node* b;
-		r = dseq(al, ts, &b, message);
+		r = dseq(al, ts, &b);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -226,7 +226,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 
 		struct dag_node* c;
-		r = stmts(al, ts, &c, message);
+		r = stmts(al, ts, &c);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -264,7 +264,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 		/* condition */
 		struct dag_node* cond = NULL;
-		r = expr(al, ts, &cond, message);
+		r = expr(al, ts, &cond);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -281,7 +281,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 		/* body */
 		struct dag_node* body = NULL;
-		r = stmts(al, ts, &body, message);
+		r = stmts(al, ts, &body);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -312,7 +312,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 	/* expr */
 	} else {
-		r = expr(al, ts, &n, message);
+		r = expr(al, ts, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -335,7 +335,7 @@ function_error:
 * dseq -> word dseq'
 *	   | e
 */
-enum result dseq(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result dseq(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -368,7 +368,7 @@ enum result dseq(struct allocator* al, struct token_state* ts, struct dag_node**
 		dag_add_child(n, a);
 
 		struct dag_node* b = NULL;
-		r = dseq_prime(al, ts, &b, message);
+		r = dseq_prime(al, ts, &b);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -391,7 +391,7 @@ function_error:
 * dseq' -> , word dseq'
 *		| e
 */
-enum result dseq_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result dseq_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	struct dag_node* n = NULL;
 	enum result r = result_ok;
@@ -428,7 +428,7 @@ enum result dseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 		dag_add_child(n, a);
 
 		struct dag_node* b = NULL;
-		r = dseq_prime(al, ts, &b, message);
+		r = dseq_prime(al, ts, &b);
 		if (r == result_error) {
 			goto function_error;
 		}

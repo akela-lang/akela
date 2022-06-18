@@ -7,7 +7,7 @@
 /*
 * expr -> term expr'
 */
-enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -17,12 +17,12 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 	struct dag_node* c = NULL;
 	struct dag_node* n = NULL;
 
-	r = term(al, ts, &a, message);
+	r = term(al, ts, &a);
 	if (r == result_error) {
 		return r;
 	}
 
-	r = expr_prime(al, ts, &b, &c, message);
+	r = expr_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
@@ -43,7 +43,7 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 *	     | - term expr'
 *	     | e
 */
-enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point, char** message)
+enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -86,13 +86,13 @@ enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_
 	}
 
 	/* term */
-	r = term(al, ts, &a, message);
+	r = term(al, ts, &a);
 	if (r == result_error) {
 		return r;
 	}
 
 	/* expr' */
-	r = expr_prime(al, ts, &b, &c, message);
+	r = expr_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
@@ -116,7 +116,7 @@ enum result expr_prime(struct allocator* al, struct token_state* ts, struct dag_
 /*
 * term -> factor term_prime
 */
-enum result term(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result term(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -124,12 +124,12 @@ enum result term(struct allocator* al, struct token_state* ts, struct dag_node**
 	struct dag_node* b = NULL;
 	struct dag_node* c = NULL;
 
-	r = factor(al, ts, &a, message);
+	r = factor(al, ts, &a);
 	if (r == result_error) {
 		return r;
 	}
 
-	r = term_prime(al, ts, &b, &c, message);
+	r = term_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
@@ -150,7 +150,7 @@ enum result term(struct allocator* al, struct token_state* ts, struct dag_node**
 *	     | / factor term'
 *	     | e
 */
-enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point, char** message)
+enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
@@ -197,13 +197,13 @@ enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_
 	}
 
 	/* factor */
-	r = factor(al, ts, &a, message);
+	r = factor(al, ts, &a);
 	if (r == result_error) {
 		return r;
 	}
 
 	/* term' */
-	r = term_prime(al, ts, &b, &c, message);
+	r = term_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
@@ -234,7 +234,7 @@ enum result term_prime(struct allocator* al, struct token_state* ts, struct dag_
 *	| (expr)
 *	| word(cseq)
 */
-enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -279,7 +279,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 		dag_add_child(n, a);
 
 		struct dag_node* b = NULL;
-		r = cseq(al, ts, &b, message);
+		r = cseq(al, ts, &b);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -374,7 +374,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 			goto function_error;
 		}
 
-		r = expr(al, ts, &n, message);
+		r = expr(al, ts, &n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -399,13 +399,13 @@ function_error:
 * cseq -> factor cseq'
 *		| e
 */
-enum result cseq(struct allocator* al, struct token_state* ts, struct dag_node** root, char** message)
+enum result cseq(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 
 	struct dag_node* a = NULL;
-	r = factor(al, ts, &a, message);
+	r = factor(al, ts, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -419,7 +419,7 @@ enum result cseq(struct allocator* al, struct token_state* ts, struct dag_node**
 
 		dag_add_child(n, a);
 
-		r = cseq_prime(al, ts, n, message);
+		r = cseq_prime(al, ts, n);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -437,7 +437,7 @@ function_error:
 * cseq' -> , factor cseq'
 *		 | e
 */
-enum result cseq_prime(struct allocator* al, struct token_state* ts, struct dag_node* parent, char** message)
+enum result cseq_prime(struct allocator* al, struct token_state* ts, struct dag_node* parent)
 {
 	enum result r = result_ok;
 	int num;
@@ -456,7 +456,7 @@ enum result cseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 		}
 
 		struct dag_node* a = NULL;
-		r = factor(al, ts, &a, message);
+		r = factor(al, ts, &a);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -468,7 +468,7 @@ enum result cseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 
 		dag_add_child(parent, a);
 
-		r = cseq_prime(al, ts, parent, message);
+		r = cseq_prime(al, ts, parent);
 		if (r == result_error) {
 			goto function_error;
 		}
