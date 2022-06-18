@@ -1,5 +1,6 @@
 # Todo
-* logical operators
+* comparison operators
+* boolean operators
 * while statement
 * for statement
 * error test cases
