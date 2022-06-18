@@ -72,10 +72,28 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(comma);
     U16_NEXT(comma, pos2, size, cv->comma);
+
+    U_STRING_DECL(less_than, "<", 1);
+    U_STRING_INIT(less_than, "<", 1);
+    pos2 = 0;
+    size = u_strlen(less_than);
+    U16_NEXT(less_than, pos2, size, cv->less_than);
+
+    U_STRING_DECL(greater_than, ">", 1);
+    U_STRING_INIT(greater_than, ">", 1);
+    pos2 = 0;
+    size = u_strlen(greater_than);
+    U16_NEXT(greater_than, pos2, size, cv->greater_than);
+}
+
+int compound_operator_start(UChar32 uc, struct char_value* cv)
+{
+    return uc == cv->equal || uc == cv->less_than || uc == cv->greater_than;
 }
 
 enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
 {
+    enum result r;
     struct char_value cv;
     set_char_values(&cv);
     *got_token = 0;
@@ -83,14 +101,23 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     if (u_isalpha(is->uc)) {
         *state = state_id;
         t->type = token_id;
-        buffer_copy(al, &is->bf, &t->value);
+        r = buffer_copy(al, &is->bf, &t->value);
+        if (r == result_error) {
+            return r;
+        }
     } else if (u_isdigit(is->uc)) {
         *state = state_number;
         t->type = token_number;
-        buffer_copy(al, &is->bf, &t->value);
-    } else if (is->uc == cv.equal) {
-        t->type = token_equal;
-        *got_token = 1;
+        r = buffer_copy(al, &is->bf, &t->value);
+        if (r == result_error) {
+            return r;
+        }
+    } else if (compound_operator_start(is->uc, &cv)) {
+        *state = state_compound_operator;
+        r = buffer_copy(al, &is->bf, &t->value);
+        if (r == result_error) {
+            return r;
+        }
     } else if (is->uc == cv.plus) {
         t->type = token_plus;
         *got_token = 1;
@@ -183,6 +210,77 @@ enum result process_char_number(struct allocator *al, struct input_state* is, en
     return result_ok;
 }
 
+enum result process_compound_operator(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
+{
+    enum result r = result_ok;
+
+    r = buffer_copy(al, &is->bf, &t->value);
+    if (r == result_error) {
+        return r;
+    }
+
+    if (buffer_str_compare(&t->value, "==")) {
+        t->type = token_double_equal;
+        *state = state_start;
+        *got_token = 1;
+    } else if (buffer_str_compare(&t->value, "<=")) {
+        t->type = token_less_than_or_equal;
+        *state = state_start;
+        *got_token = 1;
+    } else if (buffer_str_compare(&t->value, ">=")) {
+        t->type = token_greater_than_or_equal;
+        *state = state_start;
+        *got_token = 1;
+    } else if (t->value.buf[0] == '=') {
+        t->type = token_equal;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+        input_state_push_uchar(is);
+    } else if (t->value.buf[0] == '<') {
+        t->type = token_less_than;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+        input_state_push_uchar(is);
+    } else if (t->value.buf[0] == '>') {
+        t->type = token_greater_than;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+        input_state_push_uchar(is);
+    } else {
+        char* a;
+        r = buffer2array(al, &t->value, &a);
+        if (r == result_error) {
+            return r;
+        }
+        return set_error("unrecognized compound operator: %s", a);
+    }
+
+    return r;
+}
+
+void check_for_operators(struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
+{
+    if (t->value.buf[0] == '=') {
+        t->type = token_equal;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+    } else if (t->value.buf[0] == '<') {
+        t->type = token_less_than;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+    } else if (t->value.buf[0] == '>') {
+        t->type = token_greater_than;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+    }
+}
+
 enum result scan_get_token(struct allocator *al, struct input_state* is, int* got_token, struct token** t)
 {
     enum result r = result_ok;
@@ -204,6 +302,8 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
             r = process_char_word(al, is, &state, got_token, tf);
         } else if (state == state_number) {
             r = process_char_number(al, is, &state, got_token, tf);
+        } else if (state == state_compound_operator) {
+            r = process_compound_operator(al, is, &state, got_token, tf);
         } else {
             r = set_error("unexpected state");
         }
@@ -225,6 +325,8 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
         }
         state = state_start;
         *got_token = 1;
+    } else if (state == state_compound_operator) {
+        check_for_operators(is, &state, got_token, tf);
     }
 
 function_success:

@@ -22,6 +22,11 @@ enum token_enum {
     token_if,
     token_elseif,
     token_else,
+    token_double_equal,
+    token_less_than,
+    token_less_than_or_equal,
+    token_greater_than,
+    token_greater_than_or_equal,
     token_count     /* keep at the end */
 };
 
@@ -40,8 +45,8 @@ enum result token_name_init(char** token_name)
     token_name[token_minus] = "minus";
     token_name[token_mult] = "mult";
     token_name[token_divide] = "divide";
-    token_name[token_left_paren] = "left parenthesis";
-    token_name[token_right_paren] = "right parenthesis";
+    token_name[token_left_paren] = "left-parenthesis";
+    token_name[token_right_paren] = "right-parenthesis";
     token_name[token_newline] = "newline";
     token_name[token_function] = "function";
     token_name[token_end] = "end";
@@ -49,6 +54,14 @@ enum result token_name_init(char** token_name)
     token_name[token_elseif] = "elseif";
     token_name[token_else] = "else";
     token_name[token_comma] = "comma";
+    token_name[token_if] = "if";
+    token_name[token_elseif] = "elseif";
+    token_name[token_else] = "else";
+    token_name[token_double_equal] = "double-equal";
+    token_name[token_less_than] = "less-than";
+    token_name[token_less_than_or_equal] = "less-than-or-equal";
+    token_name[token_greater_than] = "greater-than";
+    token_name[token_greater_than_or_equal] = "greater-than-or-equal";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

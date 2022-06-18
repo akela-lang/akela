@@ -526,6 +526,96 @@ void test_scan_if() {
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(!got_token, "no token");
+
+	scan_teardown(&al, &is);
+}
+
+void test_scan_compound_operators() {
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "== <= >= = < >", &is);
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 0");
+	assert_true(got_token, "got token 0");
+	expect_int_equal(t->type, token_double_equal, "double equal");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 1");
+	assert_true(got_token, "got token 1");
+	expect_int_equal(t->type, token_less_than_or_equal, "less than or equal");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 2");
+	assert_true(got_token, "got token 2");
+	expect_int_equal(t->type, token_greater_than_or_equal, "greater than or equal");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 3");
+	assert_true(got_token, "got token 3");
+	expect_int_equal(t->type, token_equal, "equal");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 4");
+	assert_true(got_token, "got token 4");
+	expect_int_equal(t->type, token_less_than, "less than");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 5");
+	assert_true(got_token, "got token 5");
+	expect_int_equal(t->type, token_greater_than, "greater_than");
+
+	scan_teardown(&al, &is);
+}
+
+void test_scan_compound_operators2() {
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "= < > == <= >=", &is);
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 3");
+	assert_true(got_token, "got token 3");
+	expect_int_equal(t->type, token_equal, "equal");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 4");
+	assert_true(got_token, "got token 4");
+	expect_int_equal(t->type, token_less_than, "less than");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 5");
+	assert_true(got_token, "got token 5");
+	expect_int_equal(t->type, token_greater_than, "greater_than");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 0");
+	assert_true(got_token, "got token 0");
+	expect_int_equal(t->type, token_double_equal, "double equal");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 1");
+	assert_true(got_token, "got token 1");
+	expect_int_equal(t->type, token_less_than_or_equal, "less than or equal");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 2");
+	assert_true(got_token, "got token 2");
+	expect_int_equal(t->type, token_greater_than_or_equal, "greater than or equal");
+
+	scan_teardown(&al, &is);
 }
 
 void test_scan()
@@ -542,4 +632,6 @@ void test_scan()
 	test_scan_function();
 	test_scan_comma();
 	test_scan_if();
+	test_scan_compound_operators();
+	test_scan_compound_operators2();
 }

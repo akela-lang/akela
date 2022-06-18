@@ -14,12 +14,15 @@ struct char_value {
     UChar32 left_paren;
     UChar32 right_paren;
     UChar32 comma;
+    UChar32 less_than;
+    UChar32 greater_than;
 };
 
 enum state_enum {
     state_start,
     state_id,
-    state_number
+    state_number,
+    state_compound_operator
 };
 
 enum result scan_get_token(struct allocator* al, struct input_state* is, int* got_token, struct token** t);

@@ -1,7 +1,9 @@
 # Todo
-* comparison operators
-* boolean binary operators
-* boolean unary operator
+* parse comparison operators
+* scan boolean unary operator
+* parse boolean unary operator
+* scan boolean binary operators
+* parse boolean binary operators
 * while statement
 * for statement
 * error test cases
