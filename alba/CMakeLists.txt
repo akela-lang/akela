@@ -7,8 +7,8 @@ set(source_files
     buffer.c
     memory.c
     dag.c
-    stmts.c
-    "expr.c"
+    parse_stmts.c
+    "parse_expr.c"
     parse.c
     parse_tools.c
     allocator.c

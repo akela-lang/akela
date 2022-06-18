@@ -3,7 +3,7 @@
 #include "token.h"
 #include "dag.h"
 #include "buffer.h"
-#include "expr.h"
+#include "parse_expr.h"
 #include "input.h"
 #include "scan.h"
 #include "parse_tools.h"

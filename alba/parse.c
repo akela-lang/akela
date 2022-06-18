@@ -3,7 +3,7 @@
 #include "allocator.h"
 #include "token.h"
 #include "dag.h"
-#include "stmts.h"
+#include "parse_stmts.h"
 #include "scan.h"
 #include "parse.h"
 #include "input.h"
