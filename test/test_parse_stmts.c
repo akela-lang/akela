@@ -14,6 +14,8 @@ void test_parse_assign()
 
 	parse_setup(&al, "a = 1", &ts, &root);
 
+	root = check_stmts(root);
+
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_assign, "assign");
 
@@ -39,6 +41,8 @@ void test_parse_assign2()
 	struct token_state ts;
 
 	parse_setup(&al, "a = 1 + 2", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_assign, "assign");
@@ -221,6 +225,8 @@ void test_parse_function()
 
 	parse_setup(&al, "function foo()\nx+1\n5+4\nend", &ts, &root);
 
+	root = check_stmts(root);
+
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_function, "function");
 
@@ -275,6 +281,8 @@ void test_parse_function2()
 	struct token_state ts;
 
 	parse_setup(&al, "function foo(x)\nx+1\n5+4\nend", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_function, "function");
@@ -339,6 +347,8 @@ void test_parse_function3()
 	struct token_state ts;
 
 	parse_setup(&al, "function foo(x, y)\nx+1\n5+4\nend", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_function, "function");
@@ -408,6 +418,8 @@ void test_parse_function4()
 	struct token_state ts;
 
 	parse_setup(&al, "function foo(x, y, z)\nx+1\n5+4\nend", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_function, "function");
@@ -483,6 +495,8 @@ void test_parse_call()
 
 	parse_setup(&al, "foo() + 10", &ts, &root);
 
+	root = check_stmts(root);
+
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
 
@@ -518,6 +532,8 @@ void test_parse_call2()
 	struct token_state ts;
 
 	parse_setup(&al, "foo(x) + 10", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -566,6 +582,8 @@ void test_parse_call3()
 	struct token_state ts;
 
 	parse_setup(&al, "foo(x,y) + 10", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -619,6 +637,8 @@ void test_parse_call4()
 	struct token_state ts;
 
 	parse_setup(&al, "foo(x,y,1) + 10", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -678,6 +698,8 @@ void test_parse_if()
 
 	parse_setup(&al, "if true\n10 + 20\nx * y\nend", &ts, &root);
 
+	root = check_stmts(root);
+
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, dag_type_if, "if");
 
@@ -734,6 +756,8 @@ void test_parse_elseif()
 	struct token_state ts;
 
 	parse_setup(&al, "if true\n10 + 20\nx * y\nelseif true\n1\n2\nend", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, dag_type_if, "if");
@@ -815,6 +839,8 @@ void test_parse_elseif2()
 	struct token_state ts;
 
 	parse_setup(&al, "if true\n10 + 20\nx * y\nelseif true\n1\n2\nelseif true\nx\ny\nend", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, dag_type_if, "if");
@@ -921,6 +947,8 @@ void test_parse_else()
 
 	parse_setup(&al, "if false\n10\nelse\nx\ny\nend", &ts, &root);
 
+	root = check_stmts(root);
+
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_if, "if");
 
@@ -935,8 +963,12 @@ void test_parse_else()
 
 	struct dag_node* stmts0 = dag_get_child(cb0, 1);
 	assert_ptr(stmts0, "ptr stmts 0");
-	expect_int_equal(stmts0->type, dag_type_number, "number stmts0");
-	expect_str(&stmts0->value, "10", "10 stmts0");
+	expect_int_equal(stmts0->type, dag_type_stmts, "stmts stmts0");
+
+	struct dag_node* num = dag_get_child(stmts0, 0);
+	assert_ptr(num, "ptr num");
+	expect_int_equal(num->type, dag_type_number, "number num");
+	expect_str(&num->value, "10", "10 num");
 
 	struct dag_node* cb1 = dag_get_child(root, 1);
 	assert_ptr(cb1, "ptr cb1");
@@ -969,6 +1001,8 @@ void test_parse_else2()
 
 	parse_setup(&al, "if false\n10\nelseif false\n20\nelse\nx\ny\nend", &ts, &root);
 
+	root = check_stmts(root);
+
 	/* top */
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_if, "if");
@@ -985,8 +1019,12 @@ void test_parse_else2()
 
 	struct dag_node* stmts0 = dag_get_child(cb0, 1);
 	assert_ptr(stmts0, "ptr stmts 0");
-	expect_int_equal(stmts0->type, dag_type_number, "number stmts0");
-	expect_str(&stmts0->value, "10", "10 stmts0");
+	expect_int_equal(stmts0->type, dag_type_stmts, "stmts stmts0");
+
+	struct dag_node* num0 = dag_get_child(stmts0, 0);
+	assert_ptr(num0, "ptr num0");
+	expect_int_equal(num0->type, dag_type_number, "number num0");
+	expect_str(&num0->value, "10", "10 num0");
 
 	/* elseif */
 	struct dag_node* cb1 = dag_get_child(root, 1);
@@ -1000,8 +1038,11 @@ void test_parse_else2()
 
 	struct dag_node* stmts1 = dag_get_child(cb1, 1);
 	assert_ptr(stmts1, "ptr stmts1");
-	expect_int_equal(stmts1->type, dag_type_number, "number stmts1");
-	expect_str(&stmts1->value, "20", "20 stmts1");
+	expect_int_equal(stmts1->type, dag_type_stmts, "stmts stmts1");
+
+	struct dag_node* num1 = dag_get_child(stmts1, 0);
+	expect_int_equal(num1->type, dag_type_number, "number num1");
+	expect_str(&num1->value, "20", "20 num1");
 
 	/* else */
 	struct dag_node* db = dag_get_child(root, 2);
@@ -1027,7 +1068,6 @@ void test_parse_else2()
 
 void test_parse_statements()
 {
-	/*
 	test_parse_assign();
 	test_parse_assign2();
 	test_parse_stmts();
@@ -1046,5 +1086,4 @@ void test_parse_statements()
 	test_parse_elseif2();
 	test_parse_else();
 	test_parse_else2();
-	*/
 }

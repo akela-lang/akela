@@ -1,5 +1,5 @@
 # Todo
-* treat newline as whitespace
+* handle semicolon as terminator
 * scan boolean unary operator
 * parse boolean unary operator
 * scan boolean binary operators

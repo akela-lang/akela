@@ -45,3 +45,10 @@ void parse_teardown(struct allocator* al, struct token_state* ts)
 	allocator_destroy(al);
 }
 
+struct dag_node* check_stmts(struct dag_node* root)
+{
+	assert_ptr(root, "ptr root");
+	assert_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	return dag_get_child(root, 0);
+}

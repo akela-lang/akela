@@ -14,7 +14,7 @@ enum result parse(struct allocator* al, struct token_state* ts, struct dag_node*
 	*root = NULL;
 	enum result r;
 
-	r = expression_list(al, ts, root);
+	r = stmts(al, ts, root);
 
 	if (r == result_error) {
 		return r;

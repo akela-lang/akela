@@ -3,14 +3,6 @@
 #include "alba/dag.h"
 #include "alba/parse_tools.h"
 
-struct dag_node* check_stmts(struct dag_node* root)
-{
-	assert_ptr(root, "ptr root");
-	assert_int_equal(root->type, dag_type_stmts, "stmts root");
-
-	return dag_get_child(root, 0);
-}
-
 void test_parse_blank()
 {
 	test_name(__func__);
@@ -20,6 +12,8 @@ void test_parse_blank()
 	struct token_state ts;
 
 	parse_setup(&al, "", &ts, &root);
+
+	root = check_stmts(root);
 
 	assert_null(root, "null root");
 
