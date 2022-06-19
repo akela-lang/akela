@@ -822,6 +822,76 @@ void test_parse_paren_mult_mult2()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_comparison()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "if count == 10\nx + 1\nelseif count <= 11\nx + 2\nelseif count >= 12\nx + 3\nend", &ts, &root);
+
+	assert_ptr(root, "root");
+	assert_int_equal(root->type, dag_type_if, "if root");
+
+	struct dag_node* cb0 = dag_get_child(root, 0);
+	assert_ptr(cb0, "ptr cb0");
+	expect_int_equal(cb0->type, dag_type_conditional_branch, "conditional branch cb0");
+
+	struct dag_node* cond0 = dag_get_child(cb0, 0);
+	assert_ptr(cond0, "ptr cond0");
+	expect_int_equal(cond0->type, dag_type_equality, "equality cond0");
+
+	struct dag_node* count0 = dag_get_child(cond0, 0);
+	assert_ptr(count0, "ptr count0");
+	expect_int_equal(count0->type, dag_type_id, "id count0");
+	expect_str(&count0->value, "count", "count count0");
+
+	struct dag_node* num0 = dag_get_child(cond0, 1);
+	assert_ptr(num0, "ptr num0");
+	expect_int_equal(num0->type, dag_type_number, "number num0");
+	expect_str(&num0->value, "10", "10 num0");
+
+	struct dag_node* cb1 = dag_get_child(root, 1);
+	assert_ptr(cb1, "ptr cb1");
+	expect_int_equal(cb1->type, dag_type_conditional_branch, "conditional branch cb1");
+
+	struct dag_node* cond1 = dag_get_child(cb1, 0);
+	assert_ptr(cond1, "ptr cond1");
+	expect_int_equal(cond1->type, dag_type_less_than_or_equal, "less than or equal cond1");
+
+	struct dag_node* count1 = dag_get_child(cond1, 0);
+	assert_ptr(count1, "ptr count1");
+	expect_int_equal(count1->type, dag_type_id, "id count1");
+	expect_str(&count1->value, "count", "count count1");
+
+	struct dag_node* num1 = dag_get_child(cond1, 1);
+	assert_ptr(num1, "ptr num1");
+	expect_int_equal(num1->type, dag_type_number, "number num1");
+	expect_str(&num1->value, "11", "11 num1");
+
+	struct dag_node* cb2 = dag_get_child(root, 2);
+	assert_ptr(cb2, "ptr cb2");
+	expect_int_equal(cb2->type, dag_type_conditional_branch, "conditional branch cb2");
+
+	struct dag_node* cond2 = dag_get_child(cb2, 0);
+	assert_ptr(cond1, "ptr cond2");
+	expect_int_equal(cond2->type, dag_type_greater_than_or_equal, "greater than or equal cond2");
+
+	struct dag_node* count2 = dag_get_child(cond2, 0);
+	assert_ptr(count2, "ptr count2");
+	expect_int_equal(count2->type, dag_type_id, "id count2");
+	expect_str(&count2->value, "count", "count count2");
+
+	struct dag_node* num2 = dag_get_child(cond2, 1);
+	assert_ptr(num2, "ptr num2");
+	expect_int_equal(num2->type, dag_type_number, "number num2");
+	expect_str(&num2->value, "12", "12 num2");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse_expression()
 {
 	test_parse_num();
@@ -851,4 +921,5 @@ void test_parse_expression()
 	test_parse_paren_mult();
 	test_parse_paren_mult_mult();
 	test_parse_paren_mult_mult2();
+	test_parse_comparison();
 }

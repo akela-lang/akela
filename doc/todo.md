@@ -1,5 +1,5 @@
 # Todo
-* parse comparison operators
+* treat newline as whitespace
 * scan boolean unary operator
 * parse boolean unary operator
 * scan boolean binary operators

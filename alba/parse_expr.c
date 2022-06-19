@@ -9,13 +9,125 @@
 */
 enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
-	return add(al, ts, root);
+	return comparison(al, ts, root);
+}
+
+/*
+* comparison -> add comparison'
+*/
+inline enum result comparison(struct allocator* al, struct token_state* ts, struct dag_node** root)
+{
+	enum result r = result_ok;
+	struct defer_node* stack_error = NULL;
+	struct defer_node* stack_temp = NULL;
+	struct dag_node* a = NULL;
+	struct dag_node* b = NULL;
+	struct dag_node* c = NULL;
+	struct dag_node* n = NULL;
+
+	r = add(al, ts, &a);
+	if (r == result_error) {
+		return r;
+	}
+
+	r = comparison_prime(al, ts, &b, &c);
+	if (r == result_error) {
+		return r;
+	}
+
+	if (a && !b) {
+		n = a;
+		*root = n;
+	} else if (a && b) {
+		dag_push(c, a);
+		*root = b;
+	}
+
+	return r;
+}
+
+/*
+* comparison' -> == add comparison'
+*	           | <= add comparison'
+*	           | >= add comparison'
+*	           | e
+*/
+enum result comparison_prime(struct allocator* al, struct token_state* ts, struct dag_node** root, struct dag_node** insert_point)
+{
+	enum result r = result_ok;
+	struct dag_node* n = NULL;
+	struct dag_node* a = NULL;
+	struct dag_node* b = NULL;
+	struct dag_node* c = NULL;
+	enum dag_type type = dag_type_none;
+	int num;
+
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		return r;
+	}
+	struct token* t0 = get_token(&ts->lookahead, 0);
+
+	/* e */
+	if (t0 == NULL) {
+		return r;
+	}
+
+	/* operator */
+	if (t0->type == token_double_equal) {
+		type = dag_type_equality;
+	} else if (t0->type == token_less_than_or_equal) {
+		type = dag_type_less_than_or_equal;
+	} else if (t0->type == token_greater_than_or_equal) {
+		type = dag_type_greater_than_or_equal;
+	} else {
+		/* e */
+		return r;
+	}
+
+	r = dag_create_node(al, &n);
+	if (r == result_error) {
+		return r;
+	}
+
+	n->type = type;
+	r = match(al, ts, t0->type, "expecting + or -");
+	if (r == result_error) {
+		return r;
+	}
+
+	/* add */
+	r = add(al, ts, &a);
+	if (r == result_error) {
+		return r;
+	}
+
+	/* comparison' */
+	r = comparison_prime(al, ts, &b, &c);
+	if (r == result_error) {
+		return r;
+	}
+
+	if (a && !b) {
+		dag_add_child(n, a);
+		*root = n;
+		*insert_point = n;
+		return r;
+	} else if (a && b) {
+		dag_add_child(n, a);
+		dag_push(c, n);
+		*root = b;
+		*insert_point = n;
+		return r;
+	} else {
+		return r;
+	}
 }
 
 /*
 * add -> mult add'
 */
-inline enum result add(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result add(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
