@@ -84,6 +84,12 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(greater_than);
     U16_NEXT(greater_than, pos2, size, cv->greater_than);
+
+    U_STRING_DECL(underscore, "_", 1);
+    U_STRING_INIT(underscore, "_", 1);
+    pos2 = 0;
+    size = u_strlen(underscore);
+    U16_NEXT(underscore, pos2, size, cv->underscore);
 }
 
 int compound_operator_start(UChar32 uc, struct char_value* cv)
@@ -105,6 +111,13 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         if (r == result_error) {
             return r;
         }
+    } else if (is->uc == cv.underscore) {
+            *state = state_id_underscore;
+            t->type = token_id;
+            r = buffer_copy(al, &is->bf, &t->value);
+            if (r == result_error) {
+                return r;
+            }
     } else if (u_isdigit(is->uc)) {
         *state = state_number;
         t->type = token_number;
@@ -176,22 +189,47 @@ enum result process_char_word(struct allocator *al, struct input_state* is, enum
     struct char_value cv;
     set_char_values(&cv);
 
-    if (u_isalpha(is->uc)) {
-        r = buffer_copy(al, &is->bf, &t->value);
-        if (r == result_error) {
-            return r;
+    if (*state == state_id) {
+        if (is->uc == cv.underscore) {
+            r = buffer_copy(al, &is->bf, &t->value);
+            if (r == result_error) {
+                return r;
+            }
+        } else if (u_isalpha(is->uc)) {
+            r = buffer_copy(al, &is->bf, &t->value);
+            if (r == result_error) {
+                return r;
+            }
+        } else if (u_isdigit(is->uc)) {
+            r = buffer_copy(al, &is->bf, &t->value);
+            if (r == result_error) {
+                return r;
+            }
+        } else {
+            check_reserved_words(t);
+            *state = state_start;
+            *got_token = 1;
+            input_state_push_uchar(is);
         }
-    } else if (u_isdigit(is->uc)) {
-        r = buffer_copy(al, &is->bf, &t->value);
-        if (r == result_error) {
-            return r;
+    } else if (*state == state_id_underscore) {
+        if (is->uc == cv.underscore) {
+            return set_error("Must have a letter following underscore at start of id");
+        } else if (u_isdigit(is->uc)) {
+            return set_error("Must have a letter following underscore at start of id");
+        } else if (u_isalpha(is->uc)) {
+            *state = state_id;
+            r = buffer_copy(al, &is->bf, &t->value);
+            if (r == result_error) {
+                return r;
+            }
+        } else {
+            check_reserved_words(t);
+            *state = state_start;
+            *got_token = 1;
+            input_state_push_uchar(is);
         }
-    } else {
-        check_reserved_words(t);
-        *state = state_start;
-        *got_token = 1;
-        input_state_push_uchar(is);
     }
+
     return result_ok;
 }
 
@@ -298,7 +336,7 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
     while (get_uchar(al, is) != result_error && !is->done) {
         if (state == state_start) {
             r = process_char_start(al, is, &state, got_token, tf);
-        } else if (state == state_id) {
+        } else if (state == state_id || state == state_id_underscore) {
             r = process_char_word(al, is, &state, got_token, tf);
         } else if (state == state_number) {
             r = process_char_number(al, is, &state, got_token, tf);

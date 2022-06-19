@@ -16,11 +16,13 @@ struct char_value {
     UChar32 comma;
     UChar32 less_than;
     UChar32 greater_than;
+    UChar32 underscore;
 };
 
 enum state_enum {
     state_start,
     state_id,
+    state_id_underscore,
     state_number,
     state_compound_operator
 };

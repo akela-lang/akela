@@ -9,55 +9,60 @@
 #include "parse_tools.h"
 
 /*
-* stmts -> stmt stmts'
-*		 | e
+* expression_list -> expression terminator |
+*					 expression terminator expression_list
 */
-enum parse_result stmts(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum parse_result expression_list(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
+	int num;
 
-	/* stmt stmts' */
+	/* expression */
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	if (num == 0) {
+		goto function_success;
+	}
+
+	struct dag_node* a = NULL;
+	r = expr(al, ts, &a);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	r = terminator(al, ts);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	if (!a) {
+		goto function_success;
+	}
+
 	r = dag_create_node(al, &n);
 	if (r == result_error) {
 		goto function_error;
 	}
-
 	n->type = dag_type_stmts;
 
-	struct dag_node* a = NULL;
-	r = stmt(al, ts, &a);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_add_child(n, a);
 
+	/* expression_list */
 	struct dag_node* b = NULL;
-	r = stmts_prime(al, ts, &b);
+	r = expression_list(al, ts, &b);
 	if (r == result_error) {
 		goto function_error;
-	}
-
-	if (a) {
-		dag_add_child(n, a);
 	}
 
 	if (a && b && b->type == dag_type_stmts && b->head) {
 		a->next = b->head;
 		b->head->prev = a;
 		n->tail = b->tail;
-
-	} else if (b) {
-		dag_add_child(n, b);
 	}
-
-	/* single statement */
-	struct dag_node* n1 = dag_get_child(n, 1);
-	if (!n1) {
-		struct dag_node* n0 = dag_get_child(n, 0);
-		n = n0;
-	}
-
-	/* e */
 
 function_success:
 	*root = n;
@@ -67,46 +72,21 @@ function_error:
 	return r;
 }
 
-/*
-* stmts' -> \n stmts
-*		  | e
-*/
-enum parse_result stmts_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum parse_result terminator(struct allocator* al, struct token_state* ts)
 {
 	enum result r = result_ok;
-	struct dag_node* n = NULL;
 	int num;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
-		goto function_error;
+		return r;
 	}
 
-	/* e */
-	if (num <= 0) {
-		goto function_success;
+	r = match(al, ts, token_newline, "expecting newline");
+	if (r == result_error) {
+		return r;
 	}
 
-	/* \n stmts */
-	struct token* t = get_token(&ts->lookahead, 0);
-	if (t->type == token_newline) {
-		r = match(al, ts, token_newline, "expecting newline");
-		if (r == result_error) {
-			return r;
-		}
-
-		r = stmts(al, ts, &n);
-		if (r == result_error) {
-			goto function_error;
-		}
-		goto function_success;
-	}
-
-function_success:
-	*root = n;
-	return r;
-
-function_error:
 	return r;
 }
 
@@ -226,7 +206,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 
 		struct dag_node* c;
-		r = stmts(al, ts, &c);
+		r = expression_list(al, ts, &c);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -281,7 +261,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 		/* body */
 		struct dag_node* body = NULL;
-		r = stmts(al, ts, &body);
+		r = expression_list(al, ts, &body);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -492,7 +472,7 @@ enum result elseif_stmts(struct allocator* al, struct token_state* ts, struct da
 		}
 
 		struct dag_node* node = NULL;
-		r = stmts(al, ts, &node, NULL);
+		r = expression_list(al, ts, &node, NULL);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -551,7 +531,7 @@ enum result else_stmt(struct allocator* al, struct token_state* ts, struct dag_n
 
 		/* stmts */
 		struct dag_node* node = NULL;
-		r = stmts(al, ts, &node, NULL);
+		r = expression_list(al, ts, &node, NULL);
 		if (r == result_error) {
 			goto function_error;
 		}
