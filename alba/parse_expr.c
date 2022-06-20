@@ -347,13 +347,14 @@ enum result mult_prime(struct allocator* al, struct token_state* ts, struct dag_
 }
 
 /*
-* factor -> number
+* factor -> id(cseq)
+*		  | number
 *		  | id
 *		  | + factor
 *		  | - factor
 *		  | (expr)
-*		  | id(cseq)
 *		  | ! factor
+* note: type system should catch incompatible sign or not factors
 */
 enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
@@ -488,25 +489,14 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 
 		dag_add_child(n, left);
 
-		struct dag_node* right;
-		r = dag_create_node(al, &right);
+		struct dag_node* right = NULL;
+		r = factor(al, ts, &right);
 		if (r == result_error) {
 			goto function_error;
 		}
 
-		if (t1->type == token_number) {
-			right->type = dag_type_number;
-		} else {
-			right->type = dag_type_id;
-		}
-
-		r = match(al, ts, t1->type, "expecting number or word");
-		if (r == result_error) {
-			goto function_error;
-		}
-
-		r = buffer_copy(al, &t1->value, &right->value);
-		if (r == result_error) {
+		if (!right) {
+			r = set_error("expecting factor after sign");
 			goto function_error;
 		}
 

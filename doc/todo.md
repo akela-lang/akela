@@ -1,5 +1,4 @@
 # Todo
-* support sign with any factor
 * scan boolean binary operators
 * parse boolean binary operators
 * while statement

@@ -162,6 +162,39 @@ void test_parse_num_positive()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_call_negative()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "-foo()", &ts, &root);
+
+	assert_ptr(root, "ptr root");
+	assert_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* sign = dag_get_child(root, 0);
+	assert_ptr(sign, "ptr sign");
+	expect_int_equal(sign->type, dag_type_sign, "sign sign");
+
+	struct dag_node* left = dag_get_child(sign, 0);
+	assert_ptr(left, "left");
+	assert_int_equal(left->type, dag_type_minus, "minus");
+
+	struct dag_node* right = dag_get_child(sign, 1);
+	assert_ptr(right, "right");
+	assert_int_equal(right->type, dag_type_call, "call");
+
+	struct dag_node* id = dag_get_child(right, 0);
+	assert_ptr(id, "ptr id");
+	assert_int_equal(id->type, dag_type_id, "id id");
+	expect_str(&id->value, "foo", "foo id");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse_add()
 {
 	test_name(__func__);
@@ -1066,6 +1099,7 @@ void test_parse_expression()
 	test_parse_id3();
 	test_parse_num_negative();
 	test_parse_num_positive();
+	test_parse_call_negative();
 	test_parse_add();
 	test_parse_add_positive();
 	test_parse_add_negative();
