@@ -19,6 +19,8 @@ struct char_value {
     UChar32 underscore;
     UChar32 semicolon;
     UChar32 exclamation;
+    UChar32 ampersand;
+    UChar32 vertical_bar;
 };
 
 enum state_enum {

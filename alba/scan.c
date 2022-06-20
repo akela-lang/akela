@@ -102,11 +102,23 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(exclamation);
     U16_NEXT(exclamation, pos2, size, cv->exclamation);
+
+    U_STRING_DECL(ampersand, "&", 1);
+    U_STRING_INIT(ampersand, "&", 1);
+    pos2 = 0;
+    size = u_strlen(ampersand);
+    U16_NEXT(ampersand, pos2, size, cv->ampersand);
+
+    U_STRING_DECL(vertical_bar, "|", 1);
+    U_STRING_INIT(vertical_bar, "|", 1);
+    pos2 = 0;
+    size = u_strlen(vertical_bar);
+    U16_NEXT(vertical_bar, pos2, size, cv->vertical_bar);
 }
 
 int compound_operator_start(UChar32 uc, struct char_value* cv)
 {
-    return uc == cv->equal || uc == cv->exclamation || uc == cv->less_than || uc == cv->greater_than;
+    return uc == cv->equal || uc == cv->exclamation || uc == cv->less_than || uc == cv->greater_than || uc == cv->ampersand || uc == cv->vertical_bar;
 }
 
 enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
@@ -288,6 +300,14 @@ enum result process_compound_operator(struct allocator* al, struct input_state* 
         t->type = token_greater_than_or_equal;
         *state = state_start;
         *got_token = 1;
+    } else if (buffer_str_compare(&t->value, "&&")) {
+        t->type = token_and;
+        *state = state_start;
+        *got_token = 1;
+    } else if (buffer_str_compare(&t->value, "||")) {
+        t->type = token_or;
+        *state = state_start;
+        *got_token = 1;
     } else if (t->value.buf[0] == '=') {
         t->type = token_equal;
         buffer_clear(&t->value);
@@ -308,6 +328,18 @@ enum result process_compound_operator(struct allocator* al, struct input_state* 
         input_state_push_uchar(is);
     } else if (t->value.buf[0] == '>') {
         t->type = token_greater_than;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+        input_state_push_uchar(is);
+    } else if (t->value.buf[0] == '&') {
+        t->type = token_ampersand;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+        input_state_push_uchar(is);
+    } else if (t->value.buf[0] == '|') {
+        t->type = token_vertical_bar;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
@@ -343,6 +375,16 @@ void check_for_operators(struct input_state* is, enum state_enum* state, int* go
         *got_token = 1;
     } else if (t->value.buf[0] == '>') {
         t->type = token_greater_than;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+    } else if (t->value.buf[0] == '&') {
+        t->type = token_ampersand;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+    } else if (t->value.buf[0] == '|') {
+        t->type = token_vertical_bar;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;

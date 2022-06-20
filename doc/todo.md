@@ -1,5 +1,4 @@
 # Todo
-* scan boolean binary operators
 * parse boolean binary operators
 * while statement
 * for statement
@@ -9,3 +8,5 @@
 * foreach statement
 * strings
 * anonymous functions
+* bitwise operators
+* shift operators

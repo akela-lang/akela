@@ -30,6 +30,10 @@ enum token_enum {
     token_greater_than,
     token_greater_than_or_equal,
     token_not,
+    token_ampersand,
+    token_and,
+    token_vertical_bar,
+    token_or,
     token_count     /* keep at the end */
 };
 
