@@ -13,7 +13,7 @@ void test_parse_blank()
 
 	parse_setup(&al, "", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_null(root, "null root");
 
@@ -615,7 +615,7 @@ void test_parse_add_mult()
 
 	parse_setup(&al, "5 + 3 * 2", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -652,7 +652,7 @@ void test_parse_mult_add()
 
 	parse_setup(&al, "4 * 3 + 2", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -689,7 +689,7 @@ void test_parse_paren_num()
 
 	parse_setup(&al, "(32)", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_number, "number");
@@ -708,7 +708,7 @@ void test_parse_paren_add()
 
 	parse_setup(&al, "(speed + 1)", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -738,7 +738,7 @@ void test_parse_paren_add2()
 
 	parse_setup(&al, "(speed) + 1", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -768,7 +768,7 @@ void test_parse_paren_add3()
 
 	parse_setup(&al, "speed + (1)", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_plus, "plus");
@@ -798,7 +798,7 @@ void test_parse_paren_add_add()
 
 	parse_setup(&al, "1 + (2 + 3)", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -837,7 +837,7 @@ void test_parse_paren_add_add2()
 
 	parse_setup(&al, "(1 + 2) + 3", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_plus, "plus");
@@ -874,7 +874,7 @@ void test_parse_paren_mult()
 
 	parse_setup(&al, "(5 * 2)", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_mult, "mult");
@@ -902,7 +902,7 @@ void test_parse_paren_mult_mult()
 
 	parse_setup(&al, "1 * (2 * 3)", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_mult, "mult");
@@ -939,7 +939,7 @@ void test_parse_paren_mult_mult2()
 
 	parse_setup(&al, "(1 * 2) * 3", &ts, &root);
 
-	root = check_stmts(root);
+	root = check_stmts(root, "stmts root");
 
 	assert_ptr(root, "root");
 	assert_int_equal(root->type, dag_type_mult, "mult");

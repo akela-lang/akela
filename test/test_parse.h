@@ -3,6 +3,6 @@
 
 void parse_setup(struct allocator* al, char* line, struct token_state* ts, struct dag_node** root);
 void parse_teardown(struct allocator* al, struct token_state* ts);
-struct dag_node* check_stmts(struct dag_node* root);
+struct dag_node* check_stmts(struct dag_node* root, char* message);
 
 #endif

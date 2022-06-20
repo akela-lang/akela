@@ -90,6 +90,12 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(underscore);
     U16_NEXT(underscore, pos2, size, cv->underscore);
+
+    U_STRING_DECL(semicolon, ";", 1);
+    U_STRING_INIT(semicolon, ";", 1);
+    pos2 = 0;
+    size = u_strlen(semicolon);
+    U16_NEXT(semicolon, pos2, size, cv->semicolon);
 }
 
 int compound_operator_start(UChar32 uc, struct char_value* cv)
@@ -156,6 +162,9 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         *got_token = 1;
     } else if (is->uc == cv.comma) {
         t->type = token_comma;
+        *got_token = 1;
+    } else if (is->uc == cv.semicolon) {
+        t->type = token_semicolon;
         *got_token = 1;
     } else {
         char* a;
