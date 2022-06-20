@@ -24,10 +24,12 @@ enum token_enum {
     token_elseif,
     token_else,
     token_double_equal,
+    token_not_equal,
     token_less_than,
     token_less_than_or_equal,
     token_greater_than,
     token_greater_than_or_equal,
+    token_not,
     token_count     /* keep at the end */
 };
 

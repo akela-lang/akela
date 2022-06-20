@@ -96,11 +96,17 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(semicolon);
     U16_NEXT(semicolon, pos2, size, cv->semicolon);
+
+    U_STRING_DECL(exclamation, "!", 1);
+    U_STRING_INIT(exclamation, "!", 1);
+    pos2 = 0;
+    size = u_strlen(exclamation);
+    U16_NEXT(exclamation, pos2, size, cv->exclamation);
 }
 
 int compound_operator_start(UChar32 uc, struct char_value* cv)
 {
-    return uc == cv->equal || uc == cv->less_than || uc == cv->greater_than;
+    return uc == cv->equal || uc == cv->exclamation || uc == cv->less_than || uc == cv->greater_than;
 }
 
 enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
@@ -270,6 +276,10 @@ enum result process_compound_operator(struct allocator* al, struct input_state* 
         t->type = token_double_equal;
         *state = state_start;
         *got_token = 1;
+    } else if (buffer_str_compare(&t->value, "!=")) {
+        t->type = token_not_equal;
+        *state = state_start;
+        *got_token = 1;
     } else if (buffer_str_compare(&t->value, "<=")) {
         t->type = token_less_than_or_equal;
         *state = state_start;
@@ -280,6 +290,12 @@ enum result process_compound_operator(struct allocator* al, struct input_state* 
         *got_token = 1;
     } else if (t->value.buf[0] == '=') {
         t->type = token_equal;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+        input_state_push_uchar(is);
+    } else if (t->value.buf[0] == '!') {
+        t->type = token_not;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
@@ -312,6 +328,11 @@ void check_for_operators(struct input_state* is, enum state_enum* state, int* go
 {
     if (t->value.buf[0] == '=') {
         t->type = token_equal;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+    } else if (t->value.buf[0] == '!') {
+        t->type = token_not;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;

@@ -18,6 +18,7 @@ struct char_value {
     UChar32 greater_than;
     UChar32 underscore;
     UChar32 semicolon;
+    UChar32 exclamation;
 };
 
 enum state_enum {
