@@ -5,7 +5,7 @@
 #include "parse_tools.h"
 
 /*
-* expr -> add
+* expr -> not_operator
 */
 enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
@@ -15,7 +15,7 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 /*
 * comparison -> add comparison'
 */
-inline enum result comparison(struct allocator* al, struct token_state* ts, struct dag_node** root)
+enum result comparison(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct defer_node* stack_error = NULL;
@@ -348,13 +348,12 @@ enum result mult_prime(struct allocator* al, struct token_state* ts, struct dag_
 
 /*
 * factor -> number
-*	| + number
-*	| - number
-*	| word
-*	| + word
-*	| - word
-*	| (expr)
-*	| word(cseq)
+*		  | id
+*		  | + factor
+*		  | - factor
+*		  | (expr)
+*		  | id(cseq)
+*		  | ! factor
 */
 enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
@@ -413,6 +412,30 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 		if (r == result_error) {
 			goto function_error;
 		}
+
+		/* ! factor */
+	} else if (t0 && t0->type == token_not) {
+		r = match(al, ts, token_not, "expecting not");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		struct dag_node* a = NULL;
+		r = factor(al, ts, &a);
+
+		if (!a) {
+			r = set_error("expected factor");
+			goto function_error;
+		}
+
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		n->type = dag_type_not;
+		dag_add_child(n, a);
+		goto function_success;
 
 		/* number or word */
 	} else if (t0 && (t0->type == token_number || t0->type == token_id)) {

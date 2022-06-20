@@ -1035,6 +1035,28 @@ void test_parse_comparison()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_not()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "!a", &ts, &root);
+
+	struct dag_node* not = check_stmts(root, "stmts root");
+	assert_ptr(not, "ptr not");
+	expect_int_equal(not->type, dag_type_not, "not not");
+
+	struct dag_node* id = dag_get_child(not, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, dag_type_id, "id id");
+	expect_str(&id->value, "a", "a id");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse_expression()
 {
 	test_parse_blank();
@@ -1068,4 +1090,5 @@ void test_parse_expression()
 	test_parse_paren_mult_mult();
 	test_parse_paren_mult_mult2();
 	test_parse_comparison();
+	test_parse_not();
 }

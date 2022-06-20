@@ -27,6 +27,7 @@ enum dag_type {
 	dag_type_not_equal,
 	dag_type_less_than_or_equal,
 	dag_type_greater_than_or_equal,
+	dag_type_not,
 	dag_type_count		/* keep at end */
 };
 
