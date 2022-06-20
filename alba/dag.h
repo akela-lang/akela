@@ -28,6 +28,8 @@ enum dag_type {
 	dag_type_less_than_or_equal,
 	dag_type_greater_than_or_equal,
 	dag_type_not,
+	dag_type_and,
+	dag_type_or,
 	dag_type_count		/* keep at end */
 };
 
@@ -49,6 +51,20 @@ enum result dag_set_names(char** names)
 	names[dag_type_mult] = "mult";
 	names[dag_type_divide] = "divide";
 	names[dag_type_stmts] = "stmts";
+	names[dag_type_function] = "function";
+	names[dag_type_dseq] = "dseq";
+	names[dag_type_call] = "call";
+	names[dag_type_cseq] = "cseq";
+	names[dag_type_if] = "if";
+	names[dag_type_conditional_branch] = "conditional-branch";
+	names[dag_type_default_branch] = "default-branch";
+	names[dag_type_equality] = "equality";
+	names[dag_type_not_equal] = "not equal";
+	names[dag_type_less_than_or_equal] = "less than or equal";
+	names[dag_type_greater_than_or_equal] = "greater than or equal";
+	names[dag_type_not] = "not";
+	names[dag_type_and] = "and";
+	names[dag_type_or] = "or";
 
 	for (int i = 0; i < dag_type_count; i++) {
 		if (names[i] == NULL) {

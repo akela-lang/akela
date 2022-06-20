@@ -1,5 +1,4 @@
 # Todo
-* parse boolean binary operators
 * while statement
 * for statement
 * error test cases
