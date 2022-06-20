@@ -1,6 +1,5 @@
 # Todo
-* parse not equal comparison operator
-* parse boolean unary operator
+* parse boolean not operator
 * scan boolean binary operators
 * parse boolean binary operators
 * while statement

@@ -76,6 +76,8 @@ enum result comparison_prime(struct allocator* al, struct token_state* ts, struc
 	/* operator */
 	if (t0->type == token_double_equal) {
 		type = dag_type_equality;
+	} else if (t0->type == token_not_equal) {
+		type = dag_type_not_equal;
 	} else if (t0->type == token_less_than_or_equal) {
 		type = dag_type_less_than_or_equal;
 	} else if (t0->type == token_greater_than_or_equal) {

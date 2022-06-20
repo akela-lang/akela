@@ -24,6 +24,7 @@ enum dag_type {
 	dag_type_conditional_branch,
 	dag_type_default_branch,
 	dag_type_equality,
+	dag_type_not_equal,
 	dag_type_less_than_or_equal,
 	dag_type_greater_than_or_equal,
 	dag_type_count		/* keep at end */

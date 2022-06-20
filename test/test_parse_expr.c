@@ -974,7 +974,7 @@ void test_parse_comparison()
 	struct dag_node* root;
 	struct token_state ts;
 
-	parse_setup(&al, "count == 10\ncount <= 11\ncount >= 12", &ts, &root);
+	parse_setup(&al, "count == 10\ncount != 11\ncount <= 12\ncount >= 13", &ts, &root);
 
 	struct dag_node* cond0 = dag_get_child(root, 0);
 	assert_ptr(cond0, "ptr cond0");
@@ -992,7 +992,7 @@ void test_parse_comparison()
 
 	struct dag_node* cond1 = dag_get_child(root, 1);
 	assert_ptr(cond1, "ptr cond1");
-	expect_int_equal(cond1->type, dag_type_less_than_or_equal, "less than or equal cond1");
+	expect_int_equal(cond1->type, dag_type_not_equal, "not equal cond1");
 
 	struct dag_node* left1 = dag_get_child(cond1, 0);
 	assert_ptr(left1, "ptr left1");
@@ -1006,7 +1006,7 @@ void test_parse_comparison()
 
 	struct dag_node* cond2 = dag_get_child(root, 2);
 	assert_ptr(cond2, "ptr cond2");
-	expect_int_equal(cond2->type, dag_type_greater_than_or_equal, "greater than or equal cond2");
+	expect_int_equal(cond2->type, dag_type_less_than_or_equal, "less than or equal cond2");
 
 	struct dag_node* left2 = dag_get_child(cond2, 0);
 	assert_ptr(left2, "ptr left2");
@@ -1017,6 +1017,20 @@ void test_parse_comparison()
 	assert_ptr(right2, "ptr right2");
 	expect_int_equal(right2->type, dag_type_number, "number right2");
 	expect_str(&right2->value, "12", "12 right2");
+
+	struct dag_node* cond3 = dag_get_child(root, 3);
+	assert_ptr(cond3, "ptr cond3");
+	expect_int_equal(cond3->type, dag_type_greater_than_or_equal, "greater than or equal cond3");
+
+	struct dag_node* left3 = dag_get_child(cond3, 0);
+	assert_ptr(left3, "ptr left3");
+	expect_int_equal(left3->type, dag_type_id, "id left3");
+	expect_str(&left3->value, "count", "count left3");
+
+	struct dag_node* right3 = dag_get_child(cond3, 1);
+	assert_ptr(right3, "ptr right3");
+	expect_int_equal(right3->type, dag_type_number, "number right3");
+	expect_str(&right3->value, "13", "13 right3");
 
 	parse_teardown(&al, &ts);
 }
