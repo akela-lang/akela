@@ -77,7 +77,7 @@ enum result dag_set_names(char** names)
 
 #else
 
-void dag_set_names(char** names);
+enum result dag_set_names(char** names);
 
 #endif
 
