@@ -34,6 +34,7 @@ enum token_enum {
     token_and,
     token_vertical_bar,
     token_or,
+    token_while,
     token_count     /* keep at the end */
 };
 
@@ -70,6 +71,12 @@ enum result token_name_init(char** token_name)
     token_name[token_less_than_or_equal] = "less-than-or-equal";
     token_name[token_greater_than] = "greater-than";
     token_name[token_greater_than_or_equal] = "greater-than-or-equal";
+    token_name[token_not] = "not";
+    token_name[token_ampersand] = "ampersand";
+    token_name[token_and] = "and";
+    token_name[token_vertical_bar] = "vertical-bar";
+    token_name[token_or] = "or";
+    token_name[token_while] = "while";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

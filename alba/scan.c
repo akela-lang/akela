@@ -207,6 +207,8 @@ void check_reserved_words(struct token* t)
         t->type = token_elseif;
     } else if (buffer_str_compare(&t->value, "else")) {
         t->type = token_else;
+    } else if (buffer_str_compare(&t->value, "while")) {
+        t->type = token_while;
     }
 }
 

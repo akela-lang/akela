@@ -1172,6 +1172,37 @@ void test_parse_else2()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_while()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "while (true) 1 end", &ts, &root);
+
+	struct dag_node* node = check_stmts(root, "stmts root");
+	assert_ptr(node, "ptr node");
+	expect_int_equal(node->type, dag_type_while, "while node");
+
+	struct dag_node* cond = dag_get_child(node, 0);
+	assert_ptr(cond, "ptr cond");
+	expect_int_equal(cond->type, dag_type_id, "id cond");
+	expect_str(&cond->value, "true", "true cond");
+
+	struct dag_node* stmts = dag_get_child(node, 1);
+	assert_ptr(stmts, "ptr stmts");
+	expect_int_equal(stmts->type, dag_type_stmts, "stmts stmts");
+
+	struct dag_node* num = dag_get_child(stmts, 0);
+	assert_ptr(num, "ptr num");
+	expect_int_equal(num->type, dag_type_number, "number num");
+	expect_str(&num->value, "1", "1 num");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse_statements()
 {
 	test_parse_assign();
@@ -1194,4 +1225,5 @@ void test_parse_statements()
 	test_parse_elseif2();
 	test_parse_else();
 	test_parse_else2();
+	test_parse_while();
 }

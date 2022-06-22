@@ -30,6 +30,7 @@ enum dag_type {
 	dag_type_not,
 	dag_type_and,
 	dag_type_or,
+	dag_type_while,
 	dag_type_count		/* keep at end */
 };
 
@@ -65,6 +66,7 @@ enum result dag_set_names(char** names)
 	names[dag_type_not] = "not";
 	names[dag_type_and] = "and";
 	names[dag_type_or] = "or";
+	names[dag_type_while] = "while";
 
 	for (int i = 0; i < dag_type_count; i++) {
 		if (names[i] == NULL) {

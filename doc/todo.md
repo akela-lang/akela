@@ -1,5 +1,4 @@
 # Todo
-* while statement
 * for statement
 * error test cases
 * types

@@ -183,6 +183,43 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		dag_add_child(n, b);
 		goto function_success;
 
+	} else if (t0 && t0->type == token_while) {
+		r = match(al, ts, token_while, "expecting while");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+		n->type = dag_type_while;
+
+		struct dag_node* a = NULL;
+		r = expr(al, ts, &a);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (!a) {
+			r = set_error("expected expression");
+			goto function_error;
+		}
+		dag_add_child(n, a);
+
+		struct dag_node* b = NULL;
+		r = stmts(al, ts, &b);
+		if (r == result_error) {
+			goto function_error;
+		}
+		dag_add_child(n, b);
+
+		r = match(al, ts, token_end, "expected end");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		goto function_success;
+
 	/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
 		r = match(al, ts, token_function, "expecting function");
