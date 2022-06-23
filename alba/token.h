@@ -35,6 +35,7 @@ enum token_enum {
     token_vertical_bar,
     token_or,
     token_while,
+    token_for,
     token_count     /* keep at the end */
 };
 
@@ -77,6 +78,7 @@ enum result token_name_init(char** token_name)
     token_name[token_vertical_bar] = "vertical-bar";
     token_name[token_or] = "or";
     token_name[token_while] = "while";
+    token_name[token_for] = "for";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

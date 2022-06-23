@@ -642,6 +642,59 @@ void test_scan_compound_operators2() {
 	scan_teardown(&al, &is);
 }
 
+void test_scan_for()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "for a; b; c; 1 end", &is);
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 0");
+	assert_true(got_token, "got token 0");
+	expect_int_equal(t->type, token_for, "for");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 1");
+	assert_true(got_token, "got token 1");
+	expect_int_equal(t->type, token_id, "id a");
+	expect_str(&t->value, "a", "a");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 2");
+	assert_true(got_token, "got token 2");
+	expect_int_equal(t->type, token_semicolon, "semicolon");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 3");
+	assert_true(got_token, "got token 3");
+	expect_int_equal(t->type, token_id, "id b");
+	expect_str(&t->value, "b", "b");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 4");
+	assert_true(got_token, "got token 4");
+	expect_int_equal(t->type, token_semicolon, "semicolon");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 5");
+	assert_true(got_token, "got token 5");
+	expect_int_equal(t->type, token_id, "id c");
+	expect_str(&t->value, "c", "c");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 6");
+	assert_true(got_token, "got token 6");
+	expect_int_equal(t->type, token_semicolon, "semicolon");
+
+	scan_teardown(&al, &is);
+}
+
 void test_scan()
 {
 	test_scan_assign();
@@ -659,4 +712,5 @@ void test_scan()
 	test_scan_if();
 	test_scan_compound_operators();
 	test_scan_compound_operators2();
+	test_scan_for();
 }

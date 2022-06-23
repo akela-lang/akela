@@ -220,6 +220,10 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 		goto function_success;
 
+		/* for (init; compare; next; stmts end */
+	} else if (t0 && t0->type == token_for) {
+
+
 	/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
 		r = match(al, ts, token_function, "expecting function");
