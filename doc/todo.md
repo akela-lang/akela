@@ -1,5 +1,4 @@
 # Todo
-* for statement
 * error test cases
 * types
 * arrays
