@@ -21,6 +21,7 @@ struct char_value {
     UChar32 exclamation;
     UChar32 ampersand;
     UChar32 vertical_bar;
+    UChar32 colon;
 };
 
 enum state_enum {

@@ -114,6 +114,12 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(vertical_bar);
     U16_NEXT(vertical_bar, pos2, size, cv->vertical_bar);
+
+    U_STRING_DECL(colon, ":", 1);
+    U_STRING_INIT(colon, ":", 1);
+    pos2 = 0;
+    size = u_strlen(colon);
+    U16_NEXT(colon, pos2, size, cv->colon);
 }
 
 int compound_operator_start(UChar32 uc, struct char_value* cv)
@@ -184,6 +190,9 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     } else if (is->uc == cv.semicolon) {
         t->type = token_semicolon;
         *got_token = 1;
+    } else if (is->uc == cv.colon) {
+        t->type = token_colon;
+        *got_token = 1;
     } else {
         char* a;
         enum result r = buffer2array(al, &is->bf, &a);
@@ -211,6 +220,8 @@ void check_reserved_words(struct token* t)
         t->type = token_while;
     } else if (buffer_str_compare(&t->value, "for")) {
         t->type = token_for;
+    } else if (buffer_str_compare(&t->value, "in")) {
+        t->type = token_in;
     }
 }
 

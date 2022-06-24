@@ -1203,7 +1203,7 @@ void test_parse_while()
 	parse_teardown(&al, &ts);
 }
 
-void test_parse_for()
+void test_parse_for_range()
 {
 	test_name(__func__);
 
@@ -1211,64 +1211,30 @@ void test_parse_for()
 	struct dag_node* root;
 	struct token_state ts;
 
-	parse_setup(&al, "for i = 0; i < 10; i = i + 1; 1 end", &ts, &root);
+	parse_setup(&al, "for i = 0:10 1 end", &ts, &root);
 
 	/* for */
 	struct dag_node* node = check_stmts(root, "stmts root");
 	assert_ptr(node, "ptr node");
-	expect_int_equal(node->type, dag_type_for, "for node");
+	expect_int_equal(node->type, dag_type_for_range, "for-range node");
 
-	/* i = 0 */
-	struct dag_node* expr0 = dag_get_child(node, 0);
-	assert_ptr(expr0, "ptr expr0");
-	expect_int_equal(expr0->type, dag_type_assign, "assign expr0");
+	/* i */
+	struct dag_node* id = dag_get_child(node, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, dag_type_id, "id id");
+	expect_str(&id->value, "i", "i id");
 
-	struct dag_node* i0 = dag_get_child(expr0, 0);
-	assert_ptr(i0, "ptr i0");
-	expect_int_equal(i0->type, dag_type_id, "id i0");
-	expect_str(&i0->value, "i", "i id");
+	/* start */
+	struct dag_node* start = dag_get_child(node, 1);
+	assert_ptr(start, "ptr start");
+	expect_int_equal(start->type, dag_type_number, "number start");
+	expect_str(&start->value, "0", "0 start");
 
-	struct dag_node* num0 = dag_get_child(expr0, 1);
-	assert_ptr(num0, "ptr num0");
-	expect_int_equal(num0->type, dag_type_number, "number num0");
-
-	/* i < 10 */
-	struct dag_node* expr1 = dag_get_child(node, 1);
-	assert_ptr(expr1, "ptr expr1");
-	expect_int_equal(expr1->type, dag_type_less_than, "id expr1");
-
-	struct dag_node* i1 = dag_get_child(expr1, 0);
-	assert_ptr(i1, "ptr i1");
-	expect_int_equal(i1->type, dag_type_id, "id i1");
-	expect_str(&i1->value, "i", "i i1");
-
-	struct dag_node* num1 = dag_get_child(expr1, 1);
-	assert_ptr(num1, "ptr num1");
-	expect_int_equal(num1->type, dag_type_number, "number num1");
-
-	/* i = i + 1 */
-	struct dag_node* expr2 = dag_get_child(node, 2);
-	assert_ptr(expr2, "ptr expr2");
-	expect_int_equal(expr2->type, dag_type_assign, "id expr2");
-
-	struct dag_node* i2 = dag_get_child(expr2, 0);
-	assert_ptr(i2, "ptr i2");
-	expect_int_equal(i2->type, dag_type_id, "id i2");
-	expect_str(&i2->value, "i", "i i2");
-
-	struct dag_node* plus = dag_get_child(expr2, 1);
-	assert_ptr(plus, "ptr plus");
-	expect_int_equal(plus->type, dag_type_plus, "plus plus");
-
-	struct dag_node* i3 = dag_get_child(plus, 0);
-	assert_ptr(i3, "ptr i3");
-	expect_int_equal(i3->type, dag_type_id, "id i3");
-	expect_str(&i3->value, "i", "i i3");
-
-	struct dag_node* num3 = dag_get_child(plus, 1);
-	assert_ptr(num3, "ptr num3");
-	expect_int_equal(num3->type, dag_type_number, "number num3");
-	expect_str(&num3->value, "1", "1 num3");
+	/* end */
+	struct dag_node* end = dag_get_child(node, 2);
+	assert_ptr(end, "ptr end");
+	expect_int_equal(end->type, dag_type_number, "number end");
+	expect_str(&end->value, "10", "10 end");
 
 	/* stmts */
 	struct dag_node* stmt0 = check_stmts(dag_get_child(node, 3), "stmts node 3");
@@ -1302,5 +1268,5 @@ void test_parse_statements()
 	test_parse_else();
 	test_parse_else2();
 	test_parse_while();
-	test_parse_for();
+	test_parse_for_range();
 }
