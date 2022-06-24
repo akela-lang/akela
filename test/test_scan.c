@@ -652,7 +652,7 @@ void test_scan_for()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "for a; b; c; 1 end", &is);
+	scan_setup(&al, "for i = 0; i < 10; i = i + 1; foo() end", &is);
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -662,35 +662,99 @@ void test_scan_for()
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
-	expect_int_equal(t->type, token_id, "id a");
-	expect_str(&t->value, "a", "a");
+	expect_int_equal(t->type, token_id, "id 1");
+	expect_str(&t->value, "i", "i");
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
-	expect_int_equal(t->type, token_semicolon, "semicolon");
+	expect_int_equal(t->type, token_equal, "equal 2");
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
-	expect_int_equal(t->type, token_id, "id b");
-	expect_str(&t->value, "b", "b");
+	expect_int_equal(t->type, token_number, "number 3");
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
-	expect_int_equal(t->type, token_semicolon, "semicolon");
+	expect_int_equal(t->type, token_semicolon, "semicolon 4");
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
-	expect_int_equal(t->type, token_id, "id c");
-	expect_str(&t->value, "c", "c");
+	expect_int_equal(t->type, token_id, "id 5");
+	expect_str(&t->value, "i", "i 5");
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 6");
 	assert_true(got_token, "got token 6");
-	expect_int_equal(t->type, token_semicolon, "semicolon");
+	expect_int_equal(t->type, token_less_than, "less than 6");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 7");
+	assert_true(got_token, "got token 7");
+	expect_int_equal(t->type, token_number, "number 7");
+	expect_str(&t->value, "10", "10 7");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 8");
+	assert_true(got_token, "got token 8");
+	expect_int_equal(t->type, token_semicolon, "semicolon 8");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 9");
+	assert_true(got_token, "got token 9");
+	expect_int_equal(t->type, token_id, "id 9");
+	expect_str(&t->value, "i", "i 9");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 10");
+	assert_true(got_token, "got token 10");
+	expect_int_equal(t->type, token_equal, "id 10");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 11");
+	assert_true(got_token, "got token 11");
+	expect_int_equal(t->type, token_id, "id 11");
+	expect_str(&t->value, "i", "i 11");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 12");
+	assert_true(got_token, "got token 12");
+	expect_int_equal(t->type, token_plus, "plus 12");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 13");
+	assert_true(got_token, "got token 13");
+	expect_int_equal(t->type, token_number, "number 13");
+	expect_str(&t->value, "1", "1 13");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 14");
+	assert_true(got_token, "got token 14");
+	expect_int_equal(t->type, token_semicolon, "semicolon 14");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 15");
+	assert_true(got_token, "got token 15");
+	expect_int_equal(t->type, token_id, "number 15");
+	expect_str(&t->value, "foo", "foo 15");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 16");
+	assert_true(got_token, "got token 16");
+	expect_int_equal(t->type, token_left_paren, "left paren 16");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 17");
+	assert_true(got_token, "got token 17");
+	expect_int_equal(t->type, token_right_paren, "right paren 17");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 18");
+	assert_true(got_token, "got token 18");
+	expect_int_equal(t->type, token_end, "end 18");
 
 	scan_teardown(&al, &is);
 }

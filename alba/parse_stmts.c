@@ -140,50 +140,10 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 	}
 
 
-	/* id = expr */
 	struct token* t0 = get_token(&ts->lookahead, 0);
 	struct token* t1 = get_token(&ts->lookahead, 1);
-	if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
-		r = match(al, ts, token_id, "expected word");
-		if (r == result_error) {
-			goto function_error;
-		}
-		r = match(al, ts, token_equal, "expected equal");
-		if (r == result_error) {
-			goto function_error;
-		}
 
-		r = dag_create_node(al, &n);
-		if (r == result_error) {
-			goto function_error;
-		}
-		n->type = dag_type_assign;
-
-		struct dag_node* a;
-		r = dag_create_node(al, &a);
-		if (r == result_error) {
-			goto function_error;
-		}
-		a->type = dag_type_id;
-		r = buffer_copy(al, &t0->value, &a->value);
-		if (r == result_error) {
-			goto function_error;
-		}
-		dag_add_child(n, a);
-
-		struct dag_node* b;
-		r = expr(al, ts, &b);
-		if (r == result_error) {
-			goto function_error;
-		}
-		if (b == NULL) {
-			r = set_error("expect expression");
-			goto function_error;
-		}
-		dag_add_child(n, b);
-		goto function_success;
-
-	} else if (t0 && t0->type == token_while) {
+	if (t0 && t0->type == token_while) {
 		r = match(al, ts, token_while, "expecting while");
 		if (r == result_error) {
 			goto function_error;
@@ -220,7 +180,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 		goto function_success;
 
-		/* for expr; expr; expr; stmts end */
+		/* for expr; expr; expr stmts end */
 	} else if (t0 && t0->type == token_for) {
 		r = match(al, ts, token_for, "expecting for");
 		if (r == result_error) {
@@ -260,6 +220,8 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 		dag_add_child(n, b);
 
+		r = match(al, ts, token_semicolon, "expecting semicolon");
+
 		/* third expr */
 		struct dag_node* c = NULL;
 		r = expr(al, ts, &c);
@@ -270,11 +232,6 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 			dag_create_node(al, &c);
 		}
 		dag_add_child(n, c);
-
-		r = match(al, ts, token_semicolon, "expecting semicolon");
-		if (r == result_error) {
-			goto function_error;
-		}
 
 		/* stmts */
 		struct dag_node* d = NULL;

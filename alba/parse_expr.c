@@ -9,7 +9,70 @@
 */
 enum result expr(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
-	return boolean(al, ts, root);
+	enum result r = result_ok;
+	struct dag_node* n = NULL;
+	int num;
+
+	r = get_lookahead(al, ts, 2, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
+	struct token* t0 = get_token(&ts->lookahead, 0);
+	struct token* t1 = get_token(&ts->lookahead, 1);
+
+	/* id = expr */
+	if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
+		r = match(al, ts, token_id, "expected word");
+		if (r == result_error) {
+			goto function_error;
+		}
+		r = match(al, ts, token_equal, "expected equal");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+		n->type = dag_type_assign;
+
+		struct dag_node* a;
+		r = dag_create_node(al, &a);
+		if (r == result_error) {
+			goto function_error;
+		}
+		a->type = dag_type_id;
+		r = buffer_copy(al, &t0->value, &a->value);
+		if (r == result_error) {
+			goto function_error;
+		}
+		dag_add_child(n, a);
+
+		struct dag_node* b;
+		r = expr(al, ts, &b);
+		if (r == result_error) {
+			goto function_error;
+		}
+		if (b == NULL) {
+			r = set_error("expect expression");
+			goto function_error;
+		}
+		dag_add_child(n, b);
+		goto function_success;
+	}
+
+	r = boolean(al, ts, &n);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+function_success:
+	*root = n;
+	return r;
+
+function_error:
+	return r;
 }
 
 /*
@@ -158,7 +221,9 @@ enum result comparison(struct allocator* al, struct token_state* ts, struct dag_
 
 /*
 * comparison' -> == add comparison'
+*			   | < add comparison'
 *	           | <= add comparison'
+*			   | > add comparison'
 *	           | >= add comparison'
 *	           | e
 */
@@ -188,8 +253,12 @@ enum result comparison_prime(struct allocator* al, struct token_state* ts, struc
 		type = dag_type_equality;
 	} else if (t0->type == token_not_equal) {
 		type = dag_type_not_equal;
+	} else if (t0->type == token_less_than) {
+		type = dag_type_less_than;
 	} else if (t0->type == token_less_than_or_equal) {
 		type = dag_type_less_than_or_equal;
+	} else if (t0->type == token_greater_than) {
+		type = dag_type_greater_than;
 	} else if (t0->type == token_greater_than_or_equal) {
 		type = dag_type_greater_than_or_equal;
 	} else {
