@@ -1245,6 +1245,47 @@ void test_parse_for_range()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_for_iteration()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+
+	parse_setup(&al, "for i in list 1 end", &ts, &root);
+
+	/* for */
+	struct dag_node* node = check_stmts(root, "stmts root");
+	assert_ptr(node, "ptr node");
+	expect_int_equal(node->type, dag_type_for_iteration, "for-iteration node");
+
+	/* id */
+	struct dag_node* id = dag_get_child(node, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, dag_type_id, "id id");
+	expect_str(&id->value, "i", "i id");
+
+	/* expr */
+	struct dag_node* expr = dag_get_child(node, 1);
+	assert_ptr(expr, "ptr expr");
+	expect_int_equal(expr->type, dag_type_id, "id expr");
+	expect_str(&expr->value, "list", "id list");
+
+	/* stmts */
+	struct dag_node* stmts0 = dag_get_child(node, 2);
+	assert_ptr(stmts0, "ptr stmts0");
+	expect_int_equal(stmts0->type, dag_type_stmts, "stmts stmts0");
+
+	/* number */
+	struct dag_node* num0 = dag_get_child(stmts0, 0);
+	assert_ptr(num0, "ptr num0");
+	expect_int_equal(num0->type, dag_type_number, "number num0");
+	expect_str(&num0->value, "1", "1 num0");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse_statements()
 {
 	test_parse_assign();
@@ -1269,4 +1310,5 @@ void test_parse_statements()
 	test_parse_else2();
 	test_parse_while();
 	test_parse_for_range();
+	test_parse_for_iteration();
 }

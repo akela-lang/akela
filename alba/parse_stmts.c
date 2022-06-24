@@ -463,7 +463,81 @@ function_error:
 enum result for_iteration(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
 	enum result r = result_ok;
+	struct dag_node* n = NULL;
+	int num;
 
+	r = get_lookahead(al, ts, 3, &num);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	struct token* t1 = get_token(&ts->lookahead, 1);
+
+	r = match(al, ts, token_for, "expecting for");
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	r = match(al, ts, token_id, "expecting id");
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	r = match(al, ts, token_in, "expecting in");
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	/* for */
+	r = dag_create_node(al, &n);
+	if (r == result_error) {
+		goto function_error;
+	}
+	n->type = dag_type_for_iteration;
+
+	/* id */
+	struct dag_node* a = NULL;
+	r = dag_create_node(al, &a);
+	if (r == result_error) {
+		goto function_error;
+	}
+	a->type = dag_type_id;
+	r = buffer_copy(al, &t1->value, &a->value);
+	if (r == result_error) {
+		goto function_error;
+	}
+	dag_add_child(n, a);
+
+	/* expr */
+	struct dag_node* b = NULL;
+	r = expr(al, ts, &b);
+	if (r == result_error) {
+		goto function_error;
+	}
+	if (!b) {
+		r = set_error("expected expression");
+		goto function_error;
+	}
+	dag_add_child(n, b);
+
+	/* stmts */
+	struct dag_node* c = NULL;
+	r = stmts(al, ts, &c);
+	if (r == result_error) {
+		goto function_error;
+	}
+	dag_add_child(n, c);
+
+	r = match(al, ts, token_end, "expected end");
+	if (r == result_error) {
+		goto function_error;
+	}
+
+function_success:
+	*root = n;
+	return r;
+
+function_error:
 	return r;
 }
 
