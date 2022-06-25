@@ -197,9 +197,9 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         char* a;
         enum result r = buffer2array(al, &is->bf, &a);
         if (r == result_error) {
-            return set_error("unrecogized character");
+            return set_error(error_message);
         }
-        return set_error("unrecogized: %s", a);
+        return set_error("Unrecognized character: %s", a);
     }
     return result_ok;
 }

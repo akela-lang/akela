@@ -5,7 +5,7 @@
 #include "alba/parse_tools.h"
 #include "alba/parse.h"
 
-void parse_setup(struct allocator* al, char* line, struct token_state* ts, struct dag_node** root)
+enum result parse_setup(struct allocator* al, char* line, struct token_state* ts, struct dag_node** root)
 {
 	enum result r;
 
@@ -36,7 +36,7 @@ void parse_setup(struct allocator* al, char* line, struct token_state* ts, struc
 	token_state_init(is, ts);
 
 	r = parse(al, ts, root);
-	assert_ok(r, "parse");
+	return r;
 }
 
 void parse_teardown(struct allocator* al, struct token_state* ts)

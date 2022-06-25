@@ -748,6 +748,26 @@ void test_scan_for_iteration()
 	scan_teardown(&al, &is);
 }
 
+void test_scan_error_char()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "$", &is);
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_true(r == result_error, "get token");
+	assert_true(!got_token, "got token");
+	expect_error_message("Unrecognized character: $");
+
+	scan_teardown(&al, &is);
+
+}
+
 void test_scan()
 {
 	test_scan_assign();
@@ -767,4 +787,5 @@ void test_scan()
 	test_scan_compound_operators2();
 	test_scan_for_range();
 	test_scan_for_iteration();
+	test_scan_error_char();
 }

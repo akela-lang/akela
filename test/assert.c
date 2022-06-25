@@ -200,3 +200,12 @@ void expect_str(struct buffer* a, char* b, char* message)
 	allocator_destroy(&al);
 	error_triggered();
 }
+
+void expect_error_message(char* s)
+{
+	test_called();
+	if (strcmp(error_message, s) == 0) return;
+	printf("%s = %s: error message does not match\n", error_message, s);
+	error_triggered();
+
+}
