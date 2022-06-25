@@ -124,7 +124,7 @@ void set_char_values(struct char_value* cv)
 
 int compound_operator_start(UChar32 uc, struct char_value* cv)
 {
-    return uc == cv->equal || uc == cv->exclamation || uc == cv->less_than || uc == cv->greater_than || uc == cv->ampersand || uc == cv->vertical_bar;
+    return uc == cv->equal || uc == cv->exclamation || uc == cv->less_than || uc == cv->greater_than || uc == cv->ampersand || uc == cv->vertical_bar || uc == cv->colon;
 }
 
 enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
@@ -323,6 +323,10 @@ enum result process_compound_operator(struct allocator* al, struct input_state* 
         t->type = token_or;
         *state = state_start;
         *got_token = 1;
+    } else if (buffer_str_compare(&t->value, "::")) {
+        t->type = token_double_colon;
+        *state = state_start;
+        *got_token = 1;
     } else if (t->value.buf[0] == '=') {
         t->type = token_equal;
         buffer_clear(&t->value);
@@ -355,6 +359,12 @@ enum result process_compound_operator(struct allocator* al, struct input_state* 
         input_state_push_uchar(is);
     } else if (t->value.buf[0] == '|') {
         t->type = token_vertical_bar;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+        input_state_push_uchar(is);
+    } else if (t->value.buf[0] == ':') {
+        t->type = token_colon;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
@@ -400,6 +410,11 @@ void check_for_operators(struct input_state* is, enum state_enum* state, int* go
         *got_token = 1;
     } else if (t->value.buf[0] == '|') {
         t->type = token_vertical_bar;
+        buffer_clear(&t->value);
+        *state = state_start;
+        *got_token = 1;
+    } else if (t->value.buf[0] == ':') {
+        t->type = token_colon;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;

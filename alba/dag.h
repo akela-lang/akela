@@ -35,6 +35,8 @@ enum dag_type {
 	dag_type_while,
 	dag_type_for_range,
 	dag_type_for_iteration,
+	dag_type_declaration,
+	dag_type_type,
 	dag_type_count		/* keep at end */
 };
 

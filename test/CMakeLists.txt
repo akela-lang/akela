@@ -14,6 +14,7 @@ set(test_files
     "${alba_dir}/input.c"
     ${alba_dir}/os_win.c
     ${alba_dir}/uconv.c
+    ${alba_dir}/types.c
     assert.c
     "test.c"
     test_parse.c

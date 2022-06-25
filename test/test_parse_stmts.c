@@ -340,11 +340,15 @@ void test_parse_function()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, dag_type_id, "id");
 
-	struct dag_node* b = dag_get_child(root, 1);
+	struct dag_node* dseq = dag_get_child(root, 1);
+	assert_ptr(dseq, "ptr dseq");
+	expect_int_equal(dseq->type, dag_type_dseq, "dseq dseq");
+
+	struct dag_node* b = dag_get_child(root, 2);
 	assert_ptr(b, "ptr b");
 	expect_int_equal(b->type, dag_type_stmts, "stmts");
 
-	struct dag_node* c = dag_get_child(root, 2);
+	struct dag_node* c = dag_get_child(root, 3);
 	assert_null(c, "ptr c");
 
 	struct dag_node* d = dag_get_child(b, 0);
@@ -385,8 +389,10 @@ void test_parse_function2()
 	struct allocator al;
 	struct dag_node* root;
 	struct token_state ts;
+	enum result r;
 
-	parse_setup(&al, "function foo(x)\nx+1\n5+4\nend", &ts, &root);
+	r = parse_setup(&al, "function foo(x::Int64)\nx+1\n5+4\nend", &ts, &root);
+	assert_ok(r, "parse");
 
 	root = check_stmts(root, "stmts root");
 
@@ -401,10 +407,19 @@ void test_parse_function2()
 	assert_ptr(seq, "ptr seq");
 	expect_int_equal(seq->type, dag_type_dseq, "seq");
 
-	struct dag_node* seq_a = dag_get_child(seq, 0);
-	assert_ptr(seq_a, "ptr seq a");
-	expect_int_equal(seq_a->type, dag_type_id, "id seq_a");
-	expect_str(&seq_a->value, "x", "x seq_a");
+	struct dag_node* seq_dec = dag_get_child(seq, 0);
+	assert_ptr(seq_dec, "ptr seq_dec");
+	expect_int_equal(seq_dec->type, dag_type_declaration, "declaration seq_dec");
+
+	struct dag_node* dec_a = dag_get_child(seq_dec, 0);
+	assert_ptr(dec_a, "ptr dec_a");
+	expect_int_equal(dec_a->type, dag_type_id, "id dec_a");
+	expect_str(&dec_a->value, "x", "x dec_a");
+
+	struct dag_node* dec_b = dag_get_child(seq_dec, 1);
+	assert_ptr(dec_b, "ptr dec_b");
+	expect_int_equal(dec_b->type, dag_type_type, "type dec_b");
+	expect_str(&dec_b->value, "Int64", "Int64 dec_b");
 
 	struct dag_node* b = dag_get_child(root, 2);
 	assert_ptr(b, "ptr b");
@@ -469,13 +484,19 @@ void test_parse_function3()
 
 	struct dag_node* seq_a = dag_get_child(seq, 0);
 	assert_ptr(seq_a, "ptr seq a");
-	expect_int_equal(seq_a->type, dag_type_id, "id seq_a");
-	expect_str(&seq_a->value, "x", "x seq_a");
+	expect_int_equal(seq_a->type, dag_type_declaration, "declaration seq_a");
+
+	struct dag_node* dec_id0 = dag_get_child(seq_a, 0);
+	assert_ptr(dec_id0, "ptr dec_id0");
+	expect_int_equal(dec_id0->type, dag_type_id, "id dec_id0");
 
 	struct dag_node* seq_b = dag_get_child(seq, 1);
 	assert_ptr(seq_b, "ptr seq b");
-	expect_int_equal(seq_b->type, dag_type_id, "id seq_b");
-	expect_str(&seq_b->value, "y", "y seq_b");
+	expect_int_equal(seq_b->type, dag_type_declaration, "declaration seq_b");
+
+	struct dag_node* dec_id1 = dag_get_child(seq_b, 0);
+	assert_ptr(dec_id1, "ptr dec_id1");
+	expect_int_equal(dec_id1->type, dag_type_id, "id dec_id1");
 
 	struct dag_node* b = dag_get_child(root, 2);
 	assert_ptr(b, "ptr b");
@@ -540,18 +561,27 @@ void test_parse_function4()
 
 	struct dag_node* seq_a = dag_get_child(seq, 0);
 	assert_ptr(seq_a, "ptr seq a");
-	expect_int_equal(seq_a->type, dag_type_id, "id seq_a");
-	expect_str(&seq_a->value, "x", "x seq_a");
+	expect_int_equal(seq_a->type, dag_type_declaration, "declaration seq_a");
+
+	struct dag_node* dec_a = dag_get_child(seq_a, 0);
+	assert_ptr(dec_a, "ptr dec_a");
+	expect_int_equal(dec_a->type, dag_type_id, "id dec_a");
 
 	struct dag_node* seq_b = dag_get_child(seq, 1);
 	assert_ptr(seq_b, "ptr seq b");
-	expect_int_equal(seq_b->type, dag_type_id, "id seq_b");
-	expect_str(&seq_b->value, "y", "y seq_b");
+	expect_int_equal(seq_b->type, dag_type_declaration, "declaration seq_b");
+
+	struct dag_node* dec_b = dag_get_child(seq_b, 0);
+	assert_ptr(dec_b, "ptr dec_b");
+	expect_int_equal(dec_b->type, dag_type_id, "id dec_b");
 
 	struct dag_node* seq_c = dag_get_child(seq, 2);
 	assert_ptr(seq_c, "ptr seq c");
-	expect_int_equal(seq_c->type, dag_type_id, "id seq_c");
-	expect_str(&seq_c->value, "z", "z seq_c");
+	expect_int_equal(seq_c->type, dag_type_declaration, "declaration seq_c");
+
+	struct dag_node* dec_c = dag_get_child(seq_c, 0);
+	assert_ptr(dec_c, "ptr dec_c");
+	expect_int_equal(dec_c->type, dag_type_id, "id dec_c");
 
 	struct dag_node* b = dag_get_child(root, 2);
 	assert_ptr(b, "ptr b");

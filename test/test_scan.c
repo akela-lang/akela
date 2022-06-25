@@ -563,7 +563,7 @@ void test_scan_compound_operators() {
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "== != <= >= && ||", &is);
+	scan_setup(&al, "== != <= >= && || ::", &is);
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -595,6 +595,11 @@ void test_scan_compound_operators() {
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_or, "or");
 
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 6");
+	assert_true(got_token, "got token 6");
+	expect_int_equal(t->type, token_double_colon, "double colon");
+
 	scan_teardown(&al, &is);
 }
 
@@ -607,7 +612,7 @@ void test_scan_compound_operators2() {
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "= ! < > & |", &is);
+	scan_setup(&al, "= ! < > & | :", &is);
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -638,6 +643,11 @@ void test_scan_compound_operators2() {
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_vertical_bar, "vertical_bar");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "get token 6");
+	assert_true(got_token, "got token 6");
+	expect_int_equal(t->type, token_colon, "colon");
 
 	scan_teardown(&al, &is);
 }

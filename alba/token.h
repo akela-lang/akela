@@ -38,6 +38,7 @@ enum token_enum {
     token_for,
     token_in,
     token_colon,
+    token_double_colon,
     token_count     /* keep at the end */
 };
 
@@ -83,6 +84,7 @@ enum result token_name_init(char** token_name)
     token_name[token_for] = "for";
     token_name[token_in] = "in";
     token_name[token_colon] = ":";
+    token_name[token_double_colon] = "::";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

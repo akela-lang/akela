@@ -1,6 +1,4 @@
 # Todo
-* error test cases
-* types
 * arrays
 * strings
 * anonymous functions
