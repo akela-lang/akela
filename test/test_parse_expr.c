@@ -1214,6 +1214,102 @@ void test_parse_array_literal()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_array_subscript()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+	enum result r;
+
+	r = parse_setup(&al, "a[1]", &ts, &root);
+	assert_ok(r, "parse");
+
+	struct dag_node* as = check_stmts(root, "stmts root");
+	assert_ptr(as, "ptr as");
+	assert_int_equal(as->type, dag_type_array_subscript, "array-subscript as");
+
+	struct dag_node* name = dag_get_child(as, 0);
+	assert_ptr(name, "ptr name");
+	expect_int_equal(name->type, dag_type_id, "id name");
+	expect_str(&name->value, "a", "a name");
+
+	struct dag_node* index = dag_get_child(as, 1);
+	assert_ptr(index, "ptr index");
+	expect_int_equal(index->type, dag_type_number, "number index");
+	expect_str(&index->value, "1", "1 index");
+
+	parse_teardown(&al, &ts);
+}
+
+void test_parse_array_subscript2()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+	enum result r;
+
+	r = parse_setup(&al, "a[b[1]]", &ts, &root);
+	assert_ok(r, "parse");
+
+	struct dag_node* a = check_stmts(root, "stmts root");
+	assert_ptr(a, "ptr a");
+	assert_int_equal(a->type, dag_type_array_subscript, "array-subscript a");
+
+	struct dag_node* a0 = dag_get_child(a, 0);
+	assert_ptr(a0, "ptr a0");
+	expect_int_equal(a0->type, dag_type_id, "id a0");
+	expect_str(&a0->value, "a", "a a0");
+
+	struct dag_node* b = dag_get_child(a, 1);
+	assert_ptr(b, "ptr b");
+	expect_int_equal(b->type, dag_type_array_subscript, "array-subscript b");
+
+	struct dag_node* b0 = dag_get_child(b, 0);
+	assert_ptr(b0, "ptr b0");
+	expect_int_equal(b0->type, dag_type_id, "id b0");
+	expect_str(&b0->value, "b", "b b0");
+
+	struct dag_node* b1 = dag_get_child(b, 1);
+	assert_ptr(b1, "ptr b1");
+	expect_int_equal(b1->type, dag_type_number, "number b1");
+	expect_str(&b1->value, "1", "1 b1");
+
+	parse_teardown(&al, &ts);
+}
+
+void test_parse_array_subscript3()
+{
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+	enum result r;
+
+	r = parse_setup(&al, "a[1][2]", &ts, &root);
+	assert_ok(r, "parse");
+
+	struct dag_node* a = check_stmts(root, "stmts root");
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_array_subscript, "array-subscript a");
+
+	struct dag_node* a0 = dag_get_child(a, 0);
+	expect_int_equal(a0->type, dag_type_id, "id a0");
+	expect_str(&a0->value, "a", "a a0");
+
+	struct dag_node* a1 = dag_get_child(a, 1);
+	expect_int_equal(a1->type, dag_type_number, "number a1");
+	expect_str(&a1->value, "1", "1 a1");
+
+	struct dag_node* a2 = dag_get_child(a, 2);
+	expect_int_equal(a2->type, dag_type_number, "number a2");
+	expect_str(&a2->value, "2", "2 a1");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse_expression()
 {
 	test_parse_blank();
@@ -1253,4 +1349,7 @@ void test_parse_expression()
 	test_parse_or();
 	test_parse_or_or();
 	test_parse_array_literal();
+	test_parse_array_subscript();
+	test_parse_array_subscript2();
+	test_parse_array_subscript3();
 }

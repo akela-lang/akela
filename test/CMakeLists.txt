@@ -8,6 +8,7 @@ set(test_files
     ${alba_dir}/dag.c
     ${alba_dir}/parse_stmts.c
     "${alba_dir}/parse_expr.c"
+    ${alba_dir}/parse_factor.c
     ${alba_dir}/parse.c
     ${alba_dir}/parse_tools.c
     ${alba_dir}/allocator.c
