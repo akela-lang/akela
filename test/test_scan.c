@@ -775,6 +775,31 @@ void test_scan_error_char()
 	expect_error_message("Unrecognized character: $");
 
 	scan_teardown(&al, &is);
+}
+
+void test_scan_square_brackets()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	r = scan_setup(&al, "[]", &is);
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan 0");
+	assert_true(got_token, "got token 0");
+	expect_int_equal(t->type, token_left_square_bracket, "left-square-bracket 0");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan 1");
+	assert_true(got_token, "got token 1");
+	expect_int_equal(t->type, token_right_square_bracket, "right-square-bracket 1");
+
+	scan_teardown(&al, &is);
 
 }
 
@@ -798,4 +823,5 @@ void test_scan()
 	test_scan_for_range();
 	test_scan_for_iteration();
 	test_scan_error_char();
+	test_scan_square_brackets();
 }

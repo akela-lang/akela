@@ -1180,6 +1180,40 @@ void test_parse_or_or()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_array_literal()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+	enum result r;
+
+	r = parse_setup(&al, "[1,2,3]", &ts, &root);
+	assert_ok(r, "parse");
+
+	struct dag_node* a = check_stmts(root, "stmts root");
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_array_literal, "array-literal a");
+
+	struct dag_node* a0 = dag_get_child(a, 0);
+	assert_ptr(a0, "ptr a0");
+	expect_int_equal(a0->type, dag_type_number, "number a0");
+	expect_str(&a0->value, "1", "1 a0");
+
+	struct dag_node* a1 = dag_get_child(a, 1);
+	assert_ptr(a1, "ptr a1");
+	expect_int_equal(a1->type, dag_type_number, "number a1");
+	expect_str(&a1->value, "2", "2 a1");
+
+	struct dag_node* a2 = dag_get_child(a, 2);
+	assert_ptr(a2, "ptr a2");
+	expect_int_equal(a2->type, dag_type_number, "number a2");
+	expect_str(&a2->value, "3", "3 a2");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse_expression()
 {
 	test_parse_blank();
@@ -1218,4 +1252,5 @@ void test_parse_expression()
 	test_parse_and();
 	test_parse_or();
 	test_parse_or_or();
+	test_parse_array_literal();
 }

@@ -22,6 +22,8 @@ struct char_value {
     UChar32 ampersand;
     UChar32 vertical_bar;
     UChar32 colon;
+    UChar32 left_square_bracket;
+    UChar32 right_square_bracket;
 };
 
 enum state_enum {

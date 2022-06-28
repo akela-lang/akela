@@ -37,10 +37,11 @@ enum dag_type {
 	dag_type_for_iteration,
 	dag_type_declaration,
 	dag_type_type,
+	dag_type_array_literal,
 	dag_type_count		/* keep at end */
 };
 
-#ifdef _DAG_C
+# ifdef _DAG_C
 
 enum result dag_set_names(char** names)
 {
@@ -75,6 +76,9 @@ enum result dag_set_names(char** names)
 	names[dag_type_while] = "while";
 	names[dag_type_for_range] = "for-range";
 	names[dag_type_for_iteration] = "for-iteration";
+	names[dag_type_declaration] = "declaration";
+	names[dag_type_type] = "type";
+	names[dag_type_array_literal] = "array-literal";
 
 	for (int i = 0; i < dag_type_count; i++) {
 		if (names[i] == NULL) {
@@ -85,11 +89,11 @@ enum result dag_set_names(char** names)
 	return result_ok;
 }
 
-#else
+# else
 
 enum result dag_set_names(char** names);
 
-#endif
+# endif
 
 struct dag_node {
 	enum dag_type type;

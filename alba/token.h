@@ -39,10 +39,12 @@ enum token_enum {
     token_in,
     token_colon,
     token_double_colon,
+    token_left_square_bracket,
+    token_right_square_bracket,
     token_count     /* keep at the end */
 };
 
-#ifdef _TOKEN_C
+# ifdef _TOKEN_C
 enum result token_name_init(char** token_name)
 {
     for (int i = 0; i < token_count; i++) {
@@ -85,6 +87,8 @@ enum result token_name_init(char** token_name)
     token_name[token_in] = "in";
     token_name[token_colon] = ":";
     token_name[token_double_colon] = "::";
+    token_name[token_left_square_bracket] = "[";
+    token_name[token_right_square_bracket] = "]";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {
@@ -93,7 +97,7 @@ enum result token_name_init(char** token_name)
     }
     return result_ok;
 }
-#endif
+# endif
 
 struct token {
     enum token_enum type;
