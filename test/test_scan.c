@@ -831,12 +831,24 @@ void test_scan_string2()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "\"\\\\hello\n\r\"", &is);
+	scan_setup(&al, "x = \"\\\\hello\n\r\"", &is);
+
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
-	expect_int_equal(t->type, token_string, "string 0");
-	expect_str(&t->value, "\\hello\n\r", "hello 0");
+	expect_int_equal(t->type, token_id, "id 0");
+	expect_str(&t->value, "x", "x 0");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan 1");
+	assert_true(got_token, "got token 1");
+	expect_int_equal(t->type, token_equal, "equal 1");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan 2");
+	assert_true(got_token, "got token 2");
+	expect_int_equal(t->type, token_string, "string 2");
+	expect_str(&t->value, "\\hello\n\r", "hello 2");
 
 	scan_teardown(&al, &is);
 }
