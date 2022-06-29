@@ -5,7 +5,7 @@
 #include "alba/uconv.h"
 #include "alba/input.h"
 
-enum result scan_setup(struct allocator* al, char* line, struct input_state* is)
+void scan_setup(struct allocator* al, char* line, struct input_state* is)
 {
 	enum result r;
 
@@ -27,7 +27,6 @@ enum result scan_setup(struct allocator* al, char* line, struct input_state* is)
 	r = conv_open(&conv);
 	assert_ok(r, "conv_open");
 	input_state_init(string_getchar, sd, conv, is);
-	return r;
 }
 
 void scan_teardown(struct allocator* al, struct input_state* is)
@@ -787,7 +786,7 @@ void test_scan_square_brackets()
 	struct token* t;
 	int got_token;
 
-	r = scan_setup(&al, "[]", &is);
+	scan_setup(&al, "[]", &is);
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_ok(r, "scan 0");
@@ -800,7 +799,46 @@ void test_scan_square_brackets()
 	expect_int_equal(t->type, token_right_square_bracket, "right-square-bracket 1");
 
 	scan_teardown(&al, &is);
+}
 
+void test_scan_string()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "\"hello\"", &is);
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan 0");
+	assert_true(got_token, "got token 0");
+	expect_int_equal(t->type, token_string, "string 0");
+	expect_str(&t->value, "hello", "hello 0");
+
+	scan_teardown(&al, &is);
+}
+
+void test_scan_string2()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "\"\\\\hello\n\r\"", &is);
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan 0");
+	assert_true(got_token, "got token 0");
+	expect_int_equal(t->type, token_string, "string 0");
+	expect_str(&t->value, "\\hello\n\r", "hello 0");
+
+	scan_teardown(&al, &is);
 }
 
 void test_scan()
@@ -824,4 +862,6 @@ void test_scan()
 	test_scan_for_iteration();
 	test_scan_error_char();
 	test_scan_square_brackets();
+	test_scan_string();
+	test_scan_string2();
 }

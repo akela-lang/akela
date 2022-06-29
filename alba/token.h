@@ -41,6 +41,7 @@ enum token_enum {
     token_double_colon,
     token_left_square_bracket,
     token_right_square_bracket,
+    token_string,
     token_count     /* keep at the end */
 };
 

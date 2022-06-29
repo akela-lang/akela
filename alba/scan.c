@@ -132,6 +132,18 @@ void set_char_values(struct char_value* cv)
     pos2 = 0;
     size = u_strlen(right_square_bracket);
     U16_NEXT(right_square_bracket, pos2, size, cv->right_square_bracket);
+
+    U_STRING_DECL(double_quote, "\"", 1);
+    U_STRING_INIT(double_quote, "\"", 1);
+    pos2 = 0;
+    size = u_strlen(double_quote);
+    U16_NEXT(double_quote, pos2, size, cv->double_quote);
+
+    U_STRING_DECL(backslash, "\\", 1);
+    U_STRING_INIT(backslash, "\\", 1);
+    pos2 = 0;
+    size = u_strlen(backslash);
+    U16_NEXT(backslash, pos2, size, cv->backslash);
 }
 
 int compound_operator_start(UChar32 uc, struct char_value* cv)
@@ -167,6 +179,9 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         if (r == result_error) {
             return r;
         }
+    } else if (is->uc == cv.double_quote) {
+        *state = state_string;
+        t->type = token_string;
     } else if (compound_operator_start(is->uc, &cv)) {
         *state = state_compound_operator;
         r = buffer_copy(al, &is->bf, &t->value);
@@ -302,6 +317,47 @@ enum result process_char_number(struct allocator *al, struct input_state* is, en
         *got_token = 1;
         input_state_push_uchar(is);
     }
+    return result_ok;
+}
+
+enum result process_char_string(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
+{
+    enum result r = result_ok;
+    struct char_value cv;
+    set_char_values(&cv);
+
+    if (*state == state_string) {
+        if (is->uc == cv.backslash) {
+            *state = state_string_backslash;
+        } else if (is->uc == cv.double_quote) {
+            *state = state_start;
+            *got_token = 1;
+        } else {
+            r = buffer_copy(al, &is->bf, &t->value);
+            if (r == result_error) {
+                return r;
+            }
+        }
+    } else if (*state == state_string_backslash) {
+        if (is->uc == cv.backslash) {
+            r = buffer_add_char(al, &t->value, '\\');
+            if (r == result_error) {
+                return r;
+            }
+        } else if (is->uc == 'n') {
+            r = buffer_add_char(al, &t->value, '\n');
+            if (r == result_error) {
+                return r;
+            }
+        } else if (is->uc == 'r') {
+            r = buffer_add_char(al, &t->value, '\r');
+            if (r == result_error) {
+                return r;
+            }
+        }
+        *state = state_string;
+    }
+
     return result_ok;
 }
 
@@ -457,6 +513,8 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
             r = process_char_word(al, is, &state, got_token, tf);
         } else if (state == state_number) {
             r = process_char_number(al, is, &state, got_token, tf);
+        } else if (state == state_string || state == state_string_backslash) {
+            r = process_char_string(al, is, &state, got_token, tf);
         } else if (state == state_compound_operator) {
             r = process_compound_operator(al, is, &state, got_token, tf);
         } else {

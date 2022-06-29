@@ -1,5 +1,4 @@
 # Todo
-* remove got_token from scan function
 * strings
 * anonymous functions
 * bitwise operators

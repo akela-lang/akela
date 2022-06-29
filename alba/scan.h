@@ -24,6 +24,8 @@ struct char_value {
     UChar32 colon;
     UChar32 left_square_bracket;
     UChar32 right_square_bracket;
+    UChar32 double_quote;
+    UChar32 backslash;
 };
 
 enum state_enum {
@@ -31,6 +33,8 @@ enum state_enum {
     state_id,
     state_id_underscore,
     state_number,
+    state_string,
+    state_string_backslash,
     state_compound_operator
 };
 
