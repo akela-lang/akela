@@ -3,6 +3,8 @@
 #include "parse_tools.h"
 #include "dag.h"
 #include "token.h"
+#include "types.h"
+#include "parse_stmts.h"
 
 /*
 * factor -> id(cseq)
@@ -14,6 +16,7 @@
 *		  | (expr)
 *		  | ! factor
 *		  | array_literal
+*         | function(dseq) stmts end
 * note: type system should catch incompatible sign or not factors
 */
 enum result factor(struct allocator* al, struct token_state* ts, struct dag_node** root)
@@ -33,8 +36,52 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 	t0 = get_token(&ts->lookahead, 0);
 	t1 = get_token(&ts->lookahead, 1);
 
-	/* function call*/
-	if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
+	/* anonymous function */
+	if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
+		r = match(al, ts, token_function, "expected anonymous function");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = match(al, ts, token_left_paren, "expected left parenthesis");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		r = dag_create_node(al, &n);
+		if (r == result_error) {
+			goto function_error;
+		}
+		n->type = dag_type_anonymous_function;
+
+		struct dag_node* a = NULL;
+		r = dseq(al, ts, &a);
+		if (r == result_error) {
+			goto function_error;
+		}
+		dag_add_child(n, a);
+
+		r = match(al, ts, token_right_paren, "expected right parenthesis");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		struct dag_node* b = NULL;
+		r = stmts(al, ts, &b);
+		if (r == result_error) {
+			goto function_error;
+		}
+		dag_add_child(n, b);
+
+		r = match(al, ts, token_end, "expected end");
+		if (r == result_error) {
+			goto function_error;
+		}
+
+		goto function_success;
+
+		/* function call*/
+	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
 		r = match(al, ts, token_id, "expecting id");
 		if (r == result_error) {
 			goto function_error;

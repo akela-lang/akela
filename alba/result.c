@@ -35,6 +35,7 @@ enum result set_error(const char* fmt, ...)
         last = *fmt;
         fmt++;
     }
+    error_message[i++] = '\0';
 
     va_end(args);
 

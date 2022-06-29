@@ -5,6 +5,110 @@
 #include "parse_tools.h"
 #include "dag.h"
 
+/*
+* dseq -> declaration dseq'
+*	   | e
+*/
+enum result dseq(struct allocator* al, struct token_state* ts, struct dag_node** root)
+{
+	enum result r = result_ok;
+	struct dag_node* n = NULL;
+	int num;
+
+	r = dag_create_node(al, &n);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	n->type = dag_type_dseq;
+
+	struct dag_node* a = NULL;
+	r = declaration(al, ts, &a);
+
+	if (!a) {
+		goto function_success;
+	}
+
+	dag_add_child(n, a);
+
+	struct dag_node* b = NULL;
+	r = dseq_prime(al, ts, &b);
+	if (r == result_error) {
+		goto function_error;
+	}
+	if (b && b->type == dag_type_dseq && b->head) {
+		a->next = b->head;
+		b->head->prev = a;
+		n->tail = b->tail;
+	}
+
+function_success:
+	*root = n;
+	return r;
+
+function_error:
+	return r;
+}
+
+/*
+* dseq' -> , declaration dseq'
+*		| e
+*/
+enum result dseq_prime(struct allocator* al, struct token_state* ts, struct dag_node** root)
+{
+	struct dag_node* n = NULL;
+	enum result r = result_ok;
+	int num;
+
+	r = get_lookahead(al, ts, 2, &num);
+	struct token* t0 = get_token(&ts->lookahead, 0);
+
+	if (!t0 || t0->type != token_comma)
+	{
+		goto function_success;
+	}
+
+	r = match(al, ts, token_comma, "expecting comma");
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	r = dag_create_node(al, &n);
+	if (r == result_error) {
+		goto function_error;
+	}
+	n->type = dag_type_dseq;
+
+	struct dag_node* a = NULL;
+	r = declaration(al, ts, &a);
+	if (r == result_error) {
+		goto function_error;
+	}
+	if (!a) {
+		r = set_error("expecting declaration");
+		goto function_error;
+	}
+	dag_add_child(n, a);
+
+	struct dag_node* b = NULL;
+	r = dseq_prime(al, ts, &b);
+	if (r == result_error) {
+		goto function_error;
+	}
+	if (b && b->type == dag_type_dseq && b->head) {
+		a->next = b->head;
+		b->head->prev = a;
+		n->tail = b->tail;
+	}
+
+function_success:
+	*root = n;
+	return r;
+
+function_error:
+	return r;
+}
+
 int is_valid_type(struct buffer* b)
 {
 	if (buffer_str_compare(b, "Int32")) return 1;

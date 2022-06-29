@@ -40,6 +40,7 @@ enum dag_type {
 	dag_type_type,
 	dag_type_array_literal,
 	dag_type_array_subscript,
+	dag_type_anonymous_function,
 	dag_type_count		/* keep at end */
 };
 
