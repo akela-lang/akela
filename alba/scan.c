@@ -354,6 +354,13 @@ enum result process_char_string(struct allocator* al, struct input_state* is, en
             if (r == result_error) {
                 return r;
             }
+        } else {
+            char* a;
+            r = buffer2array(al, &is->bf, &a);
+            if (r == result_error) {
+                return r;
+            }
+            return set_error("Unrecognized escape sequence: %s", a);
         }
         *state = state_string;
     }

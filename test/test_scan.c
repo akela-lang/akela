@@ -853,6 +853,25 @@ void test_scan_string2()
 	scan_teardown(&al, &is);
 }
 
+void test_scan_string_escape_error()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "\"\\x\"", &is);
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_true(r == result_error, "error");
+	expect_error_message("Unrecognized escape sequence: x");
+
+	scan_teardown(&al, &is);
+}
+
 void test_scan()
 {
 	test_scan_assign();
@@ -876,4 +895,5 @@ void test_scan()
 	test_scan_square_brackets();
 	test_scan_string();
 	test_scan_string2();
+	test_scan_string_escape_error();
 }
