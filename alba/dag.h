@@ -10,6 +10,7 @@ enum dag_type {
 	dag_type_id,
 	dag_type_sign,
 	dag_type_number,
+	dag_type_string,
 	dag_type_assign,
 	dag_type_plus,
 	dag_type_minus,

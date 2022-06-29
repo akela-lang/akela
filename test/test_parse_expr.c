@@ -1310,6 +1310,33 @@ void test_parse_array_subscript3()
 	parse_teardown(&al, &ts);
 }
 
+void test_parse_string()
+{
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+	enum result r;
+
+	r = parse_setup(&al, "a = \"hello\"", &ts, &root);
+	assert_ok(r, "parse");
+
+	struct dag_node* assign = check_stmts(root, "stmts root");
+	assert_ptr(assign, "ptr assign");
+	expect_int_equal(assign->type, dag_type_assign, "assign assign");
+	
+	struct dag_node* lhv = dag_get_child(assign, 0);
+	assert_ptr(lhv, "ptr lhv");
+	expect_int_equal(lhv->type, dag_type_id, "id lhv");
+	expect_str(&lhv->value, "a", "a lhv");
+
+	struct dag_node* rhv = dag_get_child(assign, 1);
+	assert_ptr(rhv, "ptr rhv");
+	expect_int_equal(rhv->type, dag_type_string, "string rhv");
+	expect_str(&rhv->value, "hello", "hello rhv");
+
+	parse_teardown(&al, &ts);
+}
+
 void test_parse_expression()
 {
 	test_parse_blank();
@@ -1352,4 +1379,5 @@ void test_parse_expression()
 	test_parse_array_subscript();
 	test_parse_array_subscript2();
 	test_parse_array_subscript3();
+	test_parse_string();
 }

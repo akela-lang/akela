@@ -1,5 +1,4 @@
 # Todo
-* strings
 * anonymous functions
 * bitwise operators
 * shift operators

@@ -7,6 +7,7 @@
 /*
 * factor -> id(cseq)
 *		  | number
+*		  | string
 *		  | id
 *		  | + factor
 *		  | - factor
@@ -97,8 +98,8 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 		dag_add_child(n, a);
 		goto function_success;
 
-		/* number or word */
-	} else if (t0 && (t0->type == token_number || t0->type == token_id)) {
+		/* number, id, string */
+	} else if (t0 && (t0->type == token_number || t0->type == token_id || t0->type == token_string)) {
 		r = dag_create_node(al, &n);
 		if (r == result_error) {
 			goto function_error;
@@ -108,13 +109,15 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 			n->type = dag_type_number;
 		} else if (t0->type == token_id) {
 			n->type = dag_type_id;
+		} else if (t0->type == token_string) {
+			n->type = dag_type_string;
 		}
 		r = buffer_copy(al, &t0->value, &n->value);
 		if (r == result_error) {
 			goto function_error;
 		}
 
-		r = match(al, ts, t0->type, "expecting number or word");
+		r = match(al, ts, t0->type, "expecting number, id, or string");
 		if (r == result_error) {
 			goto function_error;
 		}
