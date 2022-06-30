@@ -1,4 +1,5 @@
 # Todo
 * bitwise operators
 * shift operators
-* combine tail recusive parse functions
+* keep track of line and column
+* report line and column and highlight character on scan or parse error
