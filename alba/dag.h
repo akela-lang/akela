@@ -83,6 +83,7 @@ enum result dag_set_names(char** names)
 	names[dag_type_type] = "type";
 	names[dag_type_array_literal] = "array-literal";
 	names[dag_type_array_subscript] = "array-subscript";
+	names[dag_type_anonymous_function] = "anonymous-function";
 
 	for (int i = 0; i < dag_type_count; i++) {
 		if (names[i] == NULL) {
