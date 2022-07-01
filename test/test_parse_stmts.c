@@ -1327,7 +1327,7 @@ void test_parse_line_col()
 
 	r = parse_setup(&al, "* 2", &ts, &root);
 	assert_error(r, "parse");
-	expect_error_message("1, 1:expected term before operator");
+	expect_error_message("1, 1: expected term before operator");
 
 	parse_teardown(&al, &ts);
 }

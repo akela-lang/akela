@@ -11,6 +11,7 @@ set(test_files
     ${alba_dir}/parse_factor.c
     ${alba_dir}/parse.c
     ${alba_dir}/parse_tools.c
+    "${alba_dir}/source.c"
     ${alba_dir}/allocator.c
     "${alba_dir}/input.c"
     ${alba_dir}/os_win.c

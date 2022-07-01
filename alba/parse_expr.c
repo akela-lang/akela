@@ -4,6 +4,7 @@
 #include "allocator.h"
 #include "parse_tools.h"
 #include "parse_factor.h"
+#include "source.h"
 
 /*
 * expr -> not_operator
@@ -457,7 +458,7 @@ enum result mult(struct allocator* al, struct token_state* ts, struct dag_node**
 		dag_push(c, a);
 		*root = b;
 	} else if (!a && b) {
-		r = parse_set_error(t, "expected term before operator");
+		r = set_source_error(t->line, t->col, "expected term before operator");
 	}
 
 	return r;
@@ -628,7 +629,7 @@ enum result array_subscript_prime(struct allocator* al, struct token_state* ts, 
 		return r;
 	}
 
-	struct token_node* a = NULL;
+	struct dag_node* a = NULL;
 	r = array_subscript(al, ts, &a);
 	if (r == result_error) {
 		return r;

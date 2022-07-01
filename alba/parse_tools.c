@@ -2,7 +2,6 @@
 #include "parse_tools.h"
 #include "token.h"
 #include "result.h"
-#include <stdarg.h>
 #include "scan.h"
 #include <string.h>
 
@@ -76,47 +75,4 @@ enum result match(struct allocator* al, struct token_state* ts, enum token_type 
 	}
 
 	return set_error("%d, %d: %s", t->line, t->col, reason);
-}
-
-enum result parse_set_error(struct token* t, const char* fmt, ...)
-{
-	va_list args;
-	va_start(args, fmt);
-	int len;
-	char* p = error_message;
-	int n = ERROR_SIZE;
-
-	if (t) {
-		len = snprintf(p, n, "%zu, %zu: ", t->line, t->col);
-		p += len - 1;
-		n -= len - 1;
-	}
-
-	char last = 0;
-	int i = 0;
-	while (*fmt != '\0') {
-		if (last == '%' && *fmt == '%') {
-			if (i < n) p[i++] = '%';
-		} else if (*fmt == '%') {
-			/* nothing */
-		} else if (last == '%' && *fmt == 'd') {
-			len = snprintf(p + i, n - i, "%d", va_arg(args, int));
-			i += len - 1;
-		} else if (last == '%' && *fmt == 's') {
-			len = snprintf(p + i, n - i, "%s", va_arg(args, char*));
-			i += len - 1;
-		} else {
-			if (i < n) p[i++] = *fmt;
-		}
-		last = *fmt;
-		fmt++;
-	}
-	if (i > n - 1) {
-		i = n - 1;
-	}
-	p[i++] = '\0';
-
-	va_end(args);
-
-	return result_error;
 }

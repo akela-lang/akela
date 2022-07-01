@@ -7,6 +7,7 @@
 #include "scan.h"
 #include "buffer.h"
 #include "input.h"
+#include "source.h"
 
 void set_char_values(struct char_value* cv)
 {
@@ -261,7 +262,7 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         if (r == result_error) {
             return set_error(error_message);
         }
-        return set_error("%d, %d: Unrecognized character: %s", is->line, is->col, a);
+        return set_source_error(is->line, is->col, "Unrecognized character: %s", a);
     }
     return result_ok;
 }
@@ -392,7 +393,7 @@ enum result process_char_string(struct allocator* al, struct input_state* is, en
             if (r == result_error) {
                 return r;
             }
-            return set_error("%d, %d: Unrecognized escape sequence: %s", is->line, is->col, a);
+            return set_source_error(is->line, is->col, "Unrecognized escape sequence: %s", a);
         }
         *state = state_string;
     }

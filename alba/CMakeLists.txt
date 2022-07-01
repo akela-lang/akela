@@ -10,6 +10,7 @@ set(source_files
     parse_stmts.c
     "parse_expr.c"
     parse_factor.c
+    "source.c"
     parse.c
     parse_tools.c
     allocator.c
