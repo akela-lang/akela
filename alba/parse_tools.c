@@ -66,7 +66,7 @@ enum result match(struct allocator* al, struct token_state* ts, enum token_type 
 			return r;
 		}
 	} else {
-		t = ts->lookahead.head->t;
+		t = ts->lookahead.head;
 	}
 
 	if (t->type == type) {

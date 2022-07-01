@@ -107,17 +107,13 @@ struct token {
     struct buffer value;
     size_t line;
     size_t col;
-};
-
-struct token_node {
-    struct token* t;
-    struct token_node* prev;
-    struct token_node* next;
+    struct token* prev;
+    struct token* next;
 };
 
 struct token_list {
-    struct token_node* head;
-    struct token_node* tail;
+    struct token* head;
+    struct token* tail;
 };
 
 void token_init(struct token* t);
@@ -130,7 +126,6 @@ int token_find_last(struct token_list* tl, enum token_enum type);
 int token_list_count(struct token_list* tl);
 enum result token_list_make(struct allocator* al, struct token_list** tl);
 enum result token_list_add(struct allocator* al, struct token_list* tl, struct token* t);
-enum result token_list_slice(struct allocator *al, struct token_list* tl, int start, int end, struct token_list** slice);
 void token_list_reset(struct token_list* tl);
 enum result token_list_print(struct allocator* al, struct token_list* tl);
 enum result print_token(struct allocator* al, struct token* t);

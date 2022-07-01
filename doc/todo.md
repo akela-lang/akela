@@ -1,5 +1,4 @@
 # Todo
-* combine token_node and token
 * return token from match
 * return line and col from parse functions
 * pass line and col when reporting parse error
