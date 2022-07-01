@@ -25,6 +25,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 	struct defer_node* stack_error = NULL;
 	struct defer_node* stack_temp = NULL;
 	struct dag_node* n = NULL;
+	struct token* t;
 
 	int num;
 	r = get_lookahead(al, ts, 2, &num);
@@ -38,12 +39,12 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 
 	/* anonymous function */
 	if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
-		r = match(al, ts, token_function, "expected anonymous function");
+		r = match(al, ts, token_function, "expected anonymous function", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
 
-		r = match(al, ts, token_left_paren, "expected left parenthesis");
+		r = match(al, ts, token_left_paren, "expected left parenthesis", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -61,7 +62,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 		}
 		dag_add_child(n, a);
 
-		r = match(al, ts, token_right_paren, "expected right parenthesis");
+		r = match(al, ts, token_right_paren, "expected right parenthesis", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -73,7 +74,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 		}
 		dag_add_child(n, b);
 
-		r = match(al, ts, token_end, "expected end");
+		r = match(al, ts, token_end, "expected end", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -82,12 +83,12 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 
 		/* function call*/
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
-		r = match(al, ts, token_id, "expecting id");
+		r = match(al, ts, token_id, "expecting id", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
 
-		r = match(al, ts, token_left_paren, "expecting left parenthesis");
+		r = match(al, ts, token_left_paren, "expecting left parenthesis", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -116,14 +117,14 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 			dag_add_child(n, b);
 		}
 
-		r = match(al, ts, token_right_paren, "expecting right parenthesis");
+		r = match(al, ts, token_right_paren, "expecting right parenthesis", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
 
 		/* ! factor */
 	} else if (t0 && t0->type == token_not) {
-		r = match(al, ts, token_not, "expecting not");
+		r = match(al, ts, token_not, "expecting not", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -164,7 +165,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 			goto function_error;
 		}
 
-		r = match(al, ts, t0->type, "expecting number, id, or string");
+		r = match(al, ts, t0->type, "expecting number, id, or string", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -191,7 +192,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 			left->type = dag_type_minus;
 		}
 
-		r = match(al, ts, t0->type, "expecting unary plus or minus");
+		r = match(al, ts, t0->type, "expecting unary plus or minus", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -222,7 +223,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 
 		/* parenthesis */
 	} else if (t0 && t0->type == token_left_paren) {
-		r = match(al, ts, t0->type, "expecting left parenthesis");
+		r = match(al, ts, t0->type, "expecting left parenthesis", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -232,7 +233,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 			goto function_error;
 		}
 
-		r = match(al, ts, token_right_paren, "expecting right parenthesis");
+		r = match(al, ts, token_right_paren, "expecting right parenthesis", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -294,6 +295,7 @@ enum result cseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 {
 	enum result r = result_ok;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -303,7 +305,7 @@ enum result cseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 	struct token* t0 = get_token(&ts->lookahead, 0);
 
 	if (t0 && t0->type == token_comma) {
-		r = match(al, ts, token_comma, "expecting comma");
+		r = match(al, ts, token_comma, "expecting comma", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -342,6 +344,7 @@ enum result array_literal(struct allocator* al, struct token_state* ts, struct d
 	enum result r = result_ok;
 	int num;
 	struct dag_node* n = NULL;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -350,7 +353,7 @@ enum result array_literal(struct allocator* al, struct token_state* ts, struct d
 
 	struct token* t0 = get_token(&ts->lookahead, 0);
 	if (t0 && t0->type == token_left_square_bracket) {
-		r = match(al, ts, token_left_square_bracket, "expected left square bracket");
+		r = match(al, ts, token_left_square_bracket, "expected left square bracket", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -366,7 +369,7 @@ enum result array_literal(struct allocator* al, struct token_state* ts, struct d
 			goto function_error;
 		}
 
-		r = match(al, ts, token_right_square_bracket, "expected right square bracket");
+		r = match(al, ts, token_right_square_bracket, "expected right square bracket", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -414,6 +417,7 @@ enum result aseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 {
 	enum result r = result_ok;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -427,7 +431,7 @@ enum result aseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 		return r;
 	}
 
-	r = match(al, ts, token_comma, "expecting comma");
+	r = match(al, ts, token_comma, "expecting comma", &t);
 	if (r == result_error) {
 		return r;
 	}

@@ -13,7 +13,6 @@ enum result dseq(struct allocator* al, struct token_state* ts, struct dag_node**
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
-	int num;
 
 	r = dag_create_node(al, &n);
 	if (r == result_error) {
@@ -59,6 +58,7 @@ enum result dseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 	struct dag_node* n = NULL;
 	enum result r = result_ok;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 2, &num);
 	struct token* t0 = get_token(&ts->lookahead, 0);
@@ -68,7 +68,7 @@ enum result dseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 		goto function_success;
 	}
 
-	r = match(al, ts, token_comma, "expecting comma");
+	r = match(al, ts, token_comma, "expecting comma", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -127,6 +127,7 @@ enum result declaration(struct allocator* al, struct token_state* ts, struct dag
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 3, &num);
 	if (r == result_error) {
@@ -139,17 +140,17 @@ enum result declaration(struct allocator* al, struct token_state* ts, struct dag
 
 	if (t0 && t0->type == token_id && t1 && t1->type == token_double_colon && t2 && t2->type == token_id) {
 		/* id::type */
-		r = match(al, ts, token_id, "expected id");
+		r = match(al, ts, token_id, "expected id", &t);
 		if (r == result_error) {
 			return r;
 		}
 
-		r = match(al, ts, token_double_colon, "expected double colon");
+		r = match(al, ts, token_double_colon, "expected double colon", &t);
 		if (r == result_error) {
 			return r;
 		}
 
-		r = match(al, ts, token_id, "expected type");
+		r = match(al, ts, token_id, "expected type", &t);
 		if (r == result_error) {
 			return r;
 		}
@@ -181,7 +182,7 @@ enum result declaration(struct allocator* al, struct token_state* ts, struct dag
 
 	} else if (t0 && t0->type == token_id) {
 		/* id */
-		r = match(al, ts, token_id, "expected id");
+		r = match(al, ts, token_id, "expected id", &t);
 		if (r == result_error) {
 			return r;
 		}

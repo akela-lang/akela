@@ -4,6 +4,7 @@
 #include "result.h"
 #include "scan.h"
 #include <string.h>
+#include "source.h"
 
 void token_state_init(struct input_state* is, struct token_state* ts)
 {
@@ -46,33 +47,32 @@ enum parse_result get_lookahead(struct allocator* al, struct token_state* ts, in
 }
 
 /* expecting specific token */
-enum result match(struct allocator* al, struct token_state* ts, enum token_type type, char* reason)
+enum result match(struct allocator* al, struct token_state* ts, enum token_type type, char* reason, struct token** t)
 {
 	enum result r = result_ok;
 
 	int num = token_list_count(&ts->lookahead);
 	int got_token;
-	struct token* t;
 	if (num <= 0) {
-		enum result r = scan_get_token(al, ts->is, &got_token, &t);
+		enum result r = scan_get_token(al, ts->is, &got_token, t);
 		if (r == result_error) {
 			return r;
 		}
 		if (!got_token) {
-			return set_error("%d, %d: %s", ts->is->line, ts->is->col, reason);
+			return set_source_error(ts->is->line, ts->is->col, "%s", reason);
 		}
-		r = token_list_add(al, &ts->lookahead, t);
+		r = token_list_add(al, &ts->lookahead, *t);
 		if (r == result_error) {
 			return r;
 		}
 	} else {
-		t = ts->lookahead.head;
+		*t = ts->lookahead.head;
 	}
 
-	if (t->type == type) {
+	if ((*t)->type == type) {
 		token_list_pop(&ts->lookahead);
 		return r;
 	}
 
-	return set_error("%d, %d: %s", t->line, t->col, reason);
+	return set_source_error((*t)->line, (*t)->col, "%s", reason);
 }

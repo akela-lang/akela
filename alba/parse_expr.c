@@ -14,6 +14,7 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 2, &num);
 	if (r == result_error) {
@@ -24,11 +25,11 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 
 	/* id = expr */
 	if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
-		r = match(al, ts, token_id, "expected word");
+		r = match(al, ts, token_id, "expected word", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
-		r = match(al, ts, token_equal, "expected equal");
+		r = match(al, ts, token_equal, "expected equal", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -126,6 +127,7 @@ enum result boolean_prime(struct allocator* al, struct token_state* ts, struct d
 	struct dag_node* c = NULL;
 	enum dag_type type = dag_type_none;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -154,7 +156,7 @@ enum result boolean_prime(struct allocator* al, struct token_state* ts, struct d
 	}
 
 	n->type = type;
-	r = match(al, ts, t0->type, "expecting + or -");
+	r = match(al, ts, t0->type, "expecting + or -", &t);
 	if (r == result_error) {
 		return r;
 	}
@@ -238,6 +240,7 @@ enum result comparison_prime(struct allocator* al, struct token_state* ts, struc
 	struct dag_node* c = NULL;
 	enum dag_type type = dag_type_none;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -274,7 +277,7 @@ enum result comparison_prime(struct allocator* al, struct token_state* ts, struc
 	}
 
 	n->type = type;
-	r = match(al, ts, t0->type, "expecting + or -");
+	r = match(al, ts, t0->type, "expecting + or -", &t);
 	if (r == result_error) {
 		return r;
 	}
@@ -357,6 +360,7 @@ enum result add_prime(struct allocator* al, struct token_state* ts, struct dag_n
 	struct dag_node* c = NULL;
 	enum dag_type type = dag_type_none;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -385,7 +389,7 @@ enum result add_prime(struct allocator* al, struct token_state* ts, struct dag_n
 	}
 
 	n->type = type;
-	r = match(al, ts, t0->type, "expecting + or -");
+	r = match(al, ts, t0->type, "expecting + or -", &t);
 	if (r == result_error) {
 		return r;
 	}
@@ -477,6 +481,7 @@ enum result mult_prime(struct allocator* al, struct token_state* ts, struct dag_
 	struct dag_node* b = NULL;
 	struct dag_node* c = NULL;
 	enum dag_type type = dag_type_none;
+	struct token* t;
 
 	int num;
 	r = get_lookahead(al, ts, 1, &num);
@@ -510,7 +515,7 @@ enum result mult_prime(struct allocator* al, struct token_state* ts, struct dag_
 	}
 
 	n->type = type;
-	r = match(al, ts, t0->type, "expecting * or /");
+	r = match(al, ts, t0->type, "expecting * or /", &t);
 	if (r == result_error) {
 		return r;
 	}
@@ -552,6 +557,7 @@ enum result array_subscript(struct allocator* al, struct token_state* ts, struct
 	enum result r = result_ok;
 	int num;
 	struct dag_node* n = NULL;
+	struct token* t;
 	
 	r = factor(al, ts, &n);
 	if (r == result_error) {
@@ -573,7 +579,7 @@ enum result array_subscript(struct allocator* al, struct token_state* ts, struct
 		n->type = dag_type_array_subscript;
 		dag_add_child(n, a);
 
-		r = match(al, ts, token_left_square_bracket, "expecting array subscript operator");
+		r = match(al, ts, token_left_square_bracket, "expecting array subscript operator", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -586,7 +592,7 @@ enum result array_subscript(struct allocator* al, struct token_state* ts, struct
 		}
 		dag_add_child(n, b);
 
-		r = match(al, ts, token_right_square_bracket, "expecting array subscript operator");
+		r = match(al, ts, token_right_square_bracket, "expecting array subscript operator", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -612,6 +618,7 @@ enum result array_subscript_prime(struct allocator* al, struct token_state* ts, 
 {
 	enum result r = result_ok;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -624,7 +631,7 @@ enum result array_subscript_prime(struct allocator* al, struct token_state* ts, 
 		return r;
 	}
 
-	r = match(al, ts, token_left_square_bracket, "expected left square bracket");
+	r = match(al, ts, token_left_square_bracket, "expected left square bracket", &t);
 	if (r == result_error) {
 		return r;
 	}
@@ -639,7 +646,7 @@ enum result array_subscript_prime(struct allocator* al, struct token_state* ts, 
 	}
 	dag_add_child(parent, a);
 
-	r = match(al, ts, token_right_square_bracket, "expected right square_bracket");
+	r = match(al, ts, token_right_square_bracket, "expected right square_bracket", &t);
 	if (r == result_error) {
 		return r;
 	}

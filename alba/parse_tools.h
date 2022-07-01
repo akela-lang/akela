@@ -10,6 +10,6 @@ struct token_state {
 
 void token_state_init(struct input_state* is, struct token_state* ts);
 enum result get_lookahead(struct allocator* al, struct token_state* ts, int count, int* num);
-enum result match(struct allocator* al, struct token_state* ts, enum token_type type, char* reason);
+enum result match(struct allocator* al, struct token_state* ts, enum token_type type, char* reason, struct token** t);
 
 #endif

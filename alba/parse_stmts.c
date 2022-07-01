@@ -16,7 +16,6 @@ enum parse_result stmts(struct allocator* al, struct token_state* ts, struct dag
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
-	int num;
 
 	struct dag_node* a = NULL;
 	r = stmt(al, ts, &a);
@@ -93,6 +92,7 @@ enum parse_result separator(struct allocator* al, struct token_state* ts, int* h
 	enum token_type type;
 	int num;
 	*has_separator = 0;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -110,7 +110,7 @@ enum parse_result separator(struct allocator* al, struct token_state* ts, int* h
 		return r;
 	}
 
-	r = match(al, ts, type, "expecting newline or semicolon");
+	r = match(al, ts, type, "expecting newline or semicolon", &t);
 	if (r == result_error) {
 		return r;
 	}
@@ -129,6 +129,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 	enum result r;
 	struct dag_node* n = NULL;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 2, &num);
 	if (r == result_error) {
@@ -146,7 +147,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 	/* while */
 	if (t0 && t0->type == token_while) {
-		r = match(al, ts, token_while, "expecting while");
+		r = match(al, ts, token_while, "expecting while", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -175,7 +176,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 		dag_add_child(n, b);
 
-		r = match(al, ts, token_end, "expected end");
+		r = match(al, ts, token_end, "expected end", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -210,7 +211,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
-		r = match(al, ts, token_function, "expecting function");
+		r = match(al, ts, token_function, "expecting function", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -220,7 +221,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 		n->type = dag_type_function;
 
-		r = match(al, ts, token_id, "expecting word");
+		r = match(al, ts, token_id, "expecting word", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -233,7 +234,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		buffer_copy(al, &t1->value, &a->value);
 		dag_add_child(n, a);
 
-		r = match(al, ts, token_left_paren, "expecting left parenthesis");
+		r = match(al, ts, token_left_paren, "expecting left parenthesis", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -247,7 +248,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 			dag_add_child(n, b);
 		}
 
-		r = match(al, ts, token_right_paren, "expecting right parenthesis");
+		r = match(al, ts, token_right_paren, "expecting right parenthesis", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -261,7 +262,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 			dag_add_child(n, c);
 		}
 
-		r = match(al, ts, token_end, "expecting end");
+		r = match(al, ts, token_end, "expecting end", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -270,7 +271,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 
 	} else if (t0 && t0->type == token_if) {
 		/* if */
-		r = match(al, ts, token_if, "expecting if");
+		r = match(al, ts, token_if, "expecting if", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -325,7 +326,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		}
 
 		/* end */
-		r = match(al, ts, token_end, "expected end");
+		r = match(al, ts, token_end, "expected end", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -361,6 +362,7 @@ enum result for_range(struct allocator* al, struct token_state* ts, struct dag_n
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 3, &num);
 	if (r == result_error) {
@@ -368,17 +370,17 @@ enum result for_range(struct allocator* al, struct token_state* ts, struct dag_n
 	}
 	struct token* t1 = get_token(&ts->lookahead, 1);
 
-	r = match(al, ts, token_for, "expected for");
+	r = match(al, ts, token_for, "expected for", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = match(al, ts, token_id, "expected id");
+	r = match(al, ts, token_id, "expected id", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = match(al, ts, token_equal, "expected equal");
+	r = match(al, ts, token_equal, "expected equal", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -420,7 +422,7 @@ enum result for_range(struct allocator* al, struct token_state* ts, struct dag_n
 	}
 	dag_add_child(n, b);
 
-	r = match(al, ts, token_colon, "expected colon");
+	r = match(al, ts, token_colon, "expected colon", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -445,7 +447,7 @@ enum result for_range(struct allocator* al, struct token_state* ts, struct dag_n
 	}
 	dag_add_child(n, d);
 
-	r = match(al, ts, token_end, "expected end");
+	r = match(al, ts, token_end, "expected end", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -466,6 +468,7 @@ enum result for_iteration(struct allocator* al, struct token_state* ts, struct d
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 3, &num);
 	if (r == result_error) {
@@ -474,17 +477,17 @@ enum result for_iteration(struct allocator* al, struct token_state* ts, struct d
 
 	struct token* t1 = get_token(&ts->lookahead, 1);
 
-	r = match(al, ts, token_for, "expecting for");
+	r = match(al, ts, token_for, "expecting for", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = match(al, ts, token_id, "expecting id");
+	r = match(al, ts, token_id, "expecting id", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = match(al, ts, token_in, "expecting in");
+	r = match(al, ts, token_in, "expecting in", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -529,7 +532,7 @@ enum result for_iteration(struct allocator* al, struct token_state* ts, struct d
 	}
 	dag_add_child(n, c);
 
-	r = match(al, ts, token_end, "expected end");
+	r = match(al, ts, token_end, "expected end", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -550,6 +553,7 @@ enum result elseif_stmts(struct allocator* al, struct token_state* ts, struct da
 {
 	enum result r = result_ok;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -558,7 +562,7 @@ enum result elseif_stmts(struct allocator* al, struct token_state* ts, struct da
 
 	struct token* t0 = get_token(&ts->lookahead, 0);
 	if (t0->type == token_elseif) {
-		r = match(al, ts, token_elseif, "expecting elseif");
+		r = match(al, ts, token_elseif, "expecting elseif", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
@@ -613,6 +617,7 @@ enum result else_stmt(struct allocator* al, struct token_state* ts, struct dag_n
 {
 	enum result r = result_ok;
 	int num;
+	struct token* t;
 
 	r = get_lookahead(al, ts, 1, &num);
 	if (r == result_error) {
@@ -622,7 +627,7 @@ enum result else_stmt(struct allocator* al, struct token_state* ts, struct dag_n
 	struct token* t0 = get_token(&ts->lookahead, 0);
 	if (t0 && t0->type == token_else) {
 		/* else */
-		r = match(al, ts, token_else, "expected else");
+		r = match(al, ts, token_else, "expected else", &t);
 		if (r == result_error) {
 			goto function_error;
 		}
