@@ -7,6 +7,8 @@
 void token_init(struct token* t)
 {
     t->type = token_none;
+    t->line = 0;
+    t->col = 0;
     buffer_init(&t->value);
 }
 
@@ -87,25 +89,13 @@ enum result token_list_add(struct allocator* al, struct token_list* tl, struct t
     enum result r;
     struct defer_node* ds = NULL;
 
-    struct token* new_t;
-    r = allocator_malloc(al, &new_t, sizeof(struct token));
-    if (r == result_error) {
-        return r;
-    }
-
     struct token_node* tn;
     r = allocator_malloc(al, &tn, sizeof(struct token_node));
     if (r == result_error) {
         return r;
     }
 
-    new_t->type = t->type;
-    buffer_init(&new_t->value);
-    r = buffer_copy(al, &t->value, &new_t->value);
-    if (r == result_error) {
-        return r;
-    }
-    tn->t = new_t;
+    tn->t = t;
 
     /* update previous */
     struct token_node* tn_prev = tl->tail;
@@ -175,9 +165,16 @@ void token_list_reset(struct token_list* tl)
     token_list_init(tl);
 }
 
-enum result token_list_print(struct allocator* al, struct token_list* tl, char** token_name)
+enum result token_list_print(struct allocator* al, struct token_list* tl)
 {
     enum result r;
+
+    char* token_name[token_count];
+    r = token_name_init(&token_name);
+    if (r == result_error) {
+        return r;
+    }
+
     struct token_node* tn = tl->head;
     while (tn) {
         char* a;
@@ -185,8 +182,26 @@ enum result token_list_print(struct allocator* al, struct token_list* tl, char**
         if (r == result_error) {
             return r;
         }
-        printf("token: %s, value: %s\n", token_name[tn->t->type], a);
+        printf("%zu, %zu: token: %s, value: %s\n", tn->t->line, tn->t->col,token_name[tn->t->type], a);
         tn = tn->next;
     }
     return result_ok;
+}
+
+enum result print_token(struct allocator* al, struct token* t)
+{
+    enum result r;
+
+    char* token_name[token_count];
+    r = token_name_init(&token_name);
+    if (r == result_error) {
+        return r;
+    }
+
+    char* a;
+    r = buffer2array(al, &t->value, &a);
+    if (r == result_error) {
+        return r;
+    }
+    printf("%zu, %zu: token: %s, value: %s\n", t->line, t->col, token_name[t->type], a);
 }

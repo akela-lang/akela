@@ -771,7 +771,7 @@ void test_scan_error_char()
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_true(r == result_error, "get token");
 	assert_true(!got_token, "got token");
-	expect_error_message("Unrecognized character: $");
+	expect_error_message("1, 1: Unrecognized character: $");
 
 	scan_teardown(&al, &is);
 }
@@ -867,7 +867,79 @@ void test_scan_string_escape_error()
 
 	r = scan_get_token(&al, &is, &got_token, &t);
 	assert_true(r == result_error, "error");
-	expect_error_message("Unrecognized escape sequence: x");
+	expect_error_message("1, 3: Unrecognized escape sequence: x");
+
+	scan_teardown(&al, &is);
+}
+
+void test_scan_line_col()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "10 + 20\n30 + 40", &is);
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan ok 10");
+	assert_ptr(t, "ptr t 10");
+	assert_true(got_token, "got token 10");
+	expect_int_equal(t->type, token_number, "number 10");
+	expect_str(&t->value, "10", "10");
+	expect_int_equal(t->line, 1, "line 10");
+	expect_int_equal(t->col, 1, "col 10");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan ok +");
+	assert_ptr(t, "ptr t +");
+	assert_true(got_token, "got token +");
+	expect_int_equal(t->type, token_plus, "plus +");
+	expect_int_equal(t->line, 1, "line +");
+	expect_int_equal(t->col, 4, "col +");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan ok 20");
+	assert_ptr(t, "ptr t 20");
+	assert_true(got_token, "got token 20");
+	expect_int_equal(t->type, token_number, "number 20");
+	expect_int_equal(t->line, 1, "line 20");
+	expect_int_equal(t->col, 6, "col 20");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan ok newline");
+	assert_ptr(t, "ptr t newline");
+	assert_true(got_token, "got token newline");
+	expect_int_equal(t->type, token_newline, "newline newline");
+	expect_int_equal(t->line, 1, "line newline");
+	expect_int_equal(t->col, 8, "col newline");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan ok 30");
+	assert_ptr(t, "ptr t 30");
+	assert_true(got_token, "got token 30");
+	expect_int_equal(t->type, token_number, "newline 30");
+	expect_int_equal(t->line, 2, "line 30");
+	expect_int_equal(t->col, 1, "col 30");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan ok +");
+	assert_ptr(t, "ptr t +");
+	assert_true(got_token, "got token +");
+	expect_int_equal(t->type, token_plus, "plus +");
+	expect_int_equal(t->line, 2, "line +");
+	expect_int_equal(t->col, 4, "col +");
+
+	r = scan_get_token(&al, &is, &got_token, &t);
+	assert_ok(r, "scan ok 40");
+	assert_ptr(t, "ptr t 40");
+	assert_true(got_token, "got token 40");
+	expect_int_equal(t->type, token_number, "number 40");
+	expect_int_equal(t->line, 2, "line 40");
+	expect_int_equal(t->col, 6, "col 40");
 
 	scan_teardown(&al, &is);
 }
@@ -896,4 +968,5 @@ void test_scan()
 	test_scan_string();
 	test_scan_string2();
 	test_scan_string_escape_error();
+	test_scan_line_col();
 }

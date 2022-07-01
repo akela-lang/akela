@@ -74,6 +74,7 @@ enum result token_name_init(char** token_name)
     token_name[token_elseif] = "elseif";
     token_name[token_else] = "else";
     token_name[token_double_equal] = "double-equal";
+    token_name[token_not_equal] = "not-equal";
     token_name[token_less_than] = "less-than";
     token_name[token_less_than_or_equal] = "less-than-or-equal";
     token_name[token_greater_than] = "greater-than";
@@ -90,6 +91,7 @@ enum result token_name_init(char** token_name)
     token_name[token_double_colon] = "::";
     token_name[token_left_square_bracket] = "[";
     token_name[token_right_square_bracket] = "]";
+    token_name[token_string] = "string";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {
@@ -103,6 +105,8 @@ enum result token_name_init(char** token_name)
 struct token {
     enum token_enum type;
     struct buffer value;
+    size_t line;
+    size_t col;
 };
 
 struct token_node {
@@ -128,7 +132,8 @@ enum result token_list_make(struct allocator* al, struct token_list** tl);
 enum result token_list_add(struct allocator* al, struct token_list* tl, struct token* t);
 enum result token_list_slice(struct allocator *al, struct token_list* tl, int start, int end, struct token_list** slice);
 void token_list_reset(struct token_list* tl);
-enum result token_list_print(struct allocator* al, struct token_list* tl, char** token_name);
+enum result token_list_print(struct allocator* al, struct token_list* tl);
+enum result print_token(struct allocator* al, struct token* t);
 struct token* token_list_pop(struct token_list* tl);
 
 #endif

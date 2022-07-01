@@ -2,6 +2,7 @@
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
+#include <stdbool.h>
 #include "buffer.h"
 #include "input.h"
 #include "result.h"
@@ -35,72 +36,19 @@ void input_state_init(io_getchar f, io_data d, UConverter* conv, struct input_st
     is->done = 0;
     buffer_init(&is->bf);
     is->has_next = 0;
-    buffer_init(&is->next_s);
+    is->last_was_newline = false;
+    is->line = 1;
+    is->col = 0;
 }
 
 void input_state_push_uchar(struct input_state* is)
 {
-    is->next_s = is->bf;
-    is->next_uc = is->uc;
     is->has_next = 1;
 }
 
 void input_state_pop_uchar(struct input_state* is)
 {
-    is->bf = is->next_s;
-    is->uc = is->next_uc;
     is->has_next = 0;
-}
-
-enum result next_line(struct allocator* al, FILE* f, struct buffer* bf, int is_utf8, int* last_line)
-{
-    *last_line = 0;
-
-    int i = 0;
-    int count;
-    enum result r;
-    while (1) {
-        int c = getc(f);
-
-        if (c == EOF) {
-            *last_line = 1;
-            break;
-        }
-
-        if (c == '\n' || c == '\r') {
-            break;
-        }
-
-        if (is_utf8) {
-            r = num_bytes(c, &count);
-            if (r == result_error) {
-                return r;
-            }
-            r = buffer_add_char(al, bf, c);
-            if (r == result_error) {
-                return r;
-            }
-
-            for (int j = 1; j < count; j++) {
-                c = getc(f);
-                r = check_extra_byte(c);
-                if (r == result_error) {
-                    return r;
-                }
-                r = buffer_add_char(al, bf, c);
-                if (r == result_error) {
-                    return r;
-                }
-            }
-        } else {
-            r = buffer_add_char(al, bf, c);
-            if (r == result_error) {
-                return r;
-            }
-        }
-    }
-
-    return result_ok;
 }
 
 enum result get_uchar(struct allocator* al, struct input_state* is)
@@ -112,6 +60,12 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
     if (is->has_next) {
         input_state_pop_uchar(is);
         return r;
+    }
+
+    if (is->last_was_newline) {
+        is->line++;
+        is->col = 0;
+        is->last_was_newline = false;
     }
 
     buffer_clear(&is->bf);
@@ -160,6 +114,11 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
 
     size_t pos = 0;
     U16_NEXT(dest, pos, dest_len, is->uc);
+
+    is->col++;
+    if (is->uc == '\n') {
+        is->last_was_newline = true;
+    }
 
     return r;
 }

@@ -161,6 +161,8 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     if (u_isalpha(is->uc)) {
         *state = state_id;
         t->type = token_id;
+        t->line = is->line;
+        t->col = is->col;
         r = buffer_copy(al, &is->bf, &t->value);
         if (r == result_error) {
             return r;
@@ -168,6 +170,8 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     } else if (is->uc == cv.underscore) {
             *state = state_id_underscore;
             t->type = token_id;
+            t->line = is->line;
+            t->col = is->col;
             r = buffer_copy(al, &is->bf, &t->value);
             if (r == result_error) {
                 return r;
@@ -175,6 +179,8 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     } else if (u_isdigit(is->uc)) {
         *state = state_number;
         t->type = token_number;
+        t->line = is->line;
+        t->col = is->col;
         r = buffer_copy(al, &is->bf, &t->value);
         if (r == result_error) {
             return r;
@@ -182,46 +188,72 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     } else if (is->uc == cv.double_quote) {
         *state = state_string;
         t->type = token_string;
+        t->line = is->line;
+        t->col = is->col;
     } else if (compound_operator_start(is->uc, &cv)) {
         *state = state_compound_operator;
         r = buffer_copy(al, &is->bf, &t->value);
         if (r == result_error) {
             return r;
         }
+        t->line = is->line;
+        t->col = is->col;
     } else if (is->uc == cv.plus) {
         t->type = token_plus;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.minus) {
         t->type = token_minus;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.mult) {
         t->type = token_mult;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.divide) {
         t->type = token_divide;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.left_paren) {
         t->type = token_left_paren;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.right_paren) {
         t->type = token_right_paren;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.space) {
         /* nothing */
     } else if (is->uc == cv.newline) {
         t->type = token_newline;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.comma) {
         t->type = token_comma;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.semicolon) {
         t->type = token_semicolon;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.left_square_bracket) {
         t->type = token_left_square_bracket;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else if (is->uc == cv.right_square_bracket) {
         t->type = token_right_square_bracket;
+        t->line = is->line;
+        t->col = is->col;
         *got_token = 1;
     } else {
         char* a;
@@ -229,7 +261,7 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         if (r == result_error) {
             return set_error(error_message);
         }
-        return set_error("Unrecognized character: %s", a);
+        return set_error("%d, %d: Unrecognized character: %s", is->line, is->col, a);
     }
     return result_ok;
 }
@@ -360,7 +392,7 @@ enum result process_char_string(struct allocator* al, struct input_state* is, en
             if (r == result_error) {
                 return r;
             }
-            return set_error("Unrecognized escape sequence: %s", a);
+            return set_error("%d, %d: Unrecognized escape sequence: %s", is->line, is->col, a);
         }
         *state = state_string;
     }

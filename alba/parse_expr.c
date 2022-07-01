@@ -335,6 +335,8 @@ enum result add(struct allocator* al, struct token_state* ts, struct dag_node** 
 	} else if (a && b) {
 		dag_push(c, a);
 		*root = b;
+	} else if (!a && b) {
+		r = set_error("expected term before operator");
 	}
 
 	return r;
@@ -393,6 +395,11 @@ enum result add_prime(struct allocator* al, struct token_state* ts, struct dag_n
 		return r;
 	}
 
+	if (!a) {
+		r = set_error("expected term after additive operator");
+		return r;
+	}
+
 	/* add' */
 	r = add_prime(al, ts, &b, &c);
 	if (r == result_error) {
@@ -431,6 +438,13 @@ enum result mult(struct allocator* al, struct token_state* ts, struct dag_node**
 		return r;
 	}
 
+	int num;
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		return r;
+	}
+	struct token* t = get_token(&ts->lookahead, 0);
+
 	r = mult_prime(al, ts, &b, &c);
 	if (r == result_error) {
 		return r;
@@ -442,6 +456,8 @@ enum result mult(struct allocator* al, struct token_state* ts, struct dag_node**
 	} else if (a && b) {
 		dag_push(c, a);
 		*root = b;
+	} else if (!a && b) {
+		r = parse_set_error(t, "expected term before operator");
 	}
 
 	return r;

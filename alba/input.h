@@ -2,6 +2,7 @@
 #define _INPUT_H
 
 #include <stdio.h>
+#include <stdbool.h>
 #include "buffer.h"
 
 typedef int (*io_getchar)(void*);
@@ -15,8 +16,9 @@ struct input_state {
     UChar32 uc;
     struct buffer bf;
     int has_next;
-    UChar32 next_uc;
-    struct buffer next_s;
+    bool last_was_newline;
+    size_t line;
+    size_t col;
 };
 
 struct string_data {
@@ -31,6 +33,5 @@ void input_state_init(io_getchar f, io_data d, UConverter* conv, struct input_st
 void input_state_push_uchar(struct input_state* is);
 void input_state_pop_uchar(struct input_state* is);
 enum result get_uchar(struct allocator* al, struct input_state* is);
-enum result next_line(struct allocator* al, FILE* f, struct buffer* bf, int is_utf8, int* last_line);
 
 #endif

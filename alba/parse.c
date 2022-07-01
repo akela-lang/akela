@@ -29,11 +29,11 @@ enum result parse(struct allocator* al, struct token_state* ts, struct dag_node*
 	}
 
 	if (token_list_count(&ts->lookahead) > 0) {
+		struct token* t = ts->lookahead.head->t;
 		char* names[token_count];
 		r = token_name_init(names);
-		return set_error("Couldn't process token: %s", names[ts->lookahead.head->t->type]);
+		return set_error("%d, %d: Couldn't process token: %s", t->line, t->col, names[ts->lookahead.head->t->type]);
 	}
-
 
 	return result_ok;
 }

@@ -17,7 +17,6 @@ enum result parse_setup(struct allocator* al, char* line, struct token_state* ts
 	buffer_init(bf);
 	r = array2buffer(al, line, bf);
 	assert_ok(r, "ok");
-	buffer_add_char(al, bf, '\n');
 
 	struct string_data* sd;
 	r = allocator_malloc(al, &sd, sizeof(struct string_data));

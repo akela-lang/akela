@@ -144,6 +144,16 @@ void assert_ok(enum result r, char* message)
 	panic();
 }
 
+void assert_error(enum result r, char* message)
+{
+	test_called();
+
+	if (r == result_error) return;
+	printf("no error detected assertion error: %s\n", message);
+	error_triggered();
+	panic();
+}
+
 void expect_int_equal(int a, int b, char* message)
 {
 	test_called();
@@ -205,7 +215,7 @@ void expect_error_message(char* s)
 {
 	test_called();
 	if (strcmp(error_message, s) == 0) return;
-	printf("%s = %s: error message does not match\n", error_message, s);
+	printf("(%s) = (%s): error message does not match\n", error_message, s);
 	error_triggered();
 
 }

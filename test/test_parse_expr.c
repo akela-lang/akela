@@ -10,8 +10,10 @@ void test_parse_blank()
 	struct allocator al;
 	struct dag_node* root;
 	struct token_state ts;
+	enum result r;
 
-	parse_setup(&al, "", &ts, &root);
+	r = parse_setup(&al, "", &ts, &root);
+	assert_ok(r, "parse");
 
 	root = check_stmts(root, "stmts root");
 
