@@ -260,9 +260,9 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
         char* a;
         enum result r = buffer2array(al, &is->bf, &a);
         if (r == result_error) {
-            return set_error(error_message);
+            return set_source_error(NULL, is, error_message);
         }
-        return set_source_error(is->line, is->col, "Unrecognized character: %s", a);
+        return set_source_error(NULL, is, "Unrecognized character: %s", a);
     }
     return result_ok;
 }
@@ -318,9 +318,9 @@ enum result process_char_word(struct allocator *al, struct input_state* is, enum
         }
     } else if (*state == state_id_underscore) {
         if (is->uc == cv.underscore) {
-            return set_error("Must have a letter following underscore at start of id");
+            return set_source_error(NULL, is, "Must have a letter following underscore at start of id");
         } else if (u_isdigit(is->uc)) {
-            return set_error("Must have a letter following underscore at start of id");
+            return set_source_error(NULL, is, "Must have a letter following underscore at start of id");
         } else if (u_isalpha(is->uc)) {
             *state = state_id;
             r = buffer_copy(al, &is->bf, &t->value);
@@ -393,7 +393,7 @@ enum result process_char_string(struct allocator* al, struct input_state* is, en
             if (r == result_error) {
                 return r;
             }
-            return set_source_error(is->line, is->col, "Unrecognized escape sequence: %s", a);
+            return set_source_error(NULL, is, "Unrecognized escape sequence: %s", a);
         }
         *state = state_string;
     }
@@ -486,7 +486,7 @@ enum result process_compound_operator(struct allocator* al, struct input_state* 
         if (r == result_error) {
             return r;
         }
-        return set_error("unrecognized compound operator: %s", a);
+        return set_source_error(NULL, is, "unrecognized compound operator: %s", a);
     }
 
     return r;
@@ -558,7 +558,7 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
         } else if (state == state_compound_operator) {
             r = process_compound_operator(al, is, &state, got_token, tf);
         } else {
-            r = set_error("unexpected state");
+            r = set_source_error(NULL, is, "unexpected state");
         }
         if (r == result_error) {
             return r;

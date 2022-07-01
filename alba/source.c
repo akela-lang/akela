@@ -1,21 +1,29 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include "result.h"
+#include "token.h"
+#include "input.h"
 
-enum result set_source_error(size_t line, size_t col, const char* fmt, ...)
+enum result set_source_error(struct token* t, struct input_state* is, const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
 	int len;
 	char* p = error_message;
-	int n = ERROR_SIZE;
+	size_t n = ERROR_SIZE;
 
-	len = snprintf(p, n, "%zu, %zu: ", line, col);
-	p += len;
-	n -= len;
+	if (t) {
+		len = snprintf(p, n, "%zu, %zu: ", t->line, t->col);
+		p += len;
+		n -= len;
+	} else if (is) {
+		len = snprintf(p, n, "%zu, %zu: ", is->line, is->col);
+		p += len;
+		n -= len;
+	}
 
 	char last = 0;
-	int i = 0;
+	size_t i = 0;
 	while (*fmt != '\0') {
 		if (last == '%' && *fmt == '%') {
 			if (i < n) p[i++] = '%';

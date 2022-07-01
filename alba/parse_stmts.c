@@ -8,6 +8,7 @@
 #include "scan.h"
 #include "parse_tools.h"
 #include "types.h"
+#include "source.h"
 
 /*
 * stmts -> stmt stmts'
@@ -164,7 +165,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 			goto function_error;
 		}
 		if (!a) {
-			r = set_error("expected expression");
+			r = set_source_error(t0, ts->is, "expected expression after while");
 			goto function_error;
 		}
 		dag_add_child(n, a);
@@ -203,7 +204,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 				goto function_error;
 			}
 		} else {
-			r = set_error("expected = or in");
+			r = set_source_error(t0, ts->is, "expected = or in after for");
 			goto function_error;
 		}
 
@@ -297,7 +298,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 			goto function_error;
 		}
 		if (cond == NULL) {
-			r = set_error("expecting a condition");
+			r = set_source_error(t0, ts->is, "expecting a condition after if");
 			goto function_error;
 		}
 		dag_add_child(cb, cond);
@@ -343,7 +344,7 @@ enum result stmt(struct allocator* al, struct token_state* ts, struct dag_node**
 		goto function_success;
 	}
 
-	r = set_error("expected statement");
+	r = set_source_error(t0, ts->is, "expected statement");
 	goto function_error;
 
 function_success:
@@ -368,6 +369,7 @@ enum result for_range(struct allocator* al, struct token_state* ts, struct dag_n
 	if (r == result_error) {
 		goto function_error;
 	}
+	struct token* t0 = get_token(&ts->lookahead, 0);
 	struct token* t1 = get_token(&ts->lookahead, 1);
 
 	r = match(al, ts, token_for, "expected for", &t);
@@ -417,7 +419,7 @@ enum result for_range(struct allocator* al, struct token_state* ts, struct dag_n
 		goto function_error;
 	}
 	if (!b) {
-		r = set_error("expected range start");
+		r = set_source_error(t0, ts->is, "expected range start after for-range");
 		goto function_error;
 	}
 	dag_add_child(n, b);
@@ -434,7 +436,7 @@ enum result for_range(struct allocator* al, struct token_state* ts, struct dag_n
 		goto function_error;
 	}
 	if (!c) {
-		r = set_error("expected range end");
+		r = set_source_error(t0, ts->is, "expected range end after for-range");
 		goto function_error;
 	}
 	dag_add_child(n, c);
@@ -475,6 +477,7 @@ enum result for_iteration(struct allocator* al, struct token_state* ts, struct d
 		goto function_error;
 	}
 
+	struct token* t0 = get_token(&ts->lookahead, 0);
 	struct token* t1 = get_token(&ts->lookahead, 1);
 
 	r = match(al, ts, token_for, "expecting for", &t);
@@ -519,7 +522,7 @@ enum result for_iteration(struct allocator* al, struct token_state* ts, struct d
 		goto function_error;
 	}
 	if (!b) {
-		r = set_error("expected expression");
+		r = set_source_error(t0, ts->is, "expected expression after for-iteration");
 		goto function_error;
 	}
 	dag_add_child(n, b);
@@ -580,7 +583,7 @@ enum result elseif_stmts(struct allocator* al, struct token_state* ts, struct da
 			goto function_error;
 		}
 		if (cond == NULL) {
-			r = set_error("expecting condition");
+			r = set_source_error(t0, ts->is, "expecting condition after elseif");
 			goto function_error;
 		}
 		dag_add_child(cb, cond);

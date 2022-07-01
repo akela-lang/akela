@@ -5,6 +5,7 @@
 #include "token.h"
 #include "types.h"
 #include "parse_stmts.h"
+#include "source.h"
 
 /*
 * factor -> id(cseq)
@@ -133,7 +134,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 		r = factor(al, ts, &a);
 
 		if (!a) {
-			r = set_error("expected factor");
+			r = set_source_error(t0, ts->is, "expected factor after !");
 			goto function_error;
 		}
 
@@ -206,7 +207,7 @@ enum result factor(struct allocator* al, struct token_state* ts, struct dag_node
 		}
 
 		if (!right) {
-			r = set_error("expecting factor after sign");
+			r = set_source_error(t0, ts->is, "expecting factor after sign");
 			goto function_error;
 		}
 
@@ -317,7 +318,7 @@ enum result cseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 		}
 
 		if (!a) {
-			r = set_error("expected factor");
+			r = set_source_error(t0, ts->is, "expected factor after comma");
 			goto function_error;
 		}
 
@@ -444,7 +445,7 @@ enum result aseq_prime(struct allocator* al, struct token_state* ts, struct dag_
 	dag_add_child(parent, a);
 
 	if (!a) {
-		return set_error("expected factor");
+		return set_source_error(t0, ts->is, "expected factor after comma");
 	}
 
 	r = aseq_prime(al, ts, parent);

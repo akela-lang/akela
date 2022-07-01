@@ -8,6 +8,7 @@
 #include "parse.h"
 #include "input.h"
 #include "parse_tools.h"
+#include "source.h"
 
 enum result parse(struct allocator* al, struct token_state* ts, struct dag_node** root)
 {
@@ -32,7 +33,7 @@ enum result parse(struct allocator* al, struct token_state* ts, struct dag_node*
 		struct token* t = ts->lookahead.head;
 		char* names[token_count];
 		r = token_name_init(names);
-		return set_error("%d, %d: Couldn't process token: %s", t->line, t->col, names[t->type]);
+		return set_source_error(t, ts->is, "Couldn't process token: %s", names[t->type]);
 	}
 
 	return result_ok;

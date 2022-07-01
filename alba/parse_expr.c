@@ -58,7 +58,7 @@ enum result expr(struct allocator* al, struct token_state* ts, struct dag_node**
 			goto function_error;
 		}
 		if (b == NULL) {
-			r = set_error("expect expression");
+			r = set_source_error(t0, ts->is, "expect expression on rhs of assignment operator");
 			goto function_error;
 		}
 		dag_add_child(n, b);
@@ -322,6 +322,14 @@ enum result add(struct allocator* al, struct token_state* ts, struct dag_node** 
 	struct dag_node* b = NULL;
 	struct dag_node* c = NULL;
 	struct dag_node* n = NULL;
+	int num;
+
+	r = get_lookahead(al, ts, 1, &num);
+	if (r == result_error) {
+		return r;
+	}
+
+	struct token* t0 = get_token(&ts->lookahead, 0);
 
 	r = mult(al, ts, &a);
 	if (r == result_error) {
@@ -340,7 +348,7 @@ enum result add(struct allocator* al, struct token_state* ts, struct dag_node** 
 		dag_push(c, a);
 		*root = b;
 	} else if (!a && b) {
-		r = set_error("expected term before operator");
+		r = set_source_error(t0, ts->is, "expected term before operator");
 	}
 
 	return r;
@@ -401,7 +409,7 @@ enum result add_prime(struct allocator* al, struct token_state* ts, struct dag_n
 	}
 
 	if (!a) {
-		r = set_error("expected term after additive operator");
+		r = set_source_error(t0, ts->is, "expected term after additive operator");
 		return r;
 	}
 
@@ -462,7 +470,7 @@ enum result mult(struct allocator* al, struct token_state* ts, struct dag_node**
 		dag_push(c, a);
 		*root = b;
 	} else if (!a && b) {
-		r = set_source_error(t->line, t->col, "expected term before operator");
+		r = set_source_error(t, ts->is, "expected term before operator");
 	}
 
 	return r;
@@ -501,11 +509,6 @@ enum result mult_prime(struct allocator* al, struct token_state* ts, struct dag_
 	} else if (t0->type == token_divide) {
 		type = dag_type_divide;
 	} else {
-		return r;
-	}
-
-	if (type == dag_type_none) {
-		r = set_error("expecting expr'");
 		return r;
 	}
 
@@ -587,7 +590,7 @@ enum result array_subscript(struct allocator* al, struct token_state* ts, struct
 		struct dag_node* b = NULL;
 		r = array_subscript(al, ts, &b);
 		if (!b) {
-			r = set_error("expected array subscript");
+			r = set_source_error(t0, ts->is, "expected array subscript after subscript operator");
 			goto function_error;
 		}
 		dag_add_child(n, b);
@@ -642,7 +645,7 @@ enum result array_subscript_prime(struct allocator* al, struct token_state* ts, 
 		return r;
 	}
 	if (!a) {
-		return set_error("expected array subscript");
+		return set_source_error(t0, ts->is, "expected array subscript after subscript operator");
 	}
 	dag_add_child(parent, a);
 
