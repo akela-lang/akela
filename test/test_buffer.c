@@ -197,6 +197,36 @@ test_buffer_str_compare()
 	allocator_destroy(&al);
 }
 
+void test_buffer_uslice()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct buffer bf;
+	struct buffer bf2;
+	enum result r;
+
+	allocator_init(&al);
+
+	buffer_init(&bf);
+	buffer_add_char(&al, &bf, 'a');
+	buffer_add_char(&al, &bf, 'b');
+	buffer_add_char(&al, &bf, 'c');
+	buffer_add_char(&al, &bf, 'd');
+	buffer_add_char(&al, &bf, 'e');
+	buffer_add_char(&al, &bf, 'f');
+
+	buffer_init(&bf2);
+
+	r = buffer_uslice(&al, &bf, &bf2, 2, 5);
+	assert_ok(r, "buffer_uslice");
+	assert_ptr(bf2.buf, "ptr buf2.buf");
+	expect_int_equal(bf2.size, 3, "3 bf2.size");
+	expect_str(&bf2, "cde", "cde bf2");
+
+	allocator_destroy(&al);
+}
+
 void test_buffer()
 {
 	test_buffer_init();
@@ -208,4 +238,5 @@ void test_buffer()
 	test_buffer_next_char();
 	test_buffer_buffer_compare();
 	test_buffer_str_compare();
+	test_buffer_uslice();
 }

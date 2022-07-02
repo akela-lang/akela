@@ -25,5 +25,6 @@ enum result array2buffer(struct allocator* al, char* a, struct buffer* bf);
 enum result next_char(struct allocator* al, struct buffer* bf, size_t* pos, struct buffer* bf2);
 int buffer_compare(struct buffer* a, struct buffer* b);
 int buffer_str_compare(struct buffer* a, char* b);
+enum result buffer_uslice(struct allocator* al, struct buffer* src, struct buffer* dest, size_t start, size_t end);
 
 #endif

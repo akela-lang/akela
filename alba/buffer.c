@@ -124,6 +124,42 @@ enum result next_char(struct allocator* al, struct buffer* bf, size_t* pos, stru
     return result_ok;
 }
 
+enum result buffer_uslice(struct allocator* al, struct buffer* src, struct buffer* dest, size_t start, size_t end)
+{
+    enum result r = result_ok;
+    char c;
+    int count;
+
+    size_t i = 0;
+    size_t index = 0;
+    while (i < src->size && index < end) {
+        c = src->buf[i++];
+        r = num_bytes(c, &count);
+        if (r == result_error) return r;
+
+        if (index >= start && index < end) {
+            r = buffer_add_char(al, dest, c);
+            if (r == result_error) return r;
+        }
+
+
+        for (int j = 1; j < count; j++) {
+            c = src->buf[i++];
+            r = check_extra_byte(c);
+            if (r == result_error) return r;
+
+            if (index >= start && index < end) {
+                r = buffer_add_char(al, dest, c);
+                if (r == result_error) return r;
+            }
+        }
+
+        index++;
+    }
+
+    return r;
+}
+
 /*
 * if strings are equal, return 1
 * otherwise, return 0
