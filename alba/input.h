@@ -19,6 +19,7 @@ struct input_state {
     bool last_was_newline;
     size_t line;
     size_t col;
+    struct buffer current_line;
 };
 
 struct string_data {

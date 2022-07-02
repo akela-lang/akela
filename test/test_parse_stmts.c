@@ -3,6 +3,7 @@
 #include "alba/parse_tools.h"
 #include "alba/dag.h"
 #include "test_parse.h"
+#include "alba/input.h"
 
 void test_parse_assign()
 {
@@ -1328,6 +1329,24 @@ void test_parse_line_col()
 	r = parse_setup(&al, "* 2", &ts, &root);
 	assert_error(r, "parse");
 	expect_error_message("1, 1: expected term before operator");
+	expect_str(&ts.is->current_line, "* 2", "* 2");
+
+	parse_teardown(&al, &ts);
+}
+
+void test_parse_source()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct dag_node* root;
+	struct token_state ts;
+	enum result r;
+
+	r = parse_setup(&al, "1\n* 2", &ts, &root);
+	assert_error(r, "parse");
+	expect_error_message("2, 1: expected term before operator");
+	expect_str(&ts.is->current_line, "* 2", "* 2");
 
 	parse_teardown(&al, &ts);
 }
@@ -1358,4 +1377,5 @@ void test_parse_statements()
 	test_parse_for_range();
 	test_parse_for_iteration();
 	test_parse_line_col();
+	test_parse_source();
 }

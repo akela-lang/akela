@@ -59,7 +59,7 @@ enum result match(struct allocator* al, struct token_state* ts, enum token_type 
 			return r;
 		}
 		if (!got_token) {
-			return set_source_error(ts->is->line, ts->is->col, "%s", reason);
+			return set_source_error(NULL, ts->is, "%s", reason);
 		}
 		r = token_list_add(al, &ts->lookahead, *t);
 		if (r == result_error) {
@@ -74,5 +74,5 @@ enum result match(struct allocator* al, struct token_state* ts, enum token_type 
 		return r;
 	}
 
-	return set_source_error((*t)->line, (*t)->col, "%s", reason);
+	return set_source_error(*t, ts->is, "%s", reason);
 }

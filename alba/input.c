@@ -39,6 +39,23 @@ void input_state_init(io_getchar f, io_data d, UConverter* conv, struct input_st
     is->last_was_newline = false;
     is->line = 1;
     is->col = 0;
+    buffer_init(&is->current_line);
+}
+
+enum result input_state_save_char(struct allocator *al, struct input_state* is, char c)
+{
+    enum result r = result_ok;
+
+    if (is->col == 0) {
+        buffer_clear(&is->current_line);
+    }
+
+    r = buffer_add_char(al, &is->current_line, c);
+    if (r == result_error) {
+        return r;
+    }
+
+    return r;
 }
 
 void input_state_push_uchar(struct input_state* is)
@@ -87,6 +104,11 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
         return r;
     }
 
+    r = input_state_save_char(al, is, c);
+    if (r == result_error) {
+        return r;
+    }
+
     for (int i = 1; i < count; i++) {
         c = is->f(is->d);
         if (c == EOF) {
@@ -100,6 +122,11 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
         }
 
         r = buffer_add_char(al, &is->bf, c);
+        if (r == result_error) {
+            return r;
+        }
+
+        r = input_state_save_char(al, is, c);
         if (r == result_error) {
             return r;
         }
@@ -122,3 +149,4 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
 
     return r;
 }
+
