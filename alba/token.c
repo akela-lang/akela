@@ -187,3 +187,64 @@ unsigned int hash_buffer(struct buffer* bf, unsigned int size)
 
     return val;
 }
+
+/*
+* initialize word table
+*/
+enum result word_table_init(struct allocator* al, struct word_table* wt, unsigned int size)
+{
+    enum result r;
+    wt->size = size;
+    r = allocator_malloc(al, &wt->buckets, sizeof(struct token_list) * size);
+    if (r == result_error) {
+        return r;
+    }
+
+    for (int i = 0; i < size; i++) {
+        token_list_init(&wt->buckets[i]);
+    }
+
+    return result_ok;
+}
+
+/*
+* add token to word table
+* assume word is not in word table so call word_table_get before if not sure
+*/
+void word_table_add(struct word_table* wt, struct token* t)
+{
+    unsigned int val = hash_buffer(&t->value, wt->size);
+
+    /* add to beginning of bucket */
+    struct token* next = wt->buckets[val].head;
+    t->next = next;
+    if (next) {
+        next->prev = t;
+    }
+    wt->buckets[val].head = t;
+    if (!wt->buckets[val].tail) {
+        wt->buckets[val].tail = t;
+    }
+}
+
+/*
+* get token based on word
+* return token if found
+* otherwise, return NULL
+*/
+struct token* word_table_get(struct word_table* wt, struct buffer* bf)
+{
+    struct token* t;
+
+    unsigned int val = hash_buffer(bf, wt->size);
+    
+    t = wt->buckets[val].head;
+    while (t) {
+        if (buffer_compare(&t->value, bf)) {
+            return t;
+        }
+        t = t->next;
+    }
+
+    return NULL;
+}

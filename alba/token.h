@@ -116,6 +116,11 @@ struct token_list {
     struct token* tail;
 };
 
+struct word_table {
+    unsigned int size;
+    struct token_list* buckets;
+};
+
 void token_init(struct token* t);
 enum result token_name_init(char** token_name);
 void token_reset(struct token* t);
@@ -131,5 +136,8 @@ enum result token_list_print(struct allocator* al, struct token_list* tl);
 enum result print_token(struct allocator* al, struct token* t);
 struct token* token_list_pop(struct token_list* tl);
 unsigned int hash_buffer(struct buffer* bf, unsigned int size);
+enum result word_table_init(struct allocator* al, struct word_table* wt, unsigned int size);
+void word_table_add(struct word_table* wt, struct token* t);
+struct token* word_table_get(struct word_table* wt, struct buffer* bf);
 
 #endif
