@@ -175,3 +175,15 @@ enum result print_token(struct allocator* al, struct token* t)
 
     return r;
 }
+
+unsigned int hash_buffer(struct buffer* bf, unsigned int size)
+{
+    unsigned int val = 0;
+
+    for (int i = 0; i < bf->size; i++) {
+        val += (unsigned int)bf->buf[i];
+        val %= size;
+    }
+
+    return val;
+}

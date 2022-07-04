@@ -130,5 +130,6 @@ void token_list_reset(struct token_list* tl);
 enum result token_list_print(struct allocator* al, struct token_list* tl);
 enum result print_token(struct allocator* al, struct token* t);
 struct token* token_list_pop(struct token_list* tl);
+unsigned int hash_buffer(struct buffer* bf, unsigned int size);
 
 #endif

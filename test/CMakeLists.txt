@@ -26,6 +26,7 @@ set(test_files
     test_input.c
     test_buffer.c
     test_allocator.c
+    test_token.c
 )
 
 include_directories("../external/icu4c/include" "..")
