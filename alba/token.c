@@ -204,6 +204,11 @@ enum result word_table_init(struct allocator* al, struct word_table* wt, unsigne
         token_list_init(&wt->buckets[i]);
     }
 
+    r = word_table_init_reserved(al, wt);
+    if (r == result_error) {
+        return r;
+    }
+
     return result_ok;
 }
 
@@ -247,4 +252,56 @@ struct token* word_table_get(struct word_table* wt, struct buffer* bf)
     }
 
     return NULL;
+}
+
+enum result word_table_add_reserved(struct allocator* al, struct word_table* wt, char* name, enum dag_type type)
+{
+    enum result r;
+    struct token* t;
+    r = allocator_malloc(al, &t, sizeof(struct token));
+    if (r == result_error) return r;
+
+    token_init(t);
+    t->type = type;
+    char* p = name;
+    while (*p) {
+        r = buffer_add_char(al, &t->value, *p);
+        if (r == result_error) return r;
+        p++;
+    }
+
+    word_table_add(wt, t);
+
+    return result_ok;
+}
+
+enum result word_table_init_reserved(struct allocator* al, struct word_table* wt)
+{
+    enum result r;
+
+    r = word_table_add_reserved(al, wt, "function", token_function);
+    if (r == result_error) return r;
+
+    r = word_table_add_reserved(al, wt, "end", token_end);
+    if (r == result_error) return r;
+
+    r = word_table_add_reserved(al, wt, "if", token_if);
+    if (r == result_error) return r;
+
+    r = word_table_add_reserved(al, wt, "elseif", token_elseif);
+    if (r == result_error) return r;
+
+    r = word_table_add_reserved(al, wt, "else", token_else);
+    if (r == result_error) return r;
+
+    r = word_table_add_reserved(al, wt, "while", token_while);
+    if (r == result_error) return r;
+
+    r = word_table_add_reserved(al, wt, "for", token_for);
+    if (r == result_error) return r;
+
+    r = word_table_add_reserved(al, wt, "in", token_in);
+    if (r == result_error) return r;
+
+    return result_ok;
 }

@@ -31,6 +31,7 @@ int main(int argc, char** argv)
     struct allocator al;
     UConverter* conv;
     struct input_state is;
+    struct word_table wt;
     struct token_state ts;
 
     allocator_init(&al);
@@ -40,7 +41,8 @@ int main(int argc, char** argv)
         return 1;
     }
     input_state_init(file_getchar, fp, conv, &is);
-    token_state_init(&is, &ts);
+    word_table_init(&al, &wt, WORD_TABLE_SIZE);
+    token_state_init(&is, &wt, &ts);
 
     r = parse(&al, &ts, &root);
     if (r == result_error) {

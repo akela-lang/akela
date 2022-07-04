@@ -32,7 +32,10 @@ enum result parse_setup(struct allocator* al, char* line, struct token_state* ts
 	assert_ok(r, "malloc input state");
 	input_state_init(string_getchar, sd, conv, is);
 
-	token_state_init(is, ts);
+	struct word_table wt;
+	word_table_init(al, &wt, WORD_TABLE_SIZE);
+
+	token_state_init(is, &wt, ts);
 
 	r = parse(al, ts, root);
 	return r;

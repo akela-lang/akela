@@ -288,7 +288,7 @@ void check_reserved_words(struct token* t)
     }
 }
 
-enum result process_char_word(struct allocator *al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_word(struct allocator *al, struct input_state* is, struct word_table* wt, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
     struct char_value cv;
@@ -532,7 +532,7 @@ void check_for_operators(struct input_state* is, enum state_enum* state, int* go
     }
 }
 
-enum result scan_get_token(struct allocator *al, struct input_state* is, int* got_token, struct token** t)
+enum result scan_get_token(struct allocator *al, struct input_state* is, struct word_table* wt, int* got_token, struct token** t)
 {
     enum result r = result_ok;
     enum state_enum state = state_start;
@@ -550,7 +550,7 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, int* go
         if (state == state_start) {
             r = process_char_start(al, is, &state, got_token, tf);
         } else if (state == state_id || state == state_id_underscore) {
-            r = process_char_word(al, is, &state, got_token, tf);
+            r = process_char_word(al, is, wt, &state, got_token, tf);
         } else if (state == state_number) {
             r = process_char_number(al, is, &state, got_token, tf);
         } else if (state == state_string || state == state_string_backslash) {

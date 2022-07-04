@@ -4,6 +4,8 @@
 #include "result.h"
 #include "buffer.h"
 
+#define WORD_TABLE_SIZE 10
+
 enum token_enum {
     token_none,
     token_number,

@@ -87,8 +87,33 @@ void test_token_word_table()
 	expect_true(t == &t2, "t2");
 }
 
+void test_token_word_table_init()
+{
+	test_name(__func__);
+
+	enum result r;
+
+	struct allocator al;
+	allocator_init(&al);
+
+	struct word_table wt;
+	r = word_table_init(&al, &wt, 10);
+	assert_ok(r, "word_table_init");
+
+	struct buffer bf;
+	buffer_init(&bf);
+	r = array2buffer(&al, "function", &bf);
+	assert_ok(r, "array2buffer function");
+
+	struct token* t = word_table_get(&wt, &bf);
+	assert_ptr(t, "ptr t");
+	expect_int_equal(t->type, token_function, "function type");
+	expect_str(&t->value, "function", "function str");
+}
+
 void test_token()
 {
 	test_token_hash_buffer();
 	test_token_word_table();
+	test_token_word_table_init();
 }

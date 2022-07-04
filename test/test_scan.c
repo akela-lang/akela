@@ -5,7 +5,7 @@
 #include "alba/uconv.h"
 #include "alba/input.h"
 
-void scan_setup(struct allocator* al, char* line, struct input_state* is)
+void scan_setup(struct allocator* al, char* line, struct input_state* is, struct word_table* wt)
 {
 	enum result r;
 
@@ -27,6 +27,9 @@ void scan_setup(struct allocator* al, char* line, struct input_state* is)
 	r = conv_open(&conv);
 	assert_ok(r, "conv_open");
 	input_state_init(string_getchar, sd, conv, is);
+
+	r = word_table_init(al, wt, WORD_TABLE_SIZE);
+	assert_ok(r, "word_table_init");
 }
 
 void scan_teardown(struct allocator* al, struct input_state* is)
@@ -41,30 +44,31 @@ void test_scan_assign()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "a = 1", &is);
+	scan_setup(&al, "a = 1", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token 0");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "a", "a");
 	assert_true(got_token, "got token 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan get_token 1");
 	expect_int_equal(t->type, token_equal, "equal");
 	assert_true(got_token, "got token 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token2");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
 	assert_true(got_token, "got token 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
@@ -77,18 +81,19 @@ void test_scan_num()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "11", &is);
+	scan_setup(&al, "11", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token");
 	expect_int_equal(t->type, token_number, "number");
 	assert_true(got_token, "got token");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token");
 	assert_true(!got_token, "no token");
 
@@ -101,30 +106,31 @@ void test_scan_addition()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "speed + 1", &is);
+	scan_setup(&al, "speed + 1", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "speed", "speed");
 	assert_true(got_token, "got token 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	expect_int_equal(t->type, token_plus, "plus");
 	assert_true(got_token, "got token 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
 	assert_true(got_token, "got token 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
@@ -137,30 +143,31 @@ void test_scan_subtraction()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "100 - delta", &is);
+	scan_setup(&al, "100 - delta", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "100", "100");
 	assert_true(got_token, "got token 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	expect_int_equal(t->type, token_minus, "minus");
 	assert_true(got_token, "got token 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "delta", "delta");
 	assert_true(got_token, "got token 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
@@ -173,30 +180,31 @@ void test_scan_multiplication()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "100 * 20", &is);
+	scan_setup(&al, "100 * 20", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "100", "100");
 	assert_true(got_token, "got token 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	expect_int_equal(t->type, token_mult, "mult");
 	assert_true(got_token, "got token 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "20", "20");
 	assert_true(got_token, "got token 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
@@ -209,30 +217,31 @@ void test_scan_divide()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "45 / 11", &is);
+	scan_setup(&al, "45 / 11", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "45", "45");
 	assert_true(got_token, "got token 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	expect_int_equal(t->type, token_divide, "divide");
 	assert_true(got_token, "got token 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	expect_int_equal(t->type, token_number, "is number");
 	expect_str(&t->value, "11", "11");
 	assert_true(got_token, "got token 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
@@ -245,52 +254,53 @@ void test_scan_stmts_expr()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx * 4", &is);
+	scan_setup(&al, "i + 1\nx * 4", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
 	assert_true(got_token, "got token 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	expect_int_equal(t->type, token_plus, "plus");
 	assert_true(got_token, "got token 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
 	assert_true(got_token, "got token 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 3");
 	expect_int_equal(t->type, token_newline, "newline");
 	assert_true(got_token, "got token 3");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 4");
 	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
 	assert_true(got_token, "got token 4");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 5");
 	expect_int_equal(t->type, token_mult, "mult");
 	assert_true(got_token, "got token 5");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 6");
 	expect_int_equal(t->type, token_number, "number2");
 	expect_str(&t->value, "4", "4");
 	assert_true(got_token, "got token 6");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token7");
 	assert_true(!got_token, "no token 7");
 
@@ -303,61 +313,62 @@ void test_scan_stmts_expr2()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx * 4\n", &is);
+	scan_setup(&al, "i + 1\nx * 4\n", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
 	assert_true(got_token, "got token 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	expect_int_equal(t->type, token_plus, "plus");
 	assert_true(got_token, "got token 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
 	assert_true(got_token, "got token 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 3");
 	expect_int_equal(t->type, token_newline, "newline");
 	assert_true(got_token, "got token 3");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 4");
 	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
 	assert_true(got_token, "got token 4");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 5");
 	expect_int_equal(t->type, token_mult, "mult");
 	assert_true(got_token, "got token 5");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 6");
 	expect_int_equal(t->type, token_number, "number2");
 	expect_str(&t->value, "4", "4");
 	assert_true(got_token, "got token 6");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 7");
 	expect_int_equal(t->type, token_newline, "newline2");
 	assert_true(got_token, "got token 7");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 8");
 	assert_true(!got_token, "no token 8");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token9");
 	assert_true(!got_token, "no token 9");
 
@@ -370,52 +381,53 @@ void test_scan_stmts_assign()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx = 4", &is);
+	scan_setup(&al, "i + 1\nx = 4", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
 	assert_true(got_token, "got token 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	expect_int_equal(t->type, token_plus, "plus");
 	assert_true(got_token, "got token 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
 	assert_true(got_token, "got token 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 3");
 	expect_int_equal(t->type, token_newline, "newline");
 	assert_true(got_token, "got token 3");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 4");
 	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
 	assert_true(got_token, "got token 4");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 5");
 	expect_int_equal(t->type, token_equal, "equal");
 	assert_true(got_token, "got token 5");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 6");
 	expect_int_equal(t->type, token_number, "number2");
 	expect_str(&t->value, "4", "4");
 	assert_true(got_token, "got token 6");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan_get_token7");
 	assert_true(!got_token, "no token 7");
 
@@ -428,44 +440,45 @@ void test_scan_function()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "function foo () \n end", &is);
+	scan_setup(&al, "function foo () \n end", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_function, "function");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "foo", "foo");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_left_paren, "left paren");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_right_paren, "right paren");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_newline, "newline");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_end, "end");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 6");
 	assert_true(!got_token, "no token 6");
 
@@ -478,18 +491,19 @@ void test_scan_comma()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, ",", &is);
+	scan_setup(&al, ",", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_comma, "comma");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(!got_token, "got token");
 
@@ -502,18 +516,19 @@ void test_scan_semicolon()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, ";", &is);
+	scan_setup(&al, ";", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_semicolon, "semicolon");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(!got_token, "got token");
 
@@ -525,28 +540,29 @@ void test_scan_if() {
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "if elseif else", &is);
+	scan_setup(&al, "if elseif else", &is, &wt);
 	
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_if, "if");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_elseif, "elseif");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_else, "else");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(!got_token, "no token");
 
@@ -558,43 +574,44 @@ void test_scan_compound_operators() {
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "== != <= >= && || ::", &is);
+	scan_setup(&al, "== != <= >= && || ::", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_double_equal, "double equal");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_not_equal, "not equal");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_less_than_or_equal, "less than or equal");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_greater_than_or_equal, "greater than or equal");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_and, "and");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_or, "or");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 6");
 	assert_true(got_token, "got token 6");
 	expect_int_equal(t->type, token_double_colon, "double colon");
@@ -607,43 +624,44 @@ void test_scan_compound_operators2() {
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "= ! < > & | :", &is);
+	scan_setup(&al, "= ! < > & | :", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_equal, "equal");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_not, "not");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_less_than, "less than");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_greater_than, "greater_than");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_ampersand, "ampersand");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_vertical_bar, "vertical_bar");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 6");
 	assert_true(got_token, "got token 6");
 	expect_int_equal(t->type, token_colon, "colon");
@@ -657,51 +675,52 @@ void test_scan_for_range()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "for i = 0:10 1 end", &is);
+	scan_setup(&al, "for i = 0:10 1 end", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_for, "for");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_id, "id 1");
 	expect_str(&t->value, "i", "i");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_equal, "equal 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_number, "number 3");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_colon, "colon 4");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_number, "number 5");
 	expect_str(&t->value, "10", "10 5");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 6");
 	assert_true(got_token, "got token 6");
 	expect_int_equal(t->type, token_number, "number 6");
 	expect_str(&t->value, "1", "1 6");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 7");
 	assert_true(got_token, "got token 7");
 	expect_int_equal(t->type, token_end, "end 7");
@@ -715,41 +734,42 @@ void test_scan_for_iteration()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "for x in list 1 end", &is);
+	scan_setup(&al, "for x in list 1 end", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_for, "for");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_id, "id 1");
 	expect_str(&t->value, "x", "x 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_in, "in 2");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_id, "id 3");
 	expect_str(&t->value, "list", "list 3");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_number, "number 4");
 	expect_str(&t->value, "1", "1 4");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_end, "end 5");
@@ -763,12 +783,13 @@ void test_scan_error_char()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "$", &is);
-	r = scan_get_token(&al, &is, &got_token, &t);
+	scan_setup(&al, "$", &is, &wt);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_true(r == result_error, "get token");
 	assert_true(!got_token, "got token");
 	expect_error_message("1, 1: Unrecognized character: $");
@@ -782,18 +803,19 @@ void test_scan_square_brackets()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "[]", &is);
+	scan_setup(&al, "[]", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_left_square_bracket, "left-square-bracket 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_right_square_bracket, "right-square-bracket 1");
@@ -807,12 +829,13 @@ void test_scan_string()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "\"hello\"", &is);
-	r = scan_get_token(&al, &is, &got_token, &t);
+	scan_setup(&al, "\"hello\"", &is, &wt);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_string, "string 0");
@@ -827,24 +850,25 @@ void test_scan_string2()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "x = \"\\\\hello\n\r\"", &is);
+	scan_setup(&al, "x = \"\\\\hello\n\r\"", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_id, "id 0");
 	expect_str(&t->value, "x", "x 0");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_equal, "equal 1");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_string, "string 2");
@@ -859,13 +883,14 @@ void test_scan_string_escape_error()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "\"\\x\"", &is);
+	scan_setup(&al, "\"\\x\"", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_true(r == result_error, "error");
 	expect_error_message("1, 3: Unrecognized escape sequence: x");
 
@@ -878,13 +903,14 @@ void test_scan_line_col()
 
 	struct allocator al;
 	struct input_state is;
+	struct word_table wt;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "10 + 20\n30 + 40", &is);
+	scan_setup(&al, "10 + 20\n30 + 40", &is, &wt);
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan ok 10");
 	assert_ptr(t, "ptr t 10");
 	assert_true(got_token, "got token 10");
@@ -893,7 +919,7 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan ok +");
 	assert_ptr(t, "ptr t +");
 	assert_true(got_token, "got token +");
@@ -901,7 +927,7 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 1, "line +");
 	expect_int_equal(t->col, 4, "col +");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan ok 20");
 	assert_ptr(t, "ptr t 20");
 	assert_true(got_token, "got token 20");
@@ -909,7 +935,7 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 1, "line 20");
 	expect_int_equal(t->col, 6, "col 20");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan ok newline");
 	assert_ptr(t, "ptr t newline");
 	assert_true(got_token, "got token newline");
@@ -917,7 +943,7 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 1, "line newline");
 	expect_int_equal(t->col, 8, "col newline");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan ok 30");
 	assert_ptr(t, "ptr t 30");
 	assert_true(got_token, "got token 30");
@@ -925,7 +951,7 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 2, "line 30");
 	expect_int_equal(t->col, 1, "col 30");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan ok +");
 	assert_ptr(t, "ptr t +");
 	assert_true(got_token, "got token +");
@@ -933,7 +959,7 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 2, "line +");
 	expect_int_equal(t->col, 4, "col +");
 
-	r = scan_get_token(&al, &is, &got_token, &t);
+	r = scan_get_token(&al, &is, &wt, &got_token, &t);
 	assert_ok(r, "scan ok 40");
 	assert_ptr(t, "ptr t 40");
 	assert_true(got_token, "got token 40");

@@ -6,9 +6,10 @@
 #include <string.h>
 #include "source.h"
 
-void token_state_init(struct input_state* is, struct token_state* ts)
+void token_state_init(struct input_state* is, struct word_table* wt, struct token_state* ts)
 {
 	ts->is = is;
+	ts->wt = wt;
 	token_list_init(&ts->lookahead);
 }
 
@@ -29,7 +30,7 @@ enum parse_result get_lookahead(struct allocator* al, struct token_state* ts, in
 			break;
 		}
 
-		r = scan_get_token(al, ts->is, &gt, &t);
+		r = scan_get_token(al, ts->is, ts->wt, &gt, &t);
 		if (r == result_error) {
 			return r;
 		}
@@ -54,7 +55,7 @@ enum result match(struct allocator* al, struct token_state* ts, enum token_type 
 	int num = token_list_count(&ts->lookahead);
 	int got_token;
 	if (num <= 0) {
-		enum result r = scan_get_token(al, ts->is, &got_token, t);
+		enum result r = scan_get_token(al, ts->is, ts->wt, &got_token, t);
 		if (r == result_error) {
 			return r;
 		}
