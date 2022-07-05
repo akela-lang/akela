@@ -188,6 +188,19 @@ unsigned int hash_buffer(struct buffer* bf, unsigned int size)
     return val;
 }
 
+void word_init(struct word* w, struct token* t)
+{
+    w->t = t;
+    w->next = NULL;
+    w->prev = NULL;
+}
+
+void word_list_init(struct word_list* wl)
+{
+    wl->head = NULL;
+    wl->tail = NULL;
+}
+
 /*
 * initialize word table
 */
@@ -201,7 +214,7 @@ enum result word_table_init(struct allocator* al, struct word_table* wt, unsigne
     }
 
     for (int i = 0; i < size; i++) {
-        token_list_init(&wt->buckets[i]);
+        word_list_init(&wt->buckets[i]);
     }
 
     r = word_table_init_reserved(al, wt);
@@ -216,20 +229,28 @@ enum result word_table_init(struct allocator* al, struct word_table* wt, unsigne
 * add token to word table
 * assume word is not in word table so call word_table_get before if not sure
 */
-void word_table_add(struct word_table* wt, struct token* t)
+enum result word_table_add(struct allocator* al, struct word_table* wt, struct token* t)
 {
+    enum result r;
     unsigned int val = hash_buffer(&t->value, wt->size);
 
+    struct word* w;
+    r = allocator_malloc(al, &w, sizeof(struct word));
+    if (r == result_error) return r;
+    word_init(w, t);
+
     /* add to beginning of bucket */
-    struct token* next = wt->buckets[val].head;
-    t->next = next;
+    struct word* next = wt->buckets[val].head;
+    w->next = next;
     if (next) {
-        next->prev = t;
+        next->prev = w;
     }
-    wt->buckets[val].head = t;
+    wt->buckets[val].head = w;
     if (!wt->buckets[val].tail) {
-        wt->buckets[val].tail = t;
+        wt->buckets[val].tail = w;
     }
+
+    return result_ok;
 }
 
 /*
@@ -239,16 +260,16 @@ void word_table_add(struct word_table* wt, struct token* t)
 */
 struct token* word_table_get(struct word_table* wt, struct buffer* bf)
 {
-    struct token* t;
+    struct word* w;
 
     unsigned int val = hash_buffer(bf, wt->size);
     
-    t = wt->buckets[val].head;
-    while (t) {
-        if (buffer_compare(&t->value, bf)) {
-            return t;
+    w = wt->buckets[val].head;
+    while (w) {
+        if (buffer_compare(&w->t->value, bf)) {
+            return w->t;
         }
-        t = t->next;
+        w = w->next;
     }
 
     return NULL;
@@ -258,11 +279,17 @@ enum result word_table_add_reserved(struct allocator* al, struct word_table* wt,
 {
     enum result r;
     struct token* t;
+    struct word* w;
+
     r = allocator_malloc(al, &t, sizeof(struct token));
     if (r == result_error) return r;
-
     token_init(t);
     t->type = type;
+
+    r = allocator_malloc(al, &w, sizeof(struct word));
+    if (r == result_error) return r;
+    word_init(w, t);
+
     char* p = name;
     while (*p) {
         r = buffer_add_char(al, &t->value, *p);
@@ -270,7 +297,8 @@ enum result word_table_add_reserved(struct allocator* al, struct word_table* wt,
         p++;
     }
 
-    word_table_add(wt, t);
+    r = word_table_add(al, wt, t);
+    if (r == result_error) return r;
 
     return result_ok;
 }
