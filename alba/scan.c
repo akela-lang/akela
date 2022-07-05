@@ -267,7 +267,7 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
     return result_ok;
 }
 
-enum result process_char_word(struct allocator *al, struct input_state* is, struct word_table* wt, enum state_enum* state, int* got_token, struct token* t, struct token** t2)
+enum result process_char_word(struct allocator *al, struct input_state* is, struct word_table* wt, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
     struct char_value cv;
@@ -290,11 +290,12 @@ enum result process_char_word(struct allocator *al, struct input_state* is, stru
                 return r;
             }
         } else {
-            *t2 = word_table_get(wt, &t->value);
-            if (!*t2) {
-                r = word_table_add(al, wt, t);
+            struct word* w = word_table_get(wt, &t->value);
+            if (w) {
+                t->type = w->type;
+            } else {
+                r = word_table_add(al, wt, &t->value, t->type);
                 if (r == result_error) return r;
-                *t2 = t;
             }
             *state = state_start;
             *got_token = 1;
@@ -312,11 +313,12 @@ enum result process_char_word(struct allocator *al, struct input_state* is, stru
                 return r;
             }
         } else {
-            *t2 = word_table_get(wt, &t->value);
-            if (!*t2) {
-                r = word_table_add(al, wt, t);
+            struct word* w = word_table_get(wt, &t->value);
+            if (w) {
+                t->type = w->type;
+            } else {
+                r = word_table_add(al, wt, &t->value, t->type);
                 if (r == result_error) return r;
-                *t2 = t;
             }
             *state = state_start;
             *got_token = 1;
@@ -539,11 +541,7 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, struct 
         if (state == state_start) {
             r = process_char_start(al, is, &state, got_token, tf);
         } else if (state == state_id || state == state_id_underscore) {
-            struct token* t2;
-            r = process_char_word(al, is, wt, &state, got_token, tf, &t2);
-            if (*got_token) {
-                tf = t2;
-            }
+            r = process_char_word(al, is, wt, &state, got_token, tf);
         } else if (state == state_number) {
             r = process_char_number(al, is, &state, got_token, tf);
         } else if (state == state_string || state == state_string_backslash) {
@@ -567,11 +565,11 @@ enum result scan_get_token(struct allocator *al, struct input_state* is, struct 
 
     if (state != state_start && tf->type != token_none) {
         if (state == state_id) {
-            struct token* t2 = word_table_get(wt, &tf->value);
-            if (t2) {
-                tf = t2;
+            struct word* w = word_table_get(wt, &tf->value);
+            if (w) {
+                tf->type = w->type;
             } else {
-                r = word_table_add(al, wt, tf);
+                r = word_table_add(al, wt, &tf->value, tf->type);
                 if (r == result_error) return r;
             }
         }

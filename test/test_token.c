@@ -48,7 +48,7 @@ void test_token_word_table()
 	allocator_init(&al);
 
 	struct word_table wt;
-	r = word_table_init(&al, &wt, 10);
+	r = word_table_init(&al, &wt, WORD_TABLE_SIZE);
 	assert_ok(r, "word_table_init");
 
 	struct token t0;
@@ -66,28 +66,31 @@ void test_token_word_table()
 	r = array2buffer(&al, "t2", &t2.value);
 	assert_ok(r, "array2buffer t2");
 
-	struct token* t;
+	struct word* w;
 
-	t = word_table_get(&wt, &t0.value);
-	assert_null(t, "t0");
-	r = word_table_add(&al, &wt, &t0);
+	w = word_table_get(&wt, &t0.value);
+	assert_null(w, "t0");
+	r = word_table_add(&al, &wt, &t0.value, t0.type);
 	assert_ok(r, "word_table_add");
-	t = word_table_get(&wt, &t0.value);
-	expect_true(t == &t0, "t0");
+	w = word_table_get(&wt, &t0.value);
+	expect_true(buffer_compare(&w->value, &t0.value), "t0");
+	expect_int_equal(w->type, t0.type, "type t0");
 
-	t = word_table_get(&wt, &t1.value);
-	assert_null(t, "t1");
-	r = word_table_add(&al, &wt, &t1);
+	w = word_table_get(&wt, &t1.value);
+	assert_null(w, "t1");
+	r = word_table_add(&al, &wt, &t1.value, t1.type);
 	assert_ok(r, "word_table_add");
-	t = word_table_get(&wt, &t1.value);
-	expect_true(t == &t1, "t1");
+	w = word_table_get(&wt, &t1.value);
+	expect_true(buffer_compare(&w->value, &t1.value), "t1");
+	expect_int_equal(w->type, t1.type, "type t1");
 
-	t = word_table_get(&wt, &t2.value);
-	assert_null(t, "t2");
-	r = word_table_add(&al, &wt, &t2);
+	w = word_table_get(&wt, &t2.value);
+	assert_null(w, "t2");
+	r = word_table_add(&al, &wt, &t2.value, t2.type);
 	assert_ok(r, "word_table_add");
-	t = word_table_get(&wt, &t2.value);
-	expect_true(t == &t2, "t2");
+	w = word_table_get(&wt, &t2.value);
+	expect_true(buffer_compare(&w->value, &t2.value), "t2");
+	expect_int_equal(w->type, t2.type, "type t2");
 }
 
 void test_token_word_table_init()
@@ -108,22 +111,22 @@ void test_token_word_table_init()
 	r = array2buffer(&al, "function", &bf);
 	assert_ok(r, "array2buffer function");
 
-	struct token* t;
+	struct word* w;
 	
-	t = word_table_get(&wt, &bf);
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_function, "function type");
-	expect_str(&t->value, "function", "function str");
+	w = word_table_get(&wt, &bf);
+	assert_ptr(w, "ptr t");
+	expect_int_equal(w->type, token_function, "function type");
+	expect_str(&w->value, "function", "function str");
 
 	struct buffer bf1;
 	buffer_init(&bf1);
 	r = array2buffer(&al, "end", &bf1);
 	assert_ok(r, "array2buffer end");
 
-	t = word_table_get(&wt, &bf1);
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_end, "end type");
-	expect_str(&t->value, "end", "end str");
+	w = word_table_get(&wt, &bf1);
+	assert_ptr(w, "ptr t");
+	expect_int_equal(w->type, token_end, "end type");
+	expect_str(&w->value, "end", "end str");
 }
 
 void test_token()

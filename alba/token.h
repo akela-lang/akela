@@ -119,9 +119,10 @@ struct token_list {
 };
 
 struct word {
-    struct token* t;
-    struct token_node* next;
-    struct token_node* prev;
+    enum token_enum type;
+    struct buffer value;
+    struct word* next;
+    struct word* prev;
 };
 
 struct word_list {
@@ -149,8 +150,10 @@ enum result token_list_print(struct allocator* al, struct token_list* tl);
 enum result print_token(struct allocator* al, struct token* t);
 struct token* token_list_pop(struct token_list* tl);
 unsigned int hash_buffer(struct buffer* bf, unsigned int size);
+void word_init(struct word* w);
+void word_list_init(struct word_list* wl);
 enum result word_table_init(struct allocator* al, struct word_table* wt, unsigned int size);
-enum result word_table_add(struct allocator* al, struct word_table* wt, struct token* t);
-struct token* word_table_get(struct word_table* wt, struct buffer* bf);
+enum result word_table_add(struct allocator* al, struct word_table* wt, struct buffer* bf, enum token_enum type);
+struct word* word_table_get(struct word_table* wt, struct buffer* bf);
 
 #endif
