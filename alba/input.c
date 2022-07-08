@@ -91,6 +91,9 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
     c = is->f(is->d);
     if (c == EOF) {
         is->done = 1;
+        is->uc = EOF;
+        buffer_clear(&is->bf);
+        is->col++;
         return r;
     }
 

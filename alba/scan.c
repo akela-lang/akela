@@ -395,6 +395,7 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
             *got_token = 1;
 
             /* prepare next token with first letter e */
+            *state = state_start;
             sns->has_next = true;
             sns->state = state_id;
             r = allocator_malloc(al, &sns->t, sizeof(struct token));
@@ -600,6 +601,28 @@ void check_for_operators(struct input_state* is, enum state_enum* state, int* go
     }
 }
 
+enum result scan_process(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+{
+    enum result r = result_ok;
+    struct input_state* is = sns->is;
+    struct word_table* wt = sns->wt;
+
+    if (*state == state_start) {
+        r = process_char_start(al, is, state, got_token, t);
+    } else if (*state == state_id || *state == state_id_underscore) {
+        r = process_char_word(al, is, wt, state, got_token, t);
+    } else if (is_number_state(*state)) {
+        r = process_char_number(al, sns, state, got_token, t);
+    } else if (*state == state_string || *state == state_string_backslash) {
+        r = process_char_string(al, is, state, got_token, t);
+    } else if (*state == state_compound_operator) {
+        r = process_compound_operator(al, is, state, got_token, t);
+    } else {
+        r = set_source_error(NULL, is, "unexpected state");
+    }
+    return r;
+}
+
 enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* got_token, struct token** t)
 {
     enum result r = result_ok;
@@ -625,19 +648,7 @@ enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* go
 
 
     while (get_uchar(al, is) != result_error && !is->done) {
-        if (state == state_start) {
-            r = process_char_start(al, is, &state, got_token, tf);
-        } else if (state == state_id || state == state_id_underscore) {
-            r = process_char_word(al, is, wt, &state, got_token, tf);
-        } else if (is_number_state(state)) {
-            r = process_char_number(al, sns, &state, got_token, tf);
-        } else if (state == state_string || state == state_string_backslash) {
-            r = process_char_string(al, is, &state, got_token, tf);
-        } else if (state == state_compound_operator) {
-            r = process_compound_operator(al, is, &state, got_token, tf);
-        } else {
-            r = set_source_error(NULL, is, "unexpected state");
-        }
+        r = scan_process(al, sns, &state, got_token, tf);
         if (r == result_error) {
             return r;
         }
@@ -650,20 +661,9 @@ enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* go
         return r;
     }
 
-    if (state != state_start && tf->type != token_none) {
-        if (state == state_id) {
-            struct word* w = word_table_get(wt, &tf->value);
-            if (w) {
-                tf->type = w->type;
-            } else {
-                r = word_table_add(al, wt, &tf->value, tf->type);
-                if (r == result_error) return r;
-            }
-        }
-        state = state_start;
-        *got_token = 1;
-    } else if (state == state_compound_operator) {
-        check_for_operators(is, &state, got_token, tf);
+    if (state != state_start) {
+        r = scan_process(al, sns, &state, got_token, tf);
+        if (r == result_error) return r;
     }
 
 function_success:

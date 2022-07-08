@@ -1203,6 +1203,41 @@ void test_scan_number_exponent4()
 	scan_teardown(&al, &is);
 }
 
+void test_scan_number_exponent5()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct input_state is;
+	struct word_table wt;
+	struct scan_state sns;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "500.123e", &sns, &is, &wt);
+
+	r = scan_get_token(&al, &sns, &got_token, &t);
+	assert_ok(r, "scan ok");
+	assert_ptr(t, "ptr t");
+	assert_true(got_token, "got token");
+	expect_int_equal(t->type, token_number, "number");
+	expect_str(&t->value, "500.123", "500.123");
+	expect_int_equal(t->line, 1, "line 10");
+	expect_int_equal(t->col, 1, "col 10");
+
+	r = scan_get_token(&al, &sns, &got_token, &t);
+	assert_ok(r, "scan ok");
+	assert_ptr(t, "ptr t");
+	assert_true(got_token, "got token");
+	expect_int_equal(t->type, token_id, "id");
+	expect_str(&t->value, "e", "e");
+	expect_int_equal(t->line, 1, "line");
+	expect_int_equal(t->col, 8, "col");
+
+	scan_teardown(&al, &is);
+}
+
 void test_scan()
 {
 	test_scan_assign();
@@ -1235,4 +1270,5 @@ void test_scan()
 	test_scan_number_exponent2();
 	test_scan_number_exponent3();
 	test_scan_number_exponent4();
+	test_scan_number_exponent5();
 }
