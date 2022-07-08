@@ -7,8 +7,8 @@
 #include "alba/token.h"
 #include "alba/dag.h"
 
-enum result parse_setup(struct allocator* al, char* line, struct token_state* ts, struct dag_node** root);
-void parse_teardown(struct allocator* al, struct token_state* ts);
+enum result parse_setup(struct allocator* al, char* line, struct parse_state* ps, struct dag_node** root);
+void parse_teardown(struct allocator* al, struct parse_state* ps);
 struct dag_node* check_stmts(struct dag_node* root, char* message);
 
 #endif

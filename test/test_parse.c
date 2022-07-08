@@ -4,8 +4,9 @@
 #include "alba/uconv.h"
 #include "alba/parse_tools.h"
 #include "alba/parse.h"
+#include "alba/scan.h"
 
-enum result parse_setup(struct allocator* al, char* line, struct token_state* ts, struct dag_node** root)
+enum result parse_setup(struct allocator* al, char* line, struct parse_state* ps, struct dag_node** root)
 {
 	enum result r;
 
@@ -32,18 +33,26 @@ enum result parse_setup(struct allocator* al, char* line, struct token_state* ts
 	assert_ok(r, "malloc input state");
 	input_state_init(string_getchar, sd, conv, is);
 
-	struct word_table wt;
-	word_table_init(al, &wt, WORD_TABLE_SIZE);
+	struct word_table* wt;
+	r = allocator_malloc(al, &wt, sizeof(struct word_table));
+	assert_ok(r, "malloc word table");
+	r = word_table_init(al, wt, WORD_TABLE_SIZE);
+	assert_ok(r, "word table init");
 
-	token_state_init(is, &wt, ts);
+	struct scan_state* sns;
+	r = allocator_malloc(al, &sns, sizeof(struct scan_state));
+	assert_ok(r, "malloc scan state");
+	scan_state_init(sns, is, wt);
 
-	r = parse(al, ts, root);
+	parse_state_init(ps, sns);
+
+	r = parse(al, ps, root);
 	return r;
 }
 
-void parse_teardown(struct allocator* al, struct token_state* ts)
+void parse_teardown(struct allocator* al, struct parse_state* ps)
 {
-	conv_close(ts->is->conv);
+	conv_close(ps->sns->is->conv);
 	allocator_destroy(al);
 }
 

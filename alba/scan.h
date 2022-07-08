@@ -1,8 +1,17 @@
 #ifndef _SCAN_H
 #define _SCAN_H
 
+#include <stdbool.h>
 #include "buffer.h"
 #include "token.h"
+
+struct scan_state {
+    struct input_state* is;
+    struct word_table* wt;
+    bool has_next;
+    enum state_enum state;
+    struct token* t;
+};
 
 struct char_value {
     UChar32 equal;
@@ -33,13 +42,17 @@ enum state_enum {
     state_start,
     state_id,
     state_id_underscore,
-    state_number,
+    state_number_whole,
+    state_number_fraction,
+    state_number_exponent_start,
+    state_number_exponent,
     state_string,
     state_string_backslash,
     state_compound_operator
 };
 
-enum result scan_get_token(struct allocator* al, struct input_state* is, struct word_table* wt, int* got_token, struct token** t);
+void scan_state_init(struct scan_state* sns, struct input_state* is, struct word_table* wt);
+enum result scan_get_token(struct allocator* al, struct scan_state* sns, int* got_token, struct token** t);
 void set_char_values(struct char_value* cv);
 
 #endif

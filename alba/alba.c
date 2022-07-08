@@ -30,9 +30,10 @@ int main(int argc, char** argv)
 
     struct allocator al;
     UConverter* conv;
+    struct scan_state sns;
     struct input_state is;
     struct word_table wt;
-    struct token_state ts;
+    struct parse_state ps;
 
     allocator_init(&al);
     r = conv_open(&conv);
@@ -42,9 +43,10 @@ int main(int argc, char** argv)
     }
     input_state_init(file_getchar, fp, conv, &is);
     word_table_init(&al, &wt, WORD_TABLE_SIZE);
-    token_state_init(&is, &wt, &ts);
+    scan_state_init(&sns, &is, &wt);
+    parse_state_init(&ps, &sns);
 
-    r = parse(&al, &ts, &root);
+    r = parse(&al, &ps, &root);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         return 1;

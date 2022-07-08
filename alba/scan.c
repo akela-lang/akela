@@ -2,12 +2,22 @@
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "result.h"
 #include "token.h"
 #include "scan.h"
 #include "buffer.h"
 #include "input.h"
 #include "source.h"
+
+void scan_state_init(struct scan_state* sns, struct input_state* is, struct word_table* wt)
+{
+    sns->is = is;
+    sns->wt = wt;
+    sns->has_next = false;
+    sns->state = state_start;
+    sns->t = NULL;
+}
 
 void set_char_values(struct char_value* cv)
 {
@@ -152,6 +162,11 @@ int compound_operator_start(UChar32 uc, struct char_value* cv)
     return uc == cv->equal || uc == cv->exclamation || uc == cv->less_than || uc == cv->greater_than || uc == cv->ampersand || uc == cv->vertical_bar || uc == cv->colon;
 }
 
+bool is_number_state(enum state_enum state)
+{
+    return state == state_number_whole || state == state_number_fraction || state == state_number_exponent_start || state == state_number_exponent;
+}
+
 enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
@@ -178,7 +193,7 @@ enum result process_char_start(struct allocator* al, struct input_state* is, enu
                 return r;
             }
     } else if (u_isdigit(is->uc)) {
-        *state = state_number;
+        *state = state_number_whole;
         t->type = token_number;
         t->line = is->line;
         t->col = is->col;
@@ -329,17 +344,79 @@ enum result process_char_word(struct allocator *al, struct input_state* is, stru
     return result_ok;
 }
 
-enum result process_char_number(struct allocator *al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_number(struct allocator *al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    enum result r;
+    struct input_state* is = sns->is;
     struct char_value cv;
     set_char_values(&cv);
 
-    if (u_isdigit(is->uc)) {
-        buffer_copy(al, &is->bf, &t->value);
-    } else {
-        *state = state_start;
-        *got_token = 1;
-        input_state_push_uchar(is);
+    if (*state == state_number_whole) {
+        if (u_isdigit(is->uc)) {
+            buffer_copy(al, &is->bf, &t->value);
+        } else if (is->uc == '.') {
+            *state = state_number_fraction;
+            buffer_copy(al, &is->bf, &t->value);
+        } else if (is->uc == 'e') {
+            *state = state_number_exponent_start;
+            buffer_copy(al, &is->bf, &t->value);
+        } else {
+            t->type = token_number;
+            *state = state_start;
+            *got_token = 1;
+            input_state_push_uchar(is);
+        }
+    } else if (*state == state_number_fraction) {
+        if (u_isdigit(is->uc)) {
+            buffer_copy(al, &is->bf, &t->value);
+        } else if (is->uc == 'e') {
+            *state = state_number_exponent_start;
+            buffer_copy(al, &is->bf, &t->value);
+        } else {
+            t->type = token_number;
+            *state = state_start;
+            *got_token = 1;
+            input_state_push_uchar(is);
+        }
+    } else if (*state == state_number_exponent_start) {
+        if (u_isdigit(is->uc)) {
+            buffer_copy(al, &is->bf, &t->value);
+            *state = state_number_exponent;
+        } else if (is->uc == '-') {
+            *state = state_number_exponent;
+            buffer_copy(al, &is->bf, &t->value);
+        } else if (is->uc == '+') {
+            *state = state_number_exponent;
+            buffer_copy(al, &is->bf, &t->value);
+        } else {
+            /* emit float without exponent */
+            t->type = token_number;
+            t->value.size--;
+            *got_token = 1;
+
+            /* prepare next token with first letter e */
+            sns->has_next = true;
+            sns->state = state_id;
+            r = allocator_malloc(al, &sns->t, sizeof(struct token));
+            if (r == result_error) return r;
+            token_init(sns->t);
+            sns->t->type = token_id;
+            sns->t->line = is->line;
+            sns->t->col = is->col - 1;
+            r = buffer_add_char(al, &sns->t->value, 'e');
+            if (r == result_error) return r;
+
+            /* push last uchar */
+            input_state_push_uchar(is);
+        }
+    } else if (*state == state_number_exponent) {
+        if (u_isdigit(is->uc)) {
+            buffer_copy(al, &is->bf, &t->value);
+        } else {
+            *state = state_start;
+            *got_token = 1;
+            input_state_push_uchar(is);
+        }
     }
     return result_ok;
 }
@@ -523,27 +600,37 @@ void check_for_operators(struct input_state* is, enum state_enum* state, int* go
     }
 }
 
-enum result scan_get_token(struct allocator *al, struct input_state* is, struct word_table* wt, int* got_token, struct token** t)
+enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* got_token, struct token** t)
 {
     enum result r = result_ok;
     enum state_enum state = state_start;
     *got_token = 0;
     struct token* tf;
+    struct input_state* is = sns->is;
+    struct word_table* wt = sns->wt;
 
-    r = allocator_malloc(al, &tf, sizeof(struct token));
-    if (r == result_error) {
-        return r;
+    if (sns->has_next) {
+        state = sns->state;
+        tf = sns->t;
+        sns->has_next = false;
+        sns->state = state_start;
+        sns->t = NULL;
+    } else {
+        r = allocator_malloc(al, &tf, sizeof(struct token));
+        if (r == result_error) {
+            return r;
+        }
+        token_init(tf);
     }
 
-    token_init(tf);
 
     while (get_uchar(al, is) != result_error && !is->done) {
         if (state == state_start) {
             r = process_char_start(al, is, &state, got_token, tf);
         } else if (state == state_id || state == state_id_underscore) {
             r = process_char_word(al, is, wt, &state, got_token, tf);
-        } else if (state == state_number) {
-            r = process_char_number(al, is, &state, got_token, tf);
+        } else if (is_number_state(state)) {
+            r = process_char_number(al, sns, &state, got_token, tf);
         } else if (state == state_string || state == state_string_backslash) {
             r = process_char_string(al, is, &state, got_token, tf);
         } else if (state == state_compound_operator) {

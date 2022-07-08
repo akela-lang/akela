@@ -3,14 +3,13 @@
 
 #include "token.h"
 
-struct token_state {
-	struct input_state* is;
-	struct word_table* wt;
+struct parse_state {
+	struct scan_state* sns;
 	struct token_list lookahead;
 };
 
-void token_state_init(struct input_state* is, struct word_table* wt, struct token_state* ts);
-enum result get_lookahead(struct allocator* al, struct token_state* ts, int count, int* num);
-enum result match(struct allocator* al, struct token_state* ts, enum token_type type, char* reason, struct token** t);
+void parse_state_init(struct parse_state* ps, struct scan_state* sns);
+enum parse_result get_lookahead(struct allocator* al, struct parse_state* ps, int count, int* num);
+enum result match(struct allocator* al, struct parse_state* ps, enum token_type type, char* reason, struct token** t);
 
 #endif

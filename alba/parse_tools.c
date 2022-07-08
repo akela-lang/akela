@@ -6,31 +6,30 @@
 #include <string.h>
 #include "source.h"
 
-void token_state_init(struct input_state* is, struct word_table* wt, struct token_state* ts)
+void parse_state_init(struct parse_state* ps, struct scan_state* sns)
 {
-	ts->is = is;
-	ts->wt = wt;
-	token_list_init(&ts->lookahead);
+	ps->sns = sns;
+	token_list_init(&ps->lookahead);
 }
 
 /* get lookahead token */
-enum parse_result get_lookahead(struct allocator* al, struct token_state* ts, int count, int* num)
+enum parse_result get_lookahead(struct allocator* al, struct parse_state* ps, int count, int* num)
 {
 	enum result r = result_ok;
 	int gt;
 	struct token* t;
 
-	*num = token_list_count(&ts->lookahead);
+	*num = token_list_count(&ps->lookahead);
 	if (*num >= count) {
 		return r;
 	}
 
 	for (; *num < count; (*num)++) {
-		if (ts->is->done) {
+		if (ps->sns->is->done) {
 			break;
 		}
 
-		r = scan_get_token(al, ts->is, ts->wt, &gt, &t);
+		r = scan_get_token(al, ps->sns, &gt, &t);
 		if (r == result_error) {
 			return r;
 		}
@@ -38,7 +37,7 @@ enum parse_result get_lookahead(struct allocator* al, struct token_state* ts, in
 			break;
 		}
 
-		r = token_list_add(al, &ts->lookahead, t);
+		r = token_list_add(al, &ps->lookahead, t);
 		if (r == result_error) {
 			return r;
 		}
@@ -48,32 +47,32 @@ enum parse_result get_lookahead(struct allocator* al, struct token_state* ts, in
 }
 
 /* expecting specific token */
-enum result match(struct allocator* al, struct token_state* ts, enum token_type type, char* reason, struct token** t)
+enum result match(struct allocator* al, struct parse_state* ps, enum token_type type, char* reason, struct token** t)
 {
 	enum result r = result_ok;
 
-	int num = token_list_count(&ts->lookahead);
+	int num = token_list_count(&ps->lookahead);
 	int got_token;
 	if (num <= 0) {
-		enum result r = scan_get_token(al, ts->is, ts->wt, &got_token, t);
+		enum result r = scan_get_token(al, ps->sns, &got_token, t);
 		if (r == result_error) {
 			return r;
 		}
 		if (!got_token) {
-			return set_source_error(NULL, ts->is, "%s", reason);
+			return set_source_error(NULL, ps->sns->is, "%s", reason);
 		}
-		r = token_list_add(al, &ts->lookahead, *t);
+		r = token_list_add(al, &ps->lookahead, *t);
 		if (r == result_error) {
 			return r;
 		}
 	} else {
-		*t = ts->lookahead.head;
+		*t = ps->lookahead.head;
 	}
 
 	if ((*t)->type == type) {
-		token_list_pop(&ts->lookahead);
+		token_list_pop(&ps->lookahead);
 		return r;
 	}
 
-	return set_source_error(*t, ts->is, "%s", reason);
+	return set_source_error(*t, ps->sns->is, "%s", reason);
 }
