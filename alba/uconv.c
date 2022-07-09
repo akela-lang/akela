@@ -1,9 +1,10 @@
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
+#include <stdbool.h>
 #include "result.h"
 
-enum result num_bytes(unsigned char c, int* count)
+enum result check_num_bytes(unsigned char c, int* count)
 {
     /* 1 byte: 0xxx xxxx */
     if ((c & 0x80) == 0x00) {

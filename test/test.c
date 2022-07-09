@@ -6,9 +6,11 @@
 #include "test_parse_expr.h"
 #include "test_parse_stmts.h"
 #include "test_token.h"
+#include "test_uconv.h"
 
 int main(void) {
 	test_allocator();
+	test_uconv();
 	test_input();
 	test_buffer();
 	test_token();

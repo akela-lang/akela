@@ -13,13 +13,13 @@ struct input_state {
     io_data d;
     UConverter* conv;
     int done;
-    UChar32 uc;
-    struct buffer bf;
     int has_next;
     bool last_was_newline;
+    struct buffer current_line;
+    UChar32 uc;
+    struct buffer bf;
     size_t line;
     size_t col;
-    struct buffer current_line;
 };
 
 struct string_data {

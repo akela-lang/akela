@@ -101,7 +101,7 @@ enum result next_char(struct allocator* al, struct buffer* bf, size_t* pos, stru
 {
     char c = bf->buf[(*pos)++];
     int count;
-    enum result r = num_bytes(c, &count);
+    enum result r = check_num_bytes(c, &count);
     if (r == result_error) {
         return r;
     }
@@ -134,7 +134,7 @@ enum result buffer_uslice(struct allocator* al, struct buffer* src, struct buffe
     size_t index = 0;
     while (i < src->size && index < end) {
         c = src->buf[i++];
-        r = num_bytes(c, &count);
+        r = check_num_bytes(c, &count);
         if (r == result_error) return r;
 
         if (index >= start && index < end) {

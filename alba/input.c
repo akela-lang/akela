@@ -97,7 +97,7 @@ enum result get_uchar(struct allocator* al, struct input_state* is)
         return r;
     }
 
-    r = num_bytes(c, &count);
+    r = check_num_bytes(c, &count);
     if (r == result_error) {
         return r;
     }

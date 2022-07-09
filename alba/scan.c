@@ -370,8 +370,18 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
         if (u_isdigit(is->uc)) {
             buffer_copy(al, &is->bf, &t->value);
         } else if (is->uc == 'e') {
-            *state = state_number_exponent_start;
-            buffer_copy(al, &is->bf, &t->value);
+            /* lookahead another character */
+            r = get_uchar(al, sns->is);
+            if (r == result_error) return r;
+            if (u_isdigit(is->uc) || is->uc == '-' || is->uc == '+') {
+                *state = state_number_exponent_start;
+                buffer_add_char(al, &t->value, 'e');
+            } else {
+                t->type = token_number;
+                *state = state_start;
+                *got_token = 1;
+            }
+            input_state_push_uchar(is);
         } else {
             t->type = token_number;
             *state = state_start;
@@ -389,26 +399,8 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
             *state = state_number_exponent;
             buffer_copy(al, &is->bf, &t->value);
         } else {
-            /* emit float without exponent */
-            t->type = token_number;
-            t->value.size--;
-            *got_token = 1;
-
-            /* prepare next token with first letter e */
-            *state = state_start;
-            sns->has_next = true;
-            sns->state = state_id;
-            r = allocator_malloc(al, &sns->t, sizeof(struct token));
-            if (r == result_error) return r;
-            token_init(sns->t);
-            sns->t->type = token_id;
-            sns->t->line = is->line;
-            sns->t->col = is->col - 1;
-            r = buffer_add_char(al, &sns->t->value, 'e');
-            if (r == result_error) return r;
-
-            /* push last uchar */
-            input_state_push_uchar(is);
+            /* shound not happen because of lookahead */
+            return set_error("expecting <digit>, <->, or <+> because of lookahead");
         }
     } else if (*state == state_number_exponent) {
         if (u_isdigit(is->uc)) {

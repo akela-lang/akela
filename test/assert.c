@@ -178,6 +178,14 @@ void expect_true(int value, char* message)
 	error_triggered();
 }
 
+void expect_false(int value, char* message)
+{
+	test_called();
+	if (!value) return;
+	printf("(%d) = (false) error: %s\n", value, message);
+	error_triggered();
+}
+
 void expect_ptr(void* p, char* message)
 {
 	test_called();
