@@ -28,7 +28,7 @@ int string_getchar(struct string_data* sd)
 	return EOF;
 }
 
-void input_state_init(io_getchar f, io_data d, UConverter* conv, struct input_state* is)
+void input_state_init(input_getchar f, input_data d, UConverter* conv, struct input_state* is)
 {
     is->f = f;
     is->d = d;

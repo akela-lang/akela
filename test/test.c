@@ -7,10 +7,12 @@
 #include "test_parse_stmts.h"
 #include "test_token.h"
 #include "test_uconv.h"
+#include "test_lookahead_translator.h"
 
 int main(void) {
 	test_allocator();
 	test_uconv();
+	test_lookahead_translator();
 	test_input();
 	test_buffer();
 	test_token();

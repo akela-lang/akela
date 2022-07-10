@@ -162,6 +162,14 @@ void expect_int_equal(int a, int b, char* message)
 	error_triggered();
 }
 
+void expect_char_equal(char a, char b, char* message)
+{
+	test_called();
+	if (a == b) return;
+	printf("(%c) = (%c) error: %s\n", a, b, message);
+	error_triggered();
+}
+
 void expect_uint_equal(unsigned int a, unsigned int b, char* message)
 {
 	test_called();

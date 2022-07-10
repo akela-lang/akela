@@ -8,6 +8,7 @@ void assert_null(void* p, char* message);
 void assert_ok(enum result r, char* message);
 void assert_error(enum result r, char* message);
 void expect_int_equal(int a, int b, char* message);
+void expect_char_equal(char a, char b, char* message);
 void expect_uint_equal(unsigned int a, unsigned int b, char* message);
 void expect_true(int value, char* message);
 void expect_false(int value, char* message);

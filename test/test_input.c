@@ -15,8 +15,8 @@ void test_input_string()
 	struct buffer bf;
 	struct string_data sd;
 	enum result r;
-	io_getchar f;
-	io_data d;
+	input_getchar f;
+	input_data d;
 
 	allocator_init(&al);
 	buffer_init(&bf);
@@ -65,8 +65,8 @@ void test_input_file()
 	fp = fopen(filename, "r");
 	assert_ptr(fp, "fopen");
 
-	io_getchar f = file_getchar;
-	io_data d = fp;
+	input_getchar f = file_getchar;
+	input_data d = fp;
 	struct buffer bf;
 
 	buffer_init(&bf);

@@ -5,12 +5,12 @@
 #include <stdbool.h>
 #include "buffer.h"
 
-typedef int (*io_getchar)(void*);
-typedef void* io_data;
+typedef int (*input_getchar)(void*);
+typedef void* input_data;
 
 struct input_state {
-    io_getchar f;
-    io_data d;
+    input_getchar f;
+    input_data d;
     UConverter* conv;
     int done;
     int has_next;
@@ -30,7 +30,7 @@ struct string_data {
 int file_getchar(FILE* fp);
 void string_data_init(struct buffer* bf, struct string_data* sd);
 int string_getchar(struct string_data* sd);
-void input_state_init(io_getchar f, io_data d, UConverter* conv, struct input_state* is);
+void input_state_init(input_getchar f, input_data d, UConverter* conv, struct input_state* is);
 void input_state_push_uchar(struct input_state* is);
 void input_state_pop_uchar(struct input_state* is);
 enum result get_uchar(struct allocator* al, struct input_state* is);

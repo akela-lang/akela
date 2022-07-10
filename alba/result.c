@@ -29,6 +29,11 @@ enum result set_error(const char* fmt, ...)
             for (int j = 0; j < len; j++) {
                 if (i < ERROR_SIZE) error_message[i++] = buf[j];
             }
+        } else if (last == '%' && *fmt == 'c') {
+            len = snprintf(buf, ERROR_SIZE, "%c", va_arg(args, char));
+            for (int j = 0; j < len; j++) {
+                if (i < ERROR_SIZE) error_message[i++] = buf[j];
+            }
         } else {
             if (i < ERROR_SIZE) error_message[i++] = *fmt;
         }
