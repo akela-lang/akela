@@ -46,3 +46,41 @@ char circular_byte_buffer_pop(struct circular_byte_buffer* cbyte)
 
 	return EOF;
 }
+
+enum result circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t buf_size)
+{
+	cc32->buf = NULL;
+	cc32->buf_size = buf_size;
+	cc32->start = 0;
+	cc32->size = 0;
+
+	return malloc_safe(&cc32->buf, sizeof(UChar32)*buf_size);
+}
+
+void circular_uchar32_buffer_destroy(struct circular_uchar32_buffer* cc32)
+{
+	free(cc32->buf);
+}
+
+enum result circular_uchar32_buffer_add(struct circular_uchar32_buffer* cc32, UChar32 c)
+{
+	if (cc32->size < cc32->buf_size) {
+		cc32->buf[(cc32->start + cc32->size) % cc32->buf_size] = c;
+		cc32->size++;
+		return result_ok;
+	}
+
+	return set_error("No room in circular UChar32 buffer: add %d", c);
+}
+
+UChar32 circular_uchar32_buffer_pop(struct circular_uchar32_buffer* cc32)
+{
+	if (cc32->size > 0) {
+		UChar32 c = cc32->buf[cc32->start];
+		cc32->start = (cc32->start + 1) % cc32->buf_size;
+		cc32->size--;
+		return c;
+	}
+
+	return EOF;
+}
