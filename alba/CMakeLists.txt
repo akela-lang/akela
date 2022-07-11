@@ -18,6 +18,7 @@ set(source_files
     os_win.c
     uconv.c
     types.c
+    lookahead_char.c
 )
 include_directories("../external/icu4c/include")
 add_executable(alba ${source_files})

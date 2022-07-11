@@ -70,8 +70,8 @@ void test_lookahead_translator_circular_uchar32_buffer()
 	expect_error_message("No room in circular UChar32 buffer: add 100");
 
 	/* pop */
-	char c = circular_uchar32_buffer_pop(&cc32);
-	expect_char_equal(c, '0', "pop");
+	UChar32 c = circular_uchar32_buffer_pop(&cc32);
+	expect_utf32_char(c, 0, "pop");
 	expect_int_equal(cc32.size, 15, "size");
 	expect_int_equal(cc32.start, 1, "start");
 

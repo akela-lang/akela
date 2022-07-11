@@ -1,6 +1,4 @@
 # Todo
-* uchar 32 circular buffer
-* lookahead translator
-* translate to buffers
+* use lookahead_char
 * link to LLVM
 * generate LLVM IR

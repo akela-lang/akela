@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include "alba/result.h"
 #include "alba/buffer.h"
+#include "alba/uconv.h"
 
 int test_case_count = 0;
 int test_case_error_count = 0;
@@ -232,6 +233,38 @@ void expect_str(struct buffer* a, char* b, char* message)
 		printf("%s equals %s error: %s\n", temp, b, message);
 	}
 	allocator_destroy(&al);
+	error_triggered();
+}
+
+void expect_strcmp(char* a, char* b, char* message)
+{
+	test_called();
+	if (strcmp(a, b) == 0) return;
+	error_triggered();
+}
+
+void expect_utf8_char(char* a, char* b, char* message)
+{
+	test_called();
+	int count_a = NUM_BYTES(a[0]);
+	int count_b = NUM_BYTES(b[0]);
+	if (count_a == count_b) {
+		for (int i = 0; i < count_a; i++) {
+			if (a[i] != b[i]) {
+				break;
+			}
+		}
+		return;
+	}
+	printf("utf8 chars not equal: %s\n", message);
+	error_triggered();
+}
+
+void expect_utf32_char(UChar32 a, UChar32 b, char* message)
+{
+	test_called();
+	if (a == b) return;
+	printf("(%d:%c) = (%d:%c) utf32 error: %s\n", a, a, b, b, message);
 	error_triggered();
 }
 

@@ -19,6 +19,7 @@ set(test_files
     ${alba_dir}/types.c
     ${alba_dir}/uconv.c
     ${alba_dir}/lookahead_translator.c
+    ${alba_dir}/lookahead_char.c
     assert.c
     "test.c"
     test_parse.c
@@ -31,6 +32,7 @@ set(test_files
     test_token.c
     test_uconv.c
     test_lookahead_translator.c
+    test_lookahead_char.c
 )
 
 include_directories("../external/icu4c/include" "..")
