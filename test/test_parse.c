@@ -39,10 +39,15 @@ enum result parse_setup(struct allocator* al, char* line, struct parse_state* ps
 	r = word_table_init(al, wt, WORD_TABLE_SIZE);
 	assert_ok(r, "word table init");
 
+	struct lookahead_char* lc;
+	r = allocator_malloc(al, &lc, sizeof(struct lookahead_char));
+	assert_ok(r, "malloc lookahead_char");
+	lookahead_char_init(lc, string_getchar, sd, conv);
+
 	struct scan_state* sns;
 	r = allocator_malloc(al, &sns, sizeof(struct scan_state));
 	assert_ok(r, "malloc scan state");
-	scan_state_init(sns, is, wt);
+	scan_state_init(sns, lc, is, wt);
 
 	parse_state_init(ps, sns);
 
@@ -52,6 +57,7 @@ enum result parse_setup(struct allocator* al, char* line, struct parse_state* ps
 
 void parse_teardown(struct allocator* al, struct parse_state* ps)
 {
+	free(ps->sns->lc);
 	conv_close(ps->sns->is->conv);
 	allocator_destroy(al);
 }

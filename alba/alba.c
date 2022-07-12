@@ -31,6 +31,7 @@ int main(int argc, char** argv)
     struct allocator al;
     UConverter* conv;
     struct scan_state sns;
+    struct lookahead_char lc;
     struct input_state is;
     struct word_table wt;
     struct parse_state ps;
@@ -43,7 +44,8 @@ int main(int argc, char** argv)
     }
     input_state_init(file_getchar, fp, conv, &is);
     word_table_init(&al, &wt, WORD_TABLE_SIZE);
-    scan_state_init(&sns, &is, &wt);
+    lookahead_char_init(&lc, file_getchar, fp, conv);
+    scan_state_init(&sns, &lc, &is, &wt);
     parse_state_init(&ps, &sns);
 
     r = parse(&al, &ps, &root);

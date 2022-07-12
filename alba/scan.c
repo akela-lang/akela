@@ -10,8 +10,9 @@
 #include "input.h"
 #include "source.h"
 
-void scan_state_init(struct scan_state* sns, struct input_state* is, struct word_table* wt)
+void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct input_state* is, struct word_table* wt)
 {
+    sns->lc = lc;
     sns->is = is;
     sns->wt = wt;
     sns->has_next = false;

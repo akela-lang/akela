@@ -146,20 +146,20 @@ bool lookahead_char_done_loading(struct lookahead_char* lc)
 
 bool lookahead_char_done(struct lookahead_char* lc)
 {
-	return lc->done && !lookahead_char_has_utf8 && !lookahead_char_has_utf16(lc) && lc->la_size <= 0;
+	return lc->done && !lookahead_char_has_utf8(lc) && !lookahead_char_has_utf16(lc) && lc->la_size <= 0;
 }
 
-bool lookahead_char_need_loading_prep(struct lookahead_char* lc)
+bool lookahead_char_need_preping(struct lookahead_char* lc)
 {
-	return !lookahead_char_has_utf8(lc) || !lookahead_char_has_utf16(lc);
+	return (!lc->done && !lookahead_char_has_utf8(lc)) || (lookahead_char_has_utf8(lc) && !lookahead_char_has_utf16(lc));
 }
 
 bool lookahead_char_need_loading(struct lookahead_char* lc)
 {
-	return lc->la_size < 2;
+	return lookahead_char_has_utf8(lc) && lookahead_char_has_utf16(lc) && lc->la_size < 2;
 }
 
-enum result lookahead_char_load_prep(struct lookahead_char* lc)
+enum result lookahead_char_prep(struct lookahead_char* lc)
 {
 	enum result r;
 	if (!lookahead_char_has_utf8(lc)) {

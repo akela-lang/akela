@@ -13,10 +13,10 @@
 int main(void) {
 	test_allocator();
 	test_uconv();
+	test_lookahead_char();
 	test_lookahead_translator();
 	test_input();
 	test_buffer();
-	test_lookahead_char();
 	test_token();
 	test_scan();
 	test_parse_expression();

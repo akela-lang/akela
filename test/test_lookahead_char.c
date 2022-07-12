@@ -30,11 +30,10 @@ void test_lookahead_char_short()
 	struct lookahead_char lc;
 	lookahead_char_init(&lc, string_getchar, &sd, conv);
 
-	expect_true(lookahead_char_need_loading_prep(&lc), "need loading prep");
-	expect_true(lookahead_char_need_loading(&lc), "need loading");
+	expect_true(lookahead_char_need_preping(&lc), "need loading prep");
 
 	/* prep */
-	r = lookahead_char_load_prep(&lc);
+	r = lookahead_char_prep(&lc);
 	assert_ok(r, "load prep");
 	assert_true(lc.done, "done");
 	assert_true(lookahead_char_has_utf8(&lc), "has utf8");
@@ -42,6 +41,7 @@ void test_lookahead_char_short()
 	assert_true(lookahead_char_has_utf16(&lc), "has utf16");
 
 	/* load */
+	expect_true(lookahead_char_need_loading(&lc), "need loading");
 	lookahead_char_load(&lc);
 
 	expect_int_equal(lc.la_size, 2, "la size");
@@ -56,7 +56,7 @@ void test_lookahead_char_short()
 	expect_size_t_equal(lc.last_col_count, 0, "last col count");
 	expect_size_t_equal(lc.byte_pos, 0, "byte pos");
 
-	expect_false(lookahead_char_need_loading_prep(&lc), "need loading prep");
+	expect_false(lookahead_char_need_preping(&lc), "need loading prep");
 	expect_false(lookahead_char_need_loading(&lc), "need loading");
 
 	/* pop */
@@ -74,13 +74,13 @@ void test_lookahead_char_short()
 	expect_size_t_equal(lc.last_col_count, 0, "last col count");
 	expect_size_t_equal(lc.byte_pos, 1, "byte pos");
 
-	expect_false(lookahead_char_need_loading_prep(&lc), "need loading prep");
+	expect_false(lookahead_char_need_preping(&lc), "need loading prep");
 	expect_true(lookahead_char_need_loading(&lc), "need loading");
 
 	/* reload */
 	lookahead_char_load(&lc);
 
-	expect_false(lookahead_char_need_loading_prep(&lc), "need loading prep");
+	expect_false(lookahead_char_need_preping(&lc), "need loading prep");
 	expect_false(lookahead_char_need_loading(&lc), "need loading");
 
 	expect_int_equal(lc.la_size, 2, "la size");
@@ -100,7 +100,7 @@ void test_lookahead_char_short()
 	/* push */
 	lookahead_char_push(&lc);
 
-	expect_false(lookahead_char_need_loading_prep(&lc), "need loading prep");
+	expect_false(lookahead_char_need_preping(&lc), "need loading prep");
 	expect_false(lookahead_char_need_loading(&lc), "need loading");
 
 	expect_int_equal(lc.la_size, 3, "la size");
@@ -120,7 +120,7 @@ void test_lookahead_char_short()
 	/* pop */
 	lookahead_char_pop(&lc);
 
-	expect_false(lookahead_char_need_loading_prep(&lc), "need loading prep");
+	expect_false(lookahead_char_need_preping(&lc), "need loading prep");
 	expect_false(lookahead_char_need_loading(&lc), "need loading");
 
 	expect_int_equal(lc.la_size, 2, "la size");
@@ -140,7 +140,119 @@ void test_lookahead_char_short()
 	allocator_destroy(&al);
 }
 
+void test_lookahead_char_line()
+{
+	test_name(__func__);
+
+	enum result r;
+
+	struct allocator al;
+	allocator_init(&al);
+
+	struct buffer bf;
+	buffer_init(&bf);
+
+	r = array2buffer(&al, "one\ntwo", &bf);
+	assert_ok(r, "array2buffer");
+
+	struct string_data sd;
+	string_data_init(&bf, &sd);
+
+	UConverter* conv;
+	r = conv_open(&conv);
+	assert_ok(r, "conv_open");
+
+	struct lookahead_char lc;
+	lookahead_char_init(&lc, string_getchar, &sd, conv);
+
+	r = lookahead_char_prep(&lc);
+	assert_ok(r, "load prep");
+	lookahead_char_load(&lc);
+
+	expect_utf8_char(lc.la0_8, "o", "o");
+	expect_int_equal(lc.line, 1, "line");
+	expect_int_equal(lc.col, 1, "col");
+	expect_int_equal(lc.byte_pos, 0, "byte_pos");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+
+	lookahead_char_pop(&lc);
+	expect_utf8_char(lc.la0_8, "n", "n");
+	expect_int_equal(lc.line, 1, "line");
+	expect_int_equal(lc.col, 2, "col");
+	expect_int_equal(lc.byte_pos, 1, "byte_pos");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+	if (lookahead_char_need_preping(&lc)) {
+		r = lookahead_char_prep(&lc);
+		assert_ok(r, "prep");
+	}
+	if (lookahead_char_need_loading(&lc)) lookahead_char_load(&lc);
+
+	lookahead_char_pop(&lc);
+	expect_utf8_char(lc.la0_8, "e", "e");
+	expect_int_equal(lc.line, 1, "line");
+	expect_int_equal(lc.col, 3, "col");
+	expect_int_equal(lc.byte_pos, 2, "byte_pos");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+	if (lookahead_char_need_preping(&lc)) {
+		r = lookahead_char_prep(&lc);
+		assert_ok(r, "prep");
+	}
+	if (lookahead_char_need_loading(&lc)) lookahead_char_load(&lc);
+
+	lookahead_char_pop(&lc);
+	expect_utf8_char(lc.la0_8, "\n", "\n");
+	expect_int_equal(lc.line, 1, "line");
+	expect_int_equal(lc.col, 4, "col");
+	expect_int_equal(lc.byte_pos, 3, "byte_pos");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+	if (lookahead_char_need_preping(&lc)) {
+		r = lookahead_char_prep(&lc);
+		assert_ok(r, "prep");
+	}
+	if (lookahead_char_need_loading(&lc)) lookahead_char_load(&lc);
+
+	lookahead_char_pop(&lc);
+	expect_utf8_char(lc.la0_8, "t", "t");
+	expect_int_equal(lc.line, 2, "line");
+	expect_int_equal(lc.col, 1, "col");
+	expect_int_equal(lc.byte_pos, 4, "byte_pos");
+	expect_size_t_equal(lc.last_col_count, 4, "last col count");
+	if (lookahead_char_need_preping(&lc)) {
+		r = lookahead_char_prep(&lc);
+		assert_ok(r, "prep");
+	}
+	if (lookahead_char_need_loading(&lc)) lookahead_char_load(&lc);
+
+	lookahead_char_pop(&lc);
+	expect_utf8_char(lc.la0_8, "w", "w");
+	expect_int_equal(lc.line, 2, "line");
+	expect_int_equal(lc.col, 2, "col");
+	expect_int_equal(lc.byte_pos, 5, "byte_pos");
+	expect_size_t_equal(lc.last_col_count, 4, "last col count");
+	if (lookahead_char_need_preping(&lc)) {
+		r = lookahead_char_prep(&lc);
+		assert_ok(r, "prep");
+	}
+	if (lookahead_char_need_loading(&lc)) lookahead_char_load(&lc);
+
+	lookahead_char_pop(&lc);
+	expect_utf8_char(lc.la0_8, "o", "o");
+	expect_int_equal(lc.line, 2, "line");
+	expect_int_equal(lc.col, 3, "col");
+	expect_int_equal(lc.byte_pos, 6, "byte_pos");
+	expect_size_t_equal(lc.last_col_count, 4, "last col count");
+	if (lookahead_char_need_preping(&lc)) {
+		r = lookahead_char_prep(&lc);
+		assert_ok(r, "prep");
+	}
+	if (lookahead_char_need_loading(&lc)) lookahead_char_load(&lc);
+
+	lookahead_char_pop(&lc);
+	expect_true(lookahead_char_done(&lc), "done");
+}
+
 void test_lookahead_char()
 {
 	test_lookahead_char_short();
+	test_lookahead_char_line();
 }

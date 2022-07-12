@@ -4,8 +4,9 @@
 #include "alba/allocator.h"
 #include "alba/uconv.h"
 #include "alba/input.h"
+#include "alba/lookahead_char.h"
 
-void scan_setup(struct allocator* al, char* line, struct scan_state* sns, struct input_state* is, struct word_table* wt)
+void scan_setup(struct allocator* al, char* line, struct scan_state* sns, struct lookback_char* lc, struct input_state* is, struct word_table* wt)
 {
 	enum result r;
 
@@ -28,10 +29,12 @@ void scan_setup(struct allocator* al, char* line, struct scan_state* sns, struct
 	assert_ok(r, "conv_open");
 	input_state_init(string_getchar, sd, conv, is);
 
+	lookahead_char_init(lc, string_getchar, sd, conv);
+
 	r = word_table_init(al, wt, WORD_TABLE_SIZE);
 	assert_ok(r, "word_table_init");
 
-	scan_state_init(sns, is, wt);
+	scan_state_init(sns, lc, is, wt);
 }
 
 void scan_teardown(struct allocator* al, struct input_state* is)
@@ -47,12 +50,13 @@ void test_scan_assign()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "a = 1", &sns, &is, &wt);
+	scan_setup(&al, "a = 1", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan_get_token 0");
@@ -85,12 +89,13 @@ void test_scan_num()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "11", &sns, &is, &wt);
+	scan_setup(&al, "11", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan_get_token");
@@ -111,12 +116,13 @@ void test_scan_addition()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "speed + 1", &sns, &is, &wt);
+	scan_setup(&al, "speed + 1", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -149,12 +155,13 @@ void test_scan_subtraction()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "100 - delta", &sns, &is, &wt);
+	scan_setup(&al, "100 - delta", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -187,12 +194,13 @@ void test_scan_multiplication()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "100 * 20", &sns, &is, &wt);
+	scan_setup(&al, "100 * 20", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -225,12 +233,13 @@ void test_scan_divide()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "45 / 11", &sns, &is, &wt);
+	scan_setup(&al, "45 / 11", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -263,12 +272,13 @@ void test_scan_stmts_expr()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx * 4", &sns, &is, &wt);
+	scan_setup(&al, "i + 1\nx * 4", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -323,12 +333,13 @@ void test_scan_stmts_expr2()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx * 4\n", &sns, &is, &wt);
+	scan_setup(&al, "i + 1\nx * 4\n", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -392,12 +403,13 @@ void test_scan_stmts_assign()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx = 4", &sns, &is, &wt);
+	scan_setup(&al, "i + 1\nx = 4", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -452,12 +464,13 @@ void test_scan_function()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "function foo () \n end", &sns, &is, &wt);
+	scan_setup(&al, "function foo () \n end", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -504,12 +517,13 @@ void test_scan_comma()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, ",", &sns, &is, &wt);
+	scan_setup(&al, ",", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token");
@@ -530,12 +544,13 @@ void test_scan_semicolon()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, ";", &sns, &is, &wt);
+	scan_setup(&al, ";", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token");
@@ -555,12 +570,13 @@ void test_scan_if() {
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "if elseif else", &sns, &is, &wt);
+	scan_setup(&al, "if elseif else", &sns, &lc, &is, &wt);
 	
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token");
@@ -590,12 +606,13 @@ void test_scan_compound_operators() {
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "== != <= >= && || ::", &sns, &is, &wt);
+	scan_setup(&al, "== != <= >= && || ::", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -641,12 +658,13 @@ void test_scan_compound_operators2() {
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "= ! < > & | :", &sns, &is, &wt);
+	scan_setup(&al, "= ! < > & | :", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -693,12 +711,13 @@ void test_scan_for_range()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "for i = 0:10 1 end", &sns, &is, &wt);
+	scan_setup(&al, "for i = 0:10 1 end", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -753,12 +772,13 @@ void test_scan_for_iteration()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "for x in list 1 end", &sns, &is, &wt);
+	scan_setup(&al, "for x in list 1 end", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -803,12 +823,13 @@ void test_scan_error_char()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "$", &sns, &is, &wt);
+	scan_setup(&al, "$", &sns, &lc, &is, &wt);
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_true(r == result_error, "get token");
 	assert_true(!got_token, "got token");
@@ -824,12 +845,13 @@ void test_scan_square_brackets()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "[]", &sns, &is, &wt);
+	scan_setup(&al, "[]", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan 0");
@@ -851,12 +873,13 @@ void test_scan_string()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "\"hello\"", &sns, &is, &wt);
+	scan_setup(&al, "\"hello\"", &sns, &lc, &is, &wt);
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
@@ -873,12 +896,13 @@ void test_scan_string2()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "x = \"\\\\hello\n\r\"", &sns, &is, &wt);
+	scan_setup(&al, "x = \"\\\\hello\n\r\"", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan 0");
@@ -907,12 +931,13 @@ void test_scan_string_escape_error()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "\"\\x\"", &sns, &is, &wt);
+	scan_setup(&al, "\"\\x\"", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_true(r == result_error, "error");
@@ -928,12 +953,13 @@ void test_scan_line_col()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "10 + 20\n30 + 40", &sns, &is, &wt);
+	scan_setup(&al, "10 + 20\n30 + 40", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok 10");
@@ -1002,12 +1028,13 @@ void test_scan_number_whole()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500", &sns, &is, &wt);
+	scan_setup(&al, "500", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1028,12 +1055,13 @@ void test_scan_number_fraction()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.", &sns, &is, &wt);
+	scan_setup(&al, "500.", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1054,12 +1082,13 @@ void test_scan_number_fraction2()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123", &sns, &is, &wt);
+	scan_setup(&al, "500.123", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1080,12 +1109,13 @@ void test_scan_number_exponent()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e2", &sns, &is, &wt);
+	scan_setup(&al, "500.123e2", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1106,12 +1136,13 @@ void test_scan_number_exponent2()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e-2", &sns, &is, &wt);
+	scan_setup(&al, "500.123e-2", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1132,12 +1163,13 @@ void test_scan_number_exponent3()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e+2", &sns, &is, &wt);
+	scan_setup(&al, "500.123e+2", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1158,12 +1190,13 @@ void test_scan_number_exponent4()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e + 1", &sns, &is, &wt);
+	scan_setup(&al, "500.123e + 1", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1210,12 +1243,13 @@ void test_scan_number_exponent5()
 	struct allocator al;
 	struct input_state is;
 	struct word_table wt;
+	struct lookahead_char lc;
 	struct scan_state sns;
 	enum result r;
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e", &sns, &is, &wt);
+	scan_setup(&al, "500.123e", &sns, &lc, &is, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
