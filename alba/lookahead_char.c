@@ -24,6 +24,10 @@ void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data 
 	lc->has_partial = false;
 	lc->done = false;
 	lc->conv = conv;
+	lc->line = 1;
+	lc->col = 1;
+	lc->last_col_count = 0;
+	lc->byte_pos = 0;
 }
 
 enum result lookahead_char_get_input(struct lookahead_char* lc)
@@ -207,8 +211,21 @@ void lookahead_char_pop(struct lookahead_char* lc)
 		lc->la1_8 = lc->la2_8;
 		lc->la1_32 = lc->la2_32;
 
+		/* lookahead and lookbehind sizes */
 		lc->la_size--;
 		if (lc->lb_size == 0) lc->lb_size++;
+
+		/* line and col */
+		if (lc->lb_32 == '\n') {
+			lc->line++;
+			lc->last_col_count = lc->col;
+			lc->col = 1;
+		} else {
+			lc->col++;
+		}
+
+		/* bytes */
+		lc->byte_pos += NUM_BYTES(lc->lb_8[0]);
 	}
 }
 
@@ -227,7 +244,19 @@ void lookahead_char_push(struct lookahead_char* lc)
 		lc->la0_8 = lc->lb_8;
 		lc->la0_32 = lc->lb_32;
 
+		/* lookahead and lookbehind sizes */
 		lc->la_size++;
 		lc->lb_size--;
+
+		/* line and col */
+		if (lc->la0_32 == '\n') {
+			lc->line--;
+			lc->col = lc->last_col_count;
+		} else {
+			lc->col--;
+		}
+
+		/* bytes */
+		lc->byte_pos -= NUM_BYTES(lc->la0_8[0]);
 	}
 }

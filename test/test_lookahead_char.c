@@ -51,6 +51,11 @@ void test_lookahead_char_short()
 	expect_utf32_char(lc.la0_32, 'h', "h");
 	expect_utf32_char(lc.la1_32, 'e', "e");
 
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 1, "col");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+	expect_size_t_equal(lc.byte_pos, 0, "byte pos");
+
 	expect_false(lookahead_char_need_loading_prep(&lc), "need loading prep");
 	expect_false(lookahead_char_need_loading(&lc), "need loading");
 
@@ -63,6 +68,11 @@ void test_lookahead_char_short()
 	expect_utf8_char(lc.la0_8, "e", "e");
 	expect_utf32_char(lc.lb_32, 'h', "h");
 	expect_utf32_char(lc.la0_32, 'e', "e");
+
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 2, "col");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+	expect_size_t_equal(lc.byte_pos, 1, "byte pos");
 
 	expect_false(lookahead_char_need_loading_prep(&lc), "need loading prep");
 	expect_true(lookahead_char_need_loading(&lc), "need loading");
@@ -82,6 +92,11 @@ void test_lookahead_char_short()
 	expect_utf32_char(lc.la0_32, 'e', "e");
 	expect_utf32_char(lc.la1_32, 'l', "l");
 
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 2, "col");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+	expect_size_t_equal(lc.byte_pos, 1, "byte pos");
+
 	/* push */
 	lookahead_char_push(&lc);
 
@@ -97,6 +112,11 @@ void test_lookahead_char_short()
 	expect_utf32_char(lc.la1_32, 'e', "e");
 	expect_utf32_char(lc.la2_32, 'l', "l");
 
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 1, "col");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+	expect_size_t_equal(lc.byte_pos, 0, "byte pos");
+
 	/* pop */
 	lookahead_char_pop(&lc);
 
@@ -111,6 +131,11 @@ void test_lookahead_char_short()
 	expect_utf32_char(lc.lb_32, 'h', "h");
 	expect_utf32_char(lc.la0_32, 'e', "e");
 	expect_utf32_char(lc.la1_32, 'l', "l");
+
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 2, "col");
+	expect_size_t_equal(lc.last_col_count, 0, "last col count");
+	expect_size_t_equal(lc.byte_pos, 1, "byte pos");
 
 	allocator_destroy(&al);
 }

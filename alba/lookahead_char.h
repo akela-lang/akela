@@ -12,6 +12,7 @@
 #define LOOKAHEAD_SIZE (4*4)
 #define TR_IN_SIZE 64
 #define TR_OUT_SIZE TR_IN_SIZE
+#define LINE_SIZE 100
 
 /* one lookbehind which allows one push and 2 lookahead */
 struct lookahead_char {
@@ -38,6 +39,10 @@ struct lookahead_char {
 	bool has_partial;
 	bool done;
 	UConverter* conv;
+	size_t line;
+	size_t col;
+	size_t last_col_count;
+	size_t byte_pos;
 };
 
 void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv);
