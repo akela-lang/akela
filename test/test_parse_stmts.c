@@ -1327,8 +1327,8 @@ void test_parse_line_col()
 	enum result r;
 
 	r = parse_setup(&al, "* 2", &ps, &root);
-	assert_error(r, "parse");
-	expect_error_message("1, 1: expected term before operator");
+	assert_ok(r, "parse");
+	expect_compile_error_message(ps.el, "expected term before operator", 1, 1, 0);
 
 	parse_teardown(&al, &ps);
 }
@@ -1343,8 +1343,8 @@ void test_parse_source()
 	enum result r;
 
 	r = parse_setup(&al, "1\n* 2", &ps, &root);
-	assert_error(r, "parse");
-	expect_error_message("2, 1: expected term before operator");
+	assert_ok(r, "parse");
+	expect_compile_error_message(ps.el, "expected term before operator", 2, 1, 2);
 
 	parse_teardown(&al, &ps);
 }

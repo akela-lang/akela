@@ -8,6 +8,7 @@
 #include "allocator.h"
 #include "input.h"
 #include "uconv.h"
+#include "source.h"
 
 int main(int argc, char** argv)
 {
@@ -33,6 +34,7 @@ int main(int argc, char** argv)
     struct scan_state sns;
     struct lookahead_char lc;
     struct word_table wt;
+    struct compile_error_list el;
     struct parse_state ps;
 
     allocator_init(&al);
@@ -43,8 +45,9 @@ int main(int argc, char** argv)
     }
     word_table_init(&al, &wt, WORD_TABLE_SIZE);
     lookahead_char_init(&lc, file_getchar, fp, conv);
-    scan_state_init(&sns, &lc, &wt);
-    parse_state_init(&ps, &sns);
+    compile_error_list_init(&el);
+    scan_state_init(&sns, &lc, &wt, &el);
+    parse_state_init(&ps, &sns, &el);
 
     r = parse(&al, &ps, &root);
     if (r == result_error) {

@@ -6,10 +6,11 @@
 #include <string.h>
 #include "source.h"
 
-void parse_state_init(struct parse_state* ps, struct scan_state* sns)
+void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct compile_error_list* el)
 {
 	ps->sns = sns;
 	token_list_init(&ps->lookahead);
+	ps->el = el;
 }
 
 /* get lookahead token */
@@ -59,7 +60,7 @@ enum result match(struct allocator* al, struct parse_state* ps, enum token_type 
 			return r;
 		}
 		if (!got_token) {
-			return set_source_error(NULL, ps->sns->lc, "%s", reason);
+			return set_source_error(ps->el, NULL, ps->sns->lc, "%s", reason);
 		}
 		r = token_list_add(al, &ps->lookahead, *t);
 		if (r == result_error) {
@@ -74,5 +75,5 @@ enum result match(struct allocator* al, struct parse_state* ps, enum token_type 
 		return r;
 	}
 
-	return set_source_error(*t, ps->sns->lc, "%s", reason);
+	return set_source_error(ps->el, *t, ps->sns->lc, "%s", reason);
 }

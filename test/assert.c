@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include "alba/result.h"
 #include "alba/buffer.h"
 #include "alba/uconv.h"
+#include "alba/source.h"
 #include "assert.h"
 
 struct test_run tr;
@@ -275,4 +277,34 @@ void expect_error_message(char* s)
 	if (strcmp(error_message, s) == 0) return;
 	error_triggered();
 	printf("(%s) = (%s): error message does not match\n", error_message, s);
+}
+
+void expect_compile_error_message(struct compile_error_list* el, char* s, size_t line, size_t col, size_t byte_pos)
+{
+	bool found = false;
+	bool has_error = false;
+	test_called();
+	for (struct compile_error* p = el->head; p; p = p->next) {
+		if (strcmp(p->message, s) == 0) {
+			found = true;
+			if (p->line != line) {
+				set_error("(%uv) = (%uv) line error", p->line, line);
+				has_error = true;
+			} else if (p->col != col) {
+				set_error("(%uv) = (%uv) col error", p->col, col);
+				has_error = true;
+			} else if (p->byte_pos != byte_pos) {
+				set_error("(%uv) = (%uv) col error", p->byte_pos, byte_pos);
+				has_error = true;
+			}
+			break;
+		}
+	}
+	if (found && !has_error) return;
+	error_triggered();
+	if (has_error) {
+		printf("%s\n", error_message);
+	} else if (!found) {
+		printf("(%s): no matching compile error message\n", s);
+	}
 }

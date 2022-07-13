@@ -5,6 +5,7 @@
 #include "alba/parse_tools.h"
 #include "alba/parse.h"
 #include "alba/scan.h"
+#include "alba/source.h"
 
 enum result parse_setup(struct allocator* al, char* line, struct parse_state* ps, struct dag_node** root)
 {
@@ -39,12 +40,17 @@ enum result parse_setup(struct allocator* al, char* line, struct parse_state* ps
 	assert_ok(r, "malloc lookahead_char");
 	lookahead_char_init(lc, string_getchar, sd, conv);
 
+	struct compile_error_list* el;
+	r = allocator_malloc(al, &el, sizeof(struct compile_error_list));
+	assert_ok(r, "malloc compile_error_list");
+	compile_error_list_init(el);
+
 	struct scan_state* sns;
 	r = allocator_malloc(al, &sns, sizeof(struct scan_state));
 	assert_ok(r, "malloc scan state");
-	scan_state_init(sns, lc, wt);
+	scan_state_init(sns, lc, wt, el);
 
-	parse_state_init(ps, sns);
+	parse_state_init(ps, sns, el);
 
 	r = parse(al, ps, root);
 	return r;

@@ -59,7 +59,7 @@ enum result expr(struct allocator* al, struct parse_state* ps, struct dag_node**
 			goto function_error;
 		}
 		if (b == NULL) {
-			r = set_source_error(t0, ps->sns->lc, "expect expression on rhs of assignment operator");
+			r = set_source_error(ps->sns->el, t0, ps->sns->lc, "expect expression on rhs of assignment operator");
 			goto function_error;
 		}
 		dag_add_child(n, b);
@@ -349,7 +349,7 @@ enum result add(struct allocator* al, struct parse_state* ps, struct dag_node** 
 		dag_push(c, a);
 		*root = b;
 	} else if (!a && b) {
-		r = set_source_error(t0, ps->sns->lc, "expected term before operator");
+		r = set_source_error(ps->el, t0, ps->sns->lc, "expected term before operator");
 	}
 
 	return r;
@@ -410,7 +410,7 @@ enum result add_prime(struct allocator* al, struct parse_state* ps, struct dag_n
 	}
 
 	if (!a) {
-		r = set_source_error(t0, ps->sns->lc, "expected term after additive operator");
+		r = set_source_error(ps->el, t0, ps->sns->lc, "expected term after additive operator");
 		return r;
 	}
 
@@ -471,7 +471,7 @@ enum result mult(struct allocator* al, struct parse_state* ps, struct dag_node**
 		dag_push(c, a);
 		*root = b;
 	} else if (!a && b) {
-		r = set_source_error(t, ps->sns->lc, "expected term before operator");
+		r = set_source_error(ps->el, t, ps->sns->lc, "expected term before operator");
 	}
 
 	return r;
@@ -591,7 +591,7 @@ enum result array_subscript(struct allocator* al, struct parse_state* ps, struct
 		struct dag_node* b = NULL;
 		r = array_subscript(al, ps, &b);
 		if (!b) {
-			r = set_source_error(t0, ps->sns->lc, "expected array subscript after subscript operator");
+			r = set_source_error(ps->el, t0, ps->sns->lc, "expected array subscript after subscript operator");
 			goto function_error;
 		}
 		dag_add_child(n, b);
@@ -646,7 +646,7 @@ enum result array_subscript_prime(struct allocator* al, struct parse_state* ps, 
 		return r;
 	}
 	if (!a) {
-		return set_source_error(t0, ps->sns->lc, "expected array subscript after subscript operator");
+		return set_source_error(ps->el, t0, ps->sns->lc, "expected array subscript after subscript operator");
 	}
 	dag_add_child(parent, a);
 

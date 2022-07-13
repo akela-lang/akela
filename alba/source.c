@@ -4,23 +4,75 @@
 #include "token.h"
 #include "input.h"
 #include "lookahead_char.h"
+#include "source.h"
+#include "memory.h"
 
-enum result set_source_error(struct token* t, struct lookahead_char* lc, const char* fmt, ...)
+void compile_error_init(struct compile_error* e)
 {
+	e->line = 0;
+	e->col = 0;
+	e->byte_pos = 0;
+	e->next = NULL;
+	e->prev = NULL;
+}
+
+void compile_error_list_init(struct compile_error_list* el)
+{
+	el->head = NULL;
+	el->tail = NULL;
+}
+
+/* adding error to end of error list */
+void compile_error_list_add(struct compile_error_list* el, struct compile_error* e)
+{
+	struct compile_error* prev = el->tail;
+
+	e->prev = prev;
+
+	if (prev) {
+		prev->next = e;
+	}
+
+	if (!el->head) {
+		el->head = e;
+	}
+
+	el->tail = e;
+}
+
+void compile_error_list_destroy(struct compile_error_list* el)
+{
+	struct compile_error* p = el->head;
+	while (p) {
+		struct compile_error* temp = p;
+		p = p->next;
+		free(temp);
+	}
+}
+
+enum result set_source_error(struct compile_error_list* el, struct token* t, struct lookahead_char* lc, const char* fmt, ...)
+{
+	enum result r;
 	va_list args;
 	va_start(args, fmt);
 	int len;
-	char* p = error_message;
-	size_t n = ERROR_SIZE;
+	size_t n = COMPILE_ERROR_MESSAGE_SIZE;
+
+	struct compile_error* e;
+	r = malloc_safe(&e, sizeof(struct compile_error));
+	if (r == result_error) return r;
+	compile_error_init(e);
+
+	char* p = e->message;
 
 	if (t) {
-		len = snprintf(p, n, "%zu, %zu: ", t->line, t->col);
-		p += len;
-		n -= len;
+		e->line = t->line;
+		e->col = t->col;
+		e->byte_pos = t->byte_pos;
 	} else if (lc) {
-		len = snprintf(p, n, "%zu, %zu: ", lc->line, lc->col);
-		p += len;
-		n -= len;
+		e->line = lc->line;
+		e->col = lc->col;
+		e->byte_pos = lc->byte_pos;
 	}
 
 	char last = 0;
@@ -49,5 +101,7 @@ enum result set_source_error(struct token* t, struct lookahead_char* lc, const c
 
 	va_end(args);
 
-	return result_error;
+	compile_error_list_add(el, e);
+
+	return result_ok;
 }

@@ -11,10 +11,11 @@
 #include "source.h"
 #include "uconv.h"
 
-void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt)
+void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt, struct compile_error_list* el)
 {
     sns->lc = lc;
     sns->wt = wt;
+    sns->el = el;
     sns->has_next = false;
     sns->state = state_start;
     sns->t = NULL;
@@ -168,8 +169,9 @@ bool is_number_state(enum state_enum state)
     return state == state_number_whole || state == state_number_fraction || state == state_number_exponent_start || state == state_number_exponent;
 }
 
-enum result process_char_start(struct allocator* al, struct lookahead_char* lc, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_start(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    struct lookahead_char* lc = sns->lc;
     enum result r;
     struct char_value cv;
     set_char_values(&cv);
@@ -303,13 +305,15 @@ enum result process_char_start(struct allocator* al, struct lookahead_char* lc, 
             i++;
         }
         a[i] = '\0';
-        return set_source_error(NULL, lc, "Unrecognized character: %s", a);
+        return set_source_error(sns->el, NULL, lc, "Unrecognized character: %s", a);
     }
     return result_ok;
 }
 
-enum result process_char_word(struct allocator *al, struct lookahead_char* lc, struct word_table* wt, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_word(struct allocator *al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    struct lookahead_char* lc = sns->lc;
+    struct word_table* wt = sns->wt;
     enum result r;
     struct char_value cv;
     set_char_values(&cv);
@@ -350,9 +354,9 @@ enum result process_char_word(struct allocator *al, struct lookahead_char* lc, s
         }
     } else if (*state == state_id_underscore) {
         if (uc == cv.underscore) {
-            return set_source_error(NULL, lc, "Must have a letter following underscore at start of id");
+            return set_source_error(sns->el, NULL, lc, "Must have a letter following underscore at start of id");
         } else if (u_isdigit(uc)) {
-            return set_source_error(NULL, lc, "Must have a letter following underscore at start of id");
+            return set_source_error(sns->el, NULL, lc, "Must have a letter following underscore at start of id");
         } else if (u_isalpha(uc)) {
             *state = state_id;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
@@ -474,8 +478,9 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
     return result_ok;
 }
 
-enum result process_char_string(struct allocator* al, struct lookahead_char* lc, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_string(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    struct lookahead_char* lc = sns->lc;
     enum result r = result_ok;
     struct char_value cv;
     set_char_values(&cv);
@@ -522,7 +527,7 @@ enum result process_char_string(struct allocator* al, struct lookahead_char* lc,
                 i++;
             }
             a[i] = '\0';
-            return set_source_error(NULL, lc, "Unrecognized escape sequence: %s", a);
+            return set_source_error(sns->el, NULL, lc, "Unrecognized escape sequence: %s", a);
         }
         *state = state_string;
     }
@@ -530,8 +535,9 @@ enum result process_char_string(struct allocator* al, struct lookahead_char* lc,
     return result_ok;
 }
 
-enum result process_compound_operator(struct allocator* al, struct lookahead_char* lc, enum state_enum* state, int* got_token, struct token* t)
+enum result process_compound_operator(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    struct lookahead_char* lc = sns->lc;
     enum result r = result_ok;
 
     if (lc->la_size > 0) {
@@ -619,7 +625,7 @@ enum result process_compound_operator(struct allocator* al, struct lookahead_cha
             i++;
         }
         a[i] = '\0';
-        return set_source_error(NULL, lc, "unrecognized compound operator: %s", a);
+        return set_source_error(sns->el, NULL, lc, "unrecognized compound operator: %s", a);
     }
 
     return r;
@@ -630,17 +636,17 @@ enum result scan_process(struct allocator* al, struct scan_state* sns, enum stat
     enum result r = result_ok;
 
     if (*state == state_start) {
-        r = process_char_start(al, sns->lc, state, got_token, t);
+        r = process_char_start(al, sns, state, got_token, t);
     } else if (*state == state_id || *state == state_id_underscore) {
-        r = process_char_word(al, sns->lc, sns->wt, state, got_token, t);
+        r = process_char_word(al, sns, state, got_token, t);
     } else if (is_number_state(*state)) {
         r = process_char_number(al, sns, state, got_token, t);
     } else if (*state == state_string || *state == state_string_backslash) {
-        r = process_char_string(al, sns->lc, state, got_token, t);
+        r = process_char_string(al, sns, state, got_token, t);
     } else if (*state == state_compound_operator) {
-        r = process_compound_operator(al, sns->lc, state, got_token, t);
+        r = process_compound_operator(al, sns, state, got_token, t);
     } else {
-        r = set_source_error(NULL, sns->lc, "unexpected state");
+        r = set_source_error(sns->el, NULL, sns->lc, "unexpected state");
     }
     return r;
 }

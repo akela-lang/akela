@@ -38,5 +38,6 @@ void expect_utf32_char(UChar32 a, UChar32 b, char* message);
 void test_name(const char* fmt, ...);
 void print_results();
 void expect_error_message(char* s);
+void expect_compile_error_message(struct compile_error_list* el, char* s, size_t line, size_t col, size_t byte_pos);
 
 #endif

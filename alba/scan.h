@@ -9,6 +9,7 @@
 struct scan_state {
     struct lookahead_char* lc;
     struct word_table* wt;
+    struct compile_error_list* el;
     bool has_next;
     enum state_enum state;
     struct token* t;
@@ -52,7 +53,7 @@ enum state_enum {
     state_compound_operator
 };
 
-void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt);
+void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt, struct compile_error_list* el);
 enum result scan_get_token(struct allocator* al, struct scan_state* sns, int* got_token, struct token** t);
 void set_char_values(struct char_value* cv);
 
