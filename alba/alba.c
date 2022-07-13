@@ -32,7 +32,6 @@ int main(int argc, char** argv)
     UConverter* conv;
     struct scan_state sns;
     struct lookahead_char lc;
-    struct input_state is;
     struct word_table wt;
     struct parse_state ps;
 

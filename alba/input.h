@@ -8,20 +8,6 @@
 typedef int (*input_getchar)(void*);
 typedef void* input_data;
 
-struct input_state {
-    input_getchar f;
-    input_data d;
-    UConverter* conv;
-    int done;
-    int has_next;
-    bool last_was_newline;
-    struct buffer current_line;
-    UChar32 uc;
-    struct buffer bf;
-    size_t line;
-    size_t col;
-};
-
 struct string_data {
 	struct buffer* bf;
 	int pos;
