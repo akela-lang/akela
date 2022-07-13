@@ -17,6 +17,7 @@ void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data 
 	lc->lb_size = 0;
 	lc->la_size = 0;
 	lc->tr_in_size = 0;
+	lc->tr_in_pos = 0;
 	lc->tr_out_size = 0;
 	lc->tr_out_pos = 0;
 	lc->f = f;
@@ -47,6 +48,7 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 	}
 	if (c == EOF) {
 		lc->done = true;
+		return result_ok;
 	}
 	count = NUM_BYTES(c);
 	if (count == 0) return set_error("Incorrect utf-8 encoding: byte count not encoded");
@@ -178,18 +180,18 @@ enum result lookahead_char_prep(struct lookahead_char* lc)
 
 bool lookahead_char_load(struct lookahead_char* lc)
 {
-	bool have_char = false;
+	bool a = false, b = false;
 	
 	if (lookahead_char_has_utf8(lc) && lookahead_char_has_utf16(lc)) {
 		if (lc->la_size == 0) {
-			have_char = lookahead_char_utf8_pop(lc, lc->la0_8);
-			have_char = lookahead_char_utf32_pop(lc, &lc->la0_32);
-			lc->la_size++;
+			a = lookahead_char_utf8_pop(lc, lc->la0_8);
+			b = lookahead_char_utf32_pop(lc, &lc->la0_32);
+			if (a && b) lc->la_size++;
 		}
 		if (lc->la_size == 1) {
-			have_char = lookahead_char_utf8_pop(lc, lc->la1_8);
-			have_char = lookahead_char_utf32_pop(lc, &lc->la1_32);
-			lc->la_size++;
+			a = lookahead_char_utf8_pop(lc, lc->la1_8);
+			b = lookahead_char_utf32_pop(lc, &lc->la1_32);
+			if (a && b) lc->la_size++;
 		}
 	}
 
@@ -199,6 +201,9 @@ bool lookahead_char_load(struct lookahead_char* lc)
 void lookahead_char_pop(struct lookahead_char* lc)
 {
 	if (lc->la_size > 0) {
+		char* temp8 = lc->lb_8;
+		UChar32 temp32 = lc->lb_32;
+
 		/* lookbehind = lookahead0 */
 		lc->lb_8 = lc->la0_8;
 		lc->lb_32 = lc->la0_32;
@@ -211,9 +216,14 @@ void lookahead_char_pop(struct lookahead_char* lc)
 		lc->la1_8 = lc->la2_8;
 		lc->la1_32 = lc->la2_32;
 
+		/* lookahead2 = lookbehind */
+		lc->la2_8 = temp8;
+		lc->la2_32 = temp32;
+
 		/* lookahead and lookbehind sizes */
-		lc->la_size--;
-		if (lc->lb_size == 0) lc->lb_size++;
+		if (lc->la_size > 0) lc->lb_size = 1;
+		else lc->lb_size = 0;
+		if (lc->la_size > 0) lc->la_size--;
 
 		/* line and col */
 		if (lc->lb_32 == '\n') {
@@ -232,6 +242,9 @@ void lookahead_char_pop(struct lookahead_char* lc)
 void lookahead_char_push(struct lookahead_char* lc)
 {
 	if (lc->lb_size >= 1) {
+		char* temp8 = lc->la2_8;
+		UChar32 temp32 = lc->la2_32;
+
 		/* lookahead2 = lookahead1 */
 		lc->la2_8 = lc->la1_8;
 		lc->la2_32 = lc->la1_32;
@@ -244,9 +257,13 @@ void lookahead_char_push(struct lookahead_char* lc)
 		lc->la0_8 = lc->lb_8;
 		lc->la0_32 = lc->lb_32;
 
+		/* lookbehind = lookahead2 */
+		lc->lb_8 = temp8;
+		lc->lb_32 = temp32;
+
 		/* lookahead and lookbehind sizes */
 		lc->la_size++;
-		lc->lb_size--;
+		lc->lb_size = 0;
 
 		/* line and col */
 		if (lc->la0_32 == '\n') {

@@ -9,6 +9,7 @@ void token_init(struct token* t)
     t->type = token_none;
     t->line = 0;
     t->col = 0;
+    t->byte_pos = 0;
     buffer_init(&t->value);
     t->next = NULL;
     t->prev = NULL;

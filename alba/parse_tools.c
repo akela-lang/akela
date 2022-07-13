@@ -25,7 +25,7 @@ enum parse_result get_lookahead(struct allocator* al, struct parse_state* ps, in
 	}
 
 	for (; *num < count; (*num)++) {
-		if (ps->sns->is->done) {
+		if (lookahead_char_done(ps->sns->lc)) {
 			break;
 		}
 
@@ -59,7 +59,7 @@ enum result match(struct allocator* al, struct parse_state* ps, enum token_type 
 			return r;
 		}
 		if (!got_token) {
-			return set_source_error(NULL, ps->sns->is, "%s", reason);
+			return set_source_error(NULL, ps->sns->lc, "%s", reason);
 		}
 		r = token_list_add(al, &ps->lookahead, *t);
 		if (r == result_error) {
@@ -74,5 +74,5 @@ enum result match(struct allocator* al, struct parse_state* ps, enum token_type 
 		return r;
 	}
 
-	return set_source_error(*t, ps->sns->is, "%s", reason);
+	return set_source_error(*t, ps->sns->lc, "%s", reason);
 }

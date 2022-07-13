@@ -86,7 +86,7 @@ enum result dseq_prime(struct allocator* al, struct parse_state* ps, struct dag_
 		goto function_error;
 	}
 	if (!a) {
-		r = set_source_error(t0, ps->sns->is, "expecting declaration after comma");
+		r = set_source_error(t0, ps->sns->lc, "expecting declaration after comma");
 		goto function_error;
 	}
 	dag_add_child(n, a);
@@ -159,7 +159,7 @@ enum result declaration(struct allocator* al, struct parse_state* ps, struct dag
 		if (!is_valid_type(&t2->value)) {
 			char* a;
 			r = buffer2array(al, &t2->value, &a);
-			return set_source_error(t2, ps->sns->is, "unknown type: %s", a);
+			return set_source_error(t2, ps->sns->lc, "unknown type: %s", a);
 		}
 
 		r = dag_create_node(al, &n);

@@ -42,10 +42,9 @@ int main(int argc, char** argv)
         fprintf(stderr, "%s\n", error_message);
         return 1;
     }
-    input_state_init(file_getchar, fp, conv, &is);
     word_table_init(&al, &wt, WORD_TABLE_SIZE);
     lookahead_char_init(&lc, file_getchar, fp, conv);
-    scan_state_init(&sns, &lc, &is, &wt);
+    scan_state_init(&sns, &lc, &wt);
     parse_state_init(&ps, &sns);
 
     r = parse(&al, &ps, &root);

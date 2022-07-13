@@ -9,11 +9,11 @@
 #include "buffer.h"
 #include "input.h"
 #include "source.h"
+#include "uconv.h"
 
-void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct input_state* is, struct word_table* wt)
+void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt)
 {
     sns->lc = lc;
-    sns->is = is;
     sns->wt = wt;
     sns->has_next = false;
     sns->state = state_start;
@@ -168,142 +168,173 @@ bool is_number_state(enum state_enum state)
     return state == state_number_whole || state == state_number_fraction || state == state_number_exponent_start || state == state_number_exponent;
 }
 
-enum result process_char_start(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_start(struct allocator* al, struct lookahead_char* lc, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
     struct char_value cv;
     set_char_values(&cv);
     *got_token = 0;
+    UChar32 uc;
+    if (lc->la_size > 0) {
+        uc = lc->la0_32;
+    } else {
+        uc = EOF;
+        return result_ok;
+    }
 
-    if (u_isalpha(is->uc)) {
+    if (u_isalpha(uc)) {
         *state = state_id;
         t->type = token_id;
-        t->line = is->line;
-        t->col = is->col;
-        r = buffer_copy(al, &is->bf, &t->value);
-        if (r == result_error) {
-            return r;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
+        for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            if (r == result_error) return r;
         }
-    } else if (is->uc == cv.underscore) {
-            *state = state_id_underscore;
-            t->type = token_id;
-            t->line = is->line;
-            t->col = is->col;
-            r = buffer_copy(al, &is->bf, &t->value);
-            if (r == result_error) {
-                return r;
-            }
-    } else if (u_isdigit(is->uc)) {
+    } else if (uc == cv.underscore) {
+        *state = state_id_underscore;
+        t->type = token_id;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
+        for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            if (r == result_error) return r;
+        }
+    } else if (u_isdigit(uc)) {
         *state = state_number_whole;
         t->type = token_number;
-        t->line = is->line;
-        t->col = is->col;
-        r = buffer_copy(al, &is->bf, &t->value);
-        if (r == result_error) {
-            return r;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
+        for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            if (r == result_error) return r;
         }
-    } else if (is->uc == cv.double_quote) {
+    } else if (uc == cv.double_quote) {
         *state = state_string;
         t->type = token_string;
-        t->line = is->line;
-        t->col = is->col;
-    } else if (compound_operator_start(is->uc, &cv)) {
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
+    } else if (compound_operator_start(uc, &cv)) {
         *state = state_compound_operator;
-        r = buffer_copy(al, &is->bf, &t->value);
-        if (r == result_error) {
-            return r;
+        for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            if (r == result_error) return r;
         }
-        t->line = is->line;
-        t->col = is->col;
-    } else if (is->uc == cv.plus) {
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
+    } else if (uc == cv.plus) {
         t->type = token_plus;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.minus) {
+    } else if (uc == cv.minus) {
         t->type = token_minus;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.mult) {
+    } else if (uc == cv.mult) {
         t->type = token_mult;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.divide) {
+    } else if (uc == cv.divide) {
         t->type = token_divide;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.left_paren) {
+    } else if (uc == cv.left_paren) {
         t->type = token_left_paren;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.right_paren) {
+    } else if (uc == cv.right_paren) {
         t->type = token_right_paren;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.space) {
+    } else if (uc == cv.space) {
         /* nothing */
-    } else if (is->uc == cv.newline) {
+    } else if (uc == cv.newline) {
         t->type = token_newline;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.comma) {
+    } else if (uc == cv.comma) {
         t->type = token_comma;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.semicolon) {
+    } else if (uc == cv.semicolon) {
         t->type = token_semicolon;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.left_square_bracket) {
+    } else if (uc == cv.left_square_bracket) {
         t->type = token_left_square_bracket;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (is->uc == cv.right_square_bracket) {
+    } else if (uc == cv.right_square_bracket) {
         t->type = token_right_square_bracket;
-        t->line = is->line;
-        t->col = is->col;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
         *got_token = 1;
     } else {
-        char* a;
-        enum result r = buffer2array(al, &is->bf, &a);
-        if (r == result_error) {
-            return set_source_error(NULL, is, error_message);
+        char a[5];
+        int i = 0;
+        while (i < NUM_BYTES(lc->la0_8[0])) {
+            a[i] = lc->la0_8[i];
+            i++;
         }
-        return set_source_error(NULL, is, "Unrecognized character: %s", a);
+        a[i] = '\0';
+        return set_source_error(NULL, lc, "Unrecognized character: %s", a);
     }
     return result_ok;
 }
 
-enum result process_char_word(struct allocator *al, struct input_state* is, struct word_table* wt, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_word(struct allocator *al, struct lookahead_char* lc, struct word_table* wt, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
     struct char_value cv;
     set_char_values(&cv);
+    UChar32 uc;
+    if (lc->la_size > 0) {
+        uc = lc->la0_32;
+    } else {
+        uc = EOF;
+    }
 
     if (*state == state_id) {
-        if (is->uc == cv.underscore) {
-            r = buffer_copy(al, &is->bf, &t->value);
-            if (r == result_error) {
-                return r;
+        if (uc == cv.underscore) {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
             }
-        } else if (u_isalpha(is->uc)) {
-            r = buffer_copy(al, &is->bf, &t->value);
-            if (r == result_error) {
-                return r;
+        } else if (u_isalpha(uc)) {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
             }
-        } else if (u_isdigit(is->uc)) {
-            r = buffer_copy(al, &is->bf, &t->value);
-            if (r == result_error) {
-                return r;
+        } else if (u_isdigit(uc)) {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
             }
         } else {
             struct word* w = word_table_get(wt, &t->value);
@@ -315,18 +346,18 @@ enum result process_char_word(struct allocator *al, struct input_state* is, stru
             }
             *state = state_start;
             *got_token = 1;
-            input_state_push_uchar(is);
+            lookahead_char_push(lc);
         }
     } else if (*state == state_id_underscore) {
-        if (is->uc == cv.underscore) {
-            return set_source_error(NULL, is, "Must have a letter following underscore at start of id");
-        } else if (u_isdigit(is->uc)) {
-            return set_source_error(NULL, is, "Must have a letter following underscore at start of id");
-        } else if (u_isalpha(is->uc)) {
+        if (uc == cv.underscore) {
+            return set_source_error(NULL, lc, "Must have a letter following underscore at start of id");
+        } else if (u_isdigit(uc)) {
+            return set_source_error(NULL, lc, "Must have a letter following underscore at start of id");
+        } else if (u_isalpha(uc)) {
             *state = state_id;
-            r = buffer_copy(al, &is->bf, &t->value);
-            if (r == result_error) {
-                return r;
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
             }
         } else {
             struct word* w = word_table_get(wt, &t->value);
@@ -338,7 +369,7 @@ enum result process_char_word(struct allocator *al, struct input_state* is, stru
             }
             *state = state_start;
             *got_token = 1;
-            input_state_push_uchar(is);
+            lookahead_char_push(lc);
         }
     }
 
@@ -348,114 +379,150 @@ enum result process_char_word(struct allocator *al, struct input_state* is, stru
 enum result process_char_number(struct allocator *al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
-    struct input_state* is = sns->is;
+    struct lookahead_char* lc = sns->lc;
     struct char_value cv;
     set_char_values(&cv);
+    UChar32 uc;
+    if (lc->la_size > 0) {
+        uc = lc->la0_32;
+    } else {
+        uc = EOF;
+    }
 
     if (*state == state_number_whole) {
-        if (u_isdigit(is->uc)) {
-            buffer_copy(al, &is->bf, &t->value);
-        } else if (is->uc == '.') {
+        if (u_isdigit(uc)) {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
+            }
+        } else if (uc == '.') {
             *state = state_number_fraction;
-            buffer_copy(al, &is->bf, &t->value);
-        } else if (is->uc == 'e') {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
+            }
+        } else if (uc == 'e') {
             *state = state_number_exponent_start;
-            buffer_copy(al, &is->bf, &t->value);
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
+            }
         } else {
-            t->type = token_number;
             *state = state_start;
             *got_token = 1;
-            input_state_push_uchar(is);
+            lookahead_char_push(lc);
         }
     } else if (*state == state_number_fraction) {
-        if (u_isdigit(is->uc)) {
-            buffer_copy(al, &is->bf, &t->value);
-        } else if (is->uc == 'e') {
+        if (u_isdigit(uc)) {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
+            }
+        } else if (uc == 'e') {
             /* lookahead another character */
-            r = get_uchar(al, sns->is);
-            if (r == result_error) return r;
-            if (u_isdigit(is->uc) || is->uc == '-' || is->uc == '+') {
+            UChar32 uc2 = lc->la1_32;
+            if (lc->la_size >= 2 && (u_isdigit(uc2) || uc2 == '-' || uc2 == '+')) {
+                /* e is part of exponent */
                 *state = state_number_exponent_start;
                 buffer_add_char(al, &t->value, 'e');
             } else {
-                t->type = token_number;
+                /* number is done and e will be part of an id */
                 *state = state_start;
                 *got_token = 1;
+                lookahead_char_push(lc);
             }
-            input_state_push_uchar(is);
         } else {
-            t->type = token_number;
             *state = state_start;
             *got_token = 1;
-            input_state_push_uchar(is);
+            lookahead_char_push(lc);
         }
     } else if (*state == state_number_exponent_start) {
-        if (u_isdigit(is->uc)) {
-            buffer_copy(al, &is->bf, &t->value);
+        if (u_isdigit(uc)) {
             *state = state_number_exponent;
-        } else if (is->uc == '-') {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
+            }
+        } else if (uc == '-') {
             *state = state_number_exponent;
-            buffer_copy(al, &is->bf, &t->value);
-        } else if (is->uc == '+') {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
+            }
+        } else if (uc == '+') {
             *state = state_number_exponent;
-            buffer_copy(al, &is->bf, &t->value);
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
+            }
         } else {
             /* shound not happen because of lookahead */
-            return set_error("expecting <digit>, <->, or <+> because of lookahead");
+            return set_error(NULL, lc, "expecting <digit>, <->, or <+> after e in number");
         }
     } else if (*state == state_number_exponent) {
-        if (u_isdigit(is->uc)) {
-            buffer_copy(al, &is->bf, &t->value);
+        if (u_isdigit(uc)) {
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
+            }
         } else {
             *state = state_start;
             *got_token = 1;
-            input_state_push_uchar(is);
+            lookahead_char_push(lc);
         }
     }
     return result_ok;
 }
 
-enum result process_char_string(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_string(struct allocator* al, struct lookahead_char* lc, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r = result_ok;
     struct char_value cv;
     set_char_values(&cv);
+    UChar32 uc;
+    if (lc->la_size > 0) {
+        uc = lc->la0_32;
+    } else {
+        uc = EOF;
+    }
 
     if (*state == state_string) {
-        if (is->uc == cv.backslash) {
+        if (uc == cv.backslash) {
             *state = state_string_backslash;
-        } else if (is->uc == cv.double_quote) {
+        } else if (uc == cv.double_quote) {
             *state = state_start;
             *got_token = 1;
         } else {
-            r = buffer_copy(al, &is->bf, &t->value);
-            if (r == result_error) {
-                return r;
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                if (r == result_error) return r;
             }
         }
     } else if (*state == state_string_backslash) {
-        if (is->uc == cv.backslash) {
+        if (uc == cv.backslash) {
             r = buffer_add_char(al, &t->value, '\\');
             if (r == result_error) {
                 return r;
             }
-        } else if (is->uc == 'n') {
+        } else if (uc == 'n') {
             r = buffer_add_char(al, &t->value, '\n');
             if (r == result_error) {
                 return r;
             }
-        } else if (is->uc == 'r') {
+        } else if (uc == 'r') {
             r = buffer_add_char(al, &t->value, '\r');
             if (r == result_error) {
                 return r;
             }
         } else {
-            char* a;
-            r = buffer2array(al, &is->bf, &a);
-            if (r == result_error) {
-                return r;
+            char a[5];
+            int i = 0;
+            while (i < NUM_BYTES(lc->la0_8[0])) {
+                a[i] = lc->la0_8[i];
+                i++;
             }
-            return set_source_error(NULL, is, "Unrecognized escape sequence: %s", a);
+            a[i] = '\0';
+            return set_source_error(NULL, lc, "Unrecognized escape sequence: %s", a);
         }
         *state = state_string;
     }
@@ -463,13 +530,15 @@ enum result process_char_string(struct allocator* al, struct input_state* is, en
     return result_ok;
 }
 
-enum result process_compound_operator(struct allocator* al, struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
+enum result process_compound_operator(struct allocator* al, struct lookahead_char* lc, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r = result_ok;
 
-    r = buffer_copy(al, &is->bf, &t->value);
-    if (r == result_error) {
-        return r;
+    if (lc->la_size > 0) {
+        for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            if (r == result_error) return r;
+        }
     }
 
     if (buffer_str_compare(&t->value, "==")) {
@@ -505,113 +574,73 @@ enum result process_compound_operator(struct allocator* al, struct input_state* 
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        input_state_push_uchar(is);
+        lookahead_char_push(lc);
     } else if (t->value.buf[0] == '!') {
         t->type = token_not;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        input_state_push_uchar(is);
+        lookahead_char_push(lc);
     } else if (t->value.buf[0] == '<') {
         t->type = token_less_than;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        input_state_push_uchar(is);
+        lookahead_char_push(lc);
     } else if (t->value.buf[0] == '>') {
         t->type = token_greater_than;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        input_state_push_uchar(is);
+        lookahead_char_push(lc);
     } else if (t->value.buf[0] == '&') {
         t->type = token_ampersand;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        input_state_push_uchar(is);
+        lookahead_char_push(lc);
     } else if (t->value.buf[0] == '|') {
         t->type = token_vertical_bar;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        input_state_push_uchar(is);
+        lookahead_char_push(lc);
     } else if (t->value.buf[0] == ':') {
         t->type = token_colon;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        input_state_push_uchar(is);
+        lookahead_char_push(lc);
     } else {
-        char* a;
-        r = buffer2array(al, &t->value, &a);
-        if (r == result_error) {
-            return r;
+        char a[5];
+        int i = 0;
+        while (i < NUM_BYTES(lc->la0_8[0])) {
+            a[i] = lc->la0_8[i];
+            i++;
         }
-        return set_source_error(NULL, is, "unrecognized compound operator: %s", a);
+        a[i] = '\0';
+        return set_source_error(NULL, lc, "unrecognized compound operator: %s", a);
     }
 
     return r;
 }
 
-void check_for_operators(struct input_state* is, enum state_enum* state, int* got_token, struct token* t)
-{
-    if (t->value.buf[0] == '=') {
-        t->type = token_equal;
-        buffer_clear(&t->value);
-        *state = state_start;
-        *got_token = 1;
-    } else if (t->value.buf[0] == '!') {
-        t->type = token_not;
-        buffer_clear(&t->value);
-        *state = state_start;
-        *got_token = 1;
-    } else if (t->value.buf[0] == '<') {
-        t->type = token_less_than;
-        buffer_clear(&t->value);
-        *state = state_start;
-        *got_token = 1;
-    } else if (t->value.buf[0] == '>') {
-        t->type = token_greater_than;
-        buffer_clear(&t->value);
-        *state = state_start;
-        *got_token = 1;
-    } else if (t->value.buf[0] == '&') {
-        t->type = token_ampersand;
-        buffer_clear(&t->value);
-        *state = state_start;
-        *got_token = 1;
-    } else if (t->value.buf[0] == '|') {
-        t->type = token_vertical_bar;
-        buffer_clear(&t->value);
-        *state = state_start;
-        *got_token = 1;
-    } else if (t->value.buf[0] == ':') {
-        t->type = token_colon;
-        buffer_clear(&t->value);
-        *state = state_start;
-        *got_token = 1;
-    }
-}
-
 enum result scan_process(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r = result_ok;
-    struct input_state* is = sns->is;
-    struct word_table* wt = sns->wt;
 
     if (*state == state_start) {
-        r = process_char_start(al, is, state, got_token, t);
+        r = process_char_start(al, sns->lc, state, got_token, t);
     } else if (*state == state_id || *state == state_id_underscore) {
-        r = process_char_word(al, is, wt, state, got_token, t);
+        r = process_char_word(al, sns->lc, sns->wt, state, got_token, t);
     } else if (is_number_state(*state)) {
         r = process_char_number(al, sns, state, got_token, t);
     } else if (*state == state_string || *state == state_string_backslash) {
-        r = process_char_string(al, is, state, got_token, t);
+        r = process_char_string(al, sns->lc, state, got_token, t);
     } else if (*state == state_compound_operator) {
-        r = process_compound_operator(al, is, state, got_token, t);
+        r = process_compound_operator(al, sns->lc, state, got_token, t);
     } else {
-        r = set_source_error(NULL, is, "unexpected state");
+        r = set_source_error(NULL, sns->lc, "unexpected state");
     }
     return r;
 }
@@ -622,32 +651,25 @@ enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* go
     enum state_enum state = state_start;
     *got_token = 0;
     struct token* tf;
-    struct input_state* is = sns->is;
-    struct word_table* wt = sns->wt;
 
-    if (sns->has_next) {
-        state = sns->state;
-        tf = sns->t;
-        sns->has_next = false;
-        sns->state = state_start;
-        sns->t = NULL;
-    } else {
-        r = allocator_malloc(al, &tf, sizeof(struct token));
-        if (r == result_error) {
-            return r;
-        }
-        token_init(tf);
+    r = allocator_malloc(al, &tf, sizeof(struct token));
+    if (r == result_error) {
+        return r;
     }
+    token_init(tf);
 
+    while (!*got_token && !lookahead_char_done(sns->lc)) {
+        if (lookahead_char_need_preping(sns->lc)) {
+            r = lookahead_char_prep(sns->lc);
+            if (r == result_error) goto function_error;
+        }
+        if (lookahead_char_need_loading(sns->lc)) lookahead_char_load(sns->lc);
 
-    while (get_uchar(al, is) != result_error && !is->done) {
         r = scan_process(al, sns, &state, got_token, tf);
         if (r == result_error) {
             return r;
         }
-        if (*got_token) {
-            break;
-        }
+        lookahead_char_pop(sns->lc);
     }
 
     if (r == result_error) {
@@ -656,6 +678,7 @@ enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* go
 
     if (state != state_start) {
         r = scan_process(al, sns, &state, got_token, tf);
+        lookahead_char_pop(sns->lc);
         if (r == result_error) return r;
     }
 

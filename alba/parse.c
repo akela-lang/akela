@@ -9,6 +9,7 @@
 #include "input.h"
 #include "parse_tools.h"
 #include "source.h"
+#include "lookahead_char.h"
 
 enum result parse(struct allocator* al, struct parse_state* ps, struct dag_node** root)
 {
@@ -21,7 +22,7 @@ enum result parse(struct allocator* al, struct parse_state* ps, struct dag_node*
 		return r;
 	}
 
-	if (!ps->sns->is->done) {
+	if (!lookahead_char_done(ps->sns->lc)) {
 		int num;
 		r = get_lookahead(al, ps, 1, &num);
 		if (r == result_error) {
@@ -33,7 +34,7 @@ enum result parse(struct allocator* al, struct parse_state* ps, struct dag_node*
 		struct token* t = ps->lookahead.head;
 		char* names[token_count];
 		r = token_name_init(names);
-		return set_source_error(t, ps->sns->is, "Couldn't process token: %s", names[t->type]);
+		return set_source_error(t, ps->sns->lc, "Couldn't process token: %s", names[t->type]);
 	}
 
 	return result_ok;

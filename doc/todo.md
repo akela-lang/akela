@@ -1,7 +1,7 @@
 # Todo
-* use lookahead_char
-* data structure for tests
+* data structure for unit tests
 * print test name only on fail
 * memory management annotation for parse_setup
+* create structure for source parse errors
 * link to LLVM
 * generate LLVM IR

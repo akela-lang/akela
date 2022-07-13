@@ -109,6 +109,7 @@ struct token {
     struct buffer value;
     size_t line;
     size_t col;
+    size_t byte_pos;
     struct token* prev;
     struct token* next;
 };

@@ -3,8 +3,9 @@
 #include "result.h"
 #include "token.h"
 #include "input.h"
+#include "lookahead_char.h"
 
-enum result set_source_error(struct token* t, struct input_state* is, const char* fmt, ...)
+enum result set_source_error(struct token* t, struct lookahead_char* lc, const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -16,8 +17,8 @@ enum result set_source_error(struct token* t, struct input_state* is, const char
 		len = snprintf(p, n, "%zu, %zu: ", t->line, t->col);
 		p += len;
 		n -= len;
-	} else if (is) {
-		len = snprintf(p, n, "%zu, %zu: ", is->line, is->col);
+	} else if (lc) {
+		len = snprintf(p, n, "%zu, %zu: ", lc->line, lc->col);
 		p += len;
 		n -= len;
 	}

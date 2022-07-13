@@ -165,7 +165,7 @@ enum result stmt(struct allocator* al, struct parse_state* ps, struct dag_node**
 			goto function_error;
 		}
 		if (!a) {
-			r = set_source_error(t0, ps->sns->is, "expected expression after while");
+			r = set_source_error(t0, ps->sns->lc, "expected expression after while");
 			goto function_error;
 		}
 		dag_add_child(n, a);
@@ -204,7 +204,7 @@ enum result stmt(struct allocator* al, struct parse_state* ps, struct dag_node**
 				goto function_error;
 			}
 		} else {
-			r = set_source_error(t0, ps->sns->is, "expected = or in after for");
+			r = set_source_error(t0, ps->sns->lc, "expected = or in after for");
 			goto function_error;
 		}
 
@@ -298,7 +298,7 @@ enum result stmt(struct allocator* al, struct parse_state* ps, struct dag_node**
 			goto function_error;
 		}
 		if (cond == NULL) {
-			r = set_source_error(t0, ps->sns->is, "expecting a condition after if");
+			r = set_source_error(t0, ps->sns->lc, "expecting a condition after if");
 			goto function_error;
 		}
 		dag_add_child(cb, cond);
@@ -344,7 +344,7 @@ enum result stmt(struct allocator* al, struct parse_state* ps, struct dag_node**
 		goto function_success;
 	}
 
-	r = set_source_error(t0, ps->sns->is, "expected statement");
+	r = set_source_error(t0, ps->sns->lc, "expected statement");
 	goto function_error;
 
 function_success:
@@ -419,7 +419,7 @@ enum result for_range(struct allocator* al, struct parse_state* ps, struct dag_n
 		goto function_error;
 	}
 	if (!b) {
-		r = set_source_error(t0, ps->sns->is, "expected range start after for-range");
+		r = set_source_error(t0, ps->sns->lc, "expected range start after for-range");
 		goto function_error;
 	}
 	dag_add_child(n, b);
@@ -436,7 +436,7 @@ enum result for_range(struct allocator* al, struct parse_state* ps, struct dag_n
 		goto function_error;
 	}
 	if (!c) {
-		r = set_source_error(t0, ps->sns->is, "expected range end after for-range");
+		r = set_source_error(t0, ps->sns->lc, "expected range end after for-range");
 		goto function_error;
 	}
 	dag_add_child(n, c);
@@ -522,7 +522,7 @@ enum result for_iteration(struct allocator* al, struct parse_state* ps, struct d
 		goto function_error;
 	}
 	if (!b) {
-		r = set_source_error(t0, ps->sns->is, "expected expression after for-iteration");
+		r = set_source_error(t0, ps->sns->lc, "expected expression after for-iteration");
 		goto function_error;
 	}
 	dag_add_child(n, b);
@@ -583,7 +583,7 @@ enum result elseif_stmts(struct allocator* al, struct parse_state* ps, struct da
 			goto function_error;
 		}
 		if (cond == NULL) {
-			r = set_source_error(t0, ps->sns->is, "expecting condition after elseif");
+			r = set_source_error(t0, ps->sns->lc, "expecting condition after elseif");
 			goto function_error;
 		}
 		dag_add_child(cb, cond);

@@ -1329,7 +1329,6 @@ void test_parse_line_col()
 	r = parse_setup(&al, "* 2", &ps, &root);
 	assert_error(r, "parse");
 	expect_error_message("1, 1: expected term before operator");
-	expect_str(&ps.sns->is->current_line, "* 2", "* 2");
 
 	parse_teardown(&al, &ps);
 }
@@ -1346,7 +1345,6 @@ void test_parse_source()
 	r = parse_setup(&al, "1\n* 2", &ps, &root);
 	assert_error(r, "parse");
 	expect_error_message("2, 1: expected term before operator");
-	expect_str(&ps.sns->is->current_line, "* 2", "* 2");
 
 	parse_teardown(&al, &ps);
 }

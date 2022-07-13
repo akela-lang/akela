@@ -6,7 +6,7 @@
 #include "alba/input.h"
 #include "alba/lookahead_char.h"
 
-void scan_setup(struct allocator* al, char* line, struct scan_state* sns, struct lookback_char* lc, struct input_state* is, struct word_table* wt)
+void scan_setup(struct allocator* al, char* line, struct scan_state* sns, struct lookback_char* lc, struct word_table* wt)
 {
 	enum result r;
 
@@ -27,28 +27,26 @@ void scan_setup(struct allocator* al, char* line, struct scan_state* sns, struct
 	UConverter* conv;
 	r = conv_open(&conv);
 	assert_ok(r, "conv_open");
-	input_state_init(string_getchar, sd, conv, is);
 
 	lookahead_char_init(lc, string_getchar, sd, conv);
 
 	r = word_table_init(al, wt, WORD_TABLE_SIZE);
 	assert_ok(r, "word_table_init");
 
-	scan_state_init(sns, lc, is, wt);
+	scan_state_init(sns, lc, wt);
 }
 
-void scan_teardown(struct allocator* al, struct input_state* is)
+void scan_teardown(struct allocator* al, struct scan_state* sns)
 {
-	conv_close(is->conv);
+	conv_close(sns->lc->conv);
 	allocator_destroy(al);
 }
 
-void test_scan_assign()
+void test_scan_blank()
 {
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -56,7 +54,30 @@ void test_scan_assign()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "a = 1", &sns, &lc, &is, &wt);
+	scan_setup(&al, "", &sns, &lc, &wt);
+
+	r = scan_get_token(&al, &sns, &got_token, &t);
+	assert_ok(r, "scan_get_token 0");
+	expect_int_equal(t->type, token_none, "none");
+	expect_str(&t->value, "", "(blank)");
+	expect_false(got_token, "got token false");
+
+	scan_teardown(&al, &sns);
+}
+
+void test_scan_assign()
+{
+	test_name(__func__);
+
+	struct allocator al;
+	struct word_table wt;
+	struct lookahead_char lc;
+	struct scan_state sns;
+	enum result r;
+	struct token* t;
+	int got_token;
+
+	scan_setup(&al, "a = 1", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan_get_token 0");
@@ -79,7 +100,7 @@ void test_scan_assign()
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_num()
@@ -87,7 +108,6 @@ void test_scan_num()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -95,7 +115,7 @@ void test_scan_num()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "11", &sns, &lc, &is, &wt);
+	scan_setup(&al, "11", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan_get_token");
@@ -106,7 +126,7 @@ void test_scan_num()
 	assert_ok(r, "scan_get_token");
 	assert_true(!got_token, "no token");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_addition()
@@ -114,7 +134,6 @@ void test_scan_addition()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -122,7 +141,7 @@ void test_scan_addition()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "speed + 1", &sns, &lc, &is, &wt);
+	scan_setup(&al, "speed + 1", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -145,7 +164,7 @@ void test_scan_addition()
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_subtraction()
@@ -153,7 +172,6 @@ void test_scan_subtraction()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -161,7 +179,7 @@ void test_scan_subtraction()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "100 - delta", &sns, &lc, &is, &wt);
+	scan_setup(&al, "100 - delta", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -184,7 +202,7 @@ void test_scan_subtraction()
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_multiplication()
@@ -192,7 +210,6 @@ void test_scan_multiplication()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -200,7 +217,7 @@ void test_scan_multiplication()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "100 * 20", &sns, &lc, &is, &wt);
+	scan_setup(&al, "100 * 20", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -223,7 +240,7 @@ void test_scan_multiplication()
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_divide()
@@ -231,7 +248,6 @@ void test_scan_divide()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -239,7 +255,7 @@ void test_scan_divide()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "45 / 11", &sns, &lc, &is, &wt);
+	scan_setup(&al, "45 / 11", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -262,7 +278,7 @@ void test_scan_divide()
 	assert_ok(r, "scan_get_token3");
 	assert_true(!got_token, "no token 3");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_stmts_expr()
@@ -270,7 +286,6 @@ void test_scan_stmts_expr()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -278,7 +293,7 @@ void test_scan_stmts_expr()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx * 4", &sns, &lc, &is, &wt);
+	scan_setup(&al, "i + 1\nx * 4", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -323,7 +338,7 @@ void test_scan_stmts_expr()
 	assert_ok(r, "scan_get_token7");
 	assert_true(!got_token, "no token 7");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_stmts_expr2()
@@ -331,7 +346,6 @@ void test_scan_stmts_expr2()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -339,7 +353,7 @@ void test_scan_stmts_expr2()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx * 4\n", &sns, &lc, &is, &wt);
+	scan_setup(&al, "i + 1\nx * 4\n", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -393,7 +407,7 @@ void test_scan_stmts_expr2()
 	assert_ok(r, "scan_get_token9");
 	assert_true(!got_token, "no token 9");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_stmts_assign()
@@ -401,7 +415,6 @@ void test_scan_stmts_assign()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -409,7 +422,7 @@ void test_scan_stmts_assign()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "i + 1\nx = 4", &sns, &lc, &is, &wt);
+	scan_setup(&al, "i + 1\nx = 4", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -454,7 +467,7 @@ void test_scan_stmts_assign()
 	assert_ok(r, "scan_get_token7");
 	assert_true(!got_token, "no token 7");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_function()
@@ -462,7 +475,6 @@ void test_scan_function()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -470,7 +482,7 @@ void test_scan_function()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "function foo () \n end", &sns, &lc, &is, &wt);
+	scan_setup(&al, "function foo () \n end", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -507,7 +519,7 @@ void test_scan_function()
 	assert_ok(r, "get token 6");
 	assert_true(!got_token, "no token 6");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_comma()
@@ -515,7 +527,6 @@ void test_scan_comma()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -523,7 +534,7 @@ void test_scan_comma()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, ",", &sns, &lc, &is, &wt);
+	scan_setup(&al, ",", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token");
@@ -534,7 +545,7 @@ void test_scan_comma()
 	assert_ok(r, "get token");
 	assert_true(!got_token, "got token");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_semicolon()
@@ -542,7 +553,6 @@ void test_scan_semicolon()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -550,7 +560,7 @@ void test_scan_semicolon()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, ";", &sns, &lc, &is, &wt);
+	scan_setup(&al, ";", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token");
@@ -561,14 +571,13 @@ void test_scan_semicolon()
 	assert_ok(r, "get token");
 	assert_true(!got_token, "got token");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_if() {
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -576,7 +585,7 @@ void test_scan_if() {
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "if elseif else", &sns, &lc, &is, &wt);
+	scan_setup(&al, "if elseif else", &sns, &lc, &wt);
 	
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token");
@@ -597,14 +606,13 @@ void test_scan_if() {
 	assert_ok(r, "get token");
 	assert_true(!got_token, "no token");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_compound_operators() {
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -612,7 +620,7 @@ void test_scan_compound_operators() {
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "== != <= >= && || ::", &sns, &lc, &is, &wt);
+	scan_setup(&al, "== != <= >= && || ::", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -649,14 +657,13 @@ void test_scan_compound_operators() {
 	assert_true(got_token, "got token 6");
 	expect_int_equal(t->type, token_double_colon, "double colon");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_compound_operators2() {
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -664,7 +671,7 @@ void test_scan_compound_operators2() {
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "= ! < > & | :", &sns, &lc, &is, &wt);
+	scan_setup(&al, "= ! < > & | :", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -701,7 +708,7 @@ void test_scan_compound_operators2() {
 	assert_true(got_token, "got token 6");
 	expect_int_equal(t->type, token_colon, "colon");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_for_range()
@@ -709,7 +716,6 @@ void test_scan_for_range()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -717,7 +723,7 @@ void test_scan_for_range()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "for i = 0:10 1 end", &sns, &lc, &is, &wt);
+	scan_setup(&al, "for i = 0:10 1 end", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -762,7 +768,7 @@ void test_scan_for_range()
 	assert_true(got_token, "got token 7");
 	expect_int_equal(t->type, token_end, "end 7");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_for_iteration()
@@ -770,7 +776,6 @@ void test_scan_for_iteration()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -778,7 +783,7 @@ void test_scan_for_iteration()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "for x in list 1 end", &sns, &lc, &is, &wt);
+	scan_setup(&al, "for x in list 1 end", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token 0");
@@ -813,7 +818,7 @@ void test_scan_for_iteration()
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_end, "end 5");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_error_char()
@@ -821,7 +826,6 @@ void test_scan_error_char()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -829,13 +833,13 @@ void test_scan_error_char()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "$", &sns, &lc, &is, &wt);
+	scan_setup(&al, "$", &sns, &lc, &wt);
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_true(r == result_error, "get token");
 	assert_true(!got_token, "got token");
 	expect_error_message("1, 1: Unrecognized character: $");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_square_brackets()
@@ -843,7 +847,6 @@ void test_scan_square_brackets()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -851,7 +854,7 @@ void test_scan_square_brackets()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "[]", &sns, &lc, &is, &wt);
+	scan_setup(&al, "[]", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan 0");
@@ -863,7 +866,7 @@ void test_scan_square_brackets()
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_right_square_bracket, "right-square-bracket 1");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_string()
@@ -871,7 +874,6 @@ void test_scan_string()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -879,14 +881,14 @@ void test_scan_string()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "\"hello\"", &sns, &lc, &is, &wt);
+	scan_setup(&al, "\"hello\"", &sns, &lc, &wt);
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_string, "string 0");
 	expect_str(&t->value, "hello", "hello 0");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_string2()
@@ -894,7 +896,6 @@ void test_scan_string2()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -902,7 +903,7 @@ void test_scan_string2()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "x = \"\\\\hello\n\r\"", &sns, &lc, &is, &wt);
+	scan_setup(&al, "x = \"\\\\hello\n\r\"", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan 0");
@@ -921,7 +922,7 @@ void test_scan_string2()
 	expect_int_equal(t->type, token_string, "string 2");
 	expect_str(&t->value, "\\hello\n\r", "hello 2");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_string_escape_error()
@@ -929,7 +930,6 @@ void test_scan_string_escape_error()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -937,13 +937,13 @@ void test_scan_string_escape_error()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "\"\\x\"", &sns, &lc, &is, &wt);
+	scan_setup(&al, "\"\\x\"", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_true(r == result_error, "error");
 	expect_error_message("1, 3: Unrecognized escape sequence: x");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_line_col()
@@ -951,7 +951,6 @@ void test_scan_line_col()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -959,7 +958,7 @@ void test_scan_line_col()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "10 + 20\n30 + 40", &sns, &lc, &is, &wt);
+	scan_setup(&al, "10 + 20\n30 + 40", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok 10");
@@ -1018,7 +1017,7 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 2, "line 40");
 	expect_int_equal(t->col, 6, "col 40");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_number_whole()
@@ -1026,7 +1025,6 @@ void test_scan_number_whole()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -1034,7 +1032,7 @@ void test_scan_number_whole()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500", &sns, &lc, &is, &wt);
+	scan_setup(&al, "500", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1045,7 +1043,7 @@ void test_scan_number_whole()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_number_fraction()
@@ -1053,7 +1051,6 @@ void test_scan_number_fraction()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -1061,7 +1058,7 @@ void test_scan_number_fraction()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.", &sns, &lc, &is, &wt);
+	scan_setup(&al, "500.", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1072,7 +1069,7 @@ void test_scan_number_fraction()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_number_fraction2()
@@ -1080,7 +1077,6 @@ void test_scan_number_fraction2()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -1088,7 +1084,7 @@ void test_scan_number_fraction2()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123", &sns, &lc, &is, &wt);
+	scan_setup(&al, "500.123", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1099,7 +1095,7 @@ void test_scan_number_fraction2()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_number_exponent()
@@ -1107,7 +1103,6 @@ void test_scan_number_exponent()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -1115,7 +1110,7 @@ void test_scan_number_exponent()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e2", &sns, &lc, &is, &wt);
+	scan_setup(&al, "500.123e2", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1126,7 +1121,7 @@ void test_scan_number_exponent()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_number_exponent2()
@@ -1134,7 +1129,6 @@ void test_scan_number_exponent2()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -1142,7 +1136,7 @@ void test_scan_number_exponent2()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e-2", &sns, &lc, &is, &wt);
+	scan_setup(&al, "500.123e-2", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1153,7 +1147,7 @@ void test_scan_number_exponent2()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_number_exponent3()
@@ -1161,7 +1155,6 @@ void test_scan_number_exponent3()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -1169,7 +1162,7 @@ void test_scan_number_exponent3()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e+2", &sns, &lc, &is, &wt);
+	scan_setup(&al, "500.123e+2", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1180,7 +1173,7 @@ void test_scan_number_exponent3()
 	expect_int_equal(t->line, 1, "line");
 	expect_int_equal(t->col, 1, "col");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_number_exponent4()
@@ -1188,7 +1181,6 @@ void test_scan_number_exponent4()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -1196,7 +1188,7 @@ void test_scan_number_exponent4()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e + 1", &sns, &lc, &is, &wt);
+	scan_setup(&al, "500.123e + 1", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1233,7 +1225,7 @@ void test_scan_number_exponent4()
 	expect_int_equal(t->line, 1, "line");
 	expect_int_equal(t->col, 12, "col");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan_number_exponent5()
@@ -1241,7 +1233,6 @@ void test_scan_number_exponent5()
 	test_name(__func__);
 
 	struct allocator al;
-	struct input_state is;
 	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
@@ -1249,7 +1240,7 @@ void test_scan_number_exponent5()
 	struct token* t;
 	int got_token;
 
-	scan_setup(&al, "500.123e", &sns, &lc, &is, &wt);
+	scan_setup(&al, "500.123e", &sns, &lc, &wt);
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan ok");
@@ -1269,11 +1260,12 @@ void test_scan_number_exponent5()
 	expect_int_equal(t->line, 1, "line");
 	expect_int_equal(t->col, 8, "col");
 
-	scan_teardown(&al, &is);
+	scan_teardown(&al, &sns);
 }
 
 void test_scan()
 {
+	test_scan_blank();
 	test_scan_assign();
 	test_scan_num();
 	test_scan_addition();

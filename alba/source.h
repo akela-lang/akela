@@ -7,6 +7,6 @@
 #include "input.h"
 #include "token.h"
 
-enum result set_source_error(struct token* t, struct input_state* is, const char* fmt, ...);
+enum result set_source_error(struct token* t, struct lookahead_char* lc, const char* fmt, ...);
 
 #endif
