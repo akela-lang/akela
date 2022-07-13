@@ -4,6 +4,18 @@
 #include "alba/buffer.h"
 #include "alba/uconv.h"
 
+#define TEST_NAME_SIZE 100
+
+struct test_run {
+	char test_case_name[TEST_NAME_SIZE];
+	int test_case_count;
+	int test_case_error_count;
+	int test_case_has_test;
+	int test_case_has_error;
+	int check_count;
+	int check_error_count;
+};
+
 void assert_int_equal(int a, int b, char* message);
 void assert_true(int value, char* message);
 void assert_ptr(void* p, char* message);
