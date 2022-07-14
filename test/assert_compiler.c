@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "assert.h"
 #include "alba/source.h"
 #include "alba/uconv.h"
@@ -28,32 +29,39 @@ void expect_utf32_char(UChar32 a, UChar32 b, char* message)
 	printf("(%d:%c) = (%d:%c) utf32 error: %s\n", a, a, b, b, message);
 }
 
-void expect_compile_error_message(struct compile_error_list* el, char* s, size_t line, size_t col, size_t byte_pos)
+struct compile_error* assert_compile_error(struct compile_error_list* el, char* s)
 {
-	bool found = false;
-	bool has_error = false;
 	test_called();
 	for (struct compile_error* p = el->head; p; p = p->next) {
 		if (strcmp(p->message, s) == 0) {
-			found = true;
-			if (p->line != line) {
-				set_error("(%uv) = (%uv) line error", p->line, line);
-				has_error = true;
-			} else if (p->col != col) {
-				set_error("(%uv) = (%uv) col error", p->col, col);
-				has_error = true;
-			} else if (p->byte_pos != byte_pos) {
-				set_error("(%uv) = (%uv) col error", p->byte_pos, byte_pos);
-				has_error = true;
-			}
-			break;
+			return p;
 		}
 	}
-	if (found && !has_error) return;
+
 	error_triggered();
-	if (has_error) {
-		printf("%s\n", error_message);
-	} else if (!found) {
-		printf("(%s): no matching compile error message\n", s);
+	printf("(%s): no matching compile error message\n", s);
+	panic();
+	return NULL;
+}
+
+void expect_compile_error_fields(struct compile_error* e, size_t line, size_t col, size_t byte_pos)
+{
+	bool has_error = 0;
+	test_called();
+
+	if (e->line != line) {
+		set_error("(%uv) = (%uv) line error", e->line, line);
+		has_error = true;
+	} else if (e->col != col) {
+		set_error("(%uv) = (%uv) col error", e->col, col);
+		has_error = true;
+	} else if (e->byte_pos != byte_pos) {
+		set_error("(%uv) = (%uv) col error", e->byte_pos, byte_pos);
+		has_error = true;
 	}
+
+	if (!has_error) return;
+
+	error_triggered();
+	printf("%s\n", error_message);
 }

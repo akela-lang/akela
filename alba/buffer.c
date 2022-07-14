@@ -70,6 +70,18 @@ enum result buffer_copy(struct allocator* al, struct buffer* a, struct buffer* b
     return result_ok;
 }
 
+enum result buffer_copy_str(struct allocator* al, struct buffer* a, char* b)
+{
+    enum result r;
+    while (*b) {
+        r = buffer_add_char(al, a, *b);
+        if (r == result_error) return r;
+        b++;
+    }
+
+    return result_ok;
+}
+
 enum result buffer2array(struct allocator* al, struct buffer* bf, char** a)
 {
     enum result r = allocator_malloc(al, a, bf->size + 1);

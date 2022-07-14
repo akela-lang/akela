@@ -20,6 +20,7 @@ enum result buffer_add_char(struct allocator* al, struct buffer* bf, char c);
 void buffer_reset(struct buffer* bf);
 void buffer_clear(struct buffer* bf);
 enum result buffer_copy(struct allocator* al, struct buffer* a, struct buffer* b);
+enum result buffer_copy_str(struct allocator* al, struct buffer* a, char* b);
 enum result buffer2array(struct allocator* al, struct buffer* bf, char** array);
 enum result array2buffer(struct allocator* al, char* a, struct buffer* bf);
 enum result next_char(struct allocator* al, struct buffer* bf, size_t* pos, struct buffer* bf2);

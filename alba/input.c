@@ -13,6 +13,11 @@ int file_getchar(FILE* fp)
 	return getc(fp);
 }
 
+int file_seek(FILE* fp, size_t pos)
+{
+	return fseek(fp, pos, SEEK_SET);
+}
+
 void string_data_init(struct buffer* bf, struct string_data* sd)
 {
 	sd->bf = bf;
@@ -28,3 +33,9 @@ int string_getchar(struct string_data* sd)
 	return EOF;
 }
 
+int string_seek(struct string_data* sd, size_t pos)
+{
+	if (pos >= sd->bf->size) return -1;
+	sd->pos = pos;
+	return 0;
+}

@@ -105,3 +105,27 @@ enum result set_source_error(struct compile_error_list* el, struct token* t, str
 
 	return result_ok;
 }
+
+enum result format_error(struct allocator* al, struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf)
+{
+	enum result r = result_ok;
+
+	r = buffer_copy_str(al, bf, e->message);
+	if (r == result_error) return r;
+	
+	r = buffer_add_char(al, bf, '\n');
+	if (r == result_error) return r;
+
+	int err = seek(d, e->byte_pos);
+	if (err) return set_error("seek error: seek %zu", e->byte_pos);
+
+	int c;
+	while (c = f(d)) {
+		if (c == EOF) break;
+		if (c == '\n') break;
+		r = buffer_add_char(al, bf, c);
+		if (r == result_error) return r;
+	}
+
+	return r;
+}

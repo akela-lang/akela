@@ -860,7 +860,8 @@ void test_scan_error_char()
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(!got_token, "got token");
-	expect_compile_error_message(&el, "Unrecognized character: $", 1, 1, 0);
+	struct compile_error* e = assert_compile_error(&el, "Unrecognized character: $");
+	expect_compile_error_fields(e, 1, 1, 0);
 
 	scan_teardown(&al, &sns);
 }
@@ -968,7 +969,8 @@ void test_scan_string_escape_error()
 
 	r = scan_get_token(&al, &sns, &got_token, &t);
 	assert_ok(r, "scan");
-	expect_compile_error_message(&el, "Unrecognized escape sequence: x", 1, 3, 2);
+	struct compile_error* e = assert_compile_error(&el, "Unrecognized escape sequence: x");
+	expect_compile_error_fields(e, 1, 3, 2);
 
 	scan_teardown(&al, &sns);
 }

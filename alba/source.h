@@ -28,5 +28,6 @@ void compile_error_list_init(struct compile_error_list* el);
 void compile_error_list_add(struct compile_error_list* el, struct compile_error* e);
 void compile_error_list_destroy(struct compile_error_list* el);
 enum result set_source_error(struct compile_error_list* el, struct token* t, struct lookahead_char* lc, const char* fmt, ...);
+enum result format_error(struct allocator* al, struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf);
 
 #endif

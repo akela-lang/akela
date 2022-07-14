@@ -1,4 +1,5 @@
 #include "assert.h"
+#include "assert_compiler.h"
 #include "alba/allocator.h"
 #include "alba/parse_tools.h"
 #include "alba/dag.h"
@@ -1328,7 +1329,14 @@ void test_parse_line_col()
 
 	r = parse_setup(&al, "* 2", &ps, &root);
 	assert_ok(r, "parse");
-	expect_compile_error_message(ps.el, "expected term before operator", 1, 1, 0);
+	struct compile_error* e = assert_compile_error(ps.el, "expected term before operator");
+	expect_compile_error_fields(e, 1, 1, 0);
+
+	struct buffer bf;
+	buffer_init(&bf);
+	r = format_error(&al, e, string_getchar, string_seek, ps.sns->lc->d, &bf);
+	assert_ok(r, "format_error");
+	expect_str(&bf, "expected term before operator\n* 2", "format_error");
 
 	parse_teardown(&al, &ps);
 }
@@ -1344,7 +1352,14 @@ void test_parse_source()
 
 	r = parse_setup(&al, "1\n* 2", &ps, &root);
 	assert_ok(r, "parse");
-	expect_compile_error_message(ps.el, "expected term before operator", 2, 1, 2);
+	struct compile_error* e = assert_compile_error(ps.el, "expected term before operator");
+	expect_compile_error_fields(e, 2, 1, 2);
+
+	struct buffer bf;
+	buffer_init(&bf);
+	r = format_error(&al, e, string_getchar, string_seek, ps.sns->lc->d, &bf);
+	assert_ok(r, "format_error");
+	expect_str(&bf, "expected term before operator\n* 2", "format_error");
 
 	parse_teardown(&al, &ps);
 }

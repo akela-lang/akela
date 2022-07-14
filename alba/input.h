@@ -2,10 +2,12 @@
 #define _INPUT_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include "buffer.h"
 
 typedef int (*input_getchar)(void*);
+typedef int (*input_seek)(void*, size_t);
 typedef void* input_data;
 
 struct string_data {
@@ -14,11 +16,10 @@ struct string_data {
 };
 
 int file_getchar(FILE* fp);
+int file_seek(FILE* fp, size_t pos);
+
 void string_data_init(struct buffer* bf, struct string_data* sd);
 int string_getchar(struct string_data* sd);
-void input_state_init(input_getchar f, input_data d, UConverter* conv, struct input_state* is);
-void input_state_push_uchar(struct input_state* is);
-void input_state_pop_uchar(struct input_state* is);
-enum result get_uchar(struct allocator* al, struct input_state* is);
+int string_seek(struct string_data* sd, size_t pos);
 
 #endif

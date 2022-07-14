@@ -15,6 +15,10 @@ struct test_run {
 	int check_error_count;
 };
 
+void panic();
+void test_called();
+void error_triggered();
+
 void assert_int_equal(int a, int b, char* message);
 void assert_true(int value, char* message);
 void assert_ptr(void* p, char* message);
