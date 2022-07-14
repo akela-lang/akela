@@ -5,8 +5,6 @@
 #include <stdbool.h>
 #include "alba/result.h"
 #include "alba/buffer.h"
-#include "alba/uconv.h"
-#include "alba/source.h"
 #include "assert.h"
 
 struct test_run tr;
