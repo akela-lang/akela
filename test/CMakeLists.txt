@@ -21,6 +21,7 @@ set(test_files
     ${alba_dir}/lookahead_translator.c
     ${alba_dir}/lookahead_char.c
     assert.c
+    assert_compiler.c
     "test.c"
     test_parse.c
     test_parse_expr.c

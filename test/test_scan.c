@@ -1,4 +1,5 @@
 #include "assert.h"
+#include "assert_compiler.h"
 #include "alba/token.h"
 #include "alba/scan.h"
 #include "alba/allocator.h"
