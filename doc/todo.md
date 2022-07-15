@@ -2,8 +2,6 @@
 * memory annotations for alba
   * alba.c
   * alba.h
-  * os_win.c
-  * os_win.h
   * parse.c
   * parse.h
   * parse_expr.c
