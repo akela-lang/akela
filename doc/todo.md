@@ -1,7 +1,5 @@
 # Todo
 * memory annotations for alba
-  * scan.c
-  * scan.h
   * parse_tools.c
   * parse_tools.h
   * types.c
@@ -41,5 +39,6 @@
   * test_uconv.c
   * test_uconv.h
 * move utf8 macros and checks to zinc
+* use direct comparison of utf32 and char
 * link to LLVM
 * generate LLVM IR

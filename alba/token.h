@@ -152,6 +152,9 @@ void token_reset(struct token* t);
 /* static-output */
 void token_list_init(struct token_list* tl);
 
+/* dynamic-destroy t{value{}} */
+void token_destroy(struct token* t);
+
 /* static-output */
 struct token* get_token(struct token_list* tl, size_t pos);
 

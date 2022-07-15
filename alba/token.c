@@ -18,6 +18,13 @@ void token_init(struct token* t)
 }
 
 /* dynamic-destroy t{value{}} */
+void token_destroy(struct token* t)
+{
+    /* destroy t{value{}} */
+    buffer_destroy(&t->value);
+}
+
+/* dynamic-destroy t{value{}} */
 void token_reset(struct token* t)
 {
     t->type = token_none;

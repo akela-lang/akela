@@ -53,8 +53,12 @@ enum state_enum {
     state_compound_operator
 };
 
+/* static-output */
+/* initialize-output sns{} */
 void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt, struct compile_error_list* el);
+
+/* dynamic-output sns{wt{} el{}} t t{} */
+/* dynamic-temp: tf tf{} */
 enum result scan_get_token(struct scan_state* sns, int* got_token, struct token** t);
-void set_char_values(struct char_value* cv);
 
 #endif
