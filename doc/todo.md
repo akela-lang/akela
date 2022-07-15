@@ -2,8 +2,6 @@
 * memory annotations for alba
   * alba.c
   * alba.h
-  * lookahead_translator.c
-  * lookahead_translator.h
   * os_win.c
   * os_win.h
   * parse.c
