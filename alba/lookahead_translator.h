@@ -20,14 +20,28 @@ struct circular_uchar32_buffer {
 	size_t size;
 };
 
+/* dynamic-output cbyte{} */
 enum result circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_size);
+
+/* dynamic-destroy cbyte{} */
 void circular_byte_buffer_destroy(struct circular_byte_buffer* cbyte);
+
+/* static-output */
 enum result circular_byte_buffer_add(struct circular_byte_buffer* cbyte, char c);
+
+/* static-output */
 char circular_byte_buffer_pop(struct circular_byte_buffer* cbyte);
 
+/* dynamic-output: cc32{} */
 enum result circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t buf_size);
+
+/* dynamic-destroy cc32{} */
 void circular_uchar32_buffer_destroy(struct circular_uchar32_buffer* cc32);
+
+/* static-output */
 enum result circular_uchar32_buffer_add(struct circular_uchar32_buffer* cc32, UChar32 c);
+
+/* static-output */
 UChar32 circular_uchar32_buffer_pop(struct circular_uchar32_buffer* cc32);
 
 #endif
