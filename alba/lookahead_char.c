@@ -9,7 +9,8 @@
 #include "zinc/result.h"
 
 /* static-output */
-/* resource lc{conv}*/
+/* resource-input conv */
+/* resource-output lc{conv}*/
 void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv)
 {
 	lc->lb_8 = &lc->lookahead[0];
@@ -86,7 +87,7 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 }
 
 /* static-output */
-/* resource lc{conv} */
+/* resource-use lc{conv} */
 enum result lookahead_char_translate(struct lookahead_char* lc)
 {
 	int32_t len;
@@ -97,7 +98,7 @@ enum result lookahead_char_translate(struct lookahead_char* lc)
 	lc->tr_out_size = 0;
 	lc->tr_out_pos = 0;
 
-	/* resource lc{conv} */
+	/* use lc{conv} */
 	len = ucnv_toUChars(lc->conv, lc->tr_out, TR_OUT_SIZE, lc->tr_in, lc->tr_in_size, &err);
 	if (U_FAILURE(err)) {
 		return set_error("utf error: %d", err);
@@ -176,7 +177,7 @@ bool lookahead_char_need_loading(struct lookahead_char* lc)
 }
 
 /* static-output */
-/* resource lc{conv} */
+/* resource-use lc{conv} */
 enum result lookahead_char_prep(struct lookahead_char* lc)
 {
 	enum result r;

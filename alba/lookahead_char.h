@@ -46,14 +46,15 @@ struct lookahead_char {
 };
 
 /* static-output */
-/* resource lc{conv}*/
+/* resource-input conv */
+/* resource-output lc{conv}*/
 void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv);
 
 /* static-output */
 enum result lookahead_char_get_input(struct lookahead_char* lc);
 
 /* static-output */
-/* resource lc{conv} */
+/* resource-use lc{conv} */
 enum result lookahead_char_translate(struct lookahead_char* lc);
 
 /* static-output */
@@ -81,7 +82,7 @@ bool lookahead_char_need_preping(struct lookahead_char* lc);
 bool lookahead_char_need_loading(struct lookahead_char* lc);
 
 /* static-output */
-/* resource lc{conv} */
+/* resource-use lc{conv} */
 enum result lookahead_char_prep(struct lookahead_char* lc);
 
 /* static-output */
