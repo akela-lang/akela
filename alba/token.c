@@ -33,6 +33,7 @@ void token_reset(struct token* t)
 }
 
 /* static-output */
+/* initialize-output tl{} */
 void token_list_init(struct token_list* tl)
 {
     tl->head = NULL;
@@ -104,6 +105,7 @@ enum result token_list_make(struct token_list** tl)
 
 /* Append the new token to the end of the token list */
 /* static-output */
+/* dynamic-transfer t t{} -> tl{} */
 enum result token_list_add(struct token_list* tl, struct token* t)
 {
     /* update previous */

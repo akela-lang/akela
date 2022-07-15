@@ -171,6 +171,7 @@ int token_list_count(struct token_list* tl);
 enum result token_list_make(struct token_list** tl);
 
 /* static-output */
+/* dynamic-transfer t t{} -> tl{} */
 enum result token_list_add(struct token_list* tl, struct token* t);
 
 /* partition-output tl{} -> return */
