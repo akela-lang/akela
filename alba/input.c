@@ -9,12 +9,14 @@
 #include "uconv.h"
 
 /* static-output */
+/* resource fp */
 int file_getchar(FILE* fp)
 {
 	return getc(fp);
 }
 
 /* static-output */
+/* resource fp */
 int file_seek(FILE* fp, size_t pos)
 {
 	return fseek(fp, pos, SEEK_SET);
