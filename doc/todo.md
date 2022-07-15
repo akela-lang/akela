@@ -16,8 +16,6 @@
   * scan.h
   * types.c
   * types.h
-  * uconv.c
-  * uconv.h
 * memory annotations for test
   * assert_compiler.c
   * assert_compiler.h
@@ -42,5 +40,6 @@
   * test_token.h
   * test_uconv.c
   * test_uconv.h
+* move utf8 macros and checks to zinc
 * link to LLVM
 * generate LLVM IR

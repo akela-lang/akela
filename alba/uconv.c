@@ -5,6 +5,7 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 
+/* static-output */
 enum result check_num_bytes(unsigned char c, int* count)
 {
     /* 1 byte: 0xxx xxxx */
@@ -35,6 +36,7 @@ enum result check_num_bytes(unsigned char c, int* count)
     return set_error("Not utf8: could not detect number bytes in character");
 }
 
+/* static-output */
 enum result check_extra_byte(char c)
 {
     /* 10xx xxxx */
@@ -45,27 +47,39 @@ enum result check_extra_byte(char c)
     return set_error("Not utf8: extra byte in character not encoded as utf8");
 }
 
+/* dynamic-output dest */
+/* resource-input conv */
+/* resource-use conv */
 enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len)
 {
+    /* allocate dest */
     enum result r = malloc_safe(dest, sizeof(UChar) * dest_size);
     if (r == result_error) {
         return r;
     }
+
+    /* use conv */
     UErrorCode err;
     *len = ucnv_toUChars(conv, *dest, dest_size, src, src_size, &err);
     if (U_FAILURE(err)) {
         return set_error("utf error");
     }
+
     return result_ok;
 }
 
+/* dynamic-output dest */
+/* resource-input conv */
+/* resource-use conv */
 enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len)
 {
+    /* allocate dest */
     enum result r = malloc_safe(dest, dest_size + 1);
     if (r == result_error) {
         return r;
     }
     UErrorCode err;
+    /* use conv */
     *len = ucnv_fromUChars(conv, *dest, dest_size, src, src_size, &err);
     if (U_FAILURE(err)) {
         return set_error("utf error");
@@ -74,6 +88,8 @@ enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** des
     return result_ok;
 }
 
+/* static-output */
+/* resource-output conv */
 enum result conv_open(UConverter** conv)
 {
     UErrorCode err;
@@ -84,6 +100,8 @@ enum result conv_open(UConverter** conv)
     return result_ok;
 }
 
+/* static-output */
+/* resource-destroy conv */
 void conv_close(UConverter* conv)
 {
     if (conv) {

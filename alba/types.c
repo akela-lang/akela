@@ -6,15 +6,16 @@
 #include "dag.h"
 #include "source.h"
 
-/*
-* dseq -> declaration dseq'
-*	   | e
-*/
+/**
+ * @brief dseq -> declaration dseq' | e
+ * @param dynamic-output root
+ */
 enum result dseq(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 
+	/* allocate n */
 	r = dag_create_node(&n);
 	if (r == result_error) {
 		goto function_error;
@@ -50,10 +51,10 @@ function_error:
 	return r;
 }
 
-/*
-* dseq' -> , declaration dseq'
-*		| e
-*/
+/**
+ * @brief dseq' -> , declaration dseq' | e
+ * @param dynamic-output root
+ */
 enum result dseq_prime(struct parse_state* ps, struct dag_node** root)
 {
 	struct dag_node* n = NULL;
@@ -120,9 +121,10 @@ int is_valid_type(struct buffer* b)
 	return 0;
 }
 
-/*
-* declaration -> id :: type | id
-*/
+/**
+ * @brief declaration -> id :: type | id
+ * @param dynamic-output ps{} root
+ */
 enum result declaration(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;

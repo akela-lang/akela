@@ -14,11 +14,28 @@
 
 #define IS_EXTRA_BYTE(c) (((c) & 0xc0) == 0x80)
 
+/* static-output */
 enum result check_num_bytes(unsigned char c, int* count);
+
+/* static-output */
 enum result check_extra_byte(char c);
+
+/* dynamic-output dest */
+/* resource-input conv */
+/* resource-use conv */
 enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len);
+
+/* dynamic-output dest */
+/* resource-input conv */
+/* resource-use conv */
 enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len);
+
+/* static-output */
+/* resource-output conv */
 enum result conv_open(UConverter** conv);
+
+/* static-output */
+/* resource-destroy conv */
 void conv_close(UConverter* conv);
 
 #endif
