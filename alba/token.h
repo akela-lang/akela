@@ -48,6 +48,7 @@ enum token_enum {
 };
 
 # ifdef _TOKEN_C
+/* static-output */
 enum result token_name_init(char** token_name)
 {
     for (int i = 0; i < token_count; i++) {
@@ -102,6 +103,11 @@ enum result token_name_init(char** token_name)
     }
     return result_ok;
 }
+# else
+
+/* static-output */
+enum result token_name_init(char** token_name);
+
 # endif
 
 struct token {
@@ -136,28 +142,64 @@ struct word_table {
     struct word_list* buckets;
 };
 
+/* static-output */
+/* initialize-output t{} t{value{}} */
 void token_init(struct token* t);
-enum result token_name_init(char** token_name);
+
+/* dynamic-destroy t{value{}} */
 void token_reset(struct token* t);
+
+/* static-output */
 void token_list_init(struct token_list* tl);
+
+/* static-output */
 struct token* get_token(struct token_list* tl, size_t pos);
+
+/* static-output */
 int token_find_first(struct token_list* tl, enum token_enum type);
+
+/* static-output */
 int token_find_last(struct token_list* tl, enum token_enum type);
+
+/* static-output */
 int token_list_count(struct token_list* tl);
-enum result token_list_make(struct allocator* al, struct token_list** tl);
+
+/* dynamic-output tl */
+enum result token_list_make(struct token_list** tl);
+
+/* static-output */
 enum result token_list_add(struct token_list* tl, struct token* t);
-void token_list_reset(struct token_list* tl);
-enum result token_list_print(struct allocator* al, struct token_list* tl);
-enum result print_token(struct allocator* al, struct token* t);
+
+/* partition-output tl{} -> return */
 struct token* token_list_pop(struct token_list* tl);
+
+/* initialize-output tl{} */
+void token_list_reset(struct token_list* tl);
+
+/* static-output */
+enum result token_list_print(struct token_list* tl);
+
+/* static-output */
+enum result print_token(struct allocator* al, struct token* t);
+
+/* static-output */
 unsigned int hash_buffer(struct buffer* bf, unsigned int size);
+
+/* static-output */
+/* initialize-output w{} w{value{}} */
 void word_init(struct word* w);
+
+/* static-output */
+/* initialize-output wl{} */
 void word_list_init(struct word_list* wl);
 
-/* dynamic-output wt */
+/* dynamic-output wt{} */
 enum result word_table_init(struct word_table* wt, unsigned int size);
 
+/* dynamic-output wt{} */
 enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type);
+
+/* static-output */
 struct word* word_table_get(struct word_table* wt, struct buffer* bf);
 
 #endif

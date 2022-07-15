@@ -14,8 +14,6 @@
   * parse_tools.h
   * scan.c
   * scan.h
-  * token.c
-  * token.h
   * types.c
   * types.h
   * uconv.c
