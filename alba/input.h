@@ -15,11 +15,19 @@ struct string_data {
 	int pos;
 };
 
+/* static-output */
 int file_getchar(FILE* fp);
+
+/* static-output */
 int file_seek(FILE* fp, size_t pos);
 
+/*  static-output */
 void string_data_init(struct buffer* bf, struct string_data* sd);
+
+/* static-output */
 int string_getchar(struct string_data* sd);
+
+/* static-output */
 int string_seek(struct string_data* sd, size_t pos);
 
 #endif
