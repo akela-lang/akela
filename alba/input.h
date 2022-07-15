@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "buffer.h"
+#include "zinc/buffer.h"
 
 typedef int (*input_getchar)(void*);
 typedef int (*input_seek)(void*, size_t);

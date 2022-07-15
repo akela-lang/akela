@@ -1,5 +1,5 @@
-#include "buffer.h"
-#include "result.h"
+#include "zinc/buffer.h"
+#include "zinc/result.h"
 #include "token.h"
 #include "scan.h"
 #include "parse_tools.h"
@@ -10,12 +10,12 @@
 * dseq -> declaration dseq'
 *	   | e
 */
-enum result dseq(struct allocator* al, struct parse_state* ps, struct dag_node** root)
+enum result dseq(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 
-	r = dag_create_node(al, &n);
+	r = dag_create_node(&n);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -23,7 +23,7 @@ enum result dseq(struct allocator* al, struct parse_state* ps, struct dag_node**
 	n->type = dag_type_dseq;
 
 	struct dag_node* a = NULL;
-	r = declaration(al, ps, &a);
+	r = declaration(ps, &a);
 
 	if (!a) {
 		goto function_success;
@@ -32,7 +32,7 @@ enum result dseq(struct allocator* al, struct parse_state* ps, struct dag_node**
 	dag_add_child(n, a);
 
 	struct dag_node* b = NULL;
-	r = dseq_prime(al, ps, &b);
+	r = dseq_prime(ps, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -54,14 +54,14 @@ function_error:
 * dseq' -> , declaration dseq'
 *		| e
 */
-enum result dseq_prime(struct allocator* al, struct parse_state* ps, struct dag_node** root)
+enum result dseq_prime(struct parse_state* ps, struct dag_node** root)
 {
 	struct dag_node* n = NULL;
 	enum result r = result_ok;
 	int num;
 	struct token* t;
 
-	r = get_lookahead(al, ps, 2, &num);
+	r = get_lookahead(ps, 2, &num);
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	if (!t0 || t0->type != token_comma)
@@ -69,19 +69,19 @@ enum result dseq_prime(struct allocator* al, struct parse_state* ps, struct dag_
 		goto function_success;
 	}
 
-	r = match(al, ps, token_comma, "expecting comma", &t);
+	r = match(ps, token_comma, "expecting comma", &t);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = dag_create_node(al, &n);
+	r = dag_create_node(&n);
 	if (r == result_error) {
 		goto function_error;
 	}
 	n->type = dag_type_dseq;
 
 	struct dag_node* a = NULL;
-	r = declaration(al, ps, &a);
+	r = declaration(ps, &a);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -92,7 +92,7 @@ enum result dseq_prime(struct allocator* al, struct parse_state* ps, struct dag_
 	dag_add_child(n, a);
 
 	struct dag_node* b = NULL;
-	r = dseq_prime(al, ps, &b);
+	r = dseq_prime(ps, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -123,14 +123,14 @@ int is_valid_type(struct buffer* b)
 /*
 * declaration -> id :: type | id
 */
-enum result declaration(struct allocator* al, struct parse_state* ps, struct dag_node** root)
+enum result declaration(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
 	struct token* t;
 
-	r = get_lookahead(al, ps, 3, &num);
+	r = get_lookahead(ps, 3, &num);
 	if (r == result_error) {
 		return r;
 	}
@@ -141,68 +141,68 @@ enum result declaration(struct allocator* al, struct parse_state* ps, struct dag
 
 	if (t0 && t0->type == token_id && t1 && t1->type == token_double_colon && t2 && t2->type == token_id) {
 		/* id::type */
-		r = match(al, ps, token_id, "expected id", &t);
+		r = match(ps, token_id, "expected id", &t);
 		if (r == result_error) {
 			return r;
 		}
 
-		r = match(al, ps, token_double_colon, "expected double colon", &t);
+		r = match(ps, token_double_colon, "expected double colon", &t);
 		if (r == result_error) {
 			return r;
 		}
 
-		r = match(al, ps, token_id, "expected type", &t);
+		r = match(ps, token_id, "expected type", &t);
 		if (r == result_error) {
 			return r;
 		}
 
 		if (!is_valid_type(&t2->value)) {
 			char* a;
-			r = buffer2array(al, &t2->value, &a);
+			r = buffer2array(&t2->value, &a);
 			return set_source_error(ps->el, t2, ps->sns->lc, "unknown type: %s", a);
 		}
 
-		r = dag_create_node(al, &n);
+		r = dag_create_node(&n);
 		if (r == result_error) {
 			return r;
 		}
 		n->type = dag_type_declaration;
 
 		struct dag_node* a = NULL;
-		r = dag_create_node(al, &a);
+		r = dag_create_node(&a);
 		if (r == result_error) {
 			return r;
 		}
 		a->type = dag_type_id;
-		buffer_copy(al, &t0->value, &a->value);
+		buffer_copy(&t0->value, &a->value);
 		dag_add_child(n, a);
 
 		struct dag_node* b = NULL;
-		dag_create_node(al, &b);
+		dag_create_node(&b);
 		b->type = dag_type_type;
-		buffer_copy(al, &t2->value, &b->value);
+		buffer_copy(&t2->value, &b->value);
 		dag_add_child(n, b);
 
 	} else if (t0 && t0->type == token_id) {
 		/* id */
-		r = match(al, ps, token_id, "expected id", &t);
+		r = match(ps, token_id, "expected id", &t);
 		if (r == result_error) {
 			return r;
 		}
 
-		r = dag_create_node(al, &n);
+		r = dag_create_node(&n);
 		if (r == result_error) {
 			return r;
 		}
 		n->type = dag_type_declaration;
 
 		struct dag_node* a = NULL;
-		r = dag_create_node(al, &a);
+		r = dag_create_node(&a);
 		if (r == result_error) {
 			return r;
 		}
 		a->type = dag_type_id;
-		buffer_copy(al, &t0->value, &a->value);
+		buffer_copy(&t0->value, &a->value);
 		dag_add_child(n, a);
 	}
 

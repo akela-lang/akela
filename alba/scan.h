@@ -2,7 +2,7 @@
 #define _SCAN_H
 
 #include <stdbool.h>
-#include "buffer.h"
+#include "zinc/buffer.h"
 #include "token.h"
 #include "lookahead_char.h"
 
@@ -54,7 +54,7 @@ enum state_enum {
 };
 
 void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt, struct compile_error_list* el);
-enum result scan_get_token(struct allocator* al, struct scan_state* sns, int* got_token, struct token** t);
+enum result scan_get_token(struct scan_state* sns, int* got_token, struct token** t);
 void set_char_values(struct char_value* cv);
 
 #endif

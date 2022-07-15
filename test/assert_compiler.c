@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
-#include "assert.h"
+#include "zinc/assert.h"
 #include "alba/source.h"
 #include "alba/uconv.h"
+#include "zinc/result.h"
 
 void expect_utf8_char(char* a, char* b, char* message)
 {

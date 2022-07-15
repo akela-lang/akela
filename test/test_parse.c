@@ -1,5 +1,6 @@
-#include "assert.h"
-#include "alba/buffer.h"
+#include "zinc/assert.h"
+#include "zinc/buffer.h"
+#include "zinc/memory.h"
 #include "alba/input.h"
 #include "alba/uconv.h"
 #include "alba/parse_tools.h"
@@ -7,21 +8,19 @@
 #include "alba/scan.h"
 #include "alba/source.h"
 
-enum result parse_setup(struct allocator* al, char* line, struct parse_state* ps, struct dag_node** root)
+enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 {
 	enum result r;
 
-	allocator_init(al);
-
 	struct buffer* bf;
-	r = allocator_malloc(al, &bf, sizeof(struct buffer));
+	r = malloc_safe(&bf, sizeof(struct buffer));
 	assert_ok(r, "allocator malloc string");
 	buffer_init(bf);
-	r = array2buffer(al, line, bf);
+	r = array2buffer(line, bf);
 	assert_ok(r, "ok");
 
 	struct string_data* sd;
-	r = allocator_malloc(al, &sd, sizeof(struct string_data));
+	r = malloc_safe(&sd, sizeof(struct string_data));
 	assert_ok(r, "allocator_malloc string_data");
 	string_data_init(bf, sd);
 
@@ -30,36 +29,35 @@ enum result parse_setup(struct allocator* al, char* line, struct parse_state* ps
 	assert_ok(r, "conv_open");
 
 	struct word_table* wt;
-	r = allocator_malloc(al, &wt, sizeof(struct word_table));
+	r = malloc_safe(&wt, sizeof(struct word_table));
 	assert_ok(r, "malloc word table");
-	r = word_table_init(al, wt, WORD_TABLE_SIZE);
+	r = word_table_init(wt, WORD_TABLE_SIZE);
 	assert_ok(r, "word table init");
 
 	struct lookahead_char* lc;
-	r = allocator_malloc(al, &lc, sizeof(struct lookahead_char));
+	r = malloc_safe(&lc, sizeof(struct lookahead_char));
 	assert_ok(r, "malloc lookahead_char");
 	lookahead_char_init(lc, string_getchar, sd, conv);
 
 	struct compile_error_list* el;
-	r = allocator_malloc(al, &el, sizeof(struct compile_error_list));
+	r = malloc_safe(&el, sizeof(struct compile_error_list));
 	assert_ok(r, "malloc compile_error_list");
 	compile_error_list_init(el);
 
 	struct scan_state* sns;
-	r = allocator_malloc(al, &sns, sizeof(struct scan_state));
+	r = malloc_safe(&sns, sizeof(struct scan_state));
 	assert_ok(r, "malloc scan state");
 	scan_state_init(sns, lc, wt, el);
 
 	parse_state_init(ps, sns, el);
 
-	r = parse(al, ps, root);
+	r = parse(ps, root);
 	return r;
 }
 
-void parse_teardown(struct allocator* al, struct parse_state* ps)
+void parse_teardown(struct parse_state* ps)
 {
 	conv_close(ps->sns->lc->conv);
-	allocator_destroy(al);
 }
 
 struct dag_node* check_stmts(struct dag_node* root, char* message)

@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include "token.h"
 #include "scan.h"
-#include "buffer.h"
+#include "zinc/buffer.h"
 #include "parse.h"
 #include "dag.h"
-#include "allocator.h"
 #include "input.h"
 #include "uconv.h"
 #include "source.h"
@@ -29,7 +28,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    struct allocator al;
     UConverter* conv;
     struct scan_state sns;
     struct lookahead_char lc;
@@ -37,19 +35,18 @@ int main(int argc, char** argv)
     struct compile_error_list el;
     struct parse_state ps;
 
-    allocator_init(&al);
     r = conv_open(&conv);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         return 1;
     }
-    word_table_init(&al, &wt, WORD_TABLE_SIZE);
+    word_table_init(&wt, WORD_TABLE_SIZE);
     lookahead_char_init(&lc, file_getchar, fp, conv);
     compile_error_list_init(&el);
     scan_state_init(&sns, &lc, &wt, &el);
     parse_state_init(&ps, &sns, &el);
 
-    r = parse(&al, &ps, &root);
+    r = parse(&ps, &root);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         return 1;
@@ -59,9 +56,8 @@ int main(int argc, char** argv)
 
     char* names[dag_type_count];
     dag_set_names(names);
-    dag_print(&al, root, names);
+    dag_print(root, names);
 
-    allocator_destroy(&al);
     conv_close(conv);
     printf("end\n");
 

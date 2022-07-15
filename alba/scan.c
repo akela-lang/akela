@@ -3,10 +3,11 @@
 #include <unicode/ustring.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "result.h"
+#include "zinc/result.h"
 #include "token.h"
 #include "scan.h"
-#include "buffer.h"
+#include "zinc/buffer.h"
+#include "zinc/memory.h"
 #include "input.h"
 #include "source.h"
 #include "uconv.h"
@@ -169,7 +170,7 @@ bool is_number_state(enum state_enum state)
     return state == state_number_whole || state == state_number_fraction || state == state_number_exponent_start || state == state_number_exponent;
 }
 
-enum result process_char_start(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_start(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     struct lookahead_char* lc = sns->lc;
     enum result r;
@@ -191,7 +192,7 @@ enum result process_char_start(struct allocator* al, struct scan_state* sns, enu
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            r = buffer_add_char(&t->value, lc->la0_8[i]);
             if (r == result_error) return r;
         }
     } else if (uc == cv.underscore) {
@@ -201,7 +202,7 @@ enum result process_char_start(struct allocator* al, struct scan_state* sns, enu
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            r = buffer_add_char(&t->value, lc->la0_8[i]);
             if (r == result_error) return r;
         }
     } else if (u_isdigit(uc)) {
@@ -211,7 +212,7 @@ enum result process_char_start(struct allocator* al, struct scan_state* sns, enu
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            r = buffer_add_char(&t->value, lc->la0_8[i]);
             if (r == result_error) return r;
         }
     } else if (uc == cv.double_quote) {
@@ -223,7 +224,7 @@ enum result process_char_start(struct allocator* al, struct scan_state* sns, enu
     } else if (compound_operator_start(uc, &cv)) {
         *state = state_compound_operator;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            r = buffer_add_char(&t->value, lc->la0_8[i]);
             if (r == result_error) return r;
         }
         t->line = lc->line;
@@ -310,7 +311,7 @@ enum result process_char_start(struct allocator* al, struct scan_state* sns, enu
     return result_ok;
 }
 
-enum result process_char_word(struct allocator *al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_word(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     struct lookahead_char* lc = sns->lc;
     struct word_table* wt = sns->wt;
@@ -327,17 +328,17 @@ enum result process_char_word(struct allocator *al, struct scan_state* sns, enum
     if (*state == state_id) {
         if (uc == cv.underscore) {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else if (u_isalpha(uc)) {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else if (u_isdigit(uc)) {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else {
@@ -345,7 +346,7 @@ enum result process_char_word(struct allocator *al, struct scan_state* sns, enum
             if (w) {
                 t->type = w->type;
             } else {
-                r = word_table_add(al, wt, &t->value, t->type);
+                r = word_table_add(wt, &t->value, t->type);
                 if (r == result_error) return r;
             }
             *state = state_start;
@@ -360,7 +361,7 @@ enum result process_char_word(struct allocator *al, struct scan_state* sns, enum
         } else if (u_isalpha(uc)) {
             *state = state_id;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else {
@@ -368,7 +369,7 @@ enum result process_char_word(struct allocator *al, struct scan_state* sns, enum
             if (w) {
                 t->type = w->type;
             } else {
-                r = word_table_add(al, wt, &t->value, t->type);
+                r = word_table_add(wt, &t->value, t->type);
                 if (r == result_error) return r;
             }
             *state = state_start;
@@ -380,7 +381,7 @@ enum result process_char_word(struct allocator *al, struct scan_state* sns, enum
     return result_ok;
 }
 
-enum result process_char_number(struct allocator *al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_number(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r;
     struct lookahead_char* lc = sns->lc;
@@ -396,19 +397,19 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
     if (*state == state_number_whole) {
         if (u_isdigit(uc)) {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else if (uc == '.') {
             *state = state_number_fraction;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else if (uc == 'e') {
             *state = state_number_exponent_start;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else {
@@ -419,7 +420,7 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
     } else if (*state == state_number_fraction) {
         if (u_isdigit(uc)) {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else if (uc == 'e') {
@@ -428,7 +429,7 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
             if (lc->la_size >= 2 && (u_isdigit(uc2) || uc2 == '-' || uc2 == '+')) {
                 /* e is part of exponent */
                 *state = state_number_exponent_start;
-                buffer_add_char(al, &t->value, 'e');
+                buffer_add_char(&t->value, 'e');
             } else {
                 /* number is done and e will be part of an id */
                 *state = state_start;
@@ -444,19 +445,19 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
         if (u_isdigit(uc)) {
             *state = state_number_exponent;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else if (uc == '-') {
             *state = state_number_exponent;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else if (uc == '+') {
             *state = state_number_exponent;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else {
@@ -466,7 +467,7 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
     } else if (*state == state_number_exponent) {
         if (u_isdigit(uc)) {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         } else {
@@ -478,7 +479,7 @@ enum result process_char_number(struct allocator *al, struct scan_state* sns, en
     return result_ok;
 }
 
-enum result process_char_string(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+enum result process_char_string(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     struct lookahead_char* lc = sns->lc;
     enum result r = result_ok;
@@ -499,23 +500,23 @@ enum result process_char_string(struct allocator* al, struct scan_state* sns, en
             *got_token = 1;
         } else {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-                r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+                r = buffer_add_char(&t->value, lc->la0_8[i]);
                 if (r == result_error) return r;
             }
         }
     } else if (*state == state_string_backslash) {
         if (uc == cv.backslash) {
-            r = buffer_add_char(al, &t->value, '\\');
+            r = buffer_add_char(&t->value, '\\');
             if (r == result_error) {
                 return r;
             }
         } else if (uc == 'n') {
-            r = buffer_add_char(al, &t->value, '\n');
+            r = buffer_add_char(&t->value, '\n');
             if (r == result_error) {
                 return r;
             }
         } else if (uc == 'r') {
-            r = buffer_add_char(al, &t->value, '\r');
+            r = buffer_add_char(&t->value, '\r');
             if (r == result_error) {
                 return r;
             }
@@ -535,14 +536,14 @@ enum result process_char_string(struct allocator* al, struct scan_state* sns, en
     return result_ok;
 }
 
-enum result process_compound_operator(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+enum result process_compound_operator(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     struct lookahead_char* lc = sns->lc;
     enum result r = result_ok;
 
     if (lc->la_size > 0) {
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
-            r = buffer_add_char(al, &t->value, lc->la0_8[i]);
+            r = buffer_add_char(&t->value, lc->la0_8[i]);
             if (r == result_error) return r;
         }
     }
@@ -631,34 +632,34 @@ enum result process_compound_operator(struct allocator* al, struct scan_state* s
     return r;
 }
 
-enum result scan_process(struct allocator* al, struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+enum result scan_process(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     enum result r = result_ok;
 
     if (*state == state_start) {
-        r = process_char_start(al, sns, state, got_token, t);
+        r = process_char_start(sns, state, got_token, t);
     } else if (*state == state_id || *state == state_id_underscore) {
-        r = process_char_word(al, sns, state, got_token, t);
+        r = process_char_word(sns, state, got_token, t);
     } else if (is_number_state(*state)) {
-        r = process_char_number(al, sns, state, got_token, t);
+        r = process_char_number(sns, state, got_token, t);
     } else if (*state == state_string || *state == state_string_backslash) {
-        r = process_char_string(al, sns, state, got_token, t);
+        r = process_char_string(sns, state, got_token, t);
     } else if (*state == state_compound_operator) {
-        r = process_compound_operator(al, sns, state, got_token, t);
+        r = process_compound_operator(sns, state, got_token, t);
     } else {
         r = set_source_error(sns->el, NULL, sns->lc, "unexpected state");
     }
     return r;
 }
 
-enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* got_token, struct token** t)
+enum result scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
 {
     enum result r = result_ok;
     enum state_enum state = state_start;
     *got_token = 0;
     struct token* tf;
 
-    r = allocator_malloc(al, &tf, sizeof(struct token));
+    r = malloc_safe(&tf, sizeof(struct token));
     if (r == result_error) {
         return r;
     }
@@ -671,7 +672,7 @@ enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* go
         }
         if (lookahead_char_need_loading(sns->lc)) lookahead_char_load(sns->lc);
 
-        r = scan_process(al, sns, &state, got_token, tf);
+        r = scan_process(sns, &state, got_token, tf);
         if (r == result_error) {
             return r;
         }
@@ -683,7 +684,7 @@ enum result scan_get_token(struct allocator *al, struct scan_state* sns, int* go
     }
 
     if (state != state_start) {
-        r = scan_process(al, sns, &state, got_token, tf);
+        r = scan_process(sns, &state, got_token, tf);
         lookahead_char_pop(sns->lc);
         if (r == result_error) return r;
     }

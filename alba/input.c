@@ -3,9 +3,9 @@
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 #include <stdbool.h>
-#include "buffer.h"
+#include "zinc/buffer.h"
 #include "input.h"
-#include "result.h"
+#include "zinc/result.h"
 #include "uconv.h"
 
 int file_getchar(FILE* fp)

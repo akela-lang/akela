@@ -2,13 +2,14 @@
 
 #include <stdlib.h>
 #include "dag.h"
-#include "result.h"
-#include "memory.h"
-#include "allocator.h"
+#include "zinc/result.h"
+#include "zinc/memory.h"
 
-enum result dag_create_node(struct allocator* al, struct dag_node** n)
+/* dynamic-output n */
+enum result dag_create_node(struct dag_node** n)
 {
-	enum result r = allocator_malloc(al, n, sizeof(struct dag_node));
+	/* dynamic n */
+	enum result r = malloc_safe(n, sizeof(struct dag_node));
 	if (r == result_error) {
 		return r;
 	}
@@ -16,6 +17,7 @@ enum result dag_create_node(struct allocator* al, struct dag_node** n)
 	return result_ok;
 }
 
+/* static-output */
 void dag_init_node(struct dag_node* n)
 {
 	n->type = dag_type_none;
@@ -26,6 +28,7 @@ void dag_init_node(struct dag_node* n)
 	n->tail = NULL;
 }
 
+/* static-output */
 void dag_add_child(struct dag_node* p, struct dag_node* c)
 {
 	// set sibling to left
@@ -45,9 +48,8 @@ void dag_add_child(struct dag_node* p, struct dag_node* c)
 	p->tail = c;
 }
 
-/*
-* assume parent and child are not NULL
-*/
+/* assume parent and child are not NULL */
+/* static-output */
 void dag_push(struct dag_node* parent, struct dag_node* child)
 {
 	struct dag_node* old_head = parent->head;
@@ -58,6 +60,7 @@ void dag_push(struct dag_node* parent, struct dag_node* child)
 	parent->head = child;
 }
 
+/* static-output */
 struct dag_node* dag_get_child(struct dag_node* p, size_t pos)
 {
 	int i = 0;
@@ -70,6 +73,7 @@ struct dag_node* dag_get_child(struct dag_node* p, size_t pos)
 	return NULL;
 }
 
+/* static-output */
 int is_binary_operator(struct dag_node* n)
 {
 	if (n->type == dag_type_plus) {
@@ -85,7 +89,9 @@ int is_binary_operator(struct dag_node* n)
 	return 0;
 }
 
-void dag_print(struct allocator *al, struct dag_node* root, char** names)
+/* static-output */
+/* dynamic a */
+void dag_print(struct dag_node* root, char** names)
 {
 	if (root == NULL) return;
 
@@ -96,8 +102,13 @@ void dag_print(struct allocator *al, struct dag_node* root, char** names)
 		if (p->value.size > 0) {
 			char* a;
 			enum result r;
-			r = buffer2array(al, &p->value, &a);
+
+			/* allocate a */
+			r = buffer2array(&p->value, &a);
 			printf(":%s", a);
+
+			/* destroy a */
+			free(a);
 		}
 	}
 
@@ -105,7 +116,7 @@ void dag_print(struct allocator *al, struct dag_node* root, char** names)
 
 	for (struct dag_node* p = root->head; p; p = p->next) {
 		if (p->head != NULL) {
-			dag_print(al, p, names);
+			dag_print(p, names);
 		}
 	}
 }

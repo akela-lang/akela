@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "assert.h"
 #include "alba/uconv.h"
-#include "alba/result.h"
+#include "zinc/result.h"
 
 void test_uconv_one_byte()
 {

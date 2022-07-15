@@ -2,7 +2,8 @@
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 #include <stdbool.h>
-#include "result.h"
+#include "zinc/result.h"
+#include "zinc/memory.h"
 
 enum result check_num_bytes(unsigned char c, int* count)
 {
@@ -44,9 +45,9 @@ enum result check_extra_byte(char c)
     return set_error("Not utf8: extra byte in character not encoded as utf8");
 }
 
-enum result char2uchar(struct allocator* al, UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len)
+enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len)
 {
-    enum result r = allocator_malloc(al, dest, sizeof(UChar) * dest_size);
+    enum result r = malloc_safe(dest, sizeof(UChar) * dest_size);
     if (r == result_error) {
         return r;
     }
@@ -58,9 +59,9 @@ enum result char2uchar(struct allocator* al, UConverter* conv, char* src, size_t
     return result_ok;
 }
 
-enum result uchar2char(struct allocator* al, UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len)
+enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len)
 {
-    enum result r = allocator_malloc(al, dest, dest_size + 1);
+    enum result r = malloc_safe(dest, dest_size + 1);
     if (r == result_error) {
         return r;
     }

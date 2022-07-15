@@ -1,7 +1,7 @@
 #include "input.h"
 #include "parse_tools.h"
 #include "token.h"
-#include "result.h"
+#include "zinc/result.h"
 #include "scan.h"
 #include <string.h>
 #include "source.h"
@@ -14,7 +14,7 @@ void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct com
 }
 
 /* get lookahead token */
-enum parse_result get_lookahead(struct allocator* al, struct parse_state* ps, int count, int* num)
+enum parse_result get_lookahead(struct parse_state* ps, int count, int* num)
 {
 	enum result r = result_ok;
 	int gt;
@@ -30,7 +30,7 @@ enum parse_result get_lookahead(struct allocator* al, struct parse_state* ps, in
 			break;
 		}
 
-		r = scan_get_token(al, ps->sns, &gt, &t);
+		r = scan_get_token(ps->sns, &gt, &t);
 		if (r == result_error) {
 			return r;
 		}
@@ -38,7 +38,7 @@ enum parse_result get_lookahead(struct allocator* al, struct parse_state* ps, in
 			break;
 		}
 
-		r = token_list_add(al, &ps->lookahead, t);
+		r = token_list_add(&ps->lookahead, t);
 		if (r == result_error) {
 			return r;
 		}
@@ -48,21 +48,21 @@ enum parse_result get_lookahead(struct allocator* al, struct parse_state* ps, in
 }
 
 /* expecting specific token */
-enum result match(struct allocator* al, struct parse_state* ps, enum token_type type, char* reason, struct token** t)
+enum result match(struct parse_state* ps, enum token_type type, char* reason, struct token** t)
 {
 	enum result r = result_ok;
 
 	int num = token_list_count(&ps->lookahead);
 	int got_token;
 	if (num <= 0) {
-		enum result r = scan_get_token(al, ps->sns, &got_token, t);
+		enum result r = scan_get_token(ps->sns, &got_token, t);
 		if (r == result_error) {
 			return r;
 		}
 		if (!got_token) {
 			return set_source_error(ps->el, NULL, ps->sns->lc, "%s", reason);
 		}
-		r = token_list_add(al, &ps->lookahead, *t);
+		r = token_list_add(&ps->lookahead, *t);
 		if (r == result_error) {
 			return r;
 		}

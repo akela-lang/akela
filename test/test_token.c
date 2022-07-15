@@ -1,18 +1,16 @@
-#include "assert.h"
-#include "alba/buffer.h"
+#include "zinc/assert.h"
+#include "zinc/buffer.h"
 #include "alba/token.h"
 
 void test_token_hash_buffer()
 {
 	test_name(__func__);
 
-	struct allocator al;
 	struct buffer bf;
 	enum result r;
-	allocator_init(&al);
 	buffer_init(&bf);
 
-	r = array2buffer(&al, "hello", &bf);
+	r = array2buffer("hello", &bf);
 	assert_ok(r, "array2buffer");
 	unsigned int val;
 	unsigned int size = 10;
@@ -44,33 +42,30 @@ void test_token_word_table()
 
 	enum result r;
 
-	struct allocator al;
-	allocator_init(&al);
-
 	struct word_table wt;
-	r = word_table_init(&al, &wt, WORD_TABLE_SIZE);
+	r = word_table_init(&wt, WORD_TABLE_SIZE);
 	assert_ok(r, "word_table_init");
 
 	struct token t0;
 	token_init(&t0);
-	r = array2buffer(&al, "t0", &t0.value);
+	r = array2buffer("t0", &t0.value);
 	assert_ok(r, "array2buffer t0");
 
 	struct token t1;
 	token_init(&t1);
-	r = array2buffer(&al, "t1", &t1.value);
+	r = array2buffer("t1", &t1.value);
 	assert_ok(r, "array2buffer t1");
 
 	struct token t2;
 	token_init(&t2);
-	r = array2buffer(&al, "t2", &t2.value);
+	r = array2buffer("t2", &t2.value);
 	assert_ok(r, "array2buffer t2");
 
 	struct word* w;
 
 	w = word_table_get(&wt, &t0.value);
 	assert_null(w, "t0");
-	r = word_table_add(&al, &wt, &t0.value, t0.type);
+	r = word_table_add(&wt, &t0.value, t0.type);
 	assert_ok(r, "word_table_add");
 	w = word_table_get(&wt, &t0.value);
 	expect_true(buffer_compare(&w->value, &t0.value), "t0");
@@ -78,7 +73,7 @@ void test_token_word_table()
 
 	w = word_table_get(&wt, &t1.value);
 	assert_null(w, "t1");
-	r = word_table_add(&al, &wt, &t1.value, t1.type);
+	r = word_table_add(&wt, &t1.value, t1.type);
 	assert_ok(r, "word_table_add");
 	w = word_table_get(&wt, &t1.value);
 	expect_true(buffer_compare(&w->value, &t1.value), "t1");
@@ -86,7 +81,7 @@ void test_token_word_table()
 
 	w = word_table_get(&wt, &t2.value);
 	assert_null(w, "t2");
-	r = word_table_add(&al, &wt, &t2.value, t2.type);
+	r = word_table_add(&wt, &t2.value, t2.type);
 	assert_ok(r, "word_table_add");
 	w = word_table_get(&wt, &t2.value);
 	expect_true(buffer_compare(&w->value, &t2.value), "t2");
@@ -99,16 +94,13 @@ void test_token_word_table_init()
 
 	enum result r;
 
-	struct allocator al;
-	allocator_init(&al);
-
 	struct word_table wt;
-	r = word_table_init(&al, &wt, 10);
+	r = word_table_init(&wt, 10);
 	assert_ok(r, "word_table_init");
 
 	struct buffer bf;
 	buffer_init(&bf);
-	r = array2buffer(&al, "function", &bf);
+	r = array2buffer("function", &bf);
 	assert_ok(r, "array2buffer function");
 
 	struct word* w;
@@ -120,7 +112,7 @@ void test_token_word_table_init()
 
 	struct buffer bf1;
 	buffer_init(&bf1);
-	r = array2buffer(&al, "end", &bf1);
+	r = array2buffer("end", &bf1);
 	assert_ok(r, "array2buffer end");
 
 	w = word_table_get(&wt, &bf1);

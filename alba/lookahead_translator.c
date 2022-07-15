@@ -3,8 +3,8 @@
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
-#include "memory.h"
-#include "result.h"
+#include "zinc/memory.h"
+#include "zinc/result.h"
 #include "input.h"
 #include "lookahead_translator.h"
 

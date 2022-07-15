@@ -1,7 +1,7 @@
 #define _TOKEN_C
 
 #include <stdlib.h>
-#include "memory.h"
+#include "zinc/memory.h"
 #include "token.h"
 
 void token_init(struct token* t)
@@ -76,7 +76,7 @@ int token_list_count(struct token_list* tl)
 enum result token_list_make(struct allocator *al, struct token_list** tl)
 {
     enum result r;
-    r = allocator_malloc(al, tl, sizeof(**tl));
+    r = malloc_safe(al, tl, sizeof(**tl));
     if (r == result_error) {
         return r;
     }
@@ -87,7 +87,7 @@ enum result token_list_make(struct allocator *al, struct token_list** tl)
 /*
 * Append the new token to the end of the token list
 */
-enum result token_list_add(struct allocator* al, struct token_list* tl, struct token* t)
+enum result token_list_add(struct token_list* tl, struct token* t)
 {
     /* update previous */
     struct token* t_prev = tl->tail;
@@ -203,14 +203,15 @@ void word_list_init(struct word_list* wl)
     wl->tail = NULL;
 }
 
-/*
-* initialize word table
-*/
-enum result word_table_init(struct allocator* al, struct word_table* wt, unsigned int size)
+/* initialize word table */
+/* dynamic-output wt */
+enum result word_table_init(struct word_table* wt, unsigned int size)
 {
     enum result r;
     wt->size = size;
-    r = allocator_malloc(al, &wt->buckets, sizeof(struct word_list) * size);
+
+    /* allocate wt */
+    r = malloc_safe(&wt->buckets, sizeof(struct word_list) * size);
     if (r == result_error) {
         return r;
     }
@@ -219,7 +220,7 @@ enum result word_table_init(struct allocator* al, struct word_table* wt, unsigne
         word_list_init(&wt->buckets[i]);
     }
 
-    r = word_table_init_reserved(al, wt);
+    r = word_table_init_reserved(wt);
     if (r == result_error) {
         return r;
     }
@@ -227,21 +228,23 @@ enum result word_table_init(struct allocator* al, struct word_table* wt, unsigne
     return result_ok;
 }
 
-/*
-* add word to word table
-* assume word is not in word table so call word_table_get before if not sure
-*/
-enum result word_table_add(struct allocator* al, struct word_table* wt, struct buffer* bf, enum token_enum type)
+/* add word to word table */
+/* assume word is not in word table so call word_table_get before if not sure */
+/* dynamic-output wt */
+enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type)
 {
     enum result r;
     unsigned int val = hash_buffer(bf, wt->size);
 
+    /* allocate w */
     struct word* w;
-    r = allocator_malloc(al, &w, sizeof(struct word));
+    r = malloc_safe(&w, sizeof(struct word));
     if (r == result_error) return r;
     word_init(w);
     w->type = type;
-    r = buffer_copy(al, bf, &w->value);
+
+    /* allocate w */
+    r = buffer_copy(bf, &w->value);
     if (r == result_error) return r;
 
     /* add to beginning of bucket */
@@ -280,7 +283,9 @@ struct word* word_table_get(struct word_table* wt, struct buffer* bf)
     return NULL;
 }
 
-enum result word_table_add_reserved(struct allocator* al, struct word_table* wt, char* name, enum dag_type type)
+/* dynamic-output wt */
+/* dynamic-temp bf */
+enum result word_table_add_reserved(struct word_table* wt, char* name, enum dag_type type)
 {
     enum result r;
     struct buffer bf;
@@ -288,43 +293,57 @@ enum result word_table_add_reserved(struct allocator* al, struct word_table* wt,
     buffer_init(&bf);
     char* p = name;
     while (*p) {
-        r = buffer_add_char(al, &bf, *p);
+        /* allocate bf */
+        r = buffer_add_char(&bf, *p);
         if (r == result_error) return r;
         p++;
     }
 
-    r = word_table_add(al, wt, &bf, type);
+    /* allocate wt */
+    r = word_table_add(wt, &bf, type);
     if (r == result_error) return r;
+
+    /* destroy bf */
+    buffer_destroy(&bf);
 
     return result_ok;
 }
 
-enum result word_table_init_reserved(struct allocator* al, struct word_table* wt)
+/* dynamic-output wt */
+enum result word_table_init_reserved(struct word_table* wt)
 {
     enum result r;
 
-    r = word_table_add_reserved(al, wt, "function", token_function);
+    /* allocate wt */
+    r = word_table_add_reserved(wt, "function", token_function);
     if (r == result_error) return r;
 
-    r = word_table_add_reserved(al, wt, "end", token_end);
+    /* allocate wt */
+    r = word_table_add_reserved(wt, "end", token_end);
     if (r == result_error) return r;
 
-    r = word_table_add_reserved(al, wt, "if", token_if);
+    /* allocate wt */
+    r = word_table_add_reserved(wt, "if", token_if);
     if (r == result_error) return r;
 
-    r = word_table_add_reserved(al, wt, "elseif", token_elseif);
+    /* allocate wt */
+    r = word_table_add_reserved(wt, "elseif", token_elseif);
     if (r == result_error) return r;
 
-    r = word_table_add_reserved(al, wt, "else", token_else);
+    /* allocate wt */
+    r = word_table_add_reserved(wt, "else", token_else);
     if (r == result_error) return r;
 
-    r = word_table_add_reserved(al, wt, "while", token_while);
+    /* allocate wt */
+    r = word_table_add_reserved(wt, "while", token_while);
     if (r == result_error) return r;
 
-    r = word_table_add_reserved(al, wt, "for", token_for);
+    /* allocate wt */
+    r = word_table_add_reserved(wt, "for", token_for);
     if (r == result_error) return r;
 
-    r = word_table_add_reserved(al, wt, "in", token_in);
+    /* allocate wt */
+    r = word_table_add_reserved(wt, "in", token_in);
     if (r == result_error) return r;
 
     return result_ok;

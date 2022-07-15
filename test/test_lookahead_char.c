@@ -1,8 +1,8 @@
-#include "assert.h"
+#include "zinc/assert.h"
+#include "assert_compiler.h"
 #include "alba/lookahead_char.h"
 #include "alba/input.h"
-#include "alba/buffer.h"
-#include "alba/allocator.h"
+#include "zinc/buffer.h"
 #include "alba/uconv.h"
 
 void test_lookahead_char_short()
@@ -11,13 +11,10 @@ void test_lookahead_char_short()
 
 	enum result r;
 
-	struct allocator al;
-	allocator_init(&al);
-
 	struct buffer bf;
 	buffer_init(&bf);
 
-	r = array2buffer(&al, "hello", &bf);
+	r = array2buffer("hello", &bf);
 	assert_ok(r, "array2buffer");
 
 	struct string_data sd;
@@ -136,23 +133,21 @@ void test_lookahead_char_short()
 	expect_size_t_equal(lc.col, 2, "col");
 	expect_size_t_equal(lc.last_col_count, 0, "last col count");
 	expect_size_t_equal(lc.byte_pos, 1, "byte pos");
-
-	allocator_destroy(&al);
 }
 
+/* static-output */
+/* dynamic bf */
 void test_lookahead_char_line()
 {
 	test_name(__func__);
 
 	enum result r;
 
-	struct allocator al;
-	allocator_init(&al);
-
 	struct buffer bf;
 	buffer_init(&bf);
 
-	r = array2buffer(&al, "one\ntwo", &bf);
+	/* allocate bf */
+	r = array2buffer("one\ntwo", &bf);
 	assert_ok(r, "array2buffer");
 
 	struct string_data sd;
@@ -249,6 +244,9 @@ void test_lookahead_char_line()
 
 	lookahead_char_pop(&lc);
 	expect_true(lookahead_char_done(&lc), "done");
+
+	/* destroy bf */
+	buffer_destroy(&bf);
 }
 
 void test_lookahead_char()

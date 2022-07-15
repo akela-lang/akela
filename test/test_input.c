@@ -1,6 +1,5 @@
-#include "assert.h"
-#include "alba/allocator.h"
-#include "alba/buffer.h"
+#include "zinc/assert.h"
+#include "zinc/buffer.h"
 #include "alba/input.h"
 #include "alba/os_win.h"
 #include "alba/scan.h"
@@ -11,16 +10,14 @@ void test_input_string()
 {
 	test_name(__func__);
 
-	struct allocator al;
 	struct buffer bf;
 	struct string_data sd;
 	enum result r;
 	input_getchar f;
 	input_data d;
 
-	allocator_init(&al);
 	buffer_init(&bf);
-	r = array2buffer(&al, "hello", &bf);
+	r = array2buffer("hello", &bf);
 	assert_ok(r, "array2buffer");
 	string_data_init(&bf, &sd);
 
@@ -31,25 +28,23 @@ void test_input_string()
 	buffer_init(&bf2);
 	int c;
 	while ((c = f(d)) != EOF) {
-		buffer_add_char(&al, &bf2, c);
+		buffer_add_char(&bf2, c);
 	}
 
 	expect_true(buffer_compare(&bf, &bf2), "buffer_compare");
-
-	allocator_destroy(&al);
 }
 
+/* static-output */
+/* dynamic filename bf */
 void test_input_file()
 {
 	test_name(__func__);
 
 	enum result r;
-	struct allocator al;
 	char* filename;
 
-	allocator_init(&al);
-
-	r = win_temp_filename(&al, &filename);
+	/* allocate filename */
+	r = win_temp_filename(&filename);
 	assert_ok(r, "win_temp_filename");
 
 	FILE* fp = fopen(filename, "w");
@@ -72,14 +67,17 @@ void test_input_file()
 	buffer_init(&bf);
 	int c;
 	while ((c = f(d)) != EOF) {
-		buffer_add_char(&al, &bf, c);
+		/* allocate bf */
+		buffer_add_char(&bf, c);
 	}
 
 	fclose(fp);
 
 	expect_str(&bf, str, "str");
 
-	allocator_destroy(&al);
+	/* destroy filename bf */
+	free(filename);
+	buffer_destroy(&bf);
 }
 
 void test_input()

@@ -1,11 +1,12 @@
 #include <stdarg.h>
 #include <stdlib.h>
-#include "result.h"
+#include "zinc/result.h"
+#include "zinc/buffer.h"
 #include "token.h"
 #include "input.h"
 #include "lookahead_char.h"
 #include "source.h"
-#include "memory.h"
+#include "zinc/memory.h"
 
 void compile_error_init(struct compile_error* e)
 {
@@ -106,14 +107,17 @@ enum result set_source_error(struct compile_error_list* el, struct token* t, str
 	return result_ok;
 }
 
-enum result format_error(struct allocator* al, struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf)
+/* dynamic-output bf */
+enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf)
 {
 	enum result r = result_ok;
 
-	r = buffer_copy_str(al, bf, e->message);
+	/* allocate bf */
+	r = buffer_copy_str(bf, e->message);
 	if (r == result_error) return r;
 	
-	r = buffer_add_char(al, bf, '\n');
+	/* allocate bf */
+	r = buffer_add_char(bf, '\n');
 	if (r == result_error) return r;
 
 	int err = seek(d, e->byte_pos);
@@ -123,7 +127,8 @@ enum result format_error(struct allocator* al, struct compile_error* e, input_ge
 	while (c = f(d)) {
 		if (c == EOF) break;
 		if (c == '\n') break;
-		r = buffer_add_char(al, bf, c);
+		/* allocate bf */
+		r = buffer_add_char(bf, c);
 		if (r == result_error) return r;
 	}
 

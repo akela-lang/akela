@@ -1,6 +1,5 @@
 #include <stdlib.h>
-#include "result.h"
-#include "allocator.h"
+#include "zinc/result.h"
 #include "token.h"
 #include "dag.h"
 #include "parse_stmts.h"
@@ -11,12 +10,12 @@
 #include "source.h"
 #include "lookahead_char.h"
 
-enum result parse(struct allocator* al, struct parse_state* ps, struct dag_node** root)
+enum result parse(struct parse_state* ps, struct dag_node** root)
 {
 	*root = NULL;
 	enum result r;
 
-	r = stmts(al, ps, root);
+	r = stmts(ps, root);
 
 	if (r == result_error) {
 		return r;
@@ -24,7 +23,7 @@ enum result parse(struct allocator* al, struct parse_state* ps, struct dag_node*
 
 	if (!lookahead_char_done(ps->sns->lc)) {
 		int num;
-		r = get_lookahead(al, ps, 1, &num);
+		r = get_lookahead(ps, 1, &num);
 		if (r == result_error) {
 			return r;
 		}

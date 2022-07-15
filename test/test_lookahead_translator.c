@@ -1,4 +1,4 @@
-#include "assert.h"
+#include "zinc/assert.h"
 #include "alba/lookahead_translator.h"
 
 void test_lookahead_translator_cbyte()

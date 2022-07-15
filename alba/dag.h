@@ -1,9 +1,8 @@
 #ifndef _DAG_H
 #define _DAG_H
 
-#include "buffer.h"
-#include "result.h"
-#include "allocator.h"
+#include "zinc/buffer.h"
+#include "zinc/result.h"
 
 enum dag_type {
 	dag_type_none,
@@ -109,12 +108,25 @@ struct dag_node {
 	struct dag_node* tail;
 };
 
-enum result dag_create_node(struct allocator *al, struct dag_node** n);
+/* dynamic-output n */
+enum result dag_create_node(struct dag_node** n);
+
+/* static-output */
 void dag_init_node(struct dag_node* n);
+
+/* static-output */
 void dag_add_child(struct dag_node* p, struct dag_node* c);
+
+/* static-output */
 void dag_push(struct dag_node* parent, struct dag_node* child);
+
+/* static-output */
 struct dag_node* dag_get_child(struct dag_node* p, size_t pos);
+
+/* static-output */
 int is_binary_operator(struct dag_node* n);
-void dag_print(struct allocator* al, struct dag_node* root, char** names);
+
+/* static-output */
+void dag_print(struct dag_node* root, char** names);
 
 #endif

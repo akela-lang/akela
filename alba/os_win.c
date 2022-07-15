@@ -1,8 +1,9 @@
 #include <windows.h>
-#include "result.h"
-#include "allocator.h"
+#include "zinc/result.h"
+#include "zinc/memory.h"
 
-enum result win_temp_filename(struct allocator* al, char** buff)
+/* dynamic-output buff*/
+enum result win_temp_filename(char** buff)
 {
 	enum result r;
 
@@ -24,7 +25,8 @@ enum result win_temp_filename(struct allocator* al, char** buff)
 		return set_error("could not get temp path");
 	}
 
-	r = allocator_malloc(al, buff, MAX_PATH);
+	/* allocate buff */
+	r = malloc_safe(buff, MAX_PATH);
 	if (r == result_error) {
 		return r;
 	}

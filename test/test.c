@@ -1,5 +1,4 @@
 #include "assert.h"
-#include "test_allocator.h"
 #include "test_input.h"
 #include "test_buffer.h"
 #include "test_scan.h"
@@ -11,7 +10,6 @@
 #include "test_lookahead_char.h"
 
 int main(void) {
-	test_allocator();
 	test_uconv();
 	test_lookahead_char();
 	test_lookahead_translator();

@@ -1,8 +1,8 @@
 #ifndef _TOKEN_H
 #define _TOKEN_H
 
-#include "result.h"
-#include "buffer.h"
+#include "zinc/result.h"
+#include "zinc/buffer.h"
 
 #define WORD_TABLE_SIZE 10
 
@@ -145,7 +145,7 @@ int token_find_first(struct token_list* tl, enum token_enum type);
 int token_find_last(struct token_list* tl, enum token_enum type);
 int token_list_count(struct token_list* tl);
 enum result token_list_make(struct allocator* al, struct token_list** tl);
-enum result token_list_add(struct allocator* al, struct token_list* tl, struct token* t);
+enum result token_list_add(struct token_list* tl, struct token* t);
 void token_list_reset(struct token_list* tl);
 enum result token_list_print(struct allocator* al, struct token_list* tl);
 enum result print_token(struct allocator* al, struct token* t);
@@ -153,8 +153,11 @@ struct token* token_list_pop(struct token_list* tl);
 unsigned int hash_buffer(struct buffer* bf, unsigned int size);
 void word_init(struct word* w);
 void word_list_init(struct word_list* wl);
-enum result word_table_init(struct allocator* al, struct word_table* wt, unsigned int size);
-enum result word_table_add(struct allocator* al, struct word_table* wt, struct buffer* bf, enum token_enum type);
+
+/* dynamic-output wt */
+enum result word_table_init(struct word_table* wt, unsigned int size);
+
+enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type);
 struct word* word_table_get(struct word_table* wt, struct buffer* bf);
 
 #endif

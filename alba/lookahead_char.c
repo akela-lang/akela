@@ -6,7 +6,7 @@
 #include "lookahead_char.h"
 #include "uconv.h"
 #include "input.h"
-#include "result.h"
+#include "zinc/result.h"
 
 void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv)
 {

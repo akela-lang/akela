@@ -14,5 +14,18 @@ set_target_properties(icutu PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/ex
 add_library(icuuc STATIC IMPORTED)
 set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icuuc.lib")
 
+set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
+set(ZINC_BINARY ${ZINC_DIR}/out/build/x64-Debug/zinc)
+set(ZINC_LIB ${ZINC_BINARY}/zinc.lib)
+set(ZINC_DLL ${ZINC_BINARY}/zinc.dll)
+
+add_library(zinc SHARED IMPORTED)
+set_target_properties(zinc PROPERTIES
+    IMPORTED_LOCATION ${ZINC_DLL}
+    IMPORTED_IMPLIB ${ZINC_LIB}
+)
+
+include_directories(${ZINC_DIR} .)
+
 add_subdirectory(alba)
 add_subdirectory(test)
