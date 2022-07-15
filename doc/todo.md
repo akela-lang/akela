@@ -2,8 +2,6 @@
 * memory annotations for alba
   * alba.c
   * alba.h
-  * dag.c
-  * dag.h
   * input.c
   * input.h
   * lookahead_char.c

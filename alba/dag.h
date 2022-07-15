@@ -45,6 +45,7 @@ enum dag_type {
 
 # ifdef _DAG_C
 
+/* static-output */
 enum result dag_set_names(char** names)
 {
 	for (int i = 0; i < dag_type_count; i++) {

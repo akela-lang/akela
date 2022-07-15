@@ -8,7 +8,7 @@
 /* dynamic-output n */
 enum result dag_create_node(struct dag_node** n)
 {
-	/* dynamic n */
+	/* allocate n */
 	enum result r = malloc_safe(n, sizeof(struct dag_node));
 	if (r == result_error) {
 		return r;
@@ -90,7 +90,7 @@ int is_binary_operator(struct dag_node* n)
 }
 
 /* static-output */
-/* dynamic a */
+/* dynamic-temp a */
 void dag_print(struct dag_node* root, char** names)
 {
 	if (root == NULL) return;
