@@ -2,7 +2,7 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 
-/* dynamic-output buff*/
+/* dynamic-output buff */
 enum result win_temp_filename(char** buff)
 {
 	enum result r;
