@@ -1,21 +1,21 @@
 # Todo
 * memory annotations for alba
-  * alba.c
-  * alba.h
-  * parse.c
-  * parse.h
-  * parse_expr.c
-  * parse_expr.h
-  * parse_factor.c
-  * parse_factor.h
-  * parse_stmts.c
-  * parse_stmts.h
-  * parse_tools.c
-  * parse_tools.h
   * scan.c
   * scan.h
+  * parse_tools.c
+  * parse_tools.h
   * types.c
   * types.h
+  * parse_factor.c
+  * parse_factor.h
+  * parse_expr.c
+  * parse_expr.h
+  * parse_stmts.c
+  * parse_stmts.h
+  * parse.c
+  * parse.h
+  * alba.c
+  * alba.h
 * memory annotations for test
   * assert_compiler.c
   * assert_compiler.h
