@@ -8,6 +8,7 @@
 #include "source.h"
 #include "zinc/memory.h"
 
+/* static-output */
 void compile_error_init(struct compile_error* e)
 {
 	e->line = 0;
@@ -17,6 +18,7 @@ void compile_error_init(struct compile_error* e)
 	e->prev = NULL;
 }
 
+/* static-output */
 void compile_error_list_init(struct compile_error_list* el)
 {
 	el->head = NULL;
@@ -24,6 +26,7 @@ void compile_error_list_init(struct compile_error_list* el)
 }
 
 /* adding error to end of error list */
+/* static-output */
 void compile_error_list_add(struct compile_error_list* el, struct compile_error* e)
 {
 	struct compile_error* prev = el->tail;
@@ -41,16 +44,19 @@ void compile_error_list_add(struct compile_error_list* el, struct compile_error*
 	el->tail = e;
 }
 
+/* dynamic-destroy el{} */
 void compile_error_list_destroy(struct compile_error_list* el)
 {
 	struct compile_error* p = el->head;
 	while (p) {
 		struct compile_error* temp = p;
 		p = p->next;
+		/* destroy el{} */
 		free(temp);
 	}
 }
 
+/* dynamic-output el{} */
 enum result set_source_error(struct compile_error_list* el, struct token* t, struct lookahead_char* lc, const char* fmt, ...)
 {
 	enum result r;
@@ -60,6 +66,8 @@ enum result set_source_error(struct compile_error_list* el, struct token* t, str
 	size_t n = COMPILE_ERROR_MESSAGE_SIZE;
 
 	struct compile_error* e;
+
+	/* allocate e */
 	r = malloc_safe(&e, sizeof(struct compile_error));
 	if (r == result_error) return r;
 	compile_error_init(e);
@@ -102,24 +110,28 @@ enum result set_source_error(struct compile_error_list* el, struct token* t, str
 
 	va_end(args);
 
+	/* allocate e -> el{} */
 	compile_error_list_add(el, e);
 
 	return result_ok;
 }
 
-/* dynamic-output bf */
+/* dynamic-output bf{} */
+/* resource-input d */
+/* resource-use d */
 enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf)
 {
 	enum result r = result_ok;
 
-	/* allocate bf */
+	/* allocate bf{} */
 	r = buffer_copy_str(bf, e->message);
 	if (r == result_error) return r;
 	
-	/* allocate bf */
+	/* allocate bf{} */
 	r = buffer_add_char(bf, '\n');
 	if (r == result_error) return r;
 
+	/* use d */
 	int err = seek(d, e->byte_pos);
 	if (err) return set_error("seek error: seek %zu", e->byte_pos);
 
@@ -127,7 +139,8 @@ enum result format_error(struct compile_error* e, input_getchar f, input_seek se
 	while (c = f(d)) {
 		if (c == EOF) break;
 		if (c == '\n') break;
-		/* allocate bf */
+
+		/* allocate bf{} */
 		r = buffer_add_char(bf, c);
 		if (r == result_error) return r;
 	}
