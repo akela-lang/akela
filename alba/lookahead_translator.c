@@ -17,8 +17,8 @@ enum result circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t
 	cbyte->size = 0;
 
 	/* allocate cbyte{} */
-	enum result r = malloc_safe(&cbyte->buf, buf_size);
-	return r;
+	malloc_safe(&cbyte->buf, buf_size);
+	return result_ok;
 }
 
 /* dynamic-destroy cbyte{} */
@@ -62,7 +62,8 @@ enum result circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, s
 	cc32->size = 0;
 
 	/* allocate cc32{} */
-	return malloc_safe(&cc32->buf, sizeof(UChar32)*buf_size);
+	malloc_safe(&cc32->buf, sizeof(UChar32)*buf_size);
+	return result_ok;
 }
 
 /* dynamic-destroy cc32{} */

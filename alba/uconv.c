@@ -53,10 +53,7 @@ enum result check_extra_byte(char c)
 enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** dest, size_t dest_size, size_t* len)
 {
     /* allocate dest */
-    enum result r = malloc_safe(dest, sizeof(UChar) * dest_size);
-    if (r == result_error) {
-        return r;
-    }
+    malloc_safe(dest, sizeof(UChar) * dest_size);
 
     /* use conv */
     UErrorCode err;
@@ -74,10 +71,7 @@ enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** des
 enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len)
 {
     /* allocate dest */
-    enum result r = malloc_safe(dest, dest_size + 1);
-    if (r == result_error) {
-        return r;
-    }
+    malloc_safe(dest, dest_size + 1);
     UErrorCode err;
     /* use conv */
     *len = ucnv_fromUChars(conv, *dest, dest_size, src, src_size, &err);

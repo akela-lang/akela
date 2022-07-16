@@ -13,15 +13,13 @@ enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** ro
 	enum result r;
 
 	struct buffer* bf;
-	r = malloc_safe(&bf, sizeof(struct buffer));
-	assert_ok(r, "allocator malloc string");
+	malloc_safe(&bf, sizeof(struct buffer));
 	buffer_init(bf);
 	r = array2buffer(line, bf);
 	assert_ok(r, "ok");
 
 	struct string_data* sd;
-	r = malloc_safe(&sd, sizeof(struct string_data));
-	assert_ok(r, "allocator_malloc string_data");
+	malloc_safe(&sd, sizeof(struct string_data));
 	string_data_init(bf, sd);
 
 	UConverter* conv;
@@ -29,24 +27,20 @@ enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** ro
 	assert_ok(r, "conv_open");
 
 	struct word_table* wt;
-	r = malloc_safe(&wt, sizeof(struct word_table));
-	assert_ok(r, "malloc word table");
+	malloc_safe(&wt, sizeof(struct word_table));
 	r = word_table_init(wt, WORD_TABLE_SIZE);
 	assert_ok(r, "word table init");
 
 	struct lookahead_char* lc;
-	r = malloc_safe(&lc, sizeof(struct lookahead_char));
-	assert_ok(r, "malloc lookahead_char");
+	malloc_safe(&lc, sizeof(struct lookahead_char));
 	lookahead_char_init(lc, string_getchar, sd, conv);
 
 	struct compile_error_list* el;
-	r = malloc_safe(&el, sizeof(struct compile_error_list));
-	assert_ok(r, "malloc compile_error_list");
+	malloc_safe(&el, sizeof(struct compile_error_list));
 	compile_error_list_init(el);
 
 	struct scan_state* sns;
-	r = malloc_safe(&sns, sizeof(struct scan_state));
-	assert_ok(r, "malloc scan state");
+	malloc_safe(&sns, sizeof(struct scan_state));
 	scan_state_init(sns, lc, wt, el);
 
 	parse_state_init(ps, sns, el);

@@ -15,8 +15,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	struct buffer* bf;
 
 	/* allocate bf */
-	r = malloc_safe(&bf, sizeof(struct buffer));
-	assert_ok(r, "allocator malloc string");
+	malloc_safe(&bf, sizeof(struct buffer));
 	buffer_init(bf);
 
 	/* allocate bf */
@@ -26,8 +25,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	struct string_data* sd;
 
 	/* allocate sd */
-	r = malloc_safe(&sd, sizeof(struct string_data));
-	assert_ok(r, "allocator_malloc string_data");
+	malloc_safe(&sd, sizeof(struct string_data));
 	string_data_init(bf, sd);
 
 	UConverter* conv;

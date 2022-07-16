@@ -59,7 +59,6 @@ void compile_error_list_destroy(struct compile_error_list* el)
 /* dynamic-output el{} */
 enum result set_source_error(struct compile_error_list* el, struct token* t, struct lookahead_char* lc, const char* fmt, ...)
 {
-	enum result r;
 	va_list args;
 	va_start(args, fmt);
 	int len;
@@ -68,8 +67,7 @@ enum result set_source_error(struct compile_error_list* el, struct token* t, str
 	struct compile_error* e;
 
 	/* allocate e */
-	r = malloc_safe(&e, sizeof(struct compile_error));
-	if (r == result_error) return r;
+	malloc_safe(&e, sizeof(struct compile_error));
 	compile_error_init(e);
 
 	char* p = e->message;

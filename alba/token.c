@@ -93,12 +93,8 @@ int token_list_count(struct token_list* tl)
 /* dynamic-output tl */
 enum result token_list_make(struct token_list** tl)
 {
-    enum result r;
     /* allocate tl */
-    r = malloc_safe(tl, sizeof(**tl));
-    if (r == result_error) {
-        return r;
-    }
+    malloc_safe(tl, sizeof(**tl));
     token_list_init(*tl);
     return result_ok;
 }
@@ -251,10 +247,7 @@ enum result word_table_init(struct word_table* wt, unsigned int size)
     wt->size = size;
 
     /* allocate wt{} */
-    r = malloc_safe(&wt->buckets, sizeof(struct word_list) * size);
-    if (r == result_error) {
-        return r;
-    }
+    malloc_safe(&wt->buckets, sizeof(struct word_list) * size);
 
     for (int i = 0; i < size; i++) {
         /* initialize wt{} */
@@ -280,8 +273,7 @@ enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_
 
     /* allocate w */
     struct word* w;
-    r = malloc_safe(&w, sizeof(struct word));
-    if (r == result_error) return r;
+    malloc_safe(&w, sizeof(struct word));
     word_init(w);
     w->type = type;
 

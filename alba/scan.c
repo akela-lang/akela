@@ -702,10 +702,7 @@ enum result scan_get_token(struct scan_state* sns, int* got_token, struct token*
     struct token* tf;
 
     /* allocate tf */
-    r = malloc_safe(&tf, sizeof(struct token));
-    if (r == result_error) {
-        return r;
-    }
+    malloc_safe(&tf, sizeof(struct token));
     token_init(tf);
 
     while (!*got_token && !lookahead_char_done(sns->lc)) {

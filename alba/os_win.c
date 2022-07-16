@@ -5,8 +5,6 @@
 /* dynamic-output buff */
 enum result win_temp_filename(char** buff)
 {
-	enum result r;
-
 	DWORD dwRetVal = 0;
 	TCHAR temp[MAX_PATH];
 	dwRetVal = GetTempPath(MAX_PATH, temp);
@@ -26,10 +24,7 @@ enum result win_temp_filename(char** buff)
 	}
 
 	/* allocate buff */
-	r = malloc_safe(buff, MAX_PATH);
-	if (r == result_error) {
-		return r;
-	}
+	malloc_safe(buff, MAX_PATH);
 
 	strncpy(*buff, szTempFileName, MAX_PATH);
 

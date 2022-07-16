@@ -9,10 +9,7 @@
 enum result dag_create_node(struct dag_node** n)
 {
 	/* allocate n */
-	enum result r = malloc_safe(n, sizeof(struct dag_node));
-	if (r == result_error) {
-		return r;
-	}
+	malloc_safe(n, sizeof(struct dag_node));
 	dag_init_node(*n);
 	return result_ok;
 }
