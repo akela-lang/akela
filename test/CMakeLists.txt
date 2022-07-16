@@ -18,6 +18,7 @@ set(test_files
     ${alba_dir}/lookahead_char.c
     assert_compiler.c
     "test.c"
+    test_dag.c
     test_parse.c
     test_parse_expr.c
     test_parse_stmts.c

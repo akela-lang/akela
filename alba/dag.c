@@ -13,6 +13,24 @@ void dag_create_node(struct dag_node** n)
 	dag_init_node(*n);
 }
 
+/* dynamic-destroy n n{} */
+void dag_destroy(struct dag_node* n)
+{
+	/* destroy n{} */
+	struct dag_node* p = n->head;
+	while (p) {
+		struct dag_node* temp = p;
+		p = p->next;
+		dag_destroy(temp);
+	}
+
+	/* destroy n{} */
+	buffer_destroy(&n->value);
+
+	/* destroy n */
+	free(n);
+}
+
 /* static-output */
 void dag_init_node(struct dag_node* n)
 {

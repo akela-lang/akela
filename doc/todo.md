@@ -1,7 +1,7 @@
 # Todo
 * memory annotations for alba
-  * types.c
-  * types.h
+  * parse_types.c
+  * parse_types.h
   * parse_factor.c
   * parse_factor.h
   * parse_expr.c

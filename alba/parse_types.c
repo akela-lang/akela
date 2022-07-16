@@ -6,10 +6,8 @@
 #include "dag.h"
 #include "source.h"
 
-/**
- * @brief dseq -> declaration dseq' | e
- * @param dynamic-output root
- */
+/* dseq->declaration dseq' | e */
+/* dynamic - output root */
 enum result dseq(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
@@ -20,20 +18,27 @@ enum result dseq(struct parse_state* ps, struct dag_node** root)
 
 	n->type = dag_type_dseq;
 
+	/* allocate a */
 	struct dag_node* a = NULL;
 	r = declaration(ps, &a);
 
 	if (!a) {
-		goto function_success;
+		/* transfer n -> root */
+		*root = n;
+		return r;
 	}
 
+	/* transfer a -> n */
 	dag_add_child(n, a);
 
+	/* allocate b */
 	struct dag_node* b = NULL;
 	r = dseq_prime(ps, &b);
 	if (r == result_error) {
 		goto function_error;
 	}
+
+	/* transfer b -> n */
 	if (b && b->type == dag_type_dseq && b->head) {
 		a->next = b->head;
 		b->head->prev = a;
@@ -41,6 +46,7 @@ enum result dseq(struct parse_state* ps, struct dag_node** root)
 	}
 
 function_success:
+	/* transfer n -> root */
 	*root = n;
 	return r;
 

@@ -8,6 +8,7 @@
 #include "test_uconv.h"
 #include "test_lookahead_translator.h"
 #include "test_lookahead_char.h"
+#include "test_dag.h"
 
 int main(void) {
 	test_uconv();
@@ -17,6 +18,7 @@ int main(void) {
 	test_buffer();
 	test_token();
 	test_scan();
+	test_dag();
 	test_parse_expression();
 	test_parse_statements();
 	print_results();

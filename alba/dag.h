@@ -112,6 +112,9 @@ struct dag_node {
 /* dynamic-output n */
 void dag_create_node(struct dag_node** n);
 
+/* dynamic-destroy n n{} */
+void dag_destroy(struct dag_node* n);
+
 /* static-output */
 void dag_init_node(struct dag_node* n);
 
