@@ -1,8 +1,4 @@
 # Todo
-* update function signature
-  
-  * word_table_init
-  * word_table_add
 * memory annotations for alba
   * types.c
   * types.h
