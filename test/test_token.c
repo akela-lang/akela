@@ -65,24 +65,21 @@ void test_token_word_table()
 
 	w = word_table_get(&wt, &t0.value);
 	assert_null(w, "t0");
-	r = word_table_add(&wt, &t0.value, t0.type);
-	assert_ok(r, "word_table_add");
+	word_table_add(&wt, &t0.value, t0.type);
 	w = word_table_get(&wt, &t0.value);
 	expect_true(buffer_compare(&w->value, &t0.value), "t0");
 	expect_int_equal(w->type, t0.type, "type t0");
 
 	w = word_table_get(&wt, &t1.value);
 	assert_null(w, "t1");
-	r = word_table_add(&wt, &t1.value, t1.type);
-	assert_ok(r, "word_table_add");
+	word_table_add(&wt, &t1.value, t1.type);
 	w = word_table_get(&wt, &t1.value);
 	expect_true(buffer_compare(&w->value, &t1.value), "t1");
 	expect_int_equal(w->type, t1.type, "type t1");
 
 	w = word_table_get(&wt, &t2.value);
 	assert_null(w, "t2");
-	r = word_table_add(&wt, &t2.value, t2.type);
-	assert_ok(r, "word_table_add");
+	word_table_add(&wt, &t2.value, t2.type);
 	w = word_table_get(&wt, &t2.value);
 	expect_true(buffer_compare(&w->value, &t2.value), "t2");
 	expect_int_equal(w->type, t2.type, "type t2");

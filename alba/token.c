@@ -265,7 +265,7 @@ enum result word_table_init(struct word_table* wt, unsigned int size)
 /* add word to word table */
 /* assume word is not in word table so call word_table_get before if not sure */
 /* dynamic-output wt{} */
-enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type)
+void word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type)
 {
     unsigned int val = hash_buffer(bf, wt->size);
 
@@ -289,8 +289,6 @@ enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_
     if (!wt->buckets[val].tail) {
         wt->buckets[val].tail = w;
     }
-
-    return result_ok;
 }
 
 /* get token based on word */
@@ -318,7 +316,6 @@ struct word* word_table_get(struct word_table* wt, struct buffer* bf)
 /* dynamic-temp bf{} */
 enum result word_table_add_reserved(struct word_table* wt, char* name, enum dag_type type)
 {
-    enum result r;
     struct buffer bf;
 
     /* initialize bf{} */
@@ -332,8 +329,7 @@ enum result word_table_add_reserved(struct word_table* wt, char* name, enum dag_
     }
 
     /* allocate wt{} */
-    r = word_table_add(wt, &bf, type);
-    if (r == result_error) return r;
+    word_table_add(wt, &bf, type);
 
     /* destroy bf{} */
     buffer_destroy(&bf);

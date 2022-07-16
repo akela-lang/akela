@@ -323,7 +323,6 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
 {
     struct lookahead_char* lc = sns->lc;
     struct word_table* wt = sns->wt;
-    enum result r;
     struct char_value cv;
     set_char_values(&cv);
     UChar32 uc;
@@ -355,8 +354,7 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
                 t->type = w->type;
             } else {
                 /* allocate wt{} */
-                r = word_table_add(wt, &t->value, t->type);
-                if (r == result_error) return r;
+                word_table_add(wt, &t->value, t->type);
             }
             *state = state_start;
             *got_token = 1;
@@ -381,8 +379,7 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
                 t->type = w->type;
             } else {
                 /* allocate wt{} */
-                r = word_table_add(wt, &t->value, t->type);
-                if (r == result_error) return r;
+                word_table_add(wt, &t->value, t->type);
             }
             *state = state_start;
             *got_token = 1;

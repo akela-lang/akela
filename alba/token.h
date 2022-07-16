@@ -201,7 +201,7 @@ void word_list_init(struct word_list* wl);
 enum result word_table_init(struct word_table* wt, unsigned int size);
 
 /* dynamic-output wt{} */
-enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type);
+void word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type);
 
 /* static-output */
 struct word* word_table_get(struct word_table* wt, struct buffer* bf);
