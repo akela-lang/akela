@@ -21,6 +21,10 @@ enum result dseq(struct parse_state* ps, struct dag_node** root)
 	/* allocate a */
 	struct dag_node* a = NULL;
 	r = declaration(ps, &a);
+	if (r == result_error) {
+		dag_destroy(n);
+		return r;
+	}
 
 	if (!a) {
 		/* transfer n -> root */
@@ -31,86 +35,77 @@ enum result dseq(struct parse_state* ps, struct dag_node** root)
 	/* transfer a -> n */
 	dag_add_child(n, a);
 
-	/* allocate b */
-	struct dag_node* b = NULL;
-	r = dseq_prime(ps, &b);
+	/* allocate ps{} n{} */
+	r = dseq_prime(ps, n);
 	if (r == result_error) {
-		goto function_error;
+		/* destroy n n{} */
+		dag_destroy(n);
+		return r;
 	}
 
-	/* transfer b -> n */
-	if (b && b->type == dag_type_dseq && b->head) {
-		a->next = b->head;
-		b->head->prev = a;
-		n->tail = b->tail;
-	}
-
-function_success:
 	/* transfer n -> root */
 	*root = n;
 	return r;
-
-function_error:
-	return r;
 }
 
-/**
- * @brief dseq' -> , declaration dseq' | e
- * @param dynamic-output root
- */
-enum result dseq_prime(struct parse_state* ps, struct dag_node** root)
+
+/* dseq' -> , declaration dseq' | e */
+/* dynamic-output ps{} parent{} */
+enum result dseq_prime(struct parse_state* ps, struct dag_node* parent)
 {
 	struct dag_node* n = NULL;
 	enum result r = result_ok;
 	int num;
-	struct token* t;
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 2, &num);
+
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	if (!t0 || t0->type != token_comma)
 	{
-		goto function_success;
+		return r;
 	}
 
-	r = match(ps, token_comma, "expecting comma", &t);
+	/* allocate ps{} comma comma{} */
+	struct token* comma;
+	r = match(ps, token_comma, "expecting comma", &comma);
 	if (r == result_error) {
-		goto function_error;
+		return r;
 	}
 
-	dag_create_node(&n);
-	n->type = dag_type_dseq;
+	/* destroy comma comma{} */
+	token_destroy(comma);
+	free(comma);
 
+	/* allocate a */
 	struct dag_node* a = NULL;
 	r = declaration(ps, &a);
 	if (r == result_error) {
-		goto function_error;
+		/* destroy n n{} */
+		dag_destroy(n);
+		return r;
 	}
+
 	if (!a) {
+		/* allocate ps{} */
 		r = set_source_error(ps->el, t0, ps->sns->lc, "expecting declaration after comma");
-		goto function_error;
+		return r;
 	}
-	dag_add_child(n, a);
 
-	struct dag_node* b = NULL;
-	r = dseq_prime(ps, &b);
+	/* transfer a -> parent */
+	dag_add_child(parent, a);
+
+	/* allocate ps{} parent{} */
+	r = dseq_prime(ps, parent);
 	if (r == result_error) {
-		goto function_error;
-	}
-	if (b && b->type == dag_type_dseq && b->head) {
-		a->next = b->head;
-		b->head->prev = a;
-		n->tail = b->tail;
+		return r;
 	}
 
-function_success:
-	*root = n;
-	return r;
-
-function_error:
 	return r;
 }
 
+/* static-output */
 int is_valid_type(struct buffer* b)
 {
 	if (buffer_str_compare(b, "Int32")) return 1;
