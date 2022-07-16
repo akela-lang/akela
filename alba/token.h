@@ -168,7 +168,7 @@ int token_find_last(struct token_list* tl, enum token_enum type);
 int token_list_count(struct token_list* tl);
 
 /* dynamic-output tl */
-enum result token_list_make(struct token_list** tl);
+void token_list_make(struct token_list** tl);
 
 /* static-output */
 /* dynamic-transfer t t{} -> tl{} */

@@ -91,12 +91,11 @@ int token_list_count(struct token_list* tl)
 }
 
 /* dynamic-output tl */
-enum result token_list_make(struct token_list** tl)
+void token_list_make(struct token_list** tl)
 {
     /* allocate tl */
     malloc_safe(tl, sizeof(**tl));
     token_list_init(*tl);
-    return result_ok;
 }
 
 /* Append the new token to the end of the token list */

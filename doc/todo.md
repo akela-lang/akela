@@ -1,8 +1,6 @@
 # Todo
 * update function signature
-  * win_temp_filename
-  * set_source_error
-  * token_list_make
+  
   * word_table_init
   * word_table_add
 * memory annotations for alba
