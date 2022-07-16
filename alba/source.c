@@ -119,11 +119,8 @@ enum result set_source_error(struct compile_error_list* el, struct token* t, str
 /* resource-use d */
 enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf)
 {
-	enum result r = result_ok;
-
 	/* allocate bf{} */
-	r = buffer_copy_str(bf, e->message);
-	if (r == result_error) return r;
+	buffer_copy_str(bf, e->message);
 	
 	/* allocate bf{} */
 	buffer_add_char(bf, '\n');
@@ -141,5 +138,5 @@ enum result format_error(struct compile_error* e, input_getchar f, input_seek se
 		buffer_add_char(bf, c);
 	}
 
-	return r;
+	return result_ok;
 }
