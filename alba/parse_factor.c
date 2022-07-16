@@ -147,10 +147,7 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 		} else if (t0->type == token_string) {
 			n->type = dag_type_string;
 		}
-		r = buffer_copy(&t0->value, &n->value);
-		if (r == result_error) {
-			goto function_error;
-		}
+		buffer_copy(&t0->value, &n->value);
 
 		r = match(ps, t0->type, "expecting number, id, or string", &t);
 		if (r == result_error) {

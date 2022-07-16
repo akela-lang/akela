@@ -378,10 +378,7 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* a = NULL;
 	dag_create_node(&a);
 	a->type = dag_type_id;
-	r = buffer_copy(&t1->value, &a->value);
-	if (r == result_error) {
-		goto function_error;
-	}
+	buffer_copy(&t1->value, &a->value);
 	dag_add_child(n, a);
 
 	/* start expr */
@@ -475,10 +472,7 @@ enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* a = NULL;
 	dag_create_node(&a);
 	a->type = dag_type_id;
-	r = buffer_copy(&t1->value, &a->value);
-	if (r == result_error) {
-		goto function_error;
-	}
+	buffer_copy(&t1->value, &a->value);
 	dag_add_child(n, a);
 
 	/* expr */

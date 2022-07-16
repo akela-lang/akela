@@ -267,7 +267,6 @@ enum result word_table_init(struct word_table* wt, unsigned int size)
 /* dynamic-output wt{} */
 enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type)
 {
-    enum result r;
     unsigned int val = hash_buffer(bf, wt->size);
 
     /* allocate w */
@@ -277,8 +276,7 @@ enum result word_table_add(struct word_table* wt, struct buffer* bf, enum token_
     w->type = type;
 
     /* allocate w{} */
-    r = buffer_copy(bf, &w->value);
-    if (r == result_error) return r;
+    buffer_copy(bf, &w->value);
 
     /* add to beginning of bucket */
     /* allocate w w{} -> wt{} */

@@ -40,10 +40,7 @@ enum result expr(struct parse_state* ps, struct dag_node** root)
 		struct dag_node* a;
 		dag_create_node(&a);
 		a->type = dag_type_id;
-		r = buffer_copy(&t0->value, &a->value);
-		if (r == result_error) {
-			goto function_error;
-		}
+		buffer_copy(&t0->value, &a->value);
 		dag_add_child(n, a);
 
 		struct dag_node* b;
