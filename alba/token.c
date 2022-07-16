@@ -240,9 +240,8 @@ void word_list_init(struct word_list* wl)
 
 /* initialize word table */
 /* dynamic-output wt{} */
-enum result word_table_init(struct word_table* wt, unsigned int size)
+void word_table_init(struct word_table* wt, unsigned int size)
 {
-    enum result r;
     wt->size = size;
 
     /* allocate wt{} */
@@ -254,12 +253,7 @@ enum result word_table_init(struct word_table* wt, unsigned int size)
     }
 
     /* allocate wt{} */
-    r = word_table_init_reserved(wt);
-    if (r == result_error) {
-        return r;
-    }
-
-    return result_ok;
+    word_table_init_reserved(wt);
 }
 
 /* add word to word table */
@@ -314,7 +308,7 @@ struct word* word_table_get(struct word_table* wt, struct buffer* bf)
 
 /* dynamic-output wt{} */
 /* dynamic-temp bf{} */
-enum result word_table_add_reserved(struct word_table* wt, char* name, enum dag_type type)
+void word_table_add_reserved(struct word_table* wt, char* name, enum dag_type type)
 {
     struct buffer bf;
 
@@ -333,46 +327,18 @@ enum result word_table_add_reserved(struct word_table* wt, char* name, enum dag_
 
     /* destroy bf{} */
     buffer_destroy(&bf);
-
-    return result_ok;
 }
 
 /* dynamic-output wt{} */
-enum result word_table_init_reserved(struct word_table* wt)
+void word_table_init_reserved(struct word_table* wt)
 {
-    enum result r;
-
     /* allocate wt{} */
-    r = word_table_add_reserved(wt, "function", token_function);
-    if (r == result_error) return r;
-
-    /* allocate wt{} */
-    r = word_table_add_reserved(wt, "end", token_end);
-    if (r == result_error) return r;
-
-    /* allocate wt{} */
-    r = word_table_add_reserved(wt, "if", token_if);
-    if (r == result_error) return r;
-
-    /* allocate wt{} */
-    r = word_table_add_reserved(wt, "elseif", token_elseif);
-    if (r == result_error) return r;
-
-    /* allocate wt{} */
-    r = word_table_add_reserved(wt, "else", token_else);
-    if (r == result_error) return r;
-
-    /* allocate wt{} */
-    r = word_table_add_reserved(wt, "while", token_while);
-    if (r == result_error) return r;
-
-    /* allocate wt{} */
-    r = word_table_add_reserved(wt, "for", token_for);
-    if (r == result_error) return r;
-
-    /* allocate wt{} */
-    r = word_table_add_reserved(wt, "in", token_in);
-    if (r == result_error) return r;
-
-    return result_ok;
+    word_table_add_reserved(wt, "function", token_function);
+    word_table_add_reserved(wt, "end", token_end);
+    word_table_add_reserved(wt, "if", token_if);
+    word_table_add_reserved(wt, "elseif", token_elseif);
+    word_table_add_reserved(wt, "else", token_else);
+    word_table_add_reserved(wt, "while", token_while);
+    word_table_add_reserved(wt, "for", token_for);
+    word_table_add_reserved(wt, "in", token_in);
 }

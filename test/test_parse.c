@@ -28,8 +28,7 @@ enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** ro
 
 	struct word_table* wt;
 	malloc_safe(&wt, sizeof(struct word_table));
-	r = word_table_init(wt, WORD_TABLE_SIZE);
-	assert_ok(r, "word table init");
+	word_table_init(wt, WORD_TABLE_SIZE);
 
 	struct lookahead_char* lc;
 	malloc_safe(&lc, sizeof(struct lookahead_char));

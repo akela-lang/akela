@@ -1,7 +1,4 @@
 # Todo
-* change signature
-  * process_char_word
-  * word_table_add_reserved
 * memory annotations for alba
   * types.c
   * types.h

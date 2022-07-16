@@ -34,8 +34,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 
 	lookahead_char_init(lc, string_getchar, sd, conv);
 
-	r = word_table_init(wt, WORD_TABLE_SIZE);
-	assert_ok(r, "word_table_init");
+	word_table_init(wt, WORD_TABLE_SIZE);
 
 	compile_error_list_init(el);
 

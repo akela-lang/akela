@@ -43,8 +43,7 @@ void test_token_word_table()
 	enum result r;
 
 	struct word_table wt;
-	r = word_table_init(&wt, WORD_TABLE_SIZE);
-	assert_ok(r, "word_table_init");
+	word_table_init(&wt, WORD_TABLE_SIZE);
 
 	struct token t0;
 	token_init(&t0);
@@ -92,8 +91,7 @@ void test_token_word_table_init()
 	enum result r;
 
 	struct word_table wt;
-	r = word_table_init(&wt, 10);
-	assert_ok(r, "word_table_init");
+	word_table_init(&wt, 10);
 
 	struct buffer bf;
 	buffer_init(&bf);
