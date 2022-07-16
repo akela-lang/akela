@@ -3,8 +3,13 @@
 
 #include "zinc/buffer.h"
 
-int is_valid_type(struct buffer* b);
+/* dynamic-output ps{} root root{} */
 enum result dseq(struct parse_state* ps, struct dag_node** root);
+
+/* static-output */
+int is_valid_type(struct buffer* b);
+
+/* dynamic-output ps{} root root{} */
 enum result declaration(struct parse_state* ps, struct dag_node** root);
 
 #endif

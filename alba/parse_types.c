@@ -7,7 +7,7 @@
 #include "source.h"
 
 /* dseq->declaration dseq' | e */
-/* dynamic - output root */
+/* dynamic-output ps{} root root{} */
 enum result dseq(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
@@ -68,7 +68,7 @@ enum result dseq_prime(struct parse_state* ps, struct dag_node* parent)
 	}
 
 	/* allocate ps{} comma comma{} */
-	struct token* comma;
+	struct token* comma = NULL;
 	r = match(ps, token_comma, "expecting comma", &comma);
 	if (r == result_error) {
 		return r;
@@ -116,17 +116,15 @@ int is_valid_type(struct buffer* b)
 	return 0;
 }
 
-/**
- * @brief declaration -> id :: type | id
- * @param dynamic-output ps{} root
- */
+/* declaration -> id :: type | id */
+/* dynamic-output ps{} root root{} */
 enum result declaration(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
-	struct token* t;
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 3, &num);
 	if (r == result_error) {
 		return r;
@@ -138,61 +136,110 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 
 	if (t0 && t0->type == token_id && t1 && t1->type == token_double_colon && t2 && t2->type == token_id) {
 		/* id::type */
-		r = match(ps, token_id, "expected id", &t);
+
+		/* allocate ps{} id id{} */
+		struct token* id = NULL;
+		r = match(ps, token_id, "expected id", &id);
 		if (r == result_error) {
 			return r;
 		}
 
-		r = match(ps, token_double_colon, "expected double colon", &t);
+		/* allocate ps{} dc dc{} */
+		struct token* dc = NULL;
+		r = match(ps, token_double_colon, "expected double colon", &dc);
 		if (r == result_error) {
 			return r;
 		}
 
-		r = match(ps, token_id, "expected type", &t);
+		/* destroy dc dc{} */
+		token_destroy(dc);
+		free(dc);
+
+		struct token* type_id = NULL;
+		r = match(ps, token_id, "expected type", &type_id);
 		if (r == result_error) {
 			return r;
 		}
 
-		if (!is_valid_type(&t2->value)) {
+		if (!is_valid_type(&type_id->value)) {
+			/* allocate a */
 			char* a;
 			buffer2array(&t2->value, &a);
 			r = set_source_error(ps->el, t2, ps->sns->lc, "unknown type: %s", a);
+
+			/* destroy a */
 			free(a);
+
+			/* destroy id id{} type_id type_id{} */
+			token_destroy(id);
+			free(id);
+			token_destroy(type_id);
+			free(type_id);
 			return r;
 		}
 
+		/* allocate n */
 		dag_create_node(&n);
 		n->type = dag_type_declaration;
 
+		/* allocate a */
 		struct dag_node* a = NULL;
 		dag_create_node(&a);
 		a->type = dag_type_id;
-		buffer_copy(&t0->value, &a->value);
+
+		/* allocate a{} */
+		buffer_copy(&id->value, &a->value);
+
+		/* transfer a a{} -> n */
 		dag_add_child(n, a);
 
+		/* allocate b */
 		struct dag_node* b = NULL;
 		dag_create_node(&b);
 		b->type = dag_type_type;
-		buffer_copy(&t2->value, &b->value);
+
+		/* allocate b{} */
+		buffer_copy(&type_id->value, &b->value);
+
+		/* transfer b b{} -> n */
 		dag_add_child(n, b);
+
+		/* destroy id id{} type_id type_id{} */
+		token_destroy(id);
+		free(id);
+		token_destroy(type_id);
+		free(type_id);
 
 	} else if (t0 && t0->type == token_id) {
 		/* id */
-		r = match(ps, token_id, "expected id", &t);
+
+		struct token* id = NULL;
+		r = match(ps, token_id, "expected id", &id);
 		if (r == result_error) {
 			return r;
 		}
 
+		/* allocate n */
 		dag_create_node(&n);
 		n->type = dag_type_declaration;
 
+		/* allocate a */
 		struct dag_node* a = NULL;
 		dag_create_node(&a);
 		a->type = dag_type_id;
-		buffer_copy(&t0->value, &a->value);
+
+		/* allocate a{} */
+		buffer_copy(&id->value, &a->value);
+
+		/* transfer a a{} -> n */
 		dag_add_child(n, a);
+
+		/* destroy id id{} */
+		token_destroy(id);
+		free(id);
 	}
 
+	/* transfer n -> root */
 	*root = n;
 	return r;
 }
