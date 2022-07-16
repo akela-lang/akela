@@ -33,7 +33,7 @@ enum result circular_byte_buffer_add(struct circular_byte_buffer* cbyte, char c)
 char circular_byte_buffer_pop(struct circular_byte_buffer* cbyte);
 
 /* dynamic-output: cc32{} */
-enum result circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t buf_size);
+void circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t buf_size);
 
 /* dynamic-destroy cc32{} */
 void circular_uchar32_buffer_destroy(struct circular_uchar32_buffer* cc32);

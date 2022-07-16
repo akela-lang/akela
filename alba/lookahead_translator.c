@@ -53,7 +53,7 @@ char circular_byte_buffer_pop(struct circular_byte_buffer* cbyte)
 }
 
 /* dynamic-output: cc32{} */
-enum result circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t buf_size)
+void circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t buf_size)
 {
 	cc32->buf = NULL;
 	cc32->buf_size = buf_size;
@@ -62,7 +62,6 @@ enum result circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, s
 
 	/* allocate cc32{} */
 	malloc_safe(&cc32->buf, sizeof(UChar32)*buf_size);
-	return result_ok;
 }
 
 /* dynamic-destroy cc32{} */

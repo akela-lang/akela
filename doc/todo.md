@@ -1,6 +1,5 @@
 # Todo
 * update function signature
-  * circular_uchar32_buffer_init
   * win_temp_filename
   * set_source_error
   * token_list_make

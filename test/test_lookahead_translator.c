@@ -50,8 +50,7 @@ void test_lookahead_translator_circular_uchar32_buffer()
 	struct circular_uchar32_buffer cc32;
 	int size = 16;
 
-	r = circular_uchar32_buffer_init(&cc32, size);
-	assert_ok(r, "init");
+	circular_uchar32_buffer_init(&cc32, size);
 
 	int i;
 
