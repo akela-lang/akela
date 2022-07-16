@@ -329,8 +329,7 @@ enum result word_table_add_reserved(struct word_table* wt, char* name, enum dag_
     while (*p) {
 
         /* allocate bf{} */
-        r = buffer_add_char(&bf, *p);
-        if (r == result_error) return r;
+        buffer_add_char(&bf, *p);
         p++;
     }
 

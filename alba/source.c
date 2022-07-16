@@ -126,8 +126,7 @@ enum result format_error(struct compile_error* e, input_getchar f, input_seek se
 	if (r == result_error) return r;
 	
 	/* allocate bf{} */
-	r = buffer_add_char(bf, '\n');
-	if (r == result_error) return r;
+	buffer_add_char(bf, '\n');
 
 	/* use d */
 	int err = seek(d, e->byte_pos);
@@ -139,8 +138,7 @@ enum result format_error(struct compile_error* e, input_getchar f, input_seek se
 		if (c == '\n') break;
 
 		/* allocate bf{} */
-		r = buffer_add_char(bf, c);
-		if (r == result_error) return r;
+		buffer_add_char(bf, c);
 	}
 
 	return r;
