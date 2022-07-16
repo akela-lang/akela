@@ -154,8 +154,10 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 
 		if (!is_valid_type(&t2->value)) {
 			char* a;
-			r = buffer2array(&t2->value, &a);
-			return set_source_error(ps->el, t2, ps->sns->lc, "unknown type: %s", a);
+			buffer2array(&t2->value, &a);
+			r = set_source_error(ps->el, t2, ps->sns->lc, "unknown type: %s", a);
+			free(a);
+			return r;
 		}
 
 		dag_create_node(&n);

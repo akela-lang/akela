@@ -165,10 +165,7 @@ enum result token_list_print(struct token_list* tl)
         char* a;
 
         /* allocate a */
-        r = buffer2array(&t->value, &a);
-        if (r == result_error) {
-            return r;
-        }
+        buffer2array(&t->value, &a);
         printf("%zu, %zu: token: %s, value: %s\n", t->line, t->col,token_name[t->type], a);
 
         /* dynamic-destroy */
@@ -194,10 +191,7 @@ enum result print_token(struct allocator* al, struct token* t)
     char* a;
 
     /* allocate a */
-    r = buffer2array(&t->value, &a);
-    if (r == result_error) {
-        return r;
-    }
+    buffer2array(&t->value, &a);
     printf("%zu, %zu: token: %s, value: %s\n", t->line, t->col, token_name[t->type], a);
 
     /* destroy a */

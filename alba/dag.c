@@ -97,10 +97,9 @@ void dag_print(struct dag_node* root, char** names)
 		printf(" %s", names[p->type]);
 		if (p->value.size > 0) {
 			char* a;
-			enum result r;
 
 			/* allocate a */
-			r = buffer2array(&p->value, &a);
+			buffer2array(&p->value, &a);
 			printf(":%s", a);
 
 			/* destroy a */
