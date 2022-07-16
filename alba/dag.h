@@ -110,7 +110,7 @@ struct dag_node {
 };
 
 /* dynamic-output n */
-enum result dag_create_node(struct dag_node** n);
+void dag_create_node(struct dag_node** n);
 
 /* static-output */
 void dag_init_node(struct dag_node* n);

@@ -51,10 +51,7 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_anonymous_function;
 
 		struct dag_node* a = NULL;
@@ -95,17 +92,11 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_call;
 
 		struct dag_node* a = NULL;
-		r = dag_create_node(&a);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&a);
 		a->type = dag_type_id;
 		buffer_copy(&t0->value, &a->value);
 		dag_add_child(n, a);
@@ -139,10 +130,7 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 
 		n->type = dag_type_not;
 		dag_add_child(n, a);
@@ -150,10 +138,7 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 
 		/* number, id, string */
 	} else if (t0 && (t0->type == token_number || t0->type == token_id || t0->type == token_string)) {
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 
 		if (t0->type == token_number) {
 			n->type = dag_type_number;
@@ -175,18 +160,12 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 
 	/* sign and number or word */
 	else if (t0 && (t0->type == token_plus || t0->type == token_minus) && t1 && (t1->type == token_number || t1->type == token_id)) {
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 
 		n->type = dag_type_sign;
 
 		struct dag_node* left;
-		r = dag_create_node(&left);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&left);
 
 		if (t0->type == token_plus) {
 			left->type = dag_type_plus;
@@ -267,10 +246,7 @@ enum result cseq(struct parse_state* ps, struct dag_node** root)
 	}
 
 	if (a) {
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_cseq;
 
 		dag_add_child(n, a);
@@ -360,10 +336,7 @@ enum result array_literal(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_array_literal;
 
 		r = aseq(ps, n);

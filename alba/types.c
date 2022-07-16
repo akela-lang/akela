@@ -16,10 +16,7 @@ enum result dseq(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* n = NULL;
 
 	/* allocate n */
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_create_node(&n);
 
 	n->type = dag_type_dseq;
 
@@ -75,10 +72,7 @@ enum result dseq_prime(struct parse_state* ps, struct dag_node** root)
 		goto function_error;
 	}
 
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_create_node(&n);
 	n->type = dag_type_dseq;
 
 	struct dag_node* a = NULL;
@@ -164,17 +158,11 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 			return set_source_error(ps->el, t2, ps->sns->lc, "unknown type: %s", a);
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			return r;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_declaration;
 
 		struct dag_node* a = NULL;
-		r = dag_create_node(&a);
-		if (r == result_error) {
-			return r;
-		}
+		dag_create_node(&a);
 		a->type = dag_type_id;
 		buffer_copy(&t0->value, &a->value);
 		dag_add_child(n, a);
@@ -192,17 +180,11 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 			return r;
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			return r;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_declaration;
 
 		struct dag_node* a = NULL;
-		r = dag_create_node(&a);
-		if (r == result_error) {
-			return r;
-		}
+		dag_create_node(&a);
 		a->type = dag_type_id;
 		buffer_copy(&t0->value, &a->value);
 		dag_add_child(n, a);

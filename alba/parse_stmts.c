@@ -23,10 +23,7 @@ enum parse_result stmts(struct parse_state* ps, struct dag_node** root)
 		goto function_error;
 	}
 
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_create_node(&n);
 	n->type = dag_type_stmts;
 
 	if (a) {
@@ -152,10 +149,7 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_while;
 
 		struct dag_node* a = NULL;
@@ -215,10 +209,7 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 		if (r == result_error) {
 			goto function_error;
 		}
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_function;
 
 		r = match(ps, token_id, "expecting word", &t);
@@ -226,10 +217,7 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 		struct dag_node* a;
-		r = dag_create_node(&a);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&a);
 		a->type = dag_type_id;
 		buffer_copy(&t1->value, &a->value);
 		dag_add_child(n, a);
@@ -276,17 +264,11 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_if;
 
 		struct dag_node* cb = NULL;
-		r = dag_create_node(&cb);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&cb);
 		cb->type = dag_type_conditional_branch;
 		dag_add_child(n, cb);
 
@@ -386,24 +368,15 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 		goto function_error;
 	}
 
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_create_node(&n);
 
 	/* for range */
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_create_node(&n);
 	n->type = dag_type_for_range;
 
 	/* id */
 	struct dag_node* a = NULL;
-	r = dag_create_node(&a);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_create_node(&a);
 	a->type = dag_type_id;
 	r = buffer_copy(&t1->value, &a->value);
 	if (r == result_error) {
@@ -495,18 +468,12 @@ enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 	}
 
 	/* for */
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_create_node(&n);
 	n->type = dag_type_for_iteration;
 
 	/* id */
 	struct dag_node* a = NULL;
-	r = dag_create_node(&a);
-	if (r == result_error) {
-		goto function_error;
-	}
+	dag_create_node(&a);
 	a->type = dag_type_id;
 	r = buffer_copy(&t1->value, &a->value);
 	if (r == result_error) {
@@ -570,10 +537,7 @@ enum result elseif_stmts(struct parse_state* ps, struct dag_node* parent)
 		}
 
 		struct dag_node* cb = NULL;
-		r = dag_create_node(&cb);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&cb);
 		cb->type = dag_type_conditional_branch;
 
 		struct dag_node* cond = NULL;
@@ -635,10 +599,7 @@ enum result else_stmt(struct parse_state* ps, struct dag_node* parent)
 		}
 
 		struct dag_node* cb = NULL;
-		r = dag_create_node(&cb);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&cb);
 		cb->type = dag_type_default_branch;
 
 		/* stmts */

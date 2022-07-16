@@ -34,17 +34,11 @@ enum result expr(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_assign;
 
 		struct dag_node* a;
-		r = dag_create_node(&a);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&a);
 		a->type = dag_type_id;
 		r = buffer_copy(&t0->value, &a->value);
 		if (r == result_error) {
@@ -150,10 +144,7 @@ enum result boolean_prime(struct parse_state* ps, struct dag_node** root, struct
 		return r;
 	}
 
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		return r;
-	}
+	dag_create_node(&n);
 
 	n->type = type;
 	r = match(ps, t0->type, "expecting + or -", &t);
@@ -271,10 +262,7 @@ enum result comparison_prime(struct parse_state* ps, struct dag_node** root, str
 		return r;
 	}
 
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		return r;
-	}
+	dag_create_node(&n);
 
 	n->type = type;
 	r = match(ps, t0->type, "expecting + or -", &t);
@@ -391,10 +379,7 @@ enum result add_prime(struct parse_state* ps, struct dag_node** root, struct dag
 		return r;
 	}
 
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		return r;
-	}
+	dag_create_node(&n);
 
 	n->type = type;
 	r = match(ps, t0->type, "expecting + or -", &t);
@@ -512,10 +497,7 @@ enum result mult_prime(struct parse_state* ps, struct dag_node** root, struct da
 		return r;
 	}
 
-	r = dag_create_node(&n);
-	if (r == result_error) {
-		return r;
-	}
+	dag_create_node(&n);
 
 	n->type = type;
 	r = match(ps, t0->type, "expecting * or /", &t);
@@ -575,10 +557,7 @@ enum result array_subscript(struct parse_state* ps, struct dag_node** root)
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	if (t0 && t0->type == token_left_square_bracket) {
 		struct dag_node* a = n;
-		r = dag_create_node(&n);
-		if (r == result_error) {
-			goto function_error;
-		}
+		dag_create_node(&n);
 		n->type = dag_type_array_subscript;
 		dag_add_child(n, a);
 
