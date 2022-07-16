@@ -7,11 +7,9 @@ void test_token_hash_buffer()
 	test_name(__func__);
 
 	struct buffer bf;
-	enum result r;
 	buffer_init(&bf);
 
-	r = array2buffer("hello", &bf);
-	assert_ok(r, "array2buffer");
+	array2buffer("hello", &bf);
 	unsigned int val;
 	unsigned int size = 10;
 	val = hash_buffer(&bf, 10);
@@ -40,25 +38,20 @@ void test_token_word_table()
 {
 	test_name(__func__);
 
-	enum result r;
-
 	struct word_table wt;
 	word_table_init(&wt, WORD_TABLE_SIZE);
 
 	struct token t0;
 	token_init(&t0);
-	r = array2buffer("t0", &t0.value);
-	assert_ok(r, "array2buffer t0");
+	array2buffer("t0", &t0.value);
 
 	struct token t1;
 	token_init(&t1);
-	r = array2buffer("t1", &t1.value);
-	assert_ok(r, "array2buffer t1");
+	array2buffer("t1", &t1.value);
 
 	struct token t2;
 	token_init(&t2);
-	r = array2buffer("t2", &t2.value);
-	assert_ok(r, "array2buffer t2");
+	array2buffer("t2", &t2.value);
 
 	struct word* w;
 
@@ -88,15 +81,12 @@ void test_token_word_table_init()
 {
 	test_name(__func__);
 
-	enum result r;
-
 	struct word_table wt;
 	word_table_init(&wt, 10);
 
 	struct buffer bf;
 	buffer_init(&bf);
-	r = array2buffer("function", &bf);
-	assert_ok(r, "array2buffer function");
+	array2buffer("function", &bf);
 
 	struct word* w;
 	
@@ -107,8 +97,7 @@ void test_token_word_table_init()
 
 	struct buffer bf1;
 	buffer_init(&bf1);
-	r = array2buffer("end", &bf1);
-	assert_ok(r, "array2buffer end");
+	array2buffer("end", &bf1);
 
 	w = word_table_get(&wt, &bf1);
 	assert_ptr(w, "ptr t");

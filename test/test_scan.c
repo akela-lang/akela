@@ -19,8 +19,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	buffer_init(bf);
 
 	/* allocate bf */
-	r = array2buffer(line, bf);
-	assert_ok(r, "ok");
+	array2buffer(line, bf);
 
 	struct string_data* sd;
 

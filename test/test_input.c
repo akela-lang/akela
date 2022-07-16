@@ -12,13 +12,11 @@ void test_input_string()
 
 	struct buffer bf;
 	struct string_data sd;
-	enum result r;
 	input_getchar f;
 	input_data d;
 
 	buffer_init(&bf);
-	r = array2buffer("hello", &bf);
-	assert_ok(r, "array2buffer");
+	array2buffer("hello", &bf);
 	string_data_init(&bf, &sd);
 
 	f = string_getchar;

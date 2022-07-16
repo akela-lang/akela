@@ -14,8 +14,7 @@ void test_lookahead_char_short()
 	struct buffer bf;
 	buffer_init(&bf);
 
-	r = array2buffer("hello", &bf);
-	assert_ok(r, "array2buffer");
+	array2buffer("hello", &bf);
 
 	struct string_data sd;
 	string_data_init(&bf, &sd);
@@ -147,8 +146,7 @@ void test_lookahead_char_line()
 	buffer_init(&bf);
 
 	/* allocate bf */
-	r = array2buffer("one\ntwo", &bf);
-	assert_ok(r, "array2buffer");
+	array2buffer("one\ntwo", &bf);
 
 	struct string_data sd;
 	string_data_init(&bf, &sd);

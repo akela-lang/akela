@@ -15,8 +15,7 @@ enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** ro
 	struct buffer* bf;
 	malloc_safe(&bf, sizeof(struct buffer));
 	buffer_init(bf);
-	r = array2buffer(line, bf);
-	assert_ok(r, "ok");
+	array2buffer(line, bf);
 
 	struct string_data* sd;
 	malloc_safe(&sd, sizeof(struct string_data));
