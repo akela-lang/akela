@@ -13,7 +13,7 @@ set(source_files
     "input.c"
     os_win.c
     uconv.c
-    types.c
+    parse_types.c
     lookahead_char.c
 )
 include_directories("../external/icu4c/include")

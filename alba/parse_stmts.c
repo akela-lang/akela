@@ -6,7 +6,7 @@
 #include "input.h"
 #include "scan.h"
 #include "parse_tools.h"
-#include "types.h"
+#include "parse_types.h"
 #include "source.h"
 
 /*

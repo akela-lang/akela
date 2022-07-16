@@ -2,7 +2,7 @@
 #include "parse_tools.h"
 #include "dag.h"
 #include "token.h"
-#include "types.h"
+#include "parse_types.h"
 #include "parse_stmts.h"
 #include "parse_expr.h"
 #include "source.h"

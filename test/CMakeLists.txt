@@ -12,7 +12,7 @@ set(test_files
     "${alba_dir}/input.c"
     ${alba_dir}/os_win.c
     ${alba_dir}/uconv.c
-    ${alba_dir}/types.c
+    ${alba_dir}/parse_types.c
     ${alba_dir}/uconv.c
     ${alba_dir}/lookahead_translator.c
     ${alba_dir}/lookahead_char.c
