@@ -21,7 +21,7 @@ struct circular_uchar32_buffer {
 };
 
 /* dynamic-output cbyte{} */
-enum result circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_size);
+void circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_size);
 
 /* dynamic-destroy cbyte{} */
 void circular_byte_buffer_destroy(struct circular_byte_buffer* cbyte);

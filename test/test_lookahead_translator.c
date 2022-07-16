@@ -9,8 +9,7 @@ void test_lookahead_translator_cbyte()
 	struct circular_byte_buffer cbyte;
 	int size = 16;
 
-	r = circular_byte_buffer_init(&cbyte, size);
-	assert_ok(r, "init");
+	circular_byte_buffer_init(&cbyte, size);
 
 	char* s = "0123456789abcdef";
 	char* p = s;

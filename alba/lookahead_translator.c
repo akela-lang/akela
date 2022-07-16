@@ -9,7 +9,7 @@
 #include "lookahead_translator.h"
 
 /* dynamic-output cbyte{} */
-enum result circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_size)
+void circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_size)
 {
 	cbyte->buf = NULL;
 	cbyte->buf_size = buf_size;
@@ -18,7 +18,6 @@ enum result circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t
 
 	/* allocate cbyte{} */
 	malloc_safe(&cbyte->buf, buf_size);
-	return result_ok;
 }
 
 /* dynamic-destroy cbyte{} */
