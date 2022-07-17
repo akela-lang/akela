@@ -189,13 +189,19 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 		token_destroy(not);
 		free(not);
 
+		struct location loc;
+		r = get_parse_location(ps, &loc);
+		if (r == result_error) {
+			return r;
+		}
+
 		/* allocate a a{} */
 		struct dag_node* a = NULL;
 		r = factor(ps, &a);
 
 		if (!a) {
 			/* allocate ps{} */
-			r = set_source_error(ps->el, t0, ps->sns->lc, "expected factor after !");
+			r = set_source_error(ps->el, &loc, "expected factor after !");
 			return r;
 		}
 
@@ -269,6 +275,13 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 		/* transfer left -> n{} */
 		dag_add_child(n, left);
 
+		struct location loc;
+		r = get_parse_location(ps, &loc);
+		if (r == result_error) {
+			dag_destroy(n);
+			return r;
+		}
+
 		/* allocate right */
 		struct dag_node* right = NULL;
 		r = factor(ps, &right);
@@ -278,7 +291,7 @@ enum result factor(struct parse_state* ps, struct dag_node** root)
 		}
 
 		if (!right) {
-			r = set_source_error(ps->el, t0, ps->sns->lc, "expecting factor after sign");
+			r = set_source_error(ps->el, &loc, "expecting factor after sign");
 			dag_destroy(n);
 			return r;
 		}
@@ -399,6 +412,12 @@ enum result cseq_prime(struct parse_state* ps, struct dag_node* parent)
 		token_destroy(comma);
 		free(comma);
 
+		struct location loc;
+		r = get_parse_location(ps, &loc);
+		if (r == result_error) {
+			return r;
+		}
+
 		/* allocate a a{} */
 		struct dag_node* a = NULL;
 		r = factor(ps, &a);
@@ -407,7 +426,7 @@ enum result cseq_prime(struct parse_state* ps, struct dag_node* parent)
 		}
 
 		if (!a) {
-			r = set_source_error(ps->el, t0, ps->sns->lc, "expected factor after comma");
+			r = set_source_error(ps->el, &loc, "expected factor after comma");
 			return r;
 		}
 
@@ -521,7 +540,6 @@ enum result aseq_prime(struct parse_state* ps, struct dag_node* parent)
 {
 	enum result r = result_ok;
 	int num;
-	struct token* t;
 
 	/* allocate ps{} */
 	r = get_lookahead(ps, 1, &num);
@@ -547,6 +565,12 @@ enum result aseq_prime(struct parse_state* ps, struct dag_node* parent)
 	token_destroy(comma);
 	free(comma);
 
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
 	/* allocate ps{} a a{} */
 	struct dag_node* a = NULL;
 	r = factor(ps, &a);
@@ -555,7 +579,7 @@ enum result aseq_prime(struct parse_state* ps, struct dag_node* parent)
 	}
 
 	if (!a) {
-		return set_source_error(ps->el, t0, ps->sns->lc, "expected factor after comma");
+		return set_source_error(ps->el, &loc, "expected factor after comma");
 	}
 
 	/* transfer a -> parent */

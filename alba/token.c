@@ -101,7 +101,7 @@ void token_list_make(struct token_list** tl)
 /* Append the new token to the end of the token list */
 /* static-output */
 /* dynamic-transfer t t{} -> tl{} */
-enum result token_list_add(struct token_list* tl, struct token* t)
+void token_list_add(struct token_list* tl, struct token* t)
 {
     /* update previous */
     struct token* t_prev = tl->tail;
@@ -118,8 +118,6 @@ enum result token_list_add(struct token_list* tl, struct token* t)
         tl->head = t;
     }
     tl->tail = t;
-
-    return result_ok;
 }
 
 /* partition-output tl{} -> return */

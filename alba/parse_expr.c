@@ -6,73 +6,105 @@
 #include "source.h"
 #include "scan.h"
 
-/*
-* expr -> not_operator
-*/
+/* expr -> id = expr | boolean */
+/* dynamic-output ps{} root root{} */
 enum result expr(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
-	struct token* t;
+	struct location loc;
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 2, &num);
 	if (r == result_error) {
-		goto function_error;
+		return r;
 	}
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct token* t1 = get_token(&ps->lookahead, 1);
 
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
 	/* id = expr */
 	if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
-		r = match(ps, token_id, "expected word", &t);
+
+		/* allocate ps{} id id{} */
+		struct token* id = NULL;
+		r = match(ps, token_id, "expected word", &id);
 		if (r == result_error) {
-			goto function_error;
-		}
-		r = match(ps, token_equal, "expected equal", &t);
-		if (r == result_error) {
-			goto function_error;
+			return r;
 		}
 
+		/* allocate ps{} equal equal{} */
+		struct token* equal = NULL;
+		r = match(ps, token_equal, "expected equal", &equal);
+		if (r == result_error) {
+			/* destroy id id{} */
+			token_destroy(id);
+			free(id);
+			return r;
+		}
+
+		/* destroy equal equal{} */
+		token_destroy(equal);
+		free(equal);
+
+		/* allocate n */
 		dag_create_node(&n);
 		n->type = dag_type_assign;
 
+		/* allocate a */
 		struct dag_node* a;
 		dag_create_node(&a);
 		a->type = dag_type_id;
-		buffer_copy(&t0->value, &a->value);
+
+		/* allocate a{} */
+		buffer_copy(&id->value, &a->value);
+
+		/* destroy id id{} */
+		token_destroy(id);
+		free(id);
+
+		/* transfer a a{} -> n{} */
 		dag_add_child(n, a);
 
+		/* allocate b b{} */
 		struct dag_node* b;
 		r = expr(ps, &b);
 		if (r == result_error) {
-			goto function_error;
+			dag_destroy(n);
+			return r;
 		}
+
 		if (b == NULL) {
-			r = set_source_error(ps->sns->el, t0, ps->sns->lc, "expect expression on rhs of assignment operator");
-			goto function_error;
+			dag_destroy(n);
+			return set_source_error(ps->sns->el, &loc, "expect expression on rhs of assignment operator");
 		}
+
+		/* transfer b b{} -> n{} */
 		dag_add_child(n, b);
-		goto function_success;
+
+		/* transfer n n{} -> root */
+		*root = n;
+		return r;
 	}
 
+	/* allocate n n{} */
 	r = boolean(ps, &n);
 	if (r == result_error) {
-		goto function_error;
+		return r;
 	}
 
-function_success:
+	/* transfer n n{} -> root */
 	*root = n;
-	return r;
-
-function_error:
 	return r;
 }
 
-/*
-* boolean -> comparison boolean'
-*/
-
+/* boolean -> comparison boolean' */
+/* dynamic-output ps{} root root{} */
 enum result boolean(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
@@ -81,34 +113,43 @@ enum result boolean(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 	struct dag_node* c = NULL;
-	struct dag_node* n = NULL;
+	struct location loc;
 
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
+	/* allocate a a{} */
 	r = comparison(ps, &a);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* allocate b{} */
 	r = boolean_prime(ps, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
 
 	if (a && !b) {
-		n = a;
-		*root = n;
+		/* transfer a a{} -> root */
+		*root = a;
 	} else if (a && b) {
+		/* allocate b{} */
 		dag_push(c, a);
+		/* transfer b b{} -> root */
 		*root = b;
+	} else if (!a && b) {
+		dag_destroy(b);
+		return set_source_error(ps->el, &loc, "internal comparison non-terminal parse error");
 	}
 
 	return r;
 }
 
-/*
-* boolean' -> && comparison boolean'
-*			| || comparison boolean'
-*			| e
-*/
+/* boolean' -> && comparison boolean' | || comparison boolean' | e */
+/* dynamic-output ps{} root root{} */
 enum result boolean_prime(struct parse_state* ps, struct dag_node** root, struct dag_node** insert_point)
 {
 	enum result r = result_ok;
@@ -118,8 +159,8 @@ enum result boolean_prime(struct parse_state* ps, struct dag_node** root, struct
 	struct dag_node* c = NULL;
 	enum dag_type type = dag_type_none;
 	int num;
-	struct token* t;
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 1, &num);
 	if (r == result_error) {
 		return r;
@@ -141,45 +182,84 @@ enum result boolean_prime(struct parse_state* ps, struct dag_node** root, struct
 		return r;
 	}
 
+	/* allocate n */
 	dag_create_node(&n);
-
 	n->type = type;
-	r = match(ps, t0->type, "expecting + or -", &t);
+
+	/* allocate ps{} op op{} */
+	struct token* op = NULL;
+	r = match(ps, t0->type, "expecting + or -", &op);
 	if (r == result_error) {
+		/* destroy n */
+		dag_destroy(n);
+		return r;
+	}
+
+	/* destroy op op{} */
+	token_destroy(op);
+	free(op);
+
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		dag_destroy(n);
 		return r;
 	}
 
 	/* comparison */
+	/* allocate a a{} */
 	r = comparison(ps, &a);
 	if (r == result_error) {
+		/* destroy n */
+		dag_destroy(n);
 		return r;
 	}
 
 	/* boolean' */
+	/* allocate b b{} */
 	r = boolean_prime(ps, &b, &c);
 	if (r == result_error) {
+		/* destroy n */
+		dag_destroy(n);
 		return r;
 	}
 
 	if (a && !b) {
+		/* transfer a a{} -> n{} */
 		dag_add_child(n, a);
+		/* transfer n n{} -> root */
 		*root = n;
 		*insert_point = n;
 		return r;
 	} else if (a && b) {
+		/* transfer a a{} -> n{} */
+		/* transfer n n{} -> b{} */
+		/* transfer b b{} -> root */
 		dag_add_child(n, a);
 		dag_push(c, n);
 		*root = b;
 		*insert_point = n;
 		return r;
-	} else {
-		return r;
+	} else if (!a && !b) {
+		/* destroy n */
+		dag_destroy(n);
+		return set_source_error(ps->el, &loc, "no right hand op in logical expression");
+	} else if (!a && b) {
+		/* destroy n b */
+		dag_destroy(n);
+		dag_destroy(b);
+		return set_source_error(ps->el, &loc, "no right hand op in logical expression");
+	} else if (!a && !b) {
+		/* destroy n */
+		dag_destroy(n);
+		return set_source_error(ps->el, &loc, "no right hand op in logical expression");
 	}
+
+	return r;
 }
 
-/*
-* comparison -> add comparison'
-*/
+/* comparison -> add comparison' */
+/* dynamic-output ps{} root root{} */
 enum result comparison(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
@@ -188,24 +268,38 @@ enum result comparison(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 	struct dag_node* c = NULL;
-	struct dag_node* n = NULL;
 
+	/* allocate ps{} */
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
+	/* allocate ps{} a a{} */
 	r = add(ps, &a);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* allocate ps{} b b{} */
 	r = comparison_prime(ps, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
 
 	if (a && !b) {
-		n = a;
-		*root = n;
+		/* transfer a -> root */
+		*root = a;
 	} else if (a && b) {
+		/* transfer a -> b{} */
+		/* transfer b -> root */
 		dag_push(c, a);
 		*root = b;
+	} else if (!a && b) {
+		/* destroy b */
+		dag_destroy(b);
+		return set_source_error(ps->el, &loc, "internal error in comparison non-terminal");
 	}
 
 	return r;
@@ -219,6 +313,7 @@ enum result comparison(struct parse_state* ps, struct dag_node** root)
 *	           | >= add comparison'
 *	           | e
 */
+/* dynamic-output ps{} root root{} */
 enum result comparison_prime(struct parse_state* ps, struct dag_node** root, struct dag_node** insert_point)
 {
 	enum result r = result_ok;
@@ -228,8 +323,8 @@ enum result comparison_prime(struct parse_state* ps, struct dag_node** root, str
 	struct dag_node* c = NULL;
 	enum dag_type type = dag_type_none;
 	int num;
-	struct token* t;
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 1, &num);
 	if (r == result_error) {
 		return r;
@@ -259,45 +354,78 @@ enum result comparison_prime(struct parse_state* ps, struct dag_node** root, str
 		return r;
 	}
 
-	dag_create_node(&n);
-
-	n->type = type;
-	r = match(ps, t0->type, "expecting + or -", &t);
+	/* allocate ps{} op op{} */
+	struct token* op = NULL;
+	r = match(ps, t0->type, "expecting comparator", &op);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* destroy op op{} */
+	token_destroy(op);
+	free(op);
+
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
+	/* allocate n */
+	dag_create_node(&n);
+	n->type = type;
+
 	/* add */
+	/* allocate ps{} a a{} */
 	r = add(ps, &a);
 	if (r == result_error) {
+		/* destroy n n{} */
+		dag_destroy(n);
 		return r;
 	}
 
 	/* comparison' */
+	/* allocate ps{} b b{} */
 	r = comparison_prime(ps, &b, &c);
 	if (r == result_error) {
+		/* destroy n n{} a a{} */
+		dag_destroy(n);
+		dag_destroy(a);
 		return r;
 	}
 
 	if (a && !b) {
+		/* transfer a -> n{} */
+		/* transfer n -> root */
 		dag_add_child(n, a);
 		*root = n;
 		*insert_point = n;
 		return r;
 	} else if (a && b) {
+		/* transfer a -> n{} */
+		/* transfer n -> b b{} */
+		/* transfer b b{} -> root root{} */
 		dag_add_child(n, a);
 		dag_push(c, n);
 		*root = b;
 		*insert_point = n;
 		return r;
-	} else {
-		return r;
+	} else if (!a && b) {
+		/* destroy b n */
+		dag_destroy(b);
+		dag_destroy(n);
+		return set_source_error(ps->el, &loc, "Missing right-hand-side of comparison operator");
+	} else if (!a && !b) {
+		/* destroy n */
+		dag_destroy(n);
+		return set_source_error(ps->el, &loc, "Missing right-hand-side of comparison operator");
 	}
+
+	return r;
 }
 
-/*
-* add -> mult add'
-*/
+/* add -> mult add' */
+/* dynamic-output ps{} root root{} */
 enum result add(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
@@ -306,9 +434,9 @@ enum result add(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 	struct dag_node* c = NULL;
-	struct dag_node* n = NULL;
 	int num;
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 1, &num);
 	if (r == result_error) {
 		return r;
@@ -316,34 +444,45 @@ enum result add(struct parse_state* ps, struct dag_node** root)
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
+	/* allocate a a{} */
 	r = mult(ps, &a);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* allocate b b{} */
 	r = add_prime(ps, &b, &c);
 	if (r == result_error) {
+		dag_destroy(a);
 		return r;
 	}
 
 	if (a && !b) {
-		n = a;
-		*root = n;
+		/* transfer a -> n */
+		/* transfer n -> root */
+		*root = a;
 	} else if (a && b) {
+		/* transfer a -> b{} */
+		/* trasnfer b -> root */
 		dag_push(c, a);
 		*root = b;
 	} else if (!a && b) {
-		r = set_source_error(ps->el, t0, ps->sns->lc, "expected term before operator");
+		/* destroy b */
+		dag_destroy(b);
+		r = set_source_error(ps->el, &loc, "expected term before operator");
 	}
 
 	return r;
 }
 
-/*
-* add' -> + mult add'
-*	    | - mult add'
-*	    | e
-*/
+/* add' -> + mult add' | - mult add' | e */
+/* dynamic-output ps{} root root{} */
 enum result add_prime(struct parse_state* ps, struct dag_node** root, struct dag_node** insert_point)
 {
 	enum result r = result_ok;
@@ -353,8 +492,8 @@ enum result add_prime(struct parse_state* ps, struct dag_node** root, struct dag
 	struct dag_node* c = NULL;
 	enum dag_type type = dag_type_none;
 	int num;
-	struct token* t;
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 1, &num);
 	if (r == result_error) {
 		return r;
@@ -376,37 +515,66 @@ enum result add_prime(struct parse_state* ps, struct dag_node** root, struct dag
 		return r;
 	}
 
-	dag_create_node(&n);
-
-	n->type = type;
-	r = match(ps, t0->type, "expecting + or -", &t);
+	struct location loc;
+	r = get_parse_location(ps, &loc);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* allocate n */
+	dag_create_node(&n);
+	n->type = type;
+
+	/* allocate ps{} */
+	struct token* op = NULL;
+	r = match(ps, t0->type, "expecting + or -", &op);
+	if (r == result_error) {
+		/* destroy n n{} */
+		dag_destroy(n);
+		return r;
+	}
+
+	/* destroy op op{} */
+	token_destroy(op);
+	free(op);
+
 	/* term */
+	/* allocate a a{} */
 	r = mult(ps, &a);
 	if (r == result_error) {
+		/* destroy n n{} */
+		dag_destroy(n);
 		return r;
 	}
 
 	if (!a) {
-		r = set_source_error(ps->el, t0, ps->sns->lc, "expected term after additive operator");
+		/* destroy n n{} */
+		dag_destroy(n);
+		r = set_source_error(ps->el, &loc, "expected term after additive operator");
 		return r;
 	}
 
 	/* add' */
+	/* allocate b b{} */
 	r = add_prime(ps, &b, &c);
 	if (r == result_error) {
+		/* destroy n n{} a a{} */
+		dag_destroy(n);
+		dag_destroy(a);
 		return r;
 	}
 
 	if (a && !b) {
+		/* transfer a -> n{} */
+		/* transfer n -> root */
 		dag_add_child(n, a);
 		*root = n;
 		*insert_point = n;
 		return r;
 	} else if (a && b) {
+		/* transfer a -> n{} */
+		/* transfer n -> b{} */
+		/* transfer b -> root */
 		dag_add_child(n, a);
 		dag_push(c, n);
 		*root = b;
@@ -417,42 +585,46 @@ enum result add_prime(struct parse_state* ps, struct dag_node** root, struct dag
 	}
 }
 
-/*
-* mult -> array_subscript mult_prime
-*/
+/* mult -> array_subscript mult_prime */
+/* dynamic-output ps{} root root{} */
 enum result mult(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
-	struct dag_node* n = NULL;
 	struct dag_node* a = NULL;
 	struct dag_node* b = NULL;
 	struct dag_node* c = NULL;
+	struct location loc;
 
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
+	/* allocate ps{} a a{} */
 	r = array_subscript(ps, &a);
 	if (r == result_error) {
 		return r;
 	}
 
-	int num;
-	r = get_lookahead(ps, 1, &num);
-	if (r == result_error) {
-		return r;
-	}
-	struct token* t = get_token(&ps->lookahead, 0);
-
+	/* allocate ps{} b b{} */
 	r = mult_prime(ps, &b, &c);
 	if (r == result_error) {
+		/* destroy a a{} */
+		dag_destroy(a);
 		return r;
 	}
 
 	if (a && !b) {
-		n = a;
-		*root = n;
+		/* transfer a -> root */
+		*root = a;
 	} else if (a && b) {
+		/* transfer a -> b{} */
+		/* transfer b -> root */
 		dag_push(c, a);
 		*root = b;
 	} else if (!a && b) {
-		r = set_source_error(ps->el, t, ps->sns->lc, "expected term before operator");
+		dag_destroy(b);
+		return set_source_error(ps->el, &loc, "expected term before operator");
 	}
 
 	return r;
@@ -543,12 +715,13 @@ enum result array_subscript(struct parse_state* ps, struct dag_node** root)
 	
 	r = factor(ps, &n);
 	if (r == result_error) {
-		goto function_error;
+		return r;
 	}
 
 	r = get_lookahead(ps, 1, &num);
 	if (r == result_error) {
-		goto function_error;
+		dag_destroy(n);
+		return r;
 	}
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
@@ -560,14 +733,21 @@ enum result array_subscript(struct parse_state* ps, struct dag_node** root)
 
 		r = match(ps, token_left_square_bracket, "expecting array subscript operator", &t);
 		if (r == result_error) {
-			goto function_error;
+			dag_destroy(n);
+			return r;
+		}
+
+		struct location loc;
+		r = get_parse_location(ps, &loc);
+		if (r == result_error) {
+			dag_destroy(n);
+			return r;
 		}
 
 		struct dag_node* b = NULL;
 		r = array_subscript(ps, &b);
 		if (!b) {
-			r = set_source_error(ps->el, t0, ps->sns->lc, "expected array subscript after subscript operator");
-			goto function_error;
+			return set_source_error(ps->el, &loc, "expected array subscript after subscript operator");
 		}
 		dag_add_child(n, b);
 
@@ -615,13 +795,19 @@ enum result array_subscript_prime(struct parse_state* ps, struct dag_node* paren
 		return r;
 	}
 
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
 	struct dag_node* a = NULL;
 	r = array_subscript(ps, &a);
 	if (r == result_error) {
 		return r;
 	}
 	if (!a) {
-		return set_source_error(ps->el, t0, ps->sns->lc, "expected array subscript after subscript operator");
+		return set_source_error(ps->el, &loc, "expected array subscript after subscript operator");
 	}
 	dag_add_child(parent, a);
 

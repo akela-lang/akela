@@ -152,13 +152,19 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 		dag_create_node(&n);
 		n->type = dag_type_while;
 
+		struct location loc;
+		r = get_parse_location(ps, &loc);
+		if (r == result_error) {
+			goto function_error;
+		}
+
 		struct dag_node* a = NULL;
 		r = expr(ps, &a);
 		if (r == result_error) {
 			goto function_error;
 		}
 		if (!a) {
-			r = set_source_error(ps->el, t0, ps->sns->lc, "expected expression after while");
+			r = set_source_error(ps->el, &loc, "expected expression after while");
 			goto function_error;
 		}
 		dag_add_child(n, a);
@@ -197,7 +203,18 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 				goto function_error;
 			}
 		} else {
-			r = set_source_error(ps->el, t0, ps->sns->lc, "expected = or in after for");
+			struct token* id = NULL;
+			r = match(ps, token_id, "expected id after for", &id);
+			if (r == result_error) {
+				return r;
+			}
+
+			struct location loc;
+			r = get_parse_location(ps, &loc);
+			if (r == result_error) {
+				return r;
+			}
+			r = set_source_error(ps->el, &loc, "expected = or in after for and id");
 			goto function_error;
 		}
 
@@ -272,6 +289,12 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 		cb->type = dag_type_conditional_branch;
 		dag_add_child(n, cb);
 
+		struct location loc;
+		r = get_parse_location(ps, &loc);
+		if (r == result_error) {
+			goto function_error;
+		}
+
 		/* condition */
 		struct dag_node* cond = NULL;
 		r = expr(ps, &cond);
@@ -279,7 +302,7 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 			goto function_error;
 		}
 		if (cond == NULL) {
-			r = set_source_error(ps->el, t0, ps->sns->lc, "expecting a condition after if");
+			r = set_source_error(ps->el, &loc, "expecting a condition after if");
 			goto function_error;
 		}
 		dag_add_child(cb, cond);
@@ -325,9 +348,6 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 		goto function_success;
 	}
 
-	r = set_source_error(ps->el, t0, ps->sns->lc, "expected statement");
-	goto function_error;
-
 function_success:
 	*root = n;
 	return result_ok;
@@ -344,7 +364,6 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 	enum result r = result_ok;
 	struct dag_node* n = NULL;
 	int num;
-	struct token* t;
 
 	r = get_lookahead(ps, 3, &num);
 	if (r == result_error) {
@@ -353,17 +372,20 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct token* t1 = get_token(&ps->lookahead, 1);
 
-	r = match(ps, token_for, "expected for", &t);
+	struct token* f = NULL;
+	r = match(ps, token_for, "expected for", &f);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = match(ps, token_id, "expected id", &t);
+	struct token* id = NULL;
+	r = match(ps, token_id, "expected id", &id);
 	if (r == result_error) {
 		goto function_error;
 	}
 
-	r = match(ps, token_equal, "expected equal", &t);
+	struct token* equal = NULL;
+	r = match(ps, token_equal, "expected equal", &equal);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -378,8 +400,14 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* a = NULL;
 	dag_create_node(&a);
 	a->type = dag_type_id;
-	buffer_copy(&t1->value, &a->value);
+	buffer_copy(&id->value, &a->value);
 	dag_add_child(n, a);
+
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		goto function_error;
+	}
 
 	/* start expr */
 	struct dag_node* b = NULL;
@@ -388,12 +416,18 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 		goto function_error;
 	}
 	if (!b) {
-		r = set_source_error(ps->el, t0, ps->sns->lc, "expected range start after for-range");
+		r = set_source_error(ps->el, &loc, "expected range start after for-range");
 		goto function_error;
 	}
 	dag_add_child(n, b);
 
-	r = match(ps, token_colon, "expected colon", &t);
+	struct token* colon = NULL;
+	r = match(ps, token_colon, "expected colon", &colon);
+	if (r == result_error) {
+		goto function_error;
+	}
+
+	r = get_parse_location(ps, &loc);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -405,7 +439,7 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 		goto function_error;
 	}
 	if (!c) {
-		r = set_source_error(ps->el, t0, ps->sns->lc, "expected range end after for-range");
+		r = set_source_error(ps->el, &loc, "expected range end after for-range");
 		goto function_error;
 	}
 	dag_add_child(n, c);
@@ -418,7 +452,8 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 	}
 	dag_add_child(n, d);
 
-	r = match(ps, token_end, "expected end", &t);
+	struct token* end = NULL;
+	r = match(ps, token_end, "expected end", &end);
 	if (r == result_error) {
 		goto function_error;
 	}
@@ -475,6 +510,13 @@ enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 	buffer_copy(&t1->value, &a->value);
 	dag_add_child(n, a);
 
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		dag_destroy(n);
+		return r;
+	}
+
 	/* expr */
 	struct dag_node* b = NULL;
 	r = expr(ps, &b);
@@ -482,7 +524,7 @@ enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 		goto function_error;
 	}
 	if (!b) {
-		r = set_source_error(ps->el, t0, ps->sns->lc, "expected expression after for-iteration");
+		r = set_source_error(ps->el, &loc, "expected expression after for-iteration");
 		goto function_error;
 	}
 	dag_add_child(n, b);
@@ -530,6 +572,12 @@ enum result elseif_stmts(struct parse_state* ps, struct dag_node* parent)
 			goto function_error;
 		}
 
+		struct location loc;
+		r = get_parse_location(ps, &loc);
+		if (r == result_error) {
+			goto function_error;
+		}
+
 		struct dag_node* cb = NULL;
 		dag_create_node(&cb);
 		cb->type = dag_type_conditional_branch;
@@ -540,7 +588,7 @@ enum result elseif_stmts(struct parse_state* ps, struct dag_node* parent)
 			goto function_error;
 		}
 		if (cond == NULL) {
-			r = set_source_error(ps->el, t0, ps->sns->lc, "expecting condition after elseif");
+			set_source_error(ps->el, &loc, "expecting condition after elseif");
 			goto function_error;
 		}
 		dag_add_child(cb, cond);

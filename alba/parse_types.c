@@ -78,6 +78,12 @@ enum result dseq_prime(struct parse_state* ps, struct dag_node* parent)
 	token_destroy(comma);
 	free(comma);
 
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+	if (r == result_error) {
+		return r;
+	}
+
 	/* allocate a */
 	struct dag_node* a = NULL;
 	r = declaration(ps, &a);
@@ -89,7 +95,7 @@ enum result dseq_prime(struct parse_state* ps, struct dag_node* parent)
 
 	if (!a) {
 		/* allocate ps{} */
-		r = set_source_error(ps->el, t0, ps->sns->lc, "expecting declaration after comma");
+		r = set_source_error(ps->el, &loc, "expecting declaration after comma");
 		return r;
 	}
 
@@ -164,8 +170,10 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 		if (!is_valid_type(&type_id->value)) {
 			/* allocate a */
 			char* a;
-			buffer2array(&t2->value, &a);
-			r = set_source_error(ps->el, t2, ps->sns->lc, "unknown type: %s", a);
+			buffer2array(&type_id->value, &a);
+			struct location loc;
+			get_token_location(type_id, &loc);
+			r = set_source_error(ps->el, &loc, "unknown type: %s", a);
 
 			/* destroy a */
 			free(a);

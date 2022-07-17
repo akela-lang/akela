@@ -175,6 +175,14 @@ bool is_number_state(enum state_enum state)
     return state == state_number_whole || state == state_number_fraction || state == state_number_exponent_start || state == state_number_exponent;
 }
 
+/* static-output */
+void get_scan_location(struct scan_state* sns, struct location* loc)
+{
+    loc->line = sns->lc->line;
+    loc->col = sns->lc->col;
+    loc->byte_pos = sns->lc->byte_pos;
+}
+
 /* dynamic-output sns{el{}} t{} */
 enum result process_char_start(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
@@ -312,8 +320,10 @@ enum result process_char_start(struct scan_state* sns, enum state_enum* state, i
         }
         a[i] = '\0';
 
+        struct location loc;
+        get_scan_location(sns, &loc);
         /* allocate sns{el{}} */
-        return set_source_error(sns->el, NULL, lc, "Unrecognized character: %s", a);
+        return set_source_error(sns->el, &loc, "Unrecognized character: %s", a);
     }
     return result_ok;
 }
@@ -362,11 +372,15 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
         }
     } else if (*state == state_id_underscore) {
         if (uc == cv.underscore) {
+            struct location loc;
+            get_scan_location(sns, &loc);
             /* allocate sns{el{}} */
-            return set_source_error(sns->el, NULL, lc, "Must have a letter following underscore at start of id");
+            return set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
         } else if (u_isdigit(uc)) {
+            struct location loc;
+            get_scan_location(sns, &loc);
             /* allocate sns{el{}} */
-            return set_source_error(sns->el, NULL, lc, "Must have a letter following underscore at start of id");
+            return set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
         } else if (u_isalpha(uc)) {
             *state = state_id;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
@@ -531,8 +545,10 @@ enum result process_char_string(struct scan_state* sns, enum state_enum* state, 
                 i++;
             }
             a[i] = '\0';
+            struct location loc;
+            get_scan_location(sns, &loc);
             /* allocate sns{el{}} */
-            return set_source_error(sns->el, NULL, lc, "Unrecognized escape sequence: %s", a);
+            return set_source_error(sns->el, &loc, "Unrecognized escape sequence: %s", a);
         }
         *state = state_string;
     }
@@ -631,8 +647,10 @@ enum result process_compound_operator(struct scan_state* sns, enum state_enum* s
             i++;
         }
         a[i] = '\0';
+        struct location loc;
+        get_scan_location(sns, &loc);
         /* allocate sns{el{}} */
-        return set_source_error(sns->el, NULL, lc, "unrecognized compound operator: %s", a);
+        return set_source_error(sns->el, &loc, "unrecognized compound operator: %s", a);
     }
 
     return r;

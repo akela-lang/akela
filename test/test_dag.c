@@ -21,7 +21,7 @@ void test_dag1()
 	buffer_copy_str(&b->value, "b");
 	dag_add_child(n, b);
 
-	assert_ptr(n, "ptr n", n);
+	assert_ptr(n, "ptr n");
 	expect_int_equal(n->type, dag_type_plus, "plus");
 
 	a = dag_get_child(n, 0);

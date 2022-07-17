@@ -56,8 +56,16 @@ void compile_error_list_destroy(struct compile_error_list* el)
 	}
 }
 
+/* static-output */
+void get_token_location(struct token* t, struct location* loc)
+{
+	loc->line = t->line;
+	loc->col = t->col;
+	loc->byte_pos = t->byte_pos;
+}
+
 /* dynamic-output el{} */
-enum result set_source_error(struct compile_error_list* el, struct token* t, struct lookahead_char* lc, const char* fmt, ...)
+enum result set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -72,15 +80,9 @@ enum result set_source_error(struct compile_error_list* el, struct token* t, str
 
 	char* p = e->message;
 
-	if (t) {
-		e->line = t->line;
-		e->col = t->col;
-		e->byte_pos = t->byte_pos;
-	} else if (lc) {
-		e->line = lc->line;
-		e->col = lc->col;
-		e->byte_pos = lc->byte_pos;
-	}
+	e->line = loc->line;
+	e->col = loc->col;
+	e->byte_pos = loc->byte_pos;
 
 	char last = 0;
 	size_t i = 0;

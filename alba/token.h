@@ -172,7 +172,7 @@ void token_list_make(struct token_list** tl);
 
 /* static-output */
 /* dynamic-transfer t t{} -> tl{} */
-enum result token_list_add(struct token_list* tl, struct token* t);
+void token_list_add(struct token_list* tl, struct token* t);
 
 /* partition-output tl{} -> return */
 struct token* token_list_pop(struct token_list* tl);

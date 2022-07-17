@@ -18,7 +18,7 @@ void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct com
 /* get lookahead token */
 /* dynamic ps{} */
 /* dynamic-temp t t{} */
-enum parse_result get_lookahead(struct parse_state* ps, int count, int* num)
+enum result get_lookahead(struct parse_state* ps, int count, int* num)
 {
 	enum result r = result_ok;
 	int gt;
@@ -44,10 +44,7 @@ enum parse_result get_lookahead(struct parse_state* ps, int count, int* num)
 		}
 
 		/* transfer t t{} -> ps{lookahead{}} */
-		r = token_list_add(&ps->lookahead, t);
-		if (r == result_error) {
-			return r;
-		}
+		token_list_add(&ps->lookahead, t);
 	}
 
 	return r;
@@ -58,6 +55,7 @@ enum parse_result get_lookahead(struct parse_state* ps, int count, int* num)
 enum result match(struct parse_state* ps, enum token_type type, char* reason, struct token** t)
 {
 	enum result r = result_ok;
+	struct location loc;
 
 	int num = token_list_count(&ps->lookahead);
 	int got_token;
@@ -68,14 +66,12 @@ enum result match(struct parse_state* ps, enum token_type type, char* reason, st
 			return r;
 		}
 		if (!got_token) {
+			get_scan_location(ps->sns, &loc);
 			/* dynamic-output ps{el{}} */
-			return set_source_error(ps->el, NULL, ps->sns->lc, "%s", reason);
+			return set_source_error(ps->el, &loc, "%s", reason);
 		}
 		/* transfer t t{} -> ps{lookahead{}} */
-		r = token_list_add(&ps->lookahead, *t);
-		if (r == result_error) {
-			return r;
-		}
+		token_list_add(&ps->lookahead, *t);
 	} else {
 		*t = ps->lookahead.head;
 	}
@@ -85,6 +81,37 @@ enum result match(struct parse_state* ps, enum token_type type, char* reason, st
 		return r;
 	}
 
+	get_token_location(*t, &loc);
 	/* alocate ps{el{}} */
-	return set_source_error(ps->el, *t, ps->sns->lc, "%s", reason);
+	return set_source_error(ps->el, &loc, "%s", reason);
+}
+
+/* dynamic-output ps{} */
+enum result get_parse_location(struct parse_state* ps, struct location* loc)
+{
+	enum result r = result_ok;
+
+	if (!ps->lookahead.head) {
+		/* allocate ps{} */
+		int num;
+		r = get_lookahead(ps, 1, &num);
+		if (r == result_error) {
+			return r;
+		}
+	}
+
+	struct token* t = get_token(&ps->lookahead, 0);
+
+	if (!t) {
+		loc->line = ps->sns->lc->line;
+		loc->col = ps->sns->lc->col;
+		loc->byte_pos = ps->sns->lc->byte_pos;
+		return r;
+	}
+
+	loc->line = t->line;
+	loc->col = t->col;
+	loc->byte_pos = t->byte_pos;
+
+	return r;
 }

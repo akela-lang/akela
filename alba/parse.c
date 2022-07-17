@@ -33,7 +33,9 @@ enum result parse(struct parse_state* ps, struct dag_node** root)
 		struct token* t = ps->lookahead.head;
 		char* names[token_count];
 		r = token_name_init(names);
-		return set_source_error(ps->el, t, ps->sns->lc, "Couldn't process token: %s", names[t->type]);
+		struct location loc;
+		get_parse_location(ps, &loc);
+		return set_source_error(ps->el, &loc, "Couldn't process token: %s", names[t->type]);
 	}
 
 	return result_ok;
