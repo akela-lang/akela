@@ -5,6 +5,7 @@
 #include "token.h"
 #include "dag.h"
 
+/* dynamic-output ps{} root root{} */
 enum result expr(struct parse_state* ps, struct dag_node** root);
 
 #endif

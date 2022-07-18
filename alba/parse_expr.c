@@ -623,6 +623,7 @@ enum result mult(struct parse_state* ps, struct dag_node** root)
 		dag_push(c, a);
 		*root = b;
 	} else if (!a && b) {
+		/* destroy b b{} */
 		dag_destroy(b);
 		return set_source_error(ps->el, &loc, "expected term before operator");
 	}
@@ -630,11 +631,8 @@ enum result mult(struct parse_state* ps, struct dag_node** root)
 	return r;
 }
 
-/*
-* term' -> * array_subscript mult'
-*	     | / array_subscript mult'
-*	     | e
-*/
+/* term' -> * array_subscript mult' | / array_subscript mult' | e */
+/* dynamic-output ps{} root root{} */
 enum result mult_prime(struct parse_state* ps, struct dag_node** root, struct dag_node** insert_point)
 {
 	enum result r = result_ok;
@@ -645,6 +643,7 @@ enum result mult_prime(struct parse_state* ps, struct dag_node** root, struct da
 	enum dag_type type = dag_type_none;
 	struct token* t;
 
+	/* allocate ps{} */
 	int num;
 	r = get_lookahead(ps, 1, &num);
 	if (r == result_error) {
@@ -666,32 +665,53 @@ enum result mult_prime(struct parse_state* ps, struct dag_node** root, struct da
 		return r;
 	}
 
-	dag_create_node(&n);
-
-	n->type = type;
-	r = match(ps, t0->type, "expecting * or /", &t);
+	/* allocate ps{} t t{} */
+	struct token* op = NULL;
+	r = match(ps, t0->type, "expecting * or /", &op);
 	if (r == result_error) {
 		return r;
 	}
 
+	token_destroy(op);
+	free(op);
+
+	struct location loc;
+	r = get_parse_location(ps, &loc);
+
 	/* factor */
+	/* allocate ps{} a a{} */
 	r = array_subscript(ps, &a);
 	if (r == result_error) {
 		return r;
 	}
 
+	if (!a) {
+		/* allocate ps{} */
+		return set_source_error(ps->el, &loc, "Expecting term after operator");
+	}
+
 	/* mult' */
+	/* allocate ps{} b b{} */
 	r = mult_prime(ps, &b, &c);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* allocate n */
+	dag_create_node(&n);
+	n->type = type;
+
 	if (a && !b) {
+		/* transfer a -> n{} */
+		/* transfer n -> root */
 		dag_add_child(n, a);
 		*root = n;
 		*insert_point = n;
 		return r;
 	} else if (a && b) {
+		/* transfer a -> n{} */
+		/* transfer n -> b{} */
+		/* transfer b -> root */
 		dag_add_child(n, a);
 		dag_push(c, n);
 		*root = b;
@@ -702,22 +722,21 @@ enum result mult_prime(struct parse_state* ps, struct dag_node** root, struct da
 	}
 }
 
-/*
-* array_subscript -> factor array_subscript'
-* array_subscript' -> [array_subscript] array_subscript' | e
-*/
+/* array_subscript -> factor array_subscript' */
+/* dynamic-output ps{} root root{} */
 enum result array_subscript(struct parse_state* ps, struct dag_node** root)
 {
 	enum result r = result_ok;
 	int num;
 	struct dag_node* n = NULL;
-	struct token* t;
 	
+	/* allocate ps{} n n{} */
 	r = factor(ps, &n);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 1, &num);
 	if (r == result_error) {
 		dag_destroy(n);
@@ -726,59 +745,84 @@ enum result array_subscript(struct parse_state* ps, struct dag_node** root)
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	if (t0 && t0->type == token_left_square_bracket) {
+		/* transfer n -> a */
+		/* allocate n */
+		/* transfer a -> n{} */
 		struct dag_node* a = n;
 		dag_create_node(&n);
 		n->type = dag_type_array_subscript;
 		dag_add_child(n, a);
 
-		r = match(ps, token_left_square_bracket, "expecting array subscript operator", &t);
+		/* allocate ps{} lsb lsb{} */
+		struct token* lsb = NULL;
+		r = match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb);
 		if (r == result_error) {
 			dag_destroy(n);
 			return r;
 		}
 
+		/* destroy lsb lsb{} */
+		token_destroy(lsb);
+		free(lsb);
+
+		/* allocate ps{} */
 		struct location loc;
 		r = get_parse_location(ps, &loc);
 		if (r == result_error) {
+			/* destroy n n{} */
 			dag_destroy(n);
 			return r;
 		}
 
+		/* allocate b b{} */
 		struct dag_node* b = NULL;
 		r = array_subscript(ps, &b);
 		if (!b) {
+			/* destroy n n{} */
+			dag_destroy(n);
+			/* allocate ps{} */
 			return set_source_error(ps->el, &loc, "expected array subscript after subscript operator");
 		}
+
+		/* transfer b -> n{} */
 		dag_add_child(n, b);
 
-		r = match(ps, token_right_square_bracket, "expecting array subscript operator", &t);
+		/* allocate ps{} rsb rsb{} */
+		struct token* rsb = NULL;
+		r = match(ps, token_right_square_bracket, "expecting array subscript operator", &rsb);
 		if (r == result_error) {
-			goto function_error;
+			/* destroy n n{} */
+			dag_destroy(n);
+			return r;
 		}
 
+		/* destroy rsb rsb{} */
+		token_destroy(rsb);
+		free(rsb);
+
+		/* allocate n{} */
 		r = array_subscript_prime(ps, n);
 		if (r == result_error) {
-			goto function_error;
+			/* destroy n n{} */
+			dag_destroy(n);
+			return r;
 		}
 	}
 
-function_ok:
+	/* transfer n -> root */
 	*root = n;
-	return r;
-
-function_error:
 	return r;
 }
 
-/*
-* array_subscript' -> [array_subscript] array_subscript' | e
-*/
+/* array_subscript' -> [expr] array_subscript' | e */
+/* dynamic-output ps{} parent{} */
 enum result array_subscript_prime(struct parse_state* ps, struct dag_node* parent)
 {
 	enum result r = result_ok;
 	int num;
 	struct token* t;
 
+	/* allocate ps{} */
 	r = get_lookahead(ps, 1, &num);
 	if (r == result_error) {
 		return r;
@@ -790,32 +834,51 @@ enum result array_subscript_prime(struct parse_state* ps, struct dag_node* paren
 		return r;
 	}
 
-	r = match(ps, token_left_square_bracket, "expected left square bracket", &t);
+	/* allocate ps{} lsb lsb{} */
+	struct token* lsb = NULL;
+	r = match(ps, token_left_square_bracket, "expected left square bracket", &lsb);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* destroy lsb lsb{} */
+	token_destroy(lsb);
+	free(lsb);
+
+	/* allocate ps{} */
 	struct location loc;
 	r = get_parse_location(ps, &loc);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* allocate a a{} */
 	struct dag_node* a = NULL;
-	r = array_subscript(ps, &a);
+	r = expr(ps, &a);
 	if (r == result_error) {
 		return r;
 	}
+
 	if (!a) {
+		/* allocate ps{} */
 		return set_source_error(ps->el, &loc, "expected array subscript after subscript operator");
 	}
+
+	/* transfer a -> parent */
 	dag_add_child(parent, a);
 
-	r = match(ps, token_right_square_bracket, "expected right square_bracket", &t);
+	/* allocate ps{} rsb rsb{} */
+	struct token* rsb = NULL;
+	r = match(ps, token_right_square_bracket, "expected right square_bracket", &rsb);
 	if (r == result_error) {
 		return r;
 	}
 
+	/* destroy rsb rsb{} */
+	token_destroy(rsb);
+	free(rsb);
+
+	/* allocate ps{} parent{} */
 	struct dag_node* b = NULL;
 	r = array_subscript_prime(ps, parent);
 	if (r == result_error) {
