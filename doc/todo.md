@@ -1,7 +1,5 @@
 # Todo
 * memory annotations for alba
-  * parse_stmts.c
-  * parse_stmts.h
   * parse.c
   * parse.h
   * alba.c
