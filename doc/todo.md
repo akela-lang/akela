@@ -1,10 +1,7 @@
 # Todo
 * memory annotations for alba
-  * parse.c
-  * parse.h
   * alba.c
   * alba.h
-* save line, col, byte_pos before non-terminal parse function
 * memory annotations for test
   * assert_compiler.c
   * assert_compiler.h

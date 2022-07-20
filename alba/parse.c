@@ -10,17 +10,20 @@
 #include "source.h"
 #include "lookahead_char.h"
 
+/* dynamic-output ps{} root root{} */
 enum result parse(struct parse_state* ps, struct dag_node** root)
 {
 	*root = NULL;
 	enum result r;
 
+	/* allocate ps{} root root{} */
 	r = stmts(ps, root);
 
 	if (r == result_error) {
 		return r;
 	}
 
+	/* allocate ps{} */
 	if (!lookahead_char_done(ps->sns->lc)) {
 		int num;
 		r = get_lookahead(ps, 1, &num);
@@ -34,6 +37,8 @@ enum result parse(struct parse_state* ps, struct dag_node** root)
 		char* names[token_count];
 		r = token_name_init(names);
 		struct location loc;
+
+		/* allocate ps{} */
 		get_parse_location(ps, &loc);
 		return set_source_error(ps->el, &loc, "Couldn't process token: %s", names[t->type]);
 	}
