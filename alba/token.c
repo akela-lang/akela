@@ -98,6 +98,18 @@ void token_list_make(struct token_list** tl)
     token_list_init(*tl);
 }
 
+/* dynamic-destroy tl{} */
+void token_list_destroy(struct token_list* tl)
+{
+    struct token* t = tl->head;
+    while (t) {
+        struct token* temp = t;
+        t = t->next;
+        token_destroy(temp);
+        free(temp);
+    }
+}
+
 /* Append the new token to the end of the token list */
 /* static-output */
 /* dynamic-transfer t t{} -> tl{} */
@@ -222,12 +234,29 @@ void word_init(struct word* w)
     w->prev = NULL;
 }
 
+/* dynamic-destroy w{} */
+void word_destroy(struct word* w)
+{
+    buffer_destroy(&w->value);
+}
+
 /* static-output */
 /* initialize-output wl{} */
 void word_list_init(struct word_list* wl)
 {
     wl->head = NULL;
     wl->tail = NULL;
+}
+
+void word_list_destroy(struct word_list* wl)
+{
+    struct word* p = wl->head;
+    while (p) {
+        struct word* temp = p;
+        p = p->next;
+        word_destroy(temp);
+        free(temp);
+    }
 }
 
 /* initialize word table */
@@ -246,6 +275,15 @@ void word_table_init(struct word_table* wt, unsigned int size)
 
     /* allocate wt{} */
     word_table_init_reserved(wt);
+}
+
+/* dynamic-destroy wt{} */
+void word_table_destroy(struct word_table* wt)
+{
+    for (int i = 0; i < wt->size; i++) {
+        word_list_destroy(&wt->buckets[i]);
+    }
+    free(wt->buckets);
 }
 
 /* add word to word table */

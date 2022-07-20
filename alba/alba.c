@@ -8,6 +8,8 @@
 #include "input.h"
 #include "uconv.h"
 #include "source.h"
+#include "os_win.h"
+#include "source.h"
 
 int main(int argc, char** argv)
 {
@@ -20,6 +22,11 @@ int main(int argc, char** argv)
         return 1;
     }
 
+#if defined(_WIN32) || defined(WIN32)
+    set_console_utf8();
+#endif
+
+    /* resource fp */
     filename = argv[1];
     FILE* fp;
     fp = fopen(filename, "r");
@@ -35,30 +42,49 @@ int main(int argc, char** argv)
     struct compile_error_list el;
     struct parse_state ps;
 
+    /* resource conv */
     r = conv_open(&conv);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         return 1;
     }
+
+    /* allocate wt{} */
     word_table_init(&wt, WORD_TABLE_SIZE);
+
+    /* resource input fp */
     lookahead_char_init(&lc, file_getchar, fp, conv);
+
     compile_error_list_init(&el);
     scan_state_init(&sns, &lc, &wt, &el);
     parse_state_init(&ps, &sns, &el);
 
+    /* allocate ps{} root root{} */
     r = parse(&ps, &root);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         return 1;
     }
 
+    /* resource destroy fp */
     fclose(fp);
 
     char* names[dag_type_count];
     dag_set_names(names);
     dag_print(root, names);
 
+    /* resource destroy conv */
     conv_close(conv);
+
+    /* destroy wt{} */
+    word_table_destroy(&wt);
+
+    /* destroy ps{lookahead} */
+    token_list_destroy(&ps.lookahead);
+
+    /* destroy ps{el} sns{el} */
+    compile_error_list_destroy(&el);
+
     printf("end\n");
 
     return 0;

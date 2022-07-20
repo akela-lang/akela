@@ -2,6 +2,8 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 
+#if defined(_WIN32) || defined(WIN32)  
+
 /* dynamic-output buff */
 enum result win_temp_filename(char** buff)
 {
@@ -30,3 +32,10 @@ enum result win_temp_filename(char** buff)
 
 	return result_ok;
 }
+
+void set_console_utf8()
+{
+	SetConsoleOutputCP(CP_UTF8);
+}
+
+#endif

@@ -96,6 +96,7 @@ enum result dag_set_names(char** names)
 
 # else
 
+/* static-output */
 enum result dag_set_names(char** names);
 
 # endif

@@ -19,9 +19,6 @@ void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct w
     sns->lc = lc;
     sns->wt = wt;
     sns->el = el;
-    sns->has_next = false;
-    sns->state = state_start;
-    sns->t = NULL;
 }
 
 /* static-output */

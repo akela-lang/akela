@@ -10,9 +10,6 @@ struct scan_state {
     struct lookahead_char* lc;
     struct word_table* wt;
     struct compile_error_list* el;
-    bool has_next;
-    enum state_enum state;
-    struct token* t;
 };
 
 struct char_value {

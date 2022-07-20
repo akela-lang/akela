@@ -152,6 +152,9 @@ void token_reset(struct token* t);
 /* static-output */
 void token_list_init(struct token_list* tl);
 
+/* dynamic-destroy tl{} */
+void token_list_destroy(struct token_list* tl);
+
 /* dynamic-destroy t{value{}} */
 void token_destroy(struct token* t);
 
@@ -192,6 +195,9 @@ unsigned int hash_buffer(struct buffer* bf, unsigned int size);
 /* static-output */
 /* initialize-output w{} w{value{}} */
 void word_init(struct word* w);
+
+/* dynamic-destroy wt{} */
+void word_table_destroy(struct word_table* wt);
 
 /* static-output */
 /* initialize-output wl{} */
