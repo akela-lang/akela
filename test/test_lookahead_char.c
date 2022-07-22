@@ -5,6 +5,8 @@
 #include "zinc/buffer.h"
 #include "alba/uconv.h"
 
+/* static-output */
+/* dynamic-temp bf{} conv */
 void test_lookahead_char_short()
 {
 	test_name(__func__);
@@ -14,12 +16,14 @@ void test_lookahead_char_short()
 	struct buffer bf;
 	buffer_init(&bf);
 
+	/* allocate bf{} */
 	array2buffer("hello", &bf);
 
 	struct string_data sd;
 	string_data_init(&bf, &sd);
 
 	UConverter* conv;
+	/* open resource */
 	r = conv_open(&conv);
 	assert_ok(r, "conv_open");
 
@@ -132,6 +136,12 @@ void test_lookahead_char_short()
 	expect_size_t_equal(lc.col, 2, "col");
 	expect_size_t_equal(lc.last_col_count, 0, "last col count");
 	expect_size_t_equal(lc.byte_pos, 1, "byte pos");
+
+	/* destroy bf{} */
+	buffer_destroy(&bf);
+
+	/* close resource */
+	conv_close(conv);
 }
 
 /* static-output */
