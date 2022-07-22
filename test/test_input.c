@@ -6,6 +6,8 @@
 #include "alba/uconv.h"
 #include <windows.h>
 
+/* static-output */
+/* dynamic-temp bf{} bf2{} */
 void test_input_string()
 {
 	test_name(__func__);
@@ -16,6 +18,8 @@ void test_input_string()
 	input_data d;
 
 	buffer_init(&bf);
+
+	/* allocate bf{} */
 	array2buffer("hello", &bf);
 	string_data_init(&bf, &sd);
 
@@ -24,16 +28,22 @@ void test_input_string()
 
 	struct buffer bf2;
 	buffer_init(&bf2);
+
+	/* allocate bf2{} */
 	int c;
 	while ((c = f(d)) != EOF) {
 		buffer_add_char(&bf2, c);
 	}
 
 	expect_true(buffer_compare(&bf, &bf2), "buffer_compare");
+
+	/* destroy bf{} bf2{} */
+	buffer_destroy(&bf);
+	buffer_destroy(&bf2);
 }
 
 /* static-output */
-/* dynamic filename bf */
+/* dynamic-temp bf{} */
 void test_input_file()
 {
 	test_name(__func__);
@@ -45,6 +55,7 @@ void test_input_file()
 	r = win_temp_filename(&filename);
 	assert_ok(r, "win_temp_filename");
 
+	/* open resource fp */
 	FILE* fp = fopen(filename, "w");
 	assert_ptr(fp, "fopen");
 
@@ -53,8 +64,10 @@ void test_input_file()
 
 	expect_int_equal(n, strlen(str), "fwrite");
 
+	/* close resource fp */
 	fclose(fp);
 
+	/* open resource fp */
 	fp = fopen(filename, "r");
 	assert_ptr(fp, "fopen");
 
@@ -65,19 +78,21 @@ void test_input_file()
 	buffer_init(&bf);
 	int c;
 	while ((c = f(d)) != EOF) {
-		/* allocate bf */
+		/* allocate bf{} */
 		buffer_add_char(&bf, c);
 	}
 
+	/* close resource fp */
 	fclose(fp);
 
 	expect_str(&bf, str, "str");
 
-	/* destroy filename bf */
+	/* destroy filename bf{} */
 	free(filename);
 	buffer_destroy(&bf);
 }
 
+/* static-output */
 void test_input()
 {
 	test_input_string();
