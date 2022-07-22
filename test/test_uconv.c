@@ -1,9 +1,10 @@
 #include <string.h>
 #include <stdio.h>
-#include "assert.h"
+#include "zinc/assert.h"
 #include "alba/uconv.h"
 #include "zinc/result.h"
 
+/* static-output */
 void test_uconv_one_byte()
 {
 	test_name(__func__);
@@ -21,6 +22,7 @@ void test_uconv_one_byte()
 	}
 }
 
+/* static-output */
 void test_uconv_two_byte()
 {
 	test_name(__func__);
@@ -69,6 +71,7 @@ void test_uconv_two_byte()
 	}
 }
 
+/* static-output */
 void test_uconv_three_byte()
 {
 	test_name(__func__);
@@ -107,6 +110,7 @@ void test_uconv_three_byte()
 	expect_false(IS_FOUR_BYTES(s[0]), error_message);
 }
 
+/* static-output */
 void test_uconv_four_byte()
 {
 	test_name(__func__);
@@ -145,6 +149,7 @@ void test_uconv_four_byte()
 	expect_true(IS_FOUR_BYTES(s[0]), error_message);
 }
 
+/* static-output */
 void test_uconv()
 {
 	test_uconv_one_byte();
