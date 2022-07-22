@@ -1,6 +1,8 @@
 #include "zinc/assert.h"
 #include "alba/lookahead_translator.h"
 
+/* static-output */
+/* dynamic-temp cbyte{} */
 void test_lookahead_translator_cbyte()
 {
 	test_name(__func__);
@@ -9,6 +11,7 @@ void test_lookahead_translator_cbyte()
 	struct circular_byte_buffer cbyte;
 	int size = 16;
 
+	/* allocate cbyte{} */
 	circular_byte_buffer_init(&cbyte, size);
 
 	char* s = "0123456789abcdef";
@@ -40,8 +43,13 @@ void test_lookahead_translator_cbyte()
 	expect_int_equal(cbyte.size, 16, "size");
 	expect_int_equal(cbyte.start, 1, "start");
 	expect_char_equal(cbyte.buf[0], 'g', "g");
+
+	/* destroy cbyte{} */
+	circular_byte_buffer_destroy(&cbyte);
 }
 
+/* static-output */
+/* dynamic-temp cc32{} */
 void test_lookahead_translator_circular_uchar32_buffer()
 {
 	test_name(__func__);
@@ -50,6 +58,7 @@ void test_lookahead_translator_circular_uchar32_buffer()
 	struct circular_uchar32_buffer cc32;
 	int size = 16;
 
+	/* allocate cc32{} */
 	circular_uchar32_buffer_init(&cc32, size);
 
 	int i;
@@ -79,8 +88,12 @@ void test_lookahead_translator_circular_uchar32_buffer()
 	expect_int_equal(cc32.size, 16, "size");
 	expect_int_equal(cc32.start, 1, "start");
 	expect_char_equal(cc32.buf[0], 'g', "g");
+
+	/* destroy cc32{} */
+	circular_uchar32_buffer_destroy(&cc32);
 }
 
+/* static-output */
 void test_lookahead_translator()
 {
 	test_lookahead_translator_cbyte();
