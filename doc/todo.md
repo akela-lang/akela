@@ -1,7 +1,5 @@
 # Todo
 * memory annotations for test
-  * test_uconv.c
-  * test_uconv.h
   * test_scan.c
   * test_scan.h
   * test_token.c
