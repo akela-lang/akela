@@ -1,7 +1,5 @@
 # Todo
 * memory annotations for test
-  * assert_compiler.c
-  * assert_compiler.h
   * test_buffer.c
   * test_buffer.h
   * test_input.c
