@@ -24,7 +24,6 @@ set(test_files
     test_parse_stmts.c
     test_scan.c
     test_input.c
-    test_buffer.c
     test_token.c
     test_uconv.c
     test_lookahead_translator.c

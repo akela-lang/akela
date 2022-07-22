@@ -1,6 +1,5 @@
 #include "assert.h"
 #include "test_input.h"
-#include "test_buffer.h"
 #include "test_scan.h"
 #include "test_parse_expr.h"
 #include "test_parse_stmts.h"
@@ -15,7 +14,6 @@ int main(void) {
 	test_lookahead_char();
 	test_lookahead_translator();
 	test_input();
-	test_buffer();
 	test_token();
 	test_scan();
 	test_dag();
