@@ -1,7 +1,5 @@
 # Todo
 * memory annotations for test
-  * test_buffer.c
-  * test_buffer.h
   * test_input.c
   * test_input.h
   * test_lookahead_char.c
