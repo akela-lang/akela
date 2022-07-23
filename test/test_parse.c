@@ -8,50 +8,101 @@
 #include "alba/scan.h"
 #include "alba/source.h"
 
+/* allocate ps{} root root{} */
 enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 {
 	enum result r;
 
+	/* allocate bf */
 	struct buffer* bf;
 	malloc_safe(&bf, sizeof(struct buffer));
 	buffer_init(bf);
+
+	/* allocate bf{} */
 	array2buffer(line, bf);
 
+	/* allocate sd */
 	struct string_data* sd;
 	malloc_safe(&sd, sizeof(struct string_data));
+
+	/* transfer bf -> sd{} */
 	string_data_init(bf, sd);
 
+	/* open conv */
 	UConverter* conv;
 	r = conv_open(&conv);
 	assert_ok(r, "conv_open");
 
+	/* allocate wt */
 	struct word_table* wt;
 	malloc_safe(&wt, sizeof(struct word_table));
+
+	/* allocate wt {} */
 	word_table_init(wt, WORD_TABLE_SIZE);
 
+	/* allocate lc */
 	struct lookahead_char* lc;
 	malloc_safe(&lc, sizeof(struct lookahead_char));
+
+	/* transfer sd conv -> lc */
 	lookahead_char_init(lc, string_getchar, sd, conv);
 
+	/* allocate el */
 	struct compile_error_list* el;
 	malloc_safe(&el, sizeof(struct compile_error_list));
 	compile_error_list_init(el);
 
+	/* allocate sns */
 	struct scan_state* sns;
 	malloc_safe(&sns, sizeof(struct scan_state));
+
+	/* transfer lc wt el -> sns{} */
 	scan_state_init(sns, lc, wt, el);
 
+	/* transfer sns el -> ps{}  */
 	parse_state_init(ps, sns, el);
 
+	/* allocate ps{} root root{} */
 	r = parse(ps, root);
 	return r;
 }
 
+/* destroy ps{} */
 void parse_teardown(struct parse_state* ps)
 {
+	struct string_data* sd = ps->sns->lc->d;
+	struct buffer* bf = sd->bf;
+
+	/* destroy ps{lc{d}} */
+	buffer_destroy(bf);
+	free(bf);
+	free(sd);
+
+	/* destroy ps{sns{el el{}}}*/
+	struct compiler_error_list* el = ps->sns->el;
+	compile_error_list_destroy(el);
+	free(el);
+
+	/* destroy ps{sns{wt wt{}}} */
+	struct word_table* wt = ps->sns->wt;
+	word_table_destroy(wt);
+	free(wt);
+
+	/* destroy ps{sns{lc{conv}}} */
 	conv_close(ps->sns->lc->conv);
+
+	/* destroy ps{sns{lc}} */
+	struct lookahead_char* lc = ps->sns->lc;
+	free(lc);
+
+	/* destroy ps{sns} */
+	free(ps->sns);
+
+	/* destroy ps{lookahead{}}*/
+	token_list_destroy(&ps->lookahead);
 }
 
+/* automatic-output */
 struct dag_node* check_stmts(struct dag_node* root, char* message)
 {
 	assert_ptr(root, "ptr root");
