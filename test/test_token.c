@@ -2,7 +2,7 @@
 #include "zinc/buffer.h"
 #include "alba/token.h"
 
-/* static-output */
+/* dynamic-output-none */
 void test_token_hash_buffer()
 {
 	test_name(__func__);
@@ -39,7 +39,7 @@ void test_token_hash_buffer()
 	buffer_destroy(&bf);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_token_word_table()
 {
 	test_name(__func__);
@@ -99,7 +99,7 @@ void test_token_word_table()
 	token_destroy(&t2);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_token_word_table_init()
 {
 	test_name(__func__);
@@ -137,7 +137,7 @@ void test_token_word_table_init()
 	buffer_destroy(&bf1);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_token()
 {
 	test_token_hash_buffer();

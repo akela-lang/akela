@@ -64,7 +64,7 @@ void scan_teardown(struct scan_state* sns)
 	conv_close(sns->lc->conv);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_blank()
 {
 	test_name(__func__);
@@ -95,7 +95,7 @@ void test_scan_blank()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_assign()
 {
 	test_name(__func__);
@@ -156,7 +156,7 @@ void test_scan_assign()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_num()
 {
 	test_name(__func__);
@@ -195,7 +195,7 @@ void test_scan_num()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_addition()
 {
 	test_name(__func__);
@@ -256,7 +256,7 @@ void test_scan_addition()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_subtraction()
 {
 	test_name(__func__);
@@ -317,7 +317,7 @@ void test_scan_subtraction()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_multiplication()
 {
 	test_name(__func__);
@@ -378,7 +378,7 @@ void test_scan_multiplication()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_divide()
 {
 	test_name(__func__);
@@ -439,7 +439,7 @@ void test_scan_divide()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_stmts_expr()
 {
 	test_name(__func__);
@@ -542,7 +542,7 @@ void test_scan_stmts_expr()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_stmts_expr2()
 {
 	test_name(__func__);
@@ -664,7 +664,7 @@ void test_scan_stmts_expr2()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_stmts_assign()
 {
 	test_name(__func__);
@@ -767,7 +767,7 @@ void test_scan_stmts_assign()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_function()
 {
 	test_name(__func__);
@@ -857,7 +857,7 @@ void test_scan_function()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_comma()
 {
 	test_name(__func__);
@@ -896,7 +896,7 @@ void test_scan_comma()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_semicolon()
 {
 	test_name(__func__);
@@ -935,7 +935,7 @@ void test_scan_semicolon()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_if() {
 	test_name(__func__);
 
@@ -993,7 +993,7 @@ void test_scan_if() {
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_compound_operators() {
 	test_name(__func__);
 
@@ -1082,7 +1082,7 @@ void test_scan_compound_operators() {
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_compound_operators2() {
 	test_name(__func__);
 
@@ -1171,7 +1171,7 @@ void test_scan_compound_operators2() {
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_for_range()
 {
 	test_name(__func__);
@@ -1274,7 +1274,7 @@ void test_scan_for_range()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_for_iteration()
 {
 	test_name(__func__);
@@ -1357,7 +1357,7 @@ void test_scan_for_iteration()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_error_char()
 {
 	test_name(__func__);
@@ -1388,7 +1388,7 @@ void test_scan_error_char()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_square_brackets()
 {
 	test_name(__func__);
@@ -1428,7 +1428,7 @@ void test_scan_square_brackets()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_string()
 {
 	test_name(__func__);
@@ -1459,7 +1459,7 @@ void test_scan_string()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_string2()
 {
 	test_name(__func__);
@@ -1511,7 +1511,7 @@ void test_scan_string2()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_string_escape_error()
 {
 	test_name(__func__);
@@ -1541,7 +1541,7 @@ void test_scan_string_escape_error()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_line_col()
 {
 	test_name(__func__);
@@ -1653,7 +1653,7 @@ void test_scan_line_col()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_number_whole()
 {
 	test_name(__func__);
@@ -1687,7 +1687,7 @@ void test_scan_number_whole()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_number_fraction()
 {
 	test_name(__func__);
@@ -1721,7 +1721,7 @@ void test_scan_number_fraction()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_number_fraction2()
 {
 	test_name(__func__);
@@ -1755,7 +1755,7 @@ void test_scan_number_fraction2()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_number_exponent()
 {
 	test_name(__func__);
@@ -1789,7 +1789,7 @@ void test_scan_number_exponent()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_number_exponent2()
 {
 	test_name(__func__);
@@ -1823,7 +1823,7 @@ void test_scan_number_exponent2()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_number_exponent3()
 {
 	test_name(__func__);
@@ -1857,7 +1857,7 @@ void test_scan_number_exponent3()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_number_exponent4()
 {
 	test_name(__func__);
@@ -1932,7 +1932,7 @@ void test_scan_number_exponent4()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan_number_exponent5()
 {
 	test_name(__func__);
@@ -1980,7 +1980,7 @@ void test_scan_number_exponent5()
 	scan_teardown(&sns);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_scan()
 {
 	test_scan_blank();

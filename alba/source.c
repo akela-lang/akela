@@ -8,7 +8,7 @@
 #include "source.h"
 #include "zinc/memory.h"
 
-/* static-output */
+/* dynamic-output-none */
 void compile_error_init(struct compile_error* e)
 {
 	e->line = 0;
@@ -18,7 +18,7 @@ void compile_error_init(struct compile_error* e)
 	e->prev = NULL;
 }
 
-/* static-output */
+/* dynamic-output-none */
 void compile_error_list_init(struct compile_error_list* el)
 {
 	el->head = NULL;
@@ -26,7 +26,7 @@ void compile_error_list_init(struct compile_error_list* el)
 }
 
 /* adding error to end of error list */
-/* static-output */
+/* dynamic-output-none */
 void compile_error_list_add(struct compile_error_list* el, struct compile_error* e)
 {
 	struct compile_error* prev = el->tail;
@@ -56,7 +56,7 @@ void compile_error_list_destroy(struct compile_error_list* el)
 	}
 }
 
-/* static-output */
+/* dynamic-output-none */
 void get_token_location(struct token* t, struct location* loc)
 {
 	loc->line = t->line;

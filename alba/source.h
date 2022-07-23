@@ -29,13 +29,13 @@ struct location {
 	size_t byte_pos;
 };
 
-/* static-output */
+/* dynamic-output-none */
 void compile_error_init(struct compile_error* e);
 
-/* static-output */
+/* dynamic-output-none */
 void compile_error_list_init(struct compile_error_list* el);
 
-/* static-output */
+/* dynamic-output-none */
 void compile_error_list_add(struct compile_error_list* el, struct compile_error* e);
 
 /* dynamic-destroy el{} */
@@ -49,7 +49,7 @@ enum result set_source_error(struct compile_error_list* el, struct location* loc
 /* resource-use d */
 enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf);
 
-/* static-output */
+/* dynamic-output-none */
 void get_token_location(struct token* t, struct location* loc);
 
 #endif

@@ -15,12 +15,12 @@ struct string_data {
 	int pos;
 };
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-input fp */
 /* resource-use fp */
 int file_getchar(FILE* fp);
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-input fp */
 /* resource-use fp */
 int file_seek(FILE* fp, size_t pos);
@@ -28,10 +28,10 @@ int file_seek(FILE* fp, size_t pos);
 /*  static-output */
 void string_data_init(struct buffer* bf, struct string_data* sd);
 
-/* static-output */
+/* dynamic-output-none */
 int string_getchar(struct string_data* sd);
 
-/* static-output */
+/* dynamic-output-none */
 int string_seek(struct string_data* sd, size_t pos);
 
 #endif

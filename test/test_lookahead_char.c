@@ -5,7 +5,7 @@
 #include "zinc/buffer.h"
 #include "alba/uconv.h"
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-temp bf{} conv */
 void test_lookahead_char_short()
 {
@@ -144,7 +144,7 @@ void test_lookahead_char_short()
 	conv_close(conv);
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic bf */
 void test_lookahead_char_line()
 {

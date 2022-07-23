@@ -4,7 +4,7 @@
 #include "zinc/memory.h"
 #include "token.h"
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output t{} t{value{}} */
 void token_init(struct token* t)
 {
@@ -32,7 +32,7 @@ void token_reset(struct token* t)
     buffer_reset(&t->value);
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output tl{} */
 void token_list_init(struct token_list* tl)
 {
@@ -40,7 +40,7 @@ void token_list_init(struct token_list* tl)
     tl->tail = NULL;
 }
 
-/* static-output */
+/* dynamic-output-none */
 struct token* get_token(struct token_list* tl, size_t pos)
 {
     int i = 0;
@@ -53,7 +53,7 @@ struct token* get_token(struct token_list* tl, size_t pos)
     return NULL;
 }
 
-/* static-output */
+/* dynamic-output-none */
 int token_find_first(struct token_list* tl, enum token_enum type)
 {
     int i = 0;
@@ -66,7 +66,7 @@ int token_find_first(struct token_list* tl, enum token_enum type)
     return -1;
 }
 
-/* static-output */
+/* dynamic-output-none */
 int token_find_last(struct token_list* tl, enum token_enum type)
 {
     int count = token_list_count(tl);
@@ -80,7 +80,7 @@ int token_find_last(struct token_list* tl, enum token_enum type)
     return -1;
 }
 
-/* static-output */
+/* dynamic-output-none */
 int token_list_count(struct token_list* tl)
 {
     int i = 0;
@@ -111,7 +111,7 @@ void token_list_destroy(struct token_list* tl)
 }
 
 /* Append the new token to the end of the token list */
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-transfer t t{} -> tl{} */
 void token_list_add(struct token_list* tl, struct token* t)
 {
@@ -158,7 +158,7 @@ void token_list_reset(struct token_list* tl)
     token_list_init(tl);
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-temp a */
 enum result token_list_print(struct token_list* tl)
 {
@@ -186,7 +186,7 @@ enum result token_list_print(struct token_list* tl)
     return result_ok;
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-temp a */
 enum result print_token(struct allocator* al, struct token* t)
 {
@@ -210,7 +210,7 @@ enum result print_token(struct allocator* al, struct token* t)
     return r;
 }
 
-/* static-output */
+/* dynamic-output-none */
 unsigned int hash_buffer(struct buffer* bf, unsigned int size)
 {
     unsigned int val = 0;
@@ -223,7 +223,7 @@ unsigned int hash_buffer(struct buffer* bf, unsigned int size)
     return val;
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output w{} w{value{}} */
 void word_init(struct word* w)
 {
@@ -240,7 +240,7 @@ void word_destroy(struct word* w)
     buffer_destroy(&w->value);
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output wl{} */
 void word_list_init(struct word_list* wl)
 {
@@ -318,7 +318,7 @@ void word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum ty
 /* get token based on word */
 /* return token if found */
 /* otherwise, return NULL */
-/* static-output */
+/* dynamic-output-none */
 struct word* word_table_get(struct word_table* wt, struct buffer* bf)
 {
     struct word* w;

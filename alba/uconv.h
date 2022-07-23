@@ -24,11 +24,11 @@ enum result char2uchar(UConverter* conv, char* src, size_t src_size, UChar** des
 /* resource-use conv */
 enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** dest, size_t dest_size, size_t* len);
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-output conv */
 enum result conv_open(UConverter** conv);
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-destroy conv */
 void conv_close(UConverter* conv);
 

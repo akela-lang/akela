@@ -111,7 +111,7 @@ enum result dseq_prime(struct parse_state* ps, struct dag_node* parent)
 	return r;
 }
 
-/* static-output */
+/* dynamic-output-none */
 int is_valid_type(struct buffer* b)
 {
 	if (buffer_str_compare(b, "Int32")) return 1;

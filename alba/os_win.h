@@ -6,7 +6,7 @@
 /* dynamic-output buff */
 enum result win_temp_filename(char** buff);
 
-/* static-output */
+/* dynamic-output-none */
 void set_console_utf8();
 
 #endif

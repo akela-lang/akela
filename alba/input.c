@@ -8,7 +8,7 @@
 #include "zinc/result.h"
 #include "uconv.h"
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-input fp */
 /* resource-use fp */
 int file_getchar(FILE* fp)
@@ -16,7 +16,7 @@ int file_getchar(FILE* fp)
 	return getc(fp);
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-input fp */
 /* resource-use fp */
 int file_seek(FILE* fp, size_t pos)
@@ -31,7 +31,7 @@ void string_data_init(struct buffer* bf, struct string_data* sd)
 	sd->pos = 0;
 }
 
-/* static-output */
+/* dynamic-output-none */
 int string_getchar(struct string_data* sd)
 {
 	if (sd->pos >= 0 && sd->pos < sd->bf->size) {
@@ -41,7 +41,7 @@ int string_getchar(struct string_data* sd)
 	return EOF;
 }
 
-/* static-output */
+/* dynamic-output-none */
 int string_seek(struct string_data* sd, size_t pos)
 {
 	if (pos >= sd->bf->size) return -1;

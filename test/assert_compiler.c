@@ -5,7 +5,7 @@
 #include "alba/uconv.h"
 #include "zinc/result.h"
 
-/* static-output */
+/* dynamic-output-none */
 void expect_utf8_char(char* a, char* b, char* message)
 {
 	test_called();
@@ -23,7 +23,7 @@ void expect_utf8_char(char* a, char* b, char* message)
 	printf("utf8 chars not equal: %s\n", message);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void expect_utf32_char(UChar32 a, UChar32 b, char* message)
 {
 	test_called();
@@ -32,7 +32,7 @@ void expect_utf32_char(UChar32 a, UChar32 b, char* message)
 	printf("(%d:%c) = (%d:%c) utf32 error: %s\n", a, a, b, b, message);
 }
 
-/* static-output */
+/* dynamic-output-none */
 struct compile_error* assert_compile_error(struct compile_error_list* el, char* s)
 {
 	test_called();
@@ -48,7 +48,7 @@ struct compile_error* assert_compile_error(struct compile_error_list* el, char* 
 	return NULL;
 }
 
-/* static-output */
+/* dynamic-output-none */
 void expect_compile_error_fields(struct compile_error* e, size_t line, size_t col, size_t byte_pos)
 {
 	bool has_error = 0;

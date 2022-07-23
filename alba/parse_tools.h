@@ -10,7 +10,7 @@ struct parse_state {
 	struct compile_error_list* el;
 };
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output ps ps{}*/
 void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct compile_error_list* el);
 

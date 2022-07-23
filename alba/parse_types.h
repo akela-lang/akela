@@ -6,7 +6,7 @@
 /* dynamic-output ps{} root root{} */
 enum result dseq(struct parse_state* ps, struct dag_node** root);
 
-/* static-output */
+/* dynamic-output-none */
 int is_valid_type(struct buffer* b);
 
 /* dynamic-output ps{} root root{} */

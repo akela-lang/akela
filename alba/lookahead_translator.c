@@ -27,7 +27,7 @@ void circular_byte_buffer_destroy(struct circular_byte_buffer* cbyte)
 	free(cbyte->buf);
 }
 
-/* static-output */
+/* dynamic-output-none */
 enum result circular_byte_buffer_add(struct circular_byte_buffer* cbyte, char c)
 {
 	if (cbyte->size < cbyte->buf_size) {
@@ -39,7 +39,7 @@ enum result circular_byte_buffer_add(struct circular_byte_buffer* cbyte, char c)
 	return set_error("No room in circular byte buffer: add %c", c);
 }
 
-/* static-output */
+/* dynamic-output-none */
 char circular_byte_buffer_pop(struct circular_byte_buffer* cbyte)
 {
 	if (cbyte->size > 0) {
@@ -70,7 +70,7 @@ void circular_uchar32_buffer_destroy(struct circular_uchar32_buffer* cc32)
 	free(cc32->buf);
 }
 
-/* static-output */
+/* dynamic-output-none */
 enum result circular_uchar32_buffer_add(struct circular_uchar32_buffer* cc32, UChar32 c)
 {
 	if (cc32->size < cc32->buf_size) {
@@ -82,7 +82,7 @@ enum result circular_uchar32_buffer_add(struct circular_uchar32_buffer* cc32, UC
 	return set_error("No room in circular UChar32 buffer: add %d", c);
 }
 
-/* static-output */
+/* dynamic-output-none */
 UChar32 circular_uchar32_buffer_pop(struct circular_uchar32_buffer* cc32)
 {
 	if (cc32->size > 0) {

@@ -40,7 +40,7 @@ enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** des
     return result_ok;
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-output conv */
 enum result conv_open(UConverter** conv)
 {
@@ -52,7 +52,7 @@ enum result conv_open(UConverter** conv)
     return result_ok;
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-destroy conv */
 void conv_close(UConverter* conv)
 {

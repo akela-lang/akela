@@ -6,7 +6,7 @@
 #include "alba/uconv.h"
 #include <windows.h>
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-temp bf{} bf2{} */
 void test_input_string()
 {
@@ -42,7 +42,7 @@ void test_input_string()
 	buffer_destroy(&bf2);
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-temp bf{} */
 void test_input_file()
 {
@@ -92,7 +92,7 @@ void test_input_file()
 	buffer_destroy(&bf);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_input()
 {
 	test_input_string();

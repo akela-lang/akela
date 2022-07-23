@@ -48,7 +48,7 @@ enum token_enum {
 };
 
 # ifdef _TOKEN_C
-/* static-output */
+/* dynamic-output-none */
 enum result token_name_init(char** token_name)
 {
     for (int i = 0; i < token_count; i++) {
@@ -105,7 +105,7 @@ enum result token_name_init(char** token_name)
 }
 # else
 
-/* static-output */
+/* dynamic-output-none */
 enum result token_name_init(char** token_name);
 
 # endif
@@ -142,14 +142,14 @@ struct word_table {
     struct word_list* buckets;
 };
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output t{} t{value{}} */
 void token_init(struct token* t);
 
 /* dynamic-destroy t{value{}} */
 void token_reset(struct token* t);
 
-/* static-output */
+/* dynamic-output-none */
 void token_list_init(struct token_list* tl);
 
 /* dynamic-destroy tl{} */
@@ -158,22 +158,22 @@ void token_list_destroy(struct token_list* tl);
 /* dynamic-destroy t{value{}} */
 void token_destroy(struct token* t);
 
-/* static-output */
+/* dynamic-output-none */
 struct token* get_token(struct token_list* tl, size_t pos);
 
-/* static-output */
+/* dynamic-output-none */
 int token_find_first(struct token_list* tl, enum token_enum type);
 
-/* static-output */
+/* dynamic-output-none */
 int token_find_last(struct token_list* tl, enum token_enum type);
 
-/* static-output */
+/* dynamic-output-none */
 int token_list_count(struct token_list* tl);
 
 /* dynamic-output tl */
 void token_list_make(struct token_list** tl);
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-transfer t t{} -> tl{} */
 void token_list_add(struct token_list* tl, struct token* t);
 
@@ -183,23 +183,23 @@ struct token* token_list_pop(struct token_list* tl);
 /* initialize-output tl{} */
 void token_list_reset(struct token_list* tl);
 
-/* static-output */
+/* dynamic-output-none */
 enum result token_list_print(struct token_list* tl);
 
-/* static-output */
+/* dynamic-output-none */
 enum result print_token(struct allocator* al, struct token* t);
 
-/* static-output */
+/* dynamic-output-none */
 unsigned int hash_buffer(struct buffer* bf, unsigned int size);
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output w{} w{value{}} */
 void word_init(struct word* w);
 
 /* dynamic-destroy wt{} */
 void word_table_destroy(struct word_table* wt);
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output wl{} */
 void word_list_init(struct word_list* wl);
 
@@ -212,7 +212,7 @@ void word_table_init_reserved(struct word_table* wt);
 /* dynamic-output wt{} */
 void word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type);
 
-/* static-output */
+/* dynamic-output-none */
 struct word* word_table_get(struct word_table* wt, struct buffer* bf);
 
 #endif

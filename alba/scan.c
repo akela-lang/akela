@@ -12,7 +12,7 @@
 #include "source.h"
 #include "uconv.h"
 
-/* static-output */
+/* dynamic-output-none */
 /* initialize-output sns{} */
 void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt, struct compile_error_list* el)
 {
@@ -21,7 +21,7 @@ void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct w
     sns->el = el;
 }
 
-/* static-output */
+/* dynamic-output-none */
 void set_char_values(struct char_value* cv)
 {
     size_t pos2;
@@ -160,19 +160,19 @@ void set_char_values(struct char_value* cv)
     U16_NEXT(backslash, pos2, size, cv->backslash);
 }
 
-/* static-output */
+/* dynamic-output-none */
 int compound_operator_start(UChar32 uc, struct char_value* cv)
 {
     return uc == cv->equal || uc == cv->exclamation || uc == cv->less_than || uc == cv->greater_than || uc == cv->ampersand || uc == cv->vertical_bar || uc == cv->colon;
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool is_number_state(enum state_enum state)
 {
     return state == state_number_whole || state == state_number_fraction || state == state_number_exponent_start || state == state_number_exponent;
 }
 
-/* static-output */
+/* dynamic-output-none */
 void get_scan_location(struct scan_state* sns, struct location* loc)
 {
     loc->line = sns->lc->line;

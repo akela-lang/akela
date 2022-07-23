@@ -45,7 +45,7 @@ enum dag_type {
 
 # ifdef _DAG_C
 
-/* static-output */
+/* dynamic-output-none */
 enum result dag_set_names(char** names)
 {
 	for (int i = 0; i < dag_type_count; i++) {
@@ -96,7 +96,7 @@ enum result dag_set_names(char** names)
 
 # else
 
-/* static-output */
+/* dynamic-output-none */
 enum result dag_set_names(char** names);
 
 # endif
@@ -116,22 +116,22 @@ void dag_create_node(struct dag_node** n);
 /* dynamic-destroy n n{} */
 void dag_destroy(struct dag_node* n);
 
-/* static-output */
+/* dynamic-output-none */
 void dag_init_node(struct dag_node* n);
 
-/* static-output */
+/* dynamic-output-none */
 void dag_add_child(struct dag_node* p, struct dag_node* c);
 
-/* static-output */
+/* dynamic-output-none */
 void dag_push(struct dag_node* parent, struct dag_node* child);
 
-/* static-output */
+/* dynamic-output-none */
 struct dag_node* dag_get_child(struct dag_node* p, size_t pos);
 
-/* static-output */
+/* dynamic-output-none */
 int is_binary_operator(struct dag_node* n);
 
-/* static-output */
+/* dynamic-output-none */
 void dag_print(struct dag_node* root, char** names);
 
 #endif

@@ -1,7 +1,7 @@
 #include "zinc/assert.h"
 #include "alba/lookahead_translator.h"
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-temp cbyte{} */
 void test_lookahead_translator_cbyte()
 {
@@ -48,7 +48,7 @@ void test_lookahead_translator_cbyte()
 	circular_byte_buffer_destroy(&cbyte);
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-temp cc32{} */
 void test_lookahead_translator_circular_uchar32_buffer()
 {
@@ -93,7 +93,7 @@ void test_lookahead_translator_circular_uchar32_buffer()
 	circular_uchar32_buffer_destroy(&cc32);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void test_lookahead_translator()
 {
 	test_lookahead_translator_cbyte();

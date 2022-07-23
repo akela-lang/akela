@@ -26,10 +26,10 @@ void circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_si
 /* dynamic-destroy cbyte{} */
 void circular_byte_buffer_destroy(struct circular_byte_buffer* cbyte);
 
-/* static-output */
+/* dynamic-output-none */
 enum result circular_byte_buffer_add(struct circular_byte_buffer* cbyte, char c);
 
-/* static-output */
+/* dynamic-output-none */
 char circular_byte_buffer_pop(struct circular_byte_buffer* cbyte);
 
 /* dynamic-output: cc32{} */
@@ -38,10 +38,10 @@ void circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t b
 /* dynamic-destroy cc32{} */
 void circular_uchar32_buffer_destroy(struct circular_uchar32_buffer* cc32);
 
-/* static-output */
+/* dynamic-output-none */
 enum result circular_uchar32_buffer_add(struct circular_uchar32_buffer* cc32, UChar32 c);
 
-/* static-output */
+/* dynamic-output-none */
 UChar32 circular_uchar32_buffer_pop(struct circular_uchar32_buffer* cc32);
 
 #endif

@@ -33,7 +33,7 @@ void dag_destroy(struct dag_node* n)
 	}
 }
 
-/* static-output */
+/* dynamic-output-none */
 void dag_init_node(struct dag_node* n)
 {
 	n->type = dag_type_none;
@@ -44,7 +44,7 @@ void dag_init_node(struct dag_node* n)
 	n->tail = NULL;
 }
 
-/* static-output */
+/* dynamic-output-none */
 void dag_add_child(struct dag_node* p, struct dag_node* c)
 {
 	// set sibling to left
@@ -65,7 +65,7 @@ void dag_add_child(struct dag_node* p, struct dag_node* c)
 }
 
 /* assume parent and child are not NULL */
-/* static-output */
+/* dynamic-output-none */
 void dag_push(struct dag_node* parent, struct dag_node* child)
 {
 	struct dag_node* old_head = parent->head;
@@ -76,7 +76,7 @@ void dag_push(struct dag_node* parent, struct dag_node* child)
 	parent->head = child;
 }
 
-/* static-output */
+/* dynamic-output-none */
 struct dag_node* dag_get_child(struct dag_node* p, size_t pos)
 {
 	int i = 0;
@@ -89,7 +89,7 @@ struct dag_node* dag_get_child(struct dag_node* p, size_t pos)
 	return NULL;
 }
 
-/* static-output */
+/* dynamic-output-none */
 int is_binary_operator(struct dag_node* n)
 {
 	if (n->type == dag_type_plus) {
@@ -105,7 +105,7 @@ int is_binary_operator(struct dag_node* n)
 	return 0;
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* dynamic-temp a */
 void dag_print(struct dag_node* root, char** names)
 {

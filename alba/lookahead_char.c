@@ -8,7 +8,7 @@
 #include "input.h"
 #include "zinc/result.h"
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-input conv */
 /* resource-output lc{conv}*/
 void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv)
@@ -34,7 +34,7 @@ void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data 
 	lc->byte_pos = 0;
 }
 
-/* static-output */
+/* dynamic-output-none */
 enum result lookahead_char_get_input(struct lookahead_char* lc)
 {
 	int c;
@@ -86,7 +86,7 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 	return result_ok;
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-use lc{conv} */
 enum result lookahead_char_translate(struct lookahead_char* lc)
 {
@@ -108,19 +108,19 @@ enum result lookahead_char_translate(struct lookahead_char* lc)
 	return result_ok;
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_has_utf8(struct lookahead_char* lc)
 {
 	return lc->tr_in_pos < lc->tr_in_size;
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_has_utf16(struct lookahead_char* lc)
 {
 	return lc->tr_out_pos < lc->tr_out_size;
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_utf8_pop(struct lookahead_char* lc, char* buf)
 {
 	char c;
@@ -141,7 +141,7 @@ bool lookahead_char_utf8_pop(struct lookahead_char* lc, char* buf)
 	return false;
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_utf32_pop(struct lookahead_char* lc, UChar32* c)
 {
 	if (lc->tr_out_pos < lc->tr_out_size) {
@@ -152,31 +152,31 @@ bool lookahead_char_utf32_pop(struct lookahead_char* lc, UChar32* c)
 	return false;
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_done_loading(struct lookahead_char* lc)
 {
 	return lc->done && !lookahead_char_has_utf8(lc) && !lookahead_char_has_utf16(lc);
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_done(struct lookahead_char* lc)
 {
 	return lc->done && !lookahead_char_has_utf8(lc) && !lookahead_char_has_utf16(lc) && lc->la_size <= 0;
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_need_preping(struct lookahead_char* lc)
 {
 	return (!lc->done && !lookahead_char_has_utf8(lc)) || (lookahead_char_has_utf8(lc) && !lookahead_char_has_utf16(lc));
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_need_loading(struct lookahead_char* lc)
 {
 	return lookahead_char_has_utf8(lc) && lookahead_char_has_utf16(lc) && lc->la_size < 2;
 }
 
-/* static-output */
+/* dynamic-output-none */
 /* resource-use lc{conv} */
 enum result lookahead_char_prep(struct lookahead_char* lc)
 {
@@ -195,7 +195,7 @@ enum result lookahead_char_prep(struct lookahead_char* lc)
 	return result_ok;
 }
 
-/* static-output */
+/* dynamic-output-none */
 bool lookahead_char_load(struct lookahead_char* lc)
 {
 	bool a = false, b = false;
@@ -216,7 +216,7 @@ bool lookahead_char_load(struct lookahead_char* lc)
 	return lookahead_char_done_loading(lc);
 }
 
-/* static-output */
+/* dynamic-output-none */
 void lookahead_char_pop(struct lookahead_char* lc)
 {
 	if (lc->la_size > 0) {
@@ -258,7 +258,7 @@ void lookahead_char_pop(struct lookahead_char* lc)
 	}
 }
 
-/* static-output */
+/* dynamic-output-none */
 void lookahead_char_push(struct lookahead_char* lc)
 {
 	if (lc->lb_size >= 1) {
