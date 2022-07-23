@@ -1,4 +1,4 @@
-#include "assert.h"
+#include "zinc/assert.h"
 #include "test_input.h"
 #include "test_scan.h"
 #include "test_parse_expr.h"
@@ -9,6 +9,7 @@
 #include "test_lookahead_char.h"
 #include "test_dag.h"
 
+/* dynamic-output-none */
 int main(void) {
 	test_uconv();
 	test_lookahead_char();
