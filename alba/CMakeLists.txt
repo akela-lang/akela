@@ -15,6 +15,7 @@ set(source_files
     uconv.c
     parse_types.c
     lookahead_char.c
+    hash.c
 )
 include_directories("../external/icu4c/include")
 add_executable(alba ${source_files})
