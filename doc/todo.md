@@ -1,7 +1,5 @@
 # Todo
 * memory annotations for test
-  * test_scan.c
-  * test_scan.h
   * test_parse_expr.c
   * test_parse_expr.h
   * test_parse_stmts.c

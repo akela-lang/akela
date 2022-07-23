@@ -993,6 +993,7 @@ void test_scan_if() {
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_compound_operators() {
 	test_name(__func__);
 
@@ -1004,46 +1005,84 @@ void test_scan_compound_operators() {
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("== != <= >= && || ::", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_double_equal, "double equal");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_not_equal, "not equal");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_less_than_or_equal, "less than or equal");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_greater_than_or_equal, "greater than or equal");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_and, "and");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_or, "or");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 6");
 	assert_true(got_token, "got token 6");
 	expect_int_equal(t->type, token_double_colon, "double colon");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_compound_operators2() {
 	test_name(__func__);
 
@@ -1055,46 +1094,84 @@ void test_scan_compound_operators2() {
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("= ! < > & | :", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_equal, "equal");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_not, "not");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_less_than, "less than");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_greater_than, "greater_than");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_ampersand, "ampersand");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_vertical_bar, "vertical_bar");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 6");
 	assert_true(got_token, "got token 6");
 	expect_int_equal(t->type, token_colon, "colon");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_for_range()
 {
 	test_name(__func__);
@@ -1107,54 +1184,97 @@ void test_scan_for_range()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("for i = 0:10 1 end", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_for, "for");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_id, "id 1");
 	expect_str(&t->value, "i", "i");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_equal, "equal 2");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_number, "number 3");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_colon, "colon 4");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_number, "number 5");
 	expect_str(&t->value, "10", "10 5");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 6");
 	assert_true(got_token, "got token 6");
 	expect_int_equal(t->type, token_number, "number 6");
 	expect_str(&t->value, "1", "1 6");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 7");
 	assert_true(got_token, "got token 7");
 	expect_int_equal(t->type, token_end, "end 7");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_for_iteration()
 {
 	test_name(__func__);
@@ -1167,44 +1287,77 @@ void test_scan_for_iteration()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("for x in list 1 end", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_for, "for");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_id, "id 1");
 	expect_str(&t->value, "x", "x 1");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_in, "in 2");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 3");
 	assert_true(got_token, "got token 3");
 	expect_int_equal(t->type, token_id, "id 3");
 	expect_str(&t->value, "list", "list 3");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 4");
 	assert_true(got_token, "got token 4");
 	expect_int_equal(t->type, token_number, "number 4");
 	expect_str(&t->value, "1", "1 4");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token 5");
 	assert_true(got_token, "got token 5");
 	expect_int_equal(t->type, token_end, "end 5");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_error_char()
 {
 	test_name(__func__);
@@ -1217,16 +1370,25 @@ void test_scan_error_char()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("$", &sns, &lc, &wt, &el);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "get token");
 	assert_true(!got_token, "got token");
 	struct compile_error* e = assert_compile_error(&el, "Unrecognized character: $");
 	expect_compile_error_fields(e, 1, 1, 0);
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_square_brackets()
 {
 	test_name(__func__);
@@ -1239,21 +1401,34 @@ void test_scan_square_brackets()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("[]", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_left_square_bracket, "left-square-bracket 0");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_right_square_bracket, "right-square-bracket 1");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_string()
 {
 	test_name(__func__);
@@ -1266,16 +1441,25 @@ void test_scan_string()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("\"hello\"", &sns, &lc, &wt, &el);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_string, "string 0");
 	expect_str(&t->value, "hello", "hello 0");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_string2()
 {
 	test_name(__func__);
@@ -1288,28 +1472,46 @@ void test_scan_string2()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("x = \"\\\\hello\n\r\"", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan 0");
 	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_id, "id 0");
 	expect_str(&t->value, "x", "x 0");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan 1");
 	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_equal, "equal 1");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan 2");
 	assert_true(got_token, "got token 2");
 	expect_int_equal(t->type, token_string, "string 2");
 	expect_str(&t->value, "\\hello\n\r", "hello 2");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_string_escape_error()
 {
 	test_name(__func__);
@@ -1322,16 +1524,24 @@ void test_scan_string_escape_error()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("\"\\x\"", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan");
 	struct compile_error* e = assert_compile_error(&el, "Unrecognized escape sequence: x");
 	expect_compile_error_fields(e, 1, 3, 2);
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_line_col()
 {
 	test_name(__func__);
@@ -1344,8 +1554,10 @@ void test_scan_line_col()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("10 + 20\n30 + 40", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok 10");
 	assert_ptr(t, "ptr t 10");
@@ -1355,6 +1567,11 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok +");
 	assert_ptr(t, "ptr t +");
@@ -1363,6 +1580,11 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 1, "line +");
 	expect_int_equal(t->col, 4, "col +");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok 20");
 	assert_ptr(t, "ptr t 20");
@@ -1371,6 +1593,11 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 1, "line 20");
 	expect_int_equal(t->col, 6, "col 20");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok newline");
 	assert_ptr(t, "ptr t newline");
@@ -1379,6 +1606,11 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 1, "line newline");
 	expect_int_equal(t->col, 8, "col newline");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok 30");
 	assert_ptr(t, "ptr t 30");
@@ -1387,6 +1619,11 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 2, "line 30");
 	expect_int_equal(t->col, 1, "col 30");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok +");
 	assert_ptr(t, "ptr t +");
@@ -1395,6 +1632,11 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 2, "line +");
 	expect_int_equal(t->col, 4, "col +");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok 40");
 	assert_ptr(t, "ptr t 40");
@@ -1403,9 +1645,15 @@ void test_scan_line_col()
 	expect_int_equal(t->line, 2, "line 40");
 	expect_int_equal(t->col, 6, "col 40");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_number_whole()
 {
 	test_name(__func__);
@@ -1418,8 +1666,10 @@ void test_scan_number_whole()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("500", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1429,9 +1679,15 @@ void test_scan_number_whole()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_number_fraction()
 {
 	test_name(__func__);
@@ -1444,8 +1700,10 @@ void test_scan_number_fraction()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("500.", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1455,9 +1713,15 @@ void test_scan_number_fraction()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_number_fraction2()
 {
 	test_name(__func__);
@@ -1470,8 +1734,10 @@ void test_scan_number_fraction2()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("500.123", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1481,9 +1747,15 @@ void test_scan_number_fraction2()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_number_exponent()
 {
 	test_name(__func__);
@@ -1496,8 +1768,10 @@ void test_scan_number_exponent()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("500.123e2", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1507,9 +1781,15 @@ void test_scan_number_exponent()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_number_exponent2()
 {
 	test_name(__func__);
@@ -1522,8 +1802,10 @@ void test_scan_number_exponent2()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("500.123e-2", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1533,9 +1815,15 @@ void test_scan_number_exponent2()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_number_exponent3()
 {
 	test_name(__func__);
@@ -1548,8 +1836,10 @@ void test_scan_number_exponent3()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("500.123e+2", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1559,9 +1849,15 @@ void test_scan_number_exponent3()
 	expect_int_equal(t->line, 1, "line");
 	expect_int_equal(t->col, 1, "col");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_number_exponent4()
 {
 	test_name(__func__);
@@ -1574,8 +1870,10 @@ void test_scan_number_exponent4()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("500.123e + 1", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1585,6 +1883,11 @@ void test_scan_number_exponent4()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1594,6 +1897,11 @@ void test_scan_number_exponent4()
 	expect_int_equal(t->line, 1, "line");
 	expect_int_equal(t->col, 8, "col");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1602,6 +1910,11 @@ void test_scan_number_exponent4()
 	expect_int_equal(t->line, 1, "line");
 	expect_int_equal(t->col, 10, "col");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1611,9 +1924,15 @@ void test_scan_number_exponent4()
 	expect_int_equal(t->line, 1, "line");
 	expect_int_equal(t->col, 12, "col");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan_number_exponent5()
 {
 	test_name(__func__);
@@ -1626,8 +1945,10 @@ void test_scan_number_exponent5()
 	struct token* t;
 	int got_token;
 
+	/* allocate sns{} */
 	scan_setup("500.123e", &sns, &lc, &wt, &el);
 
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1637,6 +1958,11 @@ void test_scan_number_exponent5()
 	expect_int_equal(t->line, 1, "line 10");
 	expect_int_equal(t->col, 1, "col 10");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* allocate sns{} t t{} */
 	r = scan_get_token(&sns, &got_token, &t);
 	assert_ok(r, "scan ok");
 	assert_ptr(t, "ptr t");
@@ -1646,9 +1972,15 @@ void test_scan_number_exponent5()
 	expect_int_equal(t->line, 1, "line");
 	expect_int_equal(t->col, 8, "col");
 
+	/* destroy t t{} */
+	token_destroy(t);
+	free(t);
+
+	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
+/* static-output */
 void test_scan()
 {
 	test_scan_blank();
