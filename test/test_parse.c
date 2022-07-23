@@ -8,7 +8,7 @@
 #include "alba/scan.h"
 #include "alba/source.h"
 
-/* allocate ps{} root root{} */
+/* dynamic-output ps{} root root{} */
 enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 {
 	enum result r;
@@ -67,7 +67,7 @@ enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** ro
 	return r;
 }
 
-/* destroy ps{} */
+/* dynamic-destroy ps{} */
 void parse_teardown(struct parse_state* ps)
 {
 	struct string_data* sd = ps->sns->lc->d;
@@ -102,7 +102,7 @@ void parse_teardown(struct parse_state* ps)
 	token_list_destroy(&ps->lookahead);
 }
 
-/* automatic-output */
+/* dynamic-output-none */
 struct dag_node* check_stmts(struct dag_node* root, char* message)
 {
 	assert_ptr(root, "ptr root");

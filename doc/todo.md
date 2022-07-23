@@ -1,7 +1,5 @@
 # Todo
 * memory annotations for test
-  * test_parse_stmts.c
-  * test_parse_stmts.h
   * test.c
 * move utf8 macros and checks to zinc
 * use direct comparison of utf32 and char

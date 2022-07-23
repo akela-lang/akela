@@ -6,13 +6,13 @@
 #include "alba/token.h"
 #include "alba/dag.h"
 
-/* allocate ps{} root root{} */
+/* dynamic-output ps{} root root{} */
 enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** root);
 
-/* destroy ps{} */
+/* dynamic-destroy ps{} */
 void parse_teardown(struct parse_state* ps);
 
-/* automatic-output */
+/* dynamic-output-none */
 struct dag_node* check_stmts(struct dag_node* root, char* message);
 
 #endif
