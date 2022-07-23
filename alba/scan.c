@@ -11,6 +11,7 @@
 #include "input.h"
 #include "source.h"
 #include "uconv.h"
+#include "zinc/utf8.h"
 
 /* dynamic-output-none */
 /* initialize-output sns{} */

@@ -4,6 +4,7 @@
 #include "alba/source.h"
 #include "alba/uconv.h"
 #include "zinc/result.h"
+#include "zinc/utf8.h"
 
 /* dynamic-output-none */
 void expect_utf8_char(char* a, char* b, char* message)

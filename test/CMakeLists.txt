@@ -25,7 +25,6 @@ set(test_files
     test_scan.c
     test_input.c
     test_token.c
-    test_uconv.c
     test_lookahead_translator.c
     test_lookahead_char.c
 )

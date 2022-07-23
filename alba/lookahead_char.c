@@ -7,6 +7,7 @@
 #include "uconv.h"
 #include "input.h"
 #include "zinc/result.h"
+#include "zinc/utf8.h"
 
 /* dynamic-output-none */
 /* resource-input conv */

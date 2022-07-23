@@ -5,15 +5,6 @@
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 
-#define IS_ONE_BYTE(c) (((c) & 0x80) == 0x00)
-#define IS_TWO_BYTES(c) (((c) & 0xe0) == 0xc0)
-#define IS_THREE_BYTES(c) (((c) & 0xf0) == 0xe0)
-#define IS_FOUR_BYTES(c) (((c) & 0xf8) == 0xf0)
-
-#define NUM_BYTES(c) (IS_ONE_BYTE(c) ? 1 : IS_TWO_BYTES(c) ? 2 : IS_THREE_BYTES(c) ? 3 : IS_FOUR_BYTES(c) ? 4 : 0)
-
-#define IS_EXTRA_BYTE(c) (((c) & 0xc0) == 0x80)
-
 /* dynamic-output dest */
 /* resource-input conv */
 /* resource-use conv */
