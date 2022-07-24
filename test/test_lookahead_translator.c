@@ -1,4 +1,4 @@
-#include "zinc/assert.h"
+#include "zinc/unit_test.h"
 #include "alba/lookahead_translator.h"
 
 /* dynamic-output-none */

@@ -1,4 +1,4 @@
-#include "zinc/assert.h"
+#include "zinc/unit_test.h"
 #include "test_input.h"
 #include "test_scan.h"
 #include "test_parse_expr.h"

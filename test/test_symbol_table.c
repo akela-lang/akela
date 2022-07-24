@@ -1,4 +1,4 @@
-#include "zinc/assert.h"
+#include "zinc/unit_test.h"
 #include "zinc/memory.h"
 #include "alba/symbol_table.h"
 

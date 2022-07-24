@@ -1,4 +1,4 @@
-#include "zinc/assert.h"
+#include "zinc/unit_test.h"
 #include "test_parse.h"
 #include "alba/dag.h"
 #include "alba/parse_tools.h"

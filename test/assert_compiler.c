@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "zinc/assert.h"
+#include "zinc/unit_test.h"
 #include "alba/source.h"
 #include "alba/uconv.h"
 #include "zinc/result.h"
