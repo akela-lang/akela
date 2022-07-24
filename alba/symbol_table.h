@@ -7,7 +7,7 @@
 
 struct environment {
 	struct hash_table ht;
-	struct env* prev;
+	struct environment* prev;
 };
 
 struct symbol {
