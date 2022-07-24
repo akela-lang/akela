@@ -3,6 +3,7 @@
 #include <unicode/ustring.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "zinc/result.h"
 #include "token.h"
 #include "scan.h"
@@ -337,8 +338,8 @@ enum result process_char_number(struct scan_state* sns, enum state_enum* state, 
                 buffer_add_char(&t->value, lc->la0_8[i]);
             }
         } else {
-            /* shound not happen because of lookahead */
-            return set_error(NULL, lc, "expecting <digit>, <->, or <+> after e in number");
+            /* shound not happen because of lookahead: expecting <digit>, <->, or <+> after e in number */
+            assert(false);
         }
     } else if (*state == state_number_exponent) {
         if (u_isdigit(uc)) {
@@ -491,17 +492,8 @@ enum result process_compound_operator(struct scan_state* sns, enum state_enum* s
         *got_token = 1;
         lookahead_char_push(lc);
     } else {
-        char a[5];
-        int i = 0;
-        while (i < NUM_BYTES(lc->la0_8[0])) {
-            a[i] = lc->la0_8[i];
-            i++;
-        }
-        a[i] = '\0';
-        struct location loc;
-        get_scan_location(sns, &loc);
-        /* allocate sns{el{}} */
-        return set_source_error(sns->el, &loc, "unrecognized compound operator: %s", a);
+        /* unrecognized compound operator */
+        assert(false);
     }
 
     return r;
@@ -523,7 +515,8 @@ enum result scan_process(struct scan_state* sns, enum state_enum* state, int* go
     } else if (*state == state_compound_operator) {
         r = process_compound_operator(sns, state, got_token, t);
     } else {
-        r = set_error("unexpected state");
+        /* unexpected state */
+        assert(false);
     }
     return r;
 }
