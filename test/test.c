@@ -8,6 +8,7 @@
 #include "test_lookahead_char.h"
 #include "test_dag.h"
 #include "test_hash.h"
+#include "test_symbol_table.h"
 
 /* dynamic-output-none */
 int main(void) {
@@ -20,6 +21,7 @@ int main(void) {
 	test_dag();
 	test_parse_expression();
 	test_parse_statements();
+	test_symbol_table();
 	print_results();
 	return 0;
 }

@@ -38,6 +38,7 @@ void hash_list_init(struct hash_list* hl)
     hl->tail = NULL;
 }
 
+/* dynamic-destroy hl{} */
 void hash_list_destroy(struct hash_list* hl)
 {
     struct hash_entry* p = hl->head;
@@ -69,6 +70,18 @@ void hash_table_destroy(struct hash_table* ht)
         hash_list_destroy(&ht->buckets[i]);
     }
     free(ht->buckets);
+}
+
+/* dynamic-destroy ht{} */
+void hash_table_map(struct hash_table* ht, hash_table_func f)
+{
+    for (int i = 0; i < ht->size; i++) {
+        struct hash_entry* p = ht->buckets[i].head;
+        while (p) {
+            f(p->item);
+            p = p->next;
+        }
+    }
 }
 
 /* assume entry is not in table so call hash_table_get before if not sure */

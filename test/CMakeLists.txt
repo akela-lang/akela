@@ -17,6 +17,7 @@ set(test_files
     ${alba_dir}/lookahead_translator.c
     ${alba_dir}/lookahead_char.c
     ${alba_dir}/hash.c
+    ${alba_dir}/symbol_table.c
     assert_compiler.c
     "test.c"
     test_dag.c
@@ -29,6 +30,7 @@ set(test_files
     test_lookahead_translator.c
     test_lookahead_char.c
     test_hash.c
+    test_symbol_table.c
 )
 
 include_directories("../external/icu4c/include" "..")
