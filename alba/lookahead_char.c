@@ -3,6 +3,7 @@
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "lookahead_char.h"
 #include "uconv.h"
 #include "input.h"
@@ -41,7 +42,8 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 	int c;
 	int count;
 
-	if (lc->tr_in_pos < lc->tr_in_size) return set_error("More input not needed: in pos is less than in size");
+	/* should only call when more characters needed */
+	assert(lc->tr_in_pos >= lc->tr_in_size);
 
 	lc->tr_in_size = 0;
 	lc->tr_in_pos = 0;
@@ -94,7 +96,8 @@ enum result lookahead_char_translate(struct lookahead_char* lc)
 	int32_t len;
 	UErrorCode err;
 
-	if (lc->tr_out_pos < lc->tr_out_size) return set_error("Translation not needed: out pos is less than out size");
+	/* should be called only when more characters are needed */
+	assert(lc->tr_out_pos >= lc->tr_out_size);
 
 	lc->tr_out_size = 0;
 	lc->tr_out_pos = 0;
