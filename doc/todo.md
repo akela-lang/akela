@@ -1,5 +1,7 @@
 # Todo
+* add id to symbol table on declaration
+* use of id has declaration in symbol table
+* operators have valid types
 * use direct comparison of utf32 and char
-* symbol table
 * link to LLVM
 * generate LLVM IR
