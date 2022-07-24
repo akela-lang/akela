@@ -1,4 +1,5 @@
 # Todo
+* let statement
 * add id to symbol table on declaration
 * use of id has declaration in symbol table
 * operators have valid types
