@@ -23,148 +23,9 @@ void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct w
 }
 
 /* dynamic-output-none */
-void set_char_values(struct char_value* cv)
+int compound_operator_start(UChar32 uc)
 {
-    size_t pos2;
-    size_t size;
-
-    U_STRING_DECL(equal, "=", 1);
-    U_STRING_INIT(equal, "=", 1);
-    pos2 = 0;
-    size = u_strlen(equal);
-    U16_NEXT(equal, pos2, size, cv->equal);
-
-    U_STRING_DECL(plus, "+", 1);
-    U_STRING_INIT(plus, "+", 1);
-    pos2 = 0;
-    size = u_strlen(plus);
-    U16_NEXT(plus, pos2, size, cv->plus);
-
-    U_STRING_DECL(space, " ", 1);
-    U_STRING_INIT(space, " ", 1);
-    pos2 = 0;
-    size = u_strlen(space);
-    U16_NEXT(space, pos2, size, cv->space);
-
-    U_STRING_DECL(newline, "\n", 1);
-    U_STRING_INIT(newline, "\n", 1);
-    pos2 = 0;
-    size = u_strlen(newline);
-    U16_NEXT(newline, pos2, size, cv->newline);
-
-    U_STRING_DECL(minus, "-", 1);
-    U_STRING_INIT(minus, "-", 1);
-    pos2 = 0;
-    size = u_strlen(minus);
-    U16_NEXT(minus, pos2, size, cv->minus);
-
-    U_STRING_DECL(mult, "*", 1);
-    U_STRING_INIT(mult, "*", 1);
-    pos2 = 0;
-    size = u_strlen(mult);
-    U16_NEXT(mult, pos2, size, cv->mult);
-
-    U_STRING_DECL(divide, "/", 1);
-    U_STRING_INIT(divide, "/", 1);
-    pos2 = 0;
-    size = u_strlen(divide);
-    U16_NEXT(divide, pos2, size, cv->divide);
-
-    U_STRING_DECL(left_paren, "(", 1);
-    U_STRING_INIT(left_paren, "(", 1);
-    pos2 = 0;
-    size = u_strlen(left_paren);
-    U16_NEXT(left_paren, pos2, size, cv->left_paren);
-
-    U_STRING_DECL(right_paren, ")", 1);
-    U_STRING_INIT(right_paren, ")", 1);
-    pos2 = 0;
-    size = u_strlen(right_paren);
-    U16_NEXT(right_paren, pos2, size, cv->right_paren);
-
-    U_STRING_DECL(comma, ",", 1);
-    U_STRING_INIT(comma, ",", 1);
-    pos2 = 0;
-    size = u_strlen(comma);
-    U16_NEXT(comma, pos2, size, cv->comma);
-
-    U_STRING_DECL(less_than, "<", 1);
-    U_STRING_INIT(less_than, "<", 1);
-    pos2 = 0;
-    size = u_strlen(less_than);
-    U16_NEXT(less_than, pos2, size, cv->less_than);
-
-    U_STRING_DECL(greater_than, ">", 1);
-    U_STRING_INIT(greater_than, ">", 1);
-    pos2 = 0;
-    size = u_strlen(greater_than);
-    U16_NEXT(greater_than, pos2, size, cv->greater_than);
-
-    U_STRING_DECL(underscore, "_", 1);
-    U_STRING_INIT(underscore, "_", 1);
-    pos2 = 0;
-    size = u_strlen(underscore);
-    U16_NEXT(underscore, pos2, size, cv->underscore);
-
-    U_STRING_DECL(semicolon, ";", 1);
-    U_STRING_INIT(semicolon, ";", 1);
-    pos2 = 0;
-    size = u_strlen(semicolon);
-    U16_NEXT(semicolon, pos2, size, cv->semicolon);
-
-    U_STRING_DECL(exclamation, "!", 1);
-    U_STRING_INIT(exclamation, "!", 1);
-    pos2 = 0;
-    size = u_strlen(exclamation);
-    U16_NEXT(exclamation, pos2, size, cv->exclamation);
-
-    U_STRING_DECL(ampersand, "&", 1);
-    U_STRING_INIT(ampersand, "&", 1);
-    pos2 = 0;
-    size = u_strlen(ampersand);
-    U16_NEXT(ampersand, pos2, size, cv->ampersand);
-
-    U_STRING_DECL(vertical_bar, "|", 1);
-    U_STRING_INIT(vertical_bar, "|", 1);
-    pos2 = 0;
-    size = u_strlen(vertical_bar);
-    U16_NEXT(vertical_bar, pos2, size, cv->vertical_bar);
-
-    U_STRING_DECL(colon, ":", 1);
-    U_STRING_INIT(colon, ":", 1);
-    pos2 = 0;
-    size = u_strlen(colon);
-    U16_NEXT(colon, pos2, size, cv->colon);
-
-    U_STRING_DECL(left_square_bracket, "[", 1);
-    U_STRING_INIT(left_square_bracket, "[", 1);
-    pos2 = 0;
-    size = u_strlen(left_square_bracket);
-    U16_NEXT(left_square_bracket, pos2, size, cv->left_square_bracket);
-
-    U_STRING_DECL(right_square_bracket, "]", 1);
-    U_STRING_INIT(right_square_bracket, "]", 1);
-    pos2 = 0;
-    size = u_strlen(right_square_bracket);
-    U16_NEXT(right_square_bracket, pos2, size, cv->right_square_bracket);
-
-    U_STRING_DECL(double_quote, "\"", 1);
-    U_STRING_INIT(double_quote, "\"", 1);
-    pos2 = 0;
-    size = u_strlen(double_quote);
-    U16_NEXT(double_quote, pos2, size, cv->double_quote);
-
-    U_STRING_DECL(backslash, "\\", 1);
-    U_STRING_INIT(backslash, "\\", 1);
-    pos2 = 0;
-    size = u_strlen(backslash);
-    U16_NEXT(backslash, pos2, size, cv->backslash);
-}
-
-/* dynamic-output-none */
-int compound_operator_start(UChar32 uc, struct char_value* cv)
-{
-    return uc == cv->equal || uc == cv->exclamation || uc == cv->less_than || uc == cv->greater_than || uc == cv->ampersand || uc == cv->vertical_bar || uc == cv->colon;
+    return uc == '=' || uc == '!' || uc == '<' || uc == '>' || uc == '&' || uc == '|' || uc == ':';
 }
 
 /* dynamic-output-none */
@@ -185,8 +46,6 @@ void get_scan_location(struct scan_state* sns, struct location* loc)
 enum result process_char_start(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     struct lookahead_char* lc = sns->lc;
-    struct char_value cv;
-    set_char_values(&cv);
     *got_token = 0;
     UChar32 uc;
     if (lc->la_size > 0) {
@@ -206,7 +65,7 @@ enum result process_char_start(struct scan_state* sns, enum state_enum* state, i
             /* allocate t{} */
             buffer_add_char(&t->value, lc->la0_8[i]);
         }
-    } else if (uc == cv.underscore) {
+    } else if (uc == '_') {
         *state = state_id_underscore;
         t->type = token_id;
         t->line = lc->line;
@@ -226,13 +85,13 @@ enum result process_char_start(struct scan_state* sns, enum state_enum* state, i
             /* allocate t{} */
             buffer_add_char(&t->value, lc->la0_8[i]);
         }
-    } else if (uc == cv.double_quote) {
+    } else if (uc == '"') {
         *state = state_string;
         t->type = token_string;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
-    } else if (compound_operator_start(uc, &cv)) {
+    } else if (compound_operator_start(uc)) {
         *state = state_compound_operator;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
             /* allocate t{} */
@@ -241,69 +100,69 @@ enum result process_char_start(struct scan_state* sns, enum state_enum* state, i
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
-    } else if (uc == cv.plus) {
+    } else if (uc == '+') {
         t->type = token_plus;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.minus) {
+    } else if (uc == '-') {
         t->type = token_minus;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.mult) {
+    } else if (uc == '*') {
         t->type = token_mult;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.divide) {
+    } else if (uc == '/') {
         t->type = token_divide;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.left_paren) {
+    } else if (uc == '(') {
         t->type = token_left_paren;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.right_paren) {
+    } else if (uc == ')') {
         t->type = token_right_paren;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.space) {
+    } else if (uc == ' ') {
         /* nothing */
-    } else if (uc == cv.newline) {
+    } else if (uc == '\n') {
         t->type = token_newline;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.comma) {
+    } else if (uc == ',') {
         t->type = token_comma;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.semicolon) {
+    } else if (uc == ';') {
         t->type = token_semicolon;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.left_square_bracket) {
+    } else if (uc == '[') {
         t->type = token_left_square_bracket;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
-    } else if (uc == cv.right_square_bracket) {
+    } else if (uc == ']') {
         t->type = token_right_square_bracket;
         t->line = lc->line;
         t->col = lc->col;
@@ -331,8 +190,6 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
 {
     struct lookahead_char* lc = sns->lc;
     struct word_table* wt = sns->wt;
-    struct char_value cv;
-    set_char_values(&cv);
     UChar32 uc;
     if (lc->la_size > 0) {
         uc = lc->la0_32;
@@ -341,7 +198,7 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
     }
 
     if (*state == state_id) {
-        if (uc == cv.underscore) {
+        if (uc == '_') {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
                 /* allocate t{} */
                 buffer_add_char(&t->value, lc->la0_8[i]);
@@ -369,7 +226,7 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
             lookahead_char_push(lc);
         }
     } else if (*state == state_id_underscore) {
-        if (uc == cv.underscore) {
+        if (uc == '_') {
             struct location loc;
             get_scan_location(sns, &loc);
             /* allocate sns{el{}} */
@@ -406,8 +263,6 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
 enum result process_char_number(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     struct lookahead_char* lc = sns->lc;
-    struct char_value cv;
-    set_char_values(&cv);
     UChar32 uc;
     if (lc->la_size > 0) {
         uc = lc->la0_32;
@@ -504,8 +359,6 @@ enum result process_char_number(struct scan_state* sns, enum state_enum* state, 
 enum result process_char_string(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     struct lookahead_char* lc = sns->lc;
-    struct char_value cv;
-    set_char_values(&cv);
     UChar32 uc;
     if (lc->la_size > 0) {
         uc = lc->la0_32;
@@ -514,9 +367,9 @@ enum result process_char_string(struct scan_state* sns, enum state_enum* state, 
     }
 
     if (*state == state_string) {
-        if (uc == cv.backslash) {
+        if (uc == '\\') {
             *state = state_string_backslash;
-        } else if (uc == cv.double_quote) {
+        } else if (uc == '"') {
             *state = state_start;
             *got_token = 1;
         } else {
@@ -526,7 +379,7 @@ enum result process_char_string(struct scan_state* sns, enum state_enum* state, 
             }
         }
     } else if (*state == state_string_backslash) {
-        if (uc == cv.backslash) {
+        if (uc == '\\') {
             /* allocate t{} */
             buffer_add_char(&t->value, '\\');
         } else if (uc == 'n') {
