@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include "zinc/result.h"
 #include "token.h"
 #include "dag.h"
@@ -11,16 +12,17 @@
 #include "lookahead_char.h"
 
 /* dynamic-output ps{} root root{} */
-enum result parse(struct parse_state* ps, struct dag_node** root)
+bool parse(struct parse_state* ps, struct dag_node** root)
 {
 	*root = NULL;
 	enum result r;
+	bool valid = true;
 
 	/* allocate ps{} root root{} */
 	r = stmts(ps, root);
 
 	if (r == result_error) {
-		return r;
+		valid = false;
 	}
 
 	/* allocate ps{} */
@@ -28,7 +30,7 @@ enum result parse(struct parse_state* ps, struct dag_node** root)
 		int num;
 		r = get_lookahead(ps, 1, &num);
 		if (r == result_error) {
-			return r;
+			valid = false;
 		}
 	}
 
@@ -40,8 +42,9 @@ enum result parse(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} */
 		get_parse_location(ps, &loc);
-		return set_source_error(ps->el, &loc, "Couldn't process token: %s", names[t->type]);
+		set_source_error(ps->el, &loc, "Couldn't process token: %s", names[t->type]);
+		valid = false;
 	}
 
-	return result_ok;
+	return valid;
 }

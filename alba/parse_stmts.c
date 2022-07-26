@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "zinc/result.h"
 #include "token.h"
 #include "dag.h"
@@ -9,19 +10,20 @@
 #include "parse_types.h"
 #include "source.h"
 
+bool stmts_prime(struct parse_state* ps, struct dag_node* parent);
+bool separator(struct parse_state* ps, int* has_separator);
+bool stmt(struct parse_state* ps, struct dag_node** root);
+
 /* stmts -> stmt stmts' */
 /* dynamic-output ps{} root root{} */
-enum result stmts(struct parse_state* ps, struct dag_node** root)
+bool stmts(struct parse_state* ps, struct dag_node** root)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	struct dag_node* n = NULL;
 
 	/* allocate ps{} a a{} */
 	struct dag_node* a = NULL;
-	r = stmt(ps, &a);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && stmt(ps, &a);
 
 	/* allocate n */
 	dag_create_node(&n);
@@ -33,41 +35,30 @@ enum result stmts(struct parse_state* ps, struct dag_node** root)
 	}
 
 	/* allocate ps{} n{} */
-	r = stmts_prime(ps, n);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && stmts_prime(ps, n);
 
 	/* transfer n -> root */
 	*root = n;
-	return r;
+	return valid;
 }
 
 /* stmts' -> separator stmt stmts' | e */
 /* dynamic-output ps{} parent{} */
-enum parse_result stmts_prime(struct parse_state* ps, struct dag_node* parent)
+bool stmts_prime(struct parse_state* ps, struct dag_node* parent)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	int has_separator;
 
 	/* allocate ps{} */
-	r = separator(ps, &has_separator);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && separator(ps, &has_separator);
 
 	if (!has_separator) {
-		return r;
+		return valid;
 	}
 
 	/* allocate ps{} a a{} */
 	struct dag_node* a = NULL;
-	r = stmt(ps, &a);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && stmt(ps, &a);
 
 	/* transfer a -> parent{} */
 	if (a) {
@@ -75,29 +66,23 @@ enum parse_result stmts_prime(struct parse_state* ps, struct dag_node* parent)
 	}
 
 	/* allocate ps{} parent{} */
-	r = stmts_prime(ps, parent);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && stmts_prime(ps, parent);
 
-	return r;
+	return valid;
 }
 
 /* separator -> \n | ; */
 /* dynamic-output ps{} */
 /* dynamic-temp sep sep{} */
-enum parse_result separator(struct parse_state* ps, int* has_separator)
+bool separator(struct parse_state* ps, int* has_separator)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	enum token_type type;
 	int num;
 	*has_separator = 0;
 
 	/* allocate ps{} */
-	r = get_lookahead(ps, 1, &num);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && get_lookahead(ps, 1, &num);
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	if (t0 && t0->type == token_newline) {
@@ -107,21 +92,18 @@ enum parse_result separator(struct parse_state* ps, int* has_separator)
 		type = token_semicolon;
 		*has_separator = 1;
 	} else {
-		return r;
+		return valid;
 	}
 
 	/* allocate ps{} sep sep{} */
-	struct token* sep;
-	r = match(ps, type, "expecting newline or semicolon", &sep);
-	if (r == result_error) {
-		return r;
-	}
+	struct token* sep = NULL;
+	valid = valid && match(ps, type, "expecting newline or semicolon", &sep);
 
 	/* destroy sep sep{} */
 	token_destroy(sep);
 	free(sep);
 
-	return r;
+	return valid;
 }
 
 /**
@@ -131,21 +113,18 @@ enum parse_result separator(struct parse_state* ps, int* has_separator)
 *       | e
 */
 /* @param dynamic-output ps{} root root{} */
-enum result stmt(struct parse_state* ps, struct dag_node** root)
+bool stmt(struct parse_state* ps, struct dag_node** root)
 {
-	enum result r;
+	bool valid = true;
 	struct dag_node* n = NULL;
 	int num;
 
 	/* allocate ps{} */
-	r = get_lookahead(ps, 2, &num);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && get_lookahead(ps, 2, &num);
 
 	/* e */
 	if (num <= 0) {
-		return r;
+		return valid;
 	}
 
 
@@ -156,10 +135,7 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 	if (t0 && t0->type == token_while) {
 		/* allocate ps{} */
 		struct token* whl = NULL;
-		r = match(ps, token_while, "expecting while", &whl);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && match(ps, token_while, "expecting while", &whl);
 
 		/* destroy whl whl{} */
 		token_destroy(whl);
@@ -171,24 +147,18 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} */
 		struct location loc;
-		r = get_parse_location(ps, &loc);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && get_parse_location(ps, &loc);
 
 		/* allocate ps{} a a{} */
 		struct dag_node* a = NULL;
-		r = expr(ps, &a);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && expr(ps, &a);
 
 		if (!a) {
 			/* destroy n n{} */
 			dag_destroy(n);
 			/* allocate ps{} */
-			r = set_source_error(ps->el, &loc, "expected expression after while");
-			return r;
+			set_source_error(ps->el, &loc, "expected expression after while");
+			return valid;
 		}
 
 		/* transfer a -> n{} */
@@ -196,11 +166,11 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} b b{} */
 		struct dag_node* b = NULL;
-		r = stmts(ps, &b);
-		if (r == result_error) {
+		valid = valid && stmts(ps, &b);
+		if (!b) {
 			/* destroy n n{} */
 			dag_destroy(n);
-			return r;
+			return valid;
 		}
 
 		/* transfer b -> n{} */
@@ -208,42 +178,25 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} end end{} */
 		struct token* end = NULL;
-		r = match(ps, token_end, "expected end", &end);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && match(ps, token_end, "expected end", &end);
 
 	/* for */
 	} else if (t0 && t0->type == token_for) {
 		/* allocate ps{} */
-		r = get_lookahead(ps, 3, &num);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && get_lookahead(ps, 3, &num);
 
 		struct token* t2 = get_token(&ps->lookahead, 2);
 
 		if (t1 && t1->type == token_id && t2 && t2->type == token_equal) {
 			/* allocate ps{} n n{} */
-			r = for_range(ps, &n);
-			if (r == result_error) {
-				return r;
-			}
+			valid = valid && for_range(ps, &n);
 		} else if (t1 && t1->type == token_id && t2 && t2->type == token_in) {
 			/* allocate ps{} n n{} */
-			r = for_iteration(ps, &n);
-			if (r == result_error) {
-				return r;
-			}
+			valid = valid && for_iteration(ps, &n);
 		} else {
 			/* allocate ps{} */
 			struct token* id = NULL;
-			r = match(ps, token_id, "expected id after for", &id);
-			if (r == result_error) {
-				return r;
-			}
+			valid = valid && match(ps, token_id, "expected id after for", &id);
 
 			/* destroy id id{} */
 			token_destroy(id);
@@ -251,23 +204,17 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 			/* allocate ps{} */
 			struct location loc;
-			r = get_parse_location(ps, &loc);
-			if (r == result_error) {
-				return r;
-			}
+			valid = valid && get_parse_location(ps, &loc);
 			/* allocate ps{} */
-			r = set_source_error(ps->el, &loc, "expected = or in after for and id");
-			return r;
+			set_source_error(ps->el, &loc, "expected = or in after for and id");
+			valid = false;
 		}
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
 		/* allocate ps{} f f{} */
 		struct token* f = NULL;
-		r = match(ps, token_function, "expecting function", &f);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && match(ps, token_function, "expecting function", &f);
 
 		/* destroy f f{} */
 		token_destroy(f);
@@ -279,18 +226,15 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} id id{} */
 		struct token* id = NULL;
-		r = match(ps, token_id, "expecting word", &id);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && match(ps, token_id, "expecting word", &id);
 
 		/* allocate a a{} */
 		struct dag_node* a;
 		dag_create_node(&a);
 		a->type = dag_type_id;
-		buffer_copy(&id->value, &a->value);
+		if (id) {
+			buffer_copy(&id->value, &a->value);
+		}
 
 		/* destroy id id{} */
 		token_destroy(id);
@@ -301,25 +245,15 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} lp lp{} */
 		struct token* lp = NULL;
-		r = match(ps, token_left_paren, "expecting left parenthesis", &lp);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && match(ps, token_left_paren, "expecting left parenthesis", &lp);
 
 		/* destroy lp lp{} */
 		token_destroy(lp);
 		free(lp);
 
 		/* allocate ps{} b b{} */
-		struct dag_node* b;
-		r = dseq(ps, &b);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		struct dag_node* b = NULL;
+		valid = valid && dseq(ps, &b);
 
 		/* transfer b -> n{} */
 		if (b) {
@@ -328,25 +262,15 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} rp rp{} */
 		struct token* rp = NULL;
-		r = match(ps, token_right_paren, "expecting right parenthesis", &rp);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
 
 		/* destroy rp rp{} */
 		token_destroy(rp);
 		free(rp);
 
 		/* allocate ps{} c c{} */
-		struct dag_node* c;
-		r = stmts(ps, &c);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		struct dag_node* c = NULL;
+		valid = valid && stmts(ps, &c);
 
 		/* transfer c -> n{} */
 		if (c) {
@@ -355,12 +279,7 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} end end{} */
 		struct token* end = NULL;
-		r = match(ps, token_end, "expecting end", &end);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && match(ps, token_end, "expecting end", &end);
 
 		/* destroy end end{} */
 		token_destroy(end);
@@ -371,10 +290,7 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} ift ift{} */
 		struct token* ift = NULL;
-		r = match(ps, token_if, "expecting if", &ift);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && match(ps, token_if, "expecting if", &ift);
 
 		/* destroy ift ift{} */
 		token_destroy(ift);
@@ -394,43 +310,27 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} */
 		struct location loc;
-		r = get_parse_location(ps, &loc);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && get_parse_location(ps, &loc);
 
 		/* condition */
 		/* allocate ps{} cond cond{} */
 		struct dag_node* cond = NULL;
-		r = expr(ps, &cond);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && expr(ps, &cond);
 
 		if (cond == NULL) {
-			/* destroy n n{}*/
-			dag_destroy(n);
-			/* allocate ps{} */
-			r = set_source_error(ps->el, &loc, "expecting a condition after if");
-			return r;
-		}
+			set_source_error(ps->el, &loc, "expecting a condition after if");
+			valid = false;
+			return valid;
+		} else {
+			/* transfer cond -> n{} */
+			dag_add_child(cb, cond);
 
-		/* transfer cond -> n{} */
-		dag_add_child(cb, cond);
+		}
 
 		/* stmts */
 		/* allocate ps{} body body{} */
 		struct dag_node* body = NULL;
-		r = stmts(ps, &body);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && stmts(ps, &body);
 
 		/* transfer body -> n{} */
 		if (body) {
@@ -439,59 +339,40 @@ enum result stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* elseif_stmts */
 		/* allocate n{} */
-		r = elseif_stmts(ps, n);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && elseif_stmts(ps, n);
 
 		/* else_stmt */
 		/* allocate ps{] n{} */
-		r = else_stmt(ps, n);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && else_stmt(ps, n);
 
 		/* end */
 		/* allocate ps{} end end{} */
 		struct token* end = NULL;
-		r = match(ps, token_end, "expected end", &end);
-		if (r == result_error) {
-			/* destroy n n{} */
-			dag_destroy(n);
-			return r;
-		}
+		valid = valid && match(ps, token_end, "expected end", &end);
 
 	/* expr */
 	} else {
 		/* allocate ps{} n n{} */
-		r = expr(ps, &n);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && expr(ps, &n);
 	}
 
 	/* transfer n -> root */
-	*root = n;
-	return result_ok;
+	if (valid) {
+		*root = n;
+	}
+	return valid;
 }
 
 /* for_range -> for id = expr:expr stmts end */
 /* dynamic-output ps{} root root{} */
 enum result for_range(struct parse_state* ps, struct dag_node** root)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	struct dag_node* n = NULL;
 
 	/* allocate ps{} f f{} */
 	struct token* f = NULL;
-	r = match(ps, token_for, "expected for", &f);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && match(ps, token_for, "expected for", &f);
 
 	/* destroy f f{} */
 	token_destroy(f);
@@ -499,19 +380,11 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
-	r = match(ps, token_id, "expected id", &id);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && match(ps, token_id, "expected id", &id);
 
 	/* allocate ps{} equal equal{} */
 	struct token* equal = NULL;
-	r = match(ps, token_equal, "expected equal", &equal);
-	if (r == result_error) {
-		token_destroy(id);
-		free(id);
-		return r;
-	}
+	valid = valid && match(ps, token_equal, "expected equal", &equal);
 
 	/* destroy equal equal{} */
 	token_destroy(equal);
@@ -528,7 +401,9 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 	a->type = dag_type_id;
 
 	/* allocate a{} */
-	buffer_copy(&id->value, &a->value);
+	if (id) {
+		buffer_copy(&id->value, &a->value);
+	}
 
 	/* destroy id id{} */
 	token_destroy(id);
@@ -539,117 +414,76 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate ps{} */
 	struct location loc;
-	r = get_parse_location(ps, &loc);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && get_parse_location(ps, &loc);
 
 	/* start expr */
 	/* allocate b b{} */
 	struct dag_node* b = NULL;
-	r = expr(ps, &b);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && expr(ps, &b);
 
 	if (!b) {
-		/* destroy n n{} */
-		dag_destroy(n);
-
 		/* allocate ps{} */
-		r = set_source_error(ps->el, &loc, "expected range start after for-range");
-		return r;
+		set_source_error(ps->el, &loc, "expected range start after for-range");
+	} else {
+		/* transfer b -> n */
+		dag_add_child(n, b);
 	}
-
-	/* transfer b -> n */
-	dag_add_child(n, b);
 
 	/* allocate ps{} colon conlon{} */
 	struct token* colon = NULL;
-	r = match(ps, token_colon, "expected colon", &colon);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && match(ps, token_colon, "expected colon", &colon);
 
 	/* allocate ps{} */
-	r = get_parse_location(ps, &loc);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && get_parse_location(ps, &loc);
 
 	/* end expr */
 	/* allocate ps{} c c{} */
 	struct dag_node* c = NULL;
-	r = expr(ps, &c);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && expr(ps, &c);
 
 	if (!c) {
-		/* destroyo n n{} */
-		dag_destroy(n);
-		/* allocate ps{} */
-		r = set_source_error(ps->el, &loc, "expected range end after for-range");
-		return r;
+		set_source_error(ps->el, &loc, "expected range end after for-range");
+	} else {
+		/* transfer c -> n{} */
+		dag_add_child(n, c);
 	}
-
-	/* transfer c -> n{} */
-	dag_add_child(n, c);
 
 	/* stmts */
 	/* allocate ps{} d d{} */
 	struct dag_node* d = NULL;
-	r = stmts(ps, &d);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && stmts(ps, &d);
 
 	/* transfer d -> n{} */
-	dag_add_child(n, d);
+	if (d) {
+		dag_add_child(n, d);
+	}
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
-	r = match(ps, token_end, "expected end", &end);
-	if (r == result_error) {
-		/* allocate n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && match(ps, token_end, "expected end", &end);
 
 	/* destroy end end{} */
 	token_destroy(end);
 	free(end);
 
 	/* transfer n -> root */
-	*root = n;
-	return r;
+	if (valid) {
+		*root = n;
+	}
+
+	return valid;
 }
 
 /* for_iteration -> for id in expr stmts end */
 /* dynamic-output ps{} root root{} */
 enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	struct dag_node* n = NULL;
 
 	/* allocate ps{} fort fort{} */
 	struct token* fort = NULL;
-	r = match(ps, token_for, "expecting for", &fort);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && match(ps, token_for, "expecting for", &fort);
 
 	/* destroy fort fort{} */
 	token_destroy(fort);
@@ -657,20 +491,11 @@ enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
-	r = match(ps, token_id, "expecting id", &id);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && match(ps, token_id, "expecting id", &id);
 
 	/* allocate ps{} in in{} */
 	struct token* in = NULL;
-	r = match(ps, token_in, "expecting in", &in);
-	if (r == result_error) {
-		/* destroy id id{} */
-		token_destroy(id);
-		free(id);
-		return r;
-	}
+	valid = valid && match(ps, token_in, "expecting in", &in);
 
 	/* destroy in in{} */
 	token_destroy(in);
@@ -688,7 +513,9 @@ enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 	a->type = dag_type_id;
 
 	/* allocate a{} */
-	buffer_copy(&id->value, &a->value);
+	if (id) {
+		buffer_copy(&id->value, &a->value);
+	}
 
 	/* destroy id id{] */
 	token_destroy(id);
@@ -699,89 +526,61 @@ enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate ps{} */
 	struct location loc;
-	r = get_parse_location(ps, &loc);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && get_parse_location(ps, &loc);
 
 	/* expr */
 	/* allocate ps{} b b{} */
 	struct dag_node* b = NULL;
-	r = expr(ps, &b);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && expr(ps, &b);
 
 	if (!b) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		/* allocate ps{} */
-		r = set_source_error(ps->el, &loc, "expected expression after for-iteration");
-		return r;
+		set_source_error(ps->el, &loc, "expected expression after for-iteration");
+	} else {
+		/* transfer b -> n{} */
+		dag_add_child(n, b);
 	}
-
-	/* transfer b -> n{} */
-	dag_add_child(n, b);
 
 	/* stmts */
 	/* allocate ps{} c c{} */
 	struct dag_node* c = NULL;
-	r = stmts(ps, &c);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && stmts(ps, &c);
 
-	/* transfer c -> n{} */
-	dag_add_child(n, c);
+	if (c) {
+		/* transfer c -> n{} */
+		dag_add_child(n, c);
+	}
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
-	r = match(ps, token_end, "expected end", &end);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
+	valid = valid && match(ps, token_end, "expected end", &end);
+
+	if (valid) {
+		/* transfer n -> root */
+		*root = n;
 	}
 
-	/* transfer n -> root */
-	*root = n;
-	return r;
+	return valid;
 }
 
 /* elseif_stmts -> elseif expr stmts elseif_stmts | e */
 /* dynamic-output ps{} parent{} */
 enum result elseif_stmts(struct parse_state* ps, struct dag_node* parent)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	int num;
 
 	/* allocate ps{} */
-	r = get_lookahead(ps, 1, &num);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && get_lookahead(ps, 1, &num);
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	if (t0->type == token_elseif) {
 		/* allocate ps{} eit eit{} */
 		struct token* eit = NULL;
-		r = match(ps, token_elseif, "expecting elseif", &eit);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && match(ps, token_elseif, "expecting elseif", &eit);
 
 		/* allocate ps{} */
 		struct location loc;
-		r = get_parse_location(ps, &loc);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && get_parse_location(ps, &loc);
 
 		/* allocate cb */
 		struct dag_node* cb = NULL;
@@ -790,31 +589,21 @@ enum result elseif_stmts(struct parse_state* ps, struct dag_node* parent)
 
 		/* allocate ps{} cond cond{} */
 		struct dag_node* cond = NULL;
-		r = expr(ps, &cond);
-		if (r == result_error) {
-			/* destroy cb */
-			dag_destroy(cb);
-			return r;
-		}
+		valid = expr(ps, &cond);
 
-		if (cond == NULL) {
-			dag_destroy(cb);
+		if (!cond) {
 			/* allocate ps{} */
-			r = set_source_error(ps->el, &loc, "expecting condition after elseif");
-			return r;
+			set_source_error(ps->el, &loc, "expecting condition after elseif");
+			valid = false;
+		} else {
+			/* transfer cond -> cb{} */
+			dag_add_child(cb, cond);
 		}
 
-		/* transfer cond -> cb{} */
-		dag_add_child(cb, cond);
 
 		/* allocate ps{} node node{} */
 		struct dag_node* node = NULL;
-		r = stmts(ps, &node);
-		if (r == result_error) {
-			/* destroy cb cb{} */
-			dag_destroy(cb);
-			return r;
-		}
+		valid = valid && stmts(ps, &node);
 
 		/* transfer node -> cb{} */
 		if (node) {
@@ -825,37 +614,28 @@ enum result elseif_stmts(struct parse_state* ps, struct dag_node* parent)
 		dag_add_child(parent, cb);
 
 		/* allocate ps{} parent{} */
-		r = elseif_stmts(ps, parent);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && elseif_stmts(ps, parent);
 	}
 
-	return r;
+	return valid;
 }
 
 /* else_stmt -> else stmts | e */
 /* dynamic-output ps{} parent{} */
 enum result else_stmt(struct parse_state* ps, struct dag_node* parent)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	int num;
 
 	/* allocate ps{} */
-	r = get_lookahead(ps, 1, &num);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && get_lookahead(ps, 1, &num);
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	if (t0 && t0->type == token_else) {
 		/* else */
 		/* allocate ps{} et et{} */
 		struct token* et = NULL;
-		r = match(ps, token_else, "expected else", &et);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && match(ps, token_else, "expected else", &et);
 
 		/* destroy et et{} */
 		token_destroy(et);
@@ -869,13 +649,7 @@ enum result else_stmt(struct parse_state* ps, struct dag_node* parent)
 		/* stmts */
 		/* allocate node node{} */
 		struct dag_node* node = NULL;
-		r = stmts(ps, &node);
-		if (r == result_error) {
-			/* destroy cb cb{} */
-			dag_destroy(cb);
-			return r;
-		}
-
+		valid = valid && stmts(ps, &node);
 
 		/* transfer node -> cb{} */
 		if (node) {
@@ -886,5 +660,5 @@ enum result else_stmt(struct parse_state* ps, struct dag_node* parent)
 		dag_add_child(parent, cb);
 	}
 
-	return r;
+	return valid;
 }

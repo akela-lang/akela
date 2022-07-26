@@ -80,9 +80,11 @@ enum result set_source_error(struct compile_error_list* el, struct location* loc
 
 	char* p = e->message;
 
-	e->line = loc->line;
-	e->col = loc->col;
-	e->byte_pos = loc->byte_pos;
+	if (loc) {
+		e->line = loc->line;
+		e->col = loc->col;
+		e->byte_pos = loc->byte_pos;
+	}
 
 	char last = 0;
 	size_t i = 0;

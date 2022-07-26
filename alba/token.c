@@ -21,7 +21,9 @@ void token_init(struct token* t)
 void token_destroy(struct token* t)
 {
     /* destroy t{value{}} */
-    buffer_destroy(&t->value);
+    if (t) {
+        buffer_destroy(&t->value);
+    }
 }
 
 /* dynamic-destroy t{value{}} */

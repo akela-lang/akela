@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "zinc/unit_test.h"
 #include "zinc/buffer.h"
 #include "zinc/memory.h"
@@ -9,8 +10,9 @@
 #include "alba/source.h"
 
 /* dynamic-output ps{} root root{} */
-enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
+bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 {
+	bool valid = true;
 	enum result r;
 
 	/* allocate bf */
@@ -28,10 +30,19 @@ enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** ro
 	/* transfer bf -> sd{} */
 	string_data_init(bf, sd);
 
+	/* allocate el */
+	struct compile_error_list* el;
+	malloc_safe(&el, sizeof(struct compile_error_list));
+	compile_error_list_init(el);
+
 	/* open conv */
 	UConverter* conv;
 	r = conv_open(&conv);
 	assert_ok(r, "conv_open");
+	if (r == result_error) {
+		set_source_error(el, NULL, error_message);
+		valid = false;
+	}
 
 	/* allocate wt */
 	struct word_table* wt;
@@ -47,11 +58,6 @@ enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** ro
 	/* transfer sd conv -> lc */
 	lookahead_char_init(lc, string_getchar, sd, conv);
 
-	/* allocate el */
-	struct compile_error_list* el;
-	malloc_safe(&el, sizeof(struct compile_error_list));
-	compile_error_list_init(el);
-
 	/* allocate sns */
 	struct scan_state* sns;
 	malloc_safe(&sns, sizeof(struct scan_state));
@@ -63,8 +69,8 @@ enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** ro
 	parse_state_init(ps, sns, el);
 
 	/* allocate ps{} root root{} */
-	r = parse(ps, root);
-	return r;
+	valid = valid && parse(ps, root);
+	return valid;
 }
 
 /* dynamic-destroy ps{} */
