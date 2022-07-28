@@ -3,7 +3,6 @@
 * get lookahead return bool
 * match return bool
 * non-terminal return bool
-	* parse_types return bool
 	* parse_tools return bool
 * set source return void
 * let expression

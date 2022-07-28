@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "zinc/buffer.h"
 #include "zinc/result.h"
 #include "token.h"
@@ -6,11 +7,14 @@
 #include "dag.h"
 #include "source.h"
 
-/* dseq->declaration dseq' | e */
+bool dseq_prime(struct parse_state* ps, struct dag_node* parent);
+bool declaration(struct parse_state* ps, struct dag_node** root);
+
+/* dseq -> declaration dseq' | e */
 /* dynamic-output ps{} root root{} */
-enum result dseq(struct parse_state* ps, struct dag_node** root)
+bool dseq(struct parse_state* ps, struct dag_node** root)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	struct dag_node* n = NULL;
 
 	/* allocate n */
@@ -20,121 +24,95 @@ enum result dseq(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate a */
 	struct dag_node* a = NULL;
-	r = declaration(ps, &a);
-	if (r == result_error) {
-		dag_destroy(n);
-		return r;
+	valid = valid && declaration(ps, &a);
+
+	if (a) {
+		/* transfer a -> n */
+		dag_add_child(n, a);
+
+		/* allocate ps{} n{} */
+		valid = valid && dseq_prime(ps, n);
 	}
 
-	if (!a) {
+	if (valid) {
 		/* transfer n -> root */
 		*root = n;
-		return r;
 	}
 
-	/* transfer a -> n */
-	dag_add_child(n, a);
-
-	/* allocate ps{} n{} */
-	r = dseq_prime(ps, n);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
-
-	/* transfer n -> root */
-	*root = n;
-	return r;
+	return valid;
 }
 
 
 /* dseq' -> , declaration dseq' | e */
 /* dynamic-output ps{} parent{} */
-enum result dseq_prime(struct parse_state* ps, struct dag_node* parent)
+bool dseq_prime(struct parse_state* ps, struct dag_node* parent)
 {
+	bool valid = true;
 	struct dag_node* n = NULL;
-	enum result r = result_ok;
 	int num;
 
 	/* allocate ps{} */
-	r = get_lookahead(ps, 2, &num);
+	valid = valid && get_lookahead(ps, 2, &num);
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	if (!t0 || t0->type != token_comma)
 	{
-		return r;
+		return valid;
 	}
 
 	/* allocate ps{} comma comma{} */
 	struct token* comma = NULL;
-	r = match(ps, token_comma, "expecting comma", &comma);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && match(ps, token_comma, "expecting comma", &comma);
 
 	/* destroy comma comma{} */
 	token_destroy(comma);
 	free(comma);
 
 	struct location loc;
-	r = get_parse_location(ps, &loc);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && get_parse_location(ps, &loc);
 
 	/* allocate a */
 	struct dag_node* a = NULL;
-	r = declaration(ps, &a);
-	if (r == result_error) {
-		/* destroy n n{} */
-		dag_destroy(n);
-		return r;
-	}
+	valid = valid && declaration(ps, &a);
 
 	if (!a) {
 		/* allocate ps{} */
-		r = set_source_error(ps->el, &loc, "expecting declaration after comma");
-		return r;
+		set_source_error(ps->el, &loc, "expecting declaration after comma");
+		valid = false;
+		return valid;
 	}
 
 	/* transfer a -> parent */
 	dag_add_child(parent, a);
 
 	/* allocate ps{} parent{} */
-	r = dseq_prime(ps, parent);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && dseq_prime(ps, parent);
 
-	return r;
+	return valid;
 }
 
 /* dynamic-output-none */
-int is_valid_type(struct buffer* b)
+bool is_valid_type(struct buffer* b)
 {
-	if (buffer_str_compare(b, "Int32")) return 1;
-	if (buffer_str_compare(b, "Int64")) return 1;
-	if (buffer_str_compare(b, "Float32")) return 1;
-	if (buffer_str_compare(b, "Float64")) return 1;
-	if (buffer_str_compare(b, "String")) return 1;
-	return 0;
+	if (buffer_str_compare(b, "Int32")) return true;
+	if (buffer_str_compare(b, "Int64")) return true;
+	if (buffer_str_compare(b, "Float32")) return true;
+	if (buffer_str_compare(b, "Float64")) return true;
+	if (buffer_str_compare(b, "String")) return true;
+	return false;
 }
 
 /* declaration -> id :: type | id */
 /* dynamic-output ps{} root root{} */
-enum result declaration(struct parse_state* ps, struct dag_node** root)
+bool declaration(struct parse_state* ps, struct dag_node** root)
 {
-	enum result r = result_ok;
+	bool valid = true;
 	struct dag_node* n = NULL;
 	int num;
 
 	/* allocate ps{} */
-	r = get_lookahead(ps, 3, &num);
-	if (r == result_error) {
-		return r;
-	}
+	valid = valid && get_lookahead(ps, 3, &num);
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct token* t1 = get_token(&ps->lookahead, 1);
@@ -145,26 +123,23 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} id id{} */
 		struct token* id = NULL;
-		r = match(ps, token_id, "expected id", &id);
-		if (r == result_error) {
-			return r;
+		valid = valid && match(ps, token_id, "expected id", &id);
+		if (!valid) {
+			return valid;
 		}
 
 		/* allocate ps{} dc dc{} */
 		struct token* dc = NULL;
-		r = match(ps, token_double_colon, "expected double colon", &dc);
-		if (r == result_error) {
-			return r;
-		}
+		valid = valid && match(ps, token_double_colon, "expected double colon", &dc);
 
 		/* destroy dc dc{} */
 		token_destroy(dc);
 		free(dc);
 
 		struct token* type_id = NULL;
-		r = match(ps, token_id, "expected type", &type_id);
-		if (r == result_error) {
-			return r;
+		valid = valid && match(ps, token_id, "expected type", &type_id);
+		if (!valid) {
+			return valid;
 		}
 
 		if (!is_valid_type(&type_id->value)) {
@@ -173,7 +148,8 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 			buffer2array(&type_id->value, &a);
 			struct location loc;
 			get_token_location(type_id, &loc);
-			r = set_source_error(ps->el, &loc, "unknown type: %s", a);
+			set_source_error(ps->el, &loc, "unknown type: %s", a);
+			valid = false;
 
 			/* destroy a */
 			free(a);
@@ -183,7 +159,7 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 			free(id);
 			token_destroy(type_id);
 			free(type_id);
-			return r;
+			return valid;
 		}
 
 		/* allocate n */
@@ -222,9 +198,9 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 		/* id */
 
 		struct token* id = NULL;
-		r = match(ps, token_id, "expected id", &id);
-		if (r == result_error) {
-			return r;
+		valid = valid && match(ps, token_id, "expected id", &id);
+		if (!valid) {
+			return valid;
 		}
 
 		/* allocate n */
@@ -249,5 +225,5 @@ enum result declaration(struct parse_state* ps, struct dag_node** root)
 
 	/* transfer n -> root */
 	*root = n;
-	return r;
+	return valid;
 }
