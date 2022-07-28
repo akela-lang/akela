@@ -5,6 +5,12 @@
 #include "alba/source.h"
 
 /* dynamic-output-none */
+void assert_has_errors(struct compile_error_list* el);
+
+/* dynamic-output-none */
+void assert_no_errors(struct compile_error_list* el);
+
+/* dynamic-output-none */
 void expect_utf8_char(char* a, char* b, char* message);
 
 /* dynamic-output-none */

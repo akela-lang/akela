@@ -7,6 +7,29 @@
 #include "zinc/utf8.h"
 
 /* dynamic-output-none */
+void assert_has_errors(struct compile_error_list* el)
+{
+	test_called();
+	if (el->head) return;
+	error_triggered();
+	printf("assert has errors: there are no errors\n");
+}
+
+/* dynamic-output-none */
+void assert_no_errors(struct compile_error_list* el)
+{
+	test_called();
+	if (!el->head) return;
+	error_triggered();
+	printf("assert no errors: there are some errors\n");
+	struct compile_error* p = el->head;
+	while (p) {
+		printf("%s\n", p->message);
+		p = p->next;
+	}
+}
+
+/* dynamic-output-none */
 void expect_utf8_char(char* a, char* b, char* message)
 {
 	test_called();

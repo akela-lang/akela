@@ -1393,11 +1393,13 @@ void test_parse_line_col()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 	enum result r;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("* 2", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("* 2", &ps, &root);
+	assert_false(valid, "parse not valid");
+	assert_has_errors(ps.el);
 	struct compile_error* e = assert_compile_error(ps.el, "expected term before operator");
 	expect_compile_error_fields(e, 1, 1, 0);
 
@@ -1424,11 +1426,13 @@ void test_parse_source()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 	enum result r;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("1\n* 2", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("1\n* 2", &ps, &root);
+	assert_false(valid, "parse valid");
+	assert_has_errors(ps.el);
 	struct compile_error* e = assert_compile_error(ps.el, "expected term before operator");
 	expect_compile_error_fields(e, 2, 1, 2);
 
