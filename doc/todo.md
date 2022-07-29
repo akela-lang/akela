@@ -1,5 +1,4 @@
 # Todo
-* set source return void
 * let expression
 * add id to symbol table on declaration
 * use of id has declaration in symbol table
