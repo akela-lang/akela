@@ -85,7 +85,7 @@ void parse_teardown(struct parse_state* ps)
 	free(sd);
 
 	/* destroy ps{sns{el el{}}}*/
-	struct compiler_error_list* el = ps->sns->el;
+	struct compile_error_list* el = ps->sns->el;
 	compile_error_list_destroy(el);
 	free(el);
 

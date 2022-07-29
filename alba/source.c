@@ -65,7 +65,7 @@ void get_token_location(struct token* t, struct location* loc)
 }
 
 /* dynamic-output el{} */
-enum result set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...)
+void set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -114,8 +114,6 @@ enum result set_source_error(struct compile_error_list* el, struct location* loc
 
 	/* allocate e -> el{} */
 	compile_error_list_add(el, e);
-
-	return result_ok;
 }
 
 /* dynamic-output bf{} */

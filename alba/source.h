@@ -42,7 +42,7 @@ void compile_error_list_add(struct compile_error_list* el, struct compile_error*
 void compile_error_list_destroy(struct compile_error_list* el);
 
 /* dynamic-output el{} */
-enum result set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...);
+void set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...);
 
 /* dynamic-output bf{} */
 /* resource-input d */
