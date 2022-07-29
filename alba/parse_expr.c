@@ -8,6 +8,7 @@
 #include "scan.h"
 #include "parse_types.h"
 
+bool let(struct parse_state* ps, struct dag_node** root);
 bool assignment(struct parse_state* ps, struct dag_node** root);
 bool boolean(struct parse_state* ps, struct dag_node** root);
 bool boolean_prime(struct parse_state* ps, struct dag_node** root, struct dag_node** insert_point);
@@ -34,8 +35,10 @@ bool expr(struct parse_state* ps, struct dag_node** root)
 	struct token* t1 = get_token(&ps->lookahead, 1);
 
 
-	/* id = expr */
-	if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
+	/* let, assignment, or operator/term */
+	if (t0 && t0->type == token_let) {
+		valid = valid && let(ps, &n);
+	} else if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
 		valid = valid && assignment(ps, &n);
 	} else {
 		/* allocate n n{} */
@@ -72,13 +75,43 @@ bool let(struct parse_state* ps, struct dag_node** root)
 		return valid;
 	}
 
-	/* allocate ps{} equal equal{} */
-	struct token* equal = NULL;
-	valid = valid && match(ps, token_equal, "expected equal", &equal);
+	int num;
+	valid = valid && get_lookahead(ps, 1, &num);
 
-	/* destroy equal equal{} */
-	token_destroy(equal);
-	free(equal);
+	struct token* t0 = get_token(&ps->lookahead, 0);
+
+	if (t0 && t0->type == token_equal) {
+		/* allocate ps{} equal equal{} */
+		struct token* equal = NULL;
+		valid = valid && match(ps, token_equal, "expected equal", &equal);
+
+		/* destroy equal equal{} */
+		token_destroy(equal);
+		free(equal);
+
+		struct dag_node* b = NULL;
+		valid = valid && expr(ps, &b);
+
+		if (!b) {
+			/* destroy a a{} */
+			dag_destroy(a);
+			return valid;
+		}
+
+		dag_create_node(&n);
+		n->type = dag_type_let;
+
+		dag_add_child(n, a);
+		dag_add_child(n, b);
+	} else {
+		dag_create_node(&n);
+		n->type = dag_type_let;
+		dag_add_child(n, a);
+	}
+
+	if (valid) {
+		*root = n;
+	}
 
 	return valid;
 }

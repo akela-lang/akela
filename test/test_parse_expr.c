@@ -1534,6 +1534,83 @@ void test_parse_anonymous_function()
 	parse_teardown(&ps);
 }
 
+void test_parse_let()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("let a::Int32", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse valid");
+
+	struct dag_node* let = check_stmts(root, "stmts root");
+	assert_ptr(let, "ptr let");
+	expect_int_equal(let->type, dag_type_let, "let");
+
+	struct dag_node* dec = dag_get_child(let, 0);
+	assert_ptr(dec, "ptr dec");
+	expect_int_equal(dec->type, dag_type_declaration, "declaration");
+
+	struct dag_node* id = dag_get_child(dec, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, dag_type_id, "id");
+	expect_str(&id->value, "a", "a");
+
+	struct dag_node* type = dag_get_child(dec, 1);
+	assert_ptr(type, "ptr type");
+	expect_int_equal(type->type, dag_type_type, "type type");
+	expect_str(&type->value, "Int32", "Int32");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_let2()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("let a::Int32 = 1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse valid");
+
+	struct dag_node* let = check_stmts(root, "stmts root");
+	assert_ptr(let, "ptr let");
+	expect_int_equal(let->type, dag_type_let, "let");
+
+	struct dag_node* dec = dag_get_child(let, 0);
+	assert_ptr(dec, "ptr dec");
+	expect_int_equal(dec->type, dag_type_declaration, "declaration");
+
+	struct dag_node* id = dag_get_child(dec, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, dag_type_id, "id");
+	expect_str(&id->value, "a", "a");
+
+	struct dag_node* type = dag_get_child(dec, 1);
+	assert_ptr(type, "ptr type");
+	expect_int_equal(type->type, dag_type_type, "type type");
+	expect_str(&type->value, "Int32", "Int32");
+
+	struct dag_node* value = dag_get_child(let, 1);
+	assert_ptr(value, "ptr value");
+	expect_int_equal(value->type, dag_type_number, "number");
+	expect_str(&value->value, "1", "1");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_expression()
 {
@@ -1579,4 +1656,6 @@ void test_parse_expression()
 	test_parse_array_subscript3();
 	test_parse_string();
 	test_parse_anonymous_function();
+	test_parse_let();
+	test_parse_let2();
 }

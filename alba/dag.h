@@ -40,6 +40,7 @@ enum dag_type {
 	dag_type_array_literal,
 	dag_type_array_subscript,
 	dag_type_anonymous_function,
+	dag_type_let,
 	dag_type_count		/* keep at end */
 };
 
@@ -84,6 +85,7 @@ enum result dag_set_names(char** names)
 	names[dag_type_array_literal] = "array-literal";
 	names[dag_type_array_subscript] = "array-subscript";
 	names[dag_type_anonymous_function] = "anonymous-function";
+	names[dag_type_let] = "let";
 
 	for (int i = 0; i < dag_type_count; i++) {
 		if (names[i] == NULL) {

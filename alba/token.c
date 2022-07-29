@@ -376,4 +376,5 @@ void word_table_init_reserved(struct word_table* wt)
     word_table_add_reserved(wt, "while", token_while);
     word_table_add_reserved(wt, "for", token_for);
     word_table_add_reserved(wt, "in", token_in);
+    word_table_add_reserved(wt, "let", token_let);
 }
