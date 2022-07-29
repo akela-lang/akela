@@ -7,6 +7,7 @@
 #include "source.h"
 #include "scan.h"
 
+bool assignment(struct parse_state* ps, struct dag_node** root);
 bool boolean(struct parse_state* ps, struct dag_node** root);
 bool boolean_prime(struct parse_state* ps, struct dag_node** root, struct dag_node** insert_point);
 bool comparison(struct parse_state* ps, struct dag_node** root);
@@ -25,79 +26,88 @@ bool expr(struct parse_state* ps, struct dag_node** root)
 	bool valid = true;
 	struct dag_node* n = NULL;
 	int num;
-	struct location loc;
 
 	/* allocate ps{} */
 	valid = valid && get_lookahead(ps, 2, &num);
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct token* t1 = get_token(&ps->lookahead, 1);
 
-	valid = valid && get_parse_location(ps, &loc);
 
 	/* id = expr */
 	if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
-
-		/* allocate ps{} id id{} */
-		struct token* id = NULL;
-		valid = valid && match(ps, token_id, "expected word", &id);
-
-		/* allocate ps{} equal equal{} */
-		struct token* equal = NULL;
-		valid = valid && match(ps, token_equal, "expected equal", &equal);
-
-		/* destroy equal equal{} */
-		token_destroy(equal);
-		free(equal);
-
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_assign;
-
-		/* allocate a */
-		struct dag_node* a;
-		dag_create_node(&a);
-		a->type = dag_type_id;
-
-		/* allocate a{} */
-		if (id) {
-			buffer_copy(&id->value, &a->value);
-		}
-
-		/* destroy id id{} */
-		token_destroy(id);
-		free(id);
-
-		/* transfer a a{} -> n{} */
-		dag_add_child(n, a);
-
-		/* allocate b b{} */
-		struct dag_node* b = NULL;
-		valid = valid && expr(ps, &b);
-
-		if (!b) {
-			set_source_error(ps->sns->el, &loc, "expect expression on rhs of assignment operator");
-			valid = false;
-		}
-
-		if (b) {
-			/* transfer b b{} -> n{} */
-			dag_add_child(n, b);
-		}
-
-		/* transfer n n{} -> root */
-		if (valid) {
-			*root = n;
-		}
-		return valid;
+		valid = valid && assignment(ps, &n);
+	} else {
+		/* allocate n n{} */
+		valid = valid && boolean(ps, &n);
 	}
-
-	/* allocate n n{} */
-	valid = valid && boolean(ps, &n);
 
 	/* transfer n n{} -> root */
 	if (valid) {
 		*root = n;
 	}
+	return valid;
+}
+
+bool assignment(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	struct location loc;
+	valid = valid && get_parse_location(ps, &loc);
+
+	/* allocate ps{} id id{} */
+	struct token* id = NULL;
+	valid = valid && match(ps, token_id, "expected word", &id);
+
+	/* allocate ps{} equal equal{} */
+	struct token* equal = NULL;
+	valid = valid && match(ps, token_equal, "expected equal", &equal);
+
+	/* destroy equal equal{} */
+	token_destroy(equal);
+	free(equal);
+
+	/* allocate n */
+	dag_create_node(&n);
+	n->type = dag_type_assign;
+
+	/* allocate a */
+	struct dag_node* a;
+	dag_create_node(&a);
+	a->type = dag_type_id;
+
+	/* allocate a{} */
+	if (id) {
+		buffer_copy(&id->value, &a->value);
+	}
+
+	/* destroy id id{} */
+	token_destroy(id);
+	free(id);
+
+	/* transfer a a{} -> n{} */
+	dag_add_child(n, a);
+
+	/* allocate b b{} */
+	struct dag_node* b = NULL;
+	valid = valid && expr(ps, &b);
+
+	if (!b) {
+		set_source_error(ps->sns->el, &loc, "expect expression on rhs of assignment operator");
+		valid = false;
+	}
+
+	if (b) {
+		/* transfer b b{} -> n{} */
+		dag_add_child(n, b);
+	}
+
+	/* transfer n n{} -> root */
+	if (valid) {
+		*root = n;
+	}
+
 	return valid;
 }
 
