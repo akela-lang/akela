@@ -1,5 +1,4 @@
 # Todo
-* scanner return bool
 * set source return void
 * let expression
 * add id to symbol table on declaration

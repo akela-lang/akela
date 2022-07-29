@@ -56,7 +56,7 @@ void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct w
 
 /* dynamic-output sns{wt{} el{}} t t{} */
 /* dynamic-temp: tf tf{} */
-enum result scan_get_token(struct scan_state* sns, int* got_token, struct token** t);
+bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t);
 
 /* dynamic-output-none */
 void get_scan_location(struct scan_state* sns, struct location* loc);

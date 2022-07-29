@@ -24,7 +24,7 @@ void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct w
 }
 
 /* dynamic-output-none */
-int compound_operator_start(UChar32 uc)
+bool compound_operator_start(UChar32 uc)
 {
     return uc == '=' || uc == '!' || uc == '<' || uc == '>' || uc == '&' || uc == '|' || uc == ':';
 }
@@ -44,8 +44,9 @@ void get_scan_location(struct scan_state* sns, struct location* loc)
 }
 
 /* dynamic-output sns{el{}} t{} */
-enum result process_char_start(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    bool valid = true;
     struct lookahead_char* lc = sns->lc;
     *got_token = 0;
     UChar32 uc;
@@ -181,14 +182,16 @@ enum result process_char_start(struct scan_state* sns, enum state_enum* state, i
         struct location loc;
         get_scan_location(sns, &loc);
         /* allocate sns{el{}} */
-        return set_source_error(sns->el, &loc, "Unrecognized character: %s", a);
+        set_source_error(sns->el, &loc, "Unrecognized character: %s", a);
+        valid = false;
     }
-    return result_ok;
+    return valid;
 }
 
 /* dynamic-output sns{wt{} el{}} t{} */
-enum result process_char_word(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    bool valid = true;
     struct lookahead_char* lc = sns->lc;
     struct word_table* wt = sns->wt;
     UChar32 uc;
@@ -231,12 +234,14 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
             struct location loc;
             get_scan_location(sns, &loc);
             /* allocate sns{el{}} */
-            return set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
+            set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
+            valid = false;
         } else if (u_isdigit(uc)) {
             struct location loc;
             get_scan_location(sns, &loc);
             /* allocate sns{el{}} */
-            return set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
+            set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
+            valid = false;
         } else if (u_isalpha(uc)) {
             *state = state_id;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
@@ -257,12 +262,13 @@ enum result process_char_word(struct scan_state* sns, enum state_enum* state, in
         }
     }
 
-    return result_ok;
+    return valid;
 }
 
 /* dynamic-output t{} */
-enum result process_char_number(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+bool process_char_number(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    bool valid = true;
     struct lookahead_char* lc = sns->lc;
     UChar32 uc;
     if (lc->la_size > 0) {
@@ -353,12 +359,13 @@ enum result process_char_number(struct scan_state* sns, enum state_enum* state, 
             lookahead_char_push(lc);
         }
     }
-    return result_ok;
+    return valid;
 }
 
 /* dynamic-output sns{el{}} t{} */
-enum result process_char_string(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+bool process_char_string(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    bool valid = true;
     struct lookahead_char* lc = sns->lc;
     UChar32 uc;
     if (lc->la_size > 0) {
@@ -400,20 +407,21 @@ enum result process_char_string(struct scan_state* sns, enum state_enum* state, 
             struct location loc;
             get_scan_location(sns, &loc);
             /* allocate sns{el{}} */
-            return set_source_error(sns->el, &loc, "Unrecognized escape sequence: %s", a);
+            valid = false;
+            set_source_error(sns->el, &loc, "Unrecognized escape sequence: %s", a);
         }
         *state = state_string;
     }
 
-    return result_ok;
+    return valid;
 }
 
 /* dynamic-output sns{el{}} t{} */
-enum result process_compound_operator(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+bool process_compound_operator(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
+    bool valid = true;
     struct lookahead_char* lc = sns->lc;
-    enum result r = result_ok;
-
+    
     if (lc->la_size > 0) {
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
             /* allocate t{} */
@@ -496,38 +504,40 @@ enum result process_compound_operator(struct scan_state* sns, enum state_enum* s
         assert(false);
     }
 
-    return r;
+    return valid;
 }
 
 /* dyanmic-output sns{wt{} el{}} t{} */
-enum result scan_process(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
+bool scan_process(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
-    enum result r = result_ok;
+    bool valid = true;
 
     if (*state == state_start) {
-        r = process_char_start(sns, state, got_token, t);
+        valid = process_char_start(sns, state, got_token, t);
     } else if (*state == state_id || *state == state_id_underscore) {
-        r = process_char_word(sns, state, got_token, t);
+        valid = process_char_word(sns, state, got_token, t);
     } else if (is_number_state(*state)) {
-        r = process_char_number(sns, state, got_token, t);
+        valid = process_char_number(sns, state, got_token, t);
     } else if (*state == state_string || *state == state_string_backslash) {
-        r = process_char_string(sns, state, got_token, t);
+        valid = process_char_string(sns, state, got_token, t);
     } else if (*state == state_compound_operator) {
-        r = process_compound_operator(sns, state, got_token, t);
+        valid = process_compound_operator(sns, state, got_token, t);
     } else {
         /* unexpected state */
         assert(false);
     }
-    return r;
+
+    return valid;
 }
 
 /* dynamic-output sns{wt{} el{}} t t{} */
 /* dynamic-temp: tf tf{} */
-enum result scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
+bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
 {
-    enum result r = result_ok;
+    bool valid = true;
     enum state_enum state = state_start;
     *got_token = 0;
+    *t = NULL;
     struct token* tf;
 
     /* allocate tf */
@@ -538,22 +548,23 @@ enum result scan_get_token(struct scan_state* sns, int* got_token, struct token*
         if (lookahead_char_need_preping(sns->lc)) {
 
             /* resource use sns{lc{conv}} */
-            r = lookahead_char_prep(sns->lc);
-            if (r == result_error) {
+            valid = lookahead_char_prep(sns->lc);
+            if (!valid) {
                 /* destroy tf{} tf */
                 token_destroy(tf);
                 free(tf);
+                return valid;
             }
         }
         if (lookahead_char_need_loading(sns->lc)) lookahead_char_load(sns->lc);
 
         /* allocate sns{wt{} el{}} tf{} */
-        r = scan_process(sns, &state, got_token, tf);
-        if (r == result_error) {
+        valid = scan_process(sns, &state, got_token, tf);
+        if (!valid) {
             /* destroy tf{} tf */
             token_destroy(tf);
             free(tf);
-            return r;
+            return valid;
         }
 
         lookahead_char_pop(sns->lc);
@@ -561,12 +572,12 @@ enum result scan_get_token(struct scan_state* sns, int* got_token, struct token*
 
     if (state != state_start) {
         /* allocate sns{wt{} el{}} tf{} */
-        r = scan_process(sns, &state, got_token, tf);
-        if (r == result_error) {
+        valid = scan_process(sns, &state, got_token, tf);
+        if (!valid) {
             /* destroy tf{} tf */
             token_destroy(tf);
             free(tf);
-            return r;
+            return valid;
         }
 
         lookahead_char_pop(sns->lc);
@@ -574,5 +585,5 @@ enum result scan_get_token(struct scan_state* sns, int* got_token, struct token*
 
     /* allocate tf tf{} -> t t{} */
     *t = tf;
-    return r;
+    return valid;
 }

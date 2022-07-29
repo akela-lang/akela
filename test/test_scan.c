@@ -1366,7 +1366,7 @@ void test_scan_error_char()
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
-	enum result r;
+	bool valid;
 	struct token* t;
 	int got_token;
 
@@ -1374,15 +1374,13 @@ void test_scan_error_char()
 	scan_setup("$", &sns, &lc, &wt, &el);
 
 	/* allocate sns{} t t{} */
-	r = scan_get_token(&sns, &got_token, &t);
-	assert_ok(r, "get token");
-	assert_true(!got_token, "got token");
+	valid = scan_get_token(&sns, &got_token, &t);
+	assert_false(valid, "scan_get_token");
+	assert_has_errors(sns.el);
+	assert_false(got_token, "got token");
+	assert_null(t, "t");
 	struct compile_error* e = assert_compile_error(&el, "Unrecognized character: $");
 	expect_compile_error_fields(e, 1, 1, 0);
-
-	/* destroy t t{} */
-	token_destroy(t);
-	free(t);
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
@@ -1520,7 +1518,7 @@ void test_scan_string_escape_error()
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
-	enum result r;
+	bool valid;
 	struct token* t;
 	int got_token;
 
@@ -1528,14 +1526,14 @@ void test_scan_string_escape_error()
 	scan_setup("\"\\x\"", &sns, &lc, &wt, &el);
 
 	/* allocate sns{} t t{} */
-	r = scan_get_token(&sns, &got_token, &t);
-	assert_ok(r, "scan");
+	valid = scan_get_token(&sns, &got_token, &t);
+	assert_false(valid, "scan_get_token");
+	assert_has_errors(sns.el);
 	struct compile_error* e = assert_compile_error(&el, "Unrecognized escape sequence: x");
 	expect_compile_error_fields(e, 1, 3, 2);
 
-	/* destroy t t{} */
-	token_destroy(t);
-	free(t);
+	assert_false(got_token, "got_token");
+	assert_null(t, "t");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
