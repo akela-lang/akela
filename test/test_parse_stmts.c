@@ -496,7 +496,7 @@ void test_parse_function3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("function foo(x, y)\nx+1\n5+4\nend", &ps, &root);
+	parse_setup("function foo(x::String, y::Int32)\nx+1\n5+4\nend", &ps, &root);
 
 	root = check_stmts(root, "stmts root");
 
@@ -574,9 +574,12 @@ void test_parse_function4()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("function foo(x, y, z)\nx+1\n5+4\nend", &ps, &root);
+	valid = parse_setup("function foo(x::Int32, y::Int32, z::Int32)\nx+1\n5+4\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse valid");
 
 	root = check_stmts(root, "stmts root");
 

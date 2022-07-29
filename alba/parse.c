@@ -15,29 +15,24 @@
 bool parse(struct parse_state* ps, struct dag_node** root)
 {
 	*root = NULL;
-	enum result r;
 	bool valid = true;
 
 	/* allocate ps{} root root{} */
-	r = stmts(ps, root);
-
-	if (r == result_error) {
-		valid = false;
-	}
+	valid = valid && stmts(ps, root);
 
 	/* allocate ps{} */
 	if (!lookahead_char_done(ps->sns->lc)) {
 		int num;
-		r = get_lookahead(ps, 1, &num);
-		if (r == result_error) {
-			valid = false;
-		}
+		valid = valid && get_lookahead(ps, 1, &num);
 	}
 
 	if (token_list_count(&ps->lookahead) > 0) {
 		struct token* t = ps->lookahead.head;
 		char* names[token_count];
-		r = token_name_init(names);
+		enum result r = token_name_init(names);
+		if (r == result_error) {
+			return false;
+		}
 		struct location loc;
 
 		/* allocate ps{} */

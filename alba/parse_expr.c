@@ -6,6 +6,7 @@
 #include "parse_factor.h"
 #include "source.h"
 #include "scan.h"
+#include "parse_types.h"
 
 bool assignment(struct parse_state* ps, struct dag_node** root);
 bool boolean(struct parse_state* ps, struct dag_node** root);
@@ -48,6 +49,40 @@ bool expr(struct parse_state* ps, struct dag_node** root)
 	return valid;
 }
 
+bool let(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	struct token* ltt = NULL;
+	valid = valid && match(ps, token_let, "expected let", &ltt);
+
+	token_destroy(ltt);
+	free(ltt);
+
+	struct location loc;
+	valid = valid && get_parse_location(ps, &loc);
+
+	/* allocate ps{} id id{} */
+	struct dag_node* a = NULL;
+	valid = valid && declaration(ps, true, &a);
+	if (!a) {
+		set_source_error(ps->el, &loc, "expected declaration after let");
+		valid = false;
+		return valid;
+	}
+
+	/* allocate ps{} equal equal{} */
+	struct token* equal = NULL;
+	valid = valid && match(ps, token_equal, "expected equal", &equal);
+
+	/* destroy equal equal{} */
+	token_destroy(equal);
+	free(equal);
+
+	return valid;
+}
+
 bool assignment(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
@@ -58,7 +93,7 @@ bool assignment(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
-	valid = valid && match(ps, token_id, "expected word", &id);
+	valid = valid && match(ps, token_id, "expected identifier", &id);
 
 	/* allocate ps{} equal equal{} */
 	struct token* equal = NULL;

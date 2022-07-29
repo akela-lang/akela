@@ -44,6 +44,7 @@ enum token_enum {
     token_left_square_bracket,
     token_right_square_bracket,
     token_string,
+    token_let,
     token_count     /* keep at the end */
 };
 
@@ -95,6 +96,7 @@ enum result token_name_init(char** token_name)
     token_name[token_left_square_bracket] = "[";
     token_name[token_right_square_bracket] = "]";
     token_name[token_string] = "string";
+    token_name[token_let] = "let";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

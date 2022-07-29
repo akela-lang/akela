@@ -146,6 +146,9 @@ struct token* token_list_pop(struct token_list* tl)
             first->prev = NULL;
         }
         tl->head = first;
+        if (!first) {
+            tl->tail = first;
+        }
 
         t->next = NULL;
         t->prev = NULL;

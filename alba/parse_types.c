@@ -8,7 +8,7 @@
 #include "source.h"
 
 bool dseq_prime(struct parse_state* ps, struct dag_node* parent);
-bool declaration(struct parse_state* ps, struct dag_node** root);
+bool declaration(struct parse_state* ps, bool strict, struct dag_node** root);
 
 /* dseq -> declaration dseq' | e */
 /* dynamic-output ps{} root root{} */
@@ -24,7 +24,7 @@ bool dseq(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate a */
 	struct dag_node* a = NULL;
-	valid = valid && declaration(ps, &a);
+	valid = valid && declaration(ps, true, &a);
 
 	if (a) {
 		/* transfer a -> n */
@@ -74,7 +74,7 @@ bool dseq_prime(struct parse_state* ps, struct dag_node* parent)
 
 	/* allocate a */
 	struct dag_node* a = NULL;
-	valid = valid && declaration(ps, &a);
+	valid = valid && declaration(ps, true, &a);
 
 	if (!a) {
 		/* allocate ps{} */
@@ -105,7 +105,7 @@ bool is_valid_type(struct buffer* b)
 
 /* declaration -> id :: type | id */
 /* dynamic-output ps{} root root{} */
-bool declaration(struct parse_state* ps, struct dag_node** root)
+bool declaration(struct parse_state* ps, bool strict, struct dag_node** root)
 {
 	bool valid = true;
 	struct dag_node* n = NULL;
@@ -194,7 +194,7 @@ bool declaration(struct parse_state* ps, struct dag_node** root)
 		token_destroy(type_id);
 		free(type_id);
 
-	} else if (t0 && t0->type == token_id) {
+	} else if (!strict && t0 && t0->type == token_id) {
 		/* id */
 
 		struct token* id = NULL;

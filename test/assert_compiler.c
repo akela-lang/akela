@@ -27,6 +27,7 @@ void assert_no_errors(struct compile_error_list* el)
 		printf("%s\n", p->message);
 		p = p->next;
 	}
+	panic();
 }
 
 /* dynamic-output-none */

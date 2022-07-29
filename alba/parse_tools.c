@@ -88,6 +88,7 @@ bool match(struct parse_state* ps, enum token_type type, char* reason, struct to
 	get_token_location(*t, &loc);
 	/* alocate ps{el{}} */
 	set_source_error(ps->el, &loc, "%s", reason);
+	*t = NULL;
 	return valid;
 }
 

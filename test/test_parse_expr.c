@@ -2,6 +2,7 @@
 #include "test_parse.h"
 #include "alba/dag.h"
 #include "alba/parse_tools.h"
+#include "assert_compiler.h"
 
 /* dynamic-output-none */
 void test_parse_blank()
@@ -1468,11 +1469,12 @@ void test_parse_anonymous_function()
 
 	struct dag_node* root;
 	struct parse_state ps;
-	enum result r;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("a = function(x,y,z) 1 end", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("a = function(x::Int32,y::Int32,z::Int32) 1 end", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse valid");
 
 	struct dag_node* assign = check_stmts(root, "stmts root");
 	assert_ptr(assign, "ptr assign");
