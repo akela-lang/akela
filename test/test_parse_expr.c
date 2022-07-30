@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "zinc/unit_test.h"
 #include "test_parse.h"
 #include "alba/dag.h"
@@ -11,11 +12,12 @@ void test_parse_blank()
 
 	struct dag_node* root;
 	struct parse_state ps;
-	enum result r;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -33,9 +35,12 @@ void test_parse_num()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("32", &ps, &root);
+	valid = parse_setup("32", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -57,9 +62,12 @@ void test_parse_id()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("app_name", &ps, &root);
+	valid = parse_setup("app_name", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -81,9 +89,12 @@ void test_parse_id2()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("_a23", &ps, &root);
+	valid = parse_setup("_a23", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -105,9 +116,12 @@ void test_parse_id3()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("a2", &ps, &root);
+	valid = parse_setup("a2", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -129,9 +143,12 @@ void test_parse_num_negative()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("-30", &ps, &root);
+	valid = parse_setup("-30", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -161,9 +178,12 @@ void test_parse_num_positive()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("+30", &ps, &root);
+	valid = parse_setup("+30", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -193,9 +213,12 @@ void test_parse_call_negative()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("-foo()", &ps, &root);
+	valid = parse_setup("-foo()", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -229,9 +252,12 @@ void test_parse_add()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("speed + 1", &ps, &root);
+	valid = parse_setup("speed + 1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -264,9 +290,12 @@ void test_parse_add_positive()
 
 	struct dag_node* root;
 	struct parse_state ps;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	parse_setup("speed + +1", &ps, &root);
+	valid = parse_setup("speed + +1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -308,7 +337,9 @@ void test_parse_add_negative()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("speed + -1", &ps, &root);
+	bool valid = parse_setup("speed + -1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -350,7 +381,9 @@ void test_parse_sub()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("100 - delta", &ps, &root);
+	bool valid = parse_setup("100 - delta", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -385,7 +418,9 @@ void test_parse_sub_positive()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("speed - +1", &ps, &root);
+	bool valid = parse_setup("speed - +1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -428,7 +463,9 @@ void test_parse_sub_negative()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("speed - -1", &ps, &root);
+	bool valid = parse_setup("speed - -1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -471,7 +508,9 @@ void test_parse_mult()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("5 * 2", &ps, &root);
+	bool valid = parse_setup("5 * 2", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -504,7 +543,9 @@ void test_parse_mult_positive()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("speed * +1", &ps, &root);
+	bool valid = parse_setup("speed * +1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -546,7 +587,9 @@ void test_parse_mult_negative()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("speed * -1", &ps, &root);
+	bool valid = parse_setup("speed * -1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -588,7 +631,9 @@ void test_parse_divide()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("52 / 2", &ps, &root);
+	bool valid = parse_setup("52 / 2", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -621,7 +666,9 @@ void test_parse_add_add()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("1 + 2 + 3", &ps, &root);
+	bool valid = parse_setup("1 + 2 + 3", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -663,7 +710,9 @@ void test_parse_mult_mult()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("1 * 2 * 3", &ps, &root);
+	bool valid = parse_setup("1 * 2 * 3", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
@@ -705,7 +754,9 @@ void test_parse_add_mult()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("5 + 3 * 2", &ps, &root);
+	bool valid = parse_setup("5 + 3 * 2", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -745,7 +796,9 @@ void test_parse_mult_add()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("4 * 3 + 2", &ps, &root);
+	bool valid = parse_setup("4 * 3 + 2", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -785,7 +838,9 @@ void test_parse_paren_num()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("(32)", &ps, &root);
+	bool valid = parse_setup("(32)", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -807,7 +862,9 @@ void test_parse_paren_add()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("(speed + 1)", &ps, &root);
+	bool valid = parse_setup("(speed + 1)", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -840,7 +897,9 @@ void test_parse_paren_add2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("(speed) + 1", &ps, &root);
+	bool valid = parse_setup("(speed) + 1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -873,7 +932,9 @@ void test_parse_paren_add3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("speed + (1)", &ps, &root);
+	bool valid = parse_setup("speed + (1)", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -906,7 +967,9 @@ void test_parse_paren_add_add()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("1 + (2 + 3)", &ps, &root);
+	bool valid = parse_setup("1 + (2 + 3)", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -948,7 +1011,9 @@ void test_parse_paren_add_add2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("(1 + 2) + 3", &ps, &root);
+	bool valid = parse_setup("(1 + 2) + 3", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -988,7 +1053,9 @@ void test_parse_paren_mult()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("(5 * 2)", &ps, &root);
+	bool valid = parse_setup("(5 * 2)", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -1019,7 +1086,9 @@ void test_parse_paren_mult_mult()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("1 * (2 * 3)", &ps, &root);
+	bool valid = parse_setup("1 * (2 * 3)", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -1059,7 +1128,9 @@ void test_parse_paren_mult_mult2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("(1 * 2) * 3", &ps, &root);
+	bool valid = parse_setup("(1 * 2) * 3", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -1099,7 +1170,9 @@ void test_parse_comparison()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("count == 10\ncount != 11\ncount <= 12\ncount >= 13", &ps, &root);
+	bool valid = parse_setup("count == 10\ncount != 11\ncount <= 12\ncount >= 13", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* cond0 = dag_get_child(root, 0);
 	assert_ptr(cond0, "ptr cond0");
@@ -1171,7 +1244,9 @@ void test_parse_not()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("!a", &ps, &root);
+	bool valid = parse_setup("!a", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* not = check_stmts(root, "stmts root");
 	assert_ptr(not, "ptr not");
@@ -1196,7 +1271,9 @@ void test_parse_and()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("a && b", &ps, &root);
+	bool valid = parse_setup("a && b", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* and = check_stmts(root, "stmts root");
 	assert_ptr(and, "ptr and");
@@ -1226,7 +1303,9 @@ void test_parse_or()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("a || b", &ps, &root);
+	bool valid = parse_setup("a || b", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* or = check_stmts(root, "stmts root");
 	assert_ptr(or, "ptr or");
@@ -1256,7 +1335,9 @@ void test_parse_or_or()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("a || b || c", &ps, &root);
+	bool valid = parse_setup("a || b || c", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* or0 = check_stmts(root, "stmts root");
 	assert_ptr(or0 , "ptr or0");
@@ -1293,11 +1374,12 @@ void test_parse_array_literal()
 
 	struct dag_node* root;
 	struct parse_state ps;
-	enum result r;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("[1,2,3]", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("[1,2,3]", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* a = check_stmts(root, "stmts root");
 	assert_ptr(a, "ptr a");
@@ -1330,11 +1412,12 @@ void test_parse_array_subscript()
 
 	struct dag_node* root;
 	struct parse_state ps;
-	enum result r;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("a[1]", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("a[1]", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* as = check_stmts(root, "stmts root");
 	assert_ptr(as, "ptr as");
@@ -1362,11 +1445,12 @@ void test_parse_array_subscript2()
 
 	struct dag_node* root;
 	struct parse_state ps;
-	enum result r;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("a[b[1]]", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("a[b[1]]", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* a = check_stmts(root, "stmts root");
 	assert_ptr(a, "ptr a");
@@ -1403,11 +1487,12 @@ void test_parse_array_subscript3()
 
 	struct dag_node* root;
 	struct parse_state ps;
-	enum result r;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("a[1][2]", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("a[1][2]", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* a = check_stmts(root, "stmts root");
 	assert_ptr(a, "ptr a");
@@ -1437,11 +1522,12 @@ void test_parse_string()
 
 	struct dag_node* root;
 	struct parse_state ps;
-	enum result r;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("a = \"hello\"", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("a = \"hello\"", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
 
 	struct dag_node* assign = check_stmts(root, "stmts root");
 	assert_ptr(assign, "ptr assign");
