@@ -14,7 +14,9 @@ void test_parse_assign()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("a = 1", &ps, &root);
+	bool valid = parse_setup("a = 1", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -45,7 +47,9 @@ void test_parse_assign2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("a = 1 + 2", &ps, &root);
+	bool valid = parse_setup("a = 1 + 2", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -85,7 +89,9 @@ void test_parse_stmts()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("i + 1\nx * 1", &ps, &root);
+	bool valid = parse_setup("i + 1\nx * 1", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr1");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
@@ -132,7 +138,9 @@ void test_parse_stmts2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("x+1\n5-4\n", &ps, &root);
+	bool valid = parse_setup("x+1\n5-4\n", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
@@ -179,7 +187,9 @@ void test_parse_stmts3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("x+1\n5-4\ny+z", &ps, &root);
+	bool valid = parse_setup("x+1\n5-4\ny+z", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
@@ -240,7 +250,9 @@ void test_parse_stmts4()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("x+1;5-4;y+z", &ps, &root);
+	bool valid = parse_setup("x+1;5-4;y+z", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
@@ -301,7 +313,9 @@ void test_parse_stmts5()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("if true 1 else 2 end", &ps, &root);
+	bool valid = parse_setup("if true 1 else 2 end", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	struct dag_node* if_stmt = check_stmts(root, "stmts root");
 	assert_ptr(if_stmt, "ptr if_stmt");
@@ -352,7 +366,9 @@ void test_parse_function()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("function foo()\nx+1\n5+4\nend", &ps, &root);
+	bool valid = parse_setup("function foo()\nx+1\n5+4\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -414,11 +430,12 @@ void test_parse_function2()
 
 	struct dag_node* root;
 	struct parse_state ps;
-	enum result r;
+	bool valid;
 
 	/* allocate ps{} root root{} */
-	r = parse_setup("function foo(x::Int64)\nx+1\n5+4\nend", &ps, &root);
-	assert_ok(r, "parse");
+	valid = parse_setup("function foo(x::Int64)\nx+1\n5+4\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -496,7 +513,9 @@ void test_parse_function3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("function foo(x::String, y::Int32)\nx+1\n5+4\nend", &ps, &root);
+	bool valid = parse_setup("function foo(x::String, y::Int32)\nx+1\n5+4\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -667,7 +686,9 @@ void test_parse_call()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("foo() + 10", &ps, &root);
+	bool valid = parse_setup("foo() + 10", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -708,7 +729,9 @@ void test_parse_call2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("foo(x) + 10", &ps, &root);
+	bool valid = parse_setup("foo(x) + 10", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -761,7 +784,9 @@ void test_parse_call3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("foo(x,y) + 10", &ps, &root);
+	bool valid = parse_setup("foo(x,y) + 10", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -819,7 +844,9 @@ void test_parse_call4()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("foo(x,y,1) + 10", &ps, &root);
+	bool valid = parse_setup("foo(x,y,1) + 10", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -882,7 +909,9 @@ void test_parse_if()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("if true\n10 + 20\nx * y\nend", &ps, &root);
+	bool valid = parse_setup("if true\n10 + 20\nx * y\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -944,7 +973,9 @@ void test_parse_elseif()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("if true\n10 + 20\nx * y\nelseif true\n1\n2\nend", &ps, &root);
+	bool valid = parse_setup("if true\n10 + 20\nx * y\nelseif true\n1\n2\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -1030,7 +1061,9 @@ void test_parse_elseif2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("if true\n10 + 20\nx * y\nelseif true\n1\n2\nelseif true\nx\ny\nend", &ps, &root);
+	bool valid = parse_setup("if true\n10 + 20\nx * y\nelseif true\n1\n2\nelseif true\nx\ny\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -1140,7 +1173,9 @@ void test_parse_else()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("if false\n10\nelse\nx\ny\nend", &ps, &root);
+	bool valid = parse_setup("if false\n10\nelse\nx\ny\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -1197,7 +1232,9 @@ void test_parse_else2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("if false\n10\nelseif false\n20\nelse\nx\ny\nend", &ps, &root);
+	bool valid = parse_setup("if false\n10\nelseif false\n20\nelse\nx\ny\nend", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	root = check_stmts(root, "stmts root");
 
@@ -1275,7 +1312,9 @@ void test_parse_while()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("while (true) 1 end", &ps, &root);
+	bool valid = parse_setup("while (true) 1 end", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	struct dag_node* node = check_stmts(root, "stmts root");
 	assert_ptr(node, "ptr node");
@@ -1309,7 +1348,9 @@ void test_parse_for_range()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("for i = 0:10 1 end", &ps, &root);
+	bool valid = parse_setup("for i = 0:10 1 end", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	/* for */
 	struct dag_node* node = check_stmts(root, "stmts root");
@@ -1354,7 +1395,9 @@ void test_parse_for_iteration()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	parse_setup("for i in list 1 end", &ps, &root);
+	bool valid = parse_setup("for i in list 1 end", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
 
 	/* for */
 	struct dag_node* node = check_stmts(root, "stmts root");
@@ -1397,7 +1440,6 @@ void test_parse_line_col()
 	struct dag_node* root;
 	struct parse_state ps;
 	bool valid;
-	enum result r;
 
 	/* allocate ps{} root root{} */
 	valid = parse_setup("* 2", &ps, &root);
@@ -1410,7 +1452,7 @@ void test_parse_line_col()
 	buffer_init(&bf);
 
 	/* allocate bf */
-	r = format_error(e, string_getchar, string_seek, ps.sns->lc->d, &bf);
+	enum result r = format_error(e, string_getchar, string_seek, ps.sns->lc->d, &bf);
 	assert_ok(r, "format_error");
 	expect_str(&bf, "expected term before operator\n* 2", "format_error");
 
@@ -1430,7 +1472,6 @@ void test_parse_source()
 	struct dag_node* root;
 	struct parse_state ps;
 	bool valid;
-	enum result r;
 
 	/* allocate ps{} root root{} */
 	valid = parse_setup("1\n* 2", &ps, &root);
@@ -1443,7 +1484,7 @@ void test_parse_source()
 	buffer_init(&bf);
 
 	/* allocate bf */
-	r = format_error(e, string_getchar, string_seek, ps.sns->lc->d, &bf);
+	enum result r = format_error(e, string_getchar, string_seek, ps.sns->lc->d, &bf);
 	assert_ok(r, "format_error");
 	expect_str(&bf, "expected term before operator\n* 2", "format_error");
 
