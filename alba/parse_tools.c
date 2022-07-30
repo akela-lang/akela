@@ -14,6 +14,7 @@ void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct com
 	ps->sns = sns;
 	token_list_init(&ps->lookahead);
 	ps->el = el;
+	ps->top = NULL;
 }
 
 /* get lookahead token */

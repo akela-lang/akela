@@ -9,6 +9,9 @@
 #include "parse_tools.h"
 #include "parse_types.h"
 #include "source.h"
+#include "symbol_table.h"
+#include "zinc/memory.h"
+#include "symbol_table.h"
 
 bool stmts_prime(struct parse_state* ps, struct dag_node* parent);
 bool separator(struct parse_state* ps, int* has_separator);
@@ -20,6 +23,17 @@ bool stmts(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
 	struct dag_node* n = NULL;
+
+	/* transfer ps{top} -> saved */
+	struct enviornment* saved = ps->top;
+
+	/* allocate env */
+	struct environment* env = NULL;
+	malloc_safe(&env, sizeof(struct environment));
+	environment_init(env, saved);
+
+	/* share env -> top */
+	ps->top = env;
 
 	/* allocate ps{} a a{} */
 	struct dag_node* a = NULL;
@@ -36,6 +50,12 @@ bool stmts(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate ps{} n{} */
 	valid = valid && stmts_prime(ps, n);
+
+	/* destroy env env{} */
+	environment_destroy(env);
+
+	/* transfer saved -> ps{top} */
+	ps->top = saved;
 
 	/* transfer n -> root */
 	*root = n;
@@ -212,6 +232,15 @@ bool stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
+		/* shared ps{top} -> saved */
+		struct environment* saved = ps->top;
+
+		/* allocate env env{} */
+		struct environment* env = NULL;
+		malloc_safe(&env, sizeof(struct environment));
+		environment_init(env, saved);
+		ps->top = env;
+
 		/* allocate ps{} f f{} */
 		struct token* f = NULL;
 		valid = valid && match(ps, token_function, "expecting function", &f);
@@ -284,6 +313,12 @@ bool stmt(struct parse_state* ps, struct dag_node** root)
 		/* destroy end end{} */
 		token_destroy(end);
 		free(end);
+
+		/* transfer saved -> ps->top */
+		ps->top = saved;
+
+		/* destroy env env{} */
+		environment_destroy(env);
 
 	} else if (t0 && t0->type == token_if) {
 		/* if */

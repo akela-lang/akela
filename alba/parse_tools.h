@@ -4,11 +4,13 @@
 #include <stdbool.h>
 #include "token.h"
 #include "source.h"
+#include "symbol_table.h"
 
 struct parse_state {
 	struct scan_state* sns;
 	struct token_list lookahead;
 	struct compile_error_list* el;
+	struct environment* top;
 };
 
 /* dynamic-output-none */

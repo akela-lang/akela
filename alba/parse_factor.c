@@ -7,6 +7,8 @@
 #include "parse_expr.h"
 #include "source.h"
 #include "scan.h"
+#include "zinc/memory.h"
+#include "symbol_table.h"
 
 bool cseq(struct parse_state* ps, struct dag_node** root);
 bool cseq_prime(struct parse_state* ps, struct dag_node* parent);
@@ -38,6 +40,16 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 
 	/* anonymous function */
 	if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
+		/* shared ps{top} -> saved */
+		struct environment* saved = ps->top;
+
+		/* allocate env env{} */
+		struct environment* env = NULL;
+		malloc_safe(&env, sizeof(struct environment));
+		environment_init(env, saved);
+
+		/* transfer env -> ps{top} */
+		ps->top = env;
 
 		/* allocate ps{} f f{} */
 		struct token* f = NULL;
@@ -91,6 +103,12 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 		/* destroy end end{} */
 		token_destroy(end);
 		free(end);
+
+		/* transfer saved -> ps{top} */
+		ps->top = saved;
+
+		/* destroy env env{} */
+		environment_destroy(env);
 
 		/* function call*/
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
