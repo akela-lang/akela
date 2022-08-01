@@ -1,6 +1,7 @@
 # Todo
 * add id to symbol table on declaration
-* use of id has declaration in symbol table
+* verify id has declaration
+* verify type for operations
 * operators have valid types
 * link to LLVM
 * generate LLVM IR

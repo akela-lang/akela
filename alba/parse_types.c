@@ -6,6 +6,7 @@
 #include "parse_tools.h"
 #include "dag.h"
 #include "source.h"
+#include "symbol_table.h"
 
 bool dseq_prime(struct parse_state* ps, struct dag_node* parent);
 bool declaration(struct parse_state* ps, bool strict, struct dag_node** root);
