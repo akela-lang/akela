@@ -7,9 +7,11 @@
 #include "dag.h"
 #include "source.h"
 #include "symbol_table.h"
+#include "zinc/memory.h"
 
 bool dseq_prime(struct parse_state* ps, struct dag_node* parent);
 bool declaration(struct parse_state* ps, bool strict, struct dag_node** root);
+bool type(struct parse_state* ps, struct dag_node** root);
 
 /* dseq -> declaration dseq' | e */
 /* dynamic-output ps{} root root{} */
@@ -137,29 +139,17 @@ bool declaration(struct parse_state* ps, bool strict, struct dag_node** root)
 		token_destroy(dc);
 		free(dc);
 
-		struct token* type_id = NULL;
-		valid = valid && match(ps, token_id, "expected type", &type_id);
-		if (!valid) {
-			return valid;
-		}
+		struct location loc;
+		valid = valid && get_parse_location(ps, &loc);
 
-		if (!is_valid_type(&type_id->value)) {
-			/* allocate a */
-			char* a;
-			buffer2array(&type_id->value, &a);
-			struct location loc;
-			get_token_location(type_id, &loc);
-			set_source_error(ps->el, &loc, "unknown type: %s", a);
+		struct dag_node* b = NULL;
+		valid = valid && type(ps, id, &b);
+
+		if (!b) {
+			set_source_error(ps->el, &loc, "expected a type");
 			valid = false;
-
-			/* destroy a */
-			free(a);
-
-			/* destroy id id{} type_id type_id{} */
 			token_destroy(id);
 			free(id);
-			token_destroy(type_id);
-			free(type_id);
 			return valid;
 		}
 
@@ -178,22 +168,15 @@ bool declaration(struct parse_state* ps, bool strict, struct dag_node** root)
 		/* transfer a a{} -> n */
 		dag_add_child(n, a);
 
-		/* allocate b */
-		struct dag_node* b = NULL;
-		dag_create_node(&b);
-		b->type = dag_type_type;
-
-		/* allocate b{} */
-		buffer_copy(&type_id->value, &b->value);
-
 		/* transfer b b{} -> n */
 		dag_add_child(n, b);
 
 		/* destroy id id{} type_id type_id{} */
 		token_destroy(id);
 		free(id);
-		token_destroy(type_id);
-		free(type_id);
+
+		/* transfer n -> root */
+		*root = n;
 
 	} else if (!strict && t0 && t0->type == token_id) {
 		/* id */
@@ -222,9 +205,106 @@ bool declaration(struct parse_state* ps, bool strict, struct dag_node** root)
 		/* destroy id id{} */
 		token_destroy(id);
 		free(id);
+
+		/* transfer n -> root */
+		*root = n;
 	}
 
-	/* transfer n -> root */
-	*root = n;
+	return valid;
+}
+
+bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	int num;
+	valid = valid && get_lookahead(ps, 2, &num);
+	struct token* t0 = get_token(&ps->lookahead, 0);
+	struct token* t1 = get_token(&ps->lookahead, 1);
+
+	if (t0 && t0->type == token_id && t1 && t1->type == token_left_curly_brace) {
+		struct token* name = NULL;
+		valid = valid && match(ps, token_id, "expected id", &name);
+
+		struct token* lcb = NULL;
+		valid = valid && match(ps, token_left_curly_brace, "expected left curly brace", &lcb);
+		token_destroy(lcb);
+		free(lcb);
+
+		struct token* name2 = NULL;
+		valid = valid && match(ps, token_id, "expected id", &name2);
+
+		struct token* rcb = NULL;
+		valid = valid && match(ps, token_right_curly_brace, "expected right curly brace", &rcb);
+		token_destroy(rcb);
+		free(rcb);
+
+		if (valid) {
+			dag_create_node(&n);
+			n->type = dag_type_type;
+
+			struct dag_node* a = NULL;
+			dag_create_node(&a);
+			a->type = dag_type_id;
+			buffer_copy(&name->value, &a->value);
+
+			dag_add_child(n, a);
+
+			struct dag_node* b = NULL;
+			dag_create_node(&b);
+			b->type = dag_type_id;
+			buffer_copy(&name2->value, &b->value);
+
+			dag_add_child(n, b);
+
+			struct symbol* sym = NULL;
+			malloc_safe(&sym, sizeof(struct symbol));
+			symbol_init(sym);
+			buffer_copy(&name->value, &sym->type);
+			sym->dec = n;
+
+			environment_put(ps->top, &id->value, sym);
+
+			*root = n;
+		}
+
+		/* destroy name name{} name2 name2{} */
+		token_destroy(name);
+		free(name);
+		token_destroy(name2);
+		free(name2);
+
+	} else if (t0 && t0->type == token_id) {
+		struct token* name = NULL;
+		valid = valid && match(ps, token_id, "expected type id", &name);
+
+		if (valid) {
+			dag_create_node(&n);
+			n->type = dag_type_type;
+
+			struct dag_node* a = NULL;
+			dag_create_node(&a);
+			a->type = dag_type_id;
+			buffer_copy(&name->value, &a->value);
+
+			dag_add_child(n, a);
+
+			struct symbol* sym = NULL;
+			malloc_safe(&sym, sizeof(struct symbol));
+			symbol_init(sym);
+			buffer_copy(&name->value, &sym->type);
+			sym->dec = n;
+
+			environment_put(ps->top, &id->value, sym);
+
+			*root = n;
+		}
+
+		/* destroy name name{} */
+		token_destroy(name);
+		free(name);
+	}
+
 	return valid;
 }

@@ -459,10 +459,18 @@ void test_parse_function2()
 	expect_int_equal(dec_a->type, dag_type_id, "id dec_a");
 	expect_str(&dec_a->value, "x", "x dec_a");
 
+	struct dag_node* type_name = dag_get_child(seq_dec, 1);
+	assert_ptr(type_name, "ptr type_name");
+	expect_int_equal(type_name->type, dag_type_type, "id type_name");
+
 	struct dag_node* dec_b = dag_get_child(seq_dec, 1);
 	assert_ptr(dec_b, "ptr dec_b");
 	expect_int_equal(dec_b->type, dag_type_type, "type dec_b");
-	expect_str(&dec_b->value, "Int64", "Int64 dec_b");
+
+	struct dag_node* type_id_b = dag_get_child(dec_b, 0);
+	assert_ptr(type_id_b, "ptr type_id_b");
+	expect_int_equal(type_id_b->type, dag_type_id, "id type_id_b");
+	expect_str(&type_id_b->value, "Int64", "Int64 dec_b");
 
 	struct dag_node* b = dag_get_child(root, 2);
 	assert_ptr(b, "ptr b");

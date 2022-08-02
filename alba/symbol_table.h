@@ -12,6 +12,7 @@ struct environment {
 
 struct symbol {
 	struct buffer type;
+	struct dag_node* dec;
 };
 
 /* dynamic-output env{} */
@@ -24,6 +25,9 @@ void environment_put(struct environment* env, struct buffer* value, struct symbo
 
 /* dynamic-output-none */
 struct symbol* environment_get(struct environment* env, struct buffer* value);
+
+/* dynamic-output_none */
+void symbol_init(struct symbol* sym);
 
 /* dynamic-destroy env env{} */
 void environment_destroy(struct environment* env);

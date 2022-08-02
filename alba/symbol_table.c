@@ -29,6 +29,13 @@ struct symbol* environment_get(struct environment* env, struct buffer* value)
 	return NULL;
 }
 
+/* dynamic-output-none */
+void symbol_init(struct symbol* sym)
+{
+	buffer_init(&sym->type);
+	sym->dec = NULL;
+}
+
 /* destroy sym sym{} */
 void environment_destroy_symbol(struct symbol* sym)
 {
