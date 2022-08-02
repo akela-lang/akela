@@ -255,6 +255,8 @@ void test_lookahead_char_line()
 
 	/* destroy bf */
 	buffer_destroy(&bf);
+
+	conv_close(conv);
 }
 
 void test_lookahead_char()
