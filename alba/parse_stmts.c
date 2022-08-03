@@ -16,6 +16,7 @@
 bool stmts_prime(struct parse_state* ps, struct dag_node* parent);
 bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct dag_node** root);
+bool function(struct parse_state* ps, struct dag_node** root);
 bool for_range(struct parse_state* ps, struct dag_node** root);
 bool for_iteration(struct parse_state* ps, struct dag_node** root);
 bool elseif_stmts(struct parse_state* ps, struct dag_node* parent);
@@ -236,93 +237,7 @@ bool stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
-		/* shared ps{top} -> saved */
-		struct environment* saved = ps->top;
-
-		/* allocate env env{} */
-		struct environment* env = NULL;
-		malloc_safe((void**)&env, sizeof(struct environment));
-		environment_init(env, saved);
-		ps->top = env;
-
-		/* allocate ps{} f f{} */
-		struct token* f = NULL;
-		valid = valid && match(ps, token_function, "expecting function", &f);
-
-		/* destroy f f{} */
-		token_destroy(f);
-		free(f);
-
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_function;
-
-		/* allocate ps{} id id{} */
-		struct token* id = NULL;
-		valid = valid && match(ps, token_id, "expecting word", &id);
-
-		/* allocate a a{} */
-		struct dag_node* a;
-		dag_create_node(&a);
-		a->type = dag_type_id;
-		if (id) {
-			buffer_copy(&id->value, &a->value);
-		}
-
-		/* destroy id id{} */
-		token_destroy(id);
-		free(id);
-
-		/* tranfer a -> n{} */
-		dag_add_child(n, a);
-
-		/* allocate ps{} lp lp{} */
-		struct token* lp = NULL;
-		valid = valid && match(ps, token_left_paren, "expecting left parenthesis", &lp);
-
-		/* destroy lp lp{} */
-		token_destroy(lp);
-		free(lp);
-
-		/* allocate ps{} b b{} */
-		struct dag_node* b = NULL;
-		valid = valid && dseq(ps, &b);
-
-		/* transfer b -> n{} */
-		if (b) {
-			dag_add_child(n, b);
-		}
-
-		/* allocate ps{} rp rp{} */
-		struct token* rp = NULL;
-		valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
-
-		/* destroy rp rp{} */
-		token_destroy(rp);
-		free(rp);
-
-		/* allocate ps{} c c{} */
-		struct dag_node* c = NULL;
-		valid = valid && stmts(ps, &c);
-
-		/* transfer c -> n{} */
-		if (c) {
-			dag_add_child(n, c);
-		}
-
-		/* allocate ps{} end end{} */
-		struct token* end = NULL;
-		valid = valid && match(ps, token_end, "expecting end", &end);
-
-		/* destroy end end{} */
-		token_destroy(end);
-		free(end);
-
-		/* transfer saved -> ps->top */
-		ps->top = saved;
-
-		/* destroy env env{} */
-		environment_destroy(env);
+		valid = valid && function(ps, &n);
 
 	} else if (t0 && t0->type == token_if) {
 		/* if */
@@ -399,6 +314,109 @@ bool stmt(struct parse_state* ps, struct dag_node** root)
 	if (valid) {
 		*root = n;
 	}
+	return valid;
+}
+
+bool function(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	/* shared ps{top} -> saved */
+	struct environment* saved = ps->top;
+
+	/* allocate env env{} */
+	struct environment* env = NULL;
+	malloc_safe((void**)&env, sizeof(struct environment));
+	environment_init(env, saved);
+	ps->top = env;
+
+	/* allocate ps{} f f{} */
+	struct token* f = NULL;
+	valid = valid && match(ps, token_function, "expecting function", &f);
+
+	/* allocate ps{} id id{} */
+	struct token* id = NULL;
+	valid = valid && match(ps, token_id, "expecting identifier", &id);
+	struct symbol* sym = NULL;
+
+	/* allocate ps{} lp lp{} */
+	struct token* lp = NULL;
+	valid = valid && match(ps, token_left_paren, "expecting left parenthesis", &lp);
+
+	/* allocate ps{} dseq_node dseq_node{} */
+	struct dag_node* dseq_node = NULL;
+	valid = valid && dseq(ps, &dseq_node);
+
+	/* allocate ps{} rp rp{} */
+	struct token* rp = NULL;
+	valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
+
+	/* start building nodes */
+	if (valid) {
+		/* allocate n */
+		dag_create_node(&n);
+		n->type = dag_type_function;
+
+		/* allocate a a{} */
+		struct dag_node* a;
+		dag_create_node(&a);
+		a->type = dag_type_id;
+		buffer_copy(&id->value, &a->value);
+
+		/* tranfer a -> n{} */
+		dag_add_child(n, a);
+
+		/* transfer dseq_node -> n{} */
+		dag_add_child(n, dseq_node);
+
+		malloc_safe((void**)&sym, sizeof(struct symbol));
+		symbol_init(sym);
+		buffer_copy_str(&sym->type, "function");
+		sym->dec = n;
+		environment_put(saved, &id->value, sym);
+	}
+
+	/* allocate ps{} stmts_node stmts_node{} */
+	struct dag_node* stmts_node = NULL;
+	valid = valid && stmts(ps, &stmts_node);
+
+	/* allocate ps{} end end{} */
+	struct token* end = NULL;
+	valid = valid && match(ps, token_end, "expecting end", &end);
+
+	/* finish building nodes */
+	if (valid) {
+		/* transfer stmts_node -> n{} */
+		dag_add_child(n, stmts_node);
+
+		/* transfer n -> root */
+		*root = n;
+	} else {
+		/* destroy n n{} dseq_node dseq_node{} stmts_node stmts_node{} */
+		dag_destroy(n);
+		dag_destroy(dseq_node);
+		dag_destroy(stmts_node);
+	}
+
+	/* destroy f f{} id id{} lp lp{} rp rp{} end end{} */
+	token_destroy(f);
+	free(f);
+	token_destroy(id);
+	free(id);
+	token_destroy(lp);
+	free(lp);
+	token_destroy(rp);
+	free(rp);
+	token_destroy(end);
+	free(end);
+
+	/* transfer saved -> ps->top */
+	ps->top = saved;
+
+	/* destroy env env{} */
+	environment_destroy(env);
+
 	return valid;
 }
 

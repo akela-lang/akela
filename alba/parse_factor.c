@@ -10,6 +10,7 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 
+bool anonymous_function(struct parse_state* ps, struct dag_node** root);
 bool cseq(struct parse_state* ps, struct dag_node** root);
 bool cseq_prime(struct parse_state* ps, struct dag_node* parent);
 bool array_literal(struct parse_state* ps, struct dag_node** root);
@@ -40,75 +41,7 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 
 	/* anonymous function */
 	if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
-		/* shared ps{top} -> saved */
-		struct environment* saved = ps->top;
-
-		/* allocate env env{} */
-		struct environment* env = NULL;
-		malloc_safe((void**)&env, sizeof(struct environment));
-		environment_init(env, saved);
-
-		/* transfer env -> ps{top} */
-		ps->top = env;
-
-		/* allocate ps{} f f{} */
-		struct token* f = NULL;
-		valid = valid && match(ps, token_function, "expected anonymous function", &f);
-
-		/* destroy f f{} */
-		token_destroy(f);
-		free(f);
-
-		struct token* lp = NULL;
-		valid = valid && match(ps, token_left_paren, "expected left parenthesis", &lp);
-
-		/* destroy lp lp{} */
-		token_destroy(lp);
-		free(lp);
-
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_anonymous_function;
-
-		/* allocate a a{} */
-		struct dag_node* a = NULL;
-		valid = valid && dseq(ps, &a);
-
-		if (a) {
-			/* transfer a a{} -> n{} */
-			dag_add_child(n, a);
-		}
-
-		/* allocate ps{} rp rp{} */
-		struct token* rp = NULL;
-		valid = valid && match(ps, token_right_paren, "expected right parenthesis", &rp);
-
-		/* destroy rp rp{} */
-		token_destroy(rp);
-		free(rp);
-
-		/* allocate b b{} */
-		struct dag_node* b = NULL;
-		valid = valid && stmts(ps, &b);
-
-		if (b) {
-			/* transfer b b{} -> n */
-			dag_add_child(n, b);
-		}
-
-		/* allocate ps{} end end{} */
-		struct token* end = NULL;
-		valid = valid && match(ps, token_end, "expected end", &end);
-
-		/* destroy end end{} */
-		token_destroy(end);
-		free(end);
-
-		/* transfer saved -> ps{top} */
-		ps->top = saved;
-
-		/* destroy env env{} */
-		environment_destroy(env);
+		valid = valid && anonymous_function(ps, &n);
 
 		/* function call*/
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
@@ -295,6 +228,88 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 	}
 
 	/* transfer n -> root */
+	if (valid) {
+		*root = n;
+	}
+
+	return valid;
+}
+
+bool anonymous_function(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	/* shared ps{top} -> saved */
+	struct environment* saved = ps->top;
+
+	/* allocate env env{} */
+	struct environment* env = NULL;
+	malloc_safe((void**)&env, sizeof(struct environment));
+	environment_init(env, saved);
+
+	/* transfer env -> ps{top} */
+	ps->top = env;
+
+	/* allocate ps{} f f{} */
+	struct token* f = NULL;
+	valid = valid && match(ps, token_function, "expected anonymous function", &f);
+
+	/* destroy f f{} */
+	token_destroy(f);
+	free(f);
+
+	struct token* lp = NULL;
+	valid = valid && match(ps, token_left_paren, "expected left parenthesis", &lp);
+
+	/* destroy lp lp{} */
+	token_destroy(lp);
+	free(lp);
+
+	/* allocate n */
+	dag_create_node(&n);
+	n->type = dag_type_anonymous_function;
+
+	/* allocate a a{} */
+	struct dag_node* a = NULL;
+	valid = valid && dseq(ps, &a);
+
+	if (a) {
+		/* transfer a a{} -> n{} */
+		dag_add_child(n, a);
+	}
+
+	/* allocate ps{} rp rp{} */
+	struct token* rp = NULL;
+	valid = valid && match(ps, token_right_paren, "expected right parenthesis", &rp);
+
+	/* destroy rp rp{} */
+	token_destroy(rp);
+	free(rp);
+
+	/* allocate b b{} */
+	struct dag_node* b = NULL;
+	valid = valid && stmts(ps, &b);
+
+	if (b) {
+		/* transfer b b{} -> n */
+		dag_add_child(n, b);
+	}
+
+	/* allocate ps{} end end{} */
+	struct token* end = NULL;
+	valid = valid && match(ps, token_end, "expected end", &end);
+
+	/* destroy end end{} */
+	token_destroy(end);
+	free(end);
+
+	/* transfer saved -> ps{top} */
+	ps->top = saved;
+
+	/* destroy env env{} */
+	environment_destroy(env);
+
 	if (valid) {
 		*root = n;
 	}
