@@ -56,7 +56,7 @@ void hash_table_init(struct hash_table* ht, unsigned int size)
     ht->size = size;
 
     /* allocate ht{} */
-    malloc_safe(&ht->buckets, sizeof(struct hash_list) * size);
+    malloc_safe((void**)&ht->buckets, sizeof(struct hash_list) * size);
 
     for (int i = 0; i < size; i++) {
         hash_list_init(&ht->buckets[i]);
@@ -92,7 +92,7 @@ void hash_table_add(struct hash_table* ht, struct buffer* value, void* item)
 
     /* allocate ent */
     struct hash_entry* ent;
-    malloc_safe(&ent, sizeof(struct hash_entry));
+    malloc_safe((void**)&ent, sizeof(struct hash_entry));
     hash_entry_init(ent);
     ent->item = item;
 

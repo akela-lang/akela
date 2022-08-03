@@ -1460,7 +1460,7 @@ void test_parse_line_col()
 	buffer_init(&bf);
 
 	/* allocate bf */
-	enum result r = format_error(e, string_getchar, string_seek, ps.sns->lc->d, &bf);
+	enum result r = format_error(e, (input_getchar)string_getchar, (input_seek)string_seek, ps.sns->lc->d, &bf);
 	assert_ok(r, "format_error");
 	expect_str(&bf, "expected term before operator\n* 2", "format_error");
 
@@ -1492,7 +1492,7 @@ void test_parse_source()
 	buffer_init(&bf);
 
 	/* allocate bf */
-	enum result r = format_error(e, string_getchar, string_seek, ps.sns->lc->d, &bf);
+	enum result r = format_error(e, (input_getchar)string_getchar, (input_seek)string_seek, ps.sns->lc->d, &bf);
 	assert_ok(r, "format_error");
 	expect_str(&bf, "expected term before operator\n* 2", "format_error");
 

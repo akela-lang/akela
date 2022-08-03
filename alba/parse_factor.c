@@ -45,7 +45,7 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate env env{} */
 		struct environment* env = NULL;
-		malloc_safe(&env, sizeof(struct environment));
+		malloc_safe((void**)&env, sizeof(struct environment));
 		environment_init(env, saved);
 
 		/* transfer env -> ps{top} */

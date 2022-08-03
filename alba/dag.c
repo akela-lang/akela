@@ -9,7 +9,7 @@
 void dag_create_node(struct dag_node** n)
 {
 	/* allocate n */
-	malloc_safe(n, sizeof(struct dag_node));
+	malloc_safe((void**)n, sizeof(struct dag_node));
 	dag_init_node(*n);
 }
 

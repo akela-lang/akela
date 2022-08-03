@@ -17,7 +17,7 @@ bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 
 	/* allocate bf */
 	struct buffer* bf;
-	malloc_safe(&bf, sizeof(struct buffer));
+	malloc_safe((void**)&bf, sizeof(struct buffer));
 	buffer_init(bf);
 
 	/* allocate bf{} */
@@ -25,14 +25,14 @@ bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 
 	/* allocate sd */
 	struct string_data* sd;
-	malloc_safe(&sd, sizeof(struct string_data));
+	malloc_safe((void**)&sd, sizeof(struct string_data));
 
 	/* transfer bf -> sd{} */
 	string_data_init(bf, sd);
 
 	/* allocate el */
 	struct compile_error_list* el;
-	malloc_safe(&el, sizeof(struct compile_error_list));
+	malloc_safe((void**)&el, sizeof(struct compile_error_list));
 	compile_error_list_init(el);
 
 	/* open conv */
@@ -46,21 +46,21 @@ bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 
 	/* allocate wt */
 	struct word_table* wt;
-	malloc_safe(&wt, sizeof(struct word_table));
+	malloc_safe((void**)&wt, sizeof(struct word_table));
 
 	/* allocate wt {} */
 	word_table_init(wt, WORD_TABLE_SIZE);
 
 	/* allocate lc */
 	struct lookahead_char* lc;
-	malloc_safe(&lc, sizeof(struct lookahead_char));
+	malloc_safe((void**)&lc, sizeof(struct lookahead_char));
 
 	/* transfer sd conv -> lc */
-	lookahead_char_init(lc, string_getchar, sd, conv);
+	lookahead_char_init(lc, (input_getchar)string_getchar, sd, conv);
 
 	/* allocate sns */
 	struct scan_state* sns;
-	malloc_safe(&sns, sizeof(struct scan_state));
+	malloc_safe((void**)&sns, sizeof(struct scan_state));
 
 	/* transfer lc wt el -> sns{} */
 	scan_state_init(sns, lc, wt, el);

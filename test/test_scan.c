@@ -17,7 +17,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	struct buffer* bf;
 
 	/* allocate bf */
-	malloc_safe(&bf, sizeof(struct buffer));
+	malloc_safe((void**)&bf, sizeof(struct buffer));
 	buffer_init(bf);
 
 	/* allocate bf{} */
@@ -26,7 +26,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	struct string_data* sd;
 
 	/* allocate sd */
-	malloc_safe(&sd, sizeof(struct string_data));
+	malloc_safe((void**)&sd, sizeof(struct string_data));
 
 	/* transfer bf -> sd */
 	string_data_init(bf, sd);
@@ -37,7 +37,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	assert_ok(r, "conv_open");
 
 	/* transfer sd conv -> lc{} */
-	lookahead_char_init(lc, string_getchar, sd, conv);
+	lookahead_char_init(lc, (input_getchar)string_getchar, sd, conv);
 
 	/* allocate wt{} */
 	word_table_init(wt, WORD_TABLE_SIZE);

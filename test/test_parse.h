@@ -5,6 +5,7 @@
 #include "alba/scan.h"
 #include "alba/token.h"
 #include "alba/dag.h"
+#include "alba/parse_tools.h"
 
 /* dynamic-output ps{} root root{} */
 enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** root);

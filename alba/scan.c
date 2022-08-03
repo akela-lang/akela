@@ -541,7 +541,7 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
     struct token* tf;
 
     /* allocate tf */
-    malloc_safe(&tf, sizeof(struct token));
+    malloc_safe((void**)&tf, sizeof(struct token));
     token_init(tf);
 
     while (!*got_token && !lookahead_char_done(sns->lc)) {

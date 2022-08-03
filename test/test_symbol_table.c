@@ -9,7 +9,7 @@ void test_symbol_table_env()
 	struct environment* env;
 
 	/* allocate env */
-	malloc_safe(&env, sizeof(struct environment));
+	malloc_safe((void**)&env, sizeof(struct environment));
 	environment_init(env, NULL);
 
 	struct buffer value;
@@ -20,7 +20,7 @@ void test_symbol_table_env()
 
 	/* allocate sym */
 	struct symbol* sym;
-	malloc_safe(&sym, sizeof(struct symbol));
+	malloc_safe((void**)&sym, sizeof(struct symbol));
 	buffer_init(&sym->type);
 
 	/* allocate sym{} */

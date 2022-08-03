@@ -29,11 +29,11 @@ bool stmts(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* n = NULL;
 
 	/* transfer ps{top} -> saved */
-	struct enviornment* saved = ps->top;
+	struct environment* saved = ps->top;
 
 	/* allocate env */
 	struct environment* env = NULL;
-	malloc_safe(&env, sizeof(struct environment));
+	malloc_safe((void**)&env, sizeof(struct environment));
 	environment_init(env, saved);
 
 	/* share env -> top */
@@ -241,7 +241,7 @@ bool stmt(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate env env{} */
 		struct environment* env = NULL;
-		malloc_safe(&env, sizeof(struct environment));
+		malloc_safe((void**)&env, sizeof(struct environment));
 		environment_init(env, saved);
 		ps->top = env;
 

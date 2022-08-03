@@ -28,7 +28,7 @@ void test_lookahead_char_short()
 	assert_ok(r, "conv_open");
 
 	struct lookahead_char lc;
-	lookahead_char_init(&lc, string_getchar, &sd, conv);
+	lookahead_char_init(&lc, (input_getchar)string_getchar, &sd, conv);
 
 	expect_true(lookahead_char_need_preping(&lc), "need loading prep");
 
@@ -166,7 +166,7 @@ void test_lookahead_char_line()
 	assert_ok(r, "conv_open");
 
 	struct lookahead_char lc;
-	lookahead_char_init(&lc, string_getchar, &sd, conv);
+	lookahead_char_init(&lc, (input_getchar)string_getchar, &sd, conv);
 
 	r = lookahead_char_prep(&lc);
 	assert_ok(r, "load prep");

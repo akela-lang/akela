@@ -53,4 +53,4 @@ void hash_table_add(struct hash_table* ht, struct buffer* value, void* item);
 /* dynamic-output-none */
 void* hash_table_get(struct hash_table* ht, struct buffer* value);
 
-#endif;
+#endif

@@ -17,7 +17,7 @@ void circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_si
 	cbyte->size = 0;
 
 	/* allocate cbyte{} */
-	malloc_safe(&cbyte->buf, buf_size);
+	malloc_safe((void**)&cbyte->buf, buf_size);
 }
 
 /* dynamic-destroy cbyte{} */
@@ -61,7 +61,7 @@ void circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t b
 	cc32->size = 0;
 
 	/* allocate cc32{} */
-	malloc_safe(&cc32->buf, sizeof(UChar32)*buf_size);
+	malloc_safe((void**)&cc32->buf, sizeof(UChar32)*buf_size);
 }
 
 /* dynamic-destroy cc32{} */

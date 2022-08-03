@@ -259,7 +259,7 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 			dag_add_child(n, b);
 
 			struct symbol* sym = NULL;
-			malloc_safe(&sym, sizeof(struct symbol));
+			malloc_safe((void**)&sym, sizeof(struct symbol));
 			symbol_init(sym);
 			buffer_copy(&name->value, &sym->type);
 			sym->dec = n;
@@ -291,7 +291,7 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 			dag_add_child(n, a);
 
 			struct symbol* sym = NULL;
-			malloc_safe(&sym, sizeof(struct symbol));
+			malloc_safe((void**)&sym, sizeof(struct symbol));
 			symbol_init(sym);
 			buffer_copy(&name->value, &sym->type);
 			sym->dec = n;

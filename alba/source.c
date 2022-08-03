@@ -75,7 +75,7 @@ void set_source_error(struct compile_error_list* el, struct location* loc, const
 	struct compile_error* e;
 
 	/* allocate e */
-	malloc_safe(&e, sizeof(struct compile_error));
+	malloc_safe((void**)&e, sizeof(struct compile_error));
 	compile_error_init(e);
 
 	char* p = e->message;

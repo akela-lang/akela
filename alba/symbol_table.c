@@ -46,7 +46,7 @@ void environment_destroy_symbol(struct symbol* sym)
 /* dynamic-destroy env env{} */
 void environment_destroy(struct environment* env)
 {
-	hash_table_map(&env->ht, environment_destroy_symbol);
+	hash_table_map(&env->ht, (void (*)(void*))environment_destroy_symbol);
 	hash_table_destroy(&env->ht);
 	free(env);
 }

@@ -53,7 +53,7 @@ int main(int argc, char** argv)
     word_table_init(&wt, WORD_TABLE_SIZE);
 
     /* resource input fp */
-    lookahead_char_init(&lc, file_getchar, fp, conv);
+    lookahead_char_init(&lc, (input_getchar)file_getchar, fp, conv);
 
     compile_error_list_init(&el);
     scan_state_init(&sns, &lc, &wt, &el);

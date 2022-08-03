@@ -26,7 +26,7 @@ void test_input_string()
 	array2buffer("hello", &bf);
 	string_data_init(&bf, &sd);
 
-	f = string_getchar;
+	f = (input_getchar)string_getchar;
 	d = &sd;
 
 	struct buffer bf2;
