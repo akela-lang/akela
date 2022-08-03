@@ -18,8 +18,19 @@ set(source_files
     hash.c
     symbol_table.c
 )
-include_directories("../external/icu4c/include")
+
+if (WIN32)
+    include_directories("../external/icu4c/include")
+
+elseif(UNIX)
+    include_directories("../external/icu/usr/local/include")
+
+endif()
+
 add_executable(alba ${source_files})
+
+if(WIN32)
+
 target_link_libraries(alba icudt icuin icuio icutest icutu icuuc zinc)
 
 file(GLOB icu_dll "${CMAKE_SOURCE_DIR}/external/icu4c/bin64/*.dll")
@@ -32,3 +43,9 @@ add_custom_command(
                 ${ZINC_DLL}
                 ${CMAKE_CURRENT_BINARY_DIR}/zinc.dll
 )
+
+elseif(UNIX)
+
+target_link_libraries(alba icuio icutest icutu icuuc icudata icutest zinc)
+
+endif()

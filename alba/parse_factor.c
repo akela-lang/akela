@@ -486,7 +486,7 @@ bool aseq_prime(struct parse_state* ps, struct dag_node* parent)
 	valid = valid && factor(ps, &a);
 
 	if (!a) {
-		return set_source_error(ps->el, &loc, "expected factor after comma");
+		set_source_error(ps->el, &loc, "expected factor after comma");
 		valid = false;
 		return valid;
 	}

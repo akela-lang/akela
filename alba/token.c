@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "zinc/memory.h"
 #include "token.h"
+#include "dag.h"
 
 /* dynamic-output-none */
 /* initialize-output t{} t{value{}} */
@@ -193,7 +194,7 @@ enum result token_list_print(struct token_list* tl)
 
 /* dynamic-output-none */
 /* dynamic-temp a */
-enum result print_token(struct allocator* al, struct token* t)
+enum result print_token(struct token* t)
 {
     enum result r;
 

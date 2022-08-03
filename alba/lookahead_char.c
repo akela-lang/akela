@@ -94,7 +94,7 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 enum result lookahead_char_translate(struct lookahead_char* lc)
 {
 	int32_t len;
-	UErrorCode err;
+	UErrorCode err = U_ZERO_ERROR;
 
 	/* should be called only when more characters are needed */
 	assert(lc->tr_out_pos >= lc->tr_out_size);

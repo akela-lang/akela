@@ -44,7 +44,7 @@ enum result uchar2char(UConverter* conv, UChar* src, size_t src_size, char** des
 /* resource-output conv */
 enum result conv_open(UConverter** conv)
 {
-    UErrorCode err;
+    UErrorCode err = U_ZERO_ERROR;
     *conv = ucnv_open("utf8", &err);
     if (U_FAILURE(err)) {
         return set_error("utf conversion: %d", err);

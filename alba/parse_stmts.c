@@ -16,6 +16,10 @@
 bool stmts_prime(struct parse_state* ps, struct dag_node* parent);
 bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct dag_node** root);
+bool for_range(struct parse_state* ps, struct dag_node** root);
+bool for_iteration(struct parse_state* ps, struct dag_node** root);
+bool elseif_stmts(struct parse_state* ps, struct dag_node* parent);
+bool else_stmt(struct parse_state* ps, struct dag_node* parent);
 
 /* stmts -> stmt stmts' */
 /* dynamic-output ps{} root root{} */
@@ -97,7 +101,7 @@ bool stmts_prime(struct parse_state* ps, struct dag_node* parent)
 bool separator(struct parse_state* ps, int* has_separator)
 {
 	bool valid = true;
-	enum token_type type;
+	enum token_enum type;
 	int num;
 	*has_separator = 0;
 
@@ -400,7 +404,7 @@ bool stmt(struct parse_state* ps, struct dag_node** root)
 
 /* for_range -> for id = expr:expr stmts end */
 /* dynamic-output ps{} root root{} */
-enum result for_range(struct parse_state* ps, struct dag_node** root)
+bool for_range(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
 	struct dag_node* n = NULL;
@@ -511,7 +515,7 @@ enum result for_range(struct parse_state* ps, struct dag_node** root)
 
 /* for_iteration -> for id in expr stmts end */
 /* dynamic-output ps{} root root{} */
-enum result for_iteration(struct parse_state* ps, struct dag_node** root)
+bool for_iteration(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
 	struct dag_node* n = NULL;
@@ -599,7 +603,7 @@ enum result for_iteration(struct parse_state* ps, struct dag_node** root)
 
 /* elseif_stmts -> elseif expr stmts elseif_stmts | e */
 /* dynamic-output ps{} parent{} */
-enum result elseif_stmts(struct parse_state* ps, struct dag_node* parent)
+bool elseif_stmts(struct parse_state* ps, struct dag_node* parent)
 {
 	bool valid = true;
 	int num;
@@ -657,7 +661,7 @@ enum result elseif_stmts(struct parse_state* ps, struct dag_node* parent)
 
 /* else_stmt -> else stmts | e */
 /* dynamic-output ps{} parent{} */
-enum result else_stmt(struct parse_state* ps, struct dag_node* parent)
+bool else_stmt(struct parse_state* ps, struct dag_node* parent)
 {
 	bool valid = true;
 	int num;

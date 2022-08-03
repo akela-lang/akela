@@ -11,7 +11,7 @@
 
 bool dseq_prime(struct parse_state* ps, struct dag_node* parent);
 bool declaration(struct parse_state* ps, bool strict, struct dag_node** root);
-bool type(struct parse_state* ps, struct dag_node** root);
+bool type(struct parse_state* ps, struct token* id, struct dag_node** root);
 
 /* dseq -> declaration dseq' | e */
 /* dynamic-output ps{} root root{} */

@@ -4,7 +4,10 @@
 #include "alba/os_win.h"
 #include "alba/scan.h"
 #include "alba/uconv.h"
+
+#if defined(WIN32)
 #include <windows.h>
+#endif
 
 /* dynamic-output-none */
 /* dynamic-temp bf{} bf2{} */
@@ -41,6 +44,8 @@ void test_input_string()
 	buffer_destroy(&bf);
 	buffer_destroy(&bf2);
 }
+
+#if defined(WIN32)
 
 /* dynamic-output-none */
 /* dynamic-temp bf{} */
@@ -92,9 +97,15 @@ void test_input_file()
 	buffer_destroy(&bf);
 }
 
+#endif
+
 /* dynamic-output-none */
 void test_input()
 {
 	test_input_string();
+
+#if defined(WIN32)
 	test_input_file();
+#endif
+
 }

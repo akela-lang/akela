@@ -5,6 +5,7 @@
 #include "zinc/buffer.h"
 #include "token.h"
 #include "lookahead_char.h"
+#include "source.h"
 
 struct scan_state {
     struct lookahead_char* lc;

@@ -1,8 +1,9 @@
+#if defined(_WIN32) || defined(WIN32)
+
 #include <windows.h>
+
 #include "zinc/result.h"
 #include "zinc/memory.h"
-
-#if defined(_WIN32) || defined(WIN32)  
 
 /* dynamic-output buff */
 enum result win_temp_filename(char** buff)
