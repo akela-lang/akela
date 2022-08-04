@@ -4,6 +4,7 @@
 #include "alba/input.h"
 #include "zinc/buffer.h"
 #include "alba/uconv.h"
+#include <string.h>
 
 /* dynamic-output-none */
 /* dynamic-temp bf{} conv */
@@ -259,8 +260,54 @@ void test_lookahead_char_line()
 	conv_close(conv);
 }
 
+void test_lookahead_char_batches()
+{
+	test_name(__func__);
+
+	enum result r;
+
+	struct buffer bf;
+	buffer_init(&bf);
+
+	/* allocate bf */
+	char* a = "1234567890123456789012345678901234567890123456789012345678901234567890";
+	array2buffer(a, &bf);
+	size_t len = strlen(a);
+
+	struct string_data sd;
+	string_data_init(&bf, &sd);
+
+	UConverter* conv;
+	r = conv_open(&conv);
+	assert_ok(r, "conv_open");
+
+	struct lookahead_char lc;
+	lookahead_char_init(&lc, (input_getchar)string_getchar, &sd, conv);
+
+	assert_ok(r, "load prep");
+
+	for (int i = 1; i <= len; i++) {
+		if (i == 63) {
+			int x = i;
+		}
+		r = lookahead_char_prep(&lc);
+		assert_ok(r, "prep");
+		lookahead_char_load(&lc);
+		char c = (i % 10) + '0';
+		set_error("(%c) == (%c)\n", lc.la0_8[0], c);
+		expect_true(lc.la0_8[0] == c, error_message);
+		lookahead_char_pop(&lc);
+	}
+
+	/* destroy bf */
+	buffer_destroy(&bf);
+
+	conv_close(conv);
+}
+
 void test_lookahead_char()
 {
 	test_lookahead_char_short();
 	test_lookahead_char_line();
+	test_lookahead_char_batches();
 }

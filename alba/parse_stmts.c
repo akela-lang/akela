@@ -352,6 +352,19 @@ bool function(struct parse_state* ps, struct dag_node** root)
 	struct token* rp = NULL;
 	valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
 
+	struct dag_node* dret_node = NULL;
+	int num;
+	valid = valid && get_lookahead(ps, 1, &num);
+	struct token* next = get_token(&ps->lookahead, 0);
+	if (next && next->type == token_double_colon) {
+		struct token* dc = NULL;
+		valid = valid && match(ps, token_double_colon, "expecting double colon", &dc);
+		token_destroy(dc);
+		free(dc);
+
+		valid = valid && type(ps, NULL, &dret_node);
+	}
+
 	/* start building nodes */
 	if (valid) {
 		/* allocate n */
@@ -370,11 +383,39 @@ bool function(struct parse_state* ps, struct dag_node** root)
 		/* transfer dseq_node -> n{} */
 		dag_add_child(n, dseq_node);
 
+		struct dag_node* b;
+		dag_create_node(&b);
+		b->type = dag_type_dret;
+
+		if (dret_node) {
+			dag_add_child(b, dret_node);
+		}
+
+		dag_add_child(n, b);
+
 		malloc_safe((void**)&sym, sizeof(struct symbol));
 		symbol_init(sym);
 		buffer_copy_str(&sym->type, "function");
 		sym->dec = n;
 		environment_put(saved, &id->value, sym);
+	} else {
+		dag_destroy(dseq_node);
+		/* destroy f f{} id id{} lp lp{} rp rp{} end end{} */
+		token_destroy(f);
+		free(f);
+		token_destroy(id);
+		free(id);
+		token_destroy(lp);
+		free(lp);
+		token_destroy(rp);
+		free(rp);
+
+		/* transfer saved -> ps->top */
+		ps->top = saved;
+
+		/* destroy env env{} */
+		environment_destroy(env);
+		return valid;
 	}
 
 	/* allocate ps{} stmts_node stmts_node{} */
@@ -394,12 +435,29 @@ bool function(struct parse_state* ps, struct dag_node** root)
 		*root = n;
 	} else {
 		/* destroy n n{} dseq_node dseq_node{} stmts_node stmts_node{} */
+		token_destroy(f);
+		free(f);
+		token_destroy(id);
+		free(id);
+		token_destroy(lp);
+		free(lp);
+		token_destroy(rp);
+		free(rp);
+
 		dag_destroy(n);
-		dag_destroy(dseq_node);
 		dag_destroy(stmts_node);
+		token_destroy(end);
+		free(end);
+		/* transfer saved -> ps->top */
+		ps->top = saved;
+
+		/* destroy env env{} */
+		environment_destroy(env);
+
+		return valid;
 	}
 
-	/* destroy f f{} id id{} lp lp{} rp rp{} end end{} */
+	/* destroy n n{} dseq_node dseq_node{} stmts_node stmts_node{} */
 	token_destroy(f);
 	free(f);
 	token_destroy(id);
@@ -408,8 +466,6 @@ bool function(struct parse_state* ps, struct dag_node** root)
 	free(lp);
 	token_destroy(rp);
 	free(rp);
-	token_destroy(end);
-	free(end);
 
 	/* transfer saved -> ps->top */
 	ps->top = saved;
@@ -418,6 +474,11 @@ bool function(struct parse_state* ps, struct dag_node** root)
 	environment_destroy(env);
 
 	return valid;
+}
+
+bool dret(struct parse_state* ps, struct dag_node** root)
+{
+
 }
 
 /* for_range -> for id = expr:expr stmts end */

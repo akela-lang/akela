@@ -10,7 +10,7 @@
 #include "zinc/memory.h"
 
 bool dseq_prime(struct parse_state* ps, struct dag_node* parent);
-bool declaration(struct parse_state* ps, bool strict, struct dag_node** root);
+bool declaration(struct parse_state* ps, struct dag_node** root);
 bool type(struct parse_state* ps, struct token* id, struct dag_node** root);
 
 /* dseq -> declaration dseq' | e */
@@ -27,7 +27,7 @@ bool dseq(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate a */
 	struct dag_node* a = NULL;
-	valid = valid && declaration(ps, true, &a);
+	valid = valid && declaration(ps, &a);
 
 	if (a) {
 		/* transfer a -> n */
@@ -77,7 +77,7 @@ bool dseq_prime(struct parse_state* ps, struct dag_node* parent)
 
 	/* allocate a */
 	struct dag_node* a = NULL;
-	valid = valid && declaration(ps, true, &a);
+	valid = valid && declaration(ps, &a);
 
 	if (!a) {
 		/* allocate ps{} */
@@ -108,20 +108,18 @@ bool is_valid_type(struct buffer* b)
 
 /* declaration -> id :: type | id */
 /* dynamic-output ps{} root root{} */
-bool declaration(struct parse_state* ps, bool strict, struct dag_node** root)
+bool declaration(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
 	struct dag_node* n = NULL;
 	int num;
 
 	/* allocate ps{} */
-	valid = valid && get_lookahead(ps, 3, &num);
+	valid = valid && get_lookahead(ps, 1, &num);
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
-	struct token* t1 = get_token(&ps->lookahead, 1);
-	struct token* t2 = get_token(&ps->lookahead, 2);
 
-	if (t0 && t0->type == token_id && t1 && t1->type == token_double_colon && t2 && t2->type == token_id) {
+	if (t0 && t0->type == token_id) {
 		/* id::type */
 
 		/* allocate ps{} id id{} */
@@ -172,37 +170,6 @@ bool declaration(struct parse_state* ps, bool strict, struct dag_node** root)
 		dag_add_child(n, b);
 
 		/* destroy id id{} type_id type_id{} */
-		token_destroy(id);
-		free(id);
-
-		/* transfer n -> root */
-		*root = n;
-
-	} else if (!strict && t0 && t0->type == token_id) {
-		/* id */
-
-		struct token* id = NULL;
-		valid = valid && match(ps, token_id, "expected id", &id);
-		if (!valid) {
-			return valid;
-		}
-
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_declaration;
-
-		/* allocate a */
-		struct dag_node* a = NULL;
-		dag_create_node(&a);
-		a->type = dag_type_id;
-
-		/* allocate a{} */
-		buffer_copy(&id->value, &a->value);
-
-		/* transfer a a{} -> n */
-		dag_add_child(n, a);
-
-		/* destroy id id{} */
 		token_destroy(id);
 		free(id);
 
@@ -264,7 +231,9 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 			buffer_copy(&name->value, &sym->type);
 			sym->dec = n;
 
-			environment_put(ps->top, &id->value, sym);
+			if (id) {
+				environment_put(ps->top, &id->value, sym);
+			}
 
 			*root = n;
 		}
@@ -296,7 +265,9 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 			buffer_copy(&name->value, &sym->type);
 			sym->dec = n;
 
-			environment_put(ps->top, &id->value, sym);
+			if (id) {
+				environment_put(ps->top, &id->value, sym);
+			}
 
 			*root = n;
 		}

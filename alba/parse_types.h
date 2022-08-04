@@ -11,6 +11,8 @@ bool dseq(struct parse_state* ps, struct dag_node** root);
 bool is_valid_type(struct buffer* b);
 
 /* dynamic-output ps{} root root{} */
-bool declaration(struct parse_state* ps, bool strict, struct dag_node** root);
+bool declaration(struct parse_state* ps, struct dag_node** root);
+
+bool type(struct parse_state* ps, struct token* id, struct dag_node** root);
 
 #endif

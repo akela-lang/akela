@@ -11,6 +11,7 @@
 #include "symbol_table.h"
 
 bool anonymous_function(struct parse_state* ps, struct dag_node** root);
+bool function_call(struct parse_state* ps, struct dag_node** root);
 bool cseq(struct parse_state* ps, struct dag_node** root);
 bool cseq_prime(struct parse_state* ps, struct dag_node* parent);
 bool array_literal(struct parse_state* ps, struct dag_node** root);
@@ -45,56 +46,7 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 
 		/* function call*/
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
-
-		/* allocate ps{} id id{} */
-		struct token* id = NULL;
-		valid = valid && match(ps, token_id, "expecting id", &id);
-
-		/* allocate ps{} lp lp{} */
-		struct token* lp = NULL;
-		valid = valid && match(ps, token_left_paren, "expecting left parenthesis", &lp);
-
-		/* destroy lp lp{} */
-		token_destroy(lp);
-		free(lp);
-
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_call;
-
-		/* allocate a */
-		struct dag_node* a = NULL;
-		dag_create_node(&a);
-		a->type = dag_type_id;
-
-		if (id) {
-			/* allocate a{} */
-			buffer_copy(&id->value, &a->value);
-		}
-
-		/* transfer a a{} -> n{} */
-		dag_add_child(n, a);
-
-		/* destroy id id{} */
-		token_destroy(id);
-		free(id);
-
-		/* allocate b b{} */
-		struct dag_node* b = NULL;
-		valid = valid && cseq(ps, &b);
-
-		/* transfer b b{} -> n{} */
-		if (b) {
-			dag_add_child(n, b);
-		}
-
-		/* allocate ps{} rp rp{} */
-		struct token* rp = NULL;
-		valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
-
-		/* destroy rp rp{} */
-		token_destroy(rp);
-		free(rp);
+		valid = valid && function_call(ps, &n);
 
 		/* ! factor */
 	} else if (t0 && t0->type == token_not) {
@@ -313,6 +265,88 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 	if (valid) {
 		*root = n;
 	}
+
+	return valid;
+}
+
+bool function_call(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	struct location loc;
+	valid = valid && get_parse_location(ps, &loc);
+
+	/* allocate ps{} id id{} */
+	struct token* id = NULL;
+	valid = valid && match(ps, token_id, "expecting id", &id);
+
+	/* allocate ps{} lp lp{} */
+	struct token* lp = NULL;
+	valid = valid && match(ps, token_left_paren, "expecting left parenthesis", &lp);
+
+	/* allocate b b{} */
+	struct dag_node* cseq_node = NULL;
+	valid = valid && cseq(ps, &cseq_node);
+
+	/* allocate ps{} rp rp{} */
+	struct token* rp = NULL;
+	valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
+
+	if (valid) {
+		struct symbol* sym = environment_get(ps->top, &id->value);
+		if (sym) {
+			if (sym->dec->type != dag_type_function) {
+				char* name;
+				buffer2array(&id->value, &name);
+				set_source_error(ps->el, &loc, "call of variable that is not a function: %s", name);
+				free(name);
+				valid = false;
+			}
+		} else {
+			char* name;
+			buffer2array(&id->value, &name);
+			set_source_error(ps->el, &loc, "function is not declared: %s", name);
+			free(name);
+			valid = false;
+		}
+	}
+
+	if (valid) {
+		/* allocate n */
+		dag_create_node(&n);
+		n->type = dag_type_call;
+
+		/* allocate a */
+		struct dag_node* a = NULL;
+		dag_create_node(&a);
+		a->type = dag_type_id;
+
+		/* allocate a{} */
+		buffer_copy(&id->value, &a->value);
+
+		/* transfer a a{} -> n{} */
+		dag_add_child(n, a);
+
+		/* transfer b b{} -> n{} */
+		if (cseq_node) {
+			dag_add_child(n, cseq_node);
+		}
+
+		*root = n;
+
+	} else {
+		/* destroy cseq_node cseq_node{} */
+		dag_destroy(cseq_node);
+	}
+
+	/* destroy id id{} lp lp{} rp rp{} */
+	token_destroy(id);
+	free(id);
+	token_destroy(lp);
+	free(lp);
+	token_destroy(rp);
+	free(rp);
 
 	return valid;
 }

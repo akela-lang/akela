@@ -18,6 +18,7 @@ enum dag_type {
 	dag_type_stmts,
 	dag_type_function,
 	dag_type_dseq,
+	dag_type_dret,
 	dag_type_call,
 	dag_type_cseq,
 	dag_type_if,
@@ -65,6 +66,7 @@ enum result dag_set_names(char** names)
 	names[dag_type_stmts] = "stmts";
 	names[dag_type_function] = "function";
 	names[dag_type_dseq] = "dseq";
+	names[dag_type_dret] = "dret";
 	names[dag_type_call] = "call";
 	names[dag_type_cseq] = "cseq";
 	names[dag_type_if] = "if";

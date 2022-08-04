@@ -68,7 +68,7 @@ bool let(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate ps{} id id{} */
 	struct dag_node* a = NULL;
-	valid = valid && declaration(ps, true, &a);
+	valid = valid && declaration(ps, &a);
 	if (!a) {
 		set_source_error(ps->el, &loc, "expected declaration after let");
 		valid = false;

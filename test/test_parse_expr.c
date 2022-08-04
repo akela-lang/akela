@@ -216,14 +216,23 @@ void test_parse_call_negative()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("-foo()", &ps, &root);
+	valid = parse_setup("function foo() end\n-foo()", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
 	assert_int_equal(root->type, dag_type_stmts, "stmts root");
 
-	struct dag_node* sign = dag_get_child(root, 0);
+	struct dag_node* fd = dag_get_child(root, 0);
+	assert_ptr(fd, "ptr fd");
+	expect_int_equal(fd->type, dag_type_function, "function");
+
+	struct dag_node* f_id = dag_get_child(fd, 0);
+	assert_ptr(f_id, "ptr f_id");
+	expect_int_equal(f_id->type, dag_type_id, "id f_id");
+	expect_str(&f_id->value, "foo", "foo");
+
+	struct dag_node* sign = dag_get_child(root, 1);
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, dag_type_sign, "sign sign");
 

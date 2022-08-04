@@ -48,19 +48,20 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 	lc->tr_in_size = 0;
 	lc->tr_in_pos = 0;
 
-	if (lc->has_partial) {
-		c = lc->partial;
-	} else {
-		c = lc->f(lc->d);
-	}
-	if (c == EOF) {
-		lc->done = true;
-		return result_ok;
-	}
-	count = NUM_BYTES(c);
-	if (count == 0) return set_error("Incorrect utf-8 encoding: byte count not encoded");
 	do {
-		if (lc->tr_in_size + count < TR_IN_SIZE) {
+		if (lc->has_partial) {
+			c = lc->partial;
+		} else {
+			c = lc->f(lc->d);
+		}
+		if (c == EOF) {
+			lc->done = true;
+			return result_ok;
+		}
+		char c2 = c;
+		count = NUM_BYTES(c);
+		if (count == 0) return set_error("Incorrect utf-8 encoding: byte count not encoded");
+		if (lc->tr_in_size + count <= TR_IN_SIZE) {
 			lc->tr_in[lc->tr_in_size++] = c;
 			lc->has_partial = false;
 			for (int i = 1; i < count; i++) {
@@ -77,14 +78,7 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 			lc->has_partial = true;
 			break;
 		}
-		c = lc->f(lc->d);
-		if (c == EOF) {
-			lc->done = true;
-			break;
-		}
-		count = NUM_BYTES(c);
-		if (count == 0) return set_error("Incorrect utf-8 encoding: byte count not encoded");
-	} while (lc->tr_in_size + count < TR_IN_SIZE);
+	} while (lc->tr_in_size < TR_IN_SIZE);
 
 	return result_ok;
 }
