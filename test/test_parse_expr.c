@@ -1597,11 +1597,7 @@ void test_parse_anonymous_function()
 	expect_int_equal(x->type, dag_type_id, "id x");
 	expect_str(&x->value, "x", "x x");
 
-	struct dag_node* type_x = dag_get_child(dec_x, 1);
-	assert_ptr(type_x, "ptr type_x");
-	expect_int_equal(type_x->type, dag_type_type, "type type_x");
-
-	struct dag_node* name_x = dag_get_child(type_x, 0);
+	struct dag_node* name_x = dag_get_child(dec_x, 1);
 	assert_ptr(name_x, "ptr name_x");
 	expect_int_equal(name_x->type, dag_type_id, "id name_x");
 	expect_str(&name_x->value, "Int32", "Int32 name_x");
@@ -1615,11 +1611,7 @@ void test_parse_anonymous_function()
 	expect_int_equal(y->type, dag_type_id, "id y");
 	expect_str(&y->value, "y", "y y");
 
-	struct dag_node* type_y = dag_get_child(dec_y, 1);
-	assert_ptr(type_y, "ptr type_y");
-	expect_int_equal(type_y->type, dag_type_type, "type type_y");
-
-	struct dag_node* name_y = dag_get_child(type_y, 0);
+	struct dag_node* name_y = dag_get_child(dec_y, 1);
 	assert_ptr(name_y, "ptr name_y");
 	expect_int_equal(name_y->type, dag_type_id, "id name_y");
 	expect_str(&name_y->value, "Int32", "Int32 name_y");
@@ -1633,11 +1625,7 @@ void test_parse_anonymous_function()
 	expect_int_equal(z->type, dag_type_id, "id z");
 	expect_str(&z->value, "z", "z z");
 
-	struct dag_node* type_z = dag_get_child(dec_z, 1);
-	assert_ptr(type_z, "ptr type_z");
-	expect_int_equal(type_z->type, dag_type_type, "type type_z");
-
-	struct dag_node* name_z = dag_get_child(type_z, 0);
+	struct dag_node* name_z = dag_get_child(dec_z, 1);
 	assert_ptr(name_z, "ptr name_z");
 	expect_int_equal(name_z->type, dag_type_id, "id name_z");
 	expect_str(&name_z->value, "Int32", "Int32 name_z");
@@ -1700,11 +1688,7 @@ void test_parse_anonymous_function2()
 	expect_int_equal(x->type, dag_type_id, "id x");
 	expect_str(&x->value, "x", "x x");
 
-	struct dag_node* type_x = dag_get_child(dec_x, 1);
-	assert_ptr(type_x, "ptr type_x");
-	expect_int_equal(type_x->type, dag_type_type, "type type_x");
-
-	struct dag_node* name_x = dag_get_child(type_x, 0);
+	struct dag_node* name_x = dag_get_child(dec_x, 1);
 	assert_ptr(name_x, "ptr name_x");
 	expect_int_equal(name_x->type, dag_type_id, "id name_x");
 	expect_str(&name_x->value, "Int32", "Int32 name_x");
@@ -1718,11 +1702,7 @@ void test_parse_anonymous_function2()
 	expect_int_equal(y->type, dag_type_id, "id y");
 	expect_str(&y->value, "y", "y y");
 
-	struct dag_node* type_y = dag_get_child(dec_y, 1);
-	assert_ptr(type_y, "ptr type_y");
-	expect_int_equal(type_y->type, dag_type_type, "type type_y");
-
-	struct dag_node* name_y = dag_get_child(type_y, 0);
+	struct dag_node* name_y = dag_get_child(dec_y, 1);
 	assert_ptr(name_y, "ptr name_y");
 	expect_int_equal(name_y->type, dag_type_id, "id name_y");
 	expect_str(&name_y->value, "Int32", "Int32 name_y");
@@ -1736,11 +1716,7 @@ void test_parse_anonymous_function2()
 	expect_int_equal(z->type, dag_type_id, "id z");
 	expect_str(&z->value, "z", "z z");
 
-	struct dag_node* type_z = dag_get_child(dec_z, 1);
-	assert_ptr(type_z, "ptr type_z");
-	expect_int_equal(type_z->type, dag_type_type, "type type_z");
-
-	struct dag_node* name_z = dag_get_child(type_z, 0);
+	struct dag_node* name_z = dag_get_child(dec_z, 1);
 	assert_ptr(name_z, "ptr name_z");
 	expect_int_equal(name_z->type, dag_type_id, "id name_z");
 	expect_str(&name_z->value, "Int32", "Int32 name_z");
@@ -1749,11 +1725,7 @@ void test_parse_anonymous_function2()
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, dag_type_dret, "dret dret");
 
-	struct dag_node* dret_type = dag_get_child(dret, 0);
-	assert_ptr(dret_type, "ptr dret_type");
-	assert_int_equal(dret_type->type, dag_type_type, "type dret_type");
-
-	struct dag_node* dret_type_id = dag_get_child(dret_type, 0);
+	struct dag_node* dret_type_id = dag_get_child(dret, 0);
 	assert_ptr(dret_type_id, "ptr dret_type_id");
 	expect_int_equal(dret_type_id->type, dag_type_id, "id dret_type_id");
 	expect_str(&dret_type_id->value, "Int32", "In32 dret_type_id");
@@ -1798,11 +1770,7 @@ void test_parse_let()
 	expect_int_equal(id->type, dag_type_id, "id id");
 	expect_str(&id->value, "a", "a");
 
-	struct dag_node* type = dag_get_child(dec, 1);
-	assert_ptr(type, "ptr type");
-	expect_int_equal(type->type, dag_type_type, "type type");
-
-	struct dag_node* name = dag_get_child(type, 0);
+	struct dag_node* name = dag_get_child(dec, 1);
 	assert_ptr(name, "ptr name");
 	expect_int_equal(name->type, dag_type_id, "id name");
 	expect_str(&name->value, "Int32", "Int32");
@@ -1838,11 +1806,7 @@ void test_parse_let2()
 	expect_int_equal(id->type, dag_type_id, "id");
 	expect_str(&id->value, "a", "a");
 
-	struct dag_node* type = dag_get_child(dec, 1);
-	assert_ptr(type, "ptr type");
-	expect_int_equal(type->type, dag_type_type, "type type");
-
-	struct dag_node* name = dag_get_child(type, 0);
+	struct dag_node* name = dag_get_child(dec, 1);
 	assert_ptr(name, "ptr name");
 	expect_int_equal(name->type, dag_type_id, "id name");
 	expect_str(&name->value, "Int32", "Int32");

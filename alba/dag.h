@@ -37,7 +37,6 @@ enum dag_type {
 	dag_type_for_range,
 	dag_type_for_iteration,
 	dag_type_declaration,
-	dag_type_type,
 	dag_type_array_literal,
 	dag_type_array_subscript,
 	dag_type_anonymous_function,
@@ -83,7 +82,6 @@ enum result dag_set_names(char** names)
 	names[dag_type_for_range] = "for-range";
 	names[dag_type_for_iteration] = "for-iteration";
 	names[dag_type_declaration] = "declaration";
-	names[dag_type_type] = "type";
 	names[dag_type_array_literal] = "array-literal";
 	names[dag_type_array_subscript] = "array-subscript";
 	names[dag_type_anonymous_function] = "anonymous-function";

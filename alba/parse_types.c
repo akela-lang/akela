@@ -209,21 +209,15 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 
 		if (valid) {
 			dag_create_node(&n);
-			n->type = dag_type_type;
+			n->type = dag_type_id;
+			buffer_copy(&name->value, &n->value);
 
 			struct dag_node* a = NULL;
 			dag_create_node(&a);
 			a->type = dag_type_id;
-			buffer_copy(&name->value, &a->value);
+			buffer_copy(&name2->value, &a->value);
 
 			dag_add_child(n, a);
-
-			struct dag_node* b = NULL;
-			dag_create_node(&b);
-			b->type = dag_type_id;
-			buffer_copy(&name2->value, &b->value);
-
-			dag_add_child(n, b);
 
 			struct symbol* sym = NULL;
 			malloc_safe((void**)&sym, sizeof(struct symbol));
@@ -250,14 +244,8 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 
 		if (valid) {
 			dag_create_node(&n);
-			n->type = dag_type_type;
-
-			struct dag_node* a = NULL;
-			dag_create_node(&a);
-			a->type = dag_type_id;
-			buffer_copy(&name->value, &a->value);
-
-			dag_add_child(n, a);
+			n->type = dag_type_id;
+			buffer_copy(&name->value, &n->value);
 
 			struct symbol* sym = NULL;
 			malloc_safe((void**)&sym, sizeof(struct symbol));

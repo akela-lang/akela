@@ -476,11 +476,6 @@ bool function(struct parse_state* ps, struct dag_node** root)
 	return valid;
 }
 
-bool dret(struct parse_state* ps, struct dag_node** root)
-{
-
-}
-
 /* for_range -> for id = expr:expr stmts end */
 /* dynamic-output ps{} root root{} */
 bool for_range(struct parse_state* ps, struct dag_node** root)
