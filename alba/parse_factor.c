@@ -190,7 +190,6 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
-	struct dag_node* n = NULL;
 
 	/* shared ps{top} -> saved */
 	struct environment* saved = ps->top;
@@ -207,52 +206,75 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 	struct token* f = NULL;
 	valid = valid && match(ps, token_function, "expected anonymous function", &f);
 
-	/* destroy f f{} */
-	token_destroy(f);
-	free(f);
-
 	struct token* lp = NULL;
 	valid = valid && match(ps, token_left_paren, "expected left parenthesis", &lp);
 
-	/* destroy lp lp{} */
-	token_destroy(lp);
-	free(lp);
+	/* allocate a a{} */
+	struct dag_node* dseq_node = NULL;
+	valid = valid && dseq(ps, &dseq_node);
 
 	/* allocate n */
-	dag_create_node(&n);
-	n->type = dag_type_anonymous_function;
-
-	/* allocate a a{} */
-	struct dag_node* a = NULL;
-	valid = valid && dseq(ps, &a);
-
-	if (a) {
-		/* transfer a a{} -> n{} */
-		dag_add_child(n, a);
-	}
-
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
 	valid = valid && match(ps, token_right_paren, "expected right parenthesis", &rp);
 
-	/* destroy rp rp{} */
-	token_destroy(rp);
-	free(rp);
+	int num;
+	valid = valid && get_lookahead(ps, 1, &num);
+	struct token* t0 = get_token(&ps->lookahead, 0);
+	struct dag_node* dret_type = NULL;
+	if (t0 && t0->type == token_double_colon) {
+		struct token* dc = NULL;
+		valid = valid && match(ps, token_double_colon, "expecting double colon", &dc);
+		token_destroy(dc);
+		free(dc);
+
+		valid = valid && type(ps, NULL, &dret_type);
+	}
 
 	/* allocate b b{} */
-	struct dag_node* b = NULL;
-	valid = valid && stmts(ps, &b);
-
-	if (b) {
-		/* transfer b b{} -> n */
-		dag_add_child(n, b);
-	}
+	struct dag_node* stmts_node = NULL;
+	valid = valid && stmts(ps, &stmts_node);
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
 	valid = valid && match(ps, token_end, "expected end", &end);
 
-	/* destroy end end{} */
+	if (valid) {
+		struct dag_node* n = NULL;
+
+		dag_create_node(&n);
+		n->type = dag_type_anonymous_function;
+
+		/* transfer dseq_node dseq_node{} -> n{} */
+		dag_add_child(n, dseq_node);
+
+		struct dag_node* dret = NULL;
+		dag_create_node(&dret);
+		dret->type = dag_type_dret;
+
+		if (dret_type) {
+			dag_add_child(dret, dret_type);
+		}
+		dag_add_child(n, dret);
+
+		/* transfer stmts_node stmts_node{} -> n */
+		dag_add_child(n, stmts_node);
+
+		/* transfer n -> root */
+		*root = n;
+	} else {
+		dag_destroy(dseq_node);
+		dag_destroy(dret_type);
+		dag_destroy(stmts_node);
+	}
+
+	/* destroy f f{} lp lp{} rp rp{} end end{} */
+	token_destroy(f);
+	free(f);
+	token_destroy(lp);
+	free(lp);
+	token_destroy(rp);
+	free(rp);
 	token_destroy(end);
 	free(end);
 
@@ -261,10 +283,6 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 
 	/* destroy env env{} */
 	environment_destroy(env);
-
-	if (valid) {
-		*root = n;
-	}
 
 	return valid;
 }
