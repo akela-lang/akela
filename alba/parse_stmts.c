@@ -17,6 +17,8 @@ bool stmts_prime(struct parse_state* ps, struct dag_node* parent);
 bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct dag_node** root);
 bool function(struct parse_state* ps, struct dag_node** root);
+bool function_start(struct parse_state* ps, struct dag_node** root);
+bool function_finish(struct parse_state* ps, struct dag_node* fd);
 bool for_range(struct parse_state* ps, struct dag_node** root);
 bool for_iteration(struct parse_state* ps, struct dag_node** root);
 bool elseif_stmts(struct parse_state* ps, struct dag_node* parent);
@@ -320,7 +322,6 @@ bool stmt(struct parse_state* ps, struct dag_node** root)
 bool function(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
-	struct dag_node* n = NULL;
 
 	/* shared ps{top} -> saved */
 	struct environment* saved = ps->top;
@@ -330,6 +331,29 @@ bool function(struct parse_state* ps, struct dag_node** root)
 	malloc_safe((void**)&env, sizeof(struct environment));
 	environment_init(env, saved);
 	ps->top = env;
+
+	struct dag_node* fd = NULL;
+	valid = valid && function_start(ps, &fd);
+
+	valid = valid && function_finish(ps, fd);
+
+	if (valid) {
+		*root = fd;
+	}
+
+	/* transfer saved -> ps->top */
+	ps->top = saved;
+
+	/* destroy env env{} */
+	environment_destroy(env);
+
+	return valid;
+}
+
+bool function_start(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
 
 	/* allocate ps{} f f{} */
 	struct token* f = NULL;
@@ -397,7 +421,9 @@ bool function(struct parse_state* ps, struct dag_node** root)
 		symbol_init(sym);
 		buffer_copy_str(&sym->type, "function");
 		sym->dec = n;
-		environment_put(saved, &id->value, sym);
+		environment_put(ps->top->prev, &id->value, sym);
+
+		*root = n;
 	} else {
 		dag_destroy(dseq_node);
 		/* destroy f f{} id id{} lp lp{} rp rp{} end end{} */
@@ -409,14 +435,14 @@ bool function(struct parse_state* ps, struct dag_node** root)
 		free(lp);
 		token_destroy(rp);
 		free(rp);
-
-		/* transfer saved -> ps->top */
-		ps->top = saved;
-
-		/* destroy env env{} */
-		environment_destroy(env);
-		return valid;
 	}
+
+	return valid;
+}
+
+bool function_finish(struct parse_state* ps, struct dag_node* fd)
+{
+	bool valid = true;
 
 	/* allocate ps{} stmts_node stmts_node{} */
 	struct dag_node* stmts_node = NULL;
@@ -429,49 +455,16 @@ bool function(struct parse_state* ps, struct dag_node** root)
 	/* finish building nodes */
 	if (valid) {
 		/* transfer stmts_node -> n{} */
-		dag_add_child(n, stmts_node);
+		dag_add_child(fd, stmts_node);
 
-		/* transfer n -> root */
-		*root = n;
 	} else {
-		/* destroy n n{} dseq_node dseq_node{} stmts_node stmts_node{} */
-		token_destroy(f);
-		free(f);
-		token_destroy(id);
-		free(id);
-		token_destroy(lp);
-		free(lp);
-		token_destroy(rp);
-		free(rp);
-
-		dag_destroy(n);
+		dag_destroy(fd);
 		dag_destroy(stmts_node);
-		token_destroy(end);
-		free(end);
-		/* transfer saved -> ps->top */
-		ps->top = saved;
-
-		/* destroy env env{} */
-		environment_destroy(env);
-
-		return valid;
 	}
 
-	/* destroy n n{} dseq_node dseq_node{} stmts_node stmts_node{} */
-	token_destroy(f);
-	free(f);
-	token_destroy(id);
-	free(id);
-	token_destroy(lp);
-	free(lp);
-	token_destroy(rp);
-	free(rp);
-
-	/* transfer saved -> ps->top */
-	ps->top = saved;
-
-	/* destroy env env{} */
-	environment_destroy(env);
+	/* destroy end end{} */
+	token_destroy(end);
+	free(end);
 
 	return valid;
 }
