@@ -89,14 +89,14 @@ void test_parse_stmts()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("i + 1\nx * 1", &ps, &root);
+	bool valid = parse_setup("var i::Int64; var x::Int64; i + 1\nx * 1", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr1");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
 
-	struct dag_node* left = dag_get_child(root, 0);
+	struct dag_node* left = dag_get_child(root, 2);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, dag_type_plus, "plus");
 
@@ -110,7 +110,7 @@ void test_parse_stmts()
 	expect_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "1", "1");
 
-	struct dag_node* right2 = dag_get_child(root, 1);
+	struct dag_node* right2 = dag_get_child(root, 3);
 	assert_ptr(right2, "right2");
 	expect_int_equal(right2->type, dag_type_mult, "mult");
 
@@ -138,14 +138,14 @@ void test_parse_stmts2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("x+1\n5-4\n", &ps, &root);
+	bool valid = parse_setup("var x::Int64; x+1\n5-4\n", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
 
-	struct dag_node* a = dag_get_child(root, 0);
+	struct dag_node* a = dag_get_child(root, 1);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, dag_type_plus, "plus a");
 
@@ -159,7 +159,7 @@ void test_parse_stmts2()
 	expect_int_equal(c->type, dag_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct dag_node* d = dag_get_child(root, 1);
+	struct dag_node* d = dag_get_child(root, 2);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, dag_type_minus, "minus d");
 
@@ -187,14 +187,14 @@ void test_parse_stmts3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("x+1\n5-4\ny+z", &ps, &root);
+	bool valid = parse_setup("var x::Int64; var y::Int64; var z::Int64; x+1; 5-4; y+z", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
 
-	struct dag_node* a = dag_get_child(root, 0);
+	struct dag_node* a = dag_get_child(root, 3);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, dag_type_plus, "plus a");
 
@@ -208,7 +208,7 @@ void test_parse_stmts3()
 	expect_int_equal(c->type, dag_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct dag_node* d = dag_get_child(root, 1);
+	struct dag_node* d = dag_get_child(root, 4);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, dag_type_minus, "minus d");
 
@@ -222,7 +222,7 @@ void test_parse_stmts3()
 	expect_int_equal(f->type, dag_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
 
-	struct dag_node* g = dag_get_child(root, 2);
+	struct dag_node* g = dag_get_child(root, 5);
 	assert_ptr(g, "ptr g");
 	expect_int_equal(g->type, dag_type_plus, "plus g");
 
@@ -250,14 +250,14 @@ void test_parse_stmts4()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("x+1;5-4;y+z", &ps, &root);
+	bool valid = parse_setup("var x::Int64; var y::Int64; var z::Int64; x+1; 5-4; y+z", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "root");
 	expect_int_equal(root->type, dag_type_stmts, "stmts");
 
-	struct dag_node* a = dag_get_child(root, 0);
+	struct dag_node* a = dag_get_child(root, 3);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, dag_type_plus, "plus a");
 
@@ -271,7 +271,7 @@ void test_parse_stmts4()
 	expect_int_equal(c->type, dag_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct dag_node* d = dag_get_child(root, 1);
+	struct dag_node* d = dag_get_child(root, 4);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, dag_type_minus, "minus d");
 
@@ -285,7 +285,7 @@ void test_parse_stmts4()
 	expect_int_equal(f->type, dag_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
 
-	struct dag_node* g = dag_get_child(root, 2);
+	struct dag_node* g = dag_get_child(root, 5);
 	assert_ptr(g, "ptr g");
 	expect_int_equal(g->type, dag_type_plus, "plus g");
 
@@ -327,7 +327,7 @@ void test_parse_stmts5()
 
 	struct dag_node* cond = dag_get_child(cb, 0);
 	assert_ptr(cond, "ptr cond");
-	expect_int_equal(cond->type, dag_type_id, "id cond");
+	expect_int_equal(cond->type, dag_type_boolean, "boolean cond");
 	expect_str(&cond->value, "true", "true cond");
 
 	struct dag_node* stmts_cb = dag_get_child(cb, 1);
@@ -366,7 +366,7 @@ void test_parse_function()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo()\nx+1\n5+4\nend", &ps, &root);
+	bool valid = parse_setup("function foo() var x::Int64; x+1; 5+4 end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
@@ -387,11 +387,11 @@ void test_parse_function()
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, dag_type_dret, "dret dret");
 
-	struct dag_node* b = dag_get_child(root, 3);
-	assert_ptr(b, "ptr b");
-	expect_int_equal(b->type, dag_type_stmts, "stmts b");
+	struct dag_node* stmts = dag_get_child(root, 3);
+	assert_ptr(stmts, "ptr b");
+	expect_int_equal(stmts->type, dag_type_stmts, "stmts b");
 
-	struct dag_node* d = dag_get_child(b, 0);
+	struct dag_node* d = dag_get_child(stmts, 1);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, dag_type_plus, "plus");
 
@@ -405,7 +405,7 @@ void test_parse_function()
 	expect_int_equal(f->type, dag_type_number, "number f");
 	expect_str(&f->value, "1", "1");
 
-	struct dag_node* g = dag_get_child(b, 1);
+	struct dag_node* g = dag_get_child(stmts, 2);
 	assert_ptr(g, "ptr g");
 	expect_int_equal(g->type, dag_type_plus, "plus");
 
@@ -434,7 +434,7 @@ void test_parse_function2()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo(x::Int64)\nx+1\n5+4\nend", &ps, &root);
+	valid = parse_setup("function foo(x::Int64) x+1; 5+4 end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
@@ -764,7 +764,7 @@ void test_parse_call2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo(arg1::Int64) end; foo(x) + 10", &ps, &root);
+	bool valid = parse_setup("function foo(arg1::Int64) end; foo(2) + 10", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
@@ -825,8 +825,8 @@ void test_parse_call2()
 
 	struct dag_node* cseq_a = dag_get_child(cseq, 0);
 	assert_ptr(cseq_a, "ptr cseq_a");
-	expect_int_equal(cseq_a->type, dag_type_id, "cseq_a");
-	expect_str(&cseq_a->value, "x", "x cseq_a");
+	expect_int_equal(cseq_a->type, dag_type_number, "cseq_a");
+	expect_str(&cseq_a->value, "2", "2 cseq_a");
 
 	struct dag_node* cseq_b = dag_get_child(cseq, 1);
 	assert_null(cseq_b, "null cseq_b");
@@ -856,7 +856,7 @@ void test_parse_call3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo(arg1::Int64, arg2::Int64)::Int64 end; foo(x,y) + 10", &ps, &root);
+	bool valid = parse_setup("function foo(arg1::Int64, arg2::Int64)::Int64 end; var x::Int64; var y::Int64; foo(x,y) + 10", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
@@ -894,7 +894,7 @@ void test_parse_call3()
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, dag_type_dret, "dret dret");
 
-	struct dag_node* plus = dag_get_child(root, 1);
+	struct dag_node* plus = dag_get_child(root, 3);
 	assert_ptr(plus, "ptr plus");
 	expect_int_equal(plus->type, dag_type_plus, "plus plus");
 
@@ -946,7 +946,7 @@ void test_parse_call4()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo(arg0::Int64, arg1::Int64, arg2::Int64)::Int64 100 end; foo(x, y, 1) + 10", &ps, &root);
+	bool valid = parse_setup("function foo(arg0::Int64, arg1::Int64, arg2::Int64)::Int64 100 end; var x::Int64; var y::Int64; foo(x, y, 1) + 10", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
@@ -1017,7 +1017,7 @@ void test_parse_call4()
 	expect_int_equal(dret_type_id->type, dag_type_id, "id dret_type_id");
 	expect_str(&dret_type_id->value, "Int64", "Int64 dret_type_id");
 
-	struct dag_node* plus = dag_get_child(root, 1);
+	struct dag_node* plus = dag_get_child(root, 3);
 	assert_ptr(plus, "ptr plus");
 	expect_int_equal(plus->type, dag_type_plus, "plus");
 
@@ -1068,7 +1068,7 @@ void test_parse_if()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if true\n10 + 20\nx * y\nend", &ps, &root);
+	bool valid = parse_setup("if true var x::Int64; var y::Int64; 10 + 20; x * y end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
@@ -1083,14 +1083,14 @@ void test_parse_if()
 
 	struct dag_node* cond = dag_get_child(cb, 0);
 	assert_ptr(cond, "ptr cond");
-	expect_int_equal(cond->type, dag_type_id, "id");
+	expect_int_equal(cond->type, dag_type_boolean, "boolean");
 	expect_str(&cond->value, "true", "true");
 
 	struct dag_node* stmts = dag_get_child(cb, 1);
 	assert_ptr(stmts, "ptr stmts");
 	expect_int_equal(stmts->type, dag_type_stmts, "stmts");
 
-	struct dag_node* plus = dag_get_child(stmts, 0);
+	struct dag_node* plus = dag_get_child(stmts, 2);
 	assert_ptr(plus, "ptr plus");
 	expect_int_equal(plus->type, dag_type_plus, "plus");
 
@@ -1104,7 +1104,7 @@ void test_parse_if()
 	expect_int_equal(num1->type, dag_type_number, "number 1");
 	expect_str(&num1->value, "20", "20");
 
-	struct dag_node* mult = dag_get_child(stmts, 1);
+	struct dag_node* mult = dag_get_child(stmts, 3);
 	assert_ptr(mult, "ptr mult");
 	expect_int_equal(mult->type, dag_type_mult, "mult");
 
@@ -1132,22 +1132,23 @@ void test_parse_elseif()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if true\n10 + 20\nx * y\nelseif true\n1\n2\nend", &ps, &root);
+	bool valid = parse_setup("var x::Int64; var y::Int64; if true 10 + 20; x * y elseif true 1; 2 end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
-
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, dag_type_if, "if");
 
-	struct dag_node* cb = dag_get_child(root, 0);
+	struct dag_node* if_stmt = dag_get_child(root, 2);
+	assert_ptr(if_stmt, "ptr if_stmt");
+	expect_int_equal(if_stmt->type, dag_type_if, "if");
+
+	struct dag_node* cb = dag_get_child(if_stmt, 0);
 	assert_ptr(cb, "ptr cb");
 	expect_int_equal(cb->type, dag_type_conditional_branch, "conditional branch");
 
 	struct dag_node* cond = dag_get_child(cb, 0);
 	assert_ptr(cond, "ptr cond");
-	expect_int_equal(cond->type, dag_type_id, "id");
+	expect_int_equal(cond->type, dag_type_boolean, "boolean cond");
 	expect_str(&cond->value, "true", "true");
 
 	struct dag_node* stmts = dag_get_child(cb, 1);
@@ -1182,13 +1183,13 @@ void test_parse_elseif()
 	expect_int_equal(y->type, dag_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
-	struct dag_node* cb2 = dag_get_child(root, 1);
+	struct dag_node* cb2 = dag_get_child(if_stmt, 1);
 	assert_ptr(cb2, "ptr cb2");
 	expect_int_equal(cb2->type, dag_type_conditional_branch, "conditional branch cb2");
 
 	struct dag_node* cond2 = dag_get_child(cb2, 0);
 	assert_ptr(cond2, "ptr cond2");
-	expect_int_equal(cond2->type, dag_type_id, "id cond2");
+	expect_int_equal(cond2->type, dag_type_boolean, "boolean cond2");
 	expect_str(&cond2->value, "true", "true cond2");
 
 	struct dag_node* stmts2 = dag_get_child(cb2, 1);
@@ -1220,22 +1221,24 @@ void test_parse_elseif2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if true\n10 + 20\nx * y\nelseif true\n1\n2\nelseif true\nx\ny\nend", &ps, &root);
+	bool valid = parse_setup("var x::Int64; var y::Int64; if true 10 + 20; x * y elseif true 1; 2 elseif true x; y end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
-
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, dag_type_if, "if");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
 
-	struct dag_node* cb = dag_get_child(root, 0);
+	struct dag_node* if_stmt = dag_get_child(root, 2);
+	assert_ptr(if_stmt, "ptr root");
+	expect_int_equal(if_stmt->type, dag_type_if, "if if_stmt");
+
+	struct dag_node* cb = dag_get_child(if_stmt, 0);
 	assert_ptr(cb, "ptr cb");
 	expect_int_equal(cb->type, dag_type_conditional_branch, "conditional branch");
 
 	struct dag_node* cond = dag_get_child(cb, 0);
 	assert_ptr(cond, "ptr cond");
-	expect_int_equal(cond->type, dag_type_id, "id");
+	expect_int_equal(cond->type, dag_type_boolean, "boolean cond");
 	expect_str(&cond->value, "true", "true");
 
 	struct dag_node* stmts = dag_get_child(cb, 1);
@@ -1271,13 +1274,13 @@ void test_parse_elseif2()
 	expect_str(&y->value, "y", "y");
 
 	/* first elseif */
-	struct dag_node* cb2 = dag_get_child(root, 1);
+	struct dag_node* cb2 = dag_get_child(if_stmt, 1);
 	assert_ptr(cb2, "ptr cb2");
 	expect_int_equal(cb2->type, dag_type_conditional_branch, "conditional branch cb2");
 
 	struct dag_node* cond2 = dag_get_child(cb2, 0);
 	assert_ptr(cond2, "ptr cond2");
-	expect_int_equal(cond2->type, dag_type_id, "id cond2");
+	expect_int_equal(cond2->type, dag_type_boolean, "boolean cond2");
 	expect_str(&cond2->value, "true", "true cond2");
 
 	struct dag_node* stmts2 = dag_get_child(cb2, 1);
@@ -1295,13 +1298,13 @@ void test_parse_elseif2()
 	expect_str(&num3->value, "2", "2 num3");
 
 	/* second elseif */
-	struct dag_node* cb3 = dag_get_child(root, 2);
+	struct dag_node* cb3 = dag_get_child(if_stmt, 2);
 	assert_ptr(cb3, "ptr cb3");
 	expect_int_equal(cb3->type, dag_type_conditional_branch, "conditional branch cb3");
 
 	struct dag_node* cond3 = dag_get_child(cb3, 0);
 	assert_ptr(cond3, "ptr cond3");
-	expect_int_equal(cond3->type, dag_type_id, "id cond3");
+	expect_int_equal(cond3->type, dag_type_boolean, "boolean cond3");
 	expect_str(&cond3->value, "true", "true cond3");
 
 	struct dag_node* stmts3 = dag_get_child(cb3, 1);
@@ -1332,22 +1335,24 @@ void test_parse_else()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if false\n10\nelse\nx\ny\nend", &ps, &root);
+	bool valid = parse_setup("var x::Int64; var y::Int64; if false 10 else x; y end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
-
 	assert_ptr(root, "ptr root");
-	assert_int_equal(root->type, dag_type_if, "if");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
 
-	struct dag_node* cb0 = dag_get_child(root, 0);
+	struct dag_node* if_stmt = dag_get_child(root, 2);
+	assert_ptr(if_stmt, "ptr if_stmt");
+	assert_int_equal(if_stmt->type, dag_type_if, "if if_stmt");
+
+	struct dag_node* cb0 = dag_get_child(if_stmt, 0);
 	assert_ptr(cb0, "ptr cb0");
 	expect_int_equal(cb0->type, dag_type_conditional_branch, "conditional branch cb0");
 
 	struct dag_node* cond = dag_get_child(cb0, 0);
 	assert_ptr(cond, "ptr cond");
-	expect_int_equal(cond->type, dag_type_id, "id cond");
+	expect_int_equal(cond->type, dag_type_boolean, "boolean cond");
 	expect_str(&cond->value, "false", "false cond");
 
 	struct dag_node* stmts0 = dag_get_child(cb0, 1);
@@ -1359,7 +1364,7 @@ void test_parse_else()
 	expect_int_equal(num->type, dag_type_number, "number num");
 	expect_str(&num->value, "10", "10 num");
 
-	struct dag_node* cb1 = dag_get_child(root, 1);
+	struct dag_node* cb1 = dag_get_child(if_stmt, 1);
 	assert_ptr(cb1, "ptr cb1");
 	expect_int_equal(cb1->type, dag_type_default_branch, "default branch cb1");
 
@@ -1391,24 +1396,25 @@ void test_parse_else2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if false\n10\nelseif false\n20\nelse\nx\ny\nend", &ps, &root);
+	bool valid = parse_setup("var x::Int64; var y::Int64; if false 10 elseif false 20 else x; y end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
-
-	/* top */
 	assert_ptr(root, "ptr root");
-	assert_int_equal(root->type, dag_type_if, "if");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* if_stmt = dag_get_child(root, 2);
+	assert_ptr(if_stmt, "ptr root");
+	assert_int_equal(if_stmt->type, dag_type_if, "if");
 
 	/* if */
-	struct dag_node* cb0 = dag_get_child(root, 0);
+	struct dag_node* cb0 = dag_get_child(if_stmt, 0);
 	assert_ptr(cb0, "ptr cb0");
 	expect_int_equal(cb0->type, dag_type_conditional_branch, "conditional branch cb0");
 
 	struct dag_node* cond0 = dag_get_child(cb0, 0);
 	assert_ptr(cond0, "ptr cond0");
-	expect_int_equal(cond0->type, dag_type_id, "id cond0");
+	expect_int_equal(cond0->type, dag_type_boolean, "boolean cond0");
 	expect_str(&cond0->value, "false", "false cond0");
 
 	struct dag_node* stmts0 = dag_get_child(cb0, 1);
@@ -1421,13 +1427,13 @@ void test_parse_else2()
 	expect_str(&num0->value, "10", "10 num0");
 
 	/* elseif */
-	struct dag_node* cb1 = dag_get_child(root, 1);
+	struct dag_node* cb1 = dag_get_child(if_stmt, 1);
 	assert_ptr(cb1, "ptr cb1");
 	expect_int_equal(cb1->type, dag_type_conditional_branch, "conditional branch cb1");
 
 	struct dag_node* cond1 = dag_get_child(cb1, 0);
 	assert_ptr(cond1, "ptr cond");
-	expect_int_equal(cond1->type, dag_type_id, "id cond1");
+	expect_int_equal(cond1->type, dag_type_boolean, "boolean cond1");
 	expect_str(&cond1->value, "false", "false cond1");
 
 	struct dag_node* stmts1 = dag_get_child(cb1, 1);
@@ -1439,7 +1445,7 @@ void test_parse_else2()
 	expect_str(&num1->value, "20", "20 num1");
 
 	/* else */
-	struct dag_node* db = dag_get_child(root, 2);
+	struct dag_node* db = dag_get_child(if_stmt, 2);
 	assert_ptr(db, "ptr db");
 	expect_int_equal(db->type, dag_type_default_branch, "default branch db");
 
@@ -1481,7 +1487,7 @@ void test_parse_while()
 
 	struct dag_node* cond = dag_get_child(node, 0);
 	assert_ptr(cond, "ptr cond");
-	expect_int_equal(cond->type, dag_type_id, "id cond");
+	expect_int_equal(cond->type, dag_type_boolean, "boolean cond");
 	expect_str(&cond->value, "true", "true cond");
 
 	struct dag_node* stmts = dag_get_child(node, 1);
@@ -1554,12 +1560,15 @@ void test_parse_for_iteration()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("for i in list 1 end", &ps, &root);
+	bool valid = parse_setup("var list::Vector{Int64}; for i in list i + 1 end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
 	/* for */
-	struct dag_node* node = check_stmts(root, "stmts root");
+	struct dag_node* node = dag_get_child(root, 1);
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, dag_type_for_iteration, "for-iteration node");
 
@@ -1580,8 +1589,19 @@ void test_parse_for_iteration()
 	assert_ptr(stmts0, "ptr stmts0");
 	expect_int_equal(stmts0->type, dag_type_stmts, "stmts stmts0");
 
+	/* plus */
+	struct dag_node* plus = dag_get_child(stmts0, 0);
+	assert_ptr(plus, "ptr plus");
+	expect_int_equal(plus->type, dag_type_plus, "plus plus");
+
+	/* i */
+	struct dag_node* id2 = dag_get_child(plus, 0);
+	assert_ptr(id2, "ptr id2");
+	expect_int_equal(id2->type, dag_type_id, "id id2");
+	expect_str(&id2->value, "i", "i id2");
+
 	/* number */
-	struct dag_node* num0 = dag_get_child(stmts0, 0);
+	struct dag_node* num0 = dag_get_child(plus, 1);
 	assert_ptr(num0, "ptr num0");
 	expect_int_equal(num0->type, dag_type_number, "number num0");
 	expect_str(&num0->value, "1", "1 num0");

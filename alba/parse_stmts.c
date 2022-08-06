@@ -21,6 +21,8 @@ bool function_start(struct parse_state* ps, struct dag_node** root);
 bool function_finish(struct parse_state* ps, struct dag_node* fd);
 bool for_range(struct parse_state* ps, struct dag_node** root);
 bool for_iteration(struct parse_state* ps, struct dag_node** root);
+bool for_iteration_start(struct parse_state* ps, struct dag_node** root);
+bool for_iteration_finish(struct parse_state* ps, struct dag_node* n);
 bool elseif_stmts(struct parse_state* ps, struct dag_node* parent);
 bool else_stmt(struct parse_state* ps, struct dag_node* parent);
 
@@ -587,13 +589,33 @@ bool for_iteration(struct parse_state* ps, struct dag_node** root)
 	bool valid = true;
 	struct dag_node* n = NULL;
 
-	/* allocate ps{} fort fort{} */
-	struct token* fort = NULL;
-	valid = valid && match(ps, token_for, "expecting for", &fort);
+	struct environment* saved = ps->top;
+	struct environment* env = NULL;
+	malloc_safe(&env, sizeof(struct environment));
+	environment_init(env, saved);
+	ps->top = env;
 
-	/* destroy fort fort{} */
-	token_destroy(fort);
-	free(fort);
+	valid = valid && for_iteration_start(ps, &n);
+	valid = valid && for_iteration_finish(ps, n);
+
+	if (valid) {
+		*root = n;
+	}
+
+	ps->top = saved;
+	environment_destroy(env);
+
+	return valid;
+}
+
+bool for_iteration_start(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	/* allocate ps{} fort fort{} */
+	struct token* for_token = NULL;
+	valid = valid && match(ps, token_for, "expecting for", &for_token);
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
@@ -603,67 +625,92 @@ bool for_iteration(struct parse_state* ps, struct dag_node** root)
 	struct token* in = NULL;
 	valid = valid && match(ps, token_in, "expecting in", &in);
 
-	/* destroy in in{} */
-	token_destroy(in);
-	free(in);
-
-	/* for */
-	/* allocate n */
-	dag_create_node(&n);
-	n->type = dag_type_for_iteration;
-
-	/* id */
-	/* allocate a */
-	struct dag_node* a = NULL;
-	dag_create_node(&a);
-	a->type = dag_type_id;
-
-	/* allocate a{} */
-	if (id) {
-		buffer_copy(&id->value, &a->value);
-	}
-
-	/* destroy id id{] */
-	token_destroy(id);
-	free(id);
-
-	/* transfer a -> n{} */
-	dag_add_child(n, a);
-
 	/* allocate ps{} */
 	struct location loc;
 	valid = valid && get_parse_location(ps, &loc);
 
 	/* expr */
 	/* allocate ps{} b b{} */
-	struct dag_node* b = NULL;
-	valid = valid && expr(ps, &b);
+	struct dag_node* list = NULL;
+	valid = valid && expr(ps, &list);
 
-	if (!b) {
+	if (!list) {
 		set_source_error(ps->el, &loc, "expected expression after for-iteration");
+		valid = false;
+	}
+
+	if (valid) {
+		/* allocate n */
+		dag_create_node(&n);
+		n->type = dag_type_for_iteration;
+
+		/* allocate element */
+		struct dag_node* element = NULL;
+		dag_create_node(&element);
+		element->type = dag_type_id;
+
+		/* allocate element{} */
+		if (id) {
+			buffer_copy(&id->value, &element->value);
+		}
+
+		/* transfer element -> n{} */
+		dag_add_child(n, element);
+
+		/* transfer list -> n{} */
+		dag_add_child(n, list);
+
+		/* transfer n -> root */
+		*root = n;
+
+		struct symbol* sym = NULL;
+		malloc_safe(&sym, sizeof(struct symbol));
+		symbol_init(sym);
+		/* should get type information from list */
+		#pragma warning(suppress:6011)
+		environment_put(ps->top, &id->value, sym);
+
 	} else {
-		/* transfer b -> n{} */
-		dag_add_child(n, b);
+		dag_destroy(list);
+	}
+
+	token_destroy(for_token);
+	free(for_token);
+	token_destroy(id);
+	free(id);
+	token_destroy(in);
+	free(in);
+
+	return valid;
+}
+
+bool for_iteration_finish(struct parse_state* ps, struct dag_node* n)
+{
+	bool valid = true;
+
+	if (!n) {
+		valid = false;
 	}
 
 	/* stmts */
 	/* allocate ps{} c c{} */
-	struct dag_node* c = NULL;
-	valid = valid && stmts(ps, &c);
-
-	if (c) {
-		/* transfer c -> n{} */
-		dag_add_child(n, c);
-	}
+	struct dag_node* stmts_node = NULL;
+	valid = valid && stmts(ps, &stmts_node);
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
 	valid = valid && match(ps, token_end, "expected end", &end);
 
 	if (valid) {
-		/* transfer n -> root */
-		*root = n;
+		/* transfer stmts_node -> n{} */
+		dag_add_child(n, stmts_node);
+	} else {
+		dag_destroy(n);
+		dag_destroy(stmts_node);
 	}
+
+	token_destroy(end);
+	free(end);
 
 	return valid;
 }

@@ -82,11 +82,14 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 		}
 
 		/* number, id, string */
-	} else if (t0 && (t0->type == token_number || t0->type == token_id || t0->type == token_string)) {
+	} else if (t0 && (t0->type == token_number || t0->type == token_id || t0->type == token_string || t0->type == token_boolean)) {
+
+		struct location loc;
+		valid = valid && get_parse_location(ps, &loc);
 
 		/* allocate ps{} x x{} */
 		struct token* x = NULL;
-		valid = match(ps, t0->type, "expecting number, id, or string", &x);
+		valid = valid && match(ps, t0->type, "expecting number, id, or string", &x);
 
 		/* allocate n */
 		dag_create_node(&n);
@@ -97,11 +100,25 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 			n->type = dag_type_id;
 		} else if (x->type == token_string) {
 			n->type = dag_type_string;
+		} else if (x->type == token_boolean) {
+			n->type = dag_type_boolean;
 		}
 		
 		/* allocate n{} */
 		if (x) {
 			buffer_copy(&x->value, &n->value);
+		}
+
+		if (valid) {
+			if (n->type == dag_type_id) {
+				struct symbol* sym = environment_get(ps->top, &n->value);
+				if (!sym) {
+					char* a;
+					buffer2array(&n->value, &a);
+					set_source_error(ps->el, &loc, "identifier not declared: %s", a);
+					free(a);
+				}
+			}
 		}
 
 		/* destroy x x{} */

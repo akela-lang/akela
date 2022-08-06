@@ -8,7 +8,7 @@
 #include "scan.h"
 #include "parse_types.h"
 
-bool let(struct parse_state* ps, struct dag_node** root);
+bool var(struct parse_state* ps, struct dag_node** root);
 bool assignment(struct parse_state* ps, struct dag_node** root);
 bool boolean(struct parse_state* ps, struct dag_node** root);
 bool boolean_prime(struct parse_state* ps, struct dag_node** root, struct dag_node** insert_point);
@@ -36,8 +36,8 @@ bool expr(struct parse_state* ps, struct dag_node** root)
 
 
 	/* let, assignment, or operator/term */
-	if (t0 && t0->type == token_let) {
-		valid = valid && let(ps, &n);
+	if (t0 && t0->type == token_var) {
+		valid = valid && var(ps, &n);
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
 		valid = valid && assignment(ps, &n);
 	} else {
@@ -52,16 +52,16 @@ bool expr(struct parse_state* ps, struct dag_node** root)
 	return valid;
 }
 
-bool let(struct parse_state* ps, struct dag_node** root)
+bool var(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
 	struct dag_node* n = NULL;
 
-	struct token* ltt = NULL;
-	valid = valid && match(ps, token_let, "expected let", &ltt);
+	struct token* vrt = NULL;
+	valid = valid && match(ps, token_var, "expected var", &vrt);
 
-	token_destroy(ltt);
-	free(ltt);
+	token_destroy(vrt);
+	free(vrt);
 
 	struct location loc;
 	valid = valid && get_parse_location(ps, &loc);
@@ -99,13 +99,13 @@ bool let(struct parse_state* ps, struct dag_node** root)
 		}
 
 		dag_create_node(&n);
-		n->type = dag_type_let;
+		n->type = dag_type_var;
 
 		dag_add_child(n, a);
 		dag_add_child(n, b);
 	} else {
 		dag_create_node(&n);
-		n->type = dag_type_let;
+		n->type = dag_type_var;
 		dag_add_child(n, a);
 	}
 
@@ -629,7 +629,6 @@ bool mult_prime(struct parse_state* ps, struct dag_node** root, struct dag_node*
 	struct dag_node* b = NULL;
 	struct dag_node* c = NULL;
 	enum dag_type type = dag_type_none;
-	struct token* t;
 
 	/* allocate ps{} */
 	int num;
@@ -771,7 +770,6 @@ bool array_subscript_prime(struct parse_state* ps, struct dag_node* parent)
 {
 	bool valid = true;
 	int num;
-	struct token* t;
 
 	/* allocate ps{} */
 	valid = valid && get_lookahead(ps, 1, &num);

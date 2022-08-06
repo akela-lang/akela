@@ -170,6 +170,18 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
         *got_token = 1;
+    } else if (uc == '{') {
+        t->type = token_left_curly_brace;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
+        *got_token = 1;
+    } else if (uc == '}') {
+        t->type = token_right_curly_brace;
+        t->line = lc->line;
+        t->col = lc->col;
+        t->byte_pos = lc->byte_pos;
+        *got_token = 1;
     } else {
         char a[5];
         int i = 0;

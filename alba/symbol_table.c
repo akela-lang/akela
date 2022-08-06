@@ -22,7 +22,7 @@ void environment_put(struct environment* env, struct buffer* value, struct symbo
 struct symbol* environment_get(struct environment* env, struct buffer* value)
 {
 	for (struct environment* p = env; p; p = p->prev) {
-		struct symbol* found = hash_table_get(&env->ht, value);
+		struct symbol* found = hash_table_get(&p->ht, value);
 		if (found) return found;
 	}
 
