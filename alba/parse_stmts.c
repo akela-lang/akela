@@ -428,16 +428,17 @@ bool function_start(struct parse_state* ps, struct dag_node** root)
 		*root = n;
 	} else {
 		dag_destroy(dseq_node);
-		/* destroy f f{} id id{} lp lp{} rp rp{} end end{} */
-		token_destroy(f);
-		free(f);
-		token_destroy(id);
-		free(id);
-		token_destroy(lp);
-		free(lp);
-		token_destroy(rp);
-		free(rp);
 	}
+
+	/* destroy f f{} id id{} lp lp{} rp rp{} */
+	token_destroy(f);
+	free(f);
+	token_destroy(id);
+	free(id);
+	token_destroy(lp);
+	free(lp);
+	token_destroy(rp);
+	free(rp);
 
 	return valid;
 }
