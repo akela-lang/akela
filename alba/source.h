@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "zinc/result.h"
 #include "input.h"
 #include "token.h"
@@ -42,7 +43,7 @@ void compile_error_list_add(struct compile_error_list* el, struct compile_error*
 void compile_error_list_destroy(struct compile_error_list* el);
 
 /* dynamic-output el{} */
-void set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...);
+bool set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...);
 
 /* dynamic-output bf{} */
 /* resource-input d */

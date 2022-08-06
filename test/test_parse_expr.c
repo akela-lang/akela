@@ -1570,11 +1570,14 @@ void test_parse_string()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("a = \"hello\"", &ps, &root);
+	valid = parse_setup("var a::String; a = \"hello\"", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
-	struct dag_node* assign = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* assign = dag_get_child(root, 1);
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, dag_type_assign, "assign assign");
 	
@@ -1603,11 +1606,14 @@ void test_parse_anonymous_function()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("a = function(x::Int32,y::Int32,z::Int32) 1 end", &ps, &root);
+	valid = parse_setup("var a::Function; a = function(x::Int32,y::Int32,z::Int32) 1 end", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse valid");
 
-	struct dag_node* assign = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* assign = dag_get_child(root, 1);
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, dag_type_assign, "assign assign");
 
@@ -1694,11 +1700,14 @@ void test_parse_anonymous_function2()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end", &ps, &root);
+	valid = parse_setup("var a::Function; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse valid");
 
-	struct dag_node* assign = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* assign = dag_get_child(root, 1);
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, dag_type_assign, "assign assign");
 

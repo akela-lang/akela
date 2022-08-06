@@ -69,6 +69,11 @@ struct compile_error* assert_compile_error(struct compile_error_list* el, char* 
 
 	error_triggered();
 	printf("(%s): no matching compile error message\n", s);
+	struct compile_error* p = el->head;
+	while (p) {
+		printf("%s\n", p->message);
+		p = p->next;
+	}
 	panic();
 	return NULL;
 }

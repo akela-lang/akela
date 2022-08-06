@@ -14,21 +14,23 @@ void test_parse_assign()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("a = 1", &ps, &root);
+	bool valid = parse_setup("var a::Int64; a = 1", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
 
-	assert_ptr(root, "root");
-	assert_int_equal(root->type, dag_type_assign, "assign");
+	struct dag_node* assign = dag_get_child(root, 1);
+	assert_ptr(assign, "ptr assign");
+	assert_int_equal(assign->type, dag_type_assign, "assign");
 
-	struct dag_node* left = dag_get_child(root, 0);
+	struct dag_node* left = dag_get_child(assign, 0);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "a", "a");
 
-	struct dag_node* right = dag_get_child(root, 1);
+	struct dag_node* right = dag_get_child(assign, 1);
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "1", "1");
@@ -47,21 +49,23 @@ void test_parse_assign2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("a = 1 + 2", &ps, &root);
+	bool valid = parse_setup("var a::Int64; a = 1 + 2", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
 
-	assert_ptr(root, "root");
-	assert_int_equal(root->type, dag_type_assign, "assign");
+	struct dag_node* assign = dag_get_child(root, 1);
+	assert_ptr(assign, "ptr assign");
+	assert_int_equal(assign->type, dag_type_assign, "assign");
 
-	struct dag_node* left = dag_get_child(root, 0);
+	struct dag_node* left = dag_get_child(assign, 0);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, dag_type_id, "id");
 	expect_str(&left->value, "a", "a");
 
-	struct dag_node* right = dag_get_child(root, 1);
+	struct dag_node* right = dag_get_child(assign, 1);
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, dag_type_plus, "plus");
 

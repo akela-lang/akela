@@ -132,48 +132,46 @@ bool assignment(struct parse_state* ps, struct dag_node** root)
 	struct token* equal = NULL;
 	valid = valid && match(ps, token_equal, "expected equal", &equal);
 
-	/* destroy equal equal{} */
-	token_destroy(equal);
-	free(equal);
-
-	/* allocate n */
-	dag_create_node(&n);
-	n->type = dag_type_assign;
-
-	/* allocate a */
-	struct dag_node* a;
-	dag_create_node(&a);
-	a->type = dag_type_id;
-
-	/* allocate a{} */
-	if (id) {
-		buffer_copy(&id->value, &a->value);
-	}
-
-	/* destroy id id{} */
-	token_destroy(id);
-	free(id);
-
-	/* transfer a a{} -> n{} */
-	dag_add_child(n, a);
-
 	/* allocate b b{} */
 	struct dag_node* b = NULL;
 	valid = valid && expr(ps, &b);
 
 	if (!b) {
-		set_source_error(ps->sns->el, &loc, "expect expression on rhs of assignment operator");
-		valid = false;
+		valid = set_source_error(ps->sns->el, &loc, "expect expression on rhs of assignment operator");
 	}
 
-	if (b) {
+	if (valid) {
+		/* allocate n */
+		dag_create_node(&n);
+		n->type = dag_type_assign;
+
+		/* allocate a */
+		struct dag_node* a;
+		dag_create_node(&a);
+		a->type = dag_type_id;
+
+		/* allocate a{} */
+		#pragma warning (suppress:6011)
+		buffer_copy(&id->value, &a->value);
+
+		/* transfer a a{} -> n{} */
+		dag_add_child(n, a);
+
 		/* transfer b b{} -> n{} */
 		dag_add_child(n, b);
+
+		/* transfer n n{} -> root */
+		*root = n;
 	}
 
-	/* transfer n n{} -> root */
 	if (valid) {
-		*root = n;
+		struct symbol* sym = environment_get(ps->top, &id->value);
+		if (!sym) {
+			char* a;
+			buffer2array(&id->value, &a);
+			valid = set_source_error(ps->el, &loc, "identifier not declared: %s", a);
+			free(a);
+		}
 	}
 
 	return valid;

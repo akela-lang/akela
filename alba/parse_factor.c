@@ -94,6 +94,7 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 		/* allocate n */
 		dag_create_node(&n);
 
+		#pragma warning(suppress:6011)
 		if (x->type == token_number) {
 			n->type = dag_type_number;
 		} else if (x->type == token_id) {
@@ -115,7 +116,7 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 				if (!sym) {
 					char* a;
 					buffer2array(&n->value, &a);
-					set_source_error(ps->el, &loc, "identifier not declared: %s", a);
+					valid = set_source_error(ps->el, &loc, "identifier not declared: %s", a);
 					free(a);
 				}
 			}

@@ -9,6 +9,7 @@
 #include "test_dag.h"
 #include "test_hash.h"
 #include "test_symbol_table.h"
+#include "test_parse_types.h"
 
 /* dynamic-output-none */
 int main(void) {
@@ -22,6 +23,7 @@ int main(void) {
 	test_parse_expression();
 	test_parse_statements();
 	test_symbol_table();
+	test_parse_types();
 	print_results();
 	return 0;
 }

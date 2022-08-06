@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "zinc/result.h"
 #include "zinc/buffer.h"
 #include "token.h"
@@ -65,7 +66,7 @@ void get_token_location(struct token* t, struct location* loc)
 }
 
 /* dynamic-output el{} */
-void set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...)
+bool set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -114,6 +115,8 @@ void set_source_error(struct compile_error_list* el, struct location* loc, const
 
 	/* allocate e -> el{} */
 	compile_error_list_add(el, e);
+
+	return false;
 }
 
 /* dynamic-output bf{} */

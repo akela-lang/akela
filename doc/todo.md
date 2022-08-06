@@ -1,6 +1,5 @@
 # Todo
-* error test case for missing variable declaration
-* add is_expr and expr_type to dag_node
+* add expr_type_set and expr_type to dag_node
 * derive type from list in for x in list
 * check if type exists
 * verify type for operations

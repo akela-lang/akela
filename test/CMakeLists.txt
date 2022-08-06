@@ -31,6 +31,7 @@ set(test_files
     test_lookahead_char.c
     test_hash.c
     test_symbol_table.c
+    test_parse_types.c
 )
 
 if(WIN32)
