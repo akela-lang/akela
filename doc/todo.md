@@ -3,8 +3,7 @@
 * derive type from list in for x in list
 * check if type exists
 * verify type for operations
-* change let to var
 * allow comma in var
-* add let
+* add let expression
 * link to LLVM
 * generate LLVM IR
