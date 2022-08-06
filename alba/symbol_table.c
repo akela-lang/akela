@@ -30,6 +30,12 @@ struct symbol* environment_get(struct environment* env, struct buffer* value)
 }
 
 /* dynamic-output-none */
+struct symbol* environment_get_local(struct environment* env, struct buffer* value)
+{
+	return hash_table_get(&env->ht, value);
+}
+
+/* dynamic-output-none */
 void symbol_init(struct symbol* sym)
 {
 	buffer_init(&sym->type);

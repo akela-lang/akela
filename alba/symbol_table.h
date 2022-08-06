@@ -26,6 +26,9 @@ void environment_put(struct environment* env, struct buffer* value, struct symbo
 /* dynamic-output-none */
 struct symbol* environment_get(struct environment* env, struct buffer* value);
 
+/* dynamic-output-none */
+struct symbol* environment_get_local(struct environment* env, struct buffer* value);
+
 /* dynamic-output_none */
 void symbol_init(struct symbol* sym);
 

@@ -219,14 +219,23 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 
 			dag_add_child(n, a);
 
-			struct symbol* sym = NULL;
-			malloc_safe((void**)&sym, sizeof(struct symbol));
-			symbol_init(sym);
-			buffer_copy(&name->value, &sym->type);
-			sym->dec = n;
-
 			if (id) {
-				environment_put(ps->top, &id->value, sym);
+				struct symbol* search = environment_get_local(ps->top, &id->value);
+				if (search) {
+					struct location loc;
+					get_token_location(id, &loc);
+					char* a;
+					buffer2array(&id->value, &a);
+					valid = set_source_error(ps->el, &loc, "duplicate declaration in same scope: %s", a);
+					free(a);
+				} else {
+					struct symbol* sym = NULL;
+					malloc_safe((void**)&sym, sizeof(struct symbol));
+					symbol_init(sym);
+					buffer_copy(&name->value, &sym->type);
+					sym->dec = n;
+					environment_put(ps->top, &id->value, sym);
+				}
 			}
 
 			*root = n;
@@ -247,14 +256,23 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 			n->type = dag_type_id;
 			buffer_copy(&name->value, &n->value);
 
-			struct symbol* sym = NULL;
-			malloc_safe((void**)&sym, sizeof(struct symbol));
-			symbol_init(sym);
-			buffer_copy(&name->value, &sym->type);
-			sym->dec = n;
-
 			if (id) {
-				environment_put(ps->top, &id->value, sym);
+				struct symbol* search = environment_get_local(ps->top, &id->value);
+				if (search) {
+					struct location loc;
+					get_token_location(id, &loc);
+					char* a;
+					buffer2array(&id->value, &a);
+					valid = set_source_error(ps->el, &loc, "duplicate declaration in same scope: %s", a);
+					free(a);
+				} else {
+					struct symbol* sym = NULL;
+					malloc_safe((void**)&sym, sizeof(struct symbol));
+					symbol_init(sym);
+					buffer_copy(&name->value, &sym->type);
+					sym->dec = n;
+					environment_put(ps->top, &id->value, sym);
+				}
 			}
 
 			*root = n;

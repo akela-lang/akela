@@ -1,7 +1,8 @@
 # Todo
-* add expr_type_set and expr_type to dag_node
-* derive type from list in for x in list
+* disallow declaration of type that is reserved word
 * check if type exists
+* add type_set and type to dag_node
+* derive type from list in for x in list
 * verify type for operations
 * allow comma in var
 * add let expression
