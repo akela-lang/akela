@@ -137,6 +137,85 @@ void test_parse_types_exists()
 	parse_teardown(&ps);
 }
 
+/* dynamic-output-none */
+void test_parse_types_array()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Vector{Int64}; a[1]", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* var = dag_get_child(root, 0);
+	assert_ptr(var, "ptr var");
+	expect_int_equal(var->type, dag_type_var, "var dec");
+
+	struct dag_node* dec = dag_get_child(var, 0);
+	assert_ptr(dec, "ptr dec");
+	expect_int_equal(dec->type, dag_type_declaration, "declaration dec");
+
+	struct dag_node* dec_id = dag_get_child(dec, 0);
+	assert_ptr(dec_id, "ptr dec_id");
+	expect_int_equal(dec_id->type, dag_type_id, "id dec_id");
+	expect_str(&dec_id->value, "a", "a dec_id");
+
+	struct dag_node* dec_type = dag_get_child(dec, 1);
+	assert_ptr(dec_type, "ptr dec_id");
+	expect_int_equal(dec_type->type, dag_type_id, "id dec_type");
+	expect_str(&dec_type->value, "Vector", "Vector dec_type");
+
+	struct dag_node* dec_subtype = dag_get_child(dec_type, 0);
+	assert_ptr(dec_subtype, "ptr dec_subtype");
+	expect_int_equal(dec_subtype->type, dag_type_id, "id dec_subtype");
+	expect_str(&dec_subtype->value, "Int64", "Int64 dec_subtype");
+
+	struct dag_node* as = dag_get_child(root, 1);
+	assert_ptr(as, "ptr as");
+	expect_int_equal(as->type, dag_type_array_subscript, "array-subscript as");
+
+	struct dag_node* name = dag_get_child(as, 0);
+	assert_ptr(name, "ptr name");
+	expect_int_equal(name->type, dag_type_id, "id name");
+	expect_str(&name->value, "a", "a name");
+
+	struct dag_node* index = dag_get_child(as, 1);
+	assert_ptr(index, "ptr index");
+	expect_int_equal(index->type, dag_type_number, "number index");
+	expect_str(&index->value, "1", "1 index");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_types_array_error()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Int64{Int64}; a[1]", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_compile_error(ps.el, "type is not an array type: Int64");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_types()
 {
 	test_parse_types_missing_declaration();
@@ -148,4 +227,6 @@ void test_parse_types()
 	test_parse_types_reserved_type2();
 	test_parse_types_reserved_type3();
 	test_parse_types_exists();
+	test_parse_types_array();
+	test_parse_types_array_error();
 }

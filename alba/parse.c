@@ -30,10 +30,12 @@ bool parse(struct parse_state* ps, struct dag_node** root)
 		struct token* t = ps->lookahead.head;
 		char* names[token_count];
 		enum result r = token_name_init(names);
+		struct location loc;
 		if (r == result_error) {
+			get_token_location(t, &loc);
+			valid = set_source_error(ps->el, &loc, "token name init: %s", error_message);
 			return false;
 		}
-		struct location loc;
 
 		/* allocate ps{} */
 		get_parse_location(ps, &loc);

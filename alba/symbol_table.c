@@ -95,39 +95,19 @@ void symbol_table_init_reserved(struct environment* env)
 	symbol_table_add_reserved(env, "false", token_boolean);
 }
 
-void symbol_table_add_builtin_type(struct environment* env, char* name)
-{
-	struct buffer bf;
-
-	/* initialize bf{} */
-	buffer_init(&bf);
-	buffer_copy_str(&bf, name);
-
-	/* allocate sym */
-	struct symbol* sym = NULL;
-	malloc_safe(&sym, sizeof(struct symbol));
-	symbol_init(sym);
-	sym->tk_type = token_type_name;
-
-	/* allocate wt{} */
-	environment_put(env, &bf, sym);
-
-	/* destroy bf{} */
-	buffer_destroy(&bf);
-}
 
 void symbol_table_init_builtin_types(struct environment* env)
 {
-	symbol_table_add_builtin_type(env, "Int32");
-	symbol_table_add_builtin_type(env, "Int64");
-	symbol_table_add_builtin_type(env, "UInt32");
-	symbol_table_add_builtin_type(env, "UInt62");
-	symbol_table_add_builtin_type(env, "Float32");
-	symbol_table_add_builtin_type(env, "Float64");
-	symbol_table_add_builtin_type(env, "String");
-	symbol_table_add_builtin_type(env, "Bool");
-	symbol_table_add_builtin_type(env, "Vector");
-	symbol_table_add_builtin_type(env, "Function");
+	symbol_table_add_reserved(env, "Int32", token_type_name);
+	symbol_table_add_reserved(env, "Int64", token_type_name);
+	symbol_table_add_reserved(env, "UInt32", token_type_name);
+	symbol_table_add_reserved(env, "UInt62", token_type_name);
+	symbol_table_add_reserved(env, "Float32", token_type_name);
+	symbol_table_add_reserved(env, "Float64", token_type_name);
+	symbol_table_add_reserved(env, "String", token_type_name);
+	symbol_table_add_reserved(env, "Bool", token_type_name);
+	symbol_table_add_reserved(env, "Vector", token_array_type_name);
+	symbol_table_add_reserved(env, "Function", token_type_name);
 }
 
 void symbol_table_init(struct symbol_table* st)

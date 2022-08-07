@@ -9,6 +9,7 @@ enum token_enum {
     token_number,
     token_id,
     token_type_name,
+    token_array_type_name,
     token_equal,
     token_plus,
     token_minus,
@@ -61,6 +62,8 @@ enum result token_name_init(char** token_name)
     token_name[token_none] = "none";
     token_name[token_number] = "number";
     token_name[token_id] = "word";
+    token_name[token_type_name] = "token-type-name";
+    token_name[token_array_type_name] = "token-array-type-name";
     token_name[token_equal] = "equal";
     token_name[token_plus] = "plus";
     token_name[token_minus] = "minus";

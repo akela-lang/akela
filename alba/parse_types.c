@@ -191,8 +191,15 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 	struct token* t1 = get_token(&ps->lookahead, 1);
 
 	if (t0 && t0->type == token_type_name && t1 && t1->type == token_left_curly_brace) {
+		struct location loc;
+		get_token_location(t0, &loc);
+		char* a;
+		buffer2array(&t0->value, &a);
+		valid = set_source_error(ps->el, &loc, "type is not an array type: %s", a);
+		free(a);
+	} else if (t0 && t0->type == token_array_type_name && t1 && t1->type == token_left_curly_brace) {
 		struct token* name = NULL;
-		valid = valid && match(ps, token_type_name, "expected type_name", &name);
+		valid = valid && match(ps, token_array_type_name, "expected array type name", &name);
 
 		struct token* lcb = NULL;
 		valid = valid && match(ps, token_left_curly_brace, "expected left curly brace", &lcb);
