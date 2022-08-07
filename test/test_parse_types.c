@@ -77,6 +77,50 @@ void test_parse_types_double_function()
 	parse_teardown(&ps);
 }
 
+void test_parse_types_reserved_type()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct dag_node* root;
+
+	bool valid = parse_setup("var Int64::Int64", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_compile_error(ps.el, "expected declaration after var");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
+void test_parse_types_reserved_type2()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct dag_node* root;
+
+	bool valid = parse_setup("function Int64() end", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_compile_error(ps.el, "expecting identifier");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
+void test_parse_types_reserved_type3()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct dag_node* root;
+
+	bool valid = parse_setup("var list::Vector{Int64}; for Int64 in list end", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_compile_error(ps.el, "expected identifier after for");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
 
 void test_parse_types()
 {
@@ -85,4 +129,7 @@ void test_parse_types()
 	test_parse_types_missing_declaration3();
 	test_parse_types_double();
 	test_parse_types_double_function();
+	test_parse_types_reserved_type();
+	test_parse_types_reserved_type2();
+	test_parse_types_reserved_type3();
 }

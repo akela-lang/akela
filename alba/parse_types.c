@@ -190,9 +190,9 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct token* t1 = get_token(&ps->lookahead, 1);
 
-	if (t0 && t0->type == token_id && t1 && t1->type == token_left_curly_brace) {
+	if (t0 && t0->type == token_type_name && t1 && t1->type == token_left_curly_brace) {
 		struct token* name = NULL;
-		valid = valid && match(ps, token_id, "expected id", &name);
+		valid = valid && match(ps, token_type_name, "expected type_name", &name);
 
 		struct token* lcb = NULL;
 		valid = valid && match(ps, token_left_curly_brace, "expected left curly brace", &lcb);
@@ -200,7 +200,7 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 		free(lcb);
 
 		struct token* name2 = NULL;
-		valid = valid && match(ps, token_id, "expected id", &name2);
+		valid = valid && match(ps, token_type_name, "expected type name", &name2);
 
 		struct token* rcb = NULL;
 		valid = valid && match(ps, token_right_curly_brace, "expected right curly brace", &rcb);
@@ -220,7 +220,7 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 			dag_add_child(n, a);
 
 			if (id) {
-				struct symbol* search = environment_get_local(ps->top, &id->value);
+				struct symbol* search = environment_get_local(ps->st->top, &id->value);
 				if (search) {
 					struct location loc;
 					get_token_location(id, &loc);
@@ -232,9 +232,9 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 					struct symbol* sym = NULL;
 					malloc_safe((void**)&sym, sizeof(struct symbol));
 					symbol_init(sym);
-					buffer_copy(&name->value, &sym->type);
+					sym->tk_type = id->type;
 					sym->dec = n;
-					environment_put(ps->top, &id->value, sym);
+					environment_put(ps->st->top, &id->value, sym);
 				}
 			}
 
@@ -247,9 +247,9 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 		token_destroy(name2);
 		free(name2);
 
-	} else if (t0 && t0->type == token_id) {
+	} else if (t0 && t0->type == token_type_name) {
 		struct token* name = NULL;
-		valid = valid && match(ps, token_id, "expected type id", &name);
+		valid = valid && match(ps, token_type_name, "expected type id", &name);
 
 		if (valid) {
 			dag_create_node(&n);
@@ -257,7 +257,7 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 			buffer_copy(&name->value, &n->value);
 
 			if (id) {
-				struct symbol* search = environment_get_local(ps->top, &id->value);
+				struct symbol* search = environment_get_local(ps->st->top, &id->value);
 				if (search) {
 					struct location loc;
 					get_token_location(id, &loc);
@@ -269,9 +269,9 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 					struct symbol* sym = NULL;
 					malloc_safe((void**)&sym, sizeof(struct symbol));
 					symbol_init(sym);
-					buffer_copy(&name->value, &sym->type);
+					sym->tk_type = id->type;
 					sym->dec = n;
-					environment_put(ps->top, &id->value, sym);
+					environment_put(ps->st->top, &id->value, sym);
 				}
 			}
 

@@ -2,6 +2,7 @@
 #define _SYMBOL_TABLE_H
 
 #include "hash.h"
+#include "token.h"
 
 #define ENVIRONMENT_HASH_TABLE_SIZE 32
 
@@ -11,8 +12,12 @@ struct environment {
 };
 
 struct symbol {
-	struct buffer type;
+	enum token_enum tk_type;
 	struct dag_node* dec;
+};
+
+struct symbol_table {
+	struct environment* top;
 };
 
 /* dynamic-output env{} */
@@ -34,5 +39,9 @@ void symbol_init(struct symbol* sym);
 
 /* dynamic-destroy env env{} */
 void environment_destroy(struct environment* env);
+
+void symbol_table_init(struct symbol_table* st);
+
+void symbol_table_destroy(struct symbol_table* st);
 
 #endif

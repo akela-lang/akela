@@ -21,10 +21,6 @@ void test_symbol_table_env()
 	/* allocate sym */
 	struct symbol* sym;
 	malloc_safe((void**)&sym, sizeof(struct symbol));
-	buffer_init(&sym->type);
-
-	/* allocate sym{} */
-	buffer_copy_str(&sym->type, "Int32");
 
 	struct symbol* x;
 	x = environment_get(env, &value);

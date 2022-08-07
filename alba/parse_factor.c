@@ -112,7 +112,7 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 
 		if (valid) {
 			if (n->type == dag_type_id) {
-				struct symbol* sym = environment_get(ps->top, &n->value);
+				struct symbol* sym = environment_get(ps->st->top, &n->value);
 				if (!sym) {
 					char* a;
 					buffer2array(&n->value, &a);
@@ -210,7 +210,7 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 	bool valid = true;
 
 	/* shared ps{top} -> saved */
-	struct environment* saved = ps->top;
+	struct environment* saved = ps->st->top;
 
 	/* allocate env env{} */
 	struct environment* env = NULL;
@@ -218,7 +218,7 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 	environment_init(env, saved);
 
 	/* transfer env -> ps{top} */
-	ps->top = env;
+	ps->st->top = env;
 
 	/* allocate ps{} f f{} */
 	struct token* f = NULL;
@@ -297,7 +297,7 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 	free(end);
 
 	/* transfer saved -> ps{top} */
-	ps->top = saved;
+	ps->st->top = saved;
 
 	/* destroy env env{} */
 	environment_destroy(env);
@@ -330,7 +330,7 @@ bool function_call(struct parse_state* ps, struct dag_node** root)
 	valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
 
 	if (valid) {
-		struct symbol* sym = environment_get(ps->top, &id->value);
+		struct symbol* sym = environment_get(ps->st->top, &id->value);
 		if (sym) {
 			if (sym->dec->type != dag_type_function) {
 				char* name;

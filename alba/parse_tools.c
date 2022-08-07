@@ -9,12 +9,12 @@
 
 /* dynamic-output-none */
 /* initialize-output ps ps{}*/
-void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct compile_error_list* el)
+void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct compile_error_list* el, struct symbol_table* st)
 {
 	ps->sns = sns;
 	token_list_init(&ps->lookahead);
 	ps->el = el;
-	ps->top = NULL;
+	ps->st = st;
 }
 
 /* get lookahead token */

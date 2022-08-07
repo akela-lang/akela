@@ -6,10 +6,12 @@
 #include "token.h"
 #include "lookahead_char.h"
 #include "source.h"
+#include "symbol_table.h"
 
 struct scan_state {
     struct lookahead_char* lc;
     struct word_table* wt;
+    struct symbol_table* st;
     struct compile_error_list* el;
 };
 
@@ -53,7 +55,7 @@ enum state_enum {
 
 /* dynamic-output-none */
 /* initialize-output sns{} */
-void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt, struct compile_error_list* el);
+void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct compile_error_list* el, struct symbol_table* st);
 
 /* dynamic-output sns{wt{} el{}} t t{} */
 /* dynamic-temp: tf tf{} */

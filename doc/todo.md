@@ -1,5 +1,4 @@
 # Todo
-* disallow declaration of type that is reserved word
 * check if type exists
 * add type_set and type to dag_node
 * derive type from list in for x in list

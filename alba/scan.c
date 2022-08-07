@@ -16,11 +16,11 @@
 
 /* dynamic-output-none */
 /* initialize-output sns{} */
-void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt, struct compile_error_list* el)
+void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct compile_error_list* el, struct symbol_table* st)
 {
     sns->lc = lc;
-    sns->wt = wt;
     sns->el = el;
+    sns->st = st;
 }
 
 /* dynamic-output-none */
@@ -230,12 +230,9 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
                 buffer_add_char(&t->value, lc->la0_8[i]);
             }
         } else {
-            struct word* w = word_table_get(wt, &t->value);
-            if (w) {
-                t->type = w->type;
-            } else {
-                /* allocate wt{} */
-                word_table_add(wt, &t->value, t->type);
+            struct symbol* sym = environment_get(sns->st->top, &t->value);
+            if (sym) {
+                t->type = sym->tk_type;
             }
             *state = state_start;
             *got_token = 1;
@@ -261,12 +258,9 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
                 buffer_add_char(&t->value, lc->la0_8[i]);
             }
         } else {
-            struct word* w = word_table_get(wt, &t->value);
-            if (w) {
-                t->type = w->type;
-            } else {
-                /* allocate wt{} */
-                word_table_add(wt, &t->value, t->type);
+            struct symbol* sym = environment_get(sns->st->top, &t->value);
+            if (sym) {
+                t->type = sym->tk_type;
             }
             *state = state_start;
             *got_token = 1;

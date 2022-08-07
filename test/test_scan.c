@@ -10,10 +10,8 @@
 #include "alba/source.h"
 
 /* dynamic-output sns{lc{d{bf} sns{lc{d{bf{}}} sns{lc{conv}} sns{wt{}} sns{el{}} */
-void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, struct word_table* wt, struct compile_error_list* el)
+void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, struct compile_error_list* el)
 {
-	bool valid;
-
 	struct buffer* bf;
 
 	/* allocate bf */
@@ -39,13 +37,14 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	/* transfer sd conv -> lc{} */
 	lookahead_char_init(lc, (input_getchar)string_getchar, sd, conv);
 
-	/* allocate wt{} */
-	word_table_init(wt, WORD_TABLE_SIZE);
-
 	compile_error_list_init(el);
 
+	struct symbol_table* st;
+	malloc_safe(&st, sizeof(struct symbol_table));
+	symbol_table_init(st);
+
 	/* transfer lc{} wt{} el{} -> sns */
-	scan_state_init(sns, lc, wt, el);
+	scan_state_init(sns, lc, el, st);
 }
 
 /* destroy sns{lc{d{bf{}}}} sns{lc{d{bf}}} sns{lc{d}} sns{wt{}} sns{el{}} sns{lc{conv}} */
@@ -60,9 +59,10 @@ void scan_teardown(struct scan_state* sns)
 	buffer_destroy(bf);
 	free(bf);
 	free(sd);
-	word_table_destroy(wt);
 	compile_error_list_destroy(el);
 	conv_close(sns->lc->conv);
+	symbol_table_destroy(sns->st);
+	free(sns->st);
 }
 
 /* dynamic-output-none */
@@ -70,7 +70,6 @@ void test_scan_blank()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -79,7 +78,7 @@ void test_scan_blank()
 	bool valid;
 
 	/* allocate sns{} */
-	scan_setup("", &sns, &lc, &wt, &el);
+	scan_setup("", &sns, &lc, &el);
 
 	/* allocatge sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -102,7 +101,6 @@ void test_scan_assign()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -111,7 +109,7 @@ void test_scan_assign()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("a = 1", &sns, &lc, &wt, &el);
+	scan_setup("a = 1", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -167,7 +165,6 @@ void test_scan_num()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -176,7 +173,7 @@ void test_scan_num()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("11", &sns, &lc, &wt, &el);
+	scan_setup("11", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -208,7 +205,6 @@ void test_scan_addition()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -217,7 +213,7 @@ void test_scan_addition()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("speed + 1", &sns, &lc, &wt, &el);
+	scan_setup("speed + 1", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -273,7 +269,6 @@ void test_scan_subtraction()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -282,7 +277,7 @@ void test_scan_subtraction()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("100 - delta", &sns, &lc, &wt, &el);
+	scan_setup("100 - delta", &sns, &lc, &el);
 
 	/* allocate sns t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -338,7 +333,6 @@ void test_scan_multiplication()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -347,7 +341,7 @@ void test_scan_multiplication()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("100 * 20", &sns, &lc, &wt, &el);
+	scan_setup("100 * 20", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -403,7 +397,6 @@ void test_scan_divide()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -412,7 +405,7 @@ void test_scan_divide()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("45 / 11", &sns, &lc, &wt, &el);
+	scan_setup("45 / 11", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -468,7 +461,6 @@ void test_scan_stmts_expr()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -477,7 +469,7 @@ void test_scan_stmts_expr()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("i + 1\nx * 4", &sns, &lc, &wt, &el);
+	scan_setup("i + 1\nx * 4", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -579,7 +571,6 @@ void test_scan_stmts_expr2()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -588,7 +579,7 @@ void test_scan_stmts_expr2()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("i + 1\nx * 4\n", &sns, &lc, &wt, &el);
+	scan_setup("i + 1\nx * 4\n", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -711,7 +702,6 @@ void test_scan_stmts_assign()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -720,7 +710,7 @@ void test_scan_stmts_assign()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("i + 1\nx = 4", &sns, &lc, &wt, &el);
+	scan_setup("i + 1\nx = 4", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -822,7 +812,6 @@ void test_scan_function()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -831,7 +820,7 @@ void test_scan_function()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("function foo () \n end", &sns, &lc, &wt, &el);
+	scan_setup("function foo () \n end", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -919,7 +908,6 @@ void test_scan_comma()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -928,7 +916,7 @@ void test_scan_comma()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup(",", &sns, &lc, &wt, &el);
+	scan_setup(",", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -960,7 +948,6 @@ void test_scan_semicolon()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -969,7 +956,7 @@ void test_scan_semicolon()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup(";", &sns, &lc, &wt, &el);
+	scan_setup(";", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1000,7 +987,6 @@ void test_scan_semicolon()
 void test_scan_if() {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1009,7 +995,7 @@ void test_scan_if() {
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("if elseif else", &sns, &lc, &wt, &el);
+	scan_setup("if elseif else", &sns, &lc, &el);
 	
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1062,7 +1048,6 @@ void test_scan_if() {
 void test_scan_compound_operators() {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1071,7 +1056,7 @@ void test_scan_compound_operators() {
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("== != <= >= && || ::", &sns, &lc, &wt, &el);
+	scan_setup("== != <= >= && || ::", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1158,7 +1143,6 @@ void test_scan_compound_operators() {
 void test_scan_compound_operators2() {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1167,7 +1151,7 @@ void test_scan_compound_operators2() {
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("= ! < > & | :", &sns, &lc, &wt, &el);
+	scan_setup("= ! < > & | :", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1255,7 +1239,6 @@ void test_scan_for_range()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1264,7 +1247,7 @@ void test_scan_for_range()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("for i = 0:10 1 end", &sns, &lc, &wt, &el);
+	scan_setup("for i = 0:10 1 end", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1366,7 +1349,6 @@ void test_scan_for_iteration()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1375,7 +1357,7 @@ void test_scan_for_iteration()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("for x in list 1 end", &sns, &lc, &wt, &el);
+	scan_setup("for x in list 1 end", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1455,7 +1437,6 @@ void test_scan_error_char()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1464,7 +1445,7 @@ void test_scan_error_char()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("$", &sns, &lc, &wt, &el);
+	scan_setup("$", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1484,7 +1465,6 @@ void test_scan_square_brackets()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1493,7 +1473,7 @@ void test_scan_square_brackets()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("[]", &sns, &lc, &wt, &el);
+	scan_setup("[]", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1526,7 +1506,6 @@ void test_scan_string()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1535,7 +1514,7 @@ void test_scan_string()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("\"hello\"", &sns, &lc, &wt, &el);
+	scan_setup("\"hello\"", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1558,7 +1537,6 @@ void test_scan_string2()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1567,7 +1545,7 @@ void test_scan_string2()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("x = \"\\\\hello\n\r\"", &sns, &lc, &wt, &el);
+	scan_setup("x = \"\\\\hello\n\r\"", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1613,7 +1591,6 @@ void test_scan_string_escape_error()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1622,7 +1599,7 @@ void test_scan_string_escape_error()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("\"\\x\"", &sns, &lc, &wt, &el);
+	scan_setup("\"\\x\"", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1643,7 +1620,6 @@ void test_scan_line_col()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1652,7 +1628,7 @@ void test_scan_line_col()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("10 + 20\n30 + 40", &sns, &lc, &wt, &el);
+	scan_setup("10 + 20\n30 + 40", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1762,7 +1738,6 @@ void test_scan_number_whole()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1771,7 +1746,7 @@ void test_scan_number_whole()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("500", &sns, &lc, &wt, &el);
+	scan_setup("500", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1797,7 +1772,6 @@ void test_scan_number_fraction()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1806,7 +1780,7 @@ void test_scan_number_fraction()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("500.", &sns, &lc, &wt, &el);
+	scan_setup("500.", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1832,7 +1806,6 @@ void test_scan_number_fraction2()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1841,7 +1814,7 @@ void test_scan_number_fraction2()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("500.123", &sns, &lc, &wt, &el);
+	scan_setup("500.123", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1867,7 +1840,6 @@ void test_scan_number_exponent()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1876,7 +1848,7 @@ void test_scan_number_exponent()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("500.123e2", &sns, &lc, &wt, &el);
+	scan_setup("500.123e2", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1902,7 +1874,6 @@ void test_scan_number_exponent2()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1911,7 +1882,7 @@ void test_scan_number_exponent2()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("500.123e-2", &sns, &lc, &wt, &el);
+	scan_setup("500.123e-2", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1937,7 +1908,6 @@ void test_scan_number_exponent3()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct scan_state sns;
 	struct compile_error_list el;
@@ -1946,7 +1916,7 @@ void test_scan_number_exponent3()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("500.123e+2", &sns, &lc, &wt, &el);
+	scan_setup("500.123e+2", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -1972,7 +1942,6 @@ void test_scan_number_exponent4()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -1981,7 +1950,7 @@ void test_scan_number_exponent4()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("500.123e + 1", &sns, &lc, &wt, &el);
+	scan_setup("500.123e + 1", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
@@ -2051,7 +2020,6 @@ void test_scan_number_exponent5()
 {
 	test_name(__func__);
 
-	struct word_table wt;
 	struct lookahead_char lc;
 	struct compile_error_list el;
 	struct scan_state sns;
@@ -2060,7 +2028,7 @@ void test_scan_number_exponent5()
 	int got_token;
 
 	/* allocate sns{} */
-	scan_setup("500.123e", &sns, &lc, &wt, &el);
+	scan_setup("500.123e", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);

@@ -4,12 +4,11 @@
 #include "zinc/result.h"
 #include "zinc/buffer.h"
 
-#define WORD_TABLE_SIZE 10
-
 enum token_enum {
     token_none,
     token_number,
     token_id,
+    token_type_name,
     token_equal,
     token_plus,
     token_minus,
@@ -133,23 +132,6 @@ struct token_list {
     struct token* tail;
 };
 
-struct word {
-    enum token_enum type;
-    struct buffer value;
-    struct word* next;
-    struct word* prev;
-};
-
-struct word_list {
-    struct word* head;
-    struct word* tail;
-};
-
-struct word_table {
-    unsigned int size;
-    struct word_list* buckets;
-};
-
 /* dynamic-output-none */
 /* initialize-output t{} t{value{}} */
 void token_init(struct token* t);
@@ -196,31 +178,5 @@ enum result token_list_print(struct token_list* tl);
 
 /* dynamic-output-none */
 enum result print_token(struct token* t);
-
-/* dynamic-output-none */
-unsigned int hash_buffer(struct buffer* bf, unsigned int size);
-
-/* dynamic-output-none */
-/* initialize-output w{} w{value{}} */
-void word_init(struct word* w);
-
-/* dynamic-destroy wt{} */
-void word_table_destroy(struct word_table* wt);
-
-/* dynamic-output-none */
-/* initialize-output wl{} */
-void word_list_init(struct word_list* wl);
-
-/* dynamic-output wt{} */
-void word_table_init(struct word_table* wt, unsigned int size);
-
-/* dynamic-output wt{} */
-void word_table_init_reserved(struct word_table* wt);
-
-/* dynamic-output wt{} */
-void word_table_add(struct word_table* wt, struct buffer* bf, enum token_enum type);
-
-/* dynamic-output-none */
-struct word* word_table_get(struct word_table* wt, struct buffer* bf);
 
 #endif

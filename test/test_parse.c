@@ -44,13 +44,6 @@ bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 		valid = false;
 	}
 
-	/* allocate wt */
-	struct word_table* wt;
-	malloc_safe((void**)&wt, sizeof(struct word_table));
-
-	/* allocate wt {} */
-	word_table_init(wt, WORD_TABLE_SIZE);
-
 	/* allocate lc */
 	struct lookahead_char* lc;
 	malloc_safe((void**)&lc, sizeof(struct lookahead_char));
@@ -58,15 +51,19 @@ bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 	/* transfer sd conv -> lc */
 	lookahead_char_init(lc, (input_getchar)string_getchar, sd, conv);
 
+	struct symbol_table* st;
+	malloc_safe(&st, sizeof(struct symbol_table));
+	symbol_table_init(st);
+
 	/* allocate sns */
 	struct scan_state* sns;
 	malloc_safe((void**)&sns, sizeof(struct scan_state));
 
 	/* transfer lc wt el -> sns{} */
-	scan_state_init(sns, lc, wt, el);
+	scan_state_init(sns, lc, el, st);
 
 	/* transfer sns el -> ps{}  */
-	parse_state_init(ps, sns, el);
+	parse_state_init(ps, sns, el, st);
 
 	/* allocate ps{} root root{} */
 	valid = valid && parse(ps, root);
@@ -89,17 +86,15 @@ void parse_teardown(struct parse_state* ps)
 	compile_error_list_destroy(el);
 	free(el);
 
-	/* destroy ps{sns{wt wt{}}} */
-	struct word_table* wt = ps->sns->wt;
-	word_table_destroy(wt);
-	free(wt);
-
 	/* destroy ps{sns{lc{conv}}} */
 	conv_close(ps->sns->lc->conv);
 
 	/* destroy ps{sns{lc}} */
 	struct lookahead_char* lc = ps->sns->lc;
 	free(lc);
+
+	symbol_table_destroy(ps->st);
+	free(ps->st);
 
 	/* destroy ps{sns} */
 	free(ps->sns);

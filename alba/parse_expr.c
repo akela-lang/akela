@@ -70,7 +70,7 @@ bool var(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* a = NULL;
 	valid = valid && declaration(ps, &a);
 	if (!a) {
-		set_source_error(ps->el, &loc, "expected declaration after let");
+		set_source_error(ps->el, &loc, "expected declaration after var");
 		valid = false;
 		return valid;
 	}
@@ -165,7 +165,7 @@ bool assignment(struct parse_state* ps, struct dag_node** root)
 	}
 
 	if (valid) {
-		struct symbol* sym = environment_get(ps->top, &id->value);
+		struct symbol* sym = environment_get(ps->st->top, &id->value);
 		if (!sym) {
 			char* a;
 			buffer2array(&id->value, &a);

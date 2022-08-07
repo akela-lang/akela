@@ -10,6 +10,7 @@
 #include "source.h"
 #include "os_win.h"
 #include "source.h"
+#include "symbol_table.h"
 
 int main(int argc, char** argv)
 {
@@ -38,9 +39,9 @@ int main(int argc, char** argv)
     UConverter* conv;
     struct scan_state sns;
     struct lookahead_char lc;
-    struct word_table wt;
     struct compile_error_list el;
     struct parse_state ps;
+    struct symbol_table st;
 
     /* resource conv */
     r = conv_open(&conv);
@@ -49,15 +50,14 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    /* allocate wt{} */
-    word_table_init(&wt, WORD_TABLE_SIZE);
-
     /* resource input fp */
     lookahead_char_init(&lc, (input_getchar)file_getchar, fp, conv);
 
     compile_error_list_init(&el);
-    scan_state_init(&sns, &lc, &wt, &el);
-    parse_state_init(&ps, &sns, &el);
+    symbol_table_init(&st);
+
+    scan_state_init(&sns, &lc, &el, &st);
+    parse_state_init(&ps, &sns, &el, &st);
 
     /* allocate ps{} root root{} */
     r = parse(&ps, &root);
@@ -76,14 +76,13 @@ int main(int argc, char** argv)
     /* resource destroy conv */
     conv_close(conv);
 
-    /* destroy wt{} */
-    word_table_destroy(&wt);
-
     /* destroy ps{lookahead} */
     token_list_destroy(&ps.lookahead);
 
     /* destroy ps{el} sns{el} */
     compile_error_list_destroy(&el);
+
+    symbol_table_destroy(&st);
 
     printf("end\n");
 

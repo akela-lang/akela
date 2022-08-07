@@ -34,7 +34,7 @@ bool stmts(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* n = NULL;
 
 	/* transfer ps{top} -> saved */
-	struct environment* saved = ps->top;
+	struct environment* saved = ps->st->top;
 
 	/* allocate env */
 	struct environment* env = NULL;
@@ -42,7 +42,7 @@ bool stmts(struct parse_state* ps, struct dag_node** root)
 	environment_init(env, saved);
 
 	/* share env -> top */
-	ps->top = env;
+	ps->st->top = env;
 
 	/* allocate ps{} a a{} */
 	struct dag_node* a = NULL;
@@ -64,7 +64,7 @@ bool stmts(struct parse_state* ps, struct dag_node** root)
 	environment_destroy(env);
 
 	/* transfer saved -> ps{top} */
-	ps->top = saved;
+	ps->st->top = saved;
 
 	/* transfer n -> root */
 	*root = n;
@@ -225,7 +225,7 @@ bool stmt(struct parse_state* ps, struct dag_node** root)
 		} else {
 			/* allocate ps{} */
 			struct token* id = NULL;
-			valid = valid && match(ps, token_id, "expected id after for", &id);
+			valid = valid && match(ps, token_id, "expected identifier after for", &id);
 
 			/* destroy id id{} */
 			token_destroy(id);
@@ -326,13 +326,13 @@ bool function(struct parse_state* ps, struct dag_node** root)
 	bool valid = true;
 
 	/* shared ps{top} -> saved */
-	struct environment* saved = ps->top;
+	struct environment* saved = ps->st->top;
 
 	/* allocate env env{} */
 	struct environment* env = NULL;
 	malloc_safe((void**)&env, sizeof(struct environment));
 	environment_init(env, saved);
-	ps->top = env;
+	ps->st->top = env;
 
 	struct dag_node* fd = NULL;
 	valid = valid && function_start(ps, &fd);
@@ -343,8 +343,8 @@ bool function(struct parse_state* ps, struct dag_node** root)
 		*root = fd;
 	}
 
-	/* transfer saved -> ps->top */
-	ps->top = saved;
+	/* transfer saved -> ps->st->top */
+	ps->st->top = saved;
 
 	/* destroy env env{} */
 	environment_destroy(env);
@@ -419,7 +419,7 @@ bool function_start(struct parse_state* ps, struct dag_node** root)
 
 		dag_add_child(n, b);
 
-		struct symbol* search = environment_get_local(ps->top->prev, &id->value);
+		struct symbol* search = environment_get_local(ps->st->top->prev, &id->value);
 		if (search) {
 			struct location loc;
 			get_token_location(id, &loc);
@@ -430,9 +430,9 @@ bool function_start(struct parse_state* ps, struct dag_node** root)
 		} else {
 			malloc_safe((void**)&sym, sizeof(struct symbol));
 			symbol_init(sym);
-			buffer_copy_str(&sym->type, "function");
+			sym->tk_type = id->type;
 			sym->dec = n;
-			environment_put(ps->top->prev, &id->value, sym);
+			environment_put(ps->st->top->prev, &id->value, sym);
 		}
 
 		*root = n;
@@ -600,11 +600,11 @@ bool for_iteration(struct parse_state* ps, struct dag_node** root)
 	bool valid = true;
 	struct dag_node* n = NULL;
 
-	struct environment* saved = ps->top;
+	struct environment* saved = ps->st->top;
 	struct environment* env = NULL;
 	malloc_safe(&env, sizeof(struct environment));
 	environment_init(env, saved);
-	ps->top = env;
+	ps->st->top = env;
 
 	valid = valid && for_iteration_start(ps, &n);
 	valid = valid && for_iteration_finish(ps, n);
@@ -613,7 +613,7 @@ bool for_iteration(struct parse_state* ps, struct dag_node** root)
 		*root = n;
 	}
 
-	ps->top = saved;
+	ps->st->top = saved;
 	environment_destroy(env);
 
 	return valid;
@@ -677,9 +677,11 @@ bool for_iteration_start(struct parse_state* ps, struct dag_node** root)
 		struct symbol* sym = NULL;
 		malloc_safe(&sym, sizeof(struct symbol));
 		symbol_init(sym);
+		#pragma warning(suppress:6011)
+		sym->tk_type = id->type;
 		/* should get type information from list */
 		#pragma warning(suppress:6011)
-		environment_put(ps->top, &id->value, sym);
+		environment_put(ps->st->top, &id->value, sym);
 
 	} else {
 		dag_destroy(list);
