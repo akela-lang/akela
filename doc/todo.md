@@ -1,6 +1,5 @@
 # Todo
-* check if type exists
-* add type_set and type to dag_node
+* add type_checked and type to dag_node
 * derive type from list in for x in list
 * verify type for operations
 * allow comma in var

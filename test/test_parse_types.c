@@ -122,6 +122,21 @@ void test_parse_types_reserved_type3()
 	parse_teardown(&ps);
 }
 
+void test_parse_types_exists()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct dag_node* root;
+
+	bool valid = parse_setup("var x::SuperInt; x + 1", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_compile_error(ps.el, "expected a type");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
 void test_parse_types()
 {
 	test_parse_types_missing_declaration();
@@ -132,4 +147,5 @@ void test_parse_types()
 	test_parse_types_reserved_type();
 	test_parse_types_reserved_type2();
 	test_parse_types_reserved_type3();
+	test_parse_types_exists();
 }
