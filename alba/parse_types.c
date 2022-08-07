@@ -216,15 +216,19 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 
 		if (valid) {
 			dag_create_node(&n);
-			n->type = dag_type_id;
-			buffer_copy(&name->value, &n->value);
+			n->type = dag_type_array;
 
 			struct dag_node* a = NULL;
 			dag_create_node(&a);
-			a->type = dag_type_id;
-			buffer_copy(&name2->value, &a->value);
-
+			a->type = dag_type_array_type_name;
+			buffer_copy(&name->value, &a->value);
 			dag_add_child(n, a);
+
+			struct dag_node* b = NULL;
+			dag_create_node(&b);
+			b->type = dag_type_type_name;
+			buffer_copy(&name2->value, &b->value);
+			dag_add_child(n, b);
 
 			if (id) {
 				struct symbol* search = environment_get_local(ps->st->top, &id->value);

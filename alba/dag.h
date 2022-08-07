@@ -42,6 +42,9 @@ enum dag_type {
 	dag_type_anonymous_function,
 	dag_type_var,
 	dag_type_boolean,
+	dag_type_array,
+	dag_type_array_type_name,
+	dag_type_type_name,
 	dag_type_count		/* keep at end */
 };
 
@@ -88,6 +91,9 @@ enum result dag_set_names(char** names)
 	names[dag_type_anonymous_function] = "anonymous-function";
 	names[dag_type_var] = "var";
 	names[dag_type_boolean] = "boolean";
+	names[dag_type_array] = "array";
+	names[dag_type_array_type_name] = "array-type-name";
+	names[dag_type_type_name] = "type-name";
 
 	for (int i = 0; i < dag_type_count; i++) {
 		if (names[i] == NULL) {

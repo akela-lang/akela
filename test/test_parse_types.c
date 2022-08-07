@@ -167,15 +167,18 @@ void test_parse_types_array()
 	expect_int_equal(dec_id->type, dag_type_id, "id dec_id");
 	expect_str(&dec_id->value, "a", "a dec_id");
 
-	struct dag_node* dec_type = dag_get_child(dec, 1);
-	assert_ptr(dec_type, "ptr dec_id");
-	expect_int_equal(dec_type->type, dag_type_id, "id dec_type");
-	expect_str(&dec_type->value, "Vector", "Vector dec_type");
+	struct dag_node* array_node = dag_get_child(dec, 1);
+	assert_ptr(array_node, "ptr array_node");
+	expect_int_equal(array_node->type, dag_type_array, "array array_node");
 
-	struct dag_node* dec_subtype = dag_get_child(dec_type, 0);
-	assert_ptr(dec_subtype, "ptr dec_subtype");
-	expect_int_equal(dec_subtype->type, dag_type_id, "id dec_subtype");
-	expect_str(&dec_subtype->value, "Int64", "Int64 dec_subtype");
+	struct dag_node* array_type_name = dag_get_child(array_node, 0);
+	expect_int_equal(array_type_name->type, dag_type_array_type_name, "array_type_name array_type_name");
+	expect_str(&array_type_name->value, "Vector", "Vector array_type_name");
+
+	struct dag_node* type_name = dag_get_child(array_node, 1);
+	assert_ptr(type_name , "ptr type_name");
+	expect_int_equal(type_name->type, dag_type_type_name, "type_name type_name");
+	expect_str(&type_name->value, "Int64", "Int64 type_name");
 
 	struct dag_node* as = dag_get_child(root, 1);
 	assert_ptr(as, "ptr as");
