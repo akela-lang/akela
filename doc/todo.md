@@ -11,5 +11,6 @@
 * allow comma in var
 * add let expression
 * structs
+* use lookahead_char to lex compound operators
 * link to LLVM
 * generate LLVM IR

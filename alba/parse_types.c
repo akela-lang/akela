@@ -9,11 +9,11 @@
 #include "symbol_table.h"
 #include "zinc/memory.h"
 
-bool dseq_prime(struct parse_state* ps, struct dag_node* parent);
 bool declaration(struct parse_state* ps, struct dag_node** root);
 bool type(struct parse_state* ps, struct token* id, struct dag_node** root);
 
 /* dseq -> declaration dseq' | e */
+/* dseq' -> , declaration dseq' | e */
 /* dynamic-output ps{} root root{} */
 bool dseq(struct parse_state* ps, struct dag_node** root)
 {
@@ -22,88 +22,62 @@ bool dseq(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate n */
 	dag_create_node(&n);
-
 	n->type = dag_type_dseq;
 
+	/* transfer n -> root */
+	*root = n;
+
 	/* allocate a */
-	struct dag_node* a = NULL;
-	valid = valid && declaration(ps, &a);
+	struct dag_node* dec = NULL;
+	valid = valid && declaration(ps, &dec);
 
-	if (a) {
-		/* transfer a -> n */
-		dag_add_child(n, a);
-
-		/* allocate ps{} n{} */
-		valid = valid && dseq_prime(ps, n);
+	if (!dec) {
+		return valid;
 	}
 
-	if (valid) {
-		/* transfer n -> root */
-		*root = n;
+	if (dec && valid) {
+		/* transfer dec -> n */
+		dag_add_child(n, dec);
 	}
 
-	return valid;
-}
-
-
-/* dseq' -> , declaration dseq' | e */
-/* dynamic-output ps{} parent{} */
-bool dseq_prime(struct parse_state* ps, struct dag_node* parent)
-{
-	bool valid = true;
-	struct dag_node* n = NULL;
-	int num;
-
-	/* allocate ps{} */
-	valid = valid && get_lookahead(ps, 2, &num);
-
-	struct token* t0 = get_token(&ps->lookahead, 0);
-
-	if (!t0 || t0->type != token_comma)
+	while (true)
 	{
-		return valid;
-	}
-
-	/* allocate ps{} comma comma{} */
-	struct token* comma = NULL;
-	valid = valid && match(ps, token_comma, "expecting comma", &comma);
-
-	/* destroy comma comma{} */
-	token_destroy(comma);
-	free(comma);
-
-	struct location loc;
-	valid = valid && get_parse_location(ps, &loc);
-
-	/* allocate a */
-	struct dag_node* a = NULL;
-	valid = valid && declaration(ps, &a);
-
-	if (!a) {
 		/* allocate ps{} */
-		set_source_error(ps->el, &loc, "expecting declaration after comma");
-		valid = false;
-		return valid;
+		int num;
+		valid = valid && get_lookahead(ps, 2, &num);
+		struct token* t0 = get_token(&ps->lookahead, 0);
+		if (!t0 || t0->type != token_comma) {
+			break;
+		}
+
+		/* allocate ps{} comma comma{} */
+		struct token* comma = NULL;
+		valid = valid && match(ps, token_comma, "expecting comma", &comma);
+
+		token_destroy(comma);
+		free(comma);
+
+		struct location loc;
+		valid = valid && get_parse_location(ps, &loc);
+
+		/* allocate a */
+		struct dag_node* dec = NULL;
+		valid = valid && declaration(ps, &dec);
+		
+		if (!dec || !valid) {
+			/* allocate ps{} */
+			set_source_error(ps->el, &loc, "expecting declaration after comma");
+			valid = false;
+			break;
+		}
+
+		if (dec && valid) {
+			/* transfer dec -> n */
+			dag_add_child(n, dec);
+		}
 	}
-
-	/* transfer a -> parent */
-	dag_add_child(parent, a);
-
-	/* allocate ps{} parent{} */
-	valid = valid && dseq_prime(ps, parent);
 
 	return valid;
-}
-
-/* dynamic-output-none */
-bool is_valid_type(struct buffer* b)
-{
-	if (buffer_str_compare(b, "Int32")) return true;
-	if (buffer_str_compare(b, "Int64")) return true;
-	if (buffer_str_compare(b, "Float32")) return true;
-	if (buffer_str_compare(b, "Float64")) return true;
-	if (buffer_str_compare(b, "String")) return true;
-	return false;
 }
 
 /* declaration -> id :: type | id */
