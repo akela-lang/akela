@@ -13,10 +13,13 @@
 bool anonymous_function(struct parse_state* ps, struct dag_node** root);
 bool function_call(struct parse_state* ps, struct dag_node** root);
 bool cseq(struct parse_state* ps, struct dag_node** root);
-bool cseq_prime(struct parse_state* ps, struct dag_node* parent);
+bool not(struct parse_state* ps, struct dag_node** root);
+bool literal_nt(struct parse_state* ps, struct dag_node** root);
+bool id_nt(struct parse_state* ps, struct dag_node** root);
+bool sign(struct parse_state* ps, struct dag_node** root);
 bool array_literal(struct parse_state* ps, struct dag_node** root);
 bool aseq(struct parse_state* ps, struct dag_node* parent);
-bool aseq_prime(struct parse_state* ps, struct dag_node* parent);
+bool parenthesis(struct parse_state* ps, struct dag_node** root);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
@@ -40,161 +43,30 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 	t0 = get_token(&ps->lookahead, 0);
 	t1 = get_token(&ps->lookahead, 1);
 
-	/* anonymous function */
 	if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
 		valid = valid && anonymous_function(ps, &n);
 
-		/* function call*/
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
 		valid = valid && function_call(ps, &n);
 
-		/* ! factor */
 	} else if (t0 && t0->type == token_not) {
+		valid = valid && not(ps, &n);
 
-		/* allocate ps{} not not{} */
-		struct token* not = NULL;
-		valid = valid && match(ps, token_not, "expecting not", &not);
+	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
+		valid = valid && literal_nt(ps, &n);
 
-		/* destroy not not{} */
-		token_destroy(not);
-		free(not);
+	} else if (t0 && t0->type == token_id) {
+		valid = valid && id_nt(ps, &n);
 
-		struct location loc;
-		valid = valid && get_parse_location(ps, &loc);
+	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
+		valid = valid && sign(ps, &n);
 
-		/* allocate a a{} */
-		struct dag_node* a = NULL;
-		valid = valid && factor(ps, &a);
-
-		if (!a) {
-			/* allocate ps{} */
-			set_source_error(ps->el, &loc, "expected factor after !");
-			valid = false;
-		}
-
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_not;
-
-		if (a) {
-			/* transfer a -> n{} */
-			dag_add_child(n, a);
-		}
-
-		/* number, id, string */
-	} else if (t0 && (t0->type == token_number || t0->type == token_id || t0->type == token_string || t0->type == token_boolean)) {
-
-		struct location loc;
-		valid = valid && get_parse_location(ps, &loc);
-
-		/* allocate ps{} x x{} */
-		struct token* x = NULL;
-		valid = valid && match(ps, t0->type, "expecting number, id, or string", &x);
-
-		/* allocate n */
-		dag_create_node(&n);
-
-		#pragma warning(suppress:6011)
-		if (x->type == token_number) {
-			n->type = dag_type_number;
-		} else if (x->type == token_id) {
-			n->type = dag_type_id;
-		} else if (x->type == token_string) {
-			n->type = dag_type_string;
-		} else if (x->type == token_boolean) {
-			n->type = dag_type_boolean;
-		}
-		
-		/* allocate n{} */
-		if (x) {
-			buffer_copy(&x->value, &n->value);
-		}
-
-		if (valid) {
-			if (n->type == dag_type_id) {
-				struct symbol* sym = environment_get(ps->st->top, &n->value);
-				if (!sym) {
-					char* a;
-					buffer2array(&n->value, &a);
-					valid = set_source_error(ps->el, &loc, "identifier not declared: %s", a);
-					free(a);
-				}
-			}
-		}
-
-		/* destroy x x{} */
-		token_destroy(x);
-		free(x);
-	}
-
-	/* sign and number or word */
-	else if (t0 && (t0->type == token_plus || t0->type == token_minus) && t1 && (t1->type == token_number || t1->type == token_id)) {
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_sign;
-
-		/* allocate left */
-		struct dag_node* left;
-		dag_create_node(&left);
-
-		if (t0->type == token_plus) {
-			left->type = dag_type_plus;
-		} else {
-			left->type = dag_type_minus;
-		}
-
-		/* allocate sign */
-		struct token* sign = NULL;
-		valid = valid && match(ps, t0->type, "expecting unary plus or minus", &sign);
-
-		/* destroy sign */
-		token_destroy(sign);
-
-		if (left) {
-			/* transfer left -> n{} */
-			dag_add_child(n, left);
-		}
-
-		struct location loc;
-		valid = valid && get_parse_location(ps, &loc);
-
-		/* allocate right */
-		struct dag_node* right = NULL;
-		valid = valid && factor(ps, &right);
-
-		if (!right) {
-			set_source_error(ps->el, &loc, "expecting factor after sign");
-			valid = false;
-		} else {
-			/* transfer right -> n{} */
-			dag_add_child(n, right);
-		}
-
-		/* array literal */
 	} else if (t0 && t0->type == token_left_square_bracket) {
 		/* allocate n n{} */
 		valid = valid && array_literal(ps, &n);
 
-		/* parenthesis */
 	} else if (t0 && t0->type == token_left_paren) {
-		/* allocate ps{} lp lp{} */
-		struct token* lp = NULL;
-		valid = valid && match(ps, t0->type, "expecting left parenthesis", &lp);
-
-		/* destroy lp lp{} */
-		token_destroy(lp);
-		free(lp);
-
-		/* allocate n n{} */
-		valid = valid && expr(ps, &n);
-
-		/* allocate ps{} rp rp{} */
-		struct token* rp = NULL;
-		valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
-
-		/* destroy rp rp{} */
-		token_destroy(rp);
-		free(rp);
+		valid = valid && parenthesis(ps, &n);
 	}
 
 	/* transfer n -> root */
@@ -387,55 +259,39 @@ bool function_call(struct parse_state* ps, struct dag_node** root)
 	return valid;
 }
 
-/*
-* cseq -> factor cseq'
-*		| e
-*/
+/* cseq -> expr cseq' | e */
+/* cseq' -> , expr cseq' | e */
 /* dynamic-output ps{} root root{} */
 bool cseq(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
 	struct dag_node* n = NULL;
 
+	/* allocate n */
+	dag_create_node(&n);
+	n->type = dag_type_cseq;
+
+	*root = n;
+
 	/* allocate a a{} */
 	struct dag_node* a = NULL;
-	valid = valid && factor(ps, &a);
+	valid = valid && expr(ps, &a);
 
-	if (a) {
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_cseq;
-
-		/* transfer a -> n{} */
-		dag_add_child(n, a);
-
-		/* allocate n{} */
-		valid = valid && cseq_prime(ps, n);
+	if (!a) {
+		return valid;
 	}
 
-	/* transfer n -> root */
-	if (valid) {
-		*root = n;
-	}
-	return valid;
-}
+	/* transfer a -> n{} */
+	dag_add_child(n, a);
 
-/*
-* cseq' -> , factor cseq'
-*		 | e
-*/
-/* dynamic-output ps{} parent{} */
-bool cseq_prime(struct parse_state* ps, struct dag_node* parent)
-{
-	bool valid = true;
-	int num;
+	while (true) {
+		int num;
+		valid = valid && get_lookahead(ps, 1, &num);
+		struct token* t0 = get_token(&ps->lookahead, 0);
 
-	/* allocate ps{} */
-	valid = valid && get_lookahead(ps, 1, &num);
-
-	struct token* t0 = get_token(&ps->lookahead, 0);
-
-	if (t0 && t0->type == token_comma) {
+		if (!t0 || t0->type != token_comma) {
+			break;
+		}
 
 		/* allocate ps{} comma comma{} */
 		struct token* comma = NULL;;
@@ -450,19 +306,201 @@ bool cseq_prime(struct parse_state* ps, struct dag_node* parent)
 
 		/* allocate a a{} */
 		struct dag_node* a = NULL;
-		valid = valid && factor(ps, &a);
+		valid = valid && expr(ps, &a);
 
 		if (!a) {
-			set_source_error(ps->el, &loc, "expected factor after comma");
+			set_source_error(ps->el, &loc, "expected expression after comma");
 			valid = false;
 		} else {
 			/* transfer a -> parent */
-			dag_add_child(parent, a);
+			dag_add_child(n, a);
+		}
+	}
+
+	return valid;
+}
+
+bool not(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	/* allocate ps{} not not{} */
+	struct token* not = NULL;
+	valid = valid && match(ps, token_not, "expecting not", &not);
+
+	struct location loc;
+	valid = valid && get_parse_location(ps, &loc);
+
+	/* allocate a a{} */
+	struct dag_node* a = NULL;
+	valid = valid && factor(ps, &a);
+
+	if (!a) {
+		/* allocate ps{} */
+		valid = set_source_error(ps->el, &loc, "expected factor after !");
+	}
+
+	if (valid) {
+		/* allocate n */
+		dag_create_node(&n);
+		n->type = dag_type_not;
+
+		if (a) {
+			/* transfer a -> n{} */
+			dag_add_child(n, a);
 		}
 
-		/* allocate ps{} parent{} */
-		valid = valid && cseq_prime(ps, parent);
+		*root = n;
+
+	} else {
+		dag_destroy(a);
 	}
+
+	/* destroy not not{} */
+	token_destroy(not);
+	free(not);
+
+	return valid;
+}
+
+bool literal_nt(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	int num;
+	valid = valid && get_lookahead(ps, 1, &num);
+	struct token* t0 = get_token(&ps->lookahead, 0);
+
+	struct location loc;
+	valid = valid && get_parse_location(ps, &loc);
+
+	/* allocate ps{} x x{} */
+	struct token* x = NULL;
+	valid = valid && match(ps, t0->type, "expecting number, bool, or string", &x);
+
+	if (valid) {
+		/* allocate n */
+		dag_create_node(&n);
+
+		#pragma warning(suppress:6011)
+		if (x->type == token_number) {
+			n->type = dag_type_number;
+		} else if (x->type == token_string) {
+			n->type = dag_type_string;
+		} else if (x->type == token_boolean) {
+			n->type = dag_type_boolean;
+		}
+
+		/* allocate n{} */
+		buffer_copy(&x->value, &n->value);
+
+		*root = n;
+	}
+
+	/* destroy x x{} */
+	token_destroy(x);
+	free(x);
+
+	return valid;
+}
+
+bool id_nt(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	int num;
+	valid = valid && get_lookahead(ps, 1, &num);
+	struct token* t0 = get_token(&ps->lookahead, 0);
+
+	struct location loc;
+	valid = valid && get_parse_location(ps, &loc);
+
+	/* allocate ps{} x x{} */
+	struct token* id = NULL;
+	valid = valid && match(ps, token_id, "expecting identifier", &id);
+
+	if (valid) {
+		/* allocate n */
+		dag_create_node(&n);
+
+		n->type = dag_type_id;
+
+		/* allocate n{} */
+		buffer_copy(&id->value, &n->value);
+
+		*root = n;
+	}
+
+	if (valid) {
+		struct symbol* sym = environment_get(ps->st->top, &n->value);
+		if (!sym) {
+			char* a;
+			buffer2array(&n->value, &a);
+			valid = set_source_error(ps->el, &loc, "identifier not declared: %s", a);
+			free(a);
+		}
+	}
+
+	/* destroy id id{} */
+	token_destroy(id);
+	free(id);
+
+	return valid;
+}
+
+bool sign(struct parse_state* ps, struct dag_node** root)
+{
+	bool valid = true;
+	struct dag_node* n = NULL;
+
+	int num;
+	valid = valid && get_lookahead(ps, 1, &num);
+	struct token* t0 = get_token(&ps->lookahead, 0);
+
+	/* allocate sign */
+	struct token* sign = NULL;
+	valid = valid && match(ps, t0->type, "expecting unary plus or minus", &sign);
+
+	struct location loc;
+	valid = valid && get_parse_location(ps, &loc);
+
+	/* allocate right */
+	struct dag_node* right = NULL;
+	valid = valid && factor(ps, &right);
+
+	if (!right) {
+		set_source_error(ps->el, &loc, "expecting factor after sign");
+		valid = false;
+	}
+
+	if (valid) {
+		dag_create_node(&n);
+		n->type = dag_type_sign;
+
+		/* allocate left */
+		struct dag_node* left;
+		dag_create_node(&left);
+
+		if (t0->type == token_plus) {
+			left->type = dag_type_plus;
+		} else {
+			left->type = dag_type_minus;
+		}
+
+		/* transfer left -> n{} */
+		dag_add_child(n, left);
+
+		/* transfer right -> n{} */
+		dag_add_child(n, right);
+
+		*root = n;
+	}
+
+	/* destroy sign */
+	token_destroy(sign);
 
 	return valid;
 }
@@ -513,9 +551,8 @@ bool array_literal(struct parse_state* ps, struct dag_node** root)
 	return valid;
 }
 
-/*
-* aseq -> factor aseq' | e
-*/
+/* aseq -> expr aseq' | e */
+/* aseq' = , expr aseq' | e */
 /* dynamic-output ps{} parent{} */
 bool aseq(struct parse_state* ps, struct dag_node* parent)
 {
@@ -523,64 +560,77 @@ bool aseq(struct parse_state* ps, struct dag_node* parent)
 
 	/* allocate ps{} a a{} */
 	struct dag_node* a = NULL;
-	valid = valid && factor(ps, &a);
+	valid = valid && expr(ps, &a);
 
 	if (a) {
 		/* a -> parent{} */
 		dag_add_child(parent, a);
 
-		/* allocate parent{} */
-		valid = valid && aseq_prime(ps, parent);
+		while (true) {
+			/* allocate ps{} */
+			int num;
+			valid = valid && get_lookahead(ps, 1, &num);
+			struct token* t0 = get_token(&ps->lookahead, 0);
+			if (!t0 || t0->type != token_comma) {
+				break;
+			}
+
+			/* allocate ps{} comma comma{} */
+			struct token* comma = NULL;
+			valid = valid && match(ps, token_comma, "expecting comma", &comma);
+
+			/* destroy comma comma{} */
+			token_destroy(comma);
+			free(comma);
+
+			struct location loc;
+			valid = valid && get_parse_location(ps, &loc);
+
+			/* allocate ps{} a a{} */
+			struct dag_node* a = NULL;
+			valid = valid && expr(ps, &a);
+
+			if (!a) {
+				set_source_error(ps->el, &loc, "expected expr after comma");
+				valid = false;
+				break;
+			}
+
+			/* transfer a -> parent */
+			dag_add_child(parent, a);
+		}
 	}
 
 	return valid;
 }
 
-/*
-* aseq' = , factor aseq' | e
-*/
-/* dynamic-output ps{} parent{} */
-bool aseq_prime(struct parse_state* ps, struct dag_node* parent)
+bool parenthesis(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
-	int num;
+	struct dag_node* n = NULL;
 
-	/* allocate ps{} */
-	valid = valid && get_lookahead(ps, 1, &num);
+	/* allocate ps{} lp lp{} */
+	struct token* lp = NULL;
+	valid = valid && match(ps, token_left_paren, "expecting left parenthesis", &lp);
 
-	struct token* t0 = get_token(&ps->lookahead, 0);
+	/* allocate n n{} */
+	valid = valid && expr(ps, &n);
 
-	/* e */
-	if (!t0 || t0->type != token_comma) {
-		return valid;
+	/* allocate ps{} rp rp{} */
+	struct token* rp = NULL;
+	valid = valid && match(ps, token_right_paren, "expecting right parenthesis", &rp);
+
+	if (valid) {
+		*root = n;
 	}
 
-	/* allocate ps{} comma comma{} */
-	struct token* comma = NULL;
-	valid = valid && match(ps, token_comma, "expecting comma", &comma);
+	/* destroy lp lp{} */
+	token_destroy(lp);
+	free(lp);
 
-	/* destroy comma comma{} */
-	token_destroy(comma);
-	free(comma);
-
-	struct location loc;
-	valid = valid && get_parse_location(ps, &loc);
-
-	/* allocate ps{} a a{} */
-	struct dag_node* a = NULL;
-	valid = valid && factor(ps, &a);
-
-	if (!a) {
-		set_source_error(ps->el, &loc, "expected factor after comma");
-		valid = false;
-		return valid;
-	}
-
-	/* transfer a -> parent */
-	dag_add_child(parent, a);
-
-	/* allocate ps{} parent{} */
-	valid = valid && aseq_prime(ps, parent);
+	/* destroy rp rp{} */
+	token_destroy(rp);
+	free(rp);
 
 	return valid;
 }

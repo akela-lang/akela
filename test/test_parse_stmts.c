@@ -744,7 +744,8 @@ void test_parse_call()
 	expect_str(&b->value, "foo", "foo");
 
 	struct dag_node* c = dag_get_child(a, 1);
-	assert_null(c, "null c");
+	assert_ptr(c, "ptr c");
+	expect_int_equal(c->type, dag_type_cseq, "cseq");
 
 	struct dag_node* d = dag_get_child(plus, 1);
 	assert_ptr(d, "ptr d");

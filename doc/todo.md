@@ -1,7 +1,5 @@
 # Todo
 * change parsing functions to SESE and update memory annotations
-  * parse_types
-  * parse_factor
   * parse_expr
   * parse_stmts
 * add type_set and type to dag_node
