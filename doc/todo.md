@@ -1,6 +1,5 @@
 # Todo
 * change parsing functions to SESE and update memory annotations
-  * parse_expr
   * parse_stmts
 * add type_set and type to dag_node
 * derive type from list in for x in list

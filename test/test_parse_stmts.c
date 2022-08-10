@@ -1626,11 +1626,11 @@ void test_parse_line_col()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("* 2", &ps, &root);
+	valid = parse_setup("2 *", &ps, &root);
 	assert_false(valid, "parse not valid");
 	assert_has_errors(ps.el);
-	struct compile_error* e = assert_compile_error(ps.el, "expected term before operator");
-	expect_compile_error_fields(e, 1, 1, 0);
+	struct compile_error* e = assert_compile_error(ps.el, "expected term after operator");
+	expect_compile_error_fields(e, 1, 4, 3);
 
 	struct buffer bf;
 	buffer_init(&bf);
@@ -1638,7 +1638,7 @@ void test_parse_line_col()
 	/* allocate bf */
 	enum result r = format_error(e, (input_getchar)string_getchar, (input_seek)string_seek, ps.sns->lc->d, &bf);
 	assert_ok(r, "format_error");
-	expect_str(&bf, "expected term before operator\n* 2", "format_error");
+	expect_str(&bf, "expected term after operator\n*", "format_error");
 
 	/* destroy bf */
 	buffer_destroy(&bf);
@@ -1658,11 +1658,11 @@ void test_parse_source()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("1\n* 2", &ps, &root);
+	valid = parse_setup("1\n2 *", &ps, &root);
 	assert_false(valid, "parse valid");
 	assert_has_errors(ps.el);
-	struct compile_error* e = assert_compile_error(ps.el, "expected term before operator");
-	expect_compile_error_fields(e, 2, 1, 2);
+	struct compile_error* e = assert_compile_error(ps.el, "expected term after operator");
+	expect_compile_error_fields(e, 2, 4, 5);
 
 	struct buffer bf;
 	buffer_init(&bf);
@@ -1670,7 +1670,7 @@ void test_parse_source()
 	/* allocate bf */
 	enum result r = format_error(e, (input_getchar)string_getchar, (input_seek)string_seek, ps.sns->lc->d, &bf);
 	assert_ok(r, "format_error");
-	expect_str(&bf, "expected term before operator\n* 2", "format_error");
+	expect_str(&bf, "expected term after operator\n*", "format_error");
 
 	/* destroy bf */
 	buffer_destroy(&bf);

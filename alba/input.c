@@ -44,7 +44,8 @@ int string_getchar(struct string_data* sd)
 /* dynamic-output-none */
 int string_seek(struct string_data* sd, size_t pos)
 {
-	if (pos >= sd->bf->size) return -1;
+	if (pos > sd->bf->size) return -1;
+	if (pos == sd->bf->size) pos--;
 	sd->pos = pos;
 	return 0;
 }
