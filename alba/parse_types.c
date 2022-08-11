@@ -29,7 +29,7 @@ bool dseq(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate a */
 	struct dag_node* dec = NULL;
-	valid = valid && declaration(ps, &dec);
+	valid = declaration(ps, &dec) && valid;
 
 	if (!dec) {
 		return valid;
@@ -44,7 +44,7 @@ bool dseq(struct parse_state* ps, struct dag_node** root)
 	{
 		/* allocate ps{} */
 		int num;
-		valid = valid && get_lookahead(ps, 2, &num);
+		valid = get_lookahead(ps, 2, &num) && valid;
 		struct token* t0 = get_token(&ps->lookahead, 0);
 		if (!t0 || t0->type != token_comma) {
 			break;
@@ -52,17 +52,17 @@ bool dseq(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} comma comma{} */
 		struct token* comma = NULL;
-		valid = valid && match(ps, token_comma, "expecting comma", &comma);
+		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
 
 		token_destroy(comma);
 		free(comma);
 
 		struct location loc;
-		valid = valid && get_parse_location(ps, &loc);
+		valid = get_parse_location(ps, &loc) && valid;
 
 		/* allocate a */
 		struct dag_node* dec = NULL;
-		valid = valid && declaration(ps, &dec);
+		valid = declaration(ps, &dec) && valid;
 		
 		if (!dec || !valid) {
 			/* allocate ps{} */
@@ -89,7 +89,7 @@ bool declaration(struct parse_state* ps, struct dag_node** root)
 	int num;
 
 	/* allocate ps{} */
-	valid = valid && get_lookahead(ps, 1, &num);
+	valid = get_lookahead(ps, 1, &num) && valid;
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
@@ -98,57 +98,53 @@ bool declaration(struct parse_state* ps, struct dag_node** root)
 
 		/* allocate ps{} id id{} */
 		struct token* id = NULL;
-		valid = valid && match(ps, token_id, "expected id", &id);
-		if (!valid) {
-			return valid;
-		}
+		valid = match(ps, token_id, "expected id", &id) && valid;
 
 		/* allocate ps{} dc dc{} */
 		struct token* dc = NULL;
-		valid = valid && match(ps, token_double_colon, "expected double colon", &dc);
+		valid = match(ps, token_double_colon, "expected double colon", &dc) && valid;
+
+		struct location loc;
+		valid = get_parse_location(ps, &loc) && valid;
+
+		struct dag_node* type_node = NULL;
+		valid = type(ps, id, &type_node) && valid;
+
+		if (!type_node) {
+			valid = set_source_error(ps->el, &loc, "expected a type");
+		}
+
+		if (valid) {
+			/* allocate n */
+			dag_create_node(&n);
+			n->type = dag_type_declaration;
+
+			/* allocate a */
+			struct dag_node* a = NULL;
+			dag_create_node(&a);
+			a->type = dag_type_id;
+
+			/* allocate a{} */
+			buffer_copy(&id->value, &a->value);
+
+			/* transfer a a{} -> n */
+			dag_add_child(n, a);
+
+			/* transfer b b{} -> n */
+			dag_add_child(n, type_node);
+
+			/* transfer n -> root */
+			*root = n;
+		} else {
+			dag_destroy(type_node);
+		}
+
+		token_destroy(id);
+		free(id);
 
 		/* destroy dc dc{} */
 		token_destroy(dc);
 		free(dc);
-
-		struct location loc;
-		valid = valid && get_parse_location(ps, &loc);
-
-		struct dag_node* b = NULL;
-		valid = valid && type(ps, id, &b);
-
-		if (!b) {
-			set_source_error(ps->el, &loc, "expected a type");
-			valid = false;
-			token_destroy(id);
-			free(id);
-			return valid;
-		}
-
-		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_declaration;
-
-		/* allocate a */
-		struct dag_node* a = NULL;
-		dag_create_node(&a);
-		a->type = dag_type_id;
-
-		/* allocate a{} */
-		buffer_copy(&id->value, &a->value);
-
-		/* transfer a a{} -> n */
-		dag_add_child(n, a);
-
-		/* transfer b b{} -> n */
-		dag_add_child(n, b);
-
-		/* destroy id id{} type_id type_id{} */
-		token_destroy(id);
-		free(id);
-
-		/* transfer n -> root */
-		*root = n;
 	}
 
 	return valid;
@@ -160,7 +156,7 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 	struct dag_node* n = NULL;
 
 	int num;
-	valid = valid && get_lookahead(ps, 2, &num);
+	valid = get_lookahead(ps, 2, &num) && valid;
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct token* t1 = get_token(&ps->lookahead, 1);
 
@@ -173,18 +169,18 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 		free(a);
 	} else if (t0 && t0->type == token_array_type_name && t1 && t1->type == token_left_curly_brace) {
 		struct token* name = NULL;
-		valid = valid && match(ps, token_array_type_name, "expected array type name", &name);
+		valid = match(ps, token_array_type_name, "expected array type name", &name) && valid;
 
 		struct token* lcb = NULL;
-		valid = valid && match(ps, token_left_curly_brace, "expected left curly brace", &lcb);
+		valid = match(ps, token_left_curly_brace, "expected left curly brace", &lcb) && valid;
 		token_destroy(lcb);
 		free(lcb);
 
 		struct token* name2 = NULL;
-		valid = valid && match(ps, token_type_name, "expected type name", &name2);
+		valid = match(ps, token_type_name, "expected type name", &name2) && valid;
 
 		struct token* rcb = NULL;
-		valid = valid && match(ps, token_right_curly_brace, "expected right curly brace", &rcb);
+		valid = match(ps, token_right_curly_brace, "expected right curly brace", &rcb) && valid;
 		token_destroy(rcb);
 		free(rcb);
 
@@ -234,7 +230,7 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 
 	} else if (t0 && t0->type == token_type_name) {
 		struct token* name = NULL;
-		valid = valid && match(ps, token_type_name, "expected type id", &name);
+		valid = match(ps, token_type_name, "expected type id", &name) && valid;
 
 		if (valid) {
 			dag_create_node(&n);
