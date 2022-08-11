@@ -18,12 +18,12 @@ bool parse(struct parse_state* ps, struct dag_node** root)
 	bool valid = true;
 
 	/* allocate ps{} root root{} */
-	valid = valid && stmts(ps, false, root);
+	valid = stmts(ps, false, root) && valid;
 
 	/* allocate ps{} */
 	if (!lookahead_char_done(ps->sns->lc)) {
 		int num;
-		valid = valid && get_lookahead(ps, 1, &num);
+		valid = get_lookahead(ps, 1, &num) && valid;
 	}
 
 	if (token_list_count(&ps->lookahead) > 0) {
@@ -34,13 +34,12 @@ bool parse(struct parse_state* ps, struct dag_node** root)
 		if (r == result_error) {
 			get_token_location(t, &loc);
 			valid = set_source_error(ps->el, &loc, "token name init: %s", error_message);
-			return false;
+			return valid;
 		}
 
 		/* allocate ps{} */
 		get_parse_location(ps, &loc);
-		set_source_error(ps->el, &loc, "Couldn't process token: %s", names[t->type]);
-		valid = false;
+		valid = set_source_error(ps->el, &loc, "Couldn't process token: %s", names[t->type]);
 	}
 
 	return valid;

@@ -1,6 +1,4 @@
 # Todo
-* improve validation handling
-  * parse_expr
 * add is_type and is_array to struct symbol
 * add type_set and type to dag_node
 * derive type from list in for x in list
