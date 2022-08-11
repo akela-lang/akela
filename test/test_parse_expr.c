@@ -1789,6 +1789,25 @@ void test_parse_anonymous_function2()
 	parse_teardown(&ps);
 }
 
+void test_parse_anonymous_function3()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Function; a = function(x::Int64) var x::Int64 = 1 end", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_false(valid, "parse valid");
+	assert_compile_error(ps.el, "duplicate declaration in same scope: x");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_var()
 {
 	test_name(__func__);
@@ -1912,6 +1931,7 @@ void test_parse_expression()
 	test_parse_string();
 	test_parse_anonymous_function();
 	test_parse_anonymous_function2();
+	test_parse_anonymous_function3();
 	test_parse_var();
 	test_parse_var2();
 }

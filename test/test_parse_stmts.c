@@ -698,6 +698,25 @@ void test_parse_function4()
 	parse_teardown(&ps);
 }
 
+void test_parse_function5()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo(x::Int64) var x::Int64 end", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_false(valid, "parse valid");
+	assert_compile_error(ps.el, "duplicate declaration in same scope: x");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_call()
 {
@@ -1556,6 +1575,24 @@ void test_parse_for_range()
 	parse_teardown(&ps);
 }
 
+void test_parse_for_range2()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("for i = 0:10 var i::Int64 = 1 end", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_false(valid, "parse_setup valid");
+	assert_compile_error(ps.el, "duplicate declaration in same scope: i");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_for_iteration()
 {
@@ -1610,6 +1647,24 @@ void test_parse_for_iteration()
 	assert_ptr(num0, "ptr num0");
 	expect_int_equal(num0->type, dag_type_number, "number num0");
 	expect_str(&num0->value, "1", "1 num0");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_iteration2()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector{Int64}; for i in list var i::Int64 = 1 end", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_false(valid, "parse_setup valid");
+	assert_compile_error(ps.el, "duplicate declaration in same scope: i");
 
 	/* destroy ps{} root root{} */
 	dag_destroy(root);
@@ -1694,6 +1749,7 @@ void test_parse_statements()
 	test_parse_function2();
 	test_parse_function3();
 	test_parse_function4();
+	test_parse_function5();
 	test_parse_call();
 	test_parse_call2();
 	test_parse_call3();
@@ -1705,7 +1761,9 @@ void test_parse_statements()
 	test_parse_else2();
 	test_parse_while();
 	test_parse_for_range();
+	test_parse_for_range2();
 	test_parse_for_iteration();
+	test_parse_for_iteration2();
 	test_parse_line_col();
 	test_parse_source();
 }

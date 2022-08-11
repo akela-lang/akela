@@ -18,7 +18,7 @@ bool parse(struct parse_state* ps, struct dag_node** root)
 	bool valid = true;
 
 	/* allocate ps{} root root{} */
-	valid = valid && stmts(ps, root);
+	valid = valid && stmts(ps, false, root);
 
 	/* allocate ps{} */
 	if (!lookahead_char_done(ps->sns->lc)) {

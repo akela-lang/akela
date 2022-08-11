@@ -123,7 +123,7 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate b b{} */
 	struct dag_node* stmts_node = NULL;
-	valid = valid && stmts(ps, &stmts_node);
+	valid = valid && stmts(ps, true, &stmts_node);
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
