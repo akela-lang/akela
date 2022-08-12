@@ -717,6 +717,25 @@ void test_parse_function5()
 	parse_teardown(&ps);
 }
 
+void test_parse_function_not_global()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("if true function foo() 1 end end", &ps, &root);
+	assert_has_errors(ps.el);
+	assert_false(valid, "parse valid");
+	assert_compile_error(ps.el, "function declaration is not in global scope");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_call()
 {
@@ -1750,6 +1769,7 @@ void test_parse_statements()
 	test_parse_function3();
 	test_parse_function4();
 	test_parse_function5();
+	test_parse_function_not_global();
 	test_parse_call();
 	test_parse_call2();
 	test_parse_call3();

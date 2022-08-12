@@ -63,7 +63,7 @@ bool match(struct parse_state* ps, enum token_enum type, char* reason, struct to
 	int got_token;
 	if (num <= 0) {
 		/* allocate ps{sns{wt{} el{}}} t t{}*/
-		valid = valid && scan_get_token(ps->sns, &got_token, t);
+		valid = scan_get_token(ps->sns, &got_token, t) && valid;
 		if (!valid) {
 			return valid;
 		}
@@ -100,7 +100,7 @@ bool get_parse_location(struct parse_state* ps, struct location* loc)
 	if (!ps->lookahead.head) {
 		/* allocate ps{} */
 		int num;
-		valid = valid && get_lookahead(ps, 1, &num);
+		valid = get_lookahead(ps, 1, &num) && valid;
 	}
 
 	struct token* t = get_token(&ps->lookahead, 0);

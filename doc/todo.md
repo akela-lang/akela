@@ -1,5 +1,8 @@
 # Todo
-* allow function declarations at global level only
+* convert variable declaration type from dag into string
+  * simple
+  * array
+  * function
 * add type_set and type to dag_node
 * derive type from list in for x in list
 * verify type for operations

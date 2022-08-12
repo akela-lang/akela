@@ -18,7 +18,7 @@ struct symbol {
 };
 
 struct symbol_table {
-	struct environment* global;
+	struct environment* initial;
 	struct environment* top;
 };
 

@@ -118,16 +118,21 @@ void symbol_table_init(struct symbol_table* st)
 	environment_init(env, NULL);
 	symbol_table_init_reserved(env);
 	symbol_table_init_builtin_types(env);
-	st->global = env;
+	st->initial = env;
 	st->top = env;
 }
 
 void symbol_table_destroy(struct symbol_table* st)
 {
-	environment_destroy(st->top);
+	struct environment* env = st->top;
+	while (env) {
+		struct environment* prev = env->prev;
+		environment_destroy(env);
+		env = prev;
+	}
 }
 
 bool symbol_table_is_global(struct symbol_table* st)
 {
-	return st->top == st->global;
+	return st->top && (st->top->prev == st->initial);
 }

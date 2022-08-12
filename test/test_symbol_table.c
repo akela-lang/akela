@@ -47,20 +47,16 @@ void test_symbol_table_global()
 	struct symbol_table st;
 	symbol_table_init(&st);
 
-	expect_true(symbol_table_is_global(&st), "is global");
-
 	struct environment* saved = st.top;
 	struct enviornment* env = NULL;
 	malloc_safe(&env, sizeof(struct environment));
-	environment_init(env, NULL);
+	environment_init(env, saved);
 	st.top = env;
 
-	expect_false(symbol_table_is_global(&st), "is not global");
+	expect_true(symbol_table_is_global(&st), "is global");
 
 	st.top = saved;
 	environment_destroy(env);
-
-	expect_true(symbol_table_is_global(&st), "is global 2");
 
 	symbol_table_destroy(&st);
 }

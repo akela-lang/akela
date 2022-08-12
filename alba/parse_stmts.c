@@ -636,6 +636,12 @@ bool function(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
 
+	if (!symbol_table_is_global(ps->st)) {
+		struct location loc;
+		get_parse_location(ps, &loc);
+		valid = set_source_error(ps->el, &loc, "function declaration is not in global scope");
+	}
+
 	/* shared ps{top} -> saved */
 	struct environment* saved = ps->st->top;
 
