@@ -40,7 +40,33 @@ void test_symbol_table_env()
 	buffer_destroy(&value);
 }
 
+void test_symbol_table_global()
+{
+	test_name(__func__);
+
+	struct symbol_table st;
+	symbol_table_init(&st);
+
+	expect_true(symbol_table_is_global(&st), "is global");
+
+	struct environment* saved = st.top;
+	struct enviornment* env = NULL;
+	malloc_safe(&env, sizeof(struct environment));
+	environment_init(env, NULL);
+	st.top = env;
+
+	expect_false(symbol_table_is_global(&st), "is not global");
+
+	st.top = saved;
+	environment_destroy(env);
+
+	expect_true(symbol_table_is_global(&st), "is global 2");
+
+	symbol_table_destroy(&st);
+}
+
 void test_symbol_table()
 {
 	test_symbol_table_env();
+	test_symbol_table_global();
 }

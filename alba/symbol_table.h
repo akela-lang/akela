@@ -1,6 +1,7 @@
 #ifndef _SYMBOL_TABLE_H
 #define _SYMBOL_TABLE_H
 
+#include <stdbool.h>
 #include "hash.h"
 #include "token.h"
 
@@ -17,6 +18,7 @@ struct symbol {
 };
 
 struct symbol_table {
+	struct environment* global;
 	struct environment* top;
 };
 
@@ -43,5 +45,7 @@ void environment_destroy(struct environment* env);
 void symbol_table_init(struct symbol_table* st);
 
 void symbol_table_destroy(struct symbol_table* st);
+
+bool symbol_table_is_global(struct symbol_table* st);
 
 #endif
