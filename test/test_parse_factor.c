@@ -268,7 +268,7 @@ void test_parse_id3()
 }
 
 /* dynamic-output-none */
-void test_parse_num_negative()
+void test_parse_sign_negative()
 {
 	test_name(__func__);
 
@@ -282,7 +282,7 @@ void test_parse_num_negative()
 	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
-	assert_int_equal(root->type, dag_type_stmts, "stmts root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
 
 	struct dag_node* sign = dag_get_child(root, 0);
 	assert_ptr(sign, "ptr sign");
@@ -290,12 +290,17 @@ void test_parse_num_negative()
 
 	struct dag_node* left = dag_get_child(sign, 0);
 	assert_ptr(left, "left");
-	assert_int_equal(left->type, dag_type_minus, "minus");
+	expect_int_equal(left->type, dag_type_minus, "minus");
 
 	struct dag_node* right = dag_get_child(sign, 1);
 	assert_ptr(right, "right");
-	assert_int_equal(right->type, dag_type_number, "number");
+	expect_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "30", "30");
+
+	struct dag_node* etype = sign->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_type_name, "type_name sign");
+	expect_str(&etype->value, "Int64", "Int64 sign");
 
 	/* destroy ps{} root root{} */
 	dag_destroy(root);
@@ -303,7 +308,7 @@ void test_parse_num_negative()
 }
 
 /* dynamic-output-none */
-void test_parse_num_positive()
+void test_parse_sign_positive()
 {
 	test_name(__func__);
 
@@ -332,13 +337,18 @@ void test_parse_num_positive()
 	assert_int_equal(right->type, dag_type_number, "number");
 	expect_str(&right->value, "30", "30");
 
+	struct dag_node* etype = sign->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_type_name, "type_name sign");
+	expect_str(&etype->value, "Int64", "Int64 sign");
+
 	/* destroy ps{} root root{} */
 	dag_destroy(root);
 	parse_teardown(&ps);
 }
 
 /* dynamic-output-none */
-void test_parse_call_negative()
+void test_parse_sign_error()
 {
 	test_name(__func__);
 
@@ -348,37 +358,9 @@ void test_parse_call_negative()
 
 	/* allocate ps{} root root{} */
 	valid = parse_setup("function foo() end\n-foo()", &ps, &root);
-	assert_no_errors(ps.el);
-	expect_true(valid, "parse_setup valid");
-
-	assert_ptr(root, "ptr root");
-	assert_int_equal(root->type, dag_type_stmts, "stmts root");
-
-	struct dag_node* fd = dag_get_child(root, 0);
-	assert_ptr(fd, "ptr fd");
-	expect_int_equal(fd->type, dag_type_function, "function");
-
-	struct dag_node* f_id = dag_get_child(fd, 0);
-	assert_ptr(f_id, "ptr f_id");
-	expect_int_equal(f_id->type, dag_type_id, "id f_id");
-	expect_str(&f_id->value, "foo", "foo");
-
-	struct dag_node* sign = dag_get_child(root, 1);
-	assert_ptr(sign, "ptr sign");
-	expect_int_equal(sign->type, dag_type_sign, "sign sign");
-
-	struct dag_node* left = dag_get_child(sign, 0);
-	assert_ptr(left, "left");
-	assert_int_equal(left->type, dag_type_minus, "minus");
-
-	struct dag_node* right = dag_get_child(sign, 1);
-	assert_ptr(right, "right");
-	assert_int_equal(right->type, dag_type_call, "call");
-
-	struct dag_node* id = dag_get_child(right, 0);
-	assert_ptr(id, "ptr id");
-	assert_int_equal(id->type, dag_type_id, "id id");
-	expect_str(&id->value, "foo", "foo id");
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	assert_compile_error(ps.el, "cannot perform operation on expression with no value");
 
 	/* destroy ps{} root root{} */
 	dag_destroy(root);
@@ -726,6 +708,25 @@ void test_parse_not_literal()
 	parse_teardown(&ps);
 }
 
+/* dynamic-output-none */
+void test_parse_not_error()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; !foo()", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	assert_compile_error(ps.el, "cannot perform operation on expression with no value");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_factor()
 {
 	test_parse_number_integer();
@@ -736,12 +737,13 @@ void test_parse_factor()
 	test_parse_id();
 	test_parse_id2();
 	test_parse_id3();
-	test_parse_num_negative();
-	test_parse_num_positive();
-	test_parse_call_negative();
+	test_parse_sign_negative();
+	test_parse_sign_positive();
+	test_parse_sign_error();
 	test_parse_anonymous_function();
 	test_parse_anonymous_function2();
 	test_parse_anonymous_function3();
 	test_parse_not_id();
 	test_parse_not_literal();
+	test_parse_not_error();
 }

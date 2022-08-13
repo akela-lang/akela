@@ -1,7 +1,6 @@
 # Todo
 * set etype
   * factor
-    * sign
     * array literal
     * parenthesis
     * function call

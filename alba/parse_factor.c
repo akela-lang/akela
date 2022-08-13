@@ -13,7 +13,7 @@
 bool anonymous_function(struct parse_state* ps, struct dag_node** root);
 bool function_call(struct parse_state* ps, struct dag_node** root);
 bool cseq(struct parse_state* ps, struct dag_node** root);
-bool not(struct parse_state* ps, struct dag_node** root);
+bool not_nt(struct parse_state* ps, struct dag_node** root);
 bool literal_nt(struct parse_state* ps, struct dag_node** root);
 bool id_nt(struct parse_state* ps, struct dag_node** root);
 bool sign(struct parse_state* ps, struct dag_node** root);
@@ -50,7 +50,7 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 		valid = function_call(ps, &n) && valid;
 
 	} else if (t0 && t0->type == token_not) {
-		valid = not(ps, &n) && valid;
+		valid = not_nt(ps, &n) && valid;
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
 		valid = literal_nt(ps, &n) && valid;
@@ -328,7 +328,7 @@ bool cseq(struct parse_state* ps, struct dag_node** root)
 	return valid;
 }
 
-bool not(struct parse_state* ps, struct dag_node** root)
+bool not_nt(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
 	struct dag_node* n = NULL;
@@ -377,7 +377,7 @@ bool not(struct parse_state* ps, struct dag_node** root)
 				valid = set_source_error(ps->el, &loc, "used a ! operator but expression not a boolean");
 			}
 		} else {
-			valid = set_source_error(ps->el, &loc, "expression type not set");
+			valid = set_source_error(ps->el, &loc, "cannot perform operation on expression with no value");
 		}
 	}
 
@@ -566,11 +566,25 @@ bool sign(struct parse_state* ps, struct dag_node** root)
 		/* transfer right -> n{} */
 		dag_add_child(n, right);
 
-		*root = n;
+	}
+
+	if (valid) {
+		#pragma warning(suppress:6011)
+		if (right->etype) {
+			n->etype = dag_copy(right->etype);
+		} else {
+			valid = set_source_error(ps->el, &loc, "cannot perform operation on expression with no value");
+		}
 	}
 
 	/* destroy sign */
 	token_destroy(sign);
+
+	if (valid) {
+		*root = n;
+	} else {
+		dag_destroy(n);
+	}
 
 	return valid;
 }
