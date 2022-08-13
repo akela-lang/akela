@@ -462,7 +462,6 @@ bool id_nt(struct parse_state* ps, struct dag_node** root)
 		/* allocate n{} */
 		buffer_copy(&id->value, &n->value);
 
-		*root = n;
 	}
 
 	if (valid) {
@@ -473,11 +472,22 @@ bool id_nt(struct parse_state* ps, struct dag_node** root)
 			valid = set_source_error(ps->el, &loc, "identifier not declared: %s", a);
 			free(a);
 		}
+
+		if (sym) {
+			struct dag_node* etype = dag_copy(sym->dec);
+			n->etype = etype;
+		}
 	}
 
 	/* destroy id id{} */
 	token_destroy(id);
 	free(id);
+
+	if (valid) {
+		*root = n;
+	} else {
+		dag_destroy(n);
+	}
 
 	return valid;
 }

@@ -466,7 +466,7 @@ void test_parse_function2()
 
 	struct dag_node* type_id_b = dag_get_child(seq_dec, 1);
 	assert_ptr(type_id_b, "ptr type_id_b");
-	expect_int_equal(type_id_b->type, dag_type_id, "id type_id_b");
+	expect_int_equal(type_id_b->type, dag_type_type_name, "type_name type_id_b");
 	expect_str(&type_id_b->value, "Int64", "Int64 dec_b");
 
 	struct dag_node* dret = dag_get_child(root, 2);
@@ -656,7 +656,8 @@ void test_parse_function4()
 
 	struct dag_node* dret_id = dag_get_child(dret, 0);
 	assert_ptr(dret_id, "ptr dret_id");
-	expect_int_equal(dret_id->type, dag_type_id, "id dret_id");
+	expect_int_equal(dret_id->type, dag_type_type_name, "type_name dret_id");
+	expect_str(&dret_id->value, "Int32", "Int32 dret_id");
 
 	struct dag_node* b = dag_get_child(root, 3);
 	assert_ptr(b, "ptr b");
@@ -838,7 +839,7 @@ void test_parse_call2()
 
 	struct dag_node* param0_id = dag_get_child(dparam0, 1);
 	assert_ptr(param0_id, "ptr param0_id");
-	expect_int_equal(param0_id->type, dag_type_id, "id param0_id");
+	expect_int_equal(param0_id->type, dag_type_type_name, "id param0_id");
 	expect_str(&param0_id->value, "Int64", "Int64 param0_id");
 
 	struct dag_node* dret = dag_get_child(fd, 2);
@@ -930,7 +931,7 @@ void test_parse_call3()
 
 	struct dag_node* param0_id = dag_get_child(fd_param0, 1);
 	assert_ptr(param0_id, "ptr param0_id");
-	expect_int_equal(param0_id->type, dag_type_id, "id param0_id");
+	expect_int_equal(param0_id->type, dag_type_type_name, "type_name param0_id");
 	expect_str(&param0_id->value, "Int64", "Int64 param0_id");
 
 	struct dag_node* dret = dag_get_child(fd, 2);
@@ -1020,7 +1021,7 @@ void test_parse_call4()
 
 	struct dag_node* dseq_param0_type_id = dag_get_child(dseq_param0, 1);
 	assert_ptr(dseq_param0_type_id, "ptr dseq_param0_type_id");
-	expect_int_equal(dseq_param0_type_id->type, dag_type_id, "id dseq_param0_type_id");
+	expect_int_equal(dseq_param0_type_id->type, dag_type_type_name, "type_name dseq_param0_type_id");
 	expect_str(&dseq_param0_type_id->value, "Int64", "Int64 dseq_param0_type_id");
 
 	struct dag_node* dseq_param1 = dag_get_child(dseq, 1);
@@ -1034,7 +1035,7 @@ void test_parse_call4()
 
 	struct dag_node* dseq_param1_type_id = dag_get_child(dseq_param1, 1);
 	assert_ptr(dseq_param1_type_id, "ptr dseq_param1_type_id");
-	expect_int_equal(dseq_param1_type_id->type, dag_type_id, "id dseq_param1_type_id");
+	expect_int_equal(dseq_param1_type_id->type, dag_type_type_name, "type_name dseq_param1_type_id");
 	expect_str(&dseq_param1_type_id->value, "Int64", "Int64 dseq_param1_type_id");
 
 	struct dag_node* dseq_param2 = dag_get_child(dseq, 2);
@@ -1048,7 +1049,7 @@ void test_parse_call4()
 
 	struct dag_node* dseq_param2_type_id = dag_get_child(dseq_param2, 1);
 	assert_ptr(dseq_param2_type_id, "ptr dseq_param2_type_id");
-	expect_int_equal(dseq_param2_type_id->type, dag_type_id, "id dseq_param2_type_id");
+	expect_int_equal(dseq_param2_type_id->type, dag_type_type_name, "type_name dseq_param2_type_id");
 	expect_str(&dseq_param2_type_id->value, "Int64", "Int64 dseq_param2_type_id");
 
 	struct dag_node* dret = dag_get_child(fd, 2);
@@ -1057,7 +1058,7 @@ void test_parse_call4()
 
 	struct dag_node* dret_type_id = dag_get_child(dret, 0);
 	assert_ptr(dret_type_id, "ptr dret_type_id");
-	expect_int_equal(dret_type_id->type, dag_type_id, "id dret_type_id");
+	expect_int_equal(dret_type_id->type, dag_type_type_name, "type_name dret_type_id");
 	expect_str(&dret_type_id->value, "Int64", "Int64 dret_type_id");
 
 	struct dag_node* plus = dag_get_child(root, 3);

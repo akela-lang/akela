@@ -145,4 +145,6 @@ int is_binary_operator(struct dag_node* n);
 /* dynamic-output-none */
 void dag_print(struct dag_node* root, char** names);
 
+struct dag_node* dag_copy(struct dag_node* n);
+
 #endif

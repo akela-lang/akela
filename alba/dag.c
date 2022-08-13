@@ -137,3 +137,25 @@ void dag_print(struct dag_node* root, char** names)
 		}
 	}
 }
+
+/* copy dag excluding etype */
+struct dag_node* dag_copy(struct dag_node* n)
+{
+	struct dag_node* copy = NULL;
+
+	if (n) {
+		dag_create_node(&copy);
+		copy->type = n->type;
+		buffer_copy(&n->value, &copy->value);
+		
+		struct dag_node* p = copy->head;
+		while (p) {
+			struct dag_node* p_copy = NULL;
+			p_copy = dag_copy(p);
+			dag_add_child(copy, p_copy);
+			p = p->next;
+		}
+	}
+
+	return copy;
+}

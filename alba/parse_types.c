@@ -230,11 +230,11 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 
 	} else if (t0 && t0->type == token_type_name) {
 		struct token* name = NULL;
-		valid = match(ps, token_type_name, "expected type id", &name) && valid;
+		valid = match(ps, token_type_name, "expected type name", &name) && valid;
 
 		if (valid) {
 			dag_create_node(&n);
-			n->type = dag_type_id;
+			n->type = dag_type_type_name;
 			buffer_copy(&name->value, &n->value);
 
 			if (id) {

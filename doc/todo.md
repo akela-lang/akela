@@ -1,8 +1,14 @@
 # Todo
-* convert variable declaration type from dag into string
-  * simple
-  * array
-  * function
+* set etype
+  * factor
+    * anonymous function
+    * function call
+    * not
+    * sign
+    * array literal
+    * parenthesis
+  * expr
+  * stmts
 * add type_set and type to dag_node
 * derive type from list in for x in list
 * verify type for operations

@@ -1344,7 +1344,7 @@ void test_parse_var()
 
 	struct dag_node* name = dag_get_child(dec, 1);
 	assert_ptr(name, "ptr name");
-	expect_int_equal(name->type, dag_type_id, "id name");
+	expect_int_equal(name->type, dag_type_type_name, "type_name name");
 	expect_str(&name->value, "Int32", "Int32");
 
 	/* destroy ps{} root root{} */
@@ -1380,7 +1380,7 @@ void test_parse_var2()
 
 	struct dag_node* name = dag_get_child(dec, 1);
 	assert_ptr(name, "ptr name");
-	expect_int_equal(name->type, dag_type_id, "id name");
+	expect_int_equal(name->type, dag_type_type_name, "type_name name");
 	expect_str(&name->value, "Int32", "Int32");
 
 	struct dag_node* value = dag_get_child(let, 1);
