@@ -342,7 +342,7 @@ bool not(struct parse_state* ps, struct dag_node** root)
 
 	/* allocate a a{} */
 	struct dag_node* a = NULL;
-	valid = factor(ps, &a) && valid;
+	valid = expr(ps, &a) && valid;
 
 	if (!a) {
 		/* allocate ps{} */
@@ -359,15 +359,35 @@ bool not(struct parse_state* ps, struct dag_node** root)
 			dag_add_child(n, a);
 		}
 
-		*root = n;
-
 	} else {
 		dag_destroy(a);
+	}
+
+	if (valid) {
+		#pragma warning(suppress:6011)
+		if (a->etype) {
+			struct dag_node* etype = NULL;
+			if (type_is_boolean(a->etype)) {
+				etype = dag_copy(a->etype);
+				n->etype = etype;
+			}
+			if (!etype) {
+				valid = set_source_error(ps->el, &loc, "used a ! operator but expression not a boolean");
+			}
+		} else {
+			valid = set_source_error(ps->el, &loc, "expression type not set");
+		}
 	}
 
 	/* destroy not not{} */
 	token_destroy(not);
 	free(not);
+
+	if (valid) {
+		*root = n;
+	} else {
+		dag_destroy(n);
+	}
 
 	return valid;
 }
@@ -420,13 +440,13 @@ bool literal_nt(struct parse_state* ps, struct dag_node** root)
 		} else if (n->type == dag_type_string) {
 			struct dag_node* etype = NULL;
 			dag_create_node(&etype);
-			etype->type = dag_type_string;
+			etype->type = dag_type_type_name;
 			buffer_copy_str(&etype->value, "String");
 			n->etype = etype;
 		} else if (n->type == dag_type_boolean) {
 			struct dag_node* etype = NULL;
 			dag_create_node(&etype);
-			etype->type = dag_type_boolean;
+			etype->type = dag_type_type_name;
 			buffer_copy_str(&etype->value, "Bool");
 			n->etype = etype;
 		}

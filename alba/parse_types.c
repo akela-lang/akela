@@ -294,3 +294,17 @@ struct dag_node* af2etype(struct dag_node* n)
 
 	return etype;
 }
+
+bool type_is_boolean(struct dag_node* etype)
+{
+	if (etype) {
+		if (etype->type == dag_type_boolean) {
+			return true;
+		} else if (etype->type == dag_type_type_name) {
+			if (buffer_str_compare(&etype->value, "Bool")) {
+				return true;
+			}
+		}
+	}
+	return false;
+}

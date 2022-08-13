@@ -1023,36 +1023,6 @@ void test_parse_comparison()
 }
 
 /* dynamic-output-none */
-void test_parse_not()
-{
-	test_name(__func__);
-
-	struct dag_node* root;
-	struct parse_state ps;
-
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var a::Bool; !a", &ps, &root);
-	assert_no_errors(ps.el);
-	expect_true(valid, "parse_setup valid");
-
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, dag_type_stmts, "stmts root");
-
-	struct dag_node* not = dag_get_child(root, 1);
-	assert_ptr(not, "ptr not");
-	expect_int_equal(not->type, dag_type_not, "not not");
-
-	struct dag_node* id = dag_get_child(not, 0);
-	assert_ptr(id, "ptr id");
-	expect_int_equal(id->type, dag_type_id, "id id");
-	expect_str(&id->value, "a", "a id");
-
-	/* destroy ps{} root root{} */
-	dag_destroy(root);
-	parse_teardown(&ps);
-}
-
-/* dynamic-output-none */
 void test_parse_and()
 {
 	test_name(__func__);
@@ -1457,7 +1427,6 @@ void test_parse_expression()
 	test_parse_paren_mult_mult();
 	test_parse_paren_mult_mult2();
 	test_parse_comparison();
-	test_parse_not();
 	test_parse_and();
 	test_parse_or();
 	test_parse_or_or();

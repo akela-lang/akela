@@ -93,7 +93,7 @@ void test_parse_string()
 
 	struct dag_node* etype = string->etype;
 	assert_ptr(etype, "ptr etype");
-	expect_int_equal(etype->type, dag_type_string, "string etype");
+	expect_int_equal(etype->type, dag_type_type_name, "string etype");
 	expect_str(&etype->value, "String", "String etype");
 
 	/* destroy ps{} root root{} */
@@ -124,7 +124,7 @@ void test_parse_boolean_true()
 
 	struct dag_node* etype = true_node->etype;
 	assert_ptr(etype, "ptr etype");
-	expect_int_equal(etype->type, dag_type_boolean, "boolean etype");
+	expect_int_equal(etype->type, dag_type_type_name, "boolean etype");
 	expect_str(&etype->value, "Bool", "Bool etype");
 
 	/* destroy ps{} root root{} */
@@ -155,7 +155,7 @@ void test_parse_boolean_false()
 
 	struct dag_node* etype = false_node->etype;
 	assert_ptr(etype, "ptr etype");
-	expect_int_equal(etype->type, dag_type_boolean, "boolean etype");
+	expect_int_equal(etype->type, dag_type_type_name, "boolean etype");
 	expect_str(&etype->value, "Bool", "Bool etype");
 
 	/* destroy ps{} root root{} */
@@ -656,6 +656,76 @@ void test_parse_anonymous_function3()
 	parse_teardown(&ps);
 }
 
+/* dynamic-output-none */
+void test_parse_not_id()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var a::Bool; !a", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* not = dag_get_child(root, 1);
+	assert_ptr(not, "ptr not");
+	expect_int_equal(not->type, dag_type_not, "not not");
+
+	struct dag_node* id = dag_get_child(not, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, dag_type_id, "id id");
+	expect_str(&id->value, "a", "a id");
+
+	struct dag_node* etype = not->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_type_name, "type_name etype");
+	expect_str(&etype->value, "Bool", "Bool etype");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_not_literal()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("!true", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* not = dag_get_child(root, 0);
+	assert_ptr(not, "ptr not");
+	expect_int_equal(not->type, dag_type_not, "not not");
+
+	struct dag_node* lit_bool = dag_get_child(not, 0);
+	assert_ptr(lit_bool, "ptr lit_bool");
+	expect_int_equal(lit_bool->type, dag_type_boolean, "boolean true");
+	expect_str(&lit_bool->value, "true", "true lit_bool");
+
+	struct dag_node* etype = not->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_type_name, "type_name etype");
+	expect_str(&etype->value, "Bool", "Bool etype");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_factor()
 {
 	test_parse_number_integer();
@@ -672,4 +742,6 @@ void test_parse_factor()
 	test_parse_anonymous_function();
 	test_parse_anonymous_function2();
 	test_parse_anonymous_function3();
+	test_parse_not_id();
+	test_parse_not_literal();
 }
