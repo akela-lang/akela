@@ -1,13 +1,14 @@
 # Todo
 * set etype
   * factor
-    * function call
     * not
     * sign
     * array literal
     * parenthesis
   * expr
   * stmts
+    * function
+    * function call
 * add type_set and type to dag_node
 * derive type from list in for x in list
 * verify type for operations
