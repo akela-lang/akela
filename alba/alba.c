@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "token.h"
 #include "scan.h"
 #include "zinc/buffer.h"
@@ -60,9 +61,13 @@ int main(int argc, char** argv)
     parse_state_init(&ps, &sns, &el, &st);
 
     /* allocate ps{} root root{} */
-    r = parse(&ps, &root);
-    if (r == result_error) {
-        fprintf(stderr, "%s\n", error_message);
+    bool valid = parse(&ps, &root);
+    if (!valid) {
+        struct compile_error* e = ps.el->head;
+        while (e) {
+            fprintf(stderr, "%s\n", e->message);
+            e = e->next;
+        }
         return 1;
     }
 

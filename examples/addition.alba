@@ -1,2 +1,4 @@
+var á::Int64 = 1
+var count::Int64 = 0;
 á + 1
 count - 10
