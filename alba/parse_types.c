@@ -266,3 +266,31 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root)
 
 	return valid;
 }
+
+struct dag_node* af2etype(struct dag_node* n)
+{
+	struct dag_node* etype = NULL;
+	dag_create_node(&etype);
+	etype->type = dag_type_type_function;
+
+	/* dseq */
+	struct dag_node* dseq = dag_get_child(n, 0);
+	struct dag_node* type_dseq = NULL;
+	dag_create_node(&type_dseq);
+	type_dseq->type = dag_type_type_dseq;
+	struct dag_node* dec = dseq->head;
+	while (dec) {
+		struct dag_node* t = dag_get_child(dec, 1);
+		dag_add_child(type_dseq, dag_copy(t));
+		dec = dec->next;
+	}
+	dag_add_child(etype, type_dseq);
+
+	/* dret */
+	struct dag_node* dret = dag_get_child(n, 1);
+	struct dag_node* type_dret = dag_copy(dret);
+	type_dret->type = dag_type_type_dret;
+	dag_add_child(etype, type_dret);
+
+	return etype;
+}

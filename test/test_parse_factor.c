@@ -474,6 +474,33 @@ void test_parse_anonymous_function()
 	expect_int_equal(one->type, dag_type_number, "number one");
 	expect_str(&one->value, "1", "1 one");
 
+	struct dag_node* etype = f->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_type_function, "function_declaration etype");
+
+	struct dag_node* type_dseq = dag_get_child(etype, 0);
+	assert_ptr(type_dseq, "ptr type_desq");
+	expect_int_equal(type_dseq->type, dag_type_type_dseq, "type_dseq type_dseq");
+
+	struct dag_node* param0 = dag_get_child(type_dseq, 0);
+	assert_ptr(param0, "ptr param0");
+	expect_int_equal(param0->type, dag_type_type_name, "type_name param0");
+	expect_str(&param0->value, "Int32", "Int32 param0");
+
+	struct dag_node* param1 = dag_get_child(type_dseq, 1);
+	assert_ptr(param1, "ptr param1");
+	expect_int_equal(param1->type, dag_type_type_name, "type_name param1");
+	expect_str(&param1->value, "Int32", "Int32 param1");
+
+	struct dag_node* param2 = dag_get_child(type_dseq, 2);
+	assert_ptr(param2, "ptr param2");
+	expect_int_equal(param2->type, dag_type_type_name, "type_name param2");
+	expect_str(&param2->value, "Int32", "Int32 param2");
+
+	struct dag_node* type_dret = dag_get_child(etype, 1);
+	assert_ptr(type_dret, "ptr type_dret");
+	expect_int_equal(type_dret->type, dag_type_type_dret, "type_dret type_dret");
+
 	/* destroy ps{} root root{} */
 	dag_destroy(root);
 	parse_teardown(&ps);
@@ -572,6 +599,38 @@ void test_parse_anonymous_function2()
 	assert_ptr(one, "ptr one");
 	expect_int_equal(one->type, dag_type_number, "number one");
 	expect_str(&one->value, "1", "1 one");
+
+	struct dag_node* etype = f->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_type_function, "function_declaration etype");
+
+	struct dag_node* type_dseq = dag_get_child(etype, 0);
+	assert_ptr(type_dseq, "ptr type_desq");
+	expect_int_equal(type_dseq->type, dag_type_type_dseq, "type_dseq type_dseq");
+
+	struct dag_node* param0 = dag_get_child(type_dseq, 0);
+	assert_ptr(param0, "ptr param0");
+	expect_int_equal(param0->type, dag_type_type_name, "type_name param0");
+	expect_str(&param0->value, "Int32", "Int32 param0");
+
+	struct dag_node* param1 = dag_get_child(type_dseq, 1);
+	assert_ptr(param1, "ptr param1");
+	expect_int_equal(param1->type, dag_type_type_name, "type_name param1");
+	expect_str(&param1->value, "Int32", "Int32 param1");
+
+	struct dag_node* param2 = dag_get_child(type_dseq, 2);
+	assert_ptr(param2, "ptr param2");
+	expect_int_equal(param2->type, dag_type_type_name, "type_name param2");
+	expect_str(&param2->value, "Int32", "Int32 param2");
+
+	struct dag_node* type_dret = dag_get_child(etype, 1);
+	assert_ptr(type_dret, "ptr type_dret");
+	expect_int_equal(type_dret->type, dag_type_type_dret, "type_dret type_dret");
+
+	struct dag_node* type_return = dag_get_child(type_dret, 0);
+	assert_ptr(type_return, "ptr type_return");
+	expect_int_equal(type_return->type, dag_type_type_name, "type_name type_return");
+	expect_str(&type_return->value, "Int32", "Int32 type_return");
 
 	/* destroy ps{} root root{} */
 	dag_destroy(root);

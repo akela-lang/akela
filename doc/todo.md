@@ -1,7 +1,6 @@
 # Todo
 * set etype
   * factor
-    * anonymous function
     * function call
     * not
     * sign

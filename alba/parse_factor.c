@@ -80,6 +80,7 @@ bool factor(struct parse_state* ps, struct dag_node** root)
 bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 {
 	bool valid = true;
+	struct dag_node* n = NULL;
 
 	/* shared ps{top} -> saved */
 	struct environment* saved = ps->st->top;
@@ -130,8 +131,6 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 	valid = match(ps, token_end, "expected end", &end) && valid;
 
 	if (valid) {
-		struct dag_node* n = NULL;
-
 		dag_create_node(&n);
 		n->type = dag_type_anonymous_function;
 
@@ -149,13 +148,15 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 
 		/* transfer stmts_node stmts_node{} -> n */
 		dag_add_child(n, stmts_node);
-
-		/* transfer n -> root */
-		*root = n;
 	} else {
 		dag_destroy(dseq_node);
 		dag_destroy(dret_type);
 		dag_destroy(stmts_node);
+	}
+
+	if (valid) {
+		struct dag_node* etype = af2etype(n);
+		n->etype = etype;
 	}
 
 	/* destroy f f{} lp lp{} rp rp{} end end{} */
@@ -173,6 +174,13 @@ bool anonymous_function(struct parse_state* ps, struct dag_node** root)
 
 	/* destroy env env{} */
 	environment_destroy(env);
+
+	if (valid) {
+		/* transfer n -> root */
+		*root = n;
+	} else {
+		dag_destroy(n);
+	}
 
 	return valid;
 }

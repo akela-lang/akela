@@ -148,7 +148,7 @@ struct dag_node* dag_copy(struct dag_node* n)
 		copy->type = n->type;
 		buffer_copy(&n->value, &copy->value);
 		
-		struct dag_node* p = copy->head;
+		struct dag_node* p = n->head;
 		while (p) {
 			struct dag_node* p_copy = NULL;
 			p_copy = dag_copy(p);
