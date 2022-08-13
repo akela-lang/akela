@@ -6,7 +6,7 @@
 #include "test_parse.h"
 
 /* dynamic-output-none */
-void test_parse_num()
+void test_parse_number_integer()
 {
 	test_name(__func__);
 
@@ -31,6 +31,38 @@ void test_parse_num()
 	assert_ptr(etype, "ptr etype");
 	expect_int_equal(etype->type, dag_type_type_name, "type_name etype");
 	expect_str(&etype->value, "Int64", "Int64 etype");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_number_float()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("5.0e0", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	assert_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* number = dag_get_child(root, 0);
+	assert_ptr(number, "ptr num");
+	expect_int_equal(number->type, dag_type_number, "number number");
+	expect_str(&number->value, "5.0e0", "5.0e0 number");
+
+	struct dag_node* etype = number->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_type_name, "type_name etype");
+	expect_str(&etype->value, "Float64", "Float64 etype");
 
 	/* destroy ps{} root root{} */
 	dag_destroy(root);
@@ -69,7 +101,7 @@ void test_parse_string()
 	parse_teardown(&ps);
 }
 
-void test_parse_boolean()
+void test_parse_boolean_true()
 {
 	test_name(__func__);
 
@@ -100,7 +132,7 @@ void test_parse_boolean()
 	parse_teardown(&ps);
 }
 
-void test_parse_boolean2()
+void test_parse_boolean_false()
 {
 	test_name(__func__);
 
@@ -562,10 +594,11 @@ void test_parse_anonymous_function3()
 
 void test_parse_factor()
 {
-	test_parse_num();
+	test_parse_number_integer();
+	test_parse_number_float();
 	test_parse_string();
-	test_parse_boolean();
-	test_parse_boolean2();
+	test_parse_boolean_true();
+	test_parse_boolean_false();
 	test_parse_id();
 	test_parse_id2();
 	test_parse_id3();
