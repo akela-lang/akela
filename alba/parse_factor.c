@@ -367,9 +367,11 @@ bool not(struct parse_state* ps, struct dag_node** root)
 		#pragma warning(suppress:6011)
 		if (a->etype) {
 			struct dag_node* etype = NULL;
-			if (type_is_boolean(a->etype)) {
-				etype = dag_copy(a->etype);
-				n->etype = etype;
+			if (a->etype->type == dag_type_type_name) {
+				if (buffer_str_compare(&a->etype->value, "Bool")) {
+					etype = dag_copy(a->etype);
+					n->etype = etype;
+				}
 			}
 			if (!etype) {
 				valid = set_source_error(ps->el, &loc, "used a ! operator but expression not a boolean");

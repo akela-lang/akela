@@ -14,6 +14,4 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root);
 
 struct dag_node* af2etype(struct dag_node* n);
 
-bool type_is_boolean(struct dag_node* etype);
-
 #endif
