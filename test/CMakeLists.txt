@@ -22,6 +22,7 @@ set(test_files
     "test.c"
     test_dag.c
     test_parse.c
+    test_parse_factor.c
     test_parse_expr.c
     test_parse_stmts.c
     test_scan.c

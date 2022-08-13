@@ -114,6 +114,7 @@ enum result dag_set_names(char** names);
 struct dag_node {
 	enum dag_type type;
 	struct buffer value;
+	struct dag_node* etype;
 	struct dag_node* next;
 	struct dag_node* prev;
 	struct dag_node* head;

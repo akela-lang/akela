@@ -392,16 +392,47 @@ bool literal_nt(struct parse_state* ps, struct dag_node** root)
 		} else if (x->type == token_boolean) {
 			n->type = dag_type_boolean;
 		}
-
 		/* allocate n{} */
 		buffer_copy(&x->value, &n->value);
+	}
 
-		*root = n;
+	if (valid) {
+		if (n->type == dag_type_number) {
+			struct dag_node* etype = NULL;
+			dag_create_node(&etype);
+			etype->type = dag_type_type_name;
+			if (x->is_integer) {
+				buffer_copy_str(&etype->value, "Int64");
+			} else if (x->is_float) {
+				buffer_copy_str(&etype->value, "Float64");
+			} else {
+				valid = set_source_error(ps->el, &loc, "number token is not a integer or float");
+			}
+			n->etype = etype;
+		} else if (n->type == dag_type_string) {
+			struct dag_node* etype = NULL;
+			dag_create_node(&etype);
+			etype->type = dag_type_string;
+			buffer_copy_str(&etype->value, "String");
+			n->etype = etype;
+		} else if (n->type == dag_type_boolean) {
+			struct dag_node* etype = NULL;
+			dag_create_node(&etype);
+			etype->type = dag_type_boolean;
+			buffer_copy_str(&etype->value, "Bool");
+			n->etype = etype;
+		}
 	}
 
 	/* destroy x x{} */
 	token_destroy(x);
 	free(x);
+
+	if (valid) {
+		*root = n;
+	} else {
+		dag_destroy(n);
+	}
 
 	return valid;
 }

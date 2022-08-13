@@ -1,6 +1,7 @@
 #ifndef _TOKEN_H
 #define _TOKEN_H
 
+#include <stdbool.h>
 #include "zinc/result.h"
 #include "zinc/buffer.h"
 
@@ -123,6 +124,8 @@ enum result token_name_init(char** token_name);
 struct token {
     enum token_enum type;
     struct buffer value;
+    bool is_integer;
+    bool is_float;
     size_t line;
     size_t col;
     size_t byte_pos;

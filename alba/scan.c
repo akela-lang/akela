@@ -80,6 +80,7 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
     } else if (u_isdigit(uc)) {
         *state = state_number_whole;
         t->type = token_number;
+        t->is_integer = true;
         t->line = lc->line;
         t->col = lc->col;
         t->byte_pos = lc->byte_pos;
@@ -291,15 +292,27 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
             }
         } else if (uc == '.') {
             *state = state_number_fraction;
+            t->is_integer = false;
+            t->is_float = true;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
                 /* allocate t{} */
                 buffer_add_char(&t->value, lc->la0_8[i]);
             }
         } else if (uc == 'e') {
-            *state = state_number_exponent_start;
-            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+            /* lookahead another character */
+            UChar32 uc2 = lc->la1_32;
+            if (lc->la_size >= 2 && (u_isdigit(uc2) || uc2 == '-' || uc2 == '+')) {
+                /* e is part of exponent */
+                *state = state_number_exponent_start;
+                t->is_integer = false;
+                t->is_float;
                 /* allocate t{} */
-                buffer_add_char(&t->value, lc->la0_8[i]);
+                buffer_add_char(&t->value, 'e');
+            } else {
+                /* number is done and e will be part of an id */
+                *state = state_start;
+                *got_token = 1;
+                lookahead_char_push(lc);
             }
         } else {
             *state = state_start;
