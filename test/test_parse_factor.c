@@ -912,6 +912,35 @@ void test_parse_array_literal_mixed_error()
 	parse_teardown(&ps);
 }
 
+/* dynamic-output-none */
+void test_parse_paren_num()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("(32)", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* paren = dag_get_child(root, 0);
+	assert_ptr(paren, "ptr paren");
+	expect_int_equal(paren->type, dag_type_parenthesis, "parenthesis paren");
+
+	struct dag_node* number = dag_get_child(paren, 0);
+	expect_int_equal(number->type, dag_type_number, "number number");
+	expect_str(&number->value, "32", "32 number");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_factor()
 {
 	test_parse_number_integer();
@@ -935,4 +964,5 @@ void test_parse_factor()
 	test_parse_array_literal_float();
 	test_parse_array_literal_numeric();
 	test_parse_array_literal_mixed_error();
+	test_parse_paren_num();
 }

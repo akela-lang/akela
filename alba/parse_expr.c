@@ -356,7 +356,11 @@ bool add(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* b = NULL;
 	struct dag_node* n = NULL;
 	struct dag_node* left = NULL;
+	char* op_name;
 	int num;
+
+	struct location loc_a;
+	valid = get_parse_location(ps, &loc_a) && valid;
 
 	/* allocate a a{} */
 	valid = mult(ps, &a) && valid;
@@ -371,6 +375,8 @@ bool add(struct parse_state* ps, struct dag_node** root)
 		dag_destroy(a);
 	}
 
+	struct location loc_b;
+	bool first = true;
 	while (true) {
 		/* allocate ps{} */
 		valid = get_lookahead(ps, 1, &num) && valid;
@@ -385,8 +391,10 @@ bool add(struct parse_state* ps, struct dag_node** root)
 		enum dag_type type;
 		if (t0->type == token_plus) {
 			type = dag_type_plus;
+			op_name = "addition";
 		} else if (t0->type == token_minus) {
 			type = dag_type_minus;
+			op_name = "subtraction";
 		} else {
 			break;
 		}
@@ -395,12 +403,14 @@ bool add(struct parse_state* ps, struct dag_node** root)
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting + or -", &op) && valid;
 
+		struct location loc_op;
+		get_token_location(op, &loc_op);
+
 		/* destroy op op{} */
 		token_destroy(op);
 		free(op);
 
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
+		valid = get_parse_location(ps, &loc_b) && valid;
 
 		/* allocate a a{} */
 		valid = mult(ps, &b) && valid;
@@ -408,7 +418,7 @@ bool add(struct parse_state* ps, struct dag_node** root)
 		if (!b) {
 			/* destroy n n{} */
 			dag_destroy(n);
-			valid = set_source_error(ps->el, &loc, "expected term after additive operator");
+			valid = set_source_error(ps->el, &loc_b, "expected term after additive operator");
 			break;
 		}
 
@@ -418,9 +428,15 @@ bool add(struct parse_state* ps, struct dag_node** root)
 
 			dag_add_child(n, left);
 			dag_add_child(n, b);
-			left = n;
 		} else {
 			dag_destroy(b);
+		}
+
+		if (valid) {
+			struct dag_node* etype = NULL;
+			valid = binary_arithmetic_check(ps, left, a, b, &loc_a, &loc_op, &loc_b, op_name, &etype);
+			n->etype = etype;
+			left = n;
 		}
 	}
 
@@ -442,8 +458,10 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 	struct dag_node* b = NULL;
 	struct dag_node* left = NULL;
 	struct dag_node* n = NULL;
-	struct location loc;
+	char* op_name;
 
+	struct location loc_a;
+	valid = get_parse_location(ps, &loc_a);
 
 	/* allocate ps{} a a{} */
 	valid = array_subscript(ps, &a) && valid;
@@ -473,8 +491,10 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 		enum dag_type type;
 		if (t0->type == token_mult) {
 			type = dag_type_mult;
+			op_name = "multiplication";
 		} else if (t0->type == token_divide) {
 			type = dag_type_divide;
+			op_name = "division";
 		} else {
 			break;
 		}
@@ -483,11 +503,14 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting * or /", &op) && valid;
 
+		struct location loc_op;
+		get_token_location(op, &loc_op);
+
 		token_destroy(op);
 		free(op);
 
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
+		struct location loc_b;
+		valid = get_parse_location(ps, &loc_b) && valid;
 
 		/* factor */
 		/* allocate ps{} a a{} */
@@ -495,7 +518,7 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 
 		if (!b) {
 			/* allocate ps{} */
-			valid = set_source_error(ps->el, &loc, "expected term after operator");
+			valid = set_source_error(ps->el, &loc_b, "expected term after operator");
 		}
 
 		if (valid) {
@@ -505,9 +528,15 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 
 			dag_add_child(n, left);
 			dag_add_child(n, b);
-			left = n;
 		} else {
 			dag_destroy(b);
+		}
+
+		if (valid) {
+			struct dag_node* etype = NULL;
+			valid = binary_arithmetic_check(ps, left, a, b, &loc_a, &loc_op, &loc_b, op_name, &etype);
+			n->etype = etype;
+			left = n;
 		}
 	}
 

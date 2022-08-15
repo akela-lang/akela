@@ -741,15 +741,37 @@ bool parenthesis(struct parse_state* ps, struct dag_node** root)
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
 
+	struct location loc;
+	valid = get_parse_location(ps, &loc) && valid;
+
 	/* allocate n n{} */
-	valid = valid && expr(ps, &n);
+	struct dag_node* a = NULL;
+	valid = valid && expr(ps, &a);
+
+	if (!a) {
+		valid = set_source_error(ps->el, &loc, "empty parenthesis");
+	}
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
 	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
 
 	if (valid) {
-		*root = n;
+		dag_create_node(&n);
+		n->type = dag_type_parenthesis;
+
+		dag_add_child(n, a);
+	} else {
+		dag_destroy(a);
+	}
+
+	if (valid) {
+		#pragma warning(suppress:6011)
+		if (!a->etype) {
+			valid = set_source_error(ps->el, &loc, "parenthesis used on expression with no value");
+		} else {
+			n->etype = dag_copy(a->etype);
+		}
 	}
 
 	/* destroy lp lp{} */
@@ -759,6 +781,12 @@ bool parenthesis(struct parse_state* ps, struct dag_node** root)
 	/* destroy rp rp{} */
 	token_destroy(rp);
 	free(rp);
+
+	if (valid) {
+		*root = n;
+	} else {
+		dag_destroy(n);
+	}
 
 	return valid;
 }

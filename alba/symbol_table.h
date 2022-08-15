@@ -63,6 +63,4 @@ void type_info_init(struct type_info* ti);
 
 void type_info_destroy(struct type_info* ti);
 
-struct type_info* symbol_table_add_type_info(struct symbol_table* st, char* name, bool is_integer, bool is_float, bool is_signed, int bit_count);
-
 #endif

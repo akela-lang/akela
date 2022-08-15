@@ -79,8 +79,6 @@ void symbol_table_add_reserved(struct environment* env, char* name, enum token_e
 
 	/* destroy bf{} */
 	buffer_destroy(&bf);
-
-	return sym;
 }
 
 /* dynamic-output wt{} */
@@ -100,7 +98,28 @@ void symbol_table_init_reserved(struct environment* env)
 	symbol_table_add_reserved(env, "false", token_boolean, NULL);
 }
 
-void symbol_table_init_builtin_types(struct environment* env)
+void type_info_init(struct type_info* ti)
+{
+	buffer_init(&ti->name);
+	ti->is_integer = false;
+	ti->is_float = false;
+	ti->is_signed = false;
+	ti->bit_count = 0;
+	ti->next = NULL;
+}
+
+void type_info_destroy(struct type_info* ti)
+{
+	buffer_destroy(&ti->name);
+}
+
+void symbol_table_add_type_info(struct symbol_table* st, struct type_info* ti)
+{
+	ti->next = st->ti_head;
+	st->ti_head = ti;
+}
+
+void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)
 {
 	char* name;
 	struct type_info* ti = NULL;
@@ -108,53 +127,59 @@ void symbol_table_init_builtin_types(struct environment* env)
 	
 	name = "Int32";
 	malloc_safe(&ti, sizeof(struct type_info));
-	symbol_table_add_reserved(env, name, token_type_name, ti);
 	type_info_init(ti);
-	buffer_copy_str(&ti->name, name);
 	ti->is_integer = true;
 	ti->is_signed = true;
 	ti->bit_count = 32;
+	buffer_copy_str(&ti->name, name);
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	symbol_table_add_type_info(st, ti);
 
 	name = "Int64";
 	malloc_safe(&ti, sizeof(struct type_info));
-	symbol_table_add_reserved(env, name, token_type_name, ti);
 	type_info_init(ti);
 	buffer_copy_str(&ti->name, name);
 	ti->is_integer = true;
 	ti->is_signed = true;
 	ti->bit_count = 64;
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	symbol_table_add_type_info(st, ti);
 
 	name = "UInt32";
 	malloc_safe(&ti, sizeof(struct type_info));
-	symbol_table_add_reserved(env, name, token_type_name, ti);
 	type_info_init(ti);
 	buffer_copy_str(&ti->name, name);
 	ti->is_integer = true;
 	ti->bit_count = 32;
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	symbol_table_add_type_info(st, ti);
 
 	name = "UInt64";
 	malloc_safe(&ti, sizeof(struct type_info));
-	symbol_table_add_reserved(env, name, token_type_name, ti);
 	type_info_init(ti);
 	buffer_copy_str(&ti->name, name);
 	ti->is_integer = true;
 	ti->bit_count = 64;
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	symbol_table_add_type_info(st, ti);
 
 	name = "Float32";
 	malloc_safe(&ti, sizeof(struct type_info));
-	symbol_table_add_reserved(env, name, token_type_name, ti);
 	type_info_init(ti);
 	buffer_copy_str(&ti->name, name);
 	ti->is_float = true;
 	ti->bit_count = 32;
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	symbol_table_add_type_info(st, ti);
 
 	name = "Float64";
 	malloc_safe(&ti, sizeof(struct type_info));
-	symbol_table_add_reserved(env, name, token_type_name, ti);
 	type_info_init(ti);
 	buffer_copy_str(&ti->name, name);
 	ti->is_float = true;
 	ti->bit_count = 64;
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	symbol_table_add_type_info(st, ti);
 
 	symbol_table_add_reserved(env, "String", token_type_name, NULL);
 	symbol_table_add_reserved(env, "Bool", token_type_name, NULL);
@@ -168,10 +193,10 @@ void symbol_table_init(struct symbol_table* st)
 	malloc_safe(&env, sizeof(struct environment));
 	environment_init(env, NULL);
 	symbol_table_init_reserved(env);
-	symbol_table_init_builtin_types(env);
 	st->initial = env;
 	st->top = env;
 	st->ti_head = NULL;
+	symbol_table_init_builtin_types(st, env);
 }
 
 void symbol_table_destroy(struct symbol_table* st)
@@ -193,26 +218,4 @@ void symbol_table_destroy(struct symbol_table* st)
 bool symbol_table_is_global(struct symbol_table* st)
 {
 	return st->top && (st->top->prev == st->initial);
-}
-
-void type_info_init(struct type_info* ti)
-{
-	buffer_init(&ti->name);
-	ti->is_integer = false;
-	ti->is_float = false;
-	ti->is_signed = false;
-	ti->bit_count = 0;
-	ti->next = NULL;
-}
-
-void type_info_destroy(struct type_info* ti)
-{
-	buffer_destroy(&ti->name);
-}
-
-struct type_info* symbol_table_add_type_info(struct symbol_table* st, struct type_info* ti)
-{
-	ti->next = st->ti_head;
-	st->ti_head = ti;
-	return ti;
 }

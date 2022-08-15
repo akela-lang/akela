@@ -1,11 +1,11 @@
 # Todo
 * set etype
   * factor
-    * parenthesis
     * function call
   * expr
   * stmts
     * function
+* set location in dag on match and non-terminal
 * add type_set and type to dag_node
 * derive type from list in for x in list
 * verify type for operations

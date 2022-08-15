@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include "zinc/buffer.h"
 #include "zinc/result.h"
+#include "token.h"
+#include "source.h"
 
 enum dag_type {
 	dag_type_none,
@@ -49,6 +51,7 @@ enum dag_type {
 	dag_type_array,
 	dag_type_array_type_name,
 	dag_type_type_name,
+	dag_type_parenthesis,
 	dag_type_count		/* keep at end */
 };
 
@@ -118,6 +121,8 @@ enum result dag_set_names(char** names);
 struct dag_node {
 	enum dag_type type;
 	struct buffer value;
+	struct token_list tl;
+	struct location loc;
 	struct dag_node* etype;
 	struct dag_node* next;
 	struct dag_node* prev;

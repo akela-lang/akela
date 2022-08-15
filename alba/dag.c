@@ -28,6 +28,7 @@ void dag_destroy(struct dag_node* n)
 
 		/* destroy n{} */
 		buffer_destroy(&n->value);
+		token_list_destroy(&n->tl);
 		dag_destroy(n->etype);
 
 		/* destroy n */
@@ -40,6 +41,7 @@ void dag_init_node(struct dag_node* n)
 {
 	n->type = dag_type_none;
 	buffer_init(&n->value);
+	token_list_init(&n->tl);
 	n->etype = NULL;
 	n->next = NULL;
 	n->prev = NULL;

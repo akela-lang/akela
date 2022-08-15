@@ -328,6 +328,7 @@ bool base_type_match(struct symbol_table* st, struct buffer* a, struct buffer* b
 						buffer_copy(&ti->name, c);
 						return true;
 					}
+					ti = ti->next;
 				}
 			} else if (ti_a->is_float && ti_b->is_float) {
 				struct type_info* ti = ti_a;
@@ -391,4 +392,71 @@ bool type_match(struct symbol_table* st, struct dag_node* a, struct dag_node* b)
 	}
 
 	return true;
+}
+
+bool binary_arithmetic_check(struct parse_state* ps, struct dag_node* left, struct dag_node* a, struct dag_node* b, struct location* loc_a, struct location* loc_op, struct location* loc_b, char* op_name, struct dag_node** ret)
+{
+	bool valid = true;
+	struct dag_node* etype = dag_copy(left->etype);
+
+	if (!etype) {
+		if (left == a) {
+			valid = set_source_error(ps->el, loc_a, "cannot perform operation on expression with no value");
+		} else {
+			valid = set_source_error(ps->el, loc_op, "cannot perform operation on expression with no value");
+		}
+	} else if (!b->etype) {
+		valid = set_source_error(ps->el, loc_b, "cannot perform operation on expression with no value");
+	} else {
+		if (etype->type != dag_type_type_name) {
+			if (left == a) {
+				valid = set_source_error(ps->el, loc_a, "invalid operand for %s", op_name);
+			} else {
+				valid = set_source_error(ps->el, loc_op, "invalid operand for %s", op_name);
+			}
+		} else if (b->etype->type != dag_type_type_name) {
+			valid = set_source_error(ps->el, loc_b, "invalid operand for %s", op_name);
+		} else {
+			struct buffer* name_left = &etype->value;
+			struct symbol* sym_left = environment_get(ps->st->top, name_left);
+			struct buffer* name_b = &b->etype->value;
+			struct symbol* sym_b = environment_get(ps->st->top, name_b);
+			if (!sym_left) {
+				if (left == a) {
+					valid = set_source_error(ps->el, loc_a, "invalid operand for %s", op_name);
+				} else {
+					valid = set_source_error(ps->el, loc_op, "invalid operand for %s", op_name);
+				}
+			} else if (!sym_b) {
+				valid = set_source_error(ps->el, loc_b, "invalid operand for %s", op_name);
+			} else {
+				if (!sym_left->ti) {
+					if (left == a) {
+						valid = set_source_error(ps->el, loc_a, "invalid operand for %s", op_name);
+					} else {
+						valid = set_source_error(ps->el, loc_op, "invalid operand for %s", op_name);
+					}
+				} else if (!sym_b->ti) {
+					valid = set_source_error(ps->el, loc_b, "invalid operand for %s", op_name);
+				} else {
+					if (!sym_left->ti->is_integer && !sym_left->ti->is_float) {
+						if (left == a) {
+							valid = set_source_error(ps->el, loc_a, "invalid operand for %s", op_name);
+						} else {
+							valid = set_source_error(ps->el, loc_op, "invalid operand for %s", op_name);
+						}
+					} else if (!sym_b->ti->is_integer && !sym_b->ti->is_float) {
+						valid = set_source_error(ps->el, loc_b, "invalid operand for %s", op_name);
+					} else {
+						if (!type_match(ps->st, etype, b->etype)) {
+							valid = set_source_error(ps->el, loc_b, "invalid operand for %s", op_name);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	*ret = etype;
+	return valid;
 }
