@@ -1,6 +1,7 @@
 #define _DAG_C
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include "dag.h"
 #include "zinc/result.h"
 #include "zinc/memory.h"
@@ -158,4 +159,35 @@ struct dag_node* dag_copy(struct dag_node* n)
 	}
 
 	return copy;
+}
+
+bool dag_match(struct dag_node* a, struct dag_node* b)
+{
+	struct dag_node* copy = NULL;
+
+	if (a && b) {
+		if (a->type != b->type) {
+			return false;
+		}
+
+		if (!buffer_compare(&a->value, &b->value)) {
+			return false;
+		}
+
+		struct dag_node* c = a->head;
+		struct dag_node* d = b->head;
+		do {
+			if (!dag_match(c, d)) {
+				return false;
+			}
+			if (c) c = c->next;
+			if (d) d = d->next;
+		} while (c || d);
+	} else if (!a && !b) {
+		return true;
+	} else {
+		return false;
+	}
+
+	return true;
 }

@@ -14,4 +14,6 @@ bool type(struct parse_state* ps, struct token* id, struct dag_node** root);
 
 struct dag_node* af2etype(struct dag_node* n);
 
+bool type_match(struct symbol_table* st, struct dag_node* a, struct dag_node* b);
+
 #endif

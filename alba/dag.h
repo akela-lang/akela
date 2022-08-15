@@ -1,6 +1,7 @@
 #ifndef _DAG_H
 #define _DAG_H
 
+#include <stdbool.h>
 #include "zinc/buffer.h"
 #include "zinc/result.h"
 
@@ -149,5 +150,7 @@ int is_binary_operator(struct dag_node* n);
 void dag_print(struct dag_node* root, char** names);
 
 struct dag_node* dag_copy(struct dag_node* n);
+
+bool dag_match(struct dag_node* a, struct dag_node* b);
 
 #endif

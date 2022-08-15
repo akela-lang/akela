@@ -41,6 +41,7 @@ void symbol_init(struct symbol* sym)
 {
 	sym->tk_type = token_none;
 	sym->dec = NULL;
+	sym->ti = NULL;
 }
 
 /* destroy sym sym{} */
@@ -58,7 +59,7 @@ void environment_destroy(struct environment* env)
 }
 
 /* dynamic-temp bf{} */
-void symbol_table_add_reserved(struct environment* env, char* name, enum token_enum type)
+void symbol_table_add_reserved(struct environment* env, char* name, enum token_enum type, struct type_info* ti)
 {
 	struct buffer bf;
 
@@ -71,44 +72,94 @@ void symbol_table_add_reserved(struct environment* env, char* name, enum token_e
 	malloc_safe(&sym, sizeof(struct symbol));
 	symbol_init(sym);
 	sym->tk_type = type;
+	sym->ti = ti;
 
 	/* allocate wt{} */
 	environment_put(env, &bf, sym);
 
 	/* destroy bf{} */
 	buffer_destroy(&bf);
+
+	return sym;
 }
 
 /* dynamic-output wt{} */
 void symbol_table_init_reserved(struct environment* env)
 {
 	/* allocate wt{} */
-	symbol_table_add_reserved(env, "function", token_function);
-	symbol_table_add_reserved(env, "end", token_end);
-	symbol_table_add_reserved(env, "if", token_if);
-	symbol_table_add_reserved(env, "elseif", token_elseif);
-	symbol_table_add_reserved(env, "else", token_else);
-	symbol_table_add_reserved(env, "while", token_while);
-	symbol_table_add_reserved(env, "for", token_for);
-	symbol_table_add_reserved(env, "in", token_in);
-	symbol_table_add_reserved(env, "var", token_var);
-	symbol_table_add_reserved(env, "true", token_boolean);
-	symbol_table_add_reserved(env, "false", token_boolean);
+	symbol_table_add_reserved(env, "function", token_function, NULL);
+	symbol_table_add_reserved(env, "end", token_end, NULL);
+	symbol_table_add_reserved(env, "if", token_if, NULL);
+	symbol_table_add_reserved(env, "elseif", token_elseif, NULL);
+	symbol_table_add_reserved(env, "else", token_else, NULL);
+	symbol_table_add_reserved(env, "while", token_while, NULL);
+	symbol_table_add_reserved(env, "for", token_for, NULL);
+	symbol_table_add_reserved(env, "in", token_in, NULL);
+	symbol_table_add_reserved(env, "var", token_var, NULL);
+	symbol_table_add_reserved(env, "true", token_boolean, NULL);
+	symbol_table_add_reserved(env, "false", token_boolean, NULL);
 }
-
 
 void symbol_table_init_builtin_types(struct environment* env)
 {
-	symbol_table_add_reserved(env, "Int32", token_type_name);
-	symbol_table_add_reserved(env, "Int64", token_type_name);
-	symbol_table_add_reserved(env, "UInt32", token_type_name);
-	symbol_table_add_reserved(env, "UInt62", token_type_name);
-	symbol_table_add_reserved(env, "Float32", token_type_name);
-	symbol_table_add_reserved(env, "Float64", token_type_name);
-	symbol_table_add_reserved(env, "String", token_type_name);
-	symbol_table_add_reserved(env, "Bool", token_type_name);
-	symbol_table_add_reserved(env, "Vector", token_array_type_name);
-	symbol_table_add_reserved(env, "Function", token_type_name);
+	char* name;
+	struct type_info* ti = NULL;
+	struct symbol* sym = NULL;
+	
+	name = "Int32";
+	malloc_safe(&ti, sizeof(struct type_info));
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	type_info_init(ti);
+	buffer_copy_str(&ti->name, name);
+	ti->is_integer = true;
+	ti->is_signed = true;
+	ti->bit_count = 32;
+
+	name = "Int64";
+	malloc_safe(&ti, sizeof(struct type_info));
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	type_info_init(ti);
+	buffer_copy_str(&ti->name, name);
+	ti->is_integer = true;
+	ti->is_signed = true;
+	ti->bit_count = 64;
+
+	name = "UInt32";
+	malloc_safe(&ti, sizeof(struct type_info));
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	type_info_init(ti);
+	buffer_copy_str(&ti->name, name);
+	ti->is_integer = true;
+	ti->bit_count = 32;
+
+	name = "UInt64";
+	malloc_safe(&ti, sizeof(struct type_info));
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	type_info_init(ti);
+	buffer_copy_str(&ti->name, name);
+	ti->is_integer = true;
+	ti->bit_count = 64;
+
+	name = "Float32";
+	malloc_safe(&ti, sizeof(struct type_info));
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	type_info_init(ti);
+	buffer_copy_str(&ti->name, name);
+	ti->is_float = true;
+	ti->bit_count = 32;
+
+	name = "Float64";
+	malloc_safe(&ti, sizeof(struct type_info));
+	symbol_table_add_reserved(env, name, token_type_name, ti);
+	type_info_init(ti);
+	buffer_copy_str(&ti->name, name);
+	ti->is_float = true;
+	ti->bit_count = 64;
+
+	symbol_table_add_reserved(env, "String", token_type_name, NULL);
+	symbol_table_add_reserved(env, "Bool", token_type_name, NULL);
+	symbol_table_add_reserved(env, "Vector", token_array_type_name, NULL);
+	symbol_table_add_reserved(env, "Function", token_type_name, NULL);
 }
 
 void symbol_table_init(struct symbol_table* st)
@@ -120,6 +171,7 @@ void symbol_table_init(struct symbol_table* st)
 	symbol_table_init_builtin_types(env);
 	st->initial = env;
 	st->top = env;
+	st->ti_head = NULL;
 }
 
 void symbol_table_destroy(struct symbol_table* st)
@@ -130,9 +182,37 @@ void symbol_table_destroy(struct symbol_table* st)
 		environment_destroy(env);
 		env = prev;
 	}
+	struct type_info* ti = st->ti_head;
+	while (ti) {
+		struct type_info* temp = ti;
+		ti = ti->next;
+		type_info_destroy(temp);
+	}
 }
 
 bool symbol_table_is_global(struct symbol_table* st)
 {
 	return st->top && (st->top->prev == st->initial);
+}
+
+void type_info_init(struct type_info* ti)
+{
+	buffer_init(&ti->name);
+	ti->is_integer = false;
+	ti->is_float = false;
+	ti->is_signed = false;
+	ti->bit_count = 0;
+	ti->next = NULL;
+}
+
+void type_info_destroy(struct type_info* ti)
+{
+	buffer_destroy(&ti->name);
+}
+
+struct type_info* symbol_table_add_type_info(struct symbol_table* st, struct type_info* ti)
+{
+	ti->next = st->ti_head;
+	st->ti_head = ti;
+	return ti;
 }

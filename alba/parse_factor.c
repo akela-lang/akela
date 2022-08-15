@@ -615,6 +615,9 @@ bool array_literal(struct parse_state* ps, struct dag_node** root)
 		dag_create_node(&n);
 		n->type = dag_type_array_literal;
 
+		struct location loc;
+		get_parse_location(ps, &loc);
+
 		/* allocate ps{} n{} */
 		valid = aseq(ps, n) && valid;
 
@@ -625,6 +628,48 @@ bool array_literal(struct parse_state* ps, struct dag_node** root)
 		/* destroy rsb rsb{} */
 		token_destroy(rsb);
 		free(rsb);
+
+		if (valid) {
+			struct dag_node* first = dag_get_child(n, 0);
+			if (!first) {
+				valid = set_source_error(ps->el, &loc, "array literal is empty");
+			} else if (!first->etype) {
+				valid = set_source_error(ps->el, &loc, "array element has no value");
+			} else {
+				struct dag_node* element_etype = dag_copy(first->etype);
+				struct dag_node* p = dag_get_child(n, 1);
+				bool m = true;
+				while (p) {
+					if (!p->etype) {
+						valid = set_source_error(ps->el, &loc, "array element has no value");
+						break;
+					}
+					if (!type_match(ps->st, element_etype, p->etype)) {
+						m = false;
+						break;
+					}
+					p = p->next;
+				}
+				if (!m) {
+					valid = set_source_error(ps->el, &loc, "array elements not one type");
+					dag_destroy(element_etype);
+				} else {
+					struct dag_node* etype = NULL;
+					dag_create_node(&etype);
+					etype->type = dag_type_array;
+
+					struct dag_node* a = NULL;
+					dag_create_node(&a);
+					a->type = dag_type_array_type_name;
+					buffer_copy_str(&a->value, "Vector");
+					dag_add_child(etype, a);
+
+					dag_add_child(etype, element_etype);
+
+					n->etype = etype;
+				}
+			}
+		}
 	}
 
 	/* transfer n -> root */

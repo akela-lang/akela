@@ -294,3 +294,101 @@ struct dag_node* af2etype(struct dag_node* n)
 
 	return etype;
 }
+
+bool base_type_match(struct symbol_table* st, struct buffer* a, struct buffer* b, bool* promoted, struct buffer* c)
+{
+	*promoted = false;
+	buffer_clear(c);
+
+	if (buffer_compare(a, b)) {
+		return true;
+	}
+
+	struct symbol* sym_a = environment_get(st->top, a);
+	struct symbol* sym_b = environment_get(st->top, b);
+
+	if (sym_a && sym_b) {
+		struct type_info* ti_a = sym_a->ti;
+		struct type_info* ti_b = sym_b->ti;
+		if (ti_a && ti_b) {
+			if (ti_a->is_integer && ti_b->is_integer) {
+				bool is_signed = false;
+				int bit_count = ti_a->bit_count;
+				if (ti_a->is_signed || ti_b->is_signed) {
+					is_signed = true;
+				}
+				if (ti_b->bit_count > bit_count) {
+					bit_count = ti_b->bit_count;
+				}
+
+				struct type_info* ti = st->ti_head;
+				while (ti) {
+					if (ti->is_integer && ti->is_signed == is_signed && ti->bit_count == bit_count) {
+						*promoted = true;
+						buffer_copy(&ti->name, c);
+						return true;
+					}
+				}
+			} else if (ti_a->is_float && ti_b->is_float) {
+				struct type_info* ti = ti_a;
+				if (ti_b->bit_count > ti_a->bit_count) {
+					ti = ti_b;
+				}
+				*promoted = true;
+				buffer_copy(&ti->name, c);
+				return true;
+			} else if ((ti_a->is_integer && ti_b->is_float) || (ti_a->is_float && ti_b->is_integer)) {
+				struct type_info* ti = ti_a;
+				if (ti_b->is_float) {
+					ti = ti_b;
+				}
+				*promoted = true;
+				buffer_copy(&ti->name, c);
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool type_match(struct symbol_table* st, struct dag_node* a, struct dag_node* b)
+{
+	struct dag_node* copy = NULL;
+	bool promoted;
+	struct buffer c;
+
+	buffer_init(&c);
+
+	if (a && b) {
+		if (a->type != b->type) {
+			return false;
+		}
+
+		if (!base_type_match(st, &a->value, &b->value, &promoted, &c)) {
+			return false;
+		}
+
+		if (promoted) {
+			buffer_clear(&a->value);
+			buffer_copy(&c, &a->value);
+			buffer_destroy(&c);
+		}
+
+		struct dag_node* c = a->head;
+		struct dag_node* d = b->head;
+		do {
+			if (!dag_match(c, d)) {
+				return false;
+			}
+			if (c) c = c->next;
+			if (d) d = d->next;
+		} while (c || d);
+	} else if (!a && !b) {
+		return true;
+	} else {
+		return false;
+	}
+
+	return true;
+}

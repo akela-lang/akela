@@ -727,6 +727,191 @@ void test_parse_not_error()
 	parse_teardown(&ps);
 }
 
+/* dynamic-output-none */
+void test_parse_array_literal_integer()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("[1,2,3]", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* a = dag_get_child(root, 0);
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_array_literal, "array-literal a");
+
+	struct dag_node* etype = a->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_array, "array etype");
+
+	struct dag_node* type_vector = dag_get_child(etype, 0);
+	assert_ptr(type_vector, "ptr type_vector");
+	expect_int_equal(type_vector->type, dag_type_array_type_name, "array_type_name type_vector");
+	expect_str(&type_vector->value, "Vector", "Vector type_vector");
+
+	struct dag_node* type_element = dag_get_child(etype, 1);
+	assert_ptr(type_element, "ptr type_element");
+	expect_int_equal(type_element->type, dag_type_type_name, "type_name type_element");
+	expect_str(&type_element->value, "Int64", "Int64 type_element");
+
+	struct dag_node* a0 = dag_get_child(a, 0);
+	assert_ptr(a0, "ptr a0");
+	expect_int_equal(a0->type, dag_type_number, "number a0");
+	expect_str(&a0->value, "1", "1 a0");
+
+	struct dag_node* a1 = dag_get_child(a, 1);
+	assert_ptr(a1, "ptr a1");
+	expect_int_equal(a1->type, dag_type_number, "number a1");
+	expect_str(&a1->value, "2", "2 a1");
+
+	struct dag_node* a2 = dag_get_child(a, 2);
+	assert_ptr(a2, "ptr a2");
+	expect_int_equal(a2->type, dag_type_number, "number a2");
+	expect_str(&a2->value, "3", "3 a2");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_array_literal_float()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("[1.0,2.5,3.2]", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* a = dag_get_child(root, 0);
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_array_literal, "array-literal a");
+
+	struct dag_node* etype = a->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_array, "array etype");
+
+	struct dag_node* type_vector = dag_get_child(etype, 0);
+	assert_ptr(type_vector, "ptr type_vector");
+	expect_int_equal(type_vector->type, dag_type_array_type_name, "array_type_name type_vector");
+	expect_str(&type_vector->value, "Vector", "Vector type_vector");
+
+	struct dag_node* type_element = dag_get_child(etype, 1);
+	assert_ptr(type_element, "ptr type_element");
+	expect_int_equal(type_element->type, dag_type_type_name, "type_name type_element");
+	expect_str(&type_element->value, "Float64", "Float64 type_element");
+
+	struct dag_node* a0 = dag_get_child(a, 0);
+	assert_ptr(a0, "ptr a0");
+	expect_int_equal(a0->type, dag_type_number, "number a0");
+	expect_str(&a0->value, "1.0", "1.0 a0");
+
+	struct dag_node* a1 = dag_get_child(a, 1);
+	assert_ptr(a1, "ptr a1");
+	expect_int_equal(a1->type, dag_type_number, "number a1");
+	expect_str(&a1->value, "2.5", "2.5 a1");
+
+	struct dag_node* a2 = dag_get_child(a, 2);
+	assert_ptr(a2, "ptr a2");
+	expect_int_equal(a2->type, dag_type_number, "number a2");
+	expect_str(&a2->value, "3.2", "3.2 a2");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_array_literal_numeric()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("[1, 2.5, 3]", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+
+	struct dag_node* a = dag_get_child(root, 0);
+	assert_ptr(a, "ptr a");
+	expect_int_equal(a->type, dag_type_array_literal, "array-literal a");
+
+	struct dag_node* etype = a->etype;
+	assert_ptr(etype, "ptr etype");
+	expect_int_equal(etype->type, dag_type_array, "array etype");
+
+	struct dag_node* type_vector = dag_get_child(etype, 0);
+	assert_ptr(type_vector, "ptr type_vector");
+	expect_int_equal(type_vector->type, dag_type_array_type_name, "array_type_name type_vector");
+	expect_str(&type_vector->value, "Vector", "Vector type_vector");
+
+	struct dag_node* type_element = dag_get_child(etype, 1);
+	assert_ptr(type_element, "ptr type_element");
+	expect_int_equal(type_element->type, dag_type_type_name, "type_name type_element");
+	expect_str(&type_element->value, "Float64", "Float64 type_element");
+
+	struct dag_node* a0 = dag_get_child(a, 0);
+	assert_ptr(a0, "ptr a0");
+	expect_int_equal(a0->type, dag_type_number, "number a0");
+	expect_str(&a0->value, "1", "1 a0");
+
+	struct dag_node* a1 = dag_get_child(a, 1);
+	assert_ptr(a1, "ptr a1");
+	expect_int_equal(a1->type, dag_type_number, "number a1");
+	expect_str(&a1->value, "2.5", "2.5 a1");
+
+	struct dag_node* a2 = dag_get_child(a, 2);
+	assert_ptr(a2, "ptr a2");
+	expect_int_equal(a2->type, dag_type_number, "number a2");
+	expect_str(&a2->value, "3", "3 a2");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_array_literal_mixed_error()
+{
+	test_name(__func__);
+
+	struct dag_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("[1,true,3]", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	assert_compile_error(ps.el, "array elements not one type");
+
+	/* destroy ps{} root root{} */
+	dag_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_factor()
 {
 	test_parse_number_integer();
@@ -746,4 +931,8 @@ void test_parse_factor()
 	test_parse_not_id();
 	test_parse_not_literal();
 	test_parse_not_error();
+	test_parse_array_literal_integer();
+	test_parse_array_literal_float();
+	test_parse_array_literal_numeric();
+	test_parse_array_literal_mixed_error();
 }
