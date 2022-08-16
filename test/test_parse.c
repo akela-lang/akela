@@ -12,7 +12,6 @@
 /* dynamic-output ps{} root root{} */
 bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 {
-	bool valid = true;
 	enum result r;
 
 	/* allocate bf */
