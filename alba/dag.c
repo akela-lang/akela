@@ -6,6 +6,60 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 
+/* dynamic-output-none */
+enum result dag_set_names(char** names)
+{
+	for (int i = 0; i < dag_type_count; i++) {
+		names[i] = NULL;
+	}
+
+	names[dag_type_none] = "none";
+	names[dag_type_id] = "word";
+	names[dag_type_sign] = "sign";
+	names[dag_type_number] = "number";
+	names[dag_type_assign] = "assign";
+	names[dag_type_plus] = "plus";
+	names[dag_type_minus] = "minus";
+	names[dag_type_mult] = "mult";
+	names[dag_type_divide] = "divide";
+	names[dag_type_stmts] = "stmts";
+	names[dag_type_function] = "function";
+	names[dag_type_dseq] = "dseq";
+	names[dag_type_dret] = "dret";
+	names[dag_type_call] = "call";
+	names[dag_type_cseq] = "cseq";
+	names[dag_type_if] = "if";
+	names[dag_type_conditional_branch] = "conditional-branch";
+	names[dag_type_default_branch] = "default-branch";
+	names[dag_type_equality] = "equality";
+	names[dag_type_not_equal] = "not equal";
+	names[dag_type_less_than_or_equal] = "less than or equal";
+	names[dag_type_greater_than_or_equal] = "greater than or equal";
+	names[dag_type_not] = "not";
+	names[dag_type_and] = "and";
+	names[dag_type_or] = "or";
+	names[dag_type_while] = "while";
+	names[dag_type_for_range] = "for-range";
+	names[dag_type_for_iteration] = "for-iteration";
+	names[dag_type_declaration] = "declaration";
+	names[dag_type_array_literal] = "array-literal";
+	names[dag_type_array_subscript] = "array-subscript";
+	names[dag_type_anonymous_function] = "anonymous-function";
+	names[dag_type_var] = "var";
+	names[dag_type_boolean] = "boolean";
+	names[dag_type_array] = "array";
+	names[dag_type_array_type_name] = "array-type-name";
+	names[dag_type_type_name] = "type-name";
+
+	for (int i = 0; i < dag_type_count; i++) {
+		if (names[i] == NULL) {
+			return set_error("missing dag name: %d", i);
+		}
+	}
+
+	return result_ok;
+}
+
 /* dynamic-output n */
 void dag_create_node(struct dag_node** n)
 {

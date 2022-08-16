@@ -48,7 +48,7 @@ void test_symbol_table_global()
 	symbol_table_init(&st);
 
 	struct environment* saved = st.top;
-	struct enviornment* env = NULL;
+	struct environment* env = NULL;
 	malloc_safe(&env, sizeof(struct environment));
 	environment_init(env, saved);
 	st.top = env;

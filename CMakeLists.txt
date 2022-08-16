@@ -3,6 +3,16 @@ project(alba)
 
 if(WIN32)
 
+set(ICU_BIN "${CMAKE_SOURCE_DIR}/external/icu4c/bin64")
+set(ICU_DT_DLL ${ICU_BIN}/icudt70.dll)
+set(ICU_IN_DLL ${ICU_BIN}/icuin70.dll)
+set(ICU_IO_DLL ${ICU_BIN}/icuio70.dll)
+set(ICU_TU_DLL ${ICU_BIN}/icutu70.dll)
+set(ICU_UC_DLL ${ICU_BIN}/icuuc70.dll)
+
+set(EXAMPLE_DIR ${CMAKE_SOURCE_DIR}/examples)
+set(EXAMPLE_ADDITION ${EXAMPLE_DIR}/addition.alba)
+
 add_library(icudt STATIC IMPORTED)
 set_target_properties(icudt PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icudt.lib")
 add_library(icuin STATIC IMPORTED)
@@ -47,6 +57,11 @@ set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
 set(ZINC_BINARY ${ZINC_DIR}/out/build/x64-Debug/zinc)
 set(ZINC_LIB ${ZINC_BINARY}/zinc.lib)
 set(ZINC_DLL ${ZINC_BINARY}/zinc.dll)
+
+set(ALBA_DIR ${CMAKE_SOURCE_DIR})
+set(ALBA_BINARY ${ALBA_DIR}/out/build/x64-Debug/alba)
+set(ALBA_LIB ${ALBA_BINARY}/alba.lib)
+set(ALBA_DLL ${ALBA_BINARY}/alba.dll)
 
 add_library(zinc SHARED IMPORTED)
 set_target_properties(zinc PROPERTIES

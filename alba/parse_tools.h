@@ -1,6 +1,7 @@
 #ifndef _PARSE_TOOLS_H
 #define _PARSE_TOOLS_H
 
+#include "alba_api.h"
 #include <stdbool.h>
 #include "token.h"
 #include "source.h"
@@ -15,17 +16,17 @@ struct parse_state {
 
 /* dynamic-output-none */
 /* initialize-output ps ps{}*/
-void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct compile_error_list* el, struct symbol_table* st);
+ALBA_API void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct compile_error_list* el, struct symbol_table* st);
 
 /* get lookahead token */
 /* dynamic ps{} */
-bool get_lookahead(struct parse_state* ps, int count, int* num);
+ALBA_API bool get_lookahead(struct parse_state* ps, int count, int* num);
 
 /* expecting specific token */
 /* dynamic-output ps{} t t{} */
-bool match(struct parse_state* ps, enum token_enum type, char* reason, struct token** t);
+ALBA_API bool match(struct parse_state* ps, enum token_enum type, char* reason, struct token** t);
 
 /* dynamic-output ps{} */
-bool get_parse_location(struct parse_state* ps, struct location* loc);
+ALBA_API bool get_parse_location(struct parse_state* ps, struct location* loc);
 
 #endif

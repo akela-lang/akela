@@ -1,6 +1,5 @@
 
-set(source_files
-    alba.c
+set(lib_files
     scan.c
     token.c
     dag.c
@@ -15,8 +14,13 @@ set(source_files
     uconv.c
     parse_types.c
     lookahead_char.c
+    lookahead_translator.c
     hash.c
     symbol_table.c
+)
+
+set(bin_files
+    alba.c
 )
 
 if (WIN32)
@@ -27,25 +31,23 @@ elseif(UNIX)
 
 endif()
 
-add_executable(alba ${source_files})
+# library
+add_definitions(-DALBA_EXPORT)
+add_library(alba-lib SHARED ${lib_files})
+target_link_libraries(alba-lib icudt icuin icuio icutest icutu icuuc zinc)
+SET_TARGET_PROPERTIES(alba-lib
+  PROPERTIES OUTPUT_NAME alba)
+
+# executable
+add_executable(alba-bin ${bin_files})
+target_link_libraries(alba-bin alba-lib icudt icuin icuio icutest icutu icuuc zinc)
+SET_TARGET_PROPERTIES(alba-bin
+  PROPERTIES OUTPUT_NAME alba)
 
 if(WIN32)
 
-target_link_libraries(alba icudt icuin icuio icutest icutu icuuc zinc)
-
-file(GLOB icu_dll "${CMAKE_SOURCE_DIR}/external/icu4c/bin64/*.dll")
-file(COPY ${icu_dll} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-file(COPY "${CMAKE_SOURCE_DIR}/examples/addition.alba" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-
-add_custom_command(
-        TARGET alba POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${ZINC_DLL}
-                ${CMAKE_CURRENT_BINARY_DIR}/zinc.dll
-)
-
 elseif(UNIX)
 
-target_link_libraries(alba icuio icutest icutu icuuc icudata icutest zinc)
+target_link_libraries(alba-lib icuio icutest icutu icuuc icudata icutest zinc)
 
 endif()

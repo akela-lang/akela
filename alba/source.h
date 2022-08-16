@@ -1,6 +1,7 @@
 #ifndef _SOURCE_H
 #define _SOURCE_H
 
+#include "alba_api.h"
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -31,26 +32,26 @@ struct location {
 };
 
 /* dynamic-output-none */
-void compile_error_init(struct compile_error* e);
+ALBA_API void compile_error_init(struct compile_error* e);
 
 /* dynamic-output-none */
-void compile_error_list_init(struct compile_error_list* el);
+ALBA_API void compile_error_list_init(struct compile_error_list* el);
 
 /* dynamic-output-none */
-void compile_error_list_add(struct compile_error_list* el, struct compile_error* e);
+ALBA_API void compile_error_list_add(struct compile_error_list* el, struct compile_error* e);
 
 /* dynamic-destroy el{} */
-void compile_error_list_destroy(struct compile_error_list* el);
+ALBA_API void compile_error_list_destroy(struct compile_error_list* el);
 
 /* dynamic-output el{} */
-bool set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...);
+ALBA_API bool set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...);
 
 /* dynamic-output bf{} */
 /* resource-input d */
 /* resource-use d */
-enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf);
+ALBA_API enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf);
 
 /* dynamic-output-none */
-void get_token_location(struct token* t, struct location* loc);
+ALBA_API void get_token_location(struct token* t, struct location* loc);
 
 #endif

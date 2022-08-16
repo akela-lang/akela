@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "zinc/memory.h"
+#include "uconv.h"
 
 /* dynamic-output dest */
 /* resource-input conv */

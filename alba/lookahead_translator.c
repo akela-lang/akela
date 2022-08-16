@@ -3,10 +3,10 @@
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
+#include "lookahead_translator.h"
 #include "zinc/memory.h"
 #include "zinc/result.h"
 #include "input.h"
-#include "lookahead_translator.h"
 
 /* dynamic-output cbyte{} */
 void circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_size)

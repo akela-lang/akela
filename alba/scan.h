@@ -1,6 +1,7 @@
 #ifndef _SCAN_H
 #define _SCAN_H
 
+#include "alba_api.h"
 #include <stdbool.h>
 #include "zinc/buffer.h"
 #include "token.h"
@@ -55,13 +56,13 @@ enum state_enum {
 
 /* dynamic-output-none */
 /* initialize-output sns{} */
-void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct compile_error_list* el, struct symbol_table* st);
+ALBA_API void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct compile_error_list* el, struct symbol_table* st);
 
 /* dynamic-output sns{wt{} el{}} t t{} */
 /* dynamic-temp: tf tf{} */
-bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t);
+ALBA_API bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t);
 
 /* dynamic-output-none */
-void get_scan_location(struct scan_state* sns, struct location* loc);
+ALBA_API void get_scan_location(struct scan_state* sns, struct location* loc);
 
 #endif

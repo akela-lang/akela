@@ -1,6 +1,7 @@
 #ifndef _LOOKAHEAD_CHAR_H
 #define _LOOKAHEAD_CHAR_H
 
+#include "alba_api.h"
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
@@ -48,50 +49,50 @@ struct lookahead_char {
 /* dynamic-output-none */
 /* resource-input conv */
 /* resource-output lc{conv}*/
-void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv);
+ALBA_API void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv);
 
 /* dynamic-output-none */
-enum result lookahead_char_get_input(struct lookahead_char* lc);
-
-/* dynamic-output-none */
-/* resource-use lc{conv} */
-enum result lookahead_char_translate(struct lookahead_char* lc);
-
-/* dynamic-output-none */
-bool lookahead_char_has_utf8(struct lookahead_char* lc);
-
-/* dynamic-output-none */
-bool lookahead_char_has_utf16(struct lookahead_char* lc);
-
-/* dynamic-output-none */
-bool lookahead_char_utf8_pop(struct lookahead_char* lc, char* buf);
-
-/* dynamic-output-none */
-bool lookahead_char_utf32_pop(struct lookahead_char* lc, UChar32* c);
-
-/* dynamic-output-none */
-bool lookahead_char_done_loading(struct lookahead_char* lc);
-
-/* dynamic-output-none */
-bool lookahead_char_done(struct lookahead_char* lc);
-
-/* dynamic-output-none */
-bool lookahead_char_need_preping(struct lookahead_char* lc);
-
-/* dynamic-output-none */
-bool lookahead_char_need_loading(struct lookahead_char* lc);
+ALBA_API enum result lookahead_char_get_input(struct lookahead_char* lc);
 
 /* dynamic-output-none */
 /* resource-use lc{conv} */
-enum result lookahead_char_prep(struct lookahead_char* lc);
+ALBA_API enum result lookahead_char_translate(struct lookahead_char* lc);
 
 /* dynamic-output-none */
-bool lookahead_char_load(struct lookahead_char* lc);
+ALBA_API bool lookahead_char_has_utf8(struct lookahead_char* lc);
 
 /* dynamic-output-none */
-void lookahead_char_pop(struct lookahead_char* lc);
+ALBA_API bool lookahead_char_has_utf16(struct lookahead_char* lc);
 
 /* dynamic-output-none */
-void lookahead_char_push(struct lookahead_char* lc);
+ALBA_API bool lookahead_char_utf8_pop(struct lookahead_char* lc, char* buf);
+
+/* dynamic-output-none */
+ALBA_API bool lookahead_char_utf32_pop(struct lookahead_char* lc, UChar32* c);
+
+/* dynamic-output-none */
+ALBA_API bool lookahead_char_done_loading(struct lookahead_char* lc);
+
+/* dynamic-output-none */
+ALBA_API bool lookahead_char_done(struct lookahead_char* lc);
+
+/* dynamic-output-none */
+ALBA_API bool lookahead_char_need_preping(struct lookahead_char* lc);
+
+/* dynamic-output-none */
+ALBA_API bool lookahead_char_need_loading(struct lookahead_char* lc);
+
+/* dynamic-output-none */
+/* resource-use lc{conv} */
+ALBA_API enum result lookahead_char_prep(struct lookahead_char* lc);
+
+/* dynamic-output-none */
+ALBA_API bool lookahead_char_load(struct lookahead_char* lc);
+
+/* dynamic-output-none */
+ALBA_API void lookahead_char_pop(struct lookahead_char* lc);
+
+/* dynamic-output-none */
+ALBA_API void lookahead_char_push(struct lookahead_char* lc);
 
 #endif

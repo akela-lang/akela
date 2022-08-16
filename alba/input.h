@@ -1,6 +1,7 @@
 #ifndef _INPUT_H
 #define _INPUT_H
 
+#include "alba_api.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -18,20 +19,20 @@ struct string_data {
 /* dynamic-output-none */
 /* resource-input fp */
 /* resource-use fp */
-int file_getchar(FILE* fp);
+ALBA_API int file_getchar(FILE* fp);
 
 /* dynamic-output-none */
 /* resource-input fp */
 /* resource-use fp */
-int file_seek(FILE* fp, size_t pos);
+ALBA_API int file_seek(FILE* fp, size_t pos);
 
 /*  static-output */
-void string_data_init(struct buffer* bf, struct string_data* sd);
+ALBA_API void string_data_init(struct buffer* bf, struct string_data* sd);
 
 /* dynamic-output-none */
-int string_getchar(struct string_data* sd);
+ALBA_API int string_getchar(struct string_data* sd);
 
 /* dynamic-output-none */
-int string_seek(struct string_data* sd, size_t pos);
+ALBA_API int string_seek(struct string_data* sd, size_t pos);
 
 #endif

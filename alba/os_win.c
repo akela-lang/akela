@@ -4,6 +4,7 @@
 
 #include "zinc/result.h"
 #include "zinc/memory.h"
+#include "os_win.h"
 
 /* dynamic-output buff */
 enum result win_temp_filename(char** buff)

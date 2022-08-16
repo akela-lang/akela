@@ -7,6 +7,7 @@
 #include "source.h"
 #include "scan.h"
 #include "parse_types.h"
+#include "parse_expr.h"
 
 bool var(struct parse_state* ps, struct dag_node** root);
 bool assignment(struct parse_state* ps, struct dag_node** root);

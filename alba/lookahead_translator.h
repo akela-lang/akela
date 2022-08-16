@@ -1,6 +1,7 @@
 #ifndef _LOOKAHEAD_TRANSLATOR_H
 #define _LOOKAHEAD_TRANSLATOR_H
 
+#include "alba_api.h"
 #include <stdlib.h>
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
@@ -21,27 +22,27 @@ struct circular_uchar32_buffer {
 };
 
 /* dynamic-output cbyte{} */
-void circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_size);
+ALBA_API void circular_byte_buffer_init(struct circular_byte_buffer* cbyte, size_t buf_size);
 
 /* dynamic-destroy cbyte{} */
-void circular_byte_buffer_destroy(struct circular_byte_buffer* cbyte);
+ALBA_API void circular_byte_buffer_destroy(struct circular_byte_buffer* cbyte);
 
 /* dynamic-output-none */
-enum result circular_byte_buffer_add(struct circular_byte_buffer* cbyte, char c);
+ALBA_API enum result circular_byte_buffer_add(struct circular_byte_buffer* cbyte, char c);
 
 /* dynamic-output-none */
-char circular_byte_buffer_pop(struct circular_byte_buffer* cbyte);
+ALBA_API char circular_byte_buffer_pop(struct circular_byte_buffer* cbyte);
 
 /* dynamic-output: cc32{} */
-void circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t buf_size);
+ALBA_API void circular_uchar32_buffer_init(struct circular_uchar32_buffer* cc32, size_t buf_size);
 
 /* dynamic-destroy cc32{} */
-void circular_uchar32_buffer_destroy(struct circular_uchar32_buffer* cc32);
+ALBA_API void circular_uchar32_buffer_destroy(struct circular_uchar32_buffer* cc32);
 
 /* dynamic-output-none */
-enum result circular_uchar32_buffer_add(struct circular_uchar32_buffer* cc32, UChar32 c);
+ALBA_API enum result circular_uchar32_buffer_add(struct circular_uchar32_buffer* cc32, UChar32 c);
 
 /* dynamic-output-none */
-UChar32 circular_uchar32_buffer_pop(struct circular_uchar32_buffer* cc32);
+ALBA_API UChar32 circular_uchar32_buffer_pop(struct circular_uchar32_buffer* cc32);
 
 #endif

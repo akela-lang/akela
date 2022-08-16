@@ -9,6 +9,7 @@
 #include "scan.h"
 #include "zinc/memory.h"
 #include "symbol_table.h"
+#include "parse_factor.h"
 
 bool anonymous_function(struct parse_state* ps, struct dag_node** root);
 bool function_call(struct parse_state* ps, struct dag_node** root);

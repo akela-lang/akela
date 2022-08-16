@@ -1,6 +1,7 @@
 #ifndef _SYMBOL_TABLE_H
 #define _SYMBOL_TABLE_H
 
+#include "alba_api.h"
 #include <stdbool.h>
 #include "hash.h"
 #include "token.h"
@@ -35,32 +36,32 @@ struct symbol_table {
 
 /* dynamic-output env{} */
 /* transfer p -> env */
-void environment_init(struct environment* env, struct environment* p);
+ALBA_API void environment_init(struct environment* env, struct environment* p);
 
 /* dynamic-output env{} */
 /* transfer sym -> env{} */
-void environment_put(struct environment* env, struct buffer* value, struct symbol* sym);
+ALBA_API void environment_put(struct environment* env, struct buffer* value, struct symbol* sym);
 
 /* dynamic-output-none */
-struct symbol* environment_get(struct environment* env, struct buffer* value);
+ALBA_API struct symbol* environment_get(struct environment* env, struct buffer* value);
 
 /* dynamic-output-none */
-struct symbol* environment_get_local(struct environment* env, struct buffer* value);
+ALBA_API struct symbol* environment_get_local(struct environment* env, struct buffer* value);
 
 /* dynamic-output_none */
-void symbol_init(struct symbol* sym);
+ALBA_API void symbol_init(struct symbol* sym);
 
 /* dynamic-destroy env env{} */
-void environment_destroy(struct environment* env);
+ALBA_API void environment_destroy(struct environment* env);
 
-void symbol_table_init(struct symbol_table* st);
+ALBA_API void symbol_table_init(struct symbol_table* st);
 
-void symbol_table_destroy(struct symbol_table* st);
+ALBA_API void symbol_table_destroy(struct symbol_table* st);
 
-bool symbol_table_is_global(struct symbol_table* st);
+ALBA_API bool symbol_table_is_global(struct symbol_table* st);
 
-void type_info_init(struct type_info* ti);
+ALBA_API void type_info_init(struct type_info* ti);
 
-void type_info_destroy(struct type_info* ti);
+ALBA_API void type_info_destroy(struct type_info* ti);
 
 #endif

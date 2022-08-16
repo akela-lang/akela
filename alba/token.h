@@ -1,6 +1,7 @@
 #ifndef _TOKEN_H
 #define _TOKEN_H
 
+#include "alba_api.h"
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "zinc/buffer.h"
@@ -117,7 +118,7 @@ enum result token_name_init(char** token_name)
 # else
 
 /* dynamic-output-none */
-enum result token_name_init(char** token_name);
+ALBA_API enum result token_name_init(char** token_name);
 
 # endif
 
@@ -140,49 +141,49 @@ struct token_list {
 
 /* dynamic-output-none */
 /* initialize-output t{} t{value{}} */
-void token_init(struct token* t);
+ALBA_API void token_init(struct token* t);
 
 /* dynamic-destroy t{value{}} */
-void token_reset(struct token* t);
+ALBA_API void token_reset(struct token* t);
 
 /* dynamic-output-none */
-void token_list_init(struct token_list* tl);
+ALBA_API void token_list_init(struct token_list* tl);
 
 /* dynamic-destroy tl{} */
-void token_list_destroy(struct token_list* tl);
+ALBA_API void token_list_destroy(struct token_list* tl);
 
 /* dynamic-destroy t{value{}} */
-void token_destroy(struct token* t);
+ALBA_API void token_destroy(struct token* t);
 
 /* dynamic-output-none */
-struct token* get_token(struct token_list* tl, size_t pos);
+ALBA_API struct token* get_token(struct token_list* tl, size_t pos);
 
 /* dynamic-output-none */
-int token_find_first(struct token_list* tl, enum token_enum type);
+ALBA_API int token_find_first(struct token_list* tl, enum token_enum type);
 
 /* dynamic-output-none */
-int token_find_last(struct token_list* tl, enum token_enum type);
+ALBA_API int token_find_last(struct token_list* tl, enum token_enum type);
 
 /* dynamic-output-none */
-int token_list_count(struct token_list* tl);
+ALBA_API int token_list_count(struct token_list* tl);
 
 /* dynamic-output tl */
-void token_list_make(struct token_list** tl);
+ALBA_API void token_list_make(struct token_list** tl);
 
 /* dynamic-output-none */
 /* dynamic-transfer t t{} -> tl{} */
-void token_list_add(struct token_list* tl, struct token* t);
+ALBA_API void token_list_add(struct token_list* tl, struct token* t);
 
 /* partition-output tl{} -> return */
-struct token* token_list_pop(struct token_list* tl);
+ALBA_API struct token* token_list_pop(struct token_list* tl);
 
 /* initialize-output tl{} */
-void token_list_reset(struct token_list* tl);
+ALBA_API void token_list_reset(struct token_list* tl);
 
 /* dynamic-output-none */
-enum result token_list_print(struct token_list* tl);
+ALBA_API enum result token_list_print(struct token_list* tl);
 
 /* dynamic-output-none */
-enum result print_token(struct token* t);
+ALBA_API enum result print_token(struct token* t);
 
 #endif

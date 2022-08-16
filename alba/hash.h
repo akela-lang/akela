@@ -1,6 +1,7 @@
 #ifndef _HASH_H
 #define _HASH_H
 
+#include "alba_api.h"
 #include "zinc/buffer.h"
 
 struct hash_entry
@@ -24,33 +25,33 @@ struct hash_table {
 typedef void (hash_table_func)(void*);
 
 /* dynamic-output-none */
-unsigned int hash_calc(struct buffer* value, unsigned int size);
+ALBA_API unsigned int hash_calc(struct buffer* value, unsigned int size);
 
 /* dynamic-output-none */
-void hash_entry_init(struct hash_entry* ent);
+ALBA_API void hash_entry_init(struct hash_entry* ent);
 
 /* dynamic-destroy ent{} */
-void hash_entry_destroy(struct hash_entry* ent);
+ALBA_API void hash_entry_destroy(struct hash_entry* ent);
 
 /* dynamic-output-none */
-void hash_list_init(struct hash_list* hl);
+ALBA_API void hash_list_init(struct hash_list* hl);
 
 /* dynamic-destroy hl{} */
-void hash_list_destroy(struct hash_list* hl);
+ALBA_API void hash_list_destroy(struct hash_list* hl);
 
 /* dynamic-destroy ht{} */
-void hash_table_map(struct hash_table* ht, hash_table_func f);
+ALBA_API void hash_table_map(struct hash_table* ht, hash_table_func f);
 
 /* dynamic-output ht{} */
-void hash_table_init(struct hash_table* ht, unsigned int size);
+ALBA_API void hash_table_init(struct hash_table* ht, unsigned int size);
 
 /* dynamic-destroy ht{} */
-void hash_table_destroy(struct hash_table* ht);
+ALBA_API void hash_table_destroy(struct hash_table* ht);
 
 /* dynamic-output ht{} */
-void hash_table_add(struct hash_table* ht, struct buffer* value, void* item);
+ALBA_API void hash_table_add(struct hash_table* ht, struct buffer* value, void* item);
 
 /* dynamic-output-none */
-void* hash_table_get(struct hash_table* ht, struct buffer* value);
+ALBA_API void* hash_table_get(struct hash_table* ht, struct buffer* value);
 
 #endif

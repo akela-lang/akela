@@ -12,6 +12,7 @@
 #include "symbol_table.h"
 #include "zinc/memory.h"
 #include "symbol_table.h"
+#include "parse_stmts.h"
 
 bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct dag_node** root);
