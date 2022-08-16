@@ -103,5 +103,5 @@ struct ast_node* check_stmts(struct ast_node* root, char* message)
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, ast_type_stmts, message);
 
-	return ast_get_child(root, 0);
+	return ast_node_get(root, 0);
 }

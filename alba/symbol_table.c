@@ -1,6 +1,7 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include <stdbool.h>
+#include "type_info.h"
 
 /* dynamic-output env{} */
 /* transfer p -> env */

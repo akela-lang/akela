@@ -72,28 +72,28 @@ struct ast_node {
 ALBA_API enum result ast_set_names(char** names);
 
 /* dynamic-output n */
-ALBA_API void ast_create_node(struct ast_node** n);
+ALBA_API void ast_node_create(struct ast_node** n);
 
 /* dynamic-destroy n n{} */
-ALBA_API void ast_destroy(struct ast_node* n);
+ALBA_API void ast_node_destroy(struct ast_node* n);
 
 /* dynamic-output-none */
-ALBA_API void ast_init_node(struct ast_node* n);
+ALBA_API void ast_node_init(struct ast_node* n);
 
 /* dynamic-output-none */
-ALBA_API void ast_add_child(struct ast_node* p, struct ast_node* c);
+ALBA_API void ast_node_add(struct ast_node* p, struct ast_node* c);
 
 /* dynamic-output-none */
-ALBA_API void ast_push(struct ast_node* parent, struct ast_node* child);
+ALBA_API void ast_node_push(struct ast_node* parent, struct ast_node* child);
 
 /* dynamic-output-none */
-ALBA_API struct ast_node* ast_get_child(struct ast_node* p, size_t pos);
+ALBA_API struct ast_node* ast_node_get(struct ast_node* p, size_t pos);
 
 /* dynamic-output-none */
-ALBA_API void ast_print(struct ast_node* root, char** names);
+ALBA_API void ast_node_print(struct ast_node* root, char** names);
 
-ALBA_API struct ast_node* ast_copy(struct ast_node* n);
+ALBA_API struct ast_node* ast_node_copy(struct ast_node* n);
 
-ALBA_API bool ast_match(struct ast_node* a, struct ast_node* b);
+ALBA_API bool ast_node_match(struct ast_node* a, struct ast_node* b);
 
 #endif

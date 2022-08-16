@@ -59,15 +59,15 @@ enum result ast_set_names(char** names)
 }
 
 /* dynamic-output n */
-void ast_create_node(struct ast_node** n)
+void ast_node_create(struct ast_node** n)
 {
 	/* allocate n */
 	malloc_safe((void**)n, sizeof(struct ast_node));
-	ast_init_node(*n);
+	ast_node_init(*n);
 }
 
 /* dynamic-destroy n n{} */
-void ast_destroy(struct ast_node* n)
+void ast_node_destroy(struct ast_node* n)
 {
 	if (n) {
 		/* destroy n{} */
@@ -75,13 +75,13 @@ void ast_destroy(struct ast_node* n)
 		while (p) {
 			struct ast_node* temp = p;
 			p = p->next;
-			ast_destroy(temp);
+			ast_node_destroy(temp);
 		}
 
 		/* destroy n{} */
 		buffer_destroy(&n->value);
 		token_list_destroy(&n->tl);
-		ast_destroy(n->etype);
+		ast_node_destroy(n->etype);
 
 		/* destroy n */
 		free(n);
@@ -89,7 +89,7 @@ void ast_destroy(struct ast_node* n)
 }
 
 /* dynamic-output-none */
-void ast_init_node(struct ast_node* n)
+void ast_node_init(struct ast_node* n)
 {
 	n->type = ast_type_none;
 	buffer_init(&n->value);
@@ -102,7 +102,7 @@ void ast_init_node(struct ast_node* n)
 }
 
 /* dynamic-output-none */
-void ast_add_child(struct ast_node* p, struct ast_node* c)
+void ast_node_add(struct ast_node* p, struct ast_node* c)
 {
 	// set sibling to left
 	struct ast_node* prev = p->tail;
@@ -123,7 +123,7 @@ void ast_add_child(struct ast_node* p, struct ast_node* c)
 
 /* assume parent and child are not NULL */
 /* dynamic-output-none */
-void ast_push(struct ast_node* parent, struct ast_node* child)
+void ast_node_push(struct ast_node* parent, struct ast_node* child)
 {
 	struct ast_node* old_head = parent->head;
 	if (old_head) {
@@ -134,7 +134,7 @@ void ast_push(struct ast_node* parent, struct ast_node* child)
 }
 
 /* dynamic-output-none */
-struct ast_node* ast_get_child(struct ast_node* p, size_t pos)
+struct ast_node* ast_node_get(struct ast_node* p, size_t pos)
 {
 	int i = 0;
 	for (struct ast_node* n = p->head; n; n = n->next) {
@@ -148,7 +148,7 @@ struct ast_node* ast_get_child(struct ast_node* p, size_t pos)
 
 /* dynamic-output-none */
 /* dynamic-temp a */
-void ast_print(struct ast_node* root, char** names)
+void ast_node_print(struct ast_node* root, char** names)
 {
 	if (root == NULL) return;
 
@@ -172,26 +172,26 @@ void ast_print(struct ast_node* root, char** names)
 
 	for (struct ast_node* p = root->head; p; p = p->next) {
 		if (p->head != NULL) {
-			ast_print(p, names);
+			ast_node_print(p, names);
 		}
 	}
 }
 
 /* copy dag excluding etype */
-struct ast_node* ast_copy(struct ast_node* n)
+struct ast_node* ast_node_copy(struct ast_node* n)
 {
 	struct ast_node* copy = NULL;
 
 	if (n) {
-		ast_create_node(&copy);
+		ast_node_create(&copy);
 		copy->type = n->type;
 		buffer_copy(&n->value, &copy->value);
 		
 		struct ast_node* p = n->head;
 		while (p) {
 			struct ast_node* p_copy = NULL;
-			p_copy = ast_copy(p);
-			ast_add_child(copy, p_copy);
+			p_copy = ast_node_copy(p);
+			ast_node_add(copy, p_copy);
 			p = p->next;
 		}
 	}
@@ -199,7 +199,7 @@ struct ast_node* ast_copy(struct ast_node* n)
 	return copy;
 }
 
-bool ast_match(struct ast_node* a, struct ast_node* b)
+bool ast_node_match(struct ast_node* a, struct ast_node* b)
 {
 	struct ast_node* copy = NULL;
 
@@ -215,7 +215,7 @@ bool ast_match(struct ast_node* a, struct ast_node* b)
 		struct ast_node* c = a->head;
 		struct ast_node* d = b->head;
 		do {
-			if (!ast_match(c, d)) {
+			if (!ast_node_match(c, d)) {
 				return false;
 			}
 			if (c) c = c->next;

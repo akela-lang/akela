@@ -14,6 +14,7 @@ set(test_files
     test_hash.c
     test_symbol_table.c
     test_parse_types.c
+    test_type.c
 )
 
 if(WIN32)

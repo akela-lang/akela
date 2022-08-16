@@ -1,5 +1,4 @@
 # Todo
-* create a type_node
 * type check with type_node
 * set etype
   * factor

@@ -19,15 +19,6 @@ struct symbol {
 	struct type_info* ti;
 };
 
-struct type_info {
-	struct buffer name;
-	bool is_integer;
-	bool is_float;
-	bool is_signed;
-	int bit_count;
-	struct type_info* next;
-};
-
 struct symbol_table {
 	struct environment* initial;
 	struct environment* top;

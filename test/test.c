@@ -11,6 +11,7 @@
 #include "test_symbol_table.h"
 #include "test_parse_types.h"
 #include "test_parse_factor.h"
+#include "test_type.h"
 
 /* dynamic-output-none */
 int main(void) {
@@ -21,6 +22,7 @@ int main(void) {
 	test_hash();
 	test_scan();
 	test_ast();
+	test_type();
 	test_parse_factor();
 	test_parse_expression();
 	test_parse_statements();

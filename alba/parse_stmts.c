@@ -53,7 +53,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 	}
 
 	/* allocate n */
-	ast_create_node(&n);
+	ast_node_create(&n);
 	n->type = ast_type_stmts;
 	*root = n;
 
@@ -63,7 +63,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 
 	/* transfer a -> n{} */
 	if (a) {
-		ast_add_child(n, a);
+		ast_node_add(n, a);
 	}
 
 	while (true) {
@@ -80,7 +80,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 		valid = stmt(ps, &b) && valid;
 
 		if (b) {
-			ast_add_child(n, b);
+			ast_node_add(n, b);
 		}
 	}
 
@@ -180,16 +180,16 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 		free(ift);
 
 		/* allocate n */
-		ast_create_node(&n);
+		ast_node_create(&n);
 		n->type = ast_type_if;
 
 		/* allocate cb */
 		struct ast_node* cb = NULL;
-		ast_create_node(&cb);
+		ast_node_create(&cb);
 		cb->type = ast_type_conditional_branch;
 
 		/* transfer cb -> n{} */
-		ast_add_child(n, cb);
+		ast_node_add(n, cb);
 
 		/* allocate ps{} */
 		struct location loc;
@@ -206,7 +206,7 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 			return valid;
 		} else {
 			/* transfer cond -> n{} */
-			ast_add_child(cb, cond);
+			ast_node_add(cb, cond);
 
 		}
 
@@ -217,7 +217,7 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 
 		/* transfer body -> n{} */
 		if (body) {
-			ast_add_child(cb, body);
+			ast_node_add(cb, body);
 		}
 
 		/* elseif_nt */
@@ -278,21 +278,21 @@ bool while_nt(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		/* allocate n */
-		ast_create_node(&n);
+		ast_node_create(&n);
 		n->type = ast_type_while;
 
 		/* transfer a -> n{} */
-		ast_add_child(n, a);
+		ast_node_add(n, a);
 
 		/* transfer b -> n{} */
-		ast_add_child(n, b);
+		ast_node_add(n, b);
 
 		/* transfer n -> root */
 		*root = n;
 
 	} else {
-		ast_destroy(a);
-		ast_destroy(b);
+		ast_node_destroy(a);
+		ast_node_destroy(b);
 	}
 
 	token_destroy(whl);
@@ -362,7 +362,7 @@ bool for_range(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		*root = n;
 	} else {
-		ast_destroy(n);
+		ast_node_destroy(n);
 	}
 
 	ps->st->top = saved;
@@ -420,22 +420,22 @@ bool for_range_start(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		/* allocate n */
-		ast_create_node(&n);
+		ast_node_create(&n);
 		n->type = ast_type_for_range;
 
 		/* id */
 		/* allocate a */
 		struct ast_node* id_node = NULL;
-		ast_create_node(&id_node);
+		ast_node_create(&id_node);
 		id_node->type = ast_type_id;
 
 		/* allocate a{} */
 		buffer_copy(&id->value, &id_node->value);
 
 		/* transfer a -> n{} */
-		ast_add_child(n, id_node);
-		ast_add_child(n, a);
-		ast_add_child(n, b);
+		ast_node_add(n, id_node);
+		ast_node_add(n, a);
+		ast_node_add(n, b);
 		*root = n;
 
 		struct symbol* sym = NULL;
@@ -449,8 +449,8 @@ bool for_range_start(struct parse_state* ps, struct ast_node** root)
 		environment_put(ps->st->top, &id->value, sym);
 
 	} else {
-		ast_destroy(a);
-		ast_destroy(b);
+		ast_node_destroy(a);
+		ast_node_destroy(b);
 	}
 
 	/* destroy end end{} */
@@ -484,9 +484,9 @@ bool for_range_finish(struct parse_state* ps, struct ast_node* n)
 	valid = match(ps, token_end, "expected end", &end) && valid;
 
 	if (valid) {
-		ast_add_child(n, c);	
+		ast_node_add(n, c);	
 	} else {
-		ast_destroy(c);
+		ast_node_destroy(c);
 	}
 
 	/* destroy end end{} */
@@ -515,7 +515,7 @@ bool for_iteration(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		*root = n;
 	} else {
-		ast_destroy(n);
+		ast_node_destroy(n);
 	}
 
 	ps->st->top = saved;
@@ -557,12 +557,12 @@ bool for_iteration_start(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		/* allocate n */
-		ast_create_node(&n);
+		ast_node_create(&n);
 		n->type = ast_type_for_iteration;
 
 		/* allocate element */
 		struct ast_node* element = NULL;
-		ast_create_node(&element);
+		ast_node_create(&element);
 		element->type = ast_type_id;
 
 		/* allocate element{} */
@@ -571,10 +571,10 @@ bool for_iteration_start(struct parse_state* ps, struct ast_node** root)
 		}
 
 		/* transfer element -> n{} */
-		ast_add_child(n, element);
+		ast_node_add(n, element);
 
 		/* transfer list -> n{} */
-		ast_add_child(n, list);
+		ast_node_add(n, list);
 
 		/* transfer n -> root */
 		*root = n;
@@ -590,7 +590,7 @@ bool for_iteration_start(struct parse_state* ps, struct ast_node** root)
 		environment_put(ps->st->top, &id->value, sym);
 
 	} else {
-		ast_destroy(list);
+		ast_node_destroy(list);
 	}
 
 	token_destroy(for_token);
@@ -622,9 +622,9 @@ bool for_iteration_finish(struct parse_state* ps, struct ast_node* n)
 
 	if (valid) {
 		/* transfer stmts_node -> n{} */
-		ast_add_child(n, stmts_node);
+		ast_node_add(n, stmts_node);
 	} else {
-		ast_destroy(stmts_node);
+		ast_node_destroy(stmts_node);
 	}
 
 	token_destroy(end);
@@ -660,7 +660,7 @@ bool function(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		*root = fd;
 	} else {
-		ast_destroy(fd);
+		ast_node_destroy(fd);
 	}
 
 	/* transfer saved -> ps->st->top */
@@ -714,30 +714,30 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 	/* start building nodes */
 	if (valid) {
 		/* allocate n */
-		ast_create_node(&n);
+		ast_node_create(&n);
 		n->type = ast_type_function;
 
 		/* allocate a a{} */
 		struct ast_node* a;
-		ast_create_node(&a);
+		ast_node_create(&a);
 		a->type = ast_type_id;
 		buffer_copy(&id->value, &a->value);
 
 		/* tranfer a -> n{} */
-		ast_add_child(n, a);
+		ast_node_add(n, a);
 
 		/* transfer dseq_node -> n{} */
-		ast_add_child(n, dseq_node);
+		ast_node_add(n, dseq_node);
 
 		struct ast_node* b;
-		ast_create_node(&b);
+		ast_node_create(&b);
 		b->type = ast_type_dret;
 
 		if (dret_node) {
-			ast_add_child(b, dret_node);
+			ast_node_add(b, dret_node);
 		}
 
-		ast_add_child(n, b);
+		ast_node_add(n, b);
 
 		struct symbol* search = environment_get_local(ps->st->top->prev, &id->value);
 		if (search) {
@@ -757,7 +757,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 
 		*root = n;
 	} else {
-		ast_destroy(dseq_node);
+		ast_node_destroy(dseq_node);
 	}
 
 	/* destroy f f{} id id{} lp lp{} rp rp{} */
@@ -788,10 +788,10 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd)
 	/* finish building nodes */
 	if (valid) {
 		/* transfer stmts_node -> n{} */
-		ast_add_child(fd, stmts_node);
+		ast_node_add(fd, stmts_node);
 
 	} else {
-		ast_destroy(stmts_node);
+		ast_node_destroy(stmts_node);
 	}
 
 	/* destroy end end{} */
@@ -823,7 +823,7 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent)
 
 		/* allocate cb */
 		struct ast_node* cb = NULL;
-		ast_create_node(&cb);
+		ast_node_create(&cb);
 		cb->type = ast_type_conditional_branch;
 
 		/* allocate ps{} cond cond{} */
@@ -835,7 +835,7 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent)
 			valid = set_source_error(ps->el, &loc, "expecting condition after elseif");
 		} else {
 			/* transfer cond -> cb{} */
-			ast_add_child(cb, cond);
+			ast_node_add(cb, cond);
 		}
 
 
@@ -845,11 +845,11 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent)
 
 		/* transfer node -> cb{} */
 		if (node) {
-			ast_add_child(cb, node);
+			ast_node_add(cb, node);
 		}
 
 		/* transfer cb -> parent{} */
-		ast_add_child(parent, cb);
+		ast_node_add(parent, cb);
 
 		/* allocate ps{} parent{} */
 		valid = elseif_nt(ps, parent) && valid;
@@ -881,7 +881,7 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent)
 
 		/* allocate cb */
 		struct ast_node* cb = NULL;
-		ast_create_node(&cb);
+		ast_node_create(&cb);
 		cb->type = ast_type_default_branch;
 
 		/* stmts */
@@ -891,11 +891,11 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent)
 
 		/* transfer node -> cb{} */
 		if (node) {
-			ast_add_child(cb, node);
+			ast_node_add(cb, node);
 		}
 
 		/* transfer cb -> parent{} */
-		ast_add_child(parent, cb);
+		ast_node_add(parent, cb);
 	}
 
 	return valid;

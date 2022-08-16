@@ -17,6 +17,7 @@ set(lib_files
     lookahead_translator.c
     hash.c
     symbol_table.c
+    type_info.c
 )
 
 set(bin_files

@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 
     char* names[ast_type_count];
     ast_set_names(names);
-    ast_print(root, names);
+    ast_node_print(root, names);
 
     /* resource destroy conv */
     conv_close(conv);

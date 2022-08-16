@@ -9,6 +9,7 @@
 #include "symbol_table.h"
 #include "zinc/memory.h"
 #include "parse_types.h"
+#include "type_info.h"
 
 bool declaration(struct parse_state* ps, struct ast_node** root);
 bool type(struct parse_state* ps, struct token* id, struct ast_node** root);
@@ -22,7 +23,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 	struct ast_node* n = NULL;
 
 	/* allocate n */
-	ast_create_node(&n);
+	ast_node_create(&n);
 	n->type = ast_type_dseq;
 
 	/* transfer n -> root */
@@ -38,7 +39,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 
 	if (dec && valid) {
 		/* transfer dec -> n */
-		ast_add_child(n, dec);
+		ast_node_add(n, dec);
 	}
 
 	while (true)
@@ -74,7 +75,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 
 		if (dec && valid) {
 			/* transfer dec -> n */
-			ast_add_child(n, dec);
+			ast_node_add(n, dec);
 		}
 	}
 
@@ -117,27 +118,27 @@ bool declaration(struct parse_state* ps, struct ast_node** root)
 
 		if (valid) {
 			/* allocate n */
-			ast_create_node(&n);
+			ast_node_create(&n);
 			n->type = ast_type_declaration;
 
 			/* allocate a */
 			struct ast_node* a = NULL;
-			ast_create_node(&a);
+			ast_node_create(&a);
 			a->type = ast_type_id;
 
 			/* allocate a{} */
 			buffer_copy(&id->value, &a->value);
 
 			/* transfer a a{} -> n */
-			ast_add_child(n, a);
+			ast_node_add(n, a);
 
 			/* transfer b b{} -> n */
-			ast_add_child(n, type_node);
+			ast_node_add(n, type_node);
 
 			/* transfer n -> root */
 			*root = n;
 		} else {
-			ast_destroy(type_node);
+			ast_node_destroy(type_node);
 		}
 
 		token_destroy(id);
@@ -186,20 +187,20 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 		free(rcb);
 
 		if (valid) {
-			ast_create_node(&n);
+			ast_node_create(&n);
 			n->type = ast_type_array;
 
 			struct ast_node* a = NULL;
-			ast_create_node(&a);
+			ast_node_create(&a);
 			a->type = ast_type_array_type_name;
 			buffer_copy(&name->value, &a->value);
-			ast_add_child(n, a);
+			ast_node_add(n, a);
 
 			struct ast_node* b = NULL;
-			ast_create_node(&b);
+			ast_node_create(&b);
 			b->type = ast_type_type_name;
 			buffer_copy(&name2->value, &b->value);
-			ast_add_child(n, b);
+			ast_node_add(n, b);
 
 			if (id) {
 				struct symbol* search = environment_get_local(ps->st->top, &id->value);
@@ -234,7 +235,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 		valid = match(ps, token_type_name, "expected type name", &name) && valid;
 
 		if (valid) {
-			ast_create_node(&n);
+			ast_node_create(&n);
 			n->type = ast_type_type_name;
 			buffer_copy(&name->value, &n->value);
 
@@ -271,27 +272,27 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 struct ast_node* af2etype(struct ast_node* n)
 {
 	struct ast_node* etype = NULL;
-	ast_create_node(&etype);
+	ast_node_create(&etype);
 	etype->type = ast_type_type_function;
 
 	/* dseq */
-	struct ast_node* dseq = ast_get_child(n, 0);
+	struct ast_node* dseq = ast_node_get(n, 0);
 	struct ast_node* type_dseq = NULL;
-	ast_create_node(&type_dseq);
+	ast_node_create(&type_dseq);
 	type_dseq->type = ast_type_type_dseq;
 	struct ast_node* dec = dseq->head;
 	while (dec) {
-		struct ast_node* t = ast_get_child(dec, 1);
-		ast_add_child(type_dseq, ast_copy(t));
+		struct ast_node* t = ast_node_get(dec, 1);
+		ast_node_add(type_dseq, ast_node_copy(t));
 		dec = dec->next;
 	}
-	ast_add_child(etype, type_dseq);
+	ast_node_add(etype, type_dseq);
 
 	/* dret */
-	struct ast_node* dret = ast_get_child(n, 1);
-	struct ast_node* type_dret = ast_copy(dret);
+	struct ast_node* dret = ast_node_get(n, 1);
+	struct ast_node* type_dret = ast_node_copy(dret);
 	type_dret->type = ast_type_type_dret;
-	ast_add_child(etype, type_dret);
+	ast_node_add(etype, type_dret);
 
 	return etype;
 }
@@ -380,7 +381,7 @@ bool type_match(struct symbol_table* st, struct ast_node* a, struct ast_node* b)
 		struct ast_node* c = a->head;
 		struct ast_node* d = b->head;
 		do {
-			if (!ast_match(c, d)) {
+			if (!ast_node_match(c, d)) {
 				return false;
 			}
 			if (c) c = c->next;
@@ -398,7 +399,7 @@ bool type_match(struct symbol_table* st, struct ast_node* a, struct ast_node* b)
 bool binary_arithmetic_check(struct parse_state* ps, struct ast_node* left, struct ast_node* a, struct ast_node* b, struct location* loc_a, struct location* loc_op, struct location* loc_b, char* op_name, struct ast_node** ret)
 {
 	bool valid = true;
-	struct ast_node* etype = ast_copy(left->etype);
+	struct ast_node* etype = ast_node_copy(left->etype);
 
 	if (!etype) {
 		if (left == a) {

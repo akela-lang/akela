@@ -86,18 +86,18 @@ bool var(struct parse_state* ps, struct ast_node** root)
 	}
 
 	if (valid) {
-		ast_create_node(&n);
+		ast_node_create(&n);
 		n->type = ast_type_var;
 
-		ast_add_child(n, a);
+		ast_node_add(n, a);
 		if (b) {
-			ast_add_child(n, b);
+			ast_node_add(n, b);
 		}
 
 		*root = n;
 	} else {
-		ast_destroy(a);
-		ast_destroy(b);
+		ast_node_destroy(a);
+		ast_node_destroy(b);
 	}
 
 	token_destroy(vrt);
@@ -134,12 +134,12 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		/* allocate n */
-		ast_create_node(&n);
+		ast_node_create(&n);
 		n->type = ast_type_assign;
 
 		/* allocate a */
 		struct ast_node* a;
-		ast_create_node(&a);
+		ast_node_create(&a);
 		a->type = ast_type_id;
 
 		/* allocate a{} */
@@ -147,10 +147,10 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 		buffer_copy(&id->value, &a->value);
 
 		/* transfer a a{} -> n{} */
-		ast_add_child(n, a);
+		ast_node_add(n, a);
 
 		/* transfer b b{} -> n{} */
-		ast_add_child(n, b);
+		ast_node_add(n, b);
 
 		/* transfer n n{} -> root */
 		*root = n;
@@ -205,7 +205,7 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 		}
 
 		/* allocate n */
-		ast_create_node(&n);
+		ast_node_create(&n);
 		n->type = type;
 
 		/* allocate ps{} op op{} */
@@ -229,11 +229,11 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 		}
 
 		if (valid) {
-			ast_add_child(n, left);
-			ast_add_child(n, b);
+			ast_node_add(n, left);
+			ast_node_add(n, b);
 			left = n;
 		} else {
-			ast_destroy(b);
+			ast_node_destroy(b);
 			break;
 		}
 	}
@@ -241,7 +241,7 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		*root = left;
 	} else {
-		ast_destroy(left);
+		ast_node_destroy(left);
 	}
 
 	return valid;
@@ -276,7 +276,7 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		left = a;
 	} else {
-		ast_destroy(a);
+		ast_node_destroy(a);
 	}
 
 	while (true) {
@@ -327,21 +327,21 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 
 		if (valid) {
 			/* allocate n */
-			ast_create_node(&n);
+			ast_node_create(&n);
 			n->type = type;
 
-			ast_add_child(n, left);
-			ast_add_child(n, b);
+			ast_node_add(n, left);
+			ast_node_add(n, b);
 			left = n;
 		} else {
-			ast_destroy(b);
+			ast_node_destroy(b);
 		}
 	}
 
 	if (valid) {
 		*root = left;
 	} else {
-		ast_destroy(left);
+		ast_node_destroy(left);
 	}
 
 	return valid;
@@ -373,7 +373,7 @@ bool add(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		left = a;
 	} else {
-		ast_destroy(a);
+		ast_node_destroy(a);
 	}
 
 	struct location loc_b;
@@ -418,19 +418,19 @@ bool add(struct parse_state* ps, struct ast_node** root)
 
 		if (!b) {
 			/* destroy n n{} */
-			ast_destroy(n);
+			ast_node_destroy(n);
 			valid = set_source_error(ps->el, &loc_b, "expected term after additive operator");
 			break;
 		}
 
 		if (valid) {
-			ast_create_node(&n);
+			ast_node_create(&n);
 			n->type = type;
 
-			ast_add_child(n, left);
-			ast_add_child(n, b);
+			ast_node_add(n, left);
+			ast_node_add(n, b);
 		} else {
-			ast_destroy(b);
+			ast_node_destroy(b);
 		}
 
 		if (valid) {
@@ -444,7 +444,7 @@ bool add(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		*root = left;
 	} else {
-		ast_destroy(left);
+		ast_node_destroy(left);
 	}
 
 	return valid;
@@ -474,7 +474,7 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		left = a;
 	} else {
-		ast_destroy(a);
+		ast_node_destroy(a);
 	}
 
 	while (true) {
@@ -524,13 +524,13 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 
 		if (valid) {
 			/* allocate n */
-			ast_create_node(&n);
+			ast_node_create(&n);
 			n->type = type;
 
-			ast_add_child(n, left);
-			ast_add_child(n, b);
+			ast_node_add(n, left);
+			ast_node_add(n, b);
 		} else {
-			ast_destroy(b);
+			ast_node_destroy(b);
 		}
 
 		if (valid) {
@@ -544,7 +544,7 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 	if (valid) {
 		*root = left;
 	} else {
-		ast_destroy(left);
+		ast_node_destroy(left);
 	}
 
 	return valid;
@@ -595,13 +595,13 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root)
 
 		if (valid) {
 			if (!n) {
-				ast_create_node(&n);
+				ast_node_create(&n);
 				n->type = ast_type_array_subscript;
-				ast_add_child(n, a);
+				ast_node_add(n, a);
 			}
-			ast_add_child(n, b);
+			ast_node_add(n, b);
 		} else {
-			ast_destroy(b);
+			ast_node_destroy(b);
 		}
 	}
 
