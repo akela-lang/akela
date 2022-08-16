@@ -44,6 +44,18 @@ target_link_libraries(alba-bin alba-lib icudt icuin icuio icutest icutu icuuc zi
 SET_TARGET_PROPERTIES(alba-bin
   PROPERTIES OUTPUT_NAME alba)
 
+add_custom_command(
+        TARGET alba-bin POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${ZINC_DLL}
+                ${ALBA_DLL}
+                ${ICU_UC_DLL}
+                ${ICU_DT_DLL}
+                ${EXAMPLE_ADDITION}
+                ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+
 if(WIN32)
 
 elseif(UNIX)
