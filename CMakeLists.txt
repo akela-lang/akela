@@ -3,30 +3,40 @@ project(alba)
 
 if(WIN32)
 
-set(ICU_BIN "${CMAKE_SOURCE_DIR}/external/icu4c/bin64")
+set(ICU_INCLUDE ${CMAKE_SOURCE_DIR}/external/icu4c/include)
+
+set(ICU_BIN ${CMAKE_SOURCE_DIR}/external/icu4c/bin64)
 set(ICU_DT_DLL ${ICU_BIN}/icudt70.dll)
 set(ICU_IN_DLL ${ICU_BIN}/icuin70.dll)
 set(ICU_IO_DLL ${ICU_BIN}/icuio70.dll)
 set(ICU_TU_DLL ${ICU_BIN}/icutu70.dll)
 set(ICU_UC_DLL ${ICU_BIN}/icuuc70.dll)
 
-set(EXAMPLE_DIR ${CMAKE_SOURCE_DIR}/examples)
-set(EXAMPLE_ADDITION ${EXAMPLE_DIR}/addition.alba)
+set(ICU_LIB ${CMAKE_SOURCE_DIR}/external/icu4c/lib64/)
+set(ICU_DT_LIB ${ICU_LIB}/icudt.lib)
+set(ICU_IN_LIB ${ICU_LIB}/icuin.lib)
+set(ICU_IO_LIB ${ICU_LIB}/icuio.lib)
+set(ICU_TEST_LIB ${ICU_LIB}/icutest.lib)
+set(ICU_TU_LIB ${ICU_LIB}/icutu.lib)
+set(ICU_UC_LIB ${ICU_LIB}/icuuc.lib)
 
 add_library(icudt STATIC IMPORTED)
-set_target_properties(icudt PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icudt.lib")
+set_target_properties(icudt PROPERTIES IMPORTED_LOCATION ${ICU_DT_LIB})
 add_library(icuin STATIC IMPORTED)
-set_target_properties(icuin PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icuin.lib")
+set_target_properties(icuin PROPERTIES IMPORTED_LOCATION ${ICU_IN_LIB})
 add_library(icuio STATIC IMPORTED)
-set_target_properties(icuio PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icuio.lib")
+set_target_properties(icuio PROPERTIES IMPORTED_LOCATION ${ICU_IO_LIB})
 add_library(icutest STATIC IMPORTED)
-set_target_properties(icutest PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icutest.lib")
+set_target_properties(icutest PROPERTIES IMPORTED_LOCATION ${ICU_TEST_LIB})
 add_library(icutu STATIC IMPORTED)
-set_target_properties(icutu PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icutu.lib")
+set_target_properties(icutu PROPERTIES IMPORTED_LOCATION ${ICU_TU_LIB})
 add_library(icuuc STATIC IMPORTED)
-set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/external/icu4c/lib64/icuuc.lib")
+set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION ${ICU_UC_LIB})
+
+include_directories(${ICU_INCLUDE})
 
 elseif(UNIX)
+
 
 set(ICU_DIR ${CMAKE_SOURCE_DIR}/external/icu/usr/local)
 set(ICU_LIB_DIR ${ICU_DIR}/lib)
@@ -49,9 +59,14 @@ set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION ${ICU_DIR}/lib/libicuuc
 add_library(icutest STATIC IMPORTED)
 set_target_properties(icutest PROPERTIES IMPORTED_LOCATION ${ICU_DIR}/lib/libicutest.so)
 
+include_directories("external/icu/usr/local/include")
+
 endif()
 
 if(WIN32)
+
+set(EXAMPLE_DIR ${CMAKE_SOURCE_DIR}/examples)
+set(EXAMPLE_ADDITION ${EXAMPLE_DIR}/addition.alba)
 
 set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
 set(ZINC_BINARY ${ZINC_DIR}/out/build/x64-Debug/zinc)

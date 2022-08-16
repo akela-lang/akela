@@ -23,14 +23,6 @@ set(bin_files
     alba.c
 )
 
-if (WIN32)
-    include_directories("../external/icu4c/include")
-
-elseif(UNIX)
-    include_directories("../external/icu/usr/local/include")
-
-endif()
-
 # library
 add_definitions(-DALBA_EXPORT)
 add_library(alba-lib SHARED ${lib_files})

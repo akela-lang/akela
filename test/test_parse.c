@@ -39,10 +39,6 @@ bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 	UConverter* conv;
 	r = conv_open(&conv);
 	assert_ok(r, "conv_open");
-	if (r == result_error) {
-		set_source_error(el, NULL, error_message);
-		valid = false;
-	}
 
 	/* allocate lc */
 	struct lookahead_char* lc;
@@ -66,8 +62,7 @@ bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
 	parse_state_init(ps, sns, el, st);
 
 	/* allocate ps{} root root{} */
-	valid = valid && parse(ps, root);
-	return valid;
+	return parse(ps, root);
 }
 
 /* dynamic-destroy ps{} */
