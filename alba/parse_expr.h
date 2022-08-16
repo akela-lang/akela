@@ -5,10 +5,10 @@
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "token.h"
-#include "dag.h"
+#include "ast.h"
 #include "parse_tools.h"
 
 /* dynamic-output ps{} root root{} */
-ALBA_API bool expr(struct parse_state* ps, struct dag_node** root);
+ALBA_API bool expr(struct parse_state* ps, struct ast_node** root);
 
 #endif

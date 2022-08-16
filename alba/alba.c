@@ -5,7 +5,7 @@
 #include "scan.h"
 #include "zinc/buffer.h"
 #include "parse.h"
-#include "dag.h"
+#include "ast.h"
 #include "input.h"
 #include "uconv.h"
 #include "source.h"
@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
     enum result r;
     char* filename;
-    struct dag_node* root;
+    struct ast_node* root;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: alba <filename>\n");
@@ -74,9 +74,9 @@ int main(int argc, char** argv)
     /* resource destroy fp */
     fclose(fp);
 
-    char* names[dag_type_count];
-    dag_set_names(names);
-    dag_print(root, names);
+    char* names[ast_type_count];
+    ast_set_names(names);
+    ast_print(root, names);
 
     /* resource destroy conv */
     conv_close(conv);

@@ -10,7 +10,7 @@
 #include "alba/source.h"
 
 /* dynamic-output ps{} root root{} */
-bool parse_setup(char* line, struct parse_state* ps, struct dag_node** root)
+bool parse_setup(char* line, struct parse_state* ps, struct ast_node** root)
 {
 	enum result r;
 
@@ -98,10 +98,10 @@ void parse_teardown(struct parse_state* ps)
 }
 
 /* dynamic-output-none */
-struct dag_node* check_stmts(struct dag_node* root, char* message)
+struct ast_node* check_stmts(struct ast_node* root, char* message)
 {
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, dag_type_stmts, message);
+	expect_int_equal(root->type, ast_type_stmts, message);
 
-	return dag_get_child(root, 0);
+	return ast_get_child(root, 0);
 }

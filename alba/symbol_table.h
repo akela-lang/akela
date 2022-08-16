@@ -15,7 +15,7 @@ struct environment {
 
 struct symbol {
 	enum token_enum tk_type;
-	struct dag_node* dec;
+	struct ast_node* dec;
 	struct type_info* ti;
 };
 

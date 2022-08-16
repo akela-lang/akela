@@ -1,0 +1,99 @@
+#ifndef _DAG_H
+#define _DAG_H
+
+#include "alba_api.h"
+#include <stdbool.h>
+#include "zinc/buffer.h"
+#include "zinc/result.h"
+#include "token.h"
+#include "source.h"
+
+enum ast_type {
+	ast_type_none,
+	ast_type_id,
+	ast_type_sign,
+	ast_type_number,
+	ast_type_string,
+	ast_type_assign,
+	ast_type_plus,
+	ast_type_minus,
+	ast_type_mult,
+	ast_type_divide,
+	ast_type_stmts,
+	ast_type_function,
+	ast_type_dseq,
+	ast_type_dret,
+	ast_type_call,
+	ast_type_cseq,
+	ast_type_if,
+	ast_type_conditional_branch,
+	ast_type_default_branch,
+	ast_type_equality,
+	ast_type_not_equal,
+	ast_type_less_than,
+	ast_type_less_than_or_equal,
+	ast_type_greater_than,
+	ast_type_greater_than_or_equal,
+	ast_type_not,
+	ast_type_and,
+	ast_type_or,
+	ast_type_while,
+	ast_type_for_range,
+	ast_type_for_iteration,
+	ast_type_declaration,
+	ast_type_array_literal,
+	ast_type_array_subscript,
+	ast_type_anonymous_function,
+	ast_type_type_function,
+	ast_type_type_dseq,
+	ast_type_type_dret,
+	ast_type_var,
+	ast_type_boolean,
+	ast_type_array,
+	ast_type_array_type_name,
+	ast_type_type_name,
+	ast_type_parenthesis,
+	ast_type_count		/* keep at end */
+};
+
+struct ast_node {
+	enum ast_type type;
+	struct buffer value;
+	struct token_list tl;
+	struct location loc;
+	struct ast_node* etype;
+	struct ast_node* next;
+	struct ast_node* prev;
+	struct ast_node* head;
+	struct ast_node* tail;
+};
+
+/* dynamic-output-none */
+ALBA_API enum result ast_set_names(char** names);
+
+/* dynamic-output n */
+ALBA_API void ast_create_node(struct ast_node** n);
+
+/* dynamic-destroy n n{} */
+ALBA_API void ast_destroy(struct ast_node* n);
+
+/* dynamic-output-none */
+ALBA_API void ast_init_node(struct ast_node* n);
+
+/* dynamic-output-none */
+ALBA_API void ast_add_child(struct ast_node* p, struct ast_node* c);
+
+/* dynamic-output-none */
+ALBA_API void ast_push(struct ast_node* parent, struct ast_node* child);
+
+/* dynamic-output-none */
+ALBA_API struct ast_node* ast_get_child(struct ast_node* p, size_t pos);
+
+/* dynamic-output-none */
+ALBA_API void ast_print(struct ast_node* root, char** names);
+
+ALBA_API struct ast_node* ast_copy(struct ast_node* n);
+
+ALBA_API bool ast_match(struct ast_node* a, struct ast_node* b);
+
+#endif

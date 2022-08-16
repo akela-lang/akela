@@ -4,6 +4,6 @@
 #include "alba_api.h"
 
 /* dynamic-output ps{} root root{} */
-ALBA_API bool factor(struct parse_state* ps, struct dag_node** root);
+ALBA_API bool factor(struct parse_state* ps, struct ast_node** root);
 
 #endif

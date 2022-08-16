@@ -2,7 +2,7 @@
 set(lib_files
     scan.c
     token.c
-    dag.c
+    ast.c
     parse_stmts.c
     "parse_expr.c"
     parse_factor.c

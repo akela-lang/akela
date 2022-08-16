@@ -1,7 +1,7 @@
 set(test_files
     assert_compiler.c
     "test.c"
-    test_dag.c
+    test_ast.c
     test_parse.c
     test_parse_factor.c
     test_parse_expr.c

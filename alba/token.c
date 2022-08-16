@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "zinc/memory.h"
 #include "token.h"
-#include "dag.h"
+#include "ast.h"
 
 /* dynamic-output-none */
 /* initialize-output t{} t{value{}} */

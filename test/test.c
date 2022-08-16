@@ -6,7 +6,7 @@
 #include "test_token.h"
 #include "test_lookahead_translator.h"
 #include "test_lookahead_char.h"
-#include "test_dag.h"
+#include "test_ast.h"
 #include "test_hash.h"
 #include "test_symbol_table.h"
 #include "test_parse_types.h"
@@ -20,7 +20,7 @@ int main(void) {
 	test_token();
 	test_hash();
 	test_scan();
-	test_dag();
+	test_ast();
 	test_parse_factor();
 	test_parse_expression();
 	test_parse_statements();

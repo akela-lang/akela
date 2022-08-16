@@ -7,7 +7,7 @@ void test_parse_types_missing_declaration()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("x + 1", &ps, &root);
 	assert_has_errors(ps.el);
@@ -22,7 +22,7 @@ void test_parse_types_missing_declaration2()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("foo() + 1", &ps, &root);
 	assert_has_errors(ps.el);
@@ -37,7 +37,7 @@ void test_parse_types_missing_declaration3()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("x = function() end", &ps, &root);
 	assert_has_errors(ps.el);
@@ -52,7 +52,7 @@ void test_parse_types_double()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("var x::Int64; var x::Int64", &ps, &root);
 	assert_has_errors(ps.el);
@@ -67,7 +67,7 @@ void test_parse_types_double_function()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("function foo() end; function foo() end", &ps, &root);
 	assert_has_errors(ps.el);
@@ -82,7 +82,7 @@ void test_parse_types_reserved_type()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("var Int64::Int64", &ps, &root);
 	assert_has_errors(ps.el);
@@ -97,7 +97,7 @@ void test_parse_types_reserved_type2()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("function Int64() end", &ps, &root);
 	assert_has_errors(ps.el);
@@ -112,7 +112,7 @@ void test_parse_types_reserved_type3()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("var list::Vector{Int64}; for Int64 in list end", &ps, &root);
 	assert_has_errors(ps.el);
@@ -127,7 +127,7 @@ void test_parse_types_exists()
 	test_name(__func__);
 
 	struct parse_state ps;
-	struct dag_node* root;
+	struct ast_node* root;
 
 	bool valid = parse_setup("var x::SuperInt; x + 1", &ps, &root);
 	assert_has_errors(ps.el);
@@ -142,7 +142,7 @@ void test_parse_types_array()
 {
 	test_name(__func__);
 
-	struct dag_node* root;
+	struct ast_node* root;
 	struct parse_state ps;
 	bool valid;
 
@@ -152,50 +152,50 @@ void test_parse_types_array()
 	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, dag_type_stmts, "stmts root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
 
-	struct dag_node* var = dag_get_child(root, 0);
+	struct ast_node* var = ast_get_child(root, 0);
 	assert_ptr(var, "ptr var");
-	expect_int_equal(var->type, dag_type_var, "var dec");
+	expect_int_equal(var->type, ast_type_var, "var dec");
 
-	struct dag_node* dec = dag_get_child(var, 0);
+	struct ast_node* dec = ast_get_child(var, 0);
 	assert_ptr(dec, "ptr dec");
-	expect_int_equal(dec->type, dag_type_declaration, "declaration dec");
+	expect_int_equal(dec->type, ast_type_declaration, "declaration dec");
 
-	struct dag_node* dec_id = dag_get_child(dec, 0);
+	struct ast_node* dec_id = ast_get_child(dec, 0);
 	assert_ptr(dec_id, "ptr dec_id");
-	expect_int_equal(dec_id->type, dag_type_id, "id dec_id");
+	expect_int_equal(dec_id->type, ast_type_id, "id dec_id");
 	expect_str(&dec_id->value, "a", "a dec_id");
 
-	struct dag_node* array_node = dag_get_child(dec, 1);
+	struct ast_node* array_node = ast_get_child(dec, 1);
 	assert_ptr(array_node, "ptr array_node");
-	expect_int_equal(array_node->type, dag_type_array, "array array_node");
+	expect_int_equal(array_node->type, ast_type_array, "array array_node");
 
-	struct dag_node* array_type_name = dag_get_child(array_node, 0);
-	expect_int_equal(array_type_name->type, dag_type_array_type_name, "array_type_name array_type_name");
+	struct ast_node* array_type_name = ast_get_child(array_node, 0);
+	expect_int_equal(array_type_name->type, ast_type_array_type_name, "array_type_name array_type_name");
 	expect_str(&array_type_name->value, "Vector", "Vector array_type_name");
 
-	struct dag_node* type_name = dag_get_child(array_node, 1);
+	struct ast_node* type_name = ast_get_child(array_node, 1);
 	assert_ptr(type_name , "ptr type_name");
-	expect_int_equal(type_name->type, dag_type_type_name, "type_name type_name");
+	expect_int_equal(type_name->type, ast_type_type_name, "type_name type_name");
 	expect_str(&type_name->value, "Int64", "Int64 type_name");
 
-	struct dag_node* as = dag_get_child(root, 1);
+	struct ast_node* as = ast_get_child(root, 1);
 	assert_ptr(as, "ptr as");
-	expect_int_equal(as->type, dag_type_array_subscript, "array-subscript as");
+	expect_int_equal(as->type, ast_type_array_subscript, "array-subscript as");
 
-	struct dag_node* name = dag_get_child(as, 0);
+	struct ast_node* name = ast_get_child(as, 0);
 	assert_ptr(name, "ptr name");
-	expect_int_equal(name->type, dag_type_id, "id name");
+	expect_int_equal(name->type, ast_type_id, "id name");
 	expect_str(&name->value, "a", "a name");
 
-	struct dag_node* index = dag_get_child(as, 1);
+	struct ast_node* index = ast_get_child(as, 1);
 	assert_ptr(index, "ptr index");
-	expect_int_equal(index->type, dag_type_number, "number index");
+	expect_int_equal(index->type, ast_type_number, "number index");
 	expect_str(&index->value, "1", "1 index");
 
 	/* destroy ps{} root root{} */
-	dag_destroy(root);
+	ast_destroy(root);
 	parse_teardown(&ps);
 }
 
@@ -204,7 +204,7 @@ void test_parse_types_array_error()
 {
 	test_name(__func__);
 
-	struct dag_node* root;
+	struct ast_node* root;
 	struct parse_state ps;
 	bool valid;
 
@@ -215,7 +215,7 @@ void test_parse_types_array_error()
 	expect_false(valid, "valid");
 
 	/* destroy ps{} root root{} */
-	dag_destroy(root);
+	ast_destroy(root);
 	parse_teardown(&ps);
 }
 

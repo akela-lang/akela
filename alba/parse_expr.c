@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "token.h"
-#include "dag.h"
+#include "ast.h"
 #include "parse_tools.h"
 #include "parse_factor.h"
 #include "source.h"
@@ -9,20 +9,20 @@
 #include "parse_types.h"
 #include "parse_expr.h"
 
-bool var(struct parse_state* ps, struct dag_node** root);
-bool assignment(struct parse_state* ps, struct dag_node** root);
-bool boolean(struct parse_state* ps, struct dag_node** root);
-bool comparison(struct parse_state* ps, struct dag_node** root);
-bool add(struct parse_state* ps, struct dag_node** root);
-bool mult(struct parse_state* ps, struct dag_node** root);
-bool array_subscript(struct parse_state* ps, struct dag_node** root);
+bool var(struct parse_state* ps, struct ast_node** root);
+bool assignment(struct parse_state* ps, struct ast_node** root);
+bool boolean(struct parse_state* ps, struct ast_node** root);
+bool comparison(struct parse_state* ps, struct ast_node** root);
+bool add(struct parse_state* ps, struct ast_node** root);
+bool mult(struct parse_state* ps, struct ast_node** root);
+bool array_subscript(struct parse_state* ps, struct ast_node** root);
 
 /* expr -> id = expr | boolean */
 /* dynamic-output ps{} root root{} */
-bool expr(struct parse_state* ps, struct dag_node** root)
+bool expr(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
-	struct dag_node* n = NULL;
+	struct ast_node* n = NULL;
 	int num;
 
 	/* allocate ps{} */
@@ -48,10 +48,10 @@ bool expr(struct parse_state* ps, struct dag_node** root)
 	return valid;
 }
 
-bool var(struct parse_state* ps, struct dag_node** root)
+bool var(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
-	struct dag_node* n = NULL;
+	struct ast_node* n = NULL;
 
 	struct token* vrt = NULL;
 	valid = match(ps, token_var, "expected var", &vrt) && valid;
@@ -60,7 +60,7 @@ bool var(struct parse_state* ps, struct dag_node** root)
 	valid = get_parse_location(ps, &loc) && valid;
 
 	/* allocate ps{} id id{} */
-	struct dag_node* a = NULL;
+	struct ast_node* a = NULL;
 	valid = declaration(ps, &a) && valid;
 	if (!a) {
 		valid = set_source_error(ps->el, &loc, "expected declaration after var");
@@ -72,7 +72,7 @@ bool var(struct parse_state* ps, struct dag_node** root)
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	struct token* equal = NULL;
-	struct dag_node* b = NULL;
+	struct ast_node* b = NULL;
 	if (t0 && t0->type == token_equal) {
 		/* allocate ps{} equal equal{} */
 		valid = match(ps, token_equal, "expected equal", &equal) && valid;
@@ -86,18 +86,18 @@ bool var(struct parse_state* ps, struct dag_node** root)
 	}
 
 	if (valid) {
-		dag_create_node(&n);
-		n->type = dag_type_var;
+		ast_create_node(&n);
+		n->type = ast_type_var;
 
-		dag_add_child(n, a);
+		ast_add_child(n, a);
 		if (b) {
-			dag_add_child(n, b);
+			ast_add_child(n, b);
 		}
 
 		*root = n;
 	} else {
-		dag_destroy(a);
-		dag_destroy(b);
+		ast_destroy(a);
+		ast_destroy(b);
 	}
 
 	token_destroy(vrt);
@@ -108,10 +108,10 @@ bool var(struct parse_state* ps, struct dag_node** root)
 	return valid;
 }
 
-bool assignment(struct parse_state* ps, struct dag_node** root)
+bool assignment(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
-	struct dag_node* n = NULL;
+	struct ast_node* n = NULL;
 
 	struct location loc;
 	valid = get_parse_location(ps, &loc) && valid;
@@ -125,7 +125,7 @@ bool assignment(struct parse_state* ps, struct dag_node** root)
 	valid = match(ps, token_equal, "expected equal", &equal) && valid;
 
 	/* allocate b b{} */
-	struct dag_node* b = NULL;
+	struct ast_node* b = NULL;
 	valid = expr(ps, &b) && valid;
 
 	if (!b) {
@@ -134,23 +134,23 @@ bool assignment(struct parse_state* ps, struct dag_node** root)
 
 	if (valid) {
 		/* allocate n */
-		dag_create_node(&n);
-		n->type = dag_type_assign;
+		ast_create_node(&n);
+		n->type = ast_type_assign;
 
 		/* allocate a */
-		struct dag_node* a;
-		dag_create_node(&a);
-		a->type = dag_type_id;
+		struct ast_node* a;
+		ast_create_node(&a);
+		a->type = ast_type_id;
 
 		/* allocate a{} */
 		#pragma warning (suppress:6011)
 		buffer_copy(&id->value, &a->value);
 
 		/* transfer a a{} -> n{} */
-		dag_add_child(n, a);
+		ast_add_child(n, a);
 
 		/* transfer b b{} -> n{} */
-		dag_add_child(n, b);
+		ast_add_child(n, b);
 
 		/* transfer n n{} -> root */
 		*root = n;
@@ -172,14 +172,14 @@ bool assignment(struct parse_state* ps, struct dag_node** root)
 /* boolean -> comparison boolean' */
 /* boolean' -> && comparison boolean' | || comparison boolean' | e */
 /* dynamic-output ps{} root root{} */
-bool boolean(struct parse_state* ps, struct dag_node** root)
+bool boolean(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
-	struct dag_node* n = NULL;
-	struct dag_node* left;
+	struct ast_node* n = NULL;
+	struct ast_node* left;
 
 	/* allocate a a{} */
-	struct dag_node* a = NULL;
+	struct ast_node* a = NULL;
 	valid = comparison(ps, &a) && valid;
 	if (!a) {
 		return valid;
@@ -195,17 +195,17 @@ bool boolean(struct parse_state* ps, struct dag_node** root)
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		/* operator */
-		enum dag_type type = dag_type_none;
+		enum ast_type type = ast_type_none;
 		if (t0 && t0->type == token_and) {
-			type = dag_type_and;
+			type = ast_type_and;
 		} else if (t0 && t0->type == token_or) {
-			type = dag_type_or;
+			type = ast_type_or;
 		} else {
 			break;
 		}
 
 		/* allocate n */
-		dag_create_node(&n);
+		ast_create_node(&n);
 		n->type = type;
 
 		/* allocate ps{} op op{} */
@@ -221,7 +221,7 @@ bool boolean(struct parse_state* ps, struct dag_node** root)
 
 		/* comparison */
 		/* allocate a a{} */
-		struct dag_node* b = NULL;
+		struct ast_node* b = NULL;
 		valid = comparison(ps, &b) && valid;
 
 		if (!b) {
@@ -229,11 +229,11 @@ bool boolean(struct parse_state* ps, struct dag_node** root)
 		}
 
 		if (valid) {
-			dag_add_child(n, left);
-			dag_add_child(n, b);
+			ast_add_child(n, left);
+			ast_add_child(n, b);
 			left = n;
 		} else {
-			dag_destroy(b);
+			ast_destroy(b);
 			break;
 		}
 	}
@@ -241,7 +241,7 @@ bool boolean(struct parse_state* ps, struct dag_node** root)
 	if (valid) {
 		*root = left;
 	} else {
-		dag_destroy(left);
+		ast_destroy(left);
 	}
 
 	return valid;
@@ -257,13 +257,13 @@ bool boolean(struct parse_state* ps, struct dag_node** root)
 *	           | e
 */
 /* dynamic-output ps{} root root{} */
-bool comparison(struct parse_state* ps, struct dag_node** root)
+bool comparison(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
-	struct dag_node* n = NULL;
-	struct dag_node* a = NULL;
-	struct dag_node* b = NULL;
-	struct dag_node* left = NULL;
+	struct ast_node* n = NULL;
+	struct ast_node* a = NULL;
+	struct ast_node* b = NULL;
+	struct ast_node* left = NULL;
 	int num;
 
 	/* allocate ps{} a a{} */
@@ -276,31 +276,31 @@ bool comparison(struct parse_state* ps, struct dag_node** root)
 	if (valid) {
 		left = a;
 	} else {
-		dag_destroy(a);
+		ast_destroy(a);
 	}
 
 	while (true) {
 		/* allocate ps{} */
 		valid = get_lookahead(ps, 1, &num) && valid;
 		struct token* t0 = get_token(&ps->lookahead, 0);
-		enum dag_type type = dag_type_none;
+		enum ast_type type = ast_type_none;
 
 		if (!t0) {
 			break;
 		}
 
 		if (t0->type == token_double_equal) {
-			type = dag_type_equality;
+			type = ast_type_equality;
 		} else if (t0->type == token_not_equal) {
-			type = dag_type_not_equal;
+			type = ast_type_not_equal;
 		} else if (t0->type == token_less_than) {
-			type = dag_type_less_than;
+			type = ast_type_less_than;
 		} else if (t0->type == token_less_than_or_equal) {
-			type = dag_type_less_than_or_equal;
+			type = ast_type_less_than_or_equal;
 		} else if (t0->type == token_greater_than) {
-			type = dag_type_greater_than;
+			type = ast_type_greater_than;
 		} else if (t0->type == token_greater_than_or_equal) {
-			type = dag_type_greater_than_or_equal;
+			type = ast_type_greater_than_or_equal;
 		} else {
 			break;
 		}
@@ -318,7 +318,7 @@ bool comparison(struct parse_state* ps, struct dag_node** root)
 
 		/* add */
 		/* allocate ps{} a a{} */
-		struct dag_node* b = NULL;
+		struct ast_node* b = NULL;
 		valid = add(ps, &b) && valid;
 
 		if (!b) {
@@ -327,21 +327,21 @@ bool comparison(struct parse_state* ps, struct dag_node** root)
 
 		if (valid) {
 			/* allocate n */
-			dag_create_node(&n);
+			ast_create_node(&n);
 			n->type = type;
 
-			dag_add_child(n, left);
-			dag_add_child(n, b);
+			ast_add_child(n, left);
+			ast_add_child(n, b);
 			left = n;
 		} else {
-			dag_destroy(b);
+			ast_destroy(b);
 		}
 	}
 
 	if (valid) {
 		*root = left;
 	} else {
-		dag_destroy(left);
+		ast_destroy(left);
 	}
 
 	return valid;
@@ -350,13 +350,13 @@ bool comparison(struct parse_state* ps, struct dag_node** root)
 /* add -> mult add' */
 /* add' -> + mult add' | - mult add' | e */
 /* dynamic-output ps{} root root{} */
-bool add(struct parse_state* ps, struct dag_node** root)
+bool add(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
-	struct dag_node* a = NULL;
-	struct dag_node* b = NULL;
-	struct dag_node* n = NULL;
-	struct dag_node* left = NULL;
+	struct ast_node* a = NULL;
+	struct ast_node* b = NULL;
+	struct ast_node* n = NULL;
+	struct ast_node* left = NULL;
 	char* op_name;
 	int num;
 
@@ -373,7 +373,7 @@ bool add(struct parse_state* ps, struct dag_node** root)
 	if (valid) {
 		left = a;
 	} else {
-		dag_destroy(a);
+		ast_destroy(a);
 	}
 
 	struct location loc_b;
@@ -389,12 +389,12 @@ bool add(struct parse_state* ps, struct dag_node** root)
 		}
 
 		/* operator */
-		enum dag_type type;
+		enum ast_type type;
 		if (t0->type == token_plus) {
-			type = dag_type_plus;
+			type = ast_type_plus;
 			op_name = "addition";
 		} else if (t0->type == token_minus) {
-			type = dag_type_minus;
+			type = ast_type_minus;
 			op_name = "subtraction";
 		} else {
 			break;
@@ -418,23 +418,23 @@ bool add(struct parse_state* ps, struct dag_node** root)
 
 		if (!b) {
 			/* destroy n n{} */
-			dag_destroy(n);
+			ast_destroy(n);
 			valid = set_source_error(ps->el, &loc_b, "expected term after additive operator");
 			break;
 		}
 
 		if (valid) {
-			dag_create_node(&n);
+			ast_create_node(&n);
 			n->type = type;
 
-			dag_add_child(n, left);
-			dag_add_child(n, b);
+			ast_add_child(n, left);
+			ast_add_child(n, b);
 		} else {
-			dag_destroy(b);
+			ast_destroy(b);
 		}
 
 		if (valid) {
-			struct dag_node* etype = NULL;
+			struct ast_node* etype = NULL;
 			valid = binary_arithmetic_check(ps, left, a, b, &loc_a, &loc_op, &loc_b, op_name, &etype);
 			n->etype = etype;
 			left = n;
@@ -444,7 +444,7 @@ bool add(struct parse_state* ps, struct dag_node** root)
 	if (valid) {
 		*root = left;
 	} else {
-		dag_destroy(left);
+		ast_destroy(left);
 	}
 
 	return valid;
@@ -452,13 +452,13 @@ bool add(struct parse_state* ps, struct dag_node** root)
 
 /* mult -> array_subscript mult_prime */
 /* dynamic-output ps{} root root{} */
-bool mult(struct parse_state* ps, struct dag_node** root)
+bool mult(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
-	struct dag_node* a = NULL;
-	struct dag_node* b = NULL;
-	struct dag_node* left = NULL;
-	struct dag_node* n = NULL;
+	struct ast_node* a = NULL;
+	struct ast_node* b = NULL;
+	struct ast_node* left = NULL;
+	struct ast_node* n = NULL;
 	char* op_name;
 
 	struct location loc_a;
@@ -474,7 +474,7 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 	if (valid) {
 		left = a;
 	} else {
-		dag_destroy(a);
+		ast_destroy(a);
 	}
 
 	while (true) {
@@ -489,12 +489,12 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 		}
 
 		/* operator */
-		enum dag_type type;
+		enum ast_type type;
 		if (t0->type == token_mult) {
-			type = dag_type_mult;
+			type = ast_type_mult;
 			op_name = "multiplication";
 		} else if (t0->type == token_divide) {
-			type = dag_type_divide;
+			type = ast_type_divide;
 			op_name = "division";
 		} else {
 			break;
@@ -524,17 +524,17 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 
 		if (valid) {
 			/* allocate n */
-			dag_create_node(&n);
+			ast_create_node(&n);
 			n->type = type;
 
-			dag_add_child(n, left);
-			dag_add_child(n, b);
+			ast_add_child(n, left);
+			ast_add_child(n, b);
 		} else {
-			dag_destroy(b);
+			ast_destroy(b);
 		}
 
 		if (valid) {
-			struct dag_node* etype = NULL;
+			struct ast_node* etype = NULL;
 			valid = binary_arithmetic_check(ps, left, a, b, &loc_a, &loc_op, &loc_b, op_name, &etype);
 			n->etype = etype;
 			left = n;
@@ -544,7 +544,7 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 	if (valid) {
 		*root = left;
 	} else {
-		dag_destroy(left);
+		ast_destroy(left);
 	}
 
 	return valid;
@@ -553,12 +553,12 @@ bool mult(struct parse_state* ps, struct dag_node** root)
 /* array_subscript -> factor array_subscript' */
 /* array_subscript' -> [expr] array_subscript' | e */
 /* dynamic-output ps{} root root{} */
-bool array_subscript(struct parse_state* ps, struct dag_node** root)
+bool array_subscript(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
 	int num;
-	struct dag_node* n = NULL;
-	struct dag_node* a = NULL;
+	struct ast_node* n = NULL;
+	struct ast_node* a = NULL;
 	
 	/* allocate ps{} n n{} */
 	valid = factor(ps, &a) && valid;
@@ -582,7 +582,7 @@ bool array_subscript(struct parse_state* ps, struct dag_node** root)
 		free(lsb);
 
 		/* allocate b b{} */
-		struct dag_node* b = NULL;
+		struct ast_node* b = NULL;
 		valid = expr(ps, &b) && valid;
 
 		/* allocate ps{} rsb rsb{} */
@@ -595,13 +595,13 @@ bool array_subscript(struct parse_state* ps, struct dag_node** root)
 
 		if (valid) {
 			if (!n) {
-				dag_create_node(&n);
-				n->type = dag_type_array_subscript;
-				dag_add_child(n, a);
+				ast_create_node(&n);
+				n->type = ast_type_array_subscript;
+				ast_add_child(n, a);
 			}
-			dag_add_child(n, b);
+			ast_add_child(n, b);
 		} else {
-			dag_destroy(b);
+			ast_destroy(b);
 		}
 	}
 

@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "token.h"
-#include "dag.h"
+#include "ast.h"
 #include "parse_stmts.h"
 #include "scan.h"
 #include "parse.h"
@@ -12,7 +12,7 @@
 #include "lookahead_char.h"
 
 /* dynamic-output ps{} root root{} */
-bool parse(struct parse_state* ps, struct dag_node** root)
+bool parse(struct parse_state* ps, struct ast_node** root)
 {
 	*root = NULL;
 	bool valid = true;

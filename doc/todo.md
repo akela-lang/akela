@@ -1,5 +1,4 @@
 # Todo
-* change dag_node to ast_node
 * create a type_node
 * type check with type_node
 * set etype

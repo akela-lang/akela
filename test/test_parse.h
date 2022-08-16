@@ -4,16 +4,16 @@
 #include "zinc/result.h"
 #include "alba/scan.h"
 #include "alba/token.h"
-#include "alba/dag.h"
+#include "alba/ast.h"
 #include "alba/parse_tools.h"
 
 /* dynamic-output ps{} root root{} */
-enum result parse_setup(char* line, struct parse_state* ps, struct dag_node** root);
+enum result parse_setup(char* line, struct parse_state* ps, struct ast_node** root);
 
 /* dynamic-destroy ps{} */
 void parse_teardown(struct parse_state* ps);
 
 /* dynamic-output-none */
-struct dag_node* check_stmts(struct dag_node* root, char* message);
+struct ast_node* check_stmts(struct ast_node* root, char* message);
 
 #endif
