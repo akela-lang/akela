@@ -1,6 +1,6 @@
 #include "zinc/unit_test.h"
 #include "test_parse.h"
-#include "assert_compiler.h"
+#include "unit_test_compiler.h"
 
 void test_parse_types_missing_declaration()
 {

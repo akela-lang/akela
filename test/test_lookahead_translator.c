@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "zinc/result.h"
 #include "alba/lookahead_translator.h"
-#include "assert_compiler.h"
+#include "unit_test_compiler.h"
 
 /* dynamic-output-none */
 /* dynamic-temp cbyte{} */

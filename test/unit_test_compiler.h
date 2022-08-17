@@ -1,5 +1,5 @@
-#ifndef _ASSERT_COMPILER_H
-#define _ASSERT_COMPILER_H
+#ifndef _UNIT_TEST_COMPILER_H
+#define _UNIT_TEST_COMPILER_H
 
 #include "alba/uconv.h"
 #include "alba/source.h"

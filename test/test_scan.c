@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include "zinc/unit_test.h"
 #include "zinc/memory.h"
-#include "assert_compiler.h"
+#include "unit_test_compiler.h"
 #include "alba/token.h"
 #include "alba/scan.h"
 #include "alba/uconv.h"

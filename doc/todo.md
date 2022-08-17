@@ -1,4 +1,5 @@
 # Todo
+* type_info dag
 * type check with type_node
 * set etype
   * factor

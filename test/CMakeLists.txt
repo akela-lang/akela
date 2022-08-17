@@ -1,5 +1,5 @@
 set(test_files
-    assert_compiler.c
+    unit_test_compiler.c
     "test.c"
     test_ast.c
     test_parse.c
