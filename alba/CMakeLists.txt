@@ -18,6 +18,7 @@ set(lib_files
     hash.c
     symbol_table.c
     type_info.c
+    unit_test_compiler.c
 )
 
 set(bin_files
@@ -26,14 +27,12 @@ set(bin_files
 
 # library
 add_definitions(-DALBA_EXPORT)
-add_library(alba-lib SHARED ${lib_files})
-target_link_libraries(alba-lib icudt icuin icuio icutest icutu icuuc zinc)
-SET_TARGET_PROPERTIES(alba-lib
-  PROPERTIES OUTPUT_NAME alba)
+add_library(alba SHARED ${lib_files})
+target_link_libraries(alba icudt icuin icuio icutest icutu icuuc zinc)
 
 # executable
 add_executable(alba-bin ${bin_files})
-target_link_libraries(alba-bin alba-lib icudt icuin icuio icutest icutu icuuc zinc)
+target_link_libraries(alba-bin alba icudt icuin icuio icutest icutu icuuc zinc)
 SET_TARGET_PROPERTIES(alba-bin
   PROPERTIES OUTPUT_NAME alba)
 

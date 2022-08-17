@@ -3,7 +3,7 @@
 #include "test_parse.h"
 #include "alba/ast.h"
 #include "alba/parse_tools.h"
-#include "unit_test_compiler.h"
+#include "alba/unit_test_compiler.h"
 
 /* dynamic-output-none */
 void test_parse_blank()

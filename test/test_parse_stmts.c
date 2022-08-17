@@ -1,5 +1,5 @@
 #include "zinc/unit_test.h"
-#include "unit_test_compiler.h"
+#include "alba/unit_test_compiler.h"
 #include "alba/parse_tools.h"
 #include "alba/ast.h"
 #include "test_parse.h"

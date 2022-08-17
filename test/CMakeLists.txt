@@ -1,5 +1,4 @@
 set(test_files
-    unit_test_compiler.c
     "test.c"
     test_ast.c
     test_parse.c
@@ -27,7 +26,7 @@ add_executable(test ${test_files})
 
 if(WIN32)
 
-target_link_libraries(test alba-lib icudt icuin icuio icutest icutu icuuc zinc)
+target_link_libraries(test alba icudt icuin icuio icutest icutu icuuc zinc)
 
 add_custom_command(
         TARGET test POST_BUILD

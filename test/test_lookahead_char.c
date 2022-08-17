@@ -1,5 +1,5 @@
 #include "zinc/unit_test.h"
-#include "unit_test_compiler.h"
+#include "alba/unit_test_compiler.h"
 #include "alba/lookahead_char.h"
 #include "alba/input.h"
 #include "zinc/buffer.h"

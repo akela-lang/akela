@@ -1,10 +1,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "zinc/unit_test.h"
-#include "alba/source.h"
-#include "alba/uconv.h"
+#include "source.h"
+#include "uconv.h"
 #include "zinc/result.h"
 #include "zinc/utf8.h"
+#include "unit_test_compiler.h"
 
 /* dynamic-output-none */
 void assert_has_errors(struct compile_error_list* el)
