@@ -232,6 +232,7 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
             }
         } else {
             struct symbol* sym = environment_get(sns->st->top, &t->value);
+            assert(!sym || sym->tk_type != token_none);
             if (sym) {
                 t->type = sym->tk_type;
             }
@@ -260,6 +261,7 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
             }
         } else {
             struct symbol* sym = environment_get(sns->st->top, &t->value);
+            assert(!sym || sym->tk_type != token_none);
             if (sym) {
                 t->type = sym->tk_type;
             }

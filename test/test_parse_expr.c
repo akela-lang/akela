@@ -4,6 +4,7 @@
 #include "alba/ast.h"
 #include "alba/parse_tools.h"
 #include "alba/unit_test_compiler.h"
+#include "alba/type_node.h"
 
 /* dynamic-output-none */
 void test_parse_blank()
@@ -624,7 +625,7 @@ void test_parse_paren_add()
 
 	/* allocate ps{} root root{} */
 	bool valid = parse_setup("var speed::Int64; (speed + 1)", &ps, &root);
-	assert_no_errors(ps.el);
+	expect_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
@@ -633,11 +634,6 @@ void test_parse_paren_add()
 	struct ast_node* paren = ast_node_get(root, 1);
 	assert_ptr(paren, "ptr paren");
 	expect_int_equal(paren->type, ast_type_parenthesis, "parenthesis paren");
-
-	struct ast_node* etype = paren->etype;
-	assert_ptr(etype, "ptr etype");
-	expect_int_equal(etype->type, ast_type_type_name, "type_name etype");
-	expect_str(&etype->value, "Int64", "Int64 etype");
 
 	struct ast_node* plus = ast_node_get(paren, 0);
 	assert_ptr(plus, "root");
@@ -1171,7 +1167,7 @@ void test_parse_array_subscript()
 
 	/* allocate ps{} root root{} */
 	valid = parse_setup("var a::Vector{Int64}; a[1]", &ps, &root);
-	assert_no_errors(ps.el);
+	expect_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
 	assert_ptr(root, "ptr root");
@@ -1299,10 +1295,16 @@ void test_parse_var()
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "a", "a");
 
-	struct ast_node* name = ast_node_get(dec, 1);
-	assert_ptr(name, "ptr name");
-	expect_int_equal(name->type, ast_type_type_name, "type_name name");
-	expect_str(&name->value, "Int32", "Int32");
+	struct ast_node* type_node = ast_node_get(dec, 1);
+	assert_ptr(type_node, "ptr type_node");
+	expect_int_equal(type_node->type, ast_type_type, "type type");
+
+	struct type_node* tn = type_node->tn;
+	assert_ptr(tn, "ptr tn");
+
+	struct type_info* ti = tn->ti;
+	assert_ptr(ti, "ptrt ti");
+	expect_str(&ti->name, "Int32", "Int32 ti");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -1322,11 +1324,11 @@ void test_parse_var2()
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse valid");
 
-	struct ast_node* let = check_stmts(root, "stmts root");
-	assert_ptr(let, "ptr let");
-	expect_int_equal(let->type, ast_type_var, "var");
+	struct ast_node* var = check_stmts(root, "stmts root");
+	assert_ptr(var, "ptr var");
+	expect_int_equal(var->type, ast_type_var, "var");
 
-	struct ast_node* dec = ast_node_get(let, 0);
+	struct ast_node* dec = ast_node_get(var, 0);
 	assert_ptr(dec, "ptr dec");
 	expect_int_equal(dec->type, ast_type_declaration, "declaration");
 
@@ -1335,12 +1337,18 @@ void test_parse_var2()
 	expect_int_equal(id->type, ast_type_id, "id");
 	expect_str(&id->value, "a", "a");
 
-	struct ast_node* name = ast_node_get(dec, 1);
-	assert_ptr(name, "ptr name");
-	expect_int_equal(name->type, ast_type_type_name, "type_name name");
-	expect_str(&name->value, "Int32", "Int32");
+	struct ast_node* type_node = ast_node_get(dec, 1);
+	assert_ptr(type_node, "ptr type_node");
+	expect_int_equal(type_node->type, ast_type_type, "type type_node");
 
-	struct ast_node* value = ast_node_get(let, 1);
+	struct type_node* tn = type_node->tn;
+	assert_ptr(tn, "ptr tn");
+
+	struct type_info* ti = tn->ti;
+	assert_ptr(ti, "ptrt ti");
+	expect_str(&ti->name, "Int32", "Int32 ti");
+
+	struct ast_node* value = ast_node_get(var, 1);
 	assert_ptr(value, "ptr value");
 	expect_int_equal(value->type, ast_type_number, "number");
 	expect_str(&value->value, "1", "1");

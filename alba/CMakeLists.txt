@@ -18,6 +18,7 @@ set(lib_files
     hash.c
     symbol_table.c
     type_info.c
+    type_node.c
     unit_test_compiler.c
 )
 
@@ -46,6 +47,18 @@ add_custom_command(
                 ${EXAMPLE_ADDITION}
                 ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+add_custom_command(
+        TARGET alba POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${ZINC_DLL}
+                ${ALBA_DLL}
+                ${ICU_UC_DLL}
+                ${ICU_DT_DLL}
+                ${EXAMPLE_ADDITION}
+                ${CMAKE_BINARY_DIR}/test
+)
+
 
 
 if(WIN32)

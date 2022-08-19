@@ -3,6 +3,7 @@
 #include "ast.h"
 #include "zinc/result.h"
 #include "zinc/memory.h"
+#include "type_node.h"
 
 /* dynamic-output-none */
 enum result ast_set_names(char** names)
@@ -46,8 +47,6 @@ enum result ast_set_names(char** names)
 	names[ast_type_var] = "var";
 	names[ast_type_boolean] = "boolean";
 	names[ast_type_array] = "array";
-	names[ast_type_array_type_name] = "array-type-name";
-	names[ast_type_type_name] = "type-name";
 
 	for (int i = 0; i < ast_type_count; i++) {
 		if (names[i] == NULL) {
@@ -81,7 +80,7 @@ void ast_node_destroy(struct ast_node* n)
 		/* destroy n{} */
 		buffer_destroy(&n->value);
 		token_list_destroy(&n->tl);
-		ast_node_destroy(n->etype);
+		type_node_destroy(n->tn);
 
 		/* destroy n */
 		free(n);
@@ -94,7 +93,7 @@ void ast_node_init(struct ast_node* n)
 	n->type = ast_type_none;
 	buffer_init(&n->value);
 	token_list_init(&n->tl);
-	n->etype = NULL;
+	n->tn = NULL;
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;

@@ -434,9 +434,6 @@ bool add(struct parse_state* ps, struct ast_node** root)
 		}
 
 		if (valid) {
-			struct ast_node* etype = NULL;
-			valid = binary_arithmetic_check(ps, left, a, b, &loc_a, &loc_op, &loc_b, op_name, &etype);
-			n->etype = etype;
 			left = n;
 		}
 	}
@@ -534,9 +531,6 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 		}
 
 		if (valid) {
-			struct ast_node* etype = NULL;
-			valid = binary_arithmetic_check(ps, left, a, b, &loc_a, &loc_op, &loc_b, op_name, &etype);
-			n->etype = etype;
 			left = n;
 		}
 	}

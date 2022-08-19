@@ -50,9 +50,8 @@ enum ast_type {
 	ast_type_var,
 	ast_type_boolean,
 	ast_type_array,
-	ast_type_array_type_name,
-	ast_type_type_name,
 	ast_type_parenthesis,
+	ast_type_type,
 	ast_type_count		/* keep at end */
 };
 
@@ -61,7 +60,7 @@ struct ast_node {
 	struct buffer value;
 	struct token_list tl;
 	struct location loc;
-	struct ast_node* etype;
+	struct type_node* tn;
 	struct ast_node* next;
 	struct ast_node* prev;
 	struct ast_node* head;

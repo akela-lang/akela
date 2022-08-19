@@ -1,6 +1,7 @@
 #include "zinc/unit_test.h"
 #include "test_parse.h"
 #include "alba/unit_test_compiler.h"
+#include "alba/type_node.h"
 
 void test_parse_types_missing_declaration()
 {
@@ -10,8 +11,8 @@ void test_parse_types_missing_declaration()
 	struct ast_node* root;
 
 	bool valid = parse_setup("x + 1", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "identifier not declared: x");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "identifier not declared: x");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -25,8 +26,8 @@ void test_parse_types_missing_declaration2()
 	struct ast_node* root;
 
 	bool valid = parse_setup("foo() + 1", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "function is not declared: foo");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "function is not declared: foo");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -40,8 +41,8 @@ void test_parse_types_missing_declaration3()
 	struct ast_node* root;
 
 	bool valid = parse_setup("x = function() end", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "identifier not declared: x");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "identifier not declared: x");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -55,8 +56,8 @@ void test_parse_types_double()
 	struct ast_node* root;
 
 	bool valid = parse_setup("var x::Int64; var x::Int64", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "duplicate declaration in same scope: x");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "duplicate declaration in same scope: x");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -70,8 +71,8 @@ void test_parse_types_double_function()
 	struct ast_node* root;
 
 	bool valid = parse_setup("function foo() end; function foo() end", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "duplicate declaration in same scope: foo");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "duplicate declaration in same scope: foo");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -85,8 +86,8 @@ void test_parse_types_reserved_type()
 	struct ast_node* root;
 
 	bool valid = parse_setup("var Int64::Int64", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "expected declaration after var");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected declaration after var");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -100,8 +101,8 @@ void test_parse_types_reserved_type2()
 	struct ast_node* root;
 
 	bool valid = parse_setup("function Int64() end", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "expecting identifier");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expecting identifier");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -115,8 +116,8 @@ void test_parse_types_reserved_type3()
 	struct ast_node* root;
 
 	bool valid = parse_setup("var list::Vector{Int64}; for Int64 in list end", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "expected identifier after for");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected identifier after for");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -130,8 +131,8 @@ void test_parse_types_exists()
 	struct ast_node* root;
 
 	bool valid = parse_setup("var x::SuperInt; x + 1", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "expected a type");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected a type");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -169,16 +170,7 @@ void test_parse_types_array()
 
 	struct ast_node* array_node = ast_node_get(dec, 1);
 	assert_ptr(array_node, "ptr array_node");
-	expect_int_equal(array_node->type, ast_type_array, "array array_node");
-
-	struct ast_node* array_type_name = ast_node_get(array_node, 0);
-	expect_int_equal(array_type_name->type, ast_type_array_type_name, "array_type_name array_type_name");
-	expect_str(&array_type_name->value, "Vector", "Vector array_type_name");
-
-	struct ast_node* type_name = ast_node_get(array_node, 1);
-	assert_ptr(type_name , "ptr type_name");
-	expect_int_equal(type_name->type, ast_type_type_name, "type_name type_name");
-	expect_str(&type_name->value, "Int64", "Int64 type_name");
+	expect_int_equal(array_node->type, ast_type_type, "type array_node");
 
 	struct ast_node* as = ast_node_get(root, 1);
 	assert_ptr(as, "ptr as");
@@ -210,8 +202,8 @@ void test_parse_types_array_error()
 
 	/* allocate ps{} root root{} */
 	valid = parse_setup("var a::Int64{Int64}; a[1]", &ps, &root);
-	assert_has_errors(ps.el);
-	assert_compile_error(ps.el, "type is not an array type: Int64");
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "type is not an array type: Int64");
 	expect_false(valid, "valid");
 
 	/* destroy ps{} root root{} */

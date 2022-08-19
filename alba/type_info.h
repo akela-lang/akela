@@ -9,43 +9,52 @@
 #include "source.h"
 #include "symbol_table.h"
 
-struct type_info {
-	struct buffer name;
-	bool is_integer;
-	bool is_float;
-	bool is_signed;
-	int bit_count;
-	struct type_info* next;
+enum type {
+	type_none,
+	type_integer,
+	type_float,
+	type_array,
+	type_struct,
+	type_boolean,
+	type_string,
+	type_function,
+	type_function_dseq,
 };
 
-struct type_node {
-	struct type_info* ti;
-	struct type_node* next;
-	struct type_node* prev;
-	struct type_node* head;
-	struct type_node* tail;
+struct type_info {
+	enum type type;
+	struct buffer name;
+	bool is_signed;
+	int bit_count;
+	bool is_generic;
+	int generic_count;
+	struct type_info* pool;
+	struct type_info* next;
+	struct type_info* prev;
+	struct type_info* head;
+	struct type_info* tail;
 };
 
 /* dynamic-output n */
-ALBA_API void type_node_create(struct type_node** n);
+ALBA_API void type_info_create(struct type_info** n);
 
 /* dynamic-destroy n n{} */
-ALBA_API void type_node_destroy(struct type_node* n);
+ALBA_API void type_info_destroy(struct type_info* n);
 
 /* dynamic-output-none */
-ALBA_API void type_node_init(struct type_node* n);
+ALBA_API void type_info_init(struct type_info* n);
 
 /* dynamic-output-none */
-ALBA_API void type_node_add(struct type_node* p, struct type_node* c);
+ALBA_API void type_info_add(struct type_info* p, struct type_info* c);
 
 /* dynamic-output-none */
-ALBA_API void type_node_push(struct type_node* parent, struct type_node* child);
+ALBA_API void type_info_push(struct type_info* parent, struct type_info* child);
 
 /* dynamic-output-none */
-ALBA_API struct type_node* type_node_get(struct type_node* p, size_t pos);
+ALBA_API struct type_info* type_info_get(struct type_info* p, size_t pos);
 
-ALBA_API struct type_node* type_node_copy(struct type_node* n);
+ALBA_API struct type_info* type_info_copy(struct type_info* n);
 
-ALBA_API bool type_node_match(struct type_node* a, struct type_node* b);
+ALBA_API bool type_info_match(struct type_info* a, struct type_info* b);
 
 #endif

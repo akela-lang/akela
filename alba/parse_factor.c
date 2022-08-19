@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "zinc/result.h"
 #include "parse_tools.h"
 #include "ast.h"
@@ -10,6 +11,7 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include "parse_factor.h"
+#include "type_node.h"
 
 bool anonymous_function(struct parse_state* ps, struct ast_node** root);
 bool function_call(struct parse_state* ps, struct ast_node** root);
@@ -156,8 +158,6 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 	}
 
 	if (valid) {
-		struct ast_node* etype = af2etype(n);
-		n->etype = etype;
 	}
 
 	/* destroy f f{} lp lp{} rp rp{} end end{} */
@@ -343,7 +343,7 @@ bool not_nt(struct parse_state* ps, struct ast_node** root)
 
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
-	valid = expr(ps, &a) && valid;
+	valid = factor(ps, &a) && valid;
 
 	if (!a) {
 		/* allocate ps{} */
@@ -365,20 +365,17 @@ bool not_nt(struct parse_state* ps, struct ast_node** root)
 	}
 
 	if (valid) {
-		#pragma warning(suppress:6011)
-		if (a->etype) {
-			struct ast_node* etype = NULL;
-			if (a->etype->type == ast_type_type_name) {
-				if (buffer_str_compare(&a->etype->value, "Bool")) {
-					etype = ast_node_copy(a->etype);
-					n->etype = etype;
-				}
-			}
-			if (!etype) {
-				valid = set_source_error(ps->el, &loc, "used a ! operator but expression not a boolean");
-			}
+		assert(a);
+		struct type_node* tn = a->tn;
+		if (!tn) {
+			valid = set_source_error(ps->el, &loc, "! operator used on factor with no value");
 		} else {
-			valid = set_source_error(ps->el, &loc, "cannot perform operation on expression with no value");
+			assert(tn->ti);
+			if (tn->ti->type != type_boolean) {
+				set_source_error(ps->el, &loc, "not operator used on non-boolean type");
+			} else {
+				n->tn = type_node_copy(tn);
+			}
 		}
 	}
 
@@ -399,6 +396,7 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
+	char* type_name = NULL;
 
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -418,41 +416,36 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root)
 		#pragma warning(suppress:6011)
 		if (x->type == token_number) {
 			n->type = ast_type_number;
+			if (x->is_integer) {
+				type_name = "Int64";
+			} else if (x->is_float) {
+				type_name = "Float64";
+			}
 		} else if (x->type == token_string) {
 			n->type = ast_type_string;
+			type_name = "String";
 		} else if (x->type == token_boolean) {
 			n->type = ast_type_boolean;
+			type_name = "Bool";
 		}
 		/* allocate n{} */
 		buffer_copy(&x->value, &n->value);
 	}
 
 	if (valid) {
-		if (n->type == ast_type_number) {
-			struct ast_node* etype = NULL;
-			ast_node_create(&etype);
-			etype->type = ast_type_type_name;
-			if (x->is_integer) {
-				buffer_copy_str(&etype->value, "Int64");
-			} else if (x->is_float) {
-				buffer_copy_str(&etype->value, "Float64");
-			} else {
-				valid = set_source_error(ps->el, &loc, "number token is not a integer or float");
-			}
-			n->etype = etype;
-		} else if (n->type == ast_type_string) {
-			struct ast_node* etype = NULL;
-			ast_node_create(&etype);
-			etype->type = ast_type_type_name;
-			buffer_copy_str(&etype->value, "String");
-			n->etype = etype;
-		} else if (n->type == ast_type_boolean) {
-			struct ast_node* etype = NULL;
-			ast_node_create(&etype);
-			etype->type = ast_type_type_name;
-			buffer_copy_str(&etype->value, "Bool");
-			n->etype = etype;
-		}
+		assert(type_name);
+		struct buffer bf;
+		buffer_init(&bf);
+		buffer_copy_str(&bf, type_name);
+		struct symbol* sym = environment_get(ps->st->top, &bf);
+		assert(sym);
+		assert(sym->ti);
+		struct type_node* tn = NULL;
+		type_node_create(&tn);
+		tn->ti = sym->ti;
+		n->tn = tn;
+
+		buffer_destroy(&bf);
 	}
 
 	/* destroy x x{} */
@@ -492,21 +485,25 @@ bool id_nt(struct parse_state* ps, struct ast_node** root)
 
 		/* allocate n{} */
 		buffer_copy(&id->value, &n->value);
-
 	}
 
 	if (valid) {
-		struct symbol* sym = environment_get(ps->st->top, &n->value);
+		struct symbol* sym = environment_get(ps->st->top, &id->value);
 		if (!sym) {
 			char* a;
-			buffer2array(&n->value, &a);
-			valid = set_source_error(ps->el, &loc, "identifier not declared: %s", a);
+			buffer2array(&id->value, &a);
+			valid = set_source_error(ps->el, &loc, "variable not declared: %s", a);
 			free(a);
-		}
-
-		if (sym) {
-			struct ast_node* etype = ast_node_copy(sym->dec);
-			n->etype = etype;
+		} else {
+			/* assert(sym->tn);*/
+			if (!sym->tn) {
+				char* a;
+				buffer2array(&id->value, &a);
+				valid = set_source_error(ps->el, &loc, "internal error: variable not assigned type: %s", a);
+				free(a);
+			} else {
+				n->tn = type_node_copy(sym->tn);
+			}
 		}
 	}
 
@@ -570,11 +567,12 @@ bool sign(struct parse_state* ps, struct ast_node** root)
 	}
 
 	if (valid) {
-		#pragma warning(suppress:6011)
-		if (right->etype) {
-			n->etype = ast_node_copy(right->etype);
+		assert(right);
+		struct type_node* tn = right->tn;
+		if (!tn) {
+			valid = set_source_error(ps->el, &loc, "negative operator was used on expression with no value");
 		} else {
-			valid = set_source_error(ps->el, &loc, "cannot perform operation on expression with no value");
+			n->tn = type_node_copy(tn);
 		}
 	}
 
@@ -631,44 +629,23 @@ bool array_literal(struct parse_state* ps, struct ast_node** root)
 		free(rsb);
 
 		if (valid) {
-			struct ast_node* first = ast_node_get(n, 0);
+			struct ast_node* first = n->head;
+			struct type_node* tn_first = first->tn;
+			struct ast_node* x = first->next;
+
 			if (!first) {
-				valid = set_source_error(ps->el, &loc, "array literal is empty");
-			} else if (!first->etype) {
-				valid = set_source_error(ps->el, &loc, "array element has no value");
+				valid = set_source_error(ps->el, &loc, "literal array has no elements");
 			} else {
-				struct ast_node* element_etype = ast_node_copy(first->etype);
-				struct ast_node* p = ast_node_get(n, 1);
-				bool m = true;
-				while (p) {
-					if (!p->etype) {
-						valid = set_source_error(ps->el, &loc, "array element has no value");
+				struct type_node* tn = NULL;
+				while (x) {
+					struct type_node* tn_x = x->tn;
+					if (!type_node_match(tn_first, tn_x)) {
+						valid = set_source_error(ps->el, &loc, "array elements not the same type");
 						break;
 					}
-					if (!type_match(ps->st, element_etype, p->etype)) {
-						m = false;
-						break;
-					}
-					p = p->next;
+					x = x->next;
 				}
-				if (!m) {
-					valid = set_source_error(ps->el, &loc, "array elements not one type");
-					ast_node_destroy(element_etype);
-				} else {
-					struct ast_node* etype = NULL;
-					ast_node_create(&etype);
-					etype->type = ast_type_array;
-
-					struct ast_node* a = NULL;
-					ast_node_create(&a);
-					a->type = ast_type_array_type_name;
-					buffer_copy_str(&a->value, "Vector");
-					ast_node_add(etype, a);
-
-					ast_node_add(etype, element_etype);
-
-					n->etype = etype;
-				}
+				n->tn = type_node_copy(tn_first);
 			}
 		}
 	}
@@ -767,12 +744,6 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root)
 	}
 
 	if (valid) {
-		#pragma warning(suppress:6011)
-		if (!a->etype) {
-			valid = set_source_error(ps->el, &loc, "parenthesis used on expression with no value");
-		} else {
-			n->etype = ast_node_copy(a->etype);
-		}
 	}
 
 	/* destroy lp lp{} */

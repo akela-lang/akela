@@ -2,6 +2,8 @@
 #include "symbol_table.h"
 #include <stdbool.h>
 #include "type_info.h"
+#include "type_node.h"
+#include <assert.h>
 
 /* dynamic-output env{} */
 /* transfer p -> env */
@@ -16,6 +18,9 @@ void environment_init(struct environment* env, struct environment* p)
 /* transfer sym -> env{} */
 void environment_put(struct environment* env, struct buffer* value, struct symbol* sym)
 {
+	if (sym->tk_type == token_none) {
+		assert(sym->tk_type != token_none);
+	}
 	/* allocate ht{} */
 	hash_table_add(&env->ht, value, sym);
 }
@@ -25,7 +30,10 @@ struct symbol* environment_get(struct environment* env, struct buffer* value)
 {
 	for (struct environment* p = env; p; p = p->prev) {
 		struct symbol* found = hash_table_get(&p->ht, value);
-		if (found) return found;
+		if (found) {
+			assert(found->tk_type != token_none);
+			return found;
+		}
 	}
 
 	return NULL;
@@ -43,6 +51,7 @@ void symbol_init(struct symbol* sym)
 	sym->tk_type = token_none;
 	sym->dec = NULL;
 	sym->ti = NULL;
+	sym->tn = NULL;
 }
 
 /* destroy sym sym{} */
@@ -99,27 +108,6 @@ void symbol_table_init_reserved(struct environment* env)
 	symbol_table_add_reserved(env, "false", token_boolean, NULL);
 }
 
-void type_info_init(struct type_info* ti)
-{
-	buffer_init(&ti->name);
-	ti->is_integer = false;
-	ti->is_float = false;
-	ti->is_signed = false;
-	ti->bit_count = 0;
-	ti->next = NULL;
-}
-
-void type_info_destroy(struct type_info* ti)
-{
-	buffer_destroy(&ti->name);
-}
-
-void symbol_table_add_type_info(struct symbol_table* st, struct type_info* ti)
-{
-	ti->next = st->ti_head;
-	st->ti_head = ti;
-}
-
 void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)
 {
 	char* name;
@@ -129,63 +117,101 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	name = "Int32";
 	malloc_safe(&ti, sizeof(struct type_info));
 	type_info_init(ti);
-	ti->is_integer = true;
+	ti->type = type_integer;
+	buffer_copy_str(&ti->name, name);
 	ti->is_signed = true;
 	ti->bit_count = 32;
-	buffer_copy_str(&ti->name, name);
-	symbol_table_add_reserved(env, name, token_type_name, ti);
-	symbol_table_add_type_info(st, ti);
+	symbol_table_add_reserved(env, name, token_id, ti);
 
 	name = "Int64";
 	malloc_safe(&ti, sizeof(struct type_info));
 	type_info_init(ti);
+	ti->type = type_integer;
 	buffer_copy_str(&ti->name, name);
-	ti->is_integer = true;
 	ti->is_signed = true;
 	ti->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_type_name, ti);
-	symbol_table_add_type_info(st, ti);
+	symbol_table_add_reserved(env, name, token_id, ti);
 
 	name = "UInt32";
 	malloc_safe(&ti, sizeof(struct type_info));
 	type_info_init(ti);
+	ti->type = type_integer;
 	buffer_copy_str(&ti->name, name);
-	ti->is_integer = true;
 	ti->bit_count = 32;
-	symbol_table_add_reserved(env, name, token_type_name, ti);
-	symbol_table_add_type_info(st, ti);
+	symbol_table_add_reserved(env, name, token_id, ti);
 
 	name = "UInt64";
 	malloc_safe(&ti, sizeof(struct type_info));
 	type_info_init(ti);
+	ti->type = type_integer;
 	buffer_copy_str(&ti->name, name);
-	ti->is_integer = true;
 	ti->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_type_name, ti);
-	symbol_table_add_type_info(st, ti);
+	symbol_table_add_reserved(env, name, token_id, ti);
 
 	name = "Float32";
 	malloc_safe(&ti, sizeof(struct type_info));
 	type_info_init(ti);
+	ti->type = type_float;
 	buffer_copy_str(&ti->name, name);
-	ti->is_float = true;
 	ti->bit_count = 32;
-	symbol_table_add_reserved(env, name, token_type_name, ti);
-	symbol_table_add_type_info(st, ti);
+	symbol_table_add_reserved(env, name, token_id, ti);
 
 	name = "Float64";
 	malloc_safe(&ti, sizeof(struct type_info));
 	type_info_init(ti);
+	ti->type = type_float;
 	buffer_copy_str(&ti->name, name);
-	ti->is_float = true;
 	ti->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_type_name, ti);
-	symbol_table_add_type_info(st, ti);
+	symbol_table_add_reserved(env, name, token_id, ti);
 
-	symbol_table_add_reserved(env, "String", token_type_name, NULL);
-	symbol_table_add_reserved(env, "Bool", token_type_name, NULL);
-	symbol_table_add_reserved(env, "Vector", token_array_type_name, NULL);
-	symbol_table_add_reserved(env, "Function", token_type_name, NULL);
+	name = "String";
+	malloc_safe(&ti, sizeof(struct type_info));
+	type_info_init(ti);
+	ti->type = type_string;
+	buffer_copy_str(&ti->name, name);
+	symbol_table_add_reserved(env, name, token_id, ti);
+
+	name = "Bool";
+	malloc_safe(&ti, sizeof(struct type_info));
+	type_info_init(ti);
+	ti->type = type_boolean;
+	buffer_copy_str(&ti->name, name);
+	symbol_table_add_reserved(env, name, token_id, ti);
+
+	name = "Vector";
+	malloc_safe(&ti, sizeof(struct type_info));
+	type_info_init(ti);
+	ti->type = type_array;
+	buffer_copy_str(&ti->name, name);
+	symbol_table_add_reserved(env, "Vector", token_id, ti);
+
+	name = "Function";
+	malloc_safe(&ti, sizeof(struct type_info));
+	type_info_init(ti);
+	ti->type = type_function;
+	buffer_copy_str(&ti->name, name);
+	symbol_table_add_reserved(env, name, token_id, ti);
+}
+
+void symbol_table_numeric_pool_init(struct symbol_table* st)
+{
+	char* numeric[] = {
+		"Int32",
+		"Int64",
+		"UInt32",
+		"UInt64",
+		"Float32",
+		"Float64",
+		"",
+	};
+
+	struct type_info* pool = NULL;
+	malloc_safe(&pool, sizeof(struct type_info));
+	type_info_init(pool);
+	struct buffer bf;
+	buffer_init(&bf);
+
+	st->numeric_pool = pool;
 }
 
 void symbol_table_init(struct symbol_table* st)
@@ -196,8 +222,9 @@ void symbol_table_init(struct symbol_table* st)
 	symbol_table_init_reserved(env);
 	st->initial = env;
 	st->top = env;
-	st->ti_head = NULL;
+	st->numeric_pool = NULL;
 	symbol_table_init_builtin_types(st, env);
+	symbol_table_numeric_pool_init(st);
 }
 
 void symbol_table_destroy(struct symbol_table* st)
@@ -208,15 +235,82 @@ void symbol_table_destroy(struct symbol_table* st)
 		environment_destroy(env);
 		env = prev;
 	}
-	struct type_info* ti = st->ti_head;
-	while (ti) {
-		struct type_info* temp = ti;
-		ti = ti->next;
-		type_info_destroy(temp);
-	}
+	type_info_destroy(st->numeric_pool);
 }
 
 bool symbol_table_is_global(struct symbol_table* st)
 {
 	return st->top && (st->top->prev == st->initial);
+}
+
+bool type_find(struct symbol_table* st, struct type_info* a, struct type_info* b, bool *promote, struct type_info** c)
+{
+	*promote = false;
+	*c = NULL;
+
+	if (buffer_compare(&a->name, &b->name)) {
+		return true;
+	}
+
+	if ((a->type == type_integer || a->type == type_float) && (b->type == type_integer || b->type == type_float)) {
+		enum type type = a->type;
+
+		if (b->type == type_float) {
+			type = b->type;
+		}
+
+		bool is_signed = a->is_signed;
+		if (b->is_signed) {
+			is_signed = b->is_signed;
+		}
+
+		int bit_count = a->bit_count;
+		if (b->bit_count > bit_count) {
+			bit_count = b->bit_count;
+		}
+
+		struct type_info* x = st->numeric_pool->head;
+		do {
+			if (x->type == type && x->is_signed == is_signed && x->bit_count == bit_count) {
+				*promote = true;
+				*c = x;
+				return true;
+			}
+		} while (x);
+	}
+
+	return false;
+}
+
+bool type_find_whole(struct symbol_table* st, struct type_node* a, struct type_node* b)
+{
+	if (a && b) {
+		if (a->ti != b->ti) {
+			return false;
+		}
+		bool promote = false;
+		struct type_info* ti = NULL;
+		if (!type_find(st, a->ti, b->ti, &promote, &ti)) {
+			return false;
+		}
+		if (promote) {
+			a->ti = ti;
+		}
+
+		struct type_node* x = a->head;
+		struct type_node* y = b->head;
+		do {
+			if (!type_find_whole(st, x, y)) {
+				return false;
+			}
+			if (x) x = x->next;
+			if (y) y = y->next;
+		} while (x || y);
+	} else if (!a && !b) {
+		return true;
+	} else {
+		return false;
+	}
+
+	return true;
 }

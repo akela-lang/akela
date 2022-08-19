@@ -1,4 +1,4 @@
-#include "alba/type_info.h"
+#include "alba/type_node.h"
 #include "zinc/unit_test.h"
 
 void test_type_node1()

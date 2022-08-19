@@ -14,6 +14,16 @@ void assert_has_errors(struct compile_error_list* el)
 	if (el->head) return;
 	error_triggered();
 	printf("assert has errors: there are no errors\n");
+	panic();
+}
+
+/* dynamic-output-none */
+void expect_has_errors(struct compile_error_list* el)
+{
+	test_called();
+	if (el->head) return;
+	error_triggered();
+	printf("expect has errors: there are no errors\n");
 }
 
 /* dynamic-output-none */
@@ -29,6 +39,20 @@ void assert_no_errors(struct compile_error_list* el)
 		p = p->next;
 	}
 	panic();
+}
+
+/* dynamic-output-none */
+void expect_no_errors(struct compile_error_list* el)
+{
+	test_called();
+	if (!el->head) return;
+	error_triggered();
+	printf("expect no errors: there are some errors\n");
+	struct compile_error* p = el->head;
+	while (p) {
+		printf("%s\n", p->message);
+		p = p->next;
+	}
 }
 
 /* dynamic-output-none */
@@ -76,6 +100,26 @@ struct compile_error* assert_compile_error(struct compile_error_list* el, char* 
 		p = p->next;
 	}
 	panic();
+	return NULL;
+}
+
+/* dynamic-output-none */
+struct compile_error* expect_compile_error(struct compile_error_list* el, char* s)
+{
+	test_called();
+	for (struct compile_error* p = el->head; p; p = p->next) {
+		if (strcmp(p->message, s) == 0) {
+			return p;
+		}
+	}
+
+	error_triggered();
+	printf("(%s): no matching compile error message\n", s);
+	struct compile_error* p = el->head;
+	while (p) {
+		printf("%s\n", p->message);
+		p = p->next;
+	}
 	return NULL;
 }
 

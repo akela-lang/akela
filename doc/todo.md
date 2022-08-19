@@ -1,12 +1,38 @@
 # Todo
-* type_info dag
-* type check with type_node
 * set etype
   * factor
-    * function call
+    * literal [x]
+    * id [x]
+    * sign [x]
+    * not [x]
+    * parenthesis []
+    * array literal []
+    * anonymous function []
+    * function call []
+    * factor []
   * expr
+    * add []
+    * array_subscript []
+    * assignment []
+    * boolean []
+    * comparison []
+    * expr []
+    * mult []
+    * var [x]
+    * parenthesis []
   * stmts
-    * function
+    * function []
+    * else
+    * elseif
+    * for iteration []
+    * for range []
+    * function []
+    * separator []
+    * stmt []
+    * stmts []
+    * while []
+* change type_info to type_definition
+* change type_node to value_type
 * set location in dag on match and non-terminal
 * add type_set and type to dag_node
 * derive type from list in for x in list
