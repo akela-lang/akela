@@ -35,6 +35,7 @@
 * annotate test case name where each error is generated
 * set location in dag on match and non-terminal
 * add type_set and type to dag_node
+* create string type that is a variable sized buffer and inserts null char at end
 * derive type from list in for x in list
 * verify type for operations
 * check that subscripted variable is an array type

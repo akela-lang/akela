@@ -102,7 +102,7 @@ void test_parse_types_reserved_type2()
 
 	bool valid = parse_setup("function Int64() end", &ps, &root);
 	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "expecting identifier");
+	expect_compile_error(ps.el, "identifier reserved as a type: Int64");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);

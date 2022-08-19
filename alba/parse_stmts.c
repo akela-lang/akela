@@ -684,7 +684,6 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expecting identifier", &id) && valid;
-	struct symbol* sym = NULL;
 
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
@@ -748,11 +747,22 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 			valid = set_source_error(ps->el, &loc, "duplicate declaration in same scope: %s", a);
 			free(a);
 		} else {
-			malloc_safe((void**)&sym, sizeof(struct symbol));
-			symbol_init(sym);
-			sym->tk_type = id->type;
-			sym->dec = n;
-			environment_put(ps->st->top->prev, &id->value, sym);
+			struct symbol* sym = environment_get(ps->st->top, &id->value);
+			if (sym && sym->td) {
+				struct location loc;
+				get_token_location(id, &loc);
+				char* a;
+				buffer2array(&id->value, &a);
+				valid = set_source_error(ps->el, &loc, "identifier reserved as a type: %s", a);
+				free(a);
+			} else {
+				struct symbol* new_sym = NULL;
+				malloc_safe((void**)&new_sym, sizeof(struct symbol));
+				symbol_init(new_sym);
+				new_sym->tk_type = id->type;
+				new_sym->dec = n;
+				environment_put(ps->st->top->prev, &id->value, new_sym);
+			}
 		}
 
 		*root = n;
