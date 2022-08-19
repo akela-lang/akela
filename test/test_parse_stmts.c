@@ -4,6 +4,8 @@
 #include "alba/ast.h"
 #include "test_parse.h"
 #include "alba/input.h"
+#include "alba/type_def.h"
+#include "alba/type_use.h"
 
 /* dynamic-output-none */
 void test_parse_assign()
@@ -93,7 +95,7 @@ void test_parse_stmts()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var i::Int64; var x::Int64; i + 1\nx * 1", &ps, &root);
+	bool valid = parse_setup("var i::Int64; var x::Int64; i + 1; x * 1", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
@@ -442,42 +444,49 @@ void test_parse_function2()
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
 
-	assert_ptr(root, "root");
-	expect_int_equal(root->type, ast_type_function, "function");
+	struct ast_node* f_node = ast_node_get(root, 0);
+	assert_ptr(f_node, "ptr f_node");
+	expect_int_equal(f_node->type, ast_type_function, "function f_node");
 
-	struct ast_node* a = ast_node_get(root, 0);
-	assert_ptr(a, "ptr a");
-	expect_int_equal(a->type, ast_type_id, "id");
+	struct ast_node* f_id = ast_node_get(f_node, 0);
+	assert_ptr(f_id, "ptr f_id");
+	expect_int_equal(f_id->type, ast_type_id, "id f_id");
 
-	struct ast_node* seq = ast_node_get(root, 1);
-	assert_ptr(seq, "ptr seq");
-	expect_int_equal(seq->type, ast_type_dseq, "seq");
+	struct ast_node* dseq = ast_node_get(f_node, 1);
+	assert_ptr(dseq, "ptr dseq");
+	expect_int_equal(dseq->type, ast_type_dseq, "dseq");
 
-	struct ast_node* seq_dec = ast_node_get(seq, 0);
-	assert_ptr(seq_dec, "ptr seq_dec");
-	expect_int_equal(seq_dec->type, ast_type_declaration, "declaration seq_dec");
+	struct ast_node* param0 = ast_node_get(dseq, 0);
+	assert_ptr(param0, "ptr seq_dec");
+	expect_int_equal(param0->type, ast_type_declaration, "declaration param0");
 
-	struct ast_node* dec_a = ast_node_get(seq_dec, 0);
-	assert_ptr(dec_a, "ptr dec_a");
-	expect_int_equal(dec_a->type, ast_type_id, "id dec_a");
-	expect_str(&dec_a->value, "x", "x dec_a");
+	struct ast_node* x = ast_node_get(param0, 0);
+	assert_ptr(x, "ptr x");
+	expect_int_equal(x->type, ast_type_id, "id x");
+	expect_str(&x->value, "x", "x x");
 
-	struct ast_node* type_id_b = ast_node_get(seq_dec, 1);
-	assert_ptr(type_id_b, "ptr type_id_b");
-	expect_int_equal(type_id_b->type, ast_type_type, "type_name type_id_b");
-	expect_str(&type_id_b->value, "Int64", "Int64 dec_b");
+	struct ast_node* type_x = ast_node_get(param0, 1);
+	assert_ptr(type_x, "ptr type_x");
+	expect_int_equal(type_x->type, ast_type_type, "type type_x");
 
-	struct ast_node* dret = ast_node_get(root, 2);
+	struct type_use* tu_x = type_x->tu;
+	assert_ptr(tu_x, "ptr tu_x");
+
+	struct type_def* x_td = tu_x->td;
+	expect_str(&x_td->name, "Int64", "Int64 tu_x");
+
+	struct ast_node* dret = ast_node_get(f_node, 2);
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, ast_type_dret, "dret dret");
 
-	struct ast_node* b = ast_node_get(root, 3);
+	struct ast_node* b = ast_node_get(f_node, 3);
 	assert_ptr(b, "ptr b");
 	expect_int_equal(b->type, ast_type_stmts, "stmts");
 
-	struct ast_node* c = ast_node_get(root, 4);
+	struct ast_node* c = ast_node_get(f_node, 4);
 	assert_null(c, "ptr c");
 
 	struct ast_node* d = ast_node_get(b, 0);
@@ -609,7 +618,7 @@ void test_parse_function4()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo(x::Int32, y::Int32, z::Int32)::Int32\nx+1\n5+4\nend", &ps, &root);
+	valid = parse_setup("function foo(x::Int32, y::Int32, z::Int32)::Int32 x+1; 5+4 end", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse valid");
 
@@ -654,10 +663,17 @@ void test_parse_function4()
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, ast_type_dret, "dret dret");
 
-	struct ast_node* dret_id = ast_node_get(dret, 0);
-	assert_ptr(dret_id, "ptr dret_id");
-	expect_int_equal(dret_id->type, ast_type_type, "type dret_id");
-	expect_str(&dret_id->value, "Int32", "Int32 dret_id");
+	struct ast_node* dret_type = ast_node_get(dret, 0);
+	assert_ptr(dret_type, "ptr dret_type");
+	expect_int_equal(dret_type->type, ast_type_type, "type dret_type");
+
+	struct type_use* dret_tu = dret_type->tu;
+	assert_ptr(dret_tu, "ptr dret_tu");
+
+	struct type_def* dret_td = dret_tu->td;
+	assert_ptr(dret_td, "ptr dret_td");
+	expect_int_equal(dret_td->type, type_integer, "integer dret_td");
+	expect_str(&dret_td->name, "Int32", "Int32 dret_td");
 
 	struct ast_node* b = ast_node_get(root, 3);
 	assert_ptr(b, "ptr b");
