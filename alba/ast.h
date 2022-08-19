@@ -60,7 +60,7 @@ struct ast_node {
 	struct buffer value;
 	struct token_list tl;
 	struct location loc;
-	struct type_node* tn;
+	struct type_use* tu;
 	struct ast_node* next;
 	struct ast_node* prev;
 	struct ast_node* head;

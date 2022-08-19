@@ -8,7 +8,7 @@
 #include "scan.h"
 #include "parse_types.h"
 #include "parse_expr.h"
-#include "type_node.h"
+#include "type_use.h"
 #include <assert.h>
 
 bool var(struct parse_state* ps, struct ast_node** root);
@@ -436,29 +436,29 @@ bool add(struct parse_state* ps, struct ast_node** root)
 		}
 
 		if (valid) {
-			struct type_node* tn_a = a->tn;
-			struct type_node* tn_b = b->tn;
+			struct type_use* tu_a = a->tu;
+			struct type_use* tu_b = b->tu;
 
-			if (!tn_a) {
+			if (!tu_a) {
 				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
-			} else if (!is_numeric(tn_a->ti)) {
+			} else if (!is_numeric(tu_a->td)) {
 				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand");
 			}
 
-			if (!tn_b) {
+			if (!tu_b) {
 				valid = set_source_error(ps->el, &loc_b, "%s operand has no value", op_name);
-			} else if (!is_numeric(tn_b->ti)) {
+			} else if (!is_numeric(tu_b->td)) {
 				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand");
 			}
 
 			if (valid) {
-				struct type_node* tn = type_node_copy(tn_a);
-				if (!type_find_whole(ps->st, tn, tn_b)) {
+				struct type_use* tu = type_use_copy(tu_a);
+				if (!type_find_whole(ps->st, tu, tu_b)) {
 					struct location loc;
 					get_token_location(op, &loc);
 					valid = set_source_error(ps->el, &loc, "invalid types for %s", op_name);
 				} else {
-					n->tn = tn;
+					n->tu = tu;
 				}
 			}
 
@@ -561,29 +561,29 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 		if (valid) {
 			assert(a);
 			assert(b);
-			struct type_node* tn_a = a->tn;
-			struct type_node* tn_b = b->tn;
+			struct type_use* tu_a = a->tu;
+			struct type_use* tu_b = b->tu;
 
-			if (!tn_a) {
+			if (!tu_a) {
 				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
-			} else if (!is_numeric(tn_a->ti)) {
+			} else if (!is_numeric(tu_a->td)) {
 				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand");
 			}
 
-			if (!tn_b) {
+			if (!tu_b) {
 				valid = set_source_error(ps->el, &loc_b, "%s operand has no value", op_name);
-			} else if (!is_numeric(tn_b->ti)) {
+			} else if (!is_numeric(tu_b->td)) {
 				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand");
 			}
 
 			if (valid) {
-				struct type_node* tn = type_node_copy(tn_a);
-				if (!type_find_whole(ps->st, tn, tn_b)) {
+				struct type_use* tu = type_use_copy(tu_a);
+				if (!type_find_whole(ps->st, tu, tu_b)) {
 					struct location loc;
 					get_token_location(op, &loc);
 					valid = set_source_error(ps->el, &loc, "invalid types for %s", op_name);
 				} else {
-					n->tn = tn;
+					n->tu = tu;
 				}
 			}
 

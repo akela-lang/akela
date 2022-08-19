@@ -5,7 +5,7 @@
     * id [x]
     * sign [x]
     * not [x]
-    * parenthesis []
+    * parenthesis [x]
     * array literal []
     * anonymous function []
     * function call []
@@ -31,8 +31,8 @@
     * stmt []
     * stmts []
     * while []
-* change type_info to type_def
-* change type_node to type_use
+* change type_def to type_def
+* change type_use to type_use
 * set location in dag on match and non-terminal
 * add type_set and type to dag_node
 * derive type from list in for x in list

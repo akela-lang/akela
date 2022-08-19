@@ -4,7 +4,7 @@
 #include "alba/unit_test_compiler.h"
 #include "alba/ast.h"
 #include "test_parse.h"
-#include "alba/type_node.h"
+#include "alba/type_use.h"
 
 /* dynamic-output-none */
 void test_parse_number_integer()
@@ -28,13 +28,13 @@ void test_parse_number_integer()
 	expect_int_equal(number->type, ast_type_number, "number num");
 	expect_str(&number->value, "32", "32 num");
 
-	struct type_node* tn = number->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = number->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_integer, "integer ti");
-	expect_str(&ti->name, "Int64", "Int64 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -63,13 +63,13 @@ void test_parse_number_float()
 	expect_int_equal(number->type, ast_type_number, "number number");
 	expect_str(&number->value, "5.0e0", "5.0e0 number");
 
-	struct type_node* tn = number->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = number->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_float, "integer ti");
-	expect_str(&ti->name, "Float64", "Float64 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_float, "integer td");
+	expect_str(&td->name, "Float64", "Float64 td");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -98,13 +98,13 @@ void test_parse_string()
 	expect_int_equal(string->type, ast_type_string, "string string");
 	expect_str(&string->value, "hello", "hello string");
 
-	struct type_node* tn = string->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = string->tu;
+	assert_ptr(tu, "ptr tu");
 	
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_string, "string ti");
-	expect_str(&ti->name, "String", "String ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_string, "string td");
+	expect_str(&td->name, "String", "String td");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -132,13 +132,13 @@ void test_parse_boolean_true()
 	expect_int_equal(true_node->type, ast_type_boolean, "boolean true_node");
 	expect_str(&true_node->value, "true", "true true_node");
 
-	struct type_node* tn = true_node->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = true_node->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_boolean, "boolean ti");
-	expect_str(&ti->name, "Bool", "Bool ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_str(&td->name, "Bool", "Bool td");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -166,13 +166,13 @@ void test_parse_boolean_false()
 	expect_int_equal(false_node->type, ast_type_boolean, "boolean false_node");
 	expect_str(&false_node->value, "false", "false false_node");
 
-	struct type_node* tn = false_node->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = false_node->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_boolean, "boolean ti");
-	expect_str(&ti->name, "Bool", "Bool ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_str(&td->name, "Bool", "Bool td");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -218,13 +218,13 @@ void test_parse_id()
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "x", "x id");
 
-	struct type_node* tn = id->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = id->tu;
+	assert_ptr(tu, "ptr tu");
 	
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_integer, "integer ti");
-	expect_str(&ti->name, "Int64", "Int64 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -306,13 +306,13 @@ void test_parse_sign_negative()
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, ast_type_sign, "sign sign");
 
-	struct type_node* tn = sign->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = sign->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_integer, "integer ti");
-	expect_str(&ti->name, "Int64", "Int64 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	struct ast_node* left = ast_node_get(sign, 0);
 	assert_ptr(left, "left");
@@ -349,13 +349,13 @@ void test_parse_sign_positive()
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, ast_type_sign, "sign sign");
 
-	struct type_node* tn = sign->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = sign->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_integer, "integer ti");
-	expect_str(&ti->name, "Int64", "Int64 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	struct ast_node* left = ast_node_get(sign, 0);
 	assert_ptr(left, "left");
@@ -411,13 +411,13 @@ void test_parse_not_id()
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, ast_type_not, "not not");
 
-	struct type_node* tn = not->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = not->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_boolean, "boolean ti");
-	expect_str(&ti->name, "Bool", "Bool ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_str(&td->name, "Bool", "Bool td");
 
 	struct ast_node* id = ast_node_get(not, 0);
 	assert_ptr(id, "ptr id");
@@ -449,13 +449,13 @@ void test_parse_not_literal()
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, ast_type_not, "not not");
 
-	struct type_node* tn = not->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = not->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_boolean, "boolean ti");
-	expect_str(&ti->name, "Bool", "Bool ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_str(&td->name, "Bool", "Bool td");
 
 	struct ast_node* lit_bool = ast_node_get(not, 0);
 	assert_ptr(lit_bool, "ptr lit_bool");

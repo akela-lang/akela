@@ -3,7 +3,7 @@
 #include "ast.h"
 #include "zinc/result.h"
 #include "zinc/memory.h"
-#include "type_node.h"
+#include "type_use.h"
 
 /* dynamic-output-none */
 enum result ast_set_names(char** names)
@@ -80,7 +80,7 @@ void ast_node_destroy(struct ast_node* n)
 		/* destroy n{} */
 		buffer_destroy(&n->value);
 		token_list_destroy(&n->tl);
-		type_node_destroy(n->tn);
+		type_use_destroy(n->tu);
 
 		/* destroy n */
 		free(n);
@@ -93,7 +93,7 @@ void ast_node_init(struct ast_node* n)
 	n->type = ast_type_none;
 	buffer_init(&n->value);
 	token_list_init(&n->tl);
-	n->tn = NULL;
+	n->tu = NULL;
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;

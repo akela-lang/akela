@@ -11,7 +11,7 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include "parse_factor.h"
-#include "type_node.h"
+#include "type_use.h"
 
 bool anonymous_function(struct parse_state* ps, struct ast_node** root);
 bool function_call(struct parse_state* ps, struct ast_node** root);
@@ -366,15 +366,15 @@ bool not_nt(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		assert(a);
-		struct type_node* tn = a->tn;
-		if (!tn) {
+		struct type_use* tu = a->tu;
+		if (!tu) {
 			valid = set_source_error(ps->el, &loc, "! operator used on factor with no value");
 		} else {
-			assert(tn->ti);
-			if (tn->ti->type != type_boolean) {
+			assert(tu->td);
+			if (tu->td->type != type_boolean) {
 				set_source_error(ps->el, &loc, "not operator used on non-boolean type");
 			} else {
-				n->tn = type_node_copy(tn);
+				n->tu = type_use_copy(tu);
 			}
 		}
 	}
@@ -439,11 +439,11 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root)
 		buffer_copy_str(&bf, type_name);
 		struct symbol* sym = environment_get(ps->st->top, &bf);
 		assert(sym);
-		assert(sym->ti);
-		struct type_node* tn = NULL;
-		type_node_create(&tn);
-		tn->ti = sym->ti;
-		n->tn = tn;
+		assert(sym->td);
+		struct type_use* tu = NULL;
+		type_use_create(&tu);
+		tu->td = sym->td;
+		n->tu = tu;
 
 		buffer_destroy(&bf);
 	}
@@ -495,14 +495,14 @@ bool id_nt(struct parse_state* ps, struct ast_node** root)
 			valid = set_source_error(ps->el, &loc, "variable not declared: %s", a);
 			free(a);
 		} else {
-			/* assert(sym->tn);*/
-			if (!sym->tn) {
+			/* assert(sym->tu);*/
+			if (!sym->tu) {
 				char* a;
 				buffer2array(&id->value, &a);
 				valid = set_source_error(ps->el, &loc, "internal error: variable not assigned type: %s", a);
 				free(a);
 			} else {
-				n->tn = type_node_copy(sym->tn);
+				n->tu = type_use_copy(sym->tu);
 			}
 		}
 	}
@@ -568,11 +568,11 @@ bool sign(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		assert(right);
-		struct type_node* tn = right->tn;
-		if (!tn) {
+		struct type_use* tu = right->tu;
+		if (!tu) {
 			valid = set_source_error(ps->el, &loc, "negative operator was used on expression with no value");
 		} else {
-			n->tn = type_node_copy(tn);
+			n->tu = type_use_copy(tu);
 		}
 	}
 
@@ -630,22 +630,22 @@ bool array_literal(struct parse_state* ps, struct ast_node** root)
 
 		if (valid) {
 			struct ast_node* first = n->head;
-			struct type_node* tn_first = first->tn;
+			struct type_use* tu_first = first->tu;
 			struct ast_node* x = first->next;
 
 			if (!first) {
 				valid = set_source_error(ps->el, &loc, "literal array has no elements");
 			} else {
-				struct type_node* tn = NULL;
+				struct type_use* tu = NULL;
 				while (x) {
-					struct type_node* tn_x = x->tn;
-					if (!type_node_match(tn_first, tn_x)) {
+					struct type_use* tu_x = x->tu;
+					if (!type_use_match(tu_first, tu_x)) {
 						valid = set_source_error(ps->el, &loc, "array elements not the same type");
 						break;
 					}
 					x = x->next;
 				}
-				n->tn = type_node_copy(tn_first);
+				n->tu = type_use_copy(tu_first);
 			}
 		}
 	}
@@ -745,11 +745,11 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		assert(a);
-		struct type_node* tn = a->tn;
-		if (!tn) {
+		struct type_use* tu = a->tu;
+		if (!tu) {
 			valid = set_source_error(ps->el, &loc, "parenthesis on expression that has no value");
 		} else {
-			n->tn = type_node_copy(tn);
+			n->tu = type_use_copy(tu);
 		}
 	}
 

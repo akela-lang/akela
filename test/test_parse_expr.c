@@ -4,8 +4,8 @@
 #include "alba/ast.h"
 #include "alba/parse_tools.h"
 #include "alba/unit_test_compiler.h"
-#include "alba/type_node.h"
-#include "alba/type_info.h"
+#include "alba/type_use.h"
+#include "alba/type_def.h"
 
 /* dynamic-output-none */
 void test_parse_blank()
@@ -51,13 +51,13 @@ void test_parse_add()
 	assert_ptr(add, "ptr add");
 	expect_int_equal(add->type, ast_type_plus, "plus add");
 
-	struct type_node* tn = add->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = add->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_integer, "integer ti");
-	expect_str(&ti->name, "Int64", "Int64 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	struct ast_node* left = ast_node_get(add, 0);
 	assert_ptr(left, "left");
@@ -95,13 +95,13 @@ void test_parse_add_mixed_types()
 	assert_ptr(add, "ptr add");
 	expect_int_equal(add->type, ast_type_plus, "plus add");
 
-	struct type_node* add_tn = add->tn;
-	assert_ptr(add_tn, "ptr add_tn");
+	struct type_use* add_tu = add->tu;
+	assert_ptr(add_tu, "ptr add_tu");
 
-	struct type_info* add_ti = add_tn->ti;
-	assert_ptr(add_ti, "ptr add_ti");
-	expect_int_equal(add_ti->type, type_float, "float add_ti");
-	expect_str(&add_ti->name, "Float64", "Float64 add_ti");
+	struct type_def* add_td = add_tu->td;
+	assert_ptr(add_td, "ptr add_td");
+	expect_int_equal(add_td->type, type_float, "float add_td");
+	expect_str(&add_td->name, "Float64", "Float64 add_td");
 
 	struct ast_node* left = ast_node_get(add, 0);
 	assert_ptr(left, "left");
@@ -354,13 +354,13 @@ void test_parse_mult()
 	assert_ptr(mult, "root");
 	expect_int_equal(mult->type, ast_type_mult, "mult mult");
 
-	struct type_node* tn = mult->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = mult->tu;
+	assert_ptr(tu, "ptr tu");
 	
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptr ti");
-	expect_int_equal(ti->type, type_integer, "integer ti");
-	expect_str(&ti->name, "Int64", "Int64 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	struct ast_node* left = ast_node_get(mult, 0);
 	assert_ptr(left, "left");
@@ -1354,16 +1354,16 @@ void test_parse_var()
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "a", "a");
 
-	struct ast_node* type_node = ast_node_get(dec, 1);
-	assert_ptr(type_node, "ptr type_node");
-	expect_int_equal(type_node->type, ast_type_type, "type type");
+	struct ast_node* type_use = ast_node_get(dec, 1);
+	assert_ptr(type_use, "ptr type_use");
+	expect_int_equal(type_use->type, ast_type_type, "type type");
 
-	struct type_node* tn = type_node->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = type_use->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptrt ti");
-	expect_str(&ti->name, "Int32", "Int32 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_str(&td->name, "Int32", "Int32 td");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -1396,16 +1396,16 @@ void test_parse_var2()
 	expect_int_equal(id->type, ast_type_id, "id");
 	expect_str(&id->value, "a", "a");
 
-	struct ast_node* type_node = ast_node_get(dec, 1);
-	assert_ptr(type_node, "ptr type_node");
-	expect_int_equal(type_node->type, ast_type_type, "type type_node");
+	struct ast_node* type_use = ast_node_get(dec, 1);
+	assert_ptr(type_use, "ptr type_use");
+	expect_int_equal(type_use->type, ast_type_type, "type type_use");
 
-	struct type_node* tn = type_node->tn;
-	assert_ptr(tn, "ptr tn");
+	struct type_use* tu = type_use->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct type_info* ti = tn->ti;
-	assert_ptr(ti, "ptrt ti");
-	expect_str(&ti->name, "Int32", "Int32 ti");
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_str(&td->name, "Int32", "Int32 td");
 
 	struct ast_node* value = ast_node_get(var, 1);
 	assert_ptr(value, "ptr value");

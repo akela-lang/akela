@@ -1,8 +1,8 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include <stdbool.h>
-#include "type_info.h"
-#include "type_node.h"
+#include "type_def.h"
+#include "type_use.h"
 #include <assert.h>
 
 /* dynamic-output env{} */
@@ -50,8 +50,8 @@ void symbol_init(struct symbol* sym)
 {
 	sym->tk_type = token_none;
 	sym->dec = NULL;
-	sym->ti = NULL;
-	sym->tn = NULL;
+	sym->td = NULL;
+	sym->tu = NULL;
 }
 
 /* destroy sym sym{} */
@@ -69,7 +69,7 @@ void environment_destroy(struct environment* env)
 }
 
 /* dynamic-temp bf{} */
-void symbol_table_add_reserved(struct environment* env, char* name, enum token_enum type, struct type_info* ti)
+void symbol_table_add_reserved(struct environment* env, char* name, enum token_enum type, struct type_def* td)
 {
 	struct buffer bf;
 
@@ -82,7 +82,7 @@ void symbol_table_add_reserved(struct environment* env, char* name, enum token_e
 	malloc_safe(&sym, sizeof(struct symbol));
 	symbol_init(sym);
 	sym->tk_type = type;
-	sym->ti = ti;
+	sym->td = td;
 
 	/* allocate wt{} */
 	environment_put(env, &bf, sym);
@@ -111,86 +111,86 @@ void symbol_table_init_reserved(struct environment* env)
 void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)
 {
 	char* name;
-	struct type_info* ti = NULL;
+	struct type_def* td = NULL;
 	struct symbol* sym = NULL;
 	
 	name = "Int32";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_integer;
-	buffer_copy_str(&ti->name, name);
-	ti->is_signed = true;
-	ti->bit_count = 32;
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_integer;
+	buffer_copy_str(&td->name, name);
+	td->is_signed = true;
+	td->bit_count = 32;
+	symbol_table_add_reserved(env, name, token_id, td);
 
 	name = "Int64";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_integer;
-	buffer_copy_str(&ti->name, name);
-	ti->is_signed = true;
-	ti->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_integer;
+	buffer_copy_str(&td->name, name);
+	td->is_signed = true;
+	td->bit_count = 64;
+	symbol_table_add_reserved(env, name, token_id, td);
 
 	name = "UInt32";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_integer;
-	buffer_copy_str(&ti->name, name);
-	ti->bit_count = 32;
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_integer;
+	buffer_copy_str(&td->name, name);
+	td->bit_count = 32;
+	symbol_table_add_reserved(env, name, token_id, td);
 
 	name = "UInt64";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_integer;
-	buffer_copy_str(&ti->name, name);
-	ti->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_integer;
+	buffer_copy_str(&td->name, name);
+	td->bit_count = 64;
+	symbol_table_add_reserved(env, name, token_id, td);
 
 	name = "Float32";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_float;
-	buffer_copy_str(&ti->name, name);
-	ti->bit_count = 32;
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_float;
+	buffer_copy_str(&td->name, name);
+	td->bit_count = 32;
+	symbol_table_add_reserved(env, name, token_id, td);
 
 	name = "Float64";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_float;
-	buffer_copy_str(&ti->name, name);
-	ti->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_float;
+	buffer_copy_str(&td->name, name);
+	td->bit_count = 64;
+	symbol_table_add_reserved(env, name, token_id, td);
 
 	name = "String";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_string;
-	buffer_copy_str(&ti->name, name);
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_string;
+	buffer_copy_str(&td->name, name);
+	symbol_table_add_reserved(env, name, token_id, td);
 
 	name = "Bool";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_boolean;
-	buffer_copy_str(&ti->name, name);
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_boolean;
+	buffer_copy_str(&td->name, name);
+	symbol_table_add_reserved(env, name, token_id, td);
 
 	name = "Vector";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_array;
-	buffer_copy_str(&ti->name, name);
-	symbol_table_add_reserved(env, "Vector", token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_array;
+	buffer_copy_str(&td->name, name);
+	symbol_table_add_reserved(env, "Vector", token_id, td);
 
 	name = "Function";
-	malloc_safe(&ti, sizeof(struct type_info));
-	type_info_init(ti);
-	ti->type = type_function;
-	buffer_copy_str(&ti->name, name);
-	symbol_table_add_reserved(env, name, token_id, ti);
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_function;
+	buffer_copy_str(&td->name, name);
+	symbol_table_add_reserved(env, name, token_id, td);
 }
 
 void symbol_table_add_numeric(struct symbol_table* st, char* name)
@@ -200,15 +200,15 @@ void symbol_table_add_numeric(struct symbol_table* st, char* name)
 	buffer_copy_str(&bf, name);
 	struct symbol* sym = environment_get(st->top, &bf);
 	assert(sym);
-	assert(sym->ti);
-	type_info_add(st->numeric_pool, sym->ti);
+	assert(sym->td);
+	type_def_add(st->numeric_pool, sym->td);
 }
 
 void symbol_table_numeric_pool_init(struct symbol_table* st)
 {
-	struct type_info* pool = NULL;
-	malloc_safe(&pool, sizeof(struct type_info));
-	type_info_init(pool);
+	struct type_def* pool = NULL;
+	malloc_safe(&pool, sizeof(struct type_def));
+	type_def_init(pool);
 	st->numeric_pool = pool;
 
 	symbol_table_add_numeric(st, "Int32");
@@ -240,7 +240,7 @@ void symbol_table_destroy(struct symbol_table* st)
 		environment_destroy(env);
 		env = prev;
 	}
-	type_info_destroy(st->numeric_pool);
+	type_def_destroy(st->numeric_pool);
 }
 
 bool symbol_table_is_global(struct symbol_table* st)
@@ -248,12 +248,12 @@ bool symbol_table_is_global(struct symbol_table* st)
 	return st->top && (st->top->prev == st->initial);
 }
 
-bool is_numeric(struct type_info* ti)
+bool is_numeric(struct type_def* td)
 {
-	return ti->type == type_integer || ti->type == type_float;
+	return td->type == type_integer || td->type == type_float;
 }
 
-bool type_find(struct symbol_table* st, struct type_info* a, struct type_info* b, bool *promote, struct type_info** c)
+bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, bool *promote, struct type_def** c)
 {
 	*promote = false;
 	*c = NULL;
@@ -282,7 +282,7 @@ bool type_find(struct symbol_table* st, struct type_info* a, struct type_info* b
 			bit_count = b->bit_count;
 		}
 
-		struct type_info* x = st->numeric_pool->head;
+		struct type_def* x = st->numeric_pool->head;
 		assert(x);
 		do {
 			if (x->type == type && x->is_signed == is_signed && x->bit_count == bit_count) {
@@ -297,20 +297,20 @@ bool type_find(struct symbol_table* st, struct type_info* a, struct type_info* b
 	return false;
 }
 
-bool type_find_whole(struct symbol_table* st, struct type_node* a, struct type_node* b)
+bool type_find_whole(struct symbol_table* st, struct type_use* a, struct type_use* b)
 {
 	if (a && b) {
 		bool promote;
-		struct type_info* ti = NULL;
-		if (!type_find(st, a->ti, b->ti, &promote, &ti)) {
+		struct type_def* td = NULL;
+		if (!type_find(st, a->td, b->td, &promote, &td)) {
 			return false;
 		}
 		if (promote) {
-			a->ti = ti;
+			a->td = td;
 		}
 
-		struct type_node* x = a->head;
-		struct type_node* y = b->head;
+		struct type_use* x = a->head;
+		struct type_use* y = b->head;
 		do {
 			if (!type_find_whole(st, x, y)) {
 				return false;

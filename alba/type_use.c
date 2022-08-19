@@ -1,21 +1,21 @@
 #include <stdlib.h>
 #include <stdbool.h>
-#include "type_node.h"
+#include "type_use.h"
 #include "zinc/result.h"
 #include "zinc/memory.h"
 #include "zinc/buffer.h"
 
 /* dynamic-output n */
-void type_node_create(struct type_node** n)
+void type_use_create(struct type_use** n)
 {
 	/* allocate n */
-	malloc_safe((void**)n, sizeof(struct type_node));
-	type_node_init(*n);
+	malloc_safe((void**)n, sizeof(struct type_use));
+	type_use_init(*n);
 }
 
-void type_node_init(struct type_node* n)
+void type_use_init(struct type_use* n)
 {
-	n->ti = NULL;
+	n->td = NULL;
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;
@@ -23,15 +23,15 @@ void type_node_init(struct type_node* n)
 }
 
 /* dynamic-destroy n n{} */
-void type_node_destroy(struct type_node* n)
+void type_use_destroy(struct type_use* n)
 {
 	if (n) {
 		/* destroy n{} */
-		struct type_node* p = n->head;
+		struct type_use* p = n->head;
 		while (p) {
-			struct type_node* temp = p;
+			struct type_use* temp = p;
 			p = p->next;
-			type_node_destroy(temp);
+			type_use_destroy(temp);
 		}
 
 		/* destroy n */
@@ -40,10 +40,10 @@ void type_node_destroy(struct type_node* n)
 }
 
 /* dynamic-output-none */
-void type_node_add(struct type_node* p, struct type_node* c)
+void type_use_add(struct type_use* p, struct type_use* c)
 {
 	// set sibling to left
-	struct type_node* prev = p->tail;
+	struct type_use* prev = p->tail;
 	if (prev) {
 		prev->next = c;
 	}
@@ -61,9 +61,9 @@ void type_node_add(struct type_node* p, struct type_node* c)
 
 /* assume parent and child are not NULL */
 /* dynamic-output-none */
-void type_node_push(struct type_node* p, struct type_node* c)
+void type_use_push(struct type_use* p, struct type_use* c)
 {
-	struct type_node* old_head = p->head;
+	struct type_use* old_head = p->head;
 	if (old_head) {
 		old_head->prev = c;
 	}
@@ -72,10 +72,10 @@ void type_node_push(struct type_node* p, struct type_node* c)
 }
 
 /* dynamic-output-none */
-struct type_node* type_node_get(struct type_node* p, size_t pos)
+struct type_use* type_use_get(struct type_use* p, size_t pos)
 {
 	int i = 0;
-	for (struct type_node* n = p->head; n; n = n->next) {
+	for (struct type_use* n = p->head; n; n = n->next) {
 		if (i == pos) {
 			return n;
 		}
@@ -85,19 +85,19 @@ struct type_node* type_node_get(struct type_node* p, size_t pos)
 }
 
 /* copy dag excluding etype */
-struct type_node* type_node_copy(struct type_node* n)
+struct type_use* type_use_copy(struct type_use* n)
 {
-	struct type_node* copy = NULL;
+	struct type_use* copy = NULL;
 
 	if (n) {
-		type_node_create(&copy);
-		copy->ti = n->ti;
+		type_use_create(&copy);
+		copy->td = n->td;
 
-		struct type_node* p = n->head;
+		struct type_use* p = n->head;
 		while (p) {
-			struct type_node* p_copy = NULL;
-			p_copy = type_node_copy(p);
-			type_node_add(copy, p_copy);
+			struct type_use* p_copy = NULL;
+			p_copy = type_use_copy(p);
+			type_use_add(copy, p_copy);
 			p = p->next;
 		}
 	}
@@ -105,19 +105,19 @@ struct type_node* type_node_copy(struct type_node* n)
 	return copy;
 }
 
-bool type_node_match(struct type_node* a, struct type_node* b)
+bool type_use_match(struct type_use* a, struct type_use* b)
 {
-	struct type_node* copy = NULL;
+	struct type_use* copy = NULL;
 
 	if (a && b) {
-		if(a->ti != b->ti) {
+		if(a->td != b->td) {
 			return false;
 		}
 
-		struct type_node* c = a->head;
-		struct type_node* d = b->head;
+		struct type_use* c = a->head;
+		struct type_use* d = b->head;
 		do {
-			if (!type_node_match(c, d)) {
+			if (!type_use_match(c, d)) {
 				return false;
 			}
 			if (c) c = c->next;

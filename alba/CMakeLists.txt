@@ -17,8 +17,8 @@ set(lib_files
     lookahead_translator.c
     hash.c
     symbol_table.c
-    type_info.c
-    type_node.c
+    type_def.c
+    type_use.c
     unit_test_compiler.c
 )
 

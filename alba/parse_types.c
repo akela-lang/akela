@@ -9,12 +9,12 @@
 #include "symbol_table.h"
 #include "zinc/memory.h"
 #include "parse_types.h"
-#include "type_node.h"
+#include "type_use.h"
 #include <assert.h>
 
 bool declaration(struct parse_state* ps, struct ast_node** root);
 bool type(struct parse_state* ps, struct token* id, struct ast_node** root);
-bool tseq(struct parse_state* ps, struct type_node* parent);
+bool tseq(struct parse_state* ps, struct type_use* parent);
 
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | e */
@@ -111,10 +111,10 @@ bool declaration(struct parse_state* ps, struct ast_node** root)
 		struct location loc;
 		valid = get_parse_location(ps, &loc) && valid;
 
-		struct ast_node* type_node = NULL;
-		valid = type(ps, id, &type_node) && valid;
+		struct ast_node* type_use = NULL;
+		valid = type(ps, id, &type_use) && valid;
 
-		if (!type_node) {
+		if (!type_use) {
 			valid = set_source_error(ps->el, &loc, "expected a type");
 		}
 
@@ -135,12 +135,12 @@ bool declaration(struct parse_state* ps, struct ast_node** root)
 			ast_node_add(n, a);
 
 			/* transfer b b{} -> n */
-			ast_node_add(n, type_node);
+			ast_node_add(n, type_use);
 
 			/* transfer n -> root */
 			*root = n;
 		} else {
-			ast_node_destroy(type_node);
+			ast_node_destroy(type_use);
 		}
 
 		token_destroy(id);
@@ -159,7 +159,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
-	struct type_node* tn = NULL;
+	struct type_use* tu = NULL;
 
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -169,8 +169,8 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 		ast_node_create(&n);
 		n->type = ast_type_type;
 
-		type_node_create(&tn);
-		n->tn = tn;
+		type_use_create(&tu);
+		n->tu = tu;
 
 		struct location loc;
 		valid = get_parse_location(ps, &loc) && valid;
@@ -184,7 +184,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 			struct token* lcb = NULL;
 			valid = match(ps, token_left_curly_brace, "expected left curly brace", &lcb) && valid;
 
-			valid = tseq(ps, tn) && valid;
+			valid = tseq(ps, tu) && valid;
 
 			struct token* rcb = NULL;
 			valid = match(ps, token_right_curly_brace, "expected right curly brace", &rcb) && valid;
@@ -198,7 +198,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 				buffer2array(&name->value, &a);
 				valid = set_source_error(ps->el, &loc, "type not defined", a);
 				free(a);
-			} else if (!sym->ti) {
+			} else if (!sym->td) {
 				char* a;
 				buffer2array(&name->value, &a);
 				valid = set_source_error(ps->el, &loc, "identifier is not a type", a);
@@ -207,10 +207,10 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 				ast_node_create(&n);
 				n->type = ast_type_type;
 
-				type_node_create(&tn);
-				tn->ti = sym->ti;
+				type_use_create(&tu);
+				tu->td = sym->td;
 
-				n->tn = tn;
+				n->tu = tu;
 			}
 		}
 
@@ -220,7 +220,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 				malloc_safe(&new_sym, sizeof(struct symbol));
 				symbol_init(new_sym);
 				new_sym->tk_type = token_id;
-				new_sym->tn = tn;
+				new_sym->tu = tu;
 				environment_put(ps->st->top, &id->value, new_sym);
 			}
 		}
@@ -241,7 +241,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 
 /* tseq -> type tseq' */
 /* tseq' -> , tseq' */
-bool tseq(struct parse_state* ps, struct type_node* parent)
+bool tseq(struct parse_state* ps, struct type_use* parent)
 {
 	bool valid = true;
 	struct ast_node* a = NULL;
@@ -276,9 +276,9 @@ bool tseq(struct parse_state* ps, struct type_node* parent)
 
 		if (valid) {
 			assert(a);
-			assert(a->tn);
-			type_node_add(parent, a->tn);
-			a->tn = NULL;
+			assert(a->tu);
+			type_use_add(parent, a->tu);
+			a->tu = NULL;
 			ast_node_destroy(a);
 		}
 
