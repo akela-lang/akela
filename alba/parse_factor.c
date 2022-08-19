@@ -630,22 +630,22 @@ bool array_literal(struct parse_state* ps, struct ast_node** root)
 
 		if (valid) {
 			struct ast_node* first = n->head;
-			struct type_use* tu_first = first->tu;
-			struct ast_node* x = first->next;
 
 			if (!first) {
-				valid = set_source_error(ps->el, &loc, "literal array has no elements");
+				valid = set_source_error(ps->el, &loc, "array literal has no elements");
 			} else {
-				struct type_use* tu = NULL;
+				struct type_use* tu_first = type_use_copy(first->tu);
+				struct ast_node* x = first->next;
+				struct type_use* tu_x;
 				while (x) {
-					struct type_use* tu_x = x->tu;
-					if (!type_use_match(tu_first, tu_x)) {
+					tu_x = x->tu;
+					if (!type_find_whole(ps->st, tu_first, tu_x)) {
 						valid = set_source_error(ps->el, &loc, "array elements not the same type");
 						break;
 					}
 					x = x->next;
 				}
-				n->tu = type_use_copy(tu_first);
+				n->tu = tu_first;
 			}
 		}
 	}

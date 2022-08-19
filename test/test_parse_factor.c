@@ -507,6 +507,14 @@ void test_parse_array_literal_integer()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_literal, "array-literal a");
 
+	struct type_use* array_tu = a->tu;
+	assert_ptr(array_tu, "ptr array_tu");
+
+	struct type_def* array_td = array_tu->td;
+	assert_ptr(array_td, "ptr array_td");
+	expect_int_equal(array_td->type, type_integer, "integer array_td");
+	expect_str(&array_td->name, "Int64", "Int64 array_td");
+
 	struct ast_node* a0 = ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
 	expect_int_equal(a0->type, ast_type_number, "number a0");
@@ -547,6 +555,14 @@ void test_parse_array_literal_float()
 	struct ast_node* a = ast_node_get(root, 0);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_literal, "array-literal a");
+
+	struct type_use* array_tu = a->tu;
+	assert_ptr(array_tu, "ptr array_tu");
+
+	struct type_def* array_td = array_tu->td;
+	assert_ptr(array_td, "ptr array_td");
+	expect_int_equal(array_td->type, type_float, "float array_td");
+	expect_str(&array_td->name, "Float64", "Float64 array_td");
 
 	struct ast_node* a0 = ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
@@ -590,6 +606,14 @@ void test_parse_array_literal_numeric()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_literal, "array-literal a");
 
+	struct type_use* array_tu = a->tu;
+	assert_ptr(array_tu, "ptr array_tu");
+
+	struct type_def* array_td = array_tu->td;
+	assert_ptr(array_td, "ptr array_td");
+	expect_int_equal(array_td->type, type_float, "float array_td");
+	expect_str(&array_td->name, "Float64", "Float64 array_td");
+
 	struct ast_node* a0 = ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
 	expect_int_equal(a0->type, ast_type_number, "number a0");
@@ -623,7 +647,26 @@ void test_parse_array_literal_mixed_error()
 	valid = parse_setup("[1,true,3]", &ps, &root);
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "array elements not one type");
+	expect_compile_error(ps.el, "array elements not the same type");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_array_literal_empty_error()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("[]", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "array literal has no elements");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -887,5 +930,6 @@ void test_parse_factor()
 	test_parse_array_literal_float();
 	test_parse_array_literal_numeric();
 	test_parse_array_literal_mixed_error();
+	test_parse_array_literal_empty_error();
 	test_parse_paren_num();
 }
