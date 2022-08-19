@@ -12,7 +12,7 @@ void test_parse_types_missing_declaration()
 
 	bool valid = parse_setup("x + 1", &ps, &root);
 	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "identifier not declared: x");
+	expect_compile_error(ps.el, "variable not declared: x");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -87,7 +87,7 @@ void test_parse_types_reserved_type()
 
 	bool valid = parse_setup("var Int64::Int64", &ps, &root);
 	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "expected declaration after var");
+	expect_compile_error(ps.el, "identifier reserved as a type: Int64");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
