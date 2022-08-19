@@ -842,10 +842,17 @@ void test_parse_call2()
 	expect_int_equal(param0_name->type, ast_type_id, "id param0_name");
 	expect_str(&param0_name->value, "arg1", "arg1");
 
-	struct ast_node* param0_id = ast_node_get(dparam0, 1);
-	assert_ptr(param0_id, "ptr param0_id");
-	expect_int_equal(param0_id->type, ast_type_type, "type param0_id");
-	expect_str(&param0_id->value, "Int64", "Int64 param0_id");
+	struct ast_node* type = ast_node_get(dparam0, 1);
+	assert_ptr(type, "ptr param0_id");
+	expect_int_equal(type->type, ast_type_type, "type param0_id");
+
+	struct type_use* tu = type->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	struct ast_node* dret = ast_node_get(fd, 2);
 	assert_ptr(dret, "ptr dret");
@@ -916,10 +923,9 @@ void test_parse_call3()
 	expect_int_equal(param0_name->type, ast_type_id, "id param0_name");
 	expect_str(&param0_name->value, "arg1", "arg1");
 
-	struct ast_node* param0_id = ast_node_get(fd_param0, 1);
-	assert_ptr(param0_id, "ptr param0_id");
-	expect_int_equal(param0_id->type, ast_type_type, "type param0_id");
-	expect_str(&param0_id->value, "Int64", "Int64 param0_id");
+	struct ast_node* param0_type = ast_node_get(fd_param0, 1);
+	assert_ptr(param0_type, "ptr param0_id");
+	expect_int_equal(param0_type->type, ast_type_type, "type param0_id");
 
 	struct ast_node* dret = ast_node_get(fd, 2);
 	assert_ptr(dret, "ptr dret");
@@ -997,10 +1003,9 @@ void test_parse_call4()
 	expect_int_equal(dseq_param0_id->type, ast_type_id, "type dseq_param0_id");
 	expect_str(&dseq_param0_id->value, "arg0", "arg0 dseq_param0_id");
 
-	struct ast_node* dseq_param0_type_id = ast_node_get(dseq_param0, 1);
-	assert_ptr(dseq_param0_type_id, "ptr dseq_param0_type_id");
-	expect_int_equal(dseq_param0_type_id->type, ast_type_type, "type dseq_param0_type_id");
-	expect_str(&dseq_param0_type_id->value, "Int64", "Int64 dseq_param0_type_id");
+	struct ast_node* dseq_param0_type = ast_node_get(dseq_param0, 1);
+	assert_ptr(dseq_param0_type, "ptr dseq_param0_type");
+	expect_int_equal(dseq_param0_type->type, ast_type_type, "type dseq_param0_type");
 
 	struct ast_node* dseq_param1 = ast_node_get(dseq, 1);
 	assert_ptr(dseq_param1, "ptr desq_param1");
@@ -1014,7 +1019,6 @@ void test_parse_call4()
 	struct ast_node* dseq_param1_type_id = ast_node_get(dseq_param1, 1);
 	assert_ptr(dseq_param1_type_id, "ptr dseq_param1_type_id");
 	expect_int_equal(dseq_param1_type_id->type, ast_type_type, "type dseq_param1_type_id");
-	expect_str(&dseq_param1_type_id->value, "Int64", "Int64 dseq_param1_type_id");
 
 	struct ast_node* dseq_param2 = ast_node_get(dseq, 2);
 	assert_ptr(dseq_param2, "ptr desq_param2");
@@ -1028,7 +1032,6 @@ void test_parse_call4()
 	struct ast_node* dseq_param2_type_id = ast_node_get(dseq_param2, 1);
 	assert_ptr(dseq_param2_type_id, "ptr dseq_param2_type_id");
 	expect_int_equal(dseq_param2_type_id->type, ast_type_type, "type dseq_param2_type_id");
-	expect_str(&dseq_param2_type_id->value, "Int64", "Int64 dseq_param2_type_id");
 
 	struct ast_node* dret = ast_node_get(fd, 2);
 	assert_ptr(dret, "ptr dret");
@@ -1037,7 +1040,6 @@ void test_parse_call4()
 	struct ast_node* dret_type_id = ast_node_get(dret, 0);
 	assert_ptr(dret_type_id, "ptr dret_type_id");
 	expect_int_equal(dret_type_id->type, ast_type_type, "type dret_type_id");
-	expect_str(&dret_type_id->value, "Int64", "Int64 dret_type_id");
 
 	struct ast_node* call = ast_node_get(root, 3);
 	assert_ptr(call, "ptr call");
