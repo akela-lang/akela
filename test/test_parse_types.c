@@ -218,7 +218,26 @@ void test_parse_types_array_error()
 	/* allocate ps{} root root{} */
 	valid = parse_setup("var a::Int64{Int64}; a[1]", &ps, &root);
 	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "type is not an array type: Int64");
+	expect_compile_error(ps.el, "subtype was specified for non-generic type: Int64");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_types_array_error2()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Vector{Int64, Float64}; a[1]", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(valid, "valid");
 
 	/* destroy ps{} root root{} */
@@ -240,4 +259,5 @@ void test_parse_types()
 	test_parse_types_exists();
 	test_parse_types_array();
 	test_parse_types_array_error();
+	test_parse_types_array_error2();
 }

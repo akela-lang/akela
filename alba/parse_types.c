@@ -160,6 +160,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 	bool valid = true;
 	struct ast_node* n = NULL;
 	struct type_use* tu = NULL;
+	bool is_generic = false;
 
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -181,6 +182,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 		valid = get_lookahead(ps, 1, &num) && valid;
 		struct token* t0 = get_token(&ps->lookahead, 0);
 		if (t0 && t0->type == token_left_curly_brace) {
+			is_generic = true;
 			struct token* lcb = NULL;
 			valid = match(ps, token_left_curly_brace, "expected left curly brace", &lcb) && valid;
 
@@ -203,14 +205,30 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 				buffer2array(&name->value, &a);
 				valid = set_source_error(ps->el, &loc, "identifier is not a type", a);
 				free(a);
+			} else if (is_generic && !sym->td->is_generic) {
+				char* a;
+				buffer2array(&name->value, &a);
+				valid = set_source_error(ps->el, &loc, "subtype was specified for non-generic type: %s", a);
+				free(a);
 			} else {
-				ast_node_create(&n);
-				n->type = ast_type_type;
+				if (is_generic) {
+					int count = type_use_count_children(tu);
+					if (sym->td->generic_count > 0 && count != sym->td->generic_count) {
+						char* a;
+						buffer2array(&name->value, &a);
+						valid = set_source_error(
+							ps->el, &loc, "generic type (%s) should have %d subtype%s but has %d subtype%s",
+							a,
+							sym->td->generic_count, plural(sym->td->generic_count),
+							count, plural(count)
+						);
+						free(a);
+					}
+				}
 
-				type_use_create(&tu);
-				tu->td = sym->td;
-
-				n->tu = tu;
+				if (valid) {
+					tu->td = sym->td;
+				}
 			}
 		}
 
@@ -272,6 +290,15 @@ bool tseq(struct parse_state* ps, struct type_use* parent)
 		valid = set_source_error(ps->el, &loc, "expected a type name");
 	}
 
+	if (valid) {
+		assert(a);
+		assert(a->tu);
+		type_use_add(parent, a->tu);
+		a->tu = NULL;
+		ast_node_destroy(a);
+		a = NULL;
+	}
+
 	while (true) {
 		int num;
 		valid = get_lookahead(ps, 1, &num) && valid;
@@ -281,13 +308,21 @@ bool tseq(struct parse_state* ps, struct type_use* parent)
 			break;
 		}
 
+		struct token* comma = NULL;
+		valid = match(ps, token_comma, "expected comma", &comma) && valid;
+
+		token_destroy(comma);
+		free(comma);
+
 		struct location loc;
 		valid = get_parse_location(ps, &loc) && valid;
 
+		a = NULL;
 		valid = type(ps, NULL, &a) && valid;
 
 		if (!a) {
 			valid = set_source_error(ps->el, &loc, "expected a type name after comma");
+			break;
 		}
 
 		if (valid) {
@@ -296,6 +331,7 @@ bool tseq(struct parse_state* ps, struct type_use* parent)
 			type_use_add(parent, a->tu);
 			a->tu = NULL;
 			ast_node_destroy(a);
+			a = NULL;
 		}
 
 	}

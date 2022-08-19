@@ -54,4 +54,6 @@ ALBA_API enum result format_error(struct compile_error* e, input_getchar f, inpu
 /* dynamic-output-none */
 ALBA_API void get_token_location(struct token* t, struct location* loc);
 
+ALBA_API char* plural(int number);
+
 #endif

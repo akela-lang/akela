@@ -145,3 +145,9 @@ enum result format_error(struct compile_error* e, input_getchar f, input_seek se
 
 	return result_ok;
 }
+
+char* plural(int number)
+{
+	if (number == 1) return "";
+	else return "s";
+}

@@ -131,3 +131,16 @@ bool type_use_match(struct type_use* a, struct type_use* b)
 
 	return true;
 }
+
+int type_use_count_children(struct type_use* tu)
+{
+	int count = 0;
+
+	struct type_use* p = tu->head;
+	while (p) {
+		count++;
+		p = p->next;
+	}
+
+	return count;
+}

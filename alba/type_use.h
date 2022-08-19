@@ -40,4 +40,6 @@ ALBA_API struct type_use* type_use_copy(struct type_use* n);
 
 ALBA_API bool type_use_match(struct type_use* a, struct type_use* b);
 
+ALBA_API int type_use_count_children(struct type_use* tu);
+
 #endif
