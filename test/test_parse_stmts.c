@@ -522,7 +522,7 @@ void test_parse_function3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo(x::Int32, y::Int32)\nx+1\n5+4\nend", &ps, &root);
+	bool valid = parse_setup("function foo(x::Int32, y::Int32) x+1; 5+4 end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 

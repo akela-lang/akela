@@ -5,6 +5,7 @@
 #include "alba/parse_tools.h"
 #include "alba/unit_test_compiler.h"
 #include "alba/type_node.h"
+#include "alba/type_info.h"
 
 /* dynamic-output-none */
 void test_parse_blank()
@@ -50,6 +51,14 @@ void test_parse_add()
 	assert_ptr(add, "ptr add");
 	expect_int_equal(add->type, ast_type_plus, "plus add");
 
+	struct type_node* tn = add->tn;
+	assert_ptr(tn, "ptr tn");
+
+	struct type_info* ti = tn->ti;
+	assert_ptr(ti, "ptr ti");
+	expect_int_equal(ti->type, type_integer, "integer ti");
+	expect_str(&ti->name, "Int64", "Int64 ti");
+
 	struct ast_node* left = ast_node_get(add, 0);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, ast_type_id, "id");
@@ -60,7 +69,49 @@ void test_parse_add()
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "1", "1");
 
-	assert_null(ast_node_get(root, 2), "only 2 children");
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_add_mixed_types()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("1 + 5.0", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	assert_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	struct ast_node* add = ast_node_get(root, 0);
+	assert_ptr(add, "ptr add");
+	expect_int_equal(add->type, ast_type_plus, "plus add");
+
+	struct type_node* add_tn = add->tn;
+	assert_ptr(add_tn, "ptr add_tn");
+
+	struct type_info* add_ti = add_tn->ti;
+	assert_ptr(add_ti, "ptr add_ti");
+	expect_int_equal(add_ti->type, type_float, "float add_ti");
+	expect_str(&add_ti->name, "Float64", "Float64 add_ti");
+
+	struct ast_node* left = ast_node_get(add, 0);
+	assert_ptr(left, "left");
+	expect_int_equal(left->type, ast_type_number, "number left");
+	expect_str(&left->value, "1", "1 left");
+
+	struct ast_node* right = ast_node_get(add, 1);
+	assert_ptr(right, "right");
+	expect_int_equal(right->type, ast_type_number, "number");
+	expect_str(&right->value, "5.0", "5.0 right");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -302,6 +353,14 @@ void test_parse_mult()
 	struct ast_node* mult = ast_node_get(root, 0);
 	assert_ptr(mult, "root");
 	expect_int_equal(mult->type, ast_type_mult, "mult mult");
+
+	struct type_node* tn = mult->tn;
+	assert_ptr(tn, "ptr tn");
+	
+	struct type_info* ti = tn->ti;
+	assert_ptr(ti, "ptr ti");
+	expect_int_equal(ti->type, type_integer, "integer ti");
+	expect_str(&ti->name, "Int64", "Int64 ti");
 
 	struct ast_node* left = ast_node_get(mult, 0);
 	assert_ptr(left, "left");
@@ -1399,6 +1458,7 @@ void test_parse_expression()
 {
 	test_parse_blank();
 	test_parse_add();
+	test_parse_add_mixed_types();
 	test_parse_add_positive();
 	test_parse_add_negative();
 	test_parse_sub();

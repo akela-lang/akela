@@ -744,6 +744,13 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root)
 	}
 
 	if (valid) {
+		assert(a);
+		struct type_node* tn = a->tn;
+		if (!tn) {
+			valid = set_source_error(ps->el, &loc, "parenthesis on expression that has no value");
+		} else {
+			n->tn = type_node_copy(tn);
+		}
 	}
 
 	/* destroy lp lp{} */

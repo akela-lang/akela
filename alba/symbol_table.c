@@ -193,25 +193,30 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	symbol_table_add_reserved(env, name, token_id, ti);
 }
 
+void symbol_table_add_numeric(struct symbol_table* st, char* name)
+{
+	struct buffer bf;
+	buffer_init(&bf);
+	buffer_copy_str(&bf, name);
+	struct symbol* sym = environment_get(st->top, &bf);
+	assert(sym);
+	assert(sym->ti);
+	type_info_add(st->numeric_pool, sym->ti);
+}
+
 void symbol_table_numeric_pool_init(struct symbol_table* st)
 {
-	char* numeric[] = {
-		"Int32",
-		"Int64",
-		"UInt32",
-		"UInt64",
-		"Float32",
-		"Float64",
-		"",
-	};
-
 	struct type_info* pool = NULL;
 	malloc_safe(&pool, sizeof(struct type_info));
 	type_info_init(pool);
-	struct buffer bf;
-	buffer_init(&bf);
-
 	st->numeric_pool = pool;
+
+	symbol_table_add_numeric(st, "Int32");
+	symbol_table_add_numeric(st, "Int64");
+	symbol_table_add_numeric(st, "UInt32");
+	symbol_table_add_numeric(st, "UInt64");
+	symbol_table_add_numeric(st, "Float32");
+	symbol_table_add_numeric(st, "Float64");
 }
 
 void symbol_table_init(struct symbol_table* st)
@@ -243,25 +248,33 @@ bool symbol_table_is_global(struct symbol_table* st)
 	return st->top && (st->top->prev == st->initial);
 }
 
+bool is_numeric(struct type_info* ti)
+{
+	return ti->type == type_integer || ti->type == type_float;
+}
+
 bool type_find(struct symbol_table* st, struct type_info* a, struct type_info* b, bool *promote, struct type_info** c)
 {
 	*promote = false;
 	*c = NULL;
 
-	if (buffer_compare(&a->name, &b->name)) {
+	if (a == b) {
 		return true;
 	}
 
-	if ((a->type == type_integer || a->type == type_float) && (b->type == type_integer || b->type == type_float)) {
+	if (is_numeric(a) && is_numeric(b)) {
 		enum type type = a->type;
 
 		if (b->type == type_float) {
 			type = b->type;
 		}
 
-		bool is_signed = a->is_signed;
-		if (b->is_signed) {
-			is_signed = b->is_signed;
+		bool is_signed = false;
+		if (type == type_integer) {
+			is_signed = a->is_signed;
+			if (b->is_signed) {
+				is_signed = b->is_signed;
+			}
 		}
 
 		int bit_count = a->bit_count;
@@ -270,12 +283,14 @@ bool type_find(struct symbol_table* st, struct type_info* a, struct type_info* b
 		}
 
 		struct type_info* x = st->numeric_pool->head;
+		assert(x);
 		do {
 			if (x->type == type && x->is_signed == is_signed && x->bit_count == bit_count) {
 				*promote = true;
 				*c = x;
 				return true;
 			}
+			x = x->next;
 		} while (x);
 	}
 
@@ -285,10 +300,7 @@ bool type_find(struct symbol_table* st, struct type_info* a, struct type_info* b
 bool type_find_whole(struct symbol_table* st, struct type_node* a, struct type_node* b)
 {
 	if (a && b) {
-		if (a->ti != b->ti) {
-			return false;
-		}
-		bool promote = false;
+		bool promote;
 		struct type_info* ti = NULL;
 		if (!type_find(st, a->ti, b->ti, &promote, &ti)) {
 			return false;
@@ -306,11 +318,12 @@ bool type_find_whole(struct symbol_table* st, struct type_node* a, struct type_n
 			if (x) x = x->next;
 			if (y) y = y->next;
 		} while (x || y);
+		
+		return true;
+
 	} else if (!a && !b) {
 		return true;
 	} else {
 		return false;
 	}
-
-	return true;
 }

@@ -28,7 +28,6 @@ struct type_info {
 	int bit_count;
 	bool is_generic;
 	int generic_count;
-	struct type_info* pool;
 	struct type_info* next;
 	struct type_info* prev;
 	struct type_info* head;

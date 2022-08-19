@@ -21,7 +21,6 @@ void type_info_init(struct type_info* n)
 	n->bit_count = 0;
 	n->is_generic = false;
 	n->generic_count = 0;
-	n->pool = NULL;
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;

@@ -11,13 +11,13 @@
     * function call []
     * factor []
   * expr
-    * add []
+    * add [x]
+    * mult [x]
     * array_subscript []
     * assignment []
     * boolean []
     * comparison []
     * expr []
-    * mult []
     * var [x]
     * parenthesis []
   * stmts
@@ -31,8 +31,8 @@
     * stmt []
     * stmts []
     * while []
-* change type_info to type_definition
-* change type_node to value_type
+* change type_info to type_def
+* change type_node to type_use
 * set location in dag on match and non-terminal
 * add type_set and type to dag_node
 * derive type from list in for x in list

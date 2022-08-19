@@ -8,6 +8,8 @@
 #include "scan.h"
 #include "parse_types.h"
 #include "parse_expr.h"
+#include "type_node.h"
+#include <assert.h>
 
 bool var(struct parse_state* ps, struct ast_node** root);
 bool assignment(struct parse_state* ps, struct ast_node** root);
@@ -434,6 +436,32 @@ bool add(struct parse_state* ps, struct ast_node** root)
 		}
 
 		if (valid) {
+			struct type_node* tn_a = a->tn;
+			struct type_node* tn_b = b->tn;
+
+			if (!tn_a) {
+				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
+			} else if (!is_numeric(tn_a->ti)) {
+				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand");
+			}
+
+			if (!tn_b) {
+				valid = set_source_error(ps->el, &loc_b, "%s operand has no value", op_name);
+			} else if (!is_numeric(tn_b->ti)) {
+				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand");
+			}
+
+			if (valid) {
+				struct type_node* tn = type_node_copy(tn_a);
+				if (!type_find_whole(ps->st, tn, tn_b)) {
+					struct location loc;
+					get_token_location(op, &loc);
+					valid = set_source_error(ps->el, &loc, "invalid types for %s", op_name);
+				} else {
+					n->tn = tn;
+				}
+			}
+
 			left = n;
 		}
 	}
@@ -531,6 +559,34 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 		}
 
 		if (valid) {
+			assert(a);
+			assert(b);
+			struct type_node* tn_a = a->tn;
+			struct type_node* tn_b = b->tn;
+
+			if (!tn_a) {
+				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
+			} else if (!is_numeric(tn_a->ti)) {
+				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand");
+			}
+
+			if (!tn_b) {
+				valid = set_source_error(ps->el, &loc_b, "%s operand has no value", op_name);
+			} else if (!is_numeric(tn_b->ti)) {
+				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand");
+			}
+
+			if (valid) {
+				struct type_node* tn = type_node_copy(tn_a);
+				if (!type_find_whole(ps->st, tn, tn_b)) {
+					struct location loc;
+					get_token_location(op, &loc);
+					valid = set_source_error(ps->el, &loc, "invalid types for %s", op_name);
+				} else {
+					n->tn = tn;
+				}
+			}
+
 			left = n;
 		}
 	}

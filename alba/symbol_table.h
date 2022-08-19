@@ -52,6 +52,8 @@ ALBA_API void symbol_table_destroy(struct symbol_table* st);
 
 ALBA_API bool symbol_table_is_global(struct symbol_table* st);
 
+ALBA_API bool is_numeric(struct type_info* ti);
+
 ALBA_API bool type_find_whole(struct symbol_table* st, struct type_node* a, struct type_node* b);
 
 #endif
