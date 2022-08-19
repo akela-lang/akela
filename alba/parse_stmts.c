@@ -13,6 +13,7 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include "parse_stmts.h"
+#include <assert.h>
 
 bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct ast_node** root);
@@ -356,8 +357,8 @@ bool for_range(struct parse_state* ps, struct ast_node** root)
 	environment_init(env, saved);
 	ps->st->top = env;
 
-	valid = for_range_start(ps, &n);
-	valid = for_range_finish(ps, n);
+	valid = for_range_start(ps, &n) && valid;
+	valid = for_range_finish(ps, n) && valid;
 
 	if (valid) {
 		*root = n;
@@ -437,20 +438,30 @@ bool for_range_start(struct parse_state* ps, struct ast_node** root)
 		ast_node_add(n, a);
 		ast_node_add(n, b);
 		*root = n;
-
-		struct symbol* sym = NULL;
-		malloc_safe(&sym, sizeof(struct symbol));
-		symbol_init(sym);
-		#pragma warning(suppress:6011)
-		sym->tk_type = id->type;
-		sym->dec = n;
-		/* should get type information from list */
-		#pragma warning(suppress:6011)
-		environment_put(ps->st->top, &id->value, sym);
-
 	} else {
 		ast_node_destroy(a);
 		ast_node_destroy(b);
+	}
+
+	if (valid) {
+		struct symbol* sym = environment_get(ps->st->top, &id->value);
+
+		if (sym && sym->td) {
+			struct location loc;
+			get_token_location(id, &loc);
+			char* a;
+			buffer2array(&id->value, &a);
+			valid = set_source_error(ps->el, &loc, "identifier reserved as a type: %s", a);
+			free(a);
+		} else {
+			struct symbol* new_sym = NULL;
+			malloc_safe(&new_sym, sizeof(struct symbol));
+			symbol_init(new_sym);
+			new_sym->tk_type = id->type;
+			new_sym->dec = n;
+			/* should get type information from list */
+			environment_put(ps->st->top, &id->value, new_sym);
+		}
 	}
 
 	/* destroy end end{} */
@@ -578,20 +589,30 @@ bool for_iteration_start(struct parse_state* ps, struct ast_node** root)
 
 		/* transfer n -> root */
 		*root = n;
-
-		struct symbol* sym = NULL;
-		malloc_safe(&sym, sizeof(struct symbol));
-		symbol_init(sym);
-		#pragma warning(suppress:6011)
-		sym->tk_type = id->type;
-		sym->dec = n;
-		/* should get type information from list */
-		#pragma warning(suppress:6011)
-		environment_put(ps->st->top, &id->value, sym);
-
 	} else {
 		ast_node_destroy(list);
 	}
+
+	if (valid) {
+		assert(id);
+		struct symbol* sym = environment_get(ps->st->top, &id->value);
+		if (sym && sym->td) {
+			char* a;
+			buffer2array(&id->value, &a);
+			valid = set_source_error(ps->el, &loc, "identifier reserved as a type: %s", a);
+			free(a);
+		} else {
+			struct symbol* new_sym = NULL;
+			malloc_safe(&new_sym, sizeof(struct symbol));
+			symbol_init(new_sym);
+			new_sym->tk_type = id->type;
+			new_sym->dec = n;
+			/* should get type information from list */
+			environment_put(ps->st->top, &id->value, new_sym);
+		}
+
+	}
+
 
 	token_destroy(for_token);
 	free(for_token);

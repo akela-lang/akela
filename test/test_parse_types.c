@@ -115,9 +115,24 @@ void test_parse_types_reserved_type3()
 	struct parse_state ps;
 	struct ast_node* root;
 
+	bool valid = parse_setup("for Int64 = 1:10 end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "identifier reserved as a type: Int64");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
+void test_parse_types_reserved_type4()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct ast_node* root;
+
 	bool valid = parse_setup("var list::Vector{Int64}; for Int64 in list end", &ps, &root);
 	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "expected identifier after for");
+	expect_compile_error(ps.el, "identifier reserved as a type: Int64");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);
@@ -221,6 +236,7 @@ void test_parse_types()
 	test_parse_types_reserved_type();
 	test_parse_types_reserved_type2();
 	test_parse_types_reserved_type3();
+	test_parse_types_reserved_type4();
 	test_parse_types_exists();
 	test_parse_types_array();
 	test_parse_types_array_error();
