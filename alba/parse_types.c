@@ -216,12 +216,20 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 
 		if (valid) {
 			if (id) {
-				struct symbol* new_sym = NULL;
-				malloc_safe(&new_sym, sizeof(struct symbol));
-				symbol_init(new_sym);
-				new_sym->tk_type = token_id;
-				new_sym->tu = tu;
-				environment_put(ps->st->top, &id->value, new_sym);
+				struct symbol* search = environment_get_local(ps->st->top, &id->value);
+				if (search) {
+					char* a;
+					buffer2array(&id->value, &a);
+					valid = set_source_error(ps->el, &loc, "duplicate declaration in same scope: %s", a);
+					free(a);
+				} else {
+					struct symbol* new_sym = NULL;
+					malloc_safe(&new_sym, sizeof(struct symbol));
+					symbol_init(new_sym);
+					new_sym->tk_type = token_id;
+					new_sym->tu = tu;
+					environment_put(ps->st->top, &id->value, new_sym);
+				}
 			}
 		}
 

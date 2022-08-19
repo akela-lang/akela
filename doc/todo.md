@@ -13,10 +13,10 @@
   * expr
     * add [x]
     * mult [x]
-    * array_subscript []
-    * assignment []
     * boolean []
     * comparison []
+    * array_subscript []
+    * assignment []
     * expr []
     * var [x]
     * parenthesis []
@@ -32,6 +32,7 @@
     * for iteration []
     * for range []
     * function []
+* annotate test case name where each error is generated
 * set location in dag on match and non-terminal
 * add type_set and type to dag_node
 * derive type from list in for x in list
