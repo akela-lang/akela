@@ -21,6 +21,8 @@
     * var [x]
     * parenthesis []
   * stmts
+    * for iteration [x]
+    * for range [x]
     * if []
     * elseif
     * else
@@ -29,8 +31,6 @@
     * stmt []
     * stmts []
     * while []
-    * for iteration []
-    * for range []
     * function []
 * annotate test case name where each error is generated
 * set location in dag on match and non-terminal
