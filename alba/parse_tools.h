@@ -29,4 +29,6 @@ ALBA_API bool match(struct parse_state* ps, enum token_enum type, char* reason, 
 /* dynamic-output ps{} */
 ALBA_API bool get_parse_location(struct parse_state* ps, struct location* loc);
 
+ALBA_API bool is_identity_comparison(enum ast_type type);
+
 #endif

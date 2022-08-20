@@ -349,11 +349,11 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 			} else if (!b->tu) {
 				valid = set_source_error(ps->el, &loc, "operand has no value");
 			} else {
-				if (!is_numeric(left->tu->td)) {
+				if (!is_identity_comparison(type) && !is_numeric(left->tu->td)) {
 					struct location loc;
 					get_token_location(op, &loc);
 					valid = set_source_error(ps->el, &loc, "comparison operand is not numeric");
-				} else if (!is_numeric(b->tu->td)) {
+				} else if (!is_identity_comparison(type) && !is_numeric(b->tu->td)) {
 					valid = set_source_error(ps->el, &loc, "comparison operand is not numeric");
 				} else {
 					struct type_use* tu = type_use_copy(left->tu);

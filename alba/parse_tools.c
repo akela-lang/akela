@@ -6,6 +6,7 @@
 #include "zinc/result.h"
 #include "scan.h"
 #include "source.h"
+#include "ast.h"
 
 /* dynamic-output-none */
 /* initialize-output ps ps{}*/
@@ -117,4 +118,9 @@ bool get_parse_location(struct parse_state* ps, struct location* loc)
 	loc->byte_pos = t->byte_pos;
 
 	return valid;
+}
+
+bool is_identity_comparison(enum ast_type type)
+{
+	return type == ast_type_equality || type == ast_type_not_equal;
 }

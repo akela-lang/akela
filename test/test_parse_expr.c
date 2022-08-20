@@ -1119,6 +1119,59 @@ void test_parse_comparison()
 }
 
 /* dynamic-output-none */
+void test_parse_comparison_identity()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("true == true; true != true", &ps, &root);
+	expect_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+
+	struct ast_node* comp0 = ast_node_get(root, 0);
+	assert_ptr(comp0, "ptr comp0");
+	assert_ptr(comp0->tu, "ptr comp0->tu");
+	assert_ptr(comp0->tu->td, "ptr comp0->tu->td");
+	expect_int_equal(comp0->tu->td->type, type_boolean, "boolean comp0->tu->td->type");
+	expect_str(&comp0->tu->td->name, "Bool", "Bool comp0->tu->td->name");
+
+	struct ast_node* comp1 = ast_node_get(root, 1);
+	assert_ptr(comp1, "ptr comp1");
+	assert_ptr(comp1->tu, "ptr comp->tu1");
+	assert_ptr(comp1->tu->td, "ptr comp1->tu->td");
+	expect_int_equal(comp1->tu->td->type, type_boolean, "boolean comp1->tu->td->type");
+	expect_str(&comp1->tu->td->name, "Bool", "Bool comp1->tu->td->name");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_comparison_non_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("1 < true", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "comparison operand is not numeric");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
 void test_parse_and()
 {
 	test_name(__func__);
@@ -1497,6 +1550,8 @@ void test_parse_expression()
 	test_parse_paren_mult_mult();
 	test_parse_paren_mult_mult2();
 	test_parse_comparison();
+	test_parse_comparison_identity();
+	test_parse_comparison_non_numeric();
 	test_parse_and();
 	test_parse_or();
 	test_parse_or_or();
