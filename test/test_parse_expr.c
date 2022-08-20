@@ -1037,13 +1037,21 @@ void test_parse_comparison()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var count::Int64\ncount == 10\ncount != 11\ncount <= 12\ncount >= 13", &ps, &root);
+	bool valid = parse_setup("var count::Int64 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
 	struct ast_node* cond0 = ast_node_get(root, 1);
 	assert_ptr(cond0, "ptr cond0");
 	expect_int_equal(cond0->type, ast_type_equality, "equality cond0");
+
+	struct type_use* cond0_tu = cond0->tu;
+	assert_ptr(cond0_tu, "ptr cond0_tu");
+	
+	struct type_def* cond0_td = cond0_tu->td;
+	assert_ptr(cond0_td, "ptr cond0_td");
+	expect_int_equal(cond0_td->type, type_integer, "integer cond0_td");
+	expect_str(&cond0_td->name, "Int64", "Int64 cond0_td");
 
 	struct ast_node* left0 = ast_node_get(cond0, 0);
 	assert_ptr(left0, "ptr left0");
@@ -1059,6 +1067,14 @@ void test_parse_comparison()
 	assert_ptr(cond1, "ptr cond1");
 	expect_int_equal(cond1->type, ast_type_not_equal, "not equal cond1");
 
+	struct type_use* cond1_tu = cond1->tu;
+	assert_ptr(cond1_tu, "ptr cond1_tu");
+
+	struct type_def* cond1_td = cond1_tu->td;
+	assert_ptr(cond1_td, "ptr cond0_td");
+	expect_int_equal(cond1_td->type, type_float, "float cond1_td");
+	expect_str(&cond1_td->name, "Float64", "Float64 cond1_td");
+
 	struct ast_node* left1 = ast_node_get(cond1, 0);
 	assert_ptr(left1, "ptr left1");
 	expect_int_equal(left1->type, ast_type_id, "id left1");
@@ -1067,7 +1083,7 @@ void test_parse_comparison()
 	struct ast_node* right1 = ast_node_get(cond1, 1);
 	assert_ptr(right1, "ptr right1");
 	expect_int_equal(right1->type, ast_type_number, "number right1");
-	expect_str(&right1->value, "11", "11 right1");
+	expect_str(&right1->value, "11.1", "11.1 right1");
 
 	struct ast_node* cond2 = ast_node_get(root, 3);
 	assert_ptr(cond2, "ptr cond2");

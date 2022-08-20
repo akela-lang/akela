@@ -238,6 +238,7 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 			ast_node_destroy(b);
 			break;
 		}
+
 	}
 
 	if (valid) {
@@ -334,9 +335,33 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 
 			ast_node_add(n, left);
 			ast_node_add(n, b);
-			left = n;
 		} else {
 			ast_node_destroy(b);
+		}
+
+		if (valid) {
+			assert(a);
+			assert(b);
+			if (!left->tu) {
+				struct location loc;
+				get_token_location(op, &loc);
+				valid = set_source_error(ps->el, &loc, "operand has no value");
+			} else if (!b->tu) {
+				valid = set_source_error(ps->el, &loc, "operand has no value");
+			} else {
+				if (!is_numeric(left->tu->td)) {
+					struct location loc;
+					get_token_location(op, &loc);
+					valid = set_source_error(ps->el, &loc, "comparison operand is not numeric");
+				} else if (!is_numeric(b->tu->td)) {
+					valid = set_source_error(ps->el, &loc, "comparison operand is not numeric");
+				} else {
+					struct type_use* tu = type_use_copy(left->tu);
+					type_find_whole(ps->st, tu, b->tu);
+					n->tu = tu;
+				}
+			}
+			left = n;
 		}
 	}
 

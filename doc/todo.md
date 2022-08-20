@@ -13,8 +13,8 @@
   * expr
     * add [x]
     * mult [x]
+    * comparison [x]
     * boolean []
-    * comparison []
     * array_subscript []
     * assignment []
     * expr []
