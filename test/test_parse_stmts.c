@@ -1528,17 +1528,24 @@ void test_parse_for_range()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("for i = 0:10 1 end", &ps, &root);
+	bool valid = parse_setup("for i::Int64 = 0:10 1 end", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
 	/* for */
-	struct ast_node* node = check_stmts(root, "stmts root");
+	struct ast_node* node = ast_node_get(root, 0);
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_for_range, "for-range node");
 
 	/* i */
-	struct ast_node* id = ast_node_get(node, 0);
+	struct ast_node* dec = ast_node_get(node, 0);
+	assert_ptr(dec, "ptr dec");
+	expect_int_equal(dec->type, ast_type_declaration, "declaration dec");
+
+	struct ast_node* id = ast_node_get(dec, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "i", "i id");
@@ -1574,7 +1581,7 @@ void test_parse_for_range2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("for i = 0:10 var i::Int64 = 1 end", &ps, &root);
+	bool valid = parse_setup("for i::Int64 = 0:10 var i::Int64 = 1 end", &ps, &root);
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse_setup valid");
 	expect_compile_error(ps.el, "duplicate declaration in same scope: i");
@@ -1588,13 +1595,12 @@ void test_parse_for_range2()
 void test_parse_for_iteration()
 {
 	test_name(__func__);
-	return 0;
 
 	struct ast_node* root;
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i in list i end", &ps, &root);
+	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 in list i end", &ps, &root);
 	expect_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
@@ -1606,11 +1612,28 @@ void test_parse_for_iteration()
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_for_iteration, "for-iteration node");
 
+	/* declaration */
+	struct ast_node* dec = ast_node_get(node, 0);
+	assert_ptr(dec, "ptr dec");
+	expect_int_equal(dec->type, ast_type_declaration, "declaration dec");
+
 	/* id */
-	struct ast_node* id = ast_node_get(node, 0);
+	struct ast_node* id = ast_node_get(dec, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "i", "i id");
+
+	struct ast_node* i_type = ast_node_get(dec, 1);
+	assert_ptr(i_type, "ptr i_type");
+	expect_int_equal(i_type->type, ast_type_type, "type i_type");
+
+	struct type_use* i_tu = i_type->tu;
+	assert_ptr(i_tu, "ptr i_tu");
+
+	struct type_def* i_td = i_tu->td;
+	assert_ptr(i_td, "ptr i_td");
+	expect_int_equal(i_td->type, type_integer, "integer i_td");
+	expect_str(&i_td->name, "Int64", "Int64 i_td");
 
 	/* expr */
 	struct ast_node* expr = ast_node_get(node, 1);
@@ -1642,7 +1665,7 @@ void test_parse_for_iteration2()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i in list var i::Int64 = 1 end", &ps, &root);
+	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 in list var i::Int64 = 1 end", &ps, &root);
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse_setup valid");
 	expect_compile_error(ps.el, "duplicate declaration in same scope: i");

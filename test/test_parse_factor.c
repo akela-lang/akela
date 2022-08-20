@@ -592,7 +592,6 @@ void test_parse_array_literal_numeric()
 	struct ast_node* root;
 	struct parse_state ps;
 	bool valid;
-	return 0;
 
 	/* allocate ps{} root root{} */
 	valid = parse_setup("[1, 2.5, 3]", &ps, &root);

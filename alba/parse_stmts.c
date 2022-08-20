@@ -19,12 +19,8 @@ bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct ast_node** root);
 bool while_nt(struct parse_state* ps, struct ast_node** root);
 bool for_nt(struct parse_state* ps, struct ast_node** root);
-bool for_range(struct parse_state* ps, struct ast_node** root);
-bool for_range_start(struct parse_state* ps, struct ast_node** root);
-bool for_range_finish(struct parse_state* ps, struct ast_node* n);
-bool for_iteration(struct parse_state* ps, struct ast_node** root);
-bool for_iteration_start(struct parse_state* ps, struct ast_node** root);
-bool for_iteration_finish(struct parse_state* ps, struct ast_node* n);
+bool for_range(struct parse_state* ps, struct ast_node* parent);
+bool for_iteration(struct parse_state* ps, struct ast_node* parent);
 bool function(struct parse_state* ps, struct ast_node** root);
 bool function_start(struct parse_state* ps, struct ast_node** root);
 bool function_finish(struct parse_state* ps, struct ast_node* fd);
@@ -310,46 +306,12 @@ bool for_nt(struct parse_state* ps, struct ast_node** root)
 	int num;
 	struct ast_node* n = NULL;
 
-	/* allocate ps{} */
-	valid = get_lookahead(ps, 3, &num) && valid;
-	struct token* t1 = get_token(&ps->lookahead, 1);
-	struct token* t2 = get_token(&ps->lookahead, 2);
+	/* allocate ps{} f f{} */
+	struct token* f = NULL;
+	valid = match(ps, token_for, "expected for", &f) && valid;
 
-	if (t1 && t1->type == token_id && t2 && t2->type == token_equal) {
-		/* allocate ps{} n n{} */
-		valid = for_range(ps, &n) && valid;
-	} else if (t1 && t1->type == token_id && t2 && t2->type == token_in) {
-		/* allocate ps{} n n{} */
-		valid = for_iteration(ps, &n) && valid;
-	} else {
-		/* allocate ps{} */
-		struct token* id = NULL;
-		valid = match(ps, token_id, "expected identifier after for", &id) && valid;
-
-		/* destroy id id{} */
-		token_destroy(id);
-		free(id);
-
-		/* allocate ps{} */
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
-		/* allocate ps{} */
-		valid = set_source_error(ps->el, &loc, "expected = or in after for and id");
-	}
-
-	if (valid) {
-		*root = n;
-	}
-
-	return valid;
-}
-
-/* for_range -> for id = expr:expr stmts end */
-/* dynamic-output ps{} root root{} */
-bool for_range(struct parse_state* ps, struct ast_node** root)
-{
-	bool valid = true;
-	struct ast_node* n = NULL;
+	struct location loc_dec;
+	get_parse_location(ps, &loc_dec);
 
 	struct environment* saved = ps->st->top;
 	struct environment* env = NULL;
@@ -357,14 +319,57 @@ bool for_range(struct parse_state* ps, struct ast_node** root)
 	environment_init(env, saved);
 	ps->st->top = env;
 
-	valid = for_range_start(ps, &n) && valid;
-	valid = for_range_finish(ps, n) && valid;
+	struct ast_node* dec = NULL;
+	valid = declaration(ps, &dec) && valid;
+
+	valid = get_lookahead(ps, 1, &num) && valid;
+	struct token* t0 = get_token(&ps->lookahead, 0);
+	struct location loc;
+	valid = get_parse_location(ps, &loc) && valid;
+
+	if (t0 && t0->type == token_equal) {
+		ast_node_create(&n);
+		n->type = ast_type_for_range;
+		if (dec) {
+			ast_node_add(n, dec);
+		}
+		valid = for_range(ps, n) && valid;
+
+	} else if (t0 && t0->type == token_in) {
+		ast_node_create(&n);
+		n->type = ast_type_for_iteration;
+		if (dec) {
+			ast_node_add(n, dec);
+		}
+		valid = for_iteration(ps, n) && valid;
+
+	} else {
+		valid = set_source_error(ps->el, &loc, "expected an = or in after for element declaration");
+	}
+
+	struct ast_node* c = NULL;
+	valid = stmts(ps, true, &c) && valid;
+
+	/* allocate ps{} end end{} */
+	struct token* end = NULL;
+	valid = match(ps, token_end, "expected end", &end) && valid;
+
+	if (valid) {
+		ast_node_add(n, c);
+	}
+
 
 	if (valid) {
 		*root = n;
 	} else {
-		ast_node_destroy(n);
+		ast_node_destroy(dec);
+		ast_node_destroy(c);
 	}
+
+	token_destroy(f);
+	free(f);
+	token_destroy(end);
+	free(end);
 
 	ps->st->top = saved;
 	environment_destroy(env);
@@ -372,18 +377,11 @@ bool for_range(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool for_range_start(struct parse_state* ps, struct ast_node** root)
+/* for_range -> for id = expr:expr stmts end */
+/* dynamic-output ps{} root root{} */
+bool for_range(struct parse_state* ps, struct ast_node* parent)
 {
 	bool valid = true;
-	struct ast_node* n = NULL;
-
-	/* allocate ps{} f f{} */
-	struct token* f = NULL;
-	valid = match(ps, token_for, "expected for", &f) && valid;
-
-	/* allocate ps{} id id{} */
-	struct token* id = NULL;
-	valid = match(ps, token_id, "expected id", &id) && valid;
 
 	/* allocate ps{} equal equal{} */
 	struct token* equal = NULL;
@@ -420,141 +418,38 @@ bool for_range_start(struct parse_state* ps, struct ast_node** root)
 	}
 
 	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-		n->type = ast_type_for_range;
-
-		/* id */
-		/* allocate a */
-		struct ast_node* id_node = NULL;
-		ast_node_create(&id_node);
-		id_node->type = ast_type_id;
-
-		/* allocate a{} */
-		buffer_copy(&id->value, &id_node->value);
-
-		/* transfer a -> n{} */
-		ast_node_add(n, id_node);
-		ast_node_add(n, a);
-		ast_node_add(n, b);
-		*root = n;
+		ast_node_add(parent, a);
+		ast_node_add(parent, b);
 	} else {
 		ast_node_destroy(a);
 		ast_node_destroy(b);
 	}
 
-	if (valid) {
-		struct symbol* sym = environment_get(ps->st->top, &id->value);
-
-		if (sym && sym->td) {
-			struct location loc;
-			get_token_location(id, &loc);
-			char* a;
-			buffer2array(&id->value, &a);
-			valid = set_source_error(ps->el, &loc, "identifier reserved as a type: %s", a);
-			free(a);
-		} else {
-			struct symbol* new_sym = NULL;
-			malloc_safe(&new_sym, sizeof(struct symbol));
-			symbol_init(new_sym);
-			new_sym->tk_type = id->type;
-			new_sym->dec = n;
-			/* should get type information from list */
-			environment_put(ps->st->top, &id->value, new_sym);
-		}
-	}
-
 	/* destroy end end{} */
-	token_destroy(f);
-	free(f);
-	token_destroy(id);
-	free(id);
 	token_destroy(equal);
 	free(equal);
 	token_destroy(colon);
 	free(colon);
 
-	return valid;
-}
-
-bool for_range_finish(struct parse_state* ps, struct ast_node* n)
-{
-	bool valid = true;
-
-	if (!n) {
-		valid = false;
-	}
-
-	/* stmts */
-	/* allocate ps{} d d{} */
-	struct ast_node* c = NULL;
-	valid = stmts(ps, true, &c) && valid;
-
-	/* allocate ps{} end end{} */
-	struct token* end = NULL;
-	valid = match(ps, token_end, "expected end", &end) && valid;
-
 	if (valid) {
-		ast_node_add(n, c);	
-	} else {
-		ast_node_destroy(c);
 	}
-
-	/* destroy end end{} */
-	token_destroy(end);
-	free(end);
 
 	return valid;
 }
 
 /* for_iteration -> for id in expr stmts end */
 /* dynamic-output ps{} root root{} */
-bool for_iteration(struct parse_state* ps, struct ast_node** root)
+bool for_iteration(struct parse_state* ps, struct ast_node* parent)
 {
 	bool valid = true;
-	struct ast_node* n = NULL;
-
-	struct environment* saved = ps->st->top;
-	struct environment* env = NULL;
-	malloc_safe(&env, sizeof(struct environment));
-	environment_init(env, saved);
-	ps->st->top = env;
-
-	valid = for_iteration_start(ps, &n) && valid;
-	valid = for_iteration_finish(ps, n) && valid;
-
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	ps->st->top = saved;
-	environment_destroy(env);
-
-	return valid;
-}
-
-bool for_iteration_start(struct parse_state* ps, struct ast_node** root)
-{
-	bool valid = true;
-	struct ast_node* n = NULL;
-
-	/* allocate ps{} fort fort{} */
-	struct token* for_token = NULL;
-	valid = match(ps, token_for, "expecting for", &for_token) && valid;
-
-	/* allocate ps{} id id{} */
-	struct token* id = NULL;
-	valid = match(ps, token_id, "expecting id", &id) && valid;
 
 	/* allocate ps{} in in{} */
 	struct token* in = NULL;
 	valid = match(ps, token_in, "expecting in", &in) && valid;
 
 	/* allocate ps{} */
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
+	struct location loc_list;
+	valid = get_parse_location(ps, &loc_list) && valid;
 
 	/* expr */
 	/* allocate ps{} b b{} */
@@ -562,94 +457,21 @@ bool for_iteration_start(struct parse_state* ps, struct ast_node** root)
 	valid = expr(ps, &list) && valid;
 
 	if (!list) {
-		set_source_error(ps->el, &loc, "expected expression after for-iteration");
+		set_source_error(ps->el, &loc_list, "expected expression after for-iteration");
 		valid = false;
 	}
 
 	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-		n->type = ast_type_for_iteration;
-
-		/* allocate element */
-		struct ast_node* element = NULL;
-		ast_node_create(&element);
-		element->type = ast_type_id;
-
-		/* allocate element{} */
-		if (id) {
-			buffer_copy(&id->value, &element->value);
-		}
-
-		/* transfer element -> n{} */
-		ast_node_add(n, element);
-
-		/* transfer list -> n{} */
-		ast_node_add(n, list);
-
-		/* transfer n -> root */
-		*root = n;
+		ast_node_add(parent, list);
 	} else {
 		ast_node_destroy(list);
 	}
 
 	if (valid) {
-		assert(id);
-		struct symbol* sym = environment_get(ps->st->top, &id->value);
-		if (sym && sym->td) {
-			char* a;
-			buffer2array(&id->value, &a);
-			valid = set_source_error(ps->el, &loc, "identifier reserved as a type: %s", a);
-			free(a);
-		} else {
-			struct symbol* new_sym = NULL;
-			malloc_safe(&new_sym, sizeof(struct symbol));
-			symbol_init(new_sym);
-			new_sym->tk_type = id->type;
-			new_sym->dec = n;
-			/* should get type information from list */
-			environment_put(ps->st->top, &id->value, new_sym);
-		}
-
 	}
 
-
-	token_destroy(for_token);
-	free(for_token);
-	token_destroy(id);
-	free(id);
 	token_destroy(in);
 	free(in);
-
-	return valid;
-}
-
-bool for_iteration_finish(struct parse_state* ps, struct ast_node* n)
-{
-	bool valid = true;
-
-	if (!n) {
-		valid = false;
-	}
-
-	/* stmts */
-	/* allocate ps{} c c{} */
-	struct ast_node* stmts_node = NULL;
-	valid = stmts(ps, true, &stmts_node) && valid;
-
-	/* allocate ps{} end end{} */
-	struct token* end = NULL;
-	valid = match(ps, token_end, "expected end", &end) && valid;
-
-	if (valid) {
-		/* transfer stmts_node -> n{} */
-		ast_node_add(n, stmts_node);
-	} else {
-		ast_node_destroy(stmts_node);
-	}
-
-	token_destroy(end);
-	free(end);
 
 	return valid;
 }
