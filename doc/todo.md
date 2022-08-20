@@ -15,11 +15,9 @@
     * mult [x]
     * comparison [x]
     * boolean [x]
-    * array_subscript []
-    * assignment []
-    * expr []
+    * array_subscript [x]
     * var [x]
-    * parenthesis []
+    * assignment []
   * stmts
     * for iteration [x]
     * for range [x]

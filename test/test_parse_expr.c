@@ -1313,6 +1313,14 @@ void test_parse_array_subscript()
 	assert_ptr(as, "ptr as");
 	expect_int_equal(as->type, ast_type_array_subscript, "array-subscript as");
 
+	struct type_use* tu = as->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
+
 	struct ast_node* name = ast_node_get(as, 0);
 	assert_ptr(name, "ptr name");
 	expect_int_equal(name->type, ast_type_id, "id name");
@@ -1345,6 +1353,14 @@ void test_parse_array_subscript2()
 	struct ast_node* a = ast_node_get(root, 2);
 	assert_ptr(a, "ptr a");
 	assert_int_equal(a->type, ast_type_array_subscript, "array-subscript a");
+
+	struct type_use* tu = a->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	struct ast_node* a0 = ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
@@ -1380,13 +1396,21 @@ void test_parse_array_subscript3()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("var a::Vector{Int64}; a[1][2]", &ps, &root);
+	valid = parse_setup("var a::Vector{Vector{Int64}}; a[1][2]", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
 	struct ast_node* a = ast_node_get(root, 1);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_subscript, "array-subscript a");
+
+	struct type_use* tu = a->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
 
 	struct ast_node* a0 = ast_node_get(a, 0);
 	expect_int_equal(a0->type, ast_type_id, "id a0");

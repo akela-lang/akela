@@ -655,6 +655,11 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root)
 	/* allocate ps{} n n{} */
 	valid = factor(ps, &a) && valid;
 
+	struct type_use* tu = NULL;
+	struct type_use* element_tu = NULL;
+
+	struct location loc;
+	valid = get_parse_location(ps, &loc) && valid;
 
 	while (true) {
 		/* allocate ps{} */
@@ -663,6 +668,22 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root)
 
 		if (!t0 || t0->type != token_left_square_bracket) {
 			break;
+		}
+
+		if (valid) {
+			if (!tu) {
+				tu = a->tu;
+			} else {
+				tu = type_use_get(tu, 0);
+			}
+
+			element_tu = type_use_get(tu, 0);
+
+			if (!tu) {
+				valid = set_source_error(ps->el, &loc, "subscripting a expression with no type");
+			} else if (tu->td->type != type_array) {
+				valid = set_source_error(ps->el, &loc, "subscripting an expression that is not an array");
+			}
 		}
 
 		/* allocate ps{} lsb lsb{} */
@@ -697,13 +718,26 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root)
 		}
 	}
 
-	if (!n && a) {
-		n = a;
+	if (valid) {
+		if (n) {
+			if (!element_tu) {
+				valid = set_source_error(ps->el, &loc, "subscripting a expression with no type");
+			} else {
+				n->tu = type_use_copy(element_tu);
+			}
+		} else {
+			if (a) {
+				n = a;
+			}
+		}
 	}
 
 	/* transfer n -> root */
 	if (valid) {
 		*root = n;
+	} else {
+		ast_node_destroy(n);
 	}
+
 	return valid;
 }
