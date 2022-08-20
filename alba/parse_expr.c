@@ -233,10 +233,27 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 		if (valid) {
 			ast_node_add(n, left);
 			ast_node_add(n, b);
-			left = n;
 		} else {
 			ast_node_destroy(b);
 			break;
+		}
+
+		if (valid) {
+			if (!left->tu) {
+				struct location loc;
+				valid = set_source_error(ps->el, &loc, "left-side operand of boolean operator has no type");
+			} else if (!b->tu) {
+				valid = set_source_error(ps->el, &loc, "operand of boolean operator has no type");
+			} else if (left->tu->td->type != type_boolean) {
+				get_token_location(op, &loc);
+				valid = set_source_error(ps->el, &loc, "left-side expression of boolean operator is not boolean");
+			} else if (b->tu->td->type != type_boolean) {
+				valid = set_source_error(ps->el, &loc, "expression of boolean operator is not boolean");
+			} else {
+				n->tu = type_use_copy(left->tu);
+			}
+
+			left = n;
 		}
 
 	}

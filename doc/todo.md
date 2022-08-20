@@ -14,7 +14,7 @@
     * add [x]
     * mult [x]
     * comparison [x]
-    * boolean []
+    * boolean [x]
     * array_subscript []
     * assignment []
     * expr []

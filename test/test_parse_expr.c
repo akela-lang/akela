@@ -1214,7 +1214,7 @@ void test_parse_or()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var a::Int64; var b::Int64; a || b", &ps, &root);
+	bool valid = parse_setup("var a::Bool; var b::Bool; a || b", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
@@ -1224,6 +1224,14 @@ void test_parse_or()
 	struct ast_node* or = ast_node_get(root, 2);
 	assert_ptr(or, "ptr or");
 	expect_int_equal(or->type, ast_type_or, "or or");
+
+	struct type_use* tu = or->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_str(&td->name, "Bool", "Bool td");
 
 	struct ast_node* a = ast_node_get(or, 0);
 	assert_ptr(a, "ptr a");
@@ -1249,7 +1257,7 @@ void test_parse_or_or()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var a::Int64; var b::Int64; var c::Int64; a || b || c", &ps, &root);
+	bool valid = parse_setup("var a::Bool; var b::Bool; var c::Bool; a || b || c", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
