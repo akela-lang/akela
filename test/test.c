@@ -12,6 +12,7 @@
 #include "test_parse_types.h"
 #include "test_parse_factor.h"
 #include "test_type.h"
+#include "test_scan_number.h"
 
 /* dynamic-output-none */
 int main(void) {
@@ -21,6 +22,7 @@ int main(void) {
 	test_token();
 	test_hash();
 	test_scan();
+	test_scan_number();
 	test_ast();
 	test_type();
 	test_parse_factor();

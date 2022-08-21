@@ -11,7 +11,6 @@
 
 struct scan_state {
     struct lookahead_char* lc;
-    struct word_table* wt;
     struct symbol_table* st;
     struct compile_error_list* el;
 };
@@ -48,6 +47,7 @@ enum state_enum {
     state_number_whole,
     state_number_fraction,
     state_number_exponent_start,
+    state_number_exponent_sign_start,
     state_number_exponent,
     state_string,
     state_string_backslash,

@@ -32,7 +32,11 @@ bool compound_operator_start(UChar32 uc)
 /* dynamic-output-none */
 bool is_number_state(enum state_enum state)
 {
-    return state == state_number_whole || state == state_number_fraction || state == state_number_exponent_start || state == state_number_exponent;
+    return state == state_number_whole
+        || state == state_number_fraction
+        || state == state_number_exponent_start
+        || state == state_number_exponent_sign_start
+        || state == state_number_exponent;
 }
 
 /* dynamic-output-none */
@@ -206,7 +210,6 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
 {
     bool valid = true;
     struct lookahead_char* lc = sns->lc;
-    struct word_table* wt = sns->wt;
     UChar32 uc;
     if (lc->la_size > 0) {
         uc = lc->la0_32;
@@ -353,20 +356,27 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
                 /* allocate t{} */
                 buffer_add_char(&t->value, lc->la0_8[i]);
             }
-        } else if (uc == '-') {
-            *state = state_number_exponent;
+        } else if (uc == '-' || uc == '+') {
+            *state = state_number_exponent_sign_start;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
                 /* allocate t{} */
-                buffer_add_char(&t->value, lc->la0_8[i]);
-            }
-        } else if (uc == '+') {
-            *state = state_number_exponent;
-            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
                 buffer_add_char(&t->value, lc->la0_8[i]);
             }
         } else {
             /* shound not happen because of lookahead: expecting <digit>, <->, or <+> after e in number */
             assert(false);
+        }
+    } else if (*state == state_number_exponent_sign_start) {
+        if (u_isdigit(uc)) {
+            *state = state_number_exponent;
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                /* allocate t{} */
+                buffer_add_char(&t->value, lc->la0_8[i]);
+            }
+        } else {
+            struct location loc;
+            get_scan_location(sns, &loc);
+            valid = set_source_error(sns->el, &loc, "invalid number");
         }
     } else if (*state == state_number_exponent) {
         if (u_isdigit(uc)) {
