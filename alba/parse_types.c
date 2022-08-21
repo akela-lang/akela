@@ -198,12 +198,12 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 			if (!sym) {
 				char* a;
 				buffer2array(&name->value, &a);
-				valid = set_source_error(ps->el, &loc, "type not defined", a);
+				valid = set_source_error(ps->el, &loc, "type not defined: %s", a);
 				free(a);
 			} else if (!sym->td) {
 				char* a;
 				buffer2array(&name->value, &a);
-				valid = set_source_error(ps->el, &loc, "identifier is not a type", a);
+				valid = set_source_error(ps->el, &loc, "identifier is not a type: %s", a);
 				free(a);
 			} else if (is_generic && !sym->td->is_generic) {
 				char* a;

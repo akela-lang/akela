@@ -110,6 +110,8 @@ bool var(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
+/* assignment -> rhs = assignment | boolean */
+/* rhs = id | array_subscript */
 bool assignment(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
