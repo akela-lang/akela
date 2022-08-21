@@ -21,22 +21,13 @@ void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct c
     sns->lc = lc;
     sns->el = el;
     sns->st = st;
+    sns->last_state = state_start;
 }
 
 /* dynamic-output-none */
 bool compound_operator_start(UChar32 uc)
 {
     return uc == '=' || uc == '!' || uc == '<' || uc == '>' || uc == '&' || uc == '|' || uc == ':';
-}
-
-/* dynamic-output-none */
-bool is_number_state(enum state_enum state)
-{
-    return state == state_number_whole
-        || state == state_number_fraction
-        || state == state_number_exponent_start
-        || state == state_number_exponent_sign_start
-        || state == state_number_exponent;
 }
 
 /* dynamic-output-none */
@@ -277,6 +268,16 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
     return valid;
 }
 
+/* dynamic-output-none */
+bool is_number_state(enum state_enum state)
+{
+    return state == state_number_whole
+        || state == state_number_fraction_start
+        || state == state_number_fraction
+        || state == state_number_exponent_start
+        || state == state_number_exponent_sign_start
+        || state == state_number_exponent;
+}
 /* dynamic-output t{} */
 bool process_char_number(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
@@ -296,7 +297,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
                 buffer_add_char(&t->value, lc->la0_8[i]);
             }
         } else if (uc == '.') {
-            *state = state_number_fraction;
+            *state = state_number_fraction_start;
             t->is_integer = false;
             t->is_float = true;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
@@ -318,6 +319,18 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
                 *state = state_start;
                 *got_token = 1;
                 lookahead_char_push(lc);
+            }
+        } else {
+            *state = state_start;
+            *got_token = 1;
+            lookahead_char_push(lc);
+        }
+    } else if (*state == state_number_fraction_start) {
+        if (u_isdigit(uc)) {
+            *state = state_number_fraction;
+            for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
+                /* allocate t{} */
+                buffer_add_char(&t->value, lc->la0_8[i]);
             }
         } else {
             *state = state_start;
@@ -570,6 +583,7 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
     *got_token = 0;
     *t = NULL;
     struct token* tf;
+    sns->last_state = state;
 
     /* allocate tf */
     malloc_safe((void**)&tf, sizeof(struct token));
@@ -602,6 +616,7 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
     }
 
     if (state != state_start) {
+        sns->last_state = state;
         /* allocate sns{wt{} el{}} tf{} */
         valid = scan_process(sns, &state, got_token, tf);
         if (!valid) {
