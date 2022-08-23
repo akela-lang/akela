@@ -58,6 +58,7 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
 	struct token* t0 = get_token(&ps->lookahead, 0);
+	struct location loc_b;
 	if (t0 && t0->type == token_equal) {
 		struct token* equal = NULL;
 		valid = match(ps, token_equal, "expecting assign operator", &equal) && valid;
@@ -65,7 +66,6 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 		token_destroy(equal);
 		free(equal);
 
-		struct location loc_b;
 		valid = get_parse_location(ps, &loc_b);
 
 		valid = assignment(ps, &b) && valid;
@@ -86,6 +86,37 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 			n->type = ast_type_assign;
 			ast_node_add(n, a);
 			ast_node_add(n, b);
+		}
+	}
+
+	if (valid) {
+		assert(a);
+		if (a && b) {
+			struct type_use* a_tu = a->tu;
+			if (a->type == ast_type_var) {
+				struct ast_node* dec = ast_node_get(a, 0);
+				struct ast_node* a_type = ast_node_get(dec, 1);
+				a_tu = a_type->tu;
+			}
+
+			struct type_use* b_tu = b->tu;
+
+			if (!a_tu) {
+				valid = set_source_error(ps->el, &loc_a, "cannot assign with operand that has no value");
+			}
+			if (!b_tu) {
+				valid = set_source_error(ps->el, &loc_b, "cannot assign with operand that has no value");
+			}
+			if (valid) {
+				if (!type_use_can_cast(ps->st, a_tu, b_tu)) {
+					valid = set_source_error(ps->el, &loc_b, "values in assignment not compatible");
+				}
+			}
+			if (valid) {
+				if (a->type != ast_type_id && a->type != ast_type_array_subscript && a->type != ast_type_var) {
+					valid = set_source_error(ps->el, &loc_a, "not a valid lvalue");
+				}
+			}
 		}
 	}
 

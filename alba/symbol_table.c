@@ -329,3 +329,31 @@ bool type_find_whole(struct symbol_table* st, struct type_use* a, struct type_us
 		return false;
 	}
 }
+
+bool type_use_can_cast(struct symbol_table* st, struct type_use* a, struct type_use* b)
+{
+	if (a && b) {
+		bool promote;
+		struct type_def* td = NULL;
+		if (!type_find(st, a->td, b->td, &promote, &td)) {
+			return false;
+		}
+
+		struct type_use* x = a->head;
+		struct type_use* y = b->head;
+		do {
+			if (!type_use_can_cast(st, x, y)) {
+				return false;
+			}
+			if (x) x = x->next;
+			if (y) y = y->next;
+		} while (x || y);
+
+		return true;
+
+	} else if (!a && !b) {
+		return true;
+	} else {
+		return false;
+	}
+}

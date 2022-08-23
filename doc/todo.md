@@ -17,13 +17,14 @@
     * comparison [x]
     * boolean [x]
     * array_subscript [x]
-    * assignment []
-      * check compatible types
-      * check var
-      * check lvalue
+    * assignment [x]
+      * check compatible types [x]
+      * check var [x]
+      * check lvalue [x]
   * stmts
     * for iteration [x]
     * for range [x]
+    * function []
     * if []
     * elseif
     * else
@@ -32,7 +33,6 @@
     * stmt []
     * stmts []
     * while []
-    * function []
 * annotate test case name where each error is generated
 * set location in dag on match and non-terminal
 * add type_set and type to dag_node

@@ -56,4 +56,6 @@ ALBA_API bool is_numeric(struct type_def* td);
 
 ALBA_API bool type_find_whole(struct symbol_table* st, struct type_use* a, struct type_use* b);
 
+ALBA_API bool type_use_can_cast(struct symbol_table* st, struct type_use* a, struct type_use* b);
+
 #endif

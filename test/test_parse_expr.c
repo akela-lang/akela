@@ -1518,6 +1518,25 @@ void test_parse_assign_multiple()
 	parse_teardown(&ps);
 }
 
+void test_parse_assign_lvalue_error()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("1 = 0", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "not a valid lvalue");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_expression()
 {
@@ -1556,4 +1575,5 @@ void test_parse_expression()
 	test_parse_array_subscript3();
 	test_parse_assign_string();
 	test_parse_assign_multiple();
+	test_parse_assign_lvalue_error();
 }
