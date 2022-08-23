@@ -36,11 +36,8 @@ bool expr(struct parse_state* ps, struct ast_node** root)
 	/* let, assignment, or operator/term */
 	if (t0 && t0->type == token_var) {
 		valid = var(ps, &n) && valid;
-	} else if (t0 && t0->type == token_id && t1 && t1->type == token_equal) {
-		valid = assignment(ps, &n) && valid;
 	} else {
-		/* allocate n n{} */
-		valid = boolean(ps, &n) && valid;
+		valid = assignment(ps, &n) && valid;
 	}
 
 	/* transfer n n{} -> root */
@@ -110,64 +107,63 @@ bool var(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-/* assignment -> rhs = assignment | boolean */
-/* rhs = id | array_subscript */
+/* assignment -> boolean = assignment | boolean */
 bool assignment(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
+	struct ast_node* right = NULL;
 
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
+	struct location loc_a;
+	valid = get_parse_location(ps, &loc_a);
 
-	/* allocate ps{} id id{} */
-	struct token* id = NULL;
-	valid = match(ps, token_id, "expected identifier", &id) && valid;
+	struct ast_node* a = NULL;
+	valid = boolean(ps, &a) && valid;
 
-	/* allocate ps{} equal equal{} */
-	struct token* equal = NULL;
-	valid = match(ps, token_equal, "expected equal", &equal) && valid;
+	if (!a) {
+		return valid;
+	}
 
-	/* allocate b b{} */
 	struct ast_node* b = NULL;
-	valid = expr(ps, &b) && valid;
+	int num;
+	valid = get_lookahead(ps, 1, &num) && valid;
+	struct token* t0 = get_token(&ps->lookahead, 0);
+	if (t0 && t0->type == token_equal) {
+		struct token* equal = NULL;
+		valid = match(ps, token_equal, "expecting assign operator", &equal) && valid;
 
-	if (!b) {
-		valid = set_source_error(ps->sns->el, &loc, "expect expression on rhs of assignment operator");
-	}
+		token_destroy(equal);
+		free(equal);
 
-	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-		n->type = ast_type_assign;
+		struct location loc_b;
+		valid = get_parse_location(ps, &loc_b);
 
-		/* allocate a */
-		struct ast_node* a;
-		ast_node_create(&a);
-		a->type = ast_type_id;
+		valid = assignment(ps, &b) && valid;
 
-		/* allocate a{} */
-		#pragma warning (suppress:6011)
-		buffer_copy(&id->value, &a->value);
-
-		/* transfer a a{} -> n{} */
-		ast_node_add(n, a);
-
-		/* transfer b b{} -> n{} */
-		ast_node_add(n, b);
-
-		/* transfer n n{} -> root */
-		*root = n;
-	}
-
-	if (valid) {
-		struct symbol* sym = environment_get(ps->st->top, &id->value);
-		if (!sym) {
-			char* a;
-			buffer2array(&id->value, &a);
-			valid = set_source_error(ps->el, &loc, "identifier not declared: %s", a);
-			free(a);
+		if (!b) {
+			valid = set_source_error(ps->el, &loc_b, "expected a assignment term");
 		}
+	}
+
+	if (valid) {
+		assert(a);
+		if (a && !b) {
+			n = a;
+		}
+
+		if (a && b) {
+			ast_node_create(&n);
+			n->type = ast_type_assign;
+			ast_node_add(n, a);
+			ast_node_add(n, b);
+		}
+	}
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(a);
+		ast_node_destroy(b);
 	}
 
 	return valid;

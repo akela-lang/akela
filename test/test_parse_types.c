@@ -42,7 +42,7 @@ void test_parse_types_missing_declaration3()
 
 	bool valid = parse_setup("x = function() end", &ps, &root);
 	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "identifier not declared: x");
+	expect_compile_error(ps.el, "variable not declared: x");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);

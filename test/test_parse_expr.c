@@ -1554,6 +1554,59 @@ void test_parse_assign_string()
 	parse_teardown(&ps);
 }
 
+void test_parse_assign_multiple()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Int64; var b::Int64; var c::Int64; a = b = c = 0", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	struct ast_node* assign = ast_node_get(root, 3);
+	assert_ptr(assign, "ptr assign");
+	expect_int_equal(assign->type, ast_type_assign, "assign assign");
+
+	struct ast_node* lhv0 = ast_node_get(assign, 0);
+	assert_ptr(lhv0, "ptr lhv0");
+	expect_int_equal(lhv0->type, ast_type_id, "id lhv0");
+	expect_str(&lhv0->value, "a", "a lhv0");
+
+	struct ast_node* rhv0 = ast_node_get(assign, 1);
+	assert_ptr(rhv0, "ptr rhv0");
+	expect_int_equal(rhv0->type, ast_type_assign, "assign rhv0");
+
+	struct ast_node* lhv1 = ast_node_get(rhv0, 0);
+	assert_ptr(lhv1, "ptr lhv1");
+	expect_int_equal(lhv1->type, ast_type_id, "id lhv1");
+	expect_str(&lhv1->value, "b", "b lhv1");
+
+	struct ast_node* rhv1 = ast_node_get(rhv0, 1);
+	assert_ptr(rhv1, "ptr rhv1");
+	expect_int_equal(rhv1->type, ast_type_assign, "assign rhv1");
+
+	struct ast_node* lhv2 = ast_node_get(rhv1, 0);
+	assert_ptr(lhv2, "ptr lhv2");
+	expect_int_equal(lhv2->type, ast_type_id, "id lhv2");
+	expect_str(&lhv2->value, "c", "c lhv2");
+
+	struct ast_node* rhv2 = ast_node_get(rhv1, 1);
+	assert_ptr(rhv2, "ptr rhv2");
+	expect_int_equal(rhv2->type, ast_type_number, "number rhv2");
+	expect_str(&rhv2->value, "0", "0 rhv2");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_expression()
 {
@@ -1593,4 +1646,5 @@ void test_parse_expression()
 	test_parse_var();
 	test_parse_var2();
 	test_parse_assign_string();
+	test_parse_assign_multiple();
 }
