@@ -11,7 +11,6 @@
 #include "type_use.h"
 #include <assert.h>
 
-bool var(struct parse_state* ps, struct ast_node** root);
 bool assignment(struct parse_state* ps, struct ast_node** root);
 bool boolean(struct parse_state* ps, struct ast_node** root);
 bool comparison(struct parse_state* ps, struct ast_node** root);
@@ -25,84 +24,15 @@ bool expr(struct parse_state* ps, struct ast_node** root)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
-	int num;
 
-	/* allocate ps{} */
-	valid = get_lookahead(ps, 2, &num) && valid;
-	struct token* t0 = get_token(&ps->lookahead, 0);
-	struct token* t1 = get_token(&ps->lookahead, 1);
-
-
-	/* let, assignment, or operator/term */
-	if (t0 && t0->type == token_var) {
-		valid = var(ps, &n) && valid;
-	} else {
-		valid = assignment(ps, &n) && valid;
-	}
+	valid = assignment(ps, &n) && valid;
 
 	/* transfer n n{} -> root */
 	if (valid) {
 		*root = n;
-	}
-	return valid;
-}
-
-bool var(struct parse_state* ps, struct ast_node** root)
-{
-	bool valid = true;
-	struct ast_node* n = NULL;
-
-	struct token* vrt = NULL;
-	valid = match(ps, token_var, "expected var", &vrt) && valid;
-
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
-
-	/* allocate ps{} id id{} */
-	struct ast_node* a = NULL;
-	valid = declaration(ps, &a) && valid;
-	if (!a) {
-		valid = set_source_error(ps->el, &loc, "expected declaration after var");
-	}
-
-	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
-
-	struct token* t0 = get_token(&ps->lookahead, 0);
-
-	struct token* equal = NULL;
-	struct ast_node* b = NULL;
-	if (t0 && t0->type == token_equal) {
-		/* allocate ps{} equal equal{} */
-		valid = match(ps, token_equal, "expected equal", &equal) && valid;
-
-		valid = get_parse_location(ps, &loc) && valid;
-		valid = expr(ps, &b) && valid;
-
-		if (!b) {
-			valid = set_source_error(ps->el, &loc, "expected expression after equal");
-		}
-	}
-
-	if (valid) {
-		ast_node_create(&n);
-		n->type = ast_type_var;
-
-		ast_node_add(n, a);
-		if (b) {
-			ast_node_add(n, b);
-		}
-
-		*root = n;
 	} else {
-		ast_node_destroy(a);
-		ast_node_destroy(b);
+		ast_node_destroy(n);
 	}
-
-	token_destroy(vrt);
-	free(vrt);
-	token_destroy(equal);
-	free(equal);
 
 	return valid;
 }

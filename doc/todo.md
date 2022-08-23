@@ -1,5 +1,4 @@
 # Todo
-* var in factor
 * type check
   * factor
     * literal [x]
@@ -9,6 +8,7 @@
     * parenthesis [x]
     * array literal [x]
     * factor [x]
+    * var [x]
     * anonymous function []
     * function call []
   * expr
@@ -19,8 +19,8 @@
     * array_subscript [x]
     * assignment []
       * check compatible types
+      * check var
       * check lvalue
-    * var []
   * stmts
     * for iteration [x]
     * for range [x]

@@ -6,6 +6,102 @@
 #include "test_parse.h"
 #include "alba/type_use.h"
 
+void test_parse_var()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Int32", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse valid");
+
+	struct ast_node* var = check_stmts(root, "stmts root");
+	assert_ptr(var, "ptr var");
+	expect_int_equal(var->type, ast_type_var, "var");
+
+	struct ast_node* dec = ast_node_get(var, 0);
+	assert_ptr(dec, "ptr dec");
+	expect_int_equal(dec->type, ast_type_declaration, "declaration");
+
+	struct ast_node* id = ast_node_get(dec, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, ast_type_id, "id id");
+	expect_str(&id->value, "a", "a");
+
+	struct ast_node* type_use = ast_node_get(dec, 1);
+	assert_ptr(type_use, "ptr type_use");
+	expect_int_equal(type_use->type, ast_type_type, "type type");
+
+	struct type_use* tu = type_use->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_str(&td->name, "Int32", "Int32 td");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_var2()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Int32 = 1", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	struct ast_node* assign = ast_node_get(root, 0);
+	assert_ptr(assign, "ptr assign");
+	expect_int_equal(assign->type, ast_type_assign, "assign assign");
+
+	struct ast_node* var = ast_node_get(assign, 0);
+	assert_ptr(var, "ptr var");
+	expect_int_equal(var->type, ast_type_var, "var");
+
+	struct ast_node* dec = ast_node_get(var, 0);
+	assert_ptr(dec, "ptr dec");
+	expect_int_equal(dec->type, ast_type_declaration, "declaration");
+
+	struct ast_node* id = ast_node_get(dec, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, ast_type_id, "id");
+	expect_str(&id->value, "a", "a");
+
+	struct ast_node* type_use = ast_node_get(dec, 1);
+	assert_ptr(type_use, "ptr type_use");
+	expect_int_equal(type_use->type, ast_type_type, "type type_use");
+
+	struct type_use* tu = type_use->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_str(&td->name, "Int32", "Int32 td");
+
+	struct ast_node* value = ast_node_get(assign, 1);
+	assert_ptr(value, "ptr value");
+	expect_int_equal(value->type, ast_type_number, "number");
+	expect_str(&value->value, "1", "1");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_number_integer()
 {
@@ -908,6 +1004,8 @@ void test_parse_paren_num()
 
 void test_parse_factor()
 {
+	test_parse_var();
+	test_parse_var2();
 	test_parse_number_integer();
 	test_parse_number_float();
 	test_parse_string();

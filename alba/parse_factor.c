@@ -13,6 +13,7 @@
 #include "parse_factor.h"
 #include "type_use.h"
 
+bool var(struct parse_state* ps, struct ast_node** root);
 bool anonymous_function(struct parse_state* ps, struct ast_node** root);
 bool function_call(struct parse_state* ps, struct ast_node** root);
 bool cseq(struct parse_state* ps, struct ast_node** root);
@@ -46,7 +47,10 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 	t0 = get_token(&ps->lookahead, 0);
 	t1 = get_token(&ps->lookahead, 1);
 
-	if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
+	if (t0 && t0->type == token_var) {
+		valid = var(ps, &n) && valid;
+
+	} else if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
 		valid = anonymous_function(ps, &n) && valid;
 
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
@@ -75,6 +79,45 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 	/* transfer n -> root */
 	if (valid) {
 		*root = n;
+	}
+
+	return valid;
+}
+
+bool var(struct parse_state* ps, struct ast_node** root)
+{
+	bool valid = true;
+	struct ast_node* n = NULL;
+
+	struct token* vrt = NULL;
+	valid = match(ps, token_var, "expected var", &vrt) && valid;
+
+	struct location loc;
+	valid = get_parse_location(ps, &loc) && valid;
+
+	/* allocate ps{} id id{} */
+	struct ast_node* a = NULL;
+	valid = declaration(ps, &a) && valid;
+	if (!a) {
+		valid = set_source_error(ps->el, &loc, "expected declaration after var");
+	}
+
+	if (valid) {
+		ast_node_create(&n);
+		n->type = ast_type_var;
+
+		ast_node_add(n, a);
+	} else {
+		ast_node_destroy(a);
+	}
+
+	token_destroy(vrt);
+	free(vrt);
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
 	}
 
 	return valid;
