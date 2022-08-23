@@ -18,7 +18,8 @@ enum type {
 	type_boolean,
 	type_string,
 	type_function,
-	type_function_dseq,
+	type_function_input,
+	type_function_output,
 };
 
 struct type_def {

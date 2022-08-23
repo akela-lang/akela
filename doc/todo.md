@@ -9,7 +9,7 @@
     * array literal [x]
     * factor [x]
     * var [x]
-    * anonymous function []
+    * anonymous function [x]
     * function call []
   * expr
     * add [x]

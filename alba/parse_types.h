@@ -13,6 +13,6 @@ ALBA_API bool declaration(struct parse_state* ps, struct ast_node** root);
 
 ALBA_API bool type(struct parse_state* ps, struct token* id, struct ast_node** root);
 
-ALBA_API struct ast_node* af2etype(struct ast_node* n);
+ALBA_API struct type_use* af2etype(struct symbol_table* st, struct ast_node* n);
 
 #endif

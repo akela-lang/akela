@@ -339,30 +339,67 @@ bool tseq(struct parse_state* ps, struct type_use* parent)
 	return valid;
 }
 
-struct ast_node* af2etype(struct ast_node* n)
+struct type_use* af2etype(struct symbol_table* st, struct ast_node* n)
 {
-	struct ast_node* etype = NULL;
-	ast_node_create(&etype);
-	etype->type = ast_type_type_function;
+	struct buffer bf;
 
-	/* dseq */
+	/* function */
+	struct type_use* tu = NULL;
+	type_use_create(&tu);
+
+	buffer_init(&bf);
+	buffer_copy_str(&bf, "Function");
+	struct symbol* sym = environment_get(st->top, &bf);
+	assert(sym);
+	assert(sym->td);
+	tu->td = sym->td;
+
+	/* input */
+	struct type_use* input_tu = NULL;
+	type_use_create(&input_tu);
+
+	buffer_clear(&bf);
+	buffer_copy_str(&bf, "Input");
+	struct symbol* input_sym = environment_get(st->top, &bf);
+	assert(input_sym);
+	assert(input_sym->td);
+	input_tu->td = input_sym->td;
+
 	struct ast_node* dseq = ast_node_get(n, 0);
-	struct ast_node* type_dseq = NULL;
-	ast_node_create(&type_dseq);
-	type_dseq->type = ast_type_type_dseq;
 	struct ast_node* dec = dseq->head;
 	while (dec) {
-		struct ast_node* t = ast_node_get(dec, 1);
-		ast_node_add(type_dseq, ast_node_copy(t));
+		struct ast_node* type_node = ast_node_get(dec, 1);
+		struct type_use* element_tu = type_use_copy(type_node->tu);
+		type_use_add(input_tu, element_tu);
 		dec = dec->next;
 	}
-	ast_node_add(etype, type_dseq);
 
-	/* dret */
+	if (input_tu->head) {
+		type_use_add(tu, input_tu);
+	} else {
+		type_use_destroy(input_tu);
+	}
+
+	/* output */
 	struct ast_node* dret = ast_node_get(n, 1);
-	struct ast_node* type_dret = ast_node_copy(dret);
-	type_dret->type = ast_type_type_dret;
-	ast_node_add(etype, type_dret);
+	struct ast_node* dret_type = ast_node_get(dret, 0);
 
-	return etype;
+	if (dret_type) {
+		buffer_clear(&bf);
+		buffer_copy_str(&bf, "Output");
+		struct symbol* output_sym = environment_get(st->top, &bf);
+		assert(output_sym);
+		assert(output_sym->td);
+		struct type_use* output_tu = NULL;
+		type_use_create(&output_tu);
+		output_tu->td = output_sym->td;
+
+		struct type_use* element_tu = type_use_copy(dret_type->tu);
+		type_use_add(output_tu, element_tu);
+		type_use_add(tu, output_tu);
+	}
+
+	buffer_destroy(&bf);
+
+	return tu;
 }

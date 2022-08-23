@@ -200,9 +200,6 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 		ast_node_destroy(stmts_node);
 	}
 
-	if (valid) {
-	}
-
 	/* destroy f f{} lp lp{} rp rp{} end end{} */
 	token_destroy(f);
 	free(f);
@@ -212,6 +209,10 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 	free(rp);
 	token_destroy(end);
 	free(end);
+
+	if (valid) {
+		n->tu = af2etype(ps->st, n);
+	}
 
 	/* transfer saved -> ps{top} */
 	ps->st->top = saved;

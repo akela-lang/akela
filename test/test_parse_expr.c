@@ -1450,6 +1450,14 @@ void test_parse_assign_string()
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, ast_type_assign, "assign assign");
 
+	struct type_use* tu = assign->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_string, "string td");
+	expect_str(&td->name, "String", "String td");
+		
 	struct ast_node* lhv = ast_node_get(assign, 0);
 	assert_ptr(lhv, "ptr lhv");
 	expect_int_equal(lhv->type, ast_type_id, "id lhv");
@@ -1485,6 +1493,14 @@ void test_parse_assign_multiple()
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, ast_type_assign, "assign assign");
 
+	struct type_use* assign0_tu = assign->tu;
+	assert_ptr(assign0_tu, "ptr assign0_tu");
+
+	struct type_def* assign0_td = assign0_tu->td;
+	assert_ptr(assign0_td, "ptr assign0_td");
+	expect_int_equal(assign0_td->type, type_integer, "integer assign0_td");
+	expect_str(&assign0_td->name, "Int64", "Int64 assign0_td");
+
 	struct ast_node* lhv0 = ast_node_get(assign, 0);
 	assert_ptr(lhv0, "ptr lhv0");
 	expect_int_equal(lhv0->type, ast_type_id, "id lhv0");
@@ -1494,6 +1510,15 @@ void test_parse_assign_multiple()
 	assert_ptr(rhv0, "ptr rhv0");
 	expect_int_equal(rhv0->type, ast_type_assign, "assign rhv0");
 
+	struct type_use* assign1_tu = rhv0->tu;
+	assert_ptr(assign1_tu, "ptr assign1_tu");
+
+	struct type_def* assign1_td = assign1_tu->td;
+	assert_ptr(assign1_td, "ptr assign1_td");
+	expect_int_equal(assign1_td->type, type_integer, "integer assign1_td");
+	expect_str(&assign1_td->name, "Int64", "Int64 assign1_td");
+
+
 	struct ast_node* lhv1 = ast_node_get(rhv0, 0);
 	assert_ptr(lhv1, "ptr lhv1");
 	expect_int_equal(lhv1->type, ast_type_id, "id lhv1");
@@ -1502,6 +1527,14 @@ void test_parse_assign_multiple()
 	struct ast_node* rhv1 = ast_node_get(rhv0, 1);
 	assert_ptr(rhv1, "ptr rhv1");
 	expect_int_equal(rhv1->type, ast_type_assign, "assign rhv1");
+
+	struct type_use* assign2_tu = assign->tu;
+	assert_ptr(assign2_tu, "ptr assign2_tu");
+
+	struct type_def* assign2_td = assign2_tu->td;
+	assert_ptr(assign2_td, "ptr assign2_td");
+	expect_int_equal(assign2_td->type, type_integer, "integer assign2_td");
+	expect_str(&assign2_td->name, "Int64", "Int64 assign2_td");
 
 	struct ast_node* lhv2 = ast_node_get(rhv1, 0);
 	assert_ptr(lhv2, "ptr lhv2");

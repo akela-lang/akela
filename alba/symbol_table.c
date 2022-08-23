@@ -191,6 +191,24 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	malloc_safe(&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_function;
+	td->is_generic = true;
+	buffer_copy_str(&td->name, name);
+	symbol_table_add_reserved(env, name, token_id, td);
+
+	name = "Input";
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_function_input;
+	td->is_generic = true;
+	buffer_copy_str(&td->name, name);
+	symbol_table_add_reserved(env, name, token_id, td);
+
+	name = "Output";
+	malloc_safe(&td, sizeof(struct type_def));
+	type_def_init(td);
+	td->type = type_function_output;
+	td->is_generic = true;
+	td->generic_count = 1;
 	buffer_copy_str(&td->name, name);
 	symbol_table_add_reserved(env, name, token_id, td);
 }

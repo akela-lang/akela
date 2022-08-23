@@ -117,6 +117,9 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 					valid = set_source_error(ps->el, &loc_a, "not a valid lvalue");
 				}
 			}
+			if (valid) {
+				n->tu = type_use_copy(a_tu);
+			}
 		}
 	}
 

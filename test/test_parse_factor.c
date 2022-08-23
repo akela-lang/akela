@@ -778,7 +778,7 @@ void test_parse_anonymous_function()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("var a::Function; a = function(x::Int32,y::Int32,z::Int32) 1 end", &ps, &root);
+	valid = parse_setup("var a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse valid");
 
@@ -869,7 +869,7 @@ void test_parse_anonymous_function2()
 	bool valid;
 
 	/* allocate ps{} root root{} */
-	valid = parse_setup("var a::Function; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end", &ps, &root);
+	valid = parse_setup("var a::Function{Input{Int32, Int32, Int32}, Output{Int32}}; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end", &ps, &root);
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse valid");
 
