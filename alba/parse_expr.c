@@ -241,6 +241,7 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 		}
 
 		if (valid) {
+			assert(b);
 			if (!left->tu) {
 				struct location loc;
 				valid = set_source_error(ps->el, &loc, "left-side operand of boolean operator has no type");
