@@ -93,4 +93,6 @@ ALBA_API struct ast_node* ast_node_copy(struct ast_node* n);
 
 ALBA_API bool ast_node_match(struct ast_node* a, struct ast_node* b);
 
+ALBA_API int ast_node_count_children(struct ast_node* n);
+
 #endif

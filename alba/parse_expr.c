@@ -108,7 +108,7 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 				valid = set_source_error(ps->el, &loc_b, "cannot assign with operand that has no value");
 			}
 			if (valid) {
-				if (!type_use_can_cast(ps->st, a_tu, b_tu)) {
+				if (!type_use_can_cast(a_tu, b_tu)) {
 					valid = set_source_error(ps->el, &loc_b, "values in assignment not compatible");
 				}
 			}

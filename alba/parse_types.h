@@ -17,4 +17,6 @@ ALBA_API struct type_use* function2type(struct symbol_table* st, struct ast_node
 
 ALBA_API void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_node* stmts_node, struct location* loc, bool* valid);
 
+ALBA_API void get_function_children(struct type_use* tu, struct type_use** input, struct type_use** output);
+
 #endif

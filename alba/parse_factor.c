@@ -260,20 +260,59 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		struct symbol* sym = environment_get(ps->st->top, &id->value);
-		if (sym) {
-			if (sym->dec->type != ast_type_function) {
-				char* name;
-				buffer2array(&id->value, &name);
-				set_source_error(ps->el, &loc, "call of variable that is not a function: %s", name);
-				free(name);
-				valid = false;
-			}
-		} else {
+		if (!sym) {
 			char* name;
 			buffer2array(&id->value, &name);
-			set_source_error(ps->el, &loc, "function is not declared: %s", name);
+			valid = set_source_error(ps->el, &loc, "function is not declared: %s", name);
 			free(name);
 			valid = false;
+		} else {
+			assert(sym->tu);
+			assert(sym->tu->td);
+			struct type_use* tu = sym->tu;
+			struct type_def* td = tu->td;
+			if (td->type != type_function) {
+				char* name;
+				buffer2array(&id->value, &name);
+				valid = set_source_error(ps->el, &loc, "call of variable that is not a function: %s", name);
+				free(name);
+				valid = false;
+			} else {
+				struct type_use* input = NULL;
+				struct type_use* output = NULL;
+				get_function_children(tu, &input, &output);
+				int tcount = 0;
+				if (input) {
+					tcount = type_use_count_children(input);
+				}
+				int ccount = 0;
+				if (cseq_node) {
+					ccount = ast_node_count_children(cseq_node);
+				}
+
+				if (ccount < tcount) {
+					valid = set_source_error(ps->el, &loc, "not enough arguments in function call");
+				} else if (ccount > tcount) {
+					valid = set_source_error(ps->el, &loc, "too many arguments in function call");
+				} else if (tcount > 0) {
+					assert(input);
+					struct type_use* param_tu = input->head;
+					struct ast_node* arg = cseq_node->head;
+					while (param_tu) {
+						struct type_use* arg_tu = arg->tu;
+						if (!arg_tu) {
+							valid = set_source_error(ps->el, &loc, "argument in call expression does not have a value");
+						} else {
+							struct type_def* ctd = arg_tu->td;
+							if (!type_use_can_cast(param_tu, arg_tu)) {
+								valid = set_source_error(ps->el, &loc, "parameter and aguments types do not match");
+							}
+						}
+						param_tu = param_tu->next;
+						arg = arg->next;
+					}
+				}
+			}
 		}
 	}
 
@@ -298,8 +337,6 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 			ast_node_add(n, cseq_node);
 		}
 
-		*root = n;
-
 	} else {
 		/* destroy cseq_node cseq_node{} */
 		ast_node_destroy(cseq_node);
@@ -312,6 +349,12 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 	free(lp);
 	token_destroy(rp);
 	free(rp);
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
 
 	return valid;
 }

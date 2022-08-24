@@ -421,9 +421,24 @@ void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_n
 			struct type_use* ret = type_use_get(p, 0);
 			if (ret) {
 				struct type_def* ret_td = ret->td;
-				if (!type_use_can_cast(ps->st, ret, stmts_node->tu)) {
+				if (!type_use_can_cast(ret, stmts_node->tu)) {
 					*valid = set_source_error(ps->el, &loc, "returned type does not match function return type");
 				}
+			}
+		}
+		p = p->next;
+	}
+}
+
+void get_function_children(struct type_use* tu, struct type_use** input, struct type_use** output)
+{
+	struct type_use* p = tu->head;
+	while (p) {
+		if (p->td) {
+			if (p->td->type == type_function_input) {
+				*input = p;
+			} else if (p->td->type == type_function_output) {
+				*output = p;
 			}
 		}
 		p = p->next;

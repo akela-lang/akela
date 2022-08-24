@@ -49,7 +49,6 @@ struct symbol* environment_get_local(struct environment* env, struct buffer* val
 void symbol_init(struct symbol* sym)
 {
 	sym->tk_type = token_none;
-	sym->dec = NULL;
 	sym->td = NULL;
 	sym->tu = NULL;
 }
@@ -348,19 +347,31 @@ bool type_find_whole(struct symbol_table* st, struct type_use* a, struct type_us
 	}
 }
 
-bool type_use_can_cast(struct symbol_table* st, struct type_use* a, struct type_use* b)
+bool type_def_can_cast(struct type_def* a, struct type_def* b)
+{
+	if (a == b) {
+		return true;
+	}
+
+	if (is_numeric(a) && is_numeric(b)) {
+		return true;
+	}
+
+	return false;
+}
+
+bool type_use_can_cast(struct type_use* a, struct type_use* b)
 {
 	if (a && b) {
-		bool promote;
 		struct type_def* td = NULL;
-		if (!type_find(st, a->td, b->td, &promote, &td)) {
+		if (!type_def_can_cast(a->td, b->td)) {
 			return false;
 		}
 
 		struct type_use* x = a->head;
 		struct type_use* y = b->head;
 		do {
-			if (!type_use_can_cast(st, x, y)) {
+			if (!type_use_can_cast(x, y)) {
 				return false;
 			}
 			if (x) x = x->next;

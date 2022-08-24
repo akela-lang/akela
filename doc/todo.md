@@ -13,7 +13,7 @@
     * function [x]
       * check return type [x]
       * test assignment [x]
-    * function call []
+    * function call [x]
   * expr
     * add [x]
     * mult [x]

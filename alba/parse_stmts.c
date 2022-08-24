@@ -618,18 +618,16 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 				valid = set_source_error(ps->el, &loc, "identifier reserved as a type: %s", a);
 				free(a);
 			} else {
+				struct type_use* tu = function2type(ps->st, n);
 				struct symbol* new_sym = NULL;
 				malloc_safe((void**)&new_sym, sizeof(struct symbol));
 				symbol_init(new_sym);
 				new_sym->tk_type = id->type;
-				new_sym->dec = n;
+				new_sym->tu = tu;
 				environment_put(ps->st->top->prev, &id->value, new_sym);
+				n->tu = tu;
 			}
 		}
-	}
-
-	if (valid) {
-		n->tu = function2type(ps->st, n);
 	}
 
 	/* destroy f f{} id id{} lp lp{} rp rp{} */

@@ -15,7 +15,6 @@ struct environment {
 
 struct symbol {
 	enum token_enum tk_type;
-	struct ast_node* dec;
 	struct type_def* td;
 	struct type_use* tu;
 };
@@ -56,6 +55,8 @@ ALBA_API bool is_numeric(struct type_def* td);
 
 ALBA_API bool type_find_whole(struct symbol_table* st, struct type_use* a, struct type_use* b);
 
-ALBA_API bool type_use_can_cast(struct symbol_table* st, struct type_use* a, struct type_use* b);
+ALBA_API bool type_def_can_cast(struct type_def* a, struct type_def* b);
+
+ALBA_API bool type_use_can_cast(struct type_use* a, struct type_use* b);
 
 #endif

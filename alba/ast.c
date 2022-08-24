@@ -228,3 +228,14 @@ bool ast_node_match(struct ast_node* a, struct ast_node* b)
 
 	return true;
 }
+
+int ast_node_count_children(struct ast_node* n)
+{
+	int count = 0;
+	struct ast_node* p = n->head;
+	while (p) {
+		count++;
+		p = p->next;
+	}
+	return count;
+}
