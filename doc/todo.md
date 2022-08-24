@@ -32,9 +32,8 @@
     * function [x]
       * check return type [x]
     * if []
-    * elseif
-    * else
-    * function []
+    * elseif []
+    * else []
     * separator []
     * while []
 * annotate test case name where each error is generated
