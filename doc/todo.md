@@ -10,6 +10,9 @@
     * factor [x]
     * var [x]
     * anonymous function [x]
+    * function [x]
+      * check return type [x]
+      * test assignment [x]
     * function call []
   * expr
     * add [x]
@@ -24,14 +27,15 @@
   * stmts
     * for iteration [x]
     * for range [x]
-    * function []
+    * stmt [x]
+    * stmts [x]
+    * function [x]
+      * check return type [x]
     * if []
     * elseif
     * else
     * function []
     * separator []
-    * stmt []
-    * stmts []
     * while []
 * annotate test case name where each error is generated
 * set location in dag on match and non-terminal
@@ -43,6 +47,7 @@
 * allow comma in var
 * add let expression
 * structs
+* add return statements
 * allow struct at global level only
 * use lookahead_char to lex compound operators
 * suppress new environment in stmts with parameter if new environment already created

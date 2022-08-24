@@ -342,6 +342,11 @@ bool tseq(struct parse_state* ps, struct type_use* parent)
 struct type_use* af2etype(struct symbol_table* st, struct ast_node* n)
 {
 	struct buffer bf;
+	int current_node = 0;
+
+	if (n->type == ast_type_function) {
+		current_node++;
+	}
 
 	/* function */
 	struct type_use* tu = NULL;
@@ -365,7 +370,7 @@ struct type_use* af2etype(struct symbol_table* st, struct ast_node* n)
 	assert(input_sym->td);
 	input_tu->td = input_sym->td;
 
-	struct ast_node* dseq = ast_node_get(n, 0);
+	struct ast_node* dseq = ast_node_get(n, current_node++);
 	struct ast_node* dec = dseq->head;
 	while (dec) {
 		struct ast_node* type_node = ast_node_get(dec, 1);
@@ -381,7 +386,7 @@ struct type_use* af2etype(struct symbol_table* st, struct ast_node* n)
 	}
 
 	/* output */
-	struct ast_node* dret = ast_node_get(n, 1);
+	struct ast_node* dret = ast_node_get(n, current_node++);
 	struct ast_node* dret_type = ast_node_get(dret, 0);
 
 	if (dret_type) {
@@ -402,4 +407,25 @@ struct type_use* af2etype(struct symbol_table* st, struct ast_node* n)
 	buffer_destroy(&bf);
 
 	return tu;
+}
+
+void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_node* stmts_node, struct location* loc, bool *valid)
+{
+	assert(fd);
+	assert(fd->tu);
+	struct type_use* tu = fd->tu;
+	struct type_use* p = tu->head;
+	while (p) {
+		struct type_def* p_td = p->td;
+		if (p_td->type == type_function_output) {
+			struct type_use* ret = type_use_get(p, 0);
+			if (ret) {
+				struct type_def* ret_td = ret->td;
+				if (!type_use_can_cast(ps->st, ret, stmts_node->tu)) {
+					*valid = set_source_error(ps->el, &loc, "returned type does not match function return type");
+				}
+			}
+		}
+		p = p->next;
+	}
 }

@@ -363,6 +363,34 @@ void test_parse_stmts5()
 	parse_teardown(&ps);
 }
 
+void test_parse_stmts_type()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("1; true; \"hello\"", &ps, &root);
+	assert_no_errors(ps.el);
+	assert_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	struct type_use* tu = root->tu;
+	assert_ptr(tu, "ptr tu");
+	
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_string, "string td");
+	expect_str(&td->name, "String", "String td");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_function()
 {
@@ -376,54 +404,64 @@ void test_parse_function()
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
 
-	assert_ptr(root, "root");
-	expect_int_equal(root->type, ast_type_function, "function");
+	struct ast_node* f = ast_node_get(root, 0);
+	assert_ptr(f, "ptr f");
+	expect_int_equal(f->type, ast_type_function, "function");
 
-	struct ast_node* a = ast_node_get(root, 0);
-	assert_ptr(a, "ptr a");
-	expect_int_equal(a->type, ast_type_id, "id");
+	struct type_use* tu = f->tu;
+	assert_ptr(tu, "ptr tu");
 
-	struct ast_node* dseq = ast_node_get(root, 1);
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_function, "function td");
+	expect_str(&td->name, "Function", "Function td");
+
+	struct ast_node* fid = ast_node_get(f, 0);
+	assert_ptr(fid, "ptr a");
+	expect_int_equal(fid->type, ast_type_id, "id");
+
+	struct ast_node* dseq = ast_node_get(f, 1);
 	assert_ptr(dseq, "ptr dseq");
 	expect_int_equal(dseq->type, ast_type_dseq, "dseq dseq");
 
-	struct ast_node* dret = ast_node_get(root, 2);
+	struct ast_node* dret = ast_node_get(f, 2);
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, ast_type_dret, "dret dret");
 
-	struct ast_node* stmts = ast_node_get(root, 3);
+	struct ast_node* stmts = ast_node_get(f, 3);
 	assert_ptr(stmts, "ptr b");
 	expect_int_equal(stmts->type, ast_type_stmts, "stmts b");
 
-	struct ast_node* d = ast_node_get(stmts, 1);
-	assert_ptr(d, "ptr d");
-	expect_int_equal(d->type, ast_type_plus, "plus");
+	struct ast_node* add0 = ast_node_get(stmts, 1);
+	assert_ptr(add0, "ptr d");
+	expect_int_equal(add0->type, ast_type_plus, "plus");
 
-	struct ast_node* e = ast_node_get(d, 0);
-	assert_ptr(e, "ptr e");
-	expect_int_equal(e->type, ast_type_id, "id e");
-	expect_str(&e->value, "x", "x");
+	struct ast_node* x = ast_node_get(add0, 0);
+	assert_ptr(x, "ptr x");
+	expect_int_equal(x->type, ast_type_id, "id x");
+	expect_str(&x->value, "x", "x");
 
-	struct ast_node* f = ast_node_get(d, 1);
-	assert_ptr(f, "ptr f");
-	expect_int_equal(f->type, ast_type_number, "number f");
-	expect_str(&f->value, "1", "1");
+	struct ast_node* number1 = ast_node_get(add0, 1);
+	assert_ptr(number1, "ptr number1");
+	expect_int_equal(number1->type, ast_type_number, "number number1");
+	expect_str(&number1->value, "1", "1 number1");
 
-	struct ast_node* g = ast_node_get(stmts, 2);
-	assert_ptr(g, "ptr g");
-	expect_int_equal(g->type, ast_type_plus, "plus");
+	struct ast_node* add1 = ast_node_get(stmts, 2);
+	assert_ptr(add1, "ptr add1");
+	expect_int_equal(add1->type, ast_type_plus, "plus add1");
 
-	struct ast_node* h = ast_node_get(g, 0);
-	assert_ptr(h, "ptr h");
-	expect_int_equal(h->type, ast_type_number, "number h");
-	expect_str(&h->value, "5", "5");
+	struct ast_node* number5 = ast_node_get(add1, 0);
+	assert_ptr(number5, "ptr number5");
+	expect_int_equal(number5->type, ast_type_number, "number number5");
+	expect_str(&number5->value, "5", "5 number5");
 
-	struct ast_node* i = ast_node_get(g, 1);
-	assert_ptr(i, "ptr i");
-	expect_int_equal(i->type, ast_type_number, "number i");
-	expect_str(&i->value, "4", "4");
+	struct ast_node* number4 = ast_node_get(add1, 1);
+	assert_ptr(number4, "ptr number4");
+	expect_int_equal(number4->type, ast_type_number, "number number4");
+	expect_str(&number4->value, "4", "4 number4");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -622,16 +660,74 @@ void test_parse_function4()
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse valid");
 
-	root = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
 
-	assert_ptr(root, "root");
-	expect_int_equal(root->type, ast_type_function, "function");
+	struct ast_node* f = ast_node_get(root, 0);
+	assert_ptr(f, "root");
+	expect_int_equal(f->type, ast_type_function, "function f");
 
-	struct ast_node* a = ast_node_get(root, 0);
+	struct type_use* tu = f->tu;
+	assert_ptr(tu, "ptr tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_function, "function td");
+	expect_str(&td->name, "Function", "Function td");
+
+	struct type_use* input_tu = type_use_get(tu, 0);
+	assert_ptr(input_tu, "ptr input_tu");
+
+	struct type_def* input_td = input_tu->td;
+	assert_ptr(input_td, "ptr input_td");
+	expect_int_equal(input_td->type, type_function_input, "function_input input_td");
+	expect_str(&input_td->name, "Input", "Input input_td");
+
+	struct type_use* input0_tu = type_use_get(input_tu, 0);
+	assert_ptr(input0_tu, "ptr input0_tu");
+
+	struct type_def* input0_td = input0_tu->td;
+	assert_ptr(input0_td, "ptr input0_td");
+	expect_int_equal(input0_td->type, type_integer, "integer input0_td");
+	expect_str(&input0_td->name, "Int32", "Int32 input0_td");
+
+	struct type_use* input1_tu = type_use_get(input_tu, 1);
+	assert_ptr(input1_tu, "ptr input1_tu");
+
+	struct type_def* input1_td = input1_tu->td;
+	assert_ptr(input1_td, "ptr input1_td");
+	expect_int_equal(input1_td->type, type_integer, "integer input1_td");
+	expect_str(&input1_td->name, "Int32", "Int32 input1_td");
+
+	struct type_use* input2_tu = type_use_get(input_tu, 2);
+	assert_ptr(input2_tu, "ptr input2_tu");
+
+	struct type_def* input2_td = input2_tu->td;
+	assert_ptr(input2_td, "ptr input2_td");
+	expect_int_equal(input2_td->type, type_integer, "integer input2_td");
+	expect_str(&input2_td->name, "Int32", "Int32 input2_td");
+
+	struct type_use* output_tu = type_use_get(tu, 1);
+	assert_ptr(output_tu, "ptr output_tu");
+
+	struct type_def* output_td = output_tu->td;
+	assert_ptr(output_td, "ptr output_td");
+	expect_int_equal(output_td->type, type_function_output, "function_input output_td");
+	expect_str(&output_td->name, "Output", "Output output_td");
+
+	struct type_use* output0_tu = type_use_get(output_tu, 0);
+	assert_ptr(output0_tu, "ptr output0_tu");
+
+	struct type_def* output0_td = output0_tu->td;
+	assert_ptr(output0_td, "ptr output0_td");
+	expect_int_equal(output0_td->type, type_integer, "integer output0_td");
+	expect_str(&output0_td->name, "Int32", "Int32 output0_td");
+
+	struct ast_node* a = ast_node_get(f, 0);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_id, "id");
 
-	struct ast_node* seq = ast_node_get(root, 1);
+	struct ast_node* seq = ast_node_get(f, 1);
 	assert_ptr(seq, "ptr seq");
 	expect_int_equal(seq->type, ast_type_dseq, "seq");
 
@@ -659,7 +755,7 @@ void test_parse_function4()
 	assert_ptr(dec_c, "ptr dec_c");
 	expect_int_equal(dec_c->type, ast_type_id, "id dec_c");
 
-	struct ast_node* dret = ast_node_get(root, 2);
+	struct ast_node* dret = ast_node_get(f, 2);
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, ast_type_dret, "dret dret");
 
@@ -675,12 +771,9 @@ void test_parse_function4()
 	expect_int_equal(dret_td->type, type_integer, "integer dret_td");
 	expect_str(&dret_td->name, "Int32", "Int32 dret_td");
 
-	struct ast_node* b = ast_node_get(root, 3);
+	struct ast_node* b = ast_node_get(f, 3);
 	assert_ptr(b, "ptr b");
 	expect_int_equal(b->type, ast_type_stmts, "stmts");
-
-	struct ast_node* c = ast_node_get(root, 4);
-	assert_null(c, "ptr c");
 
 	struct ast_node* d = ast_node_get(b, 0);
 	assert_ptr(d, "ptr d");
@@ -691,10 +784,10 @@ void test_parse_function4()
 	expect_int_equal(e->type, ast_type_id, "id e");
 	expect_str(&e->value, "x", "x");
 
-	struct ast_node* f = ast_node_get(d, 1);
-	assert_ptr(f, "ptr f");
-	expect_int_equal(f->type, ast_type_number, "number f");
-	expect_str(&f->value, "1", "1");
+	struct ast_node* number1 = ast_node_get(d, 1);
+	assert_ptr(number1, "ptr number1");
+	expect_int_equal(number1->type, ast_type_number, "number number1");
+	expect_str(&number1->value, "1", "1 number1");
 
 	struct ast_node* g = ast_node_get(b, 1);
 	assert_ptr(g, "ptr g");
@@ -728,6 +821,25 @@ void test_parse_function5()
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse valid");
 	expect_compile_error(ps.el, "duplicate declaration in same scope: x");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_function_return_type_error()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo(x::Int64)::Int64 true end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse valid");
+	expect_compile_error(ps.el, "returned type does not match function return type");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -894,7 +1006,7 @@ void test_parse_call3()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo(arg1::Int64, arg2::Int64)::Int64 end; var x::Int64; var y::Int64; foo(x,y)", &ps, &root);
+	bool valid = parse_setup("function foo(arg1::Int64, arg2::Int64)::Int64 1 end; var x::Int64; var y::Int64; foo(x,y)", &ps, &root);
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
@@ -1749,11 +1861,13 @@ void test_parse_statements()
 	test_parse_stmts3();
 	test_parse_stmts4();
 	test_parse_stmts5();
+	test_parse_stmts_type();
 	test_parse_function();
 	test_parse_function2();
 	test_parse_function3();
 	test_parse_function4();
 	test_parse_function5();
+	test_parse_function_return_type_error();
 	test_parse_function_not_global();
 	test_parse_call();
 	test_parse_call2();

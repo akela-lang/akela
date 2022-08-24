@@ -13,6 +13,7 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include "parse_stmts.h"
+#include "type_use.h"
 #include <assert.h>
 
 bool separator(struct parse_state* ps, int* has_separator);
@@ -34,6 +35,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
+	struct ast_node* last = NULL;
 
 	struct environment* saved = NULL;
 	struct environment* env = NULL;
@@ -61,6 +63,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 	/* transfer a -> n{} */
 	if (a) {
 		ast_node_add(n, a);
+		last = a;
 	}
 
 	while (true) {
@@ -78,6 +81,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 
 		if (b) {
 			ast_node_add(n, b);
+			last = b;
 		}
 	}
 
@@ -87,6 +91,14 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 
 		/* transfer saved -> ps{top} */
 		ps->st->top = saved;
+	}
+
+	if (valid) {
+		if (last) {
+			if (last->tu) {
+				n->tu = type_use_copy(last->tu);
+			}
+		}
 	}
 
 	/* transfer n -> root */
@@ -239,6 +251,8 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 	/* transfer n -> root */
 	if (valid) {
 		*root = n;
+	} else {
+		ast_node_destroy(n);
 	}
 	return valid;
 }
@@ -581,6 +595,11 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 
 		ast_node_add(n, b);
 
+	} else {
+		ast_node_destroy(dseq_node);
+	}
+
+	if (valid) {
 		struct symbol* search = environment_get_local(ps->st->top->prev, &id->value);
 		if (search) {
 			struct location loc;
@@ -607,10 +626,10 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 				environment_put(ps->st->top->prev, &id->value, new_sym);
 			}
 		}
+	}
 
-		*root = n;
-	} else {
-		ast_node_destroy(dseq_node);
+	if (valid) {
+		n->tu = af2etype(ps->st, n);
 	}
 
 	/* destroy f f{} id id{} lp lp{} rp rp{} */
@@ -623,12 +642,25 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 	token_destroy(rp);
 	free(rp);
 
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
+
 	return valid;
 }
 
 bool function_finish(struct parse_state* ps, struct ast_node* fd)
 {
 	bool valid = true;
+
+	if (!fd) {
+		valid = false;
+	}
+
+	struct location loc;
+	valid = get_parse_location(ps, &loc) && valid;
 
 	/* allocate ps{} stmts_node stmts_node{} */
 	struct ast_node* stmts_node = NULL;
@@ -650,6 +682,10 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd)
 	/* destroy end end{} */
 	token_destroy(end);
 	free(end);
+
+	if (valid) {
+		check_return_type(ps, fd, stmts_node, &loc, &valid);
+	}
 
 	return valid;
 }

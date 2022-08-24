@@ -168,6 +168,9 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 		valid = type(ps, NULL, &dret_type) && valid;
 	}
 
+	struct location loc;
+	valid = get_parse_location(ps, &loc) && valid;
+
 	/* allocate b b{} */
 	struct ast_node* stmts_node = NULL;
 	valid = stmts(ps, true, &stmts_node) && valid;
@@ -212,6 +215,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 
 	if (valid) {
 		n->tu = af2etype(ps->st, n);
+		check_return_type(ps, n, stmts_node, &loc, &valid);
 	}
 
 	/* transfer saved -> ps{top} */

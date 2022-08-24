@@ -973,6 +973,44 @@ void test_parse_anonymous_function3()
 	parse_teardown(&ps);
 }
 
+void test_parse_anonymous_function_assignment_error()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Function = function(x::Int64) end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse valid");
+	expect_compile_error(ps.el, "values in assignment not compatible");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_anonymous_function_return_error()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var f::Function{Output{Int64}} = function()::Int64 true end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse valid");
+	expect_compile_error(ps.el, "returned type does not match function return type");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_paren_num()
 {
@@ -1020,6 +1058,8 @@ void test_parse_factor()
 	test_parse_anonymous_function();
 	test_parse_anonymous_function2();
 	test_parse_anonymous_function3();
+	test_parse_anonymous_function_return_error();
+	test_parse_anonymous_function_assignment_error();
 	test_parse_not_id();
 	test_parse_not_literal();
 	test_parse_not_error();
