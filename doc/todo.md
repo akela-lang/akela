@@ -48,6 +48,7 @@
 * add let expression
 * structs
 * add return statements
+* type check return statements
 * allow struct at global level only
 * use lookahead_char to lex compound operators
 * suppress new environment in stmts with parameter if new environment already created

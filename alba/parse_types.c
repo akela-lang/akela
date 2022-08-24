@@ -339,7 +339,7 @@ bool tseq(struct parse_state* ps, struct type_use* parent)
 	return valid;
 }
 
-struct type_use* af2etype(struct symbol_table* st, struct ast_node* n)
+struct type_use* function2type(struct symbol_table* st, struct ast_node* n)
 {
 	struct buffer bf;
 	int current_node = 0;

@@ -214,7 +214,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 	free(end);
 
 	if (valid) {
-		n->tu = af2etype(ps->st, n);
+		n->tu = function2type(ps->st, n);
 		check_return_type(ps, n, stmts_node, &loc, &valid);
 	}
 

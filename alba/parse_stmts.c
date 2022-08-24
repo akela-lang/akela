@@ -629,7 +629,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 	}
 
 	if (valid) {
-		n->tu = af2etype(ps->st, n);
+		n->tu = function2type(ps->st, n);
 	}
 
 	/* destroy f f{} id id{} lp lp{} rp rp{} */
