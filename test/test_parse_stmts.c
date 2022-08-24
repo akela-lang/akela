@@ -878,12 +878,15 @@ void test_parse_if()
 	assert_no_errors(ps.el);
 	assert_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
-
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_if, "if");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
 
-	struct ast_node* cb = ast_node_get(root, 0);
+	struct ast_node* if_node = ast_node_get(root, 0);
+	assert_ptr(if_node, "ptr root");
+	expect_int_equal(if_node->type, ast_type_if, "if if_node");
+	expect_null(if_node->tu, "null if_node->tu");
+
+	struct ast_node* cb = ast_node_get(if_node, 0);
 	assert_ptr(cb, "ptr cb");
 	expect_int_equal(cb->type, ast_type_conditional_branch, "conditional branch");
 
@@ -1290,6 +1293,7 @@ void test_parse_while()
 	struct ast_node* node = check_stmts(root, "stmts root");
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_while, "while node");
+	expect_null(node->tu, "null node->tu");
 
 	struct ast_node* cond = ast_node_get(node, 0);
 	assert_ptr(cond, "ptr cond");

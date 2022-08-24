@@ -1,41 +1,4 @@
 # Todo
-* type check
-  * factor
-    * literal [x]
-    * id [x]
-    * sign [x]
-    * not [x]
-    * parenthesis [x]
-    * array literal [x]
-    * factor [x]
-    * var [x]
-    * anonymous function [x]
-    * function [x]
-      * check return type [x]
-      * test assignment [x]
-    * function call [x]
-  * expr
-    * add [x]
-    * mult [x]
-    * comparison [x]
-    * boolean [x]
-    * array_subscript [x]
-    * assignment [x]
-      * check compatible types [x]
-      * check var [x]
-      * check lvalue [x]
-  * stmts
-    * for iteration [x]
-    * for range [x]
-    * stmt [x]
-    * stmts [x]
-    * function [x]
-      * check return type [x]
-    * if []
-    * elseif []
-    * else []
-    * separator []
-    * while []
 * annotate test case name where each error is generated
 * set location in dag on match and non-terminal
 * add type_set and type to dag_node

@@ -18,6 +18,9 @@
 
 bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct ast_node** root);
+bool if_nt(struct parse_state* ps, struct ast_node** root);
+bool elseif_nt(struct parse_state* ps, struct ast_node* parent);
+bool else_nt(struct parse_state* ps, struct ast_node* parent);
 bool while_nt(struct parse_state* ps, struct ast_node** root);
 bool for_nt(struct parse_state* ps, struct ast_node** root);
 bool for_range(struct parse_state* ps, struct ast_node* parent);
@@ -25,8 +28,6 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent);
 bool function(struct parse_state* ps, struct ast_node** root);
 bool function_start(struct parse_state* ps, struct ast_node** root);
 bool function_finish(struct parse_state* ps, struct ast_node* fd);
-bool elseif_nt(struct parse_state* ps, struct ast_node* parent);
-bool else_nt(struct parse_state* ps, struct ast_node* parent);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -175,72 +176,10 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
-		valid = valid && function(ps, &n);
+		valid = function(ps, &n) && valid;
 
 	} else if (t0 && t0->type == token_if) {
-		/* if */
-
-		/* allocate ps{} ift ift{} */
-		struct token* ift = NULL;
-		valid = valid && match(ps, token_if, "expecting if", &ift);
-
-		/* destroy ift ift{} */
-		token_destroy(ift);
-		free(ift);
-
-		/* allocate n */
-		ast_node_create(&n);
-		n->type = ast_type_if;
-
-		/* allocate cb */
-		struct ast_node* cb = NULL;
-		ast_node_create(&cb);
-		cb->type = ast_type_conditional_branch;
-
-		/* transfer cb -> n{} */
-		ast_node_add(n, cb);
-
-		/* allocate ps{} */
-		struct location loc;
-		valid = valid && get_parse_location(ps, &loc);
-
-		/* condition */
-		/* allocate ps{} cond cond{} */
-		struct ast_node* cond = NULL;
-		valid = valid && expr(ps, &cond);
-
-		if (cond == NULL) {
-			set_source_error(ps->el, &loc, "expecting a condition after if");
-			valid = false;
-			return valid;
-		} else {
-			/* transfer cond -> n{} */
-			ast_node_add(cb, cond);
-
-		}
-
-		/* stmts */
-		/* allocate ps{} body body{} */
-		struct ast_node* body = NULL;
-		valid = valid && stmts(ps, false, &body);
-
-		/* transfer body -> n{} */
-		if (body) {
-			ast_node_add(cb, body);
-		}
-
-		/* elseif_nt */
-		/* allocate n{} */
-		valid = valid && elseif_nt(ps, n);
-
-		/* else_nt */
-		/* allocate ps{] n{} */
-		valid = valid && else_nt(ps, n);
-
-		/* end */
-		/* allocate ps{} end end{} */
-		struct token* end = NULL;
-		valid = valid && match(ps, token_end, "expected end", &end);
+		valid = if_nt(ps, &n) && valid;
 
 	/* expr */
 	} else {
@@ -254,6 +193,82 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(n);
 	}
+	return valid;
+}
+
+bool if_nt(struct parse_state* ps, struct ast_node** root)
+{
+	bool valid = true;
+	struct ast_node* n = NULL;
+
+	/* allocate ps{} ift ift{} */
+	struct token* ift = NULL;
+	valid = valid && match(ps, token_if, "expecting if", &ift);
+
+	/* destroy ift ift{} */
+	token_destroy(ift);
+	free(ift);
+
+	/* allocate n */
+	ast_node_create(&n);
+	n->type = ast_type_if;
+
+	/* allocate cb */
+	struct ast_node* cb = NULL;
+	ast_node_create(&cb);
+	cb->type = ast_type_conditional_branch;
+
+	/* transfer cb -> n{} */
+	ast_node_add(n, cb);
+
+	/* allocate ps{} */
+	struct location loc;
+	valid = valid && get_parse_location(ps, &loc);
+
+	/* condition */
+	/* allocate ps{} cond cond{} */
+	struct ast_node* cond = NULL;
+	valid = valid && expr(ps, &cond);
+
+	if (cond == NULL) {
+		set_source_error(ps->el, &loc, "expecting a condition after if");
+		valid = false;
+		return valid;
+	} else {
+		/* transfer cond -> n{} */
+		ast_node_add(cb, cond);
+
+	}
+
+	/* stmts */
+	/* allocate ps{} body body{} */
+	struct ast_node* body = NULL;
+	valid = valid && stmts(ps, false, &body);
+
+	/* transfer body -> n{} */
+	if (body) {
+		ast_node_add(cb, body);
+	}
+
+	/* elseif_nt */
+	/* allocate n{} */
+	valid = valid && elseif_nt(ps, n);
+
+	/* else_nt */
+	/* allocate ps{] n{} */
+	valid = valid && else_nt(ps, n);
+
+	/* end */
+	/* allocate ps{} end end{} */
+	struct token* end = NULL;
+	valid = valid && match(ps, token_end, "expected end", &end);
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
+
 	return valid;
 }
 
