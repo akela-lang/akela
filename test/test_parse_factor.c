@@ -1092,6 +1092,61 @@ void test_parse_call()
 }
 
 /* dynamic-output-none */
+void test_parse_call_return_type()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo()::Int64 1 end; foo() + 2", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "parse_setup valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	struct ast_node* f = ast_node_get(root, 0);
+	assert_ptr(f, "ptr f");
+
+	struct ast_node* add = ast_node_get(root, 1);
+	assert_ptr(add, "ptr add");
+	expect_int_equal(add->type, ast_type_plus, "plus add");
+
+	struct type_use* add_tu = add->tu;
+	assert_ptr(add, "patr add_tu");
+
+	struct type_def* add_td = add_tu->td;
+	assert_ptr(add_td, "ptr add_td");
+	expect_int_equal(add_td->type, type_integer, "integer add_td");
+	expect_str(&add_td->name, "Int64", "Int64 add_td");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_call_return_type_error()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo()::Bool true end; foo() + 2", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "addition on non-numeric operand");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
 void test_parse_call2()
 {
 	test_name(__func__);
@@ -1463,6 +1518,8 @@ void test_parse_factor()
 	test_parse_array_literal_empty_error();
 	test_parse_paren_num();
 	test_parse_call();
+	test_parse_call_return_type();
+	test_parse_call_return_type_error();
 	test_parse_call2();
 	test_parse_call3();
 	test_parse_call4();

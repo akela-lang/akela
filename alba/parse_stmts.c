@@ -625,7 +625,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 				new_sym->tk_type = id->type;
 				new_sym->tu = tu;
 				environment_put(ps->st->top->prev, &id->value, new_sym);
-				n->tu = tu;
+				n->tu = type_use_copy(tu);
 			}
 		}
 	}

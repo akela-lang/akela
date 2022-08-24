@@ -259,6 +259,32 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
 
 	if (valid) {
+		/* allocate n */
+		ast_node_create(&n);
+		n->type = ast_type_call;
+
+		/* allocate a */
+		struct ast_node* a = NULL;
+		ast_node_create(&a);
+		a->type = ast_type_id;
+
+		/* allocate a{} */
+		buffer_copy(&id->value, &a->value);
+
+		/* transfer a a{} -> n{} */
+		ast_node_add(n, a);
+
+		/* transfer b b{} -> n{} */
+		if (cseq_node) {
+			ast_node_add(n, cseq_node);
+		}
+
+	} else {
+		/* destroy cseq_node cseq_node{} */
+		ast_node_destroy(cseq_node);
+	}
+
+	if (valid) {
 		struct symbol* sym = environment_get(ps->st->top, &id->value);
 		if (!sym) {
 			char* name;
@@ -281,6 +307,8 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 				struct type_use* input = NULL;
 				struct type_use* output = NULL;
 				get_function_children(tu, &input, &output);
+
+				/* input */
 				int tcount = 0;
 				if (input) {
 					tcount = type_use_count_children(input);
@@ -312,34 +340,13 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 						arg = arg->next;
 					}
 				}
+
+				/* output */
+				if (output) {
+					n->tu = type_use_get(output, 0);
+				}
 			}
 		}
-	}
-
-	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-		n->type = ast_type_call;
-
-		/* allocate a */
-		struct ast_node* a = NULL;
-		ast_node_create(&a);
-		a->type = ast_type_id;
-
-		/* allocate a{} */
-		buffer_copy(&id->value, &a->value);
-
-		/* transfer a a{} -> n{} */
-		ast_node_add(n, a);
-
-		/* transfer b b{} -> n{} */
-		if (cseq_node) {
-			ast_node_add(n, cseq_node);
-		}
-
-	} else {
-		/* destroy cseq_node cseq_node{} */
-		ast_node_destroy(cseq_node);
 	}
 
 	/* destroy id id{} lp lp{} rp rp{} */

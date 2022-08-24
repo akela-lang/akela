@@ -447,13 +447,13 @@ bool add(struct parse_state* ps, struct ast_node** root)
 			if (!tu_a) {
 				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
 			} else if (!is_numeric(tu_a->td)) {
-				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand");
+				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand", op_name);
 			}
 
 			if (!tu_b) {
 				valid = set_source_error(ps->el, &loc_b, "%s operand has no value", op_name);
 			} else if (!is_numeric(tu_b->td)) {
-				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand");
+				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand", op_name);
 			}
 
 			if (valid) {
