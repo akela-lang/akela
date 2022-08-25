@@ -4,6 +4,7 @@
 #include "zinc/memory.h"
 #include "token.h"
 #include "ast.h"
+#include "source.h"
 
 /* dynamic-output-none */
 /* initialize-output t{} t{value{}} */
@@ -13,9 +14,7 @@ void token_init(struct token* t)
     buffer_init(&t->value);
     t->is_integer = false;
     t->is_float = false;
-    t->line = 0;
-    t->col = 0;
-    t->byte_pos = 0;
+    location_init(&t->loc);
     t->next = NULL;
     t->prev = NULL;
 }
@@ -184,7 +183,7 @@ enum result token_list_print(struct token_list* tl)
 
         /* allocate a */
         buffer2array(&t->value, &a);
-        printf("%zu, %zu: token: %s, value: %s\n", t->line, t->col,token_name[t->type], a);
+        printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, token_name[t->type], a);
 
         /* dynamic-destroy */
         free(a);
@@ -210,10 +209,16 @@ enum result print_token(struct token* t)
 
     /* allocate a */
     buffer2array(&t->value, &a);
-    printf("%zu, %zu: token: %s, value: %s\n", t->line, t->col, token_name[t->type], a);
+    printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, token_name[t->type], a);
 
     /* destroy a */
     free(a);
 
     return r;
+}
+
+/* dynamic-output-none */
+void get_token_location(struct token* t, struct location* loc)
+{
+    *loc = t->loc;
 }

@@ -1543,8 +1543,8 @@ void test_scan_line_col()
 	assert_true(got_token, "got token 10");
 	expect_int_equal(t->type, token_number, "number 10");
 	expect_str(&t->value, "10", "10");
-	expect_int_equal(t->line, 1, "line 10");
-	expect_int_equal(t->col, 1, "col 10");
+	expect_int_equal(t->loc.line, 1, "line 10");
+	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -1557,8 +1557,8 @@ void test_scan_line_col()
 	assert_ptr(t, "ptr t +");
 	assert_true(got_token, "got token +");
 	expect_int_equal(t->type, token_plus, "plus +");
-	expect_int_equal(t->line, 1, "line +");
-	expect_int_equal(t->col, 4, "col +");
+	expect_int_equal(t->loc.line, 1, "line +");
+	expect_int_equal(t->loc.col, 4, "col +");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -1571,8 +1571,8 @@ void test_scan_line_col()
 	assert_ptr(t, "ptr t 20");
 	assert_true(got_token, "got token 20");
 	expect_int_equal(t->type, token_number, "number 20");
-	expect_int_equal(t->line, 1, "line 20");
-	expect_int_equal(t->col, 6, "col 20");
+	expect_int_equal(t->loc.line, 1, "line 20");
+	expect_int_equal(t->loc.col, 6, "col 20");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -1585,8 +1585,8 @@ void test_scan_line_col()
 	assert_ptr(t, "ptr t newline");
 	assert_true(got_token, "got token newline");
 	expect_int_equal(t->type, token_newline, "newline newline");
-	expect_int_equal(t->line, 1, "line newline");
-	expect_int_equal(t->col, 8, "col newline");
+	expect_int_equal(t->loc.line, 1, "line newline");
+	expect_int_equal(t->loc.col, 8, "col newline");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -1599,8 +1599,8 @@ void test_scan_line_col()
 	assert_ptr(t, "ptr t 30");
 	assert_true(got_token, "got token 30");
 	expect_int_equal(t->type, token_number, "newline 30");
-	expect_int_equal(t->line, 2, "line 30");
-	expect_int_equal(t->col, 1, "col 30");
+	expect_int_equal(t->loc.line, 2, "line 30");
+	expect_int_equal(t->loc.col, 1, "col 30");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -1613,8 +1613,8 @@ void test_scan_line_col()
 	assert_ptr(t, "ptr t +");
 	assert_true(got_token, "got token +");
 	expect_int_equal(t->type, token_plus, "plus +");
-	expect_int_equal(t->line, 2, "line +");
-	expect_int_equal(t->col, 4, "col +");
+	expect_int_equal(t->loc.line, 2, "line +");
+	expect_int_equal(t->loc.col, 4, "col +");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -1627,8 +1627,8 @@ void test_scan_line_col()
 	assert_ptr(t, "ptr t 40");
 	assert_true(got_token, "got token 40");
 	expect_int_equal(t->type, token_number, "number 40");
-	expect_int_equal(t->line, 2, "line 40");
-	expect_int_equal(t->col, 6, "col 40");
+	expect_int_equal(t->loc.line, 2, "line 40");
+	expect_int_equal(t->loc.col, 6, "col 40");
 
 	/* destroy t t{} */
 	token_destroy(t);

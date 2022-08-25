@@ -55,128 +55,146 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
     if (u_isalpha(uc)) {
         *state = state_id;
         t->type = token_id;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
             /* allocate t{} */
             buffer_add_char(&t->value, lc->la0_8[i]);
         }
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = t->value.size;
     } else if (uc == '_') {
         *state = state_id_underscore;
         t->type = token_id;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
             /* allocate t{} */
             buffer_add_char(&t->value, lc->la0_8[i]);
         }
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = t->value.size;
     } else if (u_isdigit(uc)) {
         *state = state_number_whole;
         t->type = token_number;
         t->is_integer = true;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
             /* allocate t{} */
             buffer_add_char(&t->value, lc->la0_8[i]);
         }
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = t->value.size;
     } else if (uc == '"') {
         *state = state_string;
         t->type = token_string;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
     } else if (compound_operator_start(uc)) {
         *state = state_compound_operator;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
             /* allocate t{} */
             buffer_add_char(&t->value, lc->la0_8[i]);
         }
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = t->value.size;
     } else if (uc == '+') {
         t->type = token_plus;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == '-') {
         t->type = token_minus;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == '*') {
         t->type = token_mult;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == '/') {
         t->type = token_divide;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == '(') {
         t->type = token_left_paren;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == ')') {
         t->type = token_right_paren;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == ' ') {
         /* nothing */
     } else if (uc == '\n') {
         t->type = token_newline;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == ',') {
         t->type = token_comma;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == ';') {
         t->type = token_semicolon;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == '[') {
         t->type = token_left_square_bracket;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == ']') {
         t->type = token_right_square_bracket;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == '{') {
         t->type = token_left_curly_brace;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else if (uc == '}') {
         t->type = token_right_curly_brace;
-        t->line = lc->line;
-        t->col = lc->col;
-        t->byte_pos = lc->byte_pos;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
         *got_token = 1;
     } else {
         char a[5];
@@ -232,6 +250,7 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
             }
             *state = state_start;
             *got_token = 1;
+            t->loc.byte_count = t->value.size;
             lookahead_char_push(lc);
         }
     } else if (*state == state_id_underscore) {
@@ -261,6 +280,7 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
             }
             *state = state_start;
             *got_token = 1;
+            t->loc.byte_count = t->value.size;
             lookahead_char_push(lc);
         }
     }
@@ -323,6 +343,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
         } else {
             *state = state_start;
             *got_token = 1;
+            t->loc.byte_count = t->value.size;
             lookahead_char_push(lc);
         }
     } else if (*state == state_number_fraction_start) {
@@ -335,6 +356,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
         } else {
             *state = state_start;
             *got_token = 1;
+            t->loc.byte_count = t->value.size;
             lookahead_char_push(lc);
         }
     } else if (*state == state_number_fraction) {
@@ -355,11 +377,13 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
                 /* number is done and e will be part of an id */
                 *state = state_start;
                 *got_token = 1;
+                t->loc.byte_count = t->value.size;
                 lookahead_char_push(lc);
             }
         } else {
             *state = state_start;
             *got_token = 1;
+            t->loc.byte_count = t->value.size;
             lookahead_char_push(lc);
         }
     } else if (*state == state_number_exponent_start) {
@@ -400,6 +424,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
         } else {
             *state = state_start;
             *got_token = 1;
+            t->loc.byte_count = t->value.size;
             lookahead_char_push(lc);
         }
     }
@@ -424,6 +449,7 @@ bool process_char_string(struct scan_state* sns, enum state_enum* state, int* go
         } else if (uc == '"') {
             *state = state_start;
             *got_token = 1;
+            t->loc.byte_count = t->value.size;
         } else {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
                 /* allocate t{} */
@@ -477,71 +503,85 @@ bool process_compound_operator(struct scan_state* sns, enum state_enum* state, i
         t->type = token_double_equal;
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
     } else if (buffer_str_compare(&t->value, "!=")) {
         t->type = token_not_equal;
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
     } else if (buffer_str_compare(&t->value, "<=")) {
         t->type = token_less_than_or_equal;
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
     } else if (buffer_str_compare(&t->value, ">=")) {
         t->type = token_greater_than_or_equal;
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
     } else if (buffer_str_compare(&t->value, "&&")) {
         t->type = token_and;
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
     } else if (buffer_str_compare(&t->value, "||")) {
         t->type = token_or;
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
     } else if (buffer_str_compare(&t->value, "::")) {
         t->type = token_double_colon;
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
     } else if (t->value.buf[0] == '=') {
         t->type = token_equal;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '!') {
         t->type = token_not;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '<') {
         t->type = token_less_than;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '>') {
         t->type = token_greater_than;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '&') {
         t->type = token_ampersand;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '|') {
         t->type = token_vertical_bar;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == ':') {
         t->type = token_colon;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
+        t->loc.byte_count = t->value.size;
         lookahead_char_push(lc);
     } else {
         /* unrecognized compound operator */

@@ -113,9 +113,10 @@ bool get_parse_location(struct parse_state* ps, struct location* loc)
 		return valid;
 	}
 
-	loc->line = t->line;
-	loc->col = t->col;
-	loc->byte_pos = t->byte_pos;
+	loc->line = t->loc.line;
+	loc->col = t->loc.col;
+	loc->byte_pos = t->loc.byte_pos;
+	loc->byte_count = t->loc.byte_count;
 
 	return valid;
 }
@@ -123,4 +124,18 @@ bool get_parse_location(struct parse_state* ps, struct location* loc)
 bool is_identity_comparison(enum ast_type type)
 {
 	return type == ast_type_equality || type == ast_type_not_equal;
+}
+
+void update_location_token(struct ast_node* n, struct token* t)
+{
+	if (t && !n->loc.line) {
+		n->loc = t->loc;
+	}
+}
+
+void update_location_ast_node(struct ast_node* n, struct ast_node* a)
+{
+	if (a && !n->loc.line) {
+		n->loc = a->loc;
+	}
 }

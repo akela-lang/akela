@@ -55,8 +55,8 @@ void test_scan_number_whole()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500", "500");
-	expect_int_equal(t->line, 1, "line 10");
-	expect_int_equal(t->col, 1, "col 10");
+	expect_int_equal(t->loc.line, 1, "line 10");
+	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -89,8 +89,8 @@ void test_scan_number_fraction_start()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.", "500.");
-	expect_int_equal(t->line, 1, "line 10");
-	expect_int_equal(t->col, 1, "col 10");
+	expect_int_equal(t->loc.line, 1, "line 10");
+	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -123,8 +123,8 @@ void test_scan_number_fraction()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123", "500.123");
-	expect_int_equal(t->line, 1, "line 10");
-	expect_int_equal(t->col, 1, "col 10");
+	expect_int_equal(t->loc.line, 1, "line 10");
+	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -236,8 +236,8 @@ void test_scan_number_fraction_exponent()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e2", "500.123e2");
-	expect_int_equal(t->line, 1, "line 10");
-	expect_int_equal(t->col, 1, "col 10");
+	expect_int_equal(t->loc.line, 1, "line 10");
+	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -330,8 +330,8 @@ void test_scan_number_fraction_exponent_negative()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e-2", "500.123e-2");
-	expect_int_equal(t->line, 1, "line 10");
-	expect_int_equal(t->col, 1, "col 10");
+	expect_int_equal(t->loc.line, 1, "line 10");
+	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -364,8 +364,8 @@ void test_scan_number_exponent_positive()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e+2", "500.123e+2");
-	expect_int_equal(t->line, 1, "line");
-	expect_int_equal(t->col, 1, "col");
+	expect_int_equal(t->loc.line, 1, "line");
+	expect_int_equal(t->loc.col, 1, "col");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -398,8 +398,8 @@ void test_scan_number_exponent_add()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123", "500.123");
-	expect_int_equal(t->line, 1, "line 10");
-	expect_int_equal(t->col, 1, "col 10");
+	expect_int_equal(t->loc.line, 1, "line 10");
+	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -413,8 +413,8 @@ void test_scan_number_exponent_add()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "e", "e");
-	expect_int_equal(t->line, 1, "line");
-	expect_int_equal(t->col, 8, "col");
+	expect_int_equal(t->loc.line, 1, "line");
+	expect_int_equal(t->loc.col, 8, "col");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -427,8 +427,8 @@ void test_scan_number_exponent_add()
 	assert_ptr(t, "ptr t");
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_plus, "plus");
-	expect_int_equal(t->line, 1, "line");
-	expect_int_equal(t->col, 10, "col");
+	expect_int_equal(t->loc.line, 1, "line");
+	expect_int_equal(t->loc.col, 10, "col");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -442,8 +442,8 @@ void test_scan_number_exponent_add()
 	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
-	expect_int_equal(t->line, 1, "line");
-	expect_int_equal(t->col, 12, "col");
+	expect_int_equal(t->loc.line, 1, "line");
+	expect_int_equal(t->loc.col, 12, "col");
 
 	/* destroy t t{} */
 	token_destroy(t);

@@ -422,7 +422,7 @@ void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_n
 			if (ret) {
 				struct type_def* ret_td = ret->td;
 				if (!type_use_can_cast(ret, stmts_node->tu)) {
-					*valid = set_source_error(ps->el, &loc, "returned type does not match function return type");
+					*valid = set_source_error(ps->el, loc, "returned type does not match function return type");
 				}
 			}
 		}

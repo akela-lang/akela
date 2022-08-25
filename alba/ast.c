@@ -79,7 +79,6 @@ void ast_node_destroy(struct ast_node* n)
 
 		/* destroy n{} */
 		buffer_destroy(&n->value);
-		token_list_destroy(&n->tl);
 		type_use_destroy(n->tu);
 
 		/* destroy n */
@@ -92,8 +91,8 @@ void ast_node_init(struct ast_node* n)
 {
 	n->type = ast_type_none;
 	buffer_init(&n->value);
-	token_list_init(&n->tl);
 	n->tu = NULL;
+	location_init(&n->loc);
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;

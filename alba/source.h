@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "input.h"
-#include "token.h"
 
 #define COMPILE_ERROR_MESSAGE_SIZE 100
 
@@ -29,6 +28,7 @@ struct location {
 	size_t line;
 	size_t col;
 	size_t byte_pos;
+	size_t byte_count;
 };
 
 /* dynamic-output-none */
@@ -51,9 +51,8 @@ ALBA_API bool set_source_error(struct compile_error_list* el, struct location* l
 /* resource-use d */
 ALBA_API enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf);
 
-/* dynamic-output-none */
-ALBA_API void get_token_location(struct token* t, struct location* loc);
-
 ALBA_API char* plural(int number);
+
+ALBA_API void location_init(struct location* loc);
 
 #endif

@@ -57,14 +57,6 @@ void compile_error_list_destroy(struct compile_error_list* el)
 	}
 }
 
-/* dynamic-output-none */
-void get_token_location(struct token* t, struct location* loc)
-{
-	loc->line = t->line;
-	loc->col = t->col;
-	loc->byte_pos = t->byte_pos;
-}
-
 /* dynamic-output el{} */
 bool set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...)
 {
@@ -150,4 +142,12 @@ char* plural(int number)
 {
 	if (number == 1) return "";
 	else return "s";
+}
+
+void location_init(struct location* loc)
+{
+	loc->line = 0;
+	loc->col = 0;
+	loc->byte_pos = 0;
+	loc->byte_count = 0;
 }

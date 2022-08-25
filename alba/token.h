@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "zinc/buffer.h"
+#include "source.h"
 
 enum token_enum {
     token_none,
@@ -123,9 +124,7 @@ struct token {
     struct buffer value;
     bool is_integer;
     bool is_float;
-    size_t line;
-    size_t col;
-    size_t byte_pos;
+    struct location loc;
     struct token* prev;
     struct token* next;
 };
@@ -181,5 +180,8 @@ ALBA_API enum result token_list_print(struct token_list* tl);
 
 /* dynamic-output-none */
 ALBA_API enum result print_token(struct token* t);
+
+/* dynamic-output-none */
+ALBA_API void get_token_location(struct token* t, struct location* loc);
 
 #endif
