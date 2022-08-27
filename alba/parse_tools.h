@@ -35,10 +35,4 @@ ALBA_API void update_location_token(struct ast_node* n, struct token* t);
 
 ALBA_API void update_location_ast_node(struct ast_node* n, struct ast_node* a);
 
-ALBA_API void update_location(struct location* loc, struct location* loc2);
-
-ALBA_API bool default_location(struct parse_state* ps, struct ast_node* n);
-
-ALBA_API bool parse_ast_node_finish(struct parse_state* ps, struct ast_node* n);
-
 #endif
