@@ -147,7 +147,7 @@ void test_parse_types_exists()
 
 	bool valid = parse_setup("var x::SuperInt; x + 1", &ps, &root);
 	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "expected a type");
+	expect_compile_error(ps.el, "type not defined: SuperInt");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);

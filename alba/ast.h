@@ -58,6 +58,7 @@ struct ast_node {
 	struct buffer value;
 	struct location loc;
 	struct type_use* tu;
+	bool empty;
 	struct ast_node* next;
 	struct ast_node* prev;
 	struct ast_node* head;

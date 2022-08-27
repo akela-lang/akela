@@ -93,6 +93,7 @@ void ast_node_init(struct ast_node* n)
 	buffer_init(&n->value);
 	n->tu = NULL;
 	location_init(&n->loc);
+	n->empty = false;
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;

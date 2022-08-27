@@ -139,3 +139,32 @@ void update_location_ast_node(struct ast_node* n, struct ast_node* a)
 		n->loc = a->loc;
 	}
 }
+
+void update_location(struct location* loc, struct location* loc2)
+{
+	if (loc2 && !loc->line) {
+		*loc = *loc2;
+	}
+}
+
+bool default_location(struct parse_state* ps, struct ast_node* n)
+{
+	bool valid = true;
+	if (!n->loc.line) {
+		valid = get_parse_location(ps, &n->loc);
+	}
+	return valid;
+}
+
+bool parse_ast_node_finish(struct parse_state* ps, struct ast_node* n)
+{
+	bool valid = true;
+
+	valid = default_location(ps, n) && valid;
+
+	if (!valid) {
+		n->empty = true;
+	}
+
+	return valid;
+}
