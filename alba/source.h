@@ -55,4 +55,6 @@ ALBA_API char* plural(int number);
 
 ALBA_API void location_init(struct location* loc);
 
+ALBA_API void location_create(struct location** loc);
+
 #endif

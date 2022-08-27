@@ -151,3 +151,9 @@ void location_init(struct location* loc)
 	loc->byte_pos = 0;
 	loc->byte_count = 0;
 }
+
+void location_create(struct location** loc)
+{
+	malloc_safe(loc, sizeof(struct location));
+	location_init(*loc);
+}

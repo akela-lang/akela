@@ -139,3 +139,14 @@ void update_location_ast_node(struct ast_node* n, struct ast_node* a)
 		n->loc = a->loc;
 	}
 }
+
+void update_location(struct location* loc, struct location* loc2)
+{
+	*loc = *loc2;
+}
+
+bool default_location(struct parse_state* ps, struct location* loc)
+{
+	bool valid = get_parse_location(ps, loc);
+	return valid;
+}

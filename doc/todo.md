@@ -1,5 +1,13 @@
 # Todo
-* set location in ast; add update with token match and production
+* output location in parse functions
+  * parse_types []
+    * tseq [x]
+    * type [x]
+    * declaration []
+    * dseq []
+  * parse_factor []
+  * parse_expr []
+  * parse_strmts []
 * annotate test case name where each error is generated
 * create string type that is a variable sized buffer and inserts null char at end
 * derive type from list in for x in list

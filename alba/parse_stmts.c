@@ -579,7 +579,9 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 		token_destroy(dc);
 		free(dc);
 
-		valid = type(ps, NULL, &dret_node) && valid;
+		struct location* loc_ret = NULL;
+		valid = type(ps, NULL, &dret_node, &loc_ret) && valid;
+		free(loc_ret);
 	}
 
 	/* start building nodes */

@@ -165,7 +165,10 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 		token_destroy(dc);
 		free(dc);
 
-		valid = type(ps, NULL, &dret_type) && valid;
+		struct location* loc_ret = NULL;
+		valid = type(ps, NULL, &dret_type, &loc_ret) && valid;
+		free(loc_ret);
+
 	}
 
 	struct location loc;

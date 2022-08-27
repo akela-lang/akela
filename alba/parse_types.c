@@ -13,8 +13,7 @@
 #include <assert.h>
 
 bool declaration(struct parse_state* ps, struct ast_node** root);
-bool type(struct parse_state* ps, struct token* id, struct ast_node** root);
-bool tseq(struct parse_state* ps, struct type_use* parent);
+bool tseq(struct parse_state* ps, struct type_use* parent, struct location** loc);
 
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | e */
@@ -108,15 +107,15 @@ bool declaration(struct parse_state* ps, struct ast_node** root)
 		struct token* dc = NULL;
 		valid = match(ps, token_double_colon, "expected double colon", &dc) && valid;
 
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
-
 		struct ast_node* type_use = NULL;
-		valid = type(ps, id, &type_use) && valid;
+		struct location* loc_type = NULL;
+		valid = type(ps, id, &type_use, &loc_type) && valid;
 
 		if (!type_use) {
-			valid = set_source_error(ps->el, &loc, "expected a type");
+			valid = set_source_error(ps->el, loc_type, "expected a type");
 		}
+
+		free(loc_type);
 
 		if (valid) {
 			/* allocate n */
@@ -155,12 +154,14 @@ bool declaration(struct parse_state* ps, struct ast_node** root)
 }
 
 /* type -> id | id { tseq } */
-bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
+bool type(struct parse_state* ps, struct token* id, struct ast_node** root, struct location** loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 	struct type_use* tu = NULL;
 	bool is_generic = false;
+
+	location_create(loc);
 
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -173,9 +174,6 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 		type_use_create(&tu);
 		n->tu = tu;
 
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
-
 		struct token* name = NULL;
 		valid = match(ps, token_id, "expected type name", &name) && valid;
 
@@ -186,7 +184,10 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 			struct token* lcb = NULL;
 			valid = match(ps, token_left_curly_brace, "expected left curly brace", &lcb) && valid;
 
-			valid = tseq(ps, tu) && valid;
+			struct location* loc_tseq = NULL;
+			valid = tseq(ps, tu, &loc_tseq) && valid;
+			update_location(*loc, loc_tseq);
+			free(loc_tseq);
 
 			struct token* rcb = NULL;
 			valid = match(ps, token_right_curly_brace, "expected right curly brace", &rcb) && valid;
@@ -198,17 +199,17 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 			if (!sym) {
 				char* a;
 				buffer2array(&name->value, &a);
-				valid = set_source_error(ps->el, &loc, "type not defined: %s", a);
+				valid = set_source_error(ps->el, &name->loc, "type not defined: %s", a);
 				free(a);
 			} else if (!sym->td) {
 				char* a;
 				buffer2array(&name->value, &a);
-				valid = set_source_error(ps->el, &loc, "identifier is not a type: %s", a);
+				valid = set_source_error(ps->el, &name->loc, "identifier is not a type: %s", a);
 				free(a);
 			} else if (is_generic && !sym->td->is_generic) {
 				char* a;
 				buffer2array(&name->value, &a);
-				valid = set_source_error(ps->el, &loc, "subtype was specified for non-generic type: %s", a);
+				valid = set_source_error(ps->el, &name->loc, "subtype was specified for non-generic type: %s", a);
 				free(a);
 			} else {
 				if (is_generic) {
@@ -217,7 +218,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 						char* a;
 						buffer2array(&name->value, &a);
 						valid = set_source_error(
-							ps->el, &loc, "generic type (%s) should have %d subtype%s but has %d subtype%s",
+							ps->el, &name->loc, "generic type (%s) should have %d subtype%s but has %d subtype%s",
 							a,
 							sym->td->generic_count, plural(sym->td->generic_count),
 							count, plural(count)
@@ -238,14 +239,14 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 				if (dup) {
 					char* a;
 					buffer2array(&id->value, &a);
-					valid = set_source_error(ps->el, &loc, "duplicate declaration in same scope: %s", a);
+					valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
 					free(a);
 				} else {
 					struct symbol* sym = environment_get(ps->st->top, &id->value);
 					if (sym && sym->td) {
 						char* a;
 						buffer2array(&id->value, &a);
-						valid = set_source_error(ps->el, &loc, "identifier reserved as a type: %s", a);
+						valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
 						free(a);
 					} else {
 						struct symbol* new_sym = NULL;
@@ -264,6 +265,8 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 		free(name);
 	}
 
+	valid = default_location(ps, *loc) && valid;
+
 	if (valid) {
 		*root = n;
 	} else {
@@ -275,20 +278,23 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root)
 
 /* tseq -> type tseq' */
 /* tseq' -> , tseq' */
-bool tseq(struct parse_state* ps, struct type_use* parent)
+bool tseq(struct parse_state* ps, struct type_use* parent, struct location** loc)
 {
 	bool valid = true;
 	struct ast_node* a = NULL;
 	struct token* t0 = NULL;
 
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
+	location_create(loc);
 
-	valid = type(ps, NULL, &a) && valid;
+	struct location* loc_type = NULL;
+	valid = type(ps, NULL, &a, &loc_type) && valid;
+	update_location(*loc, loc_type);
 
 	if (!a) {
-		valid = set_source_error(ps->el, &loc, "expected a type name");
+		valid = set_source_error(ps->el, loc_type, "expected a type name");
 	}
+
+	free(loc_type);
 
 	if (valid) {
 		assert(a);
@@ -314,16 +320,18 @@ bool tseq(struct parse_state* ps, struct type_use* parent)
 		token_destroy(comma);
 		free(comma);
 
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
-
 		a = NULL;
-		valid = type(ps, NULL, &a) && valid;
+		loc_type = NULL;
+		valid = type(ps, NULL, &a, &loc_type) && valid;
+		update_location(*loc, loc_type);
 
 		if (!a) {
-			valid = set_source_error(ps->el, &loc, "expected a type name after comma");
+			valid = set_source_error(ps->el, loc_type, "expected a type name after comma");
+			free(loc_type);
 			break;
 		}
+
+		free(loc_type);
 
 		if (valid) {
 			assert(a);
@@ -335,6 +343,8 @@ bool tseq(struct parse_state* ps, struct type_use* parent)
 		}
 
 	}
+
+	valid = default_location(ps, *loc) && valid;
 
 	return valid;
 }
