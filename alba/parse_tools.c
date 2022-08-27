@@ -126,17 +126,10 @@ bool is_identity_comparison(enum ast_type type)
 	return type == ast_type_equality || type == ast_type_not_equal;
 }
 
-void update_location_token(struct ast_node* n, struct token* t)
+void update_location_token(struct location* loc, struct token* t)
 {
-	if (t && !n->loc.line) {
-		n->loc = t->loc;
-	}
-}
-
-void update_location_ast_node(struct ast_node* n, struct ast_node* a)
-{
-	if (a && !n->loc.line) {
-		n->loc = a->loc;
+	if (t && !loc->line) {
+		*loc = t->loc;
 	}
 }
 
