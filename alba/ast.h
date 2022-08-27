@@ -56,7 +56,6 @@ enum ast_type {
 struct ast_node {
 	enum ast_type type;
 	struct buffer value;
-	struct location loc;
 	struct type_use* tu;
 	struct ast_node* next;
 	struct ast_node* prev;
