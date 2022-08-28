@@ -97,9 +97,10 @@ bool var(struct parse_state* ps, struct ast_node** root)
 
 	/* allocate ps{} id id{} */
 	struct ast_node* a = NULL;
-	valid = declaration(ps, &a) && valid;
+	struct location loc_dec;
+	valid = declaration(ps, &a, &loc_dec) && valid;
 	if (!a) {
-		valid = set_source_error(ps->el, &loc, "expected declaration after var");
+		valid = set_source_error(ps->el, &loc_dec, "expected declaration after var");
 	}
 
 	if (valid) {

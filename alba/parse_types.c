@@ -12,7 +12,6 @@
 #include "type_use.h"
 #include <assert.h>
 
-bool declaration(struct parse_state* ps, struct ast_node** root);
 bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc);
 
 /* dseq -> declaration dseq' | e */
@@ -32,7 +31,8 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 
 	/* allocate a */
 	struct ast_node* dec = NULL;
-	valid = declaration(ps, &dec) && valid;
+	struct location loc_dec;
+	valid = declaration(ps, &dec, &loc_dec) && valid;
 
 	if (!dec) {
 		return valid;
@@ -65,11 +65,12 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 
 		/* allocate a */
 		struct ast_node* dec = NULL;
-		valid = declaration(ps, &dec) && valid;
+		struct location loc_dec;
+		valid = declaration(ps, &dec, &loc_dec) && valid;
 		
 		if (!dec || !valid) {
 			/* allocate ps{} */
-			set_source_error(ps->el, &loc, "expecting declaration after comma");
+			set_source_error(ps->el, &loc_dec, "expecting declaration after comma");
 			valid = false;
 			break;
 		}
@@ -85,11 +86,13 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 
 /* declaration -> id :: type | id */
 /* dynamic-output ps{} root root{} */
-bool declaration(struct parse_state* ps, struct ast_node** root)
+bool declaration(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 	int num;
+
+	location_init(loc);
 
 	/* allocate ps{} */
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -102,14 +105,17 @@ bool declaration(struct parse_state* ps, struct ast_node** root)
 		/* allocate ps{} id id{} */
 		struct token* id = NULL;
 		valid = match(ps, token_id, "expected id", &id) && valid;
+		update_location_token(loc, id);
 
 		/* allocate ps{} dc dc{} */
 		struct token* dc = NULL;
 		valid = match(ps, token_double_colon, "expected double colon", &dc) && valid;
+		update_location_token(loc, dc);
 
 		struct ast_node* type_use = NULL;
 		struct location loc_type;
 		valid = type(ps, id, &type_use, &loc_type) && valid;
+		update_location(loc, &loc_type);
 
 		if (!type_use) {
 			valid = set_source_error(ps->el, &loc_type, "expected a type");
@@ -147,6 +153,8 @@ bool declaration(struct parse_state* ps, struct ast_node** root)
 		token_destroy(dc);
 		free(dc);
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }

@@ -3,11 +3,12 @@
   * parse_types []
     * tseq [x]
     * type [x]
-    * declaration []
+    * declaration [x]
     * dseq []
   * parse_factor []
   * parse_expr []
   * parse_strmts []
+* replace test_use with ast_node
 * annotate test case name where each error is generated
 * create string type that is a variable sized buffer and inserts null char at end
 * derive type from list in for x in list

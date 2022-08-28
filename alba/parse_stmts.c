@@ -339,9 +339,6 @@ bool for_nt(struct parse_state* ps, struct ast_node** root)
 	struct token* f = NULL;
 	valid = match(ps, token_for, "expected for", &f) && valid;
 
-	struct location loc_dec;
-	get_parse_location(ps, &loc_dec);
-
 	struct environment* saved = ps->st->top;
 	struct environment* env = NULL;
 	malloc_safe(&env, sizeof(struct environment));
@@ -349,7 +346,8 @@ bool for_nt(struct parse_state* ps, struct ast_node** root)
 	ps->st->top = env;
 
 	struct ast_node* dec = NULL;
-	valid = declaration(ps, &dec) && valid;
+	struct location loc_dec;
+	valid = declaration(ps, &dec, &loc_dec) && valid;
 
 	valid = get_lookahead(ps, 1, &num) && valid;
 	struct token* t0 = get_token(&ps->lookahead, 0);
