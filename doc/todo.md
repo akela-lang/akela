@@ -6,7 +6,7 @@
     * declaration [x]
     * dseq [x]
   * parse_factor []
-    * parenthesis []
+    * parenthesis [x]
     * aseq []
     * array_literal []
     * sign []
