@@ -6,7 +6,7 @@
 #include "zinc/buffer.h"
 
 /* dynamic-output ps{} root root{} */
-ALBA_API bool dseq(struct parse_state* ps, struct ast_node** root);
+ALBA_API bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* dynamic-output ps{} root root{} */
 ALBA_API bool declaration(struct parse_state* ps, struct ast_node** root, struct location* loc);

@@ -149,8 +149,9 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 
 	/* allocate a a{} */
 	struct ast_node* dseq_node = NULL;
-	valid = dseq(ps, &dseq_node) && valid;
-
+	struct location loc_dseq;
+	valid = dseq(ps, &dseq_node, &loc_dseq) && valid;
+	
 	/* allocate n */
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;

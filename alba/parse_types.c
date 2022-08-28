@@ -17,10 +17,11 @@ bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc)
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | e */
 /* dynamic-output ps{} root root{} */
-bool dseq(struct parse_state* ps, struct ast_node** root)
+bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
+	location_init(loc);
 
 	/* allocate n */
 	ast_node_create(&n);
@@ -33,8 +34,10 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
 	valid = declaration(ps, &dec, &loc_dec) && valid;
+	update_location(loc, &loc_dec);
 
 	if (!dec) {
+		valid = default_location(ps, loc) && valid;
 		return valid;
 	}
 
@@ -56,17 +59,16 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 		/* allocate ps{} comma comma{} */
 		struct token* comma = NULL;
 		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
+		update_location_token(loc, comma);
 
 		token_destroy(comma);
 		free(comma);
-
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
 
 		/* allocate a */
 		struct ast_node* dec = NULL;
 		struct location loc_dec;
 		valid = declaration(ps, &dec, &loc_dec) && valid;
+		update_location(loc, &loc_dec);
 		
 		if (!dec || !valid) {
 			/* allocate ps{} */
@@ -80,6 +82,8 @@ bool dseq(struct parse_state* ps, struct ast_node** root)
 			ast_node_add(n, dec);
 		}
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }
