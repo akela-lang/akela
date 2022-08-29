@@ -21,8 +21,8 @@ bool not_nt(struct parse_state* ps, struct ast_node** root);
 bool literal_nt(struct parse_state* ps, struct ast_node** root);
 bool id_nt(struct parse_state* ps, struct ast_node** root);
 bool sign(struct parse_state* ps, struct ast_node** root);
-bool array_literal(struct parse_state* ps, struct ast_node** root);
-bool aseq(struct parse_state* ps, struct ast_node* parent);
+bool array_literal(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /*
@@ -70,7 +70,8 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 
 	} else if (t0 && t0->type == token_left_square_bracket) {
 		/* allocate n n{} */
-		valid = array_literal(ps, &n) && valid;
+		struct location loc_array_literal;
+		valid = array_literal(ps, &n, &loc_array_literal) && valid;
 
 	} else if (t0 && t0->type == token_left_paren) {
 		struct location loc_paren;
@@ -693,11 +694,13 @@ bool sign(struct parse_state* ps, struct ast_node** root)
 /*
 * array_literal -> [aseq]
 */
-bool array_literal(struct parse_state* ps, struct ast_node** root)
+bool array_literal(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	int num;
 	struct ast_node* n = NULL;
+
+	location_init(loc);
 
 	/* allocate ps{} */
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -707,6 +710,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root)
 		/* allocate ps{} lsb lsb{} */
 		struct token* lsb = NULL;
 		valid = match(ps, token_left_square_bracket, "expected left square bracket", &lsb) && valid;
+		update_location_token(loc, lsb);
 
 		/* destroy lsb lsb{} */
 		token_destroy(lsb);
@@ -716,15 +720,15 @@ bool array_literal(struct parse_state* ps, struct ast_node** root)
 		ast_node_create(&n);
 		n->type = ast_type_array_literal;
 
-		struct location loc;
-		get_parse_location(ps, &loc);
-
 		/* allocate ps{} n{} */
-		valid = aseq(ps, n) && valid;
+		struct location loc_aseq;
+		valid = aseq(ps, n, &loc_aseq) && valid;
+		update_location(loc, &loc_aseq);
 
 		/* allocate ps{} rsb rsb{] */
 		struct token* rsb = NULL;
 		valid = match(ps, token_right_square_bracket, "expected right square bracket", &rsb) && valid;
+		update_location_token(loc, rsb);
 
 		/* destroy rsb rsb{} */
 		token_destroy(rsb);
@@ -734,7 +738,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root)
 			struct ast_node* first = n->head;
 
 			if (!first) {
-				valid = set_source_error(ps->el, &loc, "array literal has no elements");
+				valid = set_source_error(ps->el, &loc_aseq, "array literal has no elements");
 			} else {
 				struct type_use* tu_first = type_use_copy(first->tu);
 				struct ast_node* x = first->next;
@@ -742,7 +746,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root)
 				while (x) {
 					tu_x = x->tu;
 					if (!type_find_whole(ps->st, tu_first, tu_x)) {
-						valid = set_source_error(ps->el, &loc, "array elements not the same type");
+						valid = set_source_error(ps->el, &loc_aseq, "array elements not the same type");
 						break;
 					}
 					x = x->next;
@@ -757,15 +761,19 @@ bool array_literal(struct parse_state* ps, struct ast_node** root)
 		*root = n;
 	}
 
+	valid = default_location(ps, loc) && valid;
+
 	return valid;
 }
 
 /* aseq -> expr aseq' | e */
 /* aseq' = , expr aseq' | e */
 /* dynamic-output ps{} parent{} */
-bool aseq(struct parse_state* ps, struct ast_node* parent)
+bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
 	bool valid = true;
+
+	location_init(loc);
 
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
@@ -781,26 +789,28 @@ bool aseq(struct parse_state* ps, struct ast_node* parent)
 			valid = get_lookahead(ps, 1, &num) && valid;
 			struct token* t0 = get_token(&ps->lookahead, 0);
 			if (!t0 || t0->type != token_comma) {
+				valid = default_location(ps, loc) && valid;
 				break;
 			}
 
 			/* allocate ps{} comma comma{} */
 			struct token* comma = NULL;
 			valid = match(ps, token_comma, "expecting comma", &comma) && valid;
+			update_location_token(loc, comma);
 
 			/* destroy comma comma{} */
 			token_destroy(comma);
 			free(comma);
 
-			struct location loc;
-			valid = get_parse_location(ps, &loc) && valid;
+			struct location loc_a;
+			valid = get_parse_location(ps, &loc_a) && valid;
 
 			/* allocate ps{} a a{} */
 			struct ast_node* a = NULL;
 			valid = expr(ps, &a) && valid;
 
 			if (!a) {
-				valid = set_source_error(ps->el, &loc, "expected expr after comma");
+				valid = set_source_error(ps->el, &loc_a, "expected expr after comma");
 				break;
 			}
 
@@ -808,6 +818,8 @@ bool aseq(struct parse_state* ps, struct ast_node* parent)
 			ast_node_add(parent, a);
 		}
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }
