@@ -19,7 +19,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root);
 bool cseq(struct parse_state* ps, struct ast_node** root);
 bool not_nt(struct parse_state* ps, struct ast_node** root);
 bool literal_nt(struct parse_state* ps, struct ast_node** root);
-bool id_nt(struct parse_state* ps, struct ast_node** root);
+bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_literal(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -63,7 +63,8 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 		valid = literal_nt(ps, &n) && valid;
 
 	} else if (t0 && t0->type == token_id) {
-		valid = id_nt(ps, &n) && valid;
+		struct location loc_id;
+		valid = id_nt(ps, &n, &loc_id) && valid;
 
 	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
 		struct location loc_sign;
@@ -565,21 +566,21 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool id_nt(struct parse_state* ps, struct ast_node** root)
+bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
+
+	location_init(loc);
 
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
-
 	/* allocate ps{} x x{} */
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expecting identifier", &id) && valid;
+	update_location_token(loc, id);
 
 	if (valid) {
 		/* allocate n */
@@ -596,14 +597,14 @@ bool id_nt(struct parse_state* ps, struct ast_node** root)
 		if (!sym) {
 			char* a;
 			buffer2array(&id->value, &a);
-			valid = set_source_error(ps->el, &loc, "variable not declared: %s", a);
+			valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", a);
 			free(a);
 		} else {
 			/* assert(sym->tu);*/
 			if (!sym->tu) {
 				char* a;
 				buffer2array(&id->value, &a);
-				valid = set_source_error(ps->el, &loc, "internal error: variable not assigned type: %s", a);
+				valid = set_source_error(ps->el, &id->loc, "internal error: variable not assigned type: %s", a);
 				free(a);
 			} else {
 				n->tu = type_use_copy(sym->tu);
@@ -620,6 +621,8 @@ bool id_nt(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(n);
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }
@@ -677,7 +680,7 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		assert(right);
 		struct type_use* tu = right->tu;
 		if (!tu) {
-			valid = set_source_error(ps->el, &loc, "negative operator was used on expression with no value");
+			valid = set_source_error(ps->el, &sign->loc, "negative operator was used on expression with no value");
 		} else {
 			n->tu = type_use_copy(tu);
 		}

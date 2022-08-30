@@ -10,7 +10,7 @@
     * aseq [x]
     * array_literal [x]
     * sign [x]
-    * id_nt []
+    * id_nt [x]
     * literal_nt []
     * not_nt []
     * cseq []
