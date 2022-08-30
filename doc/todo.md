@@ -9,7 +9,7 @@
     * parenthesis [x]
     * aseq [x]
     * array_literal [x]
-    * sign []
+    * sign [x]
     * id_nt []
     * literal_nt []
     * not_nt []

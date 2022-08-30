@@ -20,7 +20,7 @@ bool cseq(struct parse_state* ps, struct ast_node** root);
 bool not_nt(struct parse_state* ps, struct ast_node** root);
 bool literal_nt(struct parse_state* ps, struct ast_node** root);
 bool id_nt(struct parse_state* ps, struct ast_node** root);
-bool sign(struct parse_state* ps, struct ast_node** root);
+bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_literal(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -66,7 +66,8 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 		valid = id_nt(ps, &n) && valid;
 
 	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
-		valid = sign(ps, &n) && valid;
+		struct location loc_sign;
+		valid = sign(ps, &n, &loc_sign) && valid;
 
 	} else if (t0 && t0->type == token_left_square_bracket) {
 		/* allocate n n{} */
@@ -623,10 +624,12 @@ bool id_nt(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool sign(struct parse_state* ps, struct ast_node** root)
+bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
+
+	location_init(loc);
 
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -635,16 +638,17 @@ bool sign(struct parse_state* ps, struct ast_node** root)
 	/* allocate sign */
 	struct token* sign = NULL;
 	valid = match(ps, t0->type, "expecting unary plus or minus", &sign) && valid;
+	update_location_token(loc, sign);
 
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
+	struct location loc_factor;
+	valid = get_parse_location(ps, &loc_factor) && valid;
 
 	/* allocate right */
 	struct ast_node* right = NULL;
 	valid = factor(ps, &right) && valid;
 
 	if (!right) {
-		valid = set_source_error(ps->el, &loc, "expecting factor after sign");
+		valid = set_source_error(ps->el, &loc_factor, "expecting factor after sign");
 	}
 
 	if (valid) {
@@ -687,6 +691,8 @@ bool sign(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(n);
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }
