@@ -5,7 +5,7 @@
     * type [x]
     * declaration [x]
     * dseq [x]
-  * parse_factor []
+  * parse_factor [x]
     * parenthesis [x]
     * aseq [x]
     * array_literal [x]
@@ -19,6 +19,13 @@
     * var [x]
     * factor [x]
   * parse_expr []
+    * array_subscript []
+    * mult []
+    * add []
+    * comparison []
+    * boolean []
+    * assignment []
+    * expr []
   * parse_strmts []
 * error location specific to call parameter / argument
 * power operator
