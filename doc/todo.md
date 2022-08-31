@@ -19,7 +19,7 @@
     * var [x]
     * factor [x]
   * parse_expr []
-    * array_subscript []
+    * array_subscript [x]
     * mult []
     * add []
     * comparison []

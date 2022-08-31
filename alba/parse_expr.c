@@ -176,10 +176,6 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting + or -", &op) && valid;
 
-		/* destroy op op{} */
-		token_destroy(op);
-		free(op);
-
 		struct location loc;
 		valid = get_parse_location(ps, &loc) && valid;
 
@@ -218,6 +214,10 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 
 			left = n;
 		}
+
+		/* destroy op op{} */
+		token_destroy(op);
+		free(op);
 
 	}
 
@@ -535,9 +535,6 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 		struct location loc_op;
 		get_token_location(op, &loc_op);
 
-		token_destroy(op);
-		free(op);
-
 		/* factor */
 		/* allocate ps{} a a{} */
 		struct location loc_b;
@@ -588,6 +585,10 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 
 			left = n;
 		}
+
+		token_destroy(op);
+		free(op);
+
 	}
 
 	if (valid) {
@@ -651,6 +652,7 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root, struct loca
 		valid = match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb) && valid;
 		location_update_token(loc, lsb);
 		if (lsb) {
+			#pragma warning(suppress:6001)
 			loc_last = lsb->loc;
 		}
 
