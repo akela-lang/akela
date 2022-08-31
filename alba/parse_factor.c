@@ -31,12 +31,14 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 * note: type system should catch incompatible sign or not factors
 */
 /* dynamic-output ps{} root root{} */
-bool factor(struct parse_state* ps, struct ast_node** root)
+bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct defer_node* stack_error = NULL;
 	struct defer_node* stack_temp = NULL;
 	struct ast_node* n = NULL;
+
+	location_init(loc);
 
 	/* allocate ps{} */
 	int num;
@@ -48,47 +50,40 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 	t1 = get_token(&ps->lookahead, 1);
 
 	if (t0 && t0->type == token_var) {
-		struct location loc_var;
-		valid = var(ps, &n, &loc_var) && valid;
+		valid = var(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
-		struct location anon_function;
-		valid = anonymous_function(ps, &n, &anon_function) && valid;
+		valid = anonymous_function(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
-		struct location loc_call;
-		valid = function_call(ps, &n, &loc_call) && valid;
+		valid = function_call(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_not) {
-		struct location loc_not;
-		valid = not_nt(ps, &n, &loc_not) && valid;
+		valid = not_nt(ps, &n, loc) && valid;
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
-		struct location loc_lit;
-		valid = literal_nt(ps, &n, &loc_lit) && valid;
+		valid = literal_nt(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_id) {
-		struct location loc_id;
-		valid = id_nt(ps, &n, &loc_id) && valid;
+		valid = id_nt(ps, &n, loc) && valid;
 
 	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
-		struct location loc_sign;
-		valid = sign(ps, &n, &loc_sign) && valid;
+		valid = sign(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_left_square_bracket) {
 		/* allocate n n{} */
-		struct location loc_array_literal;
-		valid = array_literal(ps, &n, &loc_array_literal) && valid;
+		valid = array_literal(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_left_paren) {
-		struct location loc_paren;
-		valid = parenthesis(ps, &n, &loc_paren) && valid;
+		valid = parenthesis(ps, &n, loc) && valid;
 	}
 
 	/* transfer n -> root */
 	if (valid) {
 		*root = n;
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -483,12 +478,11 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	valid = match(ps, token_not, "expecting not", &not) && valid;
 	location_update_token(loc, not);
 
-	struct location loc_factor;
-	valid = get_parse_location(ps, &loc_factor) && valid;
-
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
-	valid = factor(ps, &a) && valid;
+	struct location loc_factor;
+	valid = factor(ps, &a, &loc_factor) && valid;
+	location_update(loc, &loc_factor);
 
 	if (!a) {
 		/* allocate ps{} */
@@ -687,12 +681,11 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	valid = match(ps, t0->type, "expecting unary plus or minus", &sign) && valid;
 	location_update_token(loc, sign);
 
-	struct location loc_factor;
-	valid = get_parse_location(ps, &loc_factor) && valid;
-
 	/* allocate right */
 	struct ast_node* right = NULL;
-	valid = factor(ps, &right) && valid;
+	struct location loc_factor;
+	valid = factor(ps, &right, &loc_factor) && valid;
+	location_update(loc, &loc_factor);
 
 	if (!right) {
 		valid = set_source_error(ps->el, &loc_factor, "expecting factor after sign");

@@ -616,7 +616,8 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root)
 	struct ast_node* a = NULL;
 	
 	/* allocate ps{} n n{} */
-	valid = factor(ps, &a) && valid;
+	struct location loc_factor;
+	valid = factor(ps, &a, &loc_factor) && valid;
 
 	struct type_use* tu = NULL;
 	struct type_use* element_tu = NULL;

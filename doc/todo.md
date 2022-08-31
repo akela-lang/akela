@@ -17,7 +17,7 @@
     * function_call [x]
     * anonymous_function [x]
     * var [x]
-    * factor []
+    * factor [x]
   * parse_expr []
   * parse_strmts []
 * error location specific to call parameter / argument
