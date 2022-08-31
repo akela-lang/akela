@@ -15,7 +15,7 @@
 
 bool var(struct parse_state* ps, struct ast_node** root);
 bool anonymous_function(struct parse_state* ps, struct ast_node** root);
-bool function_call(struct parse_state* ps, struct ast_node** root);
+bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -54,7 +54,8 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 		valid = anonymous_function(ps, &n) && valid;
 
 	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
-		valid = function_call(ps, &n) && valid;
+		struct location loc_call;
+		valid = function_call(ps, &n, &loc_call) && valid;
 
 	} else if (t0 && t0->type == token_not) {
 		struct location loc_not;
@@ -243,30 +244,33 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool function_call(struct parse_state* ps, struct ast_node** root)
+bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
+	location_init(loc);
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expecting id", &id) && valid;
+	update_location_token(loc, id);
 
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
+	update_location_token(loc, lp);
 
 	/* allocate b b{} */
 	struct ast_node* cseq_node = NULL;
 	struct location loc_cseq;
 	valid = cseq(ps, &cseq_node, &loc_cseq) && valid;
+	update_location(loc, &loc_cseq);
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
 	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
+	update_location_token(loc, rp);
 
 	if (valid) {
 		/* allocate n */
@@ -299,7 +303,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 		if (!sym) {
 			char* name;
 			buffer2array(&id->value, &name);
-			valid = set_source_error(ps->el, &loc, "function is not declared: %s", name);
+			valid = set_source_error(ps->el, &id->loc, "function is not declared: %s", name);
 			free(name);
 			valid = false;
 		} else {
@@ -310,7 +314,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 			if (td->type != type_function) {
 				char* name;
 				buffer2array(&id->value, &name);
-				valid = set_source_error(ps->el, &loc, "call of variable that is not a function: %s", name);
+				valid = set_source_error(ps->el, &id->loc, "call of variable that is not a function: %s", name);
 				free(name);
 				valid = false;
 			} else {
@@ -329,9 +333,9 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 				}
 
 				if (ccount < tcount) {
-					valid = set_source_error(ps->el, &loc, "not enough arguments in function call");
+					valid = set_source_error(ps->el, &rp->loc, "not enough arguments in function call");
 				} else if (ccount > tcount) {
-					valid = set_source_error(ps->el, &loc, "too many arguments in function call");
+					valid = set_source_error(ps->el, &id->loc, "too many arguments in function call");
 				} else if (tcount > 0) {
 					assert(input);
 					struct type_use* param_tu = input->head;
@@ -339,11 +343,11 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 					while (param_tu) {
 						struct type_use* arg_tu = arg->tu;
 						if (!arg_tu) {
-							valid = set_source_error(ps->el, &loc, "argument in call expression does not have a value");
+							valid = set_source_error(ps->el, &id->loc, "argument in call expression does not have a value");
 						} else {
 							struct type_def* ctd = arg_tu->td;
 							if (!type_use_can_cast(param_tu, arg_tu)) {
-								valid = set_source_error(ps->el, &loc, "parameter and aguments types do not match");
+								valid = set_source_error(ps->el, &id->loc, "parameter and aguments types do not match");
 							}
 						}
 						param_tu = param_tu->next;
@@ -372,6 +376,8 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(n);
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }

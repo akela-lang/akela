@@ -14,12 +14,16 @@
     * literal_nt [x]
     * not_nt [x]
     * cseq [x]
-    * function_call []
+    * function_call [x]
     * anonymous_function []
     * var []
     * factor []
   * parse_expr []
   * parse_strmts []
+* change update_location to location_update
+* change update_location_token to location_update_token
+* change default_location to location_default
+* error location specific to call parameter / argument
 * power operator
 * replace test_use with ast_node
 * annotate test case name where each error is generated
