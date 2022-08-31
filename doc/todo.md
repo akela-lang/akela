@@ -20,7 +20,7 @@
     * factor [x]
   * parse_expr []
     * array_subscript [x]
-    * mult []
+    * mult [x]
     * add []
     * comparison []
     * boolean []

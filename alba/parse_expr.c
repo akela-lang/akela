@@ -15,7 +15,7 @@ bool assignment(struct parse_state* ps, struct ast_node** root);
 bool boolean(struct parse_state* ps, struct ast_node** root);
 bool comparison(struct parse_state* ps, struct ast_node** root);
 bool add(struct parse_state* ps, struct ast_node** root);
-bool mult(struct parse_state* ps, struct ast_node** root);
+bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* expr -> id = expr | boolean */
@@ -367,11 +367,9 @@ bool add(struct parse_state* ps, struct ast_node** root)
 	char* op_name;
 	int num;
 
-	struct location loc_a;
-	valid = get_parse_location(ps, &loc_a) && valid;
-
 	/* allocate a a{} */
-	valid = mult(ps, &a) && valid;
+	struct location loc_a;
+	valid = mult(ps, &a, &loc_a) && valid;
 
 	if (!a) {
 		return valid;
@@ -414,14 +412,9 @@ bool add(struct parse_state* ps, struct ast_node** root)
 		struct location loc_op;
 		get_token_location(op, &loc_op);
 
-		/* destroy op op{} */
-		token_destroy(op);
-		free(op);
-
-		valid = get_parse_location(ps, &loc_b) && valid;
-
 		/* allocate a a{} */
-		valid = mult(ps, &b) && valid;
+		struct location loc_b;
+		valid = mult(ps, &b, &loc_b) && valid;
 
 		if (!b) {
 			/* destroy n n{} */
@@ -459,9 +452,7 @@ bool add(struct parse_state* ps, struct ast_node** root)
 			if (valid) {
 				struct type_use* tu = type_use_copy(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
-					struct location loc;
-					get_token_location(op, &loc);
-					valid = set_source_error(ps->el, &loc, "invalid types for %s", op_name);
+					valid = set_source_error(ps->el, &op->loc, "invalid types for %s", op_name);
 				} else {
 					n->tu = tu;
 				}
@@ -469,6 +460,10 @@ bool add(struct parse_state* ps, struct ast_node** root)
 
 			left = n;
 		}
+
+		/* destroy op op{} */
+		token_destroy(op);
+		free(op);
 	}
 
 	if (valid) {
@@ -482,7 +477,7 @@ bool add(struct parse_state* ps, struct ast_node** root)
 
 /* mult -> array_subscript mult_prime */
 /* dynamic-output ps{} root root{} */
-bool mult(struct parse_state* ps, struct ast_node** root)
+bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* a = NULL;
@@ -491,11 +486,15 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 	struct ast_node* n = NULL;
 	char* op_name;
 
+	location_init(loc);
+
 	/* allocate ps{} a a{} */
 	struct location loc_a;
 	valid = array_subscript(ps, &a, &loc_a) && valid;
+	location_update(loc, &loc_a);
 
 	if (!a) {
+		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
 
@@ -531,14 +530,13 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 		/* allocate ps{} t t{} */
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting * or /", &op) && valid;
-
-		struct location loc_op;
-		get_token_location(op, &loc_op);
+		location_update_token(loc, op);
 
 		/* factor */
 		/* allocate ps{} a a{} */
 		struct location loc_b;
 		valid = array_subscript(ps, &b, &loc_b) && valid;
+		location_update(loc, &loc_b);
 
 		if (!b) {
 			/* allocate ps{} */
@@ -596,6 +594,8 @@ bool mult(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(left);
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
