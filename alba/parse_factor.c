@@ -17,7 +17,7 @@ bool var(struct parse_state* ps, struct ast_node** root);
 bool anonymous_function(struct parse_state* ps, struct ast_node** root);
 bool function_call(struct parse_state* ps, struct ast_node** root);
 bool cseq(struct parse_state* ps, struct ast_node** root);
-bool not_nt(struct parse_state* ps, struct ast_node** root);
+bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -57,7 +57,8 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 		valid = function_call(ps, &n) && valid;
 
 	} else if (t0 && t0->type == token_not) {
-		valid = not_nt(ps, &n) && valid;
+		struct location loc_not;
+		valid = not_nt(ps, &n, &loc_not) && valid;
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
 		struct location loc_lit;
@@ -435,17 +436,20 @@ bool cseq(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool not_nt(struct parse_state* ps, struct ast_node** root)
+bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 
+	location_init(loc);
+
 	/* allocate ps{} not not{} */
 	struct token* not = NULL;
 	valid = match(ps, token_not, "expecting not", &not) && valid;
+	update_location_token(loc, not);
 
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
+	struct location loc_factor;
+	valid = get_parse_location(ps, &loc_factor) && valid;
 
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
@@ -453,7 +457,7 @@ bool not_nt(struct parse_state* ps, struct ast_node** root)
 
 	if (!a) {
 		/* allocate ps{} */
-		valid = set_source_error(ps->el, &loc, "expected factor after !");
+		valid = set_source_error(ps->el, &loc_factor, "expected factor after !");
 	}
 
 	if (valid) {
@@ -474,11 +478,11 @@ bool not_nt(struct parse_state* ps, struct ast_node** root)
 		assert(a);
 		struct type_use* tu = a->tu;
 		if (!tu) {
-			valid = set_source_error(ps->el, &loc, "! operator used on factor with no value");
+			valid = set_source_error(ps->el, &not->loc, "! operator used on factor with no value");
 		} else {
 			assert(tu->td);
 			if (tu->td->type != type_boolean) {
-				set_source_error(ps->el, &loc, "not operator used on non-boolean type");
+				set_source_error(ps->el, &not->loc, "not operator used on non-boolean type");
 			} else {
 				n->tu = type_use_copy(tu);
 			}
@@ -494,6 +498,8 @@ bool not_nt(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(n);
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }
