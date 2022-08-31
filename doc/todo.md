@@ -21,7 +21,7 @@
   * parse_expr []
     * array_subscript [x]
     * mult [x]
-    * add []
+    * add [x]
     * comparison []
     * boolean []
     * assignment []

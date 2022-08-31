@@ -14,7 +14,7 @@
 bool assignment(struct parse_state* ps, struct ast_node** root);
 bool boolean(struct parse_state* ps, struct ast_node** root);
 bool comparison(struct parse_state* ps, struct ast_node** root);
-bool add(struct parse_state* ps, struct ast_node** root);
+bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
@@ -250,7 +250,8 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 	int num;
 
 	/* allocate ps{} a a{} */
-	valid = add(ps, &a) && valid;
+	struct location loc_a;
+	valid = add(ps, &a, &loc_a) && valid;
 
 	if (!a) {
 		return valid;
@@ -261,6 +262,8 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(a);
 	}
+
+	struct location loc_left = loc_a;
 
 	while (true) {
 		/* allocate ps{} */
@@ -302,7 +305,8 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 		/* add */
 		/* allocate ps{} a a{} */
 		struct ast_node* b = NULL;
-		valid = add(ps, &b) && valid;
+		struct location loc_b;
+		valid = add(ps, &b, &loc_b) && valid;
 
 		if (!b) {
 			valid = set_source_error(ps->el, &loc, "expected term after compare operator");
@@ -325,16 +329,14 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 			if (!left->tu) {
 				struct location loc;
 				get_token_location(op, &loc);
-				valid = set_source_error(ps->el, &loc, "operand has no value");
+				valid = set_source_error(ps->el, &loc_left, "operand has no value");
 			} else if (!b->tu) {
-				valid = set_source_error(ps->el, &loc, "operand has no value");
+				valid = set_source_error(ps->el, &loc_left, "operand has no value");
 			} else {
 				if (!is_identity_comparison(type) && !is_numeric(left->tu->td)) {
-					struct location loc;
-					get_token_location(op, &loc);
-					valid = set_source_error(ps->el, &loc, "comparison operand is not numeric");
+					valid = set_source_error(ps->el, &loc_left, "comparison operand is not numeric");
 				} else if (!is_identity_comparison(type) && !is_numeric(b->tu->td)) {
-					valid = set_source_error(ps->el, &loc, "comparison operand is not numeric");
+					valid = set_source_error(ps->el, &loc_left, "comparison operand is not numeric");
 				} else {
 					struct type_use* tu = type_use_copy(left->tu);
 					type_find_whole(ps->st, tu, b->tu);
@@ -342,6 +344,7 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 				}
 			}
 			left = n;
+			loc_left = op->loc;
 		}
 	}
 
@@ -357,7 +360,7 @@ bool comparison(struct parse_state* ps, struct ast_node** root)
 /* add -> mult add' */
 /* add' -> + mult add' | - mult add' | e */
 /* dynamic-output ps{} root root{} */
-bool add(struct parse_state* ps, struct ast_node** root)
+bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* a = NULL;
@@ -367,11 +370,15 @@ bool add(struct parse_state* ps, struct ast_node** root)
 	char* op_name;
 	int num;
 
+	location_init(loc);
+
 	/* allocate a a{} */
 	struct location loc_a;
 	valid = mult(ps, &a, &loc_a) && valid;
+	location_update(loc, &loc_a);
 
 	if (!a) {
+		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
 
@@ -408,13 +415,12 @@ bool add(struct parse_state* ps, struct ast_node** root)
 		/* allocate ps{} */
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting + or -", &op) && valid;
-
-		struct location loc_op;
-		get_token_location(op, &loc_op);
+		location_update_token(loc, op);
 
 		/* allocate a a{} */
 		struct location loc_b;
 		valid = mult(ps, &b, &loc_b) && valid;
+		location_update(loc, &loc_b);
 
 		if (!b) {
 			/* destroy n n{} */
@@ -471,6 +477,8 @@ bool add(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(left);
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
