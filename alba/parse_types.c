@@ -34,10 +34,10 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
 	valid = declaration(ps, &dec, &loc_dec) && valid;
-	update_location(loc, &loc_dec);
+	location_update(loc, &loc_dec);
 
 	if (!dec) {
-		valid = default_location(ps, loc) && valid;
+		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
 
@@ -59,7 +59,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		/* allocate ps{} comma comma{} */
 		struct token* comma = NULL;
 		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
-		update_location_token(loc, comma);
+		location_update_token(loc, comma);
 
 		token_destroy(comma);
 		free(comma);
@@ -68,7 +68,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		struct ast_node* dec = NULL;
 		struct location loc_dec;
 		valid = declaration(ps, &dec, &loc_dec) && valid;
-		update_location(loc, &loc_dec);
+		location_update(loc, &loc_dec);
 		
 		if (!dec || !valid) {
 			/* allocate ps{} */
@@ -83,7 +83,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		}
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -109,17 +109,17 @@ bool declaration(struct parse_state* ps, struct ast_node** root, struct location
 		/* allocate ps{} id id{} */
 		struct token* id = NULL;
 		valid = match(ps, token_id, "expected id", &id) && valid;
-		update_location_token(loc, id);
+		location_update_token(loc, id);
 
 		/* allocate ps{} dc dc{} */
 		struct token* dc = NULL;
 		valid = match(ps, token_double_colon, "expected double colon", &dc) && valid;
-		update_location_token(loc, dc);
+		location_update_token(loc, dc);
 
 		struct ast_node* type_use = NULL;
 		struct location loc_type;
 		valid = type(ps, id, &type_use, &loc_type) && valid;
-		update_location(loc, &loc_type);
+		location_update(loc, &loc_type);
 
 		if (!type_use) {
 			valid = set_source_error(ps->el, &loc_type, "expected a type");
@@ -158,7 +158,7 @@ bool declaration(struct parse_state* ps, struct ast_node** root, struct location
 		free(dc);
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -186,7 +186,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 
 		struct token* name = NULL;
 		valid = match(ps, token_id, "expected type name", &name) && valid;
-		update_location_token(loc, name);
+		location_update_token(loc, name);
 
 		valid = get_lookahead(ps, 1, &num) && valid;
 		struct token* t0 = get_token(&ps->lookahead, 0);
@@ -194,15 +194,15 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 			is_generic = true;
 			struct token* lcb = NULL;
 			valid = match(ps, token_left_curly_brace, "expected left curly brace", &lcb) && valid;
-			update_location_token(loc, name);
+			location_update_token(loc, name);
 
 			struct location loc_tseq;
 			valid = tseq(ps, tu, &loc_tseq) && valid;
-			update_location(loc, &loc_tseq);
+			location_update(loc, &loc_tseq);
 
 			struct token* rcb = NULL;
 			valid = match(ps, token_right_curly_brace, "expected right curly brace", &rcb) && valid;
-			update_location_token(loc, name);
+			location_update_token(loc, name);
 		}
 
 		struct symbol* sym = NULL;
@@ -277,7 +277,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 		free(name);
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	if (valid) {
 		*root = n;
@@ -300,7 +300,7 @@ bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc)
 
 	struct location loc_type;
 	valid = type(ps, NULL, &a, &loc_type) && valid;
-	update_location(loc, &loc_type);
+	location_update(loc, &loc_type);
 
 	if (!a) {
 		valid = set_source_error(ps->el, &loc_type, "expected a type name");
@@ -332,7 +332,7 @@ bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc)
 
 		a = NULL;
 		valid = type(ps, NULL, &a, &loc_type) && valid;
-		update_location(loc, &loc_type);
+		location_update(loc, &loc_type);
 
 		if (!a) {
 			valid = set_source_error(ps->el, &loc_type, "expected a type name after comma");
@@ -350,7 +350,7 @@ bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc)
 
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }

@@ -254,23 +254,23 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expecting id", &id) && valid;
-	update_location_token(loc, id);
+	location_update_token(loc, id);
 
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
-	update_location_token(loc, lp);
+	location_update_token(loc, lp);
 
 	/* allocate b b{} */
 	struct ast_node* cseq_node = NULL;
 	struct location loc_cseq;
 	valid = cseq(ps, &cseq_node, &loc_cseq) && valid;
-	update_location(loc, &loc_cseq);
+	location_update(loc, &loc_cseq);
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
 	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
-	update_location_token(loc, rp);
+	location_update_token(loc, rp);
 
 	if (valid) {
 		/* allocate n */
@@ -377,7 +377,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 		ast_node_destroy(n);
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -404,10 +404,10 @@ bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
 	valid = expr(ps, &a) && valid;
-	update_location(loc, &loc_expr);
+	location_update(loc, &loc_expr);
 
 	if (!a) {
-		valid = default_location(ps, loc) && valid;
+		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
 
@@ -426,7 +426,7 @@ bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		/* allocate ps{} comma comma{} */
 		struct token* comma = NULL;;
 		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
-		update_location_token(loc, comma);
+		location_update_token(loc, comma);
 
 		/* destroy comma comma{} */
 		token_destroy(comma);
@@ -437,7 +437,7 @@ bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		/* allocate a a{} */
 		struct ast_node* a = NULL;
 		valid = expr(ps, &a) && valid;
-		update_location(loc, &loc_expr);
+		location_update(loc, &loc_expr);
 
 		if (!a) {
 			set_source_error(ps->el, &loc_expr, "expected expression after comma");
@@ -448,7 +448,7 @@ bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		}
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -463,7 +463,7 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	/* allocate ps{} not not{} */
 	struct token* not = NULL;
 	valid = match(ps, token_not, "expecting not", &not) && valid;
-	update_location_token(loc, not);
+	location_update_token(loc, not);
 
 	struct location loc_factor;
 	valid = get_parse_location(ps, &loc_factor) && valid;
@@ -516,7 +516,7 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 		ast_node_destroy(n);
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -536,7 +536,7 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location*
 	/* allocate ps{} x x{} */
 	struct token* x = NULL;
 	valid = match(ps, t0->type, "expecting number, bool, or string", &x) && valid;
-	update_location_token(loc, x);
+	location_update_token(loc, x);
 
 	if (valid) {
 		/* allocate n */
@@ -587,7 +587,7 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location*
 		ast_node_destroy(n);
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -606,7 +606,7 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate ps{} x x{} */
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expecting identifier", &id) && valid;
-	update_location_token(loc, id);
+	location_update_token(loc, id);
 
 	if (valid) {
 		/* allocate n */
@@ -648,7 +648,7 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		ast_node_destroy(n);
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -667,7 +667,7 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate sign */
 	struct token* sign = NULL;
 	valid = match(ps, t0->type, "expecting unary plus or minus", &sign) && valid;
-	update_location_token(loc, sign);
+	location_update_token(loc, sign);
 
 	struct location loc_factor;
 	valid = get_parse_location(ps, &loc_factor) && valid;
@@ -721,7 +721,7 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		ast_node_destroy(n);
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -745,7 +745,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 		/* allocate ps{} lsb lsb{} */
 		struct token* lsb = NULL;
 		valid = match(ps, token_left_square_bracket, "expected left square bracket", &lsb) && valid;
-		update_location_token(loc, lsb);
+		location_update_token(loc, lsb);
 
 		/* destroy lsb lsb{} */
 		token_destroy(lsb);
@@ -758,12 +758,12 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 		/* allocate ps{} n{} */
 		struct location loc_aseq;
 		valid = aseq(ps, n, &loc_aseq) && valid;
-		update_location(loc, &loc_aseq);
+		location_update(loc, &loc_aseq);
 
 		/* allocate ps{} rsb rsb{] */
 		struct token* rsb = NULL;
 		valid = match(ps, token_right_square_bracket, "expected right square bracket", &rsb) && valid;
-		update_location_token(loc, rsb);
+		location_update_token(loc, rsb);
 
 		/* destroy rsb rsb{} */
 		token_destroy(rsb);
@@ -796,7 +796,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 		*root = n;
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -824,14 +824,14 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 			valid = get_lookahead(ps, 1, &num) && valid;
 			struct token* t0 = get_token(&ps->lookahead, 0);
 			if (!t0 || t0->type != token_comma) {
-				valid = default_location(ps, loc) && valid;
+				valid = location_default(ps, loc) && valid;
 				break;
 			}
 
 			/* allocate ps{} comma comma{} */
 			struct token* comma = NULL;
 			valid = match(ps, token_comma, "expecting comma", &comma) && valid;
-			update_location_token(loc, comma);
+			location_update_token(loc, comma);
 
 			/* destroy comma comma{} */
 			token_destroy(comma);
@@ -854,7 +854,7 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 		}
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -869,7 +869,7 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
-	update_location_token(loc, lp);
+	location_update_token(loc, lp);
 
 	struct location loc_a;
 	valid = get_parse_location(ps, &loc_a) && valid;
@@ -877,7 +877,7 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 	/* allocate n n{} */
 	struct ast_node* a = NULL;
 	valid = valid && expr(ps, &a);
-	update_location(loc, &loc_a);
+	location_update(loc, &loc_a);
 
 	if (!a) {
 		valid = set_source_error(ps->el, &loc_a, "empty parenthesis");
@@ -886,7 +886,7 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
 	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
-	update_location_token(loc, rp);
+	location_update_token(loc, rp);
 
 	if (valid) {
 		ast_node_create(&n);
@@ -921,7 +921,7 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 		ast_node_destroy(n);
 	}
 
-	valid = default_location(ps, loc) && valid;
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }

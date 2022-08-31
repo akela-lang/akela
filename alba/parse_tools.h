@@ -31,10 +31,10 @@ ALBA_API bool get_parse_location(struct parse_state* ps, struct location* loc);
 
 ALBA_API bool is_identity_comparison(enum ast_type type);
 
-ALBA_API void update_location_token(struct location* loc, struct token* t);
+ALBA_API void location_update_token(struct location* loc, struct token* t);
 
-ALBA_API void update_location(struct location* loc, struct location* loc2);
+ALBA_API void location_update(struct location* loc, struct location* loc2);
 
-ALBA_API bool default_location(struct parse_state* ps, struct location* loc);
+ALBA_API bool location_default(struct parse_state* ps, struct location* loc);
 
 #endif

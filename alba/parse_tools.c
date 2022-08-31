@@ -126,19 +126,19 @@ bool is_identity_comparison(enum ast_type type)
 	return type == ast_type_equality || type == ast_type_not_equal;
 }
 
-void update_location_token(struct location* loc, struct token* t)
+void location_update_token(struct location* loc, struct token* t)
 {
 	if (t && !loc->line) {
 		*loc = t->loc;
 	}
 }
 
-void update_location(struct location* loc, struct location* loc2)
+void location_update(struct location* loc, struct location* loc2)
 {
 	*loc = *loc2;
 }
 
-bool default_location(struct parse_state* ps, struct location* loc)
+bool location_default(struct parse_state* ps, struct location* loc)
 {
 	bool valid = get_parse_location(ps, loc);
 	return valid;
