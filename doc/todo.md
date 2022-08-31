@@ -22,7 +22,7 @@
     * array_subscript [x]
     * mult [x]
     * add [x]
-    * comparison []
+    * comparison [x]
     * boolean []
     * assignment []
     * expr []
