@@ -13,7 +13,7 @@
 #include "parse_factor.h"
 #include "type_use.h"
 
-bool var(struct parse_state* ps, struct ast_node** root);
+bool var(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -48,7 +48,8 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 	t1 = get_token(&ps->lookahead, 1);
 
 	if (t0 && t0->type == token_var) {
-		valid = var(ps, &n) && valid;
+		struct location loc_var;
+		valid = var(ps, &n, &loc_var) && valid;
 
 	} else if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
 		struct location anon_function;
@@ -92,21 +93,23 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool var(struct parse_state* ps, struct ast_node** root)
+bool var(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 
+	location_init(loc);
+
 	struct token* vrt = NULL;
 	valid = match(ps, token_var, "expected var", &vrt) && valid;
-
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
+	location_update_token(loc, vrt);
 
 	/* allocate ps{} id id{} */
 	struct ast_node* a = NULL;
 	struct location loc_dec;
 	valid = declaration(ps, &a, &loc_dec) && valid;
+	location_update(loc, &loc_dec);
+
 	if (!a) {
 		valid = set_source_error(ps->el, &loc_dec, "expected declaration after var");
 	}
@@ -128,6 +131,8 @@ bool var(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(n);
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -175,6 +180,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	valid = get_lookahead(ps, 1, &num) && valid;
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct ast_node* dret_type = NULL;
+	struct location loc_ret;
 	if (t0 && t0->type == token_double_colon) {
 		struct token* dc = NULL;
 		valid = match(ps, token_double_colon, "expecting double colon", &dc) && valid;
@@ -182,7 +188,6 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 		token_destroy(dc);
 		free(dc);
 
-		struct location loc_ret;
 		valid = type(ps, NULL, &dret_type, &loc_ret) && valid;
 		location_update(loc, &loc_ret);
 	}
@@ -236,7 +241,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 
 	if (valid) {
 		n->tu = function2type(ps->st, n);
-		check_return_type(ps, n, stmts_node, &loc, &valid);
+		check_return_type(ps, n, stmts_node, &loc_ret, &valid);
 	}
 
 	/* transfer saved -> ps{top} */
