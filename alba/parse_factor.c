@@ -16,7 +16,7 @@
 bool var(struct parse_state* ps, struct ast_node** root);
 bool anonymous_function(struct parse_state* ps, struct ast_node** root);
 bool function_call(struct parse_state* ps, struct ast_node** root);
-bool cseq(struct parse_state* ps, struct ast_node** root);
+bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -261,7 +261,8 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 
 	/* allocate b b{} */
 	struct ast_node* cseq_node = NULL;
-	valid = cseq(ps, &cseq_node) && valid;
+	struct location loc_cseq;
+	valid = cseq(ps, &cseq_node, &loc_cseq) && valid;
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
@@ -378,10 +379,12 @@ bool function_call(struct parse_state* ps, struct ast_node** root)
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
 /* dynamic-output ps{} root root{} */
-bool cseq(struct parse_state* ps, struct ast_node** root)
+bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
+
+	location_init(loc);
 
 	/* allocate n */
 	ast_node_create(&n);
@@ -389,11 +392,16 @@ bool cseq(struct parse_state* ps, struct ast_node** root)
 
 	*root = n;
 
+	struct location loc_expr;
+	valid = get_parse_location(ps, &loc_expr) && valid;
+
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
 	valid = expr(ps, &a) && valid;
+	update_location(loc, &loc_expr);
 
 	if (!a) {
+		valid = default_location(ps, loc) && valid;
 		return valid;
 	}
 
@@ -412,26 +420,29 @@ bool cseq(struct parse_state* ps, struct ast_node** root)
 		/* allocate ps{} comma comma{} */
 		struct token* comma = NULL;;
 		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
+		update_location_token(loc, comma);
 
 		/* destroy comma comma{} */
 		token_destroy(comma);
 		free(comma);
 
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
+		valid = get_parse_location(ps, &loc_expr) && valid;
 
 		/* allocate a a{} */
 		struct ast_node* a = NULL;
 		valid = expr(ps, &a) && valid;
+		update_location(loc, &loc_expr);
 
 		if (!a) {
-			set_source_error(ps->el, &loc, "expected expression after comma");
+			set_source_error(ps->el, &loc_expr, "expected expression after comma");
 			valid = false;
 		} else {
 			/* transfer a -> parent */
 			ast_node_add(n, a);
 		}
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }
