@@ -11,7 +11,7 @@
     * array_literal [x]
     * sign [x]
     * id_nt [x]
-    * literal_nt []
+    * literal_nt [x]
     * not_nt []
     * cseq []
     * function_call []
@@ -20,6 +20,7 @@
     * factor []
   * parse_expr []
   * parse_strmts []
+* power operator
 * replace test_use with ast_node
 * annotate test case name where each error is generated
 * create string type that is a variable sized buffer and inserts null char at end

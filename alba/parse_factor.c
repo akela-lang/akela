@@ -18,7 +18,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root);
 bool function_call(struct parse_state* ps, struct ast_node** root);
 bool cseq(struct parse_state* ps, struct ast_node** root);
 bool not_nt(struct parse_state* ps, struct ast_node** root);
-bool literal_nt(struct parse_state* ps, struct ast_node** root);
+bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_literal(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -60,7 +60,8 @@ bool factor(struct parse_state* ps, struct ast_node** root)
 		valid = not_nt(ps, &n) && valid;
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
-		valid = literal_nt(ps, &n) && valid;
+		struct location loc_lit;
+		valid = literal_nt(ps, &n, &loc_lit) && valid;
 
 	} else if (t0 && t0->type == token_id) {
 		struct location loc_id;
@@ -497,22 +498,22 @@ bool not_nt(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool literal_nt(struct parse_state* ps, struct ast_node** root)
+bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 	char* type_name = NULL;
 
+	location_init(loc);
+
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
-
 	/* allocate ps{} x x{} */
 	struct token* x = NULL;
 	valid = match(ps, t0->type, "expecting number, bool, or string", &x) && valid;
+	update_location_token(loc, x);
 
 	if (valid) {
 		/* allocate n */
@@ -562,6 +563,8 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(n);
 	}
+
+	valid = default_location(ps, loc) && valid;
 
 	return valid;
 }
