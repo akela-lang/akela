@@ -23,10 +23,11 @@
     * mult [x]
     * add [x]
     * comparison [x]
-    * boolean []
+    * boolean [x]
     * assignment []
     * expr []
   * parse_strmts []
+* add loop to assignment
 * error location specific to call parameter / argument
 * power operator
 * replace test_use with ast_node

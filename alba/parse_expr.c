@@ -11,7 +11,7 @@
 #include "type_use.h"
 #include <assert.h>
 
-bool assignment(struct parse_state* ps, struct ast_node** root);
+bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool comparison(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -25,7 +25,8 @@ bool expr(struct parse_state* ps, struct ast_node** root)
 	bool valid = true;
 	struct ast_node* n = NULL;
 
-	valid = assignment(ps, &n) && valid;
+	struct location loc_a;
+	valid = assignment(ps, &n, &loc_a) && valid;
 
 	/* transfer n n{} -> root */
 	if (valid) {
@@ -38,17 +39,21 @@ bool expr(struct parse_state* ps, struct ast_node** root)
 }
 
 /* assignment -> boolean = assignment | boolean */
-bool assignment(struct parse_state* ps, struct ast_node** root)
+bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* right = NULL;
 
+	location_init(loc);
+
 	struct location loc_a;
 	struct ast_node* a = NULL;
 	valid = boolean(ps, &a, &loc_a) && valid;
+	location_update(loc, &loc_a);
 
 	if (!a) {
+		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
 
@@ -60,13 +65,13 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 	if (t0 && t0->type == token_equal) {
 		struct token* equal = NULL;
 		valid = match(ps, token_equal, "expecting assign operator", &equal) && valid;
+		location_update_token(loc, equal);
 
 		token_destroy(equal);
 		free(equal);
 
-		valid = get_parse_location(ps, &loc_b);
-
-		valid = assignment(ps, &b) && valid;
+		valid = assignment(ps, &b, &loc_b) && valid;
+		location_update(loc, &loc_b);
 
 		if (!b) {
 			valid = set_source_error(ps->el, &loc_b, "expected a assignment term");
@@ -127,6 +132,8 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 		ast_node_destroy(a);
 		ast_node_destroy(b);
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
