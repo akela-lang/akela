@@ -26,7 +26,20 @@
     * boolean [x]
     * assignment [x]
     * expr [x]
-  * parse_strmts []
+  * parse_stmts []
+    * else_nt []
+    * elseif_nt []
+    * function_finish []
+    * function_start []
+    * function []
+    * for_iteration []
+    * for_range []
+    * for_nt []
+    * while_nt []
+    * if_nt []
+    * stmt []
+    * seperator []
+    * stmts []
 * add loop to assignment
 * error location specific to call parameter / argument
 * power operator

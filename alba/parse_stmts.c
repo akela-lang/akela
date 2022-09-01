@@ -20,7 +20,7 @@ bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct ast_node** root);
 bool if_nt(struct parse_state* ps, struct ast_node** root);
 bool elseif_nt(struct parse_state* ps, struct ast_node* parent);
-bool else_nt(struct parse_state* ps, struct ast_node* parent);
+bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool while_nt(struct parse_state* ps, struct ast_node** root);
 bool for_nt(struct parse_state* ps, struct ast_node** root);
 bool for_range(struct parse_state* ps, struct ast_node* parent);
@@ -258,7 +258,8 @@ bool if_nt(struct parse_state* ps, struct ast_node** root)
 
 	/* else_nt */
 	/* allocate ps{] n{} */
-	valid = valid && else_nt(ps, n);
+	struct location loc_else;
+	valid = valid && else_nt(ps, n, &loc_else);
 
 	/* end */
 	/* allocate ps{} end end{} */
@@ -749,10 +750,12 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent)
 
 /* else_nt -> else stmts | e */
 /* dynamic-output ps{} parent{} */
-bool else_nt(struct parse_state* ps, struct ast_node* parent)
+bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
 	bool valid = true;
 	int num;
+
+	location_init(loc);
 
 	/* allocate ps{} */
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -763,6 +766,7 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent)
 		/* allocate ps{} et et{} */
 		struct token* et = NULL;
 		valid = match(ps, token_else, "expected else", &et) && valid;
+		location_update_token(loc, et);
 
 		/* destroy et et{} */
 		token_destroy(et);
@@ -776,6 +780,8 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent)
 		/* stmts */
 		/* allocate node node{} */
 		struct ast_node* node = NULL;
+		struct location loc_node;
+		valid = get_parse_location(ps, &loc_node) && valid;
 		valid = stmts(ps, false, &node) && valid;
 
 		/* transfer node -> cb{} */
@@ -786,6 +792,8 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent)
 		/* transfer cb -> parent{} */
 		ast_node_add(parent, cb);
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
