@@ -29,7 +29,7 @@
   * parse_stmts []
     * else_nt [x]
     * elseif_nt [x]
-    * if_nt []
+    * if_nt [x]
     * function_finish []
     * function_start []
     * function []
@@ -40,9 +40,9 @@
     * stmt []
     * seperator []
     * stmts []
+* power operator
 * add loop to assignment
 * error location specific to call parameter / argument
-* power operator
 * replace test_use with ast_node
 * annotate test case name where each error is generated
 * create string type that is a variable sized buffer and inserts null char at end

@@ -18,7 +18,7 @@
 
 bool separator(struct parse_state* ps, int* has_separator);
 bool stmt(struct parse_state* ps, struct ast_node** root);
-bool if_nt(struct parse_state* ps, struct ast_node** root);
+bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool while_nt(struct parse_state* ps, struct ast_node** root);
@@ -179,7 +179,8 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 		valid = function(ps, &n) && valid;
 
 	} else if (t0 && t0->type == token_if) {
-		valid = if_nt(ps, &n) && valid;
+		struct location loc_if;
+		valid = if_nt(ps, &n, &loc_if) && valid;
 
 	/* expr */
 	} else {
@@ -616,14 +617,17 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd)
 	return valid;
 }
 
-bool if_nt(struct parse_state* ps, struct ast_node** root)
+bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 
+	location_init(loc);
+
 	/* allocate ps{} ift ift{} */
 	struct token* ift = NULL;
 	valid = valid && match(ps, token_if, "expecting if", &ift);
+	location_update_token(loc, ift);
 
 	/* destroy ift ift{} */
 	token_destroy(ift);
@@ -641,15 +645,12 @@ bool if_nt(struct parse_state* ps, struct ast_node** root)
 	/* transfer cb -> n{} */
 	ast_node_add(n, cb);
 
-	/* allocate ps{} */
-	struct location loc;
-	valid = valid && get_parse_location(ps, &loc);
-
 	/* condition */
 	/* allocate ps{} cond cond{} */
 	struct ast_node* cond = NULL;
 	struct location loc_expr;
 	valid = valid && expr(ps, &cond, &loc_expr);
+	location_update(loc, &loc_expr);
 
 	if (cond == NULL) {
 		set_source_error(ps->el, &loc_expr, "expecting a condition after if");
@@ -664,7 +665,10 @@ bool if_nt(struct parse_state* ps, struct ast_node** root)
 	/* stmts */
 	/* allocate ps{} body body{} */
 	struct ast_node* body = NULL;
+	struct location loc_stmts;
+	valid = get_parse_location(ps, &loc_stmts);
 	valid = valid && stmts(ps, false, &body);
+	location_update(loc, &loc_stmts);
 
 	/* transfer body -> n{} */
 	if (body) {
@@ -675,16 +679,21 @@ bool if_nt(struct parse_state* ps, struct ast_node** root)
 	/* allocate n{} */
 	struct location loc_elseif;
 	valid = valid && elseif_nt(ps, n, &loc_elseif);
+	location_update(loc, &loc_elseif);
 
 	/* else_nt */
 	/* allocate ps{] n{} */
 	struct location loc_else;
 	valid = valid && else_nt(ps, n, &loc_else);
+	location_update(loc, &loc_else);
 
 	/* end */
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
 	valid = valid && match(ps, token_end, "expected end", &end);
+	location_update_token(loc, end);
+
+	valid = location_default(ps, loc) && valid;
 
 	if (valid) {
 		*root = n;
