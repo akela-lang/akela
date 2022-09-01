@@ -7,8 +7,9 @@
 #include "token.h"
 #include "ast.h"
 #include "parse_tools.h"
+#include "source.h"
 
 /* dynamic-output ps{} root root{} */
-ALBA_API bool expr(struct parse_state* ps, struct ast_node** root);
+ALBA_API bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 #endif

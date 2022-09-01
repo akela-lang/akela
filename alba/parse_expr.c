@@ -20,13 +20,16 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root, struct loca
 
 /* expr -> id = expr | boolean */
 /* dynamic-output ps{} root root{} */
-bool expr(struct parse_state* ps, struct ast_node** root)
+bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 
-	struct location loc_a;
-	valid = assignment(ps, &n, &loc_a) && valid;
+	location_init(loc);
+
+	valid = assignment(ps, &n, loc) && valid;
+
+	valid = location_default(ps, loc) && valid;
 
 	/* transfer n n{} -> root */
 	if (valid) {
@@ -688,7 +691,9 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root, struct loca
 
 		/* allocate b b{} */
 		struct ast_node* b = NULL;
-		valid = expr(ps, &b) && valid;
+		struct location loc_expr;
+		valid = expr(ps, &b, &loc_expr) && valid;
+		location_update(loc, &loc_expr);
 
 		/* allocate ps{} rsb rsb{} */
 		struct token* rsb = NULL;

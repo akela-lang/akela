@@ -18,14 +18,14 @@
     * anonymous_function [x]
     * var [x]
     * factor [x]
-  * parse_expr []
+  * parse_expr [x]
     * array_subscript [x]
     * mult [x]
     * add [x]
     * comparison [x]
     * boolean [x]
-    * assignment []
-    * expr []
+    * assignment [x]
+    * expr [x]
   * parse_strmts []
 * add loop to assignment
 * error location specific to call parameter / argument

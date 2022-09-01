@@ -411,12 +411,10 @@ bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	*root = n;
 
-	struct location loc_expr;
-	valid = get_parse_location(ps, &loc_expr) && valid;
-
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
-	valid = expr(ps, &a) && valid;
+	struct location loc_expr;
+	valid = expr(ps, &a, &loc_expr) && valid;
 	location_update(loc, &loc_expr);
 
 	if (!a) {
@@ -445,11 +443,9 @@ bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		token_destroy(comma);
 		free(comma);
 
-		valid = get_parse_location(ps, &loc_expr) && valid;
-
 		/* allocate a a{} */
 		struct ast_node* a = NULL;
-		valid = expr(ps, &a) && valid;
+		valid = expr(ps, &a, &loc_expr) && valid;
 		location_update(loc, &loc_expr);
 
 		if (!a) {
@@ -823,7 +819,9 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
-	valid = expr(ps, &a) && valid;
+	struct location loc_expr;
+	valid = expr(ps, &a, &loc_expr) && valid;
+	location_update(loc, &loc_expr);
 
 	if (a) {
 		/* a -> parent{} */
@@ -853,7 +851,8 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 			/* allocate ps{} a a{} */
 			struct ast_node* a = NULL;
-			valid = expr(ps, &a) && valid;
+			valid = expr(ps, &a, &loc_expr) && valid;
+			location_update(loc, &loc_expr);
 
 			if (!a) {
 				valid = set_source_error(ps->el, &loc_a, "expected expr after comma");
@@ -882,12 +881,10 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
 	location_update_token(loc, lp);
 
-	struct location loc_a;
-	valid = get_parse_location(ps, &loc_a) && valid;
-
 	/* allocate n n{} */
 	struct ast_node* a = NULL;
-	valid = valid && expr(ps, &a);
+	struct location loc_a;
+	valid = valid && expr(ps, &a, &loc_a);
 	location_update(loc, &loc_a);
 
 	if (!a) {

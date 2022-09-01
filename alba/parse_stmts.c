@@ -184,7 +184,8 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 	/* expr */
 	} else {
 		/* allocate ps{} n n{} */
-		valid = valid && expr(ps, &n);
+		struct location loc_expr;
+		valid = valid && expr(ps, &n, &loc_expr);
 	}
 
 	/* transfer n -> root */
@@ -228,10 +229,11 @@ bool if_nt(struct parse_state* ps, struct ast_node** root)
 	/* condition */
 	/* allocate ps{} cond cond{} */
 	struct ast_node* cond = NULL;
-	valid = valid && expr(ps, &cond);
+	struct location loc_expr;
+	valid = valid && expr(ps, &cond, &loc_expr);
 
 	if (cond == NULL) {
-		set_source_error(ps->el, &loc, "expecting a condition after if");
+		set_source_error(ps->el, &loc_expr, "expecting a condition after if");
 		valid = false;
 		return valid;
 	} else {
@@ -281,17 +283,14 @@ bool while_nt(struct parse_state* ps, struct ast_node** root)
 	struct token* whl = NULL;
 	valid = match(ps, token_while, "expecting while", &whl) && valid;
 
-	/* allocate ps{} */
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
-
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
-	valid = expr(ps, &a) && valid;
+	struct location loc_expr;
+	valid = expr(ps, &a, &loc_expr) && valid;
 
 	if (!a) {
 		/* allocate ps{} */
-		valid = set_source_error(ps->el, &loc, "expected expression after while");
+		valid = set_source_error(ps->el, &loc_expr, "expected expression after while");
 	}
 
 	/* allocate ps{} b b{} */
@@ -414,34 +413,28 @@ bool for_range(struct parse_state* ps, struct ast_node* parent)
 	struct token* equal = NULL;
 	valid = match(ps, token_equal, "expected equal", &equal) && valid;
 
-	/* allocate ps{} */
-	struct location a_loc;
-	valid = get_parse_location(ps, &a_loc) && valid;
-
 	/* start expr */
 	/* allocate b b{} */
 	struct ast_node* a = NULL;
-	valid = expr(ps, &a) && valid;
+	struct location loc_a;
+	valid = expr(ps, &a, &loc_a) && valid;
 	if (!a) {
 		/* allocate ps{} */
-		valid = set_source_error(ps->el, &a_loc, "expected range start after for-range");
+		valid = set_source_error(ps->el, &loc_a, "expected range start after for-range");
 	}
 
 	/* allocate ps{} colon conlon{} */
 	struct token* colon = NULL;
 	valid = match(ps, token_colon, "expected colon", &colon) && valid;
 
-	/* allocate ps{} */
-	struct location b_loc;
-	valid = get_parse_location(ps, &b_loc) && valid;
-
 	/* end expr */
 	/* allocate ps{} c c{} */
 	struct ast_node* b = NULL;
-	valid = expr(ps, &b) && valid;
+	struct location loc_b;
+	valid = expr(ps, &b, &loc_b) && valid;
 	if (!b) {
 		/* allocate ps{} */
-		valid = set_source_error(ps->el, &b_loc, "expected range end after for-range");
+		valid = set_source_error(ps->el, &loc_b, "expected range end after for-range");
 	}
 
 	if (valid) {
@@ -474,14 +467,11 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent)
 	struct token* in = NULL;
 	valid = match(ps, token_in, "expecting in", &in) && valid;
 
-	/* allocate ps{} */
-	struct location loc_list;
-	valid = get_parse_location(ps, &loc_list) && valid;
-
 	/* expr */
 	/* allocate ps{} b b{} */
 	struct ast_node* list = NULL;
-	valid = expr(ps, &list) && valid;
+	struct location loc_list;
+	valid = expr(ps, &list, &loc_list) && valid;
 
 	if (!list) {
 		set_source_error(ps->el, &loc_list, "expected expression after for-iteration");
@@ -719,10 +709,6 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent)
 		struct token* eit = NULL;
 		valid = match(ps, token_elseif, "expecting elseif", &eit) && valid;
 
-		/* allocate ps{} */
-		struct location loc;
-		valid = get_parse_location(ps, &loc) && valid;
-
 		/* allocate cb */
 		struct ast_node* cb = NULL;
 		ast_node_create(&cb);
@@ -730,11 +716,12 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent)
 
 		/* allocate ps{} cond cond{} */
 		struct ast_node* cond = NULL;
-		valid = expr(ps, &cond) && valid;
+		struct location loc_cond;
+		valid = expr(ps, &cond, &loc_cond) && valid;
 
 		if (!cond) {
 			/* allocate ps{} */
-			valid = set_source_error(ps->el, &loc, "expecting condition after elseif");
+			valid = set_source_error(ps->el, &loc_cond, "expecting condition after elseif");
 		} else {
 			/* transfer cond -> cb{} */
 			ast_node_add(cb, cond);
