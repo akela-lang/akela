@@ -12,7 +12,7 @@
 #include <assert.h>
 
 bool assignment(struct parse_state* ps, struct ast_node** root);
-bool boolean(struct parse_state* ps, struct ast_node** root);
+bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool comparison(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -45,10 +45,8 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 	struct ast_node* right = NULL;
 
 	struct location loc_a;
-	valid = get_parse_location(ps, &loc_a);
-
 	struct ast_node* a = NULL;
-	valid = boolean(ps, &a) && valid;
+	valid = boolean(ps, &a, &loc_a) && valid;
 
 	if (!a) {
 		return valid;
@@ -136,17 +134,22 @@ bool assignment(struct parse_state* ps, struct ast_node** root)
 /* boolean -> comparison boolean' */
 /* boolean' -> && comparison boolean' | || comparison boolean' | e */
 /* dynamic-output ps{} root root{} */
-bool boolean(struct parse_state* ps, struct ast_node** root)
+bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* left;
 
+	location_init(loc);
+
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;
 	valid = comparison(ps, &a, &loc_a) && valid;
+	location_update(loc, &loc_a);
+
 	if (!a) {
+		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
 
@@ -176,12 +179,14 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 		/* allocate ps{} op op{} */
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting + or -", &op) && valid;
+		location_update_token(loc, op);
 
 		/* comparison */
 		/* allocate a a{} */
 		struct ast_node* b = NULL;
 		struct location loc_b;
 		valid = comparison(ps, &b, &loc_b) && valid;
+		location_update(loc, &loc_b);
 
 		if (!b) {
 			valid = set_source_error(ps->el, &loc_b, "expected term after + or -");
@@ -225,6 +230,8 @@ bool boolean(struct parse_state* ps, struct ast_node** root)
 	} else {
 		ast_node_destroy(left);
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
