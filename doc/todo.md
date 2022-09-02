@@ -37,7 +37,7 @@
     * for_range [x]
     * for_nt [x]
     * while_nt [x]
-    * stmt []
+    * stmt [x]
     * seperator []
     * stmts []
 * power operator

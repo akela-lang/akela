@@ -17,7 +17,7 @@
 #include <assert.h>
 
 bool separator(struct parse_state* ps, int* has_separator);
-bool stmt(struct parse_state* ps, struct ast_node** root);
+bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -59,7 +59,8 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
-	valid = stmt(ps, &a) && valid;
+	struct location loc_a;
+	valid = stmt(ps, &a, &loc_a) && valid;
 
 	/* transfer a -> n{} */
 	if (a) {
@@ -78,7 +79,8 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 
 		/* allocate ps{} a a{} */
 		struct ast_node* b = NULL;
-		valid = stmt(ps, &b) && valid;
+		struct location loc_b;
+		valid = stmt(ps, &b, &loc_b) && valid;
 
 		if (b) {
 			ast_node_add(n, b);
@@ -148,17 +150,20 @@ bool separator(struct parse_state* ps, int* has_separator)
 *       | e
 */
 /* @param dynamic-output ps{} root root{} */
-bool stmt(struct parse_state* ps, struct ast_node** root)
+bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 	int num;
+
+	location_init(loc);
 
 	/* allocate ps{} */
 	valid = get_lookahead(ps, 2, &num) && valid;
 
 	/* e */
 	if (num <= 0) {
+		valid = valid && location_default(ps, loc) && valid;
 		return valid;
 	}
 
@@ -168,29 +173,26 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 
 	/* while */
 	if (t0 && t0->type == token_while) {
-		struct location loc_while;
-		valid = while_nt(ps, &n, &loc_while) && valid;
+		valid = while_nt(ps, &n, loc) && valid;
 
 	/* for */
 	} else if (t0 && t0->type == token_for) {
-		struct location loc_for;
-		valid = for_nt(ps, &n, &loc_for) && valid;
+		valid = for_nt(ps, &n, loc) && valid;
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
-		struct location loc_function;
-		valid = function(ps, &n, &loc_function) && valid;
+		valid = function(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_if) {
-		struct location loc_if;
-		valid = if_nt(ps, &n, &loc_if) && valid;
+		valid = if_nt(ps, &n, loc) && valid;
 
 	/* expr */
 	} else {
 		/* allocate ps{} n n{} */
-		struct location loc_expr;
-		valid = valid && expr(ps, &n, &loc_expr);
+		valid = valid && expr(ps, &n, loc);
 	}
+
+	valid = valid && location_default(ps, loc) && valid;
 
 	/* transfer n -> root */
 	if (valid) {
