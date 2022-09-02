@@ -38,7 +38,7 @@
     * for_nt [x]
     * while_nt [x]
     * stmt [x]
-    * seperator []
+    * separator [x]
     * stmts []
 * power operator
 * add loop to assignment

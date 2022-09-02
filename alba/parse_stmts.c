@@ -16,7 +16,7 @@
 #include "type_use.h"
 #include <assert.h>
 
-bool separator(struct parse_state* ps, int* has_separator);
+bool separator(struct parse_state* ps, int* has_separator, struct location* loc);
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -71,7 +71,8 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 	while (true) {
 		/* allocate ps{} */
 		int has_separator = 0;
-		valid = separator(ps, &has_separator) && valid;
+		struct location loc_sep;
+		valid = separator(ps, &has_separator, &loc_sep) && valid;
 
 		if (!has_separator) {
 			break;
@@ -111,12 +112,14 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 /* separator -> \n | ; */
 /* dynamic-output ps{} */
 /* dynamic-temp sep sep{} */
-bool separator(struct parse_state* ps, int* has_separator)
+bool separator(struct parse_state* ps, int* has_separator, struct location* loc)
 {
 	bool valid = true;
 	enum token_enum type;
 	int num;
 	*has_separator = 0;
+
+	location_init(loc);
 
 	/* allocate ps{} */
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -135,10 +138,13 @@ bool separator(struct parse_state* ps, int* has_separator)
 	/* allocate ps{} sep sep{} */
 	struct token* sep = NULL;
 	valid = match(ps, type, "expecting newline or semicolon", &sep) && valid;
+	location_update_token(loc, sep);
 
 	/* destroy sep sep{} */
 	token_destroy(sep);
 	free(sep);
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
