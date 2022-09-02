@@ -30,7 +30,7 @@
     * else_nt [x]
     * elseif_nt [x]
     * if_nt [x]
-    * function_finish []
+    * function_finish [x]
     * function_start []
     * function []
     * for_iteration []

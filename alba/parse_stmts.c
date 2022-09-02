@@ -27,7 +27,7 @@ bool for_range(struct parse_state* ps, struct ast_node* parent);
 bool for_iteration(struct parse_state* ps, struct ast_node* parent);
 bool function(struct parse_state* ps, struct ast_node** root);
 bool function_start(struct parse_state* ps, struct ast_node** root);
-bool function_finish(struct parse_state* ps, struct ast_node* fd);
+bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -439,7 +439,8 @@ bool function(struct parse_state* ps, struct ast_node** root)
 	struct ast_node* fd = NULL;
 	valid = function_start(ps, &fd) && valid;
 
-	valid = function_finish(ps, fd) && valid;
+	struct location loc_finish;
+	valid = function_finish(ps, fd, &loc_finish) && valid;
 
 	if (valid) {
 		*root = fd;
@@ -578,24 +579,28 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool function_finish(struct parse_state* ps, struct ast_node* fd)
+bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc)
 {
 	bool valid = true;
+
+	location_init(loc);
 
 	if (!fd) {
 		valid = false;
 	}
 
-	struct location loc;
-	valid = get_parse_location(ps, &loc) && valid;
+	struct location loc_stmts;
+	valid = get_parse_location(ps, &loc_stmts) && valid;
 
 	/* allocate ps{} stmts_node stmts_node{} */
 	struct ast_node* stmts_node = NULL;
 	valid = stmts(ps, true, &stmts_node) && valid;
+	location_update(loc, &loc_stmts);
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
 	valid = match(ps, token_end, "expecting end", &end) && valid;
+	location_update(loc, end);
 
 	/* finish building nodes */
 	if (valid) {
@@ -611,8 +616,10 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd)
 	free(end);
 
 	if (valid) {
-		check_return_type(ps, fd, stmts_node, &loc, &valid);
+		check_return_type(ps, fd, stmts_node, &loc_stmts, &valid);
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
