@@ -32,11 +32,13 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd, struct locatio
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
 /* dynamic-output ps{} root root{} */
-bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
+bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* last = NULL;
+
+	location_init(loc);
 
 	struct environment* saved = NULL;
 	struct environment* env = NULL;
@@ -61,6 +63,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 	struct ast_node* a = NULL;
 	struct location loc_a;
 	valid = stmt(ps, &a, &loc_a) && valid;
+	location_update(loc, &loc_a);
 
 	/* transfer a -> n{} */
 	if (a) {
@@ -82,6 +85,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 		struct ast_node* b = NULL;
 		struct location loc_b;
 		valid = stmt(ps, &b, &loc_b) && valid;
+		location_update(loc, &loc_b);
 
 		if (b) {
 			ast_node_add(n, b);
@@ -104,6 +108,8 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root)
 			}
 		}
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	/* transfer n -> root */
 	return valid;
@@ -234,7 +240,9 @@ bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* l
 
 	/* allocate ps{} b b{} */
 	struct ast_node* b = NULL;
-	valid = stmts(ps, false, &b) && valid;
+	struct location loc_stmts;
+	valid = stmts(ps, false, &b, &loc_stmts) && valid;
+	location_update(loc, &loc_stmts);
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
@@ -326,8 +334,7 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	struct ast_node* c = NULL;
 	struct location loc_stmts;
-	get_parse_location(ps, &loc_stmts);
-	valid = stmts(ps, true, &c) && valid;
+	valid = stmts(ps, true, &c, &loc_stmts) && valid;
 	location_update(loc, &loc_stmts);
 
 	/* allocate ps{} end end{} */
@@ -656,12 +663,10 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd, struct locatio
 		valid = false;
 	}
 
-	struct location loc_stmts;
-	valid = get_parse_location(ps, &loc_stmts) && valid;
-
 	/* allocate ps{} stmts_node stmts_node{} */
 	struct ast_node* stmts_node = NULL;
-	valid = stmts(ps, true, &stmts_node) && valid;
+	struct location loc_stmts;
+	valid = stmts(ps, true, &stmts_node, &loc_stmts) && valid;
 	location_update(loc, &loc_stmts);
 
 	/* allocate ps{} end end{} */
@@ -740,8 +745,7 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate ps{} body body{} */
 	struct ast_node* body = NULL;
 	struct location loc_stmts;
-	valid = get_parse_location(ps, &loc_stmts);
-	valid = valid && stmts(ps, false, &body);
+	valid = valid && stmts(ps, false, &body, &loc_stmts);
 	location_update(loc, &loc_stmts);
 
 	/* transfer body -> n{} */
@@ -820,8 +824,7 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location*
 		/* allocate ps{} node node{} */
 		struct ast_node* node = NULL;
 		struct location loc_node;
-		valid = get_parse_location(ps, &loc_node);
-		valid = stmts(ps, false, &node) && valid;
+		valid = stmts(ps, false, &node, &loc_node) && valid;
 		location_update(loc, &loc_node);
 
 		/* transfer node -> cb{} */
@@ -876,8 +879,8 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* l
 		/* allocate node node{} */
 		struct ast_node* node = NULL;
 		struct location loc_node;
-		valid = get_parse_location(ps, &loc_node) && valid;
-		valid = stmts(ps, false, &node) && valid;
+		valid = stmts(ps, false, &node, &loc_node) && valid;
+		location_update(loc, &loc_node);
 
 		/* transfer node -> cb{} */
 		if (node) {

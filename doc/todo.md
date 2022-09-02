@@ -26,7 +26,7 @@
     * boolean [x]
     * assignment [x]
     * expr [x]
-  * parse_stmts []
+  * parse_stmts [x]
     * else_nt [x]
     * elseif_nt [x]
     * if_nt [x]
@@ -39,7 +39,7 @@
     * while_nt [x]
     * stmt [x]
     * separator [x]
-    * stmts []
+    * stmts [x]
 * power operator
 * add loop to assignment
 * error location specific to call parameter / argument

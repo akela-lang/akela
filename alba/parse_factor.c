@@ -187,12 +187,10 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 		location_update(loc, &loc_ret);
 	}
 
-	struct location loc_stmts;
-	valid = get_parse_location(ps, &loc_stmts) && valid;
-
 	/* allocate b b{} */
 	struct ast_node* stmts_node = NULL;
-	valid = stmts(ps, true, &stmts_node) && valid;
+	struct location loc_stmts;
+	valid = stmts(ps, true, &stmts_node, &loc_stmts) && valid;
 	location_update(loc, &loc_stmts);
 
 	/* allocate ps{} end end{} */
