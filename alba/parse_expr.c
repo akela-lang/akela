@@ -48,94 +48,116 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
-	struct ast_node* right = NULL;
 
 	location_init(loc);
 
-	struct location loc_a;
+	struct ast_node* last_p = NULL;
+	struct ast_node* last_a = NULL;
+	struct location loc_last_a;
+	location_init(&loc_last_a);
+
 	struct ast_node* a = NULL;
-	valid = boolean(ps, &a, &loc_a) && valid;
-	location_update(loc, &loc_a);
+	struct location loc_a;
 
-	if (!a) {
-		valid = location_default(ps, loc) && valid;
-		return valid;
-	}
+	while (true) {
+		bool done = false;
 
-	struct ast_node* b = NULL;
-	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
-	struct token* t0 = get_token(&ps->lookahead, 0);
-	struct location loc_b;
-	if (t0 && t0->type == token_equal) {
-		struct token* equal = NULL;
-		valid = match(ps, token_equal, "expecting assign operator", &equal) && valid;
-		location_update_token(loc, equal);
+		valid = boolean(ps, &a, &loc_a) && valid;
+		location_update(loc, &loc_a);
 
-		token_destroy(equal);
-		free(equal);
-
-		valid = assignment(ps, &b, &loc_b) && valid;
-		location_update(loc, &loc_b);
-
-		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expected a assignment term");
-		}
-	}
-
-	if (valid) {
-		assert(a);
-		if (a && !b) {
-			n = a;
+		if (!a) {
+			if (last_p) {
+				valid = set_source_error(ps->el, &loc_a, "expected a assignment term");
+				break;
+			} else {
+				break;
+			}
 		}
 
-		if (a && b) {
-			ast_node_create(&n);
-			n->type = ast_type_assign;
-			ast_node_add(n, a);
-			ast_node_add(n, b);
-		}
-	}
+		int num;
+		valid = get_lookahead(ps, 1, &num) && valid;
+		struct token* t0 = get_token(&ps->lookahead, 0);
+		struct ast_node* p = NULL;
+		if (t0 && t0->type == token_equal) {
+			struct token* equal = NULL;
+			valid = match(ps, token_equal, "expecting assign operator", &equal) && valid;
+			location_update_token(loc, equal);
 
-	if (valid) {
-		assert(a);
-		if (a && b) {
-			struct type_use* a_tu = a->tu;
-			if (a->type == ast_type_var) {
-				struct ast_node* dec = ast_node_get(a, 0);
-				struct ast_node* a_type = ast_node_get(dec, 1);
-				a_tu = a_type->tu;
-			}
+			token_destroy(equal);
+			free(equal);
 
-			struct type_use* b_tu = b->tu;
-
-			if (!a_tu) {
-				valid = set_source_error(ps->el, &loc_a, "cannot assign with operand that has no value");
-			}
-			if (!b_tu) {
-				valid = set_source_error(ps->el, &loc_b, "cannot assign with operand that has no value");
-			}
 			if (valid) {
-				if (!type_use_can_cast(a_tu, b_tu)) {
-					valid = set_source_error(ps->el, &loc_b, "values in assignment not compatible");
+				assert(a);
+
+				ast_node_create(&p);
+				p->type = ast_type_assign;
+				ast_node_add(p, a);
+
+				if (last_p) {
+					ast_node_add(last_p, p);
+				} else {
+					n = p;
 				}
 			}
-			if (valid) {
-				if (a->type != ast_type_id && a->type != ast_type_array_subscript && a->type != ast_type_var) {
-					valid = set_source_error(ps->el, &loc_a, "not a valid lvalue");
+		} else {
+			done = true;
+			if (last_p) {
+				ast_node_add(last_p, a);
+			} else {
+				n = a;
+			}
+		}
+
+		if (valid) {
+			assert(a);
+			if (last_p && last_a) {
+				struct type_use* last_a_tu = last_a->tu;
+				if (last_a->type == ast_type_var) {
+					struct ast_node* dec = ast_node_get(last_a, 0);
+					struct ast_node* last_a_type = ast_node_get(dec, 1);
+					last_a_tu = last_a_type->tu;
+				}
+
+				struct type_use* a_tu = a->tu;
+
+				if (!last_a_tu) {
+					valid = set_source_error(ps->el, &loc_last_a, "cannot assign with operand that has no value");
+				}
+				if (!a_tu) {
+					valid = set_source_error(ps->el, &loc_a, "cannot assign with operand that has no value");
+				}
+				if (valid) {
+					if (!type_use_can_cast(last_a_tu, a_tu)) {
+						valid = set_source_error(ps->el, &loc_a, "values in assignment not compatible");
+					}
+				}
+				if (valid) {
+					if (last_a->type != ast_type_id && last_a->type != ast_type_array_subscript && last_a->type != ast_type_var) {
+						valid = set_source_error(ps->el, &loc_last_a, "not a valid lvalue");
+					}
 				}
 			}
+
 			if (valid) {
-				n->tu = type_use_copy(a_tu);
+				if (p && a->tu) {
+					p->tu = type_use_copy(a->tu);
+				}
 			}
+
+			last_p = p;
+			last_a = a;
+			loc_last_a = loc_a;
+		}
+
+		if (done) {
+			break;
 		}
 	}
 
 	if (valid) {
 		*root = n;
 	} else {
-		ast_node_destroy(a);
-		ast_node_destroy(b);
+		ast_node_destroy(n);
 	}
 
 	valid = location_default(ps, loc) && valid;

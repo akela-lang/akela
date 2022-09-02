@@ -1,5 +1,4 @@
 # Todo
-* add loop to assignment
 * error location specific to call parameter / argument
 * replace test_use with ast_node
 * annotate test case name where each error is generated
