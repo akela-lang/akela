@@ -693,6 +693,14 @@ void test_parse_power()
 	assert_ptr(pow, "ptr pow");
 	expect_int_equal(pow->type, ast_type_power, "power pow");
 
+	struct type_use* tu = pow->tu;
+	assert_ptr(tu, "ptr tu");
+	
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_integer, "integer td");
+	expect_str(&td->name, "Int64", "Int64 td");
+
 	struct ast_node* number0 = ast_node_get(pow, 0);
 	assert_ptr(number0, "ptr number0");
 	expect_int_equal(number0->type, ast_type_number, "number number0");
@@ -702,6 +710,23 @@ void test_parse_power()
 	assert_ptr(number1, "ptr number1");
 	expect_int_equal(number1->type, ast_type_number, "number number1");
 	expect_str(&number1->value, "2", "2 number1");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_power_non_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("5 ^ true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "power on non-numeric operand");
 
 	ast_node_destroy(root);
 	parse_teardown(&ps);
@@ -1623,6 +1648,7 @@ void test_parse_expression()
 	test_parse_add_mult();
 	test_parse_mult_add();
 	test_parse_power();
+	test_parse_power_non_numeric();
 	test_parse_paren_add();
 	test_parse_paren_add2();
 	test_parse_paren_add3();

@@ -1,5 +1,4 @@
 # Todo
-* power type checking
 * add loop to assignment
 * error location specific to call parameter / argument
 * replace test_use with ast_node

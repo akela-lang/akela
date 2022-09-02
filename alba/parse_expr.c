@@ -652,6 +652,7 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	}
 
 	struct ast_node* left = n = a ;
+	struct location loc_left = loc_a;
 
 	while (true) {
 		struct token* t0 = NULL;
@@ -665,9 +666,6 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		struct token* caret = NULL;
 		valid = match(ps, token_caret, "exprected a caret", &caret) && valid;
 		location_update_token(loc, caret);
-
-		token_destroy(caret);
-		free(caret);
 
 		struct ast_node* b = NULL;
 		struct location loc_b;
@@ -683,10 +681,44 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 			n->type = ast_type_power;
 			ast_node_add(n, left);
 			ast_node_add(n, b);
-			left = n;
 		} else {
 			ast_node_destroy(b);
 		}
+
+		if (valid) {
+			assert(left);
+			assert(b);
+			struct type_use* tu_left = left->tu;
+			struct type_use* tu_b = b->tu;
+
+			if (!tu_left) {
+				valid = set_source_error(ps->el, &loc_left, "power operand has no value");
+			} else if (!is_numeric(tu_left->td)) {
+				valid = set_source_error(ps->el, &loc_left, "power on non-numeric operand");
+			}
+
+			if (!tu_b) {
+				valid = set_source_error(ps->el, &loc_b, "power operand has no value");
+			} else if (!is_numeric(tu_b->td)) {
+				valid = set_source_error(ps->el, &loc_b, "power on non-numeric operand");
+			}
+
+			if (valid) {
+				struct type_use* tu = type_use_copy(tu_left);
+				if (!type_find_whole(ps->st, tu, tu_b)) {
+					valid = set_source_error(ps->el, &loc_b, "invalid power types");
+				} else {
+					n->tu = tu;
+				}
+			}
+
+			left = n;
+			#pragma warning(suppress:6001)
+			loc_left = caret->loc;
+		}
+
+		token_destroy(caret);
+		free(caret);
 	}
 
 	valid = location_default(ps, loc) && valid;
