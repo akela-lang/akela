@@ -674,6 +674,39 @@ void test_parse_mult_add()
 	parse_teardown(&ps);
 }
 
+void test_parse_power()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("5 ^ 2", &ps, &root);
+	assert_no_errors(ps.el);
+	expect_true(valid, "valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	struct ast_node* pow = ast_node_get(root, 0);
+	assert_ptr(pow, "ptr pow");
+	expect_int_equal(pow->type, ast_type_power, "power pow");
+
+	struct ast_node* number0 = ast_node_get(pow, 0);
+	assert_ptr(number0, "ptr number0");
+	expect_int_equal(number0->type, ast_type_number, "number number0");
+	expect_str(&number0->value, "5", "5 number0");
+
+	struct ast_node* number1 = ast_node_get(pow, 1);
+	assert_ptr(number1, "ptr number1");
+	expect_int_equal(number1->type, ast_type_number, "number number1");
+	expect_str(&number1->value, "2", "2 number1");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_paren_add()
 {
@@ -1589,6 +1622,7 @@ void test_parse_expression()
 	test_parse_mult_mult();
 	test_parse_add_mult();
 	test_parse_mult_add();
+	test_parse_power();
 	test_parse_paren_add();
 	test_parse_paren_add2();
 	test_parse_paren_add3();

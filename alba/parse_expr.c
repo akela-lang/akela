@@ -16,6 +16,8 @@ bool boolean(struct parse_state* ps, struct ast_node** root, struct location* lo
 bool comparison(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool power(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool power_prime(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* expr -> id = expr | boolean */
@@ -519,7 +521,7 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	/* allocate ps{} a a{} */
 	struct location loc_a;
-	valid = array_subscript(ps, &a, &loc_a) && valid;
+	valid = power(ps, &a, &loc_a) && valid;
 	location_update(loc, &loc_a);
 
 	if (!a) {
@@ -564,7 +566,7 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		/* factor */
 		/* allocate ps{} a a{} */
 		struct location loc_b;
-		valid = array_subscript(ps, &b, &loc_b) && valid;
+		valid = power(ps, &b, &loc_b) && valid;
 		location_update(loc, &loc_b);
 
 		if (!b) {
@@ -625,6 +627,75 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	}
 
 	valid = location_default(ps, loc) && valid;
+
+	return valid;
+}
+
+/* power -> array_subscript power' | e */
+/* power' -> ^ array_subscript power' | e */
+bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
+{
+	bool valid = true;
+	struct ast_node* n = NULL;
+	struct ast_node* a = NULL;
+	struct ast_node* b = NULL;
+
+	location_init(loc);
+
+	struct location loc_a;
+	valid = array_subscript(ps, &a, &loc_a) && valid;
+	location_update(loc, &loc_a);
+
+	if (!a) {
+		valid = location_default(ps, loc) && valid;
+		return valid;
+	}
+
+	struct ast_node* left = n = a ;
+
+	while (true) {
+		struct token* t0 = NULL;
+		int num;
+		valid = get_lookahead(ps, 1, &num) && valid;
+		t0 = get_token(&ps->lookahead, 0);
+		if (!t0 || t0->type != token_caret) {
+			break;
+		}
+
+		struct token* caret = NULL;
+		valid = match(ps, token_caret, "exprected a caret", &caret) && valid;
+		location_update_token(loc, caret);
+
+		token_destroy(caret);
+		free(caret);
+
+		struct ast_node* b = NULL;
+		struct location loc_b;
+		valid = array_subscript(ps, &b, &loc_b) && valid;
+		location_update(loc, &loc_b);
+
+		if (!b) {
+			valid = set_source_error(ps->el, &loc_b, "expecting a term after caret");
+		}
+
+		if (valid) {
+			ast_node_create(&n);
+			n->type = ast_type_power;
+			ast_node_add(n, left);
+			ast_node_add(n, b);
+			left = n;
+		} else {
+			ast_node_destroy(b);
+		}
+	}
+
+	valid = location_default(ps, loc) && valid;
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
 
 	return valid;
 }

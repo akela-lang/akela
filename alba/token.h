@@ -49,6 +49,7 @@ enum token_enum {
     token_left_curly_brace,
     token_right_curly_brace,
     token_boolean,
+    token_caret,
     token_count     /* keep at the end */
 };
 
@@ -104,6 +105,7 @@ enum result token_name_init(char** token_name)
     token_name[token_left_curly_brace] = "{";
     token_name[token_right_curly_brace] = "}";
     token_name[token_boolean] = "boolean";
+    token_name[token_caret] = "^";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

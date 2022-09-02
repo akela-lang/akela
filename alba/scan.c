@@ -131,6 +131,13 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         t->loc.byte_pos = lc->byte_pos;
         t->loc.byte_count = 1;
         *got_token = 1;
+    } else if (uc == '^') {
+        t->type = token_caret;
+        t->loc.line = lc->line;
+        t->loc.col = lc->col;
+        t->loc.byte_pos = lc->byte_pos;
+        t->loc.byte_count = 1;
+        *got_token = 1;
     } else if (uc == '(') {
         t->type = token_left_paren;
         t->loc.line = lc->line;
