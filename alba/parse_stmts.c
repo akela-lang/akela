@@ -26,7 +26,7 @@ bool for_nt(struct parse_state* ps, struct ast_node** root);
 bool for_range(struct parse_state* ps, struct ast_node* parent);
 bool for_iteration(struct parse_state* ps, struct ast_node* parent);
 bool function(struct parse_state* ps, struct ast_node** root);
-bool function_start(struct parse_state* ps, struct ast_node** root);
+bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 
 /* stmts -> stmt stmts' */
@@ -437,7 +437,8 @@ bool function(struct parse_state* ps, struct ast_node** root)
 	ps->st->top = env;
 
 	struct ast_node* fd = NULL;
-	valid = function_start(ps, &fd) && valid;
+	struct location loc_start;
+	valid = function_start(ps, &fd, &loc_start) && valid;
 
 	struct location loc_finish;
 	valid = function_finish(ps, fd, &loc_finish) && valid;
@@ -457,31 +458,38 @@ bool function(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool function_start(struct parse_state* ps, struct ast_node** root)
+bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 
+	location_init(loc);
+
 	/* allocate ps{} f f{} */
 	struct token* f = NULL;
 	valid = match(ps, token_function, "expecting function", &f) && valid;
+	location_update_token(loc, f);
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expecting identifier", &id) && valid;
+	location_update_token(loc, id);
 
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
+	location_update_token(loc, lp);
 
 	/* allocate ps{} dseq_node dseq_node{} */
 	struct ast_node* dseq_node = NULL;
 	struct location loc_dseq;
 	valid = dseq(ps, &dseq_node, &loc_dseq) && valid;
+	location_update(loc, &loc_dseq);
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
 	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
+	location_update_token(loc, rp);
 
 	struct ast_node* dret_node = NULL;
 	int num;
@@ -490,11 +498,13 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 	if (next && next->type == token_double_colon) {
 		struct token* dc = NULL;
 		valid = match(ps, token_double_colon, "expecting double colon", &dc) && valid;
+		location_update_token(loc, dc);
 		token_destroy(dc);
 		free(dc);
 
 		struct location loc_ret;
 		valid = type(ps, NULL, &dret_node, &loc_ret) && valid;
+		location_update(loc, &loc_ret);
 	}
 
 	/* start building nodes */
@@ -536,7 +546,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 			get_token_location(id, &loc);
 			char* a;
 			buffer2array(&id->value, &a);
-			valid = set_source_error(ps->el, &loc, "duplicate declaration in same scope: %s", a);
+			valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
 			free(a);
 		} else {
 			struct symbol* sym = environment_get(ps->st->top, &id->value);
@@ -545,7 +555,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 				get_token_location(id, &loc);
 				char* a;
 				buffer2array(&id->value, &a);
-				valid = set_source_error(ps->el, &loc, "identifier reserved as a type: %s", a);
+				valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
 				free(a);
 			} else {
 				struct type_use* tu = function2type(ps->st, n);
@@ -570,6 +580,8 @@ bool function_start(struct parse_state* ps, struct ast_node** root)
 	token_destroy(rp);
 	free(rp);
 
+	valid = location_default(ps, loc) && valid;
+	
 	if (valid) {
 		*root = n;
 	} else {

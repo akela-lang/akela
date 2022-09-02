@@ -140,6 +140,9 @@ void location_update(struct location* loc, struct location* loc2)
 
 bool location_default(struct parse_state* ps, struct location* loc)
 {
-	bool valid = get_parse_location(ps, loc);
+	bool valid = true;
+	if (!loc->line) {
+		valid = get_parse_location(ps, loc);
+	}
 	return valid;
 }
