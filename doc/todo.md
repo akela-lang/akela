@@ -32,7 +32,7 @@
     * if_nt [x]
     * function_finish [x]
     * function_start [x]
-    * function []
+    * function [x]
     * for_iteration []
     * for_range []
     * for_nt []

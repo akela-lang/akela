@@ -25,7 +25,7 @@ bool while_nt(struct parse_state* ps, struct ast_node** root);
 bool for_nt(struct parse_state* ps, struct ast_node** root);
 bool for_range(struct parse_state* ps, struct ast_node* parent);
 bool for_iteration(struct parse_state* ps, struct ast_node* parent);
-bool function(struct parse_state* ps, struct ast_node** root);
+bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 
@@ -176,7 +176,8 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
-		valid = function(ps, &n) && valid;
+		struct location loc_function;
+		valid = function(ps, &n, &loc_function) && valid;
 
 	} else if (t0 && t0->type == token_if) {
 		struct location loc_if;
@@ -417,14 +418,16 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent)
 	return valid;
 }
 
-bool function(struct parse_state* ps, struct ast_node** root)
+bool function(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 
+	location_init(loc);
+
 	if (!symbol_table_is_global(ps->st)) {
-		struct location loc;
-		get_parse_location(ps, &loc);
-		valid = set_source_error(ps->el, &loc, "function declaration is not in global scope");
+		struct location loc_global;
+		get_parse_location(ps, &loc_global);
+		valid = set_source_error(ps->el, &loc_global, "function declaration is not in global scope");
 	}
 
 	/* shared ps{top} -> saved */
@@ -439,9 +442,11 @@ bool function(struct parse_state* ps, struct ast_node** root)
 	struct ast_node* fd = NULL;
 	struct location loc_start;
 	valid = function_start(ps, &fd, &loc_start) && valid;
+	location_update(loc, &loc_start);
 
 	struct location loc_finish;
 	valid = function_finish(ps, fd, &loc_finish) && valid;
+	location_update(loc, &loc_finish);
 
 	if (valid) {
 		*root = fd;
@@ -454,6 +459,8 @@ bool function(struct parse_state* ps, struct ast_node** root)
 
 	/* destroy env env{} */
 	environment_destroy(env);
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
