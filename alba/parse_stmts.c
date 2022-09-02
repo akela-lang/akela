@@ -24,7 +24,7 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* l
 bool while_nt(struct parse_state* ps, struct ast_node** root);
 bool for_nt(struct parse_state* ps, struct ast_node** root);
 bool for_range(struct parse_state* ps, struct ast_node* parent);
-bool for_iteration(struct parse_state* ps, struct ast_node* parent);
+bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
@@ -292,7 +292,8 @@ bool for_nt(struct parse_state* ps, struct ast_node** root)
 		if (dec) {
 			ast_node_add(n, dec);
 		}
-		valid = for_iteration(ps, n) && valid;
+		struct location loc_iteration;
+		valid = for_iteration(ps, n, &loc_iteration) && valid;
 
 	} else {
 		valid = set_source_error(ps->el, &loc, "expected an = or in after for element declaration");
@@ -384,19 +385,23 @@ bool for_range(struct parse_state* ps, struct ast_node* parent)
 
 /* for_iteration -> for id in expr stmts end */
 /* dynamic-output ps{} root root{} */
-bool for_iteration(struct parse_state* ps, struct ast_node* parent)
+bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
 	bool valid = true;
+
+	location_init(loc);
 
 	/* allocate ps{} in in{} */
 	struct token* in = NULL;
 	valid = match(ps, token_in, "expecting in", &in) && valid;
+	location_update_token(loc, in);
 
 	/* expr */
 	/* allocate ps{} b b{} */
 	struct ast_node* list = NULL;
 	struct location loc_list;
 	valid = expr(ps, &list, &loc_list) && valid;
+	location_update(loc, &loc_list);
 
 	if (!list) {
 		set_source_error(ps->el, &loc_list, "expected expression after for-iteration");
@@ -414,6 +419,8 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent)
 
 	token_destroy(in);
 	free(in);
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
