@@ -23,7 +23,7 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location*
 bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool while_nt(struct parse_state* ps, struct ast_node** root);
 bool for_nt(struct parse_state* ps, struct ast_node** root);
-bool for_range(struct parse_state* ps, struct ast_node* parent);
+bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -284,7 +284,8 @@ bool for_nt(struct parse_state* ps, struct ast_node** root)
 		if (dec) {
 			ast_node_add(n, dec);
 		}
-		valid = for_range(ps, n) && valid;
+		struct location loc_range;
+		valid = for_range(ps, n, &loc_range) && valid;
 
 	} else if (t0 && t0->type == token_in) {
 		ast_node_create(&n);
@@ -331,19 +332,24 @@ bool for_nt(struct parse_state* ps, struct ast_node** root)
 
 /* for_range -> for id = expr:expr stmts end */
 /* dynamic-output ps{} root root{} */
-bool for_range(struct parse_state* ps, struct ast_node* parent)
+bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
 	bool valid = true;
+
+	location_init(loc);
 
 	/* allocate ps{} equal equal{} */
 	struct token* equal = NULL;
 	valid = match(ps, token_equal, "expected equal", &equal) && valid;
+	location_update_token(loc, equal);
 
 	/* start expr */
 	/* allocate b b{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;
 	valid = expr(ps, &a, &loc_a) && valid;
+	location_update(loc, &loc_a);
+
 	if (!a) {
 		/* allocate ps{} */
 		valid = set_source_error(ps->el, &loc_a, "expected range start after for-range");
@@ -352,12 +358,15 @@ bool for_range(struct parse_state* ps, struct ast_node* parent)
 	/* allocate ps{} colon conlon{} */
 	struct token* colon = NULL;
 	valid = match(ps, token_colon, "expected colon", &colon) && valid;
+	location_update_token(loc, colon);
 
 	/* end expr */
 	/* allocate ps{} c c{} */
 	struct ast_node* b = NULL;
 	struct location loc_b;
 	valid = expr(ps, &b, &loc_b) && valid;
+	location_update(loc, &loc_b);
+
 	if (!b) {
 		/* allocate ps{} */
 		valid = set_source_error(ps->el, &loc_b, "expected range end after for-range");
@@ -379,6 +388,8 @@ bool for_range(struct parse_state* ps, struct ast_node* parent)
 
 	if (valid) {
 	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
