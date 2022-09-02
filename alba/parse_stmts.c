@@ -21,7 +21,7 @@ bool stmt(struct parse_state* ps, struct ast_node** root);
 bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-bool while_nt(struct parse_state* ps, struct ast_node** root);
+bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -168,7 +168,8 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 
 	/* while */
 	if (t0 && t0->type == token_while) {
-		valid = while_nt(ps, &n) && valid;
+		struct location loc_while;
+		valid = while_nt(ps, &n, &loc_while) && valid;
 
 	/* for */
 	} else if (t0 && t0->type == token_for) {
@@ -200,19 +201,23 @@ bool stmt(struct parse_state* ps, struct ast_node** root)
 	return valid;
 }
 
-bool while_nt(struct parse_state* ps, struct ast_node** root)
+bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
 
+	location_init(loc);
+
 	/* allocate ps{} */
 	struct token* whl = NULL;
 	valid = match(ps, token_while, "expecting while", &whl) && valid;
+	location_update_token(loc, whl);
 
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_expr;
 	valid = expr(ps, &a, &loc_expr) && valid;
+	location_update(loc, &loc_expr);
 
 	if (!a) {
 		/* allocate ps{} */
@@ -226,6 +231,7 @@ bool while_nt(struct parse_state* ps, struct ast_node** root)
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
 	valid = match(ps, token_end, "expected end", &end) && valid;
+	location_update_token(loc, end);
 
 	if (valid) {
 		/* allocate n */
@@ -250,6 +256,8 @@ bool while_nt(struct parse_state* ps, struct ast_node** root)
 	free(whl);
 	token_destroy(end);
 	free(end);
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }

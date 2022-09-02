@@ -36,7 +36,7 @@
     * for_iteration [x]
     * for_range [x]
     * for_nt [x]
-    * while_nt []
+    * while_nt [x]
     * stmt []
     * seperator []
     * stmts []
