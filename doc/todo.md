@@ -1,6 +1,5 @@
 # Todo
 * document test case name where each error is generated
-  * parse_type
   * parse_factor
   * parse_expr
   * parse_stmts

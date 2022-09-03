@@ -60,6 +60,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		struct token* comma = NULL;
 		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
 		location_update_token(loc, comma);
+		/* test case: no test case needed */
 
 		token_destroy(comma);
 		free(comma);
@@ -72,7 +73,8 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		
 		if (!dec || !valid) {
 			/* allocate ps{} */
-			set_source_error(ps->el, &loc_dec, "expecting declaration after comma");
+			set_source_error(ps->el, &loc_dec, "expected declaration after comma");
+			/* test case: test_parse_error_dseq_comma */
 			valid = false;
 			break;
 		}
@@ -109,12 +111,14 @@ bool declaration(struct parse_state* ps, struct ast_node** root, struct location
 		/* allocate ps{} id id{} */
 		struct token* id = NULL;
 		valid = match(ps, token_id, "expected id", &id) && valid;
+		/* test case: no test case needed */
 		location_update_token(loc, id);
 
 		/* allocate ps{} dc dc{} */
 		struct token* dc = NULL;
 		valid = match(ps, token_double_colon, "expected double colon", &dc) && valid;
 		location_update_token(loc, dc);
+		/* test case: test_parse_error_declaration_double_colon */
 
 		struct ast_node* type_use = NULL;
 		struct location loc_type;
@@ -123,6 +127,7 @@ bool declaration(struct parse_state* ps, struct ast_node** root, struct location
 
 		if (!type_use) {
 			valid = set_source_error(ps->el, &loc_type, "expected a type");
+			/* test case: test_parse_error_declaration_type */
 		}
 
 		if (valid) {
@@ -183,6 +188,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 		struct token* name = NULL;
 		valid = match(ps, token_id, "expected type name", &name) && valid;
 		location_update_token(loc, name);
+		/* test case: no test case needed */
 
 		valid = get_lookahead(ps, 1, &num) && valid;
 		struct token* t0 = get_token(&ps->lookahead, 0);
@@ -191,6 +197,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 			struct token* lcb = NULL;
 			valid = match(ps, token_left_curly_brace, "expected left curly brace", &lcb) && valid;
 			location_update_token(loc, name);
+			/* test case: no test case needed */
 
 			struct location loc_tseq;
 			valid = tseq(ps, n, &loc_tseq) && valid;
@@ -209,16 +216,19 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 				buffer2array(&name->value, &a);
 				valid = set_source_error(ps->el, &name->loc, "type not defined: %s", a);
 				free(a);
+				/* test case: test_parse_error_type_not_defined */
 			} else if (!sym->td) {
 				char* a;
 				buffer2array(&name->value, &a);
 				valid = set_source_error(ps->el, &name->loc, "identifier is not a type: %s", a);
 				free(a);
+				/* test case: test_parse_error_not_a_type */
 			} else if (is_generic && !sym->td->is_generic) {
 				char* a;
 				buffer2array(&name->value, &a);
 				valid = set_source_error(ps->el, &name->loc, "subtype was specified for non-generic type: %s", a);
 				free(a);
+				/* test case: test_parse_error_not_generic */
 			} else {
 				if (is_generic) {
 					int count = ast_node_count_children(n);
@@ -232,6 +242,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 							count, plural(count)
 						);
 						free(a);
+						/* test case: test_parse_error_subtype_count */
 					}
 				}
 
@@ -249,6 +260,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 					buffer2array(&id->value, &a);
 					valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
 					free(a);
+					/* test case: test_parse_error_duplicate_declarations */
 				} else {
 					struct symbol* sym = environment_get(ps->st->top, &id->value);
 					if (sym && sym->td) {
@@ -256,6 +268,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 						buffer2array(&id->value, &a);
 						valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
 						free(a);
+						/* test case: test_parse_types_reserved_type */
 					} else {
 						struct symbol* new_sym = NULL;
 						malloc_safe(&new_sym, sizeof(struct symbol));
@@ -300,6 +313,7 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 	if (!tu) {
 		valid = set_source_error(ps->el, &loc_type, "expected a type name");
+		/* test case: test_parse_error_type_name */
 	}
 
 	if (valid) {
@@ -319,6 +333,8 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 		struct token* comma = NULL;
 		valid = match(ps, token_comma, "expected comma", &comma) && valid;
+		location_update_token(loc, comma);
+		/* test case: test case not needed */
 
 		token_destroy(comma);
 		free(comma);
@@ -328,6 +344,7 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 		if (!tu) {
 			valid = set_source_error(ps->el, &loc_type, "expected a type name after comma");
+			/* test case: test_parse_error_comma_type_name */
 			break;
 		}
 
@@ -496,9 +513,11 @@ bool check_input_type(struct parse_state* ps, struct ast_node* tu, int index, st
 			if (call_tu0) {
 				if (!type_use_can_cast(tu0, call_tu0)) {
 					valid = set_source_error(ps->el, loc_expr, "parameter and aguments types do not match");
+					/* test case: test_parse_types_error_param */
 				}
 			} else {
 				valid = set_source_error(ps->el, loc_expr, "argument expression has no value");
+				/* test case: test_parse_types_error_param_no_value */
 			}
 		}
 	}

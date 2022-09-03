@@ -48,21 +48,6 @@ void test_parse_types_missing_declaration3()
 	parse_teardown(&ps);
 }
 
-void test_parse_types_double()
-{
-	test_name(__func__);
-
-	struct parse_state ps;
-	struct ast_node* root;
-
-	bool valid = parse_setup("var x::Int64; var x::Int64", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "duplicate declaration in same scope: x");
-	expect_false(valid, "valid");
-
-	parse_teardown(&ps);
-}
-
 void test_parse_types_double_function()
 {
 	test_name(__func__);
@@ -245,12 +230,253 @@ void test_parse_types_array_error2()
 	parse_teardown(&ps);
 }
 
+void test_parse_error_dseq_comma()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo(a::Int64,) end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected declaration after comma");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_error_declaration_double_colon()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected double colon");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_error_declaration_type()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected a type");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_error_type_right_curly_brace()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Vector{Int64", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected right curly brace");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_error_type_not_defined()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Foo", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "type not defined: Foo");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_error_not_a_type()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var foo::Int64; var a::foo", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "identifier is not a type: foo");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_error_not_generic()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Int64{Int64}", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "subtype was specified for non-generic type: Int64");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_error_subtype_count()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Vector{Int64, Int64}", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
+	expect_false(valid, "valid");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_error_duplicate_declarations()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct ast_node* root;
+
+	bool valid = parse_setup("var x::Int64; var x::Int64", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "duplicate declaration in same scope: x");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
+void test_parse_error_type_name()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct ast_node* root;
+
+	bool valid = parse_setup("var x::Vector{}", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected a type name");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
+void test_parse_error_comma_type_name()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct ast_node* root;
+
+	bool valid = parse_setup("var x::Vector{Int64,}", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "expected a type name after comma");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
+void test_parse_error_return_type()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct ast_node* root;
+
+	bool valid = parse_setup("function foo()::Int64 true end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "returned type does not match function return type");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
+void test_parse_types_error_param()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct ast_node* root;
+
+	bool valid = parse_setup("function foo(a::Int64) true end; foo(true)", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "parameter and aguments types do not match");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
+void test_parse_types_error_param_no_value()
+{
+	test_name(__func__);
+
+	struct parse_state ps;
+	struct ast_node* root;
+
+	bool valid = parse_setup("function foo(a::Int64) true end; foo(foo(1))", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_compile_error(ps.el, "argument expression has no value");
+	expect_false(valid, "valid");
+
+	parse_teardown(&ps);
+}
+
 void test_parse_types()
 {
 	test_parse_types_missing_declaration();
 	test_parse_types_missing_declaration2();
 	test_parse_types_missing_declaration3();
-	test_parse_types_double();
 	test_parse_types_double_function();
 	test_parse_types_reserved_type();
 	test_parse_types_reserved_type2();
@@ -260,4 +486,18 @@ void test_parse_types()
 	test_parse_types_array();
 	test_parse_types_array_error();
 	test_parse_types_array_error2();
+	test_parse_error_dseq_comma();
+	test_parse_error_declaration_double_colon();
+	test_parse_error_declaration_type();
+	test_parse_error_type_right_curly_brace();
+	test_parse_error_type_not_defined();
+	test_parse_error_not_a_type();
+	test_parse_error_not_generic();
+	test_parse_error_subtype_count();
+	test_parse_error_duplicate_declarations();
+	test_parse_error_type_name();
+	test_parse_error_comma_type_name();
+	test_parse_error_return_type();
+	test_parse_types_error_param();
+	test_parse_types_error_param_no_value();
 }
