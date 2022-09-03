@@ -8,7 +8,7 @@
 #include "scan.h"
 #include "parse_types.h"
 #include "parse_expr.h"
-#include "type_use.h"
+#include "type_def.h"
 #include <assert.h>
 
 bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -110,14 +110,14 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 		if (valid) {
 			assert(a);
 			if (last_p && last_a) {
-				struct type_use* last_a_tu = last_a->tu;
+				struct ast_node* last_a_tu = last_a->tu;
 				if (last_a->type == ast_type_var) {
 					struct ast_node* dec = ast_node_get(last_a, 0);
 					struct ast_node* last_a_type = ast_node_get(dec, 1);
 					last_a_tu = last_a_type->tu;
 				}
 
-				struct type_use* a_tu = a->tu;
+				struct ast_node* a_tu = a->tu;
 
 				if (!last_a_tu) {
 					valid = set_source_error(ps->el, &loc_last_a, "cannot assign with operand that has no value");
@@ -139,7 +139,7 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 
 			if (valid) {
 				if (p && a->tu) {
-					p->tu = type_use_copy(a->tu);
+					p->tu = ast_node_copy(a->tu);
 				}
 			}
 
@@ -244,7 +244,7 @@ bool boolean(struct parse_state* ps, struct ast_node** root, struct location* lo
 			} else if (b->tu->td->type != type_boolean) {
 				valid = set_source_error(ps->el, &loc_b, "expression of boolean operator is not boolean");
 			} else {
-				n->tu = type_use_copy(left->tu);
+				n->tu = ast_node_copy(left->tu);
 			}
 
 			left = n;
@@ -377,7 +377,7 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 				} else if (!is_identity_comparison(type) && !is_numeric(b->tu->td)) {
 					valid = set_source_error(ps->el, &loc_b, "comparison operand is not numeric");
 				} else {
-					struct type_use* tu = type_use_copy(left->tu);
+					struct ast_node* tu = ast_node_copy(left->tu);
 					type_find_whole(ps->st, tu, b->tu);
 					n->tu = tu;
 				}
@@ -484,8 +484,8 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		}
 
 		if (valid) {
-			struct type_use* tu_a = a->tu;
-			struct type_use* tu_b = b->tu;
+			struct ast_node* tu_a = a->tu;
+			struct ast_node* tu_b = b->tu;
 
 			if (!tu_a) {
 				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
@@ -500,7 +500,7 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 			}
 
 			if (valid) {
-				struct type_use* tu = type_use_copy(tu_a);
+				struct ast_node* tu = ast_node_copy(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					valid = set_source_error(ps->el, &op->loc, "invalid types for %s", op_name);
 				} else {
@@ -609,8 +609,8 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		if (valid) {
 			assert(a);
 			assert(b);
-			struct type_use* tu_a = a->tu;
-			struct type_use* tu_b = b->tu;
+			struct ast_node* tu_a = a->tu;
+			struct ast_node* tu_b = b->tu;
 
 			if (!tu_a) {
 				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
@@ -625,7 +625,7 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 			}
 
 			if (valid) {
-				struct type_use* tu = type_use_copy(tu_a);
+				struct ast_node* tu = ast_node_copy(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					valid = set_source_error(ps->el, &op->loc, "invalid types for %s", op_name);
 				} else {
@@ -709,8 +709,8 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		if (valid) {
 			assert(left);
 			assert(b);
-			struct type_use* tu_left = left->tu;
-			struct type_use* tu_b = b->tu;
+			struct ast_node* tu_left = left->tu;
+			struct ast_node* tu_b = b->tu;
 
 			if (!tu_left) {
 				valid = set_source_error(ps->el, &loc_left, "power operand has no value");
@@ -725,7 +725,7 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 			}
 
 			if (valid) {
-				struct type_use* tu = type_use_copy(tu_left);
+				struct ast_node* tu = ast_node_copy(tu_left);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					valid = set_source_error(ps->el, &loc_b, "invalid power types");
 				} else {
@@ -770,8 +770,8 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root, struct loca
 	valid = factor(ps, &a, &loc_factor) && valid;
 	location_update(loc, &loc_factor);
 
-	struct type_use* tu = NULL;
-	struct type_use* element_tu = NULL;
+	struct ast_node* tu = NULL;
+	struct ast_node* element_tu = NULL;
 
 	struct location loc_last;
 	location_init(&loc_last);
@@ -788,10 +788,10 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root, struct loca
 			if (!tu) {
 				tu = a->tu;
 			} else {
-				tu = type_use_get(tu, 0);
+				tu = ast_node_get(tu, 0);
 			}
 
-			element_tu = type_use_get(tu, 0);
+			element_tu = ast_node_get(tu, 0);
 
 			if (!tu) {
 				valid = set_source_error(ps->el, &loc_factor, "subscripting a expression with no type");
@@ -845,7 +845,7 @@ bool array_subscript(struct parse_state* ps, struct ast_node** root, struct loca
 			if (!element_tu) {
 				valid = set_source_error(ps->el, &loc_last, "subscripting a expression with no type");
 			} else {
-				n->tu = type_use_copy(element_tu);
+				n->tu = ast_node_copy(element_tu);
 			}
 		} else {
 			if (a) {

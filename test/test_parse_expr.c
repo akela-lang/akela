@@ -4,7 +4,6 @@
 #include "alba/ast.h"
 #include "alba/parse_tools.h"
 #include "alba/unit_test_compiler.h"
-#include "alba/type_use.h"
 #include "alba/type_def.h"
 
 /* dynamic-output-none */
@@ -51,7 +50,7 @@ void test_parse_add()
 	assert_ptr(add, "ptr add");
 	expect_int_equal(add->type, ast_type_plus, "plus add");
 
-	struct type_use* tu = add->tu;
+	struct ast_node* tu = add->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -95,7 +94,7 @@ void test_parse_add_mixed_types()
 	assert_ptr(add, "ptr add");
 	expect_int_equal(add->type, ast_type_plus, "plus add");
 
-	struct type_use* add_tu = add->tu;
+	struct ast_node* add_tu = add->tu;
 	assert_ptr(add_tu, "ptr add_tu");
 
 	struct type_def* add_td = add_tu->td;
@@ -354,7 +353,7 @@ void test_parse_mult()
 	assert_ptr(mult, "root");
 	expect_int_equal(mult->type, ast_type_mult, "mult mult");
 
-	struct type_use* tu = mult->tu;
+	struct ast_node* tu = mult->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct type_def* td = tu->td;
@@ -693,7 +692,7 @@ void test_parse_power()
 	assert_ptr(pow, "ptr pow");
 	expect_int_equal(pow->type, ast_type_power, "power pow");
 
-	struct type_use* tu = pow->tu;
+	struct ast_node* tu = pow->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct type_def* td = tu->td;
@@ -1103,7 +1102,7 @@ void test_parse_comparison()
 	assert_ptr(cond0, "ptr cond0");
 	expect_int_equal(cond0->type, ast_type_equality, "equality cond0");
 
-	struct type_use* cond0_tu = cond0->tu;
+	struct ast_node* cond0_tu = cond0->tu;
 	assert_ptr(cond0_tu, "ptr cond0_tu");
 	
 	struct type_def* cond0_td = cond0_tu->td;
@@ -1125,7 +1124,7 @@ void test_parse_comparison()
 	assert_ptr(cond1, "ptr cond1");
 	expect_int_equal(cond1->type, ast_type_not_equal, "not equal cond1");
 
-	struct type_use* cond1_tu = cond1->tu;
+	struct ast_node* cond1_tu = cond1->tu;
 	assert_ptr(cond1_tu, "ptr cond1_tu");
 
 	struct type_def* cond1_td = cond1_tu->td;
@@ -1283,7 +1282,7 @@ void test_parse_or()
 	assert_ptr(or, "ptr or");
 	expect_int_equal(or->type, ast_type_or, "or or");
 
-	struct type_use* tu = or->tu;
+	struct ast_node* tu = or->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -1371,7 +1370,7 @@ void test_parse_array_subscript()
 	assert_ptr(as, "ptr as");
 	expect_int_equal(as->type, ast_type_array_subscript, "array-subscript as");
 
-	struct type_use* tu = as->tu;
+	struct ast_node* tu = as->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -1412,7 +1411,7 @@ void test_parse_array_subscript2()
 	assert_ptr(a, "ptr a");
 	assert_int_equal(a->type, ast_type_array_subscript, "array-subscript a");
 
-	struct type_use* tu = a->tu;
+	struct ast_node* tu = a->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -1462,7 +1461,7 @@ void test_parse_array_subscript3()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_subscript, "array-subscript a");
 
-	struct type_use* tu = a->tu;
+	struct ast_node* tu = a->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -1508,7 +1507,7 @@ void test_parse_assign_string()
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, ast_type_assign, "assign assign");
 
-	struct type_use* tu = assign->tu;
+	struct ast_node* tu = assign->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -1551,7 +1550,7 @@ void test_parse_assign_multiple()
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, ast_type_assign, "assign assign");
 
-	struct type_use* assign0_tu = assign->tu;
+	struct ast_node* assign0_tu = assign->tu;
 	assert_ptr(assign0_tu, "ptr assign0_tu");
 
 	struct type_def* assign0_td = assign0_tu->td;
@@ -1568,7 +1567,7 @@ void test_parse_assign_multiple()
 	assert_ptr(rhv0, "ptr rhv0");
 	expect_int_equal(rhv0->type, ast_type_assign, "assign rhv0");
 
-	struct type_use* assign1_tu = rhv0->tu;
+	struct ast_node* assign1_tu = rhv0->tu;
 	assert_ptr(assign1_tu, "ptr assign1_tu");
 
 	struct type_def* assign1_td = assign1_tu->td;
@@ -1586,7 +1585,7 @@ void test_parse_assign_multiple()
 	assert_ptr(rhv1, "ptr rhv1");
 	expect_int_equal(rhv1->type, ast_type_assign, "assign rhv1");
 
-	struct type_use* assign2_tu = assign->tu;
+	struct ast_node* assign2_tu = assign->tu;
 	assert_ptr(assign2_tu, "ptr assign2_tu");
 
 	struct type_def* assign2_td = assign2_tu->td;

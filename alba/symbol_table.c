@@ -2,8 +2,8 @@
 #include "symbol_table.h"
 #include <stdbool.h>
 #include "type_def.h"
-#include "type_use.h"
 #include <assert.h>
+#include "ast.h"
 
 /* dynamic-output env{} */
 /* transfer p -> env */
@@ -316,7 +316,7 @@ bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, 
 	return false;
 }
 
-bool type_find_whole(struct symbol_table* st, struct type_use* a, struct type_use* b)
+bool type_find_whole(struct symbol_table* st, struct ast_node* a, struct ast_node* b)
 {
 	if (a && b) {
 		bool promote;
@@ -328,8 +328,8 @@ bool type_find_whole(struct symbol_table* st, struct type_use* a, struct type_us
 			a->td = td;
 		}
 
-		struct type_use* x = a->head;
-		struct type_use* y = b->head;
+		struct ast_node* x = a->head;
+		struct ast_node* y = b->head;
 		do {
 			if (!type_find_whole(st, x, y)) {
 				return false;
@@ -360,7 +360,7 @@ bool type_def_can_cast(struct type_def* a, struct type_def* b)
 	return false;
 }
 
-bool type_use_can_cast(struct type_use* a, struct type_use* b)
+bool type_use_can_cast(struct ast_node* a, struct ast_node* b)
 {
 	if (a && b) {
 		struct type_def* td = NULL;
@@ -368,8 +368,8 @@ bool type_use_can_cast(struct type_use* a, struct type_use* b)
 			return false;
 		}
 
-		struct type_use* x = a->head;
-		struct type_use* y = b->head;
+		struct ast_node* x = a->head;
+		struct ast_node* y = b->head;
 		do {
 			if (!type_use_can_cast(x, y)) {
 				return false;

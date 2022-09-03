@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "test_parse.h"
 #include "alba/unit_test_compiler.h"
-#include "alba/type_use.h"
+#include "alba/type_def.h"
 
 void test_parse_types_missing_declaration()
 {

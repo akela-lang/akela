@@ -18,7 +18,6 @@ set(lib_files
     hash.c
     symbol_table.c
     type_def.c
-    type_use.c
     unit_test_compiler.c
 )
 

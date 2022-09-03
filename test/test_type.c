@@ -1,32 +1,36 @@
-#include "alba/type_use.h"
+#include "alba/type_def.h"
 #include "zinc/unit_test.h"
+#include "alba/ast.h"
 
 void test_type_use1()
 {
 	test_name(__func__);
 
-	struct type_use* n;
-	type_use_create(&n);
+	struct ast_node* n;
+	ast_node_create(&n);
+	n->type = ast_type_type;
 
-	struct type_use* a;
-	type_use_create(&a);
-	type_use_add(n, a);
+	struct ast_node* a;
+	ast_node_create(&a);
+	a->type = ast_type_type;
+	ast_node_add(n, a);
 
-	struct type_use* b;
-	type_use_create(&b);
-	type_use_add(n, b);
+	struct ast_node* b;
+	ast_node_create(&b);
+	b->type = ast_type_type;
+	ast_node_add(n, b);
 
 	assert_ptr(n, "ptr n");
 
-	struct type_use* n0 = type_use_get(n, 0);
+	struct ast_node* n0 = ast_node_get(n, 0);
 	assert_ptr(n0, "ptr a");
 	expect_ptr_equal(n0, a, "a");
 
-	struct type_use* n1 = type_use_get(n, 1);
+	struct ast_node* n1 = ast_node_get(n, 1);
 	assert_ptr(n1, "ptr b");
 	expect_ptr_equal(n1, b, "b");
 
-	type_use_destroy(n);
+	ast_node_destroy(n);
 }
 
 

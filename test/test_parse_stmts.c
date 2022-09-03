@@ -5,7 +5,6 @@
 #include "test_parse.h"
 #include "alba/input.h"
 #include "alba/type_def.h"
-#include "alba/type_use.h"
 
 /* dynamic-output-none */
 void test_parse_assign()
@@ -378,7 +377,7 @@ void test_parse_stmts_type()
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, ast_type_stmts, "stmts root");
 
-	struct type_use* tu = root->tu;
+	struct ast_node* tu = root->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct type_def* td = tu->td;
@@ -411,7 +410,7 @@ void test_parse_function()
 	assert_ptr(f, "ptr f");
 	expect_int_equal(f->type, ast_type_function, "function");
 
-	struct type_use* tu = f->tu;
+	struct ast_node* tu = f->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -510,7 +509,7 @@ void test_parse_function2()
 	assert_ptr(type_x, "ptr type_x");
 	expect_int_equal(type_x->type, ast_type_type, "type type_x");
 
-	struct type_use* tu_x = type_x->tu;
+	struct ast_node* tu_x = type_x->tu;
 	assert_ptr(tu_x, "ptr tu_x");
 
 	struct type_def* x_td = tu_x->td;
@@ -667,7 +666,7 @@ void test_parse_function4()
 	assert_ptr(f, "root");
 	expect_int_equal(f->type, ast_type_function, "function f");
 
-	struct type_use* tu = f->tu;
+	struct ast_node* tu = f->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -675,7 +674,7 @@ void test_parse_function4()
 	expect_int_equal(td->type, type_function, "function td");
 	expect_str(&td->name, "Function", "Function td");
 
-	struct type_use* input_tu = type_use_get(tu, 0);
+	struct ast_node* input_tu = ast_node_get(tu, 0);
 	assert_ptr(input_tu, "ptr input_tu");
 
 	struct type_def* input_td = input_tu->td;
@@ -683,7 +682,7 @@ void test_parse_function4()
 	expect_int_equal(input_td->type, type_function_input, "function_input input_td");
 	expect_str(&input_td->name, "Input", "Input input_td");
 
-	struct type_use* input0_tu = type_use_get(input_tu, 0);
+	struct ast_node* input0_tu = ast_node_get(input_tu, 0);
 	assert_ptr(input0_tu, "ptr input0_tu");
 
 	struct type_def* input0_td = input0_tu->td;
@@ -691,7 +690,7 @@ void test_parse_function4()
 	expect_int_equal(input0_td->type, type_integer, "integer input0_td");
 	expect_str(&input0_td->name, "Int32", "Int32 input0_td");
 
-	struct type_use* input1_tu = type_use_get(input_tu, 1);
+	struct ast_node* input1_tu = ast_node_get(input_tu, 1);
 	assert_ptr(input1_tu, "ptr input1_tu");
 
 	struct type_def* input1_td = input1_tu->td;
@@ -699,7 +698,7 @@ void test_parse_function4()
 	expect_int_equal(input1_td->type, type_integer, "integer input1_td");
 	expect_str(&input1_td->name, "Int32", "Int32 input1_td");
 
-	struct type_use* input2_tu = type_use_get(input_tu, 2);
+	struct ast_node* input2_tu = ast_node_get(input_tu, 2);
 	assert_ptr(input2_tu, "ptr input2_tu");
 
 	struct type_def* input2_td = input2_tu->td;
@@ -707,7 +706,7 @@ void test_parse_function4()
 	expect_int_equal(input2_td->type, type_integer, "integer input2_td");
 	expect_str(&input2_td->name, "Int32", "Int32 input2_td");
 
-	struct type_use* output_tu = type_use_get(tu, 1);
+	struct ast_node* output_tu = ast_node_get(tu, 1);
 	assert_ptr(output_tu, "ptr output_tu");
 
 	struct type_def* output_td = output_tu->td;
@@ -715,7 +714,7 @@ void test_parse_function4()
 	expect_int_equal(output_td->type, type_function_output, "function_input output_td");
 	expect_str(&output_td->name, "Output", "Output output_td");
 
-	struct type_use* output0_tu = type_use_get(output_tu, 0);
+	struct ast_node* output0_tu = ast_node_get(output_tu, 0);
 	assert_ptr(output0_tu, "ptr output0_tu");
 
 	struct type_def* output0_td = output0_tu->td;
@@ -763,7 +762,7 @@ void test_parse_function4()
 	assert_ptr(dret_type, "ptr dret_type");
 	expect_int_equal(dret_type->type, ast_type_type, "type dret_type");
 
-	struct type_use* dret_tu = dret_type->tu;
+	struct ast_node* dret_tu = dret_type->tu;
 	assert_ptr(dret_tu, "ptr dret_tu");
 
 	struct type_def* dret_td = dret_tu->td;
@@ -1422,7 +1421,7 @@ void test_parse_for_iteration()
 	assert_ptr(i_type, "ptr i_type");
 	expect_int_equal(i_type->type, ast_type_type, "type i_type");
 
-	struct type_use* i_tu = i_type->tu;
+	struct ast_node* i_tu = i_type->tu;
 	assert_ptr(i_tu, "ptr i_tu");
 
 	struct type_def* i_td = i_tu->td;

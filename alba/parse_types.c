@@ -9,10 +9,10 @@
 #include "symbol_table.h"
 #include "zinc/memory.h"
 #include "parse_types.h"
-#include "type_use.h"
+#include "type_def.h"
 #include <assert.h>
 
-bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc);
+bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | e */
@@ -168,7 +168,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
-	struct type_use* tu = NULL;
+	struct ast_node* tu = NULL;
 	bool is_generic = false;
 
 	location_init(loc);
@@ -181,7 +181,8 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 		ast_node_create(&n);
 		n->type = ast_type_type;
 
-		type_use_create(&tu);
+		ast_node_create(&tu);
+		tu->type = ast_type_type;
 		n->tu = tu;
 
 		struct token* name = NULL;
@@ -225,7 +226,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 				free(a);
 			} else {
 				if (is_generic) {
-					int count = type_use_count_children(tu);
+					int count = ast_node_count_children(tu);
 					if (sym->td->generic_count > 0 && count != sym->td->generic_count) {
 						char* a;
 						buffer2array(&name->value, &a);
@@ -290,7 +291,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 
 /* tseq -> type tseq' */
 /* tseq' -> , tseq' */
-bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc)
+bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* a = NULL;
@@ -309,7 +310,7 @@ bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc)
 	if (valid) {
 		assert(a);
 		assert(a->tu);
-		type_use_add(parent, a->tu);
+		ast_node_add(parent, a->tu);
 		a->tu = NULL;
 		ast_node_destroy(a);
 		a = NULL;
@@ -342,7 +343,7 @@ bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc)
 		if (valid) {
 			assert(a);
 			assert(a->tu);
-			type_use_add(parent, a->tu);
+			ast_node_add(parent, a->tu);
 			a->tu = NULL;
 			ast_node_destroy(a);
 			a = NULL;
@@ -355,7 +356,7 @@ bool tseq(struct parse_state* ps, struct type_use* parent, struct location* loc)
 	return valid;
 }
 
-struct type_use* function2type(struct symbol_table* st, struct ast_node* n)
+struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 {
 	struct buffer bf;
 	int current_node = 0;
@@ -365,8 +366,9 @@ struct type_use* function2type(struct symbol_table* st, struct ast_node* n)
 	}
 
 	/* function */
-	struct type_use* tu = NULL;
-	type_use_create(&tu);
+	struct ast_node* tu = NULL;
+	ast_node_create(&tu);
+	tu->type = ast_type_type;
 
 	buffer_init(&bf);
 	buffer_copy_str(&bf, "Function");
@@ -376,8 +378,9 @@ struct type_use* function2type(struct symbol_table* st, struct ast_node* n)
 	tu->td = sym->td;
 
 	/* input */
-	struct type_use* input_tu = NULL;
-	type_use_create(&input_tu);
+	struct ast_node* input_tu = NULL;
+	ast_node_create(&input_tu);
+	input_tu->type = ast_type_type;
 
 	buffer_clear(&bf);
 	buffer_copy_str(&bf, "Input");
@@ -390,15 +393,15 @@ struct type_use* function2type(struct symbol_table* st, struct ast_node* n)
 	struct ast_node* dec = dseq->head;
 	while (dec) {
 		struct ast_node* type_node = ast_node_get(dec, 1);
-		struct type_use* element_tu = type_use_copy(type_node->tu);
-		type_use_add(input_tu, element_tu);
+		struct ast_node* element_tu = ast_node_copy(type_node->tu);
+		ast_node_add(input_tu, element_tu);
 		dec = dec->next;
 	}
 
 	if (input_tu->head) {
-		type_use_add(tu, input_tu);
+		ast_node_add(tu, input_tu);
 	} else {
-		type_use_destroy(input_tu);
+		ast_node_destroy(input_tu);
 	}
 
 	/* output */
@@ -411,13 +414,14 @@ struct type_use* function2type(struct symbol_table* st, struct ast_node* n)
 		struct symbol* output_sym = environment_get(st->top, &bf);
 		assert(output_sym);
 		assert(output_sym->td);
-		struct type_use* output_tu = NULL;
-		type_use_create(&output_tu);
+		struct ast_node* output_tu = NULL;
+		ast_node_create(&output_tu);
+		output_tu->type = ast_type_type;
 		output_tu->td = output_sym->td;
 
-		struct type_use* element_tu = type_use_copy(dret_type->tu);
-		type_use_add(output_tu, element_tu);
-		type_use_add(tu, output_tu);
+		struct ast_node* element_tu = ast_node_copy(dret_type->tu);
+		ast_node_add(output_tu, element_tu);
+		ast_node_add(tu, output_tu);
 	}
 
 	buffer_destroy(&bf);
@@ -429,12 +433,12 @@ void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_n
 {
 	assert(fd);
 	assert(fd->tu);
-	struct type_use* tu = fd->tu;
-	struct type_use* p = tu->head;
+	struct ast_node* tu = fd->tu;
+	struct ast_node* p = tu->head;
 	while (p) {
 		struct type_def* p_td = p->td;
 		if (p_td->type == type_function_output) {
-			struct type_use* ret = type_use_get(p, 0);
+			struct ast_node* ret = ast_node_get(p, 0);
 			if (ret) {
 				struct type_def* ret_td = ret->td;
 				if (!type_use_can_cast(ret, stmts_node->tu)) {
@@ -446,9 +450,9 @@ void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_n
 	}
 }
 
-void get_function_children(struct type_use* tu, struct type_use** input, struct type_use** output)
+void get_function_children(struct ast_node* tu, struct ast_node** input, struct ast_node** output)
 {
-	struct type_use* p = tu->head;
+	struct ast_node* p = tu->head;
 	while (p) {
 		if (p->td) {
 			if (p->td->type == type_function_input) {
@@ -461,7 +465,7 @@ void get_function_children(struct type_use* tu, struct type_use** input, struct 
 	}
 }
 
-struct type_use* get_function_type(struct symbol* sym)
+struct ast_node* get_function_type(struct symbol* sym)
 {
 	if (sym) {
 		if (sym->tu) {
@@ -476,15 +480,15 @@ struct type_use* get_function_type(struct symbol* sym)
 	return NULL;
 }
 
-struct type_use* get_function_input_type(struct type_use* tu, int index)
+struct ast_node* get_function_input_type(struct ast_node* tu, int index)
 {
-	struct type_use* input = NULL;
-	struct type_use* output = NULL;
+	struct ast_node* input = NULL;
+	struct ast_node* output = NULL;
 	get_function_children(tu, &input, &output);
 
 	if (!input) return NULL;
 
-	struct type_use* p = input->head;
+	struct ast_node* p = input->head;
 	int i = 0;
 	while (p) {
 		if (i == index) return p;
@@ -493,14 +497,14 @@ struct type_use* get_function_input_type(struct type_use* tu, int index)
 	return NULL;
 }
 
-bool check_input_type(struct parse_state* ps, struct type_use* tu, int index, struct ast_node* a, struct location* loc_expr)
+bool check_input_type(struct parse_state* ps, struct ast_node* tu, int index, struct ast_node* a, struct location* loc_expr)
 {
 	bool valid = true;
 
 	if (tu) {
-		struct type_use* tu0 = get_function_input_type(tu, index);
+		struct ast_node* tu0 = get_function_input_type(tu, index);
 		if (tu0) {
-			struct type_use* call_tu0 = a->tu;
+			struct ast_node* call_tu0 = a->tu;
 			if (call_tu0) {
 				if (!type_use_can_cast(tu0, call_tu0)) {
 					valid = set_source_error(ps->el, loc_expr, "parameter and aguments types do not match");

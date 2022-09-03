@@ -13,16 +13,16 @@ ALBA_API bool declaration(struct parse_state* ps, struct ast_node** root, struct
 
 ALBA_API bool type(struct parse_state* ps, struct token* id, struct ast_node** root, struct location* loc);
 
-ALBA_API struct type_use* function2type(struct symbol_table* st, struct ast_node* n);
+ALBA_API struct ast_node* function2type(struct symbol_table* st, struct ast_node* n);
 
 ALBA_API void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_node* stmts_node, struct location* loc, bool* valid);
 
-ALBA_API void get_function_children(struct type_use* tu, struct type_use** input, struct type_use** output);
+ALBA_API void get_function_children(struct ast_node* tu, struct ast_node** input, struct ast_node** output);
 
-ALBA_API struct type_use* get_function_type(struct symbol* sym);
+ALBA_API struct ast_node* get_function_type(struct symbol* sym);
 
-ALBA_API struct type_use* get_function_input_type(struct type_use* tu, int index);
+ALBA_API struct ast_node* get_function_input_type(struct ast_node* tu, int index);
 
-ALBA_API bool check_input_type(struct parse_state* ps, struct type_use* tu, int index, struct ast_node* a, struct location* loc_expr);
+ALBA_API bool check_input_type(struct parse_state* ps, struct ast_node* tu, int index, struct ast_node* a, struct location* loc_expr);
 
 #endif

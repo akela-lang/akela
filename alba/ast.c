@@ -3,7 +3,7 @@
 #include "ast.h"
 #include "zinc/result.h"
 #include "zinc/memory.h"
-#include "type_use.h"
+#include "type_def.h"
 
 /* dynamic-output-none */
 enum result ast_set_names(char** names)
@@ -79,7 +79,7 @@ void ast_node_destroy(struct ast_node* n)
 
 		/* destroy n{} */
 		buffer_destroy(&n->value);
-		type_use_destroy(n->tu);
+		ast_node_destroy(n->tu);
 
 		/* destroy n */
 		free(n);
@@ -92,6 +92,7 @@ void ast_node_init(struct ast_node* n)
 	n->type = ast_type_none;
 	buffer_init(&n->value);
 	n->tu = NULL;
+	n->td = NULL;
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;
@@ -182,6 +183,7 @@ struct ast_node* ast_node_copy(struct ast_node* n)
 	if (n) {
 		ast_node_create(&copy);
 		copy->type = n->type;
+		copy->td = n->td;
 		buffer_copy(&n->value, &copy->value);
 		
 		struct ast_node* p = n->head;
@@ -206,6 +208,10 @@ bool ast_node_match(struct ast_node* a, struct ast_node* b)
 		}
 
 		if (!buffer_compare(&a->value, &b->value)) {
+			return false;
+		}
+
+		if (a->td != b->td) {
 			return false;
 		}
 

@@ -4,7 +4,7 @@
 #include "alba/unit_test_compiler.h"
 #include "alba/ast.h"
 #include "test_parse.h"
-#include "alba/type_use.h"
+#include "alba/type_def.h"
 
 void test_parse_var()
 {
@@ -36,7 +36,7 @@ void test_parse_var()
 	assert_ptr(type_use, "ptr type_use");
 	expect_int_equal(type_use->type, ast_type_type, "type type");
 
-	struct type_use* tu = type_use->tu;
+	struct ast_node* tu = type_use->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -85,7 +85,7 @@ void test_parse_var2()
 	assert_ptr(type_use, "ptr type_use");
 	expect_int_equal(type_use->type, ast_type_type, "type type_use");
 
-	struct type_use* tu = type_use->tu;
+	struct ast_node* tu = type_use->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -124,7 +124,7 @@ void test_parse_number_integer()
 	expect_int_equal(number->type, ast_type_number, "number num");
 	expect_str(&number->value, "32", "32 num");
 
-	struct type_use* tu = number->tu;
+	struct ast_node* tu = number->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -159,7 +159,7 @@ void test_parse_number_float()
 	expect_int_equal(number->type, ast_type_number, "number number");
 	expect_str(&number->value, "5.0e0", "5.0e0 number");
 
-	struct type_use* tu = number->tu;
+	struct ast_node* tu = number->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -194,7 +194,7 @@ void test_parse_string()
 	expect_int_equal(string->type, ast_type_string, "string string");
 	expect_str(&string->value, "hello", "hello string");
 
-	struct type_use* tu = string->tu;
+	struct ast_node* tu = string->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct type_def* td = tu->td;
@@ -228,7 +228,7 @@ void test_parse_boolean_true()
 	expect_int_equal(true_node->type, ast_type_boolean, "boolean true_node");
 	expect_str(&true_node->value, "true", "true true_node");
 
-	struct type_use* tu = true_node->tu;
+	struct ast_node* tu = true_node->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -262,7 +262,7 @@ void test_parse_boolean_false()
 	expect_int_equal(false_node->type, ast_type_boolean, "boolean false_node");
 	expect_str(&false_node->value, "false", "false false_node");
 
-	struct type_use* tu = false_node->tu;
+	struct ast_node* tu = false_node->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -314,7 +314,7 @@ void test_parse_id()
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "x", "x id");
 
-	struct type_use* tu = id->tu;
+	struct ast_node* tu = id->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct type_def* td = tu->td;
@@ -402,7 +402,7 @@ void test_parse_sign_negative()
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, ast_type_sign, "sign sign");
 
-	struct type_use* tu = sign->tu;
+	struct ast_node* tu = sign->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -445,7 +445,7 @@ void test_parse_sign_positive()
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, ast_type_sign, "sign sign");
 
-	struct type_use* tu = sign->tu;
+	struct ast_node* tu = sign->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -507,7 +507,7 @@ void test_parse_not_id()
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, ast_type_not, "not not");
 
-	struct type_use* tu = not->tu;
+	struct ast_node* tu = not->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -545,7 +545,7 @@ void test_parse_not_literal()
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, ast_type_not, "not not");
 
-	struct type_use* tu = not->tu;
+	struct ast_node* tu = not->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -603,7 +603,7 @@ void test_parse_array_literal_integer()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_literal, "array-literal a");
 
-	struct type_use* array_tu = a->tu;
+	struct ast_node* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
 	struct type_def* array_td = array_tu->td;
@@ -652,7 +652,7 @@ void test_parse_array_literal_float()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_literal, "array-literal a");
 
-	struct type_use* array_tu = a->tu;
+	struct ast_node* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
 	struct type_def* array_td = array_tu->td;
@@ -701,7 +701,7 @@ void test_parse_array_literal_numeric()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_literal, "array-literal a");
 
-	struct type_use* array_tu = a->tu;
+	struct ast_node* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
 	struct type_def* array_td = array_tu->td;
@@ -1114,7 +1114,7 @@ void test_parse_call_return_type()
 	assert_ptr(add, "ptr add");
 	expect_int_equal(add->type, ast_type_plus, "plus add");
 
-	struct type_use* add_tu = add->tu;
+	struct ast_node* add_tu = add->tu;
 	assert_ptr(add, "patr add_tu");
 
 	struct type_def* add_td = add_tu->td;
@@ -1188,7 +1188,7 @@ void test_parse_call2()
 	assert_ptr(type, "ptr param0_id");
 	expect_int_equal(type->type, ast_type_type, "type param0_id");
 
-	struct type_use* tu = type->tu;
+	struct ast_node* tu = type->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;

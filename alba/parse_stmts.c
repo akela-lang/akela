@@ -13,7 +13,7 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include "parse_stmts.h"
-#include "type_use.h"
+#include "type_def.h"
 #include <assert.h>
 
 bool separator(struct parse_state* ps, int* has_separator, struct location* loc);
@@ -104,7 +104,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 	if (valid) {
 		if (last) {
 			if (last->tu) {
-				n->tu = type_use_copy(last->tu);
+				n->tu = ast_node_copy(last->tu);
 			}
 		}
 	}
@@ -620,14 +620,14 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 				valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
 				free(a);
 			} else {
-				struct type_use* tu = function2type(ps->st, n);
+				struct ast_node* tu = function2type(ps->st, n);
 				struct symbol* new_sym = NULL;
 				malloc_safe((void**)&new_sym, sizeof(struct symbol));
 				symbol_init(new_sym);
 				new_sym->tk_type = id->type;
 				new_sym->tu = tu;
 				environment_put(ps->st->top->prev, &id->value, new_sym);
-				n->tu = type_use_copy(tu);
+				n->tu = ast_node_copy(tu);
 			}
 		}
 	}
