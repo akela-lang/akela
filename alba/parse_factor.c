@@ -16,7 +16,7 @@
 bool var(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool cseq(struct parse_state* ps, struct token* id, struct ast_node** root, struct location* loc);
 bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -275,7 +275,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 	/* allocate b b{} */
 	struct ast_node* cseq_node = NULL;
 	struct location loc_cseq;
-	valid = cseq(ps, &cseq_node, &loc_cseq) && valid;
+	valid = cseq(ps, id, &cseq_node, &loc_cseq) && valid;
 	location_update(loc, &loc_cseq);
 
 	/* allocate ps{} rp rp{} */
@@ -346,24 +346,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 				if (ccount < tcount) {
 					valid = set_source_error(ps->el, &rp->loc, "not enough arguments in function call");
 				} else if (ccount > tcount) {
-					valid = set_source_error(ps->el, &id->loc, "too many arguments in function call");
-				} else if (tcount > 0) {
-					assert(input);
-					struct type_use* param_tu = input->head;
-					struct ast_node* arg = cseq_node->head;
-					while (param_tu) {
-						struct type_use* arg_tu = arg->tu;
-						if (!arg_tu) {
-							valid = set_source_error(ps->el, &id->loc, "argument in call expression does not have a value");
-						} else {
-							struct type_def* ctd = arg_tu->td;
-							if (!type_use_can_cast(param_tu, arg_tu)) {
-								valid = set_source_error(ps->el, &id->loc, "parameter and aguments types do not match");
-							}
-						}
-						param_tu = param_tu->next;
-						arg = arg->next;
-					}
+					valid = set_source_error(ps->el, &rp->loc, "too many arguments in function call");
 				}
 
 				/* output */
@@ -396,7 +379,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
 /* dynamic-output ps{} root root{} */
-bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
+bool cseq(struct parse_state* ps, struct token* id, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
@@ -419,6 +402,20 @@ bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
+
+	struct symbol* sym = NULL;
+	struct type_use* tu = NULL;
+	int i = 0;
+	if (id) {
+		sym = environment_get(ps->st->top, &id->value);
+		if (sym) {
+			tu = get_function_type(sym);
+		}
+	}
+
+
+	valid = check_input_type(ps, tu, i, a, &loc_expr) && valid;
+	i++;
 
 	/* transfer a -> n{} */
 	ast_node_add(n, a);
@@ -452,7 +449,11 @@ bool cseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		} else {
 			/* transfer a -> parent */
 			ast_node_add(n, a);
+
+			valid = check_input_type(ps, tu, i++, a, &loc_expr) && valid;
 		}
+
+		i++;
 	}
 
 	valid = location_default(ps, loc) && valid;

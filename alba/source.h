@@ -15,6 +15,7 @@ struct compile_error {
 	size_t line;
 	size_t col;
 	size_t byte_pos;
+	size_t byte_count;
 	struct compile_error* next;
 	struct compile_error* prev;
 };

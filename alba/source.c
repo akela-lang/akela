@@ -15,6 +15,7 @@ void compile_error_init(struct compile_error* e)
 	e->line = 0;
 	e->col = 0;
 	e->byte_pos = 0;
+	e->byte_count = 0;
 	e->next = NULL;
 	e->prev = NULL;
 }
@@ -77,6 +78,7 @@ bool set_source_error(struct compile_error_list* el, struct location* loc, const
 		e->line = loc->line;
 		e->col = loc->col;
 		e->byte_pos = loc->byte_pos;
+		e->byte_count = loc->byte_count;
 	}
 
 	char last = 0;

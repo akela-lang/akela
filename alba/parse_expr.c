@@ -17,7 +17,6 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool power(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool power_prime(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* expr -> id = expr | boolean */

@@ -460,3 +460,56 @@ void get_function_children(struct type_use* tu, struct type_use** input, struct 
 		p = p->next;
 	}
 }
+
+struct type_use* get_function_type(struct symbol* sym)
+{
+	if (sym) {
+		if (sym->tu) {
+			if (sym->tu->td) {
+				if (sym->tu->td->type == type_function) {
+					return sym->tu;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
+struct type_use* get_function_input_type(struct type_use* tu, int index)
+{
+	struct type_use* input = NULL;
+	struct type_use* output = NULL;
+	get_function_children(tu, &input, &output);
+
+	if (!input) return NULL;
+
+	struct type_use* p = input->head;
+	int i = 0;
+	while (p) {
+		if (i == index) return p;
+		i++;
+	}
+	return NULL;
+}
+
+bool check_input_type(struct parse_state* ps, struct type_use* tu, int index, struct ast_node* a, struct location* loc_expr)
+{
+	bool valid = true;
+
+	if (tu) {
+		struct type_use* tu0 = get_function_input_type(tu, index);
+		if (tu0) {
+			struct type_use* call_tu0 = a->tu;
+			if (call_tu0) {
+				if (!type_use_can_cast(tu0, call_tu0)) {
+					valid = set_source_error(ps->el, loc_expr, "parameter and aguments types do not match");
+				}
+			} else {
+				valid = set_source_error(ps->el, loc_expr, "argument expression has no value");
+			}
+		}
+	}
+
+	return valid;
+}

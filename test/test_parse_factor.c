@@ -1463,7 +1463,12 @@ void test_parse_call_type_error()
 	bool valid = parse_setup("function foo(a::Int64) end; foo(true)", &ps, &root);
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "parameter and aguments types do not match");
+	struct compile_error* e = expect_compile_error(ps.el, "parameter and aguments types do not match");
+	assert_ptr(e, "ptr e");
+	expect_int_equal(e->line, 1, "line");
+	expect_int_equal(e->col, 33, "col");
+	expect_int_equal(e->byte_pos, 32, "byte_pos");
+	expect_int_equal(e->byte_count, 4, "byte_count");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);

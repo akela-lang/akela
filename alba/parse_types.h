@@ -19,4 +19,10 @@ ALBA_API void check_return_type(struct parse_state* ps, struct ast_node* fd, str
 
 ALBA_API void get_function_children(struct type_use* tu, struct type_use** input, struct type_use** output);
 
+ALBA_API struct type_use* get_function_type(struct symbol* sym);
+
+ALBA_API struct type_use* get_function_input_type(struct type_use* tu, int index);
+
+ALBA_API bool check_input_type(struct parse_state* ps, struct type_use* tu, int index, struct ast_node* a, struct location* loc_expr);
+
 #endif
