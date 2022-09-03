@@ -1338,7 +1338,7 @@ void test_scan_for_iteration()
 }
 
 /* dynamic-output-none */
-void test_scan_error_char()
+void test_scan_error_unrecognized_character()
 {
 	test_name(__func__);
 
@@ -1638,6 +1638,83 @@ void test_scan_line_col()
 	scan_teardown(&sns);
 }
 
+void test_scan_error_underscore_letter()
+{
+	test_name(__func__);
+
+	struct lookahead_char lc;
+	struct compile_error_list el;
+	struct scan_state sns;
+	bool valid;
+	struct token* t;
+	int got_token;
+
+	/* allocate sns{} */
+	scan_setup("_1", &sns, &lc, &el);
+
+	/* allocate sns{} t t{} */
+	valid = scan_get_token(&sns, &got_token, &t);
+	assert_has_errors(sns.el);
+	expect_false(valid, "scan_get_token valid");
+	expect_null(t, "null t");
+	expect_false(got_token, "got token");
+	expect_compile_error(&el, "Must have a letter following underscore at start of id");
+
+	/* destroy sns{} */
+	scan_teardown(&sns);
+}
+
+void test_scan_error_underscore_letter2()
+{
+	test_name(__func__);
+
+	struct lookahead_char lc;
+	struct compile_error_list el;
+	struct scan_state sns;
+	bool valid;
+	struct token* t;
+	int got_token;
+
+	/* allocate sns{} */
+	scan_setup("__", &sns, &lc, &el);
+
+	/* allocate sns{} t t{} */
+	valid = scan_get_token(&sns, &got_token, &t);
+	assert_has_errors(sns.el);
+	expect_false(valid, "scan_get_token valid");
+	expect_null(t, "null t");
+	expect_false(got_token, "got token");
+	expect_compile_error(&el, "Must have a letter following underscore at start of id");
+
+	/* destroy sns{} */
+	scan_teardown(&sns);
+}
+
+void test_scan_error_exponent_sign()
+{
+	test_name(__func__);
+
+	struct lookahead_char lc;
+	struct compile_error_list el;
+	struct scan_state sns;
+	bool valid;
+	struct token* t;
+	int got_token;
+
+	/* allocate sns{} */
+	scan_setup("100e-a", &sns, &lc, &el);
+
+	/* allocate sns{} t t{} */
+	valid = scan_get_token(&sns, &got_token, &t);
+	assert_has_errors(sns.el);
+	expect_false(valid, "scan_get_token valid");
+	expect_null(t, "null t");
+	expect_false(got_token, "got token");
+	expect_compile_error(&el, "invalid number");
+
+	/* destroy sns{} */
+	scan_teardown(&sns);
+}
 
 /* dynamic-output-none */
 void test_scan()
@@ -1659,10 +1736,13 @@ void test_scan()
 	test_scan_compound_operators2();
 	test_scan_for_range();
 	test_scan_for_iteration();
-	test_scan_error_char();
+	test_scan_error_unrecognized_character();
 	test_scan_square_brackets();
 	test_scan_string();
 	test_scan_string2();
 	test_scan_string_escape_error();
 	test_scan_line_col();
+	test_scan_error_underscore_letter();
+	test_scan_error_underscore_letter2();
+	test_scan_error_exponent_sign();
 }

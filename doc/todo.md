@@ -1,5 +1,9 @@
 # Todo
-* annotate test case name where each error is generated
+* document test case name where each error is generated
+  * parse_type
+  * parse_factor
+  * parse_expr
+  * parse_stmts
 * derive type from list in for x in list
 * verify type for operations
 * check that subscripted variable is an array type

@@ -216,6 +216,7 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         get_scan_location(sns, &loc);
         /* allocate sns{el{}} */
         set_source_error(sns->el, &loc, "Unrecognized character: %s", a);
+        /* error test case: test_scan_error_unrecognized_character */
         valid = false;
     }
     return valid;
@@ -267,12 +268,14 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
             /* allocate sns{el{}} */
             set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
             valid = false;
+            /* test case: test_scan_error_underscore_letter2 */
         } else if (u_isdigit(uc)) {
             struct location loc;
             get_scan_location(sns, &loc);
             /* allocate sns{el{}} */
             set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
             valid = false;
+            /* test case: test_scan_error_underscore_letter */
         } else if (u_isalpha(uc)) {
             *state = state_id;
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
@@ -421,6 +424,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
             struct location loc;
             get_scan_location(sns, &loc);
             valid = set_source_error(sns->el, &loc, "invalid number");
+            /* test case: test_scan_error_exponent_sign */
         }
     } else if (*state == state_number_exponent) {
         if (u_isdigit(uc)) {
@@ -486,6 +490,7 @@ bool process_char_string(struct scan_state* sns, enum state_enum* state, int* go
             /* allocate sns{el{}} */
             valid = false;
             set_source_error(sns->el, &loc, "Unrecognized escape sequence: %s", a);
+            /* test case: test_scan_string_escape_error */
         }
         *state = state_string;
     }
