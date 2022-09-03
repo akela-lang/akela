@@ -1,5 +1,4 @@
 # Todo
-* replace test_use with ast_node
 * annotate test case name where each error is generated
 * derive type from list in for x in list
 * verify type for operations

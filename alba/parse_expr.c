@@ -113,8 +113,7 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 				struct ast_node* last_a_tu = last_a->tu;
 				if (last_a->type == ast_type_var) {
 					struct ast_node* dec = ast_node_get(last_a, 0);
-					struct ast_node* last_a_type = ast_node_get(dec, 1);
-					last_a_tu = last_a_type->tu;
+					last_a_tu = ast_node_get(dec, 1);
 				}
 
 				struct ast_node* a_tu = a->tu;

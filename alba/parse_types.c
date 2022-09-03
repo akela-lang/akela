@@ -168,7 +168,6 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
-	struct ast_node* tu = NULL;
 	bool is_generic = false;
 
 	location_init(loc);
@@ -180,10 +179,6 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 	if (t0 && t0->type == token_id) {
 		ast_node_create(&n);
 		n->type = ast_type_type;
-
-		ast_node_create(&tu);
-		tu->type = ast_type_type;
-		n->tu = tu;
 
 		struct token* name = NULL;
 		valid = match(ps, token_id, "expected type name", &name) && valid;
@@ -198,7 +193,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 			location_update_token(loc, name);
 
 			struct location loc_tseq;
-			valid = tseq(ps, tu, &loc_tseq) && valid;
+			valid = tseq(ps, n, &loc_tseq) && valid;
 			location_update(loc, &loc_tseq);
 
 			struct token* rcb = NULL;
@@ -226,7 +221,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 				free(a);
 			} else {
 				if (is_generic) {
-					int count = ast_node_count_children(tu);
+					int count = ast_node_count_children(n);
 					if (sym->td->generic_count > 0 && count != sym->td->generic_count) {
 						char* a;
 						buffer2array(&name->value, &a);
@@ -241,7 +236,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 				}
 
 				if (valid) {
-					tu->td = sym->td;
+					n->td = sym->td;
 				}
 			}
 		}
@@ -266,7 +261,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 						malloc_safe(&new_sym, sizeof(struct symbol));
 						symbol_init(new_sym);
 						new_sym->tk_type = token_id;
-						new_sym->tu = tu;
+						new_sym->tu = n;
 						environment_put(ps->st->top, &id->value, new_sym);
 					}
 				}
@@ -294,26 +289,23 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
 	bool valid = true;
-	struct ast_node* a = NULL;
+	struct ast_node* tu = NULL;
 	struct token* t0 = NULL;
 
 	location_init(loc);
 
 	struct location loc_type;
-	valid = type(ps, NULL, &a, &loc_type) && valid;
+	valid = type(ps, NULL, &tu, &loc_type) && valid;
 	location_update(loc, &loc_type);
 
-	if (!a) {
+	if (!tu) {
 		valid = set_source_error(ps->el, &loc_type, "expected a type name");
 	}
 
 	if (valid) {
-		assert(a);
-		assert(a->tu);
-		ast_node_add(parent, a->tu);
-		a->tu = NULL;
-		ast_node_destroy(a);
-		a = NULL;
+		assert(tu);
+		ast_node_add(parent, tu);
+		tu = NULL;
 	}
 
 	while (true) {
@@ -331,22 +323,18 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 		token_destroy(comma);
 		free(comma);
 
-		a = NULL;
-		valid = type(ps, NULL, &a, &loc_type) && valid;
+		valid = type(ps, NULL, &tu, &loc_type) && valid;
 		location_update(loc, &loc_type);
 
-		if (!a) {
+		if (!tu) {
 			valid = set_source_error(ps->el, &loc_type, "expected a type name after comma");
 			break;
 		}
 
 		if (valid) {
-			assert(a);
-			assert(a->tu);
-			ast_node_add(parent, a->tu);
-			a->tu = NULL;
-			ast_node_destroy(a);
-			a = NULL;
+			assert(tu);
+			ast_node_add(parent, tu);
+			tu = NULL;
 		}
 
 	}
@@ -393,7 +381,7 @@ struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 	struct ast_node* dec = dseq->head;
 	while (dec) {
 		struct ast_node* type_node = ast_node_get(dec, 1);
-		struct ast_node* element_tu = ast_node_copy(type_node->tu);
+		struct ast_node* element_tu = ast_node_copy(type_node);
 		ast_node_add(input_tu, element_tu);
 		dec = dec->next;
 	}
@@ -419,7 +407,7 @@ struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 		output_tu->type = ast_type_type;
 		output_tu->td = output_sym->td;
 
-		struct ast_node* element_tu = ast_node_copy(dret_type->tu);
+		struct ast_node* element_tu = ast_node_copy(dret_type);
 		ast_node_add(output_tu, element_tu);
 		ast_node_add(tu, output_tu);
 	}

@@ -32,11 +32,7 @@ void test_parse_var()
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "a", "a");
 
-	struct ast_node* type_use = ast_node_get(dec, 1);
-	assert_ptr(type_use, "ptr type_use");
-	expect_int_equal(type_use->type, ast_type_type, "type type");
-
-	struct ast_node* tu = type_use->tu;
+	struct ast_node* tu = ast_node_get(dec, 1);
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -81,11 +77,7 @@ void test_parse_var2()
 	expect_int_equal(id->type, ast_type_id, "id");
 	expect_str(&id->value, "a", "a");
 
-	struct ast_node* type_use = ast_node_get(dec, 1);
-	assert_ptr(type_use, "ptr type_use");
-	expect_int_equal(type_use->type, ast_type_type, "type type_use");
-
-	struct ast_node* tu = type_use->tu;
+	struct ast_node* tu = ast_node_get(dec, 1);
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -1184,11 +1176,7 @@ void test_parse_call2()
 	expect_int_equal(param0_name->type, ast_type_id, "id param0_name");
 	expect_str(&param0_name->value, "arg1", "arg1");
 
-	struct ast_node* type = ast_node_get(dparam0, 1);
-	assert_ptr(type, "ptr param0_id");
-	expect_int_equal(type->type, ast_type_type, "type param0_id");
-
-	struct ast_node* tu = type->tu;
+	struct ast_node* tu = ast_node_get(dparam0, 1);
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;

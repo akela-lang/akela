@@ -505,11 +505,7 @@ void test_parse_function2()
 	expect_int_equal(x->type, ast_type_id, "id x");
 	expect_str(&x->value, "x", "x x");
 
-	struct ast_node* type_x = ast_node_get(param0, 1);
-	assert_ptr(type_x, "ptr type_x");
-	expect_int_equal(type_x->type, ast_type_type, "type type_x");
-
-	struct ast_node* tu_x = type_x->tu;
+	struct ast_node* tu_x = ast_node_get(param0, 1);
 	assert_ptr(tu_x, "ptr tu_x");
 
 	struct type_def* x_td = tu_x->td;
@@ -758,11 +754,7 @@ void test_parse_function4()
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, ast_type_dret, "dret dret");
 
-	struct ast_node* dret_type = ast_node_get(dret, 0);
-	assert_ptr(dret_type, "ptr dret_type");
-	expect_int_equal(dret_type->type, ast_type_type, "type dret_type");
-
-	struct ast_node* dret_tu = dret_type->tu;
+	struct ast_node* dret_tu = ast_node_get(dret, 0);
 	assert_ptr(dret_tu, "ptr dret_tu");
 
 	struct type_def* dret_td = dret_tu->td;
@@ -1417,11 +1409,7 @@ void test_parse_for_iteration()
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "i", "i id");
 
-	struct ast_node* i_type = ast_node_get(dec, 1);
-	assert_ptr(i_type, "ptr i_type");
-	expect_int_equal(i_type->type, ast_type_type, "type i_type");
-
-	struct ast_node* i_tu = i_type->tu;
+	struct ast_node* i_tu = ast_node_get(dec, 1);
 	assert_ptr(i_tu, "ptr i_tu");
 
 	struct type_def* i_td = i_tu->td;
