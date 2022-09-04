@@ -486,6 +486,7 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	struct token* not = NULL;
 	valid = match(ps, token_not, "expecting not", &not) && valid;
 	location_update_token(loc, not);
+	/* test case: no test case needed */
 
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
@@ -496,6 +497,7 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	if (!a) {
 		/* allocate ps{} */
 		valid = set_source_error(ps->el, &loc_factor, "expected factor after !");
+		/* test case: test_parse_not_error_expected_factor */
 	}
 
 	if (valid) {
@@ -517,10 +519,12 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 		struct ast_node* tu = a->tu;
 		if (!tu) {
 			valid = set_source_error(ps->el, &not->loc, "! operator used on factor with no value");
+			/* test case: test_parse_not_error_no_value */
 		} else {
 			assert(tu->td);
 			if (tu->td->type != type_boolean) {
-				set_source_error(ps->el, &not->loc, "not operator used on non-boolean type");
+				valid = set_source_error(ps->el, &not->loc, "not operator used on non-boolean");
+				/* test case: test_parse_not_error_not_boolean */
 			} else {
 				n->tu = ast_node_copy(tu);
 			}
@@ -558,6 +562,7 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location*
 	struct token* x = NULL;
 	valid = match(ps, t0->type, "expecting number, bool, or string", &x) && valid;
 	location_update_token(loc, x);
+	/* test case: no test case needed */
 
 	if (valid) {
 		/* allocate n */
@@ -629,6 +634,7 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expecting identifier", &id) && valid;
 	location_update_token(loc, id);
+	/* test case: no test case needed */
 
 	if (valid) {
 		/* allocate n */
@@ -647,16 +653,10 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 			buffer2array(&id->value, &a);
 			valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", a);
 			free(a);
+			/* test case: test_parse_types_missing_declaration */
 		} else {
-			/* assert(sym->tu);*/
-			if (!sym->tu) {
-				char* a;
-				buffer2array(&id->value, &a);
-				valid = set_source_error(ps->el, &id->loc, "internal error: variable not assigned type: %s", a);
-				free(a);
-			} else {
-				n->tu = ast_node_copy(sym->tu);
-			}
+			assert(sym->tu);
+			n->tu = ast_node_copy(sym->tu);
 		}
 	}
 
@@ -690,6 +690,7 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	struct token* sign = NULL;
 	valid = match(ps, t0->type, "expecting unary plus or minus", &sign) && valid;
 	location_update_token(loc, sign);
+	/* test case: no test case needed */
 
 	/* allocate right */
 	struct ast_node* right = NULL;
@@ -698,7 +699,7 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	location_update(loc, &loc_factor);
 
 	if (!right) {
-		valid = set_source_error(ps->el, &loc_factor, "expecting factor after sign");
+		valid = set_source_error(ps->el, &loc_factor, "expected factor after sign");
 	}
 
 	if (valid) {
@@ -728,6 +729,7 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		struct ast_node* tu = right->tu;
 		if (!tu) {
 			valid = set_source_error(ps->el, &sign->loc, "negative operator was used on expression with no value");
+			/* test case: test_parse_sign_error */
 		} else {
 			n->tu = ast_node_copy(tu);
 		}

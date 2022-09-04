@@ -479,7 +479,7 @@ void test_parse_sign_positive()
 }
 
 /* dynamic-output-none */
-void test_parse_sign_error()
+void test_parse_sign_error_no_value()
 {
 	test_name(__func__);
 
@@ -492,6 +492,25 @@ void test_parse_sign_error()
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse_setup valid");
 	expect_compile_error(ps.el, "negative operator was used on expression with no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_sign_expected_factor()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("-", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected factor after sign");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -1646,6 +1665,60 @@ void test_parse_call_extra_comma()
 	parse_teardown(&ps);
 }
 
+void test_parse_not_error_expected_factor()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("!", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected factor after !");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_not_error_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; !foo()", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "! operator used on factor with no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_not_error_not_boolean()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("!1", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "not operator used on non-boolean");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_factor()
 {
 	test_parse_var();
@@ -1661,7 +1734,8 @@ void test_parse_factor()
 	test_parse_id3();
 	test_parse_sign_negative();
 	test_parse_sign_positive();
-	test_parse_sign_error();
+	test_parse_sign_error_no_value();
+	test_parse_sign_expected_factor();
 	test_parse_anonymous_function();
 	test_parse_anonymous_function2();
 	test_parse_anonymous_function3();
@@ -1694,4 +1768,7 @@ void test_parse_factor()
 	test_parse_call_error_not_enough_arguments();
 	test_parse_call_error_too_many_arguments();
 	test_parse_call_extra_comma();
+	test_parse_not_error_expected_factor();
+	test_parse_not_error_no_value();
+	test_parse_not_error_not_boolean();
 }
