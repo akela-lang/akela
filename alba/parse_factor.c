@@ -769,6 +769,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 		struct token* lsb = NULL;
 		valid = match(ps, token_left_square_bracket, "expected left square bracket", &lsb) && valid;
 		location_update_token(loc, lsb);
+		/* test case: no test case needed */
 
 		/* destroy lsb lsb{} */
 		token_destroy(lsb);
@@ -787,6 +788,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 		struct token* rsb = NULL;
 		valid = match(ps, token_right_square_bracket, "expected right square bracket", &rsb) && valid;
 		location_update_token(loc, rsb);
+		/* test case: test_parse_array_literal_error_right_square_bracket */
 
 		/* destroy rsb rsb{} */
 		token_destroy(rsb);
@@ -797,6 +799,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 
 			if (!first) {
 				valid = set_source_error(ps->el, &loc_aseq, "array literal has no elements");
+				/* test case: test_parse_array_literal_empty_error */
 			} else {
 				struct ast_node* tu_first = ast_node_copy(first->tu);
 				struct ast_node* x = first->next;
@@ -805,6 +808,7 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 					tu_x = x->tu;
 					if (!type_find_whole(ps->st, tu_first, tu_x)) {
 						valid = set_source_error(ps->el, &loc_aseq, "array elements not the same type");
+						/* test case: test_parse_array_literal_mixed_error */
 						break;
 					}
 					x = x->next;
@@ -857,13 +861,11 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 			struct token* comma = NULL;
 			valid = match(ps, token_comma, "expecting comma", &comma) && valid;
 			location_update_token(loc, comma);
+			/* test case: no test case needed */
 
 			/* destroy comma comma{} */
 			token_destroy(comma);
 			free(comma);
-
-			struct location loc_a;
-			valid = get_parse_location(ps, &loc_a) && valid;
 
 			/* allocate ps{} a a{} */
 			struct ast_node* a = NULL;
@@ -871,7 +873,8 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 			location_update(loc, &loc_expr);
 
 			if (!a) {
-				valid = set_source_error(ps->el, &loc_a, "expected expr after comma");
+				valid = set_source_error(ps->el, &loc_expr, "expected expr after comma");
+				/* test cases: test_parse_array_literal_error_expected_expr */
 				break;
 			}
 
@@ -896,6 +899,7 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
 	location_update_token(loc, lp);
+	/* test case: no test case needed */
 
 	/* allocate n n{} */
 	struct ast_node* a = NULL;
@@ -905,11 +909,12 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 
 	if (!a) {
 		valid = set_source_error(ps->el, &loc_a, "empty parenthesis");
+		/* test case: test_parse_paren_error_empty */
 	}
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
-	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
+	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
 	location_update_token(loc, rp);
 
 	if (valid) {

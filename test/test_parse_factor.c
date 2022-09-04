@@ -798,6 +798,44 @@ void test_parse_array_literal_empty_error()
 	parse_teardown(&ps);
 }
 
+void test_parse_array_literal_error_right_square_bracket()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("[1,2", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected right square bracket");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_array_literal_error_expected_expr()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("[1,]", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected expr after comma");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_anonymous_function()
 {
@@ -1102,6 +1140,61 @@ void test_parse_paren_num()
 	struct ast_node* number = ast_node_get(paren, 0);
 	expect_int_equal(number->type, ast_type_number, "number number");
 	expect_str(&number->value, "32", "32 number");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_paren_error_empty()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("()", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "empty parenthesis");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_paren_error_right_parenthesis()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("(1", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected right parenthesis");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_paren_error_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; (foo())", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "parenthesis on expression that has no value");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -1750,7 +1843,12 @@ void test_parse_factor()
 	test_parse_array_literal_numeric();
 	test_parse_array_literal_mixed_error();
 	test_parse_array_literal_empty_error();
+	test_parse_array_literal_error_right_square_bracket();
+	test_parse_array_literal_error_expected_expr();
 	test_parse_paren_num();
+	test_parse_paren_error_empty();
+	test_parse_paren_error_right_parenthesis();
+	test_parse_paren_error_no_value();
 	test_parse_call();
 	test_parse_call_return_type();
 	test_parse_call_return_type_error();
