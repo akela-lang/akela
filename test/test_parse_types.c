@@ -27,7 +27,7 @@ void test_parse_types_missing_declaration2()
 
 	bool valid = parse_setup("foo() + 1", &ps, &root);
 	expect_has_errors(ps.el);
-	expect_compile_error(ps.el, "function is not declared: foo");
+	expect_compile_error(ps.el, "function not declared: foo");
 	expect_false(valid, "valid");
 
 	parse_teardown(&ps);

@@ -192,7 +192,7 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		valid = for_nt(ps, &n, loc) && valid;
 
 		/* function word (seq) stmts end */
-	} else if (t0 && t0->type == token_function) {
+	} else if (t0 && t0->type == token_function && t1 && t1->type == token_id) {
 		valid = function(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_if) {

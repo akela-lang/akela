@@ -94,6 +94,25 @@ void test_parse_var2()
 	parse_teardown(&ps);
 }
 
+void test_parse_var_expected_declaration()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse valid");
+	expect_compile_error(ps.el, "expected declaration after var");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_number_integer()
 {
@@ -1003,6 +1022,44 @@ void test_parse_anonymous_function_return_error()
 	parse_teardown(&ps);
 }
 
+void test_parse_anonymous_function_expected_right_paren()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function(", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse valid");
+	expect_compile_error(ps.el, "expected right parenthesis");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_anonymous_function_expected_end()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function()", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse valid");
+	expect_compile_error(ps.el, "expected end");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_paren_num()
 {
@@ -1481,10 +1538,119 @@ void test_parse_call_anonymous_function_type_error()
 	parse_teardown(&ps);
 }
 
+void test_parse_call_error_right_paren()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; foo(", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected right parenthesis");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_call_error_function_not_declared()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("foo()", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "function not declared: foo");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_call_error_not_function()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var foo::Int64; foo()", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "call of variable that is not a function: foo");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_call_error_not_enough_arguments()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo(x::Int64) end; foo()", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "not enough arguments in function call");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_call_error_too_many_arguments()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; foo(1)", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "too many arguments in function call");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_call_extra_comma()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo(x::Int64) end; foo(1,)", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected expression after comma");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_factor()
 {
 	test_parse_var();
 	test_parse_var2();
+	test_parse_var_expected_declaration();
 	test_parse_number_integer();
 	test_parse_number_float();
 	test_parse_string();
@@ -1501,6 +1667,7 @@ void test_parse_factor()
 	test_parse_anonymous_function3();
 	test_parse_anonymous_function_return_error();
 	test_parse_anonymous_function_assignment_error();
+	test_parse_anonymous_function_expected_right_paren();
 	test_parse_not_id();
 	test_parse_not_literal();
 	test_parse_not_error();
@@ -1520,4 +1687,11 @@ void test_parse_factor()
 	test_parse_call_too_many_arguments();
 	test_parse_call_type_error();
 	test_parse_call_anonymous_function_type_error();
+	test_parse_anonymous_function_expected_end();
+	test_parse_call_error_right_paren();
+	test_parse_call_error_function_not_declared();
+	test_parse_call_error_not_function();
+	test_parse_call_error_not_enough_arguments();
+	test_parse_call_error_too_many_arguments();
+	test_parse_call_extra_comma();
 }

@@ -98,6 +98,7 @@ bool var(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	struct token* vrt = NULL;
 	valid = match(ps, token_var, "expected var", &vrt) && valid;
 	location_update_token(loc, vrt);
+	/* test case: no test case needed */
 
 	/* allocate ps{} id id{} */
 	struct ast_node* a = NULL;
@@ -154,10 +155,12 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	struct token* f = NULL;
 	valid = match(ps, token_function, "expected anonymous function", &f) && valid;
 	location_update_token(loc, f);
+	/* test case: no test case needed */
 
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
 	location_update_token(loc, lp);
+	/* test case: no test case needed */
 
 	/* allocate a a{} */
 	struct ast_node* dseq_node = NULL;
@@ -170,6 +173,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	struct token* rp = NULL;
 	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
 	location_update_token(loc, rp);
+	/* test case: test_parse_anonymous_function_expected_right_paren */
 
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -182,6 +186,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 		location_update_token(loc, dc);
 		token_destroy(dc);
 		free(dc);
+		/* test case: no test case needed */
 
 		valid = type(ps, NULL, &dret_type, &loc_ret) && valid;
 		location_update(loc, &loc_ret);
@@ -197,6 +202,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	struct token* end = NULL;
 	valid = match(ps, token_end, "expected end", &end) && valid;
 	location_update_token(loc, end);
+	/* test case: test_parse_anonymous_function_expected_end */
 
 	if (valid) {
 		ast_node_create(&n);
@@ -264,13 +270,15 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
-	valid = match(ps, token_id, "expecting id", &id) && valid;
+	valid = match(ps, token_id, "expected id", &id) && valid;
 	location_update_token(loc, id);
+	/* test case: test case not needed */
 
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
-	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
+	valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
 	location_update_token(loc, lp);
+	/* test case: test case not needed */
 
 	/* allocate b b{} */
 	struct ast_node* cseq_node = NULL;
@@ -280,8 +288,9 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
-	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
+	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
 	location_update_token(loc, rp);
+	/* test case: test_parse_call_error_right_paren */
 
 	if (valid) {
 		/* allocate n */
@@ -314,9 +323,10 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 		if (!sym) {
 			char* name;
 			buffer2array(&id->value, &name);
-			valid = set_source_error(ps->el, &id->loc, "function is not declared: %s", name);
+			valid = set_source_error(ps->el, &id->loc, "function not declared: %s", name);
 			free(name);
 			valid = false;
+			/* test case: test_parse_call_error_function_not_declared */
 		} else {
 			assert(sym->tu);
 			assert(sym->tu->td);
@@ -328,6 +338,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 				valid = set_source_error(ps->el, &id->loc, "call of variable that is not a function: %s", name);
 				free(name);
 				valid = false;
+				/* test case: test_parse_call_error_not_function */
 			} else {
 				struct ast_node* input = NULL;
 				struct ast_node* output = NULL;
@@ -345,8 +356,10 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 
 				if (ccount < tcount) {
 					valid = set_source_error(ps->el, &rp->loc, "not enough arguments in function call");
+					/* test case: test_parse_call_error_not_enough_arguments */
 				} else if (ccount > tcount) {
 					valid = set_source_error(ps->el, &rp->loc, "too many arguments in function call");
+					/* test_parse_call_error_too_many_arguments */
 				}
 
 				/* output */
@@ -433,6 +446,7 @@ bool cseq(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 		struct token* comma = NULL;;
 		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
 		location_update_token(loc, comma);
+		/* test case: no test case needed */
 
 		/* destroy comma comma{} */
 		token_destroy(comma);
