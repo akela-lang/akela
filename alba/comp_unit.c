@@ -12,8 +12,8 @@ void comp_unit_init(struct comp_unit* cu)
 {
 	cu->root = NULL;
 	compile_error_list_init(&cu->el);
-	buffer_init(&cu->filename);
 	buffer_init(&cu->path);
+	symbol_table_init(&cu->st);
 	cu->next = NULL;
 	cu->prev = NULL;
 }
@@ -22,42 +22,11 @@ void comp_unit_destroy(struct comp_unit* cu)
 {
 	ast_node_destroy(cu->root);
 	compile_error_list_destroy(&cu->el);
-	buffer_destroy(&cu->filename);
 	buffer_destroy(&cu->path);
+	symbol_table_destroy(&cu->st);
 }
 
-void comp_unit_list_init(struct comp_unit_list* list)
-{
-	symbol_table_init(&list->st);
-	list->head = NULL;
-	list->tail = NULL;
-}
-
-void comp_unit_list_destroy(struct comp_unit_list* list)
-{
-	symbol_table_destroy(&list->st);
-	struct comp_unit* p = list->head;
-	while (p) {
-		struct comp_unit* temp = p;
-		p = p->next;
-		comp_unit_destroy(temp);
-		free(temp);
-	}
-}
-
-void comp_unit_list_add(struct comp_unit_list* list, struct comp_unit* cu)
-{
-	if (list->head) {
-		list->head->prev = cu;
-	}
-	cu->next = list->head;
-	list->head = cu;
-	if (!list->tail) {
-		list->tail = cu;
-	}
-}
-
-enum result comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data* id, struct symbol_table* st, struct parse_state** ps)
+enum result comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data id, struct parse_state** ps)
 {
 	enum result r = result_ok;
 	*ps = NULL;
@@ -84,18 +53,18 @@ enum result comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data* 
 
 	struct scan_state* sns = NULL;
 	malloc_safe(&sns, sizeof(struct scan_state));
-	scan_state_init(sns, lc, &cu->el, st);
+	scan_state_init(sns, lc, &cu->el, &cu->st);
 
 	malloc_safe(ps, sizeof(struct parse_state));
-	parse_state_init(*ps, sns, &cu->el, st);
+	parse_state_init(*ps, sns, &cu->el, &cu->st);
 
 	return r;
 }
 
-bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data* id, struct symbol_table* st)
+bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id)
 {
 	struct parse_state* ps = NULL;
-	enum result r = comp_unit_setup(cu, ig, id, st, &ps);
+	enum result r = comp_unit_setup(cu, ig, id, &ps);
 	bool valid = parse(ps, &cu->root);
 	comp_unit_teardown(cu, ps);
 	return valid;

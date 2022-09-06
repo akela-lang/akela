@@ -17,6 +17,7 @@ set(test_files
     test_parse_types.c
     test_type.c
     test_comp_unit.c
+    test_comp_table.c
 )
 
 if(WIN32)

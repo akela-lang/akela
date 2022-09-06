@@ -20,6 +20,7 @@ set(lib_files
     type_def.c
     unit_test_compiler.c
     comp_unit.c
+    comp_table.c
 )
 
 set(bin_files

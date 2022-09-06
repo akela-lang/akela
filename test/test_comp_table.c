@@ -2,10 +2,15 @@
 #include "alba/comp_unit.h"
 #include "zinc/memory.h"
 #include "alba/input.h"
+#include "alba/comp_table.h"
+#include "zinc/buffer.h"
 
-void test_comp_unit_compile()
+void test_comp_table_compile()
 {
 	test_name(__func__);
+
+	struct comp_table ct;
+	comp_table_init(&ct);
 
 	struct buffer bf;
 	buffer_init(&bf);
@@ -16,10 +21,13 @@ void test_comp_unit_compile()
 	struct comp_unit* cu = NULL;
 	malloc_safe(&cu, sizeof(struct comp_unit));
 	comp_unit_init(cu);
+	array2buffer("|main|", &cu->path);
+
+	comp_table_put(&ct, &cu->path, cu);
 
 	bool valid = comp_unit_compile(cu, string_getchar, &sd);
 	expect_true(valid, "valid");
-	
+
 	struct ast_node* root = cu->root;
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, ast_type_stmts, "stmts root");
@@ -29,12 +37,11 @@ void test_comp_unit_compile()
 	expect_int_equal(number->type, ast_type_number, "number number");
 	expect_str(&number->value, "10", "10 number");
 
-	comp_unit_destroy(cu);
-	free(cu);
 	buffer_destroy(&bf);
+	comp_table_destroy(&ct);
 }
 
-void test_comp_unit()
+void test_comp_table()
 {
-	test_comp_unit_compile();
+	test_comp_table_compile();
 }

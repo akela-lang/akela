@@ -14,6 +14,7 @@
 #include "test_type.h"
 #include "test_scan_number.h"
 #include "test_comp_unit.h"
+#include "test_comp_table.h"
 
 /* dynamic-output-none */
 int main(void) {
@@ -32,6 +33,7 @@ int main(void) {
 	test_symbol_table();
 	test_parse_types();
 	test_comp_unit();
+	test_comp_table();
 	print_results();
 	return 0;
 }

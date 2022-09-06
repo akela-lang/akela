@@ -1,5 +1,7 @@
 # Todo
-* load modules
+* compile_table
+* module statement
+* math module; include math module
 * document test case name where each error is generated
   * parse_expr
   * parse_stmts
