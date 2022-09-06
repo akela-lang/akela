@@ -19,6 +19,7 @@ set(lib_files
     symbol_table.c
     type_def.c
     unit_test_compiler.c
+    comp_unit.c
 )
 
 set(bin_files
