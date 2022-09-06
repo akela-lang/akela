@@ -4,6 +4,7 @@
 #include "type_def.h"
 #include <assert.h>
 #include "ast.h"
+#include "hash.h"
 
 /* dynamic-output env{} */
 /* transfer p -> env */
@@ -243,12 +244,17 @@ void symbol_table_init(struct symbol_table* st)
 	struct environment* env = NULL;
 	malloc_safe(&env, sizeof(struct environment));
 	environment_init(env, NULL);
-	symbol_table_init_reserved(env);
-	st->initial = env;
 	st->top = env;
-	st->numeric_pool = NULL;
+	st->initial = env;
+	symbol_table_init_reserved(env);
 	symbol_table_init_builtin_types(st, env);
 	symbol_table_numeric_pool_init(st);
+
+	env = NULL;
+	malloc_safe(&env, sizeof(struct environment));
+	environment_init(env, st->top);
+	st->top = env;
+	st->global = env;
 }
 
 void symbol_table_destroy(struct symbol_table* st)
@@ -264,7 +270,7 @@ void symbol_table_destroy(struct symbol_table* st)
 
 bool symbol_table_is_global(struct symbol_table* st)
 {
-	return st->top && (st->top->prev == st->initial);
+	return st->top == st->global;
 }
 
 bool is_numeric(struct type_def* td)
@@ -384,5 +390,20 @@ bool type_use_can_cast(struct ast_node* a, struct ast_node* b)
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest)
+{
+	for (int i = 0; i < src->global->ht.size; i++) {
+		struct hash_entry* p = src->global->ht.buckets[i].head;
+		while (p) {
+			struct symbol* src_sym = p->item;
+			struct symbol* dest_sym = NULL;
+			malloc_safe(&dest_sym, sizeof(struct symbol));
+			*dest_sym = *src_sym;
+			environment_put(dest->global, &p->value, dest_sym);
+			p = p->next;
+		}
 	}
 }

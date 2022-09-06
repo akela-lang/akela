@@ -1,5 +1,4 @@
 # Todo
-* compile_table
 * module statement
 * math module; include math module
 * document test case name where each error is generated

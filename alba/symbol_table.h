@@ -21,6 +21,7 @@ struct symbol {
 
 struct symbol_table {
 	struct environment* initial;
+	struct environment* global;
 	struct environment* top;
 	struct type_def* numeric_pool;
 };
@@ -58,5 +59,7 @@ ALBA_API bool type_find_whole(struct symbol_table* st, struct ast_node* a, struc
 ALBA_API bool type_def_can_cast(struct type_def* a, struct type_def* b);
 
 ALBA_API bool type_use_can_cast(struct ast_node* a, struct ast_node* b);
+
+ALBA_API void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest);
 
 #endif

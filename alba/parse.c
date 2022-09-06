@@ -19,7 +19,7 @@ bool parse(struct parse_state* ps, struct ast_node** root)
 
 	/* allocate ps{} root root{} */
 	struct location loc_stmts;
-	valid = stmts(ps, false, root, &loc_stmts) && valid;
+	valid = stmts(ps, true, root, &loc_stmts) && valid;
 
 	/* allocate ps{} */
 	if (!lookahead_char_done(ps->sns->lc)) {
