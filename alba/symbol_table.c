@@ -57,6 +57,7 @@ void symbol_init(struct symbol* sym)
 /* destroy sym sym{} */
 void environment_destroy_symbol(struct symbol* sym)
 {
+	type_def_destroy(sym->td);
 	free(sym);
 }
 
@@ -221,14 +222,18 @@ void symbol_table_add_numeric(struct symbol_table* st, char* name)
 	struct symbol* sym = environment_get(st->top, &bf);
 	assert(sym);
 	assert(sym->td);
-	type_def_add(st->numeric_pool, sym->td);
+	struct ast_node* n = NULL;
+	ast_node_create(&n);
+	n->type = ast_type_type_pool;
+	n->td = sym->td;
+	ast_node_add(st->numeric_pool, n);
 }
 
 void symbol_table_numeric_pool_init(struct symbol_table* st)
 {
-	struct type_def* pool = NULL;
-	malloc_safe(&pool, sizeof(struct type_def));
-	type_def_init(pool);
+	struct ast_node* pool = NULL;
+	malloc_safe(&pool, sizeof(struct ast_node));
+	ast_node_init(pool);
 	st->numeric_pool = pool;
 
 	symbol_table_add_numeric(st, "Int32");
@@ -265,7 +270,7 @@ void symbol_table_destroy(struct symbol_table* st)
 		environment_destroy(env);
 		env = prev;
 	}
-	type_def_destroy(st->numeric_pool);
+	ast_node_destroy(st->numeric_pool);
 }
 
 bool symbol_table_is_global(struct symbol_table* st)
@@ -307,16 +312,18 @@ bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, 
 			bit_count = b->bit_count;
 		}
 
-		struct type_def* x = st->numeric_pool->head;
-		assert(x);
+		struct ast_node* n = st->numeric_pool->head;
+		assert(n);
 		do {
+			struct type_def* x = n->td;
+			assert(x);
 			if (x->type == type && x->is_signed == is_signed && x->bit_count == bit_count) {
 				*promote = true;
 				*c = x;
 				return true;
 			}
-			x = x->next;
-		} while (x);
+			n = n->next;
+		} while (n);
 	}
 
 	return false;

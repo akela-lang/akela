@@ -29,10 +29,6 @@ struct type_def {
 	int bit_count;
 	bool is_generic;
 	int generic_count;
-	struct type_def* next;
-	struct type_def* prev;
-	struct type_def* head;
-	struct type_def* tail;
 };
 
 /* dynamic-output n */
@@ -43,15 +39,6 @@ ALBA_API void type_def_destroy(struct type_def* n);
 
 /* dynamic-output-none */
 ALBA_API void type_def_init(struct type_def* n);
-
-/* dynamic-output-none */
-ALBA_API void type_def_add(struct type_def* p, struct type_def* c);
-
-/* dynamic-output-none */
-ALBA_API void type_def_push(struct type_def* parent, struct type_def* child);
-
-/* dynamic-output-none */
-ALBA_API struct type_def* type_def_get(struct type_def* p, size_t pos);
 
 ALBA_API struct type_def* type_def_copy(struct type_def* n);
 

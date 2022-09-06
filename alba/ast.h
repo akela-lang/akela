@@ -51,6 +51,7 @@ enum ast_type {
 	ast_type_parenthesis,
 	ast_type_type,
 	ast_type_power,
+	ast_type_type_pool,
 	ast_type_count		/* keep at end */
 };
 

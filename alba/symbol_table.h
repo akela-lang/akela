@@ -23,7 +23,7 @@ struct symbol_table {
 	struct environment* initial;
 	struct environment* global;
 	struct environment* top;
-	struct type_def* numeric_pool;
+	struct ast_node* numeric_pool;
 };
 
 /* dynamic-output env{} */
