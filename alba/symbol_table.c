@@ -108,6 +108,7 @@ void symbol_table_init_reserved(struct environment* env)
 	symbol_table_add_reserved(env, "var", token_var, NULL);
 	symbol_table_add_reserved(env, "true", token_boolean, NULL);
 	symbol_table_add_reserved(env, "false", token_boolean, NULL);
+	symbol_table_add_reserved(env, "module", token_module, NULL);
 }
 
 void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)

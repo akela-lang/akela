@@ -1716,6 +1716,55 @@ void test_scan_error_exponent_sign()
 	scan_teardown(&sns);
 }
 
+void test_scan_module()
+{
+	test_name(__func__);
+
+	struct lookahead_char lc;
+	struct compile_error_list el;
+	struct scan_state sns;
+	bool valid;
+	int got_token;
+
+	scan_setup("module 1 end", &sns, &lc, &el);
+
+	struct token* module;
+	valid = scan_get_token(&sns, &got_token, &module);
+	assert_no_errors(sns.el);
+	assert_true(valid, "valid module");
+	assert_true(got_token, "got_token module");
+	assert_ptr(module, "ptr module");
+	expect_int_equal(module->type, token_module, "module module");
+
+	token_destroy(module);
+	free(module);
+
+	struct token* number;
+	valid = scan_get_token(&sns, &got_token, &number);
+	assert_no_errors(sns.el);
+	assert_true(valid, "valid number");
+	assert_true(got_token, "got_token number");
+	assert_ptr(number, "ptr number");
+	expect_int_equal(number->type, token_number, "number number");
+	expect_str(&number->value, "1", "1 number");
+
+	token_destroy(number);
+	free(number);
+
+	struct token* end;
+	valid = scan_get_token(&sns, &got_token, &end);
+	assert_no_errors(sns.el);
+	assert_true(valid, "valid end");
+	assert_true(got_token, "got_token end");
+	assert_ptr(end, "ptr end");
+	expect_int_equal(end->type, token_end, "end end");
+
+	token_destroy(end);
+	free(end);
+
+	scan_teardown(&sns);
+}
+
 /* dynamic-output-none */
 void test_scan()
 {
@@ -1745,4 +1794,5 @@ void test_scan()
 	test_scan_error_underscore_letter();
 	test_scan_error_underscore_letter2();
 	test_scan_error_exponent_sign();
+	test_scan_module();
 }
