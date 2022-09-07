@@ -4,6 +4,8 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 #include "type_def.h"
+#include "windows.h"
+#include <DbgHelp.h>
 
 /* dynamic-output-none */
 enum result ast_set_names(char** names)
@@ -13,9 +15,10 @@ enum result ast_set_names(char** names)
 	}
 
 	names[ast_type_none] = "none";
-	names[ast_type_id] = "word";
+	names[ast_type_id] = "id";
 	names[ast_type_sign] = "sign";
 	names[ast_type_number] = "number";
+	names[ast_type_string] = "string";
 	names[ast_type_assign] = "assign";
 	names[ast_type_plus] = "plus";
 	names[ast_type_minus] = "minus";
@@ -31,9 +34,11 @@ enum result ast_set_names(char** names)
 	names[ast_type_conditional_branch] = "conditional-branch";
 	names[ast_type_default_branch] = "default-branch";
 	names[ast_type_equality] = "equality";
-	names[ast_type_not_equal] = "not equal";
-	names[ast_type_less_than_or_equal] = "less than or equal";
-	names[ast_type_greater_than_or_equal] = "greater than or equal";
+	names[ast_type_not_equal] = "not-equal";
+	names[ast_type_less_than] = "less-than";
+	names[ast_type_less_than_or_equal] = "less-than-or-equal";
+	names[ast_type_greater_than] = "greater-than";
+	names[ast_type_greater_than_or_equal] = "greater-than-or-equal";
 	names[ast_type_not] = "not";
 	names[ast_type_and] = "and";
 	names[ast_type_or] = "or";
@@ -47,6 +52,10 @@ enum result ast_set_names(char** names)
 	names[ast_type_var] = "var";
 	names[ast_type_boolean] = "boolean";
 	names[ast_type_array] = "array";
+	names[ast_type_parenthesis] = "parenthesis";
+	names[ast_type_type] = "type";
+	names[ast_type_power] = "power";
+	names[ast_type_type_pool] = "type-pool";
 
 	for (int i = 0; i < ast_type_count; i++) {
 		if (names[i] == NULL) {
@@ -150,28 +159,36 @@ void ast_node_print(struct ast_node* root, char** names)
 {
 	if (root == NULL) return;
 
-	printf("%s:", names[root->type]);
-
+	if (root->td) {
+		buffer_finish(&root->td->name);
+		printf("[%p]%s<%s>", root, names[root->type], root->td->name.buf);
+	} else {
+		printf("[%p]%s", root, names[root->type]);
+	}
+	if (root->value.size > 0) {
+		buffer_finish(&root->value);
+		printf("-%s", root->value.buf);
+	}
+	printf(":");
 	for (struct ast_node* p = root->head; p; p = p->next) {
-		printf(" %s", names[p->type]);
+		if (p->td) {
+			buffer_finish(&p->td->name);
+			printf(" %s<%s>", names[p->type], p->td->name.buf);
+		} else {
+			printf(" %s", names[p->type]);
+		}
 		if (p->value.size > 0) {
-			char* a;
-
-			/* allocate a */
-			buffer2array(&p->value, &a);
-			printf(":%s", a);
-
-			/* destroy a */
-			free(a);
+			buffer_finish(&p->value);
+			printf("-%s", p->value.buf);
 		}
 	}
 
 	printf("\n");
 
+	ast_node_print(root->tu, names);
+
 	for (struct ast_node* p = root->head; p; p = p->next) {
-		if (p->head != NULL) {
-			ast_node_print(p, names);
-		}
+		ast_node_print(p, names);
 	}
 }
 

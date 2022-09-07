@@ -44,7 +44,6 @@ enum ast_type {
 	ast_type_array_literal,
 	ast_type_array_subscript,
 	ast_type_anonymous_function,
-	ast_type_type_function,
 	ast_type_var,
 	ast_type_boolean,
 	ast_type_array,

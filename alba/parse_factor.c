@@ -364,7 +364,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 
 				/* output */
 				if (output) {
-					n->tu = ast_node_get(output, 0);
+					n->tu = ast_node_copy(ast_node_get(output, 0));
 				}
 			}
 		}

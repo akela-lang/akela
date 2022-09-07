@@ -274,7 +274,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 						malloc_safe(&new_sym, sizeof(struct symbol));
 						symbol_init(new_sym);
 						new_sym->tk_type = token_id;
-						new_sym->tu = n;
+						new_sym->tu = ast_node_copy(n);
 						environment_put(ps->st->top, &id->value, new_sym);
 					}
 				}
@@ -383,30 +383,29 @@ struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 	tu->td = sym->td;
 
 	/* input */
-	struct ast_node* input_tu = NULL;
-	ast_node_create(&input_tu);
-	input_tu->type = ast_type_type;
-
-	buffer_clear(&bf);
-	buffer_copy_str(&bf, "Input");
-	struct symbol* input_sym = environment_get(st->top, &bf);
-	assert(input_sym);
-	assert(input_sym->td);
-	input_tu->td = input_sym->td;
-
 	struct ast_node* dseq = ast_node_get(n, current_node++);
-	struct ast_node* dec = dseq->head;
-	while (dec) {
-		struct ast_node* type_node = ast_node_get(dec, 1);
-		struct ast_node* element_tu = ast_node_copy(type_node);
-		ast_node_add(input_tu, element_tu);
-		dec = dec->next;
-	}
 
-	if (input_tu->head) {
+	if (dseq->head) {
+		struct ast_node* input_tu = NULL;
+		ast_node_create(&input_tu);
+		input_tu->type = ast_type_type;
+
+		buffer_clear(&bf);
+		buffer_copy_str(&bf, "Input");
+		struct symbol* input_sym = environment_get(st->top, &bf);
+		assert(input_sym);
+		assert(input_sym->td);
+		input_tu->td = input_sym->td;
+
+		struct ast_node* dec = dseq->head;
+		while (dec) {
+			struct ast_node* type_node = ast_node_get(dec, 1);
+			struct ast_node* element_tu = ast_node_copy(type_node);
+			ast_node_add(input_tu, element_tu);
+			dec = dec->next;
+		}
+
 		ast_node_add(tu, input_tu);
-	} else {
-		ast_node_destroy(input_tu);
 	}
 
 	/* output */

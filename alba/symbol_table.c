@@ -57,6 +57,7 @@ void symbol_init(struct symbol* sym)
 /* destroy sym sym{} */
 void environment_destroy_symbol(struct symbol* sym)
 {
+	ast_node_destroy(sym->tu);
 	type_def_destroy(sym->td);
 	free(sym);
 }
@@ -408,7 +409,9 @@ void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest
 			struct symbol* src_sym = p->item;
 			struct symbol* dest_sym = NULL;
 			malloc_safe(&dest_sym, sizeof(struct symbol));
-			*dest_sym = *src_sym;
+			dest_sym->tk_type = src_sym->tk_type;
+			dest_sym->td = type_def_copy(src_sym->td);
+			dest_sym->tu = ast_node_copy(src_sym->tu);
 			environment_put(dest->global, &p->value, dest_sym);
 			p = p->next;
 		}
