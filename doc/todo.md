@@ -1,5 +1,5 @@
 # Todo
-* parse module statement
+* dot operator
 * update symbol table with module symbols
 * math module; include math module
 * document test case name where each error is generated

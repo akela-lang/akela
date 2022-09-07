@@ -1521,6 +1521,27 @@ void test_parse_source()
 	parse_teardown(&ps);
 }
 
+void test_parse_module()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("module math var pi::Float64 = 3.14 end; math.pi", &ps, &root);
+	expect_no_errors(ps.el);
+	expect_true(valid, "valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	struct ast_node* module = ast_node_get(root, 0);
+	assert_ptr(module, "ptr module");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_statements()
 {
@@ -1551,4 +1572,5 @@ void test_parse_statements()
 	test_parse_for_iteration2();
 	test_parse_line_col();
 	test_parse_source();
+	test_parse_module();
 }

@@ -28,6 +28,7 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
+bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -197,6 +198,9 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	} else if (t0 && t0->type == token_if) {
 		valid = if_nt(ps, &n, loc) && valid;
+
+	} else if (t0 && t0->type == token_module) {
+		valid = module_nt(ps, &n, loc) && valid;
 
 	/* expr */
 	} else {
@@ -892,6 +896,61 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* l
 	}
 
 	valid = location_default(ps, loc) && valid;
+
+	return valid;
+}
+
+/* module_nt -> module stmts end */
+bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+{
+	bool valid = true;
+	struct ast_node* n = NULL;
+
+	location_init(loc);
+
+	struct token* module = NULL;
+	valid = match(ps, token_module, "expected module", &module) && valid;
+	location_update_token(loc, module);
+
+	token_destroy(module);
+	free(module);
+
+	struct environment* saved = ps->st->top;
+	struct environment* env = NULL;
+	malloc_safe(&env, sizeof(struct environment));
+	environment_init(env, saved);
+	ps->st->top = env;
+
+	struct token* id = NULL;
+	valid = match(ps, token_id, "expected identifier after module", &id);
+	location_update_token(loc, id);
+
+	struct location loc_stmts;
+	valid = stmts(ps, true, &n, &loc_stmts) && valid;
+	location_update(loc, &loc_stmts);
+
+	transfer_module_symbols(env, saved, &id->value);
+
+	ps->st->top = saved;
+	environment_destroy(env);
+
+	struct token* end = NULL;
+	valid = match(ps, token_end, "expected end", &end) && valid;
+	location_update_token(loc, end);
+
+	token_destroy(end);
+	free(end);
+
+	valid = location_default(ps, loc) && valid;
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
+
+	token_destroy(id);
+	free(id);
 
 	return valid;
 }

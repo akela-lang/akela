@@ -418,3 +418,28 @@ void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest
 		}
 	}
 }
+
+void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name)
+{
+	for (int i = 0; i < src->ht.size; i++) {
+		struct hash_entry* p = src->ht.buckets[i].head;
+		while (p) {
+			struct symbol* src_sym = p->item;
+			struct symbol* dest_sym = NULL;
+			malloc_safe(&dest_sym, sizeof(struct symbol));
+			dest_sym->tk_type = src_sym->tk_type;
+			dest_sym->td = type_def_copy(src_sym->td);
+			dest_sym->tu = ast_node_copy(src_sym->tu);
+
+			/* value is module_name.sym_name */
+			struct buffer value;
+			buffer_init(&value);
+			buffer_copy(module_name, &value);
+			buffer_add_char(&value, '.');
+			buffer_copy(&p->value, &value);
+			environment_put(dest, &value, dest_sym);
+
+			p = p->next;
+		}
+	}
+}

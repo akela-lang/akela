@@ -62,4 +62,6 @@ ALBA_API bool type_use_can_cast(struct ast_node* a, struct ast_node* b);
 
 ALBA_API void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest);
 
+ALBA_API void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name);
+
 #endif
