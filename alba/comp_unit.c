@@ -80,6 +80,6 @@ void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
 	free(ps->sns);
 
 	/* destroy ps{} */
-	token_list_destroy(&ps->lookahead);
+	parse_state_destroy(ps);
 	free(ps);
 }

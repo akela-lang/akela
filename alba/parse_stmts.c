@@ -925,8 +925,9 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	valid = match(ps, token_id, "expected identifier after module", &id);
 	location_update_token(loc, id);
 
+	struct ast_node* a = NULL;
 	struct location loc_stmts;
-	valid = stmts(ps, true, &n, &loc_stmts) && valid;
+	valid = stmts(ps, true, &a, &loc_stmts) && valid;
 	location_update(loc, &loc_stmts);
 
 	transfer_module_symbols(env, saved, &id->value);
@@ -940,6 +941,49 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 
 	token_destroy(end);
 	free(end);
+
+	if (valid) {
+		ast_node_create(&n);
+		n->type = ast_type_module;
+
+		struct ast_node* id_node = NULL;
+		ast_node_create(&id_node);
+		id_node->type = ast_type_id;
+		buffer_copy(&id->value, &id_node->value);
+		ast_node_add(n, id_node);
+
+		ast_node_add(n, a);
+	} else {
+		ast_node_destroy(a);
+	}
+
+	if (valid) {
+		struct symbol* sym = environment_get(ps->st->top, &id->value);
+		if (sym) {
+			buffer_finish(&id->value);
+			valid = set_source_error(ps->el, &id->loc, "variable aready used: %s", &id->value);
+		} else {
+			struct buffer bf;
+			buffer_init(&bf);
+			buffer_copy_str(&bf, "Module");
+			struct symbol* sym = environment_get(ps->st->top, &bf);
+			buffer_destroy(&bf);
+			assert(sym);
+			assert(sym->td);
+
+			struct ast_node* tu = NULL;
+			ast_node_create(&tu);
+			tu->type = ast_type_type;
+			tu->td = sym->td;
+
+			struct symbol* new_sym = NULL;
+			malloc_safe(&new_sym, sizeof(struct symbol));
+			symbol_init(new_sym);
+			new_sym->tk_type = token_id;
+			new_sym->tu = tu;
+			environment_put(ps->st->top, &id->value, new_sym);
+		}
+	}
 
 	valid = location_default(ps, loc) && valid;
 

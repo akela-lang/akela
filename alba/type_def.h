@@ -20,6 +20,7 @@ enum type {
 	type_function,
 	type_function_input,
 	type_function_output,
+	type_module,
 };
 
 struct type_def {

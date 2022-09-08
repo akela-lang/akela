@@ -17,6 +17,7 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool power(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* expr -> id = expr | boolean */
@@ -663,7 +664,7 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	location_init(loc);
 
 	struct location loc_a;
-	valid = array_subscript(ps, &a, &loc_a) && valid;
+	valid = dot_nt(ps, &a, &loc_a) && valid;
 	location_update(loc, &loc_a);
 
 	if (!a) {
@@ -689,7 +690,7 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 		struct ast_node* b = NULL;
 		struct location loc_b;
-		valid = array_subscript(ps, &b, &loc_b) && valid;
+		valid = dot_nt(ps, &b, &loc_b) && valid;
 		location_update(loc, &loc_b);
 
 		if (!b) {
@@ -742,6 +743,113 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	}
 
 	valid = location_default(ps, loc) && valid;
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
+
+	return valid;
+}
+
+bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+{
+	bool valid = true;
+	struct ast_node* n = NULL;
+	struct ast_node* a = NULL;
+	struct ast_node* b = NULL;
+
+	location_init(loc);
+
+	struct location loc_a;
+	valid = array_subscript(ps, &a, &loc_a) && valid;
+	location_update(loc, &loc_a);
+
+	if (!a) {
+		valid = location_default(ps, loc) && valid;
+		return valid;
+	}
+
+	struct ast_node* left = n = a;
+	struct location loc_left = loc_a;
+	buffer_copy(&a->value, &ps->qualifier);
+	buffer_add_char(&ps->qualifier, '.');
+
+	while (true) {
+		struct token* t0 = NULL;
+		int num;
+		valid = get_lookahead(ps, 1, &num) && valid;
+		t0 = get_token(&ps->lookahead, 0);
+		if (!t0 || t0->type != token_dot) {
+			break;
+		}
+
+		struct token* dot = NULL;
+		valid = match(ps, token_dot, "exprected a dot", &dot) && valid;
+		location_update_token(loc, dot);
+
+		struct ast_node* b = NULL;
+		struct location loc_b;
+		valid = array_subscript(ps, &b, &loc_b) && valid;
+		location_update(loc, &loc_b);
+
+		if (!b) {
+			valid = set_source_error(ps->el, &loc_b, "expecting a term after dot");
+		}
+
+		if (valid) {
+			ast_node_create(&n);
+			n->type = ast_type_dot;
+			ast_node_add(n, left);
+			ast_node_add(n, b);
+		} else {
+			ast_node_destroy(b);
+		}
+
+		if (valid) {
+			assert(left);
+			assert(b);
+			struct ast_node* tu_left = left->tu;
+			struct ast_node* tu_b = b->tu;
+
+			if (!tu_left) {
+				valid = set_source_error(ps->el, &loc_left, "dot operand has no value");
+			} else if (tu_left->td->type != type_module) {
+				valid = set_source_error(ps->el, &loc_left, "dot on non-module operand");
+			}
+
+			if (!tu_b) {
+				valid = set_source_error(ps->el, &loc_b, "dot operand has no value");
+			}
+
+			if (left == a) {
+				if (left->type != ast_type_id) {
+					valid = set_source_error(ps->el, &loc_left, "left side of dot operator not an identifier");
+				}
+			}
+
+			if (b->type != ast_type_id) {
+				valid = set_source_error(ps->el, &loc_b, "right side of dot operator not an identifier");
+			}
+
+			if (valid) {
+				n->tu = ast_node_copy(tu_b);
+			}
+
+			left = n;
+			#pragma warning(suppress:6001)
+			loc_left = dot->loc;
+			buffer_copy(&b->value, &ps->qualifier);
+			buffer_add_char(&ps->qualifier, '.');
+		}
+
+		token_destroy(dot);
+		free(dot);
+	}
+
+	valid = location_default(ps, loc) && valid;
+	buffer_clear(&ps->qualifier);
 
 	if (valid) {
 		*root = n;

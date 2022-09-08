@@ -94,7 +94,7 @@ void parse_teardown(struct parse_state* ps)
 	free(ps->sns);
 
 	/* destroy ps{lookahead{}}*/
-	token_list_destroy(&ps->lookahead);
+	parse_state_destroy(ps);
 }
 
 /* dynamic-output-none */

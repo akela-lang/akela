@@ -16,6 +16,13 @@ void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct com
 	token_list_init(&ps->lookahead);
 	ps->el = el;
 	ps->st = st;
+	buffer_init(&ps->qualifier);
+}
+
+void parse_state_destroy(struct parse_state* ps)
+{
+	token_list_destroy(&ps->lookahead);
+	buffer_destroy(&ps->qualifier);
 }
 
 /* get lookahead token */

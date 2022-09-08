@@ -51,6 +51,7 @@ enum token_enum {
     token_boolean,
     token_caret,
     token_module,
+    token_dot,
     token_count     /* keep at the end */
 };
 
@@ -108,6 +109,7 @@ enum result token_name_init(char** token_name)
     token_name[token_boolean] = "boolean";
     token_name[token_caret] = "^";
     token_name[token_module] = "module";
+    token_name[token_dot] = "dot";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

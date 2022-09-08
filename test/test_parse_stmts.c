@@ -1537,6 +1537,117 @@ void test_parse_module()
 
 	struct ast_node* module = ast_node_get(root, 0);
 	assert_ptr(module, "ptr module");
+	expect_int_equal(module->type, ast_type_module, "module module");
+
+	struct ast_node* id = ast_node_get(module, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, ast_type_id, "id id");
+	expect_str(&id->value, "math", "math id");
+
+	struct ast_node* module_stmts = ast_node_get(module, 1);
+	assert_ptr(module_stmts, "ptr module_stmts");
+	expect_int_equal(module_stmts->type, ast_type_stmts, "stmts module_stmts");
+
+	struct ast_node* dot = ast_node_get(root, 1);
+	assert_ptr(dot, "ptr dot");
+	expect_int_equal(dot->type, ast_type_dot, "dot dot");
+
+	struct ast_node* tu = dot->tu;
+	assert_ptr(tu, "ptr tu");
+	expect_int_equal(tu->type, ast_type_type, "type tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_float, "float td");
+	expect_str(&td->name, "Float64", "Float64 td");
+
+	struct ast_node* dot_id_0 = ast_node_get(dot, 0);
+	assert_ptr(dot_id_0, "ptr dot_id_0");
+	expect_int_equal(dot_id_0->type, ast_type_id, "id dot_id_0");
+	expect_str(&dot_id_0->value, "math", "math dot_id_0");
+
+	struct ast_node* dot_id_1 = ast_node_get(dot, 1);
+	assert_ptr(dot_id_1, "ptr dot_id_1");
+	expect_int_equal(dot_id_1->type, ast_type_id, "id dot_id_1");
+	expect_str(&dot_id_1->value, "pi", "pi dot_id_1");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_module_nested()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("module base module math var pi::Float64 = 3.14 end end; base.math.pi", &ps, &root);
+	expect_no_errors(ps.el);
+	expect_true(valid, "valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	/* base */
+	struct ast_node* base_module = ast_node_get(root, 0);
+	assert_ptr(base_module, "ptr base_module");
+	expect_int_equal(base_module->type, ast_type_module, "module base_module");
+
+	struct ast_node* base_id = ast_node_get(base_module, 0);
+	assert_ptr(base_id, "ptr base_id");
+	expect_int_equal(base_id->type, ast_type_id, "id base_id");
+	expect_str(&base_id->value, "base", "base id");
+
+	struct ast_node* base_module_stmts = ast_node_get(base_module, 1);
+	assert_ptr(base_module_stmts, "ptr base_module_stmts");
+	expect_int_equal(base_module_stmts->type, ast_type_stmts, "stmts base_module_stmts");
+
+	/* math */
+	struct ast_node* math_module = ast_node_get(base_module_stmts, 0);
+	assert_ptr(math_module, "ptr math_module");
+	expect_int_equal(math_module->type, ast_type_module, "module math_module");
+
+	struct ast_node* math_id = ast_node_get(math_module, 0);
+	assert_ptr(math_id, "ptr math_id");
+	expect_int_equal(math_id->type, ast_type_id, "id math_id");
+	expect_str(&math_id->value, "math", "math id");
+
+	struct ast_node* math_module_stmts = ast_node_get(math_module, 1);
+	assert_ptr(math_module_stmts, "ptr math_module_stmts");
+	expect_int_equal(math_module_stmts->type, ast_type_stmts, "stmts math_module_stmts");
+
+	struct ast_node* dot0 = ast_node_get(root, 1);
+	assert_ptr(dot0, "ptr dot0");
+	expect_int_equal(dot0->type, ast_type_dot, "dot dot0");
+
+	struct ast_node* tu = dot0->tu;
+	assert_ptr(tu, "ptr tu");
+	expect_int_equal(tu->type, ast_type_type, "type tu");
+
+	struct type_def* td = tu->td;
+	assert_ptr(td, "ptr td");
+	expect_int_equal(td->type, type_float, "float td");
+	expect_str(&td->name, "Float64", "Float64 td");
+
+	struct ast_node* dot1 = ast_node_get(dot0, 0);
+	assert_ptr(dot1, "ptr dot1");
+	expect_int_equal(dot1->type, ast_type_dot, "id dot1");
+
+	struct ast_node* base_id_1 = ast_node_get(dot1, 0);
+	assert_ptr(base_id_1, "ptr base_id_1");
+	expect_int_equal(base_id_1->type, ast_type_id, "id base_id_1");
+	expect_str(&base_id_1->value, "base", "base base_id_1");
+
+	struct ast_node* math_id_1 = ast_node_get(dot1, 1);
+	assert_ptr(math_id_1, "ptr math_id_1");
+	expect_int_equal(math_id_1->type, ast_type_id, "id math_id_1");
+	expect_str(&math_id_1->value, "math", "math math_id_1");
+
+	struct ast_node* pi_id = ast_node_get(dot0, 1);
+	assert_ptr(pi_id, "ptr pi_id");
+	expect_int_equal(pi_id->type, ast_type_id, "id pi_id");
+	expect_str(&pi_id->value, "pi", "pi pi_id");
 
 	ast_node_destroy(root);
 	parse_teardown(&ps);
@@ -1573,4 +1684,5 @@ void test_parse_statements()
 	test_parse_line_col();
 	test_parse_source();
 	test_parse_module();
+	test_parse_module_nested();
 }

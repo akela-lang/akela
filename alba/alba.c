@@ -82,7 +82,7 @@ int main(int argc, char** argv)
     conv_close(conv);
 
     /* destroy ps{lookahead} */
-    token_list_destroy(&ps.lookahead);
+    parse_state_destroy(&ps);
 
     /* destroy ps{el} sns{el} */
     compile_error_list_destroy(&el);

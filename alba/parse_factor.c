@@ -647,12 +647,14 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	}
 
 	if (valid) {
-		struct symbol* sym = environment_get(ps->st->top, &id->value);
+		struct buffer full_id;
+		buffer_init(&full_id);
+		buffer_copy(&ps->qualifier, &full_id);
+		buffer_copy(&id->value, &full_id);
+		struct symbol* sym = environment_get(ps->st->top, &full_id);
 		if (!sym) {
-			char* a;
-			buffer2array(&id->value, &a);
-			valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", a);
-			free(a);
+			buffer_finish(&full_id);
+			valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
 			/* test case: test_parse_types_missing_declaration */
 		} else {
 			assert(sym->tu);
