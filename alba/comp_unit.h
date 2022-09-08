@@ -5,8 +5,10 @@
 #include "ast.h"
 #include "source.h"
 #include "symbol_table.h"
+#include <stdbool.h>
 
 struct comp_unit {
+	bool valid;
 	struct ast_node* root;
 	struct compile_error_list el;
 	struct symbol_table st;

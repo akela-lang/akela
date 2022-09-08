@@ -10,6 +10,7 @@
 
 void comp_unit_init(struct comp_unit* cu)
 {
+	cu->valid = true;
 	cu->root = NULL;
 	compile_error_list_init(&cu->el);
 	buffer_init(&cu->path);
@@ -65,9 +66,9 @@ bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id)
 {
 	struct parse_state* ps = NULL;
 	enum result r = comp_unit_setup(cu, ig, id, &ps);
-	bool valid = parse(ps, &cu->root);
+	cu->valid = parse(ps, &cu->root);
 	comp_unit_teardown(cu, ps);
-	return valid;
+	return cu->valid;
 }
 
 void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
