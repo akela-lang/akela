@@ -64,12 +64,14 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 	while (true) {
 		bool done = false;
 
+		a = NULL;
 		valid = boolean(ps, &a, &loc_a) && valid;
 		location_update(loc, &loc_a);
 
 		if (!a) {
 			if (last_p) {
-				valid = set_source_error(ps->el, &loc_a, "expected a assignment term");
+				valid = set_source_error(ps->el, &loc_a, "expected an assignment term");
+				/* test case: test_parse_assign_error_term */
 				break;
 			} else {
 				break;
@@ -84,6 +86,7 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 			struct token* equal = NULL;
 			valid = match(ps, token_equal, "expecting assign operator", &equal) && valid;
 			location_update_token(loc, equal);
+			/* test case: no test case needed */
 
 			token_destroy(equal);
 			free(equal);
@@ -123,18 +126,22 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 
 				if (!last_a_tu) {
 					valid = set_source_error(ps->el, &loc_last_a, "cannot assign with operand that has no value");
+					/* test case: test_parse_assign_error_no_value_left */
 				}
 				if (!a_tu) {
 					valid = set_source_error(ps->el, &loc_a, "cannot assign with operand that has no value");
+					/* test case: test_parse_assign_error_no_value_right */
 				}
 				if (valid) {
 					if (!type_use_can_cast(last_a_tu, a_tu)) {
 						valid = set_source_error(ps->el, &loc_a, "values in assignment not compatible");
+						/* test case: test_parse_assign_error_not_compatible */
 					}
 				}
 				if (valid) {
 					if (last_a->type != ast_type_id && last_a->type != ast_type_array_subscript && last_a->type != ast_type_var) {
 						valid = set_source_error(ps->el, &loc_last_a, "not a valid lvalue");
+						/* test case: test_parse_assign_error_lvalue*/
 					}
 				}
 			}

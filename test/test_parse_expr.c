@@ -1608,7 +1608,7 @@ void test_parse_assign_multiple()
 	parse_teardown(&ps);
 }
 
-void test_parse_assign_lvalue_error()
+void test_parse_assign_error_term()
 {
 	test_name(__func__);
 
@@ -1616,13 +1616,79 @@ void test_parse_assign_lvalue_error()
 	struct parse_state ps;
 	bool valid;
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("1 = 0", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
+	valid = parse_setup("var a::String =", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected an assignment term");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_assign_error_no_value_right()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	valid = parse_setup("function foo() end; var a::String = foo()", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "cannot assign with operand that has no value");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_assign_error_no_value_left()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	valid = parse_setup("function foo() end; foo() = 1", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "cannot assign with operand that has no value");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_assign_error_not_compatible()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	valid = parse_setup("var x::Int64 = true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "values in assignment not compatible");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_assign_error_lvalue()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	valid = parse_setup("true = true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
 	expect_compile_error(ps.el, "not a valid lvalue");
 
-	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
 	parse_teardown(&ps);
 }
@@ -1667,5 +1733,9 @@ void test_parse_expression()
 	test_parse_array_subscript3();
 	test_parse_assign_string();
 	test_parse_assign_multiple();
-	test_parse_assign_lvalue_error();
+	test_parse_assign_error_term();
+	test_parse_assign_error_no_value_right();
+	test_parse_assign_error_no_value_left();
+	test_parse_assign_error_not_compatible();
+	test_parse_assign_error_lvalue();
 }
