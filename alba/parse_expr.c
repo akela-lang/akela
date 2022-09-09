@@ -351,6 +351,7 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting comparator", &op) && valid;
 		location_update_token(loc, op);
+		/* test case: no test case needed */
 
 		/* add */
 		/* allocate ps{} a a{} */
@@ -360,7 +361,8 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 		location_update(loc, &loc_b);
 
 		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expected term after compare operator");
+			valid = set_source_error(ps->el, &loc_b, "expected term after comparison operator");
+			/* case case: test_parse_comparison_error_no_term */
 		}
 
 		if (valid) {
@@ -382,13 +384,17 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 				struct location loc;
 				get_token_location(op, &loc);
 				valid = set_source_error(ps->el, &loc_left, "operand has no value");
+				/* test case: test_parse_comparison_error_left_not_numeric */
 			} else if (!b->tu) {
 				valid = set_source_error(ps->el, &loc_b, "operand has no value");
+				/* test case: test_parse_comparison_error_right_no_value */
 			} else {
 				if (!is_identity_comparison(type) && !is_numeric(left->tu->td)) {
 					valid = set_source_error(ps->el, &loc_left, "comparison operand is not numeric");
+					/* test case: test_parse_comparison_error_left_not_numeric */
 				} else if (!is_identity_comparison(type) && !is_numeric(b->tu->td)) {
 					valid = set_source_error(ps->el, &loc_b, "comparison operand is not numeric");
+					/* test case: test_parse_comparison_error_right_not_numeric */
 				} else {
 					struct ast_node* tu = ast_node_copy(left->tu);
 					type_find_whole(ps->st, tu, b->tu);

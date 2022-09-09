@@ -1209,8 +1209,7 @@ void test_parse_comparison_identity()
 	parse_teardown(&ps);
 }
 
-/* dynamic-output-none */
-void test_parse_comparison_non_numeric()
+void test_parse_comparison_error_no_term()
 {
 	test_name(__func__);
 
@@ -1218,7 +1217,81 @@ void test_parse_comparison_non_numeric()
 	struct parse_state ps;
 
 	/* allocate ps{} root root{} */
-	bool valid = parse_setup("1 < true", &ps, &root);
+	bool valid = parse_setup("100 <", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected term after comparison operator");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_comparison_error_left_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; foo() < 100", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "operand has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_comparison_error_right_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; 100 < foo()", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "operand has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_comparison_error_left_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("true < 100", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "comparison operand is not numeric");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_comparison_error_right_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("true < 100", &ps, &root);
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse_setup valid");
 	expect_compile_error(ps.el, "comparison operand is not numeric");
@@ -1815,7 +1888,11 @@ void test_parse_expression()
 	test_parse_paren_mult_mult2();
 	test_parse_comparison();
 	test_parse_comparison_identity();
-	test_parse_comparison_non_numeric();
+	test_parse_comparison_error_no_term();
+	test_parse_comparison_error_left_no_value();
+	test_parse_comparison_error_right_no_value();
+	test_parse_comparison_error_left_not_numeric();
+	test_parse_comparison_error_right_not_numeric();
 	test_parse_and();
 	test_parse_or();
 	test_parse_or_or();
