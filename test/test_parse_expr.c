@@ -472,6 +472,101 @@ void test_parse_mult()
 }
 
 /* dynamic-output-none */
+void test_parse_mult_error_expected_term()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("5*", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected term after operator");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_mult_error_left_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; foo() * 1", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "multiplication operand has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_mult_error_left_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("true * 1", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "multiplication on non-numeric operand");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_mult_error_right_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; 1 * foo()", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "multiplication operand has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_mult_error_right_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("1 * true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "multiplication on non-numeric operand");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
 void test_parse_mult_positive()
 {
 	test_name(__func__);
@@ -1968,6 +2063,11 @@ void test_parse_expression()
 	test_parse_sub_positive();
 	test_parse_sub_negative();
 	test_parse_mult();
+	test_parse_mult_error_expected_term();
+	test_parse_mult_error_left_no_value();
+	test_parse_mult_error_left_not_numeric();
+	test_parse_mult_error_right_no_value();
+	test_parse_mult_error_right_not_numeric();
 	test_parse_mult_positive();
 	test_parse_mult_negative();
 	test_parse_divide();

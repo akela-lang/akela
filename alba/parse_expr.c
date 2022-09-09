@@ -602,6 +602,7 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting * or /", &op) && valid;
 		location_update_token(loc, op);
+		/* test case: test case not needed */
 
 		/* factor */
 		/* allocate ps{} a a{} */
@@ -612,6 +613,7 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		if (!b) {
 			/* allocate ps{} */
 			valid = set_source_error(ps->el, &loc_b, "expected term after operator");
+			/* test case: test_parse_mult_error_expected_term */
 		}
 
 		if (valid) {
@@ -633,20 +635,25 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 			if (!tu_a) {
 				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
+				/* test case: test_parse_mult_error_left_no_value */
 			} else if (!is_numeric(tu_a->td)) {
-				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand");
+				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand", op_name);
+				/* test case: test_parse_mult_error_left_not_numeric */
 			}
 
 			if (!tu_b) {
 				valid = set_source_error(ps->el, &loc_b, "%s operand has no value", op_name);
+				/* test case: test_parse_mult_error_right_no_value*/
 			} else if (!is_numeric(tu_b->td)) {
-				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand");
+				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand", op_name);
+				/* test case: test_parse_mult_error_right_not_numeric */
 			}
 
 			if (valid) {
 				struct ast_node* tu = ast_node_copy(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					valid = set_source_error(ps->el, &op->loc, "invalid types for %s", op_name);
+					/* test case: no test case needed */
 				} else {
 					n->tu = tu;
 				}
