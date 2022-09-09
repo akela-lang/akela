@@ -126,7 +126,7 @@ void test_comp_table_include_base()
 	/* main */
 	struct buffer bf_main;
 	buffer_init(&bf_main);
-	buffer_copy_str(&bf_main, "sqrt(25)");
+	buffer_copy_str(&bf_main, "math.sqrt(25)");
 	struct string_data sd;
 	string_data_init(&bf_main, &sd);
 
@@ -155,10 +155,20 @@ void test_comp_table_include_base()
 	assert_ptr(call_main, "ptr call_main");
 	expect_int_equal(call_main->type, ast_type_call, "call call_main");
 
-	struct ast_node* id_main = ast_node_get(call_main, 0);
-	assert_ptr(id_main, "ptr id_main");
-	expect_int_equal(id_main->type, ast_type_id, "id id_main");
-	expect_str(&id_main->value, "sqrt", "sqrt id_main");
+	struct ast_node* dot_main = ast_node_get(call_main, 0);
+	assert_ptr(dot_main, "ptr dot_main");
+	expect_int_equal(dot_main->type, ast_type_dot, "dot dot_main");
+	expect_str(&dot_main->value, "math.sqrt", "math.sqrt dot_main");
+
+	struct ast_node* math_main = ast_node_get(dot_main, 0);
+	assert_ptr(math_main, "ptr math_main");
+	expect_int_equal(math_main->type, ast_type_id, "id math_main");
+	expect_str(&math_main->value, "math", "math math_main");
+
+	struct ast_node* sqrt_main = ast_node_get(dot_main, 1);
+	assert_ptr(sqrt_main, "ptr sqrt_main");
+	expect_int_equal(sqrt_main->type, ast_type_id, "id sqrt_main");
+	expect_str(&sqrt_main->value, "sqrt", "sqrt sqrt_main");
 
 	struct ast_node* cseq_main = ast_node_get(call_main, 1);
 	assert_ptr(cseq_main, "ptr cseq");

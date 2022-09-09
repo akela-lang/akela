@@ -15,8 +15,6 @@
 
 bool var(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool cseq(struct parse_state* ps, struct token* id, struct ast_node** root, struct location* loc);
 bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -54,9 +52,6 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	} else if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
 		valid = anonymous_function(ps, &n, loc) && valid;
-
-	} else if (t0 && t0->type == token_id && t1 && t1->type == token_left_paren) {
-		valid = function_call(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_not) {
 		valid = not_nt(ps, &n, loc) && valid;
@@ -261,220 +256,6 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	return valid;
 }
 
-bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc)
-{
-	bool valid = true;
-	struct ast_node* n = NULL;
-
-	location_init(loc);
-
-	/* allocate ps{} id id{} */
-	struct token* id = NULL;
-	valid = match(ps, token_id, "expected id", &id) && valid;
-	location_update_token(loc, id);
-	/* test case: test case not needed */
-
-	/* allocate ps{} lp lp{} */
-	struct token* lp = NULL;
-	valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
-	location_update_token(loc, lp);
-	/* test case: test case not needed */
-
-	/* allocate b b{} */
-	struct ast_node* cseq_node = NULL;
-	struct location loc_cseq;
-	valid = cseq(ps, id, &cseq_node, &loc_cseq) && valid;
-	location_update(loc, &loc_cseq);
-
-	/* allocate ps{} rp rp{} */
-	struct token* rp = NULL;
-	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
-	location_update_token(loc, rp);
-	/* test case: test_parse_call_error_right_paren */
-
-	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-		n->type = ast_type_call;
-
-		/* allocate a */
-		struct ast_node* a = NULL;
-		ast_node_create(&a);
-		a->type = ast_type_id;
-
-		/* allocate a{} */
-		buffer_copy(&id->value, &a->value);
-
-		/* transfer a a{} -> n{} */
-		ast_node_add(n, a);
-
-		/* transfer b b{} -> n{} */
-		if (cseq_node) {
-			ast_node_add(n, cseq_node);
-		}
-
-	} else {
-		/* destroy cseq_node cseq_node{} */
-		ast_node_destroy(cseq_node);
-	}
-
-	if (valid) {
-		struct symbol* sym = environment_get(ps->st->top, &id->value);
-		if (!sym) {
-			char* name;
-			buffer2array(&id->value, &name);
-			valid = set_source_error(ps->el, &id->loc, "function not declared: %s", name);
-			free(name);
-			valid = false;
-			/* test case: test_parse_call_error_function_not_declared */
-		} else {
-			assert(sym->tu);
-			assert(sym->tu->td);
-			struct ast_node* tu = sym->tu;
-			struct type_def* td = tu->td;
-			if (td->type != type_function) {
-				char* name;
-				buffer2array(&id->value, &name);
-				valid = set_source_error(ps->el, &id->loc, "call of variable that is not a function: %s", name);
-				free(name);
-				valid = false;
-				/* test case: test_parse_call_error_not_function */
-			} else {
-				struct ast_node* input = NULL;
-				struct ast_node* output = NULL;
-				get_function_children(tu, &input, &output);
-
-				/* input */
-				int tcount = 0;
-				if (input) {
-					tcount = ast_node_count_children(input);
-				}
-				int ccount = 0;
-				if (cseq_node) {
-					ccount = ast_node_count_children(cseq_node);
-				}
-
-				if (ccount < tcount) {
-					valid = set_source_error(ps->el, &rp->loc, "not enough arguments in function call");
-					/* test case: test_parse_call_error_not_enough_arguments */
-				} else if (ccount > tcount) {
-					valid = set_source_error(ps->el, &rp->loc, "too many arguments in function call");
-					/* test_parse_call_error_too_many_arguments */
-				}
-
-				/* output */
-				if (output) {
-					n->tu = ast_node_copy(ast_node_get(output, 0));
-				}
-			}
-		}
-	}
-
-	/* destroy id id{} lp lp{} rp rp{} */
-	token_destroy(id);
-	free(id);
-	token_destroy(lp);
-	free(lp);
-	token_destroy(rp);
-	free(rp);
-
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
-}
-
-/* cseq -> expr cseq' | e */
-/* cseq' -> , expr cseq' | e */
-/* dynamic-output ps{} root root{} */
-bool cseq(struct parse_state* ps, struct token* id, struct ast_node** root, struct location* loc)
-{
-	bool valid = true;
-	struct ast_node* n = NULL;
-
-	location_init(loc);
-
-	/* allocate n */
-	ast_node_create(&n);
-	n->type = ast_type_cseq;
-
-	*root = n;
-
-	/* allocate a a{} */
-	struct ast_node* a = NULL;
-	struct location loc_expr;
-	valid = expr(ps, &a, &loc_expr) && valid;
-	location_update(loc, &loc_expr);
-
-	if (!a) {
-		valid = location_default(ps, loc) && valid;
-		return valid;
-	}
-
-	struct symbol* sym = NULL;
-	struct ast_node* tu = NULL;
-	int i = 0;
-	if (id) {
-		sym = environment_get(ps->st->top, &id->value);
-		if (sym) {
-			tu = get_function_type(sym);
-		}
-	}
-
-
-	valid = check_input_type(ps, tu, i, a, &loc_expr) && valid;
-	i++;
-
-	/* transfer a -> n{} */
-	ast_node_add(n, a);
-
-	while (true) {
-		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
-		struct token* t0 = get_token(&ps->lookahead, 0);
-
-		if (!t0 || t0->type != token_comma) {
-			break;
-		}
-
-		/* allocate ps{} comma comma{} */
-		struct token* comma = NULL;;
-		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
-		location_update_token(loc, comma);
-		/* test case: no test case needed */
-
-		/* destroy comma comma{} */
-		token_destroy(comma);
-		free(comma);
-
-		/* allocate a a{} */
-		struct ast_node* a = NULL;
-		valid = expr(ps, &a, &loc_expr) && valid;
-		location_update(loc, &loc_expr);
-
-		if (!a) {
-			set_source_error(ps->el, &loc_expr, "expected expression after comma");
-			valid = false;
-		} else {
-			/* transfer a -> parent */
-			ast_node_add(n, a);
-
-			valid = check_input_type(ps, tu, i++, a, &loc_expr) && valid;
-		}
-
-		i++;
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
-}
-
 bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
@@ -491,7 +272,7 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_factor;
-	valid = factor(ps, &a, &loc_factor) && valid;
+	valid = expr(ps, &a, &loc_factor) && valid;
 	location_update(loc, &loc_factor);
 
 	if (!a) {
@@ -697,7 +478,7 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate right */
 	struct ast_node* right = NULL;
 	struct location loc_factor;
-	valid = factor(ps, &right, &loc_factor) && valid;
+	valid = expr(ps, &right, &loc_factor) && valid;
 	location_update(loc, &loc_factor);
 
 	if (!right) {

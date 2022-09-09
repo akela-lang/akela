@@ -56,6 +56,7 @@ enum result ast_set_names(char** names)
 	names[ast_type_type] = "type";
 	names[ast_type_power] = "power";
 	names[ast_type_type_pool] = "type-pool";
+	names[ast_type_dot] = "dot";
 	names[ast_type_module] = "module";
 
 	for (int i = 0; i < ast_type_count; i++) {

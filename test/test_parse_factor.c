@@ -1679,7 +1679,7 @@ void test_parse_call_error_function_not_declared()
 	bool valid = parse_setup("foo()", &ps, &root);
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "function not declared: foo");
+	expect_compile_error(ps.el, "variable not declared: foo");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -1697,7 +1697,7 @@ void test_parse_call_error_not_function()
 	bool valid = parse_setup("var foo::Int64; foo()", &ps, &root);
 	expect_has_errors(ps.el);
 	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "call of variable that is not a function: foo");
+	expect_compile_error(ps.el, "not a function type");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);

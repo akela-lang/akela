@@ -34,7 +34,7 @@ struct comp_unit* include_base(struct comp_table* ct, struct comp_unit* cu)
 {
 	struct buffer bf_base;
 	buffer_init(&bf_base);
-	buffer_copy_str(&bf_base, "function sqrt(x::Int64)::Int64 1 end");
+	buffer_copy_str(&bf_base, "module math function sqrt(x::Int64)::Int64 1 end end");
 	struct string_data sd_base;
 	string_data_init(&bf_base, &sd_base);
 
