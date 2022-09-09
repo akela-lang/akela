@@ -1350,6 +1350,97 @@ void test_parse_or_or()
 }
 
 /* dynamic-output-none */
+void test_parse_boolean_error_expected_term()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("true &&", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected term after && or ||");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_boolean_error_left_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; foo() && true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "left-side operand of boolean operator has no type");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_boolean_error_right_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; true && foo()", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "operand of boolean operator has no type");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_boolean_error_left_not_boolean()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("1 && true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "left-side expression of boolean operator is not boolean");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_boolean_error_right_not_boolean()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("true && 1", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expression of boolean operator is not boolean");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
 void test_parse_array_subscript()
 {
 	test_name(__func__);
@@ -1728,6 +1819,11 @@ void test_parse_expression()
 	test_parse_and();
 	test_parse_or();
 	test_parse_or_or();
+	test_parse_boolean_error_expected_term();
+	test_parse_boolean_error_left_no_value();
+	test_parse_boolean_error_right_no_value();
+	test_parse_boolean_error_left_not_boolean();
+	test_parse_boolean_error_right_not_boolean();
 	test_parse_array_subscript();
 	test_parse_array_subscript2();
 	test_parse_array_subscript3();

@@ -220,8 +220,9 @@ bool boolean(struct parse_state* ps, struct ast_node** root, struct location* lo
 
 		/* allocate ps{} op op{} */
 		struct token* op = NULL;
-		valid = match(ps, t0->type, "expecting + or -", &op) && valid;
+		valid = match(ps, t0->type, "expecting && or ||", &op) && valid;
 		location_update_token(loc, op);
+		/* test case: no test cases needed */
 
 		/* comparison */
 		/* allocate a a{} */
@@ -231,7 +232,8 @@ bool boolean(struct parse_state* ps, struct ast_node** root, struct location* lo
 		location_update(loc, &loc_b);
 
 		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expected term after + or -");
+			valid = set_source_error(ps->el, &loc_b, "expected term after && or ||");
+			/* test case: test_parse_boolean_error_expected_term */
 		}
 
 		if (valid) {
@@ -246,8 +248,10 @@ bool boolean(struct parse_state* ps, struct ast_node** root, struct location* lo
 			assert(b);
 			if (!left->tu) {
 				valid = set_source_error(ps->el, &loc_left, "left-side operand of boolean operator has no type");
+				/* test case: test_parse_boolean_error_left_no_value */
 			} else if (!b->tu) {
 				valid = set_source_error(ps->el, &loc_b, "operand of boolean operator has no type");
+				/* test case: test_parse_boolean_error_right_no_value */
 			} else if (left->tu->td->type != type_boolean) {
 				valid = set_source_error(ps->el, &loc_left, "left-side expression of boolean operator is not boolean");
 			} else if (b->tu->td->type != type_boolean) {
