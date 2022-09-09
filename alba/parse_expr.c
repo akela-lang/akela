@@ -876,7 +876,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 					/* test case: test_parse_call_error_not_enough_arguments */
 				} else if (ccount > tcount) {
 					valid = set_source_error(ps->el, &rp->loc, "too many arguments in function call");
-					/* test_parse_call_error_too_many_arguments */
+					/* test case: test_parse_call_error_too_many_arguments */
 				}
 
 				/* output */
@@ -922,6 +922,7 @@ bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, s
 	if (!tu || !tu->td || tu->td->type != type_function) {
 		valid = location_default(ps, loc) && valid;
 		valid = set_source_error(ps->el, loc, "not a function type");
+		/* test case: no test case needed */
 		return valid;
 	}
 
@@ -974,6 +975,7 @@ bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, s
 
 		if (!a) {
 			set_source_error(ps->el, &loc_expr, "expected expression after comma");
+			/* test case: test_parse_call_error_expected_expression */
 			valid = false;
 		} else {
 			/* transfer a -> parent */

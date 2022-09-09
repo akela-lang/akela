@@ -1740,7 +1740,7 @@ void test_parse_call_error_too_many_arguments()
 	parse_teardown(&ps);
 }
 
-void test_parse_call_extra_comma()
+void test_parse_call_error_expected_expression()
 {
 	test_name(__func__);
 
@@ -1865,7 +1865,7 @@ void test_parse_factor()
 	test_parse_call_error_not_function();
 	test_parse_call_error_not_enough_arguments();
 	test_parse_call_error_too_many_arguments();
-	test_parse_call_extra_comma();
+	test_parse_call_error_expected_expression();
 	test_parse_not_error_expected_factor();
 	test_parse_not_error_no_value();
 	test_parse_not_error_not_boolean();
