@@ -73,6 +73,101 @@ void test_parse_add()
 	parse_teardown(&ps);
 }
 
+void test_parse_add_error_expected_term()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("1 +", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected term after additive operator");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_add_error_left_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo() end; foo() + 1", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "addition operand has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_add_error_left_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("true + 1", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "addition on non-numeric operand");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_add_error_right_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo() end; 1 + foo()", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "addition operand has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_add_error_right_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("1 + true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "addition on non-numeric operand");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_add_mixed_types()
 {
@@ -1862,6 +1957,10 @@ void test_parse_expression()
 {
 	test_parse_blank();
 	test_parse_add();
+	test_parse_add_error_expected_term();
+	test_parse_add_error_left_no_value();
+	test_parse_add_error_left_not_numeric();
+	test_parse_add_error_right_no_value();
 	test_parse_add_mixed_types();
 	test_parse_add_positive();
 	test_parse_add_negative();

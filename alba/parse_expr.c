@@ -445,11 +445,7 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		return valid;
 	}
 
-	if (valid) {
-		left = a;
-	} else {
-		ast_node_destroy(a);
-	}
+	left = n = a;
 
 	struct location loc_b;
 	bool first = true;
@@ -479,6 +475,7 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting + or -", &op) && valid;
 		location_update_token(loc, op);
+		/* test case: no test case needed */
 
 		/* allocate a a{} */
 		struct location loc_b;
@@ -486,9 +483,8 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		location_update(loc, &loc_b);
 
 		if (!b) {
-			/* destroy n n{} */
-			ast_node_destroy(n);
 			valid = set_source_error(ps->el, &loc_b, "expected term after additive operator");
+			/* test case: test_parse_add_error_expected_term */
 			break;
 		}
 
@@ -508,20 +504,24 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 			if (!tu_a) {
 				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
+				/* test case: test_parse_add_error_left_no_value */
 			} else if (!is_numeric(tu_a->td)) {
 				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand", op_name);
 			}
 
 			if (!tu_b) {
 				valid = set_source_error(ps->el, &loc_b, "%s operand has no value", op_name);
+				/* test case: test_parse_add_error_right_no_value */
 			} else if (!is_numeric(tu_b->td)) {
 				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand", op_name);
+				/* test case: test_parse_add_error_right_not_numeric */
 			}
 
 			if (valid) {
 				struct ast_node* tu = ast_node_copy(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					valid = set_source_error(ps->el, &op->loc, "invalid types for %s", op_name);
+					/* test case: no test case needed */
 				} else {
 					n->tu = tu;
 				}
@@ -535,13 +535,13 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		free(op);
 	}
 
+	valid = location_default(ps, loc) && valid;
+
 	if (valid) {
 		*root = left;
 	} else {
 		ast_node_destroy(left);
 	}
-
-	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
