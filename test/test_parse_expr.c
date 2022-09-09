@@ -904,7 +904,75 @@ void test_parse_power()
 	parse_teardown(&ps);
 }
 
-void test_parse_power_non_numeric()
+void test_parse_power_error_expected_term()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("5^", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected term after caret");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_power_error_left_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; 5 ^ foo()", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "power operand has no value");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_power_error_left_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("true ^ 2", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "power on non-numeric operand");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_power_error_right_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; 5 ^ foo()", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "power operand has no value");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_power_error_right_not_numeric()
 {
 	test_name(__func__);
 
@@ -2076,7 +2144,11 @@ void test_parse_expression()
 	test_parse_add_mult();
 	test_parse_mult_add();
 	test_parse_power();
-	test_parse_power_non_numeric();
+	test_parse_power_error_expected_term();
+	test_parse_power_error_left_no_value();
+	test_parse_power_error_left_not_numeric();
+	test_parse_power_error_right_no_value();
+	test_parse_power_error_right_not_numeric();
 	test_parse_paren_add();
 	test_parse_paren_add2();
 	test_parse_paren_add3();

@@ -713,6 +713,7 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		struct token* caret = NULL;
 		valid = match(ps, token_caret, "exprected a caret", &caret) && valid;
 		location_update_token(loc, caret);
+		/* test case: no test case needed */
 
 		struct ast_node* b = NULL;
 		struct location loc_b;
@@ -720,7 +721,8 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		location_update(loc, &loc_b);
 
 		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expecting a term after caret");
+			valid = set_source_error(ps->el, &loc_b, "expected term after caret");
+			/* test case: test_parse_power_error_expected_term */
 		}
 
 		if (valid) {
@@ -740,20 +742,25 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 			if (!tu_left) {
 				valid = set_source_error(ps->el, &loc_left, "power operand has no value");
+				/* test case: test_parse_power_error_left_no_value */
 			} else if (!is_numeric(tu_left->td)) {
 				valid = set_source_error(ps->el, &loc_left, "power on non-numeric operand");
+				/* test case: test_parse_power_error_left_not_numeric */
 			}
 
 			if (!tu_b) {
 				valid = set_source_error(ps->el, &loc_b, "power operand has no value");
+				/* test case: test_parse_power_error_right_no_value */
 			} else if (!is_numeric(tu_b->td)) {
 				valid = set_source_error(ps->el, &loc_b, "power on non-numeric operand");
+				/* test case: test_parse_power_error_right_not_numeric */
 			}
 
 			if (valid) {
 				struct ast_node* tu = ast_node_copy(tu_left);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					valid = set_source_error(ps->el, &loc_b, "invalid power types");
+					/* test case: no test case needed */
 				} else {
 					n->tu = tu;
 				}
