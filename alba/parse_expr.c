@@ -1027,6 +1027,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 		struct token* dot = NULL;
 		valid = match(ps, token_dot, "exprected a dot", &dot) && valid;
 		location_update_token(loc, dot);
+		/* test case: no test case needed */
 
 		struct ast_node* b = NULL;
 		struct location loc_b;
@@ -1034,7 +1035,8 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 		location_update(loc, &loc_b);
 
 		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expecting a term after dot");
+			valid = set_source_error(ps->el, &loc_b, "expected term after dot");
+			/* test case: test_parse_dot_error_expected_term */
 		}
 
 		if (valid) {
@@ -1065,22 +1067,27 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 			if (!tu_left) {
 				valid = set_source_error(ps->el, &loc_left, "dot operand has no value");
+				/* test case: no test case necessary */
 			} else if (tu_left->td->type != type_module) {
 				valid = set_source_error(ps->el, &loc_left, "dot on non-module operand");
+				/* test case: test_parse_dot_error_left_non_module */
 			}
 
 			if (!tu_b) {
 				valid = set_source_error(ps->el, &loc_b, "dot operand has no value");
+				/* test case: test_parse_dot_error_non_module */
 			}
 
 			if (left == a) {
 				if (left->type != ast_type_id) {
-					valid = set_source_error(ps->el, &loc_left, "left side of dot operator not an identifier");
+					valid = set_source_error(ps->el, &loc_left, "operand of dot operator not an identifier");
+					/* test case: no test case necessary */
 				}
 			}
 
 			if (b->type != ast_type_id) {
-				valid = set_source_error(ps->el, &loc_b, "right side of dot operator not an identifier");
+				valid = set_source_error(ps->el, &loc_b, "operand of dot operator not an identifier");
+				/* test case: test_parse_dot_error_right_not_identifier */
 			}
 
 			if (valid) {

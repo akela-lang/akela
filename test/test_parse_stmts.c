@@ -1634,6 +1634,54 @@ void test_parse_module_nested()
 	parse_teardown(&ps);
 }
 
+void test_parse_dot_error_expected_term()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("module math var pi::Float64 = 3.14 end; math.", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected term after dot");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_dot_error_left_non_module()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("function foo() end; module math var pi::Float64 = 3.14 end; true.1", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "dot on non-module operand");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_dot_error_right_not_identifier()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("function foo() end; module math var pi::Float64 = 3.14 end; math.\"hello\"", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "operand of dot operator not an identifier");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_statements()
 {
@@ -1665,4 +1713,7 @@ void test_parse_statements()
 	test_parse_source();
 	test_parse_module();
 	test_parse_module_nested();
+	test_parse_dot_error_expected_term();
+	test_parse_dot_error_left_non_module();
+	test_parse_dot_error_right_not_identifier();
 }
