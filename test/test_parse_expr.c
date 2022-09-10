@@ -1909,6 +1909,86 @@ void test_parse_array_subscript3()
 }
 
 /* dynamic-output-none */
+void test_parse_subscript_error_no_type()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo() end; var a::Vector{Int64}; foo()[1]", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "subscripting expression with no type");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_subscript_error_not_array()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Int64; a[1]", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "subscripting expression that is not an array");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_subscript_error_expected_right_square_bracket()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Vector{Int64}; a[1", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected right-square-bracket");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_subscript_error_no_subtype()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("var a::Vector; a[1]", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "subscripting expression with no subtype");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
 void test_parse_assign_string()
 {
 	test_name(__func__);
@@ -2175,6 +2255,10 @@ void test_parse_expression()
 	test_parse_array_subscript();
 	test_parse_array_subscript2();
 	test_parse_array_subscript3();
+	test_parse_subscript_error_no_type();
+	test_parse_subscript_error_not_array();
+	test_parse_subscript_error_expected_right_square_bracket();
+	test_parse_subscript_error_no_subtype();
 	test_parse_assign_string();
 	test_parse_assign_multiple();
 	test_parse_assign_error_term();

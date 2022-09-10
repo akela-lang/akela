@@ -17,10 +17,10 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool power(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, struct location* loc);
 bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool array_subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* expr -> id = expr | boolean */
 /* dynamic-output ps{} root root{} */
@@ -690,7 +690,7 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	location_init(loc);
 
 	struct location loc_a;
-	valid = function_call(ps, &a, &loc_a) && valid;
+	valid = subscript(ps, &a, &loc_a) && valid;
 	location_update(loc, &loc_a);
 
 	if (!a) {
@@ -717,7 +717,7 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 		struct ast_node* b = NULL;
 		struct location loc_b;
-		valid = function_call(ps, &b, &loc_b) && valid;
+		valid = subscript(ps, &b, &loc_b) && valid;
 		location_update(loc, &loc_b);
 
 		if (!b) {
@@ -782,6 +782,125 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	} else {
 		ast_node_destroy(n);
 	}
+
+	return valid;
+}
+
+/* array_subscript -> factor array_subscript' */
+/* array_subscript' -> [expr] array_subscript' | e */
+/* dynamic-output ps{} root root{} */
+bool subscript(struct parse_state* ps, struct ast_node** root, struct location* loc)
+{
+	bool valid = true;
+	int num;
+	struct ast_node* n = NULL;
+	struct ast_node* a = NULL;
+
+	location_init(loc);
+
+	/* allocate ps{} n n{} */
+	struct location loc_factor;
+	valid = function_call(ps, &a, &loc_factor) && valid;
+	location_update(loc, &loc_factor);
+
+	struct ast_node* tu = NULL;
+	struct ast_node* element_tu = NULL;
+
+	struct location loc_last;
+	location_init(&loc_last);
+	while (true) {
+		/* allocate ps{} */
+		valid = get_lookahead(ps, 1, &num) && valid;
+		struct token* t0 = get_token(&ps->lookahead, 0);
+
+		if (!t0 || t0->type != token_left_square_bracket) {
+			break;
+		}
+
+		if (valid) {
+			if (!tu) {
+				tu = a->tu;
+			} else {
+				tu = ast_node_get(tu, 0);
+			}
+
+			if (!tu) {
+				valid = set_source_error(ps->el, &loc_factor, "subscripting expression with no type");
+				/* test case: test_parse_subscript_error_no_type */
+			} else if (tu->td->type != type_array) {
+				valid = set_source_error(ps->el, &loc_factor, "subscripting expression that is not an array");
+				/* test case: test_parse_subscript_error_not_array */
+			}
+		}
+
+		/* allocate ps{} lsb lsb{} */
+		struct token* lsb = NULL;
+		valid = match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb) && valid;
+		location_update_token(loc, lsb);
+		/* test case: no test cases needed */
+		if (lsb) {
+		#pragma warning(suppress:6001)
+			loc_last = lsb->loc;
+		}
+
+		/* destroy lsb lsb{} */
+		token_destroy(lsb);
+		free(lsb);
+
+		/* allocate b b{} */
+		struct ast_node* b = NULL;
+		struct location loc_expr;
+		valid = expr(ps, &b, &loc_expr) && valid;
+		location_update(loc, &loc_expr);
+
+		/* allocate ps{} rsb rsb{} */
+		struct token* rsb = NULL;
+		valid = match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb) && valid;
+		location_update_token(loc, rsb);
+
+		/* destroy rsb rsb{} */
+		token_destroy(rsb);
+		free(rsb);
+
+		if (valid) {
+			if (!n) {
+				ast_node_create(&n);
+				n->type = ast_type_array_subscript;
+				ast_node_add(n, a);
+			}
+			ast_node_add(n, b);
+		} else {
+			ast_node_destroy(b);
+		}
+	}
+
+	if (valid) {
+		if (tu) {
+			element_tu = ast_node_get(tu, 0);
+		}
+
+		if (n) {
+			if (!element_tu) {
+				valid = set_source_error(ps->el, &loc_last, "subscripting expression with no subtype");
+				/* test case: test_parse_subscript_error_no_subtype */
+			} else {
+				n->tu = ast_node_copy(element_tu);
+			}
+		} else {
+			if (a) {
+				n = a;
+			}
+		}
+	}
+
+	/* transfer n -> root */
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
+
+	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
@@ -1002,7 +1121,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	location_init(loc);
 
 	struct location loc_a;
-	valid = array_subscript(ps, &a, &loc_a) && valid;
+	valid = factor(ps, &a, &loc_a) && valid;
 	location_update(loc, &loc_a);
 
 	if (!a) {
@@ -1031,7 +1150,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 		struct ast_node* b = NULL;
 		struct location loc_b;
-		valid = array_subscript(ps, &b, &loc_b) && valid;
+		valid = factor(ps, &b, &loc_b) && valid;
 		location_update(loc, &loc_b);
 
 		if (!b) {
@@ -1113,119 +1232,6 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	} else {
 		ast_node_destroy(n);
 	}
-
-	return valid;
-}
-
-/* array_subscript -> factor array_subscript' */
-/* array_subscript' -> [expr] array_subscript' | e */
-/* dynamic-output ps{} root root{} */
-bool array_subscript(struct parse_state* ps, struct ast_node** root, struct location* loc)
-{
-	bool valid = true;
-	int num;
-	struct ast_node* n = NULL;
-	struct ast_node* a = NULL;
-
-	location_init(loc);
-	
-	/* allocate ps{} n n{} */
-	struct location loc_factor;
-	valid = factor(ps, &a, &loc_factor) && valid;
-	location_update(loc, &loc_factor);
-
-	struct ast_node* tu = NULL;
-	struct ast_node* element_tu = NULL;
-
-	struct location loc_last;
-	location_init(&loc_last);
-	while (true) {
-		/* allocate ps{} */
-		valid = get_lookahead(ps, 1, &num) && valid;
-		struct token* t0 = get_token(&ps->lookahead, 0);
-
-		if (!t0 || t0->type != token_left_square_bracket) {
-			break;
-		}
-
-		if (valid) {
-			if (!tu) {
-				tu = a->tu;
-			} else {
-				tu = ast_node_get(tu, 0);
-			}
-
-			element_tu = ast_node_get(tu, 0);
-
-			if (!tu) {
-				valid = set_source_error(ps->el, &loc_factor, "subscripting a expression with no type");
-			} else if (tu->td->type != type_array) {
-				valid = set_source_error(ps->el, &loc_factor, "subscripting an expression that is not an array");
-			}
-		}
-
-		/* allocate ps{} lsb lsb{} */
-		struct token* lsb = NULL;
-		valid = match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb) && valid;
-		location_update_token(loc, lsb);
-		if (lsb) {
-			#pragma warning(suppress:6001)
-			loc_last = lsb->loc;
-		}
-
-		/* destroy lsb lsb{} */
-		token_destroy(lsb);
-		free(lsb);
-
-		/* allocate b b{} */
-		struct ast_node* b = NULL;
-		struct location loc_expr;
-		valid = expr(ps, &b, &loc_expr) && valid;
-		location_update(loc, &loc_expr);
-
-		/* allocate ps{} rsb rsb{} */
-		struct token* rsb = NULL;
-		valid = match(ps, token_right_square_bracket, "expecting array subscript operator", &rsb) && valid;
-		location_update_token(loc, rsb);
-
-		/* destroy rsb rsb{} */
-		token_destroy(rsb);
-		free(rsb);
-
-		if (valid) {
-			if (!n) {
-				ast_node_create(&n);
-				n->type = ast_type_array_subscript;
-				ast_node_add(n, a);
-			}
-			ast_node_add(n, b);
-		} else {
-			ast_node_destroy(b);
-		}
-	}
-
-	if (valid) {
-		if (n) {
-			if (!element_tu) {
-				valid = set_source_error(ps->el, &loc_last, "subscripting a expression with no type");
-			} else {
-				n->tu = ast_node_copy(element_tu);
-			}
-		} else {
-			if (a) {
-				n = a;
-			}
-		}
-	}
-
-	/* transfer n -> root */
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	valid = location_default(ps, loc) && valid;
 
 	return valid;
 }
