@@ -97,6 +97,9 @@ set_target_properties(zinc PROPERTIES
 
 endif()
 
+# math.alba
+set(BASE_DIR ${CMAKE_SOURCE_DIR}/base)
+set(ALBA_MATH ${BASE_DIR}/math.alba)
 
 include_directories(${ZINC_DIR} .)
 

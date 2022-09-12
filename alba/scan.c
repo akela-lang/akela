@@ -154,6 +154,8 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         *got_token = 1;
     } else if (uc == ' ') {
         /* nothing */
+    } else if (uc == '\t') {
+        /* nothing */
     } else if (uc == '\n') {
         t->type = token_newline;
         t->loc.line = lc->line;

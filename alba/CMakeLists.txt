@@ -46,6 +46,7 @@ add_custom_command(
                 ${ICU_UC_DLL}
                 ${ICU_DT_DLL}
                 ${EXAMPLE_ADDITION}
+                ${ALBA_MATH}
                 ${CMAKE_CURRENT_BINARY_DIR}
 )
 
@@ -57,6 +58,7 @@ add_custom_command(
                 ${ICU_UC_DLL}
                 ${ICU_DT_DLL}
                 ${EXAMPLE_ADDITION}
+                ${ALBA_MATH}
                 ${CMAKE_BINARY_DIR}/test
 )
 

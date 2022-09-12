@@ -136,7 +136,10 @@ void test_comp_table_include_base()
 	array2buffer("|main|", &cu_main->path);
 	comp_table_put(&ct, &cu_main->path, cu_main);
 
-	struct comp_unit* cu_base = include_base(&ct, cu_main);
+	struct comp_unit* cu_base = NULL;
+	bool valid = include_base(&ct, cu_main, &cu_base);
+	assert_true(valid, "include_base valid");
+	assert_no_errors(&cu_main->el);
 
 	/* test base */
 	expect_no_errors(&cu_base->el);

@@ -1,0 +1,11 @@
+module math
+
+function sqrt(x::Float64)::Float64
+	1.0
+end
+
+function log10(x::Float64)::Float64
+	1.0
+end
+
+end

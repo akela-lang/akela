@@ -11,6 +11,12 @@ ALBA_API enum result win_temp_filename(char** buff);
 /* dynamic-output-none */
 ALBA_API void set_console_utf8();
 
+ALBA_API char* get_exe_path();
+
+ALBA_API void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename);
+
+ALBA_API void path_join(struct buffer* path, struct buffer* filename);
+
 #endif
 
 

@@ -2,6 +2,8 @@
 #include "hash.h"
 #include "comp_unit.h"
 #include "zinc/memory.h"
+#include "alba/os_win.h"
+#include <stdio.h>
 
 void comp_table_init(struct comp_table* ct)
 {
@@ -30,25 +32,57 @@ void comp_table_destroy(struct comp_table* ct)
 	hash_table_destroy(&ct->ht);
 }
 
-struct comp_unit* include_base(struct comp_table* ct, struct comp_unit* cu)
+bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit** cu_base)
 {
-	struct buffer bf_base;
-	buffer_init(&bf_base);
-	buffer_copy_str(&bf_base, "module math function sqrt(x::Int64)::Int64 1 end end");
-	struct string_data sd_base;
-	string_data_init(&bf_base, &sd_base);
+	bool valid = true;
+	char* path = NULL;
+	path = get_exe_path();
+	struct location loc;
+	location_init(&loc);
 
-	struct comp_unit* cu_base = NULL;
-	malloc_safe(&cu_base, sizeof(struct comp_unit));
-	comp_unit_init(cu_base);
-	array2buffer("|math|", &cu_base->path);
-	comp_table_put(ct, &cu_base->path, cu_base);
+	if (!path) {
+		valid = set_source_error(&cu->el, &loc, "could not get executable path");
+		return valid;
+	}
 
-	comp_unit_compile(cu_base, string_getchar, &sd_base);
+	struct buffer path2;
+	struct buffer dir;
+	struct buffer filename;
+	buffer_init(&path2);
+	buffer_init(&dir);
+	buffer_init(&filename);
 
-	transfer_global_symbols(&cu_base->st, &cu->st);
+	buffer_copy_str(&path2, path);
+	split_path(&path2, &dir, &filename);
 
-	buffer_destroy(&bf_base);
+	struct buffer math_path;
+	buffer_init(&math_path);
+	buffer_copy(&dir, &math_path);
+	buffer_clear(&filename);
+	buffer_copy_str(&filename, "math.alba");
+	path_join(&math_path, &filename);
+	buffer_finish(&math_path);
 
-	return cu_base;
+	FILE* fp = fopen(math_path.buf, "r");
+	if (!fp) {
+		valid = set_source_error(&cu->el, &loc, "could not open file: %s\n", math_path.buf);
+		goto exit;
+	}
+
+	malloc_safe(cu_base, sizeof(struct comp_unit));
+	comp_unit_init(*cu_base);
+	comp_table_put(ct, &math_path, *cu_base);
+
+	comp_unit_compile(*cu_base, file_getchar, fp);
+
+	transfer_global_symbols(&(*cu_base)->st, &cu->st);
+
+exit:
+	free(path);
+	buffer_destroy(&path2);
+	buffer_destroy(&dir);
+	buffer_destroy(&filename);
+	buffer_destroy(&math_path);
+	if (fp) fclose(fp);
+	return valid;
 }

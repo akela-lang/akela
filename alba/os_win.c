@@ -5,6 +5,7 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 #include "os_win.h"
+#include "zinc/buffer.h"
 
 /* dynamic-output buff */
 enum result win_temp_filename(char** buff)
@@ -38,6 +39,73 @@ enum result win_temp_filename(char** buff)
 void set_console_utf8()
 {
 	SetConsoleOutputCP(CP_UTF8);
+}
+
+char* get_exe_path()
+{
+    DWORD last_error;
+    DWORD result;
+    DWORD path_size = 1024;
+    char* path = NULL;
+    malloc_safe(&path, path_size);
+
+    for (;;)
+    {
+        #pragma warning(suppress:6387)
+        memset(path, 0, path_size);
+        #pragma warning(suppress:6387)
+        result = GetModuleFileName(0, path, path_size - 1);
+        last_error = GetLastError();
+
+        if (0 == result) {
+            free(path);
+            path = 0;
+            break;
+        } else if (result == path_size - 1) {
+            free(path);
+            /* May need to also check for ERROR_SUCCESS here if XP/2K */
+            if (ERROR_INSUFFICIENT_BUFFER != last_error)
+            {
+                path = 0;
+                break;
+            }
+            path_size = path_size * 2;
+            malloc_safe(&path, path_size);
+        } else {
+            break;
+        }
+    }
+
+    return path;
+}
+
+void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename)
+{
+    int sep_pos = -1;
+
+    for (int i = 0; i < path->size; i++) {
+        if (path->buf[i] == '\\') {
+            sep_pos = i;
+        }
+    }
+
+    if (sep_pos >= 0) {
+        for (int i = 0; i < sep_pos; i++) {
+            buffer_add_char(dir, path->buf[i]);
+        }
+    }
+    buffer_finish(dir);
+
+    for (int i = sep_pos + 1; i < path->size; i++) {
+        buffer_add_char(filename, path->buf[i]);
+    }
+    buffer_finish(filename);
+}
+
+void path_join(struct buffer* path, struct buffer* filename)
+{
+    buffer_add_char(path, '\\');
+    buffer_copy(filename, path);
 }
 
 #endif
