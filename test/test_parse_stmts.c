@@ -1286,6 +1286,42 @@ void test_parse_while()
 	parse_teardown(&ps);
 }
 
+void test_parse_while_error_expected_expression()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("while end", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected expression after while");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_while_error_expected_end()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("while true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected end");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_for_range()
 {
@@ -1705,6 +1741,8 @@ void test_parse_statements()
 	test_parse_else();
 	test_parse_else2();
 	test_parse_while();
+	test_parse_while_error_expected_expression();
+	test_parse_while_error_expected_end();
 	test_parse_for_range();
 	test_parse_for_range2();
 	test_parse_for_iteration();

@@ -146,6 +146,7 @@ bool separator(struct parse_state* ps, int* has_separator, struct location* loc)
 	struct token* sep = NULL;
 	valid = match(ps, type, "expecting newline or semicolon", &sep) && valid;
 	location_update_token(loc, sep);
+	/* test case: no test case necessary */
 
 	/* destroy sep sep{} */
 	token_destroy(sep);
@@ -240,6 +241,7 @@ bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* l
 	if (!a) {
 		/* allocate ps{} */
 		valid = set_source_error(ps->el, &loc_expr, "expected expression after while");
+		/* test case: test_parse_while_error_expected_expression */
 	}
 
 	/* allocate ps{} b b{} */
@@ -252,6 +254,7 @@ bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* l
 	struct token* end = NULL;
 	valid = match(ps, token_end, "expected end", &end) && valid;
 	location_update_token(loc, end);
+	/* test case: test_parse_while_error_expected_end */
 
 	if (valid) {
 		/* allocate n */
