@@ -420,7 +420,7 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 	if (!b) {
 		/* allocate ps{} */
 		valid = set_source_error(ps->el, &loc_b, "expected range end");
-		/* test case: */
+		/* test case: test_parse_for_error_expected_range_end */
 	}
 
 	if (valid) {
@@ -438,6 +438,29 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 	free(colon);
 
 	if (valid) {
+		assert(a);
+		if (!a->tu) {
+			valid = set_source_error(ps->el, &loc_a, "start range expression has no value");
+			/* test case: test_parse_for_range_error_start_no_value */
+		} else {
+			assert(a->tu->td);
+			if (!is_numeric(a->tu->td)) {
+				valid = set_source_error(ps->el, &loc_a, "start range expression is not numeric");
+				/* test case: test_parse_for_range_error_start_not_numeric */
+			}
+		}
+
+		assert(b);
+		if (!b->tu) {
+			valid = set_source_error(ps->el, &loc_b, "end range expression has no value");
+			/* test case: test_parse_for_range_error_end_no_value */
+		} else {
+			assert(b->tu->td);
+			if (!is_numeric(b->tu->td)) {
+				valid = set_source_error(ps->el, &loc_b, "end range expression is not numeric");
+				/* test case: test_parse_for_range_error_end_not_numeric */
+			}
+		}
 	}
 
 	valid = location_default(ps, loc) && valid;

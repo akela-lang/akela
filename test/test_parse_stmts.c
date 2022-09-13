@@ -1770,6 +1770,78 @@ void test_parse_for_error_expected_range_end()
 	parse_teardown(&ps);
 }
 
+void test_parse_for_range_error_start_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; for i::Int64 = foo():10 end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "start range expression has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_range_error_start_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("for i::Int64 = true:10 end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "start range expression is not numeric");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_range_error_end_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function foo() end; for i::Int64 = 1:foo() end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "end range expression has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_range_error_end_not_numeric()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("for i::Int64 = 1:true end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "end range expression is not numeric");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_for_error_expected_iteration_expression()
 {
 	test_name(__func__);
@@ -2121,6 +2193,10 @@ void test_parse_statements()
 	test_parse_while_error_expected_end();
 	test_parse_for_range();
 	test_parse_for_range2();
+	test_parse_for_range_error_start_no_value();
+	test_parse_for_range_error_start_not_numeric();
+	test_parse_for_range_error_end_no_value();
+	test_parse_for_range_error_end_not_numeric();
 	test_parse_for_iteration();
 	test_parse_for_iteration2();
 	test_parse_for_iteration_error_no_value();
