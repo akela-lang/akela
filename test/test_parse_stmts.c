@@ -1474,6 +1474,114 @@ void test_parse_for_iteration2()
 	parse_teardown(&ps);
 }
 
+void test_parse_for_error_after_declaration()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected '=' or 'in' after for element declaration");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_error_expected_end()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 = 1:10", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected end");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_error_expected_range_start()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 =", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected range start");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_error_expected_colon()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 = 1", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected colon");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_error_expected_range_end()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 = 1:", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected range end");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_error_expected_iteration_expression()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 in:", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "expected for iteration expression");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_line_col()
 {
@@ -1747,6 +1855,12 @@ void test_parse_statements()
 	test_parse_for_range2();
 	test_parse_for_iteration();
 	test_parse_for_iteration2();
+	test_parse_for_error_after_declaration();
+	test_parse_for_error_expected_end();
+	test_parse_for_error_expected_range_start();
+	test_parse_for_error_expected_colon();
+	test_parse_for_error_expected_range_end();
+	test_parse_for_error_expected_iteration_expression();
 	test_parse_line_col();
 	test_parse_source();
 	test_parse_module();

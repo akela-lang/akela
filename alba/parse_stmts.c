@@ -297,6 +297,7 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	struct token* f = NULL;
 	valid = match(ps, token_for, "expected for", &f) && valid;
 	location_update_token(loc, f);
+	/* test case: test cases not needed */
 
 	struct environment* saved = ps->st->top;
 	struct environment* env = NULL;
@@ -336,7 +337,8 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 		struct location loc_error;
 		location_init(&loc_error);
 		get_parse_location(ps, &loc_error);
-		valid = set_source_error(ps->el, &loc_error, "expected an = or in after for element declaration");
+		valid = set_source_error(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
+		/* test case: test_parse_for_error_after_declaration */
 	}
 
 	struct ast_node* c = NULL;
@@ -348,6 +350,7 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	struct token* end = NULL;
 	valid = match(ps, token_end, "expected end", &end) && valid;
 	location_update_token(loc, end);
+	/* test case: test_parse_for_error_expected_end */
 
 	valid = location_default(ps, loc) && valid;
 
@@ -386,6 +389,7 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 	struct token* equal = NULL;
 	valid = match(ps, token_equal, "expected equal", &equal) && valid;
 	location_update_token(loc, equal);
+	/* test case: no test case needed */
 
 	/* start expr */
 	/* allocate b b{} */
@@ -396,13 +400,15 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 
 	if (!a) {
 		/* allocate ps{} */
-		valid = set_source_error(ps->el, &loc_a, "expected range start after for-range");
+		valid = set_source_error(ps->el, &loc_a, "expected range start");
+		/* test case: test_parse_for_error_expected_range_start */
 	}
 
 	/* allocate ps{} colon conlon{} */
 	struct token* colon = NULL;
 	valid = match(ps, token_colon, "expected colon", &colon) && valid;
 	location_update_token(loc, colon);
+	/* test case: test_parse_for_error_expected_colon */
 
 	/* end expr */
 	/* allocate ps{} c c{} */
@@ -413,7 +419,8 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 
 	if (!b) {
 		/* allocate ps{} */
-		valid = set_source_error(ps->el, &loc_b, "expected range end after for-range");
+		valid = set_source_error(ps->el, &loc_b, "expected range end");
+		/* test case: */
 	}
 
 	if (valid) {
@@ -450,6 +457,7 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 	struct token* in = NULL;
 	valid = match(ps, token_in, "expecting in", &in) && valid;
 	location_update_token(loc, in);
+	/* test case: no test case necessary */
 
 	/* expr */
 	/* allocate ps{} b b{} */
@@ -459,8 +467,9 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 	location_update(loc, &loc_list);
 
 	if (!list) {
-		set_source_error(ps->el, &loc_list, "expected expression after for-iteration");
+		set_source_error(ps->el, &loc_list, "expected for iteration expression");
 		valid = false;
+		/* test case: test_parse_for_error_expected_iteration_expression */
 	}
 
 	if (valid) {
