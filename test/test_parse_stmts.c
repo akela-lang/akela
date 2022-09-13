@@ -1345,6 +1345,63 @@ void test_parse_else2()
 }
 
 /* dynamic-output-none */
+void test_parse_if_error_expected_expression()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("if end", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected condition after if");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_if_error_expected_end()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("if true", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected end");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
+void test_parse_if_error_expected_elseif_expression()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("if true elseif end", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected condition after elseif");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+/* dynamic-output-none */
 void test_parse_while()
 {
 	test_name(__func__);
@@ -1873,6 +1930,60 @@ void test_parse_module_nested()
 	parse_teardown(&ps);
 }
 
+void test_parse_module_expected_identifier()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("module end", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected identifier after module");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_module_expected_end()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("module math", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected end");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_module_duplicate_declaration()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var foo::Int64; module foo end", &ps, &root);
+	assert_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "variable already used: foo");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_dot_error_expected_term()
 {
 	test_name(__func__);
@@ -1948,6 +2059,9 @@ void test_parse_statements()
 	test_parse_elseif2();
 	test_parse_else();
 	test_parse_else2();
+	test_parse_if_error_expected_expression();
+	test_parse_if_error_expected_end();
+	test_parse_if_error_expected_elseif_expression();
 	test_parse_while();
 	test_parse_while_error_expected_expression();
 	test_parse_while_error_expected_end();
@@ -1965,6 +2079,9 @@ void test_parse_statements()
 	test_parse_source();
 	test_parse_module();
 	test_parse_module_nested();
+	test_parse_module_expected_identifier();
+	test_parse_module_expected_end();
+	test_parse_module_duplicate_declaration();
 	test_parse_dot_error_expected_term();
 	test_parse_dot_error_left_non_module();
 	test_parse_dot_error_right_not_identifier();

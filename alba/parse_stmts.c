@@ -725,6 +725,7 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	struct token* ift = NULL;
 	valid = valid && match(ps, token_if, "expecting if", &ift);
 	location_update_token(loc, ift);
+	/* test case: no test case necessary */
 
 	/* destroy ift ift{} */
 	token_destroy(ift);
@@ -750,8 +751,8 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	location_update(loc, &loc_expr);
 
 	if (cond == NULL) {
-		set_source_error(ps->el, &loc_expr, "expecting a condition after if");
-		valid = false;
+		valid = set_source_error(ps->el, &loc_expr, "expected condition after if");
+		/* test case: test_parse_if_error_expected_expression */
 		return valid;
 	} else {
 		/* transfer cond -> n{} */
@@ -788,6 +789,7 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	struct token* end = NULL;
 	valid = valid && match(ps, token_end, "expected end", &end);
 	location_update_token(loc, end);
+	/* test case: test_parse_if_error_expected_end */
 
 	valid = location_default(ps, loc) && valid;
 
@@ -813,11 +815,12 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location*
 	valid = get_lookahead(ps, 1, &num) && valid;
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
-	if (t0->type == token_elseif) {
+	if (t0 && t0->type == token_elseif) {
 		/* allocate ps{} eit eit{} */
 		struct token* eit = NULL;
 		valid = match(ps, token_elseif, "expecting elseif", &eit) && valid;
 		location_update_token(loc, eit);
+		/* test case: no test case neeeded */
 
 		/* allocate cb */
 		struct ast_node* cb = NULL;
@@ -832,7 +835,8 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location*
 
 		if (!cond) {
 			/* allocate ps{} */
-			valid = set_source_error(ps->el, &loc_cond, "expecting condition after elseif");
+			valid = set_source_error(ps->el, &loc_cond, "expected condition after elseif");
+			/* test case: test_parse_if_error_expected_elseif_expression */
 		} else {
 			/* transfer cond -> cb{} */
 			ast_node_add(cb, cond);
@@ -883,6 +887,7 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* l
 		struct token* et = NULL;
 		valid = match(ps, token_else, "expected else", &et) && valid;
 		location_update_token(loc, et);
+		/* test case: no test case needed */
 
 		/* destroy et et{} */
 		token_destroy(et);
@@ -925,6 +930,7 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	struct token* module = NULL;
 	valid = match(ps, token_module, "expected module", &module) && valid;
 	location_update_token(loc, module);
+	/* test case: no test case needed */
 
 	token_destroy(module);
 	free(module);
@@ -938,6 +944,7 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expected identifier after module", &id);
 	location_update_token(loc, id);
+	/* test case: test_parse_module_expected_identifier */
 
 	struct ast_node* a = NULL;
 	struct location loc_stmts;
@@ -952,6 +959,7 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	struct token* end = NULL;
 	valid = match(ps, token_end, "expected end", &end) && valid;
 	location_update_token(loc, end);
+	/* test case: test_parse_module_expected_end */
 
 	token_destroy(end);
 	free(end);
@@ -975,7 +983,8 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 		struct symbol* sym = environment_get(ps->st->top, &id->value);
 		if (sym) {
 			buffer_finish(&id->value);
-			valid = set_source_error(ps->el, &id->loc, "variable aready used: %s", &id->value);
+			valid = set_source_error(ps->el, &id->loc, "variable already used: %s", id->value.buf);
+			/* test case: test_parse_module_duplicate_declaration */
 		} else {
 			struct buffer bf;
 			buffer_init(&bf);
