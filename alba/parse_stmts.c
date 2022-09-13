@@ -541,16 +541,19 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 	struct token* f = NULL;
 	valid = match(ps, token_function, "expecting function", &f) && valid;
 	location_update_token(loc, f);
+	/* test case: no test case needed */
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expecting identifier", &id) && valid;
 	location_update_token(loc, id);
+	/* test case: no test case needed */
 
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
-	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
+	valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
 	location_update_token(loc, lp);
+	/* test case: test_parse_function_error_expected_left_parenthesis */
 
 	/* allocate ps{} dseq_node dseq_node{} */
 	struct ast_node* dseq_node = NULL;
@@ -560,8 +563,9 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
-	valid = match(ps, token_right_paren, "expecting right parenthesis", &rp) && valid;
+	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
 	location_update_token(loc, rp);
+	/* test case: test_parse_function_error_expected_right_parenthesis */
 
 	struct ast_node* dret_node = NULL;
 	int num;
@@ -573,6 +577,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 		location_update_token(loc, dc);
 		token_destroy(dc);
 		free(dc);
+		/* test case: no test case needed */
 
 		struct location loc_ret;
 		valid = type(ps, NULL, &dret_node, &loc_ret) && valid;
@@ -620,6 +625,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 			buffer2array(&id->value, &a);
 			valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
 			free(a);
+			/* test case: test_parse_function_error_duplicate_declaration */
 		} else {
 			struct symbol* sym = environment_get(ps->st->top, &id->value);
 			if (sym && sym->td) {
@@ -629,6 +635,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 				buffer2array(&id->value, &a);
 				valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
 				free(a);
+				/* test case: test_parse_function_error_identifier_reserved */
 			} else {
 				struct ast_node* tu = function2type(ps->st, n);
 				struct symbol* new_sym = NULL;
@@ -681,8 +688,9 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd, struct locatio
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
-	valid = match(ps, token_end, "expecting end", &end) && valid;
+	valid = match(ps, token_end, "expected end", &end) && valid;
 	location_update_token(loc, end);
+	/* test case: test_parse_function_error_expected_end */
 
 	/* finish building nodes */
 	if (valid) {

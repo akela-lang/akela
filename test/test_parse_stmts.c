@@ -837,6 +837,101 @@ void test_parse_function_return_type_error()
 	parse_teardown(&ps);
 }
 
+void test_parse_function_error_expected_left_parenthesis()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected left parenthesis");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_function_error_expected_right_parenthesis()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo(", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected right parenthesis");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_function_error_duplicate_declaration()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo() end; function foo() end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "duplicate declaration in same scope: foo");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_function_error_identifier_reserved()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function Int64() end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "identifier reserved as a type: Int64");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_function_error_expected_end()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+	bool valid;
+
+	/* allocate ps{} root root{} */
+	valid = parse_setup("function foo()", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected end");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 /* dynamic-output-none */
 void test_parse_if()
 {
@@ -1843,6 +1938,11 @@ void test_parse_statements()
 	test_parse_function4();
 	test_parse_function5();
 	test_parse_function_return_type_error();
+	test_parse_function_error_expected_left_parenthesis();
+	test_parse_function_error_expected_right_parenthesis();
+	test_parse_function_error_duplicate_declaration();
+	test_parse_function_error_identifier_reserved();
+	test_parse_function_error_expected_end();
 	test_parse_if();
 	test_parse_elseif();
 	test_parse_elseif2();
