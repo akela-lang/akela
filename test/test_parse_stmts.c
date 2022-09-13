@@ -1626,6 +1626,60 @@ void test_parse_for_iteration2()
 	parse_teardown(&ps);
 }
 
+void test_parse_for_iteration_error_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("function list() end; for i::Int64 in list() end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "iteration expression has no value");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_iteration_error_no_child_element()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector; for i::Int64 in list end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "iteration expression has no child element");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_for_iteration_error_cannot_cast()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	/* allocate ps{} root root{} */
+	bool valid = parse_setup("var list::Vector{Bool}; for i::Int64 in list end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "parse_setup valid");
+	expect_compile_error(ps.el, "cannot cast list element");
+
+	/* destroy ps{} root root{} */
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_for_error_after_declaration()
 {
 	test_name(__func__);
@@ -2069,6 +2123,9 @@ void test_parse_statements()
 	test_parse_for_range2();
 	test_parse_for_iteration();
 	test_parse_for_iteration2();
+	test_parse_for_iteration_error_no_value();
+	test_parse_for_iteration_error_no_child_element();
+	test_parse_for_iteration_error_cannot_cast();
 	test_parse_for_error_after_declaration();
 	test_parse_for_error_expected_end();
 	test_parse_for_error_expected_range_start();

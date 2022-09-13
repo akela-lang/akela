@@ -479,6 +479,24 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 	}
 
 	if (valid) {
+		struct ast_node* element = ast_node_get(parent, 0);
+		struct ast_node* element_tu = ast_node_get(element, 1);
+
+		struct ast_node* list_tu = list->tu;
+
+		if (!list_tu) {
+			valid = set_source_error(ps->el, &loc_list, "iteration expression has no value");
+			/* test case: test_parse_for_iteration_error_no_value */
+		} else if (!list_tu->head) {
+			valid = set_source_error(ps->el, &loc_list, "iteration expression has no child element");
+			/* test case: test_parse_for_iteration_error_no_child_element */
+		} else {
+			struct ast_node* element_tu2 = ast_node_get(list_tu, 0);
+			if (!type_use_can_cast(element_tu2, element_tu)) {
+				valid = set_source_error(ps->el, &loc_list, "cannot cast list element");
+				/* test case: test_parse_for_iteration_error_cannot_cast */
+			}
+		}
 	}
 
 	token_destroy(in);

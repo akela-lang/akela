@@ -1,5 +1,5 @@
 # Todo
-* derive type from list in for x in list
+* type check for range (start and end range)
 * verify type for operations
 * check that subscripted variable is an array type
 * allow comma in var
