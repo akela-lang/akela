@@ -16,7 +16,7 @@
 #include "type_def.h"
 #include <assert.h>
 
-bool separator(struct parse_state* ps, int* has_separator, struct location* loc);
+bool separator(struct parse_state* ps, bool* has_separator, struct location* loc);
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -29,6 +29,7 @@ bool function(struct parse_state* ps, struct ast_node** root, struct location* l
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -74,7 +75,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 
 	while (true) {
 		/* allocate ps{} */
-		int has_separator = 0;
+		bool has_separator = false;
 		struct location loc_sep;
 		valid = separator(ps, &has_separator, &loc_sep) && valid;
 
@@ -119,12 +120,12 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 /* separator -> \n | ; */
 /* dynamic-output ps{} */
 /* dynamic-temp sep sep{} */
-bool separator(struct parse_state* ps, int* has_separator, struct location* loc)
+bool separator(struct parse_state* ps, bool* has_separator, struct location* loc)
 {
 	bool valid = true;
 	enum token_enum type;
 	int num;
-	*has_separator = 0;
+	*has_separator = false;
 
 	location_init(loc);
 
@@ -134,10 +135,10 @@ bool separator(struct parse_state* ps, int* has_separator, struct location* loc)
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	if (t0 && t0->type == token_newline) {
 		type = token_newline;
-		*has_separator = 1;
+		*has_separator = true;
 	} else if (t0 && t0->type == token_semicolon) {
 		type = token_semicolon;
-		*has_separator = 1;
+		*has_separator = true;
 	} else {
 		return valid;
 	}
@@ -202,6 +203,9 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	} else if (t0 && t0->type == token_module) {
 		valid = module_nt(ps, &n, loc) && valid;
+
+	} else if (t0 && t0->type == token_struct) {
+		valid = struct_nt(ps, &n, loc) && valid;
 
 	/* expr */
 	} else {
@@ -1059,6 +1063,104 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 
 	token_destroy(id);
 	free(id);
+
+	return valid;
+}
+
+/* struct_np -> struct id struct_stmts end */
+/* struct_stmts -> declaration struct_stmts | e */
+/* struct_stmts' -> separator declaration | e */
+bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+{
+	bool valid = true;
+	struct ast_node* n = NULL;
+
+	location_init(loc);
+
+	struct token* st = NULL;
+	valid = match(ps, token_struct, "expected struct", &st) && valid;
+	location_update_token(loc, st);
+
+	struct token* id = NULL;
+	valid = match(ps, token_id, "expected identifier", &id) && valid;
+	location_update_token(loc, id);
+
+	struct ast_node* a = NULL;
+	struct location a_loc;
+	valid = declaration(ps, &a, &a_loc) && valid;
+	location_update(loc, &a_loc);
+
+	ast_node_create(&n);
+	n->type = ast_type_struct;
+
+	if (a) {
+		ast_node_add(n, a);
+	} else {
+		ast_node_destroy(n);
+		valid = location_default(ps, loc) && valid;
+		return valid;
+	}
+
+	while (true) {
+		bool has_separator;
+		struct location sep_loc;
+		valid = separator(ps, &has_separator, &sep_loc) && valid;
+		location_update(loc, &sep_loc);
+
+		if (!has_separator) {
+			break;
+		}
+
+		struct ast_node* b = NULL;
+		struct location b_loc;
+		valid = declaration(ps, &b, &b_loc) && valid;
+		location_update(loc, &b_loc);
+
+		if (b) {
+			ast_node_add(n, b);
+		}
+	}
+
+	struct token* end = NULL;
+	valid = match(ps, token_end, "expected end", &end);
+	location_update_token(loc, end);
+
+	if (valid) {
+		struct symbol* search = environment_get_local(ps->st->top, &id->value);
+		if (search) {
+			buffer_finish(&id->value);
+			valid = set_source_error(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
+		} else {
+			struct ast_node* tu = ast_node_copy(n);
+			struct type_def* td = NULL;
+			malloc_safe(&td, sizeof(struct type_def));
+			type_def_init(td);
+			td->type = type_struct;
+			buffer_copy(&id->value, &td->name);
+			td->composite = tu;
+			struct symbol* sym = NULL;
+			malloc_safe(&sym, sizeof(struct symbol));
+			symbol_init(sym);
+			sym->tk_type = token_id;
+			sym->td = td;
+			environment_put(ps->st->top, &id->value, sym);
+		}
+	}
+
+	token_destroy(st);
+	free(st);
+	token_destroy(id);
+	free(id);
+	token_destroy(end);
+	free(end);
+
+	valid = location_default(ps, loc) && valid;
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
 
 	return valid;
 }

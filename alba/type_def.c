@@ -21,6 +21,7 @@ void type_def_init(struct type_def* n)
 	n->bit_count = 0;
 	n->is_generic = false;
 	n->generic_count = 0;
+	n->composite = NULL;
 }
 
 /* dynamic-destroy n n{} */
@@ -29,6 +30,7 @@ void type_def_destroy(struct type_def* n)
 	if (n) {
 		/* destroy n n{} */
 		buffer_destroy(&n->name);
+		ast_node_destroy(n->composite);
 		free(n);
 	}
 }

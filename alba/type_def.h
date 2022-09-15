@@ -30,6 +30,7 @@ struct type_def {
 	int bit_count;
 	bool is_generic;
 	int generic_count;
+	struct ast_node* composite;
 };
 
 /* dynamic-output n */

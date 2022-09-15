@@ -52,6 +52,7 @@ enum token_enum {
     token_caret,
     token_module,
     token_dot,
+    token_struct,
     token_count     /* keep at the end */
 };
 
@@ -65,7 +66,7 @@ enum result token_name_init(char** token_name)
 
     token_name[token_none] = "none";
     token_name[token_number] = "number";
-    token_name[token_id] = "word";
+    token_name[token_id] = "id";
     token_name[token_equal] = "equal";
     token_name[token_plus] = "plus";
     token_name[token_minus] = "minus";
@@ -110,6 +111,7 @@ enum result token_name_init(char** token_name)
     token_name[token_caret] = "^";
     token_name[token_module] = "module";
     token_name[token_dot] = "dot";
+    token_name[token_struct] = "struct";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

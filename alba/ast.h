@@ -53,6 +53,7 @@ enum ast_type {
 	ast_type_type_pool,
 	ast_type_dot,
 	ast_type_module,
+	ast_type_struct,
 	ast_type_count		/* keep at end */
 };
 
