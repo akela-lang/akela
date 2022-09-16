@@ -25,4 +25,6 @@ ALBA_API struct ast_node* get_function_input_type(struct ast_node* tu, int index
 
 ALBA_API bool check_input_type(struct parse_state* ps, struct ast_node* tu, int index, struct ast_node* a, struct location* loc_expr);
 
+ALBA_API struct ast_node* make_constructor(struct type_def* td);
+
 #endif

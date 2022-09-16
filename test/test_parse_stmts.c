@@ -756,6 +756,7 @@ void test_parse_function4()
 
 	struct ast_node* dret_tu = ast_node_get(dret, 0);
 	assert_ptr(dret_tu, "ptr dret_tu");
+	assert_int_equal(dret_tu->type, ast_type_type, "type dret_tu");
 
 	struct type_def* dret_td = dret_tu->td;
 	assert_ptr(dret_td, "ptr dret_td");
@@ -2165,13 +2166,14 @@ void test_parse_struct()
 	struct ast_node* root;
 	struct parse_state ps;
 
-	bool valid = parse_setup("struct Person firstName::String; lastName::String; age::Int64 end; var a::Person", &ps, &root);
+	bool valid = parse_setup("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45)", &ps, &root);
 	expect_no_errors(ps.el);
 	expect_true(valid, "valid");
 
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, ast_type_stmts, "stmts root");
 
+	/* struct */
 	struct ast_node* st = ast_node_get(root, 0);
 	assert_ptr(st, "ptr st");
 	expect_int_equal(st->type, ast_type_struct, "struct st");
@@ -2233,19 +2235,26 @@ void test_parse_struct()
 	expect_int_equal(td2->type, type_integer, "integer td2");
 	expect_str(&td2->name, "Int64", "Int64 td2");
 
-	struct ast_node* var = ast_node_get(root, 1);
+	struct ast_node* assign = ast_node_get(root, 1);
+	assert_ptr(assign, "ptr assign");
+	expect_int_equal(assign->type, ast_type_assign, "assign assign");
+
+	/* assign */
+	struct ast_node* var = ast_node_get(assign, 0);
 	assert_ptr(var, "ptr var");
 	expect_int_equal(var->type, ast_type_var, "var var");
 
-	struct ast_node* dec_a = ast_node_get(var, 0);
-	assert_ptr(dec_a, "ptr dec_a");
-	expect_int_equal(dec_a->type, ast_type_declaration, "id dec_a");
+	/* var */
+	struct ast_node* dec_p = ast_node_get(var, 0);
+	assert_ptr(dec_p, "ptr dec_p");
+	expect_int_equal(dec_p->type, ast_type_declaration, "id dec_p");
 
-	struct ast_node* a = ast_node_get(dec_a, 0);
-	assert_ptr(a, "ptr a");
-	expect_int_equal(a->type, ast_type_id, "id a");
+	struct ast_node* p = ast_node_get(dec_p, 0);
+	assert_ptr(p, "ptr p");
+	expect_int_equal(p->type, ast_type_id, "id p");
+	expect_str(&p->value, "p", "p p");
 
-	struct ast_node* at = ast_node_get(dec_a, 1);
+	struct ast_node* at = ast_node_get(dec_p, 1);
 	assert_ptr(at, "ptr at");
 	expect_int_equal(at->type, ast_type_type, "type at");
 
@@ -2253,6 +2262,35 @@ void test_parse_struct()
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_struct, "struct td");
 	expect_str(&td->name, "Person", "Person td");
+
+	/* constructor call */
+	struct ast_node* call = ast_node_get(assign, 1);
+	assert_ptr(call, "ptr call");
+	expect_int_equal(call->type, ast_type_call, "call call");
+
+	struct ast_node* call_id = ast_node_get(call, 0);
+	assert_ptr(call_id, "ptr call_id");
+	expect_int_equal(call_id->type, ast_type_id, "id call_id");
+	expect_str(&call_id->value, "Person", "Person call_id");
+
+	struct ast_node* cseq = ast_node_get(call, 1);
+	assert_ptr(cseq, "ptr cseq");
+	expect_int_equal(cseq->type, ast_type_cseq, "cseq cseq");
+
+	struct ast_node* a0 = ast_node_get(cseq, 0);
+	assert_ptr(a0, "ptr a0");
+	expect_int_equal(a0->type, ast_type_string, "string a0");
+	expect_str(&a0->value, "John", "John a0");
+
+	struct ast_node* a1 = ast_node_get(cseq, 1);
+	assert_ptr(a1, "ptr a1");
+	expect_int_equal(a1->type, ast_type_string, "string a1");
+	expect_str(&a1->value, "Smith", "Smith a1");
+
+	struct ast_node* a2 = ast_node_get(cseq, 2);
+	assert_ptr(a2, "ptr a2");
+	expect_int_equal(a2->type, ast_type_number, "string a2");
+	expect_str(&a2->value, "45", "45 a2");
 
 	ast_node_destroy(root);
 	parse_teardown(&ps);

@@ -17,6 +17,8 @@ struct symbol {
 	enum token_enum tk_type;
 	struct type_def* td;
 	struct ast_node* tu;
+	struct symbol* constructor;
+	struct ast_node* root;
 };
 
 struct symbol_table {

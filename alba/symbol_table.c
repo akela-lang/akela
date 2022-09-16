@@ -52,6 +52,8 @@ void symbol_init(struct symbol* sym)
 	sym->tk_type = token_none;
 	sym->td = NULL;
 	sym->tu = NULL;
+	sym->constructor = NULL;
+	sym->root = NULL;
 }
 
 /* destroy sym sym{} */
@@ -59,6 +61,10 @@ void environment_destroy_symbol(struct symbol* sym)
 {
 	ast_node_destroy(sym->tu);
 	type_def_destroy(sym->td);
+	if (sym->constructor) {
+		environment_destroy_symbol(sym->constructor);
+	}
+	ast_node_destroy(sym->root);
 	free(sym);
 }
 
@@ -418,9 +424,11 @@ void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest
 			struct symbol* src_sym = p->item;
 			struct symbol* dest_sym = NULL;
 			malloc_safe(&dest_sym, sizeof(struct symbol));
+			symbol_init(dest_sym);
 			dest_sym->tk_type = src_sym->tk_type;
 			dest_sym->td = type_def_copy(src_sym->td);
 			dest_sym->tu = ast_node_copy(src_sym->tu);
+			dest_sym->root = ast_node_copy(src_sym->root);
 			environment_put(dest->global, &p->value, dest_sym);
 			p = p->next;
 		}
@@ -435,9 +443,11 @@ void transfer_module_symbols(struct environment* src, struct environment* dest, 
 			struct symbol* src_sym = p->item;
 			struct symbol* dest_sym = NULL;
 			malloc_safe(&dest_sym, sizeof(struct symbol));
+			symbol_init(dest_sym);
 			dest_sym->tk_type = src_sym->tk_type;
 			dest_sym->td = type_def_copy(src_sym->td);
 			dest_sym->tu = ast_node_copy(src_sym->tu);
+			dest_sym->root = ast_node_copy(src_sym->root);
 
 			/* value is module_name.sym_name */
 			struct buffer value;

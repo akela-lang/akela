@@ -1100,7 +1100,7 @@ bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, s
 			/* transfer a -> parent */
 			ast_node_add(n, a);
 
-			valid = check_input_type(ps, tu, i++, a, &loc_expr) && valid;
+			valid = check_input_type(ps, tu, i, a, &loc_expr) && valid;
 		}
 
 		i++;

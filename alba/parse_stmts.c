@@ -1138,11 +1138,22 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 			td->type = type_struct;
 			buffer_copy(&id->value, &td->name);
 			td->composite = tu;
+			struct ast_node* root = make_constructor(td);
+			struct ast_node* root_tu = function2type(ps->st, root);
+
+			struct symbol* constructor_sym = NULL;
+			malloc_safe(&constructor_sym, sizeof(struct symbol));
+			symbol_init(constructor_sym);
+			constructor_sym->tk_type = token_id;
+			constructor_sym->tu = root_tu;
+			constructor_sym->root = root;
+
 			struct symbol* sym = NULL;
 			malloc_safe(&sym, sizeof(struct symbol));
 			symbol_init(sym);
 			sym->tk_type = token_id;
 			sym->td = td;
+			sym->constructor = constructor_sym;
 			environment_put(ps->st->top, &id->value, sym);
 		}
 	}

@@ -438,6 +438,9 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 			valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
 			/* test case: test_parse_types_missing_declaration */
 		} else {
+			if (!sym->tu) {
+				sym = sym->constructor;
+			}
 			assert(sym->tu);
 			n->tu = ast_node_copy(sym->tu);
 		}
