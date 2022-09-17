@@ -59,6 +59,7 @@ enum result ast_set_names(char** names)
 	names[ast_type_dot] = "dot";
 	names[ast_type_module] = "module";
 	names[ast_type_struct] = "struct";
+	names[ast_type_return] = "return";
 
 	for (int i = 0; i < ast_type_count; i++) {
 		if (names[i] == NULL) {

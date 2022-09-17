@@ -53,6 +53,7 @@ enum token_enum {
     token_module,
     token_dot,
     token_struct,
+    token_return,
     token_count     /* keep at the end */
 };
 
@@ -112,6 +113,7 @@ enum result token_name_init(char** token_name)
     token_name[token_module] = "module";
     token_name[token_dot] = "dot";
     token_name[token_struct] = "struct";
+    token_name[token_return] = "return";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

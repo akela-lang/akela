@@ -19,6 +19,7 @@ struct symbol {
 	struct ast_node* tu;
 	struct symbol* constructor;
 	struct ast_node* root;
+	struct ast_node* root_ptr;
 };
 
 struct symbol_table {
@@ -65,5 +66,8 @@ ALBA_API bool type_use_can_cast(struct ast_node* a, struct ast_node* b);
 ALBA_API void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest);
 
 ALBA_API void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name);
+
+ALBA_API void set_current_function(struct environment* env, struct ast_node* fd);
+ALBA_API struct ast_node* get_current_function(struct environment* env);
 
 #endif

@@ -17,6 +17,7 @@ void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct com
 	ps->el = el;
 	ps->st = st;
 	buffer_init(&ps->qualifier);
+	ps->fd = NULL;
 }
 
 void parse_state_destroy(struct parse_state* ps)

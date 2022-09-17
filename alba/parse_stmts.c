@@ -30,6 +30,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -206,6 +207,9 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	} else if (t0 && t0->type == token_struct) {
 		valid = struct_nt(ps, &n, loc) && valid;
+
+	} else if (t0 && t0->type == token_return) {
+		valid = return_nt(ps, &n, loc) && valid;
 
 	/* expr */
 	} else {
@@ -726,6 +730,7 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd, struct locatio
 	}
 
 	/* allocate ps{} stmts_node stmts_node{} */
+	set_current_function(ps->st->top, fd);
 	struct ast_node* stmts_node = NULL;
 	struct location loc_stmts;
 	valid = stmts(ps, true, &stmts_node, &loc_stmts) && valid;
@@ -1166,6 +1171,61 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	free(end);
 
 	valid = location_default(ps, loc) && valid;
+
+	if (valid) {
+		*root = n;
+	} else {
+		ast_node_destroy(n);
+	}
+
+	return valid;
+}
+
+/* return_nt -> return expr | return */
+bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+{
+	bool valid = true;
+	struct ast_node* n = NULL;
+
+	location_init(loc);
+
+	struct token* ret = NULL;
+	valid = match(ps, token_return, "expected return", &ret) && valid;
+	location_update_token(loc, ret);
+
+	struct ast_node* a = NULL;
+	struct location a_loc;
+	valid = expr(ps, &a, &a_loc) && valid;
+	location_update(loc, &a_loc);
+
+	valid = location_default(ps, loc) && valid;
+
+	if (valid) {
+		ast_node_create(&n);
+		n->type = ast_type_return;
+		ast_node_add(n, a);
+	} else {
+		ast_node_destroy(a);
+	}
+
+	if (valid) {
+		if (a) {
+			if (!a->tu) {
+				valid = set_source_error(ps->el, &a_loc, "return expression has no value");
+				/* test case: test_parse_return_error_no_value */
+			} else {
+				n->tu = ast_node_copy(a->tu);
+				struct ast_node* fd = get_current_function(ps->st->top);
+				if (!fd) {
+					valid = set_source_error(ps->el, &ret->loc, "return statement outside of function");
+					/* test case: test_parse_return_error_outside_of_function */
+				} else {
+					check_return_type(ps, fd, n, &ret->loc, &valid);
+					/* test case: test_parse_return_error_type_does_not_match */
+				}
+			}
+		}
+	}
 
 	if (valid) {
 		*root = n;

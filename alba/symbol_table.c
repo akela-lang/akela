@@ -54,6 +54,7 @@ void symbol_init(struct symbol* sym)
 	sym->tu = NULL;
 	sym->constructor = NULL;
 	sym->root = NULL;
+	sym->root_ptr = NULL;
 }
 
 /* destroy sym sym{} */
@@ -116,6 +117,7 @@ void symbol_table_init_reserved(struct environment* env)
 	symbol_table_add_reserved(env, "false", token_boolean, NULL);
 	symbol_table_add_reserved(env, "module", token_module, NULL);
 	symbol_table_add_reserved(env, "struct", token_struct, NULL);
+	symbol_table_add_reserved(env, "return", token_return, NULL);
 }
 
 void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)
@@ -416,19 +418,29 @@ bool type_use_can_cast(struct ast_node* a, struct ast_node* b)
 	}
 }
 
+struct symbol* symbol_copy(struct symbol* sym)
+{
+	struct symbol* new_sym = NULL;
+	if (sym) {
+		malloc_safe(&new_sym, sizeof(struct symbol));
+		symbol_init(new_sym);
+		new_sym->tk_type = sym->tk_type;
+		new_sym->tu = ast_node_copy(sym->tu);
+		new_sym->td = type_def_copy(sym->td);
+		new_sym->constructor = symbol_copy(sym->constructor);
+		new_sym->root = ast_node_copy(sym->root);
+		new_sym->root_ptr = sym->root_ptr;
+	}
+	return new_sym;
+}
+
 void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest)
 {
 	for (int i = 0; i < src->global->ht.size; i++) {
 		struct hash_entry* p = src->global->ht.buckets[i].head;
 		while (p) {
 			struct symbol* src_sym = p->item;
-			struct symbol* dest_sym = NULL;
-			malloc_safe(&dest_sym, sizeof(struct symbol));
-			symbol_init(dest_sym);
-			dest_sym->tk_type = src_sym->tk_type;
-			dest_sym->td = type_def_copy(src_sym->td);
-			dest_sym->tu = ast_node_copy(src_sym->tu);
-			dest_sym->root = ast_node_copy(src_sym->root);
+			struct symbol* dest_sym = symbol_copy(src_sym);
 			environment_put(dest->global, &p->value, dest_sym);
 			p = p->next;
 		}
@@ -441,13 +453,7 @@ void transfer_module_symbols(struct environment* src, struct environment* dest, 
 		struct hash_entry* p = src->ht.buckets[i].head;
 		while (p) {
 			struct symbol* src_sym = p->item;
-			struct symbol* dest_sym = NULL;
-			malloc_safe(&dest_sym, sizeof(struct symbol));
-			symbol_init(dest_sym);
-			dest_sym->tk_type = src_sym->tk_type;
-			dest_sym->td = type_def_copy(src_sym->td);
-			dest_sym->tu = ast_node_copy(src_sym->tu);
-			dest_sym->root = ast_node_copy(src_sym->root);
+			struct symbol* dest_sym = symbol_copy(src_sym);
 
 			/* value is module_name.sym_name */
 			struct buffer value;
@@ -459,5 +465,34 @@ void transfer_module_symbols(struct environment* src, struct environment* dest, 
 
 			p = p->next;
 		}
+	}
+}
+
+void set_current_function(struct environment* env, struct ast_node* fd)
+{
+	struct symbol* sym = NULL;
+	malloc_safe(&sym, sizeof(struct symbol));
+	symbol_init(sym);
+	sym->tk_type = token_id;
+	sym->root_ptr = fd;
+
+	struct buffer bf;
+	buffer_init(&bf);
+	buffer_copy_str(&bf, "|current_function|");
+	environment_put(env, &bf, sym);
+	buffer_destroy(&bf);
+}
+
+struct ast_node* get_current_function(struct environment* env)
+{
+	struct buffer bf;
+	buffer_init(&bf);
+	buffer_copy_str(&bf, "|current_function|");
+	struct symbol* sym = environment_get(env, &bf);
+	buffer_destroy(&bf);
+	if (sym) {
+		return sym->root_ptr;
+	} else {
+		return NULL;
 	}
 }

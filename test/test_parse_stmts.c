@@ -2294,7 +2294,81 @@ void test_parse_struct()
 
 	ast_node_destroy(root);
 	parse_teardown(&ps);
+}
 
+void test_parse_return()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("function foo()::Int64 return 1 end", &ps, &root);
+	expect_no_errors(ps.el);
+	expect_true(valid, "valid");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_return_error_no_value()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("function bar() end; function foo()::Int64 return bar() end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "return expression has no value");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_return_error_outside_of_function()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("return true", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "return statement outside of function");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_return_error_type_does_not_match()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("function foo()::Int64 return true end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "returned type does not match function return type");
+
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
 }
 
 /* dynamic-output-none */
@@ -2358,4 +2432,8 @@ void test_parse_statements()
 	test_parse_dot_error_left_non_module();
 	test_parse_dot_error_right_not_identifier();
 	test_parse_struct();
+	test_parse_return();
+	test_parse_return_error_no_value();
+	test_parse_return_error_outside_of_function();
+	test_parse_return_error_type_does_not_match();
 }
