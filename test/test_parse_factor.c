@@ -19,7 +19,10 @@ void test_parse_var()
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse valid");
 
-	struct ast_node* var = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	assert_int_equal(root->type, ast_type_stmts, "stmts root");
+
+	struct ast_node* var = ast_node_get(root, 0);
 	assert_ptr(var, "ptr var");
 	expect_int_equal(var->type, ast_type_var, "var");
 

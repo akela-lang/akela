@@ -20,9 +20,11 @@ void test_parse_blank()
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	expect_int_equal(root->type, ast_type_stmts, "stmts root");
 
-	assert_null(root, "null root");
+	struct ast_node* node = ast_node_get(root, 0);
+	assert_null(node, "null node");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);
@@ -790,17 +792,19 @@ void test_parse_add_mult()
 	assert_no_errors(ps.el);
 	expect_true(valid, "parse_setup valid");
 
-	root = check_stmts(root, "stmts root");
+	assert_ptr(root, "ptr root");
+	assert_int_equal(root->type, ast_type_stmts, "stmts root");
 
-	assert_ptr(root, "root");
-	assert_int_equal(root->type, ast_type_plus, "plus");
+	struct ast_node* plus = ast_node_get(root, 0);
+	assert_ptr(plus, "root");
+	assert_int_equal(plus->type, ast_type_plus, "plus");
 
-	struct ast_node* left = ast_node_get(root, 0);
+	struct ast_node* left = ast_node_get(plus, 0);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, ast_type_number, "number");
 	expect_str(&left->value, "5", "5");
 
-	struct ast_node* right = ast_node_get(root, 1);
+	struct ast_node* right = ast_node_get(plus, 1);
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, ast_type_mult, "mult");
 

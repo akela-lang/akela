@@ -96,12 +96,3 @@ void parse_teardown(struct parse_state* ps)
 	/* destroy ps{lookahead{}}*/
 	parse_state_destroy(ps);
 }
-
-/* dynamic-output-none */
-struct ast_node* check_stmts(struct ast_node* root, char* message)
-{
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, message);
-
-	return ast_node_get(root, 0);
-}
