@@ -1,7 +1,7 @@
 # Todo
 * use compile_unit in parse test setup
-  * parse_types
-  * parse_expr
-  * parse_stmts
+  * test_parse_types
+  * test_parse_expr
+  * test_parse_stmts
 * link to LLVM
 * generate LLVM IR
