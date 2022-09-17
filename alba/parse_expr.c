@@ -1131,9 +1131,8 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	struct ast_node* left = n = a;
 	struct location loc_left = loc_a;
+	if (ps->qualifier.size > 0) buffer_add_char(&ps->qualifier, '.');
 	buffer_copy(&a->value, &ps->qualifier);
-	buffer_add_char(&ps->qualifier, '.');
-
 	while (true) {
 		struct token* t0 = NULL;
 		int num;
@@ -1187,8 +1186,8 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 			if (!tu_left) {
 				valid = set_source_error(ps->el, &loc_left, "dot operand has no value");
 				/* test case: no test case necessary */
-			} else if (tu_left->td->type != type_module) {
-				valid = set_source_error(ps->el, &loc_left, "dot on non-module operand");
+			} else if (tu_left->td->type != type_module && tu_left->td->type != type_struct) {
+				valid = set_source_error(ps->el, &loc_left, "dot operand is not a module or struct");
 				/* test case: test_parse_dot_error_left_non_module */
 			}
 
@@ -1216,8 +1215,8 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 			left = n;
 			#pragma warning(suppress:6001)
 			loc_left = dot->loc;
+			if (ps->qualifier.size > 0) buffer_add_char(&ps->qualifier, '.');
 			buffer_copy(&b->value, &ps->qualifier);
-			buffer_add_char(&ps->qualifier, '.');
 		}
 
 		token_destroy(dot);

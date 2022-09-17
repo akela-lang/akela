@@ -430,19 +430,57 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	if (valid) {
 		struct buffer full_id;
 		buffer_init(&full_id);
-		buffer_copy(&ps->qualifier, &full_id);
-		buffer_copy(&id->value, &full_id);
-		struct symbol* sym = environment_get(ps->st->top, &full_id);
-		if (!sym) {
-			buffer_finish(&full_id);
-			valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
-			/* test case: test_parse_types_missing_declaration */
-		} else {
-			if (!sym->tu) {
-				sym = sym->constructor;
+		bool is_struct = false;
+		struct symbol* sym = NULL;
+		if (ps->qualifier.size > 0) {
+			sym = environment_get(ps->st->top, &ps->qualifier);
+			if (sym && sym->tu && sym->tu->td->type == type_struct) {
+				buffer_copy(&ps->qualifier, &full_id);
+				is_struct = true;
+			} else {
+				buffer_copy(&ps->qualifier, &full_id);
+				buffer_add_char(&full_id, '.');
+				buffer_copy(&id->value, &full_id);
 			}
-			assert(sym->tu);
-			n->tu = ast_node_copy(sym->tu);
+		} else {
+			buffer_copy(&id->value, &full_id);
+		}
+		if (is_struct) {
+			struct ast_node* tu = sym->tu->td->composite;
+			assert(tu);
+			bool found_id = false;
+			struct ast_node* found_tu = NULL;
+			struct ast_node* dec = tu->head;
+			while (dec) {
+				struct ast_node* field_id = ast_node_get(dec, 0);
+				if (field_id) {
+					if (buffer_compare(&id->value, &field_id->value)) {
+						found_id = true;
+						found_tu = ast_node_get(dec, 1);
+					}
+				}
+				dec = dec->next;
+			}
+
+			if (found_id) {
+				n->tu = ast_node_copy(found_tu);
+			} else {
+				buffer_finish(&id->value);
+				valid = set_source_error(ps->el, &id->loc, "variable not a field of struct: %s", id->value.buf);
+			}
+		} else {
+			struct symbol* sym = environment_get(ps->st->top, &full_id);
+			if (!sym) {
+				buffer_finish(&full_id);
+				valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
+				/* test case: test_parse_types_missing_declaration */
+			} else {
+				if (!sym->tu) {
+					sym = sym->constructor;
+				}
+				assert(sym->tu);
+				n->tu = ast_node_copy(sym->tu);
+			}
 		}
 	}
 

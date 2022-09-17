@@ -1,5 +1,4 @@
 # Todo
-* allow struct subfield access with dot
 * use lookahead_char to lex compound operators
 * use location in compile_error
 * link to LLVM

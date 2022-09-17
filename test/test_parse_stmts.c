@@ -2137,7 +2137,7 @@ void test_parse_dot_error_left_non_module()
 	bool valid = parse_setup("function foo() end; module math var pi::Float64 = 3.14 end; true.1", &ps, &root);
 	expect_has_errors(ps.el);
 	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "dot on non-module operand");
+	expect_compile_error(ps.el, "dot operand is not a module or struct");
 
 	ast_node_destroy(root);
 	parse_teardown(&ps);
@@ -2166,7 +2166,7 @@ void test_parse_struct()
 	struct ast_node* root;
 	struct parse_state ps;
 
-	bool valid = parse_setup("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45)", &ps, &root);
+	bool valid = parse_setup("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45); p.firstName", &ps, &root);
 	expect_no_errors(ps.el);
 	expect_true(valid, "valid");
 
@@ -2291,6 +2291,22 @@ void test_parse_struct()
 	assert_ptr(a2, "ptr a2");
 	expect_int_equal(a2->type, ast_type_number, "string a2");
 	expect_str(&a2->value, "45", "45 a2");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_struct_error_not_field()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45); p.abc", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "variable not a field of struct: abc");
 
 	ast_node_destroy(root);
 	parse_teardown(&ps);
@@ -2496,6 +2512,7 @@ void test_parse_statements()
 	test_parse_dot_error_left_non_module();
 	test_parse_dot_error_right_not_identifier();
 	test_parse_struct();
+	test_parse_struct_error_not_field();
 	test_parse_struct_error_expected_identifier();
 	test_parse_struct_error_expected_end();
 	test_parse_struct_error_expected_end2();

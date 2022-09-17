@@ -14,7 +14,6 @@ struct parse_state {
 	struct compile_error_list* el;
 	struct symbol_table* st;
 	struct buffer qualifier;
-	struct ast_node* fd;
 };
 
 /* dynamic-output-none */
