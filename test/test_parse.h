@@ -13,4 +13,7 @@ enum result parse_setup(char* line, struct parse_state* ps, struct ast_node** ro
 /* dynamic-destroy ps{} */
 void parse_teardown(struct parse_state* ps);
 
+bool parse_setup2(char* line, struct comp_unit* cu);
+void parse_teardown2(struct comp_unit* cu);
+
 #endif

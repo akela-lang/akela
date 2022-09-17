@@ -27,9 +27,10 @@ void comp_unit_destroy(struct comp_unit* cu)
 	symbol_table_destroy(&cu->st);
 }
 
-enum result comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data id, struct parse_state** ps)
+bool comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data id, struct parse_state** ps)
 {
 	enum result r = result_ok;
+	bool valid = true;
 	*ps = NULL;
 
 	/* allocate conv{} */
@@ -40,8 +41,8 @@ enum result comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data i
 	if (r == result_error) {
 		struct location loc;
 		location_init(&loc);
-		set_source_error(&cu->el, &loc, "conv_open: %s", error_message);
-		return r;
+		valid = set_source_error(&cu->el, &loc, "conv_open: %s", error_message);
+		return valid;
 	}
 
 	/* destroy root root{} */
@@ -59,16 +60,20 @@ enum result comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data i
 	malloc_safe(ps, sizeof(struct parse_state));
 	parse_state_init(*ps, sns, &cu->el, &cu->st);
 
-	return r;
+	return valid;
 }
 
 bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id)
 {
+	bool valid = true;
 	struct parse_state* ps = NULL;
-	enum result r = comp_unit_setup(cu, ig, id, &ps);
-	cu->valid = parse(ps, &cu->root);
+	valid = comp_unit_setup(cu, ig, id, &ps) && valid;
+	if (valid) {
+		valid = parse(ps, &cu->root) && valid;
+	}
 	comp_unit_teardown(cu, ps);
-	return cu->valid;
+	cu->valid = valid;
+	return valid;
 }
 
 void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)

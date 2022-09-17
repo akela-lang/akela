@@ -19,7 +19,7 @@ struct comp_unit {
 
 ALBA_API void comp_unit_init(struct comp_unit* cu);
 ALBA_API void comp_unit_destroy(struct comp_unit* cu);
-ALBA_API enum result comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data id, struct parse_state** ps);
+ALBA_API bool comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data id, struct parse_state** ps);
 ALBA_API bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id);
 ALBA_API void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps);
 
