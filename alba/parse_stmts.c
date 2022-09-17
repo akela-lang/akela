@@ -1089,6 +1089,7 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	struct token* id = NULL;
 	valid = match(ps, token_id, "expected identifier", &id) && valid;
 	location_update_token(loc, id);
+	/* test case: test_parse_struct_error_expected_identifier */
 
 	struct ast_node* a = NULL;
 	struct location a_loc;
@@ -1100,10 +1101,6 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 
 	if (a) {
 		ast_node_add(n, a);
-	} else {
-		ast_node_destroy(n);
-		valid = location_default(ps, loc) && valid;
-		return valid;
 	}
 
 	while (true) {
@@ -1127,14 +1124,16 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	}
 
 	struct token* end = NULL;
-	valid = match(ps, token_end, "expected end", &end);
+	valid = match(ps, token_end, "expected end", &end) && valid;
 	location_update_token(loc, end);
+	/* test case: test_parse_struct_error_expected_end */
 
 	if (valid) {
 		struct symbol* search = environment_get_local(ps->st->top, &id->value);
 		if (search) {
 			buffer_finish(&id->value);
 			valid = set_source_error(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
+			/* test case: test_parse_struct_error_duplicate */
 		} else {
 			struct ast_node* tu = ast_node_copy(n);
 			struct type_def* td = NULL;
@@ -1192,6 +1191,7 @@ bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	struct token* ret = NULL;
 	valid = match(ps, token_return, "expected return", &ret) && valid;
 	location_update_token(loc, ret);
+	/* test case: no test case needed */
 
 	struct ast_node* a = NULL;
 	struct location a_loc;

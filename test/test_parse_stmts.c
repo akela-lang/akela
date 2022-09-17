@@ -2296,6 +2296,70 @@ void test_parse_struct()
 	parse_teardown(&ps);
 }
 
+void test_parse_struct_error_expected_identifier()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("struct end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected identifier");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_struct_error_expected_end()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("struct Person", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected end");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_struct_error_expected_end2()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("struct Person x::Int64", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "expected end");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
+void test_parse_struct_error_duplicate()
+{
+	test_name(__func__);
+
+	struct ast_node* root;
+	struct parse_state ps;
+
+	bool valid = parse_setup("var Person::Int64 = 1; struct Person end", &ps, &root);
+	expect_has_errors(ps.el);
+	expect_false(valid, "valid");
+	expect_compile_error(ps.el, "duplicate variable in scope: Person");
+
+	ast_node_destroy(root);
+	parse_teardown(&ps);
+}
+
 void test_parse_return()
 {
 	test_name(__func__);
@@ -2432,6 +2496,10 @@ void test_parse_statements()
 	test_parse_dot_error_left_non_module();
 	test_parse_dot_error_right_not_identifier();
 	test_parse_struct();
+	test_parse_struct_error_expected_identifier();
+	test_parse_struct_error_expected_end();
+	test_parse_struct_error_expected_end2();
+	test_parse_struct_error_duplicate();
 	test_parse_return();
 	test_parse_return_error_no_value();
 	test_parse_return_error_outside_of_function();
