@@ -12,10 +12,7 @@
 /* dynamic-output-none */
 void compile_error_init(struct compile_error* e)
 {
-	e->line = 0;
-	e->col = 0;
-	e->byte_pos = 0;
-	e->byte_count = 0;
+	location_init(&e->loc);
 	e->next = NULL;
 	e->prev = NULL;
 }
@@ -75,10 +72,7 @@ bool set_source_error(struct compile_error_list* el, struct location* loc, const
 	char* p = e->message;
 
 	if (loc) {
-		e->line = loc->line;
-		e->col = loc->col;
-		e->byte_pos = loc->byte_pos;
-		e->byte_count = loc->byte_count;
+		e->loc = *loc;
 	}
 
 	char last = 0;
@@ -125,8 +119,8 @@ enum result format_error(struct compile_error* e, input_getchar f, input_seek se
 	buffer_add_char(bf, '\n');
 
 	/* use d */
-	int err = seek(d, e->byte_pos);
-	if (err) return set_error("seek error: seek %zu", e->byte_pos);
+	int err = seek(d, e->loc.byte_pos);
+	if (err) return set_error("seek error: seek %zu", e->loc.byte_pos);
 
 	int c;
 	while (c = f(d)) {

@@ -10,12 +10,16 @@
 
 #define COMPILE_ERROR_MESSAGE_SIZE 100
 
-struct compile_error {
-	char message[COMPILE_ERROR_MESSAGE_SIZE];
+struct location {
 	size_t line;
 	size_t col;
 	size_t byte_pos;
 	size_t byte_count;
+};
+
+struct compile_error {
+	char message[COMPILE_ERROR_MESSAGE_SIZE];
+	struct location loc;
 	struct compile_error* next;
 	struct compile_error* prev;
 };
@@ -23,13 +27,6 @@ struct compile_error {
 struct compile_error_list {
 	struct compile_error* head;
 	struct compile_error* tail;
-};
-
-struct location {
-	size_t line;
-	size_t col;
-	size_t byte_pos;
-	size_t byte_count;
 };
 
 /* dynamic-output-none */

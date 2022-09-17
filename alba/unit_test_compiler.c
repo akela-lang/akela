@@ -129,14 +129,14 @@ void expect_compile_error_fields(struct compile_error* e, size_t line, size_t co
 	bool has_error = 0;
 	test_called();
 
-	if (e->line != line) {
-		set_error("(%zu) = (%zu) line error", e->line, line);
+	if (e->loc.line != line) {
+		set_error("(%zu) = (%zu) line error", e->loc.line, line);
 		has_error = true;
-	} else if (e->col != col) {
-		set_error("(%zu) = (%zu) col error", e->col, col);
+	} else if (e->loc.col != col) {
+		set_error("(%zu) = (%zu) col error", e->loc.col, col);
 		has_error = true;
-	} else if (e->byte_pos != byte_pos) {
-		set_error("(%zu) = (%zu) col error", e->byte_pos, byte_pos);
+	} else if (e->loc.byte_pos != byte_pos) {
+		set_error("(%zu) = (%zu) col error", e->loc.byte_pos, byte_pos);
 		has_error = true;
 	}
 

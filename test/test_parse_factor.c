@@ -1622,10 +1622,10 @@ void test_parse_call_type_error()
 	expect_false(valid, "parse_setup valid");
 	struct compile_error* e = expect_compile_error(ps.el, "parameter and aguments types do not match");
 	assert_ptr(e, "ptr e");
-	expect_int_equal(e->line, 1, "line");
-	expect_int_equal(e->col, 33, "col");
-	expect_int_equal(e->byte_pos, 32, "byte_pos");
-	expect_int_equal(e->byte_count, 4, "byte_count");
+	expect_int_equal(e->loc.line, 1, "line");
+	expect_int_equal(e->loc.col, 33, "col");
+	expect_int_equal(e->loc.byte_pos, 32, "byte_pos");
+	expect_int_equal(e->loc.byte_count, 4, "byte_count");
 
 	/* destroy ps{} root root{} */
 	ast_node_destroy(root);

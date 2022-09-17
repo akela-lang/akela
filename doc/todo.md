@@ -1,5 +1,4 @@
 # Todo
-* use lookahead_char to lex compound operators
-* use location in compile_error
+* use compile_unit in parse test setup
 * link to LLVM
 * generate LLVM IR
