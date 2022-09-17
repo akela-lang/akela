@@ -315,7 +315,7 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
-	valid = declaration(ps, &dec, &loc_dec) && valid;
+	valid = declaration(ps, true, &dec, &loc_dec) && valid;
 	location_update(loc, &loc_dec);
 
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -1093,7 +1093,7 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 
 	struct ast_node* a = NULL;
 	struct location a_loc;
-	valid = declaration(ps, &a, &a_loc) && valid;
+	valid = declaration(ps, false, &a, &a_loc) && valid;
 	location_update(loc, &a_loc);
 
 	ast_node_create(&n);
@@ -1115,7 +1115,7 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 
 		struct ast_node* b = NULL;
 		struct location b_loc;
-		valid = declaration(ps, &b, &b_loc) && valid;
+		valid = declaration(ps, false, &b, &b_loc) && valid;
 		location_update(loc, &b_loc);
 
 		if (b) {

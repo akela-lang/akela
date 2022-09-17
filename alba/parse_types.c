@@ -33,7 +33,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate a */
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
-	valid = declaration(ps, &dec, &loc_dec) && valid;
+	valid = declaration(ps, true, &dec, &loc_dec) && valid;
 	location_update(loc, &loc_dec);
 
 	if (!dec) {
@@ -68,7 +68,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		/* allocate a */
 		struct ast_node* dec = NULL;
 		struct location loc_dec;
-		valid = declaration(ps, &dec, &loc_dec) && valid;
+		valid = declaration(ps, true, &dec, &loc_dec) && valid;
 		location_update(loc, &loc_dec);
 		
 		if (!dec || !valid) {
@@ -92,7 +92,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 /* declaration -> id :: type | id */
 /* dynamic-output ps{} root root{} */
-bool declaration(struct parse_state* ps, struct ast_node** root, struct location* loc)
+bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
@@ -122,7 +122,11 @@ bool declaration(struct parse_state* ps, struct ast_node** root, struct location
 
 		struct ast_node* type_use = NULL;
 		struct location loc_type;
-		valid = type(ps, id, &type_use, &loc_type) && valid;
+		if (add_symbol) {
+			valid = type(ps, id, &type_use, &loc_type) && valid;
+		} else {
+			valid = type(ps, NULL, &type_use, &loc_type) && valid;
+		}
 		location_update(loc, &loc_type);
 
 		if (!type_use) {

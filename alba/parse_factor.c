@@ -98,7 +98,7 @@ bool var(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate ps{} id id{} */
 	struct ast_node* a = NULL;
 	struct location loc_dec;
-	valid = declaration(ps, &a, &loc_dec) && valid;
+	valid = declaration(ps, true, &a, &loc_dec) && valid;
 	location_update(loc, &loc_dec);
 
 	if (!a) {
