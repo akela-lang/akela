@@ -5,24 +5,23 @@
 #include "test_parse.h"
 #include "alba/input.h"
 #include "alba/type_def.h"
+#include "alba/comp_unit.h"
 
 /* dynamic-output-none */
 void test_parse_assign()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
+	
+	parse_setup2("var a::Int64; a = 1", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var a::Int64; a = 1", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
-
-	struct ast_node* assign = ast_node_get(root, 1);
+	struct ast_node* assign = ast_node_get(cu.root, 1);
 	assert_ptr(assign, "ptr assign");
 	assert_int_equal(assign->type, ast_type_assign, "assign");
 
@@ -36,9 +35,7 @@ void test_parse_assign()
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "1", "1");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -46,18 +43,16 @@ void test_parse_assign2()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
+	
+	parse_setup2("var a::Int64; a = 1 + 2", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var a::Int64; a = 1 + 2", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
-
-	struct ast_node* assign = ast_node_get(root, 1);
+	struct ast_node* assign = ast_node_get(cu.root, 1);
 	assert_ptr(assign, "ptr assign");
 	assert_int_equal(assign->type, ast_type_assign, "assign");
 
@@ -79,10 +74,8 @@ void test_parse_assign2()
 	assert_ptr(right2, "right");
 	expect_int_equal(right2->type, ast_type_number, "number2");
 	expect_str(&right2->value, "2", "2");
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -90,18 +83,16 @@ void test_parse_stmts()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
+	
+	parse_setup2("var i::Int64; var x::Int64; i + 1; x * 1", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var i::Int64; var x::Int64; i + 1; x * 1", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "ptr1");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts");
 
-	assert_ptr(root, "ptr1");
-	expect_int_equal(root->type, ast_type_stmts, "stmts");
-
-	struct ast_node* left = ast_node_get(root, 2);
+	struct ast_node* left = ast_node_get(cu.root, 2);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, ast_type_plus, "plus");
 
@@ -115,7 +106,7 @@ void test_parse_stmts()
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "1", "1");
 
-	struct ast_node* right2 = ast_node_get(root, 3);
+	struct ast_node* right2 = ast_node_get(cu.root, 3);
 	assert_ptr(right2, "right2");
 	expect_int_equal(right2->type, ast_type_mult, "mult");
 
@@ -129,9 +120,7 @@ void test_parse_stmts()
 	expect_int_equal(right3->type, ast_type_number, "number2");
 	expect_str(&right3->value, "1", "1");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -139,18 +128,16 @@ void test_parse_stmts2()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
+	
+	parse_setup2("var x::Int64; x+1\n5-4\n", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var x::Int64; x+1\n5-4\n", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts");
 
-	assert_ptr(root, "root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts");
-
-	struct ast_node* a = ast_node_get(root, 1);
+	struct ast_node* a = ast_node_get(cu.root, 1);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_plus, "plus a");
 
@@ -164,7 +151,7 @@ void test_parse_stmts2()
 	expect_int_equal(c->type, ast_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct ast_node* d = ast_node_get(root, 2);
+	struct ast_node* d = ast_node_get(cu.root, 2);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, ast_type_minus, "minus d");
 
@@ -177,10 +164,8 @@ void test_parse_stmts2()
 	assert_ptr(f, "ptr f");
 	expect_int_equal(f->type, ast_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -188,18 +173,16 @@ void test_parse_stmts3()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
+	
+	parse_setup2("var x::Int64; var y::Int64; var z::Int64; x+1; 5-4; y+z", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var x::Int64; var y::Int64; var z::Int64; x+1; 5-4; y+z", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts");
 
-	assert_ptr(root, "root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts");
-
-	struct ast_node* a = ast_node_get(root, 3);
+	struct ast_node* a = ast_node_get(cu.root, 3);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_plus, "plus a");
 
@@ -213,7 +196,7 @@ void test_parse_stmts3()
 	expect_int_equal(c->type, ast_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct ast_node* d = ast_node_get(root, 4);
+	struct ast_node* d = ast_node_get(cu.root, 4);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, ast_type_minus, "minus d");
 
@@ -227,7 +210,7 @@ void test_parse_stmts3()
 	expect_int_equal(f->type, ast_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
 
-	struct ast_node* g = ast_node_get(root, 5);
+	struct ast_node* g = ast_node_get(cu.root, 5);
 	assert_ptr(g, "ptr g");
 	expect_int_equal(g->type, ast_type_plus, "plus g");
 
@@ -241,9 +224,7 @@ void test_parse_stmts3()
 	expect_int_equal(i->type, ast_type_id, "id i");
 	expect_str(&i->value, "z", "z c");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -251,18 +232,16 @@ void test_parse_stmts4()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
+	
+	parse_setup2("var x::Int64; var y::Int64; var z::Int64; x+1; 5-4; y+z", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var x::Int64; var y::Int64; var z::Int64; x+1; 5-4; y+z", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts");
 
-	assert_ptr(root, "root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts");
-
-	struct ast_node* a = ast_node_get(root, 3);
+	struct ast_node* a = ast_node_get(cu.root, 3);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_plus, "plus a");
 
@@ -276,7 +255,7 @@ void test_parse_stmts4()
 	expect_int_equal(c->type, ast_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct ast_node* d = ast_node_get(root, 4);
+	struct ast_node* d = ast_node_get(cu.root, 4);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, ast_type_minus, "minus d");
 
@@ -290,7 +269,7 @@ void test_parse_stmts4()
 	expect_int_equal(f->type, ast_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
 
-	struct ast_node* g = ast_node_get(root, 5);
+	struct ast_node* g = ast_node_get(cu.root, 5);
 	assert_ptr(g, "ptr g");
 	expect_int_equal(g->type, ast_type_plus, "plus g");
 
@@ -304,9 +283,7 @@ void test_parse_stmts4()
 	expect_int_equal(i->type, ast_type_id, "id i");
 	expect_str(&i->value, "z", "z c");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -314,18 +291,16 @@ void test_parse_stmts5()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
+	
+	parse_setup2("if true 1 else 2 end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if true 1 else 2 end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "ptr cu.root");
+	assert_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	assert_ptr(root, "ptr root");
-	assert_int_equal(root->type, ast_type_stmts, "stmts root");
-
-	struct ast_node* if_stmt = ast_node_get(root, 0);
+	struct ast_node* if_stmt = ast_node_get(cu.root, 0);
 	assert_ptr(if_stmt, "ptr if_stmt");
 	expect_int_equal(if_stmt->type, ast_type_if, "if if_stmt");
 
@@ -360,27 +335,23 @@ void test_parse_stmts5()
 	expect_int_equal(num1->type, ast_type_number, "number num1");
 	expect_str(&num1->value, "2", "2 num1");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_stmts_type()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("1; true; \"hello\"", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	parse_setup2("1; true; \"hello\"", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	struct ast_node* tu = root->tu;
+	struct ast_node* tu = cu.root->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct type_def* td = tu->td;
@@ -388,9 +359,7 @@ void test_parse_stmts_type()
 	expect_int_equal(td->type, type_string, "string td");
 	expect_str(&td->name, "String", "String td");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -398,18 +367,16 @@ void test_parse_function()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
+	
+	parse_setup2("function foo() var x::Int64; x+1; 5+4 end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo() var x::Int64; x+1; 5+4 end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
-
-	struct ast_node* f = ast_node_get(root, 0);
+	struct ast_node* f = ast_node_get(cu.root, 0);
 	assert_ptr(f, "ptr f");
 	expect_int_equal(f->type, ast_type_function, "function");
 
@@ -465,9 +432,7 @@ void test_parse_function()
 	expect_int_equal(number4->type, ast_type_number, "number number4");
 	expect_str(&number4->value, "4", "4 number4");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -475,19 +440,16 @@ void test_parse_function2()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
+	struct comp_unit cu;
+		
+	parse_setup2("function foo(x::Int64) x+1; 5+4 end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo(x::Int64) x+1; 5+4 end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
-
-	struct ast_node* f_node = ast_node_get(root, 0);
+	struct ast_node* f_node = ast_node_get(cu.root, 0);
 	assert_ptr(f_node, "ptr f_node");
 	expect_int_equal(f_node->type, ast_type_function, "function f_node");
 
@@ -553,29 +515,25 @@ void test_parse_function2()
 	expect_int_equal(i->type, ast_type_number, "number i");
 	expect_str(&i->value, "4", "4");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
 void test_parse_function3()
 {
 	test_name(__func__);
+	
+	struct comp_unit cu;
+	
+	parse_setup2("function foo(x::Int32, y::Int32) x+1; 5+4 end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	struct ast_node* root;
-	struct parse_state ps;
+	assert_ptr(cu.root, "ptr cu.root");
+	assert_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo(x::Int32, y::Int32) x+1; 5+4 end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
-
-	assert_ptr(root, "ptr root");
-	assert_int_equal(root->type, ast_type_stmts, "stmts root");
-
-	struct ast_node* f = ast_node_get(root, 0);
-	assert_ptr(f, "root");
+	struct ast_node* f = ast_node_get(cu.root, 0);
+	assert_ptr(f, "cu.root");
 	expect_int_equal(f->type, ast_type_function, "function");
 
 	struct ast_node* a = ast_node_get(f, 0);
@@ -641,9 +599,7 @@ void test_parse_function3()
 	expect_int_equal(i->type, ast_type_number, "number i");
 	expect_str(&i->value, "4", "4");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -651,20 +607,17 @@ void test_parse_function4()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
+	struct comp_unit cu;
+		
+	parse_setup2("function foo(x::Int32, y::Int32, z::Int32)::Int32 x+1; 5+4 end", &cu);
+	assert_no_errors(&cu.el);
+	expect_true(cu.valid, "parse valid");
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo(x::Int32, y::Int32, z::Int32)::Int32 x+1; 5+4 end", &ps, &root);
-	assert_no_errors(ps.el);
-	expect_true(valid, "parse valid");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
-
-	struct ast_node* f = ast_node_get(root, 0);
-	assert_ptr(f, "root");
+	struct ast_node* f = ast_node_get(cu.root, 0);
+	assert_ptr(f, "cu.root");
 	expect_int_equal(f->type, ast_type_function, "function f");
 
 	struct ast_node* tu = f->tu;
@@ -800,142 +753,105 @@ void test_parse_function4()
 	expect_int_equal(i->type, ast_type_number, "number i");
 	expect_str(&i->value, "4", "4");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_function5()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
+	struct comp_unit cu;
+		
+	parse_setup2("function foo(x::Int64) var x::Int64 end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse valid");
+	expect_compile_error(&cu.el, "duplicate declaration in same scope: x");
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo(x::Int64) var x::Int64 end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse valid");
-	expect_compile_error(ps.el, "duplicate declaration in same scope: x");
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_function_return_type_error()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
+	struct comp_unit cu;
+	
+	parse_setup2("function foo(x::Int64)::Int64 true end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse valid");
+	expect_compile_error(&cu.el, "returned type does not match function return type");
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo(x::Int64)::Int64 true end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse valid");
-	expect_compile_error(ps.el, "returned type does not match function return type");
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_function_error_expected_left_parenthesis()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
+	struct comp_unit cu;
+	
+	parse_setup2("function foo", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected left parenthesis");
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected left parenthesis");
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_function_error_expected_right_parenthesis()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
+	struct comp_unit cu;
+	
+	parse_setup2("function foo(", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected right parenthesis");
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo(", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected right parenthesis");
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_function_error_duplicate_declaration()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
-
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo() end; function foo() end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "duplicate declaration in same scope: foo");
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	struct comp_unit cu;
+	
+	parse_setup2("function foo() end; function foo() end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "duplicate declaration in same scope: foo");
+	
+	parse_teardown2(&cu);
 }
 
 void test_parse_function_error_identifier_reserved()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function Int64() end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "identifier reserved as a type: Int64");
+	parse_setup2("function Int64() end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "identifier reserved as a type: Int64");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_function_error_expected_end()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
+	struct comp_unit cu;
+	
+	parse_setup2("function foo()", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected end");
 
-	/* allocate ps{} root root{} */
-	valid = parse_setup("function foo()", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected end");
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -943,19 +859,17 @@ void test_parse_if()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if true var x::Int64; var y::Int64; 10 + 20; x * y end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	parse_setup2("if true var x::Int64; var y::Int64; 10 + 20; x * y end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	struct ast_node* if_node = ast_node_get(root, 0);
-	assert_ptr(if_node, "ptr root");
+	struct ast_node* if_node = ast_node_get(cu.root, 0);
+	assert_ptr(if_node, "ptr cu.root");
 	expect_int_equal(if_node->type, ast_type_if, "if if_node");
 	expect_null(if_node->tu, "null if_node->tu");
 
@@ -1000,9 +914,7 @@ void test_parse_if()
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1010,17 +922,15 @@ void test_parse_elseif()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var x::Int64; var y::Int64; if true 10 + 20; x * y elseif true 1; 2 end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	parse_setup2("var x::Int64; var y::Int64; if true 10 + 20; x * y elseif true 1; 2 end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
+	assert_ptr(cu.root, "ptr cu.root");
 
-	struct ast_node* if_stmt = ast_node_get(root, 2);
+	struct ast_node* if_stmt = ast_node_get(cu.root, 2);
 	assert_ptr(if_stmt, "ptr if_stmt");
 	expect_int_equal(if_stmt->type, ast_type_if, "if");
 
@@ -1088,10 +998,7 @@ void test_parse_elseif()
 	expect_int_equal(num3->type, ast_type_number, "number num3");
 	expect_str(&num3->value, "2", "2 num3");
 
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1099,19 +1006,17 @@ void test_parse_elseif2()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var x::Int64; var y::Int64; if true 10 + 20; x * y elseif true 1; 2 elseif true x; y end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	parse_setup2("var x::Int64; var y::Int64; if true 10 + 20; x * y elseif true 1; 2 elseif true x; y end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	struct ast_node* if_stmt = ast_node_get(root, 2);
-	assert_ptr(if_stmt, "ptr root");
+	struct ast_node* if_stmt = ast_node_get(cu.root, 2);
+	assert_ptr(if_stmt, "ptr cu.root");
 	expect_int_equal(if_stmt->type, ast_type_if, "if if_stmt");
 
 	struct ast_node* cb = ast_node_get(if_stmt, 0);
@@ -1203,9 +1108,7 @@ void test_parse_elseif2()
 	expect_int_equal(y2->type, ast_type_id, "id y2");
 	expect_str(&y2->value, "y", "y y2");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1213,18 +1116,16 @@ void test_parse_else()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var x::Int64; var y::Int64; if false 10 else x; y end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	parse_setup2("var x::Int64; var y::Int64; if false 10 else x; y end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	struct ast_node* if_stmt = ast_node_get(root, 2);
+	struct ast_node* if_stmt = ast_node_get(cu.root, 2);
 	assert_ptr(if_stmt, "ptr if_stmt");
 	assert_int_equal(if_stmt->type, ast_type_if, "if if_stmt");
 
@@ -1264,9 +1165,7 @@ void test_parse_else()
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1274,19 +1173,17 @@ void test_parse_else2()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var x::Int64; var y::Int64; if false 10 elseif false 20 else x; y end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	parse_setup2("var x::Int64; var y::Int64; if false 10 elseif false 20 else x; y end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	struct ast_node* if_stmt = ast_node_get(root, 2);
-	assert_ptr(if_stmt, "ptr root");
+	struct ast_node* if_stmt = ast_node_get(cu.root, 2);
+	assert_ptr(if_stmt, "ptr cu.root");
 	assert_int_equal(if_stmt->type, ast_type_if, "if");
 
 	/* if */
@@ -1345,9 +1242,7 @@ void test_parse_else2()
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1355,18 +1250,14 @@ void test_parse_if_error_expected_expression()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if end", &ps, &root);
-	assert_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected condition after if");
+	parse_setup2("if end", &cu);
+	assert_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected condition after if");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1374,18 +1265,14 @@ void test_parse_if_error_expected_end()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if true", &ps, &root);
-	assert_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected end");
+	parse_setup2("if true", &cu);
+	assert_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected end");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1393,18 +1280,14 @@ void test_parse_if_error_expected_elseif_expression()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("if true elseif end", &ps, &root);
-	assert_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected condition after elseif");
+	parse_setup2("if true elseif end", &cu);
+	assert_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected condition after elseif");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1412,18 +1295,16 @@ void test_parse_while()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("while true 1 end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	parse_setup2("while true 1 end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
-	assert_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	assert_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	struct ast_node* node = ast_node_get(root, 0);
+	struct ast_node* node = ast_node_get(cu.root, 0);
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_while, "while node");
 	expect_null(node->tu, "null node->tu");
@@ -1442,45 +1323,35 @@ void test_parse_while()
 	expect_int_equal(num->type, ast_type_number, "number num");
 	expect_str(&num->value, "1", "1 num");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_while_error_expected_expression()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("while end", &ps, &root);
-	assert_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "expected expression after while");
+	parse_setup2("while end", &cu);
+	assert_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "expected expression after while");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_while_error_expected_end()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("while true", &ps, &root);
-	assert_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "expected end");
+	parse_setup2("while true", &cu);
+	assert_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "expected end");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1488,19 +1359,17 @@ void test_parse_for_range()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("for i::Int64 = 0:10 1 end", &ps, &root);
-	assert_no_errors(ps.el);
-	assert_true(valid, "parse_setup valid");
+	parse_setup2("for i::Int64 = 0:10 1 end", &cu);
+	assert_no_errors(&cu.el);
+	assert_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
 	/* for */
-	struct ast_node* node = ast_node_get(root, 0);
+	struct ast_node* node = ast_node_get(cu.root, 0);
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_for_range, "for-range node");
 
@@ -1536,27 +1405,21 @@ void test_parse_for_range()
 	expect_int_equal(stmt0->type, ast_type_number, "number stmt0");
 	expect_str(&stmt0->value, "1", "1 stmt0");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_range2()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("for i::Int64 = 0:10 var i::Int64 = 1 end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "duplicate declaration in same scope: i");
+	parse_setup2("for i::Int64 = 0:10 var i::Int64 = 1 end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "duplicate declaration in same scope: i");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -1564,19 +1427,17 @@ void test_parse_for_iteration()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 in list i end", &ps, &root);
-	expect_no_errors(ps.el);
-	expect_true(valid, "parse_setup valid");
+	parse_setup2("var list::Vector{Int64}; for i::Int64 in list i end", &cu);
+	expect_no_errors(&cu.el);
+	expect_true(cu.valid, "parse_setup valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
 	/* for */
-	struct ast_node* node = ast_node_get(root, 1);
+	struct ast_node* node = ast_node_get(cu.root, 1);
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_for_iteration, "for-iteration node");
 
@@ -1616,342 +1477,219 @@ void test_parse_for_iteration()
 	expect_int_equal(id2->type, ast_type_id, "id id2");
 	expect_str(&id2->value, "i", "i id2");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_iteration2()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 in list var i::Int64 = 1 end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "duplicate declaration in same scope: i");
+	parse_setup2("var list::Vector{Int64}; for i::Int64 in list var i::Int64 = 1 end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "duplicate declaration in same scope: i");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_iteration_error_no_value()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function list() end; for i::Int64 in list() end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "iteration expression has no value");
+	parse_setup2("function list() end; for i::Int64 in list() end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "iteration expression has no value");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_iteration_error_no_child_element()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector; for i::Int64 in list end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "iteration expression has no child element");
+	parse_setup2("var list::Vector; for i::Int64 in list end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "iteration expression has no child element");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_iteration_error_cannot_cast()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Bool}; for i::Int64 in list end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "cannot cast list element");
+	parse_setup2("var list::Vector{Bool}; for i::Int64 in list end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "cannot cast list element");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_error_after_declaration()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "expected '=' or 'in' after for element declaration");
+	parse_setup2("var list::Vector{Int64}; for i::Int64 end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "expected '=' or 'in' after for element declaration");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_error_expected_end()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 = 1:10", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "expected end");
+	parse_setup2("var list::Vector{Int64}; for i::Int64 = 1:10", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "expected end");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_error_expected_range_start()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 =", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "expected range start");
+	parse_setup2("var list::Vector{Int64}; for i::Int64 =", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "expected range start");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_error_expected_colon()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 = 1", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "expected colon");
+	parse_setup2("var list::Vector{Int64}; for i::Int64 = 1", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "expected colon");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_error_expected_range_end()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 = 1:", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "expected range end");
+	parse_setup2("var list::Vector{Int64}; for i::Int64 = 1:", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "expected range end");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_range_error_start_no_value()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo() end; for i::Int64 = foo():10 end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "start range expression has no value");
+	parse_setup2("function foo() end; for i::Int64 = foo():10 end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "start range expression has no value");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_range_error_start_not_numeric()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("for i::Int64 = true:10 end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "start range expression is not numeric");
+	parse_setup2("for i::Int64 = true:10 end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "start range expression is not numeric");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_range_error_end_no_value()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("function foo() end; for i::Int64 = 1:foo() end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "end range expression has no value");
+	parse_setup2("function foo() end; for i::Int64 = 1:foo() end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "end range expression has no value");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_range_error_end_not_numeric()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("for i::Int64 = 1:true end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "end range expression is not numeric");
+	parse_setup2("for i::Int64 = 1:true end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "end range expression is not numeric");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_for_error_expected_iteration_expression()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var list::Vector{Int64}; for i::Int64 in:", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "parse_setup valid");
-	expect_compile_error(ps.el, "expected for iteration expression");
+	parse_setup2("var list::Vector{Int64}; for i::Int64 in:", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "parse_setup valid");
+	expect_compile_error(&cu.el, "expected for iteration expression");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
-}
-
-/* dynamic-output-none */
-void test_parse_line_col()
-{
-	test_name(__func__);
-
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
-
-	/* allocate ps{} root root{} */
-	valid = parse_setup("2 *", &ps, &root);
-	assert_false(valid, "parse not valid");
-	assert_has_errors(ps.el);
-	struct compile_error* e = assert_compile_error(ps.el, "expected term after operator");
-	expect_compile_error_fields(e, 1, 4, 3);
-
-	struct buffer bf;
-	buffer_init(&bf);
-
-	/* allocate bf */
-	enum result r = format_error(e, (input_getchar)string_getchar, (input_seek)string_seek, ps.sns->lc->d, &bf);
-	assert_ok(r, "format_error");
-	expect_str(&bf, "expected term after operator\n*", "format_error");
-
-	/* destroy bf */
-	buffer_destroy(&bf);
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
-}
-
-/* dynamic-output-none */
-void test_parse_source()
-{
-	test_name(__func__);
-
-	struct ast_node* root;
-	struct parse_state ps;
-	bool valid;
-
-	/* allocate ps{} root root{} */
-	valid = parse_setup("1\n2 *", &ps, &root);
-	assert_false(valid, "parse valid");
-	assert_has_errors(ps.el);
-	struct compile_error* e = assert_compile_error(ps.el, "expected term after operator");
-	expect_compile_error_fields(e, 2, 4, 5);
-
-	struct buffer bf;
-	buffer_init(&bf);
-
-	/* allocate bf */
-	enum result r = format_error(e, (input_getchar)string_getchar, (input_seek)string_seek, ps.sns->lc->d, &bf);
-	assert_ok(r, "format_error");
-	expect_str(&bf, "expected term after operator\n*", "format_error");
-
-	/* destroy bf */
-	buffer_destroy(&bf);
-
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_module()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("module math var pi::Float64 = 3.14 end; math.pi", &ps, &root);
-	expect_no_errors(ps.el);
-	expect_true(valid, "valid");
+	parse_setup2("module math var pi::Float64 = 3.14 end; math.pi", &cu);
+	expect_no_errors(&cu.el);
+	expect_true(cu.valid, "valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	struct ast_node* module = ast_node_get(root, 0);
+	struct ast_node* module = ast_node_get(cu.root, 0);
 	assert_ptr(module, "ptr module");
 	expect_int_equal(module->type, ast_type_module, "module module");
 
@@ -1964,7 +1702,7 @@ void test_parse_module()
 	assert_ptr(module_stmts, "ptr module_stmts");
 	expect_int_equal(module_stmts->type, ast_type_stmts, "stmts module_stmts");
 
-	struct ast_node* dot = ast_node_get(root, 1);
+	struct ast_node* dot = ast_node_get(cu.root, 1);
 	assert_ptr(dot, "ptr dot");
 	expect_int_equal(dot->type, ast_type_dot, "dot dot");
 
@@ -1987,26 +1725,24 @@ void test_parse_module()
 	expect_int_equal(dot_id_1->type, ast_type_id, "id dot_id_1");
 	expect_str(&dot_id_1->value, "pi", "pi dot_id_1");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_module_nested()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("module base module math var pi::Float64 = 3.14 end end; base.math.pi", &ps, &root);
-	expect_no_errors(ps.el);
-	expect_true(valid, "valid");
+	parse_setup2("module base module math var pi::Float64 = 3.14 end end; base.math.pi", &cu);
+	expect_no_errors(&cu.el);
+	expect_true(cu.valid, "valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
 	/* base */
-	struct ast_node* base_module = ast_node_get(root, 0);
+	struct ast_node* base_module = ast_node_get(cu.root, 0);
 	assert_ptr(base_module, "ptr base_module");
 	expect_int_equal(base_module->type, ast_type_module, "module base_module");
 
@@ -2033,7 +1769,7 @@ void test_parse_module_nested()
 	assert_ptr(math_module_stmts, "ptr math_module_stmts");
 	expect_int_equal(math_module_stmts->type, ast_type_stmts, "stmts math_module_stmts");
 
-	struct ast_node* dot0 = ast_node_get(root, 1);
+	struct ast_node* dot0 = ast_node_get(cu.root, 1);
 	assert_ptr(dot0, "ptr dot0");
 	expect_int_equal(dot0->type, ast_type_dot, "dot dot0");
 
@@ -2065,128 +1801,108 @@ void test_parse_module_nested()
 	expect_int_equal(pi_id->type, ast_type_id, "id pi_id");
 	expect_str(&pi_id->value, "pi", "pi pi_id");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_module_expected_identifier()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("module end", &ps, &root);
-	assert_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected identifier after module");
+	parse_setup2("module end", &cu);
+	assert_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected identifier after module");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_module_expected_end()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("module math", &ps, &root);
-	assert_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected end");
+	parse_setup2("module math", &cu);
+	assert_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected end");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_module_duplicate_declaration()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	/* allocate ps{} root root{} */
-	bool valid = parse_setup("var foo::Int64; module foo end", &ps, &root);
-	assert_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "variable already used: foo");
+	parse_setup2("var foo::Int64; module foo end", &cu);
+	assert_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "variable already used: foo");
 
-	/* destroy ps{} root root{} */
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_dot_error_expected_term()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("module math var pi::Float64 = 3.14 end; math.", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected term after dot");
+	parse_setup2("module math var pi::Float64 = 3.14 end; math.", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected term after dot");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_dot_error_left_non_module()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("function foo() end; module math var pi::Float64 = 3.14 end; true.1", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "dot operand is not a module or struct");
+	parse_setup2("function foo() end; module math var pi::Float64 = 3.14 end; true.1", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "dot operand is not a module or struct");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_dot_error_right_not_identifier()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("function foo() end; module math var pi::Float64 = 3.14 end; math.\"hello\"", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "operand of dot operator not an identifier");
+	parse_setup2("function foo() end; module math var pi::Float64 = 3.14 end; math.\"hello\"", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "operand of dot operator not an identifier");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_struct()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45); p.firstName", &ps, &root);
-	expect_no_errors(ps.el);
-	expect_true(valid, "valid");
+	parse_setup2("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45); p.firstName", &cu);
+	expect_no_errors(&cu.el);
+	expect_true(cu.valid, "valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
 	/* struct */
-	struct ast_node* st = ast_node_get(root, 0);
+	struct ast_node* st = ast_node_get(cu.root, 0);
 	assert_ptr(st, "ptr st");
 	expect_int_equal(st->type, ast_type_struct, "struct st");
 
@@ -2247,7 +1963,7 @@ void test_parse_struct()
 	expect_int_equal(td2->type, type_integer, "integer td2");
 	expect_str(&td2->name, "Int64", "Int64 td2");
 
-	struct ast_node* assign = ast_node_get(root, 1);
+	struct ast_node* assign = ast_node_get(cu.root, 1);
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, ast_type_assign, "assign assign");
 
@@ -2304,163 +2020,144 @@ void test_parse_struct()
 	expect_int_equal(a2->type, ast_type_number, "string a2");
 	expect_str(&a2->value, "45", "45 a2");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_struct_error_not_field()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45); p.abc", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "variable not a field of struct: abc");
+	parse_setup2("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45); p.abc", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "variable not a field of struct: abc");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_struct_error_expected_identifier()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("struct end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected identifier");
+	parse_setup2("struct end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected identifier");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_struct_error_expected_end()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("struct Person", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected end");
+	parse_setup2("struct Person", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected end");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_struct_error_expected_end2()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("struct Person x::Int64", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "expected end");
+	parse_setup2("struct Person x::Int64", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "expected end");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_struct_error_duplicate()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("var Person::Int64 = 1; struct Person end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "duplicate variable in scope: Person");
+	parse_setup2("var Person::Int64 = 1; struct Person end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "duplicate variable in scope: Person");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_return()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("function foo()::Int64 return 1 end", &ps, &root);
-	expect_no_errors(ps.el);
-	expect_true(valid, "valid");
+	parse_setup2("function foo()::Int64 return 1 end", &cu);
+	expect_no_errors(&cu.el);
+	expect_true(cu.valid, "valid");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_return_error_no_value()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("function bar() end; function foo()::Int64 return bar() end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "return expression has no value");
+	parse_setup2("function bar() end; function foo()::Int64 return bar() end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "return expression has no value");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_return_error_outside_of_function()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("return true", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "return statement outside of function");
+	parse_setup2("return true", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "return statement outside of function");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 void test_parse_return_error_type_does_not_match()
 {
 	test_name(__func__);
 
-	struct ast_node* root;
-	struct parse_state ps;
+	struct comp_unit cu;
 
-	bool valid = parse_setup("function foo()::Int64 return true end", &ps, &root);
-	expect_has_errors(ps.el);
-	expect_false(valid, "valid");
-	expect_compile_error(ps.el, "returned type does not match function return type");
+	parse_setup2("function foo()::Int64 return true end", &cu);
+	expect_has_errors(&cu.el);
+	expect_false(cu.valid, "valid");
+	expect_compile_error(&cu.el, "returned type does not match function return type");
 
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	assert_ptr(cu.root, "ptr cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	ast_node_destroy(root);
-	parse_teardown(&ps);
+	parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -2513,8 +2210,6 @@ void test_parse_statements()
 	test_parse_for_error_expected_colon();
 	test_parse_for_error_expected_range_end();
 	test_parse_for_error_expected_iteration_expression();
-	test_parse_line_col();
-	test_parse_source();
 	test_parse_module();
 	test_parse_module_nested();
 	test_parse_module_expected_identifier();
