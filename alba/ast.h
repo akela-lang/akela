@@ -91,7 +91,7 @@ ALBA_API void ast_node_push(struct ast_node* parent, struct ast_node* child);
 ALBA_API struct ast_node* ast_node_get(struct ast_node* p, size_t pos);
 
 /* dynamic-output-none */
-ALBA_API void ast_node_print(struct ast_node* root, char** names);
+ALBA_API void ast_node_print(struct ast_node* root, char** names, bool debug);
 
 ALBA_API struct ast_node* ast_node_copy(struct ast_node* n);
 

@@ -159,40 +159,49 @@ struct ast_node* ast_node_get(struct ast_node* p, size_t pos)
 
 /* dynamic-output-none */
 /* dynamic-temp a */
-void ast_node_print(struct ast_node* root, char** names)
+void ast_node_print(struct ast_node* root, char** names, bool debug)
 {
 	if (root == NULL) return;
+	if (!debug && !root->head) return;
 
+	printf("<");
 	if (root->td) {
 		buffer_finish(&root->td->name);
-		printf("[%p]%s<%s>", root, names[root->type], root->td->name.buf);
+		if (debug) printf("[%p]", root);
+		printf("%s,%s", names[root->type], root->td->name.buf);
 	} else {
-		printf("[%p]%s", root, names[root->type]);
+		if (debug) printf("[%p]", root);
+		printf("%s", names[root->type]);
 	}
 	if (root->value.size > 0) {
 		buffer_finish(&root->value);
-		printf("-%s", root->value.buf);
+		printf(",%s", root->value.buf);
 	}
+	printf(">");
 	printf(":");
 	for (struct ast_node* p = root->head; p; p = p->next) {
+		printf(" <");
 		if (p->td) {
 			buffer_finish(&p->td->name);
-			printf(" %s<%s>", names[p->type], p->td->name.buf);
+			printf("%s,%s", names[p->type], p->td->name.buf);
 		} else {
-			printf(" %s", names[p->type]);
+			printf("%s", names[p->type]);
 		}
 		if (p->value.size > 0) {
 			buffer_finish(&p->value);
-			printf("-%s", p->value.buf);
+			printf(",%s", p->value.buf);
 		}
+		printf(">");
 	}
 
 	printf("\n");
 
-	ast_node_print(root->tu, names);
+	if (debug) {
+		ast_node_print(root->tu, names, debug);
+	}
 
 	for (struct ast_node* p = root->head; p; p = p->next) {
-		ast_node_print(p, names);
+		ast_node_print(p, names, debug);
 	}
 }
 

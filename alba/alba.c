@@ -1,23 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "token.h"
-#include "scan.h"
-#include "zinc/buffer.h"
-#include "parse.h"
 #include "ast.h"
 #include "input.h"
-#include "uconv.h"
 #include "source.h"
 #include "os_win.h"
-#include "source.h"
-#include "symbol_table.h"
+#include "comp_unit.h"
 
 int main(int argc, char** argv)
 {
     enum result r;
     char* filename;
-    struct ast_node* root;
+    struct comp_unit cu;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: alba <filename>\n");
@@ -37,33 +31,11 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    UConverter* conv;
-    struct scan_state sns;
-    struct lookahead_char lc;
-    struct compile_error_list el;
-    struct parse_state ps;
-    struct symbol_table st;
+    comp_unit_init(&cu);
+    comp_unit_compile(&cu, file_getchar, fp);
 
-    /* resource conv */
-    r = conv_open(&conv);
-    if (r == result_error) {
-        fprintf(stderr, "%s\n", error_message);
-        return 1;
-    }
-
-    /* resource input fp */
-    lookahead_char_init(&lc, (input_getchar)file_getchar, fp, conv);
-
-    compile_error_list_init(&el);
-    symbol_table_init(&st);
-
-    scan_state_init(&sns, &lc, &el, &st);
-    parse_state_init(&ps, &sns, &el, &st);
-
-    /* allocate ps{} root root{} */
-    bool valid = parse(&ps, &root);
-    if (!valid) {
-        struct compile_error* e = ps.el->head;
+    if (!cu.valid) {
+        struct compile_error* e = cu.el.head;
         while (e) {
             fprintf(stderr, "%s\n", e->message);
             e = e->next;
@@ -71,24 +43,14 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    /* resource destroy fp */
-    fclose(fp);
-
     char* names[ast_type_count];
     ast_set_names(names);
-    ast_node_print(root, names);
+    ast_node_print(cu.root, names, false);
 
-    /* resource destroy conv */
-    conv_close(conv);
+    comp_unit_destroy(&cu);
 
-    /* destroy ps{lookahead} */
-    parse_state_destroy(&ps);
-
-    /* destroy ps{el} sns{el} */
-    compile_error_list_destroy(&el);
-
-    symbol_table_destroy(&st);
-
+    /* resource destroy fp */
+    fclose(fp);
     printf("end\n");
 
     return 0;
