@@ -1,3 +1,5 @@
+#if defined(unix)
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -59,3 +61,5 @@ errno_t fopen_s(FILE **f, const char *name, const char *mode)
         ret = errno;
     return ret;
 }
+
+#endif
