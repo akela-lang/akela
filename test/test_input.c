@@ -61,10 +61,12 @@ void test_input_file()
 	assert_ok(r, "win_temp_filename");
 
 	/* open resource fp */
-	FILE* fp = fopen(filename, "w");
+	FILE* fp = NULL;
+	int err = fopen_s(&fp, filename, "w");
+	assert_int_equal(err, 0, "err");
 	assert_ptr(fp, "fopen");
 
-	char* str = "x + 5";
+	const char* str = "x + 5";
 	size_t n = fwrite(str, sizeof(char), strlen(str), fp);
 
 	expect_int_equal(n, strlen(str), "fwrite");
@@ -73,10 +75,11 @@ void test_input_file()
 	fclose(fp);
 
 	/* open resource fp */
-	fp = fopen(filename, "r");
+	err = fopen_s(&fp, filename, "r");
+	assert_int_equal(err, 0, "err");
 	assert_ptr(fp, "fopen");
 
-	input_getchar f = file_getchar;
+	input_getchar f = (input_getchar)file_getchar;
 	input_data d = fp;
 	struct buffer bf;
 

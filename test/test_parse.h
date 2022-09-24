@@ -6,6 +6,7 @@
 #include "alba/token.h"
 #include "alba/ast.h"
 #include "alba/parse_tools.h"
+#include "alba/comp_unit.h"
 
 bool parse_setup2(char* line, struct comp_unit* cu);
 void parse_teardown2(struct comp_unit* cu);

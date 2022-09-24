@@ -14,7 +14,7 @@
 bool parse_setup2(char* line, struct comp_unit* cu)
 {
 	/* allocate bf */
-	struct buffer* bf;
+	struct buffer* bf = NULL;
 	malloc_safe((void**)&bf, sizeof(struct buffer));
 	buffer_init(bf);
 
@@ -29,7 +29,7 @@ bool parse_setup2(char* line, struct comp_unit* cu)
 	string_data_init(bf, sd);
 
 	comp_unit_init(cu);
-	bool valid = comp_unit_compile(cu, string_getchar, sd);
+	bool valid = comp_unit_compile(cu, (input_getchar)string_getchar, (input_data)sd);
 
 	buffer_destroy(bf);
 	free(bf);

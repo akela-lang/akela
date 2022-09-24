@@ -4,11 +4,12 @@
 #include "alba/symbol_table.h"
 #include "alba/scan.h"
 #include "zinc/memory.h"
+#include "zinc/unit_test.h"
 
 /* dynamic-output sns{lc{d{bf} sns{lc{d{bf{}}} sns{lc{conv}} sns{wt{}} sns{el{}} */
 void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, struct compile_error_list* el)
 {
-	struct buffer* bf;
+	struct buffer* bf = NULL;
 
 	/* allocate bf */
 	malloc_safe((void**)&bf, sizeof(struct buffer));
@@ -17,7 +18,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	/* allocate bf{} */
 	array2buffer(line, bf);
 
-	struct string_data* sd;
+	struct string_data* sd = NULL;
 
 	/* allocate sd */
 	malloc_safe((void**)&sd, sizeof(struct string_data));
@@ -35,8 +36,8 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 
 	compile_error_list_init(el);
 
-	struct symbol_table* st;
-	malloc_safe(&st, sizeof(struct symbol_table));
+	struct symbol_table* st = NULL;
+	malloc_safe((void**)&st, sizeof(struct symbol_table));
 	symbol_table_init(st);
 
 	/* transfer lc{} wt{} el{} -> sns */
@@ -46,7 +47,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 /* destroy sns{lc{d{bf{}}}} sns{lc{d{bf}}} sns{lc{d}} sns{wt{}} sns{el{}} sns{lc{conv}} */
 void scan_teardown(struct scan_state* sns)
 {
-	struct string_data* sd = sns->lc->d;
+	struct string_data* sd = (struct string_data*)sns->lc->d;
 	struct buffer* bf = sd->bf;
 	struct compile_error_list* el = sns->el;
 
