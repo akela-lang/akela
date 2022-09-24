@@ -46,13 +46,13 @@ add_custom_command(
 
 elseif(UNIX)
 
-target_link_libraries(test icuio icutest icutu icuuc icudata icutest zinc)
+target_link_libraries(test alba icudata icui18n icuio icutu icuuc icutest zinc)
 
 add_custom_command(
         TARGET test POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${ZINC_SO}
-                $ENV{HOME}/lib/libzinc.so
+                $ENV{HOME}/lib
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${ICU_LIB_DIR}/*.so*
                 $ENV{HOME}/lib

@@ -5,6 +5,7 @@
 #include "input.h"
 #include "source.h"
 #include "os_win.h"
+#include "os_linux.h"
 #include "comp_unit.h"
 
 int main(int argc, char** argv)

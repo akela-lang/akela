@@ -11,6 +11,7 @@ set(lib_files
     parse_tools.c
     "input.c"
     os_win.c
+    os_linux.c
     uconv.c
     parse_types.c
     lookahead_char.c
@@ -28,13 +29,26 @@ set(bin_files
 )
 
 # library
-add_definitions(-DALBA_EXPORT)
+IF(WIN32)
+  add_definitions(-DALBA_EXPORT)
+ENDIF()
+
 add_library(alba SHARED ${lib_files})
-target_link_libraries(alba icudt icuin icuio icutest icutu icuuc zinc)
+IF(WIN32)
+  target_link_libraries(alba icudt icuin icuio icutest icutu icuuc zinc)
+ELSEIF(UNIX)
+  target_link_libraries(alba icudata icui18n icuio icutu icuuc icutest zinc)
+ENDIF()
 
 # executable
 add_executable(alba-bin ${bin_files})
-target_link_libraries(alba-bin alba icudt icuin icuio icutest icutu icuuc zinc)
+
+IF (WIN32)
+  target_link_libraries(alba-bin alba icudt icuin icuio icutest icutu icuuc zinc)
+ELSEIF (UNIX)
+  target_link_libraries(alba-bin alba icudata icui18n icuio icutu icuuc icutest zinc)
+ENDIF()
+
 SET_TARGET_PROPERTIES(alba-bin
   PROPERTIES OUTPUT_NAME alba)
 
@@ -61,13 +75,3 @@ add_custom_command(
                 ${ALBA_MATH}
                 ${CMAKE_BINARY_DIR}/test
 )
-
-
-
-if(WIN32)
-
-elseif(UNIX)
-
-target_link_libraries(alba-lib icuio icutest icutu icuuc icudata icutest zinc)
-
-endif()

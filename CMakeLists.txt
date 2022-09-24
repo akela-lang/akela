@@ -86,6 +86,10 @@ set_target_properties(zinc PROPERTIES
 
 elseif(UNIX)
 
+set(ALBA_DIR ${CMAKE_SOURCE_DIR})
+set(ALBA_BINARY ${ALBA_DIR}/build/alba)
+set(ALBA_SO ${ALBA_BINARY}/alba.so)
+
 set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
 set(ZINC_BINARY ${ZINC_DIR}/build/zinc)
 set(ZINC_SO ${ZINC_BINARY}/libzinc.so)

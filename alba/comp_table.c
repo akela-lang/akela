@@ -2,7 +2,8 @@
 #include "hash.h"
 #include "comp_unit.h"
 #include "zinc/memory.h"
-#include "alba/os_win.h"
+#include "os_win.h"
+#include "os_linux.h"
 #include <stdio.h>
 
 void comp_table_init(struct comp_table* ct)
@@ -36,7 +37,9 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 {
 	bool valid = true;
 	char* path = NULL;
+	
 	path = get_exe_path();
+
 	struct location loc;
 	location_init(&loc);
 

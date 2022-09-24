@@ -4,8 +4,10 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 #include "type_def.h"
-#include "windows.h"
-#include <DbgHelp.h>
+#if defined(WIN32)
+	#include "windows.h"
+	#include <DbgHelp.h>
+#endif
 
 /* dynamic-output-none */
 enum result ast_set_names(char** names)
