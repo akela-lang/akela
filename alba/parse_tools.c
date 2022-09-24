@@ -62,7 +62,7 @@ bool get_lookahead(struct parse_state* ps, int count, int* num)
 
 /* expecting specific token */
 /* dynamic-output ps{} t t{} */
-bool match(struct parse_state* ps, enum token_enum type, char* reason, struct token** t)
+bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t)
 {
 	bool valid = true;
 	struct location loc;

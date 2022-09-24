@@ -20,13 +20,13 @@ void test_comp_table_compile()
 	string_data_init(&bf, &sd);
 
 	struct comp_unit* cu = NULL;
-	malloc_safe(&cu, sizeof(struct comp_unit));
+	malloc_safe((void**)&cu, sizeof(struct comp_unit));
 	comp_unit_init(cu);
 	array2buffer("|main|", &cu->path);
 
 	comp_table_put(&ct, &cu->path, cu);
 
-	bool valid = comp_unit_compile(cu, string_getchar, &sd);
+	bool valid = comp_unit_compile(cu, (input_getchar)string_getchar, (input_data)&sd);
 	expect_true(valid, "valid");
 
 	struct ast_node* root = cu->root;

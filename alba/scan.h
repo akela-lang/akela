@@ -13,7 +13,6 @@ struct scan_state {
     struct lookahead_char* lc;
     struct symbol_table* st;
     struct compile_error_list* el;
-    enum state_enum last_state;
 };
 
 struct char_value {

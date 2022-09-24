@@ -7,6 +7,7 @@
 #include "scan.h"
 #include "parse_tools.h"
 #include "parse.h"
+#include <assert.h>
 
 void comp_unit_init(struct comp_unit* cu)
 {
@@ -50,17 +51,33 @@ bool comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data id, stru
 	cu->root = NULL;
 
 	struct lookahead_char* lc = NULL;
-	malloc_safe(&lc, sizeof(struct lookahead_char));
+	malloc_safe((void**) & lc, sizeof(struct lookahead_char));
 	lookahead_char_init(lc, ig, id, conv);
 
 	struct scan_state* sns = NULL;
-	malloc_safe(&sns, sizeof(struct scan_state));
+	malloc_safe((void**)&sns, sizeof(struct scan_state));
 	scan_state_init(sns, lc, &cu->el, &cu->st);
 
-	malloc_safe(ps, sizeof(struct parse_state));
+	malloc_safe((void**)ps, sizeof(struct parse_state));
 	parse_state_init(*ps, sns, &cu->el, &cu->st);
 
 	return valid;
+}
+
+void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
+{
+	assert(ps);
+	assert(ps->sns);
+	/* destroy conv{} */
+	conv_close(ps->sns->lc->conv);
+
+	free(ps->sns->lc);
+
+	free(ps->sns);
+
+	/* destroy ps{} */
+	parse_state_destroy(ps);
+	free(ps);
 }
 
 bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id)
@@ -74,18 +91,4 @@ bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id)
 	comp_unit_teardown(cu, ps);
 	cu->valid = valid;
 	return valid;
-}
-
-void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
-{
-	/* destroy conv{} */
-	conv_close(ps->sns->lc->conv);
-
-	free(ps->sns->lc);
-
-	free(ps->sns);
-
-	/* destroy ps{} */
-	parse_state_destroy(ps);
-	free(ps);
 }

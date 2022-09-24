@@ -49,7 +49,7 @@ ALBA_API bool set_source_error(struct compile_error_list* el, struct location* l
 /* resource-use d */
 ALBA_API enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf);
 
-ALBA_API char* plural(int number);
+ALBA_API const char* plural(int number);
 
 ALBA_API void location_init(struct location* loc);
 

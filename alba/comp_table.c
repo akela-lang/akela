@@ -12,12 +12,12 @@ void comp_table_init(struct comp_table* ct)
 
 void comp_table_put(struct comp_table* ct, struct buffer* path, struct comp_unit* cu)
 {
-	hash_table_add(&ct->ht, path, cu);
+	hash_table_add(&ct->ht, path, (void*)cu);
 }
 
 struct comp_unit* comp_table_get(struct comp_table* ct, struct buffer* path)
 {
-	return hash_table_get(&ct->ht, path);
+	return (struct comp_unit*)hash_table_get(&ct->ht, path);
 }
 
 void comp_table_destroy_comp_unit(struct comp_unit* cu)
@@ -63,17 +63,18 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 	path_join(&math_path, &filename);
 	buffer_finish(&math_path);
 
-	FILE* fp = fopen(math_path.buf, "r");
-	if (!fp) {
+	FILE* fp = NULL;
+	int err = fopen_s(&fp, math_path.buf, "r");
+	if (err || !fp) {
 		valid = set_source_error(&cu->el, &loc, "could not open file: %s\n", math_path.buf);
 		goto exit;
 	}
 
-	malloc_safe(cu_base, sizeof(struct comp_unit));
+	malloc_safe((void**)cu_base, sizeof(struct comp_unit));
 	comp_unit_init(*cu_base);
 	comp_table_put(ct, &math_path, *cu_base);
 
-	comp_unit_compile(*cu_base, file_getchar, fp);
+	comp_unit_compile(*cu_base, (input_getchar)file_getchar, (input_data)fp);
 
 	transfer_global_symbols(&(*cu_base)->st, &cu->st);
 

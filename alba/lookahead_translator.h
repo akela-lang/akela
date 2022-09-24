@@ -6,6 +6,7 @@
 #include <unicode/uchar.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
+#include "zinc/result.h"
 
 struct circular_byte_buffer {
 	char* buf;

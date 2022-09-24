@@ -123,7 +123,7 @@ enum result format_error(struct compile_error* e, input_getchar f, input_seek se
 	if (err) return set_error("seek error: seek %zu", e->loc.byte_pos);
 
 	int c;
-	while (c = f(d)) {
+	while ((c = f(d))) {
 		if (c == EOF) break;
 		if (c == '\n') break;
 
@@ -134,7 +134,7 @@ enum result format_error(struct compile_error* e, input_getchar f, input_seek se
 	return result_ok;
 }
 
-char* plural(int number)
+const char* plural(int number)
 {
 	if (number == 1) return "";
 	else return "s";
@@ -150,6 +150,6 @@ void location_init(struct location* loc)
 
 void location_create(struct location** loc)
 {
-	malloc_safe(loc, sizeof(struct location));
+	malloc_safe((void**)loc, sizeof(struct location));
 	location_init(*loc);
 }

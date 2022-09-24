@@ -275,7 +275,7 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 						/* test case: test_parse_types_reserved_type */
 					} else {
 						struct symbol* new_sym = NULL;
-						malloc_safe(&new_sym, sizeof(struct symbol));
+						malloc_safe((void**)&new_sym, sizeof(struct symbol));
 						symbol_init(new_sym);
 						new_sym->tk_type = token_id;
 						new_sym->tu = ast_node_copy(n);
@@ -448,7 +448,6 @@ void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_n
 		if (p_td->type == type_function_output) {
 			struct ast_node* ret = ast_node_get(p, 0);
 			if (ret) {
-				struct type_def* ret_td = ret->td;
 				if (!type_use_can_cast(ret, stmts_node->tu)) {
 					*valid = set_source_error(ps->el, loc, "returned type does not match function return type");
 				}

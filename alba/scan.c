@@ -21,7 +21,6 @@ void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct c
     sns->lc = lc;
     sns->el = el;
     sns->st = st;
-    sns->last_state = state_start;
 }
 
 /* dynamic-output-none */
@@ -48,7 +47,6 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
     if (lc->la_size > 0) {
         uc = lc->la0_32;
     } else {
-        uc = EOF;
         return result_ok;
     }
 
@@ -350,7 +348,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
                 /* e is part of exponent */
                 *state = state_number_exponent_start;
                 t->is_integer = false;
-                t->is_float;
+                t->is_float = true;
                 /* allocate t{} */
                 buffer_add_char(&t->value, 'e');
             } else {
@@ -644,7 +642,6 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
     *got_token = 0;
     *t = NULL;
     struct token* tf;
-    sns->last_state = state;
 
     /* allocate tf */
     malloc_safe((void**)&tf, sizeof(struct token));
@@ -677,7 +674,6 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
     }
 
     if (state != state_start) {
-        sns->last_state = state;
         /* allocate sns{wt{} el{}} tf{} */
         valid = scan_process(sns, &state, got_token, tf);
         if (!valid) {

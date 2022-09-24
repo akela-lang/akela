@@ -2,6 +2,8 @@
 #define _OS_WIN_H
 
 #include "alba_api.h"
+#include "zinc/result.h"
+#include "zinc/buffer.h"
 
 #if defined(_WIN32) || defined(WIN32)
 

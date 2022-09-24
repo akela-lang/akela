@@ -6,6 +6,7 @@
 #include "alba_api.h"
 #include "hash.h"
 #include <stdbool.h>
+#include "comp_unit.h"
 
 struct comp_table {
 	struct hash_table ht;

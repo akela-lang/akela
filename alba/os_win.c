@@ -29,9 +29,9 @@ enum result win_temp_filename(char** buff)
 	}
 
 	/* allocate buff */
-	malloc_safe(buff, MAX_PATH);
+	malloc_safe((void**)buff, MAX_PATH);
 
-	strncpy(*buff, szTempFileName, MAX_PATH);
+	strncpy_s(*buff, MAX_PATH, szTempFileName, MAX_PATH);
 
 	return result_ok;
 }
@@ -47,7 +47,7 @@ char* get_exe_path()
     DWORD result;
     DWORD path_size = 1024;
     char* path = NULL;
-    malloc_safe(&path, path_size);
+    malloc_safe((void**)&path, path_size);
 
     for (;;)
     {
@@ -70,7 +70,7 @@ char* get_exe_path()
                 break;
             }
             path_size = path_size * 2;
-            malloc_safe(&path, path_size);
+            malloc_safe((void**)&path, path_size);
         } else {
             break;
         }

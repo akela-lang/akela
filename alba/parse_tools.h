@@ -7,6 +7,7 @@
 #include "source.h"
 #include "symbol_table.h"
 #include "zinc/buffer.h"
+#include "ast.h"
 
 struct parse_state {
 	struct scan_state* sns;
@@ -28,7 +29,7 @@ ALBA_API bool get_lookahead(struct parse_state* ps, int count, int* num);
 
 /* expecting specific token */
 /* dynamic-output ps{} t t{} */
-ALBA_API bool match(struct parse_state* ps, enum token_enum type, char* reason, struct token** t);
+ALBA_API bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t);
 
 /* dynamic-output ps{} */
 ALBA_API bool get_parse_location(struct parse_state* ps, struct location* loc);

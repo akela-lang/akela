@@ -309,7 +309,7 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	struct environment* saved = ps->st->top;
 	struct environment* env = NULL;
-	malloc_safe(&env, sizeof(struct environment));
+	malloc_safe((void**)&env, sizeof(struct environment));
 	environment_init(env, saved);
 	ps->st->top = env;
 
@@ -987,12 +987,12 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 
 	struct environment* saved = ps->st->top;
 	struct environment* env = NULL;
-	malloc_safe(&env, sizeof(struct environment));
+	malloc_safe((void**)&env, sizeof(struct environment));
 	environment_init(env, saved);
 	ps->st->top = env;
 
 	struct token* id = NULL;
-	valid = match(ps, token_id, "expected identifier after module", &id);
+	valid = match(ps, token_id, "expected identifier after module", &id) && valid;
 	location_update_token(loc, id);
 	/* test case: test_parse_module_expected_identifier */
 
@@ -1050,7 +1050,7 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 			tu->td = sym->td;
 
 			struct symbol* new_sym = NULL;
-			malloc_safe(&new_sym, sizeof(struct symbol));
+			malloc_safe((void**)&new_sym, sizeof(struct symbol));
 			symbol_init(new_sym);
 			new_sym->tk_type = token_id;
 			new_sym->tu = tu;
@@ -1137,7 +1137,7 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 		} else {
 			struct ast_node* tu = ast_node_copy(n);
 			struct type_def* td = NULL;
-			malloc_safe(&td, sizeof(struct type_def));
+			malloc_safe((void**)&td, sizeof(struct type_def));
 			type_def_init(td);
 			td->type = type_struct;
 			buffer_copy(&id->value, &td->name);
@@ -1146,14 +1146,14 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 			struct ast_node* root_tu = function2type(ps->st, root);
 
 			struct symbol* constructor_sym = NULL;
-			malloc_safe(&constructor_sym, sizeof(struct symbol));
+			malloc_safe((void**)&constructor_sym, sizeof(struct symbol));
 			symbol_init(constructor_sym);
 			constructor_sym->tk_type = token_id;
 			constructor_sym->tu = root_tu;
 			constructor_sym->root = root;
 
 			struct symbol* sym = NULL;
-			malloc_safe(&sym, sizeof(struct symbol));
+			malloc_safe((void**)&sym, sizeof(struct symbol));
 			symbol_init(sym);
 			sym->tk_type = token_id;
 			sym->td = td;

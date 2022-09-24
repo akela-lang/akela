@@ -9,7 +9,6 @@
 
 int main(int argc, char** argv)
 {
-    enum result r;
     char* filename;
     struct comp_unit cu;
 
@@ -25,14 +24,14 @@ int main(int argc, char** argv)
     /* resource fp */
     filename = argv[1];
     FILE* fp;
-    fp = fopen(filename, "r");
-    if (fp == NULL) {
+    int err = fopen_s(&fp, filename, "r");
+    if (err || fp == NULL) {
         fprintf(stderr, "Could not open file: %s\n", filename);
         return 1;
     }
 
     comp_unit_init(&cu);
-    comp_unit_compile(&cu, file_getchar, fp);
+    comp_unit_compile(&cu, (input_getchar)file_getchar, fp);
 
     if (!cu.valid) {
         struct compile_error* e = cu.el.head;
