@@ -1,5 +1,5 @@
 #include "comp_table.h"
-#include "hash.h"
+#include "zinc/hash.h"
 #include "comp_unit.h"
 #include "zinc/memory.h"
 #include "os_win.h"

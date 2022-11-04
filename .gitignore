@@ -4,3 +4,5 @@ external
 .vscode
 out
 *.opendb
+.idea
+cmake-build-debug

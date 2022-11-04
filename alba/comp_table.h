@@ -4,7 +4,7 @@
 #define COMP_TABLE_HASH_TABLE_SIZE 32
 
 #include "alba_api.h"
-#include "hash.h"
+#include "zinc/hash.h"
 #include <stdbool.h>
 #include "comp_unit.h"
 

@@ -16,7 +16,6 @@ set(lib_files
     parse_types.c
     lookahead_char.c
     lookahead_translator.c
-    hash.c
     symbol_table.c
     type_def.c
     unit_test_compiler.c

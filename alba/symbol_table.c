@@ -4,7 +4,7 @@
 #include "type_def.h"
 #include <assert.h>
 #include "ast.h"
-#include "hash.h"
+#include "zinc/hash.h"
 
 /* dynamic-output env{} */
 /* transfer p -> env */

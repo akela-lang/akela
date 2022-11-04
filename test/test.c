@@ -7,7 +7,6 @@
 #include "test_lookahead_translator.h"
 #include "test_lookahead_char.h"
 #include "test_ast.h"
-#include "test_hash.h"
 #include "test_symbol_table.h"
 #include "test_parse_types.h"
 #include "test_parse_factor.h"
@@ -22,7 +21,6 @@ int main(void) {
 	test_lookahead_translator();
 	test_input();
 	test_token();
-	test_hash();
 	test_scan();
 	test_scan_number();
 	test_ast();

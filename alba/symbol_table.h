@@ -3,7 +3,7 @@
 
 #include "alba_api.h"
 #include <stdbool.h>
-#include "hash.h"
+#include "zinc/hash.h"
 #include "token.h"
 
 #define ENVIRONMENT_HASH_TABLE_SIZE 32
