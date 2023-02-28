@@ -10,7 +10,7 @@
 #include "zinc/memory.h"
 
 /* dynamic-output-none */
-void compile_error_init(struct compile_error* e)
+void compile_error_init(struct error* e)
 {
 	location_init(&e->loc);
 	e->next = NULL;
@@ -18,7 +18,7 @@ void compile_error_init(struct compile_error* e)
 }
 
 /* dynamic-output-none */
-void compile_error_list_init(struct compile_error_list* el)
+void compile_error_list_init(struct error_list* el)
 {
 	el->head = NULL;
 	el->tail = NULL;
@@ -26,9 +26,9 @@ void compile_error_list_init(struct compile_error_list* el)
 
 /* adding error to end of error list */
 /* dynamic-output-none */
-void compile_error_list_add(struct compile_error_list* el, struct compile_error* e)
+void compile_error_list_add(struct error_list* el, struct error* e)
 {
-	struct compile_error* prev = el->tail;
+	struct error* prev = el->tail;
 
 	e->prev = prev;
 
@@ -44,11 +44,11 @@ void compile_error_list_add(struct compile_error_list* el, struct compile_error*
 }
 
 /* dynamic-destroy el{} */
-void compile_error_list_destroy(struct compile_error_list* el)
+void compile_error_list_destroy(struct error_list* el)
 {
-	struct compile_error* p = el->head;
+	struct error* p = el->head;
 	while (p) {
-		struct compile_error* temp = p;
+		struct error* temp = p;
 		p = p->next;
 		/* destroy el{} */
 		free(temp);
@@ -56,17 +56,17 @@ void compile_error_list_destroy(struct compile_error_list* el)
 }
 
 /* dynamic-output el{} */
-bool set_source_error(struct compile_error_list* el, struct location* loc, const char* fmt, ...)
+bool set_source_error(struct error_list* el, struct location* loc, const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
 	int len;
-	size_t n = COMPILE_ERROR_MESSAGE_SIZE;
+	size_t n = ERROR_SIZE;
 
-	struct compile_error* e;
+	struct error* e;
 
 	/* allocate e */
-	malloc_safe((void**)&e, sizeof(struct compile_error));
+	malloc_safe((void**)&e, sizeof(struct error));
 	compile_error_init(e);
 
 	char* p = e->message;
@@ -110,7 +110,7 @@ bool set_source_error(struct compile_error_list* el, struct location* loc, const
 /* dynamic-output bf{} */
 /* resource-input d */
 /* resource-use d */
-enum result format_error(struct compile_error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf)
+enum result format_error(struct error* e, input_getchar f, input_seek seek, input_data d, struct buffer* bf)
 {
 	/* allocate bf{} */
 	buffer_copy_str(bf, e->message);
@@ -145,7 +145,7 @@ void location_init(struct location* loc)
 	loc->line = 0;
 	loc->col = 0;
 	loc->byte_pos = 0;
-	loc->byte_count = 0;
+	loc->size = 0;
 }
 
 void location_create(struct location** loc)

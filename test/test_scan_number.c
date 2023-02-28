@@ -4,13 +4,14 @@
 #include "alba/scan.h"
 #include "test_scan_setup.h"
 #include "alba/unit_test_compiler.h"
+#include "zinc/error_unit_test.h"
 
 void test_scan_number_negative_start()
 {
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -38,7 +39,7 @@ void test_scan_number_whole()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -72,7 +73,7 @@ void test_scan_number_fraction_start()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -106,7 +107,7 @@ void test_scan_number_fraction()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -139,7 +140,7 @@ void test_scan_number_exponent_start()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -179,7 +180,7 @@ void test_scan_number_fraction_exponent_start()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -219,7 +220,7 @@ void test_scan_number_fraction_exponent()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -253,7 +254,7 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -267,7 +268,7 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 	expect_has_errors(sns.el);
 	expect_false(valid, "valid 0");
 	expect_false(got_token, "got token 0");
-	expect_compile_error(sns.el, "invalid number");
+	expect_error(sns.el, "invalid number");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -283,7 +284,7 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -297,7 +298,7 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 	expect_has_errors(sns.el);
 	expect_false(valid, "valid 0");
 	expect_false(got_token, "got token 0");
-	expect_compile_error(sns.el, "invalid number");
+	expect_error(sns.el, "invalid number");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -313,7 +314,7 @@ void test_scan_number_fraction_exponent_negative()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -348,7 +349,7 @@ void test_scan_number_exponent_positive()
 
 	struct lookahead_char lc;
 	struct scan_state sns;
-	struct compile_error_list el;
+	struct error_list el;
 	bool valid;
 	struct token* t;
 	int got_token;
@@ -381,7 +382,7 @@ void test_scan_number_exponent_add()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;

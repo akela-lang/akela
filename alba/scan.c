@@ -16,7 +16,7 @@
 
 /* dynamic-output-none */
 /* initialize-output sns{} */
-void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct compile_error_list* el, struct symbol_table* st)
+void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct error_list* el, struct symbol_table* st)
 {
     sns->lc = lc;
     sns->el = el;
@@ -60,7 +60,7 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
     } else if (uc == '_') {
         *state = state_id_underscore;
         t->type = token_id;
@@ -71,7 +71,7 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
     } else if (u_isdigit(uc)) {
         *state = state_number_whole;
         t->type = token_number;
@@ -83,14 +83,14 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
     } else if (uc == '"') {
         *state = state_string;
         t->type = token_string;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
     } else if (compound_operator_start(uc)) {
         *state = state_compound_operator;
         for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
@@ -100,55 +100,55 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
     } else if (uc == '+') {
         t->type = token_plus;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '-') {
         t->type = token_minus;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '*') {
         t->type = token_mult;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '/') {
         t->type = token_divide;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '^') {
         t->type = token_caret;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '(') {
         t->type = token_left_paren;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == ')') {
         t->type = token_right_paren;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == ' ') {
         /* nothing */
@@ -159,56 +159,56 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == ',') {
         t->type = token_comma;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == ';') {
         t->type = token_semicolon;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '[') {
         t->type = token_left_square_bracket;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == ']') {
         t->type = token_right_square_bracket;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '{') {
         t->type = token_left_curly_brace;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '}') {
         t->type = token_right_curly_brace;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else if (uc == '.') {
         t->type = token_dot;
         t->loc.line = lc->line;
         t->loc.col = lc->col;
         t->loc.byte_pos = lc->byte_pos;
-        t->loc.byte_count = 1;
+        t->loc.size = 1;
         *got_token = 1;
     } else {
         char a[5];
@@ -265,7 +265,7 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
             }
             *state = state_start;
             *got_token = 1;
-            t->loc.byte_count = t->value.size;
+            t->loc.size = t->value.size;
             lookahead_char_push(lc);
         }
     } else if (*state == state_id_underscore) {
@@ -297,7 +297,7 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
             }
             *state = state_start;
             *got_token = 1;
-            t->loc.byte_count = t->value.size;
+            t->loc.size = t->value.size;
             lookahead_char_push(lc);
         }
     }
@@ -360,7 +360,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
         } else {
             *state = state_start;
             *got_token = 1;
-            t->loc.byte_count = t->value.size;
+            t->loc.size = t->value.size;
             lookahead_char_push(lc);
         }
     } else if (*state == state_number_fraction_start) {
@@ -373,7 +373,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
         } else {
             *state = state_start;
             *got_token = 1;
-            t->loc.byte_count = t->value.size;
+            t->loc.size = t->value.size;
             lookahead_char_push(lc);
         }
     } else if (*state == state_number_fraction) {
@@ -394,13 +394,13 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
                 /* number is done and e will be part of an id */
                 *state = state_start;
                 *got_token = 1;
-                t->loc.byte_count = t->value.size;
+                t->loc.size = t->value.size;
                 lookahead_char_push(lc);
             }
         } else {
             *state = state_start;
             *got_token = 1;
-            t->loc.byte_count = t->value.size;
+            t->loc.size = t->value.size;
             lookahead_char_push(lc);
         }
     } else if (*state == state_number_exponent_start) {
@@ -442,7 +442,7 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
         } else {
             *state = state_start;
             *got_token = 1;
-            t->loc.byte_count = t->value.size;
+            t->loc.size = t->value.size;
             lookahead_char_push(lc);
         }
     }
@@ -467,7 +467,7 @@ bool process_char_string(struct scan_state* sns, enum state_enum* state, int* go
         } else if (uc == '"') {
             *state = state_start;
             *got_token = 1;
-            t->loc.byte_count = t->value.size;
+            t->loc.size = t->value.size;
         } else {
             for (int i = 0; i < NUM_BYTES(lc->la0_8[0]); i++) {
                 /* allocate t{} */
@@ -518,89 +518,89 @@ bool process_compound_operator(struct scan_state* sns, enum state_enum* state, i
         }
     }
 
-    if (buffer_str_compare(&t->value, "==")) {
+    if (buffer_compare_str(&t->value, "==")) {
         t->type = token_double_equal;
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
-    } else if (buffer_str_compare(&t->value, "!=")) {
+        t->loc.size = t->value.size;
+    } else if (buffer_compare_str(&t->value, "!=")) {
         t->type = token_not_equal;
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
-    } else if (buffer_str_compare(&t->value, "<=")) {
+        t->loc.size = t->value.size;
+    } else if (buffer_compare_str(&t->value, "<=")) {
         t->type = token_less_than_or_equal;
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
-    } else if (buffer_str_compare(&t->value, ">=")) {
+        t->loc.size = t->value.size;
+    } else if (buffer_compare_str(&t->value, ">=")) {
         t->type = token_greater_than_or_equal;
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
-    } else if (buffer_str_compare(&t->value, "&&")) {
+        t->loc.size = t->value.size;
+    } else if (buffer_compare_str(&t->value, "&&")) {
         t->type = token_and;
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
-    } else if (buffer_str_compare(&t->value, "||")) {
+        t->loc.size = t->value.size;
+    } else if (buffer_compare_str(&t->value, "||")) {
         t->type = token_or;
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
-    } else if (buffer_str_compare(&t->value, "::")) {
+        t->loc.size = t->value.size;
+    } else if (buffer_compare_str(&t->value, "::")) {
         t->type = token_double_colon;
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
     } else if (t->value.buf[0] == '=') {
         t->type = token_equal;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '!') {
         t->type = token_not;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '<') {
         t->type = token_less_than;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '>') {
         t->type = token_greater_than;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '&') {
         t->type = token_ampersand;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == '|') {
         t->type = token_vertical_bar;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
         lookahead_char_push(lc);
     } else if (t->value.buf[0] == ':') {
         t->type = token_colon;
         buffer_clear(&t->value);
         *state = state_start;
         *got_token = 1;
-        t->loc.byte_count = t->value.size;
+        t->loc.size = t->value.size;
         lookahead_char_push(lc);
     } else {
         /* unrecognized compound operator */

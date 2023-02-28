@@ -6,6 +6,7 @@
 #include "alba/input.h"
 #include "alba/type_def.h"
 #include "alba/comp_unit.h"
+#include "zinc/error_unit_test.h"
 
 /* dynamic-output-none */
 void test_parse_assign()
@@ -765,7 +766,7 @@ void test_parse_function5()
 	parse_setup2("function foo(x::Int64) var x::Int64 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
-	expect_compile_error(&cu.el, "duplicate declaration in same scope: x");
+	expect_error(&cu.el, "duplicate declaration in same scope: x");
 
 	parse_teardown2(&cu);
 }
@@ -779,7 +780,7 @@ void test_parse_function_return_type_error()
 	parse_setup2("function foo(x::Int64)::Int64 true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
-	expect_compile_error(&cu.el, "returned type does not match function return type");
+	expect_error(&cu.el, "returned type does not match function return type");
 
 	parse_teardown2(&cu);
 }
@@ -793,7 +794,7 @@ void test_parse_function_error_expected_left_parenthesis()
 	parse_setup2("function foo", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected left parenthesis");
+	expect_error(&cu.el, "expected left parenthesis");
 
 	parse_teardown2(&cu);
 }
@@ -807,7 +808,7 @@ void test_parse_function_error_expected_right_parenthesis()
 	parse_setup2("function foo(", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected right parenthesis");
+	expect_error(&cu.el, "expected right parenthesis");
 
 	parse_teardown2(&cu);
 }
@@ -821,7 +822,7 @@ void test_parse_function_error_duplicate_declaration()
 	parse_setup2("function foo() end; function foo() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "duplicate declaration in same scope: foo");
+	expect_error(&cu.el, "duplicate declaration in same scope: foo");
 	
 	parse_teardown2(&cu);
 }
@@ -835,7 +836,7 @@ void test_parse_function_error_identifier_reserved()
 	parse_setup2("function Int64() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "identifier reserved as a type: Int64");
+	expect_error(&cu.el, "identifier reserved as a type: Int64");
 
 	parse_teardown2(&cu);
 }
@@ -849,7 +850,7 @@ void test_parse_function_error_expected_end()
 	parse_setup2("function foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected end");
+	expect_error(&cu.el, "expected end");
 
 	parse_teardown2(&cu);
 }
@@ -1255,7 +1256,7 @@ void test_parse_if_error_expected_expression()
 	parse_setup2("if end", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected condition after if");
+	expect_error(&cu.el, "expected condition after if");
 
 	parse_teardown2(&cu);
 }
@@ -1270,7 +1271,7 @@ void test_parse_if_error_expected_end()
 	parse_setup2("if true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected end");
+	expect_error(&cu.el, "expected end");
 
 	parse_teardown2(&cu);
 }
@@ -1285,7 +1286,7 @@ void test_parse_if_error_expected_elseif_expression()
 	parse_setup2("if true elseif end", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected condition after elseif");
+	expect_error(&cu.el, "expected condition after elseif");
 
 	parse_teardown2(&cu);
 }
@@ -1335,7 +1336,7 @@ void test_parse_while_error_expected_expression()
 	parse_setup2("while end", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "expected expression after while");
+	expect_error(&cu.el, "expected expression after while");
 
 	parse_teardown2(&cu);
 }
@@ -1349,7 +1350,7 @@ void test_parse_while_error_expected_end()
 	parse_setup2("while true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "expected end");
+	expect_error(&cu.el, "expected end");
 
 	parse_teardown2(&cu);
 }
@@ -1417,7 +1418,7 @@ void test_parse_for_range2()
 	parse_setup2("for i::Int64 = 0:10 var i::Int64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "duplicate declaration in same scope: i");
+	expect_error(&cu.el, "duplicate declaration in same scope: i");
 
 	parse_teardown2(&cu);
 }
@@ -1489,7 +1490,7 @@ void test_parse_for_iteration2()
 	parse_setup2("var list::Vector{Int64}; for i::Int64 in list var i::Int64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "duplicate declaration in same scope: i");
+	expect_error(&cu.el, "duplicate declaration in same scope: i");
 
 	parse_teardown2(&cu);
 }
@@ -1503,7 +1504,7 @@ void test_parse_for_iteration_error_no_value()
 	parse_setup2("function list() end; for i::Int64 in list() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "iteration expression has no value");
+	expect_error(&cu.el, "iteration expression has no value");
 
 	parse_teardown2(&cu);
 }
@@ -1517,7 +1518,7 @@ void test_parse_for_iteration_error_no_child_element()
 	parse_setup2("var list::Vector; for i::Int64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "iteration expression has no child element");
+	expect_error(&cu.el, "iteration expression has no child element");
 
 	parse_teardown2(&cu);
 }
@@ -1531,7 +1532,7 @@ void test_parse_for_iteration_error_cannot_cast()
 	parse_setup2("var list::Vector{Bool}; for i::Int64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "cannot cast list element");
+	expect_error(&cu.el, "cannot cast list element");
 
 	parse_teardown2(&cu);
 }
@@ -1545,7 +1546,7 @@ void test_parse_for_error_after_declaration()
 	parse_setup2("var list::Vector{Int64}; for i::Int64 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "expected '=' or 'in' after for element declaration");
+	expect_error(&cu.el, "expected '=' or 'in' after for element declaration");
 
 	parse_teardown2(&cu);
 }
@@ -1559,7 +1560,7 @@ void test_parse_for_error_expected_end()
 	parse_setup2("var list::Vector{Int64}; for i::Int64 = 1:10", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "expected end");
+	expect_error(&cu.el, "expected end");
 
 	parse_teardown2(&cu);
 }
@@ -1573,7 +1574,7 @@ void test_parse_for_error_expected_range_start()
 	parse_setup2("var list::Vector{Int64}; for i::Int64 =", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "expected range start");
+	expect_error(&cu.el, "expected range start");
 
 	parse_teardown2(&cu);
 }
@@ -1587,7 +1588,7 @@ void test_parse_for_error_expected_colon()
 	parse_setup2("var list::Vector{Int64}; for i::Int64 = 1", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "expected colon");
+	expect_error(&cu.el, "expected colon");
 
 	parse_teardown2(&cu);
 }
@@ -1601,7 +1602,7 @@ void test_parse_for_error_expected_range_end()
 	parse_setup2("var list::Vector{Int64}; for i::Int64 = 1:", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "expected range end");
+	expect_error(&cu.el, "expected range end");
 
 	parse_teardown2(&cu);
 }
@@ -1615,7 +1616,7 @@ void test_parse_for_range_error_start_no_value()
 	parse_setup2("function foo() end; for i::Int64 = foo():10 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "start range expression has no value");
+	expect_error(&cu.el, "start range expression has no value");
 
 	parse_teardown2(&cu);
 }
@@ -1629,7 +1630,7 @@ void test_parse_for_range_error_start_not_numeric()
 	parse_setup2("for i::Int64 = true:10 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "start range expression is not numeric");
+	expect_error(&cu.el, "start range expression is not numeric");
 
 	parse_teardown2(&cu);
 }
@@ -1643,7 +1644,7 @@ void test_parse_for_range_error_end_no_value()
 	parse_setup2("function foo() end; for i::Int64 = 1:foo() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "end range expression has no value");
+	expect_error(&cu.el, "end range expression has no value");
 
 	parse_teardown2(&cu);
 }
@@ -1657,7 +1658,7 @@ void test_parse_for_range_error_end_not_numeric()
 	parse_setup2("for i::Int64 = 1:true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "end range expression is not numeric");
+	expect_error(&cu.el, "end range expression is not numeric");
 
 	parse_teardown2(&cu);
 }
@@ -1671,7 +1672,7 @@ void test_parse_for_error_expected_iteration_expression()
 	parse_setup2("var list::Vector{Int64}; for i::Int64 in:", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_compile_error(&cu.el, "expected for iteration expression");
+	expect_error(&cu.el, "expected for iteration expression");
 
 	parse_teardown2(&cu);
 }
@@ -1813,7 +1814,7 @@ void test_parse_module_expected_identifier()
 	parse_setup2("module end", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected identifier after module");
+	expect_error(&cu.el, "expected identifier after module");
 
 	parse_teardown2(&cu);
 }
@@ -1827,7 +1828,7 @@ void test_parse_module_expected_end()
 	parse_setup2("module math", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected end");
+	expect_error(&cu.el, "expected end");
 
 	parse_teardown2(&cu);
 }
@@ -1841,7 +1842,7 @@ void test_parse_module_duplicate_declaration()
 	parse_setup2("var foo::Int64; module foo end", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "variable already used: foo");
+	expect_error(&cu.el, "variable already used: foo");
 
 	parse_teardown2(&cu);
 }
@@ -1855,7 +1856,7 @@ void test_parse_dot_error_expected_term()
 	parse_setup2("module math var pi::Float64 = 3.14 end; math.", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected term after dot");
+	expect_error(&cu.el, "expected term after dot");
 
 	parse_teardown2(&cu);
 }
@@ -1869,7 +1870,7 @@ void test_parse_dot_error_left_non_module()
 	parse_setup2("function foo() end; module math var pi::Float64 = 3.14 end; true.1", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "dot operand is not a module or struct");
+	expect_error(&cu.el, "dot operand is not a module or struct");
 
 	parse_teardown2(&cu);
 }
@@ -1883,7 +1884,7 @@ void test_parse_dot_error_right_not_identifier()
 	parse_setup2("function foo() end; module math var pi::Float64 = 3.14 end; math.\"hello\"", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "operand of dot operator not an identifier");
+	expect_error(&cu.el, "operand of dot operator not an identifier");
 
 	parse_teardown2(&cu);
 }
@@ -2032,7 +2033,7 @@ void test_parse_struct_error_not_field()
 	parse_setup2("struct Person firstName::String; lastName::String; age::Int64 end; var p::Person = Person(\"John\", \"Smith\", 45); p.abc", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "variable not a field of struct: abc");
+	expect_error(&cu.el, "variable not a field of struct: abc");
 
 	parse_teardown2(&cu);
 }
@@ -2046,7 +2047,7 @@ void test_parse_struct_error_expected_identifier()
 	parse_setup2("struct end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected identifier");
+	expect_error(&cu.el, "expected identifier");
 
 	parse_teardown2(&cu);
 }
@@ -2060,7 +2061,7 @@ void test_parse_struct_error_expected_end()
 	parse_setup2("struct Person", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected end");
+	expect_error(&cu.el, "expected end");
 
 	parse_teardown2(&cu);
 }
@@ -2074,7 +2075,7 @@ void test_parse_struct_error_expected_end2()
 	parse_setup2("struct Person x::Int64", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected end");
+	expect_error(&cu.el, "expected end");
 
 	parse_teardown2(&cu);
 }
@@ -2088,7 +2089,7 @@ void test_parse_struct_error_duplicate()
 	parse_setup2("var Person::Int64 = 1; struct Person end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "duplicate variable in scope: Person");
+	expect_error(&cu.el, "duplicate variable in scope: Person");
 
 	parse_teardown2(&cu);
 }
@@ -2118,7 +2119,7 @@ void test_parse_return_error_no_value()
 	parse_setup2("function bar() end; function foo()::Int64 return bar() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "return expression has no value");
+	expect_error(&cu.el, "return expression has no value");
 
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
@@ -2135,7 +2136,7 @@ void test_parse_return_error_outside_of_function()
 	parse_setup2("return true", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "return statement outside of function");
+	expect_error(&cu.el, "return statement outside of function");
 
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
@@ -2152,7 +2153,7 @@ void test_parse_return_error_type_does_not_match()
 	parse_setup2("function foo()::Int64 return true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "returned type does not match function return type");
+	expect_error(&cu.el, "returned type does not match function return type");
 
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");

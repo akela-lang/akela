@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     comp_unit_compile(&cu, (input_getchar)file_getchar, fp);
 
     if (!cu.valid) {
-        struct compile_error* e = cu.el.head;
+        struct error* e = cu.el.head;
         while (e) {
             fprintf(stderr, "%s\n", e->message);
             e = e->next;

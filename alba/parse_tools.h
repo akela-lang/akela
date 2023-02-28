@@ -12,14 +12,14 @@
 struct parse_state {
 	struct scan_state* sns;
 	struct token_list lookahead;
-	struct compile_error_list* el;
+	struct error_list* el;
 	struct symbol_table* st;
 	struct buffer qualifier;
 };
 
 /* dynamic-output-none */
 /* initialize-output ps ps{}*/
-ALBA_API void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct compile_error_list* el, struct symbol_table* st);
+ALBA_API void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct error_list* el, struct symbol_table* st);
 
 ALBA_API void parse_state_destroy(struct parse_state* ps);
 

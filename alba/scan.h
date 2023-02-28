@@ -12,7 +12,7 @@
 struct scan_state {
     struct lookahead_char* lc;
     struct symbol_table* st;
-    struct compile_error_list* el;
+    struct error_list* el;
 };
 
 struct char_value {
@@ -57,7 +57,7 @@ enum state_enum {
 
 /* dynamic-output-none */
 /* initialize-output sns{} */
-ALBA_API void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct compile_error_list* el, struct symbol_table* st);
+ALBA_API void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct error_list* el, struct symbol_table* st);
 
 /* dynamic-output sns{wt{} el{}} t t{} */
 /* dynamic-temp: tf tf{} */

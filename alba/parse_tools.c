@@ -10,7 +10,7 @@
 
 /* dynamic-output-none */
 /* initialize-output ps ps{}*/
-void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct compile_error_list* el, struct symbol_table* st)
+void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct error_list* el, struct symbol_table* st)
 {
 	ps->sns = sns;
 	token_list_init(&ps->lookahead);
@@ -123,7 +123,7 @@ bool get_parse_location(struct parse_state* ps, struct location* loc)
 	loc->line = t->loc.line;
 	loc->col = t->loc.col;
 	loc->byte_pos = t->loc.byte_pos;
-	loc->byte_count = t->loc.byte_count;
+	loc->size = t->loc.size;
 
 	return valid;
 }

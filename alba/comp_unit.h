@@ -10,7 +10,7 @@
 struct comp_unit {
 	bool valid;
 	struct ast_node* root;
-	struct compile_error_list el;
+	struct error_list el;
 	struct symbol_table st;
 	struct buffer path;
 	struct comp_unit* next;

@@ -9,6 +9,7 @@
 #include "alba/lookahead_char.h"
 #include "alba/source.h"
 #include "test_scan_setup.h"
+#include "zinc/error_unit_test.h"
 
 /* dynamic-output-none */
 void test_scan_blank()
@@ -16,7 +17,7 @@ void test_scan_blank()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	struct token* t;
 	int got_token;
@@ -47,7 +48,7 @@ void test_scan_assign()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -111,7 +112,7 @@ void test_scan_addition()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -175,7 +176,7 @@ void test_scan_subtraction()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -239,7 +240,7 @@ void test_scan_multiplication()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -303,7 +304,7 @@ void test_scan_divide()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -367,7 +368,7 @@ void test_scan_stmts_expr()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -477,7 +478,7 @@ void test_scan_stmts_expr2()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -608,7 +609,7 @@ void test_scan_stmts_assign()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -718,7 +719,7 @@ void test_scan_function()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -814,7 +815,7 @@ void test_scan_comma()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -854,7 +855,7 @@ void test_scan_semicolon()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -893,7 +894,7 @@ void test_scan_if() {
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -954,7 +955,7 @@ void test_scan_compound_operators() {
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1049,7 +1050,7 @@ void test_scan_compound_operators2() {
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1145,7 +1146,7 @@ void test_scan_for_range()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1255,7 +1256,7 @@ void test_scan_for_iteration()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1343,7 +1344,7 @@ void test_scan_error_unrecognized_character()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1358,8 +1359,7 @@ void test_scan_error_unrecognized_character()
 	assert_has_errors(sns.el);
 	assert_false(got_token, "got token");
 	assert_null(t, "t");
-	struct compile_error* e = assert_compile_error(&el, "Unrecognized character: $");
-	expect_compile_error_fields(e, 1, 1, 0);
+	expect_error(&el, "Unrecognized character: $");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
@@ -1371,7 +1371,7 @@ void test_scan_square_brackets()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1412,7 +1412,7 @@ void test_scan_string()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1443,7 +1443,7 @@ void test_scan_string2()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1497,7 +1497,7 @@ void test_scan_string_escape_error()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1510,8 +1510,7 @@ void test_scan_string_escape_error()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_false(valid, "scan_get_token");
 	assert_has_errors(sns.el);
-	struct compile_error* e = assert_compile_error(&el, "Unrecognized escape sequence: x");
-	expect_compile_error_fields(e, 1, 3, 2);
+	expect_error(&el, "Unrecognized escape sequence: x");
 
 	assert_false(got_token, "got_token");
 	assert_null(t, "t");
@@ -1526,7 +1525,7 @@ void test_scan_line_col()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1643,7 +1642,7 @@ void test_scan_error_underscore_letter()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1658,7 +1657,7 @@ void test_scan_error_underscore_letter()
 	expect_false(valid, "scan_get_token valid");
 	expect_null(t, "null t");
 	expect_false(got_token, "got token");
-	expect_compile_error(&el, "Must have a letter following underscore at start of id");
+	expect_error(&el, "Must have a letter following underscore at start of id");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
@@ -1669,7 +1668,7 @@ void test_scan_error_underscore_letter2()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1684,7 +1683,7 @@ void test_scan_error_underscore_letter2()
 	expect_false(valid, "scan_get_token valid");
 	expect_null(t, "null t");
 	expect_false(got_token, "got token");
-	expect_compile_error(&el, "Must have a letter following underscore at start of id");
+	expect_error(&el, "Must have a letter following underscore at start of id");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
@@ -1695,7 +1694,7 @@ void test_scan_error_exponent_sign()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
@@ -1710,7 +1709,7 @@ void test_scan_error_exponent_sign()
 	expect_false(valid, "scan_get_token valid");
 	expect_null(t, "null t");
 	expect_false(got_token, "got token");
-	expect_compile_error(&el, "invalid number");
+	expect_error(&el, "invalid number");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
@@ -1721,7 +1720,7 @@ void test_scan_module()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct compile_error_list el;
+	struct error_list el;
 	struct scan_state sns;
 	bool valid;
 	int got_token;

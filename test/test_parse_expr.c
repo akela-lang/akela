@@ -6,6 +6,7 @@
 #include "alba/unit_test_compiler.h"
 #include "alba/type_def.h"
 #include "alba/comp_unit.h"
+#include "zinc/error_unit_test.h"
 
 /* dynamic-output-none */
 void test_parse_blank()
@@ -25,6 +26,19 @@ void test_parse_blank()
 	assert_null(node, "null node");
 	
 	parse_teardown2(&cu);
+}
+
+void test_parse_expr_newline()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("1 + 2", &cu);     /* TODO: insert newline */
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    parse_teardown2(&cu);
 }
 
 /* dynamic-output-none */
@@ -75,7 +89,7 @@ void test_parse_add_error_expected_term()
 	parse_setup2("1 +", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "expected term after additive operator");
+	expect_error(&cu.el, "expected term after additive operator");
 
 	parse_teardown2(&cu);
 }
@@ -89,7 +103,7 @@ void test_parse_add_error_left_no_value()
 	parse_setup2("function foo() end; foo() + 1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "addition operand has no value");
+	expect_error(&cu.el, "addition operand has no value");
 	
 	parse_teardown2(&cu);
 }
@@ -103,7 +117,7 @@ void test_parse_add_error_left_not_numeric()
 	parse_setup2("true + 1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "addition on non-numeric operand");
+	expect_error(&cu.el, "addition on non-numeric operand");
 
 	parse_teardown2(&cu);
 }
@@ -117,7 +131,7 @@ void test_parse_add_error_right_no_value()
 	parse_setup2("function foo() end; 1 + foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "addition operand has no value");
+	expect_error(&cu.el, "addition operand has no value");
 
 	parse_teardown2(&cu);
 }
@@ -131,7 +145,7 @@ void test_parse_add_error_right_not_numeric()
 	parse_setup2("1 + true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "addition on non-numeric operand");
+	expect_error(&cu.el, "addition on non-numeric operand");
 
 	parse_teardown2(&cu);
 }
@@ -418,7 +432,7 @@ void test_parse_mult_error_expected_term()
 	parse_setup2("5*", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "expected term after operator");
+	expect_error(&cu.el, "expected term after operator");
 
 	parse_teardown2(&cu);
 }
@@ -433,7 +447,7 @@ void test_parse_mult_error_left_no_value()
 	parse_setup2("function foo() end; foo() * 1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "multiplication operand has no value");
+	expect_error(&cu.el, "multiplication operand has no value");
 	
 	parse_teardown2(&cu);
 }
@@ -448,7 +462,7 @@ void test_parse_mult_error_left_not_numeric()
 	parse_setup2("true * 1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "multiplication on non-numeric operand");
+	expect_error(&cu.el, "multiplication on non-numeric operand");
 
 	parse_teardown2(&cu);
 }
@@ -463,7 +477,7 @@ void test_parse_mult_error_right_no_value()
 	parse_setup2("function foo() end; 1 * foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "multiplication operand has no value");
+	expect_error(&cu.el, "multiplication operand has no value");
 	
 	parse_teardown2(&cu);
 }
@@ -478,7 +492,7 @@ void test_parse_mult_error_right_not_numeric()
 	parse_setup2("1 * true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "multiplication on non-numeric operand");
+	expect_error(&cu.el, "multiplication on non-numeric operand");
 	
 	parse_teardown2(&cu);
 }
@@ -801,7 +815,7 @@ void test_parse_power_error_expected_term()
 	parse_setup2("5^", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "expected term after caret");
+	expect_error(&cu.el, "expected term after caret");
 	
 	parse_teardown2(&cu);
 }
@@ -815,7 +829,7 @@ void test_parse_power_error_left_no_value()
 	parse_setup2("function foo() end; 5 ^ foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "power operand has no value");
+	expect_error(&cu.el, "power operand has no value");
 	
 	parse_teardown2(&cu);
 }
@@ -829,7 +843,7 @@ void test_parse_power_error_left_not_numeric()
 	parse_setup2("true ^ 2", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "power on non-numeric operand");
+	expect_error(&cu.el, "power on non-numeric operand");
 	
 	parse_teardown2(&cu);
 }
@@ -843,7 +857,7 @@ void test_parse_power_error_right_no_value()
 	parse_setup2("function foo() end; 5 ^ foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "power operand has no value");
+	expect_error(&cu.el, "power operand has no value");
 	
 	parse_teardown2(&cu);
 }
@@ -857,7 +871,7 @@ void test_parse_power_error_right_not_numeric()
 	parse_setup2("5 ^ true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "power on non-numeric operand");
+	expect_error(&cu.el, "power on non-numeric operand");
 	
 	parse_teardown2(&cu);
 }
@@ -1309,7 +1323,7 @@ void test_parse_comparison_error_no_term()
 	parse_setup2("100 <", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected term after comparison operator");
+	expect_error(&cu.el, "expected term after comparison operator");
 
 	parse_teardown2(&cu);
 }
@@ -1323,7 +1337,7 @@ void test_parse_comparison_error_left_no_value()
 	parse_setup2("function foo() end; foo() < 100", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "operand has no value");
+	expect_error(&cu.el, "operand has no value");
 
 	parse_teardown2(&cu);
 }
@@ -1337,7 +1351,7 @@ void test_parse_comparison_error_right_no_value()
 	parse_setup2("function foo() end; 100 < foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "operand has no value");
+	expect_error(&cu.el, "operand has no value");
 	
 	parse_teardown2(&cu);
 }
@@ -1352,7 +1366,7 @@ void test_parse_comparison_error_left_not_numeric()
 	parse_setup2("true < 100", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "comparison operand is not numeric");	
+	expect_error(&cu.el, "comparison operand is not numeric");	
 	
 	parse_teardown2(&cu);
 }
@@ -1367,7 +1381,7 @@ void test_parse_comparison_error_right_not_numeric()
 	parse_setup2("true < 100", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "comparison operand is not numeric");
+	expect_error(&cu.el, "comparison operand is not numeric");
 	
 	parse_teardown2(&cu);
 }
@@ -1491,7 +1505,7 @@ void test_parse_boolean_error_expected_term()
 	parse_setup2("true &&", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "expected term after && or ||");
+	expect_error(&cu.el, "expected term after && or ||");
 	
 	parse_teardown2(&cu);
 }
@@ -1507,7 +1521,7 @@ void test_parse_boolean_error_left_no_value()
 	parse_setup2("function foo() end; foo() && true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "left-side operand of boolean operator has no type");
+	expect_error(&cu.el, "left-side operand of boolean operator has no type");
 
 	parse_teardown2(&cu);
 }
@@ -1523,7 +1537,7 @@ void test_parse_boolean_error_right_no_value()
 	parse_setup2("function foo() end; true && foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "operand of boolean operator has no type");
+	expect_error(&cu.el, "operand of boolean operator has no type");
 
 	parse_teardown2(&cu);
 }
@@ -1537,7 +1551,7 @@ void test_parse_boolean_error_left_not_boolean()
 	parse_setup2("1 && true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "left-side expression of boolean operator is not boolean");
+	expect_error(&cu.el, "left-side expression of boolean operator is not boolean");
 	
 	parse_teardown2(&cu);
 }
@@ -1551,7 +1565,7 @@ void test_parse_boolean_error_right_not_boolean()
 	parse_setup2("true && 1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_compile_error(&cu.el, "expression of boolean operator is not boolean");
+	expect_error(&cu.el, "expression of boolean operator is not boolean");
 	
 	parse_teardown2(&cu);
 }
@@ -1688,7 +1702,7 @@ void test_parse_subscript_error_no_type()
 	parse_setup2("function foo() end; var a::Vector{Int64}; foo()[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "subscripting expression with no type");	
+	expect_error(&cu.el, "subscripting expression with no type");	
 	
 	parse_teardown2(&cu);
 }
@@ -1703,7 +1717,7 @@ void test_parse_subscript_error_not_array()
 	parse_setup2("var a::Int64; a[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "subscripting expression that is not an array");	
+	expect_error(&cu.el, "subscripting expression that is not an array");	
 	
 	parse_teardown2(&cu);
 }
@@ -1718,7 +1732,7 @@ void test_parse_subscript_error_expected_right_square_bracket()
 	parse_setup2("var a::Vector{Int64}; a[1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected right-square-bracket");
+	expect_error(&cu.el, "expected right-square-bracket");
 	
 	parse_teardown2(&cu);
 }
@@ -1733,7 +1747,7 @@ void test_parse_subscript_error_no_subtype()
 	parse_setup2("var a::Vector; a[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "subscripting expression with no subtype");
+	expect_error(&cu.el, "subscripting expression with no subtype");
 	
 	parse_teardown2(&cu);
 }
@@ -1858,7 +1872,7 @@ void test_parse_assign_error_term()
 	parse_setup2("var a::String =", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "expected an assignment term");
+	expect_error(&cu.el, "expected an assignment term");
 
 	parse_teardown2(&cu);
 }
@@ -1872,7 +1886,7 @@ void test_parse_assign_error_no_value_right()
 	parse_setup2("function foo() end; var a::String = foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "cannot assign with operand that has no value");
+	expect_error(&cu.el, "cannot assign with operand that has no value");
 	
 	parse_teardown2(&cu);
 }
@@ -1886,7 +1900,7 @@ void test_parse_assign_error_no_value_left()
 	parse_setup2("function foo() end; foo() = 1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "cannot assign with operand that has no value");
+	expect_error(&cu.el, "cannot assign with operand that has no value");
 	
 	parse_teardown2(&cu);
 }
@@ -1900,7 +1914,7 @@ void test_parse_assign_error_not_compatible()
 	parse_setup2("var x::Int64 = true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "values in assignment not compatible");
+	expect_error(&cu.el, "values in assignment not compatible");
 	
 	parse_teardown2(&cu);
 }
@@ -1914,7 +1928,7 @@ void test_parse_assign_error_lvalue()
 	parse_setup2("true = true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_compile_error(&cu.el, "not a valid lvalue");
+	expect_error(&cu.el, "not a valid lvalue");
 
 	parse_teardown2(&cu);
 }
@@ -1990,4 +2004,5 @@ void test_parse_expression()
 	test_parse_assign_error_no_value_left();
 	test_parse_assign_error_not_compatible();
 	test_parse_assign_error_lvalue();
+    test_parse_expr_newline();
 }
