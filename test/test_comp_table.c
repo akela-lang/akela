@@ -6,6 +6,7 @@
 #include "alba/comp_table.h"
 #include "zinc/buffer.h"
 #include "alba/comp_unit.h"
+#include "zinc/error_unit_test.h"
 
 void test_comp_table_compile()
 {

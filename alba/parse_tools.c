@@ -101,6 +101,26 @@ bool match(struct parse_state* ps, enum token_enum type, const char* reason, str
 	return valid;
 }
 
+bool consume_newline(struct parse_state* ps)
+{
+    bool valid = true;
+    while (true) {
+        int num;
+        valid = get_lookahead(ps, 1, &num) && valid;
+        struct token* t0 = get_token(&ps->lookahead, 0);
+        if (t0 && t0->type == token_newline) {
+            struct token* t = NULL;
+            valid = match(ps, token_newline, "expected newline", &t) && valid;
+            token_destroy(t);
+            free(t);
+        } else {
+            break;
+        }
+    }
+
+    return valid;
+}
+
 /* dynamic-output ps{} */
 bool get_parse_location(struct parse_state* ps, struct location* loc)
 {

@@ -31,6 +31,8 @@ ALBA_API bool get_lookahead(struct parse_state* ps, int count, int* num);
 /* dynamic-output ps{} t t{} */
 ALBA_API bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t);
 
+ALBA_API bool consume_newline(struct parse_state* ps);
+
 /* dynamic-output ps{} */
 ALBA_API bool get_parse_location(struct parse_state* ps, struct location* loc);
 

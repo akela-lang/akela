@@ -28,19 +28,6 @@ void test_parse_blank()
 	parse_teardown2(&cu);
 }
 
-void test_parse_expr_newline()
-{
-    test_name(__func__);
-
-    struct comp_unit cu;
-
-    parse_setup2("1 + 2", &cu);     /* TODO: insert newline */
-    assert_no_errors(&cu.el);
-    expect_true(cu.valid, "valid");
-
-    parse_teardown2(&cu);
-}
-
 /* dynamic-output-none */
 void test_parse_add()
 {
@@ -1933,6 +1920,33 @@ void test_parse_assign_error_lvalue()
 	parse_teardown2(&cu);
 }
 
+void test_parse_expr_newline_add()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("1 +\n2", &cu);
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    struct ast_node* add = ast_node_get(cu.root, 0);
+    assert_ptr(add, "ptr add");
+    expect_int_equal(add->type, ast_type_plus, "plus add");
+
+    struct ast_node* one = ast_node_get(add, 0);
+    assert_ptr(one, "one");
+    expect_int_equal(one->type, ast_type_number, "number one");
+    expect_str(&one->value, "1", "1");
+
+    struct ast_node* two = ast_node_get(add, 1);
+    assert_ptr(two, "two");
+    expect_int_equal(two->type, ast_type_number, "number two");
+    expect_str(&two->value, "2", "2");
+
+    parse_teardown2(&cu);
+}
+
 /* dynamic-output-none */
 void test_parse_expression()
 {
@@ -2004,5 +2018,5 @@ void test_parse_expression()
 	test_parse_assign_error_no_value_left();
 	test_parse_assign_error_not_compatible();
 	test_parse_assign_error_lvalue();
-    test_parse_expr_newline();
+    test_parse_expr_newline_add();
 }
