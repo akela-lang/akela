@@ -4,7 +4,7 @@
   * boolean []
   * comparison []
   * add [x]
-  * mult []
+  * mult [x]
   * power []
   * subscript []
   * function call []

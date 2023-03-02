@@ -606,6 +606,8 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		location_update_token(loc, op);
 		/* test case: test case not needed */
 
+        valid = consume_newline(ps) && valid;
+
 		/* factor */
 		/* allocate ps{} a a{} */
 		struct location loc_b;
