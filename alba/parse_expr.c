@@ -719,6 +719,8 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		location_update_token(loc, caret);
 		/* test case: no test case needed */
 
+        valid = consume_newline(ps) && valid;
+
 		struct ast_node* b = NULL;
 		struct location loc_b;
 		valid = subscript(ps, &b, &loc_b) && valid;
