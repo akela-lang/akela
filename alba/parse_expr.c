@@ -853,13 +853,17 @@ bool subscript(struct parse_state* ps, struct ast_node** root, struct location* 
 		token_destroy(lsb);
 		free(lsb);
 
+        valid = consume_newline(ps) && valid;
+
 		/* allocate b b{} */
 		struct ast_node* b = NULL;
 		struct location loc_expr;
 		valid = expr(ps, &b, &loc_expr) && valid;
 		location_update(loc, &loc_expr);
 
-		/* allocate ps{} rsb rsb{} */
+        valid = consume_newline(ps) && valid;
+
+        /* allocate ps{} rsb rsb{} */
 		struct token* rsb = NULL;
 		valid = match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb) && valid;
 		location_update_token(loc, rsb);

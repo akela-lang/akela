@@ -2001,6 +2001,32 @@ void test_parse_expr_newline_power()
     parse_teardown2(&cu);
 }
 
+void test_parse_expr_newline_subscript()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("var a::Vector{Int64}; a[\n0\n]", &cu);
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    struct ast_node* subscript = ast_node_get(cu.root, 1);
+    assert_ptr(subscript, "ptr subscript");
+    expect_int_equal(subscript->type, ast_type_array_subscript, "array_subscript subscript");
+
+    struct ast_node* array = ast_node_get(subscript, 0);
+    assert_ptr(array, "array");
+    expect_int_equal(array->type, ast_type_id, "id array");
+    expect_str(&array->value, "a", "a");
+
+    struct ast_node* zero = ast_node_get(subscript, 1);
+    assert_ptr(zero, "zero");
+    expect_int_equal(zero->type, ast_type_number, "number zero");
+    expect_str(&zero->value, "0", "0");
+
+    parse_teardown2(&cu);
+}
 /* dynamic-output-none */
 void test_parse_expression()
 {
@@ -2075,4 +2101,5 @@ void test_parse_expression()
     test_parse_expr_newline_add();
     test_parse_expr_newline_mult();
     test_parse_expr_newline_power();
+    test_parse_expr_newline_subscript();
 }

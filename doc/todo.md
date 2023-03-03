@@ -6,7 +6,7 @@
   * add [x]
   * mult [x]
   * power [x]
-  * subscript []
+  * subscript [x]
   * function call []
   * cseq []
   * dot []
