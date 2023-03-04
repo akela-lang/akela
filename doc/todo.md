@@ -9,7 +9,7 @@
   * subscript [x]
   * function call [x]
   * cseq [x]
-  * dot []
+  * dot [x]
 * handle newlines in factor
 * handle newlines in types
 * link to LLVM

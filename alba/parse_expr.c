@@ -1132,7 +1132,6 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* a = NULL;
-	struct ast_node* b = NULL;
 
 	location_init(loc);
 
@@ -1159,9 +1158,11 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 		}
 
 		struct token* dot = NULL;
-		valid = match(ps, token_dot, "exprected a dot", &dot) && valid;
+		valid = match(ps, token_dot, "expected a dot", &dot) && valid;
 		location_update_token(loc, dot);
 		/* test case: no test case needed */
+
+        valid = consume_newline(ps) && valid;
 
 		struct ast_node* b = NULL;
 		struct location loc_b;

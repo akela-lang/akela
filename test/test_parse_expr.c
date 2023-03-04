@@ -2064,6 +2064,54 @@ void test_parse_expr_newline_function_call()
     parse_teardown2(&cu);
 }
 
+void test_parse_expr_newline_dot()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("module base module math var pi::Float64 = 3.14 end end; base.\nmath.\npi", &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    assert_ptr(cu.root, "ptr cu.root");
+    expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
+
+    struct ast_node* dot0 = ast_node_get(cu.root, 1);
+    assert_ptr(dot0, "ptr dot0");
+    expect_int_equal(dot0->type, ast_type_dot, "dot dot0");
+
+    struct ast_node* tu = dot0->tu;
+    assert_ptr(tu, "ptr tu");
+    expect_int_equal(tu->type, ast_type_type, "type tu");
+
+    struct type_def* td = tu->td;
+    assert_ptr(td, "ptr td");
+    expect_int_equal(td->type, type_float, "float td");
+    expect_str(&td->name, "Float64", "Float64 td");
+
+    struct ast_node* dot1 = ast_node_get(dot0, 0);
+    assert_ptr(dot1, "ptr dot1");
+    expect_int_equal(dot1->type, ast_type_dot, "id dot1");
+
+    struct ast_node* base_id_1 = ast_node_get(dot1, 0);
+    assert_ptr(base_id_1, "ptr base_id_1");
+    expect_int_equal(base_id_1->type, ast_type_id, "id base_id_1");
+    expect_str(&base_id_1->value, "base", "base base_id_1");
+
+    struct ast_node* math_id_1 = ast_node_get(dot1, 1);
+    assert_ptr(math_id_1, "ptr math_id_1");
+    expect_int_equal(math_id_1->type, ast_type_id, "id math_id_1");
+    expect_str(&math_id_1->value, "math", "math math_id_1");
+
+    struct ast_node* pi_id = ast_node_get(dot0, 1);
+    assert_ptr(pi_id, "ptr pi_id");
+    expect_int_equal(pi_id->type, ast_type_id, "id pi_id");
+    expect_str(&pi_id->value, "pi", "pi pi_id");
+
+    parse_teardown2(&cu);
+}
+
 /* dynamic-output-none */
 void test_parse_expression()
 {
@@ -2140,4 +2188,5 @@ void test_parse_expression()
     test_parse_expr_newline_power();
     test_parse_expr_newline_subscript();
     test_parse_expr_newline_function_call();
+    test_parse_expr_newline_dot();
 }
