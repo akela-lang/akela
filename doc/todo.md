@@ -7,8 +7,8 @@
   * mult [x]
   * power [x]
   * subscript [x]
-  * function call []
-  * cseq []
+  * function call [x]
+  * cseq [x]
   * dot []
 * handle newlines in factor
 * handle newlines in types

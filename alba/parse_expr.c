@@ -952,11 +952,15 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 		location_update_token(loc, lp);
 		/* test case: test case not needed */
 
+        valid = consume_newline(ps) && valid;
+
 		/* allocate b b{} */
 		struct ast_node* cseq_node = NULL;
 		struct location loc_cseq;
 		valid = cseq(ps, left->tu, &cseq_node, &loc_cseq) && valid;
 		location_update(loc, &loc_cseq);
+
+        valid = consume_newline(ps) && valid;
 
 		/* allocate ps{} rp rp{} */
 		struct token* rp = NULL;
@@ -1096,6 +1100,8 @@ bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, s
 		/* destroy comma comma{} */
 		token_destroy(comma);
 		free(comma);
+
+        valid = consume_newline(ps) && valid;
 
 		/* allocate a a{} */
 		struct ast_node* a = NULL;

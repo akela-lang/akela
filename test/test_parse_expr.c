@@ -2027,6 +2027,43 @@ void test_parse_expr_newline_subscript()
 
     parse_teardown2(&cu);
 }
+
+void test_parse_expr_newline_function_call()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("function foo(a::Int64, b::Int64)::Int64 a+b end; foo(\n1,\n2\n)", &cu);
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    struct ast_node* call = ast_node_get(cu.root, 1);
+    assert_ptr(call, "ptr call");
+    expect_int_equal(call->type, ast_type_call, "call call");
+
+    struct ast_node* foo = ast_node_get(call, 0);
+    assert_ptr(foo, "ptr foo");
+    expect_int_equal(foo->type, ast_type_id, "id foo");
+    expect_str(&foo->value, "foo", "foo");
+
+    struct ast_node* cseq = ast_node_get(call, 1);
+    assert_ptr(cseq, "ptr cseq");
+    expect_int_equal(cseq->type, ast_type_cseq, "cseq cseq");
+
+    struct ast_node* one = ast_node_get(cseq, 0);
+    assert_ptr(one, "ptr one");
+    expect_int_equal(one->type, ast_type_number, "number one");
+    expect_str(&one->value, "1", "1");
+
+    struct ast_node* two = ast_node_get(cseq, 1);
+    assert_ptr(two, "ptr two");
+    expect_int_equal(two->type, ast_type_number, "number two");
+    expect_str(&two->value, "2", "2");
+
+    parse_teardown2(&cu);
+}
+
 /* dynamic-output-none */
 void test_parse_expression()
 {
@@ -2102,4 +2139,5 @@ void test_parse_expression()
     test_parse_expr_newline_mult();
     test_parse_expr_newline_power();
     test_parse_expr_newline_subscript();
+    test_parse_expr_newline_function_call();
 }
