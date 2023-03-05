@@ -353,6 +353,8 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 		location_update_token(loc, op);
 		/* test case: no test case needed */
 
+        valid = consume_newline(ps) && valid;
+
 		/* add */
 		/* allocate ps{} a a{} */
 		struct ast_node* b = NULL;

@@ -2,7 +2,7 @@
 * handle newlines in expressions
   * assignment []
   * boolean []
-  * comparison []
+  * comparison [x]
   * add [x]
   * mult [x]
   * power [x]
