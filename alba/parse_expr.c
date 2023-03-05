@@ -297,7 +297,6 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* a = NULL;
-	struct ast_node* b = NULL;
 	struct ast_node* left = NULL;
 	int num;
 
