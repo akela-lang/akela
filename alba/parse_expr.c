@@ -224,6 +224,8 @@ bool boolean(struct parse_state* ps, struct ast_node** root, struct location* lo
 		location_update_token(loc, op);
 		/* test case: no test cases needed */
 
+        valid = consume_newline(ps) && valid;
+
 		/* comparison */
 		/* allocate a a{} */
 		struct ast_node* b = NULL;

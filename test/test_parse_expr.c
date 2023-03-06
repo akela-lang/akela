@@ -1920,6 +1920,33 @@ void test_parse_assign_error_lvalue()
 	parse_teardown2(&cu);
 }
 
+void test_parse_expr_newline_boolean()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("true &&\nfalse", &cu);
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    struct ast_node* op = ast_node_get(cu.root, 0);
+    assert_ptr(op, "ptr add");
+    expect_int_equal(op->type, ast_type_and, "less than op");
+
+    struct ast_node* one = ast_node_get(op, 0);
+    assert_ptr(one, "one");
+    expect_int_equal(one->type, ast_type_boolean, "boolean one");
+    expect_str(&one->value, "true", "true");
+
+    struct ast_node* two = ast_node_get(op, 1);
+    assert_ptr(two, "two");
+    expect_int_equal(two->type, ast_type_boolean, "boolean two");
+    expect_str(&two->value, "false", "false");
+
+    parse_teardown2(&cu);
+}
+
 void test_parse_expr_newline_comparison()
 {
     test_name(__func__);
@@ -2210,6 +2237,7 @@ void test_parse_expression()
 	test_parse_assign_error_no_value_left();
 	test_parse_assign_error_not_compatible();
 	test_parse_assign_error_lvalue();
+    test_parse_expr_newline_boolean();
     test_parse_expr_newline_comparison();
     test_parse_expr_newline_add();
     test_parse_expr_newline_mult();

@@ -1,7 +1,7 @@
 # Todo
 * handle newlines in expressions
   * assignment []
-  * boolean []
+  * boolean [x]
   * comparison [x]
   * add [x]
   * mult [x]
