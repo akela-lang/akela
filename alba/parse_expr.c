@@ -91,6 +91,8 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 			token_destroy(equal);
 			free(equal);
 
+            valid = consume_newline(ps) && valid;
+
 			if (valid) {
 				assert(a);
 

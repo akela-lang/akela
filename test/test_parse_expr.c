@@ -1920,6 +1920,33 @@ void test_parse_assign_error_lvalue()
 	parse_teardown2(&cu);
 }
 
+void test_parse_expr_newline_assignment()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("var a::Int64; a =\n1", &cu);
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    struct ast_node* op = ast_node_get(cu.root, 1);
+    assert_ptr(op, "ptr op");
+    expect_int_equal(op->type, ast_type_assign, "assign op");
+
+    struct ast_node* one = ast_node_get(op, 0);
+    assert_ptr(one, "one");
+    expect_int_equal(one->type, ast_type_id, "id one");
+    expect_str(&one->value, "a", "a one");
+
+    struct ast_node* two = ast_node_get(op, 1);
+    assert_ptr(two, "two");
+    expect_int_equal(two->type, ast_type_number, "number two");
+    expect_str(&two->value, "1", "1 two");
+
+    parse_teardown2(&cu);
+}
+
 void test_parse_expr_newline_boolean()
 {
     test_name(__func__);
@@ -2237,6 +2264,7 @@ void test_parse_expression()
 	test_parse_assign_error_no_value_left();
 	test_parse_assign_error_not_compatible();
 	test_parse_assign_error_lvalue();
+    test_parse_expr_newline_assignment();
     test_parse_expr_newline_boolean();
     test_parse_expr_newline_comparison();
     test_parse_expr_newline_add();
