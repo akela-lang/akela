@@ -95,6 +95,8 @@ bool var(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	location_update_token(loc, vrt);
 	/* test case: no test case needed */
 
+    valid = consume_newline(ps) && valid;
+
 	/* allocate ps{} id id{} */
 	struct ast_node* a = NULL;
 	struct location loc_dec;

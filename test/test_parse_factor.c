@@ -1775,6 +1775,36 @@ void test_parse_not_error_not_boolean()
 	parse_teardown2(&cu);
 }
 
+void test_parse_factor_newline_var()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    /* allocate ps{} cu.root cu.root{} */
+    parse_setup2("var\nx::Int64", &cu);
+    expect_true(cu.valid, "parse_setup valid");
+    expect_no_errors(&cu.el);
+
+    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown2(&cu);
+}
+
+void test_parse_factor_newline_var_assign()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    /* allocate ps{} cu.root cu.root{} */
+    parse_setup2("var\nx::Int64 =\n1", &cu);
+    expect_true(cu.valid, "parse_setup valid");
+    expect_no_errors(&cu.el);
+
+    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown2(&cu);
+}
+
 void test_parse_factor()
 {
 	test_parse_var();
@@ -1832,4 +1862,6 @@ void test_parse_factor()
 	test_parse_not_error_expected_factor();
 	test_parse_not_error_no_value();
 	test_parse_not_error_not_boolean();
+    test_parse_factor_newline_var();
+    test_parse_factor_newline_var_assign();
 }
