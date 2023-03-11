@@ -13,6 +13,7 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include "parse_stmts.h"
+#include "parse_factor.h"
 #include "type_def.h"
 #include <assert.h>
 
@@ -185,7 +186,6 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
-	struct token* t1 = get_token(&ps->lookahead, 1);
 
 	/* while */
 	if (t0 && t0->type == token_while) {
@@ -196,7 +196,7 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		valid = for_nt(ps, &n, loc) && valid;
 
 		/* function word (seq) stmts end */
-	} else if (t0 && t0->type == token_function && t1 && t1->type == token_id) {
+	} else if (t0 && t0->type == token_function) {
 		valid = function(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_if) {
@@ -541,38 +541,57 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
+    struct ast_node* n = NULL;
 
 	location_init(loc);
 
-	/* shared ps{top} -> saved */
-	struct environment* saved = ps->st->top;
+    struct token* f = NULL;
+    valid = match(ps, token_function, "expected function", &f) && valid;
+    location_update_token(loc, f);
+    token_destroy(f);
+    free(f);
 
-	/* allocate env env{} */
-	struct environment* env = NULL;
-	malloc_safe((void**)&env, sizeof(struct environment));
-	environment_init(env, saved);
-	ps->st->top = env;
+    valid = consume_newline(ps) && valid;
 
-	struct ast_node* fd = NULL;
-	struct location loc_start;
-	valid = function_start(ps, &fd, &loc_start) && valid;
-	location_update(loc, &loc_start);
+    int num;
+    valid = get_lookahead(ps, 1, &num) && valid;
+    struct token* t0 = get_token(&ps->lookahead, 0);
+    if (t0 && t0->type == token_id) {
+        /* shared ps{top} -> saved */
+        struct environment* saved = ps->st->top;
 
-	struct location loc_finish;
-	valid = function_finish(ps, fd, &loc_finish) && valid;
-	location_update(loc, &loc_finish);
+        /* allocate env env{} */
+        struct environment* env = NULL;
+        malloc_safe((void**)&env, sizeof(struct environment));
+        environment_init(env, saved);
+        ps->st->top = env;
+
+        struct location loc_start;
+        valid = function_start(ps, &n, &loc_start) && valid;
+        location_update(loc, &loc_start);
+
+        struct location loc_finish;
+        valid = function_finish(ps, n, &loc_finish) && valid;
+        location_update(loc, &loc_finish);
+
+        /* transfer saved -> ps->st->top */
+        ps->st->top = saved;
+
+        /* destroy env env{} */
+        environment_destroy(env);
+    } else if (t0 && t0->type == token_left_paren) {
+        struct location af_loc;
+        valid = anonymous_function(ps, &n, &af_loc) && valid;
+        location_update(loc, &af_loc);
+    } else {
+        valid = set_source_error(ps->el, loc, "expected function name or parenthesis");
+    }
 
 	if (valid) {
-		*root = fd;
+		*root = n;
 	} else {
-		ast_node_destroy(fd);
+		ast_node_destroy(n);
 	}
-
-	/* transfer saved -> ps->st->top */
-	ps->st->top = saved;
-
-	/* destroy env env{} */
-	environment_destroy(env);
 
 	valid = location_default(ps, loc) && valid;
 
@@ -585,12 +604,6 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 	struct ast_node* n = NULL;
 
 	location_init(loc);
-
-	/* allocate ps{} f f{} */
-	struct token* f = NULL;
-	valid = match(ps, token_function, "expecting function", &f) && valid;
-	location_update_token(loc, f);
-	/* test case: no test case needed */
 
 	/* allocate ps{} id id{} */
 	struct token* id = NULL;
@@ -698,9 +711,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 		}
 	}
 
-	/* destroy f f{} id id{} lp lp{} rp rp{} */
-	token_destroy(f);
-	free(f);
+	/* destroy id id{} lp lp{} rp rp{} */
 	token_destroy(id);
 	free(id);
 	token_destroy(lp);

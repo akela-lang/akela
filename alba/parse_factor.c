@@ -45,13 +45,22 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 	struct token* t0;
 	struct token* t1;
 	t0 = get_token(&ps->lookahead, 0);
-	t1 = get_token(&ps->lookahead, 1);
 
 	if (t0 && t0->type == token_var) {
 		valid = var(ps, &n, loc) && valid;
 
-	} else if (t0 && t0->type == token_function && t1 && t1->type == token_left_paren) {
-		valid = anonymous_function(ps, &n, loc) && valid;
+	} else if (t0 && t0->type == token_function) {
+        /* allocate ps{} f f{} */
+        struct token* f = NULL;
+        valid = match(ps, token_function, "expected function", &f) && valid;
+        location_update_token(loc, f);
+        /* test case: no test case needed */
+        token_destroy(f);
+        free(f);
+
+        valid = consume_newline(ps) && valid;
+
+        valid = anonymous_function(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_not) {
 		valid = not_nt(ps, &n, loc) && valid;
@@ -148,22 +157,20 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	/* transfer env -> ps{top} */
 	ps->st->top = env;
 
-	/* allocate ps{} f f{} */
-	struct token* f = NULL;
-	valid = match(ps, token_function, "expected anonymous function", &f) && valid;
-	location_update_token(loc, f);
-	/* test case: no test case needed */
-
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
 	location_update_token(loc, lp);
 	/* test case: no test case needed */
+
+    valid = consume_newline(ps) && valid;
 
 	/* allocate a a{} */
 	struct ast_node* dseq_node = NULL;
 	struct location loc_dseq;
 	valid = dseq(ps, &dseq_node, &loc_dseq) && valid;
 	location_update(loc, &loc_dseq);
+
+    valid = consume_newline(ps) && valid;
 	
 	/* allocate n */
 	/* allocate ps{} rp rp{} */
@@ -171,6 +178,8 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
 	location_update_token(loc, rp);
 	/* test case: test_parse_anonymous_function_expected_right_paren */
+
+    valid = consume_newline(ps) && valid;
 
 	int num;
 	valid = get_lookahead(ps, 1, &num) && valid;
@@ -185,8 +194,14 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 		free(dc);
 		/* test case: no test case needed */
 
+        valid = consume_newline(ps) && valid;
+
 		valid = type(ps, NULL, &dret_type, &loc_ret) && valid;
 		location_update(loc, &loc_ret);
+
+        if (!dret_type) {
+            valid = set_source_error(ps->el, &loc_ret, "expected a type");
+        }
 	}
 
 	/* allocate b b{} */
@@ -226,8 +241,6 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	}
 
 	/* destroy f f{} lp lp{} rp rp{} end end{} */
-	token_destroy(f);
-	free(f);
 	token_destroy(lp);
 	free(lp);
 	token_destroy(rp);
@@ -471,17 +484,21 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 				valid = set_source_error(ps->el, &id->loc, "variable not a field of struct: %s", id->value.buf);
 			}
 		} else {
-			struct symbol* sym = environment_get(ps->st->top, &full_id);
-			if (!sym) {
-				buffer_finish(&full_id);
-				valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
-				/* test case: test_parse_types_missing_declaration */
+			struct symbol* sym2 = environment_get(ps->st->top, &full_id);
+			if (!sym2) {
+                buffer_finish(&full_id);
+                valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
+                /* test case: test_parse_types_missing_declaration */
+            } else if (sym2->td && sym2->td->type != type_struct) {
+                valid = set_source_error(ps->el, &id->loc, "using type as an identifier: %s", full_id.buf);
 			} else {
-				if (!sym->tu) {
-					sym = sym->constructor;
+                struct symbol* sym3 = sym2;
+				if (!sym3->tu) {
+					sym3 = sym3->constructor;
 				}
-				assert(sym->tu);
-				n->tu = ast_node_copy(sym->tu);
+                assert(sym3);
+				assert(sym3->tu);
+				n->tu = ast_node_copy(sym3->tu);
 			}
 		}
 	}

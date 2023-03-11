@@ -65,6 +65,8 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		token_destroy(comma);
 		free(comma);
 
+        valid = consume_newline(ps) && valid;
+
 		/* allocate a */
 		struct ast_node* dec = NULL;
 		struct location loc_dec;

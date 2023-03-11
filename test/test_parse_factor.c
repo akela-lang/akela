@@ -1805,6 +1805,46 @@ void test_parse_factor_newline_var_assign()
     parse_teardown2(&cu);
 }
 
+void test_parse_factor_newline_anonymous_function()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    /* allocate ps{} cu.root cu.root{} */
+    parse_setup2("function\n(\na::Int64,\nb::Int64,\nc::Int64\n)\n::\nInt64\na+b+c\nend", &cu);
+    expect_true(cu.valid, "parse_setup valid");
+    expect_no_errors(&cu.el);
+
+    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown2(&cu);
+}
+
+void test_parse_factor_newline_anonymous_function_var()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    /* allocate ps{} cu.root cu.root{} */
+    parse_setup2(
+        "var foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function\n"
+        "(\n"
+        "a::Int64,\n"
+        "b::Int64,\n"
+        "c::Int64\n"
+        ")\n"
+        "::\n"
+        "Int64\n"
+        "a+b+c\n"
+        "end", &cu);
+    expect_true(cu.valid, "parse_setup valid");
+    expect_no_errors(&cu.el);
+
+    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown2(&cu);
+}
+
 void test_parse_factor()
 {
 	test_parse_var();
@@ -1864,4 +1904,6 @@ void test_parse_factor()
 	test_parse_not_error_not_boolean();
     test_parse_factor_newline_var();
     test_parse_factor_newline_var_assign();
+    test_parse_factor_newline_anonymous_function();
+    test_parse_factor_newline_anonymous_function_var();
 }
