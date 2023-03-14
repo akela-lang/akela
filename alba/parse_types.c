@@ -116,11 +116,15 @@ bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root
 		/* test case: no test case needed */
 		location_update_token(loc, id);
 
+        valid = consume_newline(ps) && valid;
+
 		/* allocate ps{} dc dc{} */
 		struct token* dc = NULL;
 		valid = match(ps, token_double_colon, "expected double colon", &dc) && valid;
 		location_update_token(loc, dc);
 		/* test case: test_parse_error_declaration_double_colon */
+
+        valid = consume_newline(ps) && valid;
 
 		struct ast_node* type_use = NULL;
 		struct location loc_type;

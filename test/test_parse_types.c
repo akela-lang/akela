@@ -404,6 +404,23 @@ void test_parse_types_error_param_no_value()
 	parse_teardown2(&cu);
 }
 
+void test_parse_types_newline_declaration()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("var a\n::\nInt64", &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    struct ast_node* var = ast_node_get(cu.root, 0);
+    assert_ptr(var, "ptr var");
+    expect_int_equal(var->type, ast_type_var, "var var");
+
+    parse_teardown2(&cu);
+}
+
 void test_parse_types()
 {
 	test_parse_types_missing_declaration();
@@ -432,4 +449,5 @@ void test_parse_types()
 	test_parse_error_return_type();
 	test_parse_types_error_param();
 	test_parse_types_error_param_no_value();
+    test_parse_types_newline_declaration();
 }

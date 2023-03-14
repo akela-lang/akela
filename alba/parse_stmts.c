@@ -980,7 +980,7 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* l
 	return valid;
 }
 
-/* module_nt -> module stmts end */
+/* module_nt -> module id stmts end */
 bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
