@@ -1,9 +1,4 @@
 # Todo
-* handle newlines in types
-  * dseq [x]
-  * declaration [x]
-  * type [x]
-  * tseq [x]
 * handle newline in stmt
   * function []
   * for []
