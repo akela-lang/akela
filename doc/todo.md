@@ -3,10 +3,10 @@
   * var [x]
   * var assign [x]
   * anonymous function [x]
-  * not []
-  * sign []
-  * array literal []
-  * aseq []
+  * not [x]
+  * sign [x]
+  * array literal [x]
+  * aseq [x]
   * parenthesis []
 * handle newlines in types
 * handle newline in stmt

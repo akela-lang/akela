@@ -284,6 +284,8 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	location_update_token(loc, not);
 	/* test case: no test case needed */
 
+    valid = consume_newline(ps) && valid;
+
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_factor;
@@ -535,6 +537,8 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	location_update_token(loc, sign);
 	/* test case: no test case needed */
 
+    valid = consume_newline(ps) && valid;
+
 	/* allocate right */
 	struct ast_node* right = NULL;
 	struct location loc_factor;
@@ -618,6 +622,8 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 		token_destroy(lsb);
 		free(lsb);
 
+        valid = consume_newline(ps) && valid;
+
 		/* allocate n */
 		ast_node_create(&n);
 		n->type = ast_type_array_literal;
@@ -626,6 +632,8 @@ bool array_literal(struct parse_state* ps, struct ast_node** root, struct locati
 		struct location loc_aseq;
 		valid = aseq(ps, n, &loc_aseq) && valid;
 		location_update(loc, &loc_aseq);
+
+        valid = consume_newline(ps) && valid;
 
 		/* allocate ps{} rsb rsb{] */
 		struct token* rsb = NULL;
@@ -709,6 +717,8 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 			/* destroy comma comma{} */
 			token_destroy(comma);
 			free(comma);
+
+            valid = consume_newline(ps) && valid;
 
 			/* allocate ps{} a a{} */
 			struct ast_node* a = NULL;

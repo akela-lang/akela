@@ -1845,6 +1845,99 @@ void test_parse_factor_newline_anonymous_function_var()
     parse_teardown2(&cu);
 }
 
+void test_parse_factor_newline_not()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    /* allocate ps{} cu.root cu.root{} */
+    parse_setup2("!\ntrue", &cu);
+    expect_true(cu.valid, "parse_setup valid");
+    expect_no_errors(&cu.el);
+
+    struct ast_node* stmts = cu.root;
+    assert_ptr(stmts, "ptr stmts");
+    expect_int_equal(stmts->type, ast_type_stmts, "stmts stmts");
+
+    struct ast_node* not = stmts->head;
+    assert_ptr(not, "ptr not");
+    expect_int_equal(not->type, not->type, "not not");
+
+    struct ast_node* tr = not->head;
+    assert_ptr(tr, "ptr tr");
+    expect_int_equal(tr->type, ast_type_boolean, "boolean tr");
+    expect_str(&tr->value, "true", "true");
+
+    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown2(&cu);
+}
+
+void test_parse_factor_newline_sign()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    /* allocate ps{} cu.root cu.root{} */
+    parse_setup2("-\n1", &cu);
+    expect_true(cu.valid, "parse_setup valid");
+    expect_no_errors(&cu.el);
+
+    struct ast_node* stmts = cu.root;
+    assert_ptr(stmts, "ptr stmts");
+    expect_int_equal(stmts->type, ast_type_stmts, "stmts stmts");
+
+    struct ast_node* sign = stmts->head;
+    assert_ptr(sign, "ptr sign");
+    expect_int_equal(sign->type, sign->type, "sign sign");
+
+    struct ast_node* op = sign->head;
+    assert_ptr(op, "ptr op");
+    expect_int_equal(op->type, ast_type_minus, "minus op");
+
+    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown2(&cu);
+}
+
+void test_parse_factor_newline_array_literal()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    /* allocate ps{} cu.root cu.root{} */
+    parse_setup2("[\n1,\n2,\n3\n]", &cu);
+    expect_true(cu.valid, "parse_setup valid");
+    expect_no_errors(&cu.el);
+
+    struct ast_node* stmts = cu.root;
+    assert_ptr(stmts, "ptr stmts");
+    expect_int_equal(stmts->type, ast_type_stmts, "stmts stmts");
+
+    struct ast_node* al = ast_node_get(stmts, 0);
+    assert_ptr(al, "ptr al");
+    expect_int_equal(al->type, ast_type_array_literal, "array_literal al");
+
+    struct ast_node* one = ast_node_get(al, 0);
+    assert_ptr(one, "ptr one");
+    expect_int_equal(one->type, ast_type_number, "number one");
+    expect_str(&one->value, "1", "1");
+
+    struct ast_node* two = ast_node_get(al, 1);
+    assert_ptr(two, "ptr two");
+    expect_int_equal(two->type, ast_type_number, "number two");
+    expect_str(&two->value, "2", "2");
+
+    struct ast_node* three = ast_node_get(al, 2);
+    assert_ptr(three, "ptr three");
+    expect_int_equal(three->type, ast_type_number, "number three");
+    expect_str(&three->value, "3", "3");
+
+    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown2(&cu);
+}
+
 void test_parse_factor()
 {
 	test_parse_var();
@@ -1906,4 +1999,7 @@ void test_parse_factor()
     test_parse_factor_newline_var_assign();
     test_parse_factor_newline_anonymous_function();
     test_parse_factor_newline_anonymous_function_var();
+    test_parse_factor_newline_not();
+    test_parse_factor_newline_sign();
+    test_parse_factor_newline_array_literal();
 }
