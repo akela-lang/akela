@@ -754,6 +754,8 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 	location_update_token(loc, lp);
 	/* test case: no test case needed */
 
+    valid = consume_newline(ps) && valid;
+
 	/* allocate n n{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;

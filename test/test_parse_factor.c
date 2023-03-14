@@ -1938,6 +1938,33 @@ void test_parse_factor_newline_array_literal()
     parse_teardown2(&cu);
 }
 
+void test_parse_factor_newline_array_parenthesis()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    /* allocate ps{} cu.root cu.root{} */
+    parse_setup2("(\n1+2)", &cu);
+    expect_true(cu.valid, "parse_setup valid");
+    expect_no_errors(&cu.el);
+
+    struct ast_node* stmts = cu.root;
+    assert_ptr(stmts, "ptr stmts");
+    expect_int_equal(stmts->type, ast_type_stmts, "stmts stmts");
+
+    struct ast_node* paren = ast_node_get(stmts, 0);
+    assert_ptr(paren, "ptr paren");
+    expect_int_equal(paren->type, ast_type_parenthesis, " parenthesis paren");
+
+    struct ast_node* plus = ast_node_get(paren, 0);
+    assert_ptr(plus, "ptr plus");
+    expect_int_equal(plus->type, ast_type_plus, "plus plus");
+
+    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown2(&cu);
+}
+
 void test_parse_factor()
 {
 	test_parse_var();
@@ -2002,4 +2029,5 @@ void test_parse_factor()
     test_parse_factor_newline_not();
     test_parse_factor_newline_sign();
     test_parse_factor_newline_array_literal();
+    test_parse_factor_newline_array_parenthesis();
 }
