@@ -2,8 +2,8 @@
 * handle newlines in types
   * dseq [x]
   * declaration [x]
-  * type []
-  * tseq []
+  * type [x]
+  * tseq [x]
 * handle newline in stmt
   * function []
   * for []

@@ -209,9 +209,13 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 			location_update_token(loc, name);
 			/* test case: no test case needed */
 
+            valid = consume_newline(ps) && valid;
+
 			struct location loc_tseq;
 			valid = tseq(ps, n, &loc_tseq) && valid;
 			location_update(loc, &loc_tseq);
+
+            valid = consume_newline(ps) && valid;
 
 			struct token* rcb = NULL;
 			valid = match(ps, token_right_curly_brace, "expected right curly brace", &rcb) && valid;
@@ -348,6 +352,8 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 		token_destroy(comma);
 		free(comma);
+
+        valid = consume_newline(ps) && valid;
 
 		valid = type(ps, NULL, &tu, &loc_type) && valid;
 		location_update(loc, &loc_type);
