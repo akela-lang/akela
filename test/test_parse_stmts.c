@@ -2174,6 +2174,19 @@ void test_parse_stmts_newline_function()
     parse_teardown2(&cu);
 }
 
+void test_parse_stmts_newline_for_range()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("for\ni\n::\nInt64\n=\n0\n:\n10 i end", &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    parse_teardown2(&cu);
+}
+
 /* dynamic-output-none */
 void test_parse_statements()
 {
@@ -2243,4 +2256,5 @@ void test_parse_statements()
 	test_parse_return_error_outside_of_function();
 	test_parse_return_error_type_does_not_match();
     test_parse_stmts_newline_function();
+    test_parse_stmts_newline_for_range();
 }

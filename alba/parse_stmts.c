@@ -313,10 +313,14 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	environment_init(env, saved);
 	ps->st->top = env;
 
+    valid = consume_newline(ps) && valid;
+
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
 	valid = declaration(ps, true, &dec, &loc_dec) && valid;
 	location_update(loc, &loc_dec);
+
+    valid = consume_newline(ps) && valid;
 
 	valid = get_lookahead(ps, 1, &num) && valid;
 	struct token* t0 = get_token(&ps->lookahead, 0);
@@ -399,6 +403,8 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 	location_update_token(loc, equal);
 	/* test case: no test case needed */
 
+    valid = consume_newline(ps) && valid;
+
 	/* start expr */
 	/* allocate b b{} */
 	struct ast_node* a = NULL;
@@ -412,11 +418,15 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 		/* test case: test_parse_for_error_expected_range_start */
 	}
 
+    valid = consume_newline(ps) && valid;
+
 	/* allocate ps{} colon conlon{} */
 	struct token* colon = NULL;
 	valid = match(ps, token_colon, "expected colon", &colon) && valid;
 	location_update_token(loc, colon);
 	/* test case: test_parse_for_error_expected_colon */
+
+    valid = consume_newline(ps) && valid;
 
 	/* end expr */
 	/* allocate ps{} c c{} */
