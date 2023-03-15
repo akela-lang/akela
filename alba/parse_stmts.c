@@ -611,11 +611,15 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 	location_update_token(loc, id);
 	/* test case: no test case needed */
 
+    valid = consume_newline(ps) && valid;
+
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
 	valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
 	location_update_token(loc, lp);
 	/* test case: test_parse_function_error_expected_left_parenthesis */
+
+    valid = consume_newline(ps) && valid;
 
 	/* allocate ps{} dseq_node dseq_node{} */
 	struct ast_node* dseq_node = NULL;
@@ -623,11 +627,15 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 	valid = dseq(ps, &dseq_node, &loc_dseq) && valid;
 	location_update(loc, &loc_dseq);
 
+    valid = consume_newline(ps) && valid;
+
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
 	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
 	location_update_token(loc, rp);
 	/* test case: test_parse_function_error_expected_right_parenthesis */
+
+    valid = consume_newline(ps) && valid;
 
 	struct ast_node* dret_node = NULL;
 	int num;
@@ -640,6 +648,8 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 		token_destroy(dc);
 		free(dc);
 		/* test case: no test case needed */
+
+        valid = consume_newline(ps) && valid;
 
 		struct location loc_ret;
 		valid = type(ps, NULL, &dret_node, &loc_ret) && valid;

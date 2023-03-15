@@ -1,6 +1,6 @@
 # Todo
 * handle newline in stmt
-  * function []
+  * function [x]
   * for []
 * handle lseq and rseq in assignment and var
   * lseq []
