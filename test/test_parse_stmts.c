@@ -2187,6 +2187,19 @@ void test_parse_stmts_newline_for_range()
     parse_teardown2(&cu);
 }
 
+void test_parse_stmts_newline_for_iteration()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("var v::Vector{Int64}; for\nx\n::\nInt64\nin\nv x end", &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    parse_teardown2(&cu);
+}
+
 /* dynamic-output-none */
 void test_parse_statements()
 {
@@ -2257,4 +2270,5 @@ void test_parse_statements()
 	test_parse_return_error_type_does_not_match();
     test_parse_stmts_newline_function();
     test_parse_stmts_newline_for_range();
+    test_parse_stmts_newline_for_iteration();
 }

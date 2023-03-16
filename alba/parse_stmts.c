@@ -500,6 +500,8 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 	location_update_token(loc, in);
 	/* test case: no test case necessary */
 
+    valid = consume_newline(ps) && valid;
+
 	/* expr */
 	/* allocate ps{} b b{} */
 	struct ast_node* list = NULL;
