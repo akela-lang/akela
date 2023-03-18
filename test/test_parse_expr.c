@@ -1878,20 +1878,6 @@ void test_parse_assign_error_no_value_right()
 	parse_teardown2(&cu);
 }
 
-void test_parse_assign_error_no_value_left()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-	parse_setup2("function foo() end; foo() = 1", &cu);
-	assert_has_errors(&cu.el);
-	expect_false(cu.valid, "valid");
-	expect_error(&cu.el, "cannot assign with operand that has no value");
-	
-	parse_teardown2(&cu);
-}
-
 void test_parse_assign_error_not_compatible()
 {
 	test_name(__func__);
@@ -1915,7 +1901,7 @@ void test_parse_assign_error_lvalue()
 	parse_setup2("true = true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_error(&cu.el, "not a valid lvalue");
+	expect_error(&cu.el, "invalid lvalue");
 
 	parse_teardown2(&cu);
 }
@@ -2193,6 +2179,77 @@ void test_parse_expr_newline_dot()
     parse_teardown2(&cu);
 }
 
+void test_parse_expr_eseq()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("var a::Int64\n"
+                 "var b::Int64\n"
+                 "var c::Int64\n"
+                 "a,b,c = 1,2,3"
+                 , &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    assert_ptr(cu.root, "ptr cu.root");
+    expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
+
+    struct ast_node* assign = ast_node_get(cu.root, 3);
+    assert_ptr(assign, "ptr assign");
+    expect_int_equal(assign->type, ast_type_assign, "assign assign");
+
+    struct ast_node* lvalue = ast_node_get(assign, 0);
+    assert_ptr(lvalue, "ptr lvalue");
+    expect_int_equal(lvalue->type, ast_type_eseq, "eseq lvalue");
+
+    struct ast_node* a = ast_node_get(lvalue, 0);
+    assert_ptr(a, "ptr a");
+    expect_int_equal(a->type, ast_type_id, "id a");
+    expect_str(&a->value, "a", "a");
+
+    struct ast_node* b = ast_node_get(lvalue, 1);
+    assert_ptr(b, "ptr b");
+    expect_int_equal(b->type, ast_type_id, "id b");
+    expect_str(&b->value, "b", "b");
+
+    struct ast_node* c = ast_node_get(lvalue, 2);
+    assert_ptr(c, "ptr c");
+    expect_int_equal(c->type, ast_type_id, "id c");
+    expect_str(&c->value, "c", "c");
+}
+
+void test_parse_expr_error_lvalue()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("var a::Int64\n"
+                 "1 = 1"
+            , &cu);
+    expect_has_errors(&cu.el);
+    expect_error(&cu.el, "invalid lvalue");
+    expect_false(cu.valid, "valid");
+}
+
+void test_parse_expr_error_eseq_lvalue()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup2("var a::Int64\n"
+                 "var b::Int64\n"
+                 "var c::Int64\n"
+                 "1,2,3 = 1,2,3"
+            , &cu);
+    expect_has_errors(&cu.el);
+    expect_error(&cu.el, "invalid lvalue");
+    expect_false(cu.valid, "valid");
+}
+
 /* dynamic-output-none */
 void test_parse_expression()
 {
@@ -2261,7 +2318,6 @@ void test_parse_expression()
 	test_parse_assign_multiple();
 	test_parse_assign_error_term();
 	test_parse_assign_error_no_value_right();
-	test_parse_assign_error_no_value_left();
 	test_parse_assign_error_not_compatible();
 	test_parse_assign_error_lvalue();
     test_parse_expr_newline_assignment();
@@ -2273,4 +2329,7 @@ void test_parse_expression()
     test_parse_expr_newline_subscript();
     test_parse_expr_newline_function_call();
     test_parse_expr_newline_dot();
+    test_parse_expr_eseq();
+    test_parse_expr_error_lvalue();
+    test_parse_expr_error_eseq_lvalue();
 }

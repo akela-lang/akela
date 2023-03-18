@@ -691,7 +691,7 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_expr;
-	valid = expr(ps, &a, &loc_expr) && valid;
+	valid = boolean(ps, &a, &loc_expr) && valid;
 	location_update(loc, &loc_expr);
 
 	if (a) {
@@ -722,7 +722,7 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 			/* allocate ps{} a a{} */
 			struct ast_node* a = NULL;
-			valid = expr(ps, &a, &loc_expr) && valid;
+			valid = boolean(ps, &a, &loc_expr) && valid;
 			location_update(loc, &loc_expr);
 
 			if (!a) {

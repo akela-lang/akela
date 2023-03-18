@@ -55,6 +55,7 @@ enum ast_type {
 	ast_type_module,
 	ast_type_struct,
 	ast_type_return,
+    ast_type_eseq,
 	ast_type_count		/* keep at end */
 };
 

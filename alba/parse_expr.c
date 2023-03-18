@@ -12,7 +12,7 @@
 #include <assert.h>
 
 bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, struct location* loc);
 bool comparison(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -45,11 +45,44 @@ bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	return valid;
 }
 
+bool is_lvalue(enum ast_type type)
+{
+    if (type == ast_type_id) {
+        return true;
+    }
+
+    if (type == ast_type_array_subscript) {
+        return true;
+    }
+
+    if (type == ast_type_var) {
+        return true;
+    }
+
+    if (type == ast_type_eseq) {
+        return true;
+    }
+
+    return false;
+}
+
+bool check_lvalue(struct parse_state* ps, enum ast_type type, struct location* loc)
+{
+    bool valid = true;
+
+    if (!is_lvalue(type)) {
+        valid = set_source_error(ps->el, loc, "invalid lvalue");
+    }
+
+    return valid;
+}
+
 /* assignment -> boolean = assignment | boolean */
 bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
+    size_t assign_index = 0;
 
 	location_init(loc);
 
@@ -59,18 +92,18 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 	location_init(&loc_last_a);
 
 	struct ast_node* a = NULL;
-	struct location loc_a;
+	struct location a_loc;
 
 	while (true) {
 		bool done = false;
 
 		a = NULL;
-		valid = boolean(ps, &a, &loc_a) && valid;
-		location_update(loc, &loc_a);
+		valid = eseq(ps, assign_index, &a, &a_loc) && valid;
+		location_update(loc, &a_loc);
 
 		if (!a) {
 			if (last_p) {
-				valid = set_source_error(ps->el, &loc_a, "expected an assignment term");
+				valid = set_source_error(ps->el, &a_loc, "expected an assignment term");
 				/* test case: test_parse_assign_error_term */
 				break;
 			} else {
@@ -92,6 +125,9 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 			free(equal);
 
             valid = consume_newline(ps) && valid;
+
+            valid = check_lvalue(ps, a->type, &a_loc) && valid;
+            /* test case: test_parse_expr_error_lvalue */
 
 			if (valid) {
 				assert(a);
@@ -126,24 +162,15 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 
 				struct ast_node* a_tu = a->tu;
 
-				if (!last_a_tu) {
-					valid = set_source_error(ps->el, &loc_last_a, "cannot assign with operand that has no value");
-					/* test case: test_parse_assign_error_no_value_left */
-				}
-				if (!a_tu) {
-					valid = set_source_error(ps->el, &loc_a, "cannot assign with operand that has no value");
+                assert(a->type == ast_type_eseq || last_a_tu);
+				if (a->type != ast_type_eseq && !a_tu) {
+					valid = set_source_error(ps->el, &a_loc, "cannot assign with operand that has no value");
 					/* test case: test_parse_assign_error_no_value_right */
 				}
 				if (valid) {
 					if (!type_use_can_cast(last_a_tu, a_tu)) {
-						valid = set_source_error(ps->el, &loc_a, "values in assignment not compatible");
+						valid = set_source_error(ps->el, &a_loc, "values in assignment not compatible");
 						/* test case: test_parse_assign_error_not_compatible */
-					}
-				}
-				if (valid) {
-					if (last_a->type != ast_type_id && last_a->type != ast_type_array_subscript && last_a->type != ast_type_var) {
-						valid = set_source_error(ps->el, &loc_last_a, "not a valid lvalue");
-						/* test case: test_parse_assign_error_lvalue*/
 					}
 				}
 			}
@@ -156,12 +183,14 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 
 			last_p = p;
 			last_a = a;
-			loc_last_a = loc_a;
+			loc_last_a = a_loc;
 		}
 
 		if (done) {
 			break;
 		}
+
+        assign_index++;
 	}
 
 	if (valid) {
@@ -173,6 +202,104 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 	valid = location_default(ps, loc) && valid;
 
 	return valid;
+}
+
+bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, struct location* loc)
+{
+    bool valid = true;
+
+    location_init(loc);
+
+    struct ast_node* a = NULL;
+    struct location a_loc;
+    valid = boolean(ps, &a, &a_loc) && valid;
+    location_update(loc, &a_loc);
+
+    if (!a) {
+        valid = location_default(ps, loc) && valid;
+        return valid;
+    }
+
+    struct ast_node* parent = NULL;
+    while (true) {
+        /* an assignment can only have two eseq */
+        if (assign_index >= 2) {
+            break;
+        }
+
+        int num;
+        valid = get_lookahead(ps, 1, &num) && valid;
+        struct token* t0 = get_token(&ps->lookahead, 0);
+
+        if (!t0 || t0->type != token_comma) {
+            break;
+        }
+
+        if (!parent) {
+            ast_node_create(&parent);
+            parent->type = ast_type_eseq;
+            ast_node_add(parent, a);
+
+            if (valid) {
+                if (!a->tu) {
+                    valid = set_source_error(ps->el, &a_loc, "operand of eseq has no type");
+                }
+                if (assign_index == 0) {
+                    if (!is_lvalue(a->type)) {
+                        valid = set_source_error(ps->el, &a_loc, "invalid lvalue");
+                        /* test case: test_parse_expr_error_eseq_lvalue */
+                    }
+                }
+            }
+        }
+
+        struct token* comma = NULL;
+        valid = match(ps, token_comma, "expected a comma", &comma) && valid;
+        location_update_token(loc, comma);
+        token_destroy(comma);
+        free(comma);
+
+        struct ast_node* b = NULL;
+        struct location b_loc;
+        valid = boolean(ps, &b, &b_loc) && valid;
+        location_update(loc, &b_loc);
+
+        if (!b) {
+            valid = set_source_error(ps->el, &b_loc, "expected term after comma");
+        } else if (assign_index == 0) {
+            if (!is_lvalue(b->type)) {
+                valid = set_source_error(ps->el, &b_loc, "invalid lvalue");
+            }
+        }
+
+        if (valid) {
+            ast_node_add(parent, b);
+        } else {
+            ast_node_destroy(b);
+            break;
+        }
+
+        if (valid) {
+            assert(b);
+            if (!b->tu) {
+                valid = set_source_error(ps->el, &b_loc, "operand of eseq has no type");
+            }
+        }
+    }
+
+    if (valid) {
+        if (parent) {
+            *root = parent;
+        } else {
+            *root = a;
+        }
+    } else {
+        ast_node_destroy(parent);
+    }
+
+    valid = location_default(ps, loc) && valid;
+
+    return valid;
 }
 
 /* boolean -> comparison boolean' */
@@ -1073,7 +1200,7 @@ bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, s
 	/* allocate a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_expr;
-	valid = expr(ps, &a, &loc_expr) && valid;
+	valid = boolean(ps, &a, &loc_expr) && valid;
 	location_update(loc, &loc_expr);
 
 	if (!a) {
@@ -1110,7 +1237,7 @@ bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, s
 
 		/* allocate a a{} */
 		struct ast_node* a = NULL;
-		valid = expr(ps, &a, &loc_expr) && valid;
+		valid = boolean(ps, &a, &loc_expr) && valid;
 		location_update(loc, &loc_expr);
 
 		if (!a) {
