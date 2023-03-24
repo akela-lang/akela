@@ -13,6 +13,7 @@
 
 bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, struct location* loc);
+bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool comparison(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -26,23 +27,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 /* dynamic-output ps{} root root{} */
 bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
-	bool valid = true;
-	struct ast_node* n = NULL;
-
-	location_init(loc);
-
-	valid = assignment(ps, &n, loc) && valid;
-
-	valid = location_default(ps, loc) && valid;
-
-	/* transfer n n{} -> root */
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	return valid;
+	return assignment(ps, root, loc);
 }
 
 bool is_lvalue(enum ast_type type)
@@ -300,6 +285,11 @@ bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, s
     valid = location_default(ps, loc) && valid;
 
     return valid;
+}
+
+bool simple_expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
+{
+    return boolean(ps, root, loc);
 }
 
 /* boolean -> comparison boolean' */

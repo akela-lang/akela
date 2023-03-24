@@ -11,6 +11,6 @@
 
 /* dynamic-output ps{} root root{} */
 ALBA_API bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc);
-ALBA_API bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc);
+ALBA_API bool simple_expr(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
 #endif

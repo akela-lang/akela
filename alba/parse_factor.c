@@ -13,8 +13,6 @@
 #include "parse_factor.h"
 #include "type_def.h"
 
-bool var(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -40,16 +38,12 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	/* allocate ps{} */
 	int num;
-	valid = get_lookahead(ps, 2, &num) && valid;
+	valid = get_lookahead(ps, 1, &num) && valid;
 
 	struct token* t0;
-	struct token* t1;
 	t0 = get_token(&ps->lookahead, 0);
 
-	if (t0 && t0->type == token_var) {
-		valid = var(ps, &n, loc) && valid;
-
-	} else if (t0 && t0->type == token_function) {
+	if (t0 && t0->type == token_function) {
         /* allocate ps{} f f{} */
         struct token* f = NULL;
         valid = match(ps, token_function, "expected function", &f) && valid;
@@ -85,53 +79,6 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 	/* transfer n -> root */
 	if (valid) {
 		*root = n;
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
-}
-
-bool var(struct parse_state* ps, struct ast_node** root, struct location* loc)
-{
-	bool valid = true;
-	struct ast_node* n = NULL;
-
-	location_init(loc);
-
-	struct token* vrt = NULL;
-	valid = match(ps, token_var, "expected var", &vrt) && valid;
-	location_update_token(loc, vrt);
-	/* test case: no test case needed */
-
-    valid = consume_newline(ps) && valid;
-
-	/* allocate ps{} id id{} */
-	struct ast_node* a = NULL;
-	struct location loc_dec;
-	valid = declaration(ps, true, &a, &loc_dec) && valid;
-	location_update(loc, &loc_dec);
-
-	if (!a) {
-		valid = set_source_error(ps->el, &loc_dec, "expected declaration after var");
-	}
-
-	if (valid) {
-		ast_node_create(&n);
-		n->type = ast_type_var;
-
-		ast_node_add(n, a);
-	} else {
-		ast_node_destroy(a);
-	}
-
-	token_destroy(vrt);
-	free(vrt);
-
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
 	}
 
 	valid = location_default(ps, loc) && valid;
@@ -196,7 +143,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 
         valid = consume_newline(ps) && valid;
 
-		valid = type(ps, NULL, &dret_type, &loc_ret) && valid;
+		valid = parse_type(ps, NULL, &dret_type, &loc_ret) && valid;
 		location_update(loc, &loc_ret);
 
         if (!dret_type) {
@@ -691,7 +638,7 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_expr;
-	valid = boolean(ps, &a, &loc_expr) && valid;
+	valid = simple_expr(ps, &a, &loc_expr) && valid;
 	location_update(loc, &loc_expr);
 
 	if (a) {
@@ -722,7 +669,7 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 			/* allocate ps{} a a{} */
 			struct ast_node* a = NULL;
-			valid = boolean(ps, &a, &loc_expr) && valid;
+			valid = simple_expr(ps, &a, &loc_expr) && valid;
 			location_update(loc, &loc_expr);
 
 			if (!a) {

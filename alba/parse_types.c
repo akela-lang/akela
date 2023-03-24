@@ -129,9 +129,12 @@ bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root
 		struct ast_node* type_use = NULL;
 		struct location loc_type;
 		if (add_symbol) {
-			valid = type(ps, id, &type_use, &loc_type) && valid;
+            struct token_list tl;
+            token_list_init(&tl);
+            token_list_add(&tl, id);
+			valid = parse_type(ps, &tl, &type_use, &loc_type) && valid;
 		} else {
-			valid = type(ps, NULL, &type_use, &loc_type) && valid;
+			valid = parse_type(ps, NULL, &type_use, &loc_type) && valid;
 		}
 		location_update(loc, &loc_type);
 
@@ -179,7 +182,7 @@ bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root
 }
 
 /* type -> id | id { tseq } */
-bool type(struct parse_state* ps, struct token* id, struct ast_node** root, struct location* loc)
+bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
 	struct ast_node* n = NULL;
@@ -267,32 +270,36 @@ bool type(struct parse_state* ps, struct token* id, struct ast_node** root, stru
 		}
 
 		if (valid) {
-			if (id) {
-				struct symbol* dup = environment_get_local(ps->st->top, &id->value);
-				if (dup) {
-					char* a;
-					buffer2array(&id->value, &a);
-					valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
-					free(a);
-					/* test case: test_parse_error_duplicate_declarations */
-				} else {
-					struct symbol* sym = environment_get(ps->st->top, &id->value);
-					if (sym && sym->td) {
-						char* a;
-						buffer2array(&id->value, &a);
-						valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
-						free(a);
-						/* test case: test_parse_types_reserved_type */
-					} else {
-						struct symbol* new_sym = NULL;
-						malloc_safe((void**)&new_sym, sizeof(struct symbol));
-						symbol_init(new_sym);
-						new_sym->tk_type = token_id;
-						new_sym->tu = ast_node_copy(n);
-						environment_put(ps->st->top, &id->value, new_sym);
-					}
-				}
-			}
+            if (id_list) {
+                struct token* id = id_list->head;
+                while (id) {
+                    struct symbol* dup = environment_get_local(ps->st->top, &id->value);
+                    if (dup) {
+                        char* a;
+                        buffer2array(&id->value, &a);
+                        valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
+                        free(a);
+                        /* test case: test_parse_error_duplicate_declarations */
+                    } else {
+                        struct symbol* sym2 = environment_get(ps->st->top, &id->value);
+                        if (sym2 && sym2->td) {
+                            char* a;
+                            buffer2array(&id->value, &a);
+                            valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
+                            free(a);
+                            /* test case: test_parse_types_reserved_type */
+                        } else {
+                            struct symbol* new_sym = NULL;
+                            malloc_safe((void**)&new_sym, sizeof(struct symbol));
+                            symbol_init(new_sym);
+                            new_sym->tk_type = token_id;
+                            new_sym->tu = ast_node_copy(n);
+                            environment_put(ps->st->top, &id->value, new_sym);
+                        }
+                    }
+                    id = id->next;
+                }
+            }
 		}
 
 		/* destroy name name{} */
@@ -322,7 +329,7 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 	location_init(loc);
 
 	struct location loc_type;
-	valid = type(ps, NULL, &tu, &loc_type) && valid;
+	valid = parse_type(ps, NULL, &tu, &loc_type) && valid;
 	location_update(loc, &loc_type);
 
 	if (!tu) {
@@ -355,7 +362,7 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
         valid = consume_newline(ps) && valid;
 
-		valid = type(ps, NULL, &tu, &loc_type) && valid;
+		valid = parse_type(ps, NULL, &tu, &loc_type) && valid;
 		location_update(loc, &loc_type);
 
 		if (!tu) {

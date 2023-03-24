@@ -125,7 +125,7 @@ void test_parse_types_exists()
 	
 	parse_setup2("var x::SuperInt; x + 1", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected a type");
+	expect_error(&cu.el, "type not defined: SuperInt");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -149,27 +149,27 @@ void test_parse_types_array()
 	assert_ptr(var, "ptr var");
 	expect_int_equal(var->type, ast_type_var, "var dec");
 
-	struct ast_node* dec = ast_node_get(var, 0);
-	assert_ptr(dec, "ptr dec");
-	expect_int_equal(dec->type, ast_type_declaration, "declaration dec");
+	struct ast_node* var_lseq = ast_node_get(var, 0);
+	assert_ptr(var_lseq, "ptr var_lseq");
+	expect_int_equal(var_lseq->type, ast_type_var_lseq, "var_lseq var_lseq");
 
-	struct ast_node* dec_id = ast_node_get(dec, 0);
-	assert_ptr(dec_id, "ptr dec_id");
-	expect_int_equal(dec_id->type, ast_type_id, "id dec_id");
-	expect_str(&dec_id->value, "a", "a dec_id");
+	struct ast_node* name = ast_node_get(var_lseq, 0);
+	assert_ptr(name, "ptr name");
+	expect_int_equal(name->type, ast_type_id, "id name");
+	expect_str(&name->value, "a", "a name");
 
-	struct ast_node* array_node = ast_node_get(dec, 1);
-	assert_ptr(array_node, "ptr array_node");
-	expect_int_equal(array_node->type, ast_type_type, "type array_node");
+	struct ast_node* var_type = ast_node_get(var, 1);
+	assert_ptr(var_type, "ptr var_type");
+	expect_int_equal(var_type->type, ast_type_type, "type var_type");
 
 	struct ast_node* as = ast_node_get(cu.root, 1);
 	assert_ptr(as, "ptr as");
 	expect_int_equal(as->type, ast_type_array_subscript, "array-subscript as");
 
-	struct ast_node* name = ast_node_get(as, 0);
-	assert_ptr(name, "ptr name");
-	expect_int_equal(name->type, ast_type_id, "id name");
-	expect_str(&name->value, "a", "a name");
+	struct ast_node* id = ast_node_get(as, 0);
+	assert_ptr(id, "ptr id");
+	expect_int_equal(id->type, ast_type_id, "id id");
+	expect_str(&id->value, "a", "a id");
 
 	struct ast_node* index = ast_node_get(as, 1);
 	assert_ptr(index, "ptr index");
@@ -230,7 +230,7 @@ void test_parse_error_declaration_double_colon()
 		
 	parse_setup2("var a", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected double colon");
+	expect_error(&cu.el, "expected :: after variable(s)");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -244,7 +244,7 @@ void test_parse_error_declaration_type()
 
 	parse_setup2("var a::", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected a type");
+	expect_error(&cu.el, "expected type");
 	expect_false(cu.valid, "valid");
 	
 	parse_teardown2(&cu);

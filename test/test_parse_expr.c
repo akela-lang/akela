@@ -1859,7 +1859,7 @@ void test_parse_assign_error_term()
 	parse_setup2("var a::String =", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_error(&cu.el, "expected an assignment term");
+	expect_error(&cu.el, "expected expression");
 
 	parse_teardown2(&cu);
 }

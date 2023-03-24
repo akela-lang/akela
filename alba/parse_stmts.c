@@ -16,6 +16,7 @@
 #include "parse_factor.h"
 #include "type_def.h"
 #include <assert.h>
+#include "zinc/list.h"
 
 bool separator(struct parse_state* ps, bool* has_separator, struct location* loc);
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -32,6 +33,12 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd, struct locatio
 bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool parse_var(struct parse_state* ps, struct ast_node** root, struct location* loc);
+bool parse_var_lseq(struct parse_state* ps, struct ast_node** root, struct location* loc, struct token_list* tl);
+bool parse_var_rseq(struct parse_state* ps,
+                    struct ast_node** root,
+                    struct location* loc,
+                    struct list* l);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -209,7 +216,9 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		valid = struct_nt(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_return) {
-		valid = return_nt(ps, &n, loc) && valid;
+        valid = return_nt(ps, &n, loc) && valid;
+    } else if (t0 && t0->type == token_var) {
+        valid = parse_var(ps, &n, loc) && valid;
 
 	/* expr */
 	} else {
@@ -664,7 +673,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
         valid = consume_newline(ps) && valid;
 
 		struct location loc_ret;
-		valid = type(ps, NULL, &dret_node, &loc_ret) && valid;
+		valid = parse_type(ps, NULL, &dret_node, &loc_ret) && valid;
 		location_update(loc, &loc_ret);
 	}
 
@@ -1267,4 +1276,267 @@ bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	}
 
 	return valid;
+}
+
+void location_item_destroy(struct location* loc)
+{
+    free(loc);
+}
+
+/* parse_var = var var_lseq :: type | var var_lseq :: type = var_rseq */
+bool parse_var(struct parse_state* ps, struct ast_node** root, struct location* loc)
+{
+    bool valid = true;
+    struct ast_node* n = NULL;
+
+    location_init(loc);
+
+    struct token* vrt = NULL;
+    valid = match(ps, token_var, "expected var", &vrt) && valid;
+    location_update_token(loc, vrt);
+    /* test case: no test case needed */
+
+    token_destroy(vrt);
+    free(vrt);
+
+    valid = consume_newline(ps) && valid;
+
+    ast_node_create(&n);
+    n->type = ast_type_var;
+
+    /* allocate ps{} id id{} */
+    struct ast_node* a = NULL;
+    struct location a_loc;
+    struct token_list a_tl;
+    token_list_init(&a_tl);
+    valid = parse_var_lseq(ps, &a, &a_loc, &a_tl) && valid;
+    location_update(loc, &a_loc);
+
+    if (a) {
+        ast_node_add(n, a);
+    } else {
+        valid = set_source_error(ps->el, &a_loc, "expected variable(s) after var");
+    }
+
+    valid = consume_newline(ps) && valid;
+
+    struct token* dc = NULL;
+    valid = match(ps, token_double_colon, "expected :: after variable(s)", &dc) && valid;
+    location_update_token(loc, dc);
+    token_destroy(dc);
+    free(dc);
+
+    valid = consume_newline(ps) && valid;
+
+    struct ast_node* type_use = NULL;
+    struct location type_use_loc;
+    valid = parse_type(ps, &a_tl, &type_use, &type_use_loc) && valid;
+    location_update(loc, &type_use_loc);
+    if (type_use) {
+        ast_node_add(n, type_use);
+    } else {
+        valid = set_source_error(ps->el, &type_use_loc, "expected type");
+    }
+
+    /* add variables */
+
+    int num;
+    valid = get_lookahead(ps, 1, &num) && valid;
+    struct token* t0 = get_token(&ps->lookahead, 0);
+
+    if (t0 && t0->type == token_equal) {
+        struct token* equal = NULL;
+        valid = match(ps, token_equal, "expected equal", &equal) && valid;
+        location_update_token(loc, equal);
+        token_destroy(equal);
+        free(equal);
+
+        valid = consume_newline(ps) && valid;
+
+        struct ast_node* b = NULL;
+        struct location b_loc;
+        struct list b_l;
+        list_init(&b_l);
+        valid = parse_var_rseq(ps, &b, &b_loc, &b_l) && valid;
+
+        if (b) {
+            ast_node_add(n, b);
+        } else {
+            valid = set_source_error(ps->el, &b_loc, "expected expression");
+        }
+
+        if (valid) {
+            int a_count = ast_node_count_children(a);
+            int b_count = ast_node_count_children(b);
+            if (a_count != b_count) {
+                valid = set_source_error(ps->el, &a_loc, "lvalue count does not equal rvalue count");
+            } else {
+                for (int i = 0; i < a_count; i++) {
+                    struct ast_node* x = ast_node_get(a, i);
+                    struct ast_node* y = ast_node_get(b, i);
+                    struct location* y_loc = list_get(&b_l, i);
+                    if (!y->tu) {
+                        valid = set_source_error(ps->el, y_loc, "cannot assign with operand that has no value");
+                    } else if (!type_use_can_cast(type_use, y->tu)) {
+                        valid = set_source_error(ps->el, y_loc, "values in assignment not compatible");
+                    }
+                }
+            }
+        }
+
+        list_destroy(&b_l, (list_node_destroy)location_item_destroy);
+    }
+
+    if (valid) {
+        *root = n;
+    } else {
+        ast_node_destroy(n);
+    }
+
+    token_list_destroy(&a_tl);
+
+    valid = location_default(ps, loc) && valid;
+
+    return valid;
+}
+
+/* var_lseq -> id var_lseq' */
+/* var_lseq' -> , id var_lseq' */
+bool parse_var_lseq(struct parse_state* ps, struct ast_node** root, struct location* loc, struct token_list* tl)
+{
+    bool valid = true;
+
+    location_init(loc);
+
+    struct ast_node* var_lseq = NULL;
+    malloc_safe((void**)&var_lseq, sizeof(struct ast_node));
+    ast_node_init(var_lseq);
+    var_lseq->type = ast_type_var_lseq;
+
+    struct token* id = NULL;
+    valid = match(ps, token_id, "expected an id", &id) && valid;
+    location_update_token(loc, id);
+    if (id) {
+        token_list_add(tl, id);
+    }
+
+    struct ast_node* a = NULL;
+    malloc_safe((void**)&a, sizeof(struct ast_node));
+    ast_node_init(a);
+    a->type = ast_type_id;
+    buffer_copy(&id->value, &a->value);
+
+    if (!a) {
+        valid = set_source_error(ps->el, &id->loc, "expected id");
+    } else {
+        ast_node_add(var_lseq, a);
+    }
+
+    while (true) {
+        int num;
+        valid = get_lookahead(ps, 1, &num) && valid;
+        struct token* t0 = get_token(&ps->lookahead, 0);
+        if (!t0 || t0->type != token_comma) {
+            break;
+        }
+
+        struct token* comma = NULL;
+        valid = match(ps, token_comma, "expected comma", &comma) && valid;
+        location_update_token(loc, comma);
+        token_destroy(comma);
+        free(comma);
+
+        id = NULL;
+        valid = match(ps, token_id, "expected id", &id) && valid;
+        location_update_token(loc, id);
+
+        a = NULL;
+        malloc_safe((void**)&a, sizeof(struct ast_node));
+        ast_node_init(a);
+        a->type = ast_type_id;
+        buffer_copy(&id->value, &a->value);
+
+        if (!a) {
+            valid = set_source_error(ps->el, &id->loc, "expected id");
+        } else {
+            ast_node_add(var_lseq, a);
+        }
+
+        token_destroy(id);
+        free(id);
+    }
+
+    valid = location_default(ps, loc);
+
+    if (valid) {
+        *root = var_lseq;
+    } else {
+        ast_node_destroy(var_lseq);
+        free(var_lseq);
+    }
+
+    return valid;
+}
+
+/* var_rseq -> simple_expr var_rseq' */
+/* var_rseq' -> , simple_expr var_rseq' */
+bool parse_var_rseq(struct parse_state* ps,
+        struct ast_node** root,
+        struct location* loc,
+        struct list* l)
+{
+    bool valid = true;
+
+    location_init(loc);
+
+    struct ast_node* var_rseq = NULL;
+    malloc_safe((void**)&var_rseq, sizeof(struct ast_node));
+    ast_node_init(var_rseq);
+    var_rseq->type = ast_type_var_rseq;
+
+    struct ast_node* a = NULL;
+    struct location* a_loc = NULL;
+    malloc_safe((void**)&a_loc, sizeof(struct location));
+    location_init(a_loc);
+    valid = simple_expr(ps, &a, a_loc) && valid;
+    location_update(loc, a_loc);
+    list_add_item(l, a_loc);
+
+    if (a) {
+        ast_node_add(var_rseq, a);
+    } else {
+        valid = set_source_error(ps->el, a_loc, "expected an expression");
+    }
+
+    while (true) {
+        int num;
+        valid = get_lookahead(ps, 1, &num) && valid;
+        struct token* t0 = get_token(&ps->lookahead, 0);
+        if (!t0 || t0->type != token_comma) {
+            break;
+        }
+
+        struct ast_node* b = NULL;
+        struct location* b_loc = NULL;
+        malloc_safe((void*)&b_loc, sizeof(struct location));
+        location_init(b_loc);
+        valid = simple_expr(ps, &b, b_loc) && valid;
+        location_update(loc, b_loc);
+        list_add_item(l, b_loc);
+        if (b) {
+            ast_node_add(var_rseq, b);
+        } else {
+            valid = set_source_error(ps->el, b_loc, "expected an expression");
+        }
+    }
+
+    if (valid) {
+        *root = var_rseq;
+    } else {
+        ast_node_destroy(var_rseq);
+    }
+
+    valid = location_default(ps, loc) && valid;
+
+    return valid;
 }

@@ -4,6 +4,7 @@
 #include "alba_api.h"
 #include <stdbool.h>
 #include "zinc/buffer.h"
+#include "zinc/buffer_list.h"
 
 /* dynamic-output ps{} root root{} */
 ALBA_API bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc);
@@ -11,7 +12,7 @@ ALBA_API bool dseq(struct parse_state* ps, struct ast_node** root, struct locati
 /* dynamic-output ps{} root root{} */
 ALBA_API bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root, struct location* loc);
 
-ALBA_API bool type(struct parse_state* ps, struct token* id, struct ast_node** root, struct location* loc);
+ALBA_API bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_node** root, struct location* loc);
 
 ALBA_API struct ast_node* function2type(struct symbol_table* st, struct ast_node* n);
 
