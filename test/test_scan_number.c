@@ -268,7 +268,7 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 	expect_has_errors(sns.el);
 	expect_false(valid, "valid 0");
 	expect_false(got_token, "got token 0");
-	expect_error(sns.el, "invalid number");
+	expect_source_error(sns.el, "invalid number");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -298,7 +298,7 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 	expect_has_errors(sns.el);
 	expect_false(valid, "valid 0");
 	expect_false(got_token, "got token 0");
-	expect_error(sns.el, "invalid number");
+	expect_source_error(sns.el, "invalid number");
 
 	/* destroy t t{} */
 	token_destroy(t);

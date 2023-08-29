@@ -1359,7 +1359,7 @@ void test_scan_error_unrecognized_character()
 	assert_has_errors(sns.el);
 	assert_false(got_token, "got token");
 	assert_null(t, "t");
-	expect_error(&el, "Unrecognized character: $");
+	expect_source_error(&el, "Unrecognized character: $");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
@@ -1510,7 +1510,7 @@ void test_scan_string_escape_error()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_false(valid, "scan_get_token");
 	assert_has_errors(sns.el);
-	expect_error(&el, "Unrecognized escape sequence: x");
+	expect_source_error(&el, "Unrecognized escape sequence: x");
 
 	assert_false(got_token, "got_token");
 	assert_null(t, "t");
@@ -1657,7 +1657,7 @@ void test_scan_error_underscore_letter()
 	expect_false(valid, "scan_get_token valid");
 	expect_null(t, "null t");
 	expect_false(got_token, "got token");
-	expect_error(&el, "Must have a letter following underscore at start of id");
+	expect_source_error(&el, "Must have a letter following underscore at start of id");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
@@ -1683,7 +1683,7 @@ void test_scan_error_underscore_letter2()
 	expect_false(valid, "scan_get_token valid");
 	expect_null(t, "null t");
 	expect_false(got_token, "got token");
-	expect_error(&el, "Must have a letter following underscore at start of id");
+	expect_source_error(&el, "Must have a letter following underscore at start of id");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);
@@ -1709,7 +1709,7 @@ void test_scan_error_exponent_sign()
 	expect_false(valid, "scan_get_token valid");
 	expect_null(t, "null t");
 	expect_false(got_token, "got token");
-	expect_error(&el, "invalid number");
+	expect_source_error(&el, "invalid number");
 
 	/* destroy sns{} */
 	scan_teardown(&sns);

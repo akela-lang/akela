@@ -382,7 +382,7 @@ void test_parse_sign_error_no_value()
 	parse_setup2("function foo() end\n-foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "negative operator was used on expression with no value");
+	expect_source_error(&cu.el, "negative operator was used on expression with no value");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -401,7 +401,7 @@ void test_parse_sign_expected_factor()
 	parse_setup2("-", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "expected factor after sign");
+	expect_source_error(&cu.el, "expected factor after sign");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -496,7 +496,7 @@ void test_parse_not_error()
 	parse_setup2("function foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "! operator used on factor with no value");
+	expect_source_error(&cu.el, "! operator used on factor with no value");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -663,7 +663,7 @@ void test_parse_array_literal_mixed_error()
 	parse_setup2("[1,true,3]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "array elements not the same type");
+	expect_source_error(&cu.el, "array elements not the same type");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -682,7 +682,7 @@ void test_parse_array_literal_empty_error()
 	parse_setup2("[]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "array literal has no elements");
+	expect_source_error(&cu.el, "array literal has no elements");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -701,7 +701,7 @@ void test_parse_array_literal_error_right_square_bracket()
 	parse_setup2("[1,2", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "expected right square bracket");
+	expect_source_error(&cu.el, "expected right square bracket");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -720,7 +720,7 @@ void test_parse_array_literal_error_expected_expr()
 	parse_setup2("[1,]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "expected expr after comma");
+	expect_source_error(&cu.el, "expected expr after comma");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -925,7 +925,7 @@ void test_parse_anonymous_function3()
 	parse_setup2("var a::Function; a = function(x::Int64) var x::Int64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
-	expect_error(&cu.el, "duplicate declaration in same scope: x");
+	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -944,7 +944,7 @@ void test_parse_anonymous_function_assignment_error()
 	parse_setup2("var a::Function = function(x::Int64) end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
-	expect_error(&cu.el, "values in assignment not compatible");
+	expect_source_error(&cu.el, "values in assignment not compatible");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -963,7 +963,7 @@ void test_parse_anonymous_function_return_error()
 	parse_setup2("var f::Function{Output{Int64}} = function()::Int64 true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
-	expect_error(&cu.el, "returned type does not match function return type");
+	expect_source_error(&cu.el, "returned type does not match function return type");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -982,7 +982,7 @@ void test_parse_anonymous_function_expected_right_paren()
 	parse_setup2("function(", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
-	expect_error(&cu.el, "expected right parenthesis");
+	expect_source_error(&cu.el, "expected right parenthesis");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1001,7 +1001,7 @@ void test_parse_anonymous_function_expected_end()
 	parse_setup2("function()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
-	expect_error(&cu.el, "expected end");
+	expect_source_error(&cu.el, "expected end");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1049,7 +1049,7 @@ void test_parse_paren_error_empty()
 	parse_setup2("()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "empty parenthesis");
+	expect_source_error(&cu.el, "empty parenthesis");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1067,7 +1067,7 @@ void test_parse_paren_error_right_parenthesis()
 	parse_setup2("(1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "expected right parenthesis");
+	expect_source_error(&cu.el, "expected right parenthesis");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1085,7 +1085,7 @@ void test_parse_paren_error_no_value()
 	parse_setup2("function foo() end; (foo())", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "parenthesis on expression that has no value");
+	expect_source_error(&cu.el, "parenthesis on expression that has no value");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1188,7 +1188,7 @@ void test_parse_call_return_type_error()
 	parse_setup2("function foo()::Bool true end; foo() + 2", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "addition on non-numeric operand");
+	expect_source_error(&cu.el, "addition on non-numeric operand");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1468,7 +1468,7 @@ void test_parse_call_missing_arguments()
 	parse_setup2("function foo(a::Int64, b::Int64) end; foo(1)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "not enough arguments in function call");
+	expect_source_error(&cu.el, "not enough arguments in function call");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1485,7 +1485,7 @@ void test_parse_call_too_many_arguments()
 	parse_setup2("function foo(a::Int64) end; foo(1, 2)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "too many arguments in function call");
+	expect_source_error(&cu.el, "too many arguments in function call");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1502,7 +1502,7 @@ void test_parse_call_type_error()
 	parse_setup2("function foo(a::Int64) end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "parameter and aguments types do not match");
+	expect_source_error(&cu.el, "parameter and aguments types do not match");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1519,7 +1519,7 @@ void test_parse_call_anonymous_function_type_error()
 	parse_setup2("var foo::Function{Input{Int64}} = function (a::Int64) end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "parameter and aguments types do not match");
+	expect_source_error(&cu.el, "parameter and aguments types do not match");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1536,7 +1536,7 @@ void test_parse_call_error_right_paren()
 	parse_setup2("function foo() end; foo(", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "expected right parenthesis");
+	expect_source_error(&cu.el, "expected right parenthesis");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1553,7 +1553,7 @@ void test_parse_call_error_function_not_declared()
 	parse_setup2("foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "variable not declared: foo");
+	expect_source_error(&cu.el, "variable not declared: foo");
 
 	/* destroy ps{} cu.root cu.root{} */
 	
@@ -1570,7 +1570,7 @@ void test_parse_call_error_not_function()
 	parse_setup2("var foo::Int64; foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "not a function type");
+	expect_source_error(&cu.el, "not a function type");
 
 	/* destroy ps{} cu.root cu.root{} */
 	parse_teardown2(&cu);
@@ -1586,7 +1586,7 @@ void test_parse_call_error_not_enough_arguments()
 	parse_setup2("function foo(x::Int64) end; foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "not enough arguments in function call");
+	expect_source_error(&cu.el, "not enough arguments in function call");
 
 	parse_teardown2(&cu);
 }
@@ -1601,7 +1601,7 @@ void test_parse_call_error_too_many_arguments()
 	parse_setup2("function foo() end; foo(1)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "too many arguments in function call");
+	expect_source_error(&cu.el, "too many arguments in function call");
 
 	parse_teardown2(&cu);
 }
@@ -1616,7 +1616,7 @@ void test_parse_call_error_expected_expression()
 	parse_setup2("function foo(x::Int64) end; foo(1,)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "expected expression after comma");
+	expect_source_error(&cu.el, "expected expression after comma");
 
 	/* destroy ps{} cu.root cu.root{} */
 	parse_teardown2(&cu);
@@ -1633,7 +1633,7 @@ void test_parse_not_error_expected_factor()
 	parse_setup2("!", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "expected factor after !");
+	expect_source_error(&cu.el, "expected factor after !");
 
 	/* destroy ps{} cu.root cu.root{} */
 	parse_teardown2(&cu);
@@ -1649,7 +1649,7 @@ void test_parse_not_error_no_value()
 	parse_setup2("function foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "! operator used on factor with no value");
+	expect_source_error(&cu.el, "! operator used on factor with no value");
 
 	/* destroy ps{} cu.root cu.root{} */
 	parse_teardown2(&cu);
@@ -1665,7 +1665,7 @@ void test_parse_not_error_not_boolean()
 	parse_setup2("!1", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_error(&cu.el, "not operator used on non-boolean");
+	expect_source_error(&cu.el, "not operator used on non-boolean");
 
 	/* destroy ps{} cu.root cu.root{} */	
 	parse_teardown2(&cu);

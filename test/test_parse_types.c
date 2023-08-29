@@ -13,7 +13,7 @@ void test_parse_types_missing_declaration()
 	
 	parse_setup2("x + 1", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "variable not declared: x");
+	expect_source_error(&cu.el, "variable not declared: x");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -27,7 +27,7 @@ void test_parse_types_missing_declaration2()
 
 	parse_setup2("foo() + 1", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "variable not declared: foo");
+	expect_source_error(&cu.el, "variable not declared: foo");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -41,7 +41,7 @@ void test_parse_types_missing_declaration3()
 
 	parse_setup2("x = function() end", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "variable not declared: x");
+	expect_source_error(&cu.el, "variable not declared: x");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -55,7 +55,7 @@ void test_parse_types_double_function()
 	
 	parse_setup2("function foo() end; function foo() end", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "duplicate declaration in same scope: foo");
+	expect_source_error(&cu.el, "duplicate declaration in same scope: foo");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -69,7 +69,7 @@ void test_parse_types_reserved_type()
 
 	parse_setup2("var Int64::Int64", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "identifier reserved as a type: Int64");
+	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -83,7 +83,7 @@ void test_parse_types_reserved_type2()
 	
 	parse_setup2("function Int64() end", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "identifier reserved as a type: Int64");
+	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -97,7 +97,7 @@ void test_parse_types_reserved_type3()
 
 	parse_setup2("for Int64::Int64 = 1:10 end", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "identifier reserved as a type: Int64");
+	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -111,7 +111,7 @@ void test_parse_types_reserved_type4()
 	
 	parse_setup2("var list::Vector{Int64}; for Int64::Int64 in list end", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "identifier reserved as a type: Int64");
+	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -125,7 +125,7 @@ void test_parse_types_exists()
 	
 	parse_setup2("var x::SuperInt; x + 1", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "type not defined: SuperInt");
+	expect_source_error(&cu.el, "type not defined: SuperInt");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -188,7 +188,7 @@ void test_parse_types_array_error()
 	
 	parse_setup2("var a::Int64{Int64}; a[1]", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "subtype was specified for non-generic type: Int64");
+	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
 	expect_false(cu.valid, "valid");
 	
 	parse_teardown2(&cu);
@@ -202,7 +202,7 @@ void test_parse_types_array_error2()
 	
 	parse_setup2("var a::Vector{Int64, Float64}; a[1]", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
+	expect_source_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -216,7 +216,7 @@ void test_parse_error_dseq_comma()
 		
 	parse_setup2("function foo(a::Int64,) end", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected declaration after comma");
+	expect_source_error(&cu.el, "expected declaration after comma");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -230,7 +230,7 @@ void test_parse_error_declaration_double_colon()
 		
 	parse_setup2("var a", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected :: after variable(s)");
+	expect_source_error(&cu.el, "expected :: after variable(s)");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -244,7 +244,7 @@ void test_parse_error_declaration_type()
 
 	parse_setup2("var a::", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected type");
+	expect_source_error(&cu.el, "expected type");
 	expect_false(cu.valid, "valid");
 	
 	parse_teardown2(&cu);
@@ -258,7 +258,7 @@ void test_parse_error_type_right_curly_brace()
 		
 	parse_setup2("var a::Vector{Int64", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected right curly brace");
+	expect_source_error(&cu.el, "expected right curly brace");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -272,7 +272,7 @@ void test_parse_error_type_not_defined()
 		
 	parse_setup2("var a::Foo", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "type not defined: Foo");
+	expect_source_error(&cu.el, "type not defined: Foo");
 	expect_false(cu.valid, "valid");
 	
 	parse_teardown2(&cu);
@@ -286,7 +286,7 @@ void test_parse_error_not_a_type()
 	
 	parse_setup2("var foo::Int64; var a::foo", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "identifier is not a type: foo");
+	expect_source_error(&cu.el, "identifier is not a type: foo");
 	expect_false(cu.valid, "valid");
 	
 	parse_teardown2(&cu);
@@ -300,7 +300,7 @@ void test_parse_error_not_generic()
 	
 	parse_setup2("var a::Int64{Int64}", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "subtype was specified for non-generic type: Int64");
+	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
 	expect_false(cu.valid, "valid");
 	
 	parse_teardown2(&cu);
@@ -314,7 +314,7 @@ void test_parse_error_subtype_count()
 		
 	parse_setup2("var a::Vector{Int64, Int64}", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
+	expect_source_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -328,7 +328,7 @@ void test_parse_error_duplicate_declarations()
 	
 	parse_setup2("var x::Int64; var x::Int64", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "duplicate declaration in same scope: x");
+	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -342,7 +342,7 @@ void test_parse_error_type_name()
 
 	parse_setup2("var x::Vector{}", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected a type name");
+	expect_source_error(&cu.el, "expected a type name");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -356,7 +356,7 @@ void test_parse_error_comma_type_name()
 	
 	parse_setup2("var x::Vector{Int64,}", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "expected a type name after comma");
+	expect_source_error(&cu.el, "expected a type name after comma");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -370,7 +370,7 @@ void test_parse_error_return_type()
 	
 	parse_setup2("function foo()::Int64 true end", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "returned type does not match function return type");
+	expect_source_error(&cu.el, "returned type does not match function return type");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -384,7 +384,7 @@ void test_parse_types_error_param()
 
 	parse_setup2("function foo(a::Int64) true end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "parameter and aguments types do not match");
+	expect_source_error(&cu.el, "parameter and aguments types do not match");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
@@ -398,7 +398,7 @@ void test_parse_types_error_param_no_value()
 
 	parse_setup2("function foo(a::Int64) true end; foo(foo(1))", &cu);
 	expect_has_errors(&cu.el);
-	expect_error(&cu.el, "argument expression has no value");
+	expect_source_error(&cu.el, "argument expression has no value");
 	expect_false(cu.valid, "valid");
 
 	parse_teardown2(&cu);
