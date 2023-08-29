@@ -63,6 +63,8 @@ enum result ast_set_names(char** names)
 	names[ast_type_struct] = "struct";
 	names[ast_type_return] = "return";
     names[ast_type_eseq] = "eseq";
+    names[ast_type_var_lseq] = "var_lseq";
+    names[ast_type_var_rseq] = "var_rseq";
 
 	for (int i = 0; i < ast_type_count; i++) {
 		if (names[i] == NULL) {

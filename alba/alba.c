@@ -44,7 +44,10 @@ int main(int argc, char** argv)
     }
 
     char* names[ast_type_count];
-    ast_set_names(names);
+    enum result r = ast_set_names(names);
+    if (r == result_error) {
+        printf("%s\n", get_error_message());
+    }
     ast_node_print(cu.root, names, false);
 
     comp_unit_destroy(&cu);
