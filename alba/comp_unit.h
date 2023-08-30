@@ -1,7 +1,7 @@
 	#ifndef _COMP_UNIT_H
 #define _COMP_UNIT_H
 
-#include "alba_api.h"
+#include "akela_api.h"
 #include "ast.h"
 #include "source.h"
 #include "symbol_table.h"
@@ -17,8 +17,8 @@ struct comp_unit {
 	struct comp_unit* prev;
 };
 
-ALBA_API void comp_unit_init(struct comp_unit* cu);
-ALBA_API void comp_unit_destroy(struct comp_unit* cu);
-ALBA_API bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id);
+AKELA_API void comp_unit_init(struct comp_unit* cu);
+AKELA_API void comp_unit_destroy(struct comp_unit* cu);
+AKELA_API bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id);
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef _TOKEN_H
 #define _TOKEN_H
 
-#include "alba_api.h"
+#include "akela_api.h"
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "zinc/buffer.h"
@@ -125,7 +125,7 @@ enum result token_name_init(char** token_name)
 # else
 
 /* dynamic-output-none */
-ALBA_API enum result token_name_init(char** token_name);
+AKELA_API enum result token_name_init(char** token_name);
 
 # endif
 
@@ -146,52 +146,52 @@ struct token_list {
 
 /* dynamic-output-none */
 /* initialize-output t{} t{value{}} */
-ALBA_API void token_init(struct token* t);
+AKELA_API void token_init(struct token* t);
 
 /* dynamic-destroy t{value{}} */
-ALBA_API void token_reset(struct token* t);
+AKELA_API void token_reset(struct token* t);
 
 /* dynamic-output-none */
-ALBA_API void token_list_init(struct token_list* tl);
+AKELA_API void token_list_init(struct token_list* tl);
 
 /* dynamic-destroy tl{} */
-ALBA_API void token_list_destroy(struct token_list* tl);
+AKELA_API void token_list_destroy(struct token_list* tl);
 
 /* dynamic-destroy t{value{}} */
-ALBA_API void token_destroy(struct token* t);
+AKELA_API void token_destroy(struct token* t);
 
 /* dynamic-output-none */
-ALBA_API struct token* get_token(struct token_list* tl, size_t pos);
+AKELA_API struct token* get_token(struct token_list* tl, size_t pos);
 
 /* dynamic-output-none */
-ALBA_API int token_find_first(struct token_list* tl, enum token_enum type);
+AKELA_API int token_find_first(struct token_list* tl, enum token_enum type);
 
 /* dynamic-output-none */
-ALBA_API int token_find_last(struct token_list* tl, enum token_enum type);
+AKELA_API int token_find_last(struct token_list* tl, enum token_enum type);
 
 /* dynamic-output-none */
-ALBA_API int token_list_count(struct token_list* tl);
+AKELA_API int token_list_count(struct token_list* tl);
 
 /* dynamic-output tl */
-ALBA_API void token_list_make(struct token_list** tl);
+AKELA_API void token_list_make(struct token_list** tl);
 
 /* dynamic-output-none */
 /* dynamic-transfer t t{} -> tl{} */
-ALBA_API void token_list_add(struct token_list* tl, struct token* t);
+AKELA_API void token_list_add(struct token_list* tl, struct token* t);
 
 /* partition-output tl{} -> return */
-ALBA_API struct token* token_list_pop(struct token_list* tl);
+AKELA_API struct token* token_list_pop(struct token_list* tl);
 
 /* initialize-output tl{} */
-ALBA_API void token_list_reset(struct token_list* tl);
+AKELA_API void token_list_reset(struct token_list* tl);
 
 /* dynamic-output-none */
-ALBA_API enum result token_list_print(struct token_list* tl);
+AKELA_API enum result token_list_print(struct token_list* tl);
 
 /* dynamic-output-none */
-ALBA_API enum result print_token(struct token* t);
+AKELA_API enum result print_token(struct token* t);
 
 /* dynamic-output-none */
-ALBA_API void get_token_location(struct token* t, struct location* loc);
+AKELA_API void get_token_location(struct token* t, struct location* loc);
 
 #endif

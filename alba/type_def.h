@@ -1,7 +1,7 @@
 #ifndef _TYPE_DEF_H
 #define _TYPE_DEF_H
 
-#include "alba_api.h"
+#include "akela_api.h"
 #include <stdbool.h>
 #include "zinc/buffer.h"
 #include "zinc/result.h"
@@ -34,16 +34,16 @@ struct type_def {
 };
 
 /* dynamic-output n */
-ALBA_API void type_def_create(struct type_def** n);
+AKELA_API void type_def_create(struct type_def** n);
 
 /* dynamic-destroy n n{} */
-ALBA_API void type_def_destroy(struct type_def* n);
+AKELA_API void type_def_destroy(struct type_def* n);
 
 /* dynamic-output-none */
-ALBA_API void type_def_init(struct type_def* n);
+AKELA_API void type_def_init(struct type_def* n);
 
-ALBA_API struct type_def* type_def_copy(struct type_def* n);
+AKELA_API struct type_def* type_def_copy(struct type_def* n);
 
-ALBA_API bool type_def_match(struct type_def* a, struct type_def* b);
+AKELA_API bool type_def_match(struct type_def* a, struct type_def* b);
 
 #endif

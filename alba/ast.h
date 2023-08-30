@@ -1,7 +1,7 @@
 #ifndef _AST_H
 #define _AST_H
 
-#include "alba_api.h"
+#include "akela_api.h"
 #include <stdbool.h>
 #include "zinc/buffer.h"
 #include "zinc/result.h"
@@ -73,33 +73,33 @@ struct ast_node {
 };
 
 /* dynamic-output-none */
-ALBA_API enum result ast_set_names(char** names);
+AKELA_API enum result ast_set_names(char** names);
 
 /* dynamic-output n */
-ALBA_API void ast_node_create(struct ast_node** n);
+AKELA_API void ast_node_create(struct ast_node** n);
 
 /* dynamic-destroy n n{} */
-ALBA_API void ast_node_destroy(struct ast_node* n);
+AKELA_API void ast_node_destroy(struct ast_node* n);
 
 /* dynamic-output-none */
-ALBA_API void ast_node_init(struct ast_node* n);
+AKELA_API void ast_node_init(struct ast_node* n);
 
 /* dynamic-output-none */
-ALBA_API void ast_node_add(struct ast_node* p, struct ast_node* c);
+AKELA_API void ast_node_add(struct ast_node* p, struct ast_node* c);
 
 /* dynamic-output-none */
-ALBA_API void ast_node_push(struct ast_node* parent, struct ast_node* child);
+AKELA_API void ast_node_push(struct ast_node* parent, struct ast_node* child);
 
 /* dynamic-output-none */
-ALBA_API struct ast_node* ast_node_get(struct ast_node* p, size_t pos);
+AKELA_API struct ast_node* ast_node_get(struct ast_node* p, size_t pos);
 
 /* dynamic-output-none */
-ALBA_API void ast_node_print(struct ast_node* root, char** names, bool debug);
+AKELA_API void ast_node_print(struct ast_node* root, char** names, bool debug);
 
-ALBA_API struct ast_node* ast_node_copy(struct ast_node* n);
+AKELA_API struct ast_node* ast_node_copy(struct ast_node* n);
 
-ALBA_API bool ast_node_match(struct ast_node* a, struct ast_node* b);
+AKELA_API bool ast_node_match(struct ast_node* a, struct ast_node* b);
 
-ALBA_API int ast_node_count_children(struct ast_node* n);
+AKELA_API int ast_node_count_children(struct ast_node* n);
 
 #endif

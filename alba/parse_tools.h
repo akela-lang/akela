@@ -1,7 +1,7 @@
 #ifndef _PARSE_TOOLS_H
 #define _PARSE_TOOLS_H
 
-#include "alba_api.h"
+#include "akela_api.h"
 #include <stdbool.h>
 #include "token.h"
 #include "source.h"
@@ -19,29 +19,29 @@ struct parse_state {
 
 /* dynamic-output-none */
 /* initialize-output ps ps{}*/
-ALBA_API void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct error_list* el, struct symbol_table* st);
+AKELA_API void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct error_list* el, struct symbol_table* st);
 
-ALBA_API void parse_state_destroy(struct parse_state* ps);
+AKELA_API void parse_state_destroy(struct parse_state* ps);
 
 /* get lookahead token */
 /* dynamic ps{} */
-ALBA_API bool get_lookahead(struct parse_state* ps, int count, int* num);
+AKELA_API bool get_lookahead(struct parse_state* ps, int count, int* num);
 
 /* expecting specific token */
 /* dynamic-output ps{} t t{} */
-ALBA_API bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t);
+AKELA_API bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t);
 
-ALBA_API bool consume_newline(struct parse_state* ps);
+AKELA_API bool consume_newline(struct parse_state* ps);
 
 /* dynamic-output ps{} */
-ALBA_API bool get_parse_location(struct parse_state* ps, struct location* loc);
+AKELA_API bool get_parse_location(struct parse_state* ps, struct location* loc);
 
-ALBA_API bool is_identity_comparison(enum ast_type type);
+AKELA_API bool is_identity_comparison(enum ast_type type);
 
-ALBA_API void location_update_token(struct location* loc, struct token* t);
+AKELA_API void location_update_token(struct location* loc, struct token* t);
 
-ALBA_API void location_update(struct location* loc, struct location* loc2);
+AKELA_API void location_update(struct location* loc, struct location* loc2);
 
-ALBA_API bool location_default(struct parse_state* ps, struct location* loc);
+AKELA_API bool location_default(struct parse_state* ps, struct location* loc);
 
 #endif

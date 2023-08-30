@@ -24,12 +24,12 @@ set(lib_files
 )
 
 set(bin_files
-    alba.c
+        akela.c
 )
 
 # library
 IF(WIN32)
-  add_definitions(-DALBA_EXPORT)
+  add_definitions(-DAKELA_EXPORT)
 ENDIF()
 
 add_library(alba SHARED ${lib_files})

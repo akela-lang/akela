@@ -1,7 +1,7 @@
 #ifndef _INPUT_H
 #define _INPUT_H
 
-#include "alba_api.h"
+#include "akela_api.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -19,20 +19,20 @@ struct string_data {
 /* dynamic-output-none */
 /* resource-input fp */
 /* resource-use fp */
-ALBA_API int file_getchar(FILE* fp);
+AKELA_API int file_getchar(FILE* fp);
 
 /* dynamic-output-none */
 /* resource-input fp */
 /* resource-use fp */
-ALBA_API int file_seek(FILE* fp, size_t pos);
+AKELA_API int file_seek(FILE* fp, size_t pos);
 
 /*  static-output */
-ALBA_API void string_data_init(struct buffer* bf, struct string_data* sd);
+AKELA_API void string_data_init(struct buffer* bf, struct string_data* sd);
 
 /* dynamic-output-none */
-ALBA_API int string_getchar(struct string_data* sd);
+AKELA_API int string_getchar(struct string_data* sd);
 
 /* dynamic-output-none */
-ALBA_API int string_seek(struct string_data* sd, size_t pos);
+AKELA_API int string_seek(struct string_data* sd, size_t pos);
 
 #endif
