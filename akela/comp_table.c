@@ -62,7 +62,7 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 	buffer_init(&math_path);
 	buffer_copy(&dir, &math_path);
 	buffer_clear(&filename);
-	buffer_copy_str(&filename, "math.alba");
+	buffer_copy_str(&filename, "math.akela");
 	path_join(&math_path, &filename);
 	buffer_finish(&math_path);
 

@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     struct comp_unit cu;
 
     if (argc != 2) {
-        fprintf(stderr, "Usage: alba <filename>\n");
+        fprintf(stderr, "Usage: akela <filename>\n");
         return 1;
     }
 

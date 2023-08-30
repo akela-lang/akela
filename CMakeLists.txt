@@ -66,7 +66,7 @@ endif()
 if(WIN32)
 
 set(EXAMPLE_DIR ${CMAKE_SOURCE_DIR}/examples)
-set(EXAMPLE_ADDITION ${EXAMPLE_DIR}/addition.alba)
+set(EXAMPLE_ADDITION ${EXAMPLE_DIR}/addition.akela)
 
 set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
 set(ZINC_BINARY ${ZINC_DIR}/out/build/x64-Debug/zinc)
@@ -101,9 +101,9 @@ set_target_properties(zinc PROPERTIES
 
 endif()
 
-# math.alba
+# math.akela
 set(BASE_DIR ${CMAKE_SOURCE_DIR}/base)
-set(ALBA_MATH ${BASE_DIR}/math.alba)
+set(ALBA_MATH ${BASE_DIR}/math.akela)
 
 include_directories(${ZINC_DIR} .)
 
