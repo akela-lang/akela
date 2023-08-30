@@ -32,45 +32,45 @@ IF(WIN32)
   add_definitions(-DAKELA_EXPORT)
 ENDIF()
 
-add_library(alba SHARED ${lib_files})
+add_library(akela SHARED ${lib_files})
 IF(WIN32)
-  target_link_libraries(alba icudt icuin icuio icutest icutu icuuc zinc)
+  target_link_libraries(akela icudt icuin icuio icutest icutu icuuc zinc)
 ELSEIF(UNIX)
-  target_link_libraries(alba icudata icui18n icuio icutu icuuc icutest zinc)
+  target_link_libraries(akela icudata icui18n icuio icutu icuuc icutest zinc)
 ENDIF()
 
 # executable
-add_executable(alba-bin ${bin_files})
+add_executable(akela-bin ${bin_files})
 
 IF (WIN32)
-  target_link_libraries(alba-bin alba icudt icuin icuio icutest icutu icuuc zinc)
+  target_link_libraries(akela-bin akela icudt icuin icuio icutest icutu icuuc zinc)
 ELSEIF (UNIX)
-  target_link_libraries(alba-bin alba icudata icui18n icuio icutu icuuc icutest zinc)
+  target_link_libraries(akela-bin akela icudata icui18n icuio icutu icuuc icutest zinc)
 ENDIF()
 
-SET_TARGET_PROPERTIES(alba-bin
-  PROPERTIES OUTPUT_NAME alba)
+SET_TARGET_PROPERTIES(akela-bin
+  PROPERTIES OUTPUT_NAME akela)
 
 add_custom_command(
-        TARGET alba-bin POST_BUILD
+        TARGET akela-bin POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${ZINC_DLL}
-                ${ALBA_DLL}
+                ${AKELA_DLL}
                 ${ICU_UC_DLL}
                 ${ICU_DT_DLL}
                 ${EXAMPLE_ADDITION}
-                ${ALBA_MATH}
+                ${AKELA_MATH}
                 ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 add_custom_command(
-        TARGET alba POST_BUILD
+        TARGET akela POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${ZINC_DLL}
-                ${ALBA_DLL}
+                ${AKELA_DLL}
                 ${ICU_UC_DLL}
                 ${ICU_DT_DLL}
                 ${EXAMPLE_ADDITION}
-                ${ALBA_MATH}
+                ${AKELA_MATH}
                 ${CMAKE_BINARY_DIR}/test
 )

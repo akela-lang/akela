@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(alba)
+project(akela)
 
 if(WIN32)
 
@@ -73,10 +73,10 @@ set(ZINC_BINARY ${ZINC_DIR}/out/build/x64-Debug/zinc)
 set(ZINC_LIB ${ZINC_BINARY}/zinc.lib)
 set(ZINC_DLL ${ZINC_BINARY}/zinc.dll)
 
-set(ALBA_DIR ${CMAKE_SOURCE_DIR})
-set(ALBA_BINARY ${ALBA_DIR}/out/build/x64-Debug/alba)
-set(ALBA_LIB ${ALBA_BINARY}/alba.lib)
-set(ALBA_DLL ${ALBA_BINARY}/alba.dll)
+set(AKELA_DIR ${CMAKE_SOURCE_DIR})
+set(AKELA_BINARY ${AKELA_DIR}/out/build/x64-Debug/akela)
+set(AKELA_LIB ${AKELA_BINARY}/akela.lib)
+set(AKELA_DLL ${AKELA_BINARY}/akela.dll)
 
 add_library(zinc SHARED IMPORTED)
 set_target_properties(zinc PROPERTIES
@@ -86,9 +86,9 @@ set_target_properties(zinc PROPERTIES
 
 elseif(UNIX)
 
-set(ALBA_DIR ${CMAKE_SOURCE_DIR})
-set(ALBA_BINARY ${ALBA_DIR}/build/alba)
-set(ALBA_SO ${ALBA_BINARY}/alba.so)
+set(AKELA_DIR ${CMAKE_SOURCE_DIR})
+set(AKELA_BINARY ${AKELA_DIR}/build/akela)
+set(AKELA_SO ${AKELA_BINARY}/akela.so)
 
 set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
 set(ZINC_BINARY ${ZINC_DIR}/build/zinc)
@@ -103,7 +103,7 @@ endif()
 
 # math.akela
 set(BASE_DIR ${CMAKE_SOURCE_DIR}/base)
-set(ALBA_MATH ${BASE_DIR}/math.akela)
+set(AKELA_MATH ${BASE_DIR}/math.akela)
 
 include_directories(${ZINC_DIR} .)
 

@@ -29,23 +29,23 @@ add_executable(test ${test_files})
 
 if(WIN32)
 
-target_link_libraries(test alba icudt icuin icuio icutest icutu icuuc zinc)
+target_link_libraries(test akela icudt icuin icuio icutest icutu icuuc zinc)
 
 add_custom_command(
         TARGET test POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${ZINC_DLL}
-                ${ALBA_DLL}
+                ${AKELA_DLL}
                 ${ICU_UC_DLL}
                 ${ICU_DT_DLL}
                 ${EXAMPLE_ADDITION}
-                ${ALBA_MATH}
+                ${AKELA_MATH}
                 ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 elseif(UNIX)
 
-target_link_libraries(test alba icudata icui18n icuio icutu icuuc icutest zinc)
+target_link_libraries(test akela icudata icui18n icuio icutu icuuc icutest zinc)
 
 add_custom_command(
         TARGET test POST_BUILD
