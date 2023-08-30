@@ -1,11 +1,11 @@
 #include "zinc/unit_test.h"
-#include "alba/unit_test_compiler.h"
-#include "alba/comp_unit.h"
+#include "akela/unit_test_compiler.h"
+#include "akela/comp_unit.h"
 #include "zinc/memory.h"
-#include "alba/input.h"
-#include "alba/comp_table.h"
+#include "akela/input.h"
+#include "akela/comp_table.h"
 #include "zinc/buffer.h"
-#include "alba/comp_unit.h"
+#include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"
 
 void test_comp_table_compile()

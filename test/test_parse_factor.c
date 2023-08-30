@@ -1,11 +1,11 @@
 #include <stdbool.h>
 #include "zinc/unit_test.h"
-#include "alba/parse_tools.h"
-#include "alba/unit_test_compiler.h"
-#include "alba/ast.h"
+#include "akela/parse_tools.h"
+#include "akela/unit_test_compiler.h"
+#include "akela/ast.h"
 #include "test_parse.h"
-#include "alba/type_def.h"
-#include "alba/comp_unit.h"
+#include "akela/type_def.h"
+#include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"
 
 /* dynamic-output-none */

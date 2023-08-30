@@ -1,6 +1,6 @@
-#include "alba/type_def.h"
+#include "akela/type_def.h"
 #include "zinc/unit_test.h"
-#include "alba/ast.h"
+#include "akela/ast.h"
 
 void test_type_use1()
 {

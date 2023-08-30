@@ -4,7 +4,7 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 #include "zinc/buffer.h"
-#include "alba/ast.h"
+#include "ast.h"
 
 /* dynamic-output n */
 void type_def_create(struct type_def** n)

@@ -107,5 +107,5 @@ set(ALBA_MATH ${BASE_DIR}/math.alba)
 
 include_directories(${ZINC_DIR} .)
 
-add_subdirectory(alba)
+add_subdirectory(akela)
 add_subdirectory(test)

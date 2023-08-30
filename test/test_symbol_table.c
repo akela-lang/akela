@@ -1,6 +1,6 @@
 #include "zinc/unit_test.h"
 #include "zinc/memory.h"
-#include "alba/symbol_table.h"
+#include "akela/symbol_table.h"
 
 void test_symbol_table_env()
 {

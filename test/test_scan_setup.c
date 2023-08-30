@@ -1,8 +1,8 @@
 #include "zinc/buffer.h"
-#include "alba/input.h"
-#include "alba/uconv.h"
-#include "alba/symbol_table.h"
-#include "alba/scan.h"
+#include "akela/input.h"
+#include "akela/uconv.h"
+#include "akela/symbol_table.h"
+#include "akela/scan.h"
 #include "zinc/memory.h"
 #include "zinc/unit_test.h"
 

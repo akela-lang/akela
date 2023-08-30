@@ -2,13 +2,13 @@
 #include "zinc/unit_test.h"
 #include "zinc/buffer.h"
 #include "zinc/memory.h"
-#include "alba/input.h"
-#include "alba/uconv.h"
-#include "alba/parse_tools.h"
-#include "alba/parse.h"
-#include "alba/scan.h"
-#include "alba/source.h"
-#include "alba/comp_unit.h"
+#include "akela/input.h"
+#include "akela/uconv.h"
+#include "akela/parse_tools.h"
+#include "akela/parse.h"
+#include "akela/scan.h"
+#include "akela/source.h"
+#include "akela/comp_unit.h"
 
 /* dynamic-output ps{} root root{} */
 bool parse_setup2(char* line, struct comp_unit* cu)

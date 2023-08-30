@@ -1,5 +1,5 @@
 #include "zinc/unit_test.h"
-#include "alba/ast.h"
+#include "akela/ast.h"
 
 void test_ast1()
 {

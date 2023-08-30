@@ -1,9 +1,9 @@
 #include "zinc/unit_test.h"
-#include "alba/unit_test_compiler.h"
-#include "alba/lookahead_char.h"
-#include "alba/input.h"
+#include "akela/unit_test_compiler.h"
+#include "akela/lookahead_char.h"
+#include "akela/input.h"
 #include "zinc/buffer.h"
-#include "alba/uconv.h"
+#include "akela/uconv.h"
 #include <string.h>
 
 /* dynamic-output-none */

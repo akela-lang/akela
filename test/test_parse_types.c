@@ -1,8 +1,8 @@
 #include "zinc/unit_test.h"
 #include "test_parse.h"
-#include "alba/unit_test_compiler.h"
-#include "alba/type_def.h"
-#include "alba/comp_unit.h"
+#include "akela/unit_test_compiler.h"
+#include "akela/type_def.h"
+#include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"
 
 void test_parse_types_missing_declaration()

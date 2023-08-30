@@ -2,11 +2,11 @@
 #define _TEST_PARSE_H
 
 #include "zinc/result.h"
-#include "alba/scan.h"
-#include "alba/token.h"
-#include "alba/ast.h"
-#include "alba/parse_tools.h"
-#include "alba/comp_unit.h"
+#include "akela/scan.h"
+#include "akela/token.h"
+#include "akela/ast.h"
+#include "akela/parse_tools.h"
+#include "akela/comp_unit.h"
 
 bool parse_setup2(char* line, struct comp_unit* cu);
 void parse_teardown2(struct comp_unit* cu);

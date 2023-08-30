@@ -1,9 +1,9 @@
 #include "zinc/unit_test.h"
-#include "alba/lookahead_char.h"
-#include "alba/source.h"
-#include "alba/scan.h"
+#include "akela/lookahead_char.h"
+#include "akela/source.h"
+#include "akela/scan.h"
 #include "test_scan_setup.h"
-#include "alba/unit_test_compiler.h"
+#include "akela/unit_test_compiler.h"
 #include "zinc/error_unit_test.h"
 
 void test_scan_number_negative_start()

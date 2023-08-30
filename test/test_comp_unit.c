@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
-#include "alba/comp_unit.h"
+#include "akela/comp_unit.h"
 #include "zinc/memory.h"
-#include "alba/input.h"
+#include "akela/input.h"
 
 void test_comp_unit_compile()
 {

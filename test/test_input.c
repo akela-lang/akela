@@ -1,9 +1,9 @@
 #include "zinc/unit_test.h"
 #include "zinc/buffer.h"
-#include "alba/input.h"
-#include "alba/os_win.h"
-#include "alba/scan.h"
-#include "alba/uconv.h"
+#include "akela/input.h"
+#include "akela/os_win.h"
+#include "akela/scan.h"
+#include "akela/uconv.h"
 
 #if defined(WIN32)
 #include <windows.h>
