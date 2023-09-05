@@ -2259,6 +2259,7 @@ void test_parse_expression()
 	test_parse_add_error_left_no_value();
 	test_parse_add_error_left_not_numeric();
 	test_parse_add_error_right_no_value();
+    test_parse_add_error_right_not_numeric();
 	test_parse_add_mixed_types();
 	test_parse_add_positive();
 	test_parse_add_negative();

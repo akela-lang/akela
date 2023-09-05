@@ -31,8 +31,6 @@ AKELA_API enum result format_error(struct error* e, input_getchar f, input_seek 
 
 AKELA_API const char* plural(int number);
 
-AKELA_API void location_init(struct location* loc);
-
 AKELA_API void location_create(struct location** loc);
 
 #endif

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(akela)
 
+# ICU
 set(ICU_DIR ${CMAKE_SOURCE_DIR}/../icu/source/install)
 set(ICU_LIB_DIR ${ICU_DIR}/lib)
 
@@ -21,6 +22,7 @@ set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION ${ICU_DIR}/lib/libicuuc
 
 include_directories("${CMAKE_SOURCE_DIR}/../icu/source/install/include")
 
+# AKELA
 set(AKELA_DIR ${CMAKE_SOURCE_DIR})
 set(AKELA_BINARY ${AKELA_DIR}/build/akela)
 set(AKELA_SO ${AKELA_BINARY}/akela.so)
@@ -30,15 +32,62 @@ set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
 set(ZINC_BINARY ${ZINC_DIR}/build/zinc)
 set(ZINC_A ${ZINC_BINARY}/libzinc.a)
 
+set(BASE_DIR ${CMAKE_SOURCE_DIR}/base)
+set(AKELA_MATH ${BASE_DIR}/math.akela)
+
+# ZINC
 add_library(zinc STATIC IMPORTED)
 set_target_properties(zinc PROPERTIES
     IMPORTED_LOCATION ${ZINC_A}
 )
 
-set(BASE_DIR ${CMAKE_SOURCE_DIR}/base)
-set(AKELA_MATH ${BASE_DIR}/math.akela)
-
 include_directories(${ZINC_DIR} .)
 
+# LLVM
+find_package(LLVM 16 REQUIRED CONFIG PATHS ${CMAKE_SOURCE_DIR}/../llvm-project/build)
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+include_directories(${LLVM_INCLUDE_DIRS})
+link_directories(${LLVM_LIBRARY_DIRS})
+add_definitions(${LLVM_DEFINITIONS})
+set(LLVM_LINK_COMPONENTS
+        AllTargetsAsmParsers
+        AllTargetsCodeGens
+        AllTargetsDescs
+        AllTargetsDisassemblers
+        AllTargetsInfos
+        Analysis
+        BitReader
+        Core
+        ExecutionEngine
+        InstCombine
+        Interpreter
+        MC
+        MCDisassembler
+        MCJIT
+        Object
+        OrcJIT
+        RuntimeDyld
+        ScalarOpts
+        Support
+        Target
+        TransformUtils
+        native
+        nativecodegen
+        AsmPrinter
+        DebugInfoPDB
+        IrReader
+        LibDriver
+        Linker
+        LTO
+        Option
+        WindowsManifest
+        WindowsDriver
+        )
+llvm_map_components_to_libnames(llvm_libs ${LLVM_LINK_COMPONENTS})
+
+
+
+# directories
 add_subdirectory(akela)
 add_subdirectory(test)

@@ -140,14 +140,6 @@ const char* plural(int number)
 	else return "s";
 }
 
-void location_init(struct location* loc)
-{
-	loc->line = 0;
-	loc->col = 0;
-	loc->byte_pos = 0;
-	loc->size = 0;
-}
-
 void location_create(struct location** loc)
 {
 	malloc_safe((void**)loc, sizeof(struct location));

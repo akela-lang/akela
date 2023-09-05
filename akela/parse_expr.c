@@ -23,8 +23,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, struct location* loc);
 bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 
-/* expr -> id = expr | boolean */
-/* dynamic-output ps{} root root{} */
+/* expr -> assignment */
 bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	return assignment(ps, root, loc);
@@ -62,7 +61,7 @@ bool check_lvalue(struct parse_state* ps, enum ast_type type, struct location* l
     return valid;
 }
 
-/* assignment -> boolean = assignment | boolean */
+/* assignment -> eseq = assignment | eseq assignment */
 bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;

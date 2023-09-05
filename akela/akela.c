@@ -7,6 +7,7 @@
 #include "os_win.h"
 #include "os_linux.h"
 #include "comp_unit.h"
+#include "code_gen.h"
 
 int main(int argc, char** argv)
 {
@@ -49,6 +50,8 @@ int main(int argc, char** argv)
         printf("%s\n", get_error_message());
     }
     ast_node_print(cu.root, names, false);
+
+    code_gen(&cu);
 
     comp_unit_destroy(&cu);
 

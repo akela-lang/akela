@@ -1,3 +1,2 @@
 # Todo
-* link to LLVM
-* generate LLVM IR
+* test code generation
