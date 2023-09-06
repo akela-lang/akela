@@ -51,13 +51,17 @@ int main(int argc, char** argv)
     }
     ast_node_print(cu.root, names, false);
 
-    code_gen(&cu);
+    struct buffer bf;
+    buffer_init(&bf);
+    cg_jit(&cu, &bf, true, true);
+    buffer_finish(&bf);
+    printf("\n%s\n", bf.buf);
+    buffer_destroy(&bf);
 
     comp_unit_destroy(&cu);
 
     /* resource destroy fp */
     fclose(fp);
-    printf("end\n");
 
     return 0;
 }

@@ -3,6 +3,6 @@
 
 #include "comp_unit.h"
 
-void code_gen(struct comp_unit* cu);
+void cg_jit(struct comp_unit* cu, struct buffer* bf, bool output_bc, bool output_ll);
 
 #endif

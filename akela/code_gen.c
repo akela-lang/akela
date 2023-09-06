@@ -11,6 +11,7 @@
 #include "code_gen_tools.h"
 #include "zinc/hash.h"
 #include "zinc/memory.h"
+#include "zinc/result.h"
 
 LLVMValueRef cg_expr(struct cg_data* cgd, struct ast_node* n);
 LLVMValueRef cg_stmts(struct cg_data* cgd, struct ast_node* n);
@@ -68,17 +69,28 @@ LLVMValueRef get_llvm_constant(struct ast_node* n)
     exit(1);
 }
 
-void code_gen(struct comp_unit* cu)
+enum result serialize(LLVMExecutionEngineRef engine, LLVMTypeRef t, struct buffer* bf)
+{
+    enum result r = result_ok;
+    if (t == LLVMInt64Type()) {
+        int64_t (*main_func)() = (int64_t (*)())LLVMGetFunctionAddress(engine, "main");
+        buffer_add_format(bf, "%ld", main_func());
+    } else {
+        r = set_error("unknown type");
+    }
+    return r;
+}
+
+void cg_jit(struct comp_unit* cu, struct buffer* bf, bool output_bc, bool output_ll)
 {
     LLVMModuleRef mod = LLVMModuleCreateWithName("my_module");
     LLVMContextRef context = LLVMContextCreate();
 
-    LLVMTypeRef param_types[] = { LLVMInt32Type(), LLVMInt32Type() };
     LLVMTypeRef ret_type = get_llvm_type(cu->root->tu);
-    LLVMTypeRef fun_type = LLVMFunctionType(ret_type, param_types, 2, 0);
-    LLVMValueRef sum = LLVMAddFunction(mod, "sum", fun_type);
+    LLVMTypeRef fun_type = LLVMFunctionType(ret_type, NULL, 0, 0);
+    LLVMValueRef _main = LLVMAddFunction(mod, "main", fun_type);
 
-    LLVMBasicBlockRef entry = LLVMAppendBasicBlock(sum, "entry");
+    LLVMBasicBlockRef entry = LLVMAppendBasicBlock(_main, "entry");
 
     LLVMBuilderRef builder = LLVMCreateBuilder();
     LLVMPositionBuilderAtEnd(builder, entry);
@@ -110,19 +122,18 @@ void code_gen(struct comp_unit* cu)
         exit(EXIT_FAILURE);
     }
 
-    int x = 1;
-    int y = 2;
-
-    int (*sum_func)(int, int) = (int (*)(int, int))LLVMGetFunctionAddress(engine, "sum");
-    printf("%d\n", sum_func(x, y));
+    enum result r = serialize(engine, ret_type, bf);
+    if (r == result_error) {
+        fprintf(stderr, "%s\n", error_message);
+    }
 
     // Write out bitcode to file
-    if (LLVMWriteBitcodeToFile(mod, "sum.bc") != 0) {
+    if (LLVMWriteBitcodeToFile(mod, "main.bc") != 0) {
         fprintf(stderr, "error writing bitcode to file, skipping\n");
     }
 
     error = NULL;
-    if (LLVMPrintModuleToFile(mod, "sum.ll", &error)) {
+    if (LLVMPrintModuleToFile(mod, "main.ll", &error)) {
         fprintf(stderr, "%s\n", error);
         LLVMDisposeMessage(error);
     }
@@ -151,7 +162,6 @@ LLVMValueRef cg_expr(struct cg_data* cgd, struct ast_node* n)
         fprintf(stderr, "unknown expression: %d\n", n->type);
         exit(1);
     }
-    return NULL;
 }
 
 LLVMValueRef cg_stmts(struct cg_data* cgd, struct ast_node* n)
