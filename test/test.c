@@ -14,6 +14,7 @@
 #include "test_scan_number.h"
 #include "test_comp_unit.h"
 #include "test_comp_table.h"
+#include "test_code_gen.h"
 
 /* dynamic-output-none */
 int main(void) {
@@ -32,6 +33,7 @@ int main(void) {
 	test_parse_types();
 	test_comp_unit();
 	test_comp_table();
+    test_code_gen();
 	print_results();
 	return 0;
 }
