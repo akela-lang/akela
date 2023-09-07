@@ -38,7 +38,7 @@ bool parse_setup(char* line, struct comp_unit* cu)
 	return valid;
 }
 
-void parse_teardown2(struct comp_unit* cu)
+void parse_teardown(struct comp_unit* cu)
 {
 	comp_unit_destroy(cu);
 }

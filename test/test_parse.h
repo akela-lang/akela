@@ -9,6 +9,6 @@
 #include "akela/comp_unit.h"
 
 bool parse_setup(char* line, struct comp_unit* cu);
-void parse_teardown2(struct comp_unit* cu);
+void parse_teardown(struct comp_unit* cu);
 
 #endif

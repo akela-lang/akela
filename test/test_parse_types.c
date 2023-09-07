@@ -16,7 +16,7 @@ void test_parse_types_missing_declaration()
 	expect_source_error(&cu.el, "variable not declared: x");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_missing_declaration2()
@@ -30,7 +30,7 @@ void test_parse_types_missing_declaration2()
 	expect_source_error(&cu.el, "variable not declared: foo");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_missing_declaration3()
@@ -44,7 +44,7 @@ void test_parse_types_missing_declaration3()
 	expect_source_error(&cu.el, "variable not declared: x");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_double_function()
@@ -58,7 +58,7 @@ void test_parse_types_double_function()
 	expect_source_error(&cu.el, "duplicate declaration in same scope: foo");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_reserved_type()
@@ -72,7 +72,7 @@ void test_parse_types_reserved_type()
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_reserved_type2()
@@ -86,7 +86,7 @@ void test_parse_types_reserved_type2()
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_reserved_type3()
@@ -100,7 +100,7 @@ void test_parse_types_reserved_type3()
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_reserved_type4()
@@ -114,7 +114,7 @@ void test_parse_types_reserved_type4()
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_exists()
@@ -128,7 +128,7 @@ void test_parse_types_exists()
 	expect_source_error(&cu.el, "type not defined: SuperInt");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -176,7 +176,7 @@ void test_parse_types_array()
 	expect_int_equal(index->type, ast_type_number, "number index");
 	expect_str(&index->value, "1", "1 index");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -190,8 +190,8 @@ void test_parse_types_array_error()
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
 	expect_false(cu.valid, "valid");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_types_array_error2()
@@ -205,7 +205,7 @@ void test_parse_types_array_error2()
 	expect_source_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_error_dseq_comma()
@@ -219,7 +219,7 @@ void test_parse_error_dseq_comma()
 	expect_source_error(&cu.el, "expected declaration after comma");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_error_declaration_double_colon()
@@ -233,7 +233,7 @@ void test_parse_error_declaration_double_colon()
 	expect_source_error(&cu.el, "expected :: after variable(s)");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_error_declaration_type()
@@ -246,8 +246,8 @@ void test_parse_error_declaration_type()
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected type");
 	expect_false(cu.valid, "valid");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_error_type_right_curly_brace()
@@ -261,7 +261,7 @@ void test_parse_error_type_right_curly_brace()
 	expect_source_error(&cu.el, "expected right curly brace");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_error_type_not_defined()
@@ -274,8 +274,8 @@ void test_parse_error_type_not_defined()
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "type not defined: Foo");
 	expect_false(cu.valid, "valid");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_error_not_a_type()
@@ -288,8 +288,8 @@ void test_parse_error_not_a_type()
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier is not a type: foo");
 	expect_false(cu.valid, "valid");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_error_not_generic()
@@ -302,8 +302,8 @@ void test_parse_error_not_generic()
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
 	expect_false(cu.valid, "valid");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_error_subtype_count()
@@ -317,7 +317,7 @@ void test_parse_error_subtype_count()
 	expect_source_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_error_duplicate_declarations()
@@ -331,7 +331,7 @@ void test_parse_error_duplicate_declarations()
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_error_type_name()
@@ -345,7 +345,7 @@ void test_parse_error_type_name()
 	expect_source_error(&cu.el, "expected a type name");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_error_comma_type_name()
@@ -359,7 +359,7 @@ void test_parse_error_comma_type_name()
 	expect_source_error(&cu.el, "expected a type name after comma");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_error_return_type()
@@ -373,7 +373,7 @@ void test_parse_error_return_type()
 	expect_source_error(&cu.el, "returned type does not match function return type");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_error_param()
@@ -387,7 +387,7 @@ void test_parse_types_error_param()
 	expect_source_error(&cu.el, "parameter and aguments types do not match");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_error_param_no_value()
@@ -401,7 +401,7 @@ void test_parse_types_error_param_no_value()
 	expect_source_error(&cu.el, "argument expression has no value");
 	expect_false(cu.valid, "valid");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_newline_declaration()
@@ -418,7 +418,7 @@ void test_parse_types_newline_declaration()
     assert_ptr(var, "ptr var");
     expect_int_equal(var->type, ast_type_var, "var var");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_types_newline_type()
@@ -435,7 +435,7 @@ void test_parse_types_newline_type()
     assert_ptr(var, "ptr var");
     expect_int_equal(var->type, ast_type_var, "var var");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 void test_parse_types()
 {

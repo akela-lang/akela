@@ -36,7 +36,7 @@ void test_parse_assign()
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "1", "1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -75,8 +75,8 @@ void test_parse_assign2()
 	assert_ptr(right2, "right");
 	expect_int_equal(right2->type, ast_type_number, "number2");
 	expect_str(&right2->value, "2", "2");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -121,7 +121,7 @@ void test_parse_stmts()
 	expect_int_equal(right3->type, ast_type_number, "number2");
 	expect_str(&right3->value, "1", "1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -165,8 +165,8 @@ void test_parse_stmts2()
 	assert_ptr(f, "ptr f");
 	expect_int_equal(f->type, ast_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -225,7 +225,7 @@ void test_parse_stmts3()
 	expect_int_equal(i->type, ast_type_id, "id i");
 	expect_str(&i->value, "z", "z c");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -284,7 +284,7 @@ void test_parse_stmts4()
 	expect_int_equal(i->type, ast_type_id, "id i");
 	expect_str(&i->value, "z", "z c");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -336,7 +336,7 @@ void test_parse_stmts5()
 	expect_int_equal(num1->type, ast_type_number, "number num1");
 	expect_str(&num1->value, "2", "2 num1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_stmts_type()
@@ -360,7 +360,7 @@ void test_parse_stmts_type()
 	expect_int_equal(td->type, type_string, "string td");
 	expect_str(&td->name, "String", "String td");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -433,7 +433,7 @@ void test_parse_function()
 	expect_int_equal(number4->type, ast_type_number, "number number4");
 	expect_str(&number4->value, "4", "4 number4");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -516,7 +516,7 @@ void test_parse_function2()
 	expect_int_equal(i->type, ast_type_number, "number i");
 	expect_str(&i->value, "4", "4");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -600,7 +600,7 @@ void test_parse_function3()
 	expect_int_equal(i->type, ast_type_number, "number i");
 	expect_str(&i->value, "4", "4");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -754,7 +754,7 @@ void test_parse_function4()
 	expect_int_equal(i->type, ast_type_number, "number i");
 	expect_str(&i->value, "4", "4");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_function5()
@@ -768,7 +768,7 @@ void test_parse_function5()
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_function_return_type_error()
@@ -782,7 +782,7 @@ void test_parse_function_return_type_error()
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "returned type does not match function return type");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_function_error_expected_left_parenthesis()
@@ -796,7 +796,7 @@ void test_parse_function_error_expected_left_parenthesis()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected left parenthesis");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_function_error_expected_right_parenthesis()
@@ -810,7 +810,7 @@ void test_parse_function_error_expected_right_parenthesis()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected right parenthesis");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_function_error_duplicate_declaration()
@@ -823,8 +823,8 @@ void test_parse_function_error_duplicate_declaration()
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: foo");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_function_error_identifier_reserved()
@@ -838,7 +838,7 @@ void test_parse_function_error_identifier_reserved()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_function_error_expected_end()
@@ -852,7 +852,7 @@ void test_parse_function_error_expected_end()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected end");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -915,7 +915,7 @@ void test_parse_if()
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -999,7 +999,7 @@ void test_parse_elseif()
 	expect_int_equal(num3->type, ast_type_number, "number num3");
 	expect_str(&num3->value, "2", "2 num3");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1109,7 +1109,7 @@ void test_parse_elseif2()
 	expect_int_equal(y2->type, ast_type_id, "id y2");
 	expect_str(&y2->value, "y", "y y2");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1166,7 +1166,7 @@ void test_parse_else()
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1243,7 +1243,7 @@ void test_parse_else2()
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1258,7 +1258,7 @@ void test_parse_if_error_expected_expression()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected condition after if");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1273,7 +1273,7 @@ void test_parse_if_error_expected_end()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected end");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1288,7 +1288,7 @@ void test_parse_if_error_expected_elseif_expression()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected condition after elseif");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1324,7 +1324,7 @@ void test_parse_while()
 	expect_int_equal(num->type, ast_type_number, "number num");
 	expect_str(&num->value, "1", "1 num");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_while_error_expected_expression()
@@ -1338,7 +1338,7 @@ void test_parse_while_error_expected_expression()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected expression after while");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_while_error_expected_end()
@@ -1352,7 +1352,7 @@ void test_parse_while_error_expected_end()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected end");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1406,7 +1406,7 @@ void test_parse_for_range()
 	expect_int_equal(stmt0->type, ast_type_number, "number stmt0");
 	expect_str(&stmt0->value, "1", "1 stmt0");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_range2()
@@ -1420,7 +1420,7 @@ void test_parse_for_range2()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: i");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1478,7 +1478,7 @@ void test_parse_for_iteration()
 	expect_int_equal(id2->type, ast_type_id, "id id2");
 	expect_str(&id2->value, "i", "i id2");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_iteration2()
@@ -1492,7 +1492,7 @@ void test_parse_for_iteration2()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: i");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_iteration_error_no_value()
@@ -1506,7 +1506,7 @@ void test_parse_for_iteration_error_no_value()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "iteration expression has no value");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_iteration_error_no_child_element()
@@ -1520,7 +1520,7 @@ void test_parse_for_iteration_error_no_child_element()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "iteration expression has no child element");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_iteration_error_cannot_cast()
@@ -1534,7 +1534,7 @@ void test_parse_for_iteration_error_cannot_cast()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "cannot cast list element");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_error_after_declaration()
@@ -1548,7 +1548,7 @@ void test_parse_for_error_after_declaration()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected '=' or 'in' after for element declaration");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_error_expected_end()
@@ -1562,7 +1562,7 @@ void test_parse_for_error_expected_end()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected end");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_error_expected_range_start()
@@ -1576,7 +1576,7 @@ void test_parse_for_error_expected_range_start()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected range start");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_error_expected_colon()
@@ -1590,7 +1590,7 @@ void test_parse_for_error_expected_colon()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected colon");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_error_expected_range_end()
@@ -1604,7 +1604,7 @@ void test_parse_for_error_expected_range_end()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected range end");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_range_error_start_no_value()
@@ -1618,7 +1618,7 @@ void test_parse_for_range_error_start_no_value()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "start range expression has no value");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_range_error_start_not_numeric()
@@ -1632,7 +1632,7 @@ void test_parse_for_range_error_start_not_numeric()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "start range expression is not numeric");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_range_error_end_no_value()
@@ -1646,7 +1646,7 @@ void test_parse_for_range_error_end_no_value()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "end range expression has no value");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_range_error_end_not_numeric()
@@ -1660,7 +1660,7 @@ void test_parse_for_range_error_end_not_numeric()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "end range expression is not numeric");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_for_error_expected_iteration_expression()
@@ -1674,7 +1674,7 @@ void test_parse_for_error_expected_iteration_expression()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected for iteration expression");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_module()
@@ -1726,7 +1726,7 @@ void test_parse_module()
 	expect_int_equal(dot_id_1->type, ast_type_id, "id dot_id_1");
 	expect_str(&dot_id_1->value, "pi", "pi dot_id_1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_module_nested()
@@ -1802,7 +1802,7 @@ void test_parse_module_nested()
 	expect_int_equal(pi_id->type, ast_type_id, "id pi_id");
 	expect_str(&pi_id->value, "pi", "pi pi_id");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_module_expected_identifier()
@@ -1816,7 +1816,7 @@ void test_parse_module_expected_identifier()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected identifier after module");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_module_expected_end()
@@ -1830,7 +1830,7 @@ void test_parse_module_expected_end()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected end");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_module_duplicate_declaration()
@@ -1844,7 +1844,7 @@ void test_parse_module_duplicate_declaration()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "variable already used: foo");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_dot_error_expected_term()
@@ -1858,7 +1858,7 @@ void test_parse_dot_error_expected_term()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected term after dot");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_dot_error_left_non_module()
@@ -1872,7 +1872,7 @@ void test_parse_dot_error_left_non_module()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "dot operand is not a module or struct");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_dot_error_right_not_identifier()
@@ -1886,7 +1886,7 @@ void test_parse_dot_error_right_not_identifier()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "operand of dot operator not an identifier");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_struct()
@@ -2025,7 +2025,7 @@ void test_parse_struct()
 	expect_int_equal(a2->type, ast_type_number, "string a2");
 	expect_str(&a2->value, "45", "45 a2");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_struct_error_not_field()
@@ -2041,7 +2041,7 @@ void test_parse_struct_error_not_field()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "variable not a field of struct: abc");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_struct_error_expected_identifier()
@@ -2055,7 +2055,7 @@ void test_parse_struct_error_expected_identifier()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected identifier");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_struct_error_expected_end()
@@ -2069,7 +2069,7 @@ void test_parse_struct_error_expected_end()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected end");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_struct_error_expected_end2()
@@ -2083,7 +2083,7 @@ void test_parse_struct_error_expected_end2()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected end");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_struct_error_duplicate()
@@ -2097,7 +2097,7 @@ void test_parse_struct_error_duplicate()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "duplicate variable in scope: Person");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_return()
@@ -2113,7 +2113,7 @@ void test_parse_return()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_return_error_no_value()
@@ -2130,7 +2130,7 @@ void test_parse_return_error_no_value()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_return_error_outside_of_function()
@@ -2147,7 +2147,7 @@ void test_parse_return_error_outside_of_function()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_return_error_type_does_not_match()
@@ -2164,7 +2164,7 @@ void test_parse_return_error_type_does_not_match()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_stmts_newline_function()
@@ -2177,7 +2177,7 @@ void test_parse_stmts_newline_function()
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_stmts_newline_for_range()
@@ -2190,7 +2190,7 @@ void test_parse_stmts_newline_for_range()
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_stmts_newline_for_iteration()
@@ -2203,7 +2203,7 @@ void test_parse_stmts_newline_for_iteration()
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_var()
@@ -2241,7 +2241,7 @@ void test_parse_var()
     expect_str(&td->name, "Int32", "Int32 td");
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_var2()
@@ -2289,7 +2289,7 @@ void test_parse_var2()
 
     /* destroy ps{} cu.root cu.root{} */
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_var_expected_declaration()
@@ -2307,7 +2307,7 @@ void test_parse_var_expected_declaration()
 
     /* destroy ps{} cu.root cu.root{} */
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */

@@ -37,8 +37,8 @@ void test_parse_number_integer()
 	expect_str(&td->name, "Int64", "Int64 td");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -70,8 +70,8 @@ void test_parse_number_float()
 	expect_str(&td->name, "Float64", "Float64 td");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -105,8 +105,8 @@ void test_parse_string()
 	expect_str(&td->name, "String", "String td");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_boolean_true()
@@ -139,8 +139,8 @@ void test_parse_boolean_true()
 	expect_str(&td->name, "Bool", "Bool td");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_boolean_false()
@@ -173,8 +173,8 @@ void test_parse_boolean_false()
 	expect_str(&td->name, "Bool", "Bool td");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -225,8 +225,8 @@ void test_parse_id()
 	expect_str(&td->name, "Int64", "Int64 td");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -252,8 +252,8 @@ void test_parse_id2()
 	expect_str(&id->value, "_a23", "_a23 id");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -279,8 +279,8 @@ void test_parse_id3()
 	expect_str(&id->value, "a2", "a2 id");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -322,8 +322,8 @@ void test_parse_sign_negative()
 	expect_str(&right->value, "30", "30");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -365,8 +365,8 @@ void test_parse_sign_positive()
 	expect_str(&right->value, "30", "30");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -385,8 +385,8 @@ void test_parse_sign_error_no_value()
 	expect_source_error(&cu.el, "negative operator was used on expression with no value");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_sign_expected_factor()
@@ -404,8 +404,8 @@ void test_parse_sign_expected_factor()
 	expect_source_error(&cu.el, "expected factor after sign");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -442,8 +442,8 @@ void test_parse_not_id()
 	expect_str(&id->value, "a", "a id");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -480,8 +480,8 @@ void test_parse_not_literal()
 	expect_str(&lit_bool->value, "true", "true lit_bool");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -499,8 +499,8 @@ void test_parse_not_error()
 	expect_source_error(&cu.el, "! operator used on factor with no value");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -548,8 +548,8 @@ void test_parse_array_literal_integer()
 	expect_str(&a2->value, "3", "3 a2");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -597,8 +597,8 @@ void test_parse_array_literal_float()
 	expect_str(&a2->value, "3.2", "3.2 a2");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -646,8 +646,8 @@ void test_parse_array_literal_numeric()
 	expect_str(&a2->value, "3", "3 a2");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -666,8 +666,8 @@ void test_parse_array_literal_mixed_error()
 	expect_source_error(&cu.el, "array elements not the same type");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_array_literal_empty_error()
@@ -685,8 +685,8 @@ void test_parse_array_literal_empty_error()
 	expect_source_error(&cu.el, "array literal has no elements");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_array_literal_error_right_square_bracket()
@@ -704,8 +704,8 @@ void test_parse_array_literal_error_right_square_bracket()
 	expect_source_error(&cu.el, "expected right square bracket");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_array_literal_error_expected_expr()
@@ -723,8 +723,8 @@ void test_parse_array_literal_error_expected_expr()
 	expect_source_error(&cu.el, "expected expr after comma");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -814,8 +814,8 @@ void test_parse_anonymous_function()
 	expect_str(&one->value, "1", "1 one");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -911,8 +911,8 @@ void test_parse_anonymous_function2()
 	expect_str(&one->value, "1", "1 one");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_anonymous_function3()
@@ -930,8 +930,8 @@ void test_parse_anonymous_function3()
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_anonymous_function_assignment_error()
@@ -949,8 +949,8 @@ void test_parse_anonymous_function_assignment_error()
 	expect_source_error(&cu.el, "values in assignment not compatible");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_anonymous_function_return_error()
@@ -968,8 +968,8 @@ void test_parse_anonymous_function_return_error()
 	expect_source_error(&cu.el, "returned type does not match function return type");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_anonymous_function_expected_right_paren()
@@ -987,8 +987,8 @@ void test_parse_anonymous_function_expected_right_paren()
 	expect_source_error(&cu.el, "expected right parenthesis");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_anonymous_function_expected_end()
@@ -1006,8 +1006,8 @@ void test_parse_anonymous_function_expected_end()
 	expect_source_error(&cu.el, "expected end");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1035,8 +1035,8 @@ void test_parse_paren_num()
 	expect_str(&number->value, "32", "32 number");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1054,8 +1054,8 @@ void test_parse_paren_error_empty()
 	expect_source_error(&cu.el, "empty parenthesis");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_paren_error_right_parenthesis()
@@ -1072,8 +1072,8 @@ void test_parse_paren_error_right_parenthesis()
 	expect_source_error(&cu.el, "expected right parenthesis");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_paren_error_no_value()
@@ -1090,8 +1090,8 @@ void test_parse_paren_error_no_value()
 	expect_source_error(&cu.el, "parenthesis on expression that has no value");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1140,8 +1140,8 @@ void test_parse_call()
 	expect_int_equal(c->type, ast_type_cseq, "cseq");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1175,8 +1175,8 @@ void test_parse_call_return_type()
 	expect_str(&add_td->name, "Int64", "Int64 add_td");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1193,8 +1193,8 @@ void test_parse_call_return_type_error()
 	expect_source_error(&cu.el, "addition on non-numeric operand");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1269,8 +1269,8 @@ void test_parse_call2()
 	expect_str(&cseq_a->value, "2", "2 cseq_a");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1348,8 +1348,8 @@ void test_parse_call3()
 	assert_null(c, "null c");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1458,8 +1458,8 @@ void test_parse_call4()
 	expect_str(&cseq_param2->value, "1", "1 cseq_param2");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_call_missing_arguments()
@@ -1475,8 +1475,8 @@ void test_parse_call_missing_arguments()
 	expect_source_error(&cu.el, "not enough arguments in function call");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_call_too_many_arguments()
@@ -1492,8 +1492,8 @@ void test_parse_call_too_many_arguments()
 	expect_source_error(&cu.el, "too many arguments in function call");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_call_type_error()
@@ -1509,8 +1509,8 @@ void test_parse_call_type_error()
 	expect_source_error(&cu.el, "parameter and aguments types do not match");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_call_anonymous_function_type_error()
@@ -1526,8 +1526,8 @@ void test_parse_call_anonymous_function_type_error()
 	expect_source_error(&cu.el, "parameter and aguments types do not match");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_call_error_right_paren()
@@ -1543,8 +1543,8 @@ void test_parse_call_error_right_paren()
 	expect_source_error(&cu.el, "expected right parenthesis");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_call_error_function_not_declared()
@@ -1560,8 +1560,8 @@ void test_parse_call_error_function_not_declared()
 	expect_source_error(&cu.el, "variable not declared: foo");
 
 	/* destroy ps{} cu.root cu.root{} */
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_call_error_not_function()
@@ -1577,7 +1577,7 @@ void test_parse_call_error_not_function()
 	expect_source_error(&cu.el, "not a function type");
 
 	/* destroy ps{} cu.root cu.root{} */
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_call_error_not_enough_arguments()
@@ -1592,7 +1592,7 @@ void test_parse_call_error_not_enough_arguments()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "not enough arguments in function call");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_call_error_too_many_arguments()
@@ -1607,7 +1607,7 @@ void test_parse_call_error_too_many_arguments()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "too many arguments in function call");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_call_error_expected_expression()
@@ -1623,7 +1623,7 @@ void test_parse_call_error_expected_expression()
 	expect_source_error(&cu.el, "expected expression after comma");
 
 	/* destroy ps{} cu.root cu.root{} */
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_not_error_expected_factor()
@@ -1640,7 +1640,7 @@ void test_parse_not_error_expected_factor()
 	expect_source_error(&cu.el, "expected factor after !");
 
 	/* destroy ps{} cu.root cu.root{} */
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_not_error_no_value()
@@ -1656,7 +1656,7 @@ void test_parse_not_error_no_value()
 	expect_source_error(&cu.el, "! operator used on factor with no value");
 
 	/* destroy ps{} cu.root cu.root{} */
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_not_error_not_boolean()
@@ -1671,8 +1671,8 @@ void test_parse_not_error_not_boolean()
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "not operator used on non-boolean");
 
-	/* destroy ps{} cu.root cu.root{} */	
-	parse_teardown2(&cu);
+	/* destroy ps{} cu.root cu.root{} */
+    parse_teardown(&cu);
 }
 
 void test_parse_factor_newline_var()
@@ -1687,7 +1687,7 @@ void test_parse_factor_newline_var()
     expect_no_errors(&cu.el);
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_factor_newline_var_assign()
@@ -1702,7 +1702,7 @@ void test_parse_factor_newline_var_assign()
     expect_no_errors(&cu.el);
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_factor_newline_anonymous_function()
@@ -1717,7 +1717,7 @@ void test_parse_factor_newline_anonymous_function()
     expect_no_errors(&cu.el);
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_factor_newline_anonymous_function_var()
@@ -1742,7 +1742,7 @@ void test_parse_factor_newline_anonymous_function_var()
     expect_no_errors(&cu.el);
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_factor_newline_not()
@@ -1770,7 +1770,7 @@ void test_parse_factor_newline_not()
     expect_str(&tr->value, "true", "true");
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_factor_newline_sign()
@@ -1797,7 +1797,7 @@ void test_parse_factor_newline_sign()
     expect_int_equal(op->type, ast_type_minus, "minus op");
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_factor_newline_array_literal()
@@ -1835,7 +1835,7 @@ void test_parse_factor_newline_array_literal()
     expect_str(&three->value, "3", "3");
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_factor_newline_array_parenthesis()
@@ -1862,7 +1862,7 @@ void test_parse_factor_newline_array_parenthesis()
     expect_int_equal(plus->type, ast_type_plus, "plus plus");
 
     /* destroy ps{} cu.root cu.root{} */
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_factor()

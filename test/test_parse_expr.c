@@ -24,8 +24,8 @@ void test_parse_blank()
 
 	struct ast_node* node = ast_node_get(cu.root, 0);
 	assert_null(node, "null node");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -64,7 +64,7 @@ void test_parse_add()
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "1", "1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_add_error_expected_term()
@@ -78,7 +78,7 @@ void test_parse_add_error_expected_term()
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "expected term after additive operator");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_add_error_left_no_value()
@@ -91,8 +91,8 @@ void test_parse_add_error_left_no_value()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "addition operand has no value");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_add_error_left_not_numeric()
@@ -106,7 +106,7 @@ void test_parse_add_error_left_not_numeric()
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "addition on non-numeric operand");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_add_error_right_no_value()
@@ -120,7 +120,7 @@ void test_parse_add_error_right_no_value()
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "addition operand has no value");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_add_error_right_not_numeric()
@@ -134,7 +134,7 @@ void test_parse_add_error_right_not_numeric()
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "addition on non-numeric operand");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -172,8 +172,8 @@ void test_parse_add_mixed_types()
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "5.0", "5.0 right");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -213,7 +213,7 @@ void test_parse_add_positive()
 	assert_ptr(right2, "right2");
 	expect_str(&right2->value, "1", "1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -253,7 +253,7 @@ void test_parse_add_negative()
 	assert_ptr(right2, "right2");
 	expect_str(&right2->value, "1", "1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -286,7 +286,7 @@ void test_parse_sub()
 
 	assert_null(ast_node_get(cu.root, 2), "only 2 children");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -325,8 +325,8 @@ void test_parse_sub_positive()
 	struct ast_node* right2 = ast_node_get(right, 1);
 	assert_ptr(right2, "right2");
 	expect_str(&right2->value, "1", "1");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -366,7 +366,7 @@ void test_parse_sub_negative()
 	assert_ptr(right2, "right2");
 	expect_str(&right2->value, "1", "1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 
@@ -406,7 +406,7 @@ void test_parse_mult()
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "2", "2");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -421,7 +421,7 @@ void test_parse_mult_error_expected_term()
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "expected term after operator");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -435,8 +435,8 @@ void test_parse_mult_error_left_no_value()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "multiplication operand has no value");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -451,7 +451,7 @@ void test_parse_mult_error_left_not_numeric()
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "multiplication on non-numeric operand");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -465,8 +465,8 @@ void test_parse_mult_error_right_no_value()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "multiplication operand has no value");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -480,8 +480,8 @@ void test_parse_mult_error_right_not_numeric()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "multiplication on non-numeric operand");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -521,7 +521,7 @@ void test_parse_mult_positive()
 	assert_ptr(right2, "right2");
 	expect_str(&right2->value, "1", "1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -561,7 +561,7 @@ void test_parse_mult_negative()
 	assert_ptr(right2, "right2");
 	expect_str(&right2->value, "1", "1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -591,8 +591,8 @@ void test_parse_divide()
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "2", "2");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -631,8 +631,8 @@ void test_parse_add_add()
 	assert_ptr(right2, "ptr right2");
 	expect_int_equal(right2->type, ast_type_number, "number right2");
 	expect_str(&right2->value, "3", "3 right2");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -672,7 +672,7 @@ void test_parse_mult_mult()
 	expect_int_equal(right2->type, ast_type_number, "number right2");
 	expect_str(&right2->value, "3", "3 right2");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -712,7 +712,7 @@ void test_parse_add_mult()
 	expect_int_equal(right2->type, ast_type_number, "number 3");
 	expect_str(&right2->value, "2", "2");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -752,7 +752,7 @@ void test_parse_mult_add()
 	expect_int_equal(right->type, ast_type_number, "number 2");
 	expect_str(&right->value, "2", "2");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_power()
@@ -790,7 +790,7 @@ void test_parse_power()
 	expect_int_equal(number1->type, ast_type_number, "number number1");
 	expect_str(&number1->value, "2", "2 number1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_power_error_expected_term()
@@ -803,8 +803,8 @@ void test_parse_power_error_expected_term()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "expected term after caret");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_power_error_left_no_value()
@@ -817,8 +817,8 @@ void test_parse_power_error_left_no_value()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "power operand has no value");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_power_error_left_not_numeric()
@@ -831,8 +831,8 @@ void test_parse_power_error_left_not_numeric()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "power on non-numeric operand");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_power_error_right_no_value()
@@ -845,8 +845,8 @@ void test_parse_power_error_right_no_value()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "power operand has no value");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_power_error_right_not_numeric()
@@ -859,8 +859,8 @@ void test_parse_power_error_right_not_numeric()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "power on non-numeric operand");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -897,7 +897,7 @@ void test_parse_paren_add()
 
 	assert_null(ast_node_get(cu.root, 2), "only 2 children");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -934,7 +934,7 @@ void test_parse_paren_add2()
 
 	assert_null(ast_node_get(cu.root, 2), "only 2 children");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -968,8 +968,8 @@ void test_parse_paren_add3()
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "1", "1");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1015,7 +1015,7 @@ void test_parse_paren_add_add()
 	expect_int_equal(right2->type, ast_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1059,7 +1059,7 @@ void test_parse_paren_add_add2()
 	expect_int_equal(right2->type, ast_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1093,8 +1093,8 @@ void test_parse_paren_mult()
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "2", "2");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1137,8 +1137,8 @@ void test_parse_paren_mult_mult()
 	assert_ptr(right2, "right2");
 	expect_int_equal(right2->type, ast_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1181,8 +1181,8 @@ void test_parse_paren_mult_mult2()
 	assert_ptr(right2, "right2");
 	expect_int_equal(right2->type, ast_type_number, "number 3");
 	expect_str(&right2->value, "3", "3");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1268,7 +1268,7 @@ void test_parse_comparison()
 	expect_int_equal(right3->type, ast_type_number, "number right3");
 	expect_str(&right3->value, "13", "13 right3");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1298,7 +1298,7 @@ void test_parse_comparison_identity()
 	expect_int_equal(comp1->tu->td->type, type_boolean, "boolean comp1->tu->td->type");
 	expect_str(&comp1->tu->td->name, "Bool", "Bool comp1->tu->td->name");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_comparison_error_no_term()
@@ -1312,7 +1312,7 @@ void test_parse_comparison_error_no_term()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected term after comparison operator");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_comparison_error_left_no_value()
@@ -1326,7 +1326,7 @@ void test_parse_comparison_error_left_no_value()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "operand has no value");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_comparison_error_right_no_value()
@@ -1339,8 +1339,8 @@ void test_parse_comparison_error_right_no_value()
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "operand has no value");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1353,9 +1353,9 @@ void test_parse_comparison_error_left_not_numeric()
     parse_setup("true < 100", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "comparison operand is not numeric");	
-	
-	parse_teardown2(&cu);
+	expect_source_error(&cu.el, "comparison operand is not numeric");
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1369,8 +1369,8 @@ void test_parse_comparison_error_right_not_numeric()
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "comparison operand is not numeric");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1400,7 +1400,7 @@ void test_parse_and()
 	expect_int_equal(b->type, ast_type_id, "id b");
 	expect_str(&b->value, "b", "b b");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1439,7 +1439,7 @@ void test_parse_or()
 	expect_int_equal(b->type, ast_type_id, "id b");
 	expect_str(&b->value, "b", "b b");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1478,8 +1478,8 @@ void test_parse_or_or()
 	assert_ptr(c, "ptr c");
 	expect_int_equal(c->type, ast_type_id, "id c");
 	expect_str(&c->value, "c", "c c");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1493,8 +1493,8 @@ void test_parse_boolean_error_expected_term()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "expected term after && or ||");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_left_no_value()
@@ -1510,7 +1510,7 @@ void test_parse_boolean_error_left_no_value()
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "left-side operand of boolean operator has no type");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_right_no_value()
@@ -1526,7 +1526,7 @@ void test_parse_boolean_error_right_no_value()
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "operand of boolean operator has no type");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_left_not_boolean()
@@ -1539,8 +1539,8 @@ void test_parse_boolean_error_left_not_boolean()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "left-side expression of boolean operator is not boolean");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_right_not_boolean()
@@ -1553,8 +1553,8 @@ void test_parse_boolean_error_right_not_boolean()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "expression of boolean operator is not boolean");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1593,7 +1593,7 @@ void test_parse_array_subscript()
 	expect_int_equal(index->type, ast_type_number, "number index");
 	expect_str(&index->value, "1", "1 index");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1638,7 +1638,7 @@ void test_parse_array_subscript2()
 	expect_int_equal(b1->type, ast_type_number, "number b1");
 	expect_str(&b1->value, "1", "1 b1");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1675,8 +1675,8 @@ void test_parse_array_subscript3()
 	struct ast_node* a2 = ast_node_get(a, 2);
 	expect_int_equal(a2->type, ast_type_number, "number a2");
 	expect_str(&a2->value, "2", "2 a1");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1689,9 +1689,9 @@ void test_parse_subscript_error_no_type()
     parse_setup("function foo() end; var a::Vector{Int64}; foo()[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "subscripting expression with no type");	
-	
-	parse_teardown2(&cu);
+	expect_source_error(&cu.el, "subscripting expression with no type");
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1704,9 +1704,9 @@ void test_parse_subscript_error_not_array()
     parse_setup("var a::Int64; a[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "subscripting expression that is not an array");	
-	
-	parse_teardown2(&cu);
+	expect_source_error(&cu.el, "subscripting expression that is not an array");
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1720,8 +1720,8 @@ void test_parse_subscript_error_expected_right_square_bracket()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected right-square-bracket");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1735,8 +1735,8 @@ void test_parse_subscript_error_no_subtype()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "subscripting expression with no subtype");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
@@ -1774,8 +1774,8 @@ void test_parse_assign_string()
 	assert_ptr(rhv, "ptr rhv");
 	expect_int_equal(rhv->type, ast_type_string, "string rhv");
 	expect_str(&rhv->value, "hello", "hello rhv");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_assign_multiple()
@@ -1847,7 +1847,7 @@ void test_parse_assign_multiple()
 	expect_int_equal(rhv2->type, ast_type_number, "number rhv2");
 	expect_str(&rhv2->value, "0", "0 rhv2");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_assign_error_term()
@@ -1861,7 +1861,7 @@ void test_parse_assign_error_term()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected expression");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_assign_error_no_value_right()
@@ -1874,8 +1874,8 @@ void test_parse_assign_error_no_value_right()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "cannot assign with operand that has no value");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_assign_error_not_compatible()
@@ -1888,8 +1888,8 @@ void test_parse_assign_error_not_compatible()
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "values in assignment not compatible");
-	
-	parse_teardown2(&cu);
+
+    parse_teardown(&cu);
 }
 
 void test_parse_assign_error_lvalue()
@@ -1903,7 +1903,7 @@ void test_parse_assign_error_lvalue()
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "invalid lvalue");
 
-	parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_assignment()
@@ -1930,7 +1930,7 @@ void test_parse_expr_newline_assignment()
     expect_int_equal(two->type, ast_type_number, "number two");
     expect_str(&two->value, "1", "1 two");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_boolean()
@@ -1957,7 +1957,7 @@ void test_parse_expr_newline_boolean()
     expect_int_equal(two->type, ast_type_boolean, "boolean two");
     expect_str(&two->value, "false", "false");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_comparison()
@@ -1984,7 +1984,7 @@ void test_parse_expr_newline_comparison()
     expect_int_equal(two->type, ast_type_number, "number two");
     expect_str(&two->value, "2", "2");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_add()
@@ -2011,7 +2011,7 @@ void test_parse_expr_newline_add()
     expect_int_equal(two->type, ast_type_number, "number two");
     expect_str(&two->value, "2", "2");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_mult()
@@ -2038,7 +2038,7 @@ void test_parse_expr_newline_mult()
     expect_int_equal(two->type, ast_type_number, "number two");
     expect_str(&two->value, "2", "2");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_power()
@@ -2065,7 +2065,7 @@ void test_parse_expr_newline_power()
     expect_int_equal(two->type, ast_type_number, "number two");
     expect_str(&two->value, "2", "2");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_subscript()
@@ -2092,7 +2092,7 @@ void test_parse_expr_newline_subscript()
     expect_int_equal(zero->type, ast_type_number, "number zero");
     expect_str(&zero->value, "0", "0");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_function_call()
@@ -2128,7 +2128,7 @@ void test_parse_expr_newline_function_call()
     expect_int_equal(two->type, ast_type_number, "number two");
     expect_str(&two->value, "2", "2");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_newline_dot()
@@ -2176,7 +2176,7 @@ void test_parse_expr_newline_dot()
     expect_int_equal(pi_id->type, ast_type_id, "id pi_id");
     expect_str(&pi_id->value, "pi", "pi pi_id");
 
-    parse_teardown2(&cu);
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_eseq()
