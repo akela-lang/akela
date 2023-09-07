@@ -11,7 +11,7 @@
 #include "akela/comp_unit.h"
 
 /* dynamic-output ps{} root root{} */
-bool parse_setup2(char* line, struct comp_unit* cu)
+bool parse_setup(char* line, struct comp_unit* cu)
 {
 	/* allocate bf */
 	struct buffer* bf = NULL;

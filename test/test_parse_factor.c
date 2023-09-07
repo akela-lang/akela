@@ -16,7 +16,7 @@ void test_parse_number_integer()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("32", &cu);
+    parse_setup("32", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -49,7 +49,7 @@ void test_parse_number_float()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("5.0e0", &cu);
+    parse_setup("5.0e0", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -84,7 +84,7 @@ void test_parse_string()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("\"hello\"", &cu);
+    parse_setup("\"hello\"", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -118,7 +118,7 @@ void test_parse_boolean_true()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("true", &cu);
+    parse_setup("true", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -152,7 +152,7 @@ void test_parse_boolean_false()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("false", &cu);
+    parse_setup("false", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -187,7 +187,7 @@ void test_parse_id()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var x::Int64; x", &cu);
+    parse_setup("var x::Int64; x", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -239,7 +239,7 @@ void test_parse_id2()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var _a23::Int64; _a23", &cu);
+    parse_setup("var _a23::Int64; _a23", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -266,7 +266,7 @@ void test_parse_id3()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var a2::Int64; a2", &cu);
+    parse_setup("var a2::Int64; a2", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -293,7 +293,7 @@ void test_parse_sign_negative()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("-30", &cu);
+    parse_setup("-30", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -336,7 +336,7 @@ void test_parse_sign_positive()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("+30", &cu);
+    parse_setup("+30", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -379,7 +379,7 @@ void test_parse_sign_error_no_value()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo() end\n-foo()", &cu);
+    parse_setup("function foo() end\n-foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "negative operator was used on expression with no value");
@@ -398,7 +398,7 @@ void test_parse_sign_expected_factor()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("-", &cu);
+    parse_setup("-", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected factor after sign");
@@ -417,7 +417,7 @@ void test_parse_not_id()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var a::Bool; !a", &cu);
+    parse_setup("var a::Bool; !a", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -455,7 +455,7 @@ void test_parse_not_literal()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("!true", &cu);
+    parse_setup("!true", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -493,7 +493,7 @@ void test_parse_not_error()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo() end; !foo()", &cu);
+    parse_setup("function foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "! operator used on factor with no value");
@@ -513,7 +513,7 @@ void test_parse_array_literal_integer()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("[1,2,3]", &cu);
+    parse_setup("[1,2,3]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -562,7 +562,7 @@ void test_parse_array_literal_float()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("[1.0,2.5,3.2]", &cu);
+    parse_setup("[1.0,2.5,3.2]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -611,7 +611,7 @@ void test_parse_array_literal_numeric()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("[1, 2.5, 3]", &cu);
+    parse_setup("[1, 2.5, 3]", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -660,7 +660,7 @@ void test_parse_array_literal_mixed_error()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("[1,true,3]", &cu);
+    parse_setup("[1,true,3]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "array elements not the same type");
@@ -679,7 +679,7 @@ void test_parse_array_literal_empty_error()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("[]", &cu);
+    parse_setup("[]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "array literal has no elements");
@@ -698,7 +698,7 @@ void test_parse_array_literal_error_right_square_bracket()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("[1,2", &cu);
+    parse_setup("[1,2", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected right square bracket");
@@ -717,7 +717,7 @@ void test_parse_array_literal_error_expected_expr()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("[1,]", &cu);
+    parse_setup("[1,]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected expr after comma");
@@ -737,7 +737,7 @@ void test_parse_anonymous_function()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
+    parse_setup("var a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse valid");
 
@@ -828,7 +828,9 @@ void test_parse_anonymous_function2()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var a::Function{Input{Int32, Int32, Int32}, Output{Int32}}; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end", &cu);
+    parse_setup(
+            "var a::Function{Input{Int32, Int32, Int32}, Output{Int32}}; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end",
+            &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse valid");
 
@@ -922,7 +924,7 @@ void test_parse_anonymous_function3()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var a::Function; a = function(x::Int64) var x::Int64 = 1 end", &cu);
+    parse_setup("var a::Function; a = function(x::Int64) var x::Int64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
@@ -941,7 +943,7 @@ void test_parse_anonymous_function_assignment_error()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var a::Function = function(x::Int64) end", &cu);
+    parse_setup("var a::Function = function(x::Int64) end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "values in assignment not compatible");
@@ -960,7 +962,7 @@ void test_parse_anonymous_function_return_error()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var f::Function{Output{Int64}} = function()::Int64 true end", &cu);
+    parse_setup("var f::Function{Output{Int64}} = function()::Int64 true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "returned type does not match function return type");
@@ -979,7 +981,7 @@ void test_parse_anonymous_function_expected_right_paren()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function(", &cu);
+    parse_setup("function(", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "expected right parenthesis");
@@ -998,7 +1000,7 @@ void test_parse_anonymous_function_expected_end()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function()", &cu);
+    parse_setup("function()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "expected end");
@@ -1017,7 +1019,7 @@ void test_parse_paren_num()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("(32)", &cu);
+    parse_setup("(32)", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -1046,7 +1048,7 @@ void test_parse_paren_error_empty()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("()", &cu);
+    parse_setup("()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "empty parenthesis");
@@ -1064,7 +1066,7 @@ void test_parse_paren_error_right_parenthesis()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("(1", &cu);
+    parse_setup("(1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected right parenthesis");
@@ -1082,7 +1084,7 @@ void test_parse_paren_error_no_value()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo() end; (foo())", &cu);
+    parse_setup("function foo() end; (foo())", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "parenthesis on expression that has no value");
@@ -1100,7 +1102,7 @@ void test_parse_call()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo() 1 end; foo()", &cu);
+    parse_setup("function foo() 1 end; foo()", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -1150,7 +1152,7 @@ void test_parse_call_return_type()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo()::Int64 1 end; foo() + 2", &cu);
+    parse_setup("function foo()::Int64 1 end; foo() + 2", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -1185,7 +1187,7 @@ void test_parse_call_return_type_error()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo()::Bool true end; foo() + 2", &cu);
+    parse_setup("function foo()::Bool true end; foo() + 2", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "addition on non-numeric operand");
@@ -1203,7 +1205,7 @@ void test_parse_call2()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo(arg1::Int64) arg1 end; foo(2)", &cu);
+    parse_setup("function foo(arg1::Int64) arg1 end; foo(2)", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -1279,7 +1281,7 @@ void test_parse_call3()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo(arg1::Int64, arg2::Int64)::Int64 1 end; var x::Int64; var y::Int64; foo(x,y)", &cu);
+    parse_setup("function foo(arg1::Int64, arg2::Int64)::Int64 1 end; var x::Int64; var y::Int64; foo(x,y)", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -1358,7 +1360,9 @@ void test_parse_call4()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo(arg0::Int64, arg1::Int64, arg2::Int64)::Int64 100 end; var x::Int64; var y::Int64; foo(x, y, 1)", &cu);
+    parse_setup(
+            "function foo(arg0::Int64, arg1::Int64, arg2::Int64)::Int64 100 end; var x::Int64; var y::Int64; foo(x, y, 1)",
+            &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -1465,7 +1469,7 @@ void test_parse_call_missing_arguments()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo(a::Int64, b::Int64) end; foo(1)", &cu);
+    parse_setup("function foo(a::Int64, b::Int64) end; foo(1)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "not enough arguments in function call");
@@ -1482,7 +1486,7 @@ void test_parse_call_too_many_arguments()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo(a::Int64) end; foo(1, 2)", &cu);
+    parse_setup("function foo(a::Int64) end; foo(1, 2)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "too many arguments in function call");
@@ -1499,7 +1503,7 @@ void test_parse_call_type_error()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo(a::Int64) end; foo(true)", &cu);
+    parse_setup("function foo(a::Int64) end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "parameter and aguments types do not match");
@@ -1516,7 +1520,7 @@ void test_parse_call_anonymous_function_type_error()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var foo::Function{Input{Int64}} = function (a::Int64) end; foo(true)", &cu);
+    parse_setup("var foo::Function{Input{Int64}} = function (a::Int64) end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "parameter and aguments types do not match");
@@ -1533,7 +1537,7 @@ void test_parse_call_error_right_paren()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo() end; foo(", &cu);
+    parse_setup("function foo() end; foo(", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected right parenthesis");
@@ -1550,7 +1554,7 @@ void test_parse_call_error_function_not_declared()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("foo()", &cu);
+    parse_setup("foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "variable not declared: foo");
@@ -1567,7 +1571,7 @@ void test_parse_call_error_not_function()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("var foo::Int64; foo()", &cu);
+    parse_setup("var foo::Int64; foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "not a function type");
@@ -1583,7 +1587,7 @@ void test_parse_call_error_not_enough_arguments()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo(x::Int64) end; foo()", &cu);
+    parse_setup("function foo(x::Int64) end; foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "not enough arguments in function call");
@@ -1598,7 +1602,7 @@ void test_parse_call_error_too_many_arguments()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo() end; foo(1)", &cu);
+    parse_setup("function foo() end; foo(1)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "too many arguments in function call");
@@ -1613,7 +1617,7 @@ void test_parse_call_error_expected_expression()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo(x::Int64) end; foo(1,)", &cu);
+    parse_setup("function foo(x::Int64) end; foo(1,)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected expression after comma");
@@ -1630,7 +1634,7 @@ void test_parse_not_error_expected_factor()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("!", &cu);
+    parse_setup("!", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected factor after !");
@@ -1646,7 +1650,7 @@ void test_parse_not_error_no_value()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("function foo() end; !foo()", &cu);
+    parse_setup("function foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "! operator used on factor with no value");
@@ -1662,7 +1666,7 @@ void test_parse_not_error_not_boolean()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-	parse_setup2("!1", &cu);
+    parse_setup("!1", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "not operator used on non-boolean");
@@ -1678,7 +1682,7 @@ void test_parse_factor_newline_var()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup2("var\nx::Int64", &cu);
+    parse_setup("var\nx::Int64", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1693,7 +1697,7 @@ void test_parse_factor_newline_var_assign()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup2("var\nx::Int64 =\n1", &cu);
+    parse_setup("var\nx::Int64 =\n1", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1708,7 +1712,7 @@ void test_parse_factor_newline_anonymous_function()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup2("function\n(\na::Int64,\nb::Int64,\nc::Int64\n)\n::\nInt64\na+b+c\nend", &cu);
+    parse_setup("function\n(\na::Int64,\nb::Int64,\nc::Int64\n)\n::\nInt64\na+b+c\nend", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1723,17 +1727,17 @@ void test_parse_factor_newline_anonymous_function_var()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup2(
-        "var foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function\n"
-        "(\n"
-        "a::Int64,\n"
-        "b::Int64,\n"
-        "c::Int64\n"
-        ")\n"
-        "::\n"
-        "Int64\n"
-        "a+b+c\n"
-        "end", &cu);
+    parse_setup(
+            "var foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function\n"
+            "(\n"
+            "a::Int64,\n"
+            "b::Int64,\n"
+            "c::Int64\n"
+            ")\n"
+            "::\n"
+            "Int64\n"
+            "a+b+c\n"
+            "end", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1748,7 +1752,7 @@ void test_parse_factor_newline_not()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup2("!\ntrue", &cu);
+    parse_setup("!\ntrue", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1776,7 +1780,7 @@ void test_parse_factor_newline_sign()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup2("-\n1", &cu);
+    parse_setup("-\n1", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1803,7 +1807,7 @@ void test_parse_factor_newline_array_literal()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup2("[\n1,\n2,\n3\n]", &cu);
+    parse_setup("[\n1,\n2,\n3\n]", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1841,7 +1845,7 @@ void test_parse_factor_newline_array_parenthesis()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup2("(\n1+2)", &cu);
+    parse_setup("(\n1+2)", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
