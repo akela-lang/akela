@@ -28,7 +28,7 @@ bool cg_setup(const char* text, struct buffer* value)
     expect_true(valid, "valid");
     expect_no_errors(&cu->el);
 
-    cg_jit(cu, value, false, false);
+    cg_jit(cu, value, true, true);
 
     buffer_destroy(bf);
     free(bf);

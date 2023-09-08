@@ -6,3 +6,4 @@ out
 *.opendb
 .idea
 cmake-build-debug
+temp
