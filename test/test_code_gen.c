@@ -38,8 +38,20 @@ void test_code_gen_constant_string()
     struct buffer value;
     buffer_init(&value);
 
-    cg_setup("\"hello2\"", &value);
-    expect_str(&value, "hello2", "hello2");
+    cg_setup("\"hello\"", &value);
+    expect_str(&value, "hello", "hello");
+
+    buffer_destroy(&value);
+}
+
+void test_code_gen_var_void()
+{
+    test_name(__func__);
+    struct buffer value;
+    buffer_init(&value);
+
+    cg_setup("var a::Int64 = 1", &value);
+    expect_str(&value, "", "blank");
 
     buffer_destroy(&value);
 }
@@ -49,4 +61,5 @@ void test_code_gen()
     test_code_gen_constant_integer();
     test_code_gen_constant_double();
     test_code_gen_constant_string();
+    test_code_gen_var_void();
 }

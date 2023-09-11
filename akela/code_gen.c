@@ -104,57 +104,7 @@ LLVMValueRef get_llvm_constant(struct ast_node* n)
     exit(1);
 }
 
-enum result serialize(LLVMExecutionEngineRef engine, struct ast_node* n, struct buffer* bf)
-{
-    enum result r = result_ok;
-    LLVMTypeRef t = get_llvm_type(n, NULL);
-    bool found = false;
-
-    struct ast_node* tu = n->tu;
-    if (tu) {
-        if (tu->type == ast_type_type) {
-            struct type_def* td = tu->td;
-            if (td) {
-                if (td->type == type_integer) {
-                    long v;
-                    if (td->bit_count == 32) {
-                        int32_t (*main_func)() = (int32_t (*)()) LLVMGetFunctionAddress(engine, "main");
-                        buffer_add_format(bf, "%d", main_func());
-                        found = true;
-                    } else if (td->bit_count == 64) {
-                        int64_t (*main_func)() = (int64_t (*)()) LLVMGetFunctionAddress(engine, "main");
-                        buffer_add_format(bf, "%ld", main_func());
-                        found = true;
-                    }
-                } else if (td->type == type_float) {
-                    double v;
-                    if (td->bit_count == 32) {
-                        float (*main_func)() = (float (*)())LLVMGetFunctionAddress(engine, "main");
-                        buffer_add_format(bf, "%f", main_func());
-                        found = true;
-                    } else if (td->bit_count == 64) {
-                        double (*main_func)() = (double (*)())LLVMGetFunctionAddress(engine, "main");
-                        buffer_add_format(bf, "%lf", main_func());
-                        found = true;
-                    }
-
-                } else if (td->type == type_string) {
-                    char* (*main_func)() = (char* (*)())LLVMGetFunctionAddress(engine, "main");
-                    buffer_add_format(bf, "%s", main_func());
-                    found = true;
-                }
-            }
-        }
-    }
-
-    if (!found) {
-        r = set_error("unknown type");
-    }
-
-    return r;
-}
-
-enum result serialize2(LLVMGenericValueRef v, struct ast_node* n, struct buffer* bf)
+enum result serialize(LLVMGenericValueRef v, struct ast_node* n, struct buffer* bf)
 {
     enum result r = result_ok;
     LLVMTypeRef t = get_llvm_type(n, NULL);
@@ -188,6 +138,9 @@ enum result serialize2(LLVMGenericValueRef v, struct ast_node* n, struct buffer*
                 }
             }
         }
+    } else {
+        /* void */
+        found = true;
     }
 
     if (!found) {
@@ -258,7 +211,7 @@ void cg_jit(struct comp_unit* cu, struct buffer* bf, bool output_bc, bool output
     }
 
     LLVMGenericValueRef v = LLVMRunFunction(engine, _main, 0, NULL);
-    enum result r = serialize2(v, cu->root, bf);
+    enum result r = serialize(v, cu->root, bf);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
     }
@@ -303,20 +256,9 @@ LLVMValueRef cg_stmts(struct cg_data* cgd, struct ast_node* n)
         last_n = stmt;
         stmt = stmt->next;
     }
-    if (LLVMIsConstantString(last_v)) {
-        //last = LLVMBuildGEP2(cgd->builder, LLVMPointerType(LLVMInt8Type(), 0), last, 0, 0, "abc");
-        //last = LLVMConstInBoundsGEP2(LLVMPointerType(LLVMInt8Type(), 0), last, 0, 0);
-        //last = LLVMBuildInBoundsGEP2(cgd->builder, LLVMArrayType(LLVMInt8Type(), 7), last, 0, 0, "abc");
-        //last = LLVMConstString("abc", 3, false);
-        //LLVMSetGlobalConstant(last, true);
-        //LLVMGetAsString(last, );
+    if (last_n->type == ast_type_string) {
         buffer_finish(&last_n->value);
-        last_v = LLVMBuildGlobalString(cgd->builder, last_n->value.buf, "str");
-        LLVMTypeRef last_t = LLVMArrayType(LLVMInt8Type(), last_n->value.size+1);
-        LLVMValueRef zeroIndex = LLVMConstInt( LLVMInt64Type(), 0, true );
-        LLVMValueRef indexes[2] = { zeroIndex, zeroIndex };
-        //last_v = LLVMBuildInBoundsGEP2(cgd->builder, last_t, last_v, indexes, 2, "gep");
-        last_v = LLVMConstInBoundsGEP2(last_t, last_v, indexes, 2);
+        last_v = LLVMBuildGlobalString(cgd->builder, last_n->value.buf, ".str");
     }
     return last_v;
 }
