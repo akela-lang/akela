@@ -12,6 +12,7 @@
 #include "zinc/hash.h"
 #include "zinc/memory.h"
 #include "zinc/result.h"
+#include <string.h>
 
 LLVMValueRef cg_expr(struct cg_data* cgd, struct ast_node* n);
 LLVMValueRef cg_stmts(struct cg_data* cgd, struct ast_node* n);
@@ -21,6 +22,7 @@ LLVMValueRef cg_sub(struct cg_data* cgd, struct ast_node* n);
 LLVMValueRef cg_id(struct cg_data* cgd, struct ast_node* n);
 LLVMValueRef cg_number(struct cg_data* cgd, struct ast_node* n);
 LLVMValueRef cg_string(struct cg_data* cgd, struct ast_node* n);
+LLVMValueRef cg_boolean(struct cg_data* cgd, struct ast_node* n);
 
 LLVMTypeRef get_llvm_type(struct ast_node* n, struct ast_node* tu)
 {
@@ -49,9 +51,10 @@ LLVMTypeRef get_llvm_type(struct ast_node* n, struct ast_node* tu)
                         unsigned int len = n->value.size + 1;
                         return LLVMArrayType(LLVMInt8Type(), len);
                     } else {
-                        //return LLVMArrayType(LLVMInt8Type(), 7);
                         return LLVMPointerType(LLVMInt8Type(), 0);
                     }
+                } else if (td->type == type_boolean) {
+                    return LLVMInt8Type();
                 }
             }
         }
@@ -66,7 +69,7 @@ LLVMValueRef get_llvm_constant(struct ast_node* n)
         if (tu->type == ast_type_type) {
             struct type_def* td = tu->td;
             if (td) {
-                if (td->type == type_integer) {
+                if (n->type == ast_type_number && td->type == type_integer) {
                     long v;
                     if (td->bit_count == 32) {
                         LLVMTypeRef t = LLVMInt32Type();
@@ -79,7 +82,7 @@ LLVMValueRef get_llvm_constant(struct ast_node* n)
                         v = strtoll(n->value.buf, NULL, 10);
                         return LLVMConstInt(t, v, false);
                     }
-                } else if (td->type == type_float) {
+                } else if (n->type == ast_type_number && td->type == type_float) {
                     double v;
                     if (td->bit_count == 32) {
                         LLVMTypeRef t = LLVMDoubleType();
@@ -90,11 +93,16 @@ LLVMValueRef get_llvm_constant(struct ast_node* n)
                         LLVMTypeRef t = LLVMDoubleType();
                         buffer_finish(&n->value);
                         v = strtod(n->value.buf, NULL);
-                        return LLVMConstReal(LLVMDoubleType(), v);
+                        return LLVMConstReal(t, v);
                     }
-
-                } else if (td->type == type_string) {
+                } else if (n->type == ast_type_string) {
                     return LLVMConstString(n->value.buf, n->value.size, false);
+                } else if (n->type == ast_type_boolean) {
+                    if (buffer_compare_str(&n->value, "true")) {
+                        return LLVMConstInt(LLVMInt8Type(), 1, false);
+                    } else if (buffer_compare_str(&n->value, "false")) {
+                        return LLVMConstInt(LLVMInt8Type(), 0, false);
+                    }
                 }
             }
         }
@@ -135,6 +143,15 @@ enum result serialize(LLVMGenericValueRef v, struct ast_node* n, struct buffer* 
                 } else if (td->type == type_string) {
                     buffer_add_format(bf, "%s", LLVMGenericValueToPointer(v));
                     found = true;
+                } else if (td->type == type_boolean) {
+                    unsigned long long v2 = LLVMGenericValueToInt(v, false);
+                    if (v2 == 1) {
+                        buffer_add_format(bf, "%s", "true");
+                        found = true;
+                    } else if (v2 == 0) {
+                        buffer_add_format(bf, "%s", "false");
+                        found = true;
+                    }
                 }
             }
         }
@@ -170,8 +187,11 @@ void cg_jit(struct comp_unit* cu, struct buffer* bf, bool output_bc, bool output
     LLVMBuildRet(builder, tmp);
 
     char *error = NULL;
-    LLVMVerifyModule(mod, LLVMReturnStatusAction, &error);
-    if (error) {
+    LLVMBool broken = LLVMVerifyModule(mod, LLVMPrintMessageAction, &error);
+    if (broken) {
+        fprintf(stderr, "\nmodule broken\n");
+    }
+    if (error && strlen(error) > 0) {
         fprintf(stderr, "%s\n", error);
     }
     LLVMDisposeMessage(error);
@@ -191,14 +211,6 @@ void cg_jit(struct comp_unit* cu, struct buffer* bf, bool output_bc, bool output
         exit(EXIT_FAILURE);
     }
 
-    /*
-    enum result r = serialize(engine, cu->root, bf);
-    if (r == result_error) {
-        fprintf(stderr, "%s\n", error_message);
-    }
-     */
-    //LLVMGenericValueRef v = LLVMRunFunction(engine, _main, 0, NULL);
-
     // Write out bitcode to file
     if (LLVMWriteBitcodeToFile(mod, "main.bc") != 0) {
         fprintf(stderr, "error writing bitcode to file, skipping\n");
@@ -215,8 +227,6 @@ void cg_jit(struct comp_unit* cu, struct buffer* bf, bool output_bc, bool output
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
     }
-    //printf("%lld\n", LLVMGenericValueToInt(v, true));
-
 
     LLVMContextDispose(context);
     LLVMDisposeBuilder(builder);
@@ -239,6 +249,8 @@ LLVMValueRef cg_expr(struct cg_data* cgd, struct ast_node* n)
     } else if (n->type == ast_type_number) {
         return cg_number(cgd, n);
     } else if (n->type == ast_type_string) {
+        return cg_string(cgd, n);
+    } else if (n->type == ast_type_boolean) {
         return cg_string(cgd, n);
     } else {
         fprintf(stderr, "unknown expression: %d\n", n->type);
@@ -270,7 +282,10 @@ LLVMValueRef cg_var(struct cg_data* cgd, struct ast_node* n)
     struct ast_node* rseq = ast_node_get(n, 2);
 
     struct ast_node *lval = ast_node_get(lseq, 0);
-    struct ast_node *rval = ast_node_get(rseq, 0);
+    struct ast_node *rval = NULL;
+    if (rseq) {
+        rval = ast_node_get(rseq, 0);
+    }
     while (lval) {
         if (rval) {
             LLVMValueRef rhs = cg_expr(cgd, rval);
@@ -326,6 +341,11 @@ LLVMValueRef cg_number(struct cg_data* cgd, struct ast_node* n)
 }
 
 LLVMValueRef cg_string(struct cg_data* cgd, struct ast_node* n)
+{
+    return get_llvm_constant(n);
+}
+
+LLVMValueRef cg_boolean(struct cg_data* cgd, struct ast_node* n)
 {
     return get_llvm_constant(n);
 }

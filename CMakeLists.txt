@@ -44,7 +44,8 @@ set_target_properties(zinc PROPERTIES
 include_directories(${ZINC_DIR} .)
 
 # LLVM
-find_package(LLVM 16 REQUIRED CONFIG PATHS ${CMAKE_SOURCE_DIR}/../llvm-project/build)
+set(llvm_build_dir release)
+find_package(LLVM 16 REQUIRED CONFIG PATHS ${CMAKE_SOURCE_DIR}/../llvm-project/${llvm_build_dir})
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 include_directories(${LLVM_INCLUDE_DIRS})
@@ -85,8 +86,6 @@ set(LLVM_LINK_COMPONENTS
         WindowsDriver
         )
 llvm_map_components_to_libnames(llvm_libs ${LLVM_LINK_COMPONENTS})
-
-
 
 # directories
 add_subdirectory(akela)

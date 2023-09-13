@@ -1,3 +1,3 @@
 # Todo
-* bool constant
+* subtract
 * use symbol table for ids for correct lexical scope
