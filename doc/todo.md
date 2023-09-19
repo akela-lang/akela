@@ -2,7 +2,7 @@
 * return ast_node in factor parsing functions
   * parenthesis [x]
   * aseq [x]
-  * array_literal []
+  * array_literal [x]
   * sign []
   * id_nt []
   * literal_nt []
