@@ -108,6 +108,31 @@ void test_code_gen_add2()
     buffer_destroy(&value);
 }
 
+void test_code_gen_sub()
+{
+    test_name(__func__);
+    struct buffer value;
+    buffer_init(&value);
+
+    cg_setup("15-2", &value);
+    expect_str(&value, "13", "13");
+
+    buffer_destroy(&value);
+}
+
+void test_code_gen_sub2()
+{
+    test_name(__func__);
+    struct buffer value;
+    buffer_init(&value);
+
+    cg_setup("var a::Int64 = 10\n"
+             "a - 2\n",
+             &value);
+    expect_str(&value, "8", "8");
+
+    buffer_destroy(&value);
+}
 void test_code_gen_boolean_true()
 {
     test_name(__func__);
@@ -146,4 +171,6 @@ void test_code_gen()
     test_code_gen_add2();
     test_code_gen_boolean_true();
     test_code_gen_boolean_false();
+    test_code_gen_sub();
+    test_code_gen_sub2();
 }
