@@ -58,6 +58,7 @@ enum ast_type {
     ast_type_eseq,
     ast_type_var_lseq,
     ast_type_var_rseq,
+    ast_type_error,
 	ast_type_count		/* keep at end */
 };
 
@@ -66,6 +67,7 @@ struct ast_node {
 	struct buffer value;
 	struct ast_node* tu;
 	struct type_def* td;
+    struct location loc;
 	struct ast_node* next;
 	struct ast_node* prev;
 	struct ast_node* head;

@@ -19,7 +19,7 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool array_literal(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parenthesis(struct parse_state* ps);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
@@ -73,7 +73,10 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 		valid = array_literal(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_left_paren) {
-		valid = parenthesis(ps, &n, loc) && valid;
+		n = parenthesis(ps);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 	}
 
 	/* transfer n -> root */
@@ -688,51 +691,57 @@ bool aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 	return valid;
 }
 
-bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parenthesis(struct parse_state* ps)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_parenthesis;
 
-	location_init(loc);
+	location_init(&n->loc);
 
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
-	valid = match(ps, token_left_paren, "expecting left parenthesis", &lp) && valid;
-	location_update_token(loc, lp);
+	if (!match(ps, token_left_paren, "expecting left parenthesis", &lp)) {
+        n->type = ast_type_error;
+    }
+	location_update_token(&n->loc, lp);
 	/* test case: no test case needed */
 
-    valid = consume_newline(ps) && valid;
+    if (!consume_newline(ps)) {
+        n->type = ast_type_error;
+    }
 
 	/* allocate n n{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;
-	valid = valid && expr(ps, &a, &loc_a);
-	location_update(loc, &loc_a);
+	if (!expr(ps, &a, &loc_a)) {
+        n->type == ast_type_error;
+    }
+	location_update(&n->loc, &loc_a);
 
 	if (!a) {
-		valid = set_source_error(ps->el, &loc_a, "empty parenthesis");
+		set_source_error(ps->el, &loc_a, "empty parenthesis");
+        n->type = ast_type_error;
 		/* test case: test_parse_paren_error_empty */
 	}
 
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
-	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
-	location_update_token(loc, rp);
+	if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
+        n->type = ast_type_error;
+    }
+	location_update_token(&n->loc, rp);
 
-	if (valid) {
-		ast_node_create(&n);
-		n->type = ast_type_parenthesis;
-
+	if (a) {
 		ast_node_add(n, a);
-	} else {
-		ast_node_destroy(a);
 	}
 
-	if (valid) {
+	if (n->type != ast_type_error) {
 		assert(a);
 		struct ast_node* tu = a->tu;
 		if (!tu) {
-			valid = set_source_error(ps->el, &loc_a, "parenthesis on expression that has no value");
+			set_source_error(ps->el, &loc_a, "parenthesis on expression that has no value");
+            n->type = ast_type_error;
 		} else {
 			n->tu = ast_node_copy(tu);
 		}
@@ -746,13 +755,9 @@ bool parenthesis(struct parse_state* ps, struct ast_node** root, struct location
 	token_destroy(rp);
 	free(rp);
 
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
+	if (!location_default(ps, &n->loc)) {
+        n->type = ast_type_error;
+    }
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }

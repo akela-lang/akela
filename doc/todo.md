@@ -1,4 +1,14 @@
 # Todo
+* return ast_node in factor parsing functions
+  * parenthesis [x]
+  * aseq []
+  * array_literal []
+  * sign []
+  * id_nt []
+  * literal_nt []
+  * not_nt []
+  * anonymous_function []
+  * factor []
 * return ast node from parser functions instead of boolean
 * create error type for ast nodes
 * store source location in ast node

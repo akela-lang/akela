@@ -65,6 +65,7 @@ enum result ast_set_names(char** names)
     names[ast_type_eseq] = "eseq";
     names[ast_type_var_lseq] = "var_lseq";
     names[ast_type_var_rseq] = "var_rseq";
+    names[ast_type_error] = "error";
 
 	for (int i = 0; i < ast_type_count; i++) {
 		if (names[i] == NULL) {
@@ -111,6 +112,7 @@ void ast_node_init(struct ast_node* n)
 	buffer_init(&n->value);
 	n->tu = NULL;
 	n->td = NULL;
+    location_init(&n->loc);
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;
