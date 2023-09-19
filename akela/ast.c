@@ -281,11 +281,6 @@ int ast_node_count_children(struct ast_node* n)
 	return count;
 }
 
-bool ast_node_location_init(struct ast_node* n)
-{
-    location_init(&n->loc);
-}
-
 void ast_node_location_update_token(struct ast_node* n, struct token* t)
 {
     if (t && !n->loc.line) {

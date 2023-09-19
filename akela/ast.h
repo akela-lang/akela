@@ -104,10 +104,8 @@ AKELA_API bool ast_node_match(struct ast_node* a, struct ast_node* b);
 
 AKELA_API int ast_node_count_children(struct ast_node* n);
 
-AKELA_API inline bool ast_node_location_init(struct ast_node* n);
+AKELA_API void ast_node_location_update_token(struct ast_node* n, struct token* t);
 
-AKELA_API inline void ast_node_location_update_token(struct ast_node* n, struct token* t);
-
-AKELA_API inline void ast_node_location_update(struct ast_node* n, struct ast_node* n2);
+AKELA_API void ast_node_location_update(struct ast_node* n, struct ast_node* n2);
 
 #endif

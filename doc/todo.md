@@ -1,7 +1,7 @@
 # Todo
 * return ast_node in factor parsing functions
   * parenthesis [x]
-  * aseq []
+  * aseq [x]
   * array_literal []
   * sign []
   * id_nt []
