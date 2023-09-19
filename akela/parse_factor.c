@@ -697,14 +697,14 @@ struct ast_node* parenthesis(struct parse_state* ps)
     ast_node_create(&n);
     n->type = ast_type_parenthesis;
 
-	location_init(&n->loc);
+	ast_node_location_init(n);
 
 	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
 	if (!match(ps, token_left_paren, "expecting left parenthesis", &lp)) {
         n->type = ast_type_error;
     }
-	location_update_token(&n->loc, lp);
+	ast_node_location_update_token(n, lp);
 	/* test case: no test case needed */
 
     if (!consume_newline(ps)) {
@@ -730,7 +730,7 @@ struct ast_node* parenthesis(struct parse_state* ps)
 	if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
         n->type = ast_type_error;
     }
-	location_update_token(&n->loc, rp);
+	ast_node_location_update_token(n, rp);
 
 	if (a) {
 		ast_node_add(n, a);
@@ -755,7 +755,7 @@ struct ast_node* parenthesis(struct parse_state* ps)
 	token_destroy(rp);
 	free(rp);
 
-	if (!location_default(ps, &n->loc)) {
+	if (!ast_node_location_default(ps, n)) {
         n->type = ast_type_error;
     }
 

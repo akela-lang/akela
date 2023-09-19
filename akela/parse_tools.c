@@ -173,3 +173,12 @@ bool location_default(struct parse_state* ps, struct location* loc)
 	}
 	return valid;
 }
+
+bool ast_node_location_default(struct parse_state* ps, struct ast_node* n)
+{
+    bool valid = true;
+    if (!n->loc.line) {
+        valid = get_parse_location(ps, &n->loc);
+    }
+    return valid;
+}
