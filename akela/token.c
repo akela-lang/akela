@@ -5,6 +5,7 @@
 #include "token.h"
 #include "ast.h"
 #include "source.h"
+#include <assert.h>
 
 /* dynamic-output-none */
 /* initialize-output t{} t{value{}} */
@@ -47,6 +48,7 @@ void token_list_init(struct token_list* tl)
 /* dynamic-output-none */
 struct token* get_token(struct token_list* tl, size_t pos)
 {
+    assert(pos == 0);
     int i = 0;
     for (struct token* t = tl->head; t; t = t->next) {
         if (i == pos) {
