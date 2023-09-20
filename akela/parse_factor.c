@@ -15,8 +15,8 @@
 
 bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_id(struct parse_state* ps);
+struct ast_node* parse_sign(struct parse_state* ps);
 struct ast_node* parse_array_literal(struct parse_state* ps);
 void parse_aseq(struct parse_state* ps, struct ast_node* parent);
 struct ast_node* parse_parenthesis(struct parse_state* ps);
@@ -63,10 +63,16 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 		valid = literal_nt(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_id) {
-		valid = id_nt(ps, &n, loc) && valid;
+		n = parse_id(ps);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
-		valid = sign(ps, &n, loc) && valid;
+		n = parse_sign(ps);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 	} else if (t0 && t0->type == token_left_square_bracket) {
 		/* allocate n n{} */
@@ -370,34 +376,24 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location*
 	return valid;
 }
 
-bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_id(struct parse_state* ps)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_id;
 
-	location_init(loc);
-
-	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
-	struct token* t0 = get_token(&ps->lookahead, 0);
-
-	/* allocate ps{} x x{} */
 	struct token* id = NULL;
-	valid = match(ps, token_id, "expecting identifier", &id) && valid;
-	location_update_token(loc, id);
-	/* test case: no test case needed */
+    if (!match(ps, token_id, "expecting identifier", &id)) {
+        /* test case: no test case needed */
+        n->type = ast_type_error;
+    }
+	location_update_token(&n->loc, id);
 
-	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-
-		n->type = ast_type_id;
-
-		/* allocate n{} */
+	if (n->type != ast_type_error) {
 		buffer_copy(&id->value, &n->value);
 	}
 
-	if (valid) {
+    if (n->type != ast_type_error) {
 		struct buffer full_id;
 		buffer_init(&full_id);
 		bool is_struct = false;
@@ -436,16 +432,19 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 				n->tu = ast_node_copy(found_tu);
 			} else {
 				buffer_finish(&id->value);
-				valid = set_source_error(ps->el, &id->loc, "variable not a field of struct: %s", id->value.buf);
+				set_source_error(ps->el, &id->loc, "variable not a field of struct: %s", id->value.buf);
+                n->type = ast_type_error;
 			}
 		} else {
 			struct symbol* sym2 = environment_get(ps->st->top, &full_id);
 			if (!sym2) {
                 buffer_finish(&full_id);
-                valid = set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
+                set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
                 /* test case: test_parse_types_missing_declaration */
+                n->type = ast_type_error;
             } else if (sym2->td && sym2->td->type != type_struct) {
-                valid = set_source_error(ps->el, &id->loc, "using type as an identifier: %s", full_id.buf);
+                set_source_error(ps->el, &id->loc, "using type as an identifier: %s", full_id.buf);
+                n->type = ast_type_error;
 			} else {
                 struct symbol* sym3 = sym2;
 				if (!sym3->tu) {
@@ -462,50 +461,52 @@ bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	token_destroy(id);
 	free(id);
 
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
+	if (!location_default(ps, &n->loc)) {
+        n->type = ast_type_error;
+    }
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
-bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_sign(struct parse_state* ps)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
 
-	location_init(loc);
+    ast_node_create(&n);
+    n->type = ast_type_sign;
 
 	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
+	if (!get_lookahead(ps, 1, &num)) {
+        n->type = ast_type_error;
+    }
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	/* allocate sign */
 	struct token* sign = NULL;
-	valid = match(ps, t0->type, "expecting unary plus or minus", &sign) && valid;
-	location_update_token(loc, sign);
+	if (!match(ps, t0->type, "expecting unary plus or minus", &sign)) {
+        n->type = ast_type_error;
+    }
+	location_update_token(&n->loc, sign);
 	/* test case: no test case needed */
 
-    valid = consume_newline(ps) && valid;
+    if (!consume_newline(ps)) {
+        n->type = ast_type_error;
+    }
 
 	/* allocate right */
 	struct ast_node* right = NULL;
 	struct location loc_factor;
-	valid = expr(ps, &right, &loc_factor) && valid;
-	location_update(loc, &loc_factor);
+	if (!expr(ps, &right, &loc_factor)) {
+        n->type = ast_type_error;
+    }
+	location_update(&n->loc, &loc_factor);
 
 	if (!right) {
-		valid = set_source_error(ps->el, &loc_factor, "expected factor after sign");
+		set_source_error(ps->el, &loc_factor, "expected factor after sign");
+        n->type = ast_type_error;
 	}
 
-	if (valid) {
-		ast_node_create(&n);
-		n->type = ast_type_sign;
-
+	if (n->type != ast_type_error) {
 		/* allocate left */
 		struct ast_node* left;
 		ast_node_create(&left);
@@ -524,12 +525,13 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	}
 
-	if (valid) {
+	if (n->type != ast_type_error) {
 		assert(right);
 		struct ast_node* tu = right->tu;
 		if (!tu) {
-			valid = set_source_error(ps->el, &sign->loc, "negative operator was used on expression with no value");
+			set_source_error(ps->el, &sign->loc, "negative operator was used on expression with no value");
 			/* test case: test_parse_sign_error */
+            n->type = ast_type_error;
 		} else {
 			n->tu = ast_node_copy(tu);
 		}
@@ -538,15 +540,11 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* destroy sign */
 	token_destroy(sign);
 
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
+	if (!location_default(ps, &n->loc)) {
+        n->type = ast_type_error;
+    }
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 /*
