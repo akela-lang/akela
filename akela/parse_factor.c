@@ -17,9 +17,9 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool id_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc);
-struct ast_node* array_literal(struct parse_state* ps);
-void aseq(struct parse_state* ps, struct ast_node* parent);
-struct ast_node* parenthesis(struct parse_state* ps);
+struct ast_node* parse_array_literal(struct parse_state* ps);
+void parse_aseq(struct parse_state* ps, struct ast_node* parent);
+struct ast_node* parse_parenthesis(struct parse_state* ps);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
@@ -70,13 +70,13 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	} else if (t0 && t0->type == token_left_square_bracket) {
 		/* allocate n n{} */
-		n = array_literal(ps);
+		n = parse_array_literal(ps);
         if (n->type == ast_type_error) {
             valid = false;
         }
 
 	} else if (t0 && t0->type == token_left_paren) {
-		n = parenthesis(ps);
+		n = parse_parenthesis(ps);
         if (n->type == ast_type_error) {
             valid = false;
         }
@@ -552,7 +552,7 @@ bool sign(struct parse_state* ps, struct ast_node** root, struct location* loc)
 /*
 * array_literal -> [aseq]
 */
-struct ast_node* array_literal(struct parse_state* ps)
+struct ast_node* parse_array_literal(struct parse_state* ps)
 {
 	int num;
 	struct ast_node* n = NULL;
@@ -574,7 +574,7 @@ struct ast_node* array_literal(struct parse_state* ps)
         n->type = ast_type_error;
     }
 
-    aseq(ps, n);
+    parse_aseq(ps, n);
 
     if (!consume_newline(ps)) {
         n->type = ast_type_error;
@@ -627,7 +627,7 @@ struct ast_node* array_literal(struct parse_state* ps)
 /* aseq -> expr aseq' | e */
 /* aseq' = , expr aseq' | e */
 /* dynamic-output ps{} parent{} */
-void aseq(struct parse_state* ps, struct ast_node* parent)
+void parse_aseq(struct parse_state* ps, struct ast_node* parent)
 {
 	struct ast_node* a = NULL;
 	struct location loc_expr;
@@ -691,7 +691,7 @@ void aseq(struct parse_state* ps, struct ast_node* parent)
     }
 }
 
-struct ast_node* parenthesis(struct parse_state* ps)
+struct ast_node* parse_parenthesis(struct parse_state* ps)
 {
 	struct ast_node* n = NULL;
     ast_node_create(&n);
