@@ -1424,7 +1424,9 @@ bool parse_var_lseq(struct parse_state* ps, struct ast_node** root, struct locat
     malloc_safe((void**)&a, sizeof(struct ast_node));
     ast_node_init(a);
     a->type = ast_type_id;
-    buffer_copy(&id->value, &a->value);
+    if (id) {
+        buffer_copy(&id->value, &a->value);
+    }
 
     if (!a) {
         valid = set_source_error(ps->el, &id->loc, "expected id");
@@ -1454,7 +1456,9 @@ bool parse_var_lseq(struct parse_state* ps, struct ast_node** root, struct locat
         malloc_safe((void**)&a, sizeof(struct ast_node));
         ast_node_init(a);
         a->type = ast_type_id;
-        buffer_copy(&id->value, &a->value);
+        if (id) {
+            buffer_copy(&id->value, &a->value);
+        }
 
         if (!a) {
             valid = set_source_error(ps->el, &id->loc, "expected id");

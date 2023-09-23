@@ -14,8 +14,13 @@
 #include "uconv.h"
 #include "zinc/utf8.h"
 
-/* dynamic-output-none */
-/* initialize-output sns{} */
+/**
+ * initialize scanner state
+ * @param sns scanner data
+ * @param lc lookahead buffer
+ * @param el error list
+ * @param st symbol table
+ */
 void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct error_list* el, struct symbol_table* st)
 {
     sns->lc = lc;
@@ -23,13 +28,21 @@ void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct e
     sns->st = st;
 }
 
-/* dynamic-output-none */
+/**
+ * check if compound operator
+ * @param uc utf32 character
+ * @return true if a compound operator, otherwise false
+ */
 bool compound_operator_start(UChar32 uc)
 {
     return uc == '=' || uc == '!' || uc == '<' || uc == '>' || uc == '&' || uc == '|' || uc == ':';
 }
 
-/* dynamic-output-none */
+/**
+ * get scanner location
+ * @param sns scanner state
+ * @param loc location pointer
+ */
 void get_scan_location(struct scan_state* sns, struct location* loc)
 {
     loc->line = sns->lc->line;
@@ -37,7 +50,14 @@ void get_scan_location(struct scan_state* sns, struct location* loc)
     loc->byte_pos = sns->lc->byte_pos;
 }
 
-/* dynamic-output sns{el{}} t{} */
+/**
+ * scan in start state
+ * @param sns scanner data
+ * @param state current state
+ * @param got_token if token is made
+ * @param t the token
+ * @return true if valid, otherwise false
+ */
 bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     bool valid = true;
@@ -229,7 +249,14 @@ bool process_char_start(struct scan_state* sns, enum state_enum* state, int* got
     return valid;
 }
 
-/* dynamic-output sns{wt{} el{}} t{} */
+/**
+ * scan word
+ * @param sns scanner data
+ * @param state scanner state
+ * @param got_token if got token
+ * @param t the token
+ * @return true if valid, otherwise false
+ */
 bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     bool valid = true;
@@ -305,7 +332,11 @@ bool process_char_word(struct scan_state* sns, enum state_enum* state, int* got_
     return valid;
 }
 
-/* dynamic-output-none */
+/**
+ * check if the state is a number state
+ * @param state the state
+ * @return true if number state, otherwise false
+ */
 bool is_number_state(enum state_enum state)
 {
     return state == state_number_whole
@@ -315,7 +346,15 @@ bool is_number_state(enum state_enum state)
         || state == state_number_exponent_sign_start
         || state == state_number_exponent;
 }
-/* dynamic-output t{} */
+
+/**
+ * scan a number
+ * @param sns scanner data
+ * @param state current state
+ * @param got_token if produced a token
+ * @param t the token
+ * @return true if valid, otherwise false
+ */
 bool process_char_number(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     bool valid = true;
@@ -449,7 +488,14 @@ bool process_char_number(struct scan_state* sns, enum state_enum* state, int* go
     return valid;
 }
 
-/* dynamic-output sns{el{}} t{} */
+/**
+ * scan a string
+ * @param sns scanner data
+ * @param state current state
+ * @param got_token if made a token
+ * @param t the token
+ * @return true if valid, otherwise false
+ */
 bool process_char_string(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     bool valid = true;
@@ -505,7 +551,14 @@ bool process_char_string(struct scan_state* sns, enum state_enum* state, int* go
     return valid;
 }
 
-/* dynamic-output sns{el{}} t{} */
+/**
+ * scan a compound operator
+ * @param sns scanner state
+ * @param state current state
+ * @param got_token if got a token
+ * @param t the token
+ * @return true if valid, otherwise false
+ */
 bool process_compound_operator(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     bool valid = true;
@@ -610,7 +663,14 @@ bool process_compound_operator(struct scan_state* sns, enum state_enum* state, i
     return valid;
 }
 
-/* dyanmic-output sns{wt{} el{}} t{} */
+/**
+ * scan at starting state
+ * @param sns scanner data
+ * @param state current state
+ * @param got_token if got a token
+ * @param t the token
+ * @return true if valid, otherwise false
+ */
 bool scan_process(struct scan_state* sns, enum state_enum* state, int* got_token, struct token* t)
 {
     bool valid = true;
@@ -633,8 +693,13 @@ bool scan_process(struct scan_state* sns, enum state_enum* state, int* got_token
     return valid;
 }
 
-/* dynamic-output sns{wt{} el{}} t t{} */
-/* dynamic-temp: tf tf{} */
+/**
+ * scan and produce a token
+ * @param sns scanner data
+ * @param got_token if got a token
+ * @param t the token
+ * @return true if valid, otherwise false
+ */
 bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
 {
     bool valid = true;
@@ -684,6 +749,11 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
         }
 
         lookahead_char_pop(sns->lc);
+    }
+
+    if (valid && !*got_token && tf->type == token_none && lookahead_char_done(sns->lc)) {
+        *got_token = true;
+        tf->type = token_eof;
     }
 
     /* allocate tf tf{} -> t t{} */

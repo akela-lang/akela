@@ -30,9 +30,9 @@ void test_scan_blank()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token 0");
-	expect_int_equal(t->type, token_none, "none");
+	expect_int_equal(t->type, token_eof, "none");
 	expect_str(&t->value, "", "(blank)");
-	expect_false(got_token, "got token false");
+	expect_true(got_token, "got token");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -96,7 +96,7 @@ void test_scan_assign()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 3");
+	assert_true(got_token, "got token 3");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -159,8 +159,9 @@ void test_scan_addition()
 	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
+    assert_int_equal(t->type, token_eof, "eof");
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 3");
+	assert_true(got_token, "got token 3");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -224,7 +225,9 @@ void test_scan_subtraction()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 3");
+	assert_true(got_token, "get token");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -288,7 +291,9 @@ void test_scan_multiplication()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 3");
+	assert_true(got_token, "got token 3");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -352,7 +357,9 @@ void test_scan_divide()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 3");
+	assert_true(got_token, "get token 3");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -462,7 +469,9 @@ void test_scan_stmts_expr()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 7");
+	assert_true(got_token, "get token 7");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -583,7 +592,9 @@ void test_scan_stmts_expr2()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 8");
+	assert_true(got_token, "got token 8");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -593,7 +604,9 @@ void test_scan_stmts_expr2()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 9");
+	assert_true(got_token, "got token 9");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -703,7 +716,9 @@ void test_scan_stmts_assign()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 7");
+	assert_true(got_token, "got token 7");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -799,7 +814,9 @@ void test_scan_function()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token 6");
+	assert_true(got_token, "get token 6");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -839,7 +856,9 @@ void test_scan_comma()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "got token");
+	assert_true(got_token, "got token");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -879,7 +898,9 @@ void test_scan_semicolon()
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "got token");
+	assert_true(got_token, "got token");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -940,7 +961,9 @@ void test_scan_if() {
 	valid = scan_get_token(&sns, &got_token, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
-	assert_true(!got_token, "no token");
+	assert_true(got_token, "got token");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
 
 	/* destroy t t{} */
 	token_destroy(t);

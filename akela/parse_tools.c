@@ -7,6 +7,7 @@
 #include "scan.h"
 #include "source.h"
 #include "ast.h"
+#include <assert.h>
 
 /* dynamic-output-none */
 /* initialize-output ps ps{}*/
@@ -40,10 +41,6 @@ bool get_lookahead(struct parse_state* ps, int count, int* num)
 	}
 
 	for (; *num < count; (*num)++) {
-		if (lookahead_char_done(ps->sns->lc)) {
-			break;
-		}
-
 		/* allocate sns{wt{} el{}} t t{}*/
 		valid = scan_get_token(ps->sns, &gt, &t);
 		if (!valid) {
@@ -58,6 +55,25 @@ bool get_lookahead(struct parse_state* ps, int count, int* num)
 	}
 
 	return valid;
+}
+
+bool get_lookahead_one(struct parse_state* ps)
+{
+    bool valid = true;
+
+    if (ps->lookahead.head) {
+        return valid;
+    }
+
+    int gt;
+    struct token* t = NULL;
+    do {
+        valid = scan_get_token(ps->sns, &gt, &t) && valid;
+    } while (!valid || !gt || !t);
+
+    token_list_add(&ps->lookahead, t);
+
+    return valid;
 }
 
 /* expecting specific token */
@@ -132,6 +148,7 @@ bool get_parse_location(struct parse_state* ps, struct location* loc)
 	}
 
 	struct token* t = get_token(&ps->lookahead, 0);
+    //assert(t);
 
 	if (!valid || !t) {
 		loc->line = ps->sns->lc->line;

@@ -38,7 +38,7 @@ void test_lookahead_char_short()
 	assert_ok(r, "load prep");
 	assert_true(lc.done, "done");
 	assert_true(lookahead_char_has_utf8(&lc), "has utf8");
-	assert_int_equal(lc.tr_in_size, 5, "tr in size");
+	assert_size_t_equal(lc.tr_in_size, 5, "tr in size");
 	assert_true(lookahead_char_has_utf16(&lc), "has utf16");
 
 	/* load */
@@ -174,16 +174,16 @@ void test_lookahead_char_line()
 	lookahead_char_load(&lc);
 
 	expect_utf8_char(lc.la0_8, "o", "o");
-	expect_int_equal(lc.line, 1, "line");
-	expect_int_equal(lc.col, 1, "col");
-	expect_int_equal(lc.byte_pos, 0, "byte_pos");
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 1, "col");
+	expect_size_t_equal(lc.byte_pos, 0, "byte_pos");
 	expect_size_t_equal(lc.last_col_count, 0, "last col count");
 
 	lookahead_char_pop(&lc);
 	expect_utf8_char(lc.la0_8, "n", "n");
-	expect_int_equal(lc.line, 1, "line");
-	expect_int_equal(lc.col, 2, "col");
-	expect_int_equal(lc.byte_pos, 1, "byte_pos");
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 2, "col");
+	expect_size_t_equal(lc.byte_pos, 1, "byte_pos");
 	expect_size_t_equal(lc.last_col_count, 0, "last col count");
 	if (lookahead_char_need_preping(&lc)) {
 		r = lookahead_char_prep(&lc);
@@ -193,9 +193,9 @@ void test_lookahead_char_line()
 
 	lookahead_char_pop(&lc);
 	expect_utf8_char(lc.la0_8, "e", "e");
-	expect_int_equal(lc.line, 1, "line");
-	expect_int_equal(lc.col, 3, "col");
-	expect_int_equal(lc.byte_pos, 2, "byte_pos");
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 3, "col");
+	expect_size_t_equal(lc.byte_pos, 2, "byte_pos");
 	expect_size_t_equal(lc.last_col_count, 0, "last col count");
 	if (lookahead_char_need_preping(&lc)) {
 		r = lookahead_char_prep(&lc);
@@ -205,9 +205,9 @@ void test_lookahead_char_line()
 
 	lookahead_char_pop(&lc);
 	expect_utf8_char(lc.la0_8, "\n", "\n");
-	expect_int_equal(lc.line, 1, "line");
-	expect_int_equal(lc.col, 4, "col");
-	expect_int_equal(lc.byte_pos, 3, "byte_pos");
+	expect_size_t_equal(lc.line, 1, "line");
+	expect_size_t_equal(lc.col, 4, "col");
+	expect_size_t_equal(lc.byte_pos, 3, "byte_pos");
 	expect_size_t_equal(lc.last_col_count, 0, "last col count");
 	if (lookahead_char_need_preping(&lc)) {
 		r = lookahead_char_prep(&lc);
@@ -217,9 +217,9 @@ void test_lookahead_char_line()
 
 	lookahead_char_pop(&lc);
 	expect_utf8_char(lc.la0_8, "t", "t");
-	expect_int_equal(lc.line, 2, "line");
-	expect_int_equal(lc.col, 1, "col");
-	expect_int_equal(lc.byte_pos, 4, "byte_pos");
+	expect_size_t_equal(lc.line, 2, "line");
+	expect_size_t_equal(lc.col, 1, "col");
+	expect_size_t_equal(lc.byte_pos, 4, "byte_pos");
 	expect_size_t_equal(lc.last_col_count, 4, "last col count");
 	if (lookahead_char_need_preping(&lc)) {
 		r = lookahead_char_prep(&lc);
@@ -229,9 +229,9 @@ void test_lookahead_char_line()
 
 	lookahead_char_pop(&lc);
 	expect_utf8_char(lc.la0_8, "w", "w");
-	expect_int_equal(lc.line, 2, "line");
-	expect_int_equal(lc.col, 2, "col");
-	expect_int_equal(lc.byte_pos, 5, "byte_pos");
+	expect_size_t_equal(lc.line, 2, "line");
+	expect_size_t_equal(lc.col, 2, "col");
+	expect_size_t_equal(lc.byte_pos, 5, "byte_pos");
 	expect_size_t_equal(lc.last_col_count, 4, "last col count");
 	if (lookahead_char_need_preping(&lc)) {
 		r = lookahead_char_prep(&lc);
@@ -241,9 +241,9 @@ void test_lookahead_char_line()
 
 	lookahead_char_pop(&lc);
 	expect_utf8_char(lc.la0_8, "o", "o");
-	expect_int_equal(lc.line, 2, "line");
-	expect_int_equal(lc.col, 3, "col");
-	expect_int_equal(lc.byte_pos, 6, "byte_pos");
+	expect_size_t_equal(lc.line, 2, "line");
+	expect_size_t_equal(lc.col, 3, "col");
+	expect_size_t_equal(lc.byte_pos, 6, "byte_pos");
 	expect_size_t_equal(lc.last_col_count, 4, "last col count");
 	if (lookahead_char_need_preping(&lc)) {
 		r = lookahead_char_prep(&lc);

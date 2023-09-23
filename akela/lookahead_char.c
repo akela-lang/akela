@@ -10,9 +10,13 @@
 #include "zinc/result.h"
 #include "zinc/utf8.h"
 
-/* dynamic-output-none */
-/* resource-input conv */
-/* resource-output lc{conv}*/
+/**
+ * Initialize lookahead_char struct
+ * @param lc lookahead_char struct pointer
+ * @param f getchar function
+ * @param d data pointer for f
+ * @param conv the utf convertor
+ */
 void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv)
 {
 	lc->lb_8 = &lc->lookahead[0];
@@ -36,7 +40,11 @@ void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data 
 	lc->byte_pos = 0;
 }
 
-/* dynamic-output-none */
+/**
+ * Fill in tr_in (translation input), a buffer of utf8 characters
+ * @param lc lookahead struct pointer
+ * @return result_ok if successful, otherwise result_error if there is a utf encoding error
+ */
 enum result lookahead_char_get_input(struct lookahead_char* lc)
 {
 	int c;
@@ -58,11 +66,10 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 			lc->done = true;
 			return result_ok;
 		}
-		char c2 = c;
 		count = NUM_BYTES(c);
 		if (count == 0) return set_error("Incorrect utf-8 encoding: byte count not encoded");
 		if (lc->tr_in_size + count <= TR_IN_SIZE) {
-			lc->tr_in[lc->tr_in_size++] = c;
+			lc->tr_in[lc->tr_in_size++] = (char)c;
 			lc->has_partial = false;
 			for (int i = 1; i < count; i++) {
 				c = lc->f(lc->d);
@@ -71,7 +78,7 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 					return set_error("Got EOF before end of utf-8 char");
 				}
 				if (!IS_EXTRA_BYTE(c)) return set_error("Incorrect utf-8 encoding: not extra byte");
-				lc->tr_in[lc->tr_in_size++] = c;
+				lc->tr_in[lc->tr_in_size++] = (char)c;
 			}
 		} else {
 			lc->partial = c;
@@ -83,8 +90,11 @@ enum result lookahead_char_get_input(struct lookahead_char* lc)
 	return result_ok;
 }
 
-/* dynamic-output-none */
-/* resource-use lc{conv} */
+/**
+ * Translate input buffer and output to tr_out
+ * @param lc the lookahead_char struct
+ * @return result_ok if successful, otherwise result_error if there is a translation error
+ */
 enum result lookahead_char_translate(struct lookahead_char* lc)
 {
 	int32_t len;
@@ -97,7 +107,7 @@ enum result lookahead_char_translate(struct lookahead_char* lc)
 	lc->tr_out_pos = 0;
 
 	/* use lc{conv} */
-	len = ucnv_toUChars(lc->conv, lc->tr_out, TR_OUT_SIZE, lc->tr_in, lc->tr_in_size, &err);
+	len = ucnv_toUChars(lc->conv, lc->tr_out, TR_OUT_SIZE, lc->tr_in, (int32_t)lc->tr_in_size, &err);
 	if (U_FAILURE(err)) {
 		return set_error("utf error: %d", err);
 	}
@@ -106,19 +116,32 @@ enum result lookahead_char_translate(struct lookahead_char* lc)
 	return result_ok;
 }
 
-/* dynamic-output-none */
+/**
+ * Check if there is some unconverted utf8 input
+ * @param lc the lookahead_char struct
+ * @return true if there is some input, otherwise false
+ */
 bool lookahead_char_has_utf8(struct lookahead_char* lc)
 {
 	return lc->tr_in_pos < lc->tr_in_size;
 }
 
-/* dynamic-output-none */
+/**
+ * Check if there is some unprocessed utf16
+ * @param lc lookahead_char struct pointer
+ * @return true if there is some utf16 unprocessed, otherwise false
+ */
 bool lookahead_char_has_utf16(struct lookahead_char* lc)
 {
 	return lc->tr_out_pos < lc->tr_out_size;
 }
 
-/* dynamic-output-none */
+/**
+ * Pop a utf8 code point into buffer
+ * @param lc the lookahead_char struct pointer
+ * @param buf the destination buffer
+ * @return true if the pop was successful, otherwise false
+ */
 bool lookahead_char_utf8_pop(struct lookahead_char* lc, char* buf)
 {
 	char c;
@@ -139,7 +162,12 @@ bool lookahead_char_utf8_pop(struct lookahead_char* lc, char* buf)
 	return false;
 }
 
-/* dynamic-output-none */
+/**
+ * pop a utf32 character
+ * @param lc the lookahead_char struct pointer
+ * @param c outputted UTF32 char
+ * @return true if successful, otherwise false
+ */
 bool lookahead_char_utf32_pop(struct lookahead_char* lc, UChar32* c)
 {
 	if (lc->tr_out_pos < lc->tr_out_size) {
@@ -150,32 +178,51 @@ bool lookahead_char_utf32_pop(struct lookahead_char* lc, UChar32* c)
 	return false;
 }
 
-/* dynamic-output-none */
+/**
+ * check if there are no more characters put in lookahead
+ * @param lc the lookahead_char struct pointer
+ * @return true if there are no more characters to process, otherwise false
+ */
 bool lookahead_char_done_loading(struct lookahead_char* lc)
 {
 	return lc->done && !lookahead_char_has_utf8(lc) && !lookahead_char_has_utf16(lc);
 }
 
-/* dynamic-output-none */
+/**
+ * check if there are no more characters to read
+ * @param lc the lookahead_char struct pointer
+ * @return true if there are no more characters, otherwise false
+ */
 bool lookahead_char_done(struct lookahead_char* lc)
 {
 	return lc->done && !lookahead_char_has_utf8(lc) && !lookahead_char_has_utf16(lc) && lc->la_size <= 0;
 }
 
-/* dynamic-output-none */
+/**
+ * check if we need to prep input or translation buffers
+ * @param lc the lookahead_char struct pointer
+ * @return true of we need to prep input or translation buffers, otherwise false
+ */
 bool lookahead_char_need_preping(struct lookahead_char* lc)
 {
 	return (!lc->done && !lookahead_char_has_utf8(lc)) || (lookahead_char_has_utf8(lc) && !lookahead_char_has_utf16(lc));
 }
 
-/* dynamic-output-none */
+/**
+ * check if we need to load lookahead
+ * @param lc the lookahead_char struct pointer
+ * @return true if need to load lookahead, otherwise false
+ */
 bool lookahead_char_need_loading(struct lookahead_char* lc)
 {
 	return lookahead_char_has_utf8(lc) && lookahead_char_has_utf16(lc) && lc->la_size < 2;
 }
 
-/* dynamic-output-none */
-/* resource-use lc{conv} */
+/**
+ * prep the input and translation buffers
+ * @param lc the lookahead_char struct pointer
+ * @return result_ok if successful, otherwise result_error if utf encoding or translation error
+ */
 enum result lookahead_char_prep(struct lookahead_char* lc)
 {
 	enum result r;
@@ -193,7 +240,11 @@ enum result lookahead_char_prep(struct lookahead_char* lc)
 	return result_ok;
 }
 
-/* dynamic-output-none */
+/**
+ * load lookahead
+ * @param lc the lookahead_char struct pointer
+ * @return true if no more input characters to load into lookahead
+ */
 bool lookahead_char_load(struct lookahead_char* lc)
 {
 	bool a = false, b = false;
@@ -214,7 +265,10 @@ bool lookahead_char_load(struct lookahead_char* lc)
 	return lookahead_char_done_loading(lc);
 }
 
-/* dynamic-output-none */
+/**
+ * pop character off of lookahead
+ * @param lc the lookahead_char struct pointer
+ */
 void lookahead_char_pop(struct lookahead_char* lc)
 {
 	if (lc->la_size > 0) {
@@ -256,7 +310,10 @@ void lookahead_char_pop(struct lookahead_char* lc)
 	}
 }
 
-/* dynamic-output-none */
+/**
+ * put the previous character into the lookahead
+ * @param lc the lookahead_char struct pointer
+ */
 void lookahead_char_push(struct lookahead_char* lc)
 {
 	if (lc->lb_size >= 1) {

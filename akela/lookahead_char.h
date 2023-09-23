@@ -46,9 +46,6 @@ struct lookahead_char {
 	size_t byte_pos;
 };
 
-/* dynamic-output-none */
-/* resource-input conv */
-/* resource-output lc{conv}*/
 AKELA_API void lookahead_char_init(struct lookahead_char* lc, input_getchar f, input_data d, UConverter* conv);
 
 /* dynamic-output-none */

@@ -10,6 +10,7 @@
 #include "parse_tools.h"
 #include "source.h"
 #include "lookahead_char.h"
+#include <assert.h>
 
 /* dynamic-output ps{} root root{} */
 bool parse(struct parse_state* ps, struct ast_node** root)
@@ -27,7 +28,8 @@ bool parse(struct parse_state* ps, struct ast_node** root)
 		valid = get_lookahead(ps, 1, &num) && valid;
 	}
 
-	if (token_list_count(&ps->lookahead) > 0) {
+    assert(ps->lookahead.head);
+	if (ps->lookahead.head->type != token_eof) {
 		struct token* t = ps->lookahead.head;
 		char* names[token_count];
 		enum result r = token_name_init(names);
