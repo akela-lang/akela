@@ -61,7 +61,7 @@ AKELA_API void scan_state_init(struct scan_state* sns, struct lookahead_char* lc
 
 /* dynamic-output sns{wt{} el{}} t t{} */
 /* dynamic-temp: tf tf{} */
-AKELA_API bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t);
+AKELA_API bool scan_get_token(struct scan_state* sns, struct token** t);
 
 /* dynamic-output-none */
 AKELA_API void get_scan_location(struct scan_state* sns, struct location* loc);

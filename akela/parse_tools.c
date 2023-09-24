@@ -42,12 +42,9 @@ bool get_lookahead(struct parse_state* ps, int count, int* num)
 
 	for (; *num < count; (*num)++) {
 		/* allocate sns{wt{} el{}} t t{}*/
-		valid = scan_get_token(ps->sns, &gt, &t);
+		valid = scan_get_token(ps->sns, &t);
 		if (!valid) {
 			return valid;
-		}
-		if (!gt) {
-			break;
 		}
 
 		/* transfer t t{} -> ps{lookahead{}} */
@@ -68,8 +65,8 @@ bool get_lookahead_one(struct parse_state* ps)
     int gt;
     struct token* t = NULL;
     do {
-        valid = scan_get_token(ps->sns, &gt, &t) && valid;
-    } while (!valid || !gt || !t);
+        valid = scan_get_token(ps->sns, &t) && valid;
+    } while (!valid || !t);
 
     token_list_add(&ps->lookahead, t);
 
@@ -87,15 +84,8 @@ bool match(struct parse_state* ps, enum token_enum type, const char* reason, str
 	int got_token;
 	if (num <= 0) {
 		/* allocate ps{sns{wt{} el{}}} t t{}*/
-		valid = scan_get_token(ps->sns, &got_token, t) && valid;
+		valid = scan_get_token(ps->sns, t) && valid;
 		if (!valid) {
-			return valid;
-		}
-		if (!got_token) {
-			get_scan_location(ps->sns, &loc);
-			/* dynamic-output ps{el{}} */
-			set_source_error(ps->el, &loc, "%s", reason);
-			valid = false;
 			return valid;
 		}
 		/* transfer t t{} -> ps{lookahead{}} */

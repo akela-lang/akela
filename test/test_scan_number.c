@@ -15,14 +15,12 @@ void test_scan_number_negative_start()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("-", &sns, &lc, &el);
 
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	expect_true(valid, "valid 0");
-	expect_true(got_token, "got_token 0");
 	expect_int_equal(t->type, token_minus, "minus 0");
 
 	/* destroy t t{} */
@@ -43,21 +41,19 @@ void test_scan_number_whole()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500", "500");
-	expect_int_equal(t->loc.line, 1, "line 10");
-	expect_int_equal(t->loc.col, 1, "col 10");
+	expect_size_t_equal(t->loc.line, 1, "line 10");
+	expect_size_t_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -77,17 +73,15 @@ void test_scan_number_fraction_start()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.", "500.");
 	expect_int_equal(t->loc.line, 1, "line 10");
@@ -111,17 +105,15 @@ void test_scan_number_fraction()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.123", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123", "500.123");
 	expect_int_equal(t->loc.line, 1, "line 10");
@@ -144,25 +136,22 @@ void test_scan_number_exponent_start()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500e", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "valid 0");
 	assert_ptr(t, "ptr t 0");
-	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_number, "number 0");
 	expect_str(&t->value, "500", "500 0");
 
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "valid 1");
 	assert_ptr(t, "ptr t 1");
-	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_id, "number 1");
 	expect_str(&t->value, "e", "e 1");
 
@@ -184,25 +173,22 @@ void test_scan_number_fraction_exponent_start()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.123e", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "valid 0");
 	assert_ptr(t, "ptr t 0");
-	assert_true(got_token, "got token 0");
 	expect_int_equal(t->type, token_number, "number 0");
 	expect_str(&t->value, "500.123", "500.123 0");
 
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "valid 1");
 	assert_ptr(t, "ptr t 1");
-	assert_true(got_token, "got token 1");
 	expect_int_equal(t->type, token_id, "number 1");
 	expect_str(&t->value, "e", "e 1");
 
@@ -224,17 +210,15 @@ void test_scan_number_fraction_exponent()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.123e2", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e2", "500.123e2");
 	expect_int_equal(t->loc.line, 1, "line 10");
@@ -258,16 +242,14 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.123e-", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	expect_has_errors(sns.el);
 	expect_false(valid, "valid 0");
-	expect_false(got_token, "got token 0");
 	expect_source_error(sns.el, "invalid number");
 
 	/* destroy t t{} */
@@ -288,16 +270,14 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.123e+", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns,  &t);
 	expect_has_errors(sns.el);
 	expect_false(valid, "valid 0");
-	expect_false(got_token, "got token 0");
 	expect_source_error(sns.el, "invalid number");
 
 	/* destroy t t{} */
@@ -318,17 +298,15 @@ void test_scan_number_fraction_exponent_negative()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.123e-2", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns,  &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e-2", "500.123e-2");
 	expect_int_equal(t->loc.line, 1, "line 10");
@@ -352,17 +330,15 @@ void test_scan_number_exponent_positive()
 	struct error_list el;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.123e+2", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e+2", "500.123e+2");
 	expect_int_equal(t->loc.line, 1, "line");
@@ -386,17 +362,15 @@ void test_scan_number_exponent_add()
 	struct scan_state sns;
 	bool valid;
 	struct token* t;
-	int got_token;
 
 	/* allocate sns{} */
 	scan_setup("500.123e + 1", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123", "500.123");
 	expect_int_equal(t->loc.line, 1, "line 10");
@@ -407,11 +381,10 @@ void test_scan_number_exponent_add()
 	free(t);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "e", "e");
 	expect_int_equal(t->loc.line, 1, "line");
@@ -422,11 +395,10 @@ void test_scan_number_exponent_add()
 	free(t);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_plus, "plus");
 	expect_int_equal(t->loc.line, 1, "line");
 	expect_int_equal(t->loc.col, 10, "col");
@@ -436,11 +408,10 @@ void test_scan_number_exponent_add()
 	free(t);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &got_token, &t);
+	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	assert_ptr(t, "ptr t");
-	assert_true(got_token, "got token");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
 	expect_int_equal(t->loc.line, 1, "line");

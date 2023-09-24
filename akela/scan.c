@@ -696,15 +696,14 @@ bool scan_process(struct scan_state* sns, enum state_enum* state, int* got_token
 /**
  * scan and produce a token
  * @param sns scanner data
- * @param got_token if got a token
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
+bool scan_get_token(struct scan_state* sns, struct token** t)
 {
     bool valid = true;
     enum state_enum state = state_start;
-    *got_token = 0;
+    int got_token = 0;
     *t = NULL;
     struct token* tf;
 
@@ -712,7 +711,7 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
     malloc_safe((void**)&tf, sizeof(struct token));
     token_init(tf);
 
-    while (!*got_token && !lookahead_char_done(sns->lc)) {
+    while (!got_token && !lookahead_char_done(sns->lc)) {
         if (lookahead_char_need_preping(sns->lc)) {
 
             /* resource use sns{lc{conv}} */
@@ -727,7 +726,7 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
         if (lookahead_char_need_loading(sns->lc)) lookahead_char_load(sns->lc);
 
         /* allocate sns{wt{} el{}} tf{} */
-        valid = scan_process(sns, &state, got_token, tf);
+        valid = scan_process(sns, &state, &got_token, tf);
         if (!valid) {
             /* destroy tf{} tf */
             token_destroy(tf);
@@ -740,7 +739,7 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
 
     if (state != state_start) {
         /* allocate sns{wt{} el{}} tf{} */
-        valid = scan_process(sns, &state, got_token, tf);
+        valid = scan_process(sns, &state, &got_token, tf);
         if (!valid) {
             /* destroy tf{} tf */
             token_destroy(tf);
@@ -751,11 +750,12 @@ bool scan_get_token(struct scan_state* sns, int* got_token, struct token** t)
         lookahead_char_pop(sns->lc);
     }
 
-    if (valid && !*got_token && tf->type == token_none && lookahead_char_done(sns->lc)) {
-        *got_token = true;
+    if (valid && !got_token && tf->type == token_none && lookahead_char_done(sns->lc)) {
+        got_token = true;
         tf->type = token_eof;
     }
 
+    assert(got_token);
     /* allocate tf tf{} -> t t{} */
     *t = tf;
     return valid;

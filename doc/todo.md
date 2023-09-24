@@ -1,5 +1,4 @@
 # Todo
-* remove got_token parameter from scanner
 * test eof token location is correct
 * get location of ast_node once
 * return ast_node in factor parsing functions
