@@ -1,5 +1,4 @@
 # Todo
-* test eof token location is correct
 * get location of ast_node once
 * return ast_node in factor parsing functions
   * parenthesis [x]

@@ -750,9 +750,14 @@ bool scan_get_token(struct scan_state* sns, struct token** t)
         lookahead_char_pop(sns->lc);
     }
 
-    if (valid && !got_token && tf->type == token_none && lookahead_char_done(sns->lc)) {
+    if (!got_token && tf->type == token_none && lookahead_char_done(sns->lc)) {
+        assert(valid);
         got_token = true;
         tf->type = token_eof;
+        tf->loc.line = sns->lc->line;
+        tf->loc.col = sns->lc->col;
+        tf->loc.size = 0;
+        tf->loc.byte_pos = sns->lc->byte_pos;
     }
 
     assert(got_token);

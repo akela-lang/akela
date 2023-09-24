@@ -31,6 +31,10 @@ void test_scan_blank()
 	assert_true(valid, "scan_get_token 0");
 	expect_int_equal(t->type, token_eof, "none");
 	expect_str(&t->value, "", "(blank)");
+    expect_size_t_equal(t->loc.line, 1, "line 1");
+    expect_size_t_equal(t->loc.col, 1, "col 1");
+    expect_size_t_equal(t->loc.size, 0, "size 0");
+    expect_size_t_equal(t->loc.byte_pos, 0, "byte pos 0");
 
 	/* destroy t t{} */
 	token_destroy(t);
@@ -90,8 +94,14 @@ void test_scan_assign()
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
+    assert_ptr(t, "ptr t");
+    expect_int_equal(t->type, token_eof, "eof");
+    expect_size_t_equal(t->loc.line, 1, "line 1");
+    expect_size_t_equal(t->loc.col, 6, "col 6");
+    expect_size_t_equal(t->loc.size, 0, "size 0");
+    expect_size_t_equal(t->loc.byte_pos, 5, "byte pos 5");
 
-	/* destroy t t{} */
+    /* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
