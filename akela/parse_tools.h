@@ -27,6 +27,8 @@ AKELA_API void parse_state_destroy(struct parse_state* ps);
 /* dynamic ps{} */
 AKELA_API bool get_lookahead(struct parse_state* ps, int count, int* num);
 
+AKELA_API bool get_lookahead_one(struct parse_state* ps);
+
 /* expecting specific token */
 /* dynamic-output ps{} t t{} */
 AKELA_API bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t);
@@ -45,5 +47,7 @@ AKELA_API void location_update(struct location* loc, struct location* loc2);
 AKELA_API bool location_default(struct parse_state* ps, struct location* loc);
 
 AKELA_API bool ast_node_location_default(struct parse_state* ps, struct ast_node* n);
+
+AKELA_API bool set_location(struct parse_state* ps, struct ast_node* n);
 
 #endif

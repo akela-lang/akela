@@ -1,6 +1,5 @@
 # Todo
-* get location of ast_node once
-* return ast_node in factor parsing functions
+* return ast_node in parse_factor functions; get location of ast_node once
   * parenthesis [x]
   * aseq [x]
   * array_literal [x]
@@ -10,6 +9,9 @@
   * not_nt []
   * anonymous_function []
   * factor []
+* return ast_node in parse_expr functions
+* return ast_node in parse_stmts functions
+* return ast_node in parse_types functions
 * return ast node from parser functions instead of boolean
 * create error type for ast nodes
 * store source location in ast node

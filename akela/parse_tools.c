@@ -62,11 +62,13 @@ bool get_lookahead_one(struct parse_state* ps)
         return valid;
     }
 
-    int gt;
     struct token* t = NULL;
-    do {
+    while (true) {
         valid = scan_get_token(ps->sns, &t) && valid;
-    } while (!valid || !t);
+        if (t) {
+            break;
+        }
+    }
 
     token_list_add(&ps->lookahead, t);
 
@@ -153,6 +155,13 @@ bool get_parse_location(struct parse_state* ps, struct location* loc)
 	loc->size = t->loc.size;
 
 	return valid;
+}
+
+bool set_location(struct parse_state* ps, struct ast_node* n)
+{
+    bool valid = get_lookahead_one(ps);
+    location_update_token(&n->loc, ps->lookahead.head);
+    return valid;
 }
 
 bool is_identity_comparison(enum ast_type type)

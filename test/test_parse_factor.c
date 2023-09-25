@@ -1051,7 +1051,13 @@ void test_parse_paren_error_empty()
     parse_setup("()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_source_error(&cu.el, "empty parenthesis");
+	struct error* e = expect_source_error(&cu.el, "empty parenthesis");
+    if (e) {
+        expect_size_t_equal(e->loc.line, 1, "line");
+        expect_size_t_equal(e->loc.col, 2, "col");
+        expect_size_t_equal(e->loc.size, 1, "size");
+        expect_size_t_equal(e->loc.byte_pos, 1, "byte_pos");
+    }
 
 	/* destroy ps{} cu.root cu.root{} */
 
