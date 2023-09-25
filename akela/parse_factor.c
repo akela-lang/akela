@@ -14,7 +14,7 @@
 #include "type_def.h"
 
 bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_literal(struct parse_state* ps);
 struct ast_node* parse_id(struct parse_state* ps);
 struct ast_node* parse_sign(struct parse_state* ps);
 struct ast_node* parse_array_literal(struct parse_state* ps);
@@ -60,7 +60,10 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 		valid = not_nt(ps, &n, loc) && valid;
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
-		valid = literal_nt(ps, &n, loc) && valid;
+		n = parse_literal(ps);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 	} else if (t0 && t0->type == token_id) {
 		n = parse_id(ps);
@@ -303,28 +306,29 @@ bool not_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	return valid;
 }
 
-bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_literal(struct parse_state* ps)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
 	char* type_name = NULL;
-
-	location_init(loc);
+    ast_node_create(&n);
+    if (!set_location(ps, n)) {
+        n->type = ast_type_error;
+    }
 
 	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
+	if (!get_lookahead(ps, 1, &num)) {
+        n->type = ast_type_error;
+    }
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	/* allocate ps{} x x{} */
 	struct token* x = NULL;
-	valid = match(ps, t0->type, "expecting number, bool, or string", &x) && valid;
-	location_update_token(loc, x);
-	/* test case: no test case needed */
+	if (!match(ps, t0->type, "expecting number, bool, or string", &x)) {
+        /* test case: no test case needed */
+        n->type = ast_type_error;
+    }
 
-	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-
+	if (n->type != ast_type_error) {
 		#pragma warning(suppress:6011)
 		if (x->type == token_number) {
 			n->type = ast_type_number;
@@ -344,7 +348,7 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location*
 		buffer_copy(&x->value, &n->value);
 	}
 
-	if (valid) {
+	if (n->type != ast_type_error) {
 		assert(type_name);
 		struct buffer bf;
 		buffer_init(&bf);
@@ -365,15 +369,7 @@ bool literal_nt(struct parse_state* ps, struct ast_node** root, struct location*
 	token_destroy(x);
 	free(x);
 
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 struct ast_node* parse_id(struct parse_state* ps)
@@ -547,7 +543,6 @@ struct ast_node* parse_sign(struct parse_state* ps)
 */
 struct ast_node* parse_array_literal(struct parse_state* ps)
 {
-	int num;
 	struct ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_array_literal;

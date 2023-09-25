@@ -5,7 +5,7 @@
   * array_literal [x]
   * sign [x]
   * id_nt [x]
-  * literal_nt []
+  * literal_nt [x]
   * not_nt []
   * anonymous_function []
   * factor []
