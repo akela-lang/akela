@@ -6,7 +6,7 @@
   * sign [x]
   * id_nt [x]
   * literal_nt [x]
-  * not_nt []
+  * not_nt [x]
   * anonymous_function []
   * factor []
 * return ast_node in parse_expr functions
