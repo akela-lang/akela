@@ -164,6 +164,13 @@ bool set_location(struct parse_state* ps, struct ast_node* n)
     return valid;
 }
 
+bool get_location(struct parse_state* ps, struct location* loc)
+{
+    bool valid = get_lookahead_one(ps);
+    *loc = ps->lookahead.head->loc;
+    return valid;
+}
+
 bool is_identity_comparison(enum ast_type type)
 {
 	return type == ast_type_equality || type == ast_type_not_equal;

@@ -1,5 +1,5 @@
 # Todo
-* return ast_node in parse_factor functions; get location of ast_node once
+* return ast_node in parse_factor functions
   * parenthesis [x]
   * aseq [x]
   * array_literal [x]
@@ -12,9 +12,8 @@
 * return ast_node in parse_expr functions
 * return ast_node in parse_stmts functions
 * return ast_node in parse_types functions
-* return ast node from parser functions instead of boolean
-* create error type for ast nodes
-* store source location in ast node
+* get location of ast_node once
+* parse_function and parse_function_part and parse_function_anonymous
 * store IR value in ast node
 * store IR variable references in symbol table
 * keep LLVM references out of parsing code and symbol table - use void* to reference them

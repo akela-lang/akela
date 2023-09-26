@@ -1256,9 +1256,13 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	location_init(loc);
 
-	struct location loc_a;
-	valid = factor(ps, &a, &loc_a) && valid;
-	location_update(loc, &loc_a);
+	a = factor(ps);
+    if (a && a->type == ast_type_error) {
+        valid = false;
+    }
+    if (a) {
+        location_update(loc, &a->loc);
+    }
 
 	if (!a) {
 		valid = location_default(ps, loc) && valid;
@@ -1266,7 +1270,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	}
 
 	struct ast_node* left = n = a;
-	struct location loc_left = loc_a;
+	struct location loc_left = a->loc;
 	if (ps->qualifier.size > 0) buffer_add_char(&ps->qualifier, '.');
 	buffer_copy(&a->value, &ps->qualifier);
 	while (true) {
@@ -1286,12 +1290,18 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
         valid = consume_newline(ps) && valid;
 
 		struct ast_node* b = NULL;
-		struct location loc_b;
-		valid = factor(ps, &b, &loc_b) && valid;
-		location_update(loc, &loc_b);
+		b = factor(ps);
+        if (b && b->type == ast_type_error) {
+            valid = false;
+        }
+        if (b) {
+            location_update(loc, &b->loc);
+        }
 
 		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expected term after dot");
+            struct location b_loc;
+            get_location(ps, &b_loc);
+			valid = set_source_error(ps->el, &b_loc, "expected term after dot");
 			/* test case: test_parse_dot_error_expected_term */
 		}
 
@@ -1330,7 +1340,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 			}
 
 			if (!tu_b) {
-				valid = set_source_error(ps->el, &loc_b, "dot operand has no value");
+				valid = set_source_error(ps->el, &b->loc, "dot operand has no value");
 				/* test case: test_parse_dot_error_non_module */
 			}
 
@@ -1342,7 +1352,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 			}
 
 			if (b->type != ast_type_id) {
-				valid = set_source_error(ps->el, &loc_b, "operand of dot operator not an identifier");
+				valid = set_source_error(ps->el, &b->loc, "operand of dot operator not an identifier");
 				/* test case: test_parse_dot_error_right_not_identifier */
 			}
 

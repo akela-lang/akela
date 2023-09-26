@@ -26,85 +26,42 @@ struct ast_node* parse_parenthesis(struct parse_state* ps);
 *		  | ! factor | array_literal | function(dseq) stmts end
 * note: type system should catch incompatible sign or not factors
 */
-/* dynamic-output ps{} root root{} */
-bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* factor(struct parse_state* ps)
 {
-	bool valid = true;
-	struct defer_node* stack_error = NULL;
-	struct defer_node* stack_temp = NULL;
 	struct ast_node* n = NULL;
-
-	location_init(loc);
-
-	/* allocate ps{} */
-	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
+	get_lookahead_one(ps);
 
 	struct token* t0;
 	t0 = get_token(&ps->lookahead, 0);
 
 	if (t0 && t0->type == token_function) {
-        /* allocate ps{} f f{} */
         struct token* f = NULL;
-        valid = match(ps, token_function, "expected function", &f) && valid;
-        location_update_token(loc, f);
-        /* test case: no test case needed */
+        match(ps, token_function, "expected function", &f);
+        consume_newline(ps);
         token_destroy(f);
         free(f);
-
-        valid = consume_newline(ps) && valid;
-
         n = parse_anonymous_function(ps);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_not) {
 		n = parse_not(ps);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
 		n = parse_literal(ps);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_id) {
 		n = parse_id(ps);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
 		n = parse_sign(ps);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_left_square_bracket) {
-		/* allocate n n{} */
 		n = parse_array_literal(ps);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_left_paren) {
 		n = parse_parenthesis(ps);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 	}
 
-	/* transfer n -> root */
-	if (valid) {
-		*root = n;
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 struct ast_node* parse_anonymous_function(struct parse_state* ps)
