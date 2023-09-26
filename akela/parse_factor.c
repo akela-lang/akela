@@ -54,7 +54,10 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 
         valid = consume_newline(ps) && valid;
 
-        valid = anonymous_function(ps, &n, loc) && valid;
+        n = parse_anonymous_function(ps);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 	} else if (t0 && t0->type == token_not) {
 		n = parse_not(ps);
@@ -104,12 +107,15 @@ bool factor(struct parse_state* ps, struct ast_node** root, struct location* loc
 	return valid;
 }
 
-bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_anonymous_function(struct parse_state* ps)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_anonymous_function;
 
-	location_init(loc);
+	if (!set_location(ps, n)) {
+        n->type = ast_type_error;
+    }
 
 	/* shared ps{top} -> saved */
 	struct environment* saved = ps->st->top;
@@ -123,68 +129,83 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	ps->st->top = env;
 
 	struct token* lp = NULL;
-	valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
-	location_update_token(loc, lp);
-	/* test case: no test case needed */
+	if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
+        /* test case: no test case needed */
+        n->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    if (!consume_newline(ps)) {
+        n->type = ast_type_error;
+    }
 
 	/* allocate a a{} */
 	struct ast_node* dseq_node = NULL;
 	struct location loc_dseq;
-	valid = dseq(ps, &dseq_node, &loc_dseq) && valid;
-	location_update(loc, &loc_dseq);
+	if (!dseq(ps, &dseq_node, &loc_dseq)) {
+        n->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    if (!consume_newline(ps)) {
+        n->type = ast_type_error;
+    }
 	
 	/* allocate n */
 	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
-	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
-	location_update_token(loc, rp);
-	/* test case: test_parse_anonymous_function_expected_right_paren */
+	if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
+        /* test case: test_parse_anonymous_function_expected_right_paren */
+        n->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    if (!consume_newline(ps)) {
+        n->type = ast_type_error;
+    }
 
 	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
+	if (!get_lookahead(ps, 1, &num)) {
+        n->type = ast_type_error;
+    }
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct ast_node* dret_type = NULL;
 	struct location loc_ret;
 	if (t0 && t0->type == token_double_colon) {
 		struct token* dc = NULL;
-		valid = match(ps, token_double_colon, "expecting double colon", &dc) && valid;
-		location_update_token(loc, dc);
+		if (!match(ps, token_double_colon, "expecting double colon", &dc)) {
+            /* test case: no test case needed */
+            n->type = ast_type_error;
+        }
 		token_destroy(dc);
 		free(dc);
-		/* test case: no test case needed */
 
-        valid = consume_newline(ps) && valid;
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
 
-		valid = parse_type(ps, NULL, &dret_type, &loc_ret) && valid;
-		location_update(loc, &loc_ret);
+		if (!parse_type(ps, NULL, &dret_type, &loc_ret)) {
+            n->type = ast_type_error;
+        }
 
         if (!dret_type) {
-            valid = set_source_error(ps->el, &loc_ret, "expected a type");
+            set_source_error(ps->el, &loc_ret, "expected a type");
+            n->type = ast_type_error;
         }
 	}
 
 	/* allocate b b{} */
 	struct ast_node* stmts_node = NULL;
 	struct location loc_stmts;
-	valid = stmts(ps, true, &stmts_node, &loc_stmts) && valid;
-	location_update(loc, &loc_stmts);
+	if (!stmts(ps, true, &stmts_node, &loc_stmts)) {
+        n->type = ast_type_error;
+    }
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
-	valid = match(ps, token_end, "expected end", &end) && valid;
-	location_update_token(loc, end);
-	/* test case: test_parse_anonymous_function_expected_end */
+	if (!match(ps, token_end, "expected end", &end)) {
+        /* test case: test_parse_anonymous_function_expected_end */
+        n->type = ast_type_error;
+    }
 
-	if (valid) {
-		ast_node_create(&n);
-		n->type = ast_type_anonymous_function;
-
+	if (n->type != ast_type_error) {
 		/* transfer dseq_node dseq_node{} -> n{} */
 		ast_node_add(n, dseq_node);
 
@@ -199,10 +220,6 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 
 		/* transfer stmts_node stmts_node{} -> n */
 		ast_node_add(n, stmts_node);
-	} else {
-		ast_node_destroy(dseq_node);
-		ast_node_destroy(dret_type);
-		ast_node_destroy(stmts_node);
 	}
 
 	/* destroy f f{} lp lp{} rp rp{} end end{} */
@@ -213,9 +230,13 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	token_destroy(end);
 	free(end);
 
-	if (valid) {
+	if (n->type != ast_type_error) {
 		n->tu = function2type(ps->st, n);
+        bool valid = true;
 		check_return_type(ps, n, stmts_node, &loc_ret, &valid);
+        if (!valid) {
+            n->type = ast_type_error;
+        }
 	}
 
 	/* transfer saved -> ps{top} */
@@ -224,16 +245,7 @@ bool anonymous_function(struct parse_state* ps, struct ast_node** root, struct l
 	/* destroy env env{} */
 	environment_destroy(env);
 
-	if (valid) {
-		/* transfer n -> root */
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 struct ast_node* parse_not(struct parse_state* ps)

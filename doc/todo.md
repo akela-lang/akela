@@ -7,7 +7,7 @@
   * id_nt [x]
   * literal_nt [x]
   * not_nt [x]
-  * anonymous_function []
+  * anonymous_function [x]
   * factor []
 * return ast_node in parse_expr functions
 * return ast_node in parse_stmts functions
