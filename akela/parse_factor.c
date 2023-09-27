@@ -16,7 +16,7 @@
 struct ast_node* parse_not(struct parse_state* ps);
 struct ast_node* parse_literal(struct parse_state* ps);
 struct ast_node* parse_id(struct parse_state* ps);
-struct ast_node* parse_sign(struct parse_state* ps);
+struct ast_node* parse_sign(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_array_literal(struct parse_state* ps, struct location* loc);
 void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc);
@@ -53,7 +53,7 @@ struct ast_node* factor(struct parse_state* ps)
 		n = parse_id(ps);
 
 	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
-		n = parse_sign(ps);
+		n = parse_sign(ps, &loc);
 
 	} else if (t0 && t0->type == token_left_square_bracket) {
 		n = parse_array_literal(ps, &loc);
@@ -411,12 +411,16 @@ struct ast_node* parse_id(struct parse_state* ps)
 	return n;
 }
 
-struct ast_node* parse_sign(struct parse_state* ps)
+struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
 
     ast_node_create(&n);
     n->type = ast_type_sign;
+
+    if (!get_location(ps, loc)) {
+        n->type = ast_type_error;
+    }
 
 	int num;
 	if (!get_lookahead(ps, 1, &num)) {
