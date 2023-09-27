@@ -602,7 +602,7 @@ bool function(struct parse_state* ps, struct ast_node** root, struct location* l
         environment_destroy(env);
     } else if (t0 && t0->type == token_left_paren) {
         struct location af_loc;
-        n = parse_anonymous_function(ps);
+        n = parse_anonymous_function(ps, &af_loc);
         if (n->type == ast_type_error) {
             valid = false;
         }
