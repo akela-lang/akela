@@ -18,7 +18,7 @@ struct ast_node* parse_literal(struct parse_state* ps);
 struct ast_node* parse_id(struct parse_state* ps);
 struct ast_node* parse_sign(struct parse_state* ps);
 struct ast_node* parse_array_literal(struct parse_state* ps);
-void parse_aseq(struct parse_state* ps, struct ast_node* parent);
+void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc);
 
 /*
@@ -508,10 +508,7 @@ struct ast_node* parse_array_literal(struct parse_state* ps)
     }
 
     struct location first_loc;
-    if (!get_location(ps, &first_loc)) {
-        n->type = ast_type_error;
-    }
-    parse_aseq(ps, n);
+    parse_aseq(ps, n, &first_loc);
 
     if (!consume_newline(ps)) {
         n->type = ast_type_error;
@@ -559,8 +556,12 @@ struct ast_node* parse_array_literal(struct parse_state* ps)
 /* aseq -> expr aseq' | e */
 /* aseq' = , expr aseq' | e */
 /* dynamic-output ps{} parent{} */
-void parse_aseq(struct parse_state* ps, struct ast_node* parent)
+void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location *loc)
 {
+    if (!get_location(ps, loc)) {
+        parent->type = ast_type_error;
+    }
+
 	struct ast_node* a = NULL;
 	struct location loc_expr;
 	if (!simple_expr(ps, &a, &loc_expr)) {

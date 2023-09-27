@@ -1,7 +1,7 @@
 # Todo
 * return loc from parse_factor functions
   * parse_parenthesis [x]
-  * parse_aseq []
+  * parse_aseq [x]
   * parse_array_literal []
   * parse_sign []
   * parse_id []
