@@ -20,8 +20,8 @@ bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool power(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, struct location* loc);
-bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct location* loc);
+struct ast_node* parse_dot(struct parse_state* ps, struct location* loc);
 
 /* expr -> assignment */
 bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
@@ -1031,7 +1031,7 @@ bool subscript(struct parse_state* ps, struct ast_node** root, struct location* 
 	return valid;
 }
 
-/* function_call -> dot_nt function_call' */
+/* function_call -> dot function_call' */
 /* function_call' -> ( cseq ) function_call' */
 bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
@@ -1042,7 +1042,10 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 
 	struct ast_node* dot_node = NULL;
 	struct location dot_loc;
-	valid = dot_nt(ps, &dot_node, &dot_loc);
+	dot_node = parse_dot(ps, &dot_loc);
+    if (dot_node && dot_node->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &dot_loc);
 
 	if (!dot_node) {
@@ -1073,7 +1076,10 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 		/* allocate b b{} */
 		struct ast_node* cseq_node = NULL;
 		struct location loc_cseq;
-		valid = cseq(ps, left->tu, &cseq_node, &loc_cseq) && valid;
+		cseq_node = parse_cseq(ps, left->tu, &loc_cseq);
+        if (cseq_node && cseq_node->type == ast_type_error) {
+            valid = false;
+        }
 		location_update(loc, &loc_cseq);
 
         valid = consume_newline(ps) && valid;
@@ -1160,105 +1166,99 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
-/* dynamic-output ps{} root root{} */
-bool cseq(struct parse_state* ps, struct ast_node* tu, struct ast_node** root, struct location* loc)
+struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_cseq;
 
-	location_init(loc);
+	if (!get_location(ps, loc)) {
+        n->type = ast_type_error;
+    }
 
 	if (!tu || !tu->td || tu->td->type != type_function) {
-		valid = location_default(ps, loc) && valid;
-		valid = set_source_error(ps->el, loc, "not a function type");
+		set_source_error(ps->el, loc, "not a function type");
 		/* test case: no test case needed */
-		return valid;
+        n->type = ast_type_error;
+		return n;
 	}
 
-	/* allocate n */
-	ast_node_create(&n);
-	n->type = ast_type_cseq;
-
-	*root = n;
-
-	/* allocate a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_expr;
-	valid = boolean(ps, &a, &loc_expr) && valid;
-	location_update(loc, &loc_expr);
+	if (!boolean(ps, &a, &loc_expr)) {
+        n->type = ast_type_error;
+    }
 
 	if (!a) {
-		valid = location_default(ps, loc) && valid;
-		return valid;
+		return n;
 	}
 	int i = 0;
-	valid = check_input_type(ps, tu, i, a, &loc_expr) && valid;
+	if (!check_input_type(ps, tu, i, a, &loc_expr)) {
+        n->type = ast_type_error;
+    }
 	i++;
 
-	/* transfer a -> n{} */
 	ast_node_add(n, a);
 
 	while (true) {
 		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
+		if (!get_lookahead(ps, 1, &num)) {
+            n->type = ast_type_error;
+        }
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		if (!t0 || t0->type != token_comma) {
 			break;
 		}
 
-		/* allocate ps{} comma comma{} */
 		struct token* comma = NULL;;
-		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
-		location_update_token(loc, comma);
-		/* test case: no test case needed */
+		if (!match(ps, token_comma, "expecting comma", &comma)) {
+            /* test case: no test case needed */
+            n->type = ast_type_error;
+        }
 
-		/* destroy comma comma{} */
 		token_destroy(comma);
 		free(comma);
 
-        valid = consume_newline(ps) && valid;
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
 
-		/* allocate a a{} */
-		struct ast_node* a = NULL;
-		valid = boolean(ps, &a, &loc_expr) && valid;
-		location_update(loc, &loc_expr);
+		a = NULL;
+		if (!boolean(ps, &a, &loc_expr)) {
+            n->type = ast_type_error;
+        }
 
 		if (!a) {
 			set_source_error(ps->el, &loc_expr, "expected expression after comma");
 			/* test case: test_parse_call_error_expected_expression */
-			valid = false;
+            n->type = ast_type_error;
 		} else {
 			/* transfer a -> parent */
 			ast_node_add(n, a);
 
-			valid = check_input_type(ps, tu, i, a, &loc_expr) && valid;
+			if (!check_input_type(ps, tu, i, a, &loc_expr)) {
+                n->type = ast_type_error;
+            }
 		}
 
 		i++;
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
-bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* a = NULL;
 
-	valid = get_location(ps, loc) && valid;
-
-    struct location f_loc;
-	a = factor(ps, &f_loc);
-    if (a && a->type == ast_type_error) {
-        valid = false;
-    }
+    struct location a_loc;
+	a = factor(ps, &a_loc);
+    *loc = a_loc;
 
 	if (!a) {
-		return valid;
+		return a;
 	}
 
 	struct ast_node* left = n = a;
@@ -1268,82 +1268,103 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	while (true) {
 		struct token* t0 = NULL;
 		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
+		if (!get_lookahead(ps, 1, &num)) {
+            left->type = ast_type_error;
+        }
 		t0 = get_token(&ps->lookahead, 0);
 		if (!t0 || t0->type != token_dot) {
 			break;
 		}
 
-		struct token* dot = NULL;
-		valid = match(ps, token_dot, "expected a dot", &dot) && valid;
-		/* test case: no test case needed */
+        ast_node_create(&n);
+        n->type = ast_type_dot;
 
-        valid = consume_newline(ps) && valid;
+        struct token* dot = NULL;
+		if (!match(ps, token_dot, "expected a dot", &dot)) {
+            /* test case: no test case needed */
+            n->type = ast_type_error;
+        }
+
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
 
 		struct ast_node* b = NULL;
         struct location b_loc;
 		b = factor(ps, &b_loc);
         if (b && b->type == ast_type_error) {
-            valid = false;
+            n->type = ast_type_error;
         }
 
 		if (!b) {
-			valid = set_source_error(ps->el, &b_loc, "expected term after dot");
+			set_source_error(ps->el, &b_loc, "expected term after dot");
 			/* test case: test_parse_dot_error_expected_term */
+            n->type = ast_type_error;
 		}
 
-		if (valid) {
-			assert(b);
-			ast_node_create(&n);
-			n->type = ast_type_dot;
-			if (left->type == ast_type_dot) {
-				buffer_copy(&left->value, &n->value);
-				buffer_add_char(&n->value, '.');
-				buffer_copy(&b->value, &n->value);
-			} else if (left->type == ast_type_id) {
-				buffer_copy(&left->value, &n->value);
-				buffer_add_char(&n->value, '.');
-				buffer_copy(&b->value, &n->value);
-			}
+        if (left && b) {
+            if (left->type == ast_type_dot) {
+                buffer_copy(&left->value, &n->value);
+                buffer_add_char(&n->value, '.');
+                buffer_copy(&b->value, &n->value);
+            } else if (left->type == ast_type_id) {
+                buffer_copy(&left->value, &n->value);
+                buffer_add_char(&n->value, '.');
+                buffer_copy(&b->value, &n->value);
+            }
+        }
 
-			ast_node_add(n, left);
-			ast_node_add(n, b);
-		} else {
-			ast_node_destroy(b);
-		}
+        if (left) {
+            ast_node_add(n, left);
+            if (left->type == ast_type_error) {
+                n->type = ast_type_error;
+            }
+        }
 
-		if (valid) {
+        if (b) {
+            ast_node_add(n, b);
+            if (b->type == ast_type_error) {
+                n->type = ast_type_error;
+            }
+        }
+
+		if (n->type != ast_type_error) {
 			assert(left);
 			assert(b);
 			struct ast_node* tu_left = left->tu;
 			struct ast_node* tu_b = b->tu;
 
 			if (!tu_left) {
-				valid = set_source_error(ps->el, &loc_left, "dot operand has no value");
+				set_source_error(ps->el, &loc_left, "dot operand has no value");
 				/* test case: no test case necessary */
+                n->type = ast_type_error;
 			} else if (tu_left->td->type != type_module && tu_left->td->type != type_struct) {
-				valid = set_source_error(ps->el, &loc_left, "dot operand is not a module or struct");
+				set_source_error(ps->el, &loc_left, "dot operand is not a module or struct");
 				/* test case: test_parse_dot_error_left_non_module */
+                n->type = ast_type_error;
 			}
 
 			if (!tu_b) {
-				valid = set_source_error(ps->el, &b_loc, "dot operand has no value");
+				set_source_error(ps->el, &b_loc, "dot operand has no value");
 				/* test case: test_parse_dot_error_non_module */
+                n->type = ast_type_error;
 			}
 
 			if (left == a) {
 				if (left->type != ast_type_id) {
-					valid = set_source_error(ps->el, &loc_left, "operand of dot operator not an identifier");
+					set_source_error(ps->el, &loc_left, "operand of dot operator not an identifier");
 					/* test case: no test case necessary */
+                    n->type = ast_type_error;
 				}
 			}
 
 			if (b->type != ast_type_id) {
-				valid = set_source_error(ps->el, &b_loc, "operand of dot operator not an identifier");
+				set_source_error(ps->el, &b_loc, "operand of dot operator not an identifier");
 				/* test case: test_parse_dot_error_right_not_identifier */
+                n->type = ast_type_error;
 			}
 
-			if (valid) {
+			if (n->type != ast_type_error) {
 				n->tu = ast_node_copy(tu_b);
 			}
 
@@ -1360,11 +1381,5 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	buffer_clear(&ps->qualifier);
 
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	return valid;
+	return n;
 }

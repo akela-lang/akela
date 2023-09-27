@@ -1,7 +1,7 @@
 # Todo
 * return ast_node in parse_expr functions
-  * dot_nt []
-  * cseq []
+  * dot_nt [x]
+  * cseq [x]
   * function_call []
   * subscript []
   * power []
