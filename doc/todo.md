@@ -2,7 +2,7 @@
 * return ast_node in parse_expr functions
   * dot_nt [x]
   * cseq [x]
-  * function_call []
+  * function_call [x]
   * subscript []
   * power []
   * mult []

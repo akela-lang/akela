@@ -19,7 +19,7 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool power(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_call(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct location* loc);
 struct ast_node* parse_dot(struct parse_state* ps, struct location* loc);
 
@@ -922,7 +922,10 @@ bool subscript(struct parse_state* ps, struct ast_node** root, struct location* 
 
 	/* allocate ps{} n n{} */
 	struct location loc_factor;
-	valid = function_call(ps, &a, &loc_factor) && valid;
+	a = parse_call(ps, &loc_factor);
+    if (a && a->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_factor);
 
 	struct ast_node* tu = NULL;
@@ -1031,26 +1034,18 @@ bool subscript(struct parse_state* ps, struct ast_node** root, struct location* 
 	return valid;
 }
 
-/* function_call -> dot function_call' */
-/* function_call' -> ( cseq ) function_call' */
-bool function_call(struct parse_state* ps, struct ast_node** root, struct location* loc)
+/* call -> dot call' */
+/* call' -> ( cseq ) call' */
+struct ast_node* parse_call(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
-
-	location_init(loc);
 
 	struct ast_node* dot_node = NULL;
 	struct location dot_loc;
 	dot_node = parse_dot(ps, &dot_loc);
-    if (dot_node && dot_node->type == ast_type_error) {
-        valid = false;
-    }
-	location_update(loc, &dot_loc);
 
 	if (!dot_node) {
-		valid = location_default(ps, loc) && valid;
-		return valid;
+		return dot_node;
 	}
 
 	struct ast_node* left = n = dot_node;
@@ -1058,59 +1053,71 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 
 	while (true) {
 		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
+		if (!get_lookahead(ps, 1, &num)) {
+            n->type = ast_type_error;
+        }
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		if (!t0 || t0->type != token_left_paren) {
 			break;
 		}
 
-		/* allocate ps{} lp lp{} */
 		struct token* lp = NULL;
-		valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
-		location_update_token(loc, lp);
-		/* test case: test case not needed */
+		if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
+            /* test case: test case not needed */
+            n->type = ast_type_error;
+        }
 
-        valid = consume_newline(ps) && valid;
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
 
-		/* allocate b b{} */
 		struct ast_node* cseq_node = NULL;
 		struct location loc_cseq;
 		cseq_node = parse_cseq(ps, left->tu, &loc_cseq);
         if (cseq_node && cseq_node->type == ast_type_error) {
-            valid = false;
+            n->type = ast_type_error;
         }
-		location_update(loc, &loc_cseq);
 
-        valid = consume_newline(ps) && valid;
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
 
-		/* allocate ps{} rp rp{} */
 		struct token* rp = NULL;
-		valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
-		location_update_token(loc, rp);
-		/* test case: test_parse_call_error_right_paren */
+		if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
+            /* test case: test_parse_call_error_right_paren */
+            n->type = ast_type_error;
+        }
 
 
-		if (valid) {
-			/* allocate n */
+		if (n->type != ast_type_error) {
 			ast_node_create(&n);
 			n->type = ast_type_call;
-			ast_node_add(n, left);
-			ast_node_add(n, cseq_node);
 
-		} else {
-			/* destroy cseq_node cseq_node{} */
-			ast_node_destroy(cseq_node);
+            if (left) {
+                ast_node_add(n, left);
+                if (left->type == ast_type_error) {
+                    n->type = ast_type_error;
+                }
+            }
+
+            if (cseq_node) {
+                ast_node_add(n, cseq_node);
+                if (cseq_node->type == ast_type_error) {
+                    n->type = ast_type_error;
+                }
+            }
 		}
 
-		if (valid) {
+		if (n->type != ast_type_error) {
 			struct ast_node* tu = left->tu;
 			assert(tu);
 			assert(tu->td);
 			struct type_def* td = tu->td;
 			if (td->type != type_function) {
-				valid = set_source_error(ps->el, &left_loc, "not a function type");
+				set_source_error(ps->el, &left_loc, "not a function type");
 				/* test case: test_parse_call_error_not_function */
+                n->type = ast_type_error;
 			} else {
 				struct ast_node* input = NULL;
 				struct ast_node* output = NULL;
@@ -1127,11 +1134,13 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 				}
 
 				if (ccount < tcount) {
-					valid = set_source_error(ps->el, &rp->loc, "not enough arguments in function call");
+					set_source_error(ps->el, &rp->loc, "not enough arguments in function call");
 					/* test case: test_parse_call_error_not_enough_arguments */
+                    n->type = ast_type_error;
 				} else if (ccount > tcount) {
-					valid = set_source_error(ps->el, &rp->loc, "too many arguments in function call");
+					set_source_error(ps->el, &rp->loc, "too many arguments in function call");
 					/* test case: test_parse_call_error_too_many_arguments */
+                    n->type = ast_type_error;
 				}
 
 				/* output */
@@ -1153,15 +1162,7 @@ bool function_call(struct parse_state* ps, struct ast_node** root, struct locati
 
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	return valid;
+	return n;
 }
 
 /* cseq -> expr cseq' | e */
