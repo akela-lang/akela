@@ -2,7 +2,7 @@
 * return loc from parse_factor functions
   * parse_parenthesis [x]
   * parse_aseq [x]
-  * parse_array_literal []
+  * parse_array_literal [x]
   * parse_sign []
   * parse_id []
   * parse_literal []
