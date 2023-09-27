@@ -1,14 +1,4 @@
 # Todo
-* return loc from parse_factor functions
-  * parse_parenthesis [x]
-  * parse_aseq [x]
-  * parse_array_literal [x]
-  * parse_sign [x]
-  * parse_id [x]
-  * parse_literal [x]
-  * parse_not [x]
-  * parse_anonymous_function [x]
-  * factor []
 * return ast_node in parse_expr functions
   * dot_nt []
   * cseq []

@@ -26,11 +26,10 @@ struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
 *		  | ! factor | array_literal | function(dseq) stmts end
 * note: type system should catch incompatible sign or not factors
 */
-struct ast_node* factor(struct parse_state* ps)
+struct ast_node* factor(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
 	get_lookahead_one(ps);
-    struct location loc;
 
 	struct token* t0;
 	t0 = get_token(&ps->lookahead, 0);
@@ -41,26 +40,31 @@ struct ast_node* factor(struct parse_state* ps)
         consume_newline(ps);
         token_destroy(f);
         free(f);
-        n = parse_anonymous_function(ps, &loc);
+        n = parse_anonymous_function(ps, loc);
 
 	} else if (t0 && t0->type == token_not) {
-		n = parse_not(ps, &loc);
+		n = parse_not(ps, loc);
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
-		n = parse_literal(ps, &loc);
+		n = parse_literal(ps, loc);
 
 	} else if (t0 && t0->type == token_id) {
-		n = parse_id(ps, &loc);
+		n = parse_id(ps, loc);
 
 	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
-		n = parse_sign(ps, &loc);
+		n = parse_sign(ps, loc);
 
 	} else if (t0 && t0->type == token_left_square_bracket) {
-		n = parse_array_literal(ps, &loc);
+		n = parse_array_literal(ps, loc);
 
 	} else if (t0 && t0->type == token_left_paren) {
-		n = parse_parenthesis(ps, &loc);
-	}
+		n = parse_parenthesis(ps, loc);
+	} else {
+        if (!get_location(ps, loc)) {
+            ast_node_create(&n);
+            n->type = ast_type_error;
+        }
+    }
 
 	return n;
 }

@@ -1251,7 +1251,8 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 	valid = get_location(ps, loc) && valid;
 
-	a = factor(ps);
+    struct location f_loc;
+	a = factor(ps, &f_loc);
     if (a && a->type == ast_type_error) {
         valid = false;
     }
@@ -1281,12 +1282,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 		struct ast_node* b = NULL;
         struct location b_loc;
-        bool b_valid = true;
-        b_valid = get_location(ps, &b_loc);
-		b = factor(ps);
-        if (b && !b_valid) {
-            b->type = ast_type_error;
-        }
+		b = factor(ps, &b_loc);
         if (b && b->type == ast_type_error) {
             valid = false;
         }
