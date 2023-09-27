@@ -14,7 +14,7 @@
 #include "type_def.h"
 
 struct ast_node* parse_not(struct parse_state* ps);
-struct ast_node* parse_literal(struct parse_state* ps);
+struct ast_node* parse_literal(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_id(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_sign(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_array_literal(struct parse_state* ps, struct location* loc);
@@ -47,7 +47,7 @@ struct ast_node* factor(struct parse_state* ps)
 		n = parse_not(ps);
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
-		n = parse_literal(ps);
+		n = parse_literal(ps, &loc);
 
 	} else if (t0 && t0->type == token_id) {
 		n = parse_id(ps, &loc);
@@ -261,13 +261,17 @@ struct ast_node* parse_not(struct parse_state* ps)
 	return n;
 }
 
-struct ast_node* parse_literal(struct parse_state* ps)
+struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
 	char* type_name = NULL;
     ast_node_create(&n);
 
-	int num;
+    if (!get_location(ps, loc)) {
+        n->type = ast_type_error;
+    }
+
+    int num;
 	if (!get_lookahead(ps, 1, &num)) {
         n->type = ast_type_error;
     }
