@@ -13,7 +13,7 @@
 #include "parse_factor.h"
 #include "type_def.h"
 
-struct ast_node* parse_not(struct parse_state* ps);
+struct ast_node* parse_not(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_literal(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_id(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_sign(struct parse_state* ps, struct location* loc);
@@ -44,7 +44,7 @@ struct ast_node* factor(struct parse_state* ps)
         n = parse_anonymous_function(ps);
 
 	} else if (t0 && t0->type == token_not) {
-		n = parse_not(ps);
+		n = parse_not(ps, &loc);
 
 	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
 		n = parse_literal(ps, &loc);
@@ -202,13 +202,17 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps)
 	return n;
 }
 
-struct ast_node* parse_not(struct parse_state* ps)
+struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_not;
 
-	struct token* not = NULL;
+    if (!get_location(ps, loc)) {
+        n->type = ast_type_error;
+    }
+
+    struct token* not = NULL;
 	if (!match(ps, token_not, "expecting not", &not)) {
         /* test case: no test case needed */
         n->type = ast_type_error;

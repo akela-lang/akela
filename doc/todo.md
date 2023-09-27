@@ -6,7 +6,7 @@
   * parse_sign [x]
   * parse_id [x]
   * parse_literal [x]
-  * parse_not []
+  * parse_not [x]
   * parse_anonymous_function []
   * factor []
 * return ast_node in parse_expr functions
