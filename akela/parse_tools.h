@@ -46,10 +46,6 @@ AKELA_API void location_update(struct location* loc, struct location* loc2);
 
 AKELA_API bool location_default(struct parse_state* ps, struct location* loc);
 
-AKELA_API bool ast_node_location_default(struct parse_state* ps, struct ast_node* n);
-
-AKELA_API bool set_location(struct parse_state* ps, struct ast_node* n);
-
 AKELA_API bool get_location(struct parse_state* ps, struct location* loc);
 
 #endif

@@ -157,13 +157,6 @@ bool get_parse_location(struct parse_state* ps, struct location* loc)
 	return valid;
 }
 
-bool set_location(struct parse_state* ps, struct ast_node* n)
-{
-    bool valid = get_lookahead_one(ps);
-    location_update_token(&n->loc, ps->lookahead.head);
-    return valid;
-}
-
 bool get_location(struct parse_state* ps, struct location* loc)
 {
     bool valid = get_lookahead_one(ps);
@@ -195,13 +188,4 @@ bool location_default(struct parse_state* ps, struct location* loc)
 		valid = get_parse_location(ps, loc);
 	}
 	return valid;
-}
-
-bool ast_node_location_default(struct parse_state* ps, struct ast_node* n)
-{
-    bool valid = true;
-    if (!n->loc.line) {
-        valid = get_parse_location(ps, &n->loc);
-    }
-    return valid;
 }

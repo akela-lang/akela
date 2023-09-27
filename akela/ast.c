@@ -112,7 +112,6 @@ void ast_node_init(struct ast_node* n)
 	buffer_init(&n->value);
 	n->tu = NULL;
 	n->td = NULL;
-    location_init(&n->loc);
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;
@@ -279,16 +278,4 @@ int ast_node_count_children(struct ast_node* n)
 		p = p->next;
 	}
 	return count;
-}
-
-void ast_node_location_update_token(struct ast_node* n, struct token* t)
-{
-    if (t && !n->loc.line) {
-        n->loc = t->loc;
-    }
-}
-
-void ast_node_location_update(struct ast_node* n, struct ast_node* n2)
-{
-    n->loc = n2->loc;
 }

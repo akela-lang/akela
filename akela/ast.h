@@ -67,7 +67,6 @@ struct ast_node {
 	struct buffer value;
 	struct ast_node* tu;
 	struct type_def* td;
-    struct location loc;
 	struct ast_node* next;
 	struct ast_node* prev;
 	struct ast_node* head;

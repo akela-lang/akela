@@ -554,21 +554,18 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	char* op_name;
 	int num;
 
-	location_init(loc);
+    valid = get_location(ps, loc) && valid;
 
 	/* allocate a a{} */
 	struct location loc_a;
 	valid = mult(ps, &a, &loc_a) && valid;
-	location_update(loc, &loc_a);
 
 	if (!a) {
-		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
 
 	left = n = a;
 
-	struct location loc_b;
 	bool first = true;
 	while (true) {
 		/* allocate ps{} */
@@ -595,7 +592,6 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		/* allocate ps{} */
 		struct token* op = NULL;
 		valid = match(ps, t0->type, "expecting + or -", &op) && valid;
-		location_update_token(loc, op);
 		/* test case: no test case needed */
 
         valid = consume_newline(ps) && valid;
@@ -603,7 +599,6 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		/* allocate a a{} */
 		struct location loc_b;
 		valid = mult(ps, &b, &loc_b) && valid;
-		location_update(loc, &loc_b);
 
 		if (!b) {
 			valid = set_source_error(ps->el, &loc_b, "expected term after additive operator");
@@ -1254,23 +1249,19 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	struct ast_node* n = NULL;
 	struct ast_node* a = NULL;
 
-	location_init(loc);
+	valid = get_location(ps, loc) && valid;
 
 	a = factor(ps);
     if (a && a->type == ast_type_error) {
         valid = false;
     }
-    if (a) {
-        location_update(loc, &a->loc);
-    }
 
 	if (!a) {
-		valid = location_default(ps, loc) && valid;
 		return valid;
 	}
 
 	struct ast_node* left = n = a;
-	struct location loc_left = a->loc;
+	struct location loc_left = *loc;
 	if (ps->qualifier.size > 0) buffer_add_char(&ps->qualifier, '.');
 	buffer_copy(&a->value, &ps->qualifier);
 	while (true) {
@@ -1284,23 +1275,23 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 
 		struct token* dot = NULL;
 		valid = match(ps, token_dot, "expected a dot", &dot) && valid;
-		location_update_token(loc, dot);
 		/* test case: no test case needed */
 
         valid = consume_newline(ps) && valid;
 
 		struct ast_node* b = NULL;
+        struct location b_loc;
+        bool b_valid = true;
+        b_valid = get_location(ps, &b_loc);
 		b = factor(ps);
+        if (b && !b_valid) {
+            b->type = ast_type_error;
+        }
         if (b && b->type == ast_type_error) {
             valid = false;
         }
-        if (b) {
-            location_update(loc, &b->loc);
-        }
 
 		if (!b) {
-            struct location b_loc;
-            get_location(ps, &b_loc);
 			valid = set_source_error(ps->el, &b_loc, "expected term after dot");
 			/* test case: test_parse_dot_error_expected_term */
 		}
@@ -1340,7 +1331,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 			}
 
 			if (!tu_b) {
-				valid = set_source_error(ps->el, &b->loc, "dot operand has no value");
+				valid = set_source_error(ps->el, &b_loc, "dot operand has no value");
 				/* test case: test_parse_dot_error_non_module */
 			}
 
@@ -1352,7 +1343,7 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 			}
 
 			if (b->type != ast_type_id) {
-				valid = set_source_error(ps->el, &b->loc, "operand of dot operator not an identifier");
+				valid = set_source_error(ps->el, &b_loc, "operand of dot operator not an identifier");
 				/* test case: test_parse_dot_error_right_not_identifier */
 			}
 
@@ -1371,7 +1362,6 @@ bool dot_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 		free(dot);
 	}
 
-	valid = location_default(ps, loc) && valid;
 	buffer_clear(&ps->qualifier);
 
 	if (valid) {

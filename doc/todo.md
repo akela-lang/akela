@@ -1,15 +1,28 @@
 # Todo
-* return ast_node in parse_factor functions
-  * parenthesis [x]
-  * aseq [x]
-  * array_literal [x]
-  * sign [x]
-  * id_nt [x]
-  * literal_nt [x]
-  * not_nt [x]
-  * anonymous_function [x]
+* return loc from parse_factor functions
+  * parse_parenthesis [x]
+  * parse_aseq []
+  * parse_array_literal []
+  * parse_sign []
+  * parse_id []
+  * parse_literal []
+  * parse_not []
+  * parse_anonymous_function []
   * factor []
 * return ast_node in parse_expr functions
+  * dot_nt []
+  * cseq []
+  * function_call []
+  * subscript []
+  * power []
+  * mult []
+  * add []
+  * comparison []
+  * boolean []
+  * simple_expr []
+  * eseq []
+  * assignment []
+  * expr []
 * return ast_node in parse_stmts functions
 * return ast_node in parse_types functions
 * get location of ast_node once

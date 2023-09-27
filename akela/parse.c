@@ -26,6 +26,9 @@ bool parse(struct parse_state* ps, struct ast_node** root)
 	if (!lookahead_char_done(ps->sns->lc)) {
 		int num;
 		valid = get_lookahead(ps, 1, &num) && valid;
+        if (!valid) {
+            return valid;
+        }
 	}
 
     assert(ps->lookahead.head);

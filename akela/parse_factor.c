@@ -19,7 +19,7 @@ struct ast_node* parse_id(struct parse_state* ps);
 struct ast_node* parse_sign(struct parse_state* ps);
 struct ast_node* parse_array_literal(struct parse_state* ps);
 void parse_aseq(struct parse_state* ps, struct ast_node* parent);
-struct ast_node* parse_parenthesis(struct parse_state* ps);
+struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
@@ -30,6 +30,7 @@ struct ast_node* factor(struct parse_state* ps)
 {
 	struct ast_node* n = NULL;
 	get_lookahead_one(ps);
+    struct location loc;
 
 	struct token* t0;
 	t0 = get_token(&ps->lookahead, 0);
@@ -58,7 +59,7 @@ struct ast_node* factor(struct parse_state* ps)
 		n = parse_array_literal(ps);
 
 	} else if (t0 && t0->type == token_left_paren) {
-		n = parse_parenthesis(ps);
+		n = parse_parenthesis(ps, &loc);
 	}
 
 	return n;
@@ -69,10 +70,6 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps)
 	struct ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_anonymous_function;
-
-	if (!set_location(ps, n)) {
-        n->type = ast_type_error;
-    }
 
 	/* shared ps{top} -> saved */
 	struct environment* saved = ps->st->top;
@@ -211,10 +208,6 @@ struct ast_node* parse_not(struct parse_state* ps)
     ast_node_create(&n);
     n->type = ast_type_not;
 
-    if (!set_location(ps, n)) {
-        n->type = ast_type_error;
-    }
-
 	struct token* not = NULL;
 	if (!match(ps, token_not, "expecting not", &not)) {
         /* test case: no test case needed */
@@ -273,9 +266,6 @@ struct ast_node* parse_literal(struct parse_state* ps)
 	struct ast_node* n = NULL;
 	char* type_name = NULL;
     ast_node_create(&n);
-    if (!set_location(ps, n)) {
-        n->type = ast_type_error;
-    }
 
 	int num;
 	if (!get_lookahead(ps, 1, &num)) {
@@ -339,9 +329,6 @@ struct ast_node* parse_id(struct parse_state* ps)
 	struct ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_id;
-    if (!set_location(ps, n)) {
-        n->type = ast_type_error;
-    }
 
 	struct token* id = NULL;
     if (!match(ps, token_id, "expecting identifier", &id)) {
@@ -430,9 +417,6 @@ struct ast_node* parse_sign(struct parse_state* ps)
 
     ast_node_create(&n);
     n->type = ast_type_sign;
-    if (!set_location(ps, n)) {
-        n->type = ast_type_error;
-    }
 
 	int num;
 	if (!get_lookahead(ps, 1, &num)) {
@@ -508,9 +492,6 @@ struct ast_node* parse_array_literal(struct parse_state* ps)
 	struct ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_array_literal;
-    if (!set_location(ps, n)) {
-        n->type = ast_type_error;
-    }
 
     struct token* lsb = NULL;
     if (!match(ps, token_left_square_bracket, "expected left square bracket", &lsb)) {
@@ -526,6 +507,10 @@ struct ast_node* parse_array_literal(struct parse_state* ps)
         n->type = ast_type_error;
     }
 
+    struct location first_loc;
+    if (!get_location(ps, &first_loc)) {
+        n->type = ast_type_error;
+    }
     parse_aseq(ps, n);
 
     if (!consume_newline(ps)) {
@@ -553,7 +538,7 @@ struct ast_node* parse_array_literal(struct parse_state* ps)
             while (x) {
                 tu_x = x->tu;
                 if (!type_find_whole(ps->st, tu_first, tu_x)) {
-                    set_source_error(ps->el, &first->loc, "array elements not the same type");
+                    set_source_error(ps->el, &first_loc, "array elements not the same type");
                     /* test case: test_parse_array_literal_mixed_error */
                     n->type = ast_type_error;
                     break;
@@ -631,12 +616,13 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent)
 	}
 }
 
-struct ast_node* parse_parenthesis(struct parse_state* ps)
+struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_parenthesis;
-    if (!set_location(ps, n)) {
+
+    if (!get_location(ps, loc)) {
         n->type = ast_type_error;
     }
 
