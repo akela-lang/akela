@@ -4,7 +4,7 @@
   * cseq [x]
   * function_call [x]
   * subscript [x]
-  * power []
+  * power [x]
   * mult []
   * add []
   * comparison []
