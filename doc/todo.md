@@ -3,7 +3,7 @@
   * dot_nt [x]
   * cseq [x]
   * function_call [x]
-  * subscript []
+  * subscript [x]
   * power []
   * mult []
   * add []

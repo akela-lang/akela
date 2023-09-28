@@ -18,7 +18,7 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool mult(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool power(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool subscript(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_call(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct location* loc);
 struct ast_node* parse_dot(struct parse_state* ps, struct location* loc);
@@ -805,13 +805,15 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* a = NULL;
-	struct ast_node* b = NULL;
 
 	location_init(loc);
 
-	struct location loc_a;
-	valid = subscript(ps, &a, &loc_a) && valid;
-	location_update(loc, &loc_a);
+	struct location a_loc;
+	a = parse_subscript(ps, &a_loc);
+    if (a && a->type == ast_type_error) {
+        valid = false;
+    }
+	location_update(loc, &a_loc);
 
 	if (!a) {
 		valid = location_default(ps, loc) && valid;
@@ -819,7 +821,7 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	}
 
 	struct ast_node* left = n = a ;
-	struct location loc_left = loc_a;
+	struct location loc_left = a_loc;
 
 	while (true) {
 		struct token* t0 = NULL;
@@ -838,12 +840,15 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
         valid = consume_newline(ps) && valid;
 
 		struct ast_node* b = NULL;
-		struct location loc_b;
-		valid = subscript(ps, &b, &loc_b) && valid;
-		location_update(loc, &loc_b);
+		struct location b_loc;
+		b = parse_subscript(ps, &b_loc);
+        if (b && b->type == ast_type_error) {
+            valid = false;
+        }
+		location_update(loc, &b_loc);
 
 		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expected term after caret");
+			valid = set_source_error(ps->el, &b_loc, "expected term after caret");
 			/* test case: test_parse_power_error_expected_term */
 		}
 
@@ -871,17 +876,17 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 			}
 
 			if (!tu_b) {
-				valid = set_source_error(ps->el, &loc_b, "power operand has no value");
+				valid = set_source_error(ps->el, &b_loc, "power operand has no value");
 				/* test case: test_parse_power_error_right_no_value */
 			} else if (!is_numeric(tu_b->td)) {
-				valid = set_source_error(ps->el, &loc_b, "power on non-numeric operand");
+				valid = set_source_error(ps->el, &b_loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_right_not_numeric */
 			}
 
 			if (valid) {
 				struct ast_node* tu = ast_node_copy(tu_left);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
-					valid = set_source_error(ps->el, &loc_b, "invalid power types");
+					valid = set_source_error(ps->el, &b_loc, "invalid power types");
 					/* test case: no test case needed */
 				} else {
 					n->tu = tu;
@@ -908,41 +913,47 @@ bool power(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	return valid;
 }
 
-/* array_subscript -> factor array_subscript' */
-/* array_subscript' -> [expr] array_subscript' | e */
-/* dynamic-output ps{} root root{} */
-bool subscript(struct parse_state* ps, struct ast_node** root, struct location* loc)
+/* subscript -> call subscript' */
+/* subscript' -> [expr] subscript' | e */
+struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
 	int num;
 	struct ast_node* n = NULL;
 	struct ast_node* a = NULL;
 
-	location_init(loc);
+	struct location a_loc;
+	a = parse_call(ps, &a_loc);
 
-	/* allocate ps{} n n{} */
-	struct location loc_factor;
-	a = parse_call(ps, &loc_factor);
-    if (a && a->type == ast_type_error) {
-        valid = false;
+    if (!a) {
+        *loc = a_loc;
+        return a;
     }
-	location_update(loc, &loc_factor);
 
-	struct ast_node* tu = NULL;
+    struct ast_node* tu = NULL;
 	struct ast_node* element_tu = NULL;
+    struct location loc_last;
 
-	struct location loc_last;
-	location_init(&loc_last);
 	while (true) {
-		/* allocate ps{} */
-		valid = get_lookahead(ps, 1, &num) && valid;
+		if (!get_lookahead(ps, 1, &num)) {
+            if (n) {
+                n->type = ast_type_error;
+            } else {
+                a->type = ast_type_error;
+            }
+        }
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		if (!t0 || t0->type != token_left_square_bracket) {
 			break;
 		}
 
-		if (valid) {
+        if (!n) {
+            ast_node_create(&n);
+            n->type = ast_type_array_subscript;
+            ast_node_add(n, a);
+        }
+
+        if (n->type != ast_type_error) {
 			if (!tu) {
 				tu = a->tu;
 			} else {
@@ -950,88 +961,74 @@ bool subscript(struct parse_state* ps, struct ast_node** root, struct location* 
 			}
 
 			if (!tu) {
-				valid = set_source_error(ps->el, &loc_factor, "subscripting expression with no type");
+				set_source_error(ps->el, &a_loc, "subscripting expression with no type");
 				/* test case: test_parse_subscript_error_no_type */
+                n->type = ast_type_error;
 			} else if (tu->td->type != type_array) {
-				valid = set_source_error(ps->el, &loc_factor, "subscripting expression that is not an array");
+				set_source_error(ps->el, &a_loc, "subscripting expression that is not an array");
 				/* test case: test_parse_subscript_error_not_array */
+                n->type = ast_type_error;
 			}
 		}
 
-		/* allocate ps{} lsb lsb{} */
 		struct token* lsb = NULL;
-		valid = match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb) && valid;
-		location_update_token(loc, lsb);
-		/* test case: no test cases needed */
+		assert(match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb));
 		if (lsb) {
 		#pragma warning(suppress:6001)
 			loc_last = lsb->loc;
 		}
 
-		/* destroy lsb lsb{} */
 		token_destroy(lsb);
 		free(lsb);
 
-        valid = consume_newline(ps) && valid;
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
 
-		/* allocate b b{} */
 		struct ast_node* b = NULL;
 		struct location loc_expr;
-		valid = expr(ps, &b, &loc_expr) && valid;
-		location_update(loc, &loc_expr);
+		if (!expr(ps, &b, &loc_expr)) {
+            n->type = ast_type_error;
+        }
 
-        valid = consume_newline(ps) && valid;
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
 
-        /* allocate ps{} rsb rsb{} */
 		struct token* rsb = NULL;
-		valid = match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb) && valid;
-		location_update_token(loc, rsb);
+		if (!match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb)) {
+            n->type = ast_type_error;
+        }
 
-		/* destroy rsb rsb{} */
 		token_destroy(rsb);
 		free(rsb);
 
-		if (valid) {
-			if (!n) {
-				ast_node_create(&n);
-				n->type = ast_type_array_subscript;
-				ast_node_add(n, a);
-			}
+		if (b) {
 			ast_node_add(n, b);
-		} else {
-			ast_node_destroy(b);
 		}
 	}
 
-	if (valid) {
+	if ((n && n->type != ast_type_error) || (a && a->type != ast_type_error)) {
 		if (tu) {
 			element_tu = ast_node_get(tu, 0);
 		}
 
 		if (n) {
 			if (!element_tu) {
-				valid = set_source_error(ps->el, &loc_last, "subscripting expression with no subtype");
+				set_source_error(ps->el, &loc_last, "subscripting expression with no subtype");
 				/* test case: test_parse_subscript_error_no_subtype */
+                n->type = ast_type_error;
 			} else {
 				n->tu = ast_node_copy(element_tu);
-			}
-		} else {
-			if (a) {
-				n = a;
 			}
 		}
 	}
 
-	/* transfer n -> root */
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
+    if (!n) {
+        n = a;
+    }
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 /* call -> dot call' */
