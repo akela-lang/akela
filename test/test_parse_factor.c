@@ -1173,7 +1173,7 @@ void test_parse_call_return_type()
 	expect_int_equal(add->type, ast_type_plus, "plus add");
 
 	struct ast_node* add_tu = add->tu;
-	assert_ptr(add, "patr add_tu");
+	assert_ptr(add_tu, "patr add_tu");
 
 	struct type_def* add_td = add_tu->td;
 	assert_ptr(add_td, "ptr add_td");

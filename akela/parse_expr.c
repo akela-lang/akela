@@ -15,7 +15,7 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, struct location* loc);
 bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool comparison(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool add(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_add(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_mult(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_power(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc);
@@ -420,12 +420,14 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 	struct ast_node* left = NULL;
 	int num;
 
-	location_init(loc);
+	valid = get_location(ps, loc) && valid;
 
 	/* allocate ps{} a a{} */
 	struct location loc_a;
-	valid = add(ps, &a, &loc_a) && valid;
-	location_update(loc, &loc_a);
+	a = parse_add(ps, &loc_a);
+    if (a && a->type == ast_type_error) {
+        valid = false;
+    }
 
 	if (!a) {
 		valid = location_default(ps, loc) && valid;
@@ -478,8 +480,10 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 		/* allocate ps{} a a{} */
 		struct ast_node* b = NULL;
 		struct location loc_b;
-		valid = add(ps, &b, &loc_b) && valid;
-		location_update(loc, &loc_b);
+		b = parse_add(ps, &loc_b);
+        if (b && b->type == ast_type_error) {
+            valid = false;
+        }
 
 		if (!b) {
 			valid = set_source_error(ps->el, &loc_b, "expected term after comparison operator");
@@ -543,10 +547,8 @@ bool comparison(struct parse_state* ps, struct ast_node** root, struct location*
 
 /* add -> mult add' */
 /* add' -> + mult add' | - mult add' | e */
-/* dynamic-output ps{} root root{} */
-bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_add(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* a = NULL;
 	struct ast_node* b = NULL;
 	struct ast_node* n = NULL;
@@ -554,25 +556,19 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	char* op_name;
 	int num;
 
-    valid = get_location(ps, loc) && valid;
-
-	/* allocate a a{} */
 	struct location loc_a;
 	a = parse_mult(ps, &loc_a);
-    if (a && a->type == ast_type_error) {
-        valid = false;
-    }
 
 	if (!a) {
-		return valid;
+		return NULL;
 	}
 
 	left = n = a;
 
-	bool first = true;
 	while (true) {
-		/* allocate ps{} */
-		valid = get_lookahead(ps, 1, &num) && valid;
+		if (!get_lookahead(ps, 1, &num)) {
+            n->type = ast_type_error;
+        }
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		/* e */
@@ -592,60 +588,71 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 			break;
 		}
 
-		/* allocate ps{} */
 		struct token* op = NULL;
-		valid = match(ps, t0->type, "expecting + or -", &op) && valid;
-		/* test case: no test case needed */
-
-        valid = consume_newline(ps) && valid;
-
-		/* allocate a a{} */
-		struct location loc_b;
-		b = parse_mult(ps, &loc_b);
-        if (b && b->type == ast_type_error) {
-            valid = false;
+		if (!match(ps, t0->type, "expecting + or -", &op)) {
+            /* test case: no test case needed */
+            n->type = ast_type_error;
         }
 
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
+
+		struct location b_loc;
+		b = parse_mult(ps, &b_loc);
+
 		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expected term after additive operator");
+			set_source_error(ps->el, &b_loc, "expected term after additive operator");
 			/* test case: test_parse_add_error_expected_term */
-			break;
+            n->type = ast_type_error;
 		}
 
-		if (valid) {
-			ast_node_create(&n);
-			n->type = type;
+        ast_node_create(&n);
+        n->type = type;
 
-			ast_node_add(n, left);
-			ast_node_add(n, b);
-		} else {
-			ast_node_destroy(b);
-		}
+        if (left) {
+            ast_node_add(n, left);
+            if (left->type == ast_type_error) {
+                n->type = ast_type_error;
+            }
+        }
 
-		if (valid) {
+        if (b) {
+            ast_node_add(n, b);
+            if (b->type == ast_type_error) {
+                n->type = ast_type_error;
+            }
+        }
+
+		if (n->type != ast_type_error) {
 			struct ast_node* tu_a = a->tu;
 			struct ast_node* tu_b = b->tu;
 
 			if (!tu_a) {
-				valid = set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
+				set_source_error(ps->el, &loc_a, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_left_no_value */
+                n->type = ast_type_error;
 			} else if (!is_numeric(tu_a->td)) {
-				valid = set_source_error(ps->el, &loc_a, "%s on non-numeric operand", op_name);
+				set_source_error(ps->el, &loc_a, "%s on non-numeric operand", op_name);
+                n->type = ast_type_error;
 			}
 
 			if (!tu_b) {
-				valid = set_source_error(ps->el, &loc_b, "%s operand has no value", op_name);
+				set_source_error(ps->el, &b_loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_right_no_value */
+                n->type = ast_type_error;
 			} else if (!is_numeric(tu_b->td)) {
-				valid = set_source_error(ps->el, &loc_b, "%s on non-numeric operand", op_name);
+				set_source_error(ps->el, &b_loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_add_error_right_not_numeric */
+                n->type = ast_type_error;
 			}
 
-			if (valid) {
+			if (n->type != ast_type_error) {
 				struct ast_node* tu = ast_node_copy(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
-					valid = set_source_error(ps->el, &op->loc, "invalid types for %s", op_name);
+					set_source_error(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
+                    n->type = ast_type_error;
 				} else {
 					n->tu = tu;
 				}
@@ -659,15 +666,7 @@ bool add(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		free(op);
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	if (valid) {
-		*root = left;
-	} else {
-		ast_node_destroy(left);
-	}
-
-	return valid;
+	return n;
 }
 
 /* mult -> power mult' */

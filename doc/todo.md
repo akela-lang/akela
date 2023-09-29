@@ -7,7 +7,7 @@
   * subscript [x]
   * power [x]
   * mult [x]
-  * add []
+  * add [x]
   * comparison []
   * boolean []
   * simple_expr []
