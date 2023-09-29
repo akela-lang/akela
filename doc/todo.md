@@ -8,7 +8,7 @@
   * power [x]
   * mult [x]
   * add [x]
-  * comparison []
+  * comparison [x]
   * boolean []
   * simple_expr []
   * eseq []
