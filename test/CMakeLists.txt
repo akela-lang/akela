@@ -24,5 +24,8 @@ set(test_files
 #include_directories("..")
 
 add_executable(test ${test_files})
-
 target_link_libraries(test akela zinc icui18n icuio icutu icuuc icudata stdc++ m ${llvm_libs})
+
+set(event_loop_files event_loop.c)
+add_executable(event_loop ${event_loop_files})
+target_link_libraries(event_loop akela zinc)

@@ -23,6 +23,7 @@ set(lib_files
         comp_table.c
         code_gen.c
         code_gen_tools.c
+        text_interface.c
 )
 
 set(bin_files
