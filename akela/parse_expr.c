@@ -292,14 +292,9 @@ bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, s
     return valid;
 }
 
-bool simple_expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_simple_expr(struct parse_state* ps, struct location* loc)
 {
-    *root = parse_boolean(ps, loc);
-    bool valid = true;
-    if (*root && (*root)->type == ast_type_error) {
-        valid = false;
-    }
-    return valid;
+    return parse_boolean(ps, loc);
 }
 
 /* boolean -> comparison boolean' */
@@ -1183,7 +1178,8 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
 
 	struct ast_node* a = NULL;
 	struct location loc_expr;
-	if (!simple_expr(ps, &a, &loc_expr)) {
+	a = parse_simple_expr(ps, &loc_expr);
+    if (a && a->type == ast_type_error) {
         n->type = ast_type_error;
     }
 
@@ -1222,8 +1218,8 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
             n->type = ast_type_error;
         }
 
-		a = NULL;
-		if (!simple_expr(ps, &a, &loc_expr)) {
+		a = parse_simple_expr(ps, &loc_expr);
+		if (a && a->type == ast_type_error) {
             n->type = ast_type_error;
         }
 

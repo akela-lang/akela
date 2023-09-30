@@ -592,7 +592,8 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
 
 	struct ast_node* a = NULL;
 	struct location loc_expr;
-	if (!simple_expr(ps, &a, &loc_expr)) {
+    a = parse_simple_expr(ps, &loc_expr);
+	if (a && a->type == ast_type_error) {
         parent->type = ast_type_error;
     }
 
@@ -627,8 +628,8 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
             }
 
 			/* allocate ps{} a a{} */
-			a = NULL;
-			if (!simple_expr(ps, &a, &loc_expr)) {
+			a = parse_simple_expr(ps, &loc_expr);
+			if (a && a->type == ast_type_error) {
                 parent->type = ast_type_error;
             }
 

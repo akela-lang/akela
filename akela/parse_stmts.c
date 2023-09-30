@@ -1504,7 +1504,10 @@ bool parse_var_rseq(struct parse_state* ps,
     struct location* a_loc = NULL;
     malloc_safe((void**)&a_loc, sizeof(struct location));
     location_init(a_loc);
-    valid = simple_expr(ps, &a, a_loc) && valid;
+    a = parse_simple_expr(ps, a_loc);
+    if (a && a->type == ast_type_error) {
+        valid = false;
+    }
     location_update(loc, a_loc);
     list_add_item(l, a_loc);
 
@@ -1526,7 +1529,10 @@ bool parse_var_rseq(struct parse_state* ps,
         struct location* b_loc = NULL;
         malloc_safe((void*)&b_loc, sizeof(struct location));
         location_init(b_loc);
-        valid = simple_expr(ps, &b, b_loc) && valid;
+        b = parse_simple_expr(ps, b_loc);
+        if (b && b->type == ast_type_error) {
+            valid = false;
+        }
         location_update(loc, b_loc);
         list_add_item(l, b_loc);
         if (b) {
