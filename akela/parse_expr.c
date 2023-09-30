@@ -13,7 +13,7 @@
 
 bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, struct location* loc);
-bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_boolean(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_comparison(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_add(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_mult(struct parse_state* ps, struct location* loc);
@@ -196,8 +196,11 @@ bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, s
 
     struct ast_node* a = NULL;
     struct location a_loc;
-    valid = boolean(ps, &a, &a_loc) && valid;
+    a = parse_boolean(ps, &a_loc);
     location_update(loc, &a_loc);
+    if (a && a->type == ast_type_error) {
+        valid = false;
+    }
 
     if (!a) {
         valid = location_default(ps, loc) && valid;
@@ -245,8 +248,11 @@ bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, s
 
         struct ast_node* b = NULL;
         struct location b_loc;
-        valid = boolean(ps, &b, &b_loc) && valid;
+        b = parse_boolean(ps, &b_loc);
         location_update(loc, &b_loc);
+        if (b && b->type == ast_type_error) {
+            valid = false;
+        }
 
         if (!b) {
             valid = set_source_error(ps->el, &b_loc, "expected term after comma");
@@ -288,41 +294,38 @@ bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, s
 
 bool simple_expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
-    return boolean(ps, root, loc);
+    *root = parse_boolean(ps, loc);
+    bool valid = true;
+    if (*root && (*root)->type == ast_type_error) {
+        valid = false;
+    }
+    return valid;
 }
 
 /* boolean -> comparison boolean' */
 /* boolean' -> && comparison boolean' | || comparison boolean' | e */
-/* dynamic-output ps{} root root{} */
-bool boolean(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* left;
+    struct location left_loc;
 
-	valid = get_location(ps, loc) && valid;
-
-	/* allocate a a{} */
 	struct ast_node* a = NULL;
-	struct location loc_a;
-	a = parse_comparison(ps, &loc_a);
-	location_update(loc, &loc_a);
-    if (a && a->type == ast_type_error) {
-        valid = false;
-    }
+	struct location a_loc;
+	a = parse_comparison(ps, &a_loc);
+    *loc = a_loc;
 
 	if (!a) {
-		valid = location_default(ps, loc) && valid;
-		return valid;
+		return NULL;
 	}
 
-	left = a;
-	struct location loc_left = loc_a;
+	left = n = a;
+    left_loc = a_loc;
 	while (true) {
-		/* allocate b{} */
-		/* allocate ps{} */
 		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
+		if (!get_lookahead(ps, 1, &num)) {
+            n->type = ast_type_error;
+        }
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		/* operator */
@@ -335,53 +338,59 @@ bool boolean(struct parse_state* ps, struct ast_node** root, struct location* lo
 			break;
 		}
 
-		/* allocate n */
 		ast_node_create(&n);
 		n->type = type;
 
-		/* allocate ps{} op op{} */
 		struct token* op = NULL;
-		valid = match(ps, t0->type, "expecting && or ||", &op) && valid;
-		location_update_token(loc, op);
-		/* test case: no test cases needed */
-
-        valid = consume_newline(ps) && valid;
-
-		/* comparison */
-		/* allocate a a{} */
-		struct ast_node* b = NULL;
-		struct location loc_b;
-		b = parse_comparison(ps, &loc_b);
-		location_update(loc, &loc_b);
-        if (b && b->type == ast_type_error) {
-            valid = false;
+		if (!match(ps, t0->type, "expecting && or ||", &op)) {
+            /* test case: no test case needed */
+            assert(false);
         }
 
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
+
+		/* comparison */
+		struct ast_node* b = NULL;
+		struct location b_loc;
+		b = parse_comparison(ps, &b_loc);
+
 		if (!b) {
-			valid = set_source_error(ps->el, &loc_b, "expected term after && or ||");
+			set_source_error(ps->el, &b_loc, "expected term after && or ||");
 			/* test case: test_parse_boolean_error_expected_term */
+            n->type = ast_type_error;
 		}
 
-		if (valid) {
-			ast_node_add(n, left);
-			ast_node_add(n, b);
-		} else {
-			ast_node_destroy(b);
-			break;
-		}
+        if (left) {
+            ast_node_add(n, left);
+            if (left->type == ast_type_error) {
+                n->type = ast_type_error;
+            }
+        }
+        if (b) {
+            ast_node_add(n, b);
+            if (b->type == ast_type_error) {
+                n->type = ast_type_error;
+            }
+        }
 
-		if (valid) {
+		if (n->type != ast_type_error) {
 			assert(b);
 			if (!left->tu) {
-				valid = set_source_error(ps->el, &loc_left, "left-side operand of boolean operator has no type");
+				set_source_error(ps->el, &left_loc, "left-side operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_left_no_value */
+                n->type = ast_type_error;
 			} else if (!b->tu) {
-				valid = set_source_error(ps->el, &loc_b, "operand of boolean operator has no type");
+				set_source_error(ps->el, &b_loc, "operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_right_no_value */
+                n->type = ast_type_error;
 			} else if (left->tu->td->type != type_boolean) {
-				valid = set_source_error(ps->el, &loc_left, "left-side expression of boolean operator is not boolean");
+				set_source_error(ps->el, &left_loc, "left-side expression of boolean operator is not boolean");
+                n->type = ast_type_error;
 			} else if (b->tu->td->type != type_boolean) {
-				valid = set_source_error(ps->el, &loc_b, "expression of boolean operator is not boolean");
+				set_source_error(ps->el, &b_loc, "expression of boolean operator is not boolean");
+                n->type = ast_type_error;
 			} else {
 				n->tu = ast_node_copy(left->tu);
 			}
@@ -390,22 +399,13 @@ bool boolean(struct parse_state* ps, struct ast_node** root, struct location* lo
 		}
 
 		#pragma warning(suppress:6001)
-		loc_left = op->loc;
+		left_loc = op->loc;
 
-		/* destroy op op{} */
 		token_destroy(op);
 		free(op);
 	}
 
-	if (valid) {
-		*root = left;
-	} else {
-		ast_node_destroy(left);
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 /* comparison -> add comparison' */
@@ -1178,7 +1178,7 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
 
 	struct ast_node* a = NULL;
 	struct location loc_expr;
-	if (!boolean(ps, &a, &loc_expr)) {
+	if (!simple_expr(ps, &a, &loc_expr)) {
         n->type = ast_type_error;
     }
 
@@ -1204,7 +1204,7 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
 			break;
 		}
 
-		struct token* comma = NULL;;
+		struct token* comma = NULL;
 		if (!match(ps, token_comma, "expecting comma", &comma)) {
             /* test case: no test case needed */
             n->type = ast_type_error;
@@ -1218,7 +1218,7 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
         }
 
 		a = NULL;
-		if (!boolean(ps, &a, &loc_expr)) {
+		if (!simple_expr(ps, &a, &loc_expr)) {
             n->type = ast_type_error;
         }
 

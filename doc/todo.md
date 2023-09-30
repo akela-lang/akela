@@ -9,7 +9,7 @@
   * mult [x]
   * add [x]
   * comparison [x]
-  * boolean []
+  * boolean [x]
   * simple_expr []
   * eseq []
   * assignment []
