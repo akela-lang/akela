@@ -823,8 +823,10 @@ struct ast_node* parse_power(struct parse_state* ps, struct location* loc)
 		}
 
 		struct token* caret = NULL;
-		assert(match(ps, token_caret, "expected a caret", &caret));
-		/* test case: no test case needed */
+		if (!match(ps, token_caret, "expected a caret", &caret)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
 
         if (!consume_newline(ps)) {
             n->type = ast_type_error;
@@ -966,7 +968,10 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 		}
 
 		struct token* lsb = NULL;
-		assert(match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb));
+		if (!match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
 		if (lsb) {
 		#pragma warning(suppress:6001)
 			loc_last = lsb->loc;

@@ -1,5 +1,4 @@
 # Todo
-* remove assert of match
 * return ast_node in parse_expr functions
   * dot_nt [x]
   * cseq [x]
@@ -30,3 +29,7 @@
 * run code gen on first pass
 * get text interface for lexer
 * get char interface for lexer
+* allow only English and Greek letters for identifiers
+  * A-Z
+  * a-z
+  * ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω
