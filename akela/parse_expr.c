@@ -12,7 +12,7 @@
 #include <assert.h>
 
 bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, struct location* loc);
+struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct location* loc);
 struct ast_node* parse_boolean(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_comparison(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_add(struct parse_state* ps, struct location* loc);
@@ -81,9 +81,11 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 	while (true) {
 		bool done = false;
 
-		a = NULL;
-		valid = eseq(ps, assign_index, &a, &a_loc) && valid;
+		a = parse_eseq(ps, assign_index, &a_loc);
 		location_update(loc, &a_loc);
+        if (a && a->type == ast_type_error) {
+            valid = false;
+        }
 
 		if (!a) {
 			if (last_p) {
@@ -188,23 +190,15 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 	return valid;
 }
 
-bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, struct location* loc)
+struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct location* loc)
 {
-    bool valid = true;
-
-    location_init(loc);
-
     struct ast_node* a = NULL;
     struct location a_loc;
     a = parse_boolean(ps, &a_loc);
-    location_update(loc, &a_loc);
-    if (a && a->type == ast_type_error) {
-        valid = false;
-    }
+    *loc = a_loc;
 
     if (!a) {
-        valid = location_default(ps, loc) && valid;
-        return valid;
+        return NULL;
     }
 
     struct ast_node* parent = NULL;
@@ -215,7 +209,13 @@ bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, s
         }
 
         int num;
-        valid = get_lookahead(ps, 1, &num) && valid;
+        if (!get_lookahead(ps, 1, &num)) {
+            if (parent) {
+                parent->type = ast_type_error;
+            } else {
+                a->type = ast_type_error;
+            }
+        }
         struct token* t0 = get_token(&ps->lookahead, 0);
 
         if (!t0 || t0->type != token_comma) {
@@ -226,70 +226,70 @@ bool eseq(struct parse_state* ps, size_t assign_index, struct ast_node** root, s
             ast_node_create(&parent);
             parent->type = ast_type_eseq;
             ast_node_add(parent, a);
+            if (a->type == ast_type_error) {
+                parent->type = ast_type_error;
+            }
 
-            if (valid) {
+            if (parent->type != ast_type_error) {
                 if (!a->tu) {
-                    valid = set_source_error(ps->el, &a_loc, "operand of eseq has no type");
+                    set_source_error(ps->el, &a_loc, "operand of eseq has no type");
+                    parent->type = ast_type_error;
                 }
                 if (assign_index == 0) {
                     if (!is_lvalue(a->type)) {
-                        valid = set_source_error(ps->el, &a_loc, "invalid lvalue");
+                        set_source_error(ps->el, &a_loc, "invalid lvalue");
                         /* test case: test_parse_expr_error_eseq_lvalue */
+                        parent->type = ast_type_error;
                     }
                 }
             }
         }
 
         struct token* comma = NULL;
-        valid = match(ps, token_comma, "expected a comma", &comma) && valid;
-        location_update_token(loc, comma);
+        if (!match(ps, token_comma, "expected a comma", &comma)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
         token_destroy(comma);
         free(comma);
 
         struct ast_node* b = NULL;
         struct location b_loc;
         b = parse_boolean(ps, &b_loc);
-        location_update(loc, &b_loc);
         if (b && b->type == ast_type_error) {
-            valid = false;
+            parent->type = ast_type_error;
         }
 
+        /* parent checks */
         if (!b) {
-            valid = set_source_error(ps->el, &b_loc, "expected term after comma");
+            set_source_error(ps->el, &b_loc, "expected term after comma");
+            parent->type = ast_type_error;
         } else if (assign_index == 0) {
             if (!is_lvalue(b->type)) {
-                valid = set_source_error(ps->el, &b_loc, "invalid lvalue");
+                set_source_error(ps->el, &b_loc, "invalid lvalue");
+                parent->type = ast_type_error;
             }
         }
 
-        if (valid) {
-            ast_node_add(parent, b);
-        } else {
-            ast_node_destroy(b);
-            break;
-        }
-
-        if (valid) {
-            assert(b);
+        if (b) {
             if (!b->tu) {
-                valid = set_source_error(ps->el, &b_loc, "operand of eseq has no type");
+                set_source_error(ps->el, &b_loc, "operand of eseq has no type");
+                b->type = ast_type_error;
+            }
+        }
+
+        if (b) {
+            ast_node_add(parent, b);
+            if (b->type == ast_type_error) {
+                parent->type = ast_type_error;
             }
         }
     }
 
-    if (valid) {
-        if (parent) {
-            *root = parent;
-        } else {
-            *root = a;
-        }
-    } else {
-        ast_node_destroy(parent);
+    if (parent == NULL) {
+        parent = a;
     }
-
-    valid = location_default(ps, loc) && valid;
-
-    return valid;
+    return parent;
 }
 
 struct ast_node* parse_simple_expr(struct parse_state* ps, struct location* loc)

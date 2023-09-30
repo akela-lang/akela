@@ -1,4 +1,5 @@
 # Todo
+* error test cases for eseq
 * return ast_node in parse_expr functions
   * dot_nt [x]
   * cseq [x]
@@ -10,7 +11,7 @@
   * comparison [x]
   * boolean [x]
   * simple_expr [x]
-  * eseq []
+  * eseq [x]
   * assignment []
   * expr []
 * return ast_node in parse_stmts functions
