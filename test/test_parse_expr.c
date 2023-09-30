@@ -1850,6 +1850,34 @@ void test_parse_assign_multiple()
     parse_teardown(&cu);
 }
 
+void test_parse_expr_assignment_eseq_error_eseq_count()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("var a::Int64; var b::Int64; var c::Int64; a, b, c = 1, 2", &cu);
+    expect_has_errors(&cu.el);
+    expect_false(cu.valid, "valid");
+    expect_source_error(&cu.el, "assignment sequence counts do not match");
+
+    parse_teardown(&cu);
+}
+
+void test_parse_expr_assignment_eseq_error_too_many_assignments()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("var a::Int64; var b::Int64; var c::Int64; a, b, c = 1, 2, 3 = 1", &cu);
+    expect_has_errors(&cu.el);
+    expect_false(cu.valid, "valid");
+    expect_source_error(&cu.el, "more than one assignment adjacent to an assignment sequence");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_assign_error_term()
 {
 	test_name(__func__);
@@ -2179,7 +2207,7 @@ void test_parse_expr_newline_dot()
     parse_teardown(&cu);
 }
 
-void test_parse_expr_eseq()
+void test_parse_expr_assign_eseq()
 {
     test_name(__func__);
 
@@ -2314,6 +2342,8 @@ void test_parse_expression()
 	test_parse_subscript_error_no_subtype();
 	test_parse_assign_string();
 	test_parse_assign_multiple();
+    test_parse_expr_assignment_eseq_error_eseq_count();
+    test_parse_expr_assignment_eseq_error_too_many_assignments();
 	test_parse_assign_error_term();
 	test_parse_assign_error_no_value_right();
 	test_parse_assign_error_not_compatible();
@@ -2327,7 +2357,7 @@ void test_parse_expression()
     test_parse_expr_newline_subscript();
     test_parse_expr_newline_function_call();
     test_parse_expr_newline_dot();
-    test_parse_expr_eseq();
+    test_parse_expr_assign_eseq();
     test_parse_expr_error_lvalue();
     test_parse_expr_error_eseq_lvalue();
 }
