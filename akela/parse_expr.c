@@ -11,7 +11,7 @@
 #include "type_def.h"
 #include <assert.h>
 
-bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct location* loc);
 struct ast_node* parse_boolean(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_comparison(struct parse_state* ps, struct location* loc);
@@ -26,7 +26,13 @@ struct ast_node* parse_dot(struct parse_state* ps, struct location* loc);
 /* expr -> assignment */
 bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
-	return assignment(ps, root, loc);
+	struct ast_node* n = parse_assignment(ps, loc);
+    *root = n;
+    bool valid = true;
+    if (n && n->type == ast_type_error) {
+        valid = false;
+    }
+    return valid;
 }
 
 bool is_lvalue(enum ast_type type)
@@ -61,21 +67,19 @@ bool check_lvalue(struct parse_state* ps, enum ast_type type, struct location* l
     return valid;
 }
 
-/* assignment -> eseq | eseq = assignment */
-bool assignment(struct parse_state* ps, struct ast_node** root, struct location* loc)
+/* assignment -> eseq = assignment | eseq */
+struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
     size_t assign_index = 0;
     size_t assign_count = 0;
     bool has_eseq = false;
 
-	location_init(loc);
+    get_location(ps, loc);
 
 	struct ast_node* last_p = NULL;
 	struct ast_node* last_a = NULL;
 	struct location loc_last_a;
-	location_init(&loc_last_a);
 
 	struct ast_node* a = NULL;
 	struct location a_loc;
@@ -84,9 +88,11 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 		bool done = false;
 
 		a = parse_eseq(ps, assign_index, &a_loc);
-		location_update(loc, &a_loc);
-        if (a && a->type == ast_type_error) {
-            valid = false;
+        if (n == NULL) {
+            n = a;
+        }
+        if (assign_index == 0) {
+            *loc = a_loc;
         }
         if (a && a->type == ast_type_eseq) {
             has_eseq = true;
@@ -94,8 +100,9 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 
 		if (!a) {
 			if (last_p) {
-				valid = set_source_error(ps->el, &a_loc, "expected an assignment term");
+				set_source_error(ps->el, &a_loc, "expected an assignment term");
 				/* test case: test_parse_assign_error_term */
+                n->type = ast_type_error;
 				break;
 			} else {
 				break;
@@ -103,72 +110,83 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
 		}
 
 		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
+		if (!get_lookahead(ps, 1, &num)) {
+            n->type = ast_type_error;
+        }
 		struct token* t0 = get_token(&ps->lookahead, 0);
 		struct ast_node* p = NULL;
 		if (t0 && t0->type == token_equal) {
             assign_count++;
 
+            struct token *equal = NULL;
+            if (!match(ps, token_equal, "expecting assign operator", &equal)) {
+                /* test case: no test case needed */
+                assert(false);
+            }
+
             if (has_eseq && assign_count > 1) {
                 set_source_error(ps->el, loc, "more than one assignment adjacent to an assignment sequence");
                 /* test case: test_parse_expr_assignment_eseq_error_too_many_assignments */
-                valid = false;
+                n->type = ast_type_error;
             }
 
-            struct token* equal = NULL;
-			valid = match(ps, token_equal, "expecting assign operator", &equal) && valid;
-			location_update_token(loc, equal);
-			/* test case: no test case needed */
+            token_destroy(equal);
+            free(equal);
 
-			token_destroy(equal);
-			free(equal);
+            if (!consume_newline(ps)) {
+                n->type = ast_type_error;
+            }
 
-            valid = consume_newline(ps) && valid;
+            if (!check_lvalue(ps, a->type, &a_loc)) {
+                /* test case: test_parse_expr_error_lvalue */
+                n->type = ast_type_error;
+            }
 
-            valid = check_lvalue(ps, a->type, &a_loc) && valid;
-            /* test case: test_parse_expr_error_lvalue */
+            ast_node_create(&p);
+            p->type = ast_type_assign;
+            ast_node_add(p, a);
+            if (a->type == ast_type_error) {
+                p->type = ast_type_error;
+            }
 
-			if (valid) {
-				assert(a);
+            if (last_p) {
+                ast_node_add(last_p, p);
+                if (p->type == ast_type_error) {
+                    last_p->type = ast_type_error;
+                }
+            } else {
+                n = p;
+            }
 
-				ast_node_create(&p);
-				p->type = ast_type_assign;
-				ast_node_add(p, a);
+        } else {
+            if (last_p) {
+                ast_node_add(last_p, a);
+            }
+            done = true;
+        }
 
-				if (last_p) {
-					ast_node_add(last_p, p);
-				} else {
-					n = p;
-				}
-			}
-		} else {
-			done = true;
-			if (last_p) {
-				ast_node_add(last_p, a);
-			} else {
-				n = a;
-			}
-		}
 
-		if (valid) {
+		if (n && n->type != ast_type_error) {
 			assert(a);
 			if (last_p && last_a) {
 				struct ast_node* last_a_tu = last_a->tu;
 				struct ast_node* a_tu = a->tu;
 
 				if (a->type != ast_type_eseq && !a_tu) {
-					valid = set_source_error(ps->el, &a_loc, "cannot assign with operand that has no value");
+					set_source_error(ps->el, &a_loc, "cannot assign with operand that has no value");
 					/* test case: test_parse_assign_error_no_value_right */
+                    n->type = ast_type_error;
 				}
-				if (valid) {
+				if (n->type != ast_type_error) {
 					if (!type_use_can_cast(last_a_tu, a_tu)) {
-						valid = set_source_error(ps->el, &a_loc, "values in assignment not compatible");
+						set_source_error(ps->el, &a_loc, "values in assignment not compatible");
 						/* test case: test_parse_assign_error_not_compatible */
+                        n->type = ast_type_error;
 					}
 				}
 			}
 
-			if (valid) {
+			if (n->type != ast_type_error) {
 				if (p && a->tu) {
 					p->tu = ast_node_copy(a->tu);
 				}
@@ -186,7 +204,7 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
         assign_index++;
 	}
 
-    if (valid) {
+    if (n && n->type != ast_type_error) {
         if (n && n->type == ast_type_assign) {
             struct ast_node* n0 = ast_node_get(n, 0);
             struct ast_node* n1 = ast_node_get(n, 1);
@@ -196,21 +214,13 @@ bool assignment(struct parse_state* ps, struct ast_node** root, struct location*
                 if (count0 != count1) {
                     set_source_error(ps->el, loc, "assignment sequence counts do not match");
                     /* test case: test_parse_expr_assignment_eseq_error_eseq_count */
-                    valid = false;
+                    n->type = ast_type_error;
                 }
             }
         }
     }
 
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct location* loc)

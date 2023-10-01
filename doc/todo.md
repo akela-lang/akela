@@ -1,5 +1,6 @@
 # Todo
 * error test cases for eseq
+* don't bubble up lexer errors to the parser
 * return ast_node in parse_expr functions
   * dot_nt [x]
   * cseq [x]
@@ -12,7 +13,7 @@
   * boolean [x]
   * simple_expr [x]
   * eseq [x]
-  * assignment []
+  * assignment [x]
   * expr []
 * return ast_node in parse_stmts functions
 * return ast_node in parse_types functions
