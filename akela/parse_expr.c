@@ -24,15 +24,9 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
 struct ast_node* parse_dot(struct parse_state* ps, struct location* loc);
 
 /* expr -> assignment */
-bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_expr(struct parse_state* ps, struct location* loc)
 {
-	struct ast_node* n = parse_assignment(ps, loc);
-    *root = n;
-    bool valid = true;
-    if (n && n->type == ast_type_error) {
-        valid = false;
-    }
-    return valid;
+    return parse_assignment(ps, loc);
 }
 
 bool is_lvalue(enum ast_type type)
@@ -1009,7 +1003,8 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 
 		struct ast_node* b = NULL;
 		struct location loc_expr;
-		if (!expr(ps, &b, &loc_expr)) {
+        b = parse_expr(ps, &loc_expr);
+		if (b && b->type == ast_type_error) {
             n->type = ast_type_error;
         }
 

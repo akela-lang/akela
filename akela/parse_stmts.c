@@ -223,7 +223,10 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* expr */
 	} else {
 		/* allocate ps{} n n{} */
-		valid = valid && expr(ps, &n, loc);
+        n = parse_expr(ps, loc);
+        if (n && n->type == ast_type_error) {
+            valid = false;
+        }
 	}
 
 	valid = valid && location_default(ps, loc) && valid;
@@ -252,7 +255,10 @@ bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* l
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_expr;
-	valid = expr(ps, &a, &loc_expr) && valid;
+    a = parse_expr(ps, &loc_expr);
+	if (a && a->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_expr);
 
 	if (!a) {
@@ -418,7 +424,10 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 	/* allocate b b{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;
-	valid = expr(ps, &a, &loc_a) && valid;
+    a = parse_expr(ps, &loc_a);
+	if (a && a->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_a);
 
 	if (!a) {
@@ -441,7 +450,10 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 	/* allocate ps{} c c{} */
 	struct ast_node* b = NULL;
 	struct location loc_b;
-	valid = expr(ps, &b, &loc_b) && valid;
+    b = parse_expr(ps, &loc_b);
+	if (b && b->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_b);
 
 	if (!b) {
@@ -515,7 +527,10 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 	/* allocate ps{} b b{} */
 	struct ast_node* list = NULL;
 	struct location loc_list;
-	valid = expr(ps, &list, &loc_list) && valid;
+    list = parse_expr(ps, &loc_list);
+	if (list && list->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_list);
 
 	if (!list) {
@@ -841,7 +856,10 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate ps{} cond cond{} */
 	struct ast_node* cond = NULL;
 	struct location loc_expr;
-	valid = valid && expr(ps, &cond, &loc_expr);
+    cond = parse_expr(ps, &loc_expr);
+	if (cond && cond->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_expr);
 
 	if (cond == NULL) {
@@ -924,7 +942,10 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location*
 		/* allocate ps{} cond cond{} */
 		struct ast_node* cond = NULL;
 		struct location loc_cond;
-		valid = expr(ps, &cond, &loc_cond) && valid;
+        cond = parse_expr(ps, &loc_cond);
+		if (cond && cond->type == ast_type_error) {
+            valid = false;
+        }
 		location_update(loc, &loc_cond);
 
 		if (!cond) {
@@ -1239,7 +1260,10 @@ bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 
 	struct ast_node* a = NULL;
 	struct location a_loc;
-	valid = expr(ps, &a, &a_loc) && valid;
+    a = parse_expr(ps, &a_loc);
+	if (a && a->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &a_loc);
 
 	valid = location_default(ps, loc) && valid;

@@ -232,7 +232,8 @@ struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
 
 	struct ast_node* a = NULL;
 	struct location loc_factor;
-	if (!expr(ps, &a, &loc_factor)) {
+	a = parse_expr(ps, &loc_factor);
+    if (a && a->type == ast_type_error) {
         n->type = ast_type_error;
     }
 
@@ -462,7 +463,8 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 	/* allocate right */
 	struct ast_node* right = NULL;
 	struct location loc_factor;
-	if (!expr(ps, &right, &loc_factor)) {
+    right = parse_expr(ps, &loc_factor);
+	if (right && right->type == ast_type_error) {
         n->type = ast_type_error;
     }
 
@@ -670,7 +672,8 @@ struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
 	/* allocate n n{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;
-	if (!expr(ps, &a, &loc_a)) {
+    a = parse_expr(ps, &loc_a);
+	if (a && a->type == ast_type_error) {
         n->type = ast_type_error;
     }
 

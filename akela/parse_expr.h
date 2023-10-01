@@ -10,7 +10,7 @@
 #include "source.h"
 
 /* dynamic-output ps{} root root{} */
-AKELA_API bool expr(struct parse_state* ps, struct ast_node** root, struct location* loc);
+AKELA_API struct ast_node* parse_expr(struct parse_state* ps, struct location* loc);
 AKELA_API struct ast_node* parse_simple_expr(struct parse_state* ps, struct location* loc);
 
 #endif

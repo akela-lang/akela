@@ -1,23 +1,11 @@
 # Todo
+* parse_compound
 * error test cases for eseq
 * don't bubble up lexer errors to the parser
-* return ast_node in parse_expr functions
-  * dot_nt [x]
-  * cseq [x]
-  * function_call [x]
-  * subscript [x]
-  * power [x]
-  * mult [x]
-  * add [x]
-  * comparison [x]
-  * boolean [x]
-  * simple_expr [x]
-  * eseq [x]
-  * assignment [x]
-  * expr []
 * return ast_node in parse_stmts functions
 * return ast_node in parse_types functions
 * get location of ast_node once
+* parse_assign_or_expr
 * add support for file io to event loop test
 * get larger strings from stdin in event loop
 * test get char in event loop
