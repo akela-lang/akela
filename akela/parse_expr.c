@@ -735,7 +735,7 @@ struct ast_node* parse_mult(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
-		/* factor */
+		/* parse_factor */
 		struct location b_loc;
 		b = parse_power(ps, &b_loc);
 
@@ -1271,7 +1271,7 @@ struct ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 	struct ast_node* a = NULL;
 
     struct location a_loc;
-	a = factor(ps, &a_loc);
+	a = parse_factor(ps, &a_loc);
     *loc = a_loc;
 
 	if (!a) {
@@ -1308,7 +1308,7 @@ struct ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 
 		struct ast_node* b = NULL;
         struct location b_loc;
-		b = factor(ps, &b_loc);
+		b = parse_factor(ps, &b_loc);
         if (b && b->type == ast_type_error) {
             n->type = ast_type_error;
         }

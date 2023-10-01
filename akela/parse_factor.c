@@ -23,10 +23,10 @@ struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
-*		  | ! factor | array_literal | function(dseq) stmts end
+*		  | ! parse_factor | array_literal | function(dseq) stmts end
 * note: type system should catch incompatible sign or not factors
 */
-struct ast_node* factor(struct parse_state* ps, struct location* loc)
+struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
 	get_lookahead_one(ps);
@@ -238,7 +238,7 @@ struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
     }
 
 	if (!a) {
-		set_source_error(ps->el, &loc_factor, "expected factor after !");
+		set_source_error(ps->el, &loc_factor, "expected parse_factor after !");
 		/* test case: test_parse_not_error_expected_factor */
         n->type = ast_type_error;
 	}
@@ -253,7 +253,7 @@ struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
 		assert(a);
 		struct ast_node* tu = a->tu;
 		if (!tu) {
-			set_source_error(ps->el, &not->loc, "! operator used on factor with no value");
+			set_source_error(ps->el, &not->loc, "! operator used on parse_factor with no value");
 			/* test case: test_parse_not_error_no_value */
             n->type = ast_type_error;
 		} else {
@@ -469,7 +469,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
     }
 
 	if (!right) {
-		set_source_error(ps->el, &loc_factor, "expected factor after sign");
+		set_source_error(ps->el, &loc_factor, "expected parse_factor after sign");
         n->type = ast_type_error;
 	}
 

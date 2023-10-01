@@ -401,7 +401,7 @@ void test_parse_sign_expected_factor()
     parse_setup("-", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_source_error(&cu.el, "expected factor after sign");
+	expect_source_error(&cu.el, "expected parse_factor after sign");
 
 	/* destroy ps{} cu.root cu.root{} */
 
@@ -496,7 +496,7 @@ void test_parse_not_error()
     parse_setup("function foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_source_error(&cu.el, "! operator used on factor with no value");
+	expect_source_error(&cu.el, "! operator used on parse_factor with no value");
 
 	/* destroy ps{} cu.root cu.root{} */
 
@@ -1643,7 +1643,7 @@ void test_parse_not_error_expected_factor()
     parse_setup("!", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_source_error(&cu.el, "expected factor after !");
+	expect_source_error(&cu.el, "expected parse_factor after !");
 
 	/* destroy ps{} cu.root cu.root{} */
     parse_teardown(&cu);
@@ -1659,7 +1659,7 @@ void test_parse_not_error_no_value()
     parse_setup("function foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_source_error(&cu.el, "! operator used on factor with no value");
+	expect_source_error(&cu.el, "! operator used on parse_factor with no value");
 
 	/* destroy ps{} cu.root cu.root{} */
     parse_teardown(&cu);
