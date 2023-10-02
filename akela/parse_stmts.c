@@ -34,7 +34,7 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool parse_var(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool parse_var_lseq(struct parse_state* ps, struct ast_node** root, struct location* loc, struct token_list* tl);
+struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, struct token_list* tl);
 struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, struct list* l);
 
 /* stmts -> stmt stmts' */
@@ -1332,7 +1332,10 @@ bool parse_var(struct parse_state* ps, struct ast_node** root, struct location* 
     struct location a_loc;
     struct token_list a_tl;
     token_list_init(&a_tl);
-    valid = parse_var_lseq(ps, &a, &a_loc, &a_tl) && valid;
+    a = parse_var_lseq(ps, &a_loc, &a_tl);
+    if (a && a->type == ast_type_error) {
+        valid = false;
+    }
     location_update(loc, &a_loc);
 
     if (a) {
@@ -1428,84 +1431,68 @@ bool parse_var(struct parse_state* ps, struct ast_node** root, struct location* 
 
 /* var_lseq -> id var_lseq' */
 /* var_lseq' -> , id var_lseq' */
-bool parse_var_lseq(struct parse_state* ps, struct ast_node** root, struct location* loc, struct token_list* tl)
+struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, struct token_list* tl)
 {
-    bool valid = true;
+    get_location(ps, loc);
 
-    location_init(loc);
+    get_lookahead_one(ps);
+    struct token* t0 = ps->lookahead.head;
+    if (!t0 || t0->type != token_id) {
+        return NULL;
+    }
 
-    struct ast_node* var_lseq = NULL;
-    malloc_safe((void**)&var_lseq, sizeof(struct ast_node));
-    ast_node_init(var_lseq);
-    var_lseq->type = ast_type_var_lseq;
+    struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_var_lseq;
 
     struct token* id = NULL;
-    valid = match(ps, token_id, "expected an id", &id) && valid;
-    location_update_token(loc, id);
-    if (id) {
-        token_list_add(tl, id);
+    if (!match(ps, token_id, "expected an id", &id)) {
+        /* test case: no test case needed */
+        assert(false);
     }
+
+    token_list_add(tl, id);
 
     struct ast_node* a = NULL;
-    malloc_safe((void**)&a, sizeof(struct ast_node));
-    ast_node_init(a);
+    ast_node_create(&a);
     a->type = ast_type_id;
-    if (id) {
-        buffer_copy(&id->value, &a->value);
-    }
-
-    if (!a) {
-        valid = set_source_error(ps->el, &id->loc, "expected id");
-    } else {
-        ast_node_add(var_lseq, a);
-    }
+    buffer_copy(&id->value, &a->value);
+    ast_node_add(n, a);
 
     while (true) {
         int num;
-        valid = get_lookahead(ps, 1, &num) && valid;
-        struct token* t0 = get_token(&ps->lookahead, 0);
+        get_lookahead_one(ps);
+        t0 = ps->lookahead.head;
         if (!t0 || t0->type != token_comma) {
             break;
         }
 
         struct token* comma = NULL;
-        valid = match(ps, token_comma, "expected comma", &comma) && valid;
-        location_update_token(loc, comma);
+        if (!match(ps, token_comma, "expected comma", &comma)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
         token_destroy(comma);
         free(comma);
 
         id = NULL;
-        valid = match(ps, token_id, "expected id", &id) && valid;
-        location_update_token(loc, id);
+        if (!match(ps, token_id, "expected id", &id)) {
+            set_source_error(ps->el, &id->loc, "expected id");
+            n->type = ast_type_error;
+            token_destroy(id);
+            free(id);
+            break;
+        }
 
         a = NULL;
-        malloc_safe((void**)&a, sizeof(struct ast_node));
-        ast_node_init(a);
+        ast_node_create(&a);
         a->type = ast_type_id;
-        if (id) {
-            buffer_copy(&id->value, &a->value);
-        }
-
-        if (!a) {
-            valid = set_source_error(ps->el, &id->loc, "expected id");
-        } else {
-            ast_node_add(var_lseq, a);
-        }
-
-        token_destroy(id);
-        free(id);
+        buffer_copy(&id->value, &a->value);
+        ast_node_add(n, a);
+        token_list_add(tl, id);
     }
 
-    valid = location_default(ps, loc);
-
-    if (valid) {
-        *root = var_lseq;
-    } else {
-        ast_node_destroy(var_lseq);
-        free(var_lseq);
-    }
-
-    return valid;
+    return n;
 }
 
 /* var_rseq -> simple_expr var_rseq' */

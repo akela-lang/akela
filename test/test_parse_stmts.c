@@ -2296,14 +2296,13 @@ void test_parse_var_expected_declaration()
 {
     test_name(__func__);
 
-
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
     parse_setup("var", &cu);
     assert_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
-    expect_source_error(&cu.el, "expected an id");
+    expect_source_error(&cu.el, "expected variable(s) after var");
 
     /* destroy ps{} cu.root cu.root{} */
 
