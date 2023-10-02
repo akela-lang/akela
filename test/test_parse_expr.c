@@ -1878,7 +1878,7 @@ void test_parse_expr_assignment_eseq_error_too_many_assignments()
     parse_teardown(&cu);
 }
 
-void test_parse_assign_error_term()
+void test_parse_var_assign_error_term()
 {
 	test_name(__func__);
 	
@@ -2344,7 +2344,7 @@ void test_parse_expression()
 	test_parse_assign_multiple();
     test_parse_expr_assignment_eseq_error_eseq_count();
     test_parse_expr_assignment_eseq_error_too_many_assignments();
-	test_parse_assign_error_term();
+	test_parse_var_assign_error_term();
 	test_parse_assign_error_no_value_right();
 	test_parse_assign_error_not_compatible();
 	test_parse_assign_error_lvalue();

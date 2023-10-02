@@ -323,6 +323,8 @@ struct ast_node* parse_simple_expr(struct parse_state* ps, struct location* loc)
 /* boolean' -> && comparison boolean' | || comparison boolean' | e */
 struct ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 {
+    get_location(ps, loc);
+
 	struct ast_node* n = NULL;
 	struct ast_node* left;
     struct location left_loc;
@@ -330,7 +332,6 @@ struct ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 	struct ast_node* a = NULL;
 	struct location a_loc;
 	a = parse_comparison(ps, &a_loc);
-    *loc = a_loc;
 
 	if (!a) {
 		return NULL;

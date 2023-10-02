@@ -35,10 +35,7 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool parse_var(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool parse_var_lseq(struct parse_state* ps, struct ast_node** root, struct location* loc, struct token_list* tl);
-bool parse_var_rseq(struct parse_state* ps,
-                    struct ast_node** root,
-                    struct location* loc,
-                    struct list* l);
+struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, struct list* l);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -1383,7 +1380,10 @@ bool parse_var(struct parse_state* ps, struct ast_node** root, struct location* 
         struct location b_loc;
         struct list b_l;
         list_init(&b_l);
-        valid = parse_var_rseq(ps, &b, &b_loc, &b_l) && valid;
+        b = parse_var_rseq(ps, &b_loc, &b_l);
+        if (b && b->type == ast_type_error) {
+            valid = false;
+        }
 
         if (b) {
             ast_node_add(n, b);
@@ -1510,69 +1510,58 @@ bool parse_var_lseq(struct parse_state* ps, struct ast_node** root, struct locat
 
 /* var_rseq -> simple_expr var_rseq' */
 /* var_rseq' -> , simple_expr var_rseq' */
-bool parse_var_rseq(struct parse_state* ps,
-        struct ast_node** root,
-        struct location* loc,
-        struct list* l)
+struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, struct list* l)
 {
-    bool valid = true;
-
-    location_init(loc);
-
-    struct ast_node* var_rseq = NULL;
-    malloc_safe((void**)&var_rseq, sizeof(struct ast_node));
-    ast_node_init(var_rseq);
-    var_rseq->type = ast_type_var_rseq;
+    get_location(ps, loc);
 
     struct ast_node* a = NULL;
-    struct location* a_loc = NULL;
-    malloc_safe((void**)&a_loc, sizeof(struct location));
-    location_init(a_loc);
-    a = parse_simple_expr(ps, a_loc);
-    if (a && a->type == ast_type_error) {
-        valid = false;
+    struct location a_loc;
+    ast_node_create(&a);
+    a = parse_simple_expr(ps, &a_loc);
+    if (!a) {
+        return NULL;
     }
-    location_update(loc, a_loc);
-    list_add_item(l, a_loc);
 
-    if (a) {
-        ast_node_add(var_rseq, a);
-    } else {
-        valid = set_source_error(ps->el, a_loc, "expected an expression");
+    struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_var_rseq;
+
+    if (a && a->type == ast_type_error) {
+        n->type = ast_type_error;
     }
+
+    struct location* temp = NULL;
+    location_create(&temp);
+    *temp = a_loc;
+    list_add_item(l, temp);
+
+    ast_node_add(n, a);
 
     while (true) {
         int num;
-        valid = get_lookahead(ps, 1, &num) && valid;
+        get_lookahead(ps, 1, &num);
         struct token* t0 = get_token(&ps->lookahead, 0);
         if (!t0 || t0->type != token_comma) {
             break;
         }
 
         struct ast_node* b = NULL;
-        struct location* b_loc = NULL;
-        malloc_safe((void*)&b_loc, sizeof(struct location));
-        location_init(b_loc);
-        b = parse_simple_expr(ps, b_loc);
+        struct location b_loc;
+        b = parse_simple_expr(ps, &b_loc);
         if (b && b->type == ast_type_error) {
-            valid = false;
+            n->type = ast_type_error;
         }
-        location_update(loc, b_loc);
-        list_add_item(l, b_loc);
+
+        location_create(&temp);
+        *temp = b_loc;
+        list_add_item(l, temp);
         if (b) {
-            ast_node_add(var_rseq, b);
+            ast_node_add(n, b);
         } else {
-            valid = set_source_error(ps->el, b_loc, "expected an expression");
+            set_source_error(ps->el, &b_loc, "expected an expression");
+            n->type = ast_type_error;
         }
     }
 
-    if (valid) {
-        *root = var_rseq;
-    } else {
-        ast_node_destroy(var_rseq);
-    }
-
-    valid = location_default(ps, loc) && valid;
-
-    return valid;
+    return n;
 }
