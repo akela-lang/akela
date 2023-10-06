@@ -2,7 +2,7 @@
 * return ast_node in parse_stmts functions
   * parse_var_rseq [x]
   * parse_var_lseq [x]
-  * parse_var []
+  * parse_var [x]
   * return_nt []
   * struct_nt []
   * module_nt []
