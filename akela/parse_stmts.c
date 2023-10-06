@@ -32,7 +32,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_return(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_var(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, struct token_list* tl);
 struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, struct list* l);
@@ -213,7 +213,11 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		valid = struct_nt(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_return) {
-        valid = return_nt(ps, &n, loc) && valid;
+        n = parse_return(ps, loc);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
+
     } else if (t0 && t0->type == token_var) {
         n = parse_var(ps, loc);
         if (n->type == ast_type_error) {
@@ -1245,63 +1249,58 @@ bool struct_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	return valid;
 }
 
-/* return_nt -> return expr | return */
-bool return_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+/* pr-return -> return expr | return */
+struct ast_node* parse_return(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
-	struct ast_node* n = NULL;
+    get_location(ps, loc);
 
-	location_init(loc);
+	struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_return;
 
 	struct token* ret = NULL;
-	valid = match(ps, token_return, "expected return", &ret) && valid;
-	location_update_token(loc, ret);
-	/* test case: no test case needed */
+	if (!match(ps, token_return, "expected return", &ret)) {
+        assert(false);
+        /* test case: no test case needed */
+    }
 
 	struct ast_node* a = NULL;
 	struct location a_loc;
     a = parse_expr(ps, &a_loc);
 	if (a && a->type == ast_type_error) {
-        valid = false;
+        n->type = ast_type_error;
     }
-	location_update(loc, &a_loc);
 
-	valid = location_default(ps, loc) && valid;
-
-	if (valid) {
-		ast_node_create(&n);
-		n->type = ast_type_return;
+	if (a) {
 		ast_node_add(n, a);
-	} else {
-		ast_node_destroy(a);
 	}
 
-	if (valid) {
+	if (n->type != ast_type_error) {
 		if (a) {
 			if (!a->tu) {
-				valid = set_source_error(ps->el, &a_loc, "return expression has no value");
+				set_source_error(ps->el, &a_loc, "return expression has no value");
 				/* test case: test_parse_return_error_no_value */
+                n->type = ast_type_error;
 			} else {
 				n->tu = ast_node_copy(a->tu);
 				struct ast_node* fd = get_current_function(ps->st->top);
 				if (!fd) {
-					valid = set_source_error(ps->el, &ret->loc, "return statement outside of function");
+					set_source_error(ps->el, &ret->loc, "return statement outside of function");
 					/* test case: test_parse_return_error_outside_of_function */
+                    n->type = ast_type_error;
 				} else {
+                    bool valid = true;
 					check_return_type(ps, fd, n, &ret->loc, &valid);
 					/* test case: test_parse_return_error_type_does_not_match */
+                    if (!valid) {
+                        n->type = ast_type_error;
+                    }
 				}
 			}
 		}
 	}
 
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	return valid;
+	return n;
 }
 
 void location_item_destroy(struct location* loc)

@@ -3,7 +3,7 @@
   * parse_var_rseq [x]
   * parse_var_lseq [x]
   * parse_var [x]
-  * return_nt []
+  * return_nt [x]
   * struct_nt []
   * module_nt []
   * else_nt []
