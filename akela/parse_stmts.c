@@ -21,7 +21,6 @@
 bool separator(struct parse_state* ps, bool* has_separator, struct location* loc);
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -29,6 +28,7 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
+void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_else(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_module(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_struct(struct parse_state* ps, struct location* loc);
@@ -897,7 +897,10 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* elseif_nt */
 	/* allocate n{} */
 	struct location loc_elseif;
-	valid = valid && elseif_nt(ps, n, &loc_elseif);
+	parse_elseif(ps, n, &loc_elseif);
+    if (n->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_elseif);
 
 	/* else_nt */
@@ -930,27 +933,20 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	return valid;
 }
 
-/* elseif_nt -> elseif expr stmts elseif_nt | e */
-/* dynamic-output ps{} parent{} */
-bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc)
+/* parse_elseif -> elseif expr stmts parse_elseif | e */
+void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
-	bool valid = true;
-	int num;
+    get_location(ps, loc);
 
-	location_init(loc);
-
-	/* allocate ps{} */
-	valid = get_lookahead(ps, 1, &num) && valid;
-
-	struct token* t0 = get_token(&ps->lookahead, 0);
-	if (t0 && t0->type == token_elseif) {
-		/* allocate ps{} eit eit{} */
+	get_lookahead_one(ps);
+	struct token* t0 = ps->lookahead.head;
+	if (t0->type == token_elseif) {
 		struct token* eit = NULL;
-		valid = match(ps, token_elseif, "expecting elseif", &eit) && valid;
-		location_update_token(loc, eit);
-		/* test case: no test case neeeded */
+		if (!match(ps, token_elseif, "expecting elseif", &eit)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
 
-		/* allocate cb */
 		struct ast_node* cb = NULL;
 		ast_node_create(&cb);
 		cb->type = ast_type_conditional_branch;
@@ -960,43 +956,35 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location*
 		struct location loc_cond;
         cond = parse_expr(ps, &loc_cond);
 		if (cond && cond->type == ast_type_error) {
-            valid = false;
+            cb->type = ast_type_error;
+            parent->type = ast_type_error;
         }
-		location_update(loc, &loc_cond);
 
 		if (!cond) {
-			/* allocate ps{} */
-			valid = set_source_error(ps->el, &loc_cond, "expected condition after elseif");
+			set_source_error(ps->el, &loc_cond, "expected condition after elseif");
 			/* test case: test_parse_if_error_expected_elseif_expression */
+            cb->type = ast_type_error;
+            parent->type = ast_type_error;
 		} else {
-			/* transfer cond -> cb{} */
 			ast_node_add(cb, cond);
 		}
 
-
-		/* allocate ps{} node node{} */
 		struct ast_node* node = NULL;
 		struct location loc_node;
-		valid = stmts(ps, false, &node, &loc_node) && valid;
-		location_update(loc, &loc_node);
+		if (!stmts(ps, false, &node, &loc_node)) {
+            cb->type = ast_type_error;
+            parent->type = ast_type_error;
+        }
 
-		/* transfer node -> cb{} */
 		if (node) {
 			ast_node_add(cb, node);
 		}
 
-		/* transfer cb -> parent{} */
 		ast_node_add(parent, cb);
 
-		/* allocate ps{} parent{} */
 		struct location loc_elseif;
-		valid = elseif_nt(ps, parent, &loc_elseif) && valid;
-		location_update(loc, &loc_elseif);
+		parse_elseif(ps, parent, &loc_elseif);
 	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
 }
 
 /* parse_else -> else stmts | e */
