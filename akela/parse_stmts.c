@@ -22,7 +22,6 @@ bool separator(struct parse_state* ps, bool* has_separator, struct location* loc
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -30,6 +29,7 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
+struct ast_node* parse_else(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_module(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_struct(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_return(struct parse_state* ps, struct location* loc);
@@ -902,9 +902,15 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	/* else_nt */
 	/* allocate ps{] n{} */
-	struct location loc_else;
-	valid = valid && else_nt(ps, n, &loc_else);
-	location_update(loc, &loc_else);
+	struct location b_loc;
+    struct ast_node* b = NULL;
+	b = parse_else(ps, &b_loc);
+    if (b && b->type == ast_type_error) {
+        valid = false;
+    }
+    if (b) {
+        ast_node_add(n, b);
+    }
 
 	/* end */
 	/* allocate ps{} end end{} */
@@ -993,55 +999,41 @@ bool elseif_nt(struct parse_state* ps, struct ast_node* parent, struct location*
 	return valid;
 }
 
-/* else_nt -> else stmts | e */
-/* dynamic-output ps{} parent{} */
-bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* loc)
+/* parse_else -> else stmts | e */
+struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
-	int num;
+    get_location(ps, loc);
 
-	location_init(loc);
+    struct ast_node* n = NULL;
 
-	/* allocate ps{} */
-	valid = get_lookahead(ps, 1, &num) && valid;
-
-	struct token* t0 = get_token(&ps->lookahead, 0);
+	get_lookahead_one(ps);
+	struct token* t0 = ps->lookahead.head;
 	if (t0 && t0->type == token_else) {
-		/* else */
-		/* allocate ps{} et et{} */
-		struct token* et = NULL;
-		valid = match(ps, token_else, "expected else", &et) && valid;
-		location_update_token(loc, et);
-		/* test case: no test case needed */
+        ast_node_create(&n);
+        n->type = ast_type_default_branch;
 
-		/* destroy et et{} */
+		struct token* et = NULL;
+		if (!match(ps, token_else, "expected else", &et)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
+
 		token_destroy(et);
 		free(et);
 
-		/* allocate cb */
-		struct ast_node* cb = NULL;
-		ast_node_create(&cb);
-		cb->type = ast_type_default_branch;
-
 		/* stmts */
-		/* allocate node node{} */
-		struct ast_node* node = NULL;
-		struct location loc_node;
-		valid = stmts(ps, false, &node, &loc_node) && valid;
-		location_update(loc, &loc_node);
+		struct ast_node* a = NULL;
+		struct location a_loc;
+		if (!stmts(ps, false, &a, &a_loc)) {
+            n->type = ast_type_error;
+        }
 
-		/* transfer node -> cb{} */
-		if (node) {
-			ast_node_add(cb, node);
+		if (a) {
+			ast_node_add(n, a);
 		}
-
-		/* transfer cb -> parent{} */
-		ast_node_add(parent, cb);
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 /* parse_module -> module id stmts end */

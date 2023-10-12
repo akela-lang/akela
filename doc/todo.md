@@ -6,7 +6,7 @@
   * return_nt [x]
   * struct_nt [x]
   * module_nt [x]
-  * else_nt []
+  * else_nt [x]
   * elseif_nt []
   * if_nt []
   * function_finish []
