@@ -39,7 +39,7 @@ struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, st
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
-/* dynamic-output ps{} root root{} */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
@@ -170,7 +170,7 @@ bool separator(struct parse_state* ps, bool* has_separator, struct location* loc
 *       | expr
 *       | e
 */
-/* @param dynamic-output ps{} root root{} */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
@@ -250,6 +250,7 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	return valid;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
@@ -318,6 +319,7 @@ bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* l
 	return valid;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
@@ -584,6 +586,7 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 	return valid;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
@@ -646,6 +649,7 @@ bool function(struct parse_state* ps, struct ast_node** root, struct location* l
 	return valid;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
@@ -739,8 +743,6 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 	if (valid) {
 		struct symbol* search = environment_get_local(ps->st->top->prev, &id->value);
 		if (search) {
-			struct location loc;
-			get_token_location(id, &loc);
 			char* a;
 			buffer2array(&id->value, &a);
 			valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
@@ -749,8 +751,6 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 		} else {
 			struct symbol* sym = environment_get(ps->st->top, &id->value);
 			if (sym && sym->td) {
-				struct location loc;
-				get_token_location(id, &loc);
 				char* a;
 				buffer2array(&id->value, &a);
 				valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
@@ -788,6 +788,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 	return valid;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc)
 {
 	bool valid = true;
@@ -833,6 +834,7 @@ bool function_finish(struct parse_state* ps, struct ast_node* fd, struct locatio
 	return valid;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 {
 	bool valid = true;
@@ -934,6 +936,7 @@ bool if_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 }
 
 /* parse_elseif -> elseif expr stmts parse_elseif | e */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
     get_location(ps, loc);
@@ -988,6 +991,7 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
 }
 
 /* parse_else -> else stmts | e */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
 {
     get_location(ps, loc);
@@ -1025,6 +1029,7 @@ struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
 }
 
 /* parse_module -> module id stmts end */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 struct ast_node* parse_module(struct parse_state* ps, struct location* loc)
 {
     get_location(ps, loc);
@@ -1094,7 +1099,7 @@ struct ast_node* parse_module(struct parse_state* ps, struct location* loc)
 			struct buffer bf;
 			buffer_init(&bf);
 			buffer_copy_str(&bf, "Module");
-			struct symbol* sym = environment_get(ps->st->top, &bf);
+			sym = environment_get(ps->st->top, &bf);
 			buffer_destroy(&bf);
 			assert(sym);
 			assert(sym->td);
