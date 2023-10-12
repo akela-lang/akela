@@ -40,6 +40,7 @@
 * run code gen on first pass
 * get text interface for lexer
 * get char interface for lexer
+* remove ICU dependency
 * allow only English and Greek letters for identifiers
   * A-Z
   * a-z
