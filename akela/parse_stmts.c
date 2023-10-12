@@ -30,7 +30,7 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
-bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_module(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_struct(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_return(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_var(struct parse_state* ps, struct location* loc);
@@ -207,7 +207,10 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		valid = if_nt(ps, &n, loc) && valid;
 
 	} else if (t0 && t0->type == token_module) {
-		valid = module_nt(ps, &n, loc) && valid;
+		n = parse_module(ps, loc);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 	} else if (t0 && t0->type == token_struct) {
 		n = parse_struct(ps, loc);
@@ -1041,18 +1044,20 @@ bool else_nt(struct parse_state* ps, struct ast_node* parent, struct location* l
 	return valid;
 }
 
-/* module_nt -> module id stmts end */
-bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+/* parse_module -> module id stmts end */
+struct ast_node* parse_module(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
-	struct ast_node* n = NULL;
+    get_location(ps, loc);
 
-	location_init(loc);
+	struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_module;
 
 	struct token* module = NULL;
-	valid = match(ps, token_module, "expected module", &module) && valid;
-	location_update_token(loc, module);
-	/* test case: no test case needed */
+	if (!match(ps, token_module, "expected module", &module)) {
+        assert(false);
+        /* test case: no test case needed */
+    }
 
 	token_destroy(module);
 	free(module);
@@ -1064,14 +1069,16 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	ps->st->top = env;
 
 	struct token* id = NULL;
-	valid = match(ps, token_id, "expected identifier after module", &id) && valid;
-	location_update_token(loc, id);
-	/* test case: test_parse_module_expected_identifier */
+	if (!match(ps, token_id, "expected identifier after module", &id)) {
+        /* test case: test_parse_module_expected_identifier */
+        n->type = ast_type_error;
+    }
 
 	struct ast_node* a = NULL;
 	struct location loc_stmts;
-	valid = stmts(ps, true, &a, &loc_stmts) && valid;
-	location_update(loc, &loc_stmts);
+	if (!stmts(ps, true, &a, &loc_stmts)) {
+        n->type = ast_type_error;
+    }
 
 	transfer_module_symbols(env, saved, &id->value);
 
@@ -1079,34 +1086,30 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 	environment_destroy(env);
 
 	struct token* end = NULL;
-	valid = match(ps, token_end, "expected end", &end) && valid;
-	location_update_token(loc, end);
-	/* test case: test_parse_module_expected_end */
+	if (!match(ps, token_end, "expected end", &end)) {
+        /* test case: test_parse_module_expected_end */
+        n->type = ast_type_error;
+    }
 
 	token_destroy(end);
 	free(end);
 
-	if (valid) {
-		ast_node_create(&n);
-		n->type = ast_type_module;
-
+	if (n->type != ast_type_error) {
 		struct ast_node* id_node = NULL;
 		ast_node_create(&id_node);
 		id_node->type = ast_type_id;
 		buffer_copy(&id->value, &id_node->value);
 		ast_node_add(n, id_node);
-
 		ast_node_add(n, a);
-	} else {
-		ast_node_destroy(a);
 	}
 
-	if (valid) {
+	if (n->type != ast_type_error) {
 		struct symbol* sym = environment_get(ps->st->top, &id->value);
 		if (sym) {
 			buffer_finish(&id->value);
-			valid = set_source_error(ps->el, &id->loc, "variable already used: %s", id->value.buf);
-			/* test case: test_parse_module_duplicate_declaration */
+			set_source_error(ps->el, &id->loc, "variable already used: %s", id->value.buf);
+            /* test case: test_parse_module_duplicate_declaration */
+            n->type = ast_type_error;
 		} else {
 			struct buffer bf;
 			buffer_init(&bf);
@@ -1130,21 +1133,13 @@ bool module_nt(struct parse_state* ps, struct ast_node** root, struct location* 
 		}
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
 	token_destroy(id);
 	free(id);
 
-	return valid;
+	return n;
 }
 
-/* struct_np -> struct id struct_stmts end */
+/* parse_struct -> struct id struct_stmts end */
 /* struct_stmts -> declaration struct_stmts | e */
 /* struct_stmts' -> separator declaration | e */
 struct ast_node* parse_struct(struct parse_state* ps, struct location* loc)
