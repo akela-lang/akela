@@ -13,7 +13,7 @@ void comp_unit_init(struct comp_unit* cu)
 {
 	cu->valid = true;
 	cu->root = NULL;
-	compile_error_list_init(&cu->el);
+	error_list_init(&cu->el);
 	buffer_init(&cu->path);
 	symbol_table_init(&cu->st);
 	cu->next = NULL;
@@ -23,7 +23,7 @@ void comp_unit_init(struct comp_unit* cu)
 void comp_unit_destroy(struct comp_unit* cu)
 {
 	ast_node_destroy(cu->root);
-	compile_error_list_destroy(&cu->el);
+	error_list_destroy(&cu->el);
 	buffer_destroy(&cu->path);
 	symbol_table_destroy(&cu->st);
 }

@@ -29,7 +29,7 @@ set(AKELA_SO ${AKELA_BINARY}/akela.so)
 set(EXAMPLE_ADDITION ${CMAKE_SOURCE_DIR}/examples/addition.akela)
 
 set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
-set(ZINC_BINARY ${ZINC_DIR}/build/zinc)
+set(ZINC_BINARY ${ZINC_DIR}/cmake-build-debug/zinc)
 set(ZINC_A ${ZINC_BINARY}/libzinc.a)
 
 set(BASE_DIR ${CMAKE_SOURCE_DIR}/base)

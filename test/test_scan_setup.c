@@ -34,7 +34,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	/* transfer sd conv -> lc{} */
 	lookahead_char_init(lc, (input_getchar)string_getchar, sd, conv);
 
-	compile_error_list_init(el);
+	error_list_init(el);
 
 	struct symbol_table* st = NULL;
 	malloc_safe((void**)&st, sizeof(struct symbol_table));
@@ -55,7 +55,7 @@ void scan_teardown(struct scan_state* sns)
 	buffer_destroy(bf);
 	free(bf);
 	free(sd);
-	compile_error_list_destroy(el);
+	error_list_destroy(el);
 	conv_close(sns->lc->conv);
 	symbol_table_destroy(sns->st);
 	free(sns->st);
