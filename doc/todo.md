@@ -8,7 +8,7 @@
   * module_nt [x]
   * else_nt [x]
   * elseif_nt [x]
-  * if_nt []
+  * if_nt [x]
   * function_finish []
   * function_start []
   * function []
