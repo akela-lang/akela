@@ -9,7 +9,7 @@
   * else_nt [x]
   * elseif_nt [x]
   * if_nt [x]
-  * function_finish []
+  * parse_function_finish [x]
   * function_start []
   * function []
   * for_iteration []
@@ -19,6 +19,7 @@
   * stmt []
   * separator []
   * stmts []
+* return valid in check_return_type
 * return ast_node in parse_types functions
 * return ast_node in parse function
 * parse_compound

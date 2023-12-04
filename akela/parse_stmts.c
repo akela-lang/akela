@@ -26,7 +26,7 @@ bool for_range(struct parse_state* ps, struct ast_node* parent, struct location*
 bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
+void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 struct ast_node* parse_if(struct parse_state* ps, struct location* loc);
 void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_else(struct parse_state* ps, struct location* loc);
@@ -622,9 +622,14 @@ bool function(struct parse_state* ps, struct ast_node** root, struct location* l
         valid = function_start(ps, &n, &loc_start) && valid;
         location_update(loc, &loc_start);
 
-        struct location loc_finish;
-        valid = function_finish(ps, n, &loc_finish) && valid;
-        location_update(loc, &loc_finish);
+        if (n) {
+            struct location loc_finish;
+            parse_function_finish(ps, n, &loc_finish);
+            if (n->type == ast_type_error) {
+                valid = false;
+            }
+            location_update(loc, &loc_finish);
+        }
 
         /* transfer saved -> ps->st->top */
         ps->st->top = saved;
@@ -792,49 +797,40 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc)
+void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc)
 {
-	bool valid = true;
+	get_location(ps, loc);
 
-	location_init(loc);
-
-	if (!fd) {
-		valid = false;
-	}
-
-	/* allocate ps{} stmts_node stmts_node{} */
 	set_current_function(ps->st->top, fd);
 	struct ast_node* stmts_node = NULL;
 	struct location loc_stmts;
-	valid = stmts(ps, true, &stmts_node, &loc_stmts) && valid;
+	if (!stmts(ps, true, &stmts_node, &loc_stmts)) {
+        fd->type = ast_type_error;
+    }
 	location_update(loc, &loc_stmts);
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
-	valid = match(ps, token_end, "expected end", &end) && valid;
-	location_update_token(loc, end);
-	/* test case: test_parse_function_error_expected_end */
+	if (!match(ps, token_end, "expected end", &end)) {
+        /* test case: test_parse_function_error_expected_end */
+        fd->type = ast_type_error;
+    }
 
 	/* finish building nodes */
-	if (valid) {
-		/* transfer stmts_node -> n{} */
+	if (fd->type != ast_type_error) {
 		ast_node_add(fd, stmts_node);
-
-	} else {
-		ast_node_destroy(stmts_node);
 	}
 
-	/* destroy end end{} */
 	token_destroy(end);
 	free(end);
 
-	if (valid) {
-		check_return_type(ps, fd, stmts_node, &loc_stmts, &valid);
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+    if (fd->type != ast_type_error) {
+        bool valid = true;
+        check_return_type(ps, fd, stmts_node, &loc_stmts, &valid);
+        if (!valid) {
+            fd->type = ast_type_error;
+        }
+    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
