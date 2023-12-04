@@ -25,7 +25,7 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_function_start(struct parse_state* ps, struct location* loc);
 void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 struct ast_node* parse_if(struct parse_state* ps, struct location* loc);
 void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -619,7 +619,10 @@ bool function(struct parse_state* ps, struct ast_node** root, struct location* l
         ps->st->top = env;
 
         struct location loc_start;
-        valid = function_start(ps, &n, &loc_start) && valid;
+        n = parse_function_start(ps, &loc_start);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
         location_update(loc, &loc_start);
 
         if (n) {
@@ -658,80 +661,76 @@ bool function(struct parse_state* ps, struct ast_node** root, struct location* l
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool function_start(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_function_start(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
+    get_location(ps, loc);
+
 	struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_function;
 
-	location_init(loc);
-
-	/* allocate ps{} id id{} */
 	struct token* id = NULL;
-	valid = match(ps, token_id, "expecting identifier", &id) && valid;
-	location_update_token(loc, id);
-	/* test case: no test case needed */
+	if (!match(ps, token_id, "expecting identifier", &id)) {
+        /* test case: no test case needed */
+        n->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
-	/* allocate ps{} lp lp{} */
 	struct token* lp = NULL;
-	valid = match(ps, token_left_paren, "expected left parenthesis", &lp) && valid;
-	location_update_token(loc, lp);
-	/* test case: test_parse_function_error_expected_left_parenthesis */
+	if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
+        /* test case: test_parse_function_error_expected_left_parenthesis */
+        n->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
-	/* allocate ps{} dseq_node dseq_node{} */
 	struct ast_node* dseq_node = NULL;
 	struct location loc_dseq;
-	valid = dseq(ps, &dseq_node, &loc_dseq) && valid;
-	location_update(loc, &loc_dseq);
+	if (!dseq(ps, &dseq_node, &loc_dseq)) {
+        n->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
-	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
-	valid = match(ps, token_right_paren, "expected right parenthesis", &rp) && valid;
-	location_update_token(loc, rp);
-	/* test case: test_parse_function_error_expected_right_parenthesis */
+	if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
+        /* test case: test_parse_function_error_expected_right_parenthesis */
+        n->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
 	struct ast_node* dret_node = NULL;
 	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
+	get_lookahead_one(ps);
 	struct token* next = get_token(&ps->lookahead, 0);
 	if (next && next->type == token_double_colon) {
 		struct token* dc = NULL;
-		valid = match(ps, token_double_colon, "expecting double colon", &dc) && valid;
-		location_update_token(loc, dc);
+		if (!match(ps, token_double_colon, "expecting double colon", &dc)) {
+            /* test case: no test case needed */
+            n->type = ast_type_error;
+        }
 		token_destroy(dc);
 		free(dc);
-		/* test case: no test case needed */
 
-        valid = consume_newline(ps) && valid;
+        consume_newline(ps);
 
 		struct location loc_ret;
-		valid = parse_type(ps, NULL, &dret_node, &loc_ret) && valid;
-		location_update(loc, &loc_ret);
+		if (!parse_type(ps, NULL, &dret_node, &loc_ret)) {
+            n->type = ast_type_error;
+        }
 	}
 
 	/* start building nodes */
-	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-		n->type = ast_type_function;
-
-		/* allocate a a{} */
+	if (n->type != ast_type_error) {
 		struct ast_node* a;
 		ast_node_create(&a);
 		a->type = ast_type_id;
 		buffer_copy(&id->value, &a->value);
 
-		/* tranfer a -> n{} */
 		ast_node_add(n, a);
 
-		/* transfer dseq_node -> n{} */
 		ast_node_add(n, dseq_node);
 
 		struct ast_node* b;
@@ -748,12 +747,13 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 		ast_node_destroy(dseq_node);
 	}
 
-	if (valid) {
+	if (n->type != ast_type_error) {
 		struct symbol* search = environment_get_local(ps->st->top->prev, &id->value);
 		if (search) {
 			char* a;
 			buffer2array(&id->value, &a);
-			valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
+			set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
+            n->type = ast_type_error;
 			free(a);
 			/* test case: test_parse_function_error_duplicate_declaration */
 		} else {
@@ -761,7 +761,8 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 			if (sym && sym->td) {
 				char* a;
 				buffer2array(&id->value, &a);
-				valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
+				set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
+                n->type = ast_type_error;
 				free(a);
 				/* test case: test_parse_function_error_identifier_reserved */
 			} else {
@@ -785,15 +786,7 @@ bool function_start(struct parse_state* ps, struct ast_node** root, struct locat
 	token_destroy(rp);
 	free(rp);
 
-	valid = location_default(ps, loc) && valid;
-	
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	return valid;
+	return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

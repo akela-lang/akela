@@ -10,7 +10,7 @@
   * elseif_nt [x]
   * if_nt [x]
   * parse_function_finish [x]
-  * function_start []
+  * parse_function_start [x]
   * function []
   * for_iteration []
   * for_range []
@@ -19,9 +19,9 @@
   * stmt []
   * separator []
   * stmts []
-* return valid in check_return_type
 * return ast_node in parse_types functions
 * return ast_node in parse function
+* return valid in check_return_type
 * parse_compound
 * parse_assign_or_expr
 * combine function and function_anonymous
