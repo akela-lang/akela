@@ -35,7 +35,6 @@ void test_ast1()
 	expect_str(&b->value, "b", "b");
 
 	ast_node_destroy(n);
-
 }
 
 
