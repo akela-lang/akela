@@ -21,20 +21,17 @@ set(AKELA_DIR ${CMAKE_SOURCE_DIR})
 set(AKELA_BINARY ${AKELA_DIR}/build/akela)
 set(AKELA_A${AKELA_BINARY}/akela.a)
 set(EXAMPLE_ADDITION ${CMAKE_SOURCE_DIR}/examples/addition.akela)
-
-set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
-set(ZINC_BINARY ${ZINC_DIR}/cmake-build-debug/zinc)
-set(ZINC_A ${ZINC_BINARY}/libzinc.a)
-
 set(BASE_DIR ${CMAKE_SOURCE_DIR}/base)
 set(AKELA_MATH ${BASE_DIR}/math.akela)
 
 # ZINC
+set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
+set(ZINC_BINARY ${ZINC_DIR}/cmake-build-debug/zinc)
+set(ZINC_A ${ZINC_BINARY}/libzinc.a)
 add_library(zinc STATIC IMPORTED)
 set_target_properties(zinc PROPERTIES
     IMPORTED_LOCATION ${ZINC_A}
 )
-
 include_directories(${ZINC_DIR} .)
 
 # LLVM
