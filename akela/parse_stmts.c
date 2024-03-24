@@ -24,8 +24,8 @@ bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* l
 bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-bool function(struct parse_state* ps, struct ast_node** root, struct location* loc);
-struct ast_node* parse_function_start(struct parse_state* ps, struct location* loc);
+struct ast_node* parse_function(struct parse_state* ps, struct location* loc);
+void parse_function_start(struct parse_state* ps, struct ast_node* n, struct location* loc);
 void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 struct ast_node* parse_if(struct parse_state* ps, struct location* loc);
 void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -201,7 +201,10 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
-		valid = function(ps, &n, loc) && valid;
+		n = parse_function(ps, loc);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 	} else if (t0 && t0->type == token_if) {
 		n = parse_if(ps, loc);
@@ -590,84 +593,64 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool function(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
+    get_location(ps, loc);
+
     struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_function;
 
 	location_init(loc);
 
     struct token* f = NULL;
-    valid = match(ps, token_function, "expected function", &f) && valid;
-    location_update_token(loc, f);
+    if (!match(ps, token_function, "expected function", &f)) {
+        n->type = ast_type_error;
+    }
     token_destroy(f);
     free(f);
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
-    int num;
-    valid = get_lookahead(ps, 1, &num) && valid;
+    get_lookahead_one(ps);
     struct token* t0 = get_token(&ps->lookahead, 0);
     if (t0 && t0->type == token_id) {
-        /* shared ps{top} -> saved */
         struct environment* saved = ps->st->top;
 
-        /* allocate env env{} */
         struct environment* env = NULL;
         malloc_safe((void**)&env, sizeof(struct environment));
         environment_init(env, saved);
         ps->st->top = env;
 
         struct location loc_start;
-        n = parse_function_start(ps, &loc_start);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
-        location_update(loc, &loc_start);
+        parse_function_start(ps, n, &loc_start);
 
         if (n) {
             struct location loc_finish;
             parse_function_finish(ps, n, &loc_finish);
             if (n->type == ast_type_error) {
-                valid = false;
+                n->type = ast_type_error;
             }
-            location_update(loc, &loc_finish);
         }
 
-        /* transfer saved -> ps->st->top */
         ps->st->top = saved;
 
-        /* destroy env env{} */
         environment_destroy(env);
     } else if (t0 && t0->type == token_left_paren) {
         struct location af_loc;
-        n = parse_anonymous_function(ps, &af_loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
+        parse_anonymous_function(ps, n, &af_loc);
     } else {
-        valid = set_source_error(ps->el, loc, "expected function name or parenthesis");
+        n->type = ast_type_error;
+        set_source_error(ps->el, loc, "expected function name or parenthesis");
     }
 
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-struct ast_node* parse_function_start(struct parse_state* ps, struct location* loc)
+void parse_function_start(struct parse_state* ps, struct ast_node* n, struct location* loc)
 {
     get_location(ps, loc);
-
-	struct ast_node* n = NULL;
-    ast_node_create(&n);
-    n->type = ast_type_function;
 
 	struct token* id = NULL;
 	if (!match(ps, token_id, "expecting identifier", &id)) {
@@ -785,8 +768,6 @@ struct ast_node* parse_function_start(struct parse_state* ps, struct location* l
 	free(lp);
 	token_destroy(rp);
 	free(rp);
-
-	return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

@@ -11,7 +11,7 @@
   * if_nt [x]
   * parse_function_finish [x]
   * parse_function_start [x]
-  * function []
+  * function [x]
   * for_iteration []
   * for_range []
   * for_nt []

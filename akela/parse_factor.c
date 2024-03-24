@@ -40,7 +40,7 @@ struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
         consume_newline(ps);
         token_destroy(f);
         free(f);
-        n = parse_anonymous_function(ps, loc);
+        n = parse_anonymous_function(ps, NULL, loc);
 
 	} else if (t0 && t0->type == token_not) {
 		n = parse_not(ps, loc);
@@ -69,10 +69,11 @@ struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-struct ast_node* parse_anonymous_function(struct parse_state* ps, struct location* loc)
+struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_node* n, struct location* loc)
 {
-	struct ast_node* n = NULL;
-    ast_node_create(&n);
+    if (!n) {
+        ast_node_create(&n);
+    }
     n->type = ast_type_anonymous_function;
 
     if (!get_location(ps, loc)) {
