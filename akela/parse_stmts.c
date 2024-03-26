@@ -22,8 +22,8 @@ bool separator(struct parse_state* ps, bool* has_separator, struct location* loc
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
+void parse_for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
+void parse_for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_function(struct parse_state* ps, struct location* loc);
 void parse_function_start(struct parse_state* ps, struct ast_node* n, struct location* loc);
 void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
@@ -365,8 +365,11 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 			ast_node_add(n, dec);
 		}
 		struct location loc_range;
-		valid = for_range(ps, n, &loc_range) && valid;
+		parse_for_range(ps, n, &loc_range);
 		location_update(loc, &loc_range);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 	} else if (t0 && t0->type == token_in) {
 		ast_node_create(&n);
@@ -375,7 +378,10 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 			ast_node_add(n, dec);
 		}
 		struct location loc_iteration;
-		valid = for_iteration(ps, n, &loc_iteration) && valid;
+		parse_for_iteration(ps, n, &loc_iteration);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 		location_update(loc, &loc_iteration);
 
 	} else {
@@ -423,162 +429,147 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 }
 
 /* for_range -> for id = expr:expr stmts end */
-/* dynamic-output ps{} root root{} */
-bool for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc)
+void parse_for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
-	bool valid = true;
+    get_location(ps, loc);
 
-	location_init(loc);
-
-	/* allocate ps{} equal equal{} */
 	struct token* equal = NULL;
-	valid = match(ps, token_equal, "expected equal", &equal) && valid;
-	location_update_token(loc, equal);
-	/* test case: no test case needed */
+	if (!match(ps, token_equal, "expected equal", &equal)) {
+        /* test case: no test case needed */
+        parent->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
 	/* start expr */
-	/* allocate b b{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;
     a = parse_expr(ps, &loc_a);
 	if (a && a->type == ast_type_error) {
-        valid = false;
+        parent->type = ast_type_error;
     }
-	location_update(loc, &loc_a);
 
 	if (!a) {
-		/* allocate ps{} */
-		valid = set_source_error(ps->el, &loc_a, "expected range start");
+		set_source_error(ps->el, &loc_a, "expected range start");
+        parent->type = ast_type_error;
 		/* test case: test_parse_for_error_expected_range_start */
 	}
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
-	/* allocate ps{} colon conlon{} */
 	struct token* colon = NULL;
-	valid = match(ps, token_colon, "expected colon", &colon) && valid;
-	location_update_token(loc, colon);
-	/* test case: test_parse_for_error_expected_colon */
+	if (!match(ps, token_colon, "expected colon", &colon)) {
+        /* test case: test_parse_for_error_expected_colon */
+        parent->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
 	/* end expr */
-	/* allocate ps{} c c{} */
 	struct ast_node* b = NULL;
 	struct location loc_b;
     b = parse_expr(ps, &loc_b);
 	if (b && b->type == ast_type_error) {
-        valid = false;
+        parent->type = ast_type_error;
     }
-	location_update(loc, &loc_b);
 
 	if (!b) {
-		/* allocate ps{} */
-		valid = set_source_error(ps->el, &loc_b, "expected range end");
+		set_source_error(ps->el, &loc_b, "expected range end");
+        parent->type = ast_type_error;
 		/* test case: test_parse_for_error_expected_range_end */
 	}
 
-	if (valid) {
-		ast_node_add(parent, a);
+	if (a) {
+        ast_node_add(parent, a);
+    }
+    if (b) {
 		ast_node_add(parent, b);
-	} else {
-		ast_node_destroy(a);
-		ast_node_destroy(b);
 	}
 
-	/* destroy end end{} */
 	token_destroy(equal);
 	free(equal);
 	token_destroy(colon);
 	free(colon);
 
-	if (valid) {
+	if (parent->type != ast_type_error) {
 		assert(a);
 		if (!a->tu) {
-			valid = set_source_error(ps->el, &loc_a, "start range expression has no value");
+			set_source_error(ps->el, &loc_a, "start range expression has no value");
+            parent->type = ast_type_error;
 			/* test case: test_parse_for_range_error_start_no_value */
 		} else {
 			assert(a->tu->td);
 			if (!is_numeric(a->tu->td)) {
-				valid = set_source_error(ps->el, &loc_a, "start range expression is not numeric");
+				set_source_error(ps->el, &loc_a, "start range expression is not numeric");
+                parent->type = ast_type_error;
 				/* test case: test_parse_for_range_error_start_not_numeric */
 			}
 		}
 
 		assert(b);
 		if (!b->tu) {
-			valid = set_source_error(ps->el, &loc_b, "end range expression has no value");
+			set_source_error(ps->el, &loc_b, "end range expression has no value");
+            parent->type = ast_type_error;
 			/* test case: test_parse_for_range_error_end_no_value */
 		} else {
 			assert(b->tu->td);
 			if (!is_numeric(b->tu->td)) {
-				valid = set_source_error(ps->el, &loc_b, "end range expression is not numeric");
+				set_source_error(ps->el, &loc_b, "end range expression is not numeric");
+                parent->type = ast_type_error;
 				/* test case: test_parse_for_range_error_end_not_numeric */
 			}
 		}
 	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
 }
 
 /* for_iteration -> for id in expr stmts end */
 /* dynamic-output ps{} root root{} */
-bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc)
+void parse_for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
-	bool valid = true;
+	get_location(ps, loc);
 
-	location_init(loc);
-
-	/* allocate ps{} in in{} */
 	struct token* in = NULL;
-	valid = match(ps, token_in, "expecting in", &in) && valid;
-	location_update_token(loc, in);
-	/* test case: no test case necessary */
+	if (!match(ps, token_in, "expecting in", &in)) {
+        /* test case: no test case necessary */
+        parent->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
 	/* expr */
-	/* allocate ps{} b b{} */
 	struct ast_node* list = NULL;
 	struct location loc_list;
     list = parse_expr(ps, &loc_list);
 	if (list && list->type == ast_type_error) {
-        valid = false;
+        parent->type = ast_type_error;
     }
-	location_update(loc, &loc_list);
 
 	if (!list) {
 		set_source_error(ps->el, &loc_list, "expected for iteration expression");
-		valid = false;
-		/* test case: test_parse_for_error_expected_iteration_expression */
+        parent->type = ast_type_error;
+        /* test case: test_parse_for_error_expected_iteration_expression */
 	}
 
-	if (valid) {
+	if (parent->type != ast_type_error) {
 		ast_node_add(parent, list);
-	} else {
-		ast_node_destroy(list);
-	}
-
-	if (valid) {
 		struct ast_node* element = ast_node_get(parent, 0);
 		struct ast_node* element_tu = ast_node_get(element, 1);
 
 		struct ast_node* list_tu = list->tu;
 
 		if (!list_tu) {
-			valid = set_source_error(ps->el, &loc_list, "iteration expression has no value");
+			set_source_error(ps->el, &loc_list, "iteration expression has no value");
+            parent->type = ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_value */
 		} else if (!list_tu->head) {
-			valid = set_source_error(ps->el, &loc_list, "iteration expression has no child element");
+			set_source_error(ps->el, &loc_list, "iteration expression has no child element");
+            parent->type = ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
 			struct ast_node* element_tu2 = ast_node_get(list_tu, 0);
 			if (!type_use_can_cast(element_tu2, element_tu)) {
-				valid = set_source_error(ps->el, &loc_list, "cannot cast list element");
+                parent->type = ast_type_error;
+				set_source_error(ps->el, &loc_list, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
 		}
@@ -586,10 +577,6 @@ bool for_iteration(struct parse_state* ps, struct ast_node* parent, struct locat
 
 	token_destroy(in);
 	free(in);
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
