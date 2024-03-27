@@ -21,7 +21,7 @@
 bool separator(struct parse_state* ps, bool* has_separator, struct location* loc);
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
 bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_for(struct parse_state* ps, struct location* loc);
 void parse_for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 void parse_for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_function(struct parse_state* ps, struct location* loc);
@@ -197,7 +197,10 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	/* for */
 	} else if (t0 && t0->type == token_for) {
-		valid = for_nt(ps, &n, loc) && valid;
+		n = parse_for(ps, loc);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
@@ -326,19 +329,19 @@ bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* l
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
 	int num;
 	struct ast_node* n = NULL;
+    ast_node_create(&n);
 
-	location_init(loc);
+    get_location(ps, loc);
 
-	/* allocate ps{} f f{} */
 	struct token* f = NULL;
-	valid = match(ps, token_for, "expected for", &f) && valid;
-	location_update_token(loc, f);
-	/* test case: test cases not needed */
+	if (!match(ps, token_for, "expected for", &f)) {
+        /* test case: test cases not needed */
+        n->type = ast_type_error;
+    }
 
 	struct environment* saved = ps->st->top;
 	struct environment* env = NULL;
@@ -346,76 +349,62 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	environment_init(env, saved);
 	ps->st->top = env;
 
-    valid = consume_newline(ps) && valid;
+    consume_newline(ps);
 
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
-	valid = declaration(ps, true, &dec, &loc_dec) && valid;
-	location_update(loc, &loc_dec);
+	if (!declaration(ps, true, &dec, &loc_dec)) {
+        n->type = ast_type_error;
+    }
 
-    valid = consume_newline(ps) && valid;
+    if (dec) {
+        ast_node_add(n, dec);
+    }
 
-	valid = get_lookahead(ps, 1, &num) && valid;
+    consume_newline(ps);
+
+	get_lookahead_one(ps);
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	if (t0 && t0->type == token_equal) {
-		ast_node_create(&n);
-		n->type = ast_type_for_range;
-		if (dec) {
-			ast_node_add(n, dec);
-		}
+        if (n->type == ast_type_none) {
+            n->type = ast_type_for_range;
+        }
 		struct location loc_range;
 		parse_for_range(ps, n, &loc_range);
 		location_update(loc, &loc_range);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_in) {
-		ast_node_create(&n);
-		n->type = ast_type_for_iteration;
-		if (dec) {
-			ast_node_add(n, dec);
-		}
+        if (n->type == ast_type_none) {
+            n->type = ast_type_for_iteration;
+        }
 		struct location loc_iteration;
 		parse_for_iteration(ps, n, &loc_iteration);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
-		location_update(loc, &loc_iteration);
 
 	} else {
 		struct location loc_error;
 		location_init(&loc_error);
 		get_parse_location(ps, &loc_error);
-		valid = set_source_error(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
+		set_source_error(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
+        n->type = ast_type_error;
 		/* test case: test_parse_for_error_after_declaration */
 	}
 
 	struct ast_node* c = NULL;
 	struct location loc_stmts;
-	valid = stmts(ps, true, &c, &loc_stmts) && valid;
-	location_update(loc, &loc_stmts);
+	if (!stmts(ps, true, &c, &loc_stmts)) {
+        n->type = ast_type_error;
+    }
 
-	/* allocate ps{} end end{} */
 	struct token* end = NULL;
-	valid = match(ps, token_end, "expected end", &end) && valid;
-	location_update_token(loc, end);
-	/* test case: test_parse_for_error_expected_end */
+	if (!match(ps, token_end, "expected end", &end)) {
+        /* test case: test_parse_for_error_expected_end */
+        n->type = ast_type_error;
+    }
 
-	valid = location_default(ps, loc) && valid;
-
-	if (valid) {
-		ast_node_add(n, c);
-	}
-
-
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(dec);
-		ast_node_destroy(c);
-	}
+    if (c) {
+        ast_node_add(n, c);
+    }
 
 	token_destroy(f);
 	free(f);
@@ -425,7 +414,7 @@ bool for_nt(struct parse_state* ps, struct ast_node** root, struct location* loc
 	ps->st->top = saved;
 	environment_destroy(env);
 
-	return valid;
+	return n;
 }
 
 /* for_range -> for id = expr:expr stmts end */
