@@ -20,7 +20,7 @@
 
 bool separator(struct parse_state* ps, bool* has_separator, struct location* loc);
 bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
-bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_while(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_for(struct parse_state* ps, struct location* loc);
 void parse_for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 void parse_for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -193,7 +193,10 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 
 	/* while */
 	if (t0 && t0->type == token_while) {
-		valid = while_nt(ps, &n, loc) && valid;
+		n = parse_while(ps, loc);
+        if (n->type == ast_type_error) {
+            valid = false;
+        }
 
 	/* for */
 	} else if (t0 && t0->type == token_for) {
@@ -260,72 +263,56 @@ bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool while_nt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_while(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
+    get_location(ps, loc);
+
 	struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_while;
 
-	location_init(loc);
-
-	/* allocate ps{} */
 	struct token* whl = NULL;
-	valid = match(ps, token_while, "expecting while", &whl) && valid;
-	location_update_token(loc, whl);
+	if (!match(ps, token_while, "expecting while", &whl)) {
+        n->type = ast_type_error;
+    }
 
-	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_expr;
     a = parse_expr(ps, &loc_expr);
 	if (a && a->type == ast_type_error) {
-        valid = false;
+        n->type = ast_type_error;
     }
-	location_update(loc, &loc_expr);
 
-	if (!a) {
-		/* allocate ps{} */
-		valid = set_source_error(ps->el, &loc_expr, "expected expression after while");
+    if (a) {
+        ast_node_add(n, a);
+    } else {
+		set_source_error(ps->el, &loc_expr, "expected expression after while");
+        n->type = ast_type_error;
 		/* test case: test_parse_while_error_expected_expression */
 	}
 
-	/* allocate ps{} b b{} */
 	struct ast_node* b = NULL;
 	struct location loc_stmts;
-	valid = stmts(ps, false, &b, &loc_stmts) && valid;
-	location_update(loc, &loc_stmts);
+	if (!stmts(ps, false, &b, &loc_stmts)) {
+        n->type = ast_type_error;
+    }
 
-	/* allocate ps{} end end{} */
+    if (b) {
+        ast_node_add(n, b);
+    }
+
 	struct token* end = NULL;
-	valid = match(ps, token_end, "expected end", &end) && valid;
-	location_update_token(loc, end);
-	/* test case: test_parse_while_error_expected_end */
-
-	if (valid) {
-		/* allocate n */
-		ast_node_create(&n);
-		n->type = ast_type_while;
-
-		/* transfer a -> n{} */
-		ast_node_add(n, a);
-
-		/* transfer b -> n{} */
-		ast_node_add(n, b);
-
-		/* transfer n -> root */
-		*root = n;
-
-	} else {
-		ast_node_destroy(a);
-		ast_node_destroy(b);
-	}
+	if (!match(ps, token_end, "expected end", &end)) {
+        n->type = ast_type_error;
+        /* test case: test_parse_while_error_expected_end */
+    }
 
 	token_destroy(whl);
 	free(whl);
 	token_destroy(end);
 	free(end);
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
