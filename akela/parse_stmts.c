@@ -19,7 +19,7 @@
 #include "zinc/list.h"
 
 bool separator(struct parse_state* ps, bool* has_separator, struct location* loc);
-bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc);
+struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_while(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_for(struct parse_state* ps, struct location* loc);
 void parse_for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
@@ -70,7 +70,10 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;
-	valid = stmt(ps, &a, &loc_a) && valid;
+	a = parse_stmt(ps, &loc_a);
+    if (a && a->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_a);
 
 	/* transfer a -> n{} */
@@ -92,7 +95,10 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 		/* allocate ps{} a a{} */
 		struct ast_node* b = NULL;
 		struct location loc_b;
-		valid = stmt(ps, &b, &loc_b) && valid;
+		b = parse_stmt(ps, &loc_b);
+        if (b && b->type == ast_type_error) {
+            valid = false;
+        }
 		location_update(loc, &loc_b);
 
 		if (b) {
@@ -171,95 +177,59 @@ bool separator(struct parse_state* ps, bool* has_separator, struct location* loc
 *       | e
 */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool stmt(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
-	int num;
+
+    get_location(ps, loc);
 
 	location_init(loc);
 
 	/* allocate ps{} */
-	valid = get_lookahead(ps, 2, &num) && valid;
+	get_lookahead_one(ps);
 
-	/* e */
-	if (num <= 0) {
-		valid = valid && location_default(ps, loc) && valid;
-		return valid;
+    struct token* t0 = get_token(&ps->lookahead, 0);
+
+    /* e */
+	if (!t0) {
+		return n;
 	}
 
-
-	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	/* while */
 	if (t0 && t0->type == token_while) {
 		n = parse_while(ps, loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	/* for */
 	} else if (t0 && t0->type == token_for) {
 		n = parse_for(ps, loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 		/* function word (seq) stmts end */
 	} else if (t0 && t0->type == token_function) {
 		n = parse_function(ps, loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_if) {
 		n = parse_if(ps, loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_module) {
 		n = parse_module(ps, loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_struct) {
 		n = parse_struct(ps, loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	} else if (t0 && t0->type == token_return) {
         n = parse_return(ps, loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
     } else if (t0 && t0->type == token_var) {
         n = parse_var(ps, loc);
-        if (n->type == ast_type_error) {
-            valid = false;
-        }
 
 	/* expr */
 	} else {
 		/* allocate ps{} n n{} */
         n = parse_expr(ps, loc);
-        if (n && n->type == ast_type_error) {
-            valid = false;
-        }
 	}
 
-	valid = valid && location_default(ps, loc) && valid;
-
-	/* transfer n -> root */
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-	return valid;
+    return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
