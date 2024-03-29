@@ -18,7 +18,7 @@
 #include <assert.h>
 #include "zinc/list.h"
 
-bool separator(struct parse_state* ps, bool* has_separator, struct location* loc);
+void parse_separator(struct parse_state* ps, bool* has_separator, struct location* loc);
 struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_while(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_for(struct parse_state* ps, struct location* loc);
@@ -86,7 +86,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 		/* allocate ps{} */
 		bool has_separator = false;
 		struct location loc_sep;
-		valid = separator(ps, &has_separator, &loc_sep) && valid;
+		parse_separator(ps, &has_separator, &loc_sep);
 
 		if (!has_separator) {
 			break;
@@ -132,17 +132,14 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 /* separator -> \n | ; */
 /* dynamic-output ps{} */
 /* dynamic-temp sep sep{} */
-bool separator(struct parse_state* ps, bool* has_separator, struct location* loc)
+void parse_separator(struct parse_state* ps, bool* has_separator, struct location* loc)
 {
-	bool valid = true;
 	enum token_enum type;
-	int num;
 	*has_separator = false;
 
-	location_init(loc);
+    get_location(ps, loc);
 
-	/* allocate ps{} */
-	valid = get_lookahead(ps, 1, &num) && valid;
+	get_lookahead_one(ps);
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	if (t0 && t0->type == token_newline) {
@@ -152,22 +149,17 @@ bool separator(struct parse_state* ps, bool* has_separator, struct location* loc
 		type = token_semicolon;
 		*has_separator = true;
 	} else {
-		return valid;
+		return;
 	}
 
-	/* allocate ps{} sep sep{} */
 	struct token* sep = NULL;
-	valid = match(ps, type, "expecting newline or semicolon", &sep) && valid;
-	location_update_token(loc, sep);
-	/* test case: no test case necessary */
+	if (!match(ps, type, "expecting newline or semicolon", &sep)) {
+        assert(false);
+        /* test case: no test case necessary */
+    }
 
-	/* destroy sep sep{} */
 	token_destroy(sep);
 	free(sep);
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
 }
 
 /**
@@ -1041,9 +1033,7 @@ struct ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 	while (true) {
 		bool has_separator;
 		struct location sep_loc;
-		if (!separator(ps, &has_separator, &sep_loc)) {
-            n->type = ast_type_error;
-        }
+		parse_separator(ps, &has_separator, &sep_loc);
 
 		if (!has_separator) {
 			break;

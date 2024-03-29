@@ -17,7 +17,7 @@
   * for_nt [x]
   * while_nt [x]
   * parse_stmt [x]
-  * separator []
+  * separator [x]
   * stmts []
 * return ast_node in parse_types functions
 * return ast_node in parse function
