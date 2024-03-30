@@ -26,7 +26,7 @@ enum result ast_set_names(char** names)
 	names[ast_type_minus] = "minus";
 	names[ast_type_mult] = "mult";
 	names[ast_type_divide] = "divide";
-	names[ast_type_stmts] = "stmts";
+	names[ast_type_stmts] = "parse_stmts";
 	names[ast_type_function] = "function";
 	names[ast_type_dseq] = "dseq";
 	names[ast_type_dret] = "dret";

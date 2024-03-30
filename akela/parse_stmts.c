@@ -40,50 +40,40 @@ struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, st
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, struct location* loc)
+struct ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
 	struct ast_node* last = NULL;
 
-	location_init(loc);
+    get_location(ps, loc);
 
 	struct environment* saved = NULL;
 	struct environment* env = NULL;
 	if (!suppress_env) {
-		/* transfer ps{top} -> saved */
 		saved = ps->st->top;
 
-		/* allocate env */
 		malloc_safe((void**)&env, sizeof(struct environment));
 		environment_init(env, saved);
 
-		/* share env -> top */
 		ps->st->top = env;
 	}
 
-	/* allocate n */
 	ast_node_create(&n);
 	n->type = ast_type_stmts;
-	*root = n;
 
-	/* allocate ps{} a a{} */
 	struct ast_node* a = NULL;
 	struct location loc_a;
 	a = parse_stmt(ps, &loc_a);
     if (a && a->type == ast_type_error) {
-        valid = false;
+        n->type = ast_type_error;
     }
-	location_update(loc, &loc_a);
 
-	/* transfer a -> n{} */
 	if (a) {
 		ast_node_add(n, a);
 		last = a;
 	}
 
 	while (true) {
-		/* allocate ps{} */
 		bool has_separator = false;
 		struct location loc_sep;
 		parse_separator(ps, &has_separator, &loc_sep);
@@ -97,7 +87,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 		struct location loc_b;
 		b = parse_stmt(ps, &loc_b);
         if (b && b->type == ast_type_error) {
-            valid = false;
+            n->type = ast_type_error;
         }
 		location_update(loc, &loc_b);
 
@@ -115,7 +105,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 		ps->st->top = saved;
 	}
 
-	if (valid) {
+	if (n->type != ast_type_error) {
 		if (last) {
 			if (last->tu) {
 				n->tu = ast_node_copy(last->tu);
@@ -123,10 +113,7 @@ bool stmts(struct parse_state* ps, bool suppress_env, struct ast_node** root, st
 		}
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	/* transfer n -> root */
-	return valid;
+	return n;
 }
 
 /* separator -> \n | ; */
@@ -164,7 +151,7 @@ void parse_separator(struct parse_state* ps, bool* has_separator, struct locatio
 
 /**
 * @brief stmt -> id = expr
-*		| function id (dseq) stmts end
+*		| function id (dseq) parse_stmts end
 *       | expr
 *       | e
 */
@@ -255,7 +242,8 @@ struct ast_node* parse_while(struct parse_state* ps, struct location* loc)
 
 	struct ast_node* b = NULL;
 	struct location loc_stmts;
-	if (!stmts(ps, false, &b, &loc_stmts)) {
+    b = parse_stmts(ps, false, &loc_stmts);
+	if (b && b->type == ast_type_error) {
         n->type = ast_type_error;
     }
 
@@ -280,7 +268,6 @@ struct ast_node* parse_while(struct parse_state* ps, struct location* loc)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 {
-	int num;
 	struct ast_node* n = NULL;
     ast_node_create(&n);
 
@@ -341,7 +328,8 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 
 	struct ast_node* c = NULL;
 	struct location loc_stmts;
-	if (!stmts(ps, true, &c, &loc_stmts)) {
+    c = parse_stmts(ps, true, &loc_stmts);
+	if (c && c->type == ast_type_error) {
         n->type = ast_type_error;
     }
 
@@ -703,10 +691,10 @@ void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct l
 	set_current_function(ps->st->top, fd);
 	struct ast_node* stmts_node = NULL;
 	struct location loc_stmts;
-	if (!stmts(ps, true, &stmts_node, &loc_stmts)) {
+    stmts_node = parse_stmts(ps, true, &loc_stmts);
+	if (stmts_node && stmts_node->type == ast_type_error) {
         fd->type = ast_type_error;
     }
-	location_update(loc, &loc_stmts);
 
 	/* allocate ps{} end end{} */
 	struct token* end = NULL;
@@ -774,7 +762,8 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
 
 	struct ast_node* body = NULL;
 	struct location loc_stmts;
-	if (!stmts(ps, false, &body, &loc_stmts)) {
+    body = parse_stmts(ps, false, &loc_stmts);
+	if (body && body->type == ast_type_error) {
         n->type = ast_type_error;
         cb->type = ast_type_error;
     }
@@ -847,7 +836,8 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
 
 		struct ast_node* node = NULL;
 		struct location loc_node;
-		if (!stmts(ps, false, &node, &loc_node)) {
+        node = parse_stmts(ps, false, &loc_node);
+		if (node && node->type == ast_type_error) {
             cb->type = ast_type_error;
             parent->type = ast_type_error;
         }
@@ -889,7 +879,8 @@ struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
 		/* stmts */
 		struct ast_node* a = NULL;
 		struct location a_loc;
-		if (!stmts(ps, false, &a, &a_loc)) {
+        a = parse_stmts(ps, false, &a_loc);
+		if (a && a->type == ast_type_error) {
             n->type = ast_type_error;
         }
 
@@ -934,7 +925,8 @@ struct ast_node* parse_module(struct parse_state* ps, struct location* loc)
 
 	struct ast_node* a = NULL;
 	struct location loc_stmts;
-	if (!stmts(ps, true, &a, &loc_stmts)) {
+    a = parse_stmts(ps, true, &loc_stmts);
+	if (a && a->type == ast_type_error) {
         n->type = ast_type_error;
     }
 

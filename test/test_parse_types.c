@@ -143,7 +143,7 @@ void test_parse_types_array()
 	expect_true(cu.valid, "parse_setup valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
-	expect_int_equal(cu.root->type, ast_type_stmts, "stmts cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
 	struct ast_node* var = ast_node_get(cu.root, 0);
 	assert_ptr(var, "ptr var");

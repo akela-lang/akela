@@ -12,17 +12,17 @@
 #include "lookahead_char.h"
 #include <assert.h>
 
-/* dynamic-output ps{} root root{} */
 bool parse(struct parse_state* ps, struct ast_node** root)
 {
 	*root = NULL;
 	bool valid = true;
 
-	/* allocate ps{} root root{} */
 	struct location loc_stmts;
-	valid = stmts(ps, true, root, &loc_stmts) && valid;
+	*root = parse_stmts(ps, true, &loc_stmts);
+    if (*root && (*root)->type == ast_type_error) {
+        valid = false;
+    }
 
-	/* allocate ps{} */
 	if (!lookahead_char_done(ps->sns->lc)) {
 		int num;
 		valid = get_lookahead(ps, 1, &num) && valid;
@@ -43,7 +43,6 @@ bool parse(struct parse_state* ps, struct ast_node** root)
 			return valid;
 		}
 
-		/* allocate ps{} */
 		get_parse_location(ps, &loc);
 		valid = set_source_error(ps->el, &loc, "Couldn't process token: %s", names[t->type]);
 	}

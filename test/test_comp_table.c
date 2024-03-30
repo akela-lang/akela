@@ -33,7 +33,7 @@ void test_comp_table_compile()
 
 	struct ast_node* root = cu->root;
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "stmts root");
+	expect_int_equal(root->type, ast_type_stmts, "parse_stmts root");
 
 	struct ast_node* number = ast_node_get(root, 0);
 	assert_ptr(number, "ptr number");
@@ -92,7 +92,7 @@ void test_comp_table_include()
 	expect_true(valid_main, "valid valid_main");
 	struct ast_node* root_main = cu_main->root;
 	assert_ptr(root_main, "ptr root");
-	expect_int_equal(root_main->type, ast_type_stmts, "stmts root_main");
+	expect_int_equal(root_main->type, ast_type_stmts, "parse_stmts root_main");
 
 	struct ast_node* call_main = ast_node_get(root_main, 0);
 	assert_ptr(call_main, "ptr call_main");
@@ -154,7 +154,7 @@ void test_comp_table_include_base()
 	expect_true(valid_main, "valid valid_main");
 	struct ast_node* root_main = cu_main->root;
 	assert_ptr(root_main, "ptr root");
-	expect_int_equal(root_main->type, ast_type_stmts, "stmts root_main");
+	expect_int_equal(root_main->type, ast_type_stmts, "parse_stmts root_main");
 
 	struct ast_node* call_main = ast_node_get(root_main, 0);
 	assert_ptr(call_main, "ptr call_main");

@@ -157,7 +157,8 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
 	/* allocate b b{} */
 	struct ast_node* stmts_node = NULL;
 	struct location loc_stmts;
-	if (!stmts(ps, true, &stmts_node, &loc_stmts)) {
+    stmts_node = parse_stmts(ps, true, &loc_stmts);
+	if (stmts_node && stmts_node->type == ast_type_error) {
         n->type = ast_type_error;
     }
 

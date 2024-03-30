@@ -1,24 +1,4 @@
 # Todo
-* return ast_node in parse_stmts functions
-  * parse_var_rseq [x]
-  * parse_var_lseq [x]
-  * parse_var [x]
-  * return_nt [x]
-  * struct_nt [x]
-  * module_nt [x]
-  * else_nt [x]
-  * elseif_nt [x]
-  * if_nt [x]
-  * parse_function_finish [x]
-  * parse_function_start [x]
-  * function [x]
-  * for_iteration [x]
-  * for_range [x]
-  * for_nt [x]
-  * while_nt [x]
-  * parse_stmt [x]
-  * separator [x]
-  * stmts []
 * return ast_node in parse_types functions
 * return ast_node in parse function
 * return valid in check_return_type
