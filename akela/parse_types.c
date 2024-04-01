@@ -12,7 +12,7 @@
 #include "type_def.h"
 #include <assert.h>
 
-bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
+void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | e */
@@ -215,7 +215,10 @@ bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_n
             valid = consume_newline(ps) && valid;
 
 			struct location loc_tseq;
-			valid = tseq(ps, n, &loc_tseq) && valid;
+            parse_tseq(ps, n, &loc_tseq);
+            if (n->type == ast_type_error) {
+                valid = false;
+            }
 			location_update(loc, &loc_tseq);
 
             valid = consume_newline(ps) && valid;
@@ -320,24 +323,25 @@ bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_n
 
 /* tseq -> type tseq' */
 /* tseq' -> , tseq' */
-bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
+void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* tu = NULL;
 	struct token* t0 = NULL;
 
-	location_init(loc);
+	get_location(ps, loc);
 
 	struct location loc_type;
-	valid = parse_type(ps, NULL, &tu, &loc_type) && valid;
-	location_update(loc, &loc_type);
+	if (!parse_type(ps, NULL, &tu, &loc_type)) {
+        parent->type = ast_type_error;
+    }
 
 	if (!tu) {
-		valid = set_source_error(ps->el, &loc_type, "expected a type name");
+		set_source_error(ps->el, &loc_type, "expected a type name");
 		/* test case: test_parse_error_type_name */
+        parent->type = ast_type_error;
 	}
 
-	if (valid) {
+	if (tu) {
 		assert(tu);
 		ast_node_add(parent, tu);
 		tu = NULL;
@@ -345,7 +349,7 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 
 	while (true) {
 		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
+		get_lookahead_one(ps);
 		t0 = get_token(&ps->lookahead, 0);
 
 		if (!t0 || t0->type != token_comma) {
@@ -353,35 +357,34 @@ bool tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 		}
 
 		struct token* comma = NULL;
-		valid = match(ps, token_comma, "expected comma", &comma) && valid;
-		location_update_token(loc, comma);
-		/* test case: test case not needed */
+		if (!match(ps, token_comma, "expected comma", &comma)) {
+            /* test case: test case not needed */
+            assert(false);
+        }
 
 		token_destroy(comma);
 		free(comma);
 
-        valid = consume_newline(ps) && valid;
+        consume_newline(ps);
 
-		valid = parse_type(ps, NULL, &tu, &loc_type) && valid;
-		location_update(loc, &loc_type);
+		if (!parse_type(ps, NULL, &tu, &loc_type)) {
+            parent->type = ast_type_error;
+        }
 
 		if (!tu) {
-			valid = set_source_error(ps->el, &loc_type, "expected a type name after comma");
+			set_source_error(ps->el, &loc_type, "expected a type name after comma");
 			/* test case: test_parse_error_comma_type_name */
+            parent->type = ast_type_error;
 			break;
 		}
 
-		if (valid) {
+		if (parent->type != ast_type_error) {
 			assert(tu);
 			ast_node_add(parent, tu);
 			tu = NULL;
 		}
 
 	}
-
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
 }
 
 struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)

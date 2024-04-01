@@ -1,5 +1,9 @@
 # Todo
 * return ast_node in parse_types functions
+  * parse_tseq [x]
+  * type []
+  * declaration []
+  * dseq []
 * return ast_node in parse function
 * return valid in check_return_type
 * parse_compound
