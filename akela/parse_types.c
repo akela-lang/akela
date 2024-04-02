@@ -132,9 +132,15 @@ bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root
             struct token_list tl;
             token_list_init(&tl);
             token_list_add(&tl, id);
-			valid = parse_type(ps, &tl, &type_use, &loc_type) && valid;
+			type_use = parse_type(ps, &tl, &loc_type);
+            if (type_use && type_use->type == ast_type_error) {
+                valid = false;
+            }
 		} else {
-			valid = parse_type(ps, NULL, &type_use, &loc_type) && valid;
+			type_use = parse_type(ps, NULL, &loc_type);
+            if (type_use && type_use->type == ast_type_error) {
+                valid = false;
+            }
 		}
 		location_update(loc, &loc_type);
 
@@ -182,16 +188,14 @@ bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root
 }
 
 /* type -> id | id { tseq } */
-bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_node** root, struct location* loc)
+struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
 	bool is_generic = false;
 
-	location_init(loc);
+	get_location(ps, loc);
 
-	int num;
-	valid = get_lookahead(ps, 1, &num) && valid;
+	get_lookahead_one(ps);
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	if (t0 && t0->type == token_id) {
@@ -199,55 +203,57 @@ bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_n
 		n->type = ast_type_type;
 
 		struct token* name = NULL;
-		valid = match(ps, token_id, "expected type name", &name) && valid;
-		location_update_token(loc, name);
-		/* test case: no test case needed */
+		if (!match(ps, token_id, "expected type name", &name)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
 
-		valid = get_lookahead(ps, 1, &num) && valid;
+		get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 		if (t0 && t0->type == token_left_curly_brace) {
 			is_generic = true;
 			struct token* lcb = NULL;
-			valid = match(ps, token_left_curly_brace, "expected left curly brace", &lcb) && valid;
-			location_update_token(loc, name);
-			/* test case: no test case needed */
+			if (!match(ps, token_left_curly_brace, "expected left curly brace", &lcb)) {
+                /* test case: no test case needed */
+                assert(false);
+            }
 
-            valid = consume_newline(ps) && valid;
+            consume_newline(ps);
 
 			struct location loc_tseq;
             parse_tseq(ps, n, &loc_tseq);
-            if (n->type == ast_type_error) {
-                valid = false;
-            }
-			location_update(loc, &loc_tseq);
 
-            valid = consume_newline(ps) && valid;
+            consume_newline(ps);
 
 			struct token* rcb = NULL;
-			valid = match(ps, token_right_curly_brace, "expected right curly brace", &rcb) && valid;
-			location_update_token(loc, name);
+			if (!match(ps, token_right_curly_brace, "expected right curly brace", &rcb)) {
+                n->type = ast_type_error;
+            }
 		}
 
 		struct symbol* sym = NULL;
-		if (valid) {
+		if (n->type != ast_type_error) {
 			sym = environment_get(ps->st->top, &name->value);
 			if (!sym) {
 				char* a;
 				buffer2array(&name->value, &a);
-				valid = set_source_error(ps->el, &name->loc, "type not defined: %s", a);
+				set_source_error(ps->el, &name->loc, "type not defined: %s", a);
 				free(a);
+                n->type = ast_type_error;
 				/* test case: test_parse_error_type_not_defined */
 			} else if (!sym->td) {
 				char* a;
 				buffer2array(&name->value, &a);
-				valid = set_source_error(ps->el, &name->loc, "identifier is not a type: %s", a);
+				set_source_error(ps->el, &name->loc, "identifier is not a type: %s", a);
 				free(a);
+                n->type = ast_type_error;
 				/* test case: test_parse_error_not_a_type */
 			} else if (is_generic && !sym->td->is_generic) {
 				char* a;
 				buffer2array(&name->value, &a);
-				valid = set_source_error(ps->el, &name->loc, "subtype was specified for non-generic type: %s", a);
+				set_source_error(ps->el, &name->loc, "subtype was specified for non-generic type: %s", a);
 				free(a);
+                n->type = ast_type_error;
 				/* test case: test_parse_error_not_generic */
 			} else {
 				if (is_generic) {
@@ -255,24 +261,25 @@ bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_n
 					if (sym->td->generic_count > 0 && count != sym->td->generic_count) {
 						char* a;
 						buffer2array(&name->value, &a);
-						valid = set_source_error(
+						set_source_error(
 							ps->el, &name->loc, "generic type (%s) should have %d subtype%s but has %d subtype%s",
 							a,
 							sym->td->generic_count, plural(sym->td->generic_count),
 							count, plural(count)
 						);
 						free(a);
+                        n->type = ast_type_error;
 						/* test case: test_parse_error_subtype_count */
 					}
 				}
 
-				if (valid) {
+				if (n->type != ast_type_error) {
 					n->td = sym->td;
 				}
 			}
 		}
 
-		if (valid) {
+		if (n->type != ast_type_error) {
             if (id_list) {
                 struct token* id = id_list->head;
                 while (id) {
@@ -280,16 +287,18 @@ bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_n
                     if (dup) {
                         char* a;
                         buffer2array(&id->value, &a);
-                        valid = set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
+                        set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
                         free(a);
+                        n->type = ast_type_error;
                         /* test case: test_parse_error_duplicate_declarations */
                     } else {
                         struct symbol* sym2 = environment_get(ps->st->top, &id->value);
                         if (sym2 && sym2->td) {
                             char* a;
                             buffer2array(&id->value, &a);
-                            valid = set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
+                            set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
                             free(a);
+                            n->type = ast_type_error;
                             /* test case: test_parse_types_reserved_type */
                         } else {
                             struct symbol* new_sym = NULL;
@@ -305,20 +314,11 @@ bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_n
             }
 		}
 
-		/* destroy name name{} */
 		token_destroy(name);
 		free(name);
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	if (valid) {
-		*root = n;
-	} else {
-		ast_node_destroy(n);
-	}
-
-	return valid;
+	return n;
 }
 
 /* tseq -> type tseq' */
@@ -331,7 +331,8 @@ void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location
 	get_location(ps, loc);
 
 	struct location loc_type;
-	if (!parse_type(ps, NULL, &tu, &loc_type)) {
+    tu = parse_type(ps, NULL, &loc_type);
+	if (tu && tu->type == ast_type_error) {
         parent->type = ast_type_error;
     }
 
@@ -367,7 +368,8 @@ void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location
 
         consume_newline(ps);
 
-		if (!parse_type(ps, NULL, &tu, &loc_type)) {
+        tu = parse_type(ps, NULL, &loc_type);
+		if (tu && tu->type == ast_type_error) {
             parent->type = ast_type_error;
         }
 

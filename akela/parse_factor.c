@@ -144,7 +144,8 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
             n->type = ast_type_error;
         }
 
-		if (!parse_type(ps, NULL, &dret_type, &loc_ret)) {
+        dret_type = parse_type(ps, NULL, &loc_ret);
+		if (dret_type && dret_type->type == ast_type_error) {
             n->type = ast_type_error;
         }
 

@@ -12,7 +12,7 @@ AKELA_API bool dseq(struct parse_state* ps, struct ast_node** root, struct locat
 /* dynamic-output ps{} root root{} */
 AKELA_API bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root, struct location* loc);
 
-AKELA_API bool parse_type(struct parse_state* ps, struct token_list* id_list, struct ast_node** root, struct location* loc);
+AKELA_API struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, struct location* loc);
 
 AKELA_API struct ast_node* function2type(struct symbol_table* st, struct ast_node* n);
 

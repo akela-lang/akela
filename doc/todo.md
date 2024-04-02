@@ -1,7 +1,7 @@
 # Todo
 * return ast_node in parse_types functions
   * parse_tseq [x]
-  * type []
+  * type [x]
   * declaration []
   * dseq []
 * return ast_node in parse function

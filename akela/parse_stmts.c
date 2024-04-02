@@ -613,7 +613,8 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
         consume_newline(ps);
 
 		struct location loc_ret;
-		if (!parse_type(ps, NULL, &dret_node, &loc_ret)) {
+        dret_node = parse_type(ps, NULL, &loc_ret);
+		if (dret_node && dret_node->type == ast_type_error) {
             n->type = ast_type_error;
         }
 	}
@@ -1201,7 +1202,8 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
 
     struct ast_node* type_use = NULL;
     struct location type_use_loc;
-    if (!parse_type(ps, &a_tl, &type_use, &type_use_loc)) {
+    type_use = parse_type(ps, &a_tl, &type_use_loc);
+    if (type_use && type_use->type == ast_type_error) {
         n->type = ast_type_error;
     }
     if (type_use) {
