@@ -289,7 +289,8 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
-	if (!declaration(ps, true, &dec, &loc_dec)) {
+    dec = parse_declaration(ps, true, &loc_dec);
+	if (dec && dec->type == ast_type_error) {
         n->type = ast_type_error;
     }
 
@@ -321,7 +322,7 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 		struct location loc_error;
 		location_init(&loc_error);
 		get_parse_location(ps, &loc_error);
-		set_source_error(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
+		set_source_error(ps->el, &loc_error, "expected '=' or 'in' after for element parse_declaration");
         n->type = ast_type_error;
 		/* test case: test_parse_for_error_after_declaration */
 	}
@@ -649,7 +650,7 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
 		if (search) {
 			char* a;
 			buffer2array(&id->value, &a);
-			set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
+			set_source_error(ps->el, &id->loc, "duplicate parse_declaration in same scope: %s", a);
             n->type = ast_type_error;
 			free(a);
 			/* test case: test_parse_function_error_duplicate_declaration */
@@ -1015,7 +1016,8 @@ struct ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 
 	struct ast_node* a = NULL;
 	struct location a_loc;
-	if (!declaration(ps, false, &a, &a_loc)) {
+    a = parse_declaration(ps, false, &a_loc);
+	if (a && a->type == ast_type_error) {
         n->type = ast_type_error;
     }
 
@@ -1034,7 +1036,8 @@ struct ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 
 		struct ast_node* b = NULL;
 		struct location b_loc;
-		if (!declaration(ps, false, &b, &b_loc)) {
+        b = parse_declaration(ps, false, &b_loc);
+		if (b && b->type == ast_type_error) {
             n->type = ast_type_error;
         }
 

@@ -2,7 +2,7 @@
 * return ast_node in parse_types functions
   * parse_tseq [x]
   * type [x]
-  * declaration []
+  * parse_declaration [x]
   * dseq []
 * return ast_node in parse function
 * return valid in check_return_type

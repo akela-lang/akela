@@ -33,7 +33,10 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	/* allocate a */
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
-	valid = declaration(ps, true, &dec, &loc_dec) && valid;
+	dec = parse_declaration(ps, true, &loc_dec);
+    if (dec && dec->type == ast_type_error) {
+        valid = false;
+    }
 	location_update(loc, &loc_dec);
 
 	if (!dec) {
@@ -70,12 +73,15 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		/* allocate a */
 		struct ast_node* dec = NULL;
 		struct location loc_dec;
-		valid = declaration(ps, true, &dec, &loc_dec) && valid;
+		dec = parse_declaration(ps, true, &loc_dec);
+        if (dec && dec->type == ast_type_error) {
+            valid = false;
+        }
 		location_update(loc, &loc_dec);
 		
 		if (!dec || !valid) {
 			/* allocate ps{} */
-			set_source_error(ps->el, &loc_dec, "expected declaration after comma");
+			set_source_error(ps->el, &loc_dec, "expected parse_declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
 			valid = false;
 			break;
@@ -92,39 +98,37 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 	return valid;
 }
 
-/* declaration -> id :: type | id */
-/* dynamic-output ps{} root root{} */
-bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root, struct location* loc)
+/* declaration -> id :: type | e */
+struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct location* loc)
 {
-	bool valid = true;
 	struct ast_node* n = NULL;
-	int num;
 
-	location_init(loc);
+    get_location(ps, loc);
 
-	/* allocate ps{} */
-	valid = get_lookahead(ps, 1, &num) && valid;
+	get_lookahead_one(ps);
 
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	if (t0 && t0->type == token_id) {
-		/* id::type */
+        /* id::type */
+        ast_node_create(&n);
+        n->type = ast_type_declaration;
 
-		/* allocate ps{} id id{} */
 		struct token* id = NULL;
-		valid = match(ps, token_id, "expected id", &id) && valid;
-		/* test case: no test case needed */
-		location_update_token(loc, id);
+		if (!match(ps, token_id, "expected id", &id)) {
+            assert(false);
+            /* test case: no test case needed */
+        }
 
-        valid = consume_newline(ps) && valid;
+        consume_newline(ps);
 
-		/* allocate ps{} dc dc{} */
 		struct token* dc = NULL;
-		valid = match(ps, token_double_colon, "expected double colon", &dc) && valid;
-		location_update_token(loc, dc);
-		/* test case: test_parse_error_declaration_double_colon */
+		if (!match(ps, token_double_colon, "expected double colon", &dc)) {
+            /* test case: test_parse_error_declaration_double_colon */
+            n->type = ast_type_error;
+        }
 
-        valid = consume_newline(ps) && valid;
+        consume_newline(ps);
 
 		struct ast_node* type_use = NULL;
 		struct location loc_type;
@@ -134,57 +138,40 @@ bool declaration(struct parse_state* ps, bool add_symbol, struct ast_node** root
             token_list_add(&tl, id);
 			type_use = parse_type(ps, &tl, &loc_type);
             if (type_use && type_use->type == ast_type_error) {
-                valid = false;
+                n->type = ast_type_error;
             }
 		} else {
 			type_use = parse_type(ps, NULL, &loc_type);
             if (type_use && type_use->type == ast_type_error) {
-                valid = false;
+                n->type = ast_type_error;
             }
 		}
-		location_update(loc, &loc_type);
 
 		if (!type_use) {
-			valid = set_source_error(ps->el, &loc_type, "expected a type");
+			set_source_error(ps->el, &loc_type, "expected a type");
 			/* test case: test_parse_error_declaration_type */
+            n->type = ast_type_error;
 		}
 
-		if (valid) {
-			/* allocate n */
-			ast_node_create(&n);
-			n->type = ast_type_declaration;
-
-			/* allocate a */
+		if (n->type != ast_type_error) {
 			struct ast_node* a = NULL;
 			ast_node_create(&a);
 			a->type = ast_type_id;
 
-			/* allocate a{} */
 			buffer_copy(&id->value, &a->value);
 
-			/* transfer a a{} -> n */
 			ast_node_add(n, a);
-
-			/* transfer b b{} -> n */
 			ast_node_add(n, type_use);
-
-			/* transfer n -> root */
-			*root = n;
-		} else {
-			ast_node_destroy(type_use);
 		}
 
 		token_destroy(id);
 		free(id);
 
-		/* destroy dc dc{} */
 		token_destroy(dc);
 		free(dc);
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 /* type -> id | id { tseq } */
@@ -287,7 +274,7 @@ struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, 
                     if (dup) {
                         char* a;
                         buffer2array(&id->value, &a);
-                        set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
+                        set_source_error(ps->el, &id->loc, "duplicate parse_declaration in same scope: %s", a);
                         free(a);
                         n->type = ast_type_error;
                         /* test case: test_parse_error_duplicate_declarations */
