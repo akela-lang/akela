@@ -81,7 +81,7 @@ bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
 		
 		if (!dec || !valid) {
 			/* allocate ps{} */
-			set_source_error(ps->el, &loc_dec, "expected parse_declaration after comma");
+			set_source_error(ps->el, &loc_dec, "expected declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
 			valid = false;
 			break;
@@ -274,7 +274,7 @@ struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, 
                     if (dup) {
                         char* a;
                         buffer2array(&id->value, &a);
-                        set_source_error(ps->el, &id->loc, "duplicate parse_declaration in same scope: %s", a);
+                        set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
                         free(a);
                         n->type = ast_type_error;
                         /* test case: test_parse_error_duplicate_declarations */
