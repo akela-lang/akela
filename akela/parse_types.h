@@ -7,7 +7,7 @@
 #include "zinc/buffer_list.h"
 
 /* dynamic-output ps{} root root{} */
-AKELA_API bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc);
+AKELA_API struct ast_node* parse_dseq(struct parse_state* ps, struct location* loc);
 
 /* dynamic-output ps{} root root{} */
 AKELA_API struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct location* loc);

@@ -584,7 +584,8 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
 
 	struct ast_node* dseq_node = NULL;
 	struct location loc_dseq;
-	if (!dseq(ps, &dseq_node, &loc_dseq)) {
+    dseq_node = parse_dseq(ps, &loc_dseq);
+	if (dseq_node && dseq_node->type == ast_type_error) {
         n->type = ast_type_error;
     }
 

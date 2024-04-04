@@ -16,86 +16,66 @@ void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location
 
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | e */
-/* dynamic-output ps{} root root{} */
-bool dseq(struct parse_state* ps, struct ast_node** root, struct location* loc)
+struct ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
-	struct ast_node* n = NULL;
-	location_init(loc);
+    get_location(ps, loc);
 
-	/* allocate n */
+	struct ast_node* n = NULL;
 	ast_node_create(&n);
 	n->type = ast_type_dseq;
 
-	/* transfer n -> root */
-	*root = n;
-
-	/* allocate a */
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
 	dec = parse_declaration(ps, true, &loc_dec);
     if (dec && dec->type == ast_type_error) {
-        valid = false;
+        n->type = ast_type_error;
     }
-	location_update(loc, &loc_dec);
 
 	if (!dec) {
-		valid = location_default(ps, loc) && valid;
-		return valid;
+		return n;
 	}
 
-	if (dec && valid) {
-		/* transfer dec -> n */
-		ast_node_add(n, dec);
-	}
+    ast_node_add(n, dec);
 
 	while (true)
 	{
-		/* allocate ps{} */
-		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
+		get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 		if (!t0 || t0->type != token_comma) {
 			break;
 		}
 
-		/* allocate ps{} comma comma{} */
 		struct token* comma = NULL;
-		valid = match(ps, token_comma, "expecting comma", &comma) && valid;
-		location_update_token(loc, comma);
-		/* test case: no test case needed */
+		if (!match(ps, token_comma, "expecting comma", &comma)) {
+            assert(false);
+            /* test case: no test case needed */
+        }
 
 		token_destroy(comma);
 		free(comma);
 
-        valid = consume_newline(ps) && valid;
+        consume_newline(ps);
 
-		/* allocate a */
 		struct ast_node* dec = NULL;
 		struct location loc_dec;
 		dec = parse_declaration(ps, true, &loc_dec);
         if (dec && dec->type == ast_type_error) {
-            valid = false;
+            n->type = ast_type_error;
         }
-		location_update(loc, &loc_dec);
-		
-		if (!dec || !valid) {
-			/* allocate ps{} */
+
+		if (!dec) {
 			set_source_error(ps->el, &loc_dec, "expected declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
-			valid = false;
+            n->type = ast_type_error;
 			break;
 		}
 
-		if (dec && valid) {
-			/* transfer dec -> n */
+		if (dec) {
 			ast_node_add(n, dec);
 		}
 	}
 
-	valid = location_default(ps, loc) && valid;
-
-	return valid;
+	return n;
 }
 
 /* declaration -> id :: type | e */
