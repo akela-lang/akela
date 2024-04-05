@@ -12,40 +12,29 @@
 #include "lookahead_char.h"
 #include <assert.h>
 
-bool parse(struct parse_state* ps, struct ast_node** root)
+struct ast_node* parse(struct parse_state* ps)
 {
-	*root = NULL;
-	bool valid = true;
+    struct ast_node* n = NULL;
 
 	struct location loc_stmts;
-	*root = parse_stmts(ps, true, &loc_stmts);
-    if (*root && (*root)->type == ast_type_error) {
-        valid = false;
-    }
+	n = parse_stmts(ps, true, &loc_stmts);
 
-	if (!lookahead_char_done(ps->sns->lc)) {
-		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
-        if (!valid) {
-            return valid;
-        }
-	}
-
-    assert(ps->lookahead.head);
-	if (ps->lookahead.head->type != token_eof) {
-		struct token* t = ps->lookahead.head;
+    struct location next_loc;
+    get_location(ps, &next_loc);
+    struct token* t0 = get_token(&ps->lookahead, 0);
+    assert(t0);
+	if (t0->type != token_eof) {
 		char* names[token_count];
 		enum result r = token_name_init(names);
-		struct location loc;
 		if (r == result_error) {
-			get_token_location(t, &loc);
-			valid = set_source_error(ps->el, &loc, "token name init: %s", error_message);
-			return valid;
+			set_source_error(ps->el, &next_loc, "token name init: %s", error_message);
+            n->type = ast_type_error;
+			return n;
 		}
 
-		get_parse_location(ps, &loc);
-		valid = set_source_error(ps->el, &loc, "Couldn't process token: %s", names[t->type]);
+		set_source_error(ps->el, &next_loc, "Couldn't process token: %s", names[t0->type]);
+        n->type = ast_type_error;
 	}
 
-	return valid;
+	return n;
 }

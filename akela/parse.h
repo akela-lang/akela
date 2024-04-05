@@ -7,7 +7,6 @@
 #include "ast.h"
 #include "zinc/result.h"
 
-/* dynamic-output ps{} root root{} */
-AKELA_API bool parse(struct parse_state* ps, struct ast_node** root);
+AKELA_API struct ast_node* parse(struct parse_state* ps);
 
 #endif

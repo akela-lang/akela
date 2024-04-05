@@ -86,7 +86,10 @@ bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id)
 	struct parse_state* ps = NULL;
 	valid = comp_unit_setup(cu, ig, id, &ps) && valid;
 	if (valid) {
-		valid = parse(ps, &cu->root) && valid;
+		cu->root = parse(ps);
+        if (cu->root->type == ast_type_error) {
+            valid = false;
+        }
 	}
 	comp_unit_teardown(cu, ps);
 	cu->valid = valid;

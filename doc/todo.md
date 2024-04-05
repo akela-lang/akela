@@ -1,5 +1,4 @@
 # Todo
-* return ast_node in parse function
 * return valid in check_return_type
 * parse_compound
 * parse_assign_or_expr
