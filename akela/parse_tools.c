@@ -26,34 +26,6 @@ void parse_state_destroy(struct parse_state* ps)
 	buffer_destroy(&ps->qualifier);
 }
 
-/* get lookahead token */
-/* dynamic ps{} */
-/* dynamic-temp t t{} */
-bool get_lookahead(struct parse_state* ps, int count, int* num)
-{
-	bool valid = true;
-	int gt;
-	struct token* t;
-
-	*num = token_list_count(&ps->lookahead);
-	if (*num >= count) {
-		return valid;
-	}
-
-	for (; *num < count; (*num)++) {
-		/* allocate sns{wt{} el{}} t t{}*/
-		valid = scan_get_token(ps->sns, &t);
-		if (!valid) {
-			return valid;
-		}
-
-		/* transfer t t{} -> ps{lookahead{}} */
-		token_list_add(&ps->lookahead, t);
-	}
-
-	return valid;
-}
-
 bool get_lookahead_one(struct parse_state* ps)
 {
     bool valid = true;
@@ -113,8 +85,7 @@ bool consume_newline(struct parse_state* ps)
 {
     bool valid = true;
     while (true) {
-        int num;
-        valid = get_lookahead(ps, 1, &num) && valid;
+        valid = get_lookahead_one(ps) && valid;
         struct token* t0 = get_token(&ps->lookahead, 0);
         if (t0 && t0->type == token_newline) {
             struct token* t = NULL;
@@ -129,32 +100,24 @@ bool consume_newline(struct parse_state* ps)
     return valid;
 }
 
-/* dynamic-output ps{} */
 bool get_parse_location(struct parse_state* ps, struct location* loc)
 {
-	bool valid = true;
-	if (!ps->lookahead.head) {
-		/* allocate ps{} */
-		int num;
-		valid = get_lookahead(ps, 1, &num) && valid;
-	}
-
+    bool valid = get_lookahead_one(ps);
 	struct token* t = get_token(&ps->lookahead, 0);
     //assert(t);
 
-	if (!valid || !t) {
+	if (!t) {
 		loc->line = ps->sns->lc->line;
 		loc->col = ps->sns->lc->col;
 		loc->byte_pos = ps->sns->lc->byte_pos;
-		return valid;
-	}
+	} else {
+        loc->line = t->loc.line;
+        loc->col = t->loc.col;
+        loc->byte_pos = t->loc.byte_pos;
+        loc->size = t->loc.size;
+    }
 
-	loc->line = t->loc.line;
-	loc->col = t->loc.col;
-	loc->byte_pos = t->loc.byte_pos;
-	loc->size = t->loc.size;
-
-	return valid;
+    return valid;
 }
 
 bool get_location(struct parse_state* ps, struct location* loc)

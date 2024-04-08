@@ -103,10 +103,7 @@ struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
 			}
 		}
 
-		int num;
-		if (!get_lookahead(ps, 1, &num)) {
-            n->type = ast_type_error;
-        }
+		get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 		struct ast_node* p = NULL;
 		if (t0 && t0->type == token_equal) {
@@ -231,14 +228,7 @@ struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct 
 
     struct ast_node* parent = NULL;
     while (true) {
-        int num;
-        if (!get_lookahead(ps, 1, &num)) {
-            if (parent) {
-                parent->type = ast_type_error;
-            } else {
-                a->type = ast_type_error;
-            }
-        }
+        get_lookahead_one(ps);
         struct token* t0 = get_token(&ps->lookahead, 0);
 
         if (!t0 || t0->type != token_comma) {
@@ -341,10 +331,7 @@ struct ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 	left = n = a;
     left_loc = a_loc;
 	while (true) {
-		int num;
-		if (!get_lookahead(ps, 1, &num)) {
-            n->type = ast_type_error;
-        }
+		get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		/* operator */
@@ -456,9 +443,7 @@ struct ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
 	struct location left_loc = a_loc;
 
 	while (true) {
-		if (!get_lookahead(ps, 1, &num)) {
-            n->type = ast_type_error;
-        }
+        get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 		enum ast_type type = ast_type_none;
 
@@ -580,9 +565,7 @@ struct ast_node* parse_add(struct parse_state* ps, struct location* loc)
 	left = n = a;
 
 	while (true) {
-		if (!get_lookahead(ps, 1, &num)) {
-            n->type = ast_type_error;
-        }
+        get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		/* e */
@@ -704,10 +687,7 @@ struct ast_node* parse_mult(struct parse_state* ps, struct location* loc)
     left = n = a;
 
 	while (true) {
-		int num;
-		if (!get_lookahead(ps, 1, &num)) {
-            n->type = ast_type_error;
-        }
+        get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		/* e */
@@ -833,9 +813,7 @@ struct ast_node* parse_power(struct parse_state* ps, struct location* loc)
 	while (true) {
 		struct token* t0 = NULL;
 		int num;
-		if (!get_lookahead(ps, 1, &num)) {
-            n->type = ast_type_error;
-        }
+        get_lookahead_one(ps);
 		t0 = get_token(&ps->lookahead, 0);
 		if (!t0 || t0->type != token_caret) {
 			break;
@@ -949,13 +927,7 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
     struct location loc_last;
 
 	while (true) {
-		if (!get_lookahead(ps, 1, &num)) {
-            if (n) {
-                n->type = ast_type_error;
-            } else {
-                a->type = ast_type_error;
-            }
-        }
+        get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		if (!t0 || t0->type != token_left_square_bracket) {
@@ -1069,10 +1041,7 @@ struct ast_node* parse_call(struct parse_state* ps, struct location* loc)
 	struct location left_loc = dot_loc;
 
 	while (true) {
-		int num;
-		if (!get_lookahead(ps, 1, &num)) {
-            n->type = ast_type_error;
-        }
+        get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		if (!t0 || t0->type != token_left_paren) {
@@ -1220,10 +1189,7 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
 	ast_node_add(n, a);
 
 	while (true) {
-		int num;
-		if (!get_lookahead(ps, 1, &num)) {
-            n->type = ast_type_error;
-        }
+        get_lookahead_one(ps);
 		struct token* t0 = get_token(&ps->lookahead, 0);
 
 		if (!t0 || t0->type != token_comma) {
@@ -1286,10 +1252,7 @@ struct ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 	buffer_copy(&a->value, &ps->qualifier);
 	while (true) {
 		struct token* t0 = NULL;
-		int num;
-		if (!get_lookahead(ps, 1, &num)) {
-            left->type = ast_type_error;
-        }
+        get_lookahead_one(ps);
 		t0 = get_token(&ps->lookahead, 0);
 		if (!t0 || t0->type != token_dot) {
 			break;

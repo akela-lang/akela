@@ -1,5 +1,4 @@
 # Todo
-* remove get_lookahead
 * get location of ast_node once
 * add support for file io to event loop test
 * get larger strings from stdin in event loop

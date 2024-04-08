@@ -125,10 +125,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-	int num;
-	if (!get_lookahead(ps, 1, &num)) {
-        n->type = ast_type_error;
-    }
+    get_lookahead_one(ps);
 	struct token* t0 = get_token(&ps->lookahead, 0);
 	struct ast_node* dret_type = NULL;
 	struct location loc_ret;
@@ -286,10 +283,7 @@ struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-    int num;
-	if (!get_lookahead(ps, 1, &num)) {
-        n->type = ast_type_error;
-    }
+    get_lookahead_one(ps);
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	/* allocate ps{} x x{} */
@@ -445,10 +439,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-	int num;
-	if (!get_lookahead(ps, 1, &num)) {
-        n->type = ast_type_error;
-    }
+    get_lookahead_one(ps);
 	struct token* t0 = get_token(&ps->lookahead, 0);
 
 	/* allocate sign */
@@ -606,11 +597,7 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
 		ast_node_add(parent, a);
 
 		while (true) {
-			/* allocate ps{} */
-			int num;
-			if (!get_lookahead(ps, 1, &num)) {
-                parent->type = ast_type_error;
-            }
+            get_lookahead_one(ps);
 			struct token* t0 = get_token(&ps->lookahead, 0);
 			if (!t0 || t0->type != token_comma) {
 				break;

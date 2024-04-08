@@ -1371,8 +1371,7 @@ struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, st
     ast_node_add(n, a);
 
     while (true) {
-        int num;
-        get_lookahead(ps, 1, &num);
+        get_lookahead_one(ps);
         struct token* t0 = get_token(&ps->lookahead, 0);
         if (!t0 || t0->type != token_comma) {
             break;
