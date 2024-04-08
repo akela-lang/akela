@@ -89,7 +89,6 @@ struct ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct l
         if (b && b->type == ast_type_error) {
             n->type = ast_type_error;
         }
-		location_update(loc, &loc_b);
 
 		if (b) {
 			ast_node_add(n, b);
@@ -128,7 +127,7 @@ void parse_separator(struct parse_state* ps, bool* has_separator, struct locatio
 
 	get_lookahead_one(ps);
 
-	struct token* t0 = get_token(&ps->lookahead, 0);
+	struct token* t0 = get_token(ps);
 	if (t0 && t0->type == token_newline) {
 		type = token_newline;
 		*has_separator = true;
@@ -167,7 +166,7 @@ struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
 	/* allocate ps{} */
 	get_lookahead_one(ps);
 
-    struct token* t0 = get_token(&ps->lookahead, 0);
+    struct token* t0 = get_token(ps);
 
     /* e */
 	if (!t0) {
@@ -301,7 +300,7 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
     consume_newline(ps);
 
 	get_lookahead_one(ps);
-	struct token* t0 = get_token(&ps->lookahead, 0);
+	struct token* t0 = get_token(ps);
 
 	if (t0 && t0->type == token_equal) {
         if (n->type == ast_type_none) {
@@ -309,7 +308,6 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
         }
 		struct location loc_range;
 		parse_for_range(ps, n, &loc_range);
-		location_update(loc, &loc_range);
 
 	} else if (t0 && t0->type == token_in) {
         if (n->type == ast_type_none) {
@@ -526,7 +524,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
     consume_newline(ps);
 
     get_lookahead_one(ps);
-    struct token* t0 = get_token(&ps->lookahead, 0);
+    struct token* t0 = get_token(ps);
     if (t0 && t0->type == token_id) {
         struct environment* saved = ps->st->top;
 
@@ -601,7 +599,7 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
 	struct ast_node* dret_node = NULL;
 	int num;
 	get_lookahead_one(ps);
-	struct token* next = get_token(&ps->lookahead, 0);
+	struct token* next = get_token(ps);
 	if (next && next->type == token_double_colon) {
 		struct token* dc = NULL;
 		if (!match(ps, token_double_colon, "expecting double colon", &dc)) {
@@ -1371,7 +1369,7 @@ struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, st
 
     while (true) {
         get_lookahead_one(ps);
-        struct token* t0 = get_token(&ps->lookahead, 0);
+        struct token* t0 = get_token(ps);
         if (!t0 || t0->type != token_comma) {
             break;
         }

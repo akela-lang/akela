@@ -163,9 +163,6 @@ AKELA_API void token_list_destroy(struct token_list* tl);
 AKELA_API void token_destroy(struct token* t);
 
 /* dynamic-output-none */
-AKELA_API struct token* get_token(struct token_list* tl, size_t pos);
-
-/* dynamic-output-none */
 AKELA_API int token_find_first(struct token_list* tl, enum token_enum type);
 
 /* dynamic-output-none */

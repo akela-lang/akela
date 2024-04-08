@@ -1,8 +1,4 @@
 # Todo
-* add support for file io to event loop test
-* get larger strings from stdin in event loop
-* test get char in event loop
-* parse_function and parse_function_part and parse_function_anonymous
 * support only one lookahead token - there is an assert so just the data structure needs changing
 * store IR value in ast node
 * store IR variable references in symbol table

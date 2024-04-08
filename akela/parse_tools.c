@@ -86,7 +86,7 @@ bool consume_newline(struct parse_state* ps)
     bool valid = true;
     while (true) {
         valid = get_lookahead_one(ps) && valid;
-        struct token* t0 = get_token(&ps->lookahead, 0);
+        struct token* t0 = get_token(ps);
         if (t0 && t0->type == token_newline) {
             struct token* t = NULL;
             valid = match(ps, token_newline, "expected newline", &t) && valid;
@@ -112,7 +112,7 @@ bool is_identity_comparison(enum ast_type type)
 	return type == ast_type_equality || type == ast_type_not_equal;
 }
 
-void location_update(struct location* loc, struct location* loc2)
+struct token* get_token(struct parse_state* ps)
 {
-	*loc = *loc2;
+    return ps->lookahead.head;
 }

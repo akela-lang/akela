@@ -46,20 +46,6 @@ void token_list_init(struct token_list* tl)
 }
 
 /* dynamic-output-none */
-struct token* get_token(struct token_list* tl, size_t pos)
-{
-    assert(pos == 0);
-    int i = 0;
-    for (struct token* t = tl->head; t; t = t->next) {
-        if (i == pos) {
-            return t;
-        }
-        i++;
-    }
-    return NULL;
-}
-
-/* dynamic-output-none */
 int token_find_first(struct token_list* tl, enum token_enum type)
 {
     int i = 0;

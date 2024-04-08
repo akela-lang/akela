@@ -40,7 +40,7 @@ struct ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 	while (true)
 	{
 		get_lookahead_one(ps);
-		struct token* t0 = get_token(&ps->lookahead, 0);
+		struct token* t0 = get_token(ps);
 		if (!t0 || t0->type != token_comma) {
 			break;
 		}
@@ -87,7 +87,7 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
 
 	get_lookahead_one(ps);
 
-	struct token* t0 = get_token(&ps->lookahead, 0);
+	struct token* t0 = get_token(ps);
 
 	if (t0 && t0->type == token_id) {
         /* id::type */
@@ -163,7 +163,7 @@ struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, 
 	get_location(ps, loc);
 
 	get_lookahead_one(ps);
-	struct token* t0 = get_token(&ps->lookahead, 0);
+	struct token* t0 = get_token(ps);
 
 	if (t0 && t0->type == token_id) {
 		ast_node_create(&n);
@@ -176,7 +176,7 @@ struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, 
         }
 
 		get_lookahead_one(ps);
-		struct token* t0 = get_token(&ps->lookahead, 0);
+		struct token* t0 = get_token(ps);
 		if (t0 && t0->type == token_left_curly_brace) {
 			is_generic = true;
 			struct token* lcb = NULL;
@@ -318,7 +318,7 @@ void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location
 	while (true) {
 		int num;
 		get_lookahead_one(ps);
-		t0 = get_token(&ps->lookahead, 0);
+		t0 = get_token(ps);
 
 		if (!t0 || t0->type != token_comma) {
 			break;
