@@ -320,8 +320,7 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 
 	} else {
 		struct location loc_error;
-		location_init(&loc_error);
-		get_parse_location(ps, &loc_error);
+		get_location(ps, &loc_error);
 		set_source_error(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
         n->type = ast_type_error;
 		/* test case: test_parse_for_error_after_declaration */

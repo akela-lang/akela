@@ -100,26 +100,6 @@ bool consume_newline(struct parse_state* ps)
     return valid;
 }
 
-bool get_parse_location(struct parse_state* ps, struct location* loc)
-{
-    bool valid = get_lookahead_one(ps);
-	struct token* t = get_token(&ps->lookahead, 0);
-    //assert(t);
-
-	if (!t) {
-		loc->line = ps->sns->lc->line;
-		loc->col = ps->sns->lc->col;
-		loc->byte_pos = ps->sns->lc->byte_pos;
-	} else {
-        loc->line = t->loc.line;
-        loc->col = t->loc.col;
-        loc->byte_pos = t->loc.byte_pos;
-        loc->size = t->loc.size;
-    }
-
-    return valid;
-}
-
 bool get_location(struct parse_state* ps, struct location* loc)
 {
     bool valid = get_lookahead_one(ps);
@@ -132,23 +112,7 @@ bool is_identity_comparison(enum ast_type type)
 	return type == ast_type_equality || type == ast_type_not_equal;
 }
 
-void location_update_token(struct location* loc, struct token* t)
-{
-	if (t && !loc->line) {
-		*loc = t->loc;
-	}
-}
-
 void location_update(struct location* loc, struct location* loc2)
 {
 	*loc = *loc2;
-}
-
-bool location_default(struct parse_state* ps, struct location* loc)
-{
-	bool valid = true;
-	if (!loc->line) {
-		valid = get_parse_location(ps, loc);
-	}
-	return valid;
 }
