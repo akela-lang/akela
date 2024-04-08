@@ -198,9 +198,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
 
 	if (n->type != ast_type_error) {
 		n->tu = function2type(ps->st, n);
-        bool valid = true;
-		check_return_type(ps, n, stmts_node, &loc_ret, &valid);
-        if (!valid) {
+		if (!check_return_type(ps, n, stmts_node, &loc_ret)) {
             n->type = ast_type_error;
         }
 	}

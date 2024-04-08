@@ -217,6 +217,7 @@ struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
+/* eseq = boolean | , boolean */
 struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct location* loc)
 {
     struct ast_node* a = NULL;

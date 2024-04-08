@@ -1,10 +1,5 @@
 # Todo
-* return valid in check_return_type
-* parse_compound
-* parse_assign_or_expr
-* combine function and function_anonymous
-* error test cases for eseq
-* don't bubble up lexer errors to the parser
+* remove get_lookahead
 * get location of ast_node once
 * add support for file io to event loop test
 * get larger strings from stdin in event loop

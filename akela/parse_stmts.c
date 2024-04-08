@@ -715,9 +715,7 @@ void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct l
 	free(end);
 
     if (fd->type != ast_type_error) {
-        bool valid = true;
-        check_return_type(ps, fd, stmts_node, &loc_stmts, &valid);
-        if (!valid) {
+        if (!check_return_type(ps, fd, stmts_node, &loc_stmts)) {
             fd->type = ast_type_error;
         }
     }
@@ -1138,11 +1136,9 @@ struct ast_node* parse_return(struct parse_state* ps, struct location* loc)
 					/* test case: test_parse_return_error_outside_of_function */
                     n->type = ast_type_error;
 				} else {
-                    bool valid = true;
-					check_return_type(ps, fd, n, &ret->loc, &valid);
-					/* test case: test_parse_return_error_type_does_not_match */
-                    if (!valid) {
-                        n->type = ast_type_error;
+					if (!check_return_type(ps, fd, n, &ret->loc)) {
+                        /* test case: test_parse_return_error_type_does_not_match */
+                            n->type = ast_type_error;
                     }
 				}
 			}

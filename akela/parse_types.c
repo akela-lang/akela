@@ -428,8 +428,10 @@ struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 	return tu;
 }
 
-void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_node* stmts_node, struct location* loc, bool *valid)
+bool check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_node* stmts_node, struct location* loc)
 {
+    bool valid = true;
+
 	assert(fd);
 	assert(fd->tu);
 	struct ast_node* tu = fd->tu;
@@ -440,12 +442,14 @@ void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_n
 			struct ast_node* ret = ast_node_get(p, 0);
 			if (ret) {
 				if (!type_use_can_cast(ret, stmts_node->tu)) {
-					*valid = set_source_error(ps->el, loc, "returned type does not match function return type");
+					valid = set_source_error(ps->el, loc, "returned type does not match function return type");
 				}
 			}
 		}
 		p = p->next;
 	}
+
+    return valid;
 }
 
 void get_function_children(struct ast_node* tu, struct ast_node** input, struct ast_node** output)

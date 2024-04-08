@@ -16,7 +16,7 @@ AKELA_API struct ast_node* parse_type(struct parse_state* ps, struct token_list*
 
 AKELA_API struct ast_node* function2type(struct symbol_table* st, struct ast_node* n);
 
-AKELA_API void check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_node* stmts_node, struct location* loc, bool* valid);
+AKELA_API bool check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_node* stmts_node, struct location* loc);
 
 AKELA_API void get_function_children(struct ast_node* tu, struct ast_node** input, struct ast_node** output);
 
