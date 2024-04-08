@@ -792,7 +792,7 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
 {
     get_location(ps, loc);
 
-	struct token* t0 = ps->lookahead.head;
+	struct token* t0 = get_lookahead(ps);
 	if (t0->type == token_elseif) {
 		struct token* eit = NULL;
 		if (!match(ps, token_elseif, "expecting elseif", &eit)) {
