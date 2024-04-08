@@ -11,7 +11,7 @@
 
 struct parse_state {
 	struct scan_state* sns;
-	struct token_list lookahead;
+	struct token* lookahead;
 	struct error_list* el;
 	struct symbol_table* st;
 	struct buffer qualifier;

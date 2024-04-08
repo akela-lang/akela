@@ -1,5 +1,9 @@
 # Todo
-* replace token_list with token in parse_state
+* remove ICU dependency
+* allow only English and Greek letters for identifiers
+  * A-Z
+  * a-z
+  * ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω
 * store IR value in ast node
 * store IR variable references in symbol table
 * keep LLVM references out of parsing code and symbol table - use void* to reference them
@@ -8,8 +12,3 @@
 * run code gen on first pass
 * get text interface for lexer
 * get char interface for lexer
-* remove ICU dependency
-* allow only English and Greek letters for identifiers
-  * A-Z
-  * a-z
-  * ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω
