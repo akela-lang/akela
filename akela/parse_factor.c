@@ -29,10 +29,9 @@ struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
 struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
-	get_lookahead_one(ps);
 
-	struct token* t0;
-	t0 = get_token(ps);
+    struct token* t0;
+	t0 = get_lookahead(ps);
 
 	if (t0 && t0->type == token_function) {
         struct token* f = NULL;
@@ -125,8 +124,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-    get_lookahead_one(ps);
-	struct token* t0 = get_token(ps);
+	struct token* t0 = get_lookahead(ps);
 	struct ast_node* dret_type = NULL;
 	struct location loc_ret;
 	if (t0 && t0->type == token_double_colon) {
@@ -283,8 +281,7 @@ struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-    get_lookahead_one(ps);
-	struct token* t0 = get_token(ps);
+	struct token* t0 = get_lookahead(ps);
 
 	/* allocate ps{} x x{} */
 	struct token* x = NULL;
@@ -439,8 +436,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-    get_lookahead_one(ps);
-	struct token* t0 = get_token(ps);
+	struct token* t0 = get_lookahead(ps);
 
 	/* allocate sign */
 	struct token* sign = NULL;
@@ -597,8 +593,7 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
 		ast_node_add(parent, a);
 
 		while (true) {
-            get_lookahead_one(ps);
-			struct token* t0 = get_token(ps);
+			struct token* t0 = get_lookahead(ps);
 			if (!t0 || t0->type != token_comma) {
 				break;
 			}

@@ -21,7 +21,7 @@ struct ast_node* parse(struct parse_state* ps)
 
     struct location next_loc;
     get_location(ps, &next_loc);
-    struct token* t0 = get_token(ps);
+    struct token* t0 = get_lookahead(ps);
     assert(t0);
 	if (t0->type != token_eof) {
 		char* names[token_count];

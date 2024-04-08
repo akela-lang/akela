@@ -21,8 +21,6 @@ AKELA_API void parse_state_init(struct parse_state* ps, struct scan_state* sns, 
 
 AKELA_API void parse_state_destroy(struct parse_state* ps);
 
-AKELA_API bool get_lookahead_one(struct parse_state* ps);
-
 AKELA_API bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t);
 
 AKELA_API bool consume_newline(struct parse_state* ps);
@@ -31,6 +29,6 @@ AKELA_API bool is_identity_comparison(enum ast_type type);
 
 AKELA_API bool get_location(struct parse_state* ps, struct location* loc);
 
-AKELA_API struct token* get_token(struct parse_state* ps);
+AKELA_API struct token* get_lookahead(struct parse_state* ps);
 
 #endif

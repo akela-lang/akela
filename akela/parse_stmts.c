@@ -125,9 +125,7 @@ void parse_separator(struct parse_state* ps, bool* has_separator, struct locatio
 
     get_location(ps, loc);
 
-	get_lookahead_one(ps);
-
-	struct token* t0 = get_token(ps);
+	struct token* t0 = get_lookahead(ps);
 	if (t0 && t0->type == token_newline) {
 		type = token_newline;
 		*has_separator = true;
@@ -163,10 +161,7 @@ struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
 
 	location_init(loc);
 
-	/* allocate ps{} */
-	get_lookahead_one(ps);
-
-    struct token* t0 = get_token(ps);
+    struct token* t0 = get_lookahead(ps);
 
     /* e */
 	if (!t0) {
@@ -299,8 +294,7 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 
     consume_newline(ps);
 
-	get_lookahead_one(ps);
-	struct token* t0 = get_token(ps);
+	struct token* t0 = get_lookahead(ps);
 
 	if (t0 && t0->type == token_equal) {
         if (n->type == ast_type_none) {
@@ -523,8 +517,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
 
     consume_newline(ps);
 
-    get_lookahead_one(ps);
-    struct token* t0 = get_token(ps);
+    struct token* t0 = get_lookahead(ps);
     if (t0 && t0->type == token_id) {
         struct environment* saved = ps->st->top;
 
@@ -597,9 +590,7 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
     consume_newline(ps);
 
 	struct ast_node* dret_node = NULL;
-	int num;
-	get_lookahead_one(ps);
-	struct token* next = get_token(ps);
+	struct token* next = get_lookahead(ps);
 	if (next && next->type == token_double_colon) {
 		struct token* dc = NULL;
 		if (!match(ps, token_double_colon, "expecting double colon", &dc)) {
@@ -801,7 +792,6 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
 {
     get_location(ps, loc);
 
-	get_lookahead_one(ps);
 	struct token* t0 = ps->lookahead.head;
 	if (t0->type == token_elseif) {
 		struct token* eit = NULL;
@@ -859,8 +849,7 @@ struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
 
     struct ast_node* n = NULL;
 
-	get_lookahead_one(ps);
-	struct token* t0 = ps->lookahead.head;
+	struct token* t0 = get_lookahead(ps);
 	if (t0 && t0->type == token_else) {
         ast_node_create(&n);
         n->type = ast_type_default_branch;
@@ -1212,8 +1201,7 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
 
     /* add variables */
 
-    get_lookahead_one(ps);
-    struct token* t0 = ps->lookahead.head;
+    struct token* t0 = get_lookahead(ps);
 
     if (t0 && t0->type == token_equal) {
         struct token* equal = NULL;
@@ -1278,8 +1266,7 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, st
 {
     get_location(ps, loc);
 
-    get_lookahead_one(ps);
-    struct token* t0 = ps->lookahead.head;
+    struct token* t0 = get_lookahead(ps);
     if (!t0 || t0->type != token_id) {
         return NULL;
     }
@@ -1303,9 +1290,7 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, st
     ast_node_add(n, a);
 
     while (true) {
-        int num;
-        get_lookahead_one(ps);
-        t0 = ps->lookahead.head;
+        t0 = get_lookahead(ps);
         if (!t0 || t0->type != token_comma) {
             break;
         }
@@ -1368,8 +1353,7 @@ struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, st
     ast_node_add(n, a);
 
     while (true) {
-        get_lookahead_one(ps);
-        struct token* t0 = get_token(ps);
+        struct token* t0 = get_lookahead(ps);
         if (!t0 || t0->type != token_comma) {
             break;
         }

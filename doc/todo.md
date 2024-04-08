@@ -1,5 +1,5 @@
 # Todo
-* support only one lookahead token - there is an assert so just the data structure needs changing
+* replace token_list with token in parse_state
 * store IR value in ast node
 * store IR variable references in symbol table
 * keep LLVM references out of parsing code and symbol table - use void* to reference them
