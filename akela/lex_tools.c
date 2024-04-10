@@ -56,18 +56,3 @@ bool is_num(const char c[4])
 {
     return isdigit(*c);
 }
-
-/**
- * check if the state is a number state
- * @param state the state
- * @return true if number state, otherwise false
- */
-bool is_number_state(enum state_enum state)
-{
-    return state == state_number_whole
-           || state == state_number_fraction_start
-           || state == state_number_fraction
-           || state == state_number_exponent_start
-           || state == state_number_exponent_sign_start
-           || state == state_number_exponent;
-}

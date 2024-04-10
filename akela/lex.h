@@ -11,6 +11,6 @@
 #include "zinc/input_char.h"
 #include "lex_tools.h"
 
-AKELA_API bool lex_get_token(struct scan_state* sns, struct token** t);
+AKELA_API bool lex(struct scan_state* sns, struct token** t);
 
 #endif

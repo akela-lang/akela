@@ -34,6 +34,5 @@ void scan_state_init(struct scan_state* sns, void* input_obj, InputCharVTable* i
 bool compound_operator_start(int num, const char c[4]);
 bool is_word(const char c[4]);
 bool is_num(const char c[4]);
-bool is_number_state(enum state_enum state);
 
 #endif

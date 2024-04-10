@@ -35,7 +35,7 @@ bool get_lookahead_one(struct parse_state* ps)
 
     struct token* t = NULL;
     while (true) {
-        valid = lex_get_token(ps->sns, &t) && valid;
+        valid = lex(ps->sns, &t) && valid;
         if (t) {
             break;
         }

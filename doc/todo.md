@@ -1,5 +1,4 @@
 # Todo
-* use combinators for scanner
 * create input_unicode interface for input
 * remove old input interfaces
 * remove ICU dependency
