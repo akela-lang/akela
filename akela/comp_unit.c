@@ -8,6 +8,7 @@
 #include "parse_tools.h"
 #include "parse.h"
 #include <assert.h>
+#include "zinc/input_char_string.h"
 
 void comp_unit_init(struct comp_unit* cu)
 {
@@ -16,6 +17,7 @@ void comp_unit_init(struct comp_unit* cu)
 	error_list_init(&cu->el);
 	buffer_init(&cu->path);
 	symbol_table_init(&cu->st);
+    cu->input_obj = NULL;
 	cu->next = NULL;
 	cu->prev = NULL;
 }
@@ -28,69 +30,43 @@ void comp_unit_destroy(struct comp_unit* cu)
 	symbol_table_destroy(&cu->st);
 }
 
-bool comp_unit_setup(struct comp_unit* cu, input_getchar ig, input_data id, struct parse_state** ps)
+void comp_unit_setup(struct comp_unit* cu, void* input_obj, InputCharVTable* input_vtable, struct parse_state** ps)
 {
-	enum result r = result_ok;
-	bool valid = true;
 	*ps = NULL;
 
-	/* allocate conv{} */
-	UConverter* conv;
-	r = conv_open(&conv);
-
-	/* allocate exp{el{}} */
-	if (r == result_error) {
-		struct location loc;
-		location_init(&loc);
-		valid = set_source_error(&cu->el, &loc, "conv_open: %s", error_message);
-		return valid;
-	}
-
-	/* destroy root root{} */
 	ast_node_destroy(cu->root);
 	cu->root = NULL;
 
-	struct lookahead_char* lc = NULL;
-	malloc_safe((void**) & lc, sizeof(struct lookahead_char));
-	lookahead_char_init(lc, ig, id, conv);
-
 	struct scan_state* sns = NULL;
 	malloc_safe((void**)&sns, sizeof(struct scan_state));
-	scan_state_init(sns, lc, &cu->el, &cu->st);
+	scan_state_init(sns, input_obj, input_vtable, &cu->el, &cu->st);
 
 	malloc_safe((void**)ps, sizeof(struct parse_state));
 	parse_state_init(*ps, sns, &cu->el, &cu->st);
-
-	return valid;
 }
 
 void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
 {
 	assert(ps);
 	assert(ps->sns);
-	/* destroy conv{} */
-	conv_close(ps->sns->lc->conv);
-
-	free(ps->sns->lc);
 
 	free(ps->sns);
 
-	/* destroy ps{} */
 	parse_state_destroy(ps);
 	free(ps);
 }
 
-bool comp_unit_compile(struct comp_unit* cu, input_getchar ig, input_data id)
+bool comp_unit_compile(struct comp_unit* cu, void* input_obj, InputCharVTable* input_vtable)
 {
 	bool valid = true;
 	struct parse_state* ps = NULL;
-	valid = comp_unit_setup(cu, ig, id, &ps) && valid;
-	if (valid) {
-		cu->root = parse(ps);
-        if (cu->root->type == ast_type_error) {
-            valid = false;
-        }
-	}
+    cu->input_obj = input_obj;
+	comp_unit_setup(cu, input_obj, input_vtable, &ps);
+    cu->root = parse(ps);
+    if (cu->root->type == ast_type_error) {
+        valid = false;
+    }
+
 	comp_unit_teardown(cu, ps);
 	cu->valid = valid;
 	return valid;

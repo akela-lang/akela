@@ -8,9 +8,12 @@
 #include "lookahead_char.h"
 #include "source.h"
 #include "symbol_table.h"
+#include "zinc/input_char.h"
 
 struct scan_state {
-    struct lookahead_char* lc;
+    void* input_obj;
+    InputCharVTable* input_vtable;
+    struct location loc;
     struct symbol_table* st;
     struct error_list* el;
 };
@@ -55,15 +58,7 @@ enum state_enum {
     state_compound_operator
 };
 
-/* dynamic-output-none */
-/* initialize-output sns{} */
-AKELA_API void scan_state_init(struct scan_state* sns, struct lookahead_char* lc, struct error_list* el, struct symbol_table* st);
-
-/* dynamic-output sns{wt{} el{}} t t{} */
-/* dynamic-temp: tf tf{} */
+AKELA_API void scan_state_init(struct scan_state* sns, void* input_obj, InputCharVTable* input_vtable, struct error_list* el, struct symbol_table* st);
 AKELA_API bool scan_get_token(struct scan_state* sns, struct token** t);
-
-/* dynamic-output-none */
-AKELA_API void get_scan_location(struct scan_state* sns, struct location* loc);
 
 #endif

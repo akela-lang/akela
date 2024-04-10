@@ -8,14 +8,12 @@
 #include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"
 
-/* dynamic-output-none */
 void test_parse_number_integer()
 {
 	test_name(__func__);
 	
 	struct comp_unit cu;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("32", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -35,8 +33,6 @@ void test_parse_number_integer()
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
 	expect_str(&td->name, "Int64", "Int64 td");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }

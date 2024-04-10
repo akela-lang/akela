@@ -9,36 +9,30 @@
 #include "akela/scan.h"
 #include "akela/source.h"
 #include "akela/comp_unit.h"
+#include "zinc/input_char.h"
+#include "zinc/input_char_string.h"
+#include <string.h>
 
-/* dynamic-output ps{} root root{} */
 bool parse_setup(char* line, struct comp_unit* cu)
 {
-	/* allocate bf */
-	struct buffer* bf = NULL;
-	malloc_safe((void**)&bf, sizeof(struct buffer));
-	buffer_init(bf);
+    Vector* text = NULL;
+    VectorCreate(&text, sizeof(char));
+    VectorAdd(text, line, strlen(line));
 
-	/* allocate bf{} */
-	array2buffer(line, bf);
-
-	/* allocate sd */
-	struct string_data* sd = NULL;
-	malloc_safe((void**)&sd, sizeof(struct string_data));
-
-	/* transfer bf -> sd{} */
-	string_data_init(bf, sd);
+    InputCharString* input_obj = NULL;
+    InputCharStringCreate(&input_obj, text);
 
 	comp_unit_init(cu);
-	bool valid = comp_unit_compile(cu, (input_getchar)string_getchar, (input_data)sd);
-
-	buffer_destroy(bf);
-	free(bf);
-	free(sd);
+	bool valid = comp_unit_compile(cu, input_obj, input_obj->input_vtable);
 
 	return valid;
 }
 
 void parse_teardown(struct comp_unit* cu)
 {
+    InputCharString* input_obj = cu->input_obj;
+    Vector* text = input_obj->text;
+    VectorDestroy(text);
+    free(text);
 	comp_unit_destroy(cu);
 }

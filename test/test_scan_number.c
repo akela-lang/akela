@@ -137,10 +137,8 @@ void test_scan_number_exponent_start()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("500e", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "valid 0");
@@ -155,15 +153,12 @@ void test_scan_number_exponent_start()
 	expect_int_equal(t->type, token_id, "number 1");
 	expect_str(&t->value, "e", "e 1");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
-/* dynamic-output-none */
 void test_scan_number_fraction_exponent_start()
 {
 	test_name(__func__);
@@ -174,33 +169,28 @@ void test_scan_number_fraction_exponent_start()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("500.123e", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "valid 0");
-	assert_ptr(t, "ptr t 0");
-	expect_int_equal(t->type, token_number, "number 0");
-	expect_str(&t->value, "500.123", "500.123 0");
+	assert_true(valid, "0 valid");
+	assert_ptr(t, "0 ptr t");
+	expect_int_equal(t->type, token_number, "0 number");
+	expect_str(&t->value, "500.123e", "0 value");
 
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "valid 1");
-	assert_ptr(t, "ptr t 1");
-	expect_int_equal(t->type, token_id, "number 1");
-	expect_str(&t->value, "e", "e 1");
+	assert_true(valid, "1 valid");
+	assert_ptr(t, "1 ptr t");
+	expect_int_equal(t->type, token_eof, "1 eof");
+	expect_str(&t->value, "", "1 value");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
-/* dynamic-output-none */
 void test_scan_number_fraction_exponent()
 {
 	test_name(__func__);
@@ -211,10 +201,8 @@ void test_scan_number_fraction_exponent()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("500.123e2", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
@@ -224,15 +212,12 @@ void test_scan_number_fraction_exponent()
 	expect_int_equal(t->loc.line, 1, "line 10");
 	expect_int_equal(t->loc.col, 1, "col 10");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
-/* dynamic-output-none */
 void test_scan_number_fraction_exponent_sign_start_negative()
 {
 	test_name(__func__);
@@ -243,24 +228,19 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("500.123e-", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	expect_has_errors(sns.el);
-	expect_false(valid, "valid 0");
-	expect_source_error(sns.el, "invalid number");
+	expect_false(valid, "0 valid");
+	expect_source_error(sns.el, "expected number after exponent sign");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
-/* dynamic-output-none */
 void test_scan_number_fraction_exponent_sign_start_positive()
 {
 	test_name(__func__);
@@ -271,20 +251,16 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("500.123e+", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns,  &t);
 	expect_has_errors(sns.el);
-	expect_false(valid, "valid 0");
-	expect_source_error(sns.el, "invalid number");
+	expect_false(valid, "0 valid");
+	expect_source_error(sns.el, "expected number after exponent sign");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
@@ -352,7 +328,6 @@ void test_scan_number_exponent_positive()
 	scan_teardown(&sns);
 }
 
-/* dynamic-output-none */
 void test_scan_number_exponent_add()
 {
 	test_name(__func__);
@@ -363,65 +338,43 @@ void test_scan_number_exponent_add()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("500.123e + 1", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_number, "number");
-	expect_str(&t->value, "500.123", "500.123");
-	expect_int_equal(t->loc.line, 1, "line 10");
-	expect_int_equal(t->loc.col, 1, "col 10");
+	assert_true(valid, "0 valid");
+	assert_ptr(t, "0 ptr t");
+	expect_int_equal(t->type, token_number, "0 number");
+	expect_str(&t->value, "500.123e", "0 value");
+	expect_int_equal(t->loc.line, 1, "0 line 10");
+	expect_int_equal(t->loc.col, 1, "0 col 10");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_id, "id");
-	expect_str(&t->value, "e", "e");
-	expect_int_equal(t->loc.line, 1, "line");
-	expect_int_equal(t->loc.col, 8, "col");
+	assert_true(valid, "1 valid");
+	assert_ptr(t, "1 ptr t");
+	expect_int_equal(t->type, token_plus, "1 plus");
+	expect_size_t_equal(t->loc.line, 1, "1 line");
+	expect_size_t_equal(t->loc.col, 10, "1 col");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_plus, "plus");
-	expect_int_equal(t->loc.line, 1, "line");
-	expect_int_equal(t->loc.col, 10, "col");
+	assert_true(valid, "2 valid");
+	assert_ptr(t, "2 ptr t");
+	expect_int_equal(t->type, token_number, "2 number");
+	expect_str(&t->value, "1", "2 value");
+	expect_size_t_equal(t->loc.line, 1, "2 line");
+	expect_size_t_equal(t->loc.col, 12, "2 col");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &t);
-	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_number, "number");
-	expect_str(&t->value, "1", "1");
-	expect_int_equal(t->loc.line, 1, "line");
-	expect_int_equal(t->loc.col, 12, "col");
-
-	/* destroy t t{} */
-	token_destroy(t);
-	free(t);
-
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 

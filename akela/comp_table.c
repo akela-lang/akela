@@ -5,6 +5,7 @@
 #include "os_win.h"
 #include "os_linux.h"
 #include <stdio.h>
+#include "zinc/input_char_file.h"
 
 void comp_table_init(struct comp_table* ct)
 {
@@ -73,11 +74,14 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 		goto exit;
 	}
 
+    InputCharFile* input = NULL;
+    InputCharFileCreate(&input, fp);
+
 	malloc_safe((void**)cu_base, sizeof(struct comp_unit));
 	comp_unit_init(*cu_base);
 	comp_table_put(ct, &math_path, *cu_base);
 
-	comp_unit_compile(*cu_base, (input_getchar)file_getchar, (input_data)fp);
+	comp_unit_compile(*cu_base, input, input->input_vtable);
 
 	transfer_global_symbols(&(*cu_base)->st, &cu->st);
 

@@ -2,22 +2,24 @@
 #include "akela/comp_unit.h"
 #include "zinc/memory.h"
 #include "akela/input.h"
+#include "zinc/input_char_string.h"
 
 void test_comp_unit_compile()
 {
 	test_name(__func__);
 
-	struct buffer bf;
-	buffer_init(&bf);
-	buffer_copy_str(&bf, "10");
-	struct string_data sd;
-	string_data_init(&bf, &sd);
+    Vector* text = NULL;
+    VectorCreate(&text, sizeof(char));
+    VectorAdd(text, "10", 3);
+
+    InputCharString* input = NULL;
+    InputCharStringCreate(&input, text);
 
 	struct comp_unit* cu = NULL;
 	malloc_safe((void**)&cu, sizeof(struct comp_unit));
 	comp_unit_init(cu);
 
-	bool valid = comp_unit_compile(cu, (input_getchar)string_getchar, (input_data)&sd);
+	bool valid = comp_unit_compile(cu, input, input->input_vtable);
 	expect_true(valid, "valid");
 	
 	struct ast_node* root = cu->root;
@@ -31,7 +33,8 @@ void test_comp_unit_compile()
 
 	comp_unit_destroy(cu);
 	free(cu);
-	buffer_destroy(&bf);
+    VectorDestroy(text);
+    free(text);
 }
 
 void test_comp_unit()

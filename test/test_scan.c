@@ -11,7 +11,6 @@
 #include "test_scan_setup.h"
 #include "zinc/error_unit_test.h"
 
-/* dynamic-output-none */
 void test_scan_blank()
 {
 	test_name(__func__);
@@ -22,10 +21,8 @@ void test_scan_blank()
 	struct token* t;
 	bool valid;
 
-	/* allocate sns{} */
 	scan_setup("", &sns, &lc, &el);
 
-	/* allocatge sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token 0");
@@ -33,18 +30,15 @@ void test_scan_blank()
 	expect_str(&t->value, "", "(blank)");
     expect_size_t_equal(t->loc.line, 1, "line 1");
     expect_size_t_equal(t->loc.col, 1, "col 1");
-    expect_size_t_equal(t->loc.size, 0, "size 0");
+    expect_size_t_equal(t->loc.size, 3, "size 0");
     expect_size_t_equal(t->loc.byte_pos, 0, "byte pos 0");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
-/* dynamic-output-none */
 void test_scan_assign()
 {
 	test_name(__func__);
@@ -55,27 +49,22 @@ void test_scan_assign()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("a = 1", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "a", "a");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
 	expect_int_equal(t->type, token_equal, "equal");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
@@ -86,11 +75,9 @@ void test_scan_assign()
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "scan_get_token valid");
@@ -98,7 +85,7 @@ void test_scan_assign()
     expect_int_equal(t->type, token_eof, "eof");
     expect_size_t_equal(t->loc.line, 1, "line 1");
     expect_size_t_equal(t->loc.col, 6, "col 6");
-    expect_size_t_equal(t->loc.size, 0, "size 0");
+    expect_size_t_equal(t->loc.size, 3, "size 3");
     expect_size_t_equal(t->loc.byte_pos, 5, "byte pos 5");
 
     /* destroy t t{} */
@@ -1264,7 +1251,6 @@ void test_scan_for_iteration()
 	scan_teardown(&sns);
 }
 
-/* dynamic-output-none */
 void test_scan_error_unrecognized_character()
 {
 	test_name(__func__);
@@ -1275,17 +1261,14 @@ void test_scan_error_unrecognized_character()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("$", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_false(valid, "scan_get_token");
 	assert_has_errors(sns.el);
 	assert_null(t, "t");
 	expect_source_error(&el, "Unrecognized character: $");
 
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
@@ -1600,17 +1583,14 @@ void test_scan_error_exponent_sign()
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
 	scan_setup("100e-a", &sns, &lc, &el);
 
-	/* allocate sns{} t t{} */
 	valid = scan_get_token(&sns, &t);
 	assert_has_errors(sns.el);
 	expect_false(valid, "scan_get_token valid");
 	expect_null(t, "null t");
-	expect_source_error(&el, "invalid number");
+	expect_source_error(&el, "expected number after exponent sign");
 
-	/* destroy sns{} */
 	scan_teardown(&sns);
 }
 
