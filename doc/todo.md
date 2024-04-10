@@ -1,4 +1,8 @@
 # Todo
+* use combinators for scanner
+* change scan to lex
+* create input_unicode interface for input
+* remove old input interfaces
 * remove ICU dependency
 * allow only English and Greek letters for identifiers
   * A-Z

@@ -9,17 +9,23 @@
 #include <errno.h>
 #include <assert.h>
 #include "os_linux.h"
+#include "zinc/result.h"
 
-char* get_exe_path()
+enum result get_exe_path(char** path)
 {
-  char* buf = NULL;
-  int bufsize = 1000;
+    enum result r = result_ok;
+    int buf_size = 1024;
 
-  malloc_safe((void**)&buf, bufsize);
+    malloc_safe((void**)path, buf_size+1);
 
-  size_t size = readlink("/proc/self/exe", buf, bufsize);
+    size_t size = readlink("/proc/self/exe", *path, buf_size);
+    if (size == -1) {
+      r = set_error("path not read");
+    } else {
+      (*path)[size] = '\0';
+    }
 
-  return buf;
+  return r;
 }
 
 void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename)

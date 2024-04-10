@@ -37,17 +37,16 @@ void comp_table_destroy(struct comp_table* ct)
 bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit** cu_base)
 {
 	bool valid = true;
+    enum result r;
 	char* path = NULL;
-	
-	path = get_exe_path();
 
-	struct location loc;
-	location_init(&loc);
+    struct location loc;
+    location_init(&loc);
 
-	if (!path) {
-		valid = set_source_error(&cu->el, &loc, "could not get executable path");
-		return valid;
-	}
+	r = get_exe_path(&path);
+    if (r == result_error) {
+        valid = set_source_error(&cu->el, &loc, "could not get executable path");
+    }
 
 	struct buffer path2;
 	struct buffer dir;
