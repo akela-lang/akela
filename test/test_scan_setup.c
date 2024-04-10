@@ -2,7 +2,7 @@
 #include "akela/input.h"
 #include "akela/uconv.h"
 #include "akela/symbol_table.h"
-#include "akela/scan.h"
+#include "akela/lex.h"
 #include "zinc/memory.h"
 #include "zinc/unit_test.h"
 #include "zinc/input_char_string.h"

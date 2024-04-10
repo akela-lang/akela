@@ -7,7 +7,7 @@
 #include "parse_stmts.h"
 #include "parse_expr.h"
 #include "source.h"
-#include "scan.h"
+#include "lex.h"
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include "parse_factor.h"

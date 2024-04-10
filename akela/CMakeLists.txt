@@ -1,6 +1,7 @@
 
 set(lib_files
-        scan.c
+        lex.c
+        lex_tools.c
         token.c
         ast.c
         parse_stmts.c

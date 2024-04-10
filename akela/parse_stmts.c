@@ -5,7 +5,7 @@
 #include "zinc/buffer.h"
 #include "parse_expr.h"
 #include "input.h"
-#include "scan.h"
+#include "lex.h"
 #include "parse_tools.h"
 #include "parse_types.h"
 #include "source.h"

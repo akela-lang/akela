@@ -4,7 +4,7 @@
 #include "token.h"
 #include "ast.h"
 #include "parse_stmts.h"
-#include "scan.h"
+#include "lex.h"
 #include "parse.h"
 #include "input.h"
 #include "parse_tools.h"

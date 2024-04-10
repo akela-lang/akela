@@ -1,6 +1,5 @@
 # Todo
 * use combinators for scanner
-* change scan to lex
 * create input_unicode interface for input
 * remove old input interfaces
 * remove ICU dependency
@@ -8,6 +7,7 @@
   * A-Z
   * a-z
   * ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω
+* fix memory leaks
 * store IR value in ast node
 * store IR variable references in symbol table
 * keep LLVM references out of parsing code and symbol table - use void* to reference them

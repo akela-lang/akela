@@ -4,7 +4,7 @@
 #include "parse_tools.h"
 #include "token.h"
 #include "zinc/result.h"
-#include "scan.h"
+#include "lex.h"
 #include "source.h"
 #include "ast.h"
 #include <assert.h>
@@ -35,7 +35,7 @@ bool get_lookahead_one(struct parse_state* ps)
 
     struct token* t = NULL;
     while (true) {
-        valid = scan_get_token(ps->sns, &t) && valid;
+        valid = lex_get_token(ps->sns, &t) && valid;
         if (t) {
             break;
         }

@@ -2,7 +2,7 @@
 #include "zinc/buffer.h"
 #include "zinc/result.h"
 #include "token.h"
-#include "scan.h"
+#include "lex.h"
 #include "parse_tools.h"
 #include "ast.h"
 #include "source.h"

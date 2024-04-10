@@ -2,7 +2,7 @@
 #define _TEST_PARSE_H
 
 #include "zinc/result.h"
-#include "akela/scan.h"
+#include "akela/lex.h"
 #include "akela/token.h"
 #include "akela/ast.h"
 #include "akela/parse_tools.h"

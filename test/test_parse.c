@@ -6,7 +6,7 @@
 #include "akela/uconv.h"
 #include "akela/parse_tools.h"
 #include "akela/parse.h"
-#include "akela/scan.h"
+#include "akela/lex.h"
 #include "akela/source.h"
 #include "akela/comp_unit.h"
 #include "zinc/input_char.h"

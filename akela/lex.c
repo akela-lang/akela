@@ -1,12 +1,10 @@
-#include <unicode/uchar.h>
-#include <unicode/ucnv.h>
-#include <unicode/ustring.h>
+#include "lex_tools.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
 #include "zinc/result.h"
 #include "token.h"
-#include "scan.h"
+#include "lex.h"
 #include "zinc/buffer.h"
 #include "zinc/memory.h"
 #include "input.h"
@@ -16,61 +14,6 @@
 #include <ctype.h>
 
 /**
- * initialize scanner state
- * @param sns scanner data
- * @param lc lookahead buffer
- * @param el error list
- * @param st symbol table
- */
-void scan_state_init(struct scan_state* sns, void* input_obj, InputCharVTable* input_vtable, struct error_list* el, struct symbol_table* st)
-{
-    sns->input_obj = input_obj;
-    sns->input_vtable = input_vtable;
-    sns->el = el;
-    sns->st = st;
-}
-
-/**
- * check if compound operator
- * @param uc utf32 character
- * @return true if a compound operator, otherwise false
- */
-bool compound_operator_start(int num, const char c[4])
-{
-    return *c == '=' || *c == '!' || *c == '<' || *c == '>' || *c == '&' || *c == '|' || *c == ':';
-}
-
-bool get_uc_char(struct scan_state* sns, char c[4], int* num, struct location* loc)
-{
-    bool done;
-    done = InputCharNext(sns->input_obj, sns->input_vtable, c, loc);
-    if (done) {
-        num = 0;
-        return done;
-    }
-    *num = NUM_BYTES(*c);
-    for (int i = 1; i < *num; i++) {
-        struct location loc2;
-        done = InputCharNext(sns->input_obj, sns->input_vtable, c + i, &loc2);
-        if (done) {
-            break;
-        }
-        loc->size++;
-    }
-    return done;
-}
-
-bool is_word(const char c[4])
-{
-    return isalpha(*c);
-}
-
-bool is_num(const char c[4])
-{
-    return isdigit(*c);
-}
-
-/**
  * scan in start state
  * @param sns scanner data
  * @param state current state
@@ -78,11 +21,11 @@ bool is_num(const char c[4])
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool process_char_start(struct scan_state* sns,
-            enum state_enum* state,
-            int* got_token,
-            bool* done,
-            struct token* t)
+bool lex_start(struct scan_state* sns,
+               enum state_enum* state,
+               int* got_token,
+               bool* done,
+               struct token* t)
 {
     bool valid = true;
     char c[4];
@@ -215,11 +158,11 @@ bool process_char_start(struct scan_state* sns,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool process_char_word(struct scan_state* sns,
-        enum state_enum* state,
-        int* got_token,
-        bool* done,
-        struct token* t)
+bool lex_word(struct scan_state* sns,
+              enum state_enum* state,
+              int* got_token,
+              bool* done,
+              struct token* t)
 {
     bool valid = true;
     char c[4];
@@ -294,21 +237,6 @@ bool process_char_word(struct scan_state* sns,
 }
 
 /**
- * check if the state is a number state
- * @param state the state
- * @return true if number state, otherwise false
- */
-bool is_number_state(enum state_enum state)
-{
-    return state == state_number_whole
-        || state == state_number_fraction_start
-        || state == state_number_fraction
-        || state == state_number_exponent_start
-        || state == state_number_exponent_sign_start
-        || state == state_number_exponent;
-}
-
-/**
  * scan a number
  * @param sns scanner data
  * @param state current state
@@ -316,11 +244,11 @@ bool is_number_state(enum state_enum state)
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool process_char_number(struct scan_state* sns,
-        enum state_enum* state,
-        int* got_token,
-        bool* done,
-        struct token* t)
+bool lex_number(struct scan_state* sns,
+                enum state_enum* state,
+                int* got_token,
+                bool* done,
+                struct token* t)
 {
     bool valid = true;
     char c[4];
@@ -460,7 +388,7 @@ bool process_char_number(struct scan_state* sns,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool process_char_string(
+bool lex_string(
         struct scan_state* sns,
         enum state_enum* state,
         int* got_token,
@@ -532,7 +460,7 @@ bool process_char_string(
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool process_compound_operator(
+bool lex_compound_operator(
         struct scan_state* sns,
         enum state_enum* state,
         int* got_token,
@@ -651,24 +579,24 @@ bool process_compound_operator(
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool scan_process(struct scan_state* sns,
-        enum state_enum* state,
-        int* got_token,
-        bool* done,
-        struct token* t)
+bool lex_process(struct scan_state* sns,
+                 enum state_enum* state,
+                 int* got_token,
+                 bool* done,
+                 struct token* t)
 {
     bool valid = true;
 
     if (*state == state_start) {
-        valid = process_char_start(sns, state, got_token, done, t);
+        valid = lex_start(sns, state, got_token, done, t);
     } else if (*state == state_id || *state == state_id_underscore) {
-        valid = process_char_word(sns, state, got_token, done, t);
+        valid = lex_word(sns, state, got_token, done, t);
     } else if (is_number_state(*state)) {
-        valid = process_char_number(sns, state, got_token, done, t);
+        valid = lex_number(sns, state, got_token, done, t);
     } else if (*state == state_string || *state == state_string_backslash) {
-        valid = process_char_string(sns, state, got_token, done, t);
+        valid = lex_string(sns, state, got_token, done, t);
     } else if (*state == state_compound_operator) {
-        valid = process_compound_operator(sns, state, got_token, done, t);
+        valid = lex_compound_operator(sns, state, got_token, done, t);
     } else {
         /* unexpected state */
         assert(false);
@@ -683,7 +611,7 @@ bool scan_process(struct scan_state* sns,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool scan_get_token(struct scan_state* sns, struct token** t)
+bool lex_get_token(struct scan_state* sns, struct token** t)
 {
     bool valid = true;
     enum state_enum state = state_start;
@@ -696,7 +624,7 @@ bool scan_get_token(struct scan_state* sns, struct token** t)
     token_init(tf);
 
     while (!got_token && !done) {
-        valid = scan_process(sns, &state, &got_token, &done, tf);
+        valid = lex_process(sns, &state, &got_token, &done, tf);
         if (!valid) {
             token_destroy(tf);
             free(tf);
@@ -705,7 +633,7 @@ bool scan_get_token(struct scan_state* sns, struct token** t)
     }
 
     if (state != state_start) {
-        valid = scan_process(sns, &state, &got_token, &done, tf);
+        valid = lex_process(sns, &state, &got_token, &done, tf);
         if (!valid) {
             token_destroy(tf);
             free(tf);

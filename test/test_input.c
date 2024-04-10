@@ -2,7 +2,7 @@
 #include "zinc/buffer.h"
 #include "akela/input.h"
 #include "akela/os_win.h"
-#include "akela/scan.h"
+#include "akela/lex.h"
 #include "akela/uconv.h"
 
 #if defined(WIN32)

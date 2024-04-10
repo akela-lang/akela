@@ -5,7 +5,7 @@
 #include "parse_tools.h"
 #include "parse_factor.h"
 #include "source.h"
-#include "scan.h"
+#include "lex.h"
 #include "parse_types.h"
 #include "parse_expr.h"
 #include "type_def.h"

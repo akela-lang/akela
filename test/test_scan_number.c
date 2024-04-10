@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "akela/lookahead_char.h"
 #include "akela/source.h"
-#include "akela/scan.h"
+#include "akela/lex.h"
 #include "test_scan_setup.h"
 #include "akela/unit_test_compiler.h"
 #include "zinc/error_unit_test.h"
@@ -19,7 +19,7 @@ void test_scan_number_negative_start()
 	/* allocate sns{} */
 	scan_setup("-", &sns, &lc, &el);
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	expect_true(valid, "valid 0");
 	expect_int_equal(t->type, token_minus, "minus 0");
 
@@ -46,9 +46,9 @@ void test_scan_number_whole()
 	scan_setup("500", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
+	assert_true(valid, "lex_get_token valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500", "500");
@@ -78,9 +78,9 @@ void test_scan_number_fraction_start()
 	scan_setup("500.", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
+	assert_true(valid, "lex_get_token valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.", "500.");
@@ -110,9 +110,9 @@ void test_scan_number_fraction()
 	scan_setup("500.123", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
+	assert_true(valid, "lex_get_token valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123", "500.123");
@@ -139,14 +139,14 @@ void test_scan_number_exponent_start()
 
 	scan_setup("500e", &sns, &lc, &el);
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "valid 0");
 	assert_ptr(t, "ptr t 0");
 	expect_int_equal(t->type, token_number, "number 0");
 	expect_str(&t->value, "500", "500 0");
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "valid 1");
 	assert_ptr(t, "ptr t 1");
@@ -171,14 +171,14 @@ void test_scan_number_fraction_exponent_start()
 
 	scan_setup("500.123e", &sns, &lc, &el);
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
 	expect_int_equal(t->type, token_number, "0 number");
 	expect_str(&t->value, "500.123e", "0 value");
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
@@ -203,9 +203,9 @@ void test_scan_number_fraction_exponent()
 
 	scan_setup("500.123e2", &sns, &lc, &el);
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
+	assert_true(valid, "lex_get_token valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e2", "500.123e2");
@@ -230,7 +230,7 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 
 	scan_setup("500.123e-", &sns, &lc, &el);
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	expect_has_errors(sns.el);
 	expect_false(valid, "0 valid");
 	expect_source_error(sns.el, "expected number after exponent sign");
@@ -253,7 +253,7 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 
 	scan_setup("500.123e+", &sns, &lc, &el);
 
-	valid = scan_get_token(&sns,  &t);
+	valid = lex_get_token(&sns, &t);
 	expect_has_errors(sns.el);
 	expect_false(valid, "0 valid");
 	expect_source_error(sns.el, "expected number after exponent sign");
@@ -279,9 +279,9 @@ void test_scan_number_fraction_exponent_negative()
 	scan_setup("500.123e-2", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns,  &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
+	assert_true(valid, "lex_get_token valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e-2", "500.123e-2");
@@ -311,9 +311,9 @@ void test_scan_number_exponent_positive()
 	scan_setup("500.123e+2", &sns, &lc, &el);
 
 	/* allocate sns{} t t{} */
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "scan_get_token valid");
+	assert_true(valid, "lex_get_token valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "500.123e+2", "500.123e+2");
@@ -340,7 +340,7 @@ void test_scan_number_exponent_add()
 
 	scan_setup("500.123e + 1", &sns, &lc, &el);
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
@@ -352,7 +352,7 @@ void test_scan_number_exponent_add()
 	token_destroy(t);
 	free(t);
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
@@ -363,7 +363,7 @@ void test_scan_number_exponent_add()
 	token_destroy(t);
 	free(t);
 
-	valid = scan_get_token(&sns, &t);
+	valid = lex_get_token(&sns, &t);
 	assert_no_errors(sns.el);
 	assert_true(valid, "2 valid");
 	assert_ptr(t, "2 ptr t");

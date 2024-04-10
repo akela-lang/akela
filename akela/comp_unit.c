@@ -4,7 +4,7 @@
 #include "zinc/result.h"
 #include "zinc/memory.h"
 #include "lookahead_char.h"
-#include "scan.h"
+#include "lex.h"
 #include "parse_tools.h"
 #include "parse.h"
 #include <assert.h>
