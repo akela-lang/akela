@@ -12,14 +12,14 @@ void test_scan_number_negative_start()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("-", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("-", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
+	valid = lex(&ls, &t);
 	expect_true(valid, "valid 0");
 	expect_int_equal(t->type, token_minus, "minus 0");
 
@@ -27,8 +27,8 @@ void test_scan_number_negative_start()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -38,16 +38,16 @@ void test_scan_number_whole()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("500", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("500", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
@@ -59,8 +59,8 @@ void test_scan_number_whole()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -70,16 +70,16 @@ void test_scan_number_fraction_start()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("500.", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("500.", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
@@ -91,8 +91,8 @@ void test_scan_number_fraction_start()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -102,16 +102,16 @@ void test_scan_number_fraction()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("500.123", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("500.123", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
@@ -123,8 +123,8 @@ void test_scan_number_fraction()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 void test_scan_number_exponent_start()
@@ -133,21 +133,21 @@ void test_scan_number_exponent_start()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("500e", &sns, &lc, &el);
+	scan_setup("500e", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
 	expect_int_equal(t->type, token_number, "0 number");
 	expect_str(&t->value, "500e", "0 value");
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
 	expect_int_equal(t->type, token_eof, "1 eof");
@@ -156,7 +156,7 @@ void test_scan_number_exponent_start()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 void test_scan_number_fraction_exponent_start()
@@ -165,21 +165,21 @@ void test_scan_number_fraction_exponent_start()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e", &sns, &lc, &el);
+	scan_setup("500.123e", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
 	expect_int_equal(t->type, token_number, "0 number");
 	expect_str(&t->value, "500.123e", "0 value");
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
 	expect_int_equal(t->type, token_eof, "1 eof");
@@ -188,7 +188,7 @@ void test_scan_number_fraction_exponent_start()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 void test_scan_number_fraction_exponent()
@@ -197,14 +197,14 @@ void test_scan_number_fraction_exponent()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e2", &sns, &lc, &el);
+	scan_setup("500.123e2", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
@@ -215,7 +215,7 @@ void test_scan_number_fraction_exponent()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 void test_scan_number_fraction_exponent_sign_start_negative()
@@ -224,21 +224,21 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e-", &sns, &lc, &el);
+	scan_setup("500.123e-", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	expect_has_errors(sns.el);
+	valid = lex(&ls, &t);
+	expect_has_errors(ls.el);
 	expect_false(valid, "0 valid");
-	expect_source_error(sns.el, "expected number after exponent sign");
+	expect_source_error(ls.el, "expected number after exponent sign");
 
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 void test_scan_number_fraction_exponent_sign_start_positive()
@@ -247,21 +247,21 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e+", &sns, &lc, &el);
+	scan_setup("500.123e+", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	expect_has_errors(sns.el);
+	valid = lex(&ls, &t);
+	expect_has_errors(ls.el);
 	expect_false(valid, "0 valid");
-	expect_source_error(sns.el, "expected number after exponent sign");
+	expect_source_error(ls.el, "expected number after exponent sign");
 
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -271,16 +271,16 @@ void test_scan_number_fraction_exponent_negative()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("500.123e-2", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("500.123e-2", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
@@ -292,8 +292,8 @@ void test_scan_number_fraction_exponent_negative()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -302,17 +302,17 @@ void test_scan_number_exponent_positive()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct lex_state sns;
+	struct lex_state ls;
 	struct error_list el;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("500.123e+2", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("500.123e+2", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, token_number, "number");
@@ -324,8 +324,8 @@ void test_scan_number_exponent_positive()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 void test_scan_number_exponent_add()
@@ -334,14 +334,14 @@ void test_scan_number_exponent_add()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e + 1", &sns, &lc, &el);
+	scan_setup("500.123e + 1", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
 	expect_int_equal(t->type, token_number, "0 number");
@@ -352,8 +352,8 @@ void test_scan_number_exponent_add()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
 	expect_int_equal(t->type, token_plus, "1 plus");
@@ -363,8 +363,8 @@ void test_scan_number_exponent_add()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "2 valid");
 	assert_ptr(t, "2 ptr t");
 	expect_int_equal(t->type, token_number, "2 number");
@@ -375,7 +375,7 @@ void test_scan_number_exponent_add()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 void test_scan_number()

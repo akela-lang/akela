@@ -17,14 +17,14 @@ void test_scan_blank()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	struct token* t;
 	bool valid;
 
-	scan_setup("", &sns, &lc, &el);
+	scan_setup("", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex 0");
 	expect_int_equal(t->type, token_eof, "none");
 	expect_str(&t->value, "", "(blank)");
@@ -36,7 +36,7 @@ void test_scan_blank()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 void test_scan_assign()
@@ -45,14 +45,14 @@ void test_scan_assign()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("a = 1", &sns, &lc, &el);
+	scan_setup("a = 1", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "a", "a");
@@ -60,17 +60,17 @@ void test_scan_assign()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal");
 
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
@@ -78,8 +78,8 @@ void test_scan_assign()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -92,8 +92,8 @@ void test_scan_assign()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -103,16 +103,16 @@ void test_scan_addition()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("speed + 1", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("speed + 1", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "speed", "speed");
@@ -121,9 +121,9 @@ void test_scan_addition()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_plus, "plus");
 
@@ -131,9 +131,9 @@ void test_scan_addition()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
@@ -142,9 +142,9 @@ void test_scan_addition()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
     assert_int_equal(t->type, token_eof, "eof");
 	assert_true(valid, "lex valid");
 
@@ -152,8 +152,8 @@ void test_scan_addition()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -163,16 +163,16 @@ void test_scan_subtraction()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("100 - delta", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("100 - delta", &ls, &lc, &el);
 
-	/* allocate sns t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "100", "100");
@@ -181,9 +181,9 @@ void test_scan_subtraction()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_minus, "minus");
 
@@ -191,9 +191,9 @@ void test_scan_subtraction()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "delta", "delta");
@@ -202,9 +202,9 @@ void test_scan_subtraction()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -213,8 +213,8 @@ void test_scan_subtraction()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -224,16 +224,16 @@ void test_scan_multiplication()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("100 * 20", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("100 * 20", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "100", "100");
@@ -242,9 +242,9 @@ void test_scan_multiplication()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_mult, "mult");
 
@@ -252,9 +252,9 @@ void test_scan_multiplication()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "20", "20");
@@ -263,9 +263,9 @@ void test_scan_multiplication()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -274,8 +274,8 @@ void test_scan_multiplication()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -285,16 +285,16 @@ void test_scan_divide()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("45 / 11", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("45 / 11", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "45", "45");
@@ -303,9 +303,9 @@ void test_scan_divide()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_divide, "divide");
 
@@ -313,9 +313,9 @@ void test_scan_divide()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "is number");
 	expect_str(&t->value, "11", "11");
@@ -324,9 +324,9 @@ void test_scan_divide()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -335,8 +335,8 @@ void test_scan_divide()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -346,16 +346,16 @@ void test_scan_stmts_expr()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("i + 1\nx * 4", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("i + 1\nx * 4", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
@@ -364,9 +364,9 @@ void test_scan_stmts_expr()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_plus, "plus");
 
@@ -374,9 +374,9 @@ void test_scan_stmts_expr()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
@@ -385,9 +385,9 @@ void test_scan_stmts_expr()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
 
@@ -395,9 +395,9 @@ void test_scan_stmts_expr()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
@@ -406,9 +406,9 @@ void test_scan_stmts_expr()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_mult, "mult");
 
@@ -416,9 +416,9 @@ void test_scan_stmts_expr()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number2");
 	expect_str(&t->value, "4", "4");
@@ -427,9 +427,9 @@ void test_scan_stmts_expr()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -438,8 +438,8 @@ void test_scan_stmts_expr()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -449,16 +449,16 @@ void test_scan_stmts_expr2()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("i + 1\nx * 4\n", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("i + 1\nx * 4\n", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
@@ -467,9 +467,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_plus, "plus");
 
@@ -477,9 +477,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
@@ -488,9 +488,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
 
@@ -498,9 +498,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
@@ -509,9 +509,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_mult, "mult");
 
@@ -519,9 +519,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number2");
 	expect_str(&t->value, "4", "4");
@@ -530,9 +530,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline2");
 
@@ -540,9 +540,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -551,9 +551,9 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -562,8 +562,8 @@ void test_scan_stmts_expr2()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -573,16 +573,16 @@ void test_scan_stmts_assign()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("i + 1\nx = 4", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("i + 1\nx = 4", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "i", "i");
@@ -591,9 +591,9 @@ void test_scan_stmts_assign()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_plus, "plus");
 
@@ -601,9 +601,9 @@ void test_scan_stmts_assign()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
 	expect_str(&t->value, "1", "1");
@@ -612,9 +612,9 @@ void test_scan_stmts_assign()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
 
@@ -622,9 +622,9 @@ void test_scan_stmts_assign()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id2");
 	expect_str(&t->value, "x", "x");
@@ -633,9 +633,9 @@ void test_scan_stmts_assign()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal");
 
@@ -643,9 +643,9 @@ void test_scan_stmts_assign()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number2");
 	expect_str(&t->value, "4", "4");
@@ -654,9 +654,9 @@ void test_scan_stmts_assign()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -665,8 +665,8 @@ void test_scan_stmts_assign()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -676,16 +676,16 @@ void test_scan_function()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("function foo () \n end", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("function foo () \n end", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_function, "function");
 
@@ -693,9 +693,9 @@ void test_scan_function()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "foo", "foo");
@@ -704,9 +704,9 @@ void test_scan_function()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_left_paren, "left paren");
 
@@ -714,9 +714,9 @@ void test_scan_function()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_right_paren, "right paren");
 
@@ -724,9 +724,9 @@ void test_scan_function()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
 
@@ -734,9 +734,9 @@ void test_scan_function()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_end, "end");
 
@@ -744,9 +744,9 @@ void test_scan_function()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -755,8 +755,8 @@ void test_scan_function()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -766,16 +766,16 @@ void test_scan_comma()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup(",", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup(",", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_comma, "comma");
 
@@ -783,9 +783,9 @@ void test_scan_comma()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -794,8 +794,8 @@ void test_scan_comma()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -805,16 +805,16 @@ void test_scan_semicolon()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup(";", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup(";", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_semicolon, "semicolon");
 
@@ -822,9 +822,9 @@ void test_scan_semicolon()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -833,8 +833,8 @@ void test_scan_semicolon()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -843,16 +843,16 @@ void test_scan_if() {
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("if elseif else", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("if elseif else", &ls, &lc, &el);
 	
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_if, "if");
 
@@ -860,9 +860,9 @@ void test_scan_if() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_elseif, "elseif");
 
@@ -870,9 +870,9 @@ void test_scan_if() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_else, "else");
 
@@ -880,9 +880,9 @@ void test_scan_if() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
@@ -891,8 +891,8 @@ void test_scan_if() {
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{}*/
-	scan_teardown(&sns);
+	/* destroy ls{}*/
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -901,16 +901,16 @@ void test_scan_compound_operators() {
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("== != <= >= && || ::", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("== != <= >= && || ::", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_double_equal, "double equal");
 
@@ -918,9 +918,9 @@ void test_scan_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_not_equal, "not equal");
 
@@ -928,9 +928,9 @@ void test_scan_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_less_than_or_equal, "less than or equal");
 
@@ -938,9 +938,9 @@ void test_scan_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_greater_than_or_equal, "greater than or equal");
 
@@ -948,9 +948,9 @@ void test_scan_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_and, "and");
 
@@ -958,9 +958,9 @@ void test_scan_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_or, "or");
 
@@ -968,9 +968,9 @@ void test_scan_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_double_colon, "double colon");
 
@@ -978,8 +978,8 @@ void test_scan_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -988,16 +988,16 @@ void test_scan_compound_operators2() {
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("= ! < > & | :", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("= ! < > & | :", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal");
 
@@ -1005,9 +1005,9 @@ void test_scan_compound_operators2() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_not, "not");
 
@@ -1015,9 +1015,9 @@ void test_scan_compound_operators2() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_less_than, "less than");
 
@@ -1025,9 +1025,9 @@ void test_scan_compound_operators2() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_greater_than, "greater_than");
 
@@ -1035,9 +1035,9 @@ void test_scan_compound_operators2() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_ampersand, "ampersand");
 
@@ -1045,9 +1045,9 @@ void test_scan_compound_operators2() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_vertical_bar, "vertical_bar");
 
@@ -1055,9 +1055,9 @@ void test_scan_compound_operators2() {
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_colon, "colon");
 
@@ -1065,8 +1065,8 @@ void test_scan_compound_operators2() {
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1076,16 +1076,16 @@ void test_scan_for_range()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("for i = 0:10 1 end", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("for i = 0:10 1 end", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_for, "for");
 
@@ -1093,9 +1093,9 @@ void test_scan_for_range()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 1");
 	expect_str(&t->value, "i", "i");
@@ -1104,9 +1104,9 @@ void test_scan_for_range()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal 2");
 
@@ -1114,9 +1114,9 @@ void test_scan_for_range()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 3");
 
@@ -1124,9 +1124,9 @@ void test_scan_for_range()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_colon, "colon 4");
 
@@ -1134,9 +1134,9 @@ void test_scan_for_range()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 5");
 	expect_str(&t->value, "10", "10 5");
@@ -1145,9 +1145,9 @@ void test_scan_for_range()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 6");
 	expect_str(&t->value, "1", "1 6");
@@ -1156,9 +1156,9 @@ void test_scan_for_range()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_end, "end 7");
 
@@ -1166,8 +1166,8 @@ void test_scan_for_range()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1177,16 +1177,16 @@ void test_scan_for_iteration()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("for x in list 1 end", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("for x in list 1 end", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_for, "for");
 
@@ -1194,9 +1194,9 @@ void test_scan_for_iteration()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 1");
 	expect_str(&t->value, "x", "x 1");
@@ -1205,9 +1205,9 @@ void test_scan_for_iteration()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_in, "in 2");
 
@@ -1215,9 +1215,9 @@ void test_scan_for_iteration()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 3");
 	expect_str(&t->value, "list", "list 3");
@@ -1226,9 +1226,9 @@ void test_scan_for_iteration()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 4");
 	expect_str(&t->value, "1", "1 4");
@@ -1237,9 +1237,9 @@ void test_scan_for_iteration()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_end, "end 5");
 
@@ -1247,8 +1247,8 @@ void test_scan_for_iteration()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 void test_scan_error_unrecognized_character()
@@ -1257,19 +1257,19 @@ void test_scan_error_unrecognized_character()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("$", &sns, &lc, &el);
+	scan_setup("$", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
+	valid = lex(&ls, &t);
 	assert_false(valid, "lex");
-	assert_has_errors(sns.el);
+	assert_has_errors(ls.el);
 	assert_null(t, "t");
 	expect_source_error(&el, "Unrecognized character: $");
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1279,16 +1279,16 @@ void test_scan_square_brackets()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("[]", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("[]", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_left_square_bracket, "left-square-bracket 0");
 
@@ -1296,9 +1296,9 @@ void test_scan_square_brackets()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_right_square_bracket, "right-square-bracket 1");
 
@@ -1306,8 +1306,8 @@ void test_scan_square_brackets()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1317,16 +1317,16 @@ void test_scan_string()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("\"hello\"", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("\"hello\"", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_string, "string 0");
 	expect_str(&t->value, "hello", "hello 0");
@@ -1335,8 +1335,8 @@ void test_scan_string()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1346,16 +1346,16 @@ void test_scan_string2()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("x = \"\\\\hello\n\r\"", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("x = \"\\\\hello\n\r\"", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 0");
 	expect_str(&t->value, "x", "x 0");
@@ -1364,9 +1364,9 @@ void test_scan_string2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal 1");
 
@@ -1374,9 +1374,9 @@ void test_scan_string2()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_string, "string 2");
 	expect_str(&t->value, "\\hello\n\r", "hello 2");
@@ -1385,8 +1385,8 @@ void test_scan_string2()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1396,23 +1396,23 @@ void test_scan_string_escape_error()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("\"\\x\"", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("\"\\x\"", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
 	assert_false(valid, "lex");
-	assert_has_errors(sns.el);
+	assert_has_errors(ls.el);
 	expect_source_error(&el, "Unrecognized escape sequence: x");
 
 	assert_null(t, "t");
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1422,16 +1422,16 @@ void test_scan_line_col()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("10 + 20\n30 + 40", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("10 + 20\n30 + 40", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t 10");
 	expect_int_equal(t->type, token_number, "number 10");
@@ -1443,9 +1443,9 @@ void test_scan_line_col()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t +");
 	expect_size_t_equal(t->type, token_plus, "plus +");
@@ -1456,9 +1456,9 @@ void test_scan_line_col()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t 20");
 	expect_size_t_equal(t->type, token_number, "number 20");
@@ -1469,9 +1469,9 @@ void test_scan_line_col()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t newline");
 	expect_size_t_equal(t->type, token_newline, "newline newline");
@@ -1482,9 +1482,9 @@ void test_scan_line_col()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t 30");
 	expect_size_t_equal(t->type, token_number, "newline 30");
@@ -1495,9 +1495,9 @@ void test_scan_line_col()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t +");
 	expect_size_t_equal(t->type, token_plus, "plus +");
@@ -1508,9 +1508,9 @@ void test_scan_line_col()
 	token_destroy(t);
 	free(t);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_no_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t 40");
 	expect_int_equal(t->type, token_number, "number 40");
@@ -1521,8 +1521,8 @@ void test_scan_line_col()
 	token_destroy(t);
 	free(t);
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 void test_scan_error_underscore_letter()
@@ -1531,22 +1531,22 @@ void test_scan_error_underscore_letter()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("_1", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("_1", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_has_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_has_errors(ls.el);
 	expect_false(valid, "lex valid");
 	expect_null(t, "null t");
 	expect_source_error(&el, "Must have a letter following underscore at start of id");
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 void test_scan_error_underscore_letter2()
@@ -1555,22 +1555,22 @@ void test_scan_error_underscore_letter2()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	/* allocate sns{} */
-	scan_setup("__", &sns, &lc, &el);
+	/* allocate ls{} */
+	scan_setup("__", &ls, &lc, &el);
 
-	/* allocate sns{} t t{} */
-	valid = lex(&sns, &t);
-	assert_has_errors(sns.el);
+	/* allocate ls{} t t{} */
+	valid = lex(&ls, &t);
+	assert_has_errors(ls.el);
 	expect_false(valid, "lex valid");
 	expect_null(t, "null t");
 	expect_source_error(&el, "Must have a letter following underscore at start of id");
 
-	/* destroy sns{} */
-	scan_teardown(&sns);
+	/* destroy ls{} */
+	scan_teardown(&ls);
 }
 
 void test_scan_error_exponent_sign()
@@ -1579,19 +1579,19 @@ void test_scan_error_exponent_sign()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	scan_setup("100e-a", &sns, &lc, &el);
+	scan_setup("100e-a", &ls, &lc, &el);
 
-	valid = lex(&sns, &t);
-	assert_has_errors(sns.el);
+	valid = lex(&ls, &t);
+	assert_has_errors(ls.el);
 	expect_false(valid, "lex valid");
 	expect_null(t, "null t");
 	expect_source_error(&el, "expected number after exponent sign");
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 void test_scan_module()
@@ -1600,14 +1600,14 @@ void test_scan_module()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct lex_state sns;
+	struct lex_state ls;
 	bool valid;
 
-	scan_setup("module 1 end", &sns, &lc, &el);
+	scan_setup("module 1 end", &ls, &lc, &el);
 
 	struct token* module;
-	valid = lex(&sns, &module);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &module);
+	assert_no_errors(ls.el);
 	assert_true(valid, "valid module");
 	assert_ptr(module, "ptr module");
 	expect_int_equal(module->type, token_module, "module module");
@@ -1616,8 +1616,8 @@ void test_scan_module()
 	free(module);
 
 	struct token* number;
-	valid = lex(&sns, &number);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &number);
+	assert_no_errors(ls.el);
 	assert_true(valid, "valid number");
 	assert_ptr(number, "ptr number");
 	expect_int_equal(number->type, token_number, "number number");
@@ -1627,8 +1627,8 @@ void test_scan_module()
 	free(number);
 
 	struct token* end;
-	valid = lex(&sns, &end);
-	assert_no_errors(sns.el);
+	valid = lex(&ls, &end);
+	assert_no_errors(ls.el);
 	assert_true(valid, "valid end");
 	assert_ptr(end, "ptr end");
 	expect_int_equal(end->type, token_end, "end end");
@@ -1636,7 +1636,7 @@ void test_scan_module()
 	token_destroy(end);
 	free(end);
 
-	scan_teardown(&sns);
+	scan_teardown(&ls);
 }
 
 /* dynamic-output-none */
