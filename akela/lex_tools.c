@@ -3,8 +3,8 @@
 #include <ctype.h>
 
 /**
- * initialize scanner state
- * @param ls scanner data
+ * initialize lexer state
+ * @param ls lexer data
  * @param lc lookahead buffer
  * @param el error list
  * @param st symbol table

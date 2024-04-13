@@ -2,11 +2,11 @@
 #include "akela/lookahead_char.h"
 #include "akela/source.h"
 #include "akela/lex.h"
-#include "test_scan_setup.h"
+#include "test_lex_setup.h"
 #include "akela/unit_test_compiler.h"
 #include "zinc/error_unit_test.h"
 
-void test_scan_number_negative_start()
+void test_lex_number_negative_start()
 {
 	test_name(__func__);
 
@@ -17,7 +17,7 @@ void test_scan_number_negative_start()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("-", &ls, &lc, &el);
+	lex_setup("-", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	expect_true(valid, "valid 0");
@@ -28,11 +28,11 @@ void test_scan_number_negative_start()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_number_whole()
+void test_lex_number_whole()
 {
 	test_name(__func__);
 
@@ -43,7 +43,7 @@ void test_scan_number_whole()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("500", &ls, &lc, &el);
+	lex_setup("500", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -60,11 +60,11 @@ void test_scan_number_whole()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_number_fraction_start()
+void test_lex_number_fraction_start()
 {
 	test_name(__func__);
 
@@ -75,7 +75,7 @@ void test_scan_number_fraction_start()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("500.", &ls, &lc, &el);
+	lex_setup("500.", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -92,11 +92,11 @@ void test_scan_number_fraction_start()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_number_fraction()
+void test_lex_number_fraction()
 {
 	test_name(__func__);
 
@@ -107,7 +107,7 @@ void test_scan_number_fraction()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("500.123", &ls, &lc, &el);
+	lex_setup("500.123", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -124,10 +124,10 @@ void test_scan_number_fraction()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_number_exponent_start()
+void test_lex_number_exponent_start()
 {
 	test_name(__func__);
 
@@ -137,7 +137,7 @@ void test_scan_number_exponent_start()
 	bool valid;
 	struct token* t;
 
-	scan_setup("500e", &ls, &lc, &el);
+	lex_setup("500e", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -156,10 +156,10 @@ void test_scan_number_exponent_start()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_number_fraction_exponent_start()
+void test_lex_number_fraction_exponent_start()
 {
 	test_name(__func__);
 
@@ -169,7 +169,7 @@ void test_scan_number_fraction_exponent_start()
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e", &ls, &lc, &el);
+	lex_setup("500.123e", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -188,10 +188,10 @@ void test_scan_number_fraction_exponent_start()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_number_fraction_exponent()
+void test_lex_number_fraction_exponent()
 {
 	test_name(__func__);
 
@@ -201,7 +201,7 @@ void test_scan_number_fraction_exponent()
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e2", &ls, &lc, &el);
+	lex_setup("500.123e2", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -215,10 +215,10 @@ void test_scan_number_fraction_exponent()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_number_fraction_exponent_sign_start_negative()
+void test_lex_number_fraction_exponent_sign_start_negative()
 {
 	test_name(__func__);
 
@@ -228,7 +228,7 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e-", &ls, &lc, &el);
+	lex_setup("500.123e-", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	expect_has_errors(ls.el);
@@ -238,10 +238,10 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_number_fraction_exponent_sign_start_positive()
+void test_lex_number_fraction_exponent_sign_start_positive()
 {
 	test_name(__func__);
 
@@ -251,7 +251,7 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e+", &ls, &lc, &el);
+	lex_setup("500.123e+", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	expect_has_errors(ls.el);
@@ -261,11 +261,11 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_number_fraction_exponent_negative()
+void test_lex_number_fraction_exponent_negative()
 {
 	test_name(__func__);
 
@@ -276,7 +276,7 @@ void test_scan_number_fraction_exponent_negative()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("500.123e-2", &ls, &lc, &el);
+	lex_setup("500.123e-2", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -293,11 +293,11 @@ void test_scan_number_fraction_exponent_negative()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_number_exponent_positive()
+void test_lex_number_exponent_positive()
 {
 	test_name(__func__);
 
@@ -308,7 +308,7 @@ void test_scan_number_exponent_positive()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("500.123e+2", &ls, &lc, &el);
+	lex_setup("500.123e+2", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -325,10 +325,10 @@ void test_scan_number_exponent_positive()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_number_exponent_add()
+void test_lex_number_exponent_add()
 {
 	test_name(__func__);
 
@@ -338,7 +338,7 @@ void test_scan_number_exponent_add()
 	bool valid;
 	struct token* t;
 
-	scan_setup("500.123e + 1", &ls, &lc, &el);
+	lex_setup("500.123e + 1", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -375,21 +375,21 @@ void test_scan_number_exponent_add()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_number()
+void test_lex_number()
 {
-	test_scan_number_negative_start();
-	test_scan_number_whole();
-	test_scan_number_fraction_start();
-	test_scan_number_fraction();
-	test_scan_number_exponent_start();
-	test_scan_number_fraction_exponent_start();
-	test_scan_number_fraction_exponent();
-	test_scan_number_fraction_exponent_sign_start_negative();
-	test_scan_number_fraction_exponent_sign_start_positive();
-	test_scan_number_fraction_exponent_negative();
-	test_scan_number_exponent_positive();
-	test_scan_number_exponent_add();
+	test_lex_number_negative_start();
+	test_lex_number_whole();
+	test_lex_number_fraction_start();
+	test_lex_number_fraction();
+	test_lex_number_exponent_start();
+	test_lex_number_fraction_exponent_start();
+	test_lex_number_fraction_exponent();
+	test_lex_number_fraction_exponent_sign_start_negative();
+	test_lex_number_fraction_exponent_sign_start_positive();
+	test_lex_number_fraction_exponent_negative();
+	test_lex_number_exponent_positive();
+	test_lex_number_exponent_add();
 }

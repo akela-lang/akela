@@ -1,6 +1,6 @@
 #include "zinc/unit_test.h"
 #include "test_input.h"
-#include "test_scan.h"
+#include "test_lex.h"
 #include "test_parse_expr.h"
 #include "test_parse_stmts.h"
 #include "test_token.h"
@@ -11,7 +11,7 @@
 #include "test_parse_types.h"
 #include "test_parse_factor.h"
 #include "test_type.h"
-#include "test_scan_number.h"
+#include "test_lex_number.h"
 #include "test_comp_unit.h"
 #include "test_comp_table.h"
 #include "test_code_gen.h"
@@ -22,8 +22,8 @@ int main(void) {
 	test_lookahead_translator();
 	test_input();
 	test_token();
-	test_scan();
-	test_scan_number();
+	test_lex();
+	test_lex_number();
 	test_ast();
 	test_type();
 	test_parse_factor();

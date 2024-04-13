@@ -5,9 +5,9 @@ set(test_files
         test_parse_factor.c
         test_parse_expr.c
         test_parse_stmts.c
-        test_scan_setup.c
-        test_scan.c
-        test_scan_number.c
+        test_lex_setup.c
+        test_lex.c
+        test_lex_number.c
         test_input.c
         test_token.c
         test_lookahead_translator.c

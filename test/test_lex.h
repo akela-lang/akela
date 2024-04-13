@@ -2,6 +2,6 @@
 #define _TEST_SCAN_H
 
 /* dynamic-output-none */
-void test_scan();
+void test_lex();
 
 #endif

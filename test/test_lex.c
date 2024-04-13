@@ -8,10 +8,10 @@
 #include "akela/input.h"
 #include "akela/lookahead_char.h"
 #include "akela/source.h"
-#include "test_scan_setup.h"
+#include "test_lex_setup.h"
 #include "zinc/error_unit_test.h"
 
-void test_scan_blank()
+void test_lex_blank()
 {
 	test_name(__func__);
 
@@ -21,7 +21,7 @@ void test_scan_blank()
 	struct token* t;
 	bool valid;
 
-	scan_setup("", &ls, &lc, &el);
+	lex_setup("", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -36,10 +36,10 @@ void test_scan_blank()
 	token_destroy(t);
 	free(t);
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_assign()
+void test_lex_assign()
 {
 	test_name(__func__);
 
@@ -49,7 +49,7 @@ void test_scan_assign()
 	bool valid;
 	struct token* t;
 
-	scan_setup("a = 1", &ls, &lc, &el);
+	lex_setup("a = 1", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -93,11 +93,11 @@ void test_scan_assign()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_addition()
+void test_lex_addition()
 {
 	test_name(__func__);
 
@@ -108,7 +108,7 @@ void test_scan_addition()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("speed + 1", &ls, &lc, &el);
+	lex_setup("speed + 1", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -153,11 +153,11 @@ void test_scan_addition()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_subtraction()
+void test_lex_subtraction()
 {
 	test_name(__func__);
 
@@ -168,7 +168,7 @@ void test_scan_subtraction()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("100 - delta", &ls, &lc, &el);
+	lex_setup("100 - delta", &ls, &lc, &el);
 
 	/* allocate ls t t{} */
 	valid = lex(&ls, &t);
@@ -214,11 +214,11 @@ void test_scan_subtraction()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_multiplication()
+void test_lex_multiplication()
 {
 	test_name(__func__);
 
@@ -229,7 +229,7 @@ void test_scan_multiplication()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("100 * 20", &ls, &lc, &el);
+	lex_setup("100 * 20", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -275,11 +275,11 @@ void test_scan_multiplication()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_divide()
+void test_lex_divide()
 {
 	test_name(__func__);
 
@@ -290,7 +290,7 @@ void test_scan_divide()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("45 / 11", &ls, &lc, &el);
+	lex_setup("45 / 11", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -336,11 +336,11 @@ void test_scan_divide()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_stmts_expr()
+void test_lex_stmts_expr()
 {
 	test_name(__func__);
 
@@ -351,7 +351,7 @@ void test_scan_stmts_expr()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("i + 1\nx * 4", &ls, &lc, &el);
+	lex_setup("i + 1\nx * 4", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -439,11 +439,11 @@ void test_scan_stmts_expr()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_stmts_expr2()
+void test_lex_stmts_expr2()
 {
 	test_name(__func__);
 
@@ -454,7 +454,7 @@ void test_scan_stmts_expr2()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("i + 1\nx * 4\n", &ls, &lc, &el);
+	lex_setup("i + 1\nx * 4\n", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -563,11 +563,11 @@ void test_scan_stmts_expr2()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_stmts_assign()
+void test_lex_stmts_assign()
 {
 	test_name(__func__);
 
@@ -578,7 +578,7 @@ void test_scan_stmts_assign()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("i + 1\nx = 4", &ls, &lc, &el);
+	lex_setup("i + 1\nx = 4", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -666,11 +666,11 @@ void test_scan_stmts_assign()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_function()
+void test_lex_function()
 {
 	test_name(__func__);
 
@@ -681,7 +681,7 @@ void test_scan_function()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("function foo () \n end", &ls, &lc, &el);
+	lex_setup("function foo () \n end", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -756,11 +756,11 @@ void test_scan_function()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_comma()
+void test_lex_comma()
 {
 	test_name(__func__);
 
@@ -771,7 +771,7 @@ void test_scan_comma()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup(",", &ls, &lc, &el);
+	lex_setup(",", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -795,11 +795,11 @@ void test_scan_comma()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_semicolon()
+void test_lex_semicolon()
 {
 	test_name(__func__);
 
@@ -810,7 +810,7 @@ void test_scan_semicolon()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup(";", &ls, &lc, &el);
+	lex_setup(";", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -834,11 +834,11 @@ void test_scan_semicolon()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_if() {
+void test_lex_if() {
 	test_name(__func__);
 
 	struct lookahead_char lc;
@@ -848,7 +848,7 @@ void test_scan_if() {
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("if elseif else", &ls, &lc, &el);
+	lex_setup("if elseif else", &ls, &lc, &el);
 	
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -892,11 +892,11 @@ void test_scan_if() {
 	free(t);
 
 	/* destroy ls{}*/
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_compound_operators() {
+void test_lex_compound_operators() {
 	test_name(__func__);
 
 	struct lookahead_char lc;
@@ -906,7 +906,7 @@ void test_scan_compound_operators() {
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("== != <= >= && || ::", &ls, &lc, &el);
+	lex_setup("== != <= >= && || ::", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -979,11 +979,11 @@ void test_scan_compound_operators() {
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_compound_operators2() {
+void test_lex_compound_operators2() {
 	test_name(__func__);
 
 	struct lookahead_char lc;
@@ -993,7 +993,7 @@ void test_scan_compound_operators2() {
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("= ! < > & | :", &ls, &lc, &el);
+	lex_setup("= ! < > & | :", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1066,11 +1066,11 @@ void test_scan_compound_operators2() {
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_for_range()
+void test_lex_for_range()
 {
 	test_name(__func__);
 
@@ -1081,7 +1081,7 @@ void test_scan_for_range()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("for i = 0:10 1 end", &ls, &lc, &el);
+	lex_setup("for i = 0:10 1 end", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1167,11 +1167,11 @@ void test_scan_for_range()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_for_iteration()
+void test_lex_for_iteration()
 {
 	test_name(__func__);
 
@@ -1182,7 +1182,7 @@ void test_scan_for_iteration()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("for x in list 1 end", &ls, &lc, &el);
+	lex_setup("for x in list 1 end", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1248,10 +1248,10 @@ void test_scan_for_iteration()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_error_unrecognized_character()
+void test_lex_error_unrecognized_character()
 {
 	test_name(__func__);
 
@@ -1261,7 +1261,7 @@ void test_scan_error_unrecognized_character()
 	bool valid;
 	struct token* t;
 
-	scan_setup("$", &ls, &lc, &el);
+	lex_setup("$", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	assert_false(valid, "lex");
@@ -1269,11 +1269,11 @@ void test_scan_error_unrecognized_character()
 	assert_null(t, "t");
 	expect_source_error(&el, "Unrecognized character: $");
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_square_brackets()
+void test_lex_square_brackets()
 {
 	test_name(__func__);
 
@@ -1284,7 +1284,7 @@ void test_scan_square_brackets()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("[]", &ls, &lc, &el);
+	lex_setup("[]", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1307,11 +1307,11 @@ void test_scan_square_brackets()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_string()
+void test_lex_string()
 {
 	test_name(__func__);
 
@@ -1322,7 +1322,7 @@ void test_scan_string()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("\"hello\"", &ls, &lc, &el);
+	lex_setup("\"hello\"", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1336,11 +1336,11 @@ void test_scan_string()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_string2()
+void test_lex_string2()
 {
 	test_name(__func__);
 
@@ -1351,7 +1351,7 @@ void test_scan_string2()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("x = \"\\\\hello\n\r\"", &ls, &lc, &el);
+	lex_setup("x = \"\\\\hello\n\r\"", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1386,11 +1386,11 @@ void test_scan_string2()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_string_escape_error()
+void test_lex_string_escape_error()
 {
 	test_name(__func__);
 
@@ -1401,7 +1401,7 @@ void test_scan_string_escape_error()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("\"\\x\"", &ls, &lc, &el);
+	lex_setup("\"\\x\"", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1412,11 +1412,11 @@ void test_scan_string_escape_error()
 	assert_null(t, "t");
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan_line_col()
+void test_lex_line_col()
 {
 	test_name(__func__);
 
@@ -1427,7 +1427,7 @@ void test_scan_line_col()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("10 + 20\n30 + 40", &ls, &lc, &el);
+	lex_setup("10 + 20\n30 + 40", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1522,10 +1522,10 @@ void test_scan_line_col()
 	free(t);
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_error_underscore_letter()
+void test_lex_error_underscore_letter()
 {
 	test_name(__func__);
 
@@ -1536,7 +1536,7 @@ void test_scan_error_underscore_letter()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("_1", &ls, &lc, &el);
+	lex_setup("_1", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1546,10 +1546,10 @@ void test_scan_error_underscore_letter()
 	expect_source_error(&el, "Must have a letter following underscore at start of id");
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_error_underscore_letter2()
+void test_lex_error_underscore_letter2()
 {
 	test_name(__func__);
 
@@ -1560,7 +1560,7 @@ void test_scan_error_underscore_letter2()
 	struct token* t;
 
 	/* allocate ls{} */
-	scan_setup("__", &ls, &lc, &el);
+	lex_setup("__", &ls, &lc, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1570,10 +1570,10 @@ void test_scan_error_underscore_letter2()
 	expect_source_error(&el, "Must have a letter following underscore at start of id");
 
 	/* destroy ls{} */
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_error_exponent_sign()
+void test_lex_error_exponent_sign()
 {
 	test_name(__func__);
 
@@ -1583,7 +1583,7 @@ void test_scan_error_exponent_sign()
 	bool valid;
 	struct token* t;
 
-	scan_setup("100e-a", &ls, &lc, &el);
+	lex_setup("100e-a", &ls, &lc, &el);
 
 	valid = lex(&ls, &t);
 	assert_has_errors(ls.el);
@@ -1591,10 +1591,10 @@ void test_scan_error_exponent_sign()
 	expect_null(t, "null t");
 	expect_source_error(&el, "expected number after exponent sign");
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
-void test_scan_module()
+void test_lex_module()
 {
 	test_name(__func__);
 
@@ -1603,7 +1603,7 @@ void test_scan_module()
 	struct lex_state ls;
 	bool valid;
 
-	scan_setup("module 1 end", &ls, &lc, &el);
+	lex_setup("module 1 end", &ls, &lc, &el);
 
 	struct token* module;
 	valid = lex(&ls, &module);
@@ -1636,37 +1636,37 @@ void test_scan_module()
 	token_destroy(end);
 	free(end);
 
-	scan_teardown(&ls);
+	lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
-void test_scan()
+void test_lex()
 {
-	test_scan_blank();
-	test_scan_assign();
-	test_scan_addition();
-	test_scan_subtraction();
-	test_scan_multiplication();
-	test_scan_divide();
-	test_scan_stmts_expr();
-	test_scan_stmts_expr2();
-	test_scan_stmts_assign();
-	test_scan_function();
-	test_scan_comma();
-	test_scan_semicolon();
-	test_scan_if();
-	test_scan_compound_operators();
-	test_scan_compound_operators2();
-	test_scan_for_range();
-	test_scan_for_iteration();
-	test_scan_error_unrecognized_character();
-	test_scan_square_brackets();
-	test_scan_string();
-	test_scan_string2();
-	test_scan_string_escape_error();
-	test_scan_line_col();
-	test_scan_error_underscore_letter();
-	test_scan_error_underscore_letter2();
-	test_scan_error_exponent_sign();
-	test_scan_module();
+	test_lex_blank();
+	test_lex_assign();
+	test_lex_addition();
+	test_lex_subtraction();
+	test_lex_multiplication();
+	test_lex_divide();
+	test_lex_stmts_expr();
+	test_lex_stmts_expr2();
+	test_lex_stmts_assign();
+	test_lex_function();
+	test_lex_comma();
+	test_lex_semicolon();
+	test_lex_if();
+	test_lex_compound_operators();
+	test_lex_compound_operators2();
+	test_lex_for_range();
+	test_lex_for_iteration();
+	test_lex_error_unrecognized_character();
+	test_lex_square_brackets();
+	test_lex_string();
+	test_lex_string2();
+	test_lex_string_escape_error();
+	test_lex_line_col();
+	test_lex_error_underscore_letter();
+	test_lex_error_underscore_letter2();
+	test_lex_error_exponent_sign();
+	test_lex_module();
 }
