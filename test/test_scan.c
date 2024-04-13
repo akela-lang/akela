@@ -17,7 +17,7 @@ void test_scan_blank()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	struct token* t;
 	bool valid;
 
@@ -45,7 +45,7 @@ void test_scan_assign()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -103,7 +103,7 @@ void test_scan_addition()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -163,7 +163,7 @@ void test_scan_subtraction()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -224,7 +224,7 @@ void test_scan_multiplication()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -285,7 +285,7 @@ void test_scan_divide()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -346,7 +346,7 @@ void test_scan_stmts_expr()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -449,7 +449,7 @@ void test_scan_stmts_expr2()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -573,7 +573,7 @@ void test_scan_stmts_assign()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -676,7 +676,7 @@ void test_scan_function()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -766,7 +766,7 @@ void test_scan_comma()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -805,7 +805,7 @@ void test_scan_semicolon()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -843,7 +843,7 @@ void test_scan_if() {
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -901,7 +901,7 @@ void test_scan_compound_operators() {
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -988,7 +988,7 @@ void test_scan_compound_operators2() {
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1076,7 +1076,7 @@ void test_scan_for_range()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1177,7 +1177,7 @@ void test_scan_for_iteration()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1257,7 +1257,7 @@ void test_scan_error_unrecognized_character()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1279,7 +1279,7 @@ void test_scan_square_brackets()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1317,7 +1317,7 @@ void test_scan_string()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1346,7 +1346,7 @@ void test_scan_string2()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1396,7 +1396,7 @@ void test_scan_string_escape_error()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1422,7 +1422,7 @@ void test_scan_line_col()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1531,7 +1531,7 @@ void test_scan_error_underscore_letter()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1555,7 +1555,7 @@ void test_scan_error_underscore_letter2()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1579,7 +1579,7 @@ void test_scan_error_exponent_sign()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -1600,7 +1600,7 @@ void test_scan_module()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 
 	scan_setup("module 1 end", &sns, &lc, &el);

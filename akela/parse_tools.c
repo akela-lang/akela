@@ -11,9 +11,9 @@
 
 /* dynamic-output-none */
 /* initialize-output ps ps{}*/
-void parse_state_init(struct parse_state* ps, struct scan_state* sns, struct error_list* el, struct symbol_table* st)
+void parse_state_init(struct parse_state* ps, struct lex_state* ls, struct error_list* el, struct symbol_table* st)
 {
-	ps->sns = sns;
+	ps->ls = ls;
 	ps->lookahead = NULL;
 	ps->el = el;
 	ps->st = st;
@@ -35,7 +35,7 @@ bool get_lookahead_one(struct parse_state* ps)
 
     struct token* t = NULL;
     while (true) {
-        valid = lex(ps->sns, &t) && valid;
+        valid = lex(ps->ls, &t) && valid;
         if (t) {
             break;
         }

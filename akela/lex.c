@@ -14,36 +14,36 @@
 #include <ctype.h>
 #include "zinc/input_unicode.h"
 
-bool lex_start(struct scan_state* sns,
+bool lex_start(struct lex_state* ls,
                enum state_enum* state,
                bool* done,
                struct token* t);
-bool lex_word(struct scan_state* sns,
+bool lex_word(struct lex_state* ls,
               enum state_enum* state,
               bool* done,
               struct token* t);
-bool lex_number(struct scan_state* sns,
+bool lex_number(struct lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t);
-bool lex_string(struct scan_state* sns,
+bool lex_string(struct lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t);
-bool lex_compound_operator(struct scan_state* sns,
+bool lex_compound_operator(struct lex_state* ls,
                         enum state_enum* state,
                         bool* done,
                         struct token* t);
 
 /**
- * scan in start state
- * @param sns scanner data
+ * lex in start state
+ * @param ls scanner data
  * @param state current state
  * @param got_token if token is made
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex_start(struct scan_state* sns,
+bool lex_start(struct lex_state* ls,
                enum state_enum* state,
                bool* done,
                struct token* t)
@@ -55,9 +55,9 @@ bool lex_start(struct scan_state* sns,
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = set_source_error(sns->el, &loc, error_message);
+            valid = set_source_error(ls->el, &loc, error_message);
             break;
         }
 
@@ -72,7 +72,7 @@ bool lex_start(struct scan_state* sns,
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc = loc;
-            return lex_word(sns, state, done, t);
+            return lex_word(ls, state, done, t);
         } else if (*c == '_') {
             *state = state_id_underscore;
             t->type = token_id;
@@ -80,7 +80,7 @@ bool lex_start(struct scan_state* sns,
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc = loc;
-            return lex_word(sns, state, done, t);
+            return lex_word(ls, state, done, t);
         } else if (is_num(c)) {
             *state = state_number_whole;
             t->type = token_number;
@@ -89,19 +89,19 @@ bool lex_start(struct scan_state* sns,
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc = loc;
-            return lex_number(sns, state, done, t);
+            return lex_number(ls, state, done, t);
         } else if (*c == '"') {
             *state = state_string;
             t->type = token_string;
             t->loc = loc;
-            return lex_string(sns, state, done, t);
+            return lex_string(ls, state, done, t);
         } else if (compound_operator_start(num, c)) {
             *state = state_compound_operator;
             for (int i = 0; i < num; i++) {
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc = loc;
-            return lex_compound_operator(sns, state, done, t);
+            return lex_compound_operator(ls, state, done, t);
         } else if (*c == '+') {
             t->type = token_plus;
             t->loc = loc;
@@ -175,7 +175,7 @@ bool lex_start(struct scan_state* sns,
             }
             a[i] = '\0';
 
-            set_source_error(sns->el, &loc, "Unrecognized character: %s", a);
+            set_source_error(ls->el, &loc, "Unrecognized character: %s", a);
             /* error test case: test_scan_error_unrecognized_character */
             valid = false;
             break;
@@ -185,14 +185,14 @@ bool lex_start(struct scan_state* sns,
 }
 
 /**
- * scan word
- * @param sns scanner data
+ * lex word
+ * @param ls scanner data
  * @param state scanner state
  * @param got_token if got token
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex_word(struct scan_state* sns,
+bool lex_word(struct lex_state* ls,
               enum state_enum* state,
               bool* done,
               struct token* t)
@@ -204,14 +204,14 @@ bool lex_word(struct scan_state* sns,
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = set_source_error(sns->el, &loc, error_message);
+            valid = set_source_error(ls->el, &loc, error_message);
             break;
         }
 
         if (*done) {
-            struct symbol* sym = environment_get(sns->st->top, &t->value);
+            struct symbol* sym = environment_get(ls->st->top, &t->value);
             assert(!sym || sym->tk_type != token_none);
             if (sym) {
                 t->type = sym->tk_type;
@@ -235,23 +235,23 @@ bool lex_word(struct scan_state* sns,
                     buffer_add_char(&t->value, c[i]);
                 }
             } else {
-                struct symbol* sym = environment_get(sns->st->top, &t->value);
+                struct symbol* sym = environment_get(ls->st->top, &t->value);
                 assert(!sym || sym->tk_type != token_none);
                 if (sym) {
                     t->type = sym->tk_type;
                 }
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == state_id_underscore) {
             if (*c == '_') {
-                set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
+                set_source_error(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_scan_error_underscore_letter2 */
             } else if (is_num(c)) {
-                set_source_error(sns->el, &loc, "Must have a letter following underscore at start of id");
+                set_source_error(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_scan_error_underscore_letter */
             } else if (is_word(c)) {
@@ -260,14 +260,14 @@ bool lex_word(struct scan_state* sns,
                     buffer_add_char(&t->value, c[i]);
                 }
             } else {
-                struct symbol* sym = environment_get(sns->st->top, &t->value);
+                struct symbol* sym = environment_get(ls->st->top, &t->value);
                 assert(!sym || sym->tk_type != token_none);
                 if (sym) {
                     t->type = sym->tk_type;
                 }
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         }
@@ -277,14 +277,14 @@ bool lex_word(struct scan_state* sns,
 }
 
 /**
- * scan a number
- * @param sns scanner data
+ * lex a number
+ * @param ls scanner data
  * @param state current state
  * @param got_token if produced a token
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex_number(struct scan_state* sns,
+bool lex_number(struct lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t)
@@ -296,9 +296,9 @@ bool lex_number(struct scan_state* sns,
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = set_source_error(sns->el, &loc, error_message);
+            valid = set_source_error(ls->el, &loc, error_message);
             break;
         }
 
@@ -322,7 +322,7 @@ bool lex_number(struct scan_state* sns,
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == state_number_fraction_start) {
@@ -334,7 +334,7 @@ bool lex_number(struct scan_state* sns,
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == state_number_fraction) {
@@ -348,7 +348,7 @@ bool lex_number(struct scan_state* sns,
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == state_number_exponent_start) {
@@ -365,7 +365,7 @@ bool lex_number(struct scan_state* sns,
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == state_number_exponent_sign_start) {
@@ -375,11 +375,11 @@ bool lex_number(struct scan_state* sns,
                     buffer_add_char(&t->value, c[i]);
                 }
             } else {
-                valid = set_source_error(sns->el, &loc, "expected number after exponent sign");
+                valid = set_source_error(ls->el, &loc, "expected number after exponent sign");
                 /* test case: test_scan_error_exponent_sign */
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == state_number_exponent) {
@@ -390,7 +390,7 @@ bool lex_number(struct scan_state* sns,
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         }
@@ -401,15 +401,15 @@ bool lex_number(struct scan_state* sns,
 }
 
 /**
- * scan a string
- * @param sns scanner data
+ * lex a string
+ * @param ls scanner data
  * @param state current state
  * @param got_token if made a token
  * @param t the token
  * @return true if valid, otherwise false
  */
 bool lex_string(
-        struct scan_state* sns,
+        struct lex_state* ls,
         enum state_enum* state,
         bool* done,
         struct token* t)
@@ -421,9 +421,9 @@ bool lex_string(
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = set_source_error(sns->el, &loc, error_message);
+            valid = set_source_error(ls->el, &loc, error_message);
         }
 
         if (*done) {
@@ -431,7 +431,7 @@ bool lex_string(
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc.size += num;
-            valid = set_source_error(sns->el, &loc, "Unclosed string");
+            valid = set_source_error(ls->el, &loc, "Unclosed string");
             break;
         }
 
@@ -468,7 +468,7 @@ bool lex_string(
                     i++;
                 }
                 a[i] = '\0';
-                valid = set_source_error(sns->el, &loc, "Unrecognized escape sequence: %s", a);
+                valid = set_source_error(ls->el, &loc, "Unrecognized escape sequence: %s", a);
                 /* test case: test_scan_string_escape_error */
                 break;
             }
@@ -480,15 +480,15 @@ bool lex_string(
 }
 
 /**
- * scan a compound operator
- * @param sns scanner state
+ * lex a compound operator
+ * @param ls scanner state
  * @param state current state
  * @param got_token if got a token
  * @param t the token
  * @return true if valid, otherwise false
  */
 bool lex_compound_operator(
-        struct scan_state* sns,
+        struct lex_state* ls,
         enum state_enum* state,
         bool* done,
         struct token* t)
@@ -499,9 +499,9 @@ bool lex_compound_operator(
     struct location loc;
     enum result r;
 
-    r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+    r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
     if (r == result_error) {
-        valid = set_source_error(sns->el, &loc, error_message);
+        valid = set_source_error(ls->el, &loc, error_message);
     }
 
     if (!*done && num > 0) {
@@ -543,43 +543,43 @@ bool lex_compound_operator(
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
     } else if (t->value.buf[0] == '!') {
         t->type = token_not;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
     } else if (t->value.buf[0] == '<') {
         t->type = token_less_than;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
     } else if (t->value.buf[0] == '>') {
         t->type = token_greater_than;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
     } else if (t->value.buf[0] == '&') {
         t->type = token_ampersand;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
     } else if (t->value.buf[0] == '|') {
         t->type = token_vertical_bar;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
     } else if (t->value.buf[0] == ':') {
         t->type = token_colon;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
+        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
     } else {
         /* unrecognized compound operator */
         assert(false);
@@ -589,12 +589,12 @@ bool lex_compound_operator(
 }
 
 /**
- * scan and produce a token
- * @param sns scanner data
+ * lex and produce a token
+ * @param ls scanner data
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex(struct scan_state* sns, struct token** t)
+bool lex(struct lex_state* ls, struct token** t)
 {
     bool valid = true;
     enum state_enum state = state_start;
@@ -605,7 +605,7 @@ bool lex(struct scan_state* sns, struct token** t)
     malloc_safe((void**)&tf, sizeof(struct token));
     token_init(tf);
 
-    valid = lex_start(sns, &state, &done, tf);
+    valid = lex_start(ls, &state, &done, tf);
     if (!valid) {
         token_destroy(tf);
         free(tf);
@@ -615,7 +615,7 @@ bool lex(struct scan_state* sns, struct token** t)
     if (tf->type == token_none) {
         assert(valid);
         tf->type = token_eof;
-        tf->loc = InputUnicodeGetLocation(sns->input_obj, sns->input_vtable);
+        tf->loc = InputUnicodeGetLocation(ls->input_obj, ls->input_vtable);
         tf->loc.size = 3;
     }
 

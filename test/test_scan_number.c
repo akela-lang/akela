@@ -12,7 +12,7 @@ void test_scan_number_negative_start()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -38,7 +38,7 @@ void test_scan_number_whole()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -70,7 +70,7 @@ void test_scan_number_fraction_start()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -102,7 +102,7 @@ void test_scan_number_fraction()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -133,7 +133,7 @@ void test_scan_number_exponent_start()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -165,7 +165,7 @@ void test_scan_number_fraction_exponent_start()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -197,7 +197,7 @@ void test_scan_number_fraction_exponent()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -224,7 +224,7 @@ void test_scan_number_fraction_exponent_sign_start_negative()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -247,7 +247,7 @@ void test_scan_number_fraction_exponent_sign_start_positive()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -271,7 +271,7 @@ void test_scan_number_fraction_exponent_negative()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 
@@ -302,7 +302,7 @@ void test_scan_number_exponent_positive()
 	test_name(__func__);
 
 	struct lookahead_char lc;
-	struct scan_state sns;
+	struct lex_state sns;
 	struct error_list el;
 	bool valid;
 	struct token* t;
@@ -334,7 +334,7 @@ void test_scan_number_exponent_add()
 
 	struct lookahead_char lc;
 	struct error_list el;
-	struct scan_state sns;
+	struct lex_state sns;
 	bool valid;
 	struct token* t;
 

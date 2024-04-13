@@ -37,20 +37,20 @@ void comp_unit_setup(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* 
 	ast_node_destroy(cu->root);
 	cu->root = NULL;
 
-	struct scan_state* sns = NULL;
-	malloc_safe((void**)&sns, sizeof(struct scan_state));
-	scan_state_init(sns, input_obj, input_vtable, &cu->el, &cu->st);
+	struct lex_state* ls = NULL;
+	malloc_safe((void**)&ls, sizeof(struct lex_state));
+    lex_state_init(ls, input_obj, input_vtable, &cu->el, &cu->st);
 
 	malloc_safe((void**)ps, sizeof(struct parse_state));
-	parse_state_init(*ps, sns, &cu->el, &cu->st);
+	parse_state_init(*ps, ls, &cu->el, &cu->st);
 }
 
 void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
 {
 	assert(ps);
-	assert(ps->sns);
+	assert(ps->ls);
 
-	free(ps->sns);
+	free(ps->ls);
 
 	parse_state_destroy(ps);
 	free(ps);

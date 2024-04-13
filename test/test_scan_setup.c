@@ -8,7 +8,7 @@
 #include "zinc/input_unicode_string.h"
 #include <string.h>
 
-void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, struct error_list* el)
+void scan_setup(char* line, struct lex_state* sns, struct lookahead_char* lc, struct error_list* el)
 {
     Vector* text = NULL;
     VectorCreate(&text, sizeof(char));
@@ -23,10 +23,10 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 	malloc_safe((void**)&st, sizeof(struct symbol_table));
 	symbol_table_init(st);
 
-	scan_state_init(sns, input_string, input_string->input_vtable, el, st);
+    lex_state_init(sns, input_string, input_string->input_vtable, el, st);
 }
 
-void scan_teardown(struct scan_state* sns)
+void scan_teardown(struct lex_state* sns)
 {
     InputUnicodeString* input_string = sns->input_obj;
     VectorDestroy(input_string->text);

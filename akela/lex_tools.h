@@ -6,7 +6,7 @@
 #include "symbol_table.h"
 #include "zinc/error.h"
 
-struct scan_state {
+struct lex_state {
     void* input_obj;
     InputUnicodeVTable* input_vtable;
     struct location loc;
@@ -29,8 +29,8 @@ enum state_enum {
     state_compound_operator
 };
 
-void scan_state_init(
-        struct scan_state* sns,
+void lex_state_init(
+        struct lex_state* ls,
         void* input_obj,
         InputUnicodeVTable* input_vtable,
         struct error_list* el,

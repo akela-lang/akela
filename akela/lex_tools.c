@@ -4,22 +4,22 @@
 
 /**
  * initialize scanner state
- * @param sns scanner data
+ * @param ls scanner data
  * @param lc lookahead buffer
  * @param el error list
  * @param st symbol table
  */
-void scan_state_init(
-        struct scan_state* sns,
+void lex_state_init(
+        struct lex_state* ls,
         void* input_obj,
         InputUnicodeVTable* input_vtable,
         struct error_list* el,
         struct symbol_table* st)
 {
-    sns->input_obj = input_obj;
-    sns->input_vtable = input_vtable;
-    sns->el = el;
-    sns->st = st;
+    ls->input_obj = input_obj;
+    ls->input_vtable = input_vtable;
+    ls->el = el;
+    ls->st = st;
 }
 
 /**
