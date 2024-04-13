@@ -15,6 +15,7 @@
 #include "test_comp_unit.h"
 #include "test_comp_table.h"
 #include "test_code_gen.h"
+#include "test_lex_tools.h"
 
 /* dynamic-output-none */
 int main(void) {
@@ -24,6 +25,7 @@ int main(void) {
 	test_token();
 	test_lex();
 	test_lex_number();
+    test_lex_tools();
 	test_ast();
 	test_type();
 	test_parse_factor();

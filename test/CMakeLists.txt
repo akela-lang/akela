@@ -8,6 +8,7 @@ set(test_files
         test_lex_setup.c
         test_lex.c
         test_lex_number.c
+        test_lex_tools.c
         test_input.c
         test_token.c
         test_lookahead_translator.c

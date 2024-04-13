@@ -36,7 +36,7 @@ void lex_state_init(
         struct error_list* el,
         struct symbol_table* st);
 bool compound_operator_start(int num, const char c[4]);
-bool is_word(const char c[4]);
-bool is_num(const char c[4]);
+bool is_word(const char c[4], int num);
+bool is_num(const char c[4], int num);
 
 #endif

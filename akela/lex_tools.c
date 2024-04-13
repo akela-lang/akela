@@ -29,15 +29,46 @@ void lex_state_init(
  */
 bool compound_operator_start(int num, const char c[4])
 {
+    if (num != 1) return false;
     return *c == '=' || *c == '!' || *c == '<' || *c == '>' || *c == '&' || *c == '|' || *c == ':';
 }
 
-bool is_word(const char c[4])
+bool utf8_match(const char a[4], int a_num, const char b[4], int b_num)
 {
-    return isalpha(*c);
+    if (a_num != b_num) return false;
+    for (int i = 0; i < a_num; i++) {
+        if (a[i] != b[i]) return false;
+    }
+    return true;
 }
 
-bool is_num(const char c[4])
+bool is_word(const char c[4], int num)
 {
+    if (num == 1 && isalpha(c[0])) {
+        return true;
+    }
+
+    if (num >= 2) {
+        char greek[] = "ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω";
+        int pos = 0;
+        int num2;
+        while (greek[pos]) {
+            num2 = NUM_BYTES(greek[pos]);
+            if (num2 != num) {
+                return false;
+            }
+            if (utf8_match(c, num, greek+pos, num2)) {
+                return true;
+            }
+            pos += num2;
+        }
+    }
+
+    return false;
+}
+
+bool is_num(const char c[4], int num)
+{
+    if (num != 1) return false;
     return isdigit(*c);
 }

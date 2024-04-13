@@ -252,16 +252,13 @@ void test_parse_id2()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_id3()
 {
 	test_name(__func__);
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("var a2::Int64; a2", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -274,7 +271,46 @@ void test_parse_id3()
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "a2", "a2 id");
 
-	/* destroy ps{} cu.root cu.root{} */
+    parse_teardown(&cu);
+}
+
+void test_parse_id_greek()
+{
+    test_name(__func__);
+
+
+    struct comp_unit cu;
+
+    parse_setup("var αβγ::Int64; αβγ", &cu);
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "parse_setup valid");
+
+    assert_ptr(cu.root, "ptr cu.root");
+    assert_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
+
+    struct ast_node* id = ast_node_get(cu.root, 1);
+    assert_ptr(id, "ptr id");
+    expect_int_equal(id->type, ast_type_id, "id");
+    expect_str(&id->value, "αβγ", "value");
+
+    parse_teardown(&cu);
+}
+
+void test_parse_id_cyrillic()
+{
+    test_name(__func__);
+
+
+    struct comp_unit cu;
+
+    parse_setup("var я::Int64; я", &cu);
+    assert_has_errors(&cu.el);
+    struct error* e = expect_source_error(&cu.el, "Unrecognized character: я");
+    expect_size_t_equal(e->loc.byte_pos, 4, "byte_pos");
+    expect_size_t_equal(e->loc.line, 1, "line");
+    expect_size_t_equal(e->loc.col, 5, "col");
+    expect_size_t_equal(e->loc.size, 1, "size");
+    expect_false(cu.valid, "parse_setup valid");
 
     parse_teardown(&cu);
 }
@@ -1877,6 +1913,8 @@ void test_parse_factor()
 	test_parse_id();
 	test_parse_id2();
 	test_parse_id3();
+    test_parse_id_greek();
+    test_parse_id_cyrillic();
 	test_parse_sign_negative();
 	test_parse_sign_positive();
 	test_parse_sign_error_no_value();

@@ -65,7 +65,7 @@ bool lex_start(struct lex_state* ls,
             return result_ok;
         }
 
-        if (is_word(c)) {
+        if (is_word(c, num)) {
             *state = state_id;
             t->type = token_id;
             for (int i = 0; i < num; i++) {
@@ -81,7 +81,7 @@ bool lex_start(struct lex_state* ls,
             }
             t->loc = loc;
             return lex_word(ls, state, done, t);
-        } else if (is_num(c)) {
+        } else if (is_num(c, num)) {
             *state = state_number_whole;
             t->type = token_number;
             t->is_integer = true;
@@ -226,11 +226,11 @@ bool lex_word(struct lex_state* ls,
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
-            } else if (is_word(c)) {
+            } else if (is_word(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
-            } else if (is_num(c)) {
+            } else if (is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
@@ -250,11 +250,11 @@ bool lex_word(struct lex_state* ls,
                 set_source_error(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_lex_error_underscore_letter2 */
-            } else if (is_num(c)) {
+            } else if (is_num(c, num)) {
                 set_source_error(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_lex_error_underscore_letter */
-            } else if (is_word(c)) {
+            } else if (is_word(c, num)) {
                 *state = state_id;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
@@ -303,7 +303,7 @@ bool lex_number(struct lex_state* ls,
         }
 
         if (*state == state_number_whole) {
-            if (!*done && is_num(c)) {
+            if (!*done && is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
@@ -326,7 +326,7 @@ bool lex_number(struct lex_state* ls,
                 break;
             }
         } else if (*state == state_number_fraction_start) {
-            if (!*done && is_num(c)) {
+            if (!*done && is_num(c, num)) {
                 *state = state_number_fraction;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
@@ -338,7 +338,7 @@ bool lex_number(struct lex_state* ls,
                 break;
             }
         } else if (*state == state_number_fraction) {
-            if (!*done && is_num(c)) {
+            if (!*done && is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
@@ -352,7 +352,7 @@ bool lex_number(struct lex_state* ls,
                 break;
             }
         } else if (*state == state_number_exponent_start) {
-            if (!*done && is_num(c)) {
+            if (!*done && is_num(c, num)) {
                 *state = state_number_exponent;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
@@ -369,7 +369,7 @@ bool lex_number(struct lex_state* ls,
                 break;
             }
         } else if (*state == state_number_exponent_sign_start) {
-            if (!*done && is_num(c)) {
+            if (!*done && is_num(c, num)) {
                 *state = state_number_exponent;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
@@ -383,7 +383,7 @@ bool lex_number(struct lex_state* ls,
                 break;
             }
         } else if (*state == state_number_exponent) {
-            if (!*done && is_num(c)) {
+            if (!*done && is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }

@@ -1,8 +1,4 @@
 # Todo
-* allow only English and Greek letters for identifiers
-  * A-Z
-  * a-z
-  * ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω
 * remove old input interfaces
 * remove ICU dependency
 * fix memory leaks
