@@ -8,7 +8,6 @@
 #include "lookahead_char.h"
 #include "source.h"
 #include "symbol_table.h"
-#include "zinc/input_char.h"
 #include "lex_tools.h"
 
 AKELA_API bool lex(struct scan_state* sns, struct token** t);

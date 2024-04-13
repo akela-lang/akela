@@ -12,6 +12,7 @@
 #include "uconv.h"
 #include "zinc/utf8.h"
 #include <ctype.h>
+#include "zinc/input_unicode.h"
 
 bool lex_start(struct scan_state* sns,
                enum state_enum* state,
@@ -51,9 +52,15 @@ bool lex_start(struct scan_state* sns,
     char c[4];
     int num;
     struct location loc;
+    enum result r;
 
     while (true) {
-        *done = get_uc_char(sns, c, &num, &loc);
+        r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = set_source_error(sns->el, &loc, error_message);
+            break;
+        }
+
         if (*done) {
             return result_ok;
         }
@@ -194,9 +201,14 @@ bool lex_word(struct scan_state* sns,
     char c[4];
     int num;
     struct location loc;
+    enum result r;
 
     while (true) {
-        *done = get_uc_char(sns, c, &num, &loc);
+        r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = set_source_error(sns->el, &loc, error_message);
+            break;
+        }
 
         if (*done) {
             struct symbol* sym = environment_get(sns->st->top, &t->value);
@@ -230,7 +242,7 @@ bool lex_word(struct scan_state* sns,
                 }
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
                 break;
             }
         } else if (*state == state_id_underscore) {
@@ -255,7 +267,7 @@ bool lex_word(struct scan_state* sns,
                 }
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
                 break;
             }
         }
@@ -281,9 +293,14 @@ bool lex_number(struct scan_state* sns,
     char c[4];
     int num;
     struct location loc;
+    enum result r;
 
     while (true) {
-        *done = get_uc_char(sns, c, &num, &loc);
+        r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = set_source_error(sns->el, &loc, error_message);
+            break;
+        }
 
         if (*state == state_number_whole) {
             if (!*done && is_num(c)) {
@@ -298,29 +315,14 @@ bool lex_number(struct scan_state* sns,
                     buffer_add_char(&t->value, c[i]);
                 }
             } else if (!*done && *c == 'e') {
-                /* lookahead another character */
-                char peek_c[4];
-                int peek_num;
-                bool peek_done;
-                struct location peek_loc;
-                peek_done = get_uc_char(sns, peek_c, &peek_num, &peek_loc);
-                if (!peek_done && (is_num(peek_c) || *peek_c == '-' || *peek_c == '+')) {
-                    /* e is part of exponent */
-                    *state = state_number_exponent_start;
-                    t->is_integer = false;
-                    t->is_float = true;
-                    buffer_add_char(&t->value, 'e');
-                    InputCharSeek(sns->input_obj, sns->input_vtable, &peek_loc);
-                } else {
-                    /* number is done and e will be part of an id */
-                    InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
-                    *state = state_start;
-                    break;
-                }
+                *state = state_number_exponent_start;
+                t->is_integer = false;
+                t->is_float = true;
+                buffer_add_char(&t->value, 'e');
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
                 break;
             }
         } else if (*state == state_number_fraction_start) {
@@ -332,7 +334,7 @@ bool lex_number(struct scan_state* sns,
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
                 break;
             }
         } else if (*state == state_number_fraction) {
@@ -342,13 +344,11 @@ bool lex_number(struct scan_state* sns,
                 }
             } else if (!*done && *c == 'e') {
                 *state = state_number_exponent_start;
-                for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
-                }
+                buffer_add_char(&t->value, 'e');
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
                 break;
             }
         } else if (*state == state_number_exponent_start) {
@@ -365,7 +365,7 @@ bool lex_number(struct scan_state* sns,
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
                 break;
             }
         } else if (*state == state_number_exponent_sign_start) {
@@ -379,7 +379,7 @@ bool lex_number(struct scan_state* sns,
                 /* test case: test_scan_error_exponent_sign */
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
                 break;
             }
         } else if (*state == state_number_exponent) {
@@ -390,7 +390,7 @@ bool lex_number(struct scan_state* sns,
             } else {
                 *state = state_start;
                 t->loc.size = t->value.size;
-                InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+                InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
                 break;
             }
         }
@@ -418,9 +418,14 @@ bool lex_string(
     char c[4];
     int num;
     struct location loc;
+    enum result r;
 
     while (true) {
-        *done = get_uc_char(sns, c, &num, &loc);
+        r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = set_source_error(sns->el, &loc, error_message);
+        }
+
         if (*done) {
             for (int i = 0; i < num; i++) {
                 buffer_add_char(&t->value, c[i]);
@@ -492,7 +497,12 @@ bool lex_compound_operator(
     char c[4];
     int num;
     struct location loc;
-    *done = get_uc_char(sns, c, &num, &loc);
+    enum result r;
+
+    r = InputUnicodeNext(sns->input_obj, sns->input_vtable, c, &num, &loc, done);
+    if (r == result_error) {
+        valid = set_source_error(sns->el, &loc, error_message);
+    }
 
     if (!*done && num > 0) {
         for (int i = 0; i < num; i++) {
@@ -533,43 +543,43 @@ bool lex_compound_operator(
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
     } else if (t->value.buf[0] == '!') {
         t->type = token_not;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
     } else if (t->value.buf[0] == '<') {
         t->type = token_less_than;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
     } else if (t->value.buf[0] == '>') {
         t->type = token_greater_than;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
     } else if (t->value.buf[0] == '&') {
         t->type = token_ampersand;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
     } else if (t->value.buf[0] == '|') {
         t->type = token_vertical_bar;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
     } else if (t->value.buf[0] == ':') {
         t->type = token_colon;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;
-        InputCharSeek(sns->input_obj, sns->input_vtable, &loc);
+        InputUnicodeRepeat(sns->input_obj, sns->input_vtable);
     } else {
         /* unrecognized compound operator */
         assert(false);
@@ -605,7 +615,7 @@ bool lex(struct scan_state* sns, struct token** t)
     if (tf->type == token_none) {
         assert(valid);
         tf->type = token_eof;
-        tf->loc = InputCharGetLocation(sns->input_obj, sns->input_vtable);
+        tf->loc = InputUnicodeGetLocation(sns->input_obj, sns->input_vtable);
         tf->loc.size = 3;
     }
 

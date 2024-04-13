@@ -5,7 +5,7 @@
 #include "akela/lex.h"
 #include "zinc/memory.h"
 #include "zinc/unit_test.h"
-#include "zinc/input_char_string.h"
+#include "zinc/input_unicode_string.h"
 #include <string.h>
 
 void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, struct error_list* el)
@@ -14,8 +14,8 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
     VectorCreate(&text, sizeof(char));
     VectorAdd(text, line, strlen(line));
 
-    InputCharString* input_string = NULL;
-    InputCharStringCreate(&input_string, text);
+    InputUnicodeString* input_string = NULL;
+    InputUnicodeStringCreate(&input_string, text);
 
 	error_list_init(el);
 
@@ -28,7 +28,7 @@ void scan_setup(char* line, struct scan_state* sns, struct lookahead_char* lc, s
 
 void scan_teardown(struct scan_state* sns)
 {
-    InputCharString* input_string = sns->input_obj;
+    InputUnicodeString* input_string = sns->input_obj;
     VectorDestroy(input_string->text);
 
 	struct error_list* el = sns->el;

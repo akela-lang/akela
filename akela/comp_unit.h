@@ -6,7 +6,7 @@
 #include "source.h"
 #include "symbol_table.h"
 #include <stdbool.h>
-#include "zinc/input_char.h"
+#include "zinc/input_unicode.h"
 
 struct comp_unit {
 	bool valid;
@@ -21,6 +21,6 @@ struct comp_unit {
 
 AKELA_API void comp_unit_init(struct comp_unit* cu);
 AKELA_API void comp_unit_destroy(struct comp_unit* cu);
-AKELA_API bool comp_unit_compile(struct comp_unit* cu, void* input_obj, InputCharVTable* input_vtable);
+AKELA_API bool comp_unit_compile(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable);
 
 #endif

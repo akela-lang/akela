@@ -7,7 +7,7 @@
 #include "zinc/buffer.h"
 #include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"
-#include "zinc/input_char_string.h"
+#include "zinc/input_unicode_string.h"
 #include <string.h>
 
 void test_comp_table_compile()
@@ -21,8 +21,8 @@ void test_comp_table_compile()
     VectorCreate(&text, sizeof(char));
     VectorAdd(text, "10", 3);
 
-    InputCharString* input = NULL;
-    InputCharStringCreate(&input, text);
+    InputUnicodeString* input = NULL;
+    InputUnicodeStringCreate(&input, text);
 
 	struct comp_unit* cu = NULL;
 	malloc_safe((void**)&cu, sizeof(struct comp_unit));
@@ -61,8 +61,8 @@ void test_comp_table_include()
     char base_string[] = "function sqrt(x::Int64)::Int64 1 end";
     VectorAdd(base_text, base_string, strlen(base_string));
     VectorAddNull(base_text);
-    InputCharString* base_input = NULL;
-    InputCharStringCreate(&base_input, base_text);
+    InputUnicodeString* base_input = NULL;
+    InputUnicodeStringCreate(&base_input, base_text);
 
 	struct comp_unit* cu_base = NULL;
 	malloc_safe((void**)&cu_base, sizeof(struct comp_unit));
@@ -82,8 +82,8 @@ void test_comp_table_include()
     VectorCreate(&main_vector, sizeof(char));
     VectorAdd(main_vector, main_string, strlen(main_string));
     VectorAddNull(main_vector);
-    InputCharString* main_input = NULL;
-    InputCharStringCreate(&main_input, main_vector);
+    InputUnicodeString* main_input = NULL;
+    InputUnicodeStringCreate(&main_input, main_vector);
 
 	struct comp_unit* cu_main = NULL;
 	malloc_safe((void**)&cu_main, sizeof(struct comp_unit));
@@ -140,8 +140,8 @@ void test_comp_table_include_base()
     Vector* main_vector = NULL;
     VectorCreate(&main_vector, sizeof(char));
     VectorAdd(main_vector, main_string, strlen(main_string));
-    InputCharString* input = NULL;
-    InputCharStringCreate(&input, main_vector);
+    InputUnicodeString* input = NULL;
+    InputUnicodeStringCreate(&input, main_vector);
 
 	struct comp_unit* cu_main = NULL;
 	malloc_safe((void**)&cu_main, sizeof(struct comp_unit));

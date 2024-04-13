@@ -1,14 +1,14 @@
 #ifndef LEX_TOOLS_H
 #define LEX_TOOLS_H
 
-#include "zinc/input_char.h"
+#include "zinc/input_unicode.h"
 #include "zinc/error.h"
 #include "symbol_table.h"
 #include "zinc/error.h"
 
 struct scan_state {
     void* input_obj;
-    InputCharVTable* input_vtable;
+    InputUnicodeVTable* input_vtable;
     struct location loc;
     struct symbol_table* st;
     struct error_list* el;
@@ -29,8 +29,12 @@ enum state_enum {
     state_compound_operator
 };
 
-bool get_uc_char(struct scan_state* sns, char c[4], int* num, struct location* loc);
-void scan_state_init(struct scan_state* sns, void* input_obj, InputCharVTable* input_vtable, struct error_list* el, struct symbol_table* st);
+void scan_state_init(
+        struct scan_state* sns,
+        void* input_obj,
+        InputUnicodeVTable* input_vtable,
+        struct error_list* el,
+        struct symbol_table* st);
 bool compound_operator_start(int num, const char c[4]);
 bool is_word(const char c[4]);
 bool is_num(const char c[4]);

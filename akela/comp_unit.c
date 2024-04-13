@@ -8,7 +8,7 @@
 #include "parse_tools.h"
 #include "parse.h"
 #include <assert.h>
-#include "zinc/input_char_string.h"
+#include "zinc/input_unicode_string.h"
 
 void comp_unit_init(struct comp_unit* cu)
 {
@@ -30,7 +30,7 @@ void comp_unit_destroy(struct comp_unit* cu)
 	symbol_table_destroy(&cu->st);
 }
 
-void comp_unit_setup(struct comp_unit* cu, void* input_obj, InputCharVTable* input_vtable, struct parse_state** ps)
+void comp_unit_setup(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable, struct parse_state** ps)
 {
 	*ps = NULL;
 
@@ -56,7 +56,7 @@ void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
 	free(ps);
 }
 
-bool comp_unit_compile(struct comp_unit* cu, void* input_obj, InputCharVTable* input_vtable)
+bool comp_unit_compile(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable)
 {
 	bool valid = true;
 	struct parse_state* ps = NULL;

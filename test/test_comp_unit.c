@@ -2,7 +2,7 @@
 #include "akela/comp_unit.h"
 #include "zinc/memory.h"
 #include "akela/input.h"
-#include "zinc/input_char_string.h"
+#include "zinc/input_unicode_string.h"
 
 void test_comp_unit_compile()
 {
@@ -12,8 +12,8 @@ void test_comp_unit_compile()
     VectorCreate(&text, sizeof(char));
     VectorAdd(text, "10", 3);
 
-    InputCharString* input = NULL;
-    InputCharStringCreate(&input, text);
+    InputUnicodeString* input = NULL;
+    InputUnicodeStringCreate(&input, text);
 
 	struct comp_unit* cu = NULL;
 	malloc_safe((void**)&cu, sizeof(struct comp_unit));

@@ -9,8 +9,8 @@
 #include "akela/lex.h"
 #include "akela/source.h"
 #include "akela/comp_unit.h"
-#include "zinc/input_char.h"
-#include "zinc/input_char_string.h"
+#include "zinc/input_unicode.h"
+#include "zinc/input_unicode_string.h"
 #include <string.h>
 
 bool parse_setup(char* line, struct comp_unit* cu)
@@ -19,8 +19,8 @@ bool parse_setup(char* line, struct comp_unit* cu)
     VectorCreate(&text, sizeof(char));
     VectorAdd(text, line, strlen(line));
 
-    InputCharString* input_obj = NULL;
-    InputCharStringCreate(&input_obj, text);
+    InputUnicodeString* input_obj = NULL;
+    InputUnicodeStringCreate(&input_obj, text);
 
 	comp_unit_init(cu);
 	bool valid = comp_unit_compile(cu, input_obj, input_obj->input_vtable);
@@ -30,7 +30,7 @@ bool parse_setup(char* line, struct comp_unit* cu)
 
 void parse_teardown(struct comp_unit* cu)
 {
-    InputCharString* input_obj = cu->input_obj;
+    InputUnicodeString* input_obj = cu->input_obj;
     Vector* text = input_obj->text;
     VectorDestroy(text);
     free(text);

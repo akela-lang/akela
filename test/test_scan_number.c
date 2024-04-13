@@ -141,17 +141,17 @@ void test_scan_number_exponent_start()
 
 	valid = lex(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "valid 0");
-	assert_ptr(t, "ptr t 0");
-	expect_int_equal(t->type, token_number, "number 0");
-	expect_str(&t->value, "500", "500 0");
+	assert_true(valid, "0 valid");
+	assert_ptr(t, "0 ptr t");
+	expect_int_equal(t->type, token_number, "0 number");
+	expect_str(&t->value, "500e", "0 value");
 
 	valid = lex(&sns, &t);
 	assert_no_errors(sns.el);
-	assert_true(valid, "valid 1");
-	assert_ptr(t, "ptr t 1");
-	expect_int_equal(t->type, token_id, "number 1");
-	expect_str(&t->value, "e", "e 1");
+	assert_true(valid, "1 valid");
+	assert_ptr(t, "1 ptr t");
+	expect_int_equal(t->type, token_eof, "1 eof");
+	expect_str(&t->value, "", "1 value");
 
 	token_destroy(t);
 	free(t);
