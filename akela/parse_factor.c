@@ -166,24 +166,27 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-	if (n->type != ast_type_error) {
-		/* transfer dseq_node dseq_node{} -> n{} */
-		ast_node_add(n, dseq_node);
+	if (dseq_node) {
+        ast_node_add(n, dseq_node);
+    }
 
-		struct ast_node* dret = NULL;
-		ast_node_create(&dret);
-		dret->type = ast_type_dret;
 
-		if (dret_type) {
-			ast_node_add(dret, dret_type);
-		}
-		ast_node_add(n, dret);
+    struct ast_node* dret = NULL;
+    ast_node_create(&dret);
+    dret->type = ast_type_dret;
 
-		/* transfer stmts_node stmts_node{} -> n */
+    if (dret_type) {
+        ast_node_add(dret, dret_type);
+    }
+
+    if (dret) {
+        ast_node_add(n, dret);
+    }
+
+    if (stmts_node) {
 		ast_node_add(n, stmts_node);
 	}
 
-	/* destroy f f{} lp lp{} rp rp{} end end{} */
 	token_destroy(lp);
 	free(lp);
 	token_destroy(rp);
@@ -416,6 +419,8 @@ struct ast_node* parse_id(struct parse_state* ps, struct location* loc)
 				n->tu = ast_node_copy(sym3->tu);
 			}
 		}
+
+        buffer_destroy(&full_id);
 	}
 
 	/* destroy id id{} */

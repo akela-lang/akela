@@ -7,3 +7,8 @@ Akela is a programming language geared toward finance.
 
 ## Run Tests
     cmake-build-debug/test/test
+
+## Valgrind
+    valgrind cmake-build-debug/test/test
+
+    valgrind --leak-check=full --num-callers=25 cmake-build-debug/test/test
