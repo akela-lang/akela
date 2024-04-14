@@ -29,6 +29,7 @@ bool cg_setup(const char* text, struct buffer* value)
     VectorDestroy(vector);
     free(vector);
     free(input);
+    comp_unit_destroy(cu);
     free(cu);
 
     return valid;
