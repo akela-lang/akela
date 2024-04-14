@@ -1,5 +1,4 @@
 # Todo
-* remove ICU dependency
 * fix memory leaks
 * store IR value in ast node
 * store IR variable references in symbol table

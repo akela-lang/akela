@@ -19,7 +19,6 @@ set(lib_files
         comp_table.c
         code_gen.c
         code_gen_tools.c
-        text_interface.c
 )
 
 set(bin_files
@@ -27,11 +26,11 @@ set(bin_files
 )
 
 add_library(akela STATIC ${lib_files})
-target_link_libraries(akela zinc icui18n icuio icutu icuuc icudata stdc++ m)
+target_link_libraries(akela zinc)
 
 # executable
 add_executable(akela-bin ${bin_files})
-target_link_libraries(akela-bin akela zinc icui18n icuio icutu icuuc icudata stdc++ m ${llvm_libs})
+target_link_libraries(akela-bin akela zinc ${llvm_libs})
 
 SET_TARGET_PROPERTIES(akela-bin
   PROPERTIES OUTPUT_NAME akela)
