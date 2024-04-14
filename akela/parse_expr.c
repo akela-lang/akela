@@ -1039,7 +1039,10 @@ struct ast_node* parse_call(struct parse_state* ps, struct location* loc)
 			break;
 		}
 
-		struct token* lp = NULL;
+        ast_node_create(&n);
+        n->type = ast_type_call;
+
+        struct token* lp = NULL;
 		if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
             /* test case: test case not needed */
             n->type = ast_type_error;
@@ -1049,7 +1052,7 @@ struct ast_node* parse_call(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
-		struct ast_node* cseq_node = NULL;
+        struct ast_node* cseq_node = NULL;
 		struct location loc_cseq;
 		cseq_node = parse_cseq(ps, left->tu, &loc_cseq);
         if (cseq_node && cseq_node->type == ast_type_error) {
@@ -1066,25 +1069,19 @@ struct ast_node* parse_call(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
-
-		if (n->type != ast_type_error) {
-			ast_node_create(&n);
-			n->type = ast_type_call;
-
-            if (left) {
-                ast_node_add(n, left);
-                if (left->type == ast_type_error) {
-                    n->type = ast_type_error;
-                }
+        if (left) {
+            ast_node_add(n, left);
+            if (left->type == ast_type_error) {
+                n->type = ast_type_error;
             }
+        }
 
-            if (cseq_node) {
-                ast_node_add(n, cseq_node);
-                if (cseq_node->type == ast_type_error) {
-                    n->type = ast_type_error;
-                }
+        if (cseq_node) {
+            ast_node_add(n, cseq_node);
+            if (cseq_node->type == ast_type_error) {
+                n->type = ast_type_error;
             }
-		}
+        }
 
 		if (n->type != ast_type_error) {
 			struct ast_node* tu = left->tu;

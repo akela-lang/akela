@@ -2245,6 +2245,8 @@ void test_parse_expr_assign_eseq()
     assert_ptr(c, "ptr c");
     expect_int_equal(c->type, ast_type_id, "id c");
     expect_str(&c->value, "c", "c");
+
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_error_lvalue()
@@ -2258,6 +2260,8 @@ void test_parse_expr_error_lvalue()
     expect_has_errors(&cu.el);
     expect_source_error(&cu.el, "invalid lvalue");
     expect_false(cu.valid, "valid");
+
+    parse_teardown(&cu);
 }
 
 void test_parse_expr_error_eseq_lvalue()
@@ -2273,6 +2277,8 @@ void test_parse_expr_error_eseq_lvalue()
     expect_has_errors(&cu.el);
     expect_source_error(&cu.el, "invalid lvalue");
     expect_false(cu.valid, "valid");
+
+    parse_teardown(&cu);
 }
 
 /* dynamic-output-none */
