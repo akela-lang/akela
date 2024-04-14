@@ -4,9 +4,6 @@
 #include "akela/unit_test_compiler.h"
 #include "akela/token.h"
 #include "akela/lex.h"
-#include "akela/uconv.h"
-#include "akela/input.h"
-#include "akela/lookahead_char.h"
 #include "akela/source.h"
 #include "test_lex_setup.h"
 #include "zinc/error_unit_test.h"
@@ -15,13 +12,12 @@ void test_lex_blank()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	struct token* t;
 	bool valid;
 
-	lex_setup("", &ls, &lc, &el);
+	lex_setup("", &ls, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -43,13 +39,12 @@ void test_lex_assign()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("a = 1", &ls, &lc, &el);
+	lex_setup("a = 1", &ls, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -101,14 +96,13 @@ void test_lex_addition()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("speed + 1", &ls, &lc, &el);
+	lex_setup("speed + 1", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -161,14 +155,13 @@ void test_lex_subtraction()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("100 - delta", &ls, &lc, &el);
+	lex_setup("100 - delta", &ls, &el);
 
 	/* allocate ls t t{} */
 	valid = lex(&ls, &t);
@@ -222,14 +215,13 @@ void test_lex_multiplication()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("100 * 20", &ls, &lc, &el);
+	lex_setup("100 * 20", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -283,14 +275,13 @@ void test_lex_divide()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("45 / 11", &ls, &lc, &el);
+	lex_setup("45 / 11", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -344,14 +335,13 @@ void test_lex_stmts_expr()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("i + 1\nx * 4", &ls, &lc, &el);
+	lex_setup("i + 1\nx * 4", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -447,14 +437,13 @@ void test_lex_stmts_expr2()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("i + 1\nx * 4\n", &ls, &lc, &el);
+	lex_setup("i + 1\nx * 4\n", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -571,14 +560,13 @@ void test_lex_stmts_assign()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("i + 1\nx = 4", &ls, &lc, &el);
+	lex_setup("i + 1\nx = 4", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -674,14 +662,13 @@ void test_lex_function()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("function foo () \n end", &ls, &lc, &el);
+	lex_setup("function foo () \n end", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -764,14 +751,13 @@ void test_lex_comma()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup(",", &ls, &lc, &el);
+	lex_setup(",", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -803,14 +789,13 @@ void test_lex_semicolon()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup(";", &ls, &lc, &el);
+	lex_setup(";", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -841,14 +826,13 @@ void test_lex_semicolon()
 void test_lex_if() {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("if elseif else", &ls, &lc, &el);
+	lex_setup("if elseif else", &ls, &el);
 	
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -899,14 +883,13 @@ void test_lex_if() {
 void test_lex_compound_operators() {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("== != <= >= && || ::", &ls, &lc, &el);
+	lex_setup("== != <= >= && || ::", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -986,14 +969,13 @@ void test_lex_compound_operators() {
 void test_lex_compound_operators2() {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("= ! < > & | :", &ls, &lc, &el);
+	lex_setup("= ! < > & | :", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1074,14 +1056,13 @@ void test_lex_for_range()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("for i = 0:10 1 end", &ls, &lc, &el);
+	lex_setup("for i = 0:10 1 end", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1175,14 +1156,13 @@ void test_lex_for_iteration()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("for x in list 1 end", &ls, &lc, &el);
+	lex_setup("for x in list 1 end", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1255,13 +1235,12 @@ void test_lex_error_unrecognized_character()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("$", &ls, &lc, &el);
+	lex_setup("$", &ls, &el);
 
 	valid = lex(&ls, &t);
 	assert_false(valid, "lex");
@@ -1277,14 +1256,13 @@ void test_lex_square_brackets()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("[]", &ls, &lc, &el);
+	lex_setup("[]", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1315,14 +1293,13 @@ void test_lex_string()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("\"hello\"", &ls, &lc, &el);
+	lex_setup("\"hello\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1344,14 +1321,13 @@ void test_lex_string2()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("x = \"\\\\hello\n\r\"", &ls, &lc, &el);
+	lex_setup("x = \"\\\\hello\n\r\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1394,14 +1370,13 @@ void test_lex_string_escape_error()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("\"\\x\"", &ls, &lc, &el);
+	lex_setup("\"\\x\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1420,14 +1395,13 @@ void test_lex_line_col()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("10 + 20\n30 + 40", &ls, &lc, &el);
+	lex_setup("10 + 20\n30 + 40", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1529,14 +1503,13 @@ void test_lex_error_underscore_letter()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("_1", &ls, &lc, &el);
+	lex_setup("_1", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1553,14 +1526,13 @@ void test_lex_error_underscore_letter2()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("__", &ls, &lc, &el);
+	lex_setup("__", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -1577,13 +1549,12 @@ void test_lex_error_exponent_sign()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("100e-a", &ls, &lc, &el);
+	lex_setup("100e-a", &ls, &el);
 
 	valid = lex(&ls, &t);
 	assert_has_errors(ls.el);
@@ -1598,12 +1569,11 @@ void test_lex_module()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 
-	lex_setup("module 1 end", &ls, &lc, &el);
+	lex_setup("module 1 end", &ls, &el);
 
 	struct token* module;
 	valid = lex(&ls, &module);

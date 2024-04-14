@@ -2,8 +2,6 @@
 #include "zinc/unit_test.h"
 #include "zinc/buffer.h"
 #include "zinc/memory.h"
-#include "akela/input.h"
-#include "akela/uconv.h"
 #include "akela/parse_tools.h"
 #include "akela/parse.h"
 #include "akela/lex.h"

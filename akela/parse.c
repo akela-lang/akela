@@ -6,10 +6,8 @@
 #include "parse_stmts.h"
 #include "lex.h"
 #include "parse.h"
-#include "input.h"
 #include "parse_tools.h"
 #include "source.h"
-#include "lookahead_char.h"
 #include <assert.h>
 
 struct ast_node* parse(struct parse_state* ps)

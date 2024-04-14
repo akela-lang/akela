@@ -1,6 +1,4 @@
 #include "zinc/buffer.h"
-#include "akela/input.h"
-#include "akela/uconv.h"
 #include "akela/symbol_table.h"
 #include "akela/lex.h"
 #include "zinc/memory.h"
@@ -8,7 +6,7 @@
 #include "zinc/input_unicode_string.h"
 #include <string.h>
 
-void lex_setup(char* line, struct lex_state* ls, struct lookahead_char* lc, struct error_list* el)
+void lex_setup(char* line, struct lex_state* ls, struct error_list* el)
 {
     Vector* text = NULL;
     VectorCreate(&text, sizeof(char));

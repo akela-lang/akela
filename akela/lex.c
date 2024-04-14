@@ -7,9 +7,7 @@
 #include "lex.h"
 #include "zinc/buffer.h"
 #include "zinc/memory.h"
-#include "input.h"
 #include "source.h"
-#include "uconv.h"
 #include "zinc/utf8.h"
 #include <ctype.h>
 #include "zinc/input_unicode.h"

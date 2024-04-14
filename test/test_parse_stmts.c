@@ -3,7 +3,6 @@
 #include "akela/parse_tools.h"
 #include "akela/ast.h"
 #include "test_parse.h"
-#include "akela/input.h"
 #include "akela/type_def.h"
 #include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"

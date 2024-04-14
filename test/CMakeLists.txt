@@ -9,10 +9,7 @@ set(test_files
         test_lex.c
         test_lex_number.c
         test_lex_tools.c
-        test_input.c
         test_token.c
-        test_lookahead_translator.c
-        test_lookahead_char.c
         test_symbol_table.c
         test_parse_types.c
         test_type.c

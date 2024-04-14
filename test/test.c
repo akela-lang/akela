@@ -1,11 +1,8 @@
 #include "zinc/unit_test.h"
-#include "test_input.h"
 #include "test_lex.h"
 #include "test_parse_expr.h"
 #include "test_parse_stmts.h"
 #include "test_token.h"
-#include "test_lookahead_translator.h"
-#include "test_lookahead_char.h"
 #include "test_ast.h"
 #include "test_symbol_table.h"
 #include "test_parse_types.h"
@@ -19,9 +16,6 @@
 
 /* dynamic-output-none */
 int main(void) {
-	test_lookahead_char();
-	test_lookahead_translator();
-	test_input();
 	test_token();
 	test_lex();
 	test_lex_number();

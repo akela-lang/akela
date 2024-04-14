@@ -2,7 +2,6 @@
 #include "akela/unit_test_compiler.h"
 #include "akela/comp_unit.h"
 #include "zinc/memory.h"
-#include "akela/input.h"
 #include "akela/comp_table.h"
 #include "zinc/buffer.h"
 #include "akela/comp_unit.h"

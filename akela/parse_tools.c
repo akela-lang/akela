@@ -1,6 +1,5 @@
 #include <string.h>
 #include <stdbool.h>
-#include "input.h"
 #include "parse_tools.h"
 #include "token.h"
 #include "zinc/result.h"

@@ -1,7 +1,6 @@
 #include "zinc/unit_test.h"
 #include "akela/comp_unit.h"
 #include "zinc/memory.h"
-#include "akela/input.h"
 #include "zinc/input_unicode_string.h"
 
 void test_comp_unit_compile()

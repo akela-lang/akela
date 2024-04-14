@@ -7,16 +7,11 @@ set(lib_files
         parse_stmts.c
         "parse_expr.c"
         parse_factor.c
-        "source.c"
         parse.c
         parse_tools.c
-        "input.c"
         os_win.c
         os_linux.c
-        uconv.c
         parse_types.c
-        lookahead_char.c
-        lookahead_translator.c
         symbol_table.c
         type_def.c
         unit_test_compiler.c

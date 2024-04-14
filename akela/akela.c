@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "ast.h"
-#include "input.h"
 #include "source.h"
 #include "os_win.h"
 #include "os_linux.h"
 #include "comp_unit.h"
 #include "code_gen.h"
+#include "zinc/input_unicode_file.h"
 
 int main(int argc, char** argv)
 {
@@ -32,8 +32,11 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    InputUnicodeFile* input = NULL;
+    InputUnicodeFileCreate(&input, fp);
+
     comp_unit_init(&cu);
-    comp_unit_compile(&cu, (input_getchar)file_getchar, fp);
+    comp_unit_compile(&cu, input, input->input_vtable);
 
     if (!cu.valid) {
         struct error* e = cu.el.head;
@@ -60,7 +63,7 @@ int main(int argc, char** argv)
 
     comp_unit_destroy(&cu);
 
-    /* resource destroy fp */
+    free(input);
     fclose(fp);
 
     return 0;

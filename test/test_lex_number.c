@@ -1,5 +1,4 @@
 #include "zinc/unit_test.h"
-#include "akela/lookahead_char.h"
 #include "akela/source.h"
 #include "akela/lex.h"
 #include "test_lex_setup.h"
@@ -10,14 +9,13 @@ void test_lex_number_negative_start()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("-", &ls, &lc, &el);
+	lex_setup("-", &ls, &el);
 
 	valid = lex(&ls, &t);
 	expect_true(valid, "valid 0");
@@ -36,14 +34,13 @@ void test_lex_number_whole()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("500", &ls, &lc, &el);
+	lex_setup("500", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -68,14 +65,13 @@ void test_lex_number_fraction_start()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("500.", &ls, &lc, &el);
+	lex_setup("500.", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -100,14 +96,13 @@ void test_lex_number_fraction()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("500.123", &ls, &lc, &el);
+	lex_setup("500.123", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -131,13 +126,12 @@ void test_lex_number_exponent_start()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("500e", &ls, &lc, &el);
+	lex_setup("500e", &ls, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -163,13 +157,12 @@ void test_lex_number_fraction_exponent_start()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("500.123e", &ls, &lc, &el);
+	lex_setup("500.123e", &ls, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -195,13 +188,12 @@ void test_lex_number_fraction_exponent()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("500.123e2", &ls, &lc, &el);
+	lex_setup("500.123e2", &ls, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
@@ -222,13 +214,12 @@ void test_lex_number_fraction_exponent_sign_start_negative()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("500.123e-", &ls, &lc, &el);
+	lex_setup("500.123e-", &ls, &el);
 
 	valid = lex(&ls, &t);
 	expect_has_errors(ls.el);
@@ -245,13 +236,12 @@ void test_lex_number_fraction_exponent_sign_start_positive()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("500.123e+", &ls, &lc, &el);
+	lex_setup("500.123e+", &ls, &el);
 
 	valid = lex(&ls, &t);
 	expect_has_errors(ls.el);
@@ -269,14 +259,13 @@ void test_lex_number_fraction_exponent_negative()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("500.123e-2", &ls, &lc, &el);
+	lex_setup("500.123e-2", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -301,14 +290,13 @@ void test_lex_number_exponent_positive()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct lex_state ls;
 	struct error_list el;
 	bool valid;
 	struct token* t;
 
 	/* allocate ls{} */
-	lex_setup("500.123e+2", &ls, &lc, &el);
+	lex_setup("500.123e+2", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
@@ -332,13 +320,12 @@ void test_lex_number_exponent_add()
 {
 	test_name(__func__);
 
-	struct lookahead_char lc;
 	struct error_list el;
 	struct lex_state ls;
 	bool valid;
 	struct token* t;
 
-	lex_setup("500.123e + 1", &ls, &lc, &el);
+	lex_setup("500.123e + 1", &ls, &el);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);

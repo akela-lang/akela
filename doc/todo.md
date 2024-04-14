@@ -1,5 +1,4 @@
 # Todo
-* remove old input interfaces
 * remove ICU dependency
 * fix memory leaks
 * store IR value in ast node

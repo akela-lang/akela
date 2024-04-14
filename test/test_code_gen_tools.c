@@ -2,7 +2,6 @@
 #include "zinc/unit_test.h"
 #include "zinc/error_unit_test.h"
 #include "zinc/memory.h"
-#include "akela/input.h"
 #include "akela/parse_tools.h"
 #include "akela/comp_unit.h"
 #include "akela/code_gen.h"
