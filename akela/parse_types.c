@@ -130,16 +130,16 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
             n->type = ast_type_error;
 		}
 
-		if (n->type != ast_type_error) {
-			struct ast_node* a = NULL;
-			ast_node_create(&a);
-			a->type = ast_type_id;
-
-			buffer_copy(&id->value, &a->value);
-
-			ast_node_add(n, a);
-			ast_node_add(n, type_use);
-		}
+        struct ast_node* a = NULL;
+        ast_node_create(&a);
+        a->type = ast_type_id;
+        if (id) {
+            buffer_copy(&id->value, &a->value);
+        }
+        ast_node_add(n, a);
+        if (type_use) {
+            ast_node_add(n, type_use);
+        }
 
 		token_destroy(id);
 		free(id);
@@ -180,6 +180,9 @@ struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, 
                 assert(false);
             }
 
+            token_destroy(lcb);
+            free(lcb);
+
             consume_newline(ps);
 
 			struct location loc_tseq;
@@ -191,6 +194,9 @@ struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, 
 			if (!match(ps, token_right_curly_brace, "expected right curly brace", &rcb)) {
                 n->type = ast_type_error;
             }
+
+            token_destroy(rcb);
+            free(rcb);
 		}
 
 		struct symbol* sym = NULL;

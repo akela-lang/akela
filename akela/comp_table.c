@@ -84,6 +84,8 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 
 	transfer_global_symbols(&(*cu_base)->st, &cu->st);
 
+    free(input);
+
 exit:
 	free(path);
 	buffer_destroy(&path2);

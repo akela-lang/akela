@@ -785,6 +785,9 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
+    token_destroy(end);
+    free(end);
+
 	return n;
 }
 
@@ -801,6 +804,9 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
             /* test case: no test case needed */
             assert(false);
         }
+
+        token_destroy(eit);
+        free(eit);
 
 		struct ast_node* cb = NULL;
 		ast_node_create(&cb);
@@ -1133,6 +1139,9 @@ struct ast_node* parse_return(struct parse_state* ps, struct location* loc)
 		}
 	}
 
+    token_destroy(ret);
+    free(ret);
+
 	return n;
 }
 
@@ -1333,7 +1342,6 @@ struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, st
 
     struct ast_node* a = NULL;
     struct location a_loc;
-    ast_node_create(&a);
     a = parse_simple_expr(ps, &a_loc);
     if (!a) {
         return NULL;

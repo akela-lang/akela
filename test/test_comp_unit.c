@@ -30,6 +30,7 @@ void test_comp_unit_compile()
 	expect_int_equal(number->type, ast_type_number, "number number");
 	expect_str(&number->value, "10", "10 number");
 
+    free(input);
 	comp_unit_destroy(cu);
 	free(cu);
     VectorDestroy(text);

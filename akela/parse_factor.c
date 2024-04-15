@@ -454,7 +454,6 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-	/* allocate right */
 	struct ast_node* right = NULL;
 	struct location loc_factor;
     right = parse_expr(ps, &loc_factor);
@@ -468,7 +467,6 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 	}
 
 	if (n->type != ast_type_error) {
-		/* allocate left */
 		struct ast_node* left;
 		ast_node_create(&left);
 
@@ -478,10 +476,8 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 			left->type = ast_type_minus;
 		}
 
-		/* transfer left -> n{} */
 		ast_node_add(n, left);
 
-		/* transfer right -> n{} */
 		ast_node_add(n, right);
 
 	}
@@ -498,8 +494,8 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 		}
 	}
 
-	/* destroy sign */
 	token_destroy(sign);
+    free(sign);
 
 	return n;
 }

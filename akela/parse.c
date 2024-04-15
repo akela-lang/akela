@@ -27,12 +27,17 @@ struct ast_node* parse(struct parse_state* ps)
 		if (r == result_error) {
 			set_source_error(ps->el, &next_loc, "token name init: %s", error_message);
             n->type = ast_type_error;
+            token_destroy(t0);
+            free(t0);
 			return n;
 		}
 
 		set_source_error(ps->el, &next_loc, "Couldn't process token: %s", names[t0->type]);
         n->type = ast_type_error;
-	}
+ 	}
+
+    token_destroy(t0);
+    free(t0);
 
 	return n;
 }

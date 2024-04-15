@@ -224,6 +224,7 @@ void cg_jit(struct comp_unit* cu, struct buffer* bf, bool output_bc, bool output
 
     LLVMGenericValueRef v = LLVMRunFunction(engine, _main, 0, NULL);
     enum result r = serialize(v, cu->root, bf);
+    LLVMDisposeGenericValue(v);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
     }

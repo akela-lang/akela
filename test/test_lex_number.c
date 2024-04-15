@@ -140,7 +140,10 @@ void test_lex_number_exponent_start()
 	expect_int_equal(t->type, token_number, "0 number");
 	expect_str(&t->value, "500e", "0 value");
 
-	valid = lex(&ls, &t);
+    token_destroy(t);
+    free(t);
+
+    valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
@@ -170,6 +173,9 @@ void test_lex_number_fraction_exponent_start()
 	assert_ptr(t, "0 ptr t");
 	expect_int_equal(t->type, token_number, "0 number");
 	expect_str(&t->value, "500.123e", "0 value");
+
+    token_destroy(t);
+    free(t);
 
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);

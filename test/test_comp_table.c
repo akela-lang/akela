@@ -42,6 +42,7 @@ void test_comp_table_compile()
 	expect_int_equal(number->type, ast_type_number, "number number");
 	expect_str(&number->value, "10", "10 number");
 
+    free(input);
 	comp_table_destroy(&ct);
     VectorDestroy(text);
     free(text);
@@ -120,6 +121,8 @@ void test_comp_table_include()
 	expect_str(&number_main->value, "25", "25 number_main");
 
 	/* destroy */
+    free(base_input);
+    free(main_input);
     VectorDestroy(base_text);
     free(base_text);
     VectorDestroy(main_vector);

@@ -253,6 +253,7 @@ void symbol_table_add_numeric(struct symbol_table* st, const char* name)
 	n->type = ast_type_type_pool;
 	n->td = sym->td;
 	ast_node_add(st->numeric_pool, n);
+    buffer_destroy(&bf);
 }
 
 void symbol_table_numeric_pool_init(struct symbol_table* st)
@@ -470,7 +471,7 @@ void transfer_module_symbols(struct environment* src, struct environment* dest, 
 			buffer_add_char(&value, '.');
 			buffer_copy(&p->value, &value);
 			environment_put(dest, &value, dest_sym);
-
+            buffer_destroy(&value);
 			p = p->next;
 		}
 	}

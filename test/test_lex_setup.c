@@ -29,6 +29,7 @@ void lex_teardown(struct lex_state* ls)
     InputUnicodeString* input_string = ls->input_obj;
     VectorDestroy(input_string->text);
     free(input_string->text);
+    free(input_string);
 
 	struct error_list* el = ls->el;
 
