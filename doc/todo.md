@@ -1,5 +1,4 @@
 # Todo
-* fix memory leaks
 * store IR value in ast node
 * store IR variable references in symbol table
 * keep LLVM references out of parsing code and symbol table - use void* to reference them

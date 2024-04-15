@@ -201,7 +201,6 @@ struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct 
         if (!parent) {
             ast_node_create(&parent);
             parent->type = ast_type_eseq;
-            parent->loc = *loc;
             ast_node_add(parent, a);
             if (a->type == ast_type_error) {
                 parent->type = ast_type_error;
