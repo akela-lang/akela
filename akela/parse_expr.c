@@ -1186,14 +1186,17 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
 	return n;
 }
 
+/* dot -> factor dot' */
+/* dot' -> . factor | e */
 struct ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
 	struct ast_node* a = NULL;
 
+    get_location(ps, loc);
+
     struct location a_loc;
 	a = parse_factor(ps, &a_loc);
-    *loc = a_loc;
 
 	if (!a) {
 		return a;

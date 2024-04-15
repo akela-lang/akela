@@ -467,8 +467,11 @@ void parse_for_iteration(struct parse_state* ps, struct ast_node* parent, struct
         /* test case: test_parse_for_error_expected_iteration_expression */
 	}
 
+    if (list) {
+        ast_node_add(parent, list);
+    }
+
 	if (parent->type != ast_type_error) {
-		ast_node_add(parent, list);
 		struct ast_node* element = ast_node_get(parent, 0);
 		struct ast_node* element_tu = ast_node_get(element, 1);
 
@@ -609,29 +612,29 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
 	}
 
 	/* start building nodes */
-	if (n->type != ast_type_error) {
-		struct ast_node* a;
-		ast_node_create(&a);
-		a->type = ast_type_id;
-		buffer_copy(&id->value, &a->value);
+    struct ast_node* a;
+    ast_node_create(&a);
+    a->type = ast_type_id;
+    if (id) {
+        buffer_copy(&id->value, &a->value);
+    }
 
-		ast_node_add(n, a);
+    ast_node_add(n, a);
 
-		ast_node_add(n, dseq_node);
+    if (dseq_node) {
+        ast_node_add(n, dseq_node);
+    }
 
-		struct ast_node* b;
-		ast_node_create(&b);
-		b->type = ast_type_dret;
+    struct ast_node* b;
+    ast_node_create(&b);
+    b->type = ast_type_dret;
 
-		if (dret_node) {
-			ast_node_add(b, dret_node);
-		}
+    if (dret_node) {
+        ast_node_add(b, dret_node);
+    }
 
-		ast_node_add(n, b);
+    ast_node_add(n, b);
 
-	} else {
-		ast_node_destroy(dseq_node);
-	}
 
 	if (n->type != ast_type_error) {
 		struct symbol* search = environment_get_local(ps->st->top->prev, &id->value);
@@ -930,14 +933,14 @@ struct ast_node* parse_module(struct parse_state* ps, struct location* loc)
 	token_destroy(end);
 	free(end);
 
-	if (n->type != ast_type_error) {
-		struct ast_node* id_node = NULL;
-		ast_node_create(&id_node);
-		id_node->type = ast_type_id;
-		buffer_copy(&id->value, &id_node->value);
-		ast_node_add(n, id_node);
-		ast_node_add(n, a);
-	}
+    struct ast_node* id_node = NULL;
+    ast_node_create(&id_node);
+    id_node->type = ast_type_id;
+    if (id) {
+        buffer_copy(&id->value, &id_node->value);
+    }
+    ast_node_add(n, id_node);
+    ast_node_add(n, a);
 
 	if (n->type != ast_type_error) {
 		struct symbol* sym = environment_get(ps->st->top, &id->value);
