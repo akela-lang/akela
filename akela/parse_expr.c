@@ -66,47 +66,75 @@ struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
     size_t assign_index = 0;
-    size_t assign_count = 0;
-    bool has_eseq = false;
 
     get_location(ps, loc);
 
-	struct ast_node* last_p = NULL;
-	struct ast_node* last_a = NULL;
-	struct location loc_last_a;
-
 	struct ast_node* a = NULL;
 	struct location a_loc;
+    struct ast_node* a_last;
 
 	while (true) {
-		bool done = false;
-
+        a_last = a;
 		a = parse_eseq(ps, assign_index, &a_loc);
-        if (n == NULL) {
-            n = a;
-        }
-        if (assign_index == 0) {
-            *loc = a_loc;
-        }
-        if (a && a->type == ast_type_eseq) {
-            has_eseq = true;
+
+        if (!check_assignment_value_count(a, a_last)) {
+            set_source_error(ps->el, &a_loc, "assignment sequence counts do not match");
+            /* test case: test_parse_expr_assignment_eseq_error_eseq_count */
+            n->type = ast_type_error;
         }
 
-		if (!a) {
-			if (last_p) {
-				set_source_error(ps->el, &a_loc, "expected an assignment term");
-				/* test case: test_parse_assign_error_term */
+        if (a) {
+            a->loc = a_loc;
+        }
+
+        if (!a) {
+            if (n) {
+                set_source_error(ps->el, &a_loc, "missing rvalue in assignment");
                 n->type = ast_type_error;
-				break;
-			} else {
-				break;
-			}
-		}
+            }
+            break;
+        }
+
+        /* rvalue */
+        if (a_last && a) {
+            if (a->type == ast_type_eseq) {
+                struct ast_node* p = a->head;
+                while (p) {
+                    if (!p->tu) {
+                        set_source_error(ps->el, &p->loc, "rvalue does not have a type");
+                    }
+                    p = p->next;
+                }
+            } else {
+                if (!a->tu) {
+                    set_source_error(ps->el, &a_loc, "rvalue does not have a type");
+                }
+            }
+        }
 
 		struct token* t0 = get_lookahead(ps);
-		struct ast_node* p = NULL;
-		if (t0 && t0->type == token_equal) {
-            assign_count++;
+        if (t0->type != token_equal) {
+            if (n) {
+                /* last assignment */
+                ast_node_add(n, a);
+                if (a->type == ast_type_error) {
+                    n->type = ast_type_error;
+                }
+            } else {
+                /* no assignment */
+                n = a;
+            }
+            break;
+
+        } else {
+            if (!n) {
+                /* start assign tree */
+                ast_node_create(&n);
+                n->type = ast_type_assign;
+                n->tu = ast_node_copy(a->tu);
+            }
+
+            ast_node_add(n, a);
 
             struct token *equal = NULL;
             if (!match(ps, token_equal, "expecting assign operator", &equal)) {
@@ -114,112 +142,49 @@ struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
                 assert(false);
             }
 
-            if (has_eseq && assign_count > 1) {
-                set_source_error(ps->el, loc, "more than one assignment adjacent to an assignment sequence");
-                /* test case: test_parse_expr_assignment_eseq_error_too_many_assignments */
+            /* is an lvalue */
+            if (!is_lvalue(a->type)) {
+                set_source_error(ps->el, &a_loc, "invalid lvalue");
+                /* test case: test_parse_assign_error_lvalue */
                 n->type = ast_type_error;
+            }
+
+            if (a->type == ast_type_eseq) {
+                struct ast_node* p = a->head;
+                while (p) {
+                    if (!p->tu) {
+                        set_source_error(ps->el, &p->loc, "lvalue does not have a type");
+                        n->type = ast_type_error;
+                    }
+                    p = p->next;
+                }
+            } else {
+                if (!a->tu) {
+                    set_source_error(ps->el, &a_loc, "lvalue does not have a type");
+                    n->type = ast_type_error;
+                }
             }
 
             token_destroy(equal);
             free(equal);
 
-            if (!consume_newline(ps)) {
-                n->type = ast_type_error;
-            }
-
-            if (!check_lvalue(ps, a->type, &a_loc)) {
-                /* test case: test_parse_expr_error_lvalue */
-                n->type = ast_type_error;
-            }
-
-            ast_node_create(&p);
-            p->type = ast_type_assign;
-            ast_node_add(p, a);
-            if (a->type == ast_type_error) {
-                p->type = ast_type_error;
-            }
-
-            if (last_p) {
-                ast_node_add(last_p, p);
-                if (p->type == ast_type_error) {
-                    last_p->type = ast_type_error;
-                }
-            } else {
-                n = p;
-            }
-
-        } else {
-            if (last_p) {
-                ast_node_add(last_p, a);
-            }
-            done = true;
+            consume_newline(ps);
         }
-
-
-		if (n && n->type != ast_type_error) {
-			assert(a);
-			if (last_p && last_a) {
-				struct ast_node* last_a_tu = last_a->tu;
-				struct ast_node* a_tu = a->tu;
-
-				if (a->type != ast_type_eseq && !a_tu) {
-					set_source_error(ps->el, &a_loc, "cannot assign with operand that has no value");
-					/* test case: test_parse_assign_error_no_value_right */
-                    n->type = ast_type_error;
-				}
-				if (n->type != ast_type_error) {
-					if (!type_use_can_cast(last_a_tu, a_tu)) {
-						set_source_error(ps->el, &a_loc, "values in assignment not compatible");
-						/* test case: test_parse_assign_error_not_compatible */
-                        n->type = ast_type_error;
-					}
-				}
-			}
-
-			if (n->type != ast_type_error) {
-				if (p && a->tu) {
-					p->tu = ast_node_copy(a->tu);
-				}
-			}
-
-			last_p = p;
-			last_a = a;
-			loc_last_a = a_loc;
-		}
-
-		if (done) {
-			break;
-		}
-
         assign_index++;
 	}
-
-    if (n && n->type != ast_type_error) {
-        if (n && n->type == ast_type_assign) {
-            struct ast_node* n0 = ast_node_get(n, 0);
-            struct ast_node* n1 = ast_node_get(n, 1);
-            if (n0 && n0->type == ast_type_eseq && n1 && n1->type == ast_type_eseq) {
-                int count0 = ast_node_count_children(n0);
-                int count1 = ast_node_count_children(n1);
-                if (count0 != count1) {
-                    set_source_error(ps->el, loc, "assignment sequence counts do not match");
-                    /* test case: test_parse_expr_assignment_eseq_error_eseq_count */
-                    n->type = ast_type_error;
-                }
-            }
-        }
-    }
 
 	return n;
 }
 
-/* eseq = boolean | , boolean */
+/* eseq = boolean eseq' */
+/* eseq' = , boolean | e */
 struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct location* loc)
 {
+    get_location(ps, loc);
+
     struct ast_node* a = NULL;
     struct location a_loc;
     a = parse_boolean(ps, &a_loc);
-    *loc = a_loc;
 
     if (!a) {
         return NULL;
@@ -236,6 +201,7 @@ struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct 
         if (!parent) {
             ast_node_create(&parent);
             parent->type = ast_type_eseq;
+            parent->loc = *loc;
             ast_node_add(parent, a);
             if (a->type == ast_type_error) {
                 parent->type = ast_type_error;
@@ -1066,25 +1032,22 @@ struct ast_node* parse_call(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
+        ast_node_create(&n);
+        n->type = ast_type_call;
 
-		if (n->type != ast_type_error) {
-			ast_node_create(&n);
-			n->type = ast_type_call;
-
-            if (left) {
-                ast_node_add(n, left);
-                if (left->type == ast_type_error) {
-                    n->type = ast_type_error;
-                }
+        if (left) {
+            ast_node_add(n, left);
+            if (left->type == ast_type_error) {
+                n->type = ast_type_error;
             }
+        }
 
-            if (cseq_node) {
-                ast_node_add(n, cseq_node);
-                if (cseq_node->type == ast_type_error) {
-                    n->type = ast_type_error;
-                }
+        if (cseq_node) {
+            ast_node_add(n, cseq_node);
+            if (cseq_node->type == ast_type_error) {
+                n->type = ast_type_error;
             }
-		}
+        }
 
 		if (n->type != ast_type_error) {
 			struct ast_node* tu = left->tu;

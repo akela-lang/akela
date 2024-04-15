@@ -112,6 +112,7 @@ void ast_node_init(struct ast_node* n)
 	buffer_init(&n->value);
 	n->tu = NULL;
 	n->td = NULL;
+    location_init(&n->loc);
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;
@@ -220,6 +221,7 @@ struct ast_node* ast_node_copy(struct ast_node* n)
 		ast_node_create(&copy);
 		copy->type = n->type;
 		copy->td = n->td;
+        copy->loc = n->loc;
 		buffer_copy(&n->value, &copy->value);
 		
 		struct ast_node* p = n->head;
@@ -269,9 +271,9 @@ bool ast_node_match(struct ast_node* a, struct ast_node* b)
 	return true;
 }
 
-int ast_node_count_children(struct ast_node* n)
+size_t ast_node_count_children(struct ast_node* n)
 {
-	int count = 0;
+	size_t count = 0;
 	struct ast_node* p = n->head;
 	while (p) {
 		count++;

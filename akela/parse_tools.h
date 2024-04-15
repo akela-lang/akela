@@ -31,4 +31,6 @@ AKELA_API bool get_location(struct parse_state* ps, struct location* loc);
 
 AKELA_API struct token* get_lookahead(struct parse_state* ps);
 
+AKELA_API bool check_assignment_value_count(struct ast_node* a, struct ast_node* b);
+
 #endif

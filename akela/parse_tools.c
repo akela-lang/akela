@@ -105,3 +105,21 @@ struct token* get_lookahead(struct parse_state* ps)
     struct token* t = ps->lookahead;
     return t;
 }
+
+bool check_assignment_value_count(struct ast_node* a, struct ast_node* b)
+{
+    if (a && b) {
+        if (a->type != ast_type_error && b->type != ast_type_error) {
+            if (a->type == ast_type_eseq && b->type != ast_type_eseq) {
+                return false;
+            } else if (a->type != ast_type_eseq && b->type == ast_type_eseq) {
+                return false;
+            } else if (a->type == ast_type_eseq || b->type == ast_type_eseq) {
+                if (ast_node_count_children(a) != ast_node_count_children(b)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}

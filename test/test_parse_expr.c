@@ -1750,8 +1750,8 @@ void test_parse_assign_string()
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
-	assert_ptr(cu.root, "ptr cu.root");
-	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
+	assert_ptr(cu.root, "ptr root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts root");
 
 	struct ast_node* assign = ast_node_get(cu.root, 1);
 	assert_ptr(assign, "ptr assign");
@@ -1795,57 +1795,33 @@ void test_parse_assign_multiple()
 	assert_ptr(assign, "ptr assign");
 	expect_int_equal(assign->type, ast_type_assign, "assign assign");
 
-	struct ast_node* assign0_tu = assign->tu;
-	assert_ptr(assign0_tu, "ptr assign0_tu");
+	struct ast_node* assign_tu = assign->tu;
+	assert_ptr(assign_tu, "ptr assign_tu");
 
-	struct type_def* assign0_td = assign0_tu->td;
-	assert_ptr(assign0_td, "ptr assign0_td");
-	expect_int_equal(assign0_td->type, type_integer, "integer assign0_td");
-	expect_str(&assign0_td->name, "Int64", "Int64 assign0_td");
+	struct type_def* assign_td = assign_tu->td;
+	assert_ptr(assign_td, "ptr assign_td");
+	expect_int_equal(assign_td->type, type_integer, "integer assign_td");
+	expect_str(&assign_td->name, "Int64", "Int64 assign_td");
 
-	struct ast_node* lhv0 = ast_node_get(assign, 0);
-	assert_ptr(lhv0, "ptr lhv0");
-	expect_int_equal(lhv0->type, ast_type_id, "id lhv0");
-	expect_str(&lhv0->value, "a", "a lhv0");
+	struct ast_node* assign0 = ast_node_get(assign, 0);
+	assert_ptr(assign0, "ptr lhv0");
+	expect_int_equal(assign0->type, ast_type_id, "id assign0");
+	expect_str(&assign0->value, "a", "assign0 value");
 
-	struct ast_node* rhv0 = ast_node_get(assign, 1);
-	assert_ptr(rhv0, "ptr rhv0");
-	expect_int_equal(rhv0->type, ast_type_assign, "assign rhv0");
+	struct ast_node* assign1 = ast_node_get(assign, 1);
+	assert_ptr(assign1, "ptr assign1");
+	expect_int_equal(assign1->type, ast_type_id, "assign assign1");
+    expect_str(&assign1->value, "b", "assign1 value");
 
-	struct ast_node* assign1_tu = rhv0->tu;
-	assert_ptr(assign1_tu, "ptr assign1_tu");
+    struct ast_node* assign2 = ast_node_get(assign, 2);
+    assert_ptr(assign2, "ptr assign2");
+    expect_int_equal(assign2->type, ast_type_id, "assign assign2");
+    expect_str(&assign2->value, "c", "assign2 value");
 
-	struct type_def* assign1_td = assign1_tu->td;
-	assert_ptr(assign1_td, "ptr assign1_td");
-	expect_int_equal(assign1_td->type, type_integer, "integer assign1_td");
-	expect_str(&assign1_td->name, "Int64", "Int64 assign1_td");
-
-	struct ast_node* lhv1 = ast_node_get(rhv0, 0);
-	assert_ptr(lhv1, "ptr lhv1");
-	expect_int_equal(lhv1->type, ast_type_id, "id lhv1");
-	expect_str(&lhv1->value, "b", "b lhv1");
-
-	struct ast_node* rhv1 = ast_node_get(rhv0, 1);
-	assert_ptr(rhv1, "ptr rhv1");
-	expect_int_equal(rhv1->type, ast_type_assign, "assign rhv1");
-
-	struct ast_node* assign2_tu = assign->tu;
-	assert_ptr(assign2_tu, "ptr assign2_tu");
-
-	struct type_def* assign2_td = assign2_tu->td;
-	assert_ptr(assign2_td, "ptr assign2_td");
-	expect_int_equal(assign2_td->type, type_integer, "integer assign2_td");
-	expect_str(&assign2_td->name, "Int64", "Int64 assign2_td");
-
-	struct ast_node* lhv2 = ast_node_get(rhv1, 0);
-	assert_ptr(lhv2, "ptr lhv2");
-	expect_int_equal(lhv2->type, ast_type_id, "id lhv2");
-	expect_str(&lhv2->value, "c", "c lhv2");
-
-	struct ast_node* rhv2 = ast_node_get(rhv1, 1);
-	assert_ptr(rhv2, "ptr rhv2");
-	expect_int_equal(rhv2->type, ast_type_number, "number rhv2");
-	expect_str(&rhv2->value, "0", "0 rhv2");
+    struct ast_node* assign3 = ast_node_get(assign, 3);
+    assert_ptr(assign3, "ptr assign3");
+    expect_int_equal(assign3->type, ast_type_number, "assign assign3");
+    expect_str(&assign3->value, "0", "assign3 value");
 
     parse_teardown(&cu);
 }
@@ -1860,20 +1836,6 @@ void test_parse_expr_assignment_eseq_error_eseq_count()
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "assignment sequence counts do not match");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_expr_assignment_eseq_error_too_many_assignments()
-{
-    test_name(__func__);
-
-    struct comp_unit cu;
-
-    parse_setup("var a::Int64; var b::Int64; var c::Int64; a, b, c = 1, 2, 3 = 1", &cu);
-    expect_has_errors(&cu.el);
-    expect_false(cu.valid, "valid");
-    expect_source_error(&cu.el, "more than one assignment adjacent to an assignment sequence");
 
     parse_teardown(&cu);
 }
@@ -2349,7 +2311,6 @@ void test_parse_expression()
 	test_parse_assign_string();
 	test_parse_assign_multiple();
     test_parse_expr_assignment_eseq_error_eseq_count();
-    test_parse_expr_assignment_eseq_error_too_many_assignments();
 	test_parse_var_assign_error_term();
 	test_parse_assign_error_no_value_right();
 	test_parse_assign_error_not_compatible();

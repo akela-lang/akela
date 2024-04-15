@@ -768,7 +768,6 @@ void test_parse_anonymous_function()
 	struct comp_unit cu;
 	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("var a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse valid");

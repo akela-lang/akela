@@ -694,7 +694,7 @@ void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct l
     }
 
 	/* finish building nodes */
-	if (fd->type != ast_type_error) {
+	if (stmts_node) {
 		ast_node_add(fd, stmts_node);
 	}
 

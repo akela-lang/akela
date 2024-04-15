@@ -67,6 +67,7 @@ struct ast_node {
 	struct buffer value;
 	struct ast_node* tu;
 	struct type_def* td;
+    struct location loc;
 	struct ast_node* next;
 	struct ast_node* prev;
 	struct ast_node* head;
@@ -101,7 +102,7 @@ AKELA_API struct ast_node* ast_node_copy(struct ast_node* n);
 
 AKELA_API bool ast_node_match(struct ast_node* a, struct ast_node* b);
 
-AKELA_API int ast_node_count_children(struct ast_node* n);
+AKELA_API size_t ast_node_count_children(struct ast_node* n);
 
 AKELA_API void ast_node_location_update_token(struct ast_node* n, struct token* t);
 
