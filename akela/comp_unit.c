@@ -20,6 +20,12 @@ void comp_unit_init(struct comp_unit* cu)
 	cu->prev = NULL;
 }
 
+void comp_unit_create(struct comp_unit** cu)
+{
+    malloc_safe((void**)cu, sizeof(struct comp_unit));
+    comp_unit_init(*cu);
+}
+
 void comp_unit_destroy(struct comp_unit* cu)
 {
 	ast_node_destroy(cu->root);

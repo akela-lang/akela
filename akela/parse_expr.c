@@ -1186,7 +1186,7 @@ struct ast_node* parse_cseq(struct parse_state* ps, struct ast_node* tu, struct 
 }
 
 /* dot -> factor dot' */
-/* dot' -> . factor | e */
+/* dot' -> . factor dot' | e */
 struct ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;

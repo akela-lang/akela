@@ -1,8 +1,14 @@
-#ifndef CODE_GEN_H
-#define CODE_GEN_H
+#ifndef AKELA_CODE_GEN_H
+#define AKELA_CODE_GEN_H
 
-#include "comp_unit.h"
+#include "ast.h"
 
-void cg_jit(struct comp_unit* cu, struct buffer* bf, bool output_bc, bool output_ll);
+typedef struct {
+    u_int8_t jit_offset;
+} CodeGenVTable;
+
+typedef void (*CodeGenInterface)(void* cg_obj, struct ast_node* n, struct buffer* bf);
+
+void CodeGenJIT(void* cg_obj, CodeGenVTable* cg_vtable, struct ast_node* n, struct buffer* bf);
 
 #endif

@@ -51,6 +51,8 @@ AKELA_API void environment_destroy(struct environment* env);
 
 AKELA_API void symbol_table_init(struct symbol_table* st);
 
+AKELA_API void symbol_table_create(struct symbol_table** st);
+
 AKELA_API void symbol_table_destroy(struct symbol_table* st);
 
 AKELA_API bool symbol_table_is_global(struct symbol_table* st);

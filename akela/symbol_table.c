@@ -289,6 +289,12 @@ void symbol_table_init(struct symbol_table* st)
 	st->global = env;
 }
 
+void symbol_table_create(struct symbol_table** st)
+{
+    malloc_safe((void**)st, sizeof(struct symbol_table));
+    symbol_table_init(*st);
+}
+
 void symbol_table_destroy(struct symbol_table* st)
 {
 	struct environment* env = st->top;
