@@ -113,6 +113,7 @@ void ast_node_init(struct ast_node* n)
 	n->tu = NULL;
 	n->td = NULL;
     location_init(&n->loc);
+    n->sym = NULL;
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;

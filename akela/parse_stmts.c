@@ -33,7 +33,7 @@ struct ast_node* parse_module(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_struct(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_return(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_var(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, struct token_list* tl);
+struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, struct list* l);
 
 /* stmts -> stmt stmts' */
@@ -96,10 +96,9 @@ struct ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct l
 	}
 
 	if (!suppress_env) {
-		/* destroy env env{} */
-		environment_destroy(env);
-
-		/* transfer saved -> ps{top} */
+        env->prev = ps->st->deactivated;
+        ps->st->deactivated = env;
+		//environment_destroy(env);
 		ps->st->top = saved;
 	}
 
@@ -554,6 +553,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
+/* function_start -> id ( dseq ) | id ( dseq ) :: type */
 void parse_function_start(struct parse_state* ps, struct ast_node* n, struct location* loc)
 {
     get_location(ps, loc);
@@ -563,6 +563,14 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
         /* test case: no test case needed */
         n->type = ast_type_error;
     }
+
+    struct ast_node* a;
+    ast_node_create(&a);
+    a->type = ast_type_id;
+    if (id) {
+        buffer_copy(&id->value, &a->value);
+    }
+    ast_node_add(n, a);
 
     consume_newline(ps);
 
@@ -579,6 +587,10 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
     dseq_node = parse_dseq(ps, &loc_dseq);
 	if (dseq_node && dseq_node->type == ast_type_error) {
         n->type = ast_type_error;
+    }
+
+    if (dseq_node) {
+        ast_node_add(n, dseq_node);
     }
 
     consume_newline(ps);
@@ -611,20 +623,6 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
         }
 	}
 
-	/* start building nodes */
-    struct ast_node* a;
-    ast_node_create(&a);
-    a->type = ast_type_id;
-    if (id) {
-        buffer_copy(&id->value, &a->value);
-    }
-
-    ast_node_add(n, a);
-
-    if (dseq_node) {
-        ast_node_add(n, dseq_node);
-    }
-
     struct ast_node* b;
     ast_node_create(&b);
     b->type = ast_type_dret;
@@ -639,20 +637,16 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
 	if (n->type != ast_type_error) {
 		struct symbol* search = environment_get_local(ps->st->top->prev, &id->value);
 		if (search) {
-			char* a;
-			buffer2array(&id->value, &a);
-			set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
+			buffer_finish(&id->value);
+			set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", id->value.buf);
             n->type = ast_type_error;
-			free(a);
 			/* test case: test_parse_function_error_duplicate_declaration */
 		} else {
 			struct symbol* sym = environment_get(ps->st->top, &id->value);
 			if (sym && sym->td) {
-				char* a;
-				buffer2array(&id->value, &a);
-				set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
+                buffer_finish(&id->value);
+				set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", id->value.buf);
                 n->type = ast_type_error;
-				free(a);
 				/* test case: test_parse_function_error_identifier_reserved */
 			} else {
 				struct ast_node* tu = function2type(ps->st, n);
@@ -1172,9 +1166,10 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
 
     struct ast_node* a = NULL;
     struct location a_loc;
-    struct token_list a_tl;
-    token_list_init(&a_tl);
-    a = parse_var_lseq(ps, &a_loc, &a_tl);
+    a = parse_var_lseq(ps, &a_loc);
+    if (a) {
+        a->loc = a_loc;
+    }
     if (a && a->type == ast_type_error) {
         n->type = ast_type_error;
     }
@@ -1199,7 +1194,7 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
 
     struct ast_node* type_use = NULL;
     struct location type_use_loc;
-    type_use = parse_type(ps, &a_tl, &type_use_loc);
+    type_use = parse_type(ps, a, &type_use_loc);
     if (type_use && type_use->type == ast_type_error) {
         n->type = ast_type_error;
     }
@@ -1266,14 +1261,12 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
         list_destroy(&b_l, (list_node_destroy)location_item_destroy);
     }
 
-    token_list_destroy(&a_tl);
-
     return n;
 }
 
 /* var_lseq -> id var_lseq' */
 /* var_lseq' -> , id var_lseq' */
-struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, struct token_list* tl)
+struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc)
 {
     get_location(ps, loc);
 
@@ -1292,13 +1285,12 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, st
         assert(false);
     }
 
-    token_list_add(tl, id);
-
     struct ast_node* a = NULL;
     ast_node_create(&a);
     a->type = ast_type_id;
     buffer_copy(&id->value, &a->value);
     ast_node_add(n, a);
+    a->loc = id->loc;
 
     while (true) {
         t0 = get_lookahead(ps);
@@ -1328,7 +1320,7 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc, st
         a->type = ast_type_id;
         buffer_copy(&id->value, &a->value);
         ast_node_add(n, a);
-        token_list_add(tl, id);
+        a->loc = id->loc;
     }
 
     return n;

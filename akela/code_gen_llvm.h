@@ -20,7 +20,6 @@ typedef struct {
     struct symbol_table* st;
     LLVMBuilderRef builder;
     LLVMContextRef context;
-    struct hash_table named_values;
     CodeGenInterface jit;
 } CodeGenLLVM;
 

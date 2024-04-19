@@ -417,6 +417,7 @@ struct ast_node* parse_id(struct parse_state* ps, struct location* loc)
                 assert(sym3);
 				assert(sym3->tu);
 				n->tu = ast_node_copy(sym3->tu);
+                n->sym = sym3;
 			}
 		}
 

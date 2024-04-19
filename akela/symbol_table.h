@@ -20,6 +20,7 @@ struct symbol {
 	struct symbol* constructor;
 	struct ast_node* root;
 	struct ast_node* root_ptr;
+    void* allocation;
 };
 
 struct symbol_table {
@@ -27,6 +28,7 @@ struct symbol_table {
 	struct environment* global;
 	struct environment* top;
 	struct ast_node* numeric_pool;
+    struct environment* deactivated;
 };
 
 /* dynamic-output env{} */

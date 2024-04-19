@@ -68,6 +68,7 @@ struct ast_node {
 	struct ast_node* tu;
 	struct type_def* td;
     struct location loc;
+    struct symbol* sym;
 	struct ast_node* next;
 	struct ast_node* prev;
 	struct ast_node* head;

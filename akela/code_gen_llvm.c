@@ -38,7 +38,6 @@ void CodeGenLLVMInit(CodeGenLLVM* cg, struct symbol_table* st)
     cg->st = st;
     cg->builder = NULL;
     cg->context = NULL;
-    hash_table_init(&cg->named_values, NAMED_VALUES_HASH_SIZE);;
     cg->jit = (CodeGenInterface)CodeGenLLVMJIT;
 }
 
@@ -305,24 +304,23 @@ LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n)
     struct ast_node* tu = ast_node_get(n, 1);
     struct ast_node* rseq = ast_node_get(n, 2);
 
-    struct ast_node *lval = ast_node_get(lseq, 0);
-    struct ast_node *rval = NULL;
+    struct ast_node *lp = ast_node_get(lseq, 0);
+    struct ast_node *rp = NULL;
     if (rseq) {
-        rval = ast_node_get(rseq, 0);
+        rp = ast_node_get(rseq, 0);
     }
-    while (lval) {
-        if (rval) {
-            LLVMValueRef rhs = CodeGenLLVMExpr(cg, rval);
-
-            LLVMTypeRef t = get_llvm_type(NULL, tu);
-            struct buffer* bf = &lval->value;
-            buffer_finish(bf);
-            LLVMValueRef lhs =  LLVMBuildAlloca(cg->builder, t, bf->buf);
+    while (lp) {
+        LLVMTypeRef t = get_llvm_type(NULL, tu);
+        buffer_finish(&lp->value);
+        LLVMValueRef lhs =  LLVMBuildAlloca(cg->builder, t, lp->value.buf);
+        assert(lp->sym);
+        lp->sym->allocation = lhs;
+        if (rp) {
+            LLVMValueRef rhs = CodeGenLLVMExpr(cg, rp);
             LLVMBuildStore(cg->builder, rhs, lhs);
-            hash_table_add(&cg->named_values, bf, lhs);
-            rval = rval->next;
+            rp = rp->next;
         }
-        lval = lval->next;
+        lp = lp->next;
     }
 
     return NULL;
@@ -352,11 +350,12 @@ LLVMValueRef CodeGenLLVMSub(CodeGenLLVM* cg, struct ast_node* n)
 
 LLVMValueRef CodeGenLLVMID(CodeGenLLVM* cg, struct ast_node* n)
 {
-    struct buffer* bf = &n->value;
-    buffer_finish(bf);
-    LLVMValueRef v = hash_table_get(&cg->named_values, bf);
+    buffer_finish(&n->value);
+    struct symbol* sym = n->sym;
+    assert(sym);
+    LLVMValueRef v = sym->allocation;
     LLVMTypeRef t = LLVMGetAllocatedType(v);
-    return LLVMBuildLoad2(cg->builder, t, v, bf->buf);
+    return LLVMBuildLoad2(cg->builder, t, v, n->value.buf);
 }
 
 LLVMValueRef CodeGenLLVMNumber(CodeGenLLVM* cg, struct ast_node* n)

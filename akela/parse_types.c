@@ -97,6 +97,15 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
             /* test case: no test case needed */
         }
 
+        struct ast_node* id_node = NULL;
+        ast_node_create(&id_node);
+        id_node->type = ast_type_id;
+        if (id) {
+            buffer_copy(&id->value, &id_node->value);
+        }
+
+        ast_node_add(n, id_node);
+
         consume_newline(ps);
 
 		struct token* dc = NULL;
@@ -109,20 +118,14 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
 
 		struct ast_node* type_use = NULL;
 		struct location loc_type;
-		if (add_symbol) {
-            struct token_list tl;
-            token_list_init(&tl);
-            token_list_add(&tl, id);
-			type_use = parse_type(ps, &tl, &loc_type);
-            if (type_use && type_use->type == ast_type_error) {
-                n->type = ast_type_error;
-            }
-		} else {
-			type_use = parse_type(ps, NULL, &loc_type);
-            if (type_use && type_use->type == ast_type_error) {
-                n->type = ast_type_error;
-            }
-		}
+        if (add_symbol) {
+            type_use = parse_type(ps, id_node, &loc_type);
+        } else {
+            type_use = parse_type(ps, NULL, &loc_type);
+        }
+        if (type_use && type_use->type == ast_type_error) {
+            n->type = ast_type_error;
+        }
 
 		if (!type_use) {
 			set_source_error(ps->el, &loc_type, "expected a type");
@@ -130,13 +133,6 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
             n->type = ast_type_error;
 		}
 
-        struct ast_node* a = NULL;
-        ast_node_create(&a);
-        a->type = ast_type_id;
-        if (id) {
-            buffer_copy(&id->value, &a->value);
-        }
-        ast_node_add(n, a);
         if (type_use) {
             ast_node_add(n, type_use);
         }
@@ -151,8 +147,45 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
 	return n;
 }
 
+/**
+ * Check ID node and create symbol
+ * @param ps parse state
+ * @param n type node
+ * @param id_node ID node
+ */
+void check_id_node(struct parse_state* ps, struct ast_node* n, struct ast_node* id_node)
+{
+    struct symbol* dup = environment_get_local(ps->st->top, &id_node->value);
+    if (dup) {
+        char* a;
+        buffer2array(&id_node->value, &a);
+        set_source_error(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
+        free(a);
+        n->type = ast_type_error;
+        /* test case: test_parse_error_duplicate_declarations */
+    } else {
+        struct symbol* sym2 = environment_get(ps->st->top, &id_node->value);
+        if (sym2 && sym2->td) {
+            char* a;
+            buffer2array(&id_node->value, &a);
+            set_source_error(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
+            free(a);
+            n->type = ast_type_error;
+            /* test case: test_parse_types_reserved_type */
+        } else {
+            struct symbol* new_sym = NULL;
+            malloc_safe((void**)&new_sym, sizeof(struct symbol));
+            symbol_init(new_sym);
+            new_sym->tk_type = token_id;
+            new_sym->tu = ast_node_copy(n);
+            environment_put(ps->st->top, &id_node->value, new_sym);
+            id_node->sym = new_sym;
+        }
+    }
+}
+
 /* type -> id | id { tseq } */
-struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, struct location* loc)
+struct ast_node* parse_type(struct parse_state* ps, struct ast_node* id_node, struct location* loc)
 {
 	struct ast_node* n = NULL;
 	bool is_generic = false;
@@ -248,36 +281,17 @@ struct ast_node* parse_type(struct parse_state* ps, struct token_list* id_list, 
 		}
 
 		if (n->type != ast_type_error) {
-            if (id_list) {
-                struct token* id = id_list->head;
-                while (id) {
-                    struct symbol* dup = environment_get_local(ps->st->top, &id->value);
-                    if (dup) {
-                        char* a;
-                        buffer2array(&id->value, &a);
-                        set_source_error(ps->el, &id->loc, "duplicate declaration in same scope: %s", a);
-                        free(a);
-                        n->type = ast_type_error;
-                        /* test case: test_parse_error_duplicate_declarations */
-                    } else {
-                        struct symbol* sym2 = environment_get(ps->st->top, &id->value);
-                        if (sym2 && sym2->td) {
-                            char* a;
-                            buffer2array(&id->value, &a);
-                            set_source_error(ps->el, &id->loc, "identifier reserved as a type: %s", a);
-                            free(a);
-                            n->type = ast_type_error;
-                            /* test case: test_parse_types_reserved_type */
-                        } else {
-                            struct symbol* new_sym = NULL;
-                            malloc_safe((void**)&new_sym, sizeof(struct symbol));
-                            symbol_init(new_sym);
-                            new_sym->tk_type = token_id;
-                            new_sym->tu = ast_node_copy(n);
-                            environment_put(ps->st->top, &id->value, new_sym);
-                        }
+            if (id_node) {
+                if (id_node->type == ast_type_id) {
+                    check_id_node(ps, n, id_node);
+                } else if (id_node->type == ast_type_var_lseq) {
+                    struct ast_node* p = id_node->head;
+                    while (p) {
+                        check_id_node(ps, n, p);
+                        p = p->next;
                     }
-                    id = id->next;
+                } else {
+                    assert(false);
                 }
             }
 		}
@@ -361,7 +375,8 @@ struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 	int current_node = 0;
 
 	if (n->type == ast_type_function) {
-		current_node++;
+        struct ast_node* id_node = ast_node_get(n, current_node++);
+        assert(id_node->type == ast_type_id);
 	}
 
 	/* function */
@@ -378,6 +393,7 @@ struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 
 	/* input */
 	struct ast_node* dseq = ast_node_get(n, current_node++);
+    assert(dseq->type == ast_type_dseq);
 
 	if (dseq->head) {
 		struct ast_node* input_tu = NULL;

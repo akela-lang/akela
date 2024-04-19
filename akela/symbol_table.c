@@ -55,6 +55,7 @@ void symbol_init(struct symbol* sym)
 	sym->constructor = NULL;
 	sym->root = NULL;
 	sym->root_ptr = NULL;
+    sym->allocation = NULL;
 }
 
 /* destroy sym sym{} */
@@ -287,6 +288,7 @@ void symbol_table_init(struct symbol_table* st)
 	environment_init(env, st->top);
 	st->top = env;
 	st->global = env;
+    st->deactivated = NULL;
 }
 
 void symbol_table_create(struct symbol_table** st)
@@ -303,6 +305,12 @@ void symbol_table_destroy(struct symbol_table* st)
 		environment_destroy(env);
 		env = prev;
 	}
+    env = st->deactivated;
+    while (env) {
+        struct environment* prev = env->prev;
+        environment_destroy(env);
+        env = prev;
+    }
 	ast_node_destroy(st->numeric_pool);
 }
 
