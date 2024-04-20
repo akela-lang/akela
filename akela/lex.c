@@ -7,7 +7,6 @@
 #include "lex.h"
 #include "zinc/buffer.h"
 #include "zinc/memory.h"
-#include "source.h"
 #include "zinc/utf8.h"
 #include <ctype.h>
 #include "zinc/input_unicode.h"
@@ -55,7 +54,7 @@ bool lex_start(struct lex_state* ls,
     while (true) {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = set_source_error(ls->el, &loc, error_message);
+            valid = error_list_set(ls->el, &loc, error_message);
             break;
         }
 
@@ -173,7 +172,7 @@ bool lex_start(struct lex_state* ls,
             }
             a[i] = '\0';
 
-            set_source_error(ls->el, &loc, "Unrecognized character: %s", a);
+            error_list_set(ls->el, &loc, "Unrecognized character: %s", a);
             /* error test case: test_lex_error_unrecognized_character */
             valid = false;
             break;
@@ -204,7 +203,7 @@ bool lex_word(struct lex_state* ls,
     while (true) {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = set_source_error(ls->el, &loc, error_message);
+            valid = error_list_set(ls->el, &loc, error_message);
             break;
         }
 
@@ -245,11 +244,11 @@ bool lex_word(struct lex_state* ls,
             }
         } else if (*state == state_id_underscore) {
             if (*c == '_') {
-                set_source_error(ls->el, &loc, "Must have a letter following underscore at start of id");
+                error_list_set(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_lex_error_underscore_letter2 */
             } else if (is_num(c, num)) {
-                set_source_error(ls->el, &loc, "Must have a letter following underscore at start of id");
+                error_list_set(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_lex_error_underscore_letter */
             } else if (is_word(c, num)) {
@@ -296,7 +295,7 @@ bool lex_number(struct lex_state* ls,
     while (true) {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = set_source_error(ls->el, &loc, error_message);
+            valid = error_list_set(ls->el, &loc, error_message);
             break;
         }
 
@@ -373,7 +372,7 @@ bool lex_number(struct lex_state* ls,
                     buffer_add_char(&t->value, c[i]);
                 }
             } else {
-                valid = set_source_error(ls->el, &loc, "expected number after exponent sign");
+                valid = error_list_set(ls->el, &loc, "expected number after exponent sign");
                 /* test case: test_lex_error_exponent_sign */
                 *state = state_start;
                 t->loc.size = t->value.size;
@@ -421,7 +420,7 @@ bool lex_string(
     while (true) {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = set_source_error(ls->el, &loc, error_message);
+            valid = error_list_set(ls->el, &loc, error_message);
         }
 
         if (*done) {
@@ -429,7 +428,7 @@ bool lex_string(
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc.size += num;
-            valid = set_source_error(ls->el, &loc, "Unclosed string");
+            valid = error_list_set(ls->el, &loc, "Unclosed string");
             break;
         }
 
@@ -466,7 +465,7 @@ bool lex_string(
                     i++;
                 }
                 a[i] = '\0';
-                valid = set_source_error(ls->el, &loc, "Unrecognized escape sequence: %s", a);
+                valid = error_list_set(ls->el, &loc, "Unrecognized escape sequence: %s", a);
                 /* test case: test_lex_string_escape_error */
                 break;
             }
@@ -499,7 +498,7 @@ bool lex_compound_operator(
 
     r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
     if (r == result_error) {
-        valid = set_source_error(ls->el, &loc, error_message);
+        valid = error_list_set(ls->el, &loc, error_message);
     }
 
     if (!*done && num > 0) {

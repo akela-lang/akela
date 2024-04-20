@@ -1,8 +1,7 @@
 #include "zinc/unit_test.h"
-#include "akela/source.h"
 #include "akela/lex.h"
 #include "test_lex_setup.h"
-#include "akela/unit_test_compiler.h"
+#include "zinc/unit_test_compiler.h"
 #include "zinc/error_unit_test.h"
 
 void test_lex_number_negative_start()

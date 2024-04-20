@@ -12,7 +12,6 @@ set(lib_files
         parse_types.c
         symbol_table.c
         type_def.c
-        unit_test_compiler.c
         comp_unit.c
         comp_table.c
         code_gen.c

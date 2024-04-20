@@ -4,7 +4,6 @@
 #include "akela_api.h"
 #include <stdbool.h>
 #include "token.h"
-#include "source.h"
 #include "symbol_table.h"
 #include "zinc/buffer.h"
 #include "ast.h"

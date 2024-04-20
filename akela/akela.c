@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "ast.h"
-#include "source.h"
 #include "zinc/os_win.h"
 #include "zinc/os_unix.h"
 #include "comp_unit.h"

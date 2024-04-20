@@ -5,7 +5,6 @@
 #include "lex.h"
 #include "parse_tools.h"
 #include "ast.h"
-#include "source.h"
 #include "symbol_table.h"
 #include "zinc/memory.h"
 #include "parse_types.h"
@@ -63,7 +62,7 @@ struct ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
         }
 
 		if (!dec) {
-			set_source_error(ps->el, &loc_dec, "expected declaration after comma");
+			error_list_set(ps->el, &loc_dec, "expected declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
             n->type = ast_type_error;
 			break;
@@ -128,7 +127,7 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
         }
 
 		if (!type_use) {
-			set_source_error(ps->el, &loc_type, "expected a type");
+			error_list_set(ps->el, &loc_type, "expected a type");
 			/* test case: test_parse_error_declaration_type */
             n->type = ast_type_error;
 		}
@@ -159,7 +158,7 @@ void check_id_node(struct parse_state* ps, struct ast_node* n, struct ast_node* 
     if (dup) {
         char* a;
         buffer2array(&id_node->value, &a);
-        set_source_error(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
+        error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
         free(a);
         n->type = ast_type_error;
         /* test case: test_parse_error_duplicate_declarations */
@@ -168,7 +167,7 @@ void check_id_node(struct parse_state* ps, struct ast_node* n, struct ast_node* 
         if (sym2 && sym2->td) {
             char* a;
             buffer2array(&id_node->value, &a);
-            set_source_error(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
+            error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
             free(a);
             n->type = ast_type_error;
             /* test case: test_parse_types_reserved_type */
@@ -238,21 +237,21 @@ struct ast_node* parse_type(struct parse_state* ps, struct ast_node* id_node, st
 			if (!sym) {
 				char* a;
 				buffer2array(&name->value, &a);
-				set_source_error(ps->el, &name->loc, "type not defined: %s", a);
+				error_list_set(ps->el, &name->loc, "type not defined: %s", a);
 				free(a);
                 n->type = ast_type_error;
 				/* test case: test_parse_error_type_not_defined */
 			} else if (!sym->td) {
 				char* a;
 				buffer2array(&name->value, &a);
-				set_source_error(ps->el, &name->loc, "identifier is not a type: %s", a);
+				error_list_set(ps->el, &name->loc, "identifier is not a type: %s", a);
 				free(a);
                 n->type = ast_type_error;
 				/* test case: test_parse_error_not_a_type */
 			} else if (is_generic && !sym->td->is_generic) {
 				char* a;
 				buffer2array(&name->value, &a);
-				set_source_error(ps->el, &name->loc, "subtype was specified for non-generic type: %s", a);
+				error_list_set(ps->el, &name->loc, "subtype was specified for non-generic type: %s", a);
 				free(a);
                 n->type = ast_type_error;
 				/* test case: test_parse_error_not_generic */
@@ -262,7 +261,7 @@ struct ast_node* parse_type(struct parse_state* ps, struct ast_node* id_node, st
 					if (sym->td->generic_count > 0 && count != sym->td->generic_count) {
 						char* a;
 						buffer2array(&name->value, &a);
-						set_source_error(
+						error_list_set(
 							ps->el, &name->loc, "generic type (%s) should have %d subtype%s but has %d subtype%s",
 							a,
 							sym->td->generic_count, plural(sym->td->generic_count),
@@ -319,7 +318,7 @@ void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location
     }
 
 	if (!tu) {
-		set_source_error(ps->el, &loc_type, "expected a type name");
+		error_list_set(ps->el, &loc_type, "expected a type name");
 		/* test case: test_parse_error_type_name */
         parent->type = ast_type_error;
 	}
@@ -354,7 +353,7 @@ void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location
         }
 
 		if (!tu) {
-			set_source_error(ps->el, &loc_type, "expected a type name after comma");
+			error_list_set(ps->el, &loc_type, "expected a type name after comma");
 			/* test case: test_parse_error_comma_type_name */
             parent->type = ast_type_error;
 			break;
@@ -457,7 +456,7 @@ bool check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_n
 			struct ast_node* ret = ast_node_get(p, 0);
 			if (ret) {
 				if (!type_use_can_cast(ret, stmts_node->tu)) {
-					valid = set_source_error(ps->el, loc, "returned type does not match function return type");
+					valid = error_list_set(ps->el, loc, "returned type does not match function return type");
 				}
 			}
 		}
@@ -525,11 +524,11 @@ bool check_input_type(struct parse_state* ps, struct ast_node* tu, int index, st
 			struct ast_node* call_tu0 = a->tu;
 			if (call_tu0) {
 				if (!type_use_can_cast(tu0, call_tu0)) {
-					valid = set_source_error(ps->el, loc_expr, "parameter and aguments types do not match");
+					valid = error_list_set(ps->el, loc_expr, "parameter and aguments types do not match");
 					/* test case: test_parse_types_error_param */
 				}
 			} else {
-				valid = set_source_error(ps->el, loc_expr, "argument expression has no value");
+				valid = error_list_set(ps->el, loc_expr, "argument expression has no value");
 				/* test case: test_parse_types_error_param_no_value */
 			}
 		}

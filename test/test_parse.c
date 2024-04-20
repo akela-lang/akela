@@ -5,7 +5,6 @@
 #include "akela/parse_tools.h"
 #include "akela/parse.h"
 #include "akela/lex.h"
-#include "akela/source.h"
 #include "akela/comp_unit.h"
 #include "zinc/input_unicode.h"
 #include "zinc/input_unicode_string.h"

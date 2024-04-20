@@ -3,7 +3,6 @@
 
 #include "akela_api.h"
 #include "ast.h"
-#include "source.h"
 #include "symbol_table.h"
 #include <stdbool.h>
 #include "zinc/input_unicode.h"

@@ -6,7 +6,6 @@
 #include "parse_types.h"
 #include "parse_stmts.h"
 #include "parse_expr.h"
-#include "source.h"
 #include "lex.h"
 #include "zinc/memory.h"
 #include "symbol_table.h"
@@ -146,7 +145,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         }
 
         if (!dret_type) {
-            set_source_error(ps->el, &loc_ret, "expected a type");
+            error_list_set(ps->el, &loc_ret, "expected a type");
             n->type = ast_type_error;
         }
 	}
@@ -238,7 +237,7 @@ struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
     }
 
 	if (!a) {
-		set_source_error(ps->el, &loc_factor, "expected parse_factor after !");
+		error_list_set(ps->el, &loc_factor, "expected parse_factor after !");
 		/* test case: test_parse_not_error_expected_factor */
         n->type = ast_type_error;
 	}
@@ -253,13 +252,13 @@ struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
 		assert(a);
 		struct ast_node* tu = a->tu;
 		if (!tu) {
-			set_source_error(ps->el, &not->loc, "! operator used on parse_factor with no value");
+			error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
 			/* test case: test_parse_not_error_no_value */
             n->type = ast_type_error;
 		} else {
 			assert(tu->td);
 			if (tu->td->type != type_boolean) {
-				set_source_error(ps->el, &not->loc, "not operator used on non-boolean");
+				error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = ast_type_error;
 			} else {
@@ -396,18 +395,18 @@ struct ast_node* parse_id(struct parse_state* ps, struct location* loc)
 				n->tu = ast_node_copy(found_tu);
 			} else {
 				buffer_finish(&id->value);
-				set_source_error(ps->el, &id->loc, "variable not a field of struct: %s", id->value.buf);
+				error_list_set(ps->el, &id->loc, "variable not a field of struct: %s", id->value.buf);
                 n->type = ast_type_error;
 			}
 		} else {
 			struct symbol* sym2 = environment_get(ps->st->top, &full_id);
 			if (!sym2) {
                 buffer_finish(&full_id);
-                set_source_error(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
+                error_list_set(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
                 /* test case: test_parse_types_missing_declaration */
                 n->type = ast_type_error;
             } else if (sym2->td && sym2->td->type != type_struct) {
-                set_source_error(ps->el, &id->loc, "using type as an identifier: %s", full_id.buf);
+                error_list_set(ps->el, &id->loc, "using type as an identifier: %s", full_id.buf);
                 n->type = ast_type_error;
 			} else {
                 struct symbol* sym3 = sym2;
@@ -463,7 +462,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
     }
 
 	if (!right) {
-		set_source_error(ps->el, &loc_factor, "expected parse_factor after sign");
+		error_list_set(ps->el, &loc_factor, "expected parse_factor after sign");
         n->type = ast_type_error;
 	}
 
@@ -487,7 +486,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 		assert(right);
 		struct ast_node* tu = right->tu;
 		if (!tu) {
-			set_source_error(ps->el, &sign->loc, "negative operator was used on expression with no value");
+			error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
 			/* test case: test_parse_sign_error */
             n->type = ast_type_error;
 		} else {
@@ -546,7 +545,7 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
         struct ast_node* first = n->head;
 
         if (!first) {
-            set_source_error(ps->el, &rsb->loc, "array literal has no elements");
+            error_list_set(ps->el, &rsb->loc, "array literal has no elements");
             /* test case: test_parse_array_literal_empty_error */
             n->type = ast_type_error;
         } else {
@@ -556,7 +555,7 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
             while (x) {
                 tu_x = x->tu;
                 if (!type_find_whole(ps->st, tu_first, tu_x)) {
-                    set_source_error(ps->el, &first_loc, "array elements not the same type");
+                    error_list_set(ps->el, &first_loc, "array elements not the same type");
                     /* test case: test_parse_array_literal_mixed_error */
                     n->type = ast_type_error;
                     break;
@@ -622,7 +621,7 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
             }
 
 			if (!a) {
-				set_source_error(ps->el, &loc_expr, "expected expr after comma");
+				error_list_set(ps->el, &loc_expr, "expected expr after comma");
                 parent->type = ast_type_error;
 				/* test cases: test_parse_array_literal_error_expected_expr */
 				break;
@@ -664,7 +663,7 @@ struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
     }
 
 	if (!a) {
-		set_source_error(ps->el, &loc_a, "empty parenthesis");
+		error_list_set(ps->el, &loc_a, "empty parenthesis");
         n->type = ast_type_error;
 		/* test case: test_parse_paren_error_empty */
 	}
@@ -683,7 +682,7 @@ struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
 		assert(a);
 		struct ast_node* tu = a->tu;
 		if (!tu) {
-			set_source_error(ps->el, &loc_a, "parenthesis on expression that has no value");
+			error_list_set(ps->el, &loc_a, "parenthesis on expression that has no value");
             n->type = ast_type_error;
 		} else {
 			n->tu = ast_node_copy(tu);

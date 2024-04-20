@@ -6,7 +6,6 @@
 #include "zinc/buffer.h"
 #include "zinc/result.h"
 #include "token.h"
-#include "source.h"
 #include "symbol_table.h"
 
 enum type {

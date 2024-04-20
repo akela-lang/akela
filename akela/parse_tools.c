@@ -4,7 +4,6 @@
 #include "token.h"
 #include "zinc/result.h"
 #include "lex.h"
-#include "source.h"
 #include "ast.h"
 #include <assert.h>
 
@@ -63,7 +62,7 @@ bool match(struct parse_state* ps, enum token_enum type, const char* reason, str
 
 	valid = false;
 	get_token_location(*t, &loc);
-	set_source_error(ps->el, &loc, "%s", reason);
+	error_list_set(ps->el, &loc, "%s", reason);
 	*t = NULL;
 	return valid;
 }

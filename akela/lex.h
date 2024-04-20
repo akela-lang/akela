@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include "zinc/buffer.h"
 #include "token.h"
-#include "source.h"
 #include "symbol_table.h"
 #include "lex_tools.h"
 

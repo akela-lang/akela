@@ -45,7 +45,7 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 
 	r = get_exe_path(&path);
     if (r == result_error) {
-        valid = set_source_error(&cu->el, &loc, "could not get executable path");
+        valid = error_list_set(&cu->el, &loc, "could not get executable path");
     }
 
 	struct buffer path2;
@@ -71,7 +71,7 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 	FILE* fp = NULL;
 	int err = fopen_s(&fp, math_path.buf, "r");
 	if (err || !fp) {
-		valid = set_source_error(&cu->el, &loc, "could not open file: %s\n", math_path.buf);
+		valid = error_list_set(&cu->el, &loc, "could not open file: %s\n", math_path.buf);
 		goto exit;
 	}
 

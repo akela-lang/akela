@@ -1,6 +1,6 @@
 #include "zinc/unit_test.h"
 #include "test_parse.h"
-#include "akela/unit_test_compiler.h"
+#include "zinc/unit_test_compiler.h"
 #include "akela/type_def.h"
 #include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"

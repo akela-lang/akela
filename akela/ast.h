@@ -6,7 +6,6 @@
 #include "zinc/buffer.h"
 #include "zinc/result.h"
 #include "token.h"
-#include "source.h"
 
 enum ast_type {
 	ast_type_none,

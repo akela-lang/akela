@@ -4,8 +4,8 @@
 #include "zinc/memory.h"
 #include "token.h"
 #include "ast.h"
-#include "source.h"
 #include <assert.h>
+#include "zinc/error.h"
 
 /* dynamic-output-none */
 /* initialize-output t{} t{value{}} */

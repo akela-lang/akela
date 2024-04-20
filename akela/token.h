@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "zinc/buffer.h"
-#include "source.h"
+#include "zinc/error.h"
 
 enum token_enum {
     token_none,
