@@ -2,8 +2,8 @@
 #include "zinc/hash.h"
 #include "comp_unit.h"
 #include "zinc/memory.h"
-#include "os_win.h"
-#include "os_linux.h"
+#include "zinc/os_win.h"
+#include "zinc/os_unix.h"
 #include <stdio.h>
 #include "zinc/input_unicode_file.h"
 
@@ -58,12 +58,14 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 	buffer_copy_str(&path2, path);
 	split_path(&path2, &dir, &filename);
 
-	struct buffer math_path;
-	buffer_init(&math_path);
-	buffer_copy(&dir, &math_path);
+	struct buffer math_dir;
+	buffer_init(&math_dir);
+	buffer_copy(&dir, &math_dir);
 	buffer_clear(&filename);
 	buffer_copy_str(&filename, "math.akela");
-	path_join(&math_path, &filename);
+    struct buffer math_path;
+    buffer_init(&math_path);
+	path_join(&math_dir, &filename, &math_path);
 	buffer_finish(&math_path);
 
 	FILE* fp = NULL;

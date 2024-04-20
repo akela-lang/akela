@@ -9,8 +9,6 @@ set(lib_files
         parse_factor.c
         parse.c
         parse_tools.c
-        os_win.c
-        os_linux.c
         parse_types.c
         symbol_table.c
         type_def.c
