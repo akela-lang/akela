@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include "ast.h"
 #include "source.h"
-#include "os_win.h"
-#include "os_linux.h"
+#include "zinc/os_win.h"
+#include "zinc/os_unix.h"
 #include "comp_unit.h"
 #include "code_gen.h"
 #include "zinc/input_unicode_file.h"
