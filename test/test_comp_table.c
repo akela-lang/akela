@@ -1,5 +1,4 @@
 #include "zinc/unit_test.h"
-#include "zinc/unit_test_compiler.h"
 #include "akela/comp_unit.h"
 #include "zinc/memory.h"
 #include "akela/comp_table.h"

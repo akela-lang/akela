@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include "zinc/unit_test.h"
 #include "zinc/memory.h"
-#include "zinc/unit_test_compiler.h"
 #include "akela/token.h"
 #include "akela/lex.h"
 #include "test_lex_setup.h"

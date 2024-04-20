@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include "zinc/unit_test.h"
 #include "akela/parse_tools.h"
-#include "zinc/unit_test_compiler.h"
 #include "akela/ast.h"
 #include "test_parse.h"
 #include "akela/type_def.h"
