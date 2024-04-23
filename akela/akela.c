@@ -41,7 +41,8 @@ int main(int argc, char** argv)
     if (!cu.valid) {
         struct error* e = cu.el.head;
         while (e) {
-            fprintf(stderr, "%s\n", e->message);
+            buffer_finish(&e->message);
+            fprintf(stderr, "%s\n", e->message.buf);
             e = e->next;
         }
         return 1;
@@ -57,7 +58,7 @@ int main(int argc, char** argv)
     struct buffer bf;
     buffer_init(&bf);
     CodeGenLLVM* cg = NULL;
-    CodeGenLLVMCreate(&cg, &cu.st);
+    CodeGenLLVMCreate(&cg, &cu.el, &cu.st);
     CodeGenJIT(cg, &CodeGenLLVMVTable, cu.root, &bf);
     buffer_finish(&bf);
     printf("\n%s\n", bf.buf);
