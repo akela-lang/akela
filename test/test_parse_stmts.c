@@ -870,7 +870,16 @@ void test_parse_if()
 	struct ast_node* if_node = ast_node_get(cu.root, 0);
 	assert_ptr(if_node, "ptr cu.root");
 	expect_int_equal(if_node->type, ast_type_if, "if if_node");
-	expect_null(if_node->tu, "null if_node->tu");
+
+    struct ast_node* tu = if_node->tu;
+	expect_ptr(tu, "ptr tu");
+    expect_int_equal(tu->type, ast_type_type, "type tu");
+
+    struct type_def* td = tu->td;
+    expect_ptr(td, "ptr td");
+    expect_int_equal(td->type, type_integer, "type td");
+    expect_int_equal(td->bit_count, 64, "bit_count td");
+    expect_str(&td->name, "Int64", "name td");
 
 	struct ast_node* cb = ast_node_get(if_node, 0);
 	assert_ptr(cb, "ptr cb");

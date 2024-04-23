@@ -159,6 +159,38 @@ void test_code_gen_boolean_false()
     buffer_destroy(&value);
 }
 
+void test_code_gen_last()
+{
+    test_name(__func__);
+    struct buffer value;
+    buffer_init(&value);
+
+    cg_setup("var a::Int64 = 1\n"
+             "var b::Int64 = 2\n"
+             "a + b\n",
+             &value);
+    expect_str(&value, "3", "value");
+
+    buffer_destroy(&value);
+}
+
+void test_code_gen_if()
+{
+    test_name(__func__);
+    struct buffer value;
+    buffer_init(&value);
+
+    cg_setup("if true\n"
+             "  1\n"
+             "else\n"
+             "  2\n"
+             "end\n",
+             &value);
+    expect_str(&value, "1", "value");
+
+    buffer_destroy(&value);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -173,4 +205,6 @@ void test_code_gen()
     test_code_gen_boolean_false();
     test_code_gen_sub();
     test_code_gen_sub2();
+    test_code_gen_last();
+    test_code_gen_if();
 }

@@ -27,7 +27,8 @@ bool cg_setup(const char* text, struct buffer* value)
 
     CodeGenLLVM* cg = NULL;
     CodeGenLLVMCreate(&cg, &cu->st);
-    CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, value);
+    enum result r = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, value);
+    expect_ok(r, "CodeGenJIT");
 
     VectorDestroy(vector);
     free(vector);

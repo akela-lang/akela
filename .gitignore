@@ -7,3 +7,5 @@
 /.idea
 /main.bc
 /main.ll
+/toplevel.bc
+/toplevel.ll

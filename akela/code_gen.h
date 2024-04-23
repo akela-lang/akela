@@ -7,8 +7,8 @@ typedef struct {
     u_int8_t jit_offset;
 } CodeGenVTable;
 
-typedef void (*CodeGenInterface)(void* cg_obj, struct ast_node* n, struct buffer* bf);
+typedef enum result (*CodeGenInterface)(void* cg_obj, struct ast_node* n, struct buffer* bf);
 
-void CodeGenJIT(void* cg_obj, CodeGenVTable* cg_vtable, struct ast_node* n, struct buffer* bf);
+enum result CodeGenJIT(void* cg_obj, CodeGenVTable* cg_vtable, struct ast_node* n, struct buffer* bf);
 
 #endif

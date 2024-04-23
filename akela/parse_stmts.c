@@ -752,6 +752,10 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
         cb->type = ast_type_error;
     }
 
+    if (body) {
+        cb->tu = ast_node_copy(body->tu);
+    }
+
 	if (body) {
 		ast_node_add(cb, body);
 	}
@@ -780,6 +784,25 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
 
     token_destroy(end);
     free(end);
+
+    if (n->type != ast_type_error) {
+        struct ast_node* p = n->head;
+        struct ast_node* tu = NULL;
+        if (p) {
+            tu = ast_node_copy(p->tu);
+            p = p->next;
+        }
+        while (p) {
+            if (!type_find_whole(ps->st, tu, p->tu)) {
+                error_list_set(ps->el, &p->loc,
+                    "branch type does not match type of previous branch");
+                n->type = ast_type_error;
+                break;
+            }
+            p = p->next;
+        }
+        n->tu = tu;
+    }
 
 	return n;
 }
@@ -823,16 +846,17 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
 			ast_node_add(cb, cond);
 		}
 
-		struct ast_node* node = NULL;
+		struct ast_node* body = NULL;
 		struct location loc_node;
-        node = parse_stmts(ps, false, &loc_node);
-		if (node && node->type == ast_type_error) {
+        body = parse_stmts(ps, false, &loc_node);
+		if (body && body->type == ast_type_error) {
             cb->type = ast_type_error;
             parent->type = ast_type_error;
         }
 
-		if (node) {
-			ast_node_add(cb, node);
+		if (body) {
+			ast_node_add(cb, body);
+            cb->tu = ast_node_copy(body->tu);
 		}
 
 		ast_node_add(parent, cb);
@@ -865,15 +889,19 @@ struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
 		free(et);
 
 		/* stmts */
-		struct ast_node* a = NULL;
-		struct location a_loc;
-        a = parse_stmts(ps, false, &a_loc);
-		if (a && a->type == ast_type_error) {
+		struct ast_node* body = NULL;
+		struct location body_loc;
+        body = parse_stmts(ps, false, &body_loc);
+		if (body && body->type == ast_type_error) {
             n->type = ast_type_error;
         }
 
-		if (a) {
-			ast_node_add(n, a);
+        if (body) {
+            n->tu = ast_node_copy(body->tu);
+        }
+
+		if (body) {
+			ast_node_add(n, body);
 		}
 	}
 
