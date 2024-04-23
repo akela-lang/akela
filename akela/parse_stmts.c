@@ -754,9 +754,6 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
 
     if (body) {
         cb->tu = ast_node_copy(body->tu);
-    }
-
-	if (body) {
 		ast_node_add(cb, body);
 	}
 
@@ -807,16 +804,20 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-/* parse_elseif -> elseif expr stmts parse_elseif | e */
+/* elseif-statement -> elseif expr stmts elseif | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc)
 {
     get_location(ps, loc);
 
-	struct token* t0 = get_lookahead(ps);
-	if (t0->type == token_elseif) {
-		struct token* eit = NULL;
-		if (!match(ps, token_elseif, "expecting elseif", &eit)) {
+    while (true) {
+        struct token* t0 = get_lookahead(ps);
+        if (t0->type != token_elseif) {
+            break;
+        }
+
+        struct token *eit = NULL;
+        if (!match(ps, token_elseif, "expecting elseif", &eit)) {
             /* test case: no test case needed */
             assert(false);
         }
@@ -824,46 +825,45 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
         token_destroy(eit);
         free(eit);
 
-		struct ast_node* cb = NULL;
-		ast_node_create(&cb);
-		cb->type = ast_type_conditional_branch;
+        struct ast_node *cb = NULL;
+        ast_node_create(&cb);
+        cb->type = ast_type_conditional_branch;
 
-		/* allocate ps{} cond cond{} */
-		struct ast_node* cond = NULL;
-		struct location loc_cond;
+        /* allocate ps{} cond cond{} */
+        struct ast_node *cond = NULL;
+        struct location loc_cond;
         cond = parse_expr(ps, &loc_cond);
-		if (cond && cond->type == ast_type_error) {
+        if (cond && cond->type == ast_type_error) {
             cb->type = ast_type_error;
             parent->type = ast_type_error;
         }
 
-		if (!cond) {
-			error_list_set(ps->el, &loc_cond, "expected condition after elseif");
-			/* test case: test_parse_if_error_expected_elseif_expression */
+        if (!cond) {
+            error_list_set(ps->el, &loc_cond, "expected condition after elseif");
+            /* test case: test_parse_if_error_expected_elseif_expression */
             cb->type = ast_type_error;
             parent->type = ast_type_error;
-		} else {
-			ast_node_add(cb, cond);
-		}
+        } else {
+            ast_node_add(cb, cond);
+        }
 
-		struct ast_node* body = NULL;
-		struct location loc_node;
+        struct ast_node *body = NULL;
+        struct location loc_node;
         body = parse_stmts(ps, false, &loc_node);
-		if (body && body->type == ast_type_error) {
+        if (body && body->type == ast_type_error) {
             cb->type = ast_type_error;
             parent->type = ast_type_error;
         }
 
-		if (body) {
-			ast_node_add(cb, body);
+        if (body) {
+            ast_node_add(cb, body);
             cb->tu = ast_node_copy(body->tu);
-		}
+        }
 
-		ast_node_add(parent, cb);
+        ast_node_add(parent, cb);
 
-		struct location loc_elseif;
-		parse_elseif(ps, parent, &loc_elseif);
-	}
+        struct location loc_elseif;
+    }
 }
 
 /* parse_else -> else stmts | e */

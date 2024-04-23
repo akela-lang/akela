@@ -1016,7 +1016,19 @@ void test_parse_elseif2()
 
 	struct comp_unit cu;
 
-    parse_setup("var x::Int64; var y::Int64; if true 10 + 20; x * y elseif true 1; 2 elseif true x; y end", &cu);
+    parse_setup("var x::Int64\n"
+        "var y::Int64\n"
+        "if true\n"
+        "  10 + 20\n"
+        "  x * y\n"
+        "elseif true\n"
+        "  1\n"
+        "  2\n"
+        "elseif true\n"
+        "  x\n"
+        "  y\n"
+        "end\n"
+        , &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
