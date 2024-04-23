@@ -182,12 +182,78 @@ void test_code_gen_if()
 
     cg_setup("if true\n"
              "  1\n"
+             "end\n",
+             &value);
+    expect_str(&value, "", "value");
+
+    buffer_destroy(&value);
+}
+
+void test_code_gen_if_else()
+{
+    test_name(__func__);
+    struct buffer value;
+
+    buffer_init(&value);
+    cg_setup("if true\n"
+             "  1\n"
              "else\n"
              "  2\n"
              "end\n",
              &value);
-    expect_str(&value, "1", "value");
+    expect_str(&value, "1", "1 value");
+    buffer_destroy(&value);
 
+    buffer_init(&value);
+    cg_setup("if false\n"
+             "  1\n"
+             "else\n"
+             "  2\n"
+             "end\n",
+             &value);
+    expect_str(&value, "2", "2 value");
+    buffer_destroy(&value);
+}
+
+void test_code_gen_if_elseif_else()
+{
+    test_name(__func__);
+    struct buffer value;
+
+    buffer_init(&value);
+    cg_setup("if true\n"
+             "  1\n"
+             "elseif true\n"
+             "  2\n"
+             "else\n"
+             "  3\n"
+             "end\n",
+             &value);
+    expect_str(&value, "1", "value");
+    buffer_destroy(&value);
+
+    buffer_init(&value);
+    cg_setup("if false\n"
+             "  1\n"
+             "elseif true\n"
+             "  2\n"
+             "else\n"
+             "  3\n"
+             "end\n",
+             &value);
+    expect_str(&value, "2", "value");
+    buffer_destroy(&value);
+
+    buffer_init(&value);
+    cg_setup("if false\n"
+             "  1\n"
+             "elseif false\n"
+             "  2\n"
+             "else\n"
+             "  3\n"
+             "end\n",
+             &value);
+    expect_str(&value, "3", "value");
     buffer_destroy(&value);
 }
 
@@ -207,4 +273,6 @@ void test_code_gen()
     test_code_gen_sub2();
     test_code_gen_last();
     test_code_gen_if();
+    test_code_gen_if_else();
+    test_code_gen_if_elseif_else();
 }

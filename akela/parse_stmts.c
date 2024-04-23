@@ -771,8 +771,6 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
         ast_node_add(n, b);
     }
 
-	/* end */
-	/* allocate ps{} end end{} */
 	struct token* end = NULL;
 	if (!match(ps, token_end, "expected end", &end)) {
         /* test case: test_parse_if_error_expected_end */
@@ -798,7 +796,10 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
             }
             p = p->next;
         }
-        n->tu = tu;
+        if (b) {
+            /* only return a value if else exists */
+            n->tu = tu;
+        }
     }
 
 	return n;
@@ -829,7 +830,6 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
         ast_node_create(&cb);
         cb->type = ast_type_conditional_branch;
 
-        /* allocate ps{} cond cond{} */
         struct ast_node *cond = NULL;
         struct location loc_cond;
         cond = parse_expr(ps, &loc_cond);

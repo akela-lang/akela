@@ -12,6 +12,7 @@
 #include <assert.h>
 #include <string.h>
 #include "zinc/memory.h"
+#include "zinc/list.h"
 
 enum result CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf);
 LLVMValueRef CodeGenLLVMExpr(CodeGenLLVM* cg, struct ast_node* n);
@@ -284,33 +285,97 @@ LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n)
 
 LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n)
 {
-    struct ast_node* cb0 = ast_node_get(n, 0);
-    struct ast_node* cond = ast_node_get(cb0, 0);
-    struct ast_node* then_body = ast_node_get(cb0, 1);
-    struct ast_node* db0 = ast_node_get(n, 1);
-    struct ast_node* else_body = ast_node_get(db0, 0);
+    bool has_else = false;
 
-    LLVMTypeRef type = get_llvm_type(n, n->tu);
-    LLVMValueRef ptr = LLVMBuildAlloca(cg->builder, type, "ifresult");
+    LLVMTypeRef type = NULL;
+    LLVMValueRef ptr = NULL;
+    if (n->tu) {
+        type = get_llvm_type(n, n->tu);
+    }
+    if (type) {
+        ptr = LLVMBuildAlloca(cg->builder, type, "ifresult");
+    }
 
-    LLVMBasicBlockRef then_bb = LLVMAppendBasicBlockInContext(cg->context, cg->main, "thentmp");
-    LLVMBasicBlockRef else_bb = LLVMAppendBasicBlockInContext(cg->context, cg->main, "elsetmp");
-    LLVMBasicBlockRef end_bb = LLVMAppendBasicBlockInContext(cg->context, cg->main, "endtmp");
-    LLVMValueRef cond_value = CodeGenLLVMExpr(cg, cond);
-    LLVMValueRef branch = LLVMBuildCondBr(cg->builder, cond_value, then_bb, else_bb);
+    struct list l;
+    list_init(&l);
 
-    LLVMPositionBuilderAtEnd(cg->builder, then_bb);
-    LLVMValueRef then_value = CodeGenLLVMStmts(cg, then_body);
-    LLVMBuildStore(cg->builder, then_value, ptr);
-    LLVMBuildBr(cg->builder, end_bb);
+    LLVMBasicBlockRef cond_block = NULL;
+    LLVMBasicBlockRef then_block = NULL;
+    LLVMBasicBlockRef next_block = NULL;
+    int i = 0;
+    while (true) {
+        struct ast_node* branch = ast_node_get(n, i);
+        if (!branch) {
+            break;
+        }
 
-    LLVMPositionBuilderAtEnd(cg->builder, else_bb);
-    LLVMValueRef else_value = CodeGenLLVMStmts(cg, else_body);
-    LLVMBuildStore(cg->builder, else_value, ptr);
-    LLVMBuildBr(cg->builder, end_bb);
+        if (branch->type == ast_type_conditional_branch) {
+            struct ast_node* cond = ast_node_get(branch, 0);
+            struct ast_node* body = ast_node_get(branch, 1);
 
-    LLVMPositionBuilderAtEnd(cg->builder, end_bb);
-    LLVMValueRef value = LLVMBuildLoad2(cg->builder, type, ptr, "branchresulttmp");
+            if (next_block) {
+                cond_block = next_block;
+            } else {
+                if (i >= 1) {
+                    cond_block = LLVMAppendBasicBlockInContext(cg->context, cg->main, "condtmp");
+                }
+            }
+            then_block = LLVMAppendBasicBlockInContext(cg->context, cg->main, "thentmp");
+            next_block = LLVMAppendBasicBlockInContext(cg->context, cg->main, "nexttmp");
+
+            if (cond_block) {
+                LLVMPositionBuilderAtEnd(cg->builder, cond_block);
+            }
+            LLVMValueRef cond_value = CodeGenLLVMExpr(cg, cond);
+            LLVMValueRef branch_value = LLVMBuildCondBr(cg->builder, cond_value, then_block, next_block);
+
+            LLVMPositionBuilderAtEnd(cg->builder, then_block);
+            LLVMValueRef body_value = CodeGenLLVMStmts(cg, body);
+            if (type) {
+                LLVMBuildStore(cg->builder, body_value, ptr);
+            }
+            list_add_item(&l, then_block);      /* branch to end after end_block is created */
+
+            LLVMPositionBuilderAtEnd(cg->builder, next_block);
+
+        } else if (branch->type == ast_type_default_branch) {
+            struct ast_node* body = ast_node_get(branch, 0);
+
+            LLVMValueRef body_value = CodeGenLLVMStmts(cg, body);
+            if (type) {
+                LLVMBuildStore(cg->builder, body_value, ptr);
+            }
+            list_add_item(&l, next_block);      /* branch to end after end_block is created */
+            has_else = true;
+
+        } else {
+            assert(false);
+        }
+
+        i++;
+    }
+
+    LLVMBasicBlockRef end_block = NULL;
+    if (has_else) {
+        end_block = LLVMAppendBasicBlockInContext(cg->context, cg->main, "endiftmp");
+    } else {
+        end_block = next_block;
+    }
+    struct list_node* ln = l.head;
+    while (ln) {
+        LLVMBasicBlockRef p = ln->item;
+        LLVMPositionBuilderAtEnd(cg->builder, p);
+        LLVMBuildBr(cg->builder, end_block);
+        ln = ln->next;
+    }
+
+    LLVMPositionBuilderAtEnd(cg->builder, end_block);
+    LLVMValueRef value = NULL;
+    if (type) {
+        value = LLVMBuildLoad2(cg->builder, type, ptr, "branchresulttmp");
+    }
+
+    list_destroy(&l, NULL);
 
     return value;
 }
