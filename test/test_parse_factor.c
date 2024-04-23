@@ -305,6 +305,7 @@ void test_parse_id_cyrillic()
     parse_setup("var я::Int64; я", &cu);
     assert_has_errors(&cu.el);
     struct error* e = expect_source_error(&cu.el, "Unrecognized character: я");
+    assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.byte_pos, 4, "byte_pos");
     expect_size_t_equal(e->loc.line, 1, "line");
     expect_size_t_equal(e->loc.col, 5, "col");

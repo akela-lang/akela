@@ -14,9 +14,8 @@
 #include "comp_unit.h"
 #include "zinc/buffer_list.h"
 
-#define NAMED_VALUES_HASH_SIZE 32
-
 typedef struct {
+    struct error_list* el;
     struct symbol_table* st;
     LLVMBuilderRef builder;
     LLVMContextRef context;
@@ -26,6 +25,6 @@ typedef struct {
 
 extern CodeGenVTable CodeGenLLVMVTable;
 
-void CodeGenLLVMCreate(CodeGenLLVM** cg, struct symbol_table* st);
+void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el, struct symbol_table* st);
 
 #endif

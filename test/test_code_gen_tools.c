@@ -20,15 +20,18 @@ bool cg_setup(const char* text, struct buffer* value)
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, vector);
 
+    bool valid;
+
     comp_unit_init(cu);
-    bool valid = comp_unit_compile(cu, input, input->input_vtable);
+    valid = comp_unit_compile(cu, input, input->input_vtable);
     expect_true(valid, "valid");
-    expect_no_errors(&cu->el);
 
     CodeGenLLVM* cg = NULL;
-    CodeGenLLVMCreate(&cg, &cu->st);
-    enum result r = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, value);
-    expect_ok(r, "CodeGenJIT");
+    CodeGenLLVMCreate(&cg, &cu->el, &cu->st);
+    valid = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, value);
+    expect_true(valid, "valid");
+
+    expect_no_errors(&cu->el);
 
     VectorDestroy(vector);
     free(vector);

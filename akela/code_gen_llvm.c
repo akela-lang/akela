@@ -14,7 +14,7 @@
 #include "zinc/memory.h"
 #include "zinc/list.h"
 
-enum result CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf);
+bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf);
 LLVMValueRef CodeGenLLVMExpr(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMStmts(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n);
@@ -30,8 +30,9 @@ CodeGenVTable CodeGenLLVMVTable = {
         .jit_offset = offsetof(CodeGenLLVM, jit),
 };
 
-void CodeGenLLVMInit(CodeGenLLVM* cg, struct symbol_table* st)
+void CodeGenLLVMInit(CodeGenLLVM* cg, struct error_list* el, struct symbol_table* st)
 {
+    cg->el = el;
     cg->st = st;
     cg->builder = NULL;
     cg->context = NULL;
@@ -39,10 +40,10 @@ void CodeGenLLVMInit(CodeGenLLVM* cg, struct symbol_table* st)
     cg->jit = (CodeGenInterface)CodeGenLLVMJIT;
 }
 
-void CodeGenLLVMCreate(CodeGenLLVM** cg, struct symbol_table* st)
+void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el, struct symbol_table* st)
 {
     malloc_safe((void**)cg, sizeof(CodeGenLLVM));
-    CodeGenLLVMInit(*cg, st);
+    CodeGenLLVMInit(*cg, el, st);
 }
 
 LLVMTypeRef get_llvm_type(struct ast_node* n, struct ast_node* tu)
@@ -138,9 +139,9 @@ enum result serialize(LLVMGenericValueRef v, struct ast_node* n, struct buffer* 
     return r;
 }
 
-enum result CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
+bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
 {
-    enum result r = result_ok;
+    bool valid = true;
 
     LLVMModuleRef mod = LLVMModuleCreateWithName("my_module");
     LLVMContextRef context = LLVMContextCreate();
@@ -167,15 +168,21 @@ enum result CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* b
     char *error = NULL;
     LLVMBool broken = LLVMVerifyModule(mod, LLVMReturnStatusAction, &error);
     if (broken || (error && strlen(error) > 0)) {
-        r = set_error("%s\n", error);
+        char* mod_str = LLVMPrintModuleToString(mod);
+        struct location loc;
+        location_init(&loc);
+        error_list_set(cg->el, &loc, "%s", error);
+        error_list_set(cg->el, &loc, "module:\n%s", mod_str);
+        valid = false;
+        LLVMDisposeMessage(error);
 
         error = NULL;
         if (LLVMPrintModuleToFile(mod, "toplevel.ll", &error)) {
-            fprintf(stderr, "%s\n", error);
+            error_list_set(cg->el, &loc, "%s", error);
             LLVMDisposeMessage(error);
         }
 
-        return r;
+        return valid;
     }
     LLVMDisposeMessage(error);
 
@@ -200,17 +207,19 @@ enum result CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* b
     }
 
     LLVMGenericValueRef v = LLVMRunFunction(engine, _main, 0, NULL);
-    r = serialize(v, n, bf);
+    enum result r = serialize(v, n, bf);
     LLVMDisposeGenericValue(v);
     if (r == result_error) {
-        fprintf(stderr, "%s\n", error_message);
+        struct location loc;
+        location_init(&loc);
+        valid = error_list_set(cg->el, &loc, "%s", error_message);
     }
 
     LLVMContextDispose(context);
     LLVMDisposeBuilder(builder);
     LLVMDisposeExecutionEngine(engine);
 
-    return r;
+    return valid;
 }
 
 LLVMValueRef CodeGenLLVMExpr(CodeGenLLVM* cg, struct ast_node* n)
