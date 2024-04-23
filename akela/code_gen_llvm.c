@@ -82,57 +82,6 @@ LLVMTypeRef get_llvm_type(struct ast_node* n, struct ast_node* tu)
     return LLVMVoidType();
 }
 
-LLVMValueRef get_llvm_constant(CodeGenLLVM* cg, struct ast_node* n)
-{
-    struct ast_node* tu = n->tu;
-    if (tu) {
-        if (tu->type == ast_type_type) {
-            struct type_def* td = tu->td;
-            if (td) {
-                if (n->type == ast_type_number && td->type == type_integer) {
-                    long v;
-                    if (td->bit_count == 32) {
-                        LLVMTypeRef t = LLVMInt32Type();
-                        buffer_finish(&n->value);
-                        v = strtol(n->value.buf, NULL, 10);
-                        return LLVMConstInt(t, v, false);
-                    } else if (td->bit_count == 64) {
-                        LLVMTypeRef t = LLVMInt64Type();
-                        buffer_finish(&n->value);
-                        v = strtoll(n->value.buf, NULL, 10);
-                        return LLVMConstInt(t, v, false);
-                    }
-                } else if (n->type == ast_type_number && td->type == type_float) {
-                    double v;
-                    if (td->bit_count == 32) {
-                        LLVMTypeRef t = LLVMDoubleType();
-                        buffer_finish(&n->value);
-                        v = strtod(n->value.buf, NULL);
-                        return LLVMConstReal(t, v);
-                    } else if (td->bit_count == 64) {
-                        LLVMTypeRef t = LLVMDoubleType();
-                        buffer_finish(&n->value);
-                        v = strtod(n->value.buf, NULL);
-                        return LLVMConstReal(t, v);
-                    }
-                } else if (n->type == ast_type_string) {
-                    buffer_finish(&n->value);
-                    return LLVMBuildGlobalStringPtr(cg->builder, n->value.buf, ".str");
-                } else if (n->type == ast_type_boolean) {
-                    if (buffer_compare_str(&n->value, "true")) {
-                        return LLVMConstInt(LLVMInt1Type(), 1, false);
-                    } else if (buffer_compare_str(&n->value, "false")) {
-                        return LLVMConstInt(LLVMInt1Type(), 0, false);
-                    }
-                }
-            }
-        }
-    }
-
-    fprintf(stderr, "Constant not implemented");
-    exit(1);
-}
-
 enum result serialize(LLVMGenericValueRef v, struct ast_node* n, struct buffer* bf)
 {
     enum result r = result_ok;
@@ -400,15 +349,50 @@ LLVMValueRef CodeGenLLVMID(CodeGenLLVM* cg, struct ast_node* n)
 
 LLVMValueRef CodeGenLLVMNumber(CodeGenLLVM* cg, struct ast_node* n)
 {
-    return get_llvm_constant(cg, n);
+    struct ast_node* tu = n->tu;
+    struct type_def *td = tu->td;
+    if (td->type == type_integer) {
+        long v;
+        if (td->bit_count == 32) {
+            LLVMTypeRef t = LLVMInt32Type();
+            buffer_finish(&n->value);
+            v = strtol(n->value.buf, NULL, 10);
+            return LLVMConstInt(t, v, false);
+        } else if (td->bit_count == 64) {
+            LLVMTypeRef t = LLVMInt64Type();
+            buffer_finish(&n->value);
+            v = strtoll(n->value.buf, NULL, 10);
+            return LLVMConstInt(t, v, false);
+        }
+    } else if (td->type == type_float) {
+        double v;
+        if (td->bit_count == 32) {
+            LLVMTypeRef t = LLVMDoubleType();
+            buffer_finish(&n->value);
+            v = strtod(n->value.buf, NULL);
+            return LLVMConstReal(t, v);
+        } else if (td->bit_count == 64) {
+            LLVMTypeRef t = LLVMDoubleType();
+            buffer_finish(&n->value);
+            v = strtod(n->value.buf, NULL);
+            return LLVMConstReal(t, v);
+        }
+    }
+    assert(false);
 }
 
 LLVMValueRef CodeGenLLVMString(CodeGenLLVM* cg, struct ast_node* n)
 {
-    return get_llvm_constant(cg, n);
+    buffer_finish(&n->value);
+    return LLVMBuildGlobalStringPtr(cg->builder, n->value.buf, ".str");
 }
 
 LLVMValueRef CodeGenLLVMBoolean(CodeGenLLVM* cg, struct ast_node* n)
 {
-    return get_llvm_constant(cg, n);
+    if (buffer_compare_str(&n->value, "true")) {
+        return LLVMConstInt(LLVMInt1Type(), 1, false);
+    } else if (buffer_compare_str(&n->value, "false")) {
+        return LLVMConstInt(LLVMInt1Type(), 0, false);
+    }
+    assert(false);
 }
