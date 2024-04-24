@@ -15,9 +15,10 @@
 #include "zinc/list.h"
 
 bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf);
-LLVMValueRef CodeGenLLVMExpr(CodeGenLLVM* cg, struct ast_node* n);
+LLVMValueRef CodeGenLLVMDispatch(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMStmts(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n);
+LLVMValueRef CodeGenLLVMAssign(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMAdd(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMSub(CodeGenLLVM* cg, struct ast_node* n);
@@ -158,7 +159,7 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
     cg->builder = builder;
     LLVMPositionBuilderAtEnd(builder, entry);
 
-    LLVMValueRef tmp = CodeGenLLVMExpr(cg, n);
+    LLVMValueRef tmp = CodeGenLLVMDispatch(cg, n);
     if (n->tu) {
         LLVMBuildRet(builder, tmp);
     } else {
@@ -222,12 +223,14 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
     return valid;
 }
 
-LLVMValueRef CodeGenLLVMExpr(CodeGenLLVM* cg, struct ast_node* n)
+LLVMValueRef CodeGenLLVMDispatch(CodeGenLLVM* cg, struct ast_node* n)
 {
     if (n->type == ast_type_stmts) {
         return CodeGenLLVMStmts(cg, n);
     } else if (n->type == ast_type_if) {
         return CodeGenLLVMIf(cg, n);
+    } else if (n->type == ast_type_assign) {
+        return CodeGenLLVMAssign(cg, n);
     } else if (n->type == ast_type_var) {
         return CodeGenLLVMVar(cg, n);
     } else if (n->type == ast_type_plus) {
@@ -257,7 +260,7 @@ LLVMValueRef CodeGenLLVMStmts(CodeGenLLVM* cg, struct ast_node* n)
     struct ast_node* last_n = NULL;
     struct ast_node* stmt = ast_node_get(n, 0);
     while (stmt) {
-        last_v = CodeGenLLVMExpr(cg, stmt);
+        last_v = CodeGenLLVMDispatch(cg, stmt);
         last_n = stmt;
         stmt = stmt->next;
     }
@@ -282,7 +285,7 @@ LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n)
         assert(lp->sym);
         lp->sym->allocation = lhs;
         if (rp) {
-            LLVMValueRef rhs = CodeGenLLVMExpr(cg, rp);
+            LLVMValueRef rhs = CodeGenLLVMDispatch(cg, rp);
             LLVMBuildStore(cg->builder, rhs, lhs);
             rp = rp->next;
         }
@@ -290,6 +293,20 @@ LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n)
     }
 
     return NULL;
+}
+
+LLVMValueRef CodeGenLLVMAssign(CodeGenLLVM* cg, struct ast_node* n)
+{
+    struct ast_node* p = n->tail;
+    LLVMValueRef rhs = CodeGenLLVMDispatch(cg, p);
+    p = p->prev;
+    LLVMValueRef lhs;
+    while (p) {
+        lhs = p->sym->allocation;
+        LLVMBuildStore(cg->builder, rhs, lhs);
+        p = p->prev;
+    }
+    return rhs;
 }
 
 LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n)
@@ -335,7 +352,7 @@ LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n)
             if (cond_block) {
                 LLVMPositionBuilderAtEnd(cg->builder, cond_block);
             }
-            LLVMValueRef cond_value = CodeGenLLVMExpr(cg, cond);
+            LLVMValueRef cond_value = CodeGenLLVMDispatch(cg, cond);
             LLVMValueRef branch_value = LLVMBuildCondBr(cg->builder, cond_value, then_block, next_block);
 
             LLVMPositionBuilderAtEnd(cg->builder, then_block);
@@ -392,10 +409,10 @@ LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n)
 LLVMValueRef CodeGenLLVMAdd(CodeGenLLVM* cg, struct ast_node* n)
 {
     struct ast_node* a = ast_node_get(n, 0);
-    LLVMValueRef lhs = CodeGenLLVMExpr(cg, a);
+    LLVMValueRef lhs = CodeGenLLVMDispatch(cg, a);
 
     struct ast_node* b = ast_node_get(n, 1);
-    LLVMValueRef rhs = CodeGenLLVMExpr(cg, b);
+    LLVMValueRef rhs = CodeGenLLVMDispatch(cg, b);
 
     return LLVMBuildAdd(cg->builder, lhs, rhs, "addtmp");
 }
@@ -403,10 +420,10 @@ LLVMValueRef CodeGenLLVMAdd(CodeGenLLVM* cg, struct ast_node* n)
 LLVMValueRef CodeGenLLVMSub(CodeGenLLVM* cg, struct ast_node* n)
 {
     struct ast_node* a = ast_node_get(n, 0);
-    LLVMValueRef lhs = CodeGenLLVMExpr(cg, a);
+    LLVMValueRef lhs = CodeGenLLVMDispatch(cg, a);
 
     struct ast_node* b = ast_node_get(n, 1);
-    LLVMValueRef rhs = CodeGenLLVMExpr(cg, b);
+    LLVMValueRef rhs = CodeGenLLVMDispatch(cg, b);
 
     return LLVMBuildSub(cg->builder, lhs, rhs, "subtmp");
 }

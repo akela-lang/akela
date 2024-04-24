@@ -257,6 +257,56 @@ void test_code_gen_if_elseif_else()
     buffer_destroy(&value);
 }
 
+void test_code_gen_assign()
+{
+    test_name(__func__);
+    struct buffer value;
+
+    buffer_init(&value);
+    cg_setup("var a::Int64\n"
+             "a = 44\n",
+             &value);
+    expect_str(&value, "44", "value");
+    buffer_destroy(&value);
+}
+
+void test_code_gen_assign_multiple()
+{
+    test_name(__func__);
+    struct buffer value;
+
+    buffer_init(&value);
+    cg_setup("var a,b,c::Int64\n"
+             "a = b = c = 44\n"
+             "a",
+             &value);
+    expect_str(&value, "44", "value");
+    buffer_destroy(&value);
+
+    buffer_init(&value);
+    cg_setup("var a,b,c::Int64\n"
+             "a = b = c = 44\n"
+             "b",
+             &value);
+    expect_str(&value, "44", "value");
+    buffer_destroy(&value);
+
+    buffer_init(&value);
+    cg_setup("var a,b,c::Int64\n"
+             "a = b = c = 44\n"
+             "c",
+             &value);
+    expect_str(&value, "44", "value");
+    buffer_destroy(&value);
+
+    buffer_init(&value);
+    cg_setup("var a,b,c::Int64\n"
+             "a = b = c = 44\n",
+             &value);
+    expect_str(&value, "44", "value");
+    buffer_destroy(&value);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -275,4 +325,6 @@ void test_code_gen()
     test_code_gen_if();
     test_code_gen_if_else();
     test_code_gen_if_elseif_else();
+    test_code_gen_assign();
+    test_code_gen_assign_multiple();
 }
