@@ -27,7 +27,12 @@ target_link_libraries(akela zinc)
 
 # executable
 add_executable(akela-bin ${bin_files})
-target_link_libraries(akela-bin akela zinc ${llvm_libs})
+if(${CMAKE_BUILD_TYPE} MATCHES Debug)
+    target_link_libraries(akela-bin akela zinc gcov ${llvm_libs})
+else()
+    target_link_libraries(akela-bin akela zinc gcov ${llvm_libs})
+endif()
+
 
 SET_TARGET_PROPERTIES(akela-bin
   PROPERTIES OUTPUT_NAME akela)
