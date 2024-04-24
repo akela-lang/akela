@@ -1,4 +1,5 @@
 # Todo
+* memory leaks
 * code gen assignment
 * code gen function
 * code gen anonymous function

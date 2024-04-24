@@ -226,7 +226,6 @@ void test_parse_stmts3()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_stmts4()
 {
 	test_name(__func__);

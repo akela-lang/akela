@@ -1319,6 +1319,9 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc)
     ast_node_add(n, a);
     a->loc = id->loc;
 
+    token_destroy(id);
+    free(id);
+
     while (true) {
         t0 = get_lookahead(ps);
         if (!t0 || t0->type != token_comma) {
@@ -1337,8 +1340,6 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc)
         if (!match(ps, token_id, "expected id", &id)) {
             error_list_set(ps->el, &id->loc, "expected id");
             n->type = ast_type_error;
-            token_destroy(id);
-            free(id);
             break;
         }
 
@@ -1348,6 +1349,9 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc)
         buffer_copy(&id->value, &a->value);
         ast_node_add(n, a);
         a->loc = id->loc;
+
+        token_destroy(id);
+        free(id);
     }
 
     return n;
