@@ -781,23 +781,23 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
     free(end);
 
     if (n->type != ast_type_error) {
-        struct ast_node* p = n->head;
-        struct ast_node* tu = NULL;
-        if (p) {
-            tu = ast_node_copy(p->tu);
-            p = p->next;
-        }
-        while (p) {
-            if (!type_find_whole(ps->st, tu, p->tu)) {
-                error_list_set(ps->el, &p->loc,
-                    "branch type does not match type of previous branch");
-                n->type = ast_type_error;
-                break;
-            }
-            p = p->next;
-        }
         if (b) {
             /* only return a value if else exists */
+            struct ast_node* p = n->head;
+            struct ast_node* tu = NULL;
+            if (p) {
+                tu = ast_node_copy(p->tu);
+                p = p->next;
+            }
+            while (p) {
+                if (!type_find_whole(ps->st, tu, p->tu)) {
+                    error_list_set(ps->el, &p->loc,
+                                   "branch type does not match type of previous branch");
+                    n->type = ast_type_error;
+                    break;
+                }
+                p = p->next;
+            }
             n->tu = tu;
         }
     }
