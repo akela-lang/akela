@@ -27,10 +27,10 @@ target_link_libraries(akela zinc)
 
 # executable
 add_executable(akela-bin ${bin_files})
-if(${CMAKE_BUILD_TYPE} MATCHES Debug)
+if(${COVERAGE} MATCHES On)
     target_link_libraries(akela-bin akela zinc gcov ${llvm_libs})
 else()
-    target_link_libraries(akela-bin akela zinc gcov ${llvm_libs})
+    target_link_libraries(akela-bin akela zinc ${llvm_libs})
 endif()
 
 

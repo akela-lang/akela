@@ -63,7 +63,7 @@ set(LLVM_LINK_COMPONENTS
         )
 llvm_map_components_to_libnames(llvm_libs ${LLVM_LINK_COMPONENTS})
 
-if(${CMAKE_BUILD_TYPE} MATCHES Debug)
+if(${COVERAGE} MATCHES On)
         add_compile_options(-Wall -fprofile-arcs -ftest-coverage)
 endif()
 

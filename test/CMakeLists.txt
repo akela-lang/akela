@@ -20,7 +20,8 @@ set(test_files
 )
 
 add_executable(test ${test_files})
-if(${CMAKE_BUILD_TYPE} MATCHES Debug)
+
+if(${COVERAGE} MATCHES On)
     target_link_libraries(test akela zinc gcov ${llvm_libs})
 else()
     target_link_libraries(test akela zinc ${llvm_libs})
@@ -29,7 +30,7 @@ endif()
 
 set(event_loop_files event_loop.c)
 add_executable(event_loop ${event_loop_files})
-if(${CMAKE_BUILD_TYPE} MATCHES Debug)
+if(${COVERAGE} MATCHES On)
     target_link_libraries(event_loop akela zinc gcov)
 else()
     target_link_libraries(event_loop akela zinc)
