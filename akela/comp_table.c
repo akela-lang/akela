@@ -94,6 +94,7 @@ exit:
 	buffer_destroy(&dir);
 	buffer_destroy(&filename);
 	buffer_destroy(&math_path);
+    buffer_destroy(&math_dir);
 	if (fp) fclose(fp);
 	return valid;
 }

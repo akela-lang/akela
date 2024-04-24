@@ -33,6 +33,7 @@ bool cg_setup(const char* text, struct buffer* value)
 
     expect_no_errors(&cu->el);
 
+    free(cg);
     VectorDestroy(vector);
     free(vector);
     free(input);
