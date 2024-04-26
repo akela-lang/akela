@@ -101,10 +101,12 @@ LLVMTypeRef get_llvm_type(struct ast_node* n, struct ast_node* tu)
                         ret_type = LLVMVoidType();
                     }
 
-                    return LLVMFunctionType(ret_type,
+                    LLVMTypeRef fun_type = LLVMFunctionType(ret_type,
                                             param_types,
                                             input_count,
                                             false);
+                    free(param_types);
+                    return fun_type;
                 }
             }
         }
@@ -261,6 +263,7 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
 
     LLVMDisposeBuilder(builder);
     LLVMDisposeExecutionEngine(engine);
+    LLVMContextDispose(context);
 
     return valid;
 }
@@ -313,31 +316,8 @@ LLVMValueRef CodeGenLLVMStmts(CodeGenLLVM* cg, struct ast_node* n)
 
 LLVMValueRef CodeGenLLVMFunction(CodeGenLLVM* cg, struct ast_node* n)
 {
-    LLVMTypeRef ret_type = NULL;
-    struct ast_node *ret = ast_node_get(n, 2);
-    struct ast_node *ret_tu = NULL;
-    if (ret) {
-        ret_tu = ast_node_get(ret, 0);
-    }
-    ret_type = get_llvm_type(NULL, ret_tu);
+    LLVMTypeRef fun_type = get_llvm_type(n, n->tu);
 
-    struct ast_node *dseq = ast_node_get(n, 1);
-    size_t dec_count = ast_node_count_children(dseq);
-    LLVMTypeRef *param_types = NULL;
-    if (dec_count > 0) {
-        malloc_safe((void **) &param_types, sizeof(LLVMTypeRef) * dec_count);
-        for (size_t i = 0; i < dec_count; i++) {
-            struct ast_node *dec = ast_node_get(dseq, i);
-            struct ast_node *tu = ast_node_get(dec, 1);
-            LLVMTypeRef type = get_llvm_type(NULL, tu);
-            param_types[i] = type;
-        }
-    }
-
-    LLVMTypeRef fun_type = LLVMFunctionType(ret_type,
-                                            param_types,
-                                            dec_count,
-                                            false);
     struct ast_node *id = ast_node_get(n, 0);
     buffer_finish(&id->value);
     LLVMValueRef f = LLVMAddFunction(cg->mod, id->value.buf, fun_type);
