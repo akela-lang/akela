@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     struct buffer bf;
     buffer_init(&bf);
     CodeGenLLVM* cg = NULL;
-    CodeGenLLVMCreate(&cg, &cu.el, &cu.st);
+    CodeGenLLVMCreate(&cg, &cu.el);
     CodeGenJIT(cg, &CodeGenLLVMVTable, cu.root, &bf);
     buffer_finish(&bf);
     printf("\n%s\n", bf.buf);
