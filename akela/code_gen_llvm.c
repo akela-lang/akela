@@ -38,7 +38,7 @@ void CodeGenLLVMInit(CodeGenLLVM* cg, struct error_list* el)
     cg->builder = NULL;
     cg->context = NULL;
     cg->mod = NULL;
-    cg->main = NULL;
+    cg->toplevel = NULL;
     cg->jit = (CodeGenInterface)CodeGenLLVMJIT;
 }
 
@@ -190,10 +190,10 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
 
     LLVMTypeRef ret_type = get_llvm_type_wrap(NULL, n->tu);
     LLVMTypeRef fun_type = LLVMFunctionType(ret_type, NULL, 0, 0);
-    LLVMValueRef _main = LLVMAddFunction(mod, "toplevel", fun_type);
-    cg->main = _main;
+    LLVMValueRef toplevel = LLVMAddFunction(mod, "toplevel", fun_type);
+    cg->toplevel = toplevel;
 
-    LLVMBasicBlockRef entry = LLVMAppendBasicBlock(_main, "entry");
+    LLVMBasicBlockRef entry = LLVMAppendBasicBlock(toplevel, "entry");
 
     LLVMBuilderRef builder = LLVMCreateBuilder();
     cg->builder = builder;
@@ -201,7 +201,7 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
 
     LLVMValueRef tmp = CodeGenLLVMDispatch(cg, n);
 
-    LLVMBasicBlockRef last_block = LLVMGetLastBasicBlock(_main);
+    LLVMBasicBlockRef last_block = LLVMGetLastBasicBlock(toplevel);
     LLVMPositionBuilderAtEnd(cg->builder, last_block);
     if (n->tu) {
         LLVMBuildRet(builder, tmp);
@@ -250,7 +250,7 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
         fprintf(stderr, "error writing bitcode to file, skipping\n");
     }
 
-    LLVMGenericValueRef v = LLVMRunFunction(engine, _main, 0, NULL);
+    LLVMGenericValueRef v = LLVMRunFunction(engine, toplevel, 0, NULL);
     enum result r = serialize(v, n, bf);
     LLVMDisposeGenericValue(v);
     if (r == result_error) {
@@ -430,11 +430,11 @@ LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n)
                 cond_block = next_block;
             } else {
                 if (i >= 1) {
-                    cond_block = LLVMAppendBasicBlockInContext(cg->context, cg->main, "condtmp");
+                    cond_block = LLVMAppendBasicBlockInContext(cg->context, cg->toplevel, "condtmp");
                 }
             }
-            then_block = LLVMAppendBasicBlockInContext(cg->context, cg->main, "thentmp");
-            next_block = LLVMAppendBasicBlockInContext(cg->context, cg->main, "nexttmp");
+            then_block = LLVMAppendBasicBlockInContext(cg->context, cg->toplevel, "thentmp");
+            next_block = LLVMAppendBasicBlockInContext(cg->context, cg->toplevel, "nexttmp");
 
             if (cond_block) {
                 LLVMPositionBuilderAtEnd(cg->builder, cond_block);
@@ -470,7 +470,7 @@ LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n)
 
     LLVMBasicBlockRef end_block = NULL;
     if (has_else) {
-        end_block = LLVMAppendBasicBlockInContext(cg->context, cg->main, "endiftmp");
+        end_block = LLVMAppendBasicBlockInContext(cg->context, cg->toplevel, "endiftmp");
     } else {
         end_block = next_block;
     }

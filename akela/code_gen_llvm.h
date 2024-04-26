@@ -19,7 +19,7 @@ typedef struct {
     LLVMBuilderRef builder;
     LLVMContextRef context;
     LLVMModuleRef mod;
-    LLVMValueRef main;
+    LLVMValueRef toplevel;
     CodeGenInterface jit;
 } CodeGenLLVM;
 
