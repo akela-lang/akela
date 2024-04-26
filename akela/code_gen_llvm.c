@@ -17,6 +17,7 @@
 bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf);
 LLVMValueRef CodeGenLLVMDispatch(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMStmts(CodeGenLLVM* cg, struct ast_node* n);
+LLVMValueRef CodeGenLLVMFunction(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMAssign(CodeGenLLVM* cg, struct ast_node* n);
 LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n);
@@ -37,6 +38,7 @@ void CodeGenLLVMInit(CodeGenLLVM* cg, struct error_list* el, struct symbol_table
     cg->st = st;
     cg->builder = NULL;
     cg->context = NULL;
+    cg->mod = NULL;
     cg->main = NULL;
     cg->jit = (CodeGenInterface)CodeGenLLVMJIT;
 }
@@ -78,11 +80,46 @@ LLVMTypeRef get_llvm_type(struct ast_node* n, struct ast_node* tu)
                     }
                 } else if (td->type == type_boolean) {
                     return LLVMInt1Type();
+                } else if (td->type == type_function) {
+                    LLVMTypeRef* param_types = NULL;
+                    struct ast_node* input = ast_node_get(tu, 0);
+                    size_t input_count = ast_node_count_children(input);
+                    if (input_count > 0) {
+                        malloc_safe((void**)&param_types, sizeof(LLVMTypeRef) * input_count);
+                        for (size_t i = 0; i < input_count; i++) {
+                            struct ast_node* dec = ast_node_get(input, i);
+                            LLVMTypeRef dec_type = get_llvm_type(NULL, dec);
+                            param_types[i] = dec_type;
+                        }
+                    }
+
+                    LLVMTypeRef ret_type = NULL;
+                    struct ast_node* output = ast_node_get(tu, 1);
+                    if (output) {
+                        struct ast_node *ret = ast_node_get(output, 0);
+                        ret_type = get_llvm_type(NULL, ret);
+                    } else {
+                        ret_type = LLVMVoidType();
+                    }
+
+                    return LLVMFunctionType(ret_type,
+                                            param_types,
+                                            input_count,
+                                            false);
                 }
             }
         }
     }
     return LLVMVoidType();
+}
+
+LLVMTypeRef get_llvm_type_wrap(struct ast_node* n, struct ast_node* tu)
+{
+    if (tu && tu->td && tu->td->type == type_function) {
+        return LLVMPointerType(get_llvm_type(n, tu), 0);
+    } else {
+        return get_llvm_type(n, tu);
+    }
 }
 
 enum result serialize(LLVMGenericValueRef v, struct ast_node* n, struct buffer* bf)
@@ -125,6 +162,9 @@ enum result serialize(LLVMGenericValueRef v, struct ast_node* n, struct buffer* 
                         buffer_add_format(bf, "%s", "false");
                         found = true;
                     }
+                } else if (td->type == type_function) {
+                    buffer_add_format(bf, "%s", "Function");
+                    found = true;
                 }
             }
         }
@@ -145,10 +185,11 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
     bool valid = true;
 
     LLVMModuleRef mod = LLVMModuleCreateWithName("my_module");
+    cg->mod = mod;
     LLVMContextRef context = LLVMContextCreate();
     cg->context = context;
 
-    LLVMTypeRef ret_type = get_llvm_type(n, NULL);
+    LLVMTypeRef ret_type = get_llvm_type_wrap(NULL, n->tu);
     LLVMTypeRef fun_type = LLVMFunctionType(ret_type, NULL, 0, 0);
     LLVMValueRef _main = LLVMAddFunction(mod, "toplevel", fun_type);
     cg->main = _main;
@@ -160,6 +201,9 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
     LLVMPositionBuilderAtEnd(builder, entry);
 
     LLVMValueRef tmp = CodeGenLLVMDispatch(cg, n);
+
+    LLVMBasicBlockRef last_block = LLVMGetLastBasicBlock(_main);
+    LLVMPositionBuilderAtEnd(cg->builder, last_block);
     if (n->tu) {
         LLVMBuildRet(builder, tmp);
     } else {
@@ -202,7 +246,7 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
         exit(EXIT_FAILURE);
     }
 
-    // Write out bitcode to file
+    /* Write out bitcode to file */
     if (LLVMWriteBitcodeToFile(mod, "toplevel.bc") != 0) {
         fprintf(stderr, "error writing bitcode to file, skipping\n");
     }
@@ -216,7 +260,6 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
         valid = error_list_set(cg->el, &loc, "%s", error_message);
     }
 
-    LLVMContextDispose(context);
     LLVMDisposeBuilder(builder);
     LLVMDisposeExecutionEngine(engine);
 
@@ -227,6 +270,8 @@ LLVMValueRef CodeGenLLVMDispatch(CodeGenLLVM* cg, struct ast_node* n)
 {
     if (n->type == ast_type_stmts) {
         return CodeGenLLVMStmts(cg, n);
+    } else if (n->type == ast_type_function) {
+        return CodeGenLLVMFunction(cg, n);
     } else if (n->type == ast_type_if) {
         return CodeGenLLVMIf(cg, n);
     } else if (n->type == ast_type_assign) {
@@ -248,9 +293,9 @@ LLVMValueRef CodeGenLLVMDispatch(CodeGenLLVM* cg, struct ast_node* n)
     } else {
         char* names[ast_type_count];
         ast_set_names(names);
-        fprintf(stderr, "code gen: unknown expression: %d\n", n->type);
+        fprintf(stderr, "code gen: unhandled ast node type: %s\n", names[n->type]);
         ast_node_print(n, names, false);
-        exit(1);
+        return NULL;
     }
 }
 
@@ -265,6 +310,49 @@ LLVMValueRef CodeGenLLVMStmts(CodeGenLLVM* cg, struct ast_node* n)
         stmt = stmt->next;
     }
     return last_v;
+}
+
+LLVMValueRef CodeGenLLVMFunction(CodeGenLLVM* cg, struct ast_node* n)
+{
+    LLVMTypeRef ret_type = NULL;
+    struct ast_node *ret = ast_node_get(n, 2);
+    struct ast_node *ret_tu = NULL;
+    if (ret) {
+        ret_tu = ast_node_get(ret, 0);
+    }
+    ret_type = get_llvm_type(NULL, ret_tu);
+
+    struct ast_node *dseq = ast_node_get(n, 1);
+    size_t dec_count = ast_node_count_children(dseq);
+    LLVMTypeRef *param_types = NULL;
+    if (dec_count > 0) {
+        malloc_safe((void **) &param_types, sizeof(LLVMTypeRef) * dec_count);
+        for (size_t i = 0; i < dec_count; i++) {
+            struct ast_node *dec = ast_node_get(dseq, i);
+            struct ast_node *tu = ast_node_get(dec, 1);
+            LLVMTypeRef type = get_llvm_type(NULL, tu);
+            param_types[i] = type;
+        }
+    }
+
+    LLVMTypeRef fun_type = LLVMFunctionType(ret_type,
+                                            param_types,
+                                            dec_count,
+                                            false);
+    struct ast_node *id = ast_node_get(n, 0);
+    buffer_finish(&id->value);
+    LLVMValueRef f = LLVMAddFunction(cg->mod, id->value.buf, fun_type);
+    LLVMBasicBlockRef block = LLVMAppendBasicBlockInContext(cg->context, f, "body");
+    LLVMPositionBuilderAtEnd(cg->builder, block);
+
+    struct ast_node* body = ast_node_get(n, 3);
+    LLVMValueRef ret_value = CodeGenLLVMDispatch(cg, body);
+    if (body->tu) {
+        LLVMBuildRet(cg->builder, ret_value);
+    } else {
+        LLVMBuildRet(cg->builder, NULL);
+    }
+    return f;
 }
 
 LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n)

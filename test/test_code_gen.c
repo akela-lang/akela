@@ -307,6 +307,19 @@ void test_code_gen_assign_multiple()
     buffer_destroy(&value);
 }
 
+void test_code_gen_function()
+{
+    test_name(__func__);
+    struct buffer value;
+
+    buffer_init(&value);
+    cg_setup("function foo(a::Int64, b::Int64, c::Int64)\n"
+             "end\n",
+             &value);
+    expect_str(&value, "Function", "value");
+    buffer_destroy(&value);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -327,4 +340,5 @@ void test_code_gen()
     test_code_gen_if_elseif_else();
     test_code_gen_assign();
     test_code_gen_assign_multiple();
+    test_code_gen_function();
 }
