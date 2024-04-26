@@ -195,10 +195,9 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
     LLVMValueRef toplevel = LLVMAddFunction(mod, "toplevel", fun_type);
     cg->toplevel = toplevel;
 
-    LLVMBasicBlockRef entry = LLVMAppendBasicBlock(toplevel, "entry");
-
     LLVMBuilderRef builder = LLVMCreateBuilder();
     cg->builder = builder;
+    LLVMBasicBlockRef entry = LLVMAppendBasicBlock(toplevel, "entry");
     LLVMPositionBuilderAtEnd(builder, entry);
 
     LLVMValueRef tmp = CodeGenLLVMDispatch(cg, n);
@@ -263,7 +262,7 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
 
     LLVMDisposeBuilder(builder);
     LLVMDisposeExecutionEngine(engine);
-    LLVMContextDispose(context);
+    //LLVMContextDispose(context);
 
     return valid;
 }
@@ -321,8 +320,21 @@ LLVMValueRef CodeGenLLVMFunction(CodeGenLLVM* cg, struct ast_node* n)
     struct ast_node *id = ast_node_get(n, 0);
     buffer_finish(&id->value);
     LLVMValueRef f = LLVMAddFunction(cg->mod, id->value.buf, fun_type);
-    LLVMBasicBlockRef block = LLVMAppendBasicBlockInContext(cg->context, f, "body");
-    LLVMPositionBuilderAtEnd(cg->builder, block);
+    LLVMBasicBlockRef body_block = LLVMAppendBasicBlockInContext(cg->context, f, "body");
+    LLVMPositionBuilderAtEnd(cg->builder, body_block);
+
+    struct ast_node* dseq = ast_node_get(n, 1);
+    struct ast_node* dec = dseq->head;
+    while (dec) {
+        struct ast_node* dec_id = ast_node_get(dec, 0);
+        struct ast_node* dec_type = ast_node_get(dec, 1);
+        buffer_finish(&dec_id->value);
+        LLVMValueRef lhs = LLVMBuildAlloca(cg->builder,
+                                           get_llvm_type(NULL, dec_type),
+                                           dec_id->value.buf);
+        dec_id->sym->allocation = lhs;
+        dec = dec->next;
+    }
 
     struct ast_node* body = ast_node_get(n, 3);
     LLVMValueRef ret_value = CodeGenLLVMDispatch(cg, body);
