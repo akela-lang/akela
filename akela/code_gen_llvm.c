@@ -32,10 +32,9 @@ CodeGenVTable CodeGenLLVMVTable = {
         .jit_offset = offsetof(CodeGenLLVM, jit),
 };
 
-void CodeGenLLVMInit(CodeGenLLVM* cg, struct error_list* el, struct symbol_table* st)
+void CodeGenLLVMInit(CodeGenLLVM* cg, struct error_list* el)
 {
     cg->el = el;
-    cg->st = st;
     cg->builder = NULL;
     cg->context = NULL;
     cg->mod = NULL;
@@ -43,10 +42,10 @@ void CodeGenLLVMInit(CodeGenLLVM* cg, struct error_list* el, struct symbol_table
     cg->jit = (CodeGenInterface)CodeGenLLVMJIT;
 }
 
-void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el, struct symbol_table* st)
+void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el)
 {
     malloc_safe((void**)cg, sizeof(CodeGenLLVM));
-    CodeGenLLVMInit(*cg, el, st);
+    CodeGenLLVMInit(*cg, el);
 }
 
 LLVMTypeRef get_llvm_type(struct ast_node* n, struct ast_node* tu)

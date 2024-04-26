@@ -16,7 +16,6 @@
 
 typedef struct {
     struct error_list* el;
-    struct symbol_table* st;
     LLVMBuilderRef builder;
     LLVMContextRef context;
     LLVMModuleRef mod;
@@ -26,6 +25,6 @@ typedef struct {
 
 extern CodeGenVTable CodeGenLLVMVTable;
 
-void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el, struct symbol_table* st);
+void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el);
 
 #endif

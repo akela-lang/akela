@@ -27,7 +27,7 @@ bool cg_setup(const char* text, struct buffer* value)
     expect_true(valid, "valid");
 
     CodeGenLLVM* cg = NULL;
-    CodeGenLLVMCreate(&cg, &cu->el, &cu->st);
+    CodeGenLLVMCreate(&cg, &cu->el);
     valid = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, value);
     expect_true(valid, "valid");
 
