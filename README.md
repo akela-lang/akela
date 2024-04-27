@@ -2,8 +2,8 @@
 Akela is a general-purpose programming language geared toward numerical computation and finance.
 
 ## Dependencies
-* (https://github.com/akela-lang/zinc)[Zinc]
-* (https://releases.llvm.org/)[LLVM]
+* [Zinc](https://github.com/akela-lang/zinc)
+* [LLVM](https://releases.llvm.org/)
 
 ## Build
     cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
