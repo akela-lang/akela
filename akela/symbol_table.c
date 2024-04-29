@@ -6,27 +6,26 @@
 #include "ast.h"
 #include "zinc/hash.h"
 
-/* dynamic-output env{} */
-/* transfer p -> env */
 void environment_init(struct environment* env, struct environment* p)
 {
-	/* allocate ht{} */
 	hash_table_init(&env->ht, ENVIRONMENT_HASH_TABLE_SIZE);
 	env->prev = p;
 }
 
-/* dynamic-output env{} */
-/* transfer sym -> env{} */
+void environment_create(struct environment** env, struct environment* p)
+{
+    malloc_safe((void**)env, sizeof(struct environment));
+    environment_init(*env, p);
+}
+
 void environment_put(struct environment* env, struct buffer* value, struct symbol* sym)
 {
 	if (sym->tk_type == token_none) {
 		assert(sym->tk_type != token_none);
 	}
-	/* allocate ht{} */
 	hash_table_add(&env->ht, value, sym);
 }
 
-/* dynamic-output-none */
 struct symbol* environment_get(struct environment* env, struct buffer* value)
 {
 	for (struct environment* p = env; p; p = p->prev) {
@@ -40,13 +39,26 @@ struct symbol* environment_get(struct environment* env, struct buffer* value)
 	return NULL;
 }
 
-/* dynamic-output-none */
 struct symbol* environment_get_local(struct environment* env, struct buffer* value)
 {
 	return (struct symbol*)hash_table_get(&env->ht, value);
 }
 
-/* dynamic-output-none */
+void environment_begin(struct symbol_table* st)
+{
+    struct environment* env = NULL;
+    environment_create(&env, st->top);
+    st->top = env;
+}
+
+void environment_end(struct symbol_table* st)
+{
+    struct environment* env = st->top;
+    st->top = env->prev;
+    env->prev = st->deactivated;
+    st->deactivated = env;
+}
+
 void symbol_init(struct symbol* sym)
 {
 	sym->tk_type = token_none;
@@ -58,7 +70,7 @@ void symbol_init(struct symbol* sym)
     sym->allocation = NULL;
 }
 
-/* destroy sym sym{} */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 void environment_destroy_symbol(struct symbol* sym)
 {
 	ast_node_destroy(sym->tu);
@@ -70,7 +82,6 @@ void environment_destroy_symbol(struct symbol* sym)
 	free(sym);
 }
 
-/* dynamic-destroy env env{} */
 void environment_destroy(struct environment* env)
 {
 	hash_table_map(&env->ht, (void (*)(void*))environment_destroy_symbol);
@@ -78,33 +89,26 @@ void environment_destroy(struct environment* env)
 	free(env);
 }
 
-/* dynamic-temp bf{} */
 void symbol_table_add_reserved(struct environment* env, const char* name, enum token_enum type, struct type_def* td)
 {
 	struct buffer bf;
 
-	/* initialize bf{} */
 	buffer_init(&bf);
 	buffer_copy_str(&bf, name);
 
-	/* allocate sym */
 	struct symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct symbol));
 	symbol_init(sym);
 	sym->tk_type = type;
 	sym->td = td;
 
-	/* allocate wt{} */
 	environment_put(env, &bf, sym);
 
-	/* destroy bf{} */
 	buffer_destroy(&bf);
 }
 
-/* dynamic-output wt{} */
 void symbol_table_init_reserved(struct environment* env)
 {
-	/* allocate wt{} */
 	symbol_table_add_reserved(env, "function", token_function, NULL);
 	symbol_table_add_reserved(env, "end", token_end, NULL);
 	symbol_table_add_reserved(env, "if", token_if, NULL);

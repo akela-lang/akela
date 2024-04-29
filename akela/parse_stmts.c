@@ -48,12 +48,7 @@ struct ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct l
 	struct environment* saved = NULL;
 	struct environment* env = NULL;
 	if (!suppress_env) {
-		saved = ps->st->top;
-
-		malloc_safe((void**)&env, sizeof(struct environment));
-		environment_init(env, saved);
-
-		ps->st->top = env;
+        environment_begin(ps->st);
 	}
 
 	ast_node_create(&n);
@@ -80,7 +75,6 @@ struct ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct l
 			break;
 		}
 
-		/* allocate ps{} a a{} */
 		struct ast_node* b = NULL;
 		struct location loc_b;
 		b = parse_stmt(ps, &loc_b);
@@ -95,10 +89,7 @@ struct ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct l
 	}
 
 	if (!suppress_env) {
-        env->prev = ps->st->deactivated;
-        ps->st->deactivated = env;
-		//environment_destroy(env);
-		ps->st->top = saved;
+        environment_end(ps->st);
 	}
 
 	if (n->type != ast_type_error) {
@@ -270,11 +261,7 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-	struct environment* saved = ps->st->top;
-	struct environment* env = NULL;
-	malloc_safe((void**)&env, sizeof(struct environment));
-	environment_init(env, saved);
-	ps->st->top = env;
+    environment_begin(ps->st);
 
     consume_newline(ps);
 
@@ -337,10 +324,7 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 	token_destroy(end);
 	free(end);
 
-	ps->st->top = saved;
-    env->prev = ps->st->deactivated;
-    ps->st->deactivated = env;
-	//environment_destroy(env);
+    environment_end(ps->st);
 
 	return n;
 }
@@ -521,12 +505,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
 
     struct token* t0 = get_lookahead(ps);
     if (t0 && t0->type == token_id) {
-        struct environment* saved = ps->st->top;
-
-        struct environment* env = NULL;
-        malloc_safe((void**)&env, sizeof(struct environment));
-        environment_init(env, saved);
-        ps->st->top = env;
+        environment_begin(ps->st);
 
         struct location loc_start;
         parse_function_start(ps, n, &loc_start);
@@ -539,11 +518,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
             }
         }
 
-        ps->st->top = saved;
-
-        //environment_destroy(env);
-        env->prev = ps->st->deactivated;
-        ps->st->deactivated = env;
+        environment_end(ps->st);
     } else if (t0 && t0->type == token_left_paren) {
         struct location af_loc;
         parse_anonymous_function(ps, n, &af_loc);
@@ -660,11 +635,11 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
 				new_sym->tu = tu;
 				environment_put(ps->st->top->prev, &id->value, new_sym);
 				n->tu = ast_node_copy(tu);
+                n->sym = sym;
 			}
 		}
 	}
 
-	/* destroy id id{} lp lp{} rp rp{} */
 	token_destroy(id);
 	free(id);
 	token_destroy(lp);
@@ -931,11 +906,7 @@ struct ast_node* parse_module(struct parse_state* ps, struct location* loc)
 	token_destroy(module);
 	free(module);
 
-	struct environment* saved = ps->st->top;
-	struct environment* env = NULL;
-	malloc_safe((void**)&env, sizeof(struct environment));
-	environment_init(env, saved);
-	ps->st->top = env;
+    environment_begin(ps->st);
 
 	struct token* id = NULL;
 	if (!match(ps, token_id, "expected identifier after module", &id)) {
@@ -950,12 +921,9 @@ struct ast_node* parse_module(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-	transfer_module_symbols(env, saved, &id->value);
+	transfer_module_symbols(ps->st->top, ps->st->top->prev, &id->value);
 
-	ps->st->top = saved;
-	//environment_destroy(env);
-    env->prev = ps->st->deactivated;
-    ps->st->deactivated = env;
+    environment_end(ps->st);
 
 	struct token* end = NULL;
 	if (!match(ps, token_end, "expected end", &end)) {

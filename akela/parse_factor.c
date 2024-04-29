@@ -78,13 +78,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-	struct environment* saved = ps->st->top;
-
-	struct environment* env = NULL;
-	malloc_safe((void**)&env, sizeof(struct environment));
-	environment_init(env, saved);
-
-	ps->st->top = env;
+    environment_begin(ps->st);
 
 	struct token* lp = NULL;
 	if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
@@ -192,10 +186,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         }
 	}
 
-	ps->st->top = saved;
-	//environment_destroy(env);
-    env->prev = ps->st->deactivated;
-    ps->st->deactivated = env;
+    environment_end(ps->st);
 
 	return n;
 }
