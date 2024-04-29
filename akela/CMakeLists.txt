@@ -16,6 +16,7 @@ set(lib_files
         comp_table.c
         code_gen.c
         code_gen_llvm.c
+        code_gen_llvm2.cpp
 )
 
 set(bin_files
@@ -32,7 +33,6 @@ if(${COVERAGE} MATCHES On)
 else()
     target_link_libraries(akela-bin akela zinc ${llvm_libs})
 endif()
-
 
 SET_TARGET_PROPERTIES(akela-bin
   PROPERTIES OUTPUT_NAME akela)

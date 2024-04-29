@@ -195,9 +195,10 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
     LLVMValueRef toplevel = LLVMAddFunction(mod, "toplevel", fun_type);
     cg->toplevel = toplevel;
 
-    LLVMBuilderRef builder = LLVMCreateBuilder();
-    cg->builder = builder;
     LLVMBasicBlockRef entry = LLVMAppendBasicBlock(toplevel, "entry");
+
+    LLVMBuilderRef builder = LLVMCreateBuilderInContext(context);
+    cg->builder = builder;
     LLVMPositionBuilderAtEnd(builder, entry);
 
     LLVMValueRef tmp = CodeGenLLVMDispatch(cg, n);
@@ -262,11 +263,12 @@ bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, struct buffer* bf)
 
     LLVMDisposeBuilder(builder);
     LLVMDisposeExecutionEngine(engine);
-    //LLVMContextDispose(context);
+    LLVMContextDispose(context);
 
     return valid;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 LLVMValueRef CodeGenLLVMDispatch(CodeGenLLVM* cg, struct ast_node* n)
 {
     if (n->type == ast_type_stmts) {
@@ -300,6 +302,7 @@ LLVMValueRef CodeGenLLVMDispatch(CodeGenLLVM* cg, struct ast_node* n)
     }
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 LLVMValueRef CodeGenLLVMStmts(CodeGenLLVM* cg, struct ast_node* n)
 {
     LLVMValueRef last_v = NULL;
@@ -313,6 +316,7 @@ LLVMValueRef CodeGenLLVMStmts(CodeGenLLVM* cg, struct ast_node* n)
     return last_v;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 LLVMValueRef CodeGenLLVMFunction(CodeGenLLVM* cg, struct ast_node* n)
 {
     LLVMTypeRef fun_type = get_llvm_type(n, n->tu);
@@ -346,6 +350,7 @@ LLVMValueRef CodeGenLLVMFunction(CodeGenLLVM* cg, struct ast_node* n)
     return f;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n)
 {
     struct ast_node* lseq = ast_node_get(n, 0);
@@ -374,6 +379,7 @@ LLVMValueRef CodeGenLLVMVar(CodeGenLLVM* cg, struct ast_node* n)
     return NULL;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 LLVMValueRef CodeGenLLVMAssign(CodeGenLLVM* cg, struct ast_node* n)
 {
     struct ast_node* p = n->tail;
@@ -388,6 +394,8 @@ LLVMValueRef CodeGenLLVMAssign(CodeGenLLVM* cg, struct ast_node* n)
     return rhs;
 }
 
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
 LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n)
 {
     bool has_else = false;
@@ -485,6 +493,7 @@ LLVMValueRef CodeGenLLVMIf(CodeGenLLVM* cg, struct ast_node* n)
     return value;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 LLVMValueRef CodeGenLLVMAdd(CodeGenLLVM* cg, struct ast_node* n)
 {
     struct ast_node* a = ast_node_get(n, 0);
@@ -496,6 +505,7 @@ LLVMValueRef CodeGenLLVMAdd(CodeGenLLVM* cg, struct ast_node* n)
     return LLVMBuildAdd(cg->builder, lhs, rhs, "addtmp");
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 LLVMValueRef CodeGenLLVMSub(CodeGenLLVM* cg, struct ast_node* n)
 {
     struct ast_node* a = ast_node_get(n, 0);

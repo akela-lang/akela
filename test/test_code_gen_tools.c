@@ -6,6 +6,7 @@
 #include "akela/comp_unit.h"
 #include "akela/code_gen.h"
 #include "akela/code_gen_llvm.h"
+#include "akela/code_gen_llvm2.h"
 #include <string.h>
 #include "zinc/input_unicode_string.h"
 
@@ -26,14 +27,21 @@ bool cg_setup(const char* text, struct buffer* value)
     valid = comp_unit_compile(cu, input, input->input_vtable);
     expect_true(valid, "valid");
 
-    CodeGenLLVM* cg = NULL;
-    CodeGenLLVMCreate(&cg, &cu->el);
-    valid = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, value);
-    expect_true(valid, "valid");
+    if (false) {
+        CodeGenLLVM* cg = NULL;
+        CodeGenLLVMCreate(&cg, &cu->el);
+        valid = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, value);
+        free(cg);
+    } else {
+        CodeGenLLVM2* cg = NULL;
+        CodeGenLLVM2Create(&cg, &cu->el);
+        valid = CodeGenJIT(cg, &CodeGenLLVM2VTable, cu->root, value);
+        CodeGenLLVM2Destroy(cg);
+    }
 
+    expect_true(valid, "valid");
     expect_no_errors(&cu->el);
 
-    free(cg);
     VectorDestroy(vector);
     free(vector);
     free(input);

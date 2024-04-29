@@ -78,15 +78,12 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-    /* shared ps{top} -> saved */
 	struct environment* saved = ps->st->top;
 
-	/* allocate env env{} */
 	struct environment* env = NULL;
 	malloc_safe((void**)&env, sizeof(struct environment));
 	environment_init(env, saved);
 
-	/* transfer env -> ps{top} */
 	ps->st->top = env;
 
 	struct token* lp = NULL;
@@ -99,7 +96,6 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-	/* allocate a a{} */
 	struct ast_node* dseq_node = NULL;
 	struct location loc_dseq;
     dseq_node = parse_dseq(ps, &loc_dseq);
@@ -111,8 +107,6 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 	
-	/* allocate n */
-	/* allocate ps{} rp rp{} */
 	struct token* rp = NULL;
 	if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
         /* test case: test_parse_anonymous_function_expected_right_paren */
@@ -150,7 +144,6 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         }
 	}
 
-	/* allocate b b{} */
 	struct ast_node* stmts_node = NULL;
 	struct location loc_stmts;
     stmts_node = parse_stmts(ps, true, &loc_stmts);
@@ -158,7 +151,6 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-	/* allocate ps{} end end{} */
 	struct token* end = NULL;
 	if (!match(ps, token_end, "expected end", &end)) {
         /* test case: test_parse_anonymous_function_expected_end */
@@ -200,11 +192,10 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         }
 	}
 
-	/* transfer saved -> ps{top} */
 	ps->st->top = saved;
-
-	/* destroy env env{} */
-	environment_destroy(env);
+	//environment_destroy(env);
+    env->prev = ps->st->deactivated;
+    ps->st->deactivated = env;
 
 	return n;
 }

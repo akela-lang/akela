@@ -338,7 +338,9 @@ struct ast_node* parse_for(struct parse_state* ps, struct location* loc)
 	free(end);
 
 	ps->st->top = saved;
-	environment_destroy(env);
+    env->prev = ps->st->deactivated;
+    ps->st->deactivated = env;
+	//environment_destroy(env);
 
 	return n;
 }
@@ -539,7 +541,9 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
 
         ps->st->top = saved;
 
-        environment_destroy(env);
+        //environment_destroy(env);
+        env->prev = ps->st->deactivated;
+        ps->st->deactivated = env;
     } else if (t0 && t0->type == token_left_paren) {
         struct location af_loc;
         parse_anonymous_function(ps, n, &af_loc);
@@ -949,7 +953,9 @@ struct ast_node* parse_module(struct parse_state* ps, struct location* loc)
 	transfer_module_symbols(env, saved, &id->value);
 
 	ps->st->top = saved;
-	environment_destroy(env);
+	//environment_destroy(env);
+    env->prev = ps->st->deactivated;
+    ps->st->deactivated = env;
 
 	struct token* end = NULL;
 	if (!match(ps, token_end, "expected end", &end)) {

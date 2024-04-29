@@ -22,12 +22,12 @@ include_directories(${ZINC_DIR} .)
 # LLVM
 set(llvm_build_dir release)
 find_package(LLVM 19 REQUIRED CONFIG PATHS ${CMAKE_SOURCE_DIR}/../llvm-project/${llvm_build_dir})
-# find_package(LLVM 18.1.1 REQUIRED CONFIG PATHS ${CMAKE_SOURCE_DIR}/../llvm-project-llvmorg-18.1.1/${llvm_build_dir})
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
+include_directories(${LLVM_BUILD_MAIN_SRC_DIR}/examples/Kaleidoscope/include)
 set(LLVM_LINK_COMPONENTS
         AllTargetsAsmParsers
         AllTargetsCodeGens

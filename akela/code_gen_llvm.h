@@ -16,9 +16,9 @@
 
 typedef struct {
     struct error_list* el;
-    LLVMBuilderRef builder;
     LLVMContextRef context;
     LLVMModuleRef mod;
+    LLVMBuilderRef builder;
     LLVMValueRef toplevel;
     CodeGenInterface jit;
 } CodeGenLLVM;

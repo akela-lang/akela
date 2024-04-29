@@ -82,6 +82,32 @@ void test_code_gen_var_int()
     buffer_destroy(&value);
 }
 
+void test_code_gen_boolean_true()
+{
+    test_name(__func__);
+    struct buffer value;
+    buffer_init(&value);
+
+    cg_setup("true",
+             &value);
+    expect_str(&value, "true", "true");
+
+    buffer_destroy(&value);
+}
+
+void test_code_gen_boolean_false()
+{
+    test_name(__func__);
+    struct buffer value;
+    buffer_init(&value);
+
+    cg_setup("true",
+             &value);
+    expect_str(&value, "true", "true");
+
+    buffer_destroy(&value);
+}
+
 void test_code_gen_add()
 {
     test_name(__func__);
@@ -130,31 +156,6 @@ void test_code_gen_sub2()
              "a - 2\n",
              &value);
     expect_str(&value, "8", "8");
-
-    buffer_destroy(&value);
-}
-void test_code_gen_boolean_true()
-{
-    test_name(__func__);
-    struct buffer value;
-    buffer_init(&value);
-
-    cg_setup("true",
-             &value);
-    expect_str(&value, "true", "true");
-
-    buffer_destroy(&value);
-}
-
-void test_code_gen_boolean_false()
-{
-    test_name(__func__);
-    struct buffer value;
-    buffer_init(&value);
-
-    cg_setup("true",
-             &value);
-    expect_str(&value, "true", "true");
 
     buffer_destroy(&value);
 }
@@ -342,10 +343,10 @@ void test_code_gen()
     test_code_gen_var_void1();
     test_code_gen_var_void2();
     test_code_gen_var_int();
-    test_code_gen_add();
-    test_code_gen_add2();
     test_code_gen_boolean_true();
     test_code_gen_boolean_false();
+    test_code_gen_add();
+    test_code_gen_add2();
     test_code_gen_sub();
     test_code_gen_sub2();
     test_code_gen_last();

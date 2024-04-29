@@ -7,7 +7,7 @@
 #include "comp_unit.h"
 #include "code_gen.h"
 #include "zinc/input_unicode_file.h"
-#include "code_gen_llvm.h"
+#include "code_gen_llvm2.h"
 
 int main(int argc, char** argv)
 {
@@ -57,9 +57,15 @@ int main(int argc, char** argv)
 
     struct buffer bf;
     buffer_init(&bf);
-    CodeGenLLVM* cg = NULL;
-    CodeGenLLVMCreate(&cg, &cu.el);
-    CodeGenJIT(cg, &CodeGenLLVMVTable, cu.root, &bf);
+
+//    CodeGenLLVM* cg = NULL;
+//    CodeGenLLVMCreate(&cg, &cu.el);
+//    CodeGenJIT(cg, &CodeGenLLVMVTable, cu.root, &bf);
+
+    CodeGenLLVM2* cg = NULL;
+    CodeGenLLVM2Create(&cg, &cu.el);
+    CodeGenJIT(cg, &CodeGenLLVM2VTable, cu.root, &bf);
+
     buffer_finish(&bf);
     printf("\n%s\n", bf.buf);
     buffer_destroy(&bf);
