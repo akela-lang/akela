@@ -197,7 +197,7 @@ void CodeGenLLVM2Run(JITData* jd, struct ast_node* n, struct buffer* bf)
         } else if (type == type_string) {
             char *(*fp)() = ExprSymbol.getAddress().toPtr<char *(*)()>();
             char *v = fp();
-            buffer_add_format(bf, "%s", v);
+            buffer_add_format(bf, "\"%s\"", v);
         } else if (type == type_function) {
             void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
             void* v = fp();

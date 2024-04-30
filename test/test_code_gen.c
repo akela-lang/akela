@@ -39,7 +39,7 @@ void test_code_gen_constant_string()
     buffer_init(&value);
 
     cg_setup("\"hello\"", &value);
-    expect_str(&value, "hello", "hello");
+    expect_str(&value, "\"hello\"", "hello");
 
     buffer_destroy(&value);
 }
@@ -350,6 +350,36 @@ void test_code_gen_call()
     buffer_destroy(&value);
 }
 
+void test_code_gen_call2()
+{
+    test_name(__func__);
+    struct buffer value;
+
+    buffer_init(&value);
+    cg_setup("function foo(a::Int64, b::Int64, c::Int64)::Bool\n"
+             "  true\n"
+             "end\n"
+             "foo(1, 2, 3)\n",
+             &value);
+    expect_str(&value, "true", "value");
+    buffer_destroy(&value);
+}
+
+void test_code_gen_call3()
+{
+    test_name(__func__);
+    struct buffer value;
+
+    buffer_init(&value);
+    cg_setup("function foo(a::Int64, b::Int64, c::Int64)::String\n"
+             "  \"hello\"\n"
+             "end\n"
+             "foo(1, 2, 3)\n",
+             &value);
+    expect_str(&value, "\"hello\"", "value");
+    buffer_destroy(&value);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -373,4 +403,6 @@ void test_code_gen()
     test_code_gen_function();
     test_code_gen_function_ret();
     test_code_gen_call();
+    test_code_gen_call2();
+    test_code_gen_call3();
 }
