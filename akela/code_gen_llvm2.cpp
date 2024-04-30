@@ -66,6 +66,7 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Add(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Sub(JITData* jd, struct ast_node* n);
+Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Boolean(JITData* jd, struct ast_node* n);
@@ -212,6 +213,16 @@ void CodeGenLLVM2Run(JITData* jd, struct ast_node* n, struct buffer* bf)
     }
 }
 
+BasicBlock* CodeGenLLVM2GetLastBlock(JITData* jd, Function* f)
+{
+    BasicBlock* last_block = nullptr;
+    Function::iterator blocks = f->end();
+    if (blocks != f->begin()) {
+        last_block = &*--blocks;
+    }
+    return last_block;
+}
+
 bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, struct buffer* bf)
 {
     bool valid = true;
@@ -299,6 +310,8 @@ Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n)
         return CodeGenLLVM2Add(jd, n);
     } else if (n->type == ast_type_minus) {
         return CodeGenLLVM2Sub(jd, n);
+    } else if (n->type == ast_type_call) {
+        return CodeGenLLVM2Call(jd, n);
     } else if (n->type == ast_type_id) {
         return CodeGenLLVM2ID(jd, n);
     } else if (n->type == ast_type_number) {
@@ -470,15 +483,19 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
 
     struct ast_node* dseq = ast_node_get(n, 1);
     struct ast_node* dec = dseq->head;
+    int i = 0;
     while (dec) {
         struct ast_node* dec_id = ast_node_get(dec, 0);
         struct ast_node* dec_type = ast_node_get(dec, 1);
         buffer_finish(&dec_id->value);
-        Value* lhs = jd->Builder->CreateAlloca(CodeGenLLVM2GetType(jd, dec_type),
+        Type* t = CodeGenLLVM2GetType(jd, dec_type);
+        Value* lhs = jd->Builder->CreateAlloca(t,
                                            nullptr,
                                            dec_id->value.buf);
+        jd->Builder->CreateStore(&f->arg_begin()[i], lhs);
         dec_id->sym->allocation = lhs;
         dec = dec->next;
+        i++;
     }
 
     struct ast_node* body = ast_node_get(n, 3);
@@ -488,6 +505,12 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
     } else {
         jd->Builder->CreateRetVoid();
     }
+
+    BasicBlock* last_block = CodeGenLLVM2GetLastBlock(jd, jd->toplevel);
+    jd->Builder->SetInsertPoint(last_block);
+
+    n->sym->allocation = f;
+
     return f;
 }
 
@@ -530,6 +553,24 @@ Value* CodeGenLLVM2Sub(JITData* jd, struct ast_node* n)
     return jd->Builder->CreateSub(lhs, rhs, "subtmp");
 }
 
+Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n)
+{
+    struct ast_node* callee = ast_node_get(n, 0);
+    struct ast_node* cseq = ast_node_get(n, 1);
+
+    assert(callee && callee->tu && callee->tu->td && callee->tu->td->type == type_function);
+    Value* callee_value = CodeGenLLVM2Dispatch(jd, callee);
+    auto f = reinterpret_cast<Function*>(callee_value);
+    std::vector<Value*> arg_list;
+    struct ast_node* arg = cseq->head;
+    while (arg) {
+        Value* value = CodeGenLLVM2Dispatch(jd, arg);
+        arg_list.push_back(value);
+        arg = arg->next;
+    }
+    return jd->Builder->CreateCall(f, arg_list);
+}
+
 Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
 {
     buffer_finish(&n->value);
@@ -538,7 +579,11 @@ Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
     auto v = (AllocaInst*)sym->allocation;
     Type* t = v->getAllocatedType();
     buffer_finish(&n->value);
-    return jd->Builder->CreateLoad(t, v, n->value.buf);
+    if (n->tu->td->type == type_function) {
+        return v;
+    } else {
+        return jd->Builder->CreateLoad(t, v, n->value.buf);
+    }
 }
 
 Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n)

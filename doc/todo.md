@@ -1,5 +1,4 @@
 # Todo
-* code gen call
 * code gen anonymous function
 * code gen struct
 * while

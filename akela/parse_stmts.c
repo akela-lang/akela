@@ -635,7 +635,7 @@ void parse_function_start(struct parse_state* ps, struct ast_node* n, struct loc
 				new_sym->tu = tu;
 				environment_put(ps->st->top->prev, &id->value, new_sym);
 				n->tu = ast_node_copy(tu);
-                n->sym = sym;
+                n->sym = new_sym;
 			}
 		}
 	}
