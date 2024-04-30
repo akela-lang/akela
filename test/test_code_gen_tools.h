@@ -3,7 +3,8 @@
 
 #include <stdbool.h>
 #include "zinc/buffer.h"
+#include "akela/code_gen.h"
 
-bool cg_setup(const char* text, struct buffer* value);
+bool cg_setup(const char* text, CodeGenResult* result);
 
 #endif

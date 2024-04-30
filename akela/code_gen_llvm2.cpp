@@ -57,7 +57,7 @@ CodeGenVTable CodeGenLLVM2VTable = {
 };
 
 Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu);
-bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, struct buffer* bf);
+bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, CodeGenResult* result);
 Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Stmts(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2If(JITData* jd, struct ast_node* n);
@@ -223,7 +223,7 @@ BasicBlock* CodeGenLLVM2GetLastBlock(JITData* jd, Function* f)
     return last_block;
 }
 
-bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, struct buffer* bf)
+bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, CodeGenResult* result)
 {
     bool valid = true;
 
@@ -274,21 +274,24 @@ bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, struct buffer* bf)
         struct location loc = {};
         location_init(&loc);
         error_list_set(cg->el, &loc, "%s", str.c_str());
-
-        std::string str2;
-        raw_string_ostream os2(str2);
-        jd.TheModule->print(os2, nullptr);
-        error_list_set(cg->el, &loc, "%s", str2.c_str());
         valid = false;
     }
+
+    std::string str2;
+    raw_string_ostream os2(str2);
+    jd.TheModule->print(os2, nullptr);
+    buffer_add_format(&result->text, "%s", str2.c_str());
 
     if (valid) {
         auto rt = jd.TheJIT->getMainJITDylib().createResourceTracker();
         auto tsm = ThreadSafeModule(std::move(jd.TheModule), std::move(jd.TheContext));
         jd.ExitOnErr(jd.TheJIT->addModule(std::move(tsm), rt));
-        CodeGenLLVM2Run(&jd, n, bf);
+        CodeGenLLVM2Run(&jd, n, &result->value);
         jd.ExitOnErr(rt->remove());
     }
+
+    buffer_finish(&result->value);
+    buffer_finish(&result->text);
 
     return true;
 }

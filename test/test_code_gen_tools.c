@@ -10,7 +10,7 @@
 #include <string.h>
 #include "zinc/input_unicode_string.h"
 
-bool cg_setup(const char* text, struct buffer* value)
+bool cg_setup(const char* text, CodeGenResult* result)
 {
     struct comp_unit* cu = NULL;
     malloc_safe((void**)&cu, sizeof(struct comp_unit));
@@ -27,19 +27,18 @@ bool cg_setup(const char* text, struct buffer* value)
     valid = comp_unit_compile(cu, input, input->input_vtable);
     expect_true(valid, "valid");
 
-    if (false) {
-        CodeGenLLVM* cg = NULL;
-        CodeGenLLVMCreate(&cg, &cu->el);
-        valid = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, value);
-        free(cg);
-    } else {
-        CodeGenLLVM2* cg = NULL;
-        CodeGenLLVM2Create(&cg, &cu->el);
-        valid = CodeGenJIT(cg, &CodeGenLLVM2VTable, cu->root, value);
-        CodeGenLLVM2Destroy(cg);
-    }
+    CodeGenLLVM2* cg = NULL;
+    CodeGenLLVM2Create(&cg, &cu->el);
+    valid = CodeGenJIT(cg, &CodeGenLLVM2VTable, cu->root, result);
+    CodeGenLLVM2Destroy(cg);
 
     expect_true(valid, "valid");
+    if (!valid && result->text.size > 0) {
+        struct location loc;
+        location_init(&loc);
+        buffer_finish(&result->text);
+        error_list_set(&cu->el, &loc, "Module:\n%s", result->text.buf);
+    }
     expect_no_errors(&cu->el);
 
     VectorDestroy(vector);
