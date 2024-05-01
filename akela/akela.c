@@ -58,17 +58,14 @@ int main(int argc, char** argv)
     struct buffer bf;
     buffer_init(&bf);
 
-//    CodeGenLLVM* cg = NULL;
-//    CodeGenLLVMCreate(&cg, &cu.el);
-//    CodeGenJIT(cg, &CodeGenLLVMVTable, cu.root, &bf);
-
     CodeGenLLVM2* cg = NULL;
     CodeGenLLVM2Create(&cg, &cu.el);
-    CodeGenJIT(cg, &CodeGenLLVM2VTable, cu.root, &bf);
+    CodeGenResult result;
+    CodeGenResultInit(&result);
+    CodeGenJIT(cg, &CodeGenLLVM2VTable, cu.root, &result);
 
-    buffer_finish(&bf);
-    printf("\n%s\n", bf.buf);
-    buffer_destroy(&bf);
+    printf("\n%s\n", result.value.buf);
+    CodeGenResultDestroy(&result);
 
     comp_unit_destroy(&cu);
 
