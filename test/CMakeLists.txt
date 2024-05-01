@@ -1,3 +1,4 @@
+# test
 set(test_files
         test.c
         test_ast.c
@@ -18,16 +19,14 @@ set(test_files
         test_code_gen.c
         test_code_gen_tools.c
 )
-
 add_executable(test ${test_files})
-
 if(${COVERAGE} MATCHES On)
     target_link_libraries(test akela zinc gcov ${llvm_libs})
 else()
     target_link_libraries(test akela zinc ${llvm_libs})
 endif()
 
-
+# event loop
 set(event_loop_files event_loop.c)
 add_executable(event_loop ${event_loop_files})
 if(${COVERAGE} MATCHES On)
@@ -36,3 +35,6 @@ else()
     target_link_libraries(event_loop akela zinc)
 endif()
 
+# function_pointer
+add_executable(function_pointer function_pointer.cpp)
+target_link_libraries(function_pointer ${llvm_libs})

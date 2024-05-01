@@ -35,6 +35,7 @@
 #include "akela/type_def.h"
 #include "zinc/error.h"
 #include "zinc/list.h"
+#include <cassert>
 
 #define TOPLEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"
@@ -51,6 +52,16 @@ typedef struct {
     std::unique_ptr<KaleidoscopeJIT> TheJIT;
     Function* toplevel;
 } JITData;
+
+typedef enum StorageClass {
+    StorageClassValue,
+    StorageClassPointer,
+} StorageClass;
+
+typedef struct CGResult {
+    Value* value;
+    StorageClass* sg;
+} CGResult;
 
 CodeGenVTable CodeGenLLVM2VTable = {
         .jit_offset = offsetof(CodeGenLLVM2, jit),
@@ -307,6 +318,8 @@ Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n)
         return CodeGenLLVM2Var(jd, n);
     } else if (n->type == ast_type_function) {
         return CodeGenLLVM2Function(jd, n);
+    } else if (n->type == ast_type_anonymous_function) {
+        return CodeGenLLVM2Function(jd, n);
     } else if (n->type == ast_type_assign) {
         return CodeGenLLVM2Assign(jd, n);
     } else if (n->type == ast_type_plus) {
@@ -437,7 +450,7 @@ Value* CodeGenLLVM2If(JITData* jd, struct ast_node* n)
     jd->Builder->SetInsertPoint(end_block);
     Value* value = nullptr;
     if (type) {
-        value = jd->Builder->CreateLoad(type, ptr, "branchresulttmp");
+        value = jd->Builder->CreateLoad(type, ptr);
     }
 
     list_destroy(&l, nullptr);
@@ -458,13 +471,26 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
         rp = ast_node_get(rseq, 0);
     }
     while (lp) {
-        Type* t = CodeGenLLVM2GetType(jd, tu);
-        buffer_finish(&lp->value);
-        AllocaInst* lhs = jd->Builder->CreateAlloca(t, nullptr, lp->value.buf);
+        AllocaInst* lhs = nullptr;
+        if (tu->td->type == type_function) {
+            FunctionType* func_type = CodeGenLLVM2FunctionType(jd, tu);
+            PointerType* pt = func_type->getPointerTo();
+            buffer_finish(&lp->value);
+            lhs = jd->Builder->CreateAlloca(pt, nullptr, lp->value.buf);
+        } else {
+            Type* t = CodeGenLLVM2GetType(jd, tu);
+            buffer_finish(&lp->value);
+            lhs = jd->Builder->CreateAlloca(t, nullptr, lp->value.buf);
+        }
         assert(lp->sym);
         lp->sym->allocation = lhs;
         if (rp) {
             Value* rhs = CodeGenLLVM2Dispatch(jd, rp);
+            if (tu->td->type == type_function) {
+                FunctionType* func_type = CodeGenLLVM2FunctionType(jd, tu);
+                PointerType* pt = func_type->getPointerTo();
+                rhs = jd->Builder->CreateLoad(pt, rhs);
+            }
             jd->Builder->CreateStore(rhs, lhs);
             rp = rp->next;
         }
@@ -477,10 +503,10 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
 {
-    Type* fun_type = CodeGenLLVM2GetType(jd, n->tu);
+    FunctionType* func_type = CodeGenLLVM2FunctionType(jd, n->tu);
     struct ast_node *id = ast_node_get(n, 0);
     buffer_finish(&id->value);
-    Function* f = Function::Create((FunctionType*)fun_type, GlobalValue::ExternalLinkage, id->value.buf, *jd->TheModule);
+    Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->value.buf, *jd->TheModule);
     BasicBlock* body_block = BasicBlock::Create(*jd->TheContext, "body", f);
     jd->Builder->SetInsertPoint(body_block);
 
@@ -512,9 +538,16 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
     BasicBlock* last_block = CodeGenLLVM2GetLastBlock(jd, jd->toplevel);
     jd->Builder->SetInsertPoint(last_block);
 
-    n->sym->allocation = f;
+    PointerType* pt = func_type->getPointerTo();
+    Value* fp = jd->Builder->CreateAlloca(pt, nullptr, "funcptrtmp");
+    jd->Builder->CreateStore(f, fp);
 
-    return f;
+    n->sym->allocation = fp;
+    if (n->type == ast_type_function) {
+        n->sym->function = f;
+    }
+
+    return fp;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -563,7 +596,6 @@ Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n)
 
     assert(callee && callee->tu && callee->tu->td && callee->tu->td->type == type_function);
     Value* callee_value = CodeGenLLVM2Dispatch(jd, callee);
-    auto f = reinterpret_cast<Function*>(callee_value);
     std::vector<Value*> arg_list;
     struct ast_node* arg = cseq->head;
     while (arg) {
@@ -571,7 +603,19 @@ Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n)
         arg_list.push_back(value);
         arg = arg->next;
     }
-    return jd->Builder->CreateCall(f, arg_list);
+
+    if (callee->sym->function) {
+        auto f = static_cast<Function*>(callee->sym->function);
+        return jd->Builder->CreateCall(f, arg_list);
+    } else if (callee->sym->allocation) {
+        FunctionType* ft = CodeGenLLVM2FunctionType(jd, callee->tu);
+        PointerType* pt = ft->getPointerTo();
+        auto p = static_cast<Value*>(callee->sym->allocation);
+        Value* temp = jd->Builder->CreateLoad(pt, p, "funcptrtmp");
+        return jd->Builder->CreateCall(ft, temp, arg_list);
+    } else {
+        assert(false &&  "should always have the function or pointer");
+    }
 }
 
 Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
@@ -582,11 +626,7 @@ Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
     auto v = (AllocaInst*)sym->allocation;
     Type* t = v->getAllocatedType();
     buffer_finish(&n->value);
-    if (n->tu->td->type == type_function) {
-        return v;
-    } else {
-        return jd->Builder->CreateLoad(t, v, n->value.buf);
-    }
+    return jd->Builder->CreateLoad(t, v, n->value.buf);
 }
 
 Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n)

@@ -76,19 +76,15 @@ enum result ast_set_names(char** names)
 	return result_ok;
 }
 
-/* dynamic-output n */
 void ast_node_create(struct ast_node** n)
 {
-	/* allocate n */
 	malloc_safe((void**)n, sizeof(struct ast_node));
 	ast_node_init(*n);
 }
 
-/* dynamic-destroy n n{} */
 void ast_node_destroy(struct ast_node* n)
 {
 	if (n) {
-		/* destroy n{} */
 		struct ast_node* p = n->head;
 		while (p) {
 			struct ast_node* temp = p;
@@ -96,16 +92,13 @@ void ast_node_destroy(struct ast_node* n)
 			ast_node_destroy(temp);
 		}
 
-		/* destroy n{} */
 		buffer_destroy(&n->value);
 		ast_node_destroy(n->tu);
 
-		/* destroy n */
 		free(n);
 	}
 }
 
-/* dynamic-output-none */
 void ast_node_init(struct ast_node* n)
 {
 	n->type = ast_type_none;

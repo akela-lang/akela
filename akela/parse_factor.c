@@ -69,16 +69,19 @@ struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 
 struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_node* n, struct location* loc)
 {
+    get_location(ps, loc);
+
     if (!n) {
         ast_node_create(&n);
     }
     n->type = ast_type_anonymous_function;
 
-    if (!get_location(ps, loc)) {
-        n->type = ast_type_error;
-    }
-
-    environment_begin(ps->st);
+    /* create a unique id */
+    struct ast_node* id_node = NULL;
+    ast_node_create(&id_node);
+    id_node->type = ast_type_id;
+    buffer_add_format(&id_node->value, "__anonymous_function_%zu", symbol_table_generate_id(ps->st));
+    ast_node_add(n, id_node);
 
 	struct token* lp = NULL;
 	if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
@@ -90,7 +93,9 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-	struct ast_node* dseq_node = NULL;
+    environment_begin(ps->st);
+
+    struct ast_node* dseq_node = NULL;
 	struct location loc_dseq;
     dseq_node = parse_dseq(ps, &loc_dseq);
 	if (dseq_node && dseq_node->type == ast_type_error) {
@@ -145,7 +150,9 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-	struct token* end = NULL;
+    environment_end(ps->st);
+
+    struct token* end = NULL;
 	if (!match(ps, token_end, "expected end", &end)) {
         /* test case: test_parse_anonymous_function_expected_end */
         n->type = ast_type_error;
@@ -179,14 +186,19 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
 	token_destroy(end);
 	free(end);
 
-	if (n->type != ast_type_error) {
+    if (n->type != ast_type_error) {
 		n->tu = function2type(ps->st, n);
 		if (!check_return_type(ps, n, stmts_node, &loc_ret)) {
             n->type = ast_type_error;
         }
-	}
 
-    environment_end(ps->st);
+        struct symbol* sym = NULL;
+        symbol_create(&sym);
+        sym->tk_type = token_id;
+        sym->tu = ast_node_copy(n->tu);
+        environment_put(ps->st->top, &id_node->value, sym);
+        n->sym = sym;
+	}
 
 	return n;
 }

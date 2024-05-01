@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "zinc/hash.h"
 #include "token.h"
+#include <stdlib.h>
 
 #define ENVIRONMENT_HASH_TABLE_SIZE 32
 
@@ -21,6 +22,7 @@ struct symbol {
 	struct ast_node* root;
 	struct ast_node* root_ptr;
     void* allocation;
+    void* function;
 };
 
 struct symbol_table {
@@ -29,6 +31,7 @@ struct symbol_table {
 	struct environment* top;
 	struct ast_node* numeric_pool;
     struct environment* deactivated;
+    size_t id_count;
 };
 
 AKELA_API void environment_init(struct environment* env, struct environment* p);
@@ -39,6 +42,7 @@ AKELA_API struct symbol* environment_get_local(struct environment* env, struct b
 AKELA_API void environment_begin(struct symbol_table* st);
 AKELA_API void environment_end(struct symbol_table* st);
 AKELA_API void symbol_init(struct symbol* sym);
+AKELA_API void symbol_create(struct symbol** sym);
 AKELA_API void environment_destroy(struct environment* env);
 AKELA_API void symbol_table_init(struct symbol_table* st);
 AKELA_API void symbol_table_create(struct symbol_table** st);
@@ -52,5 +56,6 @@ AKELA_API void transfer_global_symbols(struct symbol_table* src, struct symbol_t
 AKELA_API void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name);
 AKELA_API void set_current_function(struct environment* env, struct ast_node* fd);
 AKELA_API struct ast_node* get_current_function(struct environment* env);
+AKELA_API size_t symbol_table_generate_id(struct symbol_table* st);
 
 #endif

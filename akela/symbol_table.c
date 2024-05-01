@@ -68,6 +68,13 @@ void symbol_init(struct symbol* sym)
 	sym->root = NULL;
 	sym->root_ptr = NULL;
     sym->allocation = NULL;
+    sym->function = NULL;
+}
+
+void symbol_create(struct symbol** sym)
+{
+    malloc_safe((void**)sym, sizeof(struct symbol));
+    symbol_init(*sym);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -293,6 +300,7 @@ void symbol_table_init(struct symbol_table* st)
 	st->top = env;
 	st->global = env;
     st->deactivated = NULL;
+    st->id_count = 0;
 }
 
 void symbol_table_create(struct symbol_table** st)
@@ -522,4 +530,9 @@ struct ast_node* get_current_function(struct environment* env)
 	} else {
 		return NULL;
 	}
+}
+
+size_t symbol_table_generate_id(struct symbol_table* st)
+{
+    return st->id_count++;
 }

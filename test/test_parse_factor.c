@@ -759,14 +759,12 @@ void test_parse_array_literal_error_expected_expr()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_anonymous_function()
 {
 	test_name(__func__);
 
 	
 	struct comp_unit cu;
-	bool valid;
 
     parse_setup("var a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
 	assert_no_errors(&cu.el);
@@ -788,7 +786,12 @@ void test_parse_anonymous_function()
 	assert_ptr(f, "ptr f");
 	expect_int_equal(f->type, ast_type_anonymous_function, "anonymous-function f");
 
-	struct ast_node* dseq = ast_node_get(f, 0);
+    struct ast_node* func_id = ast_node_get(f, 0);
+    assert_ptr(func_id, "ptr func_id");
+    expect_int_equal(func_id->type, ast_type_id, "type func_id");
+    expect_str(&func_id->value, "__anonymous_function_0", "value func_id");
+
+	struct ast_node* dseq = ast_node_get(f, 1);
 	assert_ptr(dseq, "ptr dseq");
 	expect_int_equal(dseq->type, ast_type_dseq, "dseq dseq");
 
@@ -831,11 +834,11 @@ void test_parse_anonymous_function()
 	assert_ptr(type_z, "ptr type_z");
 	expect_int_equal(type_z->type, ast_type_type, "type type_z");
 
-	struct ast_node* dret = ast_node_get(f, 1);
+	struct ast_node* dret = ast_node_get(f, 2);
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, ast_type_dret, "dret dret");
 
-	struct ast_node* stmts = ast_node_get(f, 2);
+	struct ast_node* stmts = ast_node_get(f, 3);
 	assert_ptr(stmts, "ptr parse_stmts");
 	expect_int_equal(stmts->type, ast_type_stmts, "stmts parse_stmts");
 
@@ -844,21 +847,16 @@ void test_parse_anonymous_function()
 	expect_int_equal(one->type, ast_type_number, "number one");
 	expect_str(&one->value, "1", "1 one");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_anonymous_function2()
 {
 	test_name(__func__);
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup(
             "var a::Function{Input{Int32, Int32, Int32}, Output{Int32}}; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end",
             &cu);
@@ -879,9 +877,14 @@ void test_parse_anonymous_function2()
 
 	struct ast_node* f = ast_node_get(assign, 1);
 	assert_ptr(f, "ptr f");
-	expect_int_equal(f->type, ast_type_anonymous_function, "anonymous-function f");
+	expect_int_equal(f->type, ast_type_anonymous_function, "type f");
 
-	struct ast_node* dseq = ast_node_get(f, 0);
+    struct ast_node* func_id = ast_node_get(f, 0);
+    assert_ptr(func_id, "ptr func_id");
+    expect_int_equal(func_id->type, ast_type_id, "type func_id");
+    expect_str(&func_id->value, "__anonymous_function_0", "value func_id");
+
+    struct ast_node* dseq = ast_node_get(f, 1);
 	assert_ptr(dseq, "ptr dseq");
 	expect_int_equal(dseq->type, ast_type_dseq, "dseq dseq");
 
@@ -924,7 +927,7 @@ void test_parse_anonymous_function2()
 	assert_ptr(type_z, "ptr type_z");
 	expect_int_equal(type_z->type, ast_type_type, "type type_z");
 
-	struct ast_node* dret = ast_node_get(f, 1);
+	struct ast_node* dret = ast_node_get(f, 2);
 	assert_ptr(dret, "ptr dret");
 	expect_int_equal(dret->type, ast_type_dret, "dret dret");
 
@@ -932,7 +935,7 @@ void test_parse_anonymous_function2()
 	assert_ptr(dret_type, "ptr dret_type");
 	expect_int_equal(dret_type->type, ast_type_type, "id dret_type");
 
-	struct ast_node* stmts = ast_node_get(f, 2);
+	struct ast_node* stmts = ast_node_get(f, 3);
 	assert_ptr(stmts, "ptr parse_stmts");
 	expect_int_equal(stmts->type, ast_type_stmts, "stmts parse_stmts");
 
@@ -941,8 +944,6 @@ void test_parse_anonymous_function2()
 	expect_int_equal(one->type, ast_type_number, "number one");
 	expect_str(&one->value, "1", "1 one");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
@@ -950,17 +951,12 @@ void test_parse_anonymous_function3()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("var a::Function; a = function(x::Int64) var x::Int64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }

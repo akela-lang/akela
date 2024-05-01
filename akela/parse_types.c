@@ -373,10 +373,8 @@ struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 	struct buffer bf;
 	int current_node = 0;
 
-	if (n->type == ast_type_function) {
-        struct ast_node* id_node = ast_node_get(n, current_node++);
-        assert(id_node->type == ast_type_id);
-	}
+    struct ast_node* id_node = ast_node_get(n, current_node++);
+    assert(id_node->type == ast_type_id);
 
 	/* function */
 	struct ast_node* tu = NULL;

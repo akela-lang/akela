@@ -350,6 +350,21 @@ void test_code_gen_call()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_call_ptr()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function (a::Int64, b::Int64, c::Int64)::Int64\n"
+             "  a + b + c\n"
+             "end\n"
+             "foo(1, 2, 3)\n",
+             &result);
+    expect_str(&result.value, "6", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen_call2()
 {
     test_name(__func__);
@@ -380,6 +395,35 @@ void test_code_gen_call3()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_anonymous_function()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function (a::Int64, b::Int64, c::Int64)::Int64\n"
+             "  a + b + c\n"
+             "end\n"
+             "foo(1, 1, 1)\n",
+             &result);
+    expect_str(&result.value, "3", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_gen_copy_from_variable()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::Int64 = 50\n"
+             "var b::Int64 = a\n"
+             "a + b\n",
+             &result);
+    expect_str(&result.value, "100", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -403,6 +447,9 @@ void test_code_gen()
     test_code_gen_function();
     test_code_gen_function_ret();
     test_code_gen_call();
+    test_code_gen_call_ptr();
     test_code_gen_call2();
     test_code_gen_call3();
+    test_code_gen_anonymous_function();
+    test_code_gen_copy_from_variable();
 }
