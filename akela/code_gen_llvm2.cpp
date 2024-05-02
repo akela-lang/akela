@@ -53,16 +53,6 @@ typedef struct {
     Function* toplevel;
 } JITData;
 
-typedef enum StorageClass {
-    StorageClassValue,
-    StorageClassPointer,
-} StorageClass;
-
-typedef struct CGResult {
-    Value* value;
-    StorageClass* sg;
-} CGResult;
-
 CodeGenVTable CodeGenLLVM2VTable = {
         .jit_offset = offsetof(CodeGenLLVM2, jit),
 };
@@ -486,7 +476,7 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
         lp->sym->allocation = lhs;
         if (rp) {
             Value* rhs = CodeGenLLVM2Dispatch(jd, rp);
-            if (tu->td->type == type_function) {
+            if (rp->type == ast_type_function || rp->type == ast_type_anonymous_function) {
                 FunctionType* func_type = CodeGenLLVM2FunctionType(jd, tu);
                 PointerType* pt = func_type->getPointerTo();
                 rhs = jd->Builder->CreateLoad(pt, rhs);

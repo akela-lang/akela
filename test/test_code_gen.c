@@ -424,6 +424,22 @@ void test_code_gen_copy_from_variable()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_function_copy()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("function foo(a::Int64)::Int64\n"
+             "  a + 1\n"
+             "end\n"
+             "var a::Function{Input{Int64},Output{Int64}} = foo\n"
+             "a(1)\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -452,4 +468,5 @@ void test_code_gen()
     test_code_gen_call3();
     test_code_gen_anonymous_function();
     test_code_gen_copy_from_variable();
+    test_code_gen_function_copy();
 }
