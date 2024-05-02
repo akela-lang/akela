@@ -1,6 +1,5 @@
 # Todo
-* combine function and anonymous function code
-* make function definitions an expression
+* make if expression
 * extern
 * add info buffer to ast node for function name and parameter names
 * add size to ast node for size of array

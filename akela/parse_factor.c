@@ -19,6 +19,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_array_literal(struct parse_state* ps, struct location* loc);
 void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc);
+struct ast_node* parse_anonymous_function(struct parse_state* ps, struct location* loc);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
@@ -33,12 +34,7 @@ struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 	t0 = get_lookahead(ps);
 
 	if (t0 && t0->type == token_function) {
-        struct token* f = NULL;
-        match(ps, token_function, "expected function", &f);
-        consume_newline(ps);
-        token_destroy(f);
-        free(f);
-        n = parse_anonymous_function(ps, NULL, loc);
+        n = parse_anonymous_function(ps, loc);
 
 	} else if (t0 && t0->type == token_not) {
 		n = parse_not(ps, loc);
@@ -67,23 +63,44 @@ struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_node* n, struct location* loc)
+struct ast_node* parse_anonymous_function(struct parse_state* ps, struct location* loc)
 {
+    struct ast_node* n = NULL;
+
     get_location(ps, loc);
 
-    if (!n) {
-        ast_node_create(&n);
-    }
-    n->type = ast_type_anonymous_function;
+    struct token* f = NULL;
+    match(ps, token_function, "expected function", &f);
+    consume_newline(ps);
+    token_destroy(f);
+    free(f);
 
-    /* create a unique id */
+    ast_node_create(&n);
+
     struct ast_node* id_node = NULL;
-    ast_node_create(&id_node);
-    id_node->type = ast_type_id;
-    buffer_add_format(&id_node->value, "__anonymous_function_%zu", symbol_table_generate_id(ps->st));
-    ast_node_add(n, id_node);
+    struct token* t0 = get_lookahead(ps);
+    if (t0->type == token_id) {
+        struct token* id = NULL;
+        if (!match(ps, token_id, "expected identifier", &id)) {
+            assert(false);
+        }
+        ast_node_create(&id_node);
+        id_node->type = ast_type_id;
+        buffer_copy(&id->value, &id_node->value);
+        ast_node_add(n, id_node);
+        n->type = ast_type_function;
+        token_destroy(id);
+        free(id);
+        consume_newline(ps);
+    } else {
+        ast_node_create(&id_node);
+        id_node->type = ast_type_id;
+        buffer_add_format(&id_node->value, "__anonymous_function_%zu", symbol_table_generate_id(ps->st));
+        ast_node_add(n, id_node);
+        n->type = ast_type_anonymous_function;
+    }
 
-	struct token* lp = NULL;
+    struct token* lp = NULL;
 	if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
         /* test case: no test case needed */
         n->type = ast_type_error;
@@ -94,6 +111,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
     }
 
     environment_begin(ps->st);
+    set_current_function(ps->st->top, n);
 
     struct ast_node* dseq_node = NULL;
 	struct location loc_dseq;
@@ -116,7 +134,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
         n->type = ast_type_error;
     }
 
-	struct token* t0 = get_lookahead(ps);
+	t0 = get_lookahead(ps);
 	struct ast_node* dret_type = NULL;
 	struct location loc_ret;
 	if (t0 && t0->type == token_double_colon) {
@@ -187,17 +205,41 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct ast_nod
 	free(end);
 
     if (n->type != ast_type_error) {
-		n->tu = function2type(ps->st, n);
-		if (!check_return_type(ps, n, stmts_node, &loc_ret)) {
+        /* check and save symbol */
+        struct symbol* search = environment_get_local(ps->st->top, &id_node->value);
+        if (search) {
+            buffer_finish(&id_node->value);
+            error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
             n->type = ast_type_error;
+            /* test case: test_parse_function_error_duplicate_declaration */
+        } else {
+            struct symbol* sym = environment_get(ps->st->top, &id_node->value);
+            if (sym && sym->td) {
+                buffer_finish(&id_node->value);
+                error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
+                n->type = ast_type_error;
+                /* test case: test_parse_function_error_identifier_reserved */
+            } else {
+                struct ast_node* tu = function2type(ps->st, n);
+                struct symbol* new_sym = NULL;
+                malloc_safe((void**)&new_sym, sizeof(struct symbol));
+                symbol_init(new_sym);
+                new_sym->tk_type = token_id;
+                new_sym->tu = tu;
+                environment_put(ps->st->top, &id_node->value, new_sym);
+                n->tu = ast_node_copy(tu);
+                n->sym = new_sym;
+            }
         }
 
-        struct symbol* sym = NULL;
-        symbol_create(&sym);
-        sym->tk_type = token_id;
-        sym->tu = ast_node_copy(n->tu);
-        environment_put(ps->st->top, &id_node->value, sym);
-        n->sym = sym;
+        /* check return type */
+        n->tu = function2type(ps->st, n);
+        if (!check_return_type(ps, n, stmts_node, &loc_ret)) {
+            n->type = ast_type_error;
+        }
+    }
+
+    if (n->type != ast_type_error) {
 	}
 
 	return n;

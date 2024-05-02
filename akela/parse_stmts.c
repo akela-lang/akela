@@ -22,9 +22,6 @@ struct ast_node* parse_while(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_for(struct parse_state* ps, struct location* loc);
 void parse_for_range(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 void parse_for_iteration(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-struct ast_node* parse_function(struct parse_state* ps, struct location* loc);
-void parse_function_start(struct parse_state* ps, struct ast_node* n, struct location* loc);
-void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc);
 struct ast_node* parse_if(struct parse_state* ps, struct location* loc);
 void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_else(struct parse_state* ps, struct location* loc);
@@ -104,8 +101,6 @@ struct ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct l
 }
 
 /* separator -> \n | ; */
-/* dynamic-output ps{} */
-/* dynamic-temp sep sep{} */
 void parse_separator(struct parse_state* ps, bool* has_separator, struct location* loc)
 {
 	enum token_enum type;
@@ -164,10 +159,6 @@ struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
 	/* for */
 	} else if (t0 && t0->type == token_for) {
 		n = parse_for(ps, loc);
-
-		/* function word (seq) stmts end */
-	} else if (t0 && t0->type == token_function) {
-		n = parse_function(ps, loc);
 
 	} else if (t0 && t0->type == token_if) {
 		n = parse_if(ps, loc);
@@ -481,206 +472,6 @@ void parse_for_iteration(struct parse_state* ps, struct ast_node* parent, struct
 
 	token_destroy(in);
 	free(in);
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
-{
-    get_location(ps, loc);
-
-    struct ast_node* n = NULL;
-    ast_node_create(&n);
-    n->type = ast_type_function;
-
-	location_init(loc);
-
-    struct token* f = NULL;
-    if (!match(ps, token_function, "expected function", &f)) {
-        n->type = ast_type_error;
-    }
-    token_destroy(f);
-    free(f);
-
-    consume_newline(ps);
-
-    struct token* t0 = get_lookahead(ps);
-    if (t0 && t0->type == token_id) {
-        environment_begin(ps->st);
-
-        struct location loc_start;
-        parse_function_start(ps, n, &loc_start);
-
-        if (n) {
-            struct location loc_finish;
-            parse_function_finish(ps, n, &loc_finish);
-            if (n->type == ast_type_error) {
-                n->type = ast_type_error;
-            }
-        }
-
-        environment_end(ps->st);
-    } else if (t0 && t0->type == token_left_paren) {
-        struct location af_loc;
-        parse_anonymous_function(ps, n, &af_loc);
-    } else {
-        n->type = ast_type_error;
-        error_list_set(ps->el, loc, "expected function name or parenthesis");
-    }
-
-	return n;
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-/* function_start -> id ( dseq ) | id ( dseq ) :: type */
-void parse_function_start(struct parse_state* ps, struct ast_node* n, struct location* loc)
-{
-    get_location(ps, loc);
-
-	struct token* id = NULL;
-	if (!match(ps, token_id, "expecting identifier", &id)) {
-        /* test case: no test case needed */
-        n->type = ast_type_error;
-    }
-
-    struct ast_node* a;
-    ast_node_create(&a);
-    a->type = ast_type_id;
-    if (id) {
-        buffer_copy(&id->value, &a->value);
-    }
-    ast_node_add(n, a);
-
-    consume_newline(ps);
-
-	struct token* lp = NULL;
-	if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
-        /* test case: test_parse_function_error_expected_left_parenthesis */
-        n->type = ast_type_error;
-    }
-
-    consume_newline(ps);
-
-	struct ast_node* dseq_node = NULL;
-	struct location loc_dseq;
-    dseq_node = parse_dseq(ps, &loc_dseq);
-	if (dseq_node && dseq_node->type == ast_type_error) {
-        n->type = ast_type_error;
-    }
-
-    if (dseq_node) {
-        ast_node_add(n, dseq_node);
-    }
-
-    consume_newline(ps);
-
-	struct token* rp = NULL;
-	if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
-        /* test case: test_parse_function_error_expected_right_parenthesis */
-        n->type = ast_type_error;
-    }
-
-    consume_newline(ps);
-
-	struct ast_node* dret_node = NULL;
-	struct token* next = get_lookahead(ps);
-	if (next && next->type == token_double_colon) {
-		struct token* dc = NULL;
-		if (!match(ps, token_double_colon, "expecting double colon", &dc)) {
-            /* test case: no test case needed */
-            n->type = ast_type_error;
-        }
-		token_destroy(dc);
-		free(dc);
-
-        consume_newline(ps);
-
-		struct location loc_ret;
-        dret_node = parse_type(ps, NULL, &loc_ret);
-		if (dret_node && dret_node->type == ast_type_error) {
-            n->type = ast_type_error;
-        }
-	}
-
-    struct ast_node* b;
-    ast_node_create(&b);
-    b->type = ast_type_dret;
-
-    if (dret_node) {
-        ast_node_add(b, dret_node);
-    }
-
-    ast_node_add(n, b);
-
-
-	if (n->type != ast_type_error) {
-		struct symbol* search = environment_get_local(ps->st->top->prev, &id->value);
-		if (search) {
-			buffer_finish(&id->value);
-			error_list_set(ps->el, &id->loc, "duplicate declaration in same scope: %s", id->value.buf);
-            n->type = ast_type_error;
-			/* test case: test_parse_function_error_duplicate_declaration */
-		} else {
-			struct symbol* sym = environment_get(ps->st->top, &id->value);
-			if (sym && sym->td) {
-                buffer_finish(&id->value);
-				error_list_set(ps->el, &id->loc, "identifier reserved as a type: %s", id->value.buf);
-                n->type = ast_type_error;
-				/* test case: test_parse_function_error_identifier_reserved */
-			} else {
-				struct ast_node* tu = function2type(ps->st, n);
-				struct symbol* new_sym = NULL;
-				malloc_safe((void**)&new_sym, sizeof(struct symbol));
-				symbol_init(new_sym);
-				new_sym->tk_type = id->type;
-				new_sym->tu = tu;
-				environment_put(ps->st->top->prev, &id->value, new_sym);
-				n->tu = ast_node_copy(tu);
-                n->sym = new_sym;
-			}
-		}
-	}
-
-	token_destroy(id);
-	free(id);
-	token_destroy(lp);
-	free(lp);
-	token_destroy(rp);
-	free(rp);
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void parse_function_finish(struct parse_state* ps, struct ast_node* fd, struct location* loc)
-{
-	get_location(ps, loc);
-
-	set_current_function(ps->st->top, fd);
-	struct ast_node* stmts_node = NULL;
-	struct location loc_stmts;
-    stmts_node = parse_stmts(ps, true, &loc_stmts);
-	if (stmts_node && stmts_node->type == ast_type_error) {
-        fd->type = ast_type_error;
-    }
-
-	/* allocate ps{} end end{} */
-	struct token* end = NULL;
-	if (!match(ps, token_end, "expected end", &end)) {
-        /* test case: test_parse_function_error_expected_end */
-        fd->type = ast_type_error;
-    }
-
-	/* finish building nodes */
-	if (stmts_node) {
-		ast_node_add(fd, stmts_node);
-	}
-
-	token_destroy(end);
-	free(end);
-
-    if (fd->type != ast_type_error) {
-        if (!check_return_type(ps, fd, stmts_node, &loc_stmts)) {
-            fd->type = ast_type_error;
-        }
-    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -1125,9 +916,11 @@ struct ast_node* parse_return(struct parse_state* ps, struct location* loc)
 					/* test case: test_parse_return_error_outside_of_function */
                     n->type = ast_type_error;
 				} else {
-					if (!check_return_type(ps, fd, n, &ret->loc)) {
-                        /* test case: test_parse_return_error_type_does_not_match */
+                    if (fd->tu) {
+                        if (!check_return_type(ps, fd, n, &ret->loc)) {
+                            /* test case: test_parse_return_error_type_does_not_match */
                             n->type = ast_type_error;
+                        }
                     }
 				}
 			}
