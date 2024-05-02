@@ -967,15 +967,11 @@ void test_parse_anonymous_function_assignment_error()
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("var a::Function = function(x::Int64) end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "values in assignment not compatible");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }

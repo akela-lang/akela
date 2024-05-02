@@ -390,7 +390,6 @@ struct ast_node* function2type(struct symbol_table* st, struct ast_node* n)
 
 	/* input */
 	struct ast_node* dseq = ast_node_get(n, current_node++);
-    assert(dseq->type == ast_type_dseq);
 
 	if (dseq->head) {
 		struct ast_node* input_tu = NULL;
@@ -445,21 +444,23 @@ bool check_return_type(struct parse_state* ps, struct ast_node* fd, struct ast_n
     bool valid = true;
 
 	assert(fd);
-	assert(fd->tu);
-	struct ast_node* tu = fd->tu;
-	struct ast_node* p = tu->head;
-	while (p) {
-		struct type_def* p_td = p->td;
-		if (p_td->type == type_function_output) {
-			struct ast_node* ret = ast_node_get(p, 0);
-			if (ret) {
-				if (!type_use_can_cast(ret, stmts_node->tu)) {
-					valid = error_list_set(ps->el, loc, "returned type does not match function return type");
-				}
-			}
-		}
-		p = p->next;
-	}
+
+    if (fd->type != ast_type_error && stmts_node->type != ast_type_error) {
+        struct ast_node* tu = fd->tu;
+        struct ast_node* p = tu->head;
+        while (p) {
+            struct type_def* p_td = p->td;
+            if (p_td->type == type_function_output) {
+                struct ast_node* ret = ast_node_get(p, 0);
+                if (ret) {
+                    if (!type_use_can_cast(ret, stmts_node->tu)) {
+                        valid = error_list_set(ps->el, loc, "returned type does not match function return type");
+                    }
+                }
+            }
+            p = p->next;
+        }
+    }
 
     return valid;
 }

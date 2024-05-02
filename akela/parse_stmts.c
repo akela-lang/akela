@@ -916,11 +916,9 @@ struct ast_node* parse_return(struct parse_state* ps, struct location* loc)
 					/* test case: test_parse_return_error_outside_of_function */
                     n->type = ast_type_error;
 				} else {
-                    if (fd->tu) {
-                        if (!check_return_type(ps, fd, n, &ret->loc)) {
-                            /* test case: test_parse_return_error_type_does_not_match */
-                            n->type = ast_type_error;
-                        }
+                    if (!check_return_type(ps, fd, n, &ret->loc)) {
+                        /* test case: test_parse_return_error_type_does_not_match */
+                        n->type = ast_type_error;
                     }
 				}
 			}

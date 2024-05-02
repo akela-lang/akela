@@ -106,9 +106,7 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct locatio
         n->type = ast_type_error;
     }
 
-    if (!consume_newline(ps)) {
-        n->type = ast_type_error;
-    }
+    consume_newline(ps);
 
     environment_begin(ps->st);
     set_current_function(ps->st->top, n);
@@ -118,6 +116,10 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct locatio
     dseq_node = parse_dseq(ps, &loc_dseq);
 	if (dseq_node && dseq_node->type == ast_type_error) {
         n->type = ast_type_error;
+    }
+
+    if (dseq_node) {
+        ast_node_add(n, dseq_node);
     }
 
     if (!consume_newline(ps)) {
@@ -161,11 +163,27 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct locatio
         }
 	}
 
-	struct ast_node* stmts_node = NULL;
+    struct ast_node* dret = NULL;
+    ast_node_create(&dret);
+    dret->type = ast_type_dret;
+    ast_node_add(n, dret);
+
+    if (dret_type) {
+        ast_node_add(dret, dret_type);
+    }
+
+    /* type needed in case of return in statements */
+    n->tu = function2type(ps->st, n);
+
+    struct ast_node* stmts_node = NULL;
 	struct location loc_stmts;
     stmts_node = parse_stmts(ps, true, &loc_stmts);
 	if (stmts_node && stmts_node->type == ast_type_error) {
         n->type = ast_type_error;
+    }
+
+    if (stmts_node) {
+        ast_node_add(n, stmts_node);
     }
 
     environment_end(ps->st);
@@ -175,27 +193,6 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct locatio
         /* test case: test_parse_anonymous_function_expected_end */
         n->type = ast_type_error;
     }
-
-	if (dseq_node) {
-        ast_node_add(n, dseq_node);
-    }
-
-
-    struct ast_node* dret = NULL;
-    ast_node_create(&dret);
-    dret->type = ast_type_dret;
-
-    if (dret_type) {
-        ast_node_add(dret, dret_type);
-    }
-
-    if (dret) {
-        ast_node_add(n, dret);
-    }
-
-    if (stmts_node) {
-		ast_node_add(n, stmts_node);
-	}
 
 	token_destroy(lp);
 	free(lp);
@@ -233,14 +230,10 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct locatio
         }
 
         /* check return type */
-        n->tu = function2type(ps->st, n);
         if (!check_return_type(ps, n, stmts_node, &loc_ret)) {
             n->type = ast_type_error;
         }
     }
-
-    if (n->type != ast_type_error) {
-	}
 
 	return n;
 }
