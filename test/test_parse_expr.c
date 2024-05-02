@@ -7,7 +7,6 @@
 #include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"
 
-/* dynamic-output-none */
 void test_parse_blank()
 {
 	test_name(__func__);

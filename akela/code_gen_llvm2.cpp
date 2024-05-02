@@ -494,13 +494,14 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
 Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
 {
     FunctionType* func_type = CodeGenLLVM2FunctionType(jd, n->tu);
-    struct ast_node *id = ast_node_get(n, 0);
+    struct ast_node *proto = ast_node_get(n, 0);
+    struct ast_node *id = ast_node_get(proto, 0);
     buffer_finish(&id->value);
     Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->value.buf, *jd->TheModule);
     BasicBlock* body_block = BasicBlock::Create(*jd->TheContext, "body", f);
     jd->Builder->SetInsertPoint(body_block);
 
-    struct ast_node* dseq = ast_node_get(n, 1);
+    struct ast_node* dseq = ast_node_get(proto, 1);
     struct ast_node* dec = dseq->head;
     int i = 0;
     while (dec) {
@@ -517,7 +518,7 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
         i++;
     }
 
-    struct ast_node* body = ast_node_get(n, 3);
+    struct ast_node* body = ast_node_get(n, 1);
     Value* ret_value = CodeGenLLVM2Dispatch(jd, body);
     if (body->tu) {
         jd->Builder->CreateRet(ret_value);

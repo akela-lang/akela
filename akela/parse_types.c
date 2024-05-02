@@ -12,6 +12,136 @@
 #include <assert.h>
 
 void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
+void declare_type(struct parse_state* ps, struct ast_node* n, struct ast_node* id_node);
+
+struct ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location* loc)
+{
+    struct ast_node* n = NULL;
+
+    get_location(ps, loc);
+
+    ast_node_create(&n);
+    n->type = ast_type_prototype;
+
+    /* index 0: id */
+    struct ast_node* id_node = NULL;
+    struct token* t0 = get_lookahead(ps);
+    if (t0->type == token_id) {
+        struct token* id = NULL;
+        if (!match(ps, token_id, "expected identifier", &id)) {
+            assert(false);
+        }
+        ast_node_create(&id_node);
+        id_node->type = ast_type_id;
+        buffer_copy(&id->value, &id_node->value);
+        ast_node_add(n, id_node);
+        token_destroy(id);
+        free(id);
+        consume_newline(ps);
+        *has_id = true;
+    } else {
+        ast_node_create(&id_node);
+        id_node->type = ast_type_id;
+        buffer_add_format(&id_node->value, "__anonymous_function_%zu", symbol_table_generate_id(ps->st));
+        ast_node_add(n, id_node);
+        *has_id = false;
+    }
+
+    struct token* lp = NULL;
+    if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
+        /* test case: no test case needed */
+        n->type = ast_type_error;
+    }
+    token_destroy(lp);
+    free(lp);
+
+    consume_newline(ps);
+
+    /* index 1: dseq */
+    struct ast_node* dseq_node = NULL;
+    struct location loc_dseq;
+    dseq_node = parse_dseq(ps, &loc_dseq);
+    if (dseq_node && dseq_node->type == ast_type_error) {
+        n->type = ast_type_error;
+    }
+
+    if (dseq_node) {
+        ast_node_add(n, dseq_node);
+    }
+
+    if (!consume_newline(ps)) {
+        n->type = ast_type_error;
+    }
+
+    struct token* rp = NULL;
+    if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
+        /* test case: test_parse_anonymous_function_expected_right_paren */
+        n->type = ast_type_error;
+    }
+    token_destroy(rp);
+    free(rp);
+
+    if (!consume_newline(ps)) {
+        n->type = ast_type_error;
+    }
+
+    /* index 2: ret */
+    t0 = get_lookahead(ps);
+    struct ast_node* ret_type = NULL;
+    struct location ret_loc;
+    location_init(&ret_loc);
+    if (t0 && t0->type == token_double_colon) {
+        struct token* dc = NULL;
+        if (!match(ps, token_double_colon, "expecting double colon", &dc)) {
+            /* test case: no test case needed */
+            n->type = ast_type_error;
+        }
+        token_destroy(dc);
+        free(dc);
+
+        if (!consume_newline(ps)) {
+            n->type = ast_type_error;
+        }
+
+        ret_type = parse_type(ps, &ret_loc);
+        if (ret_type && ret_type->type == ast_type_error) {
+            n->type = ast_type_error;
+        }
+
+        if (!ret_type) {
+            error_list_set(ps->el, &ret_loc, "expected a type");
+            n->type = ast_type_error;
+        }
+    }
+
+    struct ast_node* ret = NULL;
+    ast_node_create(&ret);
+    ret->type = ast_type_dret;
+    ret->loc = ret_loc;
+    ast_node_add(n, ret);
+
+    if (ret_type) {
+        ast_node_add(ret, ret_type);
+    }
+
+    /* index 3: type */
+    struct ast_node* tu = function2type(ps->st, n);
+    ast_node_add(n, tu);
+
+    return n;
+}
+
+void declare_params(struct parse_state* ps, struct ast_node* proto)
+{
+    struct ast_node* dseq = ast_node_get(proto, 1);
+    struct ast_node* dec = dseq->head;
+    while (dec) {
+        struct ast_node* id_node = ast_node_get(dec, 0);
+        struct ast_node* type_node = ast_node_get(dec, 1);
+        declare_type(ps, type_node, id_node);
+        dec = dec->next;
+    }
+}
 
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | e */
@@ -25,7 +155,7 @@ struct ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 
 	struct ast_node* dec = NULL;
 	struct location loc_dec;
-	dec = parse_declaration(ps, true, &loc_dec);
+	dec = parse_declaration(ps, false, &loc_dec);
     if (dec && dec->type == ast_type_error) {
         n->type = ast_type_error;
     }
@@ -56,7 +186,7 @@ struct ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 
 		struct ast_node* dec = NULL;
 		struct location loc_dec;
-		dec = parse_declaration(ps, true, &loc_dec);
+		dec = parse_declaration(ps, false, &loc_dec);
         if (dec && dec->type == ast_type_error) {
             n->type = ast_type_error;
         }
@@ -118,9 +248,10 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
 		struct ast_node* type_use = NULL;
 		struct location loc_type;
         if (add_symbol) {
-            type_use = parse_type(ps, id_node, &loc_type);
+            type_use = parse_type(ps, &loc_type);
+            declare_type(ps, type_use, id_node);
         } else {
-            type_use = parse_type(ps, NULL, &loc_type);
+            type_use = parse_type(ps, &loc_type);
         }
         if (type_use && type_use->type == ast_type_error) {
             n->type = ast_type_error;
@@ -184,7 +315,7 @@ void check_id_node(struct parse_state* ps, struct ast_node* n, struct ast_node* 
 }
 
 /* type -> id | id { tseq } */
-struct ast_node* parse_type(struct parse_state* ps, struct ast_node* id_node, struct location* loc)
+struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
 	bool is_generic = false;
@@ -279,27 +410,30 @@ struct ast_node* parse_type(struct parse_state* ps, struct ast_node* id_node, st
 			}
 		}
 
-		if (n->type != ast_type_error) {
-            if (id_node) {
-                if (id_node->type == ast_type_id) {
-                    check_id_node(ps, n, id_node);
-                } else if (id_node->type == ast_type_var_lseq) {
-                    struct ast_node* p = id_node->head;
-                    while (p) {
-                        check_id_node(ps, n, p);
-                        p = p->next;
-                    }
-                } else {
-                    assert(false);
-                }
-            }
-		}
-
 		token_destroy(name);
 		free(name);
 	}
 
 	return n;
+}
+
+void declare_type(struct parse_state* ps, struct ast_node* n, struct ast_node* id_node)
+{
+    if (n && n->type != ast_type_error) {
+        if (id_node) {
+            if (id_node->type == ast_type_id) {
+                check_id_node(ps, n, id_node);
+            } else if (id_node->type == ast_type_var_lseq) {
+                struct ast_node* p = id_node->head;
+                while (p) {
+                    check_id_node(ps, n, p);
+                    p = p->next;
+                }
+            } else {
+                assert(false);
+            }
+        }
+    }
 }
 
 /* tseq -> type tseq' */
@@ -312,7 +446,7 @@ void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location
 	get_location(ps, loc);
 
 	struct location loc_type;
-    tu = parse_type(ps, NULL, &loc_type);
+    tu = parse_type(ps, &loc_type);
 	if (tu && tu->type == ast_type_error) {
         parent->type = ast_type_error;
     }
@@ -347,7 +481,7 @@ void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location
 
         consume_newline(ps);
 
-        tu = parse_type(ps, NULL, &loc_type);
+        tu = parse_type(ps, &loc_type);
 		if (tu && tu->type == ast_type_error) {
             parent->type = ast_type_error;
         }

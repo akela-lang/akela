@@ -178,6 +178,11 @@ struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
     return n;
 }
 
+struct ast_node* parse_extern(struct parse_state* ps, struct location* loc)
+{
+
+}
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
 struct ast_node* parse_while(struct parse_state* ps, struct location* loc)
 {
@@ -776,7 +781,8 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
 
     struct ast_node* type_use = NULL;
     struct location type_use_loc;
-    type_use = parse_type(ps, a, &type_use_loc);
+    type_use = parse_type(ps, &type_use_loc);
+    declare_type(ps, type_use, a);
     if (type_use && type_use->type == ast_type_error) {
         n->type = ast_type_error;
     }

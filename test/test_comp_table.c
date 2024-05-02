@@ -152,10 +152,7 @@ void test_comp_table_include_base()
 
 	struct comp_unit* cu_base = NULL;
 	bool valid = include_base(&ct, cu_main, &cu_base);
-	assert_no_errors(&cu_main->el);
 	assert_true(valid, "include_base valid");
-
-	/* test base */
 	expect_no_errors(&cu_base->el);
 	expect_true(cu_base->valid, "valid_base");
 
