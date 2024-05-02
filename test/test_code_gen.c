@@ -468,6 +468,26 @@ void test_code_gen_anonymous_function_expression()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_if_expression()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::Int64 = if true 1 else 2 end\n"
+             "a\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::Int64 = if false 1 else 2 end\n"
+             "a\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -499,4 +519,5 @@ void test_code_gen()
     test_code_gen_function_copy();
     test_code_gen_function_expression();
     test_code_gen_anonymous_function_expression();
+    test_code_gen_if_expression();
 }

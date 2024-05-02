@@ -20,6 +20,9 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
 void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
 struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_anonymous_function(struct parse_state* ps, struct location* loc);
+struct ast_node* parse_if(struct parse_state* ps, struct location* loc);
+void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc);
+struct ast_node* parse_else(struct parse_state* ps, struct location* loc);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
@@ -32,32 +35,32 @@ struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 
     struct token* t0;
 	t0 = get_lookahead(ps);
+    assert(t0);
 
-	if (t0 && t0->type == token_function) {
+	if (t0->type == token_function) {
         n = parse_anonymous_function(ps, loc);
 
-	} else if (t0 && t0->type == token_not) {
+    } else if (t0->type == token_if) {
+        n = parse_if(ps, loc);
+
+	} else if (t0->type == token_not) {
 		n = parse_not(ps, loc);
 
-	} else if (t0 && (t0->type == token_number || t0->type == token_string || t0->type == token_boolean)) {
+	} else if (t0->type == token_number || t0->type == token_string || t0->type == token_boolean) {
 		n = parse_literal(ps, loc);
 
-	} else if (t0 && t0->type == token_id) {
+	} else if (t0->type == token_id) {
 		n = parse_id(ps, loc);
 
-	} else if (t0 && (t0->type == token_plus || t0->type == token_minus)) {
+	} else if (t0->type == token_plus || t0->type == token_minus) {
 		n = parse_sign(ps, loc);
 
-	} else if (t0 && t0->type == token_left_square_bracket) {
+	} else if (t0->type == token_left_square_bracket) {
 		n = parse_array_literal(ps, loc);
 
-	} else if (t0 && t0->type == token_left_paren) {
+	} else if (t0->type == token_left_paren) {
 		n = parse_parenthesis(ps, loc);
-	} else {
-        if (!get_location(ps, loc)) {
-            ast_node_create(&n);
-            n->type = ast_type_error;
-        }
+
     }
 
 	return n;
@@ -236,6 +239,210 @@ struct ast_node* parse_anonymous_function(struct parse_state* ps, struct locatio
     }
 
 	return n;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
+{
+    get_location(ps, loc);
+
+    struct ast_node* n = NULL;
+    ast_node_create(&n);
+    n->type = ast_type_if;
+
+    struct token* ift = NULL;
+    if (!match(ps, token_if, "expecting if", &ift)) {
+        /* test case: no test case necessary */
+        n->type = ast_type_error;
+    }
+
+    token_destroy(ift);
+    free(ift);
+
+    struct ast_node* cb = NULL;
+    ast_node_create(&cb);
+    cb->type = ast_type_conditional_branch;
+
+    ast_node_add(n, cb);
+
+    struct ast_node* cond = NULL;
+    struct location loc_expr;
+    cond = parse_expr(ps, &loc_expr);
+    if (cond && cond->type == ast_type_error) {
+        n->type = ast_type_error;
+    }
+
+    if (cond == NULL) {
+        error_list_set(ps->el, &loc_expr, "expected condition after if");
+        /* test case: test_parse_if_error_expected_expression */
+        n->type = ast_type_error;
+        cb->type = ast_type_error;
+    } else {
+        ast_node_add(cb, cond);
+    }
+
+    struct ast_node* body = NULL;
+    struct location loc_stmts;
+    body = parse_stmts(ps, false, &loc_stmts);
+    if (body && body->type == ast_type_error) {
+        n->type = ast_type_error;
+        cb->type = ast_type_error;
+    }
+
+    if (body) {
+        cb->tu = ast_node_copy(body->tu);
+        ast_node_add(cb, body);
+    }
+
+    struct location loc_elseif;
+    parse_elseif(ps, n, &loc_elseif);
+
+    struct location b_loc;
+    struct ast_node* b = NULL;
+    b = parse_else(ps, &b_loc);
+    if (b && b->type == ast_type_error) {
+        n->type = ast_type_error;
+    }
+
+    if (b) {
+        ast_node_add(n, b);
+    }
+
+    struct token* end = NULL;
+    if (!match(ps, token_end, "expected end", &end)) {
+        /* test case: test_parse_if_error_expected_end */
+        n->type = ast_type_error;
+    }
+
+    token_destroy(end);
+    free(end);
+
+    if (n->type != ast_type_error) {
+        if (b) {
+            /* only return a value if else exists */
+            struct ast_node* p = n->head;
+            struct ast_node* tu = NULL;
+            if (p) {
+                tu = ast_node_copy(p->tu);
+                p = p->next;
+            }
+            while (p) {
+                if (!type_find_whole(ps->st, tu, p->tu)) {
+                    error_list_set(ps->el, &p->loc,
+                                   "branch type does not match type of previous branch");
+                    n->type = ast_type_error;
+                    break;
+                }
+                p = p->next;
+            }
+            n->tu = tu;
+        }
+    }
+
+    return n;
+}
+
+/* elseif-statement -> elseif expr stmts elseif | e */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc)
+{
+    get_location(ps, loc);
+
+    while (true) {
+        struct token* t0 = get_lookahead(ps);
+        if (t0->type != token_elseif) {
+            break;
+        }
+
+        struct token *eit = NULL;
+        if (!match(ps, token_elseif, "expecting elseif", &eit)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
+
+        token_destroy(eit);
+        free(eit);
+
+        struct ast_node *cb = NULL;
+        ast_node_create(&cb);
+        cb->type = ast_type_conditional_branch;
+
+        struct ast_node *cond = NULL;
+        struct location loc_cond;
+        cond = parse_expr(ps, &loc_cond);
+        if (cond && cond->type == ast_type_error) {
+            cb->type = ast_type_error;
+            parent->type = ast_type_error;
+        }
+
+        if (!cond) {
+            error_list_set(ps->el, &loc_cond, "expected condition after elseif");
+            /* test case: test_parse_if_error_expected_elseif_expression */
+            cb->type = ast_type_error;
+            parent->type = ast_type_error;
+        } else {
+            ast_node_add(cb, cond);
+        }
+
+        struct ast_node *body = NULL;
+        struct location loc_node;
+        body = parse_stmts(ps, false, &loc_node);
+        if (body && body->type == ast_type_error) {
+            cb->type = ast_type_error;
+            parent->type = ast_type_error;
+        }
+
+        if (body) {
+            ast_node_add(cb, body);
+            cb->tu = ast_node_copy(body->tu);
+        }
+
+        ast_node_add(parent, cb);
+
+        struct location loc_elseif;
+    }
+}
+
+/* parse_else -> else stmts | e */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
+{
+    get_location(ps, loc);
+
+    struct ast_node* n = NULL;
+
+    struct token* t0 = get_lookahead(ps);
+    if (t0 && t0->type == token_else) {
+        ast_node_create(&n);
+        n->type = ast_type_default_branch;
+
+        struct token* et = NULL;
+        if (!match(ps, token_else, "expected else", &et)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
+
+        token_destroy(et);
+        free(et);
+
+        /* stmts */
+        struct ast_node* body = NULL;
+        struct location body_loc;
+        body = parse_stmts(ps, false, &body_loc);
+        if (body && body->type == ast_type_error) {
+            n->type = ast_type_error;
+        }
+
+        if (body) {
+            n->tu = ast_node_copy(body->tu);
+        }
+
+        if (body) {
+            ast_node_add(n, body);
+        }
+    }
+
+    return n;
 }
 
 struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
