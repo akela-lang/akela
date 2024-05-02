@@ -1757,7 +1757,7 @@ void test_parse_factor_newline_anonymous_function()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup("function\n(\na::Int64,\nb::Int64,\nc::Int64\n)\n::\nInt64\na+b+c\nend", &cu);
+    parse_setup("function\n(\na::Int64,\nb::Int64,\nc::Int64\n)::\nInt64\na+b+c\nend", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1778,8 +1778,7 @@ void test_parse_factor_newline_anonymous_function_var()
             "a::Int64,\n"
             "b::Int64,\n"
             "c::Int64\n"
-            ")\n"
-            "::\n"
+            ")::\n"
             "Int64\n"
             "a+b+c\n"
             "end", &cu);

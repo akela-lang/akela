@@ -61,6 +61,7 @@ Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu);
 bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, CodeGenResult* result);
 Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Stmts(JITData* jd, struct ast_node* n);
+Value* CodeGenLLVM2Extern(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2If(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n);
@@ -302,6 +303,8 @@ Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n)
 {
     if (n->type == ast_type_stmts) {
         return CodeGenLLVM2Stmts(jd, n);
+    } else if (n->type == ast_type_extern) {
+        return CodeGenLLVM2Extern(jd, n);
     } else if (n->type == ast_type_if) {
         return CodeGenLLVM2If(jd, n);
     } else if (n->type == ast_type_var) {
@@ -541,6 +544,27 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
     return fp;
 }
 
+Value* CodeGenLLVM2Extern(JITData* jd, struct ast_node* n)
+{
+    FunctionType* func_type = CodeGenLLVM2FunctionType(jd, n->tu);
+    struct ast_node *proto = ast_node_get(n, 0);
+    struct ast_node *id = ast_node_get(proto, 0);
+    buffer_finish(&id->value);
+    Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->value.buf, *jd->TheModule);
+
+    BasicBlock* last_block = CodeGenLLVM2GetLastBlock(jd, jd->toplevel);
+    jd->Builder->SetInsertPoint(last_block);
+
+    PointerType* pt = func_type->getPointerTo();
+    Value* fp = jd->Builder->CreateAlloca(pt, nullptr, "funcptrtmp");
+    jd->Builder->CreateStore(f, fp);
+
+    n->sym->allocation = fp;
+    n->sym->function = f;
+
+    return fp;
+}
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n)
 {
@@ -615,9 +639,12 @@ Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
     struct symbol* sym = n->sym;
     assert(sym);
     auto v = (AllocaInst*)sym->allocation;
-    Type* t = v->getAllocatedType();
-    buffer_finish(&n->value);
-    return jd->Builder->CreateLoad(t, v, n->value.buf);
+    if (v) {
+        Type* t = v->getAllocatedType();
+        buffer_finish(&n->value);
+        return jd->Builder->CreateLoad(t, v, n->value.buf);
+    }
+    return nullptr;
 }
 
 Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n)

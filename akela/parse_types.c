@@ -81,10 +81,6 @@ struct ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct lo
     token_destroy(rp);
     free(rp);
 
-    if (!consume_newline(ps)) {
-        n->type = ast_type_error;
-    }
-
     /* index 2: ret */
     t0 = get_lookahead(ps);
     struct ast_node* ret_type = NULL;

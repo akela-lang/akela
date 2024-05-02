@@ -1,5 +1,4 @@
 # Todo
-* extern
 * generate IR to serialize arbitrary value and call it to get return value returned by toplevel function
 * move zinc into akela repo
 * move code gen into llvm and generic libraries: zinc, akela-parse, akela-llvm, akela-compile

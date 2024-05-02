@@ -28,6 +28,7 @@ struct ast_node* parse_return(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_var(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, struct list* l);
+struct ast_node* parse_extern(struct parse_state* ps, struct location* loc);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -142,36 +143,23 @@ struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
 	location_init(loc);
 
     struct token* t0 = get_lookahead(ps);
+    assert(t0);
 
-    /* e */
-	if (!t0) {
-		return n;
-	}
-
-
-	/* while */
-	if (t0 && t0->type == token_while) {
+	if (t0->type == token_while) {
 		n = parse_while(ps, loc);
-
-	/* for */
-	} else if (t0 && t0->type == token_for) {
+	} else if (t0->type == token_for) {
 		n = parse_for(ps, loc);
-
-	} else if (t0 && t0->type == token_module) {
+	} else if (t0->type == token_module) {
 		n = parse_module(ps, loc);
-
-	} else if (t0 && t0->type == token_struct) {
+	} else if (t0->type == token_struct) {
 		n = parse_struct(ps, loc);
-
-	} else if (t0 && t0->type == token_return) {
+	} else if (t0->type == token_return) {
         n = parse_return(ps, loc);
-
-    } else if (t0 && t0->type == token_var) {
+    } else if (t0->type == token_var) {
         n = parse_var(ps, loc);
-
-	/* expr */
+    } else if (t0->type == token_extern) {
+        n = parse_extern(ps, loc);
 	} else {
-		/* allocate ps{} n n{} */
         n = parse_expr(ps, loc);
 	}
 
@@ -180,7 +168,68 @@ struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
 
 struct ast_node* parse_extern(struct parse_state* ps, struct location* loc)
 {
+    struct ast_node* n = NULL;
+    get_location(ps, loc);
 
+    struct token* ext = NULL;
+    if (!match(ps, token_extern, "expected extern", &ext)) {
+        /* test case: no test case needed */
+        assert(false);
+    }
+
+    ast_node_create(&n);
+    n->type = ast_type_extern;
+
+    struct ast_node* proto = NULL;
+    struct location proto_loc;
+    bool has_id;
+    proto = parse_prototype(ps, &has_id, &proto_loc);
+    if (proto) {
+        ast_node_add(n, proto);
+        if (proto->type == ast_type_error) {
+            n->type = ast_type_error;
+        }
+        struct ast_node* tu = ast_node_get(proto, 3);
+        n->tu = ast_node_copy(tu);
+    }
+
+    if (!has_id) {
+        error_list_set(ps->el, &proto_loc, "expected an identifier after extern");
+        n->type = ast_type_error;
+    }
+
+    if (n->type != ast_type_error) {
+        if (ps->st->top != ps->st->global) {
+            error_list_set(ps->el, loc, "extern only allowed at top level scope");
+            n->type = ast_type_error;
+        }
+
+        struct ast_node *id_node = ast_node_get(proto, 0);
+        /* check and save symbol */
+        struct symbol *search = environment_get_local(ps->st->top, &id_node->value);
+        if (search) {
+            buffer_finish(&id_node->value);
+            error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
+            n->type = ast_type_error;
+        } else {
+            struct symbol *sym = environment_get(ps->st->top, &id_node->value);
+            if (sym && sym->td) {
+                buffer_finish(&id_node->value);
+                error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
+                n->type = ast_type_error;
+            } else {
+                struct symbol *new_sym = NULL;
+                malloc_safe((void **) &new_sym, sizeof(struct symbol));
+                symbol_init(new_sym);
+                new_sym->tk_type = token_id;
+                new_sym->tu = ast_node_copy(n->tu);
+                environment_put(ps->st->top, &id_node->value, new_sym);
+                n->sym = new_sym;
+            }
+        }
+    }
+
+    return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

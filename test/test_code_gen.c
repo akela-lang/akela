@@ -488,6 +488,19 @@ void test_code_gen_if_expression()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_extern()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("extern pow(x::Float64, y::Float64)::Float64\n"
+             "pow(5.0, 2.0)\n",
+             &result);
+    expect_str(&result.value, "25.000000", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -520,4 +533,5 @@ void test_code_gen()
     test_code_gen_function_expression();
     test_code_gen_anonymous_function_expression();
     test_code_gen_if_expression();
+    test_code_gen_extern();
 }

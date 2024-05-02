@@ -2191,7 +2191,7 @@ void test_parse_stmts_newline_function()
 
     struct comp_unit cu;
 
-    parse_setup("function\nfoo\n(\na::Int64,\nb::Int64\n)\n::\nInt64 1 end", &cu);
+    parse_setup("function\nfoo\n(\na::Int64,\nb::Int64\n)::\nInt64 1 end", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2327,7 +2327,56 @@ void test_parse_var_expected_declaration()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
+void test_parse_extern()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("extern foo(a::Int64)\n"
+                "foo(1)\n",
+                &cu);
+    assert_no_errors(&cu.el);
+    assert_true(cu.valid, "parse_setup valid");
+
+    assert_ptr(cu.root, "ptr cu.root");
+    expect_int_equal(cu.root->type, ast_type_stmts, "type cu.root");
+
+    struct ast_node* f = ast_node_get(cu.root, 0);
+    assert_ptr(f, "ptr f");
+    expect_int_equal(f->type, ast_type_extern, "type f");
+
+    struct ast_node* tu = f->tu;
+    assert_ptr(tu, "ptr tu");
+
+    struct type_def* td = tu->td;
+    assert_ptr(td, "ptr td");
+    expect_int_equal(td->type, type_function, "type td");
+    expect_str(&td->name, "Function", "name td");
+
+    struct ast_node* proto = ast_node_get(f, 0);
+    assert_ptr(proto, "ptr proto");
+    expect_int_equal(proto->type, ast_type_prototype, "type proto");
+
+    struct ast_node* fid = ast_node_get(proto, 0);
+    assert_ptr(fid, "ptr fid");
+    expect_int_equal(fid->type, ast_type_id, "id");
+
+    struct ast_node* dseq = ast_node_get(proto, 1);
+    assert_ptr(dseq, "ptr dseq");
+    expect_int_equal(dseq->type, ast_type_dseq, "dseq dseq");
+
+    struct ast_node* dret = ast_node_get(proto, 2);
+    assert_ptr(dret, "ptr dret");
+    expect_int_equal(dret->type, ast_type_dret, "dret dret");
+
+    struct ast_node* call = ast_node_get(cu.root, 1);
+    expect_ptr(call, "ptr call");
+    expect_int_equal(call->type, ast_type_call, "type call");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_statements()
 {
 	test_parse_assign();
@@ -2401,4 +2450,5 @@ void test_parse_statements()
     test_parse_var();
     test_parse_var2();
     test_parse_var_expected_declaration();
+    test_parse_extern();
 }

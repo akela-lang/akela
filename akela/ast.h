@@ -59,6 +59,7 @@ enum ast_type {
     ast_type_var_rseq,
     ast_type_error,
     ast_type_prototype,
+    ast_type_extern,
 	ast_type_count		/* keep at end */
 };
 
