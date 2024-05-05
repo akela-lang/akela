@@ -297,7 +297,7 @@ LLVMValueRef CodeGenLLVMDispatch(CodeGenLLVM* cg, struct ast_node* n)
         char* names[ast_type_count];
         ast_set_names(names);
         fprintf(stderr, "code gen: unhandled ast node type: %s\n", names[n->type]);
-        ast_node_print(n, names, false);
+        ast_node_print(n, false);
         return NULL;
     }
 }

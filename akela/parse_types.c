@@ -12,7 +12,6 @@
 #include <assert.h>
 
 void parse_tseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-void declare_type(struct parse_state* ps, struct ast_node* n, struct ast_node* id_node);
 
 struct ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location* loc)
 {
@@ -273,43 +272,6 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
 	return n;
 }
 
-/**
- * Check ID node and create symbol
- * @param ps parse state
- * @param n type node
- * @param id_node ID node
- */
-void check_id_node(struct parse_state* ps, struct ast_node* n, struct ast_node* id_node)
-{
-    struct symbol* dup = environment_get_local(ps->st->top, &id_node->value);
-    if (dup) {
-        char* a;
-        buffer2array(&id_node->value, &a);
-        error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
-        free(a);
-        n->type = ast_type_error;
-        /* test case: test_parse_error_duplicate_declarations */
-    } else {
-        struct symbol* sym2 = environment_get(ps->st->top, &id_node->value);
-        if (sym2 && sym2->td) {
-            char* a;
-            buffer2array(&id_node->value, &a);
-            error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
-            free(a);
-            n->type = ast_type_error;
-            /* test case: test_parse_types_reserved_type */
-        } else {
-            struct symbol* new_sym = NULL;
-            malloc_safe((void**)&new_sym, sizeof(struct symbol));
-            symbol_init(new_sym);
-            new_sym->tk_type = token_id;
-            new_sym->tu = ast_node_copy(n);
-            environment_put(ps->st->top, &id_node->value, new_sym);
-            id_node->sym = new_sym;
-        }
-    }
-}
-
 /* type -> id | id { tseq } */
 struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
 {
@@ -319,10 +281,59 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
 	get_location(ps, loc);
 
 	struct token* t0 = get_lookahead(ps);
+    while (t0->type == token_left_square_bracket) {
+        struct token *lsb = NULL;
+        if (!match(ps, token_left_square_bracket, "expected left square bracket", &lsb)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
+
+        token_destroy(lsb);
+        free(lsb);
+
+        if (!n) {
+            ast_node_create(&n);
+            n->type = ast_type_type;
+        }
+
+        t0 = get_lookahead(ps);
+        if (t0->type != token_right_square_bracket) {
+            if (t0->type == token_number || t0->type == token_mult) {
+                struct token *dim_size = NULL;
+                if (!match(ps, t0->type, "expected array size or asterisk", &dim_size)) {
+                    /* test case: no test case needed */
+                    assert(false);
+                }
+
+                if (t0->type == token_number) {
+                    n->to.is_array = true;
+                    buffer_finish(&dim_size->value);
+                    size_t v = (size_t)strtol(dim_size->value.buf, NULL, 10);
+                    VectorAdd(&n->to.dim, &v, 1);
+                } else if (t0->type == token_mult) {
+                    n->to.is_slice = true;
+                }
+            } else {
+                error_list_set(ps->el,
+                               &t0->loc,
+                               "expected array size, asterisk, or right square_bracket");
+                n->type = ast_type_error;
+            }
+        }
+
+        struct token* rsb = NULL;
+        if (!match(ps, token_right_square_bracket, "expected right square bracket", &rsb)) {
+            n->type = ast_type_error;
+        }
+
+        t0 = get_lookahead(ps);
+    }
 
 	if (t0 && t0->type == token_id) {
-		ast_node_create(&n);
-		n->type = ast_type_type;
+        if (!n) {
+            ast_node_create(&n);
+            n->type = ast_type_type;
+        }
 
 		struct token* name = NULL;
 		if (!match(ps, token_id, "expected type name", &name)) {
@@ -330,7 +341,7 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
             assert(false);
         }
 
-		struct token* t0 = get_lookahead(ps);
+		t0 = get_lookahead(ps);
 		if (t0 && t0->type == token_left_curly_brace) {
 			is_generic = true;
 			struct token* lcb = NULL;
@@ -411,6 +422,43 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
 	}
 
 	return n;
+}
+
+/**
+ * Check ID node and create symbol
+ * @param ps parse state
+ * @param n type node
+ * @param id_node ID node
+ */
+void check_id_node(struct parse_state* ps, struct ast_node* n, struct ast_node* id_node)
+{
+    struct symbol* dup = environment_get_local(ps->st->top, &id_node->value);
+    if (dup) {
+        char* a;
+        buffer2array(&id_node->value, &a);
+        error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
+        free(a);
+        n->type = ast_type_error;
+        /* test case: test_parse_error_duplicate_declarations */
+    } else {
+        struct symbol* sym2 = environment_get(ps->st->top, &id_node->value);
+        if (sym2 && sym2->td) {
+            char* a;
+            buffer2array(&id_node->value, &a);
+            error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
+            free(a);
+            n->type = ast_type_error;
+            /* test case: test_parse_types_reserved_type */
+        } else {
+            struct symbol* new_sym = NULL;
+            malloc_safe((void**)&new_sym, sizeof(struct symbol));
+            symbol_init(new_sym);
+            new_sym->tk_type = token_id;
+            new_sym->tu = ast_node_copy(n);
+            environment_put(ps->st->top, &id_node->value, new_sym);
+            id_node->sym = new_sym;
+        }
+    }
 }
 
 void declare_type(struct parse_state* ps, struct ast_node* n, struct ast_node* id_node)

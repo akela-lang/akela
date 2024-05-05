@@ -5,7 +5,7 @@ set(lib_files
         token.c
         ast.c
         parse_stmts.c
-        "parse_expr.c"
+        parse_expr.c
         parse_factor.c
         parse.c
         parse_tools.c

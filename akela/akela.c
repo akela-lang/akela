@@ -48,12 +48,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    char* names[ast_type_count];
-    enum result r = ast_set_names(names);
-    if (r == result_error) {
-        printf("%s\n", get_error_message());
-    }
-    ast_node_print(cu.root, names, false);
+    ast_node_print(cu.root, false);
 
     struct buffer bf;
     buffer_init(&bf);

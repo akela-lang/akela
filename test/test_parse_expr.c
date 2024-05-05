@@ -1555,18 +1555,35 @@ void test_parse_boolean_error_right_not_boolean()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
+void test_parse_array_declare()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("var a::[5]Int64\n"
+                "a[0]\n",
+                &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    assert_ptr(cu.root, "ptr cu.root");
+    expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_array_subscript()
 {
 	test_name(__func__);
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Vector{Int64}; a[1]", &cu);
+    parse_setup("var a::[10]Int64; a[1]", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
-	assert_ptr(cu.root, "ptr cu.root");
+    assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
 	struct ast_node* as = ast_node_get(cu.root, 1);
@@ -1594,65 +1611,64 @@ void test_parse_array_subscript()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_array_subscript2()
 {
 	test_name(__func__);
 	
 	struct comp_unit cu;
 
-    parse_setup("var a::Vector{Int64}; var b::Vector{Int64}; a[b[1]]", &cu);
+    parse_setup("var a::[10][10]Int64; a[0][1]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
-	struct ast_node* a = ast_node_get(cu.root, 2);
+    struct ast_node* a = ast_node_get(cu.root, 1);
 	assert_ptr(a, "ptr a");
 	assert_int_equal(a->type, ast_type_array_subscript, "array-subscript a");
 
-	struct ast_node* tu = a->tu;
-	assert_ptr(tu, "ptr tu");
+	struct ast_node* a_tu = a->tu;
+	assert_ptr(a_tu, "ptr tu");
+    expect_false(a_tu->to.is_array, "is array to");
 
-	struct type_def* td = tu->td;
+	struct type_def* td = a_tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
 	expect_str(&td->name, "Int64", "Int64 td");
 
-	struct ast_node* a0 = ast_node_get(a, 0);
-	assert_ptr(a0, "ptr a0");
-	expect_int_equal(a0->type, ast_type_id, "id a0");
-	expect_str(&a0->value, "a", "a a0");
-
-	struct ast_node* b = ast_node_get(a, 1);
+	struct ast_node* b = ast_node_get(a, 0);
 	assert_ptr(b, "ptr b");
-	expect_int_equal(b->type, ast_type_array_subscript, "array-subscript b");
+	expect_int_equal(b->type, ast_type_array_subscript, "array_subscript b");
 
-	struct ast_node* b0 = ast_node_get(b, 0);
-	assert_ptr(b0, "ptr b0");
-	expect_int_equal(b0->type, ast_type_id, "id b0");
-	expect_str(&b0->value, "b", "b b0");
+    struct ast_node* c = ast_node_get(b, 0);
+    assert_ptr(c, "ptr c");
+    expect_int_equal(c->type, ast_type_id, "id c");
+    expect_str(&c->value, "a", "value a");
 
-	struct ast_node* b1 = ast_node_get(b, 1);
-	assert_ptr(b1, "ptr b1");
-	expect_int_equal(b1->type, ast_type_number, "number b1");
-	expect_str(&b1->value, "1", "1 b1");
+    struct ast_node* d = ast_node_get(b, 1);
+    assert_ptr(d, "ptr d");
+    expect_int_equal(d->type, ast_type_number, "type d");
+    expect_str(&d->value, "0", "value d");
+
+	struct ast_node* e = ast_node_get(a, 1);
+	assert_ptr(e, "ptr e");
+	expect_int_equal(d->type, ast_type_number, "number e");
+    expect_str(&e->value, "1", "value e");
 
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_array_subscript3()
 {
 	test_name(__func__);
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Vector{Vector{Int64}}; a[1][2]", &cu);
+    parse_setup("var a::[5]Int64; var b::Int64; a[b]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
-	struct ast_node* a = ast_node_get(cu.root, 1);
+	struct ast_node* a = ast_node_get(cu.root, 2);
 	assert_ptr(a, "ptr a");
-	expect_int_equal(a->type, ast_type_array_subscript, "array-subscript a");
+	expect_int_equal(a->type, ast_type_array_subscript, "type a");
 
 	struct ast_node* tu = a->tu;
 	assert_ptr(tu, "ptr tu");
@@ -1662,22 +1678,17 @@ void test_parse_array_subscript3()
 	expect_int_equal(td->type, type_integer, "integer td");
 	expect_str(&td->name, "Int64", "Int64 td");
 
-	struct ast_node* a0 = ast_node_get(a, 0);
-	expect_int_equal(a0->type, ast_type_id, "id a0");
-	expect_str(&a0->value, "a", "a a0");
+	struct ast_node* b = ast_node_get(a, 0);
+	expect_int_equal(b->type, ast_type_id, "type b");
+	expect_str(&b->value, "a", "a b");
 
-	struct ast_node* a1 = ast_node_get(a, 1);
-	expect_int_equal(a1->type, ast_type_number, "number a1");
-	expect_str(&a1->value, "1", "1 a1");
-
-	struct ast_node* a2 = ast_node_get(a, 2);
-	expect_int_equal(a2->type, ast_type_number, "number a2");
-	expect_str(&a2->value, "2", "2 a1");
+	struct ast_node* c = ast_node_get(a, 1);
+	expect_int_equal(c->type, ast_type_id, "type c");
+	expect_str(&c->value, "b", "value c");
 
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_subscript_error_no_type()
 {
 	test_name(__func__);
@@ -1687,12 +1698,11 @@ void test_parse_subscript_error_no_type()
     parse_setup("function foo() end; var a::Vector{Int64}; foo()[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "subscripting expression with no type");
+	expect_source_error(&cu.el, "expression has subscript but has no value");
 
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_subscript_error_not_array()
 {
 	test_name(__func__);
@@ -1702,12 +1712,11 @@ void test_parse_subscript_error_not_array()
     parse_setup("var a::Int64; a[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "subscripting expression that is not an array");
+	expect_source_error(&cu.el, "expression has subscript but is not an array or slice");
 
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_subscript_error_expected_right_square_bracket()
 {
 	test_name(__func__);
@@ -1722,22 +1731,6 @@ void test_parse_subscript_error_expected_right_square_bracket()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
-void test_parse_subscript_error_no_subtype()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("var a::Vector; a[1]", &cu);
-	assert_has_errors(&cu.el);
-	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "subscripting expression with no subtype");
-
-    parse_teardown(&cu);
-}
-
-/* dynamic-output-none */
 void test_parse_assign_string()
 {
 	test_name(__func__);
@@ -2299,13 +2292,13 @@ void test_parse_expression()
 	test_parse_boolean_error_right_no_value();
 	test_parse_boolean_error_left_not_boolean();
 	test_parse_boolean_error_right_not_boolean();
+    test_parse_array_declare();
 	test_parse_array_subscript();
 	test_parse_array_subscript2();
 	test_parse_array_subscript3();
 	test_parse_subscript_error_no_type();
 	test_parse_subscript_error_not_array();
 	test_parse_subscript_error_expected_right_square_bracket();
-	test_parse_subscript_error_no_subtype();
 	test_parse_assign_string();
 	test_parse_assign_multiple();
     test_parse_expr_assignment_eseq_error_eseq_count();

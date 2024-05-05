@@ -9,7 +9,6 @@
 	#include <DbgHelp.h>
 #endif
 
-/* dynamic-output-none */
 enum result ast_set_names(char** names)
 {
 	for (int i = 0; i < ast_type_count; i++) {
@@ -82,21 +81,13 @@ void ast_node_create(struct ast_node** n)
 	ast_node_init(*n);
 }
 
-void ast_node_destroy(struct ast_node* n)
+void Type_options_init(Type_options* to)
 {
-	if (n) {
-		struct ast_node* p = n->head;
-		while (p) {
-			struct ast_node* temp = p;
-			p = p->next;
-			ast_node_destroy(temp);
-		}
-
-		buffer_destroy(&n->value);
-		ast_node_destroy(n->tu);
-
-		free(n);
-	}
+    to->is_mutable = false;
+    to->is_array = false;
+    to->is_slice = false;
+    to->is_ref = false;
+    VectorInit(&to->dim, sizeof(size_t));
 }
 
 void ast_node_init(struct ast_node* n)
@@ -105,7 +96,7 @@ void ast_node_init(struct ast_node* n)
 	buffer_init(&n->value);
 	n->tu = NULL;
 	n->td = NULL;
-    location_init(&n->loc);
+    Type_options_init(&n->to);
     n->sym = NULL;
 	n->next = NULL;
 	n->prev = NULL;
@@ -113,7 +104,27 @@ void ast_node_init(struct ast_node* n)
 	n->tail = NULL;
 }
 
-/* dynamic-output-none */
+void ast_node_destroy(struct ast_node* n)
+{
+    if (n) {
+        struct ast_node* p = n->head;
+        while (p) {
+            struct ast_node* temp = p;
+            p = p->next;
+            ast_node_destroy(temp);
+        }
+
+        buffer_destroy(&n->value);
+        ast_node_destroy(n->tu);
+        free(n);
+    }
+}
+
+void Type_options_destroy(Type_options* to)
+{
+    VectorDestroy(&to->dim);
+}
+
 void ast_node_add(struct ast_node* p, struct ast_node* c)
 {
 	// set sibling to left
@@ -158,11 +169,12 @@ struct ast_node* ast_node_get(struct ast_node* p, size_t pos)
 	return NULL;
 }
 
-/* dynamic-output-none */
-/* dynamic-temp a */
-void ast_node_print(struct ast_node* root, char** names, bool debug)
+void ast_node_print(struct ast_node* root,bool debug)
 {
-	if (root == NULL) return;
+    char* names[ast_type_count];
+    ast_set_names(names);
+
+    if (root == NULL) return;
 	if (!debug && !root->head) return;
 
 	printf("<");
@@ -198,11 +210,11 @@ void ast_node_print(struct ast_node* root, char** names, bool debug)
 	printf("\n");
 
 	if (debug) {
-		ast_node_print(root->tu, names, debug);
+		ast_node_print(root->tu, debug);
 	}
 
 	for (struct ast_node* p = root->head; p; p = p->next) {
-		ast_node_print(p, names, debug);
+		ast_node_print(p, debug);
 	}
 }
 
@@ -215,6 +227,7 @@ struct ast_node* ast_node_copy(struct ast_node* n)
 		ast_node_create(&copy);
 		copy->type = n->type;
 		copy->td = n->td;
+        copy->to = n->to;
         copy->loc = n->loc;
 		buffer_copy(&n->value, &copy->value);
 		

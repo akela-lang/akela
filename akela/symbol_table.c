@@ -212,14 +212,6 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	buffer_copy_str(&td->name, name);
 	symbol_table_add_reserved(env, name, token_id, td);
 
-    name = "Matrix";
-    malloc_safe((void**)&td, sizeof(struct type_def));
-    type_def_init(td);
-    td->type = type_array;
-    td->is_generic = true;
-    buffer_copy_str(&td->name, name);
-    symbol_table_add_reserved(env, name, token_id, td);
-
     name = "Function";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);

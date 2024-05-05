@@ -6,6 +6,15 @@
 #include "zinc/buffer.h"
 #include "zinc/result.h"
 #include "token.h"
+#include "zinc/vector.h"
+
+typedef struct Type_options {
+    bool is_mutable;
+    bool is_array;
+    bool is_slice;
+    bool is_ref;
+    Vector dim;     /* vector of size_t */
+} Type_options;
 
 enum ast_type {
 	ast_type_none,
@@ -68,6 +77,7 @@ struct ast_node {
 	struct buffer value;
 	struct ast_node* tu;
 	struct type_def* td;
+    struct Type_options to;
     struct location loc;
     struct symbol* sym;
 	struct ast_node* next;
@@ -87,12 +97,14 @@ AKELA_API void ast_node_init(struct ast_node* n);
 AKELA_API void ast_node_add(struct ast_node* p, struct ast_node* c);
 AKELA_API void ast_node_push(struct ast_node* parent, struct ast_node* child);
 AKELA_API struct ast_node* ast_node_get(struct ast_node* p, size_t pos);
-AKELA_API void ast_node_print(struct ast_node* root, char** names, bool debug);
+AKELA_API void ast_node_print(struct ast_node* root, bool debug);
 AKELA_API struct ast_node* ast_node_copy(struct ast_node* n);
 AKELA_API bool ast_node_match(struct ast_node* a, struct ast_node* b);
 AKELA_API size_t ast_node_count_children(struct ast_node* n);
 AKELA_API void ast_node_location_update_token(struct ast_node* n, struct token* t);
 AKELA_API void ast_node_location_update(struct ast_node* n, struct ast_node* n2);
+AKELA_API void Type_options_init(Type_options* to);
+AKELA_API void Type_options_destroy(Type_options* to);
 
 #ifdef __cplusplus
 }

@@ -863,7 +863,7 @@ struct ast_node* parse_power(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-/* subscript -> call subscript' */
+/* parse_subscript -> call subscript' */
 /* subscript' -> [expr] subscript' | e */
 struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 {
@@ -879,10 +879,11 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
         return a;
     }
 
-    struct ast_node* tu = NULL;
 	struct ast_node* element_tu = NULL;
     struct location loc_last;
-
+    struct ast_node* left = a;
+    struct location left_loc = a->loc;
+    n = a;
 	while (true) {
 		struct token* t0 = get_lookahead(ps);
 
@@ -890,25 +891,37 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 			break;
 		}
 
-        if (!n) {
-            ast_node_create(&n);
-            n->type = ast_type_array_subscript;
-            ast_node_add(n, a);
+        if (!left->tu) {
+            error_list_set(ps->el, &left_loc, "expression has subscript but has no value");
+            left->type = ast_type_error;
+        }
+
+        ast_node_create(&n);
+        n->type = ast_type_array_subscript;
+        ast_node_add(n, left);
+        if (left->type != ast_type_error) {
+            if (left->tu->to.is_array || left->tu->to.is_slice) {
+                n->tu = ast_node_copy(left->tu);
+                n->tu->to.dim.count = 0;
+                VectorAdd(&n->tu->to.dim, VECTOR_PTR(&left->tu->to.dim, 1), left->tu->to.dim.count-1);
+                if (n->tu->to.dim.count == 0) {
+                    n->tu->to.is_array = false;
+                    n->tu->to.is_slice = false;
+                }
+            }
+        }
+
+        if (left->type == ast_type_error) {
+            n->type = ast_type_error;
         }
 
         if (n->type != ast_type_error) {
-			if (!tu) {
-				tu = a->tu;
-			} else {
-				tu = ast_node_get(tu, 0);
-			}
-
-			if (!tu) {
-				error_list_set(ps->el, &a_loc, "subscripting expression with no type");
-				/* test case: test_parse_subscript_error_no_type */
-                n->type = ast_type_error;
-			} else if (tu->td->type != type_array) {
-				error_list_set(ps->el, &a_loc, "subscripting expression that is not an array");
+            if (left->tu->td->type != type_array
+                    && !left->tu->to.is_array
+                    && !left->tu->to.is_slice) {
+				error_list_set(ps->el,
+                               &a_loc,
+                               "expression has subscript but is not an array or slice");
 				/* test case: test_parse_subscript_error_not_array */
                 n->type = ast_type_error;
 			}
@@ -920,8 +933,7 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
             assert(false);
         }
 		if (lsb) {
-		#pragma warning(suppress:6001)
-			loc_last = lsb->loc;
+            left_loc = lsb->loc;
 		}
 
 		token_destroy(lsb);
@@ -938,6 +950,10 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
+        if (b) {
+            left_loc = loc_expr;
+        }
+
         if (!consume_newline(ps)) {
             n->type = ast_type_error;
         }
@@ -947,33 +963,19 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
+        if (rsb) {
+            left_loc = rsb->loc;
+        }
+
 		token_destroy(rsb);
 		free(rsb);
 
 		if (b) {
 			ast_node_add(n, b);
 		}
+
+        left = n;
 	}
-
-	if ((n && n->type != ast_type_error) || (a && a->type != ast_type_error)) {
-		if (tu) {
-			element_tu = ast_node_get(tu, 0);
-		}
-
-		if (n) {
-			if (!element_tu) {
-				error_list_set(ps->el, &loc_last, "subscripting expression with no subtype");
-				/* test case: test_parse_subscript_error_no_subtype */
-                n->type = ast_type_error;
-			} else {
-				n->tu = ast_node_copy(element_tu);
-			}
-		}
-	}
-
-    if (!n) {
-        n = a;
-    }
 
 	return n;
 }
