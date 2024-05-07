@@ -2310,6 +2310,61 @@ void test_parse_var2()
     parse_teardown(&cu);
 }
 
+void test_parse_var3()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("var a,b::Int32 = 1,2", &cu);
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "parse valid");
+
+    assert_ptr(cu.root, "ptr cu.root");
+    expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
+
+    struct ast_node* var = ast_node_get(cu.root, 0);
+    assert_ptr(var, "ptr var");
+    expect_int_equal(var->type, ast_type_var, "var var");
+
+    struct ast_node* var_lseq = ast_node_get(var, 0);
+    assert_ptr(var_lseq, "ptr var_lseq");
+    expect_int_equal(var_lseq->type, ast_type_var_lseq, "var_lseq var_lseq");
+
+    struct ast_node* id0 = ast_node_get(var_lseq, 0);
+    assert_ptr(id0, "ptr id0");
+    expect_int_equal(id0->type, ast_type_id, "id id0");
+    expect_str(&id0->value, "a", "value id0");
+
+    struct ast_node* tu = ast_node_get(var, 1);
+    assert_ptr(tu, "ptr tu");
+
+    struct type_def* td = tu->td;
+    assert_ptr(td, "ptr td");
+    expect_str(&td->name, "Int32", "Int32 td");
+
+    struct ast_node* id2 = ast_node_get(var_lseq, 1);
+    assert_ptr(id2, "ptr id2");
+    expect_int_equal(id2->type, ast_type_id, "type id2");
+    expect_str(&id2->value, "b", "value id2");
+
+    struct ast_node* var_rseq = ast_node_get(var, 2);
+    assert_ptr(var_rseq, "ptr var_rseq");
+    expect_int_equal(var_rseq->type, ast_type_var_rseq, "var_rseq var_rseq");
+
+    struct ast_node* value0 = ast_node_get(var_rseq, 0);
+    assert_ptr(value0, "ptr value0");
+    expect_int_equal(value0->type, ast_type_number, "type value0");
+    expect_str(&value0->value, "1", "value value0");
+
+    struct ast_node* value1 = ast_node_get(var_rseq, 1);
+    assert_ptr(value1, "ptr value1");
+    expect_int_equal(value1->type, ast_type_number, "type value1");
+    expect_str(&value1->value, "2", "value value1");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_var_expected_declaration()
 {
     test_name(__func__);
@@ -2449,6 +2504,7 @@ void test_parse_statements()
     test_parse_stmts_newline_for_iteration();
     test_parse_var();
     test_parse_var2();
+    test_parse_var3();
     test_parse_var_expected_declaration();
     test_parse_extern();
 }

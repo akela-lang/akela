@@ -2,12 +2,15 @@
 #define AKELA_CODE_GEN_H
 
 #include "ast.h"
+#include "symbol_table.h"
+#include "comp_unit.h"
 
 typedef struct {
     u_int8_t jit_offset;
 } CodeGenVTable;
 
 typedef struct {
+    struct comp_unit* cu;
     struct buffer value;
     struct buffer text;
 } CodeGenResult;

@@ -101,9 +101,9 @@ void test_code_gen_boolean_false()
     CodeGenResult result;
     CodeGenResultInit(&result);
 
-    cg_setup("true",
+    cg_setup("false",
              &result);
-    expect_str(&result.value, "true", "true");
+    expect_str(&result.value, "false", "false");
 
     CodeGenResultDestroy(&result);
 }
@@ -501,6 +501,81 @@ void test_code_gen_extern()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_array_literal()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+             "a[0]\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+             "a[1]\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+             "a[2]\n",
+             &result);
+    expect_str(&result.value, "3", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+             "a[3]\n",
+             &result);
+    expect_str(&result.value, "4", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+             "a[4]\n",
+             &result);
+    expect_str(&result.value, "5", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_gen_array_literal_multidimensional()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][2]Int64 = [[1,2],[3,4]]\n"
+             "a[0][0]\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][2]Int64 = [[1,2],[3,4]]\n"
+             "a[0][1]\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][2]Int64 = [[1,2],[3,4]]\n"
+             "a[1][0]\n",
+             &result);
+    expect_str(&result.value, "3", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][2]Int64 = [[1,2],[3,4]]\n"
+             "a[1][1]\n",
+             &result);
+    expect_str(&result.value, "4", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -534,4 +609,6 @@ void test_code_gen()
     test_code_gen_anonymous_function_expression();
     test_code_gen_if_expression();
     test_code_gen_extern();
+    test_code_gen_array_literal();
+    test_code_gen_array_literal_multidimensional();
 }

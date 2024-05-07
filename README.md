@@ -1,5 +1,6 @@
 # Akela
-Akela is a general-purpose programming language capable of robust software construction and standalone or embeddable execution.
+Akela is a general-purpose programming language with the aim to be capable of constructing robust
+software, standalone or embeddable execution, and suitable for numerical computation and finance.
 
 ## Dependencies
 * [Zinc](https://github.com/akela-lang/zinc)

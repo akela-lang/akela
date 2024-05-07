@@ -315,16 +315,13 @@ void test_parse_id_cyrillic()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_sign_negative()
 {
 	test_name(__func__);
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("-30", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -353,21 +350,16 @@ void test_parse_sign_negative()
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "30", "30");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_sign_positive()
 {
 	test_name(__func__);
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("+30", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -396,27 +388,20 @@ void test_parse_sign_positive()
 	assert_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "30", "30");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_sign_error_no_value()
 {
 	test_name(__func__);
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("function foo() end\n-foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "negative operator was used on expression with no value");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -427,28 +412,21 @@ void test_parse_sign_expected_factor()
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("-", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected parse_factor after sign");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_not_id()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("var a::Bool; !a", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -473,20 +451,15 @@ void test_parse_not_id()
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "a", "a id");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_not_literal()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("!true", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -511,40 +484,29 @@ void test_parse_not_literal()
 	expect_int_equal(lit_bool->type, ast_type_boolean, "boolean true");
 	expect_str(&lit_bool->value, "true", "true lit_bool");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_not_error()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("function foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "! operator used on parse_factor with no value");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_array_literal_integer()
 {
 	test_name(__func__);
-
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("[1,2,3]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -556,13 +518,16 @@ void test_parse_array_literal_integer()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_array_literal, "array-literal a");
 
-	struct ast_node* array_tu = a->tu;
-	assert_ptr(array_tu, "ptr array_tu");
+	struct ast_node* a_tu = a->tu;
+	assert_ptr(a_tu, "ptr array_tu");
+    expect_true(a_tu->to.is_array, "is_array a_tu");
+    expect_size_t_equal(a_tu->to.dim.count, 1, "dim.count a_tu");
+    expect_size_t_equal(*(size_t*)VECTOR_PTR(&a_tu->to.dim, 0), 3, "dim[0] a_tu");
 
-	struct type_def* array_td = array_tu->td;
-	assert_ptr(array_td, "ptr array_td");
-	expect_int_equal(array_td->type, type_integer, "integer array_td");
-	expect_str(&array_td->name, "Int64", "Int64 array_td");
+	struct type_def* a_td = a_tu->td;
+	assert_ptr(a_td, "ptr array_td");
+	expect_int_equal(a_td->type, type_integer, "integer array_td");
+	expect_str(&a_td->name, "Int64", "Int64 array_td");
 
 	struct ast_node* a0 = ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
@@ -579,21 +544,15 @@ void test_parse_array_literal_integer()
 	expect_int_equal(a2->type, ast_type_number, "number a2");
 	expect_str(&a2->value, "3", "3 a2");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_array_literal_float()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("[1.0,2.5,3.2]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -628,21 +587,15 @@ void test_parse_array_literal_float()
 	expect_int_equal(a2->type, ast_type_number, "number a2");
 	expect_str(&a2->value, "3.2", "3.2 a2");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_array_literal_numeric()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("[1, 2.5, 3]", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -677,27 +630,19 @@ void test_parse_array_literal_numeric()
 	expect_int_equal(a2->type, ast_type_number, "number a2");
 	expect_str(&a2->value, "3", "3 a2");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_array_literal_mixed_error()
 {
 	test_name(__func__);
-
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("[1,true,3]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "array elements not the same type");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -705,18 +650,13 @@ void test_parse_array_literal_mixed_error()
 void test_parse_array_literal_empty_error()
 {
 	test_name(__func__);
-
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("[]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "array literal has no elements");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -727,15 +667,11 @@ void test_parse_array_literal_error_right_square_bracket()
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("[1,2", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected right square bracket");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -746,15 +682,11 @@ void test_parse_array_literal_error_expected_expr()
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("[1,]", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected expr after comma");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -763,7 +695,6 @@ void test_parse_anonymous_function()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
 
     parse_setup("var a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
@@ -861,7 +792,6 @@ void test_parse_anonymous_function()
 void test_parse_anonymous_function2()
 {
 	test_name(__func__);
-
 	
 	struct comp_unit cu;
 
@@ -981,7 +911,6 @@ void test_parse_anonymous_function_assignment_error()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
 
     parse_setup("var a::Function = function(x::Int64) end", &cu);
@@ -998,15 +927,11 @@ void test_parse_anonymous_function_return_error()
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("var f::Function{Output{Int64}} = function()::Int64 true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "returned type does not match function return type");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -1017,15 +942,11 @@ void test_parse_anonymous_function_expected_right_paren()
 
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("function(", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "expected right parenthesis");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -1034,30 +955,22 @@ void test_parse_anonymous_function_expected_end()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("function()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "expected end");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_num()
 {
 	test_name(__func__);
 
-	
 	struct comp_unit cu;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("(32)", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -1073,12 +986,9 @@ void test_parse_paren_num()
 	expect_int_equal(number->type, ast_type_number, "number number");
 	expect_str(&number->value, "32", "32 number");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_error_empty()
 {
 	test_name(__func__);
@@ -1086,7 +996,6 @@ void test_parse_paren_error_empty()
 	
 	struct comp_unit cu;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
@@ -1097,8 +1006,6 @@ void test_parse_paren_error_empty()
         expect_size_t_equal(e->loc.size, 1, "size");
         expect_size_t_equal(e->loc.byte_pos, 1, "byte_pos");
     }
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }

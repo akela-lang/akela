@@ -660,12 +660,10 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 struct ast_node* parse_array_literal(struct parse_state* ps, struct location* loc)
 {
 	struct ast_node* n = NULL;
+    get_location(ps, loc);
+
     ast_node_create(&n);
     n->type = ast_type_array_literal;
-
-    if (!get_location(ps, loc)) {
-        n->type = ast_type_error;
-    }
 
     struct token* lsb = NULL;
     if (!match(ps, token_left_square_bracket, "expected left square bracket", &lsb)) {
@@ -673,13 +671,10 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
         /* test case: no test case needed */
     }
 
-    /* destroy lsb lsb{} */
     token_destroy(lsb);
     free(lsb);
 
-    if (!consume_newline(ps)) {
-        n->type = ast_type_error;
-    }
+    consume_newline(ps);
 
     struct location first_loc;
     parse_aseq(ps, n, &first_loc);
@@ -688,7 +683,6 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
         n->type = ast_type_error;
     }
 
-    /* allocate ps{} rsb rsb{] */
     struct token* rsb = NULL;
     if (!match(ps, token_right_square_bracket, "expected right square bracket", &rsb)) {
         /* test case: test_parse_array_literal_error_right_square_bracket */
@@ -696,6 +690,7 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
     }
 
     if (n->type != ast_type_error) {
+        size_t count = 0;
         struct ast_node* first = n->head;
 
         if (!first) {
@@ -706,6 +701,7 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
             struct ast_node* tu_first = ast_node_copy(first->tu);
             struct ast_node* x = first->next;
             struct ast_node* tu_x;
+            count++;
             while (x) {
                 tu_x = x->tu;
                 if (!type_find_whole(ps->st, tu_first, tu_x)) {
@@ -714,13 +710,15 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
                     n->type = ast_type_error;
                     break;
                 }
+                count++;
                 x = x->next;
             }
             n->tu = tu_first;
+            n->tu->to.is_array = true;
+            VectorAdd(&n->tu->to.dim, &count, 1);
         }
     }
 
-    /* destroy rsb rsb{} */
     token_destroy(rsb);
     free(rsb);
 
@@ -729,12 +727,9 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
 
 /* aseq -> expr aseq' | e */
 /* aseq' = , expr aseq' | e */
-/* dynamic-output ps{} parent{} */
 void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location *loc)
 {
-    if (!get_location(ps, loc)) {
-        parent->type = ast_type_error;
-    }
+    get_location(ps, loc);
 
 	struct ast_node* a = NULL;
 	struct location loc_expr;
@@ -744,7 +739,6 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
     }
 
 	if (a) {
-		/* a -> parent{} */
 		ast_node_add(parent, a);
 
 		while (true) {
@@ -753,14 +747,12 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
 				break;
 			}
 
-			/* allocate ps{} comma comma{} */
 			struct token* comma = NULL;
 			if (!match(ps, token_comma, "expecting comma", &comma)) {
                 /* test case: no test case needed */
                 parent->type = ast_type_error;
             }
 
-			/* destroy comma comma{} */
 			token_destroy(comma);
 			free(comma);
 
@@ -768,7 +760,6 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
                 parent->type = ast_type_error;
             }
 
-			/* allocate ps{} a a{} */
 			a = parse_simple_expr(ps, &loc_expr);
 			if (a && a->type == ast_type_error) {
                 parent->type = ast_type_error;
@@ -781,7 +772,6 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
 				break;
 			}
 
-			/* transfer a -> parent */
 			ast_node_add(parent, a);
 		}
 	}

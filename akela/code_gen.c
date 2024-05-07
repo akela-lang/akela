@@ -2,12 +2,15 @@
 
 void CodeGenResultInit(CodeGenResult* result)
 {
+    result->cu = NULL;
     buffer_init(&result->value);
     buffer_init(&result->text);
 }
 
 void CodeGenResultDestroy(CodeGenResult* result)
 {
+    comp_unit_destroy(result->cu);
+    free(result->cu);
     buffer_destroy(&result->value);
     buffer_destroy(&result->text);
 }

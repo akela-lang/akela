@@ -1,5 +1,4 @@
 # Todo
-* array code gen
 * string or array of u8
 * mut type annotation
 * slice

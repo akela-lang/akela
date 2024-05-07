@@ -1001,6 +1001,14 @@ struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, st
             break;
         }
 
+        struct token* comma = NULL;
+        if (!match(ps, token_comma, "expected comma", &comma)) {
+            assert(false && "should see comma");
+        }
+
+        token_destroy(comma);
+        free(comma);
+
         struct ast_node* b = NULL;
         struct location b_loc;
         b = parse_simple_expr(ps, &b_loc);

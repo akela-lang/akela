@@ -31,6 +31,7 @@ bool cg_setup(const char* text, CodeGenResult* result)
     CodeGenLLVM2Create(&cg, &cu->el);
     valid = CodeGenJIT(cg, &CodeGenLLVM2VTable, cu->root, result);
     CodeGenLLVM2Destroy(cg);
+    result->cu = cu;
 
     expect_true(valid, "valid");
     if (!valid && result->text.size > 0) {
@@ -44,8 +45,6 @@ bool cg_setup(const char* text, CodeGenResult* result)
     VectorDestroy(vector);
     free(vector);
     free(input);
-    comp_unit_destroy(cu);
-    free(cu);
 
     return valid;
 }

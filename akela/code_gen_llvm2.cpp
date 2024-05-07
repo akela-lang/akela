@@ -35,7 +35,9 @@
 #include "akela/type_def.h"
 #include "zinc/error.h"
 #include "zinc/list.h"
+#include "zinc/vector.h"
 #include <cassert>
+#include <iostream>
 
 #define TOPLEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"
@@ -70,6 +72,8 @@ Value* CodeGenLLVM2Add(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Sub(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n);
+Value* CodeGenLLVM2ArrayLiteral(JITData* jd, struct ast_node* n);
+Value* CodeGenLLVM2Subscript(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Boolean(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2String(JITData* jd, struct ast_node* n);
@@ -141,10 +145,24 @@ Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu)
     struct type_def *td = tu->td;
 
     if (td->type == type_integer) {
+        Type* t = nullptr;
         if (td->bit_count == 64) {
-            return Type::getInt64Ty(*jd->TheContext);
+            t = Type::getInt64Ty(*jd->TheContext);
         } else if (td->bit_count == 32) {
-            return Type::getInt32Ty(*jd->TheContext);
+            t =  Type::getInt32Ty(*jd->TheContext);
+        }
+        if (tu->to.is_array) {
+            Type* dim_type = t;
+            size_t i = tu->to.dim.count - 1;
+            while (true) {
+                size_t len = *(size_t*)VECTOR_PTR(&tu->to.dim, i);
+                dim_type = ArrayType::get(dim_type, len);
+                if (i == 0) break;
+                i--;
+            }
+            return dim_type;
+        } else {
+            return t;
         }
     } else if (td->type == type_float) {
         if (td->bit_count == 64) {
@@ -178,16 +196,40 @@ void CodeGenLLVM2Run(JITData* jd, struct ast_node* n, struct buffer* bf)
     auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOPLEVEL_NAME));
     if (n->tu) {
         enum type type = n->tu->td->type;
+        bool is_array = n->tu->to.is_array;
         if (type == type_integer) {
-            int (*fp)() = ExprSymbol.getAddress().toPtr < int(*)
-            () > ();
-            int v = fp();
-            buffer_add_format(bf, "%d", v);
+            if (is_array) {
+                long* (*fp)() = ExprSymbol.getAddress().toPtr<long*(*)()>();
+                long* p = fp();
+                Vector* dim_vector = &n->tu->to.dim;
+                size_t count = 1;
+                for (int i = 0; i < dim_vector->count; i++) {
+                    size_t dim = *(size_t *) VECTOR_PTR(dim_vector, i);
+                    count *= dim;
+                }
+                buffer_add_char(bf, '[');
+                for (int i = 0; i < count; i++) {
+                    if (i >= 1) {
+                        buffer_add_char(bf, ',');
+                    }
+                    buffer_add_format(bf, "%ld", *p++);
+                }
+                buffer_add_char(bf, ']');
+            } else {
+                int (*fp)() = ExprSymbol.getAddress().toPtr<int(*)()>();
+                int v = fp();
+                buffer_add_format(bf, "%d", v);
+            }
         } else if (type == type_float) {
-            double (*fp)() = ExprSymbol.getAddress().toPtr < double(*)
-            () > ();
-            double v = fp();
-            buffer_add_format(bf, "%lf", v);
+            if (is_array) {
+                double* (*fp)() = ExprSymbol.getAddress().toPtr <double*(*)()>();
+                double* p = fp();
+                buffer_add_format(bf, "%lf", *p);
+            } else {
+                double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
+                double v = fp();
+                buffer_add_format(bf, "%lf", v);
+            }
         } else if (type == type_boolean) {
             bool (*fp)() = ExprSymbol.getAddress().toPtr <bool(*)()>();
             bool v = fp();
@@ -323,6 +365,10 @@ Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n)
         return CodeGenLLVM2Call(jd, n);
     } else if (n->type == ast_type_id) {
         return CodeGenLLVM2ID(jd, n);
+    } else if (n->type == ast_type_array_literal) {
+        return CodeGenLLVM2ArrayLiteral(jd, n);
+    } else if (n->type == ast_type_array_subscript) {
+        return CodeGenLLVM2Subscript(jd, n);
     } else if (n->type == ast_type_number) {
         return CodeGenLLVM2Number(jd, n);
     } else if (n->type == ast_type_boolean) {
@@ -466,10 +512,12 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
     while (lp) {
         AllocaInst* lhs = nullptr;
         if (tu->td->type == type_function) {
-            FunctionType* func_type = CodeGenLLVM2FunctionType(jd, tu);
-            PointerType* pt = func_type->getPointerTo();
+            FunctionType *func_type = CodeGenLLVM2FunctionType(jd, tu);
+            PointerType *pt = func_type->getPointerTo();
             buffer_finish(&lp->value);
             lhs = jd->Builder->CreateAlloca(pt, nullptr, lp->value.buf);
+        } else if (tu->to.is_array) {
+            // nothing
         } else {
             Type* t = CodeGenLLVM2GetType(jd, tu);
             buffer_finish(&lp->value);
@@ -480,11 +528,15 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
         if (rp) {
             Value* rhs = CodeGenLLVM2Dispatch(jd, rp);
             if (rp->type == ast_type_function || rp->type == ast_type_anonymous_function) {
-                FunctionType* func_type = CodeGenLLVM2FunctionType(jd, tu);
-                PointerType* pt = func_type->getPointerTo();
+                FunctionType *func_type = CodeGenLLVM2FunctionType(jd, tu);
+                PointerType *pt = func_type->getPointerTo();
                 rhs = jd->Builder->CreateLoad(pt, rhs);
+                jd->Builder->CreateStore(rhs, lhs);
+            } else if (rp->type == ast_type_array_literal) {
+                lp->sym->allocation = rhs;
+            } else {
+                jd->Builder->CreateStore(rhs, lhs);
             }
-            jd->Builder->CreateStore(rhs, lhs);
             rp = rp->next;
         }
         lp = lp->next;
@@ -604,6 +656,7 @@ Value* CodeGenLLVM2Sub(JITData* jd, struct ast_node* n)
     return jd->Builder->CreateSub(lhs, rhs, "subtmp");
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n)
 {
     struct ast_node* callee = ast_node_get(n, 0);
@@ -639,12 +692,120 @@ Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
     struct symbol* sym = n->sym;
     assert(sym);
     auto v = (AllocaInst*)sym->allocation;
-    if (v) {
+    if (n->tu->to.is_array) {
+        return v;
+    } else if (v) {
         Type* t = v->getAllocatedType();
         buffer_finish(&n->value);
         return jd->Builder->CreateLoad(t, v, n->value.buf);
     }
     return nullptr;
+}
+
+namespace Code_gen_llvm {
+    class Array_literal {
+    public:
+        Value* code_gen(JITData* jd, struct ast_node* n)
+        {
+            std::vector<size_t> index;
+            Type *t = CodeGenLLVM2GetType(jd, n->tu);
+            Value* ptr = jd->Builder->CreateAlloca(t, nullptr, "arrayliteraltmp");
+
+            code_gen_element(jd, n, n->tu, ptr, 0);
+
+            return ptr;
+        }
+
+    private:
+
+        /* NOLINTNEXTLINE(misc-no-recursion) */
+        void code_gen_element(JITData* jd,
+                                struct ast_node* n,
+                                struct ast_node* base_tu,
+                                Value* parent_ptr,
+                                size_t index)
+        {
+            Type* t = get_type(jd, n, base_tu);
+
+            std::vector<Value*> list;
+            list.push_back(
+                    ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
+                    APInt(base_tu->td->bit_count, index, base_tu->td->is_signed)));
+
+            Value* ptr = jd->Builder->CreateInBoundsGEP(t, parent_ptr, list, "arrayelementtmp");
+
+            if (n->tu->to.is_array) {
+                size_t next_index = 0;
+                struct ast_node* p = n->head;
+                while (p) {
+                    code_gen_element(jd, p, base_tu, ptr, next_index++);
+                    p = p->next;
+                }
+            } else {
+                Type* t_element = get_type(jd, n, base_tu);
+                buffer_finish(&n->value);
+                long v = strtol(n->value.buf, nullptr, 10);
+                Value* value = ConstantInt::get(t_element,
+                                    APInt(base_tu->td->bit_count,
+                                    v,
+                                    base_tu->td->is_signed));
+                jd->Builder->CreateStore(value, ptr);
+            }
+        }
+
+        Type* get_type(JITData* jd, struct ast_node* n, struct ast_node* base_tu)
+        {
+            Type* t = nullptr;
+            if (base_tu->td->bit_count == 64) {
+                t = Type::getInt64Ty(*jd->TheContext);
+            } else if (base_tu->td->bit_count == 32) {
+                t =  Type::getInt32Ty(*jd->TheContext);
+            }
+
+            if (n->tu->to.is_array) {
+                Type *dim_type = t;
+                size_t i = n->tu->to.dim.count - 1;
+                while (true) {
+                    size_t len = *(size_t *) VECTOR_PTR(&n->tu->to.dim, i);
+                    dim_type = ArrayType::get(dim_type, len);
+                    if (i == 0) break;
+                    i--;
+                }
+                t = dim_type;
+            }
+            return t;
+        }
+    };
+};
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Value* CodeGenLLVM2ArrayLiteral(JITData* jd, struct ast_node* n)
+{
+    assert(n->tu->to.is_array);
+    Code_gen_llvm::Array_literal array_literal;
+    return array_literal.code_gen(jd, n);
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Value* CodeGenLLVM2Subscript(JITData* jd, struct ast_node* n)
+{
+    Type* element_type = CodeGenLLVM2GetType(jd, n->tu);
+
+    struct ast_node* array = n->head;
+    assert(array->tu->to.is_array);
+    Value* array_value = CodeGenLLVM2Dispatch(jd, array);
+
+    struct ast_node* subscript = array->next;
+    Value* subscript_value = CodeGenLLVM2Dispatch(jd, subscript);
+    std::vector<Value*> list;
+    list.push_back(subscript_value);
+    Value* element_ptr = jd->Builder->CreateInBoundsGEP(element_type, array_value, list, "subscripttmp");
+
+    if (n->tu->to.is_array) {
+        return element_ptr;
+    } else {
+        return jd->Builder->CreateLoad(element_type, element_ptr, "elementtmp");
+    }
 }
 
 Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n)
@@ -655,7 +816,7 @@ Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n)
         Type* t = CodeGenLLVM2GetType(jd, n->tu);
         buffer_finish(&n->value);
         long v = strtol(n->value.buf, nullptr, 10);
-        return ConstantInt::get(t, APInt(td->bit_count, v, true));
+        return ConstantInt::get(t, APInt(td->bit_count, v, n->tu->td->is_signed));
     } else if (td->type == type_float) {
         buffer_finish(&n->value);
         double v = strtod(n->value.buf, nullptr);
