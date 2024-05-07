@@ -77,11 +77,13 @@ Value* CodeGenLLVM2Subscript(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Boolean(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2String(JITData* jd, struct ast_node* n);
+Value* CodeGenLLVM2Sign(JITData* jd, struct ast_node* n);
 
 void CodeGenLLVM2Init(CodeGenLLVM2* cg, struct error_list* el)
 {
     cg->el = el;
     cg->jit = (CodeGenInterface)CodeGenLLVM2JIT;
+    cg->debug = false;
 }
 
 void CodeGenLLVM2Create(CodeGenLLVM2** cg, struct error_list* el)
@@ -216,9 +218,17 @@ void CodeGenLLVM2Run(JITData* jd, struct ast_node* n, struct buffer* bf)
                 }
                 buffer_add_char(bf, ']');
             } else {
-                int (*fp)() = ExprSymbol.getAddress().toPtr<int(*)()>();
-                int v = fp();
-                buffer_add_format(bf, "%d", v);
+                if (n->tu->td->bit_count == 64) {
+                    long (*fp)() = ExprSymbol.getAddress().toPtr<long(*)()>();
+                    long v = fp();
+                    buffer_add_format(bf, "%d", v);
+                } else if (n->tu->td->bit_count == 32) {
+                    int (*fp)() = ExprSymbol.getAddress().toPtr<int(*)()>();
+                    int v = fp();
+                    buffer_add_format(bf, "%d", v);
+                } else {
+                    assert(false);
+                }
             }
         } else if (type == type_float) {
             if (is_array) {
@@ -326,6 +336,10 @@ bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, CodeGenResult* result
     jd.TheModule->print(os2, nullptr);
     buffer_add_format(&result->text, "%s", str2.c_str());
 
+    if (cg->debug) {
+        printf("%s\n\n", result->text.buf);
+    }
+
     if (valid) {
         auto rt = jd.TheJIT->getMainJITDylib().createResourceTracker();
         auto tsm = ThreadSafeModule(std::move(jd.TheModule), std::move(jd.TheContext));
@@ -369,6 +383,8 @@ Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n)
         return CodeGenLLVM2ArrayLiteral(jd, n);
     } else if (n->type == ast_type_array_subscript) {
         return CodeGenLLVM2Subscript(jd, n);
+    } else if (n->type == ast_type_sign) {
+        return CodeGenLLVM2Sign(jd, n);
     } else if (n->type == ast_type_number) {
         return CodeGenLLVM2Number(jd, n);
     } else if (n->type == ast_type_boolean) {
@@ -378,10 +394,8 @@ Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n)
     } else {
         char* names[ast_type_count];
         ast_set_names(names);
-        struct location loc{};
-        location_init(&loc);
-        error_list_set(jd->el, &loc, "code gen: unhandled ast node type: %s", names[n->type]);
-        return nullptr;
+        printf("code gen: unhandled ast node type: %s", names[n->type]);
+        exit(1);
     }
 }
 
@@ -743,12 +757,15 @@ namespace Code_gen_llvm {
                 }
             } else {
                 Type* t_element = get_type(jd, n, base_tu);
-                buffer_finish(&n->value);
-                long v = strtol(n->value.buf, nullptr, 10);
-                Value* value = ConstantInt::get(t_element,
-                                    APInt(base_tu->td->bit_count,
-                                    v,
-                                    base_tu->td->is_signed));
+
+//                buffer_finish(&n->value);
+//                long v = strtol(n->value.buf, nullptr, 10);
+//                Value* value = ConstantInt::get(t_element,
+//                                    APInt(base_tu->td->bit_count,
+//                                    v,
+//                                    base_tu->td->is_signed));
+
+                Value* value = CodeGenLLVM2Dispatch(jd, n);
                 jd->Builder->CreateStore(value, ptr);
             }
         }
@@ -806,6 +823,34 @@ Value* CodeGenLLVM2Subscript(JITData* jd, struct ast_node* n)
     } else {
         return jd->Builder->CreateLoad(element_type, element_ptr, "elementtmp");
     }
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Value* CodeGenLLVM2Sign(JITData* jd, struct ast_node* n)
+{
+    struct ast_node* op = ast_node_get(n, 0);
+    struct ast_node* number = ast_node_get(n, 1);
+    Value* number_value = CodeGenLLVM2Dispatch(jd, number);
+
+    if (op->type == ast_type_plus) {
+        return number_value;
+    }
+
+    assert(op->type == ast_type_minus);
+
+    Type* number_type = CodeGenLLVM2GetType(jd, number->tu);
+
+    Value* zero_value;
+    if (n->tu->td->type == type_integer) {
+        zero_value = ConstantInt::get(number_type,
+                                      APInt(number->tu->td->bit_count, 0, number->tu->td->is_signed));
+    } else if (n->tu->td->type == type_float) {
+        zero_value = ConstantFP::get(number_type, APFloat(0.0));
+    } else {
+        assert(false);
+    }
+    Value* value = jd->Builder->CreateSub(zero_value, number_value, "negatetmp");
+    return value;
 }
 
 Value* CodeGenLLVM2Number(JITData* jd, struct ast_node* n)

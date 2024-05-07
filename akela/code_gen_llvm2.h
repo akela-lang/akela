@@ -6,6 +6,7 @@
 typedef struct {
     struct error_list* el;
     CodeGenInterface jit;
+    bool debug;
 } CodeGenLLVM2;
 
 extern CodeGenVTable CodeGenLLVM2VTable;

@@ -576,6 +576,58 @@ void test_code_gen_array_literal_multidimensional()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_array_literal_signed()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][2]Int64 = [[1,-2],[3,4]]\n"
+             "a[0][1]\n",
+             &result);
+    expect_str(&result.value, "-2", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_gen_int64()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::Int64 = 2\n"
+             "a\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_gen_int32()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::Int32 = 2\n"
+             "a\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_gen_array_literal_int32()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][2]Int32 = [[1,2],[3,4]]\n"
+             "a[0][1]\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -611,4 +663,8 @@ void test_code_gen()
     test_code_gen_extern();
     test_code_gen_array_literal();
     test_code_gen_array_literal_multidimensional();
+    test_code_gen_array_literal_signed();
+    test_code_gen_int64();
+    //test_code_gen_int32();
+    //test_code_gen_array_literal_int32();
 }

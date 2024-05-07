@@ -1,4 +1,8 @@
 # Todo
+* calculate min bit count for constants
+* coerce constants to destination type
+* add must cast to type options; cast constants that must be cast
+* arrays of other types
 * string or array of u8
 * mut type annotation
 * slice
