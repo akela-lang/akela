@@ -665,6 +665,6 @@ void test_code_gen()
     test_code_gen_array_literal_multidimensional();
     test_code_gen_array_literal_signed();
     test_code_gen_int64();
-    //test_code_gen_int32();
-    //test_code_gen_array_literal_int32();
+    test_code_gen_int32();
+    test_code_gen_array_literal_int32();
 }

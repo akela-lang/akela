@@ -439,7 +439,6 @@ struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
 
 	struct token* t0 = get_lookahead(ps);
 
-	/* allocate ps{} x x{} */
 	struct token* x = NULL;
 	if (!match(ps, t0->type, "expecting number, bool, or string", &x)) {
         /* test case: no test case needed */
