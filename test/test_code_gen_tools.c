@@ -27,13 +27,16 @@ bool cg_setup(const char* text, CodeGenResult* result)
     valid = comp_unit_compile(cu, input, input->input_vtable);
     expect_true(valid, "valid");
 
-    CodeGenLLVM2* cg = NULL;
-    CodeGenLLVM2Create(&cg, &cu->el);
-    valid = CodeGenJIT(cg, &CodeGenLLVM2VTable, cu->root, result);
-    CodeGenLLVM2Destroy(cg);
     result->cu = cu;
 
-    expect_true(valid, "valid");
+    if (valid) {
+        CodeGenLLVM2* cg = NULL;
+        CodeGenLLVM2Create(&cg, &cu->el);
+        valid = CodeGenJIT(cg, &CodeGenLLVM2VTable, cu->root, result);
+        CodeGenLLVM2Destroy(cg);
+        expect_true(valid, "valid");
+    }
+
     if (!valid && result->text.size > 0) {
         struct location loc;
         location_init(&loc);

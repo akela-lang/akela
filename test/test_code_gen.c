@@ -615,6 +615,20 @@ void test_code_gen_int32()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_int32_int64()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::Int64 = 1\n"
+             "var b::Int32 = a\n"
+             "b\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen_array_literal_int32()
 {
     test_name(__func__);
@@ -623,6 +637,20 @@ void test_code_gen_array_literal_int32()
     CodeGenResultInit(&result);
     cg_setup("var a::[2][2]Int32 = [[1,2],[3,4]]\n"
              "a[0][1]\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_gen_array_literal_ptr()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Int64 = [[1,2,3,4]]\n"
+             "var b::[4]Int64 = a\n"
+             "b[1]\n",
              &result);
     expect_str(&result.value, "2", "value");
     CodeGenResultDestroy(&result);
@@ -666,5 +694,7 @@ void test_code_gen()
     test_code_gen_array_literal_signed();
     test_code_gen_int64();
     test_code_gen_int32();
+    test_code_gen_int32_int64();
     test_code_gen_array_literal_int32();
+    test_code_gen_array_literal_ptr();
 }

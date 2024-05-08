@@ -23,6 +23,7 @@ struct symbol {
 	struct ast_node* root_ptr;
     void* allocation;
     void* function;
+    void* ptr;
 };
 
 struct symbol_table {

@@ -1,5 +1,7 @@
 # Todo
+* use allocation for allocated data and ptr for pointer to allocation in symbol table
 * arrays of other types
+* array with some non-constant elements
 * string or array of u8
 * mut type annotation
 * slice

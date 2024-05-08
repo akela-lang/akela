@@ -548,6 +548,8 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
                 jd->Builder->CreateStore(rhs, lhs);
             } else if (rp->type == ast_type_array_literal) {
                 lp->sym->allocation = rhs;
+            } else if (rp->tu->to.is_array) {
+                lp->sym->allocation = rhs;
             } else {
                 jd->Builder->CreateStore(rhs, lhs);
             }
@@ -566,7 +568,10 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
     struct ast_node *proto = ast_node_get(n, 0);
     struct ast_node *id = ast_node_get(proto, 0);
     buffer_finish(&id->value);
-    Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->value.buf, *jd->TheModule);
+    Function* f = Function::Create(func_type,
+                                   GlobalValue::ExternalLinkage,
+                                   id->value.buf,
+                                   *jd->TheModule);
     BasicBlock* body_block = BasicBlock::Create(*jd->TheContext, "body", f);
     jd->Builder->SetInsertPoint(body_block);
 
@@ -706,6 +711,7 @@ Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
     struct symbol* sym = n->sym;
     assert(sym);
     auto v = (AllocaInst*)sym->allocation;
+    assert(v);
     if (n->tu->to.is_array) {
         return v;
     } else if (v) {
@@ -811,6 +817,7 @@ Value* CodeGenLLVM2Subscript(JITData* jd, struct ast_node* n)
     struct ast_node* array = n->head;
     assert(array->tu->to.is_array);
     Value* array_value = CodeGenLLVM2Dispatch(jd, array);
+    assert(array_value);
 
     struct ast_node* subscript = array->next;
     Value* subscript_value = CodeGenLLVM2Dispatch(jd, subscript);
