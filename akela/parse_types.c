@@ -823,3 +823,22 @@ struct ast_node* make_constructor(struct type_def* td)
 
 	return n;
 }
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Override_rhs(struct ast_node* tu, struct ast_node* rhs)
+{
+    int bit_count = tu->td->bit_count;
+    if (tu->td->type == type_integer || tu->td->type == type_float) {
+        rhs->tu->td->bit_count = bit_count;
+        if (rhs->type == ast_type_sign) {
+            struct ast_node* p = ast_node_get(rhs, 1);
+            Override_rhs(tu, p);
+        } else if (tu->to.is_array) {
+            struct ast_node* p = rhs->head;
+            while (p) {
+                Override_rhs(tu, p);
+                p = p->next;
+            }
+        }
+    }
+}

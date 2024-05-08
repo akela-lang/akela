@@ -135,12 +135,9 @@ FunctionType* CodeGenLLVM2FunctionType(JITData* jd, struct ast_node* tu)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu)
+Type* CodeGenLLVM2GetTypeScalar(JITData* jd, struct ast_node* tu)
 {
     if (!tu) {
-        return Type::getVoidTy(*jd->TheContext);
-    }
-    if (!tu->td) {
         return Type::getVoidTy(*jd->TheContext);
     }
 
@@ -153,19 +150,7 @@ Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu)
         } else if (td->bit_count == 32) {
             t =  Type::getInt32Ty(*jd->TheContext);
         }
-        if (tu->to.is_array) {
-            Type* dim_type = t;
-            size_t i = tu->to.dim.count - 1;
-            while (true) {
-                size_t len = *(size_t*)VECTOR_PTR(&tu->to.dim, i);
-                dim_type = ArrayType::get(dim_type, len);
-                if (i == 0) break;
-                i--;
-            }
-            return dim_type;
-        } else {
-            return t;
-        }
+        return t;
     } else if (td->type == type_float) {
         if (td->bit_count == 64) {
             return Type::getDoubleTy(*jd->TheContext);
@@ -178,9 +163,27 @@ Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu)
         return Type::getInt1Ty(*jd->TheContext);
     } else if (td->type == type_function) {
         return CodeGenLLVM2FunctionType(jd, tu);
+    } else {
+        assert(false);
     }
 
-    return Type::getVoidTy(*jd->TheContext);
+    return nullptr;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu) {
+    Type *t = CodeGenLLVM2GetTypeScalar(jd, tu);
+    if (tu && tu->to.is_array) {
+        size_t i = tu->to.dim.count - 1;
+        while (true) {
+            size_t len = *(size_t *) VECTOR_PTR(&tu->to.dim, i);
+            t = ArrayType::get(t, len);
+            if (i == 0) break;
+            i--;
+        }
+    }
+
+    return t;
 }
 
 Type* CodeGenLLVM2ReturnType(JITData* jd, struct ast_node* tu)
@@ -713,6 +716,8 @@ Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
 namespace Code_gen_llvm {
     class Array_literal {
     public:
+
+        /* NOLINTNEXTLINE(misc-no-recursion) */
         Value* code_gen(JITData* jd, struct ast_node* n)
         {
             std::vector<size_t> index;
@@ -733,12 +738,12 @@ namespace Code_gen_llvm {
                                 Value* parent_ptr,
                                 size_t index)
         {
-            Type* t = get_type(jd, n, base_tu);
+            Type* t = CodeGenLLVM2GetType(jd, n->tu);
 
             std::vector<Value*> list;
             list.push_back(
                     ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
-                    APInt(base_tu->td->bit_count, index, base_tu->td->is_signed)));
+                    APInt(64, index, false)));
 
             Value* ptr = jd->Builder->CreateInBoundsGEP(t, parent_ptr, list, "arrayelementtmp");
 
@@ -753,29 +758,6 @@ namespace Code_gen_llvm {
                 Value* value = CodeGenLLVM2Dispatch(jd, n);
                 jd->Builder->CreateStore(value, ptr);
             }
-        }
-
-        Type* get_type(JITData* jd, struct ast_node* n, struct ast_node* base_tu)
-        {
-            Type* t = nullptr;
-            if (base_tu->td->bit_count == 64) {
-                t = Type::getInt64Ty(*jd->TheContext);
-            } else if (base_tu->td->bit_count == 32) {
-                t =  Type::getInt32Ty(*jd->TheContext);
-            }
-
-            if (n->tu->to.is_array) {
-                Type *dim_type = t;
-                size_t i = n->tu->to.dim.count - 1;
-                while (true) {
-                    size_t len = *(size_t *) VECTOR_PTR(&n->tu->to.dim, i);
-                    dim_type = ArrayType::get(dim_type, len);
-                    if (i == 0) break;
-                    i--;
-                }
-                t = dim_type;
-            }
-            return t;
         }
     };
 };

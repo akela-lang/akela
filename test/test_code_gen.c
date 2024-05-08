@@ -510,6 +510,7 @@ void test_code_gen_array_literal()
     cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
              "a[0]\n",
              &result);
+    printf("%s\n", result.text.buf);
     expect_str(&result.value, "1", "value");
     CodeGenResultDestroy(&result);
 
@@ -648,12 +649,51 @@ void test_code_gen_array_literal_ptr()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64 = [[1,2,3,4]]\n"
+    cg_setup("var a::[4]Int64 = [1,2,3,4]\n"
              "var b::[4]Int64 = a\n"
              "b[1]\n",
              &result);
     expect_str(&result.value, "2", "value");
     CodeGenResultDestroy(&result);
+}
+
+void Test_code_gen_array_boolean()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Bool = [true,false,true,false]\n"
+             "a[0]\n",
+             &result);
+    printf("%s\n", result.text.buf);
+    expect_str(&result.value, "true", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Bool = [true,false,true,false]\n"
+             "a[1]\n",
+             &result);
+    printf("%s\n", result.text.buf);
+    expect_str(&result.value, "false", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Bool = [true,false,true,false]\n"
+             "a[2]\n",
+             &result);
+    printf("%s\n", result.text.buf);
+    expect_str(&result.value, "true", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Bool = [true,false,true,false]\n"
+             "a[3]\n",
+             &result);
+    printf("%s\n", result.text.buf);
+    expect_str(&result.value, "false", "value");
+    CodeGenResultDestroy(&result);
+
 }
 
 void test_code_gen()
@@ -697,4 +737,5 @@ void test_code_gen()
     test_code_gen_int32_int64();
     test_code_gen_array_literal_int32();
     test_code_gen_array_literal_ptr();
+    Test_code_gen_array_boolean();
 }

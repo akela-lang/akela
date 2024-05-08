@@ -898,17 +898,9 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
         if (n->type != ast_type_error) {
             /* adjust rhs to the bit_size of lhs */
             if (a && type_use && b) {
-                struct ast_node* lhs = a->head;
                 struct ast_node* rhs = b->head;
-                while(lhs && rhs) {
-                    if (rhs->type == ast_type_number || rhs->type == ast_type_array_literal) {
-                        if (type_use->td->type == type_integer || type_use->td->type == type_float) {
-                            if (type_use->td->bit_count != rhs->tu->td->bit_count) {
-                                rhs->tu->td->bit_count = type_use->td->bit_count;
-                            }
-                        }
-                    }
-                    lhs = lhs->next;
+                while (rhs) {
+                    Override_rhs(type_use, rhs);
                     rhs = rhs->next;
                 }
             }
