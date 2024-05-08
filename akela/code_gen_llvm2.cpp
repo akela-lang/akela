@@ -524,35 +524,45 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
         rp = ast_node_get(rseq, 0);
     }
     while (lp) {
-        AllocaInst* lhs = nullptr;
+        assert(lp->sym);
         if (tu->td->type == type_function) {
             FunctionType *func_type = CodeGenLLVM2FunctionType(jd, tu);
             PointerType *pt = func_type->getPointerTo();
             buffer_finish(&lp->value);
-            lhs = jd->Builder->CreateAlloca(pt, nullptr, lp->value.buf);
+            AllocaInst* lhs = jd->Builder->CreateAlloca(pt, nullptr, lp->value.buf);
+            lp->sym->reference = lhs;
+
+            if (rp) {
+                Value* rhs = CodeGenLLVM2Dispatch(jd, rp);
+                jd->Builder->CreateStore(rhs, lhs);
+            }
         } else if (tu->to.is_array) {
-            // nothing
+            if (rp) {
+                Type* t = CodeGenLLVM2GetType(jd, tu);
+                t = t->getPointerTo();
+                buffer_finish(&lp->value);
+                AllocaInst* lhs = jd->Builder->CreateAlloca(t, nullptr, lp->value.buf);
+                Value *rhs = CodeGenLLVM2Dispatch(jd, rp);
+                lp->sym->reference = lhs;
+                jd->Builder->CreateStore(rhs, lhs);
+            } else {
+                Type* t = CodeGenLLVM2GetType(jd, tu);
+                buffer_finish(&lp->value);
+                AllocaInst* lhs = jd->Builder->CreateAlloca(t, nullptr, lp->value.buf);
+                lp->sym->value = lhs;
+            }
         } else {
             Type* t = CodeGenLLVM2GetType(jd, tu);
             buffer_finish(&lp->value);
-            lhs = jd->Builder->CreateAlloca(t, nullptr, lp->value.buf);
-        }
-        assert(lp->sym);
-        lp->sym->allocation = lhs;
-        if (rp) {
-            Value* rhs = CodeGenLLVM2Dispatch(jd, rp);
-            if (rp->type == ast_type_function || rp->type == ast_type_anonymous_function) {
-                FunctionType *func_type = CodeGenLLVM2FunctionType(jd, tu);
-                PointerType *pt = func_type->getPointerTo();
-                rhs = jd->Builder->CreateLoad(pt, rhs);
-                jd->Builder->CreateStore(rhs, lhs);
-            } else if (rp->type == ast_type_array_literal) {
-                lp->sym->allocation = rhs;
-            } else if (rp->tu->to.is_array) {
-                lp->sym->allocation = rhs;
-            } else {
+            AllocaInst* lhs = jd->Builder->CreateAlloca(t, nullptr, lp->value.buf);
+            lp->sym->reference = lhs;
+
+            if (rp) {
+                Value *rhs = CodeGenLLVM2Dispatch(jd, rp);
                 jd->Builder->CreateStore(rhs, lhs);
             }
+        }
+        if (rp) {
             rp = rp->next;
         }
         lp = lp->next;
@@ -587,7 +597,7 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
                                            nullptr,
                                            dec_id->value.buf);
         jd->Builder->CreateStore(&f->arg_begin()[i], lhs);
-        dec_id->sym->allocation = lhs;
+        dec_id->sym->reference = lhs;
         dec = dec->next;
         i++;
     }
@@ -603,16 +613,9 @@ Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n)
     BasicBlock* last_block = CodeGenLLVM2GetLastBlock(jd, jd->toplevel);
     jd->Builder->SetInsertPoint(last_block);
 
-    PointerType* pt = func_type->getPointerTo();
-    Value* fp = jd->Builder->CreateAlloca(pt, nullptr, "funcptrtmp");
-    jd->Builder->CreateStore(f, fp);
+    n->sym->value = f;
 
-    n->sym->allocation = fp;
-    if (n->type == ast_type_function) {
-        n->sym->function = f;
-    }
-
-    return fp;
+    return f;
 }
 
 Value* CodeGenLLVM2Extern(JITData* jd, struct ast_node* n)
@@ -626,14 +629,9 @@ Value* CodeGenLLVM2Extern(JITData* jd, struct ast_node* n)
     BasicBlock* last_block = CodeGenLLVM2GetLastBlock(jd, jd->toplevel);
     jd->Builder->SetInsertPoint(last_block);
 
-    PointerType* pt = func_type->getPointerTo();
-    Value* fp = jd->Builder->CreateAlloca(pt, nullptr, "funcptrtmp");
-    jd->Builder->CreateStore(f, fp);
+    n->sym->value = f;
 
-    n->sym->allocation = fp;
-    n->sym->function = f;
-
-    return fp;
+    return f;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -644,7 +642,7 @@ Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n)
     p = p->prev;
     Value* lhs;
     while (p) {
-        lhs = (Value*)p->sym->allocation;
+        lhs = (Value*)p->sym->reference;
         jd->Builder->CreateStore(rhs, lhs);
         p = p->prev;
     }
@@ -683,6 +681,7 @@ Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n)
 
     assert(callee && callee->tu && callee->tu->td && callee->tu->td->type == type_function);
     Value* callee_value = CodeGenLLVM2Dispatch(jd, callee);
+
     std::vector<Value*> arg_list;
     struct ast_node* arg = cseq->head;
     while (arg) {
@@ -691,35 +690,24 @@ Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n)
         arg = arg->next;
     }
 
-    if (callee->sym->function) {
-        auto f = static_cast<Function*>(callee->sym->function);
-        return jd->Builder->CreateCall(f, arg_list);
-    } else if (callee->sym->allocation) {
-        FunctionType* ft = CodeGenLLVM2FunctionType(jd, callee->tu);
-        PointerType* pt = ft->getPointerTo();
-        auto p = static_cast<Value*>(callee->sym->allocation);
-        Value* temp = jd->Builder->CreateLoad(pt, p, "funcptrtmp");
-        return jd->Builder->CreateCall(ft, temp, arg_list);
-    } else {
-        assert(false &&  "should always have the function or pointer");
-    }
+    FunctionType *t = CodeGenLLVM2FunctionType(jd, callee->tu);
+    return jd->Builder->CreateCall(t, callee_value, arg_list);
 }
 
 Value* CodeGenLLVM2ID(JITData* jd, struct ast_node* n)
 {
     buffer_finish(&n->value);
     struct symbol* sym = n->sym;
-    assert(sym);
-    auto v = (AllocaInst*)sym->allocation;
-    assert(v);
-    if (n->tu->to.is_array) {
-        return v;
-    } else if (v) {
+    if (sym->value) {
+        return (Value*)sym->value;
+    } else if (sym->reference) {
+        auto v = (AllocaInst*)sym->reference;
         Type* t = v->getAllocatedType();
         buffer_finish(&n->value);
         return jd->Builder->CreateLoad(t, v, n->value.buf);
+    } else {
+        assert(false);
     }
-    return nullptr;
 }
 
 namespace Code_gen_llvm {
@@ -762,15 +750,6 @@ namespace Code_gen_llvm {
                     p = p->next;
                 }
             } else {
-                Type* t_element = get_type(jd, n, base_tu);
-
-//                buffer_finish(&n->value);
-//                long v = strtol(n->value.buf, nullptr, 10);
-//                Value* value = ConstantInt::get(t_element,
-//                                    APInt(base_tu->td->bit_count,
-//                                    v,
-//                                    base_tu->td->is_signed));
-
                 Value* value = CodeGenLLVM2Dispatch(jd, n);
                 jd->Builder->CreateStore(value, ptr);
             }

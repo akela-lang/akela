@@ -67,9 +67,8 @@ void symbol_init(struct symbol* sym)
 	sym->constructor = NULL;
 	sym->root = NULL;
 	sym->root_ptr = NULL;
-    sym->allocation = NULL;
-    sym->function = NULL;
-    sym->ptr = NULL;
+    sym->value = NULL;
+    sym->reference = NULL;
 }
 
 void symbol_create(struct symbol** sym)

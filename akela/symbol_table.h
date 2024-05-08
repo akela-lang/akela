@@ -21,9 +21,8 @@ struct symbol {
 	struct symbol* constructor;
 	struct ast_node* root;
 	struct ast_node* root_ptr;
-    void* allocation;
-    void* function;
-    void* ptr;
+    void* value;
+    void* reference;
 };
 
 struct symbol_table {
