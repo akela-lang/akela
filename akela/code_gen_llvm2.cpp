@@ -38,12 +38,17 @@
 #include "zinc/vector.h"
 #include <cassert>
 #include <iostream>
+#include "parse_types.h"
 
 #define TOPLEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"
 
 using namespace llvm;
 using namespace llvm::orc;
+
+typedef struct Code_gen_context{
+    bool in_lhs;
+} Code_gen_context;
 
 typedef struct {
     struct error_list* el;
@@ -53,6 +58,7 @@ typedef struct {
     ExitOnError ExitOnErr;
     std::unique_ptr<KaleidoscopeJIT> TheJIT;
     Function* toplevel;
+    Code_gen_context context;
 } JITData;
 
 CodeGenVTable CodeGenLLVM2VTable = {
@@ -106,13 +112,17 @@ void JITDataInit(JITData* jd, struct error_list* el)
     jd->TheModule->setDataLayout(jd->TheJIT->getDataLayout());
     jd->Builder = std::make_unique<IRBuilder<>>(*jd->TheContext);
     jd->toplevel = nullptr;
+    jd->context.in_lhs = false;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 FunctionType* CodeGenLLVM2FunctionType(JITData* jd, struct ast_node* tu)
 {
+    struct ast_node *input = nullptr;
+    struct ast_node *output = nullptr;
+    get_function_children(tu, &input, &output);
+
     std::vector<Type *> param_types = std::vector<Type *>();
-    struct ast_node *input = ast_node_get(tu, 0);
     size_t input_count = ast_node_count_children(input);
     if (input_count > 0) {
         for (size_t i = 0; i < input_count; i++) {
@@ -123,7 +133,6 @@ FunctionType* CodeGenLLVM2FunctionType(JITData* jd, struct ast_node* tu)
     }
 
     Type *ret_type = nullptr;
-    struct ast_node *output = ast_node_get(tu, 1);
     if (output) {
         struct ast_node *ret = ast_node_get(output, 0);
         ret_type = CodeGenLLVM2GetType(jd, ret);
@@ -549,10 +558,7 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
                 lp->sym->reference = lhs;
                 jd->Builder->CreateStore(rhs, lhs);
             } else {
-                Type* t = CodeGenLLVM2GetType(jd, tu);
-                buffer_finish(&lp->value);
-                AllocaInst* lhs = jd->Builder->CreateAlloca(t, nullptr, lp->value.buf);
-                lp->sym->value = lhs;
+                /* don't allocate anything */
             }
         } else {
             Type* t = CodeGenLLVM2GetType(jd, tu);
@@ -572,6 +578,48 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
     }
 
     return nullptr;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n)
+{
+    struct ast_node* rhs = n->tail;
+    Value* rhs_value = CodeGenLLVM2Dispatch(jd, rhs);
+    struct ast_node* p = rhs->prev;
+    while (p) {
+        if (p->tu->td->type == type_function) {
+            if (p->type == ast_type_id) {
+                FunctionType *func_type = CodeGenLLVM2FunctionType(jd, rhs->tu);
+                PointerType *pt = func_type->getPointerTo();
+                buffer_finish(&rhs->value);
+                AllocaInst *lhs_value = jd->Builder->CreateAlloca(pt, nullptr, rhs->value.buf);
+                p->sym->reference = lhs_value;
+                jd->Builder->CreateStore(rhs_value, lhs_value);
+            } else {
+                assert(false);
+            }
+        } else if (p->tu->to.is_array) {
+            if (p->type == ast_type_id) {
+                Type* t = CodeGenLLVM2GetType(jd, p->tu);
+                t = t->getPointerTo();
+                buffer_finish(&p->value);
+                AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, p->value.buf);
+                p->sym->reference = lhs_value;
+                jd->Builder->CreateStore(rhs_value, lhs_value);
+            } else {
+                assert(false);
+            }
+        } else {
+            if (p->type == ast_type_id) {
+                auto lhs_value = (Value*)p->sym->reference;
+                jd->Builder->CreateStore(rhs_value, lhs_value);
+            } else {
+                assert(false);
+            }
+        }
+        p = p->prev;
+    }
+    return rhs_value;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -635,21 +683,6 @@ Value* CodeGenLLVM2Extern(JITData* jd, struct ast_node* n)
     n->sym->value = f;
 
     return f;
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n)
-{
-    struct ast_node* p = n->tail;
-    Value* rhs = CodeGenLLVM2Dispatch(jd, p);
-    p = p->prev;
-    Value* lhs;
-    while (p) {
-        lhs = (Value*)p->sym->reference;
-        jd->Builder->CreateStore(rhs, lhs);
-        p = p->prev;
-    }
-    return rhs;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

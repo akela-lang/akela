@@ -1,15 +1,19 @@
 # Todo
+* assign lhs subscript
+* constant string
 * arrays of other types
   * integer [x]
   * boolean [x]
   * float [x]
   * string []
+* change var to let
+* mut type annotation
 * array with some non-constant elements
 * string or array of u8
-* mut type annotation
 * slice
 * struct
 * dot operator
+* tuple
 * type inference
 * generate IR to serialize arbitrary value and call it to get return value returned by toplevel function
 * move zinc into akela repo
@@ -17,4 +21,8 @@
 * while
 * for i = 0 to 10 step 2
 * for x in y
+* enum
+* match
+* methods
+* modules
 * REPL

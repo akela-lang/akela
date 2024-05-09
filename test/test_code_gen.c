@@ -724,6 +724,51 @@ void Test_code_gen_array_float() {
     CodeGenResultDestroy(&result);
 }
 
+void test_code_assign_function_id()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("function foo()::Int64 1 end\n"
+             "var bar::Function{Output{Int64}}\n"
+             "bar = foo\n"
+             "bar()\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_assign_array_id()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Int64 = [1, 2, 3, 4]\n"
+             "var b::[4]Int64\n"
+             "b = a\n"
+             "b[0]\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_assign_scalar_id()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::Int64 = 11\n"
+             "var b::Int64\n"
+             "b = a\n"
+             "b\n",
+             &result);
+    expect_str(&result.value, "11", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -767,4 +812,7 @@ void test_code_gen()
     test_code_gen_array_literal_ptr();
     Test_code_gen_array_boolean();
     Test_code_gen_array_float();
+    test_code_assign_function_id();
+    test_code_assign_array_id();
+    test_code_assign_scalar_id();
 }

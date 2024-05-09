@@ -6,6 +6,10 @@
 #include "zinc/buffer.h"
 #include "zinc/buffer_list.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 AKELA_API struct ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location* loc);
 AKELA_API struct ast_node* parse_dseq(struct parse_state* ps, struct location* loc);
 AKELA_API void declare_params(struct parse_state* ps, struct ast_node* proto);
@@ -20,5 +24,9 @@ AKELA_API struct ast_node* get_function_input_type(struct ast_node* tu, int inde
 AKELA_API bool check_input_type(struct parse_state* ps, struct ast_node* tu, int index, struct ast_node* a, struct location* loc_expr);
 AKELA_API struct ast_node* make_constructor(struct type_def* td);
 AKELA_API void Override_rhs(struct ast_node* tu, struct ast_node* rhs);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
