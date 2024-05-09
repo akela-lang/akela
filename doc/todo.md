@@ -2,7 +2,7 @@
 * arrays of other types
   * integer [x]
   * boolean [x]
-  * float []
+  * float [x]
   * string []
 * array with some non-constant elements
 * string or array of u8

@@ -691,6 +691,39 @@ void Test_code_gen_array_boolean()
 
 }
 
+void Test_code_gen_array_float() {
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
+             "a[0]\n",
+             &result);
+    expect_str(&result.value, "1.000000", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
+             "a[1]\n",
+             &result);
+    expect_str(&result.value, "2.000000", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
+             "a[2]\n",
+             &result);
+    expect_str(&result.value, "3.000000", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
+             "a[3]\n",
+             &result);
+    expect_str(&result.value, "4.000000", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -733,4 +766,5 @@ void test_code_gen()
     test_code_gen_array_literal_int32();
     test_code_gen_array_literal_ptr();
     Test_code_gen_array_boolean();
+    Test_code_gen_array_float();
 }
