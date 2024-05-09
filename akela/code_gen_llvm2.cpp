@@ -723,9 +723,7 @@ namespace Code_gen_llvm {
             std::vector<size_t> index;
             Type *t = CodeGenLLVM2GetType(jd, n->tu);
             Value* ptr = jd->Builder->CreateAlloca(t, nullptr, "arrayliteraltmp");
-
-            code_gen_element(jd, n, n->tu, ptr, 0);
-
+            code_gen_element(jd, n, ptr);
             return ptr;
         }
 
@@ -734,24 +732,20 @@ namespace Code_gen_llvm {
         /* NOLINTNEXTLINE(misc-no-recursion) */
         void code_gen_element(JITData* jd,
                                 struct ast_node* n,
-                                struct ast_node* base_tu,
-                                Value* parent_ptr,
-                                size_t index)
+                                Value* ptr)
         {
-            Type* t = CodeGenLLVM2GetType(jd, n->tu);
-
-            std::vector<Value*> list;
-            list.push_back(
-                    ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
-                    APInt(64, index, false)));
-
-            Value* ptr = jd->Builder->CreateInBoundsGEP(t, parent_ptr, list, "arrayelementtmp");
-
             if (n->tu->to.is_array) {
-                size_t next_index = 0;
+                size_t i = 0;
                 struct ast_node* p = n->head;
                 while (p) {
-                    code_gen_element(jd, p, base_tu, ptr, next_index++);
+                    Type* t = CodeGenLLVM2GetType(jd, p->tu);
+                    std::vector<Value*> list;
+                    list.push_back(
+                            ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
+                                             APInt(64, i, false)));
+                    Value* ptr2 = jd->Builder->CreateInBoundsGEP(t, ptr, list, "arrayelementtmp");
+                    code_gen_element(jd, p, ptr2);
+                    i++;
                     p = p->next;
                 }
             } else {
