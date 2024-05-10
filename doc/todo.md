@@ -1,5 +1,4 @@
 # Todo
-* preallocate arrays
 * constant string
 * arrays of other types
   * integer [x]

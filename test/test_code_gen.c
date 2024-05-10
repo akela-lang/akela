@@ -867,6 +867,55 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_assign_array_allocate() {
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Int64\n"
+             "a[0] = 1\n"
+             "a[1] = 2\n"
+             "a[2] = 3\n"
+             "a[3] = 4\n"
+             "a[0]",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Int64\n"
+             "a[0] = 1\n"
+             "a[1] = 2\n"
+             "a[2] = 3\n"
+             "a[3] = 4\n"
+             "a[1]",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Int64\n"
+             "a[0] = 1\n"
+             "a[1] = 2\n"
+             "a[2] = 3\n"
+             "a[3] = 4\n"
+             "a[2]",
+             &result);
+    expect_str(&result.value, "3", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Int64\n"
+             "a[0] = 1\n"
+             "a[1] = 2\n"
+             "a[2] = 3\n"
+             "a[3] = 4\n"
+             "a[3]",
+             &result);
+    expect_str(&result.value, "4", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -917,4 +966,5 @@ void test_code_gen()
     test_code_assign_array_id2();
     test_code_assign_array_subscript();
     test_code_assign_array_subscript2();
+    test_code_assign_array_allocate();
 }

@@ -556,6 +556,11 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
                 Value *rhs_value = CodeGenLLVM2Dispatch(jd, rhs);
                 lhs->sym->reference = lhs_value;
                 jd->Builder->CreateStore(rhs_value, lhs_value);
+            } else {
+                Type* t = CodeGenLLVM2GetType(jd, tu);
+                buffer_finish(&lhs->value);
+                AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                lhs->sym->value = lhs_value;
             }
         } else {
             if (rhs) {
@@ -606,6 +611,7 @@ Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n)
                 if (lhs->sym->reference) {
                     lhs_value = (AllocaInst*)lhs->sym->reference;
                 } else {
+                    lhs->sym->value = nullptr;
                     Type* t = CodeGenLLVM2GetType(jd, lhs->tu);
                     t = t->getPointerTo();
                     buffer_finish(&lhs->value);
