@@ -769,6 +769,21 @@ void test_code_assign_scalar_id()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_assign_function_id2()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("function foo()::Int64 24 end\n"
+             "var bar::Function{Output{Int64}}\n"
+             "bar = foo\n"
+             "bar()\n",
+             &result);
+    expect_str(&result.value, "24", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -815,4 +830,5 @@ void test_code_gen()
     test_code_assign_function_id();
     test_code_assign_array_id();
     test_code_assign_scalar_id();
+    test_code_assign_function_id2();
 }
