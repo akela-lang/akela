@@ -775,12 +775,12 @@ void test_code_assign_function_id2()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("function foo()::Int64 24 end\n"
-             "var bar::Function{Output{Int64}}\n"
-             "bar = foo\n"
-             "bar()\n",
+    cg_setup("function foo()::Int64 1 end\n"
+             "function bar()::Int64 2 end\n"
+             "foo = bar\n"
+             "foo()\n",
              &result);
-    expect_str(&result.value, "24", "value");
+    expect_str(&result.value, "1", "value");
     CodeGenResultDestroy(&result);
 }
 
