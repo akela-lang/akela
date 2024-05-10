@@ -784,6 +784,21 @@ void test_code_assign_function_id2()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_assign_array_id2()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Int64 = [1, 2, 3, 4]\n"
+             "var b::[4]Int64 = [5, 6, 7, 8]\n"
+             "a = b\n"
+             "a[0]\n",
+             &result);
+    expect_str(&result.value, "5", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -831,4 +846,5 @@ void test_code_gen()
     test_code_assign_array_id();
     test_code_assign_scalar_id();
     test_code_assign_function_id2();
+    test_code_assign_array_id2();
 }
