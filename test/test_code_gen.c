@@ -799,6 +799,74 @@ void test_code_assign_array_id2()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_assign_array_subscript()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[4]Int64 = [1, 2, 3, 4]\n"
+             "a[0] = 10\n"
+             "a[0]\n",
+             &result);
+    expect_str(&result.value, "10", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_assign_array_subscript2()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+             "a[1][2] = 60\n"
+             "a[0][0]\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+             "a[1][2] = 60\n"
+             "a[0][1]\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+             "a[1][2] = 60\n"
+             "a[0][2]\n",
+             &result);
+    expect_str(&result.value, "3", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+             "a[1][2] = 60\n"
+             "a[1][0]\n",
+             &result);
+    expect_str(&result.value, "4", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+             "a[1][2] = 60\n"
+             "a[1][1]\n",
+             &result);
+    expect_str(&result.value, "5", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+             "a[1][2] = 60\n"
+             "a[1][2]\n",
+             &result);
+    expect_str(&result.value, "60", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -847,4 +915,6 @@ void test_code_gen()
     test_code_assign_scalar_id();
     test_code_assign_function_id2();
     test_code_assign_array_id2();
+    test_code_assign_array_subscript();
+    test_code_assign_array_subscript2();
 }

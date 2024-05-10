@@ -1,5 +1,4 @@
 # Todo
-* assign lhs subscript
 * preallocate arrays
 * constant string
 * arrays of other types

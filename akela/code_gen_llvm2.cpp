@@ -629,7 +629,10 @@ Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n)
                 }
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
-                assert(false);
+                jd->context.in_lhs = true;
+                Value* lhs_value = CodeGenLLVM2Dispatch(jd, lhs);
+                jd->context.in_lhs = false;
+                jd->Builder->CreateStore(rhs_value, lhs_value);
             }
         }
         lhs = lhs->prev;
@@ -831,7 +834,11 @@ Value* CodeGenLLVM2Subscript(JITData* jd, struct ast_node* n)
     if (n->tu->to.is_array) {
         return element_ptr;
     } else {
-        return jd->Builder->CreateLoad(element_type, element_ptr, "elementtmp");
+        if (jd->context.in_lhs) {
+            return element_ptr;
+        } else {
+            return jd->Builder->CreateLoad(element_type, element_ptr, "elementtmp");
+        }
     }
 }
 
