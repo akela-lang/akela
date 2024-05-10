@@ -780,7 +780,7 @@ void test_code_assign_function_id2()
              "foo = bar\n"
              "foo()\n",
              &result);
-    expect_str(&result.value, "1", "value");
+    expect_str(&result.value, "2", "value");
     CodeGenResultDestroy(&result);
 }
 

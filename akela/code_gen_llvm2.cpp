@@ -589,6 +589,7 @@ Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n)
                 if (lhs->sym->reference) {
                     lhs_value = (AllocaInst*)lhs->sym->reference;
                 } else {
+                    lhs->sym->value = nullptr;
                     FunctionType *func_type = CodeGenLLVM2FunctionType(jd, rhs->tu);
                     PointerType *pt = func_type->getPointerTo();
                     buffer_finish(&rhs->value);
