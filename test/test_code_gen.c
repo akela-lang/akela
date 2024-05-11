@@ -44,7 +44,7 @@ void test_code_gen_constant_string()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_gen_var_void1()
+void test_code_gen_let_void1()
 {
     test_name(__func__);
     CodeGenResult result;
@@ -56,7 +56,7 @@ void test_code_gen_var_void1()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_gen_var_void2()
+void test_code_gen_let_void2()
 {
     test_name(__func__);
     CodeGenResult result;
@@ -68,7 +68,7 @@ void test_code_gen_var_void2()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_gen_var_int()
+void test_code_gen_let_int()
 {
     test_name(__func__);
     CodeGenResult result;
@@ -921,9 +921,9 @@ void test_code_gen()
     test_code_gen_constant_integer();
     test_code_gen_constant_double();
     test_code_gen_constant_string();
-    test_code_gen_var_void1();
-    test_code_gen_var_void2();
-    test_code_gen_var_int();
+    test_code_gen_let_void1();
+    test_code_gen_let_void2();
+    test_code_gen_let_int();
     test_code_gen_boolean_true();
     test_code_gen_boolean_false();
     test_code_gen_add();

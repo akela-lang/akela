@@ -25,9 +25,9 @@ void parse_for_iteration(struct parse_state* ps, struct ast_node* parent, struct
 struct ast_node* parse_module(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_struct(struct parse_state* ps, struct location* loc);
 struct ast_node* parse_return(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_var(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, struct list* l);
+struct ast_node* parse_let(struct parse_state* ps, struct location* loc);
+struct ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc);
+struct ast_node* parse_let_rseq(struct parse_state* ps, struct location* loc, struct list* l);
 struct ast_node* parse_extern(struct parse_state* ps, struct location* loc);
 
 /* stmts -> stmt stmts' */
@@ -155,8 +155,8 @@ struct ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
 		n = parse_struct(ps, loc);
 	} else if (t0->type == token_return) {
         n = parse_return(ps, loc);
-    } else if (t0->type == token_var) {
-        n = parse_var(ps, loc);
+    } else if (t0->type == token_let) {
+        n = parse_let(ps, loc);
     } else if (t0->type == token_extern) {
         n = parse_extern(ps, loc);
 	} else {
@@ -780,8 +780,8 @@ void location_item_destroy(struct location* loc)
     free(loc);
 }
 
-/* parse_var = var var_lseq :: type | var var_lseq :: type = var_rseq */
-struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
+/* parse_let = let let_lseq :: type | let let_lseq :: type = let_rseq */
+struct ast_node* parse_let(struct parse_state* ps, struct location* loc)
 {
     get_location(ps, loc);
 
@@ -790,7 +790,7 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
     n->type = ast_type_let;
 
     struct token* vrt = NULL;
-    if (!match(ps, token_var, "expected var", &vrt)) {
+    if (!match(ps, token_let, "expected let", &vrt)) {
         /* test case: no test case needed */
         assert(false);
     }
@@ -802,7 +802,7 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
 
     struct ast_node* a = NULL;
     struct location a_loc;
-    a = parse_var_lseq(ps, &a_loc);
+    a = parse_let_lseq(ps, &a_loc);
     if (a) {
         a->loc = a_loc;
     }
@@ -813,7 +813,7 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
     if (a) {
         ast_node_add(n, a);
     } else {
-        error_list_set(ps->el, &a_loc, "expected variable(s) after var");
+        error_list_set(ps->el, &a_loc, "expected variable(s) after let");
         n->type = ast_type_error;
     }
 
@@ -861,7 +861,7 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
         struct location b_loc;
         struct list b_l;
         list_init(&b_l);
-        b = parse_var_rseq(ps, &b_loc, &b_l);
+        b = parse_let_rseq(ps, &b_loc, &b_l);
         if (b && b->type == ast_type_error) {
             n->type = ast_type_error;
         }
@@ -912,9 +912,9 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
     return n;
 }
 
-/* var_lseq -> id var_lseq' */
-/* var_lseq' -> , id var_lseq' */
-struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc)
+/* let_lseq -> id let_lseq' */
+/* let_lseq' -> , id let_lseq' */
+struct ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc)
 {
     get_location(ps, loc);
 
@@ -978,9 +978,9 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc)
     return n;
 }
 
-/* var_rseq -> simple_expr var_rseq' */
-/* var_rseq' -> , simple_expr var_rseq' */
-struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, struct list* l)
+/* let_rseq -> simple_expr let_rseq' */
+/* let_rseq' -> , simple_expr let_rseq' */
+struct ast_node* parse_let_rseq(struct parse_state* ps, struct location* loc, struct list* l)
 {
     get_location(ps, loc);
 

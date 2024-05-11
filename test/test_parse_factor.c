@@ -189,20 +189,20 @@ void test_parse_id()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct ast_node* var = ast_node_get(cu.root, 0);
-	assert_ptr(var, "ptr var");
-	assert_int_equal(var->type, ast_type_let, "var var");
+	struct ast_node* let = ast_node_get(cu.root, 0);
+	assert_ptr(let, "ptr let");
+	assert_int_equal(let->type, ast_type_let, "type let");
 
-	struct ast_node* var_lseq = ast_node_get(var, 0);
-	assert_ptr(var_lseq, "ptr var_lseq");
-	assert_int_equal(var_lseq->type, ast_type_let_lseq, "var_lseq var_lseq");
+	struct ast_node* let_lseq = ast_node_get(let, 0);
+	assert_ptr(let_lseq, "ptr let_lseq");
+	assert_int_equal(let_lseq->type, ast_type_let_lseq, "let_lseq let_lseq");
 
-	struct ast_node* id = ast_node_get(var_lseq, 0);
+	struct ast_node* id = ast_node_get(let_lseq, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "x", "x");
 
-	struct ast_node* type = ast_node_get(var, 1);
+	struct ast_node* type = ast_node_get(let, 1);
 	assert_ptr(type, "ptr type");
 	expect_int_equal(type->type, ast_type_type, "type type");
 
@@ -1627,7 +1627,7 @@ void test_parse_not_error_not_boolean()
     parse_teardown(&cu);
 }
 
-void test_parse_factor_newline_var()
+void test_parse_factor_newline_let()
 {
     test_name(__func__);
 
@@ -1642,7 +1642,7 @@ void test_parse_factor_newline_var()
     parse_teardown(&cu);
 }
 
-void test_parse_factor_newline_var_assign()
+void test_parse_factor_newline_let_assign()
 {
     test_name(__func__);
 
@@ -1672,7 +1672,7 @@ void test_parse_factor_newline_anonymous_function()
     parse_teardown(&cu);
 }
 
-void test_parse_factor_newline_anonymous_function_var()
+void test_parse_factor_newline_anonymous_function_let()
 {
     test_name(__func__);
 
@@ -1872,10 +1872,10 @@ void test_parse_factor()
 	test_parse_not_error_expected_factor();
 	test_parse_not_error_no_value();
 	test_parse_not_error_not_boolean();
-    test_parse_factor_newline_var();
-    test_parse_factor_newline_var_assign();
+    test_parse_factor_newline_let();
+    test_parse_factor_newline_let_assign();
     test_parse_factor_newline_anonymous_function();
-    test_parse_factor_newline_anonymous_function_var();
+    test_parse_factor_newline_anonymous_function_let();
     test_parse_factor_newline_not();
     test_parse_factor_newline_sign();
     test_parse_factor_newline_array_literal();

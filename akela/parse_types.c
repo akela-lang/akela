@@ -762,16 +762,16 @@ struct ast_node* make_constructor(struct type_def* td)
 	stmts->type = ast_type_stmts;
 	ast_node_add(n, stmts);
 
-	/* var */
-	struct ast_node* var = NULL;
-	ast_node_create(&var);
-	var->type = ast_type_let;
-	ast_node_add(stmts, var);
+	/* let */
+	struct ast_node* let = NULL;
+	ast_node_create(&let);
+	let->type = ast_type_let;
+	ast_node_add(stmts, let);
 
 	struct ast_node* dec = NULL;
 	ast_node_create(&dec);
 	dec->type = ast_type_declaration;
-	ast_node_add(var, dec);
+	ast_node_add(let, dec);
 
 	struct ast_node* id2 = NULL;
 	ast_node_create(&id2);

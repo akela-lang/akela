@@ -144,26 +144,26 @@ void test_parse_types_array()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct ast_node* var = ast_node_get(cu.root, 0);
-	assert_ptr(var, "ptr var");
-	expect_int_equal(var->type, ast_type_let, "var dec");
+	struct ast_node* let = ast_node_get(cu.root, 0);
+	assert_ptr(let, "ptr let");
+	expect_int_equal(let->type, ast_type_let, "type let");
 
-	struct ast_node* var_lseq = ast_node_get(var, 0);
-	assert_ptr(var_lseq, "ptr var_lseq");
-	expect_int_equal(var_lseq->type, ast_type_let_lseq, "var_lseq var_lseq");
+	struct ast_node* let_lseq = ast_node_get(let, 0);
+	assert_ptr(let_lseq, "ptr let_lseq");
+	expect_int_equal(let_lseq->type, ast_type_let_lseq, "type let_lseq");
 
-	struct ast_node* name = ast_node_get(var_lseq, 0);
+	struct ast_node* name = ast_node_get(let_lseq, 0);
 	assert_ptr(name, "ptr name");
 	expect_int_equal(name->type, ast_type_id, "id name");
 	expect_str(&name->value, "a", "a name");
 
-	struct ast_node* var_type = ast_node_get(var, 1);
-	assert_ptr(var_type, "ptr var_type");
-	expect_int_equal(var_type->type, ast_type_type, "type var_type");
+	struct ast_node* let_type = ast_node_get(let, 1);
+	assert_ptr(let_type, "ptr let_type");
+	expect_int_equal(let_type->type, ast_type_type, "type let_type");
 
 	struct ast_node* as = ast_node_get(cu.root, 1);
 	assert_ptr(as, "ptr as");
-	expect_int_equal(as->type, ast_type_array_subscript, "array-subscript as");
+	expect_int_equal(as->type, ast_type_array_subscript, "type array-subscript");
 
 	struct ast_node* id = ast_node_get(as, 0);
 	assert_ptr(id, "ptr id");
@@ -413,9 +413,9 @@ void test_parse_types_newline_declaration()
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
-    struct ast_node* var = ast_node_get(cu.root, 0);
-    assert_ptr(var, "ptr var");
-    expect_int_equal(var->type, ast_type_let, "var var");
+    struct ast_node* let = ast_node_get(cu.root, 0);
+    assert_ptr(let, "ptr let");
+    expect_int_equal(let->type, ast_type_let, "type let");
 
     parse_teardown(&cu);
 }

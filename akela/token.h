@@ -45,7 +45,7 @@ enum token_enum {
     token_left_square_bracket,
     token_right_square_bracket,
     token_string,
-    token_var,
+    token_let,
     token_left_curly_brace,
     token_right_curly_brace,
     token_boolean,
@@ -107,7 +107,7 @@ enum result token_name_init(char** token_name)
     token_name[token_left_square_bracket] = "[";
     token_name[token_right_square_bracket] = "]";
     token_name[token_string] = "string";
-    token_name[token_var] = "var";
+    token_name[token_let] = "var";
     token_name[token_left_curly_brace] = "{";
     token_name[token_right_curly_brace] = "}";
     token_name[token_boolean] = "boolean";
