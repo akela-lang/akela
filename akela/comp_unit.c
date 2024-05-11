@@ -28,10 +28,12 @@ void comp_unit_create(struct comp_unit** cu)
 
 void comp_unit_destroy(struct comp_unit* cu)
 {
-	ast_node_destroy(cu->root);
-	error_list_destroy(&cu->el);
-	buffer_destroy(&cu->path);
-	symbol_table_destroy(&cu->st);
+    if (cu) {
+        ast_node_destroy(cu->root);
+        error_list_destroy(&cu->el);
+        buffer_destroy(&cu->path);
+        symbol_table_destroy(&cu->st);
+    }
 }
 
 void comp_unit_setup(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable, struct parse_state** ps)
