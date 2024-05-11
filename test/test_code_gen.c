@@ -877,7 +877,7 @@ void test_code_assign_array_allocate() {
              "a[1] = 2\n"
              "a[2] = 3\n"
              "a[3] = 4\n"
-             "a[0]",
+             "a[0]\n",
              &result);
     expect_str(&result.value, "1", "value");
     CodeGenResultDestroy(&result);
@@ -888,7 +888,7 @@ void test_code_assign_array_allocate() {
              "a[1] = 2\n"
              "a[2] = 3\n"
              "a[3] = 4\n"
-             "a[1]",
+             "a[1]\n",
              &result);
     expect_str(&result.value, "2", "value");
     CodeGenResultDestroy(&result);
@@ -899,7 +899,7 @@ void test_code_assign_array_allocate() {
              "a[1] = 2\n"
              "a[2] = 3\n"
              "a[3] = 4\n"
-             "a[2]",
+             "a[2]\n",
              &result);
     expect_str(&result.value, "3", "value");
     CodeGenResultDestroy(&result);
@@ -910,7 +910,7 @@ void test_code_assign_array_allocate() {
              "a[1] = 2\n"
              "a[2] = 3\n"
              "a[3] = 4\n"
-             "a[3]",
+             "a[3]\n",
              &result);
     expect_str(&result.value, "4", "value");
     CodeGenResultDestroy(&result);
