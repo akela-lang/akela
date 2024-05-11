@@ -787,7 +787,7 @@ struct ast_node* parse_var(struct parse_state* ps, struct location* loc)
 
     struct ast_node* n = NULL;
     ast_node_create(&n);
-    n->type = ast_type_var;
+    n->type = ast_type_let;
 
     struct token* vrt = NULL;
     if (!match(ps, token_var, "expected var", &vrt)) {
@@ -925,7 +925,7 @@ struct ast_node* parse_var_lseq(struct parse_state* ps, struct location* loc)
 
     struct ast_node* n = NULL;
     ast_node_create(&n);
-    n->type = ast_type_var_lseq;
+    n->type = ast_type_let_lseq;
 
     struct token* id = NULL;
     if (!match(ps, token_id, "expected an id", &id)) {
@@ -993,7 +993,7 @@ struct ast_node* parse_var_rseq(struct parse_state* ps, struct location* loc, st
 
     struct ast_node* n = NULL;
     ast_node_create(&n);
-    n->type = ast_type_var_rseq;
+    n->type = ast_type_let_rseq;
 
     if (a && a->type == ast_type_error) {
         n->type = ast_type_error;

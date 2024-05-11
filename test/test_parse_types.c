@@ -66,7 +66,7 @@ void test_parse_types_reserved_type()
 
 	struct comp_unit cu;
 
-    parse_setup("var Int64::Int64", &cu);
+    parse_setup("let Int64::Int64", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
@@ -108,7 +108,7 @@ void test_parse_types_reserved_type4()
 
 	struct comp_unit cu;
 
-    parse_setup("var list::Vector{Int64}; for Int64::Int64 in list end", &cu);
+    parse_setup("let list::Vector{Int64}; for Int64::Int64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
@@ -122,7 +122,7 @@ void test_parse_types_exists()
 
 	struct comp_unit cu;
 
-    parse_setup("var x::SuperInt; x + 1", &cu);
+    parse_setup("let x::SuperInt; x + 1", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "type not defined: SuperInt");
 	expect_false(cu.valid, "valid");
@@ -137,7 +137,7 @@ void test_parse_types_array()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Vector{Int64}; a[1]", &cu);
+    parse_setup("let a::Vector{Int64}; a[1]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -146,11 +146,11 @@ void test_parse_types_array()
 
 	struct ast_node* var = ast_node_get(cu.root, 0);
 	assert_ptr(var, "ptr var");
-	expect_int_equal(var->type, ast_type_var, "var dec");
+	expect_int_equal(var->type, ast_type_let, "var dec");
 
 	struct ast_node* var_lseq = ast_node_get(var, 0);
 	assert_ptr(var_lseq, "ptr var_lseq");
-	expect_int_equal(var_lseq->type, ast_type_var_lseq, "var_lseq var_lseq");
+	expect_int_equal(var_lseq->type, ast_type_let_lseq, "var_lseq var_lseq");
 
 	struct ast_node* name = ast_node_get(var_lseq, 0);
 	assert_ptr(name, "ptr name");
@@ -185,7 +185,7 @@ void test_parse_types_array_error()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Int64{Int64}; a[1]", &cu);
+    parse_setup("let a::Int64{Int64}; a[1]", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
 	expect_false(cu.valid, "valid");
@@ -199,7 +199,7 @@ void test_parse_types_array_error2()
 	
 	struct comp_unit cu;
 
-    parse_setup("var a::Vector{Int64, Float64}; a[1]", &cu);
+    parse_setup("let a::Vector{Int64, Float64}; a[1]", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(cu.valid, "valid");
@@ -227,7 +227,7 @@ void test_parse_error_declaration_double_colon()
 
 	struct comp_unit cu;
 
-    parse_setup("var a", &cu);
+    parse_setup("let a", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected :: after variable(s)");
 	expect_false(cu.valid, "valid");
@@ -241,7 +241,7 @@ void test_parse_error_declaration_type()
 	
 	struct comp_unit cu;
 
-    parse_setup("var a::", &cu);
+    parse_setup("let a::", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected type");
 	expect_false(cu.valid, "valid");
@@ -255,7 +255,7 @@ void test_parse_error_type_right_curly_brace()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Vector{Int64", &cu);
+    parse_setup("let a::Vector{Int64", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected right curly brace");
 	expect_false(cu.valid, "valid");
@@ -269,7 +269,7 @@ void test_parse_error_type_not_defined()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Foo", &cu);
+    parse_setup("let a::Foo", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "type not defined: Foo");
 	expect_false(cu.valid, "valid");
@@ -283,7 +283,7 @@ void test_parse_error_not_a_type()
 	
 	struct comp_unit cu;
 
-    parse_setup("var foo::Int64; var a::foo", &cu);
+    parse_setup("let foo::Int64; let a::foo", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier is not a type: foo");
 	expect_false(cu.valid, "valid");
@@ -297,7 +297,7 @@ void test_parse_error_not_generic()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Int64{Int64}", &cu);
+    parse_setup("let a::Int64{Int64}", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
 	expect_false(cu.valid, "valid");
@@ -311,7 +311,7 @@ void test_parse_error_subtype_count()
 	
 	struct comp_unit cu;
 
-    parse_setup("var a::Vector{Int64, Int64}", &cu);
+    parse_setup("let a::Vector{Int64, Int64}", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(cu.valid, "valid");
@@ -325,7 +325,7 @@ void test_parse_error_duplicate_declarations()
 
 	struct comp_unit cu;
 
-    parse_setup("var x::Int64; var x::Int64", &cu);
+    parse_setup("let x::Int64; let x::Int64", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 	expect_false(cu.valid, "valid");
@@ -339,7 +339,7 @@ void test_parse_error_type_name()
 
 	struct comp_unit cu;
 
-    parse_setup("var x::Vector{}", &cu);
+    parse_setup("let x::Vector{}", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected a type name");
 	expect_false(cu.valid, "valid");
@@ -353,7 +353,7 @@ void test_parse_error_comma_type_name()
 
 	struct comp_unit cu;
 
-    parse_setup("var x::Vector{Int64,}", &cu);
+    parse_setup("let x::Vector{Int64,}", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected a type name after comma");
 	expect_false(cu.valid, "valid");
@@ -409,13 +409,13 @@ void test_parse_types_newline_declaration()
 
     struct comp_unit cu;
 
-    parse_setup("var a\n::\nInt64", &cu);
+    parse_setup("let a\n::\nInt64", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     struct ast_node* var = ast_node_get(cu.root, 0);
     assert_ptr(var, "ptr var");
-    expect_int_equal(var->type, ast_type_var, "var var");
+    expect_int_equal(var->type, ast_type_let, "var var");
 
     parse_teardown(&cu);
 }

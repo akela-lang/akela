@@ -50,7 +50,7 @@ enum result ast_set_names(char** names)
 	names[ast_type_array_literal] = "array-literal";
 	names[ast_type_array_subscript] = "array-subscript";
 	names[ast_type_anonymous_function] = "anonymous-function";
-	names[ast_type_var] = "var";
+	names[ast_type_let] = "var";
 	names[ast_type_boolean] = "boolean";
 	names[ast_type_array] = "array";
 	names[ast_type_parenthesis] = "parenthesis";
@@ -62,8 +62,8 @@ enum result ast_set_names(char** names)
 	names[ast_type_struct] = "struct";
 	names[ast_type_return] = "return";
     names[ast_type_eseq] = "eseq";
-    names[ast_type_var_lseq] = "var_lseq";
-    names[ast_type_var_rseq] = "var_rseq";
+    names[ast_type_let_lseq] = "var_lseq";
+    names[ast_type_let_rseq] = "var_rseq";
     names[ast_type_error] = "error";
 
 	for (int i = 0; i < ast_type_count; i++) {

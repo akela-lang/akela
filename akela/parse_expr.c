@@ -38,7 +38,7 @@ bool is_lvalue(enum ast_type type)
         return true;
     }
 
-    if (type == ast_type_var) {
+    if (type == ast_type_let) {
         return true;
     }
 

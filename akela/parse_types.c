@@ -467,7 +467,7 @@ void declare_type(struct parse_state* ps, struct ast_node* n, struct ast_node* i
         if (id_node) {
             if (id_node->type == ast_type_id) {
                 check_id_node(ps, n, id_node);
-            } else if (id_node->type == ast_type_var_lseq) {
+            } else if (id_node->type == ast_type_let_lseq) {
                 struct ast_node* p = id_node->head;
                 while (p) {
                     check_id_node(ps, n, p);
@@ -765,7 +765,7 @@ struct ast_node* make_constructor(struct type_def* td)
 	/* var */
 	struct ast_node* var = NULL;
 	ast_node_create(&var);
-	var->type = ast_type_var;
+	var->type = ast_type_let;
 	ast_node_add(stmts, var);
 
 	struct ast_node* dec = NULL;

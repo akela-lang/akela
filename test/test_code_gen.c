@@ -50,7 +50,7 @@ void test_code_gen_var_void1()
     CodeGenResult result;
     CodeGenResultInit(&result);
 
-    cg_setup("var a::Int64", &result);
+    cg_setup("let a::Int64", &result);
     expect_str(&result.value, "", "blank");
 
     CodeGenResultDestroy(&result);
@@ -62,7 +62,7 @@ void test_code_gen_var_void2()
     CodeGenResult result;
     CodeGenResultInit(&result);
 
-    cg_setup("var a::Int64 = 1", &result);
+    cg_setup("let a::Int64 = 1", &result);
     expect_str(&result.value, "", "blank");
 
     CodeGenResultDestroy(&result);
@@ -74,7 +74,7 @@ void test_code_gen_var_int()
     CodeGenResult result;
     CodeGenResultInit(&result);
 
-    cg_setup("var a::Int64 = 31\n"
+    cg_setup("let a::Int64 = 31\n"
              "a"
              ,&result);
     expect_str(&result.value, "31", "31");
@@ -126,7 +126,7 @@ void test_code_gen_add2()
     CodeGenResult result;
     CodeGenResultInit(&result);
 
-    cg_setup("var a::Int64 = 4\n"
+    cg_setup("let a::Int64 = 4\n"
              "a + 61\n",
              &result);
     expect_str(&result.value, "65", "65");
@@ -152,7 +152,7 @@ void test_code_gen_sub2()
     CodeGenResult result;
     CodeGenResultInit(&result);
 
-    cg_setup("var a::Int64 = 10\n"
+    cg_setup("let a::Int64 = 10\n"
              "a - 2\n",
              &result);
     expect_str(&result.value, "8", "8");
@@ -166,8 +166,8 @@ void test_code_gen_last()
     CodeGenResult result;
     CodeGenResultInit(&result);
 
-    cg_setup("var a::Int64 = 1\n"
-             "var b::Int64 = 2\n"
+    cg_setup("let a::Int64 = 1\n"
+             "let b::Int64 = 2\n"
              "a + b\n",
              &result);
     expect_str(&result.value, "3", "value");
@@ -264,7 +264,7 @@ void test_code_gen_assign()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::Int64\n"
+    cg_setup("let a::Int64\n"
              "a = 44\n",
              &result);
     expect_str(&result.value, "44", "value");
@@ -277,7 +277,7 @@ void test_code_gen_assign_multiple()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a,b,c::Int64\n"
+    cg_setup("let a,b,c::Int64\n"
              "a = b = c = 44\n"
              "a",
              &result);
@@ -285,7 +285,7 @@ void test_code_gen_assign_multiple()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a,b,c::Int64\n"
+    cg_setup("let a,b,c::Int64\n"
              "a = b = c = 44\n"
              "b",
              &result);
@@ -293,7 +293,7 @@ void test_code_gen_assign_multiple()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a,b,c::Int64\n"
+    cg_setup("let a,b,c::Int64\n"
              "a = b = c = 44\n"
              "c",
              &result);
@@ -301,7 +301,7 @@ void test_code_gen_assign_multiple()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a,b,c::Int64\n"
+    cg_setup("let a,b,c::Int64\n"
              "a = b = c = 44\n",
              &result);
     expect_str(&result.value, "44", "value");
@@ -356,7 +356,7 @@ void test_code_gen_call_ptr()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function (a::Int64, b::Int64, c::Int64)::Int64\n"
+    cg_setup("let foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function (a::Int64, b::Int64, c::Int64)::Int64\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -401,7 +401,7 @@ void test_code_gen_anonymous_function()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function (a::Int64, b::Int64, c::Int64)::Int64\n"
+    cg_setup("let foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function (a::Int64, b::Int64, c::Int64)::Int64\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 1, 1)\n",
@@ -416,8 +416,8 @@ void test_code_gen_copy_from_variable()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::Int64 = 50\n"
-             "var b::Int64 = a\n"
+    cg_setup("let a::Int64 = 50\n"
+             "let b::Int64 = a\n"
              "a + b\n",
              &result);
     expect_str(&result.value, "100", "value");
@@ -433,7 +433,7 @@ void test_code_gen_function_copy()
     cg_setup("function foo(a::Int64)::Int64\n"
              "  a + 1\n"
              "end\n"
-             "var a::Function{Input{Int64},Output{Int64}} = foo\n"
+             "let a::Function{Input{Int64},Output{Int64}} = foo\n"
              "a(1)\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -474,14 +474,14 @@ void test_code_gen_if_expression()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::Int64 = if true 1 else 2 end\n"
+    cg_setup("let a::Int64 = if true 1 else 2 end\n"
              "a\n",
              &result);
     expect_str(&result.value, "1", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::Int64 = if false 1 else 2 end\n"
+    cg_setup("let a::Int64 = if false 1 else 2 end\n"
              "a\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -507,35 +507,35 @@ void test_code_gen_array_literal()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+    cg_setup("let a::[5]Int64 = [1,2,3,4,5]\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "1", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+    cg_setup("let a::[5]Int64 = [1,2,3,4,5]\n"
              "a[1]\n",
              &result);
     expect_str(&result.value, "2", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+    cg_setup("let a::[5]Int64 = [1,2,3,4,5]\n"
              "a[2]\n",
              &result);
     expect_str(&result.value, "3", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+    cg_setup("let a::[5]Int64 = [1,2,3,4,5]\n"
              "a[3]\n",
              &result);
     expect_str(&result.value, "4", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[5]Int64 = [1,2,3,4,5]\n"
+    cg_setup("let a::[5]Int64 = [1,2,3,4,5]\n"
              "a[4]\n",
              &result);
     expect_str(&result.value, "5", "value");
@@ -548,28 +548,28 @@ void test_code_gen_array_literal_multidimensional()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][2]Int64 = [[1,2],[3,4]]\n"
+    cg_setup("let a::[2][2]Int64 = [[1,2],[3,4]]\n"
              "a[0][0]\n",
              &result);
     expect_str(&result.value, "1", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][2]Int64 = [[1,2],[3,4]]\n"
+    cg_setup("let a::[2][2]Int64 = [[1,2],[3,4]]\n"
              "a[0][1]\n",
              &result);
     expect_str(&result.value, "2", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][2]Int64 = [[1,2],[3,4]]\n"
+    cg_setup("let a::[2][2]Int64 = [[1,2],[3,4]]\n"
              "a[1][0]\n",
              &result);
     expect_str(&result.value, "3", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][2]Int64 = [[1,2],[3,4]]\n"
+    cg_setup("let a::[2][2]Int64 = [[1,2],[3,4]]\n"
              "a[1][1]\n",
              &result);
     expect_str(&result.value, "4", "value");
@@ -582,7 +582,7 @@ void test_code_gen_array_literal_signed()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][2]Int64 = [[1,-2],[3,4]]\n"
+    cg_setup("let a::[2][2]Int64 = [[1,-2],[3,4]]\n"
              "a[0][1]\n",
              &result);
     expect_str(&result.value, "-2", "value");
@@ -595,7 +595,7 @@ void test_code_gen_int64()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::Int64 = 2\n"
+    cg_setup("let a::Int64 = 2\n"
              "a\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -608,7 +608,7 @@ void test_code_gen_int32()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::Int32 = 2\n"
+    cg_setup("let a::Int32 = 2\n"
              "a\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -621,8 +621,8 @@ void test_code_gen_int32_int64()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::Int64 = 1\n"
-             "var b::Int32 = a\n"
+    cg_setup("let a::Int64 = 1\n"
+             "let b::Int32 = a\n"
              "b\n",
              &result);
     expect_str(&result.value, "1", "value");
@@ -635,7 +635,7 @@ void test_code_gen_array_literal_int32()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][2]Int32 = [[1,2],[3,4]]\n"
+    cg_setup("let a::[2][2]Int32 = [[1,2],[3,4]]\n"
              "a[0][1]\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -648,8 +648,8 @@ void test_code_gen_array_literal_ptr()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64 = [1,2,3,4]\n"
-             "var b::[4]Int64 = a\n"
+    cg_setup("let a::[4]Int64 = [1,2,3,4]\n"
+             "let b::[4]Int64 = a\n"
              "b[1]\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -662,28 +662,28 @@ void Test_code_gen_array_boolean()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Bool = [true,false,true,false]\n"
+    cg_setup("let a::[4]Bool = [true,false,true,false]\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "true", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Bool = [true,false,true,false]\n"
+    cg_setup("let a::[4]Bool = [true,false,true,false]\n"
              "a[1]\n",
              &result);
     expect_str(&result.value, "false", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Bool = [true,false,true,false]\n"
+    cg_setup("let a::[4]Bool = [true,false,true,false]\n"
              "a[2]\n",
              &result);
     expect_str(&result.value, "true", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Bool = [true,false,true,false]\n"
+    cg_setup("let a::[4]Bool = [true,false,true,false]\n"
              "a[3]\n",
              &result);
     expect_str(&result.value, "false", "value");
@@ -696,28 +696,28 @@ void Test_code_gen_array_float() {
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
+    cg_setup("let a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "1.000000", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
+    cg_setup("let a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[1]\n",
              &result);
     expect_str(&result.value, "2.000000", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
+    cg_setup("let a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[2]\n",
              &result);
     expect_str(&result.value, "3.000000", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
+    cg_setup("let a::[4]Float64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[3]\n",
              &result);
     expect_str(&result.value, "4.000000", "value");
@@ -731,7 +731,7 @@ void test_code_assign_function_id()
 
     CodeGenResultInit(&result);
     cg_setup("function foo()::Int64 1 end\n"
-             "var bar::Function{Output{Int64}}\n"
+             "let bar::Function{Output{Int64}}\n"
              "bar = foo\n"
              "bar()\n",
              &result);
@@ -745,8 +745,8 @@ void test_code_assign_array_id()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64 = [1, 2, 3, 4]\n"
-             "var b::[4]Int64\n"
+    cg_setup("let a::[4]Int64 = [1, 2, 3, 4]\n"
+             "let b::[4]Int64\n"
              "b = a\n"
              "b[0]\n",
              &result);
@@ -760,8 +760,8 @@ void test_code_assign_scalar_id()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::Int64 = 11\n"
-             "var b::Int64\n"
+    cg_setup("let a::Int64 = 11\n"
+             "let b::Int64\n"
              "b = a\n"
              "b\n",
              &result);
@@ -790,8 +790,8 @@ void test_code_assign_array_id2()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64 = [1, 2, 3, 4]\n"
-             "var b::[4]Int64 = [5, 6, 7, 8]\n"
+    cg_setup("let a::[4]Int64 = [1, 2, 3, 4]\n"
+             "let b::[4]Int64 = [5, 6, 7, 8]\n"
              "a = b\n"
              "a[0]\n",
              &result);
@@ -805,7 +805,7 @@ void test_code_assign_array_subscript()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64 = [1, 2, 3, 4]\n"
+    cg_setup("let a::[4]Int64 = [1, 2, 3, 4]\n"
              "a[0] = 10\n"
              "a[0]\n",
              &result);
@@ -819,7 +819,7 @@ void test_code_assign_array_subscript2()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][0]\n",
              &result);
@@ -827,7 +827,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][1]\n",
              &result);
@@ -835,7 +835,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][2]\n",
              &result);
@@ -843,7 +843,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][0]\n",
              &result);
@@ -851,7 +851,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][1]\n",
              &result);
@@ -859,7 +859,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][2]\n",
              &result);
@@ -872,7 +872,7 @@ void test_code_assign_array_allocate() {
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64\n"
+    cg_setup("let a::[4]Int64\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -883,7 +883,7 @@ void test_code_assign_array_allocate() {
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64\n"
+    cg_setup("let a::[4]Int64\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -894,7 +894,7 @@ void test_code_assign_array_allocate() {
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64\n"
+    cg_setup("let a::[4]Int64\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -905,7 +905,7 @@ void test_code_assign_array_allocate() {
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("var a::[4]Int64\n"
+    cg_setup("let a::[4]Int64\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"

@@ -375,7 +375,7 @@ Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n)
         return CodeGenLLVM2Extern(jd, n);
     } else if (n->type == ast_type_if) {
         return CodeGenLLVM2If(jd, n);
-    } else if (n->type == ast_type_var) {
+    } else if (n->type == ast_type_let) {
         return CodeGenLLVM2Var(jd, n);
     } else if (n->type == ast_type_function) {
         return CodeGenLLVM2Function(jd, n);

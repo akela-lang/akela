@@ -1,13 +1,13 @@
 # Todo
-* element const type option
+* mut type annotation
+* mut and const element annotation
 * constant string, array of u8
 * array
   * integer [x]
   * boolean [x]
   * float [x]
   * string []
-* change var to let
-* mut type annotation
+* array indexing check
 * slice
 * struct
 * dot operator

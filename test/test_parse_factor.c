@@ -182,7 +182,7 @@ void test_parse_id()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-    parse_setup("var x::Int64; x", &cu);
+    parse_setup("let x::Int64; x", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -191,11 +191,11 @@ void test_parse_id()
 
 	struct ast_node* var = ast_node_get(cu.root, 0);
 	assert_ptr(var, "ptr var");
-	assert_int_equal(var->type, ast_type_var, "var var");
+	assert_int_equal(var->type, ast_type_let, "var var");
 
 	struct ast_node* var_lseq = ast_node_get(var, 0);
 	assert_ptr(var_lseq, "ptr var_lseq");
-	assert_int_equal(var_lseq->type, ast_type_var_lseq, "var_lseq var_lseq");
+	assert_int_equal(var_lseq->type, ast_type_let_lseq, "var_lseq var_lseq");
 
 	struct ast_node* id = ast_node_get(var_lseq, 0);
 	assert_ptr(id, "ptr id");
@@ -234,7 +234,7 @@ void test_parse_id2()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-    parse_setup("var _a23::Int64; _a23", &cu);
+    parse_setup("let _a23::Int64; _a23", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -258,7 +258,7 @@ void test_parse_id3()
 	
 	struct comp_unit cu;
 
-    parse_setup("var a2::Int64; a2", &cu);
+    parse_setup("let a2::Int64; a2", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -280,7 +280,7 @@ void test_parse_id_greek()
 
     struct comp_unit cu;
 
-    parse_setup("var αβγ::Int64; αβγ", &cu);
+    parse_setup("let αβγ::Int64; αβγ", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "parse_setup valid");
 
@@ -302,7 +302,7 @@ void test_parse_id_cyrillic()
 
     struct comp_unit cu;
 
-    parse_setup("var я::Int64; я", &cu);
+    parse_setup("let я::Int64; я", &cu);
     assert_has_errors(&cu.el);
     struct error* e = expect_source_error(&cu.el, "Unrecognized character: я");
     assert_ptr(e, "ptr e");
@@ -427,7 +427,7 @@ void test_parse_not_id()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Bool; !a", &cu);
+    parse_setup("let a::Bool; !a", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -697,7 +697,7 @@ void test_parse_anonymous_function()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
+    parse_setup("let a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse valid");
 
@@ -796,7 +796,7 @@ void test_parse_anonymous_function2()
 	struct comp_unit cu;
 
     parse_setup(
-            "var a::Function{Input{Int32, Int32, Int32}, Output{Int32}}; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end",
+            "let a::Function{Input{Int32, Int32, Int32}, Output{Int32}}; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end",
             &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse valid");
@@ -899,7 +899,7 @@ void test_parse_anonymous_function3()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Function; a = function(x::Int64) var x::Int64 = 1 end", &cu);
+    parse_setup("let a::Function; a = function(x::Int64) let x::Int64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
@@ -913,7 +913,7 @@ void test_parse_anonymous_function_assignment_error()
 
 	struct comp_unit cu;
 
-    parse_setup("var a::Function = function(x::Int64) end", &cu);
+    parse_setup("let a::Function = function(x::Int64) end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "values in assignment not compatible");
@@ -928,7 +928,7 @@ void test_parse_anonymous_function_return_error()
 	
 	struct comp_unit cu;
 
-    parse_setup("var f::Function{Output{Int64}} = function()::Int64 true end", &cu);
+    parse_setup("let f::Function{Output{Int64}} = function()::Int64 true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "returned type does not match function return type");
@@ -1231,7 +1231,7 @@ void test_parse_call3()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(arg1::Int64, arg2::Int64)::Int64 1 end; var x::Int64; var y::Int64; foo(x,y)", &cu);
+    parse_setup("function foo(arg1::Int64, arg2::Int64)::Int64 1 end; let x::Int64; let y::Int64; foo(x,y)", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -1311,7 +1311,7 @@ void test_parse_call4()
 	struct comp_unit cu;
 
     parse_setup(
-            "function foo(arg0::Int64, arg1::Int64, arg2::Int64)::Int64 100 end; var x::Int64; var y::Int64; foo(x, y, 1)",
+            "function foo(arg0::Int64, arg1::Int64, arg2::Int64)::Int64 100 end; let x::Int64; let y::Int64; foo(x, y, 1)",
             &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
@@ -1472,7 +1472,7 @@ void test_parse_call_anonymous_function_type_error()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-    parse_setup("var foo::Function{Input{Int64}} = function (a::Int64) end; foo(true)", &cu);
+    parse_setup("let foo::Function{Input{Int64}} = function (a::Int64) end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "parameter and aguments types do not match");
@@ -1523,7 +1523,7 @@ void test_parse_call_error_not_function()
 	struct comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
-    parse_setup("var foo::Int64; foo()", &cu);
+    parse_setup("let foo::Int64; foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "not a function type");
@@ -1634,7 +1634,7 @@ void test_parse_factor_newline_var()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup("var\nx::Int64", &cu);
+    parse_setup("let\nx::Int64", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1649,7 +1649,7 @@ void test_parse_factor_newline_var_assign()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup("var\nx::Int64 =\n1", &cu);
+    parse_setup("let\nx::Int64 =\n1", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1680,7 +1680,7 @@ void test_parse_factor_newline_anonymous_function_var()
 
     /* allocate ps{} cu.root cu.root{} */
     parse_setup(
-            "var foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function\n"
+            "let foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = function\n"
             "(\n"
             "a::Int64,\n"
             "b::Int64,\n"
