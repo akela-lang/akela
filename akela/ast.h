@@ -8,12 +8,19 @@
 #include "token.h"
 #include "zinc/vector.h"
 
+typedef enum Array_element_option {
+    Array_element_const,
+    Array_element_mut,
+    Array_element_default,
+} Array_element_option;
+
 typedef struct Type_options {
     bool is_mut;
     bool is_array;
     bool is_slice;
     bool is_ref;
-    Vector dim;     /* vector of size_t */
+    Vector dim;             /* vector of size_t */
+    Vector dim_option;      /* vector of Array_element_option */
 } Type_options;
 
 enum ast_type {

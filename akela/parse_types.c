@@ -272,6 +272,24 @@ struct ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, stru
 	return n;
 }
 
+bool Is_placeholder_node(struct ast_node* n)
+{
+    if (n->type == ast_type_id && buffer_compare_str(&n->value, "_")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Is_placeholder_token(struct token* t)
+{
+    if (t->type == token_id && buffer_compare_str(&t->value, "_")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 /* type -> id | id { tseq } */
 struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
 {
@@ -296,29 +314,44 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
             n->type = ast_type_type;
         }
 
+        bool has_number = false;
+        bool has_const = false;
+        bool has_mut = false;
+        size_t dim_size_number;
         t0 = get_lookahead(ps);
-        if (t0->type != token_right_square_bracket) {
-            if (t0->type == token_number || t0->type == token_mult) {
-                struct token *dim_size = NULL;
-                if (!match(ps, t0->type, "expected array size or asterisk", &dim_size)) {
-                    /* test case: no test case needed */
-                    assert(false);
-                }
 
-                if (t0->type == token_number) {
-                    n->to.is_array = true;
-                    buffer_finish(&dim_size->value);
-                    size_t v = (size_t)strtol(dim_size->value.buf, NULL, 10);
-                    VectorAdd(&n->to.dim, &v, 1);
-                } else if (t0->type == token_mult) {
-                    n->to.is_slice = true;
-                }
-            } else {
-                error_list_set(ps->el,
-                               &t0->loc,
-                               "expected array size, asterisk, or right square_bracket");
-                n->type = ast_type_error;
+        if (t0->type == token_number) {
+            struct token *dim_size = NULL;
+            if (!match(ps, token_number, "expected number", &dim_size)) {
+                /* test case: no test case needed */
+                assert(false);
             }
+            has_number = true;
+            buffer_finish(&dim_size->value);
+            dim_size_number = (size_t) strtol(dim_size->value.buf, NULL, 10);
+            token_destroy(dim_size);
+            free(dim_size);
+            t0 = get_lookahead(ps);
+        }
+
+        int const_mut_count = 0;
+        struct location const_mut_loc;
+        while (t0->type == token_const || t0->type == token_mut) {
+            const_mut_count++;
+            struct token* const_mut = NULL;
+            if (!match(ps, t0->type, "expected const", &const_mut)) {
+                /* test case: no test case needed */
+                assert(false);
+            }
+            const_mut_loc = const_mut->loc;
+            if (const_mut->type == token_const) {
+                has_const = true;
+            } else if (const_mut->type == token_mut) {
+                has_mut = true;
+            }
+            token_destroy(const_mut);
+            free(const_mut);
+            t0 = get_lookahead(ps);
         }
 
         struct token* rsb = NULL;
@@ -326,10 +359,36 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
+        token_destroy(rsb);
+        free(rsb);
+
+        if (has_number) {
+            n->to.is_array = true;
+            VectorAdd(&n->to.dim, &dim_size_number, 1);
+        } else {
+            n->to.is_slice = true;
+            size_t zero = 0;
+            VectorAdd(&n->to.dim, &zero, 1);
+        }
+
+        if (const_mut_count > 1) {
+            error_list_set(ps->el, &const_mut_loc, "const or mut option set multiple times");
+            n->type = ast_type_error;
+        } else if (has_const) {
+            Array_element_option option = Array_element_const;
+            VectorAdd(&n->to.dim_option, &option, 1);
+        } else if (has_mut) {
+            Array_element_option option = Array_element_mut;
+            VectorAdd(&n->to.dim_option, &option, 1);
+        } else {
+            Array_element_option option = Array_element_default;
+            VectorAdd(&n->to.dim_option, &option, 1);
+        }
+
         t0 = get_lookahead(ps);
     }
 
-	if (t0 && t0->type == token_id) {
+	if (t0->type == token_id) {
         if (!n) {
             ast_node_create(&n);
             n->type = ast_type_type;

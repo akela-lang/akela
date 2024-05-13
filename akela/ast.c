@@ -88,6 +88,7 @@ void Type_options_init(Type_options* to)
     to->is_slice = false;
     to->is_ref = false;
     VectorInit(&to->dim, sizeof(size_t));
+    VectorInit(&to->dim_option, sizeof(Array_element_option));
 }
 
 void ast_node_init(struct ast_node* n)

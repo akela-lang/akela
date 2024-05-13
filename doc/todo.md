@@ -1,9 +1,10 @@
 # Todo
+* scratch array size in constructor
 * mut type annotation:
   * let [x]
   * prototype []
   * call []
-* error is mut is unnecessary
+* error if mut is unnecessary
 * mut and const element annotation
 * constant string, array of u8
 * array
@@ -12,11 +13,11 @@
   * float [x]
   * string []
 * array indexing check
-* scratch array size in constructor
 * mut type annotation: match, enum, for
 * slice
 * struct
 * dot operator
+* struct methods
 * tuple
 * type inference
 * generate IR to serialize arbitrary value and call it to get return value returned by toplevel function
@@ -26,7 +27,7 @@
 * for i = 0 to 10 step 2
 * for x in y
 * enum
+* enum methods
 * match
-* methods
 * modules
 * REPL
