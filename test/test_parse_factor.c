@@ -298,11 +298,10 @@ void test_parse_id_greek()
 void test_parse_id_cyrillic()
 {
     test_name(__func__);
-
-
     struct comp_unit cu;
 
     parse_setup("let я::Int64; я", &cu);
+    expect_false(cu.valid, "parse_setup valid");
     assert_has_errors(&cu.el);
     struct error* e = expect_source_error(&cu.el, "Unrecognized character: я");
     assert_ptr(e, "ptr e");
@@ -310,7 +309,6 @@ void test_parse_id_cyrillic()
     expect_size_t_equal(e->loc.line, 1, "line");
     expect_size_t_equal(e->loc.col, 5, "col");
     expect_size_t_equal(e->loc.size, 1, "size");
-    expect_false(cu.valid, "parse_setup valid");
 
     parse_teardown(&cu);
 }
@@ -697,7 +695,7 @@ void test_parse_anonymous_function()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
+    parse_setup("let mut a::Function{Input{Int32, Int32, Int32}}; a = function(x::Int32,y::Int32,z::Int32) 1 end", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse valid");
 
@@ -796,7 +794,7 @@ void test_parse_anonymous_function2()
 	struct comp_unit cu;
 
     parse_setup(
-            "let a::Function{Input{Int32, Int32, Int32}, Output{Int32}}; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end",
+            "let mut a::Function{Input{Int32, Int32, Int32}, Output{Int32}}; a = function(x::Int32,y::Int32,z::Int32)::Int32 1 end",
             &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse valid");

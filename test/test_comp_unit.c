@@ -9,7 +9,7 @@ void test_comp_unit_compile()
 
     Vector* text = NULL;
     VectorCreate(&text, sizeof(char));
-    VectorAdd(text, "10", 3);
+    VectorAdd(text, "10", 2);
 
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, text);

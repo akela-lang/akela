@@ -24,6 +24,7 @@ AKELA_API struct ast_node* get_function_input_type(struct ast_node* tu, int inde
 AKELA_API bool check_input_type(struct parse_state* ps, struct ast_node* tu, int index, struct ast_node* a, struct location* loc_expr);
 AKELA_API struct ast_node* make_constructor(struct type_def* td);
 AKELA_API void Override_rhs(struct ast_node* tu, struct ast_node* rhs);
+AKELA_API bool check_lvalue(struct parse_state* ps, struct ast_node* n, struct location* loc);
 
 #ifdef __cplusplus
 }

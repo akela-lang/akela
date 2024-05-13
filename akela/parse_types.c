@@ -457,6 +457,8 @@ void check_id_node(struct parse_state* ps, struct ast_node* n, struct ast_node* 
             new_sym->tu = ast_node_copy(n);
             environment_put(ps->st->top, &id_node->value, new_sym);
             id_node->sym = new_sym;
+            /* copy is_mut from id node to type use node */
+            new_sym->tu->to.is_mut = id_node->to.is_mut;
         }
     }
 }
@@ -841,4 +843,54 @@ void Override_rhs(struct ast_node* tu, struct ast_node* rhs)
             }
         }
     }
+}
+
+bool is_lvalue(enum ast_type type)
+{
+    if (type == ast_type_id) {
+        return true;
+    }
+
+    if (type == ast_type_array_subscript) {
+        return true;
+    }
+
+    if (type == ast_type_eseq) {
+        return true;
+    }
+
+    if (type == ast_type_dot) {
+        return true;
+    }
+
+    return false;
+}
+
+bool check_lvalue(struct parse_state* ps, struct ast_node* n, struct location* loc)
+{
+    struct ast_node* p = n;
+    while (p) {
+        if (!is_lvalue(p->type)) {
+            error_list_set(ps->el, loc, "invalid lvalue");
+            return false;
+        }
+        if (!p->head) {
+            assert(p->tu);
+            if (p->type == ast_type_id) {
+                struct symbol* sym = environment_get(ps->st->top, &p->value);
+                if (sym) {
+                    if (sym->assign_count > 0) {
+                        if (!p->tu->to.is_mut) {
+                            error_list_set(ps->el, loc, "immutable variable changed in assignment");
+                            return false;
+                        }
+                    }
+                    sym->assign_count++;
+                }
+            }
+        }
+        p = p->head;
+    }
+
+    return true;
 }

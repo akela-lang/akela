@@ -12,7 +12,7 @@ void test_parse_assign()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Int64; a = 1", &cu);
+    parse_setup("let mut a::Int64; a = 1", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -2431,6 +2431,64 @@ void test_parse_extern()
     parse_teardown(&cu);
 }
 
+void test_parse_stmts_mut() {
+    test_name(__func__);
+    struct comp_unit cu;
+
+    parse_setup("let mut x::Int64 = 10\n"
+                "x = 5\n"
+                "x",
+                &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "parse_setup valid");
+
+    expect_int_equal(cu.root->type, ast_type_stmts, "type cu.root");
+
+    struct ast_node *let = ast_node_get(cu.root, 0);
+    assert_ptr(let, "ptr let");
+    expect_int_equal(let->type, ast_type_let, "type let");
+
+    struct ast_node *let_lseq = ast_node_get(let, 0);
+    assert_ptr(let_lseq, "ptr let_lseq");
+    expect_int_equal(let_lseq->type, ast_type_let_lseq, "type let_lseq");
+
+    struct ast_node *let_lhs = ast_node_get(let_lseq, 0);
+    assert_ptr(let_lhs, "ptr lhs");
+    expect_int_equal(let_lhs->type, ast_type_id, "type lhs");
+    expect_true(let_lhs->to.is_mut, "is_mut lhs");
+
+    struct ast_node *assign = ast_node_get(cu.root, 1);
+    assert_ptr(assign, "ptr assign");
+    expect_int_equal(assign->type, ast_type_assign, "type assign");
+
+    assert_ptr(assign->tu, "ptr assign->tu");
+    expect_true(assign->tu->to.is_mut, "is_mut assign");
+
+    struct ast_node *x = ast_node_get(assign, 0);
+    assert_ptr(x, "ptr x");
+    expect_int_equal(x->type, ast_type_id, "type id");
+
+    expect_ptr(x->tu, "ptr x->tu");
+    expect_true(x->tu->to.is_mut, "is_mut x->tu");
+
+    parse_teardown(&cu);
+}
+
+void test_parse_stmts_error_mut()
+{
+    test_name(__func__);
+    struct comp_unit cu;
+
+    parse_setup("let x::Int64 = 10\n"
+                "x = 5\n"
+                "x",
+                &cu);
+    expect_false(cu.valid, "parse_setup valid");
+    expect_has_errors(&cu.el);
+    struct error* e = expect_source_error(&cu.el, "immutable variable changed in assignment");
+    parse_teardown(&cu);
+}
+
 void test_parse_statements()
 {
 	test_parse_assign();
@@ -2506,4 +2564,6 @@ void test_parse_statements()
     test_parse_let3();
     test_parse_let_expected_declaration();
     test_parse_extern();
+    test_parse_stmts_mut();
+    test_parse_stmts_error_mut();
 }

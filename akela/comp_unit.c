@@ -69,7 +69,7 @@ bool comp_unit_compile(struct comp_unit* cu, void* input_obj, InputUnicodeVTable
     cu->input_obj = input_obj;
 	comp_unit_setup(cu, input_obj, input_vtable, &ps);
     cu->root = parse(ps);
-    if (cu->root->type == ast_type_error) {
+    if (cu->root->type == ast_type_error || cu->el.head) {
         valid = false;
     }
 

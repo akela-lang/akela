@@ -724,7 +724,7 @@ void Test_code_gen_array_float() {
     CodeGenResultDestroy(&result);
 }
 
-void test_code_assign_function_id()
+void test_code_gen_assign_function_id()
 {
     test_name(__func__);
     CodeGenResult result;
@@ -739,7 +739,7 @@ void test_code_assign_function_id()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_assign_array_id()
+void test_code_gen_assign_array_id()
 {
     test_name(__func__);
     CodeGenResult result;
@@ -754,7 +754,7 @@ void test_code_assign_array_id()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_assign_scalar_id()
+void test_code_gen_assign_scalar_id()
 {
     test_name(__func__);
     CodeGenResult result;
@@ -769,7 +769,7 @@ void test_code_assign_scalar_id()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_assign_function_id2()
+void test_code_gen_assign_function_id2()
 {
     test_name(__func__);
     CodeGenResult result;
@@ -784,13 +784,13 @@ void test_code_assign_function_id2()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_assign_array_id2()
+void test_code_gen_assign_array_id2()
 {
     test_name(__func__);
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[4]Int64 = [1, 2, 3, 4]\n"
+    cg_setup("let mut a::[4]Int64 = [1, 2, 3, 4]\n"
              "let b::[4]Int64 = [5, 6, 7, 8]\n"
              "a = b\n"
              "a[0]\n",
@@ -799,13 +799,13 @@ void test_code_assign_array_id2()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_assign_array_subscript()
+void test_code_gen_assign_array_subscript()
 {
     test_name(__func__);
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[4]Int64 = [1, 2, 3, 4]\n"
+    cg_setup("let mut a::[4]Int64 = [1, 2, 3, 4]\n"
              "a[0] = 10\n"
              "a[0]\n",
              &result);
@@ -813,13 +813,13 @@ void test_code_assign_array_subscript()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_assign_array_subscript2()
+void test_code_gen_assign_array_subscript2()
 {
     test_name(__func__);
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let mut a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][0]\n",
              &result);
@@ -827,7 +827,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let mut a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][1]\n",
              &result);
@@ -835,7 +835,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let mut a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][2]\n",
              &result);
@@ -843,7 +843,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let mut a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][0]\n",
              &result);
@@ -851,7 +851,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let mut a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][1]\n",
              &result);
@@ -859,7 +859,7 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
+    cg_setup("let mut a::[2][3]Int64 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][2]\n",
              &result);
@@ -867,12 +867,12 @@ void test_code_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_assign_array_allocate() {
+void test_code_gen_assign_array_allocate() {
     test_name(__func__);
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[4]Int64\n"
+    cg_setup("let mut a::[4]Int64\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -883,7 +883,7 @@ void test_code_assign_array_allocate() {
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[4]Int64\n"
+    cg_setup("let mut a::[4]Int64\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -894,7 +894,7 @@ void test_code_assign_array_allocate() {
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[4]Int64\n"
+    cg_setup("let mut a::[4]Int64\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -905,7 +905,7 @@ void test_code_assign_array_allocate() {
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::[4]Int64\n"
+    cg_setup("let mut a::[4]Int64\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -959,12 +959,12 @@ void test_code_gen()
     test_code_gen_array_literal_ptr();
     Test_code_gen_array_boolean();
     Test_code_gen_array_float();
-    test_code_assign_function_id();
-    test_code_assign_array_id();
-    test_code_assign_scalar_id();
-    test_code_assign_function_id2();
-    test_code_assign_array_id2();
-    test_code_assign_array_subscript();
-    test_code_assign_array_subscript2();
-    test_code_assign_array_allocate();
+    test_code_gen_assign_function_id();
+    test_code_gen_assign_array_id();
+    test_code_gen_assign_scalar_id();
+    test_code_gen_assign_function_id2();
+    test_code_gen_assign_array_id2();
+    test_code_gen_assign_array_subscript();
+    test_code_gen_assign_array_subscript2();
+    test_code_gen_assign_array_allocate();
 }

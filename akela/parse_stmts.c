@@ -810,9 +810,10 @@ struct ast_node* parse_let(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-    if (a) {
-        ast_node_add(n, a);
-    } else {
+    assert(a);
+    ast_node_add(n, a);
+
+    if (!a->head) {
         error_list_set(ps->el, &a_loc, "expected variable(s) after let");
         n->type = ast_type_error;
     }
@@ -906,6 +907,19 @@ struct ast_node* parse_let(struct parse_state* ps, struct location* loc)
             }
         }
 
+        if (n->type != ast_type_error) {
+            assert(a);
+            struct ast_node* lhs = a->head;
+            while (lhs) {
+                assert(lhs->type == ast_type_id);
+                struct symbol* sym = NULL;
+                sym = environment_get(ps->st->top, &lhs->value);
+                assert(sym);
+                sym->assign_count++;
+                lhs = lhs->next;
+            }
+        }
+
         list_destroy(&b_l, (list_node_destroy)location_item_destroy);
     }
 
@@ -918,24 +932,36 @@ struct ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc)
 {
     get_location(ps, loc);
 
-    struct token* t0 = get_lookahead(ps);
-    if (!t0 || t0->type != token_id) {
-        return NULL;
-    }
-
     struct ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_let_lseq;
 
+    struct token* t0 = get_lookahead(ps);
+    if (t0->type != token_mut && t0->type != token_id) {
+        return n;
+    }
+
+    bool is_mut = false;
+    if (t0->type == token_mut) {
+        struct token* mut = NULL;
+        if (!match(ps, token_mut, "expected mut", &mut)) {
+            assert(false);
+        }
+        token_destroy(mut);
+        free(mut);
+
+        is_mut = true;
+    }
+
     struct token* id = NULL;
     if (!match(ps, token_id, "expected an id", &id)) {
-        /* test case: no test case needed */
-        assert(false);
+        n->type = ast_type_error;
     }
 
     struct ast_node* a = NULL;
     ast_node_create(&a);
     a->type = ast_type_id;
+    a->to.is_mut = is_mut;
     buffer_copy(&id->value, &a->value);
     ast_node_add(n, a);
     a->loc = id->loc;

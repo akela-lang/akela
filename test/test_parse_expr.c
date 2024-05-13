@@ -1737,7 +1737,7 @@ void test_parse_assign_string()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::String; a = \"hello\"", &cu);
+    parse_setup("let mut a::String; a = \"hello\"", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1775,7 +1775,7 @@ void test_parse_assign_multiple()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Int64; let b::Int64; let c::Int64; a = b = c = 0", &cu);
+    parse_setup("let mut a::Int64; let mut b::Int64; let mut c::Int64; a = b = c = 0", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1823,7 +1823,7 @@ void test_parse_expr_assignment_eseq_error_eseq_count()
 
     struct comp_unit cu;
 
-    parse_setup("let a::Int64; let b::Int64; let c::Int64; a, b, c = 1, 2", &cu);
+    parse_setup("let mut a::Int64; let mut b::Int64; let mut c::Int64; a, b, c = 1, 2", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "assignment sequence counts do not match");
@@ -1893,7 +1893,7 @@ void test_parse_expr_newline_assignment()
 
     struct comp_unit cu;
 
-    parse_setup("let a::Int64; a =\n1", &cu);
+    parse_setup("let mut a::Int64; a =\n1", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2166,9 +2166,9 @@ void test_parse_expr_assign_eseq()
 
     struct comp_unit cu;
 
-    parse_setup("let a::Int64\n"
-                "let b::Int64\n"
-                "let c::Int64\n"
+    parse_setup("let mut a::Int64\n"
+                "let mut b::Int64\n"
+                "let mut c::Int64\n"
                 "a,b,c = 1,2,3", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");

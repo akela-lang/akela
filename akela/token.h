@@ -56,6 +56,7 @@ enum token_enum {
     token_return,
     token_eof,
     token_extern,
+    token_mut,
     token_count     /* keep at the end */
 };
 
@@ -117,6 +118,7 @@ enum result token_name_init(char** token_name)
     token_name[token_struct] = "struct";
     token_name[token_return] = "return";
     token_name[token_eof] = "EOF";
+    token_name[token_mut] = "mut";
     token_name[token_extern] = "extern";
 
     for (int i = 0; i < token_count; i++) {

@@ -9,7 +9,7 @@
 #include "zinc/vector.h"
 
 typedef struct Type_options {
-    bool is_mutable;
+    bool is_mut;
     bool is_array;
     bool is_slice;
     bool is_ref;

@@ -28,38 +28,6 @@ struct ast_node* parse_expr(struct parse_state* ps, struct location* loc)
     return parse_assignment(ps, loc);
 }
 
-bool is_lvalue(enum ast_type type)
-{
-    if (type == ast_type_id) {
-        return true;
-    }
-
-    if (type == ast_type_array_subscript) {
-        return true;
-    }
-
-    if (type == ast_type_let) {
-        return true;
-    }
-
-    if (type == ast_type_eseq) {
-        return true;
-    }
-
-    return false;
-}
-
-bool check_lvalue(struct parse_state* ps, enum ast_type type, struct location* loc)
-{
-    bool valid = true;
-
-    if (!is_lvalue(type)) {
-        valid = error_list_set(ps->el, loc, "invalid lvalue");
-    }
-
-    return valid;
-}
-
 /* assignment -> eseq = assignment | eseq */
 struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
 {
@@ -141,13 +109,6 @@ struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
                 assert(false);
             }
 
-            /* is an lvalue */
-            if (!is_lvalue(a->type)) {
-                error_list_set(ps->el, &a_loc, "invalid lvalue");
-                /* test case: test_parse_assign_error_lvalue */
-                n->type = ast_type_error;
-            }
-
             if (a->type == ast_type_eseq) {
                 struct ast_node* p = a->head;
                 while (p) {
@@ -171,6 +132,27 @@ struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
         }
         assign_index++;
 	}
+
+    if (n && n->type == ast_type_assign) {
+        struct ast_node* rhs = n->tail;
+        struct ast_node* lhs = n->head;
+        while (lhs && lhs != rhs) {
+            if (lhs->type == ast_type_eseq) {
+                struct ast_node* lhs2 = lhs->head;
+                while (lhs2) {
+                    if (!check_lvalue(ps, lhs2, loc)) {
+                        n->type = ast_type_error;
+                    }
+                    lhs2 = lhs2->next;
+                }
+            } else {
+                if (!check_lvalue(ps, lhs, loc)) {
+                    n->type = ast_type_error;
+                }
+            }
+            lhs = lhs->next;
+        }
+    }
 
 	return n;
 }
@@ -210,13 +192,6 @@ struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct 
                     error_list_set(ps->el, &a_loc, "operand of eseq has no type");
                     parent->type = ast_type_error;
                 }
-                if (assign_index == 0) {
-                    if (!is_lvalue(a->type)) {
-                        error_list_set(ps->el, &a_loc, "invalid lvalue");
-                        /* test case: test_parse_expr_error_eseq_lvalue */
-                        parent->type = ast_type_error;
-                    }
-                }
             }
         }
 
@@ -239,11 +214,6 @@ struct ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct 
         if (!b) {
             error_list_set(ps->el, &b_loc, "expected term after comma");
             parent->type = ast_type_error;
-        } else if (assign_index == 0) {
-            if (!is_lvalue(b->type)) {
-                error_list_set(ps->el, &b_loc, "invalid lvalue");
-                parent->type = ast_type_error;
-            }
         }
 
         if (b) {

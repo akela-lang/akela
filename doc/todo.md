@@ -1,5 +1,9 @@
 # Todo
-* mut type annotation
+* mut type annotation:
+  * let [x]
+  * prototype []
+  * call []
+* error is mut is unnecessary
 * mut and const element annotation
 * constant string, array of u8
 * array
@@ -8,6 +12,8 @@
   * float [x]
   * string []
 * array indexing check
+* scratch array size in constructor
+* mut type annotation: match, enum, for
 * slice
 * struct
 * dot operator

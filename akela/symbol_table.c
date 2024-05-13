@@ -69,6 +69,7 @@ void symbol_init(struct symbol* sym)
 	sym->root_ptr = NULL;
     sym->value = NULL;
     sym->reference = NULL;
+    sym->assign_count = 0;
 }
 
 void symbol_create(struct symbol** sym)
@@ -131,6 +132,7 @@ void symbol_table_init_reserved(struct environment* env)
 	symbol_table_add_reserved(env, "struct", token_struct, NULL);
 	symbol_table_add_reserved(env, "return", token_return, NULL);
     symbol_table_add_reserved(env, "extern", token_extern, NULL);
+    symbol_table_add_reserved(env, "mut", token_mut, NULL);
 }
 
 void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)
@@ -157,7 +159,15 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->bit_count = 64;
 	symbol_table_add_reserved(env, name, token_id, td);
 
-	name = "UInt32";
+    name = "UInt8";
+    malloc_safe((void**)&td, sizeof(struct type_def));
+    type_def_init(td);
+    td->type = type_integer;
+    buffer_copy_str(&td->name, name);
+    td->bit_count = 8;
+    symbol_table_add_reserved(env, name, token_id, td);
+
+    name = "UInt32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_integer;

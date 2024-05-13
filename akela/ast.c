@@ -83,7 +83,7 @@ void ast_node_create(struct ast_node** n)
 
 void Type_options_init(Type_options* to)
 {
-    to->is_mutable = false;
+    to->is_mut = false;
     to->is_array = false;
     to->is_slice = false;
     to->is_ref = false;

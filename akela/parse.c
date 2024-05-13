@@ -14,7 +14,7 @@ struct ast_node* parse(struct parse_state* ps)
     struct ast_node* n = NULL;
 
 	struct location loc_stmts;
-	n = parse_stmts(ps, true, &loc_stmts);
+    n = parse_stmts(ps, true, &loc_stmts);
 
     struct location next_loc;
     get_location(ps, &next_loc);
