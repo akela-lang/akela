@@ -9,18 +9,22 @@
 #include "zinc/vector.h"
 
 typedef enum Array_element_option {
-    Array_element_const,
-    Array_element_mut,
     Array_element_default,
+    Array_element_const,
 } Array_element_option;
+
+typedef struct Type_dimension {
+    size_t size;
+    Array_element_option option;
+} Type_dimension;
 
 typedef struct Type_options {
     bool is_mut;
     bool is_array;
     bool is_slice;
     bool is_ref;
-    Vector dim;             /* vector of size_t */
-    Vector dim_option;      /* vector of Array_element_option */
+    bool original_is_mut;
+    Vector dim;             /* vector of Type_dimension */
 } Type_options;
 
 enum ast_type {
@@ -112,6 +116,7 @@ AKELA_API void ast_node_location_update_token(struct ast_node* n, struct token* 
 AKELA_API void ast_node_location_update(struct ast_node* n, struct ast_node* n2);
 AKELA_API void Type_options_init(Type_options* to);
 AKELA_API void Type_options_destroy(Type_options* to);
+AKELA_API void Type_options_reduce_dimension(Type_options* to);
 
 #ifdef __cplusplus
 }

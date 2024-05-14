@@ -87,8 +87,8 @@ void Type_options_init(Type_options* to)
     to->is_array = false;
     to->is_slice = false;
     to->is_ref = false;
-    VectorInit(&to->dim, sizeof(size_t));
-    VectorInit(&to->dim_option, sizeof(Array_element_option));
+    to->original_is_mut = false;
+    VectorInit(&to->dim, sizeof(Type_dimension));
 }
 
 void ast_node_init(struct ast_node* n)
@@ -117,6 +117,7 @@ void ast_node_destroy(struct ast_node* n)
 
         buffer_destroy(&n->value);
         ast_node_destroy(n->tu);
+        Type_options_destroy(&n->to);
         free(n);
     }
 }
@@ -219,7 +220,45 @@ void ast_node_print(struct ast_node* root,bool debug)
 	}
 }
 
-/* copy dag excluding etype */
+void Type_options_copy(Type_options* src, Type_options* dest)
+{
+    dest->is_mut = src->is_mut;
+    dest->is_array = src->is_array;
+    dest->is_slice = src->is_slice;
+    dest->is_ref = src->is_ref;
+    dest->original_is_mut = src->original_is_mut;
+    VectorCopy(&src->dim, &dest->dim);
+}
+
+void Type_options_reduce_dimension(Type_options* to)
+{
+    if (to->dim.count > 0) {
+        Type_dimension current;
+        Type_dimension *first = (Type_dimension*)VECTOR_PTR(&to->dim, 0);
+        current = *first;
+
+        if (!to->original_is_mut || current.option == Array_element_const) {
+            to->is_mut = false;
+        } else {
+            to->is_mut = true;
+        }
+
+        for (size_t i = 0; i < to->dim.count - 1; i++) {
+            Type_dimension* dest = (Type_dimension*)VECTOR_PTR(&to->dim, i);
+            Type_dimension* src = (Type_dimension*)VECTOR_PTR(&to->dim, i + 1);
+            *dest = *src;
+        }
+        if (to->dim.count > 0) {
+            to->dim.count--;
+        }
+        if (to->dim.count == 0) {
+            to->is_array = false;
+            to->is_slice = false;
+        }
+    }
+}
+
+/* copy dag excluding tu */
 struct ast_node* ast_node_copy(struct ast_node* n)
 {
 	struct ast_node* copy = NULL;
@@ -228,7 +267,7 @@ struct ast_node* ast_node_copy(struct ast_node* n)
 		ast_node_create(&copy);
 		copy->type = n->type;
 		copy->td = n->td;
-        copy->to = n->to;
+        Type_options_copy(&n->to, &copy->to);
         copy->loc = n->loc;
 		buffer_copy(&n->value, &copy->value);
 		

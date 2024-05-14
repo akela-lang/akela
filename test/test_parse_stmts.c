@@ -36,7 +36,6 @@ void test_parse_assign()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_assign2()
 {
 	test_name(__func__);

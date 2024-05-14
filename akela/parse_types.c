@@ -316,7 +316,6 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         bool has_number = false;
         bool has_const = false;
-        bool has_mut = false;
         size_t dim_size_number;
         t0 = get_lookahead(ps);
 
@@ -334,24 +333,15 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
             t0 = get_lookahead(ps);
         }
 
-        int const_mut_count = 0;
-        struct location const_mut_loc;
-        while (t0->type == token_const || t0->type == token_mut) {
-            const_mut_count++;
-            struct token* const_mut = NULL;
-            if (!match(ps, t0->type, "expected const", &const_mut)) {
+        if (t0->type == token_const) {
+            struct token* const_token = NULL;
+            if (!match(ps, token_const, "expected const", &const_token)) {
                 /* test case: no test case needed */
                 assert(false);
             }
-            const_mut_loc = const_mut->loc;
-            if (const_mut->type == token_const) {
-                has_const = true;
-            } else if (const_mut->type == token_mut) {
-                has_mut = true;
-            }
-            token_destroy(const_mut);
-            free(const_mut);
-            t0 = get_lookahead(ps);
+            has_const = true;
+            token_destroy(const_token);
+            free(const_token);
         }
 
         struct token* rsb = NULL;
@@ -364,25 +354,24 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         if (has_number) {
             n->to.is_array = true;
-            VectorAdd(&n->to.dim, &dim_size_number, 1);
+            Type_dimension dim;
+            dim.size =  dim_size_number;
+            if (has_const) {
+                dim.option = Array_element_const;
+            } else {
+                dim.option = Array_element_default;
+            }
+            VectorAdd(&n->to.dim, &dim, 1);
         } else {
             n->to.is_slice = true;
-            size_t zero = 0;
-            VectorAdd(&n->to.dim, &zero, 1);
-        }
-
-        if (const_mut_count > 1) {
-            error_list_set(ps->el, &const_mut_loc, "const or mut option set multiple times");
-            n->type = ast_type_error;
-        } else if (has_const) {
-            Array_element_option option = Array_element_const;
-            VectorAdd(&n->to.dim_option, &option, 1);
-        } else if (has_mut) {
-            Array_element_option option = Array_element_mut;
-            VectorAdd(&n->to.dim_option, &option, 1);
-        } else {
-            Array_element_option option = Array_element_default;
-            VectorAdd(&n->to.dim_option, &option, 1);
+            Type_dimension dim;
+            dim.size = 0;
+            if (has_const) {
+                dim.option = Array_element_const;
+            } else {
+                dim.option = Array_element_default;
+            }
+            VectorAdd(&n->to.dim, &dim, 1);
         }
 
         t0 = get_lookahead(ps);
@@ -518,6 +507,7 @@ void check_id_node(struct parse_state* ps, struct ast_node* n, struct ast_node* 
             id_node->sym = new_sym;
             /* copy is_mut from id node to type use node */
             new_sym->tu->to.is_mut = id_node->to.is_mut;
+            new_sym->tu->to.original_is_mut = id_node->to.is_mut;
         }
     }
 }
@@ -928,6 +918,7 @@ bool is_lvalue(enum ast_type type)
 bool check_lvalue(struct parse_state* ps, struct ast_node* n, struct location* loc)
 {
     struct ast_node* p = n;
+    struct symbol* sym = NULL;
     while (p) {
         if (!is_lvalue(p->type)) {
             error_list_set(ps->el, loc, "invalid lvalue");
@@ -935,20 +926,27 @@ bool check_lvalue(struct parse_state* ps, struct ast_node* n, struct location* l
         }
         if (!p->head) {
             assert(p->tu);
-            if (p->type == ast_type_id) {
-                struct symbol* sym = environment_get(ps->st->top, &p->value);
-                if (sym) {
-                    if (sym->assign_count > 0) {
-                        if (!p->tu->to.is_mut) {
-                            error_list_set(ps->el, loc, "immutable variable changed in assignment");
-                            return false;
-                        }
-                    }
-                    sym->assign_count++;
-                }
+            if (p->type != ast_type_id) {
+                error_list_set(ps->el, loc, "invalid lvalue");
+                return false;
             }
+            sym = environment_get(ps->st->top, &p->value);
         }
         p = p->head;
+    }
+
+    if (!n->tu) {
+        error_list_set(ps->el, loc, "invalid lvalue");
+        return false;
+    }
+
+    if (!sym) {
+        error_list_set(ps->el, loc, "invalid lvalue");
+        return false;
+    }
+
+    if (!n->tu->to.is_mut && sym->assign_count >= 1) {
+        error_list_set(ps->el, loc, "immutable variable changed in assignment");
     }
 
     return true;

@@ -1,12 +1,11 @@
 # Todo
-* scratch array size in constructor
+* constant string, array of u8
+* placeholder array size in constructor
 * mut type annotation:
   * let [x]
   * prototype []
   * call []
 * error if mut is unnecessary
-* mut and const element annotation
-* constant string, array of u8
 * array
   * integer [x]
   * boolean [x]

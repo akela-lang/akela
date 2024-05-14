@@ -1793,7 +1793,6 @@ void test_parse_factor_newline_array_parenthesis()
 
     struct comp_unit cu;
 
-    /* allocate ps{} cu.root cu.root{} */
     parse_setup("(\n1+2)", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
@@ -1810,7 +1809,48 @@ void test_parse_factor_newline_array_parenthesis()
     assert_ptr(plus, "ptr plus");
     expect_int_equal(plus->type, ast_type_plus, "plus plus");
 
-    /* destroy ps{} cu.root cu.root{} */
+    parse_teardown(&cu);
+}
+
+void test_parse_factor_array_element_const()
+{
+    test_name(__func__);
+    struct comp_unit cu;
+
+    parse_setup("let mut a::[4 const]Int64 = [1, 2, 3, 4]\n"
+                "a[0]\n",
+                &cu);
+    expect_true(cu.valid, "valid");
+    expect_no_errors(&cu.el);
+
+    struct ast_node* let = ast_node_get(cu.root, 0);
+    assert_ptr(let, "ptr let");
+    expect_int_equal(let->type, ast_type_let, "type let");
+
+    struct ast_node* let_type = ast_node_get(let, 1);
+    assert_ptr(let_type, "ptr type");
+    expect_int_equal(let_type->type, ast_type_type, "type type");
+    expect_true(let_type->to.is_array, "is_array type");
+    expect_size_t_equal(let_type->to.dim.count, 1, "dim.count type");
+
+    struct Type_dimension* let_type_dim = (Type_dimension*)VECTOR_PTR(&let_type->to.dim, 0);
+    expect_size_t_equal(let_type_dim->size, 4, "size let_type_dim");
+    expect_int_equal(let_type_dim->option, Array_element_const, "option let_type_dim");
+
+    parse_teardown(&cu);
+}
+
+void test_parse_factor_array_element_const_error()
+{
+    test_name(__func__);
+    struct comp_unit cu;
+
+    parse_setup("let mut a::[4 const]Int64 = [1, 2, 3, 4]\n"
+                "a[0] = 10\n",
+                &cu);
+    expect_false(cu.valid, "valid");
+    expect_has_errors(&cu.el);
+    struct error* e = expect_source_error(&cu.el, "immutable variable changed in assignment");
     parse_teardown(&cu);
 }
 
@@ -1878,4 +1918,6 @@ void test_parse_factor()
     test_parse_factor_newline_sign();
     test_parse_factor_newline_array_literal();
     test_parse_factor_newline_array_parenthesis();
+    test_parse_factor_array_element_const();
+    test_parse_factor_array_element_const_error();
 }

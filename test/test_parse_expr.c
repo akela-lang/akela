@@ -1689,6 +1689,120 @@ void test_parse_array_subscript3()
     parse_teardown(&cu);
 }
 
+void test_parse_expr_array_subscript_3d()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("let mut x::[2][3][4 const]Int64 = \n"
+                "[\n"
+                "  [\n"
+                "    [1, 2, 3, 4],\n"
+                "    [5, 6, 7, 8],\n"
+                "    [9, 10, 11, 12]\n"
+                "  ],\n"
+                "  [\n"
+                "    [13, 14, 15, 16],\n"
+                "    [17, 18, 19, 20],\n"
+                "    [21, 22, 23, 24]\n"
+                "  ]\n"
+                "]\n"
+                "x[1][1][3]\n",
+                &cu);
+    assert_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    struct ast_node* let = ast_node_get(cu.root, 0);
+    assert_ptr(let, "per let");
+    expect_int_equal(let->type, ast_type_let, "type let");
+
+    struct ast_node* let_type = ast_node_get(let, 1);
+    assert_ptr(let_type, "ptr let_type");
+    expect_int_equal(let_type->type, ast_type_type, "type let_type");
+
+    struct ast_node* a = ast_node_get(cu.root, 1);
+    assert_ptr(a, "ptr a");
+    assert_int_equal(a->type, ast_type_array_subscript, "type a");
+
+    struct ast_node* a_tu = a->tu;
+    assert_ptr(a_tu, "ptr a_tu");
+    expect_false(a_tu->to.is_mut, "is_mut a_tu");
+    expect_false(a_tu->to.is_array, "is_array a_tu");
+    expect_size_t_equal(a_tu->to.dim.count, 0, "dim.count a_tu");
+
+    struct type_def* a_td = a_tu->td;
+    assert_ptr(a_td, "ptr a_td");
+    expect_int_equal(a_td->type, type_integer, "type a_td");
+    expect_str(&a_td->name, "Int64", "name a_td");
+
+    struct ast_node* b = ast_node_get(a, 0);
+    assert_ptr(b, "ptr b");
+    expect_int_equal(b->type, ast_type_array_subscript, "type b");
+
+    struct ast_node* b_tu = b->tu;
+    assert_ptr(b_tu, "ptr b_tu");
+    expect_int_equal(b_tu->type, ast_type_type, "type b_tu");
+    expect_true(b_tu->to.is_array, "is_array b_tu");
+    expect_size_t_equal(b_tu->to.dim.count, 1, "dim.count b_tu");
+
+    Type_dimension* b_dim0 = (Type_dimension*)VECTOR_PTR(&b_tu->to.dim, 0);
+    assert_ptr(b_dim0, "ptr b_dim0");
+    expect_size_t_equal(b_dim0->size, 4, "size b_dim0");
+    expect_size_t_equal(b_dim0->option, Array_element_const, "option b_dim0");
+
+    struct ast_node* c = ast_node_get(b, 0);
+    assert_ptr(c, "ptr c");
+    expect_int_equal(c->type, ast_type_array_subscript, "type c");
+
+    struct ast_node* c_tu = c->tu;
+    assert_ptr(c_tu, "ptr c_tu");
+    expect_true(c_tu->to.is_mut, "is_mut c_tu");
+    expect_true(c_tu->to.is_array, "is_array c_tu");
+    expect_size_t_equal(c_tu->to.dim.count, 2, "dim.count c_tu");
+
+    Type_dimension* c_dim0 = (Type_dimension*)VECTOR_PTR(&c_tu->to.dim, 0);
+    assert_ptr(c_dim0, "ptr c_dim0");
+    expect_size_t_equal(c_dim0->size, 3, "size c_dim0");
+    expect_int_equal(c_dim0->option, Array_element_default, "option c_dim0");
+
+    Type_dimension* c_dim1 = (Type_dimension*)VECTOR_PTR(&c_tu->to.dim, 1);
+    assert_ptr(c_dim1, "ptr c_dim1");
+    expect_size_t_equal(c_dim1->size, 4, "size c_dim1");
+    expect_int_equal(c_dim1->option, Array_element_const, "option c_dim1");
+
+    struct ast_node* d = ast_node_get(c, 0);
+    assert_ptr(d, "ptr d");
+    expect_int_equal(d->type, ast_type_id, "type d");
+
+    struct ast_node* d_tu = d->tu;
+    assert_ptr(d_tu, "ptr d_tu");
+    expect_true(d_tu->to.is_mut, "is_mut d_tu");
+    expect_true(d_tu->to.is_array, "is_array d_tu");
+    expect_size_t_equal(d_tu->to.dim.count, 3, "dim.count d_tu");
+
+    Type_dimension* d_dim0 = (Type_dimension*)VECTOR_PTR(&d_tu->to.dim, 0);
+    assert_ptr(d_dim0, "ptr d_dim0");
+    expect_size_t_equal(d_dim0->size, 2, "size d_dim0");
+    expect_int_equal(d_dim0->option, Array_element_default, "option d_dim0");
+
+    Type_dimension* d_dim1 = (Type_dimension*)VECTOR_PTR(&d_tu->to.dim, 1);
+    assert_ptr(d_dim1, "ptr d_dim1");
+    expect_size_t_equal(d_dim1->size, 3, "size d_dim1");
+    expect_int_equal(d_dim1->option, Array_element_default, "option d_dim1");
+
+    Type_dimension* d_dim2 = (Type_dimension*)VECTOR_PTR(&d_tu->to.dim, 2);
+    assert_ptr(d_dim2, "ptr d_dim2");
+    expect_size_t_equal(d_dim2->size, 4, "size d_dim2");
+    expect_int_equal(d_dim2->option, Array_element_const, "option d_dim2");
+
+    struct ast_node* e = ast_node_get(c, 1);
+    assert_ptr(e, "ptr e");
+    expect_int_equal(e->type, ast_type_number, "type e");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_subscript_error_no_type()
 {
 	test_name(__func__);
@@ -2296,6 +2410,7 @@ void test_parse_expression()
 	test_parse_array_subscript();
 	test_parse_array_subscript2();
 	test_parse_array_subscript3();
+    test_parse_expr_array_subscript_3d();
 	test_parse_subscript_error_no_type();
 	test_parse_subscript_error_not_array();
 	test_parse_subscript_error_expected_right_square_bracket();

@@ -185,8 +185,8 @@ Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu) {
     if (tu && tu->to.is_array) {
         size_t i = tu->to.dim.count - 1;
         while (true) {
-            size_t len = *(size_t *) VECTOR_PTR(&tu->to.dim, i);
-            t = ArrayType::get(t, len);
+            auto dim = (Type_dimension*)VECTOR_PTR(&tu->to.dim, i);
+            t = ArrayType::get(t, dim->size);
             if (i == 0) break;
             i--;
         }
@@ -218,8 +218,8 @@ void CodeGenLLVM2Run(JITData* jd, struct ast_node* n, struct buffer* bf)
                 Vector* dim_vector = &n->tu->to.dim;
                 size_t count = 1;
                 for (int i = 0; i < dim_vector->count; i++) {
-                    size_t dim = *(size_t *) VECTOR_PTR(dim_vector, i);
-                    count *= dim;
+                    auto dim = (Type_dimension*)VECTOR_PTR(dim_vector, i);
+                    count *= dim->size;
                 }
                 buffer_add_char(bf, '[');
                 for (int i = 0; i < count; i++) {

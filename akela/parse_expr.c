@@ -872,12 +872,7 @@ struct ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
         if (left->type != ast_type_error) {
             if (left->tu->to.is_array || left->tu->to.is_slice) {
                 n->tu = ast_node_copy(left->tu);
-                n->tu->to.dim.count = 0;
-                VectorAdd(&n->tu->to.dim, VECTOR_PTR(&left->tu->to.dim, 1), left->tu->to.dim.count-1);
-                if (n->tu->to.dim.count == 0) {
-                    n->tu->to.is_array = false;
-                    n->tu->to.is_slice = false;
-                }
+                Type_options_reduce_dimension(&n->tu->to);
             }
         }
 
