@@ -526,7 +526,7 @@ void test_code_gen_call3()
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
-    expect_str(&result.value, "\"hello\"", "value");
+    expect_str(&result.value, "hello", "value");
     CodeGenResultDestroy(&result);
 }
 
@@ -1002,7 +1002,8 @@ void test_code_gen_assign_array_subscript2()
     CodeGenResultDestroy(&result);
 }
 
-void test_code_gen_assign_array_allocate() {
+void test_code_gen_assign_array_allocate()
+{
     test_name(__func__);
     CodeGenResult result;
 
@@ -1051,6 +1052,45 @@ void test_code_gen_assign_array_allocate() {
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_assign_eseq()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("let a, b, c, d::Int64\n"
+             "a, b, c, d = 1, 2, 3, 4\n"
+             "a",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a, b, c, d::Int64\n"
+             "a, b, c, d = 1, 2, 3, 4\n"
+             "b",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a, b, c, d::Int64\n"
+             "a, b, c, d = 1, 2, 3, 4\n"
+             "c",
+             &result);
+    expect_str(&result.value, "3", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a, b, c, d::Int64\n"
+             "a, b, c, d = 1, 2, 3, 4\n"
+             "d",
+             &result);
+    expect_str(&result.value, "4", "value");
+    CodeGenResultDestroy(&result);
+
+}
+
 void test_code_gen()
 {
     test_code_gen_constant_integer();
@@ -1080,7 +1120,7 @@ void test_code_gen()
     test_code_gen_call();
     test_code_gen_call_ptr();
     test_code_gen_call2();
-    //test_code_gen_call3();
+    test_code_gen_call3();
     test_code_gen_anonymous_function();
     test_code_gen_copy_from_variable();
     test_code_gen_function_copy();
@@ -1106,4 +1146,5 @@ void test_code_gen()
     test_code_gen_assign_array_subscript();
     test_code_gen_assign_array_subscript2();
     test_code_gen_assign_array_allocate();
+    test_code_gen_assign_eseq();
 }

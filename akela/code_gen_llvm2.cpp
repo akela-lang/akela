@@ -66,6 +66,7 @@ CodeGenVTable CodeGenLLVM2VTable = {
 };
 
 Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu);
+Type* CodeGenLLVM2ReturnType(JITData* jd, struct ast_node* tu);
 bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, CodeGenResult* result);
 Value* CodeGenLLVM2Dispatch(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Stmts(JITData* jd, struct ast_node* n);
@@ -74,6 +75,8 @@ Value* CodeGenLLVM2If(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Function(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n);
+Value* Code_gen_llvm_assign_lhs_rhs(JITData* jd, struct ast_node* lhs, struct ast_node* rhs);
+Value* Code_gen_llvm_assign_lhs_rhs_value(JITData* jd, struct ast_node* lhs, struct ast_node* rhs, Value* rhs_value);
 Value* CodeGenLLVM2Add(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Sub(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVM2Call(JITData* jd, struct ast_node* n);
@@ -135,7 +138,7 @@ FunctionType* CodeGenLLVM2FunctionType(JITData* jd, struct ast_node* tu)
     Type *ret_type = nullptr;
     if (output) {
         struct ast_node *ret = ast_node_get(output, 0);
-        ret_type = CodeGenLLVM2GetType(jd, ret);
+        ret_type = CodeGenLLVM2ReturnType(jd, ret);
     } else {
         ret_type = Type::getVoidTy(*jd->TheContext);
     }
@@ -616,64 +619,94 @@ Value* CodeGenLLVM2Var(JITData* jd, struct ast_node* n)
 Value* CodeGenLLVM2Assign(JITData* jd, struct ast_node* n)
 {
     struct ast_node* rhs = n->tail;
-    Value* rhs_value = CodeGenLLVM2Dispatch(jd, rhs);
     struct ast_node* lhs = rhs->prev;
-    while (lhs) {
-        if (lhs->tu->td->type == type_function) {
-            if (lhs->type == ast_type_id) {
-                AllocaInst* lhs_value;
-                if (lhs->sym->reference) {
-                    lhs_value = (AllocaInst*)lhs->sym->reference;
-                } else {
-                    lhs->sym->value = nullptr;
-                    FunctionType *func_type = CodeGenLLVM2FunctionType(jd, rhs->tu);
-                    PointerType *pt = func_type->getPointerTo();
-                    buffer_finish(&rhs->value);
-                    lhs_value = jd->Builder->CreateAlloca(pt, nullptr, rhs->value.buf);
-                    lhs->sym->reference = lhs_value;
-                }
-                jd->Builder->CreateStore(rhs_value, lhs_value);
+    if (lhs->type == ast_type_eseq && rhs->type == ast_type_eseq) {
+        struct ast_node* lhs2 = lhs->head;
+        struct ast_node* rhs2 = rhs->head;
+        while (lhs2 && rhs2) {
+            Code_gen_llvm_assign_lhs_rhs(jd, lhs2, rhs2);
+            lhs2 = lhs2->next;
+            rhs2 = rhs2->next;
+        }
+        return nullptr;
+    } else {
+        Value* rhs_value = CodeGenLLVM2Dispatch(jd, rhs);
+        while (lhs) {
+            Code_gen_llvm_assign_lhs_rhs_value(jd, lhs, rhs, rhs_value);
+            lhs = lhs->prev;
+        }
+        return rhs_value;
+    }
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Value* Code_gen_llvm_assign_lhs_rhs(JITData* jd, struct ast_node* lhs, struct ast_node* rhs) {
+    Value* rhs_value = CodeGenLLVM2Dispatch(jd, rhs);
+    return Code_gen_llvm_assign_lhs_rhs_value(jd, lhs, rhs, rhs_value);
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Value* Code_gen_llvm_assign_lhs_rhs_value(JITData* jd, struct ast_node* lhs, struct ast_node* rhs, Value* rhs_value)
+{
+    if (lhs->tu->td->type == type_function) {
+        if (lhs->type == ast_type_id) {
+            AllocaInst* lhs_value;
+            if (lhs->sym->reference) {
+                lhs_value = (AllocaInst*)lhs->sym->reference;
             } else {
-                assert(false);
+                lhs->sym->value = nullptr;
+                FunctionType *func_type = CodeGenLLVM2FunctionType(jd, rhs->tu);
+                PointerType *pt = func_type->getPointerTo();
+                buffer_finish(&rhs->value);
+                lhs_value = jd->Builder->CreateAlloca(pt, nullptr, rhs->value.buf);
+                lhs->sym->reference = lhs_value;
             }
-        } else if (lhs->tu->to.is_array) {
-            if (lhs->type == ast_type_id) {
-                AllocaInst* lhs_value;
-                if (lhs->sym->reference) {
-                    lhs_value = (AllocaInst*)lhs->sym->reference;
-                } else {
-                    lhs->sym->value = nullptr;
-                    Type* t = CodeGenLLVM2GetType(jd, lhs->tu);
-                    t = t->getPointerTo();
-                    buffer_finish(&lhs->value);
-                    lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    lhs->sym->reference = lhs_value;
-                }
-                jd->Builder->CreateStore(rhs_value, lhs_value);
+            jd->Builder->CreateStore(rhs_value, lhs_value);
+        } else {
+            assert(false);
+        }
+    } else if (lhs->tu->to.is_array) {
+        if (lhs->type == ast_type_id) {
+            AllocaInst *lhs_value;
+            if (lhs->sym->reference) {
+                lhs_value = (AllocaInst *) lhs->sym->reference;
             } else {
-                assert(false);
+                lhs->sym->value = nullptr;
+                Type *t = CodeGenLLVM2GetType(jd, lhs->tu);
+                t = t->getPointerTo();
+                buffer_finish(&lhs->value);
+                lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                lhs->sym->reference = lhs_value;
+            }
+            jd->Builder->CreateStore(rhs_value, lhs_value);
+        } else if (lhs->type == ast_type_eseq) {
+            struct ast_node* p = lhs->head;
+            while (p) {
+                p = p->next;
             }
         } else {
-            if (lhs->type == ast_type_id) {
-                AllocaInst* lhs_value;
-                if (lhs->sym->reference) {
-                    lhs_value = (AllocaInst*)lhs->sym->reference;
-                } else {
-                    Type* t = CodeGenLLVM2GetType(jd, lhs->tu);
-                    buffer_finish(&lhs->value);
-                    lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    lhs->sym->reference = lhs_value;
-                }
-                jd->Builder->CreateStore(rhs_value, lhs_value);
-            } else {
-                jd->context.in_lhs = true;
-                Value* lhs_value = CodeGenLLVM2Dispatch(jd, lhs);
-                jd->context.in_lhs = false;
-                jd->Builder->CreateStore(rhs_value, lhs_value);
-            }
+            assert(false);
         }
-        lhs = lhs->prev;
+    } else {
+        if (lhs->type == ast_type_id) {
+            AllocaInst* lhs_value;
+            if (lhs->sym->reference) {
+                lhs_value = (AllocaInst*)lhs->sym->reference;
+            } else {
+                Type* t = CodeGenLLVM2GetType(jd, lhs->tu);
+                buffer_finish(&lhs->value);
+                lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                lhs->sym->reference = lhs_value;
+            }
+            jd->Builder->CreateStore(rhs_value, lhs_value);
+        } else {
+            jd->context.in_lhs = true;
+            Value* lhs_value = CodeGenLLVM2Dispatch(jd, lhs);
+            jd->context.in_lhs = false;
+            jd->Builder->CreateStore(rhs_value, lhs_value);
+        }
     }
+
     return rhs_value;
 }
 

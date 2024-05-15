@@ -1,4 +1,5 @@
 # Todo
+* assign subarray
 * use fn for function declarations
 * function declarations that use prototype parsing
 * remove generics
