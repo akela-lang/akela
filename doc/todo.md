@@ -1,4 +1,7 @@
 # Todo
+* use fn for function declarations
+* function declarations that use prototype parsing
+* remove generics
 * mut type annotation:
   * type [x]
   * call []
@@ -6,9 +9,6 @@
 * placeholder array size in constructor
 * array indexing check
 * slice
-* use fn for function declarations
-* function declarations that use prototype parsing
-* remove generics
 * single colon
 * arrow for function output
 * shorter type names

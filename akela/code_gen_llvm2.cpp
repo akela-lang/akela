@@ -940,5 +940,4 @@ Value* CodeGenLLVM2String(JITData* jd, struct ast_node* n)
 {
     buffer_finish(&n->value);
     return jd->Builder->CreateGlobalString(n->value.buf, ".str");
-    return jd->Builder->CreateGlobalStringPtr(n->value.buf, ".str");
 }
