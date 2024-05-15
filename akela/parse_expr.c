@@ -136,21 +136,37 @@ struct ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
     if (n && n->type == ast_type_assign) {
         struct ast_node* rhs = n->tail;
         struct ast_node* lhs = n->head;
+        struct ast_node* prev_lhs = NULL;
         while (lhs && lhs != rhs) {
             if (lhs->type == ast_type_eseq) {
                 struct ast_node* lhs2 = lhs->head;
+                struct ast_node* rhs2 = rhs->head;
                 while (lhs2) {
                     if (!check_lvalue(ps, lhs2, loc)) {
                         n->type = ast_type_error;
                     }
+                    Override_rhs(lhs2->tu, rhs2);
                     lhs2 = lhs2->next;
+                    rhs2 = rhs2->next;
                 }
             } else {
                 if (!check_lvalue(ps, lhs, loc)) {
                     n->type = ast_type_error;
                 }
+
+                if (prev_lhs) {
+                    if (lhs->tu->td != prev_lhs->tu->td) {
+                        error_list_set(ps->el, &lhs->loc, "lvalues do not match type in assignment");
+                        n->type = ast_type_error;
+                    }
+                }
             }
+            prev_lhs = lhs;
             lhs = lhs->next;
+        }
+
+        if (prev_lhs && prev_lhs->type != ast_type_eseq) {
+            Override_rhs(prev_lhs->tu, rhs);
         }
     }
 

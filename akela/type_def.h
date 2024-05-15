@@ -23,7 +23,6 @@ enum type {
     type_function_output,
     type_function_input,
     type_array,
-    type_string,
 };
 
 struct type_def {

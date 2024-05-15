@@ -13,6 +13,7 @@ typedef struct {
     struct comp_unit* cu;
     struct buffer value;
     struct buffer text;
+    bool debug;
 } CodeGenResult;
 
 typedef bool (*CodeGenInterface)(void* cg_obj, struct ast_node* n, CodeGenResult* result);

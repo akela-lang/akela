@@ -352,8 +352,8 @@ void test_parse_stmts_type()
 	
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_string, "string td");
-	expect_str(&td->name, "String", "String td");
+	expect_int_equal(td->type, type_integer, "type td");
+	expect_str(&td->name, "UInt8", "name td");
 
     parse_teardown(&cu);
 }
@@ -1911,12 +1911,13 @@ void test_parse_struct()
 
 	struct comp_unit cu;
 
-    parse_setup("struct Person firstName::String\n"
-                "lastName::String\n"
-                "age::Int64\n"
+    parse_setup("struct Person\n"
+                "  firstName::[100 const]UInt8\n"
+                "  lastName::[100 const]UInt8\n"
+                "  age::Int64\n"
                 "end\n"
                 "let p::Person = Person(\"John\", \"Smith\", 45)\n"
-                "p.firstName", &cu);
+                "p.firstName\n", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1944,8 +1945,8 @@ void test_parse_struct()
 
 	struct type_def* td0 = t0->td;
 	assert_ptr(td0, "ptr td0");
-	expect_int_equal(td0->type, type_string, "string td0");
-	expect_str(&td0->name, "String", "String td0");
+	expect_int_equal(td0->type, type_integer, "type td0");
+	expect_str(&td0->name, "UInt8", "name td0");
 
 	/* lastName */
 	struct ast_node* d1 = ast_node_get(st, 1);
@@ -1963,8 +1964,8 @@ void test_parse_struct()
 
 	struct type_def* td1 = t1->td;
 	assert_ptr(td1, "ptr td1");
-	expect_int_equal(td1->type, type_string, "string td1");
-	expect_str(&td1->name, "String", "String td1");
+	expect_int_equal(td1->type, type_integer, "type td1");
+	expect_str(&td1->name, "UInt8", "name td1");
 
 	/* age */
 	struct ast_node* d2 = ast_node_get(st, 2);
@@ -2051,7 +2052,13 @@ void test_parse_struct_error_not_field()
 	struct comp_unit cu;
 
     parse_setup(
-            "struct Person firstName::String; lastName::String; age::Int64 end; let p::Person = Person(\"John\", \"Smith\", 45); p.abc",
+            "struct Person\n"
+            "  firstName::[100 const]UInt8\n"
+            "  lastName::[100 const]UInt8\n"
+            "  age::Int64\n"
+            "end\n"
+            "let p::Person = Person(\"John\", \"Smith\", 45)\n"
+            "p.abc\n",
             &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");

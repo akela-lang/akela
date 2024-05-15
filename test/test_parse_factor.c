@@ -69,37 +69,38 @@ void test_parse_number_float()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_string()
 {
 	test_name(__func__);
-
 	
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("\"hello\"", &cu);
 	assert_no_errors(&cu.el);
-	expect_true(cu.valid, "parse_setup valid");
+	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
-	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
+	expect_int_equal(cu.root->type, ast_type_stmts, "type cu.root");
 
 	struct ast_node* string = ast_node_get(cu.root, 0);
 	assert_ptr(string, "ptr string");
-	expect_int_equal(string->type, ast_type_string, "string string");
-	expect_str(&string->value, "hello", "hello string");
+	expect_int_equal(string->type, ast_type_string, "type string");
+	expect_str(&string->value, "hello", "value string");
 
 	struct ast_node* tu = string->tu;
 	assert_ptr(tu, "ptr tu");
+    expect_true(tu->to.is_array, "is_array tu");
+    expect_size_t_equal(tu->to.dim.count, 1, "dim.count tu");
+
+    Type_dimension* dim = (Type_dimension*)VECTOR_PTR(&tu->to.dim, 0);
+    assert_ptr(dim, "ptr dim");
+    expect_size_t_equal(dim->size, 6, "size dim");
+    expect_int_equal(dim->option, Array_element_const, "option dim");
 	
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_string, "string td");
-	expect_str(&td->name, "String", "String td");
-
-	/* destroy ps{} cu.root cu.root{} */
+	expect_int_equal(td->type, type_integer, "type td");
+	expect_str(&td->name, "UInt8", "name td");
 
     parse_teardown(&cu);
 }

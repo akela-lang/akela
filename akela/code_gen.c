@@ -5,6 +5,7 @@ void CodeGenResultInit(CodeGenResult* result)
     result->cu = NULL;
     buffer_init(&result->value);
     buffer_init(&result->text);
+    result->debug = false;
 }
 
 void CodeGenResultDestroy(CodeGenResult* result)

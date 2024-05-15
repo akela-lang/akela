@@ -200,13 +200,6 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->bit_count = 64;
 	symbol_table_add_reserved(env, name, token_id, td);
 
-	name = "String";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_string;
-	buffer_copy_str(&td->name, name);
-	symbol_table_add_reserved(env, name, token_id, td);
-
 	name = "Bool";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);

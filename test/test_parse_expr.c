@@ -1851,7 +1851,7 @@ void test_parse_assign_string()
 
 	struct comp_unit cu;
 
-    parse_setup("let mut a::String; a = \"hello\"", &cu);
+    parse_setup("let mut a::[6 const]UInt8; a = \"hello\"", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1867,8 +1867,8 @@ void test_parse_assign_string()
 
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_string, "string td");
-	expect_str(&td->name, "String", "String td");
+	expect_int_equal(td->type, type_integer, "type td");
+	expect_str(&td->name, "UInt8", "name td");
 		
 	struct ast_node* lhv = ast_node_get(assign, 0);
 	assert_ptr(lhv, "ptr lhv");
@@ -1965,7 +1965,7 @@ void test_parse_assign_error_no_value_right()
 	
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; let a::String = foo()", &cu);
+    parse_setup("function foo() end; let a::[10]UInt8 = foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "cannot assign with operand that has no value");

@@ -445,6 +445,7 @@ struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
+    bool is_string = false;
 	if (n->type != ast_type_error) {
 		#pragma warning(suppress:6011)
 		if (x->type == token_number) {
@@ -456,30 +457,40 @@ struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
 			}
 		} else if (x->type == token_string) {
 			n->type = ast_type_string;
-			type_name = "String";
+			type_name = "UInt8";
+            is_string = true;
 		} else if (x->type == token_boolean) {
 			n->type = ast_type_boolean;
 			type_name = "Bool";
-		}
-		/* allocate n{} */
+		} else {
+            assert(false);
+        }
 		buffer_copy(&x->value, &n->value);
 	}
 
 	if (n->type != ast_type_error) {
 		assert(type_name);
-		struct buffer bf;
-		buffer_init(&bf);
-		buffer_copy_str(&bf, type_name);
-		struct symbol* sym = environment_get(ps->st->top, &bf);
-		assert(sym);
-		assert(sym->td);
-		struct ast_node* tu = NULL;
-		ast_node_create(&tu);
-		tu->type = ast_type_type;
-		tu->td = sym->td;
-		n->tu = tu;
+        struct buffer bf;
+        buffer_init(&bf);
+        buffer_copy_str(&bf, type_name);
+        struct symbol* sym = environment_get(ps->st->top, &bf);
+        assert(sym);
+        assert(sym->td);
+        struct ast_node* tu = NULL;
+        ast_node_create(&tu);
+        tu->type = ast_type_type;
+        tu->td = sym->td;
+        n->tu = tu;
+        buffer_destroy(&bf);
 
-		buffer_destroy(&bf);
+        if (is_string) {
+            tu->to.is_array = true;
+            Type_dimension dim;
+            buffer_finish(&n->value);
+            dim.size = n->value.size + 1;
+            dim.option = Array_element_const;
+            VectorAdd(&tu->to.dim, &dim, 1);
+        }
 	}
 
 	/* destroy x x{} */

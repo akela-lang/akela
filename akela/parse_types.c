@@ -377,7 +377,7 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
         t0 = get_lookahead(ps);
     }
 
-	if (t0->type == token_id) {
+	if (true) {
         if (!n) {
             ast_node_create(&n);
             n->type = ast_type_type;
@@ -385,8 +385,7 @@ struct ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
 		struct token* name = NULL;
 		if (!match(ps, token_id, "expected type name", &name)) {
-            /* test case: no test case needed */
-            assert(false);
+            n->type = ast_type_error;
         }
 
 		t0 = get_lookahead(ps);

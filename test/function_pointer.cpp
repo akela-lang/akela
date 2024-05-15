@@ -50,81 +50,28 @@ void JITDataInit(JITData* jd)
     jd->toplevel = nullptr;
 }
 
+void CreateTopLevel(JITData* jd)
+{
+    std::vector<Type*> param_types = std::vector<Type*>();
+    Type* element_type = Type::getInt8Ty(*jd->TheContext);
+    ArrayType* array_type = ArrayType::get(element_type, 6);
+    PointerType* pt = array_type->getPointerTo();
+    Type* ret_type = pt;
+    FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
+    Function *f = Function::Create(func_type, Function::ExternalLinkage, TOPLEVEL_NAME, *jd->TheModule);
+    BasicBlock* entry = BasicBlock::Create(*jd->TheContext, "entry", f);
+    jd->Builder->SetInsertPoint(entry);
+
+    Value* value = jd->Builder->CreateGlobalStringPtr("hello", ".str");
+    jd->Builder->CreateRet(value);
+}
+
 void Run(JITData* jd, std::string* s)
 {
     auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOPLEVEL_NAME));
-    int (*fp)() = ExprSymbol.getAddress().toPtr <int(*)()>();
-    int v = fp();
-    *s = std::to_string(v);
-}
-
-BasicBlock* GetLastBlock(Function* f)
-{
-    BasicBlock* last_block = nullptr;
-    Function::iterator blocks = f->end();
-    if (blocks != f->begin()) {
-        last_block = &*--blocks;
-    }
-    return last_block;
-}
-
-bool CreateFoo(JITData* jd, Function** foo)
-{
-    bool valid = true;
-
-    std::vector<Type*> param_types = std::vector<Type*>();
-    param_types.push_back(Type::getInt64Ty(*jd->TheContext));
-    Type* ret_type = Type::getInt64Ty(*jd->TheContext);
-    FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
-    Function *f = Function::Create(func_type, Function::ExternalLinkage, "foo", *jd->TheModule);
-    if (verifyFunction(*f, &errs())) {
-        valid = false;
-    }
-    BasicBlock* entry = BasicBlock::Create(*jd->TheContext, "entry", f);
-    jd->Builder->SetInsertPoint(entry);
-    Value* x;
-    for (auto &arg: f->args()) {
-        x = jd->Builder->CreateAlloca(arg.getType(), nullptr, "x");
-        jd->Builder->CreateStore(&arg, x);
-    }
-    Value* x2 = jd->Builder->CreateLoad(Type::getInt64Ty(*jd->TheContext), x);
-    Value* one = ConstantInt::get(Type::getInt64Ty(*jd->TheContext), APInt(64, 1, true));
-    Value* result = jd->Builder->CreateAdd(x2, one, "addtmp");
-    jd->Builder->CreateRet(result);
-
-    *foo = f;
-
-    return valid;
-}
-
-bool CreateTopLevel(JITData* jd, Function* foo)
-{
-    bool valid = true;
-
-    std::vector<Type*> param_types = std::vector<Type*>();
-    Type* ret_type = Type::getInt64Ty(*jd->TheContext);
-    FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
-    Function *f = Function::Create(func_type, Function::ExternalLinkage, TOPLEVEL_NAME, *jd->TheModule);
-    jd->toplevel = f;
-    if (verifyFunction(*f, &errs())) {
-        valid = false;
-    }
-    BasicBlock* entry = BasicBlock::Create(*jd->TheContext, "entry", f);
-    jd->Builder->SetInsertPoint(entry);
-    Value* one = ConstantInt::get(Type::getInt64Ty(*jd->TheContext), APInt(64, 1, true));
-    std::vector<Value*> args;
-    args.push_back(one);
-
-    PointerType* pt = foo->getFunctionType()->getPointerTo();
-    Value* p = jd->Builder->CreateAlloca(pt, nullptr, "p");
-    jd->Builder->CreateStore(foo, p);
-    Value* temp = jd->Builder->CreateLoad(pt, p);
-
-    Value* result = jd->Builder->CreateCall(foo->getFunctionType(), temp, args);
-
-    jd->Builder->CreateRet(result);
-
-    return valid;
+    char* (*fp)() = ExprSymbol.getAddress().toPtr <char*(*)()>();
+    char* p = fp();
+    printf("%s\n", p);
 }
 
 int main()
@@ -137,13 +84,12 @@ int main()
     JITData jd;
     JITDataInit(&jd);
 
-    Function* foo = nullptr;
-    valid = CreateFoo(&jd, &foo) && valid;
-    valid = CreateTopLevel(&jd, foo) && valid;
+    CreateTopLevel(&jd);
 
     if (verifyModule(*jd.TheModule, &errs())) {
         valid = false;
     }
+    printf("\n");
     jd.TheModule->print(outs(), nullptr);
 
     if (valid) {

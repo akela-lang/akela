@@ -157,7 +157,11 @@ Type* CodeGenLLVM2GetTypeScalar(JITData* jd, struct ast_node* tu)
         if (td->bit_count == 64) {
             t = Type::getInt64Ty(*jd->TheContext);
         } else if (td->bit_count == 32) {
-            t =  Type::getInt32Ty(*jd->TheContext);
+            t = Type::getInt32Ty(*jd->TheContext);
+        } else if (td->bit_count == 8) {
+            t = Type::getInt8Ty(*jd->TheContext);
+        } else {
+            assert(false);
         }
         return t;
     } else if (td->type == type_float) {
@@ -166,8 +170,6 @@ Type* CodeGenLLVM2GetTypeScalar(JITData* jd, struct ast_node* tu)
         } else if (td->bit_count == 32) {
             return Type::getFloatTy(*jd->TheContext);
         }
-    } else if (td->type == type_string) {
-        return Type::getInt8Ty(*jd->TheContext)->getPointerTo();
     } else if (td->type == type_boolean) {
         return Type::getInt1Ty(*jd->TheContext);
     } else if (td->type == type_function) {
@@ -198,8 +200,10 @@ Type* CodeGenLLVM2GetType(JITData* jd, struct ast_node* tu) {
 Type* CodeGenLLVM2ReturnType(JITData* jd, struct ast_node* tu)
 {
     if (tu && tu->td && tu->td->type == type_function) {
-        FunctionType* func_type = CodeGenLLVM2FunctionType(jd, tu);
-        return static_cast<Type*>(func_type->getPointerTo());
+        FunctionType *func_type = CodeGenLLVM2FunctionType(jd, tu);
+        return static_cast<Type *>(func_type->getPointerTo());
+    } if (tu && tu->to.is_array) {
+        return CodeGenLLVM2GetType(jd, tu)->getPointerTo();
     } else {
         return CodeGenLLVM2GetType(jd, tu);
     }
@@ -211,32 +215,63 @@ void CodeGenLLVM2Run(JITData* jd, struct ast_node* n, struct buffer* bf)
     if (n->tu) {
         enum type type = n->tu->td->type;
         bool is_array = n->tu->to.is_array;
+        int bit_count = n->tu->td->bit_count;
         if (type == type_integer) {
             if (is_array) {
-                long* (*fp)() = ExprSymbol.getAddress().toPtr<long*(*)()>();
-                long* p = fp();
-                Vector* dim_vector = &n->tu->to.dim;
-                size_t count = 1;
-                for (int i = 0; i < dim_vector->count; i++) {
-                    auto dim = (Type_dimension*)VECTOR_PTR(dim_vector, i);
-                    count *= dim->size;
-                }
-                buffer_add_char(bf, '[');
-                for (int i = 0; i < count; i++) {
-                    if (i >= 1) {
-                        buffer_add_char(bf, ',');
+                if (bit_count == 64) {
+                    long* (*fp)() = ExprSymbol.getAddress().toPtr<long*(*)()>();
+                    long* p = fp();
+                    Vector* dim_vector = &n->tu->to.dim;
+                    size_t count = 1;
+                    for (int i = 0; i < dim_vector->count; i++) {
+                        auto dim = (Type_dimension*)VECTOR_PTR(dim_vector, i);
+                        count *= dim->size;
                     }
-                    buffer_add_format(bf, "%ld", *p++);
+                    buffer_add_char(bf, '[');
+                    for (int i = 0; i < count; i++) {
+                        if (i >= 1) {
+                            buffer_add_char(bf, ',');
+                        }
+                        buffer_add_format(bf, "%ld", *p++);
+                    }
+                    buffer_add_char(bf, ']');
+                } else if (bit_count == 32) {
+                    int* (*fp)() = ExprSymbol.getAddress().toPtr<int*(*)()>();
+                    int* p = fp();
+                    Vector* dim_vector = &n->tu->to.dim;
+                    size_t count = 1;
+                    for (int i = 0; i < dim_vector->count; i++) {
+                        auto dim = (Type_dimension*)VECTOR_PTR(dim_vector, i);
+                        count *= dim->size;
+                    }
+                    buffer_add_char(bf, '[');
+                    for (int i = 0; i < count; i++) {
+                        if (i >= 1) {
+                            buffer_add_char(bf, ',');
+                        }
+                        buffer_add_format(bf, "%d", *p++);
+                    }
+                    buffer_add_char(bf, ']');
+                } else if (bit_count == 8) {
+                    char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
+                    char* p = fp();
+                    buffer_add_format(bf, "%s", p);
+                } else {
+                    assert(false);
                 }
-                buffer_add_char(bf, ']');
             } else {
                 if (n->tu->td->bit_count == 64) {
                     long (*fp)() = ExprSymbol.getAddress().toPtr<long(*)()>();
                     long v = fp();
                     buffer_add_format(bf, "%d", v);
                 } else if (n->tu->td->bit_count == 32) {
-                    int (*fp)() = ExprSymbol.getAddress().toPtr<int(*)()>();
+                    int (*fp)() = ExprSymbol.getAddress().toPtr < int(*)
+                    () > ();
                     int v = fp();
+                    buffer_add_format(bf, "%d", v);
+                } else if (bit_count == 8) {
+                    char (*fp)() = ExprSymbol.getAddress().toPtr<char(*)()> ();
+                    char v = fp();
                     buffer_add_format(bf, "%d", v);
                 } else {
                     assert(false);
@@ -260,10 +295,6 @@ void CodeGenLLVM2Run(JITData* jd, struct ast_node* n, struct buffer* bf)
             } else {
                 buffer_add_format(bf, "false", v);
             }
-        } else if (type == type_string) {
-            char *(*fp)() = ExprSymbol.getAddress().toPtr<char *(*)()>();
-            char *v = fp();
-            buffer_add_format(bf, "\"%s\"", v);
         } else if (type == type_function) {
             void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
             void* v = fp();
@@ -348,7 +379,7 @@ bool CodeGenLLVM2JIT(CodeGenLLVM2* cg, struct ast_node* n, CodeGenResult* result
     jd.TheModule->print(os2, nullptr);
     buffer_add_format(&result->text, "%s", str2.c_str());
 
-    if (cg->debug) {
+    if (result->debug) {
         printf("%s\n\n", result->text.buf);
     }
 
@@ -908,5 +939,6 @@ Value* CodeGenLLVM2Boolean(JITData* jd, struct ast_node* n)
 Value* CodeGenLLVM2String(JITData* jd, struct ast_node* n)
 {
     buffer_finish(&n->value);
+    return jd->Builder->CreateGlobalString(n->value.buf, ".str");
     return jd->Builder->CreateGlobalStringPtr(n->value.buf, ".str");
 }

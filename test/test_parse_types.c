@@ -243,7 +243,7 @@ void test_parse_error_declaration_type()
 
     parse_setup("let a::", &cu);
 	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected type");
+	expect_source_error(&cu.el, "expected type name");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -341,7 +341,7 @@ void test_parse_error_type_name()
 
     parse_setup("let x::Vector{}", &cu);
 	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected a type name");
+	expect_source_error(&cu.el, "expected type name");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -355,7 +355,7 @@ void test_parse_error_comma_type_name()
 
     parse_setup("let x::Vector{Int64,}", &cu);
 	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected a type name after comma");
+	expect_source_error(&cu.el, "expected type name");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
