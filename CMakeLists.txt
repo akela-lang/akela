@@ -9,15 +9,7 @@ set(EXAMPLE_ADDITION ${CMAKE_SOURCE_DIR}/examples/addition.akela)
 set(BASE_DIR ${CMAKE_SOURCE_DIR}/base)
 set(AKELA_MATH ${BASE_DIR}/math.akela)
 
-# ZINC
-set(ZINC_DIR ${CMAKE_SOURCE_DIR}/../zinc)
-set(ZINC_BINARY ${ZINC_DIR}/cmake-build-debug/zinc)
-set(ZINC_A ${ZINC_BINARY}/libzinc.a)
-add_library(zinc STATIC IMPORTED)
-set_target_properties(zinc PROPERTIES
-    IMPORTED_LOCATION ${ZINC_A}
-)
-include_directories(${ZINC_DIR} .)
+include_directories(.)
 
 # LLVM
 set(llvm_build_dir release)
@@ -71,3 +63,5 @@ endif()
 # directories
 add_subdirectory(akela)
 add_subdirectory(test)
+add_subdirectory(zinc)
+add_subdirectory(zinc-test)

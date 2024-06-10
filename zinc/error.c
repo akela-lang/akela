@@ -1,0 +1,188 @@
+#include "error.h"
+#include "memory.h"
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include "buffer.h"
+
+void location_init(struct location* loc)
+{
+    loc->byte_pos = 0;
+    loc->size = 0;
+    loc->line = 0;
+    loc->col = 0;
+}
+
+void error_init(struct error* e)
+{
+    buffer_init(&e->message);
+    location_init(&e->loc);
+    e->next = NULL;
+    e->prev = NULL;
+}
+
+void error_create(struct error** e)
+{
+    malloc_safe((void**)e, sizeof(struct error));
+    error_init(*e);
+}
+
+void error_destroy(struct error* e)
+{
+    buffer_destroy(&e->message);
+}
+
+void error_list_init(struct error_list* el)
+{
+    el->head = NULL;
+    el->tail = NULL;
+}
+
+void error_list_create(struct error_list** el)
+{
+    malloc_safe((void**)el, sizeof(struct error_list));
+    error_list_init(*el);
+}
+
+void error_list_add(struct error_list *el, struct error* e)
+{
+    if (el->tail) {
+        el->tail->next = e;
+        e->prev = el->tail;
+    }
+    el->tail = e;
+
+    if (!el->head) {
+        el->head = e;
+    }
+}
+
+void error_list_destroy(struct error_list* el)
+{
+    struct error* p = el->head;
+    while (p) {
+        struct error* temp = p;
+        p = p->next;
+        error_destroy(temp);
+        free(temp);
+    }
+}
+
+/* static-output */
+bool error_list_set(struct error_list *el, struct location* loc, const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    struct buffer bf;
+    buffer_init(&bf);
+    int len;
+    struct error* e = NULL;
+    error_create(&e);
+
+    char last_last = 0;
+    char last = 0;
+    while (*fmt != '\0') {
+        if (last == '%' && *fmt == '%') {
+            buffer_add_char(&e->message, '%');
+        } else if (*fmt == '%') {
+            /* nothing */
+        } else if (last == '%' && *fmt == 'z') {
+            /* nothing */
+        } else if (last == '%' && *fmt == 'd') {
+            int x = va_arg(args, int);
+            while (true) {
+                buffer_clear(&bf);
+                len = snprintf(bf.buf, bf.buf_size, "%d", x);
+                if (len < bf.buf_size) {
+                    bf.size = len;
+                    break;
+                } else {
+                    buffer_expand(&bf, len + BUFFER_CHUNK);
+                }
+            }
+            buffer_add(&e->message, bf.buf, bf.size);
+        } else if (last_last == '%' && last == 'z' && *fmt == 'u') {
+            size_t x = va_arg(args, size_t);
+            while (true) {
+                buffer_clear(&bf);
+                len = snprintf(bf.buf, bf.buf_size, "%zu", x);
+                if (len < bf.buf_size) {
+                    bf.size = len;
+                    break;
+                } else {
+                    buffer_expand(&bf, len + BUFFER_CHUNK);
+                }
+            }
+            buffer_add(&e->message, bf.buf, bf.size);
+        } else if (last == '%' && *fmt == 's') {
+            char* x = va_arg(args, char*);
+            while (true) {
+                buffer_clear(&bf);
+                len = snprintf(bf.buf, bf.buf_size, "%s", x);
+                if (len + 1 < bf.buf_size) {
+                    bf.size = len;
+                    break;
+                } else {
+                    buffer_expand(&bf, len + 1 + BUFFER_CHUNK);
+                }
+            }
+            buffer_add(&e->message, bf.buf, bf.size);
+        } else if (last == '%' && *fmt == 'b') {
+            struct buffer* src = va_arg(args, struct buffer*);
+            buffer_finish(src);
+            while (true) {
+                buffer_clear(&bf);
+                len = snprintf(bf.buf, bf.buf_size, "%s", src->buf);
+                if (len < bf.buf_size) {
+                    bf.size = len;
+                    break;
+                } else {
+                    buffer_expand(&bf, len + BUFFER_CHUNK);
+                }
+            }
+            buffer_add(&e->message, bf.buf, bf.size);
+        } else if (last == '%' && *fmt == 'c') {
+            char c = (char)va_arg(args, int);
+            buffer_add_char(&e->message, c);
+        } else {
+            buffer_add_char(&e->message, *fmt);
+        }
+        last_last = last;
+        last = *fmt;
+        fmt++;
+    }
+
+    va_end(args);
+
+    error_list_add(el, e);
+    if (loc) {
+        e->loc = *loc;
+    }
+
+    buffer_destroy(&bf);
+
+    return false;
+}
+
+void error_list_print(struct error_list* el)
+{
+    struct error* e = el->head;
+    while (e) {
+        buffer_finish(&e->message);
+        fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
+        e = e->next;
+    }
+}
+
+void location_create(struct location** loc)
+{
+    malloc_safe((void**)loc, sizeof(struct location));
+    location_init(*loc);
+}
+
+const char* plural(int number)
+{
+    if (number == 1) return "";
+    else return "s";
+}

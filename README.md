@@ -12,6 +12,7 @@ and finance.
     ninja -C cmake-build-debug
 
 ## Run Tests
+    cmake-build-debug/zinc-test/zinc-test
     cmake-build-debug/test/test
 
 ## Valgrind

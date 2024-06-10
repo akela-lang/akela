@@ -32,7 +32,7 @@
 #include <vector>
 #include "code_gen.h"
 #include "code_gen_llvm.h"
-#include "akela/type_def.h"
+#include "type_def.h"
 #include "zinc/error.h"
 #include "zinc/list.h"
 #include "zinc/vector.h"

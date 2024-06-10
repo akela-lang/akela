@@ -1,0 +1,50 @@
+#ifndef _ERROR_H
+#define _ERROR_H
+
+#include <stdarg.h>
+#include <stdbool.h>
+#include "api.h"
+#include <stdlib.h>
+#include "buffer.h"
+
+struct location {
+    size_t byte_pos;
+    size_t size;
+    size_t line;
+    size_t col;
+};
+
+struct error {
+    struct buffer message;
+    struct location loc;
+    struct error* next;
+    struct error* prev;
+};
+
+struct error_list {
+    struct error* head;
+    struct error* tail;
+};
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+ZINC_API void error_init(struct error* e);
+ZINC_API void error_create(struct error** e);
+ZINC_API void error_destroy(struct error* e);
+ZINC_API void error_list_init(struct error_list* el);
+ZINC_API void error_list_create(struct error_list** el);
+ZINC_API void error_list_add(struct error_list *el, struct error* e);
+ZINC_API void error_list_destroy(struct error_list* el);
+ZINC_API bool error_list_set(struct error_list *el, struct location* loc, const char* fmt, ...);
+ZINC_API void error_list_print(struct error_list* el);
+ZINC_API void location_init(struct location* loc);
+ZINC_API void location_create(struct location** loc);
+ZINC_API const char* plural(int number);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
