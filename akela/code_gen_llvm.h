@@ -15,8 +15,8 @@ extern CodeGenVTable CodeGenLLVM2VTable;
 extern "C" {
 #endif
 
-void CodeGenLLVM2Create(CodeGenLLVM2** cg, struct error_list* el);
-void CodeGenLLVM2Destroy(CodeGenLLVM2* cg);
+void CodeGenLLVMCreate(CodeGenLLVM2** cg, struct error_list* el);
+void CodeGenLLVMDestroy(CodeGenLLVM2* cg);
 
 #ifdef __cplusplus
 }

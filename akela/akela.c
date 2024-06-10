@@ -7,7 +7,7 @@
 #include "comp_unit.h"
 #include "code_gen.h"
 #include "zinc/input_unicode_file.h"
-#include "code_gen_llvm2.h"
+#include "code_gen_llvm.h"
 
 int main(int argc, char** argv)
 {
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     buffer_init(&bf);
 
     CodeGenLLVM2* cg = NULL;
-    CodeGenLLVM2Create(&cg, &cu.el);
+    CodeGenLLVMCreate(&cg, &cu.el);
     CodeGenResult result;
     CodeGenResultInit(&result);
     CodeGenJIT(cg, &CodeGenLLVM2VTable, cu.root, &result);

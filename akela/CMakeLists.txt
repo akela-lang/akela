@@ -15,7 +15,7 @@ set(lib_files
         comp_unit.c
         comp_table.c
         code_gen.c
-        code_gen_llvm2.cpp
+        code_gen_llvm.cpp
 )
 
 set(bin_files
