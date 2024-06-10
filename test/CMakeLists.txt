@@ -38,3 +38,8 @@ endif()
 # function_pointer
 add_executable(function_pointer function_pointer.cpp)
 target_link_libraries(function_pointer ${llvm_libs})
+
+set_target_properties(test event_loop function_pointer
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)

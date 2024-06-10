@@ -26,11 +26,14 @@ set(SOURCE_FILES
         test_input_unicode_file.c
 )
 
-include_directories(..)
-
 add_executable(zinc-test ${SOURCE_FILES})
 if(${COVERAGE} MATCHES On)
     target_link_libraries(zinc-test zinc gcov)
 else()
     target_link_libraries(zinc-test zinc)
 endif()
+
+set_target_properties(zinc-test
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)

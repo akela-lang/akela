@@ -3,17 +3,23 @@ Akela is a general-purpose programming language with the aim of supporting robus
 construction, standalone and embeddable execution, and being suitable for numerical computation
 and finance.
 
-## Dependencies
-* [Zinc](https://github.com/akela-lang/zinc)
-* [LLVM](https://github.com/llvm/llvm-project)
+## LLVM
+    cd ..
+    git clone https://github.com/llvm/llvm-project
+    cd llvm-project
+	cmake -S llvm -B release -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -G Ninja
+	ninja -C release check-llvm -j 8
+	ninja -C release clang -j 8
+	ninja -C release Kaleidoscope -j 8
+    cd ../akela
 
 ## Build
     cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
     ninja -C cmake-build-debug
 
 ## Run Tests
-    cmake-build-debug/zinc-test/zinc-test
-    cmake-build-debug/test/test
+    cmake-build-debug/bin/zinc-test
+    cmake-build-debug/bin/test
 
 ## Valgrind
     valgrind --leak-check=full --num-callers=40 cmake-build-debug/test/test

@@ -7,7 +7,7 @@ void TestInputCharFileNext()
 {
     test_name(__func__);
 
-    char filename[] = "temp.txt";
+    char filename[] = "/tmp/temp.txt";
     char text[] = "hello file\n";
     FILE *fp;
     size_t len = strlen(text);
@@ -16,6 +16,7 @@ void TestInputCharFileNext()
     fclose(fp);
 
     fp = fopen(filename, "r");
+    assert_ptr(fp, "fp");
     InputCharFile* input;
     InputCharFileCreate(&input, fp);
 
@@ -56,7 +57,7 @@ void TestInputCharFileRepeat()
 {
     test_name(__func__);
 
-    char filename[] = "temp.txt";
+    char filename[] = "/tmp/temp.txt";
     char text[] = "hello file\n";
     char text_expected[] = "hhello file\n";
     FILE *fp;
@@ -66,6 +67,7 @@ void TestInputCharFileRepeat()
     fclose(fp);
 
     fp = fopen(filename, "r");
+    assert_ptr(fp, "fp");
     InputCharFile* input;
     InputCharFileCreate(&input, fp);
 
@@ -112,7 +114,7 @@ void TestInputCharFileSeek()
 {
     test_name(__func__);
 
-    char filename[] = "temp.txt";
+    char filename[] = "/tmp/temp.txt";
     char text[] = "hello file\n";
     char text_expected[] = "file\n";
     FILE *fp;
@@ -122,6 +124,7 @@ void TestInputCharFileSeek()
     fclose(fp);
 
     fp = fopen(filename, "r");
+    assert_ptr(fp, "fp");
     InputCharFile* input;
     InputCharFileCreate(&input, fp);
 
@@ -150,11 +153,12 @@ void TestInputCharFileGetAll()
 {
     test_name(__func__);
 
-    char filename[] = "temp.txt";
+    char filename[] = "/tmp/temp.txt";
     char text[] = "hello file\n";
     FILE *fp;
     size_t len = strlen(text);
     fp = fopen(filename, "w");
+    assert_ptr(fp, "fp");
     fwrite(text, 1, len, fp);
     fclose(fp);
 

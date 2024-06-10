@@ -1,4 +1,4 @@
-
+# library
 set(lib_files
         lex.c
         lex_tools.c
@@ -18,14 +18,26 @@ set(lib_files
         code_gen_llvm.cpp
 )
 
+add_library(akela STATIC ${lib_files})
+target_link_libraries(akela zinc)
+set_target_properties(akela
+        PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)
+
+add_custom_command(
+        TARGET akela POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${EXAMPLE_ADDITION}
+        ${AKELA_MATH}
+        ${CMAKE_BINARY_DIR}/bin
+)
+
+# executable
 set(bin_files
         akela.c
 )
-
-add_library(akela STATIC ${lib_files})
-target_link_libraries(akela zinc)
-
-# executable
 add_executable(akela-bin ${bin_files})
 if(${COVERAGE} MATCHES On)
     target_link_libraries(akela-bin akela zinc gcov ${llvm_libs})
@@ -33,21 +45,16 @@ else()
     target_link_libraries(akela-bin akela zinc ${llvm_libs})
 endif()
 
-SET_TARGET_PROPERTIES(akela-bin
-  PROPERTIES OUTPUT_NAME akela)
+set_target_properties(akela-bin
+  PROPERTIES
+        OUTPUT_NAME akela
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
 
 add_custom_command(
         TARGET akela-bin POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${EXAMPLE_ADDITION}
                 ${AKELA_MATH}
-                ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_custom_command(
-        TARGET akela POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${EXAMPLE_ADDITION}
-                ${AKELA_MATH}
-                ${CMAKE_BINARY_DIR}/test
+                ${CMAKE_BINARY_DIR}/bin
 )
