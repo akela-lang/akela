@@ -61,7 +61,8 @@ if(${COVERAGE} MATCHES On)
 endif()
 
 # directories
-add_subdirectory(akela)
-add_subdirectory(test)
 add_subdirectory(zinc)
 add_subdirectory(zinc-test)
+add_subdirectory(akela)
+add_subdirectory(test)
+add_subdirectory(akela-bin)

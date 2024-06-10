@@ -7,7 +7,7 @@ typedef struct {
     struct error_list* el;
     CodeGenInterface jit;
     bool debug;
-} CodeGenLLVM2;
+} CodeGenLLVM;
 
 extern CodeGenVTable CodeGenLLVM2VTable;
 
@@ -15,8 +15,8 @@ extern CodeGenVTable CodeGenLLVM2VTable;
 extern "C" {
 #endif
 
-void CodeGenLLVMCreate(CodeGenLLVM2** cg, struct error_list* el);
-void CodeGenLLVMDestroy(CodeGenLLVM2* cg);
+void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el);
+void CodeGenLLVMDestroy(CodeGenLLVM* cg);
 
 #ifdef __cplusplus
 }

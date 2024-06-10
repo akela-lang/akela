@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "ast.h"
+#include "akela/ast.h"
 #include "zinc/os_win.h"
 #include "zinc/os_unix.h"
-#include "comp_unit.h"
-#include "code_gen.h"
+#include "akela/comp_unit.h"
+#include "akela/code_gen.h"
 #include "zinc/input_unicode_file.h"
-#include "code_gen_llvm.h"
+#include "akela/code_gen_llvm.h"
 
 int main(int argc, char** argv)
 {
@@ -48,12 +48,10 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    ast_node_print(cu.root, false);
-
     struct buffer bf;
     buffer_init(&bf);
 
-    CodeGenLLVM2* cg = NULL;
+    CodeGenLLVM* cg = NULL;
     CodeGenLLVMCreate(&cg, &cu.el);
     CodeGenResult result;
     CodeGenResultInit(&result);

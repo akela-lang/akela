@@ -62,12 +62,12 @@ typedef struct {
 } JITData;
 
 CodeGenVTable CodeGenLLVM2VTable = {
-        .jit_offset = offsetof(CodeGenLLVM2, jit),
+        .jit_offset = offsetof(CodeGenLLVM, jit),
 };
 
 Type* CodeGenLLVMGetType(JITData* jd, struct ast_node* tu);
 Type* CodeGenLLVMReturnType(JITData* jd, struct ast_node* tu);
-bool CodeGenLLVMJIT(CodeGenLLVM2* cg, struct ast_node* n, CodeGenResult* result);
+bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, CodeGenResult* result);
 Value* CodeGenLLVMDispatch(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVMStmts(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVMExtern(JITData* jd, struct ast_node* n);
@@ -88,20 +88,20 @@ Value* CodeGenLLVMBoolean(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVMString(JITData* jd, struct ast_node* n);
 Value* CodeGenLLVMSign(JITData* jd, struct ast_node* n);
 
-void CodeGenLLVMInit(CodeGenLLVM2* cg, struct error_list* el)
+void CodeGenLLVMInit(CodeGenLLVM* cg, struct error_list* el)
 {
     cg->el = el;
     cg->jit = (CodeGenInterface) CodeGenLLVMJIT;
     cg->debug = false;
 }
 
-void CodeGenLLVMCreate(CodeGenLLVM2** cg, struct error_list* el)
+void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el)
 {
-    *cg = new CodeGenLLVM2();
+    *cg = new CodeGenLLVM();
     CodeGenLLVMInit(*cg, el);
 }
 
-void CodeGenLLVMDestroy(CodeGenLLVM2* cg)
+void CodeGenLLVMDestroy(CodeGenLLVM* cg)
 {
     delete cg;
 }
@@ -324,7 +324,7 @@ BasicBlock* CodeGenLLVMGetLastBlock(JITData* jd, Function* f)
     return last_block;
 }
 
-bool CodeGenLLVMJIT(CodeGenLLVM2* cg, struct ast_node* n, CodeGenResult* result)
+bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct ast_node* n, CodeGenResult* result)
 {
     bool valid = true;
 

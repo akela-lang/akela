@@ -29,7 +29,7 @@ bool cg_setup(const char* text, CodeGenResult* result)
     result->cu = cu;
 
     if (valid) {
-        CodeGenLLVM2* cg = NULL;
+        CodeGenLLVM* cg = NULL;
         CodeGenLLVMCreate(&cg, &cu->el);
         valid = CodeGenJIT(cg, &CodeGenLLVM2VTable, cu->root, result);
         CodeGenLLVMDestroy(cg);
