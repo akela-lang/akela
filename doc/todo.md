@@ -2,9 +2,8 @@
 * split up code gen into submodules
   * literal [x]
   * function [x]
-  * stmt []
-  * loop []
-  * variable []
+  * variable [x]
+  * stmts []
   * operator []
   * tools [x]
 * assign subarray
