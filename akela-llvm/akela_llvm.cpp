@@ -132,9 +132,7 @@ Value* CodeGenLLVMDispatch(JITData* jd, struct ast_node* n)
         return CodeGenLLVMIf(jd, n);
     } else if (n->type == ast_type_let) {
         return CodeGenLLVMVar(jd, n);
-    } else if (n->type == ast_type_function) {
-        return CodeGenLLVMFunction(jd, n);
-    } else if (n->type == ast_type_anonymous_function) {
+    } else if (n->type == ast_type_function || n->type == ast_type_anonymous_function) {
         return CodeGenLLVMFunction(jd, n);
     } else if (n->type == ast_type_assign) {
         return CodeGenLLVMAssign(jd, n);

@@ -33,6 +33,11 @@ set(SOURCE_FILES
 
 add_definitions(-DZINC_EXPORT)
 add_library(zinc STATIC ${SOURCE_FILES})
+
+if(${COVERAGE} MATCHES On)
+    target_link_libraries(zinc gcov)
+endif ()
+
 set_target_properties(zinc
         PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib

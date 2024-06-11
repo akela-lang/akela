@@ -19,9 +19,9 @@ set(files
 )
 add_executable(akela-test ${files})
 if(${COVERAGE} MATCHES On)
-    target_link_libraries(akela-test akela zinc gcov ${llvm_libs})
+    target_link_libraries(akela-test akela zinc gcov)
 else()
-    target_link_libraries(akela-test akela zinc ${llvm_libs})
+    target_link_libraries(akela-test akela zinc)
 endif()
 
 # event loop
@@ -33,11 +33,7 @@ else()
     target_link_libraries(event_loop zinc)
 endif()
 
-# function_pointer
-add_executable(function_pointer function_pointer.cpp)
-target_link_libraries(function_pointer ${llvm_libs})
-
-set_target_properties(akela-test event_loop function_pointer
+set_target_properties(akela-test event_loop
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
