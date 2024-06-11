@@ -1,6 +1,6 @@
 # Akela Todo
 * split up code gen into submodules
-  * literal []
+  * literal [x]
   * function []
   * stmt []
   * loop []

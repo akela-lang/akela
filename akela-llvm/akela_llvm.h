@@ -9,7 +9,7 @@ typedef struct {
     bool debug;
 } CodeGenLLVM;
 
-extern CodeGenVTable CodeGenLLVM2VTable;
+extern CodeGenVTable CodeGenLLVMVTable;
 
 #ifdef __cplusplus
 extern "C" {

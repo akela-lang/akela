@@ -7,7 +7,7 @@
 #include "akela/comp_unit.h"
 #include "akela/code_gen.h"
 #include "zinc/input_unicode_file.h"
-#include "akela-llvm/code_gen_llvm.h"
+#include "akela-llvm/akela_llvm.h"
 
 int main(int argc, char** argv)
 {
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     CodeGenLLVMCreate(&cg, &cu.el);
     CodeGenResult result;
     CodeGenResultInit(&result);
-    CodeGenJIT(cg, &CodeGenLLVM2VTable, cu.root, &result);
+    CodeGenJIT(cg, &CodeGenLLVMVTable, cu.root, &result);
 
     printf("%s\n", result.value.buf);
     CodeGenResultDestroy(&result);

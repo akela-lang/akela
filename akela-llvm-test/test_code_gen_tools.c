@@ -5,7 +5,7 @@
 #include "akela/parse_tools.h"
 #include "akela/comp_unit.h"
 #include "akela/code_gen.h"
-#include "akela-llvm/code_gen_llvm.h"
+#include "akela-llvm/akela_llvm.h"
 #include <string.h>
 #include "zinc/input_unicode_string.h"
 
@@ -31,7 +31,7 @@ bool cg_setup(const char* text, CodeGenResult* result)
     if (valid) {
         CodeGenLLVM* cg = NULL;
         CodeGenLLVMCreate(&cg, &cu->el);
-        valid = CodeGenJIT(cg, &CodeGenLLVM2VTable, cu->root, result);
+        valid = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, result);
         CodeGenLLVMDestroy(cg);
         expect_true(valid, "valid");
     }
