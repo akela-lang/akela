@@ -7,8 +7,8 @@ and finance.
     cd ..
     git clone https://github.com/llvm/llvm-project
     cd llvm-project
-	cmake -S llvm -B release -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -G Ninja
-	ninja -C release check-llvm -j 8
+	cmake -S llvm -B build-release -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -G Ninja
+	ninja -C build-release check-llvm -j 8
     cd ../akela
 
 ## Build
@@ -24,7 +24,9 @@ and finance.
     cmake-build-debug/bin/akela examples/addition.akela
 
 ## Valgrind
-    valgrind --leak-check=full --num-callers=40 cmake-build-debug/test/test
+    valgrind --leak-check=full --num-callers=40 cmake-build-debug/bin/zinc-test
+    valgrind --leak-check=full --num-callers=40 cmake-build-debug/bin/akela-test
+    valgrind --leak-check=full --num-callers=40 cmake-build-debug/bin/akela-llvm-test
 
 ## Coverage
     rm -rf cmake-build-debug &&
@@ -47,10 +49,10 @@ and finance.
     cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja &&
     ninja -C cmake-build-debug
 
-## CMake Options to specify compiler
+## CMake options to specify compiler
     -DCMAKE_C_COMPILER=clang
     -DCMAKE_CXX_COMPILER=clang++
 
 ## Optional LLVM targets
-	ninja -C release clang -j 8
-	ninja -C release Kaleidoscope -j 8
+	ninja -C build-release clang -j 8
+	ninja -C build-release Kaleidoscope -j 8

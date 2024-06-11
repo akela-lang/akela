@@ -16,7 +16,7 @@ configure_file(${AKELA_MATH} ${CMAKE_BINARY_DIR}/bin COPYONLY)
 include_directories(.)
 
 # LLVM
-set(llvm_build_dir release)
+set(llvm_build_dir build-release)
 find_package(LLVM 19 REQUIRED CONFIG PATHS ${CMAKE_SOURCE_DIR}/../llvm-project/${llvm_build_dir})
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
