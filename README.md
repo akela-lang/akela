@@ -19,7 +19,7 @@ and finance.
 
 ## Run Tests
     cmake-build-debug/bin/zinc-test
-    cmake-build-debug/bin/test
+    cmake-build-debug/bin/akela-test
 
 ## Run JIT on file
     cmake-build-debug/bin/akela examples/addition.akela

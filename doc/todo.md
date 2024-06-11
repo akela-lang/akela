@@ -1,5 +1,14 @@
 # Akela Todo
+* split up code gen into submodules
+  * literal []
+  * function []
+  * stmt []
+  * loop []
+  * variable []
+  * operator []
+  * tools []
 * assign subarray
+* naming convention: Leading-upper-snake-case and prefixed
 * use fn for function declarations
 * function declarations that use prototype parsing
 * remove generics

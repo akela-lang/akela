@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(akela)
+set(CMAKE_CXX_STANDARD 17)
 
 # AKELA
 set(AKELA_DIR ${CMAKE_SOURCE_DIR})
@@ -8,6 +9,7 @@ set(AKELA_A${AKELA_BINARY}/akela.a)
 set(EXAMPLE_ADDITION ${CMAKE_SOURCE_DIR}/examples/addition.akela)
 set(STD_DIR ${CMAKE_SOURCE_DIR}/std)
 set(AKELA_MATH ${STD_DIR}/math.akela)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 configure_file(${EXAMPLE_ADDITION} ${CMAKE_BINARY_DIR}/bin COPYONLY)
 configure_file(${AKELA_MATH} ${CMAKE_BINARY_DIR}/bin COPYONLY)
 
