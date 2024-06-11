@@ -42,9 +42,6 @@
 #include <cassert>
 #include <iostream>
 
-using namespace llvm;
-using namespace llvm::orc;
-
 #define TOPLEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"
 
@@ -54,21 +51,22 @@ typedef struct Code_gen_context{
 
 typedef struct {
     struct error_list* el;
-    std::unique_ptr<LLVMContext> TheContext;
-    std::unique_ptr<Module> TheModule;
-    std::unique_ptr<IRBuilder<>> Builder;
-    ExitOnError ExitOnErr;
-    std::unique_ptr<KaleidoscopeJIT> TheJIT;
-    Function* toplevel;
+    std::unique_ptr<llvm::LLVMContext> TheContext;
+    std::unique_ptr<llvm::Module> TheModule;
+    std::unique_ptr<llvm::IRBuilder<>> Builder;
+    llvm::ExitOnError ExitOnErr;
+    std::unique_ptr<llvm::orc::KaleidoscopeJIT> TheJIT;
+    llvm::Function* toplevel;
     Code_gen_context context;
 } JITData;
 
 void JITDataInit(JITData* jd, struct error_list* el);
-FunctionType* CodeGenLLVMFunctionType(JITData* jd, struct ast_node* tu);
-Type* CodeGenLLVMGetTypeScalar(JITData* jd, struct ast_node* tu);
-Type* CodeGenLLVMGetType(JITData* jd, struct ast_node* tu);
-Type* CodeGenLLVMReturnType(JITData* jd, struct ast_node* tu);
+llvm::FunctionType* CodeGenLLVMFunctionType(JITData* jd, struct ast_node* tu);
+llvm::Type* CodeGenLLVMGetTypeScalar(JITData* jd, struct ast_node* tu);
+llvm::Type* CodeGenLLVMGetType(JITData* jd, struct ast_node* tu);
+llvm::Type* CodeGenLLVMReturnType(JITData* jd, struct ast_node* tu);
 void CodeGenLLVMRun(JITData* jd, struct ast_node* n, struct buffer* bf);
-BasicBlock* CodeGenLLVMGetLastBlock(JITData* jd, Function* f);
+llvm::BasicBlock* CodeGenLLVMGetLastBlock(JITData* jd, llvm::Function* f);
+llvm::Value* CodeGenLLVMDispatch(JITData* jd, struct ast_node* n);
 
 #endif

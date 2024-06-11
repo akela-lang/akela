@@ -3,6 +3,7 @@ set(lib_files
         akela_llvm.cpp
         akela_llvm_tools.cpp
         akela_llvm_literal.cpp
+        akela_llvm_function.cpp
 )
 
 add_library(akela-llvm STATIC ${lib_files})
