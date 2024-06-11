@@ -1,7 +1,8 @@
 # Akela
-Akela is a general-purpose programming language with the aim of supporting robust software
-construction, standalone and embeddable execution, and of being suitable for numerical computation
-and finance.
+Akela is a general-purpose programming language with the aim of being
+capable of standalone and embeddable execution,
+suitable for numerical computation and finance,
+and capable of robust software construction.
 
 ## LLVM
     cd ..
