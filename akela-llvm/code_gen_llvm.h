@@ -1,7 +1,7 @@
 #ifndef AKELA_CODE_GEN_LLVM2_H
 #define AKELA_CODE_GEN_LLVM2_H
 
-#include "code_gen.h"
+#include "akela/code_gen.h"
 
 typedef struct {
     struct error_list* el;

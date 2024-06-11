@@ -30,15 +30,15 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "code_gen.h"
+#include "akela/code_gen.h"
 #include "code_gen_llvm.h"
-#include "type_def.h"
+#include "akela/type_def.h"
 #include "zinc/error.h"
 #include "zinc/list.h"
 #include "zinc/vector.h"
 #include <cassert>
 #include <iostream>
-#include "parse_types.h"
+#include "akela/parse_types.h"
 
 #define TOPLEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"

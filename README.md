@@ -1,6 +1,6 @@
 # Akela
 Akela is a general-purpose programming language with the aim of supporting robust software
-construction, standalone and embeddable execution, and being suitable for numerical computation
+construction, standalone and embeddable execution, and to be suitable for numerical computation
 and finance.
 
 ## LLVM
@@ -20,6 +20,9 @@ and finance.
 ## Run Tests
     cmake-build-debug/bin/zinc-test
     cmake-build-debug/bin/test
+
+## Run JIT on file
+    cmake-build-debug/bin/akela examples/addition.akela
 
 ## Valgrind
     valgrind --leak-check=full --num-callers=40 cmake-build-debug/test/test

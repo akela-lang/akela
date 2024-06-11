@@ -15,7 +15,6 @@ set(lib_files
         comp_unit.c
         comp_table.c
         code_gen.c
-        code_gen_llvm.cpp
 )
 
 add_library(akela STATIC ${lib_files})
@@ -24,12 +23,4 @@ set_target_properties(akela
         PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
-)
-
-add_custom_command(
-        TARGET akela POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${EXAMPLE_ADDITION}
-        ${AKELA_MATH}
-        ${CMAKE_BINARY_DIR}/bin
 )

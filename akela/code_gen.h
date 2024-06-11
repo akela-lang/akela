@@ -1,7 +1,7 @@
 #ifndef AKELA_CODE_GEN_H
 #define AKELA_CODE_GEN_H
 
-#include "ast.h"
+#include "akela/ast.h"
 #include "symbol_table.h"
 #include "comp_unit.h"
 

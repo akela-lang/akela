@@ -5,7 +5,7 @@
 #include "akela/parse_tools.h"
 #include "akela/comp_unit.h"
 #include "akela/code_gen.h"
-#include "akela/code_gen_llvm.h"
+#include "akela-llvm/code_gen_llvm.h"
 #include <string.h>
 #include "zinc/input_unicode_string.h"
 
