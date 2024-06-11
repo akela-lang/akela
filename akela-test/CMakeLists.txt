@@ -1,5 +1,5 @@
-# test
-set(test_files
+# akela-test
+set(files
         test.c
         test_ast.c
         test_parse.c
@@ -16,14 +16,12 @@ set(test_files
         test_type.c
         test_comp_unit.c
         test_comp_table.c
-        test_code_gen.c
-        test_code_gen_tools.c
 )
-add_executable(test ${test_files})
+add_executable(akela-test ${files})
 if(${COVERAGE} MATCHES On)
-    target_link_libraries(test akela-llvm akela zinc gcov ${llvm_libs})
+    target_link_libraries(akela-test akela-llvm akela zinc gcov ${llvm_libs})
 else()
-    target_link_libraries(test akela-llvm akela zinc ${llvm_libs})
+    target_link_libraries(akela-test akela-llvm akela zinc ${llvm_libs})
 endif()
 
 # event loop
@@ -39,7 +37,7 @@ endif()
 add_executable(function_pointer function_pointer.cpp)
 target_link_libraries(function_pointer ${llvm_libs})
 
-set_target_properties(test event_loop function_pointer
+set_target_properties(akela-test event_loop function_pointer
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
