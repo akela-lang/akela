@@ -19,16 +19,16 @@ void test_parse_assign()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* assign = ast_node_get(cu.root, 1);
+	Ast_node* assign = Ast_node_get(cu.root, 1);
 	assert_ptr(assign, "ptr assign");
 	assert_int_equal(assign->type, ast_type_assign, "assign");
 
-	struct Ast_node* left = ast_node_get(assign, 0);
+	Ast_node* left = Ast_node_get(assign, 0);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, ast_type_id, "id");
 	expect_str(&left->value, "a", "a");
 
-	struct Ast_node* right = ast_node_get(assign, 1);
+	Ast_node* right = Ast_node_get(assign, 1);
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "1", "1");
@@ -49,25 +49,25 @@ void test_parse_assign2()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* assign = ast_node_get(cu.root, 1);
+	Ast_node* assign = Ast_node_get(cu.root, 1);
 	assert_ptr(assign, "ptr assign");
 	assert_int_equal(assign->type, ast_type_assign, "assign");
 
-	struct Ast_node* left = ast_node_get(assign, 0);
+	Ast_node* left = Ast_node_get(assign, 0);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, ast_type_id, "id");
 	expect_str(&left->value, "a", "a");
 
-	struct Ast_node* right = ast_node_get(assign, 1);
+	Ast_node* right = Ast_node_get(assign, 1);
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, ast_type_plus, "plus");
 
-	struct Ast_node* left2 = ast_node_get(right, 0);
+	Ast_node* left2 = Ast_node_get(right, 0);
 	assert_ptr(left2, "left2");
 	expect_int_equal(left2->type, ast_type_number, "number");
 	expect_str(&left2->value, "1", "1");
 
-	struct Ast_node* right2 = ast_node_get(right, 1);
+	Ast_node* right2 = Ast_node_get(right, 1);
 	assert_ptr(right2, "right");
 	expect_int_equal(right2->type, ast_type_number, "number2");
 	expect_str(&right2->value, "2", "2");
@@ -89,30 +89,30 @@ void test_parse_stmts()
 	assert_ptr(cu.root, "ptr1");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts");
 
-	struct Ast_node* left = ast_node_get(cu.root, 2);
+	Ast_node* left = Ast_node_get(cu.root, 2);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, ast_type_plus, "plus");
 
-	struct Ast_node* left2 = ast_node_get(left, 0);
+	Ast_node* left2 = Ast_node_get(left, 0);
 	assert_ptr(left2, "left2");
 	expect_int_equal(left2->type, ast_type_id, "id");
 	expect_str(&left2->value, "i", "i");
 
-	struct Ast_node* right = ast_node_get(left, 1);
+	Ast_node* right = Ast_node_get(left, 1);
 	assert_ptr(right, "right");
 	expect_int_equal(right->type, ast_type_number, "number");
 	expect_str(&right->value, "1", "1");
 
-	struct Ast_node* right2 = ast_node_get(cu.root, 3);
+	Ast_node* right2 = Ast_node_get(cu.root, 3);
 	assert_ptr(right2, "right2");
 	expect_int_equal(right2->type, ast_type_mult, "mult");
 
-	struct Ast_node* left3 = ast_node_get(right2, 0);
+	Ast_node* left3 = Ast_node_get(right2, 0);
 	assert_ptr(left3, "left3");
 	expect_int_equal(left3->type, ast_type_id, "id");
 	expect_str(&left3->value, "x", "x");
 
-	struct Ast_node* right3 = ast_node_get(right2, 1);
+	Ast_node* right3 = Ast_node_get(right2, 1);
 	assert_ptr(right3, "right3");
 	expect_int_equal(right3->type, ast_type_number, "number2");
 	expect_str(&right3->value, "1", "1");
@@ -134,30 +134,30 @@ void test_parse_stmts2()
 	assert_ptr(cu.root, "cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts");
 
-	struct Ast_node* a = ast_node_get(cu.root, 1);
+	Ast_node* a = Ast_node_get(cu.root, 1);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_plus, "plus a");
 
-	struct Ast_node* b = ast_node_get(a, 0);
+	Ast_node* b = Ast_node_get(a, 0);
 	assert_ptr(b, "ptr b");
 	expect_int_equal(b->type, ast_type_id, "id b");
 	expect_str(&b->value, "x", "x b");
 
-	struct Ast_node* c = ast_node_get(a, 1);
+	Ast_node* c = Ast_node_get(a, 1);
 	assert_ptr(c, "ptr c");
 	expect_int_equal(c->type, ast_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct Ast_node* d = ast_node_get(cu.root, 2);
+	Ast_node* d = Ast_node_get(cu.root, 2);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, ast_type_minus, "minus d");
 
-	struct Ast_node* e = ast_node_get(d, 0);
+	Ast_node* e = Ast_node_get(d, 0);
 	assert_ptr(e, "ptr e");
 	expect_int_equal(e->type, ast_type_number, "number e");
 	expect_str(&e->value, "5", "5 b");
 
-	struct Ast_node* f = ast_node_get(d, 1);
+	Ast_node* f = Ast_node_get(d, 1);
 	assert_ptr(f, "ptr f");
 	expect_int_equal(f->type, ast_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
@@ -179,44 +179,44 @@ void test_parse_stmts3()
 	assert_ptr(cu.root, "cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts");
 
-	struct Ast_node* a = ast_node_get(cu.root, 3);
+	Ast_node* a = Ast_node_get(cu.root, 3);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_plus, "plus a");
 
-	struct Ast_node* b = ast_node_get(a, 0);
+	Ast_node* b = Ast_node_get(a, 0);
 	assert_ptr(b, "ptr b");
 	expect_int_equal(b->type, ast_type_id, "id b");
 	expect_str(&b->value, "x", "x b");
 
-	struct Ast_node* c = ast_node_get(a, 1);
+	Ast_node* c = Ast_node_get(a, 1);
 	assert_ptr(c, "ptr c");
 	expect_int_equal(c->type, ast_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct Ast_node* d = ast_node_get(cu.root, 4);
+	Ast_node* d = Ast_node_get(cu.root, 4);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, ast_type_minus, "minus d");
 
-	struct Ast_node* e = ast_node_get(d, 0);
+	Ast_node* e = Ast_node_get(d, 0);
 	assert_ptr(e, "ptr e");
 	expect_int_equal(e->type, ast_type_number, "number e");
 	expect_str(&e->value, "5", "5 b");
 
-	struct Ast_node* f = ast_node_get(d, 1);
+	Ast_node* f = Ast_node_get(d, 1);
 	assert_ptr(f, "ptr f");
 	expect_int_equal(f->type, ast_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
 
-	struct Ast_node* g = ast_node_get(cu.root, 5);
+	Ast_node* g = Ast_node_get(cu.root, 5);
 	assert_ptr(g, "ptr g");
 	expect_int_equal(g->type, ast_type_plus, "plus g");
 
-	struct Ast_node* h = ast_node_get(g, 0);
+	Ast_node* h = Ast_node_get(g, 0);
 	assert_ptr(h, "ptr h");
 	expect_int_equal(h->type, ast_type_id, "id h");
 	expect_str(&h->value, "y", "y h");
 
-	struct Ast_node* i = ast_node_get(g, 1);
+	Ast_node* i = Ast_node_get(g, 1);
 	assert_ptr(i, "ptr i");
 	expect_int_equal(i->type, ast_type_id, "id i");
 	expect_str(&i->value, "z", "z c");
@@ -237,44 +237,44 @@ void test_parse_stmts4()
 	assert_ptr(cu.root, "cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts");
 
-	struct Ast_node* a = ast_node_get(cu.root, 3);
+	Ast_node* a = Ast_node_get(cu.root, 3);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, ast_type_plus, "plus a");
 
-	struct Ast_node* b = ast_node_get(a, 0);
+	Ast_node* b = Ast_node_get(a, 0);
 	assert_ptr(b, "ptr b");
 	expect_int_equal(b->type, ast_type_id, "id b");
 	expect_str(&b->value, "x", "x b");
 
-	struct Ast_node* c = ast_node_get(a, 1);
+	Ast_node* c = Ast_node_get(a, 1);
 	assert_ptr(c, "ptr c");
 	expect_int_equal(c->type, ast_type_number, "number c");
 	expect_str(&c->value, "1", "1 c");
 
-	struct Ast_node* d = ast_node_get(cu.root, 4);
+	Ast_node* d = Ast_node_get(cu.root, 4);
 	assert_ptr(d, "ptr d");
 	expect_int_equal(d->type, ast_type_minus, "minus d");
 
-	struct Ast_node* e = ast_node_get(d, 0);
+	Ast_node* e = Ast_node_get(d, 0);
 	assert_ptr(e, "ptr e");
 	expect_int_equal(e->type, ast_type_number, "number e");
 	expect_str(&e->value, "5", "5 b");
 
-	struct Ast_node* f = ast_node_get(d, 1);
+	Ast_node* f = Ast_node_get(d, 1);
 	assert_ptr(f, "ptr f");
 	expect_int_equal(f->type, ast_type_number, "number f");
 	expect_str(&f->value, "4", "4 c");
 
-	struct Ast_node* g = ast_node_get(cu.root, 5);
+	Ast_node* g = Ast_node_get(cu.root, 5);
 	assert_ptr(g, "ptr g");
 	expect_int_equal(g->type, ast_type_plus, "plus g");
 
-	struct Ast_node* h = ast_node_get(g, 0);
+	Ast_node* h = Ast_node_get(g, 0);
 	assert_ptr(h, "ptr h");
 	expect_int_equal(h->type, ast_type_id, "id h");
 	expect_str(&h->value, "y", "y h");
 
-	struct Ast_node* i = ast_node_get(g, 1);
+	Ast_node* i = Ast_node_get(g, 1);
 	assert_ptr(i, "ptr i");
 	expect_int_equal(i->type, ast_type_id, "id i");
 	expect_str(&i->value, "z", "z c");
@@ -296,37 +296,37 @@ void test_parse_stmts5()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* if_stmt = ast_node_get(cu.root, 0);
+	Ast_node* if_stmt = Ast_node_get(cu.root, 0);
 	assert_ptr(if_stmt, "ptr if_stmt");
 	expect_int_equal(if_stmt->type, ast_type_if, "if if_stmt");
 
-	struct Ast_node* cb = ast_node_get(if_stmt, 0);
+	Ast_node* cb = Ast_node_get(if_stmt, 0);
 	assert_ptr(cb, "ptr cb");
 	expect_int_equal(cb->type, ast_type_conditional_branch, "conditional branch cb");
 
-	struct Ast_node* cond = ast_node_get(cb, 0);
+	Ast_node* cond = Ast_node_get(cb, 0);
 	assert_ptr(cond, "ptr cond");
 	expect_int_equal(cond->type, ast_type_boolean, "boolean cond");
 	expect_str(&cond->value, "true", "true cond");
 
-	struct Ast_node* stmts_cb = ast_node_get(cb, 1);
+	Ast_node* stmts_cb = Ast_node_get(cb, 1);
 	assert_ptr(stmts_cb, "ptr stmts_cb");
 	expect_int_equal(stmts_cb->type, ast_type_stmts, "parse_stmts stmts_cb");
 
-	struct Ast_node* num0 = ast_node_get(stmts_cb, 0);
+	Ast_node* num0 = Ast_node_get(stmts_cb, 0);
 	assert_ptr(num0, "ptr num0");
 	expect_int_equal(num0->type, ast_type_number, "number num0");
 	expect_str(&num0->value, "1", "1 num0");
 
-	struct Ast_node* db = ast_node_get(if_stmt, 1);
+	Ast_node* db = Ast_node_get(if_stmt, 1);
 	assert_ptr(db, "ptr db");
 	expect_int_equal(db->type, ast_type_default_branch, "default branch db");
 
-	struct Ast_node* stmts_db = ast_node_get(db, 0);
+	Ast_node* stmts_db = Ast_node_get(db, 0);
 	assert_ptr(stmts_db, "ptr stmts_db");
 	expect_int_equal(stmts_db->type, ast_type_stmts, "parse_stmts stmts_db");
 
-	struct Ast_node* num1 = ast_node_get(stmts_db, 0);
+	Ast_node* num1 = Ast_node_get(stmts_db, 0);
 	assert_ptr(num1, "ptr num1");
 	expect_int_equal(num1->type, ast_type_number, "number num1");
 	expect_str(&num1->value, "2", "2 num1");
@@ -347,7 +347,7 @@ void test_parse_stmts_type()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* tu = cu.root->tu;
+	Ast_node* tu = cu.root->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct type_def* td = tu->td;
@@ -372,50 +372,50 @@ void test_parse_if()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* if_node = ast_node_get(cu.root, 0);
+	Ast_node* if_node = Ast_node_get(cu.root, 0);
 	assert_ptr(if_node, "ptr cu.root");
 	expect_int_equal(if_node->type, ast_type_if, "if if_node");
 
-    struct Ast_node* tu = if_node->tu;
+    Ast_node* tu = if_node->tu;
 	expect_null(tu, "null tu");
 
-	struct Ast_node* cb = ast_node_get(if_node, 0);
+	Ast_node* cb = Ast_node_get(if_node, 0);
 	assert_ptr(cb, "ptr cb");
 	expect_int_equal(cb->type, ast_type_conditional_branch, "conditional branch");
 
-	struct Ast_node* cond = ast_node_get(cb, 0);
+	Ast_node* cond = Ast_node_get(cb, 0);
 	assert_ptr(cond, "ptr cond");
 	expect_int_equal(cond->type, ast_type_boolean, "boolean");
 	expect_str(&cond->value, "true", "true");
 
-	struct Ast_node* stmts = ast_node_get(cb, 1);
+	Ast_node* stmts = Ast_node_get(cb, 1);
 	assert_ptr(stmts, "ptr parse_stmts");
 	expect_int_equal(stmts->type, ast_type_stmts, "parse_stmts");
 
-	struct Ast_node* plus = ast_node_get(stmts, 2);
+	Ast_node* plus = Ast_node_get(stmts, 2);
 	assert_ptr(plus, "ptr plus");
 	expect_int_equal(plus->type, ast_type_plus, "plus");
 
-	struct Ast_node* num0 = ast_node_get(plus, 0);
+	Ast_node* num0 = Ast_node_get(plus, 0);
 	assert_ptr(num0, "ptr num0");
 	expect_int_equal(num0->type, ast_type_number, "number 0");
 	expect_str(&num0->value, "10", "10");
 
-	struct Ast_node* num1 = ast_node_get(plus, 1);
+	Ast_node* num1 = Ast_node_get(plus, 1);
 	assert_ptr(num1, "ptr num1");
 	expect_int_equal(num1->type, ast_type_number, "number 1");
 	expect_str(&num1->value, "20", "20");
 
-	struct Ast_node* mult = ast_node_get(stmts, 3);
+	Ast_node* mult = Ast_node_get(stmts, 3);
 	assert_ptr(mult, "ptr mult");
 	expect_int_equal(mult->type, ast_type_mult, "mult");
 
-	struct Ast_node* x = ast_node_get(mult, 0);
+	Ast_node* x = Ast_node_get(mult, 0);
 	assert_ptr(x, "ptr x");
 	expect_int_equal(x->type, ast_type_id, "id x");
 	expect_str(&x->value, "x", "x");
 
-	struct Ast_node* y = ast_node_get(mult, 1);
+	Ast_node* y = Ast_node_get(mult, 1);
 	assert_ptr(y, "ptr y");
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
@@ -436,70 +436,70 @@ void test_parse_elseif()
 
 	assert_ptr(cu.root, "ptr cu.root");
 
-	struct Ast_node* if_stmt = ast_node_get(cu.root, 2);
+	Ast_node* if_stmt = Ast_node_get(cu.root, 2);
 	assert_ptr(if_stmt, "ptr if_stmt");
 	expect_int_equal(if_stmt->type, ast_type_if, "if");
 
-	struct Ast_node* cb = ast_node_get(if_stmt, 0);
+	Ast_node* cb = Ast_node_get(if_stmt, 0);
 	assert_ptr(cb, "ptr cb");
 	expect_int_equal(cb->type, ast_type_conditional_branch, "conditional branch");
 
-	struct Ast_node* cond = ast_node_get(cb, 0);
+	Ast_node* cond = Ast_node_get(cb, 0);
 	assert_ptr(cond, "ptr cond");
 	expect_int_equal(cond->type, ast_type_boolean, "boolean cond");
 	expect_str(&cond->value, "true", "true");
 
-	struct Ast_node* stmts = ast_node_get(cb, 1);
+	Ast_node* stmts = Ast_node_get(cb, 1);
 	assert_ptr(stmts, "ptr parse_stmts");
 	expect_int_equal(stmts->type, ast_type_stmts, "parse_stmts");
 
-	struct Ast_node* plus = ast_node_get(stmts, 0);
+	Ast_node* plus = Ast_node_get(stmts, 0);
 	assert_ptr(plus, "ptr plus");
 	expect_int_equal(plus->type, ast_type_plus, "plus");
 
-	struct Ast_node* num0 = ast_node_get(plus, 0);
+	Ast_node* num0 = Ast_node_get(plus, 0);
 	assert_ptr(num0, "ptr num0");
 	expect_int_equal(num0->type, ast_type_number, "number 0");
 	expect_str(&num0->value, "10", "10");
 
-	struct Ast_node* num1 = ast_node_get(plus, 1);
+	Ast_node* num1 = Ast_node_get(plus, 1);
 	assert_ptr(num1, "ptr num1");
 	expect_int_equal(num1->type, ast_type_number, "number 1");
 	expect_str(&num1->value, "20", "20");
 
-	struct Ast_node* mult = ast_node_get(stmts, 1);
+	Ast_node* mult = Ast_node_get(stmts, 1);
 	assert_ptr(mult, "ptr mult");
 	expect_int_equal(mult->type, ast_type_mult, "mult");
 
-	struct Ast_node* x = ast_node_get(mult, 0);
+	Ast_node* x = Ast_node_get(mult, 0);
 	assert_ptr(x, "ptr x");
 	expect_int_equal(x->type, ast_type_id, "id x");
 	expect_str(&x->value, "x", "x");
 
-	struct Ast_node* y = ast_node_get(mult, 1);
+	Ast_node* y = Ast_node_get(mult, 1);
 	assert_ptr(y, "ptr y");
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
-	struct Ast_node* cb2 = ast_node_get(if_stmt, 1);
+	Ast_node* cb2 = Ast_node_get(if_stmt, 1);
 	assert_ptr(cb2, "ptr cb2");
 	expect_int_equal(cb2->type, ast_type_conditional_branch, "conditional branch cb2");
 
-	struct Ast_node* cond2 = ast_node_get(cb2, 0);
+	Ast_node* cond2 = Ast_node_get(cb2, 0);
 	assert_ptr(cond2, "ptr cond2");
 	expect_int_equal(cond2->type, ast_type_boolean, "boolean cond2");
 	expect_str(&cond2->value, "true", "true cond2");
 
-	struct Ast_node* stmts2 = ast_node_get(cb2, 1);
+	Ast_node* stmts2 = Ast_node_get(cb2, 1);
 	assert_ptr(stmts2, "ptr stmts2");
 	expect_int_equal(stmts2->type, ast_type_stmts, "parse_stmts stmts2");
 
-	struct Ast_node* num2 = ast_node_get(stmts2, 0);
+	Ast_node* num2 = Ast_node_get(stmts2, 0);
 	assert_ptr(num2, "ptr num2");
 	expect_int_equal(num2->type, ast_type_number, "number num2");
 	expect_str(&num2->value, "1", "1 num2");
 
-	struct Ast_node* num3 = ast_node_get(stmts2, 1);
+	Ast_node* num3 = Ast_node_get(stmts2, 1);
 	assert_ptr(num3, "ptr num3");
 	expect_int_equal(num3->type, ast_type_number, "number num3");
 	expect_str(&num3->value, "2", "2 num3");
@@ -533,95 +533,95 @@ void test_parse_elseif2()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* if_stmt = ast_node_get(cu.root, 2);
+	Ast_node* if_stmt = Ast_node_get(cu.root, 2);
 	assert_ptr(if_stmt, "ptr cu.root");
 	expect_int_equal(if_stmt->type, ast_type_if, "if if_stmt");
 
-	struct Ast_node* cb = ast_node_get(if_stmt, 0);
+	Ast_node* cb = Ast_node_get(if_stmt, 0);
 	assert_ptr(cb, "ptr cb");
 	expect_int_equal(cb->type, ast_type_conditional_branch, "conditional branch");
 
-	struct Ast_node* cond = ast_node_get(cb, 0);
+	Ast_node* cond = Ast_node_get(cb, 0);
 	assert_ptr(cond, "ptr cond");
 	expect_int_equal(cond->type, ast_type_boolean, "boolean cond");
 	expect_str(&cond->value, "true", "true");
 
-	struct Ast_node* stmts = ast_node_get(cb, 1);
+	Ast_node* stmts = Ast_node_get(cb, 1);
 	assert_ptr(stmts, "ptr parse_stmts");
 	expect_int_equal(stmts->type, ast_type_stmts, "parse_stmts");
 
-	struct Ast_node* plus = ast_node_get(stmts, 0);
+	Ast_node* plus = Ast_node_get(stmts, 0);
 	assert_ptr(plus, "ptr plus");
 	expect_int_equal(plus->type, ast_type_plus, "plus");
 
-	struct Ast_node* num0 = ast_node_get(plus, 0);
+	Ast_node* num0 = Ast_node_get(plus, 0);
 	assert_ptr(num0, "ptr num0");
 	expect_int_equal(num0->type, ast_type_number, "number 0");
 	expect_str(&num0->value, "10", "10");
 
-	struct Ast_node* num1 = ast_node_get(plus, 1);
+	Ast_node* num1 = Ast_node_get(plus, 1);
 	assert_ptr(num1, "ptr num1");
 	expect_int_equal(num1->type, ast_type_number, "number 1");
 	expect_str(&num1->value, "20", "20");
 
-	struct Ast_node* mult = ast_node_get(stmts, 1);
+	Ast_node* mult = Ast_node_get(stmts, 1);
 	assert_ptr(mult, "ptr mult");
 	expect_int_equal(mult->type, ast_type_mult, "mult");
 
-	struct Ast_node* x = ast_node_get(mult, 0);
+	Ast_node* x = Ast_node_get(mult, 0);
 	assert_ptr(x, "ptr x");
 	expect_int_equal(x->type, ast_type_id, "id x");
 	expect_str(&x->value, "x", "x");
 
-	struct Ast_node* y = ast_node_get(mult, 1);
+	Ast_node* y = Ast_node_get(mult, 1);
 	assert_ptr(y, "ptr y");
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
 
 	/* first elseif */
-	struct Ast_node* cb2 = ast_node_get(if_stmt, 1);
+	Ast_node* cb2 = Ast_node_get(if_stmt, 1);
 	assert_ptr(cb2, "ptr cb2");
 	expect_int_equal(cb2->type, ast_type_conditional_branch, "conditional branch cb2");
 
-	struct Ast_node* cond2 = ast_node_get(cb2, 0);
+	Ast_node* cond2 = Ast_node_get(cb2, 0);
 	assert_ptr(cond2, "ptr cond2");
 	expect_int_equal(cond2->type, ast_type_boolean, "boolean cond2");
 	expect_str(&cond2->value, "true", "true cond2");
 
-	struct Ast_node* stmts2 = ast_node_get(cb2, 1);
+	Ast_node* stmts2 = Ast_node_get(cb2, 1);
 	assert_ptr(stmts2, "ptr stmts2");
 	expect_int_equal(stmts2->type, ast_type_stmts, "parse_stmts stmts2");
 
-	struct Ast_node* num2 = ast_node_get(stmts2, 0);
+	Ast_node* num2 = Ast_node_get(stmts2, 0);
 	assert_ptr(num2, "ptr num2");
 	expect_int_equal(num2->type, ast_type_number, "number num2");
 	expect_str(&num2->value, "1", "1 num2");
 
-	struct Ast_node* num3 = ast_node_get(stmts2, 1);
+	Ast_node* num3 = Ast_node_get(stmts2, 1);
 	assert_ptr(num3, "ptr num3");
 	expect_int_equal(num3->type, ast_type_number, "number num3");
 	expect_str(&num3->value, "2", "2 num3");
 
 	/* second elseif */
-	struct Ast_node* cb3 = ast_node_get(if_stmt, 2);
+	Ast_node* cb3 = Ast_node_get(if_stmt, 2);
 	assert_ptr(cb3, "ptr cb3");
 	expect_int_equal(cb3->type, ast_type_conditional_branch, "conditional branch cb3");
 
-	struct Ast_node* cond3 = ast_node_get(cb3, 0);
+	Ast_node* cond3 = Ast_node_get(cb3, 0);
 	assert_ptr(cond3, "ptr cond3");
 	expect_int_equal(cond3->type, ast_type_boolean, "boolean cond3");
 	expect_str(&cond3->value, "true", "true cond3");
 
-	struct Ast_node* stmts3 = ast_node_get(cb3, 1);
+	Ast_node* stmts3 = Ast_node_get(cb3, 1);
 	assert_ptr(stmts3, "ptr stmts3");
 	expect_int_equal(stmts3->type, ast_type_stmts, "parse_stmts stmts3");
 
-	struct Ast_node* x2 = ast_node_get(stmts3, 0);
+	Ast_node* x2 = Ast_node_get(stmts3, 0);
 	assert_ptr(x2, "ptr x2");
 	expect_int_equal(x2->type, ast_type_id, "id x2");
 	expect_str(&x2->value, "x", "x x2");
 
-	struct Ast_node* y2 = ast_node_get(stmts3, 1);
+	Ast_node* y2 = Ast_node_get(stmts3, 1);
 	assert_ptr(y2, "ptr y2");
 	expect_int_equal(y2->type, ast_type_id, "id y2");
 	expect_str(&y2->value, "y", "y y2");
@@ -643,42 +643,42 @@ void test_parse_else()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* if_stmt = ast_node_get(cu.root, 2);
+	Ast_node* if_stmt = Ast_node_get(cu.root, 2);
 	assert_ptr(if_stmt, "ptr if_stmt");
 	assert_int_equal(if_stmt->type, ast_type_if, "if if_stmt");
 
-	struct Ast_node* cb0 = ast_node_get(if_stmt, 0);
+	Ast_node* cb0 = Ast_node_get(if_stmt, 0);
 	assert_ptr(cb0, "ptr cb0");
 	expect_int_equal(cb0->type, ast_type_conditional_branch, "conditional branch cb0");
 
-	struct Ast_node* cond = ast_node_get(cb0, 0);
+	Ast_node* cond = Ast_node_get(cb0, 0);
 	assert_ptr(cond, "ptr cond");
 	expect_int_equal(cond->type, ast_type_boolean, "boolean cond");
 	expect_str(&cond->value, "false", "false cond");
 
-	struct Ast_node* stmts0 = ast_node_get(cb0, 1);
+	Ast_node* stmts0 = Ast_node_get(cb0, 1);
 	assert_ptr(stmts0, "ptr parse_stmts 0");
 	expect_int_equal(stmts0->type, ast_type_stmts, "parse_stmts stmts0");
 
-	struct Ast_node* num = ast_node_get(stmts0, 0);
+	Ast_node* num = Ast_node_get(stmts0, 0);
 	assert_ptr(num, "ptr num");
 	expect_int_equal(num->type, ast_type_number, "number num");
 	expect_str(&num->value, "10", "10 num");
 
-	struct Ast_node* cb1 = ast_node_get(if_stmt, 1);
+	Ast_node* cb1 = Ast_node_get(if_stmt, 1);
 	assert_ptr(cb1, "ptr cb1");
 	expect_int_equal(cb1->type, ast_type_default_branch, "default branch cb1");
 
-	struct Ast_node* stmts1 = ast_node_get(cb1, 0);
+	Ast_node* stmts1 = Ast_node_get(cb1, 0);
 	assert_ptr(stmts1, "ptr stmts1");
 	expect_int_equal(stmts1->type, ast_type_stmts, "parse_stmts stmts1");
 
-	struct Ast_node* x = ast_node_get(stmts1, 0);
+	Ast_node* x = Ast_node_get(stmts1, 0);
 	assert_ptr(x, "ptr x");
 	expect_int_equal(x->type, ast_type_id, "id x");
 	expect_str(&x->value, "x", "x");
 
-	struct Ast_node* y = ast_node_get(stmts1, 1);
+	Ast_node* y = Ast_node_get(stmts1, 1);
 	assert_ptr(y, "ptr y");
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
@@ -700,62 +700,62 @@ void test_parse_else2()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* if_stmt = ast_node_get(cu.root, 2);
+	Ast_node* if_stmt = Ast_node_get(cu.root, 2);
 	assert_ptr(if_stmt, "ptr cu.root");
 	assert_int_equal(if_stmt->type, ast_type_if, "if");
 
 	/* if */
-	struct Ast_node* cb0 = ast_node_get(if_stmt, 0);
+	Ast_node* cb0 = Ast_node_get(if_stmt, 0);
 	assert_ptr(cb0, "ptr cb0");
 	expect_int_equal(cb0->type, ast_type_conditional_branch, "conditional branch cb0");
 
-	struct Ast_node* cond0 = ast_node_get(cb0, 0);
+	Ast_node* cond0 = Ast_node_get(cb0, 0);
 	assert_ptr(cond0, "ptr cond0");
 	expect_int_equal(cond0->type, ast_type_boolean, "boolean cond0");
 	expect_str(&cond0->value, "false", "false cond0");
 
-	struct Ast_node* stmts0 = ast_node_get(cb0, 1);
+	Ast_node* stmts0 = Ast_node_get(cb0, 1);
 	assert_ptr(stmts0, "ptr parse_stmts 0");
 	expect_int_equal(stmts0->type, ast_type_stmts, "parse_stmts stmts0");
 
-	struct Ast_node* num0 = ast_node_get(stmts0, 0);
+	Ast_node* num0 = Ast_node_get(stmts0, 0);
 	assert_ptr(num0, "ptr num0");
 	expect_int_equal(num0->type, ast_type_number, "number num0");
 	expect_str(&num0->value, "10", "10 num0");
 
 	/* elseif */
-	struct Ast_node* cb1 = ast_node_get(if_stmt, 1);
+	Ast_node* cb1 = Ast_node_get(if_stmt, 1);
 	assert_ptr(cb1, "ptr cb1");
 	expect_int_equal(cb1->type, ast_type_conditional_branch, "conditional branch cb1");
 
-	struct Ast_node* cond1 = ast_node_get(cb1, 0);
+	Ast_node* cond1 = Ast_node_get(cb1, 0);
 	assert_ptr(cond1, "ptr cond");
 	expect_int_equal(cond1->type, ast_type_boolean, "boolean cond1");
 	expect_str(&cond1->value, "false", "false cond1");
 
-	struct Ast_node* stmts1 = ast_node_get(cb1, 1);
+	Ast_node* stmts1 = Ast_node_get(cb1, 1);
 	assert_ptr(stmts1, "ptr stmts1");
 	expect_int_equal(stmts1->type, ast_type_stmts, "parse_stmts stmts1");
 
-	struct Ast_node* num1 = ast_node_get(stmts1, 0);
+	Ast_node* num1 = Ast_node_get(stmts1, 0);
 	expect_int_equal(num1->type, ast_type_number, "number num1");
 	expect_str(&num1->value, "20", "20 num1");
 
 	/* else */
-	struct Ast_node* db = ast_node_get(if_stmt, 2);
+	Ast_node* db = Ast_node_get(if_stmt, 2);
 	assert_ptr(db, "ptr db");
 	expect_int_equal(db->type, ast_type_default_branch, "default branch db");
 
-	struct Ast_node* stmts2 = ast_node_get(db, 0);
+	Ast_node* stmts2 = Ast_node_get(db, 0);
 	assert_ptr(stmts2, "ptr stmts2");
 	expect_int_equal(stmts2->type, ast_type_stmts, "parse_stmts stmts2");
 
-	struct Ast_node* x = ast_node_get(stmts2, 0);
+	Ast_node* x = Ast_node_get(stmts2, 0);
 	assert_ptr(x, "ptr x");
 	expect_int_equal(x->type, ast_type_id, "id x");
 	expect_str(&x->value, "x", "x");
 
-	struct Ast_node* y = ast_node_get(stmts2, 1);
+	Ast_node* y = Ast_node_get(stmts2, 1);
 	assert_ptr(y, "ptr y");
 	expect_int_equal(y->type, ast_type_id, "id y");
 	expect_str(&y->value, "y", "y");
@@ -822,21 +822,21 @@ void test_parse_while()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* node = ast_node_get(cu.root, 0);
+	Ast_node* node = Ast_node_get(cu.root, 0);
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_while, "while node");
 	expect_null(node->tu, "null node->tu");
 
-	struct Ast_node* cond = ast_node_get(node, 0);
+	Ast_node* cond = Ast_node_get(node, 0);
 	assert_ptr(cond, "ptr cond");
 	expect_int_equal(cond->type, ast_type_boolean, "boolean cond");
 	expect_str(&cond->value, "true", "true cond");
 
-	struct Ast_node* stmts = ast_node_get(node, 1);
+	Ast_node* stmts = Ast_node_get(node, 1);
 	assert_ptr(stmts, "ptr parse_stmts");
 	expect_int_equal(stmts->type, ast_type_stmts, "parse_stmts stmts");
 
-	struct Ast_node* num = ast_node_get(stmts, 0);
+	Ast_node* num = Ast_node_get(stmts, 0);
 	assert_ptr(num, "ptr num");
 	expect_int_equal(num->type, ast_type_number, "number num");
 	expect_str(&num->value, "1", "1 num");
@@ -887,38 +887,38 @@ void test_parse_for_range()
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
 	/* for */
-	struct Ast_node* node = ast_node_get(cu.root, 0);
+	Ast_node* node = Ast_node_get(cu.root, 0);
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_for_range, "for-range node");
 
 	/* i */
-	struct Ast_node* dec = ast_node_get(node, 0);
+	Ast_node* dec = Ast_node_get(node, 0);
 	assert_ptr(dec, "ptr dec");
 	expect_int_equal(dec->type, ast_type_declaration, "declaration dec");
 
-	struct Ast_node* id = ast_node_get(dec, 0);
+	Ast_node* id = Ast_node_get(dec, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "i", "i id");
 
 	/* start */
-	struct Ast_node* start = ast_node_get(node, 1);
+	Ast_node* start = Ast_node_get(node, 1);
 	assert_ptr(start, "ptr start");
 	expect_int_equal(start->type, ast_type_number, "number start");
 	expect_str(&start->value, "0", "0 start");
 
 	/* end */
-	struct Ast_node* end = ast_node_get(node, 2);
+	Ast_node* end = Ast_node_get(node, 2);
 	assert_ptr(end, "ptr end");
 	expect_int_equal(end->type, ast_type_number, "number end");
 	expect_str(&end->value, "10", "10 end");
 
 	/* stmts */
-	struct Ast_node* stmts = ast_node_get(node, 3);
+	Ast_node* stmts = Ast_node_get(node, 3);
 	assert_ptr(stmts, "ptr parse_stmts");
 	expect_int_equal(stmts->type, ast_type_stmts, "parse_stmts stmts");
 
-	struct Ast_node* stmt0 = ast_node_get(stmts, 0);
+	Ast_node* stmt0 = Ast_node_get(stmts, 0);
 	assert_ptr(stmt0, "ptr stmt0");
 	expect_int_equal(stmt0->type, ast_type_number, "number stmt0");
 	expect_str(&stmt0->value, "1", "1 stmt0");
@@ -955,22 +955,22 @@ void test_parse_for_iteration()
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
 	/* for */
-	struct Ast_node* node = ast_node_get(cu.root, 1);
+	Ast_node* node = Ast_node_get(cu.root, 1);
 	assert_ptr(node, "ptr node");
 	expect_int_equal(node->type, ast_type_for_iteration, "for-iteration node");
 
 	/* declaration */
-	struct Ast_node* dec = ast_node_get(node, 0);
+	Ast_node* dec = Ast_node_get(node, 0);
 	assert_ptr(dec, "ptr dec");
 	expect_int_equal(dec->type, ast_type_declaration, "declaration dec");
 
 	/* id */
-	struct Ast_node* id = ast_node_get(dec, 0);
+	Ast_node* id = Ast_node_get(dec, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "i", "i id");
 
-	struct Ast_node* i_tu = ast_node_get(dec, 1);
+	Ast_node* i_tu = Ast_node_get(dec, 1);
 	assert_ptr(i_tu, "ptr i_tu");
 
 	struct type_def* i_td = i_tu->td;
@@ -979,18 +979,18 @@ void test_parse_for_iteration()
 	expect_str(&i_td->name, "Int64", "Int64 i_td");
 
 	/* expr */
-	struct Ast_node* expr = ast_node_get(node, 1);
+	Ast_node* expr = Ast_node_get(node, 1);
 	assert_ptr(expr, "ptr expr");
 	expect_int_equal(expr->type, ast_type_id, "id expr");
 	expect_str(&expr->value, "list", "id list");
 
 	/* stmts */
-	struct Ast_node* stmts0 = ast_node_get(node, 2);
+	Ast_node* stmts0 = Ast_node_get(node, 2);
 	assert_ptr(stmts0, "ptr stmts0");
 	expect_int_equal(stmts0->type, ast_type_stmts, "parse_stmts stmts0");
 
 	/* i */
-	struct Ast_node* id2 = ast_node_get(stmts0, 0);
+	Ast_node* id2 = Ast_node_get(stmts0, 0);
 	assert_ptr(id2, "ptr id2");
 	expect_int_equal(id2->type, ast_type_id, "id id2");
 	expect_str(&id2->value, "i", "i id2");
@@ -1207,24 +1207,24 @@ void test_parse_module()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* module = ast_node_get(cu.root, 0);
+	Ast_node* module = Ast_node_get(cu.root, 0);
 	assert_ptr(module, "ptr module");
 	expect_int_equal(module->type, ast_type_module, "module module");
 
-	struct Ast_node* id = ast_node_get(module, 0);
+	Ast_node* id = Ast_node_get(module, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "math", "math id");
 
-	struct Ast_node* module_stmts = ast_node_get(module, 1);
+	Ast_node* module_stmts = Ast_node_get(module, 1);
 	assert_ptr(module_stmts, "ptr module_stmts");
 	expect_int_equal(module_stmts->type, ast_type_stmts, "parse_stmts module_stmts");
 
-	struct Ast_node* dot = ast_node_get(cu.root, 1);
+	Ast_node* dot = Ast_node_get(cu.root, 1);
 	assert_ptr(dot, "ptr dot");
 	expect_int_equal(dot->type, ast_type_dot, "dot dot");
 
-	struct Ast_node* tu = dot->tu;
+	Ast_node* tu = dot->tu;
 	assert_ptr(tu, "ptr tu");
 	expect_int_equal(tu->type, ast_type_type, "type tu");
 
@@ -1233,12 +1233,12 @@ void test_parse_module()
 	expect_int_equal(td->type, type_float, "float td");
 	expect_str(&td->name, "Float64", "Float64 td");
 
-	struct Ast_node* dot_id_0 = ast_node_get(dot, 0);
+	Ast_node* dot_id_0 = Ast_node_get(dot, 0);
 	assert_ptr(dot_id_0, "ptr dot_id_0");
 	expect_int_equal(dot_id_0->type, ast_type_id, "id dot_id_0");
 	expect_str(&dot_id_0->value, "math", "math dot_id_0");
 
-	struct Ast_node* dot_id_1 = ast_node_get(dot, 1);
+	Ast_node* dot_id_1 = Ast_node_get(dot, 1);
 	assert_ptr(dot_id_1, "ptr dot_id_1");
 	expect_int_equal(dot_id_1->type, ast_type_id, "id dot_id_1");
 	expect_str(&dot_id_1->value, "pi", "pi dot_id_1");
@@ -1260,38 +1260,38 @@ void test_parse_module_nested()
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
 	/* base */
-	struct Ast_node* base_module = ast_node_get(cu.root, 0);
+	Ast_node* base_module = Ast_node_get(cu.root, 0);
 	assert_ptr(base_module, "ptr base_module");
 	expect_int_equal(base_module->type, ast_type_module, "module base_module");
 
-	struct Ast_node* base_id = ast_node_get(base_module, 0);
+	Ast_node* base_id = Ast_node_get(base_module, 0);
 	assert_ptr(base_id, "ptr base_id");
 	expect_int_equal(base_id->type, ast_type_id, "id base_id");
 	expect_str(&base_id->value, "base", "base id");
 
-	struct Ast_node* base_module_stmts = ast_node_get(base_module, 1);
+	Ast_node* base_module_stmts = Ast_node_get(base_module, 1);
 	assert_ptr(base_module_stmts, "ptr base_module_stmts");
 	expect_int_equal(base_module_stmts->type, ast_type_stmts, "parse_stmts base_module_stmts");
 
 	/* math */
-	struct Ast_node* math_module = ast_node_get(base_module_stmts, 0);
+	Ast_node* math_module = Ast_node_get(base_module_stmts, 0);
 	assert_ptr(math_module, "ptr math_module");
 	expect_int_equal(math_module->type, ast_type_module, "module math_module");
 
-	struct Ast_node* math_id = ast_node_get(math_module, 0);
+	Ast_node* math_id = Ast_node_get(math_module, 0);
 	assert_ptr(math_id, "ptr math_id");
 	expect_int_equal(math_id->type, ast_type_id, "id math_id");
 	expect_str(&math_id->value, "math", "math id");
 
-	struct Ast_node* math_module_stmts = ast_node_get(math_module, 1);
+	Ast_node* math_module_stmts = Ast_node_get(math_module, 1);
 	assert_ptr(math_module_stmts, "ptr math_module_stmts");
 	expect_int_equal(math_module_stmts->type, ast_type_stmts, "parse_stmts math_module_stmts");
 
-	struct Ast_node* dot0 = ast_node_get(cu.root, 1);
+	Ast_node* dot0 = Ast_node_get(cu.root, 1);
 	assert_ptr(dot0, "ptr dot0");
 	expect_int_equal(dot0->type, ast_type_dot, "dot dot0");
 
-	struct Ast_node* tu = dot0->tu;
+	Ast_node* tu = dot0->tu;
 	assert_ptr(tu, "ptr tu");
 	expect_int_equal(tu->type, ast_type_type, "type tu");
 
@@ -1300,21 +1300,21 @@ void test_parse_module_nested()
 	expect_int_equal(td->type, type_float, "float td");
 	expect_str(&td->name, "Float64", "Float64 td");
 
-	struct Ast_node* dot1 = ast_node_get(dot0, 0);
+	Ast_node* dot1 = Ast_node_get(dot0, 0);
 	assert_ptr(dot1, "ptr dot1");
 	expect_int_equal(dot1->type, ast_type_dot, "id dot1");
 
-	struct Ast_node* base_id_1 = ast_node_get(dot1, 0);
+	Ast_node* base_id_1 = Ast_node_get(dot1, 0);
 	assert_ptr(base_id_1, "ptr base_id_1");
 	expect_int_equal(base_id_1->type, ast_type_id, "id base_id_1");
 	expect_str(&base_id_1->value, "base", "base base_id_1");
 
-	struct Ast_node* math_id_1 = ast_node_get(dot1, 1);
+	Ast_node* math_id_1 = Ast_node_get(dot1, 1);
 	assert_ptr(math_id_1, "ptr math_id_1");
 	expect_int_equal(math_id_1->type, ast_type_id, "id math_id_1");
 	expect_str(&math_id_1->value, "math", "math math_id_1");
 
-	struct Ast_node* pi_id = ast_node_get(dot0, 1);
+	Ast_node* pi_id = Ast_node_get(dot0, 1);
 	assert_ptr(pi_id, "ptr pi_id");
 	expect_int_equal(pi_id->type, ast_type_id, "id pi_id");
 	expect_str(&pi_id->value, "pi", "pi pi_id");
@@ -1426,21 +1426,21 @@ void test_parse_struct()
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
 	/* struct */
-	struct Ast_node* st = ast_node_get(cu.root, 0);
+	Ast_node* st = Ast_node_get(cu.root, 0);
 	assert_ptr(st, "ptr st");
 	expect_int_equal(st->type, ast_type_struct, "struct st");
 
 	/* firstName */
-	struct Ast_node* d0 = ast_node_get(st, 0);
+	Ast_node* d0 = Ast_node_get(st, 0);
 	assert_ptr(d0, "ptr d0");
 	expect_int_equal(d0->type, ast_type_declaration, "declaration d0");
 
-	struct Ast_node* id0 = ast_node_get(d0, 0);
+	Ast_node* id0 = Ast_node_get(d0, 0);
 	assert_ptr(id0, "ptr id0");
 	expect_int_equal(id0->type, ast_type_id, "id id0");
 	expect_str(&id0->value, "firstName", "firstName id0");
 
-	struct Ast_node* t0 = ast_node_get(d0, 1);
+	Ast_node* t0 = Ast_node_get(d0, 1);
 	assert_ptr(t0, "ptr t0");
 	expect_int_equal(t0->type, ast_type_type, "type t0");
 
@@ -1450,16 +1450,16 @@ void test_parse_struct()
 	expect_str(&td0->name, "UInt8", "name td0");
 
 	/* lastName */
-	struct Ast_node* d1 = ast_node_get(st, 1);
+	Ast_node* d1 = Ast_node_get(st, 1);
 	assert_ptr(d1, "ptr d1");
 	expect_int_equal(d1->type, ast_type_declaration, "declaration d1");
 
-	struct Ast_node* id1 = ast_node_get(d1, 0);
+	Ast_node* id1 = Ast_node_get(d1, 0);
 	assert_ptr(id1, "ptr id1");
 	expect_int_equal(id1->type, ast_type_id, "id id1");
 	expect_str(&id1->value, "lastName", "lastName id1");
 
-	struct Ast_node* t1 = ast_node_get(d1, 1);
+	Ast_node* t1 = Ast_node_get(d1, 1);
 	assert_ptr(t1, "ptr t0");
 	expect_int_equal(t1->type, ast_type_type, "type t1");
 
@@ -1469,16 +1469,16 @@ void test_parse_struct()
 	expect_str(&td1->name, "UInt8", "name td1");
 
 	/* age */
-	struct Ast_node* d2 = ast_node_get(st, 2);
+	Ast_node* d2 = Ast_node_get(st, 2);
 	assert_ptr(d2, "ptr d2");
 	expect_int_equal(d2->type, ast_type_declaration, "declaration d2");
 
-	struct Ast_node* id2 = ast_node_get(d2, 0);
+	Ast_node* id2 = Ast_node_get(d2, 0);
 	assert_ptr(id2, "ptr id2");
 	expect_int_equal(id2->type, ast_type_id, "id id2");
 	expect_str(&id2->value, "age", "age id2");
 
-	struct Ast_node* t2 = ast_node_get(d2, 1);
+	Ast_node* t2 = Ast_node_get(d2, 1);
 	assert_ptr(t2, "ptr t2");
 	expect_int_equal(t2->type, ast_type_type, "type t2");
 
@@ -1488,15 +1488,15 @@ void test_parse_struct()
 	expect_str(&td2->name, "Int64", "Int64 td2");
 
     /* let */
-	struct Ast_node* let = ast_node_get(cu.root, 1);
+	Ast_node* let = Ast_node_get(cu.root, 1);
 	assert_ptr(let, "ptr let");
 	expect_int_equal(let->type, ast_type_let, "type let");
 
-	struct Ast_node* let_lseq = ast_node_get(let, 0);
+	Ast_node* let_lseq = Ast_node_get(let, 0);
 	assert_ptr(let_lseq, "ptr let_lseq");
 	expect_int_equal(let_lseq->type, ast_type_let_lseq, "let_lseq let_lseq");
 
-	struct Ast_node* let_type = ast_node_get(let, 1);
+	Ast_node* let_type = Ast_node_get(let, 1);
 	assert_ptr(let_type, "ptr let_type");
 	expect_int_equal(let_type->type, ast_type_type, "type let_type");
 
@@ -1505,40 +1505,40 @@ void test_parse_struct()
     expect_int_equal(td->type, type_struct, "struct td");
     expect_str(&td->name, "Person", "Person td");
 
-    struct Ast_node* let_rseq = ast_node_get(let, 2);
+    Ast_node* let_rseq = Ast_node_get(let, 2);
     assert_ptr(let_rseq, "ptr let_rseq");
     expect_int_equal(let_rseq->type, ast_type_let_rseq, "let_rseq let_rseq");
 
-	struct Ast_node* p = ast_node_get(let_lseq, 0);
+	Ast_node* p = Ast_node_get(let_lseq, 0);
 	assert_ptr(p, "ptr p");
 	expect_int_equal(p->type, ast_type_id, "id p");
 	expect_str(&p->value, "p", "p p");
 
 	/* constructor call */
-	struct Ast_node* call = ast_node_get(let_rseq, 0);
+	Ast_node* call = Ast_node_get(let_rseq, 0);
 	assert_ptr(call, "ptr call");
 	expect_int_equal(call->type, ast_type_call, "call call");
 
-	struct Ast_node* call_id = ast_node_get(call, 0);
+	Ast_node* call_id = Ast_node_get(call, 0);
 	assert_ptr(call_id, "ptr call_id");
 	expect_int_equal(call_id->type, ast_type_id, "id call_id");
 	expect_str(&call_id->value, "Person", "Person call_id");
 
-	struct Ast_node* cseq = ast_node_get(call, 1);
+	Ast_node* cseq = Ast_node_get(call, 1);
 	assert_ptr(cseq, "ptr cseq");
 	expect_int_equal(cseq->type, ast_type_cseq, "cseq cseq");
 
-	struct Ast_node* a0 = ast_node_get(cseq, 0);
+	Ast_node* a0 = Ast_node_get(cseq, 0);
 	assert_ptr(a0, "ptr a0");
 	expect_int_equal(a0->type, ast_type_string, "string a0");
 	expect_str(&a0->value, "John", "John a0");
 
-	struct Ast_node* a1 = ast_node_get(cseq, 1);
+	Ast_node* a1 = Ast_node_get(cseq, 1);
 	assert_ptr(a1, "ptr a1");
 	expect_int_equal(a1->type, ast_type_string, "string a1");
 	expect_str(&a1->value, "Smith", "Smith a1");
 
-	struct Ast_node* a2 = ast_node_get(cseq, 2);
+	Ast_node* a2 = Ast_node_get(cseq, 2);
 	assert_ptr(a2, "ptr a2");
 	expect_int_equal(a2->type, ast_type_number, "string a2");
 	expect_str(&a2->value, "45", "45 a2");
@@ -1664,20 +1664,20 @@ void test_parse_let()
     assert_ptr(cu.root, "ptr cu.root");
     assert_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-    struct Ast_node* let = ast_node_get(cu.root, 0);
+    Ast_node* let = Ast_node_get(cu.root, 0);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, ast_type_let, "type let");
 
-    struct Ast_node* let_lseq = ast_node_get(let, 0);
+    Ast_node* let_lseq = Ast_node_get(let, 0);
     assert_ptr(let_lseq, "ptr let_lseq");
     expect_int_equal(let_lseq->type, ast_type_let_lseq, "type let_lseq");
 
-    struct Ast_node* id = ast_node_get(let_lseq, 0);
+    Ast_node* id = Ast_node_get(let_lseq, 0);
     assert_ptr(id, "ptr id");
     expect_int_equal(id->type, ast_type_id, "id id");
     expect_str(&id->value, "a", "a");
 
-    struct Ast_node* tu = ast_node_get(let, 1);
+    Ast_node* tu = Ast_node_get(let, 1);
     assert_ptr(tu, "ptr tu");
 
     struct type_def* td = tu->td;
@@ -1702,31 +1702,31 @@ void test_parse_let2()
     assert_ptr(cu.root, "ptr cu.root");
     expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-    struct Ast_node* let = ast_node_get(cu.root, 0);
+    Ast_node* let = Ast_node_get(cu.root, 0);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, ast_type_let, "type let");
 
-    struct Ast_node* let_lseq = ast_node_get(let, 0);
+    Ast_node* let_lseq = Ast_node_get(let, 0);
     assert_ptr(let_lseq, "ptr let_lseq");
     expect_int_equal(let_lseq->type, ast_type_let_lseq, "type let_lseq");
 
-    struct Ast_node* id = ast_node_get(let_lseq, 0);
+    Ast_node* id = Ast_node_get(let_lseq, 0);
     assert_ptr(id, "ptr id");
     expect_int_equal(id->type, ast_type_id, "id");
     expect_str(&id->value, "a", "a");
 
-    struct Ast_node* tu = ast_node_get(let, 1);
+    Ast_node* tu = Ast_node_get(let, 1);
     assert_ptr(tu, "ptr tu");
 
     struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_str(&td->name, "Int32", "Int32 td");
 
-    struct Ast_node* let_rseq = ast_node_get(let, 2);
+    Ast_node* let_rseq = Ast_node_get(let, 2);
     assert_ptr(let_rseq, "ptr let_rseq");
     expect_int_equal(let_rseq->type, ast_type_let_rseq, "type let_rseq");
 
-    struct Ast_node* value = ast_node_get(let_rseq, 0);
+    Ast_node* value = Ast_node_get(let_rseq, 0);
     assert_ptr(value, "ptr value");
     expect_int_equal(value->type, ast_type_number, "number");
     expect_str(&value->value, "1", "1");
@@ -1749,41 +1749,41 @@ void test_parse_let3()
     assert_ptr(cu.root, "ptr cu.root");
     expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-    struct Ast_node* let = ast_node_get(cu.root, 0);
+    Ast_node* let = Ast_node_get(cu.root, 0);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, ast_type_let, "type let");
 
-    struct Ast_node* let_lseq = ast_node_get(let, 0);
+    Ast_node* let_lseq = Ast_node_get(let, 0);
     assert_ptr(let_lseq, "ptr let_lseq");
     expect_int_equal(let_lseq->type, ast_type_let_lseq, "type let_lseq");
 
-    struct Ast_node* id0 = ast_node_get(let_lseq, 0);
+    Ast_node* id0 = Ast_node_get(let_lseq, 0);
     assert_ptr(id0, "ptr id0");
     expect_int_equal(id0->type, ast_type_id, "id id0");
     expect_str(&id0->value, "a", "value id0");
 
-    struct Ast_node* tu = ast_node_get(let, 1);
+    Ast_node* tu = Ast_node_get(let, 1);
     assert_ptr(tu, "ptr tu");
 
     struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_str(&td->name, "Int32", "Int32 td");
 
-    struct Ast_node* id2 = ast_node_get(let_lseq, 1);
+    Ast_node* id2 = Ast_node_get(let_lseq, 1);
     assert_ptr(id2, "ptr id2");
     expect_int_equal(id2->type, ast_type_id, "type id2");
     expect_str(&id2->value, "b", "value id2");
 
-    struct Ast_node* let_rseq = ast_node_get(let, 2);
+    Ast_node* let_rseq = Ast_node_get(let, 2);
     assert_ptr(let_rseq, "ptr let_rseq");
     expect_int_equal(let_rseq->type, ast_type_let_rseq, "type let_rseq");
 
-    struct Ast_node* value0 = ast_node_get(let_rseq, 0);
+    Ast_node* value0 = Ast_node_get(let_rseq, 0);
     assert_ptr(value0, "ptr value0");
     expect_int_equal(value0->type, ast_type_number, "type value0");
     expect_str(&value0->value, "1", "value value0");
 
-    struct Ast_node* value1 = ast_node_get(let_rseq, 1);
+    Ast_node* value1 = Ast_node_get(let_rseq, 1);
     assert_ptr(value1, "ptr value1");
     expect_int_equal(value1->type, ast_type_number, "type value1");
     expect_str(&value1->value, "2", "value value1");
@@ -1823,11 +1823,11 @@ void test_parse_extern()
     assert_ptr(cu.root, "ptr cu.root");
     expect_int_equal(cu.root->type, ast_type_stmts, "type cu.root");
 
-    struct Ast_node* f = ast_node_get(cu.root, 0);
+    Ast_node* f = Ast_node_get(cu.root, 0);
     assert_ptr(f, "ptr f");
     expect_int_equal(f->type, ast_type_extern, "type f");
 
-    struct Ast_node* tu = f->tu;
+    Ast_node* tu = f->tu;
     assert_ptr(tu, "ptr tu");
 
     struct type_def* td = tu->td;
@@ -1835,23 +1835,23 @@ void test_parse_extern()
     expect_int_equal(td->type, type_function, "type td");
     expect_str(&td->name, "Function", "name td");
 
-    struct Ast_node* proto = ast_node_get(f, 0);
+    Ast_node* proto = Ast_node_get(f, 0);
     assert_ptr(proto, "ptr proto");
     expect_int_equal(proto->type, ast_type_prototype, "type proto");
 
-    struct Ast_node* fid = ast_node_get(proto, 0);
+    Ast_node* fid = Ast_node_get(proto, 0);
     assert_ptr(fid, "ptr fid");
     expect_int_equal(fid->type, ast_type_id, "id");
 
-    struct Ast_node* dseq = ast_node_get(proto, 1);
+    Ast_node* dseq = Ast_node_get(proto, 1);
     assert_ptr(dseq, "ptr dseq");
     expect_int_equal(dseq->type, ast_type_dseq, "dseq dseq");
 
-    struct Ast_node* dret = ast_node_get(proto, 2);
+    Ast_node* dret = Ast_node_get(proto, 2);
     assert_ptr(dret, "ptr dret");
     expect_int_equal(dret->type, ast_type_dret, "dret dret");
 
-    struct Ast_node* call = ast_node_get(cu.root, 1);
+    Ast_node* call = Ast_node_get(cu.root, 1);
     expect_ptr(call, "ptr call");
     expect_int_equal(call->type, ast_type_call, "type call");
 
@@ -1871,27 +1871,27 @@ void test_parse_stmts_mut() {
 
     expect_int_equal(cu.root->type, ast_type_stmts, "type cu.root");
 
-    struct Ast_node *let = ast_node_get(cu.root, 0);
+    Ast_node *let = Ast_node_get(cu.root, 0);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, ast_type_let, "type let");
 
-    struct Ast_node *let_lseq = ast_node_get(let, 0);
+    Ast_node *let_lseq = Ast_node_get(let, 0);
     assert_ptr(let_lseq, "ptr let_lseq");
     expect_int_equal(let_lseq->type, ast_type_let_lseq, "type let_lseq");
 
-    struct Ast_node *let_lhs = ast_node_get(let_lseq, 0);
+    Ast_node *let_lhs = Ast_node_get(let_lseq, 0);
     assert_ptr(let_lhs, "ptr lhs");
     expect_int_equal(let_lhs->type, ast_type_id, "type lhs");
     expect_true(let_lhs->to.is_mut, "is_mut lhs");
 
-    struct Ast_node *assign = ast_node_get(cu.root, 1);
+    Ast_node *assign = Ast_node_get(cu.root, 1);
     assert_ptr(assign, "ptr assign");
     expect_int_equal(assign->type, ast_type_assign, "type assign");
 
     assert_ptr(assign->tu, "ptr assign->tu");
     expect_true(assign->tu->to.is_mut, "is_mut assign");
 
-    struct Ast_node *x = ast_node_get(assign, 0);
+    Ast_node *x = Ast_node_get(assign, 0);
     assert_ptr(x, "ptr x");
     expect_int_equal(x->type, ast_type_id, "type id");
 

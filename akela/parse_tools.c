@@ -91,7 +91,7 @@ bool get_location(struct parse_state* ps, struct location* loc)
     return valid;
 }
 
-bool is_identity_comparison(enum ast_type type)
+bool is_identity_comparison(enum Ast_type type)
 {
 	return type == ast_type_equality || type == ast_type_not_equal;
 }
@@ -112,7 +112,7 @@ bool check_assignment_value_count(Ast_node* a, Ast_node* b)
             } else if (a->type != ast_type_eseq && b->type == ast_type_eseq) {
                 return false;
             } else if (a->type == ast_type_eseq || b->type == ast_type_eseq) {
-                if (ast_node_count_children(a) != ast_node_count_children(b)) {
+                if (Ast_node_count_children(a) != Ast_node_count_children(b)) {
                     return false;
                 }
             }

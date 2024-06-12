@@ -9,7 +9,7 @@
 	#include <DbgHelp.h>
 #endif
 
-enum result ast_set_names(char** names)
+enum result Ast_set_names(char** names)
 {
 	for (int i = 0; i < ast_type_count; i++) {
 		names[i] = NULL;
@@ -75,10 +75,10 @@ enum result ast_set_names(char** names)
 	return result_ok;
 }
 
-void ast_node_create(Ast_node** n)
+void Ast_node_create(Ast_node** n)
 {
 	malloc_safe((void**)n, sizeof(Ast_node));
-	ast_node_init(*n);
+	Ast_node_init(*n);
 }
 
 void Type_options_init(Type_options* to)
@@ -91,7 +91,7 @@ void Type_options_init(Type_options* to)
     VectorInit(&to->dim, sizeof(Type_dimension));
 }
 
-void ast_node_init(Ast_node* n)
+void Ast_node_init(Ast_node* n)
 {
 	n->type = ast_type_none;
 	buffer_init(&n->value);
@@ -105,18 +105,18 @@ void ast_node_init(Ast_node* n)
 	n->tail = NULL;
 }
 
-void ast_node_destroy(Ast_node* n)
+void Ast_node_destroy(Ast_node* n)
 {
     if (n) {
         Ast_node* p = n->head;
         while (p) {
             Ast_node* temp = p;
             p = p->next;
-            ast_node_destroy(temp);
+            Ast_node_destroy(temp);
         }
 
         buffer_destroy(&n->value);
-        ast_node_destroy(n->tu);
+        Ast_node_destroy(n->tu);
         Type_options_destroy(&n->to);
         free(n);
     }
@@ -127,7 +127,7 @@ void Type_options_destroy(Type_options* to)
     VectorDestroy(&to->dim);
 }
 
-void ast_node_add(Ast_node* p, Ast_node* c)
+void Ast_node_add(Ast_node* p, Ast_node* c)
 {
 	// set sibling to left
 	Ast_node* prev = p->tail;
@@ -148,7 +148,7 @@ void ast_node_add(Ast_node* p, Ast_node* c)
 
 /* assume parent and child are not NULL */
 /* dynamic-output-none */
-void ast_node_push(Ast_node* parent, Ast_node* child)
+void Ast_node_push(Ast_node* parent, Ast_node* child)
 {
 	Ast_node* old_head = parent->head;
 	if (old_head) {
@@ -159,7 +159,7 @@ void ast_node_push(Ast_node* parent, Ast_node* child)
 }
 
 /* dynamic-output-none */
-Ast_node* ast_node_get(Ast_node* p, size_t pos)
+Ast_node* Ast_node_get(Ast_node* p, size_t pos)
 {
 	int i = 0;
 	for (Ast_node* n = p->head; n; n = n->next) {
@@ -171,10 +171,10 @@ Ast_node* ast_node_get(Ast_node* p, size_t pos)
 	return NULL;
 }
 
-void ast_node_print(Ast_node* root, bool debug)
+void Ast_node_print(Ast_node* root, bool debug)
 {
     char* names[ast_type_count];
-    ast_set_names(names);
+    Ast_set_names(names);
 
     if (root == NULL) return;
 	if (!debug && !root->head) return;
@@ -212,11 +212,11 @@ void ast_node_print(Ast_node* root, bool debug)
 	printf("\n");
 
 	if (debug) {
-		ast_node_print(root->tu, debug);
+        Ast_node_print(root->tu, debug);
 	}
 
 	for (Ast_node* p = root->head; p; p = p->next) {
-		ast_node_print(p, debug);
+        Ast_node_print(p, debug);
 	}
 }
 
@@ -259,12 +259,12 @@ void Type_options_reduce_dimension(Type_options* to)
 }
 
 /* copy dag excluding tu */
-Ast_node* ast_node_copy(Ast_node* n)
+Ast_node* Ast_node_copy(Ast_node* n)
 {
 	Ast_node* copy = NULL;
 
 	if (n) {
-		ast_node_create(&copy);
+        Ast_node_create(&copy);
 		copy->type = n->type;
 		copy->td = n->td;
         Type_options_copy(&n->to, &copy->to);
@@ -274,8 +274,8 @@ Ast_node* ast_node_copy(Ast_node* n)
 		Ast_node* p = n->head;
 		while (p) {
 			Ast_node* p_copy = NULL;
-			p_copy = ast_node_copy(p);
-			ast_node_add(copy, p_copy);
+			p_copy = Ast_node_copy(p);
+            Ast_node_add(copy, p_copy);
 			p = p->next;
 		}
 	}
@@ -283,7 +283,7 @@ Ast_node* ast_node_copy(Ast_node* n)
 	return copy;
 }
 
-bool ast_node_match(Ast_node* a, Ast_node* b)
+bool Ast_node_match(Ast_node* a, Ast_node* b)
 {
 	Ast_node* copy = NULL;
 
@@ -303,7 +303,7 @@ bool ast_node_match(Ast_node* a, Ast_node* b)
 		Ast_node* c = a->head;
 		Ast_node* d = b->head;
 		do {
-			if (!ast_node_match(c, d)) {
+			if (!Ast_node_match(c, d)) {
 				return false;
 			}
 			if (c) c = c->next;
@@ -318,7 +318,7 @@ bool ast_node_match(Ast_node* a, Ast_node* b)
 	return true;
 }
 
-size_t ast_node_count_children(Ast_node* n)
+size_t Ast_node_count_children(Ast_node* n)
 {
     size_t count = 0;
     if (n) {

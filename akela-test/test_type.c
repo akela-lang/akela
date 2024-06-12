@@ -6,31 +6,31 @@ void test_type_use1()
 {
 	test_name(__func__);
 
-	struct Ast_node* n;
-	ast_node_create(&n);
+	Ast_node* n;
+    Ast_node_create(&n);
 	n->type = ast_type_type;
 
-	struct Ast_node* a;
-	ast_node_create(&a);
+	Ast_node* a;
+    Ast_node_create(&a);
 	a->type = ast_type_type;
-	ast_node_add(n, a);
+    Ast_node_add(n, a);
 
-	struct Ast_node* b;
-	ast_node_create(&b);
+	Ast_node* b;
+    Ast_node_create(&b);
 	b->type = ast_type_type;
-	ast_node_add(n, b);
+    Ast_node_add(n, b);
 
 	assert_ptr(n, "ptr n");
 
-	struct Ast_node* n0 = ast_node_get(n, 0);
+	Ast_node* n0 = Ast_node_get(n, 0);
 	assert_ptr(n0, "ptr a");
 	expect_ptr_equal(n0, a, "a");
 
-	struct Ast_node* n1 = ast_node_get(n, 1);
+	Ast_node* n1 = Ast_node_get(n, 1);
 	assert_ptr(n1, "ptr b");
 	expect_ptr_equal(n1, b, "b");
 
-	ast_node_destroy(n);
+    Ast_node_destroy(n);
 }
 
 

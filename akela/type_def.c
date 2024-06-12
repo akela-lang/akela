@@ -31,7 +31,7 @@ void type_def_destroy(struct type_def* n)
 	if (n) {
 		/* destroy n n{} */
 		buffer_destroy(&n->name);
-		ast_node_destroy(n->composite);
+        Ast_node_destroy(n->composite);
 		free(n);
 	}
 }

@@ -3,8 +3,8 @@
 
 #include "akela_llvm_tools.h"
 
-llvm::Value* CodeGenLLVMAdd(JITData* jd, struct Ast_node* n);
-llvm::Value* CodeGenLLVMSub(JITData* jd, struct Ast_node* n);
-llvm::Value* CodeGenLLVMSign(JITData* jd, struct Ast_node* n);
+llvm::Value* CodeGenLLVMAdd(JITData* jd, Ast_node* n);
+llvm::Value* CodeGenLLVMSub(JITData* jd, Ast_node* n);
+llvm::Value* CodeGenLLVMSign(JITData* jd, Ast_node* n);
 
 #endif

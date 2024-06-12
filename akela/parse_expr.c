@@ -83,7 +83,7 @@ Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
         if (t0->type != token_equal) {
             if (n) {
                 /* last assignment */
-                ast_node_add(n, a);
+                Ast_node_add(n, a);
                 if (a->type == ast_type_error) {
                     n->type = ast_type_error;
                 }
@@ -96,12 +96,12 @@ Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
         } else {
             if (!n) {
                 /* start assign tree */
-                ast_node_create(&n);
+                Ast_node_create(&n);
                 n->type = ast_type_assign;
-                n->tu = ast_node_copy(a->tu);
+                n->tu = Ast_node_copy(a->tu);
             }
 
-            ast_node_add(n, a);
+            Ast_node_add(n, a);
 
             struct token *equal = NULL;
             if (!match(ps, token_equal, "expecting assign operator", &equal)) {
@@ -196,9 +196,9 @@ Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct locatio
         }
 
         if (!parent) {
-            ast_node_create(&parent);
+            Ast_node_create(&parent);
             parent->type = ast_type_eseq;
-            ast_node_add(parent, a);
+            Ast_node_add(parent, a);
             if (a->type == ast_type_error) {
                 parent->type = ast_type_error;
             }
@@ -240,7 +240,7 @@ Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct locatio
         }
 
         if (b) {
-            ast_node_add(parent, b);
+            Ast_node_add(parent, b);
             if (b->type == ast_type_error) {
                 parent->type = ast_type_error;
             }
@@ -282,7 +282,7 @@ Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 		struct token* t0 = get_lookahead(ps);
 
 		/* operator */
-		enum ast_type type = ast_type_none;
+		enum Ast_type type = ast_type_none;
 		if (t0 && t0->type == token_and) {
 			type = ast_type_and;
 		} else if (t0 && t0->type == token_or) {
@@ -291,7 +291,7 @@ Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 			break;
 		}
 
-		ast_node_create(&n);
+        Ast_node_create(&n);
 		n->type = type;
 
 		struct token* op = NULL;
@@ -316,13 +316,13 @@ Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 		}
 
         if (left) {
-            ast_node_add(n, left);
+            Ast_node_add(n, left);
             if (left->type == ast_type_error) {
                 n->type = ast_type_error;
             }
         }
         if (b) {
-            ast_node_add(n, b);
+            Ast_node_add(n, b);
             if (b->type == ast_type_error) {
                 n->type = ast_type_error;
             }
@@ -345,7 +345,7 @@ Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 				error_list_set(ps->el, &b_loc, "expression of boolean operator is not boolean");
                 n->type = ast_type_error;
 			} else {
-				n->tu = ast_node_copy(left->tu);
+				n->tu = Ast_node_copy(left->tu);
 			}
 
 			left = n;
@@ -391,7 +391,7 @@ Ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
 
 	while (true) {
 		struct token* t0 = get_lookahead(ps);
-		enum ast_type type = ast_type_none;
+		enum Ast_type type = ast_type_none;
 
 		if (!t0) {
 			break;
@@ -433,18 +433,18 @@ Ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
 		}
 
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = type;
 
         if (left) {
-            ast_node_add(n, left);
+            Ast_node_add(n, left);
             if (left->type == ast_type_error) {
                 n->type = ast_type_error;
             }
         }
 
         if (b) {
-            ast_node_add(n, b);
+            Ast_node_add(n, b);
             if (b->type == ast_type_error) {
                 n->type = ast_type_error;
             }
@@ -472,7 +472,7 @@ Ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
 					/* test case: test_parse_comparison_error_right_not_numeric */
                     n->type = ast_type_error;
 				} else {
-					Ast_node* tu = ast_node_copy(left->tu);
+					Ast_node* tu = Ast_node_copy(left->tu);
 					type_find_whole(ps->st, tu, b->tu);
 					n->tu = tu;
 				}
@@ -519,7 +519,7 @@ Ast_node* parse_add(struct parse_state* ps, struct location* loc)
 		}
 
 		/* operator */
-		enum ast_type type;
+		enum Ast_type type;
 		if (t0->type == token_plus) {
 			type = ast_type_plus;
 			op_name = "addition";
@@ -549,18 +549,18 @@ Ast_node* parse_add(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
 		}
 
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = type;
 
         if (left) {
-            ast_node_add(n, left);
+            Ast_node_add(n, left);
             if (left->type == ast_type_error) {
                 n->type = ast_type_error;
             }
         }
 
         if (b) {
-            ast_node_add(n, b);
+            Ast_node_add(n, b);
             if (b->type == ast_type_error) {
                 n->type = ast_type_error;
             }
@@ -590,7 +590,7 @@ Ast_node* parse_add(struct parse_state* ps, struct location* loc)
 			}
 
 			if (n->type != ast_type_error) {
-				Ast_node* tu = ast_node_copy(tu_a);
+				Ast_node* tu = Ast_node_copy(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
@@ -640,7 +640,7 @@ Ast_node* parse_mult(struct parse_state* ps, struct location* loc)
 		}
 
 		/* operator */
-		enum ast_type type;
+		enum Ast_type type;
 		if (t0->type == token_mult) {
 			type = ast_type_mult;
 			op_name = "multiplication";
@@ -671,18 +671,18 @@ Ast_node* parse_mult(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
 		}
 
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = type;
 
         if (left) {
-            ast_node_add(n, left);
+            Ast_node_add(n, left);
             if (left->type == ast_type_error) {
                 n->type = ast_type_error;
             }
         }
 
         if (b) {
-            ast_node_add(n, b);
+            Ast_node_add(n, b);
             if (b->type == ast_type_error) {
                 n->type = ast_type_error;
             }
@@ -715,7 +715,7 @@ Ast_node* parse_mult(struct parse_state* ps, struct location* loc)
 			}
 
 			if (n->type != ast_type_error) {
-				Ast_node* tu = ast_node_copy(tu_a);
+				Ast_node* tu = Ast_node_copy(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
@@ -779,16 +779,16 @@ Ast_node* parse_power(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = ast_type_power;
         if (left) {
-            ast_node_add(n, left);
+            Ast_node_add(n, left);
             if (left->type == ast_type_error) {
                 n->type = ast_type_error;
             }
         }
         if (b) {
-            ast_node_add(n, b);
+            Ast_node_add(n, b);
             if (b->type == ast_type_error) {
                 n->type = ast_type_error;
             }
@@ -827,7 +827,7 @@ Ast_node* parse_power(struct parse_state* ps, struct location* loc)
 			}
 
 			if (n->type != ast_type_error) {
-				Ast_node* tu = ast_node_copy(tu_left);
+				Ast_node* tu = Ast_node_copy(tu_left);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &b_loc, "invalid power types");
 					/* test case: no test case needed */
@@ -882,12 +882,12 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
             left->type = ast_type_error;
         }
 
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = ast_type_array_subscript;
-        ast_node_add(n, left);
+        Ast_node_add(n, left);
         if (left->type != ast_type_error) {
             if (left->tu->to.is_array || left->tu->to.is_slice) {
-                n->tu = ast_node_copy(left->tu);
+                n->tu = Ast_node_copy(left->tu);
                 Type_options_reduce_dimension(&n->tu->to);
             }
         }
@@ -952,7 +952,7 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 		free(rsb);
 
 		if (b) {
-			ast_node_add(n, b);
+            Ast_node_add(n, b);
 		}
 
         left = n;
@@ -1013,18 +1013,18 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = ast_type_call;
 
         if (left) {
-            ast_node_add(n, left);
+            Ast_node_add(n, left);
             if (left->type == ast_type_error) {
                 n->type = ast_type_error;
             }
         }
 
         if (cseq_node) {
-            ast_node_add(n, cseq_node);
+            Ast_node_add(n, cseq_node);
             if (cseq_node->type == ast_type_error) {
                 n->type = ast_type_error;
             }
@@ -1047,11 +1047,11 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 				/* input */
 				int tcount = 0;
 				if (input) {
-					tcount = ast_node_count_children(input);
+					tcount = Ast_node_count_children(input);
 				}
 				int ccount = 0;
 				if (cseq_node) {
-					ccount = ast_node_count_children(cseq_node);
+					ccount = Ast_node_count_children(cseq_node);
 				}
 
 				if (ccount < tcount) {
@@ -1066,7 +1066,7 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 
 				/* output */
 				if (output) {
-					n->tu = ast_node_copy(ast_node_get(output, 0));
+					n->tu = Ast_node_copy(Ast_node_get(output, 0));
 				}
 			}
 
@@ -1091,7 +1091,7 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 Ast_node* parse_cseq(struct parse_state* ps, Ast_node* tu, struct location* loc)
 {
 	Ast_node* n = NULL;
-    ast_node_create(&n);
+    Ast_node_create(&n);
     n->type = ast_type_cseq;
 
 	if (!get_location(ps, loc)) {
@@ -1121,7 +1121,7 @@ Ast_node* parse_cseq(struct parse_state* ps, Ast_node* tu, struct location* loc)
     }
 	i++;
 
-	ast_node_add(n, a);
+    Ast_node_add(n, a);
 
 	while (true) {
 		struct token* t0 = get_lookahead(ps);
@@ -1154,7 +1154,7 @@ Ast_node* parse_cseq(struct parse_state* ps, Ast_node* tu, struct location* loc)
             n->type = ast_type_error;
 		} else {
 			/* transfer a -> parent */
-			ast_node_add(n, a);
+            Ast_node_add(n, a);
 
 			if (!check_input_type(ps, tu, i, a, &loc_expr)) {
                 n->type = ast_type_error;
@@ -1194,7 +1194,7 @@ Ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 			break;
 		}
 
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = ast_type_dot;
 
         struct token* dot = NULL;
@@ -1233,14 +1233,14 @@ Ast_node* parse_dot(struct parse_state* ps, struct location* loc)
         }
 
         if (left) {
-            ast_node_add(n, left);
+            Ast_node_add(n, left);
             if (left->type == ast_type_error) {
                 n->type = ast_type_error;
             }
         }
 
         if (b) {
-            ast_node_add(n, b);
+            Ast_node_add(n, b);
             if (b->type == ast_type_error) {
                 n->type = ast_type_error;
             }
@@ -1283,7 +1283,7 @@ Ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 			}
 
 			if (n->type != ast_type_error) {
-				n->tu = ast_node_copy(tu_b);
+				n->tu = Ast_node_copy(tu_b);
 			}
 
 			left = n;

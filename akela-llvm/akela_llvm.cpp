@@ -9,7 +9,7 @@ CodeGenVTable CodeGenLLVMVTable = {
         .jit_offset = offsetof(CodeGenLLVM, jit),
 };
 
-bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct Ast_node* n, CodeGenResult* result);
+bool CodeGenLLVMJIT(CodeGenLLVM* cg, Ast_node* n, CodeGenResult* result);
 
 void CodeGenLLVMInit(CodeGenLLVM* cg, struct error_list* el)
 {
@@ -29,7 +29,7 @@ void CodeGenLLVMDestroy(CodeGenLLVM* cg)
     delete cg;
 }
 
-bool CodeGenLLVMJIT(CodeGenLLVM* cg, struct Ast_node* n, CodeGenResult* result)
+bool CodeGenLLVMJIT(CodeGenLLVM* cg, Ast_node* n, CodeGenResult* result)
 {
     bool valid = true;
 

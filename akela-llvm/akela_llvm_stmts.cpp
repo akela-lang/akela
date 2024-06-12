@@ -3,11 +3,11 @@
 using namespace llvm;
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVMStmts(JITData* jd, struct Ast_node* n)
+Value* CodeGenLLVMStmts(JITData* jd, Ast_node* n)
 {
     Value* last_v = nullptr;
-    struct Ast_node* last_n = nullptr;
-    struct Ast_node* stmt = ast_node_get(n, 0);
+    Ast_node* last_n = nullptr;
+    Ast_node* stmt = Ast_node_get(n, 0);
     while (stmt) {
         last_v = CodeGenLLVMDispatch(jd, stmt);
         last_n = stmt;
@@ -17,7 +17,7 @@ Value* CodeGenLLVMStmts(JITData* jd, struct Ast_node* n)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVMIf(JITData* jd, struct Ast_node* n)
+Value* CodeGenLLVMIf(JITData* jd, Ast_node* n)
 {
     bool has_else = false;
 
@@ -38,14 +38,14 @@ Value* CodeGenLLVMIf(JITData* jd, struct Ast_node* n)
     BasicBlock* next_block = nullptr;
     int i = 0;
     while (true) {
-        struct Ast_node* branch = ast_node_get(n, i);
+        Ast_node* branch = Ast_node_get(n, i);
         if (!branch) {
             break;
         }
 
         if (branch->type == ast_type_conditional_branch) {
-            struct Ast_node* cond = ast_node_get(branch, 0);
-            struct Ast_node* body = ast_node_get(branch, 1);
+            Ast_node* cond = Ast_node_get(branch, 0);
+            Ast_node* body = Ast_node_get(branch, 1);
 
             if (next_block) {
                 cond_block = next_block;
@@ -73,7 +73,7 @@ Value* CodeGenLLVMIf(JITData* jd, struct Ast_node* n)
             jd->Builder->SetInsertPoint(next_block);
 
         } else if (branch->type == ast_type_default_branch) {
-            struct Ast_node* body = ast_node_get(branch, 0);
+            Ast_node* body = Ast_node_get(branch, 0);
 
             Value* body_value = CodeGenLLVMStmts(jd, body);
             if (type) {

@@ -61,12 +61,12 @@ typedef struct {
 } JITData;
 
 void JITDataInit(JITData* jd, struct error_list* el);
-llvm::FunctionType* CodeGenLLVMFunctionType(JITData* jd, struct Ast_node* tu);
-llvm::Type* CodeGenLLVMGetTypeScalar(JITData* jd, struct Ast_node* tu);
-llvm::Type* CodeGenLLVMGetType(JITData* jd, struct Ast_node* tu);
-llvm::Type* CodeGenLLVMReturnType(JITData* jd, struct Ast_node* tu);
-void CodeGenLLVMRun(JITData* jd, struct Ast_node* n, struct buffer* bf);
+llvm::FunctionType* CodeGenLLVMFunctionType(JITData* jd, Ast_node* tu);
+llvm::Type* CodeGenLLVMGetTypeScalar(JITData* jd, Ast_node* tu);
+llvm::Type* CodeGenLLVMGetType(JITData* jd, Ast_node* tu);
+llvm::Type* CodeGenLLVMReturnType(JITData* jd, Ast_node* tu);
+void CodeGenLLVMRun(JITData* jd, Ast_node* n, struct buffer* bf);
 llvm::BasicBlock* CodeGenLLVMGetLastBlock(JITData* jd, llvm::Function* f);
-llvm::Value* CodeGenLLVMDispatch(JITData* jd, struct Ast_node* n);
+llvm::Value* CodeGenLLVMDispatch(JITData* jd, Ast_node* n);
 
 #endif

@@ -27,7 +27,7 @@ typedef struct Type_options {
     Vector dim;             /* vector of Type_dimension */
 } Type_options;
 
-enum ast_type {
+typedef enum Ast_type {
 	ast_type_none,
 	ast_type_id,
 	ast_type_sign,
@@ -81,10 +81,10 @@ enum ast_type {
     ast_type_prototype,
     ast_type_extern,
 	ast_type_count		/* keep at end */
-};
+} Ast_type;
 
 typedef struct Ast_node {
-	enum ast_type type;
+	Ast_type type;
 	struct buffer value;
 	struct Ast_node* tu;
 	struct type_def* td;
@@ -101,17 +101,17 @@ typedef struct Ast_node {
 extern "C" {
 #endif
 
-AKELA_API enum result ast_set_names(char** names);
-AKELA_API void ast_node_create(Ast_node** n);
-AKELA_API void ast_node_destroy(Ast_node* n);
-AKELA_API void ast_node_init(Ast_node* n);
-AKELA_API void ast_node_add(Ast_node* p, Ast_node* c);
-AKELA_API void ast_node_push(Ast_node* parent, Ast_node* child);
-AKELA_API Ast_node* ast_node_get(Ast_node* p, size_t pos);
-AKELA_API void ast_node_print(Ast_node* root, bool debug);
-AKELA_API Ast_node* ast_node_copy(Ast_node* n);
-AKELA_API bool ast_node_match(Ast_node* a, Ast_node* b);
-AKELA_API size_t ast_node_count_children(Ast_node* n);
+AKELA_API enum result Ast_set_names(char** names);
+AKELA_API void Ast_node_create(Ast_node** n);
+AKELA_API void Ast_node_destroy(Ast_node* n);
+AKELA_API void Ast_node_init(Ast_node* n);
+AKELA_API void Ast_node_add(Ast_node* p, Ast_node* c);
+AKELA_API void Ast_node_push(Ast_node* parent, Ast_node* child);
+AKELA_API Ast_node* Ast_node_get(Ast_node* p, size_t pos);
+AKELA_API void Ast_node_print(Ast_node* root, bool debug);
+AKELA_API Ast_node* Ast_node_copy(Ast_node* n);
+AKELA_API bool Ast_node_match(Ast_node* a, Ast_node* b);
+AKELA_API size_t Ast_node_count_children(Ast_node* n);
 AKELA_API void ast_node_location_update_token(Ast_node* n, struct token* t);
 AKELA_API void ast_node_location_update(Ast_node* n, Ast_node* n2);
 AKELA_API void Type_options_init(Type_options* to);

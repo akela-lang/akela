@@ -26,7 +26,7 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
 
     get_location(ps, loc);
 
-    ast_node_create(&n);
+    Ast_node_create(&n);
     n->type = ast_type_prototype;
 
     /* index 0: id */
@@ -37,19 +37,19 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
         if (!match(ps, token_id, "expected identifier", &id)) {
             assert(false);
         }
-        ast_node_create(&id_node);
+        Ast_node_create(&id_node);
         id_node->type = ast_type_id;
         buffer_copy(&id->value, &id_node->value);
-        ast_node_add(n, id_node);
+        Ast_node_add(n, id_node);
         token_destroy(id);
         free(id);
         consume_newline(ps);
         *has_id = true;
     } else {
-        ast_node_create(&id_node);
+        Ast_node_create(&id_node);
         id_node->type = ast_type_id;
         buffer_add_format(&id_node->value, "__anonymous_function_%zu", symbol_table_generate_id(ps->st));
-        ast_node_add(n, id_node);
+        Ast_node_add(n, id_node);
         *has_id = false;
     }
 
@@ -72,7 +72,7 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
     }
 
     if (dseq_node) {
-        ast_node_add(n, dseq_node);
+        Ast_node_add(n, dseq_node);
     }
 
     if (!consume_newline(ps)) {
@@ -117,18 +117,18 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
     }
 
     Ast_node* ret = NULL;
-    ast_node_create(&ret);
+    Ast_node_create(&ret);
     ret->type = ast_type_dret;
     ret->loc = ret_loc;
-    ast_node_add(n, ret);
+    Ast_node_add(n, ret);
 
     if (ret_type) {
-        ast_node_add(ret, ret_type);
+        Ast_node_add(ret, ret_type);
     }
 
     /* index 3: type */
     Ast_node* tu = function2type(ps->st, n);
-    ast_node_add(n, tu);
+    Ast_node_add(n, tu);
 
     return n;
 }
@@ -140,11 +140,11 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
  */
 void declare_params(struct parse_state* ps, Ast_node* proto)
 {
-    Ast_node* dseq = ast_node_get(proto, 1);
+    Ast_node* dseq = Ast_node_get(proto, 1);
     Ast_node* dec = dseq->head;
     while (dec) {
-        Ast_node* id_node = ast_node_get(dec, 0);
-        Ast_node* type_node = ast_node_get(dec, 1);
+        Ast_node* id_node = Ast_node_get(dec, 0);
+        Ast_node* type_node = Ast_node_get(dec, 1);
         declare_type(ps, type_node, id_node);
         dec = dec->next;
     }
@@ -163,7 +163,7 @@ Ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
     get_location(ps, loc);
 
 	Ast_node* n = NULL;
-	ast_node_create(&n);
+    Ast_node_create(&n);
 	n->type = ast_type_dseq;
 
 	Ast_node* dec = NULL;
@@ -177,7 +177,7 @@ Ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 		return n;
 	}
 
-    ast_node_add(n, dec);
+    Ast_node_add(n, dec);
 
 	while (true)
 	{
@@ -212,7 +212,7 @@ Ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 		}
 
 		if (dec) {
-			ast_node_add(n, dec);
+            Ast_node_add(n, dec);
 		}
 	}
 
@@ -237,7 +237,7 @@ Ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct loca
 
 	if (t0 && t0->type == token_id) {
         /* id::type */
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = ast_type_declaration;
 
 		struct token* id = NULL;
@@ -247,13 +247,13 @@ Ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct loca
         }
 
         Ast_node* id_node = NULL;
-        ast_node_create(&id_node);
+        Ast_node_create(&id_node);
         id_node->type = ast_type_id;
         if (id) {
             buffer_copy(&id->value, &id_node->value);
         }
 
-        ast_node_add(n, id_node);
+        Ast_node_add(n, id_node);
 
         consume_newline(ps);
 
@@ -284,7 +284,7 @@ Ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct loca
 		}
 
         if (type_use) {
-            ast_node_add(n, type_use);
+            Ast_node_add(n, type_use);
         }
 
 		token_destroy(id);
@@ -325,7 +325,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
         free(lsb);
 
         if (!n) {
-            ast_node_create(&n);
+            Ast_node_create(&n);
             n->type = ast_type_type;
         }
 
@@ -393,7 +393,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
     }
 
     if (!n) {
-        ast_node_create(&n);
+        Ast_node_create(&n);
         n->type = ast_type_type;
     }
 
@@ -421,7 +421,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
             struct symbol* sym = environment_get(ps->st->top, &name);
             assert(sym);
             n->td = sym->td;
-            ast_node_add(n, proto);
+            Ast_node_add(n, proto);
 
             buffer_destroy(&name);
         }
@@ -487,7 +487,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
                 /* test case: test_parse_error_not_generic */
             } else {
                 if (is_generic) {
-                    size_t count = ast_node_count_children(n);
+                    size_t count = Ast_node_count_children(n);
                     if (sym->td->generic_count > 0 && count != sym->td->generic_count) {
                         char* a;
                         buffer2array(&name->value, &a);
@@ -552,7 +552,7 @@ void check_id_node(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
             malloc_safe((void**)&new_sym, sizeof(struct symbol));
             symbol_init(new_sym);
             new_sym->tk_type = token_id;
-            new_sym->tu = ast_node_copy(n);
+            new_sym->tu = Ast_node_copy(n);
             environment_put(ps->st->top, &id_node->value, new_sym);
             id_node->sym = new_sym;
             /* copy is_mut from id node to type use node */
@@ -604,7 +604,7 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
 
 	if (tu) {
 		assert(tu);
-		ast_node_add(parent, tu);
+        Ast_node_add(parent, tu);
 		tu = NULL;
 	}
 
@@ -640,7 +640,7 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
 
 		if (parent->type != ast_type_error) {
 			assert(tu);
-			ast_node_add(parent, tu);
+            Ast_node_add(parent, tu);
 			tu = NULL;
 		}
 
@@ -652,12 +652,12 @@ Ast_node* function2type(struct symbol_table* st, Ast_node* n)
 	struct buffer bf;
 	int current_node = 0;
 
-    Ast_node* id_node = ast_node_get(n, current_node++);
+    Ast_node* id_node = Ast_node_get(n, current_node++);
     assert(id_node->type == ast_type_id);
 
 	/* function */
 	Ast_node* tu = NULL;
-	ast_node_create(&tu);
+    Ast_node_create(&tu);
 	tu->type = ast_type_type;
 
 	buffer_init(&bf);
@@ -668,11 +668,11 @@ Ast_node* function2type(struct symbol_table* st, Ast_node* n)
 	tu->td = sym->td;
 
 	/* input */
-	Ast_node* dseq = ast_node_get(n, current_node++);
+	Ast_node* dseq = Ast_node_get(n, current_node++);
 
 	if (dseq->head) {
 		Ast_node* input_tu = NULL;
-		ast_node_create(&input_tu);
+        Ast_node_create(&input_tu);
 		input_tu->type = ast_type_type;
 
 		buffer_clear(&bf);
@@ -684,18 +684,18 @@ Ast_node* function2type(struct symbol_table* st, Ast_node* n)
 
 		Ast_node* dec = dseq->head;
 		while (dec) {
-			Ast_node* type_node = ast_node_get(dec, 1);
-			Ast_node* element_tu = ast_node_copy(type_node);
-			ast_node_add(input_tu, element_tu);
+			Ast_node* type_node = Ast_node_get(dec, 1);
+			Ast_node* element_tu = Ast_node_copy(type_node);
+            Ast_node_add(input_tu, element_tu);
 			dec = dec->next;
 		}
 
-		ast_node_add(tu, input_tu);
+        Ast_node_add(tu, input_tu);
 	}
 
 	/* output */
-	Ast_node* dret = ast_node_get(n, current_node++);
-	Ast_node* dret_type = ast_node_get(dret, 0);
+	Ast_node* dret = Ast_node_get(n, current_node++);
+	Ast_node* dret_type = Ast_node_get(dret, 0);
 
 	if (dret_type) {
 		buffer_clear(&bf);
@@ -704,13 +704,13 @@ Ast_node* function2type(struct symbol_table* st, Ast_node* n)
 		assert(output_sym);
 		assert(output_sym->td);
 		Ast_node* output_tu = NULL;
-		ast_node_create(&output_tu);
+        Ast_node_create(&output_tu);
 		output_tu->type = ast_type_type;
 		output_tu->td = output_sym->td;
 
-		Ast_node* element_tu = ast_node_copy(dret_type);
-		ast_node_add(output_tu, element_tu);
-		ast_node_add(tu, output_tu);
+		Ast_node* element_tu = Ast_node_copy(dret_type);
+        Ast_node_add(output_tu, element_tu);
+        Ast_node_add(tu, output_tu);
 	}
 
 	buffer_destroy(&bf);
@@ -730,7 +730,7 @@ bool check_return_type(struct parse_state* ps, Ast_node* fd, Ast_node* stmts_nod
         while (p) {
             struct type_def* p_td = p->td;
             if (p_td->type == type_function_output) {
-                Ast_node* ret = ast_node_get(p, 0);
+                Ast_node* ret = Ast_node_get(p, 0);
                 if (ret) {
                     if (!type_use_can_cast(ret, stmts_node->tu)) {
                         valid = error_list_set(ps->el, loc, "returned type does not match function return type");
@@ -820,107 +820,107 @@ Ast_node* make_constructor(struct type_def* td)
 	Ast_node* tu = td->composite;
 
 	Ast_node* n = NULL;
-	ast_node_create(&n);
+    Ast_node_create(&n);
 	n->type = ast_type_function;
 
 	/* id */
 	Ast_node* id = NULL;
-	ast_node_create(&id);
+    Ast_node_create(&id);
 	id->type = ast_type_id;
 	buffer_copy(&td->name, &id->value);
-	ast_node_add(n, id);
+    Ast_node_add(n, id);
 
 	/* dseq */
 	Ast_node* dseq = NULL;
-	ast_node_create(&dseq);
+    Ast_node_create(&dseq);
 	dseq->type = ast_type_dseq;
 
 	Ast_node* p = tu->head;
 	while (p) {
-		Ast_node* dec = ast_node_copy(p);
-		ast_node_add(dseq, dec);
+		Ast_node* dec = Ast_node_copy(p);
+        Ast_node_add(dseq, dec);
 		p = p->next;
 	}
 
-	ast_node_add(n, dseq);
+    Ast_node_add(n, dseq);
 
 	/* dret */
 	Ast_node* dret = NULL;
-	ast_node_create(&dret);
+    Ast_node_create(&dret);
 	dret->type = ast_type_dret;
 
 	Ast_node* dret_tu = NULL;
-	ast_node_create(&dret_tu);
+    Ast_node_create(&dret_tu);
 	dret_tu->type = ast_type_type;
 	dret_tu->td = td;
-	ast_node_add(dret, dret_tu);
+    Ast_node_add(dret, dret_tu);
 
-	ast_node_add(n, dret);
+    Ast_node_add(n, dret);
 
 	/* stmts */
 	Ast_node* stmts = NULL;
-	ast_node_create(&stmts);
+    Ast_node_create(&stmts);
 	stmts->type = ast_type_stmts;
-	ast_node_add(n, stmts);
+    Ast_node_add(n, stmts);
 
 	/* let */
 	Ast_node* let = NULL;
-	ast_node_create(&let);
+    Ast_node_create(&let);
 	let->type = ast_type_let;
-	ast_node_add(stmts, let);
+    Ast_node_add(stmts, let);
 
 	Ast_node* dec = NULL;
-	ast_node_create(&dec);
+    Ast_node_create(&dec);
 	dec->type = ast_type_declaration;
-	ast_node_add(let, dec);
+    Ast_node_add(let, dec);
 
 	Ast_node* id2 = NULL;
-	ast_node_create(&id2);
+    Ast_node_create(&id2);
 	id2->type = ast_type_id;
 	buffer_copy_str(&id2->value, "__x");
-	ast_node_add(dec, id2);
+    Ast_node_add(dec, id2);
 
 	Ast_node* t = NULL;
-	ast_node_create(&t);
+    Ast_node_create(&t);
 	t->type = ast_type_type;
 	t->td = td;
-	ast_node_add(dec, t);
+    Ast_node_add(dec, t);
 
 	/* assignments */
 	p = tu->head;
 	while (p) {
 		Ast_node* assign = NULL;
-		ast_node_create(&assign);
+        Ast_node_create(&assign);
 		assign->type = ast_type_assign;
-		ast_node_add(stmts, assign);
+        Ast_node_add(stmts, assign);
 
 		Ast_node* dot = NULL;
-		ast_node_create(&dot);
+        Ast_node_create(&dot);
 		dot->type = ast_type_type;
-		ast_node_add(assign, dot);
+        Ast_node_add(assign, dot);
 
 		Ast_node* x = NULL;
-		ast_node_create(&x);
+        Ast_node_create(&x);
 		x->type = ast_type_id;
 		buffer_copy_str(&x->value, "__x");
-		ast_node_add(dot, x);
+        Ast_node_add(dot, x);
 
 		Ast_node* field = NULL;
-		ast_node_create(&field);
+        Ast_node_create(&field);
 		field->type = ast_type_id;
-		Ast_node* id3 = ast_node_get(p, 0);
+		Ast_node* id3 = Ast_node_get(p, 0);
 		buffer_copy(&id3->value, &field->value);
-		ast_node_add(dot, field);
+        Ast_node_add(dot, field);
 
 		p = p->next;
 	}
 
 	/* return __x */
 	Ast_node* id4 = NULL;
-	ast_node_create(&id4);
+    Ast_node_create(&id4);
 	id4->type = ast_type_id;
 	buffer_copy_str(&id4->value, "__x");
-	ast_node_add(stmts, id4);
+    Ast_node_add(stmts, id4);
 
 	return n;
 }
@@ -932,7 +932,7 @@ void Override_rhs(Ast_node* tu, Ast_node* rhs)
     if (tu->td->type == type_integer || tu->td->type == type_float) {
         rhs->tu->td->bit_count = bit_count;
         if (rhs->type == ast_type_sign) {
-            Ast_node* p = ast_node_get(rhs, 1);
+            Ast_node* p = Ast_node_get(rhs, 1);
             Override_rhs(tu, p);
         } else if (tu->to.is_array) {
             Ast_node* p = rhs->head;
@@ -944,7 +944,7 @@ void Override_rhs(Ast_node* tu, Ast_node* rhs)
     }
 }
 
-bool is_lvalue(enum ast_type type)
+bool is_lvalue(enum Ast_type type)
 {
     if (type == ast_type_id) {
         return true;

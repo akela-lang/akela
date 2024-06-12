@@ -81,12 +81,12 @@ void symbol_create(struct symbol** sym)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void environment_destroy_symbol(struct symbol* sym)
 {
-	ast_node_destroy(sym->tu);
+    Ast_node_destroy(sym->tu);
 	type_def_destroy(sym->td);
 	if (sym->constructor) {
 		environment_destroy_symbol(sym->constructor);
 	}
-	ast_node_destroy(sym->root);
+    Ast_node_destroy(sym->root);
 	free(sym);
 }
 
@@ -258,10 +258,10 @@ void symbol_table_add_numeric(struct symbol_table* st, const char* name)
 	assert(sym);
 	assert(sym->td);
 	Ast_node* n = NULL;
-	ast_node_create(&n);
+    Ast_node_create(&n);
 	n->type = ast_type_type_pool;
 	n->td = sym->td;
-	ast_node_add(st->numeric_pool, n);
+    Ast_node_add(st->numeric_pool, n);
     buffer_destroy(&bf);
 }
 
@@ -269,7 +269,7 @@ void symbol_table_numeric_pool_init(struct symbol_table* st)
 {
 	Ast_node* pool = NULL;
 	malloc_safe((void**)&pool, sizeof(Ast_node));
-	ast_node_init(pool);
+	Ast_node_init(pool);
 	st->numeric_pool = pool;
 
 	symbol_table_add_numeric(st, "Int32");
@@ -320,7 +320,7 @@ void symbol_table_destroy(struct symbol_table* st)
         environment_destroy(env);
         env = prev;
     }
-	ast_node_destroy(st->numeric_pool);
+    Ast_node_destroy(st->numeric_pool);
 }
 
 bool symbol_table_is_global(struct symbol_table* st)
@@ -457,10 +457,10 @@ struct symbol* symbol_copy(struct symbol* sym)
 		malloc_safe((void**)&new_sym, sizeof(struct symbol));
 		symbol_init(new_sym);
 		new_sym->tk_type = sym->tk_type;
-		new_sym->tu = ast_node_copy(sym->tu);
+		new_sym->tu = Ast_node_copy(sym->tu);
 		new_sym->td = type_def_copy(sym->td);
 		new_sym->constructor = symbol_copy(sym->constructor);
-		new_sym->root = ast_node_copy(sym->root);
+		new_sym->root = Ast_node_copy(sym->root);
 		new_sym->root_ptr = sym->root_ptr;
 	}
 	return new_sym;

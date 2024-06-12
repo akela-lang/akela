@@ -24,7 +24,7 @@ AKELA_API bool match(struct parse_state* ps, enum token_enum type, const char* r
 
 AKELA_API bool consume_newline(struct parse_state* ps);
 
-AKELA_API bool is_identity_comparison(enum ast_type type);
+AKELA_API bool is_identity_comparison(enum Ast_type type);
 
 AKELA_API bool get_location(struct parse_state* ps, struct location* loc);
 

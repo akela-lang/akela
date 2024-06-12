@@ -144,33 +144,33 @@ void test_parse_types_array()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
 
-	struct Ast_node* let = ast_node_get(cu.root, 0);
+	Ast_node* let = Ast_node_get(cu.root, 0);
 	assert_ptr(let, "ptr let");
 	expect_int_equal(let->type, ast_type_let, "type let");
 
-	struct Ast_node* let_lseq = ast_node_get(let, 0);
+	Ast_node* let_lseq = Ast_node_get(let, 0);
 	assert_ptr(let_lseq, "ptr let_lseq");
 	expect_int_equal(let_lseq->type, ast_type_let_lseq, "type let_lseq");
 
-	struct Ast_node* name = ast_node_get(let_lseq, 0);
+	Ast_node* name = Ast_node_get(let_lseq, 0);
 	assert_ptr(name, "ptr name");
 	expect_int_equal(name->type, ast_type_id, "id name");
 	expect_str(&name->value, "a", "a name");
 
-	struct Ast_node* let_type = ast_node_get(let, 1);
+	Ast_node* let_type = Ast_node_get(let, 1);
 	assert_ptr(let_type, "ptr let_type");
 	expect_int_equal(let_type->type, ast_type_type, "type let_type");
 
-	struct Ast_node* as = ast_node_get(cu.root, 1);
+	Ast_node* as = Ast_node_get(cu.root, 1);
 	assert_ptr(as, "ptr as");
 	expect_int_equal(as->type, ast_type_array_subscript, "type array-subscript");
 
-	struct Ast_node* id = ast_node_get(as, 0);
+	Ast_node* id = Ast_node_get(as, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, ast_type_id, "id id");
 	expect_str(&id->value, "a", "a id");
 
-	struct Ast_node* index = ast_node_get(as, 1);
+	Ast_node* index = Ast_node_get(as, 1);
 	assert_ptr(index, "ptr index");
 	expect_int_equal(index->type, ast_type_number, "number index");
 	expect_str(&index->value, "1", "1 index");
@@ -413,7 +413,7 @@ void test_parse_types_newline_declaration()
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
-    struct Ast_node* let = ast_node_get(cu.root, 0);
+    Ast_node* let = Ast_node_get(cu.root, 0);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, ast_type_let, "type let");
 

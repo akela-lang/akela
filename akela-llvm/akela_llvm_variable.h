@@ -3,10 +3,10 @@
 
 #include "akela_llvm_tools.h"
 
-llvm::Value* CodeGenLLVMVar(JITData* jd, struct Ast_node* n);
-llvm::Value* CodeGenLLVMAssign(JITData* jd, struct Ast_node* n);
-llvm::Value* CodeGenLLVMID(JITData* jd, struct Ast_node* n);
-llvm::Value* CodeGenLLVMArrayLiteral(JITData* jd, struct Ast_node* n);
-llvm::Value* CodeGenLLVMSubscript(JITData* jd, struct Ast_node* n);
+llvm::Value* CodeGenLLVMVar(JITData* jd, Ast_node* n);
+llvm::Value* CodeGenLLVMAssign(JITData* jd, Ast_node* n);
+llvm::Value* CodeGenLLVMID(JITData* jd, Ast_node* n);
+llvm::Value* CodeGenLLVMArrayLiteral(JITData* jd, Ast_node* n);
+llvm::Value* CodeGenLLVMSubscript(JITData* jd, Ast_node* n);
 
 #endif
