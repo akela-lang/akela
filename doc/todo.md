@@ -1,4 +1,5 @@
 # Akela Todo
+* print location of error
 * function declarations that use prototype parsing
 * remove generics
 * mut type annotation:
