@@ -7,6 +7,7 @@ set(test_files
         test_akela_llvm_operator.c
         test_akela_llvm_stmts.c
         test_akela_llvm_function.c
+        test_akela_llvm_array.c
 )
 add_executable(akela-llvm-test ${test_files})
 if(${COVERAGE} MATCHES On)
