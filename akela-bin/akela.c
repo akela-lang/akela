@@ -42,7 +42,7 @@ int main(int argc, char** argv)
         struct error* e = cu.el.head;
         while (e) {
             buffer_finish(&e->message);
-            fprintf(stderr, "%s\n", e->message.buf);
+            fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
             e = e->next;
         }
         return 1;
