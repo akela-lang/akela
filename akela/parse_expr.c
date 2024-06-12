@@ -146,11 +146,19 @@ Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
                         n->type = ast_type_error;
                     }
                     Override_rhs(lhs2->tu, rhs2);
+                    if (!type_use_can_cast(lhs2->tu, rhs2->tu)) {
+                        error_list_set(ps->el, &rhs2->loc, "values in assignment not compatible");
+                    }
                     lhs2 = lhs2->next;
                     rhs2 = rhs2->next;
                 }
             } else {
                 if (!check_lvalue(ps, lhs, loc)) {
+                    n->type = ast_type_error;
+                }
+
+                if (!type_use_can_cast(lhs->tu, rhs->tu)) {
+                    error_list_set(ps->el, &rhs->loc, "values in assignment not compatible");
                     n->type = ast_type_error;
                 }
 
@@ -1040,16 +1048,16 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 				/* test case: test_parse_call_error_not_function */
                 n->type = ast_type_error;
 			} else {
-				Ast_node* input = NULL;
-				Ast_node* output = NULL;
-				get_function_children(tu, &input, &output);
+				Ast_node* dseq = NULL;
+				Ast_node* dret = NULL;
+				get_function_children(tu, &dseq, &dret);
 
 				/* input */
-				int tcount = 0;
-				if (input) {
-					tcount = Ast_node_count_children(input);
+				size_t tcount = 0;
+				if (dseq) {
+					tcount = Ast_node_count_children(dseq);
 				}
-				int ccount = 0;
+				size_t ccount = 0;
 				if (cseq_node) {
 					ccount = Ast_node_count_children(cseq_node);
 				}
@@ -1065,8 +1073,8 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 				}
 
 				/* output */
-				if (output) {
-					n->tu = Ast_node_copy(Ast_node_get(output, 0));
+				if (dret && dret->head) {
+					n->tu = Ast_node_copy(dret->head);
 				}
 			}
 

@@ -80,10 +80,11 @@ Ast_node* parse_function(struct parse_state* ps, struct location* loc)
 
     Ast_node_create(&n);
 
+    /* 0 prototype */
     Ast_node* proto = NULL;
     struct location proto_loc;
     bool has_id;
-    proto = parse_prototype(ps, &has_id, &proto_loc);
+    proto = parse_prototype(ps, false, &has_id, &proto_loc);
     Ast_node_add(n, proto);
     if (has_id) {
         n->type = ast_type_function;
@@ -97,8 +98,8 @@ Ast_node* parse_function(struct parse_state* ps, struct location* loc)
     environment_begin(ps->st);
     declare_params(ps, proto);
     set_current_function(ps->st->top, n);
-    Ast_node* tu = Ast_node_get(proto, 3);
-    n->tu = Ast_node_copy(tu);
+    Ast_node* tu = proto2type(ps->st, proto);
+    n->tu = tu;
 
     Ast_node* stmts_node = NULL;
 	struct location loc_stmts;
@@ -107,6 +108,7 @@ Ast_node* parse_function(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
+    /* 1 stmts */
     if (stmts_node) {
         Ast_node_add(n, stmts_node);
     }
@@ -150,8 +152,8 @@ Ast_node* parse_function(struct parse_state* ps, struct location* loc)
         }
 
         /* check return type */
-        Ast_node* ret = Ast_node_get(proto, 2);
-        if (!check_return_type(ps, n, stmts_node, &ret->loc)) {
+        Ast_node* dret = Ast_node_get(proto, 2);
+        if (!check_return_type(ps, proto, stmts_node, &dret->loc)) {
             n->type = ast_type_error;
         }
     }

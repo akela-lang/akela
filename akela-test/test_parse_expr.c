@@ -2169,7 +2169,7 @@ void test_parse_expr_newline_subscript()
 
     struct comp_unit cu;
 
-    parse_setup("let a::Vector{Int64}; a[\n0\n]", &cu);
+    parse_setup("let a::[1]Int64; a[\n0\n]", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 

@@ -1,5 +1,5 @@
 # Akela Todo
-* function declarations that use prototype parsing
+* prototype allow no types if a type
 * remove generics
 * mut type annotation:
   * type [x]

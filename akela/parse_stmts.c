@@ -183,14 +183,14 @@ Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
     Ast_node* proto = NULL;
     struct location proto_loc;
     bool has_id;
-    proto = parse_prototype(ps, &has_id, &proto_loc);
+    proto = parse_prototype(ps, false, &has_id, &proto_loc);
     if (proto) {
         Ast_node_add(n, proto);
         if (proto->type == ast_type_error) {
             n->type = ast_type_error;
         }
-        Ast_node* tu = Ast_node_get(proto, 3);
-        n->tu = Ast_node_copy(tu);
+        Ast_node* tu = proto2type(ps->st, proto);
+        n->tu = tu;
     }
 
     if (!has_id) {
@@ -504,12 +504,13 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct locati
 			error_list_set(ps->el, &loc_list, "iteration expression has no value");
             parent->type = ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_value */
-		} else if (!list_tu->head) {
-			error_list_set(ps->el, &loc_list, "iteration expression has no child element");
+		} else if (!list_tu->to.is_array) {
+			error_list_set(ps->el, &loc_list, "iteration expression is not an array");
             parent->type = ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
-			Ast_node* element_tu2 = Ast_node_get(list_tu, 0);
+			Ast_node* element_tu2 = Ast_node_copy(list_tu);
+            Type_options_reduce_dimension(&element_tu2->to);
 			if (!type_use_can_cast(element_tu2, element_tu)) {
                 parent->type = ast_type_error;
 				error_list_set(ps->el, &loc_list, "cannot cast list element");
@@ -691,7 +692,8 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 			buffer_copy(&id->value, &td->name);
 			td->composite = tu;
 			Ast_node* root = make_constructor(td);
-			Ast_node* root_tu = function2type(ps->st, root);
+            Ast_node* proto = Ast_node_get(root, 0);
+			Ast_node* root_tu = proto2type(ps->st, proto);
 
 			struct symbol* constructor_sym = NULL;
 			malloc_safe((void**)&constructor_sym, sizeof(struct symbol));
@@ -760,7 +762,8 @@ Ast_node* parse_return(struct parse_state* ps, struct location* loc)
 					/* test case: test_parse_return_error_outside_of_function */
                     n->type = ast_type_error;
 				} else {
-                    if (!check_return_type(ps, fd, n, &ret->loc)) {
+                    Ast_node* proto = Ast_node_get(fd, 0);
+                    if (!check_return_type(ps, proto, n, &ret->loc)) {
                         /* test case: test_parse_return_error_type_does_not_match */
                         n->type = ast_type_error;
                     }

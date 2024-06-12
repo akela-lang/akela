@@ -940,14 +940,13 @@ void test_parse_for_range2()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_for_iteration()
 {
 	test_name(__func__);
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for i::Int64 in list i end", &cu);
+    parse_setup("let list::[10]Int64; for i::Int64 in list i end", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -1032,10 +1031,10 @@ void test_parse_for_iteration_error_no_child_element()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector; for i::Int64 in list end", &cu);
+    parse_setup("let list::Int64; for i::Int64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	expect_source_error(&cu.el, "iteration expression has no child element");
+	expect_source_error(&cu.el, "iteration expression is not an array");
 
     parse_teardown(&cu);
 }
@@ -1046,7 +1045,7 @@ void test_parse_for_iteration_error_cannot_cast()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Bool}; for i::Int64 in list end", &cu);
+    parse_setup("let list::[10]Bool; for i::Int64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "cannot cast list element");
@@ -1643,7 +1642,7 @@ void test_parse_stmts_newline_for_iteration()
 
     struct comp_unit cu;
 
-    parse_setup("let v::Vector{Int64}; for\nx\n::\nInt64\nin\nv x end", &cu);
+    parse_setup("let v::[10]Int64; for\nx\n::\nInt64\nin\nv x end", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 

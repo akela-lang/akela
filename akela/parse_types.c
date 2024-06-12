@@ -20,7 +20,7 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc);
  * @param loc
  * @return struct ast_node*
  */
-Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location* loc)
+Ast_node* parse_prototype(struct parse_state* ps, bool is_type, bool* has_id, struct location* loc)
 {
     Ast_node* n = NULL;
 
@@ -29,7 +29,7 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
     Ast_node_create(&n);
     n->type = ast_type_prototype;
 
-    /* index 0: id */
+    /* 0 id */
     Ast_node* id_node = NULL;
     struct token* t0 = get_lookahead(ps);
     if (t0->type == token_id) {
@@ -48,7 +48,13 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
     } else {
         Ast_node_create(&id_node);
         id_node->type = ast_type_id;
-        buffer_add_format(&id_node->value, "__anonymous_function_%zu", symbol_table_generate_id(ps->st));
+        if (!is_type) {
+            buffer_add_format(
+                &id_node->value,
+                "__anonymous_function_%zu",
+                symbol_table_generate_id(ps->st)
+            );
+        }
         Ast_node_add(n, id_node);
         *has_id = false;
     }
@@ -63,7 +69,7 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
 
     consume_newline(ps);
 
-    /* index 1: dseq */
+    /* 1 dseq */
     Ast_node* dseq_node = NULL;
     struct location loc_dseq;
     dseq_node = parse_dseq(ps, &loc_dseq);
@@ -87,7 +93,7 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
     token_destroy(rp);
     free(rp);
 
-    /* index 2: ret */
+    /* 2 ret */
     t0 = get_lookahead(ps);
     Ast_node* ret_type = NULL;
     struct location ret_loc;
@@ -120,15 +126,12 @@ Ast_node* parse_prototype(struct parse_state* ps, bool* has_id, struct location*
     Ast_node_create(&ret);
     ret->type = ast_type_dret;
     ret->loc = ret_loc;
-    Ast_node_add(n, ret);
-
     if (ret_type) {
         Ast_node_add(ret, ret_type);
     }
 
-    /* index 3: type */
-    Ast_node* tu = function2type(ps->st, n);
-    Ast_node_add(n, tu);
+    Ast_node_add(n, ret);
+
 
     return n;
 }
@@ -408,7 +411,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         struct location fn_loc;
         bool has_id;
-        Ast_node* proto = parse_prototype(ps, &has_id, &fn_loc);
+        Ast_node* proto = parse_prototype(ps, true, &has_id, &fn_loc);
         if (has_id) {
             error_list_set(ps->el, &fn_loc, "function name is unnecessary");
         }
@@ -647,19 +650,13 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
 	}
 }
 
-Ast_node* function2type(struct symbol_table* st, Ast_node* n)
+Ast_node* proto2type(struct symbol_table* st, Ast_node* proto)
 {
-	struct buffer bf;
-	int current_node = 0;
-
-    Ast_node* id_node = Ast_node_get(n, current_node++);
-    assert(id_node->type == ast_type_id);
-
-	/* function */
 	Ast_node* tu = NULL;
     Ast_node_create(&tu);
 	tu->type = ast_type_type;
 
+    struct buffer bf;
 	buffer_init(&bf);
 	buffer_copy_str(&bf, "Function");
 	struct symbol* sym = environment_get(st->top, &bf);
@@ -667,96 +664,35 @@ Ast_node* function2type(struct symbol_table* st, Ast_node* n)
 	assert(sym->td);
 	tu->td = sym->td;
 
-	/* input */
-	Ast_node* dseq = Ast_node_get(n, current_node++);
-
-	if (dseq->head) {
-		Ast_node* input_tu = NULL;
-        Ast_node_create(&input_tu);
-		input_tu->type = ast_type_type;
-
-		buffer_clear(&bf);
-		buffer_copy_str(&bf, "Input");
-		struct symbol* input_sym = environment_get(st->top, &bf);
-		assert(input_sym);
-		assert(input_sym->td);
-		input_tu->td = input_sym->td;
-
-		Ast_node* dec = dseq->head;
-		while (dec) {
-			Ast_node* type_node = Ast_node_get(dec, 1);
-			Ast_node* element_tu = Ast_node_copy(type_node);
-            Ast_node_add(input_tu, element_tu);
-			dec = dec->next;
-		}
-
-        Ast_node_add(tu, input_tu);
-	}
-
-	/* output */
-	Ast_node* dret = Ast_node_get(n, current_node++);
-	Ast_node* dret_type = Ast_node_get(dret, 0);
-
-	if (dret_type) {
-		buffer_clear(&bf);
-		buffer_copy_str(&bf, "Output");
-		struct symbol* output_sym = environment_get(st->top, &bf);
-		assert(output_sym);
-		assert(output_sym->td);
-		Ast_node* output_tu = NULL;
-        Ast_node_create(&output_tu);
-		output_tu->type = ast_type_type;
-		output_tu->td = output_sym->td;
-
-		Ast_node* element_tu = Ast_node_copy(dret_type);
-        Ast_node_add(output_tu, element_tu);
-        Ast_node_add(tu, output_tu);
-	}
+    Ast_node_add(tu, Ast_node_copy(proto));
 
 	buffer_destroy(&bf);
 
 	return tu;
 }
 
-bool check_return_type(struct parse_state* ps, Ast_node* fd, Ast_node* stmts_node, struct location* loc)
+bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_node, struct location* loc)
 {
     bool valid = true;
 
-	assert(fd);
-
-    if (fd->type != ast_type_error && stmts_node->type != ast_type_error) {
-        Ast_node* tu = fd->tu;
-        Ast_node* p = tu->head;
-        while (p) {
-            struct type_def* p_td = p->td;
-            if (p_td->type == type_function_output) {
-                Ast_node* ret = Ast_node_get(p, 0);
-                if (ret) {
-                    if (!type_use_can_cast(ret, stmts_node->tu)) {
-                        valid = error_list_set(ps->el, loc, "returned type does not match function return type");
-                    }
-                }
+    if (proto->type != ast_type_error && stmts_node->type != ast_type_error) {
+        Ast_node *dret = Ast_node_get(proto, 2);
+        Ast_node *ret_type = Ast_node_get(dret, 0);
+        if (ret_type) {
+            if (!type_use_can_cast(ret_type, stmts_node->tu)) {
+                valid = error_list_set(ps->el, loc, "returned type does not match function return type");
             }
-            p = p->next;
         }
     }
 
     return valid;
 }
 
-void get_function_children(Ast_node* tu, Ast_node** input, Ast_node** output)
+void get_function_children(Ast_node* tu, Ast_node** dseq, Ast_node** dret)
 {
-	Ast_node* p = tu->head;
-	while (p) {
-		if (p->td) {
-			if (p->td->type == type_function_input) {
-				*input = p;
-			} else if (p->td->type == type_function_output) {
-				*output = p;
-			}
-		}
-		p = p->next;
-	}
+    Ast_node* proto = Ast_node_get(tu, 0);
+    *dseq = Ast_node_get(proto, 1);
+    *dret = Ast_node_get(proto, 2);
 }
 
 Ast_node* get_function_type(struct symbol* sym)
@@ -776,16 +712,20 @@ Ast_node* get_function_type(struct symbol* sym)
 
 Ast_node* get_function_input_type(Ast_node* tu, int index)
 {
-	Ast_node* input = NULL;
-	Ast_node* output = NULL;
-	get_function_children(tu, &input, &output);
+	Ast_node* dseq = NULL;
+	Ast_node* dret = NULL;
+	get_function_children(tu, &dseq, &dret);
 
-	if (!input) return NULL;
+	if (!dseq) return NULL;
 
-	Ast_node* p = input->head;
+	Ast_node* p = dseq->head;
 	int i = 0;
 	while (p) {
-		if (i == index) return p;
+		if (i == index) {
+            Ast_node* dec = p;
+            Ast_node* dec_tu = Ast_node_get(dec, 1);
+            return dec_tu;
+        }
 		p = p->next;
 		i++;
 	}
@@ -819,43 +759,47 @@ Ast_node* make_constructor(struct type_def* td)
 {
 	Ast_node* tu = td->composite;
 
+    /* function */
 	Ast_node* n = NULL;
     Ast_node_create(&n);
 	n->type = ast_type_function;
+
+    Ast_node* proto = NULL;
+    Ast_node_create(&proto);
+    proto->type = ast_type_prototype;
 
 	/* id */
 	Ast_node* id = NULL;
     Ast_node_create(&id);
 	id->type = ast_type_id;
 	buffer_copy(&td->name, &id->value);
-    Ast_node_add(n, id);
+    Ast_node_add(proto, id);
 
 	/* dseq */
 	Ast_node* dseq = NULL;
     Ast_node_create(&dseq);
 	dseq->type = ast_type_dseq;
-
 	Ast_node* p = tu->head;
 	while (p) {
 		Ast_node* dec = Ast_node_copy(p);
         Ast_node_add(dseq, dec);
 		p = p->next;
 	}
-
-    Ast_node_add(n, dseq);
+    Ast_node_add(proto, dseq);
 
 	/* dret */
 	Ast_node* dret = NULL;
     Ast_node_create(&dret);
 	dret->type = ast_type_dret;
-
 	Ast_node* dret_tu = NULL;
     Ast_node_create(&dret_tu);
 	dret_tu->type = ast_type_type;
 	dret_tu->td = td;
     Ast_node_add(dret, dret_tu);
+    Ast_node_add(proto, dret);
 
-    Ast_node_add(n, dret);
+    /* proto */
+    Ast_node_add(n, proto);
 
 	/* stmts */
 	Ast_node* stmts = NULL;

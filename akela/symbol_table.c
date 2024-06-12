@@ -207,37 +207,11 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	buffer_copy_str(&td->name, name);
 	symbol_table_add_reserved(env, name, token_id, td);
 
-	name = "Vector";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_array;
-	td->is_generic = true;
-	td->generic_count = 1;
-	buffer_copy_str(&td->name, name);
-	symbol_table_add_reserved(env, name, token_id, td);
-
     name = "Function";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_function;
 	td->is_generic = true;
-	buffer_copy_str(&td->name, name);
-	symbol_table_add_reserved(env, name, token_id, td);
-
-	name = "Input";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_function_input;
-	td->is_generic = true;
-	buffer_copy_str(&td->name, name);
-	symbol_table_add_reserved(env, name, token_id, td);
-
-	name = "Output";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_function_output;
-	td->is_generic = true;
-	td->generic_count = 1;
 	buffer_copy_str(&td->name, name);
 	symbol_table_add_reserved(env, name, token_id, td);
 
@@ -416,7 +390,7 @@ bool type_def_can_cast(struct type_def* a, struct type_def* b)
 		return true;
 	}
 
-	if (is_numeric(a) && is_numeric(b)) {
+	if (a && b && is_numeric(a) && is_numeric(b)) {
 		return true;
 	}
 

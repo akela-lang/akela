@@ -130,14 +130,13 @@ void test_parse_types_exists()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_types_array()
 {
 	test_name(__func__);
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Vector{Int64}; a[1]", &cu);
+    parse_setup("let a::[10]Int64; a[1]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -188,20 +187,6 @@ void test_parse_types_array_error()
     parse_setup("let a::Int64{Int64}; a[1]", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
-	expect_false(cu.valid, "valid");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_types_array_error2()
-{
-	test_name(__func__);
-	
-	struct comp_unit cu;
-
-    parse_setup("let a::Vector{Int64, Float64}; a[1]", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -300,20 +285,6 @@ void test_parse_error_not_generic()
     parse_setup("let a::Int64{Int64}", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
-	expect_false(cu.valid, "valid");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_error_subtype_count()
-{
-	test_name(__func__);
-	
-	struct comp_unit cu;
-
-    parse_setup("let a::Vector{Int64, Int64}", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "generic type (Vector) should have 1 subtype but has 2 subtypes");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -433,7 +404,6 @@ void test_parse_types()
 	test_parse_types_exists();
 	test_parse_types_array();
 	test_parse_types_array_error();
-	test_parse_types_array_error2();
 	test_parse_error_dseq_comma();
 	test_parse_error_declaration_double_colon();
 	test_parse_error_declaration_type();
@@ -441,7 +411,6 @@ void test_parse_types()
 	test_parse_error_type_not_defined();
 	test_parse_error_not_a_type();
 	test_parse_error_not_generic();
-	test_parse_error_subtype_count();
 	test_parse_error_duplicate_declarations();
 	test_parse_error_type_name();
 	test_parse_error_comma_type_name();
