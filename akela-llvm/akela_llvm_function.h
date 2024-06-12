@@ -3,8 +3,8 @@
 
 #include "akela_llvm_tools.h"
 
-llvm::Value* CodeGenLLVMExtern(JITData* jd, struct ast_node* n);
-llvm::Value* CodeGenLLVMFunction(JITData* jd, struct ast_node* n);
-llvm::Value* CodeGenLLVMCall(JITData* jd, struct ast_node* n);
+llvm::Value* CodeGenLLVMExtern(JITData* jd, struct Ast_node* n);
+llvm::Value* CodeGenLLVMFunction(JITData* jd, struct Ast_node* n);
+llvm::Value* CodeGenLLVMCall(JITData* jd, struct Ast_node* n);
 
 #endif

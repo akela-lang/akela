@@ -3,9 +3,9 @@
 using namespace llvm;
 using namespace llvm::orc;
 
-Value* CodeGenLLVMNumber(JITData* jd, struct ast_node* n)
+Value* CodeGenLLVMNumber(JITData* jd, struct Ast_node* n)
 {
-    struct ast_node* tu = n->tu;
+    struct Ast_node* tu = n->tu;
     struct type_def *td = tu->td;
     if (td->type == type_integer) {
         Type* t = CodeGenLLVMGetType(jd, n->tu);
@@ -20,7 +20,7 @@ Value* CodeGenLLVMNumber(JITData* jd, struct ast_node* n)
     assert(false);
 }
 
-Value* CodeGenLLVMBoolean(JITData* jd, struct ast_node* n)
+Value* CodeGenLLVMBoolean(JITData* jd, struct Ast_node* n)
 {
     if (buffer_compare_str(&n->value, "true")) {
         Type* t = Type::getInt1Ty(*jd->TheContext);
@@ -32,7 +32,7 @@ Value* CodeGenLLVMBoolean(JITData* jd, struct ast_node* n)
     assert(false && "invalid boolean identifier");
 }
 
-Value* CodeGenLLVMString(JITData* jd, struct ast_node* n)
+Value* CodeGenLLVMString(JITData* jd, struct Ast_node* n)
 {
     buffer_finish(&n->value);
     return jd->Builder->CreateGlobalString(n->value.buf, ".str");

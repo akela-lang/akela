@@ -23,17 +23,17 @@ void JITDataInit(JITData* jd, struct error_list* el)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-FunctionType* CodeGenLLVMFunctionType(JITData* jd, struct ast_node* tu)
+FunctionType* CodeGenLLVMFunctionType(JITData* jd, struct Ast_node* tu)
 {
-    struct ast_node *input = nullptr;
-    struct ast_node *output = nullptr;
+    struct Ast_node *input = nullptr;
+    struct Ast_node *output = nullptr;
     get_function_children(tu, &input, &output);
 
     std::vector<Type *> param_types = std::vector<Type *>();
     size_t input_count = ast_node_count_children(input);
     if (input_count > 0) {
         for (size_t i = 0; i < input_count; i++) {
-            struct ast_node *dec = ast_node_get(input, i);
+            struct Ast_node *dec = ast_node_get(input, i);
             Type *dec_type = CodeGenLLVMGetType(jd, dec);
             param_types.push_back(dec_type);
         }
@@ -41,7 +41,7 @@ FunctionType* CodeGenLLVMFunctionType(JITData* jd, struct ast_node* tu)
 
     Type *ret_type = nullptr;
     if (output) {
-        struct ast_node *ret = ast_node_get(output, 0);
+        struct Ast_node *ret = ast_node_get(output, 0);
         ret_type = CodeGenLLVMReturnType(jd, ret);
     } else {
         ret_type = Type::getVoidTy(*jd->TheContext);
@@ -51,7 +51,7 @@ FunctionType* CodeGenLLVMFunctionType(JITData* jd, struct ast_node* tu)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Type* CodeGenLLVMGetTypeScalar(JITData* jd, struct ast_node* tu)
+Type* CodeGenLLVMGetTypeScalar(JITData* jd, struct Ast_node* tu)
 {
     if (!tu) {
         return Type::getVoidTy(*jd->TheContext);
@@ -89,7 +89,7 @@ Type* CodeGenLLVMGetTypeScalar(JITData* jd, struct ast_node* tu)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Type* CodeGenLLVMGetType(JITData* jd, struct ast_node* tu)
+Type* CodeGenLLVMGetType(JITData* jd, struct Ast_node* tu)
 {
     Type *t = CodeGenLLVMGetTypeScalar(jd, tu);
     if (tu && tu->to.is_array) {
@@ -106,7 +106,7 @@ Type* CodeGenLLVMGetType(JITData* jd, struct ast_node* tu)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Type* CodeGenLLVMReturnType(JITData* jd, struct ast_node* tu)
+Type* CodeGenLLVMReturnType(JITData* jd, struct Ast_node* tu)
 {
     if (tu && tu->td && tu->td->type == type_function) {
         FunctionType *func_type = CodeGenLLVMFunctionType(jd, tu);
@@ -128,7 +128,7 @@ BasicBlock* CodeGenLLVMGetLastBlock(JITData* jd, Function* f)
     return last_block;
 }
 
-void CodeGenLLVMRun(JITData* jd, struct ast_node* n, struct buffer* bf)
+void CodeGenLLVMRun(JITData* jd, struct Ast_node* n, struct buffer* bf)
 {
     auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOPLEVEL_NAME));
     if (n->tu) {
@@ -230,7 +230,7 @@ void CodeGenLLVMRun(JITData* jd, struct ast_node* n, struct buffer* bf)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVMDispatch(JITData* jd, struct ast_node* n)
+Value* CodeGenLLVMDispatch(JITData* jd, struct Ast_node* n)
 {
     if (n->type == ast_type_stmts) {
         return CodeGenLLVMStmts(jd, n);

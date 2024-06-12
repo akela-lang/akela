@@ -3,34 +3,34 @@
 using namespace llvm;
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVMAdd(JITData* jd, struct ast_node* n)
+Value* CodeGenLLVMAdd(JITData* jd, struct Ast_node* n)
 {
-    struct ast_node* a = ast_node_get(n, 0);
+    struct Ast_node* a = ast_node_get(n, 0);
     Value* lhs = CodeGenLLVMDispatch(jd, a);
 
-    struct ast_node* b = ast_node_get(n, 1);
+    struct Ast_node* b = ast_node_get(n, 1);
     Value* rhs = CodeGenLLVMDispatch(jd, b);
 
     return jd->Builder->CreateAdd(lhs, rhs, "addtmp");
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVMSub(JITData* jd, struct ast_node* n)
+Value* CodeGenLLVMSub(JITData* jd, struct Ast_node* n)
 {
-    struct ast_node* a = ast_node_get(n, 0);
+    struct Ast_node* a = ast_node_get(n, 0);
     Value* lhs = CodeGenLLVMDispatch(jd, a);
 
-    struct ast_node* b = ast_node_get(n, 1);
+    struct Ast_node* b = ast_node_get(n, 1);
     Value* rhs = CodeGenLLVMDispatch(jd, b);
 
     return jd->Builder->CreateSub(lhs, rhs, "subtmp");
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVMSign(JITData* jd, struct ast_node* n)
+Value* CodeGenLLVMSign(JITData* jd, struct Ast_node* n)
 {
-    struct ast_node* op = ast_node_get(n, 0);
-    struct ast_node* number = ast_node_get(n, 1);
+    struct Ast_node* op = ast_node_get(n, 0);
+    struct Ast_node* number = ast_node_get(n, 1);
     Value* number_value = CodeGenLLVMDispatch(jd, number);
 
     if (op->type == ast_type_plus) {

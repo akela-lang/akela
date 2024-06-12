@@ -21,11 +21,11 @@ void test_comp_unit_compile()
 	bool valid = comp_unit_compile(cu, input, input->input_vtable);
 	expect_true(valid, "valid");
 	
-	struct ast_node* root = cu->root;
+	struct Ast_node* root = cu->root;
 	assert_ptr(root, "ptr root");
 	expect_int_equal(root->type, ast_type_stmts, "parse_stmts root");
 
-	struct ast_node* number = ast_node_get(root, 0);
+	struct Ast_node* number = ast_node_get(root, 0);
 	assert_ptr(number, "ptr number");
 	expect_int_equal(number->type, ast_type_number, "number number");
 	expect_str(&number->value, "10", "10 number");

@@ -75,9 +75,9 @@ enum result ast_set_names(char** names)
 	return result_ok;
 }
 
-void ast_node_create(struct ast_node** n)
+void ast_node_create(Ast_node** n)
 {
-	malloc_safe((void**)n, sizeof(struct ast_node));
+	malloc_safe((void**)n, sizeof(Ast_node));
 	ast_node_init(*n);
 }
 
@@ -91,7 +91,7 @@ void Type_options_init(Type_options* to)
     VectorInit(&to->dim, sizeof(Type_dimension));
 }
 
-void ast_node_init(struct ast_node* n)
+void ast_node_init(Ast_node* n)
 {
 	n->type = ast_type_none;
 	buffer_init(&n->value);
@@ -105,12 +105,12 @@ void ast_node_init(struct ast_node* n)
 	n->tail = NULL;
 }
 
-void ast_node_destroy(struct ast_node* n)
+void ast_node_destroy(Ast_node* n)
 {
     if (n) {
-        struct ast_node* p = n->head;
+        Ast_node* p = n->head;
         while (p) {
-            struct ast_node* temp = p;
+            Ast_node* temp = p;
             p = p->next;
             ast_node_destroy(temp);
         }
@@ -127,10 +127,10 @@ void Type_options_destroy(Type_options* to)
     VectorDestroy(&to->dim);
 }
 
-void ast_node_add(struct ast_node* p, struct ast_node* c)
+void ast_node_add(Ast_node* p, Ast_node* c)
 {
 	// set sibling to left
-	struct ast_node* prev = p->tail;
+	Ast_node* prev = p->tail;
 	if (prev) {
 		prev->next = c;
 	}
@@ -148,9 +148,9 @@ void ast_node_add(struct ast_node* p, struct ast_node* c)
 
 /* assume parent and child are not NULL */
 /* dynamic-output-none */
-void ast_node_push(struct ast_node* parent, struct ast_node* child)
+void ast_node_push(Ast_node* parent, Ast_node* child)
 {
-	struct ast_node* old_head = parent->head;
+	Ast_node* old_head = parent->head;
 	if (old_head) {
 		old_head->prev = child;
 	}
@@ -159,10 +159,10 @@ void ast_node_push(struct ast_node* parent, struct ast_node* child)
 }
 
 /* dynamic-output-none */
-struct ast_node* ast_node_get(struct ast_node* p, size_t pos)
+Ast_node* ast_node_get(Ast_node* p, size_t pos)
 {
 	int i = 0;
-	for (struct ast_node* n = p->head; n; n = n->next) {
+	for (Ast_node* n = p->head; n; n = n->next) {
 		if (i == pos) {
 			return n;
 		}
@@ -171,7 +171,7 @@ struct ast_node* ast_node_get(struct ast_node* p, size_t pos)
 	return NULL;
 }
 
-void ast_node_print(struct ast_node* root,bool debug)
+void ast_node_print(Ast_node* root, bool debug)
 {
     char* names[ast_type_count];
     ast_set_names(names);
@@ -194,7 +194,7 @@ void ast_node_print(struct ast_node* root,bool debug)
 	}
 	printf(">");
 	printf(":");
-	for (struct ast_node* p = root->head; p; p = p->next) {
+	for (Ast_node* p = root->head; p; p = p->next) {
 		printf(" <");
 		if (p->td) {
 			buffer_finish(&p->td->name);
@@ -215,7 +215,7 @@ void ast_node_print(struct ast_node* root,bool debug)
 		ast_node_print(root->tu, debug);
 	}
 
-	for (struct ast_node* p = root->head; p; p = p->next) {
+	for (Ast_node* p = root->head; p; p = p->next) {
 		ast_node_print(p, debug);
 	}
 }
@@ -259,9 +259,9 @@ void Type_options_reduce_dimension(Type_options* to)
 }
 
 /* copy dag excluding tu */
-struct ast_node* ast_node_copy(struct ast_node* n)
+Ast_node* ast_node_copy(Ast_node* n)
 {
-	struct ast_node* copy = NULL;
+	Ast_node* copy = NULL;
 
 	if (n) {
 		ast_node_create(&copy);
@@ -271,9 +271,9 @@ struct ast_node* ast_node_copy(struct ast_node* n)
         copy->loc = n->loc;
 		buffer_copy(&n->value, &copy->value);
 		
-		struct ast_node* p = n->head;
+		Ast_node* p = n->head;
 		while (p) {
-			struct ast_node* p_copy = NULL;
+			Ast_node* p_copy = NULL;
 			p_copy = ast_node_copy(p);
 			ast_node_add(copy, p_copy);
 			p = p->next;
@@ -283,9 +283,9 @@ struct ast_node* ast_node_copy(struct ast_node* n)
 	return copy;
 }
 
-bool ast_node_match(struct ast_node* a, struct ast_node* b)
+bool ast_node_match(Ast_node* a, Ast_node* b)
 {
-	struct ast_node* copy = NULL;
+	Ast_node* copy = NULL;
 
 	if (a && b) {
 		if (a->type != b->type) {
@@ -300,8 +300,8 @@ bool ast_node_match(struct ast_node* a, struct ast_node* b)
 			return false;
 		}
 
-		struct ast_node* c = a->head;
-		struct ast_node* d = b->head;
+		Ast_node* c = a->head;
+		Ast_node* d = b->head;
 		do {
 			if (!ast_node_match(c, d)) {
 				return false;
@@ -318,11 +318,11 @@ bool ast_node_match(struct ast_node* a, struct ast_node* b)
 	return true;
 }
 
-size_t ast_node_count_children(struct ast_node* n)
+size_t ast_node_count_children(Ast_node* n)
 {
     size_t count = 0;
     if (n) {
-        struct ast_node* p = n->head;
+        Ast_node* p = n->head;
         while (p) {
             count++;
             p = p->next;

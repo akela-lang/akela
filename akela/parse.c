@@ -9,9 +9,9 @@
 #include "parse_tools.h"
 #include <assert.h>
 
-struct ast_node* parse(struct parse_state* ps)
+Ast_node* parse(struct parse_state* ps)
 {
-    struct ast_node* n = NULL;
+    Ast_node* n = NULL;
 
 	struct location loc_stmts;
     n = parse_stmts(ps, true, &loc_stmts);

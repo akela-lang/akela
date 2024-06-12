@@ -83,37 +83,37 @@ enum ast_type {
 	ast_type_count		/* keep at end */
 };
 
-struct ast_node {
+typedef struct Ast_node {
 	enum ast_type type;
 	struct buffer value;
-	struct ast_node* tu;
+	struct Ast_node* tu;
 	struct type_def* td;
     struct Type_options to;
     struct location loc;
     struct symbol* sym;
-	struct ast_node* next;
-	struct ast_node* prev;
-	struct ast_node* head;
-	struct ast_node* tail;
-};
+	struct Ast_node* next;
+	struct Ast_node* prev;
+	struct Ast_node* head;
+	struct Ast_node* tail;
+} Ast_node;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 AKELA_API enum result ast_set_names(char** names);
-AKELA_API void ast_node_create(struct ast_node** n);
-AKELA_API void ast_node_destroy(struct ast_node* n);
-AKELA_API void ast_node_init(struct ast_node* n);
-AKELA_API void ast_node_add(struct ast_node* p, struct ast_node* c);
-AKELA_API void ast_node_push(struct ast_node* parent, struct ast_node* child);
-AKELA_API struct ast_node* ast_node_get(struct ast_node* p, size_t pos);
-AKELA_API void ast_node_print(struct ast_node* root, bool debug);
-AKELA_API struct ast_node* ast_node_copy(struct ast_node* n);
-AKELA_API bool ast_node_match(struct ast_node* a, struct ast_node* b);
-AKELA_API size_t ast_node_count_children(struct ast_node* n);
-AKELA_API void ast_node_location_update_token(struct ast_node* n, struct token* t);
-AKELA_API void ast_node_location_update(struct ast_node* n, struct ast_node* n2);
+AKELA_API void ast_node_create(Ast_node** n);
+AKELA_API void ast_node_destroy(Ast_node* n);
+AKELA_API void ast_node_init(Ast_node* n);
+AKELA_API void ast_node_add(Ast_node* p, Ast_node* c);
+AKELA_API void ast_node_push(Ast_node* parent, Ast_node* child);
+AKELA_API Ast_node* ast_node_get(Ast_node* p, size_t pos);
+AKELA_API void ast_node_print(Ast_node* root, bool debug);
+AKELA_API Ast_node* ast_node_copy(Ast_node* n);
+AKELA_API bool ast_node_match(Ast_node* a, Ast_node* b);
+AKELA_API size_t ast_node_count_children(Ast_node* n);
+AKELA_API void ast_node_location_update_token(Ast_node* n, struct token* t);
+AKELA_API void ast_node_location_update(Ast_node* n, Ast_node* n2);
 AKELA_API void Type_options_init(Type_options* to);
 AKELA_API void Type_options_destroy(Type_options* to);
 AKELA_API void Type_options_reduce_dimension(Type_options* to);

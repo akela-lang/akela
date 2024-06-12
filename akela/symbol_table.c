@@ -257,7 +257,7 @@ void symbol_table_add_numeric(struct symbol_table* st, const char* name)
 	struct symbol* sym = environment_get(st->top, &bf);
 	assert(sym);
 	assert(sym->td);
-	struct ast_node* n = NULL;
+	Ast_node* n = NULL;
 	ast_node_create(&n);
 	n->type = ast_type_type_pool;
 	n->td = sym->td;
@@ -267,8 +267,8 @@ void symbol_table_add_numeric(struct symbol_table* st, const char* name)
 
 void symbol_table_numeric_pool_init(struct symbol_table* st)
 {
-	struct ast_node* pool = NULL;
-	malloc_safe((void**)&pool, sizeof(struct ast_node));
+	Ast_node* pool = NULL;
+	malloc_safe((void**)&pool, sizeof(Ast_node));
 	ast_node_init(pool);
 	st->numeric_pool = pool;
 
@@ -362,7 +362,7 @@ bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, 
 			bit_count = b->bit_count;
 		}
 
-		struct ast_node* n = st->numeric_pool->head;
+		Ast_node* n = st->numeric_pool->head;
 		assert(n);
 		do {
 			struct type_def* x = n->td;
@@ -379,7 +379,7 @@ bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, 
 	return false;
 }
 
-bool type_find_whole(struct symbol_table* st, struct ast_node* a, struct ast_node* b)
+bool type_find_whole(struct symbol_table* st, Ast_node* a, Ast_node* b)
 {
 	if (a && b) {
 		bool promote;
@@ -391,8 +391,8 @@ bool type_find_whole(struct symbol_table* st, struct ast_node* a, struct ast_nod
 			a->td = td;
 		}
 
-		struct ast_node* x = a->head;
-		struct ast_node* y = b->head;
+		Ast_node* x = a->head;
+		Ast_node* y = b->head;
 		do {
 			if (!type_find_whole(st, x, y)) {
 				return false;
@@ -423,7 +423,7 @@ bool type_def_can_cast(struct type_def* a, struct type_def* b)
 	return false;
 }
 
-bool type_use_can_cast(struct ast_node* a, struct ast_node* b)
+bool type_use_can_cast(Ast_node* a, Ast_node* b)
 {
 	if (a && b) {
 		struct type_def* td = NULL;
@@ -431,8 +431,8 @@ bool type_use_can_cast(struct ast_node* a, struct ast_node* b)
 			return false;
 		}
 
-		struct ast_node* x = a->head;
-		struct ast_node* y = b->head;
+		Ast_node* x = a->head;
+		Ast_node* y = b->head;
 		do {
 			if (!type_use_can_cast(x, y)) {
 				return false;
@@ -500,7 +500,7 @@ void transfer_module_symbols(struct environment* src, struct environment* dest, 
 	}
 }
 
-void set_current_function(struct environment* env, struct ast_node* fd)
+void set_current_function(struct environment* env, Ast_node* fd)
 {
 	struct symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct symbol));
@@ -515,7 +515,7 @@ void set_current_function(struct environment* env, struct ast_node* fd)
 	buffer_destroy(&bf);
 }
 
-struct ast_node* get_current_function(struct environment* env)
+Ast_node* get_current_function(struct environment* env)
 {
 	struct buffer bf;
 	buffer_init(&bf);

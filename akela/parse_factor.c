@@ -12,26 +12,26 @@
 #include "parse_factor.h"
 #include "type_def.h"
 
-struct ast_node* parse_not(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_literal(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_id(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_sign(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_array_literal(struct parse_state* ps, struct location* loc);
-void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_function(struct parse_state* ps, struct location* loc);
-struct ast_node* parse_if(struct parse_state* ps, struct location* loc);
-void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc);
-struct ast_node* parse_else(struct parse_state* ps, struct location* loc);
+Ast_node* parse_not(struct parse_state* ps, struct location* loc);
+Ast_node* parse_literal(struct parse_state* ps, struct location* loc);
+Ast_node* parse_id(struct parse_state* ps, struct location* loc);
+Ast_node* parse_sign(struct parse_state* ps, struct location* loc);
+Ast_node* parse_array_literal(struct parse_state* ps, struct location* loc);
+void parse_aseq(struct parse_state* ps, Ast_node* parent, struct location* loc);
+Ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc);
+Ast_node* parse_function(struct parse_state* ps, struct location* loc);
+Ast_node* parse_if(struct parse_state* ps, struct location* loc);
+void parse_elseif(struct parse_state* ps, Ast_node* parent, struct location* loc);
+Ast_node* parse_else(struct parse_state* ps, struct location* loc);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
 *		  | ! parse_factor | array_literal | function(dseq) stmts end
 * note: type system should catch incompatible sign or not factors
 */
-struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
+Ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 {
-	struct ast_node* n = NULL;
+	Ast_node* n = NULL;
 
     struct token* t0;
 	t0 = get_lookahead(ps);
@@ -66,9 +66,9 @@ struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
+Ast_node* parse_function(struct parse_state* ps, struct location* loc)
 {
-    struct ast_node* n = NULL;
+    Ast_node* n = NULL;
 
     get_location(ps, loc);
 
@@ -80,7 +80,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
 
     ast_node_create(&n);
 
-    struct ast_node* proto = NULL;
+    Ast_node* proto = NULL;
     struct location proto_loc;
     bool has_id;
     proto = parse_prototype(ps, &has_id, &proto_loc);
@@ -97,10 +97,10 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
     environment_begin(ps->st);
     declare_params(ps, proto);
     set_current_function(ps->st->top, n);
-    struct ast_node* tu = ast_node_get(proto, 3);
+    Ast_node* tu = ast_node_get(proto, 3);
     n->tu = ast_node_copy(tu);
 
-    struct ast_node* stmts_node = NULL;
+    Ast_node* stmts_node = NULL;
 	struct location loc_stmts;
     stmts_node = parse_stmts(ps, true, &loc_stmts);
 	if (stmts_node && stmts_node->type == ast_type_error) {
@@ -122,7 +122,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
 	token_destroy(end);
 	free(end);
 
-    struct ast_node* id_node = ast_node_get(proto, 0);
+    Ast_node* id_node = ast_node_get(proto, 0);
     if (n->type != ast_type_error) {
         /* check and save symbol */
         struct symbol* search = environment_get_local(ps->st->top, &id_node->value);
@@ -150,7 +150,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
         }
 
         /* check return type */
-        struct ast_node* ret = ast_node_get(proto, 2);
+        Ast_node* ret = ast_node_get(proto, 2);
         if (!check_return_type(ps, n, stmts_node, &ret->loc)) {
             n->type = ast_type_error;
         }
@@ -160,11 +160,11 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
+Ast_node* parse_if(struct parse_state* ps, struct location* loc)
 {
     get_location(ps, loc);
 
-    struct ast_node* n = NULL;
+    Ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_if;
 
@@ -177,13 +177,13 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
     token_destroy(ift);
     free(ift);
 
-    struct ast_node* cb = NULL;
+    Ast_node* cb = NULL;
     ast_node_create(&cb);
     cb->type = ast_type_conditional_branch;
 
     ast_node_add(n, cb);
 
-    struct ast_node* cond = NULL;
+    Ast_node* cond = NULL;
     struct location loc_expr;
     cond = parse_expr(ps, &loc_expr);
     if (cond && cond->type == ast_type_error) {
@@ -199,7 +199,7 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
         ast_node_add(cb, cond);
     }
 
-    struct ast_node* body = NULL;
+    Ast_node* body = NULL;
     struct location loc_stmts;
     body = parse_stmts(ps, false, &loc_stmts);
     if (body && body->type == ast_type_error) {
@@ -216,7 +216,7 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
     parse_elseif(ps, n, &loc_elseif);
 
     struct location b_loc;
-    struct ast_node* b = NULL;
+    Ast_node* b = NULL;
     b = parse_else(ps, &b_loc);
     if (b && b->type == ast_type_error) {
         n->type = ast_type_error;
@@ -238,8 +238,8 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
     if (n->type != ast_type_error) {
         if (b) {
             /* only return a value if else exists */
-            struct ast_node* p = n->head;
-            struct ast_node* tu = NULL;
+            Ast_node* p = n->head;
+            Ast_node* tu = NULL;
             if (p) {
                 tu = ast_node_copy(p->tu);
                 p = p->next;
@@ -262,7 +262,7 @@ struct ast_node* parse_if(struct parse_state* ps, struct location* loc)
 
 /* elseif-statement -> elseif expr stmts elseif | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct location* loc)
+void parse_elseif(struct parse_state* ps, Ast_node* parent, struct location* loc)
 {
     get_location(ps, loc);
 
@@ -281,11 +281,11 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
         token_destroy(eit);
         free(eit);
 
-        struct ast_node *cb = NULL;
+        Ast_node *cb = NULL;
         ast_node_create(&cb);
         cb->type = ast_type_conditional_branch;
 
-        struct ast_node *cond = NULL;
+        Ast_node *cond = NULL;
         struct location loc_cond;
         cond = parse_expr(ps, &loc_cond);
         if (cond && cond->type == ast_type_error) {
@@ -302,7 +302,7 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
             ast_node_add(cb, cond);
         }
 
-        struct ast_node *body = NULL;
+        Ast_node *body = NULL;
         struct location loc_node;
         body = parse_stmts(ps, false, &loc_node);
         if (body && body->type == ast_type_error) {
@@ -323,11 +323,11 @@ void parse_elseif(struct parse_state* ps, struct ast_node* parent, struct locati
 
 /* parse_else -> else stmts | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
+Ast_node* parse_else(struct parse_state* ps, struct location* loc)
 {
     get_location(ps, loc);
 
-    struct ast_node* n = NULL;
+    Ast_node* n = NULL;
 
     struct token* t0 = get_lookahead(ps);
     if (t0 && t0->type == token_else) {
@@ -344,7 +344,7 @@ struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
         free(et);
 
         /* stmts */
-        struct ast_node* body = NULL;
+        Ast_node* body = NULL;
         struct location body_loc;
         body = parse_stmts(ps, false, &body_loc);
         if (body && body->type == ast_type_error) {
@@ -363,9 +363,9 @@ struct ast_node* parse_else(struct parse_state* ps, struct location* loc)
     return n;
 }
 
-struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
+Ast_node* parse_not(struct parse_state* ps, struct location* loc)
 {
-	struct ast_node* n = NULL;
+	Ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_not;
 
@@ -383,7 +383,7 @@ struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-	struct ast_node* a = NULL;
+	Ast_node* a = NULL;
 	struct location loc_factor;
 	a = parse_expr(ps, &loc_factor);
     if (a && a->type == ast_type_error) {
@@ -404,7 +404,7 @@ struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
 
 	if (n->type != ast_type_error) {
 		assert(a);
-		struct ast_node* tu = a->tu;
+		Ast_node* tu = a->tu;
 		if (!tu) {
 			error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
 			/* test case: test_parse_not_error_no_value */
@@ -427,9 +427,9 @@ struct ast_node* parse_not(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
+Ast_node* parse_literal(struct parse_state* ps, struct location* loc)
 {
-	struct ast_node* n = NULL;
+	Ast_node* n = NULL;
 	char* type_name = NULL;
     ast_node_create(&n);
 
@@ -476,7 +476,7 @@ struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
         struct symbol* sym = environment_get(ps->st->top, &bf);
         assert(sym);
         assert(sym->td);
-        struct ast_node* tu = NULL;
+        Ast_node* tu = NULL;
         ast_node_create(&tu);
         tu->type = ast_type_type;
         tu->td = sym->td;
@@ -500,9 +500,9 @@ struct ast_node* parse_literal(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-struct ast_node* parse_id(struct parse_state* ps, struct location* loc)
+Ast_node* parse_id(struct parse_state* ps, struct location* loc)
 {
-	struct ast_node* n = NULL;
+	Ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_id;
 
@@ -539,13 +539,13 @@ struct ast_node* parse_id(struct parse_state* ps, struct location* loc)
 			buffer_copy(&id->value, &full_id);
 		}
 		if (is_struct) {
-			struct ast_node* tu = sym->tu->td->composite;
+			Ast_node* tu = sym->tu->td->composite;
 			assert(tu);
 			bool found_id = false;
-			struct ast_node* found_tu = NULL;
-			struct ast_node* dec = tu->head;
+			Ast_node* found_tu = NULL;
+			Ast_node* dec = tu->head;
 			while (dec) {
-				struct ast_node* field_id = ast_node_get(dec, 0);
+				Ast_node* field_id = ast_node_get(dec, 0);
 				if (field_id) {
 					if (buffer_compare(&id->value, &field_id->value)) {
 						found_id = true;
@@ -594,9 +594,9 @@ struct ast_node* parse_id(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
+Ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 {
-	struct ast_node* n = NULL;
+	Ast_node* n = NULL;
 
     ast_node_create(&n);
     n->type = ast_type_sign;
@@ -618,7 +618,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
         n->type = ast_type_error;
     }
 
-	struct ast_node* right = NULL;
+	Ast_node* right = NULL;
 	struct location loc_factor;
     right = parse_expr(ps, &loc_factor);
 	if (right && right->type == ast_type_error) {
@@ -631,7 +631,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 	}
 
 	if (n->type != ast_type_error) {
-		struct ast_node* left;
+		Ast_node* left;
 		ast_node_create(&left);
 
 		if (t0->type == token_plus) {
@@ -648,7 +648,7 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 
 	if (n->type != ast_type_error) {
 		assert(right);
-		struct ast_node* tu = right->tu;
+		Ast_node* tu = right->tu;
 		if (!tu) {
 			error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
 			/* test case: test_parse_sign_error */
@@ -667,9 +667,9 @@ struct ast_node* parse_sign(struct parse_state* ps, struct location* loc)
 /*
 * array_literal -> [aseq]
 */
-struct ast_node* parse_array_literal(struct parse_state* ps, struct location* loc)
+Ast_node* parse_array_literal(struct parse_state* ps, struct location* loc)
 {
-	struct ast_node* n = NULL;
+	Ast_node* n = NULL;
     get_location(ps, loc);
 
     ast_node_create(&n);
@@ -701,16 +701,16 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
 
     if (n->type != ast_type_error) {
         size_t count = 0;
-        struct ast_node* first = n->head;
+        Ast_node* first = n->head;
 
         if (!first) {
             error_list_set(ps->el, &rsb->loc, "array literal has no elements");
             /* test case: test_parse_array_literal_empty_error */
             n->type = ast_type_error;
         } else {
-            struct ast_node* tu_first = ast_node_copy(first->tu);
-            struct ast_node* x = first->next;
-            struct ast_node* tu_x;
+            Ast_node* tu_first = ast_node_copy(first->tu);
+            Ast_node* x = first->next;
+            Ast_node* tu_x;
             count++;
             while (x) {
                 tu_x = x->tu;
@@ -737,11 +737,11 @@ struct ast_node* parse_array_literal(struct parse_state* ps, struct location* lo
 
 /* aseq -> expr aseq' | e */
 /* aseq' = , expr aseq' | e */
-void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location *loc)
+void parse_aseq(struct parse_state* ps, Ast_node* parent, struct location *loc)
 {
     get_location(ps, loc);
 
-	struct ast_node* a = NULL;
+	Ast_node* a = NULL;
 	struct location loc_expr;
     a = parse_simple_expr(ps, &loc_expr);
 	if (a && a->type == ast_type_error) {
@@ -787,9 +787,9 @@ void parse_aseq(struct parse_state* ps, struct ast_node* parent, struct location
 	}
 }
 
-struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
+Ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
 {
-	struct ast_node* n = NULL;
+	Ast_node* n = NULL;
     ast_node_create(&n);
     n->type = ast_type_parenthesis;
 
@@ -809,7 +809,7 @@ struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
     }
 
 	/* allocate n n{} */
-	struct ast_node* a = NULL;
+	Ast_node* a = NULL;
 	struct location loc_a;
     a = parse_expr(ps, &loc_a);
 	if (a && a->type == ast_type_error) {
@@ -834,7 +834,7 @@ struct ast_node* parse_parenthesis(struct parse_state* ps, struct location* loc)
 
 	if (n->type != ast_type_error) {
 		assert(a);
-		struct ast_node* tu = a->tu;
+		Ast_node* tu = a->tu;
 		if (!tu) {
 			error_list_set(ps->el, &loc_a, "parenthesis on expression that has no value");
             n->type = ast_type_error;

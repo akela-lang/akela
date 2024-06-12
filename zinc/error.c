@@ -181,7 +181,7 @@ void location_create(struct location** loc)
     location_init(*loc);
 }
 
-const char* plural(int number)
+const char* plural(size_t number)
 {
     if (number == 1) return "";
     else return "s";

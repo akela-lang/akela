@@ -8,6 +8,7 @@
 #include "token.h"
 #include "symbol_table.h"
 #include "zinc/vector.h"
+#include "ast.h"
 
 enum type {
 	type_none,
@@ -30,7 +31,7 @@ struct type_def {
 	struct buffer name;
     int bit_count;
     bool is_signed;
-    struct ast_node* composite;
+    Ast_node* composite;
     /* get rid of */
 	bool is_generic;
 	int generic_count;

@@ -7,8 +7,6 @@
 #include "ast.h"
 #include <assert.h>
 
-/* dynamic-output-none */
-/* initialize-output ps ps{}*/
 void parse_state_init(struct parse_state* ps, struct lex_state* ls, struct error_list* el, struct symbol_table* st)
 {
 	ps->ls = ls;
@@ -105,7 +103,7 @@ struct token* get_lookahead(struct parse_state* ps)
     return t;
 }
 
-bool check_assignment_value_count(struct ast_node* a, struct ast_node* b)
+bool check_assignment_value_count(Ast_node* a, Ast_node* b)
 {
     if (a && b) {
         if (a->type != ast_type_error && b->type != ast_type_error) {

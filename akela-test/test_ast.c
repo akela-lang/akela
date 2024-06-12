@@ -5,17 +5,17 @@ void test_ast1()
 {
 	test_name(__func__);
 
-	struct ast_node* n;
+	struct Ast_node* n;
 	ast_node_create(&n);
 	n->type = ast_type_plus;
 
-	struct ast_node* a;
+	struct Ast_node* a;
 	ast_node_create(&a);
 	a->type = ast_type_number;
 	buffer_copy_str(&a->value, "a");
 	ast_node_add(n, a);
 
-	struct ast_node* b;
+	struct Ast_node* b;
 	ast_node_create(&b);
 	b->type = ast_type_number;
 	buffer_copy_str(&b->value, "b");

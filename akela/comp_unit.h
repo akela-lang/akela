@@ -9,7 +9,7 @@
 
 struct comp_unit {
 	bool valid;
-	struct ast_node* root;
+	Ast_node* root;
 	struct error_list el;
 	struct symbol_table st;
     void* input_obj;
