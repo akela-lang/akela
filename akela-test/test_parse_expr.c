@@ -85,7 +85,7 @@ void test_parse_add_error_left_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; foo() + 1", &cu);
+    parse_setup("fn foo() end; foo() + 1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "addition operand has no value");
@@ -113,7 +113,7 @@ void test_parse_add_error_right_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; 1 + foo()", &cu);
+    parse_setup("fn foo() end; 1 + foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "addition operand has no value");
@@ -429,7 +429,7 @@ void test_parse_mult_error_left_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; foo() * 1", &cu);
+    parse_setup("fn foo() end; foo() * 1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "multiplication operand has no value");
@@ -459,7 +459,7 @@ void test_parse_mult_error_right_no_value()
 	
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; 1 * foo()", &cu);
+    parse_setup("fn foo() end; 1 * foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "multiplication operand has no value");
@@ -811,7 +811,7 @@ void test_parse_power_error_left_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; 5 ^ foo()", &cu);
+    parse_setup("fn foo() end; 5 ^ foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "power operand has no value");
@@ -839,7 +839,7 @@ void test_parse_power_error_right_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; 5 ^ foo()", &cu);
+    parse_setup("fn foo() end; 5 ^ foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "power operand has no value");
@@ -1319,7 +1319,7 @@ void test_parse_comparison_error_left_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; foo() < 100", &cu);
+    parse_setup("fn foo() end; foo() < 100", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "operand has no value");
@@ -1333,7 +1333,7 @@ void test_parse_comparison_error_right_no_value()
 	
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; 100 < foo()", &cu);
+    parse_setup("fn foo() end; 100 < foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "operand has no value");
@@ -1503,7 +1503,7 @@ void test_parse_boolean_error_left_no_value()
 	struct comp_unit cu;
 
 
-    parse_setup("function foo() end; foo() && true", &cu);
+    parse_setup("fn foo() end; foo() && true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "left-side operand of boolean operator has no type");
@@ -1519,7 +1519,7 @@ void test_parse_boolean_error_right_no_value()
 	struct comp_unit cu;
 
 
-    parse_setup("function foo() end; true && foo()", &cu);
+    parse_setup("fn foo() end; true && foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
 	expect_source_error(&cu.el, "operand of boolean operator has no type");
@@ -1809,7 +1809,7 @@ void test_parse_subscript_error_no_type()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; let a::Vector{Int64}; foo()[1]", &cu);
+    parse_setup("fn foo() end; let a::Vector{Int64}; foo()[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expression has subscript but has no value");
@@ -1965,7 +1965,7 @@ void test_parse_assign_error_no_value_right()
 	
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; let a::[10]UInt8 = foo()", &cu);
+    parse_setup("fn foo() end; let a::[10]UInt8 = foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "cannot assign with operand that has no value");
@@ -2196,7 +2196,7 @@ void test_parse_expr_newline_function_call()
 
     struct comp_unit cu;
 
-    parse_setup("function foo(a::Int64, b::Int64)::Int64 a+b end; foo(\n1,\n2\n)", &cu);
+    parse_setup("fn foo(a::Int64, b::Int64)::Int64 a+b end; foo(\n1,\n2\n)", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 

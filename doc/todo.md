@@ -1,5 +1,4 @@
 # Akela Todo
-* use fn for function declarations
 * function declarations that use prototype parsing
 * remove generics
 * mut type annotation:
@@ -30,4 +29,5 @@
 * match
 * mut type annotation: match
 * modules
+* naming convention: Leading-upper-snake-case and prefixed
 * REPL

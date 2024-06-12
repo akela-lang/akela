@@ -364,7 +364,7 @@ void test_parse_function()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() let x::Int64; x+1; 5+4 end", &cu);
+    parse_setup("fn foo() let x::Int64; x+1; 5+4 end", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -440,7 +440,7 @@ void test_parse_function2()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(x::Int64) x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x::Int64) x+1; 5+4 end", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -524,7 +524,7 @@ void test_parse_function3()
 	
 	struct comp_unit cu;
 
-    parse_setup("function foo(x::Int32, y::Int32) x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x::Int32, y::Int32) x+1; 5+4 end", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -608,7 +608,7 @@ void test_parse_function4()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(x::Int32, y::Int32, z::Int32)::Int32 x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x::Int32, y::Int32, z::Int32)::Int32 x+1; 5+4 end", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse valid");
 
@@ -765,7 +765,7 @@ void test_parse_function5()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(x::Int64) let x::Int64 end", &cu);
+    parse_setup("fn foo(x::Int64) let x::Int64 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
@@ -779,7 +779,7 @@ void test_parse_function_return_type_error()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(x::Int64)::Int64 true end", &cu);
+    parse_setup("fn foo(x::Int64)::Int64 true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse valid");
 	expect_source_error(&cu.el, "returned type does not match function return type");
@@ -793,7 +793,7 @@ void test_parse_function_error_expected_left_parenthesis()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo", &cu);
+    parse_setup("fn foo", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected left parenthesis");
@@ -807,7 +807,7 @@ void test_parse_function_error_expected_right_parenthesis()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(", &cu);
+    parse_setup("fn foo(", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected right parenthesis");
@@ -821,7 +821,7 @@ void test_parse_function_error_duplicate_declaration()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; function foo() end", &cu);
+    parse_setup("fn foo() end; fn foo() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: foo");
@@ -835,7 +835,7 @@ void test_parse_function_error_identifier_reserved()
 
 	struct comp_unit cu;
 
-    parse_setup("function Int64() end", &cu);
+    parse_setup("fn Int64() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
@@ -849,7 +849,7 @@ void test_parse_function_error_expected_end()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo()", &cu);
+    parse_setup("fn foo()", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected end");
@@ -1517,7 +1517,7 @@ void test_parse_for_iteration_error_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function list() end; for i::Int64 in list() end", &cu);
+    parse_setup("fn list() end; for i::Int64 in list() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "iteration expression has no value");
@@ -1629,7 +1629,7 @@ void test_parse_for_range_error_start_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; for i::Int64 = foo():10 end", &cu);
+    parse_setup("fn foo() end; for i::Int64 = foo():10 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "start range expression has no value");
@@ -1657,7 +1657,7 @@ void test_parse_for_range_error_end_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; for i::Int64 = 1:foo() end", &cu);
+    parse_setup("fn foo() end; for i::Int64 = 1:foo() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "end range expression has no value");
@@ -1883,7 +1883,7 @@ void test_parse_dot_error_left_non_module()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; module math let pi::Float64 = 3.14 end; true.1", &cu);
+    parse_setup("fn foo() end; module math let pi::Float64 = 3.14 end; true.1", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "dot operand is not a module or struct");
@@ -1897,7 +1897,7 @@ void test_parse_dot_error_right_not_identifier()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; module math let pi::Float64 = 3.14 end; math.\"hello\"", &cu);
+    parse_setup("fn foo() end; module math let pi::Float64 = 3.14 end; math.\"hello\"", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "operand of dot operator not an identifier");
@@ -2129,7 +2129,7 @@ void test_parse_return()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo()::Int64 return 1 end", &cu);
+    parse_setup("fn foo()::Int64 return 1 end", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -2145,7 +2145,7 @@ void test_parse_return_error_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function bar() end; function foo()::Int64 return bar() end", &cu);
+    parse_setup("fn bar() end; fn foo()::Int64 return bar() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "return expression has no value");
@@ -2179,7 +2179,7 @@ void test_parse_return_error_type_does_not_match()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo()::Int64 return true end", &cu);
+    parse_setup("fn foo()::Int64 return true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "returned type does not match function return type");
@@ -2196,7 +2196,7 @@ void test_parse_stmts_newline_function()
 
     struct comp_unit cu;
 
-    parse_setup("function\nfoo\n(\na::Int64,\nb::Int64\n)::\nInt64 1 end", &cu);
+    parse_setup("fn\nfoo\n(\na::Int64,\nb::Int64\n)::\nInt64 1 end", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 

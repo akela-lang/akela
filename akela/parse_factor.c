@@ -37,7 +37,7 @@ struct ast_node* parse_factor(struct parse_state* ps, struct location* loc)
 	t0 = get_lookahead(ps);
     assert(t0);
 
-	if (t0->type == token_function) {
+	if (t0->type == token_fn) {
         n = parse_function(ps, loc);
 
     } else if (t0->type == token_if) {
@@ -73,7 +73,7 @@ struct ast_node* parse_function(struct parse_state* ps, struct location* loc)
     get_location(ps, loc);
 
     struct token* f = NULL;
-    match(ps, token_function, "expected function", &f);
+    match(ps, token_fn, "expected fn", &f);
     consume_newline(ps);
     token_destroy(f);
     free(f);

@@ -117,7 +117,7 @@ void symbol_table_add_reserved(struct environment* env, const char* name, enum t
 
 void symbol_table_init_reserved(struct environment* env)
 {
-	symbol_table_add_reserved(env, "function", token_function, NULL);
+	symbol_table_add_reserved(env, "fn", token_fn, NULL);
 	symbol_table_add_reserved(env, "end", token_end, NULL);
 	symbol_table_add_reserved(env, "if", token_if, NULL);
 	symbol_table_add_reserved(env, "elseif", token_elseif, NULL);

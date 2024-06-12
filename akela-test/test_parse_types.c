@@ -38,7 +38,7 @@ void test_parse_types_missing_declaration3()
 
 	struct comp_unit cu;
 
-    parse_setup("x = function() end", &cu);
+    parse_setup("x = fn() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "variable not declared: x");
 	expect_false(cu.valid, "valid");
@@ -52,7 +52,7 @@ void test_parse_types_double_function()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo() end; function foo() end", &cu);
+    parse_setup("fn foo() end; fn foo() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "duplicate declaration in same scope: foo");
 	expect_false(cu.valid, "valid");
@@ -80,7 +80,7 @@ void test_parse_types_reserved_type2()
 
 	struct comp_unit cu;
 
-    parse_setup("function Int64() end", &cu);
+    parse_setup("fn Int64() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
@@ -213,7 +213,7 @@ void test_parse_error_dseq_comma()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(a::Int64,) end", &cu);
+    parse_setup("fn foo(a::Int64,) end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected declaration after comma");
 	expect_false(cu.valid, "valid");
@@ -367,7 +367,7 @@ void test_parse_error_return_type()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo()::Int64 true end", &cu);
+    parse_setup("fn foo()::Int64 true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "returned type does not match function return type");
 	expect_false(cu.valid, "valid");
@@ -381,7 +381,7 @@ void test_parse_types_error_param()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(a::Int64) true end; foo(true)", &cu);
+    parse_setup("fn foo(a::Int64) true end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "parameter and aguments types do not match");
 	expect_false(cu.valid, "valid");
@@ -395,7 +395,7 @@ void test_parse_types_error_param_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("function foo(a::Int64) true end; foo(foo(1))", &cu);
+    parse_setup("fn foo(a::Int64) true end; foo(foo(1))", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "argument expression has no value");
 	expect_false(cu.valid, "valid");

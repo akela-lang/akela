@@ -655,7 +655,6 @@ void test_lex_stmts_assign()
 	lex_teardown(&ls);
 }
 
-/* dynamic-output-none */
 void test_lex_function()
 {
 	test_name(__func__);
@@ -665,82 +664,66 @@ void test_lex_function()
 	bool valid;
 	struct token* t;
 
-	/* allocate ls{} */
-	lex_setup("function foo () \n end", &ls, &el);
+	lex_setup("fn foo () \n end", &ls, &el);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
-	expect_int_equal(t->type, token_function, "function");
+	expect_int_equal(t->type, token_fn, "fn");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
 	expect_str(&t->value, "foo", "foo");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_left_paren, "left paren");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_right_paren, "right paren");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_end, "end");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
     expect_int_equal(t->type, token_eof, "eof");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy ls{} */
 	lex_teardown(&ls);
 }
 

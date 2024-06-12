@@ -19,7 +19,7 @@ enum token_enum {
     token_left_paren,
     token_right_paren,
     token_newline,
-    token_function,
+    token_fn,
     token_end,
     token_comma,
     token_semicolon,
@@ -80,7 +80,7 @@ enum result token_name_init(char** token_name)
     token_name[token_left_paren] = "left-parenthesis";
     token_name[token_right_paren] = "right-parenthesis";
     token_name[token_newline] = "newline";
-    token_name[token_function] = "function";
+    token_name[token_fn] = "fn";
     token_name[token_end] = "end";
     token_name[token_if] = "if";
     token_name[token_elseif] = "elseif";
