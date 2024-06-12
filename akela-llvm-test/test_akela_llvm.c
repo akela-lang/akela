@@ -3,36 +3,6 @@
 #include "akela/code_gen.h"
 #include "test_code_gen_tools.h"
 
-void test_code_gen_constant_integer()
-{
-    test_name(__func__);
-    CodeGenResult result;
-    CodeGenResultInit(&result);
-
-    cg_setup("1", &result);
-    expect_str(&result.value, "1", "1");
-
-    CodeGenResultDestroy(&result);
-}
-
-void test_code_gen_constant_double()
-{
-    test_name(__func__);
-    CodeGenResult result;
-    CodeGenResultInit(&result);
-
-    struct buffer v_exp;
-    buffer_init(&v_exp);
-    buffer_add_format(&v_exp, "%lf", 1.5);
-    buffer_finish(&v_exp);
-
-    cg_setup("1.5", &result);
-    expect_str(&result.value, v_exp.buf, "1.5");
-
-    buffer_destroy(&v_exp);
-    CodeGenResultDestroy(&result);
-}
-
 void test_code_gen_array_const()
 {
     test_name(__func__);
@@ -1094,8 +1064,6 @@ void test_code_gen_assign_eseq()
 
 void test_code_gen()
 {
-    test_code_gen_constant_integer();
-    test_code_gen_constant_double();
     test_code_gen_array_const();
     test_code_gen_const_string();
     test_code_gen_const_string2();
