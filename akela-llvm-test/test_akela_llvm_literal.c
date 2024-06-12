@@ -33,8 +33,36 @@ void test_akela_llvm_literal_double()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_boolean_true()
+{
+    test_name(__func__);
+    CodeGenResult result;
+    CodeGenResultInit(&result);
+
+    cg_setup("true",
+             &result);
+    expect_str(&result.value, "true", "true");
+
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_gen_boolean_false()
+{
+    test_name(__func__);
+    CodeGenResult result;
+    CodeGenResultInit(&result);
+
+    cg_setup("false",
+             &result);
+    expect_str(&result.value, "false", "false");
+
+    CodeGenResultDestroy(&result);
+}
+
 void test_akela_llvm_literal()
 {
     test_akela_llvm_literal_integer();
     test_akela_llvm_literal_double();
+    test_code_gen_boolean_true();
+    test_code_gen_boolean_false();
 }
