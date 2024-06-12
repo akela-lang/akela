@@ -1,12 +1,12 @@
 # test
 set(test_files
         test.c
-        test_akela_llvm.c
         test_code_gen_tools.c
         test_akela_llvm_literal.c
         test_akela_llvm_variable.c
         test_akela_llvm_operator.c
         test_akela_llvm_stmts.c
+        test_akela_llvm_function.c
 )
 add_executable(akela-llvm-test ${test_files})
 if(${COVERAGE} MATCHES On)

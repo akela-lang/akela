@@ -101,10 +101,31 @@ void test_code_gen_if_elseif_else()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_if_expression()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("let a::Int64 = if true 1 else 2 end\n"
+             "a\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a::Int64 = if false 1 else 2 end\n"
+             "a\n",
+             &result);
+    expect_str(&result.value, "2", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_akela_llvm_stmts()
 {
     test_code_gen_last();
     test_code_gen_if();
     test_code_gen_if_else();
     test_code_gen_if_elseif_else();
+    test_code_gen_if_expression();
 }
