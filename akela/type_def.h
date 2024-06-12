@@ -20,10 +20,6 @@ enum type {
     type_enum,
     type_tuple,
     type_module,
-    /* get rid of */
-    type_function_output,
-    type_function_input,
-    type_array,
 };
 
 struct type_def {
@@ -32,9 +28,6 @@ struct type_def {
     int bit_count;
     bool is_signed;
     Ast_node* composite;
-    /* get rid of */
-	bool is_generic;
-	int generic_count;
 };
 
 AKELA_API void type_def_create(struct type_def** n);

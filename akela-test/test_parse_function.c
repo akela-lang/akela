@@ -710,7 +710,7 @@ void test_parse_anonymous_function_return_error()
 
     struct comp_unit cu;
 
-    parse_setup("let f::Function{Output{Int64}} = fn()::Int64 true end", &cu);
+    parse_setup("let f::fn()::Int64 = fn()::Int64 true end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "returned type does not match function return type");

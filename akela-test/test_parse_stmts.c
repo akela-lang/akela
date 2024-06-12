@@ -1003,7 +1003,7 @@ void test_parse_for_iteration2()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for i::Int64 in list let i::Int64 = 1 end", &cu);
+    parse_setup("let list::[10]Int64; for i::Int64 in list let i::Int64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: i");
@@ -1059,7 +1059,7 @@ void test_parse_for_error_after_declaration()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for i::Int64 end", &cu);
+    parse_setup("let list::[10]Int64; for i::Int64 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected '=' or 'in' after for element declaration");
@@ -1073,7 +1073,7 @@ void test_parse_for_error_expected_end()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for i::Int64 = 1:10", &cu);
+    parse_setup("let list::[10]Int64; for i::Int64 = 1:10", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected end");
@@ -1087,7 +1087,7 @@ void test_parse_for_error_expected_range_start()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for i::Int64 =", &cu);
+    parse_setup("let list::[10]Int64; for i::Int64 =", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected range start");
@@ -1101,7 +1101,7 @@ void test_parse_for_error_expected_colon()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for i::Int64 = 1", &cu);
+    parse_setup("let list::[10]Int64; for i::Int64 = 1", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected colon");
@@ -1115,7 +1115,7 @@ void test_parse_for_error_expected_range_end()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for i::Int64 = 1:", &cu);
+    parse_setup("let list::[10]Int64; for i::Int64 = 1:", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected range end");
@@ -1185,7 +1185,7 @@ void test_parse_for_error_expected_iteration_expression()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for i::Int64 in:", &cu);
+    parse_setup("let list::[10]Int64; for i::Int64 in:", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected for iteration expression");

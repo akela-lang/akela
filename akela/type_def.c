@@ -20,8 +20,6 @@ void type_def_init(struct type_def* n)
 	buffer_init(&n->name);
 	n->is_signed = false;
 	n->bit_count = 0;
-	n->is_generic = false;
-	n->generic_count = 0;
 	n->composite = NULL;
 }
 
@@ -47,8 +45,6 @@ struct type_def* type_def_copy(struct type_def* n)
 		buffer_copy(&n->name, &copy->name);
 		copy->is_signed = n->is_signed;
 		copy->bit_count = n->bit_count;
-		copy->is_generic = n->is_generic;
-		copy->generic_count = n->generic_count;
 	}
 
 	return copy;

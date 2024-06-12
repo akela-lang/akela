@@ -905,9 +905,7 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
         }
 
         if (n->type != ast_type_error) {
-            if (left->tu->td->type != type_array
-                    && !left->tu->to.is_array
-                    && !left->tu->to.is_slice) {
+            if (!left->tu->to.is_array && !left->tu->to.is_slice) {
 				error_list_set(ps->el,
                                &a_loc,
                                "expression has subscript but is not an array or slice");

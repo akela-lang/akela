@@ -311,7 +311,6 @@ Ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct loca
 Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 {
 	Ast_node* n = NULL;
-	bool is_generic = false;
 
 	get_location(ps, loc);
 
@@ -436,34 +435,6 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
-        t0 = get_lookahead(ps);
-        if (t0 && t0->type == token_left_curly_brace) {
-            is_generic = true;
-            struct token* lcb = NULL;
-            if (!match(ps, token_left_curly_brace, "expected left curly brace", &lcb)) {
-                /* test case: no test case needed */
-                assert(false);
-            }
-
-            token_destroy(lcb);
-            free(lcb);
-
-            consume_newline(ps);
-
-            struct location loc_tseq;
-            parse_tseq(ps, n, &loc_tseq);
-
-            consume_newline(ps);
-
-            struct token* rcb = NULL;
-            if (!match(ps, token_right_curly_brace, "expected right curly brace", &rcb)) {
-                n->type = ast_type_error;
-            }
-
-            token_destroy(rcb);
-            free(rcb);
-        }
-
         struct symbol* sym = NULL;
         if (n->type != ast_type_error) {
             sym = environment_get(ps->st->top, &name->value);
@@ -481,31 +452,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
                 free(a);
                 n->type = ast_type_error;
                 /* test case: test_parse_error_not_a_type */
-            } else if (is_generic && !sym->td->is_generic) {
-                char* a;
-                buffer2array(&name->value, &a);
-                error_list_set(ps->el, &name->loc, "subtype was specified for non-generic type: %s", a);
-                free(a);
-                n->type = ast_type_error;
-                /* test case: test_parse_error_not_generic */
             } else {
-                if (is_generic) {
-                    size_t count = Ast_node_count_children(n);
-                    if (sym->td->generic_count > 0 && count != sym->td->generic_count) {
-                        char* a;
-                        buffer2array(&name->value, &a);
-                        error_list_set(
-                                ps->el, &name->loc, "generic type (%s) should have %d subtype%s but has %d subtype%s",
-                                a,
-                                sym->td->generic_count, plural(sym->td->generic_count),
-                                count, plural(count)
-                        );
-                        free(a);
-                        n->type = ast_type_error;
-                        /* test case: test_parse_error_subtype_count */
-                    }
-                }
-
                 if (n->type != ast_type_error) {
                     n->td = sym->td;
                 }

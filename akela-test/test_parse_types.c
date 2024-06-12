@@ -108,7 +108,7 @@ void test_parse_types_reserved_type4()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::Vector{Int64}; for Int64::Int64 in list end", &cu);
+    parse_setup("let list::[10]Int64; for Int64::Int64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
@@ -177,21 +177,6 @@ void test_parse_types_array()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
-void test_parse_types_array_error()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("let a::Int64{Int64}; a[1]", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
-	expect_false(cu.valid, "valid");
-
-    parse_teardown(&cu);
-}
-
 void test_parse_error_dseq_comma()
 {
 	test_name(__func__);
@@ -234,20 +219,6 @@ void test_parse_error_declaration_type()
     parse_teardown(&cu);
 }
 
-void test_parse_error_type_right_curly_brace()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("let a::Vector{Int64", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected right curly brace");
-	expect_false(cu.valid, "valid");
-
-    parse_teardown(&cu);
-}
-
 void test_parse_error_type_not_defined()
 {
 	test_name(__func__);
@@ -276,20 +247,6 @@ void test_parse_error_not_a_type()
     parse_teardown(&cu);
 }
 
-void test_parse_error_not_generic()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("let a::Int64{Int64}", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "subtype was specified for non-generic type: Int64");
-	expect_false(cu.valid, "valid");
-
-    parse_teardown(&cu);
-}
-
 void test_parse_error_duplicate_declarations()
 {
 	test_name(__func__);
@@ -299,34 +256,6 @@ void test_parse_error_duplicate_declarations()
     parse_setup("let x::Int64; let x::Int64", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
-	expect_false(cu.valid, "valid");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_error_type_name()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("let x::Vector{}", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected type identifier or fn");
-	expect_false(cu.valid, "valid");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_error_comma_type_name()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("let x::Vector{Int64,}", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected type identifier or fn");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -403,17 +332,12 @@ void test_parse_types()
 	test_parse_types_reserved_type4();
 	test_parse_types_exists();
 	test_parse_types_array();
-	test_parse_types_array_error();
 	test_parse_error_dseq_comma();
 	test_parse_error_declaration_double_colon();
 	test_parse_error_declaration_type();
-	test_parse_error_type_right_curly_brace();
 	test_parse_error_type_not_defined();
 	test_parse_error_not_a_type();
-	test_parse_error_not_generic();
 	test_parse_error_duplicate_declarations();
-	test_parse_error_type_name();
-	test_parse_error_comma_type_name();
 	test_parse_error_return_type();
 	test_parse_types_error_param();
 	test_parse_types_error_param_no_value();

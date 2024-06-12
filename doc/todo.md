@@ -1,6 +1,5 @@
 # Akela Todo
 * prototype allow no types if a type
-* remove generics
 * mut type annotation:
   * type [x]
   * call []

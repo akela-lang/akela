@@ -1809,7 +1809,7 @@ void test_parse_subscript_error_no_type()
 
 	struct comp_unit cu;
 
-    parse_setup("fn foo() end; let a::Vector{Int64}; foo()[1]", &cu);
+    parse_setup("fn foo() end; foo()[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expression has subscript but has no value");
@@ -1837,7 +1837,7 @@ void test_parse_subscript_error_expected_right_square_bracket()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Vector{Int64}; a[1", &cu);
+    parse_setup("let a::[10]Int64; a[1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected right-square-bracket");
