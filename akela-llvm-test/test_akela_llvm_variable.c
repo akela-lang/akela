@@ -188,6 +188,56 @@ void test_code_gen_let_int()
     CodeGenResultDestroy(&result);
 }
 
+void test_code_gen_assign()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("let a::Int64\n"
+             "a = 44\n",
+             &result);
+    expect_str(&result.value, "44", "value");
+    CodeGenResultDestroy(&result);
+}
+
+void test_code_gen_assign_multiple()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("let a,b,c::Int64\n"
+             "a = b = c = 44\n"
+             "a",
+             &result);
+    expect_str(&result.value, "44", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a,b,c::Int64\n"
+             "a = b = c = 44\n"
+             "b",
+             &result);
+    expect_str(&result.value, "44", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a,b,c::Int64\n"
+             "a = b = c = 44\n"
+             "c",
+             &result);
+    expect_str(&result.value, "44", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a,b,c::Int64\n"
+             "a = b = c = 44\n",
+             &result);
+    expect_str(&result.value, "44", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_akela_llvm_variable()
 {
     test_code_gen_array_const();
@@ -198,4 +248,6 @@ void test_akela_llvm_variable()
     test_code_gen_let_void1();
     test_code_gen_let_void2();
     test_code_gen_let_int();
+    test_code_gen_assign();
+    test_code_gen_assign_multiple();
 }
