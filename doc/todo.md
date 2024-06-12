@@ -1,6 +1,4 @@
 # Akela Todo
-* assign subarray
-* naming convention: Leading-upper-snake-case and prefixed
 * use fn for function declarations
 * function declarations that use prototype parsing
 * remove generics

@@ -481,6 +481,68 @@ void test_code_gen_assign_array_id()
     CodeGenResultDestroy(&result);
 }
 
+void test_akela_llvm_array_assign_sub_array()
+{
+    test_name(__func__);
+    CodeGenResult result;
+
+    CodeGenResultInit(&result);
+    cg_setup("let a::[4][4]Int64 = ["
+             "  [1, 2, 3, 4],\n"
+             "  [5, 6, 7, 8],\n"
+             "  [9, 10, 11, 12],\n"
+             "  [13, 14, 15, 16]\n"
+             "]\n"
+             "let b::[4]Int64\n"
+             "b = a[1]\n"
+             "b[0]\n",
+             &result);
+    expect_str(&result.value, "5", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a::[4][4]Int64 = ["
+             "  [1, 2, 3, 4],\n"
+             "  [5, 6, 7, 8],\n"
+             "  [9, 10, 11, 12],\n"
+             "  [13, 14, 15, 16]\n"
+             "]\n"
+             "let b::[4]Int64\n"
+             "b = a[1]\n"
+             "b[1]\n",
+             &result);
+    expect_str(&result.value, "6", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a::[4][4]Int64 = ["
+             "  [1, 2, 3, 4],\n"
+             "  [5, 6, 7, 8],\n"
+             "  [9, 10, 11, 12],\n"
+             "  [13, 14, 15, 16]\n"
+             "]\n"
+             "let b::[4]Int64\n"
+             "b = a[1]\n"
+             "b[2]\n",
+             &result);
+    expect_str(&result.value, "7", "value");
+    CodeGenResultDestroy(&result);
+
+    CodeGenResultInit(&result);
+    cg_setup("let a::[4][4]Int64 = ["
+             "  [1, 2, 3, 4],\n"
+             "  [5, 6, 7, 8],\n"
+             "  [9, 10, 11, 12],\n"
+             "  [13, 14, 15, 16]\n"
+             "]\n"
+             "let b::[4]Int64\n"
+             "b = a[1]\n"
+             "b[3]\n",
+             &result);
+    expect_str(&result.value, "8", "value");
+    CodeGenResultDestroy(&result);
+}
+
 void test_akela_llvm_array()
 {
     test_code_gen_array_const();
@@ -500,4 +562,5 @@ void test_akela_llvm_array()
     test_code_gen_assign_array_subscript();
     test_code_gen_assign_array_subscript2();
     test_code_gen_assign_array_allocate();
+    test_akela_llvm_array_assign_sub_array();
 }
