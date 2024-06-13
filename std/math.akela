@@ -1,3 +1,3 @@
-extern sqrt(x::Float64)::Float64
-extern log10(x::Float64)::Float64
-extern abs(x::Float64)::Float64
+extern sqrt(x: Float64)->Float64
+extern log10(x: Float64)->Float64
+extern abs(x: Float64)->Float64

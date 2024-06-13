@@ -7,8 +7,6 @@
 #include <assert.h>
 #include "zinc/error.h"
 
-/* dynamic-output-none */
-/* initialize-output t{} t{value{}} */
 void token_init(struct token* t)
 {
     t->type = token_none;
@@ -20,7 +18,6 @@ void token_init(struct token* t)
     t->prev = NULL;
 }
 
-/* dynamic-destroy t{value{}} */
 void token_destroy(struct token* t)
 {
     /* destroy t{value{}} */
@@ -29,7 +26,6 @@ void token_destroy(struct token* t)
     }
 }
 
-/* dynamic-destroy t{value{}} */
 void token_reset(struct token* t)
 {
     t->type = token_none;
@@ -37,15 +33,12 @@ void token_reset(struct token* t)
     buffer_reset(&t->value);
 }
 
-/* dynamic-output-none */
-/* initialize-output tl{} */
 void token_list_init(struct token_list* tl)
 {
     tl->head = NULL;
     tl->tail = NULL;
 }
 
-/* dynamic-output-none */
 int token_find_first(struct token_list* tl, enum token_enum type)
 {
     int i = 0;
@@ -58,7 +51,6 @@ int token_find_first(struct token_list* tl, enum token_enum type)
     return -1;
 }
 
-/* dynamic-output-none */
 int token_find_last(struct token_list* tl, enum token_enum type)
 {
     int count = token_list_count(tl);
@@ -72,7 +64,6 @@ int token_find_last(struct token_list* tl, enum token_enum type)
     return -1;
 }
 
-/* dynamic-output-none */
 int token_list_count(struct token_list* tl)
 {
     int i = 0;
@@ -82,15 +73,12 @@ int token_list_count(struct token_list* tl)
     return i;
 }
 
-/* dynamic-output tl */
 void token_list_make(struct token_list** tl)
 {
-    /* allocate tl */
     malloc_safe((void**)tl, sizeof(**tl));
     token_list_init(*tl);
 }
 
-/* dynamic-destroy tl{} */
 void token_list_destroy(struct token_list* tl)
 {
     struct token* t = tl->head;
@@ -103,8 +91,6 @@ void token_list_destroy(struct token_list* tl)
 }
 
 /* Append the new token to the end of the token list */
-/* dynamic-output-none */
-/* dynamic-transfer t t{} -> tl{} */
 void token_list_add(struct token_list* tl, struct token* t)
 {
     /* update previous */
@@ -124,7 +110,6 @@ void token_list_add(struct token_list* tl, struct token* t)
     tl->tail = t;
 }
 
-/* partition-output tl{} -> return */
 struct token* token_list_pop(struct token_list* tl)
 {
     struct token* t;
@@ -147,14 +132,11 @@ struct token* token_list_pop(struct token_list* tl)
 }
 
 /* reset tl */
-/* initialize-output tl{} */
 void token_list_reset(struct token_list* tl)
 {
     token_list_init(tl);
 }
 
-/* dynamic-output-none */
-/* dynamic-temp a */
 enum result token_list_print(struct token_list* tl)
 {
     enum result r;
@@ -169,11 +151,9 @@ enum result token_list_print(struct token_list* tl)
     while (t) {
         char* a;
 
-        /* allocate a */
         buffer2array(&t->value, &a);
         printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, token_name[t->type], a);
 
-        /* dynamic-destroy */
         free(a);
 
         t = t->next;
@@ -181,8 +161,6 @@ enum result token_list_print(struct token_list* tl)
     return result_ok;
 }
 
-/* dynamic-output-none */
-/* dynamic-temp a */
 enum result print_token(struct token* t)
 {
     enum result r;
@@ -195,17 +173,14 @@ enum result print_token(struct token* t)
 
     char* a;
 
-    /* allocate a */
     buffer2array(&t->value, &a);
     printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, token_name[t->type], a);
 
-    /* destroy a */
     free(a);
 
     return r;
 }
 
-/* dynamic-output-none */
 void get_token_location(struct token* t, struct location* loc)
 {
     *loc = t->loc;

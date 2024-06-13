@@ -57,7 +57,7 @@ void test_comp_table_include()
 	/* base */
     Vector* base_text = NULL;
     VectorCreate(&base_text, sizeof(char));
-    char base_string[] = "fn sqrt(x::Int64)::Int64 1 end";
+    char base_string[] = "fn sqrt(x: Int64)->Int64 1 end";
     VectorAdd(base_text, base_string, strlen(base_string));
     VectorAddNull(base_text);
     InputUnicodeString* base_input = NULL;

@@ -163,6 +163,10 @@ bool lex_start(struct lex_state* ls,
             t->type = token_dot;
             t->loc = loc;
             break;
+        } else if (*c == ':') {
+            t->type = token_colon;
+            t->loc = loc;
+            break;
         } else {
             char a[5];
             int i = 0;
@@ -531,8 +535,8 @@ bool lex_compound_operator(
         t->type = token_or;
         *state = state_start;
         t->loc.size += num;
-    } else if (buffer_compare_str(&t->value, "::")) {
-        t->type = token_double_colon;
+    } else if (buffer_compare_str(&t->value, "->")) {
+        t->type = token_arrow;
         *state = state_start;
         t->loc.size += num;
     } else if (t->value.buf[0] == '=') {
@@ -571,8 +575,8 @@ bool lex_compound_operator(
         *state = state_start;
         t->loc.size = 1;
         InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-    } else if (t->value.buf[0] == ':') {
-        t->type = token_colon;
+    } else if (t->value.buf[0] == '-') {
+        t->type = token_minus;
         buffer_clear(&t->value);
         *state = state_start;
         t->loc.size = 1;

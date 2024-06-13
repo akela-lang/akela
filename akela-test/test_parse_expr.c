@@ -26,14 +26,13 @@ void test_parse_blank()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_add()
 {
 	test_name(__func__);
 	
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64 = 100; speed + 1", &cu);
+    parse_setup("let speed: Int64 = 100; speed + 1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -181,7 +180,7 @@ void test_parse_add_positive()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64 = 100; speed + +1", &cu);
+    parse_setup("let speed: Int64 = 100; speed + +1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -221,7 +220,7 @@ void test_parse_add_negative()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64; speed + -1", &cu);
+    parse_setup("let speed: Int64; speed + -1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -261,7 +260,7 @@ void test_parse_sub()
 
 	struct comp_unit cu;
 
-    parse_setup("let delta::Int64 = 3; 100 - delta", &cu);
+    parse_setup("let delta: Int64 = 3; 100 - delta", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -294,7 +293,7 @@ void test_parse_sub_positive()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64; speed - +1", &cu);
+    parse_setup("let speed: Int64; speed - +1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -334,7 +333,7 @@ void test_parse_sub_negative()
 	
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64; speed - -1", &cu);
+    parse_setup("let speed: Int64; speed - -1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -489,7 +488,7 @@ void test_parse_mult_positive()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64; speed * +1", &cu);
+    parse_setup("let speed: Int64; speed * +1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -529,7 +528,7 @@ void test_parse_mult_negative()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64; speed * -1", &cu);
+    parse_setup("let speed: Int64; speed * -1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -868,7 +867,7 @@ void test_parse_paren_add()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64; (speed + 1)", &cu);
+    parse_setup("let speed: Int64; (speed + 1)", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -905,7 +904,7 @@ void test_parse_paren_add2()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64; (speed) + 1", &cu);
+    parse_setup("let speed: Int64; (speed) + 1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -942,7 +941,7 @@ void test_parse_paren_add3()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed::Int64; speed + (1)", &cu);
+    parse_setup("let speed: Int64; speed + (1)", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1190,7 +1189,7 @@ void test_parse_comparison()
 
 	struct comp_unit cu;
 
-    parse_setup("let count::Int64 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &cu);
+    parse_setup("let count: Int64 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1378,7 +1377,7 @@ void test_parse_and()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Bool; let b::Bool; a && b", &cu);
+    parse_setup("let a: Bool; let b: Bool; a && b", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1408,7 +1407,7 @@ void test_parse_or()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Bool; let b::Bool; a || b", &cu);
+    parse_setup("let a: Bool; let b: Bool; a || b", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1447,7 +1446,7 @@ void test_parse_or_or()
 	
 	struct comp_unit cu;
 
-    parse_setup("let a::Bool; let b::Bool; let c::Bool; a || b || c", &cu);
+    parse_setup("let a: Bool; let b: Bool; let c: Bool; a || b || c", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1561,7 +1560,7 @@ void test_parse_array_declare()
 
     struct comp_unit cu;
 
-    parse_setup("let a::[5]Int64\n"
+    parse_setup("let a: [5]Int64\n"
                 "a[0]\n",
                 &cu);
     expect_no_errors(&cu.el);
@@ -1579,7 +1578,7 @@ void test_parse_array_subscript()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::[10]Int64; a[1]", &cu);
+    parse_setup("let a: [10]Int64; a[1]", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1617,7 +1616,7 @@ void test_parse_array_subscript2()
 	
 	struct comp_unit cu;
 
-    parse_setup("let a::[10][10]Int64; a[0][1]", &cu);
+    parse_setup("let a: [10][10]Int64; a[0][1]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1662,7 +1661,7 @@ void test_parse_array_subscript3()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::[5]Int64; let b::Int64; a[b]", &cu);
+    parse_setup("let a: [5]Int64; let b: Int64; a[b]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1695,7 +1694,7 @@ void test_parse_expr_array_subscript_3d()
 
     struct comp_unit cu;
 
-    parse_setup("let mut x::[2][3][4 const]Int64 = \n"
+    parse_setup("let mut x: [2][3][4 const]Int64 = \n"
                 "[\n"
                 "  [\n"
                 "    [1, 2, 3, 4],\n"
@@ -1823,7 +1822,7 @@ void test_parse_subscript_error_not_array()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Int64; a[1]", &cu);
+    parse_setup("let a: Int64; a[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expression has subscript but is not an array or slice");
@@ -1837,7 +1836,7 @@ void test_parse_subscript_error_expected_right_square_bracket()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::[10]Int64; a[1", &cu);
+    parse_setup("let a: [10]Int64; a[1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected right-square-bracket");
@@ -1851,7 +1850,7 @@ void test_parse_assign_string()
 
 	struct comp_unit cu;
 
-    parse_setup("let mut a::[6 const]UInt8; a = \"hello\"", &cu);
+    parse_setup("let mut a: [6 const]UInt8; a = \"hello\"", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1889,7 +1888,7 @@ void test_parse_assign_multiple()
 
 	struct comp_unit cu;
 
-    parse_setup("let mut a::Int64; let mut b::Int64; let mut c::Int64; a = b = c = 0", &cu);
+    parse_setup("let mut a: Int64; let mut b: Int64; let mut c: Int64; a = b = c = 0", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1937,7 +1936,7 @@ void test_parse_expr_assignment_eseq_error_eseq_count()
 
     struct comp_unit cu;
 
-    parse_setup("let mut a::Int64; let mut b::Int64; let mut c::Int64; a, b, c = 1, 2", &cu);
+    parse_setup("let mut a: Int64; let mut b: Int64; let mut c: Int64; a, b, c = 1, 2", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "assignment sequence counts do not match");
@@ -1951,7 +1950,7 @@ void test_parse_let_assign_error_term()
 	
 	struct comp_unit cu;
 
-    parse_setup("let a::String =", &cu);
+    parse_setup("let a: String =", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected expression");
@@ -1965,7 +1964,7 @@ void test_parse_assign_error_no_value_right()
 	
 	struct comp_unit cu;
 
-    parse_setup("fn foo() end; let a::[10]UInt8 = foo()", &cu);
+    parse_setup("fn foo() end; let a: [10]UInt8 = foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "cannot assign with operand that has no value");
@@ -1979,7 +1978,7 @@ void test_parse_assign_error_not_compatible()
 
 	struct comp_unit cu;
 
-    parse_setup("let x::Int64 = true", &cu);
+    parse_setup("let x: Int64 = true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "values in assignment not compatible");
@@ -2007,7 +2006,7 @@ void test_parse_expr_newline_assignment()
 
     struct comp_unit cu;
 
-    parse_setup("let mut a::Int64; a =\n1", &cu);
+    parse_setup("let mut a: Int64; a =\n1", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2169,7 +2168,7 @@ void test_parse_expr_newline_subscript()
 
     struct comp_unit cu;
 
-    parse_setup("let a::[1]Int64; a[\n0\n]", &cu);
+    parse_setup("let a: [1]Int64; a[\n0\n]", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2196,7 +2195,7 @@ void test_parse_expr_newline_function_call()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(a::Int64, b::Int64)::Int64 a+b end; foo(\n1,\n2\n)", &cu);
+    parse_setup("fn foo(a: Int64, b: Int64) -> Int64 a+b end; foo(\n1,\n2\n)", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2232,7 +2231,7 @@ void test_parse_expr_newline_dot()
 
     struct comp_unit cu;
 
-    parse_setup("module base module math let pi::Float64 = 3.14 end end; base.\nmath.\npi", &cu);
+    parse_setup("module base module math let pi: Float64 = 3.14 end end; base.\nmath.\npi", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2280,9 +2279,9 @@ void test_parse_expr_assign_eseq()
 
     struct comp_unit cu;
 
-    parse_setup("let mut a::Int64\n"
-                "let mut b::Int64\n"
-                "let mut c::Int64\n"
+    parse_setup("let mut a: Int64\n"
+                "let mut b: Int64\n"
+                "let mut c: Int64\n"
                 "a,b,c = 1,2,3", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
@@ -2322,7 +2321,7 @@ void test_parse_expr_error_lvalue()
 
     struct comp_unit cu;
 
-    parse_setup("let a::Int64\n"
+    parse_setup("let a: Int64\n"
                 "1 = 1", &cu);
     expect_has_errors(&cu.el);
     expect_source_error(&cu.el, "invalid lvalue");
@@ -2337,9 +2336,9 @@ void test_parse_expr_error_eseq_lvalue()
 
     struct comp_unit cu;
 
-    parse_setup("let a::Int64\n"
-                "let b::Int64\n"
-                "let c::Int64\n"
+    parse_setup("let a: Int64\n"
+                "let b: Int64\n"
+                "let c: Int64\n"
                 "1,2,3 = 1,2,3", &cu);
     expect_has_errors(&cu.el);
     expect_source_error(&cu.el, "invalid lvalue");

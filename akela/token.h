@@ -41,7 +41,6 @@ enum token_enum {
     token_for,
     token_in,
     token_colon,
-    token_double_colon,
     token_left_square_bracket,
     token_right_square_bracket,
     token_string,
@@ -58,6 +57,7 @@ enum token_enum {
     token_extern,
     token_mut,
     token_const,
+    token_arrow,
     token_count     /* keep at the end */
 };
 
@@ -105,7 +105,6 @@ enum result token_name_init(char** token_name)
     token_name[token_for] = "for";
     token_name[token_in] = "in";
     token_name[token_colon] = ":";
-    token_name[token_double_colon] = "::";
     token_name[token_left_square_bracket] = "[";
     token_name[token_right_square_bracket] = "]";
     token_name[token_string] = "string";
@@ -122,6 +121,7 @@ enum result token_name_init(char** token_name)
     token_name[token_extern] = "extern";
     token_name[token_mut] = "mut";
     token_name[token_const] = "const";
+    token_name[token_arrow] = "arrow";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {
@@ -152,51 +152,20 @@ struct token_list {
     struct token* tail;
 };
 
-/* dynamic-output-none */
-/* initialize-output t{} t{value{}} */
 AKELA_API void token_init(struct token* t);
-
-/* dynamic-destroy t{value{}} */
 AKELA_API void token_reset(struct token* t);
-
-/* dynamic-output-none */
 AKELA_API void token_list_init(struct token_list* tl);
-
-/* dynamic-destroy tl{} */
 AKELA_API void token_list_destroy(struct token_list* tl);
-
-/* dynamic-destroy t{value{}} */
 AKELA_API void token_destroy(struct token* t);
-
-/* dynamic-output-none */
 AKELA_API int token_find_first(struct token_list* tl, enum token_enum type);
-
-/* dynamic-output-none */
 AKELA_API int token_find_last(struct token_list* tl, enum token_enum type);
-
-/* dynamic-output-none */
 AKELA_API int token_list_count(struct token_list* tl);
-
-/* dynamic-output tl */
 AKELA_API void token_list_make(struct token_list** tl);
-
-/* dynamic-output-none */
-/* dynamic-transfer t t{} -> tl{} */
 AKELA_API void token_list_add(struct token_list* tl, struct token* t);
-
-/* partition-output tl{} -> return */
 AKELA_API struct token* token_list_pop(struct token_list* tl);
-
-/* initialize-output tl{} */
 AKELA_API void token_list_reset(struct token_list* tl);
-
-/* dynamic-output-none */
 AKELA_API enum result token_list_print(struct token_list* tl);
-
-/* dynamic-output-none */
 AKELA_API enum result print_token(struct token* t);
-
-/* dynamic-output-none */
 AKELA_API void get_token_location(struct token* t, struct location* loc);
 
 #endif

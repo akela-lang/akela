@@ -860,7 +860,6 @@ void test_lex_if() {
 	lex_teardown(&ls);
 }
 
-/* dynamic-output-none */
 void test_lex_compound_operators() {
 	test_name(__func__);
 
@@ -869,80 +868,64 @@ void test_lex_compound_operators() {
 	bool valid;
 	struct token* t;
 
-	/* allocate ls{} */
-	lex_setup("== != <= >= && || ::", &ls, &el);
+	lex_setup("== != <= >= && || ->", &ls, &el);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_double_equal, "double equal");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_not_equal, "not equal");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_less_than_or_equal, "less than or equal");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_greater_than_or_equal, "greater than or equal");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_and, "and");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_or, "or");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
-	expect_int_equal(t->type, token_double_colon, "double colon");
+	expect_int_equal(t->type, token_arrow, "arrow");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy ls{} */
 	lex_teardown(&ls);
 }
 
@@ -1032,7 +1015,6 @@ void test_lex_compound_operators2() {
 	lex_teardown(&ls);
 }
 
-/* dynamic-output-none */
 void test_lex_for_range()
 {
 	test_name(__func__);
@@ -1042,93 +1024,75 @@ void test_lex_for_range()
 	bool valid;
 	struct token* t;
 
-	/* allocate ls{} */
 	lex_setup("for i = 0:10 1 end", &ls, &el);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_for, "for");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 1");
 	expect_str(&t->value, "i", "i");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal 2");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 3");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_colon, "colon 4");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 5");
 	expect_str(&t->value, "10", "10 5");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 6");
 	expect_str(&t->value, "1", "1 6");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_end, "end 7");
 
-	/* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy ls{} */
 	lex_teardown(&ls);
 }
 

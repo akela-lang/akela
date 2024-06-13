@@ -824,7 +824,7 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
     consume_newline(ps);
 
     struct token* dc = NULL;
-    if (!match(ps, token_double_colon, "expected :: after variable(s)", &dc)) {
+    if (!match(ps, token_colon, "expected colon after variable(s)", &dc)) {
         n->type = ast_type_error;
     }
     token_destroy(dc);

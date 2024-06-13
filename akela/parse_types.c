@@ -99,9 +99,9 @@ Ast_node* parse_prototype(struct parse_state* ps, bool is_function, bool require
     Ast_node* ret_type = NULL;
     struct location ret_loc;
     location_init(&ret_loc);
-    if (t0 && t0->type == token_double_colon) {
+    if (t0 && t0->type == token_arrow) {
         struct token* dc = NULL;
-        if (!match(ps, token_double_colon, "expecting double colon", &dc)) {
+        if (!match(ps, token_arrow, "expecting ->", &dc)) {
             /* test case: no test case needed */
             n->type = ast_type_error;
         }
@@ -291,7 +291,7 @@ Ast_node* parse_declaration(
             consume_newline(ps);
 
             struct token *dc = NULL;
-            if (!match(ps, token_double_colon, "expected double colon", &dc)) {
+            if (!match(ps, token_colon, "expected colon", &dc)) {
                 /* test case: test_parse_error_declaration_double_colon */
                 n->type = ast_type_error;
             }

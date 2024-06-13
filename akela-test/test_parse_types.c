@@ -66,7 +66,7 @@ void test_parse_types_reserved_type()
 
 	struct comp_unit cu;
 
-    parse_setup("let Int64::Int64", &cu);
+    parse_setup("let Int64: Int64", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
@@ -94,7 +94,7 @@ void test_parse_types_reserved_type3()
 
 	struct comp_unit cu;
 
-    parse_setup("for Int64::Int64 = 1:10 end", &cu);
+    parse_setup("for Int64: Int64 = 1:10 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
@@ -108,7 +108,7 @@ void test_parse_types_reserved_type4()
 
 	struct comp_unit cu;
 
-    parse_setup("let list::[10]Int64; for Int64::Int64 in list end", &cu);
+    parse_setup("let list: [10]Int64; for Int64: Int64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier reserved as a type: Int64");
 	expect_false(cu.valid, "valid");
@@ -122,7 +122,7 @@ void test_parse_types_exists()
 
 	struct comp_unit cu;
 
-    parse_setup("let x::SuperInt; x + 1", &cu);
+    parse_setup("let x: SuperInt; x + 1", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "type not defined: SuperInt");
 	expect_false(cu.valid, "valid");
@@ -136,7 +136,7 @@ void test_parse_types_array()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::[10]Int64; a[1]", &cu);
+    parse_setup("let a: [10]Int64; a[1]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -183,7 +183,7 @@ void test_parse_error_dseq_comma()
 
 	struct comp_unit cu;
 
-    parse_setup("fn foo(a::Int64,) end", &cu);
+    parse_setup("fn foo(a: Int64,) end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected declaration after comma");
 	expect_false(cu.valid, "valid");
@@ -191,7 +191,7 @@ void test_parse_error_dseq_comma()
     parse_teardown(&cu);
 }
 
-void test_parse_error_declaration_double_colon()
+void test_parse_error_declaration_colon()
 {
 	test_name(__func__);
 
@@ -199,7 +199,7 @@ void test_parse_error_declaration_double_colon()
 
     parse_setup("let a", &cu);
 	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected :: after variable(s)");
+	expect_source_error(&cu.el, "expected colon after variable(s)");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -211,7 +211,7 @@ void test_parse_error_declaration_type()
 	
 	struct comp_unit cu;
 
-    parse_setup("let a::", &cu);
+    parse_setup("let a: ", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "expected type identifier or fn");
 	expect_false(cu.valid, "valid");
@@ -225,7 +225,7 @@ void test_parse_error_type_not_defined()
 
 	struct comp_unit cu;
 
-    parse_setup("let a::Foo", &cu);
+    parse_setup("let a: Foo", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "type not defined: Foo");
 	expect_false(cu.valid, "valid");
@@ -239,7 +239,7 @@ void test_parse_error_not_a_type()
 	
 	struct comp_unit cu;
 
-    parse_setup("let foo::Int64; let a::foo", &cu);
+    parse_setup("let foo: Int64; let a: foo", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "identifier is not a type: foo");
 	expect_false(cu.valid, "valid");
@@ -253,7 +253,7 @@ void test_parse_error_duplicate_declarations()
 
 	struct comp_unit cu;
 
-    parse_setup("let x::Int64; let x::Int64", &cu);
+    parse_setup("let x: Int64; let x: Int64", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 	expect_false(cu.valid, "valid");
@@ -267,7 +267,7 @@ void test_parse_error_return_type()
 
 	struct comp_unit cu;
 
-    parse_setup("fn foo()::Int64 true end", &cu);
+    parse_setup("fn foo()->Int64 true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "returned type does not match function return type");
 	expect_false(cu.valid, "valid");
@@ -281,7 +281,7 @@ void test_parse_types_error_param()
 
 	struct comp_unit cu;
 
-    parse_setup("fn foo(a::Int64) true end; foo(true)", &cu);
+    parse_setup("fn foo(a: Int64) true end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "parameter and aguments types do not match");
 	expect_false(cu.valid, "valid");
@@ -295,7 +295,7 @@ void test_parse_types_error_param_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("fn foo(a::Int64) true end; foo(foo(1))", &cu);
+    parse_setup("fn foo(a: Int64) true end; foo(foo(1))", &cu);
 	expect_has_errors(&cu.el);
 	expect_source_error(&cu.el, "argument expression has no value");
 	expect_false(cu.valid, "valid");
@@ -309,7 +309,7 @@ void test_parse_types_newline_declaration()
 
     struct comp_unit cu;
 
-    parse_setup("let a\n::\nInt64", &cu);
+    parse_setup("let a\n: \nInt64", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -333,7 +333,7 @@ void test_parse_types()
 	test_parse_types_exists();
 	test_parse_types_array();
 	test_parse_error_dseq_comma();
-	test_parse_error_declaration_double_colon();
+    test_parse_error_declaration_colon();
 	test_parse_error_declaration_type();
 	test_parse_error_type_not_defined();
 	test_parse_error_not_a_type();
