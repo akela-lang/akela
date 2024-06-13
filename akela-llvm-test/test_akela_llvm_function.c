@@ -9,7 +9,7 @@ void test_code_gen_function()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo(a::Int64, b::Int64, c::Int64)\n"
+    cg_setup("fn foo(a: Int64, b: Int64, c: Int64)\n"
              "end\n",
              &result);
     expect_str(&result.value, "Function", "value");
@@ -22,7 +22,7 @@ void test_code_gen_function_ret()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo(a::Int64, b::Int64, c::Int64)::Int64\n"
+    cg_setup("fn foo(a: Int64, b: Int64, c: Int64)->Int64\n"
              "  a + b + c\n"
              "end\n",
              &result);
@@ -36,7 +36,7 @@ void test_code_gen_call()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo(a::Int64, b::Int64, c::Int64)::Int64\n"
+    cg_setup("fn foo(a: Int64, b: Int64, c: Int64)->Int64\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -51,7 +51,7 @@ void test_code_gen_call_ptr()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("let foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = fn (a::Int64, b::Int64, c::Int64)::Int64\n"
+    cg_setup("let foo: fn (Int64, Int64, Int64)->Int64 = fn (a: Int64, b: Int64, c: Int64)->Int64\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -66,7 +66,7 @@ void test_code_gen_call2()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo(a::Int64, b::Int64, c::Int64)::Bool\n"
+    cg_setup("fn foo(a: Int64, b: Int64, c: Int64)->Bool\n"
              "  true\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -81,7 +81,7 @@ void test_code_gen_call3()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo(a::Int64, b::Int64, c::Int64)::[6 const]UInt8\n"
+    cg_setup("fn foo(a: Int64, b: Int64, c: Int64)->[6 const]UInt8\n"
              "  \"hello\"\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -96,7 +96,7 @@ void test_code_gen_anonymous_function()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("let foo::Function{Input{Int64,Int64,Int64},Output{Int64}} = fn (a::Int64, b::Int64, c::Int64)::Int64\n"
+    cg_setup("let foo: fn (Int64, Int64, Int64)->Int64 = fn (a: Int64, b: Int64, c: Int64)->Int64\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 1, 1)\n",
@@ -111,7 +111,7 @@ void test_code_gen_extern()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("extern pow(x::Float64, y::Float64)::Float64\n"
+    cg_setup("extern pow(x: Float64, y: Float64)->Float64\n"
              "pow(5.0, 2.0)\n",
              &result);
     expect_str(&result.value, "25.000000", "value");
@@ -124,8 +124,8 @@ void test_code_gen_assign_function_id()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo()::Int64 1 end\n"
-             "let bar::Function{Output{Int64}}\n"
+    cg_setup("fn foo()->Int64 1 end\n"
+             "let bar: fn ()->Int64\n"
              "bar = foo\n"
              "bar()\n",
              &result);
@@ -139,8 +139,8 @@ void test_code_gen_assign_function_id2()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo()::Int64 1 end\n"
-             "fn bar()::Int64 2 end\n"
+    cg_setup("fn foo()->Int64 1 end\n"
+             "fn bar()->Int64 2 end\n"
              "foo = bar\n"
              "foo()\n",
              &result);
@@ -154,10 +154,10 @@ void test_code_gen_function_copy()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo(a::Int64)::Int64\n"
+    cg_setup("fn foo(a: Int64)->Int64\n"
              "  a + 1\n"
              "end\n"
-             "let a::Function{Input{Int64},Output{Int64}} = foo\n"
+             "let a: fn (Int64)->Int64 = foo\n"
              "a(1)\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -170,7 +170,7 @@ void test_code_gen_function_expression()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn foo(a::Int64)::Int64\n"
+    cg_setup("fn foo(a: Int64)->Int64\n"
              "  a + 1\n"
              "end(1)\n",
              &result);
@@ -184,7 +184,7 @@ void test_code_gen_anonymous_function_expression()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("fn (a::Int64)::Int64\n"
+    cg_setup("fn (a: Int64)->Int64\n"
              "  a + 1\n"
              "end(1)\n",
              &result);

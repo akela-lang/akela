@@ -34,7 +34,8 @@ FunctionType* CodeGenLLVMFunctionType(JITData* jd, Ast_node* tu)
     if (input_count > 0) {
         for (size_t i = 0; i < input_count; i++) {
             Ast_node *dec = Ast_node_get(input, i);
-            Type *dec_type = CodeGenLLVMGetType(jd, dec);
+            Ast_node *type_use = Ast_node_get(dec, 1);
+            Type *dec_type = CodeGenLLVMGetType(jd, type_use);
             param_types.push_back(dec_type);
         }
     }
@@ -240,7 +241,7 @@ Value* CodeGenLLVMDispatch(JITData* jd, Ast_node* n)
         return CodeGenLLVMIf(jd, n);
     } else if (n->type == ast_type_let) {
         return CodeGenLLVMVar(jd, n);
-    } else if (n->type == ast_type_function || n->type == ast_type_anonymous_function) {
+    } else if (n->type == ast_type_function) {
         return CodeGenLLVMFunction(jd, n);
     } else if (n->type == ast_type_assign) {
         return CodeGenLLVMAssign(jd, n);

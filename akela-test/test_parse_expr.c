@@ -2195,7 +2195,7 @@ void test_parse_expr_newline_function_call()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(a: Int64, b: Int64) -> Int64 a+b end; foo(\n1,\n2\n)", &cu);
+    parse_setup("fn foo(a: Int64, b: Int64)->Int64 a+b end; foo(\n1,\n2\n)", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 

@@ -9,8 +9,8 @@ void test_code_gen_last()
     CodeGenResult result;
     CodeGenResultInit(&result);
 
-    cg_setup("let a::Int64 = 1\n"
-             "let b::Int64 = 2\n"
+    cg_setup("let a: Int64 = 1\n"
+             "let b: Int64 = 2\n"
              "a + b\n",
              &result);
     expect_str(&result.value, "3", "value");
@@ -107,14 +107,14 @@ void test_code_gen_if_expression()
     CodeGenResult result;
 
     CodeGenResultInit(&result);
-    cg_setup("let a::Int64 = if true 1 else 2 end\n"
+    cg_setup("let a: Int64 = if true 1 else 2 end\n"
              "a\n",
              &result);
     expect_str(&result.value, "1", "value");
     CodeGenResultDestroy(&result);
 
     CodeGenResultInit(&result);
-    cg_setup("let a::Int64 = if false 1 else 2 end\n"
+    cg_setup("let a: Int64 = if false 1 else 2 end\n"
              "a\n",
              &result);
     expect_str(&result.value, "2", "value");
