@@ -62,7 +62,6 @@ typedef enum Ast_type {
 	ast_type_declaration,
 	ast_type_array_literal,
 	ast_type_array_subscript,
-	ast_type_anonymous_function,
 	ast_type_let,
 	ast_type_boolean,
 	ast_type_array,

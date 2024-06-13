@@ -34,6 +34,7 @@ struct symbol_table {
 	Ast_node* numeric_pool;
     struct environment* deactivated;
     size_t id_count;
+    struct type_def* function_type_def;
 };
 
 AKELA_API void environment_init(struct environment* env, struct environment* p);

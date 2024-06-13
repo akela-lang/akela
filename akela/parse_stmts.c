@@ -183,7 +183,7 @@ Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
     Ast_node* proto = NULL;
     struct location proto_loc;
     bool has_id;
-    proto = parse_prototype(ps, false, &has_id, &proto_loc);
+    proto = parse_prototype(ps, false, true, &has_id, &proto_loc);
     if (proto) {
         Ast_node_add(n, proto);
         if (proto->type == ast_type_error) {
@@ -306,7 +306,7 @@ Ast_node* parse_for(struct parse_state* ps, struct location* loc)
 
 	Ast_node* dec = NULL;
 	struct location loc_dec;
-    dec = parse_declaration(ps, true, &loc_dec);
+    dec = parse_declaration(ps, true, true, &loc_dec);
 	if (dec && dec->type == ast_type_error) {
         n->type = ast_type_error;
     }
@@ -640,7 +640,7 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 
 	Ast_node* a = NULL;
 	struct location a_loc;
-    a = parse_declaration(ps, false, &a_loc);
+    a = parse_declaration(ps, false, true, &a_loc);
 	if (a && a->type == ast_type_error) {
         n->type = ast_type_error;
     }
@@ -660,7 +660,7 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 
 		Ast_node* b = NULL;
 		struct location b_loc;
-        b = parse_declaration(ps, false, &b_loc);
+        b = parse_declaration(ps, false, true, &b_loc);
 		if (b && b->type == ast_type_error) {
             n->type = ast_type_error;
         }

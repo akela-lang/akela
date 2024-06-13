@@ -11,10 +11,21 @@
 extern "C" {
 #endif
 
-AKELA_API Ast_node* parse_prototype(struct parse_state* ps, bool is_type, bool* has_id, struct location* loc);
-AKELA_API Ast_node* parse_dseq(struct parse_state* ps, struct location* loc);
+AKELA_API Ast_node* parse_prototype(
+        struct parse_state* ps,
+        bool is_function,
+        bool require_param_name,
+        bool* has_id,
+        struct location* loc
+);
+AKELA_API Ast_node* parse_dseq(struct parse_state* ps, bool require_param_name, struct location* loc);
 AKELA_API void declare_params(struct parse_state* ps, Ast_node* proto);
-AKELA_API Ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct location* loc);
+AKELA_API Ast_node* parse_declaration(
+    struct parse_state* ps,
+    bool add_symbol,
+    bool require_param_name,
+    struct location* loc
+);
 AKELA_API Ast_node* parse_type(struct parse_state* ps, struct location* loc);
 AKELA_API void declare_type(struct parse_state* ps, Ast_node* n, Ast_node* id_node);
 AKELA_API bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_node, struct location* loc);

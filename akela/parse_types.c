@@ -12,6 +12,7 @@
 #include <assert.h>
 
 void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc);
+bool token_is_type(struct parse_state* ps, struct token* t);
 
 /**
  * Parse a function prototype
@@ -20,7 +21,7 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc);
  * @param loc
  * @return struct ast_node*
  */
-Ast_node* parse_prototype(struct parse_state* ps, bool is_type, bool* has_id, struct location* loc)
+Ast_node* parse_prototype(struct parse_state* ps, bool is_function, bool require_param_name, bool* has_id, struct location* loc)
 {
     Ast_node* n = NULL;
 
@@ -48,11 +49,11 @@ Ast_node* parse_prototype(struct parse_state* ps, bool is_type, bool* has_id, st
     } else {
         Ast_node_create(&id_node);
         id_node->type = ast_type_id;
-        if (!is_type) {
+        if (is_function) {
             buffer_add_format(
-                &id_node->value,
-                "__anonymous_function_%zu",
-                symbol_table_generate_id(ps->st)
+                    &id_node->value,
+                    "__anonymous_function_%zu",
+                    symbol_table_generate_id(ps->st)
             );
         }
         Ast_node_add(n, id_node);
@@ -72,7 +73,7 @@ Ast_node* parse_prototype(struct parse_state* ps, bool is_type, bool* has_id, st
     /* 1 dseq */
     Ast_node* dseq_node = NULL;
     struct location loc_dseq;
-    dseq_node = parse_dseq(ps, &loc_dseq);
+    dseq_node = parse_dseq(ps, require_param_name, &loc_dseq);
     if (dseq_node && dseq_node->type == ast_type_error) {
         n->type = ast_type_error;
     }
@@ -161,7 +162,7 @@ void declare_params(struct parse_state* ps, Ast_node* proto)
  */
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | e */
-Ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
+Ast_node* parse_dseq(struct parse_state* ps, bool require_param_name, struct location* loc)
 {
     get_location(ps, loc);
 
@@ -171,7 +172,7 @@ Ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 
 	Ast_node* dec = NULL;
 	struct location loc_dec;
-	dec = parse_declaration(ps, false, &loc_dec);
+	dec = parse_declaration(ps, false, require_param_name, &loc_dec);
     if (dec && dec->type == ast_type_error) {
         n->type = ast_type_error;
     }
@@ -200,9 +201,7 @@ Ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 
         consume_newline(ps);
 
-		Ast_node* dec = NULL;
-		struct location loc_dec;
-		dec = parse_declaration(ps, false, &loc_dec);
+		dec = parse_declaration(ps, require_param_name, false, &loc_dec);
         if (dec && dec->type == ast_type_error) {
             n->type = ast_type_error;
         }
@@ -214,12 +213,39 @@ Ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
 			break;
 		}
 
-		if (dec) {
-            Ast_node_add(n, dec);
-		}
+        Ast_node_add(n, dec);
 	}
 
 	return n;
+}
+
+/**
+ * Is the token the start of a type
+ * @param ps
+ * @param t
+ * @return true if a type, otherwise false
+ */
+bool token_is_type(struct parse_state* ps, struct token* t)
+{
+    /* array type */
+    if (t->type == token_left_square_bracket) {
+        return true;
+    }
+
+    /* function type */
+    if (t->type == token_fn) {
+        return true;
+    }
+
+    /* type id */
+    if (t->type == token_id) {
+        struct symbol* sym = environment_get(ps->st->top, &t->value);
+        if (sym && sym->td) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -230,46 +256,53 @@ Ast_node* parse_dseq(struct parse_state* ps, struct location* loc)
  * @return struct ast_node*
  */
 /* declaration -> id :: type | e */
-Ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct location* loc)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ast_node* parse_declaration(
+        struct parse_state* ps,
+        bool add_symbol,
+        bool require_param_name,
+        struct location* loc)
 {
 	Ast_node* n = NULL;
 
     get_location(ps, loc);
 
 	struct token* t0 = get_lookahead(ps);
-
-	if (t0 && t0->type == token_id) {
-        /* id::type */
+    bool type_only = !require_param_name && token_is_type(ps, t0);
+    if (t0->type == token_id || type_only) {
         Ast_node_create(&n);
         n->type = ast_type_declaration;
-
-		struct token* id = NULL;
-		if (!match(ps, token_id, "expected id", &id)) {
-            assert(false);
-            /* test case: no test case needed */
-        }
 
         Ast_node* id_node = NULL;
         Ast_node_create(&id_node);
         id_node->type = ast_type_id;
-        if (id) {
-            buffer_copy(&id->value, &id_node->value);
-        }
-
         Ast_node_add(n, id_node);
 
-        consume_newline(ps);
+        if (!type_only) {
+            struct token *id = NULL;
+            if (!match(ps, token_id, "expected id", &id)) {
+                assert(false);
+                /* test case: no test case needed */
+            }
+            buffer_copy(&id->value, &id_node->value);
+            token_destroy(id);
+            free(id);
 
-		struct token* dc = NULL;
-		if (!match(ps, token_double_colon, "expected double colon", &dc)) {
-            /* test case: test_parse_error_declaration_double_colon */
-            n->type = ast_type_error;
+            consume_newline(ps);
+
+            struct token *dc = NULL;
+            if (!match(ps, token_double_colon, "expected double colon", &dc)) {
+                /* test case: test_parse_error_declaration_double_colon */
+                n->type = ast_type_error;
+            }
+            token_destroy(dc);
+            free(dc);
+
+            consume_newline(ps);
         }
 
-        consume_newline(ps);
-
-		Ast_node* type_use = NULL;
-		struct location loc_type;
+        Ast_node* type_use = NULL;
+        struct location loc_type;
         if (add_symbol) {
             type_use = parse_type(ps, &loc_type);
             declare_type(ps, type_use, id_node);
@@ -280,22 +313,16 @@ Ast_node* parse_declaration(struct parse_state* ps, bool add_symbol, struct loca
             n->type = ast_type_error;
         }
 
-		if (!type_use) {
-			error_list_set(ps->el, &loc_type, "expected a type");
-			/* test case: test_parse_error_declaration_type */
+        if (!type_use) {
+            error_list_set(ps->el, &loc_type, "expected a type");
+            /* test case: test_parse_error_declaration_type */
             n->type = ast_type_error;
-		}
+        }
 
         if (type_use) {
             Ast_node_add(n, type_use);
         }
-
-		token_destroy(id);
-		free(id);
-
-		token_destroy(dc);
-		free(dc);
-	}
+    }
 
 	return n;
 }
@@ -410,9 +437,9 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         struct location fn_loc;
         bool has_id;
-        Ast_node* proto = parse_prototype(ps, true, &has_id, &fn_loc);
+        Ast_node* proto = parse_prototype(ps, false, false, &has_id, &fn_loc);
         if (has_id) {
-            error_list_set(ps->el, &fn_loc, "function name is unnecessary");
+            error_list_set(ps->el, &fn_loc, "function type has name");
         }
         if (proto->type == ast_type_error) {
             n->type = ast_type_error;
@@ -446,12 +473,18 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
                 n->type = ast_type_error;
                 /* test case: test_parse_error_type_not_defined */
             } else if (!sym->td) {
-                char* a;
+                char *a;
                 buffer2array(&name->value, &a);
                 error_list_set(ps->el, &name->loc, "identifier is not a type: %s", a);
                 free(a);
                 n->type = ast_type_error;
                 /* test case: test_parse_error_not_a_type */
+            } else if (sym->td == ps->st->function_type_def) {
+                error_list_set(
+                        ps->el,
+                        &name->loc,
+                        "can not directly use Function to declare a function; use fn syntax to declare a function");
+                n->type = ast_type_error;
             } else {
                 if (n->type != ast_type_error) {
                     n->td = sym->td;

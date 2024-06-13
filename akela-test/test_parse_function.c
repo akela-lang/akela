@@ -479,7 +479,7 @@ void test_parse_anonymous_function()
 
     struct comp_unit cu;
 
-    parse_setup("let mut a::fn(x::Int32,y::Int32,z::Int32)\n"
+    parse_setup("let mut a::fn(Int32, Int32, Int32)\n"
         "a = fn (x::Int32,y::Int32,z::Int32)\n"
         "    1\n"
         "  end\n",
@@ -502,7 +502,7 @@ void test_parse_anonymous_function()
 
     Ast_node* f = Ast_node_get(assign, 1);
     assert_ptr(f, "ptr f");
-    expect_int_equal(f->type, ast_type_anonymous_function, "type f");
+    expect_int_equal(f->type, ast_type_function, "type f");
 
     Ast_node* proto = Ast_node_get(f, 0);
     assert_ptr(proto, "ptr proto");
@@ -579,7 +579,7 @@ void test_parse_anonymous_function2()
     struct comp_unit cu;
 
     parse_setup(
-            "let mut a::fn (x::Int32, y::Int32, z::Int32)::Int32\n"
+            "let mut a::fn (Int32, Int32, Int32)::Int32\n"
             "a = fn(x::Int32, y::Int32, z::Int32)::Int32\n"
             "  1\n"
             "end\n",
@@ -601,7 +601,7 @@ void test_parse_anonymous_function2()
 
     Ast_node* f = Ast_node_get(assign, 1);
     assert_ptr(f, "ptr f");
-    expect_int_equal(f->type, ast_type_anonymous_function, "type f");
+    expect_int_equal(f->type, ast_type_function, "type f");
 
     Ast_node* proto = Ast_node_get(f, 0);
     assert_ptr(proto, "ptr proto");
@@ -695,7 +695,7 @@ void test_parse_anonymous_function_assignment_error()
 
     struct comp_unit cu;
 
-    parse_setup("let a::Function = fn(x::Int64) end", &cu);
+    parse_setup("let a::fn(Bool) = fn(x::Int64) end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "values in assignment not compatible");
@@ -1357,6 +1357,36 @@ void test_parse_factor_newline_anonymous_function_let()
     parse_teardown(&cu);
 }
 
+void test_parse_function_error_use_fn()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("let a::Function = fn(x::Int64) end", &cu);
+    expect_has_errors(&cu.el);
+    expect_false(cu.valid, "parse valid");
+    expect_source_error(
+            &cu.el,
+            "can not directly use Function to declare a function; use fn syntax to declare a function");
+
+    parse_teardown(&cu);
+}
+
+void test_parse_function_error_require_params_name()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("let a::fn(Int64) = fn(Int64) end", &cu);
+    expect_has_errors(&cu.el);
+    expect_false(cu.valid, "parse valid");
+    expect_source_error(&cu.el, "identifier reserved as a type: Int64");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_function()
 {
     test_parse_function_no_inputs_no_outputs();
@@ -1403,4 +1433,6 @@ void test_parse_function()
     test_parse_call_error_expected_expression();
     test_parse_factor_newline_anonymous_function();
     test_parse_factor_newline_anonymous_function_let();
+    test_parse_function_error_use_fn();
+    test_parse_function_error_require_params_name();
 }

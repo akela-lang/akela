@@ -213,6 +213,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->type = type_function;
 	buffer_copy_str(&td->name, name);
 	symbol_table_add_reserved(env, name, token_id, td);
+    st->function_type_def = td;
 
 	name = "Module";
 	malloc_safe((void**)&td, sizeof(struct type_def));

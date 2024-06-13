@@ -49,7 +49,6 @@ enum result Ast_set_names(char** names)
 	names[ast_type_declaration] = "declaration";
 	names[ast_type_array_literal] = "array-literal";
 	names[ast_type_array_subscript] = "array-subscript";
-	names[ast_type_anonymous_function] = "anonymous-function";
 	names[ast_type_let] = "let";
 	names[ast_type_boolean] = "boolean";
 	names[ast_type_array] = "array";

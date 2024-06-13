@@ -84,13 +84,9 @@ Ast_node* parse_function(struct parse_state* ps, struct location* loc)
     Ast_node* proto = NULL;
     struct location proto_loc;
     bool has_id;
-    proto = parse_prototype(ps, false, &has_id, &proto_loc);
+    proto = parse_prototype(ps, true, true, &has_id, &proto_loc);
     Ast_node_add(n, proto);
-    if (has_id) {
-        n->type = ast_type_function;
-    } else {
-        n->type = ast_type_anonymous_function;
-    }
+    n->type = ast_type_function;
     if (proto->type == ast_type_error) {
         n->type = ast_type_error;
     }
