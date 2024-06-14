@@ -29,10 +29,10 @@ bool cg_setup(const char* text, CodeGenResult* result)
     result->cu = cu;
 
     if (valid) {
-        CodeGenLLVM* cg = NULL;
-        CodeGenLLVMCreate(&cg, &cu->el);
-        valid = CodeGenJIT(cg, &CodeGenLLVMVTable, cu->root, result);
-        CodeGenLLVMDestroy(cg);
+        Code_gen_llvm* cg = NULL;
+        Code_gen_llvm_create(&cg, &cu->el);
+        valid = CodeGenJIT(cg, &Code_gen_llvm_vtable, cu->root, result);
+        Code_gen_llvm_destroy(cg);
         expect_true(valid, "valid");
     }
 

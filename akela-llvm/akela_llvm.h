@@ -1,22 +1,22 @@
-#ifndef AKELA_CODE_GEN_LLVM2_H
-#define AKELA_CODE_GEN_LLVM2_H
+#ifndef AKELA_LLVM_H
+#define AKELA_LLVM_H
 
 #include "akela/code_gen.h"
 
-typedef struct {
+typedef struct Code_gen_llvm {
     struct error_list* el;
     CodeGenInterface jit;
     bool debug;
-} CodeGenLLVM;
+} Code_gen_llvm;
 
-extern CodeGenVTable CodeGenLLVMVTable;
+extern CodeGenVTable Code_gen_llvm_vtable;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void CodeGenLLVMCreate(CodeGenLLVM** cg, struct error_list* el);
-void CodeGenLLVMDestroy(CodeGenLLVM* cg);
+void Code_gen_llvm_create(Code_gen_llvm** cg, struct error_list* el);
+void Code_gen_llvm_destroy(Code_gen_llvm* cg);
 
 #ifdef __cplusplus
 }

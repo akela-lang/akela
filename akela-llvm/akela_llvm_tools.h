@@ -45,28 +45,30 @@
 #define TOPLEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"
 
-typedef struct Code_gen_context{
-    bool in_lhs;
-} Code_gen_context;
+namespace Akela_llvm {
+    typedef struct Code_gen_context{
+        bool in_lhs;
+    } Code_gen_context;
 
-typedef struct {
-    struct error_list* el;
-    std::unique_ptr<llvm::LLVMContext> TheContext;
-    std::unique_ptr<llvm::Module> TheModule;
-    std::unique_ptr<llvm::IRBuilder<>> Builder;
-    llvm::ExitOnError ExitOnErr;
-    std::unique_ptr<llvm::orc::KaleidoscopeJIT> TheJIT;
-    llvm::Function* toplevel;
-    Code_gen_context context;
-} JITData;
+    typedef struct {
+        struct error_list* el;
+        std::unique_ptr<llvm::LLVMContext> TheContext;
+        std::unique_ptr<llvm::Module> TheModule;
+        std::unique_ptr<llvm::IRBuilder<>> Builder;
+        llvm::ExitOnError ExitOnErr;
+        std::unique_ptr<llvm::orc::KaleidoscopeJIT> TheJIT;
+        llvm::Function* toplevel;
+        Code_gen_context context;
+    } Jit_data;
 
-void JITDataInit(JITData* jd, struct error_list* el);
-llvm::FunctionType* CodeGenLLVMFunctionType(JITData* jd, Ast_node* tu);
-llvm::Type* CodeGenLLVMGetTypeScalar(JITData* jd, Ast_node* tu);
-llvm::Type* CodeGenLLVMGetType(JITData* jd, Ast_node* tu);
-llvm::Type* CodeGenLLVMReturnType(JITData* jd, Ast_node* tu);
-void CodeGenLLVMRun(JITData* jd, Ast_node* n, struct buffer* bf);
-llvm::BasicBlock* CodeGenLLVMGetLastBlock(JITData* jd, llvm::Function* f);
-llvm::Value* CodeGenLLVMDispatch(JITData* jd, Ast_node* n);
+    void Jit_data_init(Jit_data* jd, struct error_list* el);
+    llvm::FunctionType* Get_function_type(Jit_data* jd, Ast_node* tu);
+    llvm::Type* Get_scalar_type(Jit_data * jd, Ast_node * tu);
+    llvm::Type* Get_type(Jit_data * jd, Ast_node * tu);
+    llvm::Type* Get_return_type(Jit_data * jd, Ast_node * tu);
+    void Run(Jit_data* jd, Ast_node* n, struct buffer* bf);
+    llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);
+    llvm::Value* Dispatch(Jit_data* jd, Ast_node* n);
+}
 
 #endif

@@ -2,114 +2,116 @@
 
 using namespace llvm;
 
-/* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVMStmts(JITData* jd, Ast_node* n)
-{
-    Value* last_v = nullptr;
-    Ast_node* last_n = nullptr;
-    Ast_node* stmt = Ast_node_get(n, 0);
-    while (stmt) {
-        last_v = CodeGenLLVMDispatch(jd, stmt);
-        last_n = stmt;
-        stmt = stmt->next;
-    }
-    return last_v;
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-Value* CodeGenLLVMIf(JITData* jd, Ast_node* n)
-{
-    bool has_else = false;
-
-    Type* type = nullptr;
-    Value* ptr = nullptr;
-    if (n->tu) {
-        type = CodeGenLLVMGetType(jd, n->tu);
-    }
-    if (type) {
-        ptr = jd->Builder->CreateAlloca(type, nullptr, "ifresult");
+namespace Akela_llvm {
+    /* NOLINTNEXTLINE(misc-no-recursion) */
+    Value* Handle_stmts(Jit_data* jd, Ast_node* n)
+    {
+        Value* last_v = nullptr;
+        Ast_node* last_n = nullptr;
+        Ast_node* stmt = Ast_node_get(n, 0);
+        while (stmt) {
+            last_v = Dispatch(jd, stmt);
+            last_n = stmt;
+            stmt = stmt->next;
+        }
+        return last_v;
     }
 
-    struct list l{};
-    list_init(&l);
+    /* NOLINTNEXTLINE(misc-no-recursion) */
+    Value* Handle_if(Jit_data* jd, Ast_node* n)
+    {
+        bool has_else = false;
 
-    BasicBlock* cond_block = nullptr;
-    BasicBlock* then_block = nullptr;
-    BasicBlock* next_block = nullptr;
-    int i = 0;
-    while (true) {
-        Ast_node* branch = Ast_node_get(n, i);
-        if (!branch) {
-            break;
+        Type* type = nullptr;
+        Value* ptr = nullptr;
+        if (n->tu) {
+            type = Get_type(jd, n->tu);
+        }
+        if (type) {
+            ptr = jd->Builder->CreateAlloca(type, nullptr, "ifresult");
         }
 
-        if (branch->type == ast_type_conditional_branch) {
-            Ast_node* cond = Ast_node_get(branch, 0);
-            Ast_node* body = Ast_node_get(branch, 1);
+        struct list l{};
+        list_init(&l);
 
-            if (next_block) {
-                cond_block = next_block;
-            } else {
-                if (i >= 1) {
-                    cond_block = BasicBlock::Create(*jd->TheContext, "condtmp", jd->toplevel);
+        BasicBlock* cond_block = nullptr;
+        BasicBlock* then_block = nullptr;
+        BasicBlock* next_block = nullptr;
+        int i = 0;
+        while (true) {
+            Ast_node* branch = Ast_node_get(n, i);
+            if (!branch) {
+                break;
+            }
+
+            if (branch->type == ast_type_conditional_branch) {
+                Ast_node* cond = Ast_node_get(branch, 0);
+                Ast_node* body = Ast_node_get(branch, 1);
+
+                if (next_block) {
+                    cond_block = next_block;
+                } else {
+                    if (i >= 1) {
+                        cond_block = BasicBlock::Create(*jd->TheContext, "condtmp", jd->toplevel);
+                    }
                 }
+                then_block = BasicBlock::Create(*jd->TheContext, "thentmp", jd->toplevel);
+                next_block = BasicBlock::Create(*jd->TheContext, "nexttmp", jd->toplevel);
+
+                if (cond_block) {
+                    jd->Builder->SetInsertPoint(cond_block);
+                }
+                Value* cond_value = Dispatch(jd, cond);
+                Value* branch_value = jd->Builder->CreateCondBr(cond_value, then_block, next_block);
+
+                jd->Builder->SetInsertPoint(then_block);
+                Value* body_value = Handle_stmts(jd, body);
+                if (type) {
+                    jd->Builder->CreateStore(body_value, ptr);
+                }
+                list_add_item(&l, then_block);      /* branch to end after end_block is created */
+
+                jd->Builder->SetInsertPoint(next_block);
+
+            } else if (branch->type == ast_type_default_branch) {
+                Ast_node* body = Ast_node_get(branch, 0);
+
+                Value* body_value = Handle_stmts(jd, body);
+                if (type) {
+                    jd->Builder->CreateStore(body_value, ptr);
+                }
+                list_add_item(&l, next_block);      /* branch to end after end_block is created */
+                has_else = true;
+
+            } else {
+                assert(false);
             }
-            then_block = BasicBlock::Create(*jd->TheContext, "thentmp", jd->toplevel);
-            next_block = BasicBlock::Create(*jd->TheContext, "nexttmp", jd->toplevel);
 
-            if (cond_block) {
-                jd->Builder->SetInsertPoint(cond_block);
-            }
-            Value* cond_value = CodeGenLLVMDispatch(jd, cond);
-            Value* branch_value = jd->Builder->CreateCondBr(cond_value, then_block, next_block);
-
-            jd->Builder->SetInsertPoint(then_block);
-            Value* body_value = CodeGenLLVMStmts(jd, body);
-            if (type) {
-                jd->Builder->CreateStore(body_value, ptr);
-            }
-            list_add_item(&l, then_block);      /* branch to end after end_block is created */
-
-            jd->Builder->SetInsertPoint(next_block);
-
-        } else if (branch->type == ast_type_default_branch) {
-            Ast_node* body = Ast_node_get(branch, 0);
-
-            Value* body_value = CodeGenLLVMStmts(jd, body);
-            if (type) {
-                jd->Builder->CreateStore(body_value, ptr);
-            }
-            list_add_item(&l, next_block);      /* branch to end after end_block is created */
-            has_else = true;
-
-        } else {
-            assert(false);
+            i++;
         }
 
-        i++;
-    }
+        BasicBlock* end_block = nullptr;
+        if (has_else) {
+            end_block = BasicBlock::Create(*jd->TheContext, "endiftmp", jd->toplevel);
+        } else {
+            end_block = next_block;
+        }
+        struct list_node* ln = l.head;
+        while (ln) {
+            auto p = (BasicBlock*)ln->item;
+            jd->Builder->SetInsertPoint(p);
+            jd->Builder->CreateBr(end_block);
+            ln = ln->next;
+        }
 
-    BasicBlock* end_block = nullptr;
-    if (has_else) {
-        end_block = BasicBlock::Create(*jd->TheContext, "endiftmp", jd->toplevel);
-    } else {
-        end_block = next_block;
-    }
-    struct list_node* ln = l.head;
-    while (ln) {
-        auto p = (BasicBlock*)ln->item;
-        jd->Builder->SetInsertPoint(p);
-        jd->Builder->CreateBr(end_block);
-        ln = ln->next;
-    }
+        jd->Builder->SetInsertPoint(end_block);
+        Value* value = nullptr;
+        if (type) {
+            value = jd->Builder->CreateLoad(type, ptr);
+        }
 
-    jd->Builder->SetInsertPoint(end_block);
-    Value* value = nullptr;
-    if (type) {
-        value = jd->Builder->CreateLoad(type, ptr);
+        list_destroy(&l, nullptr);
+
+        return value;
     }
-
-    list_destroy(&l, nullptr);
-
-    return value;
 }

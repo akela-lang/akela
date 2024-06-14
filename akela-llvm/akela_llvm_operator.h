@@ -3,8 +3,10 @@
 
 #include "akela_llvm_tools.h"
 
-llvm::Value* CodeGenLLVMAdd(JITData* jd, Ast_node* n);
-llvm::Value* CodeGenLLVMSub(JITData* jd, Ast_node* n);
-llvm::Value* CodeGenLLVMSign(JITData* jd, Ast_node* n);
+namespace Akela_llvm {
+    llvm::Value* Handle_add(Jit_data* jd, Ast_node* n);
+    llvm::Value* Handle_sub(Jit_data* jd, Ast_node* n);
+    llvm::Value* Handle_sign(Jit_data* jd, Ast_node* n);
+}
 
 #endif

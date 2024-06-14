@@ -3,7 +3,9 @@
 
 #include "akela_llvm_tools.h"
 
-llvm::Value* CodeGenLLVMStmts(JITData* jd, Ast_node* n);
-llvm::Value* CodeGenLLVMIf(JITData* jd, Ast_node* n);
+namespace Akela_llvm {
+    llvm::Value* Handle_stmts(Jit_data* jd, Ast_node* n);
+    llvm::Value* Handle_if(Jit_data* jd, Ast_node* n);
+}
 
 #endif

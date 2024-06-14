@@ -7,6 +7,7 @@ set(lib_files
         akela_llvm_variable.cpp
         akela_llvm_stmts.cpp
         akela_llvm_operator.cpp
+        akela_llvm_jit.cpp
 )
 
 add_library(akela-llvm STATIC ${lib_files})

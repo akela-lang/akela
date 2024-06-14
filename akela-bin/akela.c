@@ -51,11 +51,11 @@ int main(int argc, char** argv)
     struct buffer bf;
     buffer_init(&bf);
 
-    CodeGenLLVM* cg = NULL;
-    CodeGenLLVMCreate(&cg, &cu.el);
+    Code_gen_llvm* cg = NULL;
+    Code_gen_llvm_create(&cg, &cu.el);
     CodeGenResult result;
     CodeGenResultInit(&result);
-    CodeGenJIT(cg, &CodeGenLLVMVTable, cu.root, &result);
+    CodeGenJIT(cg, &Code_gen_llvm_vtable, cu.root, &result);
 
     printf("%s\n", result.value.buf);
     CodeGenResultDestroy(&result);
