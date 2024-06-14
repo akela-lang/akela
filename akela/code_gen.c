@@ -1,6 +1,6 @@
 #include "code_gen.h"
 
-void CodeGenResultInit(CodeGenResult* result)
+void Code_gen_result_init(Code_gen_result* result)
 {
     result->cu = NULL;
     buffer_init(&result->value);
@@ -8,7 +8,7 @@ void CodeGenResultInit(CodeGenResult* result)
     result->debug = false;
 }
 
-void CodeGenResultDestroy(CodeGenResult* result)
+void Code_gen_result_destroy(Code_gen_result* result)
 {
     comp_unit_destroy(result->cu);
     free(result->cu);
@@ -16,10 +16,10 @@ void CodeGenResultDestroy(CodeGenResult* result)
     buffer_destroy(&result->text);
 }
 
-bool CodeGenJIT(void* cg_obj, CodeGenVTable* cg_vtable, Ast_node* n, CodeGenResult* result)
+bool Code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Ast_node* n, Code_gen_result* result)
 {
     if (cg_obj && cg_vtable) {
-        CodeGenInterface* code_gen_jit = cg_obj + cg_vtable->jit_offset;
+        Code_gen_interface* code_gen_jit = cg_obj + cg_vtable->jit_offset;
         return (*code_gen_jit)(cg_obj, n, result);
     }
     return true;

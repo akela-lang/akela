@@ -5,11 +5,11 @@
 
 typedef struct Code_gen_llvm {
     struct error_list* el;
-    CodeGenInterface jit;
+    Code_gen_interface jit;
     bool debug;
 } Code_gen_llvm;
 
-extern CodeGenVTable Code_gen_llvm_vtable;
+extern Code_gen_vtable Code_gen_llvm_vtable;
 
 #ifdef __cplusplus
 extern "C" {

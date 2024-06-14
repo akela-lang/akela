@@ -53,12 +53,12 @@ int main(int argc, char** argv)
 
     Code_gen_llvm* cg = NULL;
     Code_gen_llvm_create(&cg, &cu.el);
-    CodeGenResult result;
-    CodeGenResultInit(&result);
-    CodeGenJIT(cg, &Code_gen_llvm_vtable, cu.root, &result);
+    Code_gen_result result;
+    Code_gen_result_init(&result);
+    Code_gen_jit(cg, &Code_gen_llvm_vtable, cu.root, &result);
 
     printf("%s\n", result.value.buf);
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 
     comp_unit_destroy(&cu);
 

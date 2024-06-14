@@ -4,7 +4,7 @@ using namespace llvm;
 using namespace llvm::orc;
 
 namespace Akela_llvm {
-    bool Jit(Code_gen_llvm* cg, Ast_node* n, CodeGenResult* result)
+    bool Jit(Code_gen_llvm* cg, Ast_node* n, Code_gen_result* result)
     {
         bool valid = true;
 

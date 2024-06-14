@@ -9,7 +9,7 @@
 #include <string.h>
 #include "zinc/input_unicode_string.h"
 
-bool cg_setup(const char* text, CodeGenResult* result)
+bool cg_setup(const char* text, Code_gen_result* result)
 {
     struct comp_unit* cu = NULL;
     malloc_safe((void**)&cu, sizeof(struct comp_unit));
@@ -31,7 +31,7 @@ bool cg_setup(const char* text, CodeGenResult* result)
     if (valid) {
         Code_gen_llvm* cg = NULL;
         Code_gen_llvm_create(&cg, &cu->el);
-        valid = CodeGenJIT(cg, &Code_gen_llvm_vtable, cu->root, result);
+        valid = Code_gen_jit(cg, &Code_gen_llvm_vtable, cu->root, result);
         Code_gen_llvm_destroy(cg);
         expect_true(valid, "valid");
     }

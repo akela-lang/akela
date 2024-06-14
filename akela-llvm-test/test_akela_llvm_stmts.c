@@ -6,8 +6,8 @@
 void test_code_gen_last()
 {
     test_name(__func__);
-    CodeGenResult result;
-    CodeGenResultInit(&result);
+    Code_gen_result result;
+    Code_gen_result_init(&result);
 
     cg_setup("let a: Int64 = 1\n"
              "let b: Int64 = 2\n"
@@ -15,14 +15,14 @@ void test_code_gen_last()
              &result);
     expect_str(&result.value, "3", "value");
 
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if()
 {
     test_name(__func__);
-    CodeGenResult result;
-    CodeGenResultInit(&result);
+    Code_gen_result result;
+    Code_gen_result_init(&result);
 
     cg_setup("if true\n"
              "  1\n"
@@ -30,15 +30,15 @@ void test_code_gen_if()
              &result);
     expect_str(&result.value, "", "value");
 
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_else()
 {
     test_name(__func__);
-    CodeGenResult result;
+    Code_gen_result result;
 
-    CodeGenResultInit(&result);
+    Code_gen_result_init(&result);
     cg_setup("if true\n"
              "  1\n"
              "else\n"
@@ -46,9 +46,9 @@ void test_code_gen_if_else()
              "end\n",
              &result);
     expect_str(&result.value, "1", "1 value");
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 
-    CodeGenResultInit(&result);
+    Code_gen_result_init(&result);
     cg_setup("if false\n"
              "  1\n"
              "else\n"
@@ -56,15 +56,15 @@ void test_code_gen_if_else()
              "end\n",
              &result);
     expect_str(&result.value, "2", "2 value");
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_elseif_else()
 {
     test_name(__func__);
-    CodeGenResult result;
+    Code_gen_result result;
 
-    CodeGenResultInit(&result);
+    Code_gen_result_init(&result);
     cg_setup("if true\n"
              "  1\n"
              "elseif true\n"
@@ -74,9 +74,9 @@ void test_code_gen_if_elseif_else()
              "end\n",
              &result);
     expect_str(&result.value, "1", "value");
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 
-    CodeGenResultInit(&result);
+    Code_gen_result_init(&result);
     cg_setup("if false\n"
              "  1\n"
              "elseif true\n"
@@ -86,9 +86,9 @@ void test_code_gen_if_elseif_else()
              "end\n",
              &result);
     expect_str(&result.value, "2", "value");
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 
-    CodeGenResultInit(&result);
+    Code_gen_result_init(&result);
     cg_setup("if false\n"
              "  1\n"
              "elseif false\n"
@@ -98,27 +98,27 @@ void test_code_gen_if_elseif_else()
              "end\n",
              &result);
     expect_str(&result.value, "3", "value");
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_expression()
 {
     test_name(__func__);
-    CodeGenResult result;
+    Code_gen_result result;
 
-    CodeGenResultInit(&result);
+    Code_gen_result_init(&result);
     cg_setup("let a: Int64 = if true 1 else 2 end\n"
              "a\n",
              &result);
     expect_str(&result.value, "1", "value");
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 
-    CodeGenResultInit(&result);
+    Code_gen_result_init(&result);
     cg_setup("let a: Int64 = if false 1 else 2 end\n"
              "a\n",
              &result);
     expect_str(&result.value, "2", "value");
-    CodeGenResultDestroy(&result);
+    Code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_stmts()

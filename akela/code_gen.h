@@ -7,19 +7,19 @@
 
 typedef struct {
     u_int8_t jit_offset;
-} CodeGenVTable;
+} Code_gen_vtable;
 
 typedef struct {
     struct comp_unit* cu;
     struct buffer value;
     struct buffer text;
     bool debug;
-} CodeGenResult;
+} Code_gen_result;
 
-typedef bool (*CodeGenInterface)(void* cg_obj, Ast_node* n, CodeGenResult* result);
+typedef bool (*Code_gen_interface)(void* cg_obj, Ast_node* n, Code_gen_result* result);
 
-void CodeGenResultInit(CodeGenResult* result);
-void CodeGenResultDestroy(CodeGenResult* result);
-bool CodeGenJIT(void* cg_obj, CodeGenVTable* cg_vtable, Ast_node* n, CodeGenResult* result);
+void Code_gen_result_init(Code_gen_result* result);
+void Code_gen_result_destroy(Code_gen_result* result);
+bool Code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Ast_node* n, Code_gen_result* result);
 
 #endif

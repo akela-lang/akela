@@ -3,14 +3,14 @@
 #include <cstddef>
 
 
-CodeGenVTable Code_gen_llvm_vtable = {
+Code_gen_vtable Code_gen_llvm_vtable = {
         .jit_offset = offsetof(Code_gen_llvm, jit),
 };
 
 void Code_gen_llvm_init(Code_gen_llvm* cg, struct error_list* el)
 {
     cg->el = el;
-    cg->jit = (CodeGenInterface) Akela_llvm::Jit;
+    cg->jit = (Code_gen_interface) Akela_llvm::Jit;
     cg->debug = false;
 }
 
