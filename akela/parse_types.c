@@ -852,9 +852,8 @@ Ast_node* make_constructor(struct type_def* td)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Override_rhs(Ast_node* tu, Ast_node* rhs)
 {
-    int bit_count = tu->td->bit_count;
     if (tu->td->type == type_integer || tu->td->type == type_float) {
-        rhs->tu->td->bit_count = bit_count;
+        rhs->tu->td = tu->td;
         if (rhs->type == ast_type_sign) {
             Ast_node* p = Ast_node_get(rhs, 1);
             Override_rhs(tu, p);

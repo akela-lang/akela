@@ -4,6 +4,10 @@ using namespace llvm;
 using namespace llvm::orc;
 
 namespace Akela_llvm {
+    void declare_abort(Jit_data* jd);
+    void declare_printf(Jit_data* jd);
+    void declare_exit(Jit_data* jd);
+
     bool Jit(Code_gen_llvm* cg, Ast_node* n, Code_gen_result* result)
     {
         bool valid = true;
@@ -13,6 +17,10 @@ namespace Akela_llvm {
         InitializeNativeTargetAsmParser();
         Jit_data jd;
         Jit_data_init(&jd, cg->el);
+
+        declare_abort(&jd);
+        declare_printf(&jd);
+        declare_exit(&jd);
 
         std::vector<Type*> param_types = std::vector<Type*>();
         Type* ret_type = Get_return_type(&jd, n->tu);
@@ -79,5 +87,37 @@ namespace Akela_llvm {
         buffer_finish(&result->text);
 
         return true;
+    }
+
+    void declare_abort(Jit_data* jd)
+    {
+        std::vector<Type*> param_types = std::vector<Type*>();
+        Type* ret_type = Type::getVoidTy(*jd->TheContext);
+        FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
+        Function* f = Function::Create(func_type, Function::ExternalLinkage, "abort", *jd->TheModule);
+        jd->abort_function = f;
+    }
+
+    void declare_printf(Jit_data* jd)
+    {
+        std::vector<Type*> param_types = std::vector<Type*>();
+        Type* char_type = Type::getInt8Ty(*jd->TheContext);
+        Type* string_type = char_type->getPointerTo();
+        param_types.push_back(string_type);
+        Type* ret_type = Type::getVoidTy(*jd->TheContext);
+        FunctionType *func_type = FunctionType::get(ret_type, param_types, true);
+        Function* f = Function::Create(func_type, Function::ExternalLinkage, "printf", *jd->TheModule);
+        jd->printf_function = f;
+    }
+
+    void declare_exit(Jit_data* jd)
+    {
+        std::vector<Type*> param_types = std::vector<Type*>();
+        Type* status_type = Type::getInt32Ty(*jd->TheContext);
+        param_types.push_back(status_type);
+        Type* ret_type = Type::getVoidTy(*jd->TheContext);
+        FunctionType *func_type = FunctionType::get(ret_type, param_types, true);
+        Function* f = Function::Create(func_type, Function::ExternalLinkage, "exit", *jd->TheModule);
+        jd->exit_function = f;
     }
 }

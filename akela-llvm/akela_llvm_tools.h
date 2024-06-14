@@ -41,6 +41,7 @@
 #include "zinc/vector.h"
 #include <cassert>
 #include <iostream>
+#include <setjmp.h>
 
 #define TOPLEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"
@@ -59,6 +60,9 @@ namespace Akela_llvm {
         std::unique_ptr<llvm::orc::KaleidoscopeJIT> TheJIT;
         llvm::Function* toplevel;
         Code_gen_context context;
+        llvm::Function* abort_function;
+        llvm::Function* printf_function;
+        llvm::Function* exit_function;
     } Jit_data;
 
     void Jit_data_init(Jit_data* jd, struct error_list* el);

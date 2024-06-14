@@ -222,6 +222,35 @@ namespace Akela_llvm {
 
         Ast_node* subscript = array->next;
         Value* subscript_value = Dispatch(jd, subscript);
+
+        assert(array->tu->to.dim.count >= 1);
+        size_t size = *(size_t*)VECTOR_PTR(&array->tu->to.dim, 0);
+        Type* size_type = Type::getInt64Ty(*jd->TheContext);
+        Value* size_value = ConstantInt::get(size_type, APInt(64, size, false));
+
+        Value* cond = jd->Builder->CreateICmpULT(subscript_value, size_value);
+
+        BasicBlock* abort_block = BasicBlock::Create(*jd->TheContext, "aborttmp", jd->toplevel);
+        BasicBlock* continue_block = BasicBlock::Create(*jd->TheContext, "continuetmp", jd->toplevel);
+
+        jd->Builder->CreateCondBr(cond, continue_block, abort_block);
+
+        jd->Builder->SetInsertPoint(abort_block);
+
+        std::vector<Value*> printf_args;
+        Value* printf_string = jd->Builder->CreateGlobalString("invalid subscript index", ".str");
+        printf_args.push_back(printf_string);
+        jd->Builder->CreateCall(jd->printf_function, printf_args);
+
+        std::vector<Value*> exit_args;
+        Type* status_type = Type::getInt32Ty(*jd->TheContext);
+        Value* status_value = ConstantInt::get(status_type, APInt(32, 1, false));
+        exit_args.push_back(status_value);
+        jd->Builder->CreateCall(jd->exit_function, exit_args);
+        jd->Builder->CreateBr(continue_block);
+
+        jd->Builder->SetInsertPoint(continue_block);
+
         std::vector<Value*> list;
         list.push_back(subscript_value);
         Value* element_ptr = jd->Builder->CreateInBoundsGEP(element_type, array_value, list, "subscripttmp");

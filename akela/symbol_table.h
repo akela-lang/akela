@@ -60,5 +60,6 @@ AKELA_API void transfer_module_symbols(struct environment* src, struct environme
 AKELA_API void set_current_function(struct environment* env, Ast_node* fd);
 AKELA_API Ast_node* get_current_function(struct environment* env);
 AKELA_API size_t symbol_table_generate_id(struct symbol_table* st);
+AKELA_API void symbol_table_print(struct symbol_table* st);
 
 #endif

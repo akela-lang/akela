@@ -2,18 +2,20 @@
 #include "zinc/error_unit_test.h"
 #include "akela/code_gen.h"
 #include "test_code_gen_tools.h"
+#include <signal.h>
+#include <string.h>
+#include <setjmp.h>
 
 void test_code_gen_array_const()
 {
     test_name(__func__);
     Code_gen_result result;
-    Code_gen_result_init(&result);
 
+    Code_gen_result_init(&result);
     cg_setup("let a: [4 const]UInt8 = [1,2,3,4]\n"
              "a[1]\n",
              &result);
     expect_str(&result.value, "2", "2");
-
     Code_gen_result_destroy(&result);
 }
 
@@ -543,6 +545,20 @@ void test_akela_llvm_array_assign_sub_array()
     Code_gen_result_destroy(&result);
 }
 
+void test_akela_llvm_array_subscript_exit()
+{
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup("let a: [4]Int64 = [1,2,3,4]\n"
+             "a[4]\n",
+             &result);
+    expect_true(true, "exit");
+
+    Code_gen_result_destroy(&result);
+}
+
 void test_akela_llvm_array()
 {
     test_code_gen_array_const();
@@ -563,4 +579,5 @@ void test_akela_llvm_array()
     test_code_gen_assign_array_subscript2();
     test_code_gen_assign_array_allocate();
     test_akela_llvm_array_assign_sub_array();
+    //test_akela_llvm_array_subscript_exit();
 }

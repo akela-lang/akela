@@ -1,5 +1,4 @@
 # Akela Todo
-* array indexing check
 * placeholder array size in constructor
 * slice
 * shorter type names

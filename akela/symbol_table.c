@@ -507,3 +507,37 @@ size_t symbol_table_generate_id(struct symbol_table* st)
 {
     return st->id_count++;
 }
+
+void symbol_table_print(struct symbol_table* st)
+{
+    printf("\n");
+    struct environment* p = st->top;
+    while (p) {
+        struct hash_table* ht = &p->ht;
+        for (int i = 0; i < ht->size; i++) {
+            struct hash_list* list = &ht->buckets[i];
+            struct hash_entry* entry = list->head;
+            while (entry) {
+                buffer_finish(&entry->value);
+                printf("%s ", entry->value.buf);
+                struct symbol* sym = entry->item;
+                if (sym->td) {
+                    buffer_finish(&sym->td->name);
+                    printf("%s %d %d %d", sym->td->name.buf, sym->td->type, sym->td->bit_count, sym->td->is_signed);
+                }
+                printf("\n");
+                entry = entry->next;
+            }
+        }
+        p = p->prev;
+    }
+
+    struct buffer bf;
+    buffer_init(&bf);
+    buffer_copy_str(&bf, "Int64");
+    struct symbol* sym = environment_get(st->top, &bf);
+    assert(sym && sym->td);
+    assert(sym->td->bit_count == 64);
+    assert(sym->td->is_signed);
+    buffer_destroy(&bf);
+}

@@ -1,10 +1,7 @@
 /cmake-build-debug
 /cmake-build-release
+/build
 /.vs
 /.vscode
 /.idea
-/main.bc
-/main.ll
-/toplevel.bc
-/toplevel.ll
 /coverage

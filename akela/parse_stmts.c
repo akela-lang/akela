@@ -176,6 +176,8 @@ Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
         /* test case: no test case needed */
         assert(false);
     }
+    token_destroy(ext);
+    free(ext);
 
     Ast_node_create(&n);
     n->type = ast_type_extern;
@@ -516,6 +518,7 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct locati
 				error_list_set(ps->el, &loc_list, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
+            Ast_node_destroy(element_tu2);
 		}
 	}
 

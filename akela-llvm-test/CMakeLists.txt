@@ -24,7 +24,9 @@ else()
     target_link_libraries(function_pointer ${llvm_libs})
 endif()
 
-set_target_properties(akela-llvm-test function_pointer
+add_executable(test_abort test_abort.c)
+
+set_target_properties(akela-llvm-test function_pointer test_abort
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
