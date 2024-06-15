@@ -640,6 +640,9 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
         /* test case: test_parse_struct_error_expected_identifier */
         n->type = ast_type_error;
     }
+    if (id) {
+        buffer_copy(&id->value, &n->value);
+    }
 
 	Ast_node* a = NULL;
 	struct location a_loc;
@@ -712,6 +715,7 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 			sym->td = td;
 			sym->constructor = constructor_sym;
 			environment_put(ps->st->top, &id->value, sym);
+            n->sym = sym;
 		}
 	}
 

@@ -21,6 +21,7 @@ void type_def_init(struct type_def* n)
 	n->is_signed = false;
 	n->bit_count = 0;
 	n->composite = NULL;
+    n->composite_type = NULL;
 }
 
 /* dynamic-destroy n n{} */

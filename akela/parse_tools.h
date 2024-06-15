@@ -13,7 +13,6 @@ struct parse_state {
 	struct token* lookahead;
 	struct error_list* el;
 	struct symbol_table* st;
-	struct buffer qualifier;
 };
 
 AKELA_API void parse_state_init(struct parse_state* ps, struct lex_state* ls, struct error_list* el, struct symbol_table* st);

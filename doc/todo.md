@@ -1,4 +1,11 @@
 # Akela Todo
+* struct initialize
+* methods
+* for loop
+  * range iterator []
+  * array iterator []
+* while loop
+* loop
 * placeholder array size in constructor
 * slice
 * shorter type names
@@ -7,8 +14,6 @@
   * type [x]
   * call []
 * error if mut is unnecessary
-* struct
-* dot operator
 * struct methods
 * tuple
 * enum

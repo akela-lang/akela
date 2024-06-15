@@ -5,6 +5,7 @@
 #include "akela_llvm_variable.h"
 #include "akela_llvm_stmts.h"
 #include "akela_llvm_operator.h"
+#include "akela_llvm_struct.h"
 
 using namespace llvm;
 using namespace llvm::orc;
@@ -85,6 +86,8 @@ namespace Akela_llvm {
             return Type::getInt1Ty(*jd->TheContext);
         } else if (td->type == type_function) {
             return Get_function_type(jd, tu);
+        } else if (td->type == type_struct) {
+            
         } else {
             assert(false);
         }
@@ -254,8 +257,12 @@ namespace Akela_llvm {
             return Handle_sub(jd, n);
         } else if (n->type == ast_type_call) {
             return Handle_call(jd, n);
+        } else if (n->type == ast_type_dot) {
+            return Handle_dot(jd, n);
         } else if (n->type == ast_type_id) {
             return Handle_identifier(jd, n);
+        } else if (n->type == ast_type_struct) {
+            return Handle_struct(jd, n);
         } else if (n->type == ast_type_array_literal) {
             return Handle_array_literal(jd, n);
         } else if (n->type == ast_type_array_subscript) {

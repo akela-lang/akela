@@ -491,7 +491,6 @@ Ast_node* parse_literal(struct parse_state* ps, struct location* loc)
         }
 	}
 
-	/* destroy x x{} */
 	token_destroy(x);
 	free(x);
 
@@ -519,73 +518,18 @@ Ast_node* parse_id(struct parse_state* ps, struct location* loc)
 	}
 
     if (n->type != ast_type_error) {
-		struct buffer full_id;
-		buffer_init(&full_id);
-		bool is_struct = false;
-		struct symbol* sym = NULL;
-		if (ps->qualifier.size > 0) {
-			sym = environment_get(ps->st->top, &ps->qualifier);
-			if (sym && sym->tu && sym->tu->td->type == type_struct) {
-				buffer_copy(&ps->qualifier, &full_id);
-				is_struct = true;
-			} else {
-				buffer_copy(&ps->qualifier, &full_id);
-				buffer_add_char(&full_id, '.');
-				buffer_copy(&id->value, &full_id);
-			}
-		} else {
-			buffer_copy(&id->value, &full_id);
-		}
-		if (is_struct) {
-			Ast_node* tu = sym->tu->td->composite;
-			assert(tu);
-			bool found_id = false;
-			Ast_node* found_tu = NULL;
-			Ast_node* dec = tu->head;
-			while (dec) {
-				Ast_node* field_id = Ast_node_get(dec, 0);
-				if (field_id) {
-					if (buffer_compare(&id->value, &field_id->value)) {
-						found_id = true;
-						found_tu = Ast_node_get(dec, 1);
-					}
-				}
-				dec = dec->next;
-			}
-
-			if (found_id) {
-				n->tu = Ast_node_copy(found_tu);
-			} else {
-				buffer_finish(&id->value);
-				error_list_set(ps->el, &id->loc, "variable not a field of struct: %s", id->value.buf);
-                n->type = ast_type_error;
-			}
-		} else {
-			struct symbol* sym2 = environment_get(ps->st->top, &full_id);
-			if (!sym2) {
-                buffer_finish(&full_id);
-                error_list_set(ps->el, &id->loc, "variable not declared: %s", full_id.buf);
-                /* test case: test_parse_types_missing_declaration */
-                n->type = ast_type_error;
-            } else if (sym2->td && sym2->td->type != type_struct) {
-                error_list_set(ps->el, &id->loc, "using type as an identifier: %s", full_id.buf);
-                n->type = ast_type_error;
-			} else {
-                struct symbol* sym3 = sym2;
-				if (!sym3->tu) {
-					sym3 = sym3->constructor;
-				}
-                assert(sym3);
-				assert(sym3->tu);
-				n->tu = Ast_node_copy(sym3->tu);
-                n->sym = sym3;
-			}
-		}
-
-        buffer_destroy(&full_id);
+        struct symbol* sym = environment_get(ps->st->top, &id->value);
+        if (!sym) {
+            buffer_finish(&id->value);
+            error_list_set(ps->el, &id->loc, "variable not declared: %s", id->value.buf);
+            /* test case: test_parse_types_missing_declaration */
+            n->type = ast_type_error;
+        } else {
+            n->tu = Ast_node_copy(sym->tu);
+            n->sym = sym;
+        }
 	}
 
-	/* destroy id id{} */
 	token_destroy(id);
 	free(id);
 

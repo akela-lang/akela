@@ -1190,13 +1190,11 @@ Ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 	}
 
 	Ast_node* left = n = a;
-	struct location loc_left = *loc;
-	if (ps->qualifier.size > 0) buffer_add_char(&ps->qualifier, '.');
-	buffer_copy(&a->value, &ps->qualifier);
+	struct location left_loc = *loc;
 	while (true) {
 		struct token* t0 = NULL;
 		t0 = get_lookahead(ps);
-		if (!t0 || t0->type != token_dot) {
+		if (t0->type != token_dot) {
 			break;
 		}
 
@@ -1213,97 +1211,75 @@ Ast_node* parse_dot(struct parse_state* ps, struct location* loc)
             n->type = ast_type_error;
         }
 
-		Ast_node* b = NULL;
-        struct location b_loc;
-		b = parse_factor(ps, &b_loc);
-        if (b && b->type == ast_type_error) {
+        struct token* id = NULL;
+        if (!match(ps, token_id, "expected identifier", &id)) {
             n->type = ast_type_error;
         }
 
-		if (!b) {
-			error_list_set(ps->el, &b_loc, "expected term after dot");
-			/* test case: test_parse_dot_error_expected_term */
+        Ast_node* b = NULL;
+        Ast_node_create(&b);
+        b->type = ast_type_id;
+        if (id) {
+            buffer_copy(&id->value, &b->value);
+        }
+
+        Ast_node_add(n, left);
+        if (left->type == ast_type_error) {
             n->type = ast_type_error;
-		}
-
-        if (left && b) {
-            if (left->type == ast_type_dot) {
-                buffer_copy(&left->value, &n->value);
-                buffer_add_char(&n->value, '.');
-                buffer_copy(&b->value, &n->value);
-            } else if (left->type == ast_type_id) {
-                buffer_copy(&left->value, &n->value);
-                buffer_add_char(&n->value, '.');
-                buffer_copy(&b->value, &n->value);
-            }
         }
 
-        if (left) {
-            Ast_node_add(n, left);
-            if (left->type == ast_type_error) {
-                n->type = ast_type_error;
-            }
-        }
-
-        if (b) {
-            Ast_node_add(n, b);
-            if (b->type == ast_type_error) {
-                n->type = ast_type_error;
-            }
-        }
+        Ast_node_add(n, b);
 
 		if (n->type != ast_type_error) {
-			assert(left);
-			assert(b);
-			Ast_node* tu_left = left->tu;
-			Ast_node* tu_b = b->tu;
-
-			if (!tu_left) {
-				error_list_set(ps->el, &loc_left, "dot operand has no value");
+			if (!left->tu) {
+				error_list_set(ps->el, &left_loc, "dot operand has no value");
 				/* test case: no test case necessary */
                 n->type = ast_type_error;
-			} else if (tu_left->td->type != type_module && tu_left->td->type != type_struct) {
-				error_list_set(ps->el, &loc_left, "dot operand is not a module or struct");
+			} else if (left->tu->td->type != type_struct) {
+				error_list_set(ps->el, &left_loc, "dot operand is not a struct");
 				/* test case: test_parse_dot_error_left_non_module */
                 n->type = ast_type_error;
-			}
-
-			if (!tu_b) {
-				error_list_set(ps->el, &b_loc, "dot operand has no value");
-				/* test case: test_parse_dot_error_non_module */
-                n->type = ast_type_error;
-			}
-
-			if (left == a) {
-				if (left->type != ast_type_id) {
-					error_list_set(ps->el, &loc_left, "operand of dot operator not an identifier");
-					/* test case: no test case necessary */
+			} else {
+                struct type_def* td = left->tu->td;
+                assert(td);
+                struct symbol* sym = environment_get(ps->st->top, &td->name);
+                assert(sym);
+                //left->sym = sym;
+                assert(sym->td);
+                assert(sym->td->composite);
+                bool found = false;
+                struct Ast_node* dec = sym->td->composite->head;
+                struct Ast_node* dec_id = NULL;
+                struct Ast_node* dec_tu = NULL;
+                while (dec) {
+                    dec_id = Ast_node_get(dec, 0);
+                    dec_tu = Ast_node_get(dec, 1);
+                    if (buffer_compare(&dec_id->value, &b->value)) {
+                        found = true;
+                        break;
+                    }
+                    dec = dec->next;
+                }
+                if (!found) {
+                    error_list_set(
+                            ps->el,
+                            &id->loc,
+                            "identifier not a field of struct: %b", &id->value);
                     n->type = ast_type_error;
-				}
-			}
-
-			if (b->type != ast_type_id) {
-				error_list_set(ps->el, &b_loc, "operand of dot operator not an identifier");
-				/* test case: test_parse_dot_error_right_not_identifier */
-                n->type = ast_type_error;
-			}
-
-			if (n->type != ast_type_error) {
-				n->tu = Ast_node_copy(tu_b);
-			}
+                } else {
+                    n->tu = Ast_node_copy(dec_tu);
+                }
+            }
 
 			left = n;
 			#pragma warning(suppress:6001)
-			loc_left = dot->loc;
-			if (ps->qualifier.size > 0) buffer_add_char(&ps->qualifier, '.');
-			buffer_copy(&b->value, &ps->qualifier);
+            left_loc = dot->loc;
+            token_destroy(dot);
+            free(dot);
+            token_destroy(id);
+            free(id);
 		}
-
-		token_destroy(dot);
-		free(dot);
 	}
-
-	buffer_clear(&ps->qualifier);
 
 	return n;
 }

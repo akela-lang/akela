@@ -13,12 +13,10 @@ void parse_state_init(struct parse_state* ps, struct lex_state* ls, struct error
 	ps->lookahead = NULL;
 	ps->el = el;
 	ps->st = st;
-	buffer_init(&ps->qualifier);
 }
 
 void parse_state_destroy(struct parse_state* ps)
 {
-	buffer_destroy(&ps->qualifier);
 }
 
 bool get_lookahead_one(struct parse_state* ps)

@@ -28,6 +28,7 @@ struct type_def {
     int bit_count;
     bool is_signed;
     Ast_node* composite;
+    void* composite_type;
 };
 
 AKELA_API void type_def_create(struct type_def** n);

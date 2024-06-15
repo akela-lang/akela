@@ -1193,218 +1193,6 @@ void test_parse_for_error_expected_iteration_expression()
     parse_teardown(&cu);
 }
 
-void test_parse_module()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("module math let pi: Float64 = 3.14 end; math.pi", &cu);
-	expect_no_errors(&cu.el);
-	expect_true(cu.valid, "valid");
-
-	assert_ptr(cu.root, "ptr cu.root");
-	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
-
-	Ast_node* module = Ast_node_get(cu.root, 0);
-	assert_ptr(module, "ptr module");
-	expect_int_equal(module->type, ast_type_module, "module module");
-
-	Ast_node* id = Ast_node_get(module, 0);
-	assert_ptr(id, "ptr id");
-	expect_int_equal(id->type, ast_type_id, "id id");
-	expect_str(&id->value, "math", "math id");
-
-	Ast_node* module_stmts = Ast_node_get(module, 1);
-	assert_ptr(module_stmts, "ptr module_stmts");
-	expect_int_equal(module_stmts->type, ast_type_stmts, "parse_stmts module_stmts");
-
-	Ast_node* dot = Ast_node_get(cu.root, 1);
-	assert_ptr(dot, "ptr dot");
-	expect_int_equal(dot->type, ast_type_dot, "dot dot");
-
-	Ast_node* tu = dot->tu;
-	assert_ptr(tu, "ptr tu");
-	expect_int_equal(tu->type, ast_type_type, "type tu");
-
-	struct type_def* td = tu->td;
-	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_float, "float td");
-	expect_str(&td->name, "Float64", "Float64 td");
-
-	Ast_node* dot_id_0 = Ast_node_get(dot, 0);
-	assert_ptr(dot_id_0, "ptr dot_id_0");
-	expect_int_equal(dot_id_0->type, ast_type_id, "id dot_id_0");
-	expect_str(&dot_id_0->value, "math", "math dot_id_0");
-
-	Ast_node* dot_id_1 = Ast_node_get(dot, 1);
-	assert_ptr(dot_id_1, "ptr dot_id_1");
-	expect_int_equal(dot_id_1->type, ast_type_id, "id dot_id_1");
-	expect_str(&dot_id_1->value, "pi", "pi dot_id_1");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_module_nested()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("module base module math let pi: Float64 = 3.14 end end; base.math.pi", &cu);
-	expect_no_errors(&cu.el);
-	expect_true(cu.valid, "valid");
-
-	assert_ptr(cu.root, "ptr cu.root");
-	expect_int_equal(cu.root->type, ast_type_stmts, "parse_stmts cu.root");
-
-	/* base */
-	Ast_node* base_module = Ast_node_get(cu.root, 0);
-	assert_ptr(base_module, "ptr base_module");
-	expect_int_equal(base_module->type, ast_type_module, "module base_module");
-
-	Ast_node* base_id = Ast_node_get(base_module, 0);
-	assert_ptr(base_id, "ptr base_id");
-	expect_int_equal(base_id->type, ast_type_id, "id base_id");
-	expect_str(&base_id->value, "base", "base id");
-
-	Ast_node* base_module_stmts = Ast_node_get(base_module, 1);
-	assert_ptr(base_module_stmts, "ptr base_module_stmts");
-	expect_int_equal(base_module_stmts->type, ast_type_stmts, "parse_stmts base_module_stmts");
-
-	/* math */
-	Ast_node* math_module = Ast_node_get(base_module_stmts, 0);
-	assert_ptr(math_module, "ptr math_module");
-	expect_int_equal(math_module->type, ast_type_module, "module math_module");
-
-	Ast_node* math_id = Ast_node_get(math_module, 0);
-	assert_ptr(math_id, "ptr math_id");
-	expect_int_equal(math_id->type, ast_type_id, "id math_id");
-	expect_str(&math_id->value, "math", "math id");
-
-	Ast_node* math_module_stmts = Ast_node_get(math_module, 1);
-	assert_ptr(math_module_stmts, "ptr math_module_stmts");
-	expect_int_equal(math_module_stmts->type, ast_type_stmts, "parse_stmts math_module_stmts");
-
-	Ast_node* dot0 = Ast_node_get(cu.root, 1);
-	assert_ptr(dot0, "ptr dot0");
-	expect_int_equal(dot0->type, ast_type_dot, "dot dot0");
-
-	Ast_node* tu = dot0->tu;
-	assert_ptr(tu, "ptr tu");
-	expect_int_equal(tu->type, ast_type_type, "type tu");
-
-	struct type_def* td = tu->td;
-	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_float, "float td");
-	expect_str(&td->name, "Float64", "Float64 td");
-
-	Ast_node* dot1 = Ast_node_get(dot0, 0);
-	assert_ptr(dot1, "ptr dot1");
-	expect_int_equal(dot1->type, ast_type_dot, "id dot1");
-
-	Ast_node* base_id_1 = Ast_node_get(dot1, 0);
-	assert_ptr(base_id_1, "ptr base_id_1");
-	expect_int_equal(base_id_1->type, ast_type_id, "id base_id_1");
-	expect_str(&base_id_1->value, "base", "base base_id_1");
-
-	Ast_node* math_id_1 = Ast_node_get(dot1, 1);
-	assert_ptr(math_id_1, "ptr math_id_1");
-	expect_int_equal(math_id_1->type, ast_type_id, "id math_id_1");
-	expect_str(&math_id_1->value, "math", "math math_id_1");
-
-	Ast_node* pi_id = Ast_node_get(dot0, 1);
-	assert_ptr(pi_id, "ptr pi_id");
-	expect_int_equal(pi_id->type, ast_type_id, "id pi_id");
-	expect_str(&pi_id->value, "pi", "pi pi_id");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_module_expected_identifier()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("module end", &cu);
-	assert_has_errors(&cu.el);
-	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "expected identifier after module");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_module_expected_end()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("module math", &cu);
-	assert_has_errors(&cu.el);
-	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "expected end");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_module_duplicate_declaration()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("let foo: Int64; module foo end", &cu);
-	assert_has_errors(&cu.el);
-	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "variable already used: foo");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_dot_error_expected_term()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("module math let pi: Float64 = 3.14 end; math.", &cu);
-	expect_has_errors(&cu.el);
-	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "expected term after dot");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_dot_error_left_non_module()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("fn foo() end; module math let pi: Float64 = 3.14 end; true.1", &cu);
-	expect_has_errors(&cu.el);
-	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "dot operand is not a module or struct");
-
-    parse_teardown(&cu);
-}
-
-void test_parse_dot_error_right_not_identifier()
-{
-	test_name(__func__);
-
-	struct comp_unit cu;
-
-    parse_setup("fn foo() end; module math let pi: Float64 = 3.14 end; math.\"hello\"", &cu);
-	expect_has_errors(&cu.el);
-	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "operand of dot operator not an identifier");
-
-    parse_teardown(&cu);
-}
-
 void test_parse_struct()
 {
 	test_name(__func__);
@@ -1416,7 +1204,8 @@ void test_parse_struct()
                 "  lastName: [100 const]UInt8\n"
                 "  age: Int64\n"
                 "end\n"
-                "let p: Person = Person(\"John\", \"Smith\", 45)\n"
+                "let p: Person\n"
+                "p.firstName = \"John\"\n"
                 "p.firstName\n", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
@@ -1504,43 +1293,10 @@ void test_parse_struct()
     expect_int_equal(td->type, type_struct, "struct td");
     expect_str(&td->name, "Person", "Person td");
 
-    Ast_node* let_rseq = Ast_node_get(let, 2);
-    assert_ptr(let_rseq, "ptr let_rseq");
-    expect_int_equal(let_rseq->type, ast_type_let_rseq, "let_rseq let_rseq");
-
 	Ast_node* p = Ast_node_get(let_lseq, 0);
 	assert_ptr(p, "ptr p");
 	expect_int_equal(p->type, ast_type_id, "id p");
 	expect_str(&p->value, "p", "p p");
-
-	/* constructor call */
-	Ast_node* call = Ast_node_get(let_rseq, 0);
-	assert_ptr(call, "ptr call");
-	expect_int_equal(call->type, ast_type_call, "call call");
-
-	Ast_node* call_id = Ast_node_get(call, 0);
-	assert_ptr(call_id, "ptr call_id");
-	expect_int_equal(call_id->type, ast_type_id, "id call_id");
-	expect_str(&call_id->value, "Person", "Person call_id");
-
-	Ast_node* cseq = Ast_node_get(call, 1);
-	assert_ptr(cseq, "ptr cseq");
-	expect_int_equal(cseq->type, ast_type_cseq, "cseq cseq");
-
-	Ast_node* a0 = Ast_node_get(cseq, 0);
-	assert_ptr(a0, "ptr a0");
-	expect_int_equal(a0->type, ast_type_string, "string a0");
-	expect_str(&a0->value, "John", "John a0");
-
-	Ast_node* a1 = Ast_node_get(cseq, 1);
-	assert_ptr(a1, "ptr a1");
-	expect_int_equal(a1->type, ast_type_string, "string a1");
-	expect_str(&a1->value, "Smith", "Smith a1");
-
-	Ast_node* a2 = Ast_node_get(cseq, 2);
-	assert_ptr(a2, "ptr a2");
-	expect_int_equal(a2->type, ast_type_number, "string a2");
-	expect_str(&a2->value, "45", "45 a2");
 
     parse_teardown(&cu);
 }
@@ -1557,12 +1313,12 @@ void test_parse_struct_error_not_field()
             "  lastName: [100 const]UInt8\n"
             "  age: Int64\n"
             "end\n"
-            "let p: Person = Person(\"John\", \"Smith\", 45)\n"
+            "let p: Person\n"
             "p.abc\n",
             &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "variable not a field of struct: abc");
+	expect_source_error(&cu.el, "identifier not a field of struct: abc");
 
     parse_teardown(&cu);
 }
@@ -1953,14 +1709,6 @@ void test_parse_statements()
 	test_parse_for_error_expected_colon();
 	test_parse_for_error_expected_range_end();
 	test_parse_for_error_expected_iteration_expression();
-	test_parse_module();
-	test_parse_module_nested();
-	test_parse_module_expected_identifier();
-	test_parse_module_expected_end();
-	test_parse_module_duplicate_declaration();
-	test_parse_dot_error_expected_term();
-	test_parse_dot_error_left_non_module();
-	test_parse_dot_error_right_not_identifier();
 	test_parse_struct();
 	test_parse_struct_error_not_field();
 	test_parse_struct_error_expected_identifier();

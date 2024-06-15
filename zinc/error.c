@@ -47,14 +47,13 @@ void error_list_create(struct error_list** el)
 
 void error_list_add(struct error_list *el, struct error* e)
 {
-    if (el->tail) {
+    if (el->head && el->tail) {
         el->tail->next = e;
         e->prev = el->tail;
-    }
-    el->tail = e;
-
-    if (!el->head) {
+        el->tail = e;
+    } else {
         el->head = e;
+        el->tail = e;
     }
 }
 
@@ -69,7 +68,6 @@ void error_list_destroy(struct error_list* el)
     }
 }
 
-/* static-output */
 bool error_list_set(struct error_list *el, struct location* loc, const char* fmt, ...)
 {
     va_list args;
