@@ -16,7 +16,6 @@
 #include <assert.h>
 #include "zinc/list.h"
 
-void parse_separator(struct parse_state* ps, bool* has_separator, struct location* loc);
 Ast_node* parse_stmt(struct parse_state* ps, struct location* loc);
 Ast_node* parse_while(struct parse_state* ps, struct location* loc);
 Ast_node* parse_for(struct parse_state* ps, struct location* loc);
@@ -96,35 +95,6 @@ Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct location
 	}
 
 	return n;
-}
-
-/* separator -> \n | ; */
-void parse_separator(struct parse_state* ps, bool* has_separator, struct location* loc)
-{
-	enum token_enum type;
-	*has_separator = false;
-
-    get_location(ps, loc);
-
-	struct token* t0 = get_lookahead(ps);
-	if (t0 && t0->type == token_newline) {
-		type = token_newline;
-		*has_separator = true;
-	} else if (t0 && t0->type == token_semicolon) {
-		type = token_semicolon;
-		*has_separator = true;
-	} else {
-		return;
-	}
-
-	struct token* sep = NULL;
-	if (!match(ps, type, "expecting newline or semicolon", &sep)) {
-        assert(false);
-        /* test case: no test case necessary */
-    }
-
-	token_destroy(sep);
-	free(sep);
 }
 
 /**
@@ -697,23 +667,12 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 			td->type = type_struct;
 			buffer_copy(&id->value, &td->name);
 			td->composite = tu;
-			Ast_node* root = make_constructor(td);
-            Ast_node* proto = Ast_node_get(root, 0);
-			Ast_node* root_tu = proto2type(ps->st, proto);
-
-			struct symbol* constructor_sym = NULL;
-			malloc_safe((void**)&constructor_sym, sizeof(struct symbol));
-			symbol_init(constructor_sym);
-			constructor_sym->tk_type = token_id;
-			constructor_sym->tu = root_tu;
-			constructor_sym->root = root;
 
 			struct symbol* sym = NULL;
 			malloc_safe((void**)&sym, sizeof(struct symbol));
 			symbol_init(sym);
 			sym->tk_type = token_id;
 			sym->td = td;
-			sym->constructor = constructor_sym;
 			environment_put(ps->st->top, &id->value, sym);
             n->sym = sym;
 		}

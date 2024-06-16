@@ -13,8 +13,8 @@
 #include "test_comp_table.h"
 #include "test_lex_tools.h"
 #include "test_parse_function.h"
+#include "test_parse_struct.h"
 
-/* dynamic-output-none */
 int main(void) {
 	test_token();
 	test_lex();
@@ -30,6 +30,7 @@ int main(void) {
 	test_parse_types();
 	test_comp_unit();
 	test_comp_table();
+    test_parse_struct();
 	print_results();
 	return 0;
 }

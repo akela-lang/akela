@@ -1,5 +1,5 @@
 # Akela Todo
-* struct initialize
+* code gen struct literal
 * methods
 * for loop
   * range iterator []

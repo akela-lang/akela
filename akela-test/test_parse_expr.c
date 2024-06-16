@@ -134,7 +134,6 @@ void test_parse_add_error_right_not_numeric()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_add_mixed_types()
 {
 	test_name(__func__);
@@ -173,7 +172,6 @@ void test_parse_add_mixed_types()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_add_positive()
 {
 	test_name(__func__);
@@ -213,7 +211,6 @@ void test_parse_add_positive()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_add_negative()
 {
 	test_name(__func__);
@@ -253,7 +250,6 @@ void test_parse_add_negative()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_sub()
 {
 	test_name(__func__);
@@ -286,7 +282,6 @@ void test_parse_sub()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_sub_positive()
 {
 	test_name(__func__);
@@ -326,7 +321,6 @@ void test_parse_sub_positive()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_sub_negative()
 {
 	test_name(__func__);
@@ -366,8 +360,6 @@ void test_parse_sub_negative()
     parse_teardown(&cu);
 }
 
-
-/* dynamic-output-none */
 void test_parse_mult()
 {
 	test_name(__func__);
@@ -406,7 +398,6 @@ void test_parse_mult()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_mult_error_expected_term()
 {
 	test_name(__func__);
@@ -436,7 +427,6 @@ void test_parse_mult_error_left_no_value()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_mult_error_left_not_numeric()
 {
 	test_name(__func__);
@@ -451,7 +441,6 @@ void test_parse_mult_error_left_not_numeric()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_mult_error_right_no_value()
 {
 	test_name(__func__);
@@ -466,7 +455,6 @@ void test_parse_mult_error_right_no_value()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_mult_error_right_not_numeric()
 {
 	test_name(__func__);
@@ -481,7 +469,6 @@ void test_parse_mult_error_right_not_numeric()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_mult_positive()
 {
 	test_name(__func__);
@@ -521,7 +508,6 @@ void test_parse_mult_positive()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_mult_negative()
 {
 	test_name(__func__);
@@ -561,7 +547,6 @@ void test_parse_mult_negative()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_divide()
 {
 	test_name(__func__);
@@ -592,7 +577,6 @@ void test_parse_divide()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_add_add()
 {
 	test_name(__func__);
@@ -632,7 +616,6 @@ void test_parse_add_add()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_mult_mult()
 {
 	test_name(__func__);
@@ -672,7 +655,6 @@ void test_parse_mult_mult()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_add_mult()
 {
 	test_name(__func__);
@@ -712,7 +694,6 @@ void test_parse_add_mult()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_mult_add()
 {
 	test_name(__func__);
@@ -860,7 +841,6 @@ void test_parse_power_error_right_not_numeric()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_add()
 {
 	test_name(__func__);
@@ -897,7 +877,6 @@ void test_parse_paren_add()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_add2()
 {
 	test_name(__func__);
@@ -934,7 +913,6 @@ void test_parse_paren_add2()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_add3()
 {
 	test_name(__func__);
@@ -969,7 +947,6 @@ void test_parse_paren_add3()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_add_add()
 {
 	test_name(__func__);
@@ -1015,7 +992,6 @@ void test_parse_paren_add_add()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_add_add2()
 {
 	test_name(__func__);
@@ -1059,7 +1035,6 @@ void test_parse_paren_add_add2()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_mult()
 {
 	test_name(__func__);
@@ -1094,7 +1069,6 @@ void test_parse_paren_mult()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_mult_mult()
 {
 	test_name(__func__);
@@ -1138,7 +1112,6 @@ void test_parse_paren_mult_mult()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_paren_mult_mult2()
 {
 	test_name(__func__);
@@ -1182,7 +1155,6 @@ void test_parse_paren_mult_mult2()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_comparison()
 {
 	test_name(__func__);
@@ -1268,7 +1240,6 @@ void test_parse_comparison()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_comparison_identity()
 {
 	test_name(__func__);
@@ -1340,7 +1311,6 @@ void test_parse_comparison_error_right_no_value()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_comparison_error_left_not_numeric()
 {
 	test_name(__func__);
@@ -1355,7 +1325,6 @@ void test_parse_comparison_error_left_not_numeric()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_comparison_error_right_not_numeric()
 {
 	test_name(__func__);
@@ -1370,7 +1339,6 @@ void test_parse_comparison_error_right_not_numeric()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_and()
 {
 	test_name(__func__);
@@ -1400,7 +1368,6 @@ void test_parse_and()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_or()
 {
 	test_name(__func__);
@@ -1439,7 +1406,6 @@ void test_parse_or()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_or_or()
 {
 	test_name(__func__);
@@ -1479,7 +1445,6 @@ void test_parse_or_or()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_boolean_error_expected_term()
 {
 	test_name(__func__);

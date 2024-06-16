@@ -51,7 +51,6 @@ enum result Ast_set_names(char** names)
 	names[ast_type_array_subscript] = "array-subscript";
 	names[ast_type_let] = "let";
 	names[ast_type_boolean] = "boolean";
-	names[ast_type_array] = "array";
 	names[ast_type_parenthesis] = "parenthesis";
 	names[ast_type_type] = "type";
 	names[ast_type_power] = "power";
@@ -64,6 +63,10 @@ enum result Ast_set_names(char** names)
     names[ast_type_let_lseq] = "let_lseq";
     names[ast_type_let_rseq] = "let_rseq";
     names[ast_type_error] = "error";
+    names[ast_type_prototype] = "prototype";
+    names[ast_type_extern] = "extern";
+    names[ast_type_struct_literal] = "struct-literal";
+    names[ast_type_struct_literal_field] = "struct-literal-field";
 
 	for (int i = 0; i < ast_type_count; i++) {
 		if (names[i] == NULL) {
@@ -269,7 +272,7 @@ Ast_node* Ast_node_copy(Ast_node* n)
         Type_options_copy(&n->to, &copy->to);
         copy->loc = n->loc;
 		buffer_copy(&n->value, &copy->value);
-		
+
 		Ast_node* p = n->head;
 		while (p) {
 			Ast_node* p_copy = NULL;

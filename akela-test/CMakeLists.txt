@@ -17,6 +17,7 @@ set(files
         test_comp_unit.c
         test_comp_table.c
         test_parse_function.c
+        test_parse_struct.c
 )
 add_executable(akela-test ${files})
 if(${COVERAGE} MATCHES On)

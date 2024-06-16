@@ -15,6 +15,11 @@
 Ast_node* parse_not(struct parse_state* ps, struct location* loc);
 Ast_node* parse_literal(struct parse_state* ps, struct location* loc);
 Ast_node* parse_id(struct parse_state* ps, struct location* loc);
+void parse_struct_literal_elements(
+        struct parse_state* ps,
+        struct Ast_node* parent,
+        struct type_def* td,
+        struct location* loc);
 Ast_node* parse_sign(struct parse_state* ps, struct location* loc);
 Ast_node* parse_array_literal(struct parse_state* ps, struct location* loc);
 void parse_aseq(struct parse_state* ps, Ast_node* parent, struct location* loc);
@@ -499,41 +504,215 @@ Ast_node* parse_literal(struct parse_state* ps, struct location* loc)
 
 Ast_node* parse_id(struct parse_state* ps, struct location* loc)
 {
-	Ast_node* n = NULL;
-    Ast_node_create(&n);
-    n->type = ast_type_id;
+    get_location(ps, loc);
 
-    if (!get_location(ps, loc)) {
-        n->type = ast_type_error;
-    }
 
     struct token* id = NULL;
     if (!match(ps, token_id, "expecting identifier", &id)) {
         /* test case: no test case needed */
-        n->type = ast_type_error;
+        assert(false);
     }
 
-	if (n->type != ast_type_error) {
-		buffer_copy(&id->value, &n->value);
-	}
+    struct symbol* sym = environment_get(ps->st->top, &id->value);
+    if (sym && sym->td && sym->td->type == type_struct) {
+        /* struct literal */
 
-    if (n->type != ast_type_error) {
-        struct symbol* sym = environment_get(ps->st->top, &id->value);
+        consume_newline(ps);
+
+        Ast_node* n = NULL;
+        Ast_node_create(&n);
+        n->type = ast_type_struct_literal;
+
+        Ast_node* tu = NULL;
+        Ast_node_create(&tu);
+        tu->type = ast_type_type;
+        tu->td = sym->td;
+        n->tu = tu;
+        n->sym = sym;
+
+        struct location elements_loc;
+        parse_struct_literal_elements(ps, n, sym->td, &elements_loc);
+
+        struct token* end = NULL;
+        if (!match(ps, token_end, "expected end", &end)) {
+            n->type = ast_type_error;
+        }
+        token_destroy(end);
+        free(end);
+
+        token_destroy(id);
+        free(id);
+        return n;
+
+    } else {
+        /* id */
+        Ast_node* n = NULL;
+        Ast_node_create(&n);
+        n->type = ast_type_id;
+
+        if (id) {
+            buffer_copy(&id->value, &n->value);
+        }
+
         if (!sym) {
             buffer_finish(&id->value);
             error_list_set(ps->el, &id->loc, "variable not declared: %s", id->value.buf);
+            /* test case: test_parse_types_missing_declaration */
+            n->type = ast_type_error;
+        } else if (sym->td) {
+            buffer_finish(&id->value);
+            error_list_set(ps->el, &id->loc, "expected struct or variable but found type: %s", id->value.buf);
             /* test case: test_parse_types_missing_declaration */
             n->type = ast_type_error;
         } else {
             n->tu = Ast_node_copy(sym->tu);
             n->sym = sym;
         }
-	}
 
-	token_destroy(id);
-	free(id);
+        token_destroy(id);
+        free(id);
+        return n;
+    }
 
-	return n;
+}
+
+typedef struct Struct_field_result {
+    bool found;
+    size_t index;
+    Ast_node* id;
+    Ast_node* tu;
+} Struct_field_result;
+
+Struct_field_result Get_struct_field(struct type_def* td, struct buffer* name) {
+    assert(td->type == type_struct);
+    assert(td->composite);
+    size_t index = 0;
+    Ast_node* dec = td->composite->head;
+    while (dec) {
+        assert(dec->type == ast_type_declaration);
+        Ast_node* id = Ast_node_get(dec, 0);
+        Ast_node* tu = Ast_node_get(dec, 1);
+        if (buffer_compare(&id->value, name)) {
+            Struct_field_result res = {true, index, id, tu};
+            return res;
+        }
+        dec = dec->next;
+        index++;
+    }
+
+    Struct_field_result res = {false, 0, NULL, NULL};
+    return res;
+}
+
+void Find_missing_fields(struct parse_state* ps, struct type_def* td, Ast_node* n) {
+    assert(td->type == type_struct);
+    assert(td->composite);
+    size_t index = 0;
+    Ast_node *dec = td->composite->head;
+    while (dec) {
+        Ast_node *id = Ast_node_get(dec, 0);
+        bool found = false;
+        Ast_node *field = n->head;
+        while (field) {
+            Ast_node *id2 = Ast_node_get(field, 0);
+            if (buffer_compare(&id2->value, &id->value)) {
+                found = true;
+                break;
+            }
+            field = field->next;
+        }
+        if (!found) {
+            error_list_set(ps->el, &id->loc, "struct field missing: %b", &id->value);
+            n->type = ast_type_error;
+        }
+        dec = dec->next;
+    }
+}
+
+void parse_struct_literal_elements(
+        struct parse_state* ps,
+        struct Ast_node* parent,
+        struct type_def* td,
+        struct location* loc)
+{
+    get_location(ps, loc);
+
+    struct token* t0;
+
+    while (true) {
+        struct token* name = NULL;
+        if (!match(ps, token_id, "expected a struct field identifier", &name)) {
+            parent->type = ast_type_error;
+            break;
+        }
+
+        Ast_node* field = NULL;
+        Ast_node_create(&field);
+        field->type = ast_type_struct_literal_field;
+        Ast_node_add(parent, field);
+
+        Struct_field_result sfr = Get_struct_field(td, &name->value);
+        if (!sfr.found) {
+            error_list_set(ps->el, &name->loc, "Not a valid field for %b: %b", &td->name, &name->value);
+            parent->type = ast_type_error;
+        }
+
+        Ast_node* id = NULL;
+        Ast_node_create(&id);
+        id->type = ast_type_id;
+        buffer_copy(&name->value, &id->value);
+        Ast_node_add(field, id);
+
+        token_destroy(name);
+        free(name);
+
+        struct token* colon = NULL;
+        if (!match(ps, token_colon, "expected a colon", &colon)) {
+            parent->type = ast_type_error;
+            break;
+        }
+        token_destroy(colon);
+        free(colon);
+
+        struct location expr_loc;
+        struct Ast_node* expr = parse_expr(ps, &expr_loc);
+        if (expr) {
+            Ast_node_add(field, expr);
+
+            if (parent->type != ast_type_error) {
+                if (!type_use_can_cast(sfr.tu, expr->tu)) {
+                    error_list_set(ps->el, &expr_loc, "invalid type for field");
+                    parent->type = ast_type_error;
+                }
+
+            }
+        } else {
+            error_list_set(ps->el, &expr_loc, "expected an expression");
+            parent->type = ast_type_error;
+        }
+
+
+        t0 = get_lookahead(ps);
+        if (t0->type == token_end) {
+            break;
+        }
+
+        bool has_sep;
+        struct location sep_loc;
+        parse_separator(ps, &has_sep, &sep_loc);
+
+        t0 = get_lookahead(ps);
+        if (t0->type == token_end) {
+            break;
+        }
+
+        if (!has_sep) {
+            error_list_set(ps->el, &sep_loc, "expected a separator");
+            parent->type = ast_type_error;
+        }
+    }
+
+    Find_missing_fields(ps, td, parent);
 }
 
 Ast_node* parse_sign(struct parse_state* ps, struct location* loc)

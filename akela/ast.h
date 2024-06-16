@@ -64,7 +64,6 @@ typedef enum Ast_type {
 	ast_type_array_subscript,
 	ast_type_let,
 	ast_type_boolean,
-	ast_type_array,
 	ast_type_parenthesis,
 	ast_type_type,
 	ast_type_power,
@@ -79,6 +78,8 @@ typedef enum Ast_type {
     ast_type_error,
     ast_type_prototype,
     ast_type_extern,
+    ast_type_struct_literal,
+    ast_type_struct_literal_field,
 	ast_type_count		/* keep at end */
 } Ast_type;
 

@@ -118,3 +118,32 @@ bool check_assignment_value_count(Ast_node* a, Ast_node* b)
     }
     return true;
 }
+
+/* separator -> \n | ; */
+void parse_separator(struct parse_state* ps, bool* has_separator, struct location* loc)
+{
+    enum token_enum type;
+    *has_separator = false;
+
+    get_location(ps, loc);
+
+    struct token* t0 = get_lookahead(ps);
+    if (t0 && t0->type == token_newline) {
+        type = token_newline;
+        *has_separator = true;
+    } else if (t0 && t0->type == token_semicolon) {
+        type = token_semicolon;
+        *has_separator = true;
+    } else {
+        return;
+    }
+
+    struct token* sep = NULL;
+    if (!match(ps, type, "expecting newline or semicolon", &sep)) {
+        assert(false);
+        /* test case: no test case necessary */
+    }
+
+    token_destroy(sep);
+    free(sep);
+}
