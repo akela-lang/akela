@@ -87,7 +87,7 @@ namespace Akela_llvm {
         } else if (td->type == type_function) {
             return Get_function_type(jd, tu);
         } else if (td->type == type_struct) {
-            
+
         } else {
             assert(false);
         }
@@ -263,6 +263,8 @@ namespace Akela_llvm {
             return Handle_identifier(jd, n);
         } else if (n->type == ast_type_struct) {
             return Handle_struct(jd, n);
+        } else if (n->type == ast_type_struct_literal) {
+            return Handle_struct_literal(jd, n);
         } else if (n->type == ast_type_array_literal) {
             return Handle_array_literal(jd, n);
         } else if (n->type == ast_type_array_subscript) {

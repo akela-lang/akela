@@ -47,10 +47,20 @@ namespace Akela_llvm {
                     lhs->sym->value = lhs_value;
                 }
             } else if (tu->td->type == type_struct) {
-                auto *t = (StructType*)tu->td->composite_type;
-                buffer_finish(&lhs->value);
-                AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                lhs->sym->value = lhs_value;
+                if (rhs) {
+                    Type *t = (Type*)(StructType*)tu->td->composite_type;
+                    t = t->getPointerTo();
+                    buffer_finish(&lhs->value);
+                    AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                    Value *rhs_value = Dispatch(jd, rhs);
+                    lhs->sym->reference = lhs_value;
+                    jd->Builder->CreateStore(rhs_value, lhs_value);
+                } else {
+                    auto *t = (StructType*)tu->td->composite_type;
+                    buffer_finish(&lhs->value);
+                    AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                    lhs->sym->value = lhs_value;
+                }
             } else {
                 if (rhs) {
                     Type* t = Get_type(jd, tu);

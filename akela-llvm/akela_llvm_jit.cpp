@@ -116,7 +116,7 @@ namespace Akela_llvm {
         Type* status_type = Type::getInt32Ty(*jd->TheContext);
         param_types.push_back(status_type);
         Type* ret_type = Type::getVoidTy(*jd->TheContext);
-        FunctionType *func_type = FunctionType::get(ret_type, param_types, true);
+        FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
         Function* f = Function::Create(func_type, Function::ExternalLinkage, "exit", *jd->TheModule);
         jd->exit_function = f;
     }

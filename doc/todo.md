@@ -1,5 +1,4 @@
 # Akela Todo
-* code gen struct literal
 * methods
 * for loop
   * range iterator []

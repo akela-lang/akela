@@ -58,4 +58,31 @@ namespace Akela_llvm {
             return jd->Builder->CreateLoad(dot_type, gep_value, right->value.buf);
         }
     }
+
+    Value* Handle_struct_literal(Jit_data* jd, Ast_node* n)
+    {
+        assert(n && n->tu && n->tu->td);
+        assert(n->tu->td->type == type_struct);
+        assert(n->tu->td->composite_type);
+        assert(n->tu->td->composite);
+        auto t = (StructType*)n->tu->td->composite_type;
+        buffer_finish(&n->tu->td->name);
+        Value* value = jd->Builder->CreateAlloca(t, nullptr, n->tu->td->name.buf);
+        size_t i = 0;
+        Ast_node* field = n->head;
+        while (field) {
+            Ast_node* id = Ast_node_get(field, 0);
+            Ast_node* expr = Ast_node_get(field, 1);
+
+            buffer_finish(&id->value);
+            Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
+            Value* expr_value = Dispatch(jd, expr);
+            jd->Builder->CreateStore(expr_value, gep_value);
+
+            field = field->next;
+            i++;
+        }
+
+        return value;
+    }
 }
