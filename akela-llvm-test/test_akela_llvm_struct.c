@@ -10,8 +10,8 @@ void test_akela_llvm_struct_assign_elements()
 
     Code_gen_result_init(&result);
     cg_setup("struct Point\n"
-             "  x: Float64\n"
-             "  y: Float64\n"
+             "  x: f64\n"
+             "  y: f64\n"
              "end\n"
              "let a: Point\n"
              "a.x = 1.0\n"
@@ -23,8 +23,8 @@ void test_akela_llvm_struct_assign_elements()
 
     Code_gen_result_init(&result);
     cg_setup("struct Point\n"
-             "  x: Float64\n"
-             "  y: Float64\n"
+             "  x: f64\n"
+             "  y: f64\n"
              "end\n"
              "let a: Point\n"
              "a.x = 1.0\n"
@@ -42,8 +42,8 @@ void test_akela_llvm_struct_literal()
 
     Code_gen_result_init(&result);
     cg_setup("struct Point\n"
-             "  x: Float64\n"
-             "  y: Float64\n"
+             "  x: f64\n"
+             "  y: f64\n"
              "end\n"
              "let a: Point = Point\n"
              "  x: 1.0\n"
@@ -55,8 +55,8 @@ void test_akela_llvm_struct_literal()
 
     Code_gen_result_init(&result);
     cg_setup("struct Point\n"
-             "  x: Float64\n"
-             "  y: Float64\n"
+             "  x: f64\n"
+             "  y: f64\n"
              "end\n"
              "let a: Point = Point\n"
              "  x: 1.0\n"
@@ -75,7 +75,7 @@ void test_akela_llvm_struct_array2()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [6 const]UInt8 = \"hello\"\n"
+    cg_setup("let a: [6 const]u8 = \"hello\"\n"
              "a\n",
              &result);
     expect_str(&result.value, "hello", "value");
@@ -89,7 +89,7 @@ void test_akela_llvm_struct_array3()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [6 const]UInt8 = \"John\"\n"
+    cg_setup("let a: [6 const]u8 = \"John\"\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
@@ -103,7 +103,7 @@ void test_akela_llvm_struct_array4()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [100 const]UInt8 = \"John\"\n"
+    cg_setup("let a: [100 const]u8 = \"John\"\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
@@ -117,7 +117,7 @@ void test_akela_llvm_struct_array5()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [100 const]UInt8 = \"John\"\n"
+    cg_setup("let a: [100 const]u8 = \"John\"\n"
              "a\n",
              &result);
     expect_str(&result.value, "John", "value");
@@ -131,8 +131,8 @@ void test_akela_llvm_struct_array6()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [100 const]UInt8 = \"John\"\n"
-             "let b: [100 const]UInt8 = a\n"
+    cg_setup("let a: [100 const]u8 = \"John\"\n"
+             "let b: [100 const]u8 = a\n"
              "b[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
@@ -146,8 +146,8 @@ void test_akela_llvm_struct_array7()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [4 const]UInt8 = [1,2,3,4]\n"
-             "let b: [4 const]UInt8 = a\n"
+    cg_setup("let a: [4 const]u8 = [1,2,3,4]\n"
+             "let b: [4 const]u8 = a\n"
              "b[0]\n",
              &result);
     expect_str(&result.value, "1", "value");
@@ -163,7 +163,7 @@ void test_akela_llvm_struct_array8()
     Code_gen_result_init(&result);
     cg_setup(""
              "struct Foo\n"
-             "  x: UInt8\n"
+             "  x: u8\n"
              "end\n"
              "let foo: Foo\n"
              "foo.x = 5\n"
@@ -180,9 +180,9 @@ void test_akela_llvm_struct_array9()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [4]UInt8 = [1,2,3,4]\n"
+    cg_setup("let a: [4]u8 = [1,2,3,4]\n"
             "struct Foo\n"
-            "  x: [4]UInt8\n"
+            "  x: [4]u8\n"
             "end\n"
             "let foo: Foo\n"
             "foo.x = a\n"
@@ -191,9 +191,9 @@ void test_akela_llvm_struct_array9()
     expect_str(&result.value, "1", "value");
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [4]UInt8 = [1,2,3,4]\n"
+    cg_setup("let a: [4]u8 = [1,2,3,4]\n"
              "struct Foo\n"
-             "  x: [4]UInt8\n"
+             "  x: [4]u8\n"
              "end\n"
              "let foo: Foo\n"
              "foo.x = a\n"
@@ -202,9 +202,9 @@ void test_akela_llvm_struct_array9()
     expect_str(&result.value, "2", "value");
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [4]UInt8 = [1,2,3,4]\n"
+    cg_setup("let a: [4]u8 = [1,2,3,4]\n"
              "struct Foo\n"
-             "  x: [4]UInt8\n"
+             "  x: [4]u8\n"
              "end\n"
              "let foo: Foo\n"
              "foo.x = a\n"
@@ -213,9 +213,9 @@ void test_akela_llvm_struct_array9()
     expect_str(&result.value, "3", "value");
 
     Code_gen_result_init(&result);
-    cg_setup("let a: [4]UInt8 = [1,2,3,4]\n"
+    cg_setup("let a: [4]u8 = [1,2,3,4]\n"
              "struct Foo\n"
-             "  x: [4]UInt8\n"
+             "  x: [4]u8\n"
              "end\n"
              "let foo: Foo\n"
              "foo.x = a\n"
@@ -233,9 +233,9 @@ void test_akela_llvm_struct_array10()
 
     Code_gen_result_init(&result);
     cg_setup("struct Person\n"
-             "  first_name: [100 const]UInt8\n"
-             "  last_name: [100 const]UInt8\n"
-             "  age: UInt32\n"
+             "  first_name: [100 const]u8\n"
+             "  last_name: [100 const]u8\n"
+             "  age: u32\n"
              "end\n"
              "let p: Person = Person\n"
              "  first_name: \"John\"\n"
@@ -248,9 +248,9 @@ void test_akela_llvm_struct_array10()
 
     Code_gen_result_init(&result);
     cg_setup("struct Person\n"
-             "  first_name: [100 const]UInt8\n"
-             "  last_name: [100 const]UInt8\n"
-             "  age: UInt32\n"
+             "  first_name: [100 const]u8\n"
+             "  last_name: [100 const]u8\n"
+             "  age: u32\n"
              "end\n"
              "let p: Person = Person\n"
              "  first_name: \"John\"\n"

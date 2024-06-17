@@ -1,4 +1,5 @@
 # Akela Todo
+* seq assignments
 * methods
 * for loop
   * range iterator []
@@ -7,7 +8,6 @@
 * loop
 * placeholder array size in constructor
 * slice
-* shorter type names
 * type inference
 * mut type annotation:
   * type [x]

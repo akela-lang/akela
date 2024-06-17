@@ -12,7 +12,7 @@ void test_parse_assign()
 
 	struct comp_unit cu;
 
-    parse_setup("let mut a: Int64; a = 1", &cu);
+    parse_setup("let mut a: i64; a = 1", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -42,7 +42,7 @@ void test_parse_assign2()
 
 	struct comp_unit cu;
 
-    parse_setup("let a: Int64; a = 1 + 2", &cu);
+    parse_setup("let a: i64; a = 1 + 2", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -82,7 +82,7 @@ void test_parse_stmts()
 
 	struct comp_unit cu;
 
-    parse_setup("let i: Int64; let x: Int64; i + 1; x * 1", &cu);
+    parse_setup("let i: i64; let x: i64; i + 1; x * 1", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -127,7 +127,7 @@ void test_parse_stmts2()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64; x+1\n5-4\n", &cu);
+    parse_setup("let x: i64; x+1\n5-4\n", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -172,7 +172,7 @@ void test_parse_stmts3()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64; let y: Int64; let z: Int64; x+1; 5-4; y+z", &cu);
+    parse_setup("let x: i64; let y: i64; let z: i64; x+1; 5-4; y+z", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -230,7 +230,7 @@ void test_parse_stmts4()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64; let y: Int64; let z: Int64; x+1; 5-4; y+z", &cu);
+    parse_setup("let x: i64; let y: i64; let z: i64; x+1; 5-4; y+z", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -353,7 +353,7 @@ void test_parse_stmts_type()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "type td");
-	expect_str(&td->name, "UInt8", "name td");
+	expect_str(&td->name, "u8", "name td");
 
     parse_teardown(&cu);
 }
@@ -365,7 +365,7 @@ void test_parse_if()
 
 	struct comp_unit cu;
 
-    parse_setup("if true let x: Int64; let y: Int64; 10 + 20; x * y end", &cu);
+    parse_setup("if true let x: i64; let y: i64; 10 + 20; x * y end", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -430,7 +430,7 @@ void test_parse_elseif()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64; let y: Int64; if true 10 + 20; x * y elseif true 1; 2 end", &cu);
+    parse_setup("let x: i64; let y: i64; if true 10 + 20; x * y elseif true 1; 2 end", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -514,8 +514,8 @@ void test_parse_elseif2()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64\n"
-        "let y: Int64\n"
+    parse_setup("let x: i64\n"
+        "let y: i64\n"
         "if true\n"
         "  10 + 20\n"
         "  x * y\n"
@@ -636,7 +636,7 @@ void test_parse_else()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64; let y: Int64; if false 10 else x; y end", &cu);
+    parse_setup("let x: i64; let y: i64; if false 10 else x; y end", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -693,7 +693,7 @@ void test_parse_else2()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64; let y: Int64; if false 10 elseif false 20 else x; y end", &cu);
+    parse_setup("let x: i64; let y: i64; if false 10 elseif false 20 else x; y end", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -879,7 +879,7 @@ void test_parse_for_range()
 
 	struct comp_unit cu;
 
-    parse_setup("for i: Int64 = 0:10 1 end", &cu);
+    parse_setup("for i: i64 = 0:10 1 end", &cu);
 	assert_no_errors(&cu.el);
 	assert_true(cu.valid, "parse_setup valid");
 
@@ -932,7 +932,7 @@ void test_parse_for_range2()
 
 	struct comp_unit cu;
 
-    parse_setup("for i: Int64 = 0:10 let i: Int64 = 1 end", &cu);
+    parse_setup("for i: i64 = 0:10 let i: i64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: i");
@@ -946,7 +946,7 @@ void test_parse_for_iteration()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Int64; for i: Int64 in list i end", &cu);
+    parse_setup("let list: [10]i64; for i: i64 in list i end", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -975,7 +975,7 @@ void test_parse_for_iteration()
 	struct type_def* i_td = i_tu->td;
 	assert_ptr(i_td, "ptr i_td");
 	expect_int_equal(i_td->type, type_integer, "integer i_td");
-	expect_str(&i_td->name, "Int64", "Int64 i_td");
+	expect_str(&i_td->name, "i64", "i64 i_td");
 
 	/* expr */
 	Ast_node* expr = Ast_node_get(node, 1);
@@ -1003,7 +1003,7 @@ void test_parse_for_iteration2()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Int64; for i: Int64 in list let i: Int64 = 1 end", &cu);
+    parse_setup("let list: [10]i64; for i: i64 in list let i: i64 = 1 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "duplicate declaration in same scope: i");
@@ -1017,7 +1017,7 @@ void test_parse_for_iteration_error_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("fn list() end; for i: Int64 in list() end", &cu);
+    parse_setup("fn list() end; for i: i64 in list() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "iteration expression has no value");
@@ -1031,7 +1031,7 @@ void test_parse_for_iteration_error_no_child_element()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: Int64; for i: Int64 in list end", &cu);
+    parse_setup("let list: i64; for i: i64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "iteration expression is not an array");
@@ -1045,7 +1045,7 @@ void test_parse_for_iteration_error_cannot_cast()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Bool; for i: Int64 in list end", &cu);
+    parse_setup("let list: [10]bool; for i: i64 in list end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "cannot cast list element");
@@ -1059,7 +1059,7 @@ void test_parse_for_error_after_declaration()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Int64; for i: Int64 end", &cu);
+    parse_setup("let list: [10]i64; for i: i64 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected '=' or 'in' after for element declaration");
@@ -1073,7 +1073,7 @@ void test_parse_for_error_expected_end()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Int64; for i: Int64 = 1:10", &cu);
+    parse_setup("let list: [10]i64; for i: i64 = 1:10", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected end");
@@ -1087,7 +1087,7 @@ void test_parse_for_error_expected_range_start()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Int64; for i: Int64 =", &cu);
+    parse_setup("let list: [10]i64; for i: i64 =", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected range start");
@@ -1101,7 +1101,7 @@ void test_parse_for_error_expected_colon()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Int64; for i: Int64 = 1", &cu);
+    parse_setup("let list: [10]i64; for i: i64 = 1", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected colon");
@@ -1115,7 +1115,7 @@ void test_parse_for_error_expected_range_end()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Int64; for i: Int64 = 1:", &cu);
+    parse_setup("let list: [10]i64; for i: i64 = 1:", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected range end");
@@ -1129,7 +1129,7 @@ void test_parse_for_range_error_start_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("fn foo() end; for i: Int64 = foo():10 end", &cu);
+    parse_setup("fn foo() end; for i: i64 = foo():10 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "start range expression has no value");
@@ -1143,7 +1143,7 @@ void test_parse_for_range_error_start_not_numeric()
 
 	struct comp_unit cu;
 
-    parse_setup("for i: Int64 = true:10 end", &cu);
+    parse_setup("for i: i64 = true:10 end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "start range expression is not numeric");
@@ -1157,7 +1157,7 @@ void test_parse_for_range_error_end_no_value()
 
 	struct comp_unit cu;
 
-    parse_setup("fn foo() end; for i: Int64 = 1:foo() end", &cu);
+    parse_setup("fn foo() end; for i: i64 = 1:foo() end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "end range expression has no value");
@@ -1171,7 +1171,7 @@ void test_parse_for_range_error_end_not_numeric()
 
 	struct comp_unit cu;
 
-    parse_setup("for i: Int64 = 1:true end", &cu);
+    parse_setup("for i: i64 = 1:true end", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "end range expression is not numeric");
@@ -1185,7 +1185,7 @@ void test_parse_for_error_expected_iteration_expression()
 
 	struct comp_unit cu;
 
-    parse_setup("let list: [10]Int64; for i: Int64 in:", &cu);
+    parse_setup("let list: [10]i64; for i: i64 in:", &cu);
 	expect_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
 	expect_source_error(&cu.el, "expected for iteration expression");
@@ -1199,7 +1199,7 @@ void test_parse_stmts_newline_for_range()
 
     struct comp_unit cu;
 
-    parse_setup("for\ni\n: \nInt64\n=\n0\n:\n10 i end", &cu);
+    parse_setup("for\ni\n: \ni64\n=\n0\n:\n10 i end", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -1212,7 +1212,7 @@ void test_parse_stmts_newline_for_iteration()
 
     struct comp_unit cu;
 
-    parse_setup("let v: [10]Int64; for\nx\n: \nInt64\nin\nv x end", &cu);
+    parse_setup("let v: [10]i64; for\nx\n: \ni64\nin\nv x end", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -1226,7 +1226,7 @@ void test_parse_let()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup("let a: Int32", &cu);
+    parse_setup("let a: i32", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -1251,7 +1251,7 @@ void test_parse_let()
 
     struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
-    expect_str(&td->name, "Int32", "Int32 td");
+    expect_str(&td->name, "i32", "i32 td");
 
     /* destroy ps{} cu.root cu.root{} */
     parse_teardown(&cu);
@@ -1264,7 +1264,7 @@ void test_parse_let2()
     struct comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup("let a: Int32 = 1", &cu);
+    parse_setup("let a: i32 = 1", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "parse valid");
 
@@ -1289,7 +1289,7 @@ void test_parse_let2()
 
     struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
-    expect_str(&td->name, "Int32", "Int32 td");
+    expect_str(&td->name, "i32", "i32 td");
 
     Ast_node* let_rseq = Ast_node_get(let, 2);
     assert_ptr(let_rseq, "ptr let_rseq");
@@ -1311,7 +1311,7 @@ void test_parse_let3()
 
     struct comp_unit cu;
 
-    parse_setup("let a,b: Int32 = 1,2", &cu);
+    parse_setup("let a,b: i32 = 1,2", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "parse valid");
 
@@ -1336,7 +1336,7 @@ void test_parse_let3()
 
     struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
-    expect_str(&td->name, "Int32", "Int32 td");
+    expect_str(&td->name, "i32", "i32 td");
 
     Ast_node* id2 = Ast_node_get(let_lseq, 1);
     assert_ptr(id2, "ptr id2");
@@ -1383,7 +1383,7 @@ void test_parse_extern()
 
     struct comp_unit cu;
 
-    parse_setup("extern foo(a: Int64)\n"
+    parse_setup("extern foo(a: i64)\n"
                 "foo(1)\n",
                 &cu);
     assert_no_errors(&cu.el);
@@ -1431,7 +1431,7 @@ void test_parse_stmts_mut() {
     test_name(__func__);
     struct comp_unit cu;
 
-    parse_setup("let mut x: Int64 = 10\n"
+    parse_setup("let mut x: i64 = 10\n"
                 "x = 5\n"
                 "x",
                 &cu);
@@ -1475,7 +1475,7 @@ void test_parse_stmts_error_mut()
     test_name(__func__);
     struct comp_unit cu;
 
-    parse_setup("let x: Int64 = 10\n"
+    parse_setup("let x: i64 = 10\n"
                 "x = 5\n"
                 "x",
                 &cu);

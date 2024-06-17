@@ -142,7 +142,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	struct type_def* td = NULL;
 	struct symbol* sym = NULL;
 	
-	name = "Int32";
+	name = "i32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_integer;
@@ -151,7 +151,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->bit_count = 32;
 	symbol_table_add_reserved(env, name, token_id, td);
 
-	name = "Int64";
+	name = "i64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_integer;
@@ -160,7 +160,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->bit_count = 64;
 	symbol_table_add_reserved(env, name, token_id, td);
 
-    name = "UInt8";
+    name = "u8";
     malloc_safe((void**)&td, sizeof(struct type_def));
     type_def_init(td);
     td->type = type_integer;
@@ -168,7 +168,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
     td->bit_count = 8;
     symbol_table_add_reserved(env, name, token_id, td);
 
-    name = "UInt32";
+    name = "u32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_integer;
@@ -176,7 +176,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->bit_count = 32;
 	symbol_table_add_reserved(env, name, token_id, td);
 
-	name = "UInt64";
+	name = "u64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_integer;
@@ -184,7 +184,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->bit_count = 64;
 	symbol_table_add_reserved(env, name, token_id, td);
 
-	name = "Float32";
+	name = "f32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_float;
@@ -192,7 +192,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->bit_count = 32;
 	symbol_table_add_reserved(env, name, token_id, td);
 
-	name = "Float64";
+	name = "f64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_float;
@@ -200,7 +200,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->bit_count = 64;
 	symbol_table_add_reserved(env, name, token_id, td);
 
-	name = "Bool";
+	name = "bool";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_boolean;
@@ -246,12 +246,13 @@ void symbol_table_numeric_pool_init(struct symbol_table* st)
 	Ast_node_init(pool);
 	st->numeric_pool = pool;
 
-	symbol_table_add_numeric(st, "Int32");
-	symbol_table_add_numeric(st, "Int64");
-	symbol_table_add_numeric(st, "UInt32");
-	symbol_table_add_numeric(st, "UInt64");
-	symbol_table_add_numeric(st, "Float32");
-	symbol_table_add_numeric(st, "Float64");
+	symbol_table_add_numeric(st, "i32");
+	symbol_table_add_numeric(st, "i64");
+    symbol_table_add_numeric(st, "u8");
+	symbol_table_add_numeric(st, "u32");
+	symbol_table_add_numeric(st, "u64");
+	symbol_table_add_numeric(st, "f32");
+	symbol_table_add_numeric(st, "f64");
 }
 
 void symbol_table_init(struct symbol_table* st)

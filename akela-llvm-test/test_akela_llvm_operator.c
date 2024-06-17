@@ -21,7 +21,7 @@ void test_code_gen_add2()
     Code_gen_result result;
     Code_gen_result_init(&result);
 
-    cg_setup("let a: Int64 = 4\n"
+    cg_setup("let a: i64 = 4\n"
              "a + 61\n",
              &result);
     expect_str(&result.value, "65", "65");
@@ -47,7 +47,7 @@ void test_code_gen_sub2()
     Code_gen_result result;
     Code_gen_result_init(&result);
 
-    cg_setup("let a: Int64 = 10\n"
+    cg_setup("let a: i64 = 10\n"
              "a - 2\n",
              &result);
     expect_str(&result.value, "8", "8");

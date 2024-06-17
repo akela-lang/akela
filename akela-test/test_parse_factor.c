@@ -31,7 +31,7 @@ void test_parse_number_integer()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
     parse_teardown(&cu);
 }
@@ -62,7 +62,7 @@ void test_parse_number_float()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_float, "integer td");
-	expect_str(&td->name, "Float64", "Float64 td");
+	expect_str(&td->name, "f64", "f64 td");
 
 	/* destroy ps{} cu.root cu.root{} */
 
@@ -100,7 +100,7 @@ void test_parse_string()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "type td");
-	expect_str(&td->name, "UInt8", "name td");
+	expect_str(&td->name, "u8", "name td");
 
     parse_teardown(&cu);
 }
@@ -132,7 +132,7 @@ void test_parse_boolean_true()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_boolean, "boolean td");
-	expect_str(&td->name, "Bool", "Bool td");
+	expect_str(&td->name, "bool", "bool td");
 
 	/* destroy ps{} cu.root cu.root{} */
 
@@ -166,7 +166,7 @@ void test_parse_boolean_false()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_boolean, "boolean td");
-	expect_str(&td->name, "Bool", "Bool td");
+	expect_str(&td->name, "bool", "bool td");
 
 	/* destroy ps{} cu.root cu.root{} */
 
@@ -180,7 +180,7 @@ void test_parse_id()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64; x", &cu);
+    parse_setup("let x: i64; x", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -215,7 +215,7 @@ void test_parse_id()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	/* destroy ps{} cu.root cu.root{} */
 
@@ -232,7 +232,7 @@ void test_parse_id2()
 	bool valid;
 
 	/* allocate ps{} cu.root cu.root{} */
-    parse_setup("let _a23: Int64; _a23", &cu);
+    parse_setup("let _a23: i64; _a23", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -256,7 +256,7 @@ void test_parse_id3()
 
 	struct comp_unit cu;
 
-    parse_setup("let a2: Int64; a2", &cu);
+    parse_setup("let a2: i64; a2", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -278,7 +278,7 @@ void test_parse_id_greek()
 
     struct comp_unit cu;
 
-    parse_setup("let αβγ: Int64; αβγ", &cu);
+    parse_setup("let αβγ: i64; αβγ", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "parse_setup valid");
 
@@ -298,7 +298,7 @@ void test_parse_id_cyrillic()
     test_name(__func__);
     struct comp_unit cu;
 
-    parse_setup("let я: Int64; я", &cu);
+    parse_setup("let я: i64; я", &cu);
     expect_false(cu.valid, "parse_setup valid");
     assert_has_errors(&cu.el);
     struct error* e = expect_source_error(&cu.el, "Unrecognized character: я");
@@ -335,7 +335,7 @@ void test_parse_sign_negative()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	Ast_node* left = Ast_node_get(sign, 0);
 	assert_ptr(left, "left");
@@ -373,7 +373,7 @@ void test_parse_sign_positive()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	Ast_node* left = Ast_node_get(sign, 0);
 	assert_ptr(left, "left");
@@ -423,7 +423,7 @@ void test_parse_not_id()
 
 	struct comp_unit cu;
 
-    parse_setup("let a: Bool; !a", &cu);
+    parse_setup("let a: bool; !a", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
@@ -440,7 +440,7 @@ void test_parse_not_id()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_boolean, "boolean td");
-	expect_str(&td->name, "Bool", "Bool td");
+	expect_str(&td->name, "bool", "bool td");
 
 	Ast_node* id = Ast_node_get(not, 0);
 	assert_ptr(id, "ptr id");
@@ -473,7 +473,7 @@ void test_parse_not_literal()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_boolean, "boolean td");
-	expect_str(&td->name, "Bool", "Bool td");
+	expect_str(&td->name, "bool", "bool td");
 
 	Ast_node* lit_bool = Ast_node_get(not, 0);
 	assert_ptr(lit_bool, "ptr lit_bool");
@@ -523,7 +523,7 @@ void test_parse_array_literal_integer()
 	struct type_def* a_td = a_tu->td;
 	assert_ptr(a_td, "ptr array_td");
 	expect_int_equal(a_td->type, type_integer, "integer array_td");
-	expect_str(&a_td->name, "Int64", "Int64 array_td");
+	expect_str(&a_td->name, "i64", "i64 array_td");
 
 	Ast_node* a0 = Ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
@@ -566,7 +566,7 @@ void test_parse_array_literal_float()
 	struct type_def* array_td = array_tu->td;
 	assert_ptr(array_td, "ptr array_td");
 	expect_int_equal(array_td->type, type_float, "float array_td");
-	expect_str(&array_td->name, "Float64", "Float64 array_td");
+	expect_str(&array_td->name, "f64", "f64 array_td");
 
 	Ast_node* a0 = Ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
@@ -609,7 +609,7 @@ void test_parse_array_literal_numeric()
 	struct type_def* array_td = array_tu->td;
 	assert_ptr(array_td, "ptr array_td");
 	expect_int_equal(array_td->type, type_float, "float array_td");
-	expect_str(&array_td->name, "Float64", "Float64 array_td");
+	expect_str(&array_td->name, "f64", "f64 array_td");
 
 	Ast_node* a0 = Ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
@@ -808,7 +808,7 @@ void test_parse_factor_newline_let()
 
     struct comp_unit cu;
 
-    parse_setup("let\nx: Int64", &cu);
+    parse_setup("let\nx: i64", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -821,7 +821,7 @@ void test_parse_factor_newline_let_assign()
 
     struct comp_unit cu;
 
-    parse_setup("let\nx: Int64 =\n1", &cu);
+    parse_setup("let\nx: i64 =\n1", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -945,7 +945,7 @@ void test_parse_factor_array_element_const()
     test_name(__func__);
     struct comp_unit cu;
 
-    parse_setup("let mut a: [4 const]Int64 = [1, 2, 3, 4]\n"
+    parse_setup("let mut a: [4 const]i64 = [1, 2, 3, 4]\n"
                 "a[0]\n",
                 &cu);
     expect_true(cu.valid, "valid");
@@ -973,7 +973,7 @@ void test_parse_factor_array_element_const_error()
     test_name(__func__);
     struct comp_unit cu;
 
-    parse_setup("let mut a: [4 const]Int64 = [1, 2, 3, 4]\n"
+    parse_setup("let mut a: [4 const]i64 = [1, 2, 3, 4]\n"
                 "a[0] = 10\n",
                 &cu);
     expect_false(cu.valid, "valid");

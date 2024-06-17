@@ -12,9 +12,9 @@ void test_parse_struct_field_assign()
 
     struct comp_unit cu;
     parse_setup("struct Person\n"
-                "  firstName: [100 const]UInt8\n"
-                "  lastName: [100 const]UInt8\n"
-                "  age: Int64\n"
+                "  firstName: [100 const]u8\n"
+                "  lastName: [100 const]u8\n"
+                "  age: i64\n"
                 "end\n"
                 "let p: Person\n"
                 "p.firstName = \"John\"\n"
@@ -47,7 +47,7 @@ void test_parse_struct_field_assign()
     struct type_def* td0 = t0->td;
     assert_ptr(td0, "ptr td0");
     expect_int_equal(td0->type, type_integer, "type td0");
-    expect_str(&td0->name, "UInt8", "name td0");
+    expect_str(&td0->name, "u8", "name td0");
 
     /* lastName */
     Ast_node* d1 = Ast_node_get(st, 1);
@@ -66,7 +66,7 @@ void test_parse_struct_field_assign()
     struct type_def* td1 = t1->td;
     assert_ptr(td1, "ptr td1");
     expect_int_equal(td1->type, type_integer, "type td1");
-    expect_str(&td1->name, "UInt8", "name td1");
+    expect_str(&td1->name, "u8", "name td1");
 
     /* age */
     Ast_node* d2 = Ast_node_get(st, 2);
@@ -85,7 +85,7 @@ void test_parse_struct_field_assign()
     struct type_def* td2 = t2->td;
     assert_ptr(td2, "ptr td2");
     expect_int_equal(td2->type, type_integer, "integer td2");
-    expect_str(&td2->name, "Int64", "Int64 td2");
+    expect_str(&td2->name, "i64", "i64 td2");
 
     /* let */
     Ast_node* let = Ast_node_get(cu.root, 1);
@@ -119,9 +119,9 @@ void test_parse_struct_let_literal()
 
     struct comp_unit cu;
     parse_setup("struct Person\n"
-        "  first_name: [100 const]UInt8\n"
-        "  last_name: [100 const]UInt8\n"
-        "  age: Int64\n"
+        "  first_name: [100 const]u8\n"
+        "  last_name: [100 const]u8\n"
+        "  age: i64\n"
         "end\n"
         "let p: Person = Person\n"
         "  first_name: \"John\"\n"
@@ -212,9 +212,9 @@ void test_parse_struct_error_invalid_field()
 
     struct comp_unit cu;
     parse_setup("struct Person\n"
-                "  first_name: [100 const]UInt8\n"
-                "  last_name: [100 const]UInt8\n"
-                "  age: Int64\n"
+                "  first_name: [100 const]u8\n"
+                "  last_name: [100 const]u8\n"
+                "  age: i64\n"
                 "end\n"
                 "let p: Person = Person\n"
                 "  first_name: \"John\"\n"
@@ -234,9 +234,9 @@ void test_parse_struct_error_field_missing()
 
     struct comp_unit cu;
     parse_setup("struct Person\n"
-                "  first_name: [100 const]UInt8\n"
-                "  last_name: [100 const]UInt8\n"
-                "  age: Int64\n"
+                "  first_name: [100 const]u8\n"
+                "  last_name: [100 const]u8\n"
+                "  age: i64\n"
                 "end\n"
                 "let p: Person = Person\n"
                 "  first_name: \"John\"\n"
@@ -256,9 +256,9 @@ void test_parse_struct_error_dot_invalid_field()
 
     parse_setup(
             "struct Person\n"
-            "  firstName: [100 const]UInt8\n"
-            "  lastName: [100 const]UInt8\n"
-            "  age: Int64\n"
+            "  firstName: [100 const]u8\n"
+            "  lastName: [100 const]u8\n"
+            "  age: i64\n"
             "end\n"
             "let p: Person\n"
             "p.abc\n",
@@ -304,7 +304,7 @@ void test_parse_struct_error_expected_end2()
 
     struct comp_unit cu;
 
-    parse_setup("struct Person x: Int64", &cu);
+    parse_setup("struct Person x: i64", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "expected end");
@@ -318,7 +318,7 @@ void test_parse_struct_error_duplicate()
 
     struct comp_unit cu;
 
-    parse_setup("let Person: Int64 = 1; struct Person end", &cu);
+    parse_setup("let Person: i64 = 1; struct Person end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "duplicate variable in scope: Person");

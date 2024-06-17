@@ -454,17 +454,17 @@ Ast_node* parse_literal(struct parse_state* ps, struct location* loc)
 		if (x->type == token_number) {
 			n->type = ast_type_number;
 			if (x->is_integer) {
-				type_name = "Int64";
+				type_name = "i64";
 			} else if (x->is_float) {
-				type_name = "Float64";
+				type_name = "f64";
 			}
 		} else if (x->type == token_string) {
 			n->type = ast_type_string;
-			type_name = "UInt8";
+			type_name = "u8";
             is_string = true;
 		} else if (x->type == token_boolean) {
 			n->type = ast_type_boolean;
-			type_name = "Bool";
+			type_name = "bool";
 		} else {
             assert(false);
         }

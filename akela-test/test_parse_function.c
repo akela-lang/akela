@@ -13,7 +13,7 @@ void test_parse_function_no_inputs_no_outputs()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo() let x: Int64; x+1; 5+4 end", &cu);
+    parse_setup("fn foo() let x: i64; x+1; 5+4 end", &cu);
     assert_no_errors(&cu.el);
     assert_true(cu.valid, "parse_setup valid");
 
@@ -89,7 +89,7 @@ void test_parse_function_input()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(x: Int64) x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x: i64) x+1; 5+4 end", &cu);
     assert_no_errors(&cu.el);
     assert_true(cu.valid, "parse_setup valid");
 
@@ -126,7 +126,7 @@ void test_parse_function_input()
 
     struct type_def* x_td = tu_x->td;
     assert_ptr(x_td, "ptr x_td");
-    expect_str(&x_td->name, "Int64", "Int64 tu_x");
+    expect_str(&x_td->name, "i64", "i64 tu_x");
 
     Ast_node* dret = Ast_node_get(proto, 2);
     assert_ptr(dret, "ptr dret");
@@ -173,7 +173,7 @@ void test_parse_function_multiple_inputs()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(x: Int32, y: Int32) x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x: i32, y: i32) x+1; 5+4 end", &cu);
     assert_no_errors(&cu.el);
     assert_true(cu.valid, "parse_setup valid");
 
@@ -257,7 +257,7 @@ void test_parse_function_three_inputs()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(x: Int32, y: Int32, z: Int32)->Int32 x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x: i32, y: i32, z: i32)->i32 x+1; 5+4 end", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "parse valid");
 
@@ -301,7 +301,7 @@ void test_parse_function_error_duplicate_variable_declarations()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(x: Int64) let x: Int64 end", &cu);
+    parse_setup("fn foo(x: i64) let x: i64 end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "duplicate declaration in same scope: x");
@@ -315,7 +315,7 @@ void test_parse_function_return_type_error()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(x: Int64)->Int64 true end", &cu);
+    parse_setup("fn foo(x: i64)->i64 true end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "returned type does not match function return type");
@@ -371,10 +371,10 @@ void test_parse_function_error_identifier_reserved()
 
     struct comp_unit cu;
 
-    parse_setup("fn Int64() end", &cu);
+    parse_setup("fn i64() end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
-    expect_source_error(&cu.el, "identifier reserved as a type: Int64");
+    expect_source_error(&cu.el, "identifier reserved as a type: i64");
 
     parse_teardown(&cu);
 }
@@ -416,7 +416,7 @@ void test_parse_return_error_type_does_not_match()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo()->Int64 return true end", &cu);
+    parse_setup("fn foo()->i64 return true end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "returned type does not match function return type");
@@ -433,7 +433,7 @@ void test_parse_stmts_newline_function()
 
     struct comp_unit cu;
 
-    parse_setup("fn\nfoo\n(\na: Int64,\nb: Int64\n)->\nInt64 1 end", &cu);
+    parse_setup("fn\nfoo\n(\na: i64,\nb: i64\n)->\ni64 1 end", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -446,7 +446,7 @@ void test_parse_return()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo()->Int64 return 1 end", &cu);
+    parse_setup("fn foo()->i64 return 1 end", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -462,7 +462,7 @@ void test_parse_return_error_no_value()
 
     struct comp_unit cu;
 
-    parse_setup("fn bar() end; fn foo()->Int64 return bar() end", &cu);
+    parse_setup("fn bar() end; fn foo()->i64 return bar() end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "return expression has no value");
@@ -479,8 +479,8 @@ void test_parse_anonymous_function()
 
     struct comp_unit cu;
 
-    parse_setup("let mut a: fn(Int32, Int32, Int32)\n"
-        "a = fn (x: Int32,y: Int32,z: Int32)\n"
+    parse_setup("let mut a: fn(i32, i32, i32)\n"
+        "a = fn (x: i32,y: i32,z: i32)\n"
         "    1\n"
         "  end\n",
         &cu
@@ -579,8 +579,8 @@ void test_parse_anonymous_function2()
     struct comp_unit cu;
 
     parse_setup(
-            "let mut a: fn (Int32, Int32, Int32)->Int32\n"
-            "a = fn(x: Int32, y: Int32, z: Int32)->Int32\n"
+            "let mut a: fn (i32, i32, i32)->i32\n"
+            "a = fn(x: i32, y: i32, z: i32)->i32\n"
             "  1\n"
             "end\n",
             &cu);
@@ -681,7 +681,7 @@ void test_parse_anonymous_function3()
 
     struct comp_unit cu;
 
-    parse_setup("let a: Function; a = fn(x: Int64) let x: Int64 = 1 end", &cu);
+    parse_setup("let a: Function; a = fn(x: i64) let x: i64 = 1 end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "duplicate declaration in same scope: x");
@@ -695,7 +695,7 @@ void test_parse_anonymous_function_assignment_error()
 
     struct comp_unit cu;
 
-    parse_setup("let a: fn(Bool) = fn(x: Int64) end", &cu);
+    parse_setup("let a: fn(bool) = fn(x: i64) end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "values in assignment not compatible");
@@ -710,7 +710,7 @@ void test_parse_anonymous_function_return_error()
 
     struct comp_unit cu;
 
-    parse_setup("let f: fn()->Int64 = fn()->Int64 true end", &cu);
+    parse_setup("let f: fn()->i64 = fn()->i64 true end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "returned type does not match function return type");
@@ -752,8 +752,8 @@ void test_parse_function_proto()
     test_name(__func__);
 
     struct comp_unit cu;
-    parse_setup("let foo: fn (a: Int64)->Int64\n"
-                "foo = fn (a: Int64)->Int64\n"
+    parse_setup("let foo: fn (a: i64)->i64\n"
+                "foo = fn (a: i64)->i64\n"
                 "  a + 1\n"
                 "end\n",
                 &cu);
@@ -794,8 +794,8 @@ void test_parse_function_error_let_assign()
     test_name(__func__);
 
     struct comp_unit cu;
-    parse_setup("let foo: fn (a: Bool)->Int64 =\n"
-                "  fn (a: Int64)->Int64\n"
+    parse_setup("let foo: fn (a: bool)->i64 =\n"
+                "  fn (a: i64)->i64\n"
                 "    a + 1\n"
                 "  end\n",
                 &cu);
@@ -811,7 +811,7 @@ void test_parse_function_error_assign()
     test_name(__func__);
 
     struct comp_unit cu;
-    parse_setup("let a: Int64\n"
+    parse_setup("let a: i64\n"
                 "a = true\n",
                 &cu);
     expect_false(cu.valid, "valid");
@@ -878,7 +878,7 @@ void test_parse_call_return_type()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo()->Int64 1 end; foo() + 2", &cu);
+    parse_setup("fn foo()->i64 1 end; foo() + 2", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "parse_setup valid");
 
@@ -898,7 +898,7 @@ void test_parse_call_return_type()
     struct type_def* add_td = add_tu->td;
     assert_ptr(add_td, "ptr add_td");
     expect_int_equal(add_td->type, type_integer, "integer add_td");
-    expect_str(&add_td->name, "Int64", "Int64 add_td");
+    expect_str(&add_td->name, "i64", "i64 add_td");
 
     parse_teardown(&cu);
 }
@@ -909,7 +909,7 @@ void test_parse_call_return_type_error()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo()->Bool true end; foo() + 2", &cu);
+    parse_setup("fn foo()->bool true end; foo() + 2", &cu);
     assert_has_errors(&cu.el);
     expect_false(cu.valid, "parse_setup valid");
     expect_source_error(&cu.el, "addition on non-numeric operand");
@@ -923,7 +923,7 @@ void test_parse_call2()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(arg1: Int64) arg1 end; foo(2)", &cu);
+    parse_setup("fn foo(arg1: i64) arg1 end; foo(2)", &cu);
     assert_no_errors(&cu.el);
     assert_true(cu.valid, "parse_setup valid");
 
@@ -962,7 +962,7 @@ void test_parse_call2()
     struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_int_equal(td->type, type_integer, "integer td");
-    expect_str(&td->name, "Int64", "Int64 td");
+    expect_str(&td->name, "i64", "i64 td");
 
     Ast_node* dret = Ast_node_get(proto, 2);
     assert_ptr(dret, "ptr dret");
@@ -999,7 +999,7 @@ void test_parse_call3()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(arg1: Int64, arg2: Int64)->Int64 1 end; let x: Int64; let y: Int64; foo(x,y)", &cu);
+    parse_setup("fn foo(arg1: i64, arg2: i64)->i64 1 end; let x: i64; let y: i64; foo(x,y)", &cu);
     assert_no_errors(&cu.el);
     assert_true(cu.valid, "parse_setup valid");
 
@@ -1079,7 +1079,7 @@ void test_parse_call4()
     struct comp_unit cu;
 
     parse_setup(
-            "fn foo(arg0: Int64, arg1: Int64, arg2: Int64)->Int64 100 end; let x: Int64; let y: Int64; foo(x, y, 1)",
+            "fn foo(arg0: i64, arg1: i64, arg2: i64)->i64 100 end; let x: i64; let y: i64; foo(x, y, 1)",
             &cu);
     assert_no_errors(&cu.el);
     assert_true(cu.valid, "parse_setup valid");
@@ -1188,7 +1188,7 @@ void test_parse_call_missing_arguments()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(a: Int64, b: Int64) end; foo(1)", &cu);
+    parse_setup("fn foo(a: i64, b: i64) end; foo(1)", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse_setup valid");
     expect_source_error(&cu.el, "not enough arguments in function call");
@@ -1202,7 +1202,7 @@ void test_parse_call_too_many_arguments()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(a: Int64) end; foo(1, 2)", &cu);
+    parse_setup("fn foo(a: i64) end; foo(1, 2)", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse_setup valid");
     expect_source_error(&cu.el, "too many arguments in function call");
@@ -1216,7 +1216,7 @@ void test_parse_call_type_error()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(a: Int64) end; foo(true)", &cu);
+    parse_setup("fn foo(a: i64) end; foo(true)", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse_setup valid");
     expect_source_error(&cu.el, "parameter and aguments types do not match");
@@ -1230,7 +1230,7 @@ void test_parse_call_anonymous_function_type_error()
 
     struct comp_unit cu;
 
-    parse_setup("let foo: fn (a: Int64) = fn (a: Int64) end; foo(true)", &cu);
+    parse_setup("let foo: fn (a: i64) = fn (a: i64) end; foo(true)", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse_setup valid");
     expect_source_error(&cu.el, "parameter and aguments types do not match");
@@ -1272,7 +1272,7 @@ void test_parse_call_error_not_function()
 
     struct comp_unit cu;
 
-    parse_setup("let foo: Int64; foo()", &cu);
+    parse_setup("let foo: i64; foo()", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse_setup valid");
     expect_source_error(&cu.el, "not a function type");
@@ -1286,7 +1286,7 @@ void test_parse_call_error_not_enough_arguments()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(x: Int64) end; foo()", &cu);
+    parse_setup("fn foo(x: i64) end; foo()", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse_setup valid");
     expect_source_error(&cu.el, "not enough arguments in function call");
@@ -1314,7 +1314,7 @@ void test_parse_call_error_expected_expression()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(x: Int64) end; foo(1,)", &cu);
+    parse_setup("fn foo(x: i64) end; foo(1,)", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse_setup valid");
     expect_source_error(&cu.el, "expected expression after comma");
@@ -1328,7 +1328,7 @@ void test_parse_factor_newline_anonymous_function()
 
     struct comp_unit cu;
 
-    parse_setup("fn\n(\na: Int64,\nb: Int64,\nc: Int64\n)->\nInt64\na+b+c\nend", &cu);
+    parse_setup("fn\n(\na: i64,\nb: i64,\nc: i64\n)->\ni64\na+b+c\nend", &cu);
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
@@ -1342,13 +1342,13 @@ void test_parse_factor_newline_anonymous_function_let()
     struct comp_unit cu;
 
     parse_setup(
-            "let foo: fn (a: Int64, b: Int64, c: Int64)->Int64 = fn\n"
+            "let foo: fn (a: i64, b: i64, c: i64)->i64 = fn\n"
             "(\n"
-            "a: Int64,\n"
-            "b: Int64,\n"
-            "c: Int64\n"
+            "a: i64,\n"
+            "b: i64,\n"
+            "c: i64\n"
             ")->\n"
-            "Int64\n"
+            "i64\n"
             "a+b+c\n"
             "end", &cu);
     expect_true(cu.valid, "parse_setup valid");
@@ -1363,7 +1363,7 @@ void test_parse_function_error_use_fn()
 
     struct comp_unit cu;
 
-    parse_setup("let a: Function = fn(x: Int64) end", &cu);
+    parse_setup("let a: Function = fn(x: i64) end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(
@@ -1379,10 +1379,10 @@ void test_parse_function_error_require_params_name()
 
     struct comp_unit cu;
 
-    parse_setup("let a: fn(Int64) = fn(Int64) end", &cu);
+    parse_setup("let a: fn(i64) = fn(i64) end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
-    expect_source_error(&cu.el, "identifier reserved as a type: Int64");
+    expect_source_error(&cu.el, "identifier reserved as a type: i64");
 
     parse_teardown(&cu);
 }

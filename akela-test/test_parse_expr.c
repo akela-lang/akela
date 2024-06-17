@@ -32,7 +32,7 @@ void test_parse_add()
 	
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64 = 100; speed + 1", &cu);
+    parse_setup("let speed: i64 = 100; speed + 1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -49,7 +49,7 @@ void test_parse_add()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	Ast_node* left = Ast_node_get(add, 0);
 	assert_ptr(left, "left");
@@ -157,7 +157,7 @@ void test_parse_add_mixed_types()
 	struct type_def* add_td = add_tu->td;
 	assert_ptr(add_td, "ptr add_td");
 	expect_int_equal(add_td->type, type_float, "float add_td");
-	expect_str(&add_td->name, "Float64", "Float64 add_td");
+	expect_str(&add_td->name, "f64", "f64 add_td");
 
 	Ast_node* left = Ast_node_get(add, 0);
 	assert_ptr(left, "left");
@@ -178,7 +178,7 @@ void test_parse_add_positive()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64 = 100; speed + +1", &cu);
+    parse_setup("let speed: i64 = 100; speed + +1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -217,7 +217,7 @@ void test_parse_add_negative()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64; speed + -1", &cu);
+    parse_setup("let speed: i64; speed + -1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -256,7 +256,7 @@ void test_parse_sub()
 
 	struct comp_unit cu;
 
-    parse_setup("let delta: Int64 = 3; 100 - delta", &cu);
+    parse_setup("let delta: i64 = 3; 100 - delta", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -288,7 +288,7 @@ void test_parse_sub_positive()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64; speed - +1", &cu);
+    parse_setup("let speed: i64; speed - +1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -327,7 +327,7 @@ void test_parse_sub_negative()
 	
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64; speed - -1", &cu);
+    parse_setup("let speed: i64; speed - -1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -383,7 +383,7 @@ void test_parse_mult()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	Ast_node* left = Ast_node_get(mult, 0);
 	assert_ptr(left, "left");
@@ -475,7 +475,7 @@ void test_parse_mult_positive()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64; speed * +1", &cu);
+    parse_setup("let speed: i64; speed * +1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -514,7 +514,7 @@ void test_parse_mult_negative()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64; speed * -1", &cu);
+    parse_setup("let speed: i64; speed * -1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -756,7 +756,7 @@ void test_parse_power()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	Ast_node* number0 = Ast_node_get(pow, 0);
 	assert_ptr(number0, "ptr number0");
@@ -847,7 +847,7 @@ void test_parse_paren_add()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64; (speed + 1)", &cu);
+    parse_setup("let speed: i64; (speed + 1)", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -883,7 +883,7 @@ void test_parse_paren_add2()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64; (speed) + 1", &cu);
+    parse_setup("let speed: i64; (speed) + 1", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -919,7 +919,7 @@ void test_parse_paren_add3()
 
 	struct comp_unit cu;
 
-    parse_setup("let speed: Int64; speed + (1)", &cu);
+    parse_setup("let speed: i64; speed + (1)", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1161,7 +1161,7 @@ void test_parse_comparison()
 
 	struct comp_unit cu;
 
-    parse_setup("let count: Int64 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &cu);
+    parse_setup("let count: i64 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1175,7 +1175,7 @@ void test_parse_comparison()
 	struct type_def* cond0_td = cond0_tu->td;
 	assert_ptr(cond0_td, "ptr cond0_td");
 	expect_int_equal(cond0_td->type, type_integer, "integer cond0_td");
-	expect_str(&cond0_td->name, "Int64", "Int64 cond0_td");
+	expect_str(&cond0_td->name, "i64", "i64 cond0_td");
 
 	Ast_node* left0 = Ast_node_get(cond0, 0);
 	assert_ptr(left0, "ptr left0");
@@ -1197,7 +1197,7 @@ void test_parse_comparison()
 	struct type_def* cond1_td = cond1_tu->td;
 	assert_ptr(cond1_td, "ptr cond0_td");
 	expect_int_equal(cond1_td->type, type_float, "float cond1_td");
-	expect_str(&cond1_td->name, "Float64", "Float64 cond1_td");
+	expect_str(&cond1_td->name, "f64", "f64 cond1_td");
 
 	Ast_node* left1 = Ast_node_get(cond1, 0);
 	assert_ptr(left1, "ptr left1");
@@ -1257,14 +1257,14 @@ void test_parse_comparison_identity()
 	assert_ptr(comp0->tu, "ptr comp0->tu");
 	assert_ptr(comp0->tu->td, "ptr comp0->tu->td");
 	expect_int_equal(comp0->tu->td->type, type_boolean, "boolean comp0->tu->td->type");
-	expect_str(&comp0->tu->td->name, "Bool", "Bool comp0->tu->td->name");
+	expect_str(&comp0->tu->td->name, "bool", "bool comp0->tu->td->name");
 
 	Ast_node* comp1 = Ast_node_get(cu.root, 1);
 	assert_ptr(comp1, "ptr comp1");
 	assert_ptr(comp1->tu, "ptr comp->tu1");
 	assert_ptr(comp1->tu->td, "ptr comp1->tu->td");
 	expect_int_equal(comp1->tu->td->type, type_boolean, "boolean comp1->tu->td->type");
-	expect_str(&comp1->tu->td->name, "Bool", "Bool comp1->tu->td->name");
+	expect_str(&comp1->tu->td->name, "bool", "bool comp1->tu->td->name");
 
     parse_teardown(&cu);
 }
@@ -1345,7 +1345,7 @@ void test_parse_and()
 
 	struct comp_unit cu;
 
-    parse_setup("let a: Bool; let b: Bool; a && b", &cu);
+    parse_setup("let a: bool; let b: bool; a && b", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1374,7 +1374,7 @@ void test_parse_or()
 
 	struct comp_unit cu;
 
-    parse_setup("let a: Bool; let b: Bool; a || b", &cu);
+    parse_setup("let a: bool; let b: bool; a || b", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1391,7 +1391,7 @@ void test_parse_or()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_boolean, "boolean td");
-	expect_str(&td->name, "Bool", "Bool td");
+	expect_str(&td->name, "bool", "bool td");
 
 	Ast_node* a = Ast_node_get(or, 0);
 	assert_ptr(a, "ptr a");
@@ -1412,7 +1412,7 @@ void test_parse_or_or()
 	
 	struct comp_unit cu;
 
-    parse_setup("let a: Bool; let b: Bool; let c: Bool; a || b || c", &cu);
+    parse_setup("let a: bool; let b: bool; let c: bool; a || b || c", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1525,7 +1525,7 @@ void test_parse_array_declare()
 
     struct comp_unit cu;
 
-    parse_setup("let a: [5]Int64\n"
+    parse_setup("let a: [5]i64\n"
                 "a[0]\n",
                 &cu);
     expect_no_errors(&cu.el);
@@ -1543,7 +1543,7 @@ void test_parse_array_subscript()
 
 	struct comp_unit cu;
 
-    parse_setup("let a: [10]Int64; a[1]", &cu);
+    parse_setup("let a: [10]i64; a[1]", &cu);
 	expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1560,7 +1560,7 @@ void test_parse_array_subscript()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	Ast_node* name = Ast_node_get(as, 0);
 	assert_ptr(name, "ptr name");
@@ -1581,7 +1581,7 @@ void test_parse_array_subscript2()
 	
 	struct comp_unit cu;
 
-    parse_setup("let a: [10][10]Int64; a[0][1]", &cu);
+    parse_setup("let a: [10][10]i64; a[0][1]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1596,7 +1596,7 @@ void test_parse_array_subscript2()
 	struct type_def* td = a_tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	Ast_node* b = Ast_node_get(a, 0);
 	assert_ptr(b, "ptr b");
@@ -1626,7 +1626,7 @@ void test_parse_array_subscript3()
 
 	struct comp_unit cu;
 
-    parse_setup("let a: [5]Int64; let b: Int64; a[b]", &cu);
+    parse_setup("let a: [5]i64; let b: i64; a[b]", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1640,7 +1640,7 @@ void test_parse_array_subscript3()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "integer td");
-	expect_str(&td->name, "Int64", "Int64 td");
+	expect_str(&td->name, "i64", "i64 td");
 
 	Ast_node* b = Ast_node_get(a, 0);
 	expect_int_equal(b->type, ast_type_id, "type b");
@@ -1659,7 +1659,7 @@ void test_parse_expr_array_subscript_3d()
 
     struct comp_unit cu;
 
-    parse_setup("let mut x: [2][3][4 const]Int64 = \n"
+    parse_setup("let mut x: [2][3][4 const]i64 = \n"
                 "[\n"
                 "  [\n"
                 "    [1, 2, 3, 4],\n"
@@ -1698,7 +1698,7 @@ void test_parse_expr_array_subscript_3d()
     struct type_def* a_td = a_tu->td;
     assert_ptr(a_td, "ptr a_td");
     expect_int_equal(a_td->type, type_integer, "type a_td");
-    expect_str(&a_td->name, "Int64", "name a_td");
+    expect_str(&a_td->name, "i64", "name a_td");
 
     Ast_node* b = Ast_node_get(a, 0);
     assert_ptr(b, "ptr b");
@@ -1787,7 +1787,7 @@ void test_parse_subscript_error_not_array()
 
 	struct comp_unit cu;
 
-    parse_setup("let a: Int64; a[1]", &cu);
+    parse_setup("let a: i64; a[1]", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expression has subscript but is not an array or slice");
@@ -1801,7 +1801,7 @@ void test_parse_subscript_error_expected_right_square_bracket()
 
 	struct comp_unit cu;
 
-    parse_setup("let a: [10]Int64; a[1", &cu);
+    parse_setup("let a: [10]i64; a[1", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected right-square-bracket");
@@ -1815,7 +1815,7 @@ void test_parse_assign_string()
 
 	struct comp_unit cu;
 
-    parse_setup("let mut a: [6 const]UInt8; a = \"hello\"", &cu);
+    parse_setup("let mut a: [6 const]u8; a = \"hello\"", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1832,7 +1832,7 @@ void test_parse_assign_string()
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_integer, "type td");
-	expect_str(&td->name, "UInt8", "name td");
+	expect_str(&td->name, "u8", "name td");
 		
 	Ast_node* lhv = Ast_node_get(assign, 0);
 	assert_ptr(lhv, "ptr lhv");
@@ -1853,7 +1853,7 @@ void test_parse_assign_multiple()
 
 	struct comp_unit cu;
 
-    parse_setup("let mut a: Int64; let mut b: Int64; let mut c: Int64; a = b = c = 0", &cu);
+    parse_setup("let mut a: i64; let mut b: i64; let mut c: i64; a = b = c = 0", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
@@ -1870,7 +1870,7 @@ void test_parse_assign_multiple()
 	struct type_def* assign_td = assign_tu->td;
 	assert_ptr(assign_td, "ptr assign_td");
 	expect_int_equal(assign_td->type, type_integer, "integer assign_td");
-	expect_str(&assign_td->name, "Int64", "Int64 assign_td");
+	expect_str(&assign_td->name, "i64", "i64 assign_td");
 
 	Ast_node* assign0 = Ast_node_get(assign, 0);
 	assert_ptr(assign0, "ptr lhv0");
@@ -1901,7 +1901,7 @@ void test_parse_expr_assignment_eseq_error_eseq_count()
 
     struct comp_unit cu;
 
-    parse_setup("let mut a: Int64; let mut b: Int64; let mut c: Int64; a, b, c = 1, 2", &cu);
+    parse_setup("let mut a: i64; let mut b: i64; let mut c: i64; a, b, c = 1, 2", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "assignment sequence counts do not match");
@@ -1929,7 +1929,7 @@ void test_parse_assign_error_no_value_right()
 	
 	struct comp_unit cu;
 
-    parse_setup("fn foo() end; let a: [10]UInt8 = foo()", &cu);
+    parse_setup("fn foo() end; let a: [10]u8 = foo()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "cannot assign with operand that has no value");
@@ -1943,7 +1943,7 @@ void test_parse_assign_error_not_compatible()
 
 	struct comp_unit cu;
 
-    parse_setup("let x: Int64 = true", &cu);
+    parse_setup("let x: i64 = true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "values in assignment not compatible");
@@ -1971,7 +1971,7 @@ void test_parse_expr_newline_assignment()
 
     struct comp_unit cu;
 
-    parse_setup("let mut a: Int64; a =\n1", &cu);
+    parse_setup("let mut a: i64; a =\n1", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2133,7 +2133,7 @@ void test_parse_expr_newline_subscript()
 
     struct comp_unit cu;
 
-    parse_setup("let a: [1]Int64; a[\n0\n]", &cu);
+    parse_setup("let a: [1]i64; a[\n0\n]", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2160,7 +2160,7 @@ void test_parse_expr_newline_function_call()
 
     struct comp_unit cu;
 
-    parse_setup("fn foo(a: Int64, b: Int64)->Int64 a+b end; foo(\n1,\n2\n)", &cu);
+    parse_setup("fn foo(a: i64, b: i64)->i64 a+b end; foo(\n1,\n2\n)", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
@@ -2196,9 +2196,9 @@ void test_parse_expr_assign_eseq()
 
     struct comp_unit cu;
 
-    parse_setup("let mut a: Int64\n"
-                "let mut b: Int64\n"
-                "let mut c: Int64\n"
+    parse_setup("let mut a: i64\n"
+                "let mut b: i64\n"
+                "let mut c: i64\n"
                 "a,b,c = 1,2,3", &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
@@ -2238,7 +2238,7 @@ void test_parse_expr_error_lvalue()
 
     struct comp_unit cu;
 
-    parse_setup("let a: Int64\n"
+    parse_setup("let a: i64\n"
                 "1 = 1", &cu);
     expect_has_errors(&cu.el);
     expect_source_error(&cu.el, "invalid lvalue");
@@ -2253,9 +2253,9 @@ void test_parse_expr_error_eseq_lvalue()
 
     struct comp_unit cu;
 
-    parse_setup("let a: Int64\n"
-                "let b: Int64\n"
-                "let c: Int64\n"
+    parse_setup("let a: i64\n"
+                "let b: i64\n"
+                "let c: i64\n"
                 "1,2,3 = 1,2,3", &cu);
     expect_has_errors(&cu.el);
     expect_source_error(&cu.el, "invalid lvalue");

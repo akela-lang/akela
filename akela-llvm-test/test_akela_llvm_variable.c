@@ -9,7 +9,7 @@ void test_code_gen_let_void1()
     Code_gen_result result;
     Code_gen_result_init(&result);
 
-    cg_setup("let a: Int64", &result);
+    cg_setup("let a: i64", &result);
     expect_str(&result.value, "", "blank");
 
     Code_gen_result_destroy(&result);
@@ -21,7 +21,7 @@ void test_code_gen_let_void2()
     Code_gen_result result;
     Code_gen_result_init(&result);
 
-    cg_setup("let a: Int64 = 1", &result);
+    cg_setup("let a: i64 = 1", &result);
     expect_str(&result.value, "", "blank");
 
     Code_gen_result_destroy(&result);
@@ -33,7 +33,7 @@ void test_code_gen_let_int()
     Code_gen_result result;
     Code_gen_result_init(&result);
 
-    cg_setup("let a: Int64 = 31\n"
+    cg_setup("let a: i64 = 31\n"
              "a"
             ,&result);
     expect_str(&result.value, "31", "31");
@@ -47,7 +47,7 @@ void test_code_gen_assign()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: Int64\n"
+    cg_setup("let a: i64\n"
              "a = 44\n",
              &result);
     expect_str(&result.value, "44", "value");
@@ -60,7 +60,7 @@ void test_code_gen_assign_multiple()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a,b,c: Int64\n"
+    cg_setup("let a,b,c: i64\n"
              "a = b = c = 44\n"
              "a",
              &result);
@@ -68,7 +68,7 @@ void test_code_gen_assign_multiple()
     Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
-    cg_setup("let a,b,c: Int64\n"
+    cg_setup("let a,b,c: i64\n"
              "a = b = c = 44\n"
              "b",
              &result);
@@ -76,7 +76,7 @@ void test_code_gen_assign_multiple()
     Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
-    cg_setup("let a,b,c: Int64\n"
+    cg_setup("let a,b,c: i64\n"
              "a = b = c = 44\n"
              "c",
              &result);
@@ -84,7 +84,7 @@ void test_code_gen_assign_multiple()
     Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
-    cg_setup("let a,b,c: Int64\n"
+    cg_setup("let a,b,c: i64\n"
              "a = b = c = 44\n",
              &result);
     expect_str(&result.value, "44", "value");
@@ -97,8 +97,8 @@ void test_code_gen_copy_from_variable()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: Int64 = 50\n"
-             "let b: Int64 = a\n"
+    cg_setup("let a: i64 = 50\n"
+             "let b: i64 = a\n"
              "a + b\n",
              &result);
     expect_str(&result.value, "100", "value");
@@ -111,7 +111,7 @@ void test_code_gen_int64()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: Int64 = 2\n"
+    cg_setup("let a: i64 = 2\n"
              "a\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -124,7 +124,7 @@ void test_code_gen_int32()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: Int32 = 2\n"
+    cg_setup("let a: i32 = 2\n"
              "a\n",
              &result);
     expect_str(&result.value, "2", "value");
@@ -137,8 +137,8 @@ void test_code_gen_int32_int64()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: Int64 = 1\n"
-             "let b: Int32 = a\n"
+    cg_setup("let a: i64 = 1\n"
+             "let b: i32 = a\n"
              "b\n",
              &result);
     expect_str(&result.value, "1", "value");
@@ -151,8 +151,8 @@ void test_code_gen_assign_scalar_id()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a: Int64 = 11\n"
-             "let b: Int64\n"
+    cg_setup("let a: i64 = 11\n"
+             "let b: i64\n"
              "b = a\n"
              "b\n",
              &result);
@@ -166,7 +166,7 @@ void test_code_gen_assign_eseq()
     Code_gen_result result;
 
     Code_gen_result_init(&result);
-    cg_setup("let a, b, c, d: Int64\n"
+    cg_setup("let a, b, c, d: i64\n"
              "a, b, c, d = 1, 2, 3, 4\n"
              "a",
              &result);
@@ -174,7 +174,7 @@ void test_code_gen_assign_eseq()
     Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
-    cg_setup("let a, b, c, d: Int64\n"
+    cg_setup("let a, b, c, d: i64\n"
              "a, b, c, d = 1, 2, 3, 4\n"
              "b",
              &result);
@@ -182,7 +182,7 @@ void test_code_gen_assign_eseq()
     Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
-    cg_setup("let a, b, c, d: Int64\n"
+    cg_setup("let a, b, c, d: i64\n"
              "a, b, c, d = 1, 2, 3, 4\n"
              "c",
              &result);
@@ -190,7 +190,7 @@ void test_code_gen_assign_eseq()
     Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
-    cg_setup("let a, b, c, d: Int64\n"
+    cg_setup("let a, b, c, d: i64\n"
              "a, b, c, d = 1, 2, 3, 4\n"
              "d",
              &result);
