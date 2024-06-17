@@ -57,3 +57,9 @@ and capable of robust software construction.
 ## Optional LLVM targets
 	ninja -C build-release clang -j 8
 	ninja -C build-release Kaleidoscope -j 8
+
+## LLVM Debug
+    cmake -S llvm -B build-debug -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Debug -G Ninja
+	ninja -C build-debug check-llvm -j 2
+	ninja -C build-debug clang -j 2
+	ninja -C build-debug Kaleidoscope -j 2

@@ -145,10 +145,15 @@ namespace Akela_llvm {
                 }
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else if (lhs->type == ast_type_eseq) {
-                Ast_node* p = lhs->head;
+                Ast_node *p = lhs->head;
                 while (p) {
                     p = p->next;
                 }
+            } else if (lhs->type == ast_type_dot) {
+                jd->context.in_lhs = true;
+                Value* lhs_value = Dispatch(jd, lhs);
+                jd->context.in_lhs = false;
+                jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
                 assert(false);
             }
@@ -233,6 +238,7 @@ namespace Akela_llvm {
         assert(array->tu->to.is_array);
         Value* array_value = Dispatch(jd, array);
         assert(array_value);
+        Type* array_type = Get_type(jd, array->tu);
 
         Ast_node* subscript = array->next;
         Value* subscript_value = Dispatch(jd, subscript);

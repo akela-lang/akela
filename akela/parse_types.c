@@ -857,7 +857,7 @@ void Override_rhs(Ast_node* tu, Ast_node* rhs)
         if (rhs->type == ast_type_sign) {
             Ast_node* p = Ast_node_get(rhs, 1);
             Override_rhs(tu, p);
-        } else if (tu->to.is_array) {
+        } else if (tu->to.is_array && rhs->type == ast_type_array_literal) {
             Ast_node* p = rhs->head;
             while (p) {
                 Override_rhs(tu, p);

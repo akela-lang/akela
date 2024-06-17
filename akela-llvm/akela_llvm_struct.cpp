@@ -37,9 +37,12 @@ namespace Akela_llvm {
         Ast_node* dec = left_td->composite->head;
         auto struct_type = (StructType*)left_td->composite_type;
         size_t i = 0;
+        Ast_node* dec_id = nullptr;
+        Ast_node* dec_tu = nullptr;
         bool found = false;
         while (dec) {
-            Ast_node* dec_id = Ast_node_get(dec, 0);
+            dec_id = Ast_node_get(dec, 0);
+            dec_tu = Ast_node_get(dec, 1);
             if (buffer_compare(&dec_id->value, &right->value)) {
                 found = true;
                 break;
@@ -54,6 +57,9 @@ namespace Akela_llvm {
             return gep_value;
         } else {
             Type* dot_type = Get_type(jd, n->tu);
+            if (n->tu->to.is_array) {
+                dot_type = dot_type->getPointerTo();
+            }
             buffer_finish(&right->value);
             return jd->Builder->CreateLoad(dot_type, gep_value, right->value.buf);
         }
@@ -66,8 +72,12 @@ namespace Akela_llvm {
         assert(n->tu->td->composite_type);
         assert(n->tu->td->composite);
         auto t = (StructType*)n->tu->td->composite_type;
-        buffer_finish(&n->tu->td->name);
-        Value* value = jd->Builder->CreateAlloca(t, nullptr, n->tu->td->name.buf);
+        struct buffer bf;
+        buffer_init(&bf);
+        buffer_copy(&n->tu->td->name, &bf);
+        buffer_copy_str(&bf, ".tmp");
+        buffer_finish(&bf);
+        Value* value = jd->Builder->CreateAlloca(t, nullptr, bf.buf);
         size_t i = 0;
         Ast_node* field = n->head;
         while (field) {
