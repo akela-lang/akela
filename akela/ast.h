@@ -80,6 +80,7 @@ typedef enum Ast_type {
     ast_type_extern,
     ast_type_struct_literal,
     ast_type_struct_literal_field,
+    ast_type_ellipsis,
 	ast_type_count		/* keep at end */
 } Ast_type;
 

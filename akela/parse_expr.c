@@ -1052,8 +1052,17 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 
 				/* input */
 				size_t tcount = 0;
+                bool is_variadic = false;
 				if (dseq) {
-					tcount = Ast_node_count_children(dseq);
+                    Ast_node* dec = dseq->head;
+                    while (dec) {
+                        if (dec->type == ast_type_ellipsis) {
+                            is_variadic = true;
+                        } else {
+                            tcount++;
+                        }
+                        dec = dec->next;
+                    }
 				}
 				size_t ccount = 0;
 				if (cseq_node) {
@@ -1064,7 +1073,7 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 					error_list_set(ps->el, &rp->loc, "not enough arguments in function call");
 					/* test case: test_parse_call_error_not_enough_arguments */
                     n->type = ast_type_error;
-				} else if (ccount > tcount) {
+				} else if (!is_variadic && ccount > tcount) {
 					error_list_set(ps->el, &rp->loc, "too many arguments in function call");
 					/* test case: test_parse_call_error_too_many_arguments */
                     n->type = ast_type_error;

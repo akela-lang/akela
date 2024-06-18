@@ -30,7 +30,14 @@ void lex_state_init(
 bool compound_operator_start(int num, const char c[4])
 {
     if (num != 1) return false;
-    return *c == '=' || *c == '!' || *c == '<' || *c == '>' || *c == '&' || *c == '|' || *c == '-';
+    return *c == '=' ||
+        *c == '!' ||
+        *c == '<' ||
+        *c == '>' ||
+        *c == '&' ||
+        *c == '|' ||
+        *c == '-' ||
+        *c == '.';
 }
 
 bool utf8_match(const char a[4], int a_num, const char b[4], int b_num)

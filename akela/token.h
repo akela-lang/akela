@@ -58,6 +58,8 @@ enum token_enum {
     token_mut,
     token_const,
     token_arrow,
+    token_ellipsis,
+    token_range,
     token_count     /* keep at the end */
 };
 
@@ -122,6 +124,8 @@ enum result token_name_init(char** token_name)
     token_name[token_mut] = "mut";
     token_name[token_const] = "const";
     token_name[token_arrow] = "arrow";
+    token_name[token_ellipsis] = "ellipsis";
+    token_name[token_range] = "range";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

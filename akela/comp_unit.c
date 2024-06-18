@@ -13,6 +13,7 @@ void comp_unit_init(struct comp_unit* cu)
 	cu->valid = true;
 	cu->root = NULL;
 	error_list_init(&cu->el);
+    buffer_list_init(&cu->extern_list);
 	buffer_init(&cu->path);
 	symbol_table_init(&cu->st);
     cu->input_obj = NULL;
@@ -48,7 +49,7 @@ void comp_unit_setup(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* 
     lex_state_init(ls, input_obj, input_vtable, &cu->el, &cu->st);
 
 	malloc_safe((void**)ps, sizeof(struct parse_state));
-	parse_state_init(*ps, ls, &cu->el, &cu->st);
+	parse_state_init(*ps, ls, &cu->el, &cu->extern_list, &cu->st);
 }
 
 void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)

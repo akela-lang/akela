@@ -1915,7 +1915,7 @@ void test_parse_let_assign_error_term()
 	
 	struct comp_unit cu;
 
-    parse_setup("let a: String =", &cu);
+    parse_setup("let a: bool =", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
 	expect_source_error(&cu.el, "expected expression");

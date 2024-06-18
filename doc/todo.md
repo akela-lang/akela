@@ -1,9 +1,15 @@
 # Akela Todo
+* references
+* variadic extern functions
+* save printf and exit extern function symbols
 * seq assignments
 * methods
+* update location in match and ast_node_add
 * for loop
   * range iterator []
   * array iterator []
+* for i in list
+* for x in 0..10
 * while loop
 * loop
 * placeholder array size in constructor
@@ -13,14 +19,10 @@
   * type [x]
   * call []
 * error if mut is unnecessary
-* struct methods
 * tuple
 * enum
 * generate IR to serialize arbitrary value and call it to get return value returned by toplevel function
 * move code gen into llvm and generic libraries: zinc, akela-base, akela-llvm, akela-compile
-* while
-* for i in list
-* for x in 0..list.len()
 * mut type annotation: for
 * mut type annotation: enum
 * enum methods

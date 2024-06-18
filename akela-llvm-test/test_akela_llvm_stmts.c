@@ -121,6 +121,20 @@ void test_code_gen_if_expression()
     Code_gen_result_destroy(&result);
 }
 
+void akela_llvm_stmts_printf()
+{
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup("extern printf(fmt: [100 const]u8, ...)\n"
+             "let s: [100 const]u8 = \"hello\n\"\n"
+             "printf(s)\n",
+             &result);
+    expect_str(&result.value, "1", "value");
+    Code_gen_result_destroy(&result);
+}
+
 void test_akela_llvm_stmts()
 {
     test_code_gen_last();
@@ -128,4 +142,5 @@ void test_akela_llvm_stmts()
     test_code_gen_if_else();
     test_code_gen_if_elseif_else();
     test_code_gen_if_expression();
+    //akela_llvm_stmts_printf();
 }

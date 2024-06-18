@@ -14,11 +14,16 @@ extern "C" {
 AKELA_API Ast_node* parse_prototype(
         struct parse_state* ps,
         bool is_function,
+        bool is_extern,
         bool require_param_name,
         bool* has_id,
         struct location* loc
 );
-AKELA_API Ast_node* parse_dseq(struct parse_state* ps, bool require_param_name, struct location* loc);
+AKELA_API Ast_node* parse_dseq(
+        struct parse_state* ps,
+        bool require_param_name,
+        bool is_extern,
+        struct location* loc);
 AKELA_API void declare_params(struct parse_state* ps, Ast_node* proto);
 AKELA_API Ast_node* parse_declaration(
     struct parse_state* ps,

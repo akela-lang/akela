@@ -13,9 +13,15 @@ struct parse_state {
 	struct token* lookahead;
 	struct error_list* el;
 	struct symbol_table* st;
+    struct buffer_list* extern_list;
 };
 
-AKELA_API void parse_state_init(struct parse_state* ps, struct lex_state* ls, struct error_list* el, struct symbol_table* st);
+AKELA_API void parse_state_init(
+        struct parse_state* ps,
+        struct lex_state* ls,
+        struct error_list* el,
+        struct buffer_list* extern_list,
+        struct symbol_table* st);
 AKELA_API void parse_state_destroy(struct parse_state* ps);
 AKELA_API bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t);
 AKELA_API bool consume_newline(struct parse_state* ps);

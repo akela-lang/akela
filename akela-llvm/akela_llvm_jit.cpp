@@ -18,9 +18,15 @@ namespace Akela_llvm {
         Jit_data jd;
         Jit_data_init(&jd, cg->el);
 
-        declare_abort(&jd);
-        declare_printf(&jd);
-        declare_exit(&jd);
+        if (!buffer_list_contains_str(cg->extern_list, "abort")) {
+            declare_abort(&jd);
+        }
+        if (!buffer_list_contains_str(cg->extern_list, "printf")) {
+            declare_printf(&jd);
+        }
+        if (!buffer_list_contains_str(cg->extern_list, "exit")) {
+            declare_exit(&jd);
+        }
 
         std::vector<Type*> param_types = std::vector<Type*>();
         Type* ret_type = Get_return_type(&jd, n->tu);

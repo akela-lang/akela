@@ -21,7 +21,13 @@ bool token_is_type(struct parse_state* ps, struct token* t);
  * @param loc
  * @return struct ast_node*
  */
-Ast_node* parse_prototype(struct parse_state* ps, bool is_function, bool require_param_name, bool* has_id, struct location* loc)
+Ast_node* parse_prototype(
+        struct parse_state* ps,
+        bool is_function,
+        bool is_extern,
+        bool require_param_name,
+        bool* has_id,
+        struct location* loc)
 {
     Ast_node* n = NULL;
 
@@ -73,7 +79,7 @@ Ast_node* parse_prototype(struct parse_state* ps, bool is_function, bool require
     /* 1 dseq */
     Ast_node* dseq_node = NULL;
     struct location loc_dseq;
-    dseq_node = parse_dseq(ps, require_param_name, &loc_dseq);
+    dseq_node = parse_dseq(ps, require_param_name, is_extern, &loc_dseq);
     if (dseq_node && dseq_node->type == ast_type_error) {
         n->type = ast_type_error;
     }
@@ -161,8 +167,12 @@ void declare_params(struct parse_state* ps, Ast_node* proto)
  * @return struct ast_node*
  */
 /* dseq -> declaration dseq' | e */
-/* dseq' -> , declaration dseq' | e */
-Ast_node* parse_dseq(struct parse_state* ps, bool require_param_name, struct location* loc)
+/* dseq' -> , declaration dseq' | , ... | e */
+Ast_node* parse_dseq(
+        struct parse_state* ps,
+        bool require_param_name,
+        bool is_extern,
+        struct location* loc)
 {
     get_location(ps, loc);
 
@@ -200,6 +210,28 @@ Ast_node* parse_dseq(struct parse_state* ps, bool require_param_name, struct loc
 		free(comma);
 
         consume_newline(ps);
+
+        struct token* t = get_lookahead(ps);
+        if (t->type == token_ellipsis) {
+            struct token* eps = NULL;
+            if (!match(ps, token_ellipsis, "expected ellipsis", &eps)) {
+                assert(false);
+            }
+            token_destroy(eps);
+            free(eps);
+            if (is_extern) {
+                Ast_node* ellipsis = NULL;
+                Ast_node_create(&ellipsis);
+                ellipsis->type = ast_type_ellipsis;
+                Ast_node_add(n, ellipsis);
+                break;
+            } else {
+                error_list_set(ps->el, &eps->loc,
+                       "Found ellipsis but variadic functions are only supported in extern declarations");
+                n->type = ast_type_error;
+                break;
+            }
+        }
 
 		dec = parse_declaration(ps, require_param_name, false, &loc_dec);
         if (dec && dec->type == ast_type_error) {
@@ -437,7 +469,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         struct location fn_loc;
         bool has_id;
-        Ast_node* proto = parse_prototype(ps, false, false, &has_id, &fn_loc);
+        Ast_node* proto = parse_prototype(ps, false, false, false, &has_id, &fn_loc);
         if (has_id) {
             error_list_set(ps->el, &fn_loc, "function type has name");
         }

@@ -32,12 +32,17 @@ namespace Akela_llvm {
         Ast_node *input = nullptr;
         Ast_node *output = nullptr;
         get_function_children(tu, &input, &output);
+        bool is_variadic = false;
 
         std::vector<Type *> param_types = std::vector<Type *>();
         size_t input_count = Ast_node_count_children(input);
         if (input_count > 0) {
             for (size_t i = 0; i < input_count; i++) {
                 Ast_node *dec = Ast_node_get(input, i);
+                if (dec->type == ast_type_ellipsis) {
+                    is_variadic = true;
+                    continue;
+                }
                 Ast_node *type_use = Ast_node_get(dec, 1);
                 Type *dec_type = Get_type(jd, type_use);
                 param_types.push_back(dec_type);
@@ -52,7 +57,7 @@ namespace Akela_llvm {
             ret_type = Type::getVoidTy(*jd->TheContext);
         }
 
-        return FunctionType::get(ret_type, param_types, false);
+        return FunctionType::get(ret_type, param_types, is_variadic);
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */

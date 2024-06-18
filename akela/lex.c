@@ -94,10 +94,7 @@ bool lex_start(struct lex_state* ls,
             return lex_string(ls, state, done, t);
         } else if (compound_operator_start(num, c)) {
             *state = state_compound_operator;
-            for (int i = 0; i < num; i++) {
-                buffer_add_char(&t->value, c[i]);
-            }
-            t->loc = loc;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
             return lex_compound_operator(ls, state, done, t);
         } else if (*c == '+') {
             t->type = token_plus;
@@ -505,82 +502,158 @@ bool lex_compound_operator(
         valid = error_list_set(ls->el, &loc, error_message);
     }
 
-    if (!*done && num > 0) {
-        for (int i = 0; i < num; i++) {
-            buffer_add_char(&t->value, c[i]);
-        }
-    }
+    assert(!*done);
 
-    if (buffer_compare_str(&t->value, "==")) {
-        t->type = token_double_equal;
-        *state = state_start;
+    if (num == 1 && *c == '=') {
         t->loc.size += num;
-    } else if (buffer_compare_str(&t->value, "!=")) {
-        t->type = token_not_equal;
-        *state = state_start;
+
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = error_list_set(ls->el, &loc, error_message);
+        }
+
+        if (num == 1 && *c == '=') {
+            t->type = token_double_equal;
+            *state = state_start;
+            t->loc.size += num;
+        } else {
+            t->type = token_equal;
+            *state = state_start;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        }
+    } else if (num == 1 && *c == '!') {
         t->loc.size += num;
-    } else if (buffer_compare_str(&t->value, "<=")) {
-        t->type = token_less_than_or_equal;
-        *state = state_start;
+
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = error_list_set(ls->el, &loc, error_message);
+        }
+
+        if (num == 1 && *c == '=') {
+            t->type = token_not_equal;
+            *state = state_start;
+            t->loc.size += num;
+        } else {
+            t->type = token_not;
+            *state = state_start;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        }
+    } else if (num == 1 && *c == '<') {
         t->loc.size += num;
-    } else if (buffer_compare_str(&t->value, ">=")) {
-        t->type = token_greater_than_or_equal;
-        *state = state_start;
+
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = error_list_set(ls->el, &loc, error_message);
+        }
+
+        if (num == 1 && *c == '=') {
+            t->type = token_less_than_or_equal;
+            *state = state_start;
+            t->loc.size += num;
+        } else {
+            t->type = token_less_than;
+            *state = state_start;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        }
+    } else if (num == 1 && *c == '>') {
         t->loc.size += num;
-    } else if (buffer_compare_str(&t->value, "&&")) {
-        t->type = token_and;
-        *state = state_start;
+
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = error_list_set(ls->el, &loc, error_message);
+        }
+
+        if (num == 1 && *c == '=') {
+            t->type = token_greater_than_or_equal;
+            *state = state_start;
+            t->loc.size += num;
+        } else {
+            t->type = token_greater_than;
+            *state = state_start;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        }
+    } else if (num == 1 && *c == '&') {
         t->loc.size += num;
-    } else if (buffer_compare_str(&t->value, "||")) {
-        t->type = token_or;
-        *state = state_start;
+
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = error_list_set(ls->el, &loc, error_message);
+        }
+
+        if (num == 1 && *c == '&') {
+            t->type = token_and;
+            *state = state_start;
+            t->loc.size += num;
+        } else {
+            t->type = token_ampersand;
+            *state = state_start;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        }
+    } else if (num == 1 && *c == '|') {
         t->loc.size += num;
-    } else if (buffer_compare_str(&t->value, "->")) {
-        t->type = token_arrow;
-        *state = state_start;
+
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = error_list_set(ls->el, &loc, error_message);
+        }
+
+        if (num == 1 && *c == '|') {
+            t->type = token_or;
+            *state = state_start;
+            t->loc.size += num;
+        } else {
+            t->type = token_vertical_bar;
+            *state = state_start;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        }
+    } else if (num == 1 && *c == '-') {
         t->loc.size += num;
-    } else if (t->value.buf[0] == '=') {
-        t->type = token_equal;
-        buffer_clear(&t->value);
-        *state = state_start;
-        t->loc.size = 1;
-        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-    } else if (t->value.buf[0] == '!') {
-        t->type = token_not;
-        buffer_clear(&t->value);
-        *state = state_start;
-        t->loc.size = 1;
-        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-    } else if (t->value.buf[0] == '<') {
-        t->type = token_less_than;
-        buffer_clear(&t->value);
-        *state = state_start;
-        t->loc.size = 1;
-        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-    } else if (t->value.buf[0] == '>') {
-        t->type = token_greater_than;
-        buffer_clear(&t->value);
-        *state = state_start;
-        t->loc.size = 1;
-        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-    } else if (t->value.buf[0] == '&') {
-        t->type = token_ampersand;
-        buffer_clear(&t->value);
-        *state = state_start;
-        t->loc.size = 1;
-        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-    } else if (t->value.buf[0] == '|') {
-        t->type = token_vertical_bar;
-        buffer_clear(&t->value);
-        *state = state_start;
-        t->loc.size = 1;
-        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-    } else if (t->value.buf[0] == '-') {
-        t->type = token_minus;
-        buffer_clear(&t->value);
-        *state = state_start;
-        t->loc.size = 1;
-        InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = error_list_set(ls->el, &loc, error_message);
+        }
+
+        if (num == 1 && *c == '>') {
+            t->type = token_arrow;
+            *state = state_start;
+            t->loc.size += num;
+        } else {
+            t->type = token_minus;
+            *state = state_start;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        }
+    } else if (num == 1 && *c == '.') {
+        t->loc.size += num;
+
+        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        if (r == result_error) {
+            valid = error_list_set(ls->el, &loc, error_message);
+        }
+
+        if (num == 1 && *c == '.') {
+            t->loc.size += num;
+
+            r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+            if (r == result_error) {
+                valid = error_list_set(ls->el, &loc, error_message);
+            }
+
+            if (num == 1 && *c == '.') {
+                t->type = token_ellipsis;
+                *state = state_start;
+                t->loc.size += num;
+            } else {
+                t->type = token_range;
+                *state = state_start;
+                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            }
+        } else {
+            t->type = token_dot;
+            *state = state_start;
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        }
+
     } else {
         /* unrecognized compound operator */
         assert(false);

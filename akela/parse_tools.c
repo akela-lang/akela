@@ -7,11 +7,17 @@
 #include "ast.h"
 #include <assert.h>
 
-void parse_state_init(struct parse_state* ps, struct lex_state* ls, struct error_list* el, struct symbol_table* st)
+void parse_state_init(
+        struct parse_state* ps,
+        struct lex_state* ls,
+        struct error_list* el,
+        struct buffer_list* extern_list,
+        struct symbol_table* st)
 {
 	ps->ls = ls;
 	ps->lookahead = NULL;
 	ps->el = el;
+    ps->extern_list = extern_list;
 	ps->st = st;
 }
 

@@ -115,3 +115,29 @@ struct buffer* buffer_list_get(struct buffer_list* bl, size_t num)
     }
     return NULL;
 }
+
+bool buffer_list_contains(struct buffer_list* bl, struct buffer* value)
+{
+    struct buffer_node* bn = bl->head;
+    while (bn) {
+        if (buffer_compare(&bn->value, value)) {
+            return true;
+        }
+        bn = bn->next;
+    }
+
+    return false;
+}
+
+bool buffer_list_contains_str(struct buffer_list* bl, const char* str)
+{
+    struct buffer_node* bn = bl->head;
+    while (bn) {
+        if (buffer_compare_str(&bn->value, str)) {
+            return true;
+        }
+        bn = bn->next;
+    }
+
+    return false;
+}

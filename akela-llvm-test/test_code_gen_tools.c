@@ -8,6 +8,7 @@
 #include "akela-llvm/akela_llvm.h"
 #include <string.h>
 #include "zinc/input_unicode_string.h"
+#include "zinc/buffer_list.h"
 
 bool cg_setup(const char* text, Code_gen_result* result)
 {
@@ -30,7 +31,7 @@ bool cg_setup(const char* text, Code_gen_result* result)
 
     if (valid) {
         Code_gen_llvm* cg = NULL;
-        Code_gen_llvm_create(&cg, &cu->el);
+        Code_gen_llvm_create(&cg, &cu->el, &cu->extern_list);
         valid = Code_gen_jit(cg, &Code_gen_llvm_vtable, cu->root, result);
         Code_gen_llvm_destroy(cg);
         expect_true(valid, "valid");
