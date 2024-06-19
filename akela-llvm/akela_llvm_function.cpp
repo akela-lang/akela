@@ -41,17 +41,21 @@ namespace Akela_llvm {
         while (dec) {
             Ast_node* dec_id = Ast_node_get(dec, 0);
             Ast_node* dec_type = Ast_node_get(dec, 1);
+            Value* dec_value = &f->arg_begin()[i];
+
             buffer_finish(&dec_id->value);
-            Type* t = Get_type(jd, dec_type);
+            Type* t = Get_type_pointer(jd, dec_type);
             Value* lhs = jd->Builder->CreateAlloca(t,
                                                    nullptr,
                                                    dec_id->value.buf);
-            jd->Builder->CreateStore(&f->arg_begin()[i], lhs);
+            jd->Builder->CreateStore(dec_value, lhs);
             dec_id->sym->reference = lhs;
+
             dec = dec->next;
             i++;
         }
 
+        jd->current_function.push_back(f);
         Ast_node* body = Ast_node_get(n, 1);
         Value* ret_value = Dispatch(jd, body);
         if (body->tu) {
@@ -59,6 +63,7 @@ namespace Akela_llvm {
         } else {
             jd->Builder->CreateRetVoid();
         }
+        jd->current_function.pop_back();
 
         BasicBlock* last_block = Get_last_block(jd, jd->toplevel);
         jd->Builder->SetInsertPoint(last_block);

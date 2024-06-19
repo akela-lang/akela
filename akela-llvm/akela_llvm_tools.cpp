@@ -23,6 +23,7 @@ namespace Akela_llvm {
         jd->abort_function = nullptr;
         jd->printf_function = nullptr;
         jd->exit_function = nullptr;
+        jd->current_function = std::vector<Function*>();
     }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

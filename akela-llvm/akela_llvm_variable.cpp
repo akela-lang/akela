@@ -142,11 +142,6 @@ namespace Akela_llvm {
                     lhs->sym->reference = lhs_value;
                 }
                 jd->Builder->CreateStore(rhs_value, lhs_value);
-            } else if (lhs->type == ast_type_eseq) {
-                Ast_node *p = lhs->head;
-                while (p) {
-                    p = p->next;
-                }
             } else if (lhs->type == ast_type_dot) {
                 jd->context.in_lhs = true;
                 Value* lhs_value = Dispatch(jd, lhs);
@@ -248,8 +243,8 @@ namespace Akela_llvm {
 
         Value* cond = jd->Builder->CreateICmpULT(subscript_value, size_value);
 
-        BasicBlock* abort_block = BasicBlock::Create(*jd->TheContext, "aborttmp", jd->toplevel);
-        BasicBlock* continue_block = BasicBlock::Create(*jd->TheContext, "continuetmp", jd->toplevel);
+        BasicBlock* abort_block = BasicBlock::Create(*jd->TheContext, "aborttmp", jd->current_function.back());
+        BasicBlock* continue_block = BasicBlock::Create(*jd->TheContext, "continuetmp", jd->current_function.back());
 
         jd->Builder->CreateCondBr(cond, continue_block, abort_block);
 

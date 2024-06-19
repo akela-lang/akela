@@ -63,6 +63,7 @@ namespace Akela_llvm {
         llvm::Function* abort_function;
         llvm::Function* printf_function;
         llvm::Function* exit_function;
+        std::vector<llvm::Function*> current_function;
     } Jit_data;
 
     void Jit_data_init(Jit_data* jd, struct error_list* el);

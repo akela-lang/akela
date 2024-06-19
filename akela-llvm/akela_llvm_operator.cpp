@@ -12,7 +12,11 @@ namespace Akela_llvm {
         Ast_node* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
-        return jd->Builder->CreateAdd(lhs, rhs, "addtmp");
+        if (a->tu->td->type == type_float || b->tu->td->type == type_float) {
+            return jd->Builder->CreateFAdd(lhs, rhs, "addtmp");
+        } else {
+            return jd->Builder->CreateAdd(lhs, rhs, "addtmp");
+        }
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */

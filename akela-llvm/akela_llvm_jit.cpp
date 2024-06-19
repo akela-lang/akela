@@ -31,18 +31,23 @@ namespace Akela_llvm {
         std::vector<Type*> param_types = std::vector<Type*>();
         Type* ret_type = Get_type_pointer(&jd, n->tu);
         FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
-        Function *f = Function::Create(func_type, Function::ExternalLinkage, TOPLEVEL_NAME, *jd.TheModule);
-        jd.toplevel = f;
+        Function *toplevel = Function::Create(
+                func_type,
+                Function::ExternalLinkage,
+                TOPLEVEL_NAME,
+                *jd.TheModule);
+        jd.toplevel = toplevel;
 
         std::string error_str;
         raw_string_ostream error_os(error_str);
-        if (verifyFunction(*f, &error_os)) {
+        if (verifyFunction(*toplevel, &error_os)) {
             struct location loc = {};
             location_init(&loc);
             error_list_set(cg->el, &loc, "%s", error_str.c_str());
         }
 
-        BasicBlock* entry = BasicBlock::Create(*jd.TheContext, "entry", f);
+        jd.current_function.push_back(toplevel);
+        BasicBlock* entry = BasicBlock::Create(*jd.TheContext, "entry", toplevel);
         jd.Builder->SetInsertPoint(entry);
         Value* value = Dispatch(&jd, n);
 
@@ -59,6 +64,7 @@ namespace Akela_llvm {
             jd.Builder->CreateRetVoid();
         }
 
+        jd.current_function.pop_back();
         if (cg->el->head) {
             valid = false;
         }

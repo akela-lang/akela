@@ -3,7 +3,7 @@
 #include "akela/code_gen.h"
 #include "test_code_gen_tools.h"
 
-void test_code_gen_function()
+void test_akela_llvm_function_declare()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -16,7 +16,7 @@ void test_code_gen_function()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_function_ret()
+void test_akela_llvm_function_declare_ret()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -30,7 +30,7 @@ void test_code_gen_function_ret()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_call()
+void test_akela_llvm_function_call()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -45,7 +45,7 @@ void test_code_gen_call()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_call_ptr()
+void test_akela_llvm_function_anonymous_call()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -60,7 +60,7 @@ void test_code_gen_call_ptr()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_call2()
+void test_akela_llvm_function_ret_boolean()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -75,7 +75,7 @@ void test_code_gen_call2()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_call3()
+void test_akela_llvm_function_ret_array()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -90,22 +90,7 @@ void test_code_gen_call3()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_anonymous_function()
-{
-    test_name(__func__);
-    Code_gen_result result;
-
-    Code_gen_result_init(&result);
-    cg_setup("let foo: fn (i64, i64, i64)->i64 = fn (a: i64, b: i64, c: i64)->i64\n"
-             "  a + b + c\n"
-             "end\n"
-             "foo(1, 1, 1)\n",
-             &result);
-    expect_str(&result.value, "3", "value");
-    Code_gen_result_destroy(&result);
-}
-
-void test_code_gen_extern()
+void test_akela_llvm_function_extern()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -118,7 +103,7 @@ void test_code_gen_extern()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_assign_function_id()
+void test_akela_llvm_function_assign()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -133,7 +118,7 @@ void test_code_gen_assign_function_id()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_assign_function_id2()
+void test_akela_llvm_function_assign2()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -148,7 +133,7 @@ void test_code_gen_assign_function_id2()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_function_copy()
+void test_akela_llvm_function_let_assign()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -164,7 +149,7 @@ void test_code_gen_function_copy()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_function_expression()
+void test_akela_llvm_function_expression()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -178,7 +163,7 @@ void test_code_gen_function_expression()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_anonymous_function_expression()
+void test_akela_llvm_function_anonymous_expression()
 {
     test_name(__func__);
     Code_gen_result result;
@@ -192,19 +177,136 @@ void test_code_gen_anonymous_function_expression()
     Code_gen_result_destroy(&result);
 }
 
+void test_akela_llvm_function_array_param()
+{
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup("fn add_ten(array: [10]i64, i: i64)->i64\n"
+             "  array[i] + 10\n"
+             "end\n"
+             "let a: [10]i64 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "add_ten(a, 0)\n",
+             &result);
+    expect_str(&result.value, "110", "value");
+    Code_gen_result_destroy(&result);
+
+    Code_gen_result_init(&result);
+    cg_setup("fn add_ten(array: [10]i64, i: i64)->i64\n"
+             "  array[i] + 10\n"
+             "end\n"
+             "let a: [10]i64 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "add_ten(a, 1)\n",
+             &result);
+    expect_str(&result.value, "210", "value");
+    Code_gen_result_destroy(&result);
+
+    Code_gen_result_init(&result);
+    cg_setup("fn add_ten(array: [10]i64, i: i64)->i64\n"
+             "  array[i] + 10\n"
+             "end\n"
+             "let a: [10]i64 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "add_ten(a, 2)\n",
+             &result);
+    expect_str(&result.value, "310", "value");
+    Code_gen_result_destroy(&result);
+}
+
+void test_akela_llvm_function_struct_param()
+{
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup(
+            "struct Point\n"
+            "  x: f64\n"
+            "  y: f64\n"
+            "end\n"
+            "fn add_ten(p: Point)->f64\n"
+             "  p.x + 10.0\n"
+             "end\n"
+             "let p: Point = Point\n"
+             "  x: 2.5\n"
+             "  y: 3.5\n"
+             "end\n"
+             "add_ten(p)",
+             &result);
+    expect_str(&result.value, "12.500000", "value");
+    Code_gen_result_destroy(&result);
+
+    Code_gen_result_init(&result);
+    cg_setup(
+            "struct Point\n"
+            "  x: f64\n"
+            "  y: f64\n"
+            "end\n"
+            "fn add_ten(p: Point)->f64\n"
+            "  p.y + 10.0\n"
+            "end\n"
+            "let p: Point = Point\n"
+            "  x: 2.5\n"
+            "  y: 3.5\n"
+            "end\n"
+            "add_ten(p)",
+            &result);
+    expect_str(&result.value, "13.500000", "value");
+    Code_gen_result_destroy(&result);
+}
+
+void test_akela_llvm_function_function_param() {
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup(
+            "fn add_one(x: i64)->i64\n"
+            "  x + 1\n"
+            "end\n"
+            "fn add_two(x: i64)->i64\n"
+            "  x + 2\n"
+            "end\n"
+            "fn compute(foo: fn(i64)->i64, x: i64)->i64\n"
+            "  foo(x)\n"
+            "end\n"
+            "compute(add_one, 15)\n",
+            &result);
+    expect_str(&result.value, "16", "value");
+    Code_gen_result_destroy(&result);
+
+    Code_gen_result_init(&result);
+    cg_setup(
+            "fn add_one(x: i64)->i64\n"
+            "  x + 1\n"
+            "end\n"
+            "fn add_two(x: i64)->i64\n"
+            "  x + 2\n"
+            "end\n"
+            "fn compute(foo: fn(i64)->i64, x: i64)->i64\n"
+            "  foo(x)\n"
+            "end\n"
+            "compute(add_two, 15)\n",
+            &result);
+    expect_str(&result.value, "17", "value");
+    Code_gen_result_destroy(&result);
+}
+
 void test_akela_llvm_function()
 {
-    test_code_gen_function_copy();
-    test_code_gen_function_expression();
-    test_code_gen_anonymous_function_expression();
-    test_code_gen_assign_function_id();
-    test_code_gen_function();
-    test_code_gen_function_ret();
-    test_code_gen_call();
-    test_code_gen_call_ptr();
-    test_code_gen_call2();
-    test_code_gen_call3();
-    test_code_gen_anonymous_function();
-    test_code_gen_extern();
-    test_code_gen_assign_function_id2();
+    test_akela_llvm_function_declare();
+    test_akela_llvm_function_declare_ret();
+    test_akela_llvm_function_call();
+    test_akela_llvm_function_anonymous_call();
+    test_akela_llvm_function_ret_boolean();
+    test_akela_llvm_function_ret_array();
+    test_akela_llvm_function_extern();
+    test_akela_llvm_function_assign();
+    test_akela_llvm_function_assign2();
+    test_akela_llvm_function_let_assign();
+    test_akela_llvm_function_expression();
+    test_akela_llvm_function_anonymous_expression();
+    test_akela_llvm_function_array_param();
+    test_akela_llvm_function_struct_param();
+    test_akela_llvm_function_function_param();
 }

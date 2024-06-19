@@ -12,8 +12,8 @@ int main() {
     test_akela_llvm_variable();
     test_akela_llvm_operator();
     test_akela_llvm_stmts();
-    test_akela_llvm_function();
     test_akela_llvm_array();
+    test_akela_llvm_function();
     test_akela_llvm_struct();
     print_results();
     return 0;

@@ -1,5 +1,6 @@
 # Akela Todo
 * seq assignments
+* assignment subscript
 * methods
 * update location in match and ast_node_add
 * for loop
