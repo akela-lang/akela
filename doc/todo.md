@@ -1,7 +1,4 @@
 # Akela Todo
-* references
-* variadic extern functions
-* save printf and exit extern function symbols
 * seq assignments
 * methods
 * update location in match and ast_node_add

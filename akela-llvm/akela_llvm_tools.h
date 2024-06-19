@@ -69,6 +69,7 @@ namespace Akela_llvm {
     llvm::FunctionType* Get_function_type(Jit_data* jd, Ast_node* tu);
     llvm::Type* Get_scalar_type(Jit_data * jd, Ast_node * tu);
     llvm::Type* Get_type(Jit_data * jd, Ast_node * tu);
+    llvm::Type* Get_type_pointer(Jit_data *jd, Ast_node *tu);
     llvm::Type* Get_return_type(Jit_data * jd, Ast_node * tu);
     void Run(Jit_data* jd, Ast_node* n, struct buffer* bf);
     llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);

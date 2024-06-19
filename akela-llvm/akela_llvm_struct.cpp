@@ -56,10 +56,7 @@ namespace Akela_llvm {
         if (jd->context.in_lhs) {
             return gep_value;
         } else {
-            Type* dot_type = Get_type(jd, n->tu);
-            if (n->tu->to.is_array) {
-                dot_type = dot_type->getPointerTo();
-            }
+            Type* dot_type = Get_type_pointer(jd, n->tu);
             buffer_finish(&right->value);
             return jd->Builder->CreateLoad(dot_type, gep_value, right->value.buf);
         }

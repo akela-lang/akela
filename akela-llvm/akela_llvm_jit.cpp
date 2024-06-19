@@ -29,7 +29,7 @@ namespace Akela_llvm {
         }
 
         std::vector<Type*> param_types = std::vector<Type*>();
-        Type* ret_type = Get_return_type(&jd, n->tu);
+        Type* ret_type = Get_type_pointer(&jd, n->tu);
         FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
         Function *f = Function::Create(func_type, Function::ExternalLinkage, TOPLEVEL_NAME, *jd.TheModule);
         jd.toplevel = f;

@@ -11,8 +11,7 @@ using namespace llvm;
 using namespace llvm::orc;
 
 namespace Akela_llvm {
-    void Jit_data_init(Jit_data* jd, struct error_list* el)
-    {
+    void Jit_data_init(Jit_data *jd, struct error_list *el) {
         jd->el = el;
         jd->TheJIT = jd->ExitOnErr(KaleidoscopeJIT::Create());
         jd->TheContext = std::make_unique<LLVMContext>();
@@ -27,8 +26,7 @@ namespace Akela_llvm {
     }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-    FunctionType* Get_function_type(Jit_data* jd, Ast_node* tu)
-    {
+    FunctionType *Get_function_type(Jit_data *jd, Ast_node *tu) {
         Ast_node *input = nullptr;
         Ast_node *output = nullptr;
         get_function_children(tu, &input, &output);
@@ -44,7 +42,7 @@ namespace Akela_llvm {
                     continue;
                 }
                 Ast_node *type_use = Ast_node_get(dec, 1);
-                Type *dec_type = Get_type(jd, type_use);
+                Type *dec_type = Get_type_pointer(jd, type_use);
                 param_types.push_back(dec_type);
             }
         }
@@ -52,7 +50,7 @@ namespace Akela_llvm {
         Type *ret_type = nullptr;
         if (output) {
             Ast_node *ret = Ast_node_get(output, 0);
-            ret_type = Get_return_type(jd, ret);
+            ret_type = Get_type_pointer(jd, ret);
         } else {
             ret_type = Type::getVoidTy(*jd->TheContext);
         }
@@ -61,8 +59,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_scalar_type(Jit_data* jd, Ast_node* tu)
-    {
+    Type *Get_scalar_type(Jit_data *jd, Ast_node *tu) {
         if (!tu) {
             return Type::getVoidTy(*jd->TheContext);
         }
@@ -70,7 +67,7 @@ namespace Akela_llvm {
         struct type_def *td = tu->td;
 
         if (td->type == type_integer) {
-            Type* t = nullptr;
+            Type *t = nullptr;
             if (td->bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
             } else if (td->bit_count == 32) {
@@ -92,7 +89,7 @@ namespace Akela_llvm {
         } else if (td->type == type_function) {
             return Get_function_type(jd, tu);
         } else if (td->type == type_struct) {
-
+            return (Type *) (StructType *) td->composite_type;
         } else {
             assert(false);
         }
@@ -100,7 +97,19 @@ namespace Akela_llvm {
         return nullptr;
     }
 
-/* NOLINTNEXTLINE(misc-no-recursion) */
+    /* NOLINTNEXTLINE(misc-no-recursion) */
+    Type* Get_type_pointer(Jit_data *jd, Ast_node *tu)
+    {
+        Type* t = Get_type(jd, tu);
+        if (tu) {
+            if (tu->to.is_array || tu->td->type == type_function || tu->td->type == type_struct) {
+                t = t->getPointerTo();
+            }
+        }
+        return t;
+    }
+
+    /* NOLINTNEXTLINE(misc-no-recursion) */
     Type* Get_type(Jit_data* jd, Ast_node* tu)
     {
         Type *t = Get_scalar_type(jd, tu);
@@ -115,19 +124,6 @@ namespace Akela_llvm {
         }
 
         return t;
-    }
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_return_type(Jit_data* jd, Ast_node* tu)
-    {
-        if (tu && tu->td && tu->td->type == type_function) {
-            FunctionType *func_type = Get_function_type(jd, tu);
-            return static_cast<Type *>(func_type->getPointerTo());
-        } if (tu && tu->to.is_array) {
-            return Get_type(jd, tu)->getPointerTo();
-        } else {
-            return Get_type(jd, tu);
-        }
     }
 
     BasicBlock* Get_last_block(Jit_data* jd, Function* f)

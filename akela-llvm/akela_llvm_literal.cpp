@@ -36,6 +36,7 @@ namespace Akela_llvm {
     Value* Handle_string(Jit_data* jd, Ast_node* n)
     {
         buffer_finish(&n->value);
-        return jd->Builder->CreateGlobalString(n->value.buf, ".str");
+        Value* str_value = jd->Builder->CreateGlobalString(n->value.buf, ".str");
+        return str_value;
     }
 }

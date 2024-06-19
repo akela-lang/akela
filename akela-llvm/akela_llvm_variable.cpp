@@ -33,8 +33,7 @@ namespace Akela_llvm {
                 }
             } else if (tu->to.is_array) {
                 if (rhs) {
-                    Type *t = Get_type(jd, tu);
-                    t = t->getPointerTo();
+                    Type *t = Get_type_pointer(jd, tu);
                     buffer_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     Value *rhs_value = Dispatch(jd, rhs);
@@ -48,8 +47,7 @@ namespace Akela_llvm {
                 }
             } else if (tu->td->type == type_struct) {
                 if (rhs) {
-                    Type *t = (Type*)(StructType*)tu->td->composite_type;
-                    t = t->getPointerTo();
+                    Type *t = Get_type_pointer(jd, tu);
                     buffer_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     Value *rhs_value = Dispatch(jd, rhs);
