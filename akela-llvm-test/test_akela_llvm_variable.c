@@ -41,6 +41,33 @@ void test_code_gen_let_int()
     Code_gen_result_destroy(&result);
 }
 
+void test_akela_variable_let_assign_multiple()
+{
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup("let a, b, c: i64 = 1, 2, 3\n"
+             "a\n"
+            ,&result);
+    expect_str(&result.value, "1", "value");
+    Code_gen_result_destroy(&result);
+
+    Code_gen_result_init(&result);
+    cg_setup("let a, b, c: i64 = 1, 2, 3\n"
+             "b\n"
+            ,&result);
+    expect_str(&result.value, "2", "value");
+    Code_gen_result_destroy(&result);
+
+    Code_gen_result_init(&result);
+    cg_setup("let a, b, c: i64 = 1, 2, 3\n"
+             "c\n"
+            ,&result);
+    expect_str(&result.value, "3", "value");
+    Code_gen_result_destroy(&result);
+}
+
 void test_code_gen_assign()
 {
     test_name(__func__);
@@ -204,6 +231,7 @@ void test_akela_llvm_variable()
     test_code_gen_let_void1();
     test_code_gen_let_void2();
     test_code_gen_let_int();
+    test_akela_variable_let_assign_multiple();
     test_code_gen_assign();
     test_code_gen_assign_multiple();
     test_code_gen_copy_from_variable();
