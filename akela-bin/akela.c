@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     buffer_init(&bf);
 
     Code_gen_llvm* cg = NULL;
-    Code_gen_llvm_create(&cg, &cu.el);
+    Code_gen_llvm_create(&cg, &cu.el, &cu.extern_list);
     Code_gen_result result;
     Code_gen_result_init(&result);
     Code_gen_jit(cg, &Code_gen_llvm_vtable, cu.root, &result);
