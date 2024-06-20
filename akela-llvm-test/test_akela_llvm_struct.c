@@ -365,6 +365,37 @@ void test_akela_llvm_struct_struct()
     Code_gen_result_destroy(&result);
 }
 
+void test_akela_llvm_struct_function() {
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup("struct Foo\n"
+             "  compute: fn(i64)->i64\n"
+             "end\n"
+             "let foo: Foo = Foo\n"
+             "  compute: fn (x: i64)->i64\n"
+             "    x + 1\n"
+             "  end\n"
+             "end\n"
+             "foo.compute(77)\n",
+             &result);
+    expect_str(&result.value, "78", "value");
+
+    Code_gen_result_init(&result);
+    cg_setup("struct Foo\n"
+             "  compute: fn(i64)->i64\n"
+             "end\n"
+             "let foo: Foo = Foo\n"
+             "  compute: fn (x: i64)->i64\n"
+             "    x + 2\n"
+             "  end\n"
+             "end\n"
+             "foo.compute(77)\n",
+             &result);
+    expect_str(&result.value, "79", "value");
+}
+
 void test_akela_llvm_struct()
 {
     test_akela_llvm_struct_assign_elements();
@@ -379,4 +410,5 @@ void test_akela_llvm_struct()
     test_akela_llvm_struct_array9();
     test_akela_llvm_struct_array10();
     test_akela_llvm_struct_struct();
+    test_akela_llvm_struct_function();
 }

@@ -12,6 +12,9 @@ namespace Akela_llvm {
         while (element_dec) {
             Ast_node* element_tu = Ast_node_get(element_dec, 1);
             Type* element_type = Get_type(jd, element_tu);
+            if (element_tu->td->type == type_function) {
+                element_type = element_type->getPointerTo();
+            }
             type_list.push_back(element_type);
             element_dec = element_dec->next;
         }

@@ -1,6 +1,4 @@
 # Akela Todo
-* function in struct
-* array in struct
 * sequence assignments
 * assignment subscript
 * struct methods
