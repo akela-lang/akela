@@ -1,8 +1,10 @@
 # Akela Todo
-* seq assignments
+* function in struct
+* array in struct
+* sequence assignments
 * assignment subscript
-* methods
-* update location in match and ast_node_add
+* struct methods
+* update location in match and ast_node_add; token start_pos, end_pos
 * for loop
   * range iterator []
   * array iterator []
@@ -19,12 +21,12 @@
 * error if mut is unnecessary
 * tuple
 * enum
+* match
 * generate IR to serialize arbitrary value and call it to get return value returned by toplevel function
 * move code gen into llvm and generic libraries: zinc, akela-base, akela-llvm, akela-compile
 * mut type annotation: for
 * mut type annotation: enum
 * enum methods
-* match
 * mut type annotation: match
 * modules
 * naming convention: Leading-upper-snake-case and prefixed

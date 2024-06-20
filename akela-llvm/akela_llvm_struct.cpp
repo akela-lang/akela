@@ -29,8 +29,6 @@ namespace Akela_llvm {
         assert(left_tu);
         struct type_def* left_td = left_tu->td;
         assert(left_td);
-        struct symbol* sym = left->sym;
-        assert(sym);
         Value* struct_value = Dispatch(jd, left);
 
         Ast_node* right = Ast_node_get(n, 1);
