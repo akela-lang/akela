@@ -1,0 +1,11 @@
+struct Point
+    x: f64
+    y: f64
+end
+
+let p: Point = Point
+    x: 1.5
+    y: 2.7
+end
+
+p.x

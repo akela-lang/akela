@@ -57,7 +57,19 @@ int main(int argc, char** argv)
     Code_gen_result_init(&result);
     Code_gen_jit(cg, &Code_gen_llvm_vtable, cu.root, &result);
 
-    printf("%s\n", result.value.buf);
+    if (cu.el.head) {
+        struct error* e = cu.el.head;
+        while (e) {
+            buffer_finish(&e->message);
+            fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
+            e = e->next;
+        }
+        return 1;
+    }
+
+    if (result.value.size > 0) {
+        printf("%s\n", result.value.buf);
+    }
     Code_gen_result_destroy(&result);
 
     comp_unit_destroy(&cu);
