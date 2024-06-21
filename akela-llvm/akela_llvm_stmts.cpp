@@ -44,7 +44,7 @@ namespace Akela_llvm {
                 break;
             }
 
-            if (branch->type == ast_type_conditional_branch) {
+            if (branch->type == Ast_type_conditional_branch) {
                 Ast_node* cond = Ast_node_get(branch, 0);
                 Ast_node* body = Ast_node_get(branch, 1);
 
@@ -73,7 +73,7 @@ namespace Akela_llvm {
 
                 jd->Builder->SetInsertPoint(next_block);
 
-            } else if (branch->type == ast_type_default_branch) {
+            } else if (branch->type == Ast_type_default_branch) {
                 Ast_node* body = Ast_node_get(branch, 0);
 
                 Value* body_value = Handle_stmts(jd, body);

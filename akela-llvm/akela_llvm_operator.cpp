@@ -38,11 +38,11 @@ namespace Akela_llvm {
         Ast_node* number = Ast_node_get(n, 1);
         Value* number_value = Dispatch(jd, number);
 
-        if (op->type == ast_type_plus) {
+        if (op->type == Ast_type_plus) {
             return number_value;
         }
 
-        assert(op->type == ast_type_minus);
+        assert(op->type == Ast_type_minus);
 
         Type* number_type = Get_type(jd, number->tu);
 

@@ -97,7 +97,7 @@ bool get_location(struct parse_state* ps, struct location* loc)
 
 bool is_identity_comparison(enum Ast_type type)
 {
-	return type == ast_type_equality || type == ast_type_not_equal;
+	return type == Ast_type_equality || type == Ast_type_not_equal;
 }
 
 struct token* get_lookahead(struct parse_state* ps)
@@ -110,12 +110,12 @@ struct token* get_lookahead(struct parse_state* ps)
 bool check_assignment_value_count(Ast_node* a, Ast_node* b)
 {
     if (a && b) {
-        if (a->type != ast_type_error && b->type != ast_type_error) {
-            if (a->type == ast_type_eseq && b->type != ast_type_eseq) {
+        if (a->type != Ast_type_error && b->type != Ast_type_error) {
+            if (a->type == Ast_type_eseq && b->type != Ast_type_eseq) {
                 return false;
-            } else if (a->type != ast_type_eseq && b->type == ast_type_eseq) {
+            } else if (a->type != Ast_type_eseq && b->type == Ast_type_eseq) {
                 return false;
-            } else if (a->type == ast_type_eseq || b->type == ast_type_eseq) {
+            } else if (a->type == Ast_type_eseq || b->type == Ast_type_eseq) {
                 if (Ast_node_count_children(a) != Ast_node_count_children(b)) {
                     return false;
                 }

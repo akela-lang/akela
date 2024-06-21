@@ -60,6 +60,7 @@ enum token_enum {
     token_arrow,
     token_ellipsis,
     token_range,
+    token_impl,
     token_count     /* keep at the end */
 };
 
@@ -126,6 +127,7 @@ enum result token_name_init(char** token_name)
     token_name[token_arrow] = "arrow";
     token_name[token_ellipsis] = "ellipsis";
     token_name[token_range] = "range";
+    token_name[token_impl] = "impl";
 
     for (int i = 0; i < token_count; i++) {
         if (token_name[i] == NULL) {

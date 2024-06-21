@@ -34,11 +34,11 @@ void test_comp_table_compile()
 
 	Ast_node* root = cu->root;
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "parse_stmts root");
+	expect_int_equal(root->type, Ast_type_stmts, "parse_stmts root");
 
 	Ast_node* number = Ast_node_get(root, 0);
 	assert_ptr(number, "ptr number");
-	expect_int_equal(number->type, ast_type_number, "number number");
+	expect_int_equal(number->type, Ast_type_number, "number number");
 	expect_str(&number->value, "10", "10 number");
 
     free(input);
@@ -99,24 +99,24 @@ void test_comp_table_include()
 	expect_true(valid_main, "valid valid_main");
 	Ast_node* root_main = cu_main->root;
 	assert_ptr(root_main, "ptr root");
-	expect_int_equal(root_main->type, ast_type_stmts, "parse_stmts root_main");
+	expect_int_equal(root_main->type, Ast_type_stmts, "parse_stmts root_main");
 
 	Ast_node* call_main = Ast_node_get(root_main, 0);
 	assert_ptr(call_main, "ptr call_main");
-	expect_int_equal(call_main->type, ast_type_call, "call call_main");
+	expect_int_equal(call_main->type, Ast_type_call, "call call_main");
 
 	Ast_node* id_main = Ast_node_get(call_main, 0);
 	assert_ptr(id_main, "ptr id_main");
-	expect_int_equal(id_main->type, ast_type_id, "id id_main");
+	expect_int_equal(id_main->type, Ast_type_id, "id id_main");
 	expect_str(&id_main->value, "sqrt", "sqrt id_main");
 
 	Ast_node* cseq_main = Ast_node_get(call_main, 1);
 	assert_ptr(cseq_main, "ptr cseq");
-	expect_int_equal(cseq_main->type, ast_type_cseq, "cseq cseq_main");
+	expect_int_equal(cseq_main->type, Ast_type_cseq, "cseq cseq_main");
 
 	Ast_node* number_main = Ast_node_get(cseq_main, 0);
 	assert_ptr(number_main, "ptr number_main");
-	expect_int_equal(number_main->type, ast_type_number, "number number_main");
+	expect_int_equal(number_main->type, Ast_type_number, "number number_main");
 	expect_str(&number_main->value, "25", "25 number_main");
 
 	/* destroy */
@@ -163,24 +163,24 @@ void test_comp_table_include_base()
 	expect_true(valid_main, "valid valid_main");
 	Ast_node* root_main = cu_main->root;
 	assert_ptr(root_main, "ptr root");
-	expect_int_equal(root_main->type, ast_type_stmts, "parse_stmts root_main");
+	expect_int_equal(root_main->type, Ast_type_stmts, "parse_stmts root_main");
 
 	Ast_node* call_main = Ast_node_get(root_main, 0);
 	assert_ptr(call_main, "ptr call_main");
-	expect_int_equal(call_main->type, ast_type_call, "call call_main");
+	expect_int_equal(call_main->type, Ast_type_call, "call call_main");
 
 	Ast_node* id = Ast_node_get(call_main, 0);
 	assert_ptr(id, "ptr id");
-	expect_int_equal(id->type, ast_type_id, "id id");
+	expect_int_equal(id->type, Ast_type_id, "id id");
 	expect_str(&id->value, "sqrt", "sqrt id");
 
 	Ast_node* cseq_main = Ast_node_get(call_main, 1);
 	assert_ptr(cseq_main, "ptr cseq");
-	expect_int_equal(cseq_main->type, ast_type_cseq, "cseq cseq_main");
+	expect_int_equal(cseq_main->type, Ast_type_cseq, "cseq cseq_main");
 
 	Ast_node* number_main = Ast_node_get(cseq_main, 0);
 	assert_ptr(number_main, "ptr number_main");
-	expect_int_equal(number_main->type, ast_type_number, "number number_main");
+	expect_int_equal(number_main->type, Ast_type_number, "number number_main");
 	expect_str(&number_main->value, "25", "25 number_main");
 
 	/* destroy */

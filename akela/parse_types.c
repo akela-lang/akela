@@ -34,7 +34,7 @@ Ast_node* parse_prototype(
     get_location(ps, loc);
 
     Ast_node_create(&n);
-    n->type = ast_type_prototype;
+    n->type = Ast_type_prototype;
 
     /* 0 id */
     Ast_node* id_node = NULL;
@@ -45,7 +45,7 @@ Ast_node* parse_prototype(
             assert(false);
         }
         Ast_node_create(&id_node);
-        id_node->type = ast_type_id;
+        id_node->type = Ast_type_id;
         buffer_copy(&id->value, &id_node->value);
         Ast_node_add(n, id_node);
         token_destroy(id);
@@ -54,7 +54,7 @@ Ast_node* parse_prototype(
         *has_id = true;
     } else {
         Ast_node_create(&id_node);
-        id_node->type = ast_type_id;
+        id_node->type = Ast_type_id;
         if (is_function) {
             buffer_add_format(
                     &id_node->value,
@@ -69,7 +69,7 @@ Ast_node* parse_prototype(
     struct token* lp = NULL;
     if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
         /* test case: no test case needed */
-        n->type = ast_type_error;
+        n->type = Ast_type_error;
     }
     token_destroy(lp);
     free(lp);
@@ -80,8 +80,8 @@ Ast_node* parse_prototype(
     Ast_node* dseq_node = NULL;
     struct location loc_dseq;
     dseq_node = parse_dseq(ps, require_param_name, is_extern, &loc_dseq);
-    if (dseq_node && dseq_node->type == ast_type_error) {
-        n->type = ast_type_error;
+    if (dseq_node && dseq_node->type == Ast_type_error) {
+        n->type = Ast_type_error;
     }
 
     if (dseq_node) {
@@ -89,13 +89,13 @@ Ast_node* parse_prototype(
     }
 
     if (!consume_newline(ps)) {
-        n->type = ast_type_error;
+        n->type = Ast_type_error;
     }
 
     struct token* rp = NULL;
     if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
         /* test case: test_parse_anonymous_function_expected_right_paren */
-        n->type = ast_type_error;
+        n->type = Ast_type_error;
     }
     token_destroy(rp);
     free(rp);
@@ -109,29 +109,29 @@ Ast_node* parse_prototype(
         struct token* dc = NULL;
         if (!match(ps, token_arrow, "expecting ->", &dc)) {
             /* test case: no test case needed */
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
         }
         token_destroy(dc);
         free(dc);
 
         if (!consume_newline(ps)) {
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
         }
 
         ret_type = parse_type(ps, &ret_loc);
-        if (ret_type && ret_type->type == ast_type_error) {
-            n->type = ast_type_error;
+        if (ret_type && ret_type->type == Ast_type_error) {
+            n->type = Ast_type_error;
         }
 
         if (!ret_type) {
             error_list_set(ps->el, &ret_loc, "expected a type");
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
         }
     }
 
     Ast_node* ret = NULL;
     Ast_node_create(&ret);
-    ret->type = ast_type_dret;
+    ret->type = Ast_type_dret;
     ret->loc = ret_loc;
     if (ret_type) {
         Ast_node_add(ret, ret_type);
@@ -178,13 +178,13 @@ Ast_node* parse_dseq(
 
 	Ast_node* n = NULL;
     Ast_node_create(&n);
-	n->type = ast_type_dseq;
+	n->type = Ast_type_dseq;
 
 	Ast_node* dec = NULL;
 	struct location loc_dec;
 	dec = parse_declaration(ps, false, require_param_name, &loc_dec);
-    if (dec && dec->type == ast_type_error) {
-        n->type = ast_type_error;
+    if (dec && dec->type == Ast_type_error) {
+        n->type = Ast_type_error;
     }
 
 	if (!dec) {
@@ -222,26 +222,26 @@ Ast_node* parse_dseq(
             if (is_extern) {
                 Ast_node* ellipsis = NULL;
                 Ast_node_create(&ellipsis);
-                ellipsis->type = ast_type_ellipsis;
+                ellipsis->type = Ast_type_ellipsis;
                 Ast_node_add(n, ellipsis);
                 break;
             } else {
                 error_list_set(ps->el, &eps->loc,
                        "Found ellipsis but variadic functions are only supported in extern declarations");
-                n->type = ast_type_error;
+                n->type = Ast_type_error;
                 break;
             }
         }
 
 		dec = parse_declaration(ps, require_param_name, false, &loc_dec);
-        if (dec && dec->type == ast_type_error) {
-            n->type = ast_type_error;
+        if (dec && dec->type == Ast_type_error) {
+            n->type = Ast_type_error;
         }
 
 		if (!dec) {
 			error_list_set(ps->el, &loc_dec, "expected declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
 			break;
 		}
 
@@ -303,11 +303,11 @@ Ast_node* parse_declaration(
     bool type_only = !require_param_name && token_is_type(ps, t0);
     if (t0->type == token_id || type_only) {
         Ast_node_create(&n);
-        n->type = ast_type_declaration;
+        n->type = Ast_type_declaration;
 
         Ast_node* id_node = NULL;
         Ast_node_create(&id_node);
-        id_node->type = ast_type_id;
+        id_node->type = Ast_type_id;
         Ast_node_add(n, id_node);
 
         if (!type_only) {
@@ -325,7 +325,7 @@ Ast_node* parse_declaration(
             struct token *dc = NULL;
             if (!match(ps, token_colon, "expected colon", &dc)) {
                 /* test case: test_parse_error_declaration_double_colon */
-                n->type = ast_type_error;
+                n->type = Ast_type_error;
             }
             token_destroy(dc);
             free(dc);
@@ -341,14 +341,14 @@ Ast_node* parse_declaration(
         } else {
             type_use = parse_type(ps, &loc_type);
         }
-        if (type_use && type_use->type == ast_type_error) {
-            n->type = ast_type_error;
+        if (type_use && type_use->type == Ast_type_error) {
+            n->type = Ast_type_error;
         }
 
         if (!type_use) {
             error_list_set(ps->el, &loc_type, "expected a type");
             /* test case: test_parse_error_declaration_type */
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
         }
 
         if (type_use) {
@@ -387,7 +387,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         if (!n) {
             Ast_node_create(&n);
-            n->type = ast_type_type;
+            n->type = Ast_type_type;
         }
 
         bool has_number = false;
@@ -422,7 +422,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         struct token* rsb = NULL;
         if (!match(ps, token_right_square_bracket, "expected right square bracket", &rsb)) {
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
         }
 
         token_destroy(rsb);
@@ -455,7 +455,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
     if (!n) {
         Ast_node_create(&n);
-        n->type = ast_type_type;
+        n->type = Ast_type_type;
     }
 
     if (t0->type == token_fn) {
@@ -473,8 +473,8 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
         if (has_id) {
             error_list_set(ps->el, &fn_loc, "function type has name");
         }
-        if (proto->type == ast_type_error) {
-            n->type = ast_type_error;
+        if (proto->type == Ast_type_error) {
+            n->type = Ast_type_error;
         } else {
             struct buffer name;
             buffer_init(&name);
@@ -491,34 +491,34 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
         /* handle type or array element */
         struct token* name = NULL;
         if (!match(ps, t0->type, "expected type identifier", &name)) {
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
         }
 
         struct symbol* sym = NULL;
-        if (n->type != ast_type_error) {
+        if (n->type != Ast_type_error) {
             sym = environment_get(ps->st->top, &name->value);
             if (!sym) {
                 char* a;
                 buffer2array(&name->value, &a);
                 error_list_set(ps->el, &name->loc, "type not defined: %s", a);
                 free(a);
-                n->type = ast_type_error;
+                n->type = Ast_type_error;
                 /* test case: test_parse_error_type_not_defined */
             } else if (!sym->td) {
                 char *a;
                 buffer2array(&name->value, &a);
                 error_list_set(ps->el, &name->loc, "identifier is not a type: %s", a);
                 free(a);
-                n->type = ast_type_error;
+                n->type = Ast_type_error;
                 /* test case: test_parse_error_not_a_type */
             } else if (sym->td == ps->st->function_type_def) {
                 error_list_set(
                         ps->el,
                         &name->loc,
                         "can not directly use Function to declare a function; use fn syntax to declare a function");
-                n->type = ast_type_error;
+                n->type = Ast_type_error;
             } else {
-                if (n->type != ast_type_error) {
+                if (n->type != Ast_type_error) {
                     n->td = sym->td;
                 }
             }
@@ -551,7 +551,7 @@ void check_id_node(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
         buffer2array(&id_node->value, &a);
         error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
         free(a);
-        n->type = ast_type_error;
+        n->type = Ast_type_error;
         /* test case: test_parse_error_duplicate_declarations */
     } else {
         struct symbol* sym2 = environment_get(ps->st->top, &id_node->value);
@@ -560,7 +560,7 @@ void check_id_node(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
             buffer2array(&id_node->value, &a);
             error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
             free(a);
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
             /* test case: test_parse_types_reserved_type */
         } else {
             struct symbol* new_sym = NULL;
@@ -579,11 +579,11 @@ void check_id_node(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
 
 void declare_type(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
 {
-    if (n && n->type != ast_type_error) {
+    if (n && n->type != Ast_type_error) {
         if (id_node) {
-            if (id_node->type == ast_type_id) {
+            if (id_node->type == Ast_type_id) {
                 check_id_node(ps, n, id_node);
-            } else if (id_node->type == ast_type_let_lseq) {
+            } else if (id_node->type == Ast_type_let_lseq) {
                 Ast_node* p = id_node->head;
                 while (p) {
                     check_id_node(ps, n, p);
@@ -607,14 +607,14 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
 
 	struct location loc_type;
     tu = parse_type(ps, &loc_type);
-	if (tu && tu->type == ast_type_error) {
-        parent->type = ast_type_error;
+	if (tu && tu->type == Ast_type_error) {
+        parent->type = Ast_type_error;
     }
 
 	if (!tu) {
 		error_list_set(ps->el, &loc_type, "expected a type name");
 		/* test case: test_parse_error_type_name */
-        parent->type = ast_type_error;
+        parent->type = Ast_type_error;
 	}
 
 	if (tu) {
@@ -642,18 +642,18 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
         consume_newline(ps);
 
         tu = parse_type(ps, &loc_type);
-		if (tu && tu->type == ast_type_error) {
-            parent->type = ast_type_error;
+		if (tu && tu->type == Ast_type_error) {
+            parent->type = Ast_type_error;
         }
 
 		if (!tu) {
 			error_list_set(ps->el, &loc_type, "expected a type name after comma");
 			/* test case: test_parse_error_comma_type_name */
-            parent->type = ast_type_error;
+            parent->type = Ast_type_error;
 			break;
 		}
 
-		if (parent->type != ast_type_error) {
+		if (parent->type != Ast_type_error) {
 			assert(tu);
             Ast_node_add(parent, tu);
 			tu = NULL;
@@ -666,7 +666,7 @@ Ast_node* proto2type(struct symbol_table* st, Ast_node* proto)
 {
 	Ast_node* tu = NULL;
     Ast_node_create(&tu);
-	tu->type = ast_type_type;
+	tu->type = Ast_type_type;
 
     struct buffer bf;
 	buffer_init(&bf);
@@ -687,7 +687,7 @@ bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_
 {
     bool valid = true;
 
-    if (proto->type != ast_type_error && stmts_node->type != ast_type_error) {
+    if (proto->type != Ast_type_error && stmts_node->type != Ast_type_error) {
         Ast_node *dret = Ast_node_get(proto, 2);
         Ast_node *ret_type = Ast_node_get(dret, 0);
         if (ret_type) {
@@ -774,23 +774,23 @@ Ast_node* make_constructor(struct type_def* td)
     /* function */
 	Ast_node* n = NULL;
     Ast_node_create(&n);
-	n->type = ast_type_function;
+	n->type = Ast_type_function;
 
     Ast_node* proto = NULL;
     Ast_node_create(&proto);
-    proto->type = ast_type_prototype;
+    proto->type = Ast_type_prototype;
 
 	/* id */
 	Ast_node* id = NULL;
     Ast_node_create(&id);
-	id->type = ast_type_id;
+	id->type = Ast_type_id;
 	buffer_copy(&td->name, &id->value);
     Ast_node_add(proto, id);
 
 	/* dseq */
 	Ast_node* dseq = NULL;
     Ast_node_create(&dseq);
-	dseq->type = ast_type_dseq;
+	dseq->type = Ast_type_dseq;
 	Ast_node* p = tu->head;
 	while (p) {
 		Ast_node* dec = Ast_node_copy(p);
@@ -802,10 +802,10 @@ Ast_node* make_constructor(struct type_def* td)
 	/* dret */
 	Ast_node* dret = NULL;
     Ast_node_create(&dret);
-	dret->type = ast_type_dret;
+	dret->type = Ast_type_dret;
 	Ast_node* dret_tu = NULL;
     Ast_node_create(&dret_tu);
-	dret_tu->type = ast_type_type;
+	dret_tu->type = Ast_type_type;
 	dret_tu->td = td;
     Ast_node_add(dret, dret_tu);
     Ast_node_add(proto, dret);
@@ -816,29 +816,29 @@ Ast_node* make_constructor(struct type_def* td)
 	/* stmts */
 	Ast_node* stmts = NULL;
     Ast_node_create(&stmts);
-	stmts->type = ast_type_stmts;
+	stmts->type = Ast_type_stmts;
     Ast_node_add(n, stmts);
 
 	/* let */
 	Ast_node* let = NULL;
     Ast_node_create(&let);
-	let->type = ast_type_let;
+	let->type = Ast_type_let;
     Ast_node_add(stmts, let);
 
 	Ast_node* dec = NULL;
     Ast_node_create(&dec);
-	dec->type = ast_type_declaration;
+	dec->type = Ast_type_declaration;
     Ast_node_add(let, dec);
 
 	Ast_node* id2 = NULL;
     Ast_node_create(&id2);
-	id2->type = ast_type_id;
+	id2->type = Ast_type_id;
 	buffer_copy_str(&id2->value, "__x");
     Ast_node_add(dec, id2);
 
 	Ast_node* t = NULL;
     Ast_node_create(&t);
-	t->type = ast_type_type;
+	t->type = Ast_type_type;
 	t->td = td;
     Ast_node_add(dec, t);
 
@@ -847,23 +847,23 @@ Ast_node* make_constructor(struct type_def* td)
 	while (p) {
 		Ast_node* assign = NULL;
         Ast_node_create(&assign);
-		assign->type = ast_type_assign;
+		assign->type = Ast_type_assign;
         Ast_node_add(stmts, assign);
 
 		Ast_node* dot = NULL;
         Ast_node_create(&dot);
-		dot->type = ast_type_type;
+		dot->type = Ast_type_type;
         Ast_node_add(assign, dot);
 
 		Ast_node* x = NULL;
         Ast_node_create(&x);
-		x->type = ast_type_id;
+		x->type = Ast_type_id;
 		buffer_copy_str(&x->value, "__x");
         Ast_node_add(dot, x);
 
 		Ast_node* field = NULL;
         Ast_node_create(&field);
-		field->type = ast_type_id;
+		field->type = Ast_type_id;
 		Ast_node* id3 = Ast_node_get(p, 0);
 		buffer_copy(&id3->value, &field->value);
         Ast_node_add(dot, field);
@@ -874,7 +874,7 @@ Ast_node* make_constructor(struct type_def* td)
 	/* return __x */
 	Ast_node* id4 = NULL;
     Ast_node_create(&id4);
-	id4->type = ast_type_id;
+	id4->type = Ast_type_id;
 	buffer_copy_str(&id4->value, "__x");
     Ast_node_add(stmts, id4);
 
@@ -886,10 +886,10 @@ void Override_rhs(Ast_node* tu, Ast_node* rhs)
 {
     if (tu->td->type == type_integer || tu->td->type == type_float) {
         rhs->tu->td = tu->td;
-        if (rhs->type == ast_type_sign) {
+        if (rhs->type == Ast_type_sign) {
             Ast_node* p = Ast_node_get(rhs, 1);
             Override_rhs(tu, p);
-        } else if (tu->to.is_array && rhs->type == ast_type_array_literal) {
+        } else if (tu->to.is_array && rhs->type == Ast_type_array_literal) {
             Ast_node* p = rhs->head;
             while (p) {
                 Override_rhs(tu, p);
@@ -901,19 +901,19 @@ void Override_rhs(Ast_node* tu, Ast_node* rhs)
 
 bool is_lvalue(enum Ast_type type)
 {
-    if (type == ast_type_id) {
+    if (type == Ast_type_id) {
         return true;
     }
 
-    if (type == ast_type_array_subscript) {
+    if (type == Ast_type_array_subscript) {
         return true;
     }
 
-    if (type == ast_type_eseq) {
+    if (type == Ast_type_eseq) {
         return true;
     }
 
-    if (type == ast_type_dot) {
+    if (type == Ast_type_dot) {
         return true;
     }
 
@@ -931,7 +931,7 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
         }
         if (!p->head) {
             assert(p->tu);
-            if (p->type != ast_type_id) {
+            if (p->type != Ast_type_id) {
                 error_list_set(ps->el, loc, "invalid lvalue");
                 return false;
             }
@@ -959,7 +959,7 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
 
 bool Is_placeholder_node(Ast_node* n)
 {
-    if (n->type == ast_type_id && buffer_compare_str(&n->value, "_")) {
+    if (n->type == Ast_type_id && buffer_compare_str(&n->value, "_")) {
         return true;
     } else {
         return false;

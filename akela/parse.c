@@ -25,14 +25,14 @@ Ast_node* parse(struct parse_state* ps)
 		enum result r = token_name_init(names);
 		if (r == result_error) {
 			error_list_set(ps->el, &next_loc, "token name init: %s", error_message);
-            n->type = ast_type_error;
+            n->type = Ast_type_error;
             token_destroy(t0);
             free(t0);
 			return n;
 		}
 
 		error_list_set(ps->el, &next_loc, "Couldn't process token: %s", names[t0->type]);
-        n->type = ast_type_error;
+        n->type = Ast_type_error;
  	}
 
     token_destroy(t0);

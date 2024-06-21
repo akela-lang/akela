@@ -134,6 +134,7 @@ void symbol_table_init_reserved(struct environment* env)
     symbol_table_add_reserved(env, "extern", token_extern, NULL);
     symbol_table_add_reserved(env, "mut", token_mut, NULL);
     symbol_table_add_reserved(env, "const", token_const, NULL);
+    symbol_table_add_reserved(env, "impl", token_impl, NULL);
 }
 
 void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)
@@ -233,7 +234,7 @@ void symbol_table_add_numeric(struct symbol_table* st, const char* name)
 	assert(sym->td);
 	Ast_node* n = NULL;
     Ast_node_create(&n);
-	n->type = ast_type_type_pool;
+	n->type = Ast_type_type_pool;
 	n->td = sym->td;
     Ast_node_add(st->numeric_pool, n);
     buffer_destroy(&bf);

@@ -23,11 +23,11 @@ void test_comp_unit_compile()
 	
 	Ast_node* root = cu->root;
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, ast_type_stmts, "parse_stmts root");
+	expect_int_equal(root->type, Ast_type_stmts, "parse_stmts root");
 
 	Ast_node* number = Ast_node_get(root, 0);
 	assert_ptr(number, "ptr number");
-	expect_int_equal(number->type, ast_type_number, "number number");
+	expect_int_equal(number->type, Ast_type_number, "number number");
 	expect_str(&number->value, "10", "10 number");
 
     free(input);

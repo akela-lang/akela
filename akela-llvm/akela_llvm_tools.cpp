@@ -38,7 +38,7 @@ namespace Akela_llvm {
         if (input_count > 0) {
             for (size_t i = 0; i < input_count; i++) {
                 Ast_node *dec = Ast_node_get(input, i);
-                if (dec->type == ast_type_ellipsis) {
+                if (dec->type == Ast_type_ellipsis) {
                     is_variadic = true;
                     continue;
                 }
@@ -241,46 +241,46 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Dispatch(Jit_data* jd, Ast_node* n)
     {
-        if (n->type == ast_type_stmts) {
+        if (n->type == Ast_type_stmts) {
             return Handle_stmts(jd, n);
-        } else if (n->type == ast_type_extern) {
+        } else if (n->type == Ast_type_extern) {
             return Handle_extern(jd, n);
-        } else if (n->type == ast_type_if) {
+        } else if (n->type == Ast_type_if) {
             return Handle_if(jd, n);
-        } else if (n->type == ast_type_let) {
+        } else if (n->type == Ast_type_let) {
             return Handle_let(jd, n);
-        } else if (n->type == ast_type_function) {
+        } else if (n->type == Ast_type_function) {
             return Handle_function(jd, n);
-        } else if (n->type == ast_type_assign) {
+        } else if (n->type == Ast_type_assign) {
             return Handle_assign(jd, n);
-        } else if (n->type == ast_type_plus) {
+        } else if (n->type == Ast_type_plus) {
             return Handle_add(jd, n);
-        } else if (n->type == ast_type_minus) {
+        } else if (n->type == Ast_type_minus) {
             return Handle_sub(jd, n);
-        } else if (n->type == ast_type_call) {
+        } else if (n->type == Ast_type_call) {
             return Handle_call(jd, n);
-        } else if (n->type == ast_type_dot) {
+        } else if (n->type == Ast_type_dot) {
             return Handle_dot(jd, n);
-        } else if (n->type == ast_type_id) {
+        } else if (n->type == Ast_type_id) {
             return Handle_identifier(jd, n);
-        } else if (n->type == ast_type_struct) {
+        } else if (n->type == Ast_type_struct) {
             return Handle_struct(jd, n);
-        } else if (n->type == ast_type_struct_literal) {
+        } else if (n->type == Ast_type_struct_literal) {
             return Handle_struct_literal(jd, n);
-        } else if (n->type == ast_type_array_literal) {
+        } else if (n->type == Ast_type_array_literal) {
             return Handle_array_literal(jd, n);
-        } else if (n->type == ast_type_array_subscript) {
+        } else if (n->type == Ast_type_array_subscript) {
             return Handle_subscript(jd, n);
-        } else if (n->type == ast_type_sign) {
+        } else if (n->type == Ast_type_sign) {
             return Handle_sign(jd, n);
-        } else if (n->type == ast_type_number) {
+        } else if (n->type == Ast_type_number) {
             return Handle_number(jd, n);
-        } else if (n->type == ast_type_boolean) {
+        } else if (n->type == Ast_type_boolean) {
             return Handle_boolean(jd, n);
-        } else if (n->type == ast_type_string) {
+        } else if (n->type == Ast_type_string) {
             return Handle_string(jd, n);
         } else {
-            char* names[ast_type_count];
+            char* names[Ast_type_count];
             Ast_set_names(names);
             printf("code gen: unhandled ast node type: %s", names[n->type]);
             exit(1);

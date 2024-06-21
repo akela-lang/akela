@@ -1,81 +1,10 @@
+#define AKELA_AST_C
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include "ast.h"
-#include "zinc/result.h"
 #include "zinc/memory.h"
 #include "type_def.h"
-#if defined(WIN32)
-	#include "windows.h"
-	#include <DbgHelp.h>
-#endif
-
-enum result Ast_set_names(char** names)
-{
-	for (int i = 0; i < ast_type_count; i++) {
-		names[i] = NULL;
-	}
-
-	names[ast_type_none] = "none";
-	names[ast_type_id] = "id";
-	names[ast_type_sign] = "sign";
-	names[ast_type_number] = "number";
-	names[ast_type_string] = "string";
-	names[ast_type_assign] = "assign";
-	names[ast_type_plus] = "plus";
-	names[ast_type_minus] = "minus";
-	names[ast_type_mult] = "mult";
-	names[ast_type_divide] = "divide";
-	names[ast_type_stmts] = "parse_stmts";
-	names[ast_type_function] = "function";
-	names[ast_type_dseq] = "dseq";
-	names[ast_type_dret] = "dret";
-	names[ast_type_call] = "call";
-	names[ast_type_cseq] = "cseq";
-	names[ast_type_if] = "if";
-	names[ast_type_conditional_branch] = "conditional-branch";
-	names[ast_type_default_branch] = "default-branch";
-	names[ast_type_equality] = "equality";
-	names[ast_type_not_equal] = "not-equal";
-	names[ast_type_less_than] = "less-than";
-	names[ast_type_less_than_or_equal] = "less-than-or-equal";
-	names[ast_type_greater_than] = "greater-than";
-	names[ast_type_greater_than_or_equal] = "greater-than-or-equal";
-	names[ast_type_not] = "not";
-	names[ast_type_and] = "and";
-	names[ast_type_or] = "or";
-	names[ast_type_while] = "while";
-	names[ast_type_for_range] = "for-range";
-	names[ast_type_for_iteration] = "for-iteration";
-	names[ast_type_declaration] = "declaration";
-	names[ast_type_array_literal] = "array-literal";
-	names[ast_type_array_subscript] = "array-subscript";
-	names[ast_type_let] = "let";
-	names[ast_type_boolean] = "boolean";
-	names[ast_type_parenthesis] = "parenthesis";
-	names[ast_type_type] = "type";
-	names[ast_type_power] = "power";
-	names[ast_type_type_pool] = "type-pool";
-	names[ast_type_dot] = "dot";
-	names[ast_type_module] = "module";
-	names[ast_type_struct] = "struct";
-	names[ast_type_return] = "return";
-    names[ast_type_eseq] = "eseq";
-    names[ast_type_let_lseq] = "let_lseq";
-    names[ast_type_let_rseq] = "let_rseq";
-    names[ast_type_error] = "error";
-    names[ast_type_prototype] = "prototype";
-    names[ast_type_extern] = "extern";
-    names[ast_type_struct_literal] = "struct-literal";
-    names[ast_type_struct_literal_field] = "struct-literal-field";
-
-	for (int i = 0; i < ast_type_count; i++) {
-		if (names[i] == NULL) {
-			return set_error("missing dag name: %d", i);
-		}
-	}
-
-	return result_ok;
-}
 
 void Ast_node_create(Ast_node** n)
 {
@@ -95,7 +24,7 @@ void Type_options_init(Type_options* to)
 
 void Ast_node_init(Ast_node* n)
 {
-	n->type = ast_type_none;
+	n->type = Ast_type_none;
 	buffer_init(&n->value);
 	n->tu = NULL;
 	n->td = NULL;
@@ -107,6 +36,7 @@ void Ast_node_init(Ast_node* n)
 	n->tail = NULL;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 void Ast_node_destroy(Ast_node* n)
 {
     if (n) {
@@ -149,7 +79,6 @@ void Ast_node_add(Ast_node* p, Ast_node* c)
 }
 
 /* assume parent and child are not NULL */
-/* dynamic-output-none */
 void Ast_node_push(Ast_node* parent, Ast_node* child)
 {
 	Ast_node* old_head = parent->head;
@@ -160,7 +89,6 @@ void Ast_node_push(Ast_node* parent, Ast_node* child)
 	parent->head = child;
 }
 
-/* dynamic-output-none */
 Ast_node* Ast_node_get(Ast_node* p, size_t pos)
 {
 	int i = 0;
@@ -173,9 +101,10 @@ Ast_node* Ast_node_get(Ast_node* p, size_t pos)
 	return NULL;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 void Ast_node_print(Ast_node* root, bool debug)
 {
-    char* names[ast_type_count];
+    char* names[Ast_type_count];
     Ast_set_names(names);
 
     if (root == NULL) return;
@@ -261,6 +190,7 @@ void Type_options_reduce_dimension(Type_options* to)
 }
 
 /* copy dag excluding tu */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Ast_node* Ast_node_copy(Ast_node* n)
 {
 	Ast_node* copy = NULL;
@@ -285,10 +215,9 @@ Ast_node* Ast_node_copy(Ast_node* n)
 	return copy;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 bool Ast_node_match(Ast_node* a, Ast_node* b)
 {
-	Ast_node* copy = NULL;
-
 	if (a && b) {
 		if (a->type != b->type) {
 			return false;

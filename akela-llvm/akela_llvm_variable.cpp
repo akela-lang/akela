@@ -84,7 +84,7 @@ namespace Akela_llvm {
     {
         Ast_node* rhs = n->tail;
         Ast_node* lhs = rhs->prev;
-        if (lhs->type == ast_type_eseq && rhs->type == ast_type_eseq) {
+        if (lhs->type == Ast_type_eseq && rhs->type == Ast_type_eseq) {
             Ast_node* lhs2 = lhs->head;
             Ast_node* rhs2 = rhs->head;
             while (lhs2 && rhs2) {
@@ -113,7 +113,7 @@ namespace Akela_llvm {
     Value* Assign_lhs_rhs_value(Jit_data* jd, Ast_node* lhs, Ast_node* rhs, Value* rhs_value)
     {
         if (lhs->tu->td->type == type_function) {
-            if (lhs->type == ast_type_id) {
+            if (lhs->type == Ast_type_id) {
                 AllocaInst* lhs_value;
                 if (lhs->sym->reference) {
                     lhs_value = (AllocaInst*)lhs->sym->reference;
@@ -135,7 +135,7 @@ namespace Akela_llvm {
             jd->context.in_lhs = false;
             Array_copy(jd, lhs->tu, rhs->tu, lhs_value, rhs_value);
         } else {
-            if (lhs->type == ast_type_id) {
+            if (lhs->type == Ast_type_id) {
                 AllocaInst* lhs_value;
                 if (lhs->sym->reference) {
                     lhs_value = (AllocaInst*)lhs->sym->reference;

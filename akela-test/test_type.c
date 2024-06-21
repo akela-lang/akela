@@ -8,16 +8,16 @@ void test_type_use1()
 
 	Ast_node* n;
     Ast_node_create(&n);
-	n->type = ast_type_type;
+	n->type = Ast_type_type;
 
 	Ast_node* a;
     Ast_node_create(&a);
-	a->type = ast_type_type;
+	a->type = Ast_type_type;
     Ast_node_add(n, a);
 
 	Ast_node* b;
     Ast_node_create(&b);
-	b->type = ast_type_type;
+	b->type = Ast_type_type;
     Ast_node_add(n, b);
 
 	assert_ptr(n, "ptr n");
