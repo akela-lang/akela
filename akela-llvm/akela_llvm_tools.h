@@ -75,6 +75,12 @@ namespace Akela_llvm {
     void Run(Jit_data* jd, Ast_node* n, struct buffer* bf);
     llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);
     llvm::Value* Dispatch(Jit_data* jd, Ast_node* n);
+    void Array_copy(
+            Jit_data* jd,
+            Ast_node* lhs_tu,
+            Ast_node* rhs_tu,
+            llvm::Value* lhs_ptr,
+            llvm::Value* rhs_ptr);
 }
 
 #endif

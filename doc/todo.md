@@ -1,5 +1,4 @@
 # Akela Todo
-* assignment subscript
 * struct methods
 * update location in match and ast_node_add; token start_pos, end_pos
 * for loop

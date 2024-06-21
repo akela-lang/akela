@@ -82,9 +82,10 @@ namespace Akela_llvm {
         raw_string_ostream os2(str2);
         jd.TheModule->print(os2, nullptr);
         buffer_add_format(&result->text, "%s", str2.c_str());
+        buffer_finish(&result->text);
 
         if (result->debug) {
-            printf("%s\n\n", result->text.buf);
+            fprintf(stderr, "\n%s", result->text.buf);
         }
 
         if (valid) {
@@ -93,10 +94,8 @@ namespace Akela_llvm {
             jd.ExitOnErr(jd.TheJIT->addModule(std::move(tsm), rt));
             Run(&jd, n, &result->value);
             jd.ExitOnErr(rt->remove());
+            buffer_finish(&result->value);
         }
-
-        buffer_finish(&result->value);
-        buffer_finish(&result->text);
 
         return true;
     }

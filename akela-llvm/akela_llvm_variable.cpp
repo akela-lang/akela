@@ -1,4 +1,5 @@
 #include "akela_llvm_tools.h"
+#include "zinc/vector.h"
 
 using namespace llvm;
 
@@ -51,10 +52,10 @@ namespace Akela_llvm {
                     buffer_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     Value *rhs_value = Dispatch(jd, rhs);
-                    lhs->sym->reference = lhs_value;
                     jd->Builder->CreateStore(rhs_value, lhs_value);
+                    lhs->sym->reference = lhs_value;
                 } else {
-                    auto *t = (StructType*)tu->td->composite_type;
+                    Type *t = Get_type(jd, tu);
                     buffer_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     lhs->sym->value = lhs_value;
@@ -129,27 +130,10 @@ namespace Akela_llvm {
                 assert(false);
             }
         } else if (lhs->tu->to.is_array) {
-            if (lhs->type == ast_type_id) {
-                AllocaInst *lhs_value;
-                if (lhs->sym->reference) {
-                    lhs_value = (AllocaInst *) lhs->sym->reference;
-                } else {
-                    lhs->sym->value = nullptr;
-                    Type *t = Get_type(jd, lhs->tu);
-                    t = t->getPointerTo();
-                    buffer_finish(&lhs->value);
-                    lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    lhs->sym->reference = lhs_value;
-                }
-                jd->Builder->CreateStore(rhs_value, lhs_value);
-            } else if (lhs->type == ast_type_dot) {
-                jd->context.in_lhs = true;
-                Value* lhs_value = Dispatch(jd, lhs);
-                jd->context.in_lhs = false;
-                jd->Builder->CreateStore(rhs_value, lhs_value);
-            } else {
-                assert(false);
-            }
+            jd->context.in_lhs = true;
+            Value* lhs_value = Dispatch(jd, lhs);
+            jd->context.in_lhs = false;
+            Array_copy(jd, lhs->tu, rhs->tu, lhs_value, rhs_value);
         } else {
             if (lhs->type == ast_type_id) {
                 AllocaInst* lhs_value;
@@ -188,7 +172,7 @@ namespace Akela_llvm {
         }
     }
 
-        /* NOLINTNEXTLINE(misc-no-recursion) */
+    /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_array_literal(Jit_data* jd, Ast_node* n)
     {
         assert(n->tu->to.is_array);

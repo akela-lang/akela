@@ -559,6 +559,25 @@ void test_akela_llvm_array_subscript_exit()
     Code_gen_result_destroy(&result);
 }
 
+void test_akela_llvm_array_assign_subscript()
+{
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup("let mut a: [4][4]i64 = [[1,2,3,4],\n"
+             "  [5,6,7,8],\n"
+             "  [9,10,11,12],\n"
+             "  [13,14,15,16]\n"
+             "]\n"
+             "let b: [4]i64 = [50,60,70,80]\n"
+             "a[1] = b\n"
+             "a[1][0]\n",
+             &result);
+    expect_str(&result.value, "50", "value");
+    Code_gen_result_destroy(&result);
+}
+
 void test_akela_llvm_array()
 {
     test_code_gen_array_const();
@@ -580,4 +599,5 @@ void test_akela_llvm_array()
     test_code_gen_assign_array_allocate();
     test_akela_llvm_array_assign_sub_array();
     //test_akela_llvm_array_subscript_exit();
+    test_akela_llvm_array_assign_subscript();
 }

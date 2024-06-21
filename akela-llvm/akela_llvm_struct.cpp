@@ -56,6 +56,8 @@ namespace Akela_llvm {
 
         if (jd->context.in_lhs) {
             return gep_value;
+        } else if (dec_tu->to.is_array) {
+            return gep_value;
         } else {
             Type* dot_type = Get_type_pointer(jd, n->tu);
             buffer_finish(&right->value);
@@ -85,7 +87,11 @@ namespace Akela_llvm {
             buffer_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
             Value* expr_value = Dispatch(jd, expr);
-            jd->Builder->CreateStore(expr_value, gep_value);
+            if (expr->tu->to.is_array) {
+                Array_copy(jd, expr->tu, expr->tu, gep_value, expr_value);
+            } else {
+                jd->Builder->CreateStore(expr_value, gep_value);
+            }
 
             field = field->next;
             i++;

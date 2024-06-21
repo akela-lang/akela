@@ -286,4 +286,41 @@ namespace Akela_llvm {
             exit(1);
         }
     }
+
+    /* NOLINTNEXTLINE(misc-no-recursion) */
+    void Array_copy(
+            Jit_data* jd,
+            Ast_node* lhs_tu,
+            Ast_node* rhs_tu,
+            Value* lhs_ptr,
+            Value* rhs_ptr)
+    {
+        size_t size = *(size_t*)VECTOR_PTR(&lhs_tu->to.dim, 0);
+
+        Ast_node* lhs_tu2 = Ast_node_copy(lhs_tu);
+        Type_options_reduce_dimension(&lhs_tu2->to);
+
+        Ast_node* rhs_tu2 = Ast_node_copy(rhs_tu);
+        Type_options_reduce_dimension(&rhs_tu2->to);
+
+        for (size_t i = 0; i < size; i++) {
+            Type* t = Get_type(jd, lhs_tu2);
+            std::vector<Value*> list = std::vector<Value*>();
+            Value* i_value = ConstantInt::get(*jd->TheContext, APInt(64, i, false));
+            list.push_back(i_value);
+            Value* lhs_ptr2 = jd->Builder->CreateInBoundsGEP(t, lhs_ptr, list, "lhstmp");
+            Value* rhs_ptr2 = jd->Builder->CreateInBoundsGEP(t, rhs_ptr, list, "rhstmp");
+
+            if (lhs_tu2->to.is_array) {
+                Array_copy(jd, lhs_tu2, rhs_tu2, lhs_ptr2, rhs_ptr2);
+            } else {
+                Value* value = jd->Builder->CreateLoad(t, rhs_ptr2, "rhs");
+                jd->Builder->CreateStore(value, lhs_ptr2);
+            }
+        }
+
+        Ast_node_destroy(lhs_tu2);
+        Ast_node_destroy(rhs_tu2);
+    }
+
 }
