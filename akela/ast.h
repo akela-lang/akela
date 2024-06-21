@@ -62,6 +62,7 @@ typedef enum Ast_type {
     Ast_type_struct_literal,
     Ast_type_struct_literal_field,
     Ast_type_ellipsis,
+    Ast_type_impl,
 	Ast_type_count		/* keep at end */
 } Ast_type;
 
@@ -124,6 +125,8 @@ enum result Ast_set_names(char** names)
     names[Ast_type_extern] = "extern";
     names[Ast_type_struct_literal] = "struct-literal";
     names[Ast_type_struct_literal_field] = "struct-literal-field";
+    names[Ast_type_ellipsis] = "ellipsis";
+    names[Ast_type_impl] = "impl";
 
     for (int i = 0; i < Ast_type_count; i++) {
         if (names[i] == NULL) {
