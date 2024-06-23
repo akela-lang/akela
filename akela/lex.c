@@ -62,7 +62,20 @@ bool lex_start(struct lex_state* ls,
             return result_ok;
         }
 
-        if (is_word(c, num)) {
+        if (num == 1 && *c == '#') {
+            /* comment */
+            while (!(num == 1 && *c == '\n')) {
+                r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+                if (r == result_error) {
+                    valid = error_list_set(ls->el, &loc, error_message);
+                    break;
+                }
+                if (*done) {
+                    break;
+                }
+            }
+            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+        } else if (is_word(c, num)) {
             *state = state_id;
             t->type = token_id;
             for (int i = 0; i < num; i++) {

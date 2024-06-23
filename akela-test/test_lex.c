@@ -1554,6 +1554,73 @@ void test_lex_module()
 	lex_teardown(&ls);
 }
 
+void test_lex_comment()
+{
+    test_name(__func__);
+
+    struct error_list el;
+    struct lex_state ls;
+    bool valid;
+
+    lex_setup("150 # this is 150\n"
+              "275 # this is 275\n",
+              &ls, &el);
+
+    struct token* number0;
+    valid = lex(&ls, &number0);
+    assert_no_errors(ls.el);
+    assert_true(valid, "valid number0");
+    assert_ptr(number0, "ptr number0");
+    expect_int_equal(number0->type, token_number, "type number0");
+    expect_str(&number0->value, "150", "value number0");
+
+    token_destroy(number0);
+    free(number0);
+
+    struct token* newline0;
+    valid = lex(&ls, &newline0);
+    assert_no_errors(ls.el);
+    assert_true(valid, "valid newline0");
+    assert_ptr(newline0, "ptr newline0");
+    expect_int_equal(newline0->type, token_newline, "type newline0");
+
+    token_destroy(newline0);
+    free(newline0);
+
+    struct token* number1;
+    valid = lex(&ls, &number1);
+    assert_no_errors(ls.el);
+    assert_true(valid, "valid number1");
+    assert_ptr(number1, "ptr number1");
+    expect_int_equal(number1->type, token_number, "type number1");
+    expect_str(&number1->value, "275", "value number1");
+
+    token_destroy(number1);
+    free(number1);
+
+    struct token* newline1;
+    valid = lex(&ls, &newline1);
+    assert_no_errors(ls.el);
+    assert_true(valid, "valid newline1");
+    assert_ptr(newline1, "ptr newline1");
+    expect_int_equal(newline1->type, token_newline, "type newline1");
+
+    token_destroy(newline0);
+    free(newline0);
+
+    struct token* eof;
+    valid = lex(&ls, &eof);
+    assert_no_errors(ls.el);
+    assert_true(valid, "valid eof");
+    assert_ptr(eof, "ptr eof");
+    expect_int_equal(eof->type, token_eof, "type eof");
+
+    token_destroy(eof);
+    free(eof);
+
+    lex_teardown(&ls);
+}
+
 /* dynamic-output-none */
 void test_lex()
 {
@@ -1584,4 +1651,5 @@ void test_lex()
 	test_lex_error_underscore_letter2();
 	test_lex_error_exponent_sign();
 	test_lex_module();
+    test_lex_comment();
 }
