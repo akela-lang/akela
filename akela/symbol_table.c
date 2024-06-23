@@ -6,6 +6,8 @@
 #include "ast.h"
 #include "zinc/hash.h"
 
+bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b, bool in_prototype);
+
 void environment_init(struct environment* env, struct environment* p)
 {
 	hash_table_init(&env->ht, ENVIRONMENT_HASH_TABLE_SIZE);
@@ -399,18 +401,37 @@ bool type_def_can_cast(struct type_def* a, struct type_def* b)
 	return false;
 }
 
-bool type_use_can_cast(Ast_node* a, Ast_node* b)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool type_use_can_cast(Ast_node* a, Ast_node* b) {
+    return type_use_can_cast_prototype(a, b, false);
+}
+
+/**
+ * Check if the types are be cast
+ * @param a type use
+ * @param b type use
+ * @param in_prototype be more strict if in a prototype
+ * @return
+ */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b, bool in_prototype)
 {
 	if (a && b) {
-		struct type_def* td = NULL;
-		if (!type_def_can_cast(a->td, b->td)) {
+        if (in_prototype) {
+            if (a->td != b->td) {
+                return false;
+            }
+        } else if (!type_def_can_cast(a->td, b->td)) {
 			return false;
 		}
 
+        if (a->type == Ast_type_prototype || b->type == Ast_type_prototype) {
+            in_prototype = true;
+        }
 		Ast_node* x = a->head;
 		Ast_node* y = b->head;
 		do {
-			if (!type_use_can_cast(x, y)) {
+			if (!type_use_can_cast_prototype(x, y, in_prototype)) {
 				return false;
 			}
 			if (x) x = x->next;

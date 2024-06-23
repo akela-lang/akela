@@ -21,6 +21,7 @@ bool token_is_type(struct parse_state* ps, struct token* t);
  * @param loc
  * @return struct ast_node*
  */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Ast_node* parse_prototype(
         struct parse_state* ps,
         bool is_function,

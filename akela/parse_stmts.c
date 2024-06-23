@@ -1,3 +1,4 @@
+
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "token.h"
@@ -863,7 +864,7 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
                         error_list_set(ps->el, y_loc, "cannot assign with operand that has no value");
                         n->type = Ast_type_error;
                     } else if (!type_use_can_cast(type_use, y->tu)) {
-                        error_list_set(ps->el, y_loc, "values in assignment not compatible");
+                        error_list_set(ps->el, y_loc, "values in assignment are not compatible");
                         n->type = Ast_type_error;
                     }
                 }

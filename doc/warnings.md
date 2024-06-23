@@ -5,3 +5,5 @@
 #pragma warning(suppress:6001)
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
+
+/* NOLINT(misc-no-recursion) */

@@ -1946,7 +1946,7 @@ void test_parse_assign_error_not_compatible()
     parse_setup("let x: i64 = true", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "values in assignment not compatible");
+	expect_source_error(&cu.el, "values in assignment are not compatible");
 
     parse_teardown(&cu);
 }

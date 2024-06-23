@@ -1,5 +1,4 @@
 # Akela Todo
-* check that numeric types are exactly the same for anonymous functions
 * comments
 * impl statement
 * struct methods

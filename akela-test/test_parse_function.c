@@ -698,7 +698,7 @@ void test_parse_anonymous_function_assignment_error()
     parse_setup("let a: fn(bool) = fn(x: i64) end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
-    expect_source_error(&cu.el, "values in assignment not compatible");
+    expect_source_error(&cu.el, "values in assignment are not compatible");
 
     parse_teardown(&cu);
 }
@@ -801,7 +801,7 @@ void test_parse_function_error_let_assign()
                 &cu);
     expect_false(cu.valid, "valid");
     expect_has_errors(&cu.el);
-    expect_source_error(&cu.el, "values in assignment not compatible");
+    expect_source_error(&cu.el, "values in assignment are not compatible");
 
     parse_teardown(&cu);
 }
@@ -1387,6 +1387,62 @@ void test_parse_function_error_require_params_name()
     parse_teardown(&cu);
 }
 
+void test_parse_function_error_input_type_non_numeric()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("let a: fn(i64) = fn(x: bool) end", &cu);
+    expect_has_errors(&cu.el);
+    expect_false(cu.valid, "parse valid");
+    expect_source_error(&cu.el, "values in assignment are not compatible");
+
+    parse_teardown(&cu);
+}
+
+void test_parse_function_error_output_type_non_numeric()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("let a: fn()->i64 = fn()->bool true end", &cu);
+    expect_has_errors(&cu.el);
+    expect_false(cu.valid, "parse valid");
+    expect_source_error(&cu.el, "values in assignment are not compatible");
+
+    parse_teardown(&cu);
+}
+
+void test_parse_function_error_input_type_numeric()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("let a: fn(i64) = fn(x: i32) end", &cu);
+    expect_has_errors(&cu.el);
+    expect_false(cu.valid, "parse valid");
+    expect_source_error(&cu.el, "values in assignment are not compatible");
+
+    parse_teardown(&cu);
+}
+
+void test_parse_function_error_output_type_numeric()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("let a: fn()->i64 = fn()->i32 1 end", &cu);
+    expect_has_errors(&cu.el);
+    expect_false(cu.valid, "parse valid");
+    expect_source_error(&cu.el, "values in assignment are not compatible");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_function()
 {
     test_parse_function_no_inputs_no_outputs();
@@ -1435,4 +1491,8 @@ void test_parse_function()
     test_parse_factor_newline_anonymous_function_let();
     test_parse_function_error_use_fn();
     test_parse_function_error_require_params_name();
+    test_parse_function_error_input_type_non_numeric();
+    test_parse_function_error_output_type_non_numeric();
+    test_parse_function_error_input_type_numeric();
+    test_parse_function_error_output_type_numeric();
 }
