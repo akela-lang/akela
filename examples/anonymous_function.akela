@@ -1,5 +1,7 @@
+# create an anonymous function and assign to foo
 let foo: fn(i64)->i64 = fn (x: i64)->i64
     x + 2
 end
 
+# call foo
 foo(10)
