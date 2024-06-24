@@ -64,7 +64,7 @@ Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct location
 	while (true) {
 		bool has_separator = false;
 		struct location loc_sep;
-		parse_separator(ps, &has_separator, &loc_sep);
+		parse_separator(ps, n, &has_separator, &loc_sep);
 
 		if (!has_separator) {
 			break;
@@ -142,16 +142,16 @@ Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
     Ast_node* n = NULL;
     get_location(ps, loc);
 
+    Ast_node_create(&n);
+    n->type = Ast_type_extern;
+
     struct token* ext = NULL;
-    if (!match(ps, token_extern, "expected extern", &ext)) {
+    if (!match(ps, token_extern, "expected extern", &ext, n)) {
         /* test case: no test case needed */
         assert(false);
     }
     token_destroy(ext);
     free(ext);
-
-    Ast_node_create(&n);
-    n->type = Ast_type_extern;
 
     Ast_node* proto = NULL;
     struct location proto_loc;
@@ -220,7 +220,7 @@ Ast_node* parse_while(struct parse_state* ps, struct location* loc)
     n->type = Ast_type_while;
 
 	struct token* whl = NULL;
-	if (!match(ps, token_while, "expecting while", &whl)) {
+	if (!match(ps, token_while, "expecting while", &whl, n)) {
         n->type = Ast_type_error;
     }
 
@@ -251,7 +251,7 @@ Ast_node* parse_while(struct parse_state* ps, struct location* loc)
     }
 
 	struct token* end = NULL;
-	if (!match(ps, token_end, "expected end", &end)) {
+	if (!match(ps, token_end, "expected end", &end, n)) {
         n->type = Ast_type_error;
         /* test case: test_parse_while_error_expected_end */
     }
@@ -273,14 +273,14 @@ Ast_node* parse_for(struct parse_state* ps, struct location* loc)
     get_location(ps, loc);
 
 	struct token* f = NULL;
-	if (!match(ps, token_for, "expected for", &f)) {
+	if (!match(ps, token_for, "expected for", &f, n)) {
         /* test case: test cases not needed */
         n->type = Ast_type_error;
     }
 
     environment_begin(ps->st);
 
-    consume_newline(ps);
+    consume_newline(ps, n);
 
 	Ast_node* dec = NULL;
 	struct location loc_dec;
@@ -293,7 +293,7 @@ Ast_node* parse_for(struct parse_state* ps, struct location* loc)
         Ast_node_add(n, dec);
     }
 
-    consume_newline(ps);
+    consume_newline(ps, n);
 
 	struct token* t0 = get_lookahead(ps);
 
@@ -327,7 +327,7 @@ Ast_node* parse_for(struct parse_state* ps, struct location* loc)
     }
 
 	struct token* end = NULL;
-	if (!match(ps, token_end, "expected end", &end)) {
+	if (!match(ps, token_end, "expected end", &end, n)) {
         /* test case: test_parse_for_error_expected_end */
         n->type = Ast_type_error;
     }
@@ -352,12 +352,12 @@ void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* 
     get_location(ps, loc);
 
 	struct token* equal = NULL;
-	if (!match(ps, token_equal, "expected equal", &equal)) {
+	if (!match(ps, token_equal, "expected equal", &equal, parent)) {
         /* test case: no test case needed */
         parent->type = Ast_type_error;
     }
 
-    consume_newline(ps);
+    consume_newline(ps, parent);
 
 	/* start expr */
 	Ast_node* a = NULL;
@@ -373,15 +373,15 @@ void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* 
 		/* test case: test_parse_for_error_expected_range_start */
 	}
 
-    consume_newline(ps);
+    consume_newline(ps, parent);
 
 	struct token* colon = NULL;
-	if (!match(ps, token_colon, "expected colon", &colon)) {
+	if (!match(ps, token_colon, "expected colon", &colon, parent)) {
         /* test case: test_parse_for_error_expected_colon */
         parent->type = Ast_type_error;
     }
 
-    consume_newline(ps);
+    consume_newline(ps, parent);
 
 	/* end expr */
 	Ast_node* b = NULL;
@@ -447,12 +447,12 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct locati
 	get_location(ps, loc);
 
 	struct token* in = NULL;
-	if (!match(ps, token_in, "expecting in", &in)) {
+	if (!match(ps, token_in, "expecting in", &in, parent)) {
         /* test case: no test case necessary */
         parent->type = Ast_type_error;
     }
 
-    consume_newline(ps);
+    consume_newline(ps, parent);
 
 	/* expr */
 	Ast_node* list = NULL;
@@ -513,7 +513,7 @@ Ast_node* parse_module(struct parse_state* ps, struct location* loc)
     n->type = Ast_type_module;
 
 	struct token* module = NULL;
-	if (!match(ps, token_module, "expected module", &module)) {
+	if (!match(ps, token_module, "expected module", &module, n)) {
         assert(false);
         /* test case: no test case needed */
     }
@@ -524,7 +524,7 @@ Ast_node* parse_module(struct parse_state* ps, struct location* loc)
     environment_begin(ps->st);
 
 	struct token* id = NULL;
-	if (!match(ps, token_id, "expected identifier after module", &id)) {
+	if (!match(ps, token_id, "expected identifier after module", &id, n)) {
         /* test case: test_parse_module_expected_identifier */
         n->type = Ast_type_error;
     }
@@ -541,7 +541,7 @@ Ast_node* parse_module(struct parse_state* ps, struct location* loc)
     environment_end(ps->st);
 
 	struct token* end = NULL;
-	if (!match(ps, token_end, "expected end", &end)) {
+	if (!match(ps, token_end, "expected end", &end, n)) {
         /* test case: test_parse_module_expected_end */
         n->type = Ast_type_error;
     }
@@ -606,13 +606,13 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
     n->type = Ast_type_struct;
 
     struct token* st = NULL;
-	if (!match(ps, token_struct, "expected struct", &st)) {
+	if (!match(ps, token_struct, "expected struct", &st, n)) {
         /* test case: no test case needed */
         assert(false);
     }
 
 	struct token* id = NULL;
-	if (!match(ps, token_id, "expected identifier", &id)) {
+	if (!match(ps, token_id, "expected identifier", &id, n)) {
         /* test case: test_parse_struct_error_expected_identifier */
         n->type = Ast_type_error;
     }
@@ -634,7 +634,7 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 	while (true) {
 		bool has_separator;
 		struct location sep_loc;
-		parse_separator(ps, &has_separator, &sep_loc);
+		parse_separator(ps, n, &has_separator, &sep_loc);
 
 		if (!has_separator) {
 			break;
@@ -653,7 +653,7 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 	}
 
 	struct token* end = NULL;
-	if (!match(ps, token_end, "expected end", &end)) {
+	if (!match(ps, token_end, "expected end", &end, n)) {
         /* test case: test_parse_struct_error_expected_end */
         n->type = Ast_type_error;
     }
@@ -704,7 +704,7 @@ Ast_node* parse_return(struct parse_state* ps, struct location* loc)
     n->type = Ast_type_return;
 
 	struct token* ret = NULL;
-	if (!match(ps, token_return, "expected return", &ret)) {
+	if (!match(ps, token_return, "expected return", &ret, n)) {
         assert(false);
         /* test case: no test case needed */
     }
@@ -765,7 +765,7 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
     n->type = Ast_type_let;
 
     struct token* vrt = NULL;
-    if (!match(ps, token_let, "expected let", &vrt)) {
+    if (!match(ps, token_let, "expected let", &vrt, n)) {
         /* test case: no test case needed */
         assert(false);
     }
@@ -773,7 +773,7 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
     token_destroy(vrt);
     free(vrt);
 
-    consume_newline(ps);
+    consume_newline(ps, n);
 
     Ast_node* a = NULL;
     struct location a_loc;
@@ -793,16 +793,16 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
         n->type = Ast_type_error;
     }
 
-    consume_newline(ps);
+    consume_newline(ps, n);
 
     struct token* dc = NULL;
-    if (!match(ps, token_colon, "expected colon after variable(s)", &dc)) {
+    if (!match(ps, token_colon, "expected colon after variable(s)", &dc, n)) {
         n->type = Ast_type_error;
     }
     token_destroy(dc);
     free(dc);
 
-    consume_newline(ps);
+    consume_newline(ps, n);
 
     Ast_node* type_use = NULL;
     struct location type_use_loc;
@@ -824,14 +824,14 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
 
     if (t0 && t0->type == token_equal) {
         struct token* equal = NULL;
-        if (!match(ps, token_equal, "expected equal", &equal)) {
+        if (!match(ps, token_equal, "expected equal", &equal, n)) {
             /* test case: no test case needed */
             assert(false);
         }
         token_destroy(equal);
         free(equal);
 
-        consume_newline(ps);
+        consume_newline(ps, n);
 
         Ast_node* b = NULL;
         struct location b_loc;
@@ -919,7 +919,7 @@ Ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc)
     bool is_mut = false;
     if (t0->type == token_mut) {
         struct token* mut = NULL;
-        if (!match(ps, token_mut, "expected mut", &mut)) {
+        if (!match(ps, token_mut, "expected mut", &mut, n)) {
             assert(false);
         }
         token_destroy(mut);
@@ -929,7 +929,7 @@ Ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc)
     }
 
     struct token* id = NULL;
-    if (!match(ps, token_id, "expected an id", &id)) {
+    if (!match(ps, token_id, "expected an id", &id, n)) {
         n->type = Ast_type_error;
     }
 
@@ -951,7 +951,7 @@ Ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc)
         }
 
         struct token* comma = NULL;
-        if (!match(ps, token_comma, "expected comma", &comma)) {
+        if (!match(ps, token_comma, "expected comma", &comma, n)) {
             /* test case: no test case needed */
             assert(false);
         }
@@ -959,7 +959,7 @@ Ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc)
         free(comma);
 
         id = NULL;
-        if (!match(ps, token_id, "expected id", &id)) {
+        if (!match(ps, token_id, "expected id", &id, n)) {
             error_list_set(ps->el, &id->loc, "expected id");
             n->type = Ast_type_error;
             break;
@@ -1014,7 +1014,7 @@ Ast_node* parse_let_rseq(struct parse_state* ps, struct location* loc, struct li
         }
 
         struct token* comma = NULL;
-        if (!match(ps, token_comma, "expected comma", &comma)) {
+        if (!match(ps, token_comma, "expected comma", &comma, n)) {
             assert(false && "should see comma");
         }
 

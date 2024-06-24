@@ -42,7 +42,7 @@ Ast_node* parse_prototype(
     struct token* t0 = get_lookahead(ps);
     if (t0->type == token_id) {
         struct token* id = NULL;
-        if (!match(ps, token_id, "expected identifier", &id)) {
+        if (!match(ps, token_id, "expected identifier", &id, n)) {
             assert(false);
         }
         Ast_node_create(&id_node);
@@ -51,7 +51,7 @@ Ast_node* parse_prototype(
         Ast_node_add(n, id_node);
         token_destroy(id);
         free(id);
-        consume_newline(ps);
+        consume_newline(ps, n);
         *has_id = true;
     } else {
         Ast_node_create(&id_node);
@@ -68,14 +68,14 @@ Ast_node* parse_prototype(
     }
 
     struct token* lp = NULL;
-    if (!match(ps, token_left_paren, "expected left parenthesis", &lp)) {
+    if (!match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
         /* test case: no test case needed */
         n->type = Ast_type_error;
     }
     token_destroy(lp);
     free(lp);
 
-    consume_newline(ps);
+    consume_newline(ps, n);
 
     /* 1 dseq */
     Ast_node* dseq_node = NULL;
@@ -89,12 +89,12 @@ Ast_node* parse_prototype(
         Ast_node_add(n, dseq_node);
     }
 
-    if (!consume_newline(ps)) {
+    if (!consume_newline(ps, n)) {
         n->type = Ast_type_error;
     }
 
     struct token* rp = NULL;
-    if (!match(ps, token_right_paren, "expected right parenthesis", &rp)) {
+    if (!match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
         /* test case: test_parse_anonymous_function_expected_right_paren */
         n->type = Ast_type_error;
     }
@@ -108,14 +108,14 @@ Ast_node* parse_prototype(
     location_init(&ret_loc);
     if (t0 && t0->type == token_arrow) {
         struct token* dc = NULL;
-        if (!match(ps, token_arrow, "expecting ->", &dc)) {
+        if (!match(ps, token_arrow, "expecting ->", &dc, n)) {
             /* test case: no test case needed */
             n->type = Ast_type_error;
         }
         token_destroy(dc);
         free(dc);
 
-        if (!consume_newline(ps)) {
+        if (!consume_newline(ps, n)) {
             n->type = Ast_type_error;
         }
 
@@ -202,7 +202,7 @@ Ast_node* parse_dseq(
 		}
 
 		struct token* comma = NULL;
-		if (!match(ps, token_comma, "expecting comma", &comma)) {
+		if (!match(ps, token_comma, "expecting comma", &comma, n)) {
             assert(false);
             /* test case: no test case needed */
         }
@@ -210,12 +210,12 @@ Ast_node* parse_dseq(
 		token_destroy(comma);
 		free(comma);
 
-        consume_newline(ps);
+        consume_newline(ps, n);
 
         struct token* t = get_lookahead(ps);
         if (t->type == token_ellipsis) {
             struct token* eps = NULL;
-            if (!match(ps, token_ellipsis, "expected ellipsis", &eps)) {
+            if (!match(ps, token_ellipsis, "expected ellipsis", &eps, n)) {
                 assert(false);
             }
             token_destroy(eps);
@@ -313,7 +313,7 @@ Ast_node* parse_declaration(
 
         if (!type_only) {
             struct token *id = NULL;
-            if (!match(ps, token_id, "expected id", &id)) {
+            if (!match(ps, token_id, "expected id", &id, n)) {
                 assert(false);
                 /* test case: no test case needed */
             }
@@ -321,17 +321,17 @@ Ast_node* parse_declaration(
             token_destroy(id);
             free(id);
 
-            consume_newline(ps);
+            consume_newline(ps, n);
 
             struct token *dc = NULL;
-            if (!match(ps, token_colon, "expected colon", &dc)) {
+            if (!match(ps, token_colon, "expected colon", &dc, n)) {
                 /* test case: test_parse_error_declaration_double_colon */
                 n->type = Ast_type_error;
             }
             token_destroy(dc);
             free(dc);
 
-            consume_newline(ps);
+            consume_newline(ps, n);
         }
 
         Ast_node* type_use = NULL;
@@ -377,19 +377,19 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
     /* handle array dimensions */
 	struct token* t0 = get_lookahead(ps);
     while (t0->type == token_left_square_bracket) {
+        if (!n) {
+            Ast_node_create(&n);
+            n->type = Ast_type_type;
+        }
+
         struct token *lsb = NULL;
-        if (!match(ps, token_left_square_bracket, "expected left square bracket", &lsb)) {
+        if (!match(ps, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
             /* test case: no test case needed */
             assert(false);
         }
 
         token_destroy(lsb);
         free(lsb);
-
-        if (!n) {
-            Ast_node_create(&n);
-            n->type = Ast_type_type;
-        }
 
         bool has_number = false;
         bool has_const = false;
@@ -398,7 +398,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         if (t0->type == token_number) {
             struct token *dim_size = NULL;
-            if (!match(ps, token_number, "expected number", &dim_size)) {
+            if (!match(ps, token_number, "expected number", &dim_size, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
@@ -412,7 +412,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
         if (t0->type == token_const) {
             struct token* const_token = NULL;
-            if (!match(ps, token_const, "expected const", &const_token)) {
+            if (!match(ps, token_const, "expected const", &const_token, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
@@ -422,7 +422,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
         }
 
         struct token* rsb = NULL;
-        if (!match(ps, token_right_square_bracket, "expected right square bracket", &rsb)) {
+        if (!match(ps, token_right_square_bracket, "expected right square bracket", &rsb, n)) {
             n->type = Ast_type_error;
         }
 
@@ -461,7 +461,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
 
     if (t0->type == token_fn) {
         struct token* fn = NULL;
-        if (!match(ps, token_fn, "expected fn", &fn)) {
+        if (!match(ps, token_fn, "expected fn", &fn, n)) {
             assert(false);
         }
 
@@ -491,7 +491,7 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
     } else if (t0->type == token_id) {
         /* handle type or array element */
         struct token* name = NULL;
-        if (!match(ps, t0->type, "expected type identifier", &name)) {
+        if (!match(ps, t0->type, "expected type identifier", &name, n)) {
             n->type = Ast_type_error;
         }
 
@@ -632,7 +632,7 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
 		}
 
 		struct token* comma = NULL;
-		if (!match(ps, token_comma, "expected comma", &comma)) {
+		if (!match(ps, token_comma, "expected comma", &comma, parent)) {
             /* test case: test case not needed */
             assert(false);
         }
@@ -640,7 +640,7 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
 		token_destroy(comma);
 		free(comma);
 
-        consume_newline(ps);
+        consume_newline(ps, parent);
 
         tu = parse_type(ps, &loc_type);
 		if (tu && tu->type == Ast_type_error) {

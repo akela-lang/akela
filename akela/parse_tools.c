@@ -47,7 +47,12 @@ bool get_lookahead_one(struct parse_state* ps)
 }
 
 /* expecting specific token */
-bool match(struct parse_state* ps, enum token_enum type, const char* reason, struct token** t)
+bool match(
+    struct parse_state* ps,
+    enum token_enum type,
+    const char* reason,
+    struct token** t,
+    Ast_node* n)
 {
 	bool valid = true;
 	struct location loc;
@@ -59,6 +64,7 @@ bool match(struct parse_state* ps, enum token_enum type, const char* reason, str
     *t = ps->lookahead;
 	if ((*t)->type == type) {
 		ps->lookahead = NULL;
+        location_combine(&n->loc, &(*t)->loc);
 		return valid;
 	}
 
@@ -69,7 +75,7 @@ bool match(struct parse_state* ps, enum token_enum type, const char* reason, str
 	return valid;
 }
 
-bool consume_newline(struct parse_state* ps)
+bool consume_newline(struct parse_state* ps, Ast_node* n)
 {
     bool valid = true;
     while (true) {
@@ -77,7 +83,7 @@ bool consume_newline(struct parse_state* ps)
         struct token* t0 = get_lookahead(ps);
         if (t0 && t0->type == token_newline) {
             struct token* t = NULL;
-            valid = match(ps, token_newline, "expected newline", &t) && valid;
+            valid = match(ps, token_newline, "expected newline", &t, n) && valid;
             token_destroy(t);
             free(t);
         } else {
@@ -126,7 +132,7 @@ bool check_assignment_value_count(Ast_node* a, Ast_node* b)
 }
 
 /* separator -> \n | ; */
-void parse_separator(struct parse_state* ps, bool* has_separator, struct location* loc)
+void parse_separator(struct parse_state* ps, Ast_node* n, bool* has_separator, struct location* loc)
 {
     enum token_enum type;
     *has_separator = false;
@@ -145,7 +151,7 @@ void parse_separator(struct parse_state* ps, bool* has_separator, struct locatio
     }
 
     struct token* sep = NULL;
-    if (!match(ps, type, "expecting newline or semicolon", &sep)) {
+    if (!match(ps, type, "expecting newline or semicolon", &sep, n)) {
         assert(false);
         /* test case: no test case necessary */
     }

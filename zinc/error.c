@@ -187,7 +187,9 @@ const char* plural(size_t number)
 
 void location_combine(struct location* p, struct location* c)
 {
-    if (p->line && p->col && c->line && c->col) {
+    if (!p->line && !p->col) {
+        *p = *c;
+    } else {
         if (c->start_pos < p->start_pos) {
             p->start_pos = c->start_pos;
         }
