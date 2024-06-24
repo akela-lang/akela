@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include "parse_tools.h"
 
-/* dynamic-output ps{} root root{} */
-AKELA_API Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct location* loc);
+AKELA_API Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env);
 
 #endif

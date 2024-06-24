@@ -17,28 +17,26 @@
 #include <assert.h>
 #include "zinc/list.h"
 
-Ast_node* parse_stmt(struct parse_state* ps, struct location* loc);
-Ast_node* parse_while(struct parse_state* ps, struct location* loc);
-Ast_node* parse_for(struct parse_state* ps, struct location* loc);
-void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* loc);
-void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct location* loc);
-Ast_node* parse_module(struct parse_state* ps, struct location* loc);
-Ast_node* parse_struct(struct parse_state* ps, struct location* loc);
-Ast_node* parse_return(struct parse_state* ps, struct location* loc);
-Ast_node* parse_let(struct parse_state* ps, struct location* loc);
-Ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc);
-Ast_node* parse_let_rseq(struct parse_state* ps, struct location* loc, struct list* l);
-Ast_node* parse_extern(struct parse_state* ps, struct location* loc);
+Ast_node* parse_stmt(struct parse_state* ps);
+Ast_node* parse_while(struct parse_state* ps);
+Ast_node* parse_for(struct parse_state* ps);
+void parse_for_range(struct parse_state* ps, Ast_node* parent);
+void parse_for_iteration(struct parse_state* ps, Ast_node* parent);
+Ast_node* parse_module(struct parse_state* ps);
+Ast_node* parse_struct(struct parse_state* ps);
+Ast_node* parse_return(struct parse_state* ps);
+Ast_node* parse_let(struct parse_state* ps);
+Ast_node* parse_let_lseq(struct parse_state* ps);
+Ast_node* parse_let_rseq(struct parse_state* ps, struct list* l);
+Ast_node* parse_extern(struct parse_state* ps);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct location* loc)
+Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env)
 {
 	Ast_node* n = NULL;
 	Ast_node* last = NULL;
-
-    get_location(ps, loc);
 
 	struct environment* saved = NULL;
 	struct environment* env = NULL;
@@ -50,8 +48,7 @@ Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct location
 	n->type = Ast_type_stmts;
 
 	Ast_node* a = NULL;
-	struct location loc_a;
-	a = parse_stmt(ps, &loc_a);
+	a = parse_stmt(ps);
     if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -63,16 +60,14 @@ Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct location
 
 	while (true) {
 		bool has_separator = false;
-		struct location loc_sep;
-		parse_separator(ps, n, &has_separator, &loc_sep);
+		parse_separator(ps, n, &has_separator);
 
 		if (!has_separator) {
 			break;
 		}
 
 		Ast_node* b = NULL;
-		struct location loc_b;
-		b = parse_stmt(ps, &loc_b);
+		b = parse_stmt(ps);
         if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
@@ -105,43 +100,37 @@ Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env, struct location
 *       | e
 */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_stmt(struct parse_state* ps, struct location* loc)
+Ast_node* parse_stmt(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
-
-    get_location(ps, loc);
-
-	location_init(loc);
 
     struct token* t0 = get_lookahead(ps);
     assert(t0);
 
 	if (t0->type == token_while) {
-		n = parse_while(ps, loc);
+		n = parse_while(ps);
 	} else if (t0->type == token_for) {
-		n = parse_for(ps, loc);
+		n = parse_for(ps);
 	} else if (t0->type == token_module) {
-		n = parse_module(ps, loc);
+		n = parse_module(ps);
 	} else if (t0->type == token_struct) {
-		n = parse_struct(ps, loc);
+		n = parse_struct(ps);
 	} else if (t0->type == token_return) {
-        n = parse_return(ps, loc);
+        n = parse_return(ps);
     } else if (t0->type == token_let) {
-        n = parse_let(ps, loc);
+        n = parse_let(ps);
     } else if (t0->type == token_extern) {
-        n = parse_extern(ps, loc);
+        n = parse_extern(ps);
 	} else {
-        n = parse_expr(ps, loc);
+        n = parse_expr(ps);
 	}
 
     return n;
 }
 
-Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
+Ast_node* parse_extern(struct parse_state* ps)
 {
     Ast_node* n = NULL;
-    get_location(ps, loc);
-
     Ast_node_create(&n);
     n->type = Ast_type_extern;
 
@@ -154,9 +143,8 @@ Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
     free(ext);
 
     Ast_node* proto = NULL;
-    struct location proto_loc;
     bool has_id;
-    proto = parse_prototype(ps, false, true, false, &has_id, &proto_loc);
+    proto = parse_prototype(ps, false, true, false, &has_id);
     if (proto) {
         Ast_node_add(n, proto);
         if (proto->type == Ast_type_error) {
@@ -167,13 +155,13 @@ Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
     }
 
     if (!has_id) {
-        error_list_set(ps->el, &proto_loc, "expected an identifier after extern");
+        error_list_set(ps->el, &proto->loc, "expected an identifier after extern");
         n->type = Ast_type_error;
     }
 
     if (n->type != Ast_type_error) {
         if (ps->st->top != ps->st->global) {
-            error_list_set(ps->el, loc, "extern only allowed at top level scope");
+            error_list_set(ps->el, &n->loc, "extern only allowed at top level scope");
             n->type = Ast_type_error;
         }
 
@@ -182,13 +170,21 @@ Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
         struct symbol *search = environment_get_local(ps->st->top, &id_node->value);
         if (search) {
             buffer_finish(&id_node->value);
-            error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
+            error_list_set(
+                ps->el,
+                &id_node->loc,
+                "duplicate declaration in same scope: %s",
+                id_node->value.buf);
             n->type = Ast_type_error;
         } else {
             struct symbol *sym = environment_get(ps->st->top, &id_node->value);
             if (sym && sym->td) {
                 buffer_finish(&id_node->value);
-                error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
+                error_list_set(
+                    ps->el,
+                    &id_node->loc,
+                    "identifier reserved as a type: %s",
+                    id_node->value.buf);
                 n->type = Ast_type_error;
             } else {
                 struct symbol *new_sym = NULL;
@@ -211,10 +207,8 @@ Ast_node* parse_extern(struct parse_state* ps, struct location* loc)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_while(struct parse_state* ps, struct location* loc)
+Ast_node* parse_while(struct parse_state* ps)
 {
-    get_location(ps, loc);
-
 	Ast_node* n = NULL;
     Ast_node_create(&n);
     n->type = Ast_type_while;
@@ -225,8 +219,7 @@ Ast_node* parse_while(struct parse_state* ps, struct location* loc)
     }
 
 	Ast_node* a = NULL;
-	struct location loc_expr;
-    a = parse_expr(ps, &loc_expr);
+    a = parse_expr(ps);
 	if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -234,14 +227,14 @@ Ast_node* parse_while(struct parse_state* ps, struct location* loc)
     if (a) {
         Ast_node_add(n, a);
     } else {
-		error_list_set(ps->el, &loc_expr, "expected expression after while");
+        struct location a_loc = get_location(ps);
+		error_list_set(ps->el, &a_loc, "expected expression after while");
         n->type = Ast_type_error;
 		/* test case: test_parse_while_error_expected_expression */
 	}
 
 	Ast_node* b = NULL;
-	struct location loc_stmts;
-    b = parse_stmts(ps, false, &loc_stmts);
+    b = parse_stmts(ps, false);
 	if (b && b->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -265,12 +258,10 @@ Ast_node* parse_while(struct parse_state* ps, struct location* loc)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_for(struct parse_state* ps, struct location* loc)
+Ast_node* parse_for(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
     Ast_node_create(&n);
-
-    get_location(ps, loc);
 
 	struct token* f = NULL;
 	if (!match(ps, token_for, "expected for", &f, n)) {
@@ -283,8 +274,7 @@ Ast_node* parse_for(struct parse_state* ps, struct location* loc)
     consume_newline(ps, n);
 
 	Ast_node* dec = NULL;
-	struct location loc_dec;
-    dec = parse_declaration(ps, true, true, &loc_dec);
+    dec = parse_declaration(ps, true, true);
 	if (dec && dec->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -301,27 +291,23 @@ Ast_node* parse_for(struct parse_state* ps, struct location* loc)
         if (n->type == Ast_type_none) {
             n->type = Ast_type_for_range;
         }
-		struct location loc_range;
-		parse_for_range(ps, n, &loc_range);
+		parse_for_range(ps, n);
 
 	} else if (t0 && t0->type == token_in) {
         if (n->type == Ast_type_none) {
             n->type = Ast_type_for_iteration;
         }
-		struct location loc_iteration;
-		parse_for_iteration(ps, n, &loc_iteration);
+		parse_for_iteration(ps, n);
 
 	} else {
-		struct location loc_error;
-		get_location(ps, &loc_error);
+		struct location loc_error = get_location(ps);
 		error_list_set(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
         n->type = Ast_type_error;
 		/* test case: test_parse_for_error_after_declaration */
 	}
 
 	Ast_node* c = NULL;
-	struct location loc_stmts;
-    c = parse_stmts(ps, true, &loc_stmts);
+    c = parse_stmts(ps, true);
 	if (c && c->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -347,10 +333,8 @@ Ast_node* parse_for(struct parse_state* ps, struct location* loc)
 }
 
 /* for_range -> for id = expr:expr stmts end */
-void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* loc)
+void parse_for_range(struct parse_state* ps, Ast_node* parent)
 {
-    get_location(ps, loc);
-
 	struct token* equal = NULL;
 	if (!match(ps, token_equal, "expected equal", &equal, parent)) {
         /* test case: no test case needed */
@@ -361,14 +345,14 @@ void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* 
 
 	/* start expr */
 	Ast_node* a = NULL;
-	struct location loc_a;
-    a = parse_expr(ps, &loc_a);
+    a = parse_expr(ps);
 	if (a && a->type == Ast_type_error) {
         parent->type = Ast_type_error;
     }
 
 	if (!a) {
-		error_list_set(ps->el, &loc_a, "expected range start");
+        struct location a_loc = get_location(ps);
+		error_list_set(ps->el, &a_loc, "expected range start");
         parent->type = Ast_type_error;
 		/* test case: test_parse_for_error_expected_range_start */
 	}
@@ -385,14 +369,14 @@ void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* 
 
 	/* end expr */
 	Ast_node* b = NULL;
-	struct location loc_b;
-    b = parse_expr(ps, &loc_b);
+    b = parse_expr(ps);
 	if (b && b->type == Ast_type_error) {
         parent->type = Ast_type_error;
     }
 
 	if (!b) {
-		error_list_set(ps->el, &loc_b, "expected range end");
+        struct location b_loc = get_location(ps);
+		error_list_set(ps->el, &b_loc, "expected range end");
         parent->type = Ast_type_error;
 		/* test case: test_parse_for_error_expected_range_end */
 	}
@@ -412,13 +396,13 @@ void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* 
 	if (parent->type != Ast_type_error) {
 		assert(a);
 		if (!a->tu) {
-			error_list_set(ps->el, &loc_a, "start range expression has no value");
+			error_list_set(ps->el, &a->loc, "start range expression has no value");
             parent->type = Ast_type_error;
 			/* test case: test_parse_for_range_error_start_no_value */
 		} else {
 			assert(a->tu->td);
 			if (!is_numeric(a->tu->td)) {
-				error_list_set(ps->el, &loc_a, "start range expression is not numeric");
+				error_list_set(ps->el, &a->loc, "start range expression is not numeric");
                 parent->type = Ast_type_error;
 				/* test case: test_parse_for_range_error_start_not_numeric */
 			}
@@ -426,13 +410,13 @@ void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* 
 
 		assert(b);
 		if (!b->tu) {
-			error_list_set(ps->el, &loc_b, "end range expression has no value");
+			error_list_set(ps->el, &b->loc, "end range expression has no value");
             parent->type = Ast_type_error;
 			/* test case: test_parse_for_range_error_end_no_value */
 		} else {
 			assert(b->tu->td);
 			if (!is_numeric(b->tu->td)) {
-				error_list_set(ps->el, &loc_b, "end range expression is not numeric");
+				error_list_set(ps->el, &b->loc, "end range expression is not numeric");
                 parent->type = Ast_type_error;
 				/* test case: test_parse_for_range_error_end_not_numeric */
 			}
@@ -441,11 +425,8 @@ void parse_for_range(struct parse_state* ps, Ast_node* parent, struct location* 
 }
 
 /* for_iteration -> for id in expr stmts end */
-/* dynamic-output ps{} root root{} */
-void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct location* loc)
+void parse_for_iteration(struct parse_state* ps, Ast_node* parent)
 {
-	get_location(ps, loc);
-
 	struct token* in = NULL;
 	if (!match(ps, token_in, "expecting in", &in, parent)) {
         /* test case: no test case necessary */
@@ -456,14 +437,14 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct locati
 
 	/* expr */
 	Ast_node* list = NULL;
-	struct location loc_list;
-    list = parse_expr(ps, &loc_list);
+    list = parse_expr(ps);
 	if (list && list->type == Ast_type_error) {
         parent->type = Ast_type_error;
     }
 
 	if (!list) {
-		error_list_set(ps->el, &loc_list, "expected for iteration expression");
+        struct location list_loc = get_location(ps);
+		error_list_set(ps->el, &list_loc, "expected for iteration expression");
         parent->type = Ast_type_error;
         /* test case: test_parse_for_error_expected_iteration_expression */
 	}
@@ -479,11 +460,11 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct locati
 		Ast_node* list_tu = list->tu;
 
 		if (!list_tu) {
-			error_list_set(ps->el, &loc_list, "iteration expression has no value");
+			error_list_set(ps->el, &list->loc, "iteration expression has no value");
             parent->type = Ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_value */
 		} else if (!list_tu->to.is_array) {
-			error_list_set(ps->el, &loc_list, "iteration expression is not an array");
+			error_list_set(ps->el, &list->loc, "iteration expression is not an array");
             parent->type = Ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
@@ -491,7 +472,7 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct locati
             Type_options_reduce_dimension(&element_tu2->to);
 			if (!type_use_can_cast(element_tu2, element_tu)) {
                 parent->type = Ast_type_error;
-				error_list_set(ps->el, &loc_list, "cannot cast list element");
+				error_list_set(ps->el, &list->loc, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
             Ast_node_destroy(element_tu2);
@@ -504,10 +485,8 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent, struct locati
 
 /* parse_module -> module id stmts end */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_module(struct parse_state* ps, struct location* loc)
+Ast_node* parse_module(struct parse_state* ps)
 {
-    get_location(ps, loc);
-
 	Ast_node* n = NULL;
     Ast_node_create(&n);
     n->type = Ast_type_module;
@@ -530,8 +509,7 @@ Ast_node* parse_module(struct parse_state* ps, struct location* loc)
     }
 
 	Ast_node* a = NULL;
-	struct location loc_stmts;
-    a = parse_stmts(ps, true, &loc_stmts);
+    a = parse_stmts(ps, true);
 	if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -597,10 +575,8 @@ Ast_node* parse_module(struct parse_state* ps, struct location* loc)
 /* parse_struct -> struct id struct_stmts end */
 /* struct_stmts -> declaration struct_stmts | e */
 /* struct_stmts' -> separator declaration | e */
-Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
+Ast_node* parse_struct(struct parse_state* ps)
 {
-    get_location(ps, loc);
-
 	Ast_node* n = NULL;
     Ast_node_create(&n);
     n->type = Ast_type_struct;
@@ -621,8 +597,7 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
     }
 
 	Ast_node* a = NULL;
-	struct location a_loc;
-    a = parse_declaration(ps, false, true, &a_loc);
+    a = parse_declaration(ps, false, true);
 	if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -633,16 +608,14 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 
 	while (true) {
 		bool has_separator;
-		struct location sep_loc;
-		parse_separator(ps, n, &has_separator, &sep_loc);
+		parse_separator(ps, n, &has_separator);
 
 		if (!has_separator) {
 			break;
 		}
 
 		Ast_node* b = NULL;
-		struct location b_loc;
-        b = parse_declaration(ps, false, true, &b_loc);
+        b = parse_declaration(ps, false, true);
 		if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
@@ -694,11 +667,9 @@ Ast_node* parse_struct(struct parse_state* ps, struct location* loc)
 	return n;
 }
 
-/* pr-return -> return expr | return */
-Ast_node* parse_return(struct parse_state* ps, struct location* loc)
+/* parse_return -> return expr | return */
+Ast_node* parse_return(struct parse_state* ps)
 {
-    get_location(ps, loc);
-
 	Ast_node* n = NULL;
     Ast_node_create(&n);
     n->type = Ast_type_return;
@@ -710,8 +681,7 @@ Ast_node* parse_return(struct parse_state* ps, struct location* loc)
     }
 
 	Ast_node* a = NULL;
-	struct location a_loc;
-    a = parse_expr(ps, &a_loc);
+    a = parse_expr(ps);
 	if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -723,7 +693,7 @@ Ast_node* parse_return(struct parse_state* ps, struct location* loc)
 	if (n->type != Ast_type_error) {
 		if (a) {
 			if (!a->tu) {
-				error_list_set(ps->el, &a_loc, "return expression has no value");
+				error_list_set(ps->el, &a->loc, "return expression has no value");
 				/* test case: test_parse_return_error_no_value */
                 n->type = Ast_type_error;
 			} else {
@@ -756,10 +726,8 @@ void location_item_destroy(struct location* loc)
 }
 
 /* parse_let = let let_lseq :: type | let let_lseq :: type = let_rseq */
-Ast_node* parse_let(struct parse_state* ps, struct location* loc)
+Ast_node* parse_let(struct parse_state* ps)
 {
-    get_location(ps, loc);
-
     Ast_node* n = NULL;
     Ast_node_create(&n);
     n->type = Ast_type_let;
@@ -776,11 +744,7 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
     consume_newline(ps, n);
 
     Ast_node* a = NULL;
-    struct location a_loc;
-    a = parse_let_lseq(ps, &a_loc);
-    if (a) {
-        a->loc = a_loc;
-    }
+    a = parse_let_lseq(ps);
     if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -789,7 +753,7 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
     Ast_node_add(n, a);
 
     if (!a->head) {
-        error_list_set(ps->el, &a_loc, "expected variable(s) after let");
+        error_list_set(ps->el, &a->loc, "expected variable(s) after let");
         n->type = Ast_type_error;
     }
 
@@ -805,8 +769,7 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
     consume_newline(ps, n);
 
     Ast_node* type_use = NULL;
-    struct location type_use_loc;
-    type_use = parse_type(ps, &type_use_loc);
+    type_use = parse_type(ps);
     declare_type(ps, type_use, a);
     if (type_use && type_use->type == Ast_type_error) {
         n->type = Ast_type_error;
@@ -814,6 +777,7 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
     if (type_use) {
         Ast_node_add(n, type_use);
     } else {
+        struct location type_use_loc = get_location(ps);
         error_list_set(ps->el, &type_use_loc, "expected type");
         n->type = Ast_type_error;
     }
@@ -834,10 +798,9 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
         consume_newline(ps, n);
 
         Ast_node* b = NULL;
-        struct location b_loc;
         struct list b_l;
         list_init(&b_l);
-        b = parse_let_rseq(ps, &b_loc, &b_l);
+        b = parse_let_rseq(ps, &b_l);
         if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
@@ -845,15 +808,16 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
         if (b) {
             Ast_node_add(n, b);
         } else {
+            struct location b_loc = get_location(ps);
             error_list_set(ps->el, &b_loc, "expected expression");
             n->type = Ast_type_error;
         }
 
         if (n->type != Ast_type_error) {
-            int a_count = Ast_node_count_children(a);
-            int b_count = Ast_node_count_children(b);
+            size_t a_count = Ast_node_count_children(a);
+            size_t b_count = Ast_node_count_children(b);
             if (a_count != b_count) {
-                error_list_set(ps->el, &a_loc, "lvalue count does not equal rvalue count");
+                error_list_set(ps->el, &a->loc, "lvalue count does not equal rvalue count");
                 n->type = Ast_type_error;
             } else {
                 for (int i = 0; i < a_count; i++) {
@@ -903,10 +867,8 @@ Ast_node* parse_let(struct parse_state* ps, struct location* loc)
 
 /* let_lseq -> id let_lseq' */
 /* let_lseq' -> , id let_lseq' */
-Ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc)
+Ast_node* parse_let_lseq(struct parse_state* ps)
 {
-    get_location(ps, loc);
-
     Ast_node* n = NULL;
     Ast_node_create(&n);
     n->type = Ast_type_let_lseq;
@@ -981,13 +943,11 @@ Ast_node* parse_let_lseq(struct parse_state* ps, struct location* loc)
 
 /* let_rseq -> simple_expr let_rseq' */
 /* let_rseq' -> , simple_expr let_rseq' */
-Ast_node* parse_let_rseq(struct parse_state* ps, struct location* loc, struct list* l)
+Ast_node* parse_let_rseq(struct parse_state* ps, struct list* l)
 {
-    get_location(ps, loc);
-
     Ast_node* a = NULL;
     struct location a_loc;
-    a = parse_simple_expr(ps, &a_loc);
+    a = parse_simple_expr(ps);
     if (!a) {
         return NULL;
     }
@@ -1022,18 +982,17 @@ Ast_node* parse_let_rseq(struct parse_state* ps, struct location* loc, struct li
         free(comma);
 
         Ast_node* b = NULL;
-        struct location b_loc;
-        b = parse_simple_expr(ps, &b_loc);
+        b = parse_simple_expr(ps);
         if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
 
         location_create(&temp);
-        *temp = b_loc;
         list_add_item(l, temp);
         if (b) {
             Ast_node_add(n, b);
         } else {
+            struct location b_loc = get_location(ps);
             error_list_set(ps->el, &b_loc, "expected an expression");
             n->type = Ast_type_error;
         }

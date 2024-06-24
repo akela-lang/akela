@@ -3,6 +3,6 @@
 
 #include "akela_api.h"
 
-AKELA_API Ast_node* parse_factor(struct parse_state* ps, struct location* loc);
+AKELA_API Ast_node* parse_factor(struct parse_state* ps);
 
 #endif

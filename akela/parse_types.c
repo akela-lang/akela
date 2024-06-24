@@ -11,7 +11,7 @@
 #include "type_def.h"
 #include <assert.h>
 
-void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc);
+void parse_tseq(struct parse_state* ps, Ast_node* parent);
 bool token_is_type(struct parse_state* ps, struct token* t);
 
 /**
@@ -27,12 +27,9 @@ Ast_node* parse_prototype(
         bool is_function,
         bool is_extern,
         bool require_param_name,
-        bool* has_id,
-        struct location* loc)
+        bool* has_id)
 {
     Ast_node* n = NULL;
-
-    get_location(ps, loc);
 
     Ast_node_create(&n);
     n->type = Ast_type_prototype;
@@ -79,8 +76,7 @@ Ast_node* parse_prototype(
 
     /* 1 dseq */
     Ast_node* dseq_node = NULL;
-    struct location loc_dseq;
-    dseq_node = parse_dseq(ps, require_param_name, is_extern, &loc_dseq);
+    dseq_node = parse_dseq(ps, require_param_name, is_extern);
     if (dseq_node && dseq_node->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -104,8 +100,6 @@ Ast_node* parse_prototype(
     /* 2 ret */
     t0 = get_lookahead(ps);
     Ast_node* ret_type = NULL;
-    struct location ret_loc;
-    location_init(&ret_loc);
     if (t0 && t0->type == token_arrow) {
         struct token* dc = NULL;
         if (!match(ps, token_arrow, "expecting ->", &dc, n)) {
@@ -119,12 +113,13 @@ Ast_node* parse_prototype(
             n->type = Ast_type_error;
         }
 
-        ret_type = parse_type(ps, &ret_loc);
+        ret_type = parse_type(ps);
         if (ret_type && ret_type->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
 
         if (!ret_type) {
+            struct location ret_loc = get_location(ps);
             error_list_set(ps->el, &ret_loc, "expected a type");
             n->type = Ast_type_error;
         }
@@ -133,7 +128,6 @@ Ast_node* parse_prototype(
     Ast_node* ret = NULL;
     Ast_node_create(&ret);
     ret->type = Ast_type_dret;
-    ret->loc = ret_loc;
     if (ret_type) {
         Ast_node_add(ret, ret_type);
     }
@@ -172,18 +166,14 @@ void declare_params(struct parse_state* ps, Ast_node* proto)
 Ast_node* parse_dseq(
         struct parse_state* ps,
         bool require_param_name,
-        bool is_extern,
-        struct location* loc)
+        bool is_extern)
 {
-    get_location(ps, loc);
-
 	Ast_node* n = NULL;
     Ast_node_create(&n);
 	n->type = Ast_type_dseq;
 
 	Ast_node* dec = NULL;
-	struct location loc_dec;
-	dec = parse_declaration(ps, false, require_param_name, &loc_dec);
+	dec = parse_declaration(ps, false, require_param_name);
     if (dec && dec->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -234,13 +224,14 @@ Ast_node* parse_dseq(
             }
         }
 
-		dec = parse_declaration(ps, require_param_name, false, &loc_dec);
+		dec = parse_declaration(ps, require_param_name, false);
         if (dec && dec->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
 
 		if (!dec) {
-			error_list_set(ps->el, &loc_dec, "expected declaration after comma");
+            struct location dec_loc = get_location(ps);
+			error_list_set(ps->el, &dec_loc, "expected declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
             n->type = Ast_type_error;
 			break;
@@ -293,12 +284,9 @@ bool token_is_type(struct parse_state* ps, struct token* t)
 Ast_node* parse_declaration(
         struct parse_state* ps,
         bool add_symbol,
-        bool require_param_name,
-        struct location* loc)
+        bool require_param_name)
 {
 	Ast_node* n = NULL;
-
-    get_location(ps, loc);
 
 	struct token* t0 = get_lookahead(ps);
     bool type_only = !require_param_name && token_is_type(ps, t0);
@@ -335,19 +323,19 @@ Ast_node* parse_declaration(
         }
 
         Ast_node* type_use = NULL;
-        struct location loc_type;
         if (add_symbol) {
-            type_use = parse_type(ps, &loc_type);
+            type_use = parse_type(ps);
             declare_type(ps, type_use, id_node);
         } else {
-            type_use = parse_type(ps, &loc_type);
+            type_use = parse_type(ps);
         }
         if (type_use && type_use->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
 
         if (!type_use) {
-            error_list_set(ps->el, &loc_type, "expected a type");
+            struct location type_use_loc = get_location(ps);
+            error_list_set(ps->el, &type_use_loc, "expected a type");
             /* test case: test_parse_error_declaration_type */
             n->type = Ast_type_error;
         }
@@ -368,11 +356,9 @@ Ast_node* parse_declaration(
  */
 /* type -> id | id { tseq } */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_type(struct parse_state* ps, struct location* loc)
+Ast_node* parse_type(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
-
-	get_location(ps, loc);
 
     /* handle array dimensions */
 	struct token* t0 = get_lookahead(ps);
@@ -468,11 +454,10 @@ Ast_node* parse_type(struct parse_state* ps, struct location* loc)
         token_destroy(fn);
         free(fn);
 
-        struct location fn_loc;
         bool has_id;
-        Ast_node* proto = parse_prototype(ps, false, false, false, &has_id, &fn_loc);
+        Ast_node* proto = parse_prototype(ps, false, false, false, &has_id);
         if (has_id) {
-            error_list_set(ps->el, &fn_loc, "function type has name");
+            error_list_set(ps->el, &proto->loc, "function type has name");
         }
         if (proto->type == Ast_type_error) {
             n->type = Ast_type_error;
@@ -599,21 +584,19 @@ void declare_type(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
 
 /* tseq -> type tseq' */
 /* tseq' -> , tseq' */
-void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
+void parse_tseq(struct parse_state* ps, Ast_node* parent)
 {
 	Ast_node* tu = NULL;
 	struct token* t0 = NULL;
 
-	get_location(ps, loc);
-
-	struct location loc_type;
-    tu = parse_type(ps, &loc_type);
+    tu = parse_type(ps);
 	if (tu && tu->type == Ast_type_error) {
         parent->type = Ast_type_error;
     }
 
 	if (!tu) {
-		error_list_set(ps->el, &loc_type, "expected a type name");
+        struct location tu_loc = get_location(ps);
+		error_list_set(ps->el, &tu_loc, "expected a type name");
 		/* test case: test_parse_error_type_name */
         parent->type = Ast_type_error;
 	}
@@ -642,13 +625,14 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent, struct location* loc)
 
         consume_newline(ps, parent);
 
-        tu = parse_type(ps, &loc_type);
+        tu = parse_type(ps);
 		if (tu && tu->type == Ast_type_error) {
             parent->type = Ast_type_error;
         }
 
 		if (!tu) {
-			error_list_set(ps->el, &loc_type, "expected a type name after comma");
+            struct location tu_loc = get_location(ps);
+			error_list_set(ps->el, &tu_loc, "expected a type name after comma");
 			/* test case: test_parse_error_comma_type_name */
             parent->type = Ast_type_error;
 			break;

@@ -13,11 +13,9 @@ Ast_node* parse(struct parse_state* ps)
 {
     Ast_node* n = NULL;
 
-	struct location loc_stmts;
-    n = parse_stmts(ps, true, &loc_stmts);
+    n = parse_stmts(ps, true);
 
-    struct location next_loc;
-    get_location(ps, &next_loc);
+    struct location next_loc = get_location(ps);
     struct token* t0 = get_lookahead(ps);
     assert(t0);
 	if (t0->type != token_eof) {

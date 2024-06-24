@@ -10,53 +10,46 @@
 #include "type_def.h"
 #include <assert.h>
 
-Ast_node* parse_assignment(struct parse_state* ps, struct location* loc);
-Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct location* loc);
-Ast_node* parse_boolean(struct parse_state* ps, struct location* loc);
-Ast_node* parse_comparison(struct parse_state* ps, struct location* loc);
-Ast_node* parse_add(struct parse_state* ps, struct location* loc);
-Ast_node* parse_mult(struct parse_state* ps, struct location* loc);
-Ast_node* parse_power(struct parse_state* ps, struct location* loc);
-Ast_node* parse_subscript(struct parse_state* ps, struct location* loc);
-Ast_node* parse_call(struct parse_state* ps, struct location* loc);
-Ast_node* parse_cseq(struct parse_state* ps, Ast_node* tu, struct location* loc);
-Ast_node* parse_dot(struct parse_state* ps, struct location* loc);
+Ast_node* parse_assignment(struct parse_state* ps);
+Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index);
+Ast_node* parse_boolean(struct parse_state* ps);
+Ast_node* parse_comparison(struct parse_state* ps);
+Ast_node* parse_add(struct parse_state* ps);
+Ast_node* parse_mult(struct parse_state* ps);
+Ast_node* parse_power(struct parse_state* ps);
+Ast_node* parse_subscript(struct parse_state* ps);
+Ast_node* parse_call(struct parse_state* ps);
+Ast_node* parse_cseq(struct parse_state* ps, Ast_node* left);
+Ast_node* parse_dot(struct parse_state* ps);
 
 /* expr -> assignment */
-Ast_node* parse_expr(struct parse_state* ps, struct location* loc)
+Ast_node* parse_expr(struct parse_state* ps)
 {
-    return parse_assignment(ps, loc);
+    return parse_assignment(ps);
 }
 
 /* assignment -> eseq = assignment | eseq */
-Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
+Ast_node* parse_assignment(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
     size_t assign_index = 0;
 
-    get_location(ps, loc);
-
 	Ast_node* a = NULL;
-	struct location a_loc;
     Ast_node* a_last;
 
 	while (true) {
         a_last = a;
-		a = parse_eseq(ps, assign_index, &a_loc);
+		a = parse_eseq(ps, assign_index);
 
         if (!check_assignment_value_count(a, a_last)) {
-            error_list_set(ps->el, &a_loc, "assignment sequence counts do not match");
+            error_list_set(ps->el, &a->loc, "assignment sequence counts do not match");
             /* test case: test_parse_expr_assignment_eseq_error_eseq_count */
             n->type = Ast_type_error;
         }
 
-        if (a) {
-            a->loc = a_loc;
-        }
-
         if (!a) {
             if (n) {
-                error_list_set(ps->el, &a_loc, "missing rvalue in assignment");
+                error_list_set(ps->el, &a->loc, "missing rvalue in assignment");
                 n->type = Ast_type_error;
             }
             break;
@@ -74,7 +67,7 @@ Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
                 }
             } else {
                 if (!a->tu) {
-                    error_list_set(ps->el, &a_loc, "rvalue does not have a type");
+                    error_list_set(ps->el, &a->loc, "rvalue does not have a type");
                 }
             }
         }
@@ -120,7 +113,7 @@ Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
                 }
             } else {
                 if (!a->tu) {
-                    error_list_set(ps->el, &a_loc, "lvalue does not have a type");
+                    error_list_set(ps->el, &a->loc, "lvalue does not have a type");
                     n->type = Ast_type_error;
                 }
             }
@@ -142,7 +135,7 @@ Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
                 Ast_node* lhs2 = lhs->head;
                 Ast_node* rhs2 = rhs->head;
                 while (lhs2) {
-                    if (!check_lvalue(ps, lhs2, loc)) {
+                    if (!check_lvalue(ps, lhs2, &n->loc)) {
                         n->type = Ast_type_error;
                     }
                     Override_rhs(lhs2->tu, rhs2);
@@ -153,7 +146,7 @@ Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
                     rhs2 = rhs2->next;
                 }
             } else {
-                if (!check_lvalue(ps, lhs, loc)) {
+                if (!check_lvalue(ps, lhs, &n->loc)) {
                     n->type = Ast_type_error;
                 }
 
@@ -183,13 +176,10 @@ Ast_node* parse_assignment(struct parse_state* ps, struct location* loc)
 
 /* eseq = boolean eseq' */
 /* eseq' = , boolean | e */
-Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct location* loc)
+Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index)
 {
-    get_location(ps, loc);
-
     Ast_node* a = NULL;
-    struct location a_loc;
-    a = parse_boolean(ps, &a_loc);
+    a = parse_boolean(ps);
 
     if (!a) {
         return NULL;
@@ -213,7 +203,7 @@ Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct locatio
 
             if (parent->type != Ast_type_error) {
                 if (!a->tu) {
-                    error_list_set(ps->el, &a_loc, "operand of eseq has no type");
+                    error_list_set(ps->el, &a->loc, "operand of eseq has no type");
                     parent->type = Ast_type_error;
                 }
             }
@@ -228,21 +218,20 @@ Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct locatio
         free(comma);
 
         Ast_node* b = NULL;
-        struct location b_loc;
-        b = parse_boolean(ps, &b_loc);
+        b = parse_boolean(ps);
         if (b && b->type == Ast_type_error) {
             parent->type = Ast_type_error;
         }
 
         /* parent checks */
         if (!b) {
-            error_list_set(ps->el, &b_loc, "expected term after comma");
+            error_list_set(ps->el, &b->loc, "expected term after comma");
             parent->type = Ast_type_error;
         }
 
         if (b) {
             if (!b->tu) {
-                error_list_set(ps->el, &b_loc, "operand of eseq has no type");
+                error_list_set(ps->el, &b->loc, "operand of eseq has no type");
                 b->type = Ast_type_error;
             }
         }
@@ -261,31 +250,26 @@ Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index, struct locatio
     return parent;
 }
 
-Ast_node* parse_simple_expr(struct parse_state* ps, struct location* loc)
+Ast_node* parse_simple_expr(struct parse_state* ps)
 {
-    return parse_boolean(ps, loc);
+    return parse_boolean(ps);
 }
 
 /* boolean -> comparison boolean' */
 /* boolean' -> && comparison boolean' | || comparison boolean' | e */
-Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
+Ast_node* parse_boolean(struct parse_state* ps)
 {
-    get_location(ps, loc);
-
 	Ast_node* n = NULL;
 	Ast_node* left;
-    struct location left_loc;
 
 	Ast_node* a = NULL;
-	struct location a_loc;
-	a = parse_comparison(ps, &a_loc);
+	a = parse_comparison(ps);
 
 	if (!a) {
 		return NULL;
 	}
 
 	left = n = a;
-    left_loc = a_loc;
 	while (true) {
 		struct token* t0 = get_lookahead(ps);
 
@@ -314,10 +298,10 @@ Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 
 		/* comparison */
 		Ast_node* b = NULL;
-		struct location b_loc;
-		b = parse_comparison(ps, &b_loc);
+		b = parse_comparison(ps);
 
 		if (!b) {
+            struct location b_loc = get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after && or ||");
 			/* test case: test_parse_boolean_error_expected_term */
             n->type = Ast_type_error;
@@ -339,18 +323,18 @@ Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 		if (n->type != Ast_type_error) {
 			assert(b);
 			if (!left->tu) {
-				error_list_set(ps->el, &left_loc, "left-side operand of boolean operator has no type");
+				error_list_set(ps->el, &left->loc, "left-side operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_left_no_value */
                 n->type = Ast_type_error;
 			} else if (!b->tu) {
-				error_list_set(ps->el, &b_loc, "operand of boolean operator has no type");
+				error_list_set(ps->el, &b->loc, "operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_right_no_value */
                 n->type = Ast_type_error;
 			} else if (left->tu->td->type != type_boolean) {
-				error_list_set(ps->el, &left_loc, "left-side expression of boolean operator is not boolean");
+				error_list_set(ps->el, &left->loc, "left-side expression of boolean operator is not boolean");
                 n->type = Ast_type_error;
 			} else if (b->tu->td->type != type_boolean) {
-				error_list_set(ps->el, &b_loc, "expression of boolean operator is not boolean");
+				error_list_set(ps->el, &b->loc, "expression of boolean operator is not boolean");
                 n->type = Ast_type_error;
 			} else {
 				n->tu = Ast_node_copy(left->tu);
@@ -358,9 +342,6 @@ Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 
 			left = n;
 		}
-
-		#pragma warning(suppress:6001)
-		left_loc = op->loc;
 
 		token_destroy(op);
 		free(op);
@@ -378,24 +359,20 @@ Ast_node* parse_boolean(struct parse_state* ps, struct location* loc)
 *	           | >= add comparison'
 *	           | e
 */
-Ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
+Ast_node* parse_comparison(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
 	Ast_node* a = NULL;
 	Ast_node* left = NULL;
 	int num;
 
-	struct location a_loc;
-	a = parse_add(ps, &a_loc);
-    *loc = a_loc;
+	a = parse_add(ps);
 
 	if (!a) {
 		return NULL;
 	}
 
     left = n = a;
-
-	struct location left_loc = a_loc;
 
 	while (true) {
 		struct token* t0 = get_lookahead(ps);
@@ -432,11 +409,11 @@ Ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
         }
 
 		Ast_node* b = NULL;
-		struct location loc_b;
-		b = parse_add(ps, &loc_b);
+		b = parse_add(ps);
 
 		if (!b) {
-			error_list_set(ps->el, &loc_b, "expected term after comparison operator");
+            struct location b_loc = get_location(ps);
+			error_list_set(ps->el, &b_loc, "expected term after comparison operator");
 			/* case case: test_parse_comparison_error_no_term */
             n->type = Ast_type_error;
 		}
@@ -463,20 +440,20 @@ Ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
 			assert(b);
 			assert(op);
 			if (!left->tu) {
-				error_list_set(ps->el, &left_loc, "operand has no value");
+				error_list_set(ps->el, &left->loc, "operand has no value");
 				/* test case: test_parse_comparison_error_left_not_numeric */
                 n->type = Ast_type_error;
 			} else if (!b->tu) {
-				error_list_set(ps->el, &loc_b, "operand has no value");
+				error_list_set(ps->el, &b->loc, "operand has no value");
 				/* test case: test_parse_comparison_error_right_no_value */
                 n->type = Ast_type_error;
 			} else {
 				if (!is_identity_comparison(type) && !is_numeric(left->tu->td)) {
-					error_list_set(ps->el, &left_loc, "comparison operand is not numeric");
+					error_list_set(ps->el, &left->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_left_not_numeric */
                     n->type = Ast_type_error;
 				} else if (!is_identity_comparison(type) && !is_numeric(b->tu->td)) {
-					error_list_set(ps->el, &loc_b, "comparison operand is not numeric");
+					error_list_set(ps->el, &b->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_right_not_numeric */
                     n->type = Ast_type_error;
 				} else {
@@ -486,8 +463,6 @@ Ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
 				}
 			}
 			left = n;
-			#pragma warning(suppress:6001)
-			left_loc = op->loc;
 		}
 
 		token_destroy(op);
@@ -499,7 +474,7 @@ Ast_node* parse_comparison(struct parse_state* ps, struct location* loc)
 
 /* add -> mult add' */
 /* add' -> + mult add' | - mult add' | e */
-Ast_node* parse_add(struct parse_state* ps, struct location* loc)
+Ast_node* parse_add(struct parse_state* ps)
 {
 	Ast_node* a = NULL;
 	Ast_node* b = NULL;
@@ -508,9 +483,7 @@ Ast_node* parse_add(struct parse_state* ps, struct location* loc)
 	char* op_name;
 	int num;
 
-	struct location a_loc;
-	a = parse_mult(ps, &a_loc);
-    *loc = a_loc;
+	a = parse_mult(ps);
 
 	if (!a) {
 		return NULL;
@@ -551,10 +524,10 @@ Ast_node* parse_add(struct parse_state* ps, struct location* loc)
             n->type = Ast_type_error;
         }
 
-		struct location b_loc;
-		b = parse_mult(ps, &b_loc);
+		b = parse_mult(ps);
 
 		if (!b) {
+            struct location b_loc = get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after additive operator");
 			/* test case: test_parse_add_error_expected_term */
             n->type = Ast_type_error;
@@ -579,20 +552,20 @@ Ast_node* parse_add(struct parse_state* ps, struct location* loc)
 			Ast_node* tu_b = b->tu;
 
 			if (!tu_a) {
-				error_list_set(ps->el, &a_loc, "%s operand has no value", op_name);
+				error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_left_no_value */
                 n->type = Ast_type_error;
 			} else if (!is_numeric(tu_a->td)) {
-				error_list_set(ps->el, &a_loc, "%s on non-numeric operand", op_name);
+				error_list_set(ps->el, &a->loc, "%s on non-numeric operand", op_name);
                 n->type = Ast_type_error;
 			}
 
 			if (!tu_b) {
-				error_list_set(ps->el, &b_loc, "%s operand has no value", op_name);
+				error_list_set(ps->el, &b->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_right_no_value */
                 n->type = Ast_type_error;
 			} else if (!is_numeric(tu_b->td)) {
-				error_list_set(ps->el, &b_loc, "%s on non-numeric operand", op_name);
+				error_list_set(ps->el, &b->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_add_error_right_not_numeric */
                 n->type = Ast_type_error;
 			}
@@ -621,7 +594,7 @@ Ast_node* parse_add(struct parse_state* ps, struct location* loc)
 
 /* mult -> power mult' */
 /* mult' -> * power mult' | e */
-Ast_node* parse_mult(struct parse_state* ps, struct location* loc)
+Ast_node* parse_mult(struct parse_state* ps)
 {
 	Ast_node* a = NULL;
 	Ast_node* b = NULL;
@@ -629,9 +602,7 @@ Ast_node* parse_mult(struct parse_state* ps, struct location* loc)
 	Ast_node* n = NULL;
 	char* op_name;
 
-	struct location a_loc;
-	a = parse_power(ps, &a_loc);
-    *loc = a_loc;
+	a = parse_power(ps);
 
 	if (!a) {
 		return NULL;
@@ -673,10 +644,10 @@ Ast_node* parse_mult(struct parse_state* ps, struct location* loc)
         }
 
 		/* parse_factor */
-		struct location b_loc;
-		b = parse_power(ps, &b_loc);
+		b = parse_power(ps);
 
 		if (!b) {
+            struct location b_loc = get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after operator");
 			/* test case: test_parse_mult_error_expected_term */
             n->type = Ast_type_error;
@@ -703,21 +674,21 @@ Ast_node* parse_mult(struct parse_state* ps, struct location* loc)
 			Ast_node* tu_b = b->tu;
 
 			if (!tu_a) {
-				error_list_set(ps->el, &a_loc, "%s operand has no value", op_name);
+				error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_mult_error_left_no_value */
                 n->type = Ast_type_error;
 			} else if (!is_numeric(tu_a->td)) {
-				error_list_set(ps->el, &a_loc, "%s on non-numeric operand", op_name);
+				error_list_set(ps->el, &a->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_mult_error_left_not_numeric */
                 n->type = Ast_type_error;
 			}
 
 			if (!tu_b) {
-				error_list_set(ps->el, &b_loc, "%s operand has no value", op_name);
+				error_list_set(ps->el, &b->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_mult_error_right_no_value*/
                 n->type = Ast_type_error;
 			} else if (!is_numeric(tu_b->td)) {
-				error_list_set(ps->el, &b_loc, "%s on non-numeric operand", op_name);
+				error_list_set(ps->el, &b->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_mult_error_right_not_numeric */
                 n->type = Ast_type_error;
 			}
@@ -746,21 +717,18 @@ Ast_node* parse_mult(struct parse_state* ps, struct location* loc)
 
 /* power -> subscript power' | e */
 /* power' -> ^ subscript power' | e */
-Ast_node* parse_power(struct parse_state* ps, struct location* loc)
+Ast_node* parse_power(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
 	Ast_node* a = NULL;
 
-	struct location a_loc;
-	a = parse_subscript(ps, &a_loc);
-    *loc = a_loc;
+	a = parse_subscript(ps);
 
 	if (!a) {
 		return a;
 	}
 
 	Ast_node* left = n = a ;
-	struct location loc_left = a_loc;
 
 	while (true) {
 		struct token* t0 = NULL;
@@ -790,8 +758,7 @@ Ast_node* parse_power(struct parse_state* ps, struct location* loc)
         }
 
 		Ast_node* b = NULL;
-		struct location b_loc;
-		b = parse_subscript(ps, &b_loc);
+		b = parse_subscript(ps);
         if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
@@ -804,6 +771,7 @@ Ast_node* parse_power(struct parse_state* ps, struct location* loc)
         }
 
         if (!b) {
+            struct location b_loc = get_location(ps);
             error_list_set(ps->el, &b_loc, "expected term after caret");
             /* test case: test_parse_power_error_expected_term */
             n->type = Ast_type_error;
@@ -816,21 +784,21 @@ Ast_node* parse_power(struct parse_state* ps, struct location* loc)
 			Ast_node* tu_b = b->tu;
 
 			if (!tu_left) {
-				error_list_set(ps->el, &loc_left, "power operand has no value");
+				error_list_set(ps->el, &left->loc, "power operand has no value");
 				/* test case: test_parse_power_error_left_no_value */
                 n->type = Ast_type_error;
 			} else if (!is_numeric(tu_left->td)) {
-				error_list_set(ps->el, &loc_left, "power on non-numeric operand");
+				error_list_set(ps->el, &left->loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_left_not_numeric */
                 n->type = Ast_type_error;
 			}
 
 			if (!tu_b) {
-				error_list_set(ps->el, &b_loc, "power operand has no value");
+				error_list_set(ps->el, &b->loc, "power operand has no value");
 				/* test case: test_parse_power_error_right_no_value */
                 n->type = Ast_type_error;
 			} else if (!is_numeric(tu_b->td)) {
-				error_list_set(ps->el, &b_loc, "power on non-numeric operand");
+				error_list_set(ps->el, &b->loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_right_not_numeric */
                 n->type = Ast_type_error;
 			}
@@ -838,7 +806,7 @@ Ast_node* parse_power(struct parse_state* ps, struct location* loc)
 			if (n->type != Ast_type_error) {
 				Ast_node* tu = Ast_node_copy(tu_left);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
-					error_list_set(ps->el, &b_loc, "invalid power types");
+					error_list_set(ps->el, &b->loc, "invalid power types");
 					/* test case: no test case needed */
                     n->type = Ast_type_error;
 				} else {
@@ -847,8 +815,6 @@ Ast_node* parse_power(struct parse_state* ps, struct location* loc)
 			}
 
 			left = n;
-			#pragma warning(suppress:6001)
-			loc_left = caret->loc;
 		}
 
 		token_destroy(caret);
@@ -860,15 +826,13 @@ Ast_node* parse_power(struct parse_state* ps, struct location* loc)
 
 /* parse_subscript -> call subscript' */
 /* subscript' -> [expr] subscript' | e */
-Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
+Ast_node* parse_subscript(struct parse_state* ps)
 {
 	int num;
 	Ast_node* n = NULL;
 	Ast_node* a = NULL;
 
-	struct location a_loc;
-	a = parse_call(ps, &a_loc);
-    *loc = a_loc;
+	a = parse_call(ps);
 
     if (!a) {
         return a;
@@ -877,7 +841,6 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 	Ast_node* element_tu = NULL;
     struct location loc_last;
     Ast_node* left = a;
-    struct location left_loc = a->loc;
     n = a;
 	while (true) {
 		struct token* t0 = get_lookahead(ps);
@@ -887,7 +850,7 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 		}
 
         if (!left->tu) {
-            error_list_set(ps->el, &left_loc, "expression has subscript but has no value");
+            error_list_set(ps->el, &left->loc, "expression has subscript but has no value");
             left->type = Ast_type_error;
         }
 
@@ -908,7 +871,7 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
         if (n->type != Ast_type_error) {
             if (!left->tu->to.is_array && !left->tu->to.is_slice) {
 				error_list_set(ps->el,
-                               &a_loc,
+                               &a->loc,
                                "expression has subscript but is not an array or slice");
 				/* test case: test_parse_subscript_error_not_array */
                 n->type = Ast_type_error;
@@ -920,9 +883,6 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
             /* test case: no test case needed */
             assert(false);
         }
-		if (lsb) {
-            left_loc = lsb->loc;
-		}
 
 		token_destroy(lsb);
 		free(lsb);
@@ -932,14 +892,9 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
         }
 
 		Ast_node* b = NULL;
-		struct location loc_expr;
-        b = parse_expr(ps, &loc_expr);
+        b = parse_expr(ps);
 		if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
-        }
-
-        if (b) {
-            left_loc = loc_expr;
         }
 
         if (!consume_newline(ps, n)) {
@@ -949,10 +904,6 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 		struct token* rsb = NULL;
 		if (!match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
             n->type = Ast_type_error;
-        }
-
-        if (rsb) {
-            left_loc = rsb->loc;
         }
 
 		token_destroy(rsb);
@@ -970,21 +921,18 @@ Ast_node* parse_subscript(struct parse_state* ps, struct location* loc)
 
 /* call -> dot call' */
 /* call' -> ( cseq ) call' */
-Ast_node* parse_call(struct parse_state* ps, struct location* loc)
+Ast_node* parse_call(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
 
 	Ast_node* dot_node = NULL;
-	struct location dot_loc;
-	dot_node = parse_dot(ps, &dot_loc);
-    *loc = dot_loc;
+	dot_node = parse_dot(ps);
 
 	if (!dot_node) {
 		return dot_node;
 	}
 
 	Ast_node* left = n = dot_node;
-	struct location left_loc = dot_loc;
 
 	while (true) {
 		struct token* t0 = get_lookahead(ps);
@@ -1008,7 +956,7 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 
 		Ast_node* cseq_node = NULL;
 		struct location loc_cseq;
-		cseq_node = parse_cseq(ps, left->tu, &loc_cseq);
+		cseq_node = parse_cseq(ps, left);
         if (cseq_node && cseq_node->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
@@ -1043,7 +991,7 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 			assert(tu->td);
 			struct type_def* td = tu->td;
 			if (td->type != type_function) {
-				error_list_set(ps->el, &left_loc, "not a function type");
+				error_list_set(ps->el, &left->loc, "not a function type");
 				/* test case: test_parse_call_error_not_function */
                 n->type = Ast_type_error;
 			} else {
@@ -1087,8 +1035,6 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 			}
 
 			left = n;
-			#pragma warning(suppress:6001)
-			left_loc = rp->loc;
 		}
 
 		/* destroy id id{} lp lp{} rp rp{} */
@@ -1104,26 +1050,21 @@ Ast_node* parse_call(struct parse_state* ps, struct location* loc)
 
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
-Ast_node* parse_cseq(struct parse_state* ps, Ast_node* tu, struct location* loc)
+Ast_node* parse_cseq(struct parse_state* ps, Ast_node* left)
 {
 	Ast_node* n = NULL;
     Ast_node_create(&n);
     n->type = Ast_type_cseq;
 
-	if (!get_location(ps, loc)) {
-        n->type = Ast_type_error;
-    }
-
-	if (!tu || !tu->td || tu->td->type != type_function) {
-		error_list_set(ps->el, loc, "not a function type");
+	if (!left->tu || !left->tu->td || left->tu->td->type != type_function) {
+		error_list_set(ps->el, &left->loc, "not a function type");
 		/* test case: no test case needed */
         n->type = Ast_type_error;
 		return n;
 	}
 
 	Ast_node* a = NULL;
-	struct location loc_expr;
-	a = parse_simple_expr(ps, &loc_expr);
+	a = parse_simple_expr(ps);
     if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -1132,7 +1073,7 @@ Ast_node* parse_cseq(struct parse_state* ps, Ast_node* tu, struct location* loc)
 		return n;
 	}
 	int i = 0;
-	if (!check_input_type(ps, tu, i, a, &loc_expr)) {
+	if (!check_input_type(ps, left->tu, i, a, &a->loc)) {
         n->type = Ast_type_error;
     }
 	i++;
@@ -1159,20 +1100,21 @@ Ast_node* parse_cseq(struct parse_state* ps, Ast_node* tu, struct location* loc)
             n->type = Ast_type_error;
         }
 
-		a = parse_simple_expr(ps, &loc_expr);
+		a = parse_simple_expr(ps);
 		if (a && a->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
 
 		if (!a) {
-			error_list_set(ps->el, &loc_expr, "expected expression after comma");
+            struct location a_loc = get_location(ps);
+			error_list_set(ps->el, &a_loc, "expected expression after comma");
 			/* test case: test_parse_call_error_expected_expression */
             n->type = Ast_type_error;
 		} else {
 			/* transfer a -> parent */
             Ast_node_add(n, a);
 
-			if (!check_input_type(ps, tu, i, a, &loc_expr)) {
+			if (!check_input_type(ps, left->tu, i, a, &a->loc)) {
                 n->type = Ast_type_error;
             }
 		}
@@ -1185,22 +1127,18 @@ Ast_node* parse_cseq(struct parse_state* ps, Ast_node* tu, struct location* loc)
 
 /* dot -> factor dot' */
 /* dot' -> . factor dot' | e */
-Ast_node* parse_dot(struct parse_state* ps, struct location* loc)
+Ast_node* parse_dot(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
 	Ast_node* a = NULL;
 
-    get_location(ps, loc);
-
-    struct location a_loc;
-	a = parse_factor(ps, &a_loc);
+	a = parse_factor(ps);
 
 	if (!a) {
 		return a;
 	}
 
 	Ast_node* left = n = a;
-	struct location left_loc = *loc;
 	while (true) {
 		struct token* t0 = NULL;
 		t0 = get_lookahead(ps);
@@ -1242,11 +1180,11 @@ Ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 
 		if (n->type != Ast_type_error) {
 			if (!left->tu) {
-				error_list_set(ps->el, &left_loc, "dot operand has no value");
+				error_list_set(ps->el, &left->loc, "dot operand has no value");
 				/* test case: no test case necessary */
                 n->type = Ast_type_error;
 			} else if (left->tu->td->type != type_struct) {
-				error_list_set(ps->el, &left_loc, "dot operand is not a struct");
+				error_list_set(ps->el, &left->loc, "dot operand is not a struct");
 				/* test case: test_parse_dot_error_left_non_module */
                 n->type = Ast_type_error;
 			} else {
@@ -1283,7 +1221,6 @@ Ast_node* parse_dot(struct parse_state* ps, struct location* loc)
 
 			left = n;
 			#pragma warning(suppress:6001)
-            left_loc = dot->loc;
             token_destroy(dot);
             free(dot);
             token_destroy(id);

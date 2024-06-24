@@ -31,13 +31,12 @@ AKELA_API bool match(
     Ast_node* n);
 AKELA_API bool consume_newline(struct parse_state* ps, Ast_node* n);
 AKELA_API bool is_identity_comparison(enum Ast_type type);
-AKELA_API bool get_location(struct parse_state* ps, struct location* loc);
+AKELA_API struct location get_location(struct parse_state* ps);
 AKELA_API struct token* get_lookahead(struct parse_state* ps);
 AKELA_API bool check_assignment_value_count(Ast_node* a, Ast_node* b);
 AKELA_API void parse_separator(
     struct parse_state* ps,
     Ast_node* n,
-    bool* has_separator,
-    struct location* loc);
+    bool* has_separator);
 
 #endif

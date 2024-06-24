@@ -94,11 +94,10 @@ bool consume_newline(struct parse_state* ps, Ast_node* n)
     return valid;
 }
 
-bool get_location(struct parse_state* ps, struct location* loc)
+struct location get_location(struct parse_state* ps)
 {
-    bool valid = get_lookahead_one(ps);
-    *loc = ps->lookahead->loc;
-    return valid;
+    get_lookahead_one(ps);
+    return ps->lookahead->loc;
 }
 
 bool is_identity_comparison(enum Ast_type type)
@@ -132,12 +131,10 @@ bool check_assignment_value_count(Ast_node* a, Ast_node* b)
 }
 
 /* separator -> \n | ; */
-void parse_separator(struct parse_state* ps, Ast_node* n, bool* has_separator, struct location* loc)
+void parse_separator(struct parse_state* ps, Ast_node* n, bool* has_separator)
 {
     enum token_enum type;
     *has_separator = false;
-
-    get_location(ps, loc);
 
     struct token* t0 = get_lookahead(ps);
     if (t0 && t0->type == token_newline) {
