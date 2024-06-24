@@ -184,3 +184,21 @@ const char* plural(size_t number)
     if (number == 1) return "";
     else return "s";
 }
+
+void location_combine(struct location* p, struct location* c)
+{
+    if (p->line && p->col && c->line && c->col) {
+        if (c->start_pos < p->start_pos) {
+            p->start_pos = c->start_pos;
+        }
+        if (c->end_pos > p->end_pos) {
+            p->end_pos = c->end_pos;
+        }
+        if (c->line < p->line) {
+            p->line = c->line;
+        }
+        if (c->col < p->col) {
+            p->col = c->col;
+        }
+    }
+}

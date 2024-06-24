@@ -1,5 +1,5 @@
 # Akela Todo
-* update location in Match and Ast_node_add in parser
+* update location in match in parser
 * impl statement
 * struct methods
 * use malloc when returning a pointer

@@ -6,12 +6,6 @@
 #include "zinc/memory.h"
 #include "type_def.h"
 
-void Ast_node_create(Ast_node** n)
-{
-	malloc_safe((void**)n, sizeof(Ast_node));
-	Ast_node_init(*n);
-}
-
 void Type_options_init(Type_options* to)
 {
     to->is_mut = false;
@@ -21,6 +15,11 @@ void Type_options_init(Type_options* to)
     to->original_is_mut = false;
     VectorInit(&to->dim, sizeof(Type_dimension));
 }
+void Ast_node_create(Ast_node** n)
+{
+	malloc_safe((void**)n, sizeof(Ast_node));
+	Ast_node_init(*n);
+}
 
 void Ast_node_init(Ast_node* n)
 {
@@ -29,6 +28,7 @@ void Ast_node_init(Ast_node* n)
 	n->tu = NULL;
 	n->td = NULL;
     Type_options_init(&n->to);
+    location_init(&n->loc);
     n->sym = NULL;
 	n->next = NULL;
 	n->prev = NULL;
@@ -61,21 +61,15 @@ void Type_options_destroy(Type_options* to)
 
 void Ast_node_add(Ast_node* p, Ast_node* c)
 {
-	// set sibling to left
-	Ast_node* prev = p->tail;
-	if (prev) {
-		prev->next = c;
-	}
-
-	// set child
-	c->prev = prev;
-	c->next = NULL;
-
-	// set parent
-	if (p->head == NULL) {
-		p->head = c;
-	}
-	p->tail = c;
+    if (p->head && p->tail) {
+        p->tail->next = c;
+        c->prev = p->tail;
+        p->tail = c;
+    } else {
+        p->head = c;
+        p->tail = c;
+    }
+    location_combine(&p->loc, &c->loc);
 }
 
 /* assume parent and child are not NULL */

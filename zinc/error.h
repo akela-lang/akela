@@ -42,6 +42,7 @@ ZINC_API void error_list_print(struct error_list* el);
 ZINC_API void location_init(struct location* loc);
 ZINC_API void location_create(struct location** loc);
 ZINC_API const char* plural(size_t number);
+ZINC_API void location_combine(struct location* p, struct location* c);
 
 #ifdef __cplusplus
 }
