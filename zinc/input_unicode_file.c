@@ -43,7 +43,6 @@ void InputUnicodeFileClear(InputUnicodeFile* input)
     location_init(&input->prev_loc);
     input->loc.line = 1;
     input->loc.col = 1;
-    input->loc.size = 1;
 }
 
 /**
@@ -61,7 +60,7 @@ enum result InputUnicodeFileNext(
 {
     enum result r = result_ok;
     *done = false;
-    if (input->loc.byte_pos == 0) {
+    if (input->loc.start_pos == 0) {
         InputUnicodeFileClear(input);
     }
 
@@ -100,7 +99,7 @@ enum result InputUnicodeFileNext(
         input->prev_done = *done;
     }
 
-    input->loc.byte_pos += *num;
+    input->loc.start_pos += *num;
     if (*num == 1 && c[0] == '\n') {
         input->loc.line++;
         input->loc.col = 1;
@@ -128,7 +127,7 @@ void InputUnicodeFileSeek(InputUnicodeFile* input, struct location* loc)
 {
     input->loc = *loc;
     input->prev_loc = *loc;
-    fseek(input->fp, (long)loc->byte_pos, SEEK_SET);
+    fseek(input->fp, (long)loc->start_pos, SEEK_SET);
 }
 
 /**

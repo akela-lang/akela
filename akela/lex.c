@@ -228,7 +228,6 @@ bool lex_word(struct lex_state* ls,
                 t->type = sym->tk_type;
             }
             *state = state_start;
-            t->loc.size = t->value.size;
             break;
         }
 
@@ -252,7 +251,6 @@ bool lex_word(struct lex_state* ls,
                     t->type = sym->tk_type;
                 }
                 *state = state_start;
-                t->loc.size = t->value.size;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -277,7 +275,6 @@ bool lex_word(struct lex_state* ls,
                     t->type = sym->tk_type;
                 }
                 *state = state_start;
-                t->loc.size = t->value.size;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -332,7 +329,6 @@ bool lex_number(struct lex_state* ls,
                 buffer_add_char(&t->value, 'e');
             } else {
                 *state = state_start;
-                t->loc.size = t->value.size;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -344,7 +340,6 @@ bool lex_number(struct lex_state* ls,
                 }
             } else {
                 *state = state_start;
-                t->loc.size = t->value.size;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -358,7 +353,6 @@ bool lex_number(struct lex_state* ls,
                 buffer_add_char(&t->value, 'e');
             } else {
                 *state = state_start;
-                t->loc.size = t->value.size;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -375,7 +369,6 @@ bool lex_number(struct lex_state* ls,
                 }
             } else {
                 *state = state_start;
-                t->loc.size = t->value.size;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -389,7 +382,6 @@ bool lex_number(struct lex_state* ls,
                 valid = error_list_set(ls->el, &loc, "expected number after exponent sign");
                 /* test case: test_lex_error_exponent_sign */
                 *state = state_start;
-                t->loc.size = t->value.size;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -400,7 +392,6 @@ bool lex_number(struct lex_state* ls,
                 }
             } else {
                 *state = state_start;
-                t->loc.size = t->value.size;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -441,7 +432,6 @@ bool lex_string(
             for (int i = 0; i < num; i++) {
                 buffer_add_char(&t->value, c[i]);
             }
-            t->loc.size += num;
             valid = error_list_set(ls->el, &loc, "Unclosed string");
             break;
         }
@@ -449,28 +439,22 @@ bool lex_string(
         if (*state == state_string) {
             if (*c == '\\') {
                 *state = state_string_backslash;
-                t->loc.size += num;
             } else if (*c == '"') {
                 *state = state_start;
                 t->loc = loc;
-                t->loc.size += num;
                 break;
             } else {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
-                t->loc.size += num;
             }
         } else if (*state == state_string_backslash) {
             if (*c == '\\') {
                 buffer_add_char(&t->value, '\\');
-                t->loc.size += num;
             } else if (*c == 'n') {
                 buffer_add_char(&t->value, '\n');
-                t->loc.size += num;
             } else if (*c == 'r') {
                 buffer_add_char(&t->value, '\r');
-                t->loc.size += num;
             } else {
                 char a[5];
                 int i = 0;
@@ -518,8 +502,6 @@ bool lex_compound_operator(
     assert(!*done);
 
     if (num == 1 && *c == '=') {
-        t->loc.size += num;
-
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = error_list_set(ls->el, &loc, error_message);
@@ -528,15 +510,12 @@ bool lex_compound_operator(
         if (num == 1 && *c == '=') {
             t->type = token_double_equal;
             *state = state_start;
-            t->loc.size += num;
         } else {
             t->type = token_equal;
             *state = state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '!') {
-        t->loc.size += num;
-
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = error_list_set(ls->el, &loc, error_message);
@@ -545,15 +524,12 @@ bool lex_compound_operator(
         if (num == 1 && *c == '=') {
             t->type = token_not_equal;
             *state = state_start;
-            t->loc.size += num;
         } else {
             t->type = token_not;
             *state = state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '<') {
-        t->loc.size += num;
-
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = error_list_set(ls->el, &loc, error_message);
@@ -562,15 +538,12 @@ bool lex_compound_operator(
         if (num == 1 && *c == '=') {
             t->type = token_less_than_or_equal;
             *state = state_start;
-            t->loc.size += num;
         } else {
             t->type = token_less_than;
             *state = state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '>') {
-        t->loc.size += num;
-
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = error_list_set(ls->el, &loc, error_message);
@@ -579,15 +552,12 @@ bool lex_compound_operator(
         if (num == 1 && *c == '=') {
             t->type = token_greater_than_or_equal;
             *state = state_start;
-            t->loc.size += num;
         } else {
             t->type = token_greater_than;
             *state = state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '&') {
-        t->loc.size += num;
-
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = error_list_set(ls->el, &loc, error_message);
@@ -596,15 +566,12 @@ bool lex_compound_operator(
         if (num == 1 && *c == '&') {
             t->type = token_and;
             *state = state_start;
-            t->loc.size += num;
         } else {
             t->type = token_ampersand;
             *state = state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '|') {
-        t->loc.size += num;
-
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = error_list_set(ls->el, &loc, error_message);
@@ -613,15 +580,12 @@ bool lex_compound_operator(
         if (num == 1 && *c == '|') {
             t->type = token_or;
             *state = state_start;
-            t->loc.size += num;
         } else {
             t->type = token_vertical_bar;
             *state = state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '-') {
-        t->loc.size += num;
-
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = error_list_set(ls->el, &loc, error_message);
@@ -630,23 +594,18 @@ bool lex_compound_operator(
         if (num == 1 && *c == '>') {
             t->type = token_arrow;
             *state = state_start;
-            t->loc.size += num;
         } else {
             t->type = token_minus;
             *state = state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '.') {
-        t->loc.size += num;
-
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '.') {
-            t->loc.size += num;
-
             r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
             if (r == result_error) {
                 valid = error_list_set(ls->el, &loc, error_message);
@@ -655,7 +614,6 @@ bool lex_compound_operator(
             if (num == 1 && *c == '.') {
                 t->type = token_ellipsis;
                 *state = state_start;
-                t->loc.size += num;
             } else {
                 t->type = token_range;
                 *state = state_start;
@@ -703,9 +661,15 @@ bool lex(struct lex_state* ls, struct token** t)
         assert(valid);
         tf->type = token_eof;
         tf->loc = InputUnicodeGetLocation(ls->input_obj, ls->input_vtable);
-        tf->loc.size = 3;
     }
 
     *t = tf;
+
+    struct location end = InputUnicodeGetLocation(ls->input_obj, ls->input_vtable);
+    (*t)->loc.end_pos = end.start_pos;
+    if ((*t)->loc.end_pos == (*t)->loc.start_pos) {
+        (*t)->loc.end_pos++;
+    }
+
     return valid;
 }

@@ -8,8 +8,8 @@
 #include "buffer.h"
 
 struct location {
-    size_t byte_pos;
-    size_t size;
+    size_t start_pos;
+    size_t end_pos;
     size_t line;
     size_t col;
 };

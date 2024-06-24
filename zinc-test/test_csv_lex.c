@@ -418,10 +418,10 @@ void TestCSVLexErrorQuote()
     expect_has_errors(lex_data->el);
     struct error* e = expect_source_error(lex_data->el, "quote found in unquoted field");
     if (e) {
-        expect_size_t_equal(e->loc.byte_pos, 3, "byte_pos");
+        expect_size_t_equal(e->loc.start_pos, 3, "byte_pos");
+        expect_size_t_equal(e->loc.end_pos, 4, "end_pos");
         expect_size_t_equal(e->loc.line, 1, "line");
         expect_size_t_equal(e->loc.col, 4, "col");
-        expect_size_t_equal(e->loc.size, 1, "size");
     }
 
     CSVLexTeardown(lex_data);
@@ -453,10 +453,10 @@ void TestCSVLexErrorExtraCharactersAfterQuote()
     struct error* e = expect_source_error(lex_data->el,
                                           "extra characters after field ending quote");
     if (e) {
-        expect_size_t_equal(e->loc.byte_pos, 5, "byte_pos");
+        expect_size_t_equal(e->loc.start_pos, 5, "byte_pos");
+        expect_size_t_equal(e->loc.end_pos, 6, "size");
         expect_size_t_equal(e->loc.line, 1, "line");
         expect_size_t_equal(e->loc.col, 6, "col");
-        expect_size_t_equal(e->loc.size, 1, "size");
     }
 
     CSVLexTeardown(lex_data);
@@ -489,10 +489,10 @@ void TestCSVLexErrorEOFBeforeQuote()
     struct error* e = expect_source_error(lex_data->el,
                                           "End of file found before end of quoted field");
     if (e) {
-        expect_size_t_equal(e->loc.byte_pos, 4, "byte_pos");
+        expect_size_t_equal(e->loc.start_pos, 4, "byte_pos");
+        expect_size_t_equal(e->loc.end_pos, 5, "size");
         expect_size_t_equal(e->loc.line, 1, "line");
         expect_size_t_equal(e->loc.col, 5, "col");
-        expect_size_t_equal(e->loc.size, 1, "size");
     }
 
     CSVLexTeardown(lex_data);

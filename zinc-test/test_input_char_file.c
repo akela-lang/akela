@@ -25,19 +25,20 @@ void TestInputCharFileNext()
     bool done;
     char c;
     struct location loc;
-    size_t byte_pos = 0;
+    size_t start_pos = 0;
     size_t col = 1;
     size_t line = 1;
-    size_t size = 1;
+    size_t end_pos = 1;
     do {
         done = InputCharNext(input, input->input_vtable, &c, &loc);
         if (done) break;
         VectorAdd(text_actual, &c, 1);
-        expect_size_t_equal(loc.byte_pos, byte_pos, "byte_pos");
+        expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
         expect_size_t_equal(loc.line, line, "line");
         expect_size_t_equal(loc.col, col, "col");
-        expect_size_t_equal(loc.size, size, "size");
-        byte_pos++;
+        expect_size_t_equal(loc.end_pos, end_pos, "end_pos");
+        start_pos++;
+        end_pos++;
         col++;
         if (c == '\n') {
             line++;
@@ -76,25 +77,26 @@ void TestInputCharFileRepeat()
     bool done;
     char c;
     struct location loc;
-    size_t byte_pos = 0;
+    size_t start_pos = 0;
     size_t col = 1;
     size_t line = 1;
-    size_t size = 1;
+    size_t end_pos = 1;
     bool did_repeat = false;
     do {
         done = InputCharNext(input, input->input_vtable, &c, &loc);
         if (done) break;
         VectorAdd(text_actual, &c, 1);
-        expect_size_t_equal(loc.byte_pos, byte_pos, "byte_pos");
+        expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
         expect_size_t_equal(loc.line, line, "line");
         expect_size_t_equal(loc.col, col, "col");
-        expect_size_t_equal(loc.size, size, "size");
+        expect_size_t_equal(loc.end_pos, end_pos, "end_pos");
         if (!did_repeat) {
             InputCharFileRepeat(input);
             did_repeat = true;
             continue;
         }
-        byte_pos++;
+        start_pos++;
+        end_pos++;
         col++;
         if (c == '\n') {
             line++;
@@ -133,7 +135,7 @@ void TestInputCharFileSeek()
     bool done;
     char c;
     struct location loc;
-    loc.byte_pos = 6;
+    loc.start_pos = 6;
     InputCharSeek(input, input->input_vtable, &loc);
     do {
         done = InputCharNext(input, input->input_vtable, &c, &loc);

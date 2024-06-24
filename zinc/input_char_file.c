@@ -39,7 +39,7 @@ void InputCharFileClear(InputCharFile* input)
     location_init(&input->prev_loc);
     input->loc.line = 1;
     input->loc.col = 1;
-    input->loc.size = 1;
+    input->loc.end_pos = 1;
 }
 
 /**
@@ -50,7 +50,7 @@ void InputCharFileClear(InputCharFile* input)
  */
 bool InputCharFileNext(InputCharFile* input, char* c, struct location* loc)
 {
-    if (input->loc.byte_pos == 0) {
+    if (input->loc.start_pos == 0) {
         InputCharFileClear(input);
     }
 
@@ -70,7 +70,8 @@ bool InputCharFileNext(InputCharFile* input, char* c, struct location* loc)
     }
 
     input->prev_loc = input->loc;
-    input->loc.byte_pos++;
+    input->loc.start_pos++;
+    input->loc.end_pos = input->loc.start_pos + 1;
     if (*c == '\n') {
         input->loc.line++;
         input->loc.col = 1;
@@ -98,7 +99,7 @@ void InputCharFileSeek(InputCharFile* input, struct location* loc)
 {
     input->loc = *loc;
     input->prev_loc = *loc;
-    fseek(input->fp, (long)loc->byte_pos, SEEK_SET);
+    fseek(input->fp, (long)loc->start_pos, SEEK_SET);
 }
 
 /**

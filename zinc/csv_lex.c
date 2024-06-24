@@ -52,7 +52,6 @@ void CSVLexStart(struct CSVLexData* lex_data, struct CSVToken* token)
     if (c == '"') {
         lex_data->state = CSVStateTypeFieldQuoted;
         token->loc = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
-        token->loc.size++;
     } else {
         lex_data->state = CSVStateTypeField;
         InputCharRepeat(lex_data->input_data, lex_data->input_vtable);
@@ -82,14 +81,15 @@ void CSVLexField(struct CSVLexData* lex_data, struct CSVToken* token) {
             InputCharRepeat(lex_data->input_data, lex_data->input_vtable);
             break;
         } else if (c == '"') {
-            loc.size = 1;
             error_list_set(lex_data->el, &loc, "quote found in unquoted field");
             /* test case: CSVLexErrorQuote */
         } else {
             VectorAdd(&token->value, &c, 1);
-            token->loc.size++;
         }
     }
+
+    struct location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    token->loc.end_pos = end.start_pos;
 }
 
 void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
@@ -109,24 +109,23 @@ void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
         } else if (c == '"') {
             done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
             if (done) {
-                token->loc.size++;
                 lex_data->state = CSVStateTypeEOF;
                 break;
             }
             if (c == '"') {
-                token->loc.size++;
                 VectorAdd(&token->value, &c, 1);
             } else {
-                token->loc.size++;
                 lex_data->state = CSVStateTypeFieldEndOfQuote;
                 InputCharRepeat(lex_data->input_data, lex_data->input_vtable);
                 break;
             }
         } else {
-            token->loc.size++;
             VectorAdd(&token->value, &c, 1);
         }
     }
+
+    struct location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    token->loc.end_pos = end.start_pos;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -152,11 +151,13 @@ void CSVLexFieldEndOfQuote(struct CSVLexData* lex_data, struct CSVToken* token)
             CSVLexDispatch(lex_data, token);
             break;
         } else {
-            loc.size = 1;
             error_list_set(lex_data->el, &loc, "extra characters after field ending quote");
             /* test case: CSVLexErrorExtraCharactersAfterQuote */
         }
     }
+
+    struct location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    token->loc.end_pos = end.start_pos;
 }
 
 void CSVLexEndOfRow(struct CSVLexData* lex_data, struct CSVToken* token)
@@ -178,11 +179,16 @@ void CSVLexEndOfRow(struct CSVLexData* lex_data, struct CSVToken* token)
     } else {
         assert(false);
     }
+
+    struct location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    token->loc.end_pos = end.start_pos;
 }
 
-void CSVLexEOF(struct CSVToken* token)
+void CSVLexEOF(struct CSVLexData* lex_data, struct CSVToken* token)
 {
     token->type = CSVTokenTypeEOF;
+    struct location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    token->loc.end_pos = end.start_pos;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -205,7 +211,7 @@ void CSVLexDispatch(struct CSVLexData* lex_data, struct CSVToken* token)
             CSVLexEndOfRow(lex_data, token);
             break;
         case CSVStateTypeEOF:
-            CSVLexEOF(token);
+            CSVLexEOF(lex_data, token);
             break;
         default:
             assert(false);
@@ -216,6 +222,8 @@ void CSVLex(struct CSVLexData* lex_data, struct CSVToken** token)
 {
     CSVTokenCreate(token);
     CSVLexDispatch(lex_data, *token);
+    struct location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    (*token)->loc.end_pos = end.start_pos;
 }
 
 enum result CSVLoad(const char* filename, Vector* text)

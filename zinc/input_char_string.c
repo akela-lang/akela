@@ -36,9 +36,9 @@ void InputCharStringClear(InputCharString* data)
 {
     location_init(&data->loc);
     location_init(&data->prev_loc);
+    data->loc.end_pos = 1;
     data->loc.line = 1;
     data->loc.col = 1;
-    data->loc.size = 1;
 }
 
 /**
@@ -49,7 +49,7 @@ void InputCharStringClear(InputCharString* data)
  */
 bool InputCharStringNext(InputCharString* data, char* c, struct location* loc)
 {
-    if (data->loc.byte_pos == 0) {
+    if (data->loc.start_pos == 0) {
         InputCharStringClear(data);
     }
 
@@ -63,7 +63,8 @@ bool InputCharStringNext(InputCharString* data, char* c, struct location* loc)
     if (data->pos < data->text->count) {
         *c = VECTOR_CHAR(data->text, data->pos++);
         *loc = data->loc;
-        data->loc.byte_pos++;
+        data->loc.start_pos++;
+        data->loc.end_pos = data->loc.start_pos + 1;
         if (*c == '\n') {
             data->loc.line++;
             data->loc.col = 1;
@@ -94,12 +95,12 @@ void InputCharStringRepeat(InputCharString* data)
  */
 void InputCharStringSeek(InputCharString* data, struct location* loc)
 {
-    if (loc->byte_pos < data->text->count)
+    if (loc->start_pos < data->text->count)
     {
         InputCharStringClear(data);
         data->loc = *loc;
         data->prev_loc = *loc;
-        data->pos = loc->byte_pos;
+        data->pos = loc->start_pos;
     }
 }
 

@@ -1,7 +1,8 @@
 # Akela Todo
+* update location in Match and Ast_node_add in parser
 * impl statement
 * struct methods
-* update location in match and ast_node_add; token start_pos, end_pos
+* use malloc when returning a pointer
 * for loop
   * range iterator []
   * array iterator []

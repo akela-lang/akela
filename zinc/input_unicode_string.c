@@ -39,7 +39,6 @@ void InputUnicodeStringClear(InputUnicodeString* data)
     location_init(&data->prev_loc);
     data->loc.line = 1;
     data->loc.col = 1;
-    data->loc.size = 1;
 }
 
 /**
@@ -57,12 +56,12 @@ enum result InputUnicodeStringNext(
 {
     enum result r = result_ok;
 
-    if (data->loc.byte_pos == 0) {
+    if (data->loc.start_pos == 0) {
         InputUnicodeStringClear(data);
     }
 
     if (data->repeat_char && data->pos > 0) {
-        data->pos = data->prev_loc.byte_pos;
+        data->pos = data->prev_loc.start_pos;
         data->repeat_char = false;
         data->loc = data->prev_loc;
         *loc = data->loc;
@@ -74,7 +73,7 @@ enum result InputUnicodeStringNext(
         c[0] = VECTOR_CHAR(data->text, data->pos++);
         *num = NUM_BYTES(c[0]);
         *loc = data->loc;
-        data->loc.byte_pos++;
+        data->loc.start_pos++;
         if (c[0] == '\n') {
             data->loc.line++;
             data->loc.col = 1;
@@ -87,7 +86,7 @@ enum result InputUnicodeStringNext(
         for (int i = 1; i < *num; i++) {
             if (data->pos < data->text->count) {
                 c[i] = VECTOR_CHAR(data->text, data->pos++);
-                data->loc.byte_pos++;
+                data->loc.start_pos++;
                 if (!IS_EXTRA_BYTE(c[i])) {
                     r = set_error("invalid utf8 trailing byte");
                 }
@@ -97,9 +96,11 @@ enum result InputUnicodeStringNext(
                 break;
             }
         }
+        loc->end_pos = data->loc.start_pos;
     } else {
         *num = 0;
         *loc = data->loc;
+        loc->end_pos = loc->start_pos + 1;
         *done = true;
     }
 
@@ -122,12 +123,12 @@ void InputUnicodeStringRepeat(InputUnicodeString* data)
  */
 void InputUnicodeStringSeek(InputUnicodeString* data, struct location* loc)
 {
-    if (loc->byte_pos < data->text->count)
+    if (loc->start_pos < data->text->count)
     {
         InputUnicodeStringClear(data);
         data->loc = *loc;
         data->prev_loc = *loc;
-        data->pos = loc->byte_pos;
+        data->pos = loc->start_pos;
     }
 }
 

@@ -24,8 +24,8 @@ void test_lex_blank()
 	expect_str(&t->value, "", "(blank)");
     expect_size_t_equal(t->loc.line, 1, "line 1");
     expect_size_t_equal(t->loc.col, 1, "col 1");
-    expect_size_t_equal(t->loc.size, 3, "size 0");
-    expect_size_t_equal(t->loc.byte_pos, 0, "byte pos 0");
+    expect_size_t_equal(t->loc.start_pos, 0, "start_pos 0");
+    expect_size_t_equal(t->loc.end_pos, 1, "end_pos 0");
 
 	token_destroy(t);
 	free(t);
@@ -61,7 +61,6 @@ void test_lex_assign()
 	token_destroy(t);
 	free(t);
 
-	/* allocate ls{} t t{} */
 	valid = lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
@@ -78,14 +77,12 @@ void test_lex_assign()
     expect_int_equal(t->type, token_eof, "eof");
     expect_size_t_equal(t->loc.line, 1, "line 1");
     expect_size_t_equal(t->loc.col, 6, "col 6");
-    expect_size_t_equal(t->loc.size, 3, "size 3");
-    expect_size_t_equal(t->loc.byte_pos, 5, "byte pos 5");
+    expect_size_t_equal(t->loc.start_pos, 5, "byte pos 5");
+    expect_size_t_equal(t->loc.end_pos, 6, "end_pos 3");
 
-    /* destroy t t{} */
 	token_destroy(t);
 	free(t);
 
-	/* destroy ls{} */
 	lex_teardown(&ls);
 }
 

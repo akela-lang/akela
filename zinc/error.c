@@ -8,8 +8,8 @@
 
 void location_init(struct location* loc)
 {
-    loc->byte_pos = 0;
-    loc->size = 0;
+    loc->start_pos = 0;
+    loc->end_pos = 0;
     loc->line = 0;
     loc->col = 0;
 }

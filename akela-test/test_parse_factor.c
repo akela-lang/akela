@@ -303,10 +303,10 @@ void test_parse_id_cyrillic()
     assert_has_errors(&cu.el);
     struct error* e = expect_source_error(&cu.el, "Unrecognized character: я");
     assert_ptr(e, "ptr e");
-    expect_size_t_equal(e->loc.byte_pos, 4, "byte_pos");
+    expect_size_t_equal(e->loc.start_pos, 4, "start_pos");
+    expect_size_t_equal(e->loc.end_pos, 6, "size");
     expect_size_t_equal(e->loc.line, 1, "line");
     expect_size_t_equal(e->loc.col, 5, "col");
-    expect_size_t_equal(e->loc.size, 1, "size");
 
     parse_teardown(&cu);
 }
@@ -724,8 +724,8 @@ void test_parse_paren_error_empty()
     if (e) {
         expect_size_t_equal(e->loc.line, 1, "line");
         expect_size_t_equal(e->loc.col, 2, "col");
-        expect_size_t_equal(e->loc.size, 1, "size");
-        expect_size_t_equal(e->loc.byte_pos, 1, "byte_pos");
+        expect_size_t_equal(e->loc.start_pos, 1, "start_pos");
+        expect_size_t_equal(e->loc.end_pos, 2, "size");
     }
 
     parse_teardown(&cu);
