@@ -1067,5 +1067,7 @@ Ast_node* parse_impl(struct parse_state* ps)
         }
     }
 
+    Ast_node_destroy(struct_type);
+
     return n;
 }

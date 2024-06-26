@@ -154,7 +154,7 @@ void declare_params(struct parse_state* ps, Ast_node* proto, Ast_node* struct_ty
         Ast_node* type_node = Ast_node_get(dec, 1);
         if (dec->type == Ast_type_self) {
             if (struct_type) {
-                type_node = struct_type;
+                type_node = Ast_node_copy(struct_type);
             } else {
                 dec = dec->next;
                 continue;
