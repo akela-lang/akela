@@ -9,6 +9,7 @@
 #include "parse_expr.h"
 #include "type_def.h"
 #include <assert.h>
+#include "symbol.h"
 
 Ast_node* parse_assignment(struct parse_state* ps);
 Ast_node* parse_eseq(struct parse_state* ps, size_t assign_index);

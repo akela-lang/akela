@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "ast.h"
 #include "zinc/hash.h"
+#include "symbol.h"
 
 bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b, bool in_prototype);
 
@@ -59,25 +60,6 @@ void environment_end(struct symbol_table* st)
     st->top = env->prev;
     env->prev = st->deactivated;
     st->deactivated = env;
-}
-
-void symbol_init(struct symbol* sym)
-{
-	sym->tk_type = token_none;
-	sym->td = NULL;
-	sym->tu = NULL;
-	sym->constructor = NULL;
-	sym->root = NULL;
-	sym->root_ptr = NULL;
-    sym->value = NULL;
-    sym->reference = NULL;
-    sym->assign_count = 0;
-}
-
-void symbol_create(struct symbol** sym)
-{
-    malloc_safe((void**)sym, sizeof(struct symbol));
-    symbol_init(*sym);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -445,22 +427,6 @@ bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b, bool in_prototype)
 	} else {
 		return false;
 	}
-}
-
-struct symbol* symbol_copy(struct symbol* sym)
-{
-	struct symbol* new_sym = NULL;
-	if (sym) {
-		malloc_safe((void**)&new_sym, sizeof(struct symbol));
-		symbol_init(new_sym);
-		new_sym->tk_type = sym->tk_type;
-		new_sym->tu = Ast_node_copy(sym->tu);
-		new_sym->td = type_def_copy(sym->td);
-		new_sym->constructor = symbol_copy(sym->constructor);
-		new_sym->root = Ast_node_copy(sym->root);
-		new_sym->root_ptr = sym->root_ptr;
-	}
-	return new_sym;
 }
 
 void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest)

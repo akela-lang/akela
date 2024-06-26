@@ -10,6 +10,7 @@
 #include "zinc/utf8.h"
 #include <ctype.h>
 #include "zinc/input_unicode.h"
+#include "symbol.h"
 
 bool lex_start(struct lex_state* ls,
                enum state_enum* state,

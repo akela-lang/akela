@@ -6,6 +6,7 @@
 #include "parse_tools.h"
 #include "ast.h"
 #include "symbol_table.h"
+#include "symbol.h"
 #include "zinc/memory.h"
 #include "parse_types.h"
 #include "type_def.h"

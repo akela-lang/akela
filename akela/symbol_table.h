@@ -15,18 +15,6 @@ struct environment {
 	struct environment* prev;
 };
 
-struct symbol {
-	enum token_enum tk_type;
-	struct type_def* td;
-	Ast_node* tu;
-	struct symbol* constructor;
-	Ast_node* root;
-	Ast_node* root_ptr;
-    void* value;
-    void* reference;
-    size_t assign_count;
-};
-
 struct symbol_table {
 	struct environment* initial;
 	struct environment* global;
@@ -44,8 +32,6 @@ AKELA_API struct symbol* environment_get(struct environment* env, struct buffer*
 AKELA_API struct symbol* environment_get_local(struct environment* env, struct buffer* value);
 AKELA_API void environment_begin(struct symbol_table* st);
 AKELA_API void environment_end(struct symbol_table* st);
-AKELA_API void symbol_init(struct symbol* sym);
-AKELA_API void symbol_create(struct symbol** sym);
 AKELA_API void environment_destroy(struct environment* env);
 AKELA_API void symbol_table_init(struct symbol_table* st);
 AKELA_API void symbol_table_create(struct symbol_table** st);

@@ -10,6 +10,7 @@
 #include "parse_types.h"
 #include "symbol_table.h"
 #include "zinc/memory.h"
+#include "symbol.h"
 #include "symbol_table.h"
 #include "parse_stmts.h"
 #include "parse_factor.h"

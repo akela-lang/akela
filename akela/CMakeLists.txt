@@ -15,6 +15,7 @@ set(lib_files
         comp_unit.c
         comp_table.c
         code_gen.c
+        symbol.c
 )
 
 add_library(akela STATIC ${lib_files})

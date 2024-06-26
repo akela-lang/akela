@@ -41,7 +41,7 @@
 #include "zinc/vector.h"
 #include <cassert>
 #include <iostream>
-#include <setjmp.h>
+#include "akela/symbol.h"
 
 #define TOPLEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"

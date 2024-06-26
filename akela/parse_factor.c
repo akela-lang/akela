@@ -11,6 +11,7 @@
 #include "symbol_table.h"
 #include "parse_factor.h"
 #include "type_def.h"
+#include "symbol.h"
 
 Ast_node* parse_not(struct parse_state* ps);
 Ast_node* parse_literal(struct parse_state* ps);
