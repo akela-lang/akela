@@ -9,44 +9,6 @@
 
 bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b, bool in_prototype);
 
-void environment_init(struct environment* env, struct environment* p)
-{
-	hash_table_init(&env->ht, ENVIRONMENT_HASH_TABLE_SIZE);
-	env->prev = p;
-}
-
-void environment_create(struct environment** env, struct environment* p)
-{
-    malloc_safe((void**)env, sizeof(struct environment));
-    environment_init(*env, p);
-}
-
-void environment_put(struct environment* env, struct buffer* value, struct symbol* sym)
-{
-	if (sym->tk_type == token_none) {
-		assert(sym->tk_type != token_none);
-	}
-	hash_table_add(&env->ht, value, sym);
-}
-
-struct symbol* environment_get(struct environment* env, struct buffer* value)
-{
-	for (struct environment* p = env; p; p = p->prev) {
-		struct symbol* found = (struct symbol*)hash_table_get(&p->ht, value);
-		if (found) {
-			assert(found->tk_type != token_none);
-			return found;
-		}
-	}
-
-	return NULL;
-}
-
-struct symbol* environment_get_local(struct environment* env, struct buffer* value)
-{
-	return (struct symbol*)hash_table_get(&env->ht, value);
-}
-
 void environment_begin(struct symbol_table* st)
 {
     struct environment* env = NULL;
@@ -62,26 +24,25 @@ void environment_end(struct symbol_table* st)
     st->deactivated = env;
 }
 
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void environment_destroy_symbol(struct symbol* sym)
+void symbol_table_add_reserved_word(struct environment* env, const char* name, enum token_enum tk_type)
 {
-    Ast_node_destroy(sym->tu);
-	type_def_destroy(sym->td);
-	if (sym->constructor) {
-		environment_destroy_symbol(sym->constructor);
-	}
-    Ast_node_destroy(sym->root);
-	free(sym);
+    struct buffer bf;
+
+    buffer_init(&bf);
+    buffer_copy_str(&bf, name);
+
+    struct symbol* sym = NULL;
+    malloc_safe((void**)&sym, sizeof(struct symbol));
+    symbol_init(sym);
+    sym->type = Symbol_type_reserved_word;
+    sym->tk_type = tk_type;
+
+    environment_put(env, &bf, sym);
+
+    buffer_destroy(&bf);
 }
 
-void environment_destroy(struct environment* env)
-{
-	hash_table_map(&env->ht, (void (*)(void*))environment_destroy_symbol);
-	hash_table_destroy(&env->ht);
-	free(env);
-}
-
-void symbol_table_add_reserved(struct environment* env, const char* name, enum token_enum type, struct type_def* td)
+void symbol_table_add_type(struct environment* env, const char* name, struct type_def* td)
 {
 	struct buffer bf;
 
@@ -91,7 +52,7 @@ void symbol_table_add_reserved(struct environment* env, const char* name, enum t
 	struct symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct symbol));
 	symbol_init(sym);
-	sym->tk_type = type;
+    sym->type = Symbol_type_type;
 	sym->td = td;
 
 	environment_put(env, &bf, sym);
@@ -101,24 +62,24 @@ void symbol_table_add_reserved(struct environment* env, const char* name, enum t
 
 void symbol_table_init_reserved(struct environment* env)
 {
-	symbol_table_add_reserved(env, "fn", token_fn, NULL);
-	symbol_table_add_reserved(env, "end", token_end, NULL);
-	symbol_table_add_reserved(env, "if", token_if, NULL);
-	symbol_table_add_reserved(env, "elseif", token_elseif, NULL);
-	symbol_table_add_reserved(env, "else", token_else, NULL);
-	symbol_table_add_reserved(env, "while", token_while, NULL);
-	symbol_table_add_reserved(env, "for", token_for, NULL);
-	symbol_table_add_reserved(env, "in", token_in, NULL);
-	symbol_table_add_reserved(env, "let", token_let, NULL);
-	symbol_table_add_reserved(env, "true", token_boolean, NULL);
-	symbol_table_add_reserved(env, "false", token_boolean, NULL);
-	symbol_table_add_reserved(env, "module", token_module, NULL);
-	symbol_table_add_reserved(env, "struct", token_struct, NULL);
-	symbol_table_add_reserved(env, "return", token_return, NULL);
-    symbol_table_add_reserved(env, "extern", token_extern, NULL);
-    symbol_table_add_reserved(env, "mut", token_mut, NULL);
-    symbol_table_add_reserved(env, "const", token_const, NULL);
-    symbol_table_add_reserved(env, "impl", token_impl, NULL);
+	symbol_table_add_reserved_word(env, "fn", token_fn);
+	symbol_table_add_reserved_word(env, "end", token_end);
+	symbol_table_add_reserved_word(env, "if", token_if);
+	symbol_table_add_reserved_word(env, "elseif", token_elseif);
+	symbol_table_add_reserved_word(env, "else", token_else);
+	symbol_table_add_reserved_word(env, "while", token_while);
+	symbol_table_add_reserved_word(env, "for", token_for);
+	symbol_table_add_reserved_word(env, "in", token_in);
+	symbol_table_add_reserved_word(env, "let", token_let);
+	symbol_table_add_reserved_word(env, "true", token_boolean);
+	symbol_table_add_reserved_word(env, "false", token_boolean);
+	symbol_table_add_reserved_word(env, "module", token_module);
+	symbol_table_add_reserved_word(env, "struct", token_struct);
+	symbol_table_add_reserved_word(env, "return", token_return);
+    symbol_table_add_reserved_word(env, "extern", token_extern);
+    symbol_table_add_reserved_word(env, "mut", token_mut);
+    symbol_table_add_reserved_word(env, "const", token_const);
+    symbol_table_add_reserved_word(env, "impl", token_impl);
 }
 
 void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)
@@ -134,7 +95,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	buffer_copy_str(&td->name, name);
 	td->is_signed = true;
 	td->bit_count = 32;
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
 
 	name = "i64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -143,7 +104,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	buffer_copy_str(&td->name, name);
 	td->is_signed = true;
 	td->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
 
     name = "u8";
     malloc_safe((void**)&td, sizeof(struct type_def));
@@ -151,7 +112,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
     td->type = type_integer;
     buffer_copy_str(&td->name, name);
     td->bit_count = 8;
-    symbol_table_add_reserved(env, name, token_id, td);
+    symbol_table_add_type(env, name, td);
 
     name = "u32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -159,7 +120,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->type = type_integer;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 32;
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
 
 	name = "u64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -167,7 +128,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->type = type_integer;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
 
 	name = "f32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -175,7 +136,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->type = type_float;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 32;
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
 
 	name = "f64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -183,21 +144,21 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	td->type = type_float;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 64;
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
 
 	name = "bool";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_boolean;
 	buffer_copy_str(&td->name, name);
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
 
     name = "Function";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_function;
 	buffer_copy_str(&td->name, name);
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
     st->function_type_def = td;
 
 	name = "Module";
@@ -205,7 +166,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 	type_def_init(td);
 	td->type = type_module;
 	buffer_copy_str(&td->name, name);
-	symbol_table_add_reserved(env, name, token_id, td);
+	symbol_table_add_type(env, name, td);
 }
 
 void symbol_table_add_numeric(struct symbol_table* st, const char* name)
@@ -468,7 +429,7 @@ void set_current_function(struct environment* env, Ast_node* fd)
 	struct symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct symbol));
 	symbol_init(sym);
-	sym->tk_type = token_id;
+	sym->type = Symbol_type_info;
 	sym->root_ptr = fd;
 
 	struct buffer bf;

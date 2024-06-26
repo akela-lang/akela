@@ -194,7 +194,7 @@ Ast_node* parse_extern(struct parse_state* ps)
                 struct symbol *new_sym = NULL;
                 malloc_safe((void **) &new_sym, sizeof(struct symbol));
                 symbol_init(new_sym);
-                new_sym->tk_type = token_id;
+                new_sym->type = Symbol_type_variable;
                 new_sym->tu = Ast_node_copy(n->tu);
                 environment_put(ps->st->top, &id_node->value, new_sym);
                 n->sym = new_sym;
@@ -654,7 +654,7 @@ Ast_node* parse_struct(struct parse_state* ps)
 			struct symbol* sym = NULL;
 			malloc_safe((void**)&sym, sizeof(struct symbol));
 			symbol_init(sym);
-			sym->tk_type = token_id;
+			sym->type = Symbol_type_type;
 			sym->td = td;
 			environment_put(ps->st->top, &id->value, sym);
             n->sym = sym;

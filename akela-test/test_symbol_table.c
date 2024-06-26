@@ -9,28 +9,23 @@ void test_symbol_table_env()
 
 	struct environment* env;
 
-	/* allocate env */
 	malloc_safe((void**)&env, sizeof(struct environment));
 	environment_init(env, NULL);
 
 	struct buffer value;
 	buffer_init(&value);
 
-	/* allocate bf{} */
 	buffer_copy_str(&value, "index");
 
-	/* allocate sym */
 	struct symbol* sym;
 	malloc_safe((void**)&sym, sizeof(struct symbol));
 	symbol_init(sym);
-	sym->tk_type = token_id;
+	sym->type = Symbol_type_variable;
 
 	struct symbol* x;
 	x = environment_get(env, &value);
 	expect_null(x, "x null");
 
-	/* allocate env{} */
-	/* transfer sym -> env{} */
 	environment_put(env, &value, sym);
 
 	x = environment_get(env, &value);
@@ -38,7 +33,6 @@ void test_symbol_table_env()
 
 	assert_true(x == sym, "x == sym");
 
-	/* destroy env env{} value{} */
 	environment_destroy(env);
 	buffer_destroy(&value);
 }

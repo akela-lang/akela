@@ -28,6 +28,7 @@ struct symbol* symbol_copy(struct symbol* sym)
     if (sym) {
         malloc_safe((void**)&new_sym, sizeof(struct symbol));
         symbol_init(new_sym);
+        new_sym->type = sym->type;
         new_sym->tk_type = sym->tk_type;
         new_sym->tu = Ast_node_copy(sym->tu);
         new_sym->td = type_def_copy(sym->td);

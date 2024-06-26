@@ -7,13 +7,7 @@
 #include "token.h"
 #include <stdlib.h>
 #include "ast.h"
-
-#define ENVIRONMENT_HASH_TABLE_SIZE 32
-
-struct environment {
-	struct hash_table ht;
-	struct environment* prev;
-};
+#include "environment.h"
 
 struct symbol_table {
 	struct environment* initial;
@@ -25,14 +19,8 @@ struct symbol_table {
     struct type_def* function_type_def;
 };
 
-AKELA_API void environment_init(struct environment* env, struct environment* p);
-AKELA_API void environment_create(struct environment** env, struct environment* p);
-AKELA_API void environment_put(struct environment* env, struct buffer* value, struct symbol* sym);
-AKELA_API struct symbol* environment_get(struct environment* env, struct buffer* value);
-AKELA_API struct symbol* environment_get_local(struct environment* env, struct buffer* value);
 AKELA_API void environment_begin(struct symbol_table* st);
 AKELA_API void environment_end(struct symbol_table* st);
-AKELA_API void environment_destroy(struct environment* env);
 AKELA_API void symbol_table_init(struct symbol_table* st);
 AKELA_API void symbol_table_create(struct symbol_table** st);
 AKELA_API void symbol_table_destroy(struct symbol_table* st);

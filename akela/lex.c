@@ -224,9 +224,10 @@ bool lex_word(struct lex_state* ls,
 
         if (*done) {
             struct symbol* sym = environment_get(ls->st->top, &t->value);
-            assert(!sym || sym->tk_type != token_none);
-            if (sym) {
+            if (sym && sym->type == Symbol_type_reserved_word) {
                 t->type = sym->tk_type;
+            } else {
+                t->type = token_id;
             }
             *state = state_start;
             break;
@@ -247,9 +248,10 @@ bool lex_word(struct lex_state* ls,
                 }
             } else {
                 struct symbol* sym = environment_get(ls->st->top, &t->value);
-                assert(!sym || sym->tk_type != token_none);
-                if (sym) {
+                if (sym && sym->type == Symbol_type_reserved_word) {
                     t->type = sym->tk_type;
+                } else {
+                    t->type = token_id;
                 }
                 *state = state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
@@ -271,9 +273,10 @@ bool lex_word(struct lex_state* ls,
                 }
             } else {
                 struct symbol* sym = environment_get(ls->st->top, &t->value);
-                assert(!sym || sym->tk_type != token_none);
-                if (sym) {
+                if (sym && sym->type == Symbol_type_reserved_word) {
                     t->type = sym->tk_type;
+                } else {
+                    t->type = token_id;
                 }
                 *state = state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);

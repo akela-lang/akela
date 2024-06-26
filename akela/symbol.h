@@ -9,6 +9,7 @@ typedef enum Symbol_type {
     Symbol_type_reserved_word,
     Symbol_type_type,
     Symbol_type_variable,
+    Symbol_type_info,
 } Symbol_type;
 
 struct symbol {

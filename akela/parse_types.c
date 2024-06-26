@@ -556,7 +556,7 @@ void check_id_node(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
             struct symbol* new_sym = NULL;
             malloc_safe((void**)&new_sym, sizeof(struct symbol));
             symbol_init(new_sym);
-            new_sym->tk_type = token_id;
+            new_sym->type = Symbol_type_variable;
             new_sym->tu = Ast_node_copy(n);
             environment_put(ps->st->top, &id_node->value, new_sym);
             id_node->sym = new_sym;
