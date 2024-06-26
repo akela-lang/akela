@@ -22,7 +22,7 @@ struct hash_table {
     struct hash_list* buckets;
 };
 
-typedef void (hash_table_func)(void*);
+typedef void (*hash_table_func)(void*);
 
 /* dynamic-output-none */
 ZINC_API unsigned int hash_calc(struct buffer* value, unsigned int size);

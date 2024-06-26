@@ -9,6 +9,7 @@
 #include "symbol_table.h"
 #include "zinc/vector.h"
 #include "ast.h"
+#include "zinc/hash.h"
 
 enum type {
 	type_none,
@@ -29,7 +30,11 @@ struct type_def {
     bool is_signed;
     Ast_node* composite;
     void* composite_type;
+    struct hash_table struct_impl;
+    struct hash_table type_impl;
 };
+
+#define IMPL_HASH_SIZE 32
 
 AKELA_API void type_def_create(struct type_def** n);
 AKELA_API void type_def_destroy(struct type_def* n);

@@ -5,6 +5,7 @@
 #include "zinc/memory.h"
 #include "zinc/buffer.h"
 #include "ast.h"
+#include "struct_element.h"
 
 /* dynamic-output n */
 void type_def_create(struct type_def** n)
@@ -22,16 +23,20 @@ void type_def_init(struct type_def* n)
 	n->bit_count = 0;
 	n->composite = NULL;
     n->composite_type = NULL;
+    hash_table_init(&n->struct_impl, IMPL_HASH_SIZE);
+    hash_table_init(&n->type_impl, IMPL_HASH_SIZE);
 }
 
-/* dynamic-destroy n n{} */
 void type_def_destroy(struct type_def* n)
 {
 	if (n) {
-		/* destroy n n{} */
 		buffer_destroy(&n->name);
         Ast_node_destroy(n->composite);
-		free(n);
+        hash_table_map(&n->struct_impl, (hash_table_func)Struct_element_destroy);
+        hash_table_destroy(&n->struct_impl);
+        hash_table_map(&n->type_impl, (hash_table_func)Ast_node_destroy);
+        hash_table_destroy(&n->type_impl);
+        free(n);
 	}
 }
 

@@ -14,3 +14,9 @@ void Struct_element_create(Struct_element** se)
     malloc_safe((void**)se, sizeof(Struct_element));
     Struct_element_init(*se);
 }
+
+void Struct_element_destroy(Struct_element* se)
+{
+    Ast_node_destroy(se->tu);
+    Ast_node_destroy(se->func);
+}

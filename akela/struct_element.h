@@ -16,4 +16,8 @@ typedef struct Struct_element {
     size_t index;
 } Struct_element;
 
+void Struct_element_init(Struct_element* se);
+void Struct_element_create(Struct_element** se);
+void Struct_element_destroy(Struct_element* se);
+
 #endif
