@@ -80,6 +80,7 @@ void symbol_table_init_reserved(struct environment* env)
     symbol_table_add_reserved_word(env, "mut", token_mut);
     symbol_table_add_reserved_word(env, "const", token_const);
     symbol_table_add_reserved_word(env, "impl", token_impl);
+    symbol_table_add_reserved_word(env, "self", token_self);
 }
 
 void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)

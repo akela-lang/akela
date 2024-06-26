@@ -63,6 +63,7 @@ typedef enum Ast_type {
     Ast_type_struct_literal_field,
     Ast_type_ellipsis,
     Ast_type_impl,
+    Ast_type_self,
 	Ast_type_count		/* keep at end */
 } Ast_type;
 
@@ -127,6 +128,7 @@ enum result Ast_set_names(char** names)
     names[Ast_type_struct_literal_field] = "struct-literal-field";
     names[Ast_type_ellipsis] = "ellipsis";
     names[Ast_type_impl] = "impl";
+    names[Ast_type_self] = "self";
 
     for (int i = 0; i < Ast_type_count; i++) {
         if (names[i] == NULL) {
@@ -186,8 +188,6 @@ AKELA_API void Ast_node_print(Ast_node* root, bool debug);
 AKELA_API Ast_node* Ast_node_copy(Ast_node* n);
 AKELA_API bool Ast_node_match(Ast_node* a, Ast_node* b);
 AKELA_API size_t Ast_node_count_children(Ast_node* n);
-AKELA_API void ast_node_location_update_token(Ast_node* n, struct token* t);
-AKELA_API void ast_node_location_update(Ast_node* n, Ast_node* n2);
 AKELA_API void Type_options_init(Type_options* to);
 AKELA_API void Type_options_destroy(Type_options* to);
 AKELA_API void Type_options_reduce_dimension(Type_options* to);

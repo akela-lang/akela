@@ -42,7 +42,7 @@ Ast_node* parse_factor(struct parse_state* ps)
     assert(t0);
 
 	if (t0->type == token_fn) {
-        n = parse_function(ps, false);
+        n = parse_function(ps, false, NULL);
 
     } else if (t0->type == token_if) {
         n = parse_if(ps);
@@ -53,7 +53,7 @@ Ast_node* parse_factor(struct parse_state* ps)
 	} else if (t0->type == token_number || t0->type == token_string || t0->type == token_boolean) {
 		n = parse_literal(ps);
 
-	} else if (t0->type == token_id) {
+	} else if (t0->type == token_id || t0->type == token_self) {
 		n = parse_id(ps);
 
 	} else if (t0->type == token_plus || t0->type == token_minus) {
@@ -70,7 +70,7 @@ Ast_node* parse_factor(struct parse_state* ps)
 	return n;
 }
 
-Ast_node* parse_function(struct parse_state* ps, bool is_method)
+Ast_node* parse_function(struct parse_state* ps, bool is_method, Ast_node* struct_type)
 {
     Ast_node* n = NULL;
 
@@ -86,14 +86,14 @@ Ast_node* parse_function(struct parse_state* ps, bool is_method)
     /* 0 prototype */
     Ast_node* proto = NULL;
     bool has_id;
-    proto = parse_prototype(ps, true, false, true, &has_id);
+    proto = parse_prototype(ps, true, false, is_method, true, &has_id);
     Ast_node_add(n, proto);
     if (proto->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
 
     environment_begin(ps->st);
-    declare_params(ps, proto);
+    declare_params(ps, proto, struct_type);
     set_current_function(ps->st->top, n);
     Ast_node* tu = proto2type(ps->st, proto);
     n->tu = tu;
@@ -487,10 +487,20 @@ Ast_node* parse_id(struct parse_state* ps)
     Ast_node* n = NULL;
     Ast_node_create(&n);
 
+    struct token* t = get_lookahead(ps);
+
     struct token* id = NULL;
-    if (!match(ps, token_id, "expecting identifier", &id, n)) {
-        /* test case: no test case needed */
-        assert(false);
+
+    if (t->type == token_id) {
+        if (!match(ps, token_id, "expecting identifier", &id, n)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
+    } else if (t->type == token_self) {
+        if (!match(ps, token_self, "expecting self", &id, n)) {
+            /* test case: no test case needed */
+            assert(false);
+        }
     }
 
     struct symbol* sym = environment_get(ps->st->top, &id->value);

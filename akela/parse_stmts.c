@@ -148,7 +148,7 @@ Ast_node* parse_extern(struct parse_state* ps)
 
     Ast_node* proto = NULL;
     bool has_id;
-    proto = parse_prototype(ps, false, true, false, &has_id);
+    proto = parse_prototype(ps, false, true, false, false, &has_id);
     if (proto) {
         Ast_node_add(n, proto);
         if (proto->type == Ast_type_error) {
@@ -278,7 +278,7 @@ Ast_node* parse_for(struct parse_state* ps)
     consume_newline(ps, n);
 
 	Ast_node* dec = NULL;
-    dec = parse_declaration(ps, true, true);
+    dec = parse_declaration(ps, true, false, true);
 	if (dec && dec->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -601,7 +601,7 @@ Ast_node* parse_struct(struct parse_state* ps)
     }
 
 	Ast_node* a = NULL;
-    a = parse_declaration(ps, false, true);
+    a = parse_declaration(ps, false, false, true);
 	if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
@@ -619,7 +619,7 @@ Ast_node* parse_struct(struct parse_state* ps)
 		}
 
 		Ast_node* b = NULL;
-        b = parse_declaration(ps, false, true);
+        b = parse_declaration(ps, false, false, true);
 		if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
@@ -1009,15 +1009,30 @@ Ast_node* parse_impl(struct parse_state* ps)
     if (!match(ps, token_id, "expected identifier", &id, n)) {
         n->type = Ast_type_error;
     }
-    token_destroy(id);
-    free(id);
 
     consume_newline(ps, n);
+
+    Ast_node* struct_type = NULL;
+    if (id) {
+        struct symbol* sym = environment_get(ps->st->top, &id->value);
+        if (sym->type == Symbol_type_type) {
+            if (sym->td->type == type_struct) {
+                Ast_node* tu = NULL;
+                Ast_node_create(&tu);
+                tu->type = Ast_type_type;
+                tu->td = sym->td;
+                struct_type = tu;
+            }
+        }
+    }
+
+    token_destroy(id);
+    free(id);
 
     while (true) {
         struct token* t = get_lookahead(ps);
         if (t->type == token_fn) {
-            Ast_node* func = parse_function(ps, true);
+            Ast_node* func = parse_function(ps, true, struct_type);
             Ast_node_add(n, func);
 
             struct token* t2 = get_lookahead(ps);

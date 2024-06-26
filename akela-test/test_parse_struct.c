@@ -340,15 +340,15 @@ void test_parse_struct_impl()
             "  y: f64\n"
             "end\n"
             "struct Line\n"
-                "  p0: Point\n"
-                "  p1: Point\n"
-                " end\n"
-                "impl Line\n"
-                "  fn length(p0: Point, p1: Point)->f64\n"
-                "    sqrt(pow(p1.x - p0.x, 2) + pow(p1.y - p0.y, 2))\n"
-                "  end\n"
-                "end\n",
-                &cu);
+            "  p0: Point\n"
+            "  p1: Point\n"
+            " end\n"
+            "impl Line\n"
+            "  fn length(self)->f64\n"
+            "    sqrt(pow(self.p1.x - self.p0.x, 2) + pow(self.p1.y - self.p0.y, 2))\n"
+            "  end\n"
+            "end\n",
+            &cu);
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 

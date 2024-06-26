@@ -15,16 +15,19 @@ AKELA_API Ast_node* parse_prototype(
         struct parse_state* ps,
         bool is_function,
         bool is_extern,
+        bool is_method,
         bool require_param_name,
         bool* has_id);
 AKELA_API Ast_node* parse_dseq(
         struct parse_state* ps,
         bool require_param_name,
-        bool is_extern);
-AKELA_API void declare_params(struct parse_state* ps, Ast_node* proto);
+        bool is_extern,
+        bool is_method);
+AKELA_API void declare_params(struct parse_state* ps, Ast_node* proto, Ast_node* struct_type);
 AKELA_API Ast_node* parse_declaration(
     struct parse_state* ps,
     bool add_symbol,
+    bool is_method,
     bool require_param_name);
 AKELA_API Ast_node* parse_type(struct parse_state* ps);
 AKELA_API void declare_type(struct parse_state* ps, Ast_node* n, Ast_node* id_node);
