@@ -27,8 +27,9 @@ Ast_node* parse_struct(struct parse_state* ps);
 Ast_node* parse_return(struct parse_state* ps);
 Ast_node* parse_let(struct parse_state* ps);
 Ast_node* parse_let_lseq(struct parse_state* ps);
-Ast_node* parse_let_rseq(struct parse_state* ps, struct list* l);
+Ast_node* parse_let_rseq(struct parse_state* ps);
 Ast_node* parse_extern(struct parse_state* ps);
+Ast_node* parse_impl(struct parse_state* ps);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -121,6 +122,8 @@ Ast_node* parse_stmt(struct parse_state* ps)
         n = parse_let(ps);
     } else if (t0->type == token_extern) {
         n = parse_extern(ps);
+    } else if (t0->type == token_impl) {
+        n = parse_impl(ps);
 	} else {
         n = parse_expr(ps);
 	}
@@ -798,9 +801,7 @@ Ast_node* parse_let(struct parse_state* ps)
         consume_newline(ps, n);
 
         Ast_node* b = NULL;
-        struct list b_l;
-        list_init(&b_l);
-        b = parse_let_rseq(ps, &b_l);
+        b = parse_let_rseq(ps);
         if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
@@ -821,14 +822,12 @@ Ast_node* parse_let(struct parse_state* ps)
                 n->type = Ast_type_error;
             } else {
                 for (int i = 0; i < a_count; i++) {
-                    Ast_node* x = Ast_node_get(a, i);
                     Ast_node* y = Ast_node_get(b, i);
-                    struct location* y_loc = list_get(&b_l, i);
                     if (!y->tu) {
-                        error_list_set(ps->el, y_loc, "cannot assign with operand that has no value");
+                        error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
                         n->type = Ast_type_error;
                     } else if (!type_use_can_cast(type_use, y->tu)) {
-                        error_list_set(ps->el, y_loc, "values in assignment are not compatible");
+                        error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
                         n->type = Ast_type_error;
                     }
                 }
@@ -858,8 +857,6 @@ Ast_node* parse_let(struct parse_state* ps)
                 lhs = lhs->next;
             }
         }
-
-        list_destroy(&b_l, (list_node_destroy)location_item_destroy);
     }
 
     return n;
@@ -943,10 +940,9 @@ Ast_node* parse_let_lseq(struct parse_state* ps)
 
 /* let_rseq -> simple_expr let_rseq' */
 /* let_rseq' -> , simple_expr let_rseq' */
-Ast_node* parse_let_rseq(struct parse_state* ps, struct list* l)
+Ast_node* parse_let_rseq(struct parse_state* ps)
 {
     Ast_node* a = NULL;
-    struct location a_loc;
     a = parse_simple_expr(ps);
     if (!a) {
         return NULL;
@@ -959,11 +955,6 @@ Ast_node* parse_let_rseq(struct parse_state* ps, struct list* l)
     if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
-
-    struct location* temp = NULL;
-    location_create(&temp);
-    *temp = a_loc;
-    list_add_item(l, temp);
 
     Ast_node_add(n, a);
 
@@ -987,14 +978,76 @@ Ast_node* parse_let_rseq(struct parse_state* ps, struct list* l)
             n->type = Ast_type_error;
         }
 
-        location_create(&temp);
-        list_add_item(l, temp);
         if (b) {
             Ast_node_add(n, b);
         } else {
             struct location b_loc = get_location(ps);
             error_list_set(ps->el, &b_loc, "expected an expression");
             n->type = Ast_type_error;
+        }
+    }
+
+    return n;
+}
+
+Ast_node* parse_impl(struct parse_state* ps)
+{
+    Ast_node* n = NULL;
+    Ast_node_create(&n);
+    n->type = Ast_type_impl;
+
+    struct token* imp = NULL;
+    if (!match(ps, token_impl, "expected impl", &imp, n)) {
+        /* test case: no test case needed */
+        assert(false);
+    }
+    token_destroy(imp);
+    free(imp);
+
+    struct token* id = NULL;
+    if (!match(ps, token_id, "expected identifier", &id, n)) {
+        n->type = Ast_type_error;
+    }
+    token_destroy(id);
+    free(id);
+
+    consume_newline(ps, n);
+
+    while (true) {
+        struct token* t = get_lookahead(ps);
+        if (t->type == token_fn) {
+            Ast_node* func = parse_function(ps, true);
+            Ast_node_add(n, func);
+
+            struct token* t2 = get_lookahead(ps);
+            if (t2->type == token_end) {
+                struct token* end = NULL;
+                if (!match(ps, token_end, "expected end", &end, n)) {
+                    assert(false);
+                }
+                token_destroy(end);
+                free(end);
+                break;
+            } else {
+                bool has_sep;
+                parse_separator(ps, n, &has_sep);
+                if (!has_sep) {
+                    error_list_set(ps->el, &t->loc, "expected separator");
+                    n->type = Ast_type_error;
+                }
+            }
+        } else if (t->type == token_end) {
+            struct token* end = NULL;
+            if (!match(ps, token_end, "expected end", &end, n)) {
+                assert(false);
+            }
+            token_destroy(end);
+            free(end);
+            break;
+        } else {
+            error_list_set(ps->el, &t->loc, "expected fn or end");
+            n->type = Ast_type_error;
+            break;
         }
     }
 

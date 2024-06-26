@@ -54,7 +54,7 @@ AKELA_API bool symbol_table_is_global(struct symbol_table* st);
 AKELA_API bool is_numeric(struct type_def* td);
 AKELA_API bool type_find_whole(struct symbol_table* st, Ast_node* a, Ast_node* b);
 AKELA_API bool type_def_can_cast(struct type_def* a, struct type_def* b);
-AKELA_API bool type_use_can_cast(Ast_node* a, Ast_node* b);
+AKELA_API bool type_use_can_cast(Ast_node* a, Ast_node* b           );
 AKELA_API void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest);
 AKELA_API void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name);
 AKELA_API void set_current_function(struct environment* env, Ast_node* fd);

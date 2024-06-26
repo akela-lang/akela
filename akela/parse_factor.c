@@ -23,7 +23,6 @@ Ast_node* parse_sign(struct parse_state* ps);
 Ast_node* parse_array_literal(struct parse_state* ps);
 void parse_aseq(struct parse_state* ps, Ast_node* parent);
 Ast_node* parse_parenthesis(struct parse_state* ps);
-Ast_node* parse_function(struct parse_state* ps);
 Ast_node* parse_if(struct parse_state* ps);
 void parse_elseif(struct parse_state* ps, Ast_node* parent);
 Ast_node* parse_else(struct parse_state* ps);
@@ -42,7 +41,7 @@ Ast_node* parse_factor(struct parse_state* ps)
     assert(t0);
 
 	if (t0->type == token_fn) {
-        n = parse_function(ps);
+        n = parse_function(ps, false);
 
     } else if (t0->type == token_if) {
         n = parse_if(ps);
@@ -70,7 +69,7 @@ Ast_node* parse_factor(struct parse_state* ps)
 	return n;
 }
 
-Ast_node* parse_function(struct parse_state* ps)
+Ast_node* parse_function(struct parse_state* ps, bool is_method)
 {
     Ast_node* n = NULL;
 
@@ -120,37 +119,41 @@ Ast_node* parse_function(struct parse_state* ps)
 	token_destroy(end);
 	free(end);
 
-    Ast_node* id_node = Ast_node_get(proto, 0);
     if (n->type != Ast_type_error) {
-        /* check and save symbol */
-        struct symbol* search = environment_get_local(ps->st->top, &id_node->value);
-        if (search) {
-            buffer_finish(&id_node->value);
-            error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
-            n->type = Ast_type_error;
-            /* test case: test_parse_function_error_duplicate_declaration */
-        } else {
-            struct symbol* sym = environment_get(ps->st->top, &id_node->value);
-            if (sym && sym->td) {
-                buffer_finish(&id_node->value);
-                error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
-                n->type = Ast_type_error;
-                /* test case: test_parse_function_error_identifier_reserved */
-            } else {
-                struct symbol* new_sym = NULL;
-                malloc_safe((void**)&new_sym, sizeof(struct symbol));
-                symbol_init(new_sym);
-                new_sym->tk_type = token_id;
-                new_sym->tu = Ast_node_copy(tu);
-                environment_put(ps->st->top, &id_node->value, new_sym);
-                n->sym = new_sym;
-            }
-        }
-
         /* check return type */
         Ast_node* dret = Ast_node_get(proto, 2);
         if (!check_return_type(ps, proto, stmts_node, &dret->loc)) {
             n->type = Ast_type_error;
+        }
+    }
+
+    if (!is_method) {
+        if (n->type != Ast_type_error) {
+            Ast_node* id_node = Ast_node_get(proto, 0);
+            /* check and save symbol */
+            struct symbol* search = environment_get_local(ps->st->top, &id_node->value);
+            if (search) {
+                buffer_finish(&id_node->value);
+                error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
+                n->type = Ast_type_error;
+                /* test case: test_parse_function_error_duplicate_declaration */
+            } else {
+                struct symbol* sym = environment_get(ps->st->top, &id_node->value);
+                if (sym && sym->td) {
+                    buffer_finish(&id_node->value);
+                    error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
+                    n->type = Ast_type_error;
+                    /* test case: test_parse_function_error_identifier_reserved */
+                } else {
+                    struct symbol* new_sym = NULL;
+                    malloc_safe((void**)&new_sym, sizeof(struct symbol));
+                    symbol_init(new_sym);
+                    new_sym->tk_type = token_id;
+                    new_sym->tu = Ast_node_copy(tu);
+                    environment_put(ps->st->top, &id_node->value, new_sym);
+                    n->sym = new_sym;
+                }
+            }
         }
     }
 

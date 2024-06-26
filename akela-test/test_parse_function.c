@@ -1379,7 +1379,7 @@ void test_parse_function_error_require_params_name()
 
     struct comp_unit cu;
 
-    parse_setup("let a: fn(i64) = fn(i64) end", &cu);
+    parse_setup("let a: fn(i64) = fn(i64: i64) end", &cu);
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "identifier reserved as a type: i64");

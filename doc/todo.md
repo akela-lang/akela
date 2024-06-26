@@ -1,5 +1,11 @@
 # Akela Todo
-* impl statement
+* struct element
+* type def: elements
+* type use
+* context dot: method call, function call, ptr, value
+* context subscript: ptr, value
+* check impl
+* code gen impl
 * struct methods
 * use malloc when returning a pointer
 * for loop

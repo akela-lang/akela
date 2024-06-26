@@ -150,7 +150,9 @@ void declare_params(struct parse_state* ps, Ast_node* proto)
     while (dec) {
         Ast_node* id_node = Ast_node_get(dec, 0);
         Ast_node* type_node = Ast_node_get(dec, 1);
-        declare_type(ps, type_node, id_node);
+        if (dec->type != Ast_type_error && type_node->type != Ast_type_error) {
+            declare_type(ps, type_node, id_node);
+        }
         dec = dec->next;
     }
 }
@@ -323,14 +325,14 @@ Ast_node* parse_declaration(
         }
 
         Ast_node* type_use = NULL;
-        if (add_symbol) {
-            type_use = parse_type(ps);
-            declare_type(ps, type_use, id_node);
-        } else {
-            type_use = parse_type(ps);
-        }
+        type_use = parse_type(ps);
         if (type_use && type_use->type == Ast_type_error) {
             n->type = Ast_type_error;
+        }
+        if (add_symbol) {
+            if (n->type != Ast_type_error) {
+                declare_type(ps, type_use, id_node);
+            }
         }
 
         if (!type_use) {
@@ -517,6 +519,7 @@ Ast_node* parse_type(struct parse_state* ps)
         t0 = get_lookahead(ps);
         if (t0->type != token_fn && t0->type != token_id) {
             error_list_set(ps->el, &t0->loc, "expected type identifier or fn");
+            n->type = Ast_type_error;
         }
     }
 

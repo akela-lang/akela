@@ -326,6 +326,35 @@ void test_parse_struct_error_duplicate()
     parse_teardown(&cu);
 }
 
+void test_parse_struct_impl()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup(
+            "extern pow(f64, f64)->f64\n"
+            "extern sqrt(f64)->f64\n"
+            "struct Point\n"
+            "  x: f64\n"
+            "  y: f64\n"
+            "end\n"
+            "struct Line\n"
+                "  p0: Point\n"
+                "  p1: Point\n"
+                " end\n"
+                "impl Line\n"
+                "  fn length(p0: Point, p1: Point)->f64\n"
+                "    sqrt(pow(p1.x - p0.x, 2) + pow(p1.y - p0.y, 2))\n"
+                "  end\n"
+                "end\n",
+                &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_struct()
 {
     test_parse_struct_field_assign();
@@ -337,4 +366,5 @@ void test_parse_struct()
     test_parse_struct_error_expected_end();
     test_parse_struct_error_expected_end2();
     test_parse_struct_error_duplicate();
+    test_parse_struct_impl();
 }
