@@ -18,6 +18,7 @@ set(lib_files
         symbol.c
         environment.h
         environment.c
+        struct_element.c
 )
 
 add_library(akela STATIC ${lib_files})

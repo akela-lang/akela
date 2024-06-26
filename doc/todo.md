@@ -1,5 +1,4 @@
 # Akela Todo
-* struct element
 * type def: elements
 * type use
 * context dot: method call, function call, ptr, value
