@@ -34,6 +34,7 @@ AKELA_API void declare_type(struct parse_state* ps, Ast_node* n, Ast_node* id_no
 AKELA_API bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_node, struct location* loc);
 AKELA_API void get_function_children(Ast_node* proto, Ast_node** dseq, Ast_node** dret);
 AKELA_API Type_use* proto2type(struct symbol_table* st, Ast_node* proto);
+AKELA_API Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto);
 AKELA_API Type_use* get_function_input_type(Ast_node* tu, int index);
 AKELA_API bool check_input_type(struct parse_state* ps, Ast_node* proto, int index, Ast_node* a, struct location* loc_expr);
 AKELA_API void Override_rhs(Type_use* tu, Ast_node* rhs);

@@ -11,6 +11,7 @@
 #include "type_use.h"
 
 typedef struct Type_use Type_use;
+typedef struct Ast_node Ast_node;
 
 struct symbol_table {
 	struct environment* initial;
@@ -29,13 +30,13 @@ AKELA_API void symbol_table_create(struct symbol_table** st);
 AKELA_API void symbol_table_destroy(struct symbol_table* st);
 AKELA_API bool symbol_table_is_global(struct symbol_table* st);
 AKELA_API bool is_numeric(struct type_def* td);
-AKELA_API bool type_find_whole(struct symbol_table* st, struct Type_use* a, struct Type_use* b);
+AKELA_API bool type_find_whole(struct symbol_table* st, Type_use* a, Type_use* b);
 AKELA_API bool type_def_can_cast(struct type_def* a, struct type_def* b);
 AKELA_API bool type_use_can_cast(Type_use* a, Type_use* b);
 AKELA_API void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest);
 AKELA_API void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name);
-AKELA_API void set_current_function(struct environment* env, struct Ast_node* fd);
-AKELA_API struct Ast_node* get_current_function(struct environment* env);
+AKELA_API void set_current_function(struct environment* env, Ast_node* fd);
+AKELA_API Ast_node* get_current_function(struct environment* env);
 AKELA_API size_t symbol_table_generate_id(struct symbol_table* st);
 AKELA_API void symbol_table_print(struct symbol_table* st);
 

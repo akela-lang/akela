@@ -3,6 +3,7 @@
 
 void Type_use_init(Type_use* tu)
 {
+    tu->type = Type_use_type_def;
     tu->td = NULL;
     buffer_init(&tu->name);
     VectorInit(&tu->dim, sizeof(Type_dimension));

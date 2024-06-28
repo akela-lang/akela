@@ -20,7 +20,14 @@ typedef enum Type_context {
     Type_context_ptr,
 } Type_context;
 
+typedef enum Type_use_type {
+    Type_use_type_def,
+    Type_use_function_inputs,
+    Type_use_function_outputs,
+} Type_use_type;
+
 typedef struct Type_use {
+    Type_use_type type;
     struct type_def* td;
     struct buffer name;
     Vector dim;

@@ -51,8 +51,9 @@ and capable of robust software construction.
     ninja -C cmake-build-debug
 
 ## CMake options to specify compiler
-    -DCMAKE_C_COMPILER=clang
-    -DCMAKE_CXX_COMPILER=clang++
+    rm -r cmake-build-debug
+    cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja
+    ninja -C cmake-build-debug
 
 ## Optional LLVM targets
 	ninja -C build-release clang -j 8

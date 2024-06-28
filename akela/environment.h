@@ -12,6 +12,8 @@ struct environment {
     struct environment* prev;
 };
 
+struct symbol;
+
 AKELA_API void environment_init(struct environment* env, struct environment* p);
 AKELA_API void environment_create(struct environment** env, struct environment* p);
 AKELA_API void environment_put(struct environment* env, struct buffer* value, struct symbol* sym);

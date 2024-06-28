@@ -651,6 +651,52 @@ Type_use* proto2type(struct symbol_table* st, Ast_node* proto)
 	return tu;
 }
 
+Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto)
+{
+    Type_use* func = NULL;
+    Type_use_create(&func);
+
+    struct buffer bf;
+    buffer_init(&bf);
+    buffer_copy_str(&bf, "Function");
+    struct symbol* sym = environment_get(st->top, &bf);
+    buffer_destroy(&bf);
+    assert(sym);
+    assert(sym->td);
+    func->td = sym->td;
+
+    Ast_node* id = Ast_node_get(proto, 0);
+    Ast_node* dseq = Ast_node_get(proto, 1);
+    Ast_node* dret = Ast_node_get(proto, 2);
+
+    buffer_copy(&id->value, &func->name);
+
+    Type_use* inputs = NULL;
+    Type_use_create(&inputs);
+    inputs->type = Type_use_function_inputs;
+    Type_use_add(func, inputs);
+
+    Ast_node* dec = dseq->head;
+    while (dec) {
+        Ast_node* id_node = Ast_node_get(dec, 0);
+        Ast_node* type_node = Ast_node_get(dec, 1);
+        Type_use* tu2 = Type_use_clone(type_node->tu);
+        buffer_copy(&id_node->value, &tu2->name);
+        Type_use_add(inputs, tu2);
+        dec = dec->next;
+    }
+
+    Ast_node* ret_type_node = Ast_node_get(dret, 0);
+    if (ret_type_node) {
+        Type_use* outputs = NULL;
+        Type_use_create(&outputs);
+        outputs->type = Type_use_function_outputs;
+        Type_use_add(outputs, ret_type_node->tu);
+    }
+
+    return func;
+}
+
 bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_node, struct location* loc)
 {
     bool valid = true;
