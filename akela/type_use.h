@@ -22,6 +22,7 @@ typedef enum Type_context {
 
 typedef struct Type_use {
     struct type_def* td;
+    struct buffer name;
     Vector dim;
     bool is_ref;
     bool is_mut;

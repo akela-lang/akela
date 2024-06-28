@@ -4,6 +4,7 @@
 void Type_use_init(Type_use* tu)
 {
     tu->td = NULL;
+    buffer_init(&tu->name);
     VectorInit(&tu->dim, sizeof(Type_dimension));
     tu->is_ref = false;
     tu->is_mut = false;
@@ -27,6 +28,7 @@ void Type_use_create(Type_use** tu)
 void Type_use_destroy(Type_use* tu)
 {
     if (tu) {
+        buffer_destroy(&tu->name);
         VectorDestroy(&tu->dim);
         Type_use* p = tu->head;
         while (p) {
@@ -53,6 +55,7 @@ void Type_use_add(Type_use* p, Type_use* c)
 void Type_use_copy(Type_use* src, Type_use* dest)
 {
     dest->td = src->td;
+    buffer_copy(&src->name, &dest->name);
     VectorCopy(&src->dim, &dest->dim);
     dest->is_ref = src->is_ref;
     dest->is_mut = src->is_mut;

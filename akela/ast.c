@@ -16,7 +16,6 @@ void Ast_node_init(Ast_node* n)
 	n->type = Ast_type_none;
 	buffer_init(&n->value);
 	n->tu = NULL;
-	n->td = NULL;
     n->is_mut = false;
     location_init(&n->loc);
     n->sym = NULL;
@@ -89,10 +88,10 @@ void Ast_node_print(Ast_node* root, bool debug)
 	if (!debug && !root->head) return;
 
 	printf("<");
-	if (root->td) {
-		buffer_finish(&root->td->name);
+	if (root->tu && root->tu->td) {
+		buffer_finish(&root->tu->td->name);
 		if (debug) printf("[%p]", root);
-		printf("%s,%s", names[root->type], root->td->name.buf);
+		printf("%s,%s", names[root->type], root->tu->td->name.buf);
 	} else {
 		if (debug) printf("[%p]", root);
 		printf("%s", names[root->type]);
@@ -105,9 +104,9 @@ void Ast_node_print(Ast_node* root, bool debug)
 	printf(":");
 	for (Ast_node* p = root->head; p; p = p->next) {
 		printf(" <");
-		if (p->td) {
-			buffer_finish(&p->td->name);
-			printf("%s,%s", names[p->type], p->td->name.buf);
+		if (p->tu && p->tu->td) {
+			buffer_finish(&p->tu->td->name);
+			printf("%s,%s", names[p->type], p->tu->td->name.buf);
 		} else {
 			printf("%s", names[p->type]);
 		}
@@ -129,7 +128,6 @@ void Ast_node_print(Ast_node* root, bool debug)
 void Ast_node_copy(Ast_node* src, Ast_node* dest)
 {
     dest->type = src->type;
-    dest->td = src->td;
     dest->tu = Type_use_clone(src->tu);
     dest->loc = src->loc;
     buffer_copy(&src->value, &dest->value);
@@ -168,9 +166,15 @@ bool Ast_node_match(Ast_node* a, Ast_node* b)
 			return false;
 		}
 
-		if (a->td != b->td) {
-			return false;
-		}
+        if (a->tu && b->tu) {
+            if (a->tu->td != b->tu->td) {
+                return false;
+            }
+        } else if (a->tu) {
+            return false;
+        } else if (b->tu) {
+            return false;
+        }
 
 		Ast_node* c = a->head;
 		Ast_node* d = b->head;

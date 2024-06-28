@@ -16,7 +16,7 @@ struct symbol_table {
 	struct environment* initial;
 	struct environment* global;
 	struct environment* top;
-	struct Ast_node* numeric_pool;
+	struct Type_use* numeric_pool;
     struct environment* deactivated;
     size_t id_count;
     struct type_def* function_type_def;

@@ -145,7 +145,6 @@ typedef struct Ast_node {
 	Ast_type type;
 	struct buffer value;
 	struct Type_use* tu;
-	struct type_def* td;
     bool is_mut;
     struct location loc;
     struct symbol* sym;
