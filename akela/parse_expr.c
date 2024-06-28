@@ -1,5 +1,4 @@
 #include <stdbool.h>
-#include "zinc/result.h"
 #include "token.h"
 #include "ast.h"
 #include "parse_tools.h"

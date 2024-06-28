@@ -1,16 +1,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "type_def.h"
-#include "zinc/result.h"
 #include "zinc/memory.h"
-#include "zinc/buffer.h"
 #include "ast.h"
 #include "struct_element.h"
 
-/* dynamic-output n */
 void type_def_create(struct type_def** n)
 {
-	/* allocate n */
 	malloc_safe((void**)n, sizeof(struct type_def));
 	type_def_init(*n);
 }

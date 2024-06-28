@@ -3,9 +3,6 @@
 #include <stdlib.h>
 #include "zinc/memory.h"
 #include "token.h"
-#include "ast.h"
-#include <assert.h>
-#include "zinc/error.h"
 
 void token_init(struct token* t)
 {

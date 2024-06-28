@@ -1,8 +1,6 @@
 #include "comp_table.h"
-#include "zinc/hash.h"
 #include "comp_unit.h"
 #include "zinc/memory.h"
-#include "zinc/os_win.h"
 #include "zinc/os_unix.h"
 #include <stdio.h>
 #include "zinc/input_unicode_file.h"

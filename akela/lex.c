@@ -2,14 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
-#include "zinc/result.h"
 #include "token.h"
 #include "lex.h"
-#include "zinc/buffer.h"
 #include "zinc/memory.h"
-#include "zinc/utf8.h"
-#include <ctype.h>
-#include "zinc/input_unicode.h"
 #include "symbol.h"
 
 bool lex_start(struct lex_state* ls,

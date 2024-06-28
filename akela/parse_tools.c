@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include "parse_tools.h"
 #include "token.h"
-#include "zinc/result.h"
 #include "lex.h"
 #include "ast.h"
 #include <assert.h>

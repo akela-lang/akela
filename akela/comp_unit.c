@@ -1,12 +1,9 @@
 #include "comp_unit.h"
-#include "zinc/buffer.h"
-#include "zinc/result.h"
 #include "zinc/memory.h"
 #include "lex.h"
 #include "parse_tools.h"
 #include "parse.h"
 #include <assert.h>
-#include "zinc/input_unicode_string.h"
 
 void comp_unit_init(struct comp_unit* cu)
 {

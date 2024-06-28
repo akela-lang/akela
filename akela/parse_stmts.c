@@ -1,9 +1,6 @@
-
 #include <stdbool.h>
-#include "zinc/result.h"
 #include "token.h"
 #include "ast.h"
-#include "zinc/buffer.h"
 #include "parse_expr.h"
 #include "lex.h"
 #include "parse_tools.h"
@@ -11,12 +8,10 @@
 #include "symbol_table.h"
 #include "zinc/memory.h"
 #include "symbol.h"
-#include "symbol_table.h"
 #include "parse_stmts.h"
 #include "parse_factor.h"
 #include "type_def.h"
 #include <assert.h>
-#include "zinc/list.h"
 
 Ast_node* parse_stmt(struct parse_state* ps);
 Ast_node* parse_while(struct parse_state* ps);
@@ -721,11 +716,6 @@ Ast_node* parse_return(struct parse_state* ps)
     free(ret);
 
 	return n;
-}
-
-void location_item_destroy(struct location* loc)
-{
-    free(loc);
 }
 
 /* parse_let = let let_lseq :: type | let let_lseq :: type = let_rseq */

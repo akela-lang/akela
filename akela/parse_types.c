@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include "zinc/buffer.h"
-#include "zinc/result.h"
 #include "token.h"
 #include "lex.h"
 #include "parse_tools.h"
@@ -12,7 +11,6 @@
 #include "type_def.h"
 #include <assert.h>
 
-void parse_tseq(struct parse_state* ps, Ast_node* parent);
 bool token_is_type(struct parse_state* ps, struct token* t);
 
 /**
@@ -633,71 +631,6 @@ void declare_type(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node
     }
 }
 
-/* tseq -> type tseq' */
-/* tseq' -> , tseq' */
-void parse_tseq(struct parse_state* ps, Ast_node* parent)
-{
-	Ast_node* tu = NULL;
-	struct token* t0 = NULL;
-
-    tu = parse_type(ps);
-	if (tu && tu->type == Ast_type_error) {
-        parent->type = Ast_type_error;
-    }
-
-	if (!tu) {
-        struct location tu_loc = get_location(ps);
-		error_list_set(ps->el, &tu_loc, "expected a type name");
-		/* test case: test_parse_error_type_name */
-        parent->type = Ast_type_error;
-	}
-
-	if (tu) {
-		assert(tu);
-        Ast_node_add(parent, tu);
-		tu = NULL;
-	}
-
-	while (true) {
-		t0 = get_lookahead(ps);
-
-		if (!t0 || t0->type != token_comma) {
-			break;
-		}
-
-		struct token* comma = NULL;
-		if (!match(ps, token_comma, "expected comma", &comma, parent)) {
-            /* test case: test case not needed */
-            assert(false);
-        }
-
-		token_destroy(comma);
-		free(comma);
-
-        consume_newline(ps, parent);
-
-        tu = parse_type(ps);
-		if (tu && tu->type == Ast_type_error) {
-            parent->type = Ast_type_error;
-        }
-
-		if (!tu) {
-            struct location tu_loc = get_location(ps);
-			error_list_set(ps->el, &tu_loc, "expected a type name after comma");
-			/* test case: test_parse_error_comma_type_name */
-            parent->type = Ast_type_error;
-			break;
-		}
-
-		if (parent->type != Ast_type_error) {
-			assert(tu);
-            Ast_node_add(parent, tu);
-			tu = NULL;
-		}
-
-	}
-}
-
 Type_use* proto2type(struct symbol_table* st, Ast_node* proto)
 {
 	Type_use* tu = NULL;
@@ -739,21 +672,6 @@ void get_function_children(Ast_node* proto, Ast_node** dseq, Ast_node** dret)
 {
     *dseq = Ast_node_get(proto, 1);
     *dret = Ast_node_get(proto, 2);
-}
-
-Type_use* get_function_type(struct symbol* sym)
-{
-	if (sym) {
-		if (sym->tu) {
-			if (sym->tu->td) {
-				if (sym->tu->td->type == type_function) {
-					return sym->tu;
-				}
-			}
-		}
-	}
-
-	return NULL;
 }
 
 Type_use* get_function_input_type(Ast_node* proto, int index)
