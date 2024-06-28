@@ -87,7 +87,7 @@ Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env)
 	if (n->type != Ast_type_error) {
 		if (last) {
 			if (last->tu) {
-				n->tu = Ast_node_copy(last->tu);
+                n->tu = Type_use_copy(last->tu);
 			}
 		}
 	}
@@ -154,7 +154,7 @@ Ast_node* parse_extern(struct parse_state* ps)
         if (proto->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
-        Ast_node* tu = proto2type(ps->st, proto);
+        Type_use* tu = proto2type(ps->st, proto);
         n->tu = tu;
     }
 
@@ -195,7 +195,7 @@ Ast_node* parse_extern(struct parse_state* ps)
                 malloc_safe((void **) &new_sym, sizeof(struct symbol));
                 symbol_init(new_sym);
                 new_sym->type = Symbol_type_variable;
-                new_sym->tu = Ast_node_copy(n->tu);
+                new_sym->tu = Type_use_copy(n->tu);
                 environment_put(ps->st->top, &id_node->value, new_sym);
                 n->sym = new_sym;
             }
@@ -459,27 +459,27 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent)
 
 	if (parent->type != Ast_type_error) {
 		Ast_node* element = Ast_node_get(parent, 0);
-		Ast_node* element_tu = Ast_node_get(element, 1);
+		Ast_node* element_type_node = Ast_node_get(element, 1);
 
-		Ast_node* list_tu = list->tu;
+		Type_use* list_tu = list->tu;
 
 		if (!list_tu) {
 			error_list_set(ps->el, &list->loc, "iteration expression has no value");
             parent->type = Ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_value */
-		} else if (!list_tu->to.is_array) {
+		} else if (!list_tu->is_array) {
 			error_list_set(ps->el, &list->loc, "iteration expression is not an array");
             parent->type = Ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
-			Ast_node* element_tu2 = Ast_node_copy(list_tu);
-            Type_options_reduce_dimension(&element_tu2->to);
-			if (!type_use_can_cast(element_tu2, element_tu)) {
+            Type_use* element_tu2 = Type_use_copy(list_tu);
+            Type_use_reduce_dimension(element_tu2);
+			if (!type_use_can_cast(element_tu2, element_type_node->tu)) {
                 parent->type = Ast_type_error;
 				error_list_set(ps->el, &list->loc, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
-            Ast_node_destroy(element_tu2);
+            Type_use_destroy(element_tu2);
 		}
 	}
 
@@ -556,9 +556,8 @@ Ast_node* parse_module(struct parse_state* ps)
 			assert(sym);
 			assert(sym->td);
 
-			Ast_node* tu = NULL;
-            Ast_node_create(&tu);
-			tu->type = Ast_type_type;
+			Type_use* tu = NULL;
+            Type_use_create(&tu);
 			tu->td = sym->td;
 
 			struct symbol* new_sym = NULL;
@@ -701,7 +700,7 @@ Ast_node* parse_return(struct parse_state* ps)
 				/* test case: test_parse_return_error_no_value */
                 n->type = Ast_type_error;
 			} else {
-				n->tu = Ast_node_copy(a->tu);
+				n->tu = Type_use_copy(a->tu);
 				Ast_node* fd = get_current_function(ps->st->top);
 				if (!fd) {
 					error_list_set(ps->el, &ret->loc, "return statement outside of function");
@@ -772,14 +771,14 @@ Ast_node* parse_let(struct parse_state* ps)
 
     consume_newline(ps, n);
 
-    Ast_node* type_use = NULL;
-    type_use = parse_type(ps);
-    declare_type(ps, type_use, a);
-    if (type_use && type_use->type == Ast_type_error) {
+    Ast_node* type_node = NULL;
+    type_node = parse_type(ps);
+    declare_type(ps, type_node, a);
+    if (type_node && type_node->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
-    if (type_use) {
-        Ast_node_add(n, type_use);
+    if (type_node) {
+        Ast_node_add(n, type_node);
     } else {
         struct location type_use_loc = get_location(ps);
         error_list_set(ps->el, &type_use_loc, "expected type");
@@ -827,7 +826,7 @@ Ast_node* parse_let(struct parse_state* ps)
                     if (!y->tu) {
                         error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
                         n->type = Ast_type_error;
-                    } else if (!type_use_can_cast(type_use, y->tu)) {
+                    } else if (!type_use_can_cast(type_node->tu, y->tu)) {
                         error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
                         n->type = Ast_type_error;
                     }
@@ -837,10 +836,10 @@ Ast_node* parse_let(struct parse_state* ps)
 
         if (n->type != Ast_type_error) {
             /* adjust rhs to the bit_size of lhs */
-            if (a && type_use && b) {
+            if (a && type_node && b) {
                 Ast_node* rhs = b->head;
                 while (rhs) {
-                    Override_rhs(type_use, rhs);
+                    Override_rhs(type_node->tu, rhs);
                     rhs = rhs->next;
                 }
             }
@@ -896,7 +895,7 @@ Ast_node* parse_let_lseq(struct parse_state* ps)
     Ast_node* a = NULL;
     Ast_node_create(&a);
     a->type = Ast_type_id;
-    a->to.is_mut = is_mut;
+    a->is_mut = is_mut;
     buffer_copy(&id->value, &a->value);
     Ast_node_add(n, a);
     a->loc = id->loc;
@@ -1017,11 +1016,14 @@ Ast_node* parse_impl(struct parse_state* ps)
         struct symbol* sym = environment_get(ps->st->top, &id->value);
         if (sym->type == Symbol_type_type) {
             if (sym->td->type == type_struct) {
-                Ast_node* tu = NULL;
-                Ast_node_create(&tu);
-                tu->type = Ast_type_type;
+                Ast_node* type_node = NULL;
+                Ast_node_create(&type_node);
+                type_node->type = Ast_type_type;
+                Type_use* tu = NULL;
+                Type_use_create(&tu);
                 tu->td = sym->td;
-                struct_type = tu;
+                type_node->tu = tu;
+                struct_type = type_node;
             }
         }
     }

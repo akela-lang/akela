@@ -1,5 +1,4 @@
 #include "akela_llvm_tools.h"
-#include "zinc/vector.h"
 
 using namespace llvm;
 
@@ -12,8 +11,9 @@ namespace Akela_llvm {
     Value* Handle_let(Jit_data* jd, Ast_node* n)
     {
         Ast_node* lseq = Ast_node_get(n, 0);
-        Ast_node* tu = Ast_node_get(n, 1);
+        Ast_node* type_node = Ast_node_get(n, 1);
         Ast_node* rseq = Ast_node_get(n, 2);
+        Type_use* tu = type_node->tu;
 
         Ast_node *lhs = Ast_node_get(lseq, 0);
         Ast_node *rhs = nullptr;
@@ -32,7 +32,7 @@ namespace Akela_llvm {
                     Value* rhs_value = Dispatch(jd, rhs);
                     jd->Builder->CreateStore(rhs_value, lhs_value);
                 }
-            } else if (tu->to.is_array) {
+            } else if (tu->is_array) {
                 if (rhs) {
                     Type *t = Get_type_pointer(jd, tu);
                     buffer_finish(&lhs->value);
@@ -129,7 +129,7 @@ namespace Akela_llvm {
             } else {
                 assert(false);
             }
-        } else if (lhs->tu->to.is_array) {
+        } else if (lhs->tu->is_array) {
             jd->context.in_lhs = true;
             Value* lhs_value = Dispatch(jd, lhs);
             jd->context.in_lhs = false;
@@ -175,7 +175,7 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_array_literal(Jit_data* jd, Ast_node* n)
     {
-        assert(n->tu->to.is_array);
+        assert(n->tu->is_array);
         std::vector<size_t> index;
         Type *t = Get_type(jd, n->tu);
         Value* ptr = jd->Builder->CreateAlloca(t, nullptr, "arrayliteraltmp");
@@ -186,7 +186,7 @@ namespace Akela_llvm {
         /* NOLINTNEXTLINE(misc-no-recursion) */
     void Array_literal_element(Jit_data* jd, Ast_node* n, Value* ptr)
     {
-        if (n->tu->to.is_array) {
+        if (n->tu->is_array) {
             size_t i = 0;
             Ast_node* p = n->head;
             while (p) {
@@ -212,16 +212,15 @@ namespace Akela_llvm {
         Type* element_type = Get_type(jd, n->tu);
 
         Ast_node* array = n->head;
-        assert(array->tu->to.is_array);
+        assert(array->tu->is_array);
         Value* array_value = Dispatch(jd, array);
         assert(array_value);
-        Type* array_type = Get_type(jd, array->tu);
 
         Ast_node* subscript = array->next;
         Value* subscript_value = Dispatch(jd, subscript);
 
-        assert(array->tu->to.dim.count >= 1);
-        size_t size = *(size_t*)VECTOR_PTR(&array->tu->to.dim, 0);
+        assert(array->tu->dim.count >= 1);
+        size_t size = *(size_t*)VECTOR_PTR(&array->tu->dim, 0);
         Type* size_type = Type::getInt64Ty(*jd->TheContext);
         Value* size_value = ConstantInt::get(size_type, APInt(64, size, false));
 
@@ -252,7 +251,7 @@ namespace Akela_llvm {
         list.push_back(subscript_value);
         Value* element_ptr = jd->Builder->CreateInBoundsGEP(element_type, array_value, list, "subscripttmp");
 
-        if (n->tu->to.is_array) {
+        if (n->tu->is_array) {
             return element_ptr;
         } else {
             if (jd->context.in_lhs) {

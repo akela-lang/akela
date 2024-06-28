@@ -25,7 +25,7 @@ void test_parse_number_integer()
 	expect_int_equal(number->type, Ast_type_number, "number num");
 	expect_str(&number->value, "32", "32 num");
 
-	Ast_node* tu = number->tu;
+	Type_use* tu = number->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -56,7 +56,7 @@ void test_parse_number_float()
 	expect_int_equal(number->type, Ast_type_number, "number number");
 	expect_str(&number->value, "5.0e0", "5.0e0 number");
 
-	Ast_node* tu = number->tu;
+	Type_use* tu = number->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -87,12 +87,12 @@ void test_parse_string()
 	expect_int_equal(string->type, Ast_type_string, "type string");
 	expect_str(&string->value, "hello", "value string");
 
-	Ast_node* tu = string->tu;
+	Type_use* tu = string->tu;
 	assert_ptr(tu, "ptr tu");
-    expect_true(tu->to.is_array, "is_array tu");
-    expect_size_t_equal(tu->to.dim.count, 1, "dim.count tu");
+    expect_true(tu->is_array, "is_array tu");
+    expect_size_t_equal(tu->dim.count, 1, "dim.count tu");
 
-    Type_dimension* dim = (Type_dimension*)VECTOR_PTR(&tu->to.dim, 0);
+    Type_dimension* dim = (Type_dimension*)VECTOR_PTR(&tu->dim, 0);
     assert_ptr(dim, "ptr dim");
     expect_size_t_equal(dim->size, 6, "size dim");
     expect_int_equal(dim->option, Array_element_const, "option dim");
@@ -109,11 +109,8 @@ void test_parse_boolean_true()
 {
 	test_name(__func__);
 
-
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("true", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -126,15 +123,13 @@ void test_parse_boolean_true()
 	expect_int_equal(true_node->type, Ast_type_boolean, "boolean true_node");
 	expect_str(&true_node->value, "true", "true true_node");
 
-	Ast_node* tu = true_node->tu;
+	Type_use* tu = true_node->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
 	expect_int_equal(td->type, type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
-
-	/* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -143,11 +138,8 @@ void test_parse_boolean_false()
 {
 	test_name(__func__);
 
-
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("false", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -160,7 +152,7 @@ void test_parse_boolean_false()
 	expect_int_equal(false_node->type, Ast_type_boolean, "boolean false_node");
 	expect_str(&false_node->value, "false", "false false_node");
 
-	Ast_node* tu = false_node->tu;
+	Type_use* tu = false_node->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -168,15 +160,12 @@ void test_parse_boolean_false()
 	expect_int_equal(td->type, type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
 void test_parse_id()
 {
 	test_name(__func__);
-
 
 	struct comp_unit cu;
 
@@ -209,7 +198,7 @@ void test_parse_id()
 	expect_int_equal(id2->type, Ast_type_id, "id id2");
 	expect_str(&id2->value, "x", "x id2");
 
-	Ast_node* tu = id2->tu;
+	Type_use* tu = id2->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -217,21 +206,16 @@ void test_parse_id()
 	expect_int_equal(td->type, type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
 void test_parse_id2()
 {
 	test_name(__func__);
 
 
 	struct comp_unit cu;
-	bool valid;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("let _a23: i64; _a23", &cu);
 	assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
@@ -244,15 +228,12 @@ void test_parse_id2()
 	expect_int_equal(id->type, Ast_type_id, "id id");
 	expect_str(&id->value, "_a23", "_a23 id");
 
-	/* destroy ps{} cu.root cu.root{} */
-
     parse_teardown(&cu);
 }
 
 void test_parse_id3()
 {
 	test_name(__func__);
-
 
 	struct comp_unit cu;
 
@@ -329,7 +310,7 @@ void test_parse_sign_negative()
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, Ast_type_sign, "sign sign");
 
-	Ast_node* tu = sign->tu;
+	Type_use* tu = sign->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -367,7 +348,7 @@ void test_parse_sign_positive()
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, Ast_type_sign, "sign sign");
 
-	Ast_node* tu = sign->tu;
+	Type_use* tu = sign->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -434,7 +415,7 @@ void test_parse_not_id()
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, Ast_type_not, "not not");
 
-	Ast_node* tu = not->tu;
+	Type_use* tu = not->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -467,7 +448,7 @@ void test_parse_not_literal()
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, Ast_type_not, "not not");
 
-	Ast_node* tu = not->tu;
+	Type_use* tu = not->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct type_def* td = tu->td;
@@ -514,11 +495,11 @@ void test_parse_array_literal_integer()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ast_type_array_literal, "array-literal a");
 
-	Ast_node* a_tu = a->tu;
+	Type_use* a_tu = a->tu;
 	assert_ptr(a_tu, "ptr array_tu");
-    expect_true(a_tu->to.is_array, "is_array a_tu");
-    expect_size_t_equal(a_tu->to.dim.count, 1, "dim.count a_tu");
-    expect_size_t_equal(*(size_t*)VECTOR_PTR(&a_tu->to.dim, 0), 3, "dim[0] a_tu");
+    expect_true(a_tu->is_array, "is_array a_tu");
+    expect_size_t_equal(a_tu->dim.count, 1, "dim.count a_tu");
+    expect_size_t_equal(*(size_t*)VECTOR_PTR(&a_tu->dim, 0), 3, "dim[0] a_tu");
 
 	struct type_def* a_td = a_tu->td;
 	assert_ptr(a_td, "ptr array_td");
@@ -560,7 +541,7 @@ void test_parse_array_literal_float()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ast_type_array_literal, "array-literal a");
 
-	Ast_node* array_tu = a->tu;
+	Type_use* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
 	struct type_def* array_td = array_tu->td;
@@ -603,7 +584,7 @@ void test_parse_array_literal_numeric()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ast_type_array_literal, "array-literal a");
 
-	Ast_node* array_tu = a->tu;
+	Type_use* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
 	struct type_def* array_td = array_tu->td;
@@ -958,10 +939,10 @@ void test_parse_factor_array_element_const()
     Ast_node* let_type = Ast_node_get(let, 1);
     assert_ptr(let_type, "ptr type");
     expect_int_equal(let_type->type, Ast_type_type, "type type");
-    expect_true(let_type->to.is_array, "is_array type");
-    expect_size_t_equal(let_type->to.dim.count, 1, "dim.count type");
+    expect_true(let_type->tu->is_array, "is_array type");
+    expect_size_t_equal(let_type->tu->dim.count, 1, "dim.count type");
 
-    struct Type_dimension* let_type_dim = (Type_dimension*)VECTOR_PTR(&let_type->to.dim, 0);
+    struct Type_dimension* let_type_dim = (Type_dimension*)VECTOR_PTR(&let_type->tu->dim, 0);
     expect_size_t_equal(let_type_dim->size, 4, "size let_type_dim");
     expect_int_equal(let_type_dim->option, Array_element_const, "option let_type_dim");
 
@@ -978,7 +959,7 @@ void test_parse_factor_array_element_const_error()
                 &cu);
     expect_false(cu.valid, "valid");
     expect_has_errors(&cu.el);
-    struct error* e = expect_source_error(&cu.el, "immutable variable changed in assignment");
+    expect_source_error(&cu.el, "immutable variable changed in assignment");
     parse_teardown(&cu);
 }
 

@@ -32,12 +32,12 @@ AKELA_API Ast_node* parse_declaration(
 AKELA_API Ast_node* parse_type(struct parse_state* ps);
 AKELA_API void declare_type(struct parse_state* ps, Ast_node* n, Ast_node* id_node);
 AKELA_API bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_node, struct location* loc);
-AKELA_API void get_function_children(Ast_node* tu, Ast_node** dseq, Ast_node** dret);
-AKELA_API Ast_node* proto2type(struct symbol_table* st, Ast_node* proto);
-AKELA_API Ast_node* get_function_input_type(Ast_node* tu, int index);
-AKELA_API bool check_input_type(struct parse_state* ps, Ast_node* tu, int index, Ast_node* a, struct location* loc_expr);
+AKELA_API void get_function_children(Ast_node* proto, Ast_node** dseq, Ast_node** dret);
+AKELA_API Type_use* proto2type(struct symbol_table* st, Ast_node* proto);
+AKELA_API Type_use* get_function_input_type(Ast_node* tu, int index);
+AKELA_API bool check_input_type(struct parse_state* ps, Ast_node* proto, int index, Ast_node* a, struct location* loc_expr);
 AKELA_API Ast_node* make_constructor(struct type_def* td);
-AKELA_API void Override_rhs(Ast_node* tu, Ast_node* rhs);
+AKELA_API void Override_rhs(Type_use* tu, Ast_node* rhs);
 AKELA_API bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc);
 
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
 # Akela Todo
-* type use
+* type use dag
 * context dot: method call, function call, ptr, value
 * context subscript: ptr, value
 * check impl

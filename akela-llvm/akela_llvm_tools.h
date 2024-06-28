@@ -67,18 +67,18 @@ namespace Akela_llvm {
     } Jit_data;
 
     void Jit_data_init(Jit_data* jd, struct error_list* el);
-    llvm::FunctionType* Get_function_type(Jit_data* jd, Ast_node* tu);
-    llvm::Type* Get_scalar_type(Jit_data * jd, Ast_node * tu);
-    llvm::Type* Get_type(Jit_data * jd, Ast_node * tu);
-    llvm::Type* Get_type_pointer(Jit_data *jd, Ast_node *tu);
-    llvm::Type* Get_return_type(Jit_data * jd, Ast_node * tu);
+    llvm::FunctionType* Get_function_type(Jit_data* jd, Type_use* tu);
+    llvm::Type* Get_scalar_type(Jit_data * jd, Type_use* tu);
+    llvm::Type* Get_type(Jit_data * jd, Type_use* tu);
+    llvm::Type* Get_type_pointer(Jit_data *jd, Type_use *tu);
+    llvm::Type* Get_return_type(Jit_data * jd, Type_use * tu);
     void Run(Jit_data* jd, Ast_node* n, struct buffer* bf);
     llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);
     llvm::Value* Dispatch(Jit_data* jd, Ast_node* n);
     void Array_copy(
             Jit_data* jd,
-            Ast_node* lhs_tu,
-            Ast_node* rhs_tu,
+            Type_use* lhs_tu,
+            Type_use* rhs_tu,
             llvm::Value* lhs_ptr,
             llvm::Value* rhs_ptr);
 }

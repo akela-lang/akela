@@ -19,6 +19,5 @@ AKELA_API struct symbol* environment_get(struct environment* env, struct buffer*
 AKELA_API struct symbol* environment_get_local(struct environment* env, struct buffer* value);
 AKELA_API void environment_destroy(struct environment* env);
 AKELA_API void environment_destroy_symbol(struct symbol* sym);
-AKELA_API void environment_destroy(struct environment* env);
 
 #endif

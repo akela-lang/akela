@@ -1,5 +1,5 @@
-#ifndef _TYPE_DEF_H
-#define _TYPE_DEF_H
+#ifndef AKELA_TYPE_DEF_H
+#define AKELA_TYPE_DEF_H
 
 #include "akela_api.h"
 #include <stdbool.h>
@@ -10,6 +10,7 @@
 #include "zinc/vector.h"
 #include "ast.h"
 #include "zinc/hash.h"
+#include "ast.h"
 
 enum type {
 	type_none,
@@ -28,7 +29,7 @@ struct type_def {
 	struct buffer name;
     int bit_count;
     bool is_signed;
-    Ast_node* composite;
+    struct Ast_node* composite;
     void* composite_type;
     struct hash_table struct_impl;
     struct hash_table type_impl;

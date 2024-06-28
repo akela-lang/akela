@@ -10,7 +10,8 @@ namespace Akela_llvm {
         buffer_finish(&n->value);
         struct Ast_node* element_dec = n->head;
         while (element_dec) {
-            Ast_node* element_tu = Ast_node_get(element_dec, 1);
+            Ast_node* element_type_node = Ast_node_get(element_dec, 1);
+            Type_use* element_tu = element_type_node->tu;
             Type* element_type = Get_type(jd, element_tu);
             if (element_tu->td->type == type_function) {
                 element_type = element_type->getPointerTo();
@@ -28,7 +29,7 @@ namespace Akela_llvm {
     Value* Handle_dot(Jit_data* jd, Ast_node* n)
     {
         Ast_node* left = Ast_node_get(n, 0);
-        Ast_node* left_tu = left->tu;
+        Type_use* left_tu = left->tu;
         assert(left_tu);
         struct type_def* left_td = left_tu->td;
         assert(left_td);
@@ -39,11 +40,13 @@ namespace Akela_llvm {
         auto struct_type = (StructType*)left_td->composite_type;
         size_t i = 0;
         Ast_node* dec_id = nullptr;
-        Ast_node* dec_tu = nullptr;
+        Ast_node* dec_type = nullptr;
+        Type_use* dec_tu = nullptr;
         bool found = false;
         while (dec) {
             dec_id = Ast_node_get(dec, 0);
-            dec_tu = Ast_node_get(dec, 1);
+            dec_type = Ast_node_get(dec, 1);
+            dec_tu = dec_type->tu;
             if (buffer_compare(&dec_id->value, &right->value)) {
                 found = true;
                 break;
@@ -56,7 +59,7 @@ namespace Akela_llvm {
 
         if (jd->context.in_lhs) {
             return gep_value;
-        } else if (dec_tu->to.is_array) {
+        } else if (dec_tu->is_array) {
             return gep_value;
         } else {
             Type* dot_type = Get_type_pointer(jd, n->tu);
@@ -87,7 +90,7 @@ namespace Akela_llvm {
             buffer_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
             Value* expr_value = Dispatch(jd, expr);
-            if (expr->tu->to.is_array) {
+            if (expr->tu->is_array) {
                 Array_copy(jd, expr->tu, expr->tu, gep_value, expr_value);
             } else {
                 jd->Builder->CreateStore(expr_value, gep_value);

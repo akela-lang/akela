@@ -44,7 +44,7 @@ namespace Akela_llvm {
             Value* dec_value = &f->arg_begin()[i];
 
             buffer_finish(&dec_id->value);
-            Type* t = Get_type_pointer(jd, dec_type);
+            Type* t = Get_type_pointer(jd, dec_type->tu);
             Value* lhs = jd->Builder->CreateAlloca(t,
                                                    nullptr,
                                                    dec_id->value.buf);

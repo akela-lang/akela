@@ -175,6 +175,7 @@ void declare_params(struct parse_state* ps, Ast_node* proto, Ast_node* struct_ty
  */
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | , ... | e */
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Ast_node* parse_dseq(
         struct parse_state* ps,
         bool require_param_name,
@@ -412,15 +413,16 @@ Ast_node* parse_declaration(
 Ast_node* parse_type(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
+    Ast_node_create(&n);
+    n->type = Ast_type_type;
+
+    Type_use* tu = NULL;
+    Type_use_create(&tu);
+    n->tu = tu;
 
     /* handle array dimensions */
 	struct token* t0 = get_lookahead(ps);
     while (t0->type == token_left_square_bracket) {
-        if (!n) {
-            Ast_node_create(&n);
-            n->type = Ast_type_type;
-        }
-
         struct token *lsb = NULL;
         if (!match(ps, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
             /* test case: no test case needed */
@@ -469,7 +471,7 @@ Ast_node* parse_type(struct parse_state* ps)
         free(rsb);
 
         if (has_number) {
-            n->to.is_array = true;
+            n->tu->is_array = true;
             Type_dimension dim;
             dim.size =  dim_size_number;
             if (has_const) {
@@ -477,9 +479,9 @@ Ast_node* parse_type(struct parse_state* ps)
             } else {
                 dim.option = Array_element_default;
             }
-            VectorAdd(&n->to.dim, &dim, 1);
+            VectorAdd(&n->tu->dim, &dim, 1);
         } else {
-            n->to.is_slice = true;
+            n->tu->is_slice = true;
             Type_dimension dim;
             dim.size = 0;
             if (has_const) {
@@ -487,15 +489,10 @@ Ast_node* parse_type(struct parse_state* ps)
             } else {
                 dim.option = Array_element_default;
             }
-            VectorAdd(&n->to.dim, &dim, 1);
+            VectorAdd(&n->tu->dim, &dim, 1);
         }
 
         t0 = get_lookahead(ps);
-    }
-
-    if (!n) {
-        Ast_node_create(&n);
-        n->type = Ast_type_type;
     }
 
     if (t0->type == token_fn) {
@@ -520,8 +517,8 @@ Ast_node* parse_type(struct parse_state* ps)
             buffer_copy_str(&name, "Function");
             struct symbol* sym = environment_get(ps->st->top, &name);
             assert(sym);
-            n->td = sym->td;
-            Ast_node_add(n, proto);
+            n->tu->td = sym->td;
+            n->tu->proto = proto;
 
             buffer_destroy(&name);
         }
@@ -558,7 +555,7 @@ Ast_node* parse_type(struct parse_state* ps)
                 n->type = Ast_type_error;
             } else {
                 if (n->type != Ast_type_error) {
-                    n->td = sym->td;
+                    n->tu->td = sym->td;
                 }
             }
         }
@@ -583,7 +580,7 @@ Ast_node* parse_type(struct parse_state* ps)
  * @param n type node
  * @param id_node ID node
  */
-void check_id_node(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
+void create_variable_symbol(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node)
 {
     struct symbol* dup = environment_get_local(ps->st->top, &id_node->value);
     if (dup) {
@@ -591,7 +588,7 @@ void check_id_node(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
         buffer2array(&id_node->value, &a);
         error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
         free(a);
-        n->type = Ast_type_error;
+        type_node->type = Ast_type_error;
         /* test case: test_parse_error_duplicate_declarations */
     } else {
         struct symbol* sym2 = environment_get(ps->st->top, &id_node->value);
@@ -600,33 +597,33 @@ void check_id_node(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
             buffer2array(&id_node->value, &a);
             error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
             free(a);
-            n->type = Ast_type_error;
+            type_node->type = Ast_type_error;
             /* test case: test_parse_types_reserved_type */
         } else {
             struct symbol* new_sym = NULL;
             malloc_safe((void**)&new_sym, sizeof(struct symbol));
             symbol_init(new_sym);
             new_sym->type = Symbol_type_variable;
-            new_sym->tu = Ast_node_copy(n);
+            new_sym->tu = Type_use_copy(type_node->tu);
             environment_put(ps->st->top, &id_node->value, new_sym);
             id_node->sym = new_sym;
             /* copy is_mut from id node to type use node */
-            new_sym->tu->to.is_mut = id_node->to.is_mut;
-            new_sym->tu->to.original_is_mut = id_node->to.is_mut;
+            new_sym->tu->is_mut = id_node->is_mut;
+            new_sym->tu->original_is_mut = id_node->is_mut;
         }
     }
 }
 
-void declare_type(struct parse_state* ps, Ast_node* n, Ast_node* id_node)
+void declare_type(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node)
 {
-    if (n && n->type != Ast_type_error) {
+    if (type_node && type_node->type != Ast_type_error) {
         if (id_node) {
             if (id_node->type == Ast_type_id) {
-                check_id_node(ps, n, id_node);
+                create_variable_symbol(ps, type_node, id_node);
             } else if (id_node->type == Ast_type_let_lseq) {
                 Ast_node* p = id_node->head;
                 while (p) {
-                    check_id_node(ps, n, p);
+                    create_variable_symbol(ps, type_node, p);
                     p = p->next;
                 }
             } else {
@@ -701,11 +698,10 @@ void parse_tseq(struct parse_state* ps, Ast_node* parent)
 	}
 }
 
-Ast_node* proto2type(struct symbol_table* st, Ast_node* proto)
+Type_use* proto2type(struct symbol_table* st, Ast_node* proto)
 {
-	Ast_node* tu = NULL;
-    Ast_node_create(&tu);
-	tu->type = Ast_type_type;
+	Type_use* tu = NULL;
+    Type_use_create(&tu);
 
     struct buffer bf;
 	buffer_init(&bf);
@@ -715,7 +711,7 @@ Ast_node* proto2type(struct symbol_table* st, Ast_node* proto)
 	assert(sym->td);
 	tu->td = sym->td;
 
-    Ast_node_add(tu, Ast_node_copy(proto));
+    tu->proto = Ast_node_copy(proto);
 
 	buffer_destroy(&bf);
 
@@ -730,7 +726,7 @@ bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_
         Ast_node *dret = Ast_node_get(proto, 2);
         Ast_node *ret_type = Ast_node_get(dret, 0);
         if (ret_type) {
-            if (!type_use_can_cast(ret_type, stmts_node->tu)) {
+            if (!type_use_can_cast(ret_type->tu, stmts_node->tu)) {
                 valid = error_list_set(ps->el, loc, "returned type does not match function return type");
             }
         }
@@ -739,14 +735,13 @@ bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_
     return valid;
 }
 
-void get_function_children(Ast_node* tu, Ast_node** dseq, Ast_node** dret)
+void get_function_children(Ast_node* proto, Ast_node** dseq, Ast_node** dret)
 {
-    Ast_node* proto = Ast_node_get(tu, 0);
     *dseq = Ast_node_get(proto, 1);
     *dret = Ast_node_get(proto, 2);
 }
 
-Ast_node* get_function_type(struct symbol* sym)
+Type_use* get_function_type(struct symbol* sym)
 {
 	if (sym) {
 		if (sym->tu) {
@@ -761,11 +756,11 @@ Ast_node* get_function_type(struct symbol* sym)
 	return NULL;
 }
 
-Ast_node* get_function_input_type(Ast_node* tu, int index)
+Type_use* get_function_input_type(Ast_node* proto, int index)
 {
 	Ast_node* dseq = NULL;
 	Ast_node* dret = NULL;
-	get_function_children(tu, &dseq, &dret);
+	get_function_children(proto, &dseq, &dret);
 
 	if (!dseq) return NULL;
 
@@ -774,8 +769,8 @@ Ast_node* get_function_input_type(Ast_node* tu, int index)
 	while (p) {
 		if (i == index) {
             Ast_node* dec = p;
-            Ast_node* dec_tu = Ast_node_get(dec, 1);
-            return dec_tu;
+            Ast_node* dec_type = Ast_node_get(dec, 1);
+            return dec_type->tu;
         }
 		p = p->next;
 		i++;
@@ -783,14 +778,14 @@ Ast_node* get_function_input_type(Ast_node* tu, int index)
 	return NULL;
 }
 
-bool check_input_type(struct parse_state* ps, Ast_node* tu, int index, Ast_node* a, struct location* loc_expr)
+bool check_input_type(struct parse_state* ps, Ast_node* proto, int index, Ast_node* a, struct location* loc_expr)
 {
 	bool valid = true;
 
-	if (tu) {
-		Ast_node* tu0 = get_function_input_type(tu, index);
+	if (proto) {
+		Type_use* tu0 = get_function_input_type(proto, index);
 		if (tu0) {
-			Ast_node* call_tu0 = a->tu;
+			Type_use* call_tu0 = a->tu;
 			if (call_tu0) {
 				if (!type_use_can_cast(tu0, call_tu0)) {
 					valid = error_list_set(ps->el, loc_expr, "parameter and aguments types do not match");
@@ -921,14 +916,14 @@ Ast_node* make_constructor(struct type_def* td)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Override_rhs(Ast_node* tu, Ast_node* rhs)
+void Override_rhs(Type_use* tu, Ast_node* rhs)
 {
     if (tu->td->type == type_integer || tu->td->type == type_float) {
         rhs->tu->td = tu->td;
         if (rhs->type == Ast_type_sign) {
             Ast_node* p = Ast_node_get(rhs, 1);
             Override_rhs(tu, p);
-        } else if (tu->to.is_array && rhs->type == Ast_type_array_literal) {
+        } else if (tu->is_array && rhs->type == Ast_type_array_literal) {
             Ast_node* p = rhs->head;
             while (p) {
                 Override_rhs(tu, p);
@@ -989,7 +984,7 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
         return false;
     }
 
-    if (!n->tu->to.is_mut && sym->assign_count >= 1) {
+    if (!n->tu->is_mut && sym->assign_count >= 1) {
         error_list_set(ps->el, loc, "immutable variable changed in assignment");
     }
 

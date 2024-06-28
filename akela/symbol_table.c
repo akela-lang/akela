@@ -4,10 +4,10 @@
 #include "type_def.h"
 #include <assert.h>
 #include "ast.h"
-#include "zinc/hash.h"
 #include "symbol.h"
 
-bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b, bool in_prototype);
+bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b);
+bool type_use_match(Type_use* a, Type_use* b);
 
 void environment_begin(struct symbol_table* st)
 {
@@ -87,8 +87,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct environment
 {
 	const char* name;
 	struct type_def* td = NULL;
-	struct symbol* sym = NULL;
-	
+
 	name = "i32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
@@ -301,7 +300,8 @@ bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, 
 	return false;
 }
 
-bool type_find_whole(struct symbol_table* st, Ast_node* a, Ast_node* b)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool type_find_whole(struct symbol_table* st, Type_use* a, Type_use* b)
 {
 	if (a && b) {
 		bool promote;
@@ -313,16 +313,20 @@ bool type_find_whole(struct symbol_table* st, Ast_node* a, Ast_node* b)
 			a->td = td;
 		}
 
-		Ast_node* x = a->head;
-		Ast_node* y = b->head;
-		do {
-			if (!type_find_whole(st, x, y)) {
-				return false;
-			}
-			if (x) x = x->next;
-			if (y) y = y->next;
-		} while (x || y);
-		
+        if (a->proto && b->proto) {
+            Ast_node* x = a->proto->head;
+            Ast_node* y = b->proto->head;
+            do {
+                if (x && x->tu && y && y->tu) {
+                    if (!type_find_whole(st, x->tu, y->tu)) {
+                        return false;
+                    }
+                }
+                if (x) x = x->next;
+                if (y) y = y->next;
+            } while (x || y);
+        }
+
 		return true;
 
 	} else if (!a && !b) {
@@ -346,8 +350,42 @@ bool type_def_can_cast(struct type_def* a, struct type_def* b)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool type_use_can_cast(Ast_node* a, Ast_node* b) {
-    return type_use_can_cast_prototype(a, b, false);
+bool type_use_can_cast(Type_use* a, Type_use* b)
+{
+    if (a && b) {
+        if (!type_def_can_cast(a->td, b->td)) {
+            return false;
+        }
+
+        if (!type_use_can_cast_prototype(a->proto, b->proto)) {
+            return false;
+        } else {
+            return true;
+        }
+    } else if (!a && !b) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool type_use_match(Type_use* a, Type_use* b)
+{
+    if (a && b) {
+        if (a->td != b->td) {
+            return false;
+        }
+
+        if (!type_use_can_cast_prototype(a->proto, b->proto)) {
+            return false;
+        } else {
+            return true;
+        }
+    } else if (!a && !b) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -358,37 +396,29 @@ bool type_use_can_cast(Ast_node* a, Ast_node* b) {
  * @return
  */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b, bool in_prototype)
+bool type_use_can_cast_prototype(Ast_node* a, Ast_node* b)
 {
 	if (a && b) {
-        if (in_prototype) {
-            if (a->td != b->td) {
+        if (!type_use_match(a->tu, b->tu)) {
+            return false;
+        }
+
+        Ast_node *x = a->head;
+        Ast_node *y = b->head;
+        do {
+            if (!type_use_can_cast_prototype(x, y)) {
                 return false;
             }
-        } else if (!type_def_can_cast(a->td, b->td)) {
-			return false;
-		}
+            if (x) x = x->next;
+            if (y) y = y->next;
+        } while (x || y);
 
-        if (a->type == Ast_type_prototype || b->type == Ast_type_prototype) {
-            in_prototype = true;
-        }
-		Ast_node* x = a->head;
-		Ast_node* y = b->head;
-		do {
-			if (!type_use_can_cast_prototype(x, y, in_prototype)) {
-				return false;
-			}
-			if (x) x = x->next;
-			if (y) y = y->next;
-		} while (x || y);
-
-		return true;
-
-	} else if (!a && !b) {
-		return true;
-	} else {
-		return false;
-	}
+        return true;
+    } else if (!a && !b) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest)

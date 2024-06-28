@@ -1,5 +1,4 @@
 #include <assert.h>
-#include "zinc/result.h"
 #include "parse_tools.h"
 #include "ast.h"
 #include "token.h"
@@ -95,7 +94,7 @@ Ast_node* parse_function(struct parse_state* ps, bool is_method, Ast_node* struc
     environment_begin(ps->st);
     declare_params(ps, proto, struct_type);
     set_current_function(ps->st->top, n);
-    Ast_node* tu = proto2type(ps->st, proto);
+    Type_use* tu = proto2type(ps->st, proto);
     n->tu = tu;
 
     Ast_node* stmts_node = NULL;
@@ -150,7 +149,7 @@ Ast_node* parse_function(struct parse_state* ps, bool is_method, Ast_node* struc
                     malloc_safe((void**)&new_sym, sizeof(struct symbol));
                     symbol_init(new_sym);
                     new_sym->type = Symbol_type_variable;
-                    new_sym->tu = Ast_node_copy(tu);
+                    new_sym->tu = Type_use_copy(tu);
                     environment_put(ps->st->top, &id_node->value, new_sym);
                     n->sym = new_sym;
                 }
@@ -207,7 +206,7 @@ Ast_node* parse_if(struct parse_state* ps)
     }
 
     if (body) {
-        cb->tu = Ast_node_copy(body->tu);
+        cb->tu = Type_use_copy(body->tu);
         Ast_node_add(cb, body);
     }
 
@@ -236,9 +235,9 @@ Ast_node* parse_if(struct parse_state* ps)
         if (b) {
             /* only return a value if else exists */
             Ast_node* p = n->head;
-            Ast_node* tu = NULL;
+            Type_use* tu = NULL;
             if (p) {
-                tu = Ast_node_copy(p->tu);
+                tu = Type_use_copy(p->tu);
                 p = p->next;
             }
             while (p) {
@@ -306,12 +305,10 @@ void parse_elseif(struct parse_state* ps, Ast_node* parent)
 
         if (body) {
             Ast_node_add(cb, body);
-            cb->tu = Ast_node_copy(body->tu);
+            cb->tu = Type_use_copy(body->tu);
         }
 
         Ast_node_add(parent, cb);
-
-        struct location loc_elseif;
     }
 }
 
@@ -343,7 +340,7 @@ Ast_node* parse_else(struct parse_state* ps)
         }
 
         if (body) {
-            n->tu = Ast_node_copy(body->tu);
+            n->tu = Type_use_copy(body->tu);
         }
 
         if (body) {
@@ -391,7 +388,7 @@ Ast_node* parse_not(struct parse_state* ps)
 
 	if (n->type != Ast_type_error) {
 		assert(a);
-		Ast_node* tu = a->tu;
+		Type_use* tu = a->tu;
 		if (!tu) {
 			error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
 			/* test case: test_parse_not_error_no_value */
@@ -403,7 +400,7 @@ Ast_node* parse_not(struct parse_state* ps)
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = Ast_type_error;
 			} else {
-				n->tu = Ast_node_copy(tu);
+				n->tu = Type_use_copy(tu);
 			}
 		}
 	}
@@ -459,20 +456,19 @@ Ast_node* parse_literal(struct parse_state* ps)
         struct symbol* sym = environment_get(ps->st->top, &bf);
         assert(sym);
         assert(sym->td);
-        Ast_node* tu = NULL;
-        Ast_node_create(&tu);
-        tu->type = Ast_type_type;
+        Type_use* tu = NULL;
+        Type_use_create(&tu);
         tu->td = sym->td;
         n->tu = tu;
         buffer_destroy(&bf);
 
         if (is_string) {
-            tu->to.is_array = true;
+            tu->is_array = true;
             Type_dimension dim;
             buffer_finish(&n->value);
             dim.size = n->value.size + 1;
             dim.option = Array_element_const;
-            VectorAdd(&tu->to.dim, &dim, 1);
+            VectorAdd(&tu->dim, &dim, 1);
         }
 	}
 
@@ -511,9 +507,8 @@ Ast_node* parse_id(struct parse_state* ps)
 
         n->type = Ast_type_struct_literal;
 
-        Ast_node* tu = NULL;
-        Ast_node_create(&tu);
-        tu->type = Ast_type_type;
+        Type_use* tu = NULL;
+        Type_use_create(&tu);
         tu->td = sym->td;
         n->tu = tu;
         n->sym = sym;
@@ -550,7 +545,7 @@ Ast_node* parse_id(struct parse_state* ps)
             /* test case: test_parse_types_missing_declaration */
             n->type = Ast_type_error;
         } else {
-            n->tu = Ast_node_copy(sym->tu);
+            n->tu = Type_use_copy(sym->tu);
             n->sym = sym;
         }
 
@@ -565,7 +560,7 @@ typedef struct Struct_field_result {
     bool found;
     size_t index;
     Ast_node* id;
-    Ast_node* tu;
+    Type_use* tu;
 } Struct_field_result;
 
 Struct_field_result Get_struct_field(struct type_def* td, struct buffer* name) {
@@ -576,9 +571,9 @@ Struct_field_result Get_struct_field(struct type_def* td, struct buffer* name) {
     while (dec) {
         assert(dec->type == Ast_type_declaration);
         Ast_node* id = Ast_node_get(dec, 0);
-        Ast_node* tu = Ast_node_get(dec, 1);
+        Ast_node* type_node = Ast_node_get(dec, 1);
         if (buffer_compare(&id->value, name)) {
-            Struct_field_result res = {true, index, id, tu};
+            Struct_field_result res = {true, index, id, type_node->tu};
             return res;
         }
         dec = dec->next;
@@ -592,7 +587,6 @@ Struct_field_result Get_struct_field(struct type_def* td, struct buffer* name) {
 void Find_missing_fields(struct parse_state* ps, struct type_def* td, Ast_node* n) {
     assert(td->type == type_struct);
     assert(td->composite);
-    size_t index = 0;
     Ast_node *dec = td->composite->head;
     while (dec) {
         Ast_node *id = Ast_node_get(dec, 0);
@@ -746,13 +740,13 @@ Ast_node* parse_sign(struct parse_state* ps)
 
 	if (n->type != Ast_type_error) {
 		assert(right);
-		Ast_node* tu = right->tu;
+		Type_use* tu = right->tu;
 		if (!tu) {
 			error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
 			/* test case: test_parse_sign_error */
             n->type = Ast_type_error;
 		} else {
-			n->tu = Ast_node_copy(tu);
+			n->tu = Type_use_copy(tu);
 		}
 	}
 
@@ -803,9 +797,9 @@ Ast_node* parse_array_literal(struct parse_state* ps)
             /* test case: test_parse_array_literal_empty_error */
             n->type = Ast_type_error;
         } else {
-            Ast_node* tu_first = Ast_node_copy(first->tu);
+            Type_use* tu_first = Type_use_copy(first->tu);
             Ast_node* x = first->next;
-            Ast_node* tu_x;
+            Type_use* tu_x;
             count++;
             while (x) {
                 tu_x = x->tu;
@@ -819,8 +813,8 @@ Ast_node* parse_array_literal(struct parse_state* ps)
                 x = x->next;
             }
             n->tu = tu_first;
-            n->tu->to.is_array = true;
-            VectorAdd(&n->tu->to.dim, &count, 1);
+            n->tu->is_array = true;
+            VectorAdd(&n->tu->dim, &count, 1);
         }
     }
 
@@ -920,12 +914,12 @@ Ast_node* parse_parenthesis(struct parse_state* ps)
 
 	if (n->type != Ast_type_error) {
 		assert(a);
-		Ast_node* tu = a->tu;
+		Type_use* tu = a->tu;
 		if (!tu) {
 			error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
             n->type = Ast_type_error;
 		} else {
-			n->tu = Ast_node_copy(tu);
+			n->tu = Type_use_copy(tu);
 		}
 	}
 

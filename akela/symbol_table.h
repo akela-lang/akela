@@ -1,5 +1,5 @@
-#ifndef _SYMBOL_TABLE_H
-#define _SYMBOL_TABLE_H
+#ifndef AKELA_SYMBOL_TABLE_H
+#define AKELA_SYMBOL_TABLE_H
 
 #include "akela_api.h"
 #include <stdbool.h>
@@ -8,12 +8,15 @@
 #include <stdlib.h>
 #include "ast.h"
 #include "environment.h"
+#include "type_use.h"
+
+typedef struct Type_use Type_use;
 
 struct symbol_table {
 	struct environment* initial;
 	struct environment* global;
 	struct environment* top;
-	Ast_node* numeric_pool;
+	struct Ast_node* numeric_pool;
     struct environment* deactivated;
     size_t id_count;
     struct type_def* function_type_def;
@@ -26,13 +29,13 @@ AKELA_API void symbol_table_create(struct symbol_table** st);
 AKELA_API void symbol_table_destroy(struct symbol_table* st);
 AKELA_API bool symbol_table_is_global(struct symbol_table* st);
 AKELA_API bool is_numeric(struct type_def* td);
-AKELA_API bool type_find_whole(struct symbol_table* st, Ast_node* a, Ast_node* b);
+AKELA_API bool type_find_whole(struct symbol_table* st, struct Type_use* a, struct Type_use* b);
 AKELA_API bool type_def_can_cast(struct type_def* a, struct type_def* b);
-AKELA_API bool type_use_can_cast(Ast_node* a, Ast_node* b           );
+AKELA_API bool type_use_can_cast(Type_use* a, Type_use* b);
 AKELA_API void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest);
 AKELA_API void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name);
-AKELA_API void set_current_function(struct environment* env, Ast_node* fd);
-AKELA_API Ast_node* get_current_function(struct environment* env);
+AKELA_API void set_current_function(struct environment* env, struct Ast_node* fd);
+AKELA_API struct Ast_node* get_current_function(struct environment* env);
 AKELA_API size_t symbol_table_generate_id(struct symbol_table* st);
 AKELA_API void symbol_table_print(struct symbol_table* st);
 

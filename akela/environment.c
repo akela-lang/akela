@@ -42,7 +42,7 @@ struct symbol* environment_get_local(struct environment* env, struct buffer* val
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void environment_destroy_symbol(struct symbol* sym)
 {
-    Ast_node_destroy(sym->tu);
+    Type_use_destroy(sym->tu);
     type_def_destroy(sym->td);
     if (sym->constructor) {
         environment_destroy_symbol(sym->constructor);

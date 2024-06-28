@@ -7,6 +7,7 @@
 #include "zinc/result.h"
 #include "token.h"
 #include "zinc/vector.h"
+#include "type_use.h"
 
 typedef enum Ast_type {
 	Ast_type_none,
@@ -140,31 +141,12 @@ enum result Ast_set_names(char** names)
 }
 #endif
 
-typedef enum Array_element_option {
-    Array_element_default,
-    Array_element_const,
-} Array_element_option;
-
-typedef struct Type_dimension {
-    size_t size;
-    Array_element_option option;
-} Type_dimension;
-
-typedef struct Type_options {
-    bool is_mut;
-    bool is_array;
-    bool is_slice;
-    bool is_ref;
-    bool original_is_mut;
-    Vector dim;             /* vector of Type_dimension */
-} Type_options;
-
 typedef struct Ast_node {
 	Ast_type type;
 	struct buffer value;
-	struct Ast_node* tu;
+	struct Type_use* tu;
 	struct type_def* td;
-    struct Type_options to;
+    bool is_mut;
     struct location loc;
     struct symbol* sym;
 	struct Ast_node* next;
@@ -188,9 +170,6 @@ AKELA_API void Ast_node_print(Ast_node* root, bool debug);
 AKELA_API Ast_node* Ast_node_copy(Ast_node* n);
 AKELA_API bool Ast_node_match(Ast_node* a, Ast_node* b);
 AKELA_API size_t Ast_node_count_children(Ast_node* n);
-AKELA_API void Type_options_init(Type_options* to);
-AKELA_API void Type_options_destroy(Type_options* to);
-AKELA_API void Type_options_reduce_dimension(Type_options* to);
 
 #ifdef __cplusplus
 }

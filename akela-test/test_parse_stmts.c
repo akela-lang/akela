@@ -347,7 +347,7 @@ void test_parse_stmts_type()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* tu = cu.root->tu;
+	Type_use* tu = cu.root->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct type_def* td = tu->td;
@@ -376,7 +376,7 @@ void test_parse_if()
 	assert_ptr(if_node, "ptr cu.root");
 	expect_int_equal(if_node->type, Ast_type_if, "if if_node");
 
-    Ast_node* tu = if_node->tu;
+    Type_use* tu = if_node->tu;
 	expect_null(tu, "null tu");
 
 	Ast_node* cb = Ast_node_get(if_node, 0);
@@ -969,8 +969,11 @@ void test_parse_for_iteration()
 	expect_int_equal(id->type, Ast_type_id, "id id");
 	expect_str(&id->value, "i", "i id");
 
-	Ast_node* i_tu = Ast_node_get(dec, 1);
-	assert_ptr(i_tu, "ptr i_tu");
+	Ast_node* i_type_node = Ast_node_get(dec, 1);
+	assert_ptr(i_type_node, "ptr i_tu");
+
+    Type_use* i_tu = i_type_node->tu;
+    assert_ptr(i_tu, "ptr i_tu");
 
 	struct type_def* i_td = i_tu->td;
 	assert_ptr(i_td, "ptr i_td");
@@ -1225,7 +1228,6 @@ void test_parse_let()
 
     struct comp_unit cu;
 
-    /* allocate ps{} cu.root cu.root{} */
     parse_setup("let a: i32", &cu);
     assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
@@ -1246,14 +1248,16 @@ void test_parse_let()
     expect_int_equal(id->type, Ast_type_id, "id id");
     expect_str(&id->value, "a", "a");
 
-    Ast_node* tu = Ast_node_get(let, 1);
+    Ast_node* type_node = Ast_node_get(let, 1);
+    assert_ptr(type_node, "ptr type_node");
+
+    Type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
     struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_str(&td->name, "i32", "i32 td");
 
-    /* destroy ps{} cu.root cu.root{} */
     parse_teardown(&cu);
 }
 
@@ -1284,7 +1288,10 @@ void test_parse_let2()
     expect_int_equal(id->type, Ast_type_id, "id");
     expect_str(&id->value, "a", "a");
 
-    Ast_node* tu = Ast_node_get(let, 1);
+    Ast_node* type_node = Ast_node_get(let, 1);
+    assert_ptr(type_node, "ptr type_node");
+
+    Type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
     struct type_def* td = tu->td;
@@ -1331,7 +1338,10 @@ void test_parse_let3()
     expect_int_equal(id0->type, Ast_type_id, "id id0");
     expect_str(&id0->value, "a", "value id0");
 
-    Ast_node* tu = Ast_node_get(let, 1);
+    Ast_node* type_node = Ast_node_get(let, 1);
+    assert_ptr(type_node, "ptr type_node");
+
+    Type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
     struct type_def* td = tu->td;
@@ -1366,13 +1376,10 @@ void test_parse_let_expected_declaration()
 
     struct comp_unit cu;
 
-    /* allocate ps{} cu.root cu.root{} */
     parse_setup("let", &cu);
     assert_has_errors(&cu.el);
     expect_false(cu.valid, "parse valid");
     expect_source_error(&cu.el, "expected variable(s) after let");
-
-    /* destroy ps{} cu.root cu.root{} */
 
     parse_teardown(&cu);
 }
@@ -1396,7 +1403,7 @@ void test_parse_extern()
     assert_ptr(f, "ptr f");
     expect_int_equal(f->type, Ast_type_extern, "type f");
 
-    Ast_node* tu = f->tu;
+    Type_use* tu = f->tu;
     assert_ptr(tu, "ptr tu");
 
     struct type_def* td = tu->td;
@@ -1451,21 +1458,21 @@ void test_parse_stmts_mut() {
     Ast_node *let_lhs = Ast_node_get(let_lseq, 0);
     assert_ptr(let_lhs, "ptr lhs");
     expect_int_equal(let_lhs->type, Ast_type_id, "type lhs");
-    expect_true(let_lhs->to.is_mut, "is_mut lhs");
+    expect_true(let_lhs->is_mut, "is_mut lhs");
 
     Ast_node *assign = Ast_node_get(cu.root, 1);
     assert_ptr(assign, "ptr assign");
     expect_int_equal(assign->type, Ast_type_assign, "type assign");
 
     assert_ptr(assign->tu, "ptr assign->tu");
-    expect_true(assign->tu->to.is_mut, "is_mut assign");
+    expect_true(assign->tu->is_mut, "is_mut assign");
 
     Ast_node *x = Ast_node_get(assign, 0);
     assert_ptr(x, "ptr x");
     expect_int_equal(x->type, Ast_type_id, "type id");
 
     expect_ptr(x->tu, "ptr x->tu");
-    expect_true(x->tu->to.is_mut, "is_mut x->tu");
+    expect_true(x->tu->is_mut, "is_mut x->tu");
 
     parse_teardown(&cu);
 }
@@ -1481,7 +1488,7 @@ void test_parse_stmts_error_mut()
                 &cu);
     expect_false(cu.valid, "parse_setup valid");
     expect_has_errors(&cu.el);
-    struct error* e = expect_source_error(&cu.el, "immutable variable changed in assignment");
+    expect_source_error(&cu.el, "immutable variable changed in assignment");
     parse_teardown(&cu);
 }
 

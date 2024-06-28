@@ -30,7 +30,7 @@ struct symbol* symbol_copy(struct symbol* sym)
         symbol_init(new_sym);
         new_sym->type = sym->type;
         new_sym->tk_type = sym->tk_type;
-        new_sym->tu = Ast_node_copy(sym->tu);
+        new_sym->tu = Type_use_copy(sym->tu);
         new_sym->td = type_def_copy(sym->td);
         new_sym->constructor = symbol_copy(sym->constructor);
         new_sym->root = Ast_node_copy(sym->root);

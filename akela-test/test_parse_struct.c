@@ -40,11 +40,14 @@ void test_parse_struct_field_assign()
     expect_int_equal(id0->type, Ast_type_id, "id id0");
     expect_str(&id0->value, "firstName", "firstName id0");
 
-    Ast_node* t0 = Ast_node_get(d0, 1);
-    assert_ptr(t0, "ptr t0");
-    expect_int_equal(t0->type, Ast_type_type, "type t0");
+    Ast_node* type_node0 = Ast_node_get(d0, 1);
+    assert_ptr(type_node0, "ptr type_node0");
+    expect_int_equal(type_node0->type, Ast_type_type, "type type_node0");
 
-    struct type_def* td0 = t0->td;
+    Type_use* tu0 = type_node0->tu;
+    assert_ptr(tu0, "ptr tu0");
+
+    struct type_def* td0 = tu0->td;
     assert_ptr(td0, "ptr td0");
     expect_int_equal(td0->type, type_integer, "type td0");
     expect_str(&td0->name, "u8", "name td0");
@@ -59,11 +62,14 @@ void test_parse_struct_field_assign()
     expect_int_equal(id1->type, Ast_type_id, "id id1");
     expect_str(&id1->value, "lastName", "lastName id1");
 
-    Ast_node* t1 = Ast_node_get(d1, 1);
-    assert_ptr(t1, "ptr t0");
-    expect_int_equal(t1->type, Ast_type_type, "type t1");
+    Ast_node* type_node1 = Ast_node_get(d1, 1);
+    assert_ptr(type_node1, "ptr type_node1");
+    expect_int_equal(type_node1->type, Ast_type_type, "type type_node1");
 
-    struct type_def* td1 = t1->td;
+    Type_use* tu1 = type_node1->tu;
+    assert_ptr(tu1, "ptr tu1");
+
+    struct type_def* td1 = tu1->td;
     assert_ptr(td1, "ptr td1");
     expect_int_equal(td1->type, type_integer, "type td1");
     expect_str(&td1->name, "u8", "name td1");
@@ -78,11 +84,14 @@ void test_parse_struct_field_assign()
     expect_int_equal(id2->type, Ast_type_id, "id id2");
     expect_str(&id2->value, "age", "age id2");
 
-    Ast_node* t2 = Ast_node_get(d2, 1);
-    assert_ptr(t2, "ptr t2");
-    expect_int_equal(t2->type, Ast_type_type, "type t2");
+    Ast_node* type_node2 = Ast_node_get(d2, 1);
+    assert_ptr(type_node2, "ptr type_node2");
+    expect_int_equal(type_node2->type, Ast_type_type, "type type_node2");
 
-    struct type_def* td2 = t2->td;
+    Type_use* tu2 = type_node2->tu;
+    assert_ptr(tu2, "ptr tu2");
+
+    struct type_def* td2 = tu2->td;
     assert_ptr(td2, "ptr td2");
     expect_int_equal(td2->type, type_integer, "integer td2");
     expect_str(&td2->name, "i64", "i64 td2");
@@ -100,7 +109,10 @@ void test_parse_struct_field_assign()
     assert_ptr(let_type, "ptr let_type");
     expect_int_equal(let_type->type, Ast_type_type, "type let_type");
 
-    struct type_def* td = let_type->td;
+    Type_use* tu = let_type->tu;
+    assert_ptr(tu, "ptr tu");
+
+    struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_int_equal(td->type, type_struct, "struct td");
     expect_str(&td->name, "Person", "Person td");

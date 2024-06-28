@@ -16,10 +16,10 @@ struct symbol {
     Symbol_type type;
     enum token_enum tk_type;
     struct type_def* td;
-    Ast_node* tu;
+    struct Type_use* tu;
     struct symbol* constructor;
-    Ast_node* root;
-    Ast_node* root_ptr;
+    struct Ast_node* root;
+    struct Ast_node* root_ptr;
     void* value;
     void* reference;
     size_t assign_count;

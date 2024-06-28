@@ -6,6 +6,7 @@
 #include "akela_llvm_stmts.h"
 #include "akela_llvm_operator.h"
 #include "akela_llvm_struct.h"
+#include "akela/type_use.h"
 
 using namespace llvm;
 using namespace llvm::orc;
@@ -26,32 +27,32 @@ namespace Akela_llvm {
         jd->current_function = std::vector<Function*>();
     }
 
-/* NOLINTNEXTLINE(misc-no-recursion) */
-    FunctionType *Get_function_type(Jit_data *jd, Ast_node *tu) {
-        Ast_node *input = nullptr;
-        Ast_node *output = nullptr;
-        get_function_children(tu, &input, &output);
+    /* NOLINTNEXTLINE(misc-no-recursion) */
+    FunctionType *Get_function_type(Jit_data *jd, Type_use *tu) {
+        Ast_node *dseq = nullptr;
+        Ast_node *dret = nullptr;
+        get_function_children(tu->proto, &dseq, &dret);
         bool is_variadic = false;
 
         std::vector<Type *> param_types = std::vector<Type *>();
-        size_t input_count = Ast_node_count_children(input);
+        size_t input_count = Ast_node_count_children(dseq);
         if (input_count > 0) {
             for (size_t i = 0; i < input_count; i++) {
-                Ast_node *dec = Ast_node_get(input, i);
+                Ast_node *dec = Ast_node_get(dseq, i);
                 if (dec->type == Ast_type_ellipsis) {
                     is_variadic = true;
                     continue;
                 }
-                Ast_node *type_use = Ast_node_get(dec, 1);
-                Type *dec_type = Get_type_pointer(jd, type_use);
+                Ast_node *type_node = Ast_node_get(dec, 1);
+                Type *dec_type = Get_type_pointer(jd, type_node->tu);
                 param_types.push_back(dec_type);
             }
         }
 
-        Type *ret_type = nullptr;
-        if (output) {
-            Ast_node *ret = Ast_node_get(output, 0);
-            ret_type = Get_type_pointer(jd, ret);
+        Type *ret_type;
+        Ast_node *ret_type_node = Ast_node_get(dret, 0);
+        if (ret_type_node) {
+            ret_type = Get_type_pointer(jd, ret_type_node->tu);
         } else {
             ret_type = Type::getVoidTy(*jd->TheContext);
         }
@@ -60,7 +61,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type *Get_scalar_type(Jit_data *jd, Ast_node *tu) {
+    Type *Get_scalar_type(Jit_data *jd, Type_use *tu) {
         if (!tu) {
             return Type::getVoidTy(*jd->TheContext);
         }
@@ -68,7 +69,7 @@ namespace Akela_llvm {
         struct type_def *td = tu->td;
 
         if (td->type == type_integer) {
-            Type *t = nullptr;
+            Type *t;
             if (td->bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
             } else if (td->bit_count == 32) {
@@ -99,11 +100,11 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type_pointer(Jit_data *jd, Ast_node *tu)
+    Type* Get_type_pointer(Jit_data *jd, Type_use *tu)
     {
         Type* t = Get_type(jd, tu);
         if (tu) {
-            if (tu->to.is_array || tu->td->type == type_function || tu->td->type == type_struct) {
+            if (tu->is_array || tu->td->type == type_function || tu->td->type == type_struct) {
                 t = t->getPointerTo();
             }
         }
@@ -111,13 +112,13 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type(Jit_data* jd, Ast_node* tu)
+    Type* Get_type(Jit_data* jd, Type_use* tu)
     {
         Type *t = Get_scalar_type(jd, tu);
-        if (tu && tu->to.is_array) {
-            size_t i = tu->to.dim.count - 1;
+        if (tu && tu->is_array) {
+            size_t i = tu->dim.count - 1;
             while (true) {
-                auto dim = (Type_dimension*)VECTOR_PTR(&tu->to.dim, i);
+                auto dim = (Type_dimension*)VECTOR_PTR(&tu->dim, i);
                 t = ArrayType::get(t, dim->size);
                 if (i == 0) break;
                 i--;
@@ -142,14 +143,14 @@ namespace Akela_llvm {
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOPLEVEL_NAME));
         if (n->tu) {
             enum type type = n->tu->td->type;
-            bool is_array = n->tu->to.is_array;
+            bool is_array = n->tu->is_array;
             int bit_count = n->tu->td->bit_count;
             if (type == type_integer) {
                 if (is_array) {
                     if (bit_count == 64) {
                         long* (*fp)() = ExprSymbol.getAddress().toPtr<long*(*)()>();
                         long* p = fp();
-                        Vector* dim_vector = &n->tu->to.dim;
+                        Vector* dim_vector = &n->tu->dim;
                         size_t count = 1;
                         for (int i = 0; i < dim_vector->count; i++) {
                             auto dim = (Type_dimension*)VECTOR_PTR(dim_vector, i);
@@ -166,7 +167,7 @@ namespace Akela_llvm {
                     } else if (bit_count == 32) {
                         int* (*fp)() = ExprSymbol.getAddress().toPtr<int*(*)()>();
                         int* p = fp();
-                        Vector* dim_vector = &n->tu->to.dim;
+                        Vector* dim_vector = &n->tu->dim;
                         size_t count = 1;
                         for (int i = 0; i < dim_vector->count; i++) {
                             auto dim = (Type_dimension*)VECTOR_PTR(dim_vector, i);
@@ -290,18 +291,18 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     void Array_copy(
             Jit_data* jd,
-            Ast_node* lhs_tu,
-            Ast_node* rhs_tu,
+            Type_use* lhs_tu,
+            Type_use* rhs_tu,
             Value* lhs_ptr,
             Value* rhs_ptr)
     {
-        size_t size = *(size_t*)VECTOR_PTR(&lhs_tu->to.dim, 0);
+        size_t size = *(size_t*)VECTOR_PTR(&lhs_tu->dim, 0);
 
-        Ast_node* lhs_tu2 = Ast_node_copy(lhs_tu);
-        Type_options_reduce_dimension(&lhs_tu2->to);
+        Type_use* lhs_tu2 = Type_use_copy(lhs_tu);
+        Type_use_reduce_dimension(lhs_tu2);
 
-        Ast_node* rhs_tu2 = Ast_node_copy(rhs_tu);
-        Type_options_reduce_dimension(&rhs_tu2->to);
+        Type_use* rhs_tu2 = Type_use_copy(rhs_tu);
+        Type_use_reduce_dimension(rhs_tu2);
 
         for (size_t i = 0; i < size; i++) {
             Type* t = Get_type(jd, lhs_tu2);
@@ -311,7 +312,7 @@ namespace Akela_llvm {
             Value* lhs_ptr2 = jd->Builder->CreateInBoundsGEP(t, lhs_ptr, list, "lhstmp");
             Value* rhs_ptr2 = jd->Builder->CreateInBoundsGEP(t, rhs_ptr, list, "rhstmp");
 
-            if (lhs_tu2->to.is_array) {
+            if (lhs_tu2->is_array) {
                 Array_copy(jd, lhs_tu2, rhs_tu2, lhs_ptr2, rhs_ptr2);
             } else {
                 Value* value = jd->Builder->CreateLoad(t, rhs_ptr2, "rhs");
@@ -319,8 +320,8 @@ namespace Akela_llvm {
             }
         }
 
-        Ast_node_destroy(lhs_tu2);
-        Ast_node_destroy(rhs_tu2);
+        Type_use_destroy(lhs_tu2);
+        Type_use_destroy(rhs_tu2);
     }
 
 }

@@ -4,17 +4,7 @@
 #include <stdbool.h>
 #include "ast.h"
 #include "zinc/memory.h"
-#include "type_def.h"
 
-void Type_options_init(Type_options* to)
-{
-    to->is_mut = false;
-    to->is_array = false;
-    to->is_slice = false;
-    to->is_ref = false;
-    to->original_is_mut = false;
-    VectorInit(&to->dim, sizeof(Type_dimension));
-}
 void Ast_node_create(Ast_node** n)
 {
 	malloc_safe((void**)n, sizeof(Ast_node));
@@ -27,7 +17,6 @@ void Ast_node_init(Ast_node* n)
 	buffer_init(&n->value);
 	n->tu = NULL;
 	n->td = NULL;
-    Type_options_init(&n->to);
     location_init(&n->loc);
     n->sym = NULL;
 	n->next = NULL;
@@ -48,15 +37,9 @@ void Ast_node_destroy(Ast_node* n)
         }
 
         buffer_destroy(&n->value);
-        Ast_node_destroy(n->tu);
-        Type_options_destroy(&n->to);
+        Type_use_destroy(n->tu);
         free(n);
     }
-}
-
-void Type_options_destroy(Type_options* to)
-{
-    VectorDestroy(&to->dim);
 }
 
 void Ast_node_add(Ast_node* p, Ast_node* c)
@@ -136,51 +119,9 @@ void Ast_node_print(Ast_node* root, bool debug)
 
 	printf("\n");
 
-	if (debug) {
-        Ast_node_print(root->tu, debug);
-	}
-
 	for (Ast_node* p = root->head; p; p = p->next) {
         Ast_node_print(p, debug);
 	}
-}
-
-void Type_options_copy(Type_options* src, Type_options* dest)
-{
-    dest->is_mut = src->is_mut;
-    dest->is_array = src->is_array;
-    dest->is_slice = src->is_slice;
-    dest->is_ref = src->is_ref;
-    dest->original_is_mut = src->original_is_mut;
-    VectorCopy(&src->dim, &dest->dim);
-}
-
-void Type_options_reduce_dimension(Type_options* to)
-{
-    if (to->dim.count > 0) {
-        Type_dimension current;
-        Type_dimension *first = (Type_dimension*)VECTOR_PTR(&to->dim, 0);
-        current = *first;
-
-        if (!to->original_is_mut || current.option == Array_element_const) {
-            to->is_mut = false;
-        } else {
-            to->is_mut = true;
-        }
-
-        for (size_t i = 0; i < to->dim.count - 1; i++) {
-            Type_dimension* dest = (Type_dimension*)VECTOR_PTR(&to->dim, i);
-            Type_dimension* src = (Type_dimension*)VECTOR_PTR(&to->dim, i + 1);
-            *dest = *src;
-        }
-        if (to->dim.count > 0) {
-            to->dim.count--;
-        }
-        if (to->dim.count == 0) {
-            to->is_array = false;
-            to->is_slice = false;
-        }
-    }
 }
 
 /* copy dag excluding tu */
@@ -193,7 +134,7 @@ Ast_node* Ast_node_copy(Ast_node* n)
         Ast_node_create(&copy);
 		copy->type = n->type;
 		copy->td = n->td;
-        Type_options_copy(&n->to, &copy->to);
+        copy->tu = Type_use_copy(n->tu);
         copy->loc = n->loc;
 		buffer_copy(&n->value, &copy->value);
 

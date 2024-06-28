@@ -6,7 +6,7 @@ using namespace llvm::orc;
 namespace Akela_llvm {
     Value* Handle_number(Jit_data* jd, Ast_node* n)
     {
-        Ast_node* tu = n->tu;
+        Type_use* tu = n->tu;
         struct type_def *td = tu->td;
         if (td->type == type_integer) {
             Type* t = Get_type(jd, n->tu);
