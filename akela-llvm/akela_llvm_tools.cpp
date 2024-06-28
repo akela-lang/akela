@@ -298,10 +298,10 @@ namespace Akela_llvm {
     {
         size_t size = *(size_t*)VECTOR_PTR(&lhs_tu->dim, 0);
 
-        Type_use* lhs_tu2 = Type_use_copy(lhs_tu);
+        Type_use* lhs_tu2 = Type_use_clone(lhs_tu);
         Type_use_reduce_dimension(lhs_tu2);
 
-        Type_use* rhs_tu2 = Type_use_copy(rhs_tu);
+        Type_use* rhs_tu2 = Type_use_clone(rhs_tu);
         Type_use_reduce_dimension(rhs_tu2);
 
         for (size_t i = 0; i < size; i++) {

@@ -17,6 +17,7 @@ void Ast_node_init(Ast_node* n)
 	buffer_init(&n->value);
 	n->tu = NULL;
 	n->td = NULL;
+    n->is_mut = false;
     location_init(&n->loc);
     n->sym = NULL;
 	n->next = NULL;
@@ -124,24 +125,29 @@ void Ast_node_print(Ast_node* root, bool debug)
 	}
 }
 
-/* copy dag excluding tu */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* Ast_node_copy(Ast_node* n)
+void Ast_node_copy(Ast_node* src, Ast_node* dest)
+{
+    dest->type = src->type;
+    dest->td = src->td;
+    dest->tu = Type_use_clone(src->tu);
+    dest->loc = src->loc;
+    buffer_copy(&src->value, &dest->value);
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ast_node* Ast_node_clone(Ast_node* n)
 {
 	Ast_node* copy = NULL;
 
 	if (n) {
         Ast_node_create(&copy);
-		copy->type = n->type;
-		copy->td = n->td;
-        copy->tu = Type_use_copy(n->tu);
-        copy->loc = n->loc;
-		buffer_copy(&n->value, &copy->value);
+        Ast_node_copy(n, copy);
 
 		Ast_node* p = n->head;
 		while (p) {
 			Ast_node* p_copy = NULL;
-			p_copy = Ast_node_copy(p);
+			p_copy = Ast_node_clone(p);
             Ast_node_add(copy, p_copy);
 			p = p->next;
 		}

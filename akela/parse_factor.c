@@ -149,7 +149,7 @@ Ast_node* parse_function(struct parse_state* ps, bool is_method, Ast_node* struc
                     malloc_safe((void**)&new_sym, sizeof(struct symbol));
                     symbol_init(new_sym);
                     new_sym->type = Symbol_type_variable;
-                    new_sym->tu = Type_use_copy(tu);
+                    new_sym->tu = Type_use_clone(tu);
                     environment_put(ps->st->top, &id_node->value, new_sym);
                     n->sym = new_sym;
                 }
@@ -206,7 +206,7 @@ Ast_node* parse_if(struct parse_state* ps)
     }
 
     if (body) {
-        cb->tu = Type_use_copy(body->tu);
+        cb->tu = Type_use_clone(body->tu);
         Ast_node_add(cb, body);
     }
 
@@ -237,7 +237,7 @@ Ast_node* parse_if(struct parse_state* ps)
             Ast_node* p = n->head;
             Type_use* tu = NULL;
             if (p) {
-                tu = Type_use_copy(p->tu);
+                tu = Type_use_clone(p->tu);
                 p = p->next;
             }
             while (p) {
@@ -305,7 +305,7 @@ void parse_elseif(struct parse_state* ps, Ast_node* parent)
 
         if (body) {
             Ast_node_add(cb, body);
-            cb->tu = Type_use_copy(body->tu);
+            cb->tu = Type_use_clone(body->tu);
         }
 
         Ast_node_add(parent, cb);
@@ -340,7 +340,7 @@ Ast_node* parse_else(struct parse_state* ps)
         }
 
         if (body) {
-            n->tu = Type_use_copy(body->tu);
+            n->tu = Type_use_clone(body->tu);
         }
 
         if (body) {
@@ -400,7 +400,7 @@ Ast_node* parse_not(struct parse_state* ps)
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = Ast_type_error;
 			} else {
-				n->tu = Type_use_copy(tu);
+				n->tu = Type_use_clone(tu);
 			}
 		}
 	}
@@ -545,7 +545,7 @@ Ast_node* parse_id(struct parse_state* ps)
             /* test case: test_parse_types_missing_declaration */
             n->type = Ast_type_error;
         } else {
-            n->tu = Type_use_copy(sym->tu);
+            n->tu = Type_use_clone(sym->tu);
             n->sym = sym;
         }
 
@@ -746,7 +746,7 @@ Ast_node* parse_sign(struct parse_state* ps)
 			/* test case: test_parse_sign_error */
             n->type = Ast_type_error;
 		} else {
-			n->tu = Type_use_copy(tu);
+			n->tu = Type_use_clone(tu);
 		}
 	}
 
@@ -797,7 +797,7 @@ Ast_node* parse_array_literal(struct parse_state* ps)
             /* test case: test_parse_array_literal_empty_error */
             n->type = Ast_type_error;
         } else {
-            Type_use* tu_first = Type_use_copy(first->tu);
+            Type_use* tu_first = Type_use_clone(first->tu);
             Ast_node* x = first->next;
             Type_use* tu_x;
             count++;
@@ -919,7 +919,7 @@ Ast_node* parse_parenthesis(struct parse_state* ps)
 			error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
             n->type = Ast_type_error;
 		} else {
-			n->tu = Type_use_copy(tu);
+			n->tu = Type_use_clone(tu);
 		}
 	}
 

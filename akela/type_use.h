@@ -30,6 +30,10 @@ typedef struct Type_use {
     bool is_slice;
     Type_context context;
     struct Ast_node* proto;        /* functions are duck-typed */
+    struct Type_use* next;
+    struct Type_use* prev;
+    struct Type_use* head;
+    struct Type_use* tail;
 } Type_use;
 
 #ifdef __cplusplus
@@ -39,8 +43,10 @@ extern "C" {
 void Type_use_init(Type_use* tu);
 void Type_use_create(Type_use** tu);
 void Type_use_destroy(Type_use* tu);
-Type_use* Type_use_copy(Type_use* tu);
+void Type_use_copy(Type_use* a, Type_use* b);
+Type_use* Type_use_clone(Type_use* tu);
 void Type_use_reduce_dimension(Type_use* tu);
+void Type_use_add(Type_use* p, Type_use* c);
 
 #ifdef __cplusplus
 }

@@ -154,7 +154,7 @@ void declare_params(struct parse_state* ps, Ast_node* proto, Ast_node* struct_ty
         Ast_node* type_node = Ast_node_get(dec, 1);
         if (dec->type == Ast_type_self) {
             if (struct_type) {
-                type_node = Ast_node_copy(struct_type);
+                type_node = Ast_node_clone(struct_type);
             } else {
                 dec = dec->next;
                 continue;
@@ -604,7 +604,7 @@ void create_variable_symbol(struct parse_state* ps, Ast_node* type_node, Ast_nod
             malloc_safe((void**)&new_sym, sizeof(struct symbol));
             symbol_init(new_sym);
             new_sym->type = Symbol_type_variable;
-            new_sym->tu = Type_use_copy(type_node->tu);
+            new_sym->tu = Type_use_clone(type_node->tu);
             environment_put(ps->st->top, &id_node->value, new_sym);
             id_node->sym = new_sym;
             /* copy is_mut from id node to type use node */
@@ -711,7 +711,7 @@ Type_use* proto2type(struct symbol_table* st, Ast_node* proto)
 	assert(sym->td);
 	tu->td = sym->td;
 
-    tu->proto = Ast_node_copy(proto);
+    tu->proto = Ast_node_clone(proto);
 
 	buffer_destroy(&bf);
 
@@ -799,120 +799,6 @@ bool check_input_type(struct parse_state* ps, Ast_node* proto, int index, Ast_no
 	}
 
 	return valid;
-}
-
-Ast_node* make_constructor(struct type_def* td)
-{
-	Ast_node* tu = td->composite;
-
-    /* function */
-	Ast_node* n = NULL;
-    Ast_node_create(&n);
-	n->type = Ast_type_function;
-
-    Ast_node* proto = NULL;
-    Ast_node_create(&proto);
-    proto->type = Ast_type_prototype;
-
-	/* id */
-	Ast_node* id = NULL;
-    Ast_node_create(&id);
-	id->type = Ast_type_id;
-	buffer_copy(&td->name, &id->value);
-    Ast_node_add(proto, id);
-
-	/* dseq */
-	Ast_node* dseq = NULL;
-    Ast_node_create(&dseq);
-	dseq->type = Ast_type_dseq;
-	Ast_node* p = tu->head;
-	while (p) {
-		Ast_node* dec = Ast_node_copy(p);
-        Ast_node_add(dseq, dec);
-		p = p->next;
-	}
-    Ast_node_add(proto, dseq);
-
-	/* dret */
-	Ast_node* dret = NULL;
-    Ast_node_create(&dret);
-	dret->type = Ast_type_dret;
-	Ast_node* dret_tu = NULL;
-    Ast_node_create(&dret_tu);
-	dret_tu->type = Ast_type_type;
-	dret_tu->td = td;
-    Ast_node_add(dret, dret_tu);
-    Ast_node_add(proto, dret);
-
-    /* proto */
-    Ast_node_add(n, proto);
-
-	/* stmts */
-	Ast_node* stmts = NULL;
-    Ast_node_create(&stmts);
-	stmts->type = Ast_type_stmts;
-    Ast_node_add(n, stmts);
-
-	/* let */
-	Ast_node* let = NULL;
-    Ast_node_create(&let);
-	let->type = Ast_type_let;
-    Ast_node_add(stmts, let);
-
-	Ast_node* dec = NULL;
-    Ast_node_create(&dec);
-	dec->type = Ast_type_declaration;
-    Ast_node_add(let, dec);
-
-	Ast_node* id2 = NULL;
-    Ast_node_create(&id2);
-	id2->type = Ast_type_id;
-	buffer_copy_str(&id2->value, "__x");
-    Ast_node_add(dec, id2);
-
-	Ast_node* t = NULL;
-    Ast_node_create(&t);
-	t->type = Ast_type_type;
-	t->td = td;
-    Ast_node_add(dec, t);
-
-	/* assignments */
-	p = tu->head;
-	while (p) {
-		Ast_node* assign = NULL;
-        Ast_node_create(&assign);
-		assign->type = Ast_type_assign;
-        Ast_node_add(stmts, assign);
-
-		Ast_node* dot = NULL;
-        Ast_node_create(&dot);
-		dot->type = Ast_type_type;
-        Ast_node_add(assign, dot);
-
-		Ast_node* x = NULL;
-        Ast_node_create(&x);
-		x->type = Ast_type_id;
-		buffer_copy_str(&x->value, "__x");
-        Ast_node_add(dot, x);
-
-		Ast_node* field = NULL;
-        Ast_node_create(&field);
-		field->type = Ast_type_id;
-		Ast_node* id3 = Ast_node_get(p, 0);
-		buffer_copy(&id3->value, &field->value);
-        Ast_node_add(dot, field);
-
-		p = p->next;
-	}
-
-	/* return __x */
-	Ast_node* id4 = NULL;
-    Ast_node_create(&id4);
-	id4->type = Ast_type_id;
-	buffer_copy_str(&id4->value, "__x");
-    Ast_node_add(stmts, id4);
-
-	return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

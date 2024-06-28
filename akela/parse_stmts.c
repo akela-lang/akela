@@ -87,7 +87,7 @@ Ast_node* parse_stmts(struct parse_state* ps, bool suppress_env)
 	if (n->type != Ast_type_error) {
 		if (last) {
 			if (last->tu) {
-                n->tu = Type_use_copy(last->tu);
+                n->tu = Type_use_clone(last->tu);
 			}
 		}
 	}
@@ -195,7 +195,7 @@ Ast_node* parse_extern(struct parse_state* ps)
                 malloc_safe((void **) &new_sym, sizeof(struct symbol));
                 symbol_init(new_sym);
                 new_sym->type = Symbol_type_variable;
-                new_sym->tu = Type_use_copy(n->tu);
+                new_sym->tu = Type_use_clone(n->tu);
                 environment_put(ps->st->top, &id_node->value, new_sym);
                 n->sym = new_sym;
             }
@@ -472,7 +472,7 @@ void parse_for_iteration(struct parse_state* ps, Ast_node* parent)
             parent->type = Ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
-            Type_use* element_tu2 = Type_use_copy(list_tu);
+            Type_use* element_tu2 = Type_use_clone(list_tu);
             Type_use_reduce_dimension(element_tu2);
 			if (!type_use_can_cast(element_tu2, element_type_node->tu)) {
                 parent->type = Ast_type_error;
@@ -642,7 +642,7 @@ Ast_node* parse_struct(struct parse_state* ps)
             /* test case: test_parse_struct_error_duplicate */
             n->type = Ast_type_error;
 		} else {
-			Ast_node* tu = Ast_node_copy(n);
+			Ast_node* tu = Ast_node_clone(n);
 			struct type_def* td = NULL;
 			malloc_safe((void**)&td, sizeof(struct type_def));
 			type_def_init(td);
@@ -700,7 +700,7 @@ Ast_node* parse_return(struct parse_state* ps)
 				/* test case: test_parse_return_error_no_value */
                 n->type = Ast_type_error;
 			} else {
-				n->tu = Type_use_copy(a->tu);
+				n->tu = Type_use_clone(a->tu);
 				Ast_node* fd = get_current_function(ps->st->top);
 				if (!fd) {
 					error_list_set(ps->el, &ret->loc, "return statement outside of function");

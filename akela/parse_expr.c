@@ -91,7 +91,7 @@ Ast_node* parse_assignment(struct parse_state* ps)
                 /* start assign tree */
                 Ast_node_create(&n);
                 n->type = Ast_type_assign;
-                n->tu = Type_use_copy(a->tu);
+                n->tu = Type_use_clone(a->tu);
             }
 
             Ast_node_add(n, a);
@@ -337,7 +337,7 @@ Ast_node* parse_boolean(struct parse_state* ps)
 				error_list_set(ps->el, &b->loc, "expression of boolean operator is not boolean");
                 n->type = Ast_type_error;
 			} else {
-				n->tu = Type_use_copy(left->tu);
+				n->tu = Type_use_clone(left->tu);
 			}
 
 			left = n;
@@ -457,7 +457,7 @@ Ast_node* parse_comparison(struct parse_state* ps)
 					/* test case: test_parse_comparison_error_right_not_numeric */
                     n->type = Ast_type_error;
 				} else {
-					Type_use* tu = Type_use_copy(left->tu);
+					Type_use* tu = Type_use_clone(left->tu);
 					type_find_whole(ps->st, tu, b->tu);
 					n->tu = tu;
 				}
@@ -570,7 +570,7 @@ Ast_node* parse_add(struct parse_state* ps)
 			}
 
 			if (n->type != Ast_type_error) {
-				Type_use* tu = Type_use_copy(tu_a);
+				Type_use* tu = Type_use_clone(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
@@ -693,7 +693,7 @@ Ast_node* parse_mult(struct parse_state* ps)
 			}
 
 			if (n->type != Ast_type_error) {
-				Type_use* tu = Type_use_copy(tu_a);
+				Type_use* tu = Type_use_clone(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
@@ -802,7 +802,7 @@ Ast_node* parse_power(struct parse_state* ps)
 			}
 
 			if (n->type != Ast_type_error) {
-				Type_use* tu = Type_use_copy(tu_left);
+				Type_use* tu = Type_use_clone(tu_left);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &b->loc, "invalid power types");
 					/* test case: no test case needed */
@@ -854,7 +854,7 @@ Ast_node* parse_subscript(struct parse_state* ps)
         Ast_node_add(n, left);
         if (left->type != Ast_type_error) {
             if (left->tu->is_array || left->tu->is_slice) {
-                n->tu = Type_use_copy(left->tu);
+                n->tu = Type_use_clone(left->tu);
                 Type_use_reduce_dimension(n->tu);
             }
         }
@@ -1024,7 +1024,7 @@ Ast_node* parse_call(struct parse_state* ps)
 
 				/* output */
 				if (dret && dret->head) {
-					n->tu = Type_use_copy(dret->head->tu);
+					n->tu = Type_use_clone(dret->head->tu);
 				}
 			}
 
@@ -1208,7 +1208,7 @@ Ast_node* parse_dot(struct parse_state* ps)
                             "identifier not a field of struct: %b", &id->value);
                     n->type = Ast_type_error;
                 } else {
-                    n->tu = Type_use_copy(dec_type->tu);
+                    n->tu = Type_use_clone(dec_type->tu);
                 }
             }
 

@@ -12,6 +12,10 @@ void Type_use_init(Type_use* tu)
     tu->is_slice = false;
     tu->context = Type_context_value;
     tu->proto = NULL;
+    tu->next = NULL;
+    tu->prev = NULL;
+    tu->head = NULL;
+    tu->prev = NULL;
 }
 
 void Type_use_create(Type_use** tu)
@@ -24,23 +28,54 @@ void Type_use_destroy(Type_use* tu)
 {
     if (tu) {
         VectorDestroy(&tu->dim);
+        Type_use* p = tu->head;
+        while (p) {
+            Type_use* temp = p;
+            p = p->next;
+            Type_use_destroy(temp);
+            free(temp);
+        }
     }
 }
 
-Type_use* Type_use_copy(Type_use* tu)
+void Type_use_add(Type_use* p, Type_use* c)
+{
+    if (p->head && p->tail) {
+        c->prev = p->tail;
+        p->tail->next = c;
+        p->tail = c;
+    } else {
+        p->head = c;
+        p->tail = c;
+    }
+}
+
+void Type_use_copy(Type_use* src, Type_use* dest)
+{
+    dest->td = src->td;
+    VectorCopy(&src->dim, &dest->dim);
+    dest->is_ref = src->is_ref;
+    dest->is_mut = src->is_mut;
+    dest->original_is_mut = src->original_is_mut;
+    dest->is_array = src->is_array;
+    dest->is_slice = src->is_slice;
+    dest->context = Type_context_value;         /* default to value */
+    dest->proto = Ast_node_clone(src->proto);
+}
+
+Type_use* Type_use_clone(Type_use* tu)
 {
     Type_use* new_tu = NULL;
     if (tu) {
         Type_use_create(&new_tu);
-        new_tu->td = tu->td;
-        VectorCopy(&tu->dim, &new_tu->dim);
-        new_tu->is_ref = tu->is_ref;
-        new_tu->is_mut = tu->is_mut;
-        new_tu->original_is_mut = tu->original_is_mut;
-        new_tu->is_array = tu->is_array;
-        new_tu->is_slice = tu->is_slice;
-        new_tu->context = Type_context_value;         /* default to value */
-        new_tu->proto = Ast_node_copy(tu->proto);
+        Type_use_copy(tu, new_tu);
+
+        Type_use* p = tu->head;
+        while (p) {
+            Type_use* new_p = Type_use_clone(p);
+            Type_use_add(new_tu, new_p);
+            p = p->next;
+        }
     }
     return new_tu;
 }
