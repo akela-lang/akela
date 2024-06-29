@@ -31,6 +31,7 @@ void comp_unit_destroy(struct comp_unit* cu)
         error_list_destroy(&cu->el);
         buffer_destroy(&cu->path);
         symbol_table_destroy(&cu->st);
+        buffer_list_destroy(&cu->extern_list);
     }
 }
 

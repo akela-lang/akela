@@ -5,6 +5,7 @@
 #include "lex.h"
 #include "ast.h"
 #include <assert.h>
+#include "zinc/buffer_list.h"
 
 void parse_state_init(
         struct parse_state* ps,

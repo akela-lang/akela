@@ -151,7 +151,7 @@ void declare_params(struct parse_state* ps, Ast_node* proto, Ast_node* struct_ty
         Ast_node* type_node = Ast_node_get(dec, 1);
         if (dec->type == Ast_type_self) {
             if (struct_type) {
-                type_node = Ast_node_clone(struct_type);
+                type_node = struct_type;
             } else {
                 dec = dec->next;
                 continue;
@@ -320,6 +320,9 @@ Ast_node* parse_declaration(
             id_node->type = Ast_type_id;
             buffer_copy_str(&id_node->value, "self");
             Ast_node_add(n, id_node);
+
+            token_destroy(self);
+            free(self);
 
         } else if (type_only) {
             Ast_node* id_node = NULL;
@@ -509,6 +512,7 @@ Ast_node* parse_type(struct parse_state* ps)
         if (proto->type == Ast_type_error) {
             n->type = Ast_type_error;
         } else {
+            Type_use_destroy(n->tu);
             n->tu = proto2type_use(ps->st, proto, NULL);
         }
         Ast_node_destroy(proto);

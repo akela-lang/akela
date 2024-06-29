@@ -1,4 +1,5 @@
 # Akela Todo
+* fix memory leaks
 * context dot: method call, function call, ptr, value
 * context subscript: ptr, value
 * check impl
