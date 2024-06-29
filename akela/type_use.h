@@ -4,6 +4,7 @@
 #include "type_def.h"
 #include "zinc/vector.h"
 #include <stdbool.h>
+#include "zinc/memory.h"
 
 typedef enum Array_element_option {
     Array_element_default,
@@ -24,7 +25,21 @@ typedef enum Type_use_type {
     Type_use_type_def,
     Type_use_function_inputs,
     Type_use_function_outputs,
+    Type_use_function_ellipsis,
+    Type_use_count,                 /* keep at end */
 } Type_use_type;
+
+#ifdef AKELA_TYPE_USE_C
+void Type_use_names(char* names[])
+{
+    names[Type_use_type_def] = "Type_use_type_def";
+    names[Type_use_function_inputs] = "Type_use_function_inputs";
+    names[Type_use_function_outputs] = "Type_use_function_outputs";
+    names[Type_use_function_ellipsis] = "Type_use_function_ellipsis";
+}
+#else
+void Type_use_names(char* names[]);
+#endif
 
 typedef struct Type_use {
     Type_use_type type;
@@ -37,7 +52,6 @@ typedef struct Type_use {
     bool is_array;
     bool is_slice;
     Type_context context;
-    struct Ast_node* proto;        /* functions are duck-typed */
     struct Type_use* next;
     struct Type_use* prev;
     struct Type_use* head;

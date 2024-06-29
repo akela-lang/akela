@@ -216,6 +216,8 @@ void test_parse_struct_let_literal()
     assert_ptr(expr2, "ptr expr2");
     expect_int_equal(expr2->type, Ast_type_number, "type expr2");
     expect_str(&expr2->value, "35", "value expr2");
+
+    parse_teardown(&cu);
 }
 
 void test_parse_struct_error_invalid_field()
@@ -238,6 +240,8 @@ void test_parse_struct_error_invalid_field()
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "Not a valid field for Person: middle_name");
+
+    parse_teardown(&cu);
 }
 
 void test_parse_struct_error_field_missing()
@@ -258,6 +262,8 @@ void test_parse_struct_error_field_missing()
     expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
     expect_source_error(&cu.el, "struct field missing: last_name");
+
+    parse_teardown(&cu);
 }
 
 void test_parse_struct_error_dot_invalid_field()

@@ -8,6 +8,7 @@
 #include "token.h"
 #include "zinc/vector.h"
 #include "type_use.h"
+#include "zinc/list.h"
 
 typedef enum Ast_type {
 	Ast_type_none,
@@ -165,11 +166,13 @@ AKELA_API void Ast_node_init(Ast_node* n);
 AKELA_API void Ast_node_add(Ast_node* p, Ast_node* c);
 AKELA_API void Ast_node_push(Ast_node* parent, Ast_node* child);
 AKELA_API Ast_node* Ast_node_get(Ast_node* p, size_t pos);
-AKELA_API void Ast_node_print(Ast_node* root, bool debug);
+AKELA_API void Ast_node_print(Ast_node* n);
+AKELA_API void Ast_node_print_pointers(Ast_node* root, struct list* l);
 AKELA_API void Ast_node_copy(Ast_node* src, Ast_node* dest);
 AKELA_API Ast_node* Ast_node_clone(Ast_node* n);
 AKELA_API bool Ast_node_match(Ast_node* a, Ast_node* b);
 AKELA_API size_t Ast_node_count_children(Ast_node* n);
+AKELA_API void Ast_node_validate(Ast_node* n, struct list* l);
 
 #ifdef __cplusplus
 }

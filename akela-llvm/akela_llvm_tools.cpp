@@ -6,7 +6,6 @@
 #include "akela_llvm_stmts.h"
 #include "akela_llvm_operator.h"
 #include "akela_llvm_struct.h"
-#include "akela/type_use.h"
 
 using namespace llvm;
 using namespace llvm::orc;
@@ -29,30 +28,30 @@ namespace Akela_llvm {
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
     FunctionType *Get_function_type(Jit_data *jd, Type_use *tu) {
-        Ast_node *dseq = nullptr;
-        Ast_node *dret = nullptr;
-        get_function_children(tu->proto, &dseq, &dret);
+        Type_use *inputs = nullptr;
+        Type_use *outputs = nullptr;
+        get_function_children(tu, &inputs, &outputs);
         bool is_variadic = false;
 
         std::vector<Type *> param_types = std::vector<Type *>();
-        size_t input_count = Ast_node_count_children(dseq);
-        if (input_count > 0) {
-            for (size_t i = 0; i < input_count; i++) {
-                Ast_node *dec = Ast_node_get(dseq, i);
-                if (dec->type == Ast_type_ellipsis) {
+        if (inputs) {
+            Type_use* p = inputs->head;
+            while (p) {
+                if (p->type == Type_use_function_ellipsis) {
                     is_variadic = true;
+                    p = p->next;
                     continue;
                 }
-                Ast_node *type_node = Ast_node_get(dec, 1);
-                Type *dec_type = Get_type_pointer(jd, type_node->tu);
+                Type *dec_type = Get_type_pointer(jd, p);
                 param_types.push_back(dec_type);
+                p = p->next;
             }
         }
 
         Type *ret_type;
-        Ast_node *ret_type_node = Ast_node_get(dret, 0);
-        if (ret_type_node) {
-            ret_type = Get_type_pointer(jd, ret_type_node->tu);
+        if (outputs) {
+            Type_use *ret = outputs->head;
+            ret_type = Get_type_pointer(jd, ret);
         } else {
             ret_type = Type::getVoidTy(*jd->TheContext);
         }

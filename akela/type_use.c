@@ -1,3 +1,4 @@
+#define AKELA_TYPE_USE_C
 #include "type_use.h"
 #include "zinc/memory.h"
 
@@ -13,7 +14,6 @@ void Type_use_init(Type_use* tu)
     tu->is_array = false;
     tu->is_slice = false;
     tu->context = Type_context_value;
-    tu->proto = NULL;
     tu->next = NULL;
     tu->prev = NULL;
     tu->head = NULL;
@@ -29,23 +29,23 @@ void Type_use_create(Type_use** tu)
 void Type_use_destroy(Type_use* tu)
 {
     if (tu) {
-        buffer_destroy(&tu->name);
-        VectorDestroy(&tu->dim);
         Type_use* p = tu->head;
         while (p) {
             Type_use* temp = p;
             p = p->next;
             Type_use_destroy(temp);
-            free(temp);
         }
+        buffer_destroy(&tu->name);
+        VectorDestroy(&tu->dim);
+        free(tu);
     }
 }
 
 void Type_use_add(Type_use* p, Type_use* c)
 {
     if (p->head && p->tail) {
-        c->prev = p->tail;
         p->tail->next = c;
+        c->prev = p->tail;
         p->tail = c;
     } else {
         p->head = c;
@@ -55,6 +55,7 @@ void Type_use_add(Type_use* p, Type_use* c)
 
 void Type_use_copy(Type_use* src, Type_use* dest)
 {
+    dest->type = src->type;
     dest->td = src->td;
     buffer_copy(&src->name, &dest->name);
     VectorCopy(&src->dim, &dest->dim);
@@ -64,7 +65,6 @@ void Type_use_copy(Type_use* src, Type_use* dest)
     dest->is_array = src->is_array;
     dest->is_slice = src->is_slice;
     dest->context = Type_context_value;         /* default to value */
-    dest->proto = Ast_node_clone(src->proto);
 }
 
 Type_use* Type_use_clone(Type_use* tu)

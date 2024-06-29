@@ -269,27 +269,20 @@ void test_parse_function_three_inputs()
 
     Type_use* tu = f->tu;
     assert_ptr(tu, "ptr tu");
+    expect_str(&tu->name, "foo", "name tu");
 
     struct type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_int_equal(td->type, type_function, "function td");
     expect_str(&td->name, "Function", "Function td");
 
-    Ast_node* proto = tu->proto;
-    assert_ptr(proto, "ptr proto");
+    Type_use* inputs = tu->head;
+    assert_ptr(inputs, "ptr inputs");
+    expect_int_equal(inputs->type, Type_use_function_inputs, "type inputs");
 
-    Ast_node* proto_id = Ast_node_get(proto, 0);
-    assert_ptr(proto_id, "ptr proto_id");
-    expect_int_equal(proto_id->type, Ast_type_id, "type proto_id");
-    expect_str(&proto_id->value, "foo", "name proto_id");
-
-    Ast_node* proto_dseq = Ast_node_get(proto, 1);
-    assert_ptr(proto_dseq, "ptr proto_dseq");
-    expect_int_equal(proto_dseq->type, Ast_type_dseq, "type proto_dseq");
-
-    Ast_node* proto_dret = Ast_node_get(proto, 2);
-    assert_ptr(proto_dret, "ptr proto_dret");
-    expect_int_equal(proto_dret->type, Ast_type_dret, "type proto_dret");
+    Type_use* outputs = inputs->next;
+    assert_ptr(outputs, "ptr outputs");
+    expect_int_equal(outputs->type, Type_use_function_outputs, "type outputs");
 
     parse_teardown(&cu);
 }
@@ -779,9 +772,13 @@ void test_parse_function_proto()
     assert_ptr(let_td, "ptr let_td");
     expect_int_equal(let_td->type, type_function, "type let_td");
 
-    Ast_node* let_proto = let_tu->proto;
-    assert_ptr(let_proto, "ptr let_proto");
-    expect_int_equal(let_proto->type, Ast_type_prototype, "type let_proto");
+    Type_use* inputs = let_tu->head;
+    assert_ptr(inputs, "ptr inputs");
+    expect_int_equal(inputs->type, Type_use_function_inputs, "type inputs");
+
+    Type_use* outputs = inputs->next;
+    assert_ptr(outputs, "ptr outputs");
+    expect_int_equal(outputs->type, Type_use_function_outputs, "type outputs");
 
     /* assign */
     Ast_node* assign = Ast_node_get(cu.root, 1);

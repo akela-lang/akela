@@ -41,6 +41,19 @@ void list_add_item(struct list* l, void* item)
     list_add(l, ln);
 }
 
+bool list_has_item(struct list* l, void* item)
+{
+    struct list_node* ln = l->head;
+    while (ln) {
+        if (ln->item == item) {
+            return true;
+        }
+        ln = ln->next;
+    }
+
+    return false;
+}
+
 struct list_node* list_remove_first(struct list* l)
 {
     if (l->head && l->tail) {

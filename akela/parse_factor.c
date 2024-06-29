@@ -94,7 +94,7 @@ Ast_node* parse_function(struct parse_state* ps, bool is_method, Ast_node* struc
     environment_begin(ps->st);
     declare_params(ps, proto, struct_type);
     set_current_function(ps->st->top, n);
-    Type_use* tu = proto2type(ps->st, proto);
+    Type_use* tu = proto2type_use(ps->st, proto, struct_type);
     n->tu = tu;
 
     Ast_node* stmts_node = NULL;
@@ -465,7 +465,6 @@ Ast_node* parse_literal(struct parse_state* ps)
         if (is_string) {
             tu->is_array = true;
             Type_dimension dim;
-            buffer_finish(&n->value);
             dim.size = n->value.size + 1;
             dim.option = Array_element_const;
             VectorAdd(&tu->dim, &dim, 1);

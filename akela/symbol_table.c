@@ -311,18 +311,20 @@ bool type_find_whole(struct symbol_table* st, Type_use* a, Type_use* b)
 			a->td = td;
 		}
 
-        if (a->proto && b->proto) {
-            Ast_node* x = a->proto->head;
-            Ast_node* y = b->proto->head;
+        if (a->head && b->head) {
+            Type_use* x = a->head;
+            Type_use* y = b->head;
             do {
-                if (x && x->tu && y && y->tu) {
-                    if (!type_find_whole(st, x->tu, y->tu)) {
-                        return false;
-                    }
+                if (!type_find_whole(st, x, y)) {
+                    return false;
                 }
                 if (x) x = x->next;
                 if (y) y = y->next;
             } while (x || y);
+        } else if (a->head) {
+            return false;
+        } else if (b->head) {
+            return false;
         }
 
 		return true;
@@ -347,6 +349,28 @@ bool type_def_can_cast(struct type_def* a, struct type_def* b)
 	return false;
 }
 
+bool type_def_match(struct type_def* a, struct type_def* b)
+{
+    if (a == b) {
+        return true;
+    }
+
+    return false;
+}
+
+bool type_def_should_match(Type_use* a, Type_use* b)
+{
+    if (a->type == Type_use_function_inputs || a->type == Type_use_function_outputs) {
+        return true;
+    }
+
+    if (b->type == Type_use_function_inputs || b->type == Type_use_function_outputs) {
+        return true;
+    }
+
+    return false;
+}
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool type_use_can_cast(Type_use* a, Type_use* b)
 {
@@ -355,16 +379,34 @@ bool type_use_can_cast(Type_use* a, Type_use* b)
             return false;
         }
 
-        if (!type_use_can_cast_prototype(a->proto, b->proto)) {
-            return false;
-        } else {
-            return true;
+        if (a->head && b->head) {
+            Type_use* x = a->head;
+            Type_use* y = b->head;
+            while (x || y) {
+                if (type_def_should_match(a, b)) {
+                    if (!type_use_match(x, y)) {
+                        return false;
+                    }
+                } else {
+                    if (!type_use_can_cast(x, y)) {
+                        return false;
+                    }
+                }
+                if (x) {
+                    x = x->next;
+                }
+                if (y) {
+                    y = y->next;
+                }
+            }
         }
-    } else if (!a && !b) {
-        return true;
-    } else {
+    } else if (a) {
+        return false;
+    } else if (b) {
         return false;
     }
+
+    return true;
 }
 
 bool type_use_match(Type_use* a, Type_use* b)
@@ -374,16 +416,33 @@ bool type_use_match(Type_use* a, Type_use* b)
             return false;
         }
 
-        if (!type_use_can_cast_prototype(a->proto, b->proto)) {
-            return false;
-        } else {
-            return true;
+        Type_use* x = a->head;
+        Type_use* y = b->head;
+        while (x || y) {
+            if (type_def_should_match(a, b)) {
+                if (!type_use_match(x, y)) {
+                    return false;
+                }
+            } else {
+                if (!type_use_can_cast(x, y)) {
+                    return false;
+                }
+            }
+
+            if (x) {
+                x = x->next;
+            }
+            if (y) {
+                y = y->next;
+            }
         }
-    } else if (!a && !b) {
-        return true;
-    } else {
+    } else if (a) {
+        return false;
+    } else if (b) {
         return false;
     }
+
+    return true;
 }
 
 /**

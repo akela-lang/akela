@@ -574,6 +574,7 @@ Ast_node* parse_add(struct parse_state* ps)
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
                     n->type = Ast_type_error;
+                    Type_use_destroy(tu);
 				} else {
 					n->tu = tu;
 				}
@@ -697,6 +698,7 @@ Ast_node* parse_mult(struct parse_state* ps)
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
                     n->type = Ast_type_error;
+                    Type_use_destroy(tu);
 				} else {
 					n->tu = tu;
 				}
@@ -806,6 +808,7 @@ Ast_node* parse_power(struct parse_state* ps)
 					error_list_set(ps->el, &b->loc, "invalid power types");
 					/* test case: no test case needed */
                     n->type = Ast_type_error;
+                    Type_use_destroy(tu);
 				} else {
 					n->tu = tu;
 				}
@@ -988,22 +991,22 @@ Ast_node* parse_call(struct parse_state* ps)
 				/* test case: test_parse_call_error_not_function */
                 n->type = Ast_type_error;
 			} else {
-				Ast_node* dseq = NULL;
-				Ast_node* dret = NULL;
-				get_function_children(tu->proto, &dseq, &dret);
+				Type_use* inputs = NULL;
+				Type_use* outputs = NULL;
+				get_function_children(tu, &inputs, &outputs);
 
 				/* input */
 				size_t tcount = 0;
                 bool is_variadic = false;
-				if (dseq) {
-                    Ast_node* dec = dseq->head;
-                    while (dec) {
-                        if (dec->type == Ast_type_ellipsis) {
+				if (inputs) {
+                    Type_use* input_tu = inputs->head;
+                    while (input_tu) {
+                        if (input_tu->type == Type_use_function_ellipsis) {
                             is_variadic = true;
                         } else {
                             tcount++;
                         }
-                        dec = dec->next;
+                        input_tu = input_tu->next;
                     }
 				}
 				size_t ccount = 0;
@@ -1022,8 +1025,8 @@ Ast_node* parse_call(struct parse_state* ps)
 				}
 
 				/* output */
-				if (dret && dret->head) {
-					n->tu = Type_use_clone(dret->head->tu);
+				if (outputs) {
+					n->tu = Type_use_clone(outputs->head);
 				}
 			}
 
@@ -1065,7 +1068,7 @@ Ast_node* parse_cseq(struct parse_state* ps, Ast_node* left)
 		return n;
 	}
 	int i = 0;
-	if (!check_input_type(ps, left->tu->proto, i, a, &a->loc)) {
+	if (!check_input_type(ps, left->tu, i, a)) {
         n->type = Ast_type_error;
     }
 	i++;
@@ -1106,7 +1109,7 @@ Ast_node* parse_cseq(struct parse_state* ps, Ast_node* left)
 			/* transfer a -> parent */
             Ast_node_add(n, a);
 
-			if (!check_input_type(ps, left->tu->proto, i, a, &a->loc)) {
+			if (!check_input_type(ps, left->tu, i, a)) {
                 n->type = Ast_type_error;
             }
 		}

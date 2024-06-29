@@ -1602,8 +1602,8 @@ void test_lex_comment()
     assert_ptr(newline1, "ptr newline1");
     expect_int_equal(newline1->type, token_newline, "type newline1");
 
-    token_destroy(newline0);
-    free(newline0);
+    token_destroy(newline1);
+    free(newline1);
 
     struct token* eof;
     valid = lex(&ls, &eof);

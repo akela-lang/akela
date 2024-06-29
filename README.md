@@ -25,9 +25,9 @@ and capable of robust software construction.
     cmake-build-debug/bin/akela examples/addition.akela
 
 ## Valgrind
-    valgrind --leak-check=full --num-callers=40 cmake-build-debug/bin/zinc-test
-    valgrind --leak-check=full --num-callers=40 cmake-build-debug/bin/akela-test
-    valgrind --leak-check=full --num-callers=40 cmake-build-debug/bin/akela-llvm-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/zinc-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-llvm-test
 
 ## Coverage
     rm -rf cmake-build-debug &&

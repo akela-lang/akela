@@ -134,7 +134,6 @@ Ast_node* parse_prototype(
 
     Ast_node_add(n, ret);
 
-
     return n;
 }
 
@@ -510,16 +509,9 @@ Ast_node* parse_type(struct parse_state* ps)
         if (proto->type == Ast_type_error) {
             n->type = Ast_type_error;
         } else {
-            struct buffer name;
-            buffer_init(&name);
-            buffer_copy_str(&name, "Function");
-            struct symbol* sym = environment_get(ps->st->top, &name);
-            assert(sym);
-            n->tu->td = sym->td;
-            n->tu->proto = proto;
-
-            buffer_destroy(&name);
+            n->tu = proto2type_use(ps->st, proto, NULL);
         }
+        Ast_node_destroy(proto);
 
     } else if (t0->type == token_id) {
         /* handle type or array element */
@@ -631,27 +623,7 @@ void declare_type(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node
     }
 }
 
-Type_use* proto2type(struct symbol_table* st, Ast_node* proto)
-{
-	Type_use* tu = NULL;
-    Type_use_create(&tu);
-
-    struct buffer bf;
-	buffer_init(&bf);
-	buffer_copy_str(&bf, "Function");
-	struct symbol* sym = environment_get(st->top, &bf);
-	assert(sym);
-	assert(sym->td);
-	tu->td = sym->td;
-
-    tu->proto = Ast_node_clone(proto);
-
-	buffer_destroy(&bf);
-
-	return tu;
-}
-
-Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto)
+Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto, Ast_node* struct_type)
 {
     Type_use* func = NULL;
     Type_use_create(&func);
@@ -671,19 +643,38 @@ Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto)
 
     buffer_copy(&id->value, &func->name);
 
-    Type_use* inputs = NULL;
-    Type_use_create(&inputs);
-    inputs->type = Type_use_function_inputs;
-    Type_use_add(func, inputs);
+    if (dseq->head) {
+        Type_use* inputs = NULL;
+        Type_use_create(&inputs);
+        inputs->type = Type_use_function_inputs;
+        Type_use_add(func, inputs);
 
-    Ast_node* dec = dseq->head;
-    while (dec) {
-        Ast_node* id_node = Ast_node_get(dec, 0);
-        Ast_node* type_node = Ast_node_get(dec, 1);
-        Type_use* tu2 = Type_use_clone(type_node->tu);
-        buffer_copy(&id_node->value, &tu2->name);
-        Type_use_add(inputs, tu2);
-        dec = dec->next;
+        Ast_node* dec = dseq->head;
+        while (dec) {
+            Ast_node* id_node = Ast_node_get(dec, 0);
+            Ast_node* type_node = Ast_node_get(dec, 1);
+            if (dec->type == Ast_type_self) {
+                if (struct_type) {
+                    type_node = struct_type;
+                } else {
+                    dec = dec->next;
+                    continue;
+                }
+            }
+
+            Type_use* tu2;
+            if (dec->type == Ast_type_ellipsis) {
+                Type_use_create(&tu2);
+                tu2->type = Type_use_function_ellipsis;
+            } else {
+                tu2 = Type_use_clone(type_node->tu);
+                buffer_copy(&id_node->value, &tu2->name);
+            }
+
+            Type_use_add(inputs, tu2);
+
+            dec = dec->next;
+        }
     }
 
     Ast_node* ret_type_node = Ast_node_get(dret, 0);
@@ -691,7 +682,9 @@ Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto)
         Type_use* outputs = NULL;
         Type_use_create(&outputs);
         outputs->type = Type_use_function_outputs;
-        Type_use_add(outputs, ret_type_node->tu);
+        Type_use* tu = Type_use_clone(ret_type_node->tu);
+        Type_use_add(outputs, tu);
+        Type_use_add(func, outputs);
     }
 
     return func;
@@ -714,49 +707,62 @@ bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_
     return valid;
 }
 
-void get_function_children(Ast_node* proto, Ast_node** dseq, Ast_node** dret)
+void get_function_children(Type_use* func, Type_use** inputs, Type_use** outputs)
 {
-    *dseq = Ast_node_get(proto, 1);
-    *dret = Ast_node_get(proto, 2);
+    *inputs = NULL;
+    *outputs = NULL;
+
+    Type_use* p = func->head;
+    while (p) {
+        if (p->type == Type_use_function_inputs) {
+            *inputs = p;
+        } else if (p->type == Type_use_function_outputs) {
+            *outputs = p;
+        }
+        p = p->next;
+    }
 }
 
-Type_use* get_function_input_type(Ast_node* proto, int index)
+Type_use* get_function_input_type(Type_use* func, int index)
 {
-	Ast_node* dseq = NULL;
-	Ast_node* dret = NULL;
-	get_function_children(proto, &dseq, &dret);
+	Type_use* inputs = NULL;
+	Type_use* outputs = NULL;
+	get_function_children(func, &inputs, &outputs);
 
-	if (!dseq) return NULL;
+	if (!inputs) return NULL;
 
-	Ast_node* p = dseq->head;
+	Type_use* p = inputs->head;
 	int i = 0;
 	while (p) {
 		if (i == index) {
-            Ast_node* dec = p;
-            Ast_node* dec_type = Ast_node_get(dec, 1);
-            return dec_type->tu;
+            return p;
         }
 		p = p->next;
 		i++;
 	}
+
 	return NULL;
 }
 
-bool check_input_type(struct parse_state* ps, Ast_node* proto, int index, Ast_node* a, struct location* loc_expr)
+bool check_input_type(
+    struct parse_state* ps,
+    Type_use* func,
+    int index,
+    Ast_node* a)
 {
 	bool valid = true;
 
-	if (proto) {
-		Type_use* tu0 = get_function_input_type(proto, index);
+	if (func) {
+		Type_use* tu0 = get_function_input_type(func, index);
 		if (tu0) {
 			Type_use* call_tu0 = a->tu;
 			if (call_tu0) {
 				if (!type_use_can_cast(tu0, call_tu0)) {
-					valid = error_list_set(ps->el, loc_expr, "parameter and aguments types do not match");
+					valid = error_list_set(ps->el, &a->loc, "parameter and aguments types do not match");
 					/* test case: test_parse_types_error_param */
 				}
 			} else {
-				valid = error_list_set(ps->el, loc_expr, "argument expression has no value");
+				valid = error_list_set(ps->el, &a->loc, "argument expression has no value");
 				/* test case: test_parse_types_error_param_no_value */
 			}
 		}

@@ -51,23 +51,3 @@ struct type_def* type_def_copy(struct type_def* n)
 
 	return copy;
 }
-
-bool type_def_match(struct type_def* a, struct type_def* b)
-{
-	struct type_def* copy = NULL;
-
-	if (a && b) {
-		if (a->type != b->type) {
-			return false;
-		}
-		if (!buffer_compare(&a->name, &b->name)) {
-			return false;
-		}
-	} else if (!a && !b) {
-		return true;
-	} else {
-		return false;
-	}
-
-	return true;
-}

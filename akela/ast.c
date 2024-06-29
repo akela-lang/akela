@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "ast.h"
 #include "zinc/memory.h"
+#include "zinc/list.h"
 
 void Ast_node_create(Ast_node** n)
 {
@@ -78,52 +79,100 @@ Ast_node* Ast_node_get(Ast_node* p, size_t pos)
 	return NULL;
 }
 
+void Type_use_print(Type_use* tu);
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_print(Ast_node* root, bool debug)
+void Ast_node_print(Ast_node* n)
 {
     char* names[Ast_type_count];
     Ast_set_names(names);
 
-    if (root == NULL) return;
-	if (!debug && !root->head) return;
+    if (n == NULL) return;
 
-	printf("<");
-	if (root->tu && root->tu->td) {
-		buffer_finish(&root->tu->td->name);
-		if (debug) printf("[%p]", root);
-		printf("%s,%s", names[root->type], root->tu->td->name.buf);
-	} else {
-		if (debug) printf("[%p]", root);
-		printf("%s", names[root->type]);
-	}
-	if (root->value.size > 0) {
-		buffer_finish(&root->value);
-		printf(",%s", root->value.buf);
-	}
-	printf(">");
-	printf(":");
-	for (Ast_node* p = root->head; p; p = p->next) {
-		printf(" <");
-		if (p->tu && p->tu->td) {
-			buffer_finish(&p->tu->td->name);
-			printf("%s,%s", names[p->type], p->tu->td->name.buf);
-		} else {
-			printf("%s", names[p->type]);
-		}
-		if (p->value.size > 0) {
-			buffer_finish(&p->value);
-			printf(",%s", p->value.buf);
-		}
-		printf(">");
-	}
+	printf("<ast ");
+    printf("[%p]", n);
+    printf("%s", names[n->type]);
 
-	printf("\n");
+	for (Ast_node* p = n->head; p; p = p->next) {
+		printf(" <%p>", p);
+	}
+    printf(">");
 
-	for (Ast_node* p = root->head; p; p = p->next) {
-        Ast_node_print(p, debug);
+    Type_use_print(n->tu);
+
+    printf("\n");
+
+    for (Ast_node* p = n->head; p; p = p->next) {
+        Ast_node_print(p);
 	}
 }
 
+void Type_use_print(Type_use* tu)
+{
+    if (tu) {
+        char* names[Type_use_count];
+        Type_use_names(names);
+
+        printf(" <tu ");
+        printf("[%p]", tu);
+        printf(" %s", names[tu->type]);
+        if (tu->td) {
+            buffer_finish(&tu->td->name);
+            printf(" %s", tu->td->name.buf);
+        }
+        printf(">");
+
+        Type_use* p = tu->head;
+        while (p) {
+            Type_use_print(p);
+            p = p->next;
+        }
+    }
+}
+
+void Type_use_print_pointers(Type_use* tu, struct list* l);
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Ast_node_print_pointers(Ast_node* root, struct list* l)
+{
+    char* names[Ast_type_count];
+    Ast_set_names(names);
+
+    bool created = false;
+    if (!l) {
+        list_create(&l);
+        created = true;
+    }
+
+    printf("(%p)\n", root);
+//    if (list_has_item(l, root)) abort();
+    list_add_item(l, root);
+
+    Type_use_print_pointers(root->tu, l);
+
+    for (Ast_node* p = root->head; p; p = p->next) {
+        Ast_node_print_pointers(p, l);
+    }
+
+    if (created) {
+        list_destroy(l, NULL);
+    }
+}
+
+void Type_use_print_pointers(Type_use* tu, struct list* l)
+{
+    if (tu) {
+        printf("(%p)\n", tu);
+//        if (list_has_item(l, tu)) abort();
+        list_add_item(l, tu);
+
+        Type_use* tu2 = tu->head;
+        while (tu2) {
+            Type_use_print_pointers(tu2, l);
+            tu2 = tu2->next;
+        }
+    }
+}
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ast_node_copy(Ast_node* src, Ast_node* dest)
 {

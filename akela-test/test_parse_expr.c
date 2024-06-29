@@ -2263,7 +2263,23 @@ void test_parse_expr_error_eseq_lvalue()
     parse_teardown(&cu);
 }
 
-/* dynamic-output-none */
+void test_parse_array_string_return()
+{
+    test_name(__func__);
+
+    struct comp_unit cu;
+
+    parse_setup("fn foo(a: i64, b: i64, c: i64)->[6 const]u8\n"
+                "  \"hello\"\n"
+                "end\n"
+                "foo(1, 2, 3)\n",
+                &cu);
+    expect_no_errors(&cu.el);
+    expect_true(cu.valid, "valid");
+
+    parse_teardown(&cu);
+}
+
 void test_parse_expression()
 {
 	test_parse_blank();
@@ -2347,4 +2363,5 @@ void test_parse_expression()
     test_parse_expr_assign_eseq();
     test_parse_expr_error_lvalue();
     test_parse_expr_error_eseq_lvalue();
+    test_parse_array_string_return();
 }

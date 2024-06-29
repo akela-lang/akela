@@ -1,6 +1,4 @@
 # Akela Todo
-* type use type
-* proto2type_use
 * context dot: method call, function call, ptr, value
 * context subscript: ptr, value
 * check impl

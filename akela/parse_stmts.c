@@ -149,7 +149,7 @@ Ast_node* parse_extern(struct parse_state* ps)
         if (proto->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
-        Type_use* tu = proto2type(ps->st, proto);
+        Type_use* tu = proto2type_use(ps->st, proto, NULL);
         n->tu = tu;
     }
 
