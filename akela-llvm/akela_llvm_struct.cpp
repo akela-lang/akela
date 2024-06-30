@@ -81,6 +81,7 @@ namespace Akela_llvm {
         buffer_copy_str(&bf, ".tmp");
         buffer_finish(&bf);
         Value* value = jd->Builder->CreateAlloca(t, nullptr, bf.buf);
+        buffer_destroy(&bf);
         size_t i = 0;
         Ast_node* field = n->head;
         while (field) {

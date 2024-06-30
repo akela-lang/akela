@@ -1,8 +1,6 @@
 # Akela Todo
-* fix memory leaks
 * context dot: method call, function call, ptr, value
 * context subscript: ptr, value
-* check impl
 * code gen impl
 * struct methods
 * use malloc when returning a pointer

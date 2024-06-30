@@ -52,6 +52,7 @@ void test_akela_llvm_struct_literal()
              "a.x\n",
              &result);
     expect_str(&result.value, "1.000000", "value");
+    Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
     cg_setup("struct Point\n"
@@ -65,7 +66,6 @@ void test_akela_llvm_struct_literal()
              "a.y\n",
              &result);
     expect_str(&result.value, "2.000000", "value");
-
     Code_gen_result_destroy(&result);
 }
 
@@ -286,6 +286,7 @@ void test_akela_llvm_struct_array12()
              "p.first_name[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
+    Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
     cg_setup("struct Person\n"
@@ -301,6 +302,7 @@ void test_akela_llvm_struct_array12()
              "p.last_name[0]\n",
              &result);
     expect_str(&result.value, "83", "value");
+    Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
     cg_setup("struct Person\n"
@@ -316,7 +318,6 @@ void test_akela_llvm_struct_array12()
              "p.age\n",
              &result);
     expect_str(&result.value, "35", "value");
-
     Code_gen_result_destroy(&result);
 }
 
@@ -347,6 +348,7 @@ void test_akela_llvm_struct_struct()
              "line.p0.x\n",
              &result);
     expect_str(&result.value, "1.500000", "value");
+    Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
     cg_setup("struct Point\n"
@@ -437,6 +439,7 @@ void test_akela_llvm_struct_function() {
              "foo.compute(77)\n",
              &result);
     expect_str(&result.value, "78", "value");
+    Code_gen_result_destroy(&result);
 
     Code_gen_result_init(&result);
     cg_setup("struct Foo\n"
@@ -450,6 +453,7 @@ void test_akela_llvm_struct_function() {
              "foo.compute(77)\n",
              &result);
     expect_str(&result.value, "79", "value");
+    Code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct()
