@@ -68,7 +68,11 @@ namespace Akela_llvm {
                     lhs->sym->reference = lhs_value;
                     Value *rhs_value = Dispatch(jd, rhs);
                     jd->Builder->CreateStore(rhs_value, lhs_value);
-                }
+                } else {
+                    Type* t = Get_type(jd, tu);
+                    buffer_finish(&lhs->value);
+                    AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                    lhs->sym->reference = lhs_value;                }
             }
             if (rhs) {
                 rhs = rhs->next;
@@ -137,14 +141,7 @@ namespace Akela_llvm {
         } else {
             if (lhs->type == Ast_type_id) {
                 AllocaInst* lhs_value;
-                if (lhs->sym->reference) {
-                    lhs_value = (AllocaInst*)lhs->sym->reference;
-                } else {
-                    Type* t = Get_type(jd, lhs->tu);
-                    buffer_finish(&lhs->value);
-                    lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    lhs->sym->reference = lhs_value;
-                }
+                lhs_value = (AllocaInst*)lhs->sym->reference;
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
                 jd->context.in_lhs = true;

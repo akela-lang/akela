@@ -1,8 +1,15 @@
 # Akela Todo
-* context dot: method call, function call, ptr, value
-* context subscript: ptr, value
+* context
+  * assign: lhs context: ptr [] test []
+  * dot: lhs context: ptr [] test []
+  * dot: expression look at context [] test []
+  * subscript: lhs context: ptr [] test []
+  * subscript: expression look at context [] test []
+  * id: expression look at context [] test []
+  * context ret: array, struct, func: ptr [] test []
+* impl struct method
+* impl struct type method
 * code gen impl
-* struct methods
 * use malloc when returning a pointer
 * for loop
   * range iterator []
