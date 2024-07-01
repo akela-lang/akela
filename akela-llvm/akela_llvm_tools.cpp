@@ -19,7 +19,6 @@ namespace Akela_llvm {
         jd->TheModule->setDataLayout(jd->TheJIT->getDataLayout());
         jd->Builder = std::make_unique<IRBuilder<>>(*jd->TheContext);
         jd->toplevel = nullptr;
-        jd->context.in_lhs = false;
         jd->abort_function = nullptr;
         jd->printf_function = nullptr;
         jd->exit_function = nullptr;

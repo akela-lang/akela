@@ -57,7 +57,7 @@ namespace Akela_llvm {
         assert(found);
         Value* gep_value = jd->Builder->CreateStructGEP(struct_type, struct_value, i);
 
-        if (jd->context.in_lhs) {
+        if (n->tu->context == Type_context_ptr) {
             return gep_value;
         } else if (dec_tu->is_array) {
             return gep_value;

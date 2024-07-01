@@ -47,10 +47,6 @@
 #define MODULE_NAME "Akela JIT"
 
 namespace Akela_llvm {
-    typedef struct Code_gen_context{
-        bool in_lhs;
-    } Code_gen_context;
-
     typedef struct {
         struct error_list* el;
         std::unique_ptr<llvm::LLVMContext> TheContext;
@@ -59,7 +55,6 @@ namespace Akela_llvm {
         llvm::ExitOnError ExitOnErr;
         std::unique_ptr<llvm::orc::KaleidoscopeJIT> TheJIT;
         llvm::Function* toplevel;
-        Code_gen_context context;
         llvm::Function* abort_function;
         llvm::Function* printf_function;
         llvm::Function* exit_function;

@@ -1,12 +1,6 @@
 # Akela Todo
 * context
-  * assign: lhs context: ptr [] test []
-  * dot: lhs context: ptr [] test []
   * dot: expression look at context [] test []
-  * subscript: lhs context: ptr [] test []
-  * subscript: expression look at context [] test []
-  * id: expression look at context [] test []
-  * context ret: array, struct, func: ptr [] test []
 * impl struct method
 * impl struct type method
 * code gen impl
