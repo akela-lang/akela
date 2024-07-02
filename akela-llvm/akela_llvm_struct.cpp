@@ -4,6 +4,8 @@
 using namespace llvm;
 
 namespace Akela_llvm {
+    Value* Handle_struct_literal_element(Jit_data* jd, Value* ptr, Ast_node* n);
+
     Value* Handle_struct(Jit_data* jd, Ast_node* n)
     {
         std::vector<Type*> type_list;
@@ -33,6 +35,7 @@ namespace Akela_llvm {
         assert(left_tu);
         struct type_def* left_td = left_tu->td;
         assert(left_td);
+        left->tu->context = Type_context_ptr;
         Value* struct_value = Dispatch(jd, left);
 
         Ast_node* right = Ast_node_get(n, 1);
@@ -80,7 +83,12 @@ namespace Akela_llvm {
         buffer_copy(&n->tu->td->name, &bf);
         buffer_copy_str(&bf, ".tmp");
         buffer_finish(&bf);
-        Value* value = jd->Builder->CreateAlloca(t, nullptr, bf.buf);
+        Value* value;
+        if (n->tu->lhs_allocation) {
+            value = (Value*)n->tu->lhs_allocation;
+        } else {
+            value = jd->Builder->CreateAlloca(t, nullptr, bf.buf);
+        }
         buffer_destroy(&bf);
         size_t i = 0;
         Ast_node* field = n->head;
@@ -90,10 +98,13 @@ namespace Akela_llvm {
 
             buffer_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
-            Value* expr_value = Dispatch(jd, expr);
-            if (expr->tu->is_array) {
+            if (expr->tu->td->type == type_struct) {
+                Handle_struct_literal_element(jd, gep_value, expr);
+            } else if (expr->tu->is_array) {
+                Value* expr_value = Dispatch(jd, expr);
                 Array_copy(jd, expr->tu, expr->tu, gep_value, expr_value);
             } else {
+                Value* expr_value = Dispatch(jd, expr);
                 jd->Builder->CreateStore(expr_value, gep_value);
             }
 
@@ -102,5 +113,33 @@ namespace Akela_llvm {
         }
 
         return value;
+    }
+
+    Value* Handle_struct_literal_element(Jit_data* jd, Value* ptr, Ast_node* n)
+    {
+        auto t = (StructType*)n->tu->td->composite_type;
+
+        size_t i = 0;
+        Ast_node* field = n->head;
+        while (field) {
+            Ast_node* id = Ast_node_get(field, 0);
+            Ast_node* expr = Ast_node_get(field, 1);
+
+            buffer_finish(&id->value);
+            Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->value.buf);
+            if (expr->tu->td->type == type_struct) {
+                Handle_struct_literal_element(jd, gep_value, expr);
+            } else if (expr->tu->is_array) {
+                Value* expr_value = Dispatch(jd, expr);
+                Array_copy(jd, expr->tu, expr->tu, gep_value, expr_value);
+            } else {
+                Value* expr_value = Dispatch(jd, expr);
+                jd->Builder->CreateStore(expr_value, gep_value);
+            }
+            field = field->next;
+            i++;
+        }
+
+        return ptr;
     }
 }

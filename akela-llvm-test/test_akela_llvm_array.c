@@ -86,72 +86,6 @@ void test_code_gen_array_const2()
     Code_gen_result_destroy(&result);
 }
 
-void test_code_gen_array_const3()
-{
-    test_name(__func__);
-    Code_gen_result result;
-
-    Code_gen_result_init(&result);
-    cg_setup("let a: [5 const]u8\n"
-             "a[0] = 1\n"
-             "a[1] = 2\n"
-             "a[2] = 3\n"
-             "a[3] = 4\n"
-             "a[4] = 0\n"
-             "a[0]\n",
-             &result);
-    expect_str(&result.value, "1", "value");
-    Code_gen_result_destroy(&result);
-
-    Code_gen_result_init(&result);
-    cg_setup("let a: [5 const]u8\n"
-             "a[0] = 1\n"
-             "a[1] = 2\n"
-             "a[2] = 3\n"
-             "a[3] = 4\n"
-             "a[4] = 0\n"
-             "a[1]\n",
-             &result);
-    expect_str(&result.value, "2", "value");
-    Code_gen_result_destroy(&result);
-
-    Code_gen_result_init(&result);
-    cg_setup("let a: [5 const]u8\n"
-             "a[0] = 1\n"
-             "a[1] = 2\n"
-             "a[2] = 3\n"
-             "a[3] = 4\n"
-             "a[4] = 0\n"
-             "a[2]\n",
-             &result);
-    expect_str(&result.value, "3", "value");
-    Code_gen_result_destroy(&result);
-
-    Code_gen_result_init(&result);
-    cg_setup("let a: [5 const]u8\n"
-             "a[0] = 1\n"
-             "a[1] = 2\n"
-             "a[2] = 3\n"
-             "a[3] = 4\n"
-             "a[4] = 0\n"
-             "a[3]\n",
-             &result);
-    expect_str(&result.value, "4", "value");
-    Code_gen_result_destroy(&result);
-
-    Code_gen_result_init(&result);
-    cg_setup("let a: [5 const]u8\n"
-             "a[0] = 1\n"
-             "a[1] = 2\n"
-             "a[2] = 3\n"
-             "a[3] = 4\n"
-             "a[4] = 0\n"
-             "a[4]\n",
-             &result);
-    expect_str(&result.value, "0", "value");
-    Code_gen_result_destroy(&result);
-}
-
 void test_code_gen_array_literal()
 {
     test_name(__func__);
@@ -584,7 +518,6 @@ void test_akela_llvm_array()
     test_code_gen_const_string();
     test_code_gen_const_string2();
     test_code_gen_array_const2();
-    test_code_gen_array_const3();
     test_code_gen_array_literal();
     test_code_gen_array_literal_multidimensional();
     test_code_gen_array_literal_signed();

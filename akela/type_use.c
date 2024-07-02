@@ -14,6 +14,7 @@ void Type_use_init(Type_use* tu)
     tu->is_array = false;
     tu->is_slice = false;
     tu->context = Type_context_value;
+    tu->lhs_allocation = NULL;
     tu->next = NULL;
     tu->prev = NULL;
     tu->head = NULL;
@@ -65,6 +66,7 @@ void Type_use_copy(Type_use* src, Type_use* dest)
     dest->is_array = src->is_array;
     dest->is_slice = src->is_slice;
     dest->context = Type_context_value;         /* default to value */
+    dest->lhs_allocation = NULL;                /* default to NULL */
 }
 
 Type_use* Type_use_clone(Type_use* tu)

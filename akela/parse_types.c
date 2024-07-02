@@ -818,6 +818,7 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
 {
     Ast_node* p = n;
     struct symbol* sym = NULL;
+    Ast_node* first = NULL;
     while (p) {
         if (!is_lvalue(p->type)) {
             error_list_set(ps->el, loc, "invalid lvalue");
@@ -830,6 +831,7 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
                 return false;
             }
             sym = environment_get(ps->st->top, &p->value);
+            first = p;
         }
         p = p->head;
     }
@@ -844,8 +846,22 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
         return false;
     }
 
-    if (!n->tu->is_mut && sym->assign_count >= 1) {
-        error_list_set(ps->el, loc, "immutable variable changed in assignment");
+    if (n->type != Ast_type_error) {
+        if (n->type == Ast_type_array_subscript) {
+            Ast_node* left = n->head;
+            if (left->tu->is_array) {
+                Type_dimension* type_dim = (Type_dimension*)VECTOR_PTR(&left->tu->dim, 0);
+                if (type_dim->option == Array_element_const) {
+                    error_list_set(ps->el, loc, "immutable variable changed in assignment");
+                }
+            }
+
+        }
+    }
+    if (n->type != Ast_type_error) {
+        if (!first->tu->is_mut && sym->assign_count >= 1) {
+            error_list_set(ps->el, loc, "immutable variable changed in assignment");
+        }
     }
 
     return true;

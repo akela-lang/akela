@@ -423,6 +423,58 @@ void test_akela_llvm_struct_struct()
     Code_gen_result_destroy(&result);
 }
 
+void test_akela_llvm_struct2()
+{
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup("struct Point\n"
+             "  x: f64\n"
+             "  y: f64\n"
+             "end\n"
+             "let mut p: Point = Point\n"
+             "  x: 1.5\n"
+             "  y: 2.5\n"
+             "end\n"
+             "p.x = 1.6\n"
+             "p.x\n",
+             &result);
+    expect_str(&result.value, "1.600000", "value");
+    Code_gen_result_destroy(&result);
+}
+
+void test_akela_llvm_struct_struct2()
+{
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup("struct Point\n"
+             "  x: f64\n"
+             "  y: f64\n"
+             "end\n"
+             "struct Line\n"
+             "  p0: Point\n"
+             "  p1: Point\n"
+             "end\n"
+             "let mut line: Line = Line\n"
+             "  p0: Point\n"
+             "    x: 1.5\n"
+             "    y: 2.5\n"
+             "  end\n"
+             "  p1: Point\n"
+             "    x: 3.0\n"
+             "    y: 4.0\n"
+             "  end\n"
+             "end\n"
+             "line.p0.x = 1.6\n"
+             "line.p0.x\n",
+             &result);
+    expect_str(&result.value, "1.600000", "value");
+    Code_gen_result_destroy(&result);
+}
+
 void test_akela_llvm_struct_function() {
     test_name(__func__);
     Code_gen_result result;
@@ -472,5 +524,7 @@ void test_akela_llvm_struct()
     test_akela_llvm_struct_array11();
     test_akela_llvm_struct_array12();
     test_akela_llvm_struct_struct();
+    test_akela_llvm_struct2();
+    test_akela_llvm_struct_struct2();
     test_akela_llvm_struct_function();
 }

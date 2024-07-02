@@ -1,6 +1,6 @@
 # Akela Todo
 * context
-  * dot: expression look at context [] test []
+  * dot: expression look at context [] test []; set context in IR code generation
 * impl struct method
 * impl struct type method
 * code gen impl

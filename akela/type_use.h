@@ -52,6 +52,7 @@ typedef struct Type_use {
     bool is_array;
     bool is_slice;
     Type_context context;
+    void* lhs_allocation;
     struct Type_use* next;
     struct Type_use* prev;
     struct Type_use* head;
