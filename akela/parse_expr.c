@@ -140,9 +140,6 @@ Ast_node* parse_assignment(struct parse_state* ps)
                     if (!type_use_can_cast(lhs2->tu, rhs2->tu)) {
                         error_list_set(ps->el, &rhs2->loc, "values in assignment not compatible");
                     }
-                    if (n->type != Ast_type_error) {
-                        lhs2->tu->context = Type_context_ptr;
-                    }
                     lhs2 = lhs2->next;
                     rhs2 = rhs2->next;
                 }
@@ -161,9 +158,6 @@ Ast_node* parse_assignment(struct parse_state* ps)
                         error_list_set(ps->el, &lhs->loc, "lvalues do not match type in assignment");
                         n->type = Ast_type_error;
                     }
-                }
-                if (n->type != Ast_type_error) {
-                    lhs->tu->context = Type_context_ptr;
                 }
             }
             prev_lhs = lhs;
@@ -855,10 +849,6 @@ Ast_node* parse_subscript(struct parse_state* ps)
         if (!left->tu) {
             error_list_set(ps->el, &left->loc, "expression has subscript but has no value");
             left->type = Ast_type_error;
-        }
-
-        if (left->type != Ast_type_error) {
-            left->tu->context = Type_context_ptr;
         }
 
         Ast_node_create(&n);

@@ -134,6 +134,7 @@ namespace Akela_llvm {
                 assert(false);
             }
         } else if (lhs->tu->is_array) {
+            lhs->tu->context = Type_context_ptr;
             Value* lhs_value = Dispatch(jd, lhs);
             Array_copy(jd, lhs->tu, rhs->tu, lhs_value, rhs_value);
         } else {
@@ -142,6 +143,7 @@ namespace Akela_llvm {
                 lhs_value = (AllocaInst*)lhs->sym->reference;
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
+                lhs->tu->context = Type_context_ptr;
                 Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             }
@@ -206,6 +208,7 @@ namespace Akela_llvm {
 
         Ast_node* array = n->head;
         assert(array->tu->is_array);
+        array->tu->context = Type_context_ptr;
         Value* array_value = Dispatch(jd, array);
         assert(array_value);
 
