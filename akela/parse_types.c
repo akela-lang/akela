@@ -12,6 +12,11 @@
 #include <assert.h>
 
 bool token_is_type(struct parse_state* ps, struct token* t);
+Type_use* Type_use_add_proto(
+        struct symbol_table* st,
+        Type_use* func,
+        Ast_node* proto,
+        Ast_node* struct_type);
 
 /**
  * Parse a function prototype
@@ -512,8 +517,7 @@ Ast_node* parse_type(struct parse_state* ps)
         if (proto->type == Ast_type_error) {
             n->type = Ast_type_error;
         } else {
-            Type_use_destroy(n->tu);
-            n->tu = proto2type_use(ps->st, proto, NULL);
+            Type_use_add_proto(ps->st, n->tu, proto, NULL);
         }
         Ast_node_destroy(proto);
 
@@ -627,11 +631,18 @@ void declare_type(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node
     }
 }
 
-Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto, Ast_node* struct_type)
-{
-    Type_use* func = NULL;
+Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto, Ast_node* struct_type) {
+    Type_use *func = NULL;
     Type_use_create(&func);
+    Type_use_add_proto(st, func, proto, struct_type);
+}
 
+Type_use* Type_use_add_proto(
+    struct symbol_table* st,
+    Type_use* func,
+    Ast_node* proto,
+    Ast_node* struct_type)
+{
     struct buffer bf;
     buffer_init(&bf);
     buffer_copy_str(&bf, "Function");

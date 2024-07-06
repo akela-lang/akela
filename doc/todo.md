@@ -1,4 +1,5 @@
 # Akela Todo
+* test struct field of function
 * impl struct method
 * impl struct type method
 * code gen impl

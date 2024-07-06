@@ -31,15 +31,32 @@ namespace Akela_llvm {
                     lhs->sym->reference = lhs_value;
                     Value* rhs_value = Dispatch(jd, rhs);
                     jd->Builder->CreateStore(rhs_value, lhs_value);
+                } else {
+                    if (tu->is_array) {
+                        Type *t = Get_type(jd, tu);
+                        buffer_finish(&lhs->value);
+                        AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                        lhs->sym->value = lhs_value;
+                    } else {
+                        Type *t = Get_type_pointer(jd, tu);
+                        buffer_finish(&lhs->value);
+                        AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                        lhs->sym->reference = lhs_value;
+                    }
                 }
             } else if (tu->is_array) {
                 if (rhs) {
-                    Type *t = Get_type_pointer(jd, tu);
+                    Type *t = Get_type(jd, tu);
                     buffer_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    Value *rhs_value = Dispatch(jd, rhs);
-                    lhs->sym->reference = lhs_value;
-                    jd->Builder->CreateStore(rhs_value, lhs_value);
+                    rhs->tu->lhs_allocation = lhs_value;
+                    if (rhs->type == Ast_type_array_literal) {
+                        Value *rhs_value = Dispatch(jd, rhs);
+                    } else {
+                        Value *rhs_value = Dispatch(jd, rhs);
+                        Array_copy(jd, tu, rhs->tu, lhs_value, rhs_value);
+                    }
+                    lhs->sym->value = lhs_value;
                 } else {
                     Type *t = Get_type(jd, tu);
                     buffer_finish(&lhs->value);
@@ -118,9 +135,9 @@ namespace Akela_llvm {
     {
         if (lhs->tu->td->type == type_function) {
             if (lhs->type == Ast_type_id) {
-                AllocaInst* lhs_value;
+                AllocaInst *lhs_value;
                 if (lhs->sym->reference) {
-                    lhs_value = (AllocaInst*)lhs->sym->reference;
+                    lhs_value = (AllocaInst *) lhs->sym->reference;
                 } else {
                     lhs->sym->value = nullptr;
                     FunctionType *func_type = Get_function_type(jd, rhs->tu);
@@ -129,6 +146,10 @@ namespace Akela_llvm {
                     lhs_value = jd->Builder->CreateAlloca(pt, nullptr, rhs->value.buf);
                     lhs->sym->reference = lhs_value;
                 }
+                jd->Builder->CreateStore(rhs_value, lhs_value);
+            } else if (lhs->type == Ast_type_array_subscript) {
+                lhs->tu->context = Type_context_ptr;
+                Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
                 assert(false);
@@ -173,7 +194,12 @@ namespace Akela_llvm {
         assert(n->tu->is_array);
         std::vector<size_t> index;
         Type *t = Get_type(jd, n->tu);
-        Value* ptr = jd->Builder->CreateAlloca(t, nullptr, "arrayliteraltmp");
+        Value* ptr;
+        if (n->tu->lhs_allocation) {
+            ptr = (Value*)n->tu->lhs_allocation;
+        } else {
+            ptr = jd->Builder->CreateAlloca(t, nullptr, "arrayliteraltmp");
+        }
         Array_literal_element(jd, n, ptr);
         return ptr;
     }
@@ -182,18 +208,31 @@ namespace Akela_llvm {
     void Array_literal_element(Jit_data* jd, Ast_node* n, Value* ptr)
     {
         if (n->tu->is_array) {
+            Type* t = Get_type(jd, n->tu);
             size_t i = 0;
+            std::vector<Value*> list;
+            list.push_back(
+                    ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
+                                            APInt(64, 0, false)));
+            list.push_back(
+                    ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
+                                     APInt(64, 0, false)));
             Ast_node* p = n->head;
             while (p) {
-                Type* t = Get_type(jd, p->tu);
-                std::vector<Value*> list;
-                list.push_back(
-                        ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
-                                         APInt(64, i, false)));
                 Value* ptr2 = jd->Builder->CreateInBoundsGEP(t, ptr, list, "arrayelementtmp");
                 Array_literal_element(jd, p, ptr2);
+
+                ptr = ptr2;
                 i++;
                 p = p->next;
+                if (!p) {
+                    break;
+                }
+                t = Get_type(jd, p->tu);
+                list.clear();
+                list.push_back(
+                        ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
+                                         APInt(64, 1, false)));
             }
         } else {
             Value* value = Dispatch(jd, n);
@@ -205,6 +244,9 @@ namespace Akela_llvm {
     Value* Handle_subscript(Jit_data* jd, Ast_node* n)
     {
         Type* element_type = Get_type(jd, n->tu);
+        if (n->tu->td->type == type_function) {
+            element_type = element_type->getPointerTo();
+        }
 
         Ast_node* array = n->head;
         assert(array->tu->is_array);

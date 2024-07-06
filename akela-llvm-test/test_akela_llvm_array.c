@@ -35,12 +35,12 @@ void test_code_gen_const_string2()
 {
     test_name(__func__);
     Code_gen_result result;
-    Code_gen_result_init(&result);
 
+    Code_gen_result_init(&result);
     cg_setup("let a: [6 const]u8 = \"hello\"\n"
-             "a\n",
+             "a[0]\n",
              &result);
-    expect_str(&result.value, "hello", "value");
+    expect_str(&result.value, "104", "value");
 
     Code_gen_result_destroy(&result);
 }

@@ -292,6 +292,20 @@ void test_akela_llvm_function_function_param() {
     Code_gen_result_destroy(&result);
 }
 
+void test_akela_llvm_function_in_array() {
+    test_name(__func__);
+    Code_gen_result result;
+
+    Code_gen_result_init(&result);
+    cg_setup(
+            "let func_array: [5]fn(i64)->i64\n"
+            "func_array[0] = fn (x: i64)->i64 x*2 end\n"
+            "func_array[0](10)",
+            &result);
+    expect_str(&result.value, "20", "value");
+    Code_gen_result_destroy(&result);
+}
+
 void test_akela_llvm_function()
 {
     test_akela_llvm_function_declare();
@@ -309,4 +323,5 @@ void test_akela_llvm_function()
     test_akela_llvm_function_array_param();
     test_akela_llvm_function_struct_param();
     test_akela_llvm_function_function_param();
+    test_akela_llvm_function_in_array();
 }

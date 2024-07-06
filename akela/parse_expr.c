@@ -17,10 +17,11 @@ Ast_node* parse_comparison(struct parse_state* ps);
 Ast_node* parse_add(struct parse_state* ps);
 Ast_node* parse_mult(struct parse_state* ps);
 Ast_node* parse_power(struct parse_state* ps);
-Ast_node* parse_subscript(struct parse_state* ps);
-Ast_node* parse_call(struct parse_state* ps);
-Ast_node* parse_cseq(struct parse_state* ps, Ast_node* left);
 Ast_node* parse_dot(struct parse_state* ps);
+Ast_node* parse_complex_operators(struct parse_state* ps);
+void parse_subscript(struct parse_state* ps, Ast_node* left, Ast_node* n);
+void parse_call(struct parse_state* ps, Ast_node* left, Ast_node* n);
+Ast_node* parse_cseq(struct parse_state* ps, Ast_node* left);
 
 /* expr -> assignment */
 Ast_node* parse_expr(struct parse_state* ps)
@@ -715,14 +716,14 @@ Ast_node* parse_mult(struct parse_state* ps)
 	return n;
 }
 
-/* power -> subscript power' | e */
-/* power' -> ^ subscript power' | e */
+/* power -> dot power' | e */
+/* power' -> ^ dot power' | e */
 Ast_node* parse_power(struct parse_state* ps)
 {
 	Ast_node* n = NULL;
 	Ast_node* a = NULL;
 
-	a = parse_subscript(ps);
+	a = parse_complex_operators(ps);
 
 	if (!a) {
 		return a;
@@ -757,7 +758,7 @@ Ast_node* parse_power(struct parse_state* ps)
         }
 
 		Ast_node* b = NULL;
-		b = parse_subscript(ps);
+		b = parse_complex_operators(ps);
         if (b && b->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
@@ -824,328 +825,307 @@ Ast_node* parse_power(struct parse_state* ps)
 	return n;
 }
 
-/* parse_subscript -> call subscript' */
-/* subscript' -> [expr] subscript' | e */
-Ast_node* parse_subscript(struct parse_state* ps)
+/* complex_operators -> factor complex_operators' */
+/* complex_operators' -> [expr] complex_operators' | (call_seq) complex_operators' | e */
+Ast_node* parse_complex_operators(struct parse_state* ps)
 {
-	Ast_node* n = NULL;
-	Ast_node* a = NULL;
+    Ast_node* n = NULL;
+    Ast_node* a = NULL;
 
-	a = parse_call(ps);
+    a = parse_dot(ps);
 
     if (!a) {
         return a;
     }
 
-    Ast_node* left = a;
-    n = a;
-	while (true) {
-		struct token* t0 = get_lookahead(ps);
+    Ast_node* left = n = a;
+    while (true) {
+        struct token* t0 = get_lookahead(ps);
 
-		if (!t0 || t0->type != token_left_square_bracket) {
-			break;
-		}
-
-        if (!left->tu) {
-            error_list_set(ps->el, &left->loc, "expression has subscript but has no value");
-            left->type = Ast_type_error;
+        if (t0->type != token_left_square_bracket && t0->type != token_left_paren) {
+            break;
         }
 
         Ast_node_create(&n);
-        n->type = Ast_type_array_subscript;
-        Ast_node_add(n, left);
-        if (left->type != Ast_type_error) {
-            if (left->tu->is_array || left->tu->is_slice) {
-                n->tu = Type_use_clone(left->tu);
-                Type_use_reduce_dimension(n->tu);
-            }
+        if (t0->type == token_left_square_bracket) {
+            parse_subscript(ps, left, n);
+        } else if (t0->type == token_left_paren) {
+            parse_call(ps, left, n);
         }
 
         if (left->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
 
-        if (n->type != Ast_type_error) {
-            if (!left->tu->is_array && !left->tu->is_slice) {
-				error_list_set(ps->el,
-                               &a->loc,
-                               "expression has subscript but is not an array or slice");
-				/* test case: test_parse_subscript_error_not_array */
-                n->type = Ast_type_error;
-			}
-		}
-
-		struct token* lsb = NULL;
-		if (!match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb, n)) {
-            /* test case: no test case needed */
-            assert(false);
-        }
-
-		token_destroy(lsb);
-		free(lsb);
-
-        if (!consume_newline(ps,  n)) {
-            n->type = Ast_type_error;
-        }
-
-		Ast_node* b = NULL;
-        b = parse_expr(ps);
-		if (b && b->type == Ast_type_error) {
-            n->type = Ast_type_error;
-        }
-
-        if (!consume_newline(ps, n)) {
-            n->type = Ast_type_error;
-        }
-
-		struct token* rsb = NULL;
-		if (!match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
-            n->type = Ast_type_error;
-        }
-
-		token_destroy(rsb);
-		free(rsb);
-
-		if (b) {
-            Ast_node_add(n, b);
-		}
-
         left = n;
-	}
+    }
 
-	return n;
+    return n;
 }
 
-/* call -> dot call' */
-/* call' -> ( cseq ) call' */
-Ast_node* parse_call(struct parse_state* ps)
+void parse_subscript(struct parse_state* ps, Ast_node* left, Ast_node* n)
 {
-	Ast_node* n = NULL;
+    n->type = Ast_type_array_subscript;
 
-	Ast_node* dot_node = NULL;
-	dot_node = parse_dot(ps);
+    if (!left->tu) {
+        error_list_set(ps->el, &left->loc, "expression has subscript but has no value");
+        left->type = Ast_type_error;
+    }
 
-	if (!dot_node) {
-		return dot_node;
-	}
+    if (left->type != Ast_type_error) {
+        if (left->tu->is_array || left->tu->is_slice) {
+            n->tu = Type_use_clone(left->tu);
+            Type_use_reduce_dimension(n->tu);
+        }
+    }
 
-	Ast_node* left = n = dot_node;
+    if (left->type == Ast_type_error) {
+        n->type = Ast_type_error;
+    }
 
-	while (true) {
-		struct token* t0 = get_lookahead(ps);
-
-		if (!t0 || t0->type != token_left_paren) {
-			break;
-		}
-
-        Ast_node_create(&n);
-        n->type = Ast_type_call;
-
-        struct token* lp = NULL;
-		if (!match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
-            /* test case: test case not needed */
+    if (n->type != Ast_type_error) {
+        if (!left->tu->is_array && !left->tu->is_slice) {
+            error_list_set(ps->el,
+                           &left->loc,
+                           "expression has subscript but is not an array or slice");
+            /* test case: test_parse_subscript_error_not_array */
             n->type = Ast_type_error;
         }
+    }
 
-        if (!consume_newline(ps, n)) {
+    struct token* lsb = NULL;
+    if (!match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb, n)) {
+        /* test case: no test case needed */
+        assert(false);
+    }
+
+    token_destroy(lsb);
+    free(lsb);
+
+    if (!consume_newline(ps,  n)) {
+        n->type = Ast_type_error;
+    }
+
+    Ast_node* b = NULL;
+    b = parse_expr(ps);
+    if (b && b->type == Ast_type_error) {
+        n->type = Ast_type_error;
+    }
+
+    if (!consume_newline(ps, n)) {
+        n->type = Ast_type_error;
+    }
+
+    struct token* rsb = NULL;
+    if (!match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
+        n->type = Ast_type_error;
+    }
+
+    token_destroy(rsb);
+    free(rsb);
+
+    Ast_node_add(n, left);
+
+    if (b) {
+        Ast_node_add(n, b);
+    }
+}
+
+void parse_call(struct parse_state* ps, Ast_node* left, Ast_node* n) {
+    n->type = Ast_type_call;
+
+    struct token *lp = NULL;
+    if (!match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
+        /* test case: test case not needed */
+        n->type = Ast_type_error;
+    }
+
+    if (!consume_newline(ps, n)) {
+        n->type = Ast_type_error;
+    }
+
+    Ast_node *cseq_node = NULL;
+    cseq_node = parse_cseq(ps, left);
+
+    Ast_node_add(n, left);
+
+    if (cseq_node) {
+        Ast_node_add(n, cseq_node);
+        if (cseq_node->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
+    }
 
-		Ast_node* cseq_node = NULL;
-		cseq_node = parse_cseq(ps, left);
-        if (cseq_node && cseq_node->type == Ast_type_error) {
+    if (!consume_newline(ps, n)) {
+        n->type = Ast_type_error;
+    }
+
+    struct token *rp = NULL;
+    if (!match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
+        /* test case: test_parse_call_error_right_paren */
+        n->type = Ast_type_error;
+    }
+
+    if (n->type != Ast_type_error) {
+        Type_use *tu = left->tu;
+        assert(tu);
+        assert(tu->td);
+        struct type_def *td = tu->td;
+        if (td->type != type_function) {
+            error_list_set(ps->el, &left->loc, "not a function type");
+            /* test case: test_parse_call_error_not_function */
             n->type = Ast_type_error;
-        }
+        } else {
+            Type_use *inputs = NULL;
+            Type_use *outputs = NULL;
+            get_function_children(tu, &inputs, &outputs);
 
-        if (!consume_newline(ps, n)) {
-            n->type = Ast_type_error;
-        }
-
-		struct token* rp = NULL;
-		if (!match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
-            /* test case: test_parse_call_error_right_paren */
-            n->type = Ast_type_error;
-        }
-
-        if (left) {
-            Ast_node_add(n, left);
-            if (left->type == Ast_type_error) {
-                n->type = Ast_type_error;
-            }
-        }
-
-        if (cseq_node) {
-            Ast_node_add(n, cseq_node);
-            if (cseq_node->type == Ast_type_error) {
-                n->type = Ast_type_error;
-            }
-        }
-
-		if (n->type != Ast_type_error) {
-			Type_use* tu = left->tu;
-			assert(tu);
-			assert(tu->td);
-			struct type_def* td = tu->td;
-			if (td->type != type_function) {
-				error_list_set(ps->el, &left->loc, "not a function type");
-				/* test case: test_parse_call_error_not_function */
-                n->type = Ast_type_error;
-			} else {
-				Type_use* inputs = NULL;
-				Type_use* outputs = NULL;
-				get_function_children(tu, &inputs, &outputs);
-
-				/* input */
-				size_t tcount = 0;
-                bool is_variadic = false;
-				if (inputs) {
-                    Type_use* input_tu = inputs->head;
-                    while (input_tu) {
-                        if (input_tu->type == Type_use_function_ellipsis) {
-                            is_variadic = true;
-                        } else {
-                            tcount++;
-                        }
-                        input_tu = input_tu->next;
+            /* input */
+            size_t tcount = 0;
+            bool is_variadic = false;
+            if (inputs) {
+                Type_use *input_tu = inputs->head;
+                while (input_tu) {
+                    if (input_tu->type == Type_use_function_ellipsis) {
+                        is_variadic = true;
+                    } else {
+                        tcount++;
                     }
-				}
-				size_t ccount = 0;
-				if (cseq_node) {
-					ccount = Ast_node_count_children(cseq_node);
-				}
+                    input_tu = input_tu->next;
+                }
+            }
+            size_t ccount = 0;
+            if (cseq_node) {
+                ccount = Ast_node_count_children(cseq_node);
+            }
 
-				if (ccount < tcount) {
-					error_list_set(ps->el, &rp->loc, "not enough arguments in function call");
-					/* test case: test_parse_call_error_not_enough_arguments */
-                    n->type = Ast_type_error;
-				} else if (!is_variadic && ccount > tcount) {
-					error_list_set(ps->el, &rp->loc, "too many arguments in function call");
-					/* test case: test_parse_call_error_too_many_arguments */
-                    n->type = Ast_type_error;
-				}
+            if (ccount < tcount) {
+                error_list_set(ps->el, &rp->loc, "not enough arguments in function call");
+                /* test case: test_parse_call_error_not_enough_arguments */
+                n->type = Ast_type_error;
+            } else if (!is_variadic && ccount > tcount) {
+                error_list_set(ps->el, &rp->loc, "too many arguments in function call");
+                /* test case: test_parse_call_error_too_many_arguments */
+                n->type = Ast_type_error;
+            }
 
-				/* output */
-				if (outputs) {
-					n->tu = Type_use_clone(outputs->head);
-				}
-			}
+            /* output */
+            if (outputs) {
+                n->tu = Type_use_clone(outputs->head);
+            }
+        }
 
-			left = n;
-		}
+    }
 
-		token_destroy(lp);
-		free(lp);
-		token_destroy(rp);
-		free(rp);
-
-	}
-
-	return n;
+    token_destroy(lp);
+    free(lp);
+    token_destroy(rp);
+    free(rp);
 }
 
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
 Ast_node* parse_cseq(struct parse_state* ps, Ast_node* left)
 {
-	Ast_node* n = NULL;
+    Ast_node* n = NULL;
     Ast_node_create(&n);
     n->type = Ast_type_cseq;
 
-	if (!left->tu || !left->tu->td || left->tu->td->type != type_function) {
-		error_list_set(ps->el, &left->loc, "not a function type");
-		/* test case: no test case needed */
+    if (!left->tu || !left->tu->td || left->tu->td->type != type_function) {
+        error_list_set(ps->el, &left->loc, "not a function type");
+        /* test case: no test case needed */
         n->type = Ast_type_error;
-		return n;
-	}
+        return n;
+    }
 
-	Ast_node* a = NULL;
-	a = parse_simple_expr(ps);
+    Ast_node* a = NULL;
+    a = parse_simple_expr(ps);
     if (a && a->type == Ast_type_error) {
         n->type = Ast_type_error;
     }
 
-	if (!a) {
-		return n;
-	}
-	int i = 0;
-	if (!check_input_type(ps, left->tu, i, a)) {
+    if (!a) {
+        return n;
+    }
+    int i = 0;
+    if (!check_input_type(ps, left->tu, i, a)) {
         n->type = Ast_type_error;
     }
-	i++;
+    i++;
 
     Ast_node_add(n, a);
 
-	while (true) {
-		struct token* t0 = get_lookahead(ps);
+    while (true) {
+        struct token* t0 = get_lookahead(ps);
 
-		if (!t0 || t0->type != token_comma) {
-			break;
-		}
+        if (!t0 || t0->type != token_comma) {
+            break;
+        }
 
-		struct token* comma = NULL;
-		if (!match(ps, token_comma, "expecting comma", &comma, n)) {
+        struct token* comma = NULL;
+        if (!match(ps, token_comma, "expecting comma", &comma, n)) {
             /* test case: no test case needed */
             n->type = Ast_type_error;
         }
 
-		token_destroy(comma);
-		free(comma);
+        token_destroy(comma);
+        free(comma);
 
         if (!consume_newline(ps, n)) {
             n->type = Ast_type_error;
         }
 
-		a = parse_simple_expr(ps);
-		if (a && a->type == Ast_type_error) {
+        a = parse_simple_expr(ps);
+        if (a && a->type == Ast_type_error) {
             n->type = Ast_type_error;
         }
 
-		if (!a) {
+        if (!a) {
             struct location a_loc = get_location(ps);
-			error_list_set(ps->el, &a_loc, "expected expression after comma");
-			/* test case: test_parse_call_error_expected_expression */
+            error_list_set(ps->el, &a_loc, "expected expression after comma");
+            /* test case: test_parse_call_error_expected_expression */
             n->type = Ast_type_error;
-		} else {
-			/* transfer a -> parent */
+        } else {
+            /* transfer a -> parent */
             Ast_node_add(n, a);
 
-			if (!check_input_type(ps, left->tu, i, a)) {
+            if (!check_input_type(ps, left->tu, i, a)) {
                 n->type = Ast_type_error;
             }
-		}
+        }
 
-		i++;
-	}
+        i++;
+    }
 
-	return n;
+    return n;
 }
 
 /* dot -> factor dot' */
 /* dot' -> . factor dot' | e */
 Ast_node* parse_dot(struct parse_state* ps)
 {
-	Ast_node* n = NULL;
-	Ast_node* a = NULL;
+    Ast_node* n = NULL;
+    Ast_node* a = NULL;
 
-	a = parse_factor(ps);
+    a = parse_factor(ps);
 
-	if (!a) {
-		return a;
-	}
+    if (!a) {
+        return a;
+    }
 
-	Ast_node* left = n = a;
-	while (true) {
-		struct token* t0 = NULL;
-		t0 = get_lookahead(ps);
-		if (t0->type != token_dot) {
-			break;
-		}
+    Ast_node* left = n = a;
+    while (true) {
+        struct token* t0 = NULL;
+        t0 = get_lookahead(ps);
+        if (t0->type != token_dot) {
+            break;
+        }
 
         Ast_node_create(&n);
         n->type = Ast_type_dot;
 
         struct token* dot = NULL;
-		if (!match(ps, token_dot, "expected a dot", &dot, n)) {
+        if (!match(ps, token_dot, "expected a dot", &dot, n)) {
             /* test case: no test case needed */
             n->type = Ast_type_error;
         }
@@ -1173,16 +1153,16 @@ Ast_node* parse_dot(struct parse_state* ps)
 
         Ast_node_add(n, b);
 
-		if (n->type != Ast_type_error) {
-			if (!left->tu) {
-				error_list_set(ps->el, &left->loc, "dot operand has no value");
-				/* test case: no test case necessary */
+        if (n->type != Ast_type_error) {
+            if (!left->tu) {
+                error_list_set(ps->el, &left->loc, "dot operand has no value");
+                /* test case: no test case necessary */
                 n->type = Ast_type_error;
-			} else if (left->tu->td->type != type_struct) {
-				error_list_set(ps->el, &left->loc, "dot operand is not a struct");
-				/* test case: test_parse_dot_error_left_non_module */
+            } else if (left->tu->td->type != type_struct) {
+                error_list_set(ps->el, &left->loc, "dot operand is not a struct");
+                /* test case: test_parse_dot_error_left_non_module */
                 n->type = Ast_type_error;
-			} else {
+            } else {
                 struct type_def* td = left->tu->td;
                 assert(td);
                 struct symbol* sym = environment_get(ps->st->top, &td->name);
@@ -1214,14 +1194,14 @@ Ast_node* parse_dot(struct parse_state* ps)
                 }
             }
 
-			left = n;
-			#pragma warning(suppress:6001)
+            left = n;
+#pragma warning(suppress:6001)
             token_destroy(dot);
             free(dot);
             token_destroy(id);
             free(id);
-		}
-	}
+        }
+    }
 
-	return n;
+    return n;
 }

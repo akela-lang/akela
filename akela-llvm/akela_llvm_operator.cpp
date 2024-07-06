@@ -4,6 +4,22 @@ using namespace llvm;
 
 namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
+    Value* Handle_mult(Jit_data* jd, Ast_node* n)
+    {
+        Ast_node* a = Ast_node_get(n, 0);
+        Value* lhs = Dispatch(jd, a);
+
+        Ast_node* b = Ast_node_get(n, 1);
+        Value* rhs = Dispatch(jd, b);
+
+        if (a->tu->td->type == type_float || b->tu->td->type == type_float) {
+            return jd->Builder->CreateFMul(lhs, rhs, "multmp");
+        } else {
+            return jd->Builder->CreateMul(lhs, rhs, "multmp");
+        }
+    }
+
+    /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_add(Jit_data* jd, Ast_node* n)
     {
         Ast_node* a = Ast_node_get(n, 0);

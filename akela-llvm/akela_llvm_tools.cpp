@@ -117,6 +117,9 @@ namespace Akela_llvm {
             size_t i = tu->dim.count - 1;
             while (true) {
                 auto dim = (Type_dimension*)VECTOR_PTR(&tu->dim, i);
+                if (tu->td->type == type_function) {
+                    t = t->getPointerTo();
+                }
                 t = ArrayType::get(t, dim->size);
                 if (i == 0) break;
                 i--;
@@ -252,6 +255,8 @@ namespace Akela_llvm {
             return Handle_function(jd, n);
         } else if (n->type == Ast_type_assign) {
             return Handle_assign(jd, n);
+        } else if (n->type == Ast_type_mult) {
+            return Handle_mult(jd, n);
         } else if (n->type == Ast_type_plus) {
             return Handle_add(jd, n);
         } else if (n->type == Ast_type_minus) {
