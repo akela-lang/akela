@@ -17,11 +17,11 @@ Ast_node* parse_comparison(struct parse_state* ps);
 Ast_node* parse_add(struct parse_state* ps);
 Ast_node* parse_mult(struct parse_state* ps);
 Ast_node* parse_power(struct parse_state* ps);
-Ast_node* parse_dot(struct parse_state* ps);
 Ast_node* parse_complex_operators(struct parse_state* ps);
 void parse_subscript(struct parse_state* ps, Ast_node* left, Ast_node* n);
 void parse_call(struct parse_state* ps, Ast_node* left, Ast_node* n);
 Ast_node* parse_cseq(struct parse_state* ps, Ast_node* left);
+Ast_node* parse_dot(struct parse_state* ps);
 
 /* expr -> assignment */
 Ast_node* parse_expr(struct parse_state* ps)
