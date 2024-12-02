@@ -1,4 +1,6 @@
 # Akela Todo
+* refactor array type
+* pointer type
 * test struct field of function
 * impl struct method
 * impl struct type method

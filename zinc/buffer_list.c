@@ -20,6 +20,12 @@ void buffer_list_init(struct buffer_list *bl)
     bl->tail = NULL;
 }
 
+void buffer_list_create(struct buffer_list** bl)
+{
+    malloc_safe((void**)bl, sizeof(struct buffer_list));
+    buffer_list_init(*bl);
+}
+
 void buffer_list_destroy(struct buffer_list* bl)
 {
     struct buffer_node* bn = bl->head;

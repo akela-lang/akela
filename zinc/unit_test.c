@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "result.h"
 #include "buffer.h"
+#include "buffer_list.h"
 #include "vector.h"
 #include "unit_test.h"
 #include <assert.h>
@@ -472,4 +473,29 @@ void expect_utf8_char(char* a, char* b, char* message)
     }
     error_triggered();
     printf("utf8 chars not equal: %s\n", message);
+}
+
+void expect_buffer_list_count(struct buffer_list* bl, size_t count, char* message)
+{
+	test_called();
+	size_t actual_count = buffer_list_count(bl);
+	if (actual_count == count) return;
+	error_triggered();
+	fprintf(stderr, "buffer list count not equal: %zu != %zu: %s\n", actual_count, count, message);
+}
+
+void expect_buffer_list_item(struct buffer_list* bl, size_t index, char* text, char* message)
+{
+	struct buffer* bf = buffer_list_get(bl, index);
+	if (!bf) {
+		error_triggered();
+		fprintf(stderr, "buffer list index out of bounds: %zu: %s\n", index, message);
+		return;
+	}
+
+	if (!buffer_compare_str(bf, text)) {
+		error_triggered();
+		buffer_finish(bf);
+		fprintf(stderr, "buffer list text not equal: (%s) (%s): %s\n", bf->buf, text, message);
+	}
 }

@@ -23,6 +23,7 @@ extern "C" {
 ZINC_API void buffer_node_init(struct buffer_node* bn);
 ZINC_API void buffer_node_destroy(struct buffer_node* bn);
 ZINC_API void buffer_list_init(struct buffer_list *bl);
+ZINC_API void buffer_list_create(struct buffer_list** bl);
 ZINC_API void buffer_list_destroy(struct buffer_list* bl);
 ZINC_API void buffer_list_add(struct buffer_list* bl, struct buffer_node* bn);
 ZINC_API void buffer_list_add_str(struct buffer_list* bl, const char* str);
