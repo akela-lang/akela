@@ -3,7 +3,6 @@
 #include "buffer.h"
 #include "memory.h"
 
-/* dynamic-output-none */
 unsigned int hash_calc(struct buffer* value, unsigned int size)
 {
     unsigned int val = 0;
@@ -16,7 +15,6 @@ unsigned int hash_calc(struct buffer* value, unsigned int size)
     return val;
 }
 
-/* dynamic-output-none */
 void hash_entry_init(struct hash_entry* ent)
 {
     ent->item = NULL;
@@ -25,20 +23,17 @@ void hash_entry_init(struct hash_entry* ent)
     ent->prev = NULL;
 }
 
-/* dynamic-destroy ent{} */
 void hash_entry_destroy(struct hash_entry* ent)
 {
     buffer_destroy(&ent->value);
 }
 
-/* dynamic-output-none */
 void hash_list_init(struct hash_list* hl)
 {
     hl->head = NULL;
     hl->tail = NULL;
 }
 
-/* dynamic-destroy hl{} */
 void hash_list_destroy(struct hash_list* hl)
 {
     struct hash_entry* p = hl->head;
@@ -50,12 +45,10 @@ void hash_list_destroy(struct hash_list* hl)
     }
 }
 
-/* dynamic-output ht{} */
 void hash_table_init(struct hash_table* ht, unsigned int size)
 {
     ht->size = size;
 
-    /* allocate ht{} */
     malloc_safe((void**)&ht->buckets, sizeof(struct hash_list) * size);
 
     for (int i = 0; i < size; i++) {
@@ -63,7 +56,6 @@ void hash_table_init(struct hash_table* ht, unsigned int size)
     }
 }
 
-/* dynamic-destroy ht{} */
 void hash_table_destroy(struct hash_table* ht)
 {
     for (int i = 0; i < ht->size; i++) {
@@ -72,7 +64,6 @@ void hash_table_destroy(struct hash_table* ht)
     free(ht->buckets);
 }
 
-/* dynamic-destroy ht{} */
 void hash_table_map(struct hash_table* ht, hash_table_func f)
 {
     for (int i = 0; i < ht->size; i++) {
@@ -85,22 +76,18 @@ void hash_table_map(struct hash_table* ht, hash_table_func f)
 }
 
 /* assume entry is not in table so call hash_table_get before if not sure */
-/* dynamic-output ht{} */
 void hash_table_add(struct hash_table* ht, struct buffer* value, void* item)
 {
     unsigned int val = hash_calc(value, ht->size);
 
-    /* allocate ent */
     struct hash_entry* ent;
     malloc_safe((void**)&ent, sizeof(struct hash_entry));
     hash_entry_init(ent);
     ent->item = item;
 
-    /* allocate ent{} */
     buffer_copy(value, &ent->value);
 
     /* add to beginning of bucket */
-    /* allocate ent ent{} -> ht{} */
     struct hash_entry* next = ht->buckets[val].head;
     ent->next = next;
     if (next) {
@@ -112,7 +99,6 @@ void hash_table_add(struct hash_table* ht, struct buffer* value, void* item)
     }
 }
 
-/* dynamic-output-none */
 void* hash_table_get(struct hash_table* ht, struct buffer* value)
 {
     struct hash_entry* ent;

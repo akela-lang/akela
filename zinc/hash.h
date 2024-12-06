@@ -24,34 +24,15 @@ struct hash_table {
 
 typedef void (*hash_table_func)(void*);
 
-/* dynamic-output-none */
 ZINC_API unsigned int hash_calc(struct buffer* value, unsigned int size);
-
-/* dynamic-output-none */
 ZINC_API void hash_entry_init(struct hash_entry* ent);
-
-/* dynamic-destroy ent{} */
 ZINC_API void hash_entry_destroy(struct hash_entry* ent);
-
-/* dynamic-output-none */
 ZINC_API void hash_list_init(struct hash_list* hl);
-
-/* dynamic-destroy hl{} */
 ZINC_API void hash_list_destroy(struct hash_list* hl);
-
-/* dynamic-destroy ht{} */
 ZINC_API void hash_table_map(struct hash_table* ht, hash_table_func f);
-
-/* dynamic-output ht{} */
 ZINC_API void hash_table_init(struct hash_table* ht, unsigned int size);
-
-/* dynamic-destroy ht{} */
 ZINC_API void hash_table_destroy(struct hash_table* ht);
-
-/* dynamic-output ht{} */
 ZINC_API void hash_table_add(struct hash_table* ht, struct buffer* value, void* item);
-
-/* dynamic-output-none */
 ZINC_API void* hash_table_get(struct hash_table* ht, struct buffer* value);
 
 #endif
