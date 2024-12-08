@@ -856,7 +856,7 @@ void test_match_character_type_word_not_match()
 {
     test_name(__func__);
     struct buffer_list* groups = NULL;
-    bool matched = match_run("\\w", "5", &groups);
+    bool matched = match_run("\\w", "|", &groups);
     expect_false(matched, "m");
     expect_buffer_list_count(groups, 0, "count groups");
     match_teardown(groups);
@@ -934,6 +934,17 @@ void test_match_scan_all()
     expect_true(matched, "m");
     expect_buffer_list_count(groups, 1, "count groups");
     expect_buffer_list_item(groups, 0, "a", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_word_type()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\w\\w\\w", "a0_", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "a0_", "item groups");
     match_teardown(groups);
 }
 
@@ -1043,4 +1054,6 @@ void test_match()
     test_match_character_type_space_not_match();
 
     test_match_scan_all();
+
+    test_match_word_type();
 }

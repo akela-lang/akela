@@ -763,11 +763,13 @@ void re_match_run_character_type_word(Stack_node* sn)
 
     if (task->start_slice.size > 0) {
         String_slice slice = task->start_slice;
-        if (IS_ONE_BYTE(slice.p[0]) && isalpha(slice.p[0])) {
-            task->matched = true;
-            Match_task_stack_add_char(sn, task, slice.p[0]);
-            Increment_slice(&slice);
-            task->end_slice = slice;
+        if (IS_ONE_BYTE(slice.p[0])) {
+            if (isalpha(slice.p[0]) || isdigit(slice.p[0]) || slice.p[0] == '_') {
+                task->matched = true;
+                Match_task_stack_add_char(sn, task, slice.p[0]);
+                Increment_slice(&slice);
+                task->end_slice = slice;
+            }
         }
     }
 

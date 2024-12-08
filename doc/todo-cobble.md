@@ -1,4 +1,8 @@
 # Cobble Todo
+* opposite character types: \W, \D, \S
+* opposite character class: `[^xyz]`
+* wildcard '.' should not match newline \n
+* \N - opposite of newline
 * JSON compile tests
 * JSON match tests
 * full Unicode support
