@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "zinc/error_unit_test.h"
 #include <stdbool.h>
-#include "zinc/csv_lex.h"
+#include "dataframe/csv_lex.h"
 #include "zinc/error.h"
 #include "zinc/vector.h"
 #include "zinc/input_char_string.h"

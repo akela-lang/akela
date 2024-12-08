@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
-#include "zinc/data_frame.h"
-#include "zinc/csv_lex.h"
-#include "zinc/csv_parse.h"
+#include "dataframe/data_frame.h"
+#include "dataframe/csv_lex.h"
+#include "dataframe/csv_parse.h"
 #include <string.h>
 #include "zinc/error_unit_test.h"
 #include "zinc/memory.h"

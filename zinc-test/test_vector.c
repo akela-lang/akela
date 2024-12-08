@@ -1,5 +1,4 @@
 #include "zinc/vector.h"
-#include "zinc/data_frame.h"
 #include "zinc/unit_test.h"
 
 void test_vector_double()

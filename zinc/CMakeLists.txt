@@ -16,14 +16,7 @@ set(SOURCE_FILES
         error_unit_test.c
         list.c
         vector.c
-        series.c
-        data_frame.c
-        field.c
-        field_lex.c
         input_char_string.c
-        csv_lex.c
-        csv_parse.c
-        csv_write.c
         input_char.c
         input_char_file.c
         input_unicode.c

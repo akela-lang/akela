@@ -1,7 +1,7 @@
 #ifndef ZINC_SERIES_H
 #define ZINC_SERIES_H
 
-#include "vector.h"
+#include "zinc/vector.h"
 #include "field.h"
 
 typedef struct Series {

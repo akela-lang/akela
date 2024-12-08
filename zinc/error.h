@@ -1,10 +1,10 @@
-#ifndef _ERROR_H
-#define _ERROR_H
+#ifndef ZINC_ERROR_H
+#define ZINC_ERROR_H
 
 #include <stdarg.h>
 #include <stdbool.h>
-#include "api.h"
 #include <stdlib.h>
+#include "api.h"
 #include "buffer.h"
 
 struct location {

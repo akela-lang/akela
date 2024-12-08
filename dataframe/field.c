@@ -1,5 +1,6 @@
 #include "field.h"
 #include <assert.h>
+#include "zinc/vector.h"
 
 void FieldInit(struct Field* field)
 {

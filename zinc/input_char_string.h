@@ -1,5 +1,5 @@
-#ifndef ZINC_INPUT_CHAR_STRING_H
-#define ZINC_INPUT_CHAR_STRING_H
+#ifndef __ZINC_INPUT_CHAR_STRING_H__
+#define __ZINC_INPUT_CHAR_STRING_H__
 
 #include <stdbool.h>
 #include <stdlib.h>

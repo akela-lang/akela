@@ -1,7 +1,7 @@
+#include <assert.h>
+#include "zinc/memory.h"
 #include "csv_parse.h"
 #include "csv_lex.h"
-#include "memory.h"
-#include <assert.h>
 #include "field_lex.h"
 
 bool CSVParseHeader(struct CSVParseData* parse_data, DataFrame* df);

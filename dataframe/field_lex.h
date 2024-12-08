@@ -2,8 +2,8 @@
 #define ZINC_FIELD_LEX_H
 
 #include "error.h"
-#include "input_char_string.h"
-#include "input_char.h"
+#include "zinc/input_char_string.h"
+#include "zinc/input_char.h"
 #include "field.h"
 
 struct FieldLexData {

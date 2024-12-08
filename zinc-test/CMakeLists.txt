@@ -14,13 +14,7 @@ set(SOURCE_FILES
         test_error.c
         test_list.c
         test_vector.c
-        test_data_frame.c
         test_input_char_string.c
-        test_field_lex.c
-        test_csv_lex.c
-        test_csv_parse.c
-        test_csv_write.c
-        test_csv_parse_tools.c
         test_input_char_file.c
         test_input_unicode_string.c
         test_input_unicode_file.c

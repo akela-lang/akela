@@ -1,9 +1,11 @@
 #include "field.h"
 #include <stdbool.h>
+#include "zinc/error.h"
 #include "field_lex.h"
 #include <assert.h>
 #include <ctype.h>
-#include "memory.h"
+#include "zinc/memory.h"
+#include "zinc/input_char.h"
 
 void FieldLexStart(struct FieldLexData* lex_data, enum FieldType* type);
 void FieldLexSign(struct FieldLexData* lex_data, enum FieldType* type);

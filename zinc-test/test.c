@@ -12,12 +12,7 @@
 #include "test_error.h"
 #include "test_list.h"
 #include "test_vector.h"
-#include "test_data_frame.h"
 #include "test_input_char_string.h"
-#include "test_field_lex.h"
-#include "test_csv_lex.h"
-#include "test_csv_parse.h"
-#include "test_csv_write.h"
 #include "test_input_char_file.h"
 #include "test_input_unicode_string.h"
 #include "test_input_unicode_file.h"
@@ -38,12 +33,7 @@ int main()
     test_error();
     test_list();
     test_vector();
-    TestDataFrame();
     TestInputCharString();
-    TestFieldLex();
-    TestCSVLex();
-    TestCSVParse();
-    TestCSVWrite();
     TestInputCharFile();
     test_input_unicode_string();
     test_input_unicode_file();

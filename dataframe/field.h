@@ -11,7 +11,7 @@ enum FieldType {
     FieldTypeString,
 };
 
-#include "vector.h"
+#include "zinc/vector.h"
 
 struct Field {
     enum FieldType type;

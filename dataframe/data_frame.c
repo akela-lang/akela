@@ -1,8 +1,8 @@
 #include "data_frame.h"
-#include "memory.h"
-#include "buffer.h"
+#include "zinc/memory.h"
+#include "zinc/buffer.h"
 #include <stdbool.h>
-#include "string.h"
+#include <string.h>
 #include <ctype.h>
 #include "series.h"
 

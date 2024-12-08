@@ -1,12 +1,12 @@
 #ifndef ZINC_CSV_LEX_H
 #define ZINC_CSV_LEX_H
 
-#include "buffer.h"
-#include "vector.h"
+#include "zinc/buffer.h"
+#include "zinc/vector.h"
 #include <stdlib.h>
 #include <stdbool.h>
-#include "error.h"
-#include "input_char.h"
+#include "zinc/error.h"
+#include "zinc/input_char.h"
 
 enum CSVTokenType {
     CSVTokenTypeNone,

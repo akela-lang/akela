@@ -1,7 +1,7 @@
-#include "series.h"
-#include "memory.h"
-#include "field.h"
 #include <assert.h>
+#include "zinc/memory.h"
+#include "series.h"
+#include "field.h"
 
 void SeriesInit(Series* s)
 {

@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
-#include "zinc/csv_write.h"
+#include "dataframe/csv_write.h"
 #include "zinc/error_unit_test.h"
-#include "zinc/csv_parse.h"
+#include "dataframe/csv_parse.h"
 #include "test_csv_parse_tools.h"
 
 void TestCSVWrite1()
