@@ -36,6 +36,7 @@ ZINC_API int buffer_compare_str(struct buffer* a, const char* b);
 ZINC_API enum result buffer_uslice(struct buffer* src, struct buffer* dest, size_t start, size_t end);
 ZINC_API void buffer_add_format(struct buffer *bf, const char* fmt, ...);
 ZINC_API int buffer_order(struct buffer* a, struct buffer* b);
+ZINC_API struct buffer* buffer_clone(struct buffer* bf);
 
 #ifdef __cplusplus
 }

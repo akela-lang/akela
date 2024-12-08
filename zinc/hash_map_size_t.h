@@ -23,9 +23,12 @@ typedef struct Hash_map_size_t {
 typedef void (*Hash_map_size_t_func)(size_t value, void* item);
 
 void Hash_map_size_t_entry_init(Hash_map_size_t_entry* entry);
+
 void Hash_map_size_t_list_init(Hash_map_size_t_list* list);
 void Hash_map_size_t_list_destroy(Hash_map_size_t_list* list);
+
 void Hash_map_size_t_init(Hash_map_size_t* set, size_t bucket_count);
+void Hash_map_size_t_create(Hash_map_size_t** set, size_t bucket_count);
 void Hash_map_size_t_destroy(Hash_map_size_t* set);
 void Hash_map_size_t_map(Hash_map_size_t* set, Hash_map_size_t_func f);
 void Hash_map_size_t_add(Hash_map_size_t* set, size_t value, void* item);

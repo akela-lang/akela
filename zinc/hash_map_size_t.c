@@ -35,6 +35,12 @@ void Hash_map_size_t_init(Hash_map_size_t* set, size_t bucket_count)
     }
 }
 
+void Hash_map_size_t_create(Hash_map_size_t** set, size_t bucket_count)
+{
+    malloc_safe((void**)set, sizeof(Hash_map_size_t));
+    Hash_map_size_t_init(*set, bucket_count);
+}
+
 void Hash_map_size_t_destroy(Hash_map_size_t* set)
 {
     for (size_t i = 0; i < set->bucket_count; i++) {

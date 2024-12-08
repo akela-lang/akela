@@ -382,3 +382,11 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
     va_end(args);
     free(buf);
 }
+
+struct buffer* buffer_clone(struct buffer* bf)
+{
+    struct buffer* new_bf = NULL;
+    buffer_create(&new_bf);
+    buffer_copy(bf, new_bf);
+    return new_bf;
+}
