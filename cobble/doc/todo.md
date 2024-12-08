@@ -1,5 +1,4 @@
 # Todo
-* move to Akela repo
 * JSON compile tests
 * JSON match tests
 * full Unicode support
