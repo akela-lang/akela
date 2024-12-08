@@ -47,7 +47,7 @@ void re_match_run_escape(Stack_node* sn);
 void re_match_run_character_class(Stack_node* sn);
 void re_match_child_finish_character_class(Stack_node* sn, Match_task* parent, Match_task* child);
 void re_match_run_character_range(Stack_node* sn);
-void re_match_run_character_type_word(Stack_node* sn);
+void re_match_run_character_type_word(Stack_node* sn, bool opposite);
 void re_match_run_character_type_digit(Stack_node* sn);
 void re_match_run_character_type_space(Stack_node* sn);
 
@@ -246,7 +246,9 @@ void re_match_run_dispatch(Stack_node* sn)
     } else if (task->n->type == Ast_type_character_range) {
         re_match_run_character_range(sn);
     } else if (task->n->type == Ast_type_character_type_word) {
-        re_match_run_character_type_word(sn);
+        re_match_run_character_type_word(sn, false);
+    } else if (task->n->type == Ast_type_character_type_word_opposite) {
+        re_match_run_character_type_word(sn, true);
     } else if (task->n->type == Ast_type_character_type_digit) {
         re_match_run_character_type_digit(sn);
     } else if (task->n->type == Ast_type_character_type_space) {
@@ -757,19 +759,19 @@ void re_match_run_character_range(Stack_node* sn)
     re_match_child_finish_dispatch(sn, task->parent, task);
 }
 
-void re_match_run_character_type_word(Stack_node* sn)
+void re_match_run_character_type_word(Stack_node* sn, bool opposite)
 {
     Match_task* task = sn->mts->top;
 
     if (task->start_slice.size > 0) {
         String_slice slice = task->start_slice;
-        if (IS_ONE_BYTE(slice.p[0])) {
-            if (isalpha(slice.p[0]) || isdigit(slice.p[0]) || slice.p[0] == '_') {
-                task->matched = true;
-                Match_task_stack_add_char(sn, task, slice.p[0]);
-                Increment_slice(&slice);
-                task->end_slice = slice;
-            }
+        bool is_word = IS_ONE_BYTE(slice.p[0])
+            && (isalpha(slice.p[0]) || isdigit(slice.p[0]) || slice.p[0] == '_');
+        if (!opposite && is_word || opposite && !is_word) {
+            task->matched = true;
+            Match_task_stack_add_char(sn, task, slice.p[0]);
+            Increment_slice(&slice);
+            task->end_slice = slice;
         }
     }
 

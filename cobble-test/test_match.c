@@ -862,6 +862,17 @@ void test_match_character_type_word_not_match()
     match_teardown(groups);
 }
 
+void test_match_character_type_word_opposite()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\W\\W\\W", "+-*", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "+-*", "item groups");
+    match_teardown(groups);
+}
+
 void test_match_character_type_digit()
 {
     test_name(__func__);
@@ -1044,6 +1055,8 @@ void test_match()
     test_match_character_type_word5();
     test_match_character_type_word6();
     test_match_character_type_word_not_match();
+
+    test_match_character_type_word_opposite();
 
     test_match_character_type_digit();
     test_match_character_type_digit2();

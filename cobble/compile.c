@@ -430,10 +430,16 @@ Ast_node* parse_char(struct compile_data* cd, bool strict)
             if (cd->lookahead->type == token_literal) {
                 if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'w') {
                     n->type = Ast_type_character_type_word;
+                } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'W') {
+                    n->type = Ast_type_character_type_word_opposite;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'd') {
                     n->type = Ast_type_character_type_digit;
+                } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'D') {
+                    n->type = Ast_type_character_type_digit_opposite;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 's') {
                     n->type = Ast_type_character_type_space;
+                } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'S') {
+                    n->type = Ast_type_character_type_space_opposite;
                 }
 
                 if (n->type != Ast_type_escape) {
