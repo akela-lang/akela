@@ -873,6 +873,16 @@ void test_match_character_type_word_opposite()
     match_teardown(groups);
 }
 
+void test_match_character_type_word_opposite_not_match()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\W", "a", &groups);
+    expect_false(matched, "m");
+    expect_buffer_list_count(groups, 0, "count groups");
+    match_teardown(groups);
+}
+
 void test_match_character_type_digit()
 {
     test_name(__func__);
@@ -916,6 +926,27 @@ void test_match_character_type_digit_not_match()
     match_teardown(groups);
 }
 
+void test_match_character_type_digit_opposite()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\D\\D\\D", "a.|", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "a.|", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_character_type_digit_opposite_not_match()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\D", "0", &groups);
+    expect_false(matched, "m");
+    expect_buffer_list_count(groups, 0, "count groups");
+    match_teardown(groups);
+}
+
 void test_match_character_type_space()
 {
     test_name(__func__);
@@ -932,6 +963,27 @@ void test_match_character_type_space_not_match()
     test_name(__func__);
     struct buffer_list* groups = NULL;
     bool matched = match_run("\\s", "a", &groups);
+    expect_false(matched, "m");
+    expect_buffer_list_count(groups, 0, "count groups");
+    match_teardown(groups);
+}
+
+void test_match_character_type_space_opposite()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\S\\S\\S", "abc", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "abc", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_character_type_space_opposite_not_match()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\S", " ", &groups);
     expect_false(matched, "m");
     expect_buffer_list_count(groups, 0, "count groups");
     match_teardown(groups);
@@ -1057,14 +1109,21 @@ void test_match()
     test_match_character_type_word_not_match();
 
     test_match_character_type_word_opposite();
+    test_match_character_type_word_opposite_not_match();
 
     test_match_character_type_digit();
     test_match_character_type_digit2();
     test_match_character_type_digit3();
     test_match_character_type_digit_not_match();
 
+    test_match_character_type_digit_opposite();
+    test_match_character_type_digit_opposite_not_match();
+
     test_match_character_type_space();
     test_match_character_type_space_not_match();
+
+    test_match_character_type_space_opposite();
+    test_match_character_type_space_opposite_not_match();
 
     test_match_scan_all();
 

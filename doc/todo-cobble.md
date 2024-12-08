@@ -1,8 +1,4 @@
 # Cobble Todo
-* opposite character types:
-  * \W [x]
-  * \D []
-  * \S []
 * opposite character class: `[^xyz]`
 * wildcard '.' should not match newline \n
 * \N - opposite of newline
