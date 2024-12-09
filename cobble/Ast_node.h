@@ -32,6 +32,7 @@ typedef enum Ast_type {
     Ast_type_character_type_digit_opposite,
     Ast_type_character_type_space,
     Ast_type_character_type_space_opposite,
+    Ast_type_character_type_newline_opposite,
 } Ast_type;
 
 typedef struct Ast_node {

@@ -450,6 +450,8 @@ Ast_node* parse_char(struct compile_data* cd, bool strict)
                     n->type = Ast_type_character_type_space;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'S') {
                     n->type = Ast_type_character_type_space_opposite;
+                } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'N') {
+                    n->type = Ast_type_character_type_newline_opposite;
                 }
 
                 if (n->type != Ast_type_escape) {

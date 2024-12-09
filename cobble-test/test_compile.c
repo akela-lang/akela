@@ -904,6 +904,25 @@ void test_compile_character_type_word()
     teardown_compile(cd, root);
 }
 
+void test_compile_character_type_word_opposite()
+{
+    test_name(__func__);
+
+    struct compile_data* cd = NULL;
+    setup_compile(&cd, "\\W");
+
+    Ast_node* root = NULL;
+    bool valid = compile(cd, &root);
+
+    expect_true(valid, "valid");
+    expect_no_errors(cd->el);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Ast_type_character_type_word_opposite, "type root");
+
+    teardown_compile(cd, root);
+}
+
 void test_compile_character_type_digit()
 {
     test_name(__func__);
@@ -923,6 +942,25 @@ void test_compile_character_type_digit()
     teardown_compile(cd, root);
 }
 
+void test_compile_character_type_digit_opposite()
+{
+    test_name(__func__);
+
+    struct compile_data* cd = NULL;
+    setup_compile(&cd, "\\D");
+
+    Ast_node* root = NULL;
+    bool valid = compile(cd, &root);
+
+    expect_true(valid, "valid");
+    expect_no_errors(cd->el);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Ast_type_character_type_digit_opposite, "type root");
+
+    teardown_compile(cd, root);
+}
+
 void test_compile_character_type_space()
 {
     test_name(__func__);
@@ -938,6 +976,44 @@ void test_compile_character_type_space()
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Ast_type_character_type_space, "type root");
+
+    teardown_compile(cd, root);
+}
+
+void test_compile_character_type_space_opposite()
+{
+    test_name(__func__);
+
+    struct compile_data* cd = NULL;
+    setup_compile(&cd, "\\S");
+
+    Ast_node* root = NULL;
+    bool valid = compile(cd, &root);
+
+    expect_true(valid, "valid");
+    expect_no_errors(cd->el);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Ast_type_character_type_space_opposite, "type root");
+
+    teardown_compile(cd, root);
+}
+
+void test_compile_character_type_newline_opposite()
+{
+    test_name(__func__);
+
+    struct compile_data* cd = NULL;
+    setup_compile(&cd, "\\N");
+
+    Ast_node* root = NULL;
+    bool valid = compile(cd, &root);
+
+    expect_true(valid, "valid");
+    expect_no_errors(cd->el);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Ast_type_character_type_newline_opposite, "type root");
 
     teardown_compile(cd, root);
 }
@@ -977,6 +1053,10 @@ void test_compile()
     test_compile_character_range_non_ascii_error_left();
     test_compile_character_range_non_ascii_error_right();
     test_compile_character_type_word();
+    test_compile_character_type_word_opposite();
     test_compile_character_type_digit();
+    test_compile_character_type_digit_opposite();
     test_compile_character_type_space();
+    test_compile_character_type_space_opposite();
+    test_compile_character_type_newline_opposite();
 }

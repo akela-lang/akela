@@ -52,6 +52,7 @@ void re_match_run_character_range(Stack_node* sn);
 void re_match_run_character_type_word(Stack_node* sn, bool opposite);
 void re_match_run_character_type_digit(Stack_node* sn, bool opposite);
 void re_match_run_character_type_space(Stack_node* sn, bool opposite);
+void re_match_run_character_type_newline_opposite(Stack_node* sn);
 
 bool re_match(Ast_node* root, String_slice slice, struct buffer_list* groups)
 {
@@ -261,6 +262,8 @@ void re_match_run_dispatch(Stack_node* sn)
         re_match_run_character_type_space(sn, false);
     } else if (task->n->type == Ast_type_character_type_space_opposite) {
         re_match_run_character_type_space(sn, true);
+    } else if (task->n->type == Ast_type_character_type_newline_opposite) {
+        re_match_run_character_type_newline_opposite(sn);
     } else {
         assert(false && "Not implemented");
     }
@@ -305,10 +308,18 @@ void re_match_child_finish_dispatch(Stack_node* sn, Match_task* parent, Match_ta
                 assert(false && "character range task should not have child tasks");
             } else if (parent->n->type == Ast_type_character_type_word) {
                 assert(false && "character type word task should not have child tasks");
+            } else if (parent->n->type == Ast_type_character_type_word_opposite) {
+                assert(false && "character type word opposite task should not have child tasks");
             } else if (parent->n->type == Ast_type_character_type_digit) {
                 assert(false && "character type digit task should not have child tasks");
+            } else if (parent->n->type == Ast_type_character_type_digit_opposite) {
+                assert(false && "character type digit opposite task should not have child tasks");
             } else if (parent->n->type == Ast_type_character_type_space) {
                 assert(false && "character type space task should not have child tasks");
+            } else if (parent->n->type == Ast_type_character_type_space_opposite) {
+                assert(false && "character type space opposite task should not have child tasks");
+            } else if (parent->n->type == Ast_type_character_type_newline_opposite) {
+                assert(false && "character type newline opposite task should not have child tasks");
             } else {
                 assert(false && "invalid type");
             }
@@ -871,6 +882,25 @@ void re_match_run_character_type_space(Stack_node* sn, bool opposite)
         String_slice slice = task->start_slice;
         bool is_space = IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
         if ((is_space && !opposite) || (!is_space && opposite)) {
+            task->matched = true;
+            Match_task_stack_add_char(sn, task, slice.p[0]);
+            Increment_slice(&slice);
+            task->end_slice = slice;
+        }
+    }
+
+    task->status = Match_task_finished;
+    re_match_child_finish_dispatch(sn, task->parent, task);
+}
+
+void re_match_run_character_type_newline_opposite(Stack_node* sn)
+{
+    Match_task* task = sn->mts->top;
+
+    if (task->start_slice.size > 0) {
+        String_slice slice = task->start_slice;
+        bool is_space = IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
+        if (!is_space) {
             task->matched = true;
             Match_task_stack_add_char(sn, task, slice.p[0]);
             Increment_slice(&slice);

@@ -1041,6 +1041,48 @@ void test_match_character_type_space_opposite_not_match()
     match_teardown(groups);
 }
 
+void test_match_escape_newline()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\\n", "\n", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "\n", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_escape_newline_not_match()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\\n", "x", &groups);
+    expect_false(matched, "m");
+    expect_buffer_list_count(groups, 0, "count groups");
+    match_teardown(groups);
+}
+
+void test_match_character_type_newline_opposite()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\N", "a", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "a", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_character_type_newline_opposite_not_match()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\N", "\n", &groups);
+    expect_false(matched, "m");
+    expect_buffer_list_count(groups, 0, "count groups");
+    match_teardown(groups);
+}
+
 void test_match_scan_all()
 {
     test_name(__func__);
@@ -1183,6 +1225,11 @@ void test_match()
 
     test_match_character_type_space_opposite();
     test_match_character_type_space_opposite_not_match();
+
+    test_match_escape_newline();
+    test_match_escape_newline_not_match();
+    test_match_character_type_newline_opposite();
+    test_match_character_type_newline_opposite_not_match();
 
     test_match_scan_all();
 

@@ -1,6 +1,4 @@
 # Cobble Todo
-* \N - opposite of newline
-* combine character types into one ast type
 * JSON compile tests
 * JSON match tests
 * full Unicode support
