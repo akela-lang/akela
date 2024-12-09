@@ -786,6 +786,48 @@ void test_match_character_class_range_not_match()
     match_teardown(groups);
 }
 
+void test_match_character_class_opposite()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("[^abc]", "d", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "d", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_character_class_opposite_not_match()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("[^abc]", "b", &groups);
+    expect_false(matched, "m");
+    expect_buffer_list_count(groups, 0, "count groups");
+    match_teardown(groups);
+}
+
+void test_match_character_class_opposite_range()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("[^a-z]", "0", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "0", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_character_class_opposite_range_not_match()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("[^a-z]", "l", &groups);
+    expect_false(matched, "m");
+    expect_buffer_list_count(groups, 0, "count groups");
+    match_teardown(groups);
+}
+
 void test_match_character_type_word()
 {
     test_name(__func__);
@@ -1099,6 +1141,12 @@ void test_match()
     test_match_character_class_range2();
     test_match_character_class_range3();
     test_match_character_class_range_not_match();
+
+    test_match_character_class_opposite();
+    test_match_character_class_opposite_not_match();
+
+    test_match_character_class_opposite_range();
+    test_match_character_class_opposite_range_not_match();
 
     test_match_character_type_word();
     test_match_character_type_word2();

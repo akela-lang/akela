@@ -24,6 +24,7 @@ typedef enum Ast_type {
     Ast_type_end,
     Ast_type_escape,
     Ast_type_character_class,
+    Ast_type_character_class_opposite,
     Ast_type_character_range,
     Ast_type_character_type_word,
     Ast_type_character_type_word_opposite,

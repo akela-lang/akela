@@ -282,12 +282,22 @@ Ast_node* parse_group(struct compile_data* cd)
         free(rpr);
     } else if (cd->lookahead->type == token_left_square_bracket) {
         Ast_node_create(&n);
-        n->type = Ast_type_character_class;
 
         struct token* lsb = NULL;
         if (!match(cd, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
             assert(false && "not possible");
         }
+
+        get_lookahead(cd);
+        if (cd->lookahead->type == token_caret) {
+            n->type = Ast_type_character_class_opposite;
+            if (!match(cd, token_caret, "expected caret", &lsb, n)) {
+                assert(false && "not possible");
+            }
+        } else {
+            n->type = Ast_type_character_class;
+        }
+
         free(lsb);
 
         parse_seq(cd, n);
@@ -338,9 +348,9 @@ bool is_char(const enum token_type type)
         return true;
     if (type == token_wildcard)
         return true;
-    if (type == token_begin)
+    if (type == token_caret)
         return true;
-    if (type == token_end)
+    if (type == token_dollar)
         return true;
     if (type == token_backslash)
         return true;
@@ -386,12 +396,12 @@ Ast_node* parse_char(struct compile_data* cd, bool strict)
             return n;
         }
         free(wc);
-    } else if (cd->lookahead->type == token_begin) {
+    } else if (cd->lookahead->type == token_caret) {
         Ast_node_create(&n);
         n->type = Ast_type_begin;
 
         struct token* begin = NULL;
-        if (!match(cd, token_begin, "expected begin", &begin, n)) {
+        if (!match(cd, token_caret, "expected begin", &begin, n)) {
             assert(false && "not possible");
         }
 
@@ -401,12 +411,12 @@ Ast_node* parse_char(struct compile_data* cd, bool strict)
             return n;
         }
         free(begin);
-    } else if (cd->lookahead->type == token_end) {
+    } else if (cd->lookahead->type == token_dollar) {
         Ast_node_create(&n);
         n->type = Ast_type_end;
 
         struct token* end = NULL;
-        if (!match(cd, token_end, "expected end", &end, n)) {
+        if (!match(cd, token_dollar, "expected end", &end, n)) {
             assert(false && "not possible");
         }
 

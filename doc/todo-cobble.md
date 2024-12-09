@@ -1,5 +1,4 @@
 # Cobble Todo
-* opposite character class: `[^xyz]`
 * wildcard '.' should not match newline \n
 * \N - opposite of newline
 * JSON compile tests
@@ -10,7 +9,7 @@
   * rust
   * pcre2
 * syntax tree to NFA generation
-* NFA matching
+* NFA generation and matching
 * performance testing 2
   * grep
   * awk

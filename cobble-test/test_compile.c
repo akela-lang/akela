@@ -769,7 +769,7 @@ void test_compile_character_class_begin_error()
     test_name(__func__);
 
     struct compile_data* cd = NULL;
-    setup_compile(&cd, "[^]");
+    setup_compile(&cd, "[a^]");
 
     Ast_node* root = NULL;
     bool valid = compile(cd, &root);

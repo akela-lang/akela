@@ -11,8 +11,10 @@
     \x - escape sequence
     [xyz] - character class
     [^xyz] - opposite character class
-    . - wildcard - anything but newline
+    . - wildcard - match anything but newline
     \w, \W - alphanumeric or _, opposite
     \s, \S - space, opposite
     \d, \D - digits, opposite
     \N - opposite of newline
+    ^ - beginning of string
+    $ - end of string

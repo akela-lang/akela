@@ -46,9 +46,9 @@ enum token_type token_classify(char c[4], int num, bool done)
         case '.':
             return token_wildcard;
         case '^':
-            return token_begin;
+            return token_caret;
         case '$':
-            return token_end;
+            return token_dollar;
         case '\\':
             return token_backslash;
         case '[':

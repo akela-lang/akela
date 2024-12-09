@@ -46,6 +46,8 @@ void re_match_run_end(Stack_node* sn);
 void re_match_run_escape(Stack_node* sn);
 void re_match_run_character_class(Stack_node* sn);
 void re_match_child_finish_character_class(Stack_node* sn, Match_task* parent, Match_task* child);
+void re_match_run_character_class_opposite(Stack_node* sn);
+void re_match_child_finish_character_class_opposite(Stack_node* sn, Match_task* parent, Match_task* child);
 void re_match_run_character_range(Stack_node* sn);
 void re_match_run_character_type_word(Stack_node* sn, bool opposite);
 void re_match_run_character_type_digit(Stack_node* sn, bool opposite);
@@ -243,6 +245,8 @@ void re_match_run_dispatch(Stack_node* sn)
         re_match_run_escape(sn);
     } else if (task->n->type == Ast_type_character_class) {
         re_match_run_character_class(sn);
+    } else if (task->n->type == Ast_type_character_class_opposite) {
+        re_match_run_character_class_opposite(sn);
     } else if (task->n->type == Ast_type_character_range) {
         re_match_run_character_range(sn);
     } else if (task->n->type == Ast_type_character_type_word) {
@@ -295,6 +299,8 @@ void re_match_child_finish_dispatch(Stack_node* sn, Match_task* parent, Match_ta
                 assert(false && "escape tasks should not have child tasks");
             } else if (parent->n->type == Ast_type_character_class) {
                 re_match_child_finish_character_class(sn, parent, child);
+            } else if (parent->n->type == Ast_type_character_class_opposite) {
+                re_match_child_finish_character_class_opposite(sn, parent, child);
             } else if (parent->n->type == Ast_type_character_range) {
                 assert(false && "character range task should not have child tasks");
             } else if (parent->n->type == Ast_type_character_type_word) {
@@ -618,10 +624,15 @@ void re_match_run_literal(Stack_node* sn)
         } else {
             matched = false;
         }
+        if (task->opposite) {
+            matched = !matched;
+        }
         if (matched) {
             for (int i = 0; i < task->n->num; i++) {
-                Increment_slice(&slice);
-                Match_task_stack_add_char(sn, task, task->n->c[i]);
+                if (!task->opposite) {
+                    Match_task_stack_add_char(sn, task, slice.p[0]);
+                    Increment_slice(&slice);
+                }
             }
             task->matched = true;
             task->end_slice = slice;
@@ -696,10 +707,15 @@ void re_match_run_escape(Stack_node* sn)
         } else {
             matched = false;
         }
+        if (task->opposite) {
+            matched = !matched;
+        }
         if (matched) {
             for (int i = 0; i < task->n->num; i++) {
-                Increment_slice(&slice);
-                Match_task_stack_add_char(sn, task, task->n->c[i]);
+                if (!task->opposite) {
+                    Match_task_stack_add_char(sn, task, slice.p[0]);
+                    Increment_slice(&slice);
+                }
             }
             task->matched = true;
             task->end_slice = slice;
@@ -741,6 +757,44 @@ void re_match_child_finish_character_class(Stack_node* sn, Match_task* parent, M
     }
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void re_match_run_character_class_opposite(Stack_node* sn)
+{
+    Match_task* task = sn->mts->top;
+    if (task->status == Match_task_initial) {
+        task->p = task->n->head;
+        task->status = Match_task_started;
+        task->end_slice = task->start_slice;
+        task->matched = true;
+    }
+
+    Ast_node* p = task->n->head;
+    while (p && task->matched) {
+        Match_task* child = re_match_add_task(p, task->start_slice, sn->mts, task, sn);
+        child->opposite = true;
+        re_match_run_dispatch(sn);
+        Remove_finished_task(sn->mts, sn->mts->top);
+        p = p->next;
+    }
+
+    if (task->matched) {
+        Match_task_stack_add_char(sn, task, task->end_slice.p[0]);
+        Increment_slice(&task->end_slice);
+    }
+
+    task->status = Match_task_finished;
+    re_match_child_finish_dispatch(sn, task->parent, task);
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void re_match_child_finish_character_class_opposite(Stack_node* sn, Match_task* parent, Match_task* child)
+{
+    if (!child->matched) {
+        parent->matched = false;
+        parent->end_slice = child->end_slice;
+    }
+}
+
 void re_match_run_character_range(Stack_node* sn)
 {
     Match_task* task = sn->mts->top;
@@ -749,13 +803,18 @@ void re_match_run_character_range(Stack_node* sn)
         String_slice slice = task->start_slice;
         Ast_node* a = task->n->head;
         Ast_node* b = a->next;
-        if (IS_ONE_BYTE(a->c[0]) && IS_ONE_BYTE(b->c[0]) && IS_ONE_BYTE(slice.p[0])) {
-            if (slice.p[0] >= a->c[0] && slice.p[0] <= b->c[0]) {
+        bool matched = IS_ONE_BYTE(a->c[0]) && IS_ONE_BYTE(b->c[0]) && IS_ONE_BYTE(slice.p[0])
+            && slice.p[0] >= a->c[0] && slice.p[0] <= b->c[0];
+        if (task->opposite) {
+            matched = !matched;
+        }
+        if (matched) {
+            if (!task->opposite) {
                 Match_task_stack_add_char(sn, task, slice.p[0]);
                 Increment_slice(&slice);
-                task->matched = true;
-                task->end_slice = slice;
             }
+            task->matched = true;
+            task->end_slice = slice;
         }
     }
 

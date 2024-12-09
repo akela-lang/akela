@@ -15,7 +15,7 @@ void Match_task_init(Match_task* task, Match_task* parent)
     task->start_slice.size = 0;
     task->end_slice.p = NULL;
     task->end_slice.size = 0;
-    buffer_init(&task->ms);
+    task->opposite = false;
     task->parent = parent;
     task->next = NULL;
     task->prev = NULL;
@@ -23,7 +23,6 @@ void Match_task_init(Match_task* task, Match_task* parent)
 
 void Match_task_destroy(Match_task* task)
 {
-    buffer_destroy(&task->ms);
 }
 
 void Match_task_create(Match_task** task, Match_task* parent)
@@ -41,7 +40,6 @@ void Match_task_copy(Match_task* src, Match_task* dest)
     dest->count = src->count;
     dest->start_slice = src->start_slice;
     dest->end_slice = src->end_slice;
-    buffer_copy(&src->ms, &dest->ms);
 }
 
 void Match_task_stack_init(Match_task_stack* mts, Stack_node* sn)
@@ -139,8 +137,6 @@ void Match_task_stack_pop_to(Match_task_stack* mts, Match_task* marker)
 void Match_task_stack_add_char(Stack_node* sn, Match_task* task, char c)
 {
     while (task) {
-        buffer_add_char(&task->ms, c);
-
         if (task->n->is_root) {
             struct buffer* bf = Hash_map_size_t_get(&sn->groups, 0);
             if (!bf) {

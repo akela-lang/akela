@@ -24,7 +24,7 @@ typedef struct Match_task {
     size_t count;
     String_slice start_slice;
     String_slice end_slice;
-    struct buffer ms;
+    bool opposite;
     struct Match_task* parent;
     struct Match_task* next;
     struct Match_task* prev;
