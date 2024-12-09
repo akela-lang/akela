@@ -650,12 +650,14 @@ void re_match_run_wildcard(Stack_node* sn)
     if (task->start_slice.size > 0) {
         String_slice slice = task->start_slice;
         int num = NUM_BYTES(slice.p[0]);
-        for (int i = 0; i < num; i++) {
-            Match_task_stack_add_char(sn, task, slice.p[0]);
+        if (num != 1 || slice.p[0] != '\n') {
+            for (int i = 0; i < num; i++) {
+                Match_task_stack_add_char(sn, task, slice.p[0]);
+            }
+            Increment_slice(&slice);
+            task->matched = true;
+            task->end_slice = slice;
         }
-        Increment_slice(&slice);
-        task->matched = true;
-        task->end_slice = slice;
     }
 
     task->status = Match_task_finished;

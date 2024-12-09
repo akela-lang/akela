@@ -582,6 +582,16 @@ void test_match_wildcard_three_three()
     match_teardown(groups);
 }
 
+void test_match_wildcard_newline_not_matched()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run(".", "\n", &groups);
+    expect_false(matched, "m");
+    expect_buffer_list_count(groups, 0, "count groups");
+    match_teardown(groups);
+}
+
 void test_match_begin_one()
 {
     test_name(__func__);
@@ -1117,6 +1127,7 @@ void test_match()
     test_match_wildcard_one_zero_not_matched();
     test_match_wildcard_two_two();
     test_match_wildcard_three_three();
+    test_match_wildcard_newline_not_matched();
 
     test_match_begin_one();
     test_match_begin_zero();
