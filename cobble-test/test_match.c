@@ -915,7 +915,7 @@ void test_match_character_type_word7()
     match_teardown(groups);
 }
 
-void test_match_character_type_word8()
+void test_match_character_type_word_unicode()
 {
     test_name(__func__);
     struct buffer_list* groups = NULL;
@@ -987,6 +987,17 @@ void test_match_character_type_digit3()
     expect_true(matched, "m");
     expect_buffer_list_count(groups, 1, "count groups");
     expect_buffer_list_item(groups, 0, "9", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_character_type_digit_unicode()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\d", "\u0660", &groups);  /* Arabic-Indic Digit Zero */
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "\u0660", "item groups");
     match_teardown(groups);
 }
 
@@ -1230,7 +1241,9 @@ void test_match()
     test_match_character_type_word5();
     test_match_character_type_word6();
     test_match_character_type_word7();
-    test_match_character_type_word8();
+#ifdef ICU_LIB
+    test_match_character_type_word_unicode();
+#endif
     test_match_character_type_word_not_match();
 
     test_match_character_type_word_opposite();
@@ -1239,6 +1252,9 @@ void test_match()
     test_match_character_type_digit();
     test_match_character_type_digit2();
     test_match_character_type_digit3();
+#ifdef ICU_LIB
+    test_match_character_type_digit_unicode();
+#endif
     test_match_character_type_digit_not_match();
 
     test_match_character_type_digit_opposite();

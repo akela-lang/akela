@@ -859,7 +859,13 @@ void re_match_run_character_type_digit(Stack_node* sn, bool opposite)
 
     if (task->start_slice.size > 0) {
         String_slice slice = task->start_slice;
+#ifdef ICU_LIB
+        UChar32 cp;
+        match_convert_char(slice, &cp);
+        bool is_digit = u_isdigit(cp);
+#else
         bool is_digit = IS_ONE_BYTE(slice.p[0]) && isdigit(slice.p[0]);
+#endif
         if ((is_digit && !opposite) || (!is_digit && opposite)) {
             task->matched = true;
             Match_task_stack_add_char(sn, task, slice);
