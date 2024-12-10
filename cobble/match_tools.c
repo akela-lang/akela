@@ -144,17 +144,22 @@ void Match_task_stack_pop_to(Match_task_stack* mts, Match_task* marker)
     }
 }
 
-void Match_task_stack_add_char(Stack_node* sn, Match_task* task, char c)
+void Match_task_stack_add_char(Stack_node* sn, Match_task* task, String_slice slice)
 {
+    int num = NUM_BYTES(slice.p[0]);
     while (task) {
         if (task->n->is_root) {
             struct buffer* bf = Hash_map_size_t_get(&sn->groups, 0);
             if (!bf) {
                 buffer_create(&bf);
-                buffer_add_char(bf, c);
+                for (int i = 0; i < num; i++) {
+                    buffer_add_char(bf, slice.p[i]);
+                }
                 Hash_map_size_t_add(&sn->groups, 0, bf);
             } else {
-                buffer_add_char(bf, c);
+                for (int i = 0; i < num; i++) {
+                    buffer_add_char(bf, slice.p[i]);
+                }
             }
         }
 
@@ -162,10 +167,14 @@ void Match_task_stack_add_char(Stack_node* sn, Match_task* task, char c)
             struct buffer* bf = Hash_map_size_t_get(&sn->groups, task->n->group);
             if (!bf) {
                 buffer_create(&bf);
-                buffer_add_char(bf, c);
+                for (int i = 0; i < num; i++) {
+                    buffer_add_char(bf, slice.p[i]);
+                }
                 Hash_map_size_t_add(&sn->groups, task->n->group, bf);
             } else {
-                buffer_add_char(bf, c);
+                for (int i = 0; i < num; i++) {
+                    buffer_add_char(bf, slice.p[i]);
+                }
             }
         }
 

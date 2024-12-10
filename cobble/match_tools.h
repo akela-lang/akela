@@ -70,7 +70,7 @@ void Match_task_stack_push(Match_task_stack *mts, Match_task *new_task);
 Match_task* Match_task_stack_pop(Match_task_stack* mts);
 Match_task* Match_task_stack_remove(Match_task_stack* mts, Match_task* task);
 void Match_task_stack_pop_to(Match_task_stack* mts, Match_task* marker);
-void Match_task_stack_add_char(Stack_node* sn, Match_task* task, char c);
+void Match_task_stack_add_char(Stack_node* sn, Match_task* task, String_slice slice);
 Match_task_stack* Match_task_stack_clone(Match_task_stack* mts, struct hash_table* ht, Stack_node* sn);
 
 void Stack_node_init(Stack_node* sn);

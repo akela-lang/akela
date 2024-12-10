@@ -639,11 +639,9 @@ void re_match_run_literal(Stack_node* sn)
             matched = !matched;
         }
         if (matched) {
-            for (int i = 0; i < task->n->num; i++) {
-                if (!task->opposite) {
-                    Match_task_stack_add_char(sn, task, slice.p[0]);
-                    Increment_slice(&slice);
-                }
+            if (!task->opposite) {
+                Match_task_stack_add_char(sn, task, slice);
+                Increment_slice(&slice);
             }
             task->matched = true;
             task->end_slice = slice;
@@ -658,13 +656,11 @@ void re_match_run_wildcard(Stack_node* sn)
 {
     Match_task* task = sn->mts->top;
 
-    if (task->start_slice.size > 0) {
-        String_slice slice = task->start_slice;
-        int num = NUM_BYTES(slice.p[0]);
-        if (num != 1 || slice.p[0] != '\n') {
-            for (int i = 0; i < num; i++) {
-                Match_task_stack_add_char(sn, task, slice.p[0]);
-            }
+    String_slice slice = task->start_slice;
+    int num = NUM_BYTES(slice.p[0]);
+    if (slice.size > 0) {
+        if (!(num == 1 && slice.p[0] == '\n')) {
+            Match_task_stack_add_char(sn, task, slice);
             Increment_slice(&slice);
             task->matched = true;
             task->end_slice = slice;
@@ -693,10 +689,6 @@ void re_match_run_end(Stack_node* sn)
 
     if (task->end_slice.size == 0) {
         task->matched = true;
-    } else if (task->end_slice.p[0] == '\n') {
-        task->matched = true;
-        Match_task_stack_add_char(sn, task, '\n');
-        Increment_slice(&task->end_slice);
     }
     task->status = Match_task_finished;
     re_match_child_finish_dispatch(sn, task->parent, task);
@@ -726,7 +718,7 @@ void re_match_run_escape(Stack_node* sn)
         if (matched) {
             for (int i = 0; i < task->n->num; i++) {
                 if (!task->opposite) {
-                    Match_task_stack_add_char(sn, task, slice.p[0]);
+                    Match_task_stack_add_char(sn, task, slice);
                     Increment_slice(&slice);
                 }
             }
@@ -791,7 +783,7 @@ void re_match_run_character_class_opposite(Stack_node* sn)
     }
 
     if (task->matched) {
-        Match_task_stack_add_char(sn, task, task->end_slice.p[0]);
+        Match_task_stack_add_char(sn, task, task->end_slice);
         Increment_slice(&task->end_slice);
     }
 
@@ -823,7 +815,7 @@ void re_match_run_character_range(Stack_node* sn)
         }
         if (matched) {
             if (!task->opposite) {
-                Match_task_stack_add_char(sn, task, slice.p[0]);
+                Match_task_stack_add_char(sn, task, slice);
                 Increment_slice(&slice);
             }
             task->matched = true;
@@ -851,7 +843,7 @@ void re_match_run_character_type_word(Stack_node* sn, bool opposite)
 #endif
         if ((!opposite && is_word) || (opposite && !is_word)) {
             task->matched = true;
-            Match_task_stack_add_char(sn, task, slice.p[0]);
+            Match_task_stack_add_char(sn, task, slice);
             Increment_slice(&slice);
             task->end_slice = slice;
         }
@@ -870,7 +862,7 @@ void re_match_run_character_type_digit(Stack_node* sn, bool opposite)
         bool is_digit = IS_ONE_BYTE(slice.p[0]) && isdigit(slice.p[0]);
         if ((is_digit && !opposite) || (!is_digit && opposite)) {
             task->matched = true;
-            Match_task_stack_add_char(sn, task, slice.p[0]);
+            Match_task_stack_add_char(sn, task, slice);
             Increment_slice(&slice);
             task->end_slice = slice;
         }
@@ -889,7 +881,7 @@ void re_match_run_character_type_space(Stack_node* sn, bool opposite)
         bool is_space = IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
         if ((is_space && !opposite) || (!is_space && opposite)) {
             task->matched = true;
-            Match_task_stack_add_char(sn, task, slice.p[0]);
+            Match_task_stack_add_char(sn, task, slice);
             Increment_slice(&slice);
             task->end_slice = slice;
         }
@@ -908,7 +900,7 @@ void re_match_run_character_type_newline_opposite(Stack_node* sn)
         bool is_space = IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
         if (!is_space) {
             task->matched = true;
-            Match_task_stack_add_char(sn, task, slice.p[0]);
+            Match_task_stack_add_char(sn, task, slice);
             Increment_slice(&slice);
             task->end_slice = slice;
         }

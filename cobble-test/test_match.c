@@ -639,10 +639,10 @@ void test_match_end_line()
 {
     test_name(__func__);
     struct buffer_list* groups = NULL;
-    bool matched = match_run("a$b", "a\nb", &groups);
+    bool matched = match_run("a$", "a", &groups);
     expect_true(matched, "m");
     expect_buffer_list_count(groups, 1, "count groups");
-    expect_buffer_list_item(groups, 0, "a\nb", "item groups");
+    expect_buffer_list_item(groups, 0, "a", "item groups");
     match_teardown(groups);
 }
 
@@ -912,6 +912,17 @@ void test_match_character_type_word7()
     expect_true(matched, "m");
     expect_buffer_list_count(groups, 1, "count groups");
     expect_buffer_list_item(groups, 0, "a0_", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_character_type_word8()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\w\\w\\w", "αβγ", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "αβγ", "item groups");
     match_teardown(groups);
 }
 
@@ -1219,6 +1230,7 @@ void test_match()
     test_match_character_type_word5();
     test_match_character_type_word6();
     test_match_character_type_word7();
+    test_match_character_type_word8();
     test_match_character_type_word_not_match();
 
     test_match_character_type_word_opposite();

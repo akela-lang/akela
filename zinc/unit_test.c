@@ -496,6 +496,7 @@ void expect_buffer_list_item(struct buffer_list* bl, size_t index, char* text, c
 	if (!buffer_compare_str(bf, text)) {
 		error_triggered();
 		buffer_finish(bf);
-		fprintf(stderr, "buffer list text not equal: (%s) (%s): %s\n", bf->buf, text, message);
+		fprintf(stderr,
+			"buffer list item (%zu) text not equal: (%s) (%s): %s\n", index, bf->buf, text, message);
 	}
 }
