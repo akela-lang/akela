@@ -1,9 +1,4 @@
 # Cobble Todo
-* wildcard not match newline
-* full Unicode support
-  * \w, \W [x]
-  * \d, \D [x]
-  * \s, \S []
 * JSON compile tests
 * JSON match tests
 * performance testing

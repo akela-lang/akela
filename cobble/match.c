@@ -884,7 +884,13 @@ void re_match_run_character_type_space(Stack_node* sn, bool opposite)
 
     if (task->start_slice.size > 0) {
         String_slice slice = task->start_slice;
+#ifdef ICU_LIB
+        UChar32 cp;
+        match_convert_char(slice, &cp);
+        bool is_space = u_isspace(cp);
+#else
         bool is_space = IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
+#endif
         if ((is_space && !opposite) || (!is_space && opposite)) {
             task->matched = true;
             Match_task_stack_add_char(sn, task, slice);

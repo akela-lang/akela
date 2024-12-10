@@ -1043,6 +1043,17 @@ void test_match_character_type_space()
     match_teardown(groups);
 }
 
+void test_match_character_type_space_unicode()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run("\\s", "\u1680", &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 1, "count groups");
+    expect_buffer_list_item(groups, 0, "\u1680", "item groups");
+    match_teardown(groups);
+}
+
 void test_match_character_type_space_not_match()
 {
     test_name(__func__);
@@ -1261,6 +1272,9 @@ void test_match()
     test_match_character_type_digit_opposite_not_match();
 
     test_match_character_type_space();
+#ifdef ICU_LIB
+    test_match_character_type_space_unicode();
+#endif
     test_match_character_type_space_not_match();
 
     test_match_character_type_space_opposite();
