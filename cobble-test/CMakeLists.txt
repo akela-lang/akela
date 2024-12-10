@@ -9,3 +9,7 @@ set(test_files
 
 add_executable(cobble-test ${test_files})
 target_link_libraries(cobble-test cobble zinc)
+set_target_properties(cobble-test
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)

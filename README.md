@@ -13,7 +13,7 @@ and capable of robust software construction.
     cd ../akela
 
 ## Build
-    cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
+    cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja -DICU_LIB=ENABLE
     ninja -C cmake-build-debug
 
 ## Run Tests

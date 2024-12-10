@@ -841,8 +841,14 @@ void re_match_run_character_type_word(Stack_node* sn, bool opposite)
 
     if (task->start_slice.size > 0) {
         String_slice slice = task->start_slice;
+#ifdef ICU_LIB
+        UChar32 cp;
+        match_convert_char(slice, &cp);
+        bool is_word = u_isalpha(cp) || u_isdigit(cp) || cp == '_';
+#else
         bool is_word = IS_ONE_BYTE(slice.p[0])
             && (isalpha(slice.p[0]) || isdigit(slice.p[0]) || slice.p[0] == '_');
+#endif
         if ((!opposite && is_word) || (opposite && !is_word)) {
             task->matched = true;
             Match_task_stack_add_char(sn, task, slice.p[0]);

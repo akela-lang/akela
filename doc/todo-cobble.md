@@ -1,9 +1,10 @@
 # Cobble Todo
+* full Unicode support
+  * \w, \W [x]
+  * \d, \D []
+  * \s, \S []
 * JSON compile tests
 * JSON match tests
-* full Unicode support
-  * build flag to enable full Unicode support, defaulting to local ICU libraries
-  * build flag to specify directory containing ICU libraries
 * performance testing
   * cobble
   * rust
@@ -19,4 +20,5 @@
   * python
   * julia
   * go
+  * dart
 * single pass NFA generation
