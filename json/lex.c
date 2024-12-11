@@ -69,11 +69,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             continue;
         }
 
-        struct buffer bf;
-        buffer_init(&bf);
-        buffer_add(&bf, c, num);
-        error_list_set(jld->el, &loc, "invalid character: %b", &bf);
-        buffer_destroy(&bf);
+        error_list_set(jld->el, &loc, "invalid character: %c", c[0]);
     }
 }
 
