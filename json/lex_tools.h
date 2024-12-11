@@ -3,7 +3,6 @@
 
 #include "zinc/error.h"
 #include "zinc/input_unicode.h"
-#include "zinc/memory.h"
 
 typedef enum Json_lex_state {
     Json_lex_state_start,
@@ -27,5 +26,8 @@ void Json_lex_data_create(
     void* input_obj,
     InputUnicodeVTable* input_vtable);
 bool Json_is_hex_digit(char c[4], int num);
+int code_to_utf8(unsigned char *const buffer, const unsigned int code);
+unsigned int char_to_hex(char c);
+unsigned int char4_to_hex(char src[4]);
 
 #endif

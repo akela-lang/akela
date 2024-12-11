@@ -4,7 +4,7 @@
 #include "zinc/buffer.h"
 
 typedef enum Json_token_type {
-    Json_token_none,
+    Json_token_type_none,
     Json_token_type_string,
     Json_token_type_number,
     Json_token_type_eof,
