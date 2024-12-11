@@ -1,4 +1,5 @@
 #include <zinc/error_unit_test.h>
+#include <zinc/utf8.h>
 
 #include "test_lex_tools.h"
 #include "zinc/unit_test.h"
@@ -226,6 +227,52 @@ void test_lex_string_error_unicode_code_point_less_that_0x20()
     test_lex_teardown(&jld);
 }
 
+void test_lex_string_unicode_code_point_five_digits()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "\"\\u1fa89\"");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_string, "type token");
+    expect_str(&token->value, "🪉", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_string_unicode_code_point_six_digits()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "\"\\u10ffff\"");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_string, "type token");
+    char dest[5];
+    code_to_utf8(dest, 0x10ffff);
+    int num = NUM_BYTES(dest[0]);
+    dest[num] = '\0';
+    expect_str(&token->value, dest, "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_string_unicode_code_point_too_large()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "\"\\u110000\"");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_string, "type token");
+    expect_source_error(jld.el, "code point greater than \\u10FFFF: \\u110000");
+
+    test_lex_teardown(&jld);
+}
+
 void test_lex_string_error_invalid_escape_character_single_byte()
 {
     test_name(__func__);
@@ -259,5 +306,8 @@ void test_lex()
     test_lex_string_error_invalid_unicode_escape_not_finished();
     test_lex_string_error_unicode_escape_invalid_hex_digit();
     test_lex_string_error_unicode_code_point_less_that_0x20();
-   test_lex_string_error_invalid_escape_character_single_byte();
+    test_lex_string_error_invalid_escape_character_single_byte();
+    test_lex_string_unicode_code_point_five_digits();
+    test_lex_string_unicode_code_point_six_digits();
+    test_lex_string_unicode_code_point_too_large();
  }

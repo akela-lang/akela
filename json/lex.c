@@ -175,6 +175,7 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
             buffer_init(&bf);
             buffer_copy_str(&bf, "\\u");
             bool valid = true;
+            /* first four hex digits */
             for (int i = 0; i < 4; i++) {
                 r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
 
@@ -193,14 +194,30 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
                     }
                 }
             }
+            /* optional two hex digits */
+            for (int i = 0; i < 2; i++) {
+                r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+                if (r == result_error) {
+                    error_list_set(jld->el, &loc, error_message);
+                    break;
+                }
+                if (done) {
+                    InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+                    break;
+                }
+                if (!Json_is_hex_digit(c, num)) {
+                    InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+                    break;
+                }
+                buffer_add(&bf, c, num);
+            }
             buffer_finish(&bf);
             if (valid) {
-                unsigned int cp = char4_to_hex(bf.buf + 2);
+                unsigned int cp = char4_to_hex(bf.buf + 2, (int)bf.size - 2);
                 if (cp < 0x20) {
                     error_list_set(jld->el, &loc, "code point is less than \\u0020: %s", bf.buf);
                 } else if (cp > 0x10FFFF) {
                     error_list_set(jld->el, &loc, "code point greater than \\u10FFFF: %s", bf.buf);
-                    assert(false && "not possible");
                 } else {
                     char dest[4];
                     num = code_to_utf8(dest, cp);

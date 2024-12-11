@@ -83,11 +83,14 @@ unsigned int char_to_hex(char c)
     return 0;
 }
 
-unsigned int char4_to_hex(char src[4])
+unsigned int char4_to_hex(char* src, int num)
 {
-    unsigned int code = char_to_hex(src[0]);
-    code = (code << 4) + char_to_hex(src[1]);
-    code = (code << 4) + char_to_hex(src[2]);
-    code = (code << 4) + char_to_hex(src[3]);
+    unsigned int code = 0;
+    if (num > 0) {
+        code = char_to_hex(src[0]);
+    }
+    for (int i = 1; i < num; i++) {
+        code = (code << 4) + char_to_hex(src[i]);
+    }
     return code;
 }

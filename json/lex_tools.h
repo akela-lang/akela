@@ -28,6 +28,6 @@ void Json_lex_data_create(
 bool Json_is_hex_digit(char c[4], int num);
 int code_to_utf8(unsigned char *const buffer, const unsigned int code);
 unsigned int char_to_hex(char c);
-unsigned int char4_to_hex(char src[4]);
+unsigned int char4_to_hex(char* src, int num);
 
 #endif
