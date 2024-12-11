@@ -8,7 +8,6 @@ void test_lex_setup(Json_lex_data* jld, char* text)
 {
     struct error_list* el = NULL;
     error_list_create(&el);
-    jld->el = el;
 
     Vector* v = NULL;
     VectorCreate(&v, sizeof(char));
@@ -16,8 +15,14 @@ void test_lex_setup(Json_lex_data* jld, char* text)
 
     InputUnicodeString* input_obj = NULL;
     InputUnicodeStringCreate(&input_obj, v);
-    jld->input_obj = input_obj;
-    jld->input_vtable = &InputUnicodeStringVTable;
+    InputUnicodeVTable* input_vtable = &InputUnicodeStringVTable;
+
+    enum result r = Json_lex_data_init(jld, el, input_obj, input_vtable);
+    if (r == result_error) {
+        struct location loc;
+        location_init(&loc);
+        error_list_set(el, &loc, error_message);
+    }
 }
 
 void test_lex_teardown(Json_lex_data* jld)

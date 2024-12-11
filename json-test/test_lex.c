@@ -12,6 +12,7 @@ void test_lex_string()
     test_lex_setup(&jld, "\"hello\"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "hello", "value token");
 
@@ -25,6 +26,7 @@ void test_lex_string_escape_backslash()
     test_lex_setup(&jld, "\" \\\\ \"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \\ ", "value token");
 
@@ -38,6 +40,7 @@ void test_lex_string_escape_slash()
     test_lex_setup(&jld, "\" \\/ \"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " / ", "value token");
 
@@ -51,6 +54,7 @@ void test_lex_string_escape_backspace()
     test_lex_setup(&jld, "\" \\b \"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \b ", "value token");
 
@@ -64,6 +68,7 @@ void test_lex_string_escape_form_feed()
     test_lex_setup(&jld, "\" \\f \"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \f ", "value token");
 
@@ -77,6 +82,7 @@ void test_lex_string_escape_newline()
     test_lex_setup(&jld, "\" \\n \"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \n ", "value token");
 
@@ -90,6 +96,7 @@ void test_lex_string_escape_carriage_return()
     test_lex_setup(&jld, "\" \\r \"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \r ", "value token");
 
@@ -103,6 +110,7 @@ void test_lex_string_escape_tab()
     test_lex_setup(&jld, "\" \\t \"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \t ", "value token");
 
@@ -116,6 +124,7 @@ void test_lex_string_escape_unicode()
     test_lex_setup(&jld, "\" \\u0391 \"");
 
     Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " Α ", "value token");
 

@@ -4,4 +4,4 @@ set(json_files
         lex_tools.c
 )
 add_library(json ${json_files})
-target_link_libraries(json zinc)
+target_link_libraries(json zinc icudata icui18n icuio icutu icuuc)

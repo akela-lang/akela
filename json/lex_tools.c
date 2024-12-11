@@ -2,8 +2,10 @@
 #include "zinc/input_unicode.h"
 #include "zinc/error.h"
 #include "zinc/memory.h"
+#include <unicode/locid.h>
+#include <unicode/ucnv.h>
 
-void Json_lex_data_init(
+enum result Json_lex_data_init(
     Json_lex_data* jld,
     struct error_list* el,
     void* input_obj,
@@ -12,6 +14,15 @@ void Json_lex_data_init(
     jld->el = el;
     jld->input_obj = input_obj;
     jld->input_vtable = input_vtable;
+
+    UErrorCode status = U_ZERO_ERROR;
+    jld->conv = ucnv_open("utf8", &status);
+    if (status != U_ZERO_ERROR) {
+        set_error("ucnv_open() failed with error code: %s", u_errorName(status));
+        return result_error;
+    }
+
+    return result_ok;
 }
 
 void Json_lex_data_create(
@@ -22,6 +33,30 @@ void Json_lex_data_create(
 {
     malloc_safe((void**)jld, sizeof(Json_lex_data));
     Json_lex_data_init(*jld, el, input_obj, input_vtable);
+}
+
+void Json_lex_data_destroy(Json_lex_data* jld)
+{
+    ucnv_close(jld->conv);
+}
+
+enum result Json_lex_char_to_code_point(char c[4], int num, UChar32* cp)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    UConverter *conv = ucnv_open("utf8", &status);
+    if (status != U_ZERO_ERROR) {
+        set_error("ucnv_open() failed with error code: %s", u_errorName(status));
+        return result_error;
+    }
+
+    UChar dest[4];
+    int32_t len = ucnv_toUChars(conv, dest, 4, c, num, &status);
+    size_t pos = 0;
+    U16_NEXT(dest, pos, len, *cp);
+
+    ucnv_close(conv);
+
+    return result_ok;
 }
 
 bool Json_is_hex_digit(char c[4], int num)
