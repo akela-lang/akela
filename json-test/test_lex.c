@@ -435,7 +435,7 @@ void test_lex_number_error_minus_no_digits()
     expect_has_errors(jld.el);
     expect_source_error(jld.el, "invalid number");
     expect_int_equal(token->type, Json_token_type_number, "type token");
-    expect_str(&token->value, "-", "value token");
+    expect_str(&token->value, "0", "value token");
 
     test_lex_teardown(&jld);
 }
@@ -450,7 +450,7 @@ void test_lex_number_error_plus_no_digits()
     expect_has_errors(jld.el);
     expect_source_error(jld.el, "invalid number");
     expect_int_equal(token->type, Json_token_type_number, "type token");
-    expect_str(&token->value, "+", "value token");
+    expect_str(&token->value, "0", "value token");
 
     test_lex_teardown(&jld);
 }

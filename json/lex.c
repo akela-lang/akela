@@ -345,10 +345,12 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
 
     if (t->value.size == 1 && first == '-') {
         error_list_set(jld->el, &loc, "invalid number");
+        t->value.buf[0] = '0';
     }
 
     if (t->value.size == 1 && first == '+') {
         error_list_set(jld->el, &loc, "invalid number");
+        t->value.buf[0] = '0';
     }
 
     if (digit_count > 1 && first_digit == '0') {
