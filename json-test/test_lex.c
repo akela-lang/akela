@@ -530,6 +530,45 @@ void test_lex_number_error_exponent_no_digits()
     test_lex_teardown(&jld);
 }
 
+void test_lex_left_square_bracket()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "[");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_left_square_bracket, "type token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_right_square_bracket()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "]");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_right_square_bracket, "type token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_comma()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, ",");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_comma, "type token");
+
+    test_lex_teardown(&jld);
+}
+
 void test_lex()
 {
     test_lex_string();
@@ -569,4 +608,8 @@ void test_lex()
     test_lex_number_error_exponent_multiple_signs();
     test_lex_number_error_exponent_sign_after_digits();
     test_lex_number_error_exponent_no_digits();
+
+    test_lex_left_square_bracket();
+    test_lex_right_square_bracket();
+    test_lex_comma();
  }

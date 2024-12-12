@@ -7,6 +7,9 @@ typedef enum Json_token_type {
     Json_token_type_none,
     Json_token_type_string,
     Json_token_type_number,
+    Json_token_type_left_square_bracket,
+    Json_token_type_right_square_bracket,
+    Json_token_type_comma,
     Json_token_type_eof,
 } Json_token_type;
 

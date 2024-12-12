@@ -58,6 +58,13 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             return;
         }
 
+        if (Json_is_number(c, num)) {
+            t->type = Json_token_type_number;
+            buffer_add_char(&t->value, c[0]);
+            Json_lex_number(jld, t);
+            return;
+        }
+
         if (c[0] == ' ') {
             continue;
         }
@@ -74,10 +81,18 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             continue;
         }
 
-        if (Json_is_number(c, num)) {
-            t->type = Json_token_type_number;
-            buffer_add_char(&t->value, c[0]);
-            Json_lex_number(jld, t);
+        if (c[0] == '[') {
+            t->type = Json_token_type_left_square_bracket;
+            return;
+        }
+
+        if (c[0] == ']') {
+            t->type = Json_token_type_right_square_bracket;
+            return;
+        }
+
+        if (c[0] == ',') {
+            t->type = Json_token_type_comma;
             return;
         }
 
