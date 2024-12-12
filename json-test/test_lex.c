@@ -655,7 +655,7 @@ void test_lex_word_error()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid word: abc");
+    expect_source_error(jld.el, "invalid word (abc), expecting true, false, or null");
 
     test_lex_teardown(&jld);
 }

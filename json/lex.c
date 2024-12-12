@@ -529,5 +529,5 @@ void Json_lex_word(Json_lex_data* jld, Json_token* t)
     }
 
     t->type = Json_token_type_null;
-    error_list_set(jld->el, &loc, "invalid word: %b", &t->value);
+    error_list_set(jld->el, &loc, "invalid word (%b), expecting true, false, or null", &t->value);
 }
