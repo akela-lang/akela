@@ -10,6 +10,11 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t);
 void Json_lex_string(Json_lex_data* jld, Json_token* t);
 void Json_lex_string_escape(Json_lex_data* jld, Json_token* t);
 void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t);
+bool Json_is_number(char c[4], int num);
+void Json_lex_number(Json_lex_data* jld, Json_token* t);
+void Json_lex_number_integer(Json_lex_data* jld, Json_token* t);
+void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t);
+void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t);
 
 Json_token* Json_lex(Json_lex_data* jld)
 {
@@ -67,6 +72,13 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
 
         if (c[0] == '\t') {
             continue;
+        }
+
+        if (Json_is_number(c, num)) {
+            t->type = Json_token_type_number;
+            buffer_add_char(&t->value, c[0]);
+            Json_lex_number(jld, t);
+            return;
         }
 
         error_list_set(jld->el, &loc, "invalid character: %c", c[0]);
@@ -254,4 +266,184 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     }
 
     buffer_destroy(&bf);
+}
+
+bool Json_is_number(char c[4], int num)
+{
+    if (num != 1) return false;
+    if (c[0] == '-') return true;
+    if (c[0] == '+') return true;   /* error case if starting with + */
+    if (c[0] == '.') return true;   /* error case if starting with . */
+    if (isdigit(c[0])) return true;
+    return false;
+}
+
+void Json_lex_number(Json_lex_data* jld, Json_token* t)
+{
+    char c[4];
+    int num;
+    struct location loc;
+    bool done;
+    enum result r;
+    size_t digit_count = 0;
+    char first_digit;
+
+    char first = t->value.buf[0];
+    num = NUM_BYTES(first);
+
+    if (num == 1 && first == '.') {
+        error_list_set(jld->el, &loc, "number starts with period");
+        Json_lex_number_fraction(jld, t);
+        return;
+    }
+
+    if (num == 1 && first == '+') {
+        error_list_set(jld->el, &loc, "number starts with plus");
+    }
+
+    if (isdigit(first)) {
+        digit_count++;
+        first_digit = first;
+    }
+
+    while (true) {
+        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        if (r == result_error) {
+            error_list_set(jld->el, &loc, error_message);
+            break;
+        }
+
+        if (done) {
+            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            break;
+        }
+
+        if (num == 1 && isdigit(c[0])) {
+            buffer_add_char(&t->value, c[0]);
+            digit_count++;
+            if (digit_count == 1) {
+                first_digit = c[0];
+            }
+            continue;
+        }
+
+        if (num == 1 && c[0] == '.') {
+            buffer_add_char(&t->value, '.');
+            Json_lex_number_fraction(jld, t);
+            break;;
+        }
+
+        if (num == 1 && (c[0] == 'E' || c[0] == 'e')) {
+            Json_lex_number_exponent(jld, t);
+            break;
+        }
+
+        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+        break;
+    }
+
+    if (t->value.size == 1 && first == '-') {
+        error_list_set(jld->el, &loc, "invalid number");
+    }
+
+    if (t->value.size == 1 && first == '+') {
+        error_list_set(jld->el, &loc, "invalid number");
+    }
+
+    if (digit_count > 1 && first_digit == '0') {
+        error_list_set(jld->el, &loc, "leading zero with no other digits or faction");
+    }
+}
+
+void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
+{
+    char c[4];
+    int num;
+    struct location loc;
+    bool done;
+    enum result r;
+    size_t digit_count = 0;
+
+    while (true) {
+        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        if (r == result_error) {
+            error_list_set(jld->el, &loc, error_message);
+            break;
+        }
+
+        if (done) {
+            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            break;
+        }
+
+        if (num == 1 && isdigit(c[0])) {
+            buffer_add_char(&t->value, c[0]);
+            digit_count++;
+            continue;
+        }
+
+        if (num == 1 && (c[0] == 'E' || c[0] == 'e')) {
+            buffer_add_char(&t->value, c[0]);
+            Json_lex_number_exponent(jld, t);
+            break;
+        }
+
+        break;
+    }
+
+    if (digit_count == 0) {
+        error_list_set(jld->el, &loc, "no digits in fraction");
+    }
+}
+
+void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
+{
+    char c[4];
+    int num;
+    struct location loc;
+    bool done;
+    enum result r;
+    size_t digit_count = 0;
+    bool has_sign = false;
+
+    while (true) {
+        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        if (r == result_error) {
+            error_list_set(jld->el, &loc, error_message);
+            break;
+        }
+
+        if (done) {
+            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            break;
+        }
+
+        if (num == 1 && (c[0] == '+' || c[0] == '-')) {
+            if (digit_count == 0) {
+                if (!has_sign) {
+                    buffer_add_char(&t->value, c[0]);
+                    has_sign = true;
+                    continue;
+                } else {
+                    error_list_set(jld->el, &loc, "number already has a sign");
+                    continue;
+                }
+            } else {
+                error_list_set(jld->el, &loc, "sign after digits");
+                continue;
+            }
+        }
+
+        if (num == 1 && isdigit(c[0])) {
+            buffer_add_char(&t->value, c[0]);
+            digit_count++;
+            continue;
+        }
+
+        break;
+    }
+
+    if (digit_count == 0) {
+        error_list_set(jld->el, &loc, "no digits in exponent");
+    }
 }

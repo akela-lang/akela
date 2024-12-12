@@ -1,4 +1,2 @@
 # JSON Todo
-* lex
-  * lex numbers
-  * test lex numbers
+* lex test number errors

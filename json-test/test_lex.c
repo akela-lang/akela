@@ -297,6 +297,104 @@ void test_lex_string_error_invalid_escape_character_single_byte()
     test_lex_teardown(&jld);
 }
 
+void test_lex_number_integer()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "315");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "315", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_integer_negative()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "-35");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "-35", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_fraction()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "5.13");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "5.13", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_fraction_leading_zero()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "0.5");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "0.5", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_exponent()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "1.5e2");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "1.5e2", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_exponent_positive()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "4.5e+2");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "4.5e+2", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_exponent_negative()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "4.5e-2");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "4.5e-2", "value token");
+
+    test_lex_teardown(&jld);
+}
+
 void test_lex()
 {
     test_lex_string();
@@ -319,4 +417,12 @@ void test_lex()
     test_lex_string_unicode_code_point_five_digits();
     test_lex_string_unicode_code_point_six_digits();
     test_lex_string_unicode_code_point_too_large();
+
+    test_lex_number_integer();
+    test_lex_number_integer_negative();
+    test_lex_number_fraction();
+    test_lex_number_fraction_leading_zero();
+    test_lex_number_exponent();
+    test_lex_number_exponent_positive();
+    test_lex_number_exponent_negative();
  }
