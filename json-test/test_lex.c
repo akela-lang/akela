@@ -569,6 +569,45 @@ void test_lex_comma()
     test_lex_teardown(&jld);
 }
 
+void test_lex_left_curly_brace()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "{");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_left_curly_brace, "type token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_right_curly_brace()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "}");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_right_curly_brace, "type token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_right_colon()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, ":");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_colon, "type token");
+
+    test_lex_teardown(&jld);
+}
+
 void test_lex()
 {
     test_lex_string();
@@ -612,4 +651,8 @@ void test_lex()
     test_lex_left_square_bracket();
     test_lex_right_square_bracket();
     test_lex_comma();
+
+    test_lex_left_curly_brace();
+    test_lex_right_curly_brace();
+    test_lex_right_colon();
  }

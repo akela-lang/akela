@@ -96,6 +96,21 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             return;
         }
 
+        if (c[0] == '{') {
+            t->type = Json_token_type_left_curly_brace;
+            return;
+        }
+
+        if (c[0] == '}') {
+            t->type = Json_token_type_right_curly_brace;
+            return;
+        }
+
+        if (c[0] == ':') {
+            t->type = Json_token_type_colon;
+            return;
+        }
+
         error_list_set(jld->el, &loc, "invalid character: %c", c[0]);
     }
 }
