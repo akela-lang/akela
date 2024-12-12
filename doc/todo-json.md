@@ -1,3 +1,2 @@
 # JSON Todo
-* lex boolean
-* lex null
+* store location in token

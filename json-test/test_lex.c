@@ -608,6 +608,58 @@ void test_lex_right_colon()
     test_lex_teardown(&jld);
 }
 
+void test_lex_true()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "true");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_true, "type token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_false()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "false");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_false, "type token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_null()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "null");
+
+    Json_token* token = Json_lex(&jld);
+    expect_no_errors(jld.el);
+    expect_int_equal(token->type, Json_token_type_null, "type token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_word_error()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "abc");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "invalid word: abc");
+
+    test_lex_teardown(&jld);
+}
+
 void test_lex()
 {
     test_lex_string();
@@ -655,4 +707,9 @@ void test_lex()
     test_lex_left_curly_brace();
     test_lex_right_curly_brace();
     test_lex_right_colon();
+
+    test_lex_true();
+    test_lex_false();
+    test_lex_null();
+    test_lex_word_error();
  }

@@ -15,6 +15,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t);
 void Json_lex_number_integer(Json_lex_data* jld, Json_token* t);
 void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t);
 void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t);
+void Json_lex_word(Json_lex_data* jld, Json_token* t);
 
 Json_token* Json_lex(Json_lex_data* jld)
 {
@@ -54,15 +55,18 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
 
         if (c[0] == '"') {
             t->type = Json_token_type_string;
-            Json_lex_string(jld, t);
-            return;
+            return Json_lex_string(jld, t);
         }
 
         if (Json_is_number(c, num)) {
             t->type = Json_token_type_number;
             buffer_add_char(&t->value, c[0]);
-            Json_lex_number(jld, t);
-            return;
+            return Json_lex_number(jld, t);
+        }
+
+        if (isalpha(c[0])) {
+            buffer_add_char(&t->value, c[0]);
+            return Json_lex_word(jld, t);
         }
 
         if (c[0] == ' ') {
@@ -479,4 +483,51 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
     if (digit_count == 0) {
         error_list_set(jld->el, &loc, "no digits in exponent");
     }
+}
+
+void Json_lex_word(Json_lex_data* jld, Json_token* t)
+{
+    char c[4];
+    int num;
+    struct location loc;
+    bool done;
+    enum result r;
+
+    while (true) {
+        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        if (r == result_error) {
+            error_list_set(jld->el, &loc, error_message);
+            break;
+        }
+
+        if (done) {
+            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            break;
+        }
+
+        if (num == 1 && isalpha(c[0])) {
+            buffer_add_char(&t->value, c[0]);
+            continue;
+        }
+
+        break;
+    }
+
+    if (buffer_compare_str(&t->value, "true")) {
+        t->type = Json_token_type_true;
+        return;
+    }
+
+    if (buffer_compare_str(&t->value, "false")) {
+        t->type = Json_token_type_false;
+        return;
+    }
+
+    if (buffer_compare_str(&t->value, "null")) {
+        t->type = Json_token_type_null;
+        return;
+    }
+
+    t->type = Json_token_type_null;
+    error_list_set(jld->el, &loc, "invalid word: %b", &t->value);
 }
