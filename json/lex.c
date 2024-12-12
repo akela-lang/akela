@@ -15,7 +15,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t);
 void Json_lex_number_integer(Json_lex_data* jld, Json_token* t);
 void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t);
 void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t);
-void Json_lex_word(Json_lex_data* jld, Json_token* t);
+bool Json_lex_word(Json_lex_data* jld, Json_token* t);
 
 Json_token* Json_lex(Json_lex_data* jld)
 {
@@ -64,9 +64,12 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             return Json_lex_number(jld, t);
         }
 
-        if (isalpha(c[0])) {
+        if (num == 1 && isalpha(c[0])) {
             buffer_add_char(&t->value, c[0]);
-            return Json_lex_word(jld, t);
+            if (Json_lex_word(jld, t)) {
+                return;
+            }
+            continue;
         }
 
         if (c[0] == ' ') {
@@ -485,7 +488,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
     }
 }
 
-void Json_lex_word(Json_lex_data* jld, Json_token* t)
+bool Json_lex_word(Json_lex_data* jld, Json_token* t)
 {
     char c[4];
     int num;
@@ -510,24 +513,27 @@ void Json_lex_word(Json_lex_data* jld, Json_token* t)
             continue;
         }
 
+        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
         break;
     }
 
     if (buffer_compare_str(&t->value, "true")) {
         t->type = Json_token_type_true;
-        return;
+        return true;
     }
 
     if (buffer_compare_str(&t->value, "false")) {
         t->type = Json_token_type_false;
-        return;
+        return true;
     }
 
     if (buffer_compare_str(&t->value, "null")) {
         t->type = Json_token_type_null;
-        return;
+        return true;
     }
 
-    t->type = Json_token_type_null;
     error_list_set(jld->el, &loc, "invalid word (%b), expecting true, false, or null", &t->value);
+    t->type = Json_token_type_none;
+    buffer_clear(&t->value);
+    return false;
 }
