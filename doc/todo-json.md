@@ -1,2 +1,5 @@
 # JSON Todo
-* lex test number errors
+* lex array
+* lex object
+* lex boolean
+* lex null

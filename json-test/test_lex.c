@@ -395,6 +395,141 @@ void test_lex_number_exponent_negative()
     test_lex_teardown(&jld);
 }
 
+void test_lex_number_error_starts_with_period()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, ".1");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "number starts with period");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, ".1", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_error_starts_with_plus_sign()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "+1");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "number starts with plus sign");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "+1", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_error_minus_no_digits()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "-");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "invalid number");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "-", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_error_plus_no_digits()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "+");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "invalid number");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "+", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_error_leading_zero()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "01");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "leading zero with no other digits or faction");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "01", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_error_no_digits_in_fraction()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "1.");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "no digits in fraction");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "1.", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_error_exponent_multiple_signs()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "1e--1");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "exponent already has a sign");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "1e-1", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_error_exponent_sign_after_digits()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "1e-1-");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "sign after exponent digits");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "1e-1", "value token");
+
+    test_lex_teardown(&jld);
+}
+
+void test_lex_number_error_exponent_no_digits()
+{
+    test_name(__func__);
+    Json_lex_data jld;
+    test_lex_setup(&jld, "1e");
+
+    Json_token* token = Json_lex(&jld);
+    expect_has_errors(jld.el);
+    expect_source_error(jld.el, "no digits in exponent");
+    expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_str(&token->value, "1e", "value token");
+
+    test_lex_teardown(&jld);
+}
+
 void test_lex()
 {
     test_lex_string();
@@ -425,4 +560,13 @@ void test_lex()
     test_lex_number_exponent();
     test_lex_number_exponent_positive();
     test_lex_number_exponent_negative();
+    test_lex_number_error_starts_with_period();
+    test_lex_number_error_starts_with_plus_sign();
+    test_lex_number_error_minus_no_digits();
+    test_lex_number_error_plus_no_digits();
+    test_lex_number_error_leading_zero();
+    test_lex_number_error_no_digits_in_fraction();
+    test_lex_number_error_exponent_multiple_signs();
+    test_lex_number_error_exponent_sign_after_digits();
+    test_lex_number_error_exponent_no_digits();
  }

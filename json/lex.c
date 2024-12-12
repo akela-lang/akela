@@ -298,7 +298,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     }
 
     if (num == 1 && first == '+') {
-        error_list_set(jld->el, &loc, "number starts with plus");
+        error_list_set(jld->el, &loc, "number starts with plus sign");
     }
 
     if (isdigit(first)) {
@@ -334,6 +334,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
         }
 
         if (num == 1 && (c[0] == 'E' || c[0] == 'e')) {
+            buffer_add_char(&t->value, c[0]);
             Json_lex_number_exponent(jld, t);
             break;
         }
@@ -425,11 +426,11 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
                     has_sign = true;
                     continue;
                 } else {
-                    error_list_set(jld->el, &loc, "number already has a sign");
+                    error_list_set(jld->el, &loc, "exponent already has a sign");
                     continue;
                 }
             } else {
-                error_list_set(jld->el, &loc, "sign after digits");
+                error_list_set(jld->el, &loc, "sign after exponent digits");
                 continue;
             }
         }
