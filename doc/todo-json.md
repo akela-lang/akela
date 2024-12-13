@@ -1,5 +1,4 @@
 # JSON Todo
-* json dom struct
 * parse value
 * parse string
 * parse number
