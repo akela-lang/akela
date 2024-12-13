@@ -5,6 +5,7 @@ void Json_token_init(Json_token* t)
 {
     t->type = Json_token_type_none;
     buffer_init(&t->value);
+    location_init(&t->loc);
 }
 
 void Json_token_create(Json_token** t)

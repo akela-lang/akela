@@ -2,7 +2,7 @@
 #define JSON_TOKEN_H
 
 #include "zinc/buffer.h"
-#include <stdbool.h>
+#include "zinc/error.h"
 
 typedef enum Json_token_type {
     Json_token_type_none,
@@ -23,6 +23,7 @@ typedef enum Json_token_type {
 typedef struct Json_token {
     Json_token_type type;
     struct buffer value;
+    struct location loc;
 } Json_token;
 
 void Json_token_init(Json_token* t);

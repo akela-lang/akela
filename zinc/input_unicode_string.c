@@ -114,6 +114,7 @@ enum result InputUnicodeStringNext(
 void InputUnicodeStringRepeat(InputUnicodeString* data)
 {
     data->repeat_char = true;
+    data->loc = data->prev_loc;
 }
 
 /**

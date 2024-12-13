@@ -15,6 +15,10 @@ void test_lex_string()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "hello", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 7, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -29,6 +33,10 @@ void test_lex_string_escape_backslash()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \\ ", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -43,6 +51,10 @@ void test_lex_string_escape_slash()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " / ", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -57,6 +69,10 @@ void test_lex_string_escape_backspace()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \b ", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -71,6 +87,10 @@ void test_lex_string_escape_form_feed()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \f ", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -85,6 +105,10 @@ void test_lex_string_escape_newline()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \n ", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -99,6 +123,10 @@ void test_lex_string_escape_carriage_return()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \r ", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -113,6 +141,10 @@ void test_lex_string_escape_tab()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " \t ", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -127,6 +159,10 @@ void test_lex_string_escape_unicode()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, " Α ", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 10, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -139,9 +175,13 @@ void test_lex_start_error_multibyte()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid character: θ");
+    struct error* e = expect_source_error(jld.el, "invalid character: θ");
     expect_int_equal(token->type, Json_token_type_eof, "type token");
     expect_str(&token->value, "", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 2, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -154,9 +194,13 @@ void test_lex_start_error_single_byte()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid character: |");
+    struct error* e = expect_source_error(jld.el, "invalid character: |");
     expect_int_equal(token->type, Json_token_type_eof, "type token");
     expect_str(&token->value, "", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -169,9 +213,13 @@ void test_lex_string_error_missing_escape_character()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "missing escape character");
+    struct error* e = expect_source_error(jld.el, "missing escape character");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
+    expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 3, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 3, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -184,9 +232,13 @@ void test_lex_string_error_invalid_escape_character_multibyte()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid escape character: θ");
+    struct error* e = expect_source_error(jld.el, "invalid escape character: θ");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
+    expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 4, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 3, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -199,9 +251,13 @@ void test_lex_string_error_invalid_unicode_escape_not_finished()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "unicode escape not finished");
+    struct error* e = expect_source_error(jld.el, "unicode escape not finished");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
+    expect_size_t_equal(e->loc.start_pos, 6, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 7, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 7, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -214,9 +270,13 @@ void test_lex_string_error_unicode_escape_invalid_hex_digit()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid hex digit: G");
+    struct error* e = expect_source_error(jld.el, "invalid hex digit: G");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
+    expect_size_t_equal(e->loc.start_pos, 6, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 7, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 7, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -229,9 +289,13 @@ void test_lex_string_error_unicode_code_point_less_that_0x20()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "code point is less than \\u0020: \\u0019");
+    struct error* e = expect_source_error(jld.el, "code point is less than \\u0020: \\u0019");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
+    expect_size_t_equal(e->loc.start_pos, 1, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 7, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 2, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -246,6 +310,10 @@ void test_lex_string_unicode_code_point_five_digits()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "🪉", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 9, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -264,11 +332,15 @@ void test_lex_string_unicode_code_point_six_digits()
     int num = NUM_BYTES(dest[0]);
     dest[num] = '\0';
     expect_str(&token->value, dest, "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 10, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
 
-void test_lex_string_unicode_code_point_too_large()
+void test_lex_string_unicode_error_code_point_too_large()
 {
     test_name(__func__);
     Json_lex_data jld;
@@ -277,7 +349,14 @@ void test_lex_string_unicode_code_point_too_large()
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
-    expect_source_error(jld.el, "code point greater than \\u10FFFF: \\u110000");
+    struct error* e = expect_source_error(
+        jld.el,
+        "code point greater than \\u10FFFF: \\u110000"
+    );
+    expect_size_t_equal(e->loc.start_pos, 1, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 9, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 2, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -290,9 +369,13 @@ void test_lex_string_error_invalid_escape_character_single_byte()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid escape character: |");
+    struct error* e = expect_source_error(jld.el, "invalid escape character: |");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
+    expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 3, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 3, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -307,6 +390,10 @@ void test_lex_number_integer()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "315", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -321,6 +408,10 @@ void test_lex_number_integer_negative()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "-35", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -335,6 +426,10 @@ void test_lex_number_fraction()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "5.13", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 4, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -349,6 +444,10 @@ void test_lex_number_fraction_leading_zero()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "0.5", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -363,6 +462,10 @@ void test_lex_number_exponent()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1.5e2", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 5, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -377,6 +480,10 @@ void test_lex_number_exponent_positive()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "4.5e+2", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -391,6 +498,10 @@ void test_lex_number_exponent_negative()
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "4.5e-2", "value token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -403,9 +514,13 @@ void test_lex_number_error_starts_with_period()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "number starts with period");
+    struct error* e = expect_source_error(jld.el, "number starts with period");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, ".1", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -418,9 +533,13 @@ void test_lex_number_error_starts_with_plus_sign()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "number starts with plus sign");
+    struct error* e = expect_source_error(jld.el, "number starts with plus sign");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "+1", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -433,9 +552,13 @@ void test_lex_number_error_minus_no_digits()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid number");
+    struct error* e = expect_source_error(jld.el, "invalid number");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "0", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -448,9 +571,13 @@ void test_lex_number_error_plus_no_digits()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid number");
+    struct error* e = expect_source_error(jld.el, "invalid number");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "0", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -463,9 +590,13 @@ void test_lex_number_error_leading_zero()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "leading zero with no other digits or faction");
+    struct error* e =expect_source_error(jld.el, "leading zero with no other digits or faction");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "01", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -478,9 +609,13 @@ void test_lex_number_error_no_digits_in_fraction()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "no digits in fraction");
+    struct error* e = expect_source_error(jld.el, "no digits in fraction");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1.", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -493,9 +628,13 @@ void test_lex_number_error_exponent_multiple_signs()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "exponent already has a sign");
+    struct error* e = expect_source_error(jld.el, "exponent already has a sign");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1e-1", "value token");
+    expect_size_t_equal(e->loc.start_pos, 3, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 4, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 4, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -508,9 +647,13 @@ void test_lex_number_error_exponent_sign_after_digits()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "sign after exponent digits");
+    struct error* e = expect_source_error(jld.el, "sign after exponent digits");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1e-1", "value token");
+    expect_size_t_equal(e->loc.start_pos, 4, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 5, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 5, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -523,9 +666,13 @@ void test_lex_number_error_exponent_no_digits()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "no digits in exponent");
+    struct error* e =expect_source_error(jld.el, "no digits in exponent");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1e", "value token");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -539,6 +686,10 @@ void test_lex_left_square_bracket()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_left_square_bracket, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -552,6 +703,10 @@ void test_lex_right_square_bracket()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_right_square_bracket, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -565,6 +720,10 @@ void test_lex_comma()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_comma, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -578,6 +737,10 @@ void test_lex_left_curly_brace()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_left_curly_brace, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -591,6 +754,10 @@ void test_lex_right_curly_brace()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_right_curly_brace, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -604,6 +771,10 @@ void test_lex_right_colon()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_colon, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -617,6 +788,10 @@ void test_lex_true()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_true, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 4, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -630,6 +805,10 @@ void test_lex_false()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_false, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 5, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -643,6 +822,10 @@ void test_lex_null()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_null, "type token");
+    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(token->loc.end_pos, 4, "end pos token");
+    expect_size_t_equal(token->loc.line, 1, "line token");
+    expect_size_t_equal(token->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -655,7 +838,11 @@ void test_lex_word_error()
 
     Json_token* token = Json_lex(&jld);
     expect_has_errors(jld.el);
-    expect_source_error(jld.el, "invalid word (abc), expecting true, false, or null");
+    struct error* e = expect_source_error(jld.el, "invalid word (abc), expecting true, false, or null");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+    expect_size_t_equal(e->loc.end_pos, 3, "end pos token");
+    expect_size_t_equal(e->loc.line, 1, "line token");
+    expect_size_t_equal(e->loc.col, 1, "col token");
 
     test_lex_teardown(&jld);
 }
@@ -681,7 +868,7 @@ void test_lex()
     test_lex_string_error_invalid_escape_character_single_byte();
     test_lex_string_unicode_code_point_five_digits();
     test_lex_string_unicode_code_point_six_digits();
-    test_lex_string_unicode_code_point_too_large();
+    test_lex_string_unicode_error_code_point_too_large();
 
     test_lex_number_integer();
     test_lex_number_integer_negative();

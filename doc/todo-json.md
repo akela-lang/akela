@@ -1,5 +1,4 @@
 # JSON Todo
-* store location in token
 * json dom struct
 * parse value
 * parse string

@@ -55,18 +55,29 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
 
         if (c[0] == '"') {
             t->type = Json_token_type_string;
-            return Json_lex_string(jld, t);
+            t->loc = loc;
+            Json_lex_string(jld, t);
+            loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+            t->loc.end_pos = loc.start_pos;
+            return;
         }
 
         if (Json_is_number(c, num)) {
             t->type = Json_token_type_number;
+            t->loc = loc;
             buffer_add_char(&t->value, c[0]);
-            return Json_lex_number(jld, t);
+            Json_lex_number(jld, t);
+            loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+            t->loc.end_pos = loc.start_pos;
+            return;
         }
 
         if (num == 1 && isalpha(c[0])) {
             buffer_add_char(&t->value, c[0]);
+            t->loc = loc;
             if (Json_lex_word(jld, t)) {
+                loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+                t->loc.end_pos = loc.start_pos;
                 return;
             }
             continue;
@@ -90,31 +101,37 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
 
         if (c[0] == '[') {
             t->type = Json_token_type_left_square_bracket;
+            t->loc = loc;
             return;
         }
 
         if (c[0] == ']') {
             t->type = Json_token_type_right_square_bracket;
+            t->loc = loc;
             return;
         }
 
         if (c[0] == ',') {
             t->type = Json_token_type_comma;
+            t->loc = loc;
             return;
         }
 
         if (c[0] == '{') {
             t->type = Json_token_type_left_curly_brace;
+            t->loc = loc;
             return;
         }
 
         if (c[0] == '}') {
             t->type = Json_token_type_right_curly_brace;
+            t->loc = loc;
             return;
         }
 
         if (c[0] == ':') {
             t->type = Json_token_type_colon;
+            t->loc = loc;
             return;
         }
 
@@ -250,6 +267,10 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     buffer_init(&bf);
     buffer_copy_str(&bf, "\\u");
     bool valid = true;
+    struct location first_loc;
+    first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    first_loc.start_pos -= 2;
+    first_loc.col -= 2;
 
     /* first four hex digits */
     for (int i = 0; i < 4; i++) {
@@ -289,12 +310,16 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     }
     buffer_finish(&bf);
 
+    struct location end_loc;
+    end_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    first_loc.end_pos = end_loc.start_pos;
+
     if (valid) {
         unsigned int cp = char4_to_hex(bf.buf + 2, (int)bf.size - 2);
         if (cp < 0x20) {
-            error_list_set(jld->el, &loc, "code point is less than \\u0020: %s", bf.buf);
+            error_list_set(jld->el, &first_loc, "code point is less than \\u0020: %s", bf.buf);
         } else if (cp > 0x10FFFF) {
-            error_list_set(jld->el, &loc, "code point greater than \\u10FFFF: %s", bf.buf);
+            error_list_set(jld->el, &first_loc, "code point greater than \\u10FFFF: %s", bf.buf);
         } else {
             char dest[4];
             num = code_to_utf8(dest, cp);
@@ -324,18 +349,22 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     enum result r;
     size_t digit_count = 0;
     char first_digit;
+    struct location first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    first_loc.end_pos = first_loc.start_pos;
+    first_loc.start_pos--;
+    first_loc.col--;
 
     char first = t->value.buf[0];
     num = NUM_BYTES(first);
 
     if (num == 1 && first == '.') {
-        error_list_set(jld->el, &loc, "number starts with period");
+        error_list_set(jld->el, &first_loc, "number starts with period");
         Json_lex_number_fraction(jld, t);
         return;
     }
 
     if (num == 1 && first == '+') {
-        error_list_set(jld->el, &loc, "number starts with plus sign");
+        error_list_set(jld->el, &first_loc, "number starts with plus sign");
     }
 
     if (isdigit(first)) {
@@ -381,17 +410,17 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     }
 
     if (t->value.size == 1 && first == '-') {
-        error_list_set(jld->el, &loc, "invalid number");
+        error_list_set(jld->el, &first_loc, "invalid number");
         t->value.buf[0] = '0';
     }
 
     if (t->value.size == 1 && first == '+') {
-        error_list_set(jld->el, &loc, "invalid number");
+        error_list_set(jld->el, &first_loc, "invalid number");
         t->value.buf[0] = '0';
     }
 
     if (digit_count > 1 && first_digit == '0') {
-        error_list_set(jld->el, &loc, "leading zero with no other digits or faction");
+        error_list_set(jld->el, &first_loc, "leading zero with no other digits or faction");
     }
 }
 
@@ -432,7 +461,7 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
     }
 
     if (digit_count == 0) {
-        error_list_set(jld->el, &loc, "no digits in fraction");
+        error_list_set(jld->el, &t->loc, "no digits in fraction");
     }
 }
 
@@ -484,7 +513,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
     }
 
     if (digit_count == 0) {
-        error_list_set(jld->el, &loc, "no digits in exponent");
+        error_list_set(jld->el, &t->loc, "no digits in exponent");
     }
 }
 
@@ -532,7 +561,10 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
         return true;
     }
 
-    error_list_set(jld->el, &loc, "invalid word (%b), expecting true, false, or null", &t->value);
+    loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    t->loc.end_pos = loc.start_pos;
+
+    error_list_set(jld->el, &t->loc, "invalid word (%b), expecting true, false, or null", &t->value);
     t->type = Json_token_type_none;
     buffer_clear(&t->value);
     return false;
