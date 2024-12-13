@@ -4,6 +4,7 @@
 #include "zinc/buffer.h"
 #include <stdbool.h>
 #include "zinc/hash.h"
+#include "zinc/error.h"
 
 typedef enum Json_dom_type {
     Json_dom_type_none,
@@ -27,6 +28,8 @@ typedef struct Json_dom {
         /* array: use head and tail */  /* array */
         struct hash_table object;       /* object: hash struct buffer -> Json_dom */
     } value;
+    bool has_error;
+    struct location loc;
     struct Json_dom *next;
     struct Json_dom *prev;
     struct Json_dom *head;

@@ -1,10 +1,13 @@
 #include "dom.h"
 #include "zinc/memory.h"
 #include <assert.h>
+#include "general.h"
 
 void Json_dom_init(Json_dom* dom)
 {
     dom->type = Json_dom_type_none;
+    dom->has_error = false;
+    location_init(&dom->loc);
     dom->next = NULL;
     dom->prev = NULL;
     dom->head = NULL;
@@ -88,4 +91,10 @@ void Json_dom_add(Json_dom* p, Json_dom* c)
         p->head = c;
         p->tail = c;
     }
+
+    if (c->has_error) {
+        p->has_error = true;
+    }
+
+    Json_location_combine(&p->loc, &c->loc);
 }
