@@ -11,6 +11,12 @@ Json_dom* Json_parse(Json_parse_data* pd)
     return Json_parse_value(pd);
 }
 
+bool Json_parse_is_valid(Json_parse_data* pd, Json_dom* dom)
+{
+    return !dom->has_error && !pd->el->head;
+}
+
+
 Json_dom* Json_parse_value(Json_parse_data* pd)
 {
     Json_get_lookahead(pd);
@@ -30,7 +36,7 @@ Json_dom* Json_parse_string(Json_parse_data* pd)
 {
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
-    dom->type = Json_token_type_string;
+    dom->type = Json_dom_type_string;
 
     Json_token* s = NULL;
     if (!Json_match(pd, Json_token_type_string, &s, dom)) {

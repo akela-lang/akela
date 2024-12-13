@@ -1,42 +1,22 @@
-#include <string.h>
-
+#include <zinc/error_unit_test.h>
 #include "zinc/unit_test.h"
 #include "json/parse.h"
-#include "zinc/input_unicode_string.h"
 #include "json/dom.h"
+#include "test_parse_tools.h"
 
 void test_parse_string()
 {
     test_name(__func__);
+    Json_parse_data pd;
+    test_parse_setup(&pd, "\"hello\"");
 
-    char s[] = "\"hello\"";
-    Vector* v = NULL;
-    VectorCreate(&v, sizeof(char));
-    VectorAdd(v, s, strlen(s));
+    Json_dom* dom = Json_parse(&pd);
+    expect_true(Json_parse_is_valid(&pd, dom), "valid");
+    expect_no_errors(pd.el);
+    expect_int_equal(dom->type, Json_dom_type_string, "type dom");
+    expect_str(&dom->value.string, "hello", "string dom");
 
-    InputUnicodeString* input;
-    InputUnicodeStringCreate(&input, v);
-
-    struct error_list* el = NULL;
-    error_list_create(&el);
-
-    Json_lex_data* ld = NULL;
-    Json_lex_data_create(&ld, el, input, input->input_vtable);
-
-    Json_parse_data* pd = NULL;
-    Json_parse_data_create(&pd, el, ld);
-
-    Json_dom* dom = Json_parse(pd);
-    bool valid = !dom->has_error && !el->head;
-    expect_true(valid, "valid");
-
-    VectorDestroy(v);
-    free(v);
-    free(input);
-    error_list_destroy(el);
-    free(el);
-    free(ld);
-    free(pd);
+    test_parse_destroy(&pd);
 }
 
 void test_parse()
