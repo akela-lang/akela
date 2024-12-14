@@ -49,9 +49,43 @@ void test_parse_string_escape_unicode()
     test_parse_destroy(&pd);
 }
 
+void test_parse_number_integer()
+{
+    test_name(__func__);
+    Json_parse_data pd;
+    test_parse_setup(&pd, "30");
+
+    Json_dom* dom = Json_parse(&pd);
+    expect_true(Json_parse_is_valid(&pd, dom), "valid");
+    expect_no_errors(pd.el);
+    expect_int_equal(dom->type, Json_dom_type_number, "type dom");
+    expect_int_equal(dom->number_type, Json_dom_number_type_integer, "number_type dom");
+    expect_long_long_equal(dom->value.integer, 30, "integer dom");
+
+    test_parse_destroy(&pd);
+}
+
+void test_parse_number_fp()
+{
+    test_name(__func__);
+    Json_parse_data pd;
+    test_parse_setup(&pd, "1.8");
+
+    Json_dom* dom = Json_parse(&pd);
+    expect_true(Json_parse_is_valid(&pd, dom), "valid");
+    expect_no_errors(pd.el);
+    expect_int_equal(dom->type, Json_dom_type_number, "type dom");
+    expect_int_equal(dom->number_type, Json_dom_number_type_fp, "number_type dom");
+    expect_double_equal(dom->value.fp, 1.8, "fp dom");
+
+    test_parse_destroy(&pd);
+}
+
 void test_parse()
 {
     test_parse_string();
     test_parse_string_escape();
     test_parse_string_escape_unicode();
+    test_parse_number_integer();
+    test_parse_number_fp();
 }

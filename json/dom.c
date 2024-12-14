@@ -6,6 +6,7 @@
 void Json_dom_init(Json_dom* dom)
 {
     dom->type = Json_dom_type_none;
+    dom->number_type = Json_dom_number_type_none;
     dom->has_error = false;
     location_init(&dom->loc);
     dom->next = NULL;
@@ -27,10 +28,8 @@ void Json_dom_set_type(Json_dom* dom, Json_dom_type type)
         case Json_dom_type_string:
             buffer_init(&dom->value.string);
             break;
-        case Json_dom_type_number_integer:
+        case Json_dom_type_number:
             dom->value.integer = 0;
-            break;
-        case Json_dom_type_number_fp:
             dom->value.fp = 0.0;
             break;
         case Json_dom_type_array:
@@ -60,8 +59,7 @@ void Json_dom_destroy(Json_dom* dom)
     case Json_dom_type_string:
         buffer_destroy(&dom->value.string);
         break;
-    case Json_dom_type_number_integer:
-    case Json_dom_type_number_fp:
+    case Json_dom_type_number:
     case Json_dom_type_array:
         Json_dom* p = dom->head;
         while (p) {
