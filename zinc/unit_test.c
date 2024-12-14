@@ -211,6 +211,14 @@ void expect_long_equal(long a, long b, const char* message)
     fprintf(stderr, "%ld = %ld error: %s\n", a, b, message);
 }
 
+void expect_long_long_equal(long long a, long long b, const char* message)
+{
+	test_called();
+	if (a == b) return;
+	error_triggered();
+	fprintf(stderr, "%lld = %lld error: %s\n", a, b, message);
+}
+
 void expect_u_long_equal(unsigned long a, unsigned long b, const char* message)
 {
     test_called();

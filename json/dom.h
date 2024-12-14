@@ -22,7 +22,7 @@ typedef struct Json_dom {
     union {
         /* null: no value */            /* null */
         bool boolean;                   /* boolean */
-        unsigned long long integer;     /* number integer */
+        long long integer;     /* number integer */
         double fp;                      /* number fp */
         struct buffer string;           /* string */
         /* array: use head and tail */  /* array */

@@ -22,6 +22,15 @@ Json_token* Json_lex(Json_lex_data* jld)
     Json_token* t = NULL;
     Json_token_create(&t);
     Json_lex_start(jld, t);
+    if (t->type == Json_token_type_number) {
+        if (t->number_type == Json_number_type_integer) {
+            buffer_finish(&t->value);
+            t->number.integer = strtoll(t->value.buf, NULL, 10);
+        } else if (t->number_type == Json_number_type_fp) {
+            buffer_finish(&t->value);
+            t->number.fp = strtod(t->value.buf, NULL);
+        }
+    }
     return t;
 }
 
@@ -388,6 +397,12 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
         }
 
         if (num == 1 && isdigit(c[0])) {
+            if (first_digit == '0' && digit_count == 1) {
+                t->value.size--;
+                first_digit = c[0];
+                digit_count--;
+                error_list_set(jld->el, &first_loc, "leading zero with no other digits or faction");
+            }
             buffer_add_char(&t->value, c[0]);
             digit_count++;
             if (digit_count == 1) {
@@ -420,10 +435,6 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     if (t->value.size == 1 && first == '+') {
         error_list_set(jld->el, &first_loc, "invalid number");
         t->value.buf[0] = '0';
-    }
-
-    if (digit_count > 1 && first_digit == '0') {
-        error_list_set(jld->el, &first_loc, "leading zero with no other digits or faction");
     }
 }
 

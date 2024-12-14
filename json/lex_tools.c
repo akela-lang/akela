@@ -4,6 +4,7 @@
 #include "zinc/memory.h"
 #include <unicode/locid.h>
 #include <unicode/ucnv.h>
+#include "token.h"
 
 enum result Json_lex_data_init(
     Json_lex_data* jld,

@@ -32,6 +32,7 @@ ZINC_API void assert_ok(enum result r, const char* message);
 ZINC_API void assert_error(enum result r, const char* message);
 ZINC_API void expect_int_equal(int a, int b, const char* message);
 ZINC_API void expect_long_equal(long a, long b, const char* message);
+ZINC_API void expect_long_long_equal(long long a, long long b, const char* message);
 ZINC_API void expect_u_long_equal(unsigned long a, unsigned long b, const char* message);
 ZINC_API void expect_double_equal(double a, double b, const char* message);
 ZINC_API void expect_ptr_equal(void* a, void* b, const char* message);

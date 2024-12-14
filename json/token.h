@@ -31,6 +31,10 @@ typedef struct Json_token {
     struct buffer value;
     struct location loc;
     Json_number_type number_type;
+    union {
+        long long integer;
+        double fp;
+    } number;
 } Json_token;
 
 void Json_token_init(Json_token* t);
