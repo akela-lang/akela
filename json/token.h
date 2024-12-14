@@ -20,10 +20,17 @@ typedef enum Json_token_type {
     Json_token_type_null,
 } Json_token_type;
 
+typedef enum Json_number_type {
+    Json_number_type_none,
+    Json_number_type_integer,
+    Json_number_type_fp,
+} Json_number_type;
+
 typedef struct Json_token {
     Json_token_type type;
     struct buffer value;
     struct location loc;
+    Json_number_type number_type;
 } Json_token;
 
 void Json_token_init(Json_token* t);

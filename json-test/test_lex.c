@@ -389,6 +389,7 @@ void test_lex_number_integer()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
     expect_str(&token->value, "315", "value token");
     expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
@@ -407,6 +408,7 @@ void test_lex_number_integer_negative()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
     expect_str(&token->value, "-35", "value token");
     expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
@@ -425,6 +427,7 @@ void test_lex_number_fraction()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "5.13", "value token");
     expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(token->loc.end_pos, 4, "end pos token");
@@ -443,6 +446,7 @@ void test_lex_number_fraction_leading_zero()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "0.5", "value token");
     expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
@@ -461,6 +465,7 @@ void test_lex_number_exponent()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "1.5e2", "value token");
     expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(token->loc.end_pos, 5, "end pos token");
@@ -479,6 +484,7 @@ void test_lex_number_exponent_positive()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "4.5e+2", "value token");
     expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
@@ -497,6 +503,7 @@ void test_lex_number_exponent_negative()
     Json_token* token = Json_lex(&jld);
     expect_no_errors(jld.el);
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "4.5e-2", "value token");
     expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
@@ -516,6 +523,7 @@ void test_lex_number_error_starts_with_period()
     expect_has_errors(jld.el);
     struct error* e = expect_source_error(jld.el, "number starts with period");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, ".1", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
@@ -535,6 +543,7 @@ void test_lex_number_error_starts_with_plus_sign()
     expect_has_errors(jld.el);
     struct error* e = expect_source_error(jld.el, "number starts with plus sign");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
     expect_str(&token->value, "+1", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
@@ -554,6 +563,7 @@ void test_lex_number_error_minus_no_digits()
     expect_has_errors(jld.el);
     struct error* e = expect_source_error(jld.el, "invalid number");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
     expect_str(&token->value, "0", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
@@ -573,6 +583,7 @@ void test_lex_number_error_plus_no_digits()
     expect_has_errors(jld.el);
     struct error* e = expect_source_error(jld.el, "invalid number");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
     expect_str(&token->value, "0", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
@@ -592,6 +603,7 @@ void test_lex_number_error_leading_zero()
     expect_has_errors(jld.el);
     struct error* e =expect_source_error(jld.el, "leading zero with no other digits or faction");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
     expect_str(&token->value, "01", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
@@ -611,6 +623,7 @@ void test_lex_number_error_no_digits_in_fraction()
     expect_has_errors(jld.el);
     struct error* e = expect_source_error(jld.el, "no digits in fraction");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "1.", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
@@ -630,6 +643,7 @@ void test_lex_number_error_exponent_multiple_signs()
     expect_has_errors(jld.el);
     struct error* e = expect_source_error(jld.el, "exponent already has a sign");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "1e-1", "value token");
     expect_size_t_equal(e->loc.start_pos, 3, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 4, "end pos token");
@@ -649,6 +663,7 @@ void test_lex_number_error_exponent_sign_after_digits()
     expect_has_errors(jld.el);
     struct error* e = expect_source_error(jld.el, "sign after exponent digits");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "1e-1", "value token");
     expect_size_t_equal(e->loc.start_pos, 4, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 5, "end pos token");
@@ -668,6 +683,7 @@ void test_lex_number_error_exponent_no_digits()
     expect_has_errors(jld.el);
     struct error* e =expect_source_error(jld.el, "no digits in exponent");
     expect_int_equal(token->type, Json_token_type_number, "type token");
+    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
     expect_str(&token->value, "1e", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 1, "end pos token");

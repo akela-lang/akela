@@ -342,11 +342,14 @@ bool Json_is_number(char c[4], int num)
 
 void Json_lex_number(Json_lex_data* jld, Json_token* t)
 {
+    t->number_type = Json_number_type_integer;
+
     char c[4];
     int num;
     struct location loc;
     bool done;
     enum result r;
+
     size_t digit_count = 0;
     char first_digit;
     struct location first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
@@ -426,6 +429,8 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
 
 void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
 {
+    t->number_type = Json_number_type_fp;
+
     char c[4];
     int num;
     struct location loc;
@@ -467,6 +472,8 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
 
 void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
 {
+    t->number_type = Json_number_type_fp;
+
     char c[4];
     int num;
     struct location loc;
