@@ -6,6 +6,8 @@
 Json_dom* Json_parse_value(Json_parse_data* pd);
 Json_dom* Json_parse_string(Json_parse_data* pd);
 Json_dom* Json_parse_number(Json_parse_data* pd);
+Json_dom* Json_parse_array(Json_parse_data* pd);
+void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent);
 
 Json_dom* Json_parse(Json_parse_data* pd)
 {
@@ -17,7 +19,7 @@ bool Json_parse_is_valid(Json_parse_data* pd, Json_dom* dom)
     return !dom->has_error && !pd->el->head;
 }
 
-
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Json_dom* Json_parse_value(Json_parse_data* pd)
 {
     Json_get_lookahead(pd);
@@ -34,7 +36,11 @@ Json_dom* Json_parse_value(Json_parse_data* pd)
         return NULL;
     }
 
-    assert(false && "invalid token type");
+    if (pd->lookahead->type == Json_token_type_left_square_bracket) {
+        return Json_parse_array(pd);
+    }
+
+    return NULL;
 }
 
 Json_dom* Json_parse_string(Json_parse_data* pd)
@@ -74,4 +80,65 @@ Json_dom* Json_parse_number(Json_parse_data* pd)
     }
 
     return dom;
+}
+
+/* array -> [ array_seq ] */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Json_dom* Json_parse_array(Json_parse_data* pd)
+{
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_array);
+
+    Json_token* lsb = NULL;
+    if (!Json_match(pd, Json_token_type_left_square_bracket, &lsb, dom)) {
+        assert(false && "not possible");
+    }
+    Json_token_destroy(lsb);
+    free(lsb);
+
+    Json_parse_array_seq(pd, dom);
+
+    Json_token* rsb = NULL;
+    if (!Json_match(pd, Json_token_type_right_square_bracket, &rsb, dom)) {
+        error_list_set(pd->el, &pd->lookahead->loc, "expected right square bracket");
+        dom->has_error = true;
+    }
+    Json_token_destroy(rsb);
+    free(rsb);
+
+    return dom;
+}
+
+/* array_seq -> value array_seq' | e */
+/* array_seq' -> , value array_seq' | e */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent)
+{
+    Json_dom* a = Json_parse_value(pd);
+    if (a) {
+        Json_dom_add(parent, a);
+    } else {
+        return;
+    }
+
+    Json_get_lookahead(pd);
+    while (pd->lookahead->type == Json_token_type_comma) {
+        Json_token* comma = NULL;
+        if (!Json_match(pd, Json_token_type_comma, &comma, a)) {
+            assert(false && "not_possible");
+        }
+        Json_token_destroy(comma);
+        free(comma);
+
+        Json_dom* b = Json_parse_value(pd);
+        if (b) {
+            Json_dom_add(parent, b);
+        } else {
+            error_list_set(pd->el, &pd->lookahead->loc, "expected value");
+            parent->has_error = true;
+        }
+
+        Json_get_lookahead(pd);
+    }
 }

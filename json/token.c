@@ -17,5 +17,7 @@ void Json_token_create(Json_token** t)
 
 void Json_token_destroy(Json_token* t)
 {
-    buffer_destroy(&t->value);
+    if (t) {
+        buffer_destroy(&t->value);
+    }
 }

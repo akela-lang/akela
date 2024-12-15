@@ -50,6 +50,8 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
 
         if (done) {
             t->type = Json_token_type_eof;
+            t->loc = loc;
+            t->loc.end_pos = t->loc.start_pos + 3;
             return;
         }
 
@@ -473,6 +475,7 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
             break;
         }
 
+        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
         break;
     }
 
@@ -527,6 +530,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
             continue;
         }
 
+        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
         break;
     }
 
