@@ -71,6 +71,14 @@ void buffer_add_char(struct buffer* bf, char c)
     bf->buf[bf->size++] = c;
 }
 
+void buffer_add_str(struct buffer* bf, char* str)
+{
+    while (*str) {
+        buffer_add_char(bf, *str);
+        str++;
+    }
+}
+
 void buffer_finish(struct buffer* bf)
 {
     buffer_add_char(bf, '\0');

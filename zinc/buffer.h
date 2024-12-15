@@ -23,6 +23,7 @@ ZINC_API void buffer_expand(struct buffer* bf, size_t new_size);
 ZINC_API void buffer_add(struct buffer* bf, char* s, size_t num);
 ZINC_API void buffer_destroy(struct buffer* bf);
 ZINC_API void buffer_add_char(struct buffer* bf, char c);
+ZINC_API void buffer_add_str(struct buffer* bf, char* str);
 ZINC_API void buffer_finish(struct buffer* bf);
 ZINC_API void buffer_reset(struct buffer* bf);
 ZINC_API void buffer_clear(struct buffer* bf);
