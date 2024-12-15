@@ -208,6 +208,20 @@ void test_parse_boolean_false()
     test_parse_destroy(&pd);
 }
 
+void test_parse_null()
+{
+    test_name(__func__);
+    Json_parse_data pd;
+    test_parse_setup(&pd, "null");
+
+    Json_dom* dom = Json_parse(&pd);
+    expect_true(Json_parse_is_valid(&pd, dom), "valid");
+    expect_no_errors(pd.el);
+    expect_int_equal(dom->type, Json_dom_type_null, "type dom");
+
+    test_parse_destroy(&pd);
+}
+
 void test_parse()
 {
     test_parse_string();
@@ -225,4 +239,5 @@ void test_parse()
 
     test_parse_boolean_true();
     test_parse_boolean_false();
+    test_parse_null();
 }

@@ -9,6 +9,7 @@ Json_dom* Json_parse_number(Json_parse_data* pd);
 Json_dom* Json_parse_array(Json_parse_data* pd);
 void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent);
 Json_dom* Json_parse_bool(Json_parse_data* pd);
+Json_dom* Json_parse_null(Json_parse_data* pd);
 
 Json_dom* Json_parse(Json_parse_data* pd)
 {
@@ -45,6 +46,10 @@ Json_dom* Json_parse_value(Json_parse_data* pd)
         return Json_parse_bool(pd);
     }
 
+    if (pd->lookahead->type == Json_token_type_null) {
+        return Json_parse_null(pd);
+    }
+
     return NULL;
 }
 
@@ -76,6 +81,22 @@ Json_dom* Json_parse_bool(Json_parse_data* pd)
     } else {
         assert(false && "not possible");
     }
+
+    return dom;
+}
+
+Json_dom* Json_parse_null(Json_parse_data* pd)
+{
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_null);
+
+    Json_token* n = NULL;
+    if (!Json_match(pd, Json_token_type_null, &n, dom)) {
+        assert(false && "not possible");
+    }
+    Json_token_destroy(n);
+    free(n);
 
     return dom;
 }
