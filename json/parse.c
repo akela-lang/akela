@@ -8,6 +8,7 @@ Json_dom* Json_parse_string(Json_parse_data* pd);
 Json_dom* Json_parse_number(Json_parse_data* pd);
 Json_dom* Json_parse_array(Json_parse_data* pd);
 void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent);
+Json_dom* Json_parse_bool(Json_parse_data* pd);
 
 Json_dom* Json_parse(Json_parse_data* pd)
 {
@@ -40,7 +41,43 @@ Json_dom* Json_parse_value(Json_parse_data* pd)
         return Json_parse_array(pd);
     }
 
+    if (pd->lookahead->type == Json_token_type_true || pd->lookahead->type == Json_token_type_false) {
+        return Json_parse_bool(pd);
+    }
+
     return NULL;
+}
+
+Json_dom* Json_parse_bool(Json_parse_data* pd)
+{
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_boolean);
+
+    Json_get_lookahead(pd);
+    Json_token_type type = pd->lookahead->type;
+
+    if (type == Json_token_type_true) {
+        Json_token* t = NULL;
+        if (!Json_match(pd, type, &t, dom)) {
+            assert(false && "not possible");
+        }
+        dom->value.boolean = true;
+        Json_token_destroy(t);
+        free(t);
+    } else if (type == Json_token_type_false) {
+        Json_token* f = NULL;
+        if (!Json_match(pd, type, &f, dom)) {
+            assert(false && "not possible");
+        }
+        dom->value.boolean = false;
+        Json_token_destroy(f);
+        free(f);
+    } else {
+        assert(false && "not possible");
+    }
+
+    return dom;
 }
 
 Json_dom* Json_parse_string(Json_parse_data* pd)

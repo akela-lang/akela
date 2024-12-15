@@ -178,6 +178,36 @@ void test_parse_array_error_expected_value_after_comma()
     test_parse_destroy(&pd);
 }
 
+void test_parse_boolean_true()
+{
+    test_name(__func__);
+    Json_parse_data pd;
+    test_parse_setup(&pd, "true");
+
+    Json_dom* dom = Json_parse(&pd);
+    expect_true(Json_parse_is_valid(&pd, dom), "valid");
+    expect_no_errors(pd.el);
+    expect_int_equal(dom->type, Json_dom_type_boolean, "type dom");
+    expect_true(dom->value.boolean, "boolean dom");
+
+    test_parse_destroy(&pd);
+}
+
+void test_parse_boolean_false()
+{
+    test_name(__func__);
+    Json_parse_data pd;
+    test_parse_setup(&pd, "false");
+
+    Json_dom* dom = Json_parse(&pd);
+    expect_true(Json_parse_is_valid(&pd, dom), "valid");
+    expect_no_errors(pd.el);
+    expect_int_equal(dom->type, Json_dom_type_boolean, "type dom");
+    expect_false(dom->value.boolean, "boolean dom");
+
+    test_parse_destroy(&pd);
+}
+
 void test_parse()
 {
     test_parse_string();
@@ -192,4 +222,7 @@ void test_parse()
     test_parse_array_two();
     test_parse_array_error_no_right_square_bracket();
     test_parse_array_error_expected_value_after_comma();
+
+    test_parse_boolean_true();
+    test_parse_boolean_false();
 }
