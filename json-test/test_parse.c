@@ -222,6 +222,26 @@ void test_parse_null()
     test_parse_destroy(&pd);
 }
 
+void test_parse_error_token()
+{
+    test_name(__func__);
+    Json_parse_data pd;
+    test_parse_setup(&pd, "null{}");
+
+    Json_dom* dom = Json_parse(&pd);
+    expect_false(Json_parse_is_valid(&pd, dom), "valid");
+    expect_has_errors(pd.el);
+    struct error* e = expect_source_error(pd.el, "Could not process token: left curly brace");
+    assert_ptr(e, "ptr e");
+    expect_size_t_equal(e->loc.start_pos, 4, "start pos e");
+    expect_size_t_equal(e->loc.end_pos, 5, "end pos e");
+    expect_size_t_equal(e->loc.line, 1, "line e");
+    expect_size_t_equal(e->loc.col, 5, "col e");
+
+
+    test_parse_destroy(&pd);
+}
+
 void test_parse()
 {
     test_parse_string();
@@ -240,4 +260,6 @@ void test_parse()
     test_parse_boolean_true();
     test_parse_boolean_false();
     test_parse_null();
+
+    test_parse_error_token();
 }

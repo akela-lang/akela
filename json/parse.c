@@ -13,7 +13,17 @@ Json_dom* Json_parse_null(Json_parse_data* pd);
 
 Json_dom* Json_parse(Json_parse_data* pd)
 {
-    return Json_parse_value(pd);
+    Json_dom* root = Json_parse_value(pd);
+    Json_get_lookahead(pd);
+    if (pd->lookahead->type != Json_token_type_eof) {
+        error_list_set(
+            pd->el,
+            &pd->lookahead->loc,
+            "Could not process token: %s",
+            Json_token_type_name(pd->lookahead->type));
+    }
+
+    return root;
 }
 
 bool Json_parse_is_valid(Json_parse_data* pd, Json_dom* dom)

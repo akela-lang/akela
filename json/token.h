@@ -18,7 +18,30 @@ typedef enum Json_token_type {
     Json_token_type_true,
     Json_token_type_false,
     Json_token_type_null,
+    Json_token_type_count,      /* keep at end */
 } Json_token_type;
+
+
+static char* Json_token_type_name(Json_token_type type)
+{
+    char* name_array[Json_token_type_count] = {
+        "none",
+        "string",
+        "number",
+        "eof",
+        "left square bracket",
+        "right square bracket",
+        "comma",
+        "left curly brace",
+        "right curly brace",
+        "colon",
+        "true",
+        "false",
+        "null",
+    };
+
+    return name_array[type];
+}
 
 typedef enum Json_number_type {
     Json_number_type_none,
