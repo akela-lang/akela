@@ -2,6 +2,7 @@
 #include "dom.h"
 #include "parse_tools.h"
 #include <assert.h>
+#include "zinc/hash.h"
 
 Json_dom* Json_parse_value(Json_parse_data* pd);
 Json_dom* Json_parse_string(Json_parse_data* pd);
@@ -10,6 +11,8 @@ Json_dom* Json_parse_array(Json_parse_data* pd);
 void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent);
 Json_dom* Json_parse_bool(Json_parse_data* pd);
 Json_dom* Json_parse_null(Json_parse_data* pd);
+Json_dom* Json_parse_object(Json_parse_data* pd);
+void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent);
 
 Json_dom* Json_parse(Json_parse_data* pd)
 {
@@ -26,15 +29,14 @@ Json_dom* Json_parse(Json_parse_data* pd)
     return root;
 }
 
-bool Json_parse_is_valid(Json_parse_data* pd, Json_dom* dom)
-{
-    return !dom->has_error && !pd->el->head;
-}
-
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Json_dom* Json_parse_value(Json_parse_data* pd)
 {
     Json_get_lookahead(pd);
+
+    if (pd->lookahead->type == Json_token_type_eof) {
+        return NULL;
+    }
 
     if (pd->lookahead->type == Json_token_type_string) {
         return Json_parse_string(pd);
@@ -44,20 +46,20 @@ Json_dom* Json_parse_value(Json_parse_data* pd)
         return Json_parse_number(pd);
     }
 
-    if (pd->lookahead->type == Json_token_type_eof) {
-        return NULL;
-    }
-
-    if (pd->lookahead->type == Json_token_type_left_square_bracket) {
-        return Json_parse_array(pd);
-    }
-
     if (pd->lookahead->type == Json_token_type_true || pd->lookahead->type == Json_token_type_false) {
         return Json_parse_bool(pd);
     }
 
     if (pd->lookahead->type == Json_token_type_null) {
         return Json_parse_null(pd);
+    }
+
+    if (pd->lookahead->type == Json_token_type_left_square_bracket) {
+        return Json_parse_array(pd);
+    }
+
+    if (pd->lookahead->type == Json_token_type_left_curly_brace) {
+        return Json_parse_object(pd);
     }
 
     return NULL;
@@ -202,6 +204,106 @@ void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent)
         Json_dom* b = Json_parse_value(pd);
         if (b) {
             Json_dom_add(parent, b);
+        } else {
+            error_list_set(pd->el, &pd->lookahead->loc, "expected value");
+            parent->has_error = true;
+        }
+
+        Json_get_lookahead(pd);
+    }
+}
+
+/* object -> { object_seq } */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Json_dom* Json_parse_object(Json_parse_data* pd)
+{
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_object);
+
+    Json_token* lcb = NULL;
+    if (!Json_match(pd, Json_token_type_left_curly_brace, &lcb, dom)) {
+        assert(false && "not possible");
+    }
+    Json_token_destroy(lcb);
+    free(lcb);
+
+    Json_parse_object_seq(pd, dom);
+
+    Json_token* rcb = NULL;
+    if (!Json_match(pd, Json_token_type_right_curly_brace, &rcb, dom)) {
+        error_list_set(pd->el, &pd->lookahead->loc, "expected right curly brace");
+        dom->has_error = true;
+    }
+    Json_token_destroy(rcb);
+    free(rcb);
+
+    return dom;
+}
+
+/* object_seq -> string : value object_seq' | e */
+/* object_seq' -> , string : value object_seq' | e */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
+{
+    Json_get_lookahead(pd);
+    if (pd->lookahead->type != Json_token_type_string) {
+        return;
+    }
+
+    Json_dom* string = Json_parse_string(pd);
+    if (!string) {
+        assert(false && "not possible");
+    }
+
+    Json_token* colon = NULL;
+    if (!Json_match(pd, Json_token_type_colon, &colon, parent)) {
+        error_list_set(pd->el, &pd->lookahead->loc, "expected colon");
+        parent->has_error = true;
+    }
+    Json_token_destroy(colon);
+    free(colon);
+
+    Json_dom* value = Json_parse_value(pd);
+    if (value) {
+        hash_table_add(&parent->value.object, &string->value.string, value);
+    } else {
+        error_list_set(pd->el, &pd->lookahead->loc, "expected value");
+        parent->has_error = true;
+    }
+
+    Json_get_lookahead(pd);
+    while (pd->lookahead->type == Json_token_type_comma) {
+        Json_token* comma = NULL;
+        if (!Json_match(pd, Json_token_type_comma, &comma, parent)) {
+            assert(false && "not possible");
+        }
+        Json_token_destroy(comma);
+        free(comma);
+
+        Json_get_lookahead(pd);
+        if (pd->lookahead->type != Json_token_type_string) {
+            error_list_set(pd->el, &pd->lookahead->loc, "expected string");
+            parent->has_error = true;
+            continue;
+        }
+
+        string = Json_parse_string(pd);
+        if (!string) {
+            assert(false && "not possible");
+        }
+
+        colon = NULL;
+        if (!Json_match(pd, Json_token_type_colon, &colon, parent)) {
+            error_list_set(pd->el, &pd->lookahead->loc, "expected colon");
+            parent->has_error = true;
+        }
+        Json_token_destroy(colon);
+        free(colon);
+
+        value = Json_parse_value(pd);
+        if (value) {
+            hash_table_add(&parent->value.object, &string->value.string, value);
         } else {
             error_list_set(pd->el, &pd->lookahead->loc, "expected value");
             parent->has_error = true;

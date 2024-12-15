@@ -1,5 +1,4 @@
 # JSON Todo
-* parse object
 * stringify
   * true
   * false

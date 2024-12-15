@@ -2,13 +2,27 @@
 #include "hash.h"
 #include "buffer.h"
 #include "memory.h"
+#include <string.h>
 
-unsigned int hash_calc(struct buffer* value, unsigned int size)
+unsigned int hash_calc_buffer(struct buffer* value, unsigned int size)
 {
     unsigned int val = 0;
 
     for (int i = 0; i < value->size; i++) {
         val += (unsigned int)value->buf[i];
+        val %= size;
+    }
+
+    return val;
+}
+
+unsigned int hash_calc_str(char* str, unsigned int size)
+{
+    unsigned int val = 0;
+
+    size_t len = strlen(str);
+    for (int i = 0; i < len; i++) {
+        val += (unsigned int)str[i];
         val %= size;
     }
 
@@ -78,7 +92,7 @@ void hash_table_map(struct hash_table* ht, hash_table_func f)
 /* assume entry is not in table so call hash_table_get before if not sure */
 void hash_table_add(struct hash_table* ht, struct buffer* value, void* item)
 {
-    unsigned int val = hash_calc(value, ht->size);
+    unsigned int val = hash_calc_buffer(value, ht->size);
 
     struct hash_entry* ent;
     malloc_safe((void**)&ent, sizeof(struct hash_entry));
@@ -99,15 +113,56 @@ void hash_table_add(struct hash_table* ht, struct buffer* value, void* item)
     }
 }
 
+/* assume entry is not in table so call hash_table_get before if not sure */
+void hash_table_add_str(struct hash_table* ht, char* str, void* item)
+{
+    unsigned int val = hash_calc_str(str, ht->size);
+
+    struct hash_entry* ent;
+    malloc_safe((void**)&ent, sizeof(struct hash_entry));
+    hash_entry_init(ent);
+    ent->item = item;
+
+    buffer_copy_str(&ent->value, str);
+
+    /* add to beginning of bucket */
+    struct hash_entry* next = ht->buckets[val].head;
+    ent->next = next;
+    if (next) {
+        next->prev = ent;
+    }
+    ht->buckets[val].head = ent;
+    if (!ht->buckets[val].tail) {
+        ht->buckets[val].tail = ent;
+    }
+}
+
 void* hash_table_get(struct hash_table* ht, struct buffer* value)
 {
     struct hash_entry* ent;
 
-    unsigned int val = hash_calc(value, ht->size);
+    unsigned int val = hash_calc_buffer(value, ht->size);
 
     ent = ht->buckets[val].head;
     while (ent) {
         if (buffer_compare(&ent->value, value)) {
+            return ent->item;
+        }
+        ent = ent->next;
+    }
+
+    return NULL;
+}
+
+void* hash_table_get_str(struct hash_table* ht, char* str)
+{
+    struct hash_entry* ent;
+
+    unsigned int val = hash_calc_str(str, ht->size);
+
+    ent = ht->buckets[val].head;
+    while (ent) {
+        if (buffer_compare_str(&ent->value, str)) {
             return ent->item;
         }
         ent = ent->next;
