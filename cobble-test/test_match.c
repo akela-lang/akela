@@ -5,7 +5,6 @@
 #include "cobble/match.h"
 #include <string.h>
 #include "zinc/error_unit_test.h"
-#include "cobble/unit_test_string_slice.h"
 
 bool match_run(char* pattern, char* text, struct buffer_list** groups)
 {

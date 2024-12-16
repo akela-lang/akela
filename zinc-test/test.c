@@ -17,6 +17,7 @@
 #include "test_input_unicode_string.h"
 #include "test_input_unicode_file.h"
 #include "test_hash_map_size_t.h"
+#include "test_unicode.h"
 
 int main()
 {
@@ -38,6 +39,7 @@ int main()
     test_input_unicode_string();
     test_input_unicode_file();
 	test_hash_map_size_t();
+	test_unicode();
 	print_results();
 	return 0;
 }

@@ -56,7 +56,7 @@ enum result InputUnicodeStringNext(
 {
     enum result r = result_ok;
 
-    if (data->loc.start_pos == 0) {
+    if (data->loc.line == 0) {
         InputUnicodeStringClear(data);
     }
 

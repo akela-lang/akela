@@ -1,3 +1,3 @@
 #include "dom.h"
 
-void Json_stringify(Json_dom* dom, struct buffer *bf);
+void Json_stringify(struct error_list* el, Json_dom* dom, struct buffer *bf);

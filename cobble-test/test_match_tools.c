@@ -335,26 +335,6 @@ void test_match_tools_stack_priority()
     Stack_list_destroy(sl);
 }
 
-#ifdef ICU_LIB
-void test_match_tools_convert_char1()
-{
-    test_name(__func__);
-    String_slice slice = {"A", 1};
-    UChar32 cp;
-    match_convert_char(slice, &cp);
-    expect_int_equal(cp, 0x41, "cp");
-}
-
-void test_match_tools_convert_char2()
-{
-    test_name(__func__);
-    String_slice slice = {"θ", 1};
-    UChar32 cp;
-    match_convert_char(slice, &cp);
-    expect_int_equal(cp, 0x3B8, "cp");
-}
-#endif
-
 void test_match_tools()
 {
     test_match_tools_match_task_stack();
@@ -365,8 +345,4 @@ void test_match_tools()
     test_match_tools_clone();
     test_match_tools_stack_node_clone();
     test_match_tools_stack_priority();
-#ifdef ICU_LIB
-    test_match_tools_convert_char1();
-    test_match_tools_convert_char2();
-#endif
 }

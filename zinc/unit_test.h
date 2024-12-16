@@ -5,6 +5,7 @@
 #include "buffer.h"
 #include "buffer_list.h"
 #include "vector.h"
+#include "String_slice.h"
 
 #define TEST_NAME_SIZE 100
 
@@ -55,5 +56,7 @@ ZINC_API void expect_vector_double(Vector* a, Vector* b, double threshold, const
 ZINC_API void expect_utf8_char(char* a, char* b, char* message);
 ZINC_API void expect_buffer_list_count(struct buffer_list* bl, size_t count, char* message);
 ZINC_API void expect_buffer_list_item(struct buffer_list* bl, size_t index, char* text, char* message);
+ZINC_API void expect_string_slice(String_slice* sl, struct buffer* bf, char* message);
+ZINC_API void expect_string_slice_str(String_slice* sl, char* expected, char* message);
 
 #endif

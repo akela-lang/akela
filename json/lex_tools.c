@@ -4,6 +4,7 @@
 #include "zinc/memory.h"
 #include <unicode/locid.h>
 #include <unicode/ucnv.h>
+#include "zinc/String_slice.h"
 #include "token.h"
 
 enum result Json_lex_data_init(
@@ -41,7 +42,7 @@ void Json_lex_data_destroy(Json_lex_data* jld)
     ucnv_close(jld->conv);
 }
 
-enum result Json_lex_char_to_code_point(char c[4], int num, UChar32* cp)
+enum result Json_convert_slice(String_slice slice, UChar32* c)
 {
     UErrorCode status = U_ZERO_ERROR;
     UConverter *conv = ucnv_open("utf8", &status);
@@ -51,82 +52,19 @@ enum result Json_lex_char_to_code_point(char c[4], int num, UChar32* cp)
     }
 
     UChar dest[4];
-    int32_t len = ucnv_toUChars(conv, dest, 4, c, num, &status);
+    int32_t len = ucnv_toUChars(conv, dest, 4, slice.p, slice.size, &status);
     size_t pos = 0;
-    U16_NEXT(dest, pos, len, *cp);
+    U16_NEXT(dest, pos, len, *c);
 
     ucnv_close(conv);
 
     return result_ok;
 }
 
-bool Json_is_hex_digit(char c[4], int num)
+enum result Json_convert_char(char c[4], int num, UChar32* cp)
 {
-    if (num != 1)
-        return false;
-    if (c[0] >= 'A' && c[0] <= 'F') return true;
-    if (c[0] >= 'a' && c[0] <= 'f') return true;
-    if (c[0] >= '0' && c[0] <= '9') return true;
-    return false;
-}
-
-int code_to_utf8(unsigned char *const buffer, const unsigned int code)
-{
-    if (code <= 0x7F) {
-        buffer[0] = code;
-        return 1;
-    }
-    if (code <= 0x7FF) {
-        buffer[0] = 0xC0 | (code >> 6);            /* 110xxxxx */
-        buffer[1] = 0x80 | (code & 0x3F);          /* 10xxxxxx */
-        return 2;
-    }
-    if (code <= 0xFFFF) {
-        buffer[0] = 0xE0 | (code >> 12);           /* 1110xxxx */
-        buffer[1] = 0x80 | ((code >> 6) & 0x3F);   /* 10xxxxxx */
-        buffer[2] = 0x80 | (code & 0x3F);          /* 10xxxxxx */
-        return 3;
-    }
-    if (code <= 0x10FFFF) {
-        buffer[0] = 0xF0 | (code >> 18);           /* 11110xxx */
-        buffer[1] = 0x80 | ((code >> 12) & 0x3F);  /* 10xxxxxx */
-        buffer[2] = 0x80 | ((code >> 6) & 0x3F);   /* 10xxxxxx */
-        buffer[3] = 0x80 | (code & 0x3F);          /* 10xxxxxx */
-        return 4;
-    }
-    return 0;
-}
-
-unsigned int char_to_hex(char c)
-{
-    int x = toupper(c);
-    if (x == '0') return 0;
-    if (x == '1') return 1;
-    if (x == '2') return 2;
-    if (x == '3') return 3;
-    if (x == '4') return 4;
-    if (x == '5') return 5;
-    if (x == '6') return 6;
-    if (x == '7') return 7;
-    if (x == '8') return 8;
-    if (x == '9') return 9;
-    if (x == 'A') return 10;
-    if (x == 'B') return 11;
-    if (x == 'C') return 12;
-    if (x == 'D') return 13;
-    if (x == 'E') return 14;
-    if (x == 'F') return 15;
-    return 0;
-}
-
-unsigned int char4_to_hex(char* src, int num)
-{
-    unsigned int code = 0;
-    if (num > 0) {
-        code = char_to_hex(src[0]);
-    }
-    for (int i = 1; i < num; i++) {
-        code = (code << 4) + char_to_hex(src[i]);
-    }
-    return code;
+    String_slice slice;
+    slice.p = c;
+    slice.size = num;
+    return Json_convert_slice(slice, cp);
 }

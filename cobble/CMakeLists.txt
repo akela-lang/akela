@@ -6,10 +6,10 @@ set (cobble_files
         compile_tools.c
         match.c
         match_tools.c
-        unit_test_string_slice.c)
+)
 add_library(cobble ${cobble_files})
 if (${ICU_LIB} MATCHES ENABLE)
-    target_link_libraries(cobble zinc icudata icui18n icuio icutu icuuc)
+    target_link_libraries(cobble json zinc icudata icui18n icuio icutu icuuc)
 else()
-    target_link_libraries(cobble zinc)
+    target_link_libraries(cobble json zinc)
 endif()

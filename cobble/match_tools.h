@@ -1,13 +1,13 @@
 #ifndef COBBLE_MATCH_TOOLS_H
 #define COBBLE_MATCH_TOOLS_H
 
-#include "String_slice.h"
 #include <stdbool.h>
 #include "Ast_node.h"
 #include "zinc/list.h"
 #include "zinc/hash.h"
 #include "zinc/hash_map_size_t.h"
 #include <stdlib.h>
+#include "zinc/String_slice.h"
 #ifdef ICU_LIB
 #include <unicode/uchar.h>
 #include <unicode/locid.h>

@@ -4,6 +4,7 @@
 #include "test_lex_tools.h"
 #include "zinc/unit_test.h"
 #include "json/lex.h"
+#include "zinc/unicode.h"
 
 void test_lex_string()
 {
@@ -900,6 +901,24 @@ void test_lex_word_error()
     test_lex_teardown(&jld);
 }
 
+void test_match_tools_convert_char1()
+{
+    test_name(__func__);
+    String_slice slice = {"A", 1};
+    UChar32 cp;
+    Json_convert_slice(slice, &cp);
+    expect_int_equal(cp, 0x41, "cp");
+}
+
+void test_match_tools_convert_char2()
+{
+    test_name(__func__);
+    String_slice slice = {"θ", 2};
+    UChar32 cp;
+    Json_convert_slice(slice, &cp);
+    expect_int_equal(cp, 0x3B8, "cp");
+}
+
 void test_lex()
 {
     test_lex_string();
@@ -953,4 +972,7 @@ void test_lex()
     test_lex_false();
     test_lex_null();
     test_lex_word_error();
+
+    test_match_tools_convert_char1();
+    test_match_tools_convert_char2();
  }

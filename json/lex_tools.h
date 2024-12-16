@@ -4,6 +4,7 @@
 #include "zinc/error.h"
 #include "zinc/input_unicode.h"
 #include <unicode/ucnv.h>
+#include "zinc/String_slice.h"
 
 typedef enum Json_lex_state {
     Json_lex_state_start,
@@ -27,10 +28,7 @@ void Json_lex_data_create(
     struct error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable);
-enum result Json_lex_char_to_code_point(char c[4], int num, UChar32* cp);
-bool Json_is_hex_digit(char c[4], int num);
-int code_to_utf8(unsigned char *const buffer, const unsigned int code);
-unsigned int char_to_hex(char c);
-unsigned int char4_to_hex(char* src, int num);
+enum result Json_convert_slice(String_slice slice, UChar32* c);
+enum result Json_convert_char(char c[4], int num, UChar32* cp);
 
 #endif

@@ -19,6 +19,7 @@ set(SOURCE_FILES
         test_input_unicode_string.c
         test_input_unicode_file.c
         test_hash_map_size_t.c
+        test_unicode.c
 )
 
 add_executable(zinc-test ${SOURCE_FILES})

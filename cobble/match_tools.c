@@ -371,23 +371,4 @@ void Stack_list_destroy(Stack_list* sl)
 
 #ifdef ICU_LIB
 
-enum result match_convert_char(String_slice slice, UChar32* c)
-{
-    UErrorCode status = U_ZERO_ERROR;
-    UConverter *conv = ucnv_open("utf8", &status);
-    if (status != U_ZERO_ERROR) {
-        set_error("ucnv_open() failed with error code: %s", u_errorName(status));
-        return result_error;
-    }
-
-    UChar dest[4];
-    int32_t len = ucnv_toUChars(conv, dest, 4, slice.p, 4, &status);
-    size_t pos = 0;
-    U16_NEXT(dest, pos, len, *c);
-
-    ucnv_close(conv);
-
-    return result_ok;
-}
-
 #endif

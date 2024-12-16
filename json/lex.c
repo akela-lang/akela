@@ -5,6 +5,7 @@
 #include <string.h>
 #include "zinc/utf8.h"
 #include <assert.h>
+#include "zinc/unicode.h"
 
 void Json_lex_start(Json_lex_data* jld, Json_token* t);
 void Json_lex_string(Json_lex_data* jld, Json_token* t);
@@ -179,7 +180,7 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
         }
 
         UChar32 cp;
-        Json_lex_char_to_code_point(c, num, &cp);
+        Json_convert_char(c, num, &cp);
         if (cp < 0x20) {
             error_list_set(jld->el, &loc, "code point is less than \\u0020");
         } else if (cp > 0x10FFFF) {
@@ -294,7 +295,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
                 error_list_set(jld->el, &loc, "unicode escape not finished");
                 return;
             }
-            if (Json_is_hex_digit(c, num)) {
+            if (is_hex_digit(c, num)) {
                 buffer_add(&bf, c, num);
             } else {
                 error_list_set(jld->el, &loc, "invalid hex digit: %c", c[0]);
@@ -313,7 +314,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
             InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
             break;
         }
-        if (!Json_is_hex_digit(c, num)) {
+        if (!is_hex_digit(c, num)) {
             InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
             break;
         }
