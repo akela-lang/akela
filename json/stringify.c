@@ -5,6 +5,7 @@
 #include "zinc/unicode.h"
 
 void Json_stringify_string(struct error_list* el, Json_dom* dom, struct buffer *bf);
+void Json_stringify_number(struct error_list* el, Json_dom* dom, struct buffer *bf);
 
 void Json_stringify(struct error_list* el, Json_dom* dom, struct buffer *bf)
 {
@@ -24,6 +25,11 @@ void Json_stringify(struct error_list* el, Json_dom* dom, struct buffer *bf)
 
     if (dom->type == Json_dom_type_string) {
         Json_stringify_string(el, dom, bf);
+        return;
+    }
+
+    if (dom->type == Json_dom_type_number) {
+        Json_stringify_number(el, dom, bf);
         return;
     }
 
@@ -128,4 +134,15 @@ void Json_stringify_string(struct error_list* el, Json_dom* dom, struct buffer *
     }
 
     buffer_add_char(bf, '"');
+}
+
+void Json_stringify_number(struct error_list* el, Json_dom* dom, struct buffer *bf)
+{
+    if (dom->number_type == Json_dom_number_type_integer) {
+        buffer_add_format(bf, "%lld", dom->value.integer);
+    } else if (dom->number_type == Json_dom_number_type_fp) {
+        buffer_add_format(bf, "%lf", dom->value.fp);
+    } else {
+        assert(false && "invalid number type");
+    }
 }

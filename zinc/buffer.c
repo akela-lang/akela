@@ -273,15 +273,18 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
 
     malloc_safe((void**)&buf, buf_size);
 
+    char last_last_last_last = 0;
+    char last_last_last = 0;
     char last_last = 0;
     char last = 0;
     while (*fmt != '\0') {
         if (last == '%' && *fmt == '%') {
             buffer_add_char(bf, '%');
         } else if (*fmt == '%') {
-            /* nothing */
         } else if (last == '%' && *fmt == 'l') {
-            /* nothing */
+        } else if (last_last == '%' && last == 'l' && *fmt == 'l') {
+        } else if (last == '%' && *fmt == '%') {
+            buffer_add_char(bf, '%');
         } else if (last_last == '%' && last == 'l' && *fmt == 'f') {
             double lf = va_arg(args, double);
             while (true) {
@@ -321,8 +324,20 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
             for (int j = 0; j < len; j++) {
                 buffer_add_char(bf, buf[j]);
             }
+        } else if (last_last_last == '%' && last_last == 'l' && last == 'l' && *fmt == 'd') {
+            long long lld = va_arg(args, long long);
+            while (true) {
+                len = snprintf(buf, buf_size, "%lld", lld);
+                if (len < buf_size) {
+                    break;
+                }
+                buf_size *= 2;
+                realloc_safe((void**)&buf, buf_size);
+            }
+            for (int j = 0; j < len; j++) {
+                buffer_add_char(bf, buf[j]);
+            }
         } else if (last == '%' && *fmt == 'z') {
-            /* nothing */
         } else if (last_last == '%' && last == 'z' && *fmt == 'u') {
             size_t zu = va_arg(args, size_t);
             while (true) {
@@ -379,9 +394,12 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
             }
             for (int j = 0; j < len; j++) {
                 buffer_add_char(bf, buf[j]);
-            }        } else {
+            }
+        } else {
             buffer_add_char(bf, *fmt);
         }
+        last_last_last_last = last_last_last;
+        last_last_last = last_last;
         last_last = last;
         last = *fmt;
         fmt++;

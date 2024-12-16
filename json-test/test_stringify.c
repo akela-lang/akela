@@ -1,3 +1,4 @@
+#include <json/token.h>
 #include <zinc/error_unit_test.h>
 
 #include "zinc/unit_test.h"
@@ -202,14 +203,97 @@ void test_stringify_string_error_invalid_char()
     error_list_destroy(el);
 }
 
+void test_stringify_number_integer()
+{
+    test_name(__func__);
+
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_number);
+    dom->number_type = Json_number_type_integer;
+    dom->value.integer = 123;
+
+    struct error_list* el = NULL;
+    error_list_create(&el);
+
+    struct buffer bf;
+    buffer_init(&bf);
+
+    Json_stringify(el, dom, &bf);
+
+    expect_no_errors(el);
+    expect_str(&bf, "123", "bf");
+
+    buffer_destroy(&bf);
+    Json_dom_destroy(dom);
+    error_list_destroy(el);
+}
+
+void test_stringify_number_fraction()
+{
+    test_name(__func__);
+
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_number);
+    dom->number_type = Json_number_type_fp;
+    dom->value.fp = 5.1;
+
+    struct error_list* el = NULL;
+    error_list_create(&el);
+
+    struct buffer bf;
+    buffer_init(&bf);
+
+    Json_stringify(el, dom, &bf);
+
+    expect_no_errors(el);
+    expect_str(&bf, "5.100000", "bf");
+
+    buffer_destroy(&bf);
+    Json_dom_destroy(dom);
+    error_list_destroy(el);
+}
+
+void test_stringify_number_exponent()
+{
+    test_name(__func__);
+
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_number);
+    dom->number_type = Json_number_type_fp;
+    dom->value.fp = 5.1e1;
+
+    struct error_list* el = NULL;
+    error_list_create(&el);
+
+    struct buffer bf;
+    buffer_init(&bf);
+
+    Json_stringify(el, dom, &bf);
+
+    expect_no_errors(el);
+    expect_str(&bf, "51.000000", "bf");
+
+    buffer_destroy(&bf);
+    Json_dom_destroy(dom);
+    error_list_destroy(el);
+}
+
 void test_stringify()
 {
     test_stringify_null();
     test_stringify_true();
     test_stringify_false();
+
     test_stringify_string();
     test_stringify_string2();
     test_stringify_string3();
     test_stringify_string4();
     test_stringify_string_error_invalid_char();
+
+    test_stringify_number_integer();
+    test_stringify_number_fraction();
+    test_stringify_number_exponent();
 }
