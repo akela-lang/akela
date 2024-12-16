@@ -281,6 +281,122 @@ void test_stringify_number_exponent()
     error_list_destroy(el);
 }
 
+void test_stringify_array_empty()
+{
+    test_name(__func__);
+
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_array);
+
+    struct error_list* el = NULL;
+    error_list_create(&el);
+
+    struct buffer bf;
+    buffer_init(&bf);
+
+    Json_stringify(el, dom, &bf);
+
+    expect_no_errors(el);
+    expect_str(&bf, "[]", "bf");
+
+    buffer_destroy(&bf);
+    Json_dom_destroy(dom);
+    error_list_destroy(el);
+}
+
+void test_stringify_array_one()
+{
+    test_name(__func__);
+
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_array);
+
+    Json_dom* dom0 = NULL;
+    Json_dom_create(&dom0);
+    Json_dom_set_type(dom0, Json_dom_type_number);
+    dom0->number_type = Json_number_type_integer;
+    dom0->value.integer = 3;
+    Json_dom_add(dom, dom0);
+
+    struct error_list* el = NULL;
+    error_list_create(&el);
+
+    struct buffer bf;
+    buffer_init(&bf);
+
+    Json_stringify(el, dom, &bf);
+
+    expect_no_errors(el);
+    expect_str(&bf, "[3]", "bf");
+
+    buffer_destroy(&bf);
+    Json_dom_destroy(dom);
+    error_list_destroy(el);
+}
+
+void test_stringify_array2()
+{
+    test_name(__func__);
+
+    Json_dom* dom = NULL;
+    Json_dom_create(&dom);
+    Json_dom_set_type(dom, Json_dom_type_array);
+
+    Json_dom* dom0 = NULL;
+    Json_dom_create(&dom0);
+    Json_dom_set_type(dom0, Json_dom_type_number);
+    dom0->number_type = Json_number_type_integer;
+    dom0->value.integer = 1;
+    Json_dom_add(dom, dom0);
+
+    Json_dom* dom1 = NULL;
+    Json_dom_create(&dom1);
+    Json_dom_set_type(dom1, Json_dom_type_number);
+    dom1->number_type = Json_number_type_fp;
+    dom1->value.fp = 5.1;
+    Json_dom_add(dom, dom1);
+
+    Json_dom* dom2 = NULL;
+    Json_dom_create(&dom2);
+    Json_dom_set_type(dom2, Json_dom_type_string);
+    buffer_copy_str(&dom2->value.string, "hello");
+    Json_dom_add(dom, dom2);
+
+    Json_dom* dom3 = NULL;
+    Json_dom_create(&dom3);
+    Json_dom_set_type(dom3, Json_dom_type_boolean);
+    dom3->value.boolean = true;
+    Json_dom_add(dom, dom3);
+
+    Json_dom* dom4 = NULL;
+    Json_dom_create(&dom4);
+    Json_dom_set_type(dom4, Json_dom_type_boolean);
+    dom4->value.boolean = false;
+    Json_dom_add(dom, dom4);
+
+    Json_dom* dom5 = NULL;
+    Json_dom_create(&dom5);
+    Json_dom_set_type(dom5, Json_dom_type_null);
+    Json_dom_add(dom, dom5);
+
+    struct error_list* el = NULL;
+    error_list_create(&el);
+
+    struct buffer bf;
+    buffer_init(&bf);
+
+    Json_stringify(el, dom, &bf);
+
+    expect_no_errors(el);
+    expect_str(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
+
+    buffer_destroy(&bf);
+    Json_dom_destroy(dom);
+    error_list_destroy(el);
+}
+
 void test_stringify()
 {
     test_stringify_null();
@@ -296,4 +412,7 @@ void test_stringify()
     test_stringify_number_integer();
     test_stringify_number_fraction();
     test_stringify_number_exponent();
+    test_stringify_array_empty();
+    test_stringify_array_one();
+    test_stringify_array2();
 }

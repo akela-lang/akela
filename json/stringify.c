@@ -6,6 +6,7 @@
 
 void Json_stringify_string(struct error_list* el, Json_dom* dom, struct buffer *bf);
 void Json_stringify_number(struct error_list* el, Json_dom* dom, struct buffer *bf);
+void Json_stringify_array(struct error_list* el, Json_dom* dom, struct buffer *bf);
 
 void Json_stringify(struct error_list* el, Json_dom* dom, struct buffer *bf)
 {
@@ -30,6 +31,11 @@ void Json_stringify(struct error_list* el, Json_dom* dom, struct buffer *bf)
 
     if (dom->type == Json_dom_type_number) {
         Json_stringify_number(el, dom, bf);
+        return;
+    }
+
+    if (dom->type == Json_dom_type_array) {
+        Json_stringify_array(el, dom, bf);
         return;
     }
 
@@ -143,6 +149,25 @@ void Json_stringify_number(struct error_list* el, Json_dom* dom, struct buffer *
     } else if (dom->number_type == Json_dom_number_type_fp) {
         buffer_add_format(bf, "%lf", dom->value.fp);
     } else {
-        assert(false && "invalid number type");
+        struct location loc;
+        location_init(&loc);
+        error_list_set(el, &loc, "invalid number type");
     }
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Json_stringify_array(struct error_list* el, Json_dom* dom, struct buffer *bf)
+{
+    buffer_add_char(bf, '[');
+    Json_dom* p = dom->head;
+    size_t i = 0;
+    while (p) {
+        if (i != 0) {
+            buffer_add_char(bf, ',');
+        }
+        Json_stringify(el, p, bf);
+        p = p->next;
+        i++;
+    }
+    buffer_add_char(bf, ']');
 }
