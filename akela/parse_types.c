@@ -634,7 +634,7 @@ void declare_type(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node
 Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto, Ast_node* struct_type) {
     Type_use *func = NULL;
     Type_use_create(&func);
-    Type_use_add_proto(st, func, proto, struct_type);
+    return Type_use_add_proto(st, func, proto, struct_type);
 }
 
 Type_use* Type_use_add_proto(

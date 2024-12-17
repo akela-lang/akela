@@ -58,6 +58,7 @@ llvm_map_components_to_libnames(llvm_libs ${LLVM_LINK_COMPONENTS})
 
 if(${COVERAGE} MATCHES On)
         add_compile_options(-Wall -fprofile-arcs -ftest-coverage)
+        set(coverage_lib gcov)
 endif()
 
 if (${ICU_LIB} MATCHES ENABLED)

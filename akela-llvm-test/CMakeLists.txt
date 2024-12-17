@@ -11,21 +11,14 @@ set(test_files
         test_akela_llvm_struct.c
 )
 add_executable(akela-llvm-test ${test_files})
-if(${COVERAGE} MATCHES On)
-    target_link_libraries(akela-llvm-test akela-llvm akela zinc gcov ${llvm_libs})
-else()
-    target_link_libraries(akela-llvm-test akela-llvm akela zinc ${llvm_libs})
-endif()
+target_link_libraries(akela-llvm-test akela-llvm akela zinc ${coverage_lib} ${llvm_libs})
 
 # function_pointer
 add_executable(function_pointer function_pointer.cpp)
-if(${COVERAGE} MATCHES On)
-    target_link_libraries(function_pointer ${llvm_libs} gcov)
-else()
-    target_link_libraries(function_pointer ${llvm_libs})
-endif()
+target_link_libraries(function_pointer ${llvm_libs} ${coverage_lib})
 
 add_executable(test_abort test_abort.c)
+target_link_libraries(test_abort ${coverage_lib})
 
 set_target_properties(akela-llvm-test function_pointer test_abort
         PROPERTIES

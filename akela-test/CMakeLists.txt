@@ -21,9 +21,9 @@ set(files
 )
 add_executable(akela-test ${files})
 if(${COVERAGE} MATCHES On)
-    target_link_libraries(akela-test akela zinc gcov)
+    target_link_libraries(akela-test akela zinc ${converage_lib})
 else()
-    target_link_libraries(akela-test akela zinc)
+    target_link_libraries(akela-test akela zinc ${converage_lib})
 endif()
 
 # event loop

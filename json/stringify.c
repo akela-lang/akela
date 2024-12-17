@@ -3,7 +3,7 @@
 #include "zinc/utf8.h"
 #include "lex_tools.h"
 #include "zinc/unicode.h"
-#include "stringify.h""
+#include "stringify.h"
 
 void Json_stringify_string(struct error_list* el, Json_dom* dom, struct buffer *bf);
 void Json_stringify_number(struct error_list* el, Json_dom* dom, struct buffer *bf);
@@ -193,7 +193,7 @@ void Json_stringify_object(struct error_list* el, Json_dom* dom, struct buffer *
     Json_stringify_object_el = el;
     Json_stringify_object_bf = bf;
     Json_stringify_object_index = 0;
-    hash_table_map_name(&dom->value.object, Json_stringify_property);
+    hash_table_map_name(&dom->value.object, (hash_table_func_name)Json_stringify_property);
     buffer_add_char(bf, '}');
 }
 
