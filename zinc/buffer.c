@@ -283,6 +283,8 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
         } else if (*fmt == '%') {
         } else if (last == '%' && *fmt == 'l') {
         } else if (last_last == '%' && last == 'l' && *fmt == 'l') {
+        } else if (last == '%' && *fmt == 'h') {
+        } else if (last_last == '%' && last == 'h' && *fmt == 'h') {
         } else if (last == '%' && *fmt == '%') {
             buffer_add_char(bf, '%');
         } else if (last_last == '%' && last == 'l' && *fmt == 'f') {
@@ -386,6 +388,19 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
             unsigned long x = va_arg(args, unsigned long);
             while (true) {
                 len = snprintf(buf, buf_size, "%lx", x);
+                if (len < buf_size) {
+                    break;
+                }
+                buf_size *= 2;
+                realloc_safe((void**)&buf, buf_size);
+            }
+            for (int j = 0; j < len; j++) {
+                buffer_add_char(bf, buf[j]);
+            }
+        } else if (last_last_last == '%' && last_last == 'h' && last == 'h' && *fmt == 'd') {
+            char x = va_arg(args, int);
+            while (true) {
+                len = snprintf(buf, buf_size, "%hhd", x);
                 if (len < buf_size) {
                     break;
                 }

@@ -202,7 +202,7 @@ namespace Akela_llvm {
                     } else if (bit_count == 8) {
                         char (*fp)() = ExprSymbol.getAddress().toPtr<char(*)()> ();
                         char v = fp();
-                        buffer_add_format(bf, "%d", v);
+                        buffer_add_format(bf, "%hhd", (int)v);
                     } else {
                         assert(false);
                     }

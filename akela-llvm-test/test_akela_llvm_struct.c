@@ -118,9 +118,9 @@ void test_akela_llvm_struct_array5()
 
     Code_gen_result_init(&result);
     cg_setup("let a: [100 const]u8 = \"John\"\n"
-             "a\n",
+             "a[0]\n",
              &result);
-    expect_str(&result.value, "John", "value");
+    expect_str(&result.value, "74", "value");
 
     Code_gen_result_destroy(&result);
 }
