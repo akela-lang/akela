@@ -8,14 +8,14 @@
 #include "zinc/error.h"
 #include "zinc/input_unicode.h"
 
-typedef struct compile_data {
+typedef struct Compile_data {
     void* input_obj;
     InputUnicodeVTable* input_vtable;
     struct token* lookahead;
     struct error_list* el;
-} compile_data;
+} Compile_data;
 
-void compile_data_init(struct compile_data* cd, void* input_obj, InputUnicodeVTable* input_vtable, struct error_list* el);
-void compile_data_destroy(struct compile_data* cd);
+void compile_data_init(Compile_data* cd, void* input_obj, InputUnicodeVTable* input_vtable, struct error_list* el);
+void compile_data_destroy(Compile_data* cd);
 
 #endif //COBBLE_COMPILE_DATA_H

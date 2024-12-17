@@ -3,7 +3,7 @@
 #include "token.h"
 
 void compile_data_init(
-    struct compile_data* cd,
+    Compile_data* cd,
     void* input_obj,
     InputUnicodeVTable* input_vtable,
     struct error_list* el)
@@ -14,7 +14,7 @@ void compile_data_init(
     cd->el = el;
 }
 
-void compile_data_destroy(struct compile_data* cd)
+void compile_data_destroy(Compile_data* cd)
 {
     free(cd->lookahead);
 }

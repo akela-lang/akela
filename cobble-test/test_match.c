@@ -8,7 +8,7 @@
 
 bool match_run(char* pattern, char* text, struct buffer_list** groups)
 {
-    struct compile_data* cd = NULL;
+    struct Compile_data* cd = NULL;
     setup_compile(&cd, pattern);
     bool valid = true;
     Ast_node* root = NULL;

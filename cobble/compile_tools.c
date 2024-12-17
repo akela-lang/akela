@@ -26,7 +26,7 @@ struct token* lex(void* input_obj, InputUnicodeVTable *input_vtable)
     return t;
 }
 
-void get_lookahead(struct compile_data* cd)
+void get_lookahead(struct Compile_data* cd)
 {
     if (cd->lookahead) {
         return;
@@ -36,7 +36,7 @@ void get_lookahead(struct compile_data* cd)
 }
 
 bool match(
-    struct compile_data* cd,
+    struct Compile_data* cd,
     enum token_type type,
     const char* reason,
     struct token** t,

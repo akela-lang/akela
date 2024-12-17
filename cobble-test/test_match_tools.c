@@ -23,6 +23,8 @@ void test_match_tools_match_task_stack()
     expect_ptr_equal(mt0->next, NULL, "next mt0");
     expect_ptr_equal(mts->bottom, mt0, "bottom mts");
 
+    Match_task_stack_destroy(mts);
+
     Stack_list* sl = NULL;
     Stack_list_create(&sl);
 

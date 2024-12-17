@@ -10,7 +10,7 @@ void test_compile_empty()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "");
 
     bool valid = true;
@@ -28,7 +28,7 @@ void test_compile_literal()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a");
 
     bool valid = true;
@@ -51,7 +51,7 @@ void test_compile_union_single()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a|b");
 
     bool valid = true;
@@ -82,7 +82,7 @@ void test_compile_union_single_error()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a|");
 
     bool valid = true;
@@ -108,7 +108,7 @@ void test_compile_union_double()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a|b|c");
 
     bool valid = true;
@@ -145,7 +145,7 @@ void test_compile_concat_single()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "ab");
 
     bool valid = true;
@@ -176,7 +176,7 @@ void test_compile_concat_double()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "abc");
 
     bool valid = true;
@@ -213,7 +213,7 @@ void test_compile_union_concat()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "ab|cd");
 
     bool valid = true;
@@ -264,7 +264,7 @@ void test_compile_closure()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a*");
 
     Ast_node* root = NULL;
@@ -289,7 +289,7 @@ void test_compile_concat_closure()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a*b*");
 
     Ast_node* root = NULL;
@@ -328,7 +328,7 @@ void test_compile_union_closure()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a*|b*");
 
     Ast_node* root = NULL;
@@ -367,7 +367,7 @@ void test_compile_positive_closure()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a+");
 
     Ast_node* root = NULL;
@@ -392,7 +392,7 @@ void test_compile_repeat()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a{5}");
 
     Ast_node* root = NULL;
@@ -421,7 +421,7 @@ void test_compile_repeat_num_error()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a{x}");
 
     Ast_node* root = NULL;
@@ -443,7 +443,7 @@ void test_compile_repeat_range()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a{5,10}");
 
     Ast_node* root = NULL;
@@ -477,7 +477,7 @@ void test_compile_repeat_range_num_error()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a{1,x}");
 
     Ast_node* root = NULL;
@@ -499,7 +499,7 @@ void test_compile_group_concat()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a(b|c)d");
 
     Ast_node* root = NULL;
@@ -551,7 +551,7 @@ void test_compile_group_empty()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a()b");
 
     Ast_node* root = NULL;
@@ -590,7 +590,7 @@ void test_compile_option()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "a?");
 
     Ast_node* root = NULL;
@@ -615,7 +615,7 @@ void test_compile_wildcard()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, ".");
 
     Ast_node* root = NULL;
@@ -634,7 +634,7 @@ void test_compile_begin()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "^");
 
     Ast_node* root = NULL;
@@ -653,7 +653,7 @@ void test_compile_end()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "$");
 
     Ast_node* root = NULL;
@@ -672,7 +672,7 @@ void test_compile_escape_backslash()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\\\");
 
     Ast_node* root = NULL;
@@ -693,7 +693,7 @@ void test_compile_escape_asterisk()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\*");
 
     Ast_node* root = NULL;
@@ -714,7 +714,7 @@ void test_compile_character_class()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "[abc]");
 
     Ast_node* root = NULL;
@@ -751,7 +751,7 @@ void test_compile_character_class_wildcard_error()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "[.]");
 
     Ast_node* root = NULL;
@@ -768,7 +768,7 @@ void test_compile_character_class_begin_error()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "[a^]");
 
     Ast_node* root = NULL;
@@ -785,7 +785,7 @@ void test_compile_character_class_end_error()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "[$]");
 
     Ast_node* root = NULL;
@@ -802,7 +802,7 @@ void test_compile_character_range()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "[a-z]");
 
     Ast_node* root = NULL;
@@ -838,7 +838,7 @@ void test_compile_character_range_error()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "[a-]");
 
     Ast_node* root = NULL;
@@ -855,7 +855,7 @@ void test_compile_character_range_non_ascii_error_left()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "[á-z]");
 
     Ast_node* root = NULL;
@@ -872,7 +872,7 @@ void test_compile_character_range_non_ascii_error_right()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "[a-ź]");
 
     Ast_node* root = NULL;
@@ -889,7 +889,7 @@ void test_compile_character_type_word()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\w");
 
     Ast_node* root = NULL;
@@ -908,7 +908,7 @@ void test_compile_character_type_word_opposite()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\W");
 
     Ast_node* root = NULL;
@@ -927,7 +927,7 @@ void test_compile_character_type_digit()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\d");
 
     Ast_node* root = NULL;
@@ -946,7 +946,7 @@ void test_compile_character_type_digit_opposite()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\D");
 
     Ast_node* root = NULL;
@@ -965,7 +965,7 @@ void test_compile_character_type_space()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\s");
 
     Ast_node* root = NULL;
@@ -984,7 +984,7 @@ void test_compile_character_type_space_opposite()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\S");
 
     Ast_node* root = NULL;
@@ -1003,7 +1003,7 @@ void test_compile_character_type_newline_opposite()
 {
     test_name(__func__);
 
-    struct compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, "\\N");
 
     Ast_node* root = NULL;

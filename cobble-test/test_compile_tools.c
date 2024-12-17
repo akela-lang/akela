@@ -9,7 +9,7 @@
 #include "cobble/Ast_node.h"
 #include "zinc/input_unicode_string.h"
 
-void setup_compile(struct compile_data** cd, const char* s)
+void setup_compile(Compile_data** cd, const char* s)
 {
     Vector* text = NULL;
     VectorCreate(&text, sizeof(char));
@@ -21,16 +21,18 @@ void setup_compile(struct compile_data** cd, const char* s)
     malloc_safe((void**)&el, sizeof(struct error_list));
     error_list_init(el);
 
-    malloc_safe((void**)cd, sizeof(struct compile_data));
+    malloc_safe((void**)cd, sizeof(struct Compile_data));
     compile_data_init(*cd, input, input->input_vtable, el);
 }
 
-void teardown_compile(struct compile_data* cd, Ast_node* root)
+void teardown_compile(Compile_data* cd, Ast_node* root)
 {
     InputUnicodeString* input = cd->input_obj;
     VectorDestroy(input->text);
+    free(input->text);
     error_list_destroy(cd->el);
     free(cd->el);
     free(cd->lookahead);
     Ast_node_destroy(root);
+    free(cd);
 }

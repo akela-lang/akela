@@ -743,9 +743,10 @@ void re_match_run_character_class(Stack_node* sn)
 
     Ast_node* p = task->n->head;
     while (p && !task->matched) {
-        re_match_add_task(p, task->start_slice, sn->mts, task, sn);
+        Match_task* child = re_match_add_task(p, task->start_slice, sn->mts, task, sn);
         re_match_run_dispatch(sn);
-        Remove_finished_task(sn->mts, sn->mts->top);
+        Remove_finished_task(sn->mts, child);
+        Cleanup_finished_task(child);
         p = p->next;
     }
 
@@ -778,7 +779,8 @@ void re_match_run_character_class_opposite(Stack_node* sn)
         Match_task* child = re_match_add_task(p, task->start_slice, sn->mts, task, sn);
         child->opposite = true;
         re_match_run_dispatch(sn);
-        Remove_finished_task(sn->mts, sn->mts->top);
+        Remove_finished_task(sn->mts, child);
+        Cleanup_finished_task(child);
         p = p->next;
     }
 
