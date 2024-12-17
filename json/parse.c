@@ -26,6 +26,10 @@ Json_dom* Json_parse(Json_parse_data* pd)
             Json_token_type_name(pd->lookahead->type));
     }
 
+    Json_token_destroy(pd->lookahead);
+    free(pd->lookahead);
+    pd->lookahead = NULL;
+
     return root;
 }
 
