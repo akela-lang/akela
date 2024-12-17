@@ -1,3 +1,1 @@
 # JSON Todo
-* stringify
-  * object

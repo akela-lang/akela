@@ -79,8 +79,15 @@ void Json_dom_destroy(Json_dom* dom)
     free(dom);
 }
 
-void Json_dom_add(Json_dom* p, Json_dom* c)
+/**
+ * Add an array element to the JSON DOM
+ * @param p parent
+ * @param c child
+ */
+void Json_dom_add_element(Json_dom* p, Json_dom* c)
 {
+    assert(p->type == Json_dom_type_array);
+
     if (p->head && p->tail) {
         p->tail->next = c;
         c->prev = p->tail;
@@ -95,4 +102,29 @@ void Json_dom_add(Json_dom* p, Json_dom* c)
     }
 
     Json_location_combine(&p->loc, &c->loc);
+}
+
+Json_dom* Json_dom_get_element(Json_dom* dom, size_t index)
+{
+    size_t i = 0;
+    Json_dom* p = dom->head;
+    while (p) {
+        if (i == index) return p;
+        p = p->next;
+        i++;
+    }
+
+    return NULL;
+}
+
+void Json_dom_add_property(Json_dom* dom, struct buffer* name, Json_dom* value)
+{
+    assert(dom->type == Json_dom_type_object);
+    hash_table_add(&dom->value.object, name, value);
+}
+
+Json_dom* Json_dom_get_property(Json_dom* dom, struct buffer* name)
+{
+    assert(dom->type == Json_dom_type_object);
+    return hash_table_get(&dom->value.object, name);
 }

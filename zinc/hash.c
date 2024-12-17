@@ -89,6 +89,17 @@ void hash_table_map(struct hash_table* ht, hash_table_func f)
     }
 }
 
+void hash_table_map_name(struct hash_table* ht, hash_table_func_name f)
+{
+    for (int i = 0; i < ht->size; i++) {
+        struct hash_entry* p = ht->buckets[i].head;
+        while (p) {
+            f(&p->value, p->item);
+            p = p->next;
+        }
+    }
+}
+
 /* assume entry is not in table so call hash_table_get before if not sure */
 void hash_table_add(struct hash_table* ht, struct buffer* value, void* item)
 {

@@ -8,6 +8,7 @@ void test_dom_add()
 
     Json_dom* root = NULL;
     Json_dom_create(&root);
+    Json_dom_set_type(root, Json_dom_type_array);
 
     Json_dom* a = NULL;
     Json_dom_create(&a);
@@ -21,9 +22,9 @@ void test_dom_add()
     Json_dom_create(&c);
     Json_dom_set_type(c, Json_dom_type_object);
 
-    Json_dom_add(root, a);
-    Json_dom_add(root, b);
-    Json_dom_add(root, c);
+    Json_dom_add_element(root, a);
+    Json_dom_add_element(root, b);
+    Json_dom_add_element(root, c);
 
     expect_ptr_equal(root->head, a, "head root");
     expect_ptr_equal(a->prev, NULL, "prev a");

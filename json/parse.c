@@ -187,7 +187,7 @@ void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent)
 {
     Json_dom* a = Json_parse_value(pd);
     if (a) {
-        Json_dom_add(parent, a);
+        Json_dom_add_element(parent, a);
     } else {
         return;
     }
@@ -203,7 +203,7 @@ void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent)
 
         Json_dom* b = Json_parse_value(pd);
         if (b) {
-            Json_dom_add(parent, b);
+            Json_dom_add_element(parent, b);
         } else {
             error_list_set(pd->el, &pd->lookahead->loc, "expected value");
             parent->has_error = true;
