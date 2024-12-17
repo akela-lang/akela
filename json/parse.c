@@ -161,6 +161,9 @@ Json_dom* Json_parse_number(Json_parse_data* pd)
         assert(false && "invalid number type");
     }
 
+    Json_token_destroy(n);
+    free(n);
+
     return dom;
 }
 
@@ -282,6 +285,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
     }
 
     Json_token_destroy(s);
+    free(s);
 
     Json_get_lookahead(pd);
     while (pd->lookahead->type == Json_token_type_comma) {
@@ -318,6 +322,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
         }
 
         Json_token_destroy(s);
+        free(s);
         Json_get_lookahead(pd);
     }
 }

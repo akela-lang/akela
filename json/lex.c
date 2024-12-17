@@ -293,6 +293,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
         } else {
             if (done) {
                 error_list_set(jld->el, &loc, "unicode escape not finished");
+                buffer_destroy(&bf);
                 return;
             }
             if (is_hex_digit(c, num)) {
@@ -400,7 +401,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
         }
 
         if (num == 1 && isdigit(c[0])) {
-            if (first_digit == '0' && digit_count == 1) {
+            if (digit_count == 1 && first_digit == '0') {
                 t->value.size--;
                 first_digit = c[0];
                 digit_count--;

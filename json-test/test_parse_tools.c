@@ -22,6 +22,10 @@ void test_parse_setup(Json_parse_data* pd, char* text)
 
 void test_parse_destroy(Json_parse_data* pd)
 {
+    if (pd->lookahead) {
+        Json_token_destroy(pd->lookahead);
+        free(pd->lookahead);
+    }
     Json_lex_data* ld = pd->ld;
     struct error_list* el = pd->el;
     InputUnicodeString* input = ld->input_obj;

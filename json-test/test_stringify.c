@@ -27,6 +27,7 @@ void test_stringify_null()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_true()
@@ -51,6 +52,7 @@ void test_stringify_true()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_false()
@@ -75,6 +77,7 @@ void test_stringify_false()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_string()
@@ -100,6 +103,7 @@ void test_stringify_string()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_string2()
@@ -125,6 +129,7 @@ void test_stringify_string2()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_string3()
@@ -150,6 +155,7 @@ void test_stringify_string3()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_string4()
@@ -175,6 +181,7 @@ void test_stringify_string4()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_string_error_invalid_char()
@@ -202,6 +209,7 @@ void test_stringify_string_error_invalid_char()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_number_integer()
@@ -228,6 +236,7 @@ void test_stringify_number_integer()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_number_fraction()
@@ -254,6 +263,7 @@ void test_stringify_number_fraction()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_number_exponent()
@@ -280,6 +290,7 @@ void test_stringify_number_exponent()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_array_empty()
@@ -304,6 +315,7 @@ void test_stringify_array_empty()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_array_one()
@@ -335,6 +347,7 @@ void test_stringify_array_one()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_array2()
@@ -396,6 +409,7 @@ void test_stringify_array2()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_object_empty()
@@ -420,6 +434,7 @@ void test_stringify_object_empty()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_object_one()
@@ -457,6 +472,7 @@ void test_stringify_object_one()
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify_object_many()
@@ -520,9 +536,11 @@ void test_stringify_object_many()
 
     buffer_destroy(&name0);
     buffer_destroy(&name1);
+    buffer_destroy(&name2);
     buffer_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
+    free(el);
 }
 
 void test_stringify()
