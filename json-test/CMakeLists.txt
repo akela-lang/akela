@@ -9,3 +9,7 @@ set(json_test_sources
 )
 add_executable(json-test ${json_test_sources})
 target_link_libraries(json-test json ${coverage_lib})
+set_target_properties(json-test
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)

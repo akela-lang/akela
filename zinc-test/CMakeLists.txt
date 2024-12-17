@@ -24,7 +24,6 @@ set(SOURCE_FILES
 
 add_executable(zinc-test ${SOURCE_FILES})
 target_link_libraries(zinc-test zinc ${coverage_lib})
-
 set_target_properties(zinc-test
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin

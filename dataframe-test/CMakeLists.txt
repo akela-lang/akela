@@ -10,3 +10,7 @@ set(dataframe_test_files
 
 add_executable(dataframe-test ${dataframe_test_files})
 target_link_libraries(dataframe-test dataframe zinc ${coverage_lib})
+set_target_properties(dataframe-test
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)

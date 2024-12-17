@@ -36,6 +36,9 @@ and capable of robust software construction.
     cmake-build-debug/bin/zinc-test &&
     cmake-build-debug/bin/akela-test &&
     cmake-build-debug/bin/akela-llvm-test &&
+    cmake-build-debug/bin/dataframe-test &&
+    cmake-build-debug/bin/cobble-test &&
+    cmake-build-debug/bin/json-test &&
     rm -rf coverage &&
     mkdir -p coverage &&
     cd coverage &&
@@ -45,6 +48,12 @@ and capable of robust software construction.
     gcov ../cmake-build-debug/akela-llvm-test/CMakeFiles/akela-llvm-test.dir/*.gcda &&
     gcov ../cmake-build-debug/zinc/CMakeFiles/zinc.dir/*.gcda &&
     gcov ../cmake-build-debug/zinc-test/CMakeFiles/zinc-test.dir/*.gcda &&
+    gcov ../cmake-build-debug/cobble/CMakeFiles/cobble.dir/*.gcda &&
+    gcov ../cmake-build-debug/cobble-test/CMakeFiles/cobble-test.dir/*.gcda &&
+    gcov ../cmake-build-debug/dataframe/CMakeFiles/dataframe.dir/*.gcda &&
+    gcov ../cmake-build-debug/dataframe-test/CMakeFiles/dataframe-test.dir/*.gcda &&
+    gcov ../cmake-build-debug/json/CMakeFiles/json.dir/*.gcda &&
+    gcov ../cmake-build-debug/json-test/CMakeFiles/json-test.dir/*.gcda &&
     cd .. &&
     rm -rf cmake-build-debug &&
     cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja &&
