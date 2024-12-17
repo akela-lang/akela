@@ -15,6 +15,7 @@ void test_parse_string()
     expect_int_equal(dom->type, Json_dom_type_string, "type dom");
     expect_str(&dom->value.string, "hello", "string dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -29,6 +30,7 @@ void test_parse_string_escape()
     expect_int_equal(dom->type, Json_dom_type_string, "type dom");
     expect_str(&dom->value.string, "hello\tworld", "string dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -43,6 +45,7 @@ void test_parse_string_escape_unicode()
     expect_int_equal(dom->type, Json_dom_type_string, "type dom");
     expect_str(&dom->value.string, "a", "string dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -58,6 +61,7 @@ void test_parse_number_integer()
     expect_int_equal(dom->number_type, Json_dom_number_type_integer, "number_type dom");
     expect_long_long_equal(dom->value.integer, 30, "integer dom");
 
+     Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -73,6 +77,7 @@ void test_parse_number_fp()
     expect_int_equal(dom->number_type, Json_dom_number_type_fp, "number_type dom");
     expect_double_equal(dom->value.fp, 1.8, "fp dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -86,6 +91,7 @@ void test_parse_array_empty()
     expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_array, "type dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -105,6 +111,7 @@ void test_parse_array_one()
     expect_int_equal(a->number_type, Json_number_type_fp, "number_type a");
     expect_double_equal(a->value.fp, 1.2, "fp a");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -129,6 +136,7 @@ void test_parse_array_two()
     expect_int_equal(b->type, Json_dom_type_string, "type b");
     expect_str(&b->value.string, "hello", "string b");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -147,6 +155,7 @@ void test_parse_array_error_no_right_square_bracket()
     expect_size_t_equal(e->loc.line, 1, "end pos e");
     expect_size_t_equal(e->loc.col, 14, "end pos e");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -165,6 +174,7 @@ void test_parse_array_error_expected_value_after_comma()
     expect_size_t_equal(e->loc.line, 1, "end pos e");
     expect_size_t_equal(e->loc.col, 15, "end pos e");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -179,6 +189,7 @@ void test_parse_boolean_true()
     expect_int_equal(dom->type, Json_dom_type_boolean, "type dom");
     expect_true(dom->value.boolean, "boolean dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -193,6 +204,7 @@ void test_parse_boolean_false()
     expect_int_equal(dom->type, Json_dom_type_boolean, "type dom");
     expect_false(dom->value.boolean, "boolean dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -206,6 +218,7 @@ void test_parse_null()
     expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_null, "type dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -224,7 +237,7 @@ void test_parse_error_token()
     expect_size_t_equal(e->loc.line, 1, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
 
-
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -239,6 +252,7 @@ void test_parse_object_empty()
     assert_ptr(dom, "ptr dom");
     expect_int_equal(dom->type, Json_dom_type_object, "type dom");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -263,6 +277,7 @@ void test_parse_object_one_property()
     expect_int_equal(repeat->type, Json_dom_type_boolean, "type repeat");
     expect_true(repeat->value.boolean, "repeat");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -292,6 +307,7 @@ void test_parse_object_two_properties()
     expect_int_equal(last_name->type, Json_dom_type_string, "type last_name");
     expect_str(&last_name->value.string, "Smith", "str last_name");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 
@@ -328,6 +344,7 @@ void test_parse_object_three_properties()
     expect_int_equal(age->number_type, Json_dom_number_type_integer, "type age");
     expect_long_long_equal(age->value.integer, 31, "str age");
 
+    Json_dom_destroy(dom);
     test_parse_destroy(&pd);
 }
 

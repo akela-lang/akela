@@ -124,8 +124,20 @@ Json_dom* Json_parse_string(Json_parse_data* pd)
         assert(false && "not possible");
     }
     buffer_copy(&s->value, &dom->value.string);
+    Json_token_destroy(s);
+    free(s);
 
     return dom;
+}
+
+Json_token* Json_parse_string_token(Json_parse_data* pd, Json_dom* parent)
+{
+    Json_token* s = NULL;
+    if (!Json_match(pd, Json_token_type_string, &s, parent)) {
+        assert(false && "not possible");
+    }
+
+    return s;
 }
 
 Json_dom* Json_parse_number(Json_parse_data* pd)
@@ -251,10 +263,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
         return;
     }
 
-    Json_dom* string = Json_parse_string(pd);
-    if (!string) {
-        assert(false && "not possible");
-    }
+    Json_token* s = Json_parse_string_token(pd, parent);
 
     Json_token* colon = NULL;
     if (!Json_match(pd, Json_token_type_colon, &colon, parent)) {
@@ -266,11 +275,13 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
 
     Json_dom* value = Json_parse_value(pd);
     if (value) {
-        hash_table_add(&parent->value.object, &string->value.string, value);
+        hash_table_add(&parent->value.object, &s->value, value);
     } else {
         error_list_set(pd->el, &pd->lookahead->loc, "expected value");
         parent->has_error = true;
     }
+
+    Json_token_destroy(s);
 
     Json_get_lookahead(pd);
     while (pd->lookahead->type == Json_token_type_comma) {
@@ -288,10 +299,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
             continue;
         }
 
-        string = Json_parse_string(pd);
-        if (!string) {
-            assert(false && "not possible");
-        }
+        s = Json_parse_string_token(pd, parent);
 
         colon = NULL;
         if (!Json_match(pd, Json_token_type_colon, &colon, parent)) {
@@ -303,12 +311,13 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
 
         value = Json_parse_value(pd);
         if (value) {
-            hash_table_add(&parent->value.object, &string->value.string, value);
+            hash_table_add(&parent->value.object, &s->value, value);
         } else {
             error_list_set(pd->el, &pd->lookahead->loc, "expected value");
             parent->has_error = true;
         }
 
+        Json_token_destroy(s);
         Json_get_lookahead(pd);
     }
 }

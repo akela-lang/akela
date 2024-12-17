@@ -8,38 +8,29 @@
 #include "token.h"
 
 enum result Json_lex_data_init(
-    Json_lex_data* jld,
+    Json_lex_data* ld,
     struct error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable)
 {
-    jld->el = el;
-    jld->input_obj = input_obj;
-    jld->input_vtable = input_vtable;
-
-    UErrorCode status = U_ZERO_ERROR;
-    jld->conv = ucnv_open("utf8", &status);
-    if (status != U_ZERO_ERROR) {
-        set_error("ucnv_open() failed with error code: %s", u_errorName(status));
-        return result_error;
-    }
-
+    ld->el = el;
+    ld->input_obj = input_obj;
+    ld->input_vtable = input_vtable;
     return result_ok;
 }
 
 void Json_lex_data_create(
-    Json_lex_data** jld,
+    Json_lex_data** ld,
     struct error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable)
 {
-    malloc_safe((void**)jld, sizeof(Json_lex_data));
-    Json_lex_data_init(*jld, el, input_obj, input_vtable);
+    malloc_safe((void**)ld, sizeof(Json_lex_data));
+    Json_lex_data_init(*ld, el, input_obj, input_vtable);
 }
 
-void Json_lex_data_destroy(Json_lex_data* jld)
+void Json_lex_data_destroy(Json_lex_data* ld)
 {
-    ucnv_close(jld->conv);
 }
 
 enum result Json_convert_slice(String_slice slice, UChar32* c)

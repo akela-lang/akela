@@ -15,16 +15,15 @@ typedef struct Json_lex_data {
     struct error_list* el;
     void* input_obj;
     InputUnicodeVTable* input_vtable;
-    UConverter* conv;
 } Json_lex_data;
 
 enum result Json_lex_data_init(
-    Json_lex_data* jld,
+    Json_lex_data* ld,
     struct error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable);
 void Json_lex_data_create(
-    Json_lex_data** jld,
+    Json_lex_data** ld,
     struct error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable);

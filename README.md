@@ -28,6 +28,9 @@ and capable of robust software construction.
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/zinc-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-llvm-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/dataframe-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/cobble-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/json-test
 
 ## Coverage
     rm -rf cmake-build-debug &&
