@@ -8,8 +8,4 @@ set (cobble_files
         match_tools.c
 )
 add_library(cobble ${cobble_files})
-if (${ICU_LIB} MATCHES ENABLE)
-    target_link_libraries(cobble json zinc icudata icui18n icuio icutu icuuc)
-else()
-    target_link_libraries(cobble json zinc)
-endif()
+target_link_libraries(cobble json zinc icudata icui18n icuio icutu icuuc)

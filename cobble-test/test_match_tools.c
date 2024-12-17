@@ -86,6 +86,7 @@ void test_match_tools_stack_list_remove_middle()
     expect_ptr_equal(sn1->prev, NULL, "prev sn1");
     expect_ptr_equal(sn1->next, NULL, "next sn1");
 
+    Stack_node_destroy(sn1);
     Stack_list_destroy(sl);
 }
 
@@ -130,6 +131,7 @@ void test_match_tools_stack_list_remove_head()
     expect_ptr_equal(sn0->prev, NULL, "prev sn0");
     expect_ptr_equal(sn0->next, NULL, "next sn0");
 
+    Stack_node_destroy(sn0);
     Stack_list_destroy(sl);
 }
 
@@ -174,6 +176,7 @@ void test_match_tools_stack_list_remove_tail()
     expect_ptr_equal(sn2->prev, NULL, "prev sn2");
     expect_ptr_equal(sn2->next, NULL, "next sn2");
 
+    Stack_node_destroy(sn2);
     Stack_list_destroy(sl);
 }
 
@@ -202,6 +205,7 @@ void test_match_tools_stack_list_remove_single()
     expect_ptr_equal(sn0->prev, NULL, "prev sn0");
     expect_ptr_equal(sn0->next, NULL, "next sn0");
 
+    Stack_node_destroy(sn0);
     Stack_list_destroy(sl);
 }
 
@@ -256,8 +260,10 @@ void test_match_tools_clone()
     expect_ptr_equal(new_mt3->parent, new_mt1, "parent new_mt3");
 
     Match_task_stack_destroy(mts);
+    Match_task_stack_destroy(new_mts);
     buffer_destroy(bf);
     free(bf);
+    hash_table_destroy(&ht);
 }
 
 void test_match_tools_stack_node_clone()

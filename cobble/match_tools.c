@@ -368,7 +368,3 @@ void Stack_list_destroy(Stack_list* sl)
 
     free(sl);
 }
-
-#ifdef ICU_LIB
-
-#endif

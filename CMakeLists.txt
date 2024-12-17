@@ -61,44 +61,41 @@ if(${COVERAGE} MATCHES On)
         set(coverage_lib gcov)
 endif()
 
-if (${ICU_LIB} MATCHES ENABLED)
-        add_compile_definitions(ICU_LIB)
-        if (${ICU_LIB_DIR})
-                if (${ICU_LIB_TYPE} MATCHES SHARED)
-                        add_library(icudata SHARED IMPORTED)
-                        add_library(icui18n SHARED IMPORTED)
-                        add_library(icuio SHARED IMPORTED)
-                        add_library(icutu SHARED IMPORTED)
-                        add_library(icuuc SHARED IMPORTED)
-                        set(ICU_LIB_EXT "so")
-                elseif(${ICU_LIB_TYPE} MATCHES STATIC)
-                        add_library(icudata STATIC IMPORTED)
-                        add_library(icui18n STATIC IMPORTED)
-                        add_library(icuio STATIC IMPORTED)
-                        add_library(icutu STATIC IMPORTED)
-                        add_library(icuuc STATIC IMPORTED)
-                        set(ICU_LIB_EXT "a")
-                else()
-                        add_library(icudata STATIC IMPORTED)
-                        add_library(icui18n STATIC IMPORTED)
-                        add_library(icuio STATIC IMPORTED)
-                        add_library(icutu STATIC IMPORTED)
-                        add_library(icuuc STATIC IMPORTED)
-                        set(ICU_LIB_EXT "a")
-                endif()
-
-                set_target_properties(icu PROPERTIES
-                        IMPORTED_LOCATION ${ICU_LIB_DIR}/icudata.${ICU_LIB_EXT}
-                        IMPORTED_LOCATION ${ICU_LIB_DIR}/icui18n.${ICU_LIB_EXT}
-                        IMPORTED_LOCATION ${ICU_LIB_DIR}/icuio.${ICU_LIB_EXT}
-                        IMPORTED_LOCATION ${ICU_LIB_DIR}/icutu.${ICU_LIB_EXT}
-                        IMPORTED_LOCATION ${ICU_LIB_DIR}/icuuc.${ICU_LIB_EXT}
-                )
+if (${ICU_LIB_DIR})
+        if (${ICU_LIB_TYPE} MATCHES SHARED)
+                add_library(icudata SHARED IMPORTED)
+                add_library(icui18n SHARED IMPORTED)
+                add_library(icuio SHARED IMPORTED)
+                add_library(icutu SHARED IMPORTED)
+                add_library(icuuc SHARED IMPORTED)
+                set(ICU_LIB_EXT "so")
+        elseif(${ICU_LIB_TYPE} MATCHES STATIC)
+                add_library(icudata STATIC IMPORTED)
+                add_library(icui18n STATIC IMPORTED)
+                add_library(icuio STATIC IMPORTED)
+                add_library(icutu STATIC IMPORTED)
+                add_library(icuuc STATIC IMPORTED)
+                set(ICU_LIB_EXT "a")
+        else()
+                add_library(icudata STATIC IMPORTED)
+                add_library(icui18n STATIC IMPORTED)
+                add_library(icuio STATIC IMPORTED)
+                add_library(icutu STATIC IMPORTED)
+                add_library(icuuc STATIC IMPORTED)
+                set(ICU_LIB_EXT "a")
         endif()
 
-        if (${ICU_INCLUDE_DIR})
-                include_directories(${ICU_INCLUDE_DIR})
-        endif()
+        set_target_properties(icu PROPERTIES
+                IMPORTED_LOCATION ${ICU_LIB_DIR}/icudata.${ICU_LIB_EXT}
+                IMPORTED_LOCATION ${ICU_LIB_DIR}/icui18n.${ICU_LIB_EXT}
+                IMPORTED_LOCATION ${ICU_LIB_DIR}/icuio.${ICU_LIB_EXT}
+                IMPORTED_LOCATION ${ICU_LIB_DIR}/icutu.${ICU_LIB_EXT}
+                IMPORTED_LOCATION ${ICU_LIB_DIR}/icuuc.${ICU_LIB_EXT}
+        )
+endif()
+
+if (${ICU_INCLUDE_DIR})
+        include_directories(${ICU_INCLUDE_DIR})
 endif()
 
 # directories

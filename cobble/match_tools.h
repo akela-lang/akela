@@ -8,7 +8,6 @@
 #include "zinc/hash_map_size_t.h"
 #include <stdlib.h>
 #include "zinc/String_slice.h"
-#ifdef ICU_LIB
 #include <unicode/uchar.h>
 #include <unicode/locid.h>
 #include <unicode/stringoptions.h>
@@ -16,7 +15,6 @@
 #include <unicode/ustream.h>
 #include <unicode/ustring.h>
 #include <unicode/ucnv.h>
-#endif
 
 typedef enum Match_task_status {
     Match_task_initial,
@@ -86,8 +84,6 @@ size_t Stack_list_next_priority(Stack_list* sl);
 void Stack_list_remove(Stack_list* sl, Stack_node* sn);
 void Stack_list_destroy(Stack_list* sl);
 
-#ifdef ICU_LIB
 enum result match_convert_char(String_slice slice, UChar32* c);
-#endif
 
 #endif

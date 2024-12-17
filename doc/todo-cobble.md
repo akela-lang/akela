@@ -1,6 +1,5 @@
 # Cobble Todo
 * create converter once
-* require icu library
 * JSON compile tests
 * JSON match tests
 * performance testing
