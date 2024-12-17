@@ -1,9 +1,4 @@
-//
-// Created by miguel on 6/6/23.
-//
-
 #include <string.h>
-
 #include "cobble/compile_data.h"
 #include "zinc/memory.h"
 #include "cobble/Ast_node.h"
@@ -30,6 +25,7 @@ void teardown_compile(Compile_data* cd, Ast_node* root)
     InputUnicodeString* input = cd->input_obj;
     VectorDestroy(input->text);
     free(input->text);
+    free(input);
     error_list_destroy(cd->el);
     free(cd->el);
     free(cd->lookahead);

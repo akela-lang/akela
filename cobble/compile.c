@@ -287,18 +287,19 @@ Ast_node* parse_group(struct Compile_data* cd)
         if (!match(cd, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
             assert(false && "not possible");
         }
+        free(lsb);
 
         get_lookahead(cd);
         if (cd->lookahead->type == token_caret) {
             n->type = Ast_type_character_class_opposite;
-            if (!match(cd, token_caret, "expected caret", &lsb, n)) {
+            struct token* caret = NULL;
+            if (!match(cd, token_caret, "expected caret", &caret, n)) {
                 assert(false && "not possible");
             }
+            free(caret);
         } else {
             n->type = Ast_type_character_class;
         }
-
-        free(lsb);
 
         parse_seq(cd, n);
 
@@ -393,6 +394,7 @@ Ast_node* parse_char(struct Compile_data* cd, bool strict)
         if (strict) {
             error_list_set(cd->el, &wc->loc, "unexpected wildcard");
             n->type = Ast_type_error;
+            free(wc);
             return n;
         }
         free(wc);
@@ -408,6 +410,7 @@ Ast_node* parse_char(struct Compile_data* cd, bool strict)
         if (strict) {
             error_list_set(cd->el, &begin->loc, "unexpected begin");
             n->type = Ast_type_error;
+            free(begin);
             return n;
         }
         free(begin);
@@ -423,6 +426,7 @@ Ast_node* parse_char(struct Compile_data* cd, bool strict)
         if (strict) {
             error_list_set(cd->el, &end->loc, "unexpected end");
             n->type = Ast_type_error;
+            free(end);
             return n;
         }
         free(end);

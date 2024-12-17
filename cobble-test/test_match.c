@@ -26,6 +26,7 @@ bool match_run(char* pattern, char* text, struct buffer_list** groups)
 void match_teardown(struct buffer_list* groups)
 {
     buffer_list_destroy(groups);
+    free(groups);
 }
 
 void test_match_empty()
@@ -1251,9 +1252,7 @@ void test_match()
     test_match_character_type_word5();
     test_match_character_type_word6();
     test_match_character_type_word7();
-#ifdef ICU_LIB
     test_match_character_type_word_unicode();
-#endif
     test_match_character_type_word_not_match();
 
     test_match_character_type_word_opposite();
@@ -1262,18 +1261,14 @@ void test_match()
     test_match_character_type_digit();
     test_match_character_type_digit2();
     test_match_character_type_digit3();
-#ifdef ICU_LIB
     test_match_character_type_digit_unicode();
-#endif
     test_match_character_type_digit_not_match();
 
     test_match_character_type_digit_opposite();
     test_match_character_type_digit_opposite_not_match();
 
     test_match_character_type_space();
-#ifdef ICU_LIB
     test_match_character_type_space_unicode();
-#endif
     test_match_character_type_space_not_match();
 
     test_match_character_type_space_opposite();

@@ -117,12 +117,6 @@ Stack_list* Init_stacks(Ast_node* root, String_slice slice)
     Match_task_stack* mts = NULL;
     Match_task_stack_create(&mts, NULL);
 
-    Match_task_stack* finished = NULL;
-    Match_task_stack_create(&finished, NULL);
-
-    struct list* group_tasks = NULL;
-    list_create(&group_tasks);
-
     Stack_node* sn = NULL;
     Stack_node_create(&sn);
     sn->mts = mts;
@@ -200,7 +194,7 @@ void re_match_run_dispatch(Stack_node* sn)
         if (task->n->is_root) {
             struct buffer* bf = NULL;
             buffer_create(&bf);
-            Hash_map_size_t_add(&sn->groups, task->n->group, bf);
+            Hash_map_size_t_add(&sn->groups, 0, bf);
         }
 
         if (task->n->is_group) {
