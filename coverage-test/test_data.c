@@ -34,7 +34,41 @@ void test_data_file_list()
     free(list);
 }
 
+void test_data_library()
+{
+    test_name(__func__);
+
+    Cov_library* lib0 = NULL;
+    Cov_library_create(&lib0);
+
+    Cov_library* lib1 = NULL;
+    Cov_library_create(&lib1);
+
+    Cov_library* lib2 = NULL;
+    Cov_library_create(&lib2);
+
+    Cov_library_list* list = NULL;
+    Cov_library_list_create(&list);
+
+    Cov_library_list_add(list, lib0);
+    Cov_library_list_add(list, lib1);
+    Cov_library_list_add(list, lib2);
+
+    expect_ptr_equal(list->head, lib0, "head list");
+    expect_ptr_equal(lib0->prev, NULL, "prev lib0");
+    expect_ptr_equal(lib0->next, lib1, "next lib0");
+    expect_ptr_equal(lib1->prev, lib0, "prev lib1");
+    expect_ptr_equal(lib1->next, lib2, "next lib1");
+    expect_ptr_equal(lib2->prev, lib1, "prev lib2");
+    expect_ptr_equal(lib2->next, NULL, "next lib2");
+    expect_ptr_equal(list->tail, lib2, "tail list");
+
+    Cov_library_list_destroy(list);
+    free(list);
+}
+
 void test_data()
 {
     test_data_file_list();
+    test_data_library();
 }
