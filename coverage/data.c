@@ -23,24 +23,37 @@ void Cov_file_destroy(Cov_file *file)
     buffer_destroy(&file->path);
 }
 
-void Cov_file_list_init(Cov_file_list *file_list)
+void Cov_file_list_init(Cov_file_list *list)
 {
-    file_list->head = NULL;
-    file_list->tail = NULL;
+    list->head = NULL;
+    list->tail = NULL;
 }
 
-void Cov_file_list_create(Cov_file_list **file_list)
+void Cov_file_list_create(Cov_file_list **list)
 {
-    malloc_safe((void**)file_list, sizeof(Cov_file_list));
-    Cov_file_list_init(*file_list);
+    malloc_safe((void**)list, sizeof(Cov_file_list));
+    Cov_file_list_init(*list);
 }
 
-void Cov_file_list_add(Cov_file_list* file_list, Cov_file *file)
+void Cov_file_list_add(Cov_file_list* list, Cov_file *file)
 {
-
+    if (list->head && list->tail) {
+        list->tail->next = file;
+        file->prev = list->tail;
+        list->tail = file;
+    } else {
+        list->head = file;
+        list->tail = file;
+    }
 }
 
-void Cov_file_list_destroy(Cov_file_list *file_list)
+void Cov_file_list_destroy(Cov_file_list *list)
 {
-
+    Cov_file *file = list->head;
+    while (file) {
+        Cov_file* temp = file;
+        file = file->next;
+        Cov_file_destroy(temp);
+        free(temp);
+    }
 }

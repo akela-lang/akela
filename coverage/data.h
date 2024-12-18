@@ -37,4 +37,12 @@ typedef struct Cov_app {
     Cov_library_list libraries;
 } Cov_app;
 
+void Cov_file_init(Cov_file *file);
+void Cov_file_create(Cov_file **file);
+void Cov_file_destroy(Cov_file *file);
+void Cov_file_list_init(Cov_file_list *list);
+void Cov_file_list_create(Cov_file_list **list);
+void Cov_file_list_add(Cov_file_list* list, Cov_file *file);
+void Cov_file_list_destroy(Cov_file_list *list);
+
 #endif

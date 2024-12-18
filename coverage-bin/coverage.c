@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include "zinc/buffer_list.h"
 #include "zinc/result.h"
-#include "data.h"
+#include "coverage/data.h"
 
 void Cov_cwd()
 {
