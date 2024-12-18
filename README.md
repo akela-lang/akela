@@ -20,6 +20,10 @@ and capable of robust software construction.
     cmake-build-debug/bin/zinc-test
     cmake-build-debug/bin/akela-test
     cmake-build-debug/bin/akela-llvm-test
+    cmake-build-debug/bin/dataframe-test
+    cmake-build-debug/bin/cobble-test
+    cmake-build-debug/bin/json-test
+    cmake-build-debug/bin/coverage-test
 
 ## Run JIT on file
     cmake-build-debug/bin/akela examples/addition.akela
@@ -31,6 +35,7 @@ and capable of robust software construction.
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/dataframe-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/cobble-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/json-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/coverage-test
 
 ## Coverage
     ./generate-coverage.sh
@@ -39,13 +44,3 @@ and capable of robust software construction.
     rm -r cmake-build-debug
     cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja
     ninja -C cmake-build-debug
-
-## Optional LLVM targets
-	ninja -C build-release clang -j 8
-	ninja -C build-release Kaleidoscope -j 8
-
-## LLVM Debug
-    cmake -S llvm -B build-debug -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Debug -G Ninja
-	ninja -C build-debug check-llvm -j 2
-	ninja -C build-debug clang -j 2
-	ninja -C build-debug Kaleidoscope -j 2
