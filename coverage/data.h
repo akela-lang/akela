@@ -3,38 +3,38 @@
 
 #include "zinc/buffer.h"
 
-typedef struct Coverage_file {
+typedef struct Cov_file {
     struct buffer path;
     size_t number_of_lines;
     size_t number_covered;
     size_t number_not_covered;
     double coverage_percentage;
-    struct Coverage_file* next;
-    struct Coverage_file* prev;
-} Coverage_file;
+    struct Cov_file* next;
+    struct Cov_file* prev;
+} Cov_file;
 
-typedef struct Coverage_file_list {
-    Coverage_file* head;
-    Coverage_file* tail;
-} Coverage_file_list;
+typedef struct Cov_file_list {
+    Cov_file* head;
+    Cov_file* tail;
+} Cov_file_list;
 
-typedef struct Coverage_library {
+typedef struct Cov_library {
     struct buffer name;
     struct buffer path;
-    Coverage_file_list coverage_files;
-    struct Coverage_library* next;
-    struct Coverage_library* prev;
-} Coverage_library;
+    Cov_file_list coverage_files;
+    struct Cov_library* next;
+    struct Cov_library* prev;
+} Cov_library;
 
-typedef struct Coverage_library_list
+typedef struct Cov_library_list
 {
-    Coverage_library* head;
-    Coverage_library* tail;
-} Coverage_library_list;
+    Cov_library* head;
+    Cov_library* tail;
+} Cov_library_list;
 
-typedef struct Coverage_app {
+typedef struct Cov_app {
     struct buffer data_path;
-    Coverage_library_list libraries;
-} Coverage_app;
+    Cov_library_list libraries;
+} Cov_app;
 
 #endif
