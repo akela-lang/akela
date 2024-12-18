@@ -1,0 +1,1073 @@
+        -:    0:Source:/home/miguel/workspace/trade/akela/json-test/test_lex.c
+        -:    1:#include <zinc/error_unit_test.h>
+        -:    2:#include <zinc/utf8.h>
+        -:    3:
+        -:    4:#include "test_lex_tools.h"
+        -:    5:#include "zinc/unit_test.h"
+        -:    6:#include "json/lex.h"
+        -:    7:#include "zinc/unicode.h"
+        -:    8:
+        1:    9:void test_lex_string()
+        -:   10:{
+        1:   11:    test_name(__func__);
+        -:   12:    Json_lex_data ld;
+        1:   13:    test_lex_setup(&ld, "\"hello\"");
+        -:   14:
+        1:   15:    Json_token* token = Json_lex(&ld);
+        1:   16:    expect_no_errors(ld.el);
+        1:   17:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:   18:    expect_str(&token->value, "hello", "value token");
+        1:   19:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:   20:    expect_size_t_equal(token->loc.end_pos, 7, "end pos token");
+        1:   21:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:   22:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:   23:
+        1:   24:    Json_token_destroy(token);
+        1:   25:    free(token);
+        1:   26:    test_lex_teardown(&ld);
+        1:   27:}
+        -:   28:
+        1:   29:void test_lex_string_escape_backslash()
+        -:   30:{
+        1:   31:    test_name(__func__);
+        -:   32:    Json_lex_data ld;
+        1:   33:    test_lex_setup(&ld, "\" \\\\ \"");
+        -:   34:
+        1:   35:    Json_token* token = Json_lex(&ld);
+        1:   36:    expect_no_errors(ld.el);
+        1:   37:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:   38:    expect_str(&token->value, " \\ ", "value token");
+        1:   39:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:   40:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:   41:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:   42:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:   43:
+        1:   44:    Json_token_destroy(token);
+        1:   45:    free(token);
+        1:   46:    test_lex_teardown(&ld);
+        1:   47:}
+        -:   48:
+        1:   49:void test_lex_string_escape_slash()
+        -:   50:{
+        1:   51:    test_name(__func__);
+        -:   52:    Json_lex_data ld;
+        1:   53:    test_lex_setup(&ld, "\" \\/ \"");
+        -:   54:
+        1:   55:    Json_token* token = Json_lex(&ld);
+        1:   56:    expect_no_errors(ld.el);
+        1:   57:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:   58:    expect_str(&token->value, " / ", "value token");
+        1:   59:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:   60:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:   61:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:   62:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:   63:
+        1:   64:    Json_token_destroy(token);
+        1:   65:    free(token);
+        1:   66:    test_lex_teardown(&ld);
+        1:   67:}
+        -:   68:
+        1:   69:void test_lex_string_escape_backspace()
+        -:   70:{
+        1:   71:    test_name(__func__);
+        -:   72:    Json_lex_data ld;
+        1:   73:    test_lex_setup(&ld, "\" \\b \"");
+        -:   74:
+        1:   75:    Json_token* token = Json_lex(&ld);
+        1:   76:    expect_no_errors(ld.el);
+        1:   77:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:   78:    expect_str(&token->value, " \b ", "value token");
+        1:   79:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:   80:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:   81:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:   82:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:   83:
+        1:   84:    Json_token_destroy(token);
+        1:   85:    free(token);
+        1:   86:    test_lex_teardown(&ld);
+        1:   87:}
+        -:   88:
+        1:   89:void test_lex_string_escape_form_feed()
+        -:   90:{
+        1:   91:    test_name(__func__);
+        -:   92:    Json_lex_data ld;
+        1:   93:    test_lex_setup(&ld, "\" \\f \"");
+        -:   94:
+        1:   95:    Json_token* token = Json_lex(&ld);
+        1:   96:    expect_no_errors(ld.el);
+        1:   97:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:   98:    expect_str(&token->value, " \f ", "value token");
+        1:   99:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  100:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:  101:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  102:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  103:
+        1:  104:    Json_token_destroy(token);
+        1:  105:    free(token);
+        1:  106:    test_lex_teardown(&ld);
+        1:  107:}
+        -:  108:
+        1:  109:void test_lex_string_escape_newline()
+        -:  110:{
+        1:  111:    test_name(__func__);
+        -:  112:    Json_lex_data ld;
+        1:  113:    test_lex_setup(&ld, "\" \\n \"");
+        -:  114:
+        1:  115:    Json_token* token = Json_lex(&ld);
+        1:  116:    expect_no_errors(ld.el);
+        1:  117:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  118:    expect_str(&token->value, " \n ", "value token");
+        1:  119:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  120:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:  121:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  122:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  123:
+        1:  124:    Json_token_destroy(token);
+        1:  125:    free(token);
+        1:  126:    test_lex_teardown(&ld);
+        1:  127:}
+        -:  128:
+        1:  129:void test_lex_string_escape_carriage_return()
+        -:  130:{
+        1:  131:    test_name(__func__);
+        -:  132:    Json_lex_data ld;
+        1:  133:    test_lex_setup(&ld, "\" \\r \"");
+        -:  134:
+        1:  135:    Json_token* token = Json_lex(&ld);
+        1:  136:    expect_no_errors(ld.el);
+        1:  137:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  138:    expect_str(&token->value, " \r ", "value token");
+        1:  139:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  140:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:  141:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  142:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  143:
+        1:  144:    Json_token_destroy(token);
+        1:  145:    free(token);
+        1:  146:    test_lex_teardown(&ld);
+        1:  147:}
+        -:  148:
+        1:  149:void test_lex_string_escape_tab()
+        -:  150:{
+        1:  151:    test_name(__func__);
+        -:  152:    Json_lex_data ld;
+        1:  153:    test_lex_setup(&ld, "\" \\t \"");
+        -:  154:
+        1:  155:    Json_token* token = Json_lex(&ld);
+        1:  156:    expect_no_errors(ld.el);
+        1:  157:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  158:    expect_str(&token->value, " \t ", "value token");
+        1:  159:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  160:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:  161:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  162:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  163:
+        1:  164:    Json_token_destroy(token);
+        1:  165:    free(token);
+        1:  166:    test_lex_teardown(&ld);
+        1:  167:}
+        -:  168:
+        1:  169:void test_lex_string_escape_unicode()
+        -:  170:{
+        1:  171:    test_name(__func__);
+        -:  172:    Json_lex_data ld;
+        1:  173:    test_lex_setup(&ld, "\" \\u0391 \"");
+        -:  174:
+        1:  175:    Json_token* token = Json_lex(&ld);
+        1:  176:    expect_no_errors(ld.el);
+        1:  177:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  178:    expect_str(&token->value, " Α ", "value token");
+        1:  179:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  180:    expect_size_t_equal(token->loc.end_pos, 10, "end pos token");
+        1:  181:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  182:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  183:
+        1:  184:    Json_token_destroy(token);
+        1:  185:    free(token);
+        1:  186:    test_lex_teardown(&ld);
+        1:  187:}
+        -:  188:
+        1:  189:void test_lex_start_error_multibyte()
+        -:  190:{
+        1:  191:    test_name(__func__);
+        -:  192:    Json_lex_data ld;
+        1:  193:    test_lex_setup(&ld, "θ");
+        -:  194:
+        1:  195:    Json_token* token = Json_lex(&ld);
+        1:  196:    expect_has_errors(ld.el);
+        1:  197:    struct error* e = expect_source_error(ld.el, "invalid character: θ");
+        1:  198:    expect_int_equal(token->type, Json_token_type_eof, "type token");
+        1:  199:    expect_str(&token->value, "", "value token");
+        1:  200:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  201:    expect_size_t_equal(e->loc.end_pos, 2, "end pos token");
+        1:  202:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  203:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  204:
+        1:  205:    Json_token_destroy(token);
+        1:  206:    free(token);
+        1:  207:    test_lex_teardown(&ld);
+        1:  208:}
+        -:  209:
+        1:  210:void test_lex_start_error_single_byte()
+        -:  211:{
+        1:  212:    test_name(__func__);
+        -:  213:    Json_lex_data ld;
+        1:  214:    test_lex_setup(&ld, "|");
+        -:  215:
+        1:  216:    Json_token* token = Json_lex(&ld);
+        1:  217:    expect_has_errors(ld.el);
+        1:  218:    struct error* e = expect_source_error(ld.el, "invalid character: |");
+        1:  219:    expect_int_equal(token->type, Json_token_type_eof, "type token");
+        1:  220:    expect_str(&token->value, "", "value token");
+        1:  221:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  222:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  223:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  224:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  225:
+        1:  226:    Json_token_destroy(token);
+        1:  227:    free(token);
+        1:  228:    test_lex_teardown(&ld);
+        1:  229:}
+        -:  230:
+        1:  231:void test_lex_string_error_missing_escape_character()
+        -:  232:{
+        1:  233:    test_name(__func__);
+        -:  234:    Json_lex_data ld;
+        1:  235:    test_lex_setup(&ld, "\"\\");
+        -:  236:
+        1:  237:    Json_token* token = Json_lex(&ld);
+        1:  238:    expect_has_errors(ld.el);
+        1:  239:    struct error* e = expect_source_error(ld.el, "missing escape character");
+        1:  240:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  241:    expect_str(&token->value, "", "value token");
+        1:  242:    expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
+        1:  243:    expect_size_t_equal(e->loc.end_pos, 3, "end pos token");
+        1:  244:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  245:    expect_size_t_equal(e->loc.col, 3, "col token");
+        -:  246:
+        1:  247:    Json_token_destroy(token);
+        1:  248:    free(token);
+        1:  249:    test_lex_teardown(&ld);
+        1:  250:}
+        -:  251:
+        1:  252:void test_lex_string_error_invalid_escape_character_multibyte()
+        -:  253:{
+        1:  254:    test_name(__func__);
+        -:  255:    Json_lex_data ld;
+        1:  256:    test_lex_setup(&ld, "\"\\θ\"");
+        -:  257:
+        1:  258:    Json_token* token = Json_lex(&ld);
+        1:  259:    expect_has_errors(ld.el);
+        1:  260:    struct error* e = expect_source_error(ld.el, "invalid escape character: θ");
+        1:  261:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  262:    expect_str(&token->value, "", "value token");
+        1:  263:    expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
+        1:  264:    expect_size_t_equal(e->loc.end_pos, 4, "end pos token");
+        1:  265:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  266:    expect_size_t_equal(e->loc.col, 3, "col token");
+        -:  267:
+        1:  268:    Json_token_destroy(token);
+        1:  269:    free(token);
+        1:  270:    test_lex_teardown(&ld);
+        1:  271:}
+        -:  272:
+        1:  273:void test_lex_string_error_invalid_unicode_escape_not_finished()
+        -:  274:{
+        1:  275:    test_name(__func__);
+        -:  276:    Json_lex_data ld;
+        1:  277:    test_lex_setup(&ld, "\"\\u039");
+        -:  278:
+        1:  279:    Json_token* token = Json_lex(&ld);
+        1:  280:    expect_has_errors(ld.el);
+        1:  281:    struct error* e = expect_source_error(ld.el, "unicode escape not finished");
+        1:  282:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  283:    expect_str(&token->value, "", "value token");
+        1:  284:    expect_size_t_equal(e->loc.start_pos, 6, "start pos token");
+        1:  285:    expect_size_t_equal(e->loc.end_pos, 7, "end pos token");
+        1:  286:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  287:    expect_size_t_equal(e->loc.col, 7, "col token");
+        -:  288:
+        1:  289:    Json_token_destroy(token);
+        1:  290:    free(token);
+        1:  291:    test_lex_teardown(&ld);
+        1:  292:}
+        -:  293:
+        1:  294:void test_lex_string_error_unicode_escape_invalid_hex_digit()
+        -:  295:{
+        1:  296:    test_name(__func__);
+        -:  297:    Json_lex_data ld;
+        1:  298:    test_lex_setup(&ld, "\"\\u039G\"");
+        -:  299:
+        1:  300:    Json_token* token = Json_lex(&ld);
+        1:  301:    expect_has_errors(ld.el);
+        1:  302:    struct error* e = expect_source_error(ld.el, "invalid hex digit: G");
+        1:  303:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  304:    expect_str(&token->value, "", "value token");
+        1:  305:    expect_size_t_equal(e->loc.start_pos, 6, "start pos token");
+        1:  306:    expect_size_t_equal(e->loc.end_pos, 7, "end pos token");
+        1:  307:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  308:    expect_size_t_equal(e->loc.col, 7, "col token");
+        -:  309:
+        1:  310:    Json_token_destroy(token);
+        1:  311:    free(token);
+        1:  312:    test_lex_teardown(&ld);
+        1:  313:}
+        -:  314:
+        1:  315:void test_lex_string_error_unicode_code_point_less_that_0x20()
+        -:  316:{
+        1:  317:    test_name(__func__);
+        -:  318:    Json_lex_data ld;
+        1:  319:    test_lex_setup(&ld, "\"\\u0019\"");
+        -:  320:
+        1:  321:    Json_token* token = Json_lex(&ld);
+        1:  322:    expect_has_errors(ld.el);
+        1:  323:    struct error* e = expect_source_error(ld.el, "code point is less than \\u0020: \\u0019");
+        1:  324:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  325:    expect_str(&token->value, "", "value token");
+        1:  326:    expect_size_t_equal(e->loc.start_pos, 1, "start pos token");
+        1:  327:    expect_size_t_equal(e->loc.end_pos, 7, "end pos token");
+        1:  328:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  329:    expect_size_t_equal(e->loc.col, 2, "col token");
+        -:  330:
+        1:  331:    Json_token_destroy(token);
+        1:  332:    free(token);
+        1:  333:    test_lex_teardown(&ld);
+        1:  334:}
+        -:  335:
+        1:  336:void test_lex_string_unicode_code_point_five_digits()
+        -:  337:{
+        1:  338:    test_name(__func__);
+        -:  339:    Json_lex_data ld;
+        1:  340:    test_lex_setup(&ld, "\"\\u1fa89\"");
+        -:  341:
+        1:  342:    Json_token* token = Json_lex(&ld);
+        1:  343:    expect_no_errors(ld.el);
+        1:  344:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  345:    expect_str(&token->value, "🪉", "value token");
+        1:  346:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  347:    expect_size_t_equal(token->loc.end_pos, 9, "end pos token");
+        1:  348:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  349:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  350:
+        1:  351:    Json_token_destroy(token);
+        1:  352:    free(token);
+        1:  353:    test_lex_teardown(&ld);
+        1:  354:}
+        -:  355:
+        1:  356:void test_lex_string_unicode_code_point_six_digits()
+        -:  357:{
+        1:  358:    test_name(__func__);
+        -:  359:    Json_lex_data ld;
+        1:  360:    test_lex_setup(&ld, "\"\\u10ffff\"");
+        -:  361:
+        1:  362:    Json_token* token = Json_lex(&ld);
+        1:  363:    expect_no_errors(ld.el);
+        1:  364:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        -:  365:    char dest[5];
+        1:  366:    code_to_utf8(dest, 0x10ffff);
+       1*:  367:    int num = NUM_BYTES(dest[0]);
+        1:  368:    dest[num] = '\0';
+        1:  369:    expect_str(&token->value, dest, "value token");
+        1:  370:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  371:    expect_size_t_equal(token->loc.end_pos, 10, "end pos token");
+        1:  372:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  373:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  374:
+        1:  375:    Json_token_destroy(token);
+        1:  376:    free(token);
+        1:  377:    test_lex_teardown(&ld);
+        1:  378:}
+        -:  379:
+        1:  380:void test_lex_string_unicode_error_code_point_too_large()
+        -:  381:{
+        1:  382:    test_name(__func__);
+        -:  383:    Json_lex_data ld;
+        1:  384:    test_lex_setup(&ld, "\"\\u110000\"");
+        -:  385:
+        1:  386:    Json_token* token = Json_lex(&ld);
+        1:  387:    expect_has_errors(ld.el);
+        1:  388:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  389:    struct error* e = expect_source_error(
+        -:  390:        ld.el,
+        -:  391:        "code point greater than \\u10FFFF: \\u110000"
+        -:  392:    );
+        1:  393:    expect_size_t_equal(e->loc.start_pos, 1, "start pos token");
+        1:  394:    expect_size_t_equal(e->loc.end_pos, 9, "end pos token");
+        1:  395:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  396:    expect_size_t_equal(e->loc.col, 2, "col token");
+        -:  397:
+        1:  398:    Json_token_destroy(token);
+        1:  399:    free(token);
+        1:  400:    test_lex_teardown(&ld);
+        1:  401:}
+        -:  402:
+        1:  403:void test_lex_string_error_invalid_escape_character_single_byte()
+        -:  404:{
+        1:  405:    test_name(__func__);
+        -:  406:    Json_lex_data ld;
+        1:  407:    test_lex_setup(&ld, "\"\\|\"");
+        -:  408:
+        1:  409:    Json_token* token = Json_lex(&ld);
+        1:  410:    expect_has_errors(ld.el);
+        1:  411:    struct error* e = expect_source_error(ld.el, "invalid escape character: |");
+        1:  412:    expect_int_equal(token->type, Json_token_type_string, "type token");
+        1:  413:    expect_str(&token->value, "", "value token");
+        1:  414:    expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
+        1:  415:    expect_size_t_equal(e->loc.end_pos, 3, "end pos token");
+        1:  416:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  417:    expect_size_t_equal(e->loc.col, 3, "col token");
+        -:  418:
+        1:  419:    Json_token_destroy(token);
+        1:  420:    free(token);
+        1:  421:    test_lex_teardown(&ld);
+        1:  422:}
+        -:  423:
+        1:  424:void test_lex_number_integer()
+        -:  425:{
+        1:  426:    test_name(__func__);
+        -:  427:    Json_lex_data ld;
+        1:  428:    test_lex_setup(&ld, "315");
+        -:  429:
+        1:  430:    Json_token* token = Json_lex(&ld);
+        1:  431:    expect_no_errors(ld.el);
+        1:  432:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  433:    expect_str(&token->value, "315", "value token");
+        1:  434:    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
+        1:  435:    expect_long_long_equal(token->number.integer, 315, "integer");
+        1:  436:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  437:    expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
+        1:  438:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  439:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  440:
+        1:  441:    Json_token_destroy(token);
+        1:  442:    free(token);
+        1:  443:    test_lex_teardown(&ld);
+        1:  444:}
+        -:  445:
+        1:  446:void test_lex_number_integer_negative()
+        -:  447:{
+        1:  448:    test_name(__func__);
+        -:  449:    Json_lex_data ld;
+        1:  450:    test_lex_setup(&ld, "-35");
+        -:  451:
+        1:  452:    Json_token* token = Json_lex(&ld);
+        1:  453:    expect_no_errors(ld.el);
+        1:  454:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  455:    expect_str(&token->value, "-35", "value token");
+        1:  456:    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
+        1:  457:    expect_long_long_equal(token->number.integer, -35, "integer");
+        1:  458:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  459:    expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
+        1:  460:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  461:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  462:
+        1:  463:    Json_token_destroy(token);
+        1:  464:    free(token);
+        1:  465:    test_lex_teardown(&ld);
+        1:  466:}
+        -:  467:
+        1:  468:void test_lex_number_fraction()
+        -:  469:{
+        1:  470:    test_name(__func__);
+        -:  471:    Json_lex_data ld;
+        1:  472:    test_lex_setup(&ld, "5.13");
+        -:  473:
+        1:  474:    Json_token* token = Json_lex(&ld);
+        1:  475:    expect_no_errors(ld.el);
+        1:  476:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  477:    expect_str(&token->value, "5.13", "value token");
+        1:  478:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  479:    expect_double_equal(token->number.fp, 5.13, "fp");
+        1:  480:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  481:    expect_size_t_equal(token->loc.end_pos, 4, "end pos token");
+        1:  482:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  483:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  484:
+        1:  485:    Json_token_destroy(token);
+        1:  486:    free(token);
+        1:  487:    test_lex_teardown(&ld);
+        1:  488:}
+        -:  489:
+        1:  490:void test_lex_number_fraction_leading_zero()
+        -:  491:{
+        1:  492:    test_name(__func__);
+        -:  493:    Json_lex_data ld;
+        1:  494:    test_lex_setup(&ld, "0.5");
+        -:  495:
+        1:  496:    Json_token* token = Json_lex(&ld);
+        1:  497:    expect_no_errors(ld.el);
+        1:  498:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  499:    expect_str(&token->value, "0.5", "value token");
+        1:  500:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  501:    expect_double_equal(token->number.fp, 0.5, "fp");
+        1:  502:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  503:    expect_size_t_equal(token->loc.end_pos, 3, "end pos token");
+        1:  504:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  505:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  506:
+        1:  507:    Json_token_destroy(token);
+        1:  508:    free(token);
+        1:  509:    test_lex_teardown(&ld);
+        1:  510:}
+        -:  511:
+        1:  512:void test_lex_number_exponent()
+        -:  513:{
+        1:  514:    test_name(__func__);
+        -:  515:    Json_lex_data ld;
+        1:  516:    test_lex_setup(&ld, "1.5e2");
+        -:  517:
+        1:  518:    Json_token* token = Json_lex(&ld);
+        1:  519:    expect_no_errors(ld.el);
+        1:  520:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  521:    expect_str(&token->value, "1.5e2", "value token");
+        1:  522:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  523:    expect_double_equal(token->number.fp, 1.5e2, "fp");
+        1:  524:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  525:    expect_size_t_equal(token->loc.end_pos, 5, "end pos token");
+        1:  526:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  527:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  528:
+        1:  529:    Json_token_destroy(token);
+        1:  530:    free(token);
+        1:  531:    test_lex_teardown(&ld);
+        1:  532:}
+        -:  533:
+        1:  534:void test_lex_number_exponent_positive()
+        -:  535:{
+        1:  536:    test_name(__func__);
+        -:  537:    Json_lex_data ld;
+        1:  538:    test_lex_setup(&ld, "4.5e+2");
+        -:  539:
+        1:  540:    Json_token* token = Json_lex(&ld);
+        1:  541:    expect_no_errors(ld.el);
+        1:  542:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  543:    expect_str(&token->value, "4.5e+2", "value token");
+        1:  544:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  545:    expect_double_equal(token->number.fp, 4.5e2, "fp");
+        1:  546:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  547:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:  548:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  549:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  550:
+        1:  551:    Json_token_destroy(token);
+        1:  552:    free(token);
+        1:  553:    test_lex_teardown(&ld);
+        1:  554:}
+        -:  555:
+        1:  556:void test_lex_number_exponent_negative()
+        -:  557:{
+        1:  558:    test_name(__func__);
+        -:  559:    Json_lex_data ld;
+        1:  560:    test_lex_setup(&ld, "4.5e-2");
+        -:  561:
+        1:  562:    Json_token* token = Json_lex(&ld);
+        1:  563:    expect_no_errors(ld.el);
+        1:  564:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  565:    expect_str(&token->value, "4.5e-2", "value token");
+        1:  566:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  567:    expect_double_equal(token->number.fp, 4.5e-2, "fp");
+        1:  568:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  569:    expect_size_t_equal(token->loc.end_pos, 6, "end pos token");
+        1:  570:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  571:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  572:
+        1:  573:    Json_token_destroy(token);
+        1:  574:    free(token);
+        1:  575:    test_lex_teardown(&ld);
+        1:  576:}
+        -:  577:
+        1:  578:void test_lex_number_error_starts_with_period()
+        -:  579:{
+        1:  580:    test_name(__func__);
+        -:  581:    Json_lex_data ld;
+        1:  582:    test_lex_setup(&ld, ".1");
+        -:  583:
+        1:  584:    Json_token* token = Json_lex(&ld);
+        1:  585:    expect_has_errors(ld.el);
+        1:  586:    struct error* e = expect_source_error(ld.el, "number starts with period");
+        1:  587:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  588:    expect_str(&token->value, ".1", "value token");
+        1:  589:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  590:    expect_double_equal(token->number.fp, 0.1, "fp");
+        1:  591:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  592:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  593:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  594:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  595:
+        1:  596:    Json_token_destroy(token);
+        1:  597:    free(token);
+        1:  598:    test_lex_teardown(&ld);
+        1:  599:}
+        -:  600:
+        1:  601:void test_lex_number_error_starts_with_plus_sign()
+        -:  602:{
+        1:  603:    test_name(__func__);
+        -:  604:    Json_lex_data ld;
+        1:  605:    test_lex_setup(&ld, "+1");
+        -:  606:
+        1:  607:    Json_token* token = Json_lex(&ld);
+        1:  608:    expect_has_errors(ld.el);
+        1:  609:    struct error* e = expect_source_error(ld.el, "number starts with plus sign");
+        1:  610:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  611:    expect_str(&token->value, "+1", "value token");
+        1:  612:    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
+        1:  613:    expect_long_long_equal(token->number.integer, 1, "integer");
+        1:  614:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  615:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  616:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  617:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  618:
+        1:  619:    Json_token_destroy(token);
+        1:  620:    free(token);
+        1:  621:    test_lex_teardown(&ld);
+        1:  622:}
+        -:  623:
+        1:  624:void test_lex_number_error_minus_no_digits()
+        -:  625:{
+        1:  626:    test_name(__func__);
+        -:  627:    Json_lex_data ld;
+        1:  628:    test_lex_setup(&ld, "-");
+        -:  629:
+        1:  630:    Json_token* token = Json_lex(&ld);
+        1:  631:    expect_has_errors(ld.el);
+        1:  632:    struct error* e = expect_source_error(ld.el, "invalid number");
+        1:  633:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  634:    expect_str(&token->value, "0", "value token");
+        1:  635:    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
+        1:  636:    expect_long_long_equal(token->number.integer, 0, "integer");
+        1:  637:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  638:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  639:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  640:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  641:
+        1:  642:    Json_token_destroy(token);
+        1:  643:    free(token);
+        1:  644:    test_lex_teardown(&ld);
+        1:  645:}
+        -:  646:
+        1:  647:void test_lex_number_error_plus_no_digits()
+        -:  648:{
+        1:  649:    test_name(__func__);
+        -:  650:    Json_lex_data ld;
+        1:  651:    test_lex_setup(&ld, "+");
+        -:  652:
+        1:  653:    Json_token* token = Json_lex(&ld);
+        1:  654:    expect_has_errors(ld.el);
+        1:  655:    struct error* e = expect_source_error(ld.el, "invalid number");
+        1:  656:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  657:    expect_str(&token->value, "0", "value token");
+        1:  658:    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
+        1:  659:    expect_long_long_equal(token->number.integer, 0, "integer");
+        1:  660:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  661:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  662:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  663:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  664:
+        1:  665:    Json_token_destroy(token);
+        1:  666:    free(token);
+        1:  667:    test_lex_teardown(&ld);
+        1:  668:}
+        -:  669:
+        1:  670:void test_lex_number_error_leading_zero()
+        -:  671:{
+        1:  672:    test_name(__func__);
+        -:  673:    Json_lex_data ld;
+        1:  674:    test_lex_setup(&ld, "01");
+        -:  675:
+        1:  676:    Json_token* token = Json_lex(&ld);
+        1:  677:    expect_has_errors(ld.el);
+        1:  678:    struct error* e =expect_source_error(ld.el, "leading zero with no other digits or faction");
+        1:  679:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  680:    expect_str(&token->value, "1", "value token");
+        1:  681:    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
+        1:  682:    expect_long_long_equal(token->number.integer, 1, "integer");
+        1:  683:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  684:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  685:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  686:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  687:
+        1:  688:    Json_token_destroy(token);
+        1:  689:    free(token);
+        1:  690:    test_lex_teardown(&ld);
+        1:  691:}
+        -:  692:
+        1:  693:void test_lex_number_error_leading_zero2()
+        -:  694:{
+        1:  695:    test_name(__func__);
+        -:  696:    Json_lex_data ld;
+        1:  697:    test_lex_setup(&ld, "001");
+        -:  698:
+        1:  699:    Json_token* token = Json_lex(&ld);
+        1:  700:    expect_has_errors(ld.el);
+        1:  701:    struct error* e =expect_source_error(ld.el, "leading zero with no other digits or faction");
+        1:  702:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  703:    expect_str(&token->value, "1", "value token");
+        1:  704:    expect_int_equal(token->number_type, Json_number_type_integer, "number type");
+        1:  705:    expect_long_long_equal(token->number.integer, 1, "integer");
+        1:  706:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  707:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  708:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  709:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  710:
+        1:  711:    Json_token_destroy(token);
+        1:  712:    free(token);
+        1:  713:    test_lex_teardown(&ld);
+        1:  714:}
+        -:  715:
+        1:  716:void test_lex_number_error_no_digits_in_fraction()
+        -:  717:{
+        1:  718:    test_name(__func__);
+        -:  719:    Json_lex_data ld;
+        1:  720:    test_lex_setup(&ld, "1.");
+        -:  721:
+        1:  722:    Json_token* token = Json_lex(&ld);
+        1:  723:    expect_has_errors(ld.el);
+        1:  724:    struct error* e = expect_source_error(ld.el, "no digits in fraction");
+        1:  725:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  726:    expect_str(&token->value, "1.", "value token");
+        1:  727:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  728:    expect_double_equal(token->number.fp, 1.0, "fp");
+        1:  729:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  730:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  731:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  732:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  733:
+        1:  734:    Json_token_destroy(token);
+        1:  735:    free(token);
+        1:  736:    test_lex_teardown(&ld);
+        1:  737:}
+        -:  738:
+        1:  739:void test_lex_number_error_exponent_multiple_signs()
+        -:  740:{
+        1:  741:    test_name(__func__);
+        -:  742:    Json_lex_data ld;
+        1:  743:    test_lex_setup(&ld, "1e--1");
+        -:  744:
+        1:  745:    Json_token* token = Json_lex(&ld);
+        1:  746:    expect_has_errors(ld.el);
+        1:  747:    struct error* e = expect_source_error(ld.el, "exponent already has a sign");
+        1:  748:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  749:    expect_str(&token->value, "1e-1", "value token");
+        1:  750:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  751:    expect_double_equal(token->number.fp, 1e-1, "fp");
+        1:  752:    expect_size_t_equal(e->loc.start_pos, 3, "start pos token");
+        1:  753:    expect_size_t_equal(e->loc.end_pos, 4, "end pos token");
+        1:  754:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  755:    expect_size_t_equal(e->loc.col, 4, "col token");
+        -:  756:
+        1:  757:    Json_token_destroy(token);
+        1:  758:    free(token);
+        1:  759:    test_lex_teardown(&ld);
+        1:  760:}
+        -:  761:
+        1:  762:void test_lex_number_error_exponent_sign_after_digits()
+        -:  763:{
+        1:  764:    test_name(__func__);
+        -:  765:    Json_lex_data ld;
+        1:  766:    test_lex_setup(&ld, "1e-1-");
+        -:  767:
+        1:  768:    Json_token* token = Json_lex(&ld);
+        1:  769:    expect_has_errors(ld.el);
+        1:  770:    struct error* e = expect_source_error(ld.el, "sign after exponent digits");
+        1:  771:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  772:    expect_str(&token->value, "1e-1", "value token");
+        1:  773:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  774:    expect_double_equal(token->number.fp, 1e-1, "fp");
+        1:  775:    expect_size_t_equal(e->loc.start_pos, 4, "start pos token");
+        1:  776:    expect_size_t_equal(e->loc.end_pos, 5, "end pos token");
+        1:  777:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  778:    expect_size_t_equal(e->loc.col, 5, "col token");
+        -:  779:
+        1:  780:    Json_token_destroy(token);
+        1:  781:    free(token);
+        1:  782:    test_lex_teardown(&ld);
+        1:  783:}
+        -:  784:
+        1:  785:void test_lex_number_error_exponent_no_digits()
+        -:  786:{
+        1:  787:    test_name(__func__);
+        -:  788:    Json_lex_data ld;
+        1:  789:    test_lex_setup(&ld, "1e");
+        -:  790:
+        1:  791:    Json_token* token = Json_lex(&ld);
+        1:  792:    expect_has_errors(ld.el);
+        1:  793:    struct error* e =expect_source_error(ld.el, "no digits in exponent");
+        1:  794:    expect_int_equal(token->type, Json_token_type_number, "type token");
+        1:  795:    expect_str(&token->value, "1e", "value token");
+        1:  796:    expect_int_equal(token->number_type, Json_number_type_fp, "number type");
+        1:  797:    expect_double_equal(token->number.fp, 1, "fp");
+        1:  798:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  799:    expect_size_t_equal(e->loc.end_pos, 1, "end pos token");
+        1:  800:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  801:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  802:
+        1:  803:    Json_token_destroy(token);
+        1:  804:    free(token);
+        1:  805:    test_lex_teardown(&ld);
+        1:  806:}
+        -:  807:
+        1:  808:void test_lex_left_square_bracket()
+        -:  809:{
+        1:  810:    test_name(__func__);
+        -:  811:    Json_lex_data ld;
+        1:  812:    test_lex_setup(&ld, "[");
+        -:  813:
+        1:  814:    Json_token* token = Json_lex(&ld);
+        1:  815:    expect_no_errors(ld.el);
+        1:  816:    expect_int_equal(token->type, Json_token_type_left_square_bracket, "type token");
+        1:  817:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  818:    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+        1:  819:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  820:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  821:
+        1:  822:    Json_token_destroy(token);
+        1:  823:    free(token);
+        1:  824:    test_lex_teardown(&ld);
+        1:  825:}
+        -:  826:
+        1:  827:void test_lex_right_square_bracket()
+        -:  828:{
+        1:  829:    test_name(__func__);
+        -:  830:    Json_lex_data ld;
+        1:  831:    test_lex_setup(&ld, "]");
+        -:  832:
+        1:  833:    Json_token* token = Json_lex(&ld);
+        1:  834:    expect_no_errors(ld.el);
+        1:  835:    expect_int_equal(token->type, Json_token_type_right_square_bracket, "type token");
+        1:  836:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  837:    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+        1:  838:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  839:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  840:
+        1:  841:    Json_token_destroy(token);
+        1:  842:    free(token);
+        1:  843:    test_lex_teardown(&ld);
+        1:  844:}
+        -:  845:
+        1:  846:void test_lex_comma()
+        -:  847:{
+        1:  848:    test_name(__func__);
+        -:  849:    Json_lex_data ld;
+        1:  850:    test_lex_setup(&ld, ",");
+        -:  851:
+        1:  852:    Json_token* token = Json_lex(&ld);
+        1:  853:    expect_no_errors(ld.el);
+        1:  854:    expect_int_equal(token->type, Json_token_type_comma, "type token");
+        1:  855:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  856:    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+        1:  857:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  858:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  859:
+        1:  860:    Json_token_destroy(token);
+        1:  861:    free(token);
+        1:  862:    test_lex_teardown(&ld);
+        1:  863:}
+        -:  864:
+        1:  865:void test_lex_left_curly_brace()
+        -:  866:{
+        1:  867:    test_name(__func__);
+        -:  868:    Json_lex_data ld;
+        1:  869:    test_lex_setup(&ld, "{");
+        -:  870:
+        1:  871:    Json_token* token = Json_lex(&ld);
+        1:  872:    expect_no_errors(ld.el);
+        1:  873:    expect_int_equal(token->type, Json_token_type_left_curly_brace, "type token");
+        1:  874:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  875:    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+        1:  876:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  877:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  878:
+        1:  879:    Json_token_destroy(token);
+        1:  880:    free(token);
+        1:  881:    test_lex_teardown(&ld);
+        1:  882:}
+        -:  883:
+        1:  884:void test_lex_right_curly_brace()
+        -:  885:{
+        1:  886:    test_name(__func__);
+        -:  887:    Json_lex_data ld;
+        1:  888:    test_lex_setup(&ld, "}");
+        -:  889:
+        1:  890:    Json_token* token = Json_lex(&ld);
+        1:  891:    expect_no_errors(ld.el);
+        1:  892:    expect_int_equal(token->type, Json_token_type_right_curly_brace, "type token");
+        1:  893:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  894:    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+        1:  895:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  896:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  897:
+        1:  898:    Json_token_destroy(token);
+        1:  899:    free(token);
+        1:  900:    test_lex_teardown(&ld);
+        1:  901:}
+        -:  902:
+        1:  903:void test_lex_right_colon()
+        -:  904:{
+        1:  905:    test_name(__func__);
+        -:  906:    Json_lex_data ld;
+        1:  907:    test_lex_setup(&ld, ":");
+        -:  908:
+        1:  909:    Json_token* token = Json_lex(&ld);
+        1:  910:    expect_no_errors(ld.el);
+        1:  911:    expect_int_equal(token->type, Json_token_type_colon, "type token");
+        1:  912:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  913:    expect_size_t_equal(token->loc.end_pos, 1, "end pos token");
+        1:  914:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  915:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  916:
+        1:  917:    Json_token_destroy(token);
+        1:  918:    free(token);
+        1:  919:    test_lex_teardown(&ld);
+        1:  920:}
+        -:  921:
+        1:  922:void test_lex_true()
+        -:  923:{
+        1:  924:    test_name(__func__);
+        -:  925:    Json_lex_data ld;
+        1:  926:    test_lex_setup(&ld, "true");
+        -:  927:
+        1:  928:    Json_token* token = Json_lex(&ld);
+        1:  929:    expect_no_errors(ld.el);
+        1:  930:    expect_int_equal(token->type, Json_token_type_true, "type token");
+        1:  931:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  932:    expect_size_t_equal(token->loc.end_pos, 4, "end pos token");
+        1:  933:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  934:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  935:
+        1:  936:    Json_token_destroy(token);
+        1:  937:    free(token);
+        1:  938:    test_lex_teardown(&ld);
+        1:  939:}
+        -:  940:
+        1:  941:void test_lex_false()
+        -:  942:{
+        1:  943:    test_name(__func__);
+        -:  944:    Json_lex_data ld;
+        1:  945:    test_lex_setup(&ld, "false");
+        -:  946:
+        1:  947:    Json_token* token = Json_lex(&ld);
+        1:  948:    expect_no_errors(ld.el);
+        1:  949:    expect_int_equal(token->type, Json_token_type_false, "type token");
+        1:  950:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  951:    expect_size_t_equal(token->loc.end_pos, 5, "end pos token");
+        1:  952:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  953:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  954:
+        1:  955:    Json_token_destroy(token);
+        1:  956:    free(token);
+        1:  957:    test_lex_teardown(&ld);
+        1:  958:}
+        -:  959:
+        1:  960:void test_lex_null()
+        -:  961:{
+        1:  962:    test_name(__func__);
+        -:  963:    Json_lex_data ld;
+        1:  964:    test_lex_setup(&ld, "null");
+        -:  965:
+        1:  966:    Json_token* token = Json_lex(&ld);
+        1:  967:    expect_no_errors(ld.el);
+        1:  968:    expect_int_equal(token->type, Json_token_type_null, "type token");
+        1:  969:    expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
+        1:  970:    expect_size_t_equal(token->loc.end_pos, 4, "end pos token");
+        1:  971:    expect_size_t_equal(token->loc.line, 1, "line token");
+        1:  972:    expect_size_t_equal(token->loc.col, 1, "col token");
+        -:  973:
+        1:  974:    Json_token_destroy(token);
+        1:  975:    free(token);
+        1:  976:    test_lex_teardown(&ld);
+        1:  977:}
+        -:  978:
+        1:  979:void test_lex_word_error()
+        -:  980:{
+        1:  981:    test_name(__func__);
+        -:  982:    Json_lex_data ld;
+        1:  983:    test_lex_setup(&ld, "abc");
+        -:  984:
+        1:  985:    Json_token* token = Json_lex(&ld);
+        1:  986:    expect_has_errors(ld.el);
+        1:  987:    struct error* e = expect_source_error(ld.el, "invalid word (abc), expecting true, false, or null");
+        1:  988:    expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
+        1:  989:    expect_size_t_equal(e->loc.end_pos, 3, "end pos token");
+        1:  990:    expect_size_t_equal(e->loc.line, 1, "line token");
+        1:  991:    expect_size_t_equal(e->loc.col, 1, "col token");
+        -:  992:
+        1:  993:    Json_token_destroy(token);
+        1:  994:    free(token);
+        1:  995:    test_lex_teardown(&ld);
+        1:  996:}
+        -:  997:
+        1:  998:void test_match_tools_convert_char1()
+        -:  999:{
+        1: 1000:    test_name(__func__);
+        1: 1001:    String_slice slice = {"A", 1};
+        -: 1002:    UChar32 cp;
+        1: 1003:    Json_convert_slice(slice, &cp);
+        1: 1004:    expect_int_equal(cp, 0x41, "cp");
+        1: 1005:}
+        -: 1006:
+        1: 1007:void test_match_tools_convert_char2()
+        -: 1008:{
+        1: 1009:    test_name(__func__);
+        1: 1010:    String_slice slice = {"θ", 2};
+        -: 1011:    UChar32 cp;
+        1: 1012:    Json_convert_slice(slice, &cp);
+        1: 1013:    expect_int_equal(cp, 0x3B8, "cp");
+        1: 1014:}
+        -: 1015:
+        1: 1016:void test_lex()
+        -: 1017:{
+        1: 1018:    test_lex_string();
+        1: 1019:    test_lex_string_escape_backslash();
+        1: 1020:    test_lex_string_escape_slash();
+        1: 1021:    test_lex_string_escape_backspace();
+        1: 1022:    test_lex_string_escape_form_feed();
+        1: 1023:    test_lex_string_escape_newline();
+        1: 1024:    test_lex_string_escape_carriage_return();
+        1: 1025:    test_lex_string_escape_tab();
+        1: 1026:    test_lex_string_escape_unicode();
+        1: 1027:    test_lex_start_error_multibyte();
+        1: 1028:    test_lex_start_error_single_byte();
+        1: 1029:    test_lex_string_error_missing_escape_character();
+        1: 1030:    test_lex_string_error_invalid_escape_character_multibyte();
+        1: 1031:    test_lex_string_error_invalid_unicode_escape_not_finished();
+        1: 1032:    test_lex_string_error_unicode_escape_invalid_hex_digit();
+        1: 1033:    test_lex_string_error_unicode_code_point_less_that_0x20();
+        1: 1034:    test_lex_string_error_invalid_escape_character_single_byte();
+        1: 1035:    test_lex_string_unicode_code_point_five_digits();
+        1: 1036:    test_lex_string_unicode_code_point_six_digits();
+        1: 1037:    test_lex_string_unicode_error_code_point_too_large();
+        -: 1038:
+        1: 1039:    test_lex_number_integer();
+        1: 1040:    test_lex_number_integer_negative();
+        1: 1041:    test_lex_number_fraction();
+        1: 1042:    test_lex_number_fraction_leading_zero();
+        1: 1043:    test_lex_number_exponent();
+        1: 1044:    test_lex_number_exponent_positive();
+        1: 1045:    test_lex_number_exponent_negative();
+        1: 1046:    test_lex_number_error_starts_with_period();
+        1: 1047:    test_lex_number_error_starts_with_plus_sign();
+        1: 1048:    test_lex_number_error_minus_no_digits();
+        1: 1049:    test_lex_number_error_plus_no_digits();
+        1: 1050:    test_lex_number_error_leading_zero();
+        1: 1051:    test_lex_number_error_leading_zero2();
+        1: 1052:    test_lex_number_error_no_digits_in_fraction();
+        1: 1053:    test_lex_number_error_exponent_multiple_signs();
+        1: 1054:    test_lex_number_error_exponent_sign_after_digits();
+        1: 1055:    test_lex_number_error_exponent_no_digits();
+        -: 1056:
+        1: 1057:    test_lex_left_square_bracket();
+        1: 1058:    test_lex_right_square_bracket();
+        1: 1059:    test_lex_comma();
+        -: 1060:
+        1: 1061:    test_lex_left_curly_brace();
+        1: 1062:    test_lex_right_curly_brace();
+        1: 1063:    test_lex_right_colon();
+        -: 1064:
+        1: 1065:    test_lex_true();
+        1: 1066:    test_lex_false();
+        1: 1067:    test_lex_null();
+        1: 1068:    test_lex_word_error();
+        -: 1069:
+        1: 1070:    test_match_tools_convert_char1();
+        1: 1071:    test_match_tools_convert_char2();
+        1: 1072: }

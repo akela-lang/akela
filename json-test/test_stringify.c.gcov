@@ -1,0 +1,570 @@
+        -:    0:Source:/home/miguel/workspace/trade/akela/json-test/test_stringify.c
+        -:    1:#include <cobble-test/test_compile_tools.h>
+        -:    2:#include <json/token.h>
+        -:    3:#include <zinc/error_unit_test.h>
+        -:    4:
+        -:    5:#include "zinc/unit_test.h"
+        -:    6:#include "json/dom.h"
+        -:    7:#include "json/stringify.h"
+        -:    8:
+        1:    9:void test_stringify_null()
+        -:   10:{
+        1:   11:    test_name(__func__);
+        -:   12:
+        1:   13:    Json_dom* dom = NULL;
+        1:   14:    Json_dom_create(&dom);
+        1:   15:    Json_dom_set_type(dom, Json_dom_type_null);
+        -:   16:
+        1:   17:    struct error_list* el = NULL;
+        1:   18:    error_list_create(&el);
+        -:   19:
+        -:   20:    struct buffer bf;
+        1:   21:    buffer_init(&bf);
+        -:   22:
+        1:   23:    Json_stringify(el, dom, &bf);
+        1:   24:    expect_no_errors(el);
+        1:   25:    expect_str(&bf, "null", "bf");
+        -:   26:
+        1:   27:    buffer_destroy(&bf);
+        1:   28:    Json_dom_destroy(dom);
+        1:   29:    error_list_destroy(el);
+        1:   30:    free(el);
+        1:   31:}
+        -:   32:
+        1:   33:void test_stringify_true()
+        -:   34:{
+        1:   35:    test_name(__func__);
+        -:   36:
+        1:   37:    Json_dom* dom = NULL;
+        1:   38:    Json_dom_create(&dom);
+        1:   39:    Json_dom_set_type(dom, Json_dom_type_boolean);
+        1:   40:    dom->value.boolean = true;
+        -:   41:
+        1:   42:    struct error_list* el = NULL;
+        1:   43:    error_list_create(&el);
+        -:   44:
+        -:   45:    struct buffer bf;
+        1:   46:    buffer_init(&bf);
+        -:   47:
+        1:   48:    Json_stringify(el, dom, &bf);
+        1:   49:    expect_no_errors(el);
+        1:   50:    expect_str(&bf, "true", "bf");
+        -:   51:
+        1:   52:    buffer_destroy(&bf);
+        1:   53:    Json_dom_destroy(dom);
+        1:   54:    error_list_destroy(el);
+        1:   55:    free(el);
+        1:   56:}
+        -:   57:
+        1:   58:void test_stringify_false()
+        -:   59:{
+        1:   60:    test_name(__func__);
+        -:   61:
+        1:   62:    Json_dom* dom = NULL;
+        1:   63:    Json_dom_create(&dom);
+        1:   64:    Json_dom_set_type(dom, Json_dom_type_boolean);
+        1:   65:    dom->value.boolean = false;
+        -:   66:
+        1:   67:    struct error_list* el = NULL;
+        1:   68:    error_list_create(&el);
+        -:   69:
+        -:   70:    struct buffer bf;
+        1:   71:    buffer_init(&bf);
+        -:   72:
+        1:   73:    Json_stringify(el, dom, &bf);
+        1:   74:    expect_no_errors(el);
+        1:   75:    expect_str(&bf, "false", "bf");
+        -:   76:
+        1:   77:    buffer_destroy(&bf);
+        1:   78:    Json_dom_destroy(dom);
+        1:   79:    error_list_destroy(el);
+        1:   80:    free(el);
+        1:   81:}
+        -:   82:
+        1:   83:void test_stringify_string()
+        -:   84:{
+        1:   85:    test_name(__func__);
+        -:   86:
+        1:   87:    Json_dom* dom = NULL;
+        1:   88:    Json_dom_create(&dom);
+        1:   89:    Json_dom_set_type(dom, Json_dom_type_string);
+        1:   90:    buffer_copy_str(&dom->value.string, "hello");
+        -:   91:
+        1:   92:    struct error_list* el = NULL;
+        1:   93:    error_list_create(&el);
+        -:   94:
+        -:   95:    struct buffer bf;
+        1:   96:    buffer_init(&bf);
+        -:   97:
+        1:   98:    Json_stringify(el, dom, &bf);
+        -:   99:
+        1:  100:    expect_no_errors(el);
+        1:  101:    expect_str(&bf, "\"hello\"", "bf");
+        -:  102:
+        1:  103:    buffer_destroy(&bf);
+        1:  104:    Json_dom_destroy(dom);
+        1:  105:    error_list_destroy(el);
+        1:  106:    free(el);
+        1:  107:}
+        -:  108:
+        1:  109:void test_stringify_string2()
+        -:  110:{
+        1:  111:    test_name(__func__);
+        -:  112:
+        1:  113:    Json_dom* dom = NULL;
+        1:  114:    Json_dom_create(&dom);
+        1:  115:    Json_dom_set_type(dom, Json_dom_type_string);
+        1:  116:    buffer_copy_str(&dom->value.string, "θθθ");
+        -:  117:
+        1:  118:    struct error_list* el = NULL;
+        1:  119:    error_list_create(&el);
+        -:  120:
+        -:  121:    struct buffer bf;
+        1:  122:    buffer_init(&bf);
+        -:  123:
+        1:  124:    Json_stringify(el, dom, &bf);
+        -:  125:
+        1:  126:    expect_no_errors(el);
+        1:  127:    expect_str(&bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
+        -:  128:
+        1:  129:    buffer_destroy(&bf);
+        1:  130:    Json_dom_destroy(dom);
+        1:  131:    error_list_destroy(el);
+        1:  132:    free(el);
+        1:  133:}
+        -:  134:
+        1:  135:void test_stringify_string3()
+        -:  136:{
+        1:  137:    test_name(__func__);
+        -:  138:
+        1:  139:    Json_dom* dom = NULL;
+        1:  140:    Json_dom_create(&dom);
+        1:  141:    Json_dom_set_type(dom, Json_dom_type_string);
+        1:  142:    buffer_copy_str(&dom->value.string, "🩒");
+        -:  143:
+        1:  144:    struct error_list* el = NULL;
+        1:  145:    error_list_create(&el);
+        -:  146:
+        -:  147:    struct buffer bf;
+        1:  148:    buffer_init(&bf);
+        -:  149:
+        1:  150:    Json_stringify(el, dom, &bf);
+        -:  151:
+        1:  152:    expect_no_errors(el);
+        1:  153:    expect_str(&bf, "\"\\u1fa52\"", "bf");
+        -:  154:
+        1:  155:    buffer_destroy(&bf);
+        1:  156:    Json_dom_destroy(dom);
+        1:  157:    error_list_destroy(el);
+        1:  158:    free(el);
+        1:  159:}
+        -:  160:
+        1:  161:void test_stringify_string4()
+        -:  162:{
+        1:  163:    test_name(__func__);
+        -:  164:
+        1:  165:    Json_dom* dom = NULL;
+        1:  166:    Json_dom_create(&dom);
+        1:  167:    Json_dom_set_type(dom, Json_dom_type_string);
+        1:  168:    buffer_copy_str(&dom->value.string, "\t");
+        -:  169:
+        1:  170:    struct error_list* el = NULL;
+        1:  171:    error_list_create(&el);
+        -:  172:
+        -:  173:    struct buffer bf;
+        1:  174:    buffer_init(&bf);
+        -:  175:
+        1:  176:    Json_stringify(el, dom, &bf);
+        -:  177:
+        1:  178:    expect_no_errors(el);
+        1:  179:    expect_str(&bf, "\"\\t\"", "bf");
+        -:  180:
+        1:  181:    buffer_destroy(&bf);
+        1:  182:    Json_dom_destroy(dom);
+        1:  183:    error_list_destroy(el);
+        1:  184:    free(el);
+        1:  185:}
+        -:  186:
+        1:  187:void test_stringify_string_error_invalid_char()
+        -:  188:{
+        1:  189:    test_name(__func__);
+        -:  190:
+        1:  191:    Json_dom* dom = NULL;
+        1:  192:    Json_dom_create(&dom);
+        1:  193:    Json_dom_set_type(dom, Json_dom_type_string);
+        1:  194:    char c[2] = {7, '\0'};      /* bell */
+        1:  195:    buffer_copy_str(&dom->value.string, c);
+        -:  196:
+        1:  197:    struct error_list* el = NULL;
+        1:  198:    error_list_create(&el);
+        -:  199:
+        -:  200:    struct buffer bf;
+        1:  201:    buffer_init(&bf);
+        -:  202:
+        1:  203:    Json_stringify(el, dom, &bf);
+        -:  204:
+        1:  205:    expect_has_errors(el);
+        1:  206:    struct error* e = expect_source_error(el, "invalid string character");
+        1:  207:    assert_ptr(e, "ptr e");
+        -:  208:
+        1:  209:    buffer_destroy(&bf);
+        1:  210:    Json_dom_destroy(dom);
+        1:  211:    error_list_destroy(el);
+        1:  212:    free(el);
+        1:  213:}
+        -:  214:
+        1:  215:void test_stringify_number_integer()
+        -:  216:{
+        1:  217:    test_name(__func__);
+        -:  218:
+        1:  219:    Json_dom* dom = NULL;
+        1:  220:    Json_dom_create(&dom);
+        1:  221:    Json_dom_set_type(dom, Json_dom_type_number);
+        1:  222:    dom->number_type = Json_number_type_integer;
+        1:  223:    dom->value.integer = 123;
+        -:  224:
+        1:  225:    struct error_list* el = NULL;
+        1:  226:    error_list_create(&el);
+        -:  227:
+        -:  228:    struct buffer bf;
+        1:  229:    buffer_init(&bf);
+        -:  230:
+        1:  231:    Json_stringify(el, dom, &bf);
+        -:  232:
+        1:  233:    expect_no_errors(el);
+        1:  234:    expect_str(&bf, "123", "bf");
+        -:  235:
+        1:  236:    buffer_destroy(&bf);
+        1:  237:    Json_dom_destroy(dom);
+        1:  238:    error_list_destroy(el);
+        1:  239:    free(el);
+        1:  240:}
+        -:  241:
+        1:  242:void test_stringify_number_fraction()
+        -:  243:{
+        1:  244:    test_name(__func__);
+        -:  245:
+        1:  246:    Json_dom* dom = NULL;
+        1:  247:    Json_dom_create(&dom);
+        1:  248:    Json_dom_set_type(dom, Json_dom_type_number);
+        1:  249:    dom->number_type = Json_number_type_fp;
+        1:  250:    dom->value.fp = 5.1;
+        -:  251:
+        1:  252:    struct error_list* el = NULL;
+        1:  253:    error_list_create(&el);
+        -:  254:
+        -:  255:    struct buffer bf;
+        1:  256:    buffer_init(&bf);
+        -:  257:
+        1:  258:    Json_stringify(el, dom, &bf);
+        -:  259:
+        1:  260:    expect_no_errors(el);
+        1:  261:    expect_str(&bf, "5.100000", "bf");
+        -:  262:
+        1:  263:    buffer_destroy(&bf);
+        1:  264:    Json_dom_destroy(dom);
+        1:  265:    error_list_destroy(el);
+        1:  266:    free(el);
+        1:  267:}
+        -:  268:
+        1:  269:void test_stringify_number_exponent()
+        -:  270:{
+        1:  271:    test_name(__func__);
+        -:  272:
+        1:  273:    Json_dom* dom = NULL;
+        1:  274:    Json_dom_create(&dom);
+        1:  275:    Json_dom_set_type(dom, Json_dom_type_number);
+        1:  276:    dom->number_type = Json_number_type_fp;
+        1:  277:    dom->value.fp = 5.1e1;
+        -:  278:
+        1:  279:    struct error_list* el = NULL;
+        1:  280:    error_list_create(&el);
+        -:  281:
+        -:  282:    struct buffer bf;
+        1:  283:    buffer_init(&bf);
+        -:  284:
+        1:  285:    Json_stringify(el, dom, &bf);
+        -:  286:
+        1:  287:    expect_no_errors(el);
+        1:  288:    expect_str(&bf, "51.000000", "bf");
+        -:  289:
+        1:  290:    buffer_destroy(&bf);
+        1:  291:    Json_dom_destroy(dom);
+        1:  292:    error_list_destroy(el);
+        1:  293:    free(el);
+        1:  294:}
+        -:  295:
+        1:  296:void test_stringify_array_empty()
+        -:  297:{
+        1:  298:    test_name(__func__);
+        -:  299:
+        1:  300:    Json_dom* dom = NULL;
+        1:  301:    Json_dom_create(&dom);
+        1:  302:    Json_dom_set_type(dom, Json_dom_type_array);
+        -:  303:
+        1:  304:    struct error_list* el = NULL;
+        1:  305:    error_list_create(&el);
+        -:  306:
+        -:  307:    struct buffer bf;
+        1:  308:    buffer_init(&bf);
+        -:  309:
+        1:  310:    Json_stringify(el, dom, &bf);
+        -:  311:
+        1:  312:    expect_no_errors(el);
+        1:  313:    expect_str(&bf, "[]", "bf");
+        -:  314:
+        1:  315:    buffer_destroy(&bf);
+        1:  316:    Json_dom_destroy(dom);
+        1:  317:    error_list_destroy(el);
+        1:  318:    free(el);
+        1:  319:}
+        -:  320:
+        1:  321:void test_stringify_array_one()
+        -:  322:{
+        1:  323:    test_name(__func__);
+        -:  324:
+        1:  325:    Json_dom* dom = NULL;
+        1:  326:    Json_dom_create(&dom);
+        1:  327:    Json_dom_set_type(dom, Json_dom_type_array);
+        -:  328:
+        1:  329:    Json_dom* dom0 = NULL;
+        1:  330:    Json_dom_create(&dom0);
+        1:  331:    Json_dom_set_type(dom0, Json_dom_type_number);
+        1:  332:    dom0->number_type = Json_number_type_integer;
+        1:  333:    dom0->value.integer = 3;
+        1:  334:    Json_dom_add_element(dom, dom0);
+        -:  335:
+        1:  336:    struct error_list* el = NULL;
+        1:  337:    error_list_create(&el);
+        -:  338:
+        -:  339:    struct buffer bf;
+        1:  340:    buffer_init(&bf);
+        -:  341:
+        1:  342:    Json_stringify(el, dom, &bf);
+        -:  343:
+        1:  344:    expect_no_errors(el);
+        1:  345:    expect_str(&bf, "[3]", "bf");
+        -:  346:
+        1:  347:    buffer_destroy(&bf);
+        1:  348:    Json_dom_destroy(dom);
+        1:  349:    error_list_destroy(el);
+        1:  350:    free(el);
+        1:  351:}
+        -:  352:
+        1:  353:void test_stringify_array2()
+        -:  354:{
+        1:  355:    test_name(__func__);
+        -:  356:
+        1:  357:    Json_dom* dom = NULL;
+        1:  358:    Json_dom_create(&dom);
+        1:  359:    Json_dom_set_type(dom, Json_dom_type_array);
+        -:  360:
+        1:  361:    Json_dom* dom0 = NULL;
+        1:  362:    Json_dom_create(&dom0);
+        1:  363:    Json_dom_set_type(dom0, Json_dom_type_number);
+        1:  364:    dom0->number_type = Json_number_type_integer;
+        1:  365:    dom0->value.integer = 1;
+        1:  366:    Json_dom_add_element(dom, dom0);
+        -:  367:
+        1:  368:    Json_dom* dom1 = NULL;
+        1:  369:    Json_dom_create(&dom1);
+        1:  370:    Json_dom_set_type(dom1, Json_dom_type_number);
+        1:  371:    dom1->number_type = Json_number_type_fp;
+        1:  372:    dom1->value.fp = 5.1;
+        1:  373:    Json_dom_add_element(dom, dom1);
+        -:  374:
+        1:  375:    Json_dom* dom2 = NULL;
+        1:  376:    Json_dom_create(&dom2);
+        1:  377:    Json_dom_set_type(dom2, Json_dom_type_string);
+        1:  378:    buffer_copy_str(&dom2->value.string, "hello");
+        1:  379:    Json_dom_add_element(dom, dom2);
+        -:  380:
+        1:  381:    Json_dom* dom3 = NULL;
+        1:  382:    Json_dom_create(&dom3);
+        1:  383:    Json_dom_set_type(dom3, Json_dom_type_boolean);
+        1:  384:    dom3->value.boolean = true;
+        1:  385:    Json_dom_add_element(dom, dom3);
+        -:  386:
+        1:  387:    Json_dom* dom4 = NULL;
+        1:  388:    Json_dom_create(&dom4);
+        1:  389:    Json_dom_set_type(dom4, Json_dom_type_boolean);
+        1:  390:    dom4->value.boolean = false;
+        1:  391:    Json_dom_add_element(dom, dom4);
+        -:  392:
+        1:  393:    Json_dom* dom5 = NULL;
+        1:  394:    Json_dom_create(&dom5);
+        1:  395:    Json_dom_set_type(dom5, Json_dom_type_null);
+        1:  396:    Json_dom_add_element(dom, dom5);
+        -:  397:
+        1:  398:    struct error_list* el = NULL;
+        1:  399:    error_list_create(&el);
+        -:  400:
+        -:  401:    struct buffer bf;
+        1:  402:    buffer_init(&bf);
+        -:  403:
+        1:  404:    Json_stringify(el, dom, &bf);
+        -:  405:
+        1:  406:    expect_no_errors(el);
+        1:  407:    expect_str(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
+        -:  408:
+        1:  409:    buffer_destroy(&bf);
+        1:  410:    Json_dom_destroy(dom);
+        1:  411:    error_list_destroy(el);
+        1:  412:    free(el);
+        1:  413:}
+        -:  414:
+        1:  415:void test_stringify_object_empty()
+        -:  416:{
+        1:  417:    test_name(__func__);
+        -:  418:
+        1:  419:    Json_dom* dom = NULL;
+        1:  420:    Json_dom_create(&dom);
+        1:  421:    Json_dom_set_type(dom, Json_dom_type_object);
+        -:  422:
+        1:  423:    struct error_list* el = NULL;
+        1:  424:    error_list_create(&el);
+        -:  425:
+        -:  426:    struct buffer bf;
+        1:  427:    buffer_init(&bf);
+        -:  428:
+        1:  429:    Json_stringify(el, dom, &bf);
+        -:  430:
+        1:  431:    expect_no_errors(el);
+        1:  432:    expect_str(&bf, "{}", "bf");
+        -:  433:
+        1:  434:    buffer_destroy(&bf);
+        1:  435:    Json_dom_destroy(dom);
+        1:  436:    error_list_destroy(el);
+        1:  437:    free(el);
+        1:  438:}
+        -:  439:
+        1:  440:void test_stringify_object_one()
+        -:  441:{
+        1:  442:    test_name(__func__);
+        -:  443:
+        1:  444:    Json_dom* dom = NULL;
+        1:  445:    Json_dom_create(&dom);
+        1:  446:    Json_dom_set_type(dom, Json_dom_type_object);
+        -:  447:
+        -:  448:    struct buffer name0;
+        1:  449:    buffer_init(&name0);
+        1:  450:    buffer_copy_str(&name0, "one");
+        -:  451:
+        1:  452:    Json_dom* value0 = NULL;
+        1:  453:    Json_dom_create(&value0);
+        1:  454:    Json_dom_set_type(value0, Json_dom_type_number);
+        1:  455:    value0->number_type = Json_number_type_integer;
+        1:  456:    value0->value.integer = 1;
+        -:  457:
+        1:  458:    Json_dom_add_property(dom, &name0, value0);
+        -:  459:
+        1:  460:    struct error_list* el = NULL;
+        1:  461:    error_list_create(&el);
+        -:  462:
+        -:  463:    struct buffer bf;
+        1:  464:    buffer_init(&bf);
+        -:  465:
+        1:  466:    Json_stringify(el, dom, &bf);
+        -:  467:
+        1:  468:    expect_no_errors(el);
+        1:  469:    expect_str(&bf, "{\"one\":1}", "bf");
+        -:  470:
+        1:  471:    buffer_destroy(&name0);
+        1:  472:    buffer_destroy(&bf);
+        1:  473:    Json_dom_destroy(dom);
+        1:  474:    error_list_destroy(el);
+        1:  475:    free(el);
+        1:  476:}
+        -:  477:
+        1:  478:void test_stringify_object_many()
+        -:  479:{
+        1:  480:    test_name(__func__);
+        -:  481:
+        1:  482:    Json_dom* dom = NULL;
+        1:  483:    Json_dom_create(&dom);
+        1:  484:    Json_dom_set_type(dom, Json_dom_type_object);
+        -:  485:
+        -:  486:    struct buffer name0;
+        1:  487:    buffer_init(&name0);
+        1:  488:    buffer_copy_str(&name0, "one");
+        -:  489:
+        1:  490:    Json_dom* value0 = NULL;
+        1:  491:    Json_dom_create(&value0);
+        1:  492:    Json_dom_set_type(value0, Json_dom_type_number);
+        1:  493:    value0->number_type = Json_number_type_integer;
+        1:  494:    value0->value.integer = 1;
+        -:  495:
+        -:  496:    struct buffer name1;
+        1:  497:    buffer_init(&name1);
+        1:  498:    buffer_copy_str(&name1, "two");
+        -:  499:
+        1:  500:    Json_dom* value1 = NULL;
+        1:  501:    Json_dom_create(&value1);
+        1:  502:    Json_dom_set_type(value1, Json_dom_type_number);
+        1:  503:    value1->number_type = Json_number_type_fp;
+        1:  504:    value1->value.fp = 5.5;
+        -:  505:
+        -:  506:    struct buffer name2;
+        1:  507:    buffer_init(&name2);
+        1:  508:    buffer_copy_str(&name2, "three");
+        -:  509:
+        1:  510:    Json_dom* value2 = NULL;
+        1:  511:    Json_dom_create(&value2);
+        1:  512:    Json_dom_set_type(value2, Json_dom_type_string);
+        1:  513:    buffer_copy_str(&value2->value.string, "hello");
+        -:  514:
+        1:  515:    Json_dom_add_property(dom, &name0, value0);
+        1:  516:    Json_dom_add_property(dom, &name1, value1);
+        1:  517:    Json_dom_add_property(dom, &name2, value2);
+        -:  518:
+        1:  519:    struct error_list* el = NULL;
+        1:  520:    error_list_create(&el);
+        -:  521:
+        -:  522:    struct buffer bf;
+        1:  523:    buffer_init(&bf);
+        -:  524:
+        1:  525:    Json_stringify(el, dom, &bf);
+        -:  526:
+        1:  527:    expect_no_errors(el);
+       2*:  528:    expect_true(
+        1:  529:        buffer_compare_str(&bf, "{\"one\":1,\"two\":5.500000,\"three\":\"hello\"}")
+        1:  530:        || buffer_compare_str(&bf, "{\"one\":1,\"three\":\"hello\",\"two\":5.500000}")
+    #####:  531:        || buffer_compare_str(&bf, "{\"two\":5.500000,\"one\":1,\"three\":\"hello\"}")
+    #####:  532:        || buffer_compare_str(&bf, "{\"two\":5.500000,\"three\":\"hello\",\"one\":1}")
+    #####:  533:        || buffer_compare_str(&bf, "{\"three\":\"hello\",\"one\":1,\"two\":5.500000}")
+    #####:  534:        || buffer_compare_str(&bf, "{\"three\":\"hello\",\"two\":5.500000},\"one\":1"),
+        -:  535:        "bf");
+        -:  536:
+        1:  537:    buffer_destroy(&name0);
+        1:  538:    buffer_destroy(&name1);
+        1:  539:    buffer_destroy(&name2);
+        1:  540:    buffer_destroy(&bf);
+        1:  541:    Json_dom_destroy(dom);
+        1:  542:    error_list_destroy(el);
+        1:  543:    free(el);
+        1:  544:}
+        -:  545:
+        1:  546:void test_stringify()
+        -:  547:{
+        1:  548:    test_stringify_null();
+        1:  549:    test_stringify_true();
+        1:  550:    test_stringify_false();
+        -:  551:
+        1:  552:    test_stringify_string();
+        1:  553:    test_stringify_string2();
+        1:  554:    test_stringify_string3();
+        1:  555:    test_stringify_string4();
+        1:  556:    test_stringify_string_error_invalid_char();
+        -:  557:
+        1:  558:    test_stringify_number_integer();
+        1:  559:    test_stringify_number_fraction();
+        1:  560:    test_stringify_number_exponent();
+        -:  561:
+        1:  562:    test_stringify_array_empty();
+        1:  563:    test_stringify_array_one();
+        1:  564:    test_stringify_array2();
+        -:  565:
+        1:  566:    test_stringify_object_empty();
+        1:  567:    test_stringify_object_one();
+        1:  568:    test_stringify_object_many();
+        1:  569:}

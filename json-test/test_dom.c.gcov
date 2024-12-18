@@ -1,0 +1,45 @@
+        -:    0:Source:/home/miguel/workspace/trade/akela/json-test/test_dom.c
+        -:    1:#include "zinc/unit_test.h"
+        -:    2:#include "json/dom.h"
+        -:    3:
+        -:    4:
+        1:    5:void test_dom_add()
+        -:    6:{
+        1:    7:    test_name(__func__);
+        -:    8:
+        1:    9:    Json_dom* root = NULL;
+        1:   10:    Json_dom_create(&root);
+        1:   11:    Json_dom_set_type(root, Json_dom_type_array);
+        -:   12:
+        1:   13:    Json_dom* a = NULL;
+        1:   14:    Json_dom_create(&a);
+        1:   15:    Json_dom_set_type(a, Json_dom_type_string);
+        -:   16:
+        1:   17:    Json_dom* b = NULL;
+        1:   18:    Json_dom_create(&b);
+        1:   19:    Json_dom_set_type(b, Json_dom_type_array);
+        -:   20:
+        1:   21:    Json_dom* c = NULL;
+        1:   22:    Json_dom_create(&c);
+        1:   23:    Json_dom_set_type(c, Json_dom_type_object);
+        -:   24:
+        1:   25:    Json_dom_add_element(root, a);
+        1:   26:    Json_dom_add_element(root, b);
+        1:   27:    Json_dom_add_element(root, c);
+        -:   28:
+        1:   29:    expect_ptr_equal(root->head, a, "head root");
+        1:   30:    expect_ptr_equal(a->prev, NULL, "prev a");
+        1:   31:    expect_ptr_equal(a->next, b, "next a");
+        1:   32:    expect_ptr_equal(b->prev, a, "prev b");
+        1:   33:    expect_ptr_equal(b->next, c, "next b");
+        1:   34:    expect_ptr_equal(c->prev, b, "prev c");
+        1:   35:    expect_ptr_equal(c->next, NULL, "next c");
+        1:   36:    expect_ptr_equal(root->tail, c, "tail root");
+        -:   37:
+        1:   38:    Json_dom_destroy(root);
+        1:   39:}
+        -:   40:
+        1:   41:void test_dom()
+        -:   42:{
+        1:   43:    test_dom_add();
+        1:   44:}

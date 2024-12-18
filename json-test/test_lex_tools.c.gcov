@@ -1,0 +1,38 @@
+        -:    0:Source:/home/miguel/workspace/trade/akela/json-test/test_lex_tools.c
+        -:    1:#include "json/lex.h"
+        -:    2:#include "json/lex_tools.h"
+        -:    3:#include "zinc/unit_test.h"
+        -:    4:#include "zinc/input_unicode_string.h"
+        -:    5:#include <string.h>
+        -:    6:
+       47:    7:void test_lex_setup(Json_lex_data* jld, char* text)
+        -:    8:{
+       47:    9:    struct error_list* el = NULL;
+       47:   10:    error_list_create(&el);
+        -:   11:
+       47:   12:    Vector* v = NULL;
+       47:   13:    VectorCreate(&v, sizeof(char));
+       47:   14:    VectorAdd(v, text, strlen(text));
+        -:   15:
+       47:   16:    InputUnicodeString* input_obj = NULL;
+       47:   17:    InputUnicodeStringCreate(&input_obj, v);
+       47:   18:    InputUnicodeVTable* input_vtable = &InputUnicodeStringVTable;
+        -:   19:
+       47:   20:    enum result r = Json_lex_data_init(jld, el, input_obj, input_vtable);
+       47:   21:    if (r == result_error) {
+        -:   22:        struct location loc;
+    #####:   23:        location_init(&loc);
+    #####:   24:        error_list_set(el, &loc, error_message);
+        -:   25:    }
+       47:   26:}
+        -:   27:
+       47:   28:void test_lex_teardown(Json_lex_data* jld)
+        -:   29:{
+       47:   30:    error_list_destroy(jld->el);
+       47:   31:    free(jld->el);
+       47:   32:    InputUnicodeString* input_obj = jld->input_obj;
+       47:   33:    Vector* v = input_obj->text;
+       47:   34:    VectorDestroy(v);
+       47:   35:    free(v);
+       47:   36:    free(input_obj);
+       47:   37:}
