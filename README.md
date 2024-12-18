@@ -39,8 +39,3 @@ and capable of robust software construction.
 
 ## Coverage
     ./generate-coverage.sh
-
-## CMake options to specify compiler
-    rm -r cmake-build-debug
-    cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja
-    ninja -C cmake-build-debug
