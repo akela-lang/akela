@@ -97,7 +97,7 @@ void Cov_library_init(Cov_library *lib)
 {
     buffer_init(&lib->name);
     buffer_init(&lib->path);
-    Cov_file_list_init(&lib->coverage_files);
+    Cov_file_list_init(&lib->files);
     lib->number_of_lines = 0;
     lib->number_covered = 0;
     lib->number_not_covered = 0;
@@ -116,7 +116,7 @@ void Cov_library_destroy(Cov_library *lib)
 {
     buffer_destroy(&lib->name);
     buffer_destroy(&lib->path);
-    Cov_file_list_destroy(&lib->coverage_files);
+    Cov_file_list_destroy(&lib->files);
 }
 
 void Cov_library_list_init(Cov_library_list *list)

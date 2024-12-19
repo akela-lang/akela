@@ -22,7 +22,7 @@ typedef struct Cov_file_list {
 typedef struct Cov_library {
     struct buffer name;
     struct buffer path;
-    Cov_file_list coverage_files;
+    Cov_file_list files;
     size_t number_of_lines;
     size_t number_covered;
     size_t number_not_covered;
