@@ -4,6 +4,7 @@
 #include "zinc/buffer.h"
 
 typedef struct Cov_file {
+    struct buffer name;
     struct buffer path;
     size_t number_of_lines;
     size_t number_covered;
@@ -50,8 +51,9 @@ void Cov_file_create(Cov_file **file);
 void Cov_file_destroy(Cov_file *file);
 void Cov_file_list_init(Cov_file_list *list);
 void Cov_file_list_create(Cov_file_list **list);
-void Cov_file_list_add(Cov_file_list* list, Cov_file *file);
 void Cov_file_list_destroy(Cov_file_list *list);
+void Cov_file_list_add(Cov_file_list* list, Cov_file *file);
+void Cov_file_list_add_sorted(Cov_file_list* list, Cov_file *file);
 
 void Cov_library_init(Cov_library *lib);
 void Cov_library_create(Cov_library **lib);
@@ -60,6 +62,7 @@ void Cov_library_list_init(Cov_library_list *list);
 void Cov_library_list_create(Cov_library_list **list);
 void Cov_library_list_destroy(Cov_library_list *list);
 void Cov_library_list_add(Cov_library_list *list, Cov_library *lib);
+void Cov_library_list_add_sorted(Cov_library_list* list, Cov_library *lib);
 
 void Cov_app_init(Cov_app *app);
 void Cov_app_create(Cov_app **app);

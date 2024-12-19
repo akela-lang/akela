@@ -1,5 +1,4 @@
 # Coverage Todo
-* insertion sort of libraries
 * set files data
 * insertion sort of files
 * parse files

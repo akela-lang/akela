@@ -3,6 +3,7 @@
 
 void Cov_file_init(Cov_file *file)
 {
+    buffer_init(&file->name);
     buffer_init(&file->path);
     file->number_of_lines = 0;
     file->number_covered = 0;
@@ -20,6 +21,7 @@ void Cov_file_create(Cov_file **file)
 
 void Cov_file_destroy(Cov_file *file)
 {
+    buffer_destroy(&file->name);
     buffer_destroy(&file->path);
 }
 
@@ -35,6 +37,17 @@ void Cov_file_list_create(Cov_file_list **list)
     Cov_file_list_init(*list);
 }
 
+void Cov_file_list_destroy(Cov_file_list *list)
+{
+    Cov_file *file = list->head;
+    while (file) {
+        Cov_file* temp = file;
+        file = file->next;
+        Cov_file_destroy(temp);
+        free(temp);
+    }
+}
+
 void Cov_file_list_add(Cov_file_list* list, Cov_file *file)
 {
     if (list->head && list->tail) {
@@ -47,14 +60,36 @@ void Cov_file_list_add(Cov_file_list* list, Cov_file *file)
     }
 }
 
-void Cov_file_list_destroy(Cov_file_list *list)
+void Cov_file_list_add_sorted(Cov_file_list* list, Cov_file *file)
 {
-    Cov_file *file = list->head;
-    while (file) {
-        Cov_file* temp = file;
-        file = file->next;
-        Cov_file_destroy(temp);
-        free(temp);
+    if (list->head && list->tail) {
+        Cov_file* p = list->tail;
+        while (p) {
+            int order = buffer_order(&p->name, &file->name);
+            if (order == -1 || order == 0) {
+                break;
+            }
+            p = p->prev;
+        }
+
+        if (p) {
+            if (p->next) {
+                file->next = p->next;
+                p->next->prev = file;
+            }
+            p->next = file;
+            file->prev = p;
+            if (list->tail == p) {
+                list->tail = file;
+            }
+        } else {
+            file->next = list->head;
+            list->head->prev = file;
+            list->head = file;
+        }
+    } else {
+        list->head = file;
+        list->tail = file;
     }
 }
 
@@ -113,6 +148,39 @@ void Cov_library_list_add(Cov_library_list *list, Cov_library *lib)
         list->tail->next = lib;
         lib->prev = list->tail;
         list->tail = lib;
+    } else {
+        list->head = lib;
+        list->tail = lib;
+    }
+}
+
+void Cov_library_list_add_sorted(Cov_library_list* list, Cov_library *lib)
+{
+    if (list->head && list->tail) {
+        Cov_library* p = list->tail;
+        while (p) {
+            int order = buffer_order(&p->name, &lib->name);
+            if (order == -1 || order == 0) {
+                break;
+            }
+            p = p->prev;
+        }
+
+        if (p) {
+            if (p->next) {
+                lib->next = p->next;
+                p->next->prev = lib;
+            }
+            p->next = lib;
+            lib->prev = p;
+            if (list->tail == p) {
+                list->tail = lib;
+            }
+        } else {
+            lib->next = list->head;
+            list->head->prev = lib;
+            list->head = lib;
+        }
     } else {
         list->head = lib;
         list->tail = lib;

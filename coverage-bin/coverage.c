@@ -42,7 +42,7 @@ void Cov_get_libraries(char* dir_name, Cov_library_list* libraries)
                 buffer_finish(&lib->path);
                 buffer_finish(&lib->name);
 
-                Cov_library_list_add(libraries, lib);
+                Cov_library_list_add_sorted(libraries, lib);
             }
         }
         closedir(d);
