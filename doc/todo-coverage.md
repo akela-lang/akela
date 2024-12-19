@@ -1,5 +1,6 @@
 # Coverage Todo
 * parse files
-* aggregate counts and percentage up to libraries
-* aggregate counts and percentage up to app
+* set stats of files
+* aggregate stats of libraries
+* aggregate stats of app
 * display data
