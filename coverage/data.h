@@ -6,9 +6,10 @@
 typedef struct Cov_file {
     struct buffer name;
     struct buffer path;
-    size_t number_of_lines;
-    size_t number_covered;
-    size_t number_not_covered;
+    struct buffer source_path;
+    size_t line_count;
+    size_t covered_count;
+    size_t not_covered_count;
     double coverage_percentage;
     struct Cov_file* next;
     struct Cov_file* prev;

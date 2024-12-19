@@ -13,9 +13,20 @@ typedef struct Compile_data {
     InputUnicodeVTable* input_vtable;
     struct token* lookahead;
     struct error_list* el;
+    size_t group_number;
 } Compile_data;
 
-void compile_data_init(Compile_data* cd, void* input_obj, InputUnicodeVTable* input_vtable, struct error_list* el);
+void compile_data_init(
+    Compile_data* cd,
+    void* input_obj,
+    InputUnicodeVTable* input_vtable,
+    struct error_list* el);
+void compile_data_create(
+    Compile_data** cd,
+    void* input_obj,
+    InputUnicodeVTable* input_vtable,
+    struct error_list* el);
+
 void compile_data_destroy(Compile_data* cd);
 
 #endif //COBBLE_COMPILE_DATA_H

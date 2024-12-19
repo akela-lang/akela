@@ -3,7 +3,7 @@ set(coverage_bin_files
 )
 
 add_executable(coverage-bin ${coverage_bin_files})
-target_link_libraries(coverage-bin coverage zinc)
+target_link_libraries(coverage-bin coverage cobble zinc)
 set_target_properties(coverage-bin
         PROPERTIES
         OUTPUT_NAME coverage

@@ -13,9 +13,6 @@ typedef struct Parse_test_result {
 } Parse_test_result;
 
 bool parse_setup(char* line, struct comp_unit* cu);
-void Parse_test_result_init(Parse_test_result* result);
 void parse_teardown(struct comp_unit* cu);
-bool parse_setup2(char* line, Parse_test_result *result);
-void parse_teardown2(Parse_test_result* result);
 
 #endif

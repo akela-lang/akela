@@ -5,9 +5,10 @@ void Cov_file_init(Cov_file *file)
 {
     buffer_init(&file->name);
     buffer_init(&file->path);
-    file->number_of_lines = 0;
-    file->number_covered = 0;
-    file->number_not_covered = 0;
+    buffer_init(&file->source_path);
+    file->line_count = 0;
+    file->covered_count = 0;
+    file->not_covered_count = 0;
     file->coverage_percentage = 0.0;
     file->next = NULL;
     file->prev = NULL;
@@ -23,6 +24,7 @@ void Cov_file_destroy(Cov_file *file)
 {
     buffer_destroy(&file->name);
     buffer_destroy(&file->path);
+    buffer_destroy(&file->source_path);
 }
 
 void Cov_file_list_init(Cov_file_list *list)

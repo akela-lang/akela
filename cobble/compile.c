@@ -9,16 +9,16 @@
 #include "zinc/buffer.h"
 #include <assert.h>
 
-Ast_node* parse_union(struct Compile_data* cd);
-Ast_node* parse_concat(struct Compile_data* cd);
-Ast_node* parse_mod(struct Compile_data* cd);
-Ast_node* parse_num(struct Compile_data* cd);
-Ast_node* parse_group(struct Compile_data* cd);
-void parse_seq(struct Compile_data* cd, Ast_node* parent);
+Ast_node* parse_union(Compile_data* cd);
+Ast_node* parse_concat(Compile_data* cd);
+Ast_node* parse_mod(Compile_data* cd);
+Ast_node* parse_num(Compile_data* cd);
+Ast_node* parse_group(Compile_data* cd);
+void parse_seq(Compile_data* cd, Ast_node* parent);
 bool is_char(enum token_type type);
-Ast_node* parse_char(struct Compile_data* cd, bool strict);
+Ast_node* parse_char(Compile_data* cd, bool strict);
 
-bool compile(struct Compile_data* cd, Ast_node** root)
+bool compile(Compile_data* cd, Ast_node** root)
 {
     bool valid = true;
 
@@ -29,7 +29,7 @@ bool compile(struct Compile_data* cd, Ast_node** root)
 
     /* set in case it was not set because there were no child groups */
     if (*root) {
-        Ast_node_set_root(*root);
+        (*root)->is_root = true;
     }
 
     get_lookahead(cd);
@@ -43,7 +43,7 @@ bool compile(struct Compile_data* cd, Ast_node** root)
 /* union -> concat union | e' */
 /* union' -> '|' concat union' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_union(struct Compile_data* cd)
+Ast_node* parse_union(Compile_data* cd)
 {
     Ast_node* a = NULL;
     Ast_node* b = NULL;
@@ -93,7 +93,7 @@ Ast_node* parse_union(struct Compile_data* cd)
 /* concat -> mod concat' | e */
 /* concat' -> mod concat' */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_concat(struct Compile_data* cd)
+Ast_node* parse_concat(Compile_data* cd)
 {
     Ast_node* a = NULL;
     Ast_node* b = NULL;
@@ -141,7 +141,7 @@ bool is_modifier(enum token_type type)
 /* mod -> group modifier | e */
 /* modifier -> { num } | { num , num } | * | + | ? */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_mod(struct Compile_data* cd)
+Ast_node* parse_mod(Compile_data* cd)
 {
     Ast_node* a = NULL;
     a = parse_group(cd);
@@ -209,7 +209,7 @@ Ast_node* parse_mod(struct Compile_data* cd)
 
 /* num -> digit num' */
 /* num' -> digit num' | e */
-Ast_node* parse_num(struct Compile_data* cd)
+Ast_node* parse_num(Compile_data* cd)
 {
     Ast_node* n = NULL;
     Ast_node_create(&n);
@@ -251,7 +251,7 @@ Ast_node* parse_num(struct Compile_data* cd)
 
 /* group -> char | ( union ) | [ seq ] | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_group(struct Compile_data* cd)
+Ast_node* parse_group(Compile_data* cd)
 {
     Ast_node* n = NULL;
 
@@ -260,6 +260,8 @@ Ast_node* parse_group(struct Compile_data* cd)
     if (cd->lookahead->type == token_open_paren) {
         Ast_node_create(&n);
         n->type = Ast_type_group;
+        n->is_group = true;
+        n->group = ++cd->group_number;
 
         struct token* opr = NULL;
         if (!match(cd, token_open_paren, "expected left parenthesis", &opr, n)) {
@@ -320,7 +322,7 @@ Ast_node* parse_group(struct Compile_data* cd)
 
 /* seq -> char seq' */
 /* seq' -> char seq' | e */
-void parse_seq(struct Compile_data* cd, Ast_node* parent)
+void parse_seq(Compile_data* cd, Ast_node* parent)
 {
     Ast_node* a = NULL;
     a = parse_char(cd, true);
@@ -361,7 +363,7 @@ bool is_char(const enum token_type type)
 
 /* char -> literal | wildcard | begin | end | backslash character */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_char(struct Compile_data* cd, bool strict)
+Ast_node* parse_char(Compile_data* cd, bool strict)
 {
     Ast_node* n = NULL;
 

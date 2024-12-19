@@ -192,15 +192,29 @@ void re_match_run_dispatch(Stack_node* sn)
 
     if (task->status == Match_task_initial && task->n) {
         if (task->n->is_root) {
-            struct buffer* bf = NULL;
-            buffer_create(&bf);
-            Hash_map_size_t_add(&sn->groups, 0, bf);
+            Stack_node* sn2 = sn->sl->head;
+            while (sn2) {
+                struct buffer* bf = NULL;
+                bf = Hash_map_size_t_get(&sn2->groups, 0);
+                if (!bf) {
+                    buffer_create(&bf);
+                    Hash_map_size_t_add(&sn2->groups, 0, bf);
+                }
+                sn2 = sn2->next;
+            }
         }
 
         if (task->n->is_group) {
-            struct buffer* bf = NULL;
-            buffer_create(&bf);
-            Hash_map_size_t_add(&sn->groups, task->n->group, bf);
+            Stack_node* sn2 = sn->sl->head;
+            while (sn2) {
+                struct buffer* bf = NULL;
+                bf = Hash_map_size_t_get(&sn2->groups, task->n->group);
+                if (!bf) {
+                    buffer_create(&bf);
+                    Hash_map_size_t_add(&sn2->groups, task->n->group, bf);
+                }
+                sn2 = sn2->next;
+            }
         }
     }
 
@@ -442,6 +456,7 @@ void re_match_run_pos_closure(Stack_node* sn)
         Stack_node* new_sn = Stack_node_clone(sn);
         Match_task* new_task = new_sn->mts->top;
         re_match_add_task(new_task->n->head, new_task->end_slice, new_sn->mts, new_task, new_sn);
+        new_sn->priority = Stack_list_next_priority(new_sn->sl);
         Stack_list_add(sn->sl, new_sn);
 
         task->status = Match_task_finished;
@@ -578,6 +593,7 @@ void re_match_run_option(Stack_node* sn)
         Stack_node* new_sn = Stack_node_clone(sn);
         Match_task* new_task = new_sn->mts->top;
         re_match_add_task(new_task->n->head, new_task->end_slice, new_sn->mts, new_task, new_sn);
+        new_sn->priority = Stack_list_next_priority(new_sn->sl);
         Stack_list_add(sn->sl, new_sn);
 
         task->status = Match_task_finished;

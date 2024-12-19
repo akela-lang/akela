@@ -43,7 +43,7 @@ typedef struct Ast_node {
     struct location loc;
     bool is_root;
     bool is_group;
-    int group;
+    size_t group;
     struct Ast_node* next;
     struct Ast_node* prev;
     struct Ast_node* head;
@@ -64,7 +64,5 @@ Ast_node* Ast_node_get(Ast_node* n, int index);
 void Ast_node_copy(Ast_node* src, Ast_node* dest);
 Ast_node_clone_result Ast_node_clone(Ast_node* n, Ast_node* ref);
 void Ast_node_add_char(Ast_node* n, char c);
-void Ast_node_set_root(Ast_node* n);
-void Ast_node_set_group(Ast_node* n);
 
 #endif //COBBLE_AST_NODE_H

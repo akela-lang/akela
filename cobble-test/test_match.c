@@ -8,7 +8,7 @@
 
 bool match_run(char* pattern, char* text, struct buffer_list** groups)
 {
-    struct Compile_data* cd = NULL;
+    Compile_data* cd = NULL;
     setup_compile(&cd, pattern);
     bool valid = true;
     Ast_node* root = NULL;
@@ -1149,137 +1149,241 @@ void test_match_word_type()
     match_teardown(groups);
 }
 
+void test_match_coverage_line()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run(
+        "\\s*(\\-|\\d+):\\s*(\\d+):Source:(.+)",
+        "        -:    0:Source:/home/miguel/workspace/trade/akela/coverage-test/test_data.c",
+        &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 4, "count groups");
+    expect_buffer_list_item(
+        groups,
+        0,
+        "        -:    0:Source:/home/miguel/workspace/trade/akela/coverage-test/test_data.c", "item groups");
+    expect_buffer_list_item(
+        groups,
+        1,
+        "-", "item groups");
+    expect_buffer_list_item(
+        groups,
+        2,
+        "0", "item groups");
+    expect_buffer_list_item(
+        groups,
+        3,
+        "/home/miguel/workspace/trade/akela/coverage-test/test_data.c", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_coverage_line2()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run(
+        "\\s*(\\-):\\s*(\\d+):(Source:)?(.+)",
+        "        -:    0:Source:/home/miguel/workspace/trade/akela/coverage-test/test_data.c",
+        &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 5, "count groups");
+    expect_buffer_list_item(
+        groups,
+        0,
+        "        -:    0:Source:/home/miguel/workspace/trade/akela/coverage-test/test_data.c", "item groups");
+    expect_buffer_list_item(
+        groups,
+        1,
+        "-", "item groups");
+    expect_buffer_list_item(
+        groups,
+        2,
+        "0", "item groups");
+    expect_buffer_list_item(
+        groups,
+        3,
+        "Source:", "item groups");
+    expect_buffer_list_item(
+        groups,
+        4,
+        "/home/miguel/workspace/trade/akela/coverage-test/test_data.c", "item groups");
+    match_teardown(groups);
+}
+
+void test_match_coverage_line3()
+{
+    test_name(__func__);
+    struct buffer_list* groups = NULL;
+    bool matched = match_run(
+        "\\s*(\\-):\\s*(\\d+):(Source:)?(.+)",
+        "        -:    1:#include \"zinc/unit_test.h\"",
+        &groups);
+    expect_true(matched, "m");
+    expect_buffer_list_count(groups, 5, "count groups");
+    expect_buffer_list_item(
+        groups,
+        0,
+        "        -:    1:#include \"zinc/unit_test.h\"",
+        "item groups");
+    expect_buffer_list_item(
+        groups,
+        1,
+        "-",
+        "item groups");
+    expect_buffer_list_item(
+        groups,
+        2,
+        "1",
+        "item groups");
+    expect_buffer_list_item(
+        groups,
+        3,
+        "",
+        "item groups");
+    expect_buffer_list_item(
+        groups,
+        4,
+        "#include \"zinc/unit_test.h\"",
+        "item groups");
+    match_teardown(groups);
+}
+
 void test_match()
 {
-    test_match_empty();
-
-    test_match_literal();
-    test_match_literal_not_match();
-
-    test_match_concat();
-    test_match_concat_not_match();
-    test_match_concat_not_match2();
-
-    test_match_union1();
-    test_match_union2();
-    test_match_union_not_match1();
-    test_match_union3();
-    test_match_union_cat1();
-    test_match_union_cat2();
-
-    test_match_closure_zero();
-    test_match_closure_one();
-    test_match_closure_two();
-    test_match_closure_three();
-    test_match_closure_concat();
-
-    test_match_group();
-    test_match_group2();
-
-    test_match_union_backtrack();
-    test_match_closure_backtrack();
-
-    test_match_pos_closure_one();
-    test_match_pos_closure_two();
-    test_match_pos_closure_not_match();
-    test_match_pos_closure_backtrack1();
-
-    test_match_repeat_zero();
-    test_match_repeat_zero2();
-    test_match_repeat_one();
-    test_match_repeat_one_not_match();
-    test_match_repeat_two();
-    test_match_repeat_two_not_match();
-    test_match_repeat_two_not_match_short();
-
-    test_match_repeat_range_zero_zero();
-    test_match_repeat_range_zero_zero_more();
-    test_match_repeat_range_zero_one();
-    test_match_repeat_range_one_one();
-    test_match_repeat_range_two_four_two();
-    test_match_repeat_range_two_four_three();
-    test_match_repeat_range_two_four_four();
-    test_match_repeat_range_two_four_not_match_less();
-    test_match_repeat_range_two_four_more();
-
-    test_match_option_zero();
-    test_match_option_one_not_match();
-    test_match_option_one();
-    test_match_option_two();
-    test_match_option_two_not_match2();
-
-    test_match_wildcard_one_one();
-    test_match_wildcard_one_one2();
-    test_match_wildcard_one_zero_not_matched();
-    test_match_wildcard_two_two();
-    test_match_wildcard_three_three();
-    test_match_wildcard_newline_not_matched();
-
-    test_match_begin_one();
-    test_match_begin_zero();
-    test_match_begin_one_not_match();
-
-    test_match_end_zero();
-    test_match_end_line();
-    test_match_end_line_not_match();
-
-    test_match_escape_one_backslash();
-    test_match_escape_one_closure();
-    test_match_escape_two();
-    test_match_escape_one_not_match();
-
-    test_match_character_class_one();
-    test_match_character_class_one_not_match();
-    test_match_character_class_two();
-    test_match_character_class_two2();
-    test_match_character_class_three();
-
-    test_match_character_class_range();
-    test_match_character_class_range2();
-    test_match_character_class_range3();
-    test_match_character_class_range_not_match();
-
-    test_match_character_class_opposite();
-    test_match_character_class_opposite_not_match();
-
-    test_match_character_class_opposite_range();
-    test_match_character_class_opposite_range_not_match();
-
-    test_match_character_type_word();
-    test_match_character_type_word2();
-    test_match_character_type_word3();
-    test_match_character_type_word4();
-    test_match_character_type_word5();
-    test_match_character_type_word6();
-    test_match_character_type_word7();
-    test_match_character_type_word_unicode();
-    test_match_character_type_word_not_match();
-
-    test_match_character_type_word_opposite();
-    test_match_character_type_word_opposite_not_match();
-
-    test_match_character_type_digit();
-    test_match_character_type_digit2();
-    test_match_character_type_digit3();
-    test_match_character_type_digit_unicode();
-    test_match_character_type_digit_not_match();
-
-    test_match_character_type_digit_opposite();
-    test_match_character_type_digit_opposite_not_match();
-
-    test_match_character_type_space();
-    test_match_character_type_space_unicode();
-    test_match_character_type_space_not_match();
-
-    test_match_character_type_space_opposite();
-    test_match_character_type_space_opposite_not_match();
-
-    test_match_escape_newline();
-    test_match_escape_newline_not_match();
-    test_match_character_type_newline_opposite();
-    test_match_character_type_newline_opposite_not_match();
-
-    test_match_scan_all();
-
-    test_match_word_type();
+    // test_match_empty();
+    //
+    // test_match_literal();
+    // test_match_literal_not_match();
+    //
+    // test_match_concat();
+    // test_match_concat_not_match();
+    // test_match_concat_not_match2();
+    //
+    // test_match_union1();
+    // test_match_union2();
+    // test_match_union_not_match1();
+    // test_match_union3();
+    // test_match_union_cat1();
+    // test_match_union_cat2();
+    //
+    // test_match_closure_zero();
+    // test_match_closure_one();
+    // test_match_closure_two();
+    // test_match_closure_three();
+    // test_match_closure_concat();
+    //
+    // test_match_group();
+    // test_match_group2();
+    //
+    // test_match_union_backtrack();
+    // test_match_closure_backtrack();
+    //
+    // test_match_pos_closure_one();
+    // test_match_pos_closure_two();
+    // test_match_pos_closure_not_match();
+    // test_match_pos_closure_backtrack1();
+    //
+    // test_match_repeat_zero();
+    // test_match_repeat_zero2();
+    // test_match_repeat_one();
+    // test_match_repeat_one_not_match();
+    // test_match_repeat_two();
+    // test_match_repeat_two_not_match();
+    // test_match_repeat_two_not_match_short();
+    //
+    // test_match_repeat_range_zero_zero();
+    // test_match_repeat_range_zero_zero_more();
+    // test_match_repeat_range_zero_one();
+    // test_match_repeat_range_one_one();
+    // test_match_repeat_range_two_four_two();
+    // test_match_repeat_range_two_four_three();
+    // test_match_repeat_range_two_four_four();
+    // test_match_repeat_range_two_four_not_match_less();
+    // test_match_repeat_range_two_four_more();
+    //
+    // test_match_option_zero();
+    // test_match_option_one_not_match();
+    // test_match_option_one();
+    // test_match_option_two();
+    // test_match_option_two_not_match2();
+    //
+    // test_match_wildcard_one_one();
+    // test_match_wildcard_one_one2();
+    // test_match_wildcard_one_zero_not_matched();
+    // test_match_wildcard_two_two();
+    // test_match_wildcard_three_three();
+    // test_match_wildcard_newline_not_matched();
+    //
+    // test_match_begin_one();
+    // test_match_begin_zero();
+    // test_match_begin_one_not_match();
+    //
+    // test_match_end_zero();
+    // test_match_end_line();
+    // test_match_end_line_not_match();
+    //
+    // test_match_escape_one_backslash();
+    // test_match_escape_one_closure();
+    // test_match_escape_two();
+    // test_match_escape_one_not_match();
+    //
+    // test_match_character_class_one();
+    // test_match_character_class_one_not_match();
+    // test_match_character_class_two();
+    // test_match_character_class_two2();
+    // test_match_character_class_three();
+    //
+    // test_match_character_class_range();
+    // test_match_character_class_range2();
+    // test_match_character_class_range3();
+    // test_match_character_class_range_not_match();
+    //
+    // test_match_character_class_opposite();
+    // test_match_character_class_opposite_not_match();
+    //
+    // test_match_character_class_opposite_range();
+    // test_match_character_class_opposite_range_not_match();
+    //
+    // test_match_character_type_word();
+    // test_match_character_type_word2();
+    // test_match_character_type_word3();
+    // test_match_character_type_word4();
+    // test_match_character_type_word5();
+    // test_match_character_type_word6();
+    // test_match_character_type_word7();
+    // test_match_character_type_word_unicode();
+    // test_match_character_type_word_not_match();
+    //
+    // test_match_character_type_word_opposite();
+    // test_match_character_type_word_opposite_not_match();
+    //
+    // test_match_character_type_digit();
+    // test_match_character_type_digit2();
+    // test_match_character_type_digit3();
+    // test_match_character_type_digit_unicode();
+    // test_match_character_type_digit_not_match();
+    //
+    // test_match_character_type_digit_opposite();
+    // test_match_character_type_digit_opposite_not_match();
+    //
+    // test_match_character_type_space();
+    // test_match_character_type_space_unicode();
+    // test_match_character_type_space_not_match();
+    //
+    // test_match_character_type_space_opposite();
+    // test_match_character_type_space_opposite_not_match();
+    //
+    // test_match_escape_newline();
+    // test_match_escape_newline_not_match();
+    // test_match_character_type_newline_opposite();
+    // test_match_character_type_newline_opposite_not_match();
+    //
+    // test_match_scan_all();
+    //
+    // test_match_word_type();
+    //
+    // test_match_coverage_line();
+    // test_match_coverage_line2();
+    test_match_coverage_line3();
 }

@@ -9,11 +9,21 @@
 #include "zinc/result.h"
 #include "coverage/data.h"
 #include <sys/stat.h>
+#include "cobble/compile.h"
+#include "cobble/compile_data.h"
+#include "cobble/compile_tools.h"
+#include "cobble/match.h"
+#include "cobble/match_tools.h"
+#include "zinc/input_unicode_string.h"
+#include "zinc/input_unicode.h"
+#include "zinc/vector.h"
 
 void Cov_cwd();
 void Cov_append_path(struct buffer* bf, char* path);
 void Cov_get_libraries(char* dir_name, Cov_library_list* libraries);
 void Cov_get_files(Cov_library* lib);
+void Cov_read_file(Cov_file* file);
+void Cov_print_match(struct buffer_list* groups);
 void Cov_app_print(Cov_app* app);
 
 int main(int argc, char** argv)
@@ -110,9 +120,194 @@ void Cov_get_files(Cov_library* lib)
                     buffer_finish(&file->path);
                     buffer_finish(&file->name);
                     Cov_file_list_add_sorted(&lib->files, file);
+                    Cov_read_file(file);
                 }
             }
         }
+    }
+}
+
+void Cov_read_file(Cov_file* file)
+{
+    FILE* fp = fopen(file->path.buf, "r");
+    if (!fp) {
+        perror("fopen() error");
+        return;
+    }
+
+    Vector* text = NULL;
+    VectorCreate(&text, 1);
+    char* s = "\\s*(\\-|#####|\\d+)\\*?:\\s*(\\d+):(Source:)?(.*)";
+    size_t len = strlen(s);
+    VectorAdd(text, s, len);
+
+    InputUnicodeString* input = NULL;
+    InputUnicodeStringCreate(&input, text);
+
+    struct error_list* el = NULL;
+    error_list_create(&el);
+
+    Compile_data* cd = NULL;
+    compile_data_create(&cd, input, input->input_vtable, el);
+
+    Ast_node* root = NULL;
+    bool valid = compile(cd, &root);
+    if (!valid) {
+        printf("compile() error:\n");
+        struct error* e = el->head;
+        while (e) {
+            buffer_finish(&e->message);
+            printf("%s\n", e->message.buf);
+            e = e->next;
+        }
+
+        VectorDestroy(text);
+        free(text);
+        free(input);
+        error_list_destroy(el);
+        free(el);
+        compile_data_destroy(cd);
+        free(cd);
+        return;
+    }
+
+    bool done = false;
+    struct buffer bf;
+    buffer_init(&bf);
+
+    while (!done) {
+        while (true) {
+            int c = fgetc(fp);
+            if (c == EOF) {
+                done = true;
+                break;
+            }
+            if (c == '\n') {
+                break;
+            }
+            buffer_add_char(&bf, (char)c);
+        }
+
+        if (bf.size > 0) {
+            String_slice slice;
+            slice.p = bf.buf;
+            slice.size = bf.size;
+            struct buffer_list groups;
+            buffer_list_init(&groups);
+            bool m = re_match(root, slice, &groups);
+            if (m) {
+                struct buffer* count = buffer_list_get(&groups, 1);
+                struct buffer* line_number = buffer_list_get(&groups, 2);
+                struct buffer* source = buffer_list_get(&groups, 3);
+                struct buffer* source_path = buffer_list_get(&groups, 4);
+
+                buffer_finish(line_number);
+                buffer_finish(count);
+                buffer_finish(source);
+                buffer_finish(source_path);
+
+                bool should_count_line;
+                size_t count_value = 0;
+                if (count->size > 0 && count->buf[0] == '-') {
+                    should_count_line = false;
+                } else if (buffer_compare_str(count, "#####")) {
+                    should_count_line = true;
+                    count_value = 0;
+                } else {
+                    should_count_line = true;
+                    count_value = strtoull(count->buf, NULL, 10);
+                }
+
+                if (should_count_line) {
+                    file->line_count++;
+                    if (count_value >= 1) {
+                        file->covered_count++;
+                    } else {
+                        file->not_covered_count;
+                    }
+                }
+
+                buffer_finish(line_number);
+                unsigned long long num = strtoull(line_number->buf, NULL, 10);
+                if (buffer_compare_str(source, "Source:") && num == 0) {
+                    buffer_copy(source_path, &file->source_path);
+                }
+                buffer_finish(&file->source_path);
+            } else {
+                buffer_finish(&bf);
+                fprintf(stderr, "\n%s\n", file->path.buf);
+                fprintf(stderr, "%s\n", bf.buf);
+                fprintf(stderr, "did not match\n");
+            }
+
+            buffer_list_destroy(&groups);
+            buffer_clear(&bf);
+
+        }
+    }
+
+    buffer_destroy(&bf);
+
+    fclose(fp);
+
+    VectorDestroy(text);
+    free(text);
+    free(input);
+    error_list_destroy(el);
+    free(el);
+    compile_data_destroy(cd);
+    free(cd);
+
+    if (file->line_count == 0) {
+        file->coverage_percentage = 100.0;
+    } else {
+        file->coverage_percentage =
+            (double)file->covered_count / (double)file->line_count * 100.0;
+    }
+}
+
+void Cov_print_match(struct buffer_list* groups)
+{
+    printf("matched:\n");
+
+    struct buffer* string = buffer_list_get(groups, 0);
+    if (string) {
+        buffer_finish(string);
+        printf("\tstring: %s\n", string->buf);
+    } else {
+        printf("\tcould not get string\n");
+    }
+
+    struct buffer* count = buffer_list_get(groups, 1);
+    if (count) {
+        buffer_finish(count);
+        printf("\tcount: %s\n", count->buf);
+    } else {
+        printf("\tcould not get count\n");
+    }
+
+    struct buffer* line_number = buffer_list_get(groups, 2);
+    if (line_number) {
+        buffer_finish(line_number);
+        printf("\tline number: %s\n", line_number->buf);
+    } else {
+        printf("\tcould not get line number\n");
+    }
+
+    struct buffer* source = buffer_list_get(groups, 3);
+    if (source) {
+        buffer_finish(source);
+        printf("\tsource: %s\n", source->buf);
+    } else {
+        printf("\tcould not get source\n");
+    }
+
+    struct buffer* filename = buffer_list_get(groups, 4);
+    if (filename) {
+        buffer_finish(filename);
+        printf("\tfilename: %s\n", filename->buf);
+    } else {
+        printf("\tcould not get filename\n");
     }
 }
 
@@ -120,11 +315,16 @@ void Cov_app_print(Cov_app* app)
 {
     Cov_library* lib = app->libraries.head;
     while (lib) {
-        printf("%s\n", lib->name.buf);
+        printf("\n%s\n", lib->name.buf);
 
         Cov_file* file = lib->files.head;
         while (file) {
-            printf("\t%s\n", file->name.buf);
+            printf("\tfile: %s\n", file->source_path.buf);
+            printf("\tline count: %zu\n", file->line_count);
+            printf("\tcovered count: %zu\n", file->covered_count);
+            printf("\tnot covered count: %zu\n", file->not_covered_count);
+            printf("\tcoverage (%%): %lf\n", file->coverage_percentage);
+            printf("\n");
             file = file->next;
         }
         lib = lib->next;

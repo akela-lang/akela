@@ -57,8 +57,6 @@ void Ast_node_add(Ast_node* p, Ast_node* c)
     if (c->type == Ast_type_error) {
         p->type = Ast_type_error;
     }
-
-    Ast_node_set_group(c);
 }
 
 Ast_node* Ast_node_get(Ast_node* n, int index)
@@ -74,35 +72,4 @@ Ast_node* Ast_node_get(Ast_node* n, int index)
     }
 
     return NULL;
-}
-
-void Ast_node_set_root(Ast_node* n)
-{
-    n->is_root = true;
-    if (n->type == Ast_type_group) {
-        n->is_group = true;
-        n->group = 1;
-    }
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_set_group(Ast_node* n)
-{
-    if (n->type == Ast_type_group) {
-        n->is_group = true;
-        Ast_node* p = n->parent;
-        while (p) {
-            if (p->is_group) {
-                n->group = p->group + 1;
-                break;
-            }
-
-            if (p->parent == NULL && p->is_root == false) {
-                Ast_node_set_root(p);
-                n->group = p->group + 1;
-            }
-
-            p = p->parent;
-        }
-    }
 }

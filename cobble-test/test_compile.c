@@ -1018,6 +1018,343 @@ void test_compile_character_type_newline_opposite()
     teardown_compile(cd, root);
 }
 
+void test_compile_coverage_line()
+{
+    test_name(__func__);
+
+    Compile_data* cd = NULL;
+    setup_compile(&cd, "\\s*(\\-):\\s*(\\d+):Source:(.+)");
+
+    Ast_node* root = NULL;
+    bool valid = compile(cd, &root);
+
+    expect_true(valid, "valid");
+    expect_no_errors(cd->el);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Ast_type_concat, "type root");
+    expect_true(root->is_root, "is_root root");
+    expect_false(root->is_group, "is_group root");
+
+    Ast_node* space0 = Ast_node_get(root, 0);
+    assert_ptr(space0, "ptr space0");
+    expect_int_equal(space0->type, Ast_type_closure, "type space0");
+    expect_false(space0->is_root, "is_root space0");
+    expect_false(space0->is_group, "is_group space0");
+
+    Ast_node* space00 = Ast_node_get(space0, 0);
+    assert_ptr(space00, "ptr space00");
+    expect_int_equal(space00->type, Ast_type_character_type_space, "type space00");
+    expect_false(space00->is_root, "is_root space00");
+    expect_false(space00->is_group, "is_group space00");
+
+    Ast_node* group0 = Ast_node_get(root, 1);
+    assert_ptr(group0, "ptr group0");
+    expect_int_equal(group0->type, Ast_type_group, "type group0");
+    expect_false(group0->is_root, "is_root group0");
+    expect_true(group0->is_group, "is_group group0");
+    expect_int_equal(group0->group, 1, "group group0");
+
+    Ast_node* escape0 = Ast_node_get(group0, 0);
+    assert_ptr(escape0, "ptr escape0");
+    expect_int_equal(escape0->type, Ast_type_escape, "type escape0");
+    expect_utf8_char_str(escape0->c, escape0->num, "-", "char[4],num escape0");
+    expect_false(escape0->is_root, "is_root escape0");
+    expect_false(escape0->is_group, "is_group escape0");
+
+    Ast_node* colon0 = Ast_node_get(root, 2);
+    assert_ptr(colon0, "ptr colon0");
+    expect_int_equal(colon0->type, Ast_type_literal, "type colon0");
+    expect_utf8_char_str(colon0->c, colon0->num, ":", "char[4],num colon0");
+    expect_false(colon0->is_root, "is_root colon0");
+    expect_false(colon0->is_group, "is_group colon0");
+
+    Ast_node* space1 = Ast_node_get(root, 3);
+    assert_ptr(space1, "ptr space1");
+    expect_int_equal(space1->type, Ast_type_closure, "type space1");
+    expect_false(space1->is_root, "is_root space1");
+    expect_false(space1->is_group, "is_group space1");
+
+    Ast_node* space10 = Ast_node_get(space1, 0);
+    assert_ptr(space10, "ptr space10");
+    expect_int_equal(space10->type, Ast_type_character_type_space, "type space10");
+    expect_false(space10->is_root, "is_root space10");
+    expect_false(space10->is_group, "is_group space10");
+
+    Ast_node* group1 = Ast_node_get(root, 4);
+    assert_ptr(group1, "ptr group1");
+    expect_int_equal(group1->type, Ast_type_group, "type group1");
+    expect_false(group1->is_root, "is_root group1");
+    expect_true(group1->is_group, "is_group group1");
+    expect_int_equal(group1->group, 2, "group group1");
+
+    Ast_node* digit0 = Ast_node_get(group1, 0);
+    assert_ptr(digit0, "ptr digit0");
+    expect_int_equal(digit0->type, Ast_type_positive_closure, "type digit0");
+    expect_false(digit0->is_root, "is_root digit0");
+    expect_false(digit0->is_group, "is_group digit0");
+
+    Ast_node* digit01 = Ast_node_get(digit0, 0);
+    assert_ptr(digit01, "ptr digit01");
+    expect_int_equal(digit01->type, Ast_type_character_type_digit, "type digit01");
+    expect_false(digit01->is_root, "is_root digit01");
+    expect_false(digit01->is_group, "is_group digit01");
+
+    Ast_node* colon1 = Ast_node_get(root, 5);
+    assert_ptr(colon1, "ptr colon1");
+    expect_int_equal(colon1->type, Ast_type_literal, "type colon1");
+    expect_utf8_char_str(colon1->c, colon1->num, ":", "char[4],num colon1");
+    expect_false(colon1->is_root, "is_root colon1");
+    expect_false(colon1->is_group, "is_group colon1");
+
+    Ast_node* lit0 = Ast_node_get(root, 6);
+    assert_ptr(lit0, "ptr lit0");
+    expect_int_equal(lit0->type, Ast_type_literal, "type lit0");
+    expect_utf8_char_str(lit0->c, lit0->num, "S", "char[4],num lit0");
+    expect_false(lit0->is_root, "is_root lit0");
+    expect_false(lit0->is_group, "is_group lit0");
+
+    Ast_node* lit1 = Ast_node_get(root, 7);
+    assert_ptr(lit1, "ptr lit1");
+    expect_int_equal(lit1->type, Ast_type_literal, "type lit1");
+    expect_utf8_char_str(lit1->c, lit1->num, "o", "char[4],num lit1");
+    expect_false(lit1->is_root, "is_root lit1");
+    expect_false(lit1->is_group, "is_group lit1");
+
+    Ast_node* lit2 = Ast_node_get(root, 8);
+    assert_ptr(lit2, "ptr lit2");
+    expect_int_equal(lit2->type, Ast_type_literal, "type lit2");
+    expect_utf8_char_str(lit2->c, lit2->num, "u", "char[4],num lit2");
+    expect_false(lit2->is_root, "is_root lit2");
+    expect_false(lit2->is_group, "is_group lit2");
+
+    Ast_node* lit3 = Ast_node_get(root, 9);
+    assert_ptr(lit3, "ptr lit3");
+    expect_int_equal(lit3->type, Ast_type_literal, "type lit3");
+    expect_utf8_char_str(lit3->c, lit3->num, "r", "char[4],num lit3");
+    expect_false(lit3->is_root, "is_root lit3");
+    expect_false(lit3->is_group, "is_group lit3");
+
+    Ast_node* lit4 = Ast_node_get(root, 10);
+    assert_ptr(lit4, "ptr lit4");
+    expect_int_equal(lit4->type, Ast_type_literal, "type lit4");
+    expect_utf8_char_str(lit4->c, lit4->num, "c", "char[4],num lit4");
+    expect_false(lit4->is_root, "is_root lit4");
+    expect_false(lit4->is_group, "is_group lit4");
+
+    Ast_node* lit5 = Ast_node_get(root, 11);
+    assert_ptr(lit5, "ptr lit5");
+    expect_int_equal(lit5->type, Ast_type_literal, "type lit5");
+    expect_utf8_char_str(lit5->c, lit5->num, "e", "char[4],num lit5");
+    expect_false(lit5->is_root, "is_root lit5");
+    expect_false(lit5->is_group, "is_group lit5");
+
+    Ast_node* colon2 = Ast_node_get(root, 12);
+    assert_ptr(colon2, "ptr colon2");
+    expect_int_equal(colon2->type, Ast_type_literal, "type colon2");
+    expect_utf8_char_str(colon2->c, colon2->num, ":", "char[4],num colon2");
+    expect_false(colon2->is_root, "is_root colon2");
+    expect_false(colon2->is_group, "is_group colon2");
+
+    Ast_node* group2 = Ast_node_get(root, 13);
+    assert_ptr(group2, "ptr group2");
+    expect_int_equal(group2->type, Ast_type_group, "type group2");
+    expect_false(group2->is_root, "is_root group2");
+    expect_true(group2->is_group, "is_group group2");
+    expect_int_equal(group2->group, 3, "group group2");
+
+    Ast_node* pc1 = Ast_node_get(group2, 0);
+    assert_ptr(pc1, "ptr pc1");
+    expect_int_equal(pc1->type, Ast_type_positive_closure, "type pc1");
+    expect_false(pc1->is_root, "is_root pc1");
+    expect_false(pc1->is_group, "is_group pc1");
+
+    Ast_node* wc0 = Ast_node_get(pc1, 0);
+    assert_ptr(wc0, "ptr wc0");
+    expect_int_equal(wc0->type, Ast_type_wildcard, "type wc0");
+    expect_false(wc0->is_root, "is_root wc0");
+    expect_false(wc0->is_group, "is_group wc0");
+
+    teardown_compile(cd, root);
+}
+
+void test_compile_coverage_line2()
+{
+    test_name(__func__);
+
+    Compile_data* cd = NULL;
+    setup_compile(&cd, "\\s*(\\-):\\s*(\\d+):(Source:)?(.+)");
+
+    Ast_node* root = NULL;
+    bool valid = compile(cd, &root);
+
+    expect_true(valid, "valid");
+    expect_no_errors(cd->el);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Ast_type_concat, "type root");
+    expect_true(root->is_root, "is_root root");
+    expect_false(root->is_group, "is_group root");
+
+    Ast_node* space0 = Ast_node_get(root, 0);
+    assert_ptr(space0, "ptr space0");
+    expect_int_equal(space0->type, Ast_type_closure, "type space0");
+    expect_false(space0->is_root, "is_root space0");
+    expect_false(space0->is_group, "is_group space0");
+
+    Ast_node* space00 = Ast_node_get(space0, 0);
+    assert_ptr(space00, "ptr space00");
+    expect_int_equal(space00->type, Ast_type_character_type_space, "type space00");
+    expect_false(space00->is_root, "is_root space00");
+    expect_false(space00->is_group, "is_group space00");
+
+    Ast_node* group0 = Ast_node_get(root, 1);
+    assert_ptr(group0, "ptr group0");
+    expect_int_equal(group0->type, Ast_type_group, "type group0");
+    expect_false(group0->is_root, "is_root group0");
+    expect_true(group0->is_group, "is_group group0");
+    expect_size_t_equal(group0->group, 1, "group group0");
+
+    Ast_node* escape0 = Ast_node_get(group0, 0);
+    assert_ptr(escape0, "ptr escape0");
+    expect_int_equal(escape0->type, Ast_type_escape, "type escape0");
+    expect_utf8_char_str(escape0->c, escape0->num, "-", "char[4],num escape0");
+    expect_false(escape0->is_root, "is_root escape0");
+    expect_false(escape0->is_group, "is_group escape0");
+
+    Ast_node* colon0 = Ast_node_get(root, 2);
+    assert_ptr(colon0, "ptr colon0");
+    expect_int_equal(colon0->type, Ast_type_literal, "type colon0");
+    expect_utf8_char_str(colon0->c, colon0->num, ":", "char[4],num colon0");
+    expect_false(colon0->is_root, "is_root colon0");
+    expect_false(colon0->is_group, "is_group colon0");
+
+    Ast_node* space1 = Ast_node_get(root, 3);
+    assert_ptr(space1, "ptr space1");
+    expect_int_equal(space1->type, Ast_type_closure, "type space1");
+    expect_false(space1->is_root, "is_root space1");
+    expect_false(space1->is_group, "is_group space1");
+
+    Ast_node* space10 = Ast_node_get(space1, 0);
+    assert_ptr(space10, "ptr space10");
+    expect_int_equal(space10->type, Ast_type_character_type_space, "type space10");
+    expect_false(space10->is_root, "is_root space10");
+    expect_false(space10->is_group, "is_group space10");
+
+    Ast_node* group1 = Ast_node_get(root, 4);
+    assert_ptr(group1, "ptr group1");
+    expect_int_equal(group1->type, Ast_type_group, "type group1");
+    expect_false(group1->is_root, "is_root group1");
+    expect_true(group1->is_group, "is_group group1");
+    expect_size_t_equal(group1->group, 2, "group group1");
+
+    Ast_node* digit0 = Ast_node_get(group1, 0);
+    assert_ptr(digit0, "ptr digit0");
+    expect_int_equal(digit0->type, Ast_type_positive_closure, "type digit0");
+    expect_false(digit0->is_root, "is_root digit0");
+    expect_false(digit0->is_group, "is_group digit0");
+
+    Ast_node* digit01 = Ast_node_get(digit0, 0);
+    assert_ptr(digit01, "ptr digit01");
+    expect_int_equal(digit01->type, Ast_type_character_type_digit, "type digit01");
+    expect_false(digit01->is_root, "is_root digit01");
+    expect_false(digit01->is_group, "is_group digit01");
+
+    Ast_node* colon1 = Ast_node_get(root, 5);
+    assert_ptr(colon1, "ptr colon1");
+    expect_int_equal(colon1->type, Ast_type_literal, "type colon1");
+    expect_utf8_char_str(colon1->c, colon1->num, ":", "char[4],num colon1");
+    expect_false(colon1->is_root, "is_root colon1");
+    expect_false(colon1->is_group, "is_group colon1");
+
+    Ast_node* option0 = Ast_node_get(root, 6);
+    assert_ptr(option0, "ptr option0");
+    expect_int_equal(option0->type, Ast_type_option, "type option0");
+    expect_false(option0->is_root, "is_root option0");
+    expect_false(option0->is_group, "is_group option0");
+
+    Ast_node* group2 = Ast_node_get(option0, 0);
+    assert_ptr(group2, "ptr group2");
+    expect_int_equal(group2->type, Ast_type_group, "type group2");
+    expect_false(group2->is_root, "is_root group2");
+    expect_true(group2->is_group, "is_group group2");
+    expect_size_t_equal(group2->group, 3, "group group2");
+
+    Ast_node* concat1 = Ast_node_get(group2, 0);
+    assert_ptr(concat1, "ptr concat1");
+    expect_int_equal(concat1->type, Ast_type_concat, "type concat1");
+
+    Ast_node* lit0 = Ast_node_get(concat1, 0);
+    assert_ptr(lit0, "ptr lit0");
+    expect_int_equal(lit0->type, Ast_type_literal, "type lit0");
+    expect_utf8_char_str(lit0->c, lit0->num, "S", "char[4],num lit0");
+    expect_false(lit0->is_root, "is_root lit0");
+    expect_false(lit0->is_group, "is_group lit0");
+
+    Ast_node* lit1 = Ast_node_get(concat1, 1);
+    assert_ptr(lit1, "ptr lit1");
+    expect_int_equal(lit1->type, Ast_type_literal, "type lit1");
+    expect_utf8_char_str(lit1->c, lit1->num, "o", "char[4],num lit1");
+    expect_false(lit1->is_root, "is_root lit1");
+    expect_false(lit1->is_group, "is_group lit1");
+
+    Ast_node* lit2 = Ast_node_get(concat1, 2);
+    assert_ptr(lit2, "ptr lit2");
+    expect_int_equal(lit2->type, Ast_type_literal, "type lit2");
+    expect_utf8_char_str(lit2->c, lit2->num, "u", "char[4],num lit2");
+    expect_false(lit2->is_root, "is_root lit2");
+    expect_false(lit2->is_group, "is_group lit2");
+
+    Ast_node* lit3 = Ast_node_get(concat1, 3);
+    assert_ptr(lit3, "ptr lit3");
+    expect_int_equal(lit3->type, Ast_type_literal, "type lit3");
+    expect_utf8_char_str(lit3->c, lit3->num, "r", "char[4],num lit3");
+    expect_false(lit3->is_root, "is_root lit3");
+    expect_false(lit3->is_group, "is_group lit3");
+
+    Ast_node* lit4 = Ast_node_get(concat1, 4);
+    assert_ptr(lit4, "ptr lit4");
+    expect_int_equal(lit4->type, Ast_type_literal, "type lit4");
+    expect_utf8_char_str(lit4->c, lit4->num, "c", "char[4],num lit4");
+    expect_false(lit4->is_root, "is_root lit4");
+    expect_false(lit4->is_group, "is_group lit4");
+
+    Ast_node* lit5 = Ast_node_get(concat1, 5);
+    assert_ptr(lit5, "ptr lit5");
+    expect_int_equal(lit5->type, Ast_type_literal, "type lit5");
+    expect_utf8_char_str(lit5->c, lit5->num, "e", "char[4],num lit5");
+    expect_false(lit5->is_root, "is_root lit5");
+    expect_false(lit5->is_group, "is_group lit5");
+
+    Ast_node* colon2 = Ast_node_get(concat1, 6);
+    assert_ptr(colon2, "ptr colon2");
+    expect_int_equal(colon2->type, Ast_type_literal, "type colon2");
+    expect_utf8_char_str(colon2->c, colon2->num, ":", "char[4],num colon2");
+    expect_false(colon2->is_root, "is_root colon2");
+    expect_false(colon2->is_group, "is_group colon2");
+
+    Ast_node* group3 = Ast_node_get(root, 7);
+    assert_ptr(group3, "ptr group3");
+    expect_int_equal(group3->type, Ast_type_group, "type group3");
+    expect_false(group3->is_root, "is_root group3");
+    expect_true(group3->is_group, "is_group group3");
+    expect_size_t_equal(group3->group, 4, "group group3");
+
+    Ast_node* pc1 = Ast_node_get(group3, 0);
+    assert_ptr(pc1, "ptr pc1");
+    expect_int_equal(pc1->type, Ast_type_positive_closure, "type pc1");
+    expect_false(pc1->is_root, "is_root pc1");
+    expect_false(pc1->is_group, "is_group pc1");
+
+    Ast_node* wc0 = Ast_node_get(pc1, 0);
+    assert_ptr(wc0, "ptr wc0");
+    expect_int_equal(wc0->type, Ast_type_wildcard, "type wc0");
+    expect_false(wc0->is_root, "is_root wc0");
+    expect_false(wc0->is_group, "is_group wc0");
+
+    teardown_compile(cd, root);
+}
+
 void test_compile()
 {
     test_compile_empty();
@@ -1059,4 +1396,7 @@ void test_compile()
     test_compile_character_type_space();
     test_compile_character_type_space_opposite();
     test_compile_character_type_newline_opposite();
+
+    test_compile_coverage_line();
+    test_compile_coverage_line2();
 }

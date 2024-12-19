@@ -475,13 +475,35 @@ void expect_utf8_char(char* a, char* b, char* message)
     if (count_a == count_b) {
         for (int i = 0; i < count_a; i++) {
             if (a[i] != b[i]) {
-                break;
+            	error_triggered();
+            	fprintf(stderr, "utf8 chars not equal: %s\n", message);
+            	return;
             }
         }
         return;
     }
     error_triggered();
-    printf("utf8 chars not equal: %s\n", message);
+    fprintf(stderr, "utf8 chars not equal: %s\n", message);
+}
+
+void expect_utf8_char_str(char a[4], int num, char* b, char* message)
+{
+	test_called();
+	int count_a = NUM_BYTES(a[0]);
+	int count_b = NUM_BYTES(b[0]);
+	size_t len = strlen(b);
+	if (num == count_a && num == count_b && num == len) {
+		for (int i = 0; i < num; i++) {
+			if (a[i] != b[i]) {
+				error_triggered();
+				fprintf(stderr, "utf8 chars not equal: %s\n", message);
+				return;
+			}
+		}
+		return;
+	}
+	error_triggered();
+	fprintf(stderr, "utf8 chars not equal: %s\n", message);
 }
 
 void expect_buffer_list_count(struct buffer_list* bl, size_t count, char* message)
