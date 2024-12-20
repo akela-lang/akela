@@ -1,3 +1,3 @@
 # Coverage Todo
-* aggregate stats of app
-* display data
+* print progress
+* separate test code and app code

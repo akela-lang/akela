@@ -193,9 +193,9 @@ void Cov_app_init(Cov_app *app)
 {
     buffer_init(&app->data_path);
     Cov_library_list_init(&app->libraries);
-    app->number_of_lines = 0;
-    app->number_covered = 0;
-    app->number_not_covered = 0;
+    app->line_count = 0;
+    app->covered_count = 0;
+    app->not_covered_count = 0;
     app->coverage_percentage = 0.0;
 }
 

@@ -20,12 +20,13 @@
 
 void Cov_cwd();
 void Cov_append_path(struct buffer* bf, char* path);
-void Cov_get_libraries(char* dir_name, Cov_library_list* libraries);
+void Cov_get_libraries(char* dir_name, Cov_app* app);
 void Cov_get_files(Cov_library* lib);
 void Cov_read_file(Cov_file* file);
 void Cov_print_match(struct buffer_list* groups);
 void Cov_app_print(Cov_app* app);
 void Cov_agg_files(Cov_library* lib);
+void Cov_agg_libraries(Cov_app* app);
 
 int main(int argc, char** argv)
 {
@@ -41,7 +42,7 @@ int main(int argc, char** argv)
     buffer_copy_str(&app.data_path, dir_name);
     buffer_finish(&app.data_path);
 
-    Cov_get_libraries(dir_name, &app.libraries);
+    Cov_get_libraries(dir_name, &app);
     Cov_app_print(&app);
 
     Cov_app_destroy(&app);
@@ -65,7 +66,7 @@ void Cov_append_path(struct buffer* bf, char* path)
     buffer_add_str(bf, path);
 }
 
-void Cov_get_libraries(char* dir_name, Cov_library_list* libraries)
+void Cov_get_libraries(char* dir_name, Cov_app *app)
 {
     DIR* d;
     struct dirent* dir;
@@ -86,7 +87,7 @@ void Cov_get_libraries(char* dir_name, Cov_library_list* libraries)
                     buffer_add_str(&lib->name, dir->d_name);
                     buffer_finish(&lib->path);
                     buffer_finish(&lib->name);
-                    Cov_library_list_add_sorted(libraries, lib);
+                    Cov_library_list_add_sorted(&app->libraries, lib);
                     Cov_get_files(lib);
                 }
 
@@ -97,6 +98,8 @@ void Cov_get_libraries(char* dir_name, Cov_library_list* libraries)
     } else {
         perror("opendir() error");
     }
+
+    Cov_agg_libraries(app);
 }
 
 void Cov_get_files(Cov_library* lib)
@@ -137,9 +140,21 @@ void Cov_agg_files(Cov_library* lib)
         lib->line_count += file->line_count;
         lib->covered_count += file->covered_count;
         lib->not_covered_count += file->not_covered_count;
-        lib->coverage_percentage = (double)lib->covered_count / (double)lib->line_count * 100.0;
         file = file->next;
     }
+    lib->coverage_percentage = (double)lib->covered_count / (double)lib->line_count * 100.0;
+}
+
+void Cov_agg_libraries(Cov_app* app)
+{
+    Cov_library* lib = app->libraries.head;
+    while (lib) {
+        app->line_count += lib->line_count;
+        app->covered_count += lib->covered_count;
+        app->not_covered_count += lib->not_covered_count;
+        lib = lib->next;
+    }
+    app->coverage_percentage = (double)app->covered_count / (double)app->line_count * 100.0;
 }
 
 void Cov_read_file(Cov_file* file)
@@ -238,7 +253,7 @@ void Cov_read_file(Cov_file* file)
                     if (count_value >= 1) {
                         file->covered_count++;
                     } else {
-                        file->not_covered_count;
+                        file->not_covered_count++;
                     }
                 }
 
@@ -328,6 +343,13 @@ void Cov_print_match(struct buffer_list* groups)
 
 void Cov_app_print(Cov_app* app)
 {
+    printf("\nApp\n");
+    printf("\tline count: %zu\n", app->line_count);
+    printf("\tcovered count: %zu\n", app->covered_count);
+    printf("\tnot covered count: %zu\n", app->not_covered_count);
+    printf("\tcoverage (%%): %lf\n", app->coverage_percentage);
+    printf("\n");
+
     Cov_library* lib = app->libraries.head;
     while (lib) {
         printf("\n%s\n", lib->name.buf);

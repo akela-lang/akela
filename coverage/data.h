@@ -41,9 +41,9 @@ typedef struct Cov_library_list
 typedef struct Cov_app {
     struct buffer data_path;
     Cov_library_list libraries;
-    size_t number_of_lines;
-    size_t number_covered;
-    size_t number_not_covered;
+    size_t line_count;
+    size_t covered_count;
+    size_t not_covered_count;
     double coverage_percentage;
 } Cov_app;
 
