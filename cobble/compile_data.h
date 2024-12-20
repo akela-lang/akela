@@ -4,11 +4,12 @@
 #include "zinc/error.h"
 #include "zinc/input_unicode.h"
 #include "ast.h"
+#include "token.h"
 
 typedef struct Cob_compile_data {
     void* input_obj;
     InputUnicodeVTable* input_vtable;
-    struct token* lookahead;
+    Cob_token* lookahead;
     struct error_list* el;
     size_t group_number;
 } Cob_compile_data;

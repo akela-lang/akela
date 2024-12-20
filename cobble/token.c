@@ -6,61 +6,61 @@
 #include <stdio.h>
 #include <ctype.h>
 
-void token_init(struct token* t)
+void Cob_token_init(Cob_token* t)
 {
-    t->type = token_none;
+    t->type = Cob_token_none;
     t->num = 0;
     location_init(&t->loc);
 }
 
-enum token_type token_classify(char c[4], int num, bool done)
+Cob_token_type Cob_token_classify(char c[4], int num, bool done)
 {
     if (done) {
-        return token_eof;
+        return Cob_token_eof;
     }
 
     if (num == 1) {
         if (isdigit(c[0])) {
-            return token_digit;
+            return Cob_token_digit;
         }
 
         switch (c[0]) {
         case '|':
-            return token_union;
+            return Cob_token_union;
         case '*':
-            return token_closure;
+            return Cob_token_closure;
         case '+':
-            return token_plus;
+            return Cob_token_plus;
         case '(':
-            return token_open_paren;
+            return Cob_token_open_paren;
         case ')':
-            return token_close_paren;
+            return Cob_token_close_paren;
         case '{':
-            return token_open_repeat;
+            return Cob_token_open_repeat;
         case '}':
-            return token_close_repeat;
+            return Cob_token_close_repeat;
         case ',':
-            return token_comma;
+            return Cob_token_comma;
         case '?':
-            return token_question;
+            return Cob_token_question;
         case '.':
-            return token_wildcard;
+            return Cob_token_wildcard;
         case '^':
-            return token_caret;
+            return Cob_token_caret;
         case '$':
-            return token_dollar;
+            return Cob_token_dollar;
         case '\\':
-            return token_backslash;
+            return Cob_token_backslash;
         case '[':
-            return token_left_square_bracket;
+            return Cob_token_left_square_bracket;
         case ']':
-            return token_right_square_bracket;
+            return Cob_token_right_square_bracket;
         case '-':
-            return token_dash;
+            return Cob_token_dash;
         default:
-            return token_literal;
+            return Cob_token_literal;
         }
     }
 
-    return token_literal;
+    return Cob_token_literal;
 }

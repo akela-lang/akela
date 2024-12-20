@@ -15,7 +15,7 @@ Cob_ast* Cob_parse_mod(Cob_compile_data* cd);
 Cob_ast* Cob_parse_num(Cob_compile_data* cd);
 Cob_ast* Cob_parse_group(Cob_compile_data* cd);
 void Cob_parse_seq(Cob_compile_data* cd, Cob_ast* parent);
-bool Cob_is_char(enum token_type type);
+bool Cob_is_char(Cob_token_type type);
 Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict);
 
 Cob_re Cob_compile(Cob_compile_data* cd)
@@ -29,7 +29,7 @@ Cob_re Cob_compile(Cob_compile_data* cd)
     }
 
     Cob_lookahead(cd);
-    if (cd->lookahead->type != token_eof) {
+    if (cd->lookahead->type != Cob_token_eof) {
         error_list_set(cd->el, &cd->lookahead->loc,
         "unhandled token: %d, %c", cd->lookahead->type, cd->lookahead->c);
     }
@@ -55,7 +55,7 @@ Cob_ast* Cob_parse_union(Cob_compile_data* cd)
     while (true) {
         Cob_lookahead(cd);
 
-        if (cd->lookahead->type != token_union) {
+        if (cd->lookahead->type != Cob_token_union) {
             break;
         }
 
@@ -65,8 +65,8 @@ Cob_ast* Cob_parse_union(Cob_compile_data* cd)
             Cob_ast_add(n, a);
         }
 
-        struct token* op = NULL;
-        if (!Cob_match_token(cd, token_union, "expected |", &op, n)) {
+        Cob_token* op = NULL;
+        if (!Cob_match_token(cd, Cob_token_union, "expected |", &op, n)) {
             n->type = Cob_ast_type_error;
         }
         free(op);
@@ -127,12 +127,12 @@ Cob_ast* Cob_parse_concat(Cob_compile_data* cd)
     return n;
 }
 
-bool Cob_is_modifier(enum token_type type)
+bool Cob_is_modifier(Cob_token_type type)
 {
-    if (type == token_closure) return true;
-    if (type == token_plus) return true;
-    if (type == token_open_repeat) return true;
-    if (type == token_question) return true;
+    if (type == Cob_token_closure) return true;
+    if (type == Cob_token_plus) return true;
+    if (type == Cob_token_open_repeat) return true;
+    if (type == Cob_token_question) return true;
     return false;
 }
 
@@ -157,13 +157,13 @@ Cob_ast* Cob_parse_mod(Cob_compile_data* cd)
     Cob_ast_create(&n);
     Cob_ast_add(n, a);
 
-    struct token* mod = NULL;
+    Cob_token* mod = NULL;
     if (!Cob_match_token(cd, cd->lookahead->type, "expected modifier", &mod, n)) {
         n->type = Cob_ast_type_error;
     }
 
     /* parse repeat */
-    if (mod->type == token_open_repeat) {
+    if (mod->type == Cob_token_open_repeat) {
         n->type = Cob_ast_type_repeat;
 
         Cob_ast* num = Cob_parse_num(cd);
@@ -171,11 +171,11 @@ Cob_ast* Cob_parse_mod(Cob_compile_data* cd)
 
         /* range */
         Cob_lookahead(cd);
-        if (cd->lookahead->type == token_comma) {
+        if (cd->lookahead->type == Cob_token_comma) {
             n->type = Cob_ast_type_repeat_range;
 
-            struct token* comma = NULL;
-            if (!Cob_match_token(cd, token_comma, "expected a comma", &comma, n)) {
+            Cob_token* comma = NULL;
+            if (!Cob_match_token(cd, Cob_token_comma, "expected a comma", &comma, n)) {
                 n->type = Cob_ast_type_error;
             }
             free(comma);
@@ -185,16 +185,16 @@ Cob_ast* Cob_parse_mod(Cob_compile_data* cd)
             Cob_ast_add(n, num2);
         }
 
-        struct token* ccb = NULL;
-        if (!Cob_match_token(cd, token_close_repeat, "expected }", &ccb, n)) {
+        Cob_token* ccb = NULL;
+        if (!Cob_match_token(cd, Cob_token_close_repeat, "expected }", &ccb, n)) {
             n->type = Cob_ast_type_error;
         }
         free(ccb);
-    } else if (mod->type == token_closure) {
+    } else if (mod->type == Cob_token_closure) {
         n->type = Cob_ast_type_closure;
-    } else if (mod->type == token_plus) {
+    } else if (mod->type == Cob_token_plus) {
         n->type = Cob_ast_type_positive_closure;
-    } else if (mod->type == token_question) {
+    } else if (mod->type == Cob_token_question) {
         n->type = Cob_ast_type_option;
     } else {
         assert(false && "not possible");
@@ -216,8 +216,8 @@ Cob_ast* Cob_parse_num(Cob_compile_data* cd)
     struct buffer bf;
     buffer_init(&bf);
 
-    struct token* d = NULL;
-    if (!Cob_match_token(cd, token_digit, "expected digit", &d, n)) {
+    Cob_token* d = NULL;
+    if (!Cob_match_token(cd, Cob_token_digit, "expected digit", &d, n)) {
         n->type = Cob_ast_type_error;
         buffer_destroy(&bf);
         return n;
@@ -231,8 +231,8 @@ Cob_ast* Cob_parse_num(Cob_compile_data* cd)
 
     Cob_lookahead(cd);
 
-    while (cd->lookahead->type == token_digit) {
-        if (!Cob_match_token(cd, token_digit, "expected digit", &d, n)) {
+    while (cd->lookahead->type == Cob_token_digit) {
+        if (!Cob_match_token(cd, Cob_token_digit, "expected digit", &d, n)) {
             assert(false);
         }
         buffer_add_char(&bf, d->c[0]);
@@ -255,14 +255,14 @@ Cob_ast* Cob_parse_group(Cob_compile_data* cd)
 
     Cob_lookahead(cd);
 
-    if (cd->lookahead->type == token_open_paren) {
+    if (cd->lookahead->type == Cob_token_open_paren) {
         Cob_ast_create(&n);
         n->type = Cob_ast_type_group;
         n->is_group = true;
         n->group = ++cd->group_number;
 
-        struct token* opr = NULL;
-        if (!Cob_match_token(cd, token_open_paren, "expected left parenthesis", &opr, n)) {
+        Cob_token* opr = NULL;
+        if (!Cob_match_token(cd, Cob_token_open_paren, "expected left parenthesis", &opr, n)) {
             n->type = Cob_ast_type_error;
             return n;
         }
@@ -275,25 +275,25 @@ Cob_ast* Cob_parse_group(Cob_compile_data* cd)
             Cob_ast_add(n, a);
         }
 
-        struct token* rpr = NULL;
-        if (!Cob_match_token(cd, token_close_paren, "expected right parenthesis", &rpr, n)) {
+        Cob_token* rpr = NULL;
+        if (!Cob_match_token(cd, Cob_token_close_paren, "expected right parenthesis", &rpr, n)) {
             n->type = Cob_ast_type_error;
         }
         free(rpr);
-    } else if (cd->lookahead->type == token_left_square_bracket) {
+    } else if (cd->lookahead->type == Cob_token_left_square_bracket) {
         Cob_ast_create(&n);
 
-        struct token* lsb = NULL;
-        if (!Cob_match_token(cd, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
+        Cob_token* lsb = NULL;
+        if (!Cob_match_token(cd, Cob_token_left_square_bracket, "expected left square bracket", &lsb, n)) {
             assert(false && "not possible");
         }
         free(lsb);
 
         Cob_lookahead(cd);
-        if (cd->lookahead->type == token_caret) {
+        if (cd->lookahead->type == Cob_token_caret) {
             n->type = Cob_ast_type_character_class_opposite;
-            struct token* caret = NULL;
-            if (!Cob_match_token(cd, token_caret, "expected caret", &caret, n)) {
+            Cob_token* caret = NULL;
+            if (!Cob_match_token(cd, Cob_token_caret, "expected caret", &caret, n)) {
                 assert(false && "not possible");
             }
             free(caret);
@@ -303,8 +303,8 @@ Cob_ast* Cob_parse_group(Cob_compile_data* cd)
 
         Cob_parse_seq(cd, n);
 
-        struct token* rsb = NULL;
-        if (!Cob_match_token(cd, token_right_square_bracket, "expected right square bracket", &rsb, n)) {
+        Cob_token* rsb = NULL;
+        if (!Cob_match_token(cd, Cob_token_right_square_bracket, "expected right square bracket", &rsb, n)) {
             n->type = Cob_ast_type_error;
         }
         free(rsb);
@@ -343,17 +343,17 @@ void Cob_parse_seq(Cob_compile_data* cd, Cob_ast* parent)
     }
 }
 
-bool Cob_is_char(const enum token_type type)
+bool Cob_is_char(const Cob_token_type type)
 {
-    if (type == token_literal)
+    if (type == Cob_token_literal)
         return true;
-    if (type == token_wildcard)
+    if (type == Cob_token_wildcard)
         return true;
-    if (type == token_caret)
+    if (type == Cob_token_caret)
         return true;
-    if (type == token_dollar)
+    if (type == Cob_token_dollar)
         return true;
-    if (type == token_backslash)
+    if (type == Cob_token_backslash)
         return true;
 
     return false;
@@ -366,12 +366,12 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
     Cob_ast* n = NULL;
 
     Cob_lookahead(cd);
-    if (cd->lookahead->type == token_literal) {
+    if (cd->lookahead->type == Cob_token_literal) {
         Cob_ast_create(&n);
         n->type = Cob_ast_type_literal;
 
-        struct token* lit = NULL;
-        if (!Cob_match_token(cd, token_literal, "expected literal", &lit, n)) {
+        Cob_token* lit = NULL;
+        if (!Cob_match_token(cd, Cob_token_literal, "expected literal", &lit, n)) {
             assert(false && "not possible");
         }
 
@@ -382,12 +382,12 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
             }
         }
         free(lit);
-    } else if (cd->lookahead->type == token_wildcard) {
+    } else if (cd->lookahead->type == Cob_token_wildcard) {
         Cob_ast_create(&n);
         n->type = Cob_ast_type_wildcard;
 
-        struct token* wc = NULL;
-        if (!Cob_match_token(cd, token_wildcard, "expected wildcard", &wc, n)) {
+        Cob_token* wc = NULL;
+        if (!Cob_match_token(cd, Cob_token_wildcard, "expected wildcard", &wc, n)) {
             assert(false && "not possible");
         }
 
@@ -398,12 +398,12 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
             return n;
         }
         free(wc);
-    } else if (cd->lookahead->type == token_caret) {
+    } else if (cd->lookahead->type == Cob_token_caret) {
         Cob_ast_create(&n);
         n->type = Cob_ast_type_begin;
 
-        struct token* begin = NULL;
-        if (!Cob_match_token(cd, token_caret, "expected begin", &begin, n)) {
+        Cob_token* begin = NULL;
+        if (!Cob_match_token(cd, Cob_token_caret, "expected begin", &begin, n)) {
             assert(false && "not possible");
         }
 
@@ -414,12 +414,12 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
             return n;
         }
         free(begin);
-    } else if (cd->lookahead->type == token_dollar) {
+    } else if (cd->lookahead->type == Cob_token_dollar) {
         Cob_ast_create(&n);
         n->type = Cob_ast_type_end;
 
-        struct token* end = NULL;
-        if (!Cob_match_token(cd, token_dollar, "expected end", &end, n)) {
+        Cob_token* end = NULL;
+        if (!Cob_match_token(cd, Cob_token_dollar, "expected end", &end, n)) {
             assert(false && "not possible");
         }
 
@@ -430,18 +430,18 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
             return n;
         }
         free(end);
-    } else if (cd->lookahead->type == token_backslash) {
+    } else if (cd->lookahead->type == Cob_token_backslash) {
         bool done = false;
         Cob_ast_create(&n);
         n->type = Cob_ast_type_escape;
-        struct token* backslash = NULL;
-        if (!Cob_match_token(cd, token_backslash, "expected backslash", &backslash, n)) {
+        Cob_token* backslash = NULL;
+        if (!Cob_match_token(cd, Cob_token_backslash, "expected backslash", &backslash, n)) {
             assert(false && "not possible");
         }
         free(backslash);
         if (backslash) {
             Cob_lookahead(cd);
-            if (cd->lookahead->type == token_literal) {
+            if (cd->lookahead->type == Cob_token_literal) {
                 if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'w') {
                     n->type = Cob_ast_type_character_type_word;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'W') {
@@ -459,8 +459,8 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
                 }
 
                 if (n->type != Cob_ast_type_escape) {
-                    struct token* lit = NULL;
-                    if (!Cob_match_token(cd, token_literal, "expected literal", &lit, n)) {
+                    Cob_token* lit = NULL;
+                    if (!Cob_match_token(cd, Cob_token_literal, "expected literal", &lit, n)) {
                         assert(false && "not possible");
                     }
                     free(lit);
@@ -468,8 +468,8 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
                 }
             }
 
-            if (n->type == Cob_ast_type_escape && cd->lookahead->type != token_eof) {
-                struct token* ch = NULL;
+            if (n->type == Cob_ast_type_escape && cd->lookahead->type != Cob_token_eof) {
+                Cob_token* ch = NULL;
                 if (!Cob_match_token(cd, cd->lookahead->type, "expected character", &ch, n)) {
                     assert(false && "not possible");
                 }
@@ -491,9 +491,9 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
     /* if the character is part of a range */
     if (n && strict) {
         Cob_lookahead(cd);
-        if (cd->lookahead->type == token_dash) {
-            struct token* dash = NULL;
-            if (!Cob_match_token(cd, token_dash, "expected range", &dash, n)) {
+        if (cd->lookahead->type == Cob_token_dash) {
+            Cob_token* dash = NULL;
+            if (!Cob_match_token(cd, Cob_token_dash, "expected range", &dash, n)) {
                 assert(false && "not possible");
             }
             free(dash);

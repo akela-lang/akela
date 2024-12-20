@@ -3,37 +3,37 @@
 
 #include "zinc/error.h"
 
-enum token_type {
-    token_none,
-    token_eof,
-    token_literal,
-    token_union,
-    token_closure,
-    token_plus,
-    token_open_paren,
-    token_close_paren,
-    token_open_repeat,
-    token_close_repeat,
-    token_comma,
-    token_digit,
-    token_question,
-    token_wildcard,
-    token_caret,
-    token_dollar,
-    token_backslash,
-    token_left_square_bracket,
-    token_right_square_bracket,
-    token_dash,
-};
+typedef enum Cob_token_type {
+    Cob_token_none,
+    Cob_token_eof,
+    Cob_token_literal,
+    Cob_token_union,
+    Cob_token_closure,
+    Cob_token_plus,
+    Cob_token_open_paren,
+    Cob_token_close_paren,
+    Cob_token_open_repeat,
+    Cob_token_close_repeat,
+    Cob_token_comma,
+    Cob_token_digit,
+    Cob_token_question,
+    Cob_token_wildcard,
+    Cob_token_caret,
+    Cob_token_dollar,
+    Cob_token_backslash,
+    Cob_token_left_square_bracket,
+    Cob_token_right_square_bracket,
+    Cob_token_dash,
+} Cob_token_type;
 
-struct token {
-    enum token_type type;
+typedef struct Cob_token {
+    Cob_token_type type;
     int num;
     char c[4];
     struct location loc;
-};
+} Cob_token;
 
-void token_init(struct token* t);
-enum token_type token_classify(char c[4], int num, bool done);
+void Cob_token_init(Cob_token* t);
+Cob_token_type Cob_token_classify(char c[4], int num, bool done);
 
 #endif //COBBLE_TOKEN_H
