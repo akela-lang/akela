@@ -17,6 +17,7 @@
 #include "zinc/input_unicode_string.h"
 #include "zinc/input_unicode.h"
 #include "zinc/vector.h"
+#include "coverage/parse.h"
 
 void Cov_cwd();
 void Cov_append_path(struct buffer* bf, char* path);
@@ -170,38 +171,18 @@ void Cov_read_file(Cov_file* file)
         return;
     }
 
-    Vector* text = NULL;
-    VectorCreate(&text, 1);
-    char* s = "\\s*(\\-|#####|\\d+)\\*?:\\s*(\\d+):(Source:)?(.*)";
-    size_t len = strlen(s);
-    VectorAdd(text, s, len);
+    Cob_compile_result cr = Cov_gov_line_re();
 
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, text);
-
-    struct error_list* el = NULL;
-    error_list_create(&el);
-
-    Compile_data* cd = NULL;
-    compile_data_create(&cd, input, input->input_vtable, el);
-
-    Cob_compile_result cr = compile(cd);
     if (cr.el->head) {
         printf("compile() error:\n");
-        struct error* e = el->head;
+        struct error* e = cr.el->head;
         while (e) {
             buffer_finish(&e->message);
             printf("%s\n", e->message.buf);
             e = e->next;
         }
 
-        VectorDestroy(text);
-        free(text);
-        free(input);
-        error_list_destroy(el);
-        free(el);
-        compile_data_destroy(cd);
-        free(cd);
+        Cov_re_cleanup(&cr);
         return;
     }
 
@@ -283,14 +264,6 @@ void Cov_read_file(Cov_file* file)
     buffer_destroy(&bf);
 
     fclose(fp);
-
-    VectorDestroy(text);
-    free(text);
-    free(input);
-    error_list_destroy(el);
-    free(el);
-    compile_data_destroy(cd);
-    free(cd);
 
     if (file->line_count == 0) {
         file->coverage_percentage = 100.0;
