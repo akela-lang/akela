@@ -14,9 +14,9 @@
 #include <unicode/ucnv.h>
 #include <zinc/utf8.h>
 
-void Match_task_init(Match_task* task, Match_task* parent)
+void Cob_task_init(Cob_task* task, Cob_task* parent)
 {
-    task->status = Match_task_initial;
+    task->status = Cob_task_status_initial;
     task->matched = false;
     task->n = NULL;
     task->p = NULL;
@@ -31,17 +31,13 @@ void Match_task_init(Match_task* task, Match_task* parent)
     task->prev = NULL;
 }
 
-void Match_task_destroy(Match_task* task)
+void Cob_task_create(Cob_task** task, Cob_task* parent)
 {
+    malloc_safe((void**)task, sizeof(Cob_task));
+    Cob_task_init(*task, parent);
 }
 
-void Match_task_create(Match_task** task, Match_task* parent)
-{
-    malloc_safe((void**)task, sizeof(Match_task));
-    Match_task_init(*task, parent);
-}
-
-void Match_task_copy(Match_task* src, Match_task* dest)
+void Cob_task_copy(Cob_task* src, Cob_task* dest)
 {
     dest->status = src->status;
     dest->matched = src->matched;
@@ -52,27 +48,26 @@ void Match_task_copy(Match_task* src, Match_task* dest)
     dest->end_slice = src->end_slice;
 }
 
-void Match_task_stack_init(Match_task_stack* mts, Stack_node* sn)
+void Cob_stack_init(Cob_stack* mts, Cob_stack_node* sn)
 {
     mts->top = NULL;
     mts->bottom = NULL;
 }
 
-void Match_task_stack_create(Match_task_stack** mts, Stack_node* sn)
+void Cob_stack_create(Cob_stack** mts, Cob_stack_node* sn)
 {
-    malloc_safe((void**)mts, sizeof(Match_task_stack));
-    Match_task_stack_init(*mts, sn);
+    malloc_safe((void**)mts, sizeof(Cob_stack));
+    Cob_stack_init(*mts, sn);
 }
 
-void Match_task_stack_destroy(Match_task_stack* mts)
+void Cob_stack_destroy(Cob_stack* mts)
 {
     if (mts) {
-        Match_task* task = mts->top;
+        Cob_task* task = mts->top;
 
         while (task) {
-            Match_task* temp = task;
+            Cob_task* temp = task;
             task = task->next;
-            Match_task_destroy(temp);
             free(temp);
         }
 
@@ -80,7 +75,7 @@ void Match_task_stack_destroy(Match_task_stack* mts)
     }
 }
 
-void Match_task_stack_push(Match_task_stack *mts, Match_task *new_task)
+void Cob_stack_push(Cob_stack *mts, Cob_task *new_task)
 {
     assert(new_task);
     assert(new_task->next == NULL);
@@ -96,10 +91,10 @@ void Match_task_stack_push(Match_task_stack *mts, Match_task *new_task)
     }
 }
 
-Match_task* Match_task_stack_pop(Match_task_stack* mts)
+Cob_task* Cob_stack_pop(Cob_stack* mts)
 {
     if (mts->top && mts->bottom) {
-        Match_task* task = mts->top;
+        Cob_task* task = mts->top;
         mts->top = task->next;
         if (mts->top) {
             mts->top->prev = NULL;
@@ -112,10 +107,10 @@ Match_task* Match_task_stack_pop(Match_task_stack* mts)
     }
 }
 
-Match_task* Match_task_stack_remove(Match_task_stack* mts, Match_task* task)
+Cob_task* Cob_stack_remove(Cob_stack* mts, Cob_task* task)
 {
-    Match_task* prev = task->prev;
-    Match_task* next = task->next;
+    Cob_task* prev = task->prev;
+    Cob_task* next = task->next;
     if (prev) {
         prev->next = next;
     } else {
@@ -132,19 +127,18 @@ Match_task* Match_task_stack_remove(Match_task_stack* mts, Match_task* task)
     return task;
 }
 
-void Match_task_stack_pop_to(Match_task_stack* mts, Match_task* marker)
+void Cob_stack_pop_to(Cob_stack* mts, Cob_task* marker)
 {
-    Match_task* task = mts->top;
+    Cob_task* task = mts->top;
     while (task && task != marker) {
-        Match_task* temp = task;
+        Cob_task* temp = task;
         task = task->next;
-        Match_task_stack_pop(mts);
-        Match_task_destroy(temp);
+        Cob_stack_pop(mts);
         free(temp);
     }
 }
 
-void Match_task_stack_add_char(Stack_node* sn, Match_task* task, String_slice slice)
+void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice slice)
 {
     int num = NUM_BYTES(slice.p[0]);
     while (task) {
@@ -182,21 +176,21 @@ void Match_task_stack_add_char(Stack_node* sn, Match_task* task, String_slice sl
     }
 }
 
-Match_task_stack* Match_task_stack_clone(Match_task_stack* mts, struct hash_table* ht, Stack_node* sn)
+Cob_stack* Cob_stack_clone(Cob_stack* mts, struct hash_table* ht, Cob_stack_node* sn)
 {
     if (mts) {
-        Match_task_stack* new_mts = NULL;
-        Match_task_stack_create(&new_mts, sn);
+        Cob_stack* new_mts = NULL;
+        Cob_stack_create(&new_mts, sn);
 
         struct buffer bf;
         buffer_init(&bf);
 
-        Match_task* task = mts->bottom;
+        Cob_task* task = mts->bottom;
         while (task) {
-            Match_task* new_task = NULL;
-            Match_task_create(&new_task, NULL);
-            Match_task_copy(task, new_task);
-            Match_task_stack_push(new_mts, new_task);
+            Cob_task* new_task = NULL;
+            Cob_task_create(&new_task, NULL);
+            Cob_task_copy(task, new_task);
+            Cob_stack_push(new_mts, new_task);
 
             buffer_clear(&bf);
             buffer_add_format(&bf, "%lx", task);
@@ -220,9 +214,9 @@ Match_task_stack* Match_task_stack_clone(Match_task_stack* mts, struct hash_tabl
     return NULL;
 }
 
-void Stack_node_init(Stack_node* sn)
+void Cob_stack_node_init(Cob_stack_node* sn)
 {
-    sn->mts = NULL;
+    sn->stack = NULL;
     sn->sl = NULL;
     Hash_map_size_t_init(&sn->groups, 16);
     sn->priority = 0;
@@ -230,64 +224,64 @@ void Stack_node_init(Stack_node* sn)
     sn->prev = NULL;
 }
 
-void Stack_node_create(Stack_node** sn)
+void Cob_stack_node_create(Cob_stack_node** sn)
 {
-    malloc_safe((void**)sn, sizeof(Stack_node));
-    Stack_node_init(*sn);
+    malloc_safe((void**)sn, sizeof(Cob_stack_node));
+    Cob_stack_node_init(*sn);
 }
 
-void Stack_node_groups_item_destroy(size_t index, struct buffer* bf)
+void Cob_stack_node_groups_item_destroy(size_t index, struct buffer* bf)
 {
     buffer_destroy(bf);
     free(bf);
 }
 
-void Stack_node_destroy(Stack_node* sn)
+void Cob_stack_node_destroy(Cob_stack_node* sn)
 {
-    Match_task_stack_destroy(sn->mts);
-    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Stack_node_groups_item_destroy);
+    Cob_stack_destroy(sn->stack);
+    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Cob_stack_node_groups_item_destroy);
     Hash_map_size_t_destroy(&sn->groups);
     free(sn);
 }
 
 Hash_map_size_t* Stack_target_hash = NULL;
-void Stack_node_group_copy(size_t index, struct buffer* bf)
+void Cob_stack_node_group_copy(size_t index, struct buffer* bf)
 {
     struct buffer* bf2 = buffer_clone(bf);
     Hash_map_size_t_add(Stack_target_hash, index, bf2);
 }
 
-Stack_node* Stack_node_clone(Stack_node* sn)
+Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn)
 {
     struct hash_table ht;
     hash_table_init(&ht, 32);
 
-    Stack_node* new_sn = NULL;
-    Stack_node_create(&new_sn);
+    Cob_stack_node* new_sn = NULL;
+    Cob_stack_node_create(&new_sn);
 
-    new_sn->mts = Match_task_stack_clone(sn->mts, &ht, new_sn);
+    new_sn->stack = Cob_stack_clone(sn->stack, &ht, new_sn);
     new_sn->sl = sn->sl;
 
     Stack_target_hash = &new_sn->groups;
-    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Stack_node_group_copy);
+    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Cob_stack_node_group_copy);
 
     hash_table_destroy(&ht);
 
     return new_sn;
 }
 
-void Stack_node_dump_group_buffer(size_t index, struct buffer* bf)
+void Cob_stack_node_dump_group_buffer(size_t index, struct buffer* bf)
 {
     buffer_finish(bf);
     printf("%zu: %s\n", index, bf->buf);
 }
 
-void Stack_node_dump_groups(Stack_node* sn)
+void Cob_stack_node_dump_groups(Cob_stack_node* sn)
 {
-    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Stack_node_dump_group_buffer);
+    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Cob_stack_node_dump_group_buffer);
 }
 
-void Stack_list_init(Stack_list* sl)
+void Cob_stack_list_init(Cob_stack_list* sl)
 {
     sl->head = NULL;
     sl->tail = NULL;
@@ -296,16 +290,16 @@ void Stack_list_init(Stack_list* sl)
     sl->top_priority = 0;
 }
 
-void Stack_list_create(Stack_list** sl)
+void Cob_stack_list_create(Cob_stack_list** sl)
 {
-    malloc_safe((void**)sl, sizeof(Stack_list));
-    Stack_list_init(*sl);
+    malloc_safe((void**)sl, sizeof(Cob_stack_list));
+    Cob_stack_list_init(*sl);
 }
 
-Stack_node* Stack_list_add(Stack_list* sl, Stack_node* sn)
+Cob_stack_node* Cob_stack_list_add(Cob_stack_list* sl, Cob_stack_node* sn)
 {
     if (sl->head && sl->tail) {
-        Stack_node* p = sl->tail;
+        Cob_stack_node* p = sl->tail;
         while (p && p->priority > sn->priority) {
             p = p->next;
         }
@@ -330,12 +324,12 @@ Stack_node* Stack_list_add(Stack_list* sl, Stack_node* sn)
     return sn;
 }
 
-size_t Stack_list_next_priority(Stack_list* sl)
+size_t Cob_stack_list_next_priority(Cob_stack_list* sl)
 {
     return ++sl->top_priority;
 }
 
-void Stack_list_remove(Stack_list* sl, Stack_node* sn)
+void Cob_stack_list_remove(Cob_stack_list* sl, Cob_stack_node* sn)
 {
     if (sn->prev) {
         sn->prev->next = sn->next;
@@ -357,13 +351,13 @@ void Stack_list_remove(Stack_list* sl, Stack_node* sn)
     sn->prev = NULL;
 }
 
-void Stack_list_destroy(Stack_list* sl)
+void Cob_stack_list_destroy(Cob_stack_list* sl)
 {
-    Stack_node* sn = sl->head;
+    Cob_stack_node* sn = sl->head;
     while (sn) {
-        Stack_node* temp = sn;
+        Cob_stack_node* temp = sn;
         sn = sn->next;
-        Stack_node_destroy(temp);
+        Cob_stack_node_destroy(temp);
     }
 
     free(sl);

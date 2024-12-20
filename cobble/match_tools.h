@@ -3,27 +3,19 @@
 
 #include <stdbool.h>
 #include "ast.h"
-#include "zinc/list.h"
 #include "zinc/hash.h"
 #include "zinc/hash_map_size_t.h"
-#include <stdlib.h>
 #include "zinc/String_slice.h"
 #include <unicode/uchar.h>
-#include <unicode/locid.h>
-#include <unicode/stringoptions.h>
-#include <unicode/unistr.h>
-#include <unicode/ustream.h>
-#include <unicode/ustring.h>
-#include <unicode/ucnv.h>
 
-typedef enum Match_task_status {
-    Match_task_initial,
-    Match_task_started,
-    Match_task_finished,
-} Match_task_status;
+typedef enum Cob_task_status {
+    Cob_task_status_initial,
+    Cob_task_status_started,
+    Cob_task_status_finished,
+} Cob_task_status;
 
-typedef struct Match_task {
-    Match_task_status status;
+typedef struct Cob_task {
+    Cob_task_status status;
     bool matched;
     Cob_ast* n;
     Cob_ast* p;
@@ -31,58 +23,57 @@ typedef struct Match_task {
     String_slice start_slice;
     String_slice end_slice;
     bool opposite;
-    struct Match_task* parent;
-    struct Match_task* next;
-    struct Match_task* prev;
-} Match_task;
+    struct Cob_task* parent;
+    struct Cob_task* next;
+    struct Cob_task* prev;
+} Cob_task;
 
-typedef struct Match_task_stack {
-    Match_task* top;
-    Match_task* bottom;
-} Match_task_stack;
+typedef struct Cob_stack {
+    Cob_task* top;
+    Cob_task* bottom;
+} Cob_stack;
 
-typedef struct Stack_node {
-    Match_task_stack* mts;
-    struct Stack_list* sl;
+typedef struct Cob_stack_node {
+    Cob_stack* stack;
+    struct Cob_stack_list* sl;
     Hash_map_size_t groups;
     size_t priority;
-    struct Stack_node* next;
-    struct Stack_node* prev;
-} Stack_node;
+    struct Cob_stack_node* next;
+    struct Cob_stack_node* prev;
+} Cob_stack_node;
 
-typedef struct Stack_list {
-    Stack_node* head;
-    Stack_node* tail;
+typedef struct Cob_stack_list {
+    Cob_stack_node* head;
+    Cob_stack_node* tail;
     String_slice slice;
     size_t top_priority;
-} Stack_list;
+} Cob_stack_list;
 
-void Match_task_init(Match_task* task, Match_task* parent);
-void Match_task_destroy(Match_task* task);
-void Match_task_create(Match_task** task, Match_task* parent);
+void Cob_task_init(Cob_task* task, Cob_task* parent);
+void Cob_task_create(Cob_task** task, Cob_task* parent);
 
-void Match_task_stack_init(Match_task_stack* mts, Stack_node* sn);
-void Match_task_stack_create(Match_task_stack** mts, Stack_node* sn);
-void Match_task_stack_destroy(Match_task_stack* mts);
-void Match_task_stack_push(Match_task_stack *mts, Match_task *new_task);
-Match_task* Match_task_stack_pop(Match_task_stack* mts);
-Match_task* Match_task_stack_remove(Match_task_stack* mts, Match_task* task);
-void Match_task_stack_pop_to(Match_task_stack* mts, Match_task* marker);
-void Match_task_stack_add_char(Stack_node* sn, Match_task* task, String_slice slice);
-Match_task_stack* Match_task_stack_clone(Match_task_stack* mts, struct hash_table* ht, Stack_node* sn);
+void Cob_stack_init(Cob_stack* mts, Cob_stack_node* sn);
+void Cob_stack_create(Cob_stack** mts, Cob_stack_node* sn);
+void Cob_stack_destroy(Cob_stack* mts);
+void Cob_stack_push(Cob_stack *mts, Cob_task *new_task);
+Cob_task* Cob_stack_pop(Cob_stack* mts);
+Cob_task* Cob_stack_remove(Cob_stack* mts, Cob_task* task);
+void Cob_stack_pop_to(Cob_stack* mts, Cob_task* marker);
+void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice slice);
+Cob_stack* Cob_stack_clone(Cob_stack* mts, struct hash_table* ht, Cob_stack_node* sn);
 
-void Stack_node_init(Stack_node* sn);
-void Stack_node_create(Stack_node** sn);
-void Stack_node_destroy(Stack_node* sn);
-Stack_node* Stack_node_clone(Stack_node* sn);
-void Stack_node_dump_groups(Stack_node* sn);
+void Cob_stack_node_init(Cob_stack_node* sn);
+void Cob_stack_node_create(Cob_stack_node** sn);
+void Cob_stack_node_destroy(Cob_stack_node* sn);
+Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn);
+void Cob_stack_node_dump_groups(Cob_stack_node* sn);
 
-void Stack_list_init(Stack_list* sl);
-void Stack_list_create(Stack_list** sl);
-Stack_node* Stack_list_add(Stack_list* sl, Stack_node* sn);
-size_t Stack_list_next_priority(Stack_list* sl);
-void Stack_list_remove(Stack_list* sl, Stack_node* sn);
-void Stack_list_destroy(Stack_list* sl);
+void Cob_stack_list_init(Cob_stack_list* sl);
+void Cob_stack_list_create(Cob_stack_list** sl);
+Cob_stack_node* Cob_stack_list_add(Cob_stack_list* sl, Cob_stack_node* sn);
+size_t Cob_stack_list_next_priority(Cob_stack_list* sl);
+void Cob_stack_list_remove(Cob_stack_list* sl, Cob_stack_node* sn);
+void Cob_stack_list_destroy(Cob_stack_list* sl);
 
 enum result match_convert_char(String_slice slice, UChar32* c);
 
