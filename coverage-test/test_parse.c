@@ -9,7 +9,7 @@ void test_parse_line_zero()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gov_line_re();
+    Cob_re cr = Cvr_gcov_line_re();
     char s[] = "        -:    0:Source:/home/username/workspace/trade/akela/coverage-test/test_data.c";
     String_slice slice;
     slice.p = s;
@@ -50,7 +50,7 @@ void test_parse_not_covered_line()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gov_line_re();
+    Cob_re cr = Cvr_gcov_line_re();
     char s[] = "        -:    1:#include \"zinc/unit_test.h\"";
     String_slice slice;
     slice.p = s;
@@ -96,7 +96,7 @@ void test_parse_covered_line()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gov_line_re();
+    Cob_re cr = Cvr_gcov_line_re();
     char s[] = "1:    4:void test_data_file_list_add()";
     String_slice slice;
     slice.p = s;
@@ -142,7 +142,7 @@ void test_parse_covered_line2()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gov_line_re();
+    Cob_re cr = Cvr_gcov_line_re();
     char s[] = "       1*:    9:    expect_true(is_word(\"x  \", NUM_BYTES(\"x\"[0])), \"ascii letter\");";
     String_slice slice;
     slice.p = s;
@@ -184,10 +184,78 @@ void test_parse_covered_line2()
     Cvr_re_cleanup(&cr);
 }
 
+void test_parse_gcov_ext1()
+{
+    test_name(__func__);
+
+    Cob_re cr = Cvr_gcov_ext_re();
+    char s[] = ".gcov";
+    String_slice slice;
+    slice.p = s;
+    slice.size = strlen(s);
+    struct buffer_list groups;
+    buffer_list_init(&groups);
+
+    bool matched = Cob_match(cr.root, slice, &groups);
+
+    expect_true(matched, "m");
+    expect_buffer_list_count(&groups, 1, "count groups");
+    expect_buffer_list_item(&groups, 0, ".gcov", "item groups");
+
+    buffer_list_destroy(&groups);
+    Cvr_re_cleanup(&cr);
+}
+
+void test_parse_gcov_ext2()
+{
+    test_name(__func__);
+
+    Cob_re cr = Cvr_gcov_ext_re();
+    char s[] = "ast.c.gcov";
+    String_slice slice;
+    slice.p = s;
+    slice.size = strlen(s);
+    struct buffer_list groups;
+    buffer_list_init(&groups);
+
+    bool matched = Cob_match(cr.root, slice, &groups);
+
+    expect_true(matched, "m");
+    expect_buffer_list_count(&groups, 1, "count groups");
+    expect_buffer_list_item(&groups, 0, ".gcov", "item groups");
+
+    buffer_list_destroy(&groups);
+    Cvr_re_cleanup(&cr);
+}
+
+void test_parse_gcov_ext3_not_match()
+{
+    test_name(__func__);
+
+    Cob_re cr = Cvr_gcov_ext_re();
+    char s[] = "abc.gcovabc";
+    String_slice slice;
+    slice.p = s;
+    slice.size = strlen(s);
+    struct buffer_list groups;
+    buffer_list_init(&groups);
+
+    bool matched = Cob_match(cr.root, slice, &groups);
+
+    expect_false(matched, "m");
+
+    buffer_list_destroy(&groups);
+    Cvr_re_cleanup(&cr);
+}
+
 void test_parse()
 {
     test_parse_line_zero();
     test_parse_not_covered_line();
     test_parse_covered_line();
     test_parse_covered_line2();
+
+    test_parse_gcov_ext1();
+    test_parse_gcov_ext2();
+    test_parse_gcov_ext3_not_match();
 }

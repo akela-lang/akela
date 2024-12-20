@@ -171,7 +171,7 @@ void Cvr_read_file(Cvr_file* file)
         return;
     }
 
-    Cob_re re = Cvr_gov_line_re();
+    Cob_re re = Cvr_gcov_line_re();
 
     if (re.el->head) {
         printf("compile() error:\n");
