@@ -185,9 +185,8 @@ void Cov_read_file(Cov_file* file)
     Compile_data* cd = NULL;
     compile_data_create(&cd, input, input->input_vtable, el);
 
-    Ast_node* root = NULL;
-    bool valid = compile(cd, &root);
-    if (!valid) {
+    Cob_compile_result cr = compile(cd);
+    if (cr.el->head) {
         printf("compile() error:\n");
         struct error* e = el->head;
         while (e) {
@@ -229,7 +228,7 @@ void Cov_read_file(Cov_file* file)
             slice.size = bf.size;
             struct buffer_list groups;
             buffer_list_init(&groups);
-            bool m = re_match(root, slice, &groups);
+            bool m = re_match(cr.root, slice, &groups);
             if (m) {
                 struct buffer* count = buffer_list_get(&groups, 1);
                 struct buffer* line_number = buffer_list_get(&groups, 2);
