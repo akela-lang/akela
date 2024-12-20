@@ -39,3 +39,4 @@ and capable of robust software construction.
 
 ## Coverage
     ./generate-coverage.sh
+    cmake-build-debug/bin/coverage data/coverage
