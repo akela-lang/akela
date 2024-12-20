@@ -10,15 +10,14 @@
 #include "stdbool.h"
 #include "ast.h"
 
-void get_lookahead(struct Cob_compile_data* cd);
-bool match(
-    struct Cob_compile_data* cd,
+void Cob_lookahead(Cob_compile_data* cd);
+bool Cob_match_token(
+    Cob_compile_data* cd,
     enum token_type type,
     const char* reason,
     struct token** t,
-    struct Cob_ast* n);
-void location_update(struct location* dest, struct location* src);
-void location_update_token(struct location* dest, struct token* t);
-void location_update_default(struct location* dest, struct Cob_compile_data* cd);
+    Cob_ast* n);
+void Cob_location_update(struct location* dest, struct location* src);
+void Cob_location_update_token(struct location* dest, struct token* t);
 
 #endif //COBBLE_COMPILE_TOOLS_H

@@ -3,7 +3,7 @@
 #include "token.h"
 #include "ast.h"
 
-struct token* lex(void* input_obj, InputUnicodeVTable *input_vtable)
+struct token* Cob_lex(void* input_obj, InputUnicodeVTable *input_vtable)
 {
     char c[4];
     int num;
@@ -26,24 +26,24 @@ struct token* lex(void* input_obj, InputUnicodeVTable *input_vtable)
     return t;
 }
 
-void get_lookahead(struct Cob_compile_data* cd)
+void Cob_lookahead(Cob_compile_data* cd)
 {
     if (cd->lookahead) {
         return;
     }
 
-    cd->lookahead = lex(cd->input_obj, cd->input_vtable);
+    cd->lookahead = Cob_lex(cd->input_obj, cd->input_vtable);
 }
 
-bool match(
-    struct Cob_compile_data* cd,
+bool Cob_match_token(
+    Cob_compile_data* cd,
     enum token_type type,
     const char* reason,
     struct token** t,
-    struct Cob_ast* n)
+    Cob_ast* n)
 {
     if (!cd->lookahead) {
-        get_lookahead(cd);
+        Cob_lookahead(cd);
     }
 
     if (cd->lookahead->type == type) {
@@ -59,14 +59,14 @@ bool match(
     }
 }
 
-void location_update(struct location* dest, struct location* src)
+void Cob_location_update(struct location* dest, struct location* src)
 {
     if (dest->line == 0) {
         *dest = *src;
     }
 }
 
-void location_update_token(struct location* dest, struct token* t)
+void Cob_location_update_token(struct location* dest, struct token* t)
 {
     if (dest->line == 0 && t) {
         *dest = t->loc;
