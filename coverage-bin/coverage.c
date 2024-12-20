@@ -108,6 +108,7 @@ void Cvr_get_libraries(char* dir_name, Cvr_app *app)
 
 void Cvr_get_files(Cvr_library* lib)
 {
+    Cob_re re = Cvr_gcov_ext_re();
     DIR* d;
     struct dirent* dir;
     d = opendir(lib->path.buf);
@@ -121,16 +122,23 @@ void Cvr_get_files(Cvr_library* lib)
                 buffer_finish(&bf);
                 struct stat sb;
                 if (stat(bf.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
-                    Cvr_file* file = NULL;
-                    Cvr_file_create(&file);
-                    buffer_copy(&bf, &file->path);
-                    buffer_copy_str(&file->name, dir->d_name);
-                    buffer_finish(&file->path);
-                    buffer_finish(&file->name);
-                    Cvr_file_list_add_sorted(&lib->files, file);
-                    Cvr_read_file(file);
-                    Cvr_print_file_results(file);
+                    String_slice slice = {bf.buf, bf.size};
+                    struct buffer_list groups;
+                    buffer_list_init(&groups);
+                    if (Cob_match(re.root, slice, &groups)) {
+                        Cvr_file* file = NULL;
+                        Cvr_file_create(&file);
+                        buffer_copy(&bf, &file->path);
+                        buffer_copy_str(&file->name, dir->d_name);
+                        buffer_finish(&file->path);
+                        buffer_finish(&file->name);
+                        Cvr_file_list_add_sorted(&lib->files, file);
+                        Cvr_read_file(file);
+                        Cvr_print_file_results(file);
+                    }
+                    buffer_list_destroy(&groups);
                 }
+                buffer_destroy(&bf);
             }
         }
     }
