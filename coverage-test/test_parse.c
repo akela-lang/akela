@@ -9,7 +9,7 @@ void test_parse_line_zero()
 {
     test_name(__func__);
 
-    Cob_re cr = Cov_gov_line_re();
+    Cob_re cr = Cvr_gov_line_re();
     char s[] = "        -:    0:Source:/home/username/workspace/trade/akela/coverage-test/test_data.c";
     String_slice slice;
     slice.p = s;
@@ -43,14 +43,14 @@ void test_parse_line_zero()
         "/home/username/workspace/trade/akela/coverage-test/test_data.c", "item groups");
 
     buffer_list_destroy(&groups);
-    Cov_re_cleanup(&cr);
+    Cvr_re_cleanup(&cr);
 }
 
 void test_parse_not_covered_line()
 {
     test_name(__func__);
 
-    Cob_re cr = Cov_gov_line_re();
+    Cob_re cr = Cvr_gov_line_re();
     char s[] = "        -:    1:#include \"zinc/unit_test.h\"";
     String_slice slice;
     slice.p = s;
@@ -89,14 +89,14 @@ void test_parse_not_covered_line()
         "item groups");
 
     buffer_list_destroy(&groups);
-    Cov_re_cleanup(&cr);
+    Cvr_re_cleanup(&cr);
 }
 
 void test_parse_covered_line()
 {
     test_name(__func__);
 
-    Cob_re cr = Cov_gov_line_re();
+    Cob_re cr = Cvr_gov_line_re();
     char s[] = "1:    4:void test_data_file_list_add()";
     String_slice slice;
     slice.p = s;
@@ -135,14 +135,14 @@ void test_parse_covered_line()
         "item groups");
 
     buffer_list_destroy(&groups);
-    Cov_re_cleanup(&cr);
+    Cvr_re_cleanup(&cr);
 }
 
 void test_parse_covered_line2()
 {
     test_name(__func__);
 
-    Cob_re cr = Cov_gov_line_re();
+    Cob_re cr = Cvr_gov_line_re();
     char s[] = "       1*:    9:    expect_true(is_word(\"x  \", NUM_BYTES(\"x\"[0])), \"ascii letter\");";
     String_slice slice;
     slice.p = s;
@@ -181,7 +181,7 @@ void test_parse_covered_line2()
         "item groups");
 
     buffer_list_destroy(&groups);
-    Cov_re_cleanup(&cr);
+    Cvr_re_cleanup(&cr);
 }
 
 void test_parse()

@@ -1,7 +1,7 @@
 #include "data.h"
 #include "zinc/memory.h"
 
-void Cov_file_init(Cov_file *file)
+void Cvr_file_init(Cvr_file *file)
 {
     buffer_init(&file->name);
     buffer_init(&file->path);
@@ -14,43 +14,43 @@ void Cov_file_init(Cov_file *file)
     file->prev = NULL;
 }
 
-void Cov_file_create(Cov_file **file)
+void Cvr_file_create(Cvr_file **file)
 {
-    malloc_safe((void**)file, sizeof(Cov_file));
-    Cov_file_init(*file);
+    malloc_safe((void**)file, sizeof(Cvr_file));
+    Cvr_file_init(*file);
 }
 
-void Cov_file_destroy(Cov_file *file)
+void Cvr_file_destroy(Cvr_file *file)
 {
     buffer_destroy(&file->name);
     buffer_destroy(&file->path);
     buffer_destroy(&file->source_path);
 }
 
-void Cov_file_list_init(Cov_file_list *list)
+void Cvr_file_list_init(Cvr_file_list *list)
 {
     list->head = NULL;
     list->tail = NULL;
 }
 
-void Cov_file_list_create(Cov_file_list **list)
+void Cvr_file_list_create(Cvr_file_list **list)
 {
-    malloc_safe((void**)list, sizeof(Cov_file_list));
-    Cov_file_list_init(*list);
+    malloc_safe((void**)list, sizeof(Cvr_file_list));
+    Cvr_file_list_init(*list);
 }
 
-void Cov_file_list_destroy(Cov_file_list *list)
+void Cvr_file_list_destroy(Cvr_file_list *list)
 {
-    Cov_file *file = list->head;
+    Cvr_file *file = list->head;
     while (file) {
-        Cov_file* temp = file;
+        Cvr_file* temp = file;
         file = file->next;
-        Cov_file_destroy(temp);
+        Cvr_file_destroy(temp);
         free(temp);
     }
 }
 
-void Cov_file_list_add(Cov_file_list* list, Cov_file *file)
+void Cvr_file_list_add(Cvr_file_list* list, Cvr_file *file)
 {
     if (list->head && list->tail) {
         list->tail->next = file;
@@ -62,10 +62,10 @@ void Cov_file_list_add(Cov_file_list* list, Cov_file *file)
     }
 }
 
-void Cov_file_list_add_sorted(Cov_file_list* list, Cov_file *file)
+void Cvr_file_list_add_sorted(Cvr_file_list* list, Cvr_file *file)
 {
     if (list->head && list->tail) {
-        Cov_file* p = list->tail;
+        Cvr_file* p = list->tail;
         while (p) {
             int order = buffer_order(&p->name, &file->name);
             if (order == -1 || order == 0) {
@@ -95,11 +95,11 @@ void Cov_file_list_add_sorted(Cov_file_list* list, Cov_file *file)
     }
 }
 
-void Cov_library_init(Cov_library *lib)
+void Cvr_library_init(Cvr_library *lib)
 {
     buffer_init(&lib->name);
     buffer_init(&lib->path);
-    Cov_file_list_init(&lib->files);
+    Cvr_file_list_init(&lib->files);
     lib->line_count = 0;
     lib->covered_count = 0;
     lib->not_covered_count = 0;
@@ -108,43 +108,43 @@ void Cov_library_init(Cov_library *lib)
     lib->prev = NULL;
 }
 
-void Cov_library_create(Cov_library **lib)
+void Cvr_library_create(Cvr_library **lib)
 {
-    malloc_safe((void**)lib, sizeof(Cov_library));
-    Cov_library_init(*lib);
+    malloc_safe((void**)lib, sizeof(Cvr_library));
+    Cvr_library_init(*lib);
 }
 
-void Cov_library_destroy(Cov_library *lib)
+void Cvr_library_destroy(Cvr_library *lib)
 {
     buffer_destroy(&lib->name);
     buffer_destroy(&lib->path);
-    Cov_file_list_destroy(&lib->files);
+    Cvr_file_list_destroy(&lib->files);
 }
 
-void Cov_library_list_init(Cov_library_list *list)
+void Cvr_library_list_init(Cvr_library_list *list)
 {
     list->head = NULL;
     list->tail = NULL;
 }
 
-void Cov_library_list_create(Cov_library_list **list)
+void Cvr_library_list_create(Cvr_library_list **list)
 {
-    malloc_safe((void**)list, sizeof(Cov_library_list));
-    Cov_library_list_init(*list);
+    malloc_safe((void**)list, sizeof(Cvr_library_list));
+    Cvr_library_list_init(*list);
 }
 
-void Cov_library_list_destroy(Cov_library_list *list)
+void Cvr_library_list_destroy(Cvr_library_list *list)
 {
-    Cov_library *lib = list->head;
+    Cvr_library *lib = list->head;
     while (lib) {
-        Cov_library* temp = lib;
+        Cvr_library* temp = lib;
         lib = lib->next;
-        Cov_library_destroy(temp);
+        Cvr_library_destroy(temp);
         free(temp);
     }
 }
 
-void Cov_library_list_add(Cov_library_list *list, Cov_library *lib)
+void Cvr_library_list_add(Cvr_library_list *list, Cvr_library *lib)
 {
     if (list->head && list->tail) {
         list->tail->next = lib;
@@ -156,10 +156,10 @@ void Cov_library_list_add(Cov_library_list *list, Cov_library *lib)
     }
 }
 
-void Cov_library_list_add_sorted(Cov_library_list* list, Cov_library *lib)
+void Cvr_library_list_add_sorted(Cvr_library_list* list, Cvr_library *lib)
 {
     if (list->head && list->tail) {
-        Cov_library* p = list->tail;
+        Cvr_library* p = list->tail;
         while (p) {
             int order = buffer_order(&p->name, &lib->name);
             if (order == -1 || order == 0) {
@@ -189,24 +189,24 @@ void Cov_library_list_add_sorted(Cov_library_list* list, Cov_library *lib)
     }
 }
 
-void Cov_app_init(Cov_app *app)
+void Cvr_app_init(Cvr_app *app)
 {
     buffer_init(&app->data_path);
-    Cov_library_list_init(&app->libraries);
+    Cvr_library_list_init(&app->libraries);
     app->line_count = 0;
     app->covered_count = 0;
     app->not_covered_count = 0;
     app->coverage_percentage = 0.0;
 }
 
-void Cov_app_create(Cov_app **app)
+void Cvr_app_create(Cvr_app **app)
 {
-    malloc_safe((void**)app, sizeof(Cov_app));
-    Cov_app_init(*app);
+    malloc_safe((void**)app, sizeof(Cvr_app));
+    Cvr_app_init(*app);
 }
 
-void Cov_app_destroy(Cov_app *app)
+void Cvr_app_destroy(Cvr_app *app)
 {
     buffer_destroy(&app->data_path);
-    Cov_library_list_destroy(&app->libraries);
+    Cvr_library_list_destroy(&app->libraries);
 }

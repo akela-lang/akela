@@ -5,21 +5,21 @@ void test_data_file_list_add()
 {
     test_name(__func__);
 
-    Cov_file* file0 = NULL;
-    Cov_file_create(&file0);
+    Cvr_file* file0 = NULL;
+    Cvr_file_create(&file0);
 
-    Cov_file* file1 = NULL;
-    Cov_file_create(&file1);
+    Cvr_file* file1 = NULL;
+    Cvr_file_create(&file1);
 
-    Cov_file* file2 = NULL;
-    Cov_file_create(&file2);
+    Cvr_file* file2 = NULL;
+    Cvr_file_create(&file2);
 
-    Cov_file_list* list = NULL;
-    Cov_file_list_create(&list);
+    Cvr_file_list* list = NULL;
+    Cvr_file_list_create(&list);
 
-    Cov_file_list_add(list, file0);
-    Cov_file_list_add(list, file1);
-    Cov_file_list_add(list, file2);
+    Cvr_file_list_add(list, file0);
+    Cvr_file_list_add(list, file1);
+    Cvr_file_list_add(list, file2);
 
     expect_ptr_equal(list->head, file0, "head list");
     expect_ptr_equal(file0->prev, NULL, "prev file0");
@@ -30,7 +30,7 @@ void test_data_file_list_add()
     expect_ptr_equal(file2->next, NULL, "next file2");
     expect_ptr_equal(list->tail, file2, "tail list");
 
-    Cov_file_list_destroy(list);
+    Cvr_file_list_destroy(list);
     free(list);
 }
 
@@ -38,21 +38,21 @@ void test_data_library_add()
 {
     test_name(__func__);
 
-    Cov_library* lib0 = NULL;
-    Cov_library_create(&lib0);
+    Cvr_library* lib0 = NULL;
+    Cvr_library_create(&lib0);
 
-    Cov_library* lib1 = NULL;
-    Cov_library_create(&lib1);
+    Cvr_library* lib1 = NULL;
+    Cvr_library_create(&lib1);
 
-    Cov_library* lib2 = NULL;
-    Cov_library_create(&lib2);
+    Cvr_library* lib2 = NULL;
+    Cvr_library_create(&lib2);
 
-    Cov_library_list* list = NULL;
-    Cov_library_list_create(&list);
+    Cvr_library_list* list = NULL;
+    Cvr_library_list_create(&list);
 
-    Cov_library_list_add(list, lib0);
-    Cov_library_list_add(list, lib1);
-    Cov_library_list_add(list, lib2);
+    Cvr_library_list_add(list, lib0);
+    Cvr_library_list_add(list, lib1);
+    Cvr_library_list_add(list, lib2);
 
     expect_ptr_equal(list->head, lib0, "head list");
     expect_ptr_equal(lib0->prev, NULL, "prev lib0");
@@ -63,7 +63,7 @@ void test_data_library_add()
     expect_ptr_equal(lib2->next, NULL, "next lib2");
     expect_ptr_equal(list->tail, lib2, "tail list");
 
-    Cov_library_list_destroy(list);
+    Cvr_library_list_destroy(list);
     free(list);
 }
 
@@ -71,29 +71,29 @@ void test_data_file_add_sort()
 {
     test_name(__func__);
 
-    Cov_file* file_c = NULL;
-    Cov_file_create(&file_c);
+    Cvr_file* file_c = NULL;
+    Cvr_file_create(&file_c);
     buffer_copy_str(&file_c->name, "c");
 
-    Cov_file* file_a = NULL;
-    Cov_file_create(&file_a);
+    Cvr_file* file_a = NULL;
+    Cvr_file_create(&file_a);
     buffer_copy_str(&file_a->name, "a");
 
-    Cov_file* file_d = NULL;
-    Cov_file_create(&file_d);
+    Cvr_file* file_d = NULL;
+    Cvr_file_create(&file_d);
     buffer_copy_str(&file_d->name, "d");
 
-    Cov_file* file_b = NULL;
-    Cov_file_create(&file_b);
+    Cvr_file* file_b = NULL;
+    Cvr_file_create(&file_b);
     buffer_copy_str(&file_b->name, "b");
 
-    Cov_file_list* list = NULL;
-    Cov_file_list_create(&list);
+    Cvr_file_list* list = NULL;
+    Cvr_file_list_create(&list);
 
-    Cov_file_list_add_sorted(list, file_c);
-    Cov_file_list_add_sorted(list, file_a);
-    Cov_file_list_add_sorted(list, file_d);
-    Cov_file_list_add_sorted(list, file_b);
+    Cvr_file_list_add_sorted(list, file_c);
+    Cvr_file_list_add_sorted(list, file_a);
+    Cvr_file_list_add_sorted(list, file_d);
+    Cvr_file_list_add_sorted(list, file_b);
 
     expect_ptr_equal(list->head, file_a, "head list");
     expect_ptr_equal(file_a->prev, NULL, "prev file_a");
@@ -106,7 +106,7 @@ void test_data_file_add_sort()
     expect_ptr_equal(file_d->next, NULL, "next file_d");
     expect_ptr_equal(list->tail, file_d, "tail list");
 
-    Cov_file_list_destroy(list);
+    Cvr_file_list_destroy(list);
     free(list);
 }
 
@@ -114,29 +114,29 @@ void test_data_library_add_sort()
 {
     test_name(__func__);
 
-    Cov_library* lib_c = NULL;
-    Cov_library_create(&lib_c);
+    Cvr_library* lib_c = NULL;
+    Cvr_library_create(&lib_c);
     buffer_copy_str(&lib_c->name, "c");
 
-    Cov_library* lib_a = NULL;
-    Cov_library_create(&lib_a);
+    Cvr_library* lib_a = NULL;
+    Cvr_library_create(&lib_a);
     buffer_copy_str(&lib_a->name, "a");
 
-    Cov_library* lib_d = NULL;
-    Cov_library_create(&lib_d);
+    Cvr_library* lib_d = NULL;
+    Cvr_library_create(&lib_d);
     buffer_copy_str(&lib_d->name, "d");
 
-    Cov_library* lib_b = NULL;
-    Cov_library_create(&lib_b);
+    Cvr_library* lib_b = NULL;
+    Cvr_library_create(&lib_b);
     buffer_copy_str(&lib_b->name, "b");
 
-    Cov_library_list* list = NULL;
-    Cov_library_list_create(&list);
+    Cvr_library_list* list = NULL;
+    Cvr_library_list_create(&list);
 
-    Cov_library_list_add_sorted(list, lib_c);
-    Cov_library_list_add_sorted(list, lib_a);
-    Cov_library_list_add_sorted(list, lib_d);
-    Cov_library_list_add_sorted(list, lib_b);
+    Cvr_library_list_add_sorted(list, lib_c);
+    Cvr_library_list_add_sorted(list, lib_a);
+    Cvr_library_list_add_sorted(list, lib_d);
+    Cvr_library_list_add_sorted(list, lib_b);
 
     expect_ptr_equal(list->head, lib_a, "head list");
     expect_ptr_equal(lib_a->prev, NULL, "prev lib0");
@@ -149,7 +149,7 @@ void test_data_library_add_sort()
     expect_ptr_equal(lib_d->next, NULL, "next lib2");
     expect_ptr_equal(list->tail, lib_d, "tail list");
 
-    Cov_library_list_destroy(list);
+    Cvr_library_list_destroy(list);
     free(list);
 }
 

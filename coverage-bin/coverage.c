@@ -19,18 +19,18 @@
 #include "zinc/vector.h"
 #include "coverage/parse.h"
 
-void Cov_cwd();
-void Cov_append_path(struct buffer* bf, char* path);
-void Cov_get_libraries(char* dir_name, Cov_app* app);
-void Cov_get_files(Cov_library* lib);
-void Cov_read_file(Cov_file* file);
-void Cov_print_match(struct buffer_list* groups);
-void Cov_app_print(Cov_app* app);
-void Cov_agg_files(Cov_library* lib);
-void Cov_agg_libraries(Cov_app* app);
-void Cov_print_app_results(Cov_app* app);
-void Cov_print_library_results(Cov_library* lib);
-void Cov_print_file_results(Cov_file* file);
+void Cvr_cwd();
+void Cvr_append_path(struct buffer* bf, char* path);
+void Cvr_get_libraries(char* dir_name, Cvr_app* app);
+void Cvr_get_files(Cvr_library* lib);
+void Cvr_read_file(Cvr_file* file);
+void Cvr_print_match(struct buffer_list* groups);
+void Cvr_app_print(Cvr_app* app);
+void Cvr_agg_files(Cvr_library* lib);
+void Cvr_agg_libraries(Cvr_app* app);
+void Cvr_print_app_results(Cvr_app* app);
+void Cvr_print_library_results(Cvr_library* lib);
+void Cvr_print_file_results(Cvr_file* file);
 
 int main(int argc, char** argv)
 {
@@ -41,19 +41,19 @@ int main(int argc, char** argv)
     }
     char* dir_name = argv[1];
 
-    Cov_app app;
-    Cov_app_init(&app);
+    Cvr_app app;
+    Cvr_app_init(&app);
     buffer_copy_str(&app.data_path, dir_name);
     buffer_finish(&app.data_path);
 
-    Cov_get_libraries(dir_name, &app);
+    Cvr_get_libraries(dir_name, &app);
 
-    Cov_app_destroy(&app);
+    Cvr_app_destroy(&app);
 
     return 0;
 }
 
-void Cov_cwd()
+void Cvr_cwd()
 {
     char cwd[PATH_MAX];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -63,13 +63,13 @@ void Cov_cwd()
     }
 }
 
-void Cov_append_path(struct buffer* bf, char* path)
+void Cvr_append_path(struct buffer* bf, char* path)
 {
     buffer_add_char(bf, '/');
     buffer_add_str(bf, path);
 }
 
-void Cov_get_libraries(char* dir_name, Cov_app *app)
+void Cvr_get_libraries(char* dir_name, Cvr_app *app)
 {
     DIR* d;
     struct dirent* dir;
@@ -80,18 +80,18 @@ void Cov_get_libraries(char* dir_name, Cov_app *app)
                 struct buffer bf;
                 buffer_init(&bf);
                 buffer_add_str(&bf, dir_name);
-                Cov_append_path(&bf, dir->d_name);
+                Cvr_append_path(&bf, dir->d_name);
                 buffer_finish(&bf);
                 struct stat sb;
                 if (stat(bf.buf, &sb) == 0 && S_ISDIR(sb.st_mode)) {
-                    Cov_library* lib = NULL;
-                    Cov_library_create(&lib);
+                    Cvr_library* lib = NULL;
+                    Cvr_library_create(&lib);
                     buffer_copy(&bf, &lib->path);
                     buffer_add_str(&lib->name, dir->d_name);
                     buffer_finish(&lib->path);
                     buffer_finish(&lib->name);
-                    Cov_library_list_add_sorted(&app->libraries, lib);
-                    Cov_get_files(lib);
+                    Cvr_library_list_add_sorted(&app->libraries, lib);
+                    Cvr_get_files(lib);
                 }
 
                 buffer_destroy(&bf);
@@ -102,11 +102,11 @@ void Cov_get_libraries(char* dir_name, Cov_app *app)
         perror("opendir() error");
     }
 
-    Cov_agg_libraries(app);
-    Cov_print_app_results(app);
+    Cvr_agg_libraries(app);
+    Cvr_print_app_results(app);
 }
 
-void Cov_get_files(Cov_library* lib)
+void Cvr_get_files(Cvr_library* lib)
 {
     DIR* d;
     struct dirent* dir;
@@ -117,31 +117,31 @@ void Cov_get_files(Cov_library* lib)
                 struct buffer bf;
                 buffer_init(&bf);
                 buffer_copy(&lib->path, &bf);
-                Cov_append_path(&bf, dir->d_name);
+                Cvr_append_path(&bf, dir->d_name);
                 buffer_finish(&bf);
                 struct stat sb;
                 if (stat(bf.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
-                    Cov_file* file = NULL;
-                    Cov_file_create(&file);
+                    Cvr_file* file = NULL;
+                    Cvr_file_create(&file);
                     buffer_copy(&bf, &file->path);
                     buffer_copy_str(&file->name, dir->d_name);
                     buffer_finish(&file->path);
                     buffer_finish(&file->name);
-                    Cov_file_list_add_sorted(&lib->files, file);
-                    Cov_read_file(file);
-                    Cov_print_file_results(file);
+                    Cvr_file_list_add_sorted(&lib->files, file);
+                    Cvr_read_file(file);
+                    Cvr_print_file_results(file);
                 }
             }
         }
     }
 
-    Cov_agg_files(lib);
-    Cov_print_library_results(lib);
+    Cvr_agg_files(lib);
+    Cvr_print_library_results(lib);
 }
 
-void Cov_agg_files(Cov_library* lib)
+void Cvr_agg_files(Cvr_library* lib)
 {
-    Cov_file* file = lib->files.head;
+    Cvr_file* file = lib->files.head;
     while (file) {
         lib->line_count += file->line_count;
         lib->covered_count += file->covered_count;
@@ -151,9 +151,9 @@ void Cov_agg_files(Cov_library* lib)
     lib->coverage_percentage = (double)lib->covered_count / (double)lib->line_count * 100.0;
 }
 
-void Cov_agg_libraries(Cov_app* app)
+void Cvr_agg_libraries(Cvr_app* app)
 {
-    Cov_library* lib = app->libraries.head;
+    Cvr_library* lib = app->libraries.head;
     while (lib) {
         app->line_count += lib->line_count;
         app->covered_count += lib->covered_count;
@@ -163,7 +163,7 @@ void Cov_agg_libraries(Cov_app* app)
     app->coverage_percentage = (double)app->covered_count / (double)app->line_count * 100.0;
 }
 
-void Cov_read_file(Cov_file* file)
+void Cvr_read_file(Cvr_file* file)
 {
     FILE* fp = fopen(file->path.buf, "r");
     if (!fp) {
@@ -171,7 +171,7 @@ void Cov_read_file(Cov_file* file)
         return;
     }
 
-    Cob_re re = Cov_gov_line_re();
+    Cob_re re = Cvr_gov_line_re();
 
     if (re.el->head) {
         printf("compile() error:\n");
@@ -182,7 +182,7 @@ void Cov_read_file(Cov_file* file)
             e = e->next;
         }
 
-        Cov_re_cleanup(&re);
+        Cvr_re_cleanup(&re);
         return;
     }
 
@@ -273,7 +273,7 @@ void Cov_read_file(Cov_file* file)
     }
 }
 
-void Cov_print_match(struct buffer_list* groups)
+void Cvr_print_match(struct buffer_list* groups)
 {
     printf("matched:\n");
 
@@ -318,7 +318,7 @@ void Cov_print_match(struct buffer_list* groups)
     }
 }
 
-void Cov_print_app_results(Cov_app* app)
+void Cvr_print_app_results(Cvr_app* app)
 {
     printf("App total\n");
     printf("\tline count: %zu\n", app->line_count);
@@ -332,7 +332,7 @@ void Cov_print_app_results(Cov_app* app)
     printf("\n\n");
 }
 
-void Cov_print_library_results(Cov_library* lib)
+void Cvr_print_library_results(Cvr_library* lib)
 {
     printf("Directory total (%s)\n", lib->name.buf);
     printf("\tline count: %zu\n", lib->line_count);
@@ -346,7 +346,7 @@ void Cov_print_library_results(Cov_library* lib)
     printf("\n\n");
 }
 
-void Cov_print_file_results(Cov_file* file)
+void Cvr_print_file_results(Cvr_file* file)
 {
     printf("\tfile: %s\n", file->source_path.buf);
     printf("\tline count: %zu\n", file->line_count);
