@@ -100,9 +100,9 @@ void Cov_library_init(Cov_library *lib)
     buffer_init(&lib->name);
     buffer_init(&lib->path);
     Cov_file_list_init(&lib->files);
-    lib->number_of_lines = 0;
-    lib->number_covered = 0;
-    lib->number_not_covered = 0;
+    lib->line_count = 0;
+    lib->covered_count = 0;
+    lib->not_covered_count = 0;
     lib->coverage_percentage = 0.0;
     lib->next = NULL;
     lib->prev = NULL;
