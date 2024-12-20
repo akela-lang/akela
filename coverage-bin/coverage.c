@@ -27,6 +27,9 @@ void Cov_print_match(struct buffer_list* groups);
 void Cov_app_print(Cov_app* app);
 void Cov_agg_files(Cov_library* lib);
 void Cov_agg_libraries(Cov_app* app);
+void Cov_print_app_results(Cov_app* app);
+void Cov_print_library_results(Cov_library* lib);
+void Cov_print_file_results(Cov_file* file);
 
 int main(int argc, char** argv)
 {
@@ -43,7 +46,6 @@ int main(int argc, char** argv)
     buffer_finish(&app.data_path);
 
     Cov_get_libraries(dir_name, &app);
-    Cov_app_print(&app);
 
     Cov_app_destroy(&app);
 
@@ -100,6 +102,7 @@ void Cov_get_libraries(char* dir_name, Cov_app *app)
     }
 
     Cov_agg_libraries(app);
+    Cov_print_app_results(app);
 }
 
 void Cov_get_files(Cov_library* lib)
@@ -125,13 +128,14 @@ void Cov_get_files(Cov_library* lib)
                     buffer_finish(&file->name);
                     Cov_file_list_add_sorted(&lib->files, file);
                     Cov_read_file(file);
-                    printf("%s\n", file->name.buf);
+                    Cov_print_file_results(file);
                 }
             }
         }
     }
 
     Cov_agg_files(lib);
+    Cov_print_library_results(lib);
 }
 
 void Cov_agg_files(Cov_library* lib)
@@ -342,34 +346,40 @@ void Cov_print_match(struct buffer_list* groups)
     }
 }
 
-void Cov_app_print(Cov_app* app)
+void Cov_print_app_results(Cov_app* app)
 {
-    printf("\nApp\n");
+    printf("App total\n");
     printf("\tline count: %zu\n", app->line_count);
     printf("\tcovered count: %zu\n", app->covered_count);
     printf("\tnot covered count: %zu\n", app->not_covered_count);
     printf("\tcoverage (%%): %lf\n", app->coverage_percentage);
     printf("\n");
-
-    Cov_library* lib = app->libraries.head;
-    while (lib) {
-        printf("\n%s\n", lib->name.buf);
-        printf("\tline count: %zu\n", lib->line_count);
-        printf("\tcovered count: %zu\n", lib->covered_count);
-        printf("\tnot covered count: %zu\n", lib->not_covered_count);
-        printf("\tcoverage (%%): %lf\n", lib->coverage_percentage);
-        printf("\n");
-
-        Cov_file* file = lib->files.head;
-        while (file) {
-            printf("\tfile: %s\n", file->source_path.buf);
-            printf("\tline count: %zu\n", file->line_count);
-            printf("\tcovered count: %zu\n", file->covered_count);
-            printf("\tnot covered count: %zu\n", file->not_covered_count);
-            printf("\tcoverage (%%): %lf\n", file->coverage_percentage);
-            printf("\n");
-            file = file->next;
-        }
-        lib = lib->next;
+    for (int i = 0; i < 80; i++) {
+        printf("-");
     }
+    printf("\n\n");
+}
+
+void Cov_print_library_results(Cov_library* lib)
+{
+    printf("Directory total (%s)\n", lib->name.buf);
+    printf("\tline count: %zu\n", lib->line_count);
+    printf("\tcovered count: %zu\n", lib->covered_count);
+    printf("\tnot covered count: %zu\n", lib->not_covered_count);
+    printf("\tcoverage (%%): %lf\n", lib->coverage_percentage);
+    printf("\n");
+    for (int i = 0; i < 80; i++) {
+        printf("-");
+    }
+    printf("\n\n");
+}
+
+void Cov_print_file_results(Cov_file* file)
+{
+    printf("\tfile: %s\n", file->source_path.buf);
+    printf("\tline count: %zu\n", file->line_count);
+    printf("\tcovered count: %zu\n", file->covered_count);
+    printf("\tnot covered count: %zu\n", file->not_covered_count);
+    printf("\tcoverage (%%): %lf\n", file->coverage_percentage);
+    printf("\n");
 }
