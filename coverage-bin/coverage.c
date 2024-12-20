@@ -125,6 +125,7 @@ void Cov_get_files(Cov_library* lib)
                     buffer_finish(&file->name);
                     Cov_file_list_add_sorted(&lib->files, file);
                     Cov_read_file(file);
+                    printf("%s\n", file->name.buf);
                 }
             }
         }
