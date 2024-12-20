@@ -18,6 +18,7 @@
 #include "zinc/input_unicode.h"
 #include "zinc/vector.h"
 #include "coverage/parse.h"
+#include <assert.h>
 
 void Cvr_cwd();
 void Cvr_append_path(struct buffer* bf, char* path);
@@ -98,15 +99,14 @@ void Cvr_get_libraries(char* dir_name, Cvr_app* test, Cvr_app *app)
                     buffer_finish(&lib->name);
 
                     String_slice slice = {bf.buf, bf.size};
-                    struct buffer_list groups;
-                    buffer_list_init(&groups);
-                    if (Cob_match(test_re.root, slice, &groups)) {
+                    Cob_result mr = Cob_match(&test_re, slice);
+                    if (mr.matched) {
                         Cvr_library_list_add_sorted(&test->libraries, lib);
                     } else {
                         Cvr_library_list_add_sorted(&app->libraries, lib);
                     }
                     Cvr_get_files(lib);
-                    buffer_list_destroy(&groups);
+                    Cob_result_destroy(&mr);
                 }
 
                 buffer_destroy(&bf);
@@ -140,9 +140,8 @@ void Cvr_get_files(Cvr_library* lib)
                 struct stat sb;
                 if (stat(bf.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
                     String_slice slice = {bf.buf, bf.size};
-                    struct buffer_list groups;
-                    buffer_list_init(&groups);
-                    if (Cob_match(re.root, slice, &groups)) {
+                    Cob_result mr = Cob_match(&re, slice);
+                    if (mr.matched) {
                         Cvr_file* file = NULL;
                         Cvr_file_create(&file);
                         buffer_copy(&bf, &file->path);
@@ -153,7 +152,7 @@ void Cvr_get_files(Cvr_library* lib)
                         Cvr_read_file(file);
                         Cvr_print_file_results(file);
                     }
-                    buffer_list_destroy(&groups);
+                    Cob_result_destroy(&mr);
                 }
                 buffer_destroy(&bf);
             }
@@ -232,14 +231,14 @@ void Cvr_read_file(Cvr_file* file)
             String_slice slice;
             slice.p = bf.buf;
             slice.size = bf.size;
-            struct buffer_list groups;
-            buffer_list_init(&groups);
-            bool m = Cob_match(re.root, slice, &groups);
-            if (m) {
-                struct buffer* count = buffer_list_get(&groups, 1);
-                struct buffer* line_number = buffer_list_get(&groups, 2);
-                struct buffer* source = buffer_list_get(&groups, 3);
-                struct buffer* source_path = buffer_list_get(&groups, 4);
+            Cob_result mr = Cob_match(&re, slice);
+            if (mr.matched) {
+                struct buffer* count = buffer_list_get(&mr.groups, 1);
+                struct buffer* line_number = buffer_list_get(&mr.groups, 2);
+                struct buffer* source = buffer_list_get(&mr.groups, 3);
+                struct buffer* source_path = buffer_list_get(&mr.groups, 4);
+
+                assert(line_number && count && source && source_path);
 
                 buffer_finish(line_number);
                 buffer_finish(count);
@@ -280,7 +279,7 @@ void Cvr_read_file(Cvr_file* file)
                 fprintf(stderr, "did not match\n");
             }
 
-            buffer_list_destroy(&groups);
+            Cob_result_destroy(&mr);
             buffer_clear(&bf);
 
         }
