@@ -21,14 +21,14 @@
 
 void Cvr_cwd();
 void Cvr_append_path(struct buffer* bf, char* path);
-void Cvr_get_libraries(char* dir_name, Cvr_app* app);
+void Cvr_get_libraries(char* dir_name, Cvr_app* test, Cvr_app* app);
 void Cvr_get_files(Cvr_library* lib);
 void Cvr_read_file(Cvr_file* file);
 void Cvr_print_match(struct buffer_list* groups);
 void Cvr_app_print(Cvr_app* app);
 void Cvr_agg_files(Cvr_library* lib);
 void Cvr_agg_libraries(Cvr_app* app);
-void Cvr_print_app_results(Cvr_app* app);
+void Cvr_print_app_results(Cvr_app* app, char* title);
 void Cvr_print_library_results(Cvr_library* lib);
 void Cvr_print_file_results(Cvr_file* file);
 
@@ -46,7 +46,12 @@ int main(int argc, char** argv)
     buffer_copy_str(&app.data_path, dir_name);
     buffer_finish(&app.data_path);
 
-    Cvr_get_libraries(dir_name, &app);
+    Cvr_app test;
+    Cvr_app_init(&test);
+    buffer_copy_str(&test.data_path, dir_name);
+    buffer_finish(&test.data_path);
+
+    Cvr_get_libraries(dir_name, &test, &app);
 
     Cvr_app_destroy(&app);
 
@@ -69,8 +74,9 @@ void Cvr_append_path(struct buffer* bf, char* path)
     buffer_add_str(bf, path);
 }
 
-void Cvr_get_libraries(char* dir_name, Cvr_app *app)
+void Cvr_get_libraries(char* dir_name, Cvr_app* test, Cvr_app *app)
 {
+    Cob_re test_re = Cvr_test_dir_re();
     DIR* d;
     struct dirent* dir;
     d = opendir(dir_name);
@@ -90,8 +96,17 @@ void Cvr_get_libraries(char* dir_name, Cvr_app *app)
                     buffer_add_str(&lib->name, dir->d_name);
                     buffer_finish(&lib->path);
                     buffer_finish(&lib->name);
-                    Cvr_library_list_add_sorted(&app->libraries, lib);
+
+                    String_slice slice = {bf.buf, bf.size};
+                    struct buffer_list groups;
+                    buffer_list_init(&groups);
+                    if (Cob_match(test_re.root, slice, &groups)) {
+                        Cvr_library_list_add_sorted(&test->libraries, lib);
+                    } else {
+                        Cvr_library_list_add_sorted(&app->libraries, lib);
+                    }
                     Cvr_get_files(lib);
+                    buffer_list_destroy(&groups);
                 }
 
                 buffer_destroy(&bf);
@@ -102,8 +117,10 @@ void Cvr_get_libraries(char* dir_name, Cvr_app *app)
         perror("opendir() error");
     }
 
+    Cvr_agg_libraries(test);
     Cvr_agg_libraries(app);
-    Cvr_print_app_results(app);
+    Cvr_print_app_results(test, "Test");
+    Cvr_print_app_results(app, "Application");
 }
 
 void Cvr_get_files(Cvr_library* lib)
@@ -326,9 +343,9 @@ void Cvr_print_match(struct buffer_list* groups)
     }
 }
 
-void Cvr_print_app_results(Cvr_app* app)
+void Cvr_print_app_results(Cvr_app* app, char* title)
 {
-    printf("App total\n");
+    printf("%s total\n", title);
     printf("\tline count: %zu\n", app->line_count);
     printf("\tcovered count: %zu\n", app->covered_count);
     printf("\tnot covered count: %zu\n", app->not_covered_count);
