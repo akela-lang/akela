@@ -22,7 +22,7 @@ Cob_re Cov_gov_line_re()
     Cob_compile_data* cd = NULL;
     Cob_compile_data_create(&cd, input, input->input_vtable, el);
 
-    Cob_re cr = Cob_compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     VectorDestroy(text);
     free(text);
@@ -30,7 +30,7 @@ Cob_re Cov_gov_line_re()
     Cob_compile_data_destroy(cd);
     free(cd);
 
-    return cr;
+    return re;
 }
 
 void Cov_re_cleanup(Cob_re* cr)

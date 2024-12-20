@@ -171,18 +171,18 @@ void Cov_read_file(Cov_file* file)
         return;
     }
 
-    Cob_re cr = Cov_gov_line_re();
+    Cob_re re = Cov_gov_line_re();
 
-    if (cr.el->head) {
+    if (re.el->head) {
         printf("compile() error:\n");
-        struct error* e = cr.el->head;
+        struct error* e = re.el->head;
         while (e) {
             buffer_finish(&e->message);
             printf("%s\n", e->message.buf);
             e = e->next;
         }
 
-        Cov_re_cleanup(&cr);
+        Cov_re_cleanup(&re);
         return;
     }
 
@@ -209,7 +209,7 @@ void Cov_read_file(Cov_file* file)
             slice.size = bf.size;
             struct buffer_list groups;
             buffer_list_init(&groups);
-            bool m = Cob_match(cr.root, slice, &groups);
+            bool m = Cob_match(re.root, slice, &groups);
             if (m) {
                 struct buffer* count = buffer_list_get(&groups, 1);
                 struct buffer* line_number = buffer_list_get(&groups, 2);
