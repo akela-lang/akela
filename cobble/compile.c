@@ -9,20 +9,20 @@
 #include "zinc/buffer.h"
 #include <assert.h>
 
-Ast_node* parse_union(Compile_data* cd);
-Ast_node* parse_concat(Compile_data* cd);
-Ast_node* parse_mod(Compile_data* cd);
-Ast_node* parse_num(Compile_data* cd);
-Ast_node* parse_group(Compile_data* cd);
-void parse_seq(Compile_data* cd, Ast_node* parent);
-bool is_char(enum token_type type);
-Ast_node* parse_char(Compile_data* cd, bool strict);
+Ast_node* Cob_parse_union(Cob_compile_data* cd);
+Ast_node* Cob_parse_concat(Cob_compile_data* cd);
+Ast_node* Cob_parse_mod(Cob_compile_data* cd);
+Ast_node* Cob_parse_num(Cob_compile_data* cd);
+Ast_node* Cob_parse_group(Cob_compile_data* cd);
+void Cob_parse_seq(Cob_compile_data* cd, Ast_node* parent);
+bool Cob_is_char(enum token_type type);
+Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict);
 
-Cob_re compile(Compile_data* cd)
+Cob_re Cob_compile(Cob_compile_data* cd)
 {
     Ast_node* root = NULL;
 
-    root = parse_union(cd);
+    root = Cob_parse_union(cd);
 
     if (root) {
         root->is_root = true;
@@ -41,13 +41,13 @@ Cob_re compile(Compile_data* cd)
 /* union -> concat union | e' */
 /* union' -> '|' concat union' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_union(Compile_data* cd)
+Ast_node* Cob_parse_union(Cob_compile_data* cd)
 {
     Ast_node* a = NULL;
     Ast_node* b = NULL;
     Ast_node* n = NULL;
 
-    a = parse_concat(cd);
+    a = Cob_parse_concat(cd);
     if (!a) {
         return a;
     }
@@ -72,7 +72,7 @@ Ast_node* parse_union(Compile_data* cd)
         free(op);
 
         b = NULL;
-        b = parse_concat(cd);
+        b = Cob_parse_concat(cd);
         if (!b) {
             error_list_set(cd->el, &cd->lookahead->loc, "expected term after union");
             n->type = Ast_type_error;
@@ -91,21 +91,21 @@ Ast_node* parse_union(Compile_data* cd)
 /* concat -> mod concat' | e */
 /* concat' -> mod concat' */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_concat(Compile_data* cd)
+Ast_node* Cob_parse_concat(Cob_compile_data* cd)
 {
     Ast_node* a = NULL;
     Ast_node* b = NULL;
     Ast_node* n = NULL;
 
     a = NULL;
-    a = parse_mod(cd);
+    a = Cob_parse_mod(cd);
     if (!a) {
         return a;
     }
 
     while (true) {
         b = NULL;
-        b = parse_mod(cd);
+        b = Cob_parse_mod(cd);
 
         if (!b) {
             break;
@@ -127,7 +127,7 @@ Ast_node* parse_concat(Compile_data* cd)
     return n;
 }
 
-bool is_modifier(enum token_type type)
+bool Cob_is_modifier(enum token_type type)
 {
     if (type == token_closure) return true;
     if (type == token_plus) return true;
@@ -139,17 +139,17 @@ bool is_modifier(enum token_type type)
 /* mod -> group modifier | e */
 /* modifier -> { num } | { num , num } | * | + | ? */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_mod(Compile_data* cd)
+Ast_node* Cob_parse_mod(Cob_compile_data* cd)
 {
     Ast_node* a = NULL;
-    a = parse_group(cd);
+    a = Cob_parse_group(cd);
 
     if (!a) {
         return a;
     }
 
     get_lookahead(cd);
-    if (!is_modifier(cd->lookahead->type)) {
+    if (!Cob_is_modifier(cd->lookahead->type)) {
         return a;
     }
 
@@ -166,7 +166,7 @@ Ast_node* parse_mod(Compile_data* cd)
     if (mod->type == token_open_repeat) {
         n->type = Ast_type_repeat;
 
-        Ast_node* num = parse_num(cd);
+        Ast_node* num = Cob_parse_num(cd);
         Ast_node_add(n, num);
 
         /* range */
@@ -181,7 +181,7 @@ Ast_node* parse_mod(Compile_data* cd)
             free(comma);
 
             Ast_node* num2 = NULL;
-            num2 = parse_num(cd);
+            num2 = Cob_parse_num(cd);
             Ast_node_add(n, num2);
         }
 
@@ -207,7 +207,7 @@ Ast_node* parse_mod(Compile_data* cd)
 
 /* num -> digit num' */
 /* num' -> digit num' | e */
-Ast_node* parse_num(Compile_data* cd)
+Ast_node* Cob_parse_num(Cob_compile_data* cd)
 {
     Ast_node* n = NULL;
     Ast_node_create(&n);
@@ -249,7 +249,7 @@ Ast_node* parse_num(Compile_data* cd)
 
 /* group -> char | ( union ) | [ seq ] | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_group(Compile_data* cd)
+Ast_node* Cob_parse_group(Cob_compile_data* cd)
 {
     Ast_node* n = NULL;
 
@@ -269,7 +269,7 @@ Ast_node* parse_group(Compile_data* cd)
         free(opr);
 
         Ast_node* a = NULL;
-        a = parse_union(cd);
+        a = Cob_parse_union(cd);
 
         if (a) {
             Ast_node_add(n, a);
@@ -301,15 +301,15 @@ Ast_node* parse_group(Compile_data* cd)
             n->type = Ast_type_character_class;
         }
 
-        parse_seq(cd, n);
+        Cob_parse_seq(cd, n);
 
         struct token* rsb = NULL;
         if (!match(cd, token_right_square_bracket, "expected right square bracket", &rsb, n)) {
             n->type = Ast_type_error;
         }
         free(rsb);
-    } else if (is_char(cd->lookahead->type)) {
-        n = parse_char(cd, false);
+    } else if (Cob_is_char(cd->lookahead->type)) {
+        n = Cob_parse_char(cd, false);
         if (n == NULL) {
             assert(false && "not possible");
         }
@@ -320,10 +320,10 @@ Ast_node* parse_group(Compile_data* cd)
 
 /* seq -> char seq' */
 /* seq' -> char seq' | e */
-void parse_seq(Compile_data* cd, Ast_node* parent)
+void Cob_parse_seq(Cob_compile_data* cd, Ast_node* parent)
 {
     Ast_node* a = NULL;
-    a = parse_char(cd, true);
+    a = Cob_parse_char(cd, true);
     if (!a) {
         error_list_set(cd->el, &cd->lookahead->loc, "expected character in class sequence");
         parent->type = Ast_type_error;
@@ -334,7 +334,7 @@ void parse_seq(Compile_data* cd, Ast_node* parent)
 
     while (true) {
         Ast_node* b = NULL;
-        b = parse_char(cd, true);
+        b = Cob_parse_char(cd, true);
         if (!b) {
             break;
         }
@@ -343,7 +343,7 @@ void parse_seq(Compile_data* cd, Ast_node* parent)
     }
 }
 
-bool is_char(const enum token_type type)
+bool Cob_is_char(const enum token_type type)
 {
     if (type == token_literal)
         return true;
@@ -361,7 +361,7 @@ bool is_char(const enum token_type type)
 
 /* char -> literal | wildcard | begin | end | backslash character */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_char(Compile_data* cd, bool strict)
+Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
 {
     Ast_node* n = NULL;
 
@@ -508,7 +508,7 @@ Ast_node* parse_char(Compile_data* cd, bool strict)
             }
 
             Ast_node* b = NULL;
-            b = parse_char(cd, true);
+            b = Cob_parse_char(cd, true);
             if (b) {
                 Ast_node_add(n, b);
                 if (b->num != 1) {

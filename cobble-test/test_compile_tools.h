@@ -8,7 +8,7 @@
 #include "cobble/compile_data.h"
 #include "cobble/Ast_node.h"
 
-void setup_compile(Compile_data** cd, const char* s);
-void teardown_compile(Compile_data* cd, Cob_re* cr);
+void setup_compile(Cob_compile_data** cd, const char* s);
+void teardown_compile(Cob_compile_data* cd, Cob_re* cr);
 
 #endif //COBBLE_TEST_COMPILE_TOOLS_H

@@ -9,10 +9,10 @@ void test_compile_empty()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     assert_null(re.root, "root");
@@ -24,10 +24,10 @@ void test_compile_literal()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
@@ -44,10 +44,10 @@ void test_compile_union_single()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a|b");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
 
@@ -73,10 +73,10 @@ void test_compile_union_single_error()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a|");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_ptr(re.root, "ptr root");
@@ -96,10 +96,10 @@ void test_compile_union_double()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a|b|c");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
@@ -130,10 +130,10 @@ void test_compile_concat_single()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "ab");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
@@ -158,10 +158,10 @@ void test_compile_concat_double()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "abc");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
@@ -192,10 +192,10 @@ void test_compile_union_concat()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "ab|cd");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
@@ -240,10 +240,10 @@ void test_compile_closure()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a*");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -264,10 +264,10 @@ void test_compile_concat_closure()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a*b*");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -302,10 +302,10 @@ void test_compile_union_closure()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a*|b*");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -340,10 +340,10 @@ void test_compile_positive_closure()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a+");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -364,10 +364,10 @@ void test_compile_repeat()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a{5}");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -392,10 +392,10 @@ void test_compile_repeat_num_error()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a{x}");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
@@ -413,10 +413,10 @@ void test_compile_repeat_range()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a{5,10}");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -446,10 +446,10 @@ void test_compile_repeat_range_num_error()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a{1,x}");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
@@ -467,10 +467,10 @@ void test_compile_group_concat()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a(b|c)d");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -518,10 +518,10 @@ void test_compile_group_empty()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a()b");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -556,10 +556,10 @@ void test_compile_option()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "a?");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -580,10 +580,10 @@ void test_compile_wildcard()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, ".");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -598,10 +598,10 @@ void test_compile_begin()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "^");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -616,10 +616,10 @@ void test_compile_end()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "$");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -634,10 +634,10 @@ void test_compile_escape_backslash()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\\\");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -654,10 +654,10 @@ void test_compile_escape_asterisk()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\*");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -674,10 +674,10 @@ void test_compile_character_class()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "[abc]");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -710,10 +710,10 @@ void test_compile_character_class_wildcard_error()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "[.]");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
@@ -726,10 +726,10 @@ void test_compile_character_class_begin_error()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "[a^]");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
@@ -742,10 +742,10 @@ void test_compile_character_class_end_error()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "[$]");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
@@ -758,10 +758,10 @@ void test_compile_character_range()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "[a-z]");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -793,10 +793,10 @@ void test_compile_character_range_error()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "[a-]");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
@@ -809,10 +809,10 @@ void test_compile_character_range_non_ascii_error_left()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "[á-z]");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
@@ -825,10 +825,10 @@ void test_compile_character_range_non_ascii_error_right()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "[a-ź]");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
@@ -841,10 +841,10 @@ void test_compile_character_type_word()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\w");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -859,10 +859,10 @@ void test_compile_character_type_word_opposite()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\W");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -877,10 +877,10 @@ void test_compile_character_type_digit()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\d");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -895,10 +895,10 @@ void test_compile_character_type_digit_opposite()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\D");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -913,10 +913,10 @@ void test_compile_character_type_space()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\s");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -931,10 +931,10 @@ void test_compile_character_type_space_opposite()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\S");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -949,10 +949,10 @@ void test_compile_character_type_newline_opposite()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\N");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -967,10 +967,10 @@ void test_compile_coverage_line()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\s*(\\-):\\s*(\\d+):Source:(.+)");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
@@ -1126,10 +1126,10 @@ void test_compile_coverage_line2()
 {
     test_name(__func__);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, "\\s*(\\-):\\s*(\\d+):(Source:)?(.+)");
 
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);

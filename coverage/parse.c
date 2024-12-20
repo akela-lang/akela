@@ -19,15 +19,15 @@ Cob_re Cov_gov_line_re()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     compile_data_create(&cd, input, input->input_vtable, el);
 
-    Cob_re cr = compile(cd);
+    Cob_re cr = Cob_compile(cd);
 
     VectorDestroy(text);
     free(text);
     free(input);
-    compile_data_destroy(cd);
+    Cob_compile_data_destroy(cd);
     free(cd);
 
     return cr;

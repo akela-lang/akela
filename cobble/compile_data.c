@@ -2,8 +2,8 @@
 #include "zinc/memory.h"
 #include "token.h"
 
-void compile_data_init(
-    Compile_data* cd,
+void Cob_compile_data_init(
+    Cob_compile_data* cd,
     void* input_obj,
     InputUnicodeVTable* input_vtable,
     struct error_list* el)
@@ -15,17 +15,17 @@ void compile_data_init(
     cd->group_number = 0;
 }
 
-void compile_data_reeate(
-    Compile_data** cd,
+void Cob_compile_data_create(
+    Cob_compile_data** cd,
     void* input_obj,
     InputUnicodeVTable* input_vtable,
     struct error_list* el)
 {
-    malloc_safe((void**)cd, sizeof(Compile_data));
-    compile_data_init(*cd, input_obj, input_vtable, el);
+    malloc_safe((void**)cd, sizeof(Cob_compile_data));
+    Cob_compile_data_init(*cd, input_obj, input_vtable, el);
 }
 
-void compile_data_destroy(Compile_data* cd)
+void Cob_compile_data_destroy(Cob_compile_data* cd)
 {
     free(cd->lookahead);
 }

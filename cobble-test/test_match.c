@@ -8,9 +8,9 @@
 
 bool match_run(char* pattern, char* text, struct buffer_list** groups)
 {
-    Compile_data* cd = NULL;
+    Cob_compile_data* cd = NULL;
     setup_compile(&cd, pattern);
-    Cob_re re = compile(cd);
+    Cob_re re = Cob_compile(cd);
     assert_no_errors(re.el);
 
     const size_t size = strlen(text);
