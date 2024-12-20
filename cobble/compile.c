@@ -18,7 +18,7 @@ void parse_seq(Compile_data* cd, Ast_node* parent);
 bool is_char(enum token_type type);
 Ast_node* parse_char(Compile_data* cd, bool strict);
 
-Cob_compile_result compile(Compile_data* cd)
+Cob_re compile(Compile_data* cd)
 {
     Ast_node* root = NULL;
 
@@ -34,7 +34,7 @@ Cob_compile_result compile(Compile_data* cd)
         "unhandled token: %d, %c", cd->lookahead->type, cd->lookahead->c);
     }
 
-    Cob_compile_result result = {cd->el, root};
+    Cob_re result = {cd->el, root};
     return result;
 }
 

@@ -12,12 +12,12 @@ void test_compile_empty()
     Compile_data* cd = NULL;
     setup_compile(&cd, "");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
-    assert_null(cr.root, "root");
+    expect_no_errors(re.el);
+    assert_null(re.root, "root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_literal()
@@ -27,17 +27,17 @@ void test_compile_literal()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
-    assert_ptr(cr.root, "ptr root");
-    expect_true(cr.root->is_root, "is_group root");
-    expect_false(cr.root->is_group, "is_group root");
-    expect_int_equal(cr.root->type, Ast_type_literal, "literal root");
-    expect_int_equal(cr.root->num, 1, "num");
-    expect_char_equal(cr.root->c[0], 'a', "c root");
+    expect_no_errors(re.el);
+    assert_ptr(re.root, "ptr root");
+    expect_true(re.root->is_root, "is_group root");
+    expect_false(re.root->is_group, "is_group root");
+    expect_int_equal(re.root->type, Ast_type_literal, "literal root");
+    expect_int_equal(re.root->num, 1, "num");
+    expect_char_equal(re.root->c[0], 'a', "c root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_union_single()
@@ -47,26 +47,26 @@ void test_compile_union_single()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a|b");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_union, "union root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_union, "union root");
 
-    Ast_node* a = Ast_node_get(cr.root, 0);
+    Ast_node* a = Ast_node_get(re.root, 0);
     assert_ptr(a, "ptr a");
     expect_int_equal(a->type, Ast_type_literal, "literal a");
     expect_int_equal(a->num, 1, "num");
     expect_char_equal(a->c[0], 'a', "c[0] a");
 
-    Ast_node* b = Ast_node_get(cr.root, 1);
+    Ast_node* b = Ast_node_get(re.root, 1);
     assert_ptr(b, "ptr b");
     expect_int_equal(b->type, Ast_type_literal, "literal b");
     expect_int_equal(b->num, 1, "num");
     expect_char_equal(b->c[0], 'b', "c[0] b");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_union_single_error()
@@ -76,10 +76,10 @@ void test_compile_union_single_error()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a|");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
-    expect_ptr(cr.root, "ptr root");
+    expect_has_errors(re.el);
+    expect_ptr(re.root, "ptr root");
     expect_has_errors(cd->el);
 
     struct error* e = NULL;
@@ -89,7 +89,7 @@ void test_compile_union_single_error()
     expect_size_t_equal(e->loc.col, 3, "col");
     expect_size_t_equal(e->loc.end_pos, 3, "end_pos");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_union_double()
@@ -99,31 +99,31 @@ void test_compile_union_double()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a|b|c");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_union, "union root");
+    expect_no_errors(re.el);
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_union, "union root");
 
-    Ast_node* a = Ast_node_get(cr.root, 0);
+    Ast_node* a = Ast_node_get(re.root, 0);
     assert_ptr(a, "ptr a");
     expect_int_equal(a->type, Ast_type_literal, "literal a");
     expect_int_equal(a->num, 1, "num a");
     expect_char_equal(a->c[0], 'a', "c a");
 
-    Ast_node* b = Ast_node_get(cr.root, 1);
+    Ast_node* b = Ast_node_get(re.root, 1);
     assert_ptr(b, "ptr b");
     expect_int_equal(b->type, Ast_type_literal, "literal b");
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
-    Ast_node* c = Ast_node_get(cr.root, 2);
+    Ast_node* c = Ast_node_get(re.root, 2);
     assert_ptr(c, "ptr c");
     expect_int_equal(c->type, Ast_type_literal, "literal c");
     expect_int_equal(c->num, 1, "num c");
     expect_char_equal(c->c[0], 'c', "c c");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_concat_single()
@@ -133,25 +133,25 @@ void test_compile_concat_single()
     Compile_data* cd = NULL;
     setup_compile(&cd, "ab");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_concat, "concat root");
+    expect_no_errors(re.el);
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_concat, "concat root");
 
-    Ast_node* a = Ast_node_get(cr.root, 0);
+    Ast_node* a = Ast_node_get(re.root, 0);
     assert_ptr(a, "ptr a");
     expect_int_equal(a->type, Ast_type_literal, "literal a");
     expect_int_equal(a->num, 1, "num a");
     expect_char_equal(a->c[0], 'a', "c a");
 
-    Ast_node* b = Ast_node_get(cr.root, 1);
+    Ast_node* b = Ast_node_get(re.root, 1);
     assert_ptr(b, "ptr b");
     expect_int_equal(b->type, Ast_type_literal, "literal b");
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_concat_double()
@@ -161,31 +161,31 @@ void test_compile_concat_double()
     Compile_data* cd = NULL;
     setup_compile(&cd, "abc");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_concat, "concat root");
+    expect_no_errors(re.el);
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_concat, "concat root");
 
-    Ast_node* a = Ast_node_get(cr.root, 0);
+    Ast_node* a = Ast_node_get(re.root, 0);
     assert_ptr(a, "ptr a");
     expect_int_equal(a->type, Ast_type_literal, "literal a");
     expect_int_equal(a->num, 1, "num a");
     expect_char_equal(a->c[0], 'a', "c a");
 
-    Ast_node* b = Ast_node_get(cr.root, 1);
+    Ast_node* b = Ast_node_get(re.root, 1);
     assert_ptr(b, "ptr b");
     expect_int_equal(b->type, Ast_type_literal, "literal b");
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
-    Ast_node* c = Ast_node_get(cr.root, 2);
+    Ast_node* c = Ast_node_get(re.root, 2);
     assert_ptr(c, "ptr c");
     expect_int_equal(c->type, Ast_type_literal, "literal c");
     expect_int_equal(c->num, 1, "num c");
     expect_char_equal(c->c[0], 'c', "c c");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_union_concat()
@@ -195,13 +195,13 @@ void test_compile_union_concat()
     Compile_data* cd = NULL;
     setup_compile(&cd, "ab|cd");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_union, "union root");
+    expect_no_errors(re.el);
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_union, "union root");
 
-    Ast_node* ab = Ast_node_get(cr.root, 0);
+    Ast_node* ab = Ast_node_get(re.root, 0);
     assert_ptr(ab, "ptr ab");
     expect_int_equal(ab->type, Ast_type_concat, "concat ab");
 
@@ -217,7 +217,7 @@ void test_compile_union_concat()
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
-    Ast_node* _cd = Ast_node_get(cr.root, 1);
+    Ast_node* _cd = Ast_node_get(re.root, 1);
     assert_ptr(_cd, "ptr _cd");
     expect_int_equal(_cd->type, Ast_type_concat, "concat _cd");
 
@@ -233,7 +233,7 @@ void test_compile_union_concat()
     expect_int_equal(d->num, 1, "num d");
     expect_char_equal(d->c[0], 'd', "c d");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_closure()
@@ -243,21 +243,21 @@ void test_compile_closure()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a*");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_closure, "closure root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_closure, "closure root");
 
-    Ast_node* lit = Ast_node_get(cr.root, 0);
+    Ast_node* lit = Ast_node_get(re.root, 0);
     assert_ptr(lit, "ptr lit");
     expect_int_equal(lit->type, Ast_type_literal, "literal lit");
     expect_int_equal(lit->num, 1, "num lit");
     expect_char_equal(lit->c[0], 'a', "c a");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_concat_closure()
@@ -267,15 +267,15 @@ void test_compile_concat_closure()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a*b*");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_concat, "concat root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_concat, "concat root");
 
-    Ast_node* c0 = Ast_node_get(cr.root, 0);
+    Ast_node* c0 = Ast_node_get(re.root, 0);
     assert_ptr(c0, "ptr c0");
     expect_int_equal(c0->type, Ast_type_closure, "closure c0");
 
@@ -285,7 +285,7 @@ void test_compile_concat_closure()
     expect_int_equal(a->num, 1, "num a");
     expect_char_equal(a->c[0], 'a', "c a");
 
-    Ast_node* c1 = Ast_node_get(cr.root, 1);
+    Ast_node* c1 = Ast_node_get(re.root, 1);
     assert_ptr(c1, "ptr c1");
     expect_int_equal(c1->type, Ast_type_closure, "closure c1");
 
@@ -295,7 +295,7 @@ void test_compile_concat_closure()
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_union_closure()
@@ -305,15 +305,15 @@ void test_compile_union_closure()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a*|b*");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_union, "concat root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_union, "concat root");
 
-    Ast_node* c0 = Ast_node_get(cr.root, 0);
+    Ast_node* c0 = Ast_node_get(re.root, 0);
     assert_ptr(c0, "ptr c0");
     expect_int_equal(c0->type, Ast_type_closure, "closure c0");
 
@@ -323,7 +323,7 @@ void test_compile_union_closure()
     expect_int_equal(a->num, 1, "num a");
     expect_char_equal(a->c[0], 'a', "c a");
 
-    Ast_node* c1 = Ast_node_get(cr.root, 1);
+    Ast_node* c1 = Ast_node_get(re.root, 1);
     assert_ptr(c1, "ptr c1");
     expect_int_equal(c1->type, Ast_type_closure, "closure c1");
 
@@ -333,7 +333,7 @@ void test_compile_union_closure()
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_positive_closure()
@@ -343,21 +343,21 @@ void test_compile_positive_closure()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a+");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_positive_closure, "closure root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_positive_closure, "closure root");
 
-    Ast_node* lit = Ast_node_get(cr.root, 0);
+    Ast_node* lit = Ast_node_get(re.root, 0);
     assert_ptr(lit, "ptr lit");
     expect_int_equal(lit->type, Ast_type_literal, "literal lit");
     expect_int_equal(lit->num, 1, "num lit");
     expect_char_equal(lit->c[0], 'a', "c a");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_repeat()
@@ -367,25 +367,25 @@ void test_compile_repeat()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a{5}");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_repeat, "repeat root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_repeat, "repeat root");
 
-    Ast_node* lit = Ast_node_get(cr.root, 0);
+    Ast_node* lit = Ast_node_get(re.root, 0);
     assert_ptr(lit, "ptr lit");
     expect_int_equal(lit->type, Ast_type_literal, "literal lit");
     expect_int_equal(lit->num, 1, "num lit");
     expect_char_equal(lit->c[0], 'a', "c a");
 
-    Ast_node* num = Ast_node_get(cr.root, 1);
+    Ast_node* num = Ast_node_get(re.root, 1);
     assert_ptr(num, "ptr num");
     expect_u_long_equal(num->num_value, 5, "num1 5 root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_repeat_num_error()
@@ -395,9 +395,9 @@ void test_compile_repeat_num_error()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a{x}");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
+    expect_has_errors(re.el);
     expect_has_errors(cd->el);
 
     struct error* e = assert_source_error(cd->el, "expected digit");
@@ -406,7 +406,7 @@ void test_compile_repeat_num_error()
     expect_size_t_equal(e->loc.col, 3, "col");
     expect_size_t_equal(e->loc.end_pos, 3, "end_pos");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_repeat_range()
@@ -416,30 +416,30 @@ void test_compile_repeat_range()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a{5,10}");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_repeat_range, "repeat root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_repeat_range, "repeat root");
 
-    Ast_node* lit = Ast_node_get(cr.root, 0);
+    Ast_node* lit = Ast_node_get(re.root, 0);
     assert_ptr(lit, "ptr lit");
     expect_int_equal(lit->type, Ast_type_literal, "literal lit");
     expect_char_equal(lit->c[0], 'a', "c a");
 
-    Ast_node* num = Ast_node_get(cr.root, 1);
+    Ast_node* num = Ast_node_get(re.root, 1);
     assert_ptr(num, "ptr num");
     expect_int_equal(num->type, Ast_type_number, "type num");
     expect_u_long_equal(num->num_value, 5, "num num");
 
-    Ast_node* num2 = Ast_node_get(cr.root, 2);
+    Ast_node* num2 = Ast_node_get(re.root, 2);
     assert_ptr(num2, "ptr num2");
     expect_int_equal(num2->type, Ast_type_number, "type num2");
     expect_u_long_equal(num2->num_value, 10, "num num2");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_repeat_range_num_error()
@@ -449,9 +449,9 @@ void test_compile_repeat_range_num_error()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a{1,x}");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
+    expect_has_errors(re.el);
     expect_has_errors(cd->el);
 
     struct error* e = assert_source_error(cd->el, "expected digit");
@@ -460,7 +460,7 @@ void test_compile_repeat_range_num_error()
     expect_size_t_equal(e->loc.col, 5, "col");
     expect_size_t_equal(e->loc.end_pos, 5, "end_pos");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_group_concat()
@@ -470,21 +470,21 @@ void test_compile_group_concat()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a(b|c)d");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_concat, "concat root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_concat, "concat root");
 
-    Ast_node* lit = Ast_node_get(cr.root, 0);
+    Ast_node* lit = Ast_node_get(re.root, 0);
     assert_ptr(lit, "ptr lit");
     expect_int_equal(lit->type, Ast_type_literal, "literal lit");
     expect_int_equal(lit->num, 1, "num lit");
     expect_char_equal(lit->c[0], 'a', "c lit");
 
-    Ast_node* gr = Ast_node_get(cr.root, 1);
+    Ast_node* gr = Ast_node_get(re.root, 1);
     assert_ptr(gr, "ptr gr");
     expect_int_equal(gr->type, Ast_type_group, "group gr");
     expect_true(gr->is_group, "is group gr");
@@ -506,12 +506,12 @@ void test_compile_group_concat()
     expect_int_equal(c->num, 1, "num c");
     expect_char_equal(c->c[0], 'c', "c c");
 
-    Ast_node* d = Ast_node_get(cr.root, 2);
+    Ast_node* d = Ast_node_get(re.root, 2);
     assert_ptr(d, "ptr d");
     expect_int_equal(d->type, Ast_type_literal, "literal d");
     expect_char_equal(d->c[0], 'd', "c d");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_group_empty()
@@ -521,15 +521,15 @@ void test_compile_group_empty()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a()b");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_concat, "concat root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_concat, "concat root");
 
-    Ast_node* lit = Ast_node_get(cr.root, 0);
+    Ast_node* lit = Ast_node_get(re.root, 0);
     assert_ptr(lit, "ptr lit");
     expect_int_equal(lit->type, Ast_type_literal, "literal lit");
     expect_int_equal(lit->num, 1, "num lit");
@@ -537,19 +537,19 @@ void test_compile_group_empty()
     expect_false(lit->is_group, "is group lit");
     expect_size_t_equal(lit->group, 0, "group lit");
 
-    Ast_node* gr = Ast_node_get(cr.root, 1);
+    Ast_node* gr = Ast_node_get(re.root, 1);
     assert_ptr(gr, "ptr gr");
     expect_int_equal(gr->type, Ast_type_group, "group gr");
     expect_true(gr->is_group, "is group gr");
     expect_size_t_equal(gr->group, 1, "group gr");
 
-    Ast_node* b = Ast_node_get(cr.root, 2);
+    Ast_node* b = Ast_node_get(re.root, 2);
     assert_ptr(b, "ptr b");
     expect_int_equal(b->type, Ast_type_literal, "literal b");
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_option()
@@ -559,21 +559,21 @@ void test_compile_option()
     Compile_data* cd = NULL;
     setup_compile(&cd, "a?");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_option, "option root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_option, "option root");
 
-    Ast_node* lit = Ast_node_get(cr.root, 0);
+    Ast_node* lit = Ast_node_get(re.root, 0);
     assert_ptr(lit, "ptr lit");
     expect_int_equal(lit->type, Ast_type_literal, "literal lit");
     expect_int_equal(lit->num, 1, "num lit");
     expect_char_equal(lit->c[0], 'a', "c a");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_wildcard()
@@ -583,15 +583,15 @@ void test_compile_wildcard()
     Compile_data* cd = NULL;
     setup_compile(&cd, ".");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_wildcard, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_wildcard, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_begin()
@@ -601,15 +601,15 @@ void test_compile_begin()
     Compile_data* cd = NULL;
     setup_compile(&cd, "^");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_begin, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_begin, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_end()
@@ -619,15 +619,15 @@ void test_compile_end()
     Compile_data* cd = NULL;
     setup_compile(&cd, "$");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_end, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_end, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_escape_backslash()
@@ -637,17 +637,17 @@ void test_compile_escape_backslash()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\\\");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_escape, "type root");
-    expect_int_equal(cr.root->num, 1, "num root");
-    expect_char_equal(cr.root->c[0], '\\', "c root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_escape, "type root");
+    expect_int_equal(re.root->num, 1, "num root");
+    expect_char_equal(re.root->c[0], '\\', "c root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_escape_asterisk()
@@ -657,17 +657,17 @@ void test_compile_escape_asterisk()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\*");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_escape, "type root");
-    expect_int_equal(cr.root->num, 1, "num root");
-    expect_char_equal(cr.root->c[0], '*', "c root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_escape, "type root");
+    expect_int_equal(re.root->num, 1, "num root");
+    expect_char_equal(re.root->c[0], '*', "c root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_class()
@@ -677,33 +677,33 @@ void test_compile_character_class()
     Compile_data* cd = NULL;
     setup_compile(&cd, "[abc]");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_class, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_class, "type root");
 
-    Ast_node* c0 = Ast_node_get(cr.root, 0);
+    Ast_node* c0 = Ast_node_get(re.root, 0);
     assert_ptr(c0, "ptr c0");
     expect_int_equal(c0->type, Ast_type_literal, "type c0");
     expect_int_equal(c0->num, 1, "num c0");
     expect_char_equal(c0->c[0], 'a', "c c0");
 
-    Ast_node* c1 = Ast_node_get(cr.root, 1);
+    Ast_node* c1 = Ast_node_get(re.root, 1);
     assert_ptr(c1, "ptr c1");
     expect_int_equal(c1->type, Ast_type_literal, "type c1");
     expect_int_equal(c1->num, 1, "num c1");
     expect_char_equal(c1->c[0], 'b', "c c1");
 
-    Ast_node* c2 = Ast_node_get(cr.root, 2);
+    Ast_node* c2 = Ast_node_get(re.root, 2);
     assert_ptr(c2, "ptr c2");
     expect_int_equal(c2->type, Ast_type_literal, "type c2");
     expect_int_equal(c2->num, 1, "num c2");
     expect_char_equal(c2->c[0], 'c', "c c2");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_class_wildcard_error()
@@ -713,13 +713,13 @@ void test_compile_character_class_wildcard_error()
     Compile_data* cd = NULL;
     setup_compile(&cd, "[.]");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
+    expect_has_errors(re.el);
     expect_has_errors(cd->el);
     expect_source_error(cd->el, "unexpected wildcard");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_class_begin_error()
@@ -729,13 +729,13 @@ void test_compile_character_class_begin_error()
     Compile_data* cd = NULL;
     setup_compile(&cd, "[a^]");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
+    expect_has_errors(re.el);
     expect_has_errors(cd->el);
     expect_source_error(cd->el, "unexpected begin");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_class_end_error()
@@ -745,13 +745,13 @@ void test_compile_character_class_end_error()
     Compile_data* cd = NULL;
     setup_compile(&cd, "[$]");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
+    expect_has_errors(re.el);
     expect_has_errors(cd->el);
     expect_source_error(cd->el, "unexpected end");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_range()
@@ -761,15 +761,15 @@ void test_compile_character_range()
     Compile_data* cd = NULL;
     setup_compile(&cd, "[a-z]");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_class, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_class, "type root");
 
-    Ast_node* c0 = Ast_node_get(cr.root, 0);
+    Ast_node* c0 = Ast_node_get(re.root, 0);
     assert_ptr(c0, "ptr c0");
     expect_int_equal(c0->type, Ast_type_character_range, "type c0");
     expect_int_equal(c0->num, 0, "num c0");
@@ -786,7 +786,7 @@ void test_compile_character_range()
     expect_int_equal(c01->num, 1, "num c01");
     expect_char_equal(c01->c[0], 'z', "c c01");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_range_error()
@@ -796,13 +796,13 @@ void test_compile_character_range_error()
     Compile_data* cd = NULL;
     setup_compile(&cd, "[a-]");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
+    expect_has_errors(re.el);
     expect_has_errors(cd->el);
     expect_source_error(cd->el, "expected end character in character range");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_range_non_ascii_error_left()
@@ -812,13 +812,13 @@ void test_compile_character_range_non_ascii_error_left()
     Compile_data* cd = NULL;
     setup_compile(&cd, "[á-z]");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
+    expect_has_errors(re.el);
     expect_has_errors(cd->el);
     expect_source_error(cd->el, "character range must use ascii characters");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_range_non_ascii_error_right()
@@ -828,13 +828,13 @@ void test_compile_character_range_non_ascii_error_right()
     Compile_data* cd = NULL;
     setup_compile(&cd, "[a-ź]");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_has_errors(cr.el);
+    expect_has_errors(re.el);
     expect_has_errors(cd->el);
     expect_source_error(cd->el, "character range must use ascii characters");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_type_word()
@@ -844,15 +844,15 @@ void test_compile_character_type_word()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\w");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_type_word, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_type_word, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_type_word_opposite()
@@ -862,15 +862,15 @@ void test_compile_character_type_word_opposite()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\W");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_type_word_opposite, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_type_word_opposite, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_type_digit()
@@ -880,15 +880,15 @@ void test_compile_character_type_digit()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\d");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_type_digit, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_type_digit, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_type_digit_opposite()
@@ -898,15 +898,15 @@ void test_compile_character_type_digit_opposite()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\D");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_type_digit_opposite, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_type_digit_opposite, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_type_space()
@@ -916,15 +916,15 @@ void test_compile_character_type_space()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\s");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_type_space, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_type_space, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_type_space_opposite()
@@ -934,15 +934,15 @@ void test_compile_character_type_space_opposite()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\S");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_type_space_opposite, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_type_space_opposite, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_character_type_newline_opposite()
@@ -952,15 +952,15 @@ void test_compile_character_type_newline_opposite()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\N");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_character_type_newline_opposite, "type root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_character_type_newline_opposite, "type root");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_coverage_line()
@@ -970,17 +970,17 @@ void test_compile_coverage_line()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\s*(\\-):\\s*(\\d+):Source:(.+)");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_concat, "type root");
-    expect_true(cr.root->is_root, "is_root root");
-    expect_false(cr.root->is_group, "is_group root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_concat, "type root");
+    expect_true(re.root->is_root, "is_root root");
+    expect_false(re.root->is_group, "is_group root");
 
-    Ast_node* space0 = Ast_node_get(cr.root, 0);
+    Ast_node* space0 = Ast_node_get(re.root, 0);
     assert_ptr(space0, "ptr space0");
     expect_int_equal(space0->type, Ast_type_closure, "type space0");
     expect_false(space0->is_root, "is_root space0");
@@ -992,7 +992,7 @@ void test_compile_coverage_line()
     expect_false(space00->is_root, "is_root space00");
     expect_false(space00->is_group, "is_group space00");
 
-    Ast_node* group0 = Ast_node_get(cr.root, 1);
+    Ast_node* group0 = Ast_node_get(re.root, 1);
     assert_ptr(group0, "ptr group0");
     expect_int_equal(group0->type, Ast_type_group, "type group0");
     expect_false(group0->is_root, "is_root group0");
@@ -1006,14 +1006,14 @@ void test_compile_coverage_line()
     expect_false(escape0->is_root, "is_root escape0");
     expect_false(escape0->is_group, "is_group escape0");
 
-    Ast_node* colon0 = Ast_node_get(cr.root, 2);
+    Ast_node* colon0 = Ast_node_get(re.root, 2);
     assert_ptr(colon0, "ptr colon0");
     expect_int_equal(colon0->type, Ast_type_literal, "type colon0");
     expect_utf8_char_str(colon0->c, colon0->num, ":", "char[4],num colon0");
     expect_false(colon0->is_root, "is_root colon0");
     expect_false(colon0->is_group, "is_group colon0");
 
-    Ast_node* space1 = Ast_node_get(cr.root, 3);
+    Ast_node* space1 = Ast_node_get(re.root, 3);
     assert_ptr(space1, "ptr space1");
     expect_int_equal(space1->type, Ast_type_closure, "type space1");
     expect_false(space1->is_root, "is_root space1");
@@ -1025,7 +1025,7 @@ void test_compile_coverage_line()
     expect_false(space10->is_root, "is_root space10");
     expect_false(space10->is_group, "is_group space10");
 
-    Ast_node* group1 = Ast_node_get(cr.root, 4);
+    Ast_node* group1 = Ast_node_get(re.root, 4);
     assert_ptr(group1, "ptr group1");
     expect_int_equal(group1->type, Ast_type_group, "type group1");
     expect_false(group1->is_root, "is_root group1");
@@ -1044,63 +1044,63 @@ void test_compile_coverage_line()
     expect_false(digit01->is_root, "is_root digit01");
     expect_false(digit01->is_group, "is_group digit01");
 
-    Ast_node* colon1 = Ast_node_get(cr.root, 5);
+    Ast_node* colon1 = Ast_node_get(re.root, 5);
     assert_ptr(colon1, "ptr colon1");
     expect_int_equal(colon1->type, Ast_type_literal, "type colon1");
     expect_utf8_char_str(colon1->c, colon1->num, ":", "char[4],num colon1");
     expect_false(colon1->is_root, "is_root colon1");
     expect_false(colon1->is_group, "is_group colon1");
 
-    Ast_node* lit0 = Ast_node_get(cr.root, 6);
+    Ast_node* lit0 = Ast_node_get(re.root, 6);
     assert_ptr(lit0, "ptr lit0");
     expect_int_equal(lit0->type, Ast_type_literal, "type lit0");
     expect_utf8_char_str(lit0->c, lit0->num, "S", "char[4],num lit0");
     expect_false(lit0->is_root, "is_root lit0");
     expect_false(lit0->is_group, "is_group lit0");
 
-    Ast_node* lit1 = Ast_node_get(cr.root, 7);
+    Ast_node* lit1 = Ast_node_get(re.root, 7);
     assert_ptr(lit1, "ptr lit1");
     expect_int_equal(lit1->type, Ast_type_literal, "type lit1");
     expect_utf8_char_str(lit1->c, lit1->num, "o", "char[4],num lit1");
     expect_false(lit1->is_root, "is_root lit1");
     expect_false(lit1->is_group, "is_group lit1");
 
-    Ast_node* lit2 = Ast_node_get(cr.root, 8);
+    Ast_node* lit2 = Ast_node_get(re.root, 8);
     assert_ptr(lit2, "ptr lit2");
     expect_int_equal(lit2->type, Ast_type_literal, "type lit2");
     expect_utf8_char_str(lit2->c, lit2->num, "u", "char[4],num lit2");
     expect_false(lit2->is_root, "is_root lit2");
     expect_false(lit2->is_group, "is_group lit2");
 
-    Ast_node* lit3 = Ast_node_get(cr.root, 9);
+    Ast_node* lit3 = Ast_node_get(re.root, 9);
     assert_ptr(lit3, "ptr lit3");
     expect_int_equal(lit3->type, Ast_type_literal, "type lit3");
     expect_utf8_char_str(lit3->c, lit3->num, "r", "char[4],num lit3");
     expect_false(lit3->is_root, "is_root lit3");
     expect_false(lit3->is_group, "is_group lit3");
 
-    Ast_node* lit4 = Ast_node_get(cr.root, 10);
+    Ast_node* lit4 = Ast_node_get(re.root, 10);
     assert_ptr(lit4, "ptr lit4");
     expect_int_equal(lit4->type, Ast_type_literal, "type lit4");
     expect_utf8_char_str(lit4->c, lit4->num, "c", "char[4],num lit4");
     expect_false(lit4->is_root, "is_root lit4");
     expect_false(lit4->is_group, "is_group lit4");
 
-    Ast_node* lit5 = Ast_node_get(cr.root, 11);
+    Ast_node* lit5 = Ast_node_get(re.root, 11);
     assert_ptr(lit5, "ptr lit5");
     expect_int_equal(lit5->type, Ast_type_literal, "type lit5");
     expect_utf8_char_str(lit5->c, lit5->num, "e", "char[4],num lit5");
     expect_false(lit5->is_root, "is_root lit5");
     expect_false(lit5->is_group, "is_group lit5");
 
-    Ast_node* colon2 = Ast_node_get(cr.root, 12);
+    Ast_node* colon2 = Ast_node_get(re.root, 12);
     assert_ptr(colon2, "ptr colon2");
     expect_int_equal(colon2->type, Ast_type_literal, "type colon2");
     expect_utf8_char_str(colon2->c, colon2->num, ":", "char[4],num colon2");
     expect_false(colon2->is_root, "is_root colon2");
     expect_false(colon2->is_group, "is_group colon2");
 
-    Ast_node* group2 = Ast_node_get(cr.root, 13);
+    Ast_node* group2 = Ast_node_get(re.root, 13);
     assert_ptr(group2, "ptr group2");
     expect_int_equal(group2->type, Ast_type_group, "type group2");
     expect_false(group2->is_root, "is_root group2");
@@ -1119,7 +1119,7 @@ void test_compile_coverage_line()
     expect_false(wc0->is_root, "is_root wc0");
     expect_false(wc0->is_group, "is_group wc0");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile_coverage_line2()
@@ -1129,17 +1129,17 @@ void test_compile_coverage_line2()
     Compile_data* cd = NULL;
     setup_compile(&cd, "\\s*(\\-):\\s*(\\d+):(Source:)?(.+)");
 
-    Cob_compile_result cr = compile(cd);
+    Cob_re re = compile(cd);
 
-    expect_no_errors(cr.el);
+    expect_no_errors(re.el);
     expect_no_errors(cd->el);
 
-    assert_ptr(cr.root, "ptr root");
-    expect_int_equal(cr.root->type, Ast_type_concat, "type root");
-    expect_true(cr.root->is_root, "is_root root");
-    expect_false(cr.root->is_group, "is_group root");
+    assert_ptr(re.root, "ptr root");
+    expect_int_equal(re.root->type, Ast_type_concat, "type root");
+    expect_true(re.root->is_root, "is_root root");
+    expect_false(re.root->is_group, "is_group root");
 
-    Ast_node* space0 = Ast_node_get(cr.root, 0);
+    Ast_node* space0 = Ast_node_get(re.root, 0);
     assert_ptr(space0, "ptr space0");
     expect_int_equal(space0->type, Ast_type_closure, "type space0");
     expect_false(space0->is_root, "is_root space0");
@@ -1151,7 +1151,7 @@ void test_compile_coverage_line2()
     expect_false(space00->is_root, "is_root space00");
     expect_false(space00->is_group, "is_group space00");
 
-    Ast_node* group0 = Ast_node_get(cr.root, 1);
+    Ast_node* group0 = Ast_node_get(re.root, 1);
     assert_ptr(group0, "ptr group0");
     expect_int_equal(group0->type, Ast_type_group, "type group0");
     expect_false(group0->is_root, "is_root group0");
@@ -1165,14 +1165,14 @@ void test_compile_coverage_line2()
     expect_false(escape0->is_root, "is_root escape0");
     expect_false(escape0->is_group, "is_group escape0");
 
-    Ast_node* colon0 = Ast_node_get(cr.root, 2);
+    Ast_node* colon0 = Ast_node_get(re.root, 2);
     assert_ptr(colon0, "ptr colon0");
     expect_int_equal(colon0->type, Ast_type_literal, "type colon0");
     expect_utf8_char_str(colon0->c, colon0->num, ":", "char[4],num colon0");
     expect_false(colon0->is_root, "is_root colon0");
     expect_false(colon0->is_group, "is_group colon0");
 
-    Ast_node* space1 = Ast_node_get(cr.root, 3);
+    Ast_node* space1 = Ast_node_get(re.root, 3);
     assert_ptr(space1, "ptr space1");
     expect_int_equal(space1->type, Ast_type_closure, "type space1");
     expect_false(space1->is_root, "is_root space1");
@@ -1184,7 +1184,7 @@ void test_compile_coverage_line2()
     expect_false(space10->is_root, "is_root space10");
     expect_false(space10->is_group, "is_group space10");
 
-    Ast_node* group1 = Ast_node_get(cr.root, 4);
+    Ast_node* group1 = Ast_node_get(re.root, 4);
     assert_ptr(group1, "ptr group1");
     expect_int_equal(group1->type, Ast_type_group, "type group1");
     expect_false(group1->is_root, "is_root group1");
@@ -1203,14 +1203,14 @@ void test_compile_coverage_line2()
     expect_false(digit01->is_root, "is_root digit01");
     expect_false(digit01->is_group, "is_group digit01");
 
-    Ast_node* colon1 = Ast_node_get(cr.root, 5);
+    Ast_node* colon1 = Ast_node_get(re.root, 5);
     assert_ptr(colon1, "ptr colon1");
     expect_int_equal(colon1->type, Ast_type_literal, "type colon1");
     expect_utf8_char_str(colon1->c, colon1->num, ":", "char[4],num colon1");
     expect_false(colon1->is_root, "is_root colon1");
     expect_false(colon1->is_group, "is_group colon1");
 
-    Ast_node* option0 = Ast_node_get(cr.root, 6);
+    Ast_node* option0 = Ast_node_get(re.root, 6);
     assert_ptr(option0, "ptr option0");
     expect_int_equal(option0->type, Ast_type_option, "type option0");
     expect_false(option0->is_root, "is_root option0");
@@ -1276,7 +1276,7 @@ void test_compile_coverage_line2()
     expect_false(colon2->is_root, "is_root colon2");
     expect_false(colon2->is_group, "is_group colon2");
 
-    Ast_node* group3 = Ast_node_get(cr.root, 7);
+    Ast_node* group3 = Ast_node_get(re.root, 7);
     assert_ptr(group3, "ptr group3");
     expect_int_equal(group3->type, Ast_type_group, "type group3");
     expect_false(group3->is_root, "is_root group3");
@@ -1295,7 +1295,7 @@ void test_compile_coverage_line2()
     expect_false(wc0->is_root, "is_root wc0");
     expect_false(wc0->is_group, "is_group wc0");
 
-    teardown_compile(cd, &cr);
+    teardown_compile(cd, &re);
 }
 
 void test_compile()

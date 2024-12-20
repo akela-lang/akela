@@ -9,7 +9,7 @@ void test_parse_line_zero()
 {
     test_name(__func__);
 
-    Cob_compile_result cr = Cov_gov_line_re();
+    Cob_re cr = Cov_gov_line_re();
     char s[] = "        -:    0:Source:/home/username/workspace/trade/akela/coverage-test/test_data.c";
     String_slice slice;
     slice.p = s;
@@ -17,7 +17,7 @@ void test_parse_line_zero()
     struct buffer_list groups;
     buffer_list_init(&groups);
 
-    bool matched = re_match(cr.root, slice, &groups);
+    bool matched = Cob_match(cr.root, slice, &groups);
 
     expect_true(matched, "m");
     expect_buffer_list_count(&groups, 5, "count groups");
@@ -50,7 +50,7 @@ void test_parse_not_covered_line()
 {
     test_name(__func__);
 
-    Cob_compile_result cr = Cov_gov_line_re();
+    Cob_re cr = Cov_gov_line_re();
     char s[] = "        -:    1:#include \"zinc/unit_test.h\"";
     String_slice slice;
     slice.p = s;
@@ -58,7 +58,7 @@ void test_parse_not_covered_line()
     struct buffer_list groups;
     buffer_list_init(&groups);
 
-    bool matched = re_match(cr.root, slice, &groups);
+    bool matched = Cob_match(cr.root, slice, &groups);
 
     expect_true(matched, "m");
     expect_buffer_list_count(&groups, 5, "count groups");
@@ -96,7 +96,7 @@ void test_parse_covered_line()
 {
     test_name(__func__);
 
-    Cob_compile_result cr = Cov_gov_line_re();
+    Cob_re cr = Cov_gov_line_re();
     char s[] = "1:    4:void test_data_file_list_add()";
     String_slice slice;
     slice.p = s;
@@ -104,7 +104,7 @@ void test_parse_covered_line()
     struct buffer_list groups;
     buffer_list_init(&groups);
 
-    bool matched = re_match(cr.root, slice, &groups);
+    bool matched = Cob_match(cr.root, slice, &groups);
 
     expect_true(matched, "m");
     expect_buffer_list_count(&groups, 5, "count groups");
@@ -142,7 +142,7 @@ void test_parse_covered_line2()
 {
     test_name(__func__);
 
-    Cob_compile_result cr = Cov_gov_line_re();
+    Cob_re cr = Cov_gov_line_re();
     char s[] = "       1*:    9:    expect_true(is_word(\"x  \", NUM_BYTES(\"x\"[0])), \"ascii letter\");";
     String_slice slice;
     slice.p = s;
@@ -150,7 +150,7 @@ void test_parse_covered_line2()
     struct buffer_list groups;
     buffer_list_init(&groups);
 
-    bool matched = re_match(cr.root, slice, &groups);
+    bool matched = Cob_match(cr.root, slice, &groups);
 
     expect_true(matched, "m");
     expect_buffer_list_count(&groups, 5, "count groups");

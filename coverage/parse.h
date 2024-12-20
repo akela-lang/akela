@@ -4,7 +4,7 @@
 #include "cobble/compile.h"
 #include "cobble/compile_data.h"
 
-Cob_compile_result Cov_gov_line_re();
-void Cov_re_cleanup(Cob_compile_result* cr);
+Cob_re Cov_gov_line_re();
+void Cov_re_cleanup(Cob_re* cr);
 
 #endif

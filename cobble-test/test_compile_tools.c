@@ -20,7 +20,7 @@ void setup_compile(Compile_data** cd, const char* s)
     compile_data_init(*cd, input, input->input_vtable, el);
 }
 
-void teardown_compile(Compile_data* cd, Cob_compile_result* result)
+void teardown_compile(Compile_data* cd, Cob_re* result)
 {
     InputUnicodeString* input = cd->input_obj;
     VectorDestroy(input->text);
@@ -28,5 +28,5 @@ void teardown_compile(Compile_data* cd, Cob_compile_result* result)
     free(input);
     free(cd->lookahead);
     free(cd);
-    Cob_compile_result_destroy(result);
+    Cob_re_destroy(result);
 }

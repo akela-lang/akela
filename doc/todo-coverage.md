@@ -1,5 +1,4 @@
 # Coverage Todo
-* regex files that end with ".gcov"
-* regex for files that end in "-test"
+* regex for files that end with ".gcov"
+* regex for directories that end with "-test"
 * separate test code and app code
-* create unicode conversion object once

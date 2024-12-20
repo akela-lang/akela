@@ -15,7 +15,7 @@ void compile_data_init(
     cd->group_number = 0;
 }
 
-void compile_data_create(
+void compile_data_reeate(
     Compile_data** cd,
     void* input_obj,
     InputUnicodeVTable* input_vtable,
@@ -30,22 +30,22 @@ void compile_data_destroy(Compile_data* cd)
     free(cd->lookahead);
 }
 
-void Cob_compile_result_init(Cob_compile_result* cr, struct error_list* el, Ast_node* root)
+void Cob_re_init(Cob_re* re, struct error_list* el, Ast_node* root)
 {
-    cr->el = el;
-    cr->root = root;
+    re->el = el;
+    re->root = root;
 }
 
-void Cob_compile_result_create(Cob_compile_result** cr, struct error_list* el, Ast_node* root)
+void Cob_re_reeate(Cob_re** re, struct error_list* el, Ast_node* root)
 {
-    malloc_safe((void**)cr, sizeof(Cob_compile_result));
-    Cob_compile_result_init(*cr, el, root);
+    malloc_safe((void**)re, sizeof(Cob_re));
+    Cob_re_init(*re, el, root);
 }
 
-void Cob_compile_result_destroy(Cob_compile_result* cr)
+void Cob_re_destroy(Cob_re* re)
 {
-    error_list_destroy(cr->el);
-    free(cr->el);
-    Ast_node_destroy(cr->root);
-    free(cr->root);
+    error_list_destroy(re->el);
+    free(re->el);
+    Ast_node_destroy(re->root);
+    free(re->root);
 }

@@ -10,14 +10,14 @@ bool match_run(char* pattern, char* text, struct buffer_list** groups)
 {
     Compile_data* cd = NULL;
     setup_compile(&cd, pattern);
-    Cob_compile_result cr = compile(cd);
-    assert_no_errors(cr.el);
+    Cob_re re = compile(cd);
+    assert_no_errors(re.el);
 
     const size_t size = strlen(text);
     const String_slice slice = {text, size};
     buffer_list_create(groups);
-    bool matched = re_match(cr.root, slice, *groups);
-    teardown_compile(cd, &cr);
+    bool matched = Cob_match(re.root, slice, *groups);
+    teardown_compile(cd, &re);
     return matched;
 }
 
