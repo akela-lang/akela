@@ -5,6 +5,6 @@
 #include "compile_data.h"
 #include "Ast_node.h"
 
-bool compile(Compile_data* cd, Ast_node** root);
+Cob_compile_result compile(Compile_data* cd);
 
 #endif

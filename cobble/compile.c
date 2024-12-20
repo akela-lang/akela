@@ -18,18 +18,14 @@ void parse_seq(Compile_data* cd, Ast_node* parent);
 bool is_char(enum token_type type);
 Ast_node* parse_char(Compile_data* cd, bool strict);
 
-bool compile(Compile_data* cd, Ast_node** root)
+Cob_compile_result compile(Compile_data* cd)
 {
-    bool valid = true;
+    Ast_node* root = NULL;
 
-    *root = parse_union(cd);
-    if (*root && (*root)->type == Ast_type_error) {
-        valid = false;
-    }
+    root = parse_union(cd);
 
-    /* set in case it was not set because there were no child groups */
-    if (*root) {
-        (*root)->is_root = true;
+    if (root) {
+        root->is_root = true;
     }
 
     get_lookahead(cd);
@@ -37,7 +33,9 @@ bool compile(Compile_data* cd, Ast_node** root)
         error_list_set(cd->el, &cd->lookahead->loc,
         "unhandled token: %d, %c", cd->lookahead->type, cd->lookahead->c);
     }
-    return valid;
+
+    Cob_compile_result result = {cd->el, root};
+    return result;
 }
 
 /* union -> concat union | e' */

@@ -29,3 +29,23 @@ void compile_data_destroy(Compile_data* cd)
 {
     free(cd->lookahead);
 }
+
+void Cob_compile_result_init(Cob_compile_result* cr, struct error_list* el, Ast_node* root)
+{
+    cr->el = el;
+    cr->root = root;
+}
+
+void Cob_compile_result_create(Cob_compile_result** cr, struct error_list* el, Ast_node* root)
+{
+    malloc_safe((void**)cr, sizeof(Cob_compile_result));
+    Cob_compile_result_init(*cr, el, root);
+}
+
+void Cob_compile_result_destroy(Cob_compile_result* cr)
+{
+    error_list_destroy(cr->el);
+    free(cr->el);
+    Ast_node_destroy(cr->root);
+    free(cr->root);
+}

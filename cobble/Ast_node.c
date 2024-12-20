@@ -36,8 +36,8 @@ void Ast_node_destroy(Ast_node* n)
             Ast_node* temp = p;
             p = p->next;
             Ast_node_destroy(temp);
+            free(temp);
         }
-        free(n);
     }
 }
 
