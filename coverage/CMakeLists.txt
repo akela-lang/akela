@@ -3,4 +3,4 @@ set(coverage_files
         parse.c
 )
 add_library(coverage ${coverage_files})
-target_link_libraries(coverage zinc)
+target_link_libraries(coverage cobble zinc)
