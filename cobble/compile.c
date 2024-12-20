@@ -34,7 +34,7 @@ Cob_re Cob_compile(Cob_compile_data* cd)
         "unhandled token: %d, %c", cd->lookahead->type, cd->lookahead->c);
     }
 
-    Cob_re result = {cd->el, root};
+    Cob_re result = {cd->el, root, cd->group_number + 1 };
     return result;
 }
 

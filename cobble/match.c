@@ -9,7 +9,7 @@
 #include "json/lex_tools.h"
 
 bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct buffer_list* groups);
-Cob_stack_list* Cob_init_stacks(Cob_ast* root, String_slice slice);
+Cob_stack_list* Cob_init_stacks(Cob_re* re, String_slice slice);
 void Check_group_tasks(Cob_ast* root, Cob_stack_node* sn, Cob_task* task);
 void Cob_remove_finished(Cob_stack* mts, Cob_task* task);
 void Cob_cleanup_finished(Cob_task* task);
@@ -54,20 +54,21 @@ void Cob_run_character_type_digit(Cob_stack_node* sn, bool opposite);
 void Cob_run_character_type_space(Cob_stack_node* sn, bool opposite);
 void Cob_run_character_type_newline_opposite(Cob_stack_node* sn);
 
-bool Cob_match(Cob_ast* root, String_slice slice, struct buffer_list* groups)
+Cob_result Cob_match(Cob_re* re, String_slice slice)
 {
-    bool matched = false;
+    Cob_result mr;
+    Cob_result_init(&mr);
 
     while (true) {
-        Cob_stack_list* sl = Cob_init_stacks(root, slice);
-        matched = Cob_match_slice(root, sl, groups);
+        Cob_stack_list* sl = Cob_init_stacks(re, slice);
+        mr.matched = Cob_match_slice(re->root, sl, &mr.groups);
         Cob_stack_list_destroy(sl);
-        if (matched) break;
+        if (mr.matched) break;
         if (slice.size == 0) break;
         Cob_increment_slice(&slice);
     }
 
-    return matched;
+    return mr;
 }
 
 bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct buffer_list* groups)
@@ -108,7 +109,7 @@ bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct buffer_list* grou
     return matched;
 }
 
-Cob_stack_list* Cob_init_stacks(Cob_ast* root, String_slice slice)
+Cob_stack_list* Cob_init_stacks(Cob_re* re, String_slice slice)
 {
     Cob_stack_list* sl;
     Cob_stack_list_create(&sl);
@@ -121,10 +122,15 @@ Cob_stack_list* Cob_init_stacks(Cob_ast* root, String_slice slice)
     Cob_stack_node_create(&sn);
     sn->stack = mts;
     sn->sl = sl;
+    for (size_t i = 0; i < re->group_count; i++) {
+        struct buffer* bf = NULL;
+        buffer_create(&bf);
+        Hash_map_size_t_add(&sn->groups, i, bf);
+    }
 
     Cob_stack_list_add(sl, sn);
 
-    Cob_add_task(root, slice, mts, NULL, sn);
+    Cob_add_task(re->root, slice, mts, NULL, sn);
 
     return sl;
 }
@@ -188,34 +194,6 @@ void Cob_run_dispatch(Cob_stack_node* sn)
     Cob_task* task = sn->stack->top;
     assert(task);
     assert(task->status != Cob_task_status_finished);
-
-    if (task->status == Cob_task_status_initial && task->n) {
-        if (task->n->is_root) {
-            Cob_stack_node* sn2 = sn->sl->head;
-            while (sn2) {
-                struct buffer* bf = NULL;
-                bf = Hash_map_size_t_get(&sn2->groups, 0);
-                if (!bf) {
-                    buffer_create(&bf);
-                    Hash_map_size_t_add(&sn2->groups, 0, bf);
-                }
-                sn2 = sn2->next;
-            }
-        }
-
-        if (task->n->is_group) {
-            Cob_stack_node* sn2 = sn->sl->head;
-            while (sn2) {
-                struct buffer* bf = NULL;
-                bf = Hash_map_size_t_get(&sn2->groups, task->n->group);
-                if (!bf) {
-                    buffer_create(&bf);
-                    Hash_map_size_t_add(&sn2->groups, task->n->group, bf);
-                }
-                sn2 = sn2->next;
-            }
-        }
-    }
 
     if (!task->n) {
         if (task->start_slice.size == 0) {

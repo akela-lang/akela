@@ -17,6 +17,7 @@ typedef struct Cob_compile_data {
 typedef struct Cob_re {
     struct error_list* el;
     Cob_ast* root;
+    size_t group_count;
 } Cob_re;
 
 void Cob_compile_data_init(

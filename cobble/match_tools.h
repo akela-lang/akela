@@ -7,6 +7,7 @@
 #include "zinc/hash_map_size_t.h"
 #include "zinc/String_slice.h"
 #include <unicode/uchar.h>
+#include "zinc/buffer_list.h"
 
 typedef enum Cob_task_status {
     Cob_task_status_initial,
@@ -49,6 +50,11 @@ typedef struct Cob_stack_list {
     size_t top_priority;
 } Cob_stack_list;
 
+typedef struct Cob_result {
+    bool matched;
+    struct buffer_list groups;
+} Cob_result;
+
 void Cob_task_init(Cob_task* task, Cob_task* parent);
 void Cob_task_create(Cob_task** task, Cob_task* parent);
 
@@ -67,6 +73,9 @@ void Cob_stack_node_create(Cob_stack_node** sn);
 void Cob_stack_node_destroy(Cob_stack_node* sn);
 Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn);
 void Cob_stack_node_dump_groups(Cob_stack_node* sn);
+
+void Cob_result_init(Cob_result* mr);
+void Cob_result_destroy(Cob_result* mr);
 
 void Cob_stack_list_init(Cob_stack_list* sl);
 void Cob_stack_list_create(Cob_stack_list** sl);

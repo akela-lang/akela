@@ -16,6 +16,7 @@ void test_compile_empty()
 
     expect_no_errors(re.el);
     assert_null(re.root, "root");
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     teardown_compile(cd, &re);
 }
@@ -36,6 +37,8 @@ void test_compile_literal()
     expect_int_equal(re.root->type, Cob_ast_type_literal, "literal root");
     expect_int_equal(re.root->num, 1, "num");
     expect_char_equal(re.root->c[0], 'a', "c root");
+
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     teardown_compile(cd, &re);
 }
@@ -65,6 +68,8 @@ void test_compile_union_single()
     expect_int_equal(b->type, Cob_ast_type_literal, "literal b");
     expect_int_equal(b->num, 1, "num");
     expect_char_equal(b->c[0], 'b', "c[0] b");
+
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     teardown_compile(cd, &re);
 }
@@ -151,6 +156,8 @@ void test_compile_concat_single()
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
+    expect_size_t_equal(re.group_count, 1, "group_count");
+
     teardown_compile(cd, &re);
 }
 
@@ -233,6 +240,8 @@ void test_compile_union_concat()
     expect_int_equal(d->num, 1, "num d");
     expect_char_equal(d->c[0], 'd', "c d");
 
+    expect_size_t_equal(re.group_count, 1, "group_count");
+
     teardown_compile(cd, &re);
 }
 
@@ -257,6 +266,8 @@ void test_compile_closure()
     expect_int_equal(lit->num, 1, "num lit");
     expect_char_equal(lit->c[0], 'a', "c a");
 
+    expect_size_t_equal(re.group_count, 1, "group_count");
+
     teardown_compile(cd, &re);
 }
 
@@ -270,7 +281,7 @@ void test_compile_concat_closure()
     Cob_re re = Cob_compile(cd);
 
     expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_concat, "concat root");
@@ -295,6 +306,7 @@ void test_compile_concat_closure()
     expect_int_equal(b->num, 1, "num b");
     expect_char_equal(b->c[0], 'b', "c b");
 
+
     teardown_compile(cd, &re);
 }
 
@@ -309,6 +321,7 @@ void test_compile_union_closure()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_union, "concat root");
@@ -347,6 +360,7 @@ void test_compile_positive_closure()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_positive_closure, "closure root");
@@ -371,6 +385,7 @@ void test_compile_repeat()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_repeat, "repeat root");
@@ -399,6 +414,7 @@ void test_compile_repeat_num_error()
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     struct error* e = assert_source_error(cd->el, "expected digit");
     expect_size_t_equal(e->loc.start_pos, 2, "start_pos");
@@ -420,6 +436,7 @@ void test_compile_repeat_range()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_repeat_range, "repeat root");
@@ -453,6 +470,7 @@ void test_compile_repeat_range_num_error()
 
     expect_has_errors(re.el);
     expect_has_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     struct error* e = assert_source_error(cd->el, "expected digit");
     expect_size_t_equal(e->loc.start_pos, 4, "byte_pos");
@@ -474,6 +492,7 @@ void test_compile_group_concat()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 2, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_concat, "concat root");
@@ -525,6 +544,7 @@ void test_compile_group_empty()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 2, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_concat, "concat root");
@@ -563,6 +583,7 @@ void test_compile_option()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_option, "option root");
@@ -587,6 +608,7 @@ void test_compile_wildcard()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_wildcard, "type root");
@@ -605,6 +627,7 @@ void test_compile_begin()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_begin, "type root");
@@ -623,6 +646,7 @@ void test_compile_end()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_end, "type root");
@@ -641,6 +665,7 @@ void test_compile_escape_backslash()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_escape, "type root");
@@ -661,6 +686,7 @@ void test_compile_escape_asterisk()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_escape, "type root");
@@ -681,6 +707,7 @@ void test_compile_character_class()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_class, "type root");
@@ -765,6 +792,7 @@ void test_compile_character_range()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_class, "type root");
@@ -848,6 +876,7 @@ void test_compile_character_type_word()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_type_word, "type root");
@@ -866,6 +895,7 @@ void test_compile_character_type_word_opposite()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_type_word_opposite, "type root");
@@ -884,6 +914,7 @@ void test_compile_character_type_digit()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_type_digit, "type root");
@@ -902,6 +933,7 @@ void test_compile_character_type_digit_opposite()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_type_digit_opposite, "type root");
@@ -920,6 +952,7 @@ void test_compile_character_type_space()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_type_space, "type root");
@@ -938,6 +971,7 @@ void test_compile_character_type_space_opposite()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_type_space_opposite, "type root");
@@ -956,6 +990,7 @@ void test_compile_character_type_newline_opposite()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_character_type_newline_opposite, "type root");
@@ -974,6 +1009,7 @@ void test_compile_coverage_line()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 4, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_concat, "type root");
@@ -1133,6 +1169,7 @@ void test_compile_coverage_line2()
 
     expect_no_errors(re.el);
     expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 5, "group_count");
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_concat, "type root");
@@ -1298,6 +1335,21 @@ void test_compile_coverage_line2()
     teardown_compile(cd, &re);
 }
 
+void test_compile_missing_group()
+{
+    test_name(__func__);
+
+    Cob_compile_data* cd = NULL;
+    setup_compile(&cd, "(c|xyx()|a)");
+
+    Cob_re re = Cob_compile(cd);
+
+    expect_no_errors(re.el);
+    expect_no_errors(cd->el);
+    expect_size_t_equal(re.group_count, 3, "group_count");
+    teardown_compile(cd, &re);
+}
+
 void test_compile()
 {
     test_compile_empty();
@@ -1342,4 +1394,6 @@ void test_compile()
 
     test_compile_coverage_line();
     test_compile_coverage_line2();
+
+    test_compile_missing_group();
 }

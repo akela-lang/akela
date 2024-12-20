@@ -362,3 +362,14 @@ void Cob_stack_list_destroy(Cob_stack_list* sl)
 
     free(sl);
 }
+
+void Cob_result_init(Cob_result* mr)
+{
+    mr->matched = false;
+    buffer_list_init(&mr->groups);
+}
+
+void Cob_result_destroy(Cob_result* mr)
+{
+    buffer_list_destroy(&mr->groups);
+}

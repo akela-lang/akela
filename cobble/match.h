@@ -3,7 +3,8 @@
 
 #include "match_tools.h"
 #include "zinc/buffer_list.h"
+#include "compile_tools.h"
 
-bool Cob_match(Cob_ast* root, String_slice slice, struct buffer_list* groups);
+Cob_result Cob_match(Cob_re* re, String_slice slice);
 
 #endif //COBBLE_MATCH_H
