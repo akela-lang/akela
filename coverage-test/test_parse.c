@@ -248,6 +248,90 @@ void test_parse_gcov_ext3_not_match()
     Cvr_re_cleanup(&cr);
 }
 
+void test_parse_test_dir1()
+{
+    test_name(__func__);
+
+    Cob_re cr = Cvr_test_dir_re();
+    char s[] = "-test";
+    String_slice slice;
+    slice.p = s;
+    slice.size = strlen(s);
+    struct buffer_list groups;
+    buffer_list_init(&groups);
+
+    bool matched = Cob_match(cr.root, slice, &groups);
+
+    expect_true(matched, "m");
+    expect_buffer_list_count(&groups, 1, "count groups");
+    expect_buffer_list_item(&groups, 0, "-test", "item groups");
+
+    buffer_list_destroy(&groups);
+    Cvr_re_cleanup(&cr);
+}
+
+void test_parse_test_dir2()
+{
+    test_name(__func__);
+
+    Cob_re cr = Cvr_test_dir_re();
+    char s[] = "akela-test";
+    String_slice slice;
+    slice.p = s;
+    slice.size = strlen(s);
+    struct buffer_list groups;
+    buffer_list_init(&groups);
+
+    bool matched = Cob_match(cr.root, slice, &groups);
+
+    expect_true(matched, "m");
+    expect_buffer_list_count(&groups, 1, "count groups");
+    expect_buffer_list_item(&groups, 0, "-test", "item groups");
+
+    buffer_list_destroy(&groups);
+    Cvr_re_cleanup(&cr);
+}
+
+void test_parse_test_dir3_not_match()
+{
+    test_name(__func__);
+
+    Cob_re cr = Cvr_test_dir_re();
+    char s[] = "akela";
+    String_slice slice;
+    slice.p = s;
+    slice.size = strlen(s);
+    struct buffer_list groups;
+    buffer_list_init(&groups);
+
+    bool matched = Cob_match(cr.root, slice, &groups);
+
+    expect_false(matched, "m");
+
+    buffer_list_destroy(&groups);
+    Cvr_re_cleanup(&cr);
+}
+
+void test_parse_test_dir4_not_match()
+{
+    test_name(__func__);
+
+    Cob_re cr = Cvr_test_dir_re();
+    char s[] = "akela-test-abc";
+    String_slice slice;
+    slice.p = s;
+    slice.size = strlen(s);
+    struct buffer_list groups;
+    buffer_list_init(&groups);
+
+    bool matched = Cob_match(cr.root, slice, &groups);
+
+    expect_false(matched, "m");
+
+    buffer_list_destroy(&groups);
+    Cvr_re_cleanup(&cr);
+}
+
 void test_parse()
 {
     test_parse_line_zero();
@@ -258,4 +342,9 @@ void test_parse()
     test_parse_gcov_ext1();
     test_parse_gcov_ext2();
     test_parse_gcov_ext3_not_match();
+
+    test_parse_test_dir1();
+    test_parse_test_dir2();
+    test_parse_test_dir3_not_match();
+    test_parse_test_dir4_not_match();
 }
