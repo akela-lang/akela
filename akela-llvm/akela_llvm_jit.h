@@ -2,7 +2,7 @@
 #define AKELA_LLVM_JIT_H
 
 namespace Akela_llvm {
-        bool Jit(Code_gen_llvm* cg, Ast_node* n, Code_gen_result* result);
+        bool Jit(Code_gen_llvm* cg, Cob_ast* n, Code_gen_result* result);
 }
 
 #endif

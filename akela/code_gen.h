@@ -16,10 +16,10 @@ typedef struct {
     bool debug;
 } Code_gen_result;
 
-typedef bool (*Code_gen_interface)(void* cg_obj, Ast_node* n, Code_gen_result* result);
+typedef bool (*Code_gen_interface)(void* cg_obj, Cob_ast* n, Code_gen_result* result);
 
 void Code_gen_result_init(Code_gen_result* result);
 void Code_gen_result_destroy(Code_gen_result* result);
-bool Code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Ast_node* n, Code_gen_result* result);
+bool Code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Cob_ast* n, Code_gen_result* result);
 
 #endif

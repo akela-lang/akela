@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "compile_data.h"
-#include "Ast_node.h"
+#include "ast.h"
 
 Cob_re Cob_compile(Cob_compile_data* cd);
 

@@ -10,11 +10,11 @@
 #include "type_use.h"
 #include "zinc/list.h"
 
-typedef enum Ast_type {
-	Ast_type_none,
+typedef enum Cob_ast_type {
+	Cob_ast_type_none,
 	Ast_type_id,
 	Ast_type_sign,
-	Ast_type_number,
+	Cob_ast_type_number,
 	Ast_type_string,
 	Ast_type_assign,
 	Ast_type_plus,
@@ -58,7 +58,7 @@ typedef enum Ast_type {
     Ast_type_eseq,
     Ast_type_let_lseq,
     Ast_type_let_rseq,
-    Ast_type_error,
+    Cob_ast_type_error,
     Ast_type_prototype,
     Ast_type_extern,
     Ast_type_struct_literal,
@@ -67,7 +67,7 @@ typedef enum Ast_type {
     Ast_type_impl,
     Ast_type_self,
 	Ast_type_count		/* keep at end */
-} Ast_type;
+} Cob_ast_type;
 
 #ifdef AKELA_AST_C
 enum result Ast_set_names(char** names)
@@ -76,10 +76,10 @@ enum result Ast_set_names(char** names)
         names[i] = NULL;
     }
 
-    names[Ast_type_none] = "none";
+    names[Cob_ast_type_none] = "none";
     names[Ast_type_id] = "id";
     names[Ast_type_sign] = "sign";
-    names[Ast_type_number] = "number";
+    names[Cob_ast_type_number] = "number";
     names[Ast_type_string] = "string";
     names[Ast_type_assign] = "assign";
     names[Ast_type_plus] = "plus";
@@ -123,7 +123,7 @@ enum result Ast_set_names(char** names)
     names[Ast_type_eseq] = "eseq";
     names[Ast_type_let_lseq] = "let_lseq";
     names[Ast_type_let_rseq] = "let_rseq";
-    names[Ast_type_error] = "error";
+    names[Cob_ast_type_error] = "error";
     names[Ast_type_prototype] = "prototype";
     names[Ast_type_extern] = "extern";
     names[Ast_type_struct_literal] = "struct-literal";
@@ -142,37 +142,37 @@ enum result Ast_set_names(char** names)
 }
 #endif
 
-typedef struct Ast_node {
-	Ast_type type;
+typedef struct Cob_ast {
+	Cob_ast_type type;
 	struct buffer value;
 	struct Type_use* tu;
     bool is_mut;
     struct location loc;
     struct symbol* sym;
-	struct Ast_node* next;
-	struct Ast_node* prev;
-	struct Ast_node* head;
-	struct Ast_node* tail;
-} Ast_node;
+	struct Cob_ast* next;
+	struct Cob_ast* prev;
+	struct Cob_ast* head;
+	struct Cob_ast* tail;
+} Cob_ast;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 AKELA_API enum result Ast_set_names(char** names);
-AKELA_API void Ast_node_create(Ast_node** n);
-AKELA_API void Ast_node_destroy(Ast_node* n);
-AKELA_API void Ast_node_init(Ast_node* n);
-AKELA_API void Ast_node_add(Ast_node* p, Ast_node* c);
-AKELA_API void Ast_node_push(Ast_node* parent, Ast_node* child);
-AKELA_API Ast_node* Ast_node_get(Ast_node* p, size_t pos);
-AKELA_API void Ast_node_print(Ast_node* n);
-AKELA_API void Ast_node_print_pointers(Ast_node* root, struct list* l);
-AKELA_API void Ast_node_copy(Ast_node* src, Ast_node* dest);
-AKELA_API Ast_node* Ast_node_clone(Ast_node* n);
-AKELA_API bool Ast_node_match(Ast_node* a, Ast_node* b);
-AKELA_API size_t Ast_node_count_children(Ast_node* n);
-AKELA_API void Ast_node_validate(Ast_node* n, struct list* l);
+AKELA_API void Cob_ast_create(Cob_ast** n);
+AKELA_API void Cob_ast_destroy(Cob_ast* n);
+AKELA_API void Cob_ast_init(Cob_ast* n);
+AKELA_API void Cob_ast_add(Cob_ast* p, Cob_ast* c);
+AKELA_API void Ast_node_push(Cob_ast* parent, Cob_ast* child);
+AKELA_API Cob_ast* Ast_node_get(Cob_ast* p, size_t pos);
+AKELA_API void Ast_node_print(Cob_ast* n);
+AKELA_API void Ast_node_print_pointers(Cob_ast* root, struct list* l);
+AKELA_API void Ast_node_copy(Cob_ast* src, Cob_ast* dest);
+AKELA_API Cob_ast* Ast_node_clone(Cob_ast* n);
+AKELA_API bool Ast_node_match(Cob_ast* a, Cob_ast* b);
+AKELA_API size_t Ast_node_count_children(Cob_ast* n);
+AKELA_API void Ast_node_validate(Cob_ast* n, struct list* l);
 
 #ifdef __cplusplus
 }

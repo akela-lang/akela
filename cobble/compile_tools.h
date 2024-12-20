@@ -8,7 +8,7 @@
 #include "compile_data.h"
 #include "token.h"
 #include "stdbool.h"
-#include "Ast_node.h"
+#include "ast.h"
 
 void get_lookahead(struct Cob_compile_data* cd);
 bool match(
@@ -16,7 +16,7 @@ bool match(
     enum token_type type,
     const char* reason,
     struct token** t,
-    struct Ast_node* n);
+    struct Cob_ast* n);
 void location_update(struct location* dest, struct location* src);
 void location_update_token(struct location* dest, struct token* t);
 void location_update_default(struct location* dest, struct Cob_compile_data* cd);

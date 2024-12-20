@@ -1,5 +1,5 @@
 set (cobble_files
-        Ast_node.c
+        ast.c
         compile.c
         token.c
         compile_data.c

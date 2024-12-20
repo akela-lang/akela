@@ -1,51 +1,51 @@
 #include "zinc/unit_test.h"
 #include "zinc/memory.h"
-#include "cobble/Ast_node.h"
+#include "cobble/ast.h"
 
 void test_Ast_node_root()
 {
     test_name(__func__);
 
-    Ast_node* n = NULL;
-    malloc_safe((void**)&n, sizeof(Ast_node));
-    Ast_node_init(n);
-    expect_int_equal(n->type, Ast_type_none, "type none");
+    Cob_ast* n = NULL;
+    malloc_safe((void**)&n, sizeof(Cob_ast));
+    Cob_ast_init(n);
+    expect_int_equal(n->type, Cob_ast_type_none, "type none");
     expect_int_equal(n->num, 0, "num 0");
     expect_ptr_equal(n->next, NULL, "next NULL");
     expect_ptr_equal(n->prev, NULL, "prev NULL");
     expect_ptr_equal(n->head, NULL, "head NULL");
     expect_ptr_equal(n->tail, NULL, "tail NULL");
-    Ast_node_destroy(n);
+    Cob_ast_destroy(n);
 }
 
 void test_Ast_node_children()
 {
     test_name(__func__);
 
-    Ast_node* root = NULL;
-    malloc_safe((void**)&root, sizeof(Ast_node));
-    Ast_node_init(root);
+    Cob_ast* root = NULL;
+    malloc_safe((void**)&root, sizeof(Cob_ast));
+    Cob_ast_init(root);
 
-    Ast_node* c0 = NULL;
-    malloc_safe((void**)&c0, sizeof(Ast_node));
-    Ast_node_init(c0);
+    Cob_ast* c0 = NULL;
+    malloc_safe((void**)&c0, sizeof(Cob_ast));
+    Cob_ast_init(c0);
 
-    Ast_node* c1 = NULL;
-    malloc_safe((void**)&c1, sizeof(Ast_node));
-    Ast_node_init(c1);
+    Cob_ast* c1 = NULL;
+    malloc_safe((void**)&c1, sizeof(Cob_ast));
+    Cob_ast_init(c1);
 
-    Ast_node* c2 = NULL;
-    malloc_safe((void**)&c2, sizeof(Ast_node));
-    Ast_node_init(c2);
+    Cob_ast* c2 = NULL;
+    malloc_safe((void**)&c2, sizeof(Cob_ast));
+    Cob_ast_init(c2);
 
-    Ast_node_add(root, c0);
-    Ast_node_add(root, c1);
-    Ast_node_add(root, c2);
+    Cob_ast_add(root, c0);
+    Cob_ast_add(root, c1);
+    Cob_ast_add(root, c2);
 
     expect_ptr_equal(root->head, c0, "head c0");
     expect_ptr_equal(root->tail, c2, "tail c2");
 
-    Ast_node* n = root->head;
+    Cob_ast* n = root->head;
 
     assert_ptr(n, "0 n ptr");
     expect_ptr_equal(n, c0, "0 n c1");
@@ -64,7 +64,7 @@ void test_Ast_node_children()
     expect_ptr_equal(n->prev, c1, "2 n->prev c1");
     expect_ptr_equal(n->next, NULL, "2 n->next NULL");
 
-    Ast_node_destroy(root);
+    Cob_ast_destroy(root);
 
 }
 

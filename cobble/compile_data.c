@@ -30,13 +30,13 @@ void Cob_compile_data_destroy(Cob_compile_data* cd)
     free(cd->lookahead);
 }
 
-void Cob_re_init(Cob_re* re, struct error_list* el, Ast_node* root)
+void Cob_re_init(Cob_re* re, struct error_list* el, Cob_ast* root)
 {
     re->el = el;
     re->root = root;
 }
 
-void Cob_re_reeate(Cob_re** re, struct error_list* el, Ast_node* root)
+void Cob_re_reeate(Cob_re** re, struct error_list* el, Cob_ast* root)
 {
     malloc_safe((void**)re, sizeof(Cob_re));
     Cob_re_init(*re, el, root);
@@ -46,6 +46,6 @@ void Cob_re_destroy(Cob_re* re)
 {
     error_list_destroy(re->el);
     free(re->el);
-    Ast_node_destroy(re->root);
+    Cob_ast_destroy(re->root);
     free(re->root);
 }

@@ -1,7 +1,7 @@
 #include <string.h>
 #include "cobble/compile_data.h"
 #include "zinc/memory.h"
-#include "cobble/Ast_node.h"
+#include "cobble/ast.h"
 #include "zinc/input_unicode_string.h"
 
 void setup_compile(Cob_compile_data** cd, const char* s)

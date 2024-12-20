@@ -1,5 +1,5 @@
 #include <stdbool.h>
-#include "Ast_node.h"
+#include "ast.h"
 #include "match.h"
 #include <assert.h>
 #include <zinc/list.h>
@@ -8,15 +8,15 @@
 #include "match_tools.h"
 #include "json/lex_tools.h"
 
-bool Cob_match_slice(Ast_node* root, Stack_list* sl, struct buffer_list* groups);
-Stack_list* Cob_init_stacks(Ast_node* root, String_slice slice);
-void Check_group_tasks(Ast_node* root, Stack_node* sn, Match_task* task);
+bool Cob_match_slice(Cob_ast* root, Stack_list* sl, struct buffer_list* groups);
+Stack_list* Cob_init_stacks(Cob_ast* root, String_slice slice);
+void Check_group_tasks(Cob_ast* root, Stack_node* sn, Match_task* task);
 void Cob_remove_finished(Match_task_stack* mts, Match_task* task);
 void Cob_cleanup_finished(Match_task* task);
 void Cob_check_if_done(Match_task_stack* mts, Match_task* task, bool* done, bool* matched);
 void Cob_get_groups(Stack_node* sn, struct buffer_list* groups);
 Match_task* Cob_add_task(
-    Ast_node* n,
+    Cob_ast* n,
     String_slice slice,
     Match_task_stack* mts,
     Match_task* parent,
@@ -54,7 +54,7 @@ void Cob_run_character_type_digit(Stack_node* sn, bool opposite);
 void Cob_run_character_type_space(Stack_node* sn, bool opposite);
 void Cob_run_character_type_newline_opposite(Stack_node* sn);
 
-bool Cob_match(Ast_node* root, String_slice slice, struct buffer_list* groups)
+bool Cob_match(Cob_ast* root, String_slice slice, struct buffer_list* groups)
 {
     bool matched = false;
 
@@ -70,7 +70,7 @@ bool Cob_match(Ast_node* root, String_slice slice, struct buffer_list* groups)
     return matched;
 }
 
-bool Cob_match_slice(Ast_node* root, Stack_list* sl, struct buffer_list* groups)
+bool Cob_match_slice(Cob_ast* root, Stack_list* sl, struct buffer_list* groups)
 {
     bool matched = false;
 
@@ -108,7 +108,7 @@ bool Cob_match_slice(Ast_node* root, Stack_list* sl, struct buffer_list* groups)
     return matched;
 }
 
-Stack_list* Cob_init_stacks(Ast_node* root, String_slice slice)
+Stack_list* Cob_init_stacks(Cob_ast* root, String_slice slice)
 {
     Stack_list* sl;
     Stack_list_create(&sl);
@@ -169,7 +169,7 @@ void Cob_get_groups(Stack_node* sn, struct buffer_list* groups)
 }
 
 Match_task* Cob_add_task(
-    Ast_node* n,
+    Cob_ast* n,
     String_slice slice,
     Match_task_stack* mts,
     Match_task* parent,
@@ -226,51 +226,51 @@ void Cob_run_dispatch(Stack_node* sn)
         struct buffer* bf = NULL;
         buffer_create(&bf);
         Hash_map_size_t_add(&sn->groups, 0, bf);
-    } else if (task->n->type == Ast_type_union) {
+    } else if (task->n->type == Cob_ast_type_union) {
         Cob_run_union(sn);
-    } else if (task->n->type == Ast_type_concat) {
+    } else if (task->n->type == Cob_ast_type_concat) {
         Cob_run_concat(sn);
-    } else if (task->n->type == Ast_type_closure) {
+    } else if (task->n->type == Cob_ast_type_closure) {
         Cob_run_closure(sn);
-    } else if (task->n->type == Ast_type_positive_closure) {
+    } else if (task->n->type == Cob_ast_type_positive_closure) {
         Cob_run_pos_closure(sn);
-    } else if (task->n->type == Ast_type_repeat) {
+    } else if (task->n->type == Cob_ast_type_repeat) {
         Cob_run_repeat(sn);
-    } else if (task->n->type == Ast_type_repeat_range) {
+    } else if (task->n->type == Cob_ast_type_repeat_range) {
         Cob_run_repeat_range(sn);
-    } else if (task->n->type == Ast_type_group) {
+    } else if (task->n->type == Cob_ast_type_group) {
         Cob_run_group(sn);
-    } else if (task->n->type == Ast_type_option) {
+    } else if (task->n->type == Cob_ast_type_option) {
         Cob_run_option(sn);
-    } else if (task->n->type == Ast_type_literal) {
+    } else if (task->n->type == Cob_ast_type_literal) {
         Cob_run_literal(sn);
-    } else if (task->n->type == Ast_type_wildcard) {
+    } else if (task->n->type == Cob_ast_type_wildcard) {
         Cob_run_wildcard(sn);
-    } else if (task->n->type == Ast_type_begin) {
+    } else if (task->n->type == Cob_ast_type_begin) {
         Cob_run_begin(sn);
-    } else if (task->n->type == Ast_type_end) {
+    } else if (task->n->type == Cob_ast_type_end) {
         Cob_run_end(sn);
-    } else if (task->n->type == Ast_type_escape) {
+    } else if (task->n->type == Cob_ast_type_escape) {
         Cob_run_escape(sn);
-    } else if (task->n->type == Ast_type_character_class) {
+    } else if (task->n->type == Cob_ast_type_character_class) {
         Cob_run_character_class(sn);
-    } else if (task->n->type == Ast_type_character_class_opposite) {
+    } else if (task->n->type == Cob_ast_type_character_class_opposite) {
         Cob_run_character_class_opposite(sn);
-    } else if (task->n->type == Ast_type_character_range) {
+    } else if (task->n->type == Cob_ast_type_character_range) {
         Cob_run_character_range(sn);
-    } else if (task->n->type == Ast_type_character_type_word) {
+    } else if (task->n->type == Cob_ast_type_character_type_word) {
         Cob_run_character_type_word(sn, false);
-    } else if (task->n->type == Ast_type_character_type_word_opposite) {
+    } else if (task->n->type == Cob_ast_type_character_type_word_opposite) {
         Cob_run_character_type_word(sn, true);
-    } else if (task->n->type == Ast_type_character_type_digit) {
+    } else if (task->n->type == Cob_ast_type_character_type_digit) {
         Cob_run_character_type_digit(sn, false);
-    } else if (task->n->type == Ast_type_character_type_digit_opposite) {
+    } else if (task->n->type == Cob_ast_type_character_type_digit_opposite) {
         Cob_run_character_type_digit(sn, true);
-    } else if (task->n->type == Ast_type_character_type_space) {
+    } else if (task->n->type == Cob_ast_type_character_type_space) {
         Cob_run_character_type_space(sn, false);
-    } else if (task->n->type == Ast_type_character_type_space_opposite) {
+    } else if (task->n->type == Cob_ast_type_character_type_space_opposite) {
         Cob_run_character_type_space(sn, true);
-    } else if (task->n->type == Ast_type_character_type_newline_opposite) {
+    } else if (task->n->type == Cob_ast_type_character_type_newline_opposite) {
         Cob_run_character_type_newline_opposite(sn);
     } else {
         assert(false && "Not implemented");
@@ -282,51 +282,51 @@ void Cob_child_finish_dispatch(Stack_node* sn, Match_task* parent, Match_task* c
 {
     if (parent) {
         if (parent->n) {
-            if (parent->n->type == Ast_type_union) {
+            if (parent->n->type == Cob_ast_type_union) {
                 Cob_child_finish_union(sn, parent, child);
-            } else if (parent->n->type == Ast_type_concat) {
+            } else if (parent->n->type == Cob_ast_type_concat) {
                 Cob_child_finish_concat(sn, parent, child);
-            } else if (parent->n->type == Ast_type_closure) {
+            } else if (parent->n->type == Cob_ast_type_closure) {
                 Cob_child_finish_closure(sn, parent, child);
-            } else if (parent->n->type == Ast_type_positive_closure) {
+            } else if (parent->n->type == Cob_ast_type_positive_closure) {
                 Cob_child_finish_pos_closure(sn, parent, child);
-            } else if (parent->n->type == Ast_type_repeat) {
+            } else if (parent->n->type == Cob_ast_type_repeat) {
                 Cob_child_finish_repeat(sn, parent, child);
-            } else if (parent->n->type == Ast_type_repeat_range) {
+            } else if (parent->n->type == Cob_ast_type_repeat_range) {
                 Cob_child_finish_repeat_range(sn, parent, child);
-            } else if (parent->n->type == Ast_type_group) {
+            } else if (parent->n->type == Cob_ast_type_group) {
                 Cob_child_finish_group(sn, parent, child);
-            } else if (parent->n->type == Ast_type_option) {
+            } else if (parent->n->type == Cob_ast_type_option) {
                 Cob_child_finish_option(sn, parent, child);
-            } else if (parent->n->type == Ast_type_literal) {
+            } else if (parent->n->type == Cob_ast_type_literal) {
                 assert(false && "literal tasks should not have child tasks");
-            } else if (parent->n->type == Ast_type_wildcard) {
+            } else if (parent->n->type == Cob_ast_type_wildcard) {
                 assert(false && "wildcard tasks should not have child tasks");
-            } else if (parent->n->type == Ast_type_begin) {
+            } else if (parent->n->type == Cob_ast_type_begin) {
                 assert(false && "begin tasks should not have child tasks");
-            } else if (parent->n->type == Ast_type_end) {
+            } else if (parent->n->type == Cob_ast_type_end) {
                 assert(false && "end tasks should not have child tasks");
-            } else if (parent->n->type == Ast_type_escape) {
+            } else if (parent->n->type == Cob_ast_type_escape) {
                 assert(false && "escape tasks should not have child tasks");
-            } else if (parent->n->type == Ast_type_character_class) {
+            } else if (parent->n->type == Cob_ast_type_character_class) {
                 Cob_child_finish_character_class(sn, parent, child);
-            } else if (parent->n->type == Ast_type_character_class_opposite) {
+            } else if (parent->n->type == Cob_ast_type_character_class_opposite) {
                 Cob_child_finish_character_class_opposite(sn, parent, child);
-            } else if (parent->n->type == Ast_type_character_range) {
+            } else if (parent->n->type == Cob_ast_type_character_range) {
                 assert(false && "character range task should not have child tasks");
-            } else if (parent->n->type == Ast_type_character_type_word) {
+            } else if (parent->n->type == Cob_ast_type_character_type_word) {
                 assert(false && "character type word task should not have child tasks");
-            } else if (parent->n->type == Ast_type_character_type_word_opposite) {
+            } else if (parent->n->type == Cob_ast_type_character_type_word_opposite) {
                 assert(false && "character type word opposite task should not have child tasks");
-            } else if (parent->n->type == Ast_type_character_type_digit) {
+            } else if (parent->n->type == Cob_ast_type_character_type_digit) {
                 assert(false && "character type digit task should not have child tasks");
-            } else if (parent->n->type == Ast_type_character_type_digit_opposite) {
+            } else if (parent->n->type == Cob_ast_type_character_type_digit_opposite) {
                 assert(false && "character type digit opposite task should not have child tasks");
-            } else if (parent->n->type == Ast_type_character_type_space) {
+            } else if (parent->n->type == Cob_ast_type_character_type_space) {
                 assert(false && "character type space task should not have child tasks");
-            } else if (parent->n->type == Ast_type_character_type_space_opposite) {
+            } else if (parent->n->type == Cob_ast_type_character_type_space_opposite) {
                 assert(false && "character type space opposite task should not have child tasks");
-            } else if (parent->n->type == Ast_type_character_type_newline_opposite) {
+            } else if (parent->n->type == Cob_ast_type_character_type_newline_opposite) {
                 assert(false && "character type newline opposite task should not have child tasks");
             } else {
                 assert(false && "invalid type");
@@ -346,7 +346,7 @@ void Cob_run_union(Stack_node* sn)
         task->end_slice = task->start_slice;
         task->matched = false;
 
-        Ast_node* p = task->p->next;
+        Cob_ast* p = task->p->next;
         while (p) {
             Stack_node* new_sn = Stack_node_clone(sn);
             new_sn->mts->top->p = p;
@@ -485,8 +485,8 @@ void Cob_run_repeat(Stack_node* sn)
         task->status = Match_task_started;
     }
 
-    Ast_node* child_node = task->n->head;
-    Ast_node* repeat_node = child_node->next;
+    Cob_ast* child_node = task->n->head;
+    Cob_ast* repeat_node = child_node->next;
     if (repeat_node->num_value == 0) {
         task->status = Match_task_finished;
         task->matched = true;
@@ -500,8 +500,8 @@ void Cob_run_repeat(Stack_node* sn)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cob_child_finish_repeat(Stack_node* sn, Match_task* parent, Match_task* child)
 {
-    Ast_node* child_node = parent->n->head;
-    Ast_node* repeat_node = child_node->next;
+    Cob_ast* child_node = parent->n->head;
+    Cob_ast* repeat_node = child_node->next;
 
     if (child->matched) {
         parent->end_slice = child->end_slice;
@@ -525,9 +525,9 @@ void Cob_run_repeat_range(Stack_node* sn)
         task->status = Match_task_started;
     }
 
-    Ast_node* child_node = task->n->head;
-    Ast_node* repeat_low = child_node->next;
-    Ast_node* repeat_high = repeat_low->next;
+    Cob_ast* child_node = task->n->head;
+    Cob_ast* repeat_low = child_node->next;
+    Cob_ast* repeat_high = repeat_low->next;
 
     if (task->count >= repeat_low->num_value && task->count <= repeat_high->num_value) {
         Stack_node* new_sn = Stack_node_clone(sn);
@@ -751,7 +751,7 @@ void Cob_run_character_class(Stack_node* sn)
         task->end_slice = task->start_slice;
     }
 
-    Ast_node* p = task->n->head;
+    Cob_ast* p = task->n->head;
     while (p && !task->matched) {
         Match_task* child = Cob_add_task(p, task->start_slice, sn->mts, task, sn);
         Cob_run_dispatch(sn);
@@ -784,7 +784,7 @@ void Cob_run_character_class_opposite(Stack_node* sn)
         task->matched = true;
     }
 
-    Ast_node* p = task->n->head;
+    Cob_ast* p = task->n->head;
     while (p && task->matched) {
         Match_task* child = Cob_add_task(p, task->start_slice, sn->mts, task, sn);
         child->opposite = true;
@@ -818,8 +818,8 @@ void Cob_run_character_range(Stack_node* sn)
 
     if (task->start_slice.size > 0) {
         String_slice slice = task->start_slice;
-        Ast_node* a = task->n->head;
-        Ast_node* b = a->next;
+        Cob_ast* a = task->n->head;
+        Cob_ast* b = a->next;
         bool matched = IS_ONE_BYTE(a->c[0]) && IS_ONE_BYTE(b->c[0]) && IS_ONE_BYTE(slice.p[0])
             && slice.p[0] >= a->c[0] && slice.p[0] <= b->c[0];
         if (task->opposite) {

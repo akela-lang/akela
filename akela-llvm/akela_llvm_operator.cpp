@@ -4,12 +4,12 @@ using namespace llvm;
 
 namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_mult(Jit_data* jd, Ast_node* n)
+    Value* Handle_mult(Jit_data* jd, Cob_ast* n)
     {
-        Ast_node* a = Ast_node_get(n, 0);
+        Cob_ast* a = Ast_node_get(n, 0);
         Value* lhs = Dispatch(jd, a);
 
-        Ast_node* b = Ast_node_get(n, 1);
+        Cob_ast* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
         if (a->tu->td->type == type_float || b->tu->td->type == type_float) {
@@ -20,12 +20,12 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_add(Jit_data* jd, Ast_node* n)
+    Value* Handle_add(Jit_data* jd, Cob_ast* n)
     {
-        Ast_node* a = Ast_node_get(n, 0);
+        Cob_ast* a = Ast_node_get(n, 0);
         Value* lhs = Dispatch(jd, a);
 
-        Ast_node* b = Ast_node_get(n, 1);
+        Cob_ast* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
         if (a->tu->td->type == type_float || b->tu->td->type == type_float) {
@@ -36,22 +36,22 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_sub(Jit_data* jd, Ast_node* n)
+    Value* Handle_sub(Jit_data* jd, Cob_ast* n)
     {
-        Ast_node* a = Ast_node_get(n, 0);
+        Cob_ast* a = Ast_node_get(n, 0);
         Value* lhs = Dispatch(jd, a);
 
-        Ast_node* b = Ast_node_get(n, 1);
+        Cob_ast* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
         return jd->Builder->CreateSub(lhs, rhs, "subtmp");
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_sign(Jit_data* jd, Ast_node* n)
+    Value* Handle_sign(Jit_data* jd, Cob_ast* n)
     {
-        Ast_node* op = Ast_node_get(n, 0);
-        Ast_node* number = Ast_node_get(n, 1);
+        Cob_ast* op = Ast_node_get(n, 0);
+        Cob_ast* number = Ast_node_get(n, 1);
         Value* number_value = Dispatch(jd, number);
 
         if (op->type == Ast_type_plus) {

@@ -47,7 +47,7 @@ void environment_destroy_symbol(struct symbol* sym)
     if (sym->constructor) {
         environment_destroy_symbol(sym->constructor);
     }
-    Ast_node_destroy(sym->root);
+    Cob_ast_destroy(sym->root);
     free(sym);
 }
 

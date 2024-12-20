@@ -139,7 +139,7 @@ namespace Akela_llvm {
         return last_block;
     }
 
-    void Run(Jit_data* jd, Ast_node* n, struct buffer* bf)
+    void Run(Jit_data* jd, Cob_ast* n, struct buffer* bf)
     {
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOPLEVEL_NAME));
         if (n->tu) {
@@ -241,7 +241,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Dispatch(Jit_data* jd, Ast_node* n)
+    Value* Dispatch(Jit_data* jd, Cob_ast* n)
     {
         if (n->type == Ast_type_stmts) {
             return Handle_stmts(jd, n);
@@ -277,7 +277,7 @@ namespace Akela_llvm {
             return Handle_subscript(jd, n);
         } else if (n->type == Ast_type_sign) {
             return Handle_sign(jd, n);
-        } else if (n->type == Ast_type_number) {
+        } else if (n->type == Cob_ast_type_number) {
             return Handle_number(jd, n);
         } else if (n->type == Ast_type_boolean) {
             return Handle_boolean(jd, n);

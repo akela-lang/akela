@@ -52,7 +52,7 @@ bool match(
     enum token_enum type,
     const char* reason,
     struct token** t,
-    Ast_node* n)
+    Cob_ast* n)
 {
 	bool valid = true;
 	struct location loc;
@@ -75,7 +75,7 @@ bool match(
 	return valid;
 }
 
-bool consume_newline(struct parse_state* ps, Ast_node* n)
+bool consume_newline(struct parse_state* ps, Cob_ast* n)
 {
     bool valid = true;
     while (true) {
@@ -100,7 +100,7 @@ struct location get_location(struct parse_state* ps)
     return ps->lookahead->loc;
 }
 
-bool is_identity_comparison(enum Ast_type type)
+bool is_identity_comparison(enum Cob_ast_type type)
 {
 	return type == Ast_type_equality || type == Ast_type_not_equal;
 }
@@ -112,10 +112,10 @@ struct token* get_lookahead(struct parse_state* ps)
     return t;
 }
 
-bool check_assignment_value_count(Ast_node* a, Ast_node* b)
+bool check_assignment_value_count(Cob_ast* a, Cob_ast* b)
 {
     if (a && b) {
-        if (a->type != Ast_type_error && b->type != Ast_type_error) {
+        if (a->type != Cob_ast_type_error && b->type != Cob_ast_type_error) {
             if (a->type == Ast_type_eseq && b->type != Ast_type_eseq) {
                 return false;
             } else if (a->type != Ast_type_eseq && b->type == Ast_type_eseq) {
@@ -131,7 +131,7 @@ bool check_assignment_value_count(Ast_node* a, Ast_node* b)
 }
 
 /* separator -> \n | ; */
-void parse_separator(struct parse_state* ps, Ast_node* n, bool* has_separator)
+void parse_separator(struct parse_state* ps, Cob_ast* n, bool* has_separator)
 {
     enum token_enum type;
     *has_separator = false;

@@ -6,31 +6,31 @@ void test_type_use1()
 {
 	test_name(__func__);
 
-	Ast_node* n;
-    Ast_node_create(&n);
+	Cob_ast* n;
+    Cob_ast_create(&n);
 	n->type = Ast_type_type;
 
-	Ast_node* a;
-    Ast_node_create(&a);
+	Cob_ast* a;
+    Cob_ast_create(&a);
 	a->type = Ast_type_type;
-    Ast_node_add(n, a);
+    Cob_ast_add(n, a);
 
-	Ast_node* b;
-    Ast_node_create(&b);
+	Cob_ast* b;
+    Cob_ast_create(&b);
 	b->type = Ast_type_type;
-    Ast_node_add(n, b);
+    Cob_ast_add(n, b);
 
 	assert_ptr(n, "ptr n");
 
-	Ast_node* n0 = Ast_node_get(n, 0);
+	Cob_ast* n0 = Ast_node_get(n, 0);
 	assert_ptr(n0, "ptr a");
 	expect_ptr_equal(n0, a, "a");
 
-	Ast_node* n1 = Ast_node_get(n, 1);
+	Cob_ast* n1 = Ast_node_get(n, 1);
 	assert_ptr(n1, "ptr b");
 	expect_ptr_equal(n1, b, "b");
 
-    Ast_node_destroy(n);
+    Cob_ast_destroy(n);
 }
 
 

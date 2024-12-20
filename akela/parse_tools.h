@@ -28,15 +28,15 @@ AKELA_API bool match(
     enum token_enum type,
     const char* reason,
     struct token** t,
-    Ast_node* n);
-AKELA_API bool consume_newline(struct parse_state* ps, Ast_node* n);
-AKELA_API bool is_identity_comparison(enum Ast_type type);
+    Cob_ast* n);
+AKELA_API bool consume_newline(struct parse_state* ps, Cob_ast* n);
+AKELA_API bool is_identity_comparison(enum Cob_ast_type type);
 AKELA_API struct location get_location(struct parse_state* ps);
 AKELA_API struct token* get_lookahead(struct parse_state* ps);
-AKELA_API bool check_assignment_value_count(Ast_node* a, Ast_node* b);
+AKELA_API bool check_assignment_value_count(Cob_ast* a, Cob_ast* b);
 AKELA_API void parse_separator(
     struct parse_state* ps,
-    Ast_node* n,
+    Cob_ast* n,
     bool* has_separator);
 
 #endif

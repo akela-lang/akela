@@ -15,8 +15,8 @@ bool token_is_type(struct parse_state* ps, struct token* t);
 Type_use* Type_use_add_proto(
         struct symbol_table* st,
         Type_use* func,
-        Ast_node* proto,
-        Ast_node* struct_type);
+        Cob_ast* proto,
+        Cob_ast* struct_type);
 
 /**
  * Parse a function prototype
@@ -26,7 +26,7 @@ Type_use* Type_use_add_proto(
  * @return struct ast_node*
  */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_prototype(
+Cob_ast* parse_prototype(
         struct parse_state* ps,
         bool is_function,
         bool is_extern,
@@ -34,29 +34,29 @@ Ast_node* parse_prototype(
         bool require_param_name,
         bool* has_id)
 {
-    Ast_node* n = NULL;
+    Cob_ast* n = NULL;
 
-    Ast_node_create(&n);
+    Cob_ast_create(&n);
     n->type = Ast_type_prototype;
 
     /* 0 id */
-    Ast_node* id_node = NULL;
+    Cob_ast* id_node = NULL;
     struct token* t0 = get_lookahead(ps);
     if (t0->type == token_id) {
         struct token* id = NULL;
         if (!match(ps, token_id, "expected identifier", &id, n)) {
             assert(false);
         }
-        Ast_node_create(&id_node);
+        Cob_ast_create(&id_node);
         id_node->type = Ast_type_id;
         buffer_copy(&id->value, &id_node->value);
-        Ast_node_add(n, id_node);
+        Cob_ast_add(n, id_node);
         token_destroy(id);
         free(id);
         consume_newline(ps, n);
         *has_id = true;
     } else {
-        Ast_node_create(&id_node);
+        Cob_ast_create(&id_node);
         id_node->type = Ast_type_id;
         if (is_function) {
             buffer_add_format(
@@ -65,14 +65,14 @@ Ast_node* parse_prototype(
                     symbol_table_generate_id(ps->st)
             );
         }
-        Ast_node_add(n, id_node);
+        Cob_ast_add(n, id_node);
         *has_id = false;
     }
 
     struct token* lp = NULL;
     if (!match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
         /* test case: no test case needed */
-        n->type = Ast_type_error;
+        n->type = Cob_ast_type_error;
     }
     token_destroy(lp);
     free(lp);
@@ -80,64 +80,64 @@ Ast_node* parse_prototype(
     consume_newline(ps, n);
 
     /* 1 dseq */
-    Ast_node* dseq_node = NULL;
+    Cob_ast* dseq_node = NULL;
     dseq_node = parse_dseq(ps, require_param_name, is_extern, is_method);
-    if (dseq_node && dseq_node->type == Ast_type_error) {
-        n->type = Ast_type_error;
+    if (dseq_node && dseq_node->type == Cob_ast_type_error) {
+        n->type = Cob_ast_type_error;
     }
 
     if (dseq_node) {
-        Ast_node_add(n, dseq_node);
+        Cob_ast_add(n, dseq_node);
     }
 
     if (!consume_newline(ps, n)) {
-        n->type = Ast_type_error;
+        n->type = Cob_ast_type_error;
     }
 
     struct token* rp = NULL;
     if (!match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
         /* test case: test_parse_anonymous_function_expected_right_paren */
-        n->type = Ast_type_error;
+        n->type = Cob_ast_type_error;
     }
     token_destroy(rp);
     free(rp);
 
     /* 2 ret */
     t0 = get_lookahead(ps);
-    Ast_node* ret_type = NULL;
+    Cob_ast* ret_type = NULL;
     if (t0 && t0->type == token_arrow) {
         struct token* dc = NULL;
         if (!match(ps, token_arrow, "expecting ->", &dc, n)) {
             /* test case: no test case needed */
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
         token_destroy(dc);
         free(dc);
 
         if (!consume_newline(ps, n)) {
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
 
         ret_type = parse_type(ps);
-        if (ret_type && ret_type->type == Ast_type_error) {
-            n->type = Ast_type_error;
+        if (ret_type && ret_type->type == Cob_ast_type_error) {
+            n->type = Cob_ast_type_error;
         }
 
         if (!ret_type) {
             struct location ret_loc = get_location(ps);
             error_list_set(ps->el, &ret_loc, "expected a type");
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
     }
 
-    Ast_node* ret = NULL;
-    Ast_node_create(&ret);
+    Cob_ast* ret = NULL;
+    Cob_ast_create(&ret);
     ret->type = Ast_type_dret;
     if (ret_type) {
-        Ast_node_add(ret, ret_type);
+        Cob_ast_add(ret, ret_type);
     }
 
-    Ast_node_add(n, ret);
+    Cob_ast_add(n, ret);
 
     return n;
 }
@@ -147,13 +147,13 @@ Ast_node* parse_prototype(
  * @param ps
  * @param proto
  */
-void declare_params(struct parse_state* ps, Ast_node* proto, Ast_node* struct_type)
+void declare_params(struct parse_state* ps, Cob_ast* proto, Cob_ast* struct_type)
 {
-    Ast_node* dseq = Ast_node_get(proto, 1);
-    Ast_node* dec = dseq->head;
+    Cob_ast* dseq = Ast_node_get(proto, 1);
+    Cob_ast* dec = dseq->head;
     while (dec) {
-        Ast_node* id_node = Ast_node_get(dec, 0);
-        Ast_node* type_node = Ast_node_get(dec, 1);
+        Cob_ast* id_node = Ast_node_get(dec, 0);
+        Cob_ast* type_node = Ast_node_get(dec, 1);
         if (dec->type == Ast_type_self) {
             if (struct_type) {
                 type_node = struct_type;
@@ -162,7 +162,7 @@ void declare_params(struct parse_state* ps, Ast_node* proto, Ast_node* struct_ty
                 continue;
             }
         }
-        if (dec->type != Ast_type_error && type_node->type != Ast_type_error) {
+        if (dec->type != Cob_ast_type_error && type_node->type != Cob_ast_type_error) {
             declare_type(ps, type_node, id_node);
         }
         dec = dec->next;
@@ -178,27 +178,27 @@ void declare_params(struct parse_state* ps, Ast_node* proto, Ast_node* struct_ty
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | , ... | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_dseq(
+Cob_ast* parse_dseq(
         struct parse_state* ps,
         bool require_param_name,
         bool is_extern,
         bool is_method)
 {
-	Ast_node* n = NULL;
-    Ast_node_create(&n);
+	Cob_ast* n = NULL;
+    Cob_ast_create(&n);
 	n->type = Ast_type_dseq;
 
-	Ast_node* dec = NULL;
+	Cob_ast* dec = NULL;
 	dec = parse_declaration(ps, false, is_method, require_param_name);
-    if (dec && dec->type == Ast_type_error) {
-        n->type = Ast_type_error;
+    if (dec && dec->type == Cob_ast_type_error) {
+        n->type = Cob_ast_type_error;
     }
 
 	if (!dec) {
 		return n;
 	}
 
-    Ast_node_add(n, dec);
+    Cob_ast_add(n, dec);
 
 	while (true)
 	{
@@ -227,33 +227,33 @@ Ast_node* parse_dseq(
             token_destroy(eps);
             free(eps);
             if (is_extern) {
-                Ast_node* ellipsis = NULL;
-                Ast_node_create(&ellipsis);
+                Cob_ast* ellipsis = NULL;
+                Cob_ast_create(&ellipsis);
                 ellipsis->type = Ast_type_ellipsis;
-                Ast_node_add(n, ellipsis);
+                Cob_ast_add(n, ellipsis);
                 break;
             } else {
                 error_list_set(ps->el, &eps->loc,
                        "Found ellipsis but variadic functions are only supported in extern declarations");
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
                 break;
             }
         }
 
 		dec = parse_declaration(ps, false, is_method, require_param_name);
-        if (dec && dec->type == Ast_type_error) {
-            n->type = Ast_type_error;
+        if (dec && dec->type == Cob_ast_type_error) {
+            n->type = Cob_ast_type_error;
         }
 
 		if (!dec) {
             struct location dec_loc = get_location(ps);
 			error_list_set(ps->el, &dec_loc, "expected declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
 			break;
 		}
 
-        Ast_node_add(n, dec);
+        Cob_ast_add(n, dec);
 	}
 
 	return n;
@@ -297,19 +297,19 @@ bool token_is_type(struct parse_state* ps, struct token* t)
  */
 /* declaration -> id :: type | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_declaration(
+Cob_ast* parse_declaration(
         struct parse_state* ps,
         bool add_symbol,
         bool is_method,
         bool require_param_name)
 {
-	Ast_node* n = NULL;
+	Cob_ast* n = NULL;
 
 	struct token* t0 = get_lookahead(ps);
     bool type_only = !require_param_name && token_is_type(ps, t0);
     bool is_self = is_method && t0->type == token_self;
     if (t0->type == token_id || type_only || is_self) {
-        Ast_node_create(&n);
+        Cob_ast_create(&n);
         n->type = Ast_type_declaration;
 
         if (is_self) {
@@ -320,42 +320,42 @@ Ast_node* parse_declaration(
                 assert(false);
             }
 
-            Ast_node* id_node = NULL;
-            Ast_node_create(&id_node);
+            Cob_ast* id_node = NULL;
+            Cob_ast_create(&id_node);
             id_node->type = Ast_type_id;
             buffer_copy_str(&id_node->value, "self");
-            Ast_node_add(n, id_node);
+            Cob_ast_add(n, id_node);
 
             token_destroy(self);
             free(self);
 
         } else if (type_only) {
-            Ast_node* id_node = NULL;
-            Ast_node_create(&id_node);
+            Cob_ast* id_node = NULL;
+            Cob_ast_create(&id_node);
             id_node->type = Ast_type_id;
-            Ast_node_add(n, id_node);
+            Cob_ast_add(n, id_node);
 
-            Ast_node* type_use = NULL;
+            Cob_ast* type_use = NULL;
             type_use = parse_type(ps);
-            if (type_use && type_use->type == Ast_type_error) {
-                n->type = Ast_type_error;
+            if (type_use && type_use->type == Cob_ast_type_error) {
+                n->type = Cob_ast_type_error;
             }
 
             if (!type_use) {
                 struct location type_use_loc = get_location(ps);
                 error_list_set(ps->el, &type_use_loc, "expected a type");
                 /* test case: test_parse_error_declaration_type */
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
             }
 
             if (type_use) {
-                Ast_node_add(n, type_use);
+                Cob_ast_add(n, type_use);
             }
         } else if (t0->type == token_id) {
-            Ast_node* id_node = NULL;
-            Ast_node_create(&id_node);
+            Cob_ast* id_node = NULL;
+            Cob_ast_create(&id_node);
             id_node->type = Ast_type_id;
-            Ast_node_add(n, id_node);
+            Cob_ast_add(n, id_node);
 
             struct token *id = NULL;
             if (!match(ps, token_id, "expected id", &id, n)) {
@@ -371,20 +371,20 @@ Ast_node* parse_declaration(
             struct token *dc = NULL;
             if (!match(ps, token_colon, "expected colon", &dc, n)) {
                 /* test case: test_parse_error_declaration_double_colon */
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
             }
             token_destroy(dc);
             free(dc);
 
             consume_newline(ps, n);
 
-            Ast_node* type_use = NULL;
+            Cob_ast* type_use = NULL;
             type_use = parse_type(ps);
-            if (type_use && type_use->type == Ast_type_error) {
-                n->type = Ast_type_error;
+            if (type_use && type_use->type == Cob_ast_type_error) {
+                n->type = Cob_ast_type_error;
             }
             if (add_symbol) {
-                if (n->type != Ast_type_error) {
+                if (n->type != Cob_ast_type_error) {
                     declare_type(ps, type_use, id_node);
                 }
             }
@@ -393,11 +393,11 @@ Ast_node* parse_declaration(
                 struct location type_use_loc = get_location(ps);
                 error_list_set(ps->el, &type_use_loc, "expected a type");
                 /* test case: test_parse_error_declaration_type */
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
             }
 
             if (type_use) {
-                Ast_node_add(n, type_use);
+                Cob_ast_add(n, type_use);
             }
         } else {
             assert(false);
@@ -415,10 +415,10 @@ Ast_node* parse_declaration(
  */
 /* type -> id | id { tseq } */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* parse_type(struct parse_state* ps)
+Cob_ast* parse_type(struct parse_state* ps)
 {
-	Ast_node* n = NULL;
-    Ast_node_create(&n);
+	Cob_ast* n = NULL;
+    Cob_ast_create(&n);
     n->type = Ast_type_type;
 
     Type_use* tu = NULL;
@@ -469,7 +469,7 @@ Ast_node* parse_type(struct parse_state* ps)
 
         struct token* rsb = NULL;
         if (!match(ps, token_right_square_bracket, "expected right square bracket", &rsb, n)) {
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
 
         token_destroy(rsb);
@@ -510,49 +510,49 @@ Ast_node* parse_type(struct parse_state* ps)
         free(fn);
 
         bool has_id;
-        Ast_node* proto = parse_prototype(ps, false, false, false, false, &has_id);
+        Cob_ast* proto = parse_prototype(ps, false, false, false, false, &has_id);
         if (has_id) {
             error_list_set(ps->el, &proto->loc, "function type has name");
         }
-        if (proto->type == Ast_type_error) {
-            n->type = Ast_type_error;
+        if (proto->type == Cob_ast_type_error) {
+            n->type = Cob_ast_type_error;
         } else {
             Type_use_add_proto(ps->st, n->tu, proto, NULL);
         }
-        Ast_node_destroy(proto);
+        Cob_ast_destroy(proto);
 
     } else if (t0->type == token_id) {
         /* handle type or array element */
         struct token* name = NULL;
         if (!match(ps, t0->type, "expected type identifier", &name, n)) {
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
 
         struct symbol* sym = NULL;
-        if (n->type != Ast_type_error) {
+        if (n->type != Cob_ast_type_error) {
             sym = environment_get(ps->st->top, &name->value);
             if (!sym) {
                 char* a;
                 buffer2array(&name->value, &a);
                 error_list_set(ps->el, &name->loc, "type not defined: %s", a);
                 free(a);
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
                 /* test case: test_parse_error_type_not_defined */
             } else if (!sym->td) {
                 char *a;
                 buffer2array(&name->value, &a);
                 error_list_set(ps->el, &name->loc, "identifier is not a type: %s", a);
                 free(a);
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
                 /* test case: test_parse_error_not_a_type */
             } else if (sym->td == ps->st->function_type_def) {
                 error_list_set(
                         ps->el,
                         &name->loc,
                         "can not directly use Function to declare a function; use fn syntax to declare a function");
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
             } else {
-                if (n->type != Ast_type_error) {
+                if (n->type != Cob_ast_type_error) {
                     n->tu->td = sym->td;
                 }
             }
@@ -565,7 +565,7 @@ Ast_node* parse_type(struct parse_state* ps)
         t0 = get_lookahead(ps);
         if (t0->type != token_fn && t0->type != token_id) {
             error_list_set(ps->el, &t0->loc, "expected type identifier or fn");
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
     }
 
@@ -578,7 +578,7 @@ Ast_node* parse_type(struct parse_state* ps)
  * @param n type node
  * @param id_node ID node
  */
-void create_variable_symbol(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node)
+void create_variable_symbol(struct parse_state* ps, Cob_ast* type_node, Cob_ast* id_node)
 {
     struct symbol* dup = environment_get_local(ps->st->top, &id_node->value);
     if (dup) {
@@ -586,7 +586,7 @@ void create_variable_symbol(struct parse_state* ps, Ast_node* type_node, Ast_nod
         buffer2array(&id_node->value, &a);
         error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
         free(a);
-        type_node->type = Ast_type_error;
+        type_node->type = Cob_ast_type_error;
         /* test case: test_parse_error_duplicate_declarations */
     } else {
         struct symbol* sym2 = environment_get(ps->st->top, &id_node->value);
@@ -595,7 +595,7 @@ void create_variable_symbol(struct parse_state* ps, Ast_node* type_node, Ast_nod
             buffer2array(&id_node->value, &a);
             error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
             free(a);
-            type_node->type = Ast_type_error;
+            type_node->type = Cob_ast_type_error;
             /* test case: test_parse_types_reserved_type */
         } else {
             struct symbol* new_sym = NULL;
@@ -612,14 +612,14 @@ void create_variable_symbol(struct parse_state* ps, Ast_node* type_node, Ast_nod
     }
 }
 
-void declare_type(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node)
+void declare_type(struct parse_state* ps, Cob_ast* type_node, Cob_ast* id_node)
 {
-    if (type_node && type_node->type != Ast_type_error) {
+    if (type_node && type_node->type != Cob_ast_type_error) {
         if (id_node) {
             if (id_node->type == Ast_type_id) {
                 create_variable_symbol(ps, type_node, id_node);
             } else if (id_node->type == Ast_type_let_lseq) {
-                Ast_node* p = id_node->head;
+                Cob_ast* p = id_node->head;
                 while (p) {
                     create_variable_symbol(ps, type_node, p);
                     p = p->next;
@@ -631,7 +631,7 @@ void declare_type(struct parse_state* ps, Ast_node* type_node, Ast_node* id_node
     }
 }
 
-Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto, Ast_node* struct_type) {
+Type_use* proto2type_use(struct symbol_table* st, Cob_ast* proto, Cob_ast* struct_type) {
     Type_use *func = NULL;
     Type_use_create(&func);
     return Type_use_add_proto(st, func, proto, struct_type);
@@ -640,8 +640,8 @@ Type_use* proto2type_use(struct symbol_table* st, Ast_node* proto, Ast_node* str
 Type_use* Type_use_add_proto(
     struct symbol_table* st,
     Type_use* func,
-    Ast_node* proto,
-    Ast_node* struct_type)
+    Cob_ast* proto,
+    Cob_ast* struct_type)
 {
     struct buffer bf;
     buffer_init(&bf);
@@ -652,9 +652,9 @@ Type_use* Type_use_add_proto(
     assert(sym->td);
     func->td = sym->td;
 
-    Ast_node* id = Ast_node_get(proto, 0);
-    Ast_node* dseq = Ast_node_get(proto, 1);
-    Ast_node* dret = Ast_node_get(proto, 2);
+    Cob_ast* id = Ast_node_get(proto, 0);
+    Cob_ast* dseq = Ast_node_get(proto, 1);
+    Cob_ast* dret = Ast_node_get(proto, 2);
 
     buffer_copy(&id->value, &func->name);
 
@@ -664,10 +664,10 @@ Type_use* Type_use_add_proto(
         inputs->type = Type_use_function_inputs;
         Type_use_add(func, inputs);
 
-        Ast_node* dec = dseq->head;
+        Cob_ast* dec = dseq->head;
         while (dec) {
-            Ast_node* id_node = Ast_node_get(dec, 0);
-            Ast_node* type_node = Ast_node_get(dec, 1);
+            Cob_ast* id_node = Ast_node_get(dec, 0);
+            Cob_ast* type_node = Ast_node_get(dec, 1);
             if (dec->type == Ast_type_self) {
                 if (struct_type) {
                     type_node = struct_type;
@@ -692,7 +692,7 @@ Type_use* Type_use_add_proto(
         }
     }
 
-    Ast_node* ret_type_node = Ast_node_get(dret, 0);
+    Cob_ast* ret_type_node = Ast_node_get(dret, 0);
     if (ret_type_node) {
         Type_use* outputs = NULL;
         Type_use_create(&outputs);
@@ -705,13 +705,13 @@ Type_use* Type_use_add_proto(
     return func;
 }
 
-bool check_return_type(struct parse_state* ps, Ast_node* proto, Ast_node* stmts_node, struct location* loc)
+bool check_return_type(struct parse_state* ps, Cob_ast* proto, Cob_ast* stmts_node, struct location* loc)
 {
     bool valid = true;
 
-    if (proto->type != Ast_type_error && stmts_node->type != Ast_type_error) {
-        Ast_node *dret = Ast_node_get(proto, 2);
-        Ast_node *ret_type = Ast_node_get(dret, 0);
+    if (proto->type != Cob_ast_type_error && stmts_node->type != Cob_ast_type_error) {
+        Cob_ast *dret = Ast_node_get(proto, 2);
+        Cob_ast *ret_type = Ast_node_get(dret, 0);
         if (ret_type) {
             if (!type_use_can_cast(ret_type->tu, stmts_node->tu)) {
                 valid = error_list_set(ps->el, loc, "returned type does not match function return type");
@@ -763,7 +763,7 @@ bool check_input_type(
     struct parse_state* ps,
     Type_use* func,
     int index,
-    Ast_node* a)
+    Cob_ast* a)
 {
 	bool valid = true;
 
@@ -787,15 +787,15 @@ bool check_input_type(
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Override_rhs(Type_use* tu, Ast_node* rhs)
+void Override_rhs(Type_use* tu, Cob_ast* rhs)
 {
     if (tu->td->type == type_integer || tu->td->type == type_float) {
         rhs->tu->td = tu->td;
         if (rhs->type == Ast_type_sign) {
-            Ast_node* p = Ast_node_get(rhs, 1);
+            Cob_ast* p = Ast_node_get(rhs, 1);
             Override_rhs(tu, p);
         } else if (tu->is_array && rhs->type == Ast_type_array_literal) {
-            Ast_node* p = rhs->head;
+            Cob_ast* p = rhs->head;
             while (p) {
                 Override_rhs(tu, p);
                 p = p->next;
@@ -804,7 +804,7 @@ void Override_rhs(Type_use* tu, Ast_node* rhs)
     }
 }
 
-bool is_lvalue(enum Ast_type type)
+bool is_lvalue(enum Cob_ast_type type)
 {
     if (type == Ast_type_id) {
         return true;
@@ -825,11 +825,11 @@ bool is_lvalue(enum Ast_type type)
     return false;
 }
 
-bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
+bool check_lvalue(struct parse_state* ps, Cob_ast* n, struct location* loc)
 {
-    Ast_node* p = n;
+    Cob_ast* p = n;
     struct symbol* sym = NULL;
-    Ast_node* first = NULL;
+    Cob_ast* first = NULL;
     while (p) {
         if (!is_lvalue(p->type)) {
             error_list_set(ps->el, loc, "invalid lvalue");
@@ -857,9 +857,9 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
         return false;
     }
 
-    if (n->type != Ast_type_error) {
+    if (n->type != Cob_ast_type_error) {
         if (n->type == Ast_type_array_subscript) {
-            Ast_node* left = n->head;
+            Cob_ast* left = n->head;
             if (left->tu->is_array) {
                 Type_dimension* type_dim = (Type_dimension*)VECTOR_PTR(&left->tu->dim, 0);
                 if (type_dim->option == Array_element_const) {
@@ -869,7 +869,7 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
 
         }
     }
-    if (n->type != Ast_type_error) {
+    if (n->type != Cob_ast_type_error) {
         if (!first->tu->is_mut && sym->assign_count >= 1) {
             error_list_set(ps->el, loc, "immutable variable changed in assignment");
         }
@@ -878,7 +878,7 @@ bool check_lvalue(struct parse_state* ps, Ast_node* n, struct location* loc)
     return true;
 }
 
-bool Is_placeholder_node(Ast_node* n)
+bool Is_placeholder_node(Cob_ast* n)
 {
     if (n->type == Ast_type_id && buffer_compare_str(&n->value, "_")) {
         return true;

@@ -20,7 +20,7 @@ Cob_re Cov_gov_line_re()
     error_list_create(&el);
 
     Cob_compile_data* cd = NULL;
-    compile_data_create(&cd, input, input->input_vtable, el);
+    Cob_compile_data_create(&cd, input, input->input_vtable, el);
 
     Cob_re cr = Cob_compile(cd);
 
@@ -36,6 +36,6 @@ Cob_re Cov_gov_line_re()
 void Cov_re_cleanup(Cob_re* cr)
 {
     error_list_destroy(cr->el);
-    Ast_node_destroy(cr->root);
+    Cob_ast_destroy(cr->root);
     free(cr->root);
 }

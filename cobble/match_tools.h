@@ -2,7 +2,7 @@
 #define COBBLE_MATCH_TOOLS_H
 
 #include <stdbool.h>
-#include "Ast_node.h"
+#include "ast.h"
 #include "zinc/list.h"
 #include "zinc/hash.h"
 #include "zinc/hash_map_size_t.h"
@@ -25,8 +25,8 @@ typedef enum Match_task_status {
 typedef struct Match_task {
     Match_task_status status;
     bool matched;
-    Ast_node* n;
-    Ast_node* p;
+    Cob_ast* n;
+    Cob_ast* p;
     size_t count;
     String_slice start_slice;
     String_slice end_slice;

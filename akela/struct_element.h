@@ -11,8 +11,8 @@ typedef enum Struct_element_type {
 
 typedef struct Struct_element {
     Struct_element_type type;
-    Ast_node* tu;
-    Ast_node* func;
+    Cob_ast* tu;
+    Cob_ast* func;
     size_t index;
 } Struct_element;
 

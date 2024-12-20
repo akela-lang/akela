@@ -1,14 +1,12 @@
-#include "Ast_node.h"
+#include "ast.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "zinc/memory.h"
 #include "zinc/buffer.h"
 
-void Ast_node_set_group(Ast_node* n);
-
-void Ast_node_init(Ast_node* n)
+void Cob_ast_init(Cob_ast* n)
 {
-    n->type = Ast_type_none;
+    n->type = Cob_ast_type_none;
     n->num = 0;
     location_init(&n->loc);
     n->is_root = false;
@@ -21,27 +19,27 @@ void Ast_node_init(Ast_node* n)
     n->parent = NULL;
 }
 
-void Ast_node_create(Ast_node** n)
+void Cob_ast_create(Cob_ast** n)
 {
-    malloc_safe((void**)n, sizeof(Ast_node));
-    Ast_node_init(*n);
+    malloc_safe((void**)n, sizeof(Cob_ast));
+    Cob_ast_init(*n);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_destroy(Ast_node* n)
+void Cob_ast_destroy(Cob_ast* n)
 {
     if (n) {
-        Ast_node* p = n->head;
+        Cob_ast* p = n->head;
         while (p) {
-            Ast_node* temp = p;
+            Cob_ast* temp = p;
             p = p->next;
-            Ast_node_destroy(temp);
+            Cob_ast_destroy(temp);
             free(temp);
         }
     }
 }
 
-void Ast_node_add(Ast_node* p, Ast_node* c)
+void Cob_ast_add(Cob_ast* p, Cob_ast* c)
 {
     if (p->head && p->tail) {
         p->tail->next = c;
@@ -54,15 +52,15 @@ void Ast_node_add(Ast_node* p, Ast_node* c)
     c->parent = p;
     location_combine(&p->loc, &c->loc);
 
-    if (c->type == Ast_type_error) {
-        p->type = Ast_type_error;
+    if (c->type == Cob_ast_type_error) {
+        p->type = Cob_ast_type_error;
     }
 }
 
-Ast_node* Ast_node_get(Ast_node* n, int index)
+Cob_ast* Cob_ast_get(Cob_ast* n, int index)
 {
     int count = 0;
-    Ast_node* p = n->head;
+    Cob_ast* p = n->head;
     while (p) {
         if (count == index) {
             return p;

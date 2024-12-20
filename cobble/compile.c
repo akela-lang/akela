@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "Ast_node.h"
+#include "ast.h"
 #include <stdbool.h>
 #include <string.h>
 #include "compile.h"
@@ -9,18 +9,18 @@
 #include "zinc/buffer.h"
 #include <assert.h>
 
-Ast_node* Cob_parse_union(Cob_compile_data* cd);
-Ast_node* Cob_parse_concat(Cob_compile_data* cd);
-Ast_node* Cob_parse_mod(Cob_compile_data* cd);
-Ast_node* Cob_parse_num(Cob_compile_data* cd);
-Ast_node* Cob_parse_group(Cob_compile_data* cd);
-void Cob_parse_seq(Cob_compile_data* cd, Ast_node* parent);
+Cob_ast* Cob_parse_union(Cob_compile_data* cd);
+Cob_ast* Cob_parse_concat(Cob_compile_data* cd);
+Cob_ast* Cob_parse_mod(Cob_compile_data* cd);
+Cob_ast* Cob_parse_num(Cob_compile_data* cd);
+Cob_ast* Cob_parse_group(Cob_compile_data* cd);
+void Cob_parse_seq(Cob_compile_data* cd, Cob_ast* parent);
 bool Cob_is_char(enum token_type type);
-Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict);
+Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict);
 
 Cob_re Cob_compile(Cob_compile_data* cd)
 {
-    Ast_node* root = NULL;
+    Cob_ast* root = NULL;
 
     root = Cob_parse_union(cd);
 
@@ -41,11 +41,11 @@ Cob_re Cob_compile(Cob_compile_data* cd)
 /* union -> concat union | e' */
 /* union' -> '|' concat union' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* Cob_parse_union(Cob_compile_data* cd)
+Cob_ast* Cob_parse_union(Cob_compile_data* cd)
 {
-    Ast_node* a = NULL;
-    Ast_node* b = NULL;
-    Ast_node* n = NULL;
+    Cob_ast* a = NULL;
+    Cob_ast* b = NULL;
+    Cob_ast* n = NULL;
 
     a = Cob_parse_concat(cd);
     if (!a) {
@@ -60,14 +60,14 @@ Ast_node* Cob_parse_union(Cob_compile_data* cd)
         }
 
         if (!n) {
-            Ast_node_create(&n);
-            n->type = Ast_type_union;
-            Ast_node_add(n, a);
+            Cob_ast_create(&n);
+            n->type = Cob_ast_type_union;
+            Cob_ast_add(n, a);
         }
 
         struct token* op = NULL;
         if (!match(cd, token_union, "expected |", &op, n)) {
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
         free(op);
 
@@ -75,9 +75,9 @@ Ast_node* Cob_parse_union(Cob_compile_data* cd)
         b = Cob_parse_concat(cd);
         if (!b) {
             error_list_set(cd->el, &cd->lookahead->loc, "expected term after union");
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         } else {
-            Ast_node_add(n, b);
+            Cob_ast_add(n, b);
         }
     }
 
@@ -91,11 +91,11 @@ Ast_node* Cob_parse_union(Cob_compile_data* cd)
 /* concat -> mod concat' | e */
 /* concat' -> mod concat' */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* Cob_parse_concat(Cob_compile_data* cd)
+Cob_ast* Cob_parse_concat(Cob_compile_data* cd)
 {
-    Ast_node* a = NULL;
-    Ast_node* b = NULL;
-    Ast_node* n = NULL;
+    Cob_ast* a = NULL;
+    Cob_ast* b = NULL;
+    Cob_ast* n = NULL;
 
     a = NULL;
     a = Cob_parse_mod(cd);
@@ -112,12 +112,12 @@ Ast_node* Cob_parse_concat(Cob_compile_data* cd)
         }
 
         if (!n) {
-            Ast_node_create(&n);
-            n->type = Ast_type_concat;
-            Ast_node_add(n, a);
+            Cob_ast_create(&n);
+            n->type = Cob_ast_type_concat;
+            Cob_ast_add(n, a);
         }
 
-        Ast_node_add(n, b);
+        Cob_ast_add(n, b);
     }
 
     if (!n) {
@@ -139,9 +139,9 @@ bool Cob_is_modifier(enum token_type type)
 /* mod -> group modifier | e */
 /* modifier -> { num } | { num , num } | * | + | ? */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* Cob_parse_mod(Cob_compile_data* cd)
+Cob_ast* Cob_parse_mod(Cob_compile_data* cd)
 {
-    Ast_node* a = NULL;
+    Cob_ast* a = NULL;
     a = Cob_parse_group(cd);
 
     if (!a) {
@@ -153,49 +153,49 @@ Ast_node* Cob_parse_mod(Cob_compile_data* cd)
         return a;
     }
 
-    Ast_node* n = NULL;
-    Ast_node_create(&n);
-    Ast_node_add(n, a);
+    Cob_ast* n = NULL;
+    Cob_ast_create(&n);
+    Cob_ast_add(n, a);
 
     struct token* mod = NULL;
     if (!match(cd, cd->lookahead->type, "expected modifier", &mod, n)) {
-        n->type = Ast_type_error;
+        n->type = Cob_ast_type_error;
     }
 
     /* parse repeat */
     if (mod->type == token_open_repeat) {
-        n->type = Ast_type_repeat;
+        n->type = Cob_ast_type_repeat;
 
-        Ast_node* num = Cob_parse_num(cd);
-        Ast_node_add(n, num);
+        Cob_ast* num = Cob_parse_num(cd);
+        Cob_ast_add(n, num);
 
         /* range */
         get_lookahead(cd);
         if (cd->lookahead->type == token_comma) {
-            n->type = Ast_type_repeat_range;
+            n->type = Cob_ast_type_repeat_range;
 
             struct token* comma = NULL;
             if (!match(cd, token_comma, "expected a comma", &comma, n)) {
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
             }
             free(comma);
 
-            Ast_node* num2 = NULL;
+            Cob_ast* num2 = NULL;
             num2 = Cob_parse_num(cd);
-            Ast_node_add(n, num2);
+            Cob_ast_add(n, num2);
         }
 
         struct token* ccb = NULL;
         if (!match(cd, token_close_repeat, "expected }", &ccb, n)) {
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
         free(ccb);
     } else if (mod->type == token_closure) {
-        n->type = Ast_type_closure;
+        n->type = Cob_ast_type_closure;
     } else if (mod->type == token_plus) {
-        n->type = Ast_type_positive_closure;
+        n->type = Cob_ast_type_positive_closure;
     } else if (mod->type == token_question) {
-        n->type = Ast_type_option;
+        n->type = Cob_ast_type_option;
     } else {
         assert(false && "not possible");
     }
@@ -207,18 +207,18 @@ Ast_node* Cob_parse_mod(Cob_compile_data* cd)
 
 /* num -> digit num' */
 /* num' -> digit num' | e */
-Ast_node* Cob_parse_num(Cob_compile_data* cd)
+Cob_ast* Cob_parse_num(Cob_compile_data* cd)
 {
-    Ast_node* n = NULL;
-    Ast_node_create(&n);
-    n->type = Ast_type_number;
+    Cob_ast* n = NULL;
+    Cob_ast_create(&n);
+    n->type = Cob_ast_type_number;
 
     struct buffer bf;
     buffer_init(&bf);
 
     struct token* d = NULL;
     if (!match(cd, token_digit, "expected digit", &d, n)) {
-        n->type = Ast_type_error;
+        n->type = Cob_ast_type_error;
         buffer_destroy(&bf);
         return n;
     }
@@ -249,39 +249,39 @@ Ast_node* Cob_parse_num(Cob_compile_data* cd)
 
 /* group -> char | ( union ) | [ seq ] | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* Cob_parse_group(Cob_compile_data* cd)
+Cob_ast* Cob_parse_group(Cob_compile_data* cd)
 {
-    Ast_node* n = NULL;
+    Cob_ast* n = NULL;
 
     get_lookahead(cd);
 
     if (cd->lookahead->type == token_open_paren) {
-        Ast_node_create(&n);
-        n->type = Ast_type_group;
+        Cob_ast_create(&n);
+        n->type = Cob_ast_type_group;
         n->is_group = true;
         n->group = ++cd->group_number;
 
         struct token* opr = NULL;
         if (!match(cd, token_open_paren, "expected left parenthesis", &opr, n)) {
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
             return n;
         }
         free(opr);
 
-        Ast_node* a = NULL;
+        Cob_ast* a = NULL;
         a = Cob_parse_union(cd);
 
         if (a) {
-            Ast_node_add(n, a);
+            Cob_ast_add(n, a);
         }
 
         struct token* rpr = NULL;
         if (!match(cd, token_close_paren, "expected right parenthesis", &rpr, n)) {
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
         free(rpr);
     } else if (cd->lookahead->type == token_left_square_bracket) {
-        Ast_node_create(&n);
+        Cob_ast_create(&n);
 
         struct token* lsb = NULL;
         if (!match(cd, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
@@ -291,21 +291,21 @@ Ast_node* Cob_parse_group(Cob_compile_data* cd)
 
         get_lookahead(cd);
         if (cd->lookahead->type == token_caret) {
-            n->type = Ast_type_character_class_opposite;
+            n->type = Cob_ast_type_character_class_opposite;
             struct token* caret = NULL;
             if (!match(cd, token_caret, "expected caret", &caret, n)) {
                 assert(false && "not possible");
             }
             free(caret);
         } else {
-            n->type = Ast_type_character_class;
+            n->type = Cob_ast_type_character_class;
         }
 
         Cob_parse_seq(cd, n);
 
         struct token* rsb = NULL;
         if (!match(cd, token_right_square_bracket, "expected right square bracket", &rsb, n)) {
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
         }
         free(rsb);
     } else if (Cob_is_char(cd->lookahead->type)) {
@@ -320,26 +320,26 @@ Ast_node* Cob_parse_group(Cob_compile_data* cd)
 
 /* seq -> char seq' */
 /* seq' -> char seq' | e */
-void Cob_parse_seq(Cob_compile_data* cd, Ast_node* parent)
+void Cob_parse_seq(Cob_compile_data* cd, Cob_ast* parent)
 {
-    Ast_node* a = NULL;
+    Cob_ast* a = NULL;
     a = Cob_parse_char(cd, true);
     if (!a) {
         error_list_set(cd->el, &cd->lookahead->loc, "expected character in class sequence");
-        parent->type = Ast_type_error;
+        parent->type = Cob_ast_type_error;
         return;
     }
 
-    Ast_node_add(parent, a);
+    Cob_ast_add(parent, a);
 
     while (true) {
-        Ast_node* b = NULL;
+        Cob_ast* b = NULL;
         b = Cob_parse_char(cd, true);
         if (!b) {
             break;
         }
 
-        Ast_node_add(parent, b);
+        Cob_ast_add(parent, b);
     }
 }
 
@@ -361,14 +361,14 @@ bool Cob_is_char(const enum token_type type)
 
 /* char -> literal | wildcard | begin | end | backslash character */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
+Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
 {
-    Ast_node* n = NULL;
+    Cob_ast* n = NULL;
 
     get_lookahead(cd);
     if (cd->lookahead->type == token_literal) {
-        Ast_node_create(&n);
-        n->type = Ast_type_literal;
+        Cob_ast_create(&n);
+        n->type = Cob_ast_type_literal;
 
         struct token* lit = NULL;
         if (!match(cd, token_literal, "expected literal", &lit, n)) {
@@ -383,8 +383,8 @@ Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
         }
         free(lit);
     } else if (cd->lookahead->type == token_wildcard) {
-        Ast_node_create(&n);
-        n->type = Ast_type_wildcard;
+        Cob_ast_create(&n);
+        n->type = Cob_ast_type_wildcard;
 
         struct token* wc = NULL;
         if (!match(cd, token_wildcard, "expected wildcard", &wc, n)) {
@@ -393,14 +393,14 @@ Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
 
         if (strict) {
             error_list_set(cd->el, &wc->loc, "unexpected wildcard");
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
             free(wc);
             return n;
         }
         free(wc);
     } else if (cd->lookahead->type == token_caret) {
-        Ast_node_create(&n);
-        n->type = Ast_type_begin;
+        Cob_ast_create(&n);
+        n->type = Cob_ast_type_begin;
 
         struct token* begin = NULL;
         if (!match(cd, token_caret, "expected begin", &begin, n)) {
@@ -409,14 +409,14 @@ Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
 
         if (strict) {
             error_list_set(cd->el, &begin->loc, "unexpected begin");
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
             free(begin);
             return n;
         }
         free(begin);
     } else if (cd->lookahead->type == token_dollar) {
-        Ast_node_create(&n);
-        n->type = Ast_type_end;
+        Cob_ast_create(&n);
+        n->type = Cob_ast_type_end;
 
         struct token* end = NULL;
         if (!match(cd, token_dollar, "expected end", &end, n)) {
@@ -425,15 +425,15 @@ Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
 
         if (strict) {
             error_list_set(cd->el, &end->loc, "unexpected end");
-            n->type = Ast_type_error;
+            n->type = Cob_ast_type_error;
             free(end);
             return n;
         }
         free(end);
     } else if (cd->lookahead->type == token_backslash) {
         bool done = false;
-        Ast_node_create(&n);
-        n->type = Ast_type_escape;
+        Cob_ast_create(&n);
+        n->type = Cob_ast_type_escape;
         struct token* backslash = NULL;
         if (!match(cd, token_backslash, "expected backslash", &backslash, n)) {
             assert(false && "not possible");
@@ -443,22 +443,22 @@ Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
             get_lookahead(cd);
             if (cd->lookahead->type == token_literal) {
                 if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'w') {
-                    n->type = Ast_type_character_type_word;
+                    n->type = Cob_ast_type_character_type_word;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'W') {
-                    n->type = Ast_type_character_type_word_opposite;
+                    n->type = Cob_ast_type_character_type_word_opposite;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'd') {
-                    n->type = Ast_type_character_type_digit;
+                    n->type = Cob_ast_type_character_type_digit;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'D') {
-                    n->type = Ast_type_character_type_digit_opposite;
+                    n->type = Cob_ast_type_character_type_digit_opposite;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 's') {
-                    n->type = Ast_type_character_type_space;
+                    n->type = Cob_ast_type_character_type_space;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'S') {
-                    n->type = Ast_type_character_type_space_opposite;
+                    n->type = Cob_ast_type_character_type_space_opposite;
                 } else if (cd->lookahead->num == 1 && cd->lookahead->c[0] == 'N') {
-                    n->type = Ast_type_character_type_newline_opposite;
+                    n->type = Cob_ast_type_character_type_newline_opposite;
                 }
 
-                if (n->type != Ast_type_escape) {
+                if (n->type != Cob_ast_type_escape) {
                     struct token* lit = NULL;
                     if (!match(cd, token_literal, "expected literal", &lit, n)) {
                         assert(false && "not possible");
@@ -468,7 +468,7 @@ Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
                 }
             }
 
-            if (n->type == Ast_type_escape && cd->lookahead->type != token_eof) {
+            if (n->type == Cob_ast_type_escape && cd->lookahead->type != token_eof) {
                 struct token* ch = NULL;
                 if (!match(cd, cd->lookahead->type, "expected character", &ch, n)) {
                     assert(false && "not possible");
@@ -483,7 +483,7 @@ Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
 
             if (!done) {
                 error_list_set(cd->el, &cd->lookahead->loc, "missing character in escape sequence");
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
             }
         }
     }
@@ -498,27 +498,27 @@ Ast_node* Cob_parse_char(Cob_compile_data* cd, bool strict)
             }
             free(dash);
 
-            Ast_node* a = n;
-            Ast_node_create(&n);
-            n->type = Ast_type_character_range;
-            Ast_node_add(n, a);
+            Cob_ast* a = n;
+            Cob_ast_create(&n);
+            n->type = Cob_ast_type_character_range;
+            Cob_ast_add(n, a);
             if (a->num != 1) {
                 error_list_set(cd->el, &a->loc, "character range must use ascii characters");
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
             }
 
-            Ast_node* b = NULL;
+            Cob_ast* b = NULL;
             b = Cob_parse_char(cd, true);
             if (b) {
-                Ast_node_add(n, b);
+                Cob_ast_add(n, b);
                 if (b->num != 1) {
                     error_list_set(cd->el, &b->loc, "character range must use ascii characters");
-                    n->type = Ast_type_error;
+                    n->type = Cob_ast_type_error;
                 }
             } else {
                 get_lookahead(cd);
                 error_list_set(cd->el, &cd->lookahead->loc, "expected end character in character range");
-                n->type = Ast_type_error;
+                n->type = Cob_ast_type_error;
             }
         }
     }

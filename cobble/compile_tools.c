@@ -1,7 +1,7 @@
 #include "compile_data.h"
 #include "zinc/memory.h"
 #include "token.h"
-#include "Ast_node.h"
+#include "ast.h"
 
 struct token* lex(void* input_obj, InputUnicodeVTable *input_vtable)
 {
@@ -40,7 +40,7 @@ bool match(
     enum token_type type,
     const char* reason,
     struct token** t,
-    struct Ast_node* n)
+    struct Cob_ast* n)
 {
     if (!cd->lookahead) {
         get_lookahead(cd);

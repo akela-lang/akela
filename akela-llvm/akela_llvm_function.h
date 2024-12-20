@@ -4,9 +4,9 @@
 #include "akela_llvm_tools.h"
 
 namespace Akela_llvm {
-    llvm::Value* Handle_extern(Jit_data* jd, Ast_node* n);
-    llvm::Value* Handle_function(Jit_data* jd, Ast_node* n);
-    llvm::Value* Handle_call(Jit_data* jd, Ast_node* n);
+    llvm::Value* Handle_extern(Jit_data* jd, Cob_ast* n);
+    llvm::Value* Handle_function(Jit_data* jd, Cob_ast* n);
+    llvm::Value* Handle_call(Jit_data* jd, Cob_ast* n);
 }
 
 #endif

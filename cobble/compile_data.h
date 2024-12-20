@@ -3,7 +3,7 @@
 
 #include "zinc/error.h"
 #include "zinc/input_unicode.h"
-#include "Ast_node.h"
+#include "ast.h"
 
 typedef struct Cob_compile_data {
     void* input_obj;
@@ -15,7 +15,7 @@ typedef struct Cob_compile_data {
 
 typedef struct Cob_re {
     struct error_list* el;
-    Ast_node* root;
+    Cob_ast* root;
 } Cob_re;
 
 void Cob_compile_data_init(
@@ -30,8 +30,8 @@ void Cob_compile_data_create(
     struct error_list* el);
 void Cob_compile_data_destroy(Cob_compile_data* cd);
 
-void Cob_re_init(Cob_re* re, struct error_list* el, Ast_node* root);
-void Cob_re_reeate(Cob_re** re, struct error_list* el, Ast_node* root);
+void Cob_re_init(Cob_re* re, struct error_list* el, Cob_ast* root);
+void Cob_re_reeate(Cob_re** re, struct error_list* el, Cob_ast* root);
 void Cob_re_destroy(Cob_re* re);
 
 #endif //COBBLE_COMPILE_DATA_H

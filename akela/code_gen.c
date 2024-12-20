@@ -16,7 +16,7 @@ void Code_gen_result_destroy(Code_gen_result* result)
     buffer_destroy(&result->text);
 }
 
-bool Code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Ast_node* n, Code_gen_result* result)
+bool Code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Cob_ast* n, Code_gen_result* result)
 {
     if (cg_obj && cg_vtable) {
         Code_gen_interface* code_gen_jit = cg_obj + cg_vtable->jit_offset;

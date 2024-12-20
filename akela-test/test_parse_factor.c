@@ -20,9 +20,9 @@ void test_parse_number_integer()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* number = Ast_node_get(cu.root, 0);
+	Cob_ast* number = Ast_node_get(cu.root, 0);
 	assert_ptr(number, "ptr number");
-	expect_int_equal(number->type, Ast_type_number, "number num");
+	expect_int_equal(number->type, Cob_ast_type_number, "number num");
 	expect_str(&number->value, "32", "32 num");
 
 	Type_use* tu = number->tu;
@@ -51,9 +51,9 @@ void test_parse_number_float()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* number = Ast_node_get(cu.root, 0);
+	Cob_ast* number = Ast_node_get(cu.root, 0);
 	assert_ptr(number, "ptr num");
-	expect_int_equal(number->type, Ast_type_number, "number number");
+	expect_int_equal(number->type, Cob_ast_type_number, "number number");
 	expect_str(&number->value, "5.0e0", "5.0e0 number");
 
 	Type_use* tu = number->tu;
@@ -82,7 +82,7 @@ void test_parse_string()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "type cu.root");
 
-	Ast_node* string = Ast_node_get(cu.root, 0);
+	Cob_ast* string = Ast_node_get(cu.root, 0);
 	assert_ptr(string, "ptr string");
 	expect_int_equal(string->type, Ast_type_string, "type string");
 	expect_str(&string->value, "hello", "value string");
@@ -118,7 +118,7 @@ void test_parse_boolean_true()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* true_node = Ast_node_get(cu.root, 0);
+	Cob_ast* true_node = Ast_node_get(cu.root, 0);
 	assert_ptr(true_node, "ptr true_node");
 	expect_int_equal(true_node->type, Ast_type_boolean, "boolean true_node");
 	expect_str(&true_node->value, "true", "true true_node");
@@ -147,7 +147,7 @@ void test_parse_boolean_false()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* false_node = Ast_node_get(cu.root, 0);
+	Cob_ast* false_node = Ast_node_get(cu.root, 0);
 	assert_ptr(false_node, "ptr false_node");
 	expect_int_equal(false_node->type, Ast_type_boolean, "boolean false_node");
 	expect_str(&false_node->value, "false", "false false_node");
@@ -176,24 +176,24 @@ void test_parse_id()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* let = Ast_node_get(cu.root, 0);
+	Cob_ast* let = Ast_node_get(cu.root, 0);
 	assert_ptr(let, "ptr let");
 	assert_int_equal(let->type, Ast_type_let, "type let");
 
-	Ast_node* let_lseq = Ast_node_get(let, 0);
+	Cob_ast* let_lseq = Ast_node_get(let, 0);
 	assert_ptr(let_lseq, "ptr let_lseq");
 	assert_int_equal(let_lseq->type, Ast_type_let_lseq, "let_lseq let_lseq");
 
-	Ast_node* id = Ast_node_get(let_lseq, 0);
+	Cob_ast* id = Ast_node_get(let_lseq, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, Ast_type_id, "id id");
 	expect_str(&id->value, "x", "x");
 
-	Ast_node* type = Ast_node_get(let, 1);
+	Cob_ast* type = Ast_node_get(let, 1);
 	assert_ptr(type, "ptr type");
 	expect_int_equal(type->type, Ast_type_type, "type type");
 
-	Ast_node* id2 = Ast_node_get(cu.root, 1);
+	Cob_ast* id2 = Ast_node_get(cu.root, 1);
 	assert_ptr(id2, "ptr id2");
 	expect_int_equal(id2->type, Ast_type_id, "id id2");
 	expect_str(&id2->value, "x", "x id2");
@@ -223,7 +223,7 @@ void test_parse_id2()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* id = Ast_node_get(cu.root, 1);
+	Cob_ast* id = Ast_node_get(cu.root, 1);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, Ast_type_id, "id id");
 	expect_str(&id->value, "_a23", "_a23 id");
@@ -244,7 +244,7 @@ void test_parse_id3()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* id = Ast_node_get(cu.root, 1);
+	Cob_ast* id = Ast_node_get(cu.root, 1);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, Ast_type_id, "id id");
 	expect_str(&id->value, "a2", "a2 id");
@@ -266,7 +266,7 @@ void test_parse_id_greek()
     assert_ptr(cu.root, "ptr cu.root");
     assert_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-    Ast_node* id = Ast_node_get(cu.root, 1);
+    Cob_ast* id = Ast_node_get(cu.root, 1);
     assert_ptr(id, "ptr id");
     expect_int_equal(id->type, Ast_type_id, "id");
     expect_str(&id->value, "αβγ", "value");
@@ -306,7 +306,7 @@ void test_parse_sign_negative()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* sign = Ast_node_get(cu.root, 0);
+	Cob_ast* sign = Ast_node_get(cu.root, 0);
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, Ast_type_sign, "sign sign");
 
@@ -318,13 +318,13 @@ void test_parse_sign_negative()
 	expect_int_equal(td->type, type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
-	Ast_node* left = Ast_node_get(sign, 0);
+	Cob_ast* left = Ast_node_get(sign, 0);
 	assert_ptr(left, "left");
 	expect_int_equal(left->type, Ast_type_minus, "minus");
 
-	Ast_node* right = Ast_node_get(sign, 1);
+	Cob_ast* right = Ast_node_get(sign, 1);
 	assert_ptr(right, "right");
-	expect_int_equal(right->type, Ast_type_number, "number");
+	expect_int_equal(right->type, Cob_ast_type_number, "number");
 	expect_str(&right->value, "30", "30");
 
     parse_teardown(&cu);
@@ -344,7 +344,7 @@ void test_parse_sign_positive()
 	assert_ptr(cu.root, "ptr cu.root");
 	assert_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* sign = Ast_node_get(cu.root, 0);
+	Cob_ast* sign = Ast_node_get(cu.root, 0);
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, Ast_type_sign, "sign sign");
 
@@ -356,13 +356,13 @@ void test_parse_sign_positive()
 	expect_int_equal(td->type, type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
-	Ast_node* left = Ast_node_get(sign, 0);
+	Cob_ast* left = Ast_node_get(sign, 0);
 	assert_ptr(left, "left");
 	assert_int_equal(left->type, Ast_type_plus, "plus");
 
-	Ast_node* right = Ast_node_get(sign, 1);
+	Cob_ast* right = Ast_node_get(sign, 1);
 	assert_ptr(right, "right");
-	assert_int_equal(right->type, Ast_type_number, "number");
+	assert_int_equal(right->type, Cob_ast_type_number, "number");
 	expect_str(&right->value, "30", "30");
 
     parse_teardown(&cu);
@@ -411,7 +411,7 @@ void test_parse_not_id()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* not = Ast_node_get(cu.root, 1);
+	Cob_ast* not = Ast_node_get(cu.root, 1);
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, Ast_type_not, "not not");
 
@@ -423,7 +423,7 @@ void test_parse_not_id()
 	expect_int_equal(td->type, type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
 
-	Ast_node* id = Ast_node_get(not, 0);
+	Cob_ast* id = Ast_node_get(not, 0);
 	assert_ptr(id, "ptr id");
 	expect_int_equal(id->type, Ast_type_id, "id id");
 	expect_str(&id->value, "a", "a id");
@@ -444,7 +444,7 @@ void test_parse_not_literal()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* not = Ast_node_get(cu.root, 0);
+	Cob_ast* not = Ast_node_get(cu.root, 0);
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, Ast_type_not, "not not");
 
@@ -456,7 +456,7 @@ void test_parse_not_literal()
 	expect_int_equal(td->type, type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
 
-	Ast_node* lit_bool = Ast_node_get(not, 0);
+	Cob_ast* lit_bool = Ast_node_get(not, 0);
 	assert_ptr(lit_bool, "ptr lit_bool");
 	expect_int_equal(lit_bool->type, Ast_type_boolean, "boolean true");
 	expect_str(&lit_bool->value, "true", "true lit_bool");
@@ -491,7 +491,7 @@ void test_parse_array_literal_integer()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* a = Ast_node_get(cu.root, 0);
+	Cob_ast* a = Ast_node_get(cu.root, 0);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ast_type_array_literal, "array-literal a");
 
@@ -506,19 +506,19 @@ void test_parse_array_literal_integer()
 	expect_int_equal(a_td->type, type_integer, "integer array_td");
 	expect_str(&a_td->name, "i64", "i64 array_td");
 
-	Ast_node* a0 = Ast_node_get(a, 0);
+	Cob_ast* a0 = Ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
-	expect_int_equal(a0->type, Ast_type_number, "number a0");
+	expect_int_equal(a0->type, Cob_ast_type_number, "number a0");
 	expect_str(&a0->value, "1", "1 a0");
 
-	Ast_node* a1 = Ast_node_get(a, 1);
+	Cob_ast* a1 = Ast_node_get(a, 1);
 	assert_ptr(a1, "ptr a1");
-	expect_int_equal(a1->type, Ast_type_number, "number a1");
+	expect_int_equal(a1->type, Cob_ast_type_number, "number a1");
 	expect_str(&a1->value, "2", "2 a1");
 
-	Ast_node* a2 = Ast_node_get(a, 2);
+	Cob_ast* a2 = Ast_node_get(a, 2);
 	assert_ptr(a2, "ptr a2");
-	expect_int_equal(a2->type, Ast_type_number, "number a2");
+	expect_int_equal(a2->type, Cob_ast_type_number, "number a2");
 	expect_str(&a2->value, "3", "3 a2");
 
     parse_teardown(&cu);
@@ -537,7 +537,7 @@ void test_parse_array_literal_float()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* a = Ast_node_get(cu.root, 0);
+	Cob_ast* a = Ast_node_get(cu.root, 0);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ast_type_array_literal, "array-literal a");
 
@@ -549,19 +549,19 @@ void test_parse_array_literal_float()
 	expect_int_equal(array_td->type, type_float, "float array_td");
 	expect_str(&array_td->name, "f64", "f64 array_td");
 
-	Ast_node* a0 = Ast_node_get(a, 0);
+	Cob_ast* a0 = Ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
-	expect_int_equal(a0->type, Ast_type_number, "number a0");
+	expect_int_equal(a0->type, Cob_ast_type_number, "number a0");
 	expect_str(&a0->value, "1.0", "1.0 a0");
 
-	Ast_node* a1 = Ast_node_get(a, 1);
+	Cob_ast* a1 = Ast_node_get(a, 1);
 	assert_ptr(a1, "ptr a1");
-	expect_int_equal(a1->type, Ast_type_number, "number a1");
+	expect_int_equal(a1->type, Cob_ast_type_number, "number a1");
 	expect_str(&a1->value, "2.5", "2.5 a1");
 
-	Ast_node* a2 = Ast_node_get(a, 2);
+	Cob_ast* a2 = Ast_node_get(a, 2);
 	assert_ptr(a2, "ptr a2");
-	expect_int_equal(a2->type, Ast_type_number, "number a2");
+	expect_int_equal(a2->type, Cob_ast_type_number, "number a2");
 	expect_str(&a2->value, "3.2", "3.2 a2");
 
     parse_teardown(&cu);
@@ -580,7 +580,7 @@ void test_parse_array_literal_numeric()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* a = Ast_node_get(cu.root, 0);
+	Cob_ast* a = Ast_node_get(cu.root, 0);
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ast_type_array_literal, "array-literal a");
 
@@ -592,19 +592,19 @@ void test_parse_array_literal_numeric()
 	expect_int_equal(array_td->type, type_float, "float array_td");
 	expect_str(&array_td->name, "f64", "f64 array_td");
 
-	Ast_node* a0 = Ast_node_get(a, 0);
+	Cob_ast* a0 = Ast_node_get(a, 0);
 	assert_ptr(a0, "ptr a0");
-	expect_int_equal(a0->type, Ast_type_number, "number a0");
+	expect_int_equal(a0->type, Cob_ast_type_number, "number a0");
 	expect_str(&a0->value, "1", "1 a0");
 
-	Ast_node* a1 = Ast_node_get(a, 1);
+	Cob_ast* a1 = Ast_node_get(a, 1);
 	assert_ptr(a1, "ptr a1");
-	expect_int_equal(a1->type, Ast_type_number, "number a1");
+	expect_int_equal(a1->type, Cob_ast_type_number, "number a1");
 	expect_str(&a1->value, "2.5", "2.5 a1");
 
-	Ast_node* a2 = Ast_node_get(a, 2);
+	Cob_ast* a2 = Ast_node_get(a, 2);
 	assert_ptr(a2, "ptr a2");
-	expect_int_equal(a2->type, Ast_type_number, "number a2");
+	expect_int_equal(a2->type, Cob_ast_type_number, "number a2");
 	expect_str(&a2->value, "3", "3 a2");
 
     parse_teardown(&cu);
@@ -681,12 +681,12 @@ void test_parse_paren_num()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
 
-	Ast_node* paren = Ast_node_get(cu.root, 0);
+	Cob_ast* paren = Ast_node_get(cu.root, 0);
 	assert_ptr(paren, "ptr paren");
 	expect_int_equal(paren->type, Ast_type_parenthesis, "parenthesis paren");
 
-	Ast_node* number = Ast_node_get(paren, 0);
-	expect_int_equal(number->type, Ast_type_number, "number number");
+	Cob_ast* number = Ast_node_get(paren, 0);
+	expect_int_equal(number->type, Cob_ast_type_number, "number number");
 	expect_str(&number->value, "32", "32 number");
 
     parse_teardown(&cu);
@@ -819,15 +819,15 @@ void test_parse_factor_newline_not()
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
-    Ast_node* stmts = cu.root;
+    Cob_ast* stmts = cu.root;
     assert_ptr(stmts, "ptr parse_stmts");
     expect_int_equal(stmts->type, Ast_type_stmts, "stmts parse_stmts");
 
-    Ast_node* not = stmts->head;
+    Cob_ast* not = stmts->head;
     assert_ptr(not, "ptr not");
     expect_int_equal(not->type, not->type, "not not");
 
-    Ast_node* tr = not->head;
+    Cob_ast* tr = not->head;
     assert_ptr(tr, "ptr tr");
     expect_int_equal(tr->type, Ast_type_boolean, "boolean tr");
     expect_str(&tr->value, "true", "true");
@@ -845,15 +845,15 @@ void test_parse_factor_newline_sign()
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
-    Ast_node* stmts = cu.root;
+    Cob_ast* stmts = cu.root;
     assert_ptr(stmts, "ptr parse_stmts");
     expect_int_equal(stmts->type, Ast_type_stmts, "stmts parse_stmts");
 
-    Ast_node* sign = stmts->head;
+    Cob_ast* sign = stmts->head;
     assert_ptr(sign, "ptr sign");
     expect_int_equal(sign->type, sign->type, "sign sign");
 
-    Ast_node* op = sign->head;
+    Cob_ast* op = sign->head;
     assert_ptr(op, "ptr op");
     expect_int_equal(op->type, Ast_type_minus, "minus op");
 
@@ -870,27 +870,27 @@ void test_parse_factor_newline_array_literal()
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
-    Ast_node* stmts = cu.root;
+    Cob_ast* stmts = cu.root;
     assert_ptr(stmts, "ptr parse_stmts");
     expect_int_equal(stmts->type, Ast_type_stmts, "parse_stmts stmts");
 
-    Ast_node* al = Ast_node_get(stmts, 0);
+    Cob_ast* al = Ast_node_get(stmts, 0);
     assert_ptr(al, "ptr al");
     expect_int_equal(al->type, Ast_type_array_literal, "array_literal al");
 
-    Ast_node* one = Ast_node_get(al, 0);
+    Cob_ast* one = Ast_node_get(al, 0);
     assert_ptr(one, "ptr one");
-    expect_int_equal(one->type, Ast_type_number, "number one");
+    expect_int_equal(one->type, Cob_ast_type_number, "number one");
     expect_str(&one->value, "1", "1");
 
-    Ast_node* two = Ast_node_get(al, 1);
+    Cob_ast* two = Ast_node_get(al, 1);
     assert_ptr(two, "ptr two");
-    expect_int_equal(two->type, Ast_type_number, "number two");
+    expect_int_equal(two->type, Cob_ast_type_number, "number two");
     expect_str(&two->value, "2", "2");
 
-    Ast_node* three = Ast_node_get(al, 2);
+    Cob_ast* three = Ast_node_get(al, 2);
     assert_ptr(three, "ptr three");
-    expect_int_equal(three->type, Ast_type_number, "number three");
+    expect_int_equal(three->type, Cob_ast_type_number, "number three");
     expect_str(&three->value, "3", "3");
 
     parse_teardown(&cu);
@@ -906,15 +906,15 @@ void test_parse_factor_newline_array_parenthesis()
     expect_true(cu.valid, "parse_setup valid");
     expect_no_errors(&cu.el);
 
-    Ast_node* stmts = cu.root;
+    Cob_ast* stmts = cu.root;
     assert_ptr(stmts, "ptr parse_stmts");
     expect_int_equal(stmts->type, Ast_type_stmts, "parse_stmts stmts");
 
-    Ast_node* paren = Ast_node_get(stmts, 0);
+    Cob_ast* paren = Ast_node_get(stmts, 0);
     assert_ptr(paren, "ptr paren");
     expect_int_equal(paren->type, Ast_type_parenthesis, " parenthesis paren");
 
-    Ast_node* plus = Ast_node_get(paren, 0);
+    Cob_ast* plus = Ast_node_get(paren, 0);
     assert_ptr(plus, "ptr plus");
     expect_int_equal(plus->type, Ast_type_plus, "plus plus");
 
@@ -932,11 +932,11 @@ void test_parse_factor_array_element_const()
     expect_true(cu.valid, "valid");
     expect_no_errors(&cu.el);
 
-    Ast_node* let = Ast_node_get(cu.root, 0);
+    Cob_ast* let = Ast_node_get(cu.root, 0);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, Ast_type_let, "type let");
 
-    Ast_node* let_type = Ast_node_get(let, 1);
+    Cob_ast* let_type = Ast_node_get(let, 1);
     assert_ptr(let_type, "ptr type");
     expect_int_equal(let_type->type, Ast_type_type, "type type");
     expect_true(let_type->tu->is_array, "is_array type");
