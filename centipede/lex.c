@@ -17,6 +17,7 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t);
 void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t);
 bool Cent_is_number(char c[4], int num);
 void Cent_lex_number(Cent_lex_data* ld, Cent_token* t);
+void Cent_lex_modifier(Cent_lex_data* ld, Cent_token* t);
 
 Cent_token* lex(Cent_lex_data* ld)
 {
@@ -165,6 +166,13 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
                 t->loc = loc;
                 buffer_add(&t->value, c, num);
                 Cent_lex_number(ld, t);
+                return;
+            }
+
+            if (c[0] == '`') {
+                t->type = Cent_token_modifier;
+                t->loc = loc;
+                Cent_lex_modifier(ld, t);
                 return;
             }
         }
@@ -600,5 +608,34 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
 
     if (digit_count == 0) {
         error_list_set(ld->errors, &t->loc, "no digits in exponent");
+    }
+}
+
+void Cent_lex_modifier(Cent_lex_data* ld, Cent_token* t)
+{
+    char c[4];
+    int num;
+    struct location loc;
+    bool done;
+    enum result r;
+
+    while (true) {
+        r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        if (r == result_error) {
+            fprintf(stderr, "%s\n", error_message);
+            exit(1);
+        }
+
+        if (done) {
+            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            break;
+        }
+
+        if (num == 1 && c[0] == '`') {
+            t->loc.end_pos = loc.end_pos;
+            return;
+        }
+
+        buffer_add(&t->value, c, num);
     }
 }

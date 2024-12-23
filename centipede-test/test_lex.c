@@ -16,7 +16,7 @@ void test_lex_element()
     test_lex_setup(&ld,
         "element Test_suite\n"
         "   properties\n"
-        "       name: String required\n"
+        "       name: String `required`\n"
         "       solo: Bool\n"
         "       mute: Bool\n"
         "   end\n"
@@ -65,7 +65,7 @@ void test_lex_element()
 
     t = lex(&ld);
     assert_ptr(t, "ptr 8");
-    expect_int_equal(t->type, Cent_token_required, "type 8");
+    expect_int_equal(t->type, Cent_token_modifier, "type 8");
 
     t = lex(&ld);
     assert_ptr(t, "ptr 9");
