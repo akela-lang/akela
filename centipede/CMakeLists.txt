@@ -5,6 +5,8 @@ set(centipede_files
         symbol.c
         value.c
         lex_tools.c
+        parse.c
+        parse_data.c
 )
 
 add_library(centipede ${centipede_files})

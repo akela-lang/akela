@@ -31,7 +31,7 @@ typedef enum Cent_number_type {
     Cent_number_type_none,
     Cent_number_type_integer,
     Cent_number_type_fp,
-    } Cent_number_type;
+} Cent_number_type;
 
 typedef struct Cent_token {
     Cent_token_type type;
