@@ -8,3 +8,4 @@ set(centipede_files
 )
 
 add_library(centipede ${centipede_files})
+target_link_libraries(centipede json zinc)

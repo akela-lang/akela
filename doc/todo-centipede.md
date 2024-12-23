@@ -1,2 +1,4 @@
 # Centipede Todo
-* lex top level assign
+* parse element
+* parse enum
+* parse top level assign

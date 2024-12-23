@@ -1,4 +1,5 @@
 # Cobble Todo
+* test if repeat and repeat range are greedy
 * create converter once
 * JSON compile tests
 * JSON match tests
