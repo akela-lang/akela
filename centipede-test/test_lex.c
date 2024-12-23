@@ -395,6 +395,10 @@ void test_lex_top_level_assign()
     assert_ptr(t, "ptr 27");
     expect_int_equal(t->type, Cent_token_newline, "type 27");
 
+    t = lex(&ld);
+    assert_ptr(t, "ptr 28");
+    expect_int_equal(t->type, Cent_token_eof, "type 28");
+
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
