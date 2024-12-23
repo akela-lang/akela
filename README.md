@@ -24,6 +24,7 @@ and capable of robust software construction.
     cmake-build-debug/bin/cobble-test
     cmake-build-debug/bin/json-test
     cmake-build-debug/bin/coverage-test
+    cmake-build-debug/bin/centipede-test
 
 ## Run JIT on file
     cmake-build-debug/bin/akela examples/addition.akela
@@ -36,6 +37,7 @@ and capable of robust software construction.
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/cobble-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/json-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/coverage-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/centipede-test
 
 ## Coverage
     ./generate-coverage.sh
