@@ -41,4 +41,5 @@ and capable of robust software construction.
 
 ## Coverage
     ./generate-coverage.sh
+    ninja -C cmake-build-debug
     cmake-build-debug/bin/coverage data/coverage
