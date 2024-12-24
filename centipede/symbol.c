@@ -5,8 +5,7 @@
 void Cent_symbol_init(Cent_symbol *sym)
 {
     sym->type = Symbol_type_none;
-    sym->reserved_token_type = Cent_token_none;
-    buffer_init(&sym->value);
+    sym->value = NULL;
 }
 
 void Cent_symbol_create(Cent_symbol** sym)
@@ -17,5 +16,4 @@ void Cent_symbol_create(Cent_symbol** sym)
 
 void Cent_symbol_destroy(Cent_symbol *sym)
 {
-    buffer_destroy(&sym->value);
 }

@@ -7,6 +7,8 @@ set(centipede_files
         lex_tools.c
         parse.c
         parse_data.c
+        environment.c
+        element.c
 )
 
 add_library(centipede ${centipede_files})
