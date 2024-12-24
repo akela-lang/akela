@@ -4,11 +4,31 @@ capable of standalone and embeddable execution,
 suitable for numerical computation and finance,
 and capable of robust software construction.
 
+## Subprojects
+* Akela - The Akela compiler; a compiler written in C
+* Akela-LLVM - The Akela LLVM IR code generation library
+* Zinc - A no-dependency library for basic C programming tools 
+* Cobble - Regular expression library used for parsing coverage files
+* Dataframe - For doing vector math and writing and reading vectors to and from CSV files
+* JSON - A JSON parser and stringify library
+* Centipede - The Centipede DAG description language parser; is a file format for compiler ASTs
+and will be used for testing AST output of the Akela parser
+
+The Cobble, Dataframe, JSON, and Centipede projects very useful for the
+automated testing of the Akela Compiler, but will also be useful comparing
+how good the Akela language will be at writing compilers compared to the C language.
+
+The Akela-LLVM subproject depends on LLVM.
+
+The Cobble (Regex), JSON, and Centipede subprojects depend on
+the [ICU library](https://icu.unicode.org/) which can be installed on most OSs.
+
 ## LLVM
     cd ..
     git clone https://github.com/llvm/llvm-project
     cd llvm-project
-	cmake -S llvm -B build-release -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -G Ninja
+    git checkout tags/llvmorg-19.1.6
+	cmake -S llvm -B build-release -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -G Ninja
 	ninja -C build-release check-llvm -j 8
     cd ../akela
 
