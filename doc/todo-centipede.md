@@ -1,5 +1,4 @@
 # Centipede Todo
-* ast
 * parse element
 * parse enum
 * parse top level assign

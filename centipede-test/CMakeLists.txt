@@ -3,6 +3,7 @@ set(centipede_test_files
         test_lex.c
         test_lex_setup.c
         test_value.c
+        test_ast.c
 )
 
 add_executable(centipede-test ${centipede_test_files})

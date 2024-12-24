@@ -22,7 +22,7 @@ void Cent_value_create(Cent_value **value)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_value_destroy(Cent_value *value)
 {
-    hash_table_map(&value->properties, Cent_value_free);
+    hash_table_map(&value->properties, (hash_table_func)Cent_value_free);
     Cent_value* p = value->head;
     while (p) {
         Cent_value* temp = p;

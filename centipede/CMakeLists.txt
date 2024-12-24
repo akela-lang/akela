@@ -10,6 +10,7 @@ set(centipede_files
         environment.c
         element.c
         enumerate.c
+        ast.c
 )
 
 add_library(centipede ${centipede_files})
