@@ -15,8 +15,8 @@ and capable of robust software construction.
 and will be used for testing AST output of the Akela parser
 
 The Cobble, Dataframe, JSON, and Centipede projects very useful for the
-automated testing of the Akela Compiler, but will also be useful comparing
-how good the Akela language will be at writing compilers compared to the C language.
+automated testing of the Akela compiler, but will also be useful comparing
+how good the Akela language will be for writing compilers compared to the C language.
 
 The Akela-LLVM subproject depends on LLVM.
 
