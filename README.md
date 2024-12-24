@@ -5,14 +5,15 @@ suitable for numerical computation and finance,
 and capable of robust software construction.
 
 ## Subprojects
-* Akela - The Akela compiler; a compiler written in C; has a handwritten lexer and recursive decent parser
+* Akela - The Akela compiler which is written in C;
+has a handwritten lexer and recursive decent parser
 * Akela-LLVM - The Akela LLVM IR code generation library
 * Zinc - A no-dependency library for basic C programming tools 
 * Cobble - Regular expression library used for parsing coverage files
 * Dataframe - For doing vector math and writing and reading vectors to and from CSV files
 * JSON - A JSON parser and stringify library
 * Centipede - The Centipede DAG description language parser; is a file format for compiler ASTs
-and will be used for testing AST output of the Akela parser
+and will be used for testing the AST output of the Akela parser
 
 The Cobble, Dataframe, JSON, and Centipede subprojects are very useful for the
 automated testing of the Akela compiler. When these subprojects are re-written in Akela
