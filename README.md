@@ -5,7 +5,7 @@ suitable for numerical computation and finance,
 and capable of robust software construction.
 
 ## Subprojects
-* Akela - The Akela compiler; a compiler written in C
+* Akela - The Akela compiler; a compiler written in C; has a handwritten lexer and recursive decent parser
 * Akela-LLVM - The Akela LLVM IR code generation library
 * Zinc - A no-dependency library for basic C programming tools 
 * Cobble - Regular expression library used for parsing coverage files
