@@ -14,13 +14,13 @@ and capable of robust software construction.
 * Centipede - The Centipede DAG description language parser; is a file format for compiler ASTs
 and will be used for testing AST output of the Akela parser
 
-The Cobble, Dataframe, JSON, and Centipede projects very useful for the
-automated testing of the Akela compiler, but will also be useful comparing
-how good the Akela language will be for writing compilers compared to the C language.
+The Cobble, Dataframe, JSON, and Centipede subprojects are very useful for the
+automated testing of the Akela compiler. When these subprojects are re-written in Akela
+they will be useful as a comparison to the C versions.
 
 The Akela-LLVM subproject depends on LLVM.
 
-The Cobble (Regex), JSON, and Centipede subprojects depend on
+The Cobble (regex), JSON, and Centipede subprojects depend on
 the [ICU library](https://icu.unicode.org/) which can be installed on most OSs.
 
 ## LLVM
