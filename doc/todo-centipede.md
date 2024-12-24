@@ -1,9 +1,4 @@
 # Centipede Todo
-* define data structures
-  * environment [x]
-  * symbol []
-  * element [x]
-  * enum []
 * parse element
 * parse enum
 * parse top level assign
