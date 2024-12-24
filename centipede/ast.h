@@ -25,6 +25,7 @@ typedef struct Cent_ast {
     } data;
     Cent_environment* env;
     struct location loc;
+    bool has_error;
     struct Cent_ast* next;
     struct Cent_ast* prev;
     struct Cent_ast* head;

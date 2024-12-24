@@ -9,6 +9,7 @@ void Cent_ast_init(Cent_ast *ast)
     ast->type = Cent_ast_type_none;
     ast->env = NULL;
     location_init(&ast->loc);
+    ast->has_error = false;
     ast->next = NULL;
     ast->prev = NULL;
     ast->head = NULL;
@@ -63,4 +64,10 @@ void Cent_ast_add(Cent_ast *p, Cent_ast *c)
         p->head = c;
         p->tail = c;
     }
+
+    if (c->has_error) {
+        p->has_error = true;
+    }
+
+    location_combine(&p->loc, &c->loc);
 }

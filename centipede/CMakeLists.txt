@@ -11,6 +11,7 @@ set(centipede_files
         element.c
         enumerate.c
         ast.c
+        parse_tools.c
 )
 
 add_library(centipede ${centipede_files})
