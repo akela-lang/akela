@@ -19,10 +19,12 @@ The Cobble, Dataframe, JSON, and Centipede subprojects are very useful for the
 automated testing of the Akela compiler. When these subprojects are re-written in Akela
 they will be useful as a comparison to the C versions.
 
-The Akela-LLVM subproject depends on LLVM.
+The Akela-LLVM subproject depends on [LLVM](https://llvm.org/).
 
 The Cobble (regex), JSON, and Centipede subprojects depend on
 the [ICU library](https://icu.unicode.org/) which can be installed on most OSs.
+
+When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html) should be installed.
 
 ## LLVM
     cd ..
@@ -60,7 +62,7 @@ the [ICU library](https://icu.unicode.org/) which can be installed on most OSs.
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/coverage-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/centipede-test
 
-## Coverage
+## Code Coverage
     ./generate-coverage.sh
     ninja -C cmake-build-debug
     cmake-build-debug/bin/coverage data/coverage

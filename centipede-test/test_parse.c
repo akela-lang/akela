@@ -6,14 +6,15 @@
 #include "centipede/parse_data.h"
 #include "zinc/input_unicode_string.h"
 #include "zinc/error.h"
+#include "test_parse_tools.h"
 
 void test_parse_element()
 {
     test_name(__func__);
 
     Cent_parse_data pd;
-
-    char* s = "element Test_suite\n"
+    test_parse_setup(&pd,
+        "element Test_suite\n"
         "    properties\n"
         "        name: String `required`\n"
         "        solo: Bool      # only run this suite\n"
@@ -22,30 +23,15 @@ void test_parse_element()
         "    children\n"
         "        Test\n"
         "    end\n"
-        "end\n";
-    size_t len = strlen(s);
-
-    Vector* v = NULL;
-    VectorCreate(&v, sizeof(char));
-    VectorAdd(v, s, len);
-
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, v);
-
-    struct error_list* errors = NULL;
-    error_list_create(&errors);
-
-    Cent_lex_data* ld = NULL;
-    Cent_lex_data_create(&ld, errors, input, input->input_vtable);
-
-    Cent_parse_data_init(&pd);
-    pd.errors = errors;
-    pd.ld = ld;
+        "end\n"
+    );
 
     Cent_parse_result pr = Cent_parse(&pd);
 
     assert_ptr(pr.root, "ptr pr.root");
     expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+
+    test_parse_teardown(&pd, &pr);
 }
 
 void test_parse()
