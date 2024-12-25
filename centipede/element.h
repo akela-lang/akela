@@ -4,10 +4,13 @@
 #include "zinc/buffer.h"
 #include "zinc/hash.h"
 #include "zinc/list.h"
+#include "value.h"
 
 /* the name and types of an element */
 typedef struct element {
     struct buffer name;
+    Cent_value_type type;
+    Cent_number_type number_type;
     struct hash_table properties;
     struct list children;
 } Cent_element;

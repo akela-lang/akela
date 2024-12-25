@@ -4,6 +4,8 @@
 void Cent_element_init(Cent_element* element)
 {
     buffer_init(&element->name);
+    element->type = Cent_value_type_none;
+    element->number_type = Cent_number_type_none;
     hash_table_init(&element->properties, 32);
     list_init(&element->children);
 }

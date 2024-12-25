@@ -2,6 +2,7 @@
 #include "parse_tools.h"
 #include <assert.h>
 #include <akela/parse_tools.h>
+#include "base.h"
 
 Cent_ast* Cent_parse_stmts(Cent_parse_data* pd);
 bool Cent_has_separator(Cent_parse_data* pd, Cent_ast* n);
@@ -10,7 +11,7 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd);
 
 Cent_parse_result Cent_parse(Cent_parse_data* pd)
 {
-
+    pd->top = Cent_base_create();
     Cent_ast* root = Cent_parse_stmts(pd);
 
     Cent_parse_result result;

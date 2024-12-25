@@ -40,7 +40,6 @@ void test_parse_element()
 
     Cent_parse_data_init(&pd);
     pd.errors = errors;
-    pd.top = NULL;
     pd.ld = ld;
 
     Cent_parse_result pr = Cent_parse(&pd);

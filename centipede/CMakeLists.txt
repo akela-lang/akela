@@ -12,6 +12,7 @@ set(centipede_files
         enumerate.c
         ast.c
         parse_tools.c
+        base.c
 )
 
 add_library(centipede ${centipede_files})
