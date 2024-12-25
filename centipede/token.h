@@ -25,6 +25,7 @@ typedef enum Cent_token_type {
     Cent_token_true,
     Cent_token_false,
     Cent_token_modifier,
+    Cent_token_semicolon,
 } Cent_token_type;
 
 typedef enum Cent_number_type {

@@ -102,6 +102,12 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
                 return;
             }
 
+            if (c[0] == ';') {
+                t->type = Cent_token_semicolon;
+                t->loc = loc;
+                return;
+            }
+
             if (c[0] == '=') {
                 t->type = Cent_token_equal;
                 t->loc = loc;

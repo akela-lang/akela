@@ -6,6 +6,7 @@ void Cent_parse_data_init(Cent_parse_data *pd)
     pd->errors = NULL;
     pd->ld = NULL;
     pd->lookahead = NULL;
+    pd->top = NULL;
 
 }
 
@@ -18,8 +19,8 @@ void Cent_parse_data_create(Cent_parse_data **pd)
 void Cent_parse_result_init(Cent_parse_result *pr)
 {
     pr->errors = NULL;
-    pr->base_env = NULL;
-    pr->value = NULL;
+    pr->base = NULL;
+    pr->root = NULL;
 }
 
 void Cent_parse_result_create(Cent_parse_result **pr)
