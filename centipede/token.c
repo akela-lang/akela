@@ -16,5 +16,7 @@ void Cent_token_create(Cent_token **t)
 
 void Cent_token_destroy(Cent_token *t)
 {
-    buffer_destroy(&t->value);
+    if (t) {
+        buffer_destroy(&t->value);
+    }
 }

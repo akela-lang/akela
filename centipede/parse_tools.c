@@ -22,5 +22,6 @@ bool Cent_match(Cent_parse_data* pd, Cent_token_type type, char* message, Cent_t
     }
 
     error_list_set(pd->errors, &pd->lookahead->loc, message);
+    n->has_error = true;
     return false;
 }

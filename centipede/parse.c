@@ -8,6 +8,8 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd);
 bool Cent_has_separator(Cent_parse_data* pd, Cent_ast* n);
 Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element(Cent_parse_data* pd);
+void Cent_ignore_newlines(Cent_parse_data* pd, Cent_ast* n);
+Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd);
 
 Cent_parse_result Cent_parse(Cent_parse_data* pd)
 {
@@ -98,14 +100,11 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
 
     Cent_token* e = NULL;
     if (!Cent_match(pd, Cent_token_element, "expected element", &e, n)) {
-        assert(false && "expected element");
+        assert(false && "not possible");
     }
 
     Cent_token* id = NULL;
-    if (!Cent_match(pd, Cent_token_id, "expected id", &id, n)) {
-        error_list_set(pd->errors, &pd->lookahead->loc, "expected id");
-        n->has_error = true;
-    }
+    Cent_match(pd, Cent_token_id, "expected id", &id, n);
 
     Cent_element* element = NULL;
     Cent_element_create(&element);
@@ -116,6 +115,23 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
         free(id);
     }
 
+    Cent_token* lcb = NULL;
+    Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n);
+    Cent_token_destroy(lcb);
+    free(lcb);
+
+    Cent_ignore_newlines(pd, n);
+
+    Cent_ast* a = Cent_parse_element_properties(pd);
+    Cent_ast_add(n, a);
+
+    Cent_ignore_newlines(pd, n);
+
+    Cent_token* rcb = NULL;
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
+    Cent_token_destroy(rcb);
+    free(rcb);
+
     if (!n->has_error) {
         Cent_symbol* sym = NULL;
         Cent_symbol_create(&sym);
@@ -123,6 +139,73 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
         sym->element = element;
         Cent_environment_add_symbol(pd->top, &element->name, sym);
     }
+
+    return n;
+}
+
+void Cent_ignore_newlines(Cent_parse_data* pd, Cent_ast* n)
+{
+    Cent_lookahead(pd);
+    while (pd->lookahead->type == Cent_token_newline) {
+        Cent_token* nl = NULL;
+        if (!Cent_match(pd, Cent_token_newline, "expected newline", &nl, n)) {
+            assert(false && "not possible");
+        }
+        Cent_token_destroy(nl);
+        free(nl);
+        Cent_lookahead(pd);
+    }
+}
+
+/* element_seq -> id : element element_seq' | e */
+/* element_seq' -> sep id : element element_seq | e */
+Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_properties;
+
+    Cent_lookahead(pd);
+    while (true) {
+        if (pd->lookahead->type != Cent_token_id) {
+            break;
+        }
+
+
+        if (!Cent_has_separator(pd, n)) {
+            break;
+        }
+    }
+
+    return n;
+}
+
+Cent_ast* Cent_parse_element_dec(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_declaration;
+
+    Cent_token* id = NULL;
+    if (!Cent_match(pd, Cent_token_id, "expected element", &id, n)) {
+        assert(false && "not possible");
+    }
+    Cent_token_destroy(id);
+    free(id);
+
+    Cent_token* colon = NULL;
+    if (!Cent_match(pd, Cent_token_colon, "expected colon", &colon, n)) {
+        error_list_set(pd->errors, &pd->lookahead->loc, "expected colon");
+        n->has_error = true;
+    }
+    Cent_token_destroy(colon);
+    free(colon);
+
+    if (!Cent_match(pd, Cent_token_id, "expected element", &id, n)) {
+        assert(false && "not possible");
+    }
+    Cent_token_destroy(id);
+    free(id);
 
     return n;
 }

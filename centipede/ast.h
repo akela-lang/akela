@@ -11,6 +11,8 @@ typedef enum Cent_ast_type {
     Cent_ast_type_none,
     Cent_ast_type_stmts,
     Cent_ast_type_element,
+    Cent_ast_type_properties,
+    Cent_ast_type_declaration,
     Cent_ast_type_enumerate,
     Cent_ast_type_assign,
     Cent_ast_type_id,
