@@ -145,6 +145,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
                         return;
                     }
                     if (num == 1 && c[0] == '\n') {
+                        InputUnicodeRepeat(ld->input, ld->input_vtable);
                         break;
                     }
                 }

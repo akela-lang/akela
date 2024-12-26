@@ -263,6 +263,11 @@ void test_lex_top_level_assign()
         "}\n"
     );
 
+    /* line 1 */
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_newline, "type 1.1");
+
     /* line 2 */
     t = lex(&ld);
     assert_ptr(t, "ptr 2.1");

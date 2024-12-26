@@ -1,5 +1,7 @@
 # Centipede Todo
 * parse element
+  * properties [x]
+  * children []
 * parse enum
 * parse top level assign
 * number test cases

@@ -11,21 +11,19 @@ typedef enum Cent_ast_type {
     Cent_ast_type_none,
     Cent_ast_type_stmts,
     Cent_ast_type_element,
-    Cent_ast_type_properties,
-    Cent_ast_type_declaration,
+    Cent_ast_type_prop,
+    Cent_ast_type_prop_dec,
+    Cent_ast_type_children,
     Cent_ast_type_enumerate,
     Cent_ast_type_assign,
     Cent_ast_type_id,
     Cent_ast_type_value,
+    Cent_ast_type_modifier,
 } Cent_ast_type;
 
 typedef struct Cent_ast {
     Cent_ast_type type;
-    union {
-        Cent_element* element;
-        Cent_enumerate* enumerate;
-        Cent_value* value;
-    } data;
+    struct buffer value;
     Cent_environment* env;
     struct location loc;
     bool has_error;
@@ -38,8 +36,8 @@ typedef struct Cent_ast {
 
 void Cent_ast_init(Cent_ast *ast);
 void Cent_ast_create(Cent_ast **ast);
-void Cent_ast_set_type(Cent_ast *ast, Cent_ast_type type);
 void Cent_ast_destroy(Cent_ast *ast);
 void Cent_ast_add(Cent_ast *p, Cent_ast *c);
+Cent_ast* Cent_ast_get(Cent_ast *n, size_t index);
 
 #endif

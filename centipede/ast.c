@@ -7,6 +7,7 @@
 void Cent_ast_init(Cent_ast *ast)
 {
     ast->type = Cent_ast_type_none;
+    buffer_init(&ast->value);
     ast->env = NULL;
     location_init(&ast->loc);
     ast->has_error = false;
@@ -21,20 +22,6 @@ void Cent_ast_create(Cent_ast **ast)
 {
     malloc_safe((void**)ast, sizeof(Cent_ast));
     Cent_ast_init(*ast);
-}
-
-void Cent_ast_set_type(Cent_ast *ast, Cent_ast_type type)
-{
-    ast->type = type;
-    if (ast->type == Cent_ast_type_element) {
-        ast->data.element = NULL;
-    } else if (ast->type == Cent_ast_type_enumerate) {
-        ast->data.enumerate = NULL;
-    } else if (ast->type == Cent_ast_type_value) {
-        ast->data.value = NULL;
-    } else {
-        assert(false && "should not happen");
-    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -70,4 +57,19 @@ void Cent_ast_add(Cent_ast *p, Cent_ast *c)
     }
 
     location_combine(&p->loc, &c->loc);
+}
+
+Cent_ast* Cent_ast_get(Cent_ast *n, size_t index)
+{
+    size_t i = 0;
+    Cent_ast* p = n->head;
+    while (p) {
+        if (i == index) {
+            return p;
+        }
+        p = p->next;
+        i++;
+    }
+
+    return NULL;
 }

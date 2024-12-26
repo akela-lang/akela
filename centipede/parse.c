@@ -10,6 +10,7 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element(Cent_parse_data* pd);
 void Cent_ignore_newlines(Cent_parse_data* pd, Cent_ast* n);
 Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd);
+Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd);
 
 Cent_parse_result Cent_parse(Cent_parse_data* pd)
 {
@@ -97,6 +98,7 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
+    n->type = Cent_ast_type_element;
 
     Cent_token* e = NULL;
     if (!Cent_match(pd, Cent_token_element, "expected element", &e, n)) {
@@ -122,8 +124,11 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
 
     Cent_ignore_newlines(pd, n);
 
-    Cent_ast* a = Cent_parse_element_properties(pd);
-    Cent_ast_add(n, a);
+    Cent_lookahead(pd);
+    if (pd->lookahead->type == Cent_token_properties) {
+        Cent_ast* a = Cent_parse_element_properties(pd);
+        Cent_ast_add(n, a);
+    }
 
     Cent_ignore_newlines(pd, n);
 
@@ -163,49 +168,94 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
-    n->type = Cent_ast_type_properties;
+    n->type = Cent_ast_type_prop;
 
-    Cent_lookahead(pd);
+    Cent_token* prop = NULL;
+    Cent_match(pd, Cent_token_properties, "expected properties", &prop, n);
+    Cent_token_destroy(prop);
+    free(prop);
+
+    Cent_ignore_newlines(pd, n);
+
     while (true) {
+        Cent_lookahead(pd);
         if (pd->lookahead->type != Cent_token_id) {
             break;
         }
 
+        Cent_ast* a = Cent_parse_property_dec(pd);
+        Cent_ast_add(n, a);
 
         if (!Cent_has_separator(pd, n)) {
             break;
         }
     }
 
+    Cent_token* end = NULL;
+    Cent_match(pd, Cent_token_end, "expected end", &end, n);
+    Cent_token_destroy(end);
+    free(end);
+
     return n;
 }
 
-Cent_ast* Cent_parse_element_dec(Cent_parse_data* pd)
+Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
-    n->type = Cent_ast_type_declaration;
+    n->type = Cent_ast_type_prop_dec;
 
     Cent_token* id = NULL;
-    if (!Cent_match(pd, Cent_token_id, "expected element", &id, n)) {
-        assert(false && "not possible");
-    }
+    Cent_match(pd, Cent_token_id, "expected id", &id, n);
+
+    Cent_ast* a = NULL;
+    Cent_ast_create(&a);
+    a->type = Cent_ast_type_id;
+    buffer_copy(&id->value, &a->value);
+    Cent_ast_add(n, a);
+
     Cent_token_destroy(id);
     free(id);
 
     Cent_token* colon = NULL;
-    if (!Cent_match(pd, Cent_token_colon, "expected colon", &colon, n)) {
-        error_list_set(pd->errors, &pd->lookahead->loc, "expected colon");
-        n->has_error = true;
-    }
+    Cent_match(pd, Cent_token_colon, "expected colon", &colon, n);
     Cent_token_destroy(colon);
     free(colon);
 
-    if (!Cent_match(pd, Cent_token_id, "expected element", &id, n)) {
-        assert(false && "not possible");
-    }
+    Cent_match(pd, Cent_token_id, "expected id", &id, n);
+
+    Cent_ast* b = NULL;
+    Cent_ast_create(&b);
+    b->type = Cent_ast_type_id;
+    buffer_copy(&id->value, &b->value);
+    Cent_ast_add(n, b);
+
     Cent_token_destroy(id);
     free(id);
+
+    Cent_lookahead(pd);
+    if (pd->lookahead->type == Cent_token_modifier) {
+        Cent_token* mod = NULL;
+        Cent_match(pd, Cent_token_modifier, "expected modifier", &mod, n);
+        Cent_ast* c = NULL;
+        Cent_ast_create(&c);
+        c->type = Cent_ast_type_modifier;
+        buffer_copy(&mod->value, &c->value);
+        Cent_ast_add(n, c);
+        Cent_token_destroy(mod);
+        free(mod);
+    }
+
+    return n;
+}
+
+Cent_ast* Cent_parse_children(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_children;
+
+    Cent_token* ch = NULL;
 
     return n;
 }
