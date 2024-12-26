@@ -1,7 +1,6 @@
 # Centipede Todo
-* parse element
-  * properties [x]
-  * children []
+* work queue for top-level declarations
+* circular dependency checking for top-level work items
 * parse enum
 * parse top level assign
 * number test cases

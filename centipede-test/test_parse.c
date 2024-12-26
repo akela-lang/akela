@@ -28,17 +28,22 @@ void test_parse_element()
 
     Cent_parse_result pr = Cent_parse(&pd);
 
+    /* root */
     assert_ptr(pr.root, "ptr pr.root");
     expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
 
+    /* element */
     Cent_ast* element = Cent_ast_get(pr.root, 0);
     assert_ptr(element, "ptr element");
     expect_int_equal(element->type, Cent_ast_type_element, "type element");
+    expect_str(&element->value, "Test_suite", "value element");
 
+    /* properties */
     Cent_ast* prop = Cent_ast_get(element, 0);
     assert_ptr(prop, "ptr prop");
     expect_int_equal(prop->type, Cent_ast_type_prop, "type prop");
 
+    /* name */
     Cent_ast* dec0 = Cent_ast_get(prop, 0);
     assert_ptr(dec0, "ptr dec0");
     expect_int_equal(dec0->type, Cent_ast_type_prop_dec, "type dec0");
@@ -58,6 +63,7 @@ void test_parse_element()
     expect_int_equal(mod0->type, Cent_ast_type_modifier, "type mod0");
     expect_str(&mod0->value, "required", "value mod0");
 
+    /* solo */
     Cent_ast* dec1 = Cent_ast_get(prop, 1);
     assert_ptr(dec1, "ptr dec1");
     expect_int_equal(dec1->type, Cent_ast_type_prop_dec, "type dec1");
@@ -72,6 +78,7 @@ void test_parse_element()
     expect_int_equal(type1->type, Cent_ast_type_id, "type type1");
     expect_str(&type1->value, "Bool", "value type1");
 
+    /* mute */
     Cent_ast* dec2 = Cent_ast_get(prop, 2);
     assert_ptr(dec2, "ptr dec2");
     expect_int_equal(dec2->type, Cent_ast_type_prop_dec, "type dec2");
@@ -85,6 +92,17 @@ void test_parse_element()
     assert_ptr(type2, "ptr type2");
     expect_int_equal(type2->type, Cent_ast_type_id, "type type2");
     expect_str(&type2->value, "Bool", "value type2");
+
+    /* children */
+    Cent_ast* children = Cent_ast_get(element, 1);
+    assert_ptr(children, "ptr children");
+    expect_int_equal(children->type, Cent_ast_type_children, "type children");
+
+    /* Test */
+    Cent_ast* test = Cent_ast_get(children, 0);
+    assert_ptr(test, "ptr test");
+    expect_int_equal(test->type, Cent_ast_type_id, "type test");
+    expect_str(&test->value, "Test", "value test");
 
     test_parse_teardown(&pd, &pr);
 }

@@ -11,6 +11,7 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd);
 void Cent_ignore_newlines(Cent_parse_data* pd, Cent_ast* n);
 Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd);
 Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd);
+Cent_ast* Cent_parse_children(Cent_parse_data* pd);
 
 Cent_parse_result Cent_parse(Cent_parse_data* pd)
 {
@@ -108,11 +109,8 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, n);
 
-    Cent_element* element = NULL;
-    Cent_element_create(&element);
-
     if (id) {
-        buffer_copy(&id->value, &element->name);
+        buffer_copy(&id->value, &n->value);
         Cent_token_destroy(id);
         free(id);
     }
@@ -132,12 +130,22 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
 
     Cent_ignore_newlines(pd, n);
 
+    Cent_lookahead(pd);
+    if (pd->lookahead->type == Cent_token_children) {
+        Cent_ast* b = Cent_parse_children(pd);
+        Cent_ast_add(n, b);
+    }
+
     Cent_token* rcb = NULL;
     Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
     Cent_token_destroy(rcb);
     free(rcb);
 
     if (!n->has_error) {
+        Cent_element* element = NULL;
+        Cent_element_create(&element);
+        buffer_copy(&n->value, &element->name);
+
         Cent_symbol* sym = NULL;
         Cent_symbol_create(&sym);
         sym->type = Cent_symbol_type_element;
@@ -256,6 +264,35 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
     n->type = Cent_ast_type_children;
 
     Cent_token* ch = NULL;
+    Cent_match(pd, Cent_token_children, "expected children", &ch, n);
+
+    Cent_ignore_newlines(pd, n);
+
+    Cent_lookahead(pd);
+    while (pd->lookahead->type == Cent_token_id) {
+        Cent_token* id = NULL;
+        if (!Cent_match(pd, Cent_token_id, "expected id", &id, n)) {
+            assert(false && "not possible");
+        }
+        Cent_ast* a = NULL;
+        Cent_ast_create(&a);
+        a->type = Cent_ast_type_id;
+        buffer_copy(&id->value, &a->value);
+        Cent_ast_add(n, a);
+        Cent_token_destroy(id);
+        free(id);
+
+        if (!Cent_has_separator(pd, n)) {
+            break;
+        }
+
+        Cent_lookahead(pd);
+    }
+
+    Cent_token* end = NULL;
+    Cent_match(pd, Cent_token_end, "expected end", &end, n);
+    Cent_token_destroy(end);
+    free(end);
 
     return n;
 }
