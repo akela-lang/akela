@@ -1,5 +1,6 @@
 #include <string.h>
 #include <string.h>
+#include <zinc/error_unit_test.h>
 
 #include "zinc/unit_test.h"
 #include "centipede/parse.h"
@@ -27,6 +28,7 @@ void test_parse_element()
     );
 
     Cent_parse_result pr = Cent_parse(&pd);
+    expect_no_errors(pr.errors);
 
     /* root */
     assert_ptr(pr.root, "ptr pr.root");
@@ -107,7 +109,31 @@ void test_parse_element()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_enum()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+    "enum Symbol_type\n"
+    "    Variable\n"
+    "    Type\n"
+    "    Info\n"
+    "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    /* root */
+    expect_no_errors(pr.errors);
+    assert_ptr(pr.root, "ptr pr.root");
+    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
+    test_parse_enum();
 }

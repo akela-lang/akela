@@ -26,7 +26,44 @@ typedef enum Cent_token_type {
     Cent_token_false,
     Cent_token_modifier,
     Cent_token_semicolon,
+    Cent_token_count,       /* keep at end */
 } Cent_token_type;
+
+static char* Cent_token_name(Cent_token_type type)
+{
+    char *name[] = {
+        "none",
+        "eof",
+        "id",
+        "element",
+        "end",
+        "newline",
+        "properties",
+        "children",
+        "colon",
+        "enum",
+        "equal",
+        "left-curly-brace",
+        "right-curly-brace",
+        "dot",
+        "double-colon",
+        "string",
+        "number",
+        "true",
+        "false",
+        "modifier",
+        "semicolon",
+    };
+
+    for (int i = 0; i < Cent_token_count; i++) {
+        if (i == type) {
+            return name[i];
+        }
+    }
+
+    fprintf(stderr, "invalid token: %d\n", type);
+    exit(1);
+}
 
 typedef enum Cent_number_type {
     Cent_number_type_none,

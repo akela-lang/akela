@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <akela/parse_tools.h>
 #include "base.h"
+#include "token.h"
 
 Cent_ast* Cent_parse_stmts(Cent_parse_data* pd);
 bool Cent_has_separator(Cent_parse_data* pd, Cent_ast* n);
@@ -17,6 +18,13 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
 {
     pd->top = Cent_base_create();
     Cent_ast* root = Cent_parse_stmts(pd);
+    if (pd->lookahead->type != Cent_token_eof) {
+        error_list_set(
+            pd->errors,
+            &pd->lookahead->loc,
+            "Unhandled token: %s",
+            Cent_token_name(pd->lookahead->type));
+    }
 
     Cent_parse_result result;
     Cent_parse_result_init(&result);
@@ -115,11 +123,6 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
         free(id);
     }
 
-    Cent_token* lcb = NULL;
-    Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n);
-    Cent_token_destroy(lcb);
-    free(lcb);
-
     Cent_ignore_newlines(pd, n);
 
     Cent_lookahead(pd);
@@ -136,10 +139,12 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
         Cent_ast_add(n, b);
     }
 
-    Cent_token* rcb = NULL;
-    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
-    Cent_token_destroy(rcb);
-    free(rcb);
+    Cent_ignore_newlines(pd, n);
+
+    Cent_token* end = NULL;
+    Cent_match(pd, Cent_token_end, "expected end", &end, n);
+    Cent_token_destroy(end);
+    free(end);
 
     if (!n->has_error) {
         Cent_element* element = NULL;
