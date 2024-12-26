@@ -149,7 +149,8 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
         Cent_symbol* sym = NULL;
         Cent_symbol_create(&sym);
         sym->type = Cent_symbol_type_element;
-        sym->element = element;
+        sym->data.element = element;
+        sym->n = n;
         Cent_environment_add_symbol(pd->top, &element->name, sym);
     }
 

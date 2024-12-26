@@ -24,7 +24,7 @@ typedef enum Cent_ast_type {
 typedef struct Cent_ast {
     Cent_ast_type type;
     struct buffer value;
-    Cent_environment* env;
+    struct Cent_environment* env;
     struct location loc;
     bool has_error;
     struct Cent_ast* next;

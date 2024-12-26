@@ -14,7 +14,7 @@ Cent_environment* Cent_base_create()
     element->number_type = Cent_number_type_integer;
     Cent_symbol_create(&sym);
     sym->type = Cent_symbol_type_element;
-    sym->element = element;
+    sym->data.element = element;
     hash_table_add(&env->symbols, &element->name, element);
 
     Cent_element_create(&element);
@@ -23,7 +23,7 @@ Cent_environment* Cent_base_create()
     element->number_type = Cent_number_type_fp;
     Cent_symbol_create(&sym);
     sym->type = Cent_symbol_type_element;
-    sym->element = element;
+    sym->data.element = element;
     hash_table_add(&env->symbols, &element->name, element);
 
     Cent_element_create(&element);
@@ -31,7 +31,7 @@ Cent_environment* Cent_base_create()
     element->type = Cent_value_type_string;
     Cent_symbol_create(&sym);
     sym->type = Cent_symbol_type_element;
-    sym->element = element;
+    sym->data.element = element;
     hash_table_add(&env->symbols, &element->name, element);
 
     Cent_element_create(&element);
@@ -39,7 +39,7 @@ Cent_environment* Cent_base_create()
     element->type = Cent_value_type_boolean;
     Cent_symbol_create(&sym);
     sym->type = Cent_symbol_type_element;
-    sym->element = element;
+    sym->data.element = element;
     hash_table_add(&env->symbols, &element->name, element);
 
     return env;

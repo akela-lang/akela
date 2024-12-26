@@ -1,7 +1,7 @@
 # Centipede Todo
-* work queue for top-level declarations
-* circular dependency checking for top-level work items
 * parse enum
+* flesh out environment symbols
+* circular dependency checking
 * parse top level assign
 * number test cases
 * string test cases

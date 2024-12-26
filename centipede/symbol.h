@@ -14,9 +14,12 @@ typedef enum Cent_symbol_type {
 
 typedef struct Cent_symbol {
     Cent_symbol_type type;
-    Cent_value* value;
-    Cent_element* element;
-    Cent_enumerate* enumerate;
+    union {
+        Cent_value* value;
+        Cent_element* element;
+        Cent_enumerate* enumerate;
+    } data;
+    void* n;
 } Cent_symbol;
 
 void Cent_symbol_init(Cent_symbol *sym);
