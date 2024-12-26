@@ -10,7 +10,7 @@
 
 struct comp_unit {
 	bool valid;
-	Cob_ast* root;
+	Ake_ast* root;
 	struct error_list el;
     struct buffer_list extern_list;
 	struct symbol_table st;

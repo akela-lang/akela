@@ -6,15 +6,15 @@
 #include "zinc/memory.h"
 #include "zinc/list.h"
 
-void Cob_ast_create(Cob_ast** n)
+void Ake_ast_create(Ake_ast** n)
 {
-	malloc_safe((void**)n, sizeof(Cob_ast));
-	Cob_ast_init(*n);
+	malloc_safe((void**)n, sizeof(Ake_ast));
+	Ake_ast_init(*n);
 }
 
-void Cob_ast_init(Cob_ast* n)
+void Ake_ast_init(Ake_ast* n)
 {
-	n->type = Cob_ast_type_none;
+	n->type = Ake_ast_type_none;
 	buffer_init(&n->value);
 	n->tu = NULL;
     n->is_mut = false;
@@ -27,14 +27,14 @@ void Cob_ast_init(Cob_ast* n)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Cob_ast_destroy(Cob_ast* n)
+void Ake_ast_destroy(Ake_ast* n)
 {
     if (n) {
-        Cob_ast* p = n->head;
+        Ake_ast* p = n->head;
         while (p) {
-            Cob_ast* temp = p;
+            Ake_ast* temp = p;
             p = p->next;
-            Cob_ast_destroy(temp);
+            Ake_ast_destroy(temp);
         }
 
         buffer_destroy(&n->value);
@@ -43,7 +43,7 @@ void Cob_ast_destroy(Cob_ast* n)
     }
 }
 
-void Cob_ast_add(Cob_ast* p, Cob_ast* c)
+void Ake_ast_add(Ake_ast* p, Ake_ast* c)
 {
     if (p->head && p->tail) {
         p->tail->next = c;
@@ -57,9 +57,9 @@ void Cob_ast_add(Cob_ast* p, Cob_ast* c)
 }
 
 /* assume parent and child are not NULL */
-void Ast_node_push(Cob_ast* parent, Cob_ast* child)
+void Ast_node_push(Ake_ast* parent, Ake_ast* child)
 {
-	Cob_ast* old_head = parent->head;
+	Ake_ast* old_head = parent->head;
 	if (old_head) {
 		old_head->prev = child;
 	}
@@ -67,10 +67,10 @@ void Ast_node_push(Cob_ast* parent, Cob_ast* child)
 	parent->head = child;
 }
 
-Cob_ast* Ast_node_get(Cob_ast* p, size_t pos)
+Ake_ast* Ast_node_get(Ake_ast* p, size_t pos)
 {
 	int i = 0;
-	for (Cob_ast* n = p->head; n; n = n->next) {
+	for (Ake_ast* n = p->head; n; n = n->next) {
 		if (i == pos) {
 			return n;
 		}
@@ -82,9 +82,9 @@ Cob_ast* Ast_node_get(Cob_ast* p, size_t pos)
 void Type_use_print(Type_use* tu);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_print(Cob_ast* n)
+void Ast_node_print(Ake_ast* n)
 {
-    char* names[Ast_type_count];
+    char* names[Ake_ast_type_count];
     Ast_set_names(names);
 
     if (n == NULL) return;
@@ -93,7 +93,7 @@ void Ast_node_print(Cob_ast* n)
     printf("[%p]", n);
     printf("%s", names[n->type]);
 
-	for (Cob_ast* p = n->head; p; p = p->next) {
+	for (Ake_ast* p = n->head; p; p = p->next) {
 		printf(" <%p>", p);
 	}
     printf(">");
@@ -102,7 +102,7 @@ void Ast_node_print(Cob_ast* n)
 
     printf("\n");
 
-    for (Cob_ast* p = n->head; p; p = p->next) {
+    for (Ake_ast* p = n->head; p; p = p->next) {
         Ast_node_print(p);
 	}
 }
@@ -133,9 +133,9 @@ void Type_use_print(Type_use* tu)
 void Type_use_print_pointers(Type_use* tu, struct list* l);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_print_pointers(Cob_ast* root, struct list* l)
+void Ast_node_print_pointers(Ake_ast* root, struct list* l)
 {
-    char* names[Ast_type_count];
+    char* names[Ake_ast_type_count];
     Ast_set_names(names);
 
     bool created = false;
@@ -150,7 +150,7 @@ void Ast_node_print_pointers(Cob_ast* root, struct list* l)
 
     Type_use_print_pointers(root->tu, l);
 
-    for (Cob_ast* p = root->head; p; p = p->next) {
+    for (Ake_ast* p = root->head; p; p = p->next) {
         Ast_node_print_pointers(p, l);
     }
 
@@ -174,7 +174,7 @@ void Type_use_print_pointers(Type_use* tu, struct list* l)
     }
 }
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_copy(Cob_ast* src, Cob_ast* dest)
+void Ast_node_copy(Ake_ast* src, Ake_ast* dest)
 {
     dest->type = src->type;
     dest->tu = Type_use_clone(src->tu);
@@ -183,19 +183,19 @@ void Ast_node_copy(Cob_ast* src, Cob_ast* dest)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Cob_ast* Ast_node_clone(Cob_ast* n)
+Ake_ast* Ast_node_clone(Ake_ast* n)
 {
-	Cob_ast* copy = NULL;
+	Ake_ast* copy = NULL;
 
 	if (n) {
-        Cob_ast_create(&copy);
+        Ake_ast_create(&copy);
         Ast_node_copy(n, copy);
 
-		Cob_ast* p = n->head;
+		Ake_ast* p = n->head;
 		while (p) {
-			Cob_ast* p_copy = NULL;
+			Ake_ast* p_copy = NULL;
 			p_copy = Ast_node_clone(p);
-            Cob_ast_add(copy, p_copy);
+            Ake_ast_add(copy, p_copy);
 			p = p->next;
 		}
 	}
@@ -204,7 +204,7 @@ Cob_ast* Ast_node_clone(Cob_ast* n)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Ast_node_match(Cob_ast* a, Cob_ast* b)
+bool Ast_node_match(Ake_ast* a, Ake_ast* b)
 {
 	if (a && b) {
 		if (a->type != b->type) {
@@ -225,8 +225,8 @@ bool Ast_node_match(Cob_ast* a, Cob_ast* b)
             return false;
         }
 
-		Cob_ast* c = a->head;
-		Cob_ast* d = b->head;
+		Ake_ast* c = a->head;
+		Ake_ast* d = b->head;
 		do {
 			if (!Ast_node_match(c, d)) {
 				return false;
@@ -243,11 +243,11 @@ bool Ast_node_match(Cob_ast* a, Cob_ast* b)
 	return true;
 }
 
-size_t Ast_node_count_children(Cob_ast* n)
+size_t Ast_node_count_children(Ake_ast* n)
 {
     size_t count = 0;
     if (n) {
-        Cob_ast* p = n->head;
+        Ake_ast* p = n->head;
         while (p) {
             count++;
             p = p->next;

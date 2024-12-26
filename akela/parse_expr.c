@@ -10,32 +10,32 @@
 #include <assert.h>
 #include "symbol.h"
 
-Cob_ast* parse_assignment(struct parse_state* ps);
-Cob_ast* parse_eseq(struct parse_state* ps);
-Cob_ast* parse_boolean(struct parse_state* ps);
-Cob_ast* parse_comparison(struct parse_state* ps);
-Cob_ast* parse_add(struct parse_state* ps);
-Cob_ast* parse_mult(struct parse_state* ps);
-Cob_ast* parse_power(struct parse_state* ps);
-Cob_ast* parse_complex_operators(struct parse_state* ps);
-void parse_subscript(struct parse_state* ps, Cob_ast* left, Cob_ast* n);
-void parse_call(struct parse_state* ps, Cob_ast* left, Cob_ast* n);
-Cob_ast* parse_cseq(struct parse_state* ps, Cob_ast* left);
-Cob_ast* parse_dot(struct parse_state* ps);
+Ake_ast* parse_assignment(struct parse_state* ps);
+Ake_ast* parse_eseq(struct parse_state* ps);
+Ake_ast* parse_boolean(struct parse_state* ps);
+Ake_ast* parse_comparison(struct parse_state* ps);
+Ake_ast* parse_add(struct parse_state* ps);
+Ake_ast* parse_mult(struct parse_state* ps);
+Ake_ast* parse_power(struct parse_state* ps);
+Ake_ast* parse_complex_operators(struct parse_state* ps);
+void parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n);
+void parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n);
+Ake_ast* parse_cseq(struct parse_state* ps, Ake_ast* left);
+Ake_ast* parse_dot(struct parse_state* ps);
 
 /* expr -> assignment */
-Cob_ast* parse_expr(struct parse_state* ps)
+Ake_ast* parse_expr(struct parse_state* ps)
 {
     return parse_assignment(ps);
 }
 
 /* assignment -> eseq = assignment | eseq */
-Cob_ast* parse_assignment(struct parse_state* ps)
+Ake_ast* parse_assignment(struct parse_state* ps)
 {
-	Cob_ast* n = NULL;
+	Ake_ast* n = NULL;
 
-	Cob_ast* a = NULL;
-    Cob_ast* a_last;
+	Ake_ast* a = NULL;
+    Ake_ast* a_last;
 
 	while (true) {
         a_last = a;
@@ -44,21 +44,21 @@ Cob_ast* parse_assignment(struct parse_state* ps)
         if (!check_assignment_value_count(a, a_last)) {
             error_list_set(ps->el, &a->loc, "assignment sequence counts do not match");
             /* test case: test_parse_expr_assignment_eseq_error_eseq_count */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
         if (!a) {
             if (n) {
                 error_list_set(ps->el, &a->loc, "missing rvalue in assignment");
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
             }
             break;
         }
 
         /* rvalue */
         if (a_last) {
-            if (a->type == Ast_type_eseq) {
-                Cob_ast* p = a->head;
+            if (a->type == Ake_ast_type_eseq) {
+                Ake_ast* p = a->head;
                 while (p) {
                     if (!p->tu) {
                         error_list_set(ps->el, &p->loc, "rvalue does not have a type");
@@ -76,9 +76,9 @@ Cob_ast* parse_assignment(struct parse_state* ps)
         if (t0->type != token_equal) {
             if (n) {
                 /* last assignment */
-                Cob_ast_add(n, a);
-                if (a->type == Cob_ast_type_error) {
-                    n->type = Cob_ast_type_error;
+                Ake_ast_add(n, a);
+                if (a->type == Ake_ast_type_error) {
+                    n->type = Ake_ast_type_error;
                 }
             } else {
                 /* no assignment */
@@ -89,12 +89,12 @@ Cob_ast* parse_assignment(struct parse_state* ps)
         } else {
             if (!n) {
                 /* start assign tree */
-                Cob_ast_create(&n);
-                n->type = Ast_type_assign;
+                Ake_ast_create(&n);
+                n->type = Ake_ast_type_assign;
                 n->tu = Type_use_clone(a->tu);
             }
 
-            Cob_ast_add(n, a);
+            Ake_ast_add(n, a);
 
             struct token *equal = NULL;
             if (!match(ps, token_equal, "expecting assign operator", &equal, n)) {
@@ -102,19 +102,19 @@ Cob_ast* parse_assignment(struct parse_state* ps)
                 assert(false);
             }
 
-            if (a->type == Ast_type_eseq) {
-                Cob_ast* p = a->head;
+            if (a->type == Ake_ast_type_eseq) {
+                Ake_ast* p = a->head;
                 while (p) {
                     if (!p->tu) {
                         error_list_set(ps->el, &p->loc, "lvalue does not have a type");
-                        n->type = Cob_ast_type_error;
+                        n->type = Ake_ast_type_error;
                     }
                     p = p->next;
                 }
             } else {
                 if (!a->tu) {
                     error_list_set(ps->el, &a->loc, "lvalue does not have a type");
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
                 }
             }
 
@@ -125,17 +125,17 @@ Cob_ast* parse_assignment(struct parse_state* ps)
         }
 	}
 
-    if (n && n->type == Ast_type_assign) {
-        Cob_ast* rhs = n->tail;
-        Cob_ast* lhs = n->head;
-        Cob_ast* prev_lhs = NULL;
+    if (n && n->type == Ake_ast_type_assign) {
+        Ake_ast* rhs = n->tail;
+        Ake_ast* lhs = n->head;
+        Ake_ast* prev_lhs = NULL;
         while (lhs && lhs != rhs) {
-            if (lhs->type == Ast_type_eseq) {
-                Cob_ast* lhs2 = lhs->head;
-                Cob_ast* rhs2 = rhs->head;
+            if (lhs->type == Ake_ast_type_eseq) {
+                Ake_ast* lhs2 = lhs->head;
+                Ake_ast* rhs2 = rhs->head;
                 while (lhs2) {
                     if (!check_lvalue(ps, lhs2, &n->loc)) {
-                        n->type = Cob_ast_type_error;
+                        n->type = Ake_ast_type_error;
                     }
                     Override_rhs(lhs2->tu, rhs2);
                     if (!type_use_can_cast(lhs2->tu, rhs2->tu)) {
@@ -146,18 +146,18 @@ Cob_ast* parse_assignment(struct parse_state* ps)
                 }
             } else {
                 if (!check_lvalue(ps, lhs, &n->loc)) {
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
                 }
 
                 if (!type_use_can_cast(lhs->tu, rhs->tu)) {
                     error_list_set(ps->el, &rhs->loc, "values in assignment not compatible");
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
                 }
 
                 if (prev_lhs) {
                     if (lhs->tu->td != prev_lhs->tu->td) {
                         error_list_set(ps->el, &lhs->loc, "lvalues do not match type in assignment");
-                        n->type = Cob_ast_type_error;
+                        n->type = Ake_ast_type_error;
                     }
                 }
             }
@@ -165,7 +165,7 @@ Cob_ast* parse_assignment(struct parse_state* ps)
             lhs = lhs->next;
         }
 
-        if (prev_lhs && prev_lhs->type != Ast_type_eseq) {
+        if (prev_lhs && prev_lhs->type != Ake_ast_type_eseq) {
             Override_rhs(prev_lhs->tu, rhs);
         }
     }
@@ -175,16 +175,16 @@ Cob_ast* parse_assignment(struct parse_state* ps)
 
 /* eseq = boolean eseq' */
 /* eseq' = , boolean | e */
-Cob_ast* parse_eseq(struct parse_state* ps)
+Ake_ast* parse_eseq(struct parse_state* ps)
 {
-    Cob_ast* a = NULL;
+    Ake_ast* a = NULL;
     a = parse_boolean(ps);
 
     if (!a) {
         return NULL;
     }
 
-    Cob_ast* parent = NULL;
+    Ake_ast* parent = NULL;
     while (true) {
         struct token* t0 = get_lookahead(ps);
 
@@ -193,17 +193,17 @@ Cob_ast* parse_eseq(struct parse_state* ps)
         }
 
         if (!parent) {
-            Cob_ast_create(&parent);
-            parent->type = Ast_type_eseq;
-            Cob_ast_add(parent, a);
-            if (a->type == Cob_ast_type_error) {
-                parent->type = Cob_ast_type_error;
+            Ake_ast_create(&parent);
+            parent->type = Ake_ast_type_eseq;
+            Ake_ast_add(parent, a);
+            if (a->type == Ake_ast_type_error) {
+                parent->type = Ake_ast_type_error;
             }
 
-            if (parent->type != Cob_ast_type_error) {
+            if (parent->type != Ake_ast_type_error) {
                 if (!a->tu) {
                     error_list_set(ps->el, &a->loc, "operand of eseq has no type");
-                    parent->type = Cob_ast_type_error;
+                    parent->type = Ake_ast_type_error;
                 }
             }
         }
@@ -216,29 +216,29 @@ Cob_ast* parse_eseq(struct parse_state* ps)
         token_destroy(comma);
         free(comma);
 
-        Cob_ast* b = NULL;
+        Ake_ast* b = NULL;
         b = parse_boolean(ps);
-        if (b && b->type == Cob_ast_type_error) {
-            parent->type = Cob_ast_type_error;
+        if (b && b->type == Ake_ast_type_error) {
+            parent->type = Ake_ast_type_error;
         }
 
         /* parent checks */
         if (!b) {
             error_list_set(ps->el, &b->loc, "expected term after comma");
-            parent->type = Cob_ast_type_error;
+            parent->type = Ake_ast_type_error;
         }
 
         if (b) {
             if (!b->tu) {
                 error_list_set(ps->el, &b->loc, "operand of eseq has no type");
-                b->type = Cob_ast_type_error;
+                b->type = Ake_ast_type_error;
             }
         }
 
         if (b) {
-            Cob_ast_add(parent, b);
-            if (b->type == Cob_ast_type_error) {
-                parent->type = Cob_ast_type_error;
+            Ake_ast_add(parent, b);
+            if (b->type == Ake_ast_type_error) {
+                parent->type = Ake_ast_type_error;
             }
         }
     }
@@ -249,19 +249,19 @@ Cob_ast* parse_eseq(struct parse_state* ps)
     return parent;
 }
 
-Cob_ast* parse_simple_expr(struct parse_state* ps)
+Ake_ast* parse_simple_expr(struct parse_state* ps)
 {
     return parse_boolean(ps);
 }
 
 /* boolean -> comparison boolean' */
 /* boolean' -> && comparison boolean' | || comparison boolean' | e */
-Cob_ast* parse_boolean(struct parse_state* ps)
+Ake_ast* parse_boolean(struct parse_state* ps)
 {
-	Cob_ast* n = NULL;
-	Cob_ast* left;
+	Ake_ast* n = NULL;
+	Ake_ast* left;
 
-	Cob_ast* a = NULL;
+	Ake_ast* a = NULL;
 	a = parse_comparison(ps);
 
 	if (!a) {
@@ -273,16 +273,16 @@ Cob_ast* parse_boolean(struct parse_state* ps)
 		struct token* t0 = get_lookahead(ps);
 
 		/* operator */
-		enum Cob_ast_type type;
+		enum Ake_ast_type type;
 		if (t0 && t0->type == token_and) {
-			type = Ast_type_and;
+			type = Ake_ast_type_and;
 		} else if (t0 && t0->type == token_or) {
-			type = Ast_type_or;
+			type = Ake_ast_type_or;
 		} else {
 			break;
 		}
 
-        Cob_ast_create(&n);
+        Ake_ast_create(&n);
 		n->type = type;
 
 		struct token* op = NULL;
@@ -292,50 +292,50 @@ Cob_ast* parse_boolean(struct parse_state* ps)
         }
 
         if (!consume_newline(ps, n)) {
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
 		/* comparison */
-		Cob_ast* b = NULL;
+		Ake_ast* b = NULL;
 		b = parse_comparison(ps);
 
 		if (!b) {
             struct location b_loc = get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after && or ||");
 			/* test case: test_parse_boolean_error_expected_term */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
 		}
 
         if (left) {
-            Cob_ast_add(n, left);
-            if (left->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, left);
+            if (left->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
         if (b) {
-            Cob_ast_add(n, b);
-            if (b->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, b);
+            if (b->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
-		if (n->type != Cob_ast_type_error) {
+		if (n->type != Ake_ast_type_error) {
 			assert(b);
             assert(left);
 			if (!left->tu) {
 				error_list_set(ps->el, &left->loc, "left-side operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_left_no_value */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (!b->tu) {
 				error_list_set(ps->el, &b->loc, "operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_right_no_value */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (left->tu->td->type != type_boolean) {
 				error_list_set(ps->el, &left->loc, "left-side expression of boolean operator is not boolean");
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (b->tu->td->type != type_boolean) {
 				error_list_set(ps->el, &b->loc, "expression of boolean operator is not boolean");
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else {
 				n->tu = Type_use_clone(left->tu);
 			}
@@ -359,11 +359,11 @@ Cob_ast* parse_boolean(struct parse_state* ps)
 *	           | >= add comparison'
 *	           | e
 */
-Cob_ast* parse_comparison(struct parse_state* ps)
+Ake_ast* parse_comparison(struct parse_state* ps)
 {
-	Cob_ast* n = NULL;
-	Cob_ast* a = NULL;
-	Cob_ast* left = NULL;
+	Ake_ast* n = NULL;
+	Ake_ast* a = NULL;
+	Ake_ast* left = NULL;
 
 	a = parse_add(ps);
 
@@ -375,24 +375,24 @@ Cob_ast* parse_comparison(struct parse_state* ps)
 
 	while (true) {
 		struct token* t0 = get_lookahead(ps);
-		enum Cob_ast_type type;
+		enum Ake_ast_type type;
 
 		if (!t0) {
 			break;
 		}
 
 		if (t0->type == token_double_equal) {
-			type = Ast_type_equality;
+			type = Ake_ast_type_equality;
 		} else if (t0->type == token_not_equal) {
-			type = Ast_type_not_equal;
+			type = Ake_ast_type_not_equal;
 		} else if (t0->type == token_less_than) {
-			type = Ast_type_less_than;
+			type = Ake_ast_type_less_than;
 		} else if (t0->type == token_less_than_or_equal) {
-			type = Ast_type_less_than_or_equal;
+			type = Ake_ast_type_less_than_or_equal;
 		} else if (t0->type == token_greater_than) {
-			type = Ast_type_greater_than;
+			type = Ake_ast_type_greater_than;
 		} else if (t0->type == token_greater_than_or_equal) {
-			type = Ast_type_greater_than_or_equal;
+			type = Ake_ast_type_greater_than_or_equal;
 		} else {
 			break;
 		}
@@ -400,41 +400,41 @@ Cob_ast* parse_comparison(struct parse_state* ps)
 		struct token* op = NULL;
 		if (!match(ps, t0->type, "expecting comparator", &op, n)) {
             /* test case: no test case needed */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
         if (!consume_newline(ps, n)) {
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
-		Cob_ast* b = NULL;
+		Ake_ast* b = NULL;
 		b = parse_add(ps);
 
 		if (!b) {
             struct location b_loc = get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after comparison operator");
 			/* case case: test_parse_comparison_error_no_term */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
 		}
 
-        Cob_ast_create(&n);
+        Ake_ast_create(&n);
         n->type = type;
 
         if (left) {
-            Cob_ast_add(n, left);
-            if (left->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, left);
+            if (left->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
         if (b) {
-            Cob_ast_add(n, b);
-            if (b->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, b);
+            if (b->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
-		if (n->type != Cob_ast_type_error) {
+		if (n->type != Ake_ast_type_error) {
 			assert(a);
 			assert(b);
 			assert(op);
@@ -442,20 +442,20 @@ Cob_ast* parse_comparison(struct parse_state* ps)
 			if (!left->tu) {
 				error_list_set(ps->el, &left->loc, "operand has no value");
 				/* test case: test_parse_comparison_error_left_not_numeric */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (!b->tu) {
 				error_list_set(ps->el, &b->loc, "operand has no value");
 				/* test case: test_parse_comparison_error_right_no_value */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else {
 				if (!is_identity_comparison(type) && !is_numeric(left->tu->td)) {
 					error_list_set(ps->el, &left->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_left_not_numeric */
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
 				} else if (!is_identity_comparison(type) && !is_numeric(b->tu->td)) {
 					error_list_set(ps->el, &b->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_right_not_numeric */
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
 				} else {
 					Type_use* tu = Type_use_clone(left->tu);
 					type_find_whole(ps->st, tu, b->tu);
@@ -474,12 +474,12 @@ Cob_ast* parse_comparison(struct parse_state* ps)
 
 /* add -> mult add' */
 /* add' -> + mult add' | - mult add' | e */
-Cob_ast* parse_add(struct parse_state* ps)
+Ake_ast* parse_add(struct parse_state* ps)
 {
-	Cob_ast* a = NULL;
-	Cob_ast* b = NULL;
-	Cob_ast* n = NULL;
-	Cob_ast* left = NULL;
+	Ake_ast* a = NULL;
+	Ake_ast* b = NULL;
+	Ake_ast* n = NULL;
+	Ake_ast* left = NULL;
 	char* op_name;
 
 	a = parse_mult(ps);
@@ -499,28 +499,28 @@ Cob_ast* parse_add(struct parse_state* ps)
 		}
 
 		/* operator */
-		enum Cob_ast_type type;
+		enum Ake_ast_type type;
 		if (t0->type == token_plus) {
-			type = Ast_type_plus;
+			type = Ake_ast_type_plus;
 			op_name = "addition";
 		} else if (t0->type == token_minus) {
-			type = Ast_type_minus;
+			type = Ake_ast_type_minus;
 			op_name = "subtraction";
 		} else {
 			break;
 		}
 
-        Cob_ast_create(&n);
+        Ake_ast_create(&n);
         n->type = type;
 
         struct token* op = NULL;
 		if (!match(ps, t0->type, "expecting + or -", &op, n)) {
             /* test case: no test case needed */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
         if (!consume_newline(ps, n)) {
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
 		b = parse_mult(ps);
@@ -529,52 +529,52 @@ Cob_ast* parse_add(struct parse_state* ps)
             struct location b_loc = get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after additive operator");
 			/* test case: test_parse_add_error_expected_term */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
 		}
 
         if (left) {
-            Cob_ast_add(n, left);
-            if (left->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, left);
+            if (left->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
         if (b) {
-            Cob_ast_add(n, b);
-            if (b->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, b);
+            if (b->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
-		if (n->type != Cob_ast_type_error) {
+		if (n->type != Ake_ast_type_error) {
 			Type_use* tu_a = a->tu;
 			Type_use* tu_b = b->tu;
 
 			if (!tu_a) {
 				error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_left_no_value */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (!is_numeric(tu_a->td)) {
 				error_list_set(ps->el, &a->loc, "%s on non-numeric operand", op_name);
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			}
 
 			if (!tu_b) {
 				error_list_set(ps->el, &b->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_right_no_value */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (!is_numeric(tu_b->td)) {
 				error_list_set(ps->el, &b->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_add_error_right_not_numeric */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			}
 
-			if (n->type != Cob_ast_type_error) {
+			if (n->type != Ake_ast_type_error) {
 				Type_use* tu = Type_use_clone(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
                     Type_use_destroy(tu);
 				} else {
 					n->tu = tu;
@@ -594,12 +594,12 @@ Cob_ast* parse_add(struct parse_state* ps)
 
 /* mult -> power mult' */
 /* mult' -> * power mult' | e */
-Cob_ast* parse_mult(struct parse_state* ps)
+Ake_ast* parse_mult(struct parse_state* ps)
 {
-	Cob_ast* a = NULL;
-	Cob_ast* b = NULL;
-	Cob_ast* left = NULL;
-	Cob_ast* n = NULL;
+	Ake_ast* a = NULL;
+	Ake_ast* b = NULL;
+	Ake_ast* left = NULL;
+	Ake_ast* n = NULL;
 	char* op_name;
 
 	a = parse_power(ps);
@@ -619,18 +619,18 @@ Cob_ast* parse_mult(struct parse_state* ps)
 		}
 
 		/* operator */
-		enum Cob_ast_type type;
+		enum Ake_ast_type type;
 		if (t0->type == token_mult) {
-			type = Ast_type_mult;
+			type = Ake_ast_type_mult;
 			op_name = "multiplication";
 		} else if (t0->type == token_divide) {
-			type = Ast_type_divide;
+			type = Ake_ast_type_divide;
 			op_name = "division";
 		} else {
 			break;
 		}
 
-        Cob_ast_create(&n);
+        Ake_ast_create(&n);
         n->type = type;
 
         struct token* op = NULL;
@@ -640,7 +640,7 @@ Cob_ast* parse_mult(struct parse_state* ps)
         }
 
         if (!consume_newline(ps, n)) {
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
 		/* parse_factor */
@@ -650,24 +650,24 @@ Cob_ast* parse_mult(struct parse_state* ps)
             struct location b_loc = get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after operator");
 			/* test case: test_parse_mult_error_expected_term */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
 		}
 
         if (left) {
-            Cob_ast_add(n, left);
-            if (left->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, left);
+            if (left->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
         if (b) {
-            Cob_ast_add(n, b);
-            if (b->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, b);
+            if (b->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
-		if (n->type != Cob_ast_type_error) {
+		if (n->type != Ake_ast_type_error) {
 			assert(a);
 			assert(b);
 			Type_use* tu_a = a->tu;
@@ -676,29 +676,29 @@ Cob_ast* parse_mult(struct parse_state* ps)
 			if (!tu_a) {
 				error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_mult_error_left_no_value */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (!is_numeric(tu_a->td)) {
 				error_list_set(ps->el, &a->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_mult_error_left_not_numeric */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			}
 
 			if (!tu_b) {
 				error_list_set(ps->el, &b->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_mult_error_right_no_value*/
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (!is_numeric(tu_b->td)) {
 				error_list_set(ps->el, &b->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_mult_error_right_not_numeric */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			}
 
-			if (n->type != Cob_ast_type_error) {
+			if (n->type != Ake_ast_type_error) {
 				Type_use* tu = Type_use_clone(tu_a);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
                     Type_use_destroy(tu);
 				} else {
 					n->tu = tu;
@@ -718,10 +718,10 @@ Cob_ast* parse_mult(struct parse_state* ps)
 
 /* power -> dot power' | e */
 /* power' -> ^ dot power' | e */
-Cob_ast* parse_power(struct parse_state* ps)
+Ake_ast* parse_power(struct parse_state* ps)
 {
-	Cob_ast* n = NULL;
-	Cob_ast* a = NULL;
+	Ake_ast* n = NULL;
+	Ake_ast* a = NULL;
 
 	a = parse_complex_operators(ps);
 
@@ -729,7 +729,7 @@ Cob_ast* parse_power(struct parse_state* ps)
 		return a;
 	}
 
-	Cob_ast* left = n = a ;
+	Ake_ast* left = n = a ;
 
 	while (true) {
 		struct token* t0 = NULL;
@@ -738,12 +738,12 @@ Cob_ast* parse_power(struct parse_state* ps)
 			break;
 		}
 
-        Cob_ast_create(&n);
-        n->type = Ast_type_power;
+        Ake_ast_create(&n);
+        n->type = Ake_ast_type_power;
         if (left) {
-            Cob_ast_add(n, left);
-            if (left->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, left);
+            if (left->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
@@ -754,19 +754,19 @@ Cob_ast* parse_power(struct parse_state* ps)
         }
 
         if (!consume_newline(ps, n)) {
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
-		Cob_ast* b = NULL;
+		Ake_ast* b = NULL;
 		b = parse_complex_operators(ps);
-        if (b && b->type == Cob_ast_type_error) {
-            n->type = Cob_ast_type_error;
+        if (b && b->type == Ake_ast_type_error) {
+            n->type = Ake_ast_type_error;
         }
 
         if (b) {
-            Cob_ast_add(n, b);
-            if (b->type == Cob_ast_type_error) {
-                n->type = Cob_ast_type_error;
+            Ake_ast_add(n, b);
+            if (b->type == Ake_ast_type_error) {
+                n->type = Ake_ast_type_error;
             }
         }
 
@@ -774,10 +774,10 @@ Cob_ast* parse_power(struct parse_state* ps)
             struct location b_loc = get_location(ps);
             error_list_set(ps->el, &b_loc, "expected term after caret");
             /* test case: test_parse_power_error_expected_term */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
-        if (n->type != Cob_ast_type_error) {
+        if (n->type != Ake_ast_type_error) {
 			assert(left);
 			assert(b);
 			Type_use* tu_left = left->tu;
@@ -786,29 +786,29 @@ Cob_ast* parse_power(struct parse_state* ps)
 			if (!tu_left) {
 				error_list_set(ps->el, &left->loc, "power operand has no value");
 				/* test case: test_parse_power_error_left_no_value */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (!is_numeric(tu_left->td)) {
 				error_list_set(ps->el, &left->loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_left_not_numeric */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			}
 
 			if (!tu_b) {
 				error_list_set(ps->el, &b->loc, "power operand has no value");
 				/* test case: test_parse_power_error_right_no_value */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			} else if (!is_numeric(tu_b->td)) {
 				error_list_set(ps->el, &b->loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_right_not_numeric */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
 			}
 
-			if (n->type != Cob_ast_type_error) {
+			if (n->type != Ake_ast_type_error) {
 				Type_use* tu = Type_use_clone(tu_left);
 				if (!type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &b->loc, "invalid power types");
 					/* test case: no test case needed */
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
                     Type_use_destroy(tu);
 				} else {
 					n->tu = tu;
@@ -827,10 +827,10 @@ Cob_ast* parse_power(struct parse_state* ps)
 
 /* complex_operators -> factor complex_operators' */
 /* complex_operators' -> [expr] complex_operators' | (call_seq) complex_operators' | e */
-Cob_ast* parse_complex_operators(struct parse_state* ps)
+Ake_ast* parse_complex_operators(struct parse_state* ps)
 {
-    Cob_ast* n = NULL;
-    Cob_ast* a = NULL;
+    Ake_ast* n = NULL;
+    Ake_ast* a = NULL;
 
     a = parse_dot(ps);
 
@@ -838,7 +838,7 @@ Cob_ast* parse_complex_operators(struct parse_state* ps)
         return a;
     }
 
-    Cob_ast* left = n = a;
+    Ake_ast* left = n = a;
     while (true) {
         struct token* t0 = get_lookahead(ps);
 
@@ -846,15 +846,15 @@ Cob_ast* parse_complex_operators(struct parse_state* ps)
             break;
         }
 
-        Cob_ast_create(&n);
+        Ake_ast_create(&n);
         if (t0->type == token_left_square_bracket) {
             parse_subscript(ps, left, n);
         } else if (t0->type == token_left_paren) {
             parse_call(ps, left, n);
         }
 
-        if (left->type == Cob_ast_type_error) {
-            n->type = Cob_ast_type_error;
+        if (left->type == Ake_ast_type_error) {
+            n->type = Ake_ast_type_error;
         }
 
         left = n;
@@ -863,33 +863,33 @@ Cob_ast* parse_complex_operators(struct parse_state* ps)
     return n;
 }
 
-void parse_subscript(struct parse_state* ps, Cob_ast* left, Cob_ast* n)
+void parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
 {
-    n->type = Ast_type_array_subscript;
+    n->type = Ake_ast_type_array_subscript;
 
     if (!left->tu) {
         error_list_set(ps->el, &left->loc, "expression has subscript but has no value");
-        left->type = Cob_ast_type_error;
+        left->type = Ake_ast_type_error;
     }
 
-    if (left->type != Cob_ast_type_error) {
+    if (left->type != Ake_ast_type_error) {
         if (left->tu->is_array || left->tu->is_slice) {
             n->tu = Type_use_clone(left->tu);
             Type_use_reduce_dimension(n->tu);
         }
     }
 
-    if (left->type == Cob_ast_type_error) {
-        n->type = Cob_ast_type_error;
+    if (left->type == Ake_ast_type_error) {
+        n->type = Ake_ast_type_error;
     }
 
-    if (n->type != Cob_ast_type_error) {
+    if (n->type != Ake_ast_type_error) {
         if (!left->tu->is_array && !left->tu->is_slice) {
             error_list_set(ps->el,
                            &left->loc,
                            "expression has subscript but is not an array or slice");
             /* test case: test_parse_subscript_error_not_array */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
     }
 
@@ -903,70 +903,70 @@ void parse_subscript(struct parse_state* ps, Cob_ast* left, Cob_ast* n)
     free(lsb);
 
     if (!consume_newline(ps,  n)) {
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
     }
 
-    Cob_ast* b = NULL;
+    Ake_ast* b = NULL;
     b = parse_expr(ps);
-    if (b && b->type == Cob_ast_type_error) {
-        n->type = Cob_ast_type_error;
+    if (b && b->type == Ake_ast_type_error) {
+        n->type = Ake_ast_type_error;
     }
 
     if (!consume_newline(ps, n)) {
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
     }
 
     struct token* rsb = NULL;
     if (!match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
     }
 
     token_destroy(rsb);
     free(rsb);
 
-    Cob_ast_add(n, left);
+    Ake_ast_add(n, left);
 
     if (b) {
-        Cob_ast_add(n, b);
+        Ake_ast_add(n, b);
     }
 }
 
-void parse_call(struct parse_state* ps, Cob_ast* left, Cob_ast* n) {
-    n->type = Ast_type_call;
+void parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
+    n->type = Ake_ast_type_call;
 
     struct token *lp = NULL;
     if (!match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
         /* test case: test case not needed */
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
     }
 
     if (!consume_newline(ps, n)) {
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
     }
 
-    Cob_ast *cseq_node = NULL;
+    Ake_ast *cseq_node = NULL;
     cseq_node = parse_cseq(ps, left);
 
-    Cob_ast_add(n, left);
+    Ake_ast_add(n, left);
 
     if (cseq_node) {
-        Cob_ast_add(n, cseq_node);
-        if (cseq_node->type == Cob_ast_type_error) {
-            n->type = Cob_ast_type_error;
+        Ake_ast_add(n, cseq_node);
+        if (cseq_node->type == Ake_ast_type_error) {
+            n->type = Ake_ast_type_error;
         }
     }
 
     if (!consume_newline(ps, n)) {
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
     }
 
     struct token *rp = NULL;
     if (!match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
         /* test case: test_parse_call_error_right_paren */
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
     }
 
-    if (n->type != Cob_ast_type_error) {
+    if (n->type != Ake_ast_type_error) {
         Type_use *tu = left->tu;
         assert(tu);
         assert(tu->td);
@@ -974,7 +974,7 @@ void parse_call(struct parse_state* ps, Cob_ast* left, Cob_ast* n) {
         if (td->type != type_function) {
             error_list_set(ps->el, &left->loc, "not a function type");
             /* test case: test_parse_call_error_not_function */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         } else {
             Type_use *inputs = NULL;
             Type_use *outputs = NULL;
@@ -1002,11 +1002,11 @@ void parse_call(struct parse_state* ps, Cob_ast* left, Cob_ast* n) {
             if (ccount < tcount) {
                 error_list_set(ps->el, &rp->loc, "not enough arguments in function call");
                 /* test case: test_parse_call_error_not_enough_arguments */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
             } else if (!is_variadic && ccount > tcount) {
                 error_list_set(ps->el, &rp->loc, "too many arguments in function call");
                 /* test case: test_parse_call_error_too_many_arguments */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
             }
 
             /* output */
@@ -1025,23 +1025,23 @@ void parse_call(struct parse_state* ps, Cob_ast* left, Cob_ast* n) {
 
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
-Cob_ast* parse_cseq(struct parse_state* ps, Cob_ast* left)
+Ake_ast* parse_cseq(struct parse_state* ps, Ake_ast* left)
 {
-    Cob_ast* n = NULL;
-    Cob_ast_create(&n);
-    n->type = Ast_type_cseq;
+    Ake_ast* n = NULL;
+    Ake_ast_create(&n);
+    n->type = Ake_ast_type_cseq;
 
     if (!left->tu || !left->tu->td || left->tu->td->type != type_function) {
         error_list_set(ps->el, &left->loc, "not a function type");
         /* test case: no test case needed */
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
         return n;
     }
 
-    Cob_ast* a = NULL;
+    Ake_ast* a = NULL;
     a = parse_simple_expr(ps);
-    if (a && a->type == Cob_ast_type_error) {
-        n->type = Cob_ast_type_error;
+    if (a && a->type == Ake_ast_type_error) {
+        n->type = Ake_ast_type_error;
     }
 
     if (!a) {
@@ -1049,11 +1049,11 @@ Cob_ast* parse_cseq(struct parse_state* ps, Cob_ast* left)
     }
     int i = 0;
     if (!check_input_type(ps, left->tu, i, a)) {
-        n->type = Cob_ast_type_error;
+        n->type = Ake_ast_type_error;
     }
     i++;
 
-    Cob_ast_add(n, a);
+    Ake_ast_add(n, a);
 
     while (true) {
         struct token* t0 = get_lookahead(ps);
@@ -1065,32 +1065,32 @@ Cob_ast* parse_cseq(struct parse_state* ps, Cob_ast* left)
         struct token* comma = NULL;
         if (!match(ps, token_comma, "expecting comma", &comma, n)) {
             /* test case: no test case needed */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
         token_destroy(comma);
         free(comma);
 
         if (!consume_newline(ps, n)) {
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
         a = parse_simple_expr(ps);
-        if (a && a->type == Cob_ast_type_error) {
-            n->type = Cob_ast_type_error;
+        if (a && a->type == Ake_ast_type_error) {
+            n->type = Ake_ast_type_error;
         }
 
         if (!a) {
             struct location a_loc = get_location(ps);
             error_list_set(ps->el, &a_loc, "expected expression after comma");
             /* test case: test_parse_call_error_expected_expression */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         } else {
             /* transfer a -> parent */
-            Cob_ast_add(n, a);
+            Ake_ast_add(n, a);
 
             if (!check_input_type(ps, left->tu, i, a)) {
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
             }
         }
 
@@ -1102,10 +1102,10 @@ Cob_ast* parse_cseq(struct parse_state* ps, Cob_ast* left)
 
 /* dot -> factor dot' */
 /* dot' -> . factor dot' | e */
-Cob_ast* parse_dot(struct parse_state* ps)
+Ake_ast* parse_dot(struct parse_state* ps)
 {
-    Cob_ast* n = NULL;
-    Cob_ast* a = NULL;
+    Ake_ast* n = NULL;
+    Ake_ast* a = NULL;
 
     a = parse_factor(ps);
 
@@ -1113,7 +1113,7 @@ Cob_ast* parse_dot(struct parse_state* ps)
         return a;
     }
 
-    Cob_ast* left = n = a;
+    Ake_ast* left = n = a;
     while (true) {
         struct token* t0 = NULL;
         t0 = get_lookahead(ps);
@@ -1121,47 +1121,47 @@ Cob_ast* parse_dot(struct parse_state* ps)
             break;
         }
 
-        Cob_ast_create(&n);
-        n->type = Ast_type_dot;
+        Ake_ast_create(&n);
+        n->type = Ake_ast_type_dot;
 
         struct token* dot = NULL;
         if (!match(ps, token_dot, "expected a dot", &dot, n)) {
             /* test case: no test case needed */
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
         if (!consume_newline(ps, n)) {
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
         struct token* id = NULL;
         if (!match(ps, token_id, "expected identifier", &id, n)) {
-            n->type = Cob_ast_type_error;
+            n->type = Ake_ast_type_error;
         }
 
-        Cob_ast* b = NULL;
-        Cob_ast_create(&b);
-        b->type = Ast_type_id;
+        Ake_ast* b = NULL;
+        Ake_ast_create(&b);
+        b->type = Ake_ast_type_id;
         if (id) {
             buffer_copy(&id->value, &b->value);
         }
 
-        Cob_ast_add(n, left);
-        if (left->type == Cob_ast_type_error) {
-            n->type = Cob_ast_type_error;
+        Ake_ast_add(n, left);
+        if (left->type == Ake_ast_type_error) {
+            n->type = Ake_ast_type_error;
         }
 
-        Cob_ast_add(n, b);
+        Ake_ast_add(n, b);
 
-        if (n->type != Cob_ast_type_error) {
+        if (n->type != Ake_ast_type_error) {
             if (!left->tu) {
                 error_list_set(ps->el, &left->loc, "dot operand has no value");
                 /* test case: no test case necessary */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
             } else if (left->tu->td->type != type_struct) {
                 error_list_set(ps->el, &left->loc, "dot operand is not a struct");
                 /* test case: test_parse_dot_error_left_non_module */
-                n->type = Cob_ast_type_error;
+                n->type = Ake_ast_type_error;
             } else {
                 struct type_def* td = left->tu->td;
                 assert(td);
@@ -1171,9 +1171,9 @@ Cob_ast* parse_dot(struct parse_state* ps)
                 assert(sym->td);
                 assert(sym->td->composite);
                 bool found = false;
-                struct Cob_ast* dec = sym->td->composite->head;
-                struct Cob_ast* dec_id = NULL;
-                struct Cob_ast* dec_type = NULL;
+                struct Ake_ast* dec = sym->td->composite->head;
+                struct Ake_ast* dec_id = NULL;
+                struct Ake_ast* dec_type = NULL;
                 while (dec) {
                     dec_id = Ast_node_get(dec, 0);
                     dec_type = Ast_node_get(dec, 1);
@@ -1188,7 +1188,7 @@ Cob_ast* parse_dot(struct parse_state* ps)
                             ps->el,
                             &id->loc,
                             "identifier not a field of struct: %b", &id->value);
-                    n->type = Cob_ast_type_error;
+                    n->type = Ake_ast_type_error;
                 } else {
                     n->tu = Type_use_clone(dec_type->tu);
                 }

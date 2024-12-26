@@ -141,37 +141,37 @@ void test_parse_types_array()
 	expect_true(cu.valid, "parse_setup valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
-	expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
+	expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Cob_ast* let = Ast_node_get(cu.root, 0);
+	Ake_ast* let = Ast_node_get(cu.root, 0);
 	assert_ptr(let, "ptr let");
-	expect_int_equal(let->type, Ast_type_let, "type let");
+	expect_int_equal(let->type, Ake_ast_type_let, "type let");
 
-	Cob_ast* let_lseq = Ast_node_get(let, 0);
+	Ake_ast* let_lseq = Ast_node_get(let, 0);
 	assert_ptr(let_lseq, "ptr let_lseq");
-	expect_int_equal(let_lseq->type, Ast_type_let_lseq, "type let_lseq");
+	expect_int_equal(let_lseq->type, Ake_ast_type_let_lseq, "type let_lseq");
 
-	Cob_ast* name = Ast_node_get(let_lseq, 0);
+	Ake_ast* name = Ast_node_get(let_lseq, 0);
 	assert_ptr(name, "ptr name");
-	expect_int_equal(name->type, Ast_type_id, "id name");
+	expect_int_equal(name->type, Ake_ast_type_id, "id name");
 	expect_str(&name->value, "a", "a name");
 
-	Cob_ast* let_type = Ast_node_get(let, 1);
+	Ake_ast* let_type = Ast_node_get(let, 1);
 	assert_ptr(let_type, "ptr let_type");
-	expect_int_equal(let_type->type, Ast_type_type, "type let_type");
+	expect_int_equal(let_type->type, Ake_ast_type_type, "type let_type");
 
-	Cob_ast* as = Ast_node_get(cu.root, 1);
+	Ake_ast* as = Ast_node_get(cu.root, 1);
 	assert_ptr(as, "ptr as");
-	expect_int_equal(as->type, Ast_type_array_subscript, "type array-subscript");
+	expect_int_equal(as->type, Ake_ast_type_array_subscript, "type array-subscript");
 
-	Cob_ast* id = Ast_node_get(as, 0);
+	Ake_ast* id = Ast_node_get(as, 0);
 	assert_ptr(id, "ptr id");
-	expect_int_equal(id->type, Ast_type_id, "id id");
+	expect_int_equal(id->type, Ake_ast_type_id, "id id");
 	expect_str(&id->value, "a", "a id");
 
-	Cob_ast* index = Ast_node_get(as, 1);
+	Ake_ast* index = Ast_node_get(as, 1);
 	assert_ptr(index, "ptr index");
-	expect_int_equal(index->type, Cob_ast_type_number, "number index");
+	expect_int_equal(index->type, Ake_ast_type_number, "number index");
 	expect_str(&index->value, "1", "1 index");
 
     parse_teardown(&cu);
@@ -313,9 +313,9 @@ void test_parse_types_newline_declaration()
     expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
-    Cob_ast* let = Ast_node_get(cu.root, 0);
+    Ake_ast* let = Ast_node_get(cu.root, 0);
     assert_ptr(let, "ptr let");
-    expect_int_equal(let->type, Ast_type_let, "type let");
+    expect_int_equal(let->type, Ake_ast_type_let, "type let");
 
     parse_teardown(&cu);
 }

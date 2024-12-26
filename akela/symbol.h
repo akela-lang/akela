@@ -18,8 +18,8 @@ struct symbol {
     struct type_def* td;
     struct Type_use* tu;
     struct symbol* constructor;
-    struct Cob_ast* root;
-    struct Cob_ast* root_ptr;
+    struct Ake_ast* root;
+    struct Ake_ast* root_ptr;
     void* value;
     void* reference;
     size_t assign_count;

@@ -17,6 +17,6 @@ void Struct_element_create(Struct_element** se)
 
 void Struct_element_destroy(Struct_element* se)
 {
-    Cob_ast_destroy(se->tu);
-    Cob_ast_destroy(se->func);
+    Ake_ast_destroy(se->tu);
+    Ake_ast_destroy(se->func);
 }

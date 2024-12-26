@@ -6,7 +6,7 @@
 #include "ast.h"
 #include "symbol.h"
 
-bool type_use_can_cast_prototype(Cob_ast* a, Cob_ast* b);
+bool type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b);
 bool type_use_match(Type_use* a, Type_use* b);
 
 void environment_begin(struct symbol_table* st)
@@ -453,15 +453,15 @@ bool type_use_match(Type_use* a, Type_use* b)
  * @return
  */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool type_use_can_cast_prototype(Cob_ast* a, Cob_ast* b)
+bool type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b)
 {
 	if (a && b) {
         if (!type_use_match(a->tu, b->tu)) {
             return false;
         }
 
-        Cob_ast *x = a->head;
-        Cob_ast *y = b->head;
+        Ake_ast *x = a->head;
+        Ake_ast *y = b->head;
         do {
             if (!type_use_can_cast_prototype(x, y)) {
                 return false;
@@ -512,7 +512,7 @@ void transfer_module_symbols(struct environment* src, struct environment* dest, 
 	}
 }
 
-void set_current_function(struct environment* env, Cob_ast* fd)
+void set_current_function(struct environment* env, Ake_ast* fd)
 {
 	struct symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct symbol));
@@ -527,7 +527,7 @@ void set_current_function(struct environment* env, Cob_ast* fd)
 	buffer_destroy(&bf);
 }
 
-Cob_ast* get_current_function(struct environment* env)
+Ake_ast* get_current_function(struct environment* env)
 {
 	struct buffer bf;
 	buffer_init(&bf);

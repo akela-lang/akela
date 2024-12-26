@@ -11,7 +11,7 @@
 #include "type_use.h"
 
 typedef struct Type_use Type_use;
-typedef struct Cob_ast Cob_ast;
+typedef struct Ake_ast Ake_ast;
 
 struct symbol_table {
 	struct environment* initial;
@@ -35,8 +35,8 @@ AKELA_API bool type_def_can_cast(struct type_def* a, struct type_def* b);
 AKELA_API bool type_use_can_cast(Type_use* a, Type_use* b);
 AKELA_API void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest);
 AKELA_API void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name);
-AKELA_API void set_current_function(struct environment* env, Cob_ast* fd);
-AKELA_API Cob_ast* get_current_function(struct environment* env);
+AKELA_API void set_current_function(struct environment* env, Ake_ast* fd);
+AKELA_API Ake_ast* get_current_function(struct environment* env);
 AKELA_API size_t symbol_table_generate_id(struct symbol_table* st);
 AKELA_API void symbol_table_print(struct symbol_table* st);
 

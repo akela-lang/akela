@@ -21,13 +21,13 @@ void test_comp_unit_compile()
 	bool valid = comp_unit_compile(cu, input, input->input_vtable);
 	expect_true(valid, "valid");
 	
-	Cob_ast* root = cu->root;
+	Ake_ast* root = cu->root;
 	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, Ast_type_stmts, "parse_stmts root");
+	expect_int_equal(root->type, Ake_ast_type_stmts, "parse_stmts root");
 
-	Cob_ast* number = Ast_node_get(root, 0);
+	Ake_ast* number = Ast_node_get(root, 0);
 	assert_ptr(number, "ptr number");
-	expect_int_equal(number->type, Cob_ast_type_number, "number number");
+	expect_int_equal(number->type, Ake_ast_type_number, "number number");
 	expect_str(&number->value, "10", "10 number");
 
     free(input);

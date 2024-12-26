@@ -5,6 +5,6 @@
 #include <stdbool.h>
 #include "parse_tools.h"
 
-AKELA_API Cob_ast* parse_stmts(struct parse_state* ps, bool suppress_env);
+AKELA_API Ake_ast* parse_stmts(struct parse_state* ps, bool suppress_env);
 
 #endif

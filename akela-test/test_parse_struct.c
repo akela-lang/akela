@@ -23,26 +23,26 @@ void test_parse_struct_field_assign()
     expect_true(cu.valid, "valid");
 
     assert_ptr(cu.root, "ptr cu.root");
-    expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
+    expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
     /* struct */
-    Cob_ast* st = Ast_node_get(cu.root, 0);
+    Ake_ast* st = Ast_node_get(cu.root, 0);
     assert_ptr(st, "ptr st");
-    expect_int_equal(st->type, Ast_type_struct, "struct st");
+    expect_int_equal(st->type, Ake_ast_type_struct, "struct st");
 
     /* firstName */
-    Cob_ast* d0 = Ast_node_get(st, 0);
+    Ake_ast* d0 = Ast_node_get(st, 0);
     assert_ptr(d0, "ptr d0");
-    expect_int_equal(d0->type, Ast_type_declaration, "declaration d0");
+    expect_int_equal(d0->type, Ake_ast_type_declaration, "declaration d0");
 
-    Cob_ast* id0 = Ast_node_get(d0, 0);
+    Ake_ast* id0 = Ast_node_get(d0, 0);
     assert_ptr(id0, "ptr id0");
-    expect_int_equal(id0->type, Ast_type_id, "id id0");
+    expect_int_equal(id0->type, Ake_ast_type_id, "id id0");
     expect_str(&id0->value, "firstName", "firstName id0");
 
-    Cob_ast* type_node0 = Ast_node_get(d0, 1);
+    Ake_ast* type_node0 = Ast_node_get(d0, 1);
     assert_ptr(type_node0, "ptr type_node0");
-    expect_int_equal(type_node0->type, Ast_type_type, "type type_node0");
+    expect_int_equal(type_node0->type, Ake_ast_type_type, "type type_node0");
 
     Type_use* tu0 = type_node0->tu;
     assert_ptr(tu0, "ptr tu0");
@@ -53,18 +53,18 @@ void test_parse_struct_field_assign()
     expect_str(&td0->name, "u8", "name td0");
 
     /* lastName */
-    Cob_ast* d1 = Ast_node_get(st, 1);
+    Ake_ast* d1 = Ast_node_get(st, 1);
     assert_ptr(d1, "ptr d1");
-    expect_int_equal(d1->type, Ast_type_declaration, "declaration d1");
+    expect_int_equal(d1->type, Ake_ast_type_declaration, "declaration d1");
 
-    Cob_ast* id1 = Ast_node_get(d1, 0);
+    Ake_ast* id1 = Ast_node_get(d1, 0);
     assert_ptr(id1, "ptr id1");
-    expect_int_equal(id1->type, Ast_type_id, "id id1");
+    expect_int_equal(id1->type, Ake_ast_type_id, "id id1");
     expect_str(&id1->value, "lastName", "lastName id1");
 
-    Cob_ast* type_node1 = Ast_node_get(d1, 1);
+    Ake_ast* type_node1 = Ast_node_get(d1, 1);
     assert_ptr(type_node1, "ptr type_node1");
-    expect_int_equal(type_node1->type, Ast_type_type, "type type_node1");
+    expect_int_equal(type_node1->type, Ake_ast_type_type, "type type_node1");
 
     Type_use* tu1 = type_node1->tu;
     assert_ptr(tu1, "ptr tu1");
@@ -75,18 +75,18 @@ void test_parse_struct_field_assign()
     expect_str(&td1->name, "u8", "name td1");
 
     /* age */
-    Cob_ast* d2 = Ast_node_get(st, 2);
+    Ake_ast* d2 = Ast_node_get(st, 2);
     assert_ptr(d2, "ptr d2");
-    expect_int_equal(d2->type, Ast_type_declaration, "declaration d2");
+    expect_int_equal(d2->type, Ake_ast_type_declaration, "declaration d2");
 
-    Cob_ast* id2 = Ast_node_get(d2, 0);
+    Ake_ast* id2 = Ast_node_get(d2, 0);
     assert_ptr(id2, "ptr id2");
-    expect_int_equal(id2->type, Ast_type_id, "id id2");
+    expect_int_equal(id2->type, Ake_ast_type_id, "id id2");
     expect_str(&id2->value, "age", "age id2");
 
-    Cob_ast* type_node2 = Ast_node_get(d2, 1);
+    Ake_ast* type_node2 = Ast_node_get(d2, 1);
     assert_ptr(type_node2, "ptr type_node2");
-    expect_int_equal(type_node2->type, Ast_type_type, "type type_node2");
+    expect_int_equal(type_node2->type, Ake_ast_type_type, "type type_node2");
 
     Type_use* tu2 = type_node2->tu;
     assert_ptr(tu2, "ptr tu2");
@@ -97,17 +97,17 @@ void test_parse_struct_field_assign()
     expect_str(&td2->name, "i64", "i64 td2");
 
     /* let */
-    Cob_ast* let = Ast_node_get(cu.root, 1);
+    Ake_ast* let = Ast_node_get(cu.root, 1);
     assert_ptr(let, "ptr let");
-    expect_int_equal(let->type, Ast_type_let, "type let");
+    expect_int_equal(let->type, Ake_ast_type_let, "type let");
 
-    Cob_ast* let_lseq = Ast_node_get(let, 0);
+    Ake_ast* let_lseq = Ast_node_get(let, 0);
     assert_ptr(let_lseq, "ptr let_lseq");
-    expect_int_equal(let_lseq->type, Ast_type_let_lseq, "let_lseq let_lseq");
+    expect_int_equal(let_lseq->type, Ake_ast_type_let_lseq, "let_lseq let_lseq");
 
-    Cob_ast* let_type = Ast_node_get(let, 1);
+    Ake_ast* let_type = Ast_node_get(let, 1);
     assert_ptr(let_type, "ptr let_type");
-    expect_int_equal(let_type->type, Ast_type_type, "type let_type");
+    expect_int_equal(let_type->type, Ake_ast_type_type, "type let_type");
 
     Type_use* tu = let_type->tu;
     assert_ptr(tu, "ptr tu");
@@ -117,9 +117,9 @@ void test_parse_struct_field_assign()
     expect_int_equal(td->type, type_struct, "struct td");
     expect_str(&td->name, "Person", "Person td");
 
-    Cob_ast* p = Ast_node_get(let_lseq, 0);
+    Ake_ast* p = Ast_node_get(let_lseq, 0);
     assert_ptr(p, "ptr p");
-    expect_int_equal(p->type, Ast_type_id, "id p");
+    expect_int_equal(p->type, Ake_ast_type_id, "id p");
     expect_str(&p->value, "p", "p p");
 
     parse_teardown(&cu);
@@ -145,76 +145,76 @@ void test_parse_struct_let_literal()
     expect_true(cu.valid, "valid");
 
     assert_ptr(cu.root, "ptr cu.root");
-    expect_int_equal(cu.root->type, Ast_type_stmts, "parse_stmts cu.root");
+    expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-    Cob_ast* st = Ast_node_get(cu.root, 0);
+    Ake_ast* st = Ast_node_get(cu.root, 0);
     assert_ptr(st, "ptr st");
-    expect_int_equal(st->type, Ast_type_struct, "type st");
+    expect_int_equal(st->type, Ake_ast_type_struct, "type st");
 
-    Cob_ast* let = Ast_node_get(cu.root, 1);
+    Ake_ast* let = Ast_node_get(cu.root, 1);
     assert_ptr(let, "ptr let");
-    expect_int_equal(let->type, Ast_type_let, "type let");
+    expect_int_equal(let->type, Ake_ast_type_let, "type let");
 
-    Cob_ast* let_lseq = Ast_node_get(let, 0);
+    Ake_ast* let_lseq = Ast_node_get(let, 0);
     assert_ptr(let_lseq, "ptr let_lseq");
-    expect_int_equal(let_lseq->type, Ast_type_let_lseq, "type let_lseq");
+    expect_int_equal(let_lseq->type, Ake_ast_type_let_lseq, "type let_lseq");
 
-    Cob_ast* p = Ast_node_get(let_lseq, 0);
+    Ake_ast* p = Ast_node_get(let_lseq, 0);
     assert_ptr(p, "ptr p");
-    expect_int_equal(p->type, Ast_type_id, "type p");
+    expect_int_equal(p->type, Ake_ast_type_id, "type p");
 
-    Cob_ast* let_tu = Ast_node_get(let, 1);
+    Ake_ast* let_tu = Ast_node_get(let, 1);
     assert_ptr(let_tu, "ptr let_tu");
-    expect_int_equal(let_tu->type, Ast_type_type, "type let_tu");
+    expect_int_equal(let_tu->type, Ake_ast_type_type, "type let_tu");
 
-    Cob_ast* let_rseq = Ast_node_get(let, 2);
+    Ake_ast* let_rseq = Ast_node_get(let, 2);
     assert_ptr(let_rseq, "ptr let_rseq");
-    expect_int_equal(let_rseq->type, Ast_type_let_rseq, "type let_rseq");
+    expect_int_equal(let_rseq->type, Ake_ast_type_let_rseq, "type let_rseq");
 
-    Cob_ast* literal = Ast_node_get(let_rseq, 0);
+    Ake_ast* literal = Ast_node_get(let_rseq, 0);
     assert_ptr(literal, "ptr literal");
-    expect_int_equal(literal->type, Ast_type_struct_literal, "type literal");
+    expect_int_equal(literal->type, Ake_ast_type_struct_literal, "type literal");
 
-    Cob_ast* field0 = Ast_node_get(literal, 0);
+    Ake_ast* field0 = Ast_node_get(literal, 0);
     assert_ptr(field0, "ptr field0");
-    expect_int_equal(field0->type, Ast_type_struct_literal_field, "type field0");
+    expect_int_equal(field0->type, Ake_ast_type_struct_literal_field, "type field0");
 
-    Cob_ast* id0 = Ast_node_get(field0, 0);
+    Ake_ast* id0 = Ast_node_get(field0, 0);
     assert_ptr(id0, "ptr id0");
-    expect_int_equal(id0->type, Ast_type_id, "type id0");
+    expect_int_equal(id0->type, Ake_ast_type_id, "type id0");
     expect_str(&id0->value, "first_name", "value id0");
 
-    Cob_ast* expr0 = Ast_node_get(field0, 1);
+    Ake_ast* expr0 = Ast_node_get(field0, 1);
     assert_ptr(expr0, "ptr expr0");
-    expect_int_equal(expr0->type, Ast_type_string, "type expr0");
+    expect_int_equal(expr0->type, Ake_ast_type_string, "type expr0");
     expect_str(&expr0->value, "John", "value expr0");
 
-    Cob_ast* field1 = Ast_node_get(literal, 1);
+    Ake_ast* field1 = Ast_node_get(literal, 1);
     assert_ptr(field1, "ptr field1");
-    expect_int_equal(field1->type, Ast_type_struct_literal_field, "type field1");
+    expect_int_equal(field1->type, Ake_ast_type_struct_literal_field, "type field1");
 
-    Cob_ast* id1 = Ast_node_get(field1, 0);
+    Ake_ast* id1 = Ast_node_get(field1, 0);
     assert_ptr(id1, "ptr id1");
-    expect_int_equal(id1->type, Ast_type_id, "type id1");
+    expect_int_equal(id1->type, Ake_ast_type_id, "type id1");
     expect_str(&id1->value, "last_name", "value id1");
 
-    Cob_ast* expr1 = Ast_node_get(field1, 1);
+    Ake_ast* expr1 = Ast_node_get(field1, 1);
     assert_ptr(expr1, "ptr expr1");
-    expect_int_equal(expr1->type, Ast_type_string, "type expr1");
+    expect_int_equal(expr1->type, Ake_ast_type_string, "type expr1");
     expect_str(&expr1->value, "Smith", "value expr1");
 
-    Cob_ast* field2 = Ast_node_get(literal, 2);
+    Ake_ast* field2 = Ast_node_get(literal, 2);
     assert_ptr(field2, "ptr field2");
-    expect_int_equal(field2->type, Ast_type_struct_literal_field, "type field2");
+    expect_int_equal(field2->type, Ake_ast_type_struct_literal_field, "type field2");
 
-    Cob_ast* id2 = Ast_node_get(field2, 0);
+    Ake_ast* id2 = Ast_node_get(field2, 0);
     assert_ptr(id2, "ptr id2");
-    expect_int_equal(id2->type, Ast_type_id, "type id2");
+    expect_int_equal(id2->type, Ake_ast_type_id, "type id2");
     expect_str(&id2->value, "age", "value id2");
 
-    Cob_ast* expr2 = Ast_node_get(field2, 1);
+    Ake_ast* expr2 = Ast_node_get(field2, 1);
     assert_ptr(expr2, "ptr expr2");
-    expect_int_equal(expr2->type, Cob_ast_type_number, "type expr2");
+    expect_int_equal(expr2->type, Ake_ast_type_number, "type expr2");
     expect_str(&expr2->value, "35", "value expr2");
 
     parse_teardown(&cu);

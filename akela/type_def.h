@@ -29,7 +29,7 @@ struct type_def {
 	struct buffer name;
     int bit_count;
     bool is_signed;
-    struct Cob_ast* composite;
+    struct Ake_ast* composite;
     void* composite_type;
     struct hash_table struct_impl;
     struct hash_table type_impl;
