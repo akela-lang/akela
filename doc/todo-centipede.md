@@ -1,6 +1,7 @@
 # Centipede Todo
-* update environment symbols
+* validate element type tests
 * update enum values
+* validate enum tests
 * circular dependency checking
 * number test cases
 * string test cases
