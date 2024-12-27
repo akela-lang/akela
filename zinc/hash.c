@@ -72,10 +72,12 @@ void hash_table_init(struct hash_table* ht, unsigned int size)
 
 void hash_table_destroy(struct hash_table* ht)
 {
-    for (int i = 0; i < ht->size; i++) {
-        hash_list_destroy(&ht->buckets[i]);
+    if (ht) {
+        for (int i = 0; i < ht->size; i++) {
+            hash_list_destroy(&ht->buckets[i]);
+        }
+        free(ht->buckets);
     }
-    free(ht->buckets);
 }
 
 void hash_table_map(struct hash_table* ht, hash_table_func f)

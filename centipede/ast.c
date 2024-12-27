@@ -7,7 +7,8 @@
 void Cent_ast_init(Cent_ast *ast)
 {
     ast->type = Cent_ast_type_none;
-    buffer_init(&ast->value);
+    buffer_init(&ast->text);
+    ast->value = NULL;
     ast->env = NULL;
     location_init(&ast->loc);
     ast->has_error = false;
@@ -27,17 +28,19 @@ void Cent_ast_create(Cent_ast **ast)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_ast_destroy(Cent_ast *ast)
 {
-    if (ast->env) {
-        Cent_environment_destroy(ast->env);
-        free(ast->env);
-    }
+    if (ast) {
+        if (ast->env) {
+            Cent_environment_destroy(ast->env);
+            free(ast->env);
+        }
 
-    Cent_ast* p = ast->head;
-    while (p) {
-        Cent_ast* temp = p;
-        p = p->next;
-        Cent_ast_destroy(temp);
-        free(temp);
+        Cent_ast* p = ast->head;
+        while (p) {
+            Cent_ast* temp = p;
+            p = p->next;
+            Cent_ast_destroy(temp);
+            free(temp);
+        }
     }
 }
 

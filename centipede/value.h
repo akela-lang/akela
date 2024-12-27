@@ -9,18 +9,22 @@ typedef enum Cent_value_type {
     Cent_value_type_number,
     Cent_value_type_string,
     Cent_value_type_boolean,
-    Cent_value_type_element,
+    Cent_value_type_object,
+    Cent_value_type_enum,
 } Cent_value_type;
 
 typedef struct Cent_value {
     Cent_value_type type;
     Cent_number_type number_type;
+    struct buffer display;
+    bool has_error;
     union {
         long long integer;
         double fp;
         struct buffer string;
         bool boolean;
-    } value;
+        long long enumerate;
+    } data;
     struct hash_table properties;
     struct Cent_value* next;
     struct Cent_value* prev;

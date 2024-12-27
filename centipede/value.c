@@ -5,6 +5,8 @@ void Cent_value_init(Cent_value *value)
 {
     value->type = Cent_value_type_none;
     value->number_type = Cent_number_type_none;
+    buffer_init(&value->display);
+    value->has_error = false;
     hash_table_init(&value->properties, 16);
     value->next = NULL;
     value->prev = NULL;
@@ -22,6 +24,7 @@ void Cent_value_create(Cent_value **value)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_value_destroy(Cent_value *value)
 {
+    buffer_destroy(&value->display);
     hash_table_map(&value->properties, (hash_table_func)Cent_value_free);
     Cent_value* p = value->head;
     while (p) {

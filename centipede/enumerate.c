@@ -9,7 +9,7 @@ void Cent_enumerate_init(Cent_enumerate* en)
 
 void Cent_enumerate_create(Cent_enumerate** en)
 {
-    malloc_safe((void**)en, sizeof(Cent_enumerate*));
+    malloc_safe((void**)en, sizeof(Cent_enumerate));
     Cent_enumerate_init(*en);
 }
 
