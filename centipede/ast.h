@@ -10,7 +10,7 @@
 typedef enum Cent_ast_type {
     Cent_ast_type_none,
     Cent_ast_type_stmts,
-    Cent_ast_type_element,
+    Cent_ast_type_element_type,
     Cent_ast_type_prop,
     Cent_ast_type_prop_dec,
     Cent_ast_type_children,

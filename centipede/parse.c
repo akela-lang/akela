@@ -4,11 +4,12 @@
 #include <akela/parse_tools.h>
 #include "base.h"
 #include "token.h"
+#include "semantic.h"
 
 Cent_ast* Cent_parse_stmts(Cent_parse_data* pd);
 bool Cent_has_separator(Cent_parse_data* pd, Cent_ast* n);
 Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
-Cent_ast* Cent_parse_element(Cent_parse_data* pd);
+Cent_ast* Cent_parse_element_type(Cent_parse_data* pd);
 void Cent_ignore_newlines(Cent_parse_data* pd, Cent_ast* n);
 Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd);
 Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd);
@@ -36,13 +37,17 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
             Cent_token_name(pd->lookahead->type));
     }
 
-    Cent_parse_result result;
-    Cent_parse_result_init(&result);
-    result.errors = pd->errors;
-    result.base = pd->top;
-    result.root = root;
+    Cent_parse_result pr;
+    Cent_parse_result_init(&pr);
+    pr.errors = pd->errors;
+    pr.base = pd->top;
+    pr.root = root;
 
-    return result;
+    if (!pr.errors->head) {
+        Cent_validate(&pr);
+    }
+
+    return pr;
 }
 
 /* stmts -> stmt stmts' | e */
@@ -112,7 +117,7 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
     }
 
     if (pd->lookahead->type == Cent_token_element) {
-        return Cent_parse_element(pd);
+        return Cent_parse_element_type(pd);
     }
 
     if (pd->lookahead->type == Cent_token_enum) {
@@ -123,11 +128,11 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
 }
 
 /* parse_element -> element name { element_seq } */
-Cent_ast* Cent_parse_element(Cent_parse_data* pd)
+Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
-    n->type = Cent_ast_type_element;
+    n->type = Cent_ast_type_element_type;
 
     Cent_token* e = NULL;
     if (!Cent_match(pd, Cent_token_element, "expected element", &e, n)) {
@@ -167,11 +172,20 @@ Cent_ast* Cent_parse_element(Cent_parse_data* pd)
     free(end);
 
     if (!n->has_error) {
-        Cent_element* element = NULL;
+        Cent_element_type* element = NULL;
         Cent_element_create(&element);
         buffer_copy(&n->text, &element->name);
 
         Cent_symbol* sym = NULL;
+
+        sym = Cent_environment_get(pd->top, &n->text);
+        if (sym) {
+            buffer_finish(&n->text);
+            error_list_set(pd->errors, &n->loc, "name already exists: %s", n->text.buf);
+            n->has_error = true;
+            return n;
+        }
+
         Cent_symbol_create(&sym);
         sym->type = Cent_symbol_type_element;
         sym->data.element = element;
@@ -296,12 +310,12 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
 
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_id) {
-        Cent_token* id = NULL;
-        if (!Cent_match(pd, Cent_token_id, "expected id", &id, n)) {
-            assert(false && "not possible");
-        }
         Cent_ast* a = NULL;
         Cent_ast_create(&a);
+        Cent_token* id = NULL;
+        if (!Cent_match(pd, Cent_token_id, "expected id", &id, a)) {
+            assert(false && "not possible");
+        }
         a->type = Cent_ast_type_id;
         buffer_copy(&id->value, &a->text);
         Cent_ast_add(n, a);

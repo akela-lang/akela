@@ -4,6 +4,24 @@ capable of standalone and embeddable execution,
 suitable for numerical computation and finance,
 and capable of robust software construction.
 
+Akela is influenced heavily by Julia, Rust, Zig, and Go. The way that Python excels at AI
+and Julia excels at scientific computing, Akela wants to excel at finance.
+
+## Project Goals
+The Akela project is a work in progress. Many of the following goals are aspirational.
+There is a rudimentary JIT compiler. There are a lot of automated tests. 
+
+* Static typing and type inference which we think helps
+software engineers more than dynamic or gradual typing
+* Fast compilation: handwritten lexer and parser in C
+* An AOT compiler for standalone execution
+* A JIT compiler for embeddable or interactive execution
+* Hot reloading for debugging
+* Meta programming: generics, traits, and macros
+* Garbage collecting of memory
+* Series / Vector data types for financial data
+* Support for trading indicators, screeners, and simulations within a charting platform
+
 ## Subprojects
 * Akela - The Akela compiler which is written in C;
 has a handwritten lexer and recursive decent parser

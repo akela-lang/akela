@@ -6,7 +6,7 @@ Cent_environment* Cent_base_create()
     Cent_environment_create(&env);
 
     Cent_symbol* sym = NULL;
-    Cent_element* element = NULL;
+    Cent_element_type* element = NULL;
 
     Cent_element_create(&element);
     buffer_copy_str(&element->name, "Integer");

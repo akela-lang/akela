@@ -37,6 +37,20 @@ void expect_no_errors(struct error_list* el)
     error_triggered();
 }
 
+void expect_error_count(struct error_list* el, size_t count)
+{
+    test_called();
+    size_t actual_count = 0;
+    struct error* e = el->head;
+    while (e) {
+        actual_count++;
+        e = e->next;
+    }
+    if (actual_count == count) return;
+    fprintf(stderr, "expected error count (%zu) (%zu)\n", actual_count, count);
+    error_triggered();
+}
+
 void assert_has_errors(struct error_list* el)
 {
     test_called();

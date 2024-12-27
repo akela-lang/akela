@@ -214,8 +214,6 @@ void lex_id(Cent_lex_data* ld, Cent_token* t)
 
         if (num == 1) {
             if (isalpha(c[0]) || isdigit(c[0]) || c[0] == '_' || c[0] == '.') {
-                t->type = Cent_token_id;
-                t->loc = loc;
                 buffer_add(&t->value, c, num);
                 continue;
             }

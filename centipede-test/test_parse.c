@@ -28,7 +28,8 @@ void test_parse_element()
     );
 
     Cent_parse_result pr = Cent_parse(&pd);
-    expect_no_errors(pr.errors);
+    expect_error_count(pd.errors, 1);
+    expect_source_error(pr.errors, "unknown type: Test");
 
     /* root */
     assert_ptr(pr.root, "ptr pr.root");
@@ -37,7 +38,7 @@ void test_parse_element()
     /* element */
     Cent_ast* element = Cent_ast_get(pr.root, 0);
     assert_ptr(element, "ptr element");
-    expect_int_equal(element->type, Cent_ast_type_element, "type element");
+    expect_int_equal(element->type, Cent_ast_type_element_type, "type element");
     expect_str(&element->text, "Test_suite", "value element");
 
     /* properties */

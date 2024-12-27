@@ -25,7 +25,35 @@ void Cent_environment_add_symbol(Cent_environment* environment, struct buffer* n
     hash_table_add(&environment->symbols, name, symbol);
 }
 
-void cent_environment_add_symbol_str(Cent_environment* environment, char* name, Cent_symbol* symbol)
+void Cent_environment_add_symbol_str(Cent_environment* environment, char* name, Cent_symbol* symbol)
 {
     hash_table_add_str(&environment->symbols, name, symbol);
+}
+
+Cent_symbol* Cent_environment_get(Cent_environment* top, struct buffer* name)
+{
+    Cent_environment* env = top;
+    while (env) {
+        Cent_symbol* sym = hash_table_get(&env->symbols, name);
+        if (sym) {
+            return sym;
+        }
+        env = env->prev;
+    }
+
+    return NULL;
+}
+
+Cent_symbol* Cent_environment_get_str(Cent_environment* top, char* name)
+{
+    Cent_environment* env = top;
+    while (env) {
+        Cent_symbol* sym = hash_table_get_str(&env->symbols, name);
+        if (sym) {
+            return sym;
+        }
+        env = env->prev;
+    }
+
+    return NULL;
 }

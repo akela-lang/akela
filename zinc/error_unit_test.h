@@ -10,5 +10,6 @@ ZINC_API void assert_has_errors(struct error_list* el);
 ZINC_API void expect_has_errors(struct error_list* el);
 ZINC_API struct error* assert_source_error(struct error_list* el, const char message[]);
 ZINC_API struct error* expect_source_error(struct error_list* el, const char message[]);
+ZINC_API void expect_error_count(struct error_list* el, size_t count);
 
 #endif
