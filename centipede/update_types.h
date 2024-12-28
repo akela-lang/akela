@@ -3,6 +3,6 @@
 
 #include "parse_tools.h"
 
-void Cent_validate(Cent_parse_result* pr);
+void Cent_update_types(Cent_parse_result* pr);
 
 #endif

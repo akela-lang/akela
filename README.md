@@ -16,12 +16,13 @@ software engineers more than dynamic or gradual typing
 * Fast compilation: handwritten lexer and parser in C
 * An AOT compiler for standalone execution
 * A JIT compiler for embeddable or interactive execution
-* Hot reloading for quick development / test cycle
+* Hot reloading for quick development / test cycles
 * Meta programming: generics and macros
 * Object-Oriented programming: methods and traits
+* Rust enums and matching
 * Garbage collection to manage memory
 * Series / Vector data types for financial data
-* Support for trading indicators, screeners, and simulations within a charting platform
+* Support for trading indicators, screeners, and simulations
 
 ## Subprojects
 * Akela - The Akela compiler which is written in C;

@@ -2,35 +2,42 @@
 #include "akela/environment.h"
 #include <assert.h>
 
-void Cent_validate_stmts(Cent_parse_result* pr, Cent_ast* n);
-void Cent_validate_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env);
-void Cent_validate_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env);
-void Cent_validate_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env);
+void Cent_update_stmts(Cent_parse_result* pr, Cent_ast* n);
+void Cent_update_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env);
+void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env);
+void Cent_update_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env);
+void Cent_update_enum(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env);
 
-void Cent_validate(Cent_parse_result* pr)
+void Cent_update_types(Cent_parse_result* pr)
 {
     if (pr->root && pr->root->type == Cent_ast_type_stmts) {
-        Cent_validate_stmts(pr, pr->root);
+        Cent_update_stmts(pr, pr->root);
     }
 }
 
-void Cent_validate_stmts(Cent_parse_result* pr, Cent_ast* n)
+void Cent_update_stmts(Cent_parse_result* pr, Cent_ast* n)
 {
     Cent_environment* env = n->env;
     Cent_ast* stmt = n->head;
     while (stmt) {
         if (stmt->type == Cent_ast_type_element_type) {
             if (!stmt->has_error) {
-                Cent_validate_et(pr, stmt, env);
+                Cent_update_et(pr, stmt, env);
+            }
+        } else if (stmt->type == Cent_ast_type_enum_type) {
+            if (!stmt->has_error) {
+                Cent_update_enum(pr, stmt, env);
             }
         }
         stmt = stmt->next;
     }
 }
 
-void Cent_validate_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
+void Cent_update_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
 {
     Cent_symbol* sym = Cent_environment_get(env, &n->text);
+    assert(sym);
+    assert(sym->type == Cent_symbol_type_element);
     Cent_element_type* et = sym->data.element;
 
     Cent_ast* p = n->head;
@@ -38,13 +45,13 @@ void Cent_validate_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
         if (p->type == Cent_ast_type_prop) {
             Cent_ast* prop_dec = p->head;
             while (prop_dec) {
-                Cent_validate_prop(pr, prop_dec, et, env);
+                Cent_update_prop(pr, prop_dec, et, env);
                 prop_dec = prop_dec->next;
             }
         } else if (p->type == Cent_ast_type_children) {
             Cent_ast* child = p->head;
             while (child) {
-                Cent_validate_child(pr, child, et, env);
+                Cent_update_child(pr, child, et, env);
                 child = child->next;
             }
         } else {
@@ -54,7 +61,7 @@ void Cent_validate_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
     }
 }
 
-void Cent_validate_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env)
+void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env)
 {
     Cent_ast* name = Cent_ast_get(n, 0);
     Cent_ast* type = Cent_ast_get(n, 1);
@@ -85,7 +92,7 @@ void Cent_validate_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* e
     hash_table_add(&et->properties, &name->text, prop);
 }
 
-void Cent_validate_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env)
+void Cent_update_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env)
 {
     Cent_symbol* sym = Cent_environment_get(env, &n->text);
     if (!sym) {
@@ -100,5 +107,24 @@ void Cent_validate_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* 
             /* test case: test_parse_element_child_type_not_an_element_type */
             n->has_error = true;
         }
+    }
+}
+
+void Cent_update_enum(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
+{
+    Cent_symbol* sym = Cent_environment_get(env, &n->text);
+    assert(sym);
+    assert(sym->type == Cent_symbol_type_enumerate);
+    Cent_enum_type* enumerate = sym->data.enumerate;
+    Cent_ast* p = n->head;
+    while (p) {
+        Cent_enumerate_value* ev = Cent_enumerate_get(enumerate, &p->text);
+        if (ev) {
+            error_list_set(pr->errors, &p->loc, "duplicate enum value: %b::%b", &n->text, &p->text);
+            n->has_error = true;
+        } else {
+            Cent_enumerate_add_name(enumerate, &p->text);
+        }
+        p = p->next;
     }
 }

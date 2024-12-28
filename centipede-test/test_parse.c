@@ -133,7 +133,7 @@ void test_parse_enumerate()
     /* enumerate */
     Cent_ast* enumerate = Cent_ast_get(pr.root, 0);
     assert_ptr(enumerate, "ptr enumerate");
-    expect_int_equal(enumerate->type, Cent_ast_type_enumerate, "type enumerate");
+    expect_int_equal(enumerate->type, Cent_ast_type_enum_type, "type enumerate");
     expect_str(&enumerate->text, "Symbol_type", "value enumerate");
 
     /* Variable */
@@ -682,6 +682,29 @@ void test_parse_element_child_type_not_an_element_type()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_enum_error_duplicate_enum_value()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "enum Symbol_type\n"
+        "   Element\n"
+        "   Enumerate\n"
+        "   Info\n"
+        "   Variable\n"
+        "   Info\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "duplicate enum value: Symbol_type::Info");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -708,4 +731,5 @@ void test_parse()
     test_parse_element_property_type_not_element();
     test_parse_element_child_unknown_type();
     test_parse_element_child_type_not_an_element_type();
+    test_parse_enum_error_duplicate_enum_value();
 }

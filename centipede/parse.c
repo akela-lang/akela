@@ -4,7 +4,7 @@
 #include <akela/parse_tools.h>
 #include "base.h"
 #include "token.h"
-#include "semantic.h"
+#include "update_types.h"
 
 Cent_ast* Cent_parse_stmts(Cent_parse_data* pd);
 bool Cent_has_separator(Cent_parse_data* pd, Cent_ast* n);
@@ -45,7 +45,7 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
     pr.root = root;
 
     if (!pr.errors->head) {
-        Cent_validate(&pr);
+        Cent_update_types(&pr);
     }
 
     return pr;
@@ -357,7 +357,7 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
-    n->type = Cent_ast_type_enumerate;
+    n->type = Cent_ast_type_enum_type;
 
     Cent_token* en = NULL;
     if (!Cent_match(pd, Cent_token_enum, "expected enum", &en, n)) {
@@ -409,7 +409,7 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
     /* test case: test_parse_enumerate_error_expected_end */
 
     if (!n->has_error) {
-        Cent_enumerate* enumerate = NULL;
+        Cent_enum_type* enumerate = NULL;
         Cent_enumerate_create(&enumerate);
         buffer_copy(&n->text, &enumerate->name);
 

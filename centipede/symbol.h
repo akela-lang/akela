@@ -17,7 +17,7 @@ typedef struct Cent_symbol {
     union {
         Cent_value* value;
         Cent_element_type* element;
-        Cent_enumerate* enumerate;
+        Cent_enum_type* enumerate;
     } data;
     void* n;
 } Cent_symbol;

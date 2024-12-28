@@ -14,7 +14,7 @@ typedef enum Cent_ast_type {
     Cent_ast_type_prop,
     Cent_ast_type_prop_dec,
     Cent_ast_type_children,
-    Cent_ast_type_enumerate,
+    Cent_ast_type_enum_type,
     Cent_ast_type_assign,
     Cent_ast_type_id,
     Cent_ast_type_value,
