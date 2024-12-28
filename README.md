@@ -16,9 +16,10 @@ software engineers more than dynamic or gradual typing
 * Fast compilation: handwritten lexer and parser in C
 * An AOT compiler for standalone execution
 * A JIT compiler for embeddable or interactive execution
-* Hot reloading for debugging
-* Meta programming: generics, traits, and macros
-* Garbage collecting of memory
+* Hot reloading for quick development cycle
+* Meta programming: generics and macros
+* Object-Oriented programming: methods and traits
+* Garbage collection to manage memory
 * Series / Vector data types for financial data
 * Support for trading indicators, screeners, and simulations within a charting platform
 
