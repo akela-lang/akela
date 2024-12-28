@@ -30,6 +30,7 @@ has a handwritten lexer and recursive decent parser
 * Cobble - Regular expression library used for parsing coverage files
 * Dataframe - For doing vector math and writing and reading vectors to and from CSV files
 * JSON - A JSON parser and stringify library
+* Coverage - Generate and analyze code coverage of tests
 * Centipede - The Centipede DAG description language parser; is a file format for compiler ASTs
 and will be used for testing the AST output of the Akela parser
 
