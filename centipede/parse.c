@@ -33,9 +33,10 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
         error_list_set(
             pd->errors,
             &pd->lookahead->loc,
-            "Unhandled token: %s",
+            "unhandled token: %s",
             Cent_token_name(pd->lookahead->type));
     }
+    /* test case: test_parse_unhandled_token */
 
     Cent_parse_result pr;
     Cent_parse_result_init(&pr);
@@ -141,6 +142,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
 
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, n);
+    /* test case: test_parse_element_error_expected_id */
 
     if (id) {
         buffer_copy(&id->value, &n->text);
@@ -170,6 +172,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
     Cent_match(pd, Cent_token_end, "expected end", &end, n);
     Cent_token_destroy(end);
     free(end);
+    /* test case: test_parse_element_error_expected_end */
 
     if (!n->has_error) {
         Cent_element_type* element = NULL;
@@ -184,6 +187,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
             error_list_set(pd->errors, &n->loc, "name already exists: %s", n->text.buf);
             n->has_error = true;
             return n;
+            /* test case: test_parse_element_error_name_already_exits */
         }
 
         Cent_symbol_create(&sym);
@@ -219,7 +223,9 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
     n->type = Cent_ast_type_prop;
 
     Cent_token* prop = NULL;
-    Cent_match(pd, Cent_token_properties, "expected properties", &prop, n);
+    if (!Cent_match(pd, Cent_token_properties, "expected properties", &prop, n)) {
+        assert(false && "not possible");
+    }
     Cent_token_destroy(prop);
     free(prop);
 
@@ -243,6 +249,7 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
     Cent_match(pd, Cent_token_end, "expected end", &end, n);
     Cent_token_destroy(end);
     free(end);
+    /* test case: test_parse_element_error_properties_expected_end */
 
     return n;
 }
@@ -254,7 +261,9 @@ Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
     n->type = Cent_ast_type_prop_dec;
 
     Cent_token* id = NULL;
-    Cent_match(pd, Cent_token_id, "expected id", &id, n);
+    if (!Cent_match(pd, Cent_token_id, "expected id", &id, n)) {
+        assert(false && "not possible");
+    }
 
     Cent_ast* a = NULL;
     Cent_ast_create(&a);
@@ -269,8 +278,10 @@ Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
     Cent_match(pd, Cent_token_colon, "expected colon", &colon, n);
     Cent_token_destroy(colon);
     free(colon);
+    /* test case: test_parse_element_error_property_expected_colon */
 
     Cent_match(pd, Cent_token_id, "expected id", &id, n);
+    /* test case: test_parse_element_error_property_expected_id */
 
     Cent_ast* b = NULL;
     Cent_ast_create(&b);
@@ -284,7 +295,9 @@ Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
     Cent_lookahead(pd);
     if (pd->lookahead->type == Cent_token_modifier) {
         Cent_token* mod = NULL;
-        Cent_match(pd, Cent_token_modifier, "expected modifier", &mod, n);
+        if (!Cent_match(pd, Cent_token_modifier, "expected modifier", &mod, n)) {
+            assert(false && "not possible");
+        }
         Cent_ast* c = NULL;
         Cent_ast_create(&c);
         c->type = Cent_ast_type_modifier;
@@ -304,7 +317,9 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
     n->type = Cent_ast_type_children;
 
     Cent_token* ch = NULL;
-    Cent_match(pd, Cent_token_children, "expected children", &ch, n);
+    if (!Cent_match(pd, Cent_token_children, "expected children", &ch, n)) {
+        assert(false && "not possible");
+    }
 
     Cent_ignore_newlines(pd, n);
 
@@ -333,6 +348,7 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
     Cent_match(pd, Cent_token_end, "expected end", &end, n);
     Cent_token_destroy(end);
     free(end);
+    /* test case: test_parse_element_error_children_expected_end */
 
     return n;
 }
@@ -344,7 +360,9 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
     n->type = Cent_ast_type_enumerate;
 
     Cent_token* en = NULL;
-    Cent_match(pd, Cent_token_enum, "expected enum", &en, n);
+    if (!Cent_match(pd, Cent_token_enum, "expected enum", &en, n)) {
+        assert(false && "not possible");
+    }
     Cent_token_destroy(en);
     free(en);
 
@@ -355,13 +373,16 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
         Cent_token_destroy(id);
         free(id);
     }
+    /* test case: test_parse_enumerate_error_expected_id */
 
     Cent_ignore_newlines(pd, n);
 
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_id) {
         id = NULL;
-        Cent_match(pd, Cent_token_id, "expected id", &id, n);
+        if (!Cent_match(pd, Cent_token_id, "expected id", &id, n)) {
+            assert(false && "not possible");
+        }
 
         if (id) {
             Cent_ast* a = NULL;
@@ -385,6 +406,7 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
     Cent_match(pd, Cent_token_end, "expected end", &end, n);
     Cent_token_destroy(end);
     free(end);
+    /* test case: test_parse_enumerate_error_expected_end */
 
     if (!n->has_error) {
         Cent_enumerate* enumerate = NULL;
@@ -433,6 +455,7 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
         free(id);
         return n;
     }
+    /* test case: test_parse_value_error_expected_id */
 
     Cent_lookahead(pd);
     if (pd->lookahead->type == Cent_token_double_colon) {
@@ -448,17 +471,16 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
         }
 
         Cent_token* dc = NULL;
-        Cent_match(pd, Cent_token_double_colon, "expected double-colon", &dc, n);
-        if (dc) {
-            buffer_copy_str(&v->display, "::");
-            Cent_token_destroy(dc);
-            free(dc);
-        } else {
-            v->has_error = true;
+        if (!Cent_match(pd, Cent_token_double_colon, "expected double-colon", &dc, n)) {
+            assert(false && "not possible");
         }
+        buffer_copy_str(&v->display, "::");
+        Cent_token_destroy(dc);
+        free(dc);
 
         Cent_token* id2 = NULL;
         Cent_match(pd, Cent_token_id, "expected id", &id2, n);
+        /* test case: test_parse_value_error_enum_expected_id */
 
         if (id2) {
             buffer_copy(&id2->value, &v->display);
@@ -482,7 +504,9 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
         Cent_ast_add(n, a);
 
         Cent_token* eq = NULL;
-        Cent_match(pd, Cent_token_equal, "expected equal", &eq, n);
+        if (!Cent_match(pd, Cent_token_equal, "expected equal", &eq, n)) {
+            assert(false && "not possible");
+        }
         Cent_token_destroy(eq);
         free(eq);
 
@@ -492,9 +516,18 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
             b->has_error = true;
         }
         Cent_ast_add(n, b);
+        /* test case: test_parse_value_error_nested_assignments */
 
         Cent_token_destroy(id);
         free(id);
+
+        if (!n->has_error) {
+            Cent_symbol* sym = NULL;
+            Cent_symbol_create(&sym);
+            sym->type = Cent_symbol_type_value;
+            sym->data.value = b->value;
+            Cent_environment_add_symbol(pd->top, &a->text, sym);
+        }
         return n;
     }
 
@@ -510,6 +543,7 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
     error_list_set(pd->errors, &pd->lookahead->loc, "expected assignment or object");
     Cent_token_destroy(id);
     free(id);
+    /* test case: test_parse_value_error_expected_assignment_of_object */
 
     return n;
 }
@@ -521,7 +555,9 @@ void Cent_parse_number(Cent_parse_data* pd, Cent_ast* n)
     value->type = Cent_value_type_number;
 
     Cent_token* num = NULL;
-    Cent_match(pd, Cent_token_number, "expected number", &num, n);
+    if (!Cent_match(pd, Cent_token_number, "expected number", &num, n)) {
+        assert(false && "not possible");
+    }
     if (num) {
         if (num->number_type == Cent_number_type_integer) {
             value->number_type = Cent_number_type_integer;
@@ -543,7 +579,9 @@ void Cent_parse_string(Cent_parse_data* pd, Cent_ast* n)
     Cent_value_create(&value);
 
     Cent_token* str = NULL;
-    Cent_match(pd, Cent_token_string, "expected string", &str, n);
+    if (!Cent_match(pd, Cent_token_string, "expected string", &str, n)) {
+        assert(false && "not possible");
+    }
 
     value->type = Cent_value_type_string;
     buffer_copy(&str->value, &value->data.string);
@@ -557,7 +595,9 @@ void Cent_parse_boolean(Cent_parse_data* pd, Cent_ast* n)
     Cent_value_create(&value);
     value->type = Cent_value_type_boolean;
     Cent_token* bln = NULL;
-    Cent_match(pd, pd->lookahead->type, "expected boolean", &bln, n);
+    if (!Cent_match(pd, pd->lookahead->type, "expected boolean", &bln, n)) {
+        assert(false && "not possible");
+    }
 
     value->type = Cent_value_type_boolean;
     if (bln->type == Cent_token_true) {
@@ -575,13 +615,22 @@ void Cent_parse_boolean(Cent_parse_data* pd, Cent_ast* n)
 void Cent_parse_object(Cent_parse_data* pd, Cent_ast* n)
 {
     Cent_token* lcb = NULL;
-    Cent_match(pd, Cent_token_left_curly_brace, "expected left curly brace", &lcb, n);
+    if (!Cent_match(
+        pd,
+        Cent_token_left_curly_brace,
+        "expected left curly brace",
+        &lcb,
+        n)
+    ) {
+        assert(false && "not possible");
+    }
 
     Cent_ast* a = Cent_parse_object_stmts(pd);
     Cent_ast_add(n, a);
 
     Cent_token* rcb = NULL;
     Cent_match(pd, Cent_token_right_curly_brace, "expected right curly brace", &rcb, n);
+    /* test case: test_parse_value_error_object_expected_rcb */
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -630,12 +679,15 @@ Cent_ast* Cent_parse_property_set(Cent_parse_data* pd)
     n->type = Cent_ast_type_prop_set;
 
     Cent_token* dot = NULL;
-    Cent_match(pd, Cent_token_dot, "expected dot", &dot, n);
+    if (!Cent_match(pd, Cent_token_dot, "expected dot", &dot, n)) {
+        assert(false && "not possible");
+    }
     Cent_token_destroy(dot);
     free(dot);
 
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, n);
+    /* test case: test_parse_value_error_object_property_expected_id */
 
     Cent_ast* a = NULL;
     Cent_ast_create(&a);
@@ -653,10 +705,7 @@ Cent_ast* Cent_parse_property_set(Cent_parse_data* pd)
     free(eq);
 
     Cent_ast* b = Cent_parse_value(pd);
-    if (!b) {
-        error_list_set(pd->errors, &pd->lookahead->loc, "expected a value");
-        n->has_error = true;
-    } else {
+    if (b) {
         Cent_ast_add(n, b);
     }
 

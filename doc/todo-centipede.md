@@ -1,5 +1,4 @@
 # Centipede Todo
-* validate element type tests
 * update enum values
 * validate enum tests
 * circular dependency checking

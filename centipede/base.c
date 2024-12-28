@@ -1,3 +1,5 @@
+#include <akela/symbol.h>
+
 #include "environment.h"
 
 Cent_environment* Cent_base_create()
@@ -15,7 +17,7 @@ Cent_environment* Cent_base_create()
     Cent_symbol_create(&sym);
     sym->type = Cent_symbol_type_element;
     sym->data.element = element;
-    hash_table_add(&env->symbols, &element->name, element);
+    hash_table_add(&env->symbols, &element->name, sym);
 
     Cent_element_create(&element);
     buffer_copy_str(&element->name, "Float");
@@ -24,7 +26,7 @@ Cent_environment* Cent_base_create()
     Cent_symbol_create(&sym);
     sym->type = Cent_symbol_type_element;
     sym->data.element = element;
-    hash_table_add(&env->symbols, &element->name, element);
+    hash_table_add(&env->symbols, &element->name, sym);
 
     Cent_element_create(&element);
     buffer_copy_str(&element->name, "String");
@@ -32,7 +34,7 @@ Cent_environment* Cent_base_create()
     Cent_symbol_create(&sym);
     sym->type = Cent_symbol_type_element;
     sym->data.element = element;
-    hash_table_add(&env->symbols, &element->name, element);
+    hash_table_add(&env->symbols, &element->name, sym);
 
     Cent_element_create(&element);
     buffer_copy_str(&element->name, "Bool");
@@ -40,7 +42,7 @@ Cent_environment* Cent_base_create()
     Cent_symbol_create(&sym);
     sym->type = Cent_symbol_type_element;
     sym->data.element = element;
-    hash_table_add(&env->symbols, &element->name, element);
+    hash_table_add(&env->symbols, &element->name, sym);
 
     return env;
 }

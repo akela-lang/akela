@@ -293,9 +293,419 @@ void test_parse_top_level_assignment()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_error_unhandled_token()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd, "1 end");
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_error_count(pr.errors, 1);
+    expect_source_error(pr.errors, "unhandled token: end");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_error_expected_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd, "element 1");
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_error_expected_end()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Test\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected end");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_error_name_already_exits()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Test\n"
+        "end\n"
+        "element Test\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "name already exists: Test");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_error_properties_expected_end()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Test\n"
+        "    properties\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected end");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_error_property_expected_colon()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Test\n"
+        "    properties\n"
+        "        count Integer\n"
+        "    end\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected colon");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_error_property_expected_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Test\n"
+        "    properties\n"
+        "        count:\n"
+        "    end\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_error_children_expected_end()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Test\n"
+        "    children\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected end");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_enumerate_error_expected_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "enum\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_enumerate_error_expected_end()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "enum Ast_type\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected end");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_value_error_expected_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        ":\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_value_error_enum_expected_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test_type::1\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_value_error_nested_assignments()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "a = b = 1\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "nested assignments are not allowed");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_value_error_expected_assignment_of_object()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected assignment or object");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_value_error_object_expected_rcb()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected right curly brace");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_value_error_object_property_expected_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {\n"
+        "   . = 1\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_value_error_object_property_expected_equal()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {\n"
+        "   .a 1\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected equal");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_property_unknown_type()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Test\n"
+        "   properties\n"
+        "        a: Abc\n"
+        "   end\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "unknown type: Abc");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_property_type_not_element()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Abc = 1\n"
+        "element Test\n"
+        "   properties\n"
+        "        a: Abc\n"
+        "   end\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "type is not an element type: Abc");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_child_unknown_type()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Test\n"
+        "   children\n"
+        "        Abc\n"
+        "   end\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "unknown type: Abc");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_element_child_type_not_an_element_type()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Abc = 1\n"
+        "element Test\n"
+        "   children\n"
+        "        Abc\n"
+        "   end\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "type is not an element type: Abc");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
     test_parse_enumerate();
     test_parse_top_level_assignment();
+    test_parse_error_unhandled_token();
+    test_parse_element_error_expected_id();
+    test_parse_element_error_expected_end();
+    test_parse_element_error_name_already_exits();
+    test_parse_element_error_properties_expected_end();
+    test_parse_element_error_property_expected_colon();
+    test_parse_element_error_property_expected_id();
+    test_parse_element_error_children_expected_end();
+    test_parse_enumerate_error_expected_id();
+    test_parse_enumerate_error_expected_end();
+    test_parse_value_error_expected_id();
+    test_parse_value_error_enum_expected_id();
+    test_parse_value_error_nested_assignments();
+    test_parse_value_error_expected_assignment_of_object();
+    test_parse_value_error_object_expected_rcb();
+    test_parse_value_error_object_property_expected_id();
+    test_parse_value_error_object_property_expected_equal();
+    test_parse_element_property_unknown_type();
+    test_parse_element_property_type_not_element();
+    test_parse_element_child_unknown_type();
+    test_parse_element_child_type_not_an_element_type();
 }
