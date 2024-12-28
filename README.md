@@ -16,7 +16,7 @@ software engineers more than dynamic or gradual typing
 * Fast compilation: handwritten lexer and parser in C
 * An AOT compiler for standalone execution
 * A JIT compiler for embeddable or interactive execution
-* Hot reloading for quick development cycle
+* Hot reloading for quick development / test cycle
 * Meta programming: generics and macros
 * Object-Oriented programming: methods and traits
 * Garbage collection to manage memory
