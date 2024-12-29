@@ -34,6 +34,7 @@ ZINC_API void hash_list_destroy(struct hash_list* hl);
 ZINC_API void hash_table_map(struct hash_table* ht, hash_table_func f);
 ZINC_API void hash_table_map_name(struct hash_table* ht, hash_table_func_name f);
 ZINC_API void hash_table_init(struct hash_table* ht, unsigned int size);
+ZINC_API void hash_table_create(struct hash_table** ht, unsigned int size);
 ZINC_API void hash_table_destroy(struct hash_table* ht);
 ZINC_API void hash_table_add(struct hash_table* ht, struct buffer* value, void* item);
 ZINC_API void hash_table_add_str(struct hash_table* ht, char* str, void* item);

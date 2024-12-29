@@ -17,6 +17,7 @@ void Cent_environment_create(Cent_environment** environment)
 
 void Cent_environment_destroy(Cent_environment* environment)
 {
+    hash_table_map(&environment->symbols, (hash_table_func)Cent_symbol_free);
     hash_table_destroy(&environment->symbols);
 }
 

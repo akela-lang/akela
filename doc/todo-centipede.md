@@ -1,5 +1,5 @@
 # Centipede Todo
-* circular dependency checking
+* builtin method parsing
 * value checking
 * value building
 * number test cases

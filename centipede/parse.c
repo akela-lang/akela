@@ -47,6 +47,9 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
     if (!pr.errors->head) {
         Cent_update_types(&pr);
     }
+    if (!pr.errors->head) {
+        Cent_circular_dep(&pr);
+    }
 
     return pr;
 }
@@ -104,6 +107,8 @@ bool Cent_has_separator(Cent_parse_data* pd, Cent_ast* n)
     if (!Cent_match(pd, type, "expected separator", &sep, n)) {
         assert(false && "not possible");
     }
+    Cent_token_destroy(sep);
+    free(sep);
 
     return true;
 }
@@ -175,12 +180,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
     /* test case: test_parse_element_error_expected_end */
 
     if (!n->has_error) {
-        Cent_element_type* element = NULL;
-        Cent_element_create(&element);
-        buffer_copy(&n->text, &element->name);
-
         Cent_symbol* sym = NULL;
-
         sym = Cent_environment_get(pd->top, &n->text);
         if (sym) {
             buffer_finish(&n->text);
@@ -189,6 +189,11 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
             return n;
             /* test case: test_parse_element_error_name_already_exits */
         }
+
+        Cent_element_type* element = NULL;
+        Cent_element_create(&element);
+        buffer_copy(&n->text, &element->name);
+        element->loc = n->loc;
 
         Cent_symbol_create(&sym);
         sym->type = Cent_symbol_type_element;
@@ -568,6 +573,9 @@ void Cent_parse_number(Cent_parse_data* pd, Cent_ast* n)
         } else {
             assert(false && "not possible");
         }
+
+        Cent_token_destroy(num);
+        free(num);
     }
 
     n->value = value;
@@ -585,6 +593,8 @@ void Cent_parse_string(Cent_parse_data* pd, Cent_ast* n)
 
     value->type = Cent_value_type_string;
     buffer_copy(&str->value, &value->data.string);
+    Cent_token_destroy(str);
+    free(str);
 
     n->value = value;
 }
@@ -607,6 +617,8 @@ void Cent_parse_boolean(Cent_parse_data* pd, Cent_ast* n)
     } else {
         assert(false && "not possible");
     }
+    Cent_token_destroy(bln);
+    free(bln);
 
     n->value = value;
 }

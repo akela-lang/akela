@@ -70,6 +70,12 @@ void hash_table_init(struct hash_table* ht, unsigned int size)
     }
 }
 
+void hash_table_create(struct hash_table** ht, unsigned int size)
+{
+    malloc_safe((void**)ht, sizeof(struct hash_table));
+    hash_table_init(*ht, size);
+}
+
 void hash_table_destroy(struct hash_table* ht)
 {
     if (ht) {

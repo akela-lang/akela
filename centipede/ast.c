@@ -34,6 +34,11 @@ void Cent_ast_destroy(Cent_ast *ast)
             free(ast->env);
         }
 
+        if (ast->value) {
+            Cent_value_destroy(ast->value);
+            free(ast->value);
+        }
+
         Cent_ast* p = ast->head;
         while (p) {
             Cent_ast* temp = p;
