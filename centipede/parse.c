@@ -23,7 +23,7 @@ void Cent_parse_assign(Cent_parse_data* pd, Cent_ast* n);
 void Cent_parse_object(Cent_parse_data* pd, Cent_ast* n);
 Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd);
 Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd);
-Cent_ast* Cent_parse_property_set(Cent_parse_data* pd);
+Cent_ast* Cent_parse_property(Cent_parse_data* pd);
 
 Cent_parse_result Cent_parse(Cent_parse_data* pd)
 {
@@ -475,6 +475,7 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
     }
     /* test case: test_parse_value_error_expected_id */
 
+    /* enum value */
     Cent_lookahead(pd);
     if (pd->lookahead->type == Cent_token_double_colon) {
         Cent_value* v = NULL;
@@ -512,6 +513,7 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
         return n;
     }
 
+    /* assignment */
     if (pd->lookahead->type == Cent_token_equal) {
         n->type = Cent_ast_type_assign;
 
@@ -558,10 +560,26 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
         return n;
     }
 
-    error_list_set(pd->errors, &pd->lookahead->loc, "expected assignment or object");
+    /* variable */
+    Cent_ast* a = NULL;
+    Cent_ast_create(&a);
+    a->type = Cent_ast_type_id;
+    buffer_copy(&id->value, &a->text);
+    a->loc = id->loc;
+    Cent_ast_add(n, a);
     Cent_token_destroy(id);
     free(id);
-    /* test case: test_parse_value_error_expected_assignment_of_object */
+
+    if (!n->has_error) {
+        Cent_symbol* sym = Cent_environment_get(pd->top, &a->text);
+        if (!sym) {
+            error_list_set(pd->errors, &a->loc, "invalid id: %b", &a->text);
+            n->has_error = true;
+        } else if (sym->type != Cent_symbol_type_value) {
+            error_list_set(pd->errors, &a->loc, "id is not a value");
+            n->has_error = true;
+        }
+    }
 
     return n;
 }
@@ -693,14 +711,14 @@ Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd)
     Cent_lookahead(pd);
 
     if (pd->lookahead->type == Cent_token_dot) {
-        return Cent_parse_property_set(pd);
+        return Cent_parse_property(pd);
     }
 
     return Cent_parse_value(pd);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Cent_ast* Cent_parse_property_set(Cent_parse_data* pd)
+Cent_ast* Cent_parse_property(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
@@ -717,25 +735,68 @@ Cent_ast* Cent_parse_property_set(Cent_parse_data* pd)
     Cent_match(pd, Cent_token_id, "expected id", &id, n);
     /* test case: test_parse_value_error_object_property_expected_id */
 
-    Cent_ast* a = NULL;
-    Cent_ast_create(&a);
-    a->type = Cent_ast_type_id;
+    /* property set */
+    if (id && id->builtin_type == Cent_builtin_type_none) {
+        Cent_ast* a = NULL;
+        Cent_ast_create(&a);
+        a->type = Cent_ast_type_id;
+        if (id) {
+            buffer_copy(&id->value, &a->text);
+            Cent_token_destroy(id);
+            free(id);
+        }
+        Cent_ast_add(n, a);
+
+        Cent_lookahead(pd);
+        if (id->builtin_type != Cent_builtin_type_none) {
+
+        }
+
+        Cent_token* eq = NULL;
+        Cent_match(pd, Cent_token_equal, "expected equal", &eq, n);
+        Cent_token_destroy(eq);
+        free(eq);
+
+        Cent_ast* b = Cent_parse_value(pd);
+        if (b) {
+            Cent_ast_add(n, b);
+        }
+
+        return n;
+    }
+
+    /* builtin method call */
     if (id) {
-        buffer_copy(&id->value, &a->text);
+        if (id->builtin_type == Cent_builtin_type_child_of) {
+            n->type = Cent_ast_type_method_child_of;
+        } else if (id->builtin_type == Cent_builtin_type_property_of) {
+            n->type = Cent_ast_type_method_property_of;
+        } else {
+            error_list_set(pd->errors, &id->loc, "invalid method: %b", id->value);
+            n->has_error = true;
+        }
+
         Cent_token_destroy(id);
         free(id);
-    }
-    Cent_ast_add(n, a);
 
-    Cent_token* eq = NULL;
-    Cent_match(pd, Cent_token_equal, "expected equal", &eq, n);
-    Cent_token_destroy(eq);
-    free(eq);
+        Cent_token* lp = NULL;
+        Cent_match(pd, Cent_token_left_paren, "expected left parenthesis", &lp, n);
+        Cent_token_destroy(lp);
+        free(lp);
 
-    Cent_ast* b = Cent_parse_value(pd);
-    if (b) {
-        Cent_ast_add(n, b);
+        Cent_ast* a = Cent_parse_value(pd);
+        Cent_ast_add(n, a);
+
+        Cent_token* rp = NULL;
+        Cent_match(pd, Cent_token_right_paren, "expected right parenthesis", &rp, n);
+        Cent_token_destroy(rp);
+        free(rp);
+
+        return n;
     }
+
+    error_list_set(pd->errors, &pd->lookahead->loc, "expected a property set or method call");
+    n->has_error = true;
 
     return n;
 }

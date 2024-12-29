@@ -26,6 +26,8 @@ typedef enum Cent_token_type {
     Cent_token_false,
     Cent_token_modifier,
     Cent_token_semicolon,
+    Cent_token_left_paren,
+    Cent_token_right_paren,
     Cent_token_count,       /* keep at end */
 } Cent_token_type;
 
@@ -53,6 +55,8 @@ static char* Cent_token_name(Cent_token_type type)
         "false",
         "modifier",
         "semicolon",
+        "left-parenthesis",
+        "right-parenthesis",
     };
 
     for (int i = 0; i < Cent_token_count; i++) {

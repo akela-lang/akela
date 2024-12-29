@@ -135,6 +135,18 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
                 return;
             }
 
+            if (c[0] == '(') {
+                t->type = Cent_token_left_paren;
+                t->loc = loc;
+                return;
+            }
+
+            if (c[0] == ')') {
+                t->type = Cent_token_right_paren;
+                t->loc = loc;
+                return;
+            }
+
             if (c[0] == '.') {
                 t->type = Cent_token_dot;
                 t->loc = loc;

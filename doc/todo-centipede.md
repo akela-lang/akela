@@ -1,5 +1,10 @@
 # Centipede Todo
 * builtin method parsing
+  * child of [x]
+  * property of []
+* builtin function
+  * top []
+  * file name []
 * value checking
 * value building
 * number test cases
