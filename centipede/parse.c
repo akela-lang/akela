@@ -285,17 +285,19 @@ Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
     free(colon);
     /* test case: test_parse_element_error_property_expected_colon */
 
-    Cent_match(pd, Cent_token_id, "expected id", &id, n);
+    Cent_token* type = NULL;
+    Cent_match(pd, Cent_token_id, "expected id", &type, n);
     /* test case: test_parse_element_error_property_expected_id */
 
     Cent_ast* b = NULL;
     Cent_ast_create(&b);
     b->type = Cent_ast_type_id;
-    buffer_copy(&id->value, &b->text);
+    if (type) {
+        buffer_copy(&type->value, &b->text);
+        Cent_token_destroy(type);
+        free(type);
+    }
     Cent_ast_add(n, b);
-
-    Cent_token_destroy(id);
-    free(id);
 
     Cent_lookahead(pd);
     if (pd->lookahead->type == Cent_token_modifier) {
@@ -592,6 +594,7 @@ void Cent_parse_string(Cent_parse_data* pd, Cent_ast* n)
     }
 
     value->type = Cent_value_type_string;
+    buffer_init(&value->data.string);
     buffer_copy(&str->value, &value->data.string);
     Cent_token_destroy(str);
     free(str);
