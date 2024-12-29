@@ -35,6 +35,7 @@ typedef struct Cent_value {
 
 void Cent_value_init(Cent_value *value);
 void Cent_value_create(Cent_value **value);
+void Cent_value_set_type(Cent_value *value, Cent_value_type type);
 void Cent_value_destroy(Cent_value *value);
 void Cent_value_free(Cent_value *value);
 void Cent_value_set(Cent_value* value, struct buffer* name, Cent_value* value2);

@@ -29,6 +29,8 @@ void Cent_ast_create(Cent_ast **ast)
 void Cent_ast_destroy(Cent_ast *ast)
 {
     if (ast) {
+        buffer_destroy(&ast->text);
+
         if (ast->env) {
             Cent_environment_destroy(ast->env);
             free(ast->env);

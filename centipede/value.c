@@ -21,6 +21,14 @@ void Cent_value_create(Cent_value **value)
     Cent_value_init(*value);
 }
 
+void Cent_value_set_type(Cent_value *value, Cent_value_type type)
+{
+    value->type = type;
+    if (type == Cent_value_type_string) {
+        buffer_init(&value->data.string);
+    }
+}
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_value_destroy(Cent_value *value)
 {
@@ -33,6 +41,9 @@ void Cent_value_destroy(Cent_value *value)
         Cent_value_free(temp);
     }
     hash_table_destroy(&value->properties);
+    if (value->type == Cent_value_type_string) {
+        buffer_destroy(&value->data.string);
+    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

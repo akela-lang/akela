@@ -35,6 +35,10 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
             &pd->lookahead->loc,
             "unhandled token: %s",
             Cent_token_name(pd->lookahead->type));
+        Cent_token* t = pd->lookahead;
+        pd->lookahead = NULL;
+        Cent_token_destroy(t);
+        free(t);
     }
     /* test case: test_parse_unhandled_token */
 
@@ -144,6 +148,8 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
     if (!Cent_match(pd, Cent_token_element, "expected element", &e, n)) {
         assert(false && "not possible");
     }
+    Cent_token_destroy(e);
+    free(e);
 
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, n);
@@ -327,6 +333,8 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
     if (!Cent_match(pd, Cent_token_children, "expected children", &ch, n)) {
         assert(false && "not possible");
     }
+    Cent_token_destroy(ch);
+    free(ch);
 
     Cent_ignore_newlines(pd, n);
 
@@ -468,7 +476,7 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
     if (pd->lookahead->type == Cent_token_double_colon) {
         Cent_value* v = NULL;
         Cent_value_create(&v);
-        v->type = Cent_value_type_enum;
+        Cent_value_set_type(v, Cent_value_type_enum);
         if (id) {
             buffer_copy(&id->value, &v->display);
             Cent_token_destroy(id);
@@ -559,7 +567,7 @@ void Cent_parse_number(Cent_parse_data* pd, Cent_ast* n)
 {
     Cent_value* value = NULL;
     Cent_value_create(&value);
-    value->type = Cent_value_type_number;
+    Cent_value_set_type(value, Cent_value_type_number);
 
     Cent_token* num = NULL;
     if (!Cent_match(pd, Cent_token_number, "expected number", &num, n)) {
@@ -593,8 +601,7 @@ void Cent_parse_string(Cent_parse_data* pd, Cent_ast* n)
         assert(false && "not possible");
     }
 
-    value->type = Cent_value_type_string;
-    buffer_init(&value->data.string);
+    Cent_value_set_type(value, Cent_value_type_string);
     buffer_copy(&str->value, &value->data.string);
     Cent_token_destroy(str);
     free(str);
@@ -606,13 +613,12 @@ void Cent_parse_boolean(Cent_parse_data* pd, Cent_ast* n)
 {
     Cent_value* value = NULL;
     Cent_value_create(&value);
-    value->type = Cent_value_type_boolean;
+    Cent_value_set_type(value, Cent_value_type_boolean);
     Cent_token* bln = NULL;
     if (!Cent_match(pd, pd->lookahead->type, "expected boolean", &bln, n)) {
         assert(false && "not possible");
     }
 
-    value->type = Cent_value_type_boolean;
     if (bln->type == Cent_token_true) {
         value->data.boolean = true;
     } else if (bln->type == Cent_token_false) {

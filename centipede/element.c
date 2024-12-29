@@ -21,7 +21,7 @@ void Cent_element_create(Cent_element_type** et)
 void Cent_element_destroy(Cent_element_type* et)
 {
     buffer_destroy(&et->name);
-    hash_table_map(&et->properties, Cent_property_type_free);
+    hash_table_map(&et->properties, (hash_table_func)Cent_property_type_free);
     hash_table_destroy(&et->properties);
     Cent_element_type_list_destroy(&et->children);
 }
