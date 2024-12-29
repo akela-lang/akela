@@ -846,6 +846,60 @@ void test_parse_object_method_call()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_object_method_call2()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "a = Foo {}\n"
+        "Bar {\n"
+        "    .@property_of(a)\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_no_errors(pr.errors);
+
+    /* root */
+    expect_ptr(pr.root, "ptr pr.root");
+    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+
+    /* assign */
+    Cent_ast* assign = Cent_ast_get(pr.root, 0);
+    expect_ptr(assign, "ptr assign");
+    expect_int_equal(assign->type, Cent_ast_type_assign, "type assign");
+
+    /* Bar */
+    Cent_ast* bar = Cent_ast_get(pr.root, 1);
+    expect_ptr(bar, "ptr bar");
+    expect_int_equal(bar->type, Cent_ast_type_value, "type bar");
+
+    /* object stmts */
+    Cent_ast* stmts = Cent_ast_get(bar, 0);
+    expect_ptr(stmts, "ptr bar");
+    expect_int_equal(stmts->type, Cent_ast_type_object_stmts, "type stmts");
+
+    /* method child of */
+    Cent_ast* method = Cent_ast_get(stmts, 0);
+    expect_ptr(method, "ptr method");
+    expect_int_equal(method->type, Cent_ast_type_method_property_of, "type method");
+
+    /* value */
+    Cent_ast* value = Cent_ast_get(method, 0);
+    expect_ptr(value, "ptr value");
+    expect_int_equal(value->type, Cent_ast_type_value, "type value");
+
+    /* id a */
+    Cent_ast* id = Cent_ast_get(value, 0);
+    expect_ptr(id, "ptr id");
+    expect_int_equal(id->type, Cent_ast_type_id, "type id");
+    expect_str(&id->text, "a", "text id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -877,4 +931,5 @@ void test_parse()
     test_parse_element_type_error_circular_dependency3();
     test_parse_element_type_error_circular_dependency4();
     test_parse_object_method_call();
+    test_parse_object_method_call2();
 }
