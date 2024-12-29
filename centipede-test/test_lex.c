@@ -556,9 +556,142 @@ void test_lex_top_level_assign()
     test_lex_teardown(&ld);
 }
 
+void test_lex_builtin()
+{
+    test_name(__func__);
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+
+    test_lex_setup(&ld,
+        "@child_of\n"
+        "@property_of\n"
+        "@top\n"
+        "@file_name\n"
+        "abc\n"
+    );
+
+    /* line 1 */
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_id, "type 1.1");
+    expect_int_equal(t->builtin_type, Cent_builtin_type_child_of, "builtin type 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_newline, "type 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    /* line 2 */
+    t = lex(&ld);
+    assert_ptr(t, "ptr 2.1");
+    expect_int_equal(t->type, Cent_token_id, "type 2.1");
+    expect_int_equal(t->builtin_type, Cent_builtin_type_property_of, "builtin type 2.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 2.2");
+    expect_int_equal(t->type, Cent_token_newline, "type 2.2");
+    Cent_token_destroy(t);
+    free(t);
+
+    /* line 3 */
+    t = lex(&ld);
+    assert_ptr(t, "ptr 3.1");
+    expect_int_equal(t->type, Cent_token_id, "type 3.1");
+    expect_int_equal(t->builtin_type, Cent_builtin_type_top, "builtin type 3.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 3.2");
+    expect_int_equal(t->type, Cent_token_newline, "type 3.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    /* line 4 */
+    t = lex(&ld);
+    assert_ptr(t, "ptr 4.1");
+    expect_int_equal(t->type, Cent_token_id, "type 4.1");
+    expect_int_equal(t->builtin_type, Cent_builtin_type_file_name, "builtin type 4.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 4.2");
+    expect_int_equal(t->type, Cent_token_newline, "type 4.2");
+    Cent_token_destroy(t);
+    free(t);
+
+    /* line 5 */
+    t = lex(&ld);
+    assert_ptr(t, "ptr 5.1");
+    expect_int_equal(t->type, Cent_token_id, "type 5.1");
+    expect_int_equal(t->builtin_type, Cent_builtin_type_none, "builtin type 5.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 5.2");
+    expect_int_equal(t->type, Cent_token_newline, "type 5.2");
+    Cent_token_destroy(t);
+    free(t);
+
+    /* eof */
+    t = lex(&ld);
+    assert_ptr(t, "ptr eof");
+    expect_int_equal(t->type, Cent_token_eof, "type eof");
+    Cent_token_destroy(t);
+    free(t);
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_builtin_error()
+{
+    test_name(__func__);
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+
+    test_lex_setup(&ld,
+        "@abc\n"
+    );
+
+    /* line 1 */
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_id, "type 1.1");
+    expect_int_equal(t->builtin_type, Cent_builtin_type_none, "builtin type 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_newline, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
+
+    /* eof */
+    t = lex(&ld);
+    assert_ptr(t, "ptr eof");
+    expect_int_equal(t->type, Cent_token_eof, "type eof");
+    Cent_token_destroy(t);
+    free(t);
+
+    expect_has_errors(ld.errors);
+    expect_source_error(ld.errors, "invalid builtin id: @abc");
+    test_lex_teardown(&ld);
+}
+
 void test_lex()
 {
     test_lex_element();
     test_lex_enum();
     test_lex_top_level_assign();
+    test_lex_builtin();
+    test_lex_builtin_error();
 }

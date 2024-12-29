@@ -26,9 +26,18 @@ Cent_token* lex(Cent_lex_data* ld)
 
     lex_start(ld, t);
     if (t->type == Cent_token_id) {
-        Cent_token_type* p = Cent_lex_get_reserved_word(ld, &t->value);
-        if (p) {
-            t->type = *p;
+        if (t->value.size >= 1 && t->value.buf[0] == '@') {
+            Cent_builtin_type* bt = Cent_lex_get_builtin(ld, &t->value);
+            if (bt) {
+                t->builtin_type = *bt;
+            } else {
+                error_list_set(ld->errors, &t->loc, "invalid builtin id: %b", &t->value);
+            }
+        } else {
+            Cent_token_type* p = Cent_lex_get_reserved_word(ld, &t->value);
+            if (p) {
+                t->type = *p;
+            }
         }
     }
 
@@ -153,7 +162,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
                 continue;
             }
 
-            if (isalpha(c[0]) || c[0] == '_') {
+            if (isalpha(c[0]) || c[0] == '_' || c[0] == '@') {
                 t->type = Cent_token_id;
                 t->loc = loc;
                 buffer_add(&t->value, c, num);

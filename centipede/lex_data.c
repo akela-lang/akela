@@ -11,8 +11,8 @@ void Cent_lex_data_init(
     ld->errors = errors;
     ld->input = input;
     ld->input_vtable = input_vtable;
-    hash_table_init(&ld->reserved, 16);
 
+    hash_table_init(&ld->reserved, 16);
     Cent_lex_add_reserved_word(ld, "element", Cent_token_element);
     Cent_lex_add_reserved_word(ld, "properties", Cent_token_properties);
     Cent_lex_add_reserved_word(ld, "children", Cent_token_children);
@@ -20,6 +20,12 @@ void Cent_lex_data_init(
     Cent_lex_add_reserved_word(ld, "enum", Cent_token_enum);
     Cent_lex_add_reserved_word(ld, "true", Cent_token_true);
     Cent_lex_add_reserved_word(ld, "false", Cent_token_false);
+
+    hash_table_init(&ld->builtin, 8);
+    Cent_lex_add_builtin(ld, "@child_of", Cent_builtin_type_child_of);
+    Cent_lex_add_builtin(ld, "@property_of", Cent_builtin_type_property_of);
+    Cent_lex_add_builtin(ld, "@top", Cent_builtin_type_top);
+    Cent_lex_add_builtin(ld, "@file_name", Cent_builtin_type_file_name);
 }
 
 void Cent_lex_data_create(
@@ -49,4 +55,17 @@ void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type t
 Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, struct buffer* word)
 {
     return hash_table_get(&ld->reserved, word);
+}
+
+void Cent_lex_add_builtin(Cent_lex_data* ld, char* name, Cent_builtin_type type)
+{
+    Cent_builtin_type* bt = NULL;
+    malloc_safe((void**)&bt, sizeof(Cent_builtin_type));
+    *bt = type;
+    hash_table_add_str(&ld->builtin, name, bt);
+}
+
+Cent_builtin_type* Cent_lex_get_builtin(Cent_lex_data* ld, struct buffer* name)
+{
+    return hash_table_get(&ld->builtin, name);
 }

@@ -4,6 +4,8 @@
 void Cent_token_init(Cent_token *t)
 {
     t->type = Cent_token_none;
+    t->number_type = Cent_number_type_none;
+    t->builtin_type = Cent_builtin_type_none;
     buffer_init(&t->value);
     location_init(&t->loc);
 }

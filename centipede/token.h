@@ -71,9 +71,18 @@ typedef enum Cent_number_type {
     Cent_number_type_fp,
 } Cent_number_type;
 
+typedef enum Cent_builtin_type {
+    Cent_builtin_type_none,
+    Cent_builtin_type_child_of,
+    Cent_builtin_type_property_of,
+    Cent_builtin_type_top,
+    Cent_builtin_type_file_name,
+} Cent_builtin_type;
+
 typedef struct Cent_token {
     Cent_token_type type;
     Cent_number_type number_type;
+    Cent_builtin_type builtin_type;
     struct buffer value;
     struct location loc;
     union {
