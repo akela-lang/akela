@@ -35,12 +35,15 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
             &pd->lookahead->loc,
             "unhandled token: %s",
             Cent_token_name(pd->lookahead->type));
+    }
+    /* test case: test_parse_unhandled_token */
+
+    if (pd->lookahead) {
         Cent_token* t = pd->lookahead;
         pd->lookahead = NULL;
         Cent_token_destroy(t);
         free(t);
     }
-    /* test case: test_parse_unhandled_token */
 
     Cent_parse_result pr;
     Cent_parse_result_init(&pr);
@@ -645,12 +648,16 @@ void Cent_parse_object(Cent_parse_data* pd, Cent_ast* n)
     ) {
         assert(false && "not possible");
     }
+    Cent_token_destroy(lcb);
+    free(lcb);
 
     Cent_ast* a = Cent_parse_object_stmts(pd);
     Cent_ast_add(n, a);
 
     Cent_token* rcb = NULL;
     Cent_match(pd, Cent_token_right_curly_brace, "expected right curly brace", &rcb, n);
+    Cent_token_destroy(rcb);
+    free(rcb);
     /* test case: test_parse_value_error_object_expected_rcb */
 }
 
@@ -717,8 +724,8 @@ Cent_ast* Cent_parse_property_set(Cent_parse_data* pd)
         buffer_copy(&id->value, &a->text);
         Cent_token_destroy(id);
         free(id);
-        Cent_ast_add(n, a);
     }
+    Cent_ast_add(n, a);
 
     Cent_token* eq = NULL;
     Cent_match(pd, Cent_token_equal, "expected equal", &eq, n);

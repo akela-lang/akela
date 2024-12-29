@@ -38,8 +38,12 @@ void test_parse_teardown(Cent_parse_data* pd, Cent_parse_result* pr)
     free(input);
     Cent_lex_data* ld = pd->ld;
     Cent_lex_data_destroy(ld);
+    free(ld);
     Cent_ast_destroy(pr->root);
+    free(pr->root);
     Cent_environment_destroy(pr->base);
+    free(pr->base);
     struct error_list* errors = pd->errors;
     error_list_destroy(errors);
+    free(errors);
 }

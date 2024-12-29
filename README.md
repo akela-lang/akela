@@ -19,7 +19,7 @@ software engineers more than dynamic or gradual typing
 * Hot reloading for quick development / test cycles
 * Meta programming: generics and macros
 * Object-Oriented programming: methods and traits
-* Rust enums and matching
+* No nulls:  Rust-like enums and matching
 * Garbage collection to manage memory
 * Series / Vector data types for financial data
 * Support for trading indicators, screeners, and simulations
