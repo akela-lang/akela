@@ -215,13 +215,9 @@ void test_parse_top_level_assignment()
     Cent_ast* type_value = Cent_ast_get(type_prop_set, 1);
     assert_ptr(type_value, "ptr type_value");
     expect_int_equal(type_value->type, Cent_ast_type_value, "type type");
-
-    /* type value enum */
-    Cent_value* value0 = type_value->value;
-    assert_ptr(value0, "ptr value0");
-    expect_int_equal(value0->type, Cent_value_type_enum, "type value0");
-    expect_str(&value0->data.enumeration.display, "Type_def_type::Integer", "value value0");;
-    expect_false(value0->has_error, "has error value0");
+    expect_int_equal(type_value->value_type, Cent_value_type_enum, "value_type type_value");
+    expect_str(&type_value->data.enumeration.display, "Type_def_type::Integer", "value type_value");;
+    expect_false(type_value->has_error, "has error value0");
 
     /* name prop set */
     Cent_ast* name_prop_set = Cent_ast_get(object_stmts, 1);
@@ -238,12 +234,8 @@ void test_parse_top_level_assignment()
     Cent_ast* name_value = Cent_ast_get(name_prop_set, 1);
     assert_ptr(name_value, "ptr name_value");
     expect_int_equal(name_value->type, Cent_ast_type_value, "type name_value");
-
-    /* i32 value */
-    Cent_value* value1 = name_value->value;
-    assert_ptr(value1, "ptr value1");
-    expect_int_equal(value1->type, Cent_value_type_string, "type value1");
-    expect_str(&value1->data.string, "i32", "string value1");
+    expect_int_equal(name_value->value_type, Cent_value_type_string, "value_type name_value");
+    expect_str(&name_value->data.string, "i32", "string name_value");
 
     /* bit_count prop set */
     Cent_ast* bit_count_prop_set = Cent_ast_get(object_stmts, 2);
@@ -260,13 +252,9 @@ void test_parse_top_level_assignment()
     Cent_ast* bit_count_value = Cent_ast_get(bit_count_prop_set, 1);
     assert_ptr(bit_count_value, "ptr bit_count_value");
     expect_int_equal(bit_count_value->type, Cent_ast_type_value, "type bit_count_value");
-
-    /* 32 value */
-    Cent_value* value2 = bit_count_value->value;
-    assert_ptr(value2, "ptr value2");
-    expect_int_equal(value2->type, Cent_value_type_number, "type value2");
-    expect_int_equal(value2->number_type, Cent_number_type_integer, "number_type value2");
-    expect_long_long_equal(value2->data.integer, 32, "integer value2");
+    expect_int_equal(bit_count_value->value_type, Cent_value_type_number, "value_type bit_count_value");
+    expect_int_equal(bit_count_value->number_type, Cent_number_type_integer, "number_type bit_count_value");
+    expect_long_long_equal(bit_count_value->data.integer, 32, "integer bit_count_value");
 
     /* is_signed prop set */
     Cent_ast* is_signed_prop_set = Cent_ast_get(object_stmts, 3);
@@ -283,12 +271,8 @@ void test_parse_top_level_assignment()
     Cent_ast* is_signed_value = Cent_ast_get(is_signed_prop_set, 1);
     assert_ptr(is_signed_value, "ptr is_signed_value");
     expect_int_equal(is_signed_value->type, Cent_ast_type_value, "type is_signed_value");
-
-    /* true value */
-    Cent_value* value3 = is_signed_value->value;
-    assert_ptr(value3, "ptr value3");
-    expect_int_equal(value3->type, Cent_value_type_boolean, "type value3");
-    expect_long_long_equal(value3->data.boolean, true, "boolean value3");
+    expect_int_equal(is_signed_value->value_type, Cent_value_type_boolean, "value_type is_signed_value");
+    expect_long_long_equal(is_signed_value->data.boolean, true, "boolean is_signed_value");
 
     test_parse_teardown(&pd, &pr);
 }

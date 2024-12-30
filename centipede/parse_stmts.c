@@ -135,7 +135,6 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
         Cent_symbol_create(&sym);
         sym->type = Cent_symbol_type_element;
         sym->data.element = element;
-        sym->n = n;
         Cent_environment_add_symbol(pd->top, &element->name, sym);
     }
 
@@ -350,7 +349,6 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
         Cent_symbol_create(&sym);
         sym->type = Cent_symbol_type_enumerate;
         sym->data.enumerate = enumerate;
-        sym->n = n;
         Cent_environment_add_symbol(pd->top, &enumerate->name, sym);
     }
 

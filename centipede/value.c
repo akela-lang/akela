@@ -1,4 +1,7 @@
 #include "value.h"
+
+#include <akela/type_def.h>
+
 #include "zinc/memory.h"
 
 void Cent_value_init(Cent_value *value)
@@ -20,14 +23,28 @@ void Cent_value_create(Cent_value **value)
     Cent_value_init(*value);
 }
 
+void Cent_data_init(Cent_data *data, Cent_value_type type)
+{
+    if (type == Cent_value_type_string) {
+        buffer_init(&data->string);
+    } else if (type == Cent_value_type_enum) {
+        buffer_init(&data->enumeration.display);
+    }
+}
+
+void Cent_data_destroy(Cent_data *data, Cent_value_type type)
+{
+    if (type == Cent_value_type_string) {
+        buffer_destroy(&data->string);
+    } else if (type == Cent_value_type_enum) {
+        buffer_destroy(&data->enumeration.display);
+    }
+}
+
 void Cent_value_set_type(Cent_value *value, Cent_value_type type)
 {
     value->type = type;
-    if (type == Cent_value_type_string) {
-        buffer_init(&value->data.string);
-    } else if (type == Cent_value_type_enum) {
-        buffer_init(&value->data.enumeration.display);
-    }
+    Cent_data_init(&value->data, type);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -42,11 +59,7 @@ void Cent_value_destroy(Cent_value *value)
     }
     hash_table_destroy(&value->properties);
 
-    if (value->type == Cent_value_type_string) {
-        buffer_destroy(&value->data.string);
-    } else if (value->type == Cent_value_type_enum) {
-        buffer_destroy(&value->data.enumeration.display);
-    }
+    Cent_data_destroy(&value->data, value->type);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

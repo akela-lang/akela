@@ -5,7 +5,6 @@
 void Cent_symbol_init(Cent_symbol *sym)
 {
     sym->type = Symbol_type_none;
-    sym->n = NULL;
 }
 
 void Cent_symbol_create(Cent_symbol** sym)

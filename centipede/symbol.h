@@ -1,7 +1,6 @@
 #ifndef CENTIPEDE_SYMBOL_H
 #define CENTIPEDE_SYMBOL_H
 
-#include "value.h"
 #include "element.h"
 #include "enumerate.h"
 
@@ -15,11 +14,10 @@ typedef enum Cent_symbol_type {
 typedef struct Cent_symbol {
     Cent_symbol_type type;
     union {
-        Cent_value* value;
+        void* value;
         Cent_element_type* element;
         Cent_enum_type* enumerate;
     } data;
-    void* n;
 } Cent_symbol;
 
 void Cent_symbol_init(Cent_symbol *sym);

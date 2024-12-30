@@ -7,8 +7,9 @@
 void Cent_ast_init(Cent_ast *ast)
 {
     ast->type = Cent_ast_type_none;
+    ast->value_type = Cent_value_type_none;
+    ast->number_type = Cent_number_type_none;
     buffer_init(&ast->text);
-    ast->value = NULL;
     ast->env = NULL;
     location_init(&ast->loc);
     ast->has_error = false;
@@ -25,6 +26,12 @@ void Cent_ast_create(Cent_ast **ast)
     Cent_ast_init(*ast);
 }
 
+void Cent_ast_value_set_type(Cent_ast *ast, Cent_value_type type)
+{
+    ast->value_type = type;
+    Cent_data_init(&ast->data, type);
+}
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_ast_destroy(Cent_ast *ast)
 {
@@ -36,11 +43,6 @@ void Cent_ast_destroy(Cent_ast *ast)
             free(ast->env);
         }
 
-        if (ast->value) {
-            Cent_value_destroy(ast->value);
-            free(ast->value);
-        }
-
         Cent_ast* p = ast->head;
         while (p) {
             Cent_ast* temp = p;
@@ -48,6 +50,8 @@ void Cent_ast_destroy(Cent_ast *ast)
             Cent_ast_destroy(temp);
             free(temp);
         }
+
+        Cent_data_destroy(&ast->data, ast->value_type);
     }
 }
 

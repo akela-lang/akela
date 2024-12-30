@@ -37,6 +37,9 @@ typedef struct Cent_value {
     struct Cent_value* parent;
 } Cent_value;
 
+void Cent_data_init(Cent_data *data, Cent_value_type type);
+void Cent_data_destroy(Cent_data *data, Cent_value_type type);
+
 void Cent_value_init(Cent_value *value);
 void Cent_value_create(Cent_value **value);
 void Cent_value_set_type(Cent_value *value, Cent_value_type type);

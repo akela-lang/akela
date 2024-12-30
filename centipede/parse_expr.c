@@ -47,22 +47,20 @@ Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
     /* enum value */
     Cent_lookahead(pd);
     if (pd->lookahead->type == Cent_token_double_colon) {
-        Cent_value* v = NULL;
-        Cent_value_create(&v);
-        Cent_value_set_type(v, Cent_value_type_enum);
+        Cent_ast_value_set_type(n, Cent_value_type_enum);
         if (id) {
-            buffer_copy(&id->value, &v->data.enumeration.display);
+            buffer_copy(&id->value, &n->data.enumeration.display);
             Cent_token_destroy(id);
             free(id);
         } else {
-            v->has_error = true;
+            n->has_error = true;
         }
 
         Cent_token* dc = NULL;
         if (!Cent_match(pd, Cent_token_double_colon, "expected double-colon", &dc, n)) {
             assert(false && "not possible");
         }
-        buffer_copy_str(&v->data.enumeration.display, "::");
+        buffer_copy_str(&n->data.enumeration.display, "::");
         Cent_token_destroy(dc);
         free(dc);
 
@@ -71,14 +69,13 @@ Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
         /* test case: test_parse_value_error_enum_expected_id */
 
         if (id2) {
-            buffer_copy(&id2->value, &v->data.enumeration.display);
+            buffer_copy(&id2->value, &n->data.enumeration.display);
             Cent_token_destroy(id2);
             free(id2);
         } else {
-            v->has_error = true;
+            n->has_error = true;
         }
 
-        n->value = v;
         return n;
     }
 
@@ -114,7 +111,7 @@ Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
             Cent_symbol* sym = NULL;
             Cent_symbol_create(&sym);
             sym->type = Cent_symbol_type_value;
-            sym->data.value = b->value;
+            sym->data.value = b;
             Cent_environment_add_symbol(pd->top, &a->text, sym);
         }
         return n;
@@ -195,9 +192,7 @@ Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
 
 void Cent_parse_number(Cent_parse_data* pd, Cent_ast* n)
 {
-    Cent_value* value = NULL;
-    Cent_value_create(&value);
-    Cent_value_set_type(value, Cent_value_type_number);
+    Cent_ast_value_set_type(n, Cent_value_type_number);
 
     Cent_token* num = NULL;
     if (!Cent_match(pd, Cent_token_number, "expected number", &num, n)) {
@@ -205,11 +200,11 @@ void Cent_parse_number(Cent_parse_data* pd, Cent_ast* n)
     }
     if (num) {
         if (num->number_type == Cent_number_type_integer) {
-            value->number_type = Cent_number_type_integer;
-            value->data.integer = num->number_value.integer;
+            n->number_type = Cent_number_type_integer;
+            n->data.integer = num->number_value.integer;
         } else if (num->number_type == Cent_number_type_fp) {
-            value->number_type = Cent_number_type_fp;
-            value->data.fp = num->number_value.fp;
+            n->number_type = Cent_number_type_fp;
+            n->data.fp = num->number_value.fp;
         } else {
             assert(false && "not possible");
         }
@@ -217,49 +212,38 @@ void Cent_parse_number(Cent_parse_data* pd, Cent_ast* n)
         Cent_token_destroy(num);
         free(num);
     }
-
-    n->value = value;
 }
 
 void Cent_parse_string(Cent_parse_data* pd, Cent_ast* n)
 {
-    Cent_value* value = NULL;
-    Cent_value_create(&value);
-
     Cent_token* str = NULL;
     if (!Cent_match(pd, Cent_token_string, "expected string", &str, n)) {
         assert(false && "not possible");
     }
 
-    Cent_value_set_type(value, Cent_value_type_string);
-    buffer_copy(&str->value, &value->data.string);
+    Cent_ast_value_set_type(n, Cent_value_type_string);
+    buffer_copy(&str->value, &n->data.string);
     Cent_token_destroy(str);
     free(str);
-
-    n->value = value;
 }
 
 void Cent_parse_boolean(Cent_parse_data* pd, Cent_ast* n)
 {
-    Cent_value* value = NULL;
-    Cent_value_create(&value);
-    Cent_value_set_type(value, Cent_value_type_boolean);
+    Cent_ast_value_set_type(n, Cent_value_type_boolean);
     Cent_token* bln = NULL;
     if (!Cent_match(pd, pd->lookahead->type, "expected boolean", &bln, n)) {
         assert(false && "not possible");
     }
 
     if (bln->type == Cent_token_true) {
-        value->data.boolean = true;
+        n->data.boolean = true;
     } else if (bln->type == Cent_token_false) {
-        value->data.boolean = false;
+        n->data.boolean = false;
     } else {
         assert(false && "not possible");
     }
     Cent_token_destroy(bln);
     free(bln);
-
-    n->value = value;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

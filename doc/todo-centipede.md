@@ -1,5 +1,4 @@
 # Centipede Todo
-* remove value from ast
 * value building
 * number test cases
 * string test cases

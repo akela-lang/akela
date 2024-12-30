@@ -1,8 +1,6 @@
 #ifndef CENTIPEDE_AST_H
 #define CENTIPEDE_AST_H
 
-#include "element.h"
-#include "enumerate.h"
 #include "value.h"
 #include "zinc/error.h"
 #include "environment.h"
@@ -31,7 +29,9 @@ typedef enum Cent_ast_type {
 typedef struct Cent_ast {
     Cent_ast_type type;
     struct buffer text;
-    Cent_value* value;
+    Cent_value_type value_type;
+    Cent_number_type number_type;
+    Cent_data data;
     struct Cent_environment* env;
     struct location loc;
     bool has_error;
@@ -44,6 +44,7 @@ typedef struct Cent_ast {
 
 void Cent_ast_init(Cent_ast *ast);
 void Cent_ast_create(Cent_ast **ast);
+void Cent_ast_value_set_type(Cent_ast *ast, Cent_value_type type);
 void Cent_ast_destroy(Cent_ast *ast);
 void Cent_ast_add(Cent_ast *p, Cent_ast *c);
 Cent_ast* Cent_ast_get(Cent_ast *n, size_t index);
