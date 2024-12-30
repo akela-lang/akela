@@ -6,6 +6,7 @@
 #include "token.h"
 #include "update_types.h"
 #include "parse_stmts.h"
+#include "update_values.h"
 
 Cent_parse_result Cent_parse(Cent_parse_data* pd)
 {
@@ -36,8 +37,13 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
     if (!pr.errors->head) {
         Cent_update_types(&pr);
     }
+
     if (!pr.errors->head) {
         Cent_circular_dep(&pr);
+    }
+
+    if (!pr.errors->head) {
+        Cent_update_values(&pr);
     }
 
     return pr;

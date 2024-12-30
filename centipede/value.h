@@ -19,8 +19,12 @@ typedef union Cent_data {
     struct buffer string;
     bool boolean;
     struct enumeration {
+        struct buffer id1;
+        struct location loc1;
+        struct buffer id2;
+        struct location loc2;
         struct buffer display;
-        long long number;
+        size_t number;
     } enumeration;
 } Cent_data;
 

@@ -62,3 +62,16 @@ bool Cent_has_separator(Cent_parse_data* pd, Cent_ast* n)
 
     return true;
 }
+
+Cent_environment* Cent_get_environment(Cent_ast* n)
+{
+    Cent_ast* p = n;
+    while (p) {
+        if (p->env) {
+            return p->env;
+        }
+        p = p->parent;
+    }
+
+    return NULL;
+}

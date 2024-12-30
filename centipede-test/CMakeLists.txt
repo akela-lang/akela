@@ -6,6 +6,7 @@ set(centipede_test_files
         test_ast.c
         test_parse.c
         test_parse_tools.c
+        test_build.c
 )
 
 add_executable(centipede-test ${centipede_test_files})

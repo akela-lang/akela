@@ -71,6 +71,8 @@ void Cent_ast_add(Cent_ast *p, Cent_ast *c)
     }
 
     location_combine(&p->loc, &c->loc);
+
+    c->parent = p;
 }
 
 Cent_ast* Cent_ast_get(Cent_ast *n, size_t index)

@@ -37,6 +37,8 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
             break;
         }
 
+        Cent_ignore_newlines(pd, n);
+
         a = Cent_parse_stmt(pd);
         if (a) {
             Cent_ast_add(n, a);

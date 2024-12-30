@@ -28,7 +28,11 @@ void Cent_data_init(Cent_data *data, Cent_value_type type)
     if (type == Cent_value_type_string) {
         buffer_init(&data->string);
     } else if (type == Cent_value_type_enum) {
+        buffer_init(&data->enumeration.id1);
+        buffer_init(&data->enumeration.id2);
         buffer_init(&data->enumeration.display);
+        location_init(&data->enumeration.loc1);
+        location_init(&data->enumeration.loc2);
     }
 }
 
@@ -37,6 +41,8 @@ void Cent_data_destroy(Cent_data *data, Cent_value_type type)
     if (type == Cent_value_type_string) {
         buffer_destroy(&data->string);
     } else if (type == Cent_value_type_enum) {
+        buffer_destroy(&data->enumeration.id1);
+        buffer_destroy(&data->enumeration.id2);
         buffer_destroy(&data->enumeration.display);
     }
 }

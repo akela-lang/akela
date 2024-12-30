@@ -153,9 +153,9 @@ void Cent_parse_expr_enum(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
     n->type = Cent_ast_type_expr_enum;
     Cent_ast_value_set_type(n, Cent_value_type_enum);
     if (id) {
+        buffer_copy(&id->value, &n->data.enumeration.id1);
         buffer_copy(&id->value, &n->data.enumeration.display);
-        Cent_token_destroy(id);
-        free(id);
+        n->data.enumeration.loc1 = id->loc;
     } else {
         n->has_error = true;
     }
@@ -173,12 +173,17 @@ void Cent_parse_expr_enum(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
     /* test case: test_parse_value_error_enum_expected_id */
 
     if (id2) {
+        buffer_copy(&id2->value, &n->data.enumeration.id2);
         buffer_copy(&id2->value, &n->data.enumeration.display);
-        Cent_token_destroy(id2);
-        free(id2);
+        n->data.enumeration.loc2 = id2->loc;
     } else {
         n->has_error = true;
     }
+
+    Cent_token_destroy(id);
+    free(id);
+    Cent_token_destroy(id2);
+    free(id2);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

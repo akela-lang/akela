@@ -163,6 +163,12 @@ void test_parse_top_level_assignment()
 
     Cent_parse_data pd;
     test_parse_setup(&pd,
+        "enum Type_def_type\n"
+        "    Integer\n"
+        "    Float\n"
+        "    String\n"
+        "    Boolean\n"
+        "end\n"
     "# built-in element defs\n"
     "i32 = Type_def {\n"
     "    .type = Type_def_type::Integer\n"
@@ -179,8 +185,14 @@ void test_parse_top_level_assignment()
     assert_ptr(pr.root, "ptr pr.root");
     expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
 
+    /* enum type */
+    Cent_ast* enum_type = Cent_ast_get(pr.root, 0);
+    assert_ptr(enum_type, "ptr enum_type");
+    expect_int_equal(enum_type->type, Cent_ast_type_enum_type, "type enum_type");
+    expect_str(&enum_type->text, "Type_def_type", "text enum_type");
+
     /* assign */
-    Cent_ast* assign = Cent_ast_get(pr.root, 0);
+    Cent_ast* assign = Cent_ast_get(pr.root, 1);
     assert_ptr(assign, "ptr var");
     expect_int_equal(assign->type, Cent_ast_type_expr_assign, "type assign");
 
