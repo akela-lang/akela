@@ -900,6 +900,75 @@ void test_parse_object_method_call2()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_function_call()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Foo {\n"
+        "    .a = @top()\n"
+        "    .b = @file_name()\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_no_errors(pr.errors);
+
+    /* root */
+    assert_ptr(pr.root, "ptr pr.root");
+    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+
+    /* Foo object */
+    Cent_ast* foo = Cent_ast_get(pr.root, 0);
+    assert_ptr(foo, "ptr foo");
+    expect_int_equal(foo->type, Cent_ast_type_value, "type foo");
+    expect_str(&foo->text, "Foo", "text foo");
+
+    /* object stmts */
+    Cent_ast* stmts = Cent_ast_get(foo, 0);
+    assert_ptr(stmts, "ptr bar");
+    expect_int_equal(stmts->type, Cent_ast_type_object_stmts, "type stmts");
+
+    /* property set a */
+    Cent_ast* prop_set0 = Cent_ast_get(stmts, 0);
+    assert_ptr(prop_set0, "ptr prop_set0");
+    expect_int_equal(prop_set0->type, Cent_ast_type_prop_set, "type prop_set0");
+
+    /* a id */
+    Cent_ast* a = Cent_ast_get(prop_set0, 0);
+    assert_ptr(a, "ptr a");
+    expect_int_equal(a->type, Cent_ast_type_id, "type a");
+    expect_str(&a->text, "a", "text a");
+
+    /* top() */
+    Cent_ast* top_call = Cent_ast_get(prop_set0, 1);
+    assert_ptr(top_call, "ptr top_call");
+    expect_int_equal(top_call->type, Cent_ast_type_function_top, "type top_call");
+
+    /* property set b */
+    Cent_ast* prop_set1 = Cent_ast_get(stmts, 1);
+    assert_ptr(prop_set1, "ptr prop_set1");
+    expect_int_equal(prop_set1->type, Cent_ast_type_prop_set, "type prop_set1");
+
+    /* b id */
+    Cent_ast* b = Cent_ast_get(prop_set1, 0);
+    assert_ptr(b, "ptr b");
+    expect_int_equal(b->type, Cent_ast_type_id, "type b");
+    expect_str(&b->text, "b", "text b");
+
+    /* file_name() */
+    Cent_ast* file_name_call = Cent_ast_get(prop_set1, 1);
+    assert_ptr(file_name_call, "ptr file_name_call");
+    expect_int_equal(
+        file_name_call->type,
+        Cent_ast_type_function_file_name,
+        "type file_name_call");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -932,4 +1001,5 @@ void test_parse()
     test_parse_element_type_error_circular_dependency4();
     test_parse_object_method_call();
     test_parse_object_method_call2();
+    test_parse_function_call();
 }

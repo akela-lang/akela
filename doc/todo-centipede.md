@@ -1,7 +1,4 @@
 # Centipede Todo
-* builtin function
-  * top []
-  * file name []
 * value checking
 * value building
 * number test cases

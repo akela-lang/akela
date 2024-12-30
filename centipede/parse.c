@@ -452,16 +452,19 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
 
     Cent_lookahead(pd);
 
+    /* number */
     if (pd->lookahead->type == Cent_token_number) {
         Cent_parse_number(pd, n);
         return n;
     }
 
+    /* string */
     if (pd->lookahead->type == Cent_token_string) {
         Cent_parse_string(pd, n);
         return n;
     }
 
+    /* boolean */
     if (pd->lookahead->type == Cent_token_true || pd->lookahead->type == Cent_token_false) {
         Cent_parse_boolean(pd, n);
         return n;
@@ -551,12 +554,52 @@ Cent_ast* Cent_parse_value(Cent_parse_data* pd)
         return n;
     }
 
+    /* object */
     if (pd->lookahead->type == Cent_token_left_curly_brace) {
         buffer_copy(&id->value, &n->text);
         Cent_parse_object(pd, n);
 
         Cent_token_destroy(id);
         free(id);
+        return n;
+    }
+
+    /* builtin function */
+    if (pd->lookahead->type == Cent_token_left_paren) {
+        Cent_token* lp = NULL;
+        if (!Cent_match(pd, Cent_token_left_paren, "expected left paren", &lp, n)) {
+            assert(false && "not possible");
+        }
+        Cent_token_destroy(lp);
+        free(lp);
+
+        if (id->builtin_type == Cent_builtin_type_none) {
+            error_list_set(
+                pd->errors,
+                &id->loc,
+                "id is not a builtin function which are denoted by an id starting with '@'");
+            n->has_error = true;
+        }
+
+        if (id->builtin_type == Cent_builtin_type_top) {
+            n->type = Cent_ast_type_function_top;
+        } else if (id->builtin_type == Cent_builtin_type_file_name) {
+            n->type = Cent_ast_type_function_file_name;
+        } else {
+            n->type = Cent_ast_type_none;
+            if (id->builtin_type == Cent_builtin_type_none) {
+                error_list_set(pd->errors, &id->loc, "invalid builtin function");
+                n->has_error = true;
+            }
+        }
+        Cent_token_destroy(id);
+        free(id);
+
+        Cent_token* rp = NULL;
+        Cent_match(pd, Cent_token_right_paren, "expected right paren", &rp, n);
+        Cent_token_destroy(rp);
+        free(rp);
+
         return n;
     }
 

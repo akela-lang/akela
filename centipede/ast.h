@@ -24,6 +24,8 @@ typedef enum Cent_ast_type {
     Cent_ast_type_value_enum,
     Cent_ast_type_method_child_of,
     Cent_ast_type_method_property_of,
+    Cent_ast_type_function_top,
+    Cent_ast_type_function_file_name,
 } Cent_ast_type;
 
 typedef struct Cent_ast {
