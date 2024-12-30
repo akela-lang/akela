@@ -16,6 +16,7 @@ set(centipede_files
         parse_stmts.c
         parse_expr.c
         parse_object_stmts.c
+        build.c
 )
 
 add_library(centipede ${centipede_files})
