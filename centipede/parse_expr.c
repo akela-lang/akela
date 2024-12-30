@@ -51,7 +51,7 @@ Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
         Cent_value_create(&v);
         Cent_value_set_type(v, Cent_value_type_enum);
         if (id) {
-            buffer_copy(&id->value, &v->display);
+            buffer_copy(&id->value, &v->data.enumeration.display);
             Cent_token_destroy(id);
             free(id);
         } else {
@@ -62,7 +62,7 @@ Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
         if (!Cent_match(pd, Cent_token_double_colon, "expected double-colon", &dc, n)) {
             assert(false && "not possible");
         }
-        buffer_copy_str(&v->display, "::");
+        buffer_copy_str(&v->data.enumeration.display, "::");
         Cent_token_destroy(dc);
         free(dc);
 
@@ -71,7 +71,7 @@ Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
         /* test case: test_parse_value_error_enum_expected_id */
 
         if (id2) {
-            buffer_copy(&id2->value, &v->display);
+            buffer_copy(&id2->value, &v->data.enumeration.display);
             Cent_token_destroy(id2);
             free(id2);
         } else {

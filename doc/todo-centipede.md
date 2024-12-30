@@ -1,5 +1,4 @@
 # Centipede Todo
-* create ast data tagged union
 * remove value from ast
 * value building
 * number test cases

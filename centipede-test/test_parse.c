@@ -220,7 +220,7 @@ void test_parse_top_level_assignment()
     Cent_value* value0 = type_value->value;
     assert_ptr(value0, "ptr value0");
     expect_int_equal(value0->type, Cent_value_type_enum, "type value0");
-    expect_str(&value0->display, "Type_def_type::Integer", "value value0");;
+    expect_str(&value0->data.enumeration.display, "Type_def_type::Integer", "value value0");;
     expect_false(value0->has_error, "has error value0");
 
     /* name prop set */
