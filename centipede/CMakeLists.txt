@@ -13,6 +13,9 @@ set(centipede_files
         parse_tools.c
         base.c
         update_types.c
+        parse_stmts.c
+        parse_expr.c
+        parse_object_stmts.c
 )
 
 add_library(centipede ${centipede_files})
