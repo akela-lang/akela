@@ -4,12 +4,16 @@
   * string [x]
   * boolean [x]
   * enum [x]
-  * assign []
-  * object []
-    * builtin method []
-    * set property
+  * assign [x]
+  * object [x]
+    * prop set [x]
+    * assign []
+    * builtin method
+      * child_of []
+      * property_of []
   * builtin function []
-  * variable []
+    * top []
+    * file_name []
 * parse error if top function is not called in an object
 * mark values are inline or assigment so they can be properly disposed of
 * multiple compilation units

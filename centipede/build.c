@@ -163,7 +163,7 @@ Cent_value* Cent_build_object(Cent_ast* n)
     Cent_value_set_type(value, Cent_value_type_object);
 
     Cent_ast* stmts = Cent_ast_get(n, 0);
-    assert(stmts->type == Cent_ast_type_stmts);
+    assert(stmts->type == Cent_ast_type_object_stmts);
     Cent_ast* p = stmts->head;
     while (p) {
         if (p->type == Cent_ast_type_prop_set) {

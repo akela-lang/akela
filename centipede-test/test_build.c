@@ -4,6 +4,7 @@
 #include "zinc/unit_test.h"
 #include "test_parse_tools.h"
 #include "centipede/parse.h"
+#include "centipede/parse_tools.h"
 
 void test_build_number_integer()
 {
@@ -197,6 +198,88 @@ void test_build_enum2()
     Cent_value_free(root);
 }
 
+void test_build_assign()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "a = 1\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    expect_ptr_equal(root, NULL, "ptr equal root");
+
+    Cent_environment* top = Cent_get_environment(pr.root);
+    assert_ptr(top, "ptr top");
+
+    Cent_symbol* sym = Cent_environment_get_str(top, "a");
+    assert_ptr(sym, "ptr sym");
+    expect_int_equal(sym->type, Cent_symbol_type_variable, "type sym");
+
+    Cent_value* value = sym->data.variable.value;
+    assert_ptr(value, "ptr value");
+    expect_int_equal(value->type, Cent_value_type_number, "type number");
+    expect_int_equal(value->number_type, Cent_number_type_integer, "number_type value");
+    expect_long_long_equal(value->data.integer, 1, "integer value");
+
+    test_parse_teardown(&pd, &pr);
+    Cent_value_free(root);
+}
+
+void test_build_object()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    expect_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_value_type_object, "type root");
+
+    test_parse_teardown(&pd, &pr);
+    Cent_value_free(root);
+}
+
+void test_build_object_prop_set()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {\n"
+        "    .a = 1\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    expect_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_value_type_object, "type root");
+    Cent_value* a = Cent_value_get_str(root, "a");
+    assert_ptr(a, "ptr a");
+    expect_int_equal(a->type, Cent_value_type_number, "type number");
+    expect_int_equal(a->number_type, Cent_number_type_integer, "number_type value");
+    expect_long_long_equal(a->data.integer, 1, "integer value");
+
+    test_parse_teardown(&pd, &pr);
+    Cent_value_free(root);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -207,4 +290,7 @@ void test_build()
     test_build_enum0();
     test_build_enum1();
     test_build_enum2();
+    test_build_assign();
+    test_build_object();
+    test_build_object_prop_set();
 }

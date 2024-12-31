@@ -71,8 +71,10 @@ void Cent_value_destroy(Cent_value *value)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_value_free(Cent_value *value)
 {
-    Cent_value_destroy(value);
-    free(value);
+    if (value) {
+        Cent_value_destroy(value);
+        free(value);
+    }
 }
 
 void Cent_value_set(Cent_value* value, struct buffer* name, Cent_value* value2)
