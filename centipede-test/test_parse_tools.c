@@ -27,6 +27,8 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     Cent_parse_data_init(pd);
     pd->errors = errors;
     pd->ld = ld;
+    pd->file_name.p = "**string**";
+    pd->file_name.size = strlen(pd->file_name.p);
 }
 
 void test_parse_teardown(Cent_parse_data* pd, Cent_parse_result* pr)

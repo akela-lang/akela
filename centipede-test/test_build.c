@@ -131,7 +131,7 @@ void test_build_enum0()
     expect_str(&root->data.enumeration.id1, "Symbol_type", "id1 root");
     expect_str(&root->data.enumeration.id2, "Variable", "id2 root");
     expect_str(&root->data.enumeration.display, "Symbol_type::Variable", "display root");
-    expect_long_long_equal(root->data.enumeration.number, 0, "enumeration number root");
+    expect_size_t_equal(root->data.enumeration.number, 0, "enumeration number root");
 
     test_parse_teardown(&pd, &pr);
     Cent_value_free(root);
@@ -161,7 +161,7 @@ void test_build_enum1()
     expect_str(&root->data.enumeration.id1, "Symbol_type", "id1 root");
     expect_str(&root->data.enumeration.id2, "Type", "id2 root");
     expect_str(&root->data.enumeration.display, "Symbol_type::Type", "display root");
-    expect_long_long_equal(root->data.enumeration.number, 1, "enumeration number root");
+    expect_size_t_equal(root->data.enumeration.number, 1, "enumeration number root");
 
     test_parse_teardown(&pd, &pr);
     Cent_value_free(root);
@@ -191,7 +191,7 @@ void test_build_enum2()
     expect_str(&root->data.enumeration.id1, "Symbol_type", "id1 root");
     expect_str(&root->data.enumeration.id2, "Info", "id2 root");
     expect_str(&root->data.enumeration.display, "Symbol_type::Info", "display root");
-    expect_long_long_equal(root->data.enumeration.number, 2, "enumeration number root");
+    expect_size_t_equal(root->data.enumeration.number, 2, "enumeration number root");
 
     test_parse_teardown(&pd, &pr);
     Cent_value_free(root);

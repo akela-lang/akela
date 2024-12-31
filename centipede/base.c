@@ -1,14 +1,18 @@
-#include <akela/symbol.h>
-
 #include "environment.h"
+#include "parse_data.h"
 
-Cent_environment* Cent_base_create()
+Cent_environment* Cent_base_create(Cent_parse_data* pd)
 {
     Cent_environment* env = NULL;
     Cent_environment_create(&env);
 
     Cent_symbol* sym = NULL;
     Cent_element_type* element = NULL;
+
+    Cent_symbol_create(&sym);
+    sym->type = Cent_symbol_type_file_name;
+    sym->data.file_name = pd->file_name;
+    Cent_environment_add_symbol_str(env, "#file_name#", sym);
 
     Cent_element_create(&element);
     buffer_copy_str(&element->name, "Integer");

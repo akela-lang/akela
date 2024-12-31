@@ -20,7 +20,7 @@ extern "C" {
 ZINC_API void buffer_init(struct buffer* bf);
 ZINC_API void buffer_create(struct buffer** bf);
 ZINC_API void buffer_expand(struct buffer* bf, size_t new_size);
-ZINC_API void buffer_add(struct buffer* bf, char* s, size_t num);
+ZINC_API void buffer_add(struct buffer* bf, const char* s, size_t num);
 ZINC_API void buffer_destroy(struct buffer* bf);
 ZINC_API void buffer_add_char(struct buffer* bf, char c);
 ZINC_API void buffer_add_str(struct buffer* bf, char* str);

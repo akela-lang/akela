@@ -7,7 +7,8 @@ void Cent_parse_data_init(Cent_parse_data *pd)
     pd->ld = NULL;
     pd->lookahead = NULL;
     pd->top = NULL;
-
+    pd->file_name.p = NULL;
+    pd->file_name.size = 0;
 }
 
 void Cent_parse_data_create(Cent_parse_data **pd)

@@ -7,12 +7,14 @@
 #include "value.h"
 #include "environment.h"
 #include "ast.h"
+#include "zinc/String_slice.h"
 
 typedef struct Cent_parse_data {
     Cent_lex_data *ld;
     struct error_list* errors;
     Cent_token* lookahead;
     Cent_environment* top;
+    String_slice file_name;
 } Cent_parse_data;
 
 typedef struct Cent_parse_result {

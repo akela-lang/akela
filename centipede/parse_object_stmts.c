@@ -14,6 +14,12 @@ Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd)
     Cent_ast_create(&n);
     n->type = Cent_ast_type_object_stmts;
 
+    Cent_environment* env = NULL;
+    Cent_environment_create(&env);
+    env->prev = pd->top;
+    pd->top = env;
+    n->env = env;
+
     Cent_ignore_newlines(pd, n);
     while (true) {
         Cent_lookahead(pd);
@@ -29,6 +35,8 @@ Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd)
             break;
         }
     }
+
+    pd->top = env->prev;
 
     return n;
 }

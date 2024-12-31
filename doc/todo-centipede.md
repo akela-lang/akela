@@ -10,6 +10,7 @@
     * set property
   * builtin function []
   * variable []
+* parse error if top function is not called in an object
 * mark values are inline or assigment so they can be properly disposed of
 * multiple compilation units
 * parse use

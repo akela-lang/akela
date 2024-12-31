@@ -218,8 +218,8 @@ void Cent_parse_expr_assign(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
     if (!n->has_error) {
         Cent_symbol* sym = NULL;
         Cent_symbol_create(&sym);
-        sym->type = Cent_symbol_type_value;
-        sym->data.value = b;
+        sym->type = Cent_symbol_type_variable;
+        sym->data.variable.n = b;
         Cent_environment_add_symbol(pd->top, &a->text, sym);
     }
 }
@@ -310,7 +310,7 @@ void Cent_parse_expr_variable(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
         if (!sym) {
             error_list_set(pd->errors, &a->loc, "invalid id: %b", &a->text);
             n->has_error = true;
-        } else if (sym->type != Cent_symbol_type_value) {
+        } else if (sym->type != Cent_symbol_type_variable) {
             error_list_set(pd->errors, &a->loc, "id is not a value");
             n->has_error = true;
         }

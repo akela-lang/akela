@@ -50,7 +50,7 @@ void buffer_expand(struct buffer* bf, size_t new_size)
     }
 }
 
-void buffer_add(struct buffer* bf, char* s, size_t num)
+void buffer_add(struct buffer* bf, const char* s, size_t num)
 {
     size_t new_size = bf->size + num;
     buffer_expand(bf, new_size);
