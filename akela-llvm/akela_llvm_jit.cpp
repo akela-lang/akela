@@ -8,7 +8,7 @@ namespace Akela_llvm {
     void declare_printf(Jit_data* jd);
     void declare_exit(Jit_data* jd);
 
-    bool Jit(Code_gen_llvm* cg, Cob_ast* n, Code_gen_result* result)
+    bool Jit(Code_gen_llvm* cg, Ake_ast* n, Code_gen_result* result)
     {
         bool valid = true;
 

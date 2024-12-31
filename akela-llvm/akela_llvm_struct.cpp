@@ -4,15 +4,15 @@
 using namespace llvm;
 
 namespace Akela_llvm {
-    Value* Handle_struct_literal_element(Jit_data* jd, Value* ptr, Cob_ast* n);
+    Value* Handle_struct_literal_element(Jit_data* jd, Value* ptr, Ake_ast* n);
 
-    Value* Handle_struct(Jit_data* jd, Cob_ast* n)
+    Value* Handle_struct(Jit_data* jd, Ake_ast* n)
     {
         std::vector<Type*> type_list;
         buffer_finish(&n->value);
-        struct Cob_ast* element_dec = n->head;
+        struct Ake_ast* element_dec = n->head;
         while (element_dec) {
-            Cob_ast* element_type_node = Ast_node_get(element_dec, 1);
+            Ake_ast* element_type_node = Ast_node_get(element_dec, 1);
             Type_use* element_tu = element_type_node->tu;
             Type* element_type = Get_type(jd, element_tu);
             if (element_tu->td->type == type_function) {
@@ -28,9 +28,9 @@ namespace Akela_llvm {
         return nullptr;
     }
 
-    Value* Handle_dot(Jit_data* jd, Cob_ast* n)
+    Value* Handle_dot(Jit_data* jd, Ake_ast* n)
     {
-        Cob_ast* left = Ast_node_get(n, 0);
+        Ake_ast* left = Ast_node_get(n, 0);
         Type_use* left_tu = left->tu;
         assert(left_tu);
         struct type_def* left_td = left_tu->td;
@@ -38,12 +38,12 @@ namespace Akela_llvm {
         left->tu->context = Type_context_ptr;
         Value* struct_value = Dispatch(jd, left);
 
-        Cob_ast* right = Ast_node_get(n, 1);
-        Cob_ast* dec = left_td->composite->head;
+        Ake_ast* right = Ast_node_get(n, 1);
+        Ake_ast* dec = left_td->composite->head;
         auto struct_type = (StructType*)left_td->composite_type;
         size_t i = 0;
-        Cob_ast* dec_id = nullptr;
-        Cob_ast* dec_type = nullptr;
+        Ake_ast* dec_id = nullptr;
+        Ake_ast* dec_type = nullptr;
         Type_use* dec_tu = nullptr;
         bool found = false;
         while (dec) {
@@ -71,7 +71,7 @@ namespace Akela_llvm {
         }
     }
 
-    Value* Handle_struct_literal(Jit_data* jd, Cob_ast* n)
+    Value* Handle_struct_literal(Jit_data* jd, Ake_ast* n)
     {
         assert(n && n->tu && n->tu->td);
         assert(n->tu->td->type == type_struct);
@@ -91,10 +91,10 @@ namespace Akela_llvm {
         }
         buffer_destroy(&bf);
         size_t i = 0;
-        Cob_ast* field = n->head;
+        Ake_ast* field = n->head;
         while (field) {
-            Cob_ast* id = Ast_node_get(field, 0);
-            Cob_ast* expr = Ast_node_get(field, 1);
+            Ake_ast* id = Ast_node_get(field, 0);
+            Ake_ast* expr = Ast_node_get(field, 1);
 
             buffer_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
@@ -115,15 +115,15 @@ namespace Akela_llvm {
         return value;
     }
 
-    Value* Handle_struct_literal_element(Jit_data* jd, Value* ptr, Cob_ast* n)
+    Value* Handle_struct_literal_element(Jit_data* jd, Value* ptr, Ake_ast* n)
     {
         auto t = (StructType*)n->tu->td->composite_type;
 
         size_t i = 0;
-        Cob_ast* field = n->head;
+        Ake_ast* field = n->head;
         while (field) {
-            Cob_ast* id = Ast_node_get(field, 0);
-            Cob_ast* expr = Ast_node_get(field, 1);
+            Ake_ast* id = Ast_node_get(field, 0);
+            Ake_ast* expr = Ast_node_get(field, 1);
 
             buffer_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->value.buf);

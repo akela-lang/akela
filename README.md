@@ -71,7 +71,7 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     cmake-build-debug/bin/centipede-test
 
 ## Run JIT on file
-    cmake-build-debug/bin/akela examples/addition.akela
+    cmake-build-debug/bin/akela examples/addition.ake
 
 ## Valgrind
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/zinc-test

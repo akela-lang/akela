@@ -4,11 +4,11 @@ using namespace llvm;
 
 namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_stmts(Jit_data* jd, Cob_ast* n)
+    Value* Handle_stmts(Jit_data* jd, Ake_ast* n)
     {
         Value* last_v = nullptr;
-        Cob_ast* last_n = nullptr;
-        Cob_ast* stmt = Ast_node_get(n, 0);
+        Ake_ast* last_n = nullptr;
+        Ake_ast* stmt = Ast_node_get(n, 0);
         while (stmt) {
             last_v = Dispatch(jd, stmt);
             last_n = stmt;
@@ -18,7 +18,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_if(Jit_data* jd, Cob_ast* n)
+    Value* Handle_if(Jit_data* jd, Ake_ast* n)
     {
         bool has_else = false;
 
@@ -39,14 +39,14 @@ namespace Akela_llvm {
         BasicBlock* next_block = nullptr;
         int i = 0;
         while (true) {
-            Cob_ast* branch = Ast_node_get(n, i);
+            Ake_ast* branch = Ast_node_get(n, i);
             if (!branch) {
                 break;
             }
 
-            if (branch->type == Ast_type_conditional_branch) {
-                Cob_ast* cond = Ast_node_get(branch, 0);
-                Cob_ast* body = Ast_node_get(branch, 1);
+            if (branch->type == Ake_ast_type_conditional_branch) {
+                Ake_ast* cond = Ast_node_get(branch, 0);
+                Ake_ast* body = Ast_node_get(branch, 1);
 
                 if (next_block) {
                     cond_block = next_block;
@@ -73,8 +73,8 @@ namespace Akela_llvm {
 
                 jd->Builder->SetInsertPoint(next_block);
 
-            } else if (branch->type == Ast_type_default_branch) {
-                Cob_ast* body = Ast_node_get(branch, 0);
+            } else if (branch->type == Ake_ast_type_default_branch) {
+                Ake_ast* body = Ast_node_get(branch, 0);
 
                 Value* body_value = Handle_stmts(jd, body);
                 if (type) {

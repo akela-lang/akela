@@ -4,7 +4,7 @@ using namespace llvm;
 using namespace llvm::orc;
 
 namespace Akela_llvm {
-    Value* Handle_number(Jit_data* jd, Cob_ast* n)
+    Value* Handle_number(Jit_data* jd, Ake_ast* n)
     {
         Type_use* tu = n->tu;
         struct type_def *td = tu->td;
@@ -21,7 +21,7 @@ namespace Akela_llvm {
         assert(false);
     }
 
-    Value* Handle_boolean(Jit_data* jd, Cob_ast* n)
+    Value* Handle_boolean(Jit_data* jd, Ake_ast* n)
     {
         if (buffer_compare_str(&n->value, "true")) {
             Type* t = Type::getInt1Ty(*jd->TheContext);
@@ -33,7 +33,7 @@ namespace Akela_llvm {
         assert(false && "invalid boolean identifier");
     }
 
-    Value* Handle_string(Jit_data* jd, Cob_ast* n)
+    Value* Handle_string(Jit_data* jd, Ake_ast* n)
     {
         buffer_finish(&n->value);
         Value* str_value = jd->Builder->CreateGlobalString(n->value.buf, ".str");

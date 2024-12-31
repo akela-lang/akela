@@ -67,9 +67,9 @@ namespace Akela_llvm {
     llvm::Type* Get_type(Jit_data * jd, Type_use* tu);
     llvm::Type* Get_type_pointer(Jit_data *jd, Type_use *tu);
     llvm::Type* Get_return_type(Jit_data * jd, Type_use * tu);
-    void Run(Jit_data* jd, Cob_ast* n, struct buffer* bf);
+    void Run(Jit_data* jd, Ake_ast* n, struct buffer* bf);
     llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);
-    llvm::Value* Dispatch(Jit_data* jd, Cob_ast* n);
+    llvm::Value* Dispatch(Jit_data* jd, Ake_ast* n);
     void Array_copy(
             Jit_data* jd,
             Type_use* lhs_tu,
