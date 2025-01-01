@@ -684,110 +684,6 @@ void test_parse_enum_error_duplicate_enum_value()
     test_parse_teardown(&pd, &pr);
 }
 
-void test_parse_element_type_error_circular_dependency()
-{
-    test_name(__func__);
-
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
-        "element Test_suite\n"
-        "   properties\n"
-        "       t: Test\n"
-        "   end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        ts: Test_suite\n"
-        "    end\n"
-        "end\n"
-    );
-
-    Cent_parse_result pr = Cent_parse(&pd);
-
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "circular reference: Test_suite--t--Test--ts--Test_suite");
-
-    test_parse_teardown(&pd, &pr);
-}
-
-void test_parse_element_type_error_circular_dependency2()
-{
-    test_name(__func__);
-
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
-        "element Test_suite\n"
-        "   children\n"
-        "       Test\n"
-        "   end\n"
-        "end\n"
-        "element Test\n"
-        "    children\n"
-        "        Test_suite\n"
-        "    end\n"
-        "end\n"
-    );
-
-    Cent_parse_result pr = Cent_parse(&pd);
-
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "circular reference: Test_suite--Test--Test_suite");
-
-    test_parse_teardown(&pd, &pr);
-}
-
-void test_parse_element_type_error_circular_dependency3()
-{
-    test_name(__func__);
-
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
-        "element Test_suite\n"
-        "   properties\n"
-        "       t: Test\n"
-        "   end\n"
-        "end\n"
-        "element Test\n"
-        "    children\n"
-        "        Test_suite\n"
-        "    end\n"
-        "end\n"
-    );
-
-    Cent_parse_result pr = Cent_parse(&pd);
-
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "circular reference: Test_suite--t--Test--Test_suite");
-
-    test_parse_teardown(&pd, &pr);
-}
-
-void test_parse_element_type_error_circular_dependency4()
-{
-    test_name(__func__);
-
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
-        "element Test_suite\n"
-        "   children\n"
-        "       Test\n"
-        "   end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        ts: Test_suite\n"
-        "    end\n"
-        "end\n"
-    );
-
-    Cent_parse_result pr = Cent_parse(&pd);
-
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "circular reference: Test_suite--Test--ts--Test_suite");
-
-    test_parse_teardown(&pd, &pr);
-}
-
 void test_parse_object_method_call()
 {
     test_name(__func__);
@@ -997,10 +893,6 @@ void test_parse()
     test_parse_element_child_unknown_type();
     test_parse_element_child_type_not_an_element_type();
     test_parse_enum_error_duplicate_enum_value();
-    test_parse_element_type_error_circular_dependency();
-    test_parse_element_type_error_circular_dependency2();
-    test_parse_element_type_error_circular_dependency3();
-    test_parse_element_type_error_circular_dependency4();
     test_parse_object_method_call();
     test_parse_object_method_call2();
     test_parse_function_call();

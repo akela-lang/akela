@@ -39,10 +39,6 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
     }
 
     if (!pr.errors->head) {
-        Cent_circular_dep(&pr);
-    }
-
-    if (!pr.errors->head) {
         Cent_update_values(&pr);
     }
 
