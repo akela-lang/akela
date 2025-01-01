@@ -850,7 +850,7 @@ void test_parse_object_method_call2()
     test_parse_setup(&pd,
         "a = Foo {}\n"
         "Bar {\n"
-        "    .@property_of(a)\n"
+        "    .@property_of(a, \"b\")\n"
         "}\n"
     );
 
@@ -882,7 +882,7 @@ void test_parse_object_method_call2()
     expect_ptr(method, "ptr method");
     expect_int_equal(method->type, Cent_ast_type_method_property_of, "type method");
 
-    /* variable a */
+    /* argument 1 a */
     Cent_ast* value = Cent_ast_get(method, 0);
     expect_ptr(value, "ptr value");
     expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
@@ -892,6 +892,12 @@ void test_parse_object_method_call2()
     expect_ptr(id, "ptr id");
     expect_int_equal(id->type, Cent_ast_type_id, "type id");
     expect_str(&id->text, "a", "text id");
+
+    /* argument 2 string b */
+    Cent_ast* name = Cent_ast_get(method, 1);
+    expect_ptr(name, "ptr name");
+    expect_int_equal(name->type, Cent_ast_type_expr_string, "type name");
+    expect_str(&name->data.string, "b", "text name");
 
     test_parse_teardown(&pd, &pr);
 }

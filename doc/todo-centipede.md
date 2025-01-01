@@ -7,13 +7,14 @@
   * assign [x]
   * object [x]
     * prop set [x]
-    * assign []
+    * assign [x]
     * builtin method
-      * child_of []
-      * property_of []
+      * child_of [x]
+      * property_of [x]
   * builtin function []
     * top []
     * file_name []
+* update variable expressions in update values pass
 * parse error if top function is not called in an object
 * mark values are inline or assigment so they can be properly disposed of
 * multiple compilation units

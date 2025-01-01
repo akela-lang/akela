@@ -10,6 +10,7 @@ Cent_value* Cent_build_string(Cent_ast* n);
 Cent_value* Cent_build_boolean(Cent_ast* n);
 Cent_value* Cent_build_enum(Cent_ast* n);
 Cent_value* Cent_build_assign(Cent_ast* n);
+Cent_value* Cent_build_variable(Cent_ast* n);
 Cent_value* Cent_build_function_top(Cent_ast* n);
 Cent_value* Cent_build_function_file_name(Cent_ast* n);
 Cent_value* Cent_build_object(Cent_ast* n);
@@ -64,6 +65,10 @@ Cent_value* Cent_build_dispatch(Cent_ast* n)
 
     if (n->type == Cent_ast_type_expr_object) {
         return Cent_build_object(n);
+    }
+
+    if (n->type == Cent_ast_type_expr_variable) {
+        return Cent_build_variable(n);
     }
 
     return NULL;
@@ -132,6 +137,16 @@ Cent_value* Cent_build_assign(Cent_ast* n)
     return NULL;
 }
 
+Cent_value* Cent_build_variable(Cent_ast* n)
+{
+    Cent_ast* id = Cent_ast_get(n, 0);
+    Cent_environment* top = Cent_get_environment(n);
+    Cent_symbol* sym = Cent_environment_get(top, &id->text);
+    assert(sym);
+    assert(sym->type == Cent_symbol_type_variable);
+    return sym->data.variable.value;
+}
+
 Cent_value* Cent_build_function_top(Cent_ast* n)
 {
     Cent_environment* top = Cent_get_environment(n);
@@ -161,6 +176,7 @@ Cent_value* Cent_build_object(Cent_ast* n)
     Cent_value* value = NULL;
     Cent_value_create(&value);
     Cent_value_set_type(value, Cent_value_type_object);
+    buffer_copy(&n->text, &value->data.name);
 
     Cent_ast* stmts = Cent_ast_get(n, 0);
     assert(stmts->type == Cent_ast_type_object_stmts);
@@ -174,7 +190,9 @@ Cent_value* Cent_build_object(Cent_ast* n)
             Cent_build_object_method_property_of(p, value);
         } else {
             Cent_value* value2 = Cent_build_dispatch(p);
-            Cent_value_add(value, value2);
+            if (value2) {
+                Cent_value_add(value, value2);
+            }
         }
         p = p->next;
     }
@@ -219,5 +237,11 @@ void Cent_build_object_method_property_of(Cent_ast* n, Cent_value* value)
     Cent_symbol* sym = Cent_environment_get(top, &id->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_variable);
-    Cent_value_set(sym->data.variable.value, &id->text, value);
+    Cent_value* object = sym->data.variable.value;
+
+    Cent_ast* b = Cent_ast_get(n, 1);
+    assert(b->type == Cent_ast_type_expr_string);
+    assert(b->data.string.size > 0);
+
+    Cent_value_set(object, &b->data.string, value);
 }

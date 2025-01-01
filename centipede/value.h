@@ -26,6 +26,7 @@ typedef union Cent_data {
         struct buffer display;
         size_t number;
     } enumeration;
+    struct buffer name;
 } Cent_data;
 
 typedef struct Cent_value {
@@ -51,7 +52,7 @@ void Cent_value_destroy(Cent_value *value);
 void Cent_value_free(Cent_value *value);
 void Cent_value_set(Cent_value* value, struct buffer* name, Cent_value* value2);
 void Cent_value_set_str(Cent_value* value, char* name, Cent_value* value2);
-void Cent_value_add(Cent_value* value, Cent_value* value2);
+void Cent_value_add(Cent_value* parent, Cent_value* child);
 Cent_value* Cent_value_get(Cent_value* value, struct buffer* name);
 Cent_value* Cent_value_get_str(Cent_value* value, char* name);
 

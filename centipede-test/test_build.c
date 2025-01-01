@@ -280,6 +280,111 @@ void test_build_object_prop_set()
     Cent_value_free(root);
 }
 
+void test_build_object_assign()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {\n"
+        "    count = 20\n"
+        "    .count_value = count\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    expect_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_value_type_object, "type root");
+    Cent_value* count_value = Cent_value_get_str(root, "count_value");
+    assert_ptr(count_value, "ptr count_value");
+    expect_int_equal(count_value->type, Cent_value_type_number, "type number");
+    expect_int_equal(count_value->number_type, Cent_number_type_integer, "number_type value");
+    expect_long_long_equal(count_value->data.integer, 20, "integer value");
+
+    test_parse_teardown(&pd, &pr);
+    Cent_value_free(root);
+}
+
+void test_build_object_child_of()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {\n"
+        "    foo = Foo {}\n"
+        "    bar = Bar {\n"
+        "        .@child_of(foo)\n"
+        "    }\n"
+        "    foo\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    expect_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_value_type_object, "type root");
+    expect_str(&root->data.name, "Test", "name root");
+
+    Cent_value* foo = root->head;
+    assert_ptr(foo, "ptr foo");
+    expect_int_equal(foo->type, Cent_value_type_object, "type foo");
+    expect_str(&foo->data.name, "Foo", "name foo");
+
+    Cent_value* bar = foo->head;
+    assert_ptr(bar, "ptr bar");
+    expect_int_equal(bar->type, Cent_value_type_object, "type bar");
+    expect_str(&bar->data.name, "Bar", "name bar");
+
+    test_parse_teardown(&pd, &pr);
+    Cent_value_free(root);
+}
+
+void test_build_object_property_of()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {\n"
+        "    foo = Foo {}\n"
+        "    bar = Bar {\n"
+        "        .@property_of(foo, \"x\")\n"
+        "    }\n"
+        "    foo\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_value_type_object, "type root");
+    expect_str(&root->data.name, "Test", "name root");
+
+    Cent_value* foo = root->head;
+    assert_ptr(foo, "ptr foo");
+    expect_int_equal(foo->type, Cent_value_type_object, "type foo");
+    expect_str(&foo->data.name, "Foo", "name foo");
+
+    Cent_value* bar = Cent_value_get_str(foo, "x");
+    assert_ptr(bar, "ptr bar");
+    expect_int_equal(bar->type, Cent_value_type_object, "type bar");
+    expect_str(&bar->data.name, "Bar", "name bar");
+
+    test_parse_teardown(&pd, &pr);
+    Cent_value_free(root);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -293,4 +398,7 @@ void test_build()
     test_build_assign();
     test_build_object();
     test_build_object_prop_set();
+    test_build_object_assign();
+    test_build_object_child_of();
+    test_build_object_property_of();
 }

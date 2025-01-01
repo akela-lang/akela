@@ -33,6 +33,8 @@ void Cent_data_init(Cent_data *data, Cent_value_type type)
         buffer_init(&data->enumeration.display);
         location_init(&data->enumeration.loc1);
         location_init(&data->enumeration.loc2);
+    } else if (type == Cent_value_type_object) {
+        buffer_init(&data->name);
     }
 }
 
@@ -44,6 +46,8 @@ void Cent_data_destroy(Cent_data *data, Cent_value_type type)
         buffer_destroy(&data->enumeration.id1);
         buffer_destroy(&data->enumeration.id2);
         buffer_destroy(&data->enumeration.display);
+    } else if (type == Cent_value_type_object) {
+        buffer_destroy(&data->name);
     }
 }
 
@@ -97,14 +101,15 @@ Cent_value* Cent_value_get_str(Cent_value* value, char* name)
     return hash_table_get_str(&value->properties, name);
 }
 
-void Cent_value_add(Cent_value* value, Cent_value* value2)
+void Cent_value_add(Cent_value* parent, Cent_value* child)
 {
-    if (value->head && value->tail) {
-        value->tail->next = value2;
-        value2->prev = value->tail;
-        value->tail = value2;
+    if (parent->head && parent->tail) {
+        parent->tail->next = child;
+        child->prev = parent->tail;
+        parent->tail = child;
     } else {
-        value->head = value2;
-        value->tail = value2;
+        parent->head = child;
+        parent->tail = child;
     }
+    child->parent = parent;
 }
