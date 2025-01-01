@@ -1,19 +1,4 @@
 # Centipede Todo
-* value building
-  * number [x]
-  * string [x]
-  * boolean [x]
-  * enum [x]
-  * assign [x]
-  * object [x]
-    * prop set [x]
-    * assign [x]
-    * builtin method
-      * child_of [x]
-      * property_of [x]
-  * builtin function []
-    * top [x]
-    * file_name []
 * remove circular reference check
 * remove top function
 * update variable expressions in update values pass

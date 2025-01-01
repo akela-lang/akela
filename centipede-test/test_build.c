@@ -406,6 +406,27 @@ void test_build_object_function_top()
     test_build_teardown(&pd, &pr, root);
 }
 
+void test_build_object_function_file_name()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "@file_name()\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_value_type_string, "type root");
+    expect_str(&root->data.string, "**string**", "string root");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -423,4 +444,5 @@ void test_build()
     test_build_object_child_of();
     test_build_object_property_of();
     test_build_object_function_top();
+    test_build_object_function_file_name();
 }
