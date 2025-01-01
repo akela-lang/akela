@@ -183,7 +183,7 @@ Cent_value* Cent_build_object(Cent_ast* n)
 
     Cent_symbol* sym = NULL;
     Cent_symbol_create(&sym);
-    sym->type = Cent_symbol_type_object_value;
+    Cent_symbol_set_type(sym, Cent_symbol_type_object_value);
     sym->data.object_value = value;
     Cent_environment* top = Cent_get_environment(stmts);
     Cent_environment_add_symbol_str(top, "#object_value#", sym);

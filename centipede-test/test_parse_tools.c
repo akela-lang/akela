@@ -41,7 +41,13 @@ void test_parse_teardown(Cent_parse_data* pd, Cent_parse_result* pr)
     Cent_lex_data* ld = pd->ld;
     Cent_lex_data_destroy(ld);
     free(ld);
+
+    bool need_teardown = Cent_value_destroy_setup();
     Cent_ast_destroy(pr->root);
+    if (need_teardown) {
+        Cent_value_destroy_teardown();
+    }
+
     free(pr->root);
     Cent_environment_destroy(pr->base);
     free(pr->base);

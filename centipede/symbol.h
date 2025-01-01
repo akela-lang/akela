@@ -31,6 +31,7 @@ typedef struct Cent_symbol {
 
 void Cent_symbol_init(Cent_symbol *sym);
 void Cent_symbol_create(Cent_symbol** sym);
+void Cent_symbol_set_type(Cent_symbol *sym, Cent_symbol_type type);
 void Cent_symbol_destroy(Cent_symbol *sym);
 void Cent_symbol_free(Cent_symbol *sym);
 

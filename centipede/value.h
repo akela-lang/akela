@@ -57,7 +57,7 @@ void Cent_value_add(Cent_value* parent, Cent_value* child);
 Cent_value* Cent_value_get(Cent_value* value, struct buffer* name);
 Cent_value* Cent_value_get_str(Cent_value* value, char* name);
 
-void Cent_value_destroy_setup();
+bool Cent_value_destroy_setup();
 void Cent_value_destroy_teardown();
 
 #endif

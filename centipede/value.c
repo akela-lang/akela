@@ -60,16 +60,23 @@ void Cent_value_set_type(Cent_value *value, Cent_value_type type)
 
 Hash_map_size_t* Cent_value_hash_map = NULL;
 
-void Cent_value_destroy_setup()
+bool Cent_value_destroy_setup()
 {
-    Hash_map_size_t_create(&Cent_value_hash_map, 32);
+    if (!Cent_value_hash_map) {
+        Hash_map_size_t_create(&Cent_value_hash_map, 32);
+        return true;
+    }
+
+    return false;
 }
 
 void Cent_value_destroy_teardown()
 {
-    Hash_map_size_t_destroy(Cent_value_hash_map);
-    free(Cent_value_hash_map);
-    Cent_value_hash_map = NULL;
+    if (Cent_value_hash_map) {
+        Hash_map_size_t_destroy(Cent_value_hash_map);
+        free(Cent_value_hash_map);
+        Cent_value_hash_map = NULL;
+    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

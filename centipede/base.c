@@ -10,7 +10,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     Cent_element_type* element = NULL;
 
     Cent_symbol_create(&sym);
-    sym->type = Cent_symbol_type_file_name;
+    Cent_symbol_set_type(sym, Cent_symbol_type_file_name);
     sym->data.file_name = pd->file_name;
     Cent_environment_add_symbol_str(env, "#file_name#", sym);
 
@@ -19,7 +19,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     element->type = Cent_value_type_number;
     element->number_type = Cent_number_type_integer;
     Cent_symbol_create(&sym);
-    sym->type = Cent_symbol_type_element;
+    Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
     hash_table_add(&env->symbols, &element->name, sym);
 
@@ -28,7 +28,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     element->type = Cent_value_type_number;
     element->number_type = Cent_number_type_fp;
     Cent_symbol_create(&sym);
-    sym->type = Cent_symbol_type_element;
+    Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
     hash_table_add(&env->symbols, &element->name, sym);
 
@@ -36,7 +36,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     buffer_copy_str(&element->name, "String");
     element->type = Cent_value_type_string;
     Cent_symbol_create(&sym);
-    sym->type = Cent_symbol_type_element;
+    Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
     hash_table_add(&env->symbols, &element->name, sym);
 
@@ -44,7 +44,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     buffer_copy_str(&element->name, "Bool");
     element->type = Cent_value_type_boolean;
     Cent_symbol_create(&sym);
-    sym->type = Cent_symbol_type_element;
+    Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
     hash_table_add(&env->symbols, &element->name, sym);
 

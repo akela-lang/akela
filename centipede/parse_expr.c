@@ -218,7 +218,7 @@ void Cent_parse_expr_assign(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
     if (!n->has_error) {
         Cent_symbol* sym = NULL;
         Cent_symbol_create(&sym);
-        sym->type = Cent_symbol_type_variable;
+        Cent_symbol_set_type(sym, Cent_symbol_type_variable);
         sym->data.variable.n = b;
         Cent_environment_add_symbol(pd->top, &a->text, sym);
     }
