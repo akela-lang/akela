@@ -3,6 +3,7 @@
 #include <akela/type_def.h>
 
 #include "zinc/memory.h"
+#include "zinc/hash_map_size_t.h"
 
 void Cent_value_init(Cent_value *value)
 {
@@ -57,9 +58,31 @@ void Cent_value_set_type(Cent_value *value, Cent_value_type type)
     Cent_data_init(&value->data, type);
 }
 
+Hash_map_size_t* Cent_value_hash_map = NULL;
+
+void Cent_value_destroy_setup()
+{
+    Hash_map_size_t_create(&Cent_value_hash_map, 32);
+}
+
+void Cent_value_destroy_teardown()
+{
+    Hash_map_size_t_destroy(Cent_value_hash_map);
+    free(Cent_value_hash_map);
+    Cent_value_hash_map = NULL;
+}
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_value_destroy(Cent_value *value)
 {
+    if (Cent_value_hash_map) {
+        Cent_value* value2 = Hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
+        if (value2) {
+            return;
+        }
+        Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
+    }
+
     hash_table_map(&value->properties, (hash_table_func)Cent_value_free);
     Cent_value* p = value->head;
     while (p) {
@@ -75,6 +98,14 @@ void Cent_value_destroy(Cent_value *value)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_value_free(Cent_value *value)
 {
+    if (Cent_value_hash_map) {
+        Cent_value* value2 = Hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
+        if (value2) {
+            return;
+        }
+        Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
+    }
+
     if (value) {
         Cent_value_destroy(value);
         free(value);

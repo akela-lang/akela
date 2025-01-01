@@ -3,6 +3,7 @@
 
 #include "token.h"
 #include "zinc/hash.h"
+#include "zinc/hash_map_size_t.h"
 
 typedef enum Cent_value_type {
     Cent_value_type_none,
@@ -55,5 +56,8 @@ void Cent_value_set_str(Cent_value* value, char* name, Cent_value* value2);
 void Cent_value_add(Cent_value* parent, Cent_value* child);
 Cent_value* Cent_value_get(Cent_value* value, struct buffer* name);
 Cent_value* Cent_value_get_str(Cent_value* value, char* name);
+
+void Cent_value_destroy_setup();
+void Cent_value_destroy_teardown();
 
 #endif

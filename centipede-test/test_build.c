@@ -6,6 +6,15 @@
 #include "centipede/parse.h"
 #include "centipede/parse_tools.h"
 
+void test_build_teardown(Cent_parse_data* pd, Cent_parse_result* pr, Cent_value* root)
+{
+    test_parse_teardown(pd, pr);
+
+    Cent_value_destroy_setup();
+    Cent_value_free(root);
+    Cent_value_destroy_teardown();
+}
+
 void test_build_number_integer()
 {
     test_name(__func__);
@@ -23,8 +32,7 @@ void test_build_number_integer()
     expect_int_equal(root->number_type, Cent_number_type_integer, "number_type root");
     expect_long_long_equal(root->data.integer, 241, "integer root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_number_fp()
@@ -44,8 +52,7 @@ void test_build_number_fp()
     expect_int_equal(root->number_type, Cent_number_type_fp, "number_type root");
     expect_double_equal(root->data.fp, 1.5, "fp root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_string()
@@ -64,8 +71,7 @@ void test_build_string()
     expect_int_equal(root->type, Cent_value_type_string, "type root");
     expect_str(&root->data.string, "hello", "string root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_boolean_true()
@@ -84,8 +90,7 @@ void test_build_boolean_true()
     expect_int_equal(root->type, Cent_value_type_boolean, "type root");
     expect_true(root->data.boolean, "string root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_boolean_false()
@@ -104,8 +109,7 @@ void test_build_boolean_false()
     expect_int_equal(root->type, Cent_value_type_boolean, "type root");
     expect_false(root->data.boolean, "string root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_enum0()
@@ -134,8 +138,7 @@ void test_build_enum0()
     expect_str(&root->data.enumeration.display, "Symbol_type::Variable", "display root");
     expect_size_t_equal(root->data.enumeration.number, 0, "enumeration number root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_enum1()
@@ -164,8 +167,7 @@ void test_build_enum1()
     expect_str(&root->data.enumeration.display, "Symbol_type::Type", "display root");
     expect_size_t_equal(root->data.enumeration.number, 1, "enumeration number root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_enum2()
@@ -194,8 +196,7 @@ void test_build_enum2()
     expect_str(&root->data.enumeration.display, "Symbol_type::Info", "display root");
     expect_size_t_equal(root->data.enumeration.number, 2, "enumeration number root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_assign()
@@ -227,8 +228,7 @@ void test_build_assign()
     expect_int_equal(value->number_type, Cent_number_type_integer, "number_type value");
     expect_long_long_equal(value->data.integer, 1, "integer value");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_object()
@@ -248,8 +248,7 @@ void test_build_object()
     expect_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_object, "type root");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_object_prop_set()
@@ -276,8 +275,7 @@ void test_build_object_prop_set()
     expect_int_equal(a->number_type, Cent_number_type_integer, "number_type value");
     expect_long_long_equal(a->data.integer, 1, "integer value");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_object_assign()
@@ -305,8 +303,7 @@ void test_build_object_assign()
     expect_int_equal(count_value->number_type, Cent_number_type_integer, "number_type value");
     expect_long_long_equal(count_value->data.integer, 20, "integer value");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_object_child_of()
@@ -343,8 +340,7 @@ void test_build_object_child_of()
     expect_int_equal(bar->type, Cent_value_type_object, "type bar");
     expect_str(&bar->data.name, "Bar", "name bar");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build_object_property_of()
@@ -381,8 +377,33 @@ void test_build_object_property_of()
     expect_int_equal(bar->type, Cent_value_type_object, "type bar");
     expect_str(&bar->data.name, "Bar", "name bar");
 
-    test_parse_teardown(&pd, &pr);
-    Cent_value_free(root);
+    test_build_teardown(&pd, &pr, root);
+}
+
+void test_build_object_function_top()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Test {\n"
+        "    @top()\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_value_type_object, "type root");
+    expect_str(&root->data.name, "Test", "name root");
+
+    Cent_value* top = root->head;
+    expect_ptr_equal(top, root, "ptr equal top");
+
+    test_build_teardown(&pd, &pr, root);
 }
 
 void test_build()
@@ -401,4 +422,5 @@ void test_build()
     test_build_object_assign();
     test_build_object_child_of();
     test_build_object_property_of();
+    test_build_object_function_top();
 }

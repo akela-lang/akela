@@ -180,6 +180,14 @@ Cent_value* Cent_build_object(Cent_ast* n)
 
     Cent_ast* stmts = Cent_ast_get(n, 0);
     assert(stmts->type == Cent_ast_type_object_stmts);
+
+    Cent_symbol* sym = NULL;
+    Cent_symbol_create(&sym);
+    sym->type = Cent_symbol_type_object_value;
+    sym->data.object_value = value;
+    Cent_environment* top = Cent_get_environment(stmts);
+    Cent_environment_add_symbol_str(top, "#object_value#", sym);
+
     Cent_ast* p = stmts->head;
     while (p) {
         if (p->type == Cent_ast_type_prop_set) {
@@ -196,13 +204,6 @@ Cent_value* Cent_build_object(Cent_ast* n)
         }
         p = p->next;
     }
-
-    Cent_symbol* sym = NULL;
-    Cent_symbol_create(&sym);
-    sym->type = Cent_symbol_type_object_value;
-    sym->data.object_value = value;
-    Cent_environment* top = Cent_get_environment(stmts);
-    Cent_environment_add_symbol_str(top, "#object_value#", sym);
 
     return value;
 }
