@@ -565,7 +565,6 @@ void test_lex_builtin()
     test_lex_setup(&ld,
         "@child_of\n"
         "@property_of\n"
-        "@top\n"
         "@file_name\n"
         "abc\n"
     );
@@ -602,13 +601,13 @@ void test_lex_builtin()
     t = lex(&ld);
     assert_ptr(t, "ptr 3.1");
     expect_int_equal(t->type, Cent_token_id, "type 3.1");
-    expect_int_equal(t->builtin_type, Cent_builtin_type_top, "builtin type 3.1");
+    expect_int_equal(t->builtin_type, Cent_builtin_type_file_name, "builtin type 3.1");
     Cent_token_destroy(t);
     free(t);
 
     t = lex(&ld);
     assert_ptr(t, "ptr 3.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 3.1");
+    expect_int_equal(t->type, Cent_token_newline, "type 4.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -616,27 +615,13 @@ void test_lex_builtin()
     t = lex(&ld);
     assert_ptr(t, "ptr 4.1");
     expect_int_equal(t->type, Cent_token_id, "type 4.1");
-    expect_int_equal(t->builtin_type, Cent_builtin_type_file_name, "builtin type 4.1");
+    expect_int_equal(t->builtin_type, Cent_builtin_type_none, "builtin type 4.1");
     Cent_token_destroy(t);
     free(t);
 
     t = lex(&ld);
     assert_ptr(t, "ptr 4.2");
     expect_int_equal(t->type, Cent_token_newline, "type 4.2");
-    Cent_token_destroy(t);
-    free(t);
-
-    /* line 5 */
-    t = lex(&ld);
-    assert_ptr(t, "ptr 5.1");
-    expect_int_equal(t->type, Cent_token_id, "type 5.1");
-    expect_int_equal(t->builtin_type, Cent_builtin_type_none, "builtin type 5.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 5.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 5.2");
     Cent_token_destroy(t);
     free(t);
 

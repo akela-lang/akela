@@ -26,7 +26,6 @@ typedef enum Cent_ast_type {
     Cent_ast_type_expr_enum,
     Cent_ast_type_expr_assign,
     Cent_ast_type_expr_object,
-    Cent_ast_type_expr_function_top,
     Cent_ast_type_expr_function_file_name,
     Cent_ast_type_expr_variable,
 } Cent_ast_type;

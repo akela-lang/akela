@@ -372,32 +372,6 @@ void test_build_object_property_of()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_build_object_function_top()
-{
-    test_name(__func__);
-
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
-        "Test {\n"
-        "    @top()\n"
-        "}\n"
-    );
-
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
-
-    expect_no_errors(pr.errors);
-
-    assert_ptr(root, "ptr root");
-    expect_int_equal(root->type, Cent_value_type_object, "type root");
-    expect_str(&root->data.name, "Test", "name root");
-
-    Cent_value* top = root->head;
-    expect_ptr_equal(top, root, "ptr equal top");
-
-    test_build_teardown(&pd, &pr, root);
-}
-
 void test_build_object_function_file_name()
 {
     test_name(__func__);
@@ -435,6 +409,5 @@ void test_build()
     test_build_object_assign();
     test_build_object_child_of();
     test_build_object_property_of();
-    test_build_object_function_top();
     test_build_object_function_file_name();
 }

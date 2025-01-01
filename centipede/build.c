@@ -55,10 +55,6 @@ Cent_value* Cent_build_dispatch(Cent_ast* n)
         return Cent_build_assign(n);
     }
 
-    if (n->type == Cent_ast_type_expr_function_top) {
-        return Cent_build_function_top(n);
-    }
-
     if (n->type == Cent_ast_type_expr_function_file_name) {
         return Cent_build_function_file_name(n);
     }

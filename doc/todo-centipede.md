@@ -1,5 +1,4 @@
 # Centipede Todo
-* remove top function
 * update variable expressions in update values pass
 * parse error if top function is not called in an object
 * multiple compilation units

@@ -805,7 +805,6 @@ void test_parse_function_call()
     Cent_parse_data pd;
     test_parse_setup(&pd,
         "Foo {\n"
-        "    .a = @top()\n"
         "    .b = @file_name()\n"
         "}\n"
     );
@@ -829,24 +828,8 @@ void test_parse_function_call()
     assert_ptr(stmts, "ptr bar");
     expect_int_equal(stmts->type, Cent_ast_type_object_stmts, "type stmts");
 
-    /* property set a */
-    Cent_ast* prop_set0 = Cent_ast_get(stmts, 0);
-    assert_ptr(prop_set0, "ptr prop_set0");
-    expect_int_equal(prop_set0->type, Cent_ast_type_prop_set, "type prop_set0");
-
-    /* a id */
-    Cent_ast* a = Cent_ast_get(prop_set0, 0);
-    assert_ptr(a, "ptr a");
-    expect_int_equal(a->type, Cent_ast_type_id, "type a");
-    expect_str(&a->text, "a", "text a");
-
-    /* top() */
-    Cent_ast* top_call = Cent_ast_get(prop_set0, 1);
-    assert_ptr(top_call, "ptr top_call");
-    expect_int_equal(top_call->type, Cent_ast_type_expr_function_top, "type top_call");
-
     /* property set b */
-    Cent_ast* prop_set1 = Cent_ast_get(stmts, 1);
+    Cent_ast* prop_set1 = Cent_ast_get(stmts, 0);
     assert_ptr(prop_set1, "ptr prop_set1");
     expect_int_equal(prop_set1->type, Cent_ast_type_prop_set, "type prop_set1");
 

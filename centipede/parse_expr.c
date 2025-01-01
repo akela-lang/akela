@@ -258,9 +258,7 @@ void Cent_parse_expr_object(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
 
 void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
 {
-    if (id->builtin_type == Cent_builtin_type_top) {
-        n->type = Cent_ast_type_expr_function_top;
-    } else if (id->builtin_type == Cent_builtin_type_file_name) {
+    if (id->builtin_type == Cent_builtin_type_file_name) {
         n->type = Cent_ast_type_expr_function_file_name;
     } else {
         n->type = Cent_ast_type_none;

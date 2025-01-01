@@ -24,7 +24,6 @@ void Cent_lex_data_init(
     hash_table_init(&ld->builtin, 8);
     Cent_lex_add_builtin(ld, "@child_of", Cent_builtin_type_child_of);
     Cent_lex_add_builtin(ld, "@property_of", Cent_builtin_type_property_of);
-    Cent_lex_add_builtin(ld, "@top", Cent_builtin_type_top);
     Cent_lex_add_builtin(ld, "@file_name", Cent_builtin_type_file_name);
 }
 
