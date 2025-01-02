@@ -1,5 +1,4 @@
 # Centipede Todo
-* type check properties and children
 * multiple compilation units
 * parse use
 * lex

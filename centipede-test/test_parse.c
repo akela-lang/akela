@@ -613,7 +613,7 @@ void test_parse_element_property_type_not_element()
     Cent_parse_result pr = Cent_parse(&pd);
 
     expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "type is not an element type: Abc");
+    expect_source_error(pr.errors, "type is not an element or enum type: Abc");
 
     test_parse_teardown(&pd, &pr);
 }

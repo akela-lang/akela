@@ -36,7 +36,7 @@ void Cent_update_values_enum(Cent_parse_result* pr, Cent_ast* n)
             error_list_set(
                 pr->errors,
                 &n->data.enumeration.loc1,
-                "Could not find enum: %b",
+                "could not find enum: %b",
                 &n->data.enumeration.id1);
             n->has_error = true;
         } else {
@@ -56,7 +56,7 @@ void Cent_update_values_enum(Cent_parse_result* pr, Cent_ast* n)
                 error_list_set(
                     pr->errors,
                     &n->data.enumeration.loc2,
-                    "Could not find enum id: %b",
+                    "could not find enum id: %b",
                     &n->data.enumeration.id2);
                 n->has_error = true;
             }

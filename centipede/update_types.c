@@ -78,9 +78,13 @@ void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et,
         /* test case: test_parse_element_property_unknown_type */
     } else {
         if (sym->type == Cent_symbol_type_element) {
-            prop->et = sym->data.element;
+            Cent_property_type_set_type(prop, Cent_types_element);
+            prop->data.et = sym->data.element;
+        } else if (sym->type == Cent_symbol_type_enumerate) {
+            Cent_property_type_set_type(prop, Cent_types_enum);
+            prop->data.en = sym->data.enumerate;
         } else {
-            error_list_set(pr->errors, &n->loc, "type is not an element type: %b", &type->text);
+            error_list_set(pr->errors, &n->loc, "type is not an element or enum type: %b", &type->text);
             n->has_error = true;
             /* test case: test_parse_element_property_type_not_element */
         }
@@ -107,6 +111,8 @@ void Cent_update_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et
     } else {
         if (sym->type == Cent_symbol_type_element) {
             Cent_element_add_et(et, sym->data.element, &n->loc, n->has_error);
+        } else if (sym->type == Cent_symbol_type_enumerate) {
+            Cent_element_add_en(et, sym->data.enumerate, &n->loc, n->has_error);
         } else {
             error_list_set(pr->errors, &n->loc, "type is not an element type: %b", &n->text);
             /* test case: test_parse_element_child_type_not_an_element_type */

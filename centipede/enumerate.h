@@ -10,7 +10,7 @@ typedef struct Cent_enumerate_value {
     struct Cent_enumerate_value* prev;
 } Cent_enumerate_value;
 
-typedef struct Cent_enumerate {
+typedef struct Cent_enum_type {
     struct buffer name;
     Cent_enumerate_value* head;
     Cent_enumerate_value* tail;

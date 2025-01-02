@@ -394,6 +394,51 @@ void test_build_object_function_file_name()
     test_build_teardown(&pd, &pr, root);
 }
 
+void test_build_property_set_variable()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Source\n"
+        "    children\n"
+        "        String\n"
+        "    end\n"
+        "end\n"
+        "element Test\n"
+        "    properties\n"
+        "        source: Source\n"
+        "    end\n"
+        "end\n"
+        "a = Source {\"x + 5\"}\n"
+        "Test {\n"
+        "    .source = a\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr value");
+    expect_int_equal(root->type, Cent_value_type_object, "type root");
+    expect_str(&root->name, "Test", "name root");
+
+    Cent_value* source = Cent_value_get_str(root, "source");
+    assert_ptr(source, "ptr source");
+    expect_int_equal(source->type, Cent_value_type_object, "type source");
+    expect_str(&source->name, "Source", "name source");
+
+    Cent_value* line0 = source->data.object.head;
+    assert_ptr(line0, "ptr line0");
+    expect_int_equal(line0->type, Cent_value_type_string, "type line0");
+    expect_str(&line0->name, "String", "name line0");
+    expect_str(&line0->data.string, "x + 5", "string line0");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -411,4 +456,5 @@ void test_build()
     test_build_object_child_of();
     test_build_object_property_of();
     test_build_object_function_file_name();
+    test_build_property_set_variable();
 }

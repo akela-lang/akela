@@ -24,9 +24,12 @@ Cent_value* Cent_build(Cent_parse_result* pr)
     Cent_value* value = NULL;
 
     if (!pr->errors->head) {
-        Cent_ast* last = pr->root->tail;
-        if (last) {
-            value = Cent_build_dispatch(last);
+        Cent_ast* p = pr->root->head;
+        while (p) {
+            if (p->type == Cent_ast_type_expr_assign || p == pr->root->tail) {
+                value = Cent_build_dispatch(p);
+            }
+            p = p->next;
         }
     }
 
@@ -104,6 +107,7 @@ Cent_value* Cent_build_string(Cent_ast* n)
     Cent_value_set_type(value, Cent_value_type_string);
     buffer_copy(&n->data.string, &value->data.string);
     buffer_copy_str(&value->name, "String");
+    value->n = n;
     return value;
 }
 
@@ -114,6 +118,7 @@ Cent_value* Cent_build_boolean(Cent_ast* n)
     Cent_value_set_type(value, Cent_value_type_boolean);
     value->data.boolean = n->data.boolean;
     buffer_copy_str(&value->name, "Bool");
+    value->n = n;
     return value;
 }
 
@@ -126,7 +131,8 @@ Cent_value* Cent_build_enum(Cent_ast* n)
     buffer_copy(&n->data.enumeration.id2, &value->data.enumeration.id2);
     buffer_copy(&n->data.enumeration.display, &value->data.enumeration.display);
     value->data.enumeration.number = n->data.enumeration.number;
-    buffer_copy_str(&value->name, "Enum");
+    buffer_copy(&n->data.enumeration.id1, &value->name);
+    value->n = n;
     return value;
 }
 
@@ -141,6 +147,7 @@ Cent_value* Cent_build_assign(Cent_ast* n)
     assert(sym);
     assert(sym->type == Cent_symbol_type_variable);
     sym->data.variable.value = value;
+    value->n = n;
     return NULL;
 }
 
@@ -166,6 +173,7 @@ Cent_value* Cent_build_function_file_name(Cent_ast* n)
     Cent_value_set_type(value, Cent_value_type_string);
     buffer_add(&value->data.string, sym->data.file_name.p, sym->data.file_name.size);
     buffer_copy_str(&value->name, "String");
+    value->n = n;
     return value;
 }
 
