@@ -323,12 +323,12 @@ void test_build_object_child_of()
     expect_int_equal(root->type, Cent_value_type_object, "type root");
     expect_str(&root->name, "Test", "name root");
 
-    Cent_value* foo = root->head;
+    Cent_value* foo = root->data.object.head;
     assert_ptr(foo, "ptr foo");
     expect_int_equal(foo->type, Cent_value_type_object, "type foo");
     expect_str(&foo->name, "Foo", "name foo");
 
-    Cent_value* bar = foo->head;
+    Cent_value* bar = foo->data.object.head;
     assert_ptr(bar, "ptr bar");
     expect_int_equal(bar->type, Cent_value_type_object, "type bar");
     expect_str(&bar->name, "Bar", "name bar");
@@ -360,7 +360,7 @@ void test_build_object_property_of()
     expect_int_equal(root->type, Cent_value_type_object, "type root");
     expect_str(&root->name, "Test", "name root");
 
-    Cent_value* foo = root->head;
+    Cent_value* foo = root->data.object.head;
     assert_ptr(foo, "ptr foo");
     expect_int_equal(foo->type, Cent_value_type_object, "type foo");
     expect_str(&foo->name, "Foo", "name foo");

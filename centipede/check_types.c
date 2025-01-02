@@ -23,7 +23,9 @@ void Cent_check_types_dispatch(Cent_value* value)
 
     if (value->type == Cent_value_type_object) {
         Cent_parse_types_object_value = value;
-        hash_table_map_name(&value->properties, (hash_table_func_name)Cent_check_types_property);
+        hash_table_map_name(
+            &value->data.object.properties,
+            (hash_table_func_name)Cent_check_types_property);
     }
 }
 

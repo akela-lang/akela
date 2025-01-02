@@ -27,6 +27,11 @@ typedef union Cent_data {
         struct buffer display;
         size_t number;
     } enumeration;
+    struct object {
+        struct hash_table properties;
+        struct Cent_value* head;
+        struct Cent_value* tail;
+    } object;
 } Cent_data;
 
 typedef struct Cent_value {
@@ -35,11 +40,8 @@ typedef struct Cent_value {
     Cent_number_type number_type;
     bool has_error;
     Cent_data data;
-    struct hash_table properties;
     struct Cent_value* next;
     struct Cent_value* prev;
-    struct Cent_value* head;
-    struct Cent_value* tail;
     struct Cent_value* parent;
     void* n;
 } Cent_value;
