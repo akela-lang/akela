@@ -106,5 +106,14 @@ struct error* expect_source_error(struct error_list* el, const char message[])
     }
     error_triggered();
     fprintf(stderr, "error not found: %s\n", message);
+    e = el->head;
+    if (e) {
+        fprintf(stderr, "Errors:\n");
+    }
+    while (e) {
+        buffer_finish(&e->message);
+        fprintf(stderr, "%s\n", e->message.buf);
+        e = e->next;
+    }
     return NULL;
 }

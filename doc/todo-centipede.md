@@ -1,6 +1,5 @@
 # Centipede Todo
-* update variable expressions in update values pass
-* parse error if top function is not called in an object
+* type check properties and children
 * multiple compilation units
 * parse use
 * lex

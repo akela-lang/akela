@@ -27,10 +27,10 @@ typedef union Cent_data {
         struct buffer display;
         size_t number;
     } enumeration;
-    struct buffer name;
 } Cent_data;
 
 typedef struct Cent_value {
+    struct buffer name;
     Cent_value_type type;
     Cent_number_type number_type;
     bool has_error;
@@ -41,6 +41,7 @@ typedef struct Cent_value {
     struct Cent_value* head;
     struct Cent_value* tail;
     struct Cent_value* parent;
+    void* n;
 } Cent_value;
 
 void Cent_data_init(Cent_data *data, Cent_value_type type);

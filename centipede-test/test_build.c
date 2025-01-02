@@ -6,6 +6,7 @@
 #include "centipede/parse.h"
 #include "centipede/parse_tools.h"
 #include "test_build_tools.h"
+#include "centipede/check_types.h"
 
 void test_build_number_integer()
 {
@@ -320,17 +321,17 @@ void test_build_object_child_of()
 
     expect_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_object, "type root");
-    expect_str(&root->data.name, "Test", "name root");
+    expect_str(&root->name, "Test", "name root");
 
     Cent_value* foo = root->head;
     assert_ptr(foo, "ptr foo");
     expect_int_equal(foo->type, Cent_value_type_object, "type foo");
-    expect_str(&foo->data.name, "Foo", "name foo");
+    expect_str(&foo->name, "Foo", "name foo");
 
     Cent_value* bar = foo->head;
     assert_ptr(bar, "ptr bar");
     expect_int_equal(bar->type, Cent_value_type_object, "type bar");
-    expect_str(&bar->data.name, "Bar", "name bar");
+    expect_str(&bar->name, "Bar", "name bar");
 
     test_build_teardown(&pd, &pr, root);
 }
@@ -357,17 +358,17 @@ void test_build_object_property_of()
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_object, "type root");
-    expect_str(&root->data.name, "Test", "name root");
+    expect_str(&root->name, "Test", "name root");
 
     Cent_value* foo = root->head;
     assert_ptr(foo, "ptr foo");
     expect_int_equal(foo->type, Cent_value_type_object, "type foo");
-    expect_str(&foo->data.name, "Foo", "name foo");
+    expect_str(&foo->name, "Foo", "name foo");
 
     Cent_value* bar = Cent_value_get_str(foo, "x");
     assert_ptr(bar, "ptr bar");
     expect_int_equal(bar->type, Cent_value_type_object, "type bar");
-    expect_str(&bar->data.name, "Bar", "name bar");
+    expect_str(&bar->name, "Bar", "name bar");
 
     test_build_teardown(&pd, &pr, root);
 }

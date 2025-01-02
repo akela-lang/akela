@@ -14,8 +14,7 @@ typedef struct Cent_element_type_node {
     struct Cent_element_type_node* prev;
 } Cent_element_type_node;
 
-typedef struct Cent_element_type_list
-{
+typedef struct Cent_element_type_list {
     Cent_element_type_node* head;
     Cent_element_type_node* tail;
 } Cent_element_type_list;

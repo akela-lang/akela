@@ -7,6 +7,7 @@
 
 void Cent_value_init(Cent_value *value)
 {
+    buffer_init(&value->name);
     value->type = Cent_value_type_none;
     value->number_type = Cent_number_type_none;
     value->has_error = false;
@@ -16,6 +17,7 @@ void Cent_value_init(Cent_value *value)
     value->head = NULL;
     value->tail = NULL;
     value->parent = NULL;
+    value->n = NULL;
 }
 
 void Cent_value_create(Cent_value **value)
@@ -34,8 +36,6 @@ void Cent_data_init(Cent_data *data, Cent_value_type type)
         buffer_init(&data->enumeration.display);
         location_init(&data->enumeration.loc1);
         location_init(&data->enumeration.loc2);
-    } else if (type == Cent_value_type_object) {
-        buffer_init(&data->name);
     }
 }
 
@@ -48,7 +48,6 @@ void Cent_data_destroy(Cent_data *data, Cent_value_type type)
         buffer_destroy(&data->enumeration.id2);
         buffer_destroy(&data->enumeration.display);
     } else if (type == Cent_value_type_object) {
-        buffer_destroy(&data->name);
     }
 }
 
@@ -82,6 +81,7 @@ void Cent_value_destroy_teardown()
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_value_destroy(Cent_value *value)
 {
+    buffer_destroy(&value->name);
     if (Cent_value_hash_map) {
         Cent_value* value2 = Hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
         if (value2) {

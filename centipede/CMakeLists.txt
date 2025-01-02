@@ -18,6 +18,7 @@ set(centipede_files
         parse_object_stmts.c
         build.c
         update_values.c
+        check_types.c
 )
 
 add_library(centipede ${centipede_files})

@@ -11,12 +11,12 @@ and Julia excels at scientific computing, Akela wants to excel at finance.
 The Akela project is a work in progress. Many of the following goals are aspirational.
 There is a rudimentary JIT compiler. There are a lot of automated tests. 
 
-* Static typing and type inference which we think helps
-software engineers more than dynamic or gradual typing
+* Statically typed language and type inference which we think helps
+software engineers more than dynamically typed or gradually typed
 * Fast compilation: handwritten lexer and parser in C
 * An AOT compiler for standalone execution
 * A JIT compiler for embeddable or interactive execution
-* Hot reloading for quick development / test cycles
+* Hot reloading for a quick development / test cycle
 * Meta programming: generics and macros
 * Object-Oriented programming: methods and traits
 * No nulls:  Rust-like enums and matching
