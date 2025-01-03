@@ -509,6 +509,101 @@ void test_check_types_child_enum_error_id2_not_valid()
     test_build_teardown(&pd, &pr, root);
 }
 
+void test_check_types_property_error_not_enum()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "enum Bar\n"
+        "    Filler\n"
+        "end\n"
+        "element Foo\n"
+        "    properties\n"
+        "        a: Bar\n"
+        "    end\n"
+        "end\n"
+        "Foo {\n"
+        "    .a = 87\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_has_errors(pr.errors);
+    struct error* e = expect_source_error(pr.errors, "value is not an enum value: Integer");
+    assert_ptr(e, "ptr e");
+    expect_size_t_equal(e->loc.line, 10, "line e");
+    expect_size_t_equal(e->loc.col, 10, "col e");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
+void test_check_types_property_enum_error_not_match()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "enum Apparel\n"
+        "    Shoes\n"
+        "end\n"
+        "enum Bar\n"
+        "    Filler\n"
+        "end\n"
+        "element Foo\n"
+        "    properties\n"
+        "        a: Bar\n"
+        "    end\n"
+        "end\n"
+        "Foo {\n"
+        "    .a = Apparel::Shoes\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_has_errors(pr.errors);
+    struct error* e = expect_source_error(pr.errors, "invalid value enum type: Apparel");
+    assert_ptr(e, "ptr e");
+    expect_size_t_equal(e->loc.line, 13, "line e");
+    expect_size_t_equal(e->loc.col, 10, "col e");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
+void test_check_types_child_error_no_type()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Bar\n"
+        "end\n"
+        "element Foo\n"
+        "    children\n"
+        "        Bar\n"
+        "    end\n"
+        "end\n"
+        "Foo {\n"
+        "    Bar2 {}\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_has_errors(pr.errors);
+    struct error* e = expect_source_error(pr.errors, "value has no type; looking for Bar");
+    assert_ptr(e, "ptr e");
+    expect_size_t_equal(e->loc.line, 9, "line e");
+    expect_size_t_equal(e->loc.col, 5, "col e");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
 void test_check_types()
 {
     test_check_types_property();
@@ -527,4 +622,7 @@ void test_check_types()
     test_check_types_child_enum_error_id1_not_found();
     test_check_types_child_enum_error_id1_not_match();
     test_check_types_child_enum_error_id2_not_valid();
+    test_check_types_property_error_not_enum();
+    test_check_types_property_enum_error_not_match();
+    test_check_types_child_error_no_type();
 }

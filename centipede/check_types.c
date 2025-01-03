@@ -61,6 +61,7 @@ void Cent_check_types_property(struct buffer* name, Cent_value* value)
             value->has_error = true;
             n->has_error = true;
             return;
+            /* test case: test_check_types_property_error_object */
         }
 
         assert(value_sym->type == Cent_symbol_type_element);
@@ -71,26 +72,22 @@ void Cent_check_types_property(struct buffer* name, Cent_value* value)
             error_list_set(pr->errors, &n->loc, "invalid value element type: %b", &value_element->name);
             value->has_error = true;
             n->has_error = true;
+            /* test case: test_check_types_property_error_number */
         }
     } else if (prop_type->type == Cent_types_enum) {
         Cent_enum_type* prop_en = prop_type->data.en;
 
         if (value->type != Cent_value_type_enum) {
             Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "value is not enum value: %b", &value->name);
+            error_list_set(pr->errors, &n->loc, "value is not an enum value: %b", &value->name);
             value->has_error = true;
             n->has_error = true;
             return;
+            /* test case: test_check_types_property_error_not_enum */
         }
 
         Cent_symbol* value_sym = Cent_environment_get(top, &value->data.enumeration.id1);
-        if (!value_sym) {
-            Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "invalid value enum type: %b", &value->name);
-            value->has_error = true;
-            n->has_error = true;
-            return;
-        }
+        assert(value_sym && "is checked in update values");
 
         assert(value_sym->type == Cent_symbol_type_enumerate);
         Cent_enum_type* value_en = value_sym->data.enumerate;
@@ -100,6 +97,7 @@ void Cent_check_types_property(struct buffer* name, Cent_value* value)
             error_list_set(pr->errors, &n->loc, "invalid value enum type: %b", &value_en->name);
             value->has_error = true;
             n->has_error = true;
+            /* test case: test_check_types_property_enum_error_not_match */
         }
     } else {
         assert(false && "invalid property type type");
@@ -138,6 +136,7 @@ void Cent_check_types_child(Cent_parse_result* pr, Cent_value* object_value, Cen
             error_list_set(pr->errors, &n->loc, "value has no type; looking for %b", &bf);
             value->has_error = true;
             n->has_error = true;
+            /* test case: test_check_types_child_error_no_type */
         }
 
         return;
@@ -175,5 +174,6 @@ void Cent_check_types_child(Cent_parse_result* pr, Cent_value* object_value, Cen
         error_list_set(pr->errors, &n->loc, "invalid child type: %b", &value->name);
         value->has_error = true;
         n->has_error = true;
+        /* test case: test_check_types_child_error_number */
     }
 }
