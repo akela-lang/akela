@@ -925,6 +925,35 @@ void test_parse_enum_error_could_not_find_enum_id()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_include()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "include \"types.aken\"\n"
+        "Groceries {\n"
+        "    Grocery_item::Milk\n"
+        "}\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "types.aken",
+        "enum Grocery_item\n"
+        "    Milk\n"
+        "    Cereal\n"
+        "    Steak\n"
+        "    Potatoes\n"
+        "    Carrots\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_no_errors(pr.errors);
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -957,4 +986,5 @@ void test_parse()
     test_parse_enum_duplicate_id();
     test_parse_enum_error_could_not_find_enum();
     test_parse_enum_error_could_not_find_enum_id();
+    test_parse_include();
 }

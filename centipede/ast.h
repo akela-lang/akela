@@ -28,6 +28,7 @@ typedef enum Cent_ast_type {
     Cent_ast_type_expr_object,
     Cent_ast_type_expr_function_file_name,
     Cent_ast_type_expr_variable,
+    Cent_ast_type_include,
 } Cent_ast_type;
 
 typedef struct Cent_ast {

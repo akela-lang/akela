@@ -1,5 +1,4 @@
 # Centipede Todo
-* parse use
 * lex
   * number test cases
   * string test cases

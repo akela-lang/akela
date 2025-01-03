@@ -27,7 +27,7 @@ Cent_comp_unit* test_parse_add_comp_unit(Cent_parse_data* pd, char* name, char* 
     cu->input_vtable = input->input_vtable;
     cu->errors = errors;
 
-    Cent_comp_table_add_str(pd->comp_table, "**string**", cu);
+    Cent_comp_table_add_str(pd->comp_table, name, cu);
     return cu;
 }
 

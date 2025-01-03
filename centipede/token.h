@@ -29,6 +29,7 @@ typedef enum Cent_token_type {
     Cent_token_left_paren,
     Cent_token_right_paren,
     Cent_token_comma,
+    Cent_token_include,
     Cent_token_count,       /* keep at end */
 } Cent_token_type;
 
@@ -59,6 +60,7 @@ static char* Cent_token_name(Cent_token_type type)
         "left-parenthesis",
         "right-parenthesis",
         "comma",
+        "include",
     };
 
     for (int i = 0; i < Cent_token_count; i++) {

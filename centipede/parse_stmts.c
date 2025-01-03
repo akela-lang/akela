@@ -3,6 +3,7 @@
 #include "parse_tools.h"
 #include "parse_expr.h"
 #include <assert.h>
+#include "comp_unit.h"
 
 Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element_type(Cent_parse_data* pd);
@@ -10,6 +11,8 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd);
 Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd);
 Cent_ast* Cent_parse_children(Cent_parse_data* pd);
 Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd);
+Cent_ast* Cent_parse_include(Cent_parse_data* pd);
+void Cent_parse_include_stmts(Cent_parse_data* pd, Cent_ast* n, Cent_comp_unit* cu);
 
 /* stmts -> stmt stmts' | e */
 /* stmts' -> sep stmt stmts' | e */
@@ -25,12 +28,59 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
     pd->top = env;
     n->env = env;
 
-    Cent_ignore_newlines(pd, n);
+    while (true) {
+        Cent_lookahead(pd);
 
-    Cent_ast* a = Cent_parse_stmt(pd);
-    if (a) {
-        Cent_ast_add(n, a);
+        if (pd->lookahead->type == Cent_token_eof) {
+            if (pd->ld->input != pd->comp_table->primary->input) {
+                Cent_comp_unit* cu = pd->comp_table->primary;
+                pd->ld->input = cu->input;
+                pd->ld->input_vtable = cu->input_vtable;
+                pd->ld->errors = cu->errors;
+                Cent_token* t = pd->lookahead;
+                pd->lookahead = NULL;
+                Cent_token_destroy(t);
+                free(t);
+            }
+        }
+
+
+        Cent_ast* a = Cent_parse_stmt(pd);
+        if (a) {
+            Cent_ast_add(n, a);
+
+            if (!a->has_error && a->type == Cent_ast_type_include) {
+                Cent_ast* b = a->head;
+                Cent_comp_unit* cu = Cent_comp_table_get(pd->comp_table, &b->text);
+                if (!cu) {
+                    error_list_set(pd->errors, &b->loc, "Could not find compile unit: %b", &b->text);
+                    continue;
+                }
+
+                Cent_lookahead(pd);
+                pd->ld->input = cu->input;
+                pd->ld->input_vtable = cu->input_vtable;
+                pd->ld->errors = cu->errors;
+            }
+        }
+
+        if (Cent_has_separator(pd, n)) {
+            while (Cent_has_separator(pd, n)) {
+            }
+        } else {
+            break;
+        }
+
     }
+
+    pd->top = pd->top->prev;
+
+    return n;
+}
+
+void Cent_parse_include_stmts(Cent_parse_data* pd, Cent_ast* n, Cent_comp_unit* cu)
+{
+    Cent_ast* a = NULL;
 
     while (true) {
         if (!Cent_has_separator(pd, n)) {
@@ -42,12 +92,18 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
         a = Cent_parse_stmt(pd);
         if (a) {
             Cent_ast_add(n, a);
+
+            if (a->type == Cent_ast_type_include) {
+                Cent_comp_unit* cu = Cent_comp_table_get(pd->comp_table, &a->text);
+                if (!cu) {
+                    error_list_set(pd->errors, &a->loc, "Could not find compile unit: %b", &a->text);
+                    continue;
+                }
+
+                Cent_parse_include_stmts(pd, n, cu);
+            }
         }
     }
-
-    pd->top = pd->top->prev;
-
-    return n;
 }
 
 /* stmt -> parse_element | e */
@@ -65,6 +121,10 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
 
     if (pd->lookahead->type == Cent_token_enum) {
         return Cent_parse_enumerate(pd);
+    }
+
+    if (pd->lookahead->type == Cent_token_include) {
+        return Cent_parse_include(pd);
     }
 
     return Cent_parse_expr(pd);
@@ -352,6 +412,35 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
         sym->data.enumerate = enumerate;
         Cent_environment_add_symbol(pd->top, &enumerate->name, sym);
     }
+
+    return n;
+}
+
+Cent_ast* Cent_parse_include(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_include;
+
+    Cent_token* inc = NULL;
+    if (!Cent_match(pd, Cent_token_include, "expected include", &inc, n)) {
+        assert(false && "not possible");
+    }
+
+    Cent_ast* a = NULL;
+    Cent_ast_create(&a);
+    a->type = Cent_ast_type_expr_string;
+
+    Cent_token* path;
+    if (!Cent_match(pd, Cent_token_string, "expected string", &path, a)) {
+        Cent_ast_add(n, a);
+        return n;
+    }
+
+    buffer_copy(&path->value, &a->text);
+    Cent_ast_add(n, a);
+    Cent_token_destroy(path);
+    free(path);
 
     return n;
 }

@@ -20,6 +20,7 @@ void Cent_lex_data_init(
     Cent_lex_add_reserved_word(ld, "enum", Cent_token_enum);
     Cent_lex_add_reserved_word(ld, "true", Cent_token_true);
     Cent_lex_add_reserved_word(ld, "false", Cent_token_false);
+    Cent_lex_add_reserved_word(ld, "include", Cent_token_include);
 
     hash_table_init(&ld->builtin, 8);
     Cent_lex_add_builtin(ld, "@child_of", Cent_builtin_type_child_of);
