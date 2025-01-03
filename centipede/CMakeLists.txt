@@ -19,6 +19,7 @@ set(centipede_files
         build.c
         update_values.c
         check_types.c
+        comp_unit.c
 )
 
 add_library(centipede ${centipede_files})
