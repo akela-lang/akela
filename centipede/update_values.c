@@ -39,6 +39,7 @@ void Cent_update_values_enum(Cent_parse_result* pr, Cent_ast* n)
                 "could not find enum: %b",
                 &n->data.enumeration.id1);
             n->has_error = true;
+            /* test case: test_parse_enum_error_could_not_find_enum */
         } else {
             Cent_enum_type* en = sym->data.enumerate;
             assert(en);
@@ -59,6 +60,7 @@ void Cent_update_values_enum(Cent_parse_result* pr, Cent_ast* n)
                     "could not find enum id: %b",
                     &n->data.enumeration.id2);
                 n->has_error = true;
+                /* test case: test_parse_enum_error_could_not_find_enum_id */
             }
         }
     }

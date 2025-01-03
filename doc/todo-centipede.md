@@ -1,7 +1,7 @@
 # Centipede Todo
 * error docs
   * update types [x]
-  * update values []
+  * update values [x]
   * build []
   * check types []
 * multiple compilation units

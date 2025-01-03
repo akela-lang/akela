@@ -875,6 +875,56 @@ void test_parse_enum_duplicate_id()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_enum_error_could_not_find_enum()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "enum Foo\n"
+        "    One\n"
+        "    Two\n"
+        "    Three\n"
+        "end\n"
+        "Bar::Two\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    struct error* e = expect_source_error(pr.errors, "could not find enum: Bar");
+    assert_ptr(e, "ptr e");
+    expect_size_t_equal(e->loc.line, 6, "line e");
+    expect_size_t_equal(e->loc.col, 1, "col e");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_enum_error_could_not_find_enum_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "enum Foo\n"
+        "    One\n"
+        "    Two\n"
+        "    Three\n"
+        "end\n"
+        "Foo::Four\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    struct error* e = expect_source_error(pr.errors, "could not find enum id: Four");
+    assert_ptr(e, "ptr e");
+    expect_size_t_equal(e->loc.line, 6, "line e");
+    expect_size_t_equal(e->loc.col, 6, "col e");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -905,4 +955,6 @@ void test_parse()
     test_parse_object_method_call2();
     test_parse_function_call();
     test_parse_enum_duplicate_id();
+    test_parse_enum_error_could_not_find_enum();
+    test_parse_enum_error_could_not_find_enum_id();
 }
