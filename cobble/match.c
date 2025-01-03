@@ -200,9 +200,6 @@ void Cob_run_dispatch(Cob_stack_node* sn)
             task->matched = true;
         }
         task->status = Cob_task_status_finished;
-        struct buffer* bf = NULL;
-        buffer_create(&bf);
-        Hash_map_size_t_add(&sn->groups, 0, bf);
     } else if (task->n->type == Cob_ast_type_union) {
         Cob_run_union(sn);
     } else if (task->n->type == Cob_ast_type_concat) {

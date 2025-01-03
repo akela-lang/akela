@@ -9,13 +9,16 @@ void test_Ast_node_root()
     Cob_ast* n = NULL;
     malloc_safe((void**)&n, sizeof(Cob_ast));
     Cob_ast_init(n);
+
     expect_int_equal(n->type, Cob_ast_type_none, "type none");
     expect_int_equal(n->num, 0, "num 0");
     expect_ptr_equal(n->next, NULL, "next NULL");
     expect_ptr_equal(n->prev, NULL, "prev NULL");
     expect_ptr_equal(n->head, NULL, "head NULL");
     expect_ptr_equal(n->tail, NULL, "tail NULL");
+
     Cob_ast_destroy(n);
+    free(n);
 }
 
 void test_Ast_node_children()
@@ -65,7 +68,7 @@ void test_Ast_node_children()
     expect_ptr_equal(n->next, NULL, "2 n->next NULL");
 
     Cob_ast_destroy(root);
-
+    free(root);
 }
 
 void test_ast_node()
