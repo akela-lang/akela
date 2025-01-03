@@ -850,6 +850,31 @@ void test_parse_function_call()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_enum_duplicate_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "enum Foo\n"
+        "    One\n"
+        "    Two\n"
+        "    Two\n"
+        "    Three\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+
+    expect_has_errors(pr.errors);
+    struct error* e = expect_source_error(pr.errors, "duplicate enum value: Foo::Two");
+    assert_ptr(e, "ptr e");
+    expect_size_t_equal(e->loc.line, 4, "line e");
+    expect_size_t_equal(e->loc.col, 5, "col e");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -879,4 +904,5 @@ void test_parse()
     test_parse_object_method_call();
     test_parse_object_method_call2();
     test_parse_function_call();
+    test_parse_enum_duplicate_id();
 }

@@ -1,4 +1,9 @@
 # Centipede Todo
+* error docs
+  * update types [x]
+  * update values []
+  * build []
+  * check types []
 * multiple compilation units
 * parse use
 * lex

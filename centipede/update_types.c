@@ -133,6 +133,8 @@ void Cent_update_enum(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
         if (ev) {
             error_list_set(pr->errors, &p->loc, "duplicate enum value: %b::%b", &n->text, &p->text);
             n->has_error = true;
+            p->has_error = true;
+            /* test case: test_parse_enum_duplicate_id */
         } else {
             Cent_enumerate_add_name(enumerate, &p->text);
         }

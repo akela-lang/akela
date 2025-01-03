@@ -312,20 +312,19 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
 
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_id) {
+        Cent_ast* a = NULL;
+        Cent_ast_create(&a);
+        a->type = Cent_ast_type_id;
+
         id = NULL;
-        if (!Cent_match(pd, Cent_token_id, "expected id", &id, n)) {
+        if (!Cent_match(pd, Cent_token_id, "expected id", &id, a)) {
             assert(false && "not possible");
         }
 
-        if (id) {
-            Cent_ast* a = NULL;
-            Cent_ast_create(&a);
-            a->type = Cent_ast_type_id;
-            buffer_copy(&id->value, &a->text);
-            Cent_token_destroy(id);
-            free(id);
-            Cent_ast_add(n, a);
-        }
+        buffer_copy(&id->value, &a->text);
+        Cent_token_destroy(id);
+        free(id);
+        Cent_ast_add(n, a);
 
         if (!Cent_has_separator(pd, n)) {
             break;
