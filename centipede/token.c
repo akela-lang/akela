@@ -22,3 +22,12 @@ void Cent_token_destroy(Cent_token *t)
         buffer_destroy(&t->value);
     }
 }
+
+void Cent_print_token(Cent_token *t)
+{
+    printf("%s", Cent_token_name(t->type));
+    if (t->value.size > 0) {
+        buffer_finish(&t->value);
+        printf("-%s", t->value.buf);
+    }
+}

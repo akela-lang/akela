@@ -94,6 +94,7 @@ Cob_re Cvr_test_dir_re()
 void Cvr_re_cleanup(Cob_re* cr)
 {
     error_list_destroy(cr->el);
+    free(cr->el);
     Cob_ast_destroy(cr->root);
     free(cr->root);
 }

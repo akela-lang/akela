@@ -267,8 +267,6 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
             n->has_error = true;
         }
     }
-    Cent_token_destroy(id);
-    free(id);
 
     Cent_token* lp = NULL;
     if (!Cent_match(pd, Cent_token_left_paren, "expected left paren", &lp, n)) {
@@ -284,6 +282,9 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
             "id is not a builtin function which are denoted by an id starting with '@'");
         n->has_error = true;
     }
+
+    Cent_token_destroy(id);
+    free(id);
 
     Cent_token* rp = NULL;
     Cent_match(pd, Cent_token_right_paren, "expected right paren", &rp, n);

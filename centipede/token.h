@@ -63,10 +63,8 @@ static char* Cent_token_name(Cent_token_type type)
         "include",
     };
 
-    for (int i = 0; i < Cent_token_count; i++) {
-        if (i == type) {
-            return name[i];
-        }
+    if (type < Cent_token_count) {
+        return name[type];
     }
 
     fprintf(stderr, "invalid token: %d\n", type);
@@ -102,5 +100,6 @@ typedef struct Cent_token {
 void Cent_token_init(Cent_token *t);
 void Cent_token_create(Cent_token **t);
 void Cent_token_destroy(Cent_token *t);
+void Cent_print_token(Cent_token *t);
 
 #endif

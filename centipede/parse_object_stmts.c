@@ -84,11 +84,6 @@ Cent_ast* Cent_parse_property(Cent_parse_data* pd)
         }
         Cent_ast_add(n, a);
 
-        Cent_lookahead(pd);
-        if (id->builtin_type != Cent_builtin_type_none) {
-
-        }
-
         Cent_token* eq = NULL;
         Cent_match(pd, Cent_token_equal, "expected equal", &eq, n);
         Cent_token_destroy(eq);
@@ -151,6 +146,8 @@ void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n)
         if (!Cent_match(pd, Cent_token_comma, "expected comma", &comma, n)) {
             assert(false && "not possible");
         }
+        Cent_token_destroy(comma);
+        free(comma);
 
         Cent_ast* b = Cent_parse_expr(pd);
         Cent_ast_add(n, b);

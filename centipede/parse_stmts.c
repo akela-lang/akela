@@ -44,7 +44,6 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
             }
         }
 
-
         Cent_ast* a = Cent_parse_stmt(pd);
         if (a) {
             Cent_ast_add(n, a);
@@ -65,8 +64,7 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
         }
 
         if (Cent_has_separator(pd, n)) {
-            while (Cent_has_separator(pd, n)) {
-            }
+            while (Cent_has_separator(pd, n));
         } else {
             break;
         }
@@ -76,34 +74,6 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
     pd->top = pd->top->prev;
 
     return n;
-}
-
-void Cent_parse_include_stmts(Cent_parse_data* pd, Cent_ast* n, Cent_comp_unit* cu)
-{
-    Cent_ast* a = NULL;
-
-    while (true) {
-        if (!Cent_has_separator(pd, n)) {
-            break;
-        }
-
-        Cent_ignore_newlines(pd, n);
-
-        a = Cent_parse_stmt(pd);
-        if (a) {
-            Cent_ast_add(n, a);
-
-            if (a->type == Cent_ast_type_include) {
-                Cent_comp_unit* cu = Cent_comp_table_get(pd->comp_table, &a->text);
-                if (!cu) {
-                    error_list_set(pd->errors, &a->loc, "Could not find compile unit: %b", &a->text);
-                    continue;
-                }
-
-                Cent_parse_include_stmts(pd, n, cu);
-            }
-        }
-    }
 }
 
 /* stmt -> parse_element | e */
@@ -426,6 +396,8 @@ Cent_ast* Cent_parse_include(Cent_parse_data* pd)
     if (!Cent_match(pd, Cent_token_include, "expected include", &inc, n)) {
         assert(false && "not possible");
     }
+    Cent_token_destroy(inc);
+    free(inc);
 
     Cent_ast* a = NULL;
     Cent_ast_create(&a);

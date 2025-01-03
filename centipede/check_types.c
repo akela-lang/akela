@@ -136,6 +136,7 @@ void Cent_check_types_child(Cent_parse_result* pr, Cent_value* object_value, Cen
             error_list_set(pr->errors, &n->loc, "value has no type; looking for %b", &bf);
             value->has_error = true;
             n->has_error = true;
+            buffer_destroy(&bf);
             /* test case: test_check_types_child_error_no_type */
         }
 

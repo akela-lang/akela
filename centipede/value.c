@@ -104,10 +104,13 @@ void Cent_value_destroy(Cent_value *value)
         if (value2) {
             return;
         }
-        Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
     }
 
     Cent_data_destroy(&value->data, value->type);
+
+    if (Cent_value_hash_map) {
+        Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
+    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -118,12 +121,15 @@ void Cent_value_free(Cent_value *value)
         if (value2) {
             return;
         }
-        Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
     }
 
     if (value) {
         Cent_value_destroy(value);
         free(value);
+    }
+
+    if (Cent_value_hash_map) {
+        Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
     }
 }
 

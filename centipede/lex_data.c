@@ -42,6 +42,9 @@ void Cent_lex_data_destroy(Cent_lex_data* ld)
 {
     hash_table_map(&ld->reserved, free);
     hash_table_destroy(&ld->reserved);
+
+    hash_table_map(&ld->builtin, free);
+    hash_table_destroy(&ld->builtin);
 }
 
 void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type type)
