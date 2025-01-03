@@ -1,5 +1,4 @@
 # Centipede Todo
-* multiple compilation units
 * parse use
 * lex
   * number test cases

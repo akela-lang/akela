@@ -9,6 +9,7 @@ void Cent_parse_data_init(Cent_parse_data *pd)
     pd->top = NULL;
     pd->file_name.p = NULL;
     pd->file_name.size = 0;
+    pd->comp_table = NULL;
 }
 
 void Cent_parse_data_create(Cent_parse_data **pd)

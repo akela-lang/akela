@@ -7,7 +7,7 @@
 #include "zinc/input_unicode_string.h"
 #include "zinc/error.h"
 
-void test_parse_setup(Cent_parse_data* pd, char* s)
+Cent_comp_unit* test_parse_add_comp_unit(Cent_parse_data* pd, char* name, char* s)
 {
     size_t len = strlen(s);
 
@@ -21,23 +21,57 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     struct error_list* errors = NULL;
     error_list_create(&errors);
 
-    Cent_lex_data* ld = NULL;
-    Cent_lex_data_create(&ld, errors, input, input->input_vtable);
+    Cent_comp_unit* cu = NULL;
+    Cent_comp_unit_create(&cu);
+    cu->input = input;
+    cu->input_vtable = input->input_vtable;
+    cu->errors = errors;
 
+    Cent_comp_table_add_str(pd->comp_table, "**string**", cu);
+    return cu;
+}
+
+void test_parse_setup(Cent_parse_data* pd, char* s)
+{
     Cent_parse_data_init(pd);
-    pd->errors = errors;
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create(&ct);
+    pd->comp_table = ct;
+
+    Cent_comp_unit* cu = test_parse_add_comp_unit(pd, "**string**", s);
+    ct->primary = cu;
+
+    Cent_lex_data* ld = NULL;
+    Cent_lex_data_create(&ld, cu->errors, cu->input, cu->input_vtable);
+
+    pd->errors = cu->errors;
     pd->ld = ld;
     pd->file_name.p = "**string**";
     pd->file_name.size = strlen(pd->file_name.p);
 }
 
-void test_parse_teardown(Cent_parse_data* pd, Cent_parse_result* pr)
+void test_parse_teardown_comp_unit(Cent_comp_unit* cu)
 {
-    InputUnicodeString* input = pd->ld->input;
+    InputUnicodeString* input = cu->input;
     Vector* v = input->text;
     VectorDestroy(v);
     free(v);
     free(input);
+
+    struct error_list* errors = cu->errors;
+    error_list_destroy(errors);
+    free(errors);
+
+    free(cu);
+}
+
+void test_parse_teardown(Cent_parse_data* pd, Cent_parse_result* pr)
+{
+    Cent_comp_table_map(pd->comp_table, test_parse_teardown_comp_unit);
+    Cent_comp_table_destroy(pd->comp_table);
+    free(pd->comp_table);
+
     Cent_lex_data* ld = pd->ld;
     Cent_lex_data_destroy(ld);
     free(ld);
@@ -51,7 +85,4 @@ void test_parse_teardown(Cent_parse_data* pd, Cent_parse_result* pr)
     free(pr->root);
     Cent_environment_destroy(pr->base);
     free(pr->base);
-    struct error_list* errors = pd->errors;
-    error_list_destroy(errors);
-    free(errors);
 }

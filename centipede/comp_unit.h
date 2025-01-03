@@ -15,14 +15,19 @@ typedef struct Cent_comp_table {
     struct hash_table ht;
 } Cent_comp_table;
 
-void Comp_unit_init(Cent_comp_unit *unit);
-void Comp_unit_create(Cent_comp_unit **unit);
-void Comp_table_init(Cent_comp_table* table);
-void Comp_table_create(Cent_comp_table** table);
-void Comp_table_destroy(Cent_comp_table* table);
-void Comp_table_add(Cent_comp_table* table, struct buffer* name, Cent_comp_unit *unit);
-void Comp_table_add_str(Cent_comp_table* table, char* name, Cent_comp_unit *unit);
-Cent_comp_unit* Comp_table_get(Cent_comp_table* table, struct buffer* name);
-Cent_comp_unit* Comp_table_get_str(Cent_comp_table* table, char* name);
+typedef void (*Cent_comp_table_func)(Cent_comp_unit* cu);
+typedef void (*Cent_comp_table_func_name)(struct buffer* name, Cent_comp_unit* cu);
+
+void Cent_comp_unit_init(Cent_comp_unit *unit);
+void Cent_comp_unit_create(Cent_comp_unit **unit);
+void Cent_comp_table_init(Cent_comp_table* table);
+void Cent_comp_table_create(Cent_comp_table** table);
+void Cent_comp_table_destroy(Cent_comp_table* table);
+void Cent_comp_table_add(Cent_comp_table* table, struct buffer* name, Cent_comp_unit *unit);
+void Cent_comp_table_add_str(Cent_comp_table* table, char* name, Cent_comp_unit *unit);
+Cent_comp_unit* Cent_comp_table_get(Cent_comp_table* table, struct buffer* name);
+Cent_comp_unit* Cent_comp_table_get_str(Cent_comp_table* table, char* name);
+void Cent_comp_table_map(Cent_comp_table* table, Cent_comp_table_func func);
+void Cent_comp_table_map_name(Cent_comp_table* table, Cent_comp_table_func_name func);
 
 #endif
