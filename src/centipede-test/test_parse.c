@@ -931,7 +931,7 @@ void test_parse_include()
 
     Cent_parse_data pd;
     test_parse_setup(&pd,
-        "include \"types.aken\"\n"
+        "use types\n"
         "Groceries {\n"
         "    Grocery_item::Milk\n"
         "}\n"
@@ -948,8 +948,19 @@ void test_parse_include()
     );
 
     Cent_parse_result pr = Cent_parse(&pd);
-
     expect_no_errors(pr.errors);
+
+    assert_ptr(pr.root, "ptr pr.root");
+    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+
+    Cent_ast* use = Cent_ast_get(pr.root, 0);
+    assert_ptr(use, "ptr use");
+    expect_int_equal(use->type, Cent_ast_type_use, "type use");
+
+    Cent_ast* module = Cent_ast_get(use, 0);
+    assert_ptr(module, "ptr module");
+    expect_int_equal(module->type, Cent_ast_type_id, "type module");
+    expect_str(&module->text, "types", "text module");
 
     test_parse_teardown(&pd, &pr);
 }
