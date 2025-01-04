@@ -10,6 +10,8 @@ void Cent_parse_data_init(Cent_parse_data *pd)
     pd->file_name.p = NULL;
     pd->file_name.size = 0;
     pd->comp_table = NULL;
+    pd->module_obj = NULL;
+    pd->module_vtable = NULL;
 }
 
 void Cent_parse_data_create(Cent_parse_data **pd)

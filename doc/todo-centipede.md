@@ -1,5 +1,5 @@
 # Centipede Todo
-* module import system
+* import module
 * binary operator double colon
 * binary operator equal
 * namespace values

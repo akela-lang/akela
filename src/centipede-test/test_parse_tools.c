@@ -6,8 +6,9 @@
 #include "centipede/parse_data.h"
 #include "zinc/input_unicode_string.h"
 #include "zinc/error.h"
+#include "centipede/module_string.h"
 
-Cent_comp_unit* test_parse_add_comp_unit(Cent_parse_data* pd, char* name, char* s)
+void test_parse_add_comp_unit(Cent_parse_data* pd, char* name, char* s)
 {
     size_t len = strlen(s);
 
@@ -21,14 +22,7 @@ Cent_comp_unit* test_parse_add_comp_unit(Cent_parse_data* pd, char* name, char* 
     struct error_list* errors = NULL;
     error_list_create(&errors);
 
-    Cent_comp_unit* cu = NULL;
-    Cent_comp_unit_create(&cu);
-    cu->input = input;
-    cu->input_vtable = input->input_vtable;
-    cu->errors = errors;
-
-    Cent_comp_table_add_str(pd->comp_table, name, cu);
-    return cu;
+    Cent_module_string_add_module_str_str(pd->module_obj, name, s);
 }
 
 void test_parse_setup(Cent_parse_data* pd, char* s)
@@ -39,16 +33,31 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     Cent_comp_table_create(&ct);
     pd->comp_table = ct;
 
-    Cent_comp_unit* cu = test_parse_add_comp_unit(pd, "**string**", s);
-    ct->primary = cu;
+    Cent_module_string* ms = NULL;
+    Cent_module_string_create(&ms);
+    pd->module_obj = ms;
+    pd->module_vtable = ms->vtable;
+
+    String_slice name_slice;
+    name_slice.p = "**string**";
+    name_slice.size = strlen(name_slice.p);
+    struct buffer name;
+    buffer_init(&name);
+    buffer_add(&name, name_slice.p, name_slice.size);
+    buffer_finish(&name);
+    test_parse_add_comp_unit(pd, name.buf, s);
+    Cent_comp_unit* cu = Cent_module_find_interface(
+        pd->module_obj,
+        pd->module_vtable,
+        &name);
+    buffer_destroy(&name);
 
     Cent_lex_data* ld = NULL;
     Cent_lex_data_create(&ld, cu->errors, cu->input, cu->input_vtable);
 
     pd->errors = cu->errors;
     pd->ld = ld;
-    pd->file_name.p = "**string**";
-    pd->file_name.size = strlen(pd->file_name.p);
+    pd->file_name = name_slice;
 }
 
 void test_parse_teardown_comp_unit(Cent_comp_unit* cu)
@@ -81,6 +90,9 @@ void test_parse_teardown(Cent_parse_data* pd, Cent_parse_result* pr)
     if (need_teardown) {
         Cent_value_destroy_teardown();
     }
+
+    Cent_module_string_destroy(pd->module_obj);
+    free(pd->module_obj);
 
     free(pr->root);
     Cent_environment_destroy(pr->base);

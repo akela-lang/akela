@@ -14,6 +14,7 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd);
 Cent_ast* Cent_parse_use(Cent_parse_data* pd);
 void Cent_parse_include_stmts(Cent_parse_data* pd, Cent_ast* n, Cent_comp_unit* cu);
 void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n);
+void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n);
 
 /* stmts -> stmt stmts' | e */
 /* stmts' -> sep stmt stmts' | e */
@@ -379,6 +380,10 @@ Cent_ast* Cent_parse_use(Cent_parse_data* pd)
 
     Cent_parse_module_seq(pd, n);
 
+    if (!n->has_error) {
+        Cent_parse_import_module(pd, n);
+    }
+
     return n;
 }
 
@@ -414,5 +419,29 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
         Cent_ast_add(n, b);
 
         Cent_lookahead(pd);
+    }
+}
+
+void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
+{
+    struct buffer name;
+    buffer_init(&name);
+
+    Cent_ast* p = n->head;
+    while (p) {
+        if (name.size > 0) {
+            buffer_add_char(&name, '/');
+        }
+        buffer_copy(&p->text, &name);
+        p = p->next;
+    }
+
+    buffer_copy_str(&name, ".aken");
+    Cent_comp_unit* cu = Cent_module_find_interface(pd->module_obj, pd->module_vtable, &name);
+    if (cu) {
+        Cent_comp_table_add(pd->comp_table, &name, cu);
+    } else {
+        error_list_set(pd->errors, &n->loc, "could not find module: %b", &name);
+        n->has_error = true;
     }
 }
