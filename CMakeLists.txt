@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 # AKELA
 set(AKELA_DIR ${CMAKE_SOURCE_DIR})
 set(STD_DIR ${CMAKE_SOURCE_DIR}/std)
-set(AKELA_MATH ${STD_DIR}/math.akela)
+set(AKELA_MATH ${STD_DIR}/math.ake)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 configure_file(${AKELA_MATH} ${CMAKE_BINARY_DIR}/bin COPYONLY)
 
