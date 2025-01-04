@@ -690,6 +690,8 @@ void test_lex_escape_backslash()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -713,6 +715,8 @@ void test_lex_escape_forward_slash()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -736,6 +740,8 @@ void test_lex_escape_backspace()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -759,6 +765,8 @@ void test_lex_escape_form_feed()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -782,6 +790,8 @@ void test_lex_escape_newline()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -805,6 +815,8 @@ void test_lex_escape_carriage_return()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -828,6 +840,8 @@ void test_lex_escape_tab()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -851,6 +865,8 @@ void test_lex_escape_unicode()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -903,6 +919,8 @@ void test_lex_semicolon()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.6");
     expect_int_equal(t->type, Cent_token_eof, "type 1.6");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -919,6 +937,8 @@ void test_lex_error_invalid_character()
     t = lex(&ld);
     assert_ptr(t, "ptr 1.1");
     expect_int_equal(t->type, Cent_token_eof, "type 1.1");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_has_errors(ld.errors);
     struct error* e = expect_source_error(ld.errors, "invalid character: *");
@@ -943,10 +963,14 @@ void test_lex_number_integer()
     expect_int_equal(t->type, Cent_token_number, "type 1.1");
     expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.1");
     expect_long_long_equal(t->number_value.integer, 2918, "integer 1.1");
+    Cent_token_destroy(t);
+    free(t);
 
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -965,10 +989,14 @@ void test_lex_number_fraction()
     expect_int_equal(t->type, Cent_token_number, "type 1.1");
     expect_int_equal(t->number_type, Cent_number_type_fp, "number type 1.1");
     expect_double_equal(t->number_value.fp, 5.123, "integer 1.1");
+    Cent_token_destroy(t);
+    free(t);
 
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
@@ -981,16 +1009,22 @@ void test_lex_number_exponent()
     Cent_token* t = NULL;
     Cent_lex_data ld;
     test_lex_setup(&ld, "5.123e3");
+    Cent_token_destroy(t);
+    free(t);
 
     t = lex(&ld);
     assert_ptr(t, "ptr 1.1");
     expect_int_equal(t->type, Cent_token_number, "type 1.1");
     expect_int_equal(t->number_type, Cent_number_type_fp, "number type 1.1");
     expect_double_equal(t->number_value.fp, 5.123e3, "integer 1.1");
+    Cent_token_destroy(t);
+    free(t);
 
     t = lex(&ld);
     assert_ptr(t, "ptr 1.2");
     expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
 
     expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
