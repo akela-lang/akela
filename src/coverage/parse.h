@@ -4,9 +4,9 @@
 #include "cobble/compile.h"
 #include "cobble/compile_data.h"
 
-Cob_re Cvr_gcov_line_re();
-Cob_re Cvr_gcov_ext_re();
-void Cvr_re_cleanup(Cob_re* cr);
-Cob_re Cvr_test_dir_re();
+Cob_re Cover_gcov_line_re();
+Cob_re Cover_gcov_ext_re();
+void Cover_re_cleanup(Cob_re* cr);
+Cob_re Cover_test_dir_re();
 
 #endif

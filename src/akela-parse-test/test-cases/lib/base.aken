@@ -1,0 +1,160 @@
+element Test_suite
+    properties
+        name: String `required`
+        solo: Bool      # only run this suite
+        mute: Bool      # exclude this suite from running
+    end
+
+    children
+        Test
+    end
+end
+
+element Test
+    properties
+        name: String `required`
+        source: Source `required`
+        has_error: Bool `required`
+        solo: Bool      # only run this test
+        mute: Bool      # exclude this test from running
+        errors: Errors
+    end
+
+    children
+        Ast
+    end
+end
+
+element Source
+    children
+        String
+    end
+end
+
+element Errors {
+    children
+        Error
+    end
+end
+
+element Error
+    properties
+        message: String
+        start_pos: Integer
+        end_pos: Integer
+        line: Integer
+        col: Integer
+    end
+end
+
+element Environment
+    properties
+        prev: Environment
+        symbols: Symbols
+    end
+end
+
+element Symbols
+    properties
+        _: Symbol
+    end
+end
+
+element Symbol
+    properties
+        type: Symbol_element
+        tu: Type_use
+        seq: Integer        # sequence number for declared variables
+    end
+end
+
+enum Symbol_type
+    Variable
+    Type
+    Info
+end
+
+element Ast {
+    properties
+        type: Ast_type `required`
+        value: String
+        tu: Type_use
+        seq: Integer        # sequence number for Ast_element id
+    end
+end
+
+enum Ast_element
+    Stmts
+    Number
+    Add
+    Assign
+end
+
+element Type_use
+    td: Type_def
+    dim: Integer        # array dimension if td is type Array
+end
+
+element Type_def
+    name: String required
+    type: Type_def_element required
+    bit_count: Integer
+    is_signed: Bool
+end
+
+enum Type_def_element
+    Integer
+    Float
+    Array
+end
+
+# built-in element defs
+i32 = Type_def {
+    .type = Type_def_type::Integer
+    .name = "i32"
+    .bit_count = 32
+    .is_signed = true
+}
+
+f64 = Type_def {
+    .type = Type_def_type::Float
+    .name = "f64"
+    .bit_count = 64
+    .is_signed = true
+}
+
+string = Type_def {
+    .type = Type_def_type::String
+    .name = "f64"
+}
+
+bool = Type_def {
+    .type = Type_def_type::Bool
+    .name = "bool"
+}
+
+# base environment
+env0 = Environment {
+    .symbols = Symbols {
+        # built-in types
+        .i32 = Symbol {
+            .type = Symbol_type::Type
+            .Token_type = Token_type::I32
+            .td = i32
+        }
+        .f64 = Symbol {
+            .type = Symbol_type::Type
+            .Token_type = Token_type::F64
+            .td = f64
+        }
+        .string = Symbol {
+            .type = Symbol_type::Type
+            .td = string
+        }
+        .bool = Symbol {
+            .type = Symbol_type::Type
+            .td = bool
+        }
+
+    }
+}

@@ -323,4 +323,14 @@ int fopen_s(FILE **f, const char *name, const char *mode)
     return ret;
 }
 
+void Zinc_get_cwd()
+{
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        printf("Current working dir: %s\n", cwd);
+    } else {
+        perror("getcwd() error");
+    }
+}
+
 #endif

@@ -9,7 +9,7 @@ void test_parse_line_zero()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gcov_line_re();
+    Cob_re cr = Cover_gcov_line_re();
     char s[] = "        -:    0:Source:/home/username/workspace/trade/akela/coverage-test/test_data.c";
     String_slice slice;
     slice.p = s;
@@ -41,14 +41,14 @@ void test_parse_line_zero()
         "/home/username/workspace/trade/akela/coverage-test/test_data.c", "item groups");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_not_covered_line()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gcov_line_re();
+    Cob_re cr = Cover_gcov_line_re();
     char s[] = "        -:    1:#include \"zinc/unit_test.h\"";
     String_slice slice;
     slice.p = s;
@@ -85,14 +85,14 @@ void test_parse_not_covered_line()
         "item groups");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_covered_line()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gcov_line_re();
+    Cob_re cr = Cover_gcov_line_re();
     char s[] = "1:    4:void test_data_file_list_add()";
     String_slice slice;
     slice.p = s;
@@ -129,14 +129,14 @@ void test_parse_covered_line()
         "item groups");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_covered_line2()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gcov_line_re();
+    Cob_re cr = Cover_gcov_line_re();
     char s[] = "       1*:    9:    expect_true(is_word(\"x  \", NUM_BYTES(\"x\"[0])), \"ascii letter\");";
     String_slice slice;
     slice.p = s;
@@ -173,14 +173,14 @@ void test_parse_covered_line2()
         "item groups");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_gcov_ext1()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gcov_ext_re();
+    Cob_re cr = Cover_gcov_ext_re();
     char s[] = ".gcov";
     String_slice slice;
     slice.p = s;
@@ -193,14 +193,14 @@ void test_parse_gcov_ext1()
     expect_buffer_list_item(&mr.groups, 0, ".gcov", "item groups");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_gcov_ext2()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gcov_ext_re();
+    Cob_re cr = Cover_gcov_ext_re();
     char s[] = "ast.c.gcov";
     String_slice slice;
     slice.p = s;
@@ -213,14 +213,14 @@ void test_parse_gcov_ext2()
     expect_buffer_list_item(&mr.groups, 0, ".gcov", "item groups");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_gcov_ext3_not_match()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_gcov_ext_re();
+    Cob_re cr = Cover_gcov_ext_re();
     char s[] = "abc.gcovabc";
     String_slice slice;
     slice.p = s;
@@ -231,14 +231,14 @@ void test_parse_gcov_ext3_not_match()
     expect_false(mr.matched, "m");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_test_dir1()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_test_dir_re();
+    Cob_re cr = Cover_test_dir_re();
     char s[] = "-test";
     String_slice slice;
     slice.p = s;
@@ -251,14 +251,14 @@ void test_parse_test_dir1()
     expect_buffer_list_item(&mr.groups, 0, "-test", "item groups");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_test_dir2()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_test_dir_re();
+    Cob_re cr = Cover_test_dir_re();
     char s[] = "akela-test";
     String_slice slice;
     slice.p = s;
@@ -271,14 +271,14 @@ void test_parse_test_dir2()
     expect_buffer_list_item(&mr.groups, 0, "-test", "item groups");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_test_dir3_not_match()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_test_dir_re();
+    Cob_re cr = Cover_test_dir_re();
     char s[] = "akela";
     String_slice slice;
     slice.p = s;
@@ -289,14 +289,14 @@ void test_parse_test_dir3_not_match()
     expect_false(mr.matched, "m");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse_test_dir4_not_match()
 {
     test_name(__func__);
 
-    Cob_re cr = Cvr_test_dir_re();
+    Cob_re cr = Cover_test_dir_re();
     char s[] = "akela-test-abc";
     String_slice slice;
     slice.p = s;
@@ -307,7 +307,7 @@ void test_parse_test_dir4_not_match()
     expect_false(mr.matched, "m");
 
     buffer_list_destroy(&mr.groups);
-    Cvr_re_cleanup(&cr);
+    Cover_re_cleanup(&cr);
 }
 
 void test_parse()

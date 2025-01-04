@@ -19,6 +19,7 @@ ZINC_API enum result get_dir_files(struct buffer* dir, struct buffer_list* bl);
 ZINC_API enum result get_exe_path(char** path);
 ZINC_API void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename);
 ZINC_API int fopen_s(FILE **f, const char *name, const char *mode);
+ZINC_API void Zinc_get_cwd();
 
 #endif
 

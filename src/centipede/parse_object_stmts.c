@@ -21,7 +21,10 @@ Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd)
     pd->top = env;
     n->env = env;
 
-    Cent_ignore_newlines(pd, n);
+    if (Cent_has_separator(pd, n)) {
+        while (Cent_has_separator(pd, n));
+    }
+
     while (true) {
         Cent_lookahead(pd);
         if (pd->lookahead->type == Cent_token_right_curly_brace) {
@@ -32,7 +35,10 @@ Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd)
         if (a) {
             Cent_ast_add(n, a);
         }
-        if (!Cent_has_separator(pd, n)) {
+
+        if (Cent_has_separator(pd, n)) {
+            while (Cent_has_separator(pd, n));
+        } else {
             break;
         }
     }

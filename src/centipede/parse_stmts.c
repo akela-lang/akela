@@ -28,6 +28,10 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
     pd->top = env;
     n->env = env;
 
+    if (Cent_has_separator(pd, n)) {
+        while (Cent_has_separator(pd, n));
+    }
+
     while (true) {
         Cent_lookahead(pd);
 
@@ -49,17 +53,22 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
             Cent_ast_add(n, a);
 
             if (!a->has_error && a->type == Cent_ast_type_include) {
+                Cent_lookahead(pd);
+
                 Cent_ast* b = a->head;
                 Cent_comp_unit* cu = Cent_comp_table_get(pd->comp_table, &b->text);
-                if (!cu) {
-                    error_list_set(pd->errors, &b->loc, "Could not find compile unit: %b", &b->text);
-                    continue;
+                if (cu) {
+                    pd->ld->input = cu->input;
+                    pd->ld->input_vtable = cu->input_vtable;
+                    pd->ld->errors = cu->errors;
+                } else {
+                    error_list_set(
+                        pd->errors,
+                        &b->loc,
+                        "Could not find compile unit: %b", &b->text);
+                    b->has_error = true;
+                    a->has_error = true;
                 }
-
-                Cent_lookahead(pd);
-                pd->ld->input = cu->input;
-                pd->ld->input_vtable = cu->input_vtable;
-                pd->ld->errors = cu->errors;
             }
         }
 

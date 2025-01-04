@@ -4,7 +4,7 @@
 #include <string.h>
 #include "zinc/input_unicode_string.h"
 
-Cob_re Cvr_gcov_line_re()
+Cob_re Cover_gcov_line_re()
 {
     Vector* text = NULL;
     char* s = "\\s*(\\-|#####|\\d+)\\*?:\\s*(\\d+):(Source:)?(.*)";
@@ -33,7 +33,7 @@ Cob_re Cvr_gcov_line_re()
     return re;
 }
 
-Cob_re Cvr_gcov_ext_re()
+Cob_re Cover_gcov_ext_re()
 {
     Vector* text = NULL;
     char* s = "\\.gcov$";
@@ -62,7 +62,7 @@ Cob_re Cvr_gcov_ext_re()
     return re;
 }
 
-Cob_re Cvr_test_dir_re()
+Cob_re Cover_test_dir_re()
 {
     Vector* text = NULL;
     char* s = "\\-test$";
@@ -91,7 +91,7 @@ Cob_re Cvr_test_dir_re()
     return re;
 }
 
-void Cvr_re_cleanup(Cob_re* cr)
+void Cover_re_cleanup(Cob_re* cr)
 {
     error_list_destroy(cr->el);
     free(cr->el);
