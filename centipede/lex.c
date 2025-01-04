@@ -303,8 +303,8 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
     bool done;
     r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
     if (r == result_error) {
-        error_list_set(ld->errors, &loc, error_message);
-        return;
+        fprintf(stderr, "%s\n", error_message);
+        exit(1);
     }
 
     if (done) {
@@ -391,27 +391,27 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
         r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
 
         if (r == result_error) {
-            error_list_set(ld->errors, &loc, error_message);
+            fprintf(stderr, "%s\n", error_message);
+            exit(1);
+        }
+        if (done) {
+            error_list_set(ld->errors, &loc, "unicode escape not finished");
+            buffer_destroy(&bf);
+            return;
+        }
+        if (is_hex_digit(c, num)) {
+            buffer_add(&bf, c, num);
         } else {
-            if (done) {
-                error_list_set(ld->errors, &loc, "unicode escape not finished");
-                buffer_destroy(&bf);
-                return;
-            }
-            if (is_hex_digit(c, num)) {
-                buffer_add(&bf, c, num);
-            } else {
-                error_list_set(ld->errors, &loc, "invalid hex digit: %c", c[0]);
-                valid = false;
-            }
+            error_list_set(ld->errors, &loc, "invalid hex digit: %c", c[0]);
+            valid = false;
         }
     }
     /* optional two hex digits */
     for (int i = 0; i < 2; i++) {
         r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(ld->errors, &loc, error_message);
-            break;
+            fprintf(stderr, "%s\n", error_message);
+            exit(1);
         }
         if (done) {
             InputUnicodeRepeat(ld->input, ld->input_vtable);
@@ -493,8 +493,8 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
     while (true) {
         r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(ld->errors, &loc, error_message);
-            break;
+            fprintf(stderr, "%s\n", error_message);
+            exit(1);
         }
 
         if (done) {
@@ -558,8 +558,8 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
     while (true) {
         r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(ld->errors, &loc, error_message);
-            break;
+            fprintf(stderr, "%s\n", error_message);
+            exit(1);
         }
 
         if (done) {
@@ -603,8 +603,8 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
     while (true) {
         r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(ld->errors, &loc, error_message);
-            break;
+            fprintf(stderr, "%s\n", error_message);
+            exit(1);
         }
 
         if (done) {

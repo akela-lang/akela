@@ -672,6 +672,264 @@ void test_lex_builtin_error()
     test_lex_teardown(&ld);
 }
 
+void test_lex_escape_backslash()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "\"\\\\\"");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_string, "type 1.1");
+    expect_str(&t->value, "\\", "value 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_escape_forward_slash()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "\"\\/\"");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_string, "type 1.1");
+    expect_str(&t->value, "/", "value 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_escape_backspace()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "\"\\b\"");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_string, "type 1.1");
+    expect_str(&t->value, "\b", "value 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_escape_form_feed()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "\"\\f\"");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_string, "type 1.1");
+    expect_str(&t->value, "\f", "value 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_escape_newline()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "\"\\n\"");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_string, "type 1.1");
+    expect_str(&t->value, "\n", "value 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_escape_carriage_return()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "\"\\r\"");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_string, "type 1.1");
+    expect_str(&t->value, "\r", "value 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_escape_tab()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "\"\\t\"");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_string, "type 1.1");
+    expect_str(&t->value, "\t", "value 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_escape_unicode()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "\"\\u03b8\"");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_string, "type 1.1");
+    expect_str(&t->value, "θ", "value 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_semicolon()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "1;2;3");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_number, "type 1.1");
+    expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.1");
+    expect_long_long_equal(t->number_value.integer, 1, "integer 1.1");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_semicolon, "type 1.2");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.3");
+    expect_int_equal(t->type, Cent_token_number, "type 1.3");
+    expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.3");
+    expect_long_long_equal(t->number_value.integer, 2, "integer 1.3");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.4");
+    expect_int_equal(t->type, Cent_token_semicolon, "type 1.4");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.5");
+    expect_int_equal(t->type, Cent_token_number, "type 1.5");
+    expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.5");
+    expect_long_long_equal(t->number_value.integer, 3, "integer 1.5");
+    Cent_token_destroy(t);
+    free(t);
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.6");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.6");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_error_invalid_character()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "*");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.1");
+
+    expect_has_errors(ld.errors);
+    struct error* e = expect_source_error(ld.errors, "invalid character: *");
+    assert_ptr(e, "ptr e");
+    expect_size_t_equal(e->loc.start_pos, 0, "start pos e");
+    expect_size_t_equal(e->loc.end_pos, 1, "start pos e");
+    expect_size_t_equal(e->loc.line, 1, "line e");
+    expect_size_t_equal(e->loc.col, 1, "col e");
+    test_lex_teardown(&ld);
+}
+
 void test_lex()
 {
     test_lex_element();
@@ -679,4 +937,18 @@ void test_lex()
     test_lex_top_level_assign();
     test_lex_builtin();
     test_lex_builtin_error();
+
+    test_lex_escape_backslash();
+    test_lex_escape_forward_slash();
+    test_lex_escape_backspace();
+    test_lex_escape_form_feed();
+    test_lex_escape_newline();
+    test_lex_escape_carriage_return();
+    test_lex_escape_tab();
+
+    test_lex_escape_unicode();
+
+    test_lex_semicolon();
+
+    test_lex_error_invalid_character();
 }
