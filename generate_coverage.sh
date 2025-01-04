@@ -15,7 +15,7 @@ rm -rf cmake-build-debug &&
     do
         mkdir -p $name &&
         cd $name &&
-        gcov $root_dir/../cmake-build-debug/$name/CMakeFiles/$name.dir/*.gcda &&
+        gcov $root_dir/../cmake-build-debug/src/$name/CMakeFiles/$name.dir/*.gcda &&
         cd ..
     done &&
     cd akela-llvm &&
