@@ -930,6 +930,72 @@ void test_lex_error_invalid_character()
     test_lex_teardown(&ld);
 }
 
+void test_lex_number_integer()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "2918");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_number, "type 1.1");
+    expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.1");
+    expect_long_long_equal(t->number_value.integer, 2918, "integer 1.1");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_number_fraction()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "5.123");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_number, "type 1.1");
+    expect_int_equal(t->number_type, Cent_number_type_fp, "number type 1.1");
+    expect_double_equal(t->number_value.fp, 5.123, "integer 1.1");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
+void test_lex_number_exponent()
+{
+    test_name(__func__);
+
+    Cent_token* t = NULL;
+    Cent_lex_data ld;
+    test_lex_setup(&ld, "5.123e3");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.1");
+    expect_int_equal(t->type, Cent_token_number, "type 1.1");
+    expect_int_equal(t->number_type, Cent_number_type_fp, "number type 1.1");
+    expect_double_equal(t->number_value.fp, 5.123e3, "integer 1.1");
+
+    t = lex(&ld);
+    assert_ptr(t, "ptr 1.2");
+    expect_int_equal(t->type, Cent_token_eof, "type 1.2");
+
+    expect_no_errors(ld.errors);
+    test_lex_teardown(&ld);
+}
+
 void test_lex()
 {
     test_lex_element();
@@ -951,4 +1017,8 @@ void test_lex()
     test_lex_semicolon();
 
     test_lex_error_invalid_character();
+
+    test_lex_number_integer();
+    test_lex_number_fraction();
+    test_lex_number_exponent();
 }
