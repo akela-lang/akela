@@ -421,27 +421,3 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
         Cent_lookahead(pd);
     }
 }
-
-void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
-{
-    struct buffer name;
-    buffer_init(&name);
-
-    Cent_ast* p = n->head;
-    while (p) {
-        if (name.size > 0) {
-            buffer_add_char(&name, '/');
-        }
-        buffer_copy(&p->text, &name);
-        p = p->next;
-    }
-
-    buffer_copy_str(&name, ".aken");
-    Cent_comp_unit* cu = Cent_module_find_interface(pd->module_obj, pd->module_vtable, &name);
-    if (cu) {
-        Cent_comp_table_add(pd->comp_table, &name, cu);
-    } else {
-        error_list_set(pd->errors, &n->loc, "could not find module: %b", &name);
-        n->has_error = true;
-    }
-}

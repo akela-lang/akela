@@ -23,6 +23,8 @@ set(centipede_files
         module.c
         module_string.c
         module_file.c
+        module_data.c
+        module_import.c
 )
 
 add_library(centipede ${centipede_files})

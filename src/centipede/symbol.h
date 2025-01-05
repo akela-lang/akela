@@ -5,6 +5,7 @@
 
 #include "element.h"
 #include "enumerate.h"
+#include "module_data.h"
 
 typedef enum Cent_symbol_type {
     Cent_symbol_type_none,
@@ -13,6 +14,7 @@ typedef enum Cent_symbol_type {
     Cent_symbol_type_enumerate,
     Cent_symbol_type_object_value,
     Cent_symbol_type_file_name,
+    Cent_symbol_type_module,
 } Cent_symbol_type;
 
 typedef struct Cent_symbol {
@@ -26,6 +28,7 @@ typedef struct Cent_symbol {
         Cent_enum_type* enumerate;
         Cent_value* object_value;
         String_slice file_name;
+        Cent_module* module;
     } data;
 } Cent_symbol;
 

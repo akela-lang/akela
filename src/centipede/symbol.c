@@ -30,6 +30,8 @@ void Cent_symbol_set_type(Cent_symbol *sym, Cent_symbol_type type)
     } else if (type == Cent_symbol_type_file_name) {
         sym->data.file_name.p = NULL;
         sym->data.file_name.size = 0;
+    } else if (type == Cent_symbol_type_module) {
+        sym->data.module = NULL;
     } else {
         assert(false && "invalid symbol type");
     }
@@ -50,6 +52,10 @@ void Cent_symbol_destroy(Cent_symbol *sym)
     } else if (sym->type == Cent_symbol_type_variable) {
         if (sym->data.variable.value) {
             Cent_value_free(sym->data.variable.value);
+        }
+    } else if (sym->type == Cent_symbol_type_module) {
+        if (sym->data.module) {
+            Cent_module_destroy(sym->data.module);
         }
     }
 }
