@@ -9,6 +9,7 @@ void Cent_ast_init(Cent_ast *ast)
     ast->type = Cent_ast_type_none;
     ast->value_type = Cent_value_type_none;
     ast->number_type = Cent_number_type_none;
+    ast->variable_type = Cent_variable_type_none,
     buffer_init(&ast->text);
     ast->env = NULL;
     location_init(&ast->loc);
@@ -88,4 +89,15 @@ Cent_ast* Cent_ast_get(Cent_ast *n, size_t index)
     }
 
     return NULL;
+}
+
+size_t Cent_ast_count(Cent_ast* n)
+{
+    size_t count = 0;
+    Cent_ast* p = n->head;
+    while (p) {
+        count++;
+        p = p->next;
+    }
+    return count;
 }

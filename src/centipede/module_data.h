@@ -15,5 +15,6 @@ void Cent_module_create(Cent_module** mod);
 void Cent_module_destroy(Cent_module* mod);
 void Cent_module_free(Cent_module* mod);
 void Cent_module_add(Cent_module* mod, struct buffer* name, Cent_module* submodule);
+Cent_module* Cent_module_get(Cent_module* mod, struct buffer* name);
 
 #endif

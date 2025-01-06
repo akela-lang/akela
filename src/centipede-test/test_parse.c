@@ -223,13 +223,22 @@ void test_parse_top_level_assignment()
     expect_int_equal(type->type, Cent_ast_type_id, "type type");
     expect_str(&type->text, "type", "value type");
 
-    /* type value */
-    Cent_ast* type_value = Cent_ast_get(type_prop_set, 1);
-    assert_ptr(type_value, "ptr type_value");
-    expect_int_equal(type_value->type, Cent_ast_type_expr_enum, "type type");
-    expect_int_equal(type_value->value_type, Cent_value_type_enum, "value_type type_value");
-    expect_str(&type_value->data.enumeration.display, "Type_def_type::Integer", "value type_value");;
-    expect_false(type_value->has_error, "has error value0");
+    /* enum namespace */
+    Cent_ast* ns = Cent_ast_get(type_prop_set, 1);
+    assert_ptr(ns, "ptr ns");
+    expect_int_equal(ns->type, Cent_ast_type_namespace, "type ns");
+
+    /* enum id */
+    Cent_ast* enum_id = Cent_ast_get(ns, 0);
+    assert_ptr(enum_id, "ptr enum_id");
+    expect_int_equal(enum_id->type, Cent_ast_type_id, "type enum_id");
+    expect_str(&enum_id->text, "Type_def_type", "text enum_id");
+
+    /* enum value */
+    Cent_ast* enum_value_id = Cent_ast_get(ns, 1);
+    assert_ptr(enum_value_id, "ptr enum_value_id");
+    expect_int_equal(enum_value_id->type, Cent_ast_type_id, "type enum_value_id");
+    expect_str(&enum_value_id->text, "Integer", "text enum_value_id");
 
     /* name prop set */
     Cent_ast* name_prop_set = Cent_ast_get(object_stmts, 1);
@@ -481,7 +490,7 @@ void test_parse_value_error_expected_id()
     Cent_parse_result pr = Cent_parse(&pd);
 
     expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    expect_source_error(pr.errors, "expected factor");
 
     test_parse_teardown(&pd, &pr);
 }
@@ -492,6 +501,8 @@ void test_parse_value_error_enum_expected_id()
 
     Cent_parse_data pd;
     test_parse_setup(&pd,
+        "enum Test_type\n"
+        "end\n"
         "Test_type::1\n"
     );
 
@@ -728,12 +739,7 @@ void test_parse_object_method_call()
     Cent_ast* value = Cent_ast_get(method, 0);
     expect_ptr(value, "ptr value");
     expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
-
-    /* id a */
-    Cent_ast* id = Cent_ast_get(value, 0);
-    expect_ptr(id, "ptr id");
-    expect_int_equal(id->type, Cent_ast_type_id, "type id");
-    expect_str(&id->text, "a", "text id");
+    expect_str(&value->text, "a", "text id");
 
     test_parse_teardown(&pd, &pr);
 }
@@ -782,12 +788,7 @@ void test_parse_object_method_call2()
     Cent_ast* value = Cent_ast_get(method, 0);
     expect_ptr(value, "ptr value");
     expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
-
-    /* id a */
-    Cent_ast* id = Cent_ast_get(value, 0);
-    expect_ptr(id, "ptr id");
-    expect_int_equal(id->type, Cent_ast_type_id, "type id");
-    expect_str(&id->text, "a", "text id");
+    expect_str(&value->text, "a", "text id");
 
     /* argument 2 string b */
     Cent_ast* name = Cent_ast_get(method, 1);
@@ -892,7 +893,7 @@ void test_parse_enum_error_could_not_find_enum()
     Cent_parse_result pr = Cent_parse(&pd);
 
     expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "could not find enum: Bar");
+    struct error* e = expect_source_error(pr.errors, "id is not a variable: Bar");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 6, "line e");
     expect_size_t_equal(e->loc.col, 1, "col e");
@@ -933,7 +934,7 @@ void test_parse_include()
     test_parse_setup(&pd,
         "use types\n"
         "Groceries {\n"
-        "    Grocery_item::Milk\n"
+        "    types::Grocery_item::Milk\n"
         "}\n"
     );
 

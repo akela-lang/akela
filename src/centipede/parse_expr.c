@@ -4,6 +4,11 @@
 #include <assert.h>
 #include "parse_object_stmts.h"
 
+Cent_ast* Cent_parse_assign(Cent_parse_data* pd);
+void Cent_parse_check_lvalue(Cent_parse_data* pd, Cent_ast* n);
+void Cent_parse_check_rvalue(Cent_parse_data* pd, Cent_ast* n);
+Cent_ast* Cent_parse_namespace(Cent_parse_data* pd);
+Cent_ast* Cent_parse_factor(Cent_parse_data* pd);
 Cent_ast* Cent_parse_expr_number(Cent_parse_data* pd);
 Cent_ast* Cent_parse_expr_string(Cent_parse_data* pd);
 Cent_ast* Cent_parse_expr_boolean(Cent_parse_data* pd);
@@ -16,6 +21,191 @@ void Cent_parse_expr_variable(Cent_parse_data* pd, Cent_token* id, Cent_ast* n);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
+{
+    return Cent_parse_assign(pd);
+}
+
+/* assign -> namespace = assign | namespace */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Cent_ast* Cent_parse_assign(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast* a = NULL;
+    Cent_ast* b = NULL;
+
+    a = Cent_parse_namespace(pd);
+    if (!a) {
+        return NULL;
+    }
+
+    while (true) {
+        Cent_lookahead(pd);
+        if (pd->lookahead->type != Cent_token_equal) {
+            break;
+        }
+
+        if (!n) {
+            Cent_ast_create(&n);
+            n->type = Cent_ast_type_expr_assign;
+            Cent_ast_add(n, a);
+        }
+
+        Cent_token* eq = NULL;
+        if (!Cent_match(pd, Cent_token_equal, "expected equal", &eq, n)) {
+            assert(false && "not possible");
+        }
+        Cent_token_destroy(eq);
+        free(eq);
+
+        b = Cent_parse_namespace(pd);
+        if (b) {
+            Cent_ast_add(n, b);
+        } else {
+            error_list_set(pd->errors, &pd->lookahead->loc, "expected expression");
+            n->has_error = true;
+            break;
+        }
+    }
+
+    if (!n) {
+        n = a;
+    }
+
+    if (n && !n->has_error) {
+        if (n->type == Cent_ast_type_expr_assign) {
+            if (Cent_ast_count(n) > 2) {
+                error_list_set(pd->errors, &n->loc, "nested assignments are not allowed");
+                n->has_error = true;
+            } else {
+                Cent_ast* left_node = Cent_ast_get(n, 0);
+                Cent_ast* right_node = Cent_ast_get(n, 1);
+                Cent_parse_check_lvalue(pd, left_node);
+                Cent_parse_check_rvalue(pd, right_node);
+
+                if (!n->has_error) {
+                    Cent_symbol* sym = NULL;
+                    Cent_symbol_create(&sym);
+                    Cent_symbol_set_type(sym, Cent_symbol_type_variable);
+                    sym->data.variable.n = b;
+                    Cent_environment_add_symbol(pd->top, &a->text, sym);
+                }
+            }
+        } else {
+            Cent_parse_check_rvalue(pd, n);
+        }
+    }
+
+    return n;
+}
+
+void Cent_parse_check_lvalue(Cent_parse_data* pd, Cent_ast* n)
+{
+    if (n) {
+        if (n->type == Cent_ast_type_id) {
+            Cent_symbol* sym = Cent_environment_get(pd->top, &n->text);
+            if (sym) {
+                if (sym->type == Cent_symbol_type_variable) {
+                    error_list_set(pd->errors, &n->loc, "shadowing of variable", &n->text);
+                    n->has_error = true;
+                } else {
+                    error_list_set(pd->errors, &n->loc, "invalid variable name", &n->text);
+                    n->has_error = true;
+                }
+            }
+        }
+    }
+}
+
+void Cent_parse_check_rvalue(Cent_parse_data* pd, Cent_ast* n)
+{
+    if (n) {
+        if (n->type == Cent_ast_type_id) {
+            n->type = Cent_ast_type_expr_variable;
+        }
+        if (n->type == Cent_ast_type_expr_variable) {
+            Cent_symbol* sym = Cent_environment_get(pd->top, &n->text);
+            if (!sym) {
+                error_list_set(pd->errors, &n->loc, "variable does not exist: %b", &n->text);
+                n->has_error = true;
+            } else if (sym->type != Cent_symbol_type_variable) {
+                error_list_set(pd->errors, &n->loc, "id is not a value");
+                n->has_error = true;
+            }
+        }
+    }
+}
+
+/* namespace -> namespace :: factor */
+/* convert left recursion to right recursion */
+/* namespace -> factor namespace' */
+/* namespace' -> :: factor namespace' | e */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast* a = NULL;
+    Cent_ast* b = NULL;
+
+    a = Cent_parse_factor(pd);
+
+    Cent_lookahead(pd);
+    while (pd->lookahead->type == Cent_token_double_colon) {
+        if (!n) {
+            Cent_ast_create(&n);
+            n->type = Cent_ast_type_namespace;
+            Cent_ast_add(n, a);
+        }
+
+        Cent_token* dc = NULL;
+        if (!Cent_match(pd, Cent_token_double_colon, "expected double colon", &dc, n)) {
+            assert(false && "not possible");
+        }
+
+        b = Cent_parse_factor(pd);
+        Cent_ast_add(n, b);
+
+        Cent_lookahead(pd);
+    }
+
+    if (!n) {
+        n = a;
+    }
+
+    if (!n->has_error) {
+        if (n->type == Cent_ast_type_namespace) {
+            Cent_ast* p = n->head;
+            Cent_symbol* sym = Cent_environment_get(pd->top, &p->text);
+            if (!sym) {
+                error_list_set(
+                    pd->errors,
+                    &p->loc,
+                    "id is not a variable: %b",
+                    &p->text);
+            } else if (sym->type != Cent_symbol_type_enumerate
+                && sym->type != Cent_symbol_type_module
+            ) {
+                error_list_set(pd->errors,
+                    &p->loc,
+                    "namespace does not start with an enum or module");
+                n->has_error = true;
+            } else {
+                p = p->next;
+                while (p) {
+                    if (p->type != Cent_ast_type_id) {
+                        error_list_set(pd->errors, &p->loc, "expected id");
+                        n->has_error = true;
+                    }
+                    p = p->next;
+                }
+            }
+        }
+    }
+
+    return n;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Cent_ast* Cent_parse_factor(Cent_parse_data* pd)
 {
     Cent_lookahead(pd);
 
@@ -31,7 +221,16 @@ Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
         return Cent_parse_expr_boolean(pd);
     }
 
-    return Cent_parse_expr_id(pd);
+    if (pd->lookahead->type == Cent_token_id) {
+        return Cent_parse_expr_id(pd);
+    }
+
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    error_list_set(pd->errors, &pd->lookahead->loc, "expected factor");
+    n->has_error = true;
+
+    return n;
 }
 
 Cent_ast* Cent_parse_expr_number(Cent_parse_data* pd)
@@ -124,16 +323,6 @@ Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd)
 
     Cent_lookahead(pd);
 
-    if (pd->lookahead->type == Cent_token_double_colon) {
-        Cent_parse_expr_enum(pd, id, n);
-        return n;
-    }
-
-    if (pd->lookahead->type == Cent_token_equal) {
-        Cent_parse_expr_assign(pd, id, n);
-        return n;
-    }
-
     if (pd->lookahead->type == Cent_token_left_curly_brace) {
         Cent_parse_expr_object(pd, id, n);
         return n;
@@ -146,82 +335,6 @@ Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd)
 
     Cent_parse_expr_variable(pd, id, n);
     return n;
-}
-
-void Cent_parse_expr_enum(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
-{
-    n->type = Cent_ast_type_expr_enum;
-    Cent_ast_value_set_type(n, Cent_value_type_enum);
-    if (id) {
-        buffer_copy(&id->value, &n->data.enumeration.id1);
-        buffer_copy(&id->value, &n->data.enumeration.display);
-        n->data.enumeration.loc1 = id->loc;
-    } else {
-        n->has_error = true;
-    }
-
-    Cent_token* dc = NULL;
-    if (!Cent_match(pd, Cent_token_double_colon, "expected double-colon", &dc, n)) {
-        assert(false && "not possible");
-    }
-    buffer_copy_str(&n->data.enumeration.display, "::");
-    Cent_token_destroy(dc);
-    free(dc);
-
-    Cent_token* id2 = NULL;
-    Cent_match(pd, Cent_token_id, "expected id", &id2, n);
-    /* test case: test_parse_value_error_enum_expected_id */
-
-    if (id2) {
-        buffer_copy(&id2->value, &n->data.enumeration.id2);
-        buffer_copy(&id2->value, &n->data.enumeration.display);
-        n->data.enumeration.loc2 = id2->loc;
-    } else {
-        n->has_error = true;
-    }
-
-    Cent_token_destroy(id);
-    free(id);
-    Cent_token_destroy(id2);
-    free(id2);
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Cent_parse_expr_assign(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
-{
-    n->type = Cent_ast_type_expr_assign;
-
-    Cent_ast* a = NULL;
-    Cent_ast_create(&a);
-    a->type = Cent_ast_type_id;
-    buffer_copy(&id->value, &a->text);
-    Cent_ast_add(n, a);
-
-    Cent_token* eq = NULL;
-    if (!Cent_match(pd, Cent_token_equal, "expected equal", &eq, n)) {
-        assert(false && "not possible");
-    }
-    Cent_token_destroy(eq);
-    free(eq);
-
-    Cent_ast* b = Cent_parse_expr(pd);
-    if (b->type == Cent_ast_type_expr_assign) {
-        error_list_set(pd->errors, &b->loc, "nested assignments are not allowed");
-        b->has_error = true;
-    }
-    Cent_ast_add(n, b);
-    /* test case: test_parse_value_error_nested_assignments */
-
-    Cent_token_destroy(id);
-    free(id);
-
-    if (!n->has_error) {
-        Cent_symbol* sym = NULL;
-        Cent_symbol_create(&sym);
-        Cent_symbol_set_type(sym, Cent_symbol_type_variable);
-        sym->data.variable.n = b;
-        Cent_environment_add_symbol(pd->top, &a->text, sym);
-    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -294,24 +407,8 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
 
 void Cent_parse_expr_variable(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
 {
-    n->type = Cent_ast_type_expr_variable;
-    Cent_ast* a = NULL;
-    Cent_ast_create(&a);
-    a->type = Cent_ast_type_id;
-    buffer_copy(&id->value, &a->text);
-    a->loc = id->loc;
-    Cent_ast_add(n, a);
+    n->type = Cent_ast_type_id;
+    buffer_copy(&id->value, &n->text);
     Cent_token_destroy(id);
     free(id);
-
-    if (!n->has_error) {
-        Cent_symbol* sym = Cent_environment_get(pd->top, &a->text);
-        if (!sym) {
-            error_list_set(pd->errors, &a->loc, "invalid id: %b", &a->text);
-            n->has_error = true;
-        } else if (sym->type != Cent_symbol_type_variable) {
-            error_list_set(pd->errors, &a->loc, "id is not a value");
-            n->has_error = true;
-        }
-    }
 }

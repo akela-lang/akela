@@ -124,7 +124,7 @@ void test_build_enum0()
 
     expect_no_errors(pr.errors);
 
-    assert_ptr(root, "ptr value");
+    assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_enum, "type root");
     expect_str(&root->data.enumeration.id1, "Symbol_type", "id1 root");
     expect_str(&root->data.enumeration.id2, "Variable", "id2 root");

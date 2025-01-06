@@ -58,6 +58,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     buffer_destroy(&base_name);
 
     Cent_module* last_mod = mod;
+    p = p->next;
     while (p) {
         Cent_module* new_mod = NULL;
         Cent_module_create(&new_mod);

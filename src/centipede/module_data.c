@@ -30,3 +30,8 @@ void Cent_module_add(Cent_module* mod, struct buffer* name, Cent_module* submodu
 {
     hash_table_add(&mod->submodules, name, submodule);
 }
+
+Cent_module* Cent_module_get(Cent_module* mod, struct buffer* name)
+{
+    return hash_table_get(&mod->submodules, name);
+}

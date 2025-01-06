@@ -9,7 +9,7 @@ Cent_value* Cent_build_dispatch(Cent_ast* n);
 Cent_value* Cent_build_number(Cent_ast* n);
 Cent_value* Cent_build_string(Cent_ast* n);
 Cent_value* Cent_build_boolean(Cent_ast* n);
-Cent_value* Cent_build_enum(Cent_ast* n);
+Cent_value* Cent_build_namespace(Cent_ast* n);
 Cent_value* Cent_build_assign(Cent_ast* n);
 Cent_value* Cent_build_variable(Cent_ast* n);
 Cent_value* Cent_build_function_top(Cent_ast* n);
@@ -55,8 +55,8 @@ Cent_value* Cent_build_dispatch(Cent_ast* n)
         return Cent_build_boolean(n);
     }
 
-    if (n->type == Cent_ast_type_expr_enum) {
-        return Cent_build_enum(n);
+    if (n->type == Cent_ast_type_namespace) {
+        return Cent_build_namespace(n);
     }
 
     if (n->type == Cent_ast_type_expr_assign) {
@@ -122,18 +122,22 @@ Cent_value* Cent_build_boolean(Cent_ast* n)
     return value;
 }
 
-Cent_value* Cent_build_enum(Cent_ast* n)
+Cent_value* Cent_build_namespace(Cent_ast* n)
 {
-    Cent_value* value = NULL;
-    Cent_value_create(&value);
-    Cent_value_set_type(value, Cent_value_type_enum);
-    buffer_copy(&n->data.enumeration.id1, &value->data.enumeration.id1);
-    buffer_copy(&n->data.enumeration.id2, &value->data.enumeration.id2);
-    buffer_copy(&n->data.enumeration.display, &value->data.enumeration.display);
-    value->data.enumeration.number = n->data.enumeration.number;
-    buffer_copy(&n->data.enumeration.id1, &value->name);
-    value->n = n;
-    return value;
+    if (n->value_type == Cent_value_type_enum) {
+        Cent_value* value = NULL;
+        Cent_value_create(&value);
+        Cent_value_set_type(value, Cent_value_type_enum);
+        buffer_copy(&n->data.enumeration.id1, &value->data.enumeration.id1);
+        buffer_copy(&n->data.enumeration.id2, &value->data.enumeration.id2);
+        buffer_copy(&n->data.enumeration.display, &value->data.enumeration.display);
+        value->data.enumeration.number = n->data.enumeration.number;
+        buffer_copy(&n->data.enumeration.id1, &value->name);
+        value->n = n;
+        return value;
+    } else {
+        assert(false && "not implemented");
+    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -153,9 +157,8 @@ Cent_value* Cent_build_assign(Cent_ast* n)
 
 Cent_value* Cent_build_variable(Cent_ast* n)
 {
-    Cent_ast* id = Cent_ast_get(n, 0);
     Cent_environment* top = Cent_get_environment(n);
-    Cent_symbol* sym = Cent_environment_get(top, &id->text);
+    Cent_symbol* sym = Cent_environment_get(top, &n->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_variable);
     return sym->data.variable.value;
@@ -230,9 +233,8 @@ void Cent_build_object_method_child_of(Cent_ast* n, Cent_value* value)
 {
     Cent_ast* a = Cent_ast_get(n, 0);
     assert(a->type == Cent_ast_type_expr_variable);
-    Cent_ast* id = Cent_ast_get(a, 0);
     Cent_environment* top = Cent_get_environment(n);
-    Cent_symbol* sym = Cent_environment_get(top, &id->text);
+    Cent_symbol* sym = Cent_environment_get(top, &a->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_variable);
     Cent_value_add(sym->data.variable.value, value);
@@ -242,9 +244,8 @@ void Cent_build_object_method_property_of(Cent_ast* n, Cent_value* value)
 {
     Cent_ast* a = Cent_ast_get(n, 0);
     assert(a->type == Cent_ast_type_expr_variable);
-    Cent_ast* id = Cent_ast_get(a, 0);
     Cent_environment* top = Cent_get_environment(n);
-    Cent_symbol* sym = Cent_environment_get(top, &id->text);
+    Cent_symbol* sym = Cent_environment_get(top, &a->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_variable);
     Cent_value* object = sym->data.variable.value;

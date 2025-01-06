@@ -23,20 +23,28 @@ typedef enum Cent_ast_type {
     Cent_ast_type_expr_number,
     Cent_ast_type_expr_string,
     Cent_ast_type_expr_boolean,
-    Cent_ast_type_expr_enum,
+    //Cent_ast_type_expr_enum,
     Cent_ast_type_expr_assign,
     Cent_ast_type_expr_object,
     Cent_ast_type_expr_function_file_name,
     Cent_ast_type_expr_variable,
     Cent_ast_type_use,
     Cent_ast_type_module_seq,
+    Cent_ast_type_namespace,
 } Cent_ast_type;
+
+typedef enum Cent_variable_type {
+    Cent_variable_type_none,
+    Cent_variable_type_lvalue,
+    Cent_variable_type_rvalue,
+} Cent_variable_type;
 
 typedef struct Cent_ast {
     Cent_ast_type type;
     struct buffer text;
     Cent_value_type value_type;
     Cent_number_type number_type;
+    Cent_variable_type variable_type;
     Cent_data data;
     struct Cent_environment* env;
     struct location loc;
@@ -54,5 +62,6 @@ void Cent_ast_value_set_type(Cent_ast *ast, Cent_value_type type);
 void Cent_ast_destroy(Cent_ast *ast);
 void Cent_ast_add(Cent_ast *p, Cent_ast *c);
 Cent_ast* Cent_ast_get(Cent_ast *n, size_t index);
+size_t Cent_ast_count(Cent_ast* n);
 
 #endif

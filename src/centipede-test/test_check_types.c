@@ -280,7 +280,7 @@ void test_check_types_property_enum_error_id1()
     Cent_value* root = Cent_build(&pr);
 
     expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "could not find enum: Coin_type");
+    expect_source_error(pr.errors, "id is not a variable: Coin_type");
 
     test_build_teardown(&pd, &pr, root);
 }
@@ -426,7 +426,7 @@ void test_check_types_child_enum_error_id1_not_found()
     Cent_value* root = Cent_build(&pr);
 
     expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "could not find enum: Building_type");
+    struct error* e = expect_source_error(pr.errors, "id is not a variable: Building_type");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 14, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
