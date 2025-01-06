@@ -35,53 +35,12 @@ void Cent_update_values_ast(Cent_parse_result* pr, Cent_ast* n)
 
 void Cent_update_values_namespace(Cent_parse_result* pr, Cent_ast* n)
 {
-    Cent_ast* p = n->head;
-    Cent_environment* top = Cent_get_environment(n);
-    Cent_symbol* sym = Cent_environment_get(top, &p->text);
-    assert(sym);
-
-    if (sym->type == Cent_symbol_type_enumerate) {
-        Cent_enum_type* en = sym->data.enumerate;
-        Cent_ast* id1 = p;
-        Cent_ast* id2 = p->next;
+    Cent_namespace_result nr = Cent_namespace_lookup(n);
+    if (nr.sym->type == Cent_symbol_type_enumerate) {
+        Cent_enum_type* en = nr.sym->data.enumerate;
+        Cent_ast* id1 = nr.node;
+        Cent_ast* id2 = id1->next;
         Cent_update_values_enum(pr, n, en, id1, id2);
-    } else if (sym->type == Cent_symbol_type_module) {
-        Cent_module* mod = sym->data.module;
-        p = p->next;
-        Cent_module* mod2 = mod;
-        while (p) {
-            Cent_symbol* sym2 = NULL;
-            if (mod2->env) {
-                sym2 = Cent_environment_get(mod2->env, &p->text);
-            }
-            mod2 = Cent_module_get(mod2, &p->text);
-
-            if (sym2) {
-                if (mod2) {
-                    error_list_set(pr->errors, &p->loc, "ambiguous namespace: %b", &p->text);
-                    n->has_error = true;
-                    break;
-                }
-
-                if (sym2->type == Cent_symbol_type_enumerate) {
-                    Cent_enum_type* en = sym2->data.enumerate;
-                    Cent_ast* id1 = p;
-                    Cent_ast* id2 = p->next;
-                    Cent_update_values_enum(pr, n, en, id1, id2);
-                    break;
-                }
-            }
-
-            if (!mod2) {
-                error_list_set(pr->errors, &p->loc, "could not find submodule: %b", &p->text);
-                n->has_error = true;
-                break;
-            }
-
-            p = p->next;
-        }
-    } else {
-        assert(false && "not possible");
     }
 }
 

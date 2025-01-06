@@ -75,3 +75,42 @@ Cent_environment* Cent_get_environment(Cent_ast* n)
 
     return NULL;
 }
+
+Cent_namespace_result Cent_namespace_lookup(Cent_ast* n)
+{
+    Cent_namespace_result nr = {NULL, NULL};
+
+    Cent_ast* p = n->head;
+    assert(p);
+    assert(p != n->tail);
+
+    Cent_environment* top = Cent_get_environment(n);
+    Cent_symbol* sym = Cent_environment_get(top, &p->text);
+    assert(sym);
+
+    if (sym->type != Cent_symbol_type_module) {
+        nr.sym = sym;
+        nr.node = p;
+        return nr;
+    }
+
+    Cent_module* mod = sym->data.module;
+    assert(mod);
+
+    p = p->next;
+    while (p && p != n->tail) {
+        Cent_module* temp = Cent_module_get(mod, &p->text);
+        if (!temp) break;
+        mod = temp;
+        p = p->next;
+    }
+
+    sym = Cent_environment_get(mod->env, &p->text);
+    if (sym) {
+        nr.sym = sym;
+        nr.node = p;
+        return nr;
+    }
+
+    return nr;
+}

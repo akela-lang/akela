@@ -28,6 +28,11 @@ typedef struct Cent_parse_result {
     Cent_ast* root;
 } Cent_parse_result;
 
+typedef struct Cent_namespace_result {
+    Cent_symbol* sym;
+    Cent_ast* node;
+} Cent_namespace_result;
+
 void Cent_parse_data_init(Cent_parse_data *pd);
 void Cent_parse_data_create(Cent_parse_data **pd);
 

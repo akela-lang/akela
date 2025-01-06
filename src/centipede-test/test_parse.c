@@ -1080,6 +1080,55 @@ void test_parse_include_multiple_namespace()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_include_value()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use data\n"
+        "data::a\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "data.aken",
+        "a = 12597\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_no_errors(pr.errors);
+
+    /* root */
+    assert_ptr(pr.root, "ptr pr.root");
+    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+
+    /* use */
+    Cent_ast* use = Cent_ast_get(pr.root, 0);
+    assert_ptr(use, "ptr use");
+    expect_int_equal(use->type, Cent_ast_type_use, "type use");
+
+    Cent_ast* data_mod = Cent_ast_get(use, 0);
+    assert_ptr(data_mod, "ptr data_mod");
+    expect_int_equal(data_mod->type, Cent_ast_type_id, "type data_mod");
+    expect_str(&data_mod->text, "data", "text data_mod");
+
+    /* namespace */
+    Cent_ast* ns = Cent_ast_get(pr.root, 1);
+    assert_ptr(ns, "ptr ns");
+    expect_int_equal(ns->type, Cent_ast_type_namespace, "type ns");
+
+    Cent_ast* data = Cent_ast_get(ns, 0);
+    assert_ptr(data, "ptr data");
+    expect_int_equal(data->type, Cent_ast_type_id, "type data");
+    expect_str(&data->text, "data", "text data");
+
+    Cent_ast* a = Cent_ast_get(ns, 1);
+    assert_ptr(a, "ptr a");
+    expect_int_equal(a->type, Cent_ast_type_id, "type a");
+    expect_str(&a->text, "a", "text a");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1112,6 +1161,9 @@ void test_parse()
     test_parse_enum_duplicate_id();
     test_parse_enum_error_could_not_find_enum();
     test_parse_enum_error_could_not_find_enum_id();
+
     test_parse_include();
     test_parse_include_multiple_namespace();
+
+    test_parse_include_value();
 }
