@@ -403,11 +403,16 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
 
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_double_colon) {
-        Cent_ast* b = NULL;
         Cent_token* dc = NULL;
-        if (!Cent_match(pd, Cent_token_double_colon, "expected double colon", &dc, b)) {
+        if (!Cent_match(pd, Cent_token_double_colon, "expected double colon", &dc, n)) {
             assert(false && "not possible");
         }
+        Cent_token_destroy(dc);
+        free(dc);
+
+        Cent_ast* b = NULL;
+        Cent_ast_create(&b);
+        b->type = Cent_ast_type_id;
 
         Cent_token* id2 = NULL;
         Cent_match(pd, Cent_token_id, "expected id", &id2, b);

@@ -108,53 +108,55 @@ enum Type_def_element
     Array
 end
 
-# built-in element defs
-i32 = Type_def {
-    .type = Type_def_type::Integer
-    .name = "i32"
-    .bit_count = 32
-    .is_signed = true
-}
+const common_values = {
+    # built-in element defs
+    i32 = Type_def {
+        .type = Type_def_type::Integer
+        .name = "i32"
+        .bit_count = 32
+        .is_signed = true
+    }
 
-f64 = Type_def {
-    .type = Type_def_type::Float
-    .name = "f64"
-    .bit_count = 64
-    .is_signed = true
-}
+    f64 = Type_def {
+        .type = Type_def_type::Float
+        .name = "f64"
+        .bit_count = 64
+        .is_signed = true
+    }
 
-string = Type_def {
-    .type = Type_def_type::String
-    .name = "f64"
-}
+    string = Type_def {
+        .type = Type_def_type::String
+        .name = "f64"
+    }
 
-bool = Type_def {
-    .type = Type_def_type::Bool
-    .name = "bool"
-}
+    bool = Type_def {
+        .type = Type_def_type::Bool
+        .name = "bool"
+    }
 
-# base environment
-env0 = Environment {
-    .symbols = Symbols {
-        # built-in types
-        .i32 = Symbol {
-            .type = Symbol_type::Type
-            .Token_type = Token_type::I32
-            .td = i32
+    # base environment
+    env0 = Environment {
+        .symbols = Symbols {
+            # built-in types
+            .i32 = Symbol {
+                .type = Symbol_type::Type
+                .Token_type = Token_type::I32
+                .td = i32
+            }
+            .f64 = Symbol {
+                .type = Symbol_type::Type
+                .Token_type = Token_type::F64
+                .td = f64
+            }
+            .string = Symbol {
+                .type = Symbol_type::Type
+                .td = string
+            }
+            .bool = Symbol {
+                .type = Symbol_type::Type
+                .td = bool
+            }
+
         }
-        .f64 = Symbol {
-            .type = Symbol_type::Type
-            .Token_type = Token_type::F64
-            .td = f64
-        }
-        .string = Symbol {
-            .type = Symbol_type::Type
-            .td = string
-        }
-        .bool = Symbol {
-            .type = Symbol_type::Type
-            .td = bool
-        }
-
     }
 }

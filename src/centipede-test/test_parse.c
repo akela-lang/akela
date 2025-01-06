@@ -951,9 +951,11 @@ void test_parse_include()
     Cent_parse_result pr = Cent_parse(&pd);
     expect_no_errors(pr.errors);
 
+    /* root */
     assert_ptr(pr.root, "ptr pr.root");
     expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
 
+    /* use */
     Cent_ast* use = Cent_ast_get(pr.root, 0);
     assert_ptr(use, "ptr use");
     expect_int_equal(use->type, Cent_ast_type_use, "type use");
@@ -962,6 +964,118 @@ void test_parse_include()
     assert_ptr(module, "ptr module");
     expect_int_equal(module->type, Cent_ast_type_id, "type module");
     expect_str(&module->text, "types", "text module");
+
+    /* Groceries object */
+    Cent_ast* object = Cent_ast_get(pr.root, 1);
+    assert_ptr(object, "ptr object");
+    expect_int_equal(object->type, Cent_ast_type_expr_object, "type object");
+    expect_str(&object->text, "Groceries", "text object");
+
+    Cent_ast* obj_stmts = Cent_ast_get(object, 0);
+    assert_ptr(obj_stmts, "ptr obj_stmts");
+    expect_int_equal(obj_stmts->type, Cent_ast_type_object_stmts, "type obj_stmts");
+
+    /* namespace */
+    Cent_ast* ns = Cent_ast_get(obj_stmts, 0);
+    assert_ptr(ns, "ptr ns");
+    expect_int_equal(ns->type, Cent_ast_type_namespace, "type ns");
+
+    Cent_ast* types = Cent_ast_get(ns, 0);
+    assert_ptr(types, "ptr types");
+    expect_int_equal(types->type, Cent_ast_type_id, "type types");
+    expect_str(&types->text, "types", "text types");
+
+    Cent_ast* grocery_item = Cent_ast_get(ns, 1);
+    assert_ptr(grocery_item, "ptr grocery_item");
+    expect_int_equal(grocery_item->type, Cent_ast_type_id, "type grocery_item");
+    expect_str(&grocery_item->text, "Grocery_item", "text grocery_item");
+
+    Cent_ast* milk = Cent_ast_get(ns, 2);
+    assert_ptr(milk, "ptr milk");
+    expect_int_equal(milk->type, Cent_ast_type_id, "type milk");
+    expect_str(&milk->text, "Milk", "text milk");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_include_multiple_namespace()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use lib::types\n"
+        "Groceries {\n"
+        "    lib::types::Grocery_item::Milk\n"
+        "}\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "lib/types.aken",
+        "enum Grocery_item\n"
+        "    Milk\n"
+        "    Cereal\n"
+        "    Steak\n"
+        "    Potatoes\n"
+        "    Carrots\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_no_errors(pr.errors);
+
+    /* root */
+    assert_ptr(pr.root, "ptr pr.root");
+    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+
+    /* use */
+    Cent_ast* use = Cent_ast_get(pr.root, 0);
+    assert_ptr(use, "ptr use");
+    expect_int_equal(use->type, Cent_ast_type_use, "type use");
+
+    Cent_ast* lib_mod = Cent_ast_get(use, 0);
+    assert_ptr(lib_mod, "ptr lib_mod");
+    expect_int_equal(lib_mod->type, Cent_ast_type_id, "type lib_mod");
+    expect_str(&lib_mod->text, "lib", "text lib_mod");
+
+    Cent_ast* types_mod = Cent_ast_get(use, 1);
+    assert_ptr(types_mod, "ptr types_mod");
+    expect_int_equal(types_mod->type, Cent_ast_type_id, "type types_mod");
+    expect_str(&types_mod->text, "types", "text types_mod");
+
+    /* Groceries object */
+    Cent_ast* object = Cent_ast_get(pr.root, 1);
+    assert_ptr(object, "ptr object");
+    expect_int_equal(object->type, Cent_ast_type_expr_object, "type object");
+    expect_str(&object->text, "Groceries", "text object");
+
+    Cent_ast* obj_stmts = Cent_ast_get(object, 0);
+    assert_ptr(obj_stmts, "ptr obj_stmts");
+    expect_int_equal(obj_stmts->type, Cent_ast_type_object_stmts, "type obj_stmts");
+
+    /* namespace */
+    Cent_ast* ns = Cent_ast_get(obj_stmts, 0);
+    assert_ptr(ns, "ptr ns");
+    expect_int_equal(ns->type, Cent_ast_type_namespace, "type ns");
+
+    Cent_ast* lib = Cent_ast_get(ns, 0);
+    assert_ptr(lib, "ptr lib");
+    expect_int_equal(lib->type, Cent_ast_type_id, "type lib");
+    expect_str(&lib->text, "lib", "text lib");
+
+    Cent_ast* types = Cent_ast_get(ns, 1);
+    assert_ptr(types, "ptr types");
+    expect_int_equal(types->type, Cent_ast_type_id, "type types");
+    expect_str(&types->text, "types", "text types");
+
+    Cent_ast* grocery_item = Cent_ast_get(ns, 2);
+    assert_ptr(grocery_item, "ptr grocery_item");
+    expect_int_equal(grocery_item->type, Cent_ast_type_id, "type grocery_item");
+    expect_str(&grocery_item->text, "Grocery_item", "text grocery_item");
+
+    Cent_ast* milk = Cent_ast_get(ns, 3);
+    assert_ptr(milk, "ptr milk");
+    expect_int_equal(milk->type, Cent_ast_type_id, "type milk");
+    expect_str(&milk->text, "Milk", "text milk");
 
     test_parse_teardown(&pd, &pr);
 }
@@ -999,4 +1113,5 @@ void test_parse()
     test_parse_enum_error_could_not_find_enum();
     test_parse_enum_error_could_not_find_enum_id();
     test_parse_include();
+    test_parse_include_multiple_namespace();
 }
