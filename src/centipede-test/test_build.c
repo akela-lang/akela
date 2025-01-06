@@ -439,6 +439,53 @@ void test_build_property_set_variable()
     test_build_teardown(&pd, &pr, root);
 }
 
+void test_build_namespace_enum()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use types\n"
+        "Groceries {\n"
+        "    types::Grocery_item::Milk\n"
+        "    types::Grocery_item::Carrots\n"
+        "}\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "types.aken",
+        "enum Grocery_item\n"
+        "    Milk\n"
+        "    Cereal\n"
+        "    Steak\n"
+        "    Potatoes\n"
+        "    Carrots\n"
+        "end\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr value");
+    expect_int_equal(root->type, Cent_value_type_object, "type root");
+    expect_str(&root->name, "Groceries", "name root");
+
+    Cent_value* item0 = root->data.object.head;
+    assert_ptr(item0, "ptr item0");
+    expect_int_equal(item0->type, Cent_value_type_enum, "type item0");
+    expect_str(&item0->data.enumeration.display, "Grocery_item::Milk", "display item0");
+    expect_size_t_equal(item0->data.enumeration.number, 0, "number item0");
+
+    Cent_value* item1 = item0->next;
+    assert_ptr(item0, "ptr item1");
+    expect_int_equal(item1->type, Cent_value_type_enum, "type item1");
+    expect_str(&item1->data.enumeration.display, "Grocery_item::Carrots", "display item1");
+    expect_size_t_equal(item1->data.enumeration.number, 4, "number item1");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -457,4 +504,5 @@ void test_build()
     test_build_object_property_of();
     test_build_object_function_file_name();
     test_build_property_set_variable();
+    test_build_namespace_enum();
 }
