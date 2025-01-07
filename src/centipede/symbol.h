@@ -30,6 +30,7 @@ typedef struct Cent_symbol {
         String_slice file_name;
         Cent_module* module;
     } data;
+    bool is_copy;
 } Cent_symbol;
 
 void Cent_symbol_init(Cent_symbol *sym);

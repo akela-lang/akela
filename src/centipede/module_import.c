@@ -10,6 +10,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     struct buffer path;
     buffer_init(&path);
 
+    /* find module */
     bool is_glob = false;
     Cent_ast* p = n->head;
     while (p) {
@@ -34,6 +35,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
 
     Cent_comp_table_add(pd->comp_table, &path, cu);
 
+    /* parse and build module */
     Cent_parse_data* pd2 = NULL;
     Cent_parse_data_create(&pd2);
     pd2->comp_table = pd->comp_table;
@@ -49,32 +51,39 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     Cent_parse_result pr = Cent_parse(pd2);
     Cent_value* value = Cent_build(&pr);
 
-    p = n->head;
-    Cent_module* mod = NULL;
-    Cent_module_create(&mod);
-    Cent_symbol* sym = NULL;
-    Cent_symbol_create(&sym);
-    Cent_symbol_set_type(sym, Cent_symbol_type_module);
-    sym->data.module = mod;
-    struct buffer base_name;
-    buffer_init(&base_name);
-    buffer_copy(&p->text, &base_name);
-    Cent_environment_add_symbol(pd->top, &base_name, sym);
-    buffer_destroy(&base_name);
+    if (is_glob) {
 
-    Cent_module* last_mod = mod;
-    p = p->next;
-    while (p) {
-        Cent_module* new_mod = NULL;
-        Cent_module_create(&new_mod);
-        Cent_module_add(last_mod, &p->text, new_mod);
-        last_mod = new_mod;
+    } else {
+        /* create module and symbol */
+        p = n->head;
+        Cent_module* mod = NULL;
+        Cent_module_create(&mod);
+        Cent_symbol* sym = NULL;
+        Cent_symbol_create(&sym);
+        Cent_symbol_set_type(sym, Cent_symbol_type_module);
+        sym->data.module = mod;
+        struct buffer base_name;
+        buffer_init(&base_name);
+        buffer_copy(&p->text, &base_name);
+        Cent_environment_add_symbol(pd->top, &base_name, sym);
+        buffer_destroy(&base_name);
+
+        /* create submodules */
+        Cent_module* last_mod = mod;
         p = p->next;
-    }
+        while (p) {
+            Cent_module* new_mod = NULL;
+            Cent_module_create(&new_mod);
+            Cent_module_add(last_mod, &p->text, new_mod);
+            last_mod = new_mod;
+            p = p->next;
+        }
 
-    last_mod->pr = &pr;
-    last_mod->value = value;
-    assert(pr.root);
-    assert(pr.root->type == Cent_ast_type_stmts);
-    last_mod->env = pr.root->env;
+        /* link environment to last submodule */
+        last_mod->pr = &pr;
+        last_mod->value = value;
+        assert(pr.root);
+        assert(pr.root->type == Cent_ast_type_stmts);
+        last_mod->env = pr.root->env;
+    }
 }

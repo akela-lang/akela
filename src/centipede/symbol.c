@@ -6,6 +6,7 @@
 void Cent_symbol_init(Cent_symbol *sym)
 {
     sym->type = Symbol_type_none;
+    sym->is_copy = false;
 }
 
 void Cent_symbol_create(Cent_symbol** sym)
@@ -39,23 +40,25 @@ void Cent_symbol_set_type(Cent_symbol *sym, Cent_symbol_type type)
 
 void Cent_symbol_destroy(Cent_symbol *sym)
 {
-    if (sym->type == Cent_symbol_type_element) {
-        if (sym->data.element) {
-            Cent_element_destroy(sym->data.element);
-            free(sym->data.element);
-        }
-    } else if (sym->type == Cent_symbol_type_enumerate) {
-        if (sym->data.enumerate) {
-            Cent_enumerate_destroy(sym->data.enumerate);
-            free(sym->data.enumerate);
-        }
-    } else if (sym->type == Cent_symbol_type_variable) {
-        if (sym->data.variable.value) {
-            Cent_value_free(sym->data.variable.value);
-        }
-    } else if (sym->type == Cent_symbol_type_module) {
-        if (sym->data.module) {
-            Cent_module_destroy(sym->data.module);
+    if (!sym->is_copy) {
+        if (sym->type == Cent_symbol_type_element) {
+            if (sym->data.element) {
+                Cent_element_destroy(sym->data.element);
+                free(sym->data.element);
+            }
+        } else if (sym->type == Cent_symbol_type_enumerate) {
+            if (sym->data.enumerate) {
+                Cent_enumerate_destroy(sym->data.enumerate);
+                free(sym->data.enumerate);
+            }
+        } else if (sym->type == Cent_symbol_type_variable) {
+            if (sym->data.variable.value) {
+                Cent_value_free(sym->data.variable.value);
+            }
+        } else if (sym->type == Cent_symbol_type_module) {
+            if (sym->data.module) {
+                Cent_module_destroy(sym->data.module);
+            }
         }
     }
 }
