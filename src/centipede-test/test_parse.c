@@ -918,7 +918,7 @@ void test_parse_enum_error_could_not_find_enum_id()
     Cent_parse_result pr = Cent_parse(&pd);
 
     expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "could not find enum id: Four");
+    struct error* e = expect_source_error(pr.errors, "invalid enum id: Four");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 6, "line e");
     expect_size_t_equal(e->loc.col, 6, "col e");
@@ -1129,6 +1129,27 @@ void test_parse_include_value()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_include_value_error()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use data\n"
+        "data::b\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "data.aken",
+        "a = 12597\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "not a valid id: b");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1166,4 +1187,5 @@ void test_parse()
     test_parse_include_multiple_namespace();
 
     test_parse_include_value();
+    test_parse_include_value_error();
 }

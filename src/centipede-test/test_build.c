@@ -6,7 +6,7 @@
 #include "centipede/parse.h"
 #include "centipede/parse_tools.h"
 #include "test_build_tools.h"
-#include "centipede/check_types.h"
+#include "centipede/check_value_types.h"
 
 void test_build_number_integer()
 {

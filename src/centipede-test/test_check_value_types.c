@@ -1,14 +1,11 @@
 #include "zinc/unit_test.h"
-#include "test_check_types.h"
-
 #include <zinc/error_unit_test.h>
-
 #include "test_build_tools.h"
 #include "test_parse_tools.h"
 #include "centipede/parse.h"
 #include "centipede/build.h"
 
-void test_check_types_property()
+void test_check_value_types_property()
 {
     test_name(__func__);
 
@@ -40,7 +37,7 @@ void test_check_types_property()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_error_number()
+void test_check_value_types_property_error_number()
 {
     test_name(__func__);
 
@@ -71,7 +68,7 @@ void test_check_types_property_error_number()
 }
 
 
-void test_check_types_property_error_string()
+void test_check_value_types_property_error_string()
 {
     test_name(__func__);
 
@@ -101,7 +98,7 @@ void test_check_types_property_error_string()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_error_boolean()
+void test_check_value_types_property_error_boolean()
 {
     test_name(__func__);
 
@@ -131,7 +128,7 @@ void test_check_types_property_error_boolean()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_error_object()
+void test_check_value_types_property_error_object()
 {
     test_name(__func__);
 
@@ -161,7 +158,7 @@ void test_check_types_property_error_object()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_variable()
+void test_check_value_types_property_variable()
 {
     test_name(__func__);
 
@@ -192,7 +189,7 @@ void test_check_types_property_variable()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_error_variable_object()
+void test_check_value_types_property_error_variable_object()
 {
     test_name(__func__);
 
@@ -223,7 +220,7 @@ void test_check_types_property_error_variable_object()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_enum()
+void test_check_value_types_property_enum()
 {
     test_name(__func__);
 
@@ -254,7 +251,7 @@ void test_check_types_property_enum()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_enum_error_id1()
+void test_check_value_types_property_enum_error_id1()
 {
     test_name(__func__);
 
@@ -285,7 +282,7 @@ void test_check_types_property_enum_error_id1()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_enum_error_id2()
+void test_check_value_types_property_enum_error_id2()
 {
     test_name(__func__);
 
@@ -311,12 +308,12 @@ void test_check_types_property_enum_error_id2()
     Cent_value* root = Cent_build(&pr);
 
     expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "could not find enum id: Pencil");
+    expect_source_error(pr.errors, "invalid enum id: Pencil");
 
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_child()
+void test_check_value_types_child()
 {
     test_name(__func__);
 
@@ -340,7 +337,7 @@ void test_check_types_child()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_child_error_number()
+void test_check_value_types_child_error_number()
 {
     test_name(__func__);
 
@@ -368,7 +365,7 @@ void test_check_types_child_error_number()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_child_enum()
+void test_check_value_types_child_enum()
 {
     test_name(__func__);
 
@@ -399,7 +396,7 @@ void test_check_types_child_enum()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_child_enum_error_id1_not_found()
+void test_check_value_types_child_enum_error_id1_not_found()
 {
     test_name(__func__);
 
@@ -434,7 +431,7 @@ void test_check_types_child_enum_error_id1_not_found()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_child_enum_error_id1_not_match()
+void test_check_value_types_child_enum_error_id1_not_match()
 {
     test_name(__func__);
 
@@ -474,7 +471,7 @@ void test_check_types_child_enum_error_id1_not_match()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_child_enum_error_id2_not_valid()
+void test_check_value_types_child_enum_error_id2_not_valid()
 {
     test_name(__func__);
 
@@ -501,7 +498,7 @@ void test_check_types_child_enum_error_id2_not_valid()
     Cent_value* root = Cent_build(&pr);
 
     expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "could not find enum id: Bike");
+    struct error* e = expect_source_error(pr.errors, "invalid enum id: Bike");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 14, "line e");
     expect_size_t_equal(e->loc.col, 19, "col e");
@@ -509,7 +506,7 @@ void test_check_types_child_enum_error_id2_not_valid()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_error_not_enum()
+void test_check_value_types_property_error_not_enum()
 {
     test_name(__func__);
 
@@ -540,7 +537,7 @@ void test_check_types_property_error_not_enum()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_property_enum_error_not_match()
+void test_check_value_types_property_enum_error_not_match()
 {
     test_name(__func__);
 
@@ -574,7 +571,7 @@ void test_check_types_property_enum_error_not_match()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types_child_error_no_type()
+void test_check_value_types_child_error_no_type()
 {
     test_name(__func__);
 
@@ -604,25 +601,25 @@ void test_check_types_child_error_no_type()
     test_build_teardown(&pd, &pr, root);
 }
 
-void test_check_types()
+void test_check_value_types()
 {
-    test_check_types_property();
-    test_check_types_property_error_number();
-    test_check_types_property_error_string();
-    test_check_types_property_error_boolean();
-    test_check_types_property_error_object();
-    test_check_types_property_variable();
-    test_check_types_property_error_variable_object();
-    test_check_types_property_enum();
-    test_check_types_property_enum_error_id1();
-    test_check_types_property_enum_error_id2();
-    test_check_types_child();
-    test_check_types_child_error_number();
-    test_check_types_child_enum();
-    test_check_types_child_enum_error_id1_not_found();
-    test_check_types_child_enum_error_id1_not_match();
-    test_check_types_child_enum_error_id2_not_valid();
-    test_check_types_property_error_not_enum();
-    test_check_types_property_enum_error_not_match();
-    test_check_types_child_error_no_type();
+    test_check_value_types_property();
+    test_check_value_types_property_error_number();
+    test_check_value_types_property_error_string();
+    test_check_value_types_property_error_boolean();
+    test_check_value_types_property_error_object();
+    test_check_value_types_property_variable();
+    test_check_value_types_property_error_variable_object();
+    test_check_value_types_property_enum();
+    test_check_value_types_property_enum_error_id1();
+    test_check_value_types_property_enum_error_id2();
+    test_check_value_types_child();
+    test_check_value_types_child_error_number();
+    test_check_value_types_child_enum();
+    test_check_value_types_child_enum_error_id1_not_found();
+    test_check_value_types_child_enum_error_id1_not_match();
+    test_check_value_types_child_enum_error_id2_not_valid();
+    test_check_value_types_property_error_not_enum();
+    test_check_value_types_property_enum_error_not_match();
+    test_check_value_types_child_error_no_type();
 }

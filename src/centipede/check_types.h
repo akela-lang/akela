@@ -3,6 +3,6 @@
 
 #include "parse_data.h"
 
-void Cent_check_types(Cent_parse_result* pr, Cent_value* value);
+void Cent_check_types(Cent_parse_result* pr);
 
 #endif

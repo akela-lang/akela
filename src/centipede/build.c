@@ -2,7 +2,7 @@
 #include "value.h"
 #include <assert.h>
 
-#include "check_types.h"
+#include "check_value_types.h"
 #include "parse_tools.h"
 
 Cent_value* Cent_build_dispatch(Cent_ast* n);
@@ -34,7 +34,7 @@ Cent_value* Cent_build(Cent_parse_result* pr)
     }
 
     if (!pr->errors->head) {
-        Cent_check_types(pr, value);
+        Cent_check_value_types(pr, value);
     }
 
     return value;

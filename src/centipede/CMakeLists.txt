@@ -18,13 +18,14 @@ set(centipede_files
         parse_object_stmts.c
         build.c
         update_values.c
-        check_types.c
+        check_value_types.c
         comp_unit.c
         module.c
         module_string.c
         module_file.c
         module_data.c
         module_import.c
+        check_types.c
 )
 
 add_library(centipede ${centipede_files})

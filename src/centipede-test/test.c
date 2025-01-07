@@ -4,7 +4,7 @@
 #include "test_ast.h"
 #include "test_parse.h"
 #include "test_build.h"
-#include "test_check_types.h"
+#include "test_check_value_types.h"
 
 int main()
 {
@@ -13,7 +13,7 @@ int main()
     test_ast();
     test_parse();
     test_build();
-    test_check_types();
+    test_check_value_types();
     print_results();
     return 0;
 }

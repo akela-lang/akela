@@ -151,6 +151,11 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_double_colon) {
         if (!n) {
+            if (a->type != Cent_ast_type_id) {
+                error_list_set(pd->errors, &a->loc, "expected id");
+                a->has_error = true;
+            }
+
             Cent_ast_create(&n);
             n->type = Cent_ast_type_namespace;
             Cent_ast_add(n, a);
@@ -162,6 +167,11 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
         }
 
         b = Cent_parse_factor(pd);
+        if (b->type != Cent_ast_type_id) {
+            error_list_set(pd->errors, &b->loc, "expected id");
+            b->has_error = true;
+        }
+
         Cent_ast_add(n, b);
 
         Cent_lookahead(pd);
@@ -172,33 +182,6 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
     }
 
     if (!n->has_error) {
-        if (n->type == Cent_ast_type_namespace) {
-            Cent_ast* p = n->head;
-            Cent_symbol* sym = Cent_environment_get(pd->top, &p->text);
-            if (!sym) {
-                error_list_set(
-                    pd->errors,
-                    &p->loc,
-                    "id is not a variable: %b",
-                    &p->text);
-            } else if (sym->type != Cent_symbol_type_enumerate
-                && sym->type != Cent_symbol_type_module
-            ) {
-                error_list_set(pd->errors,
-                    &p->loc,
-                    "namespace does not start with an enum or module");
-                n->has_error = true;
-            } else {
-                p = p->next;
-                while (p) {
-                    if (p->type != Cent_ast_type_id) {
-                        error_list_set(pd->errors, &p->loc, "expected id");
-                        n->has_error = true;
-                    }
-                    p = p->next;
-                }
-            }
-        }
     }
 
     return n;

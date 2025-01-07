@@ -1,7 +1,7 @@
 #include "parse_data.h"
 #include "ast.h"
-#include <assert.h>
 #include "parse_tools.h"
+#include <assert.h>
 
 void Cent_update_values_ast(Cent_parse_result* pr, Cent_ast* n);
 void Cent_update_values_namespace(Cent_parse_result* pr, Cent_ast* n);
@@ -35,12 +35,16 @@ void Cent_update_values_ast(Cent_parse_result* pr, Cent_ast* n)
 
 void Cent_update_values_namespace(Cent_parse_result* pr, Cent_ast* n)
 {
-    Cent_namespace_result nr = Cent_namespace_lookup(n);
-    if (nr.sym->type == Cent_symbol_type_enumerate) {
-        Cent_enum_type* en = nr.sym->data.enumerate;
-        Cent_ast* id1 = nr.node;
-        Cent_ast* id2 = id1->next;
-        Cent_update_values_enum(pr, n, en, id1, id2);
+    if (!n->has_error) {
+        Cent_namespace_result nr = Cent_namespace_lookup(n);
+        assert(nr.sym);
+        assert(nr.node);
+        if (nr.sym->type == Cent_symbol_type_enumerate) {
+            Cent_enum_type* en = nr.sym->data.enumerate;
+            Cent_ast* id1 = nr.node;
+            Cent_ast* id2 = id1->next;
+            Cent_update_values_enum(pr, n, en, id1, id2);
+        }
     }
 }
 
