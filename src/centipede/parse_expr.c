@@ -154,6 +154,7 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
             if (a->type != Cent_ast_type_id) {
                 error_list_set(pd->errors, &a->loc, "expected id");
                 a->has_error = true;
+                /* test case: test_parse_namespace_error_expected_id */
             }
 
             Cent_ast_create(&n);
@@ -170,6 +171,7 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
         if (b->type != Cent_ast_type_id) {
             error_list_set(pd->errors, &b->loc, "expected id");
             b->has_error = true;
+            /* test case: test_parse_namespace_error_expected_id2 */
         }
 
         Cent_ast_add(n, b);

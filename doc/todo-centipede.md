@@ -1,4 +1,4 @@
 # Centipede Todo
-* glob errors
+* test build glob values
 * const global values
 * file module find

@@ -1170,6 +1170,69 @@ void test_parse_include_glob()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_include_error_expected_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use 1::2\n"
+        "a\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "1/2.aken",
+        "a = 12597\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_namespace_error_expected_id()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use lib::data\n"
+        "1::a\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "lib/data.aken",
+        "a = 12597\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_namespace_error_expected_id2()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use lib::data\n"
+        "data::1\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "lib/data.aken",
+        "a = 12597\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "expected id");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1210,4 +1273,8 @@ void test_parse()
     test_parse_include_value_error();
 
     test_parse_include_glob();
+    test_parse_include_error_expected_id();
+
+    test_parse_namespace_error_expected_id();
+    test_parse_namespace_error_expected_id2();
 }

@@ -394,6 +394,7 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
     a->type = Cent_ast_type_id;
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, a);
+    /* test case: test_parse_include_error_expected_id */
     if (id) {
         buffer_copy(&id->value, &a->text);
         Cent_token_destroy(id);
@@ -417,7 +418,9 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
             Cent_ast_create(&b);
             b->type = Cent_ast_type_id;
             Cent_token* id2 = NULL;
-            Cent_match(pd, Cent_token_id, "expected id", &id2, b);
+            if (!Cent_match(pd, Cent_token_id, "expected id", &id2, b)) {
+                assert(false && "not possible");
+            }
             if (id2) {
                 buffer_copy(&id2->value, &b->text);
                 Cent_token_destroy(id2);
@@ -429,7 +432,9 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
             Cent_ast_create(&b);
             b->type = Cent_ast_type_glob;
             Cent_token* ast = NULL;
-            Cent_match(pd, Cent_token_asterisk, "expected asterisk", &ast, b);
+            if (!Cent_match(pd, Cent_token_asterisk, "expected asterisk", &ast, b)) {
+                assert(false && "not possible");
+            }
             Cent_token_destroy(ast);
             free(ast);
             Cent_ast_add(n, b);
