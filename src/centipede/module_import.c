@@ -10,8 +10,13 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     struct buffer path;
     buffer_init(&path);
 
+    bool is_glob = false;
     Cent_ast* p = n->head;
     while (p) {
+        if (p->type == Cent_ast_type_glob) {
+            is_glob = true;
+            break;
+        }
         if (path.size > 0) {
             buffer_add_char(&path, '/');
         }
