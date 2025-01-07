@@ -4,6 +4,17 @@
 #include "module_data.h"
 #include <assert.h>
 #include "ast.h"
+#include "parse_tools.h"
+
+Cent_environment* Cent_module_dest_env = NULL;
+
+void Cent_module_copy_symbol(struct buffer* name, Cent_symbol* sym)
+{
+    if (Cent_symbol_should_copy(sym)) {
+        Cent_symbol* new_sym = Cent_symbol_clone_shallow(sym);
+        Cent_environment_add_symbol(Cent_module_dest_env, name, new_sym);
+    }
+}
 
 void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
 {
@@ -52,7 +63,10 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     Cent_value* value = Cent_build(&pr);
 
     if (is_glob) {
-
+        /* copy symbols */
+        Cent_environment* src_env = pr.root->env;
+        Cent_module_dest_env = pd->top;
+        hash_table_map_name(&src_env->symbols, Cent_module_copy_symbol);
     } else {
         /* create module and symbol */
         p = n->head;

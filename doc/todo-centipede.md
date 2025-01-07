@@ -1,6 +1,4 @@
 # Centipede Todo
-* import glob
-  * add copy module top-level environment symbols to current environment
-  * copy symbols
+* glob errors
 * const global values
 * file module find

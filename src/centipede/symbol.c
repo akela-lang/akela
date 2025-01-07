@@ -97,7 +97,7 @@ bool Cent_symbol_should_copy(Cent_symbol *sym)
 
 void Cent_symbol_copy_shallow(Cent_symbol *src, Cent_symbol *dest)
 {
-    dest = src;
+    *dest = *src;
     dest->is_copy = true;
 }
 
