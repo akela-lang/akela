@@ -122,6 +122,7 @@ Cent_value* Cent_build_boolean(Cent_ast* n)
     return value;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Cent_value* Cent_build_namespace(Cent_ast* n)
 {
     if (n->value_type == Cent_value_type_enum) {
@@ -135,9 +136,23 @@ Cent_value* Cent_build_namespace(Cent_ast* n)
         buffer_copy(&n->data.enumeration.id1, &value->name);
         value->n = n;
         return value;
-    } else {
-        assert(false && "not implemented");
     }
+
+    Cent_namespace_result nr = Cent_namespace_lookup(n);
+    if (nr.sym) {
+        Cent_symbol* sym = nr.sym;
+        if (sym->type == Cent_symbol_type_variable) {
+            if (sym->data.variable.value) {
+                return sym->data.variable.value;
+            } else {
+                Cent_value* value = Cent_build_dispatch(sym->data.variable.n);
+                sym->data.variable.value = value;
+                return value;
+            }
+        }
+    }
+
+    return NULL;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

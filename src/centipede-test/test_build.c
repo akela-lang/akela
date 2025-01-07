@@ -486,6 +486,60 @@ void test_build_namespace_enum()
     test_build_teardown(&pd, &pr, root);
 }
 
+void test_build_namespace_variable()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use variables\n"
+        "variables::a\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "variables.aken",
+        "a = 190\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr value");
+    expect_int_equal(root->type, Cent_value_type_number, "type root");
+    expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
+    expect_long_long_equal(root->data.integer, 190, "integer root");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
+void test_build_namespace_submodules()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use foo::bar\n"
+        "foo::bar::a\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "foo/bar.aken",
+        "a = 190\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr value");
+    expect_int_equal(root->type, Cent_value_type_number, "type root");
+    expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
+    expect_long_long_equal(root->data.integer, 190, "integer root");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -505,4 +559,6 @@ void test_build()
     test_build_object_function_file_name();
     test_build_property_set_variable();
     test_build_namespace_enum();
+    test_build_namespace_variable();
+    test_build_namespace_submodules();
 }
