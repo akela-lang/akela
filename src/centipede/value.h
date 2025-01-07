@@ -3,7 +3,6 @@
 
 #include "token.h"
 #include "zinc/hash.h"
-#include "zinc/hash_map_size_t.h"
 
 typedef enum Cent_value_type {
     Cent_value_type_none,

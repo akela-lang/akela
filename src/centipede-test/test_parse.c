@@ -1150,6 +1150,26 @@ void test_parse_include_value_error()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_include_glob()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use data::*\n"
+        "a\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "data.aken",
+        "a = 12597\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_no_errors(pr.errors);
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1188,4 +1208,6 @@ void test_parse()
 
     test_parse_include_value();
     test_parse_include_value_error();
+
+    test_parse_include_glob();
 }

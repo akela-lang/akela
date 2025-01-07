@@ -1,7 +1,6 @@
 use lib::base::*
 
 Test_suite {
-    .@merge(common_values)
     .name = @file_name()
     .mute = true
 

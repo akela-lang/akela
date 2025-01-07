@@ -23,7 +23,6 @@ typedef enum Cent_ast_type {
     Cent_ast_type_expr_number,
     Cent_ast_type_expr_string,
     Cent_ast_type_expr_boolean,
-    //Cent_ast_type_expr_enum,
     Cent_ast_type_expr_assign,
     Cent_ast_type_expr_object,
     Cent_ast_type_expr_function_file_name,
@@ -31,6 +30,7 @@ typedef enum Cent_ast_type {
     Cent_ast_type_use,
     Cent_ast_type_module_seq,
     Cent_ast_type_namespace,
+    Cent_ast_type_glob,
 } Cent_ast_type;
 
 typedef enum Cent_variable_type {

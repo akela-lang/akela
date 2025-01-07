@@ -410,18 +410,32 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
         Cent_token_destroy(dc);
         free(dc);
 
-        Cent_ast* b = NULL;
-        Cent_ast_create(&b);
-        b->type = Cent_ast_type_id;
-
-        Cent_token* id2 = NULL;
-        Cent_match(pd, Cent_token_id, "expected id", &id2, b);
-        if (id2) {
-            buffer_copy(&id2->value, &b->text);
-            Cent_token_destroy(id2);
-            free(id2);
+        Cent_lookahead(pd);
+        if (pd->lookahead->type == Cent_token_id) {
+            Cent_ast* b = NULL;
+            Cent_lookahead(pd);
+            Cent_ast_create(&b);
+            b->type = Cent_ast_type_id;
+            Cent_token* id2 = NULL;
+            Cent_match(pd, Cent_token_id, "expected id", &id2, b);
+            if (id2) {
+                buffer_copy(&id2->value, &b->text);
+                Cent_token_destroy(id2);
+                free(id2);
+            }
+            Cent_ast_add(n, b);
+        } else if (pd->lookahead->type == Cent_token_asterisk) {
+            Cent_ast* b = NULL;
+            Cent_ast_create(&b);
+            b->type = Cent_ast_type_glob;
+            Cent_token* ast = NULL;
+            Cent_match(pd, Cent_token_asterisk, "expected asterisk", &ast, b);
+            Cent_token_destroy(ast);
+            free(ast);
+            Cent_ast_add(n, b);
+        } else {
+            break;
         }
-        Cent_ast_add(n, b);
 
         Cent_lookahead(pd);
     }

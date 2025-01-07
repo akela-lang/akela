@@ -159,6 +159,12 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
                 return;
             }
 
+            if (c[0] == '*') {
+                t->type = Cent_token_asterisk;
+                t->loc = loc;
+                return;
+            }
+
             if (c[0] == '#') {
                 while (true) {
                     r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);

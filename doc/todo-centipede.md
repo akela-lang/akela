@@ -1,4 +1,6 @@
 # Centipede Todo
 * import glob
-* merge object into another object
+  * add copy attribute to symbol
+  * copy symbols
+* const global values
 * file module find

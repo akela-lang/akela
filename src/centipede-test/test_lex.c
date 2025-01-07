@@ -932,7 +932,7 @@ void test_lex_error_invalid_character()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "*");
+    test_lex_setup(&ld, "~");
 
     t = lex(&ld);
     assert_ptr(t, "ptr 1.1");
@@ -941,7 +941,7 @@ void test_lex_error_invalid_character()
     free(t);
 
     expect_has_errors(ld.errors);
-    struct error* e = expect_source_error(ld.errors, "invalid character: *");
+    struct error* e = expect_source_error(ld.errors, "invalid character: ~");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 1, "start pos e");
