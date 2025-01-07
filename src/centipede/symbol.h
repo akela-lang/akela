@@ -38,5 +38,8 @@ void Cent_symbol_create(Cent_symbol** sym);
 void Cent_symbol_set_type(Cent_symbol *sym, Cent_symbol_type type);
 void Cent_symbol_destroy(Cent_symbol *sym);
 void Cent_symbol_free(Cent_symbol *sym);
+bool Cent_symbol_should_copy(Cent_symbol *sym);
+void Cent_symbol_copy_shallow(Cent_symbol *src, Cent_symbol *dest);
+Cent_symbol* Cent_symbol_clone_shallow(Cent_symbol *sym);
 
 #endif
