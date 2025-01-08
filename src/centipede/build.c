@@ -129,11 +129,10 @@ Cent_value* Cent_build_namespace(Cent_ast* n)
         Cent_value* value = NULL;
         Cent_value_create(&value);
         Cent_value_set_type(value, Cent_value_type_enum);
-        buffer_copy(&n->data.enumeration.id1, &value->data.enumeration.id1);
-        buffer_copy(&n->data.enumeration.id2, &value->data.enumeration.id2);
-        buffer_copy(&n->data.enumeration.display, &value->data.enumeration.display);
+        value->data.enumeration.enum_type = n->data.enumeration.enum_type;
+        value->data.enumeration.enum_value = n->data.enumeration.enum_value;
         value->data.enumeration.number = n->data.enumeration.number;
-        buffer_copy(&n->data.enumeration.id1, &value->name);
+        buffer_copy(&n->data.enumeration.enum_type->name, &value->name);
         value->n = n;
         return value;
     }
@@ -200,7 +199,7 @@ Cent_value* Cent_build_object(Cent_ast* n)
 {
     Cent_value* value = NULL;
     Cent_value_create(&value);
-    Cent_value_set_type(value, Cent_value_type_object);
+    Cent_value_set_type(value, Cent_value_type_dag);
     buffer_copy(&n->text, &value->name);
 
     Cent_ast* stmts = Cent_ast_get(n, 0);

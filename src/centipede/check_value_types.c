@@ -22,13 +22,13 @@ void Cent_check_value_types_dispatch(Cent_value* value)
 {
     Cent_parse_result* pr = Cent_check_value_types_pr;
 
-    if (value->type == Cent_value_type_object) {
+    if (value->type == Cent_value_type_dag) {
         Cent_parse_types_object_value = value;
         hash_table_map_name(
-            &value->data.object.properties,
+            &value->data.dag.properties,
             (hash_table_func_name)Cent_check_value_types_property);
 
-        Cent_value* p = value->data.object.head;
+        Cent_value* p = value->data.dag.head;
         while (p) {
             Cent_check_value_types_child(pr, value, p);
             p = p->next;
@@ -86,7 +86,7 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
             /* test case: test_check_types_property_error_not_enum */
         }
 
-        Cent_symbol* value_sym = Cent_environment_get(top, &value->data.enumeration.id1);
+        Cent_symbol* value_sym = Cent_environment_get(top, &value->data.enumeration.enum_type->name);
         assert(value_sym && "is checked in update values");
 
         assert(value_sym->type == Cent_symbol_type_enumerate);

@@ -14,7 +14,6 @@ void Cent_value_init(Cent_value *value)
     value->has_error = false;
     value->next = NULL;
     value->prev = NULL;
-    value->parent = NULL;
     value->n = NULL;
 }
 
@@ -29,15 +28,17 @@ void Cent_data_init(Cent_data *data, Cent_value_type type)
     if (type == Cent_value_type_string) {
         buffer_init(&data->string);
     } else if (type == Cent_value_type_enum) {
-        buffer_init(&data->enumeration.id1);
-        buffer_init(&data->enumeration.id2);
-        buffer_init(&data->enumeration.display);
-        location_init(&data->enumeration.loc1);
-        location_init(&data->enumeration.loc2);
-    } else if (type == Cent_value_type_object) {
-        hash_table_init(&data->object.properties, 16);
-        data->object.head = NULL;
-        data->object.tail = NULL;
+        data->enumeration.enum_type = NULL;
+        data->enumeration.enum_value = NULL;
+    } else if (type == Cent_value_type_list) {
+        data->list.head = NULL;
+        data->list.tail = NULL;
+    } else if (type == Cent_value_type_dict) {
+        hash_table_init(&data->dict.properties, 16);
+    } else if (type == Cent_value_type_dag) {
+        hash_table_init(&data->dag.properties, 16);
+        data->dag.head = NULL;
+        data->dag.tail = NULL;
     }
 }
 
@@ -46,19 +47,24 @@ void Cent_data_destroy(Cent_data *data, Cent_value_type type)
 {
     if (type == Cent_value_type_string) {
         buffer_destroy(&data->string);
-    } else if (type == Cent_value_type_enum) {
-        buffer_destroy(&data->enumeration.id1);
-        buffer_destroy(&data->enumeration.id2);
-        buffer_destroy(&data->enumeration.display);
-    } else if (type == Cent_value_type_object) {
-        hash_table_map(&data->object.properties, (hash_table_func)Cent_value_free);
-        Cent_value* p = data->object.head;
+    } else if (type == Cent_value_type_list) {
+        Cent_value* p = data->list.head;
         while (p) {
             Cent_value* temp = p;
             p = p->next;
             Cent_value_free(temp);
         }
-        hash_table_destroy(&data->object.properties);
+    } else if (type == Cent_value_type_dict) {
+        hash_table_destroy(&data->dict.properties);
+    } else if (type == Cent_value_type_dag) {
+        hash_table_map(&data->dag.properties, (hash_table_func)Cent_value_free);
+        Cent_value* p = data->dag.head;
+        while (p) {
+            Cent_value* temp = p;
+            p = p->next;
+            Cent_value_free(temp);
+        }
+        hash_table_destroy(&data->dag.properties);
     }
 }
 
@@ -135,38 +141,37 @@ void Cent_value_free(Cent_value *value)
 
 void Cent_value_set(Cent_value* value, struct buffer* name, Cent_value* value2)
 {
-    assert(value->type == Cent_value_type_object);
-    hash_table_add(&value->data.object.properties, name, value2);
+    assert(value->type == Cent_value_type_dag);
+    hash_table_add(&value->data.dag.properties, name, value2);
 }
 
 void Cent_value_set_str(Cent_value* value, char* name, Cent_value* value2)
 {
-    assert(value->type == Cent_value_type_object);
-    hash_table_add_str(&value->data.object.properties, name, value2);
+    assert(value->type == Cent_value_type_dag);
+    hash_table_add_str(&value->data.dag.properties, name, value2);
 }
 
 Cent_value* Cent_value_get(Cent_value* value, struct buffer* name)
 {
-    assert(value->type == Cent_value_type_object);
-    return hash_table_get(&value->data.object.properties, name);
+    assert(value->type == Cent_value_type_dag);
+    return hash_table_get(&value->data.dag.properties, name);
 }
 
 Cent_value* Cent_value_get_str(Cent_value* value, char* name)
 {
-    assert(value->type == Cent_value_type_object);
-    return hash_table_get_str(&value->data.object.properties, name);
+    assert(value->type == Cent_value_type_dag);
+    return hash_table_get_str(&value->data.dag.properties, name);
 }
 
 void Cent_value_add(Cent_value* parent, Cent_value* child)
 {
-    assert(parent->type == Cent_value_type_object);
-    if (parent->data.object.head && parent->data.object.tail) {
-        parent->data.object.tail->next = child;
-        child->prev = parent->data.object.tail;
-        parent->data.object.tail = child;
+    assert(parent->type == Cent_value_type_dag);
+    if (parent->data.dag.head && parent->data.dag.tail) {
+        parent->data.dag.tail->next = child;
+        child->prev = parent->data.dag.tail;
+        parent->data.dag.tail = child;
     } else {
-        parent->data.object.head = child;
-        parent->data.object.tail = child;
+        parent->data.dag.head = child;
+        parent->data.dag.tail = child;
     }
-    child->parent = parent;
 }

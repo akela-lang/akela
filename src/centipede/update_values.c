@@ -56,9 +56,7 @@ void Cent_update_values_enum(
     Cent_ast* id2)
 {
     Cent_ast_value_set_type(n, Cent_value_type_enum);
-    buffer_copy(&id1->text, &n->data.enumeration.id1);
-    buffer_copy(&id1->text, &n->data.enumeration.display);
-    n->data.enumeration.loc1 = id1->loc;
+    n->data.enumeration.enum_type = en;
 
     if (!id2) {
         error_list_set(pr->errors, &n->loc, "missing enum id");
@@ -67,14 +65,11 @@ void Cent_update_values_enum(
     }
 
     bool found = false;
-    Cent_enumerate_value* v = en->head;
+    Cent_enum_value* v = en->head;
     while (v) {
         if (buffer_compare(&v->display, &id2->text)) {
-            buffer_copy(&id2->text, &n->data.enumeration.id2);
-            buffer_copy_str(&n->data.enumeration.display, "::");
-            buffer_copy(&id2->text, &n->data.enumeration.display);
+            n->data.enumeration.enum_value = v;
             n->data.enumeration.number = v->value;
-            n->data.enumeration.loc2 = id2->loc;
             found = true;
         }
         v = v->next;

@@ -3,34 +3,42 @@
 
 #include "token.h"
 #include "zinc/hash.h"
+#include "enumerate.h"
 
 typedef enum Cent_value_type {
     Cent_value_type_none,
     Cent_value_type_number,
     Cent_value_type_string,
     Cent_value_type_boolean,
-    Cent_value_type_object,
+    Cent_value_type_list,
+    Cent_value_type_dict,
+    Cent_value_type_dag,
     Cent_value_type_enum,
 } Cent_value_type;
 
-typedef union Cent_data {
+typedef union Cent_data
+{
     long long integer;
     double fp;
     struct buffer string;
     bool boolean;
-    struct enumeration {
-        struct buffer id1;
-        struct location loc1;
-        struct buffer id2;
-        struct location loc2;
-        struct buffer display;
+    struct {
+        Cent_enum_type* enum_type;
+        Cent_enum_value* enum_value;
         size_t number;
     } enumeration;
-    struct object {
+    struct {
+        struct Cent_value* head;
+        struct Cent_value* tail;
+    } list;
+    struct {
+        struct hash_table properties;
+    } dict;
+    struct {
         struct hash_table properties;
         struct Cent_value* head;
         struct Cent_value* tail;
-    } object;
+    } dag;
 } Cent_data;
 
 typedef struct Cent_value {
@@ -41,7 +49,6 @@ typedef struct Cent_value {
     Cent_data data;
     struct Cent_value* next;
     struct Cent_value* prev;
-    struct Cent_value* parent;
     void* n;
 } Cent_value;
 

@@ -126,17 +126,18 @@ void Cent_update_enum(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
     Cent_symbol* sym = Cent_environment_get(env, &n->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_enumerate);
-    Cent_enum_type* enumerate = sym->data.enumerate;
+    Cent_enum_type* en = sym->data.enumerate;
+    en->loc = n->loc;
     Cent_ast* p = n->head;
     while (p) {
-        Cent_enumerate_value* ev = Cent_enumerate_get(enumerate, &p->text);
+        Cent_enum_value* ev = Cent_enumerate_get(en, &p->text);
         if (ev) {
             error_list_set(pr->errors, &p->loc, "duplicate enum value: %b::%b", &n->text, &p->text);
             n->has_error = true;
             p->has_error = true;
             /* test case: test_parse_enum_duplicate_id */
         } else {
-            Cent_enumerate_add_name(enumerate, &p->text);
+            Cent_enumerate_add_name(en, &p->text, &p->loc);
         }
         p = p->next;
     }

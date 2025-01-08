@@ -110,7 +110,7 @@ bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, C
         return false;
     }
 
-    Cent_enumerate_value* val = en->head;
+    Cent_enum_value* val = en->head;
     bool found = false;
     while (val) {
         if (buffer_compare(&val->display, &id2->text)) {
