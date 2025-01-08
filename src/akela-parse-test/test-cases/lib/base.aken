@@ -80,12 +80,16 @@ element Ast {
         value: String
         tu: Type_use
         seq: Integer        # sequence number for Ast_element id
+        env: Environment
     end
 end
 
-enum Ast_element
+enum Ast_type
     Stmts
+    Let
     Number
+    Type
+    Id
     Add
     Assign
 end
@@ -109,52 +113,53 @@ enum Type_def_element
 end
 
 # built-in element defs
-const i32 = Type_def {
+let _Int32 = Type_def {
     .type = Type_def_type::Integer
-    .name = "i32"
+    .name = "Int32"
     .bit_count = 32
     .is_signed = true
 }
 
-const f64 = Type_def {
+let _Real64 = Type_def {
     .type = Type_def_type::Float
-    .name = "f64"
+    .name = "Real64"
     .bit_count = 64
     .is_signed = true
 }
 
-const string = Type_def {
+let _String = Type_def {
     .type = Type_def_type::String
-    .name = "f64"
+    .name = "String"
 }
 
-const bool = Type_def {
+let _Bool = Type_def {
     .type = Type_def_type::Bool
-    .name = "bool"
+    .name = "Bool"
 }
 
 # base environment
-const env0 = Environment {
+let env0 = Environment {
     .symbols = Symbols {
         # built-in types
-        .i32 = Symbol {
+        .r#Int32 = Symbol {
             .type = Symbol_type::Type
-            .Token_type = Token_type::I32
-            .td = i32
+            .td = _Int32
+            .seq = 0
         }
-        .f64 = Symbol {
+        .r#Real64 = Symbol {
             .type = Symbol_type::Type
-            .Token_type = Token_type::F64
-            .td = f64
+            .td = _Real64
+            .seq = 1
         }
-        .string = Symbol {
+        .r#String = Symbol {
             .type = Symbol_type::Type
-            .td = string
+            .td = _String
+            .seq = 2
         }
-        .bool = Symbol {
+        .r#Bool = Symbol {
             .type = Symbol_type::Type
-            .td = bool
+            .td = _Bool
+            .seq = 3
         }
-
     }
 }

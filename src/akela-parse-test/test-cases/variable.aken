@@ -7,18 +7,17 @@ Test_suite {
     Test {
         .name = "declare and use an integer"
         .source = Source {
-            "var a: i32 = 1\n"
+            "let a: Int32 = 1\n"
             "a + 5\n"
         }
         .solo = true
         .has_error = false
 
-        root = Ast_node {
+        let root = Ast_node {
             .type = Ast_type::Stmts
             .tu = Type_use {
-                .td = base::i32
+                .td = _Int32
             }
-            .blk_env = env1     # environment for the block
         }
 
         root
@@ -30,78 +29,79 @@ Test_suite {
         # find lexically and temporally valid variables even after the AST is
         # fully created.
 
-        env1 = Environment {
+        let _ = Environment {
+            .@property_of(root, "env")
             .prev = env0                # base environment
             .symbols = Symbols {
                 .a = Symbol {           # 'a' is declared in the block
                     .type = Symbol_type::Variable
                     .tu = Type_use {
-                        .td = base::i32
+                        .td = _Int32
                     }
 
                     # the 'a' variable can be used by id nodes
                     # that are in this environment or descendant
                     # environments and where the id seq is greater
                     # than the symbol seq
-                    .seq = 0
+                    .seq = 4
                 }
             }
         }
 
         # line 1
-        var = Ast_node {
+        let let_stmt = Ast_node {
             @child_of(root)
-            .type = Ast_type::Var
+            .type = Ast_type::Let
         }
 
-        var_id = Ast_node {
-            .@child_of(var)
+        let let_a = Ast_node {
+            .@child_of(let_stmt)
             .type = Ast_type::Id
             .value = "a"
         }
 
-        var_type = Ast_node {
-            .@child_of(var)
+        let let_type = Ast_node {
+            .@child_of(let_stmt)
             .type = Ast_type::Type
             .tu = Type_use {
-                .td = base::i32
+                .td = _Int32
             }
         }
 
-        var_number = Ast_node {
-            .@child_of(var)
+        let let_number = Ast_node {
+            .@child_of(let_stmt)
             .type = Ast_type::Number
             .value = "1"
             .tu = Type_use {
-                .td = base::i32
+                .td = _Int32
             }
         }
 
         # line 2
-        add = Ast_node {
+        let add = Ast_node {
             .@child_of(root)
             .type = Ast_type::Add
             .tu = Type_use {
-                .td = base::i32
+                .td = _Int32
             }
         }
 
-        add_a = Ast_node {
+        let add_a = Ast_node {
             .@child_of(add)
             .type = Ast_type::Id
             .value = "a"
             .tu = Type_use {
-                .td = base::i32
+                .td = _Int32
             }
-            .seq = 1            # search for ancestor environment with symbol
-                                # 'a' that has a sequence number is less than 1
+            .seq = 5            # search for ancestor environment with symbol
+                                # 'a' that has a sequence number is less than 5
 
-        add_number = Ast_node {
+        let add_number = Ast_node {
             .@child_of(add)
             .type = Ast_type::Number
             .value = "5"
             .tu = Type_use {
-                .td = base::i32
+                .td = _Int32
             }
         }
     }
