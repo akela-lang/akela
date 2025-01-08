@@ -4,6 +4,7 @@
 #include "parse_expr.h"
 #include <assert.h>
 #include "comp_unit.h"
+#include "parse_let.h"
 
 Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element_type(Cent_parse_data* pd);
@@ -74,6 +75,10 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
 
     if (pd->lookahead->type == Cent_token_use) {
         return Cent_parse_use(pd);
+    }
+
+    if (pd->lookahead->type == Cent_token_let) {
+        return Cent_parse_let(pd);
     }
 
     return Cent_parse_expr(pd);

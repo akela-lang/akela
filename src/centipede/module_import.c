@@ -66,7 +66,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         /* copy symbols */
         Cent_environment* src_env = pr.root->env;
         Cent_module_dest_env = pd->top;
-        hash_table_map_name(&src_env->symbols, Cent_module_copy_symbol);
+        hash_table_map_name(&src_env->symbols, (hash_table_func_name)Cent_module_copy_symbol);
     } else {
         /* create module and symbol */
         p = n->head;

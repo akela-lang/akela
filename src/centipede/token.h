@@ -31,6 +31,7 @@ typedef enum Cent_token_type {
     Cent_token_comma,
     Cent_token_use,
     Cent_token_asterisk,
+    Cent_token_let,
     Cent_token_count,       /* keep at end */
 } Cent_token_type;
 
@@ -63,6 +64,7 @@ static char* Cent_token_name(Cent_token_type type)
         "comma",
         "asterisk",
         "use",
+        "let",
     };
 
     if (type < Cent_token_count) {
