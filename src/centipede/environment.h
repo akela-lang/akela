@@ -16,5 +16,7 @@ void Cent_environment_add_symbol(Cent_environment* environment, struct buffer* n
 void Cent_environment_add_symbol_str(Cent_environment* environment, char* name, Cent_symbol* symbol);
 Cent_symbol* Cent_environment_get(Cent_environment* top, struct buffer* name);
 Cent_symbol* Cent_environment_get_str(Cent_environment* top, char* name);
+Cent_symbol* Cent_environment_get_local(Cent_environment* top, struct buffer* name);
+Cent_symbol* Cent_environment_get_local_str(Cent_environment* top, char* name);
 
 #endif

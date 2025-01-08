@@ -1,6 +1,7 @@
 #include "ast.h"
 #include "parse_tools.h"
 #include "parse_expr.h"
+#include "environment.h"
 
 Cent_ast* Cent_parse_let(Cent_parse_data* pd)
 {
@@ -13,6 +14,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
 
     Cent_ast* id_node = NULL;
     Cent_ast_create(&id_node);
+    id_node->type = Cent_ast_type_id;
 
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, id_node);
@@ -30,6 +32,48 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
 
     Cent_ast* a = Cent_parse_expr(pd);
     Cent_ast_add(n, a);
+
+    if (!n->has_error) {
+        Cent_symbol* sym = Cent_environment_get(pd->top, &id_node->text);
+        if (sym) {
+            if (sym->type == Cent_symbol_type_element || sym->type == Cent_symbol_type_enumerate) {
+                error_list_set(
+                    pd->errors,
+                    &id_node->loc,
+                    "shadowing of type: %b",
+                    &id_node->text);
+                n->has_error = true;
+                /* test case: test_parse_let_error_shadow_type */
+            } else if (sym->type == Cent_symbol_type_module) {
+                error_list_set(
+                    pd->errors,
+                    &id_node->loc,
+                    "shadowing of module: %b",
+                    &id_node->text);
+                n->has_error = true;
+                /* test case: test_parse_let_error_shadow_module */
+            } else {
+                sym = Cent_environment_get_local(pd->top, &id_node->text);
+                if (sym) {
+                    error_list_set(
+                        pd->errors,
+                        &id_node->loc,
+                        "shadowing of local variable: %b",
+                        &id_node->text);
+                    n->has_error = true;
+                    /* test case: test_parse_let_error_shadow_local */
+                }
+            }
+        }
+    }
+
+    if (!n->has_error) {
+        Cent_symbol* sym = NULL;
+        Cent_symbol_create(&sym);
+        sym->type = Cent_symbol_type_variable;
+        sym->data.variable.n = n;
+        Cent_environment_add_symbol(pd->top, &id_node->text, sym);
+    }
 
     return n;
 }

@@ -1233,6 +1233,101 @@ void test_parse_namespace_error_expected_id2()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_let()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "let a = 45\n"
+        "a\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_no_errors(pr.errors);
+
+    expect_ptr(pr.root, "ptr root");
+    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type root");
+
+    Cent_ast* let = Cent_ast_get(pr.root, 0);
+    assert_ptr(let, "ptr let");
+    expect_int_equal(let->type, Cent_ast_type_let, "type let");
+
+    Cent_ast* id = Cent_ast_get(let, 0);
+    assert_ptr(id, "ptr id");
+    expect_int_equal(id->type, Cent_ast_type_id, "type id");
+    expect_str(&id->text, "a", "text id");
+
+    Cent_ast* number = Cent_ast_get(let, 1);
+    assert_ptr(number, "ptr number");
+    expect_int_equal(number->type, Cent_ast_type_expr_number, "type number");
+    expect_int_equal(number->number_type, Cent_number_type_integer, "number type");
+    expect_long_long_equal(number->data.integer, 45, "integer number");
+
+    Cent_ast* variable = Cent_ast_get(pr.root, 1);
+    assert_ptr(variable, "ptr variable");
+    expect_int_equal(variable->type, Cent_ast_type_expr_variable, "type variable");
+    expect_str(&variable->text, "a", "text variable");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_let_error_shadow_type()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Foo\n"
+        "end\n"
+        "let Foo = 45\n"
+        "Foo\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "shadowing of type: Foo");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_let_error_shadow_module()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "use base\n"
+        "let base = 45\n"
+        "base\n"
+    );
+
+    test_parse_add_comp_unit(&pd, "base.aken", "");
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "shadowing of module: base");
+
+    test_parse_teardown(&pd, &pr);
+}
+
+void test_parse_let_error_shadow_local()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "let a = 1\n"
+        "let a = 2\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_has_errors(pr.errors);
+    expect_source_error(pr.errors, "shadowing of local variable: a");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1277,4 +1372,9 @@ void test_parse()
 
     test_parse_namespace_error_expected_id();
     test_parse_namespace_error_expected_id2();
+
+    test_parse_let();
+    test_parse_let_error_shadow_type();
+    test_parse_let_error_shadow_module();
+    test_parse_let_error_shadow_local();
 }

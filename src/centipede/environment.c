@@ -58,3 +58,13 @@ Cent_symbol* Cent_environment_get_str(Cent_environment* top, char* name)
 
     return NULL;
 }
+
+Cent_symbol* Cent_environment_get_local(Cent_environment* top, struct buffer* name)
+{
+    return hash_table_get(&top->symbols, name);
+}
+
+Cent_symbol* Cent_environment_get_local_str(Cent_environment* top, char* name)
+{
+    return hash_table_get_str(&top->symbols, name);
+}
