@@ -1123,7 +1123,7 @@ void test_parse_include_value_error()
     );
 
     test_parse_add_comp_unit(&pd, "data.aken",
-        "a = 12597\n"
+        "let a = 12597\n"
     );
 
     Cent_parse_result pr = Cent_parse(&pd);
@@ -1144,7 +1144,7 @@ void test_parse_include_glob()
     );
 
     test_parse_add_comp_unit(&pd, "data.aken",
-        "a = 12597\n"
+        "let a = 12597\n"
     );
 
     Cent_parse_result pr = Cent_parse(&pd);

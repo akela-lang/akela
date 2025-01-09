@@ -60,6 +60,13 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     pd2->module_vtable = pd->module_vtable;
 
     Cent_parse_result pr = Cent_parse(pd2);
+    if (pr.errors) {
+        struct error* e = pr.errors->head;
+        while (e) {
+            error_list_set(pd->errors, &e->loc, "%b: %b", &path, &e->message);
+            e = e->next;
+        }
+    }
     Cent_value* value = Cent_build(&pr);
 
     if (is_glob) {
