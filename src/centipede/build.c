@@ -27,10 +27,7 @@ Cent_value* Cent_build(Cent_parse_result* pr)
     if (!pr->errors->head) {
         Cent_ast* p = pr->root->head;
         while (p) {
-            if (p->type == Cent_ast_type_expr_assign
-                || p->type == Cent_ast_type_let
-                || p == pr->root->tail
-            ) {
+            if (p->type == Cent_ast_type_let || p == pr->root->tail) {
                 value = Cent_build_dispatch(p);
             }
             p = p->next;
@@ -61,10 +58,6 @@ Cent_value* Cent_build_dispatch(Cent_ast* n)
 
     if (n->type == Cent_ast_type_namespace) {
         return Cent_build_namespace(n);
-    }
-
-    if (n->type == Cent_ast_type_expr_assign) {
-        return Cent_build_assign(n);
     }
 
     if (n->type == Cent_ast_type_let) {

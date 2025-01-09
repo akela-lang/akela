@@ -173,7 +173,7 @@ void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n)
                 error_list_set(pd->errors, &p->loc, "expected argument to method");
                 n->has_error = true;
             } else if (p->type != Cent_ast_type_expr_variable) {
-                error_list_set(pd->errors, &pd->lookahead->loc, "expected a variable");
+                error_list_set(pd->errors, &p->loc, "expected a variable");
                 n->has_error = true;
             } else {
                 p = Cent_ast_get(n, 1);

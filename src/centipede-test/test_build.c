@@ -195,7 +195,7 @@ void test_build_assign()
 
     Cent_parse_data pd;
     test_parse_setup(&pd,
-        "a = 1\n"
+        "let a = 1\n"
     );
 
     Cent_parse_result pr = Cent_parse(&pd);
@@ -235,7 +235,7 @@ void test_build_object()
 
     expect_no_errors(pr.errors);
 
-    expect_ptr(root, "ptr root");
+    assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
 
     test_build_teardown(&pd, &pr, root);
@@ -257,7 +257,7 @@ void test_build_object_prop_set()
 
     expect_no_errors(pr.errors);
 
-    expect_ptr(root, "ptr root");
+    assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
     Cent_value* a = Cent_value_get_str(root, "a");
     assert_ptr(a, "ptr a");
@@ -275,7 +275,7 @@ void test_build_object_assign()
     Cent_parse_data pd;
     test_parse_setup(&pd,
         "Test {\n"
-        "    count = 20\n"
+        "    let count = 20\n"
         "    .count_value = count\n"
         "}\n"
     );
@@ -285,7 +285,7 @@ void test_build_object_assign()
 
     expect_no_errors(pr.errors);
 
-    expect_ptr(root, "ptr root");
+    assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
     Cent_value* count_value = Cent_value_get_str(root, "count_value");
     assert_ptr(count_value, "ptr count_value");
@@ -303,8 +303,8 @@ void test_build_object_child_of()
     Cent_parse_data pd;
     test_parse_setup(&pd,
         "Test {\n"
-        "    foo = Foo {}\n"
-        "    bar = Bar {\n"
+        "    let foo = Foo {}\n"
+        "    let bar = Bar {\n"
         "        .@child_of(foo)\n"
         "    }\n"
         "    foo\n"
@@ -316,7 +316,7 @@ void test_build_object_child_of()
 
     expect_no_errors(pr.errors);
 
-    expect_ptr(root, "ptr root");
+    assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
     expect_str(&root->name, "Test", "name root");
 
@@ -340,8 +340,8 @@ void test_build_object_property_of()
     Cent_parse_data pd;
     test_parse_setup(&pd,
         "Test {\n"
-        "    foo = Foo {}\n"
-        "    bar = Bar {\n"
+        "    let foo = Foo {}\n"
+        "    let bar = Bar {\n"
         "        .@property_of(foo, \"x\")\n"
         "    }\n"
         "    foo\n"
@@ -407,7 +407,7 @@ void test_build_property_set_variable()
         "        source: Source\n"
         "    end\n"
         "end\n"
-        "a = Source {\"x + 5\"}\n"
+        "let a = Source {\"x + 5\"}\n"
         "Test {\n"
         "    .source = a\n"
         "}\n"
@@ -492,7 +492,7 @@ void test_build_namespace_variable()
     );
 
     test_parse_add_comp_unit(&pd, "variables.aken",
-        "a = 190\n"
+        "let a = 190\n"
     );
 
     Cent_parse_result pr = Cent_parse(&pd);
@@ -519,7 +519,7 @@ void test_build_namespace_submodules()
     );
 
     test_parse_add_comp_unit(&pd, "foo/bar.aken",
-        "a = 190\n"
+        "let a = 190\n"
     );
 
     Cent_parse_result pr = Cent_parse(&pd);
@@ -546,7 +546,7 @@ void test_build_namespace_glob_value()
     );
 
     test_parse_add_comp_unit(&pd, "foo/bar.aken",
-        "a = 190\n"
+        "let a = 190\n"
     );
 
     Cent_parse_result pr = Cent_parse(&pd);

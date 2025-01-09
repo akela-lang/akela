@@ -170,7 +170,7 @@ void test_parse_top_level_assignment()
         "    Boolean\n"
         "end\n"
     "# built-in element defs\n"
-    "i32 = Type_def {\n"
+    "let i32 = Type_def {\n"
     "    .type = Type_def_type::Integer\n"
     "    .name = \"i32\"\n"
     "    .bit_count = 32\n"
@@ -191,19 +191,19 @@ void test_parse_top_level_assignment()
     expect_int_equal(enum_type->type, Cent_ast_type_enum_type, "type enum_type");
     expect_str(&enum_type->text, "Type_def_type", "text enum_type");
 
-    /* assign */
-    Cent_ast* assign = Cent_ast_get(pr.root, 1);
-    assert_ptr(assign, "ptr var");
-    expect_int_equal(assign->type, Cent_ast_type_expr_assign, "type assign");
+    /* let */
+    Cent_ast* let = Cent_ast_get(pr.root, 1);
+    assert_ptr(let, "ptr let");
+    expect_int_equal(let->type, Cent_ast_type_let, "type let");
 
     /* name */
-    Cent_ast* name = Cent_ast_get(assign, 0);
+    Cent_ast* name = Cent_ast_get(let, 0);
     assert_ptr(name, "ptr name");
     expect_int_equal(name->type, Cent_ast_type_id, "type name");
     expect_str(&name->text, "i32", "value name");
 
     /* value */
-    Cent_ast* value = Cent_ast_get(assign, 1);
+    Cent_ast* value = Cent_ast_get(let, 1);
     assert_ptr(value, "ptr value");
     expect_int_equal(value->type, Cent_ast_type_expr_object, "type value");
 
@@ -514,23 +514,6 @@ void test_parse_value_error_enum_expected_id()
     test_parse_teardown(&pd, &pr);
 }
 
-void test_parse_value_error_nested_assignments()
-{
-    test_name(__func__);
-
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
-        "a = b = 1\n"
-    );
-
-    Cent_parse_result pr = Cent_parse(&pd);
-
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "nested assignments are not allowed");
-
-    test_parse_teardown(&pd, &pr);
-}
-
 void test_parse_value_error_object_expected_rcb()
 {
     test_name(__func__);
@@ -613,7 +596,7 @@ void test_parse_element_property_type_not_element()
 
     Cent_parse_data pd;
     test_parse_setup(&pd,
-        "Abc = 1\n"
+        "let Abc = 1\n"
         "element Test\n"
         "   properties\n"
         "        a: Abc\n"
@@ -656,7 +639,7 @@ void test_parse_element_child_type_not_an_element_type()
 
     Cent_parse_data pd;
     test_parse_setup(&pd,
-        "Abc = 1\n"
+        "let Abc = 1\n"
         "element Test\n"
         "   children\n"
         "        Abc\n"
@@ -701,7 +684,7 @@ void test_parse_object_method_call()
 
     Cent_parse_data pd;
     test_parse_setup(&pd,
-        "a = Foo {}\n"
+        "let a = Foo {}\n"
         "Bar {\n"
         "    .@child_of(a)\n"
         "}\n"
@@ -712,32 +695,32 @@ void test_parse_object_method_call()
     expect_no_errors(pr.errors);
 
     /* root */
-    expect_ptr(pr.root, "ptr pr.root");
+    assert_ptr(pr.root, "ptr pr.root");
     expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
 
-    /* assign */
-    Cent_ast* assign = Cent_ast_get(pr.root, 0);
-    expect_ptr(assign, "ptr assign");
-    expect_int_equal(assign->type, Cent_ast_type_expr_assign, "type assign");
+    /* let */
+    Cent_ast* let = Cent_ast_get(pr.root, 0);
+    assert_ptr(let, "ptr let");
+    expect_int_equal(let->type, Cent_ast_type_let, "type let");
 
     /* Bar object */
     Cent_ast* bar = Cent_ast_get(pr.root, 1);
-    expect_ptr(bar, "ptr bar");
+    assert_ptr(bar, "ptr bar");
     expect_int_equal(bar->type, Cent_ast_type_expr_object, "type bar");
 
     /* object stmts */
     Cent_ast* stmts = Cent_ast_get(bar, 0);
-    expect_ptr(stmts, "ptr bar");
+    assert_ptr(stmts, "ptr bar");
     expect_int_equal(stmts->type, Cent_ast_type_object_stmts, "type stmts");
 
     /* method child of */
     Cent_ast* method = Cent_ast_get(stmts, 0);
-    expect_ptr(method, "ptr method");
+    assert_ptr(method, "ptr method");
     expect_int_equal(method->type, Cent_ast_type_method_child_of, "type method");
 
     /* variable a */
     Cent_ast* value = Cent_ast_get(method, 0);
-    expect_ptr(value, "ptr value");
+    assert_ptr(value, "ptr value");
     expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
     expect_str(&value->text, "a", "text id");
 
@@ -750,7 +733,7 @@ void test_parse_object_method_call2()
 
     Cent_parse_data pd;
     test_parse_setup(&pd,
-        "a = Foo {}\n"
+        "let a = Foo {}\n"
         "Bar {\n"
         "    .@property_of(a, \"b\")\n"
         "}\n"
@@ -761,38 +744,38 @@ void test_parse_object_method_call2()
     expect_no_errors(pr.errors);
 
     /* root */
-    expect_ptr(pr.root, "ptr pr.root");
+    assert_ptr(pr.root, "ptr pr.root");
     expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
 
-    /* assign */
-    Cent_ast* assign = Cent_ast_get(pr.root, 0);
-    expect_ptr(assign, "ptr assign");
-    expect_int_equal(assign->type, Cent_ast_type_expr_assign, "type assign");
+    /* let */
+    Cent_ast* let = Cent_ast_get(pr.root, 0);
+    assert_ptr(let, "ptr assign");
+    expect_int_equal(let->type, Cent_ast_type_let, "type let");
 
     /* Bar object */
     Cent_ast* bar = Cent_ast_get(pr.root, 1);
-    expect_ptr(bar, "ptr bar");
+    assert_ptr(bar, "ptr bar");
     expect_int_equal(bar->type, Cent_ast_type_expr_object, "type bar");
 
     /* object stmts */
     Cent_ast* stmts = Cent_ast_get(bar, 0);
-    expect_ptr(stmts, "ptr bar");
+    assert_ptr(stmts, "ptr bar");
     expect_int_equal(stmts->type, Cent_ast_type_object_stmts, "type stmts");
 
     /* method child of */
     Cent_ast* method = Cent_ast_get(stmts, 0);
-    expect_ptr(method, "ptr method");
+    assert_ptr(method, "ptr method");
     expect_int_equal(method->type, Cent_ast_type_method_property_of, "type method");
 
     /* argument 1 a */
     Cent_ast* value = Cent_ast_get(method, 0);
-    expect_ptr(value, "ptr value");
+    assert_ptr(value, "ptr value");
     expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
     expect_str(&value->text, "a", "text id");
 
     /* argument 2 string b */
     Cent_ast* name = Cent_ast_get(method, 1);
-    expect_ptr(name, "ptr name");
+    assert_ptr(name, "ptr name");
     expect_int_equal(name->type, Cent_ast_type_expr_string, "type name");
     expect_str(&name->data.string, "b", "text name");
 
@@ -1091,7 +1074,7 @@ void test_parse_include_value()
     );
 
     test_parse_add_comp_unit(&pd, "data.aken",
-        "a = 12597\n"
+        "let a = 12597\n"
     );
 
     Cent_parse_result pr = Cent_parse(&pd);
@@ -1246,7 +1229,7 @@ void test_parse_let()
     Cent_parse_result pr = Cent_parse(&pd);
     expect_no_errors(pr.errors);
 
-    expect_ptr(pr.root, "ptr root");
+    assert_ptr(pr.root, "ptr root");
     expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type root");
 
     Cent_ast* let = Cent_ast_get(pr.root, 0);
@@ -1396,7 +1379,6 @@ void test_parse()
     test_parse_enumerate_error_expected_end();
     test_parse_value_error_expected_id();
     test_parse_value_error_enum_expected_id();
-    test_parse_value_error_nested_assignments();
     test_parse_value_error_object_expected_rcb();
     test_parse_value_error_object_property_expected_id();
     test_parse_value_error_object_property_expected_equal();

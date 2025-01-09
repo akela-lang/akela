@@ -1,3 +1,4 @@
 # Centipede Todo
-* remove assign statement
+* do something with errors in imported module
+* check if errors in import
 * file module find

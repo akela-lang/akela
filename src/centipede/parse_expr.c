@@ -22,117 +22,7 @@ void Cent_parse_expr_variable(Cent_parse_data* pd, Cent_token* id, Cent_ast* n);
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Cent_ast* Cent_parse_expr(Cent_parse_data* pd)
 {
-    return Cent_parse_assign(pd);
-}
-
-/* assign -> namespace = assign | namespace */
-/* NOLINTNEXTLINE(misc-no-recursion) */
-Cent_ast* Cent_parse_assign(Cent_parse_data* pd)
-{
-    Cent_ast* n = NULL;
-    Cent_ast* a = NULL;
-    Cent_ast* b = NULL;
-
-    a = Cent_parse_namespace(pd);
-    if (!a) {
-        return NULL;
-    }
-
-    while (true) {
-        Cent_lookahead(pd);
-        if (pd->lookahead->type != Cent_token_equal) {
-            break;
-        }
-
-        if (!n) {
-            Cent_ast_create(&n);
-            n->type = Cent_ast_type_expr_assign;
-            Cent_ast_add(n, a);
-        }
-
-        Cent_token* eq = NULL;
-        if (!Cent_match(pd, Cent_token_equal, "expected equal", &eq, n)) {
-            assert(false && "not possible");
-        }
-        Cent_token_destroy(eq);
-        free(eq);
-
-        b = Cent_parse_namespace(pd);
-        if (b) {
-            Cent_ast_add(n, b);
-        } else {
-            error_list_set(pd->errors, &pd->lookahead->loc, "expected expression");
-            n->has_error = true;
-            break;
-        }
-    }
-
-    if (!n) {
-        n = a;
-    }
-
-    if (n && !n->has_error) {
-        if (n->type == Cent_ast_type_expr_assign) {
-            if (Cent_ast_count(n) > 2) {
-                error_list_set(pd->errors, &n->loc, "nested assignments are not allowed");
-                n->has_error = true;
-            } else {
-                Cent_ast* left_node = Cent_ast_get(n, 0);
-                Cent_ast* right_node = Cent_ast_get(n, 1);
-                Cent_parse_check_lvalue(pd, left_node);
-                Cent_parse_check_rvalue(pd, right_node);
-
-                if (!n->has_error) {
-                    Cent_symbol* sym = NULL;
-                    Cent_symbol_create(&sym);
-                    Cent_symbol_set_type(sym, Cent_symbol_type_variable);
-                    sym->data.variable.n = b;
-                    Cent_environment_add_symbol(pd->top, &a->text, sym);
-                }
-            }
-        } else {
-            Cent_parse_check_rvalue(pd, n);
-        }
-    }
-
-    return n;
-}
-
-void Cent_parse_check_lvalue(Cent_parse_data* pd, Cent_ast* n)
-{
-    if (n) {
-        if (n->type == Cent_ast_type_id) {
-            Cent_symbol* sym = Cent_environment_get(pd->top, &n->text);
-            if (sym) {
-                if (sym->type == Cent_symbol_type_variable) {
-                    error_list_set(pd->errors, &n->loc, "shadowing of variable", &n->text);
-                    n->has_error = true;
-                } else {
-                    error_list_set(pd->errors, &n->loc, "invalid variable name", &n->text);
-                    n->has_error = true;
-                }
-            }
-        }
-    }
-}
-
-void Cent_parse_check_rvalue(Cent_parse_data* pd, Cent_ast* n)
-{
-    if (n) {
-        if (n->type == Cent_ast_type_id) {
-            n->type = Cent_ast_type_expr_variable;
-        }
-        if (n->type == Cent_ast_type_expr_variable) {
-            Cent_symbol* sym = Cent_environment_get(pd->top, &n->text);
-            if (!sym) {
-                error_list_set(pd->errors, &n->loc, "variable does not exist: %b", &n->text);
-                n->has_error = true;
-            } else if (sym->type != Cent_symbol_type_variable) {
-                error_list_set(pd->errors, &n->loc, "id is not a value");
-                n->has_error = true;
-            }
-        }
-    }
+    return Cent_parse_namespace(pd);
 }
 
 /* namespace -> namespace :: factor */
@@ -181,6 +71,9 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
 
     if (!n) {
         n = a;
+        if (n->type == Cent_ast_type_id) {
+            n->type = Cent_ast_type_expr_variable;
+        }
     }
 
     if (!n->has_error) {
