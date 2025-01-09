@@ -562,6 +562,29 @@ void test_build_namespace_glob_value()
     test_build_teardown(&pd, &pr, root);
 }
 
+void test_build_let()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "let a = 245\n"
+        "a\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr value");
+    expect_int_equal(root->type, Cent_value_type_number, "type root");
+    expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
+    expect_long_long_equal(root->data.integer, 245, "integer root");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -584,4 +607,5 @@ void test_build()
     test_build_namespace_variable();
     test_build_namespace_submodules();
     test_build_namespace_glob_value();
+    test_build_let();
 }

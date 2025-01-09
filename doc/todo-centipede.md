@@ -1,4 +1,4 @@
 # Centipede Todo
-* let declarations
-  * build
+* object let statement
+* remove assign statement
 * file module find
