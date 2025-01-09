@@ -585,6 +585,34 @@ void test_build_let()
     test_build_teardown(&pd, &pr, root);
 }
 
+void test_build_object_let()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Foo {\n"
+        "    let bar = Bar {}\n"
+        "    bar\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_no_errors(pr.errors);
+
+    assert_ptr(root, "ptr value");
+    expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    expect_str(&root->name, "Foo", "name root");
+
+    Cent_value* bar = root->data.dag.head;
+    expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
+    expect_str(&bar->name, "Bar", "name bar");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -608,4 +636,5 @@ void test_build()
     test_build_namespace_submodules();
     test_build_namespace_glob_value();
     test_build_let();
+    test_build_object_let();
 }
