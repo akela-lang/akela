@@ -1328,6 +1328,57 @@ void test_parse_let_error_shadow_local()
     test_parse_teardown(&pd, &pr);
 }
 
+void test_parse_object_let()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "Foo {\n"
+        "    let bar = Bar {}\n"
+        "    bar\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    expect_no_errors(pr.errors);
+
+    /* root */
+    assert_ptr(pr.root, "ptr root");
+    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type root");
+
+    /* line 1 */
+    Cent_ast* foo = Cent_ast_get(pr.root, 0);
+    assert_ptr(foo, "ptr foo");
+    expect_int_equal(foo->type, Cent_ast_type_expr_object, "type foo");
+
+    Cent_ast* foo_stmts = Cent_ast_get(foo, 0);
+    assert_ptr(foo_stmts, "ptr foo_stmts");
+    expect_int_equal(foo_stmts->type, Cent_ast_type_object_stmts, "type foo_stmts");
+
+    /* line 2 */
+    Cent_ast* foo_let = Cent_ast_get(foo_stmts, 0);
+    assert_ptr(foo_let, "ptr foo_let");
+    expect_int_equal(foo_let->type, Cent_ast_type_let, "type foo_let");
+
+    Cent_ast* bar = Cent_ast_get(foo_let, 0);
+    assert_ptr(bar, "ptr bar");
+    expect_int_equal(bar->type, Cent_ast_type_id, "type bar");
+
+    Cent_ast* bar_object = Cent_ast_get(foo_let, 1);
+    assert_ptr(bar_object, "ptr bar_object");
+    expect_int_equal(bar_object->type, Cent_ast_type_expr_object, "type bar_object");
+    expect_str(&bar_object->text, "Bar", "text bar_object");
+
+    /* line 3 */
+    Cent_ast* bar_variable = Cent_ast_get(foo_stmts, 1);
+    assert_ptr(bar_variable, "ptr bar_variable");
+    expect_int_equal(bar_variable->type, Cent_ast_type_expr_variable, "type bar_variable");
+    expect_str(&bar_variable->text, "bar", "text bar_variable");
+
+    test_parse_teardown(&pd, &pr);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1377,4 +1428,6 @@ void test_parse()
     test_parse_let_error_shadow_type();
     test_parse_let_error_shadow_module();
     test_parse_let_error_shadow_local();
+
+    test_parse_object_let();
 }
