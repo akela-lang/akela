@@ -1,26 +1,40 @@
 #include "parse_data.h"
 #include "parse_tools.h"
 #include <assert.h>
+#include "zinc/hash_map_size_t.h"
 
-void Cent_check_value_types_dispatch(Cent_value* value);
+void Cent_check_value_types_value(Cent_value* value);
 void Cent_check_value_types_property(struct buffer* name, Cent_value* value);
 void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_value, Cent_value* value);
 
 Cent_parse_result* Cent_check_value_types_pr = NULL;
+Hash_map_size_t* Cent_check_value_types_hm = NULL;;
 void Cent_check_value_types(Cent_parse_result* pr, Cent_value* value)
 {
     if (!pr->errors->head) {
         if (value) {
             Cent_check_value_types_pr = pr;
-            Cent_check_value_types_dispatch(value);
+
+            Hash_map_size_t* hm = NULL;
+            Hash_map_size_t_create(&hm, 64);
+            Cent_check_value_types_hm = hm;
+
+            Cent_check_value_types_value(value);
+
+            Hash_map_size_t_destroy(hm);
+            free(hm);
         }
     }
 }
 
 Cent_value* Cent_parse_types_object_value = NULL;
-void Cent_check_value_types_dispatch(Cent_value* value)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Cent_check_value_types_value(Cent_value* value)
 {
     Cent_parse_result* pr = Cent_check_value_types_pr;
+    Hash_map_size_t* hm = Cent_check_value_types_hm;
+
+    Hash_map_size_t_add(hm, (size_t)value, value);
 
     if (value->type == Cent_value_type_dag) {
         Cent_parse_types_object_value = value;
@@ -29,6 +43,17 @@ void Cent_check_value_types_dispatch(Cent_value* value)
             (hash_table_func_name)Cent_check_value_types_property);
 
         Cent_value* p = value->data.dag.head;
+        while (p) {
+            Cent_check_value_types_child(pr, value, p);
+            p = p->next;
+        }
+    } else if (value->type == Cent_value_type_dict) {
+        Cent_parse_types_object_value = value;
+        hash_table_map_name(
+            &value->data.dict.properties,
+            (hash_table_func_name)Cent_check_value_types_property);
+    } else if (value->type == Cent_value_type_list) {
+        Cent_value* p = value->data.list.head;
         while (p) {
             Cent_check_value_types_child(pr, value, p);
             p = p->next;
@@ -57,7 +82,7 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
         Cent_symbol* value_sym = Cent_environment_get(top, &value->name);
         if (!value_sym) {
             Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "invalid value element type: %b", &value->name);
+            error_list_set(pr->errors, &n->loc, "invalid property type: %b", &value->name);
             value->has_error = true;
             n->has_error = true;
             return;
@@ -69,7 +94,7 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
 
         if (prop_element != value_element) {
             Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "invalid value element type: %b", &value_element->name);
+            error_list_set(pr->errors, &n->loc, "invalid property type: %b", &value_element->name);
             value->has_error = true;
             n->has_error = true;
             /* test case: test_check_types_property_error_number */
@@ -102,79 +127,94 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
     } else {
         assert(false && "invalid property type type");
     }
+
+    Hash_map_size_t* hm = Cent_check_value_types_hm;
+    Cent_value* value2 = Hash_map_size_t_get(hm, (size_t)value);
+    if (!value2) {
+        Cent_check_value_types_value(value);
+    }
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_value, Cent_value* value)
 {
     Cent_environment* top = Cent_get_environment(object_value->n);
     Cent_ast* object_n = object_value->n;
     Cent_symbol* object_sym = Cent_environment_get(top, &object_n->text);
-    if (!object_sym) return;
-    assert(object_sym->type == Cent_symbol_type_element);
-    Cent_element_type* object_element = object_sym->data.element;
 
-    Cent_symbol* value_sym = Cent_environment_get(top, &value->name);
-    if (!value_sym) {
-        if (object_element->children.head) {
-            Cent_ast* n = value->n;
-            struct buffer bf;
-            buffer_init(&bf);
+    if (object_sym) {
+        assert(object_sym->type == Cent_symbol_type_element);
+        Cent_element_type* object_element = object_sym->data.element;
+
+        Cent_symbol* value_sym = Cent_environment_get(top, &value->name);
+        if (!value_sym) {
+            if (object_element->children.head) {
+                Cent_ast* n = value->n;
+                struct buffer bf;
+                buffer_init(&bf);
+                Cent_types_node* p = object_element->children.head;
+                while (p) {
+                    if (bf.size > 0) {
+                        buffer_add_char(&bf, ' ');
+                    }
+                    if (p->type == Cent_types_element) {
+                        buffer_copy(&p->data.et->name, &bf);
+                    } else if (p->type == Cent_types_enum) {
+                        buffer_copy(&p->data.en->name, &bf);
+                    } else {
+                        assert(false && "invalid types type");
+                    }
+                    p = p->next;
+                }
+                error_list_set(pr->errors, &n->loc, "value has no type; looking for %b", &bf);
+                value->has_error = true;
+                n->has_error = true;
+                buffer_destroy(&bf);
+                /* test case: test_check_types_child_error_no_type */
+            }
+
+            return;
+        }
+
+        bool found = false;
+        if (value_sym->type == Cent_symbol_type_element) {
+            Cent_element_type* value_element = value_sym->data.element;
             Cent_types_node* p = object_element->children.head;
             while (p) {
-                if (bf.size > 0) {
-                    buffer_add_char(&bf, ' ');
-                }
                 if (p->type == Cent_types_element) {
-                    buffer_copy(&p->data.et->name, &bf);
-                } else if (p->type == Cent_types_enum) {
-                    buffer_copy(&p->data.en->name, &bf);
-                } else {
-                    assert(false && "invalid types type");
+                    if (p->data.et == value_element) {
+                        found = true;
+                        break;
+                    }
                 }
                 p = p->next;
             }
-            error_list_set(pr->errors, &n->loc, "value has no type; looking for %b", &bf);
+        } else if (value_sym->type == Cent_symbol_type_enumerate) {
+            Cent_enum_type* value_enum = value_sym->data.enumerate;
+            Cent_types_node* p = object_element->children.head;
+            while (p) {
+                if (p->type == Cent_types_enum) {
+                    if (p->data.en == value_enum) {
+                        found = true;
+                        break;
+                    }
+                }
+                p = p->next;
+            }
+        }
+
+        if (!found) {
+            Cent_ast* n = value->n;
+            error_list_set(pr->errors, &n->loc, "invalid child type: %b", &value->name);
             value->has_error = true;
             n->has_error = true;
-            buffer_destroy(&bf);
-            /* test case: test_check_types_child_error_no_type */
-        }
-
-        return;
-    }
-
-    bool found = false;
-    if (value_sym->type == Cent_symbol_type_element) {
-        Cent_element_type* value_element = value_sym->data.element;
-        Cent_types_node* p = object_element->children.head;
-        while (p) {
-            if (p->type == Cent_types_element) {
-                if (p->data.et == value_element) {
-                    found = true;
-                    break;
-                }
-            }
-            p = p->next;
-        }
-    } else if (value_sym->type == Cent_symbol_type_enumerate) {
-        Cent_enum_type* value_enum = value_sym->data.enumerate;
-        Cent_types_node* p = object_element->children.head;
-        while (p) {
-            if (p->type == Cent_types_enum) {
-                if (p->data.en == value_enum) {
-                    found = true;
-                    break;
-                }
-            }
-            p = p->next;
+            /* test case: test_check_types_child_error_number */
         }
     }
 
-    if (!found) {
-        Cent_ast* n = value->n;
-        error_list_set(pr->errors, &n->loc, "invalid child type: %b", &value->name);
-        value->has_error = true;
-        n->has_error = true;
-        /* test case: test_check_types_child_error_number */
+    Hash_map_size_t* hm = Cent_check_value_types_hm;
+    Cent_value* value2 = Hash_map_size_t_get(hm, (size_t)value);
+    if (!value2) {
+        Cent_check_value_types_value(value);
     }
 }

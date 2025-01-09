@@ -63,7 +63,7 @@ void test_check_value_types_property_error_number()
 
     expect_has_errors(pr.errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid value element type: Integer");
+    expect_source_error(pr.errors, "invalid property type: Integer");
     test_build_teardown(&pd, &pr, root);
 }
 
@@ -94,7 +94,7 @@ void test_check_value_types_property_error_string()
 
     expect_has_errors(pr.errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid value element type: String");
+    expect_source_error(pr.errors, "invalid property type: String");
     test_build_teardown(&pd, &pr, root);
 }
 
@@ -124,7 +124,7 @@ void test_check_value_types_property_error_boolean()
 
     expect_has_errors(pr.errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid value element type: Bool");
+    expect_source_error(pr.errors, "invalid property type: Bool");
     test_build_teardown(&pd, &pr, root);
 }
 
@@ -154,7 +154,7 @@ void test_check_value_types_property_error_object()
 
     expect_has_errors(pr.errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid value element type: Foo");
+    expect_source_error(pr.errors, "invalid property type: Foo");
     test_build_teardown(&pd, &pr, root);
 }
 
@@ -216,7 +216,7 @@ void test_check_value_types_property_error_variable_object()
 
     expect_has_errors(pr.errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid value element type: Foo");
+    expect_source_error(pr.errors, "invalid property type: Foo");
     test_build_teardown(&pd, &pr, root);
 }
 
@@ -601,6 +601,56 @@ void test_check_value_types_child_error_no_type()
     test_build_teardown(&pd, &pr, root);
 }
 
+void test_check_value_types_not_nested()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Bar\n"
+        "    properties\n"
+        "        a: Bool\n"
+        "    end\n"
+        "end\n"
+        "Bar {.a=1}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_has_errors(pr.errors);
+
+    expect_source_error(pr.errors, "invalid property type: Integer");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
+void test_check_value_types_nested()
+{
+    test_name(__func__);
+
+    Cent_parse_data pd;
+    test_parse_setup(&pd,
+        "element Bar\n"
+        "    properties\n"
+        "        a: Bool\n"
+        "    end\n"
+        "end\n"
+        "Foo {\n"
+        "    Bar {.a=1}\n"
+        "}\n"
+    );
+
+    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_value* root = Cent_build(&pr);
+
+    expect_has_errors(pr.errors);
+
+    expect_source_error(pr.errors, "invalid property type: Integer");
+
+    test_build_teardown(&pd, &pr, root);
+}
+
 void test_check_value_types()
 {
     test_check_value_types_property();
@@ -622,4 +672,6 @@ void test_check_value_types()
     test_check_value_types_property_error_not_enum();
     test_check_value_types_property_enum_error_not_match();
     test_check_value_types_child_error_no_type();
+    test_check_value_types_not_nested();
+    test_check_value_types_nested();
 }
