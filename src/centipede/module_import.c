@@ -67,7 +67,11 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
             e = e->next;
         }
     }
-    Cent_value* value = Cent_build(&pr);
+
+    Cent_value* value = NULL;
+    if (!pr.errors->head) {
+        value = Cent_build(&pr);
+    }
 
     if (is_glob) {
         /* copy symbols */
