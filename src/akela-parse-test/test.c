@@ -6,7 +6,6 @@
 #include <linux/limits.h>
 #include <errno.h>
 #include <string.h>
-#include <linux/limits.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include "zinc/input_unicode_file.h"

@@ -7,8 +7,6 @@ Cent_module_vtable Cent_module_string_vtable = {
     .find_offset = offsetof(Cent_module_string, find),
 };
 
-Cent_comp_unit* Cent_module_find_string(Cent_module_string* ms, struct buffer* name);
-
 void Cent_module_string_init(Cent_module_string* ms)
 {
     hash_table_init(&ms->ht, 16);
