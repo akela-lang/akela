@@ -449,7 +449,7 @@ void test_build_namespace_enum()
         "}\n"
     );
 
-    test_parse_add_comp_unit(&pd, "types.aken",
+    test_parse_add_comp_unit(pd.module_obj, "types.aken",
         "enum Grocery_item\n"
         "    Milk\n"
         "    Cereal\n"
@@ -491,7 +491,7 @@ void test_build_namespace_variable()
         "variables::a\n"
     );
 
-    test_parse_add_comp_unit(&pd, "variables.aken",
+    test_parse_add_comp_unit(pd.module_obj, "variables.aken",
         "let a = 190\n"
     );
 
@@ -518,7 +518,7 @@ void test_build_namespace_submodules()
         "foo::bar::a\n"
     );
 
-    test_parse_add_comp_unit(&pd, "foo/bar.aken",
+    test_parse_add_comp_unit(pd.module_obj, "foo/bar.aken",
         "let a = 190\n"
     );
 
@@ -545,7 +545,7 @@ void test_build_namespace_glob_value()
         "a\n"
     );
 
-    test_parse_add_comp_unit(&pd, "foo/bar.aken",
+    test_parse_add_comp_unit(pd.module_obj, "foo/bar.aken",
         "let a = 190\n"
     );
 

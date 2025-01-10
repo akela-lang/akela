@@ -1,5 +1,6 @@
 #include "comp_table.h"
 #include "zinc/memory.h"
+#include <assert.h>
 
 void Cent_comp_table_init(Cent_comp_table* table)
 {
@@ -56,6 +57,9 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct buffer* na
     Cent_input_data data = Cent_module_find_interface(
         ct->module_finder_obj,
         ct->module_finder_vtable, name);
+
+    assert(data.input);
+    assert(data.input_vtable);
 
     Cent_comp_unit_create(&cu, data.input, data.input_vtable);
     cu->input = data.input;

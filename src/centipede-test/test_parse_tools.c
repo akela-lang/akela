@@ -9,8 +9,9 @@
 #include "zinc/error.h"
 #include "centipede/module_string.h"
 #include "centipede/comp_table.h"
+#include <assert.h>
 
-void test_parse_add_comp_unit(Cent_parse_data* pd, char* name, char* s)
+void test_parse_add_comp_unit(Cent_module_string* ms, char* name, char* s)
 {
     size_t len = strlen(s);
 
@@ -21,24 +22,16 @@ void test_parse_add_comp_unit(Cent_parse_data* pd, char* name, char* s)
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, v);
 
-    struct error_list* errors = NULL;
-    error_list_create(&errors);
-
-    Cent_module_string_add_module_str_str(pd->module_obj, name, s);
+    Cent_module_string_add_module_str_str(ms, name, s);
 }
 
 void test_parse_setup(Cent_parse_data* pd, char* s)
 {
-    Cent_parse_data_init(pd);
-
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create(&ct);
-    pd->comp_table = ct;
 
     Cent_module_string* ms = NULL;
     Cent_module_string_create(&ms);
-    pd->module_obj = ms;
-    pd->module_vtable = ms->vtable;
     ct->module_finder_obj = ms;
     ct->module_finder_vtable = ms->vtable;
 
@@ -49,17 +42,28 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     buffer_init(&name);
     buffer_add(&name, name_slice.p, name_slice.size);
     buffer_finish(&name);
-    test_parse_add_comp_unit(pd, name.buf, s);
-    Cent_comp_unit* cu = Cent_module_find_interface(
-        pd->module_obj,
-        pd->module_vtable,
+
+    test_parse_add_comp_unit(ms, name.buf, s);
+    Cent_input_data data = Cent_module_find_interface(
+        ms,
+        ms->vtable,
         &name);
     buffer_destroy(&name);
 
-    Cent_lex_data* ld = NULL;
-    Cent_lex_data_create(&ld, cu->errors, cu->input, cu->input_vtable);
+    assert(data.input);
+    assert(data.input_vtable);
 
-    pd->errors = cu->errors;
+    Cent_comp_unit* cu = NULL;
+    Cent_comp_unit_create(&cu, data.input, data.input_vtable);
+
+    Cent_lex_data* ld = NULL;
+    Cent_lex_data_create(&ld, &cu->errors, cu->input, cu->input_vtable);
+
+    Cent_parse_data_init(pd, &cu->errors);
+    pd->module_obj = ms;
+    pd->module_vtable = ms->vtable;
+    pd->comp_table = ct;
+
     pd->ld = ld;
     pd->file_name = name_slice;
 }
@@ -71,10 +75,6 @@ void test_parse_teardown_comp_unit(Cent_comp_unit* cu)
     VectorDestroy(v);
     free(v);
     free(input);
-
-    struct error_list* errors = cu->errors;
-    error_list_destroy(errors);
-    free(errors);
 
     Cent_comp_unit_destroy(cu);
     free(cu);

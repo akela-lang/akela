@@ -921,7 +921,7 @@ void test_parse_include()
         "}\n"
     );
 
-    test_parse_add_comp_unit(&pd, "types.aken",
+    test_parse_add_comp_unit(pd.module_obj, "types.aken",
         "enum Grocery_item\n"
         "    Milk\n"
         "    Cereal\n"
@@ -993,7 +993,7 @@ void test_parse_include_multiple_namespace()
         "}\n"
     );
 
-    test_parse_add_comp_unit(&pd, "lib/types.aken",
+    test_parse_add_comp_unit(pd.module_obj, "lib/types.aken",
         "enum Grocery_item\n"
         "    Milk\n"
         "    Cereal\n"
@@ -1073,7 +1073,7 @@ void test_parse_include_value()
         "data::a\n"
     );
 
-    test_parse_add_comp_unit(&pd, "data.aken",
+    test_parse_add_comp_unit(pd.module_obj, "data.aken",
         "let a = 12597\n"
     );
 
@@ -1122,7 +1122,7 @@ void test_parse_include_value_error()
         "data::b\n"
     );
 
-    test_parse_add_comp_unit(&pd, "data.aken",
+    test_parse_add_comp_unit(pd.module_obj, "data.aken",
         "let a = 12597\n"
     );
 
@@ -1143,7 +1143,7 @@ void test_parse_include_glob()
         "a\n"
     );
 
-    test_parse_add_comp_unit(&pd, "data.aken",
+    test_parse_add_comp_unit(pd.module_obj, "data.aken",
         "let a = 12597\n"
     );
 
@@ -1163,7 +1163,7 @@ void test_parse_include_error_expected_id()
         "a\n"
     );
 
-    test_parse_add_comp_unit(&pd, "1/2.aken",
+    test_parse_add_comp_unit(pd.module_obj, "1/2.aken",
         "a = 12597\n"
     );
 
@@ -1184,7 +1184,7 @@ void test_parse_namespace_error_expected_id()
         "1::a\n"
     );
 
-    test_parse_add_comp_unit(&pd, "lib/data.aken",
+    test_parse_add_comp_unit(pd.module_obj, "lib/data.aken",
         "a = 12597\n"
     );
 
@@ -1205,7 +1205,7 @@ void test_parse_namespace_error_expected_id2()
         "data::1\n"
     );
 
-    test_parse_add_comp_unit(&pd, "lib/data.aken",
+    test_parse_add_comp_unit(pd.module_obj, "lib/data.aken",
         "a = 12597\n"
     );
 
@@ -1285,7 +1285,7 @@ void test_parse_let_error_shadow_module()
         "base\n"
     );
 
-    test_parse_add_comp_unit(&pd, "base.aken", "");
+    test_parse_add_comp_unit(pd.module_obj, "base.aken", "");
 
     Cent_parse_result pr = Cent_parse(&pd);
     expect_has_errors(pr.errors);
