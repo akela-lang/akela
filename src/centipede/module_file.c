@@ -20,7 +20,7 @@ void Cent_module_file_init(Cent_module_file *mf, struct buffer* dir_path)
 {
     buffer_copy(dir_path, &mf->dir_path);
     buffer_finish(&mf->dir_path);
-    mf->find = Cent_module_file_find;
+    mf->find = (Cent_module_find)Cent_module_file_find;
     mf->vtable = &Cent_module_file_vtable;
 }
 

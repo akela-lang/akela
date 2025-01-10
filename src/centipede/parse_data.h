@@ -9,6 +9,7 @@
 #include "ast.h"
 #include "zinc/String_slice.h"
 #include "comp_unit.h"
+#include "comp_table.h"
 #include "module.h"
 
 typedef struct Cent_parse_data {
