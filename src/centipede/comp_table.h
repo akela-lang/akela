@@ -2,10 +2,13 @@
 #define CENTIPEDE_COMP_TABLE_H
 
 #include "comp_unit.h"
+#include "module.h"
 
 typedef struct Cent_comp_table {
     Cent_comp_unit* primary;
     struct hash_table ht;
+    void* module_finder_obj;
+    Cent_module_vtable* module_finder_vtable;
 } Cent_comp_table;
 
 typedef void (*Cent_comp_table_func)(Cent_comp_unit* cu);
@@ -19,5 +22,6 @@ Cent_comp_unit* Cent_comp_table_get(Cent_comp_table* table, struct buffer* name)
 Cent_comp_unit* Cent_comp_table_get_str(Cent_comp_table* table, char* name);
 void Cent_comp_table_map(Cent_comp_table* table, Cent_comp_table_func func);
 void Cent_comp_table_map_name(Cent_comp_table* table, Cent_comp_table_func_name func);
+Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct buffer* name);
 
 #endif

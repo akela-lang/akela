@@ -38,7 +38,8 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     }
 
     buffer_copy_str(&path, ".aken");
-    Cent_comp_unit* cu = Cent_module_find_interface(pd->module_obj, pd->module_vtable, &path);
+    //Cent_comp_unit* cu = Cent_module_find_interface(pd->module_obj, pd->module_vtable, &path);
+    Cent_comp_unit* cu = Cent_comp_table_find_unit(pd->comp_table, &path);
     if (!cu) {
         error_list_set(pd->errors, &n->loc, "could not find module: %b", &path);
         n->has_error = true;

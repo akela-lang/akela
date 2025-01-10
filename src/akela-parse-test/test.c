@@ -118,10 +118,6 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     cu->input = input;
     cu->input_vtable = input->input_vtable;
 
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create(&ct);
-    Cent_comp_table_add(ct, file_name, cu);
-
     Cent_lex_data* ld = NULL;
     Cent_lex_data_create(&ld, errors, input, input->input_vtable);
 
@@ -134,12 +130,18 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     pd->ld = ld;
     pd->errors = errors;
     pd->file_name = slice;
-    pd->comp_table = ct;
 
     Cent_module_file* mf = NULL;
     Cent_module_file_create(&mf, dir_path);
     pd->module_obj = mf;
     pd->module_vtable = mf->vtable;
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create(&ct);
+    Cent_comp_table_add(ct, file_name, cu);
+    ct->module_finder_obj = mf;
+    ct->module_finder_vtable = mf->vtable;
+    pd->comp_table = ct;
 
     Cent_parse_result pr = Cent_parse(pd);
     if (!pr.errors->head) {

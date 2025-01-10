@@ -47,3 +47,13 @@ void Cent_comp_table_map_name(Cent_comp_table* table, Cent_comp_table_func_name 
 {
     hash_table_map_name(&table->ht, (hash_table_func_name)func);
 }
+
+Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct buffer* name)
+{
+    Cent_comp_unit* cu = Cent_comp_table_get(ct, name);
+    if (cu) return cu;
+
+    cu = Cent_module_find_interface(ct->module_finder_obj, ct->module_finder_vtable, name);
+
+    return cu;
+}

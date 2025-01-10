@@ -39,6 +39,8 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     Cent_module_string_create(&ms);
     pd->module_obj = ms;
     pd->module_vtable = ms->vtable;
+    ct->module_finder_obj = ms;
+    ct->module_finder_vtable = ms->vtable;
 
     String_slice name_slice;
     name_slice.p = "**string**";
