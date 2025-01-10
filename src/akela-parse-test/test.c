@@ -115,8 +115,7 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     slice.size = file_name->size;
 
     Cent_parse_data* pd = NULL;
-    Cent_parse_data_create(&pd, &cu->errors, &cu->ld);
-    pd->file_name = slice;
+    Cent_parse_data_create(&pd, &cu->errors, &cu->ld, slice);
 
     Cent_module_file* mf = NULL;
     Cent_module_file_create(&mf, dir_path);

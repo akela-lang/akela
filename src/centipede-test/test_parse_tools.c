@@ -33,12 +33,12 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create(&ct, ms, ms->vtable);
 
-    String_slice name_slice;
-    name_slice.p = "**string**";
-    name_slice.size = strlen(name_slice.p);
+    String_slice file_name;
+    file_name.p = "**string**";
+    file_name.size = strlen(file_name.p);
     struct buffer name;
     buffer_init(&name);
-    buffer_add(&name, name_slice.p, name_slice.size);
+    buffer_add(&name, file_name.p, file_name.size);
     buffer_finish(&name);
 
     test_parse_add_comp_unit(ms, name.buf, s);
@@ -54,11 +54,10 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     Cent_comp_unit* cu = NULL;
     Cent_comp_unit_create(&cu, data.input, data.input_vtable);
 
-    Cent_parse_data_init(pd, &cu->errors, &cu->ld);
+    Cent_parse_data_init(pd, &cu->errors, &cu->ld, file_name);
     pd->module_obj = ms;
     pd->module_vtable = ms->vtable;
     pd->comp_table = ct;
-    pd->file_name = name_slice;
 }
 
 void test_parse_teardown_comp_unit(Cent_comp_unit* cu)
