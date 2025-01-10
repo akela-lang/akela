@@ -41,8 +41,9 @@ void Cent_module_file_append_path(struct buffer* path1, struct buffer* path2)
     buffer_copy(path2, path1);
 }
 
-Cent_comp_unit* Cent_module_file_find(Cent_module_file* mf, struct buffer* name)
+Cent_input_data Cent_module_file_find(Cent_module_file* mf, struct buffer* name)
 {
+    Cent_input_data data = {NULL, NULL};
     struct buffer path;
     buffer_init(&path);
     buffer_copy(&mf->dir_path, &path);
@@ -52,19 +53,13 @@ Cent_comp_unit* Cent_module_file_find(Cent_module_file* mf, struct buffer* name)
     if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
         FILE* fp = fopen(path.buf, "r");
         if (fp) {
-            Cent_comp_unit* cu = NULL;
-            Cent_comp_unit_create(&cu);
-            buffer_copy(name, &cu->name);
-            struct error_list* errors = NULL;
-            error_list_create(&errors);
-            cu->errors = errors;
             InputUnicodeFile* input = NULL;
             InputUnicodeFileCreate(&input, fp);
-            cu->input = input;
-            cu->input_vtable = input->input_vtable;
-            return cu;
+            data.input = input;
+            data.input_vtable = input->input_vtable;
+            return data;
         }
     }
     buffer_destroy(&path);
-    return NULL;
+    return data;
 }

@@ -53,7 +53,15 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct buffer* na
     Cent_comp_unit* cu = Cent_comp_table_get(ct, name);
     if (cu) return cu;
 
-    cu = Cent_module_find_interface(ct->module_finder_obj, ct->module_finder_vtable, name);
+    Cent_input_data data = Cent_module_find_interface(
+        ct->module_finder_obj,
+        ct->module_finder_vtable, name);
+
+    Cent_comp_unit_create(&cu, data.input, data.input_vtable);
+    cu->input = data.input;
+    cu->input_vtable = data.input_vtable;
+
+    buffer_copy(name, &cu->name);
 
     return cu;
 }

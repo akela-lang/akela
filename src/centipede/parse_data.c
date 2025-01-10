@@ -1,9 +1,8 @@
 #include "parse_data.h"
 #include "zinc/memory.h"
 
-void Cent_parse_data_init(Cent_parse_data *pd)
+void Cent_parse_data_init(Cent_parse_data *pd, struct error_list* errors)
 {
-    pd->errors = NULL;
     pd->ld = NULL;
     pd->lookahead = NULL;
     pd->top = NULL;
@@ -12,23 +11,24 @@ void Cent_parse_data_init(Cent_parse_data *pd)
     pd->comp_table = NULL;
     pd->module_obj = NULL;
     pd->module_vtable = NULL;
+    pd->errors = errors;
 }
 
-void Cent_parse_data_create(Cent_parse_data **pd)
+void Cent_parse_data_create(Cent_parse_data **pd, struct error_list* errors)
 {
     malloc_safe((void**)pd, sizeof(Cent_parse_data));
-    Cent_parse_data_init(*pd);
+    Cent_parse_data_init(*pd, errors);
 }
 
-void Cent_parse_result_init(Cent_parse_result *pr)
+void Cent_parse_result_init(Cent_parse_result *pr, struct error_list* errors)
 {
-    pr->errors = NULL;
+    pr->errors = errors;
     pr->base = NULL;
     pr->root = NULL;
 }
 
-void Cent_parse_result_create(Cent_parse_result **pr)
+void Cent_parse_result_create(Cent_parse_result **pr, struct error_list* errors)
 {
     malloc_safe((void**)pr, sizeof(Cent_parse_result));
-    Cent_parse_result_init(*pr);
+    Cent_parse_result_init(*pr, errors);
 }

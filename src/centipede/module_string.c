@@ -50,20 +50,14 @@ void Cent_module_string_add_module_str_str(Cent_module_string* ms, char* name, c
     hash_table_add_str(&ms->ht, name, text2);
 }
 
-Cent_comp_unit* Cent_module_find_string(Cent_module_string* ms, struct buffer* name)
+Cent_input_data Cent_module_find_string(Cent_module_string* ms, struct buffer* name)
 {
     struct buffer* text = hash_table_get(&ms->ht, name);
+    Cent_input_data data = {NULL, NULL};
 
     if (!text) {
-        return NULL;
+        return data;
     }
-
-    Cent_comp_unit* cu = NULL;
-    Cent_comp_unit_create(&cu);
-    buffer_copy(name, &cu->name);
-
-    struct error_list* errors = NULL;
-    error_list_create(&errors);
 
     Vector* v = NULL;
     VectorCreate(&v, sizeof(char));
@@ -72,9 +66,8 @@ Cent_comp_unit* Cent_module_find_string(Cent_module_string* ms, struct buffer* n
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, v);
 
-    cu->input = input;
-    cu->input_vtable = input->input_vtable;
-    cu->errors = errors;
+    data.input = input;
+    data.input_vtable = input->input_vtable;
 
-    return cu;
+    return data;
 }

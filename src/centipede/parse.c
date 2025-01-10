@@ -30,8 +30,7 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
     }
 
     Cent_parse_result pr;
-    Cent_parse_result_init(&pr);
-    pr.errors = pd->errors;
+    Cent_parse_result_init(&pr, pd->errors);
     pr.base = pd->top;
     pr.root = root;
 

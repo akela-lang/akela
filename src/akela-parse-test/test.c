@@ -111,10 +111,9 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     error_list_create(&errors);
 
     Cent_comp_unit* cu = NULL;
-    Cent_comp_unit_create(&cu);
+    Cent_comp_unit_create(&cu, input, input->input_vtable);
 
     buffer_copy(file_name, &cu->name);
-    cu->errors = errors;
     cu->input = input;
     cu->input_vtable = input->input_vtable;
 
@@ -126,7 +125,7 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     slice.size = file_name->size;
 
     Cent_parse_data* pd = NULL;
-    Cent_parse_data_create(&pd);
+    Cent_parse_data_create(&pd, &cu->errors);
     pd->ld = ld;
     pd->errors = errors;
     pd->file_name = slice;
