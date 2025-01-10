@@ -11,14 +11,15 @@ void Cent_comp_unit_init(
     InputUnicodeVTable* input_vtable,
     String_slice file_name,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable)
+    Cent_module_vtable* module_finder_vtable,
+    Cent_environment* base)
 {
     cu->status = Cent_comp_unit_status_start;
     error_list_init(&cu->errors);
     cu->input = input;
     cu->input_vtable = input_vtable;
     Cent_lex_data_init(&cu->ld, &cu->errors, input, input_vtable);
-    Cent_parse_data_init(&cu->pd, &cu->errors, &cu->ld, file_name);
+    Cent_parse_data_init(&cu->pd, &cu->errors, &cu->ld, file_name, base);
     cu->value = NULL;
 }
 
@@ -28,10 +29,18 @@ void Cent_comp_unit_create(
     InputUnicodeVTable* input_vtable,
     String_slice file_name,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable)
+    Cent_module_vtable* module_finder_vtable,
+    Cent_environment* base)
 {
     malloc_safe((void**)cu, sizeof(Cent_comp_unit));
-    Cent_comp_unit_init(*cu, input, input_vtable, file_name, module_finder_obj, module_finder_vtable);
+    Cent_comp_unit_init(
+        *cu,
+        input,
+        input_vtable,
+        file_name,
+        module_finder_obj,
+        module_finder_vtable,
+        base);
 }
 
 void Cent_comp_unit_destroy(Cent_comp_unit* cu)

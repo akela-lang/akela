@@ -5,21 +5,24 @@
 void Cent_comp_table_init(
     Cent_comp_table* ct,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable)
+    Cent_module_vtable* module_finder_vtable,
+    Cent_environment* base)
 {
     ct->primary = NULL;
     hash_table_init(&ct->ht, 32);
     ct->module_finder_obj = module_finder_obj;
     ct->module_finder_vtable = module_finder_vtable;
+    ct->base = base;
 }
 
 void Cent_comp_table_create(
     Cent_comp_table** ct,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable)
+    Cent_module_vtable* module_finder_vtable,
+    Cent_environment* base)
 {
     malloc_safe((void**)ct, sizeof(Cent_comp_table));
-    Cent_comp_table_init(*ct, module_finder_obj, module_finder_vtable);
+    Cent_comp_table_init(*ct, module_finder_obj, module_finder_vtable, base);
 }
 
 void Cent_comp_table_destroy(Cent_comp_table* table)
@@ -78,7 +81,8 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct buffer* na
         data.input_vtable,
         file_name,
         ct->module_finder_obj,
-        ct->module_finder_vtable);
+        ct->module_finder_vtable,
+        ct->base);
     cu->input = data.input;
     cu->input_vtable = data.input_vtable;
 

@@ -16,6 +16,7 @@ typedef struct Cent_parse_data {
     Cent_token* lookahead;
     Cent_environment* top;
     String_slice file_name;
+    Cent_environment* base;
     void* cu;
     void* ct;
 } Cent_parse_data;
@@ -35,12 +36,14 @@ void Cent_parse_data_init(
     Cent_parse_data *pd,
     struct error_list* errors,
     Cent_lex_data *ld,
-    String_slice file_name);
+    String_slice file_name,
+    Cent_environment* base);
 void Cent_parse_data_create(
     Cent_parse_data **pd,
     struct error_list* errors,
     Cent_lex_data *ld,
-    String_slice file_name);
+    String_slice file_name,
+    Cent_environment* base);
 
 void Cent_parse_result_init(Cent_parse_result *pr, struct error_list* errors);
 void Cent_parse_result_create(Cent_parse_result **pr, struct error_list* errors);

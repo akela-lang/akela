@@ -30,14 +30,16 @@ void Cent_comp_unit_init(
     InputUnicodeVTable* input_vtable,
     String_slice file_name,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable);
+    Cent_module_vtable* module_finder_vtable,
+    Cent_environment* base);
 void Cent_comp_unit_create(
     Cent_comp_unit **cu,
     void* input,
     InputUnicodeVTable* input_vtable,
     String_slice file_name,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable);
+    Cent_module_vtable* module_finder_vtable,
+    Cent_environment* base);
 void Cent_comp_unit_destroy(Cent_comp_unit* cu);
 void Cent_comp_unit_parse(Cent_comp_unit* cu);
 void Cent_comp_unit_build(Cent_comp_unit* cu);

@@ -5,7 +5,8 @@ void Cent_parse_data_init(
     Cent_parse_data *pd,
     struct error_list* errors,
     Cent_lex_data* ld,
-    String_slice file_name)
+    String_slice file_name,
+    Cent_environment* base)
 {
     pd->ld = ld;
     pd->lookahead = NULL;
@@ -16,16 +17,18 @@ void Cent_parse_data_init(
     pd->ct = NULL;
     pd->errors = errors;
     pd->file_name = file_name;
+    pd->base = base;
 }
 
 void Cent_parse_data_create(
     Cent_parse_data **pd,
     struct error_list* errors,
     Cent_lex_data* ld,
-    String_slice file_name)
+    String_slice file_name,
+    Cent_environment* base)
 {
     malloc_safe((void**)pd, sizeof(Cent_parse_data));
-    Cent_parse_data_init(*pd, errors, ld, file_name);
+    Cent_parse_data_init(*pd, errors, ld, file_name, base);
 }
 
 void Cent_parse_result_init(Cent_parse_result *pr, struct error_list* errors)

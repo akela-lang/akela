@@ -275,6 +275,12 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
     Cent_token_destroy(id);
     free(id);
 
+    Cent_ast* a = NULL;
+    Cent_ast_create(&a);
+    a->type = Cent_ast_type_expr_string;
+    buffer_add(&a->data.string, pd->file_name.p, pd->file_name.size);
+    Cent_ast_add(n, a);
+
     Cent_token* rp = NULL;
     Cent_match(pd, Cent_token_right_paren, "expected right paren", &rp, n);
     Cent_token_destroy(rp);

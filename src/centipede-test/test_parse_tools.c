@@ -6,6 +6,7 @@
 #include "centipede/module_string.h"
 #include "centipede/comp_table.h"
 #include <assert.h>
+#include <centipede/base.h>
 
 void test_parse_add_comp_unit(Cent_module_string* ms, char* name, char* s)
 {
@@ -26,7 +27,9 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     Cent_module_string* ms = NULL;
     Cent_module_string_create(&ms);
 
-    Cent_comp_table_create(ct, ms, ms->vtable);
+    Cent_environment* base = Cent_base_create();
+
+    Cent_comp_table_create(ct, ms, ms->vtable, base);
 
     String_slice file_name;
     file_name.p = "**string**";
@@ -53,7 +56,8 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
         data.input_vtable,
         file_name,
         ms,
-        ms->vtable);
+        ms->vtable,
+        base);
     cu->ct = *ct;
     cu->pd.ct = *ct;
     (*ct)->primary = cu;

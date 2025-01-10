@@ -55,7 +55,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
 
     /* parse and build module */
     Cent_parse_data* pd2 = NULL;
-    Cent_parse_data_create(&pd2, &cu->errors, &cu->ld, file_name);
+    Cent_parse_data_create(&pd2, &cu->errors, &cu->ld, file_name, pd->base);
     pd2->ct = pd->ct;
     pd2->cu = pd->cu;
 

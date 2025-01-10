@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <centipede/base.h>
 #include <sys/stat.h>
 #include "zinc/input_unicode_file.h"
 #include "centipede/lex_data.h"
@@ -114,11 +115,13 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     Cent_module_file* mf = NULL;
     Cent_module_file_create(&mf, dir_path);
 
+    Cent_environment* base = Cent_base_create();
+
     Cent_comp_table* ct = NULL;
-    Cent_comp_table_create(&ct, mf, mf->vtable);
+    Cent_comp_table_create(&ct, mf, mf->vtable, base);
 
     Cent_comp_unit* cu = NULL;
-    Cent_comp_unit_create(&cu, input, input->input_vtable, slice, mf, mf->vtable);
+    Cent_comp_unit_create(&cu, input, input->input_vtable, slice, mf, mf->vtable, base);
     cu->pd.cu = cu;
     cu->pd.ct = ct;
 

@@ -196,15 +196,11 @@ Cent_value* Cent_build_variable(Cent_ast* n)
 
 Cent_value* Cent_build_function_file_name(Cent_ast* n)
 {
-    Cent_environment* top = Cent_get_environment(n);
-    assert(top);
-    Cent_symbol* sym = Cent_environment_get_str(top, "#file_name#");
-    assert(sym);
-    assert(sym->type == Cent_symbol_type_file_name);
     Cent_value* value = NULL;
     Cent_value_create(&value);
     Cent_value_set_type(value, Cent_value_type_string);
-    buffer_add(&value->data.string, sym->data.file_name.p, sym->data.file_name.size);
+    Cent_ast* a = Cent_ast_get(n, 0);
+    buffer_add(&value->data.string, a->data.string.buf, a->data.string.size);
     buffer_copy_str(&value->name, "String");
     value->n = n;
     return value;

@@ -9,11 +9,6 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     Cent_symbol* sym = NULL;
     Cent_element_type* element = NULL;
 
-    Cent_symbol_create(&sym);
-    Cent_symbol_set_type(sym, Cent_symbol_type_file_name);
-    sym->data.file_name = pd->file_name;
-    Cent_environment_add_symbol_str(env, "#file_name#", sym);
-
     Cent_element_create(&element);
     buffer_copy_str(&element->name, "Integer");
     element->type = Cent_value_type_number;

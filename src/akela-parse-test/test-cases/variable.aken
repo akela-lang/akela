@@ -13,7 +13,7 @@ Test_suite {
         .solo = true
         .has_error = false
 
-        let root = Ast_node {
+        let root = Ast {
             .type = Ast_type::Stmts
             .tu = Type_use {
                 .td = _Int32
