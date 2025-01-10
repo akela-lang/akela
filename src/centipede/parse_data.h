@@ -18,8 +18,6 @@ typedef struct Cent_parse_data {
     String_slice file_name;
     void* cu;
     void* ct;
-    void* module_obj;
-    Cent_module_vtable* module_vtable;
 } Cent_parse_data;
 
 typedef struct Cent_parse_result {

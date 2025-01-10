@@ -1,7 +1,4 @@
 # Centipede Todo
-* comp table
-  * parse
-  * build
 * cache comp units if they are imported multiple times
 * use the comp table as the primary data structure for compiling
 * put the phase of the compilation in the comp unit

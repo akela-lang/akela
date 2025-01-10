@@ -7,7 +7,6 @@ set(centipede_test_files
         test_parse.c
         test_parse_tools.c
         test_build.c
-        test_build_tools.c
         test_check_value_types.c
 )
 

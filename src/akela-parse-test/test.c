@@ -107,37 +107,33 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     InputUnicodeFile* input = NULL;
     InputUnicodeFileCreate(&input, fp);
 
-    Cent_comp_unit* cu = NULL;
-    Cent_comp_unit_create(&cu, input, input->input_vtable);
-
     String_slice slice;
     slice.p = file_name->buf;
     slice.size = file_name->size;
 
-    Cent_parse_data* pd = NULL;
-    Cent_parse_data_create(&pd, &cu->errors, &cu->ld, slice);
-
     Cent_module_file* mf = NULL;
     Cent_module_file_create(&mf, dir_path);
-    pd->module_obj = mf;
-    pd->module_vtable = mf->vtable;
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create(&ct, mf, mf->vtable);
-    Cent_comp_table_add(ct, file_name, cu);
-    pd->ct = ct;
-    pd->cu = cu;
 
-    Cent_parse_result pr = Cent_parse(pd);
-    if (!pr.errors->head) {
-        Cent_value* value = Cent_build(&pr);
-        if (!pr.errors->head) {
+    Cent_comp_unit* cu = NULL;
+    Cent_comp_unit_create(&cu, input, input->input_vtable, slice, mf, mf->vtable);
+    cu->pd.cu = cu;
+    cu->pd.ct = ct;
+
+    Cent_comp_table_add(ct, file_name, cu);
+
+    Cent_comp_unit_parse(cu);
+    if (!cu->errors.head) {
+        Cent_comp_unit_build(cu);
+        if (!cu->errors.head) {
             printf("success!\n");
         }
     }
 
-    if (pr.errors->head) {
-        struct error* e = pr.errors->head;
+    if (cu->errors.head) {
+        struct error* e = cu->errors.head;
         while (e) {
             buffer_finish(&e->message);
             printf("(%zu,%zu) %s\n", e->loc.line, e->loc.col, e->message.buf);

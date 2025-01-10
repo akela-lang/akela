@@ -1,6 +1,5 @@
 #include "zinc/unit_test.h"
 #include <zinc/error_unit_test.h>
-#include "test_build_tools.h"
 #include "test_parse_tools.h"
 #include "centipede/parse.h"
 #include "centipede/build.h"
@@ -9,8 +8,8 @@ void test_check_value_types_property()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -29,20 +28,22 @@ void test_check_value_types_property()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
 
-    expect_no_errors(pr.errors);
+    expect_no_errors(errors);
     assert_ptr(root, "ptr value");
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_error_number()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -58,13 +59,15 @@ void test_check_value_types_property_error_number()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
 
-    expect_has_errors(pr.errors);
+    expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid property type: Integer");
-    test_build_teardown(&pd, &pr, root);
+    expect_source_error(errors, "invalid property type: Integer");
+    test_parse_teardown(ct);
 }
 
 
@@ -72,8 +75,8 @@ void test_check_value_types_property_error_string()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -89,21 +92,23 @@ void test_check_value_types_property_error_string()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
 
-    expect_has_errors(pr.errors);
+    expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid property type: String");
-    test_build_teardown(&pd, &pr, root);
+    expect_source_error(errors, "invalid property type: String");
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_error_boolean()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -119,21 +124,23 @@ void test_check_value_types_property_error_boolean()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
 
-    expect_has_errors(pr.errors);
+    expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid property type: Bool");
-    test_build_teardown(&pd, &pr, root);
+    expect_source_error(errors, "invalid property type: Bool");
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_error_object()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -149,21 +156,23 @@ void test_check_value_types_property_error_object()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
 
-    expect_has_errors(pr.errors);
+    expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid property type: Foo");
-    test_build_teardown(&pd, &pr, root);
+    expect_source_error(errors, "invalid property type: Foo");
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_variable()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -180,21 +189,23 @@ void test_check_value_types_property_variable()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
 
-    expect_no_errors(pr.errors);
+    expect_no_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_no_errors(pr.errors);
-    test_build_teardown(&pd, &pr, root);
+    expect_no_errors(errors);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_error_variable_object()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -211,21 +222,23 @@ void test_check_value_types_property_error_variable_object()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
 
-    expect_has_errors(pr.errors);
+    expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(pr.errors, "invalid property type: Foo");
-    test_build_teardown(&pd, &pr, root);
+    expect_source_error(errors, "invalid property type: Foo");
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_enum()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Vehicle_type\n"
         "    Car\n"
         "    Truck\n"
@@ -242,21 +255,23 @@ void test_check_value_types_property_enum()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
 
-    expect_no_errors(pr.errors);
+    expect_no_errors(errors);
     assert_ptr(root, "ptr value");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_enum_error_id1()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Vehicle_type\n"
         "    Car\n"
         "    Truck\n"
@@ -273,21 +288,22 @@ void test_check_value_types_property_enum_error_id1()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "id is not a variable: Coin_type");
+    expect_has_errors(errors);
+    expect_source_error(errors, "id is not a variable: Coin_type");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_enum_error_id2()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Vehicle_type\n"
         "    Car\n"
         "    Truck\n"
@@ -304,21 +320,22 @@ void test_check_value_types_property_enum_error_id2()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "invalid enum id: Pencil");
+    expect_has_errors(errors);
+    expect_source_error(errors, "invalid enum id: Pencil");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_child()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -329,20 +346,21 @@ void test_check_value_types_child()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_no_errors(pr.errors);
+    expect_no_errors(errors);
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_child_error_number()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Source\n"
         "    children\n"
         "        String\n"
@@ -354,23 +372,24 @@ void test_check_value_types_child_error_number()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e =expect_source_error(pr.errors, "invalid child type: Float");
+    expect_has_errors(errors);
+    struct error* e =expect_source_error(errors, "invalid child type: Float");
     expect_size_t_equal(e->loc.line, 8, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_child_enum()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Vehicle_type\n"
         "    Car\n"
         "    Truck\n"
@@ -388,20 +407,21 @@ void test_check_value_types_child_enum()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_no_errors(pr.errors);
+    expect_no_errors(errors);
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_child_enum_error_id1_not_found()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Vehicle_type\n"
         "    Car\n"
         "    Truck\n"
@@ -419,24 +439,25 @@ void test_check_value_types_child_enum_error_id1_not_found()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "id is not a variable: Building_type");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "id is not a variable: Building_type");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 14, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_child_enum_error_id1_not_match()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Vehicle_type\n"
         "    Car\n"
         "    Truck\n"
@@ -459,24 +480,25 @@ void test_check_value_types_child_enum_error_id1_not_match()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "invalid child type: Building_type");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "invalid child type: Building_type");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 19, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_child_enum_error_id2_not_valid()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Vehicle_type\n"
         "    Car\n"
         "    Truck\n"
@@ -494,24 +516,25 @@ void test_check_value_types_child_enum_error_id2_not_valid()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "invalid enum id: Bike");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "invalid enum id: Bike");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 14, "line e");
     expect_size_t_equal(e->loc.col, 19, "col e");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_error_not_enum()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Bar\n"
         "    Filler\n"
         "end\n"
@@ -525,24 +548,25 @@ void test_check_value_types_property_error_not_enum()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "value is not an enum value: Integer");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "value is not an enum value: Integer");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 10, "line e");
     expect_size_t_equal(e->loc.col, 10, "col e");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_property_enum_error_not_match()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Apparel\n"
         "    Shoes\n"
         "end\n"
@@ -559,24 +583,25 @@ void test_check_value_types_property_enum_error_not_match()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "invalid value enum type: Apparel");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "invalid value enum type: Apparel");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 13, "line e");
     expect_size_t_equal(e->loc.col, 10, "col e");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_child_error_no_type()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Bar\n"
         "end\n"
         "element Foo\n"
@@ -589,24 +614,25 @@ void test_check_value_types_child_error_no_type()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "value has no type; looking for Bar");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "value has no type; looking for Bar");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 9, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_not_nested()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Bar\n"
         "    properties\n"
         "        a: Bool\n"
@@ -615,22 +641,23 @@ void test_check_value_types_not_nested()
         "Bar {.a=1}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
+    expect_has_errors(errors);
 
-    expect_source_error(pr.errors, "invalid property type: Integer");
+    expect_source_error(errors, "invalid property type: Integer");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types_nested()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Bar\n"
         "    properties\n"
         "        a: Bool\n"
@@ -641,14 +668,15 @@ void test_check_value_types_nested()
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    Cent_value* root = Cent_build(&pr);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
+    expect_has_errors(errors);
 
-    expect_source_error(pr.errors, "invalid property type: Integer");
+    expect_source_error(errors, "invalid property type: Integer");
 
-    test_build_teardown(&pd, &pr, root);
+    test_parse_teardown(ct);
 }
 
 void test_check_value_types()

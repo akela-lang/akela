@@ -58,8 +58,6 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     Cent_parse_data_create(&pd2, &cu->errors, &cu->ld, file_name);
     pd2->ct = pd->ct;
     pd2->cu = pd->cu;
-    pd2->module_obj = pd->module_obj;
-    pd2->module_vtable = pd->module_vtable;
 
     Cent_parse_result pr = Cent_parse(pd2);
     if (pr.errors) {

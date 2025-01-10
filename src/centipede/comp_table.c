@@ -69,7 +69,16 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct buffer* na
     assert(data.input);
     assert(data.input_vtable);
 
-    Cent_comp_unit_create(&cu, data.input, data.input_vtable);
+    String_slice file_name;
+    file_name.p = name->buf;
+    file_name.size = name->size;
+    Cent_comp_unit_create(
+        &cu,
+        data.input,
+        data.input_vtable,
+        file_name,
+        ct->module_finder_obj,
+        ct->module_finder_vtable);
     cu->input = data.input;
     cu->input_vtable = data.input_vtable;
 

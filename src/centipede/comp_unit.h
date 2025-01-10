@@ -14,7 +14,7 @@ typedef enum Cent_comp_unit_status {
 
 typedef struct Cent_comp_unit {
     Cent_comp_unit_status status;
-    void* pd;
+    Cent_parse_data pd;
     void* input;
     InputUnicodeVTable* input_vtable;
     struct error_list errors;
@@ -24,9 +24,23 @@ typedef struct Cent_comp_unit {
     void* ct;
 } Cent_comp_unit;
 
-void Cent_comp_unit_init(Cent_comp_unit *cu, void* input, InputUnicodeVTable* input_vtable);
-void Cent_comp_unit_create(Cent_comp_unit **cu, void* input, InputUnicodeVTable* input_vtable);
+void Cent_comp_unit_init(
+    Cent_comp_unit *cu,
+    void* input,
+    InputUnicodeVTable* input_vtable,
+    String_slice file_name,
+    void* module_finder_obj,
+    Cent_module_vtable* module_finder_vtable);
+void Cent_comp_unit_create(
+    Cent_comp_unit **cu,
+    void* input,
+    InputUnicodeVTable* input_vtable,
+    String_slice file_name,
+    void* module_finder_obj,
+    Cent_module_vtable* module_finder_vtable);
 void Cent_comp_unit_destroy(Cent_comp_unit* cu);
-void Cent_comp_table_parse(Cent_comp_unit* cu);
+void Cent_comp_unit_parse(Cent_comp_unit* cu);
+void Cent_comp_unit_build(Cent_comp_unit* cu);
+
 
 #endif

@@ -1,20 +1,20 @@
 #include <string.h>
-#include <string.h>
 #include <zinc/error_unit_test.h>
 
 #include "zinc/unit_test.h"
-#include "centipede/parse.h"
 #include "centipede/parse_data.h"
 #include "zinc/input_unicode_string.h"
 #include "zinc/error.h"
 #include "test_parse_tools.h"
+#include "centipede/comp_table.h"
+#include "centipede/comp_unit.h"
 
 void test_parse_element()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test_suite\n"
         "    properties\n"
         "        name: String `required`\n"
@@ -27,16 +27,19 @@ void test_parse_element()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_error_count(pd.errors, 1);
-    expect_source_error(pr.errors, "unknown type: Test");
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
+
+    expect_error_count(errors, 1);
+    expect_source_error(errors, "unknown type: Test");
 
     /* root */
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* element */
-    Cent_ast* element = Cent_ast_get(pr.root, 0);
+    Cent_ast* element = Cent_ast_get(root, 0);
     assert_ptr(element, "ptr element");
     expect_int_equal(element->type, Cent_ast_type_element_type, "type element");
     expect_str(&element->text, "Test_suite", "value element");
@@ -107,15 +110,15 @@ void test_parse_element()
     expect_int_equal(test->type, Cent_ast_type_id, "type test");
     expect_str(&test->text, "Test", "value test");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_enumerate()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
     "enum Symbol_type\n"
     "    Variable\n"
     "    Type\n"
@@ -123,15 +126,17 @@ void test_parse_enumerate()
     "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
 
     /* root */
-    expect_no_errors(pr.errors);
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    expect_no_errors(errors);
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* enumerate */
-    Cent_ast* enumerate = Cent_ast_get(pr.root, 0);
+    Cent_ast* enumerate = Cent_ast_get(root, 0);
     assert_ptr(enumerate, "ptr enumerate");
     expect_int_equal(enumerate->type, Cent_ast_type_enum_type, "type enumerate");
     expect_str(&enumerate->text, "Symbol_type", "value enumerate");
@@ -154,15 +159,15 @@ void test_parse_enumerate()
     expect_int_equal(value2->type, Cent_ast_type_id, "type value2");
     expect_str(&value2->text, "Info", "value value2");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_top_level_assignment()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Type_def_type\n"
         "    Integer\n"
         "    Float\n"
@@ -178,21 +183,23 @@ void test_parse_top_level_assignment()
     "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
 
     /* root */
-    expect_no_errors(pr.errors);
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    expect_no_errors(errors);
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* enum type */
-    Cent_ast* enum_type = Cent_ast_get(pr.root, 0);
+    Cent_ast* enum_type = Cent_ast_get(root, 0);
     assert_ptr(enum_type, "ptr enum_type");
     expect_int_equal(enum_type->type, Cent_ast_type_enum_type, "type enum_type");
     expect_str(&enum_type->text, "Type_def_type", "text enum_type");
 
     /* let */
-    Cent_ast* let = Cent_ast_get(pr.root, 1);
+    Cent_ast* let = Cent_ast_get(root, 1);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, Cent_ast_type_let, "type let");
 
@@ -295,100 +302,105 @@ void test_parse_top_level_assignment()
     expect_int_equal(is_signed_value->value_type, Cent_value_type_boolean, "value_type is_signed_value");
     expect_long_long_equal(is_signed_value->data.boolean, true, "boolean is_signed_value");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_error_unhandled_token()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd, "1 end");
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct, "1 end");
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_error_count(pr.errors, 1);
-    expect_source_error(pr.errors, "unhandled token: end");
+    expect_error_count(errors, 1);
+    expect_source_error(errors, "unhandled token: end");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_error_expected_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd, "element 1");
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct, "element 1");
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected id");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_error_expected_end()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected end");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected end");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_error_name_already_exits()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test\n"
         "end\n"
         "element Test\n"
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "name already exists: Test");
+    expect_has_errors(errors);
+    expect_source_error(errors, "name already exists: Test");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_error_properties_expected_end()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test\n"
         "    properties\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected end");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected end");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_error_property_expected_colon()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test\n"
         "    properties\n"
         "        count Integer\n"
@@ -396,20 +408,21 @@ void test_parse_element_error_property_expected_colon()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected colon");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected colon");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_error_property_expected_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test\n"
         "    properties\n"
         "        count:\n"
@@ -417,164 +430,173 @@ void test_parse_element_error_property_expected_id()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected id");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_error_children_expected_end()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test\n"
         "    children\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected end");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected end");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_enumerate_error_expected_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum\n"
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected id");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_enumerate_error_expected_end()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Ast_type\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected end");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected end");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_value_error_expected_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         ":\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected factor");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected factor");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_value_error_enum_expected_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Test_type\n"
         "end\n"
         "Test_type::1\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected id");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_value_error_object_expected_rcb()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "Test {\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected right curly brace");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected right curly brace");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_value_error_object_property_expected_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "Test {\n"
         "   . = 1\n"
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected id");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_value_error_object_property_expected_equal()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "Test {\n"
         "   .a 1\n"
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected equal");
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected equal");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_property_unknown_type()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test\n"
         "   properties\n"
         "        a: Abc\n"
@@ -582,20 +604,21 @@ void test_parse_element_property_unknown_type()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "unknown type: Abc");
+    expect_has_errors(errors);
+    expect_source_error(errors, "unknown type: Abc");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_property_type_not_element()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "let Abc = 1\n"
         "element Test\n"
         "   properties\n"
@@ -604,20 +627,21 @@ void test_parse_element_property_type_not_element()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "type is not an element or enum type: Abc");
+    expect_has_errors(errors);
+    expect_source_error(errors, "type is not an element or enum type: Abc");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_child_unknown_type()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Test\n"
         "   children\n"
         "        Abc\n"
@@ -625,20 +649,21 @@ void test_parse_element_child_unknown_type()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "unknown type: Abc");
+    expect_has_errors(errors);
+    expect_source_error(errors, "unknown type: Abc");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_element_child_type_not_an_element_type()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "let Abc = 1\n"
         "element Test\n"
         "   children\n"
@@ -647,20 +672,21 @@ void test_parse_element_child_type_not_an_element_type()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "type is not an element type: Abc");
+    expect_has_errors(errors);
+    expect_source_error(errors, "type is not an element type: Abc");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_enum_error_duplicate_enum_value()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Symbol_type\n"
         "   Element\n"
         "   Enumerate\n"
@@ -670,41 +696,44 @@ void test_parse_enum_error_duplicate_enum_value()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "duplicate enum value: Symbol_type::Info");
+    expect_has_errors(errors);
+    expect_source_error(errors, "duplicate enum value: Symbol_type::Info");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_object_method_call()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "let a = Foo {}\n"
         "Bar {\n"
         "    .@child_of(a)\n"
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
 
-    expect_no_errors(pr.errors);
+    expect_no_errors(errors);
 
     /* root */
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* let */
-    Cent_ast* let = Cent_ast_get(pr.root, 0);
+    Cent_ast* let = Cent_ast_get(root, 0);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, Cent_ast_type_let, "type let");
 
     /* Bar object */
-    Cent_ast* bar = Cent_ast_get(pr.root, 1);
+    Cent_ast* bar = Cent_ast_get(root, 1);
     assert_ptr(bar, "ptr bar");
     expect_int_equal(bar->type, Cent_ast_type_expr_object, "type bar");
 
@@ -724,36 +753,38 @@ void test_parse_object_method_call()
     expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
     expect_str(&value->text, "a", "text id");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_object_method_call2()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "let a = Foo {}\n"
         "Bar {\n"
         "    .@property_of(a, \"b\")\n"
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
 
-    expect_no_errors(pr.errors);
+    expect_no_errors(errors);
 
     /* root */
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* let */
-    Cent_ast* let = Cent_ast_get(pr.root, 0);
+    Cent_ast* let = Cent_ast_get(root, 0);
     assert_ptr(let, "ptr assign");
     expect_int_equal(let->type, Cent_ast_type_let, "type let");
 
     /* Bar object */
-    Cent_ast* bar = Cent_ast_get(pr.root, 1);
+    Cent_ast* bar = Cent_ast_get(root, 1);
     assert_ptr(bar, "ptr bar");
     expect_int_equal(bar->type, Cent_ast_type_expr_object, "type bar");
 
@@ -779,30 +810,32 @@ void test_parse_object_method_call2()
     expect_int_equal(name->type, Cent_ast_type_expr_string, "type name");
     expect_str(&name->data.string, "b", "text name");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_function_call()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "Foo {\n"
         "    .b = @file_name()\n"
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
 
-    expect_no_errors(pr.errors);
+    expect_no_errors(errors);
 
     /* root */
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* Foo object */
-    Cent_ast* foo = Cent_ast_get(pr.root, 0);
+    Cent_ast* foo = Cent_ast_get(root, 0);
     assert_ptr(foo, "ptr foo");
     expect_int_equal(foo->type, Cent_ast_type_expr_object, "type foo");
     expect_str(&foo->text, "Foo", "text foo");
@@ -831,15 +864,15 @@ void test_parse_function_call()
         Cent_ast_type_expr_function_file_name,
         "type file_name_call");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_enum_duplicate_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Foo\n"
         "    One\n"
         "    Two\n"
@@ -848,23 +881,24 @@ void test_parse_enum_duplicate_id()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "duplicate enum value: Foo::Two");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "duplicate enum value: Foo::Two");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 4, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_enum_error_could_not_find_enum()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Foo\n"
         "    One\n"
         "    Two\n"
@@ -873,23 +907,24 @@ void test_parse_enum_error_could_not_find_enum()
         "Bar::Two\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "id is not a variable: Bar");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "id is not a variable: Bar");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 6, "line e");
     expect_size_t_equal(e->loc.col, 1, "col e");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_enum_error_could_not_find_enum_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "enum Foo\n"
         "    One\n"
         "    Two\n"
@@ -898,30 +933,31 @@ void test_parse_enum_error_could_not_find_enum_id()
         "Foo::Four\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(pr.errors);
-    struct error* e = expect_source_error(pr.errors, "invalid enum id: Four");
+    expect_has_errors(errors);
+    struct error* e = expect_source_error(errors, "invalid enum id: Four");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 6, "line e");
     expect_size_t_equal(e->loc.col, 6, "col e");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_include()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use types\n"
         "Groceries {\n"
         "    types::Grocery_item::Milk\n"
         "}\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "types.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "types.aken",
         "enum Grocery_item\n"
         "    Milk\n"
         "    Cereal\n"
@@ -931,15 +967,18 @@ void test_parse_include()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_no_errors(pr.errors);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
+
+    expect_no_errors(errors);
 
     /* root */
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* use */
-    Cent_ast* use = Cent_ast_get(pr.root, 0);
+    Cent_ast* use = Cent_ast_get(root, 0);
     assert_ptr(use, "ptr use");
     expect_int_equal(use->type, Cent_ast_type_use, "type use");
 
@@ -949,7 +988,7 @@ void test_parse_include()
     expect_str(&module->text, "types", "text module");
 
     /* Groceries object */
-    Cent_ast* object = Cent_ast_get(pr.root, 1);
+    Cent_ast* object = Cent_ast_get(root, 1);
     assert_ptr(object, "ptr object");
     expect_int_equal(object->type, Cent_ast_type_expr_object, "type object");
     expect_str(&object->text, "Groceries", "text object");
@@ -978,22 +1017,22 @@ void test_parse_include()
     expect_int_equal(milk->type, Cent_ast_type_id, "type milk");
     expect_str(&milk->text, "Milk", "text milk");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_include_multiple_namespace()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use lib::types\n"
         "Groceries {\n"
         "    lib::types::Grocery_item::Milk\n"
         "}\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "lib/types.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "lib/types.aken",
         "enum Grocery_item\n"
         "    Milk\n"
         "    Cereal\n"
@@ -1003,15 +1042,18 @@ void test_parse_include_multiple_namespace()
         "end\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_no_errors(pr.errors);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
+
+    expect_no_errors(errors);
 
     /* root */
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* use */
-    Cent_ast* use = Cent_ast_get(pr.root, 0);
+    Cent_ast* use = Cent_ast_get(root, 0);
     assert_ptr(use, "ptr use");
     expect_int_equal(use->type, Cent_ast_type_use, "type use");
 
@@ -1026,7 +1068,7 @@ void test_parse_include_multiple_namespace()
     expect_str(&types_mod->text, "types", "text types_mod");
 
     /* Groceries object */
-    Cent_ast* object = Cent_ast_get(pr.root, 1);
+    Cent_ast* object = Cent_ast_get(root, 1);
     assert_ptr(object, "ptr object");
     expect_int_equal(object->type, Cent_ast_type_expr_object, "type object");
     expect_str(&object->text, "Groceries", "text object");
@@ -1060,32 +1102,35 @@ void test_parse_include_multiple_namespace()
     expect_int_equal(milk->type, Cent_ast_type_id, "type milk");
     expect_str(&milk->text, "Milk", "text milk");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_include_value()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use data\n"
         "data::a\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
         "let a = 12597\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_no_errors(pr.errors);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
+
+    expect_no_errors(errors);
 
     /* root */
-    assert_ptr(pr.root, "ptr pr.root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type pr.root");
+    assert_ptr(root, "ptr pr.root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
     /* use */
-    Cent_ast* use = Cent_ast_get(pr.root, 0);
+    Cent_ast* use = Cent_ast_get(root, 0);
     assert_ptr(use, "ptr use");
     expect_int_equal(use->type, Cent_ast_type_use, "type use");
 
@@ -1095,7 +1140,7 @@ void test_parse_include_value()
     expect_str(&data_mod->text, "data", "text data_mod");
 
     /* namespace */
-    Cent_ast* ns = Cent_ast_get(pr.root, 1);
+    Cent_ast* ns = Cent_ast_get(root, 1);
     assert_ptr(ns, "ptr ns");
     expect_int_equal(ns->type, Cent_ast_type_namespace, "type ns");
 
@@ -1109,130 +1154,143 @@ void test_parse_include_value()
     expect_int_equal(a->type, Cent_ast_type_id, "type a");
     expect_str(&a->text, "a", "text a");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_include_value_error()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use data\n"
         "data::b\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
         "let a = 12597\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "not a valid id: b");
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    test_parse_teardown(&pd, &pr);
+    expect_has_errors(errors);
+    expect_source_error(errors, "not a valid id: b");
+
+    test_parse_teardown(ct);
 }
 
 void test_parse_include_glob()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use data::*\n"
         "a\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
         "let a = 12597\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_no_errors(pr.errors);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    test_parse_teardown(&pd, &pr);
+    expect_no_errors(errors);
+
+    test_parse_teardown(ct);
 }
 
 void test_parse_include_error_expected_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use 1::2\n"
         "a\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "1/2.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "1/2.aken",
         "a = 12597\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    test_parse_teardown(&pd, &pr);
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected id");
+
+    test_parse_teardown(ct);
 }
 
 void test_parse_namespace_error_expected_id()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use lib::data\n"
         "1::a\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "lib/data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.aken",
         "a = 12597\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    test_parse_teardown(&pd, &pr);
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected id");
+
+    test_parse_teardown(ct);
 }
 
 void test_parse_namespace_error_expected_id2()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use lib::data\n"
         "data::1\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "lib/data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.aken",
         "a = 12597\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "expected id");
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    test_parse_teardown(&pd, &pr);
+    expect_has_errors(errors);
+    expect_source_error(errors, "expected id");
+
+    test_parse_teardown(ct);
 }
 
 void test_parse_let()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "let a = 45\n"
         "a\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_no_errors(pr.errors);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
+    
+    expect_no_errors(errors);
 
-    assert_ptr(pr.root, "ptr root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type root");
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type root");
 
-    Cent_ast* let = Cent_ast_get(pr.root, 0);
+    Cent_ast* let = Cent_ast_get(root, 0);
     assert_ptr(let, "ptr let");
     expect_int_equal(let->type, Cent_ast_type_let, "type let");
 
@@ -1247,91 +1305,100 @@ void test_parse_let()
     expect_int_equal(number->number_type, Cent_number_type_integer, "number type");
     expect_long_long_equal(number->data.integer, 45, "integer number");
 
-    Cent_ast* variable = Cent_ast_get(pr.root, 1);
+    Cent_ast* variable = Cent_ast_get(root, 1);
     assert_ptr(variable, "ptr variable");
     expect_int_equal(variable->type, Cent_ast_type_expr_variable, "type variable");
     expect_str(&variable->text, "a", "text variable");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse_let_error_shadow_type()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "element Foo\n"
         "end\n"
         "let Foo = 45\n"
         "Foo\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "shadowing of type: Foo");
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    test_parse_teardown(&pd, &pr);
+    expect_has_errors(errors);
+    expect_source_error(errors, "shadowing of type: Foo");
+
+    test_parse_teardown(ct);
 }
 
 void test_parse_let_error_shadow_module()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "use base\n"
         "let base = 45\n"
         "base\n"
     );
 
-    test_parse_add_comp_unit(pd.module_obj, "base.aken", "");
+    test_parse_add_comp_unit(ct->module_finder_obj, "base.aken", "");
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "shadowing of module: base");
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    test_parse_teardown(&pd, &pr);
+    expect_has_errors(errors);
+    expect_source_error(errors, "shadowing of module: base");
+
+    test_parse_teardown(ct);
 }
 
 void test_parse_let_error_shadow_local()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "let a = 1\n"
         "let a = 2\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_has_errors(pr.errors);
-    expect_source_error(pr.errors, "shadowing of local variable: a");
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
 
-    test_parse_teardown(&pd, &pr);
+    expect_has_errors(errors);
+    expect_source_error(errors, "shadowing of local variable: a");
+
+    test_parse_teardown(ct);
 }
 
 void test_parse_object_let()
 {
     test_name(__func__);
 
-    Cent_parse_data pd;
-    test_parse_setup(&pd,
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
         "Foo {\n"
         "    let bar = Bar {}\n"
         "    bar\n"
         "}\n"
     );
 
-    Cent_parse_result pr = Cent_parse(&pd);
-    expect_no_errors(pr.errors);
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
+    
+    expect_no_errors(errors);
 
     /* root */
-    assert_ptr(pr.root, "ptr root");
-    expect_int_equal(pr.root->type, Cent_ast_type_stmts, "type root");
+    assert_ptr(root, "ptr root");
+    expect_int_equal(root->type, Cent_ast_type_stmts, "type root");
 
     /* line 1 */
-    Cent_ast* foo = Cent_ast_get(pr.root, 0);
+    Cent_ast* foo = Cent_ast_get(root, 0);
     assert_ptr(foo, "ptr foo");
     expect_int_equal(foo->type, Cent_ast_type_expr_object, "type foo");
 
@@ -1359,7 +1426,7 @@ void test_parse_object_let()
     expect_int_equal(bar_variable->type, Cent_ast_type_expr_variable, "type bar_variable");
     expect_str(&bar_variable->text, "bar", "text bar_variable");
 
-    test_parse_teardown(&pd, &pr);
+    test_parse_teardown(ct);
 }
 
 void test_parse()
@@ -1393,23 +1460,23 @@ void test_parse()
     test_parse_enum_duplicate_id();
     test_parse_enum_error_could_not_find_enum();
     test_parse_enum_error_could_not_find_enum_id();
-
+    
     test_parse_include();
     test_parse_include_multiple_namespace();
-
+    
     test_parse_include_value();
     test_parse_include_value_error();
-
+    
     test_parse_include_glob();
     test_parse_include_error_expected_id();
-
+    
     test_parse_namespace_error_expected_id();
     test_parse_namespace_error_expected_id2();
-
+    
     test_parse_let();
     test_parse_let_error_shadow_type();
     test_parse_let_error_shadow_module();
     test_parse_let_error_shadow_local();
-
+    
     test_parse_object_let();
 }
