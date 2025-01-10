@@ -13,8 +13,14 @@ typedef struct Cent_comp_table {
 
 typedef void (*Cent_comp_table_func)(Cent_comp_unit* cu);
 typedef void (*Cent_comp_table_func_name)(struct buffer* name, Cent_comp_unit* cu);
-void Cent_comp_table_init(Cent_comp_table* table);
-void Cent_comp_table_create(Cent_comp_table** table);
+void Cent_comp_table_init(
+    Cent_comp_table* ct,
+    void* module_finder_obj,
+    Cent_module_vtable* module_finder_vtable);
+void Cent_comp_table_create(
+    Cent_comp_table** ct,
+    void* module_finder_obj,
+    Cent_module_vtable* module_finder_vtable);
 void Cent_comp_table_destroy(Cent_comp_table* table);
 void Cent_comp_table_add(Cent_comp_table* table, struct buffer* name, Cent_comp_unit *unit);
 void Cent_comp_table_add_str(Cent_comp_table* table, char* name, Cent_comp_unit *unit);

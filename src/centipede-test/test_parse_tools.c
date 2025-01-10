@@ -27,13 +27,11 @@ void test_parse_add_comp_unit(Cent_module_string* ms, char* name, char* s)
 
 void test_parse_setup(Cent_parse_data* pd, char* s)
 {
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create(&ct);
-
     Cent_module_string* ms = NULL;
     Cent_module_string_create(&ms);
-    ct->module_finder_obj = ms;
-    ct->module_finder_vtable = ms->vtable;
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create(&ct, ms, ms->vtable);
 
     String_slice name_slice;
     name_slice.p = "**string**";

@@ -128,10 +128,8 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     pd->module_vtable = mf->vtable;
 
     Cent_comp_table* ct = NULL;
-    Cent_comp_table_create(&ct);
+    Cent_comp_table_create(&ct, mf, mf->vtable);
     Cent_comp_table_add(ct, file_name, cu);
-    ct->module_finder_obj = mf;
-    ct->module_finder_vtable = mf->vtable;
     pd->comp_table = ct;
 
     Cent_parse_result pr = Cent_parse(pd);
