@@ -20,7 +20,7 @@ software engineers more than dynamically typed or gradually typed
 * Meta programming: generics and macros
 * Object-Oriented programming: methods and traits
 * No nulls:  Rust-like enums and matching
-* Garbage collection to manage memory
+* Memory management with allocators including arena allocators, garbage collection, and user defined allocators
 * Series / Vector data types for financial data
 * Support for trading indicators, screeners, and simulations
 
