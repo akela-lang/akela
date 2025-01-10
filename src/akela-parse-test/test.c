@@ -110,10 +110,6 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     Cent_comp_unit* cu = NULL;
     Cent_comp_unit_create(&cu, input, input->input_vtable);
 
-    buffer_copy(file_name, &cu->name);
-    cu->input = input;
-    cu->input_vtable = input->input_vtable;
-
     String_slice slice;
     slice.p = file_name->buf;
     slice.size = file_name->size;

@@ -10,7 +10,6 @@ void Cent_comp_unit_init(
     void* input,
     InputUnicodeVTable* input_vtable)
 {
-    buffer_init(&cu->name);
     cu->status = Cent_comp_unit_status_start;
     error_list_init(&cu->errors);
     cu->input = input;
@@ -28,7 +27,6 @@ void Cent_comp_unit_create(Cent_comp_unit **cu, void* input, InputUnicodeVTable*
 
 void Cent_comp_unit_destroy(Cent_comp_unit* cu)
 {
-    buffer_destroy(&cu->name);
     error_list_destroy(&cu->errors);
     Cent_lex_data_destroy(&cu->ld);
 }

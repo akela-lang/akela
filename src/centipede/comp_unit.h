@@ -13,7 +13,6 @@ typedef enum Cent_comp_unit_status {
 } Cent_comp_unit_status;
 
 typedef struct Cent_comp_unit {
-    struct buffer name;
     Cent_comp_unit_status status;
     void* pd;
     void* input;

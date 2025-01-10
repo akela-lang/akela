@@ -73,7 +73,5 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct buffer* na
     cu->input = data.input;
     cu->input_vtable = data.input_vtable;
 
-    buffer_copy(name, &cu->name);
-
     return cu;
 }
