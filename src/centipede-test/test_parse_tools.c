@@ -56,12 +56,10 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     Cent_comp_unit* cu = NULL;
     Cent_comp_unit_create(&cu, data.input, data.input_vtable);
 
-    Cent_parse_data_init(pd, &cu->errors);
+    Cent_parse_data_init(pd, &cu->errors, &cu->ld);
     pd->module_obj = ms;
     pd->module_vtable = ms->vtable;
     pd->comp_table = ct;
-
-    pd->ld = &cu->ld;
     pd->file_name = name_slice;
 }
 

@@ -32,8 +32,8 @@ typedef struct Cent_namespace_result {
     Cent_ast* node;
 } Cent_namespace_result;
 
-void Cent_parse_data_init(Cent_parse_data *pd, struct error_list* errors);
-void Cent_parse_data_create(Cent_parse_data **pd, struct error_list* errors);
+void Cent_parse_data_init(Cent_parse_data *pd, struct error_list* errors, Cent_lex_data *ld);
+void Cent_parse_data_create(Cent_parse_data **pd, struct error_list* errors, Cent_lex_data *ld);
 
 void Cent_parse_result_init(Cent_parse_result *pr, struct error_list* errors);
 void Cent_parse_result_create(Cent_parse_result **pr, struct error_list* errors);

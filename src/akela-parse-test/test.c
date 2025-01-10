@@ -107,9 +107,6 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     InputUnicodeFile* input = NULL;
     InputUnicodeFileCreate(&input, fp);
 
-    struct error_list* errors;
-    error_list_create(&errors);
-
     Cent_comp_unit* cu = NULL;
     Cent_comp_unit_create(&cu, input, input->input_vtable);
 
@@ -117,17 +114,12 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     cu->input = input;
     cu->input_vtable = input->input_vtable;
 
-    Cent_lex_data* ld = NULL;
-    Cent_lex_data_create(&ld, errors, input, input->input_vtable);
-
     String_slice slice;
     slice.p = file_name->buf;
     slice.size = file_name->size;
 
     Cent_parse_data* pd = NULL;
-    Cent_parse_data_create(&pd, &cu->errors);
-    pd->ld = ld;
-    pd->errors = errors;
+    Cent_parse_data_create(&pd, &cu->errors, &cu->ld);
     pd->file_name = slice;
 
     Cent_module_file* mf = NULL;

@@ -1,9 +1,9 @@
 #include "parse_data.h"
 #include "zinc/memory.h"
 
-void Cent_parse_data_init(Cent_parse_data *pd, struct error_list* errors)
+void Cent_parse_data_init(Cent_parse_data *pd, struct error_list* errors, Cent_lex_data* ld)
 {
-    pd->ld = NULL;
+    pd->ld = ld;
     pd->lookahead = NULL;
     pd->top = NULL;
     pd->file_name.p = NULL;
@@ -14,10 +14,10 @@ void Cent_parse_data_init(Cent_parse_data *pd, struct error_list* errors)
     pd->errors = errors;
 }
 
-void Cent_parse_data_create(Cent_parse_data **pd, struct error_list* errors)
+void Cent_parse_data_create(Cent_parse_data **pd, struct error_list* errors, Cent_lex_data* ld)
 {
     malloc_safe((void**)pd, sizeof(Cent_parse_data));
-    Cent_parse_data_init(*pd, errors);
+    Cent_parse_data_init(*pd, errors, ld);
 }
 
 void Cent_parse_result_init(Cent_parse_result *pr, struct error_list* errors)
