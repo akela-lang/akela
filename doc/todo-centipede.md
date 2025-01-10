@@ -1,10 +1,4 @@
 # Centipede Todo
-* comp unit
-  * parse data
-  * name
-  * status
-  * input
-  * error list
 * comp table
   * table of comp units
   * primary comp unit

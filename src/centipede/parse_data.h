@@ -8,8 +8,6 @@
 #include "environment.h"
 #include "ast.h"
 #include "zinc/String_slice.h"
-#include "comp_unit.h"
-#include "comp_table.h"
 #include "module.h"
 
 typedef struct Cent_parse_data {
@@ -18,7 +16,7 @@ typedef struct Cent_parse_data {
     Cent_token* lookahead;
     Cent_environment* top;
     String_slice file_name;
-    Cent_comp_table* comp_table;
+    void* comp_table;
     void* module_obj;
     Cent_module_vtable* module_vtable;
 } Cent_parse_data;

@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "ast.h"
 #include "parse_tools.h"
+#include "comp_table.h"
 
 Cent_environment* Cent_module_dest_env = NULL;
 

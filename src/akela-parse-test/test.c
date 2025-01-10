@@ -13,6 +13,7 @@
 #include "centipede/parse.h"
 #include "centipede/build.h"
 #include "centipede/module_file.h"
+#include "centipede/comp_table.h"
 
 #define NAME "akela-parse-test"
 
@@ -111,6 +112,8 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
 
     Cent_comp_unit* cu = NULL;
     Cent_comp_unit_create(&cu);
+
+    buffer_copy(file_name, &cu->name);
     cu->errors = errors;
     cu->input = input;
     cu->input_vtable = input->input_vtable;

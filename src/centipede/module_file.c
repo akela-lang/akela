@@ -54,6 +54,7 @@ Cent_comp_unit* Cent_module_file_find(Cent_module_file* mf, struct buffer* name)
         if (fp) {
             Cent_comp_unit* cu = NULL;
             Cent_comp_unit_create(&cu);
+            buffer_copy(name, &cu->name);
             struct error_list* errors = NULL;
             error_list_create(&errors);
             cu->errors = errors;

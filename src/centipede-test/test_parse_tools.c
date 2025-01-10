@@ -1,5 +1,6 @@
 #include <string.h>
 #include <string.h>
+#include <akela/comp_unit.h>
 
 #include "zinc/unit_test.h"
 #include "centipede/parse.h"
@@ -7,6 +8,7 @@
 #include "zinc/input_unicode_string.h"
 #include "zinc/error.h"
 #include "centipede/module_string.h"
+#include "centipede/comp_table.h"
 
 void test_parse_add_comp_unit(Cent_parse_data* pd, char* name, char* s)
 {
@@ -72,6 +74,7 @@ void test_parse_teardown_comp_unit(Cent_comp_unit* cu)
     error_list_destroy(errors);
     free(errors);
 
+    Cent_comp_unit_destroy(cu);
     free(cu);
 }
 
