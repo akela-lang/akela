@@ -4,6 +4,7 @@
 #include "zinc/input_unicode.h"
 #include "zinc/hash.h"
 #include "parse_data.h"
+#include "lex_data.h"
 
 typedef enum Cent_comp_unit_status {
     Cent_comp_unit_status_start,
@@ -18,6 +19,7 @@ typedef struct Cent_comp_unit {
     void* input;
     InputUnicodeVTable* input_vtable;
     struct error_list errors;
+    Cent_lex_data ld;
     Cent_parse_result pr;
     Cent_value* value;
 } Cent_comp_unit;

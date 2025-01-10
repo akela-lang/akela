@@ -3,6 +3,7 @@
 #include "parse_data.h"
 #include "parse.h"
 #include "build.h"
+#include "lex_data.h"
 
 void Cent_comp_unit_init(
     Cent_comp_unit *cu,
@@ -14,6 +15,7 @@ void Cent_comp_unit_init(
     error_list_init(&cu->errors);
     cu->input = input;
     cu->input_vtable = input_vtable;
+    Cent_lex_data_init(&cu->ld, &cu->errors, input, input_vtable);
     cu->pd = NULL;
     cu->value = NULL;
 }
@@ -28,6 +30,7 @@ void Cent_comp_unit_destroy(Cent_comp_unit* cu)
 {
     buffer_destroy(&cu->name);
     error_list_destroy(&cu->errors);
+    Cent_lex_data_destroy(&cu->ld);
 }
 
 void Cent_comp_table_parse(Cent_comp_unit* cu)
