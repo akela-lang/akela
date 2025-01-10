@@ -38,7 +38,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     }
 
     buffer_copy_str(&path, ".aken");
-    Cent_comp_unit* cu = Cent_comp_table_find_unit(pd->comp_table, &path);
+    Cent_comp_unit* cu = Cent_comp_table_find_unit(pd->ct, &path);
     if (!cu) {
         error_list_set(pd->errors, &n->loc, "could not find module: %b", &path);
         n->has_error = true;
@@ -47,7 +47,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     assert(cu->input);
     assert(cu->input_vtable);
 
-    Cent_comp_table_add(pd->comp_table, &path, cu);
+    Cent_comp_table_add(pd->ct, &path, cu);
 
     String_slice file_name;
     file_name.p = path.buf;
@@ -56,10 +56,10 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     /* parse and build module */
     Cent_parse_data* pd2 = NULL;
     Cent_parse_data_create(&pd2, &cu->errors, &cu->ld, file_name);
-    pd2->comp_table = pd->comp_table;
+    pd2->ct = pd->ct;
+    pd2->cu = pd->cu;
     pd2->module_obj = pd->module_obj;
     pd2->module_vtable = pd->module_vtable;
-    pd2->errors = &cu->errors;
 
     Cent_parse_result pr = Cent_parse(pd2);
     if (pr.errors) {

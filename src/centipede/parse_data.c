@@ -12,7 +12,8 @@ void Cent_parse_data_init(
     pd->top = NULL;
     pd->file_name.p = NULL;
     pd->file_name.size = 0;
-    pd->comp_table = NULL;
+    pd->cu = NULL;
+    pd->ct = NULL;
     pd->module_obj = NULL;
     pd->module_vtable = NULL;
     pd->errors = errors;

@@ -21,6 +21,7 @@ typedef struct Cent_comp_unit {
     Cent_lex_data ld;
     Cent_parse_result pr;
     Cent_value* value;
+    void* ct;
 } Cent_comp_unit;
 
 void Cent_comp_unit_init(Cent_comp_unit *cu, void* input, InputUnicodeVTable* input_vtable);

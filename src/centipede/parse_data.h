@@ -16,7 +16,8 @@ typedef struct Cent_parse_data {
     Cent_token* lookahead;
     Cent_environment* top;
     String_slice file_name;
-    void* comp_table;
+    void* cu;
+    void* ct;
     void* module_obj;
     Cent_module_vtable* module_vtable;
 } Cent_parse_data;

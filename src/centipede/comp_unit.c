@@ -17,6 +17,7 @@ void Cent_comp_unit_init(
     Cent_lex_data_init(&cu->ld, &cu->errors, input, input_vtable);
     cu->pd = NULL;
     cu->value = NULL;
+    cu->ct = NULL;
 }
 
 void Cent_comp_unit_create(Cent_comp_unit **cu, void* input, InputUnicodeVTable* input_vtable)

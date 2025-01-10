@@ -57,7 +57,7 @@ void test_parse_setup(Cent_parse_data* pd, char* s)
     Cent_parse_data_init(pd, &cu->errors, &cu->ld, file_name);
     pd->module_obj = ms;
     pd->module_vtable = ms->vtable;
-    pd->comp_table = ct;
+    pd->ct = ct;
 }
 
 void test_parse_teardown_comp_unit(Cent_comp_unit* cu)
@@ -74,9 +74,9 @@ void test_parse_teardown_comp_unit(Cent_comp_unit* cu)
 
 void test_parse_teardown(Cent_parse_data* pd, Cent_parse_result* pr)
 {
-    Cent_comp_table_map(pd->comp_table, test_parse_teardown_comp_unit);
-    Cent_comp_table_destroy(pd->comp_table);
-    free(pd->comp_table);
+    Cent_comp_table_map(pd->ct, test_parse_teardown_comp_unit);
+    Cent_comp_table_destroy(pd->ct);
+    free(pd->ct);
 
     bool need_teardown = Cent_value_destroy_setup();
     Cent_ast_destroy(pr->root);
