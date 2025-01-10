@@ -76,6 +76,8 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
 
     Cent_property_type* prop_type = hash_table_get(&object_element->properties, name);
 
+    if (!prop_type) return;
+
     if (prop_type->type == Cent_types_element) {
         Cent_element_type* prop_element = prop_type->data.et;
 

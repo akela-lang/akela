@@ -50,7 +50,7 @@ Test_suite {
 
         # line 1
         let let_stmt = Ast_node {
-            @child_of(root)
+            .@child_of(root)
             .type = Ast_type::Let
         }
 
@@ -95,6 +95,7 @@ Test_suite {
             }
             .seq = 5            # search for ancestor environment with symbol
                                 # 'a' that has a sequence number is less than 5
+        }
 
         let add_number = Ast_node {
             .@child_of(add)

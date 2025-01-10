@@ -6,6 +6,7 @@
 typedef struct Cent_module_file {
     struct buffer dir_path;
     Cent_module_find find;
+    Cent_module_vtable* vtable;
 } Cent_module_file;
 
 extern Cent_module_vtable Cent_module_file_vtable;

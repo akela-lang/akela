@@ -253,10 +253,8 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
         n->type = Cent_ast_type_expr_function_file_name;
     } else {
         n->type = Cent_ast_type_none;
-        if (id->builtin_type == Cent_builtin_type_none) {
-            error_list_set(pd->errors, &id->loc, "invalid builtin function");
-            n->has_error = true;
-        }
+        error_list_set(pd->errors, &id->loc, "invalid builtin function");
+        n->has_error = true;
     }
 
     Cent_token* lp = NULL;

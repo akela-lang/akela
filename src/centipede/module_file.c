@@ -20,6 +20,8 @@ void Cent_module_file_init(Cent_module_file *mf, struct buffer* dir_path)
 {
     buffer_copy(dir_path, &mf->dir_path);
     buffer_finish(&mf->dir_path);
+    mf->find = Cent_module_file_find;
+    mf->vtable = &Cent_module_file_vtable;
 }
 
 void Cent_module_file_create(Cent_module_file** mf, struct buffer* dir_path)
@@ -53,10 +55,12 @@ Cent_comp_unit* Cent_module_file_find(Cent_module_file* mf, struct buffer* name)
             Cent_comp_unit* cu = NULL;
             Cent_comp_unit_create(&cu);
             struct error_list* errors = NULL;
+            error_list_create(&errors);
             cu->errors = errors;
             InputUnicodeFile* input = NULL;
             InputUnicodeFileCreate(&input, fp);
-            cu->errors = errors;
+            cu->input = input;
+            cu->input_vtable = input->input_vtable;
             return cu;
         }
     }

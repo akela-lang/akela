@@ -31,7 +31,7 @@ element Source
     end
 end
 
-element Errors {
+element Errors
     children
         Error
     end
@@ -62,7 +62,7 @@ end
 
 element Symbol
     properties
-        type: Symbol_element
+        type: Symbol_type
         tu: Type_use
         seq: Integer        # sequence number for declared variables
     end
@@ -74,7 +74,7 @@ enum Symbol_type
     Info
 end
 
-element Ast {
+element Ast
     properties
         type: Ast_type `required`
         value: String
@@ -95,21 +95,26 @@ enum Ast_type
 end
 
 element Type_use
-    td: Type_def
-    dim: Integer        # array dimension if td is type Array
+    properties
+        td: Type_def
+        dim: Integer        # array dimension if td is type Array
+    end
 end
 
 element Type_def
-    name: String required
-    type: Type_def_element required
-    bit_count: Integer
-    is_signed: Bool
+    properties
+        name: String `required`
+        type: Type_def_type `required`
+        bit_count: Integer
+        is_signed: Bool
+    end
 end
 
-enum Type_def_element
+enum Type_def_type
     Integer
     Float
-    Array
+    String
+    Bool
 end
 
 # built-in element defs
@@ -141,22 +146,22 @@ let _Bool = Type_def {
 let env0 = Environment {
     .symbols = Symbols {
         # built-in types
-        .r#Int32 = Symbol {
+        .Int32 = Symbol {
             .type = Symbol_type::Type
             .td = _Int32
             .seq = 0
         }
-        .r#Real64 = Symbol {
+        .Real64 = Symbol {
             .type = Symbol_type::Type
             .td = _Real64
             .seq = 1
         }
-        .r#String = Symbol {
+        .String = Symbol {
             .type = Symbol_type::Type
             .td = _String
             .seq = 2
         }
-        .r#Bool = Symbol {
+        .Bool = Symbol {
             .type = Symbol_type::Type
             .td = _Bool
             .seq = 3

@@ -12,13 +12,14 @@
 #include "centipede/lex_data.h"
 #include "centipede/parse.h"
 #include "centipede/build.h"
+#include "centipede/module_file.h"
 
 #define NAME "akela-parse-test"
 
 bool Parse_test_validate_directory(char* path);
 void Parse_test_append_path(struct buffer* bf, char* path);
 void Parse_test_get_files(char* dir_name);
-void Parse_test_test_case(struct buffer* path, struct buffer* file_name);
+void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct buffer* file_name);
 
 int main(int argc, char **argv)
 {
@@ -63,6 +64,9 @@ void Parse_test_append_path(struct buffer* bf, char* path)
 
 void Parse_test_get_files(char* dir_name)
 {
+    struct buffer dir_path;
+    buffer_init(&dir_path);
+    buffer_copy_str(&dir_path, dir_name);
     DIR* d;
     struct dirent* dir;
     d = opendir(dir_name);
@@ -82,7 +86,7 @@ void Parse_test_get_files(char* dir_name)
 
                 struct stat sb;
                 if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
-                    Parse_test_test_case(&path, &file_name);
+                    Parse_test_test_case(&dir_path, &path, &file_name);
                 }
 
                 buffer_destroy(&path);
@@ -90,9 +94,11 @@ void Parse_test_get_files(char* dir_name)
             }
         }
     }
+
+    buffer_destroy(&dir_path);
 }
 
-void Parse_test_test_case(struct buffer* path, struct buffer* file_name)
+void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct buffer* file_name)
 {
     printf("%s\n", path->buf);
 
@@ -126,6 +132,11 @@ void Parse_test_test_case(struct buffer* path, struct buffer* file_name)
     pd->errors = errors;
     pd->file_name = slice;
     pd->comp_table = ct;
+
+    Cent_module_file* mf = NULL;
+    Cent_module_file_create(&mf, dir_path);
+    pd->module_obj = mf;
+    pd->module_vtable = mf->vtable;
 
     Cent_parse_result pr = Cent_parse(pd);
     if (!pr.errors->head) {
