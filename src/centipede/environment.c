@@ -15,10 +15,17 @@ void Cent_environment_create(Cent_environment** environment)
     Cent_environment_init(*environment);
 }
 
-void Cent_environment_destroy(Cent_environment* environment)
+void Cent_environment_destroy(Cent_environment* env)
 {
-    hash_table_map(&environment->symbols, (hash_table_func)Cent_symbol_free);
-    hash_table_destroy(&environment->symbols);
+    hash_table_map(&env->symbols, (hash_table_func)Cent_symbol_free);
+    hash_table_destroy(&env->symbols);
+}
+
+void Cent_environment_free(Cent_environment* env)
+{
+    hash_table_map(&env->symbols, (hash_table_func)Cent_symbol_free);
+    hash_table_destroy(&env->symbols);
+    free(env);
 }
 
 void Cent_environment_add_symbol(Cent_environment* environment, struct buffer* name, Cent_symbol* symbol)

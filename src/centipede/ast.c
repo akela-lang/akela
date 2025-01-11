@@ -40,8 +40,11 @@ void Cent_ast_destroy(Cent_ast *ast)
         buffer_destroy(&ast->text);
 
         if (ast->env) {
-            Cent_environment_destroy(ast->env);
-            free(ast->env);
+            /* do not destroy shared base */
+            if (ast->env->prev) {
+                Cent_environment_destroy(ast->env);
+                free(ast->env);
+            }
         }
 
         Cent_ast* p = ast->head;

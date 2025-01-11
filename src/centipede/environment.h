@@ -11,7 +11,7 @@ typedef struct Cent_environment {
 
 void Cent_environment_init(Cent_environment* environment);
 void Cent_environment_create(Cent_environment** environment);
-void Cent_environment_destroy(Cent_environment* environment);
+void Cent_environment_destroy(Cent_environment* env);
 void Cent_environment_add_symbol(Cent_environment* environment, struct buffer* name, Cent_symbol* symbol);
 void Cent_environment_add_symbol_str(Cent_environment* environment, char* name, Cent_symbol* symbol);
 Cent_symbol* Cent_environment_get(Cent_environment* top, struct buffer* name);

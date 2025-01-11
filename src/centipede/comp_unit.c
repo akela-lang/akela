@@ -45,6 +45,9 @@ void Cent_comp_unit_create(
 
 void Cent_comp_unit_destroy(Cent_comp_unit* cu)
 {
+    Cent_ast_destroy(cu->pr.root);
+    free(cu->pr.root);
+
     error_list_destroy(&cu->errors);
     Cent_lex_data_destroy(&cu->ld);
 }

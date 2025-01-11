@@ -75,7 +75,11 @@ void test_parse_teardown_input(Cent_comp_unit* cu)
 
 void test_parse_teardown(Cent_comp_table* ct)
 {
+    Cent_value_destroy_setup();
+
     Cent_comp_table_map(ct, test_parse_teardown_input);
     Cent_comp_table_destroy(ct);
     free(ct);
+
+    Cent_value_destroy_teardown();
 }
