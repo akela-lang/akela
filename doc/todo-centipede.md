@@ -1,3 +1,4 @@
 # Centipede Todo
 * fix memory leaks
-* error is value is not connected to enclosing object
+* dispose of values not connected to enclosing tree
+* error if value is not connected to enclosing object

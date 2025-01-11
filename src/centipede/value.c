@@ -104,18 +104,20 @@ void Cent_value_destroy_teardown()
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_value_destroy(Cent_value *value)
 {
-    buffer_destroy(&value->name);
-    if (Cent_value_hash_map) {
-        Cent_value* value2 = Hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
-        if (value2) {
-            return;
+    if (value) {
+        if (Cent_value_hash_map) {
+            Cent_value* value2 = Hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
+            if (value2) {
+                return;
+            }
         }
-    }
 
-    Cent_data_destroy(&value->data, value->type);
+        buffer_destroy(&value->name);
+        Cent_data_destroy(&value->data, value->type);
 
-    if (Cent_value_hash_map) {
-        Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
+        if (Cent_value_hash_map) {
+            Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
+        }
     }
 }
 
