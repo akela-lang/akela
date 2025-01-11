@@ -17,6 +17,7 @@ void Cent_module_create(Cent_module** mod)
 
 void Cent_module_destroy(Cent_module* mod)
 {
+    hash_table_map(&mod->submodules, Cent_module_free);
     hash_table_destroy(&mod->submodules);
 }
 
