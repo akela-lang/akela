@@ -10,15 +10,6 @@
 
 void test_parse_add_comp_unit(Cent_module_string* ms, char* name, char* s)
 {
-    size_t len = strlen(s);
-
-    Vector* v = NULL;
-    VectorCreate(&v, sizeof(char));
-    VectorAdd(v, s, len);
-
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, v);
-
     Cent_module_string_add_module_str_str(ms, name, s);
 }
 
@@ -72,12 +63,20 @@ void test_parse_teardown_input(Cent_comp_unit* cu)
     free(input);
 }
 
+void test_parse_teardown_module(Cent_comp_table* ct)
+{
+    Cent_module_string* ms = ct->module_finder_obj;
+    Cent_module_string_destroy(ms);
+    free(ms);
+}
+
 void test_parse_teardown(Cent_comp_table* ct)
 {
     Cent_value_destroy_setup();
 
     Cent_comp_table_map(ct, test_parse_teardown_input);
     Cent_comp_table_destroy(ct);
+    test_parse_teardown_module(ct);
     free(ct);
 
     Cent_value_destroy_teardown();
