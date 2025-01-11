@@ -117,7 +117,7 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
                 &n->loc,
                 "invalid property type: %b--%b--%b",
                 &object_value->name,
-                &name,
+                name,
                 &value->name);
             value->has_error = true;
             n->has_error = true;

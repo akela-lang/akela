@@ -163,7 +163,7 @@ void test_check_value_types_property_error_object()
 
     expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(errors, "invalid property type: Foo");
+    expect_source_error(errors, "invalid property type: Test--source--Foo");
     test_parse_teardown(ct);
 }
 
@@ -229,7 +229,7 @@ void test_check_value_types_property_error_variable_object()
 
     expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(errors, "invalid property type: Foo");
+    expect_source_error(errors, "invalid property type: Test--source--Foo");
     test_parse_teardown(ct);
 }
 
