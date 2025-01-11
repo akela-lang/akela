@@ -56,6 +56,8 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
         if (!Cent_match(pd, Cent_token_double_colon, "expected double colon", &dc, n)) {
             assert(false && "not possible");
         }
+        Cent_token_destroy(dc);
+        free(dc);
 
         b = Cent_parse_factor(pd);
         if (b->type != Cent_ast_type_id) {
