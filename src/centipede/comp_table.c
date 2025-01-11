@@ -27,8 +27,9 @@ void Cent_comp_table_create(
 
 void Cent_comp_table_destroy(Cent_comp_table* table)
 {
-    hash_table_map(&table->ht, Cent_comp_unit_free);
+    hash_table_map(&table->ht, (hash_table_func)Cent_comp_unit_free);
     hash_table_destroy(&table->ht);
+    Cent_environment_destroy(table->base);
 }
 
 void Cent_comp_table_add(Cent_comp_table* table, struct buffer* name, Cent_comp_unit *unit)
