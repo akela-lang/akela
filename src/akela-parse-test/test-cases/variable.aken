@@ -49,18 +49,18 @@ Test_suite {
         }
 
         # line 1
-        let let_stmt = Ast_node {
+        let let_stmt = Ast {
             .@child_of(root)
             .type = Ast_type::Let
         }
 
-        let let_a = Ast_node {
+        let let_a = Ast {
             .@child_of(let_stmt)
             .type = Ast_type::Id
             .value = "a"
         }
 
-        let let_type = Ast_node {
+        let let_type = Ast {
             .@child_of(let_stmt)
             .type = Ast_type::Type
             .tu = Type_use {
@@ -68,7 +68,7 @@ Test_suite {
             }
         }
 
-        let let_number = Ast_node {
+        let let_number = Ast {
             .@child_of(let_stmt)
             .type = Ast_type::Number
             .value = "1"
@@ -78,7 +78,7 @@ Test_suite {
         }
 
         # line 2
-        let add = Ast_node {
+        let add = Ast {
             .@child_of(root)
             .type = Ast_type::Add
             .tu = Type_use {
@@ -86,7 +86,7 @@ Test_suite {
             }
         }
 
-        let add_a = Ast_node {
+        let add_a = Ast {
             .@child_of(add)
             .type = Ast_type::Id
             .value = "a"
@@ -97,7 +97,7 @@ Test_suite {
                                 # 'a' that has a sequence number is less than 5
         }
 
-        let add_number = Ast_node {
+        let add_number = Ast {
             .@child_of(add)
             .type = Ast_type::Number
             .value = "5"

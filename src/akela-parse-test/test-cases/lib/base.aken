@@ -64,6 +64,7 @@ element Symbol
     properties
         type: Symbol_type
         tu: Type_use
+        td: Type_def
         seq: Integer        # sequence number for declared variables
     end
 end

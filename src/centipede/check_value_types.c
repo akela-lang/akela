@@ -5,6 +5,7 @@
 
 void Cent_check_value_types_value(Cent_value* value);
 void Cent_check_value_types_property(struct buffer* name, Cent_value* value);
+void Cent_check_value_types_property2(Cent_value* value);
 void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_value, Cent_value* value);
 
 Cent_parse_result* Cent_check_value_types_pr = NULL;
@@ -38,9 +39,13 @@ void Cent_check_value_types_value(Cent_value* value)
 
     if (value->type == Cent_value_type_dag) {
         Cent_parse_types_object_value = value;
+        buffer_finish(&value->name);
         hash_table_map_name(
             &value->data.dag.properties,
             (hash_table_func_name)Cent_check_value_types_property);
+        hash_table_map(
+            &value->data.dag.properties,
+            (hash_table_func)Cent_check_value_types_property2);
 
         Cent_value* p = value->data.dag.head;
         while (p) {
@@ -52,6 +57,9 @@ void Cent_check_value_types_value(Cent_value* value)
         hash_table_map_name(
             &value->data.dict.properties,
             (hash_table_func_name)Cent_check_value_types_property);
+        hash_table_map(
+            &value->data.dict.properties,
+            (hash_table_func)Cent_check_value_types_property2);
     } else if (value->type == Cent_value_type_list) {
         Cent_value* p = value->data.list.head;
         while (p) {
@@ -75,8 +83,28 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
     Cent_element_type* object_element = object_sym->data.element;
 
     Cent_property_type* prop_type = hash_table_get(&object_element->properties, name);
+    if (!prop_type) {
+        struct buffer name2;
+        buffer_init(&name2);
+        buffer_copy_str(&name2, "_");
+        prop_type = hash_table_get(&object_element->properties, &name2);
+        buffer_destroy(&name2);
+    }
 
-    if (!prop_type) return;
+    buffer_finish(name);
+    if (!prop_type) {
+        Cent_ast* n = value->n;
+        error_list_set(
+            pr->errors,
+            &n->loc,
+            "invalid property type: %b--%b--%b",
+            &object_value->name,
+            name,
+            &value->name);
+        value->has_error = true;
+        n->has_error = true;
+        return;
+    }
 
     if (prop_type->type == Cent_types_element) {
         Cent_element_type* prop_element = prop_type->data.et;
@@ -84,7 +112,13 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
         Cent_symbol* value_sym = Cent_environment_get(top, &value->name);
         if (!value_sym) {
             Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "invalid property type: %b", &value->name);
+            error_list_set(
+                pr->errors,
+                &n->loc,
+                "invalid property type: %b--%b--%b",
+                &object_value->name,
+                &name,
+                &value->name);
             value->has_error = true;
             n->has_error = true;
             return;
@@ -129,7 +163,10 @@ void Cent_check_value_types_property(struct buffer* name, Cent_value* value)
     } else {
         assert(false && "invalid property type type");
     }
+}
 
+void Cent_check_value_types_property2(Cent_value* value)
+{
     Hash_map_size_t* hm = Cent_check_value_types_hm;
     Cent_value* value2 = Hash_map_size_t_get(hm, (size_t)value);
     if (!value2) {
