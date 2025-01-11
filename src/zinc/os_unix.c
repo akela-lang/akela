@@ -323,11 +323,11 @@ int fopen_s(FILE **f, const char *name, const char *mode)
     return ret;
 }
 
-void Zinc_get_cwd()
+void Zinc_get_cwd(struct buffer* cwd)
 {
-    char cwd[PATH_MAX];
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("Current working dir: %s\n", cwd);
+    char buffer[PATH_MAX];
+    if (getcwd(buffer, sizeof(buffer)) != NULL) {
+        buffer_copy_str(cwd, buffer);
     } else {
         perror("getcwd() error");
     }

@@ -15,6 +15,7 @@
 #include "centipede/build.h"
 #include "centipede/module_file.h"
 #include "centipede/comp_table.h"
+#include "zinc/os_unix.h"
 
 #define NAME "akela-parse-test"
 
@@ -45,6 +46,12 @@ bool Parse_test_validate_directory(char* path)
     struct stat sb;
     if (stat(path, &sb) == -1) {
         perror(path);
+        struct buffer cwd;
+        buffer_init(&cwd);
+        Zinc_get_cwd(&cwd);
+        buffer_finish(&cwd);
+        fprintf(stderr, "current working directory: %s\n", cwd.buf);
+        buffer_destroy(&cwd);
         return false;
     }
 
