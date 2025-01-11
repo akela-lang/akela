@@ -57,7 +57,7 @@ void Cent_symbol_destroy(Cent_symbol *sym)
             }
         } else if (sym->type == Cent_symbol_type_module) {
             if (sym->data.module) {
-                Cent_module_destroy(sym->data.module);
+                Cent_module_free(sym->data.module);
             }
         }
     }

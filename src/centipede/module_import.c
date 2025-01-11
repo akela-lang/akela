@@ -62,6 +62,8 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         }
     }
 
+    buffer_destroy(&path);
+
     Cent_value* value = NULL;
     if (!cu->errors.head) {
         Cent_comp_unit_build(cu);
