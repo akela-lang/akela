@@ -11,6 +11,8 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
 
     Cent_token* let = NULL;
     Cent_match(pd, Cent_token_let, "expected let", &let, n);
+    Cent_token_destroy(let);
+    free(let);
 
     Cent_ast* id_node = NULL;
     Cent_ast_create(&id_node);

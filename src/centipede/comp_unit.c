@@ -46,7 +46,7 @@ void Cent_comp_unit_create(
 void Cent_comp_unit_destroy(Cent_comp_unit* cu)
 {
     /* destroy value tree first while next and prev pointers are still valid */
-    Cent_value_destroy(cu->value);
+    Cent_value_free(cu->value);
 
     Cent_ast_destroy(cu->pr.root);
     free(cu->pr.root);
