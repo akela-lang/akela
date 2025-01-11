@@ -49,6 +49,12 @@ void Cent_comp_unit_destroy(Cent_comp_unit* cu)
     Cent_lex_data_destroy(&cu->ld);
 }
 
+void Cent_comp_unit_free(Cent_comp_unit* cu)
+{
+    Cent_comp_unit_destroy(cu);
+    free(cu);
+}
+
 void Cent_comp_unit_parse(Cent_comp_unit* cu)
 {
     if (cu->status == Cent_comp_unit_status_start) {

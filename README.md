@@ -82,7 +82,6 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/json-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/coverage-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/centipede-test
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-parse-test
 
 ## Code Coverage
     ./generate-coverage.sh

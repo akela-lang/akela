@@ -278,6 +278,7 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
     Cent_ast* a = NULL;
     Cent_ast_create(&a);
     a->type = Cent_ast_type_expr_string;
+    Cent_ast_value_set_type(a, Cent_value_type_string);
     buffer_add(&a->data.string, pd->file_name.p, pd->file_name.size);
     Cent_ast_add(n, a);
 
