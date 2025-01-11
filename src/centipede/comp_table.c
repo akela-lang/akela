@@ -27,6 +27,7 @@ void Cent_comp_table_create(
 
 void Cent_comp_table_destroy(Cent_comp_table* table)
 {
+    hash_table_map(&table->ht, Cent_comp_unit_free);
     hash_table_destroy(&table->ht);
 }
 

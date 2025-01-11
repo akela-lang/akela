@@ -61,23 +61,21 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     cu->ct = *ct;
     cu->pd.ct = *ct;
     (*ct)->primary = cu;
+    Cent_comp_table_add(*ct, &name, cu);
 }
 
-void test_parse_teardown_comp_unit(Cent_comp_unit* cu)
+void test_parse_teardown_input(Cent_comp_unit* cu)
 {
     InputUnicodeString* input = cu->input;
     Vector* v = input->text;
     VectorDestroy(v);
     free(v);
     free(input);
-
-    Cent_comp_unit_destroy(cu);
-    free(cu);
 }
 
 void test_parse_teardown(Cent_comp_table* ct)
 {
-    Cent_comp_table_map(ct, test_parse_teardown_comp_unit);
+    Cent_comp_table_map(ct, test_parse_teardown_input);
     Cent_comp_table_destroy(ct);
     free(ct);
 }
