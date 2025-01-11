@@ -53,15 +53,9 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     file_name.p = path.buf;
     file_name.size = path.size;
 
-    /* parse and build module */
-    Cent_parse_data* pd2 = NULL;
-    Cent_parse_data_create(&pd2, &cu->errors, &cu->ld, file_name, pd->base);
-    pd2->ct = pd->ct;
-    pd2->cu = pd->cu;
-
-    Cent_parse_result pr = Cent_parse(pd2);
-    if (pr.errors) {
-        struct error* e = pr.errors->head;
+    Cent_comp_unit_parse(cu);
+    if (&cu->errors.head) {
+        struct error* e = cu->errors.head;
         while (e) {
             error_list_set(pd->errors, &e->loc, "%b: %b", &path, &e->message);
             e = e->next;
@@ -69,13 +63,13 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     }
 
     Cent_value* value = NULL;
-    if (!pr.errors->head) {
-        value = Cent_build(&pr);
+    if (!cu->errors.head) {
+        Cent_comp_unit_build(cu);
     }
 
     if (is_glob) {
         /* copy symbols */
-        Cent_environment* src_env = pr.root->env;
+        Cent_environment* src_env = cu->pr.root->env;
         Cent_module_dest_env = pd->top;
         hash_table_map_name(&src_env->symbols, (hash_table_func_name)Cent_module_copy_symbol);
     } else {
@@ -105,10 +99,10 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         }
 
         /* link environment to last submodule */
-        last_mod->pr = &pr;
+        last_mod->pr = &cu->pr;
         last_mod->value = value;
-        assert(pr.root);
-        assert(pr.root->type == Cent_ast_type_stmts);
-        last_mod->env = pr.root->env;
+        assert(cu->pr.root);
+        assert(cu->pr.root->type == Cent_ast_type_stmts);
+        last_mod->env = cu->pr.root->env;
     }
 }
