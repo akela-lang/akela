@@ -70,7 +70,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
     if (!n->has_error) {
         Cent_symbol* sym = NULL;
         Cent_symbol_create(&sym);
-        sym->type = Cent_symbol_type_variable;
+        Cent_symbol_set_type(sym, Cent_symbol_type_variable);
         sym->data.variable.n = n;
         Cent_environment_add_symbol(pd->top, &id_node->text, sym);
     }

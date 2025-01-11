@@ -44,8 +44,6 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
         ms,
         ms->vtable,
         &name);
-    buffer_destroy(&name);
-
     assert(data.input);
     assert(data.input_vtable);
 
@@ -62,6 +60,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     cu->pd.ct = *ct;
     (*ct)->primary = cu;
     Cent_comp_table_add(*ct, &name, cu);
+    buffer_destroy(&name);
 }
 
 void test_parse_teardown_input(Cent_comp_unit* cu)
