@@ -28,6 +28,7 @@ set(centipede_files
         check_types.c
         parse_let.c
         comp_table.c
+        check_parent.c
 )
 
 add_library(centipede ${centipede_files})

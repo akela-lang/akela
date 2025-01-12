@@ -211,6 +211,7 @@ void test_build_assign()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "let a = 1\n"
+        "a\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -220,7 +221,7 @@ void test_build_assign()
 
     expect_no_errors(errors);
 
-    expect_ptr_equal(root, NULL, "ptr equal root");
+    expect_ptr(root, "ptr");
 
     Cent_environment* top = Cent_get_environment(ct->primary->pr.root);
     assert_ptr(top, "ptr top");

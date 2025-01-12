@@ -9,7 +9,7 @@ void Cent_check_value_types_property2(Cent_value* value);
 void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_value, Cent_value* value);
 
 Cent_parse_result* Cent_check_value_types_pr = NULL;
-Hash_map_size_t* Cent_check_value_types_hm = NULL;;
+Hash_map_size_t* Cent_check_value_types_hm = NULL;
 void Cent_check_value_types(Cent_parse_result* pr, Cent_value* value)
 {
     if (!pr->errors->head) {

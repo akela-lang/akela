@@ -50,6 +50,7 @@ typedef struct Cent_value {
     struct Cent_value* next;
     struct Cent_value* prev;
     void* n;
+    void* parent;
 } Cent_value;
 
 void Cent_data_init(Cent_data *data, Cent_value_type type);

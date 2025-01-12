@@ -15,6 +15,7 @@ void Cent_value_init(Cent_value *value)
     value->next = NULL;
     value->prev = NULL;
     value->n = NULL;
+    value->parent = NULL;
 }
 
 void Cent_value_create(Cent_value **value)
@@ -145,12 +146,14 @@ void Cent_value_set(Cent_value* value, struct buffer* name, Cent_value* value2)
 {
     assert(value->type == Cent_value_type_dag);
     hash_table_add(&value->data.dag.properties, name, value2);
+    value2->parent = value;
 }
 
 void Cent_value_set_str(Cent_value* value, char* name, Cent_value* value2)
 {
     assert(value->type == Cent_value_type_dag);
     hash_table_add_str(&value->data.dag.properties, name, value2);
+    value2->parent = value;
 }
 
 Cent_value* Cent_value_get(Cent_value* value, struct buffer* name)
@@ -176,4 +179,5 @@ void Cent_value_add(Cent_value* parent, Cent_value* child)
         parent->data.dag.head = child;
         parent->data.dag.tail = child;
     }
+    child->parent = parent;
 }

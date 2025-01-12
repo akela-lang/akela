@@ -679,6 +679,133 @@ void test_check_value_types_nested()
     test_parse_teardown(ct);
 }
 
+void test_check_value_types_not_attached()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "let a = Foo {}\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_has_errors(errors);
+
+    expect_source_error(errors, "value is not used");
+
+    test_parse_teardown(ct);
+}
+
+void test_check_value_types_not_attached_import()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "use bar\n"
+    );
+    test_parse_add_comp_unit(ct->module_finder_obj, "bar.aken",
+        "let a = Foo {}\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_no_errors(errors);
+
+    test_parse_teardown(ct);
+}
+
+void test_check_value_types_not_attached_import_glob()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "use bar::*\n"
+    );
+    test_parse_add_comp_unit(ct->module_finder_obj, "bar.aken",
+        "let a = Foo {}\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_no_errors(errors);
+
+    test_parse_teardown(ct);
+}
+
+void test_check_value_types_not_attached_not_last()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "let a = Foo {}\n"
+        "a\n"
+        "Bar {}\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_has_errors(errors);
+
+    expect_source_error(errors, "value is not used");
+
+    test_parse_teardown(ct);
+}
+
+void test_check_value_types_not_attached_not_last2()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "Foo {}\n"
+        "Bar {}\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_has_errors(errors);
+
+    expect_source_error(errors, "value is not used");
+
+    test_parse_teardown(ct);
+}
+
+void test_check_value_types_not_attached_in_object()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "Bar {\n"
+        "    let a = 1\n"
+        "}\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_has_errors(errors);
+
+    expect_source_error(errors, "value is not used");
+
+    test_parse_teardown(ct);
+}
+
 void test_check_value_types()
 {
     test_check_value_types_property();
@@ -702,4 +829,10 @@ void test_check_value_types()
     test_check_value_types_child_error_no_type();
     test_check_value_types_not_nested();
     test_check_value_types_nested();
+    test_check_value_types_not_attached();
+    test_check_value_types_not_attached_import();
+    test_check_value_types_not_attached_import_glob();
+    test_check_value_types_not_attached_not_last();
+    test_check_value_types_not_attached_not_last2();
+    test_check_value_types_not_attached_in_object();
 }
