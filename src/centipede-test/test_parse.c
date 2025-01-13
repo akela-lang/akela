@@ -22,7 +22,7 @@ void test_parse_element()
         "        mute: Bool\n"
         "    }\n"
         "    children {\n"
-        "        Test,\n"
+        "        Test\n"
         "    }\n"
         "}\n"
     );
@@ -626,7 +626,7 @@ void test_parse_element_child_unknown_type()
     test_parse_setup(&ct,
         "element Test {\n"
         "   children {\n"
-        "        Abc,\n"
+        "        Abc\n"
         "   }\n"
         "}\n"
     );
@@ -649,7 +649,7 @@ void test_parse_element_child_type_not_an_element_type()
         "let Abc = 1;\n"
         "element Test {\n"
         "   children {\n"
-        "        Abc,\n"
+        "        Abc\n"
         "   }\n"
         "}\n"
     );

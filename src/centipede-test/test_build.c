@@ -429,7 +429,7 @@ void test_build_property_set_variable()
     test_parse_setup(&ct,
         "element Source {\n"
         "    children {\n"
-        "        String,\n"
+        "        String\n"
         "    }\n"
         "}\n"
         "element Test {\n"

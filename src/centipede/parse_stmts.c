@@ -314,6 +314,10 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
     Cent_token_destroy(lcb);
     free(lcb);
 
+    if (Cent_has_separator(pd, n)) {
+        while (Cent_has_separator(pd, n));
+    }
+
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_id) {
         Cent_ast* a = NULL;
@@ -328,15 +332,9 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
         Cent_token_destroy(id);
         free(id);
 
-        Cent_lookahead(pd);
-        if (pd->lookahead->type != Cent_token_comma) {
-            break;
+        if (Cent_has_separator(pd, n)) {
+            while (Cent_has_separator(pd, n));
         }
-
-        Cent_token* comma = NULL;
-        Cent_match(pd, Cent_token_comma, "expected comma", &comma, n);
-        Cent_token_destroy(comma);
-        free(comma);
 
         Cent_lookahead(pd);
     }
