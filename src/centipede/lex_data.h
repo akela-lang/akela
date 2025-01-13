@@ -12,6 +12,7 @@ typedef struct Cent_lex_data {
     InputUnicodeVTable* input_vtable;
     struct hash_table reserved;
     struct hash_table builtin;
+    bool process_newline;
 } Cent_lex_data;
 
 void Cent_lex_data_init(

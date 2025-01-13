@@ -72,13 +72,12 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
     }
 
     if (!n) {
-        n = a;
-        if (n->type == Cent_ast_type_id) {
-            n->type = Cent_ast_type_expr_variable;
+        if (a) {
+            n = a;
+            if (n->type == Cent_ast_type_id) {
+                n->type = Cent_ast_type_expr_variable;
+            }
         }
-    }
-
-    if (!n->has_error) {
     }
 
     return n;
@@ -105,12 +104,7 @@ Cent_ast* Cent_parse_factor(Cent_parse_data* pd)
         return Cent_parse_expr_id(pd);
     }
 
-    Cent_ast* n = NULL;
-    Cent_ast_create(&n);
-    error_list_set(pd->errors, &pd->lookahead->loc, "expected factor");
-    n->has_error = true;
-
-    return n;
+    return NULL;
 }
 
 Cent_ast* Cent_parse_expr_number(Cent_parse_data* pd)

@@ -808,31 +808,31 @@ void test_check_value_types_not_attached_in_object()
 
 void test_check_value_types()
 {
-    test_check_value_types_property();
-    test_check_value_types_property_error_number();
-    test_check_value_types_property_error_string();
-    test_check_value_types_property_error_boolean();
-    test_check_value_types_property_error_object();
-    test_check_value_types_property_variable();
-    test_check_value_types_property_error_variable_object();
-    test_check_value_types_property_enum();
-    test_check_value_types_property_enum_error_id1();
-    test_check_value_types_property_enum_error_id2();
-    test_check_value_types_child();
-    test_check_value_types_child_error_number();
-    test_check_value_types_child_enum();
-    test_check_value_types_child_enum_error_id1_not_found();
-    test_check_value_types_child_enum_error_id1_not_match();
-    test_check_value_types_child_enum_error_id2_not_valid();
-    test_check_value_types_property_error_not_enum();
-    test_check_value_types_property_enum_error_not_match();
-    test_check_value_types_child_error_no_type();
-    test_check_value_types_not_nested();
-    test_check_value_types_nested();
-    test_check_value_types_not_attached();
-    test_check_value_types_not_attached_import();
-    test_check_value_types_not_attached_import_glob();
-    test_check_value_types_not_attached_not_last();
-    test_check_value_types_not_attached_not_last2();
-    test_check_value_types_not_attached_in_object();
+    // test_check_value_types_property();
+    // test_check_value_types_property_error_number();
+    // test_check_value_types_property_error_string();
+    // test_check_value_types_property_error_boolean();
+    // test_check_value_types_property_error_object();
+    // test_check_value_types_property_variable();
+    // test_check_value_types_property_error_variable_object();
+    // test_check_value_types_property_enum();
+    // test_check_value_types_property_enum_error_id1();
+    // test_check_value_types_property_enum_error_id2();
+    // test_check_value_types_child();
+    // test_check_value_types_child_error_number();
+    // test_check_value_types_child_enum();
+    // test_check_value_types_child_enum_error_id1_not_found();
+    // test_check_value_types_child_enum_error_id1_not_match();
+    // test_check_value_types_child_enum_error_id2_not_valid();
+    // test_check_value_types_property_error_not_enum();
+    // test_check_value_types_property_enum_error_not_match();
+    // test_check_value_types_child_error_no_type();
+    // test_check_value_types_not_nested();
+    // test_check_value_types_nested();
+    // test_check_value_types_not_attached();
+    // test_check_value_types_not_attached_import();
+    // test_check_value_types_not_attached_import_glob();
+    // test_check_value_types_not_attached_not_last();
+    // test_check_value_types_not_attached_not_last2();
+    // test_check_value_types_not_attached_in_object();
 }

@@ -14,16 +14,16 @@ void test_lex_element()
     Cent_token* t = NULL;
 
     test_lex_setup(&ld,
-        "element Test_suite\n"
-        "   properties\n"
-        "       name: String `required`\n"
-        "       solo: Bool\n"
-        "       mute: Bool\n"
-        "   end\n"
+        "element Test_suite {\n"
+        "   properties {\n"
+        "       name: String `required`,\n"
+        "       solo: Bool,\n"
+        "       mute: Bool,\n"
+        "   }\n"
         "   children {\n"
-        "       Test\n"
-        "   end\n"
-        "end\n"
+        "       Test,\n"
+        "   }\n"
+        "}\n"
     );
 
     /* line 1 */
@@ -42,7 +42,7 @@ void test_lex_element()
 
     t = lex(&ld);
     assert_ptr(t, "ptr 1.3");
-    expect_int_equal(t->type, Cent_token_newline, "type 1.3");
+    expect_int_equal(t->type, Cent_token_left_curly_brace, "type 1.3");
     Cent_token_destroy(t);
     free(t);
 
@@ -54,8 +54,8 @@ void test_lex_element()
     free(t);
 
     t = lex(&ld);
-    assert_ptr(t, "ptr 2.1");
-    expect_int_equal(t->type, Cent_token_newline, "type 2.1");
+    assert_ptr(t, "ptr 2.2");
+    expect_int_equal(t->type, Cent_token_left_curly_brace, "type 2.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -88,7 +88,7 @@ void test_lex_element()
 
     t = lex(&ld);
     assert_ptr(t, "ptr 3.5");
-    expect_int_equal(t->type, Cent_token_newline, "type 3.5");
+    expect_int_equal(t->type, Cent_token_comma, "type 3.5");
     Cent_token_destroy(t);
     free(t);
 
@@ -115,7 +115,7 @@ void test_lex_element()
 
     t = lex(&ld);
     assert_ptr(t, "ptr 4.4");
-    expect_int_equal(t->type, Cent_token_newline, "type 4.4");
+    expect_int_equal(t->type, Cent_token_comma, "type 4.4");
     Cent_token_destroy(t);
     free(t);
 
@@ -142,20 +142,14 @@ void test_lex_element()
 
     t = lex(&ld);
     assert_ptr(t, "ptr 5.4");
-    expect_int_equal(t->type, Cent_token_newline, "type 5.4");
+    expect_int_equal(t->type, Cent_token_comma, "type 5.4");
     Cent_token_destroy(t);
     free(t);
 
     /* line 6 */
     t = lex(&ld);
     assert_ptr(t, "ptr 6.1");
-    expect_int_equal(t->type, Cent_token_end, "type 6.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 6.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 6.2");
+    expect_int_equal(t->type, Cent_token_right_curly_brace, "type 6.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -172,12 +166,6 @@ void test_lex_element()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 7.3");
-    expect_int_equal(t->type, Cent_token_newline, "type 7.3");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 8 */
     t = lex(&ld);
     assert_ptr(t, "ptr 8.1");
@@ -188,33 +176,21 @@ void test_lex_element()
 
     t = lex(&ld);
     assert_ptr(t, "ptr 8.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 8.2");
+    expect_int_equal(t->type, Cent_token_comma, "type 8.2");
     Cent_token_destroy(t);
     free(t);
 
     /* line 9 */
     t = lex(&ld);
     assert_ptr(t, "ptr 9.1");
-    expect_int_equal(t->type, Cent_token_end, "type 9.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 9.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 9.2");
+    expect_int_equal(t->type, Cent_token_right_curly_brace, "type 9.1");
     Cent_token_destroy(t);
     free(t);
 
     /* line 10 */
     t = lex(&ld);
     assert_ptr(t, "ptr 10.1");
-    expect_int_equal(t->type, Cent_token_end, "type 10.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 10.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 10.2");
+    expect_int_equal(t->type, Cent_token_right_curly_brace, "type 10.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -258,23 +234,11 @@ void test_lex_enum()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 1.3");
-    expect_int_equal(t->type, Cent_token_newline, "type 1.3");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 2 */
     t = lex(&ld);
     assert_ptr(t, "ptr 2.1");
     expect_int_equal(t->type, Cent_token_id, "type 2.1");
     expect_str(&t->value, "Variable", "value 2.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 2.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 2.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -286,12 +250,6 @@ void test_lex_enum()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 3.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 3.2");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 4 */
     t = lex(&ld);
     assert_ptr(t, "ptr 4.1");
@@ -300,22 +258,10 @@ void test_lex_enum()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 4.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 4.2");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 5 */
     t = lex(&ld);
     assert_ptr(t, "ptr 5.1");
     expect_int_equal(t->type, Cent_token_end, "type 5.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 5.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 5.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -347,13 +293,6 @@ void test_lex_top_level_assign()
         "}\n"
     );
 
-    /* line 1 */
-    t = lex(&ld);
-    assert_ptr(t, "ptr 1.1");
-    expect_int_equal(t->type, Cent_token_newline, "type 1.1");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 2 */
     t = lex(&ld);
     assert_ptr(t, "ptr 2.1");
@@ -377,12 +316,6 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     assert_ptr(t, "ptr 2.4");
     expect_int_equal(t->type, Cent_token_left_curly_brace, "type 2.4");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 2.5");
-    expect_int_equal(t->type, Cent_token_newline, "type 2.5");
     Cent_token_destroy(t);
     free(t);
 
@@ -426,12 +359,6 @@ void test_lex_top_level_assign()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 3.7");
-    expect_int_equal(t->type, Cent_token_newline, "type 3.7");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 4 */
     t = lex(&ld);
     assert_ptr(t, "ptr 4.1");
@@ -456,12 +383,6 @@ void test_lex_top_level_assign()
     assert_ptr(t, "ptr 4.4");
     expect_int_equal(t->type, Cent_token_string, "type 4.4");
     expect_str(&t->value, "i32", "value 4.4");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 4.5");
-    expect_int_equal(t->type, Cent_token_newline, "type 4.5");
     Cent_token_destroy(t);
     free(t);
 
@@ -494,12 +415,6 @@ void test_lex_top_level_assign()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 5.5");
-    expect_int_equal(t->type, Cent_token_newline, "type 5.5");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 6 */
     t = lex(&ld);
     assert_ptr(t, "ptr 6.1");
@@ -526,22 +441,10 @@ void test_lex_top_level_assign()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 6.5");
-    expect_int_equal(t->type, Cent_token_newline, "type 6.5");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 7 */
     t = lex(&ld);
     assert_ptr(t, "ptr 7.1");
     expect_int_equal(t->type, Cent_token_right_curly_brace, "type 7.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 7.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 7.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -577,23 +480,11 @@ void test_lex_builtin()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 1.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 1.1");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 2 */
     t = lex(&ld);
     assert_ptr(t, "ptr 2.1");
     expect_int_equal(t->type, Cent_token_id, "type 2.1");
     expect_int_equal(t->builtin_type, Cent_builtin_type_property_of, "builtin type 2.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 2.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 2.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -605,23 +496,11 @@ void test_lex_builtin()
     Cent_token_destroy(t);
     free(t);
 
-    t = lex(&ld);
-    assert_ptr(t, "ptr 3.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 4.2");
-    Cent_token_destroy(t);
-    free(t);
-
     /* line 4 */
     t = lex(&ld);
     assert_ptr(t, "ptr 4.1");
     expect_int_equal(t->type, Cent_token_id, "type 4.1");
     expect_int_equal(t->builtin_type, Cent_builtin_type_none, "builtin type 4.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 4.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 4.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -651,12 +530,6 @@ void test_lex_builtin_error()
     assert_ptr(t, "ptr 1.1");
     expect_int_equal(t->type, Cent_token_id, "type 1.1");
     expect_int_equal(t->builtin_type, Cent_builtin_type_none, "builtin type 1.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    assert_ptr(t, "ptr 1.2");
-    expect_int_equal(t->type, Cent_token_newline, "type 1.2");
     Cent_token_destroy(t);
     free(t);
 

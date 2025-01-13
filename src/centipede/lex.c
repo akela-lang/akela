@@ -83,9 +83,12 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
             }
 
             if (c[0] == '\n') {
-                t->type = Cent_token_newline;
-                t->loc = loc;
-                return;
+                if (ld->process_newline) {
+                    t->type = Cent_token_newline;
+                    t->loc = loc;
+                    return;
+                }
+                continue;
             }
 
             if (c[0] == ':') {

@@ -31,6 +31,7 @@ typedef enum Cent_ast_type {
     Cent_ast_type_namespace,
     Cent_ast_type_glob,
     Cent_ast_type_let,
+    Cent_ast_type_pass,
 } Cent_ast_type;
 
 typedef enum Cent_variable_type {

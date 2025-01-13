@@ -60,7 +60,7 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 	buffer_init(&math_dir);
 	buffer_copy(&dir, &math_dir);
 	buffer_clear(&filename);
-	buffer_copy_str(&filename, "math.akela");
+	buffer_copy_str(&filename, "math.ake");
     struct buffer math_path;
     buffer_init(&math_path);
 	path_join(&math_dir, &filename, &math_path);

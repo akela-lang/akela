@@ -10,7 +10,9 @@ bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, C
 
 void Cent_check_types(Cent_parse_result* pr)
 {
-    Cent_check_types_node(pr, pr->root);
+    if (pr->root) {
+        Cent_check_types_node(pr, pr->root);
+    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
