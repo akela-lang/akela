@@ -46,6 +46,8 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
             break;
         }
 
+        Cent_ast_add(n, a);
+
         Cent_lookahead(pd);
         if (pd->lookahead->type == Cent_token_semicolon) {
             Cent_token* sc = NULL;
@@ -54,18 +56,23 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
             }
             Cent_token_destroy(sc);
             free(sc);
-        } else {
-            if (pd->lookahead->type == Cent_token_eof) {
+
+            Cent_lookahead(pd);
+            if (pd->lookahead->type == Cent_token_eof
+                || pd->lookahead->type == Cent_token_right_curly_brace) {
                 Cent_ast_create(&a);
                 a->type = Cent_ast_type_pass;
                 Cent_ast_add(n, a);
                 break;
             }
-
-            error_list_set(pd->errors, &pd->lookahead->loc, "expected semicolon");
-            n->has_error = true;
+        } else {
+            if (pd->lookahead->type != Cent_token_eof
+                && pd->lookahead->type != Cent_token_right_curly_brace
+            ) {
+                error_list_set(pd->errors, &pd->lookahead->loc, "expected semicolon");
+                n->has_error = true;
+            }
         }
-        Cent_ast_add(n, a);
     }
 
     pd->top = pd->top->prev;

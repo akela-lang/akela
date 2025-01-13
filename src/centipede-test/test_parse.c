@@ -310,13 +310,13 @@ void test_parse_error_unhandled_token()
     test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct, "1 end");
+    test_parse_setup(&ct, "1 }");
 
     Cent_comp_unit_parse(ct->primary);
     struct error_list* errors = &ct->primary->errors;
 
-    expect_error_count(errors, 1);
-    expect_source_error(errors, "unhandled token: end");
+    expect_has_errors(errors);
+    expect_source_error(errors, "unhandled token: right-curly-brace");
 
     test_parse_teardown(ct);
 }
@@ -337,7 +337,7 @@ void test_parse_element_error_expected_id()
     test_parse_teardown(ct);
 }
 
-void test_parse_element_error_expected_end()
+void test_parse_element_error_expected_left_curly_brace()
 {
     test_name(__func__);
 
@@ -350,7 +350,7 @@ void test_parse_element_error_expected_end()
     struct error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
-    expect_source_error(errors, "expected end");
+    expect_source_error(errors, "expected left curly-brace");
 
     test_parse_teardown(ct);
 }
@@ -361,10 +361,10 @@ void test_parse_element_error_name_already_exits()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Test\n"
-        "end\n"
-        "element Test\n"
-        "end\n"
+        "element Test {\n"
+        "}\n"
+        "element Test {\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -376,21 +376,21 @@ void test_parse_element_error_name_already_exits()
     test_parse_teardown(ct);
 }
 
-void test_parse_element_error_properties_expected_end()
+void test_parse_element_error_properties_expected_right_curly_brace()
 {
     test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Test\n"
-        "    properties\n"
+        "element Test {\n"
+        "    properties {\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
     struct error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
-    expect_source_error(errors, "expected end");
+    expect_source_error(errors, "expected right curly-brace");
 
     test_parse_teardown(ct);
 }
@@ -401,11 +401,11 @@ void test_parse_element_error_property_expected_colon()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Test\n"
-        "    properties\n"
+        "element Test {\n"
+        "    properties {\n"
         "        count Integer\n"
-        "    end\n"
-        "end\n"
+        "    }\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -423,11 +423,11 @@ void test_parse_element_error_property_expected_id()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Test\n"
-        "    properties\n"
+        "element Test {\n"
+        "    properties {\n"
         "        count:\n"
-        "    end\n"
-        "end\n"
+        "    }\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -439,21 +439,21 @@ void test_parse_element_error_property_expected_id()
     test_parse_teardown(ct);
 }
 
-void test_parse_element_error_children_expected_end()
+void test_parse_element_error_children_expected_right_curly_brace()
 {
     test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Test\n"
-        "    children\n"
+        "element Test {\n"
+        "    children {\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
     struct error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
-    expect_source_error(errors, "expected end");
+    expect_source_error(errors, "expected right curly-brace");
 
     test_parse_teardown(ct);
 }
@@ -464,8 +464,8 @@ void test_parse_enumerate_error_expected_id()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum\n"
-        "end\n"
+        "enum {\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -477,38 +477,20 @@ void test_parse_enumerate_error_expected_id()
     test_parse_teardown(ct);
 }
 
-void test_parse_enumerate_error_expected_end()
+void test_parse_enumerate_error_expected_right_curly_brace()
 {
     test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Ast_type\n"
+        "enum Ast_type {\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
     struct error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
-    expect_source_error(errors, "expected end");
-
-    test_parse_teardown(ct);
-}
-
-void test_parse_value_error_expected_id()
-{
-    test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
-        ":\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
-
-    expect_has_errors(errors);
-    expect_source_error(errors, "expected factor");
+    expect_source_error(errors, "expected right curly-brace");
 
     test_parse_teardown(ct);
 }
@@ -519,8 +501,8 @@ void test_parse_value_error_enum_expected_id()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Test_type\n"
-        "end\n"
+        "enum Test_type {\n"
+        "}\n"
         "Test_type::1\n"
     );
 
@@ -597,11 +579,11 @@ void test_parse_element_property_unknown_type()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Test\n"
-        "   properties\n"
-        "        a: Abc\n"
-        "   end\n"
-        "end\n"
+        "element Test {\n"
+        "   properties {\n"
+        "        a: Abc,\n"
+        "   }\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -619,12 +601,12 @@ void test_parse_element_property_type_not_element()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let Abc = 1\n"
-        "element Test\n"
-        "   properties\n"
-        "        a: Abc\n"
-        "   end\n"
-        "end\n"
+        "let Abc = 1;\n"
+        "element Test {\n"
+        "   properties {\n"
+        "        a: Abc,\n"
+        "   }\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -642,11 +624,11 @@ void test_parse_element_child_unknown_type()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Test\n"
-        "   children\n"
-        "        Abc\n"
-        "   end\n"
-        "end\n"
+        "element Test {\n"
+        "   children {\n"
+        "        Abc,\n"
+        "   }\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -664,12 +646,12 @@ void test_parse_element_child_type_not_an_element_type()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let Abc = 1\n"
-        "element Test\n"
-        "   children\n"
-        "        Abc\n"
-        "   end\n"
-        "end\n"
+        "let Abc = 1;\n"
+        "element Test {\n"
+        "   children {\n"
+        "        Abc,\n"
+        "   }\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -687,13 +669,13 @@ void test_parse_enum_error_duplicate_enum_value()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Symbol_type\n"
-        "   Element\n"
-        "   Enumerate\n"
-        "   Info\n"
-        "   Variable\n"
-        "   Info\n"
-        "end\n"
+        "enum Symbol_type {\n"
+        "   Element,\n"
+        "   Enumerate,\n"
+        "   Info,\n"
+        "   Variable,\n"
+        "   Info,\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -711,7 +693,7 @@ void test_parse_object_method_call()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = Foo {}\n"
+        "let a = Foo {};\n"
         "Bar {\n"
         "    .@child_of(a)\n"
         "}\n"
@@ -762,7 +744,7 @@ void test_parse_object_method_call2()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = Foo {}\n"
+        "let a = Foo {};\n"
         "Bar {\n"
         "    .@property_of(a, \"b\")\n"
         "}\n"
@@ -873,12 +855,12 @@ void test_parse_enum_duplicate_id()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Foo\n"
-        "    One\n"
-        "    Two\n"
-        "    Two\n"
-        "    Three\n"
-        "end\n"
+        "enum Foo {\n"
+        "    One,\n"
+        "    Two,\n"
+        "    Two,\n"
+        "    Three,\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -899,11 +881,11 @@ void test_parse_enum_error_could_not_find_enum()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Foo\n"
-        "    One\n"
-        "    Two\n"
-        "    Three\n"
-        "end\n"
+        "enum Foo {\n"
+        "    One,\n"
+        "    Two,\n"
+        "    Three,\n"
+        "}\n"
         "Bar::Two\n"
     );
 
@@ -925,11 +907,11 @@ void test_parse_enum_error_could_not_find_enum_id()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Foo\n"
-        "    One\n"
-        "    Two\n"
-        "    Three\n"
-        "end\n"
+        "enum Foo {\n"
+        "    One,\n"
+        "    Two,\n"
+        "    Three,\n"
+        "}\n"
         "Foo::Four\n"
     );
 
@@ -951,20 +933,20 @@ void test_parse_include()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use types\n"
+        "use types;\n"
         "Groceries {\n"
         "    types::Grocery_item::Milk\n"
         "}\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "types.aken",
-        "enum Grocery_item\n"
-        "    Milk\n"
-        "    Cereal\n"
-        "    Steak\n"
-        "    Potatoes\n"
-        "    Carrots\n"
-        "end\n"
+        "enum Grocery_item {\n"
+        "    Milk,\n"
+        "    Cereal,\n"
+        "    Steak,\n"
+        "    Potatoes,\n"
+        "    Carrots,\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1026,20 +1008,20 @@ void test_parse_include_multiple_namespace()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use lib::types\n"
+        "use lib::types;\n"
         "Groceries {\n"
         "    lib::types::Grocery_item::Milk\n"
         "}\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "lib/types.aken",
-        "enum Grocery_item\n"
-        "    Milk\n"
-        "    Cereal\n"
-        "    Steak\n"
-        "    Potatoes\n"
-        "    Carrots\n"
-        "end\n"
+        "enum Grocery_item {\n"
+        "    Milk,\n"
+        "    Cereal,\n"
+        "    Steak,\n"
+        "    Potatoes,\n"
+        "    Carrots,\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1111,12 +1093,12 @@ void test_parse_include_value()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use data\n"
+        "use data;\n"
         "data::a\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
-        "let a = 12597\n"
+        "let a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1163,12 +1145,12 @@ void test_parse_include_value_error()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use data\n"
+        "use data;\n"
         "data::b\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
-        "let a = 12597\n"
+        "let a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1186,12 +1168,12 @@ void test_parse_include_glob()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use data::*\n"
+        "use data::*;\n"
         "a\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
-        "let a = 12597\n"
+        "let a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1208,12 +1190,12 @@ void test_parse_include_error_expected_id()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use 1::2\n"
+        "use 1::2;\n"
         "a\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "1/2.aken",
-        "a = 12597\n"
+        "let a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1231,12 +1213,12 @@ void test_parse_namespace_error_expected_id()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use lib::data\n"
+        "use lib::data;\n"
         "1::a\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.aken",
-        "a = 12597\n"
+        "let a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1254,12 +1236,12 @@ void test_parse_namespace_error_expected_id2()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use lib::data\n"
+        "use lib::data;\n"
         "data::1\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.aken",
-        "a = 12597\n"
+        "let a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1277,7 +1259,7 @@ void test_parse_let()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 45\n"
+        "let a = 45;\n"
         "a\n"
     );
 
@@ -1319,9 +1301,9 @@ void test_parse_let_error_shadow_type()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Foo\n"
-        "end\n"
-        "let Foo = 45\n"
+        "element Foo {\n"
+        "}\n"
+        "let Foo = 45;\n"
         "Foo\n"
     );
 
@@ -1340,8 +1322,8 @@ void test_parse_let_error_shadow_module()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use base\n"
-        "let base = 45\n"
+        "use base;\n"
+        "let base = 45;\n"
         "base\n"
     );
 
@@ -1362,8 +1344,8 @@ void test_parse_let_error_shadow_local()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 1\n"
-        "let a = 2\n"
+        "let a = 1;\n"
+        "let a = 2;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1382,7 +1364,7 @@ void test_parse_object_let()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Foo {\n"
-        "    let bar = Bar {}\n"
+        "    let bar = Bar {};\n"
         "    bar\n"
         "}\n"
     );
@@ -1435,13 +1417,13 @@ void test_parse_module_id_error()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let math = 1\n"
-        "use math\n"
+        "let math = 1;\n"
+        "use math;\n"
         "math::Pi\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "math.aken",
-        "let Pi = 3.14\n"
+        "let Pi = 3.14;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1459,51 +1441,50 @@ void test_parse()
     test_parse_element();
     test_parse_enumerate();
     test_parse_top_level_assignment();
-    // test_parse_error_unhandled_token();
-    // test_parse_element_error_expected_id();
-    // test_parse_element_error_expected_end();
-    // test_parse_element_error_name_already_exits();
-    // test_parse_element_error_properties_expected_end();
-    // test_parse_element_error_property_expected_colon();
-    // test_parse_element_error_property_expected_id();
-    // test_parse_element_error_children_expected_end();
-    // test_parse_enumerate_error_expected_id();
-    // test_parse_enumerate_error_expected_end();
-    // test_parse_value_error_expected_id();
-    // test_parse_value_error_enum_expected_id();
-    // test_parse_value_error_object_expected_rcb();
-    // test_parse_value_error_object_property_expected_id();
-    // test_parse_value_error_object_property_expected_equal();
-    // test_parse_element_property_unknown_type();
-    // test_parse_element_property_type_not_element();
-    // test_parse_element_child_unknown_type();
-    // test_parse_element_child_type_not_an_element_type();
-    // test_parse_enum_error_duplicate_enum_value();
-    // test_parse_object_method_call();
-    // test_parse_object_method_call2();
-    // test_parse_function_call();
-    // test_parse_enum_duplicate_id();
-    // test_parse_enum_error_could_not_find_enum();
-    // test_parse_enum_error_could_not_find_enum_id();
-    //
-    // test_parse_include();
-    // test_parse_include_multiple_namespace();
-    //
-    // test_parse_include_value();
-    // test_parse_include_value_error();
-    //
-    // test_parse_include_glob();
-    // test_parse_include_error_expected_id();
-    //
-    // test_parse_namespace_error_expected_id();
-    // test_parse_namespace_error_expected_id2();
-    //
-    // test_parse_let();
-    // test_parse_let_error_shadow_type();
-    // test_parse_let_error_shadow_module();
-    // test_parse_let_error_shadow_local();
-    //
-    // test_parse_object_let();
-    //
-    // test_parse_module_id_error();
+    test_parse_error_unhandled_token();
+    test_parse_element_error_expected_id();
+    test_parse_element_error_expected_left_curly_brace();
+    test_parse_element_error_name_already_exits();
+    test_parse_element_error_properties_expected_right_curly_brace();
+    test_parse_element_error_property_expected_colon();
+    test_parse_element_error_property_expected_id();
+    test_parse_element_error_children_expected_right_curly_brace();
+    test_parse_enumerate_error_expected_id();
+    test_parse_enumerate_error_expected_right_curly_brace();
+    test_parse_value_error_enum_expected_id();
+    test_parse_value_error_object_expected_rcb();
+    test_parse_value_error_object_property_expected_id();
+    test_parse_value_error_object_property_expected_equal();
+    test_parse_element_property_unknown_type();
+    test_parse_element_property_type_not_element();
+    test_parse_element_child_unknown_type();
+    test_parse_element_child_type_not_an_element_type();
+    test_parse_enum_error_duplicate_enum_value();
+    test_parse_object_method_call();
+    test_parse_object_method_call2();
+    test_parse_function_call();
+    test_parse_enum_duplicate_id();
+    test_parse_enum_error_could_not_find_enum();
+    test_parse_enum_error_could_not_find_enum_id();
+
+    test_parse_include();
+    test_parse_include_multiple_namespace();
+
+    test_parse_include_value();
+    test_parse_include_value_error();
+
+    test_parse_include_glob();
+    test_parse_include_error_expected_id();
+
+    test_parse_namespace_error_expected_id();
+    test_parse_namespace_error_expected_id2();
+
+    test_parse_let();
+    test_parse_let_error_shadow_type();
+    test_parse_let_error_shadow_module();
+    test_parse_let_error_shadow_local();
+
+    test_parse_object_let();
+
+    test_parse_module_id_error();
 }
