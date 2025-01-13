@@ -434,7 +434,7 @@ void test_build_property_set_variable()
         "}\n"
         "element Test {\n"
         "    properties {\n"
-        "        source: Source,\n"
+        "        source: Source\n"
         "    }\n"
         "}\n"
         "let a = Source {\"x + 5\"};\n"

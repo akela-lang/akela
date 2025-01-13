@@ -202,6 +202,12 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
     Cent_token_destroy(lcb);
     free(lcb);
 
+    pd->ld->process_newline_count++;
+
+    if (Cent_has_separator(pd, n)) {
+        while (Cent_has_separator(pd, n));
+    }
+
     while (true) {
         Cent_lookahead(pd);
         if (pd->lookahead->type != Cent_token_id) {
@@ -211,15 +217,16 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
         Cent_ast* a = Cent_parse_property_dec(pd);
         Cent_ast_add(n, a);
 
-        Cent_lookahead(pd);
-        if (pd->lookahead->type != Cent_token_comma) {
+        if (Cent_has_separator(pd, n)) {
+            while (Cent_has_separator(pd, n));
+        } else {
             break;
         }
+    }
 
-        Cent_token* comma = NULL;
-        Cent_match(pd, Cent_token_comma, "expected comma", &comma, n);
-        Cent_token_destroy(comma);
-        free(comma);
+    pd->ld->process_newline_count--;
+    if (pd->ld->process_newline_count == 0) {
+        Cent_ignore_newlines(pd);
     }
 
     Cent_token* rcb = NULL;

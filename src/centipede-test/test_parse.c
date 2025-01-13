@@ -17,9 +17,9 @@ void test_parse_element()
     test_parse_setup(&ct,
         "element Test_suite {\n"
         "    properties {\n"
-        "        name: String `required`,\n"
-        "        solo: Bool,      # only run this suite\n"
-        "        mute: Bool,      # exclude this suite from running\n"
+        "        name: String `required`\n"
+        "        solo: Bool\n"
+        "        mute: Bool\n"
         "    }\n"
         "    children {\n"
         "        Test,\n"
@@ -581,7 +581,7 @@ void test_parse_element_property_unknown_type()
     test_parse_setup(&ct,
         "element Test {\n"
         "   properties {\n"
-        "        a: Abc,\n"
+        "        a: Abc\n"
         "   }\n"
         "}\n"
     );
@@ -604,7 +604,7 @@ void test_parse_element_property_type_not_element()
         "let Abc = 1;\n"
         "element Test {\n"
         "   properties {\n"
-        "        a: Abc,\n"
+        "        a: Abc\n"
         "   }\n"
         "}\n"
     );
