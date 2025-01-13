@@ -120,11 +120,11 @@ void test_build_enum0()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Symbol_type\n"
-        "    Variable\n"
-        "    Type\n"
-        "    Info\n"
-        "end\n"
+        "enum Symbol_type {\n"
+        "    Variable,\n"
+        "    Type,\n"
+        "    Info,\n"
+        "}\n"
         "Symbol_type::Variable\n"
     );
 
@@ -150,11 +150,11 @@ void test_build_enum1()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Symbol_type\n"
-        "    Variable\n"
-        "    Type\n"
-        "    Info\n"
-        "end\n"
+        "enum Symbol_type {\n"
+        "    Variable,\n"
+        "    Type,\n"
+        "    Info,\n"
+        "}\n"
         "Symbol_type::Type\n"
     );
 
@@ -180,11 +180,11 @@ void test_build_enum2()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Symbol_type\n"
-        "    Variable\n"
-        "    Type\n"
-        "    Info\n"
-        "end\n"
+        "enum Symbol_type {\n"
+        "    Variable,\n"
+        "    Type,\n"
+        "    Info,\n"
+        "}\n"
         "Symbol_type::Info\n"
     );
 
@@ -210,7 +210,7 @@ void test_build_assign()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 1\n"
+        "let a = 1;\n"
         "a\n"
     );
 
@@ -427,17 +427,17 @@ void test_build_property_set_variable()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        source: Source\n"
-        "    end\n"
-        "end\n"
-        "let a = Source {\"x + 5\"}\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
+        "element Test {\n"
+        "    properties {\n"
+        "        source: Source,\n"
+        "    }\n"
+        "}\n"
+        "let a = Source {\"x + 5\"};\n"
         "Test {\n"
         "    .source = a\n"
         "}\n"
@@ -474,7 +474,7 @@ void test_build_namespace_enum()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use types\n"
+        "use types;\n"
         "Groceries {\n"
         "    types::Grocery_item::Milk\n"
         "    types::Grocery_item::Carrots\n"
@@ -482,13 +482,13 @@ void test_build_namespace_enum()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "types.aken",
-        "enum Grocery_item\n"
-        "    Milk\n"
-        "    Cereal\n"
-        "    Steak\n"
-        "    Potatoes\n"
-        "    Carrots\n"
-        "end\n"
+        "enum Grocery_item {\n"
+        "    Milk,\n"
+        "    Cereal,\n"
+        "    Steak,\n"
+        "    Potatoes,\n"
+        "    Carrots,\n"
+        "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -521,12 +521,12 @@ void test_build_namespace_variable()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use variables\n"
+        "use variables;\n"
         "variables::a\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "variables.aken",
-        "let a = 190\n"
+        "let a = 190;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -550,12 +550,12 @@ void test_build_namespace_submodules()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use foo::bar\n"
+        "use foo::bar;\n"
         "foo::bar::a\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.aken",
-        "let a = 190\n"
+        "let a = 190;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -579,12 +579,12 @@ void test_build_namespace_glob_value()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use foo::bar::*\n"
+        "use foo::bar::*;\n"
         "a\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.aken",
-        "let a = 190\n"
+        "let a = 190;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -608,7 +608,7 @@ void test_build_let()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 245\n"
+        "let a = 245;\n"
         "a\n"
     );
 
@@ -659,26 +659,26 @@ void test_build_object_let()
 
 void test_build()
 {
-    // test_build_number_integer();
-    // test_build_number_fp();
-    // test_build_string();
-    // test_build_boolean_true();
-    // test_build_boolean_false();
-    // test_build_enum0();
-    // test_build_enum1();
-    // test_build_enum2();
-    // test_build_assign();
-    // test_build_object();
-    // test_build_object_prop_set();
-    // test_build_object_assign();
-    // test_build_object_child_of();
-    // test_build_object_property_of();
-    // test_build_object_function_file_name();
-    // test_build_property_set_variable();
-    // test_build_namespace_enum();
-    // test_build_namespace_variable();
-    // test_build_namespace_submodules();
-    // test_build_namespace_glob_value();
-    // test_build_let();
-    // test_build_object_let();
+    test_build_number_integer();
+    test_build_number_fp();
+    test_build_string();
+    test_build_boolean_true();
+    test_build_boolean_false();
+    test_build_enum0();
+    test_build_enum1();
+    test_build_enum2();
+    test_build_assign();
+    test_build_object();
+    test_build_object_prop_set();
+    test_build_object_assign();
+    test_build_object_child_of();
+    test_build_object_property_of();
+    test_build_object_function_file_name();
+    test_build_property_set_variable();
+    test_build_namespace_enum();
+    test_build_namespace_variable();
+    test_build_namespace_submodules();
+    test_build_namespace_glob_value();
+    test_build_let();
+    test_build_object_let();
 }
