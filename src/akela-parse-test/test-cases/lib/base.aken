@@ -47,41 +47,11 @@ element Error
     end
 end
 
-element Environment
-    properties
-        prev: Environment
-        symbols: Symbols
-    end
-end
-
-element Symbols
-    properties
-        _: Symbol
-    end
-end
-
-element Symbol
-    properties
-        type: Symbol_type
-        tu: Type_use
-        td: Type_def
-        seq: Integer        # sequence number for declared variables
-    end
-end
-
-enum Symbol_type
-    Variable
-    Type
-    Info
-end
-
 element Ast
     properties
         type: Ast_type `required`
         value: String
         tu: Type_use
-        seq: Integer        # sequence number for Ast_element id
-        env: Environment
     end
 end
 
@@ -91,8 +61,6 @@ enum Ast_type
     Number
     Type
     Id
-    Add
-    Assign
 end
 
 element Type_use
@@ -112,60 +80,21 @@ element Type_def
 end
 
 enum Type_def_type
-    Integer
-    Float
-    String
-    Bool
+    Int32
+    Real64
 end
 
 # built-in element defs
 let _Int32 = Type_def {
-    .type = Type_def_type::Integer
+    .type = Type_def_type::Int32
     .name = "Int32"
     .bit_count = 32
     .is_signed = true
 }
 
 let _Real64 = Type_def {
-    .type = Type_def_type::Float
+    .type = Type_def_type::Real64
     .name = "Real64"
     .bit_count = 64
     .is_signed = true
-}
-
-let _String = Type_def {
-    .type = Type_def_type::String
-    .name = "String"
-}
-
-let _Bool = Type_def {
-    .type = Type_def_type::Bool
-    .name = "Bool"
-}
-
-# base environment
-let env0 = Environment {
-    .symbols = Symbols {
-        # built-in types
-        .Int32 = Symbol {
-            .type = Symbol_type::Type
-            .td = _Int32
-            .seq = 0
-        }
-        .Real64 = Symbol {
-            .type = Symbol_type::Type
-            .td = _Real64
-            .seq = 1
-        }
-        .String = Symbol {
-            .type = Symbol_type::Type
-            .td = _String
-            .seq = 2
-        }
-        .Bool = Symbol {
-            .type = Symbol_type::Type
-            .td = _Bool
-            .seq = 3
-        }
-    }
 }
