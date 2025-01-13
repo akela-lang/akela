@@ -1,0 +1,64 @@
+use lib::base::*
+
+Test_suite {
+    .name = @file_name()
+    .mute = true
+
+    Test {
+        .name = "declare and use an integer"
+        .source = Source {
+            "let a: Int32 = 105\n"
+            "a\n"
+        }
+        .solo = true
+        .has_error = false
+
+        let root = Ast {
+            .type = Ast_type::Stmts
+            .tu = Type_use {
+                .td = _Int32
+            }
+        }
+
+        root
+
+        # line 1
+        let let_stmt = Ast {
+            .@child_of(root)
+            .type = Ast_type::Let
+        }
+
+        let let_a = Ast {
+            .@child_of(let_stmt)
+            .type = Ast_type::Id
+            .value = "a"
+        }
+
+        let let_type = Ast {
+            .@child_of(let_stmt)
+            .type = Ast_type::Type
+            .tu = Type_use {
+                .td = _Int32
+            }
+        }
+
+        let let_number = Ast {
+            .@child_of(let_stmt)
+            .type = Ast_type::Number
+            .value = "105"
+            .tu = Type_use {
+                .td = _Int32
+            }
+        }
+
+        # line 2
+        let add_a = Ast {
+            .@child_of(root)
+            .type = Ast_type::Id
+            .value = "a"
+            .tu = Type_use {
+                .td = _Int32
+            }
+        }
+    }
+}
