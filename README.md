@@ -85,5 +85,4 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
 
 ## Code Coverage
     ./generate-coverage.sh
-    ninja -C cmake-build-debug
-    cmake-build-debug/bin/coverage data/coverage
+    cmake-build-coverage/bin/coverage data/coverage

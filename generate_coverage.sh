@@ -1,12 +1,13 @@
 #!/bin/sh
 coverage_dir="data/coverage"
+build_dir="cmake-build-coverage"
 root_dir="../.."
-rm -rf cmake-build-debug &&
-    cmake -B cmake-build-debug -DCOVERAGE=On -DCMAKE_BUILD_TYPE=Debug -G Ninja &&
-    ninja -C cmake-build-debug &&
+rm -rf $build_dir &&
+    cmake -B $build_dir -DCOVERAGE=On -DCMAKE_BUILD_TYPE=Debug -G Ninja &&
+    ninja -C $build_dir &&
     for name in zinc-test akela-test akela-llvm-test dataframe-test cobble-test json-test coverage-test centipede-test
     do
-        cmake-build-debug/bin/$name
+        $build_dir/bin/$name
     done &&
     rm -rf $coverage_dir &&
     mkdir -p $coverage_dir &&
@@ -15,15 +16,11 @@ rm -rf cmake-build-debug &&
     do
         mkdir -p $name &&
         cd $name &&
-        gcov $root_dir/../cmake-build-debug/src/$name/CMakeFiles/$name.dir/*.gcda &&
+        gcov $root_dir/../$build_dir/src/$name/CMakeFiles/$name.dir/*.gcda &&
         cd ..
     done &&
     cd akela-llvm &&
     for name in `ls | grep -v '^akela_llvm'`
     do
         rm $name
-    done &&
-    cd .. &&
-    cd $root_dir &&
-    rm -rf cmake-build-debug &&
-    cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
+    done
