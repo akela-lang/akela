@@ -240,10 +240,10 @@ void test_check_value_types_property_enum()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Vehicle_type {\n"
-        "    Car,\n"
-        "    Truck,\n"
-        "    Van,\n"
-        "    Motorcycle,\n"
+        "    Car\n"
+        "    Truck\n"
+        "    Van\n"
+        "    Motorcycle\n"
         "}\n"
         "element Vehicle {\n"
         "    properties {\n"
@@ -273,10 +273,10 @@ void test_check_value_types_property_enum_error_id1()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Vehicle_type {\n"
-        "    Car,\n"
-        "    Truck,\n"
-        "    Van,\n"
-        "    Motorcycle,\n"
+        "    Car\n"
+        "    Truck\n"
+        "    Van\n"
+        "    Motorcycle\n"
         "}\n"
         "element Vehicle {\n"
         "    properties {\n"
@@ -305,10 +305,10 @@ void test_check_value_types_property_enum_error_id2()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Vehicle_type {\n"
-        "    Car,\n"
-        "    Truck,\n"
-        "    Van,\n"
-        "    Motorcycle,\n"
+        "    Car\n"
+        "    Truck\n"
+        "    Van\n"
+        "    Motorcycle\n"
         "}\n"
         "element Vehicle {\n"
         "    properties {\n"
@@ -391,10 +391,10 @@ void test_check_value_types_child_enum()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Vehicle_type {\n"
-        "    Car,\n"
-        "    Truck,\n"
-        "    Van,\n"
-        "    Motorcycle,\n"
+        "    Car\n"
+        "    Truck\n"
+        "    Van\n"
+        "    Motorcycle\n"
         "}\n"
         "element Vehicle {\n"
         "    children {\n"
@@ -423,10 +423,10 @@ void test_check_value_types_child_enum_error_id1_not_found()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Vehicle_type {\n"
-        "    Car,\n"
-        "    Truck,\n"
-        "    Van,\n"
-        "    Motorcycle,\n"
+        "    Car\n"
+        "    Truck\n"
+        "    Van\n"
+        "    Motorcycle\n"
         "}\n"
         "element Vehicle {\n"
         "    children {\n"
@@ -459,15 +459,15 @@ void test_check_value_types_child_enum_error_id1_not_match()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Vehicle_type {\n"
-        "    Car,\n"
-        "    Truck,\n"
-        "    Van,\n"
-        "    Motorcycle,\n"
+        "    Car\n"
+        "    Truck\n"
+        "    Van\n"
+        "    Motorcycle\n"
         "}\n"
         "enum Building_type {\n"
-        "    Brick,\n"
-        "    Cement,\n"
-        "    Wood,\n"
+        "    Brick\n"
+        "    Cement\n"
+        "    Wood\n"
         "}\n"
         "element Vehicle {\n"
         "    children {\n"
@@ -500,10 +500,10 @@ void test_check_value_types_child_enum_error_id2_not_valid()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Vehicle_type {\n"
-        "    Car,\n"
-        "    Truck,\n"
-        "    Van,\n"
-        "    Motorcycle,\n"
+        "    Car\n"
+        "    Truck\n"
+        "    Van\n"
+        "    Motorcycle\n"
         "}\n"
         "element Vehicle {\n"
         "    children {\n"
@@ -536,7 +536,7 @@ void test_check_value_types_property_error_not_enum()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Bar {\n"
-        "    Filler,\n"
+        "    Filler\n"
         "}\n"
         "element Foo {\n"
         "    properties {\n"
@@ -568,10 +568,10 @@ void test_check_value_types_property_enum_error_not_match()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Apparel {\n"
-        "    Shoes,\n"
+        "    Shoes\n"
         "}\n"
         "enum Bar {\n"
-        "    Filler,\n"
+        "    Filler\n"
         "}\n"
         "element Foo {\n"
         "    properties {\n"

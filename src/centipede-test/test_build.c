@@ -121,9 +121,9 @@ void test_build_enum0()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Symbol_type {\n"
-        "    Variable,\n"
-        "    Type,\n"
-        "    Info,\n"
+        "    Variable\n"
+        "    Type\n"
+        "    Info\n"
         "}\n"
         "Symbol_type::Variable\n"
     );
@@ -151,9 +151,9 @@ void test_build_enum1()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Symbol_type {\n"
-        "    Variable,\n"
-        "    Type,\n"
-        "    Info,\n"
+        "    Variable\n"
+        "    Type\n"
+        "    Info\n"
         "}\n"
         "Symbol_type::Type\n"
     );
@@ -181,9 +181,9 @@ void test_build_enum2()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Symbol_type {\n"
-        "    Variable,\n"
-        "    Type,\n"
-        "    Info,\n"
+        "    Variable\n"
+        "    Type\n"
+        "    Info\n"
         "}\n"
         "Symbol_type::Info\n"
     );
@@ -483,11 +483,11 @@ void test_build_namespace_enum()
 
     test_parse_add_comp_unit(ct->module_finder_obj, "types.aken",
         "enum Grocery_item {\n"
-        "    Milk,\n"
-        "    Cereal,\n"
-        "    Steak,\n"
-        "    Potatoes,\n"
-        "    Carrots,\n"
+        "    Milk\n"
+        "    Cereal\n"
+        "    Steak\n"
+        "    Potatoes\n"
+        "    Carrots\n"
         "}\n"
     );
 

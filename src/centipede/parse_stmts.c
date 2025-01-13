@@ -314,6 +314,7 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
     Cent_token_destroy(lcb);
     free(lcb);
 
+    pd->ld->process_newline_count++;
     if (Cent_has_separator(pd, n)) {
         while (Cent_has_separator(pd, n));
     }
@@ -334,9 +335,16 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
 
         if (Cent_has_separator(pd, n)) {
             while (Cent_has_separator(pd, n));
+        } else {
+            break;
         }
 
         Cent_lookahead(pd);
+    }
+
+    pd->ld->process_newline_count--;
+    if (pd->ld->process_newline_count == 0) {
+        Cent_ignore_newlines(pd);
     }
 
     Cent_token* rcb = NULL;
@@ -375,6 +383,12 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
     Cent_token_destroy(lcb);
     free(lcb);
 
+    pd->ld->process_newline_count++;
+
+    if (Cent_has_separator(pd, n)) {
+        while (Cent_has_separator(pd, n));
+    }
+
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_id) {
         Cent_ast* a = NULL;
@@ -391,19 +405,18 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
         free(id);
         Cent_ast_add(n, a);
 
-        Cent_lookahead(pd);
-        if (pd->lookahead->type != Cent_token_comma) {
+        if (Cent_has_separator(pd, n)) {
+            while (Cent_has_separator(pd, n));
+        } else {
             break;
         }
 
-        Cent_token* comma = NULL;
-        if (!Cent_match(pd, Cent_token_comma, "expected comma", &comma, n)) {
-            assert(false && "not possible");
-        }
-        Cent_token_destroy(comma);
-        free(comma);
-
         Cent_lookahead(pd);
+    }
+
+    pd->ld->process_newline_count--;
+    if (pd->ld->process_newline_count == 0) {
+        Cent_ignore_newlines(pd);
     }
 
     Cent_token* rcb = NULL;

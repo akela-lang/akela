@@ -120,9 +120,9 @@ void test_parse_enumerate()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
     "enum Symbol_type {\n"
-    "    Variable,\n"
-    "    Type,\n"
-    "    Info,\n"
+    "    Variable\n"
+    "    Type\n"
+    "    Info\n"
     "}\n"
     );
 
@@ -169,10 +169,10 @@ void test_parse_top_level_assignment()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Type_def_type {\n"
-        "    Integer,\n"
-        "    Float,\n"
-        "    String,\n"
-        "    Boolean,\n"
+        "    Integer\n"
+        "    Float\n"
+        "    String\n"
+        "    Boolean\n"
         "}\n"
     "# built-in element defs\n"
     "let i32 = Type_def {\n"
@@ -670,11 +670,11 @@ void test_parse_enum_error_duplicate_enum_value()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Symbol_type {\n"
-        "   Element,\n"
-        "   Enumerate,\n"
-        "   Info,\n"
-        "   Variable,\n"
-        "   Info,\n"
+        "   Element\n"
+        "   Enumerate\n"
+        "   Info\n"
+        "   Variable\n"
+        "   Info\n"
         "}\n"
     );
 
@@ -856,10 +856,10 @@ void test_parse_enum_duplicate_id()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Foo {\n"
-        "    One,\n"
-        "    Two,\n"
-        "    Two,\n"
-        "    Three,\n"
+        "    One\n"
+        "    Two\n"
+        "    Two\n"
+        "    Three\n"
         "}\n"
     );
 
@@ -882,9 +882,9 @@ void test_parse_enum_error_could_not_find_enum()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Foo {\n"
-        "    One,\n"
-        "    Two,\n"
-        "    Three,\n"
+        "    One\n"
+        "    Two\n"
+        "    Three\n"
         "}\n"
         "Bar::Two\n"
     );
@@ -908,9 +908,9 @@ void test_parse_enum_error_could_not_find_enum_id()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "enum Foo {\n"
-        "    One,\n"
-        "    Two,\n"
-        "    Three,\n"
+        "    One\n"
+        "    Two\n"
+        "    Three\n"
         "}\n"
         "Foo::Four\n"
     );
@@ -941,11 +941,11 @@ void test_parse_include()
 
     test_parse_add_comp_unit(ct->module_finder_obj, "types.aken",
         "enum Grocery_item {\n"
-        "    Milk,\n"
-        "    Cereal,\n"
-        "    Steak,\n"
-        "    Potatoes,\n"
-        "    Carrots,\n"
+        "    Milk\n"
+        "    Cereal\n"
+        "    Steak\n"
+        "    Potatoes\n"
+        "    Carrots\n"
         "}\n"
     );
 
@@ -1016,11 +1016,11 @@ void test_parse_include_multiple_namespace()
 
     test_parse_add_comp_unit(ct->module_finder_obj, "lib/types.aken",
         "enum Grocery_item {\n"
-        "    Milk,\n"
-        "    Cereal,\n"
-        "    Steak,\n"
-        "    Potatoes,\n"
-        "    Carrots,\n"
+        "    Milk\n"
+        "    Cereal\n"
+        "    Steak\n"
+        "    Potatoes\n"
+        "    Carrots\n"
         "}\n"
     );
 
