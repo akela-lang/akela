@@ -47,6 +47,8 @@ the [ICU library](https://icu.unicode.org/) which can be installed on most OSs.
 
 When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html) should be installed.
 
+[Valgrind](https://valgrind.org/) is required when checking for memory errors.
+
 ## LLVM
     cd ..
     git clone https://github.com/llvm/llvm-project
