@@ -1429,6 +1429,31 @@ void test_parse_object_let()
     test_parse_teardown(ct);
 }
 
+void test_parse_module_id_error()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "let math = 1\n"
+        "use math\n"
+        "math::Pi\n"
+    );
+
+    test_parse_add_comp_unit(ct->module_finder_obj, "math.aken",
+        "let Pi = 3.14\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+    Cent_ast* root = ct->primary->pr.root;
+
+    expect_has_errors(errors);
+
+    expect_source_error(errors, "module identifier collides with existing identifier: math");
+    test_parse_teardown(ct);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1479,4 +1504,6 @@ void test_parse()
     test_parse_let_error_shadow_local();
     
     test_parse_object_let();
+
+    test_parse_module_id_error();
 }

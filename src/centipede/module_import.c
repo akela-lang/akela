@@ -75,36 +75,42 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         Cent_module_dest_env = pd->top;
         hash_table_map_name(&src_env->symbols, (hash_table_func_name)Cent_module_copy_symbol);
     } else {
-        /* create module and symbol */
         p = n->head;
-        Cent_module* mod = NULL;
-        Cent_module_create(&mod);
-        Cent_symbol* sym = NULL;
-        Cent_symbol_create(&sym);
-        Cent_symbol_set_type(sym, Cent_symbol_type_module);
-        sym->data.module = mod;
         struct buffer base_name;
         buffer_init(&base_name);
         buffer_copy(&p->text, &base_name);
-        Cent_environment_add_symbol(pd->top, &base_name, sym);
-        buffer_destroy(&base_name);
+        Cent_symbol* sym = Cent_environment_get(pd->top, &base_name);
+        if (sym) {
+            error_list_set(pd->errors, &p->loc, "module identifier collides with existing identifier: %b", &base_name);
+            p->has_error = true;
+            buffer_destroy(&base_name);
+        } else {
+            /* create module and symbol */
+            Cent_module* mod = NULL;
+            Cent_module_create(&mod);
+            Cent_symbol_create(&sym);
+            Cent_symbol_set_type(sym, Cent_symbol_type_module);
+            sym->data.module = mod;
+            Cent_environment_add_symbol(pd->top, &base_name, sym);
+            buffer_destroy(&base_name);
 
-        /* create submodules */
-        Cent_module* last_mod = mod;
-        p = p->next;
-        while (p) {
-            Cent_module* new_mod = NULL;
-            Cent_module_create(&new_mod);
-            Cent_module_add(last_mod, &p->text, new_mod);
-            last_mod = new_mod;
+            /* create submodules */
+            Cent_module* last_mod = mod;
             p = p->next;
-        }
+            while (p) {
+                Cent_module* new_mod = NULL;
+                Cent_module_create(&new_mod);
+                Cent_module_add(last_mod, &p->text, new_mod);
+                last_mod = new_mod;
+                p = p->next;
+            }
 
-        /* link environment to last submodule */
-        last_mod->pr = &cu->pr;
-        last_mod->value = value;
-        assert(cu->pr.root);
-        assert(cu->pr.root->type == Cent_ast_type_stmts);
-        last_mod->env = cu->pr.root->env;
+            /* link environment to last submodule */
+            last_mod->pr = &cu->pr;
+            last_mod->value = value;
+            assert(cu->pr.root);
+            assert(cu->pr.root->type == Cent_ast_type_stmts);
+            last_mod->env = cu->pr.root->env;
+        }
     }
 }
