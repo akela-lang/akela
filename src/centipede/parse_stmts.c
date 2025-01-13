@@ -127,8 +127,6 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
         free(id);
     }
 
-    Cent_ignore_newlines(pd, n);
-
     Cent_token* lcb = NULL;
     Cent_match(pd, Cent_token_left_curly_brace, "expected left curly-brace", &lcb, n);
     Cent_token_destroy(lcb);
@@ -140,15 +138,11 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
         Cent_ast_add(n, a);
     }
 
-    Cent_ignore_newlines(pd, n);
-
     Cent_lookahead(pd);
     if (pd->lookahead->type == Cent_token_children) {
         Cent_ast* b = Cent_parse_children(pd);
         Cent_ast_add(n, b);
     }
-
-    Cent_ignore_newlines(pd, n);
 
     Cent_token* rcb = NULL;
     Cent_match(pd, Cent_token_right_curly_brace, "expected right curly-brace", &rcb, n);
@@ -200,8 +194,6 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
     Cent_match(pd, Cent_token_left_curly_brace, "expected left curly-brace", &lcb, n);
     Cent_token_destroy(lcb);
     free(lcb);
-
-    Cent_ignore_newlines(pd, n);
 
     while (true) {
         Cent_lookahead(pd);
@@ -308,8 +300,6 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
     Cent_token_destroy(lcb);
     free(lcb);
 
-    Cent_ignore_newlines(pd, n);
-
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_id) {
         Cent_ast* a = NULL;
@@ -368,7 +358,10 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
     }
     /* test case: test_parse_enumerate_error_expected_id */
 
-    Cent_ignore_newlines(pd, n);
+    Cent_token* lcb = NULL;
+    Cent_match(pd, Cent_token_left_curly_brace, "expected left curly-brace", &lcb, n);
+    Cent_token_destroy(lcb);
+    free(lcb);
 
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_id) {
@@ -386,18 +379,25 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
         free(id);
         Cent_ast_add(n, a);
 
-        if (!Cent_has_separator(pd, n)) {
+        Cent_lookahead(pd);
+        if (pd->lookahead->type != Cent_token_comma) {
             break;
         }
 
-        Cent_ignore_newlines(pd, n);
+        Cent_token* comma = NULL;
+        if (!Cent_match(pd, Cent_token_comma, "expected comma", &comma, n)) {
+            assert(false && "not possible");
+        }
+        Cent_token_destroy(comma);
+        free(comma);
+
         Cent_lookahead(pd);
     }
 
-    Cent_token* end = NULL;
-    Cent_match(pd, Cent_token_end, "expected end", &end, n);
-    Cent_token_destroy(end);
-    free(end);
+    Cent_token* rcb = NULL;
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right curly-brace", &rcb, n);
+    Cent_token_destroy(rcb);
+    free(rcb);
     /* test case: test_parse_enumerate_error_expected_end */
 
     if (!n->has_error) {

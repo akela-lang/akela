@@ -119,11 +119,11 @@ void test_parse_enumerate()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-    "enum Symbol_type\n"
-    "    Variable\n"
-    "    Type\n"
-    "    Info\n"
-    "end\n"
+    "enum Symbol_type {\n"
+    "    Variable,\n"
+    "    Type,\n"
+    "    Info,\n"
+    "}\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -168,19 +168,19 @@ void test_parse_top_level_assignment()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Type_def_type\n"
-        "    Integer\n"
-        "    Float\n"
-        "    String\n"
-        "    Boolean\n"
-        "end\n"
+        "enum Type_def_type {\n"
+        "    Integer,\n"
+        "    Float,\n"
+        "    String,\n"
+        "    Boolean,\n"
+        "}\n"
     "# built-in element defs\n"
     "let i32 = Type_def {\n"
     "    .type = Type_def_type::Integer\n"
     "    .name = \"i32\"\n"
     "    .bit_count = 32\n"
     "    .is_signed = true\n"
-    "}\n"
+    "};\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1457,8 +1457,8 @@ void test_parse_module_id_error()
 void test_parse()
 {
     test_parse_element();
-    // test_parse_enumerate();
-    // test_parse_top_level_assignment();
+    test_parse_enumerate();
+    test_parse_top_level_assignment();
     // test_parse_error_unhandled_token();
     // test_parse_element_error_expected_id();
     // test_parse_element_error_expected_end();

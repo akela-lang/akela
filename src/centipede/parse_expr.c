@@ -86,25 +86,29 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Cent_ast* Cent_parse_factor(Cent_parse_data* pd)
 {
+    Cent_ast* n = NULL;
+
     Cent_lookahead(pd);
 
+    pd->ld->process_newline_count++;
+
     if (pd->lookahead->type == Cent_token_number) {
-        return Cent_parse_expr_number(pd);
+        n = Cent_parse_expr_number(pd);
+    } else if (pd->lookahead->type == Cent_token_string) {
+        n = Cent_parse_expr_string(pd);
+    } else if (pd->lookahead->type == Cent_token_true || pd->lookahead->type == Cent_token_false) {
+        n = Cent_parse_expr_boolean(pd);
+    } else if (pd->lookahead->type == Cent_token_id) {
+        n = Cent_parse_expr_id(pd);
     }
 
-    if (pd->lookahead->type == Cent_token_string) {
-        return Cent_parse_expr_string(pd);
+    pd->ld->process_newline_count--;
+
+    if (pd->ld->process_newline_count == 0) {
+        Cent_ignore_newlines(pd);
     }
 
-    if (pd->lookahead->type == Cent_token_true || pd->lookahead->type == Cent_token_false) {
-        return Cent_parse_expr_boolean(pd);
-    }
-
-    if (pd->lookahead->type == Cent_token_id) {
-        return Cent_parse_expr_id(pd);
-    }
-
-    return NULL;
+    return n;
 }
 
 Cent_ast* Cent_parse_expr_number(Cent_parse_data* pd)

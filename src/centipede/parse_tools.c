@@ -27,16 +27,19 @@ bool Cent_match(Cent_parse_data* pd, Cent_token_type type, char* message, Cent_t
     return false;
 }
 
-void Cent_ignore_newlines(Cent_parse_data* pd, Cent_ast* n)
+void Cent_ignore(Cent_parse_data* pd)
+{
+    Cent_token* t = pd->lookahead;
+    pd->lookahead = NULL;
+    Cent_token_destroy(t);
+    free(t);
+}
+
+void Cent_ignore_newlines(Cent_parse_data* pd)
 {
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_newline) {
-        Cent_token* nl = NULL;
-        if (!Cent_match(pd, Cent_token_newline, "expected newline", &nl, n)) {
-            assert(false && "not possible");
-        }
-        Cent_token_destroy(nl);
-        free(nl);
+        Cent_ignore(pd);
         Cent_lookahead(pd);
     }
 }
