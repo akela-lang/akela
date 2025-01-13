@@ -10,16 +10,16 @@ void test_check_value_types_property()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        source: Source\n"
-        "    end\n"
-        "end\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
+        "element Test {\n"
+        "    properties {\n"
+        "        source: Source,\n"
+        "    }\n"
+        "}\n"
         "Test {\n"
         "    .source = Source {\n"
         "        \"a = 1\"\n"
@@ -44,16 +44,16 @@ void test_check_value_types_property_error_number()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        source: Source\n"
-        "    end\n"
-        "end\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
+        "element Test {\n"
+        "    properties {\n"
+        "        source: Source,\n"
+        "    }\n"
+        "}\n"
         "Test {\n"
         "    .source = 150\n"
         "}\n"
@@ -77,16 +77,16 @@ void test_check_value_types_property_error_string()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        source: Source\n"
-        "    end\n"
-        "end\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
+        "element Test {\n"
+        "    properties {\n"
+        "        source: Source,\n"
+        "    }\n"
+        "}\n"
         "Test {\n"
         "    .source = \"hello\"\n"
         "}\n"
@@ -109,16 +109,16 @@ void test_check_value_types_property_error_boolean()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        source: Source\n"
-        "    end\n"
-        "end\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
+        "element Test {\n"
+        "    properties {\n"
+        "        source: Source,\n"
+        "    }\n"
+        "}\n"
         "Test {\n"
         "    .source = true\n"
         "}\n"
@@ -141,16 +141,16 @@ void test_check_value_types_property_error_object()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        source: Source\n"
-        "    end\n"
-        "end\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
+        "element Test {\n"
+        "    properties {\n"
+        "        source: Source,\n"
+        "    }\n"
+        "}\n"
         "Test {\n"
         "    .source = Foo {}\n"
         "}\n"
@@ -173,17 +173,17 @@ void test_check_value_types_property_variable()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        source: Source\n"
-        "    end\n"
-        "end\n"
-        "let a = Source {\"x + 5\"}\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
+        "element Test {\n"
+        "    properties {\n"
+        "        source: Source,\n"
+        "    }\n"
+        "}\n"
+        "let a = Source {\"x + 5\"};\n"
         "Test {\n"
         "    .source = a\n"
         "}\n"
@@ -206,17 +206,17 @@ void test_check_value_types_property_error_variable_object()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
-        "element Test\n"
-        "    properties\n"
-        "        source: Source\n"
-        "    end\n"
-        "end\n"
-        "let a = Foo {}\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
+        "element Test {\n"
+        "    properties {\n"
+        "        source: Source,\n"
+        "    }\n"
+        "}\n"
+        "let a = Foo {};\n"
         "Test {\n"
         "    .source = a\n"
         "}\n"
@@ -239,17 +239,17 @@ void test_check_value_types_property_enum()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Vehicle_type\n"
-        "    Car\n"
-        "    Truck\n"
-        "    Van\n"
-        "    Motorcycle\n"
-        "end\n"
-        "element Vehicle\n"
-        "    properties\n"
-        "        type: Vehicle_type\n"
-        "    end\n"
-        "end\n"
+        "enum Vehicle_type {\n"
+        "    Car,\n"
+        "    Truck,\n"
+        "    Van,\n"
+        "    Motorcycle,\n"
+        "}\n"
+        "element Vehicle {\n"
+        "    properties {\n"
+        "        type: Vehicle_type,\n"
+        "    }\n"
+        "}\n"
         "Vehicle {\n"
         "    .type = Vehicle_type::Truck\n"
         "}\n"
@@ -272,17 +272,17 @@ void test_check_value_types_property_enum_error_id1()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Vehicle_type\n"
-        "    Car\n"
-        "    Truck\n"
-        "    Van\n"
-        "    Motorcycle\n"
-        "end\n"
-        "element Vehicle\n"
-        "    properties\n"
-        "        type: Vehicle_type\n"
-        "    end\n"
-        "end\n"
+        "enum Vehicle_type {\n"
+        "    Car,\n"
+        "    Truck,\n"
+        "    Van,\n"
+        "    Motorcycle,\n"
+        "}\n"
+        "element Vehicle {\n"
+        "    properties {\n"
+        "        type: Vehicle_type,\n"
+        "    }\n"
+        "}\n"
         "Vehicle {\n"
         "    .type = Coin_type::Truck\n"
         "}\n"
@@ -304,17 +304,17 @@ void test_check_value_types_property_enum_error_id2()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Vehicle_type\n"
-        "    Car\n"
-        "    Truck\n"
-        "    Van\n"
-        "    Motorcycle\n"
-        "end\n"
-        "element Vehicle\n"
-        "    properties\n"
-        "        type: Vehicle_type\n"
-        "    end\n"
-        "end\n"
+        "enum Vehicle_type {\n"
+        "    Car,\n"
+        "    Truck,\n"
+        "    Van,\n"
+        "    Motorcycle,\n"
+        "}\n"
+        "element Vehicle {\n"
+        "    properties {\n"
+        "        type: Vehicle_type,\n"
+        "    }\n"
+        "}\n"
         "Vehicle {\n"
         "    .type = Vehicle_type::Pencil\n"
         "}\n"
@@ -336,11 +336,11 @@ void test_check_value_types_child()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
         "Source {\n"
         "    \"one\"\n"
         "}\n"
@@ -361,11 +361,11 @@ void test_check_value_types_child_error_number()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Source\n"
-        "    children\n"
-        "        String\n"
-        "    end\n"
-        "end\n"
+        "element Source {\n"
+        "    children {\n"
+        "        String,\n"
+        "    }\n"
+        "}\n"
         "Source {\n"
         "    \"one\"\n"
         "    24.3\n"
@@ -390,17 +390,17 @@ void test_check_value_types_child_enum()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Vehicle_type\n"
-        "    Car\n"
-        "    Truck\n"
-        "    Van\n"
-        "    Motorcycle\n"
-        "end\n"
-        "element Vehicle\n"
-        "    children\n"
-        "        Vehicle_type\n"
-        "    end\n"
-        "end\n"
+        "enum Vehicle_type {\n"
+        "    Car,\n"
+        "    Truck,\n"
+        "    Van,\n"
+        "    Motorcycle,\n"
+        "}\n"
+        "element Vehicle {\n"
+        "    children {\n"
+        "        Vehicle_type,\n"
+        "    }\n"
+        "}\n"
         "Vehicle {\n"
         "    Vehicle_type::Car\n"
         "    Vehicle_type::Van\n"
@@ -422,17 +422,17 @@ void test_check_value_types_child_enum_error_id1_not_found()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Vehicle_type\n"
-        "    Car\n"
-        "    Truck\n"
-        "    Van\n"
-        "    Motorcycle\n"
-        "end\n"
-        "element Vehicle\n"
-        "    children\n"
-        "        Vehicle_type\n"
-        "    end\n"
-        "end\n"
+        "enum Vehicle_type {\n"
+        "    Car,\n"
+        "    Truck,\n"
+        "    Van,\n"
+        "    Motorcycle,\n"
+        "}\n"
+        "element Vehicle {\n"
+        "    children {\n"
+        "        Vehicle_type,\n"
+        "    }\n"
+        "}\n"
         "Vehicle {\n"
         "    Vehicle_type::Car\n"
         "    Building_type::Van\n"
@@ -458,22 +458,22 @@ void test_check_value_types_child_enum_error_id1_not_match()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Vehicle_type\n"
-        "    Car\n"
-        "    Truck\n"
-        "    Van\n"
-        "    Motorcycle\n"
-        "end\n"
-        "enum Building_type\n"
-        "    Brick\n"
-        "    Cement\n"
-        "    Wood\n"
-        "end\n"
-        "element Vehicle\n"
-        "    children\n"
-        "        Vehicle_type\n"
-        "    end\n"
-        "end\n"
+        "enum Vehicle_type {\n"
+        "    Car,\n"
+        "    Truck,\n"
+        "    Van,\n"
+        "    Motorcycle,\n"
+        "}\n"
+        "enum Building_type {\n"
+        "    Brick,\n"
+        "    Cement,\n"
+        "    Wood,\n"
+        "}\n"
+        "element Vehicle {\n"
+        "    children {\n"
+        "        Vehicle_type,\n"
+        "    }\n"
+        "}\n"
         "Vehicle {\n"
         "    Vehicle_type::Car\n"
         "    Building_type::Brick\n"
@@ -499,17 +499,17 @@ void test_check_value_types_child_enum_error_id2_not_valid()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Vehicle_type\n"
-        "    Car\n"
-        "    Truck\n"
-        "    Van\n"
-        "    Motorcycle\n"
-        "end\n"
-        "element Vehicle\n"
-        "    children\n"
-        "        Vehicle_type\n"
-        "    end\n"
-        "end\n"
+        "enum Vehicle_type {\n"
+        "    Car,\n"
+        "    Truck,\n"
+        "    Van,\n"
+        "    Motorcycle,\n"
+        "}\n"
+        "element Vehicle {\n"
+        "    children {\n"
+        "        Vehicle_type,\n"
+        "    }\n"
+        "}\n"
         "Vehicle {\n"
         "    Vehicle_type::Car\n"
         "    Vehicle_type::Bike\n"
@@ -535,14 +535,14 @@ void test_check_value_types_property_error_not_enum()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Bar\n"
-        "    Filler\n"
-        "end\n"
-        "element Foo\n"
-        "    properties\n"
-        "        a: Bar\n"
-        "    end\n"
-        "end\n"
+        "enum Bar {\n"
+        "    Filler,\n"
+        "}\n"
+        "element Foo {\n"
+        "    properties {\n"
+        "        a: Bar,\n"
+        "    }\n"
+        "}\n"
         "Foo {\n"
         "    .a = 87\n"
         "}\n"
@@ -567,17 +567,17 @@ void test_check_value_types_property_enum_error_not_match()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "enum Apparel\n"
-        "    Shoes\n"
-        "end\n"
-        "enum Bar\n"
-        "    Filler\n"
-        "end\n"
-        "element Foo\n"
-        "    properties\n"
-        "        a: Bar\n"
-        "    end\n"
-        "end\n"
+        "enum Apparel {\n"
+        "    Shoes,\n"
+        "}\n"
+        "enum Bar {\n"
+        "    Filler,\n"
+        "}\n"
+        "element Foo {\n"
+        "    properties {\n"
+        "        a: Bar,\n"
+        "    }\n"
+        "}\n"
         "Foo {\n"
         "    .a = Apparel::Shoes\n"
         "}\n"
@@ -602,13 +602,13 @@ void test_check_value_types_child_error_no_type()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Bar\n"
-        "end\n"
-        "element Foo\n"
-        "    children\n"
-        "        Bar\n"
-        "    end\n"
-        "end\n"
+        "element Bar {\n"
+        "}\n"
+        "element Foo {\n"
+        "    children {\n"
+        "        Bar,\n"
+        "    }\n"
+        "}\n"
         "Foo {\n"
         "    Bar2 {}\n"
         "}\n"
@@ -633,11 +633,11 @@ void test_check_value_types_not_nested()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Bar\n"
-        "    properties\n"
-        "        a: Bool\n"
-        "    end\n"
-        "end\n"
+        "element Bar {\n"
+        "    properties {\n"
+        "        a: Bool,\n"
+        "    }\n"
+        "}\n"
         "Bar {.a=1}\n"
     );
 
@@ -658,11 +658,11 @@ void test_check_value_types_nested()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Bar\n"
-        "    properties\n"
-        "        a: Bool\n"
-        "    end\n"
-        "end\n"
+        "element Bar {\n"
+        "    properties {\n"
+        "        a: Bool,\n"
+        "    }\n"
+        "}\n"
         "Foo {\n"
         "    Bar {.a=1}\n"
         "}\n"
@@ -685,7 +685,7 @@ void test_check_value_types_not_attached()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = Foo {}\n"
+        "let a = Foo {};\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -705,10 +705,10 @@ void test_check_value_types_not_attached_import()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use bar\n"
+        "use bar;\n"
     );
     test_parse_add_comp_unit(ct->module_finder_obj, "bar.aken",
-        "let a = Foo {}\n"
+        "let a = Foo {};\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -726,10 +726,10 @@ void test_check_value_types_not_attached_import_glob()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "use bar::*\n"
+        "use bar::*;\n"
     );
     test_parse_add_comp_unit(ct->module_finder_obj, "bar.aken",
-        "let a = Foo {}\n"
+        "let a = Foo {};\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -747,8 +747,8 @@ void test_check_value_types_not_attached_not_last()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = Foo {}\n"
-        "a\n"
+        "let a = Foo {};\n"
+        "a;\n"
         "Bar {}\n"
     );
 
@@ -769,8 +769,8 @@ void test_check_value_types_not_attached_not_last2()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "Foo {}\n"
-        "Bar {}\n"
+        "Foo {};\n"
+        "Bar {};\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -808,31 +808,31 @@ void test_check_value_types_not_attached_in_object()
 
 void test_check_value_types()
 {
-    // test_check_value_types_property();
-    // test_check_value_types_property_error_number();
-    // test_check_value_types_property_error_string();
-    // test_check_value_types_property_error_boolean();
-    // test_check_value_types_property_error_object();
-    // test_check_value_types_property_variable();
-    // test_check_value_types_property_error_variable_object();
-    // test_check_value_types_property_enum();
-    // test_check_value_types_property_enum_error_id1();
-    // test_check_value_types_property_enum_error_id2();
-    // test_check_value_types_child();
-    // test_check_value_types_child_error_number();
-    // test_check_value_types_child_enum();
-    // test_check_value_types_child_enum_error_id1_not_found();
-    // test_check_value_types_child_enum_error_id1_not_match();
-    // test_check_value_types_child_enum_error_id2_not_valid();
-    // test_check_value_types_property_error_not_enum();
-    // test_check_value_types_property_enum_error_not_match();
-    // test_check_value_types_child_error_no_type();
-    // test_check_value_types_not_nested();
-    // test_check_value_types_nested();
-    // test_check_value_types_not_attached();
-    // test_check_value_types_not_attached_import();
-    // test_check_value_types_not_attached_import_glob();
-    // test_check_value_types_not_attached_not_last();
-    // test_check_value_types_not_attached_not_last2();
-    // test_check_value_types_not_attached_in_object();
+    test_check_value_types_property();
+    test_check_value_types_property_error_number();
+    test_check_value_types_property_error_string();
+    test_check_value_types_property_error_boolean();
+    test_check_value_types_property_error_object();
+    test_check_value_types_property_variable();
+    test_check_value_types_property_error_variable_object();
+    test_check_value_types_property_enum();
+    test_check_value_types_property_enum_error_id1();
+    test_check_value_types_property_enum_error_id2();
+    test_check_value_types_child();
+    test_check_value_types_child_error_number();
+    test_check_value_types_child_enum();
+    test_check_value_types_child_enum_error_id1_not_found();
+    test_check_value_types_child_enum_error_id1_not_match();
+    test_check_value_types_child_enum_error_id2_not_valid();
+    test_check_value_types_property_error_not_enum();
+    test_check_value_types_property_enum_error_not_match();
+    test_check_value_types_child_error_no_type();
+    test_check_value_types_not_nested();
+    test_check_value_types_nested();
+    test_check_value_types_not_attached();
+    test_check_value_types_not_attached_import();
+    test_check_value_types_not_attached_import_glob();
+    test_check_value_types_not_attached_not_last();
+    test_check_value_types_not_attached_not_last2();
+    test_check_value_types_not_attached_in_object();
 }
