@@ -11,7 +11,7 @@ void test_parse_string()
     test_parse_setup(&pd, "\"hello\"");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_string, "type dom");
     expect_str(&dom->value.string, "hello", "string dom");
 
@@ -26,7 +26,7 @@ void test_parse_string_escape()
     test_parse_setup(&pd, "\"hello\\tworld\"");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_string, "type dom");
     expect_str(&dom->value.string, "hello\tworld", "string dom");
 
@@ -41,7 +41,7 @@ void test_parse_string_escape_unicode()
     test_parse_setup(&pd, "\"\\u0061\"");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_string, "type dom");
     expect_str(&dom->value.string, "a", "string dom");
 
@@ -56,7 +56,7 @@ void test_parse_number_integer()
     test_parse_setup(&pd, "30");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_number, "type dom");
     expect_int_equal(dom->number_type, Json_dom_number_type_integer, "number_type dom");
     expect_long_long_equal(dom->value.integer, 30, "integer dom");
@@ -72,7 +72,7 @@ void test_parse_number_fp()
     test_parse_setup(&pd, "1.8");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_number, "type dom");
     expect_int_equal(dom->number_type, Json_dom_number_type_fp, "number_type dom");
     expect_double_equal(dom->value.fp, 1.8, "fp dom");
@@ -88,7 +88,7 @@ void test_parse_array_empty()
     test_parse_setup(&pd, "[]");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_array, "type dom");
 
     Json_dom_destroy(dom);
@@ -102,7 +102,7 @@ void test_parse_array_one()
     test_parse_setup(&pd, "[1.2]");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_array, "type dom");
 
     Json_dom* a = dom->head;
@@ -122,7 +122,7 @@ void test_parse_array_two()
     test_parse_setup(&pd, "[1.2, \"hello\"]");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_array, "type dom");
 
     Json_dom* a = dom->head;
@@ -147,8 +147,8 @@ void test_parse_array_error_no_right_square_bracket()
     test_parse_setup(&pd, "[1.2, \"hello\"");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_has_errors(pd.el);
-    struct Zinc_error* e = expect_source_error(pd.el, "expected right square bracket");
+    Zinc_expect_has_errors(pd.el);
+    struct Zinc_error* e = Zinc_expect_source_error(pd.el, "expected right square bracket");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 13, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 16, "end pos e");
@@ -166,8 +166,8 @@ void test_parse_array_error_expected_value_after_comma()
     test_parse_setup(&pd, "[1.2, \"hello\",");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_has_errors(pd.el);
-    struct Zinc_error* e = expect_source_error(pd.el, "expected value");
+    Zinc_expect_has_errors(pd.el);
+    struct Zinc_error* e = Zinc_expect_source_error(pd.el, "expected value");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 14, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 17, "end pos e");
@@ -185,7 +185,7 @@ void test_parse_boolean_true()
     test_parse_setup(&pd, "true");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_boolean, "type dom");
     expect_true(dom->value.boolean, "boolean dom");
 
@@ -200,7 +200,7 @@ void test_parse_boolean_false()
     test_parse_setup(&pd, "false");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_boolean, "type dom");
     expect_false(dom->value.boolean, "boolean dom");
 
@@ -215,7 +215,7 @@ void test_parse_null()
     test_parse_setup(&pd, "null");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     expect_int_equal(dom->type, Json_dom_type_null, "type dom");
 
     Json_dom_destroy(dom);
@@ -229,8 +229,8 @@ void test_parse_error_token()
     test_parse_setup(&pd, "null{}");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_has_errors(pd.el);
-    struct Zinc_error* e = expect_source_error(pd.el, "Could not process token: left curly brace");
+    Zinc_expect_has_errors(pd.el);
+    struct Zinc_error* e = Zinc_expect_source_error(pd.el, "Could not process token: left curly brace");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 4, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 5, "end pos e");
@@ -248,7 +248,7 @@ void test_parse_object_empty()
     test_parse_setup(&pd, "{}");
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     assert_ptr(dom, "ptr dom");
     expect_int_equal(dom->type, Json_dom_type_object, "type dom");
 
@@ -268,7 +268,7 @@ void test_parse_object_one_property()
 
     Json_dom* dom = Json_parse(&pd);
 
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     assert_ptr(dom, "ptr dom");
     expect_int_equal(dom->type, Json_dom_type_object, "type dom");
 
@@ -293,7 +293,7 @@ void test_parse_object_two_properties()
     );
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     assert_ptr(dom, "ptr dom");
     expect_int_equal(dom->type, Json_dom_type_object, "type dom");
 
@@ -324,7 +324,7 @@ void test_parse_object_three_properties()
     );
 
     Json_dom* dom = Json_parse(&pd);
-    expect_no_errors(pd.el);
+    Zinc_expect_no_errors(pd.el);
     assert_ptr(dom, "ptr dom");
     expect_int_equal(dom->type, Json_dom_type_object, "type dom");
 

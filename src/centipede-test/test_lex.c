@@ -201,7 +201,7 @@ void test_lex_element()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
 
     test_lex_teardown(&ld);
 }
@@ -272,7 +272,7 @@ void test_lex_enum()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
 
     test_lex_teardown(&ld);
 }
@@ -455,7 +455,7 @@ void test_lex_top_level_assign()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -511,7 +511,7 @@ void test_lex_builtin()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -540,8 +540,8 @@ void test_lex_builtin_error()
     Cent_token_destroy(t);
     free(t);
 
-    expect_has_errors(ld.errors);
-    expect_source_error(ld.errors, "invalid builtin id: @abc");
+    Zinc_expect_has_errors(ld.errors);
+    Zinc_expect_source_error(ld.errors, "invalid builtin id: @abc");
     test_lex_teardown(&ld);
 }
 
@@ -566,7 +566,7 @@ void test_lex_escape_backslash()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -591,7 +591,7 @@ void test_lex_escape_forward_slash()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -616,7 +616,7 @@ void test_lex_escape_backspace()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -641,7 +641,7 @@ void test_lex_escape_form_feed()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -666,7 +666,7 @@ void test_lex_escape_newline()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -691,7 +691,7 @@ void test_lex_escape_carriage_return()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -716,7 +716,7 @@ void test_lex_escape_tab()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -741,7 +741,7 @@ void test_lex_escape_unicode()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -795,7 +795,7 @@ void test_lex_semicolon()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -813,8 +813,8 @@ void test_lex_error_invalid_character()
     Cent_token_destroy(t);
     free(t);
 
-    expect_has_errors(ld.errors);
-    struct Zinc_error* e = expect_source_error(ld.errors, "invalid character: ~");
+    Zinc_expect_has_errors(ld.errors);
+    struct Zinc_error* e = Zinc_expect_source_error(ld.errors, "invalid character: ~");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 1, "start pos e");
@@ -845,7 +845,7 @@ void test_lex_number_integer()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -871,7 +871,7 @@ void test_lex_number_fraction()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 
@@ -899,7 +899,7 @@ void test_lex_number_exponent()
     Cent_token_destroy(t);
     free(t);
 
-    expect_no_errors(ld.errors);
+    Zinc_expect_no_errors(ld.errors);
     test_lex_teardown(&ld);
 }
 

@@ -43,7 +43,7 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
         Zinc_string_finish(&result->text);
         Zinc_error_list_set(&cu->el, &loc, "Module:\n%s", result->text.buf);
     }
-    expect_no_errors(&cu->el);
+    Zinc_expect_no_errors(&cu->el);
 
     VectorDestroy(vector);
     free(vector);

@@ -21,7 +21,7 @@ void test_stringify_null()
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "null", "bf");
 
     Zinc_string_destroy(&bf);
@@ -46,7 +46,7 @@ void test_stringify_true()
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "true", "bf");
 
     Zinc_string_destroy(&bf);
@@ -71,7 +71,7 @@ void test_stringify_false()
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "false", "bf");
 
     Zinc_string_destroy(&bf);
@@ -97,7 +97,7 @@ void test_stringify_string()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "\"hello\"", "bf");
 
     Zinc_string_destroy(&bf);
@@ -123,7 +123,7 @@ void test_stringify_string2()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
 
     Zinc_string_destroy(&bf);
@@ -149,7 +149,7 @@ void test_stringify_string3()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "\"\\u1fa52\"", "bf");
 
     Zinc_string_destroy(&bf);
@@ -175,7 +175,7 @@ void test_stringify_string4()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "\"\\t\"", "bf");
 
     Zinc_string_destroy(&bf);
@@ -202,8 +202,8 @@ void test_stringify_string_error_invalid_char()
 
     Json_stringify(el, dom, &bf);
 
-    expect_has_errors(el);
-    struct Zinc_error* e = expect_source_error(el, "invalid string character");
+    Zinc_expect_has_errors(el);
+    struct Zinc_error* e = Zinc_expect_source_error(el, "invalid string character");
     assert_ptr(e, "ptr e");
 
     Zinc_string_destroy(&bf);
@@ -230,7 +230,7 @@ void test_stringify_number_integer()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "123", "bf");
 
     Zinc_string_destroy(&bf);
@@ -257,7 +257,7 @@ void test_stringify_number_fraction()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "5.100000", "bf");
 
     Zinc_string_destroy(&bf);
@@ -284,7 +284,7 @@ void test_stringify_number_exponent()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "51.000000", "bf");
 
     Zinc_string_destroy(&bf);
@@ -309,7 +309,7 @@ void test_stringify_array_empty()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "[]", "bf");
 
     Zinc_string_destroy(&bf);
@@ -341,7 +341,7 @@ void test_stringify_array_one()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "[3]", "bf");
 
     Zinc_string_destroy(&bf);
@@ -403,7 +403,7 @@ void test_stringify_array2()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
 
     Zinc_string_destroy(&bf);
@@ -428,7 +428,7 @@ void test_stringify_object_empty()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "{}", "bf");
 
     Zinc_string_destroy(&bf);
@@ -465,7 +465,7 @@ void test_stringify_object_one()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_str(&bf, "{\"one\":1}", "bf");
 
     Zinc_string_destroy(&name0);
@@ -524,7 +524,7 @@ void test_stringify_object_many()
 
     Json_stringify(el, dom, &bf);
 
-    expect_no_errors(el);
+    Zinc_expect_no_errors(el);
     expect_true(
         Zinc_string_compare_str(&bf, "{\"one\":1,\"two\":5.500000,\"three\":\"hello\"}")
         || Zinc_string_compare_str(&bf, "{\"one\":1,\"three\":\"hello\",\"two\":5.500000}")

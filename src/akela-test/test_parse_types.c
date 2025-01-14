@@ -11,8 +11,8 @@ void test_parse_types_missing_declaration()
 	struct Ake_comp_unit cu;
 
     parse_setup("x + 1", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "variable not declared: x");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "variable not declared: x");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -25,8 +25,8 @@ void test_parse_types_missing_declaration2()
 	struct Ake_comp_unit cu;
 
     parse_setup("foo() + 1", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "variable not declared: foo");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "variable not declared: foo");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -39,8 +39,8 @@ void test_parse_types_missing_declaration3()
 	struct Ake_comp_unit cu;
 
     parse_setup("x = fn() end", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "variable not declared: x");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "variable not declared: x");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -53,8 +53,8 @@ void test_parse_types_double_function()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; fn foo() end", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "duplicate declaration in same scope: foo");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "duplicate declaration in same scope: foo");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -67,8 +67,8 @@ void test_parse_types_reserved_type()
 	struct Ake_comp_unit cu;
 
     parse_setup("let i64: i64", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "identifier reserved as a type: i64");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "identifier reserved as a type: i64");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -81,8 +81,8 @@ void test_parse_types_reserved_type2()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn i64() end", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "identifier reserved as a type: i64");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "identifier reserved as a type: i64");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -95,8 +95,8 @@ void test_parse_types_reserved_type3()
 	struct Ake_comp_unit cu;
 
     parse_setup("for i64: i64 = 1:10 end", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "identifier reserved as a type: i64");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "identifier reserved as a type: i64");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -109,8 +109,8 @@ void test_parse_types_reserved_type4()
 	struct Ake_comp_unit cu;
 
     parse_setup("let list: [10]i64; for i64: i64 in list end", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "identifier reserved as a type: i64");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "identifier reserved as a type: i64");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -123,8 +123,8 @@ void test_parse_types_exists()
 	struct Ake_comp_unit cu;
 
     parse_setup("let x: SuperInt; x + 1", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "type not defined: SuperInt");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "type not defined: SuperInt");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -137,7 +137,7 @@ void test_parse_types_array()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: [10]i64; a[1]", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "parse_setup valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -184,8 +184,8 @@ void test_parse_error_dseq_comma()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64,) end", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected declaration after comma");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "expected declaration after comma");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -198,8 +198,8 @@ void test_parse_error_declaration_colon()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected colon after variable(s)");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "expected colon after variable(s)");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -212,8 +212,8 @@ void test_parse_error_declaration_type()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: ", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "expected type identifier or fn");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "expected type identifier or fn");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -226,8 +226,8 @@ void test_parse_error_type_not_defined()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: Foo", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "type not defined: Foo");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "type not defined: Foo");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -240,8 +240,8 @@ void test_parse_error_not_a_type()
 	struct Ake_comp_unit cu;
 
     parse_setup("let foo: i64; let a: foo", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "identifier is not a type: foo");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "identifier is not a type: foo");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -254,8 +254,8 @@ void test_parse_error_duplicate_declarations()
 	struct Ake_comp_unit cu;
 
     parse_setup("let x: i64; let x: i64", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "duplicate declaration in same scope: x");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -268,8 +268,8 @@ void test_parse_error_return_type()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo()->i64 true end", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "returned type does not match function return type");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "returned type does not match function return type");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -282,8 +282,8 @@ void test_parse_types_error_param()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64) true end; foo(true)", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "parameter and aguments types do not match");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "parameter and aguments types do not match");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -296,8 +296,8 @@ void test_parse_types_error_param_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64) true end; foo(foo(1))", &cu);
-	expect_has_errors(&cu.el);
-	expect_source_error(&cu.el, "argument expression has no value");
+	Zinc_expect_has_errors(&cu.el);
+	Zinc_expect_source_error(&cu.el, "argument expression has no value");
 	expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -310,7 +310,7 @@ void test_parse_types_newline_declaration()
     struct Ake_comp_unit cu;
 
     parse_setup("let a\n: \ni64", &cu);
-    expect_no_errors(&cu.el);
+    Zinc_expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* let = Ast_node_get(cu.root, 0);

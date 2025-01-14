@@ -11,7 +11,7 @@ Cob_result match_run(char* pattern, char* text)
     Cob_compile_data* cd = NULL;
     setup_compile(&cd, pattern);
     Cob_re re = Cob_compile(cd);
-    assert_no_errors(re.el);
+    Zinc_assert_no_errors(re.el);
 
     const size_t size = strlen(text);
     const String_slice slice = {text, size};

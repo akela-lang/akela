@@ -2,7 +2,7 @@
 #include "error.h"
 #include <string.h>
 
-void assert_no_errors(struct Zinc_error_list* el)
+void Zinc_assert_no_errors(Zinc_error_list* el)
 {
     test_called();
 
@@ -20,7 +20,7 @@ void assert_no_errors(struct Zinc_error_list* el)
     panic();
 }
 
-void expect_no_errors(struct Zinc_error_list* el)
+void Zinc_expect_no_errors(Zinc_error_list* el)
 {
     test_called();
 
@@ -37,7 +37,7 @@ void expect_no_errors(struct Zinc_error_list* el)
     error_triggered();
 }
 
-void expect_error_count(struct Zinc_error_list* el, size_t count)
+void Zinc_expect_error_count(Zinc_error_list* el, size_t count)
 {
     test_called();
 
@@ -53,7 +53,7 @@ void expect_error_count(struct Zinc_error_list* el, size_t count)
     fprintf(stderr, "expected error count (%zu) (%zu)\n", actual_count, count);
 }
 
-void assert_has_errors(struct Zinc_error_list* el)
+void Zinc_assert_has_errors(Zinc_error_list* el)
 {
     test_called();
 
@@ -65,7 +65,7 @@ void assert_has_errors(struct Zinc_error_list* el)
     panic();
 }
 
-void expect_has_errors(struct Zinc_error_list* el)
+void Zinc_expect_has_errors(Zinc_error_list* el)
 {
     test_called();
 
@@ -76,7 +76,7 @@ void expect_has_errors(struct Zinc_error_list* el)
     error_triggered();
 }
 
-struct Zinc_error* assert_source_error(struct Zinc_error_list* el, const char message[])
+struct Zinc_error* Zinc_assert_source_error(Zinc_error_list* el, const char message[])
 {
     test_called();
     struct Zinc_error* e = el->head;
@@ -93,7 +93,7 @@ struct Zinc_error* assert_source_error(struct Zinc_error_list* el, const char me
     return NULL;
 }
 
-struct Zinc_error* expect_source_error(struct Zinc_error_list* el, const char message[])
+struct Zinc_error* Zinc_expect_source_error(Zinc_error_list* el, const char message[])
 {
     test_called();
     struct Zinc_error* e = el->head;

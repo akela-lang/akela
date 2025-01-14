@@ -36,8 +36,8 @@ void test_error_list_set_buffer()
     Zinc_location_init(&loc);
     Zinc_error_list_set(el, &loc, "abc %b xyz", &bf);
 
-    expect_has_errors(el);
-    expect_source_error(el, "abc hello xyz");
+    Zinc_expect_has_errors(el);
+    Zinc_expect_source_error(el, "abc hello xyz");
 
     Zinc_error_list_destroy(el);
     free(el);

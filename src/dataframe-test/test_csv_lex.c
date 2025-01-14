@@ -44,7 +44,7 @@ void TestCSVLexEmptyField()
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "", "value 0");
@@ -52,7 +52,7 @@ void TestCSVLexEmptyField()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 1");
     expect_vector_str(&token->value, "", "value 1");
@@ -60,7 +60,7 @@ void TestCSVLexEmptyField()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 2");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 2");
     expect_vector_str(&token->value, "", "value 2");
@@ -79,7 +79,7 @@ void TestCSVLexEmptyFieldQuoted()
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "", "value 0");
@@ -87,7 +87,7 @@ void TestCSVLexEmptyFieldQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 1");
     expect_vector_str(&token->value, "", "value 1");
@@ -95,7 +95,7 @@ void TestCSVLexEmptyFieldQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 2");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 2");
     expect_vector_str(&token->value, "", "value 2");
@@ -114,7 +114,7 @@ void TestCSVLexOneField()
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "25", "value 0");
@@ -122,7 +122,7 @@ void TestCSVLexOneField()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 1");
     expect_vector_str(&token->value, "", "value 1");
@@ -130,7 +130,7 @@ void TestCSVLexOneField()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 2");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 2");
     expect_vector_str(&token->value, "", "value 2");
@@ -149,7 +149,7 @@ void TestCSVLexOneFieldQuoted()
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "25", "value 0");
@@ -157,7 +157,7 @@ void TestCSVLexOneFieldQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 1");
     expect_vector_str(&token->value, "", "value 1");
@@ -165,7 +165,7 @@ void TestCSVLexOneFieldQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 2");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 2");
     expect_vector_str(&token->value, "", "value 2");
@@ -184,7 +184,7 @@ void TestCSVLexTwoFields()
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "24", "value 0");
@@ -192,7 +192,7 @@ void TestCSVLexTwoFields()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeField, "type 1");
     expect_vector_str(&token->value, "11", "value 1");
@@ -200,7 +200,7 @@ void TestCSVLexTwoFields()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 2");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 2");
     expect_vector_str(&token->value, "", "value 2");
@@ -208,7 +208,7 @@ void TestCSVLexTwoFields()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 3");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 3");
     expect_vector_str(&token->value, "", "value 3");
@@ -227,7 +227,7 @@ void TestCSVLexTwoFieldsQuoted()
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "24", "value 0");
@@ -235,7 +235,7 @@ void TestCSVLexTwoFieldsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeField, "type 1");
     expect_vector_str(&token->value, "11", "value 1");
@@ -243,7 +243,7 @@ void TestCSVLexTwoFieldsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 2");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 2");
     expect_vector_str(&token->value, "", "value 2");
@@ -251,7 +251,7 @@ void TestCSVLexTwoFieldsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 3");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 3");
     expect_vector_str(&token->value, "", "value 3");
@@ -273,7 +273,7 @@ void TestCSVLexTwoRows()
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "24", "value 0");
@@ -281,7 +281,7 @@ void TestCSVLexTwoRows()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeField, "type 1");
     expect_vector_str(&token->value, "11", "value 1");
@@ -289,7 +289,7 @@ void TestCSVLexTwoRows()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 2");
     expect_vector_str(&token->value, "", "value 2");
@@ -297,7 +297,7 @@ void TestCSVLexTwoRows()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeField, "type 3");
     expect_vector_str(&token->value, "44", "value 3");
@@ -305,7 +305,7 @@ void TestCSVLexTwoRows()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeField, "type 4");
     expect_vector_str(&token->value, "100", "value 4");
@@ -313,7 +313,7 @@ void TestCSVLexTwoRows()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 5");
     expect_vector_str(&token->value, "", "value 5");
@@ -321,7 +321,7 @@ void TestCSVLexTwoRows()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 6");
     expect_vector_str(&token->value, "", "value 6");
@@ -343,7 +343,7 @@ void TestCSVLexTwoRowsQuoted()
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "24", "value 0");
@@ -351,7 +351,7 @@ void TestCSVLexTwoRowsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeField, "type 1");
     expect_vector_str(&token->value, "11", "value 1");
@@ -359,7 +359,7 @@ void TestCSVLexTwoRowsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 2");
     expect_vector_str(&token->value, "", "value 2");
@@ -367,7 +367,7 @@ void TestCSVLexTwoRowsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeField, "type 3");
     expect_vector_str(&token->value, "44", "value 3");
@@ -375,7 +375,7 @@ void TestCSVLexTwoRowsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeField, "type 4");
     expect_vector_str(&token->value, "100", "value 4");
@@ -383,7 +383,7 @@ void TestCSVLexTwoRowsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 5");
     expect_vector_str(&token->value, "", "value 5");
@@ -391,7 +391,7 @@ void TestCSVLexTwoRowsQuoted()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 6");
     expect_vector_str(&token->value, "", "value 6");
@@ -415,8 +415,8 @@ void TestCSVLexErrorQuote()
     CSVTokenDestroy(token);
     free(token);
 
-    expect_has_errors(lex_data->el);
-    struct Zinc_error* e = expect_source_error(lex_data->el, "quote found in unquoted field");
+    Zinc_expect_has_errors(lex_data->el);
+    struct Zinc_error* e = Zinc_expect_source_error(lex_data->el, "quote found in unquoted field");
     if (e) {
         expect_size_t_equal(e->loc.start_pos, 3, "byte_pos");
         expect_size_t_equal(e->loc.end_pos, 4, "end_pos");
@@ -436,7 +436,7 @@ void TestCSVLexErrorExtraCharactersAfterQuote()
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "one", "vector 0");
@@ -444,13 +444,13 @@ void TestCSVLexErrorExtraCharactersAfterQuote()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_has_errors(lex_data->el);
+    Zinc_expect_has_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 1");
     expect_vector_str(&token->value, "", "vector 1");
     CSVTokenDestroy(token);
     free(token);
-    struct Zinc_error* e = expect_source_error(lex_data->el,
+    struct Zinc_error* e = Zinc_expect_source_error(lex_data->el,
                                           "extra characters after field ending quote");
     if (e) {
         expect_size_t_equal(e->loc.start_pos, 5, "byte_pos");
@@ -471,7 +471,7 @@ void TestCSVLexErrorEOFBeforeQuote()
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    expect_has_errors(lex_data->el);
+    Zinc_expect_has_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "one", "vector 0");
@@ -479,14 +479,14 @@ void TestCSVLexErrorEOFBeforeQuote()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_has_errors(lex_data->el);
+    Zinc_expect_has_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 1");
     expect_vector_str(&token->value, "", "vector 1");
     CSVTokenDestroy(token);
     free(token);
 
-    struct Zinc_error* e = expect_source_error(lex_data->el,
+    struct Zinc_error* e = Zinc_expect_source_error(lex_data->el,
                                           "End of file found before end of quoted field");
     if (e) {
         expect_size_t_equal(e->loc.start_pos, 4, "byte_pos");
@@ -507,7 +507,7 @@ void TestCSVLexQuoteNewline()
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "one\ntwo", "vector 0");
@@ -515,7 +515,7 @@ void TestCSVLexQuoteNewline()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 1");
     expect_vector_str(&token->value, "", "vector 1");
@@ -523,7 +523,7 @@ void TestCSVLexQuoteNewline()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 2");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 2");
     expect_vector_str(&token->value, "", "vector 2");
@@ -542,7 +542,7 @@ void TestCSVLexQuoteComma()
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 0");
     expect_int_equal(token->type, CSVTokenTypeField, "type 0");
     expect_vector_str(&token->value, "one,two", "vector 0");
@@ -550,7 +550,7 @@ void TestCSVLexQuoteComma()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 1");
     expect_int_equal(token->type, CSVTokenTypeNewline, "type 1");
     expect_vector_str(&token->value, "", "vector 1");
@@ -558,7 +558,7 @@ void TestCSVLexQuoteComma()
     free(token);
 
     CSVLex(lex_data, &token);
-    expect_no_errors(lex_data->el);
+    Zinc_expect_no_errors(lex_data->el);
     assert_ptr(token, "ptr token 2");
     expect_int_equal(token->type, CSVTokenTypeEOF, "type 2");
     expect_vector_str(&token->value, "", "vector 2");

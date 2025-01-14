@@ -33,7 +33,7 @@ void test_check_value_types_property()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
     assert_ptr(root, "ptr value");
     test_parse_teardown(ct);
 }
@@ -64,9 +64,9 @@ void test_check_value_types_property_error_number()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(errors, "invalid property type: Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Integer");
     test_parse_teardown(ct);
 }
 
@@ -97,9 +97,9 @@ void test_check_value_types_property_error_string()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(errors, "invalid property type: String");
+    Zinc_expect_source_error(errors, "invalid property type: String");
     test_parse_teardown(ct);
 }
 
@@ -129,9 +129,9 @@ void test_check_value_types_property_error_boolean()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(errors, "invalid property type: Bool");
+    Zinc_expect_source_error(errors, "invalid property type: Bool");
     test_parse_teardown(ct);
 }
 
@@ -161,9 +161,9 @@ void test_check_value_types_property_error_object()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(errors, "invalid property type: Test--source--Foo");
+    Zinc_expect_source_error(errors, "invalid property type: Test--source--Foo");
     test_parse_teardown(ct);
 }
 
@@ -194,9 +194,9 @@ void test_check_value_types_property_variable()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
     test_parse_teardown(ct);
 }
 
@@ -227,9 +227,9 @@ void test_check_value_types_property_error_variable_object()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
     assert_ptr(root, "ptr value");
-    expect_source_error(errors, "invalid property type: Test--source--Foo");
+    Zinc_expect_source_error(errors, "invalid property type: Test--source--Foo");
     test_parse_teardown(ct);
 }
 
@@ -260,7 +260,7 @@ void test_check_value_types_property_enum()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
     assert_ptr(root, "ptr value");
 
     test_parse_teardown(ct);
@@ -292,8 +292,8 @@ void test_check_value_types_property_enum_error_id1()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    expect_source_error(errors, "id is not a variable: Coin_type");
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "id is not a variable: Coin_type");
 
     test_parse_teardown(ct);
 }
@@ -324,8 +324,8 @@ void test_check_value_types_property_enum_error_id2()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    expect_source_error(errors, "invalid enum id: Pencil");
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "invalid enum id: Pencil");
 
     test_parse_teardown(ct);
 }
@@ -350,7 +350,7 @@ void test_check_value_types_child()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     test_parse_teardown(ct);
 }
@@ -376,8 +376,8 @@ void test_check_value_types_child_error_number()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    struct Zinc_error* e =expect_source_error(errors, "invalid child type: Float");
+    Zinc_expect_has_errors(errors);
+    struct Zinc_error* e =Zinc_expect_source_error(errors, "invalid child type: Float");
     expect_size_t_equal(e->loc.line, 8, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
 
@@ -411,7 +411,7 @@ void test_check_value_types_child_enum()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     test_parse_teardown(ct);
 }
@@ -443,8 +443,8 @@ void test_check_value_types_child_enum_error_id1_not_found()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    struct Zinc_error* e = expect_source_error(errors, "id is not a variable: Building_type");
+    Zinc_expect_has_errors(errors);
+    struct Zinc_error* e = Zinc_expect_source_error(errors, "id is not a variable: Building_type");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 14, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
@@ -484,8 +484,8 @@ void test_check_value_types_child_enum_error_id1_not_match()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    struct Zinc_error* e = expect_source_error(errors, "invalid child type: Building_type");
+    Zinc_expect_has_errors(errors);
+    struct Zinc_error* e = Zinc_expect_source_error(errors, "invalid child type: Building_type");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 19, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
@@ -520,8 +520,8 @@ void test_check_value_types_child_enum_error_id2_not_valid()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    struct Zinc_error* e = expect_source_error(errors, "invalid enum id: Bike");
+    Zinc_expect_has_errors(errors);
+    struct Zinc_error* e = Zinc_expect_source_error(errors, "invalid enum id: Bike");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 14, "line e");
     expect_size_t_equal(e->loc.col, 19, "col e");
@@ -552,8 +552,8 @@ void test_check_value_types_property_error_not_enum()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    struct Zinc_error* e = expect_source_error(errors, "value is not an enum value: Integer");
+    Zinc_expect_has_errors(errors);
+    struct Zinc_error* e = Zinc_expect_source_error(errors, "value is not an enum value: Integer");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 10, "line e");
     expect_size_t_equal(e->loc.col, 10, "col e");
@@ -587,8 +587,8 @@ void test_check_value_types_property_enum_error_not_match()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    struct Zinc_error* e = expect_source_error(errors, "invalid value enum type: Apparel");
+    Zinc_expect_has_errors(errors);
+    struct Zinc_error* e = Zinc_expect_source_error(errors, "invalid value enum type: Apparel");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 13, "line e");
     expect_size_t_equal(e->loc.col, 10, "col e");
@@ -618,8 +618,8 @@ void test_check_value_types_child_error_no_type()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
-    struct Zinc_error* e = expect_source_error(errors, "value has no type; looking for Bar");
+    Zinc_expect_has_errors(errors);
+    struct Zinc_error* e = Zinc_expect_source_error(errors, "value has no type; looking for Bar");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 9, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
@@ -645,9 +645,9 @@ void test_check_value_types_not_nested()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
 
-    expect_source_error(errors, "invalid property type: Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Integer");
 
     test_parse_teardown(ct);
 }
@@ -672,9 +672,9 @@ void test_check_value_types_nested()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
 
-    expect_source_error(errors, "invalid property type: Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Integer");
 
     test_parse_teardown(ct);
 }
@@ -692,9 +692,9 @@ void test_check_value_types_not_attached()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
 
-    expect_source_error(errors, "value is not used");
+    Zinc_expect_source_error(errors, "value is not used");
 
     test_parse_teardown(ct);
 }
@@ -715,7 +715,7 @@ void test_check_value_types_not_attached_import()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     test_parse_teardown(ct);
 }
@@ -736,7 +736,7 @@ void test_check_value_types_not_attached_import_glob()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     test_parse_teardown(ct);
 }
@@ -756,9 +756,9 @@ void test_check_value_types_not_attached_not_last()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
 
-    expect_source_error(errors, "value is not used");
+    Zinc_expect_source_error(errors, "value is not used");
 
     test_parse_teardown(ct);
 }
@@ -777,9 +777,9 @@ void test_check_value_types_not_attached_not_last2()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
 
-    expect_source_error(errors, "value is not used");
+    Zinc_expect_source_error(errors, "value is not used");
 
     test_parse_teardown(ct);
 }
@@ -799,9 +799,9 @@ void test_check_value_types_not_attached_in_object()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    expect_has_errors(errors);
+    Zinc_expect_has_errors(errors);
 
-    expect_source_error(errors, "value is not used");
+    Zinc_expect_source_error(errors, "value is not used");
 
     test_parse_teardown(ct);
 }

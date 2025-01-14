@@ -19,7 +19,7 @@ void test_build_number_integer()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_number, "type root");
@@ -41,7 +41,7 @@ void test_build_number_fp()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_number, "type root");
@@ -63,7 +63,7 @@ void test_build_string()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_string, "type root");
@@ -84,7 +84,7 @@ void test_build_boolean_true()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_boolean, "type root");
@@ -105,7 +105,7 @@ void test_build_boolean_false()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_boolean, "type root");
@@ -133,7 +133,7 @@ void test_build_enum0()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_enum, "type root");
@@ -163,7 +163,7 @@ void test_build_enum1()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_enum, "type root");
@@ -193,7 +193,7 @@ void test_build_enum2()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_enum, "type root");
@@ -219,7 +219,7 @@ void test_build_assign()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     expect_ptr(root, "ptr");
 
@@ -253,7 +253,7 @@ void test_build_object()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
@@ -277,7 +277,7 @@ void test_build_object_prop_set()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
@@ -307,7 +307,7 @@ void test_build_object_assign()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
@@ -340,7 +340,7 @@ void test_build_object_child_of()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
@@ -379,7 +379,7 @@ void test_build_object_property_of()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
@@ -412,7 +412,7 @@ void test_build_object_function_file_name()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr root");
     expect_int_equal(root->type, Cent_value_type_string, "type root");
@@ -448,7 +448,7 @@ void test_build_property_set_variable()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
@@ -496,7 +496,7 @@ void test_build_namespace_enum()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");
@@ -534,7 +534,7 @@ void test_build_namespace_variable()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_number, "type root");
@@ -563,7 +563,7 @@ void test_build_namespace_submodules()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_number, "type root");
@@ -592,7 +592,7 @@ void test_build_namespace_glob_value()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_number, "type root");
@@ -617,7 +617,7 @@ void test_build_let()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_number, "type root");
@@ -644,7 +644,7 @@ void test_build_object_let()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    expect_no_errors(errors);
+    Zinc_expect_no_errors(errors);
 
     assert_ptr(root, "ptr value");
     expect_int_equal(root->type, Cent_value_type_dag, "type root");

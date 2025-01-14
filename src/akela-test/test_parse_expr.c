@@ -14,7 +14,7 @@ void test_parse_blank()
 	struct Ake_comp_unit cu;
 
     parse_setup("", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -33,7 +33,7 @@ void test_parse_add()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64 = 100; speed + 1", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -71,9 +71,9 @@ void test_parse_add_error_expected_term()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 +", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "expected term after additive operator");
+	Zinc_expect_source_error(&cu.el, "expected term after additive operator");
 
     parse_teardown(&cu);
 }
@@ -85,9 +85,9 @@ void test_parse_add_error_left_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() + 1", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "addition operand has no value");
+	Zinc_expect_source_error(&cu.el, "addition operand has no value");
 
     parse_teardown(&cu);
 }
@@ -99,9 +99,9 @@ void test_parse_add_error_left_not_numeric()
 	struct Ake_comp_unit cu;
 
     parse_setup("true + 1", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "addition on non-numeric operand");
+	Zinc_expect_source_error(&cu.el, "addition on non-numeric operand");
 
     parse_teardown(&cu);
 }
@@ -113,9 +113,9 @@ void test_parse_add_error_right_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 1 + foo()", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "addition operand has no value");
+	Zinc_expect_source_error(&cu.el, "addition operand has no value");
 
     parse_teardown(&cu);
 }
@@ -127,9 +127,9 @@ void test_parse_add_error_right_not_numeric()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 + true", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "addition on non-numeric operand");
+	Zinc_expect_source_error(&cu.el, "addition on non-numeric operand");
 
     parse_teardown(&cu);
 }
@@ -141,7 +141,7 @@ void test_parse_add_mixed_types()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 + 5.0", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -179,7 +179,7 @@ void test_parse_add_positive()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64 = 100; speed + +1", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -218,7 +218,7 @@ void test_parse_add_negative()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed + -1", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -257,7 +257,7 @@ void test_parse_sub()
 	struct Ake_comp_unit cu;
 
     parse_setup("let delta: i64 = 3; 100 - delta", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -289,7 +289,7 @@ void test_parse_sub_positive()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed - +1", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -328,7 +328,7 @@ void test_parse_sub_negative()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed - -1", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -367,7 +367,7 @@ void test_parse_mult()
 	struct Ake_comp_unit cu;
 
     parse_setup("5 * 2", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -405,9 +405,9 @@ void test_parse_mult_error_expected_term()
 	struct Ake_comp_unit cu;
 
     parse_setup("5*", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "expected term after operator");
+	Zinc_expect_source_error(&cu.el, "expected term after operator");
 
     parse_teardown(&cu);
 }
@@ -420,9 +420,9 @@ void test_parse_mult_error_left_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() * 1", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "multiplication operand has no value");
+	Zinc_expect_source_error(&cu.el, "multiplication operand has no value");
 
     parse_teardown(&cu);
 }
@@ -434,9 +434,9 @@ void test_parse_mult_error_left_not_numeric()
 	struct Ake_comp_unit cu;
 
     parse_setup("true * 1", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "multiplication on non-numeric operand");
+	Zinc_expect_source_error(&cu.el, "multiplication on non-numeric operand");
 
     parse_teardown(&cu);
 }
@@ -448,9 +448,9 @@ void test_parse_mult_error_right_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 1 * foo()", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "multiplication operand has no value");
+	Zinc_expect_source_error(&cu.el, "multiplication operand has no value");
 
     parse_teardown(&cu);
 }
@@ -462,9 +462,9 @@ void test_parse_mult_error_right_not_numeric()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 * true", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "multiplication on non-numeric operand");
+	Zinc_expect_source_error(&cu.el, "multiplication on non-numeric operand");
 
     parse_teardown(&cu);
 }
@@ -476,7 +476,7 @@ void test_parse_mult_positive()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed * +1", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -515,7 +515,7 @@ void test_parse_mult_negative()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed * -1", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -554,7 +554,7 @@ void test_parse_divide()
 	struct Ake_comp_unit cu;
 
     parse_setup("52 / 2", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -584,7 +584,7 @@ void test_parse_add_add()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 + 2 + 3", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -623,7 +623,7 @@ void test_parse_mult_mult()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 * 2 * 3", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -662,7 +662,7 @@ void test_parse_add_mult()
 	struct Ake_comp_unit cu;
 
     parse_setup("5 + 3 * 2", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -701,7 +701,7 @@ void test_parse_mult_add()
 	struct Ake_comp_unit cu;
 
     parse_setup("4 * 3 + 2", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -740,7 +740,7 @@ void test_parse_power()
 	struct Ake_comp_unit cu;
 
     parse_setup("5 ^ 2", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "cu.valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -778,9 +778,9 @@ void test_parse_power_error_expected_term()
 	struct Ake_comp_unit cu;
 
     parse_setup("5^", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "expected term after caret");
+	Zinc_expect_source_error(&cu.el, "expected term after caret");
 
     parse_teardown(&cu);
 }
@@ -792,9 +792,9 @@ void test_parse_power_error_left_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 5 ^ foo()", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "power operand has no value");
+	Zinc_expect_source_error(&cu.el, "power operand has no value");
 
     parse_teardown(&cu);
 }
@@ -806,9 +806,9 @@ void test_parse_power_error_left_not_numeric()
 	struct Ake_comp_unit cu;
 
     parse_setup("true ^ 2", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "power on non-numeric operand");
+	Zinc_expect_source_error(&cu.el, "power on non-numeric operand");
 
     parse_teardown(&cu);
 }
@@ -820,9 +820,9 @@ void test_parse_power_error_right_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 5 ^ foo()", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "power operand has no value");
+	Zinc_expect_source_error(&cu.el, "power operand has no value");
 
     parse_teardown(&cu);
 }
@@ -834,9 +834,9 @@ void test_parse_power_error_right_not_numeric()
 	struct Ake_comp_unit cu;
 
     parse_setup("5 ^ true", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "power on non-numeric operand");
+	Zinc_expect_source_error(&cu.el, "power on non-numeric operand");
 
     parse_teardown(&cu);
 }
@@ -848,7 +848,7 @@ void test_parse_paren_add()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; (speed + 1)", &cu);
-	expect_no_errors(&cu.el);
+	Zinc_expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -884,7 +884,7 @@ void test_parse_paren_add2()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; (speed) + 1", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -920,7 +920,7 @@ void test_parse_paren_add3()
 	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed + (1)", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -954,7 +954,7 @@ void test_parse_paren_add_add()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 + (2 + 3)", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -999,7 +999,7 @@ void test_parse_paren_add_add2()
 	struct Ake_comp_unit cu;
 
     parse_setup("(1 + 2) + 3", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1042,7 +1042,7 @@ void test_parse_paren_mult()
 	struct Ake_comp_unit cu;
 
     parse_setup("(5 * 2)", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1076,7 +1076,7 @@ void test_parse_paren_mult_mult()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 * (2 * 3)", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1119,7 +1119,7 @@ void test_parse_paren_mult_mult2()
 	struct Ake_comp_unit cu;
 
     parse_setup("(1 * 2) * 3", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1162,7 +1162,7 @@ void test_parse_comparison()
 	struct Ake_comp_unit cu;
 
     parse_setup("let count: i64 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	Ake_ast* cond0 = Ast_node_get(cu.root, 1);
@@ -1247,7 +1247,7 @@ void test_parse_comparison_identity()
 	struct Ake_comp_unit cu;
 
     parse_setup("true == true; true != true", &cu);
-	expect_no_errors(&cu.el);
+	Zinc_expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1276,9 +1276,9 @@ void test_parse_comparison_error_no_term()
 	struct Ake_comp_unit cu;
 
     parse_setup("100 <", &cu);
-	expect_has_errors(&cu.el);
+	Zinc_expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "expected term after comparison operator");
+	Zinc_expect_source_error(&cu.el, "expected term after comparison operator");
 
     parse_teardown(&cu);
 }
@@ -1290,9 +1290,9 @@ void test_parse_comparison_error_left_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() < 100", &cu);
-	expect_has_errors(&cu.el);
+	Zinc_expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "operand has no value");
+	Zinc_expect_source_error(&cu.el, "operand has no value");
 
     parse_teardown(&cu);
 }
@@ -1304,9 +1304,9 @@ void test_parse_comparison_error_right_no_value()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 100 < foo()", &cu);
-	expect_has_errors(&cu.el);
+	Zinc_expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "operand has no value");
+	Zinc_expect_source_error(&cu.el, "operand has no value");
 
     parse_teardown(&cu);
 }
@@ -1318,9 +1318,9 @@ void test_parse_comparison_error_left_not_numeric()
 	struct Ake_comp_unit cu;
 
     parse_setup("true < 100", &cu);
-	expect_has_errors(&cu.el);
+	Zinc_expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "comparison operand is not numeric");
+	Zinc_expect_source_error(&cu.el, "comparison operand is not numeric");
 
     parse_teardown(&cu);
 }
@@ -1332,9 +1332,9 @@ void test_parse_comparison_error_right_not_numeric()
 	struct Ake_comp_unit cu;
 
     parse_setup("true < 100", &cu);
-	expect_has_errors(&cu.el);
+	Zinc_expect_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "comparison operand is not numeric");
+	Zinc_expect_source_error(&cu.el, "comparison operand is not numeric");
 
     parse_teardown(&cu);
 }
@@ -1346,7 +1346,7 @@ void test_parse_and()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool; let b: bool; a && b", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1375,7 +1375,7 @@ void test_parse_or()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool; let b: bool; a || b", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1413,7 +1413,7 @@ void test_parse_or_or()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool; let b: bool; let c: bool; a || b || c", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1452,9 +1452,9 @@ void test_parse_boolean_error_expected_term()
 	struct Ake_comp_unit cu;
 
     parse_setup("true &&", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "expected term after && or ||");
+	Zinc_expect_source_error(&cu.el, "expected term after && or ||");
 
     parse_teardown(&cu);
 }
@@ -1468,9 +1468,9 @@ void test_parse_boolean_error_left_no_value()
 
 
     parse_setup("fn foo() end; foo() && true", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "left-side operand of boolean operator has no type");
+	Zinc_expect_source_error(&cu.el, "left-side operand of boolean operator has no type");
 
     parse_teardown(&cu);
 }
@@ -1484,9 +1484,9 @@ void test_parse_boolean_error_right_no_value()
 
 
     parse_setup("fn foo() end; true && foo()", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "operand of boolean operator has no type");
+	Zinc_expect_source_error(&cu.el, "operand of boolean operator has no type");
 
     parse_teardown(&cu);
 }
@@ -1498,9 +1498,9 @@ void test_parse_boolean_error_left_not_boolean()
 	struct Ake_comp_unit cu;
 
     parse_setup("1 && true", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "left-side expression of boolean operator is not boolean");
+	Zinc_expect_source_error(&cu.el, "left-side expression of boolean operator is not boolean");
 
     parse_teardown(&cu);
 }
@@ -1512,9 +1512,9 @@ void test_parse_boolean_error_right_not_boolean()
 	struct Ake_comp_unit cu;
 
     parse_setup("true && 1", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "cu.valid");
-	expect_source_error(&cu.el, "expression of boolean operator is not boolean");
+	Zinc_expect_source_error(&cu.el, "expression of boolean operator is not boolean");
 
     parse_teardown(&cu);
 }
@@ -1528,7 +1528,7 @@ void test_parse_array_declare()
     parse_setup("let a: [5]i64\n"
                 "a[0]\n",
                 &cu);
-    expect_no_errors(&cu.el);
+    Zinc_expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     assert_ptr(cu.root, "ptr cu.root");
@@ -1544,7 +1544,7 @@ void test_parse_array_subscript()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: [10]i64; a[1]", &cu);
-	expect_no_errors(&cu.el);
+	Zinc_expect_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
     assert_ptr(cu.root, "ptr cu.root");
@@ -1582,7 +1582,7 @@ void test_parse_array_subscript2()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: [10][10]i64; a[0][1]", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
     Ake_ast* a = Ast_node_get(cu.root, 1);
@@ -1627,7 +1627,7 @@ void test_parse_array_subscript3()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: [5]i64; let b: i64; a[b]", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	Ake_ast* a = Ast_node_get(cu.root, 2);
@@ -1674,7 +1674,7 @@ void test_parse_expr_array_subscript_3d()
                 "]\n"
                 "x[1][1][3]\n",
                 &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* let = Ast_node_get(cu.root, 0);
@@ -1773,9 +1773,9 @@ void test_parse_subscript_error_no_type()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo()[1]", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "expression has subscript but has no value");
+	Zinc_expect_source_error(&cu.el, "expression has subscript but has no value");
 
     parse_teardown(&cu);
 }
@@ -1787,9 +1787,9 @@ void test_parse_subscript_error_not_array()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: i64; a[1]", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "expression has subscript but is not an array or slice");
+	Zinc_expect_source_error(&cu.el, "expression has subscript but is not an array or slice");
 
     parse_teardown(&cu);
 }
@@ -1801,9 +1801,9 @@ void test_parse_subscript_error_expected_right_square_bracket()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: [10]i64; a[1", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "expected right-square-bracket");
+	Zinc_expect_source_error(&cu.el, "expected right-square-bracket");
 
     parse_teardown(&cu);
 }
@@ -1815,7 +1815,7 @@ void test_parse_assign_string()
 	struct Ake_comp_unit cu;
 
     parse_setup("let mut a: [6 const]u8; a = \"hello\"", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr root");
@@ -1853,7 +1853,7 @@ void test_parse_assign_multiple()
 	struct Ake_comp_unit cu;
 
     parse_setup("let mut a: i64; let mut b: i64; let mut c: i64; a = b = c = 0", &cu);
-	assert_no_errors(&cu.el);
+	Zinc_assert_no_errors(&cu.el);
 	expect_true(cu.valid, "valid");
 
 	assert_ptr(cu.root, "ptr cu.root");
@@ -1901,9 +1901,9 @@ void test_parse_expr_assignment_eseq_error_eseq_count()
     struct Ake_comp_unit cu;
 
     parse_setup("let mut a: i64; let mut b: i64; let mut c: i64; a, b, c = 1, 2", &cu);
-    expect_has_errors(&cu.el);
+    Zinc_expect_has_errors(&cu.el);
     expect_false(cu.valid, "valid");
-    expect_source_error(&cu.el, "assignment sequence counts do not match");
+    Zinc_expect_source_error(&cu.el, "assignment sequence counts do not match");
 
     parse_teardown(&cu);
 }
@@ -1915,9 +1915,9 @@ void test_parse_let_assign_error_term()
 	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool =", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "expected expression");
+	Zinc_expect_source_error(&cu.el, "expected expression");
 
     parse_teardown(&cu);
 }
@@ -1929,9 +1929,9 @@ void test_parse_assign_error_no_value_right()
 	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; let a: [10]u8 = foo()", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "cannot assign with operand that has no value");
+	Zinc_expect_source_error(&cu.el, "cannot assign with operand that has no value");
 
     parse_teardown(&cu);
 }
@@ -1943,9 +1943,9 @@ void test_parse_assign_error_not_compatible()
 	struct Ake_comp_unit cu;
 
     parse_setup("let x: i64 = true", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "values in assignment are not compatible");
+	Zinc_expect_source_error(&cu.el, "values in assignment are not compatible");
 
     parse_teardown(&cu);
 }
@@ -1957,9 +1957,9 @@ void test_parse_assign_error_lvalue()
 	struct Ake_comp_unit cu;
 
     parse_setup("true = true", &cu);
-	assert_has_errors(&cu.el);
+	Zinc_assert_has_errors(&cu.el);
 	expect_false(cu.valid, "valid");
-	expect_source_error(&cu.el, "invalid lvalue");
+	Zinc_expect_source_error(&cu.el, "invalid lvalue");
 
     parse_teardown(&cu);
 }
@@ -1971,7 +1971,7 @@ void test_parse_expr_newline_assignment()
     struct Ake_comp_unit cu;
 
     parse_setup("let mut a: i64; a =\n1", &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 1);
@@ -1998,7 +1998,7 @@ void test_parse_expr_newline_boolean()
     struct Ake_comp_unit cu;
 
     parse_setup("true &&\nfalse", &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 0);
@@ -2025,7 +2025,7 @@ void test_parse_expr_newline_comparison()
     struct Ake_comp_unit cu;
 
     parse_setup("1 <\n2", &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 0);
@@ -2052,7 +2052,7 @@ void test_parse_expr_newline_add()
     struct Ake_comp_unit cu;
 
     parse_setup("1 +\n2", &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* add = Ast_node_get(cu.root, 0);
@@ -2079,7 +2079,7 @@ void test_parse_expr_newline_mult()
     struct Ake_comp_unit cu;
 
     parse_setup("1 *\n2", &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 0);
@@ -2106,7 +2106,7 @@ void test_parse_expr_newline_power()
     struct Ake_comp_unit cu;
 
     parse_setup("1^\n2", &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 0);
@@ -2133,7 +2133,7 @@ void test_parse_expr_newline_subscript()
     struct Ake_comp_unit cu;
 
     parse_setup("let a: [1]i64; a[\n0\n]", &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* subscript = Ast_node_get(cu.root, 1);
@@ -2160,7 +2160,7 @@ void test_parse_expr_newline_function_call()
     struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64, b: i64)->i64 a+b end; foo(\n1,\n2\n)", &cu);
-    assert_no_errors(&cu.el);
+    Zinc_assert_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     Ake_ast* call = Ast_node_get(cu.root, 1);
@@ -2199,7 +2199,7 @@ void test_parse_expr_assign_eseq()
                 "let mut b: i64\n"
                 "let mut c: i64\n"
                 "a,b,c = 1,2,3", &cu);
-    expect_no_errors(&cu.el);
+    Zinc_expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     assert_ptr(cu.root, "ptr cu.root");
@@ -2239,8 +2239,8 @@ void test_parse_expr_error_lvalue()
 
     parse_setup("let a: i64\n"
                 "1 = 1", &cu);
-    expect_has_errors(&cu.el);
-    expect_source_error(&cu.el, "invalid lvalue");
+    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_source_error(&cu.el, "invalid lvalue");
     expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -2256,8 +2256,8 @@ void test_parse_expr_error_eseq_lvalue()
                 "let b: i64\n"
                 "let c: i64\n"
                 "1,2,3 = 1,2,3", &cu);
-    expect_has_errors(&cu.el);
-    expect_source_error(&cu.el, "invalid lvalue");
+    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_source_error(&cu.el, "invalid lvalue");
     expect_false(cu.valid, "valid");
 
     parse_teardown(&cu);
@@ -2274,7 +2274,7 @@ void test_parse_array_string_return()
                 "end\n"
                 "foo(1, 2, 3)\n",
                 &cu);
-    expect_no_errors(&cu.el);
+    Zinc_expect_no_errors(&cu.el);
     expect_true(cu.valid, "valid");
 
     parse_teardown(&cu);

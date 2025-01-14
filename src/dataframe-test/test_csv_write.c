@@ -15,7 +15,7 @@ void TestCSVWrite1()
                   "True,1.2,-3,50,hello,\n"
                   "False,5.1,80,1,world,\n");
 
-    expect_no_errors(parse_output->el);
+    Zinc_expect_no_errors(parse_output->el);
     expect_size_t_equal(DataFrameColumnCount(parse_output->df), 6, "column count");
     expect_size_t_equal(DataFrameRowCount(parse_output->df), 2, "row count");
 

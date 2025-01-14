@@ -42,7 +42,7 @@ void test_lex_number_whole()
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, Ake_token_number, "number");
@@ -73,7 +73,7 @@ void test_lex_number_fraction_start()
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, Ake_token_number, "number");
@@ -104,7 +104,7 @@ void test_lex_number_fraction()
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, Ake_token_number, "number");
@@ -132,7 +132,7 @@ void test_lex_number_exponent_start()
 	lex_setup("500e", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
 	expect_int_equal(t->type, Ake_token_number, "0 number");
@@ -142,7 +142,7 @@ void test_lex_number_exponent_start()
     free(t);
 
     valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
 	expect_int_equal(t->type, Ake_token_eof, "1 eof");
@@ -166,7 +166,7 @@ void test_lex_number_fraction_exponent_start()
 	lex_setup("500.123e", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
 	expect_int_equal(t->type, Ake_token_number, "0 number");
@@ -176,7 +176,7 @@ void test_lex_number_fraction_exponent_start()
     free(t);
 
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
 	expect_int_equal(t->type, Ake_token_eof, "1 eof");
@@ -200,7 +200,7 @@ void test_lex_number_fraction_exponent()
 	lex_setup("500.123e2", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, Ake_token_number, "number");
@@ -226,9 +226,9 @@ void test_lex_number_fraction_exponent_sign_start_negative()
 	lex_setup("500.123e-", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	expect_has_errors(ls.el);
+	Zinc_expect_has_errors(ls.el);
 	expect_false(valid, "0 valid");
-	expect_source_error(ls.el, "expected number after exponent sign");
+	Zinc_expect_source_error(ls.el, "expected number after exponent sign");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -248,9 +248,9 @@ void test_lex_number_fraction_exponent_sign_start_positive()
 	lex_setup("500.123e+", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	expect_has_errors(ls.el);
+	Zinc_expect_has_errors(ls.el);
 	expect_false(valid, "0 valid");
-	expect_source_error(ls.el, "expected number after exponent sign");
+	Zinc_expect_source_error(ls.el, "expected number after exponent sign");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -273,7 +273,7 @@ void test_lex_number_fraction_exponent_negative()
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, Ake_token_number, "number");
@@ -304,7 +304,7 @@ void test_lex_number_exponent_positive()
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
 	expect_int_equal(t->type, Ake_token_number, "number");
@@ -332,7 +332,7 @@ void test_lex_number_exponent_add()
 	lex_setup("500.123e + 1", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
 	expect_int_equal(t->type, Ake_token_number, "0 number");
@@ -344,7 +344,7 @@ void test_lex_number_exponent_add()
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
 	expect_int_equal(t->type, Ake_token_plus, "1 plus");
@@ -355,7 +355,7 @@ void test_lex_number_exponent_add()
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	assert_no_errors(ls.el);
+	Zinc_assert_no_errors(ls.el);
 	assert_true(valid, "2 valid");
 	assert_ptr(t, "2 ptr t");
 	expect_int_equal(t->type, Ake_token_number, "2 number");

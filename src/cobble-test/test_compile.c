@@ -14,7 +14,7 @@ void test_compile_empty()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.el);
     assert_null(re.root, "root");
     expect_size_t_equal(re.group_count, 1, "group_count");
 
@@ -30,7 +30,7 @@ void test_compile_literal()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
     expect_true(re.root->is_root, "is_group root");
     expect_false(re.root->is_group, "is_group root");
@@ -52,7 +52,7 @@ void test_compile_union_single()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.el);
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_union, "union root");
@@ -83,12 +83,12 @@ void test_compile_union_single_error()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
+    Zinc_expect_has_errors(re.el);
     expect_ptr(re.root, "ptr root");
-    expect_has_errors(cd->el);
+    Zinc_expect_has_errors(cd->el);
 
     struct Zinc_error* e = NULL;
-    e = assert_source_error(cd->el, "expected term after union");
+    e = Zinc_assert_source_error(cd->el, "expected term after union");
     expect_size_t_equal(e->loc.start_pos, 2, "start pos");
     expect_size_t_equal(e->loc.line, 1, "line");
     expect_size_t_equal(e->loc.col, 3, "col");
@@ -106,7 +106,7 @@ void test_compile_union_double()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_union, "union root");
 
@@ -140,7 +140,7 @@ void test_compile_concat_single()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_concat, "concat root");
 
@@ -170,7 +170,7 @@ void test_compile_concat_double()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_concat, "concat root");
 
@@ -204,7 +204,7 @@ void test_compile_union_concat()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.el);
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_union, "union root");
 
@@ -254,8 +254,8 @@ void test_compile_closure()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
 
     assert_ptr(re.root, "ptr root");
     expect_int_equal(re.root->type, Cob_ast_type_closure, "closure root");
@@ -280,7 +280,7 @@ void test_compile_concat_closure()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -319,8 +319,8 @@ void test_compile_union_closure()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -358,8 +358,8 @@ void test_compile_positive_closure()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -383,8 +383,8 @@ void test_compile_repeat()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -412,11 +412,11 @@ void test_compile_repeat_num_error()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
-    expect_has_errors(cd->el);
+    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
-    struct Zinc_error* e = assert_source_error(cd->el, "expected digit");
+    struct Zinc_error* e = Zinc_assert_source_error(cd->el, "expected digit");
     expect_size_t_equal(e->loc.start_pos, 2, "start_pos");
     expect_size_t_equal(e->loc.line, 1, "line");
     expect_size_t_equal(e->loc.col, 3, "col");
@@ -434,8 +434,8 @@ void test_compile_repeat_range()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -468,11 +468,11 @@ void test_compile_repeat_range_num_error()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
-    expect_has_errors(cd->el);
+    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
-    struct Zinc_error* e = assert_source_error(cd->el, "expected digit");
+    struct Zinc_error* e = Zinc_assert_source_error(cd->el, "expected digit");
     expect_size_t_equal(e->loc.start_pos, 4, "byte_pos");
     expect_size_t_equal(e->loc.line, 1, "line");
     expect_size_t_equal(e->loc.col, 5, "col");
@@ -490,8 +490,8 @@ void test_compile_group_concat()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 2, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -542,8 +542,8 @@ void test_compile_group_empty()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 2, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -581,8 +581,8 @@ void test_compile_option()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -606,8 +606,8 @@ void test_compile_wildcard()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -625,8 +625,8 @@ void test_compile_begin()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -644,8 +644,8 @@ void test_compile_end()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -663,8 +663,8 @@ void test_compile_escape_backslash()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -684,8 +684,8 @@ void test_compile_escape_asterisk()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -705,8 +705,8 @@ void test_compile_character_class()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -742,9 +742,9 @@ void test_compile_character_class_wildcard_error()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
-    expect_has_errors(cd->el);
-    expect_source_error(cd->el, "unexpected wildcard");
+    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_source_error(cd->el, "unexpected wildcard");
 
     teardown_compile(cd, &re);
 }
@@ -758,9 +758,9 @@ void test_compile_character_class_begin_error()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
-    expect_has_errors(cd->el);
-    expect_source_error(cd->el, "unexpected begin");
+    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_source_error(cd->el, "unexpected begin");
 
     teardown_compile(cd, &re);
 }
@@ -774,9 +774,9 @@ void test_compile_character_class_end_error()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
-    expect_has_errors(cd->el);
-    expect_source_error(cd->el, "unexpected end");
+    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_source_error(cd->el, "unexpected end");
 
     teardown_compile(cd, &re);
 }
@@ -790,8 +790,8 @@ void test_compile_character_range()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -826,9 +826,9 @@ void test_compile_character_range_error()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
-    expect_has_errors(cd->el);
-    expect_source_error(cd->el, "expected end character in character range");
+    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_source_error(cd->el, "expected end character in character range");
 
     teardown_compile(cd, &re);
 }
@@ -842,9 +842,9 @@ void test_compile_character_range_non_ascii_error_left()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
-    expect_has_errors(cd->el);
-    expect_source_error(cd->el, "character range must use ascii characters");
+    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_source_error(cd->el, "character range must use ascii characters");
 
     teardown_compile(cd, &re);
 }
@@ -858,9 +858,9 @@ void test_compile_character_range_non_ascii_error_right()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_has_errors(re.el);
-    expect_has_errors(cd->el);
-    expect_source_error(cd->el, "character range must use ascii characters");
+    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_source_error(cd->el, "character range must use ascii characters");
 
     teardown_compile(cd, &re);
 }
@@ -874,8 +874,8 @@ void test_compile_character_type_word()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -893,8 +893,8 @@ void test_compile_character_type_word_opposite()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -912,8 +912,8 @@ void test_compile_character_type_digit()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -931,8 +931,8 @@ void test_compile_character_type_digit_opposite()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -950,8 +950,8 @@ void test_compile_character_type_space()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -969,8 +969,8 @@ void test_compile_character_type_space_opposite()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -988,8 +988,8 @@ void test_compile_character_type_newline_opposite()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -1007,8 +1007,8 @@ void test_compile_coverage_line()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 4, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -1167,8 +1167,8 @@ void test_compile_coverage_line2()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 5, "group_count");
 
     assert_ptr(re.root, "ptr root");
@@ -1344,8 +1344,8 @@ void test_compile_missing_group()
 
     Cob_re re = Cob_compile(cd);
 
-    expect_no_errors(re.el);
-    expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(cd->el);
     expect_size_t_equal(re.group_count, 3, "group_count");
     teardown_compile(cd, &re);
 }
