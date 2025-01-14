@@ -1024,7 +1024,7 @@ Ake_ast* parse_impl(struct parse_state* ps)
     while (true) {
         struct token* t = get_lookahead(ps);
         if (t->type == token_fn) {
-            Ake_ast* func = parse_function(ps, true, struct_type);
+            Ake_ast* func = Ake_parse_function(ps, true, struct_type);
             Ake_ast_add(n, func);
 
             struct token* t2 = get_lookahead(ps);

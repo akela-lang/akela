@@ -10,7 +10,7 @@
   * lex_tools [x]
   * parse [x]
   * parse_expr [x]
-  * parse_factor []
+  * parse_factor [x]
   * parse_stmts []
   * parse_tools []
   * parse_types []

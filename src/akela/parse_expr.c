@@ -1120,7 +1120,7 @@ Ake_ast* Ake_parse_dot(struct parse_state* ps)
     Ake_ast* n = NULL;
     Ake_ast* a = NULL;
 
-    a = parse_factor(ps);
+    a = Ake_parse_factor(ps);
 
     if (!a) {
         return a;

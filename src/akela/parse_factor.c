@@ -12,27 +12,27 @@
 #include "type_def.h"
 #include "symbol.h"
 
-Ake_ast* parse_not(struct parse_state* ps);
-Ake_ast* parse_literal(struct parse_state* ps);
-Ake_ast* parse_id(struct parse_state* ps);
-void parse_struct_literal_elements(
+Ake_ast* Ake_parse_not(struct parse_state* ps);
+Ake_ast* Ake_parse_literal(struct parse_state* ps);
+Ake_ast* Ake_parse_id(struct parse_state* ps);
+void Ake_parse_struct_literal_elements(
         struct parse_state* ps,
         struct Ake_ast* parent,
         struct type_def* td);
-Ake_ast* parse_sign(struct parse_state* ps);
-Ake_ast* parse_array_literal(struct parse_state* ps);
-void parse_aseq(struct parse_state* ps, Ake_ast* parent);
-Ake_ast* parse_parenthesis(struct parse_state* ps);
-Ake_ast* parse_if(struct parse_state* ps);
-void parse_elseif(struct parse_state* ps, Ake_ast* parent);
-Ake_ast* parse_else(struct parse_state* ps);
+Ake_ast* Ake_parse_sign(struct parse_state* ps);
+Ake_ast* Ake_parse_array_literal(struct parse_state* ps);
+void Ake_parse_aseq(struct parse_state* ps, Ake_ast* parent);
+Ake_ast* Ake_parse_parenthesis(struct parse_state* ps);
+Ake_ast* Ake_parse_if(struct parse_state* ps);
+void Ake_parse_elseif(struct parse_state* ps, Ake_ast* parent);
+Ake_ast* Ake_parse_else(struct parse_state* ps);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
 *		  | ! parse_factor | array_literal | function(dseq) stmts end
 * note: type system should catch incompatible sign or not factors
 */
-Ake_ast* parse_factor(struct parse_state* ps)
+Ake_ast* Ake_parse_factor(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
 
@@ -41,35 +41,35 @@ Ake_ast* parse_factor(struct parse_state* ps)
     assert(t0);
 
 	if (t0->type == token_fn) {
-        n = parse_function(ps, false, NULL);
+        n = Ake_parse_function(ps, false, NULL);
 
     } else if (t0->type == token_if) {
-        n = parse_if(ps);
+        n = Ake_parse_if(ps);
 
 	} else if (t0->type == token_not) {
-		n = parse_not(ps);
+		n = Ake_parse_not(ps);
 
 	} else if (t0->type == token_number || t0->type == token_string || t0->type == token_boolean) {
-		n = parse_literal(ps);
+		n = Ake_parse_literal(ps);
 
 	} else if (t0->type == token_id || t0->type == token_self) {
-		n = parse_id(ps);
+		n = Ake_parse_id(ps);
 
 	} else if (t0->type == token_plus || t0->type == token_minus) {
-		n = parse_sign(ps);
+		n = Ake_parse_sign(ps);
 
 	} else if (t0->type == token_left_square_bracket) {
-		n = parse_array_literal(ps);
+		n = Ake_parse_array_literal(ps);
 
 	} else if (t0->type == token_left_paren) {
-		n = parse_parenthesis(ps);
+		n = Ake_parse_parenthesis(ps);
 
     }
 
 	return n;
 }
 
-Ake_ast* parse_function(struct parse_state* ps, bool is_method, Ake_ast* struct_type)
+Ake_ast* Ake_parse_function(struct parse_state* ps, bool is_method, Ake_ast* struct_type)
 {
     Ake_ast* n = NULL;
 
@@ -161,7 +161,7 @@ Ake_ast* parse_function(struct parse_state* ps, bool is_method, Ake_ast* struct_
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_if(struct parse_state* ps)
+Ake_ast* Ake_parse_if(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -210,10 +210,10 @@ Ake_ast* parse_if(struct parse_state* ps)
         Ake_ast_add(cb, body);
     }
 
-    parse_elseif(ps, n);
+    Ake_parse_elseif(ps, n);
 
     Ake_ast* b = NULL;
-    b = parse_else(ps);
+    b = Ake_parse_else(ps);
     if (b && b->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -258,7 +258,7 @@ Ake_ast* parse_if(struct parse_state* ps)
 
 /* elseif-statement -> elseif expr stmts elseif | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void parse_elseif(struct parse_state* ps, Ake_ast* parent)
+void Ake_parse_elseif(struct parse_state* ps, Ake_ast* parent)
 {
     while (true) {
         struct token* t0 = get_lookahead(ps);
@@ -314,7 +314,7 @@ void parse_elseif(struct parse_state* ps, Ake_ast* parent)
 
 /* parse_else -> else stmts | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_else(struct parse_state* ps)
+Ake_ast* Ake_parse_else(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
 
@@ -351,7 +351,7 @@ Ake_ast* parse_else(struct parse_state* ps)
     return n;
 }
 
-Ake_ast* parse_not(struct parse_state* ps)
+Ake_ast* Ake_parse_not(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -411,7 +411,7 @@ Ake_ast* parse_not(struct parse_state* ps)
 	return n;
 }
 
-Ake_ast* parse_literal(struct parse_state* ps)
+Ake_ast* Ake_parse_literal(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
 	char* type_name = NULL;
@@ -477,7 +477,7 @@ Ake_ast* parse_literal(struct parse_state* ps)
 	return n;
 }
 
-Ake_ast* parse_id(struct parse_state* ps)
+Ake_ast* Ake_parse_id(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -512,7 +512,7 @@ Ake_ast* parse_id(struct parse_state* ps)
         n->tu = tu;
         n->sym = sym;
 
-        parse_struct_literal_elements(ps, n, sym->td);
+        Ake_parse_struct_literal_elements(ps, n, sym->td);
 
         struct token* end = NULL;
         if (!match(ps, token_end, "expected end", &end, n)) {
@@ -555,14 +555,14 @@ Ake_ast* parse_id(struct parse_state* ps)
 
 }
 
-typedef struct Struct_field_result {
+typedef struct Ake_struct_field_result {
     bool found;
     size_t index;
     Ake_ast* id;
     Type_use* tu;
-} Struct_field_result;
+} Ake_struct_field_result;
 
-Struct_field_result Get_struct_field(struct type_def* td, struct buffer* name) {
+Ake_struct_field_result Ake_get_struct_field(struct type_def* td, struct buffer* name) {
     assert(td->type == type_struct);
     assert(td->composite);
     size_t index = 0;
@@ -572,18 +572,18 @@ Struct_field_result Get_struct_field(struct type_def* td, struct buffer* name) {
         Ake_ast* id = Ast_node_get(dec, 0);
         Ake_ast* type_node = Ast_node_get(dec, 1);
         if (buffer_compare(&id->value, name)) {
-            Struct_field_result res = {true, index, id, type_node->tu};
+            Ake_struct_field_result res = {true, index, id, type_node->tu};
             return res;
         }
         dec = dec->next;
         index++;
     }
 
-    Struct_field_result res = {false, 0, NULL, NULL};
+    Ake_struct_field_result res = {false, 0, NULL, NULL};
     return res;
 }
 
-void Find_missing_fields(struct parse_state* ps, struct type_def* td, Ake_ast* n) {
+void Ake_find_missing_fields(struct parse_state* ps, struct type_def* td, Ake_ast* n) {
     assert(td->type == type_struct);
     assert(td->composite);
     Ake_ast *dec = td->composite->head;
@@ -607,7 +607,7 @@ void Find_missing_fields(struct parse_state* ps, struct type_def* td, Ake_ast* n
     }
 }
 
-void parse_struct_literal_elements(
+void Ake_parse_struct_literal_elements(
         struct parse_state* ps,
         struct Ake_ast* parent,
         struct type_def* td)
@@ -626,7 +626,7 @@ void parse_struct_literal_elements(
         field->type = Ake_ast_type_struct_literal_field;
         Ake_ast_add(parent, field);
 
-        Struct_field_result sfr = Get_struct_field(td, &name->value);
+        Ake_struct_field_result sfr = Ake_get_struct_field(td, &name->value);
         if (!sfr.found) {
             error_list_set(ps->el, &name->loc, "Not a valid field for %b: %b", &td->name, &name->value);
             parent->type = Ake_ast_type_error;
@@ -686,10 +686,10 @@ void parse_struct_literal_elements(
         }
     }
 
-    Find_missing_fields(ps, td, parent);
+    Ake_find_missing_fields(ps, td, parent);
 }
 
-Ake_ast* parse_sign(struct parse_state* ps)
+Ake_ast* Ake_parse_sign(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
 
@@ -758,7 +758,7 @@ Ake_ast* parse_sign(struct parse_state* ps)
 /*
 * array_literal -> [aseq]
 */
-Ake_ast* parse_array_literal(struct parse_state* ps)
+Ake_ast* Ake_parse_array_literal(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -775,7 +775,7 @@ Ake_ast* parse_array_literal(struct parse_state* ps)
 
     consume_newline(ps, n);
 
-    parse_aseq(ps, n);
+    Ake_parse_aseq(ps, n);
 
     if (!consume_newline(ps, n)) {
         n->type = Ake_ast_type_error;
@@ -825,7 +825,7 @@ Ake_ast* parse_array_literal(struct parse_state* ps)
 
 /* aseq -> expr aseq' | e */
 /* aseq' = , expr aseq' | e */
-void parse_aseq(struct parse_state* ps, Ake_ast* parent)
+void Ake_parse_aseq(struct parse_state* ps, Ake_ast* parent)
 {
 	Ake_ast* a = NULL;
     a = Ake_parse_simple_expr(ps);
@@ -873,7 +873,7 @@ void parse_aseq(struct parse_state* ps, Ake_ast* parent)
 	}
 }
 
-Ake_ast* parse_parenthesis(struct parse_state* ps)
+Ake_ast* Ake_parse_parenthesis(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
