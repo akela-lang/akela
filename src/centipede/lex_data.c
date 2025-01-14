@@ -13,7 +13,7 @@ void Cent_lex_data_init(
     ld->input_vtable = input_vtable;
     ld->process_newline_count = 0;
 
-    hash_table_init(&ld->reserved, 16);
+    Zinc_hash_map_string_init(&ld->reserved, 16);
     Cent_lex_add_reserved_word(ld, "element", Cent_token_element);
     Cent_lex_add_reserved_word(ld, "properties", Cent_token_properties);
     Cent_lex_add_reserved_word(ld, "children", Cent_token_children);
@@ -24,7 +24,7 @@ void Cent_lex_data_init(
     Cent_lex_add_reserved_word(ld, "use", Cent_token_use);
     Cent_lex_add_reserved_word(ld, "let", Cent_token_let);
 
-    hash_table_init(&ld->builtin, 8);
+    Zinc_hash_map_string_init(&ld->builtin, 8);
     Cent_lex_add_builtin(ld, "@child_of", Cent_builtin_type_child_of);
     Cent_lex_add_builtin(ld, "@property_of", Cent_builtin_type_property_of);
     Cent_lex_add_builtin(ld, "@file_name", Cent_builtin_type_file_name);
@@ -42,11 +42,11 @@ void Cent_lex_data_create(
 
 void Cent_lex_data_destroy(Cent_lex_data* ld)
 {
-    hash_table_map(&ld->reserved, free);
-    hash_table_destroy(&ld->reserved);
+    Zinc_hash_map_str_map(&ld->reserved, free);
+    Zinc_hash_map_string_destroy(&ld->reserved);
 
-    hash_table_map(&ld->builtin, free);
-    hash_table_destroy(&ld->builtin);
+    Zinc_hash_map_str_map(&ld->builtin, free);
+    Zinc_hash_map_string_destroy(&ld->builtin);
 }
 
 void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type type)
@@ -54,12 +54,12 @@ void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type t
     Cent_token_type* p = NULL;
     malloc_safe((void**)&p, sizeof(Cent_token_type));
     *p = type;
-    hash_table_add_str(&ld->reserved, word, p);
+    Zinc_hash_map_string_add_str(&ld->reserved, word, p);
 }
 
 Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, struct Zinc_string* word)
 {
-    return hash_table_get(&ld->reserved, word);
+    return Zinc_hash_map_string_get(&ld->reserved, word);
 }
 
 void Cent_lex_add_builtin(Cent_lex_data* ld, char* name, Cent_builtin_type type)
@@ -67,10 +67,10 @@ void Cent_lex_add_builtin(Cent_lex_data* ld, char* name, Cent_builtin_type type)
     Cent_builtin_type* bt = NULL;
     malloc_safe((void**)&bt, sizeof(Cent_builtin_type));
     *bt = type;
-    hash_table_add_str(&ld->builtin, name, bt);
+    Zinc_hash_map_string_add_str(&ld->builtin, name, bt);
 }
 
 Cent_builtin_type* Cent_lex_get_builtin(Cent_lex_data* ld, struct Zinc_string* name)
 {
-    return hash_table_get(&ld->builtin, name);
+    return Zinc_hash_map_string_get(&ld->builtin, name);
 }

@@ -3,7 +3,7 @@
 
 #include "api.h"
 #include <stdbool.h>
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "token.h"
 #include <stdlib.h>
 #include "ast.h"

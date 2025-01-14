@@ -1,10 +1,10 @@
 #ifndef CENTIPEDE_MODULE_DATA_H
 #define CENTIPEDE_MODULE_DATA_H
 
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 
 typedef struct Cent_module {
-    struct hash_table submodules;
+    struct Zinc_hash_table submodules;
     void* env;
     void* pr;
     void* value;

@@ -482,7 +482,7 @@ bool Ake_type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b)
 void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol_table* dest)
 {
 	for (int i = 0; i < src->global->ht.size; i++) {
-		struct hash_entry* p = src->global->ht.buckets[i].head;
+		struct Zinc_hash_map_string_entry* p = src->global->ht.buckets[i].head;
 		while (p) {
 			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
 			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
@@ -495,7 +495,7 @@ void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol
 void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct Zinc_string* module_name)
 {
 	for (int i = 0; i < src->ht.size; i++) {
-		struct hash_entry* p = src->ht.buckets[i].head;
+		struct Zinc_hash_map_string_entry* p = src->ht.buckets[i].head;
 		while (p) {
 			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
 			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
@@ -552,10 +552,10 @@ void Ake_symbol_table_print(struct Ake_symbol_table* st)
     printf("\n");
     struct Ake_environment* p = st->top;
     while (p) {
-        struct hash_table* ht = &p->ht;
+        struct Zinc_hash_table* ht = &p->ht;
         for (int i = 0; i < ht->size; i++) {
-            struct hash_list* list = &ht->buckets[i];
-            struct hash_entry* entry = list->head;
+            struct Zinc_hash_map_string_list* list = &ht->buckets[i];
+            struct Zinc_hash_map_string_entry* entry = list->head;
             while (entry) {
                 Zinc_string_finish(&entry->value);
                 printf("%s ", entry->value.buf);

@@ -1,11 +1,11 @@
 #ifndef CENTIPEDE_ENVIRONMENT_H
 #define CENTIPEDE_ENVIRONMENT_H
 
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "symbol.h"
 
 typedef struct Cent_environment {
-    struct hash_table symbols;
+    struct Zinc_hash_table symbols;
     struct Cent_environment* prev;
 } Cent_environment;
 

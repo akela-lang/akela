@@ -3,15 +3,15 @@
 
 #include "zinc/error.h"
 #include "zinc/input_unicode.h"
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "token.h"
 
 typedef struct Cent_lex_data {
     struct Zinc_error_list* errors;
     void* input;
     InputUnicodeVTable* input_vtable;
-    struct hash_table reserved;
-    struct hash_table builtin;
+    struct Zinc_hash_table reserved;
+    struct Zinc_hash_table builtin;
     size_t process_newline_count;
 } Cent_lex_data;
 

@@ -35,7 +35,7 @@ void Json_dom_set_type(Json_dom* dom, Json_dom_type type)
         case Json_dom_type_array:
             break;
         case Json_dom_type_object:
-            hash_table_init(&dom->value.object, 32);
+            Zinc_hash_map_string_init(&dom->value.object, 32);
             break;
         default:
             assert(false && "invalid type");
@@ -69,8 +69,8 @@ void Json_dom_destroy(Json_dom* dom)
         }
         break;
     case Json_dom_type_object:
-        hash_table_map(&dom->value.object, (hash_table_func)Json_dom_destroy);
-        hash_table_destroy(&dom->value.object);
+        Zinc_hash_map_str_map(&dom->value.object, (Zinc_hash_map_string_func)Json_dom_destroy);
+        Zinc_hash_map_string_destroy(&dom->value.object);
         break;
     default:
         assert(false && "invalid type");
@@ -120,11 +120,11 @@ Json_dom* Json_dom_get_element(Json_dom* dom, size_t index)
 void Json_dom_add_property(Json_dom* dom, struct Zinc_string* name, Json_dom* value)
 {
     assert(dom->type == Json_dom_type_object);
-    hash_table_add(&dom->value.object, name, value);
+    Zinc_hash_map_string_add(&dom->value.object, name, value);
 }
 
 Json_dom* Json_dom_get_property(Json_dom* dom, struct Zinc_string* name)
 {
     assert(dom->type == Json_dom_type_object);
-    return hash_table_get(&dom->value.object, name);
+    return Zinc_hash_map_string_get(&dom->value.object, name);
 }

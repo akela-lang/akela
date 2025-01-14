@@ -1,4 +1,4 @@
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "environment.h"
 #include "zinc/memory.h"
 #include <assert.h>
@@ -6,7 +6,7 @@
 
 void Ake_environment_init(struct Ake_environment* env, struct Ake_environment* p)
 {
-    hash_table_init(&env->ht, ENVIRONMENT_HASH_TABLE_SIZE);
+    Zinc_hash_map_string_init(&env->ht, ENVIRONMENT_HASH_TABLE_SIZE);
     env->prev = p;
 }
 
@@ -19,13 +19,13 @@ void Ake_environment_create(struct Ake_environment** env, struct Ake_environment
 void Ake_environment_put(struct Ake_environment* env, Zinc_string* value, struct Ake_symbol* sym)
 {
     assert(sym->type != Ake_symbol_type_none);
-    hash_table_add(&env->ht, value, sym);
+    Zinc_hash_map_string_add(&env->ht, value, sym);
 }
 
 struct Ake_symbol* Ake_environment_get(struct Ake_environment* env, Zinc_string* value)
 {
     for (struct Ake_environment* p = env; p; p = p->prev) {
-        struct Ake_symbol* found = (struct Ake_symbol*)hash_table_get(&p->ht, value);
+        struct Ake_symbol* found = (struct Ake_symbol*)Zinc_hash_map_string_get(&p->ht, value);
         if (found) {
             return found;
         }
@@ -36,7 +36,7 @@ struct Ake_symbol* Ake_environment_get(struct Ake_environment* env, Zinc_string*
 
 struct Ake_symbol* Ake_environment_get_local(struct Ake_environment* env, Zinc_string* value)
 {
-    return (struct Ake_symbol*)hash_table_get(&env->ht, value);
+    return (struct Ake_symbol*)Zinc_hash_map_string_get(&env->ht, value);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -53,7 +53,7 @@ void Ake_environment_destroy_symbol(struct Ake_symbol* sym)
 
 void Ake_environment_destroy(struct Ake_environment* env)
 {
-    hash_table_map(&env->ht, (void (*)(void*))Ake_environment_destroy_symbol);
-    hash_table_destroy(&env->ht);
+    Zinc_hash_map_str_map(&env->ht, (void (*)(void*))Ake_environment_destroy_symbol);
+    Zinc_hash_map_string_destroy(&env->ht);
     free(env);
 }

@@ -35,9 +35,9 @@ void Cent_data_init(Cent_data *data, Cent_value_type type)
         data->list.head = NULL;
         data->list.tail = NULL;
     } else if (type == Cent_value_type_dict) {
-        hash_table_init(&data->dict.properties, 16);
+        Zinc_hash_map_string_init(&data->dict.properties, 16);
     } else if (type == Cent_value_type_dag) {
-        hash_table_init(&data->dag.properties, 16);
+        Zinc_hash_map_string_init(&data->dag.properties, 16);
         data->dag.head = NULL;
         data->dag.tail = NULL;
     }
@@ -56,16 +56,16 @@ void Cent_data_destroy(Cent_data *data, Cent_value_type type)
             Cent_value_free(temp);
         }
     } else if (type == Cent_value_type_dict) {
-        hash_table_destroy(&data->dict.properties);
+        Zinc_hash_map_string_destroy(&data->dict.properties);
     } else if (type == Cent_value_type_dag) {
-        hash_table_map(&data->dag.properties, (hash_table_func)Cent_value_free);
+        Zinc_hash_map_str_map(&data->dag.properties, (Zinc_hash_map_string_func)Cent_value_free);
         Cent_value* p = data->dag.head;
         while (p) {
             Cent_value* temp = p;
             p = p->next;
             Cent_value_free(temp);
         }
-        hash_table_destroy(&data->dag.properties);
+        Zinc_hash_map_string_destroy(&data->dag.properties);
     }
 }
 
@@ -145,27 +145,27 @@ void Cent_value_free(Cent_value *value)
 void Cent_value_set(Cent_value* value, struct Zinc_string* name, Cent_value* value2)
 {
     assert(value->type == Cent_value_type_dag);
-    hash_table_add(&value->data.dag.properties, name, value2);
+    Zinc_hash_map_string_add(&value->data.dag.properties, name, value2);
     value2->parent = value;
 }
 
 void Cent_value_set_str(Cent_value* value, char* name, Cent_value* value2)
 {
     assert(value->type == Cent_value_type_dag);
-    hash_table_add_str(&value->data.dag.properties, name, value2);
+    Zinc_hash_map_string_add_str(&value->data.dag.properties, name, value2);
     value2->parent = value;
 }
 
 Cent_value* Cent_value_get(Cent_value* value, struct Zinc_string* name)
 {
     assert(value->type == Cent_value_type_dag);
-    return hash_table_get(&value->data.dag.properties, name);
+    return Zinc_hash_map_string_get(&value->data.dag.properties, name);
 }
 
 Cent_value* Cent_value_get_str(Cent_value* value, char* name)
 {
     assert(value->type == Cent_value_type_dag);
-    return hash_table_get_str(&value->data.dag.properties, name);
+    return Zinc_hash_map_string_get_str(&value->data.dag.properties, name);
 }
 
 void Cent_value_add(Cent_value* parent, Cent_value* child)

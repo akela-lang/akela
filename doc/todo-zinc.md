@@ -6,7 +6,7 @@
   * datetime [x]
   * error [x]
   * error_unit_test [x]
-  * hash []
+  * hash [x]
   * hash_map_size_t []
   * input_char []
   * input_char_file []

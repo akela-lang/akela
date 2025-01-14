@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "ast.h"
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "zinc/hash_map_size_t.h"
 #include "zinc/String_slice.h"
 #include <unicode/uchar.h>
@@ -66,7 +66,7 @@ Cob_task* Cob_stack_pop(Cob_stack* mts);
 Cob_task* Cob_stack_remove(Cob_stack* mts, Cob_task* task);
 void Cob_stack_pop_to(Cob_stack* mts, Cob_task* marker);
 void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice slice);
-Cob_stack* Cob_stack_clone(Cob_stack* mts, struct hash_table* ht, Cob_stack_node* sn);
+Cob_stack* Cob_stack_clone(Cob_stack* mts, struct Zinc_hash_table* ht, Cob_stack_node* sn);
 
 void Cob_stack_node_init(Cob_stack_node* sn);
 void Cob_stack_node_create(Cob_stack_node** sn);

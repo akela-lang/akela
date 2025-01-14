@@ -6,7 +6,7 @@ set(SOURCE_FILES
         memory.c
         result.c
         utf8.c
-        hash.c
+        hash_map_string.c
         os_unix.c
         os_win.c
         datetime.c

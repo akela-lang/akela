@@ -6,7 +6,7 @@
 
 typedef struct Cent_comp_table {
     Cent_comp_unit* primary;
-    struct hash_table ht;
+    struct Zinc_hash_table ht;
     void* module_finder_obj;
     Cent_module_vtable* module_finder_vtable;
     Cent_environment* base;

@@ -2,7 +2,7 @@
 #define CENTIPEDE_VALUE_H
 
 #include "token.h"
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "enumerate.h"
 
 typedef enum Cent_value_type {
@@ -32,10 +32,10 @@ typedef union Cent_data
         struct Cent_value* tail;
     } list;
     struct {
-        struct hash_table properties;
+        struct Zinc_hash_table properties;
     } dict;
     struct {
-        struct hash_table properties;
+        struct Zinc_hash_table properties;
         struct Cent_value* head;
         struct Cent_value* tail;
     } dag;

@@ -7,17 +7,17 @@
 
 void Ake_comp_table_init(struct Ake_comp_table* ct)
 {
-	hash_table_init(&ct->ht, COMP_TABLE_HASH_TABLE_SIZE);
+	Zinc_hash_map_string_init(&ct->ht, COMP_TABLE_HASH_TABLE_SIZE);
 }
 
 void Ake_comp_table_put(struct Ake_comp_table* ct, struct Zinc_string* path, struct Ake_comp_unit* cu)
 {
-	hash_table_add(&ct->ht, path, (void*)cu);
+	Zinc_hash_map_string_add(&ct->ht, path, (void*)cu);
 }
 
 struct Ake_comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct Zinc_string* path)
 {
-	return (struct Ake_comp_unit*)hash_table_get(&ct->ht, path);
+	return (struct Ake_comp_unit*)Zinc_hash_map_string_get(&ct->ht, path);
 }
 
 void Ake_comp_table_destroy_comp_unit(struct Ake_comp_unit* cu)
@@ -28,8 +28,8 @@ void Ake_comp_table_destroy_comp_unit(struct Ake_comp_unit* cu)
 
 void Ake_comp_table_destroy(struct Ake_comp_table* ct)
 {
-	hash_table_map(&ct->ht, (void (*)(void*))Ake_comp_table_destroy_comp_unit);
-	hash_table_destroy(&ct->ht);
+	Zinc_hash_map_str_map(&ct->ht, (void (*)(void*))Ake_comp_table_destroy_comp_unit);
+	Zinc_hash_map_string_destroy(&ct->ht);
 }
 
 bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struct Ake_comp_unit** cu_base)

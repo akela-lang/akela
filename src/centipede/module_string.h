@@ -5,7 +5,7 @@
 #include "module.h"
 
 typedef struct Cent_module_string {
-    struct hash_table ht;
+    struct Zinc_hash_table ht;
     Cent_module_find find;
     Cent_module_vtable* vtable;
 } Cent_module_string;

@@ -3,7 +3,7 @@
 
 void Cent_module_init(Cent_module* mod)
 {
-    hash_table_init(&mod->submodules, 16);
+    Zinc_hash_map_string_init(&mod->submodules, 16);
     mod->env = NULL;
     mod->pr = NULL;
     mod->value = NULL;
@@ -17,8 +17,8 @@ void Cent_module_create(Cent_module** mod)
 
 void Cent_module_destroy(Cent_module* mod)
 {
-    hash_table_map(&mod->submodules, (hash_table_func)Cent_module_free);
-    hash_table_destroy(&mod->submodules);
+    Zinc_hash_map_str_map(&mod->submodules, (Zinc_hash_map_string_func)Cent_module_free);
+    Zinc_hash_map_string_destroy(&mod->submodules);
 }
 
 void Cent_module_free(Cent_module* mod)
@@ -29,10 +29,10 @@ void Cent_module_free(Cent_module* mod)
 
 void Cent_module_add(Cent_module* mod, struct Zinc_string* name, Cent_module* submodule)
 {
-    hash_table_add(&mod->submodules, name, submodule);
+    Zinc_hash_map_string_add(&mod->submodules, name, submodule);
 }
 
 Cent_module* Cent_module_get(Cent_module* mod, struct Zinc_string* name)
 {
-    return hash_table_get(&mod->submodules, name);
+    return Zinc_hash_map_string_get(&mod->submodules, name);
 }

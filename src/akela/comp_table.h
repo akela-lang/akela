@@ -4,12 +4,12 @@
 #define COMP_TABLE_HASH_TABLE_SIZE 32
 
 #include "api.h"
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include <stdbool.h>
 #include "comp_unit.h"
 
 typedef struct Ake_comp_table {
-	struct hash_table ht;
+	struct Zinc_hash_table ht;
 } Ake_comp_table;
 
 AKELA_API void Ake_comp_table_init(struct Ake_comp_table* ct);

@@ -2,7 +2,7 @@
 #include "dom.h"
 #include "parse_tools.h"
 #include <assert.h>
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 
 Json_dom* Json_parse_value(Json_parse_data* pd);
 Json_dom* Json_parse_string(Json_parse_data* pd);
@@ -282,7 +282,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
 
     Json_dom* value = Json_parse_value(pd);
     if (value) {
-        hash_table_add(&parent->value.object, &s->value, value);
+        Zinc_hash_map_string_add(&parent->value.object, &s->value, value);
     } else {
         Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected value");
         parent->has_error = true;
@@ -319,7 +319,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
 
         value = Json_parse_value(pd);
         if (value) {
-            hash_table_add(&parent->value.object, &s->value, value);
+            Zinc_hash_map_string_add(&parent->value.object, &s->value, value);
         } else {
             Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected value");
             parent->has_error = true;

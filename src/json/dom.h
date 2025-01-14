@@ -3,7 +3,7 @@
 
 #include "zinc/zstring.h"
 #include <stdbool.h>
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "zinc/error.h"
 
 typedef enum Json_dom_type {
@@ -32,7 +32,7 @@ typedef struct Json_dom {
         double fp;                      /* number fp */
         struct Zinc_string string;           /* string */
         /* array: use head and tail */  /* array */
-        struct hash_table object;       /* object: hash struct buffer -> Json_dom */
+        struct Zinc_hash_table object;       /* object: hash struct buffer -> Json_dom */
     } value;
     bool has_error;
     struct Zinc_location loc;

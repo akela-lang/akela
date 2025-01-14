@@ -19,8 +19,8 @@ void Ake_type_def_init(struct Ake_type_def* n)
 	n->bit_count = 0;
 	n->composite = NULL;
     n->composite_type = NULL;
-    hash_table_init(&n->struct_impl, IMPL_HASH_SIZE);
-    hash_table_init(&n->type_impl, IMPL_HASH_SIZE);
+    Zinc_hash_map_string_init(&n->struct_impl, IMPL_HASH_SIZE);
+    Zinc_hash_map_string_init(&n->type_impl, IMPL_HASH_SIZE);
 }
 
 void Ake_type_def_destroy(struct Ake_type_def* n)
@@ -28,10 +28,10 @@ void Ake_type_def_destroy(struct Ake_type_def* n)
 	if (n) {
 		Zinc_string_destroy(&n->name);
         Ake_ast_destroy(n->composite);
-        hash_table_map(&n->struct_impl, (hash_table_func)Ake_struct_element_destroy);
-        hash_table_destroy(&n->struct_impl);
-        hash_table_map(&n->type_impl, (hash_table_func)Ake_ast_destroy);
-        hash_table_destroy(&n->type_impl);
+        Zinc_hash_map_str_map(&n->struct_impl, (Zinc_hash_map_string_func)Ake_struct_element_destroy);
+        Zinc_hash_map_string_destroy(&n->struct_impl);
+        Zinc_hash_map_str_map(&n->type_impl, (Zinc_hash_map_string_func)Ake_ast_destroy);
+        Zinc_hash_map_string_destroy(&n->type_impl);
         free(n);
 	}
 }

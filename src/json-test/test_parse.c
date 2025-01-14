@@ -272,7 +272,7 @@ void test_parse_object_one_property()
     assert_ptr(dom, "ptr dom");
     expect_int_equal(dom->type, Json_dom_type_object, "type dom");
 
-    Json_dom* repeat = hash_table_get_str(&dom->value.object, "repeat");
+    Json_dom* repeat = Zinc_hash_map_string_get_str(&dom->value.object, "repeat");
     assert_ptr(repeat, "ptr repeat");
     expect_int_equal(repeat->type, Json_dom_type_boolean, "type repeat");
     expect_true(repeat->value.boolean, "repeat");
@@ -297,12 +297,12 @@ void test_parse_object_two_properties()
     assert_ptr(dom, "ptr dom");
     expect_int_equal(dom->type, Json_dom_type_object, "type dom");
 
-    Json_dom* first_name = hash_table_get_str(&dom->value.object, "first_name");
+    Json_dom* first_name = Zinc_hash_map_string_get_str(&dom->value.object, "first_name");
     assert_ptr(first_name, "ptr first_name");
     expect_int_equal(first_name->type, Json_dom_type_string, "type first_name");
     expect_str(&first_name->value.string, "Fred", "str first_name");
 
-    Json_dom* last_name = hash_table_get_str(&dom->value.object, "last_name");
+    Json_dom* last_name = Zinc_hash_map_string_get_str(&dom->value.object, "last_name");
     assert_ptr(last_name, "ptr last_name");
     expect_int_equal(last_name->type, Json_dom_type_string, "type last_name");
     expect_str(&last_name->value.string, "Smith", "str last_name");
@@ -328,17 +328,17 @@ void test_parse_object_three_properties()
     assert_ptr(dom, "ptr dom");
     expect_int_equal(dom->type, Json_dom_type_object, "type dom");
 
-    Json_dom* first_name = hash_table_get_str(&dom->value.object, "first_name");
+    Json_dom* first_name = Zinc_hash_map_string_get_str(&dom->value.object, "first_name");
     assert_ptr(first_name, "ptr first_name");
     expect_int_equal(first_name->type, Json_dom_type_string, "type first_name");
     expect_str(&first_name->value.string, "Fred", "str first_name");
 
-    Json_dom* last_name = hash_table_get_str(&dom->value.object, "last_name");
+    Json_dom* last_name = Zinc_hash_map_string_get_str(&dom->value.object, "last_name");
     assert_ptr(last_name, "ptr last_name");
     expect_int_equal(last_name->type, Json_dom_type_string, "type last_name");
     expect_str(&last_name->value.string, "Smith", "str last_name");
 
-    Json_dom* age = hash_table_get_str(&dom->value.object, "age");
+    Json_dom* age = Zinc_hash_map_string_get_str(&dom->value.object, "age");
     assert_ptr(age, "ptr age");
     expect_int_equal(age->type, Json_dom_type_number, "type age");
     expect_int_equal(age->number_type, Json_dom_number_type_integer, "type age");

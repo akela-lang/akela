@@ -2,7 +2,7 @@
 #define CENTIPEDE_COMP_UNIT_H
 
 #include "zinc/input_unicode.h"
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "parse_data.h"
 #include "lex_data.h"
 

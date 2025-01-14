@@ -193,7 +193,7 @@ void Json_stringify_object(struct Zinc_error_list* el, Json_dom* dom, struct Zin
     Json_stringify_object_el = el;
     Json_stringify_object_bf = bf;
     Json_stringify_object_index = 0;
-    hash_table_map_name(&dom->value.object, (hash_table_func_name)Json_stringify_property);
+    Zinc_hash_map_string_map_name(&dom->value.object, (Zinc_hash_map_string_func_name)Json_stringify_property);
     Zinc_string_add_char(bf, '}');
 }
 

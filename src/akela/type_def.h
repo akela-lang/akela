@@ -9,7 +9,7 @@
 #include "symbol_table.h"
 #include "zinc/vector.h"
 #include "ast.h"
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "ast.h"
 
 typedef enum Ake_type {
@@ -31,8 +31,8 @@ typedef struct Ake_type_def {
     bool is_signed;
     struct Ake_ast* composite;
     void* composite_type;
-    struct hash_table struct_impl;
-    struct hash_table type_impl;
+    struct Zinc_hash_table struct_impl;
+    struct Zinc_hash_table type_impl;
 } Ake_type_def;
 
 #define IMPL_HASH_SIZE 32

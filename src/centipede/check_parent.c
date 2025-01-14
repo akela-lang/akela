@@ -40,7 +40,7 @@ Cent_comp_unit* Cent_check_parent_cu = NULL;
 void Cent_check_parent_environment(Cent_comp_unit* cu, Cent_environment* env)
 {
     Cent_check_parent_cu = cu;
-    hash_table_map(&env->symbols, (hash_table_func)Cent_check_parent_symbol);
+    Zinc_hash_map_str_map(&env->symbols, (Zinc_hash_map_string_func)Cent_check_parent_symbol);
 }
 
 void Cent_check_parent_symbol(Cent_symbol* sym)

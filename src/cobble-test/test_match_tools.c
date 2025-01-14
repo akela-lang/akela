@@ -238,8 +238,8 @@ void test_match_tools_clone()
     struct Zinc_string* bf = NULL;
     Zinc_string_create(&bf);
 
-    struct hash_table ht;
-    hash_table_init(&ht, 32);
+    struct Zinc_hash_table ht;
+    Zinc_hash_map_string_init(&ht, 32);
 
     Cob_stack* new_mts = Cob_stack_clone(mts, &ht, NULL);
     Cob_task* new_mt3 = new_mts->top;
@@ -265,7 +265,7 @@ void test_match_tools_clone()
     Cob_stack_destroy(new_mts);
     Zinc_string_destroy(bf);
     free(bf);
-    hash_table_destroy(&ht);
+    Zinc_hash_map_string_destroy(&ht);
 }
 
 void test_match_tools_stack_node_clone()

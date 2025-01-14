@@ -73,7 +73,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         /* copy symbols */
         Cent_environment* src_env = cu->pr.root->env;
         Cent_module_dest_env = pd->top;
-        hash_table_map_name(&src_env->symbols, (hash_table_func_name)Cent_module_copy_symbol);
+        Zinc_hash_map_string_map_name(&src_env->symbols, (Zinc_hash_map_string_func_name)Cent_module_copy_symbol);
     } else {
         p = n->head;
         struct Zinc_string base_name;

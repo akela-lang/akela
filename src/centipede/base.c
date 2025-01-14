@@ -16,7 +16,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     Cent_symbol_create(&sym);
     Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
-    hash_table_add(&env->symbols, &element->name, sym);
+    Zinc_hash_map_string_add(&env->symbols, &element->name, sym);
 
     Cent_element_create(&element);
     Zinc_string_add_str(&element->name, "Float");
@@ -25,7 +25,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     Cent_symbol_create(&sym);
     Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
-    hash_table_add(&env->symbols, &element->name, sym);
+    Zinc_hash_map_string_add(&env->symbols, &element->name, sym);
 
     Cent_element_create(&element);
     Zinc_string_add_str(&element->name, "String");
@@ -33,7 +33,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     Cent_symbol_create(&sym);
     Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
-    hash_table_add(&env->symbols, &element->name, sym);
+    Zinc_hash_map_string_add(&env->symbols, &element->name, sym);
 
     Cent_element_create(&element);
     Zinc_string_add_str(&element->name, "Bool");
@@ -41,7 +41,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     Cent_symbol_create(&sym);
     Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
-    hash_table_add(&env->symbols, &element->name, sym);
+    Zinc_hash_map_string_add(&env->symbols, &element->name, sym);
 
     return env;
 }

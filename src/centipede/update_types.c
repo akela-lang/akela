@@ -1,7 +1,7 @@
 #include "parse_data.h"
 #include "akela/environment.h"
 #include <assert.h>
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 
 void Cent_update_stmts(Cent_parse_result* pr, Cent_ast* n);
 void Cent_update_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env);

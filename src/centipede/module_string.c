@@ -9,7 +9,7 @@ Cent_module_vtable Cent_module_string_vtable = {
 
 void Cent_module_string_init(Cent_module_string* ms)
 {
-    hash_table_init(&ms->ht, 16);
+    Zinc_hash_map_string_init(&ms->ht, 16);
     ms->find = (Cent_module_find)Cent_module_find_string;
     ms->vtable = &Cent_module_string_vtable;
 }
@@ -22,8 +22,8 @@ void Cent_module_string_create(Cent_module_string** ms)
 
 void Cent_module_string_destroy(Cent_module_string* ms)
 {
-    hash_table_map(&ms->ht, (hash_table_func)Zinc_string_free);
-    hash_table_destroy(&ms->ht);
+    Zinc_hash_map_str_map(&ms->ht, (Zinc_hash_map_string_func)Zinc_string_free);
+    Zinc_hash_map_string_destroy(&ms->ht);
 }
 
 void Cent_module_string_add_module(Cent_module_string* ms, struct Zinc_string* name, struct Zinc_string* text)
@@ -31,7 +31,7 @@ void Cent_module_string_add_module(Cent_module_string* ms, struct Zinc_string* n
     struct Zinc_string* text2 = NULL;
     Zinc_string_create(&text2);
     Zinc_string_copy(text, text2);
-    hash_table_add(&ms->ht, name, text2);
+    Zinc_hash_map_string_add(&ms->ht, name, text2);
 }
 
 void Cent_module_string_add_module_str(Cent_module_string* ms, char* name, struct Zinc_string* text)
@@ -39,7 +39,7 @@ void Cent_module_string_add_module_str(Cent_module_string* ms, char* name, struc
     struct Zinc_string* text2 = NULL;
     Zinc_string_create(&text2);
     Zinc_string_copy(text, text2);
-    hash_table_add_str(&ms->ht, name, text2);
+    Zinc_hash_map_string_add_str(&ms->ht, name, text2);
 }
 
 void Cent_module_string_add_module_str_str(Cent_module_string* ms, char* name, char* text)
@@ -47,12 +47,12 @@ void Cent_module_string_add_module_str_str(Cent_module_string* ms, char* name, c
     struct Zinc_string* text2 = NULL;
     Zinc_string_create(&text2);
     Zinc_string_add_str(text2, text);
-    hash_table_add_str(&ms->ht, name, text2);
+    Zinc_hash_map_string_add_str(&ms->ht, name, text2);
 }
 
 Cent_input_data Cent_module_find_string(Cent_module_string* ms, struct Zinc_string* name)
 {
-    struct Zinc_string* text = hash_table_get(&ms->ht, name);
+    struct Zinc_string* text = Zinc_hash_map_string_get(&ms->ht, name);
     Cent_input_data data = {NULL, NULL};
 
     if (!text) {

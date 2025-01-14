@@ -2,13 +2,13 @@
 #define AKELA_ENVIRONMENT_H
 
 #include "api.h"
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "symbol.h"
 
 #define ENVIRONMENT_HASH_TABLE_SIZE 32
 
 typedef struct Ake_environment {
-    struct hash_table ht;
+    struct Zinc_hash_table ht;
     struct Ake_environment* prev;
 } Ake_environment;
 

@@ -40,12 +40,12 @@ void Cent_check_value_types_value(Cent_value* value)
     if (value->type == Cent_value_type_dag) {
         Cent_parse_types_object_value = value;
         Zinc_string_finish(&value->name);
-        hash_table_map_name(
+        Zinc_hash_map_string_map_name(
             &value->data.dag.properties,
-            (hash_table_func_name)Cent_check_value_types_property);
-        hash_table_map(
+            (Zinc_hash_map_string_func_name)Cent_check_value_types_property);
+        Zinc_hash_map_str_map(
             &value->data.dag.properties,
-            (hash_table_func)Cent_check_value_types_property2);
+            (Zinc_hash_map_string_func)Cent_check_value_types_property2);
 
         Cent_value* p = value->data.dag.head;
         while (p) {
@@ -54,12 +54,12 @@ void Cent_check_value_types_value(Cent_value* value)
         }
     } else if (value->type == Cent_value_type_dict) {
         Cent_parse_types_object_value = value;
-        hash_table_map_name(
+        Zinc_hash_map_string_map_name(
             &value->data.dict.properties,
-            (hash_table_func_name)Cent_check_value_types_property);
-        hash_table_map(
+            (Zinc_hash_map_string_func_name)Cent_check_value_types_property);
+        Zinc_hash_map_str_map(
             &value->data.dict.properties,
-            (hash_table_func)Cent_check_value_types_property2);
+            (Zinc_hash_map_string_func)Cent_check_value_types_property2);
     } else if (value->type == Cent_value_type_list) {
         Cent_value* p = value->data.list.head;
         while (p) {
@@ -82,12 +82,12 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
     assert(object_sym->type == Cent_symbol_type_element);
     Cent_element_type* object_element = object_sym->data.element;
 
-    Cent_property_type* prop_type = hash_table_get(&object_element->properties, name);
+    Cent_property_type* prop_type = Zinc_hash_map_string_get(&object_element->properties, name);
     if (!prop_type) {
         struct Zinc_string name2;
         Zinc_string_init(&name2);
         Zinc_string_add_str(&name2, "_");
-        prop_type = hash_table_get(&object_element->properties, &name2);
+        prop_type = Zinc_hash_map_string_get(&object_element->properties, &name2);
         Zinc_string_destroy(&name2);
     }
 

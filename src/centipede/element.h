@@ -2,7 +2,7 @@
 #define CENTIPEDE_ELEMENT_H
 
 #include "zinc/zstring.h"
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "zinc/list.h"
 #include "value.h"
 #include "enumerate.h"
@@ -46,7 +46,7 @@ typedef struct Cent_element_type {
     struct Zinc_string name;
     Cent_value_type type;
     Cent_number_type number_type;
-    struct hash_table properties;
+    struct Zinc_hash_table properties;
     struct Cent_types_list children;
     struct Zinc_location loc;
     bool has_error;

@@ -1,7 +1,7 @@
 #include "match_tools.h"
 #include "zinc/memory.h"
 #include <assert.h>
-#include "zinc/hash.h"
+#include "zinc/hash_map_string.h"
 #include "zinc/string_list.h"
 #include "zinc/result.h"
 
@@ -176,7 +176,7 @@ void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice sl
     }
 }
 
-Cob_stack* Cob_stack_clone(Cob_stack* mts, struct hash_table* ht, Cob_stack_node* sn)
+Cob_stack* Cob_stack_clone(Cob_stack* mts, struct Zinc_hash_table* ht, Cob_stack_node* sn)
 {
     if (mts) {
         Cob_stack* new_mts = NULL;
@@ -194,12 +194,12 @@ Cob_stack* Cob_stack_clone(Cob_stack* mts, struct hash_table* ht, Cob_stack_node
 
             Zinc_string_clear(&bf);
             Zinc_string_add_format(&bf, "%lx", task);
-            hash_table_add(ht, &bf, new_task);
+            Zinc_hash_map_string_add(ht, &bf, new_task);
 
             if (task->parent) {
                 Zinc_string_clear(&bf);
                 Zinc_string_add_format(&bf, "%lx", task->parent);
-                new_task->parent = hash_table_get(ht, &bf);
+                new_task->parent = Zinc_hash_map_string_get(ht, &bf);
             }
 
             task = task->prev;
@@ -253,8 +253,8 @@ void Cob_stack_node_group_copy(size_t index, struct Zinc_string* bf)
 
 Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn)
 {
-    struct hash_table ht;
-    hash_table_init(&ht, 32);
+    struct Zinc_hash_table ht;
+    Zinc_hash_map_string_init(&ht, 32);
 
     Cob_stack_node* new_sn = NULL;
     Cob_stack_node_create(&new_sn);
@@ -265,7 +265,7 @@ Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn)
     Stack_target_hash = &new_sn->groups;
     Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Cob_stack_node_group_copy);
 
-    hash_table_destroy(&ht);
+    Zinc_hash_map_string_destroy(&ht);
 
     return new_sn;
 }
