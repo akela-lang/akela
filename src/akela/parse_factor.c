@@ -183,7 +183,7 @@ Ake_ast* parse_if(struct parse_state* ps)
     Ake_ast_add(n, cb);
 
     Ake_ast* cond = NULL;
-    cond = parse_expr(ps);
+    cond = Ake_parse_expr(ps);
     if (cond && cond->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -280,7 +280,7 @@ void parse_elseif(struct parse_state* ps, Ake_ast* parent)
         cb->type = Ake_ast_type_conditional_branch;
 
         Ake_ast *cond = NULL;
-        cond = parse_expr(ps);
+        cond = Ake_parse_expr(ps);
         if (cond && cond->type == Ake_ast_type_error) {
             cb->type = Ake_ast_type_error;
             parent->type = Ake_ast_type_error;
@@ -368,7 +368,7 @@ Ake_ast* parse_not(struct parse_state* ps)
     }
 
 	Ake_ast* a = NULL;
-	a = parse_expr(ps);
+	a = Ake_parse_expr(ps);
     if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -649,7 +649,7 @@ void parse_struct_literal_elements(
         token_destroy(colon);
         free(colon);
 
-        struct Ake_ast* expr = parse_expr(ps);
+        struct Ake_ast* expr = Ake_parse_expr(ps);
         if (expr) {
             Ake_ast_add(field, expr);
 
@@ -710,7 +710,7 @@ Ake_ast* parse_sign(struct parse_state* ps)
     }
 
 	Ake_ast* right = NULL;
-    right = parse_expr(ps);
+    right = Ake_parse_expr(ps);
 	if (right && right->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -828,7 +828,7 @@ Ake_ast* parse_array_literal(struct parse_state* ps)
 void parse_aseq(struct parse_state* ps, Ake_ast* parent)
 {
 	Ake_ast* a = NULL;
-    a = parse_simple_expr(ps);
+    a = Ake_parse_simple_expr(ps);
 	if (a && a->type == Ake_ast_type_error) {
         parent->type = Ake_ast_type_error;
     }
@@ -855,7 +855,7 @@ void parse_aseq(struct parse_state* ps, Ake_ast* parent)
                 parent->type = Ake_ast_type_error;
             }
 
-			a = parse_simple_expr(ps);
+			a = Ake_parse_simple_expr(ps);
 			if (a && a->type == Ake_ast_type_error) {
                 parent->type = Ake_ast_type_error;
             }
@@ -890,7 +890,7 @@ Ake_ast* parse_parenthesis(struct parse_state* ps)
     }
 
 	Ake_ast* a = NULL;
-    a = parse_expr(ps);
+    a = Ake_parse_expr(ps);
 	if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }

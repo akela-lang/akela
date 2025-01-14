@@ -121,7 +121,7 @@ Ake_ast* parse_stmt(struct parse_state* ps)
     } else if (t0->type == token_impl) {
         n = parse_impl(ps);
 	} else {
-        n = parse_expr(ps);
+        n = Ake_parse_expr(ps);
 	}
 
     return n;
@@ -218,7 +218,7 @@ Ake_ast* parse_while(struct parse_state* ps)
     }
 
 	Ake_ast* a = NULL;
-    a = parse_expr(ps);
+    a = Ake_parse_expr(ps);
 	if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -344,7 +344,7 @@ void parse_for_range(struct parse_state* ps, Ake_ast* parent)
 
 	/* start expr */
 	Ake_ast* a = NULL;
-    a = parse_expr(ps);
+    a = Ake_parse_expr(ps);
 	if (a && a->type == Ake_ast_type_error) {
         parent->type = Ake_ast_type_error;
     }
@@ -368,7 +368,7 @@ void parse_for_range(struct parse_state* ps, Ake_ast* parent)
 
 	/* end expr */
 	Ake_ast* b = NULL;
-    b = parse_expr(ps);
+    b = Ake_parse_expr(ps);
 	if (b && b->type == Ake_ast_type_error) {
         parent->type = Ake_ast_type_error;
     }
@@ -436,7 +436,7 @@ void parse_for_iteration(struct parse_state* ps, Ake_ast* parent)
 
 	/* expr */
 	Ake_ast* list = NULL;
-    list = parse_expr(ps);
+    list = Ake_parse_expr(ps);
 	if (list && list->type == Ake_ast_type_error) {
         parent->type = Ake_ast_type_error;
     }
@@ -679,7 +679,7 @@ Ake_ast* parse_return(struct parse_state* ps)
     }
 
 	Ake_ast* a = NULL;
-    a = parse_expr(ps);
+    a = Ake_parse_expr(ps);
 	if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -933,7 +933,7 @@ Ake_ast* parse_let_lseq(struct parse_state* ps)
 Ake_ast* parse_let_rseq(struct parse_state* ps)
 {
     Ake_ast* a = NULL;
-    a = parse_simple_expr(ps);
+    a = Ake_parse_simple_expr(ps);
     if (!a) {
         return NULL;
     }
@@ -963,7 +963,7 @@ Ake_ast* parse_let_rseq(struct parse_state* ps)
         free(comma);
 
         Ake_ast* b = NULL;
-        b = parse_simple_expr(ps);
+        b = Ake_parse_simple_expr(ps);
         if (b && b->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }

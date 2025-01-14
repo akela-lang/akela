@@ -10,27 +10,29 @@
 #include <assert.h>
 #include "symbol.h"
 
-Ake_ast* parse_assignment(struct parse_state* ps);
-Ake_ast* parse_eseq(struct parse_state* ps);
-Ake_ast* parse_boolean(struct parse_state* ps);
-Ake_ast* parse_comparison(struct parse_state* ps);
-Ake_ast* parse_add(struct parse_state* ps);
-Ake_ast* parse_mult(struct parse_state* ps);
-Ake_ast* parse_power(struct parse_state* ps);
-Ake_ast* parse_complex_operators(struct parse_state* ps);
-void parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n);
-void parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n);
-Ake_ast* parse_cseq(struct parse_state* ps, Ake_ast* left);
-Ake_ast* parse_dot(struct parse_state* ps);
+Ake_ast* Ake_parse_assignment(struct parse_state* ps);
+Ake_ast* Ake_parse_eseq(struct parse_state* ps);
+Ake_ast* Ake_parse_boolean(struct parse_state* ps);
+Ake_ast* Ake_parse_comparison(struct parse_state* ps);
+Ake_ast* Ake_parse_add(struct parse_state* ps);
+Ake_ast* Ake_parse_mult(struct parse_state* ps);
+Ake_ast* Ake_parse_power(struct parse_state* ps);
+Ake_ast* Ake_parse_complex_operators(struct parse_state* ps);
+void Ake_parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n);
+void Ake_parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n);
+Ake_ast* Ake_parse_cseq(struct parse_state* ps, Ake_ast* left);
+Ake_ast* Ake_parse_dot(struct parse_state* ps);
 
 /* expr -> assignment */
-Ake_ast* parse_expr(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_expr(struct parse_state* ps)
 {
-    return parse_assignment(ps);
+    return Ake_parse_assignment(ps);
 }
 
 /* assignment -> eseq = assignment | eseq */
-Ake_ast* parse_assignment(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_assignment(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
 
@@ -39,7 +41,7 @@ Ake_ast* parse_assignment(struct parse_state* ps)
 
 	while (true) {
         a_last = a;
-		a = parse_eseq(ps);
+		a = Ake_parse_eseq(ps);
 
         if (!check_assignment_value_count(a, a_last)) {
             error_list_set(ps->el, &a->loc, "assignment sequence counts do not match");
@@ -175,10 +177,11 @@ Ake_ast* parse_assignment(struct parse_state* ps)
 
 /* eseq = boolean eseq' */
 /* eseq' = , boolean | e */
-Ake_ast* parse_eseq(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_eseq(struct parse_state* ps)
 {
     Ake_ast* a = NULL;
-    a = parse_boolean(ps);
+    a = Ake_parse_boolean(ps);
 
     if (!a) {
         return NULL;
@@ -217,7 +220,7 @@ Ake_ast* parse_eseq(struct parse_state* ps)
         free(comma);
 
         Ake_ast* b = NULL;
-        b = parse_boolean(ps);
+        b = Ake_parse_boolean(ps);
         if (b && b->type == Ake_ast_type_error) {
             parent->type = Ake_ast_type_error;
         }
@@ -249,20 +252,22 @@ Ake_ast* parse_eseq(struct parse_state* ps)
     return parent;
 }
 
-Ake_ast* parse_simple_expr(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_simple_expr(struct parse_state* ps)
 {
-    return parse_boolean(ps);
+    return Ake_parse_boolean(ps);
 }
 
 /* boolean -> comparison boolean' */
 /* boolean' -> && comparison boolean' | || comparison boolean' | e */
-Ake_ast* parse_boolean(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_boolean(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
 	Ake_ast* left;
 
 	Ake_ast* a = NULL;
-	a = parse_comparison(ps);
+	a = Ake_parse_comparison(ps);
 
 	if (!a) {
 		return NULL;
@@ -297,7 +302,7 @@ Ake_ast* parse_boolean(struct parse_state* ps)
 
 		/* comparison */
 		Ake_ast* b = NULL;
-		b = parse_comparison(ps);
+		b = Ake_parse_comparison(ps);
 
 		if (!b) {
             struct location b_loc = get_location(ps);
@@ -359,13 +364,14 @@ Ake_ast* parse_boolean(struct parse_state* ps)
 *	           | >= add comparison'
 *	           | e
 */
-Ake_ast* parse_comparison(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_comparison(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
 	Ake_ast* a = NULL;
 	Ake_ast* left = NULL;
 
-	a = parse_add(ps);
+	a = Ake_parse_add(ps);
 
 	if (!a) {
 		return NULL;
@@ -408,7 +414,7 @@ Ake_ast* parse_comparison(struct parse_state* ps)
         }
 
 		Ake_ast* b = NULL;
-		b = parse_add(ps);
+		b = Ake_parse_add(ps);
 
 		if (!b) {
             struct location b_loc = get_location(ps);
@@ -474,7 +480,8 @@ Ake_ast* parse_comparison(struct parse_state* ps)
 
 /* add -> mult add' */
 /* add' -> + mult add' | - mult add' | e */
-Ake_ast* parse_add(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_add(struct parse_state* ps)
 {
 	Ake_ast* a = NULL;
 	Ake_ast* b = NULL;
@@ -482,7 +489,7 @@ Ake_ast* parse_add(struct parse_state* ps)
 	Ake_ast* left = NULL;
 	char* op_name;
 
-	a = parse_mult(ps);
+	a = Ake_parse_mult(ps);
 
 	if (!a) {
 		return NULL;
@@ -523,7 +530,7 @@ Ake_ast* parse_add(struct parse_state* ps)
             n->type = Ake_ast_type_error;
         }
 
-		b = parse_mult(ps);
+		b = Ake_parse_mult(ps);
 
 		if (!b) {
             struct location b_loc = get_location(ps);
@@ -594,7 +601,8 @@ Ake_ast* parse_add(struct parse_state* ps)
 
 /* mult -> power mult' */
 /* mult' -> * power mult' | e */
-Ake_ast* parse_mult(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_mult(struct parse_state* ps)
 {
 	Ake_ast* a = NULL;
 	Ake_ast* b = NULL;
@@ -602,7 +610,7 @@ Ake_ast* parse_mult(struct parse_state* ps)
 	Ake_ast* n = NULL;
 	char* op_name;
 
-	a = parse_power(ps);
+	a = Ake_parse_power(ps);
 
 	if (!a) {
 		return NULL;
@@ -644,7 +652,7 @@ Ake_ast* parse_mult(struct parse_state* ps)
         }
 
 		/* parse_factor */
-		b = parse_power(ps);
+		b = Ake_parse_power(ps);
 
 		if (!b) {
             struct location b_loc = get_location(ps);
@@ -718,12 +726,13 @@ Ake_ast* parse_mult(struct parse_state* ps)
 
 /* power -> dot power' | e */
 /* power' -> ^ dot power' | e */
-Ake_ast* parse_power(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_power(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
 	Ake_ast* a = NULL;
 
-	a = parse_complex_operators(ps);
+	a = Ake_parse_complex_operators(ps);
 
 	if (!a) {
 		return a;
@@ -758,7 +767,7 @@ Ake_ast* parse_power(struct parse_state* ps)
         }
 
 		Ake_ast* b = NULL;
-		b = parse_complex_operators(ps);
+		b = Ake_parse_complex_operators(ps);
         if (b && b->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
@@ -827,12 +836,13 @@ Ake_ast* parse_power(struct parse_state* ps)
 
 /* complex_operators -> factor complex_operators' */
 /* complex_operators' -> [expr] complex_operators' | (call_seq) complex_operators' | e */
-Ake_ast* parse_complex_operators(struct parse_state* ps)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_complex_operators(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast* a = NULL;
 
-    a = parse_dot(ps);
+    a = Ake_parse_dot(ps);
 
     if (!a) {
         return a;
@@ -848,9 +858,9 @@ Ake_ast* parse_complex_operators(struct parse_state* ps)
 
         Ake_ast_create(&n);
         if (t0->type == token_left_square_bracket) {
-            parse_subscript(ps, left, n);
+            Ake_parse_subscript(ps, left, n);
         } else if (t0->type == token_left_paren) {
-            parse_call(ps, left, n);
+            Ake_parse_call(ps, left, n);
         }
 
         if (left->type == Ake_ast_type_error) {
@@ -863,7 +873,8 @@ Ake_ast* parse_complex_operators(struct parse_state* ps)
     return n;
 }
 
-void parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Ake_parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
 {
     n->type = Ake_ast_type_array_subscript;
 
@@ -907,7 +918,7 @@ void parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
     }
 
     Ake_ast* b = NULL;
-    b = parse_expr(ps);
+    b = Ake_parse_expr(ps);
     if (b && b->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -931,7 +942,8 @@ void parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
     }
 }
 
-void parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Ake_parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
     n->type = Ake_ast_type_call;
 
     struct token *lp = NULL;
@@ -945,7 +957,7 @@ void parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
     }
 
     Ake_ast *cseq_node = NULL;
-    cseq_node = parse_cseq(ps, left);
+    cseq_node = Ake_parse_cseq(ps, left);
 
     Ake_ast_add(n, left);
 
@@ -1025,7 +1037,8 @@ void parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
 
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
-Ake_ast* parse_cseq(struct parse_state* ps, Ake_ast* left)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_ast* Ake_parse_cseq(struct parse_state* ps, Ake_ast* left)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -1039,7 +1052,7 @@ Ake_ast* parse_cseq(struct parse_state* ps, Ake_ast* left)
     }
 
     Ake_ast* a = NULL;
-    a = parse_simple_expr(ps);
+    a = Ake_parse_simple_expr(ps);
     if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -1075,7 +1088,7 @@ Ake_ast* parse_cseq(struct parse_state* ps, Ake_ast* left)
             n->type = Ake_ast_type_error;
         }
 
-        a = parse_simple_expr(ps);
+        a = Ake_parse_simple_expr(ps);
         if (a && a->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
@@ -1102,7 +1115,7 @@ Ake_ast* parse_cseq(struct parse_state* ps, Ake_ast* left)
 
 /* dot -> factor dot' */
 /* dot' -> . factor dot' | e */
-Ake_ast* parse_dot(struct parse_state* ps)
+Ake_ast* Ake_parse_dot(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast* a = NULL;
