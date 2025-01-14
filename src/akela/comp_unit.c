@@ -35,7 +35,7 @@ void Ake_comp_unit_destroy(struct Ake_comp_unit* cu)
     }
 }
 
-void Ake_comp_unit_setup(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable, struct parse_state** ps)
+void Ake_comp_unit_setup(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable, struct Ake_parse_state** ps)
 {
 	*ps = NULL;
 
@@ -46,25 +46,25 @@ void Ake_comp_unit_setup(struct Ake_comp_unit* cu, void* input_obj, InputUnicode
 	malloc_safe((void**)&ls, sizeof(struct Ake_lex_state));
     Ake_lex_state_init(ls, input_obj, input_vtable, &cu->el, &cu->st);
 
-	malloc_safe((void**)ps, sizeof(struct parse_state));
-	parse_state_init(*ps, ls, &cu->el, &cu->extern_list, &cu->st);
+	malloc_safe((void**)ps, sizeof(struct Ake_parse_state));
+	Ake_parse_state_init(*ps, ls, &cu->el, &cu->extern_list, &cu->st);
 }
 
-void Ake_comp_unit_teardown(struct Ake_comp_unit* cu, struct parse_state* ps)
+void Ake_comp_unit_teardown(struct Ake_comp_unit* cu, struct Ake_parse_state* ps)
 {
 	assert(ps);
 	assert(ps->ls);
 
 	free(ps->ls);
 
-	parse_state_destroy(ps);
+	Ake_parse_state_destroy(ps);
 	free(ps);
 }
 
 bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable)
 {
 	bool valid = true;
-	struct parse_state* ps = NULL;
+	struct Ake_parse_state* ps = NULL;
     cu->input_obj = input_obj;
 	Ake_comp_unit_setup(cu, input_obj, input_vtable, &ps);
     cu->root = Ast_parse(ps);

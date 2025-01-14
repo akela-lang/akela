@@ -11,7 +11,7 @@
 #include "type_def.h"
 #include <assert.h>
 
-bool token_is_type(struct parse_state* ps, struct token* t);
+bool token_is_type(struct Ake_parse_state* ps, struct token* t);
 Type_use* Type_use_add_proto(
         struct symbol_table* st,
         Type_use* func,
@@ -27,7 +27,7 @@ Type_use* Type_use_add_proto(
  */
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_ast* parse_prototype(
-        struct parse_state* ps,
+        struct Ake_parse_state* ps,
         bool is_function,
         bool is_extern,
         bool is_method,
@@ -41,10 +41,10 @@ Ake_ast* parse_prototype(
 
     /* 0 id */
     Ake_ast* id_node = NULL;
-    struct token* t0 = get_lookahead(ps);
+    struct token* t0 = Ake_get_lookahead(ps);
     if (t0->type == token_id) {
         struct token* id = NULL;
-        if (!match(ps, token_id, "expected identifier", &id, n)) {
+        if (!Ake_match(ps, token_id, "expected identifier", &id, n)) {
             assert(false);
         }
         Ake_ast_create(&id_node);
@@ -53,7 +53,7 @@ Ake_ast* parse_prototype(
         Ake_ast_add(n, id_node);
         token_destroy(id);
         free(id);
-        consume_newline(ps, n);
+        Ake_consume_newline(ps, n);
         *has_id = true;
     } else {
         Ake_ast_create(&id_node);
@@ -70,14 +70,14 @@ Ake_ast* parse_prototype(
     }
 
     struct token* lp = NULL;
-    if (!match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
+    if (!Ake_match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
         /* test case: no test case needed */
         n->type = Ake_ast_type_error;
     }
     token_destroy(lp);
     free(lp);
 
-    consume_newline(ps, n);
+    Ake_consume_newline(ps, n);
 
     /* 1 dseq */
     Ake_ast* dseq_node = NULL;
@@ -90,12 +90,12 @@ Ake_ast* parse_prototype(
         Ake_ast_add(n, dseq_node);
     }
 
-    if (!consume_newline(ps, n)) {
+    if (!Ake_consume_newline(ps, n)) {
         n->type = Ake_ast_type_error;
     }
 
     struct token* rp = NULL;
-    if (!match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
+    if (!Ake_match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
         /* test case: test_parse_anonymous_function_expected_right_paren */
         n->type = Ake_ast_type_error;
     }
@@ -103,18 +103,18 @@ Ake_ast* parse_prototype(
     free(rp);
 
     /* 2 ret */
-    t0 = get_lookahead(ps);
+    t0 = Ake_get_lookahead(ps);
     Ake_ast* ret_type = NULL;
     if (t0 && t0->type == token_arrow) {
         struct token* dc = NULL;
-        if (!match(ps, token_arrow, "expecting ->", &dc, n)) {
+        if (!Ake_match(ps, token_arrow, "expecting ->", &dc, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
         }
         token_destroy(dc);
         free(dc);
 
-        if (!consume_newline(ps, n)) {
+        if (!Ake_consume_newline(ps, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -124,7 +124,7 @@ Ake_ast* parse_prototype(
         }
 
         if (!ret_type) {
-            struct location ret_loc = get_location(ps);
+            struct location ret_loc = Ake_get_location(ps);
             error_list_set(ps->el, &ret_loc, "expected a type");
             n->type = Ake_ast_type_error;
         }
@@ -147,7 +147,7 @@ Ake_ast* parse_prototype(
  * @param ps
  * @param proto
  */
-void declare_params(struct parse_state* ps, Ake_ast* proto, Ake_ast* struct_type)
+void declare_params(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_type)
 {
     Ake_ast* dseq = Ast_node_get(proto, 1);
     Ake_ast* dec = dseq->head;
@@ -179,7 +179,7 @@ void declare_params(struct parse_state* ps, Ake_ast* proto, Ake_ast* struct_type
 /* dseq' -> , declaration dseq' | , ... | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_ast* parse_dseq(
-        struct parse_state* ps,
+        struct Ake_parse_state* ps,
         bool require_param_name,
         bool is_extern,
         bool is_method)
@@ -202,13 +202,13 @@ Ake_ast* parse_dseq(
 
 	while (true)
 	{
-		struct token* t0 = get_lookahead(ps);
+		struct token* t0 = Ake_get_lookahead(ps);
 		if (!t0 || t0->type != token_comma) {
 			break;
 		}
 
 		struct token* comma = NULL;
-		if (!match(ps, token_comma, "expecting comma", &comma, n)) {
+		if (!Ake_match(ps, token_comma, "expecting comma", &comma, n)) {
             assert(false);
             /* test case: no test case needed */
         }
@@ -216,12 +216,12 @@ Ake_ast* parse_dseq(
 		token_destroy(comma);
 		free(comma);
 
-        consume_newline(ps, n);
+        Ake_consume_newline(ps, n);
 
-        struct token* t = get_lookahead(ps);
+        struct token* t = Ake_get_lookahead(ps);
         if (t->type == token_ellipsis) {
             struct token* eps = NULL;
-            if (!match(ps, token_ellipsis, "expected ellipsis", &eps, n)) {
+            if (!Ake_match(ps, token_ellipsis, "expected ellipsis", &eps, n)) {
                 assert(false);
             }
             token_destroy(eps);
@@ -246,7 +246,7 @@ Ake_ast* parse_dseq(
         }
 
 		if (!dec) {
-            struct location dec_loc = get_location(ps);
+            struct location dec_loc = Ake_get_location(ps);
 			error_list_set(ps->el, &dec_loc, "expected declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
             n->type = Ake_ast_type_error;
@@ -265,7 +265,7 @@ Ake_ast* parse_dseq(
  * @param t
  * @return true if a type, otherwise false
  */
-bool token_is_type(struct parse_state* ps, struct token* t)
+bool token_is_type(struct Ake_parse_state* ps, struct token* t)
 {
     /* array type */
     if (t->type == token_left_square_bracket) {
@@ -298,14 +298,14 @@ bool token_is_type(struct parse_state* ps, struct token* t)
 /* declaration -> id :: type | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_ast* parse_declaration(
-        struct parse_state* ps,
+        struct Ake_parse_state* ps,
         bool add_symbol,
         bool is_method,
         bool require_param_name)
 {
 	Ake_ast* n = NULL;
 
-	struct token* t0 = get_lookahead(ps);
+	struct token* t0 = Ake_get_lookahead(ps);
     bool type_only = !require_param_name && token_is_type(ps, t0);
     bool is_self = is_method && t0->type == token_self;
     if (t0->type == token_id || type_only || is_self) {
@@ -315,7 +315,7 @@ Ake_ast* parse_declaration(
         if (is_self) {
             n->type = Ake_ast_type_self;
             struct token *self = NULL;
-            if (!match(ps, token_self, "expected self", &self, n)) {
+            if (!Ake_match(ps, token_self, "expected self", &self, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
@@ -342,7 +342,7 @@ Ake_ast* parse_declaration(
             }
 
             if (!type_use) {
-                struct location type_use_loc = get_location(ps);
+                struct location type_use_loc = Ake_get_location(ps);
                 error_list_set(ps->el, &type_use_loc, "expected a type");
                 /* test case: test_parse_error_declaration_type */
                 n->type = Ake_ast_type_error;
@@ -358,7 +358,7 @@ Ake_ast* parse_declaration(
             Ake_ast_add(n, id_node);
 
             struct token *id = NULL;
-            if (!match(ps, token_id, "expected id", &id, n)) {
+            if (!Ake_match(ps, token_id, "expected id", &id, n)) {
                 assert(false);
                 /* test case: no test case needed */
             }
@@ -366,17 +366,17 @@ Ake_ast* parse_declaration(
             token_destroy(id);
             free(id);
 
-            consume_newline(ps, n);
+            Ake_consume_newline(ps, n);
 
             struct token *dc = NULL;
-            if (!match(ps, token_colon, "expected colon", &dc, n)) {
+            if (!Ake_match(ps, token_colon, "expected colon", &dc, n)) {
                 /* test case: test_parse_error_declaration_double_colon */
                 n->type = Ake_ast_type_error;
             }
             token_destroy(dc);
             free(dc);
 
-            consume_newline(ps, n);
+            Ake_consume_newline(ps, n);
 
             Ake_ast* type_use = NULL;
             type_use = parse_type(ps);
@@ -390,7 +390,7 @@ Ake_ast* parse_declaration(
             }
 
             if (!type_use) {
-                struct location type_use_loc = get_location(ps);
+                struct location type_use_loc = Ake_get_location(ps);
                 error_list_set(ps->el, &type_use_loc, "expected a type");
                 /* test case: test_parse_error_declaration_type */
                 n->type = Ake_ast_type_error;
@@ -415,7 +415,7 @@ Ake_ast* parse_declaration(
  */
 /* type -> id | id { tseq } */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_type(struct parse_state* ps)
+Ake_ast* parse_type(struct Ake_parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -426,10 +426,10 @@ Ake_ast* parse_type(struct parse_state* ps)
     n->tu = tu;
 
     /* handle array dimensions */
-	struct token* t0 = get_lookahead(ps);
+	struct token* t0 = Ake_get_lookahead(ps);
     while (t0->type == token_left_square_bracket) {
         struct token *lsb = NULL;
-        if (!match(ps, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
+        if (!Ake_match(ps, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
             /* test case: no test case needed */
             assert(false);
         }
@@ -440,11 +440,11 @@ Ake_ast* parse_type(struct parse_state* ps)
         bool has_number = false;
         bool has_const = false;
         size_t dim_size_number;
-        t0 = get_lookahead(ps);
+        t0 = Ake_get_lookahead(ps);
 
         if (t0->type == token_number) {
             struct token *dim_size = NULL;
-            if (!match(ps, token_number, "expected number", &dim_size, n)) {
+            if (!Ake_match(ps, token_number, "expected number", &dim_size, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
@@ -453,12 +453,12 @@ Ake_ast* parse_type(struct parse_state* ps)
             dim_size_number = (size_t) strtol(dim_size->value.buf, NULL, 10);
             token_destroy(dim_size);
             free(dim_size);
-            t0 = get_lookahead(ps);
+            t0 = Ake_get_lookahead(ps);
         }
 
         if (t0->type == token_const) {
             struct token* const_token = NULL;
-            if (!match(ps, token_const, "expected const", &const_token, n)) {
+            if (!Ake_match(ps, token_const, "expected const", &const_token, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
@@ -468,7 +468,7 @@ Ake_ast* parse_type(struct parse_state* ps)
         }
 
         struct token* rsb = NULL;
-        if (!match(ps, token_right_square_bracket, "expected right square bracket", &rsb, n)) {
+        if (!Ake_match(ps, token_right_square_bracket, "expected right square bracket", &rsb, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -497,12 +497,12 @@ Ake_ast* parse_type(struct parse_state* ps)
             VectorAdd(&n->tu->dim, &dim, 1);
         }
 
-        t0 = get_lookahead(ps);
+        t0 = Ake_get_lookahead(ps);
     }
 
     if (t0->type == token_fn) {
         struct token* fn = NULL;
-        if (!match(ps, token_fn, "expected fn", &fn, n)) {
+        if (!Ake_match(ps, token_fn, "expected fn", &fn, n)) {
             assert(false);
         }
 
@@ -524,7 +524,7 @@ Ake_ast* parse_type(struct parse_state* ps)
     } else if (t0->type == token_id) {
         /* handle type or array element */
         struct token* name = NULL;
-        if (!match(ps, t0->type, "expected type identifier", &name, n)) {
+        if (!Ake_match(ps, t0->type, "expected type identifier", &name, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -562,7 +562,7 @@ Ake_ast* parse_type(struct parse_state* ps)
         free(name);
 
     } else {
-        t0 = get_lookahead(ps);
+        t0 = Ake_get_lookahead(ps);
         if (t0->type != token_fn && t0->type != token_id) {
             error_list_set(ps->el, &t0->loc, "expected type identifier or fn");
             n->type = Ake_ast_type_error;
@@ -578,7 +578,7 @@ Ake_ast* parse_type(struct parse_state* ps)
  * @param n type node
  * @param id_node ID node
  */
-void create_variable_symbol(struct parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
+void create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
 {
     struct Ake_symbol* dup = Ake_environment_get_local(ps->st->top, &id_node->value);
     if (dup) {
@@ -612,7 +612,7 @@ void create_variable_symbol(struct parse_state* ps, Ake_ast* type_node, Ake_ast*
     }
 }
 
-void declare_type(struct parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
+void declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
 {
     if (type_node && type_node->type != Ake_ast_type_error) {
         if (id_node) {
@@ -705,7 +705,7 @@ Type_use* Type_use_add_proto(
     return func;
 }
 
-bool check_return_type(struct parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, struct location* loc)
+bool check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, struct location* loc)
 {
     bool valid = true;
 
@@ -760,7 +760,7 @@ Type_use* get_function_input_type(Type_use* func, int index)
 }
 
 bool check_input_type(
-    struct parse_state* ps,
+    struct Ake_parse_state* ps,
     Type_use* func,
     int index,
     Ake_ast* a)
@@ -825,7 +825,7 @@ bool is_lvalue(enum Ake_ast_type type)
     return false;
 }
 
-bool check_lvalue(struct parse_state* ps, Ake_ast* n, struct location* loc)
+bool check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct location* loc)
 {
     Ake_ast* p = n;
     struct Ake_symbol* sym = NULL;

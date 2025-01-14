@@ -7,8 +7,8 @@
 #include <assert.h>
 #include "zinc/buffer_list.h"
 
-void parse_state_init(
-        struct parse_state* ps,
+void Ake_parse_state_init(
+        struct Ake_parse_state* ps,
         struct Ake_lex_state* ls,
         struct error_list* el,
         struct buffer_list* extern_list,
@@ -21,11 +21,11 @@ void parse_state_init(
 	ps->st = st;
 }
 
-void parse_state_destroy(struct parse_state* ps)
+void Ake_parse_state_destroy(struct Ake_parse_state* ps)
 {
 }
 
-bool get_lookahead_one(struct parse_state* ps)
+bool Ake_get_lookahead_one(struct Ake_parse_state* ps)
 {
     bool valid = true;
 
@@ -47,8 +47,8 @@ bool get_lookahead_one(struct parse_state* ps)
 }
 
 /* expecting specific token */
-bool match(
-    struct parse_state* ps,
+bool Ake_match(
+    struct Ake_parse_state* ps,
     enum token_enum type,
     const char* reason,
     struct token** t,
@@ -58,7 +58,7 @@ bool match(
 	struct location loc;
 
 	if (!ps->lookahead) {
-        get_lookahead_one(ps);
+        Ake_get_lookahead_one(ps);
 	}
 
     *t = ps->lookahead;
@@ -75,15 +75,15 @@ bool match(
 	return valid;
 }
 
-bool consume_newline(struct parse_state* ps, Ake_ast* n)
+bool Ake_consume_newline(struct Ake_parse_state* ps, Ake_ast* n)
 {
     bool valid = true;
     while (true) {
-        valid = get_lookahead_one(ps) && valid;
-        struct token* t0 = get_lookahead(ps);
+        valid = Ake_get_lookahead_one(ps) && valid;
+        struct token* t0 = Ake_get_lookahead(ps);
         if (t0 && t0->type == token_newline) {
             struct token* t = NULL;
-            valid = match(ps, token_newline, "expected newline", &t, n) && valid;
+            valid = Ake_match(ps, token_newline, "expected newline", &t, n) && valid;
             token_destroy(t);
             free(t);
         } else {
@@ -94,25 +94,25 @@ bool consume_newline(struct parse_state* ps, Ake_ast* n)
     return valid;
 }
 
-struct location get_location(struct parse_state* ps)
+struct location Ake_get_location(struct Ake_parse_state* ps)
 {
-    get_lookahead_one(ps);
+    Ake_get_lookahead_one(ps);
     return ps->lookahead->loc;
 }
 
-bool is_identity_comparison(enum Ake_ast_type type)
+bool Ake_is_identity_comparison(enum Ake_ast_type type)
 {
 	return type == Ake_ast_type_equality || type == Ake_ast_type_not_equal;
 }
 
-struct token* get_lookahead(struct parse_state* ps)
+struct token* Ake_get_lookahead(struct Ake_parse_state* ps)
 {
-    get_lookahead_one(ps);
+    Ake_get_lookahead_one(ps);
     struct token* t = ps->lookahead;
     return t;
 }
 
-bool check_assignment_value_count(Ake_ast* a, Ake_ast* b)
+bool Ake_check_assignment_value_count(Ake_ast* a, Ake_ast* b)
 {
     if (a && b) {
         if (a->type != Ake_ast_type_error && b->type != Ake_ast_type_error) {
@@ -131,12 +131,12 @@ bool check_assignment_value_count(Ake_ast* a, Ake_ast* b)
 }
 
 /* separator -> \n | ; */
-void parse_separator(struct parse_state* ps, Ake_ast* n, bool* has_separator)
+void Ake_parse_separator(struct Ake_parse_state* ps, Ake_ast* n, bool* has_separator)
 {
     enum token_enum type;
     *has_separator = false;
 
-    struct token* t0 = get_lookahead(ps);
+    struct token* t0 = Ake_get_lookahead(ps);
     if (t0 && t0->type == token_newline) {
         type = token_newline;
         *has_separator = true;
@@ -148,7 +148,7 @@ void parse_separator(struct parse_state* ps, Ake_ast* n, bool* has_separator)
     }
 
     struct token* sep = NULL;
-    if (!match(ps, type, "expecting newline or semicolon", &sep, n)) {
+    if (!Ake_match(ps, type, "expecting newline or semicolon", &sep, n)) {
         assert(false);
         /* test case: no test case necessary */
     }

@@ -9,14 +9,14 @@
 #include "parse_tools.h"
 #include <assert.h>
 
-Ake_ast* Ast_parse(struct parse_state* ps)
+Ake_ast* Ast_parse(struct Ake_parse_state* ps)
 {
     Ake_ast* n = NULL;
 
     n = Ake_parse_stmts(ps, true);
 
-    struct location next_loc = get_location(ps);
-    struct token* t0 = get_lookahead(ps);
+    struct location next_loc = Ake_get_location(ps);
+    struct token* t0 = Ake_get_lookahead(ps);
     assert(t0);
 	if (t0->type != token_eof) {
 		char* names[token_count];

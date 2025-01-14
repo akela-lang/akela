@@ -10,29 +10,29 @@
 #include <assert.h>
 #include "symbol.h"
 
-Ake_ast* Ake_parse_assignment(struct parse_state* ps);
-Ake_ast* Ake_parse_eseq(struct parse_state* ps);
-Ake_ast* Ake_parse_boolean(struct parse_state* ps);
-Ake_ast* Ake_parse_comparison(struct parse_state* ps);
-Ake_ast* Ake_parse_add(struct parse_state* ps);
-Ake_ast* Ake_parse_mult(struct parse_state* ps);
-Ake_ast* Ake_parse_power(struct parse_state* ps);
-Ake_ast* Ake_parse_complex_operators(struct parse_state* ps);
-void Ake_parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n);
-void Ake_parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n);
-Ake_ast* Ake_parse_cseq(struct parse_state* ps, Ake_ast* left);
-Ake_ast* Ake_parse_dot(struct parse_state* ps);
+Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps);
+Ake_ast* Ake_parse_eseq(struct Ake_parse_state* ps);
+Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps);
+Ake_ast* Ake_parse_comparison(struct Ake_parse_state* ps);
+Ake_ast* Ake_parse_add(struct Ake_parse_state* ps);
+Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps);
+Ake_ast* Ake_parse_power(struct Ake_parse_state* ps);
+Ake_ast* Ake_parse_complex_operators(struct Ake_parse_state* ps);
+void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n);
+void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n);
+Ake_ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_ast* left);
+Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps);
 
 /* expr -> assignment */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_expr(struct parse_state* ps)
+Ake_ast* Ake_parse_expr(struct Ake_parse_state* ps)
 {
     return Ake_parse_assignment(ps);
 }
 
 /* assignment -> eseq = assignment | eseq */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_assignment(struct parse_state* ps)
+Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
 {
 	Ake_ast* n = NULL;
 
@@ -43,7 +43,7 @@ Ake_ast* Ake_parse_assignment(struct parse_state* ps)
         a_last = a;
 		a = Ake_parse_eseq(ps);
 
-        if (!check_assignment_value_count(a, a_last)) {
+        if (!Ake_check_assignment_value_count(a, a_last)) {
             error_list_set(ps->el, &a->loc, "assignment sequence counts do not match");
             /* test case: test_parse_expr_assignment_eseq_error_eseq_count */
             n->type = Ake_ast_type_error;
@@ -74,7 +74,7 @@ Ake_ast* Ake_parse_assignment(struct parse_state* ps)
             }
         }
 
-		struct token* t0 = get_lookahead(ps);
+		struct token* t0 = Ake_get_lookahead(ps);
         if (t0->type != token_equal) {
             if (n) {
                 /* last assignment */
@@ -99,7 +99,7 @@ Ake_ast* Ake_parse_assignment(struct parse_state* ps)
             Ake_ast_add(n, a);
 
             struct token *equal = NULL;
-            if (!match(ps, token_equal, "expecting assign operator", &equal, n)) {
+            if (!Ake_match(ps, token_equal, "expecting assign operator", &equal, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
@@ -123,7 +123,7 @@ Ake_ast* Ake_parse_assignment(struct parse_state* ps)
             token_destroy(equal);
             free(equal);
 
-            consume_newline(ps, n);
+            Ake_consume_newline(ps, n);
         }
 	}
 
@@ -178,7 +178,7 @@ Ake_ast* Ake_parse_assignment(struct parse_state* ps)
 /* eseq = boolean eseq' */
 /* eseq' = , boolean | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_eseq(struct parse_state* ps)
+Ake_ast* Ake_parse_eseq(struct Ake_parse_state* ps)
 {
     Ake_ast* a = NULL;
     a = Ake_parse_boolean(ps);
@@ -189,7 +189,7 @@ Ake_ast* Ake_parse_eseq(struct parse_state* ps)
 
     Ake_ast* parent = NULL;
     while (true) {
-        struct token* t0 = get_lookahead(ps);
+        struct token* t0 = Ake_get_lookahead(ps);
 
         if (!t0 || t0->type != token_comma) {
             break;
@@ -212,7 +212,7 @@ Ake_ast* Ake_parse_eseq(struct parse_state* ps)
         }
 
         struct token* comma = NULL;
-        if (!match(ps, token_comma, "expected a comma", &comma, parent)) {
+        if (!Ake_match(ps, token_comma, "expected a comma", &comma, parent)) {
             /* test case: no test case needed */
             assert(false);
         }
@@ -253,7 +253,7 @@ Ake_ast* Ake_parse_eseq(struct parse_state* ps)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_simple_expr(struct parse_state* ps)
+Ake_ast* Ake_parse_simple_expr(struct Ake_parse_state* ps)
 {
     return Ake_parse_boolean(ps);
 }
@@ -261,7 +261,7 @@ Ake_ast* Ake_parse_simple_expr(struct parse_state* ps)
 /* boolean -> comparison boolean' */
 /* boolean' -> && comparison boolean' | || comparison boolean' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_boolean(struct parse_state* ps)
+Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 {
 	Ake_ast* n = NULL;
 	Ake_ast* left;
@@ -275,7 +275,7 @@ Ake_ast* Ake_parse_boolean(struct parse_state* ps)
 
 	left = n = a;
 	while (true) {
-		struct token* t0 = get_lookahead(ps);
+		struct token* t0 = Ake_get_lookahead(ps);
 
 		/* operator */
 		enum Ake_ast_type type;
@@ -291,12 +291,12 @@ Ake_ast* Ake_parse_boolean(struct parse_state* ps)
 		n->type = type;
 
 		struct token* op = NULL;
-		if (!match(ps, t0->type, "expecting && or ||", &op, n)) {
+		if (!Ake_match(ps, t0->type, "expecting && or ||", &op, n)) {
             /* test case: no test case needed */
             assert(false);
         }
 
-        if (!consume_newline(ps, n)) {
+        if (!Ake_consume_newline(ps, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -305,7 +305,7 @@ Ake_ast* Ake_parse_boolean(struct parse_state* ps)
 		b = Ake_parse_comparison(ps);
 
 		if (!b) {
-            struct location b_loc = get_location(ps);
+            struct location b_loc = Ake_get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after && or ||");
 			/* test case: test_parse_boolean_error_expected_term */
             n->type = Ake_ast_type_error;
@@ -365,7 +365,7 @@ Ake_ast* Ake_parse_boolean(struct parse_state* ps)
 *	           | e
 */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_comparison(struct parse_state* ps)
+Ake_ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 {
 	Ake_ast* n = NULL;
 	Ake_ast* a = NULL;
@@ -380,7 +380,7 @@ Ake_ast* Ake_parse_comparison(struct parse_state* ps)
     left = n = a;
 
 	while (true) {
-		struct token* t0 = get_lookahead(ps);
+		struct token* t0 = Ake_get_lookahead(ps);
 		enum Ake_ast_type type;
 
 		if (!t0) {
@@ -404,12 +404,12 @@ Ake_ast* Ake_parse_comparison(struct parse_state* ps)
 		}
 
 		struct token* op = NULL;
-		if (!match(ps, t0->type, "expecting comparator", &op, n)) {
+		if (!Ake_match(ps, t0->type, "expecting comparator", &op, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
         }
 
-        if (!consume_newline(ps, n)) {
+        if (!Ake_consume_newline(ps, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -417,7 +417,7 @@ Ake_ast* Ake_parse_comparison(struct parse_state* ps)
 		b = Ake_parse_add(ps);
 
 		if (!b) {
-            struct location b_loc = get_location(ps);
+            struct location b_loc = Ake_get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after comparison operator");
 			/* case case: test_parse_comparison_error_no_term */
             n->type = Ake_ast_type_error;
@@ -454,11 +454,11 @@ Ake_ast* Ake_parse_comparison(struct parse_state* ps)
 				/* test case: test_parse_comparison_error_right_no_value */
                 n->type = Ake_ast_type_error;
 			} else {
-				if (!is_identity_comparison(type) && !is_numeric(left->tu->td)) {
+				if (!Ake_is_identity_comparison(type) && !is_numeric(left->tu->td)) {
 					error_list_set(ps->el, &left->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_left_not_numeric */
                     n->type = Ake_ast_type_error;
-				} else if (!is_identity_comparison(type) && !is_numeric(b->tu->td)) {
+				} else if (!Ake_is_identity_comparison(type) && !is_numeric(b->tu->td)) {
 					error_list_set(ps->el, &b->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_right_not_numeric */
                     n->type = Ake_ast_type_error;
@@ -481,7 +481,7 @@ Ake_ast* Ake_parse_comparison(struct parse_state* ps)
 /* add -> mult add' */
 /* add' -> + mult add' | - mult add' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_add(struct parse_state* ps)
+Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
 {
 	Ake_ast* a = NULL;
 	Ake_ast* b = NULL;
@@ -498,7 +498,7 @@ Ake_ast* Ake_parse_add(struct parse_state* ps)
 	left = n = a;
 
 	while (true) {
-		struct token* t0 = get_lookahead(ps);
+		struct token* t0 = Ake_get_lookahead(ps);
 
 		/* e */
 		if (t0 == NULL) {
@@ -521,19 +521,19 @@ Ake_ast* Ake_parse_add(struct parse_state* ps)
         n->type = type;
 
         struct token* op = NULL;
-		if (!match(ps, t0->type, "expecting + or -", &op, n)) {
+		if (!Ake_match(ps, t0->type, "expecting + or -", &op, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
         }
 
-        if (!consume_newline(ps, n)) {
+        if (!Ake_consume_newline(ps, n)) {
             n->type = Ake_ast_type_error;
         }
 
 		b = Ake_parse_mult(ps);
 
 		if (!b) {
-            struct location b_loc = get_location(ps);
+            struct location b_loc = Ake_get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after additive operator");
 			/* test case: test_parse_add_error_expected_term */
             n->type = Ake_ast_type_error;
@@ -602,7 +602,7 @@ Ake_ast* Ake_parse_add(struct parse_state* ps)
 /* mult -> power mult' */
 /* mult' -> * power mult' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_mult(struct parse_state* ps)
+Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
 {
 	Ake_ast* a = NULL;
 	Ake_ast* b = NULL;
@@ -619,7 +619,7 @@ Ake_ast* Ake_parse_mult(struct parse_state* ps)
     left = n = a;
 
 	while (true) {
-		struct token* t0 = get_lookahead(ps);
+		struct token* t0 = Ake_get_lookahead(ps);
 
 		/* e */
 		if (t0 == NULL) {
@@ -642,12 +642,12 @@ Ake_ast* Ake_parse_mult(struct parse_state* ps)
         n->type = type;
 
         struct token* op = NULL;
-		if (!match(ps, t0->type, "expecting * or /", &op, n)) {
+		if (!Ake_match(ps, t0->type, "expecting * or /", &op, n)) {
             /* test case: test case not needed */
             assert(false);
         }
 
-        if (!consume_newline(ps, n)) {
+        if (!Ake_consume_newline(ps, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -655,7 +655,7 @@ Ake_ast* Ake_parse_mult(struct parse_state* ps)
 		b = Ake_parse_power(ps);
 
 		if (!b) {
-            struct location b_loc = get_location(ps);
+            struct location b_loc = Ake_get_location(ps);
 			error_list_set(ps->el, &b_loc, "expected term after operator");
 			/* test case: test_parse_mult_error_expected_term */
             n->type = Ake_ast_type_error;
@@ -727,7 +727,7 @@ Ake_ast* Ake_parse_mult(struct parse_state* ps)
 /* power -> dot power' | e */
 /* power' -> ^ dot power' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_power(struct parse_state* ps)
+Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
 {
 	Ake_ast* n = NULL;
 	Ake_ast* a = NULL;
@@ -742,7 +742,7 @@ Ake_ast* Ake_parse_power(struct parse_state* ps)
 
 	while (true) {
 		struct token* t0 = NULL;
-		t0 = get_lookahead(ps);
+		t0 = Ake_get_lookahead(ps);
 		if (!t0 || t0->type != token_caret) {
 			break;
 		}
@@ -757,12 +757,12 @@ Ake_ast* Ake_parse_power(struct parse_state* ps)
         }
 
         struct token* caret = NULL;
-		if (!match(ps, token_caret, "expected a caret", &caret, n)) {
+		if (!Ake_match(ps, token_caret, "expected a caret", &caret, n)) {
             /* test case: no test case needed */
             assert(false);
         }
 
-        if (!consume_newline(ps, n)) {
+        if (!Ake_consume_newline(ps, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -780,7 +780,7 @@ Ake_ast* Ake_parse_power(struct parse_state* ps)
         }
 
         if (!b) {
-            struct location b_loc = get_location(ps);
+            struct location b_loc = Ake_get_location(ps);
             error_list_set(ps->el, &b_loc, "expected term after caret");
             /* test case: test_parse_power_error_expected_term */
             n->type = Ake_ast_type_error;
@@ -837,7 +837,7 @@ Ake_ast* Ake_parse_power(struct parse_state* ps)
 /* complex_operators -> factor complex_operators' */
 /* complex_operators' -> [expr] complex_operators' | (call_seq) complex_operators' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_complex_operators(struct parse_state* ps)
+Ake_ast* Ake_parse_complex_operators(struct Ake_parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast* a = NULL;
@@ -850,7 +850,7 @@ Ake_ast* Ake_parse_complex_operators(struct parse_state* ps)
 
     Ake_ast* left = n = a;
     while (true) {
-        struct token* t0 = get_lookahead(ps);
+        struct token* t0 = Ake_get_lookahead(ps);
 
         if (t0->type != token_left_square_bracket && t0->type != token_left_paren) {
             break;
@@ -874,7 +874,7 @@ Ake_ast* Ake_parse_complex_operators(struct parse_state* ps)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
+void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n)
 {
     n->type = Ake_ast_type_array_subscript;
 
@@ -905,7 +905,7 @@ void Ake_parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
     }
 
     struct token* lsb = NULL;
-    if (!match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb, n)) {
+    if (!Ake_match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb, n)) {
         /* test case: no test case needed */
         assert(false);
     }
@@ -913,7 +913,7 @@ void Ake_parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
     token_destroy(lsb);
     free(lsb);
 
-    if (!consume_newline(ps,  n)) {
+    if (!Ake_consume_newline(ps,  n)) {
         n->type = Ake_ast_type_error;
     }
 
@@ -923,12 +923,12 @@ void Ake_parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
         n->type = Ake_ast_type_error;
     }
 
-    if (!consume_newline(ps, n)) {
+    if (!Ake_consume_newline(ps, n)) {
         n->type = Ake_ast_type_error;
     }
 
     struct token* rsb = NULL;
-    if (!match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
+    if (!Ake_match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
         n->type = Ake_ast_type_error;
     }
 
@@ -943,16 +943,16 @@ void Ake_parse_subscript(struct parse_state* ps, Ake_ast* left, Ake_ast* n)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
+void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
     n->type = Ake_ast_type_call;
 
     struct token *lp = NULL;
-    if (!match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
+    if (!Ake_match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
         /* test case: test case not needed */
         n->type = Ake_ast_type_error;
     }
 
-    if (!consume_newline(ps, n)) {
+    if (!Ake_consume_newline(ps, n)) {
         n->type = Ake_ast_type_error;
     }
 
@@ -968,12 +968,12 @@ void Ake_parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
         }
     }
 
-    if (!consume_newline(ps, n)) {
+    if (!Ake_consume_newline(ps, n)) {
         n->type = Ake_ast_type_error;
     }
 
     struct token *rp = NULL;
-    if (!match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
+    if (!Ake_match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
         /* test case: test_parse_call_error_right_paren */
         n->type = Ake_ast_type_error;
     }
@@ -1038,7 +1038,7 @@ void Ake_parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_cseq(struct parse_state* ps, Ake_ast* left)
+Ake_ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_ast* left)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -1069,14 +1069,14 @@ Ake_ast* Ake_parse_cseq(struct parse_state* ps, Ake_ast* left)
     Ake_ast_add(n, a);
 
     while (true) {
-        struct token* t0 = get_lookahead(ps);
+        struct token* t0 = Ake_get_lookahead(ps);
 
         if (!t0 || t0->type != token_comma) {
             break;
         }
 
         struct token* comma = NULL;
-        if (!match(ps, token_comma, "expecting comma", &comma, n)) {
+        if (!Ake_match(ps, token_comma, "expecting comma", &comma, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
         }
@@ -1084,7 +1084,7 @@ Ake_ast* Ake_parse_cseq(struct parse_state* ps, Ake_ast* left)
         token_destroy(comma);
         free(comma);
 
-        if (!consume_newline(ps, n)) {
+        if (!Ake_consume_newline(ps, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -1094,7 +1094,7 @@ Ake_ast* Ake_parse_cseq(struct parse_state* ps, Ake_ast* left)
         }
 
         if (!a) {
-            struct location a_loc = get_location(ps);
+            struct location a_loc = Ake_get_location(ps);
             error_list_set(ps->el, &a_loc, "expected expression after comma");
             /* test case: test_parse_call_error_expected_expression */
             n->type = Ake_ast_type_error;
@@ -1115,7 +1115,7 @@ Ake_ast* Ake_parse_cseq(struct parse_state* ps, Ake_ast* left)
 
 /* dot -> factor dot' */
 /* dot' -> . factor dot' | e */
-Ake_ast* Ake_parse_dot(struct parse_state* ps)
+Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast* a = NULL;
@@ -1129,7 +1129,7 @@ Ake_ast* Ake_parse_dot(struct parse_state* ps)
     Ake_ast* left = n = a;
     while (true) {
         struct token* t0 = NULL;
-        t0 = get_lookahead(ps);
+        t0 = Ake_get_lookahead(ps);
         if (t0->type != token_dot) {
             break;
         }
@@ -1138,17 +1138,17 @@ Ake_ast* Ake_parse_dot(struct parse_state* ps)
         n->type = Ake_ast_type_dot;
 
         struct token* dot = NULL;
-        if (!match(ps, token_dot, "expected a dot", &dot, n)) {
+        if (!Ake_match(ps, token_dot, "expected a dot", &dot, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
         }
 
-        if (!consume_newline(ps, n)) {
+        if (!Ake_consume_newline(ps, n)) {
             n->type = Ake_ast_type_error;
         }
 
         struct token* id = NULL;
-        if (!match(ps, token_id, "expected identifier", &id, n)) {
+        if (!Ake_match(ps, token_id, "expected identifier", &id, n)) {
             n->type = Ake_ast_type_error;
         }
 
