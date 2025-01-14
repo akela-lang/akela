@@ -12,12 +12,12 @@ typedef enum Symbol_type {
     Symbol_type_info,
 } Symbol_type;
 
-struct symbol {
+struct Ake_symbol {
     Symbol_type type;
     enum token_enum tk_type;
     struct type_def* td;
     struct Type_use* tu;
-    struct symbol* constructor;
+    struct Ake_symbol* constructor;
     struct Ake_ast* root;
     struct Ake_ast* root_ptr;
     void* value;
@@ -25,8 +25,8 @@ struct symbol {
     size_t assign_count;
 };
 
-AKELA_API void symbol_init(struct symbol* sym);
-AKELA_API void symbol_create(struct symbol** sym);
-AKELA_API struct symbol* symbol_copy(struct symbol* sym);
+AKELA_API void symbol_init(struct Ake_symbol* sym);
+AKELA_API void symbol_create(struct Ake_symbol** sym);
+AKELA_API struct Ake_symbol* symbol_copy(struct Ake_symbol* sym);
 
 #endif

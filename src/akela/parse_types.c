@@ -279,7 +279,7 @@ bool token_is_type(struct parse_state* ps, struct token* t)
 
     /* type id */
     if (t->type == token_id) {
-        struct symbol* sym = environment_get(ps->st->top, &t->value);
+        struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &t->value);
         if (sym && sym->td) {
             return true;
         }
@@ -528,9 +528,9 @@ Ake_ast* parse_type(struct parse_state* ps)
             n->type = Ake_ast_type_error;
         }
 
-        struct symbol* sym = NULL;
+        struct Ake_symbol* sym = NULL;
         if (n->type != Ake_ast_type_error) {
-            sym = environment_get(ps->st->top, &name->value);
+            sym = Ake_environment_get(ps->st->top, &name->value);
             if (!sym) {
                 char* a;
                 buffer2array(&name->value, &a);
@@ -580,7 +580,7 @@ Ake_ast* parse_type(struct parse_state* ps)
  */
 void create_variable_symbol(struct parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
 {
-    struct symbol* dup = environment_get_local(ps->st->top, &id_node->value);
+    struct Ake_symbol* dup = Ake_environment_get_local(ps->st->top, &id_node->value);
     if (dup) {
         char* a;
         buffer2array(&id_node->value, &a);
@@ -589,7 +589,7 @@ void create_variable_symbol(struct parse_state* ps, Ake_ast* type_node, Ake_ast*
         type_node->type = Ake_ast_type_error;
         /* test case: test_parse_error_duplicate_declarations */
     } else {
-        struct symbol* sym2 = environment_get(ps->st->top, &id_node->value);
+        struct Ake_symbol* sym2 = Ake_environment_get(ps->st->top, &id_node->value);
         if (sym2 && sym2->td) {
             char* a;
             buffer2array(&id_node->value, &a);
@@ -598,12 +598,12 @@ void create_variable_symbol(struct parse_state* ps, Ake_ast* type_node, Ake_ast*
             type_node->type = Ake_ast_type_error;
             /* test case: test_parse_types_reserved_type */
         } else {
-            struct symbol* new_sym = NULL;
-            malloc_safe((void**)&new_sym, sizeof(struct symbol));
+            struct Ake_symbol* new_sym = NULL;
+            malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
             symbol_init(new_sym);
             new_sym->type = Symbol_type_variable;
             new_sym->tu = Type_use_clone(type_node->tu);
-            environment_put(ps->st->top, &id_node->value, new_sym);
+            Ake_environment_put(ps->st->top, &id_node->value, new_sym);
             id_node->sym = new_sym;
             /* copy is_mut from id node to type use node */
             new_sym->tu->is_mut = id_node->is_mut;
@@ -646,7 +646,7 @@ Type_use* Type_use_add_proto(
     struct buffer bf;
     buffer_init(&bf);
     buffer_copy_str(&bf, "Function");
-    struct symbol* sym = environment_get(st->top, &bf);
+    struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
     buffer_destroy(&bf);
     assert(sym);
     assert(sym->td);
@@ -828,7 +828,7 @@ bool is_lvalue(enum Ake_ast_type type)
 bool check_lvalue(struct parse_state* ps, Ake_ast* n, struct location* loc)
 {
     Ake_ast* p = n;
-    struct symbol* sym = NULL;
+    struct Ake_symbol* sym = NULL;
     Ake_ast* first = NULL;
     while (p) {
         if (!is_lvalue(p->type)) {
@@ -841,7 +841,7 @@ bool check_lvalue(struct parse_state* ps, Ake_ast* n, struct location* loc)
                 error_list_set(ps->el, loc, "invalid lvalue");
                 return false;
             }
-            sym = environment_get(ps->st->top, &p->value);
+            sym = Ake_environment_get(ps->st->top, &p->value);
             first = p;
         }
         p = p->head;

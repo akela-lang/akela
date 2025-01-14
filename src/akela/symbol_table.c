@@ -11,56 +11,56 @@ bool type_use_match(Type_use* a, Type_use* b);
 
 void environment_begin(struct symbol_table* st)
 {
-    struct environment* env = NULL;
-    environment_create(&env, st->top);
+    struct Ake_environment* env = NULL;
+    Ake_environment_create(&env, st->top);
     st->top = env;
 }
 
 void environment_end(struct symbol_table* st)
 {
-    struct environment* env = st->top;
+    struct Ake_environment* env = st->top;
     st->top = env->prev;
     env->prev = st->deactivated;
     st->deactivated = env;
 }
 
-void symbol_table_add_reserved_word(struct environment* env, const char* name, enum token_enum tk_type)
+void symbol_table_add_reserved_word(struct Ake_environment* env, const char* name, enum token_enum tk_type)
 {
     struct buffer bf;
 
     buffer_init(&bf);
     buffer_copy_str(&bf, name);
 
-    struct symbol* sym = NULL;
-    malloc_safe((void**)&sym, sizeof(struct symbol));
+    struct Ake_symbol* sym = NULL;
+    malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
     symbol_init(sym);
     sym->type = Symbol_type_reserved_word;
     sym->tk_type = tk_type;
 
-    environment_put(env, &bf, sym);
+    Ake_environment_put(env, &bf, sym);
 
     buffer_destroy(&bf);
 }
 
-void symbol_table_add_type(struct environment* env, const char* name, struct type_def* td)
+void symbol_table_add_type(struct Ake_environment* env, const char* name, struct type_def* td)
 {
 	struct buffer bf;
 
 	buffer_init(&bf);
 	buffer_copy_str(&bf, name);
 
-	struct symbol* sym = NULL;
-	malloc_safe((void**)&sym, sizeof(struct symbol));
+	struct Ake_symbol* sym = NULL;
+	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
 	symbol_init(sym);
     sym->type = Symbol_type_type;
 	sym->td = td;
 
-	environment_put(env, &bf, sym);
+	Ake_environment_put(env, &bf, sym);
 
 	buffer_destroy(&bf);
 }
 
-void symbol_table_init_reserved(struct environment* env)
+void symbol_table_init_reserved(struct Ake_environment* env)
 {
 	symbol_table_add_reserved_word(env, "fn", token_fn);
 	symbol_table_add_reserved_word(env, "end", token_end);
@@ -83,7 +83,7 @@ void symbol_table_init_reserved(struct environment* env)
     symbol_table_add_reserved_word(env, "self", token_self);
 }
 
-void symbol_table_init_builtin_types(struct symbol_table* st, struct environment* env)
+void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environment* env)
 {
 	const char* name;
 	struct type_def* td = NULL;
@@ -174,7 +174,7 @@ void symbol_table_add_numeric(struct symbol_table* st, const char* name)
 	struct buffer bf;
 	buffer_init(&bf);
 	buffer_copy_str(&bf, name);
-	struct symbol* sym = environment_get(st->top, &bf);
+	struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
 	assert(sym);
 	assert(sym->td);
 	Type_use* tu = NULL;
@@ -201,9 +201,9 @@ void symbol_table_numeric_pool_init(struct symbol_table* st)
 
 void symbol_table_init(struct symbol_table* st)
 {
-	struct environment* env = NULL;
-	malloc_safe((void**)&env, sizeof(struct environment));
-	environment_init(env, NULL);
+	struct Ake_environment* env = NULL;
+	malloc_safe((void**)&env, sizeof(struct Ake_environment));
+	Ake_environment_init(env, NULL);
 	st->top = env;
 	st->initial = env;
 	symbol_table_init_reserved(env);
@@ -211,8 +211,8 @@ void symbol_table_init(struct symbol_table* st)
 	symbol_table_numeric_pool_init(st);
 
 	env = NULL;
-	malloc_safe((void**)&env, sizeof(struct environment));
-	environment_init(env, st->top);
+	malloc_safe((void**)&env, sizeof(struct Ake_environment));
+	Ake_environment_init(env, st->top);
 	st->top = env;
 	st->global = env;
     st->deactivated = NULL;
@@ -227,16 +227,16 @@ void symbol_table_create(struct symbol_table** st)
 
 void symbol_table_destroy(struct symbol_table* st)
 {
-	struct environment* env = st->top;
+	struct Ake_environment* env = st->top;
 	while (env) {
-		struct environment* prev = env->prev;
-		environment_destroy(env);
+		struct Ake_environment* prev = env->prev;
+		Ake_environment_destroy(env);
 		env = prev;
 	}
     env = st->deactivated;
     while (env) {
-        struct environment* prev = env->prev;
-        environment_destroy(env);
+        struct Ake_environment* prev = env->prev;
+        Ake_environment_destroy(env);
         env = prev;
     }
     Type_use_destroy(st->numeric_pool);
@@ -483,21 +483,21 @@ void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest
 	for (int i = 0; i < src->global->ht.size; i++) {
 		struct hash_entry* p = src->global->ht.buckets[i].head;
 		while (p) {
-			struct symbol* src_sym = (struct symbol*)p->item;
-			struct symbol* dest_sym = symbol_copy(src_sym);
-			environment_put(dest->global, &p->value, dest_sym);
+			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
+			struct Ake_symbol* dest_sym = symbol_copy(src_sym);
+			Ake_environment_put(dest->global, &p->value, dest_sym);
 			p = p->next;
 		}
 	}
 }
 
-void transfer_module_symbols(struct environment* src, struct environment* dest, struct buffer* module_name)
+void transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct buffer* module_name)
 {
 	for (int i = 0; i < src->ht.size; i++) {
 		struct hash_entry* p = src->ht.buckets[i].head;
 		while (p) {
-			struct symbol* src_sym = (struct symbol*)p->item;
-			struct symbol* dest_sym = symbol_copy(src_sym);
+			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
+			struct Ake_symbol* dest_sym = symbol_copy(src_sym);
 
 			/* value is module_name.sym_name */
 			struct buffer value;
@@ -505,17 +505,17 @@ void transfer_module_symbols(struct environment* src, struct environment* dest, 
 			buffer_copy(module_name, &value);
 			buffer_add_char(&value, '.');
 			buffer_copy(&p->value, &value);
-			environment_put(dest, &value, dest_sym);
+			Ake_environment_put(dest, &value, dest_sym);
             buffer_destroy(&value);
 			p = p->next;
 		}
 	}
 }
 
-void set_current_function(struct environment* env, Ake_ast* fd)
+void set_current_function(struct Ake_environment* env, Ake_ast* fd)
 {
-	struct symbol* sym = NULL;
-	malloc_safe((void**)&sym, sizeof(struct symbol));
+	struct Ake_symbol* sym = NULL;
+	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
 	symbol_init(sym);
 	sym->type = Symbol_type_info;
 	sym->root_ptr = fd;
@@ -523,16 +523,16 @@ void set_current_function(struct environment* env, Ake_ast* fd)
 	struct buffer bf;
 	buffer_init(&bf);
 	buffer_copy_str(&bf, "|current_function|");
-	environment_put(env, &bf, sym);
+	Ake_environment_put(env, &bf, sym);
 	buffer_destroy(&bf);
 }
 
-Ake_ast* get_current_function(struct environment* env)
+Ake_ast* get_current_function(struct Ake_environment* env)
 {
 	struct buffer bf;
 	buffer_init(&bf);
 	buffer_copy_str(&bf, "|current_function|");
-	struct symbol* sym = environment_get(env, &bf);
+	struct Ake_symbol* sym = Ake_environment_get(env, &bf);
 	buffer_destroy(&bf);
 	if (sym) {
 		return sym->root_ptr;
@@ -549,7 +549,7 @@ size_t symbol_table_generate_id(struct symbol_table* st)
 void symbol_table_print(struct symbol_table* st)
 {
     printf("\n");
-    struct environment* p = st->top;
+    struct Ake_environment* p = st->top;
     while (p) {
         struct hash_table* ht = &p->ht;
         for (int i = 0; i < ht->size; i++) {
@@ -558,7 +558,7 @@ void symbol_table_print(struct symbol_table* st)
             while (entry) {
                 buffer_finish(&entry->value);
                 printf("%s ", entry->value.buf);
-                struct symbol* sym = entry->item;
+                struct Ake_symbol* sym = entry->item;
                 if (sym->td) {
                     buffer_finish(&sym->td->name);
                     printf("%s %d %d %d", sym->td->name.buf, sym->td->type, sym->td->bit_count, sym->td->is_signed);
@@ -573,7 +573,7 @@ void symbol_table_print(struct symbol_table* st)
     struct buffer bf;
     buffer_init(&bf);
     buffer_copy_str(&bf, "Int64");
-    struct symbol* sym = environment_get(st->top, &bf);
+    struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
     assert(sym && sym->td);
     assert(sym->td->bit_count == 64);
     assert(sym->td->is_signed);

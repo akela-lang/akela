@@ -7,33 +7,33 @@ void test_symbol_table_env()
 {
 	test_name(__func__);
 
-	struct environment* env;
+	struct Ake_environment* env;
 
-	malloc_safe((void**)&env, sizeof(struct environment));
-	environment_init(env, NULL);
+	malloc_safe((void**)&env, sizeof(struct Ake_environment));
+	Ake_environment_init(env, NULL);
 
 	struct buffer value;
 	buffer_init(&value);
 
 	buffer_copy_str(&value, "index");
 
-	struct symbol* sym;
-	malloc_safe((void**)&sym, sizeof(struct symbol));
+	struct Ake_symbol* sym;
+	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
 	symbol_init(sym);
 	sym->type = Symbol_type_variable;
 
-	struct symbol* x;
-	x = environment_get(env, &value);
+	struct Ake_symbol* x;
+	x = Ake_environment_get(env, &value);
 	expect_null(x, "x null");
 
-	environment_put(env, &value, sym);
+	Ake_environment_put(env, &value, sym);
 
-	x = environment_get(env, &value);
+	x = Ake_environment_get(env, &value);
 	assert_ptr(x, "x ptr");
 
 	assert_true(x == sym, "x == sym");
 
-	environment_destroy(env);
+	Ake_environment_destroy(env);
 	buffer_destroy(&value);
 }
 

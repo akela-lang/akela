@@ -175,7 +175,7 @@ namespace Akela_llvm {
 
     Value* Handle_identifier(Jit_data* jd, Ake_ast* n)
     {
-        struct symbol* sym = n->sym;
+        struct Ake_symbol* sym = n->sym;
         if (sym->value) {
             return (Value*)sym->value;
         } else if (sym->reference) {

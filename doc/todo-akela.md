@@ -5,7 +5,7 @@
   * code_gen [x]
   * comp_table [x]
   * comp_unit [x]
-  * environment []
+  * environment [x]
   * lex []
   * lex_tools []
   * parse []

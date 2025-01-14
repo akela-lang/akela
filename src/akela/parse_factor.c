@@ -131,26 +131,26 @@ Ake_ast* parse_function(struct parse_state* ps, bool is_method, Ake_ast* struct_
         if (n->type != Ake_ast_type_error) {
             Ake_ast* id_node = Ast_node_get(proto, 0);
             /* check and save symbol */
-            struct symbol* search = environment_get_local(ps->st->top, &id_node->value);
+            struct Ake_symbol* search = Ake_environment_get_local(ps->st->top, &id_node->value);
             if (search) {
                 buffer_finish(&id_node->value);
                 error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
                 n->type = Ake_ast_type_error;
                 /* test case: test_parse_function_error_duplicate_declaration */
             } else {
-                struct symbol* sym = environment_get(ps->st->top, &id_node->value);
+                struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id_node->value);
                 if (sym && sym->td) {
                     buffer_finish(&id_node->value);
                     error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
                     n->type = Ake_ast_type_error;
                     /* test case: test_parse_function_error_identifier_reserved */
                 } else {
-                    struct symbol* new_sym = NULL;
-                    malloc_safe((void**)&new_sym, sizeof(struct symbol));
+                    struct Ake_symbol* new_sym = NULL;
+                    malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
                     symbol_init(new_sym);
                     new_sym->type = Symbol_type_variable;
                     new_sym->tu = Type_use_clone(tu);
-                    environment_put(ps->st->top, &id_node->value, new_sym);
+                    Ake_environment_put(ps->st->top, &id_node->value, new_sym);
                     n->sym = new_sym;
                 }
             }
@@ -453,7 +453,7 @@ Ake_ast* parse_literal(struct parse_state* ps)
         struct buffer bf;
         buffer_init(&bf);
         buffer_copy_str(&bf, type_name);
-        struct symbol* sym = environment_get(ps->st->top, &bf);
+        struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &bf);
         assert(sym);
         assert(sym->td);
         Type_use* tu = NULL;
@@ -498,7 +498,7 @@ Ake_ast* parse_id(struct parse_state* ps)
         }
     }
 
-    struct symbol* sym = environment_get(ps->st->top, &id->value);
+    struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id->value);
     if (sym && sym->td && sym->td->type == type_struct) {
         /* struct literal */
 

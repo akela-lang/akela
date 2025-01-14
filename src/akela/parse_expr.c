@@ -1165,7 +1165,7 @@ Ake_ast* parse_dot(struct parse_state* ps)
             } else {
                 struct type_def* td = left->tu->td;
                 assert(td);
-                struct symbol* sym = environment_get(ps->st->top, &td->name);
+                struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &td->name);
                 assert(sym);
                 //left->sym = sym;
                 assert(sym->td);

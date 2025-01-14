@@ -7,19 +7,19 @@
 
 #define ENVIRONMENT_HASH_TABLE_SIZE 32
 
-struct environment {
+typedef struct Ake_environment {
     struct hash_table ht;
-    struct environment* prev;
-};
+    struct Ake_environment* prev;
+} Ake_environment;
 
-struct symbol;
+struct Ake_symbol;
 
-AKELA_API void environment_init(struct environment* env, struct environment* p);
-AKELA_API void environment_create(struct environment** env, struct environment* p);
-AKELA_API void environment_put(struct environment* env, struct buffer* value, struct symbol* sym);
-AKELA_API struct symbol* environment_get(struct environment* env, struct buffer* value);
-AKELA_API struct symbol* environment_get_local(struct environment* env, struct buffer* value);
-AKELA_API void environment_destroy(struct environment* env);
-AKELA_API void environment_destroy_symbol(struct symbol* sym);
+AKELA_API void Ake_environment_init(struct Ake_environment* env, struct Ake_environment* p);
+AKELA_API void Ake_environment_create(struct Ake_environment** env, struct Ake_environment* p);
+AKELA_API void Ake_environment_put(struct Ake_environment* env, struct buffer* value, struct Ake_symbol* sym);
+AKELA_API struct Ake_symbol* Ake_environment_get(struct Ake_environment* env, struct buffer* value);
+AKELA_API struct Ake_symbol* Ake_environment_get_local(struct Ake_environment* env, struct buffer* value);
+AKELA_API void Ake_environment_destroy(struct Ake_environment* env);
+AKELA_API void Ake_environment_destroy_symbol(struct Ake_symbol* sym);
 
 #endif

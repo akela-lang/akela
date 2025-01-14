@@ -148,7 +148,7 @@ typedef struct Ake_ast {
 	struct Type_use* tu;
     bool is_mut;
     struct location loc;
-    struct symbol* sym;
+    struct Ake_symbol* sym;
 	struct Ake_ast* next;
 	struct Ake_ast* prev;
 	struct Ake_ast* head;
