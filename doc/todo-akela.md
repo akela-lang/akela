@@ -17,7 +17,7 @@
   * struct_element [x]
   * symbol [x]
   * symbol_table [x]
-  * token []
+  * token [x]
   * type_def []
   * type_use []
 * new syntax

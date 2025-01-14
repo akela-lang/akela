@@ -16,15 +16,15 @@ Ake_ast* Ast_parse(struct Ake_parse_state* ps)
     n = Ake_parse_stmts(ps, true);
 
     struct location next_loc = Ake_get_location(ps);
-    struct token* t0 = Ake_get_lookahead(ps);
+    struct Ake_token* t0 = Ake_get_lookahead(ps);
     assert(t0);
-	if (t0->type != token_eof) {
-		char* names[token_count];
-		enum result r = token_name_init(names);
+	if (t0->type != Ake_token_eof) {
+		char* names[Ake_token_count];
+		enum result r = Ake_token_name_init(names);
 		if (r == result_error) {
 			error_list_set(ps->el, &next_loc, "token name init: %s", error_message);
             n->type = Ake_ast_type_error;
-            token_destroy(t0);
+            Ake_token_destroy(t0);
             free(t0);
 			return n;
 		}
@@ -33,7 +33,7 @@ Ake_ast* Ast_parse(struct Ake_parse_state* ps)
         n->type = Ake_ast_type_error;
  	}
 
-    token_destroy(t0);
+    Ake_token_destroy(t0);
     free(t0);
 
 	return n;

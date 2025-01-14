@@ -5,7 +5,7 @@
 void Ake_symbol_init(struct Ake_symbol* sym)
 {
     sym->type = Ake_symbol_type_none;
-    sym->tk_type = token_none;
+    sym->tk_type = Ake_token_none;
     sym->td = NULL;
     sym->tu = NULL;
     sym->constructor = NULL;

@@ -11,7 +11,7 @@
 #include "type_def.h"
 #include <assert.h>
 
-bool token_is_type(struct Ake_parse_state* ps, struct token* t);
+bool token_is_type(struct Ake_parse_state* ps, struct Ake_token* t);
 Type_use* Type_use_add_proto(
         struct Ake_symbol_table* st,
         Type_use* func,
@@ -41,17 +41,17 @@ Ake_ast* parse_prototype(
 
     /* 0 id */
     Ake_ast* id_node = NULL;
-    struct token* t0 = Ake_get_lookahead(ps);
-    if (t0->type == token_id) {
-        struct token* id = NULL;
-        if (!Ake_match(ps, token_id, "expected identifier", &id, n)) {
+    struct Ake_token* t0 = Ake_get_lookahead(ps);
+    if (t0->type == Ake_token_id) {
+        struct Ake_token* id = NULL;
+        if (!Ake_match(ps, Ake_token_id, "expected identifier", &id, n)) {
             assert(false);
         }
         Ake_ast_create(&id_node);
         id_node->type = Ake_ast_type_id;
         buffer_copy(&id->value, &id_node->value);
         Ake_ast_add(n, id_node);
-        token_destroy(id);
+        Ake_token_destroy(id);
         free(id);
         Ake_consume_newline(ps, n);
         *has_id = true;
@@ -69,12 +69,12 @@ Ake_ast* parse_prototype(
         *has_id = false;
     }
 
-    struct token* lp = NULL;
-    if (!Ake_match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
+    struct Ake_token* lp = NULL;
+    if (!Ake_match(ps, Ake_token_left_paren, "expected left parenthesis", &lp, n)) {
         /* test case: no test case needed */
         n->type = Ake_ast_type_error;
     }
-    token_destroy(lp);
+    Ake_token_destroy(lp);
     free(lp);
 
     Ake_consume_newline(ps, n);
@@ -94,24 +94,24 @@ Ake_ast* parse_prototype(
         n->type = Ake_ast_type_error;
     }
 
-    struct token* rp = NULL;
-    if (!Ake_match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
+    struct Ake_token* rp = NULL;
+    if (!Ake_match(ps, Ake_token_right_paren, "expected right parenthesis", &rp, n)) {
         /* test case: test_parse_anonymous_function_expected_right_paren */
         n->type = Ake_ast_type_error;
     }
-    token_destroy(rp);
+    Ake_token_destroy(rp);
     free(rp);
 
     /* 2 ret */
     t0 = Ake_get_lookahead(ps);
     Ake_ast* ret_type = NULL;
-    if (t0 && t0->type == token_arrow) {
-        struct token* dc = NULL;
-        if (!Ake_match(ps, token_arrow, "expecting ->", &dc, n)) {
+    if (t0 && t0->type == Ake_token_arrow) {
+        struct Ake_token* dc = NULL;
+        if (!Ake_match(ps, Ake_token_arrow, "expecting ->", &dc, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
         }
-        token_destroy(dc);
+        Ake_token_destroy(dc);
         free(dc);
 
         if (!Ake_consume_newline(ps, n)) {
@@ -202,29 +202,29 @@ Ake_ast* parse_dseq(
 
 	while (true)
 	{
-		struct token* t0 = Ake_get_lookahead(ps);
-		if (!t0 || t0->type != token_comma) {
+		struct Ake_token* t0 = Ake_get_lookahead(ps);
+		if (!t0 || t0->type != Ake_token_comma) {
 			break;
 		}
 
-		struct token* comma = NULL;
-		if (!Ake_match(ps, token_comma, "expecting comma", &comma, n)) {
+		struct Ake_token* comma = NULL;
+		if (!Ake_match(ps, Ake_token_comma, "expecting comma", &comma, n)) {
             assert(false);
             /* test case: no test case needed */
         }
 
-		token_destroy(comma);
+		Ake_token_destroy(comma);
 		free(comma);
 
         Ake_consume_newline(ps, n);
 
-        struct token* t = Ake_get_lookahead(ps);
-        if (t->type == token_ellipsis) {
-            struct token* eps = NULL;
-            if (!Ake_match(ps, token_ellipsis, "expected ellipsis", &eps, n)) {
+        struct Ake_token* t = Ake_get_lookahead(ps);
+        if (t->type == Ake_token_ellipsis) {
+            struct Ake_token* eps = NULL;
+            if (!Ake_match(ps, Ake_token_ellipsis, "expected ellipsis", &eps, n)) {
                 assert(false);
             }
-            token_destroy(eps);
+            Ake_token_destroy(eps);
             free(eps);
             if (is_extern) {
                 Ake_ast* ellipsis = NULL;
@@ -265,20 +265,20 @@ Ake_ast* parse_dseq(
  * @param t
  * @return true if a type, otherwise false
  */
-bool token_is_type(struct Ake_parse_state* ps, struct token* t)
+bool token_is_type(struct Ake_parse_state* ps, struct Ake_token* t)
 {
     /* array type */
-    if (t->type == token_left_square_bracket) {
+    if (t->type == Ake_token_left_square_bracket) {
         return true;
     }
 
     /* function type */
-    if (t->type == token_fn) {
+    if (t->type == Ake_token_fn) {
         return true;
     }
 
     /* type id */
-    if (t->type == token_id) {
+    if (t->type == Ake_token_id) {
         struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &t->value);
         if (sym && sym->td) {
             return true;
@@ -305,17 +305,17 @@ Ake_ast* parse_declaration(
 {
 	Ake_ast* n = NULL;
 
-	struct token* t0 = Ake_get_lookahead(ps);
+	struct Ake_token* t0 = Ake_get_lookahead(ps);
     bool type_only = !require_param_name && token_is_type(ps, t0);
-    bool is_self = is_method && t0->type == token_self;
-    if (t0->type == token_id || type_only || is_self) {
+    bool is_self = is_method && t0->type == Ake_token_self;
+    if (t0->type == Ake_token_id || type_only || is_self) {
         Ake_ast_create(&n);
         n->type = Ake_ast_type_declaration;
 
         if (is_self) {
             n->type = Ake_ast_type_self;
-            struct token *self = NULL;
-            if (!Ake_match(ps, token_self, "expected self", &self, n)) {
+            struct Ake_token *self = NULL;
+            if (!Ake_match(ps, Ake_token_self, "expected self", &self, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
@@ -326,7 +326,7 @@ Ake_ast* parse_declaration(
             buffer_copy_str(&id_node->value, "self");
             Ake_ast_add(n, id_node);
 
-            token_destroy(self);
+            Ake_token_destroy(self);
             free(self);
 
         } else if (type_only) {
@@ -351,29 +351,29 @@ Ake_ast* parse_declaration(
             if (type_use) {
                 Ake_ast_add(n, type_use);
             }
-        } else if (t0->type == token_id) {
+        } else if (t0->type == Ake_token_id) {
             Ake_ast* id_node = NULL;
             Ake_ast_create(&id_node);
             id_node->type = Ake_ast_type_id;
             Ake_ast_add(n, id_node);
 
-            struct token *id = NULL;
-            if (!Ake_match(ps, token_id, "expected id", &id, n)) {
+            struct Ake_token *id = NULL;
+            if (!Ake_match(ps, Ake_token_id, "expected id", &id, n)) {
                 assert(false);
                 /* test case: no test case needed */
             }
             buffer_copy(&id->value, &id_node->value);
-            token_destroy(id);
+            Ake_token_destroy(id);
             free(id);
 
             Ake_consume_newline(ps, n);
 
-            struct token *dc = NULL;
-            if (!Ake_match(ps, token_colon, "expected colon", &dc, n)) {
+            struct Ake_token *dc = NULL;
+            if (!Ake_match(ps, Ake_token_colon, "expected colon", &dc, n)) {
                 /* test case: test_parse_error_declaration_double_colon */
                 n->type = Ake_ast_type_error;
             }
-            token_destroy(dc);
+            Ake_token_destroy(dc);
             free(dc);
 
             Ake_consume_newline(ps, n);
@@ -426,15 +426,15 @@ Ake_ast* parse_type(struct Ake_parse_state* ps)
     n->tu = tu;
 
     /* handle array dimensions */
-	struct token* t0 = Ake_get_lookahead(ps);
-    while (t0->type == token_left_square_bracket) {
-        struct token *lsb = NULL;
-        if (!Ake_match(ps, token_left_square_bracket, "expected left square bracket", &lsb, n)) {
+	struct Ake_token* t0 = Ake_get_lookahead(ps);
+    while (t0->type == Ake_token_left_square_bracket) {
+        struct Ake_token *lsb = NULL;
+        if (!Ake_match(ps, Ake_token_left_square_bracket, "expected left square bracket", &lsb, n)) {
             /* test case: no test case needed */
             assert(false);
         }
 
-        token_destroy(lsb);
+        Ake_token_destroy(lsb);
         free(lsb);
 
         bool has_number = false;
@@ -442,37 +442,37 @@ Ake_ast* parse_type(struct Ake_parse_state* ps)
         size_t dim_size_number;
         t0 = Ake_get_lookahead(ps);
 
-        if (t0->type == token_number) {
-            struct token *dim_size = NULL;
-            if (!Ake_match(ps, token_number, "expected number", &dim_size, n)) {
+        if (t0->type == Ake_token_number) {
+            struct Ake_token *dim_size = NULL;
+            if (!Ake_match(ps, Ake_token_number, "expected number", &dim_size, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
             has_number = true;
             buffer_finish(&dim_size->value);
             dim_size_number = (size_t) strtol(dim_size->value.buf, NULL, 10);
-            token_destroy(dim_size);
+            Ake_token_destroy(dim_size);
             free(dim_size);
             t0 = Ake_get_lookahead(ps);
         }
 
-        if (t0->type == token_const) {
-            struct token* const_token = NULL;
-            if (!Ake_match(ps, token_const, "expected const", &const_token, n)) {
+        if (t0->type == Ake_token_const) {
+            struct Ake_token* const_token = NULL;
+            if (!Ake_match(ps, Ake_token_const, "expected const", &const_token, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
             has_const = true;
-            token_destroy(const_token);
+            Ake_token_destroy(const_token);
             free(const_token);
         }
 
-        struct token* rsb = NULL;
-        if (!Ake_match(ps, token_right_square_bracket, "expected right square bracket", &rsb, n)) {
+        struct Ake_token* rsb = NULL;
+        if (!Ake_match(ps, Ake_token_right_square_bracket, "expected right square bracket", &rsb, n)) {
             n->type = Ake_ast_type_error;
         }
 
-        token_destroy(rsb);
+        Ake_token_destroy(rsb);
         free(rsb);
 
         if (has_number) {
@@ -500,13 +500,13 @@ Ake_ast* parse_type(struct Ake_parse_state* ps)
         t0 = Ake_get_lookahead(ps);
     }
 
-    if (t0->type == token_fn) {
-        struct token* fn = NULL;
-        if (!Ake_match(ps, token_fn, "expected fn", &fn, n)) {
+    if (t0->type == Ake_token_fn) {
+        struct Ake_token* fn = NULL;
+        if (!Ake_match(ps, Ake_token_fn, "expected fn", &fn, n)) {
             assert(false);
         }
 
-        token_destroy(fn);
+        Ake_token_destroy(fn);
         free(fn);
 
         bool has_id;
@@ -521,9 +521,9 @@ Ake_ast* parse_type(struct Ake_parse_state* ps)
         }
         Ake_ast_destroy(proto);
 
-    } else if (t0->type == token_id) {
+    } else if (t0->type == Ake_token_id) {
         /* handle type or array element */
-        struct token* name = NULL;
+        struct Ake_token* name = NULL;
         if (!Ake_match(ps, t0->type, "expected type identifier", &name, n)) {
             n->type = Ake_ast_type_error;
         }
@@ -558,12 +558,12 @@ Ake_ast* parse_type(struct Ake_parse_state* ps)
             }
         }
 
-        token_destroy(name);
+        Ake_token_destroy(name);
         free(name);
 
     } else {
         t0 = Ake_get_lookahead(ps);
-        if (t0->type != token_fn && t0->type != token_id) {
+        if (t0->type != Ake_token_fn && t0->type != Ake_token_id) {
             error_list_set(ps->el, &t0->loc, "expected type identifier or fn");
             n->type = Ake_ast_type_error;
         }
@@ -887,9 +887,9 @@ bool Is_placeholder_node(Ake_ast* n)
     }
 }
 
-bool Is_placeholder_token(struct token* t)
+bool Is_placeholder_token(struct Ake_token* t)
 {
-    if (t->type == token_id && buffer_compare_str(&t->value, "_")) {
+    if (t->type == Ake_token_id && buffer_compare_str(&t->value, "_")) {
         return true;
     } else {
         return false;

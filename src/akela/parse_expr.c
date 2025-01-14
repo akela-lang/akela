@@ -74,8 +74,8 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
             }
         }
 
-		struct token* t0 = Ake_get_lookahead(ps);
-        if (t0->type != token_equal) {
+		struct Ake_token* t0 = Ake_get_lookahead(ps);
+        if (t0->type != Ake_token_equal) {
             if (n) {
                 /* last assignment */
                 Ake_ast_add(n, a);
@@ -98,8 +98,8 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
 
             Ake_ast_add(n, a);
 
-            struct token *equal = NULL;
-            if (!Ake_match(ps, token_equal, "expecting assign operator", &equal, n)) {
+            struct Ake_token *equal = NULL;
+            if (!Ake_match(ps, Ake_token_equal, "expecting assign operator", &equal, n)) {
                 /* test case: no test case needed */
                 assert(false);
             }
@@ -120,7 +120,7 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                 }
             }
 
-            token_destroy(equal);
+            Ake_token_destroy(equal);
             free(equal);
 
             Ake_consume_newline(ps, n);
@@ -189,9 +189,9 @@ Ake_ast* Ake_parse_eseq(struct Ake_parse_state* ps)
 
     Ake_ast* parent = NULL;
     while (true) {
-        struct token* t0 = Ake_get_lookahead(ps);
+        struct Ake_token* t0 = Ake_get_lookahead(ps);
 
-        if (!t0 || t0->type != token_comma) {
+        if (!t0 || t0->type != Ake_token_comma) {
             break;
         }
 
@@ -211,12 +211,12 @@ Ake_ast* Ake_parse_eseq(struct Ake_parse_state* ps)
             }
         }
 
-        struct token* comma = NULL;
-        if (!Ake_match(ps, token_comma, "expected a comma", &comma, parent)) {
+        struct Ake_token* comma = NULL;
+        if (!Ake_match(ps, Ake_token_comma, "expected a comma", &comma, parent)) {
             /* test case: no test case needed */
             assert(false);
         }
-        token_destroy(comma);
+        Ake_token_destroy(comma);
         free(comma);
 
         Ake_ast* b = NULL;
@@ -275,13 +275,13 @@ Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 
 	left = n = a;
 	while (true) {
-		struct token* t0 = Ake_get_lookahead(ps);
+		struct Ake_token* t0 = Ake_get_lookahead(ps);
 
 		/* operator */
 		enum Ake_ast_type type;
-		if (t0 && t0->type == token_and) {
+		if (t0 && t0->type == Ake_token_and) {
 			type = Ake_ast_type_and;
-		} else if (t0 && t0->type == token_or) {
+		} else if (t0 && t0->type == Ake_token_or) {
 			type = Ake_ast_type_or;
 		} else {
 			break;
@@ -290,7 +290,7 @@ Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps)
         Ake_ast_create(&n);
 		n->type = type;
 
-		struct token* op = NULL;
+		struct Ake_token* op = NULL;
 		if (!Ake_match(ps, t0->type, "expecting && or ||", &op, n)) {
             /* test case: no test case needed */
             assert(false);
@@ -348,7 +348,7 @@ Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 			left = n;
 		}
 
-		token_destroy(op);
+		Ake_token_destroy(op);
 		free(op);
 	}
 
@@ -380,30 +380,30 @@ Ake_ast* Ake_parse_comparison(struct Ake_parse_state* ps)
     left = n = a;
 
 	while (true) {
-		struct token* t0 = Ake_get_lookahead(ps);
+		struct Ake_token* t0 = Ake_get_lookahead(ps);
 		enum Ake_ast_type type;
 
 		if (!t0) {
 			break;
 		}
 
-		if (t0->type == token_double_equal) {
+		if (t0->type == Ake_token_double_equal) {
 			type = Ake_ast_type_equality;
-		} else if (t0->type == token_not_equal) {
+		} else if (t0->type == Ake_token_not_equal) {
 			type = Ake_ast_type_not_equal;
-		} else if (t0->type == token_less_than) {
+		} else if (t0->type == Ake_token_less_than) {
 			type = Ake_ast_type_less_than;
-		} else if (t0->type == token_less_than_or_equal) {
+		} else if (t0->type == Ake_token_less_than_or_equal) {
 			type = Ake_ast_type_less_than_or_equal;
-		} else if (t0->type == token_greater_than) {
+		} else if (t0->type == Ake_token_greater_than) {
 			type = Ake_ast_type_greater_than;
-		} else if (t0->type == token_greater_than_or_equal) {
+		} else if (t0->type == Ake_token_greater_than_or_equal) {
 			type = Ake_ast_type_greater_than_or_equal;
 		} else {
 			break;
 		}
 
-		struct token* op = NULL;
+		struct Ake_token* op = NULL;
 		if (!Ake_match(ps, t0->type, "expecting comparator", &op, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
@@ -471,7 +471,7 @@ Ake_ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 			left = n;
 		}
 
-		token_destroy(op);
+		Ake_token_destroy(op);
 		free(op);
 	}
 
@@ -498,7 +498,7 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
 	left = n = a;
 
 	while (true) {
-		struct token* t0 = Ake_get_lookahead(ps);
+		struct Ake_token* t0 = Ake_get_lookahead(ps);
 
 		/* e */
 		if (t0 == NULL) {
@@ -507,10 +507,10 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
 
 		/* operator */
 		enum Ake_ast_type type;
-		if (t0->type == token_plus) {
+		if (t0->type == Ake_token_plus) {
 			type = Ake_ast_type_plus;
 			op_name = "addition";
-		} else if (t0->type == token_minus) {
+		} else if (t0->type == Ake_token_minus) {
 			type = Ake_ast_type_minus;
 			op_name = "subtraction";
 		} else {
@@ -520,7 +520,7 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
         Ake_ast_create(&n);
         n->type = type;
 
-        struct token* op = NULL;
+        struct Ake_token* op = NULL;
 		if (!Ake_match(ps, t0->type, "expecting + or -", &op, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
@@ -592,7 +592,7 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
 		}
 
 		/* destroy op op{} */
-		token_destroy(op);
+		Ake_token_destroy(op);
 		free(op);
 	}
 
@@ -619,7 +619,7 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
     left = n = a;
 
 	while (true) {
-		struct token* t0 = Ake_get_lookahead(ps);
+		struct Ake_token* t0 = Ake_get_lookahead(ps);
 
 		/* e */
 		if (t0 == NULL) {
@@ -628,10 +628,10 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
 
 		/* operator */
 		enum Ake_ast_type type;
-		if (t0->type == token_mult) {
+		if (t0->type == Ake_token_mult) {
 			type = Ake_ast_type_mult;
 			op_name = "multiplication";
-		} else if (t0->type == token_divide) {
+		} else if (t0->type == Ake_token_divide) {
 			type = Ake_ast_type_divide;
 			op_name = "division";
 		} else {
@@ -641,7 +641,7 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
         Ake_ast_create(&n);
         n->type = type;
 
-        struct token* op = NULL;
+        struct Ake_token* op = NULL;
 		if (!Ake_match(ps, t0->type, "expecting * or /", &op, n)) {
             /* test case: test case not needed */
             assert(false);
@@ -716,7 +716,7 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
 			left = n;
 		}
 
-		token_destroy(op);
+		Ake_token_destroy(op);
 		free(op);
 
 	}
@@ -741,9 +741,9 @@ Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
 	Ake_ast* left = n = a ;
 
 	while (true) {
-		struct token* t0 = NULL;
+		struct Ake_token* t0 = NULL;
 		t0 = Ake_get_lookahead(ps);
-		if (!t0 || t0->type != token_caret) {
+		if (!t0 || t0->type != Ake_token_caret) {
 			break;
 		}
 
@@ -756,8 +756,8 @@ Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
             }
         }
 
-        struct token* caret = NULL;
-		if (!Ake_match(ps, token_caret, "expected a caret", &caret, n)) {
+        struct Ake_token* caret = NULL;
+		if (!Ake_match(ps, Ake_token_caret, "expected a caret", &caret, n)) {
             /* test case: no test case needed */
             assert(false);
         }
@@ -827,7 +827,7 @@ Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
 			left = n;
 		}
 
-		token_destroy(caret);
+		Ake_token_destroy(caret);
 		free(caret);
 	}
 
@@ -850,16 +850,16 @@ Ake_ast* Ake_parse_complex_operators(struct Ake_parse_state* ps)
 
     Ake_ast* left = n = a;
     while (true) {
-        struct token* t0 = Ake_get_lookahead(ps);
+        struct Ake_token* t0 = Ake_get_lookahead(ps);
 
-        if (t0->type != token_left_square_bracket && t0->type != token_left_paren) {
+        if (t0->type != Ake_token_left_square_bracket && t0->type != Ake_token_left_paren) {
             break;
         }
 
         Ake_ast_create(&n);
-        if (t0->type == token_left_square_bracket) {
+        if (t0->type == Ake_token_left_square_bracket) {
             Ake_parse_subscript(ps, left, n);
-        } else if (t0->type == token_left_paren) {
+        } else if (t0->type == Ake_token_left_paren) {
             Ake_parse_call(ps, left, n);
         }
 
@@ -904,13 +904,13 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n)
         }
     }
 
-    struct token* lsb = NULL;
-    if (!Ake_match(ps, token_left_square_bracket, "expecting array subscript operator", &lsb, n)) {
+    struct Ake_token* lsb = NULL;
+    if (!Ake_match(ps, Ake_token_left_square_bracket, "expecting array subscript operator", &lsb, n)) {
         /* test case: no test case needed */
         assert(false);
     }
 
-    token_destroy(lsb);
+    Ake_token_destroy(lsb);
     free(lsb);
 
     if (!Ake_consume_newline(ps,  n)) {
@@ -927,12 +927,12 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n)
         n->type = Ake_ast_type_error;
     }
 
-    struct token* rsb = NULL;
-    if (!Ake_match(ps, token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
+    struct Ake_token* rsb = NULL;
+    if (!Ake_match(ps, Ake_token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
         n->type = Ake_ast_type_error;
     }
 
-    token_destroy(rsb);
+    Ake_token_destroy(rsb);
     free(rsb);
 
     Ake_ast_add(n, left);
@@ -946,8 +946,8 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n)
 void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
     n->type = Ake_ast_type_call;
 
-    struct token *lp = NULL;
-    if (!Ake_match(ps, token_left_paren, "expected left parenthesis", &lp, n)) {
+    struct Ake_token *lp = NULL;
+    if (!Ake_match(ps, Ake_token_left_paren, "expected left parenthesis", &lp, n)) {
         /* test case: test case not needed */
         n->type = Ake_ast_type_error;
     }
@@ -972,8 +972,8 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
         n->type = Ake_ast_type_error;
     }
 
-    struct token *rp = NULL;
-    if (!Ake_match(ps, token_right_paren, "expected right parenthesis", &rp, n)) {
+    struct Ake_token *rp = NULL;
+    if (!Ake_match(ps, Ake_token_right_paren, "expected right parenthesis", &rp, n)) {
         /* test case: test_parse_call_error_right_paren */
         n->type = Ake_ast_type_error;
     }
@@ -1029,9 +1029,9 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
 
     }
 
-    token_destroy(lp);
+    Ake_token_destroy(lp);
     free(lp);
-    token_destroy(rp);
+    Ake_token_destroy(rp);
     free(rp);
 }
 
@@ -1069,19 +1069,19 @@ Ake_ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_ast* left)
     Ake_ast_add(n, a);
 
     while (true) {
-        struct token* t0 = Ake_get_lookahead(ps);
+        struct Ake_token* t0 = Ake_get_lookahead(ps);
 
-        if (!t0 || t0->type != token_comma) {
+        if (!t0 || t0->type != Ake_token_comma) {
             break;
         }
 
-        struct token* comma = NULL;
-        if (!Ake_match(ps, token_comma, "expecting comma", &comma, n)) {
+        struct Ake_token* comma = NULL;
+        if (!Ake_match(ps, Ake_token_comma, "expecting comma", &comma, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
         }
 
-        token_destroy(comma);
+        Ake_token_destroy(comma);
         free(comma);
 
         if (!Ake_consume_newline(ps, n)) {
@@ -1128,17 +1128,17 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
 
     Ake_ast* left = n = a;
     while (true) {
-        struct token* t0 = NULL;
+        struct Ake_token* t0 = NULL;
         t0 = Ake_get_lookahead(ps);
-        if (t0->type != token_dot) {
+        if (t0->type != Ake_token_dot) {
             break;
         }
 
         Ake_ast_create(&n);
         n->type = Ake_ast_type_dot;
 
-        struct token* dot = NULL;
-        if (!Ake_match(ps, token_dot, "expected a dot", &dot, n)) {
+        struct Ake_token* dot = NULL;
+        if (!Ake_match(ps, Ake_token_dot, "expected a dot", &dot, n)) {
             /* test case: no test case needed */
             n->type = Ake_ast_type_error;
         }
@@ -1147,8 +1147,8 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
             n->type = Ake_ast_type_error;
         }
 
-        struct token* id = NULL;
-        if (!Ake_match(ps, token_id, "expected identifier", &id, n)) {
+        struct Ake_token* id = NULL;
+        if (!Ake_match(ps, Ake_token_id, "expected identifier", &id, n)) {
             n->type = Ake_ast_type_error;
         }
 
@@ -1209,9 +1209,9 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
 
             left = n;
 #pragma warning(suppress:6001)
-            token_destroy(dot);
+            Ake_token_destroy(dot);
             free(dot);
-            token_destroy(id);
+            Ake_token_destroy(id);
             free(id);
         }
     }

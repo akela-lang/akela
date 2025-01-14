@@ -10,17 +10,17 @@ void test_lex_number_negative_start()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	/* allocate ls{} */
 	lex_setup("-", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	expect_true(valid, "valid 0");
-	expect_int_equal(t->type, token_minus, "minus 0");
+	expect_int_equal(t->type, Ake_token_minus, "minus 0");
 
 	/* destroy t t{} */
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	/* destroy ls{} */
@@ -35,7 +35,7 @@ void test_lex_number_whole()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	/* allocate ls{} */
 	lex_setup("500", &ls, &el);
@@ -45,13 +45,13 @@ void test_lex_number_whole()
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_number, "number");
+	expect_int_equal(t->type, Ake_token_number, "number");
 	expect_str(&t->value, "500", "500");
 	expect_size_t_equal(t->loc.line, 1, "line 10");
 	expect_size_t_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	/* destroy ls{} */
@@ -66,7 +66,7 @@ void test_lex_number_fraction_start()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	/* allocate ls{} */
 	lex_setup("500.", &ls, &el);
@@ -76,13 +76,13 @@ void test_lex_number_fraction_start()
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_number, "number");
+	expect_int_equal(t->type, Ake_token_number, "number");
 	expect_str(&t->value, "500.", "500.");
 	expect_int_equal(t->loc.line, 1, "line 10");
 	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	/* destroy ls{} */
@@ -97,7 +97,7 @@ void test_lex_number_fraction()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	/* allocate ls{} */
 	lex_setup("500.123", &ls, &el);
@@ -107,13 +107,13 @@ void test_lex_number_fraction()
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_number, "number");
+	expect_int_equal(t->type, Ake_token_number, "number");
 	expect_str(&t->value, "500.123", "500.123");
 	expect_int_equal(t->loc.line, 1, "line 10");
 	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	/* destroy ls{} */
@@ -127,7 +127,7 @@ void test_lex_number_exponent_start()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	lex_setup("500e", &ls, &el);
 
@@ -135,20 +135,20 @@ void test_lex_number_exponent_start()
 	assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
-	expect_int_equal(t->type, token_number, "0 number");
+	expect_int_equal(t->type, Ake_token_number, "0 number");
 	expect_str(&t->value, "500e", "0 value");
 
-    token_destroy(t);
+    Ake_token_destroy(t);
     free(t);
 
     valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
-	expect_int_equal(t->type, token_eof, "1 eof");
+	expect_int_equal(t->type, Ake_token_eof, "1 eof");
 	expect_str(&t->value, "", "1 value");
 
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	lex_teardown(&ls);
@@ -161,7 +161,7 @@ void test_lex_number_fraction_exponent_start()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	lex_setup("500.123e", &ls, &el);
 
@@ -169,20 +169,20 @@ void test_lex_number_fraction_exponent_start()
 	assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
-	expect_int_equal(t->type, token_number, "0 number");
+	expect_int_equal(t->type, Ake_token_number, "0 number");
 	expect_str(&t->value, "500.123e", "0 value");
 
-    token_destroy(t);
+    Ake_token_destroy(t);
     free(t);
 
 	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
-	expect_int_equal(t->type, token_eof, "1 eof");
+	expect_int_equal(t->type, Ake_token_eof, "1 eof");
 	expect_str(&t->value, "", "1 value");
 
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	lex_teardown(&ls);
@@ -195,7 +195,7 @@ void test_lex_number_fraction_exponent()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	lex_setup("500.123e2", &ls, &el);
 
@@ -203,12 +203,12 @@ void test_lex_number_fraction_exponent()
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_number, "number");
+	expect_int_equal(t->type, Ake_token_number, "number");
 	expect_str(&t->value, "500.123e2", "500.123e2");
 	expect_int_equal(t->loc.line, 1, "line 10");
 	expect_int_equal(t->loc.col, 1, "col 10");
 
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	lex_teardown(&ls);
@@ -221,7 +221,7 @@ void test_lex_number_fraction_exponent_sign_start_negative()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	lex_setup("500.123e-", &ls, &el);
 
@@ -230,7 +230,7 @@ void test_lex_number_fraction_exponent_sign_start_negative()
 	expect_false(valid, "0 valid");
 	expect_source_error(ls.el, "expected number after exponent sign");
 
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	lex_teardown(&ls);
@@ -243,7 +243,7 @@ void test_lex_number_fraction_exponent_sign_start_positive()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	lex_setup("500.123e+", &ls, &el);
 
@@ -252,7 +252,7 @@ void test_lex_number_fraction_exponent_sign_start_positive()
 	expect_false(valid, "0 valid");
 	expect_source_error(ls.el, "expected number after exponent sign");
 
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	lex_teardown(&ls);
@@ -266,7 +266,7 @@ void test_lex_number_fraction_exponent_negative()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	/* allocate ls{} */
 	lex_setup("500.123e-2", &ls, &el);
@@ -276,13 +276,13 @@ void test_lex_number_fraction_exponent_negative()
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_number, "number");
+	expect_int_equal(t->type, Ake_token_number, "number");
 	expect_str(&t->value, "500.123e-2", "500.123e-2");
 	expect_int_equal(t->loc.line, 1, "line 10");
 	expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	/* destroy ls{} */
@@ -297,7 +297,7 @@ void test_lex_number_exponent_positive()
 	struct Ake_lex_state ls;
 	struct error_list el;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	/* allocate ls{} */
 	lex_setup("500.123e+2", &ls, &el);
@@ -307,13 +307,13 @@ void test_lex_number_exponent_positive()
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, token_number, "number");
+	expect_int_equal(t->type, Ake_token_number, "number");
 	expect_str(&t->value, "500.123e+2", "500.123e+2");
 	expect_int_equal(t->loc.line, 1, "line");
 	expect_int_equal(t->loc.col, 1, "col");
 
 	/* destroy t t{} */
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	/* destroy ls{} */
@@ -327,7 +327,7 @@ void test_lex_number_exponent_add()
 	struct error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
-	struct token* t;
+	struct Ake_token* t;
 
 	lex_setup("500.123e + 1", &ls, &el);
 
@@ -335,35 +335,35 @@ void test_lex_number_exponent_add()
 	assert_no_errors(ls.el);
 	assert_true(valid, "0 valid");
 	assert_ptr(t, "0 ptr t");
-	expect_int_equal(t->type, token_number, "0 number");
+	expect_int_equal(t->type, Ake_token_number, "0 number");
 	expect_str(&t->value, "500.123e", "0 value");
 	expect_int_equal(t->loc.line, 1, "0 line 10");
 	expect_int_equal(t->loc.col, 1, "0 col 10");
 
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "1 valid");
 	assert_ptr(t, "1 ptr t");
-	expect_int_equal(t->type, token_plus, "1 plus");
+	expect_int_equal(t->type, Ake_token_plus, "1 plus");
 	expect_size_t_equal(t->loc.line, 1, "1 line");
 	expect_size_t_equal(t->loc.col, 10, "1 col");
 
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "2 valid");
 	assert_ptr(t, "2 ptr t");
-	expect_int_equal(t->type, token_number, "2 number");
+	expect_int_equal(t->type, Ake_token_number, "2 number");
 	expect_str(&t->value, "1", "2 value");
 	expect_size_t_equal(t->loc.line, 1, "2 line");
 	expect_size_t_equal(t->loc.col, 12, "2 col");
 
-	token_destroy(t);
+	Ake_token_destroy(t);
 	free(t);
 
 	lex_teardown(&ls);
