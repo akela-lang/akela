@@ -12,9 +12,9 @@
 #include <assert.h>
 
 bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t);
-Type_use* Ake_Type_use_add_proto(
+Ake_type_use* Ake_Type_use_add_proto(
         struct Ake_symbol_table* st,
-        Type_use* func,
+        Ake_type_use* func,
         Ake_ast* proto,
         Ake_ast* struct_type);
 
@@ -421,8 +421,8 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
     Ake_ast_create(&n);
     n->type = Ake_ast_type_type;
 
-    Type_use* tu = NULL;
-    Type_use_create(&tu);
+    Ake_type_use* tu = NULL;
+    Ake_type_use_create(&tu);
     n->tu = tu;
 
     /* handle array dimensions */
@@ -477,22 +477,22 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
 
         if (has_number) {
             n->tu->is_array = true;
-            Type_dimension dim;
+            Ake_type_dimension dim;
             dim.size =  dim_size_number;
             if (has_const) {
-                dim.option = Array_element_const;
+                dim.option = Ake_array_element_const;
             } else {
-                dim.option = Array_element_default;
+                dim.option = Ake_array_element_default;
             }
             VectorAdd(&n->tu->dim, &dim, 1);
         } else {
             n->tu->is_slice = true;
-            Type_dimension dim;
+            Ake_type_dimension dim;
             dim.size = 0;
             if (has_const) {
-                dim.option = Array_element_const;
+                dim.option = Ake_array_element_const;
             } else {
-                dim.option = Array_element_default;
+                dim.option = Ake_array_element_default;
             }
             VectorAdd(&n->tu->dim, &dim, 1);
         }
@@ -602,7 +602,7 @@ void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, 
             malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
             Ake_symbol_init(new_sym);
             new_sym->type = Ake_symbol_type_variable;
-            new_sym->tu = Type_use_clone(type_node->tu);
+            new_sym->tu = Ake_type_use_clone(type_node->tu);
             Ake_environment_put(ps->st->top, &id_node->value, new_sym);
             id_node->sym = new_sym;
             /* copy is_mut from id node to type use node */
@@ -631,15 +631,15 @@ void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* i
     }
 }
 
-Type_use* Ake_proto2type_use(struct Ake_symbol_table* st, Ake_ast* proto, Ake_ast* struct_type) {
-    Type_use *func = NULL;
-    Type_use_create(&func);
+Ake_type_use* Ake_proto2type_use(struct Ake_symbol_table* st, Ake_ast* proto, Ake_ast* struct_type) {
+    Ake_type_use *func = NULL;
+    Ake_type_use_create(&func);
     return Ake_Type_use_add_proto(st, func, proto, struct_type);
 }
 
-Type_use* Ake_Type_use_add_proto(
+Ake_type_use* Ake_Type_use_add_proto(
     struct Ake_symbol_table* st,
-    Type_use* func,
+    Ake_type_use* func,
     Ake_ast* proto,
     Ake_ast* struct_type)
 {
@@ -659,10 +659,10 @@ Type_use* Ake_Type_use_add_proto(
     buffer_copy(&id->value, &func->name);
 
     if (dseq->head) {
-        Type_use* inputs = NULL;
-        Type_use_create(&inputs);
-        inputs->type = Type_use_function_inputs;
-        Type_use_add(func, inputs);
+        Ake_type_use* inputs = NULL;
+        Ake_type_use_create(&inputs);
+        inputs->type = Ake_type_use_function_inputs;
+        Ake_type_use_add(func, inputs);
 
         Ake_ast* dec = dseq->head;
         while (dec) {
@@ -677,16 +677,16 @@ Type_use* Ake_Type_use_add_proto(
                 }
             }
 
-            Type_use* tu2;
+            Ake_type_use* tu2;
             if (dec->type == Ake_ast_type_ellipsis) {
-                Type_use_create(&tu2);
-                tu2->type = Type_use_function_ellipsis;
+                Ake_type_use_create(&tu2);
+                tu2->type = Ake_type_use_function_ellipsis;
             } else {
-                tu2 = Type_use_clone(type_node->tu);
+                tu2 = Ake_type_use_clone(type_node->tu);
                 buffer_copy(&id_node->value, &tu2->name);
             }
 
-            Type_use_add(inputs, tu2);
+            Ake_type_use_add(inputs, tu2);
 
             dec = dec->next;
         }
@@ -694,12 +694,12 @@ Type_use* Ake_Type_use_add_proto(
 
     Ake_ast* ret_type_node = Ast_node_get(dret, 0);
     if (ret_type_node) {
-        Type_use* outputs = NULL;
-        Type_use_create(&outputs);
-        outputs->type = Type_use_function_outputs;
-        Type_use* tu = Type_use_clone(ret_type_node->tu);
-        Type_use_add(outputs, tu);
-        Type_use_add(func, outputs);
+        Ake_type_use* outputs = NULL;
+        Ake_type_use_create(&outputs);
+        outputs->type = Ake_type_use_function_outputs;
+        Ake_type_use* tu = Ake_type_use_clone(ret_type_node->tu);
+        Ake_type_use_add(outputs, tu);
+        Ake_type_use_add(func, outputs);
     }
 
     return func;
@@ -722,31 +722,31 @@ bool Ake_check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* 
     return valid;
 }
 
-void Ake_get_function_children(Type_use* func, Type_use** inputs, Type_use** outputs)
+void Ake_get_function_children(Ake_type_use* func, Ake_type_use** inputs, Ake_type_use** outputs)
 {
     *inputs = NULL;
     *outputs = NULL;
 
-    Type_use* p = func->head;
+    Ake_type_use* p = func->head;
     while (p) {
-        if (p->type == Type_use_function_inputs) {
+        if (p->type == Ake_type_use_function_inputs) {
             *inputs = p;
-        } else if (p->type == Type_use_function_outputs) {
+        } else if (p->type == Ake_type_use_function_outputs) {
             *outputs = p;
         }
         p = p->next;
     }
 }
 
-Type_use* Ake_get_function_input_type(Type_use* func, int index)
+Ake_type_use* Ake_get_function_input_type(Ake_type_use* func, int index)
 {
-	Type_use* inputs = NULL;
-	Type_use* outputs = NULL;
+	Ake_type_use* inputs = NULL;
+	Ake_type_use* outputs = NULL;
 	Ake_get_function_children(func, &inputs, &outputs);
 
 	if (!inputs) return NULL;
 
-	Type_use* p = inputs->head;
+	Ake_type_use* p = inputs->head;
 	int i = 0;
 	while (p) {
 		if (i == index) {
@@ -761,16 +761,16 @@ Type_use* Ake_get_function_input_type(Type_use* func, int index)
 
 bool Ake_check_input_type(
     struct Ake_parse_state* ps,
-    Type_use* func,
+    Ake_type_use* func,
     int index,
     Ake_ast* a)
 {
 	bool valid = true;
 
 	if (func) {
-		Type_use* tu0 = Ake_get_function_input_type(func, index);
+		Ake_type_use* tu0 = Ake_get_function_input_type(func, index);
 		if (tu0) {
-			Type_use* call_tu0 = a->tu;
+			Ake_type_use* call_tu0 = a->tu;
 			if (call_tu0) {
 				if (!Ake_type_use_can_cast(tu0, call_tu0)) {
 					valid = error_list_set(ps->el, &a->loc, "parameter and aguments types do not match");
@@ -787,7 +787,7 @@ bool Ake_check_input_type(
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_Override_rhs(Type_use* tu, Ake_ast* rhs)
+void Ake_Override_rhs(Ake_type_use* tu, Ake_ast* rhs)
 {
     if (tu->td->type == Ake_type_integer || tu->td->type == Ake_type_float) {
         rhs->tu->td = tu->td;
@@ -861,8 +861,8 @@ bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct location* l
         if (n->type == Ake_ast_type_array_subscript) {
             Ake_ast* left = n->head;
             if (left->tu->is_array) {
-                Type_dimension* type_dim = (Type_dimension*)VECTOR_PTR(&left->tu->dim, 0);
-                if (type_dim->option == Array_element_const) {
+                Ake_type_dimension* type_dim = (Ake_type_dimension*)VECTOR_PTR(&left->tu->dim, 0);
+                if (type_dim->option == Ake_array_element_const) {
                     error_list_set(ps->el, loc, "immutable variable changed in assignment");
                 }
             }

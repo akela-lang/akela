@@ -6,43 +6,39 @@
 #include <stdbool.h>
 #include "zinc/memory.h"
 
-typedef enum Array_element_option {
-    Array_element_default,
-    Array_element_const,
-} Array_element_option;
+typedef enum Ake_array_element_option {
+    Ake_array_element_default,
+    Ake_array_element_const,
+} Ake_array_element_option;
 
-typedef struct Type_dimension {
+typedef struct Ake_type_dimension {
     size_t size;
-    Array_element_option option;
-} Type_dimension;
+    Ake_array_element_option option;
+} Ake_type_dimension;
 
-typedef enum Type_context {
-    Type_context_value,
-    Type_context_ptr,
-} Type_context;
+typedef enum Ake_type_context {
+    Ake_type_context_value,
+    Ake_type_context_ptr,
+} Ake_type_context;
 
-typedef enum Type_use_type {
-    Type_use_type_def,
-    Type_use_function_inputs,
-    Type_use_function_outputs,
-    Type_use_function_ellipsis,
-    Type_use_count,                 /* keep at end */
-} Type_use_type;
+typedef enum Ake_type_use_type {
+    Ake_type_use_type_def,
+    Ake_type_use_function_inputs,
+    Ake_type_use_function_outputs,
+    Ake_type_use_function_ellipsis,
+    Ake_type_use_count,                 /* keep at end */
+} Ake_type_use_type;
 
-#ifdef AKELA_TYPE_USE_C
-void Type_use_names(char* names[])
+void static Ake_type_use_names(char* names[])
 {
-    names[Type_use_type_def] = "Type_use_type_def";
-    names[Type_use_function_inputs] = "Type_use_function_inputs";
-    names[Type_use_function_outputs] = "Type_use_function_outputs";
-    names[Type_use_function_ellipsis] = "Type_use_function_ellipsis";
+    names[Ake_type_use_type_def] = "Type_use_type_def";
+    names[Ake_type_use_function_inputs] = "Type_use_function_inputs";
+    names[Ake_type_use_function_outputs] = "Type_use_function_outputs";
+    names[Ake_type_use_function_ellipsis] = "Type_use_function_ellipsis";
 }
-#else
-void Type_use_names(char* names[]);
-#endif
 
-typedef struct Type_use {
-    Type_use_type type;
+typedef struct Ake_type_use {
+    Ake_type_use_type type;
     struct Ake_type_def* td;
     struct buffer name;
     Vector dim;
@@ -51,25 +47,25 @@ typedef struct Type_use {
     bool original_is_mut;
     bool is_array;
     bool is_slice;
-    Type_context context;
+    Ake_type_context context;
     void* lhs_allocation;
-    struct Type_use* next;
-    struct Type_use* prev;
-    struct Type_use* head;
-    struct Type_use* tail;
-} Type_use;
+    struct Ake_type_use* next;
+    struct Ake_type_use* prev;
+    struct Ake_type_use* head;
+    struct Ake_type_use* tail;
+} Ake_type_use;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void Type_use_init(Type_use* tu);
-void Type_use_create(Type_use** tu);
-void Type_use_destroy(Type_use* tu);
-void Type_use_copy(Type_use* a, Type_use* b);
-Type_use* Type_use_clone(Type_use* tu);
-void Type_use_reduce_dimension(Type_use* tu);
-void Type_use_add(Type_use* p, Type_use* c);
+void Ake_type_use_init(Ake_type_use* tu);
+void Ake_type_use_create(Ake_type_use** tu);
+void Ake_type_use_destroy(Ake_type_use* tu);
+void Ake_type_use_copy(Ake_type_use* a, Ake_type_use* b);
+Ake_type_use* Ake_type_use_clone(Ake_type_use* tu);
+void Ake_type_use_reduce_dimension(Ake_type_use* tu);
+void Ake_type_use_add(Ake_type_use* p, Ake_type_use* c);
 
 #ifdef __cplusplus
 }

@@ -82,7 +82,7 @@ Ake_ast* Ake_parse_stmts(struct Ake_parse_state* ps, bool suppress_env)
 	if (n->type != Ake_ast_type_error) {
 		if (last) {
 			if (last->tu) {
-                n->tu = Type_use_clone(last->tu);
+                n->tu = Ake_type_use_clone(last->tu);
 			}
 		}
 	}
@@ -149,7 +149,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
         if (proto->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
-        Type_use* tu = Ake_proto2type_use(ps->st, proto, NULL);
+        Ake_type_use* tu = Ake_proto2type_use(ps->st, proto, NULL);
         n->tu = tu;
     }
 
@@ -190,7 +190,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
                 malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
                 Ake_symbol_init(new_sym);
                 new_sym->type = Ake_symbol_type_variable;
-                new_sym->tu = Type_use_clone(n->tu);
+                new_sym->tu = Ake_type_use_clone(n->tu);
                 Ake_environment_put(ps->st->top, &id_node->value, new_sym);
                 n->sym = new_sym;
             }
@@ -456,7 +456,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
 		Ake_ast* element = Ast_node_get(parent, 0);
 		Ake_ast* element_type_node = Ast_node_get(element, 1);
 
-		Type_use* list_tu = list->tu;
+		Ake_type_use* list_tu = list->tu;
 
 		if (!list_tu) {
 			error_list_set(ps->el, &list->loc, "iteration expression has no value");
@@ -467,14 +467,14 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
-            Type_use* element_tu2 = Type_use_clone(list_tu);
-            Type_use_reduce_dimension(element_tu2);
+            Ake_type_use* element_tu2 = Ake_type_use_clone(list_tu);
+            Ake_type_use_reduce_dimension(element_tu2);
 			if (!Ake_type_use_can_cast(element_tu2, element_type_node->tu)) {
                 parent->type = Ake_ast_type_error;
 				error_list_set(ps->el, &list->loc, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
-            Type_use_destroy(element_tu2);
+            Ake_type_use_destroy(element_tu2);
 		}
 	}
 
@@ -551,8 +551,8 @@ Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
 			assert(sym);
 			assert(sym->td);
 
-			Type_use* tu = NULL;
-            Type_use_create(&tu);
+			Ake_type_use* tu = NULL;
+            Ake_type_use_create(&tu);
 			tu->td = sym->td;
 
 			struct Ake_symbol* new_sym = NULL;
@@ -695,7 +695,7 @@ Ake_ast* Ake_parse_return(struct Ake_parse_state* ps)
 				/* test case: test_parse_return_error_no_value */
                 n->type = Ake_ast_type_error;
 			} else {
-				n->tu = Type_use_clone(a->tu);
+				n->tu = Ake_type_use_clone(a->tu);
 				Ake_ast* fd = Ake_get_current_function(ps->st->top);
 				if (!fd) {
 					error_list_set(ps->el, &ret->loc, "return statement outside of function");
@@ -1009,8 +1009,8 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
                 Ake_ast* type_node = NULL;
                 Ake_ast_create(&type_node);
                 type_node->type = Ake_ast_type_type;
-                Type_use* tu = NULL;
-                Type_use_create(&tu);
+                Ake_type_use* tu = NULL;
+                Ake_type_use_create(&tu);
                 tu->td = sym->td;
                 type_node->tu = tu;
                 struct_type = type_node;

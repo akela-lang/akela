@@ -1,25 +1,4 @@
 # Akela Todo
-* namespace symbols
-  * api [x]
-  * ast [x]
-  * code_gen [x]
-  * comp_table [x]
-  * comp_unit [x]
-  * environment [x]
-  * lex [x]
-  * lex_tools [x]
-  * parse [x]
-  * parse_expr [x]
-  * parse_factor [x]
-  * parse_stmts [x]
-  * parse_tools [x]
-  * parse_types [x]
-  * struct_element [x]
-  * symbol [x]
-  * symbol_table [x]
-  * token [x]
-  * type_def []
-  * type_use []
 * new syntax
 * refactor array type
 * pointer type

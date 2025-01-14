@@ -13,7 +13,7 @@ namespace Akela_llvm {
         struct Ake_ast* element_dec = n->head;
         while (element_dec) {
             Ake_ast* element_type_node = Ast_node_get(element_dec, 1);
-            Type_use* element_tu = element_type_node->tu;
+            Ake_type_use* element_tu = element_type_node->tu;
             Type* element_type = Get_type(jd, element_tu);
             if (element_tu->td->type == Ake_type_function) {
                 element_type = element_type->getPointerTo();
@@ -31,11 +31,11 @@ namespace Akela_llvm {
     Value* Handle_dot(Jit_data* jd, Ake_ast* n)
     {
         Ake_ast* left = Ast_node_get(n, 0);
-        Type_use* left_tu = left->tu;
+        Ake_type_use* left_tu = left->tu;
         assert(left_tu);
         struct Ake_type_def* left_td = left_tu->td;
         assert(left_td);
-        left->tu->context = Type_context_ptr;
+        left->tu->context = Ake_type_context_ptr;
         Value* struct_value = Dispatch(jd, left);
 
         Ake_ast* right = Ast_node_get(n, 1);
@@ -44,7 +44,7 @@ namespace Akela_llvm {
         size_t i = 0;
         Ake_ast* dec_id = nullptr;
         Ake_ast* dec_type = nullptr;
-        Type_use* dec_tu = nullptr;
+        Ake_type_use* dec_tu = nullptr;
         bool found = false;
         while (dec) {
             dec_id = Ast_node_get(dec, 0);
@@ -60,7 +60,7 @@ namespace Akela_llvm {
         assert(found);
         Value* gep_value = jd->Builder->CreateStructGEP(struct_type, struct_value, i);
 
-        if (n->tu->context == Type_context_ptr) {
+        if (n->tu->context == Ake_type_context_ptr) {
             return gep_value;
         } else if (dec_tu->is_array) {
             return gep_value;

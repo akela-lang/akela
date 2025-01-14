@@ -93,7 +93,7 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                 /* start assign tree */
                 Ake_ast_create(&n);
                 n->type = Ake_ast_type_assign;
-                n->tu = Type_use_clone(a->tu);
+                n->tu = Ake_type_use_clone(a->tu);
             }
 
             Ake_ast_add(n, a);
@@ -342,7 +342,7 @@ Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 				error_list_set(ps->el, &b->loc, "expression of boolean operator is not boolean");
                 n->type = Ake_ast_type_error;
 			} else {
-				n->tu = Type_use_clone(left->tu);
+				n->tu = Ake_type_use_clone(left->tu);
 			}
 
 			left = n;
@@ -463,7 +463,7 @@ Ake_ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 					/* test case: test_parse_comparison_error_right_not_numeric */
                     n->type = Ake_ast_type_error;
 				} else {
-					Type_use* tu = Type_use_clone(left->tu);
+					Ake_type_use* tu = Ake_type_use_clone(left->tu);
 					Ake_type_find_whole(ps->st, tu, b->tu);
 					n->tu = tu;
 				}
@@ -554,8 +554,8 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
         }
 
 		if (n->type != Ake_ast_type_error) {
-			Type_use* tu_a = a->tu;
-			Type_use* tu_b = b->tu;
+			Ake_type_use* tu_a = a->tu;
+			Ake_type_use* tu_b = b->tu;
 
 			if (!tu_a) {
 				error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
@@ -577,12 +577,12 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
 			}
 
 			if (n->type != Ake_ast_type_error) {
-				Type_use* tu = Type_use_clone(tu_a);
+				Ake_type_use* tu = Ake_type_use_clone(tu_a);
 				if (!Ake_type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
                     n->type = Ake_ast_type_error;
-                    Type_use_destroy(tu);
+                    Ake_type_use_destroy(tu);
 				} else {
 					n->tu = tu;
 				}
@@ -678,8 +678,8 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
 		if (n->type != Ake_ast_type_error) {
 			assert(a);
 			assert(b);
-			Type_use* tu_a = a->tu;
-			Type_use* tu_b = b->tu;
+			Ake_type_use* tu_a = a->tu;
+			Ake_type_use* tu_b = b->tu;
 
 			if (!tu_a) {
 				error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
@@ -702,12 +702,12 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
 			}
 
 			if (n->type != Ake_ast_type_error) {
-				Type_use* tu = Type_use_clone(tu_a);
+				Ake_type_use* tu = Ake_type_use_clone(tu_a);
 				if (!Ake_type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
                     n->type = Ake_ast_type_error;
-                    Type_use_destroy(tu);
+                    Ake_type_use_destroy(tu);
 				} else {
 					n->tu = tu;
 				}
@@ -789,8 +789,8 @@ Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
         if (n->type != Ake_ast_type_error) {
 			assert(left);
 			assert(b);
-			Type_use* tu_left = left->tu;
-			Type_use* tu_b = b->tu;
+			Ake_type_use* tu_left = left->tu;
+			Ake_type_use* tu_b = b->tu;
 
 			if (!tu_left) {
 				error_list_set(ps->el, &left->loc, "power operand has no value");
@@ -813,12 +813,12 @@ Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
 			}
 
 			if (n->type != Ake_ast_type_error) {
-				Type_use* tu = Type_use_clone(tu_left);
+				Ake_type_use* tu = Ake_type_use_clone(tu_left);
 				if (!Ake_type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &b->loc, "invalid power types");
 					/* test case: no test case needed */
                     n->type = Ake_ast_type_error;
-                    Type_use_destroy(tu);
+                    Ake_type_use_destroy(tu);
 				} else {
 					n->tu = tu;
 				}
@@ -885,8 +885,8 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n)
 
     if (left->type != Ake_ast_type_error) {
         if (left->tu->is_array || left->tu->is_slice) {
-            n->tu = Type_use_clone(left->tu);
-            Type_use_reduce_dimension(n->tu);
+            n->tu = Ake_type_use_clone(left->tu);
+            Ake_type_use_reduce_dimension(n->tu);
         }
     }
 
@@ -979,7 +979,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
     }
 
     if (n->type != Ake_ast_type_error) {
-        Type_use *tu = left->tu;
+        Ake_type_use *tu = left->tu;
         assert(tu);
         assert(tu->td);
         struct Ake_type_def *td = tu->td;
@@ -988,17 +988,17 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
             /* test case: test_parse_call_error_not_function */
             n->type = Ake_ast_type_error;
         } else {
-            Type_use *inputs = NULL;
-            Type_use *outputs = NULL;
+            Ake_type_use *inputs = NULL;
+            Ake_type_use *outputs = NULL;
             Ake_get_function_children(tu, &inputs, &outputs);
 
             /* input */
             size_t tcount = 0;
             bool is_variadic = false;
             if (inputs) {
-                Type_use *input_tu = inputs->head;
+                Ake_type_use *input_tu = inputs->head;
                 while (input_tu) {
-                    if (input_tu->type == Type_use_function_ellipsis) {
+                    if (input_tu->type == Ake_type_use_function_ellipsis) {
                         is_variadic = true;
                     } else {
                         tcount++;
@@ -1023,7 +1023,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
 
             /* output */
             if (outputs) {
-                n->tu = Type_use_clone(outputs->head);
+                n->tu = Ake_type_use_clone(outputs->head);
             }
         }
 
@@ -1203,7 +1203,7 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
                             "identifier not a field of struct: %b", &id->value);
                     n->type = Ake_ast_type_error;
                 } else {
-                    n->tu = Type_use_clone(dec_type->tu);
+                    n->tu = Ake_type_use_clone(dec_type->tu);
                 }
             }
 

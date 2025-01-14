@@ -26,17 +26,17 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    FunctionType *Get_function_type(Jit_data *jd, Type_use *tu) {
-        Type_use *inputs = nullptr;
-        Type_use *outputs = nullptr;
+    FunctionType *Get_function_type(Jit_data *jd, Ake_type_use *tu) {
+        Ake_type_use *inputs = nullptr;
+        Ake_type_use *outputs = nullptr;
         Ake_get_function_children(tu, &inputs, &outputs);
         bool is_variadic = false;
 
         std::vector<Type *> param_types = std::vector<Type *>();
         if (inputs) {
-            Type_use* p = inputs->head;
+            Ake_type_use* p = inputs->head;
             while (p) {
-                if (p->type == Type_use_function_ellipsis) {
+                if (p->type == Ake_type_use_function_ellipsis) {
                     is_variadic = true;
                     p = p->next;
                     continue;
@@ -49,7 +49,7 @@ namespace Akela_llvm {
 
         Type *ret_type;
         if (outputs) {
-            Type_use *ret = outputs->head;
+            Ake_type_use *ret = outputs->head;
             ret_type = Get_type_pointer(jd, ret);
         } else {
             ret_type = Type::getVoidTy(*jd->TheContext);
@@ -59,7 +59,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type *Get_scalar_type(Jit_data *jd, Type_use *tu) {
+    Type *Get_scalar_type(Jit_data *jd, Ake_type_use *tu) {
         if (!tu) {
             return Type::getVoidTy(*jd->TheContext);
         }
@@ -98,7 +98,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type_pointer(Jit_data *jd, Type_use *tu)
+    Type* Get_type_pointer(Jit_data *jd, Ake_type_use *tu)
     {
         Type* t = Get_type(jd, tu);
         if (tu) {
@@ -110,13 +110,13 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type(Jit_data* jd, Type_use* tu)
+    Type* Get_type(Jit_data* jd, Ake_type_use* tu)
     {
         Type *t = Get_scalar_type(jd, tu);
         if (tu && tu->is_array) {
             size_t i = tu->dim.count - 1;
             while (true) {
-                auto dim = (Type_dimension*)VECTOR_PTR(&tu->dim, i);
+                auto dim = (Ake_type_dimension*)VECTOR_PTR(&tu->dim, i);
                 if (tu->td->type == Ake_type_function) {
                     t = t->getPointerTo();
                 }
@@ -154,7 +154,7 @@ namespace Akela_llvm {
                         Vector* dim_vector = &n->tu->dim;
                         size_t count = 1;
                         for (int i = 0; i < dim_vector->count; i++) {
-                            auto dim = (Type_dimension*)VECTOR_PTR(dim_vector, i);
+                            auto dim = (Ake_type_dimension*)VECTOR_PTR(dim_vector, i);
                             count *= dim->size;
                         }
                         buffer_add_char(bf, '[');
@@ -171,7 +171,7 @@ namespace Akela_llvm {
                         Vector* dim_vector = &n->tu->dim;
                         size_t count = 1;
                         for (int i = 0; i < dim_vector->count; i++) {
-                            auto dim = (Type_dimension*)VECTOR_PTR(dim_vector, i);
+                            auto dim = (Ake_type_dimension*)VECTOR_PTR(dim_vector, i);
                             count *= dim->size;
                         }
                         buffer_add_char(bf, '[');
@@ -294,18 +294,18 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     void Array_copy(
             Jit_data* jd,
-            Type_use* lhs_tu,
-            Type_use* rhs_tu,
+            Ake_type_use* lhs_tu,
+            Ake_type_use* rhs_tu,
             Value* lhs_ptr,
             Value* rhs_ptr)
     {
         size_t size = *(size_t*)VECTOR_PTR(&lhs_tu->dim, 0);
 
-        Type_use* lhs_tu2 = Type_use_clone(lhs_tu);
-        Type_use_reduce_dimension(lhs_tu2);
+        Ake_type_use* lhs_tu2 = Ake_type_use_clone(lhs_tu);
+        Ake_type_use_reduce_dimension(lhs_tu2);
 
-        Type_use* rhs_tu2 = Type_use_clone(rhs_tu);
-        Type_use_reduce_dimension(rhs_tu2);
+        Ake_type_use* rhs_tu2 = Ake_type_use_clone(rhs_tu);
+        Ake_type_use_reduce_dimension(rhs_tu2);
 
         for (size_t i = 0; i < size; i++) {
             Type* t = Get_type(jd, lhs_tu2);
@@ -323,8 +323,8 @@ namespace Akela_llvm {
             }
         }
 
-        Type_use_destroy(lhs_tu2);
-        Type_use_destroy(rhs_tu2);
+        Ake_type_use_destroy(lhs_tu2);
+        Ake_type_use_destroy(rhs_tu2);
     }
 
 }

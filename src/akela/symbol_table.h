@@ -10,14 +10,14 @@
 #include "environment.h"
 #include "type_use.h"
 
-typedef struct Type_use Type_use;
+typedef struct Ake_type_use Ake_type_use;
 typedef struct Ake_ast Ake_ast;
 
 typedef struct Ake_symbol_table {
 	struct Ake_environment* initial;
 	struct Ake_environment* global;
 	struct Ake_environment* top;
-	struct Type_use* numeric_pool;
+	struct Ake_type_use* numeric_pool;
     struct Ake_environment* deactivated;
     size_t id_count;
     struct Ake_type_def* function_type_def;
@@ -30,9 +30,9 @@ AKELA_API void Ake_symbol_table_create(struct Ake_symbol_table** st);
 AKELA_API void Ake_symbol_table_destroy(struct Ake_symbol_table* st);
 AKELA_API bool Ake_symbol_table_is_global(struct Ake_symbol_table* st);
 AKELA_API bool Ake_is_numeric(struct Ake_type_def* td);
-AKELA_API bool Ake_type_find_whole(struct Ake_symbol_table* st, Type_use* a, Type_use* b);
+AKELA_API bool Ake_type_find_whole(struct Ake_symbol_table* st, Ake_type_use* a, Ake_type_use* b);
 AKELA_API bool Ake_type_def_can_cast(struct Ake_type_def* a, struct Ake_type_def* b);
-AKELA_API bool Ake_type_use_can_cast(Type_use* a, Type_use* b);
+AKELA_API bool Ake_type_use_can_cast(Ake_type_use* a, Ake_type_use* b);
 AKELA_API void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol_table* dest);
 AKELA_API void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct buffer* module_name);
 AKELA_API void Ake_set_current_function(struct Ake_environment* env, Ake_ast* fd);

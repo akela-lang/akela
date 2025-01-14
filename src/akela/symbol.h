@@ -16,7 +16,7 @@ typedef struct Ake_symbol {
     Ake_symbol_type type;
     enum Ake_token_enum tk_type;
     struct Ake_type_def* td;
-    struct Type_use* tu;
+    struct Ake_type_use* tu;
     struct Ake_symbol* constructor;
     struct Ake_ast* root;
     struct Ake_ast* root_ptr;

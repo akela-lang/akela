@@ -145,7 +145,7 @@ enum result Ast_set_names(char** names)
 typedef struct Ake_ast {
 	Ake_ast_type type;
 	struct buffer value;
-	struct Type_use* tu;
+	struct Ake_type_use* tu;
     bool is_mut;
     struct location loc;
     struct Ake_symbol* sym;

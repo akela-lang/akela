@@ -25,7 +25,7 @@ void test_parse_number_integer()
 	expect_int_equal(number->type, Ake_ast_type_number, "number num");
 	expect_str(&number->value, "32", "32 num");
 
-	Type_use* tu = number->tu;
+	Ake_type_use* tu = number->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -56,7 +56,7 @@ void test_parse_number_float()
 	expect_int_equal(number->type, Ake_ast_type_number, "number number");
 	expect_str(&number->value, "5.0e0", "5.0e0 number");
 
-	Type_use* tu = number->tu;
+	Ake_type_use* tu = number->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -87,15 +87,15 @@ void test_parse_string()
 	expect_int_equal(string->type, Ake_ast_type_string, "type string");
 	expect_str(&string->value, "hello", "value string");
 
-	Type_use* tu = string->tu;
+	Ake_type_use* tu = string->tu;
 	assert_ptr(tu, "ptr tu");
     expect_true(tu->is_array, "is_array tu");
     expect_size_t_equal(tu->dim.count, 1, "dim.count tu");
 
-    Type_dimension* dim = (Type_dimension*)VECTOR_PTR(&tu->dim, 0);
+    Ake_type_dimension* dim = (Ake_type_dimension*)VECTOR_PTR(&tu->dim, 0);
     assert_ptr(dim, "ptr dim");
     expect_size_t_equal(dim->size, 6, "size dim");
-    expect_int_equal(dim->option, Array_element_const, "option dim");
+    expect_int_equal(dim->option, Ake_array_element_const, "option dim");
 
 	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
@@ -123,7 +123,7 @@ void test_parse_boolean_true()
 	expect_int_equal(true_node->type, Ake_ast_type_boolean, "boolean true_node");
 	expect_str(&true_node->value, "true", "true true_node");
 
-	Type_use* tu = true_node->tu;
+	Ake_type_use* tu = true_node->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -152,7 +152,7 @@ void test_parse_boolean_false()
 	expect_int_equal(false_node->type, Ake_ast_type_boolean, "boolean false_node");
 	expect_str(&false_node->value, "false", "false false_node");
 
-	Type_use* tu = false_node->tu;
+	Ake_type_use* tu = false_node->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -198,7 +198,7 @@ void test_parse_id()
 	expect_int_equal(id2->type, Ake_ast_type_id, "id id2");
 	expect_str(&id2->value, "x", "x id2");
 
-	Type_use* tu = id2->tu;
+	Ake_type_use* tu = id2->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -310,7 +310,7 @@ void test_parse_sign_negative()
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, Ake_ast_type_sign, "sign sign");
 
-	Type_use* tu = sign->tu;
+	Ake_type_use* tu = sign->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -348,7 +348,7 @@ void test_parse_sign_positive()
 	assert_ptr(sign, "ptr sign");
 	expect_int_equal(sign->type, Ake_ast_type_sign, "sign sign");
 
-	Type_use* tu = sign->tu;
+	Ake_type_use* tu = sign->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -415,7 +415,7 @@ void test_parse_not_id()
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, Ake_ast_type_not, "not not");
 
-	Type_use* tu = not->tu;
+	Ake_type_use* tu = not->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -448,7 +448,7 @@ void test_parse_not_literal()
 	assert_ptr(not, "ptr not");
 	expect_int_equal(not->type, Ake_ast_type_not, "not not");
 
-	Type_use* tu = not->tu;
+	Ake_type_use* tu = not->tu;
 	assert_ptr(tu, "ptr tu");
 
 	struct Ake_type_def* td = tu->td;
@@ -495,7 +495,7 @@ void test_parse_array_literal_integer()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ake_ast_type_array_literal, "array-literal a");
 
-	Type_use* a_tu = a->tu;
+	Ake_type_use* a_tu = a->tu;
 	assert_ptr(a_tu, "ptr array_tu");
     expect_true(a_tu->is_array, "is_array a_tu");
     expect_size_t_equal(a_tu->dim.count, 1, "dim.count a_tu");
@@ -541,7 +541,7 @@ void test_parse_array_literal_float()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ake_ast_type_array_literal, "array-literal a");
 
-	Type_use* array_tu = a->tu;
+	Ake_type_use* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
 	struct Ake_type_def* array_td = array_tu->td;
@@ -584,7 +584,7 @@ void test_parse_array_literal_numeric()
 	assert_ptr(a, "ptr a");
 	expect_int_equal(a->type, Ake_ast_type_array_literal, "array-literal a");
 
-	Type_use* array_tu = a->tu;
+	Ake_type_use* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
 	struct Ake_type_def* array_td = array_tu->td;
@@ -942,9 +942,9 @@ void test_parse_factor_array_element_const()
     expect_true(let_type->tu->is_array, "is_array type");
     expect_size_t_equal(let_type->tu->dim.count, 1, "dim.count type");
 
-    struct Type_dimension* let_type_dim = (Type_dimension*)VECTOR_PTR(&let_type->tu->dim, 0);
+    struct Ake_type_dimension* let_type_dim = (Ake_type_dimension*)VECTOR_PTR(&let_type->tu->dim, 0);
     expect_size_t_equal(let_type_dim->size, 4, "size let_type_dim");
-    expect_int_equal(let_type_dim->option, Array_element_const, "option let_type_dim");
+    expect_int_equal(let_type_dim->option, Ake_array_element_const, "option let_type_dim");
 
     parse_teardown(&cu);
 }

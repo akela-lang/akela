@@ -7,7 +7,7 @@
 #include "symbol.h"
 
 bool Ake_type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b);
-bool Ake_type_use_match(Type_use* a, Type_use* b);
+bool Ake_type_use_match(Ake_type_use* a, Ake_type_use* b);
 
 void Ake_environment_begin(struct Ake_symbol_table* st)
 {
@@ -177,17 +177,17 @@ void Ake_symbol_table_add_numeric(struct Ake_symbol_table* st, const char* name)
 	struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
 	assert(sym);
 	assert(sym->td);
-	Type_use* tu = NULL;
-    Type_use_create(&tu);
+	Ake_type_use* tu = NULL;
+    Ake_type_use_create(&tu);
 	tu->td = sym->td;
-    Type_use_add(st->numeric_pool, tu);
+    Ake_type_use_add(st->numeric_pool, tu);
     buffer_destroy(&bf);
 }
 
 void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
 {
-	Type_use* pool = NULL;
-	Type_use_create(&pool);
+	Ake_type_use* pool = NULL;
+	Ake_type_use_create(&pool);
 	st->numeric_pool = pool;
 
 	Ake_symbol_table_add_numeric(st, "i32");
@@ -239,7 +239,7 @@ void Ake_symbol_table_destroy(struct Ake_symbol_table* st)
         Ake_environment_destroy(env);
         env = prev;
     }
-    Type_use_destroy(st->numeric_pool);
+    Ake_type_use_destroy(st->numeric_pool);
 }
 
 bool Ake_symbol_table_is_global(struct Ake_symbol_table* st)
@@ -281,7 +281,7 @@ bool Ake_type_find(struct Ake_symbol_table* st, struct Ake_type_def* a, struct A
 			bit_count = b->bit_count;
 		}
 
-		Type_use* tu = st->numeric_pool->head;
+		Ake_type_use* tu = st->numeric_pool->head;
 		assert(tu);
 		do {
 			struct Ake_type_def* x = tu->td;
@@ -299,7 +299,7 @@ bool Ake_type_find(struct Ake_symbol_table* st, struct Ake_type_def* a, struct A
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Ake_type_find_whole(struct Ake_symbol_table* st, Type_use* a, Type_use* b)
+bool Ake_type_find_whole(struct Ake_symbol_table* st, Ake_type_use* a, Ake_type_use* b)
 {
 	if (a && b) {
 		bool promote;
@@ -312,8 +312,8 @@ bool Ake_type_find_whole(struct Ake_symbol_table* st, Type_use* a, Type_use* b)
 		}
 
         if (a->head && b->head) {
-            Type_use* x = a->head;
-            Type_use* y = b->head;
+            Ake_type_use* x = a->head;
+            Ake_type_use* y = b->head;
             do {
                 if (!Ake_type_find_whole(st, x, y)) {
                     return false;
@@ -358,13 +358,13 @@ bool Ake_type_def_match(struct Ake_type_def* a, struct Ake_type_def* b)
     return false;
 }
 
-bool Ake_type_def_should_match(Type_use* a, Type_use* b)
+bool Ake_type_def_should_match(Ake_type_use* a, Ake_type_use* b)
 {
-    if (a->type == Type_use_function_inputs || a->type == Type_use_function_outputs) {
+    if (a->type == Ake_type_use_function_inputs || a->type == Ake_type_use_function_outputs) {
         return true;
     }
 
-    if (b->type == Type_use_function_inputs || b->type == Type_use_function_outputs) {
+    if (b->type == Ake_type_use_function_inputs || b->type == Ake_type_use_function_outputs) {
         return true;
     }
 
@@ -372,7 +372,7 @@ bool Ake_type_def_should_match(Type_use* a, Type_use* b)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Ake_type_use_can_cast(Type_use* a, Type_use* b)
+bool Ake_type_use_can_cast(Ake_type_use* a, Ake_type_use* b)
 {
     if (a && b) {
         if (!Ake_type_def_can_cast(a->td, b->td)) {
@@ -380,8 +380,8 @@ bool Ake_type_use_can_cast(Type_use* a, Type_use* b)
         }
 
         if (a->head && b->head) {
-            Type_use* x = a->head;
-            Type_use* y = b->head;
+            Ake_type_use* x = a->head;
+            Ake_type_use* y = b->head;
             while (x || y) {
                 if (Ake_type_def_should_match(a, b)) {
                     if (!Ake_type_use_match(x, y)) {
@@ -410,15 +410,15 @@ bool Ake_type_use_can_cast(Type_use* a, Type_use* b)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Ake_type_use_match(Type_use* a, Type_use* b)
+bool Ake_type_use_match(Ake_type_use* a, Ake_type_use* b)
 {
     if (a && b) {
         if (a->td != b->td) {
             return false;
         }
 
-        Type_use* x = a->head;
-        Type_use* y = b->head;
+        Ake_type_use* x = a->head;
+        Ake_type_use* y = b->head;
         while (x || y) {
             if (Ake_type_def_should_match(a, b)) {
                 if (!Ake_type_use_match(x, y)) {

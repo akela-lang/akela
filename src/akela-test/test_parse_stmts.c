@@ -347,7 +347,7 @@ void test_parse_stmts_type()
 	assert_ptr(cu.root, "ptr cu.root");
 	expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Type_use* tu = cu.root->tu;
+	Ake_type_use* tu = cu.root->tu;
 	assert_ptr(tu, "ptr tu");
 	
 	struct Ake_type_def* td = tu->td;
@@ -376,7 +376,7 @@ void test_parse_if()
 	assert_ptr(if_node, "ptr cu.root");
 	expect_int_equal(if_node->type, Ake_ast_type_if, "if if_node");
 
-    Type_use* tu = if_node->tu;
+    Ake_type_use* tu = if_node->tu;
 	expect_null(tu, "null tu");
 
 	Ake_ast* cb = Ast_node_get(if_node, 0);
@@ -972,7 +972,7 @@ void test_parse_for_iteration()
 	Ake_ast* i_type_node = Ast_node_get(dec, 1);
 	assert_ptr(i_type_node, "ptr i_tu");
 
-    Type_use* i_tu = i_type_node->tu;
+    Ake_type_use* i_tu = i_type_node->tu;
     assert_ptr(i_tu, "ptr i_tu");
 
 	struct Ake_type_def* i_td = i_tu->td;
@@ -1251,7 +1251,7 @@ void test_parse_let()
     Ake_ast* type_node = Ast_node_get(let, 1);
     assert_ptr(type_node, "ptr type_node");
 
-    Type_use* tu = type_node->tu;
+    Ake_type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
     struct Ake_type_def* td = tu->td;
@@ -1291,7 +1291,7 @@ void test_parse_let2()
     Ake_ast* type_node = Ast_node_get(let, 1);
     assert_ptr(type_node, "ptr type_node");
 
-    Type_use* tu = type_node->tu;
+    Ake_type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
     struct Ake_type_def* td = tu->td;
@@ -1341,7 +1341,7 @@ void test_parse_let3()
     Ake_ast* type_node = Ast_node_get(let, 1);
     assert_ptr(type_node, "ptr type_node");
 
-    Type_use* tu = type_node->tu;
+    Ake_type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
     struct Ake_type_def* td = tu->td;
@@ -1403,7 +1403,7 @@ void test_parse_extern()
     assert_ptr(f, "ptr f");
     expect_int_equal(f->type, Ake_ast_type_extern, "type f");
 
-    Type_use* tu = f->tu;
+    Ake_type_use* tu = f->tu;
     assert_ptr(tu, "ptr tu");
 
     struct Ake_type_def* td = tu->td;

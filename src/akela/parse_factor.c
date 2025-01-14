@@ -94,7 +94,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
     Ake_environment_begin(ps->st);
     Ake_declare_params(ps, proto, struct_type);
     Ake_set_current_function(ps->st->top, n);
-    Type_use* tu = Ake_proto2type_use(ps->st, proto, struct_type);
+    Ake_type_use* tu = Ake_proto2type_use(ps->st, proto, struct_type);
     n->tu = tu;
 
     Ake_ast* stmts_node = NULL;
@@ -149,7 +149,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
                     malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
                     Ake_symbol_init(new_sym);
                     new_sym->type = Ake_symbol_type_variable;
-                    new_sym->tu = Type_use_clone(tu);
+                    new_sym->tu = Ake_type_use_clone(tu);
                     Ake_environment_put(ps->st->top, &id_node->value, new_sym);
                     n->sym = new_sym;
                 }
@@ -206,7 +206,7 @@ Ake_ast* Ake_parse_if(struct Ake_parse_state* ps)
     }
 
     if (body) {
-        cb->tu = Type_use_clone(body->tu);
+        cb->tu = Ake_type_use_clone(body->tu);
         Ake_ast_add(cb, body);
     }
 
@@ -235,9 +235,9 @@ Ake_ast* Ake_parse_if(struct Ake_parse_state* ps)
         if (b) {
             /* only return a value if else exists */
             Ake_ast* p = n->head;
-            Type_use* tu = NULL;
+            Ake_type_use* tu = NULL;
             if (p) {
-                tu = Type_use_clone(p->tu);
+                tu = Ake_type_use_clone(p->tu);
                 p = p->next;
             }
             while (p) {
@@ -305,7 +305,7 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_ast* parent)
 
         if (body) {
             Ake_ast_add(cb, body);
-            cb->tu = Type_use_clone(body->tu);
+            cb->tu = Ake_type_use_clone(body->tu);
         }
 
         Ake_ast_add(parent, cb);
@@ -340,7 +340,7 @@ Ake_ast* Ake_parse_else(struct Ake_parse_state* ps)
         }
 
         if (body) {
-            n->tu = Type_use_clone(body->tu);
+            n->tu = Ake_type_use_clone(body->tu);
         }
 
         if (body) {
@@ -388,7 +388,7 @@ Ake_ast* Ake_parse_not(struct Ake_parse_state* ps)
 
 	if (n->type != Ake_ast_type_error) {
 		assert(a);
-		Type_use* tu = a->tu;
+		Ake_type_use* tu = a->tu;
 		if (!tu) {
 			error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
 			/* test case: test_parse_not_error_no_value */
@@ -400,7 +400,7 @@ Ake_ast* Ake_parse_not(struct Ake_parse_state* ps)
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = Ake_ast_type_error;
 			} else {
-				n->tu = Type_use_clone(tu);
+				n->tu = Ake_type_use_clone(tu);
 			}
 		}
 	}
@@ -456,17 +456,17 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
         struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &bf);
         assert(sym);
         assert(sym->td);
-        Type_use* tu = NULL;
-        Type_use_create(&tu);
+        Ake_type_use* tu = NULL;
+        Ake_type_use_create(&tu);
         tu->td = sym->td;
         n->tu = tu;
         buffer_destroy(&bf);
 
         if (is_string) {
             tu->is_array = true;
-            Type_dimension dim;
+            Ake_type_dimension dim;
             dim.size = n->value.size + 1;
-            dim.option = Array_element_const;
+            dim.option = Ake_array_element_const;
             VectorAdd(&tu->dim, &dim, 1);
         }
 	}
@@ -506,8 +506,8 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
 
         n->type = Ake_ast_type_struct_literal;
 
-        Type_use* tu = NULL;
-        Type_use_create(&tu);
+        Ake_type_use* tu = NULL;
+        Ake_type_use_create(&tu);
         tu->td = sym->td;
         n->tu = tu;
         n->sym = sym;
@@ -544,7 +544,7 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
             /* test case: test_parse_types_missing_declaration */
             n->type = Ake_ast_type_error;
         } else {
-            n->tu = Type_use_clone(sym->tu);
+            n->tu = Ake_type_use_clone(sym->tu);
             n->sym = sym;
         }
 
@@ -559,7 +559,7 @@ typedef struct Ake_struct_field_result {
     bool found;
     size_t index;
     Ake_ast* id;
-    Type_use* tu;
+    Ake_type_use* tu;
 } Ake_struct_field_result;
 
 Ake_struct_field_result Ake_get_struct_field(struct Ake_type_def* td, struct buffer* name) {
@@ -739,13 +739,13 @@ Ake_ast* Ake_parse_sign(struct Ake_parse_state* ps)
 
 	if (n->type != Ake_ast_type_error) {
 		assert(right);
-		Type_use* tu = right->tu;
+		Ake_type_use* tu = right->tu;
 		if (!tu) {
 			error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
 			/* test case: test_parse_sign_error */
             n->type = Ake_ast_type_error;
 		} else {
-			n->tu = Type_use_clone(tu);
+			n->tu = Ake_type_use_clone(tu);
 		}
 	}
 
@@ -796,9 +796,9 @@ Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             /* test case: test_parse_array_literal_empty_error */
             n->type = Ake_ast_type_error;
         } else {
-            Type_use* tu_first = Type_use_clone(first->tu);
+            Ake_type_use* tu_first = Ake_type_use_clone(first->tu);
             Ake_ast* x = first->next;
-            Type_use* tu_x;
+            Ake_type_use* tu_x;
             count++;
             while (x) {
                 tu_x = x->tu;
@@ -913,12 +913,12 @@ Ake_ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 
 	if (n->type != Ake_ast_type_error) {
 		assert(a);
-		Type_use* tu = a->tu;
+		Ake_type_use* tu = a->tu;
 		if (!tu) {
 			error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
             n->type = Ake_ast_type_error;
 		} else {
-			n->tu = Type_use_clone(tu);
+			n->tu = Ake_type_use_clone(tu);
 		}
 	}
 

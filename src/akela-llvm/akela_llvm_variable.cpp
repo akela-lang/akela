@@ -13,7 +13,7 @@ namespace Akela_llvm {
         Ake_ast* lseq = Ast_node_get(n, 0);
         Ake_ast* type_node = Ast_node_get(n, 1);
         Ake_ast* rseq = Ast_node_get(n, 2);
-        Type_use* tu = type_node->tu;
+        Ake_type_use* tu = type_node->tu;
 
         Ake_ast *lhs = Ast_node_get(lseq, 0);
         Ake_ast *rhs = nullptr;
@@ -148,14 +148,14 @@ namespace Akela_llvm {
                 }
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else if (lhs->type == Ake_ast_type_array_subscript) {
-                lhs->tu->context = Type_context_ptr;
+                lhs->tu->context = Ake_type_context_ptr;
                 Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
                 assert(false);
             }
         } else if (lhs->tu->is_array) {
-            lhs->tu->context = Type_context_ptr;
+            lhs->tu->context = Ake_type_context_ptr;
             Value* lhs_value = Dispatch(jd, lhs);
             Array_copy(jd, lhs->tu, rhs->tu, lhs_value, rhs_value);
         } else {
@@ -164,7 +164,7 @@ namespace Akela_llvm {
                 lhs_value = (AllocaInst*)lhs->sym->reference;
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
-                lhs->tu->context = Type_context_ptr;
+                lhs->tu->context = Ake_type_context_ptr;
                 Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             }
@@ -250,7 +250,7 @@ namespace Akela_llvm {
 
         Ake_ast* array = n->head;
         assert(array->tu->is_array);
-        array->tu->context = Type_context_ptr;
+        array->tu->context = Ake_type_context_ptr;
         Value* array_value = Dispatch(jd, array);
         assert(array_value);
 
@@ -292,7 +292,7 @@ namespace Akela_llvm {
         if (n->tu->is_array) {
             return element_ptr;
         } else {
-            if (n->tu->context == Type_context_ptr) {
+            if (n->tu->context == Ake_type_context_ptr) {
                 return element_ptr;
             } else {
                 return jd->Builder->CreateLoad(element_type, element_ptr, "elementtmp");

@@ -38,7 +38,7 @@ void Ake_ast_destroy(Ake_ast* n)
         }
 
         buffer_destroy(&n->value);
-        Type_use_destroy(n->tu);
+        Ake_type_use_destroy(n->tu);
         free(n);
     }
 }
@@ -79,7 +79,7 @@ Ake_ast* Ast_node_get(Ake_ast* p, size_t pos)
 	return NULL;
 }
 
-void Ake_type_use_print(Type_use* tu);
+void Ake_type_use_print(Ake_type_use* tu);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_print(Ake_ast* n)
@@ -107,11 +107,11 @@ void Ake_ast_print(Ake_ast* n)
 	}
 }
 
-void Ake_type_use_print(Type_use* tu)
+void Ake_type_use_print(Ake_type_use* tu)
 {
     if (tu) {
-        char* names[Type_use_count];
-        Type_use_names(names);
+        char* names[Ake_type_use_count];
+        Ake_type_use_names(names);
 
         printf(" <tu ");
         printf("[%p]", tu);
@@ -122,7 +122,7 @@ void Ake_type_use_print(Type_use* tu)
         }
         printf(">");
 
-        Type_use* p = tu->head;
+        Ake_type_use* p = tu->head;
         while (p) {
             Ake_type_use_print(p);
             p = p->next;
@@ -130,7 +130,7 @@ void Ake_type_use_print(Type_use* tu)
     }
 }
 
-void Ake_type_use_print_pointers(Type_use* tu, struct list* l);
+void Ake_type_use_print_pointers(Ake_type_use* tu, struct list* l);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_print_pointers(Ake_ast* root, struct list* l)
@@ -160,14 +160,14 @@ void Ake_ast_print_pointers(Ake_ast* root, struct list* l)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_type_use_print_pointers(Type_use* tu, struct list* l)
+void Ake_type_use_print_pointers(Ake_type_use* tu, struct list* l)
 {
     if (tu) {
         printf("(%p)\n", tu);
 //        if (list_has_item(l, tu)) abort();
         list_add_item(l, tu);
 
-        Type_use* tu2 = tu->head;
+        Ake_type_use* tu2 = tu->head;
         while (tu2) {
             Ake_type_use_print_pointers(tu2, l);
             tu2 = tu2->next;
@@ -178,7 +178,7 @@ void Ake_type_use_print_pointers(Type_use* tu, struct list* l)
 void Ake_ast_copy(Ake_ast* src, Ake_ast* dest)
 {
     dest->type = src->type;
-    dest->tu = Type_use_clone(src->tu);
+    dest->tu = Ake_type_use_clone(src->tu);
     dest->loc = src->loc;
     buffer_copy(&src->value, &dest->value);
 }

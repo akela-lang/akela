@@ -44,7 +44,7 @@ void test_parse_struct_field_assign()
     assert_ptr(type_node0, "ptr type_node0");
     expect_int_equal(type_node0->type, Ake_ast_type_type, "type type_node0");
 
-    Type_use* tu0 = type_node0->tu;
+    Ake_type_use* tu0 = type_node0->tu;
     assert_ptr(tu0, "ptr tu0");
 
     struct Ake_type_def* td0 = tu0->td;
@@ -66,7 +66,7 @@ void test_parse_struct_field_assign()
     assert_ptr(type_node1, "ptr type_node1");
     expect_int_equal(type_node1->type, Ake_ast_type_type, "type type_node1");
 
-    Type_use* tu1 = type_node1->tu;
+    Ake_type_use* tu1 = type_node1->tu;
     assert_ptr(tu1, "ptr tu1");
 
     struct Ake_type_def* td1 = tu1->td;
@@ -88,7 +88,7 @@ void test_parse_struct_field_assign()
     assert_ptr(type_node2, "ptr type_node2");
     expect_int_equal(type_node2->type, Ake_ast_type_type, "type type_node2");
 
-    Type_use* tu2 = type_node2->tu;
+    Ake_type_use* tu2 = type_node2->tu;
     assert_ptr(tu2, "ptr tu2");
 
     struct Ake_type_def* td2 = tu2->td;
@@ -109,7 +109,7 @@ void test_parse_struct_field_assign()
     assert_ptr(let_type, "ptr let_type");
     expect_int_equal(let_type->type, Ake_ast_type_type, "type let_type");
 
-    Type_use* tu = let_type->tu;
+    Ake_type_use* tu = let_type->tu;
     assert_ptr(tu, "ptr tu");
 
     struct Ake_type_def* td = tu->td;
