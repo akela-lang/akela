@@ -3,7 +3,7 @@
   * api [x]
   * buffer [x]
   * buffer_list [x]
-  * datetime []
+  * datetime [x]
   * error []
   * error_unit_test []
   * hash []

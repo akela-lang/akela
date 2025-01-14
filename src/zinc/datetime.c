@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "piece.h"
 
-void get_offset(struct tm* tm, char offset[7])
+void Zinc_get_offset(struct tm* tm, char offset[7])
 {
     if (tm->tm_gmtoff == 0) {
         strncpy(offset, "Z", 7);
@@ -22,12 +22,12 @@ void get_offset(struct tm* tm, char offset[7])
     }
 }
 
-void datetime_format(struct tm* tm, struct Zinc_string* dt)
+void Zinc_datetime_format(struct tm* tm, struct Zinc_string* dt)
 {
     char s[100];
     char offset[7];
 
-    get_offset(tm, offset);
+    Zinc_get_offset(tm, offset);
 
     snprintf(s, 100, "%d-%02d-%02dT%02d:%02d:%02d%s",
         tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
@@ -35,26 +35,26 @@ void datetime_format(struct tm* tm, struct Zinc_string* dt)
     Zinc_string_add_str(dt, s);
 }
 
-void datetime_get_current_t(time_t* t)
+void Zinc_datetime_get_current_t(time_t* t)
 {
     time(t);
 }
 
-void datetime_get_utc_tm(time_t* t, struct tm* tm)
+void Zinc_datetime_get_utc_tm(time_t* t, struct tm* tm)
 {
     gmtime_r(t, tm);
 }
-void datetime_get_local_tm(time_t* t, struct tm* tm)
+void Zinc_datetime_get_local_tm(time_t* t, struct tm* tm)
 {
     localtime_r(t, tm);
 }
 
-time_t datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
+time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
 {
     time_t t0;
     struct tm tm0;
-    datetime_get_current_t(&t0);
-    datetime_get_local_tm(&t0, &tm0);
+    Zinc_datetime_get_current_t(&t0);
+    Zinc_datetime_get_local_tm(&t0, &tm0);
     int isdst = tm0.tm_isdst;
 
     struct Zinc_string date;
@@ -174,7 +174,7 @@ time_t datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
     return t;
 }
 
-void datetime_print_tm(struct tm* tm)
+void Zinc_datetime_print_tm(struct tm* tm)
 {
     printf("year: %d\n", tm->tm_year);
     printf("month: %d\n", tm->tm_mon);
