@@ -3,7 +3,7 @@
 
 #include "api.h"
 #include "result.h"
-#include "buffer.h"
+#include "zstring.h"
 
 #if defined(_WIN32) || defined(WIN32)
 

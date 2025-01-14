@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "token.h"
 #include "symbol_table.h"
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "ast.h"
 
 typedef struct Ake_parse_state {

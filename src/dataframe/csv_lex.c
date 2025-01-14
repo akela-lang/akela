@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/vector.h"
 #include "csv_lex.h"
 #include <assert.h>

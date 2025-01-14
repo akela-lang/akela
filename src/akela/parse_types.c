@@ -1,5 +1,5 @@
 #include <stdbool.h>
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "token.h"
 #include "lex.h"
 #include "parse_tools.h"

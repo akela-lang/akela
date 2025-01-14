@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "buffer.h"
+#include "zstring.h"
 
 void location_init(struct location* loc)
 {

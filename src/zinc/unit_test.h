@@ -2,7 +2,7 @@
 #define _UNIT_TEST_H
 
 #include "api.h"
-#include "buffer.h"
+#include "string.h"
 #include "buffer_list.h"
 #include "vector.h"
 #include "String_slice.h"
@@ -55,8 +55,8 @@ ZINC_API void expect_error_message(const char* s);
 ZINC_API void expect_vector_double(Vector* a, Vector* b, double threshold, const char* message);
 ZINC_API void expect_utf8_char(char* a, char* b, char* message);
 ZINC_API void expect_utf8_char_str(char a[4], int num, char* b, char* message);
-ZINC_API void expect_buffer_list_count(struct Zinc_string_list* bl, size_t count, char* message);
-ZINC_API void expect_buffer_list_item(struct Zinc_string_list* bl, size_t index, char* text, char* message);
+ZINC_API void expect_buffer_list_count(Zinc_string_list* bl, size_t count, char* message);
+ZINC_API void expect_buffer_list_item(Zinc_string_list* bl, size_t index, char* text, char* message);
 ZINC_API void expect_string_slice(String_slice* sl, struct Zinc_string* bf, char* message);
 ZINC_API void expect_string_slice_str(String_slice* sl, char* expected, char* message);
 

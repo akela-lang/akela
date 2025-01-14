@@ -2,7 +2,7 @@
 #include "akela/comp_unit.h"
 #include "zinc/memory.h"
 #include "akela/comp_table.h"
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "akela/comp_unit.h"
 #include "zinc/error_unit_test.h"
 #include "zinc/input_unicode_string.h"

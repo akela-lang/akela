@@ -1,7 +1,7 @@
 #ifndef CENTIPEDE_ENUMERATE_H
 #define CENTIPEDE_ENUMERATE_H
 
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/error.h"
 
 typedef struct Cent_enum_value {

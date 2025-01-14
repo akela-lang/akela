@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "zinc/result.h"
 #include "zinc/unit_test.h"
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include <limits.h>
 
 /* static-output */

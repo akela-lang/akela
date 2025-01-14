@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include "result.h"
-#include "buffer.h"
+#include "string.h"
 #include "buffer_list.h"
 #include "vector.h"
 #include "unit_test.h"

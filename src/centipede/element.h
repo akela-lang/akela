@@ -1,7 +1,7 @@
 #ifndef CENTIPEDE_ELEMENT_H
 #define CENTIPEDE_ELEMENT_H
 
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/hash.h"
 #include "zinc/list.h"
 #include "value.h"

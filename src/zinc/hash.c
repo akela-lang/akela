@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "hash.h"
-#include "buffer.h"
+#include "string.h"
 #include "memory.h"
 #include <string.h>
 

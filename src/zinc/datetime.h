@@ -3,7 +3,7 @@
 
 #include "api.h"
 #include <time.h>
-#include "buffer.h"
+#include "zstring.h"
 
 ZINC_API void datetime_format(struct tm* tm, struct Zinc_string* dt);
 ZINC_API void datetime_get_current_t(time_t* t);

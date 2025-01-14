@@ -1,7 +1,7 @@
 #ifndef CENTIPEDE_TOKEN_H
 #define CENTIPEDE_TOKEN_H
 
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/error.h"
 
 typedef enum Cent_token_type {

@@ -1,7 +1,7 @@
 #ifndef COBBLE_AST_NODE_H
 #define COBBLE_AST_NODE_H
 
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/error.h"
 #include "zinc/hash_map_size_t.h"
 

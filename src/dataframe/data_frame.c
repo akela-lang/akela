@@ -1,6 +1,6 @@
 #include "data_frame.h"
 #include "zinc/memory.h"
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>

@@ -1,6 +1,6 @@
 #include <stdbool.h>
 #include "zinc/unit_test.h"
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/memory.h"
 #include "akela/parse_tools.h"
 #include "akela/parse.h"

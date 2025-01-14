@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "buffer.h"
+#include "zstring.h"
 
 void get_piece(struct Zinc_string* bf, char delim, size_t num, struct Zinc_string* out)
 {

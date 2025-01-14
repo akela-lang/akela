@@ -7,7 +7,7 @@
 #include <string.h>
 #include <errno.h>
 #include "result.h"
-#include "buffer.h"
+#include "zstring.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
@@ -17,7 +17,6 @@
 #include "buffer_list.h"
 #include <fcntl.h>
 #include "memory.h"
-#include "buffer.h"
 #include <assert.h>
 
 enum result get_temp_file(FILE** fp_out, struct Zinc_string* name)

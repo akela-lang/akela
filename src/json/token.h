@@ -1,7 +1,7 @@
 #ifndef JSON_TOKEN_H
 #define JSON_TOKEN_H
 
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/error.h"
 
 typedef enum Json_token_type {

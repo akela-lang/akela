@@ -2,7 +2,7 @@
 #define _HASH_H
 
 #include "api.h"
-#include "buffer.h"
+#include "zstring.h"
 
 struct hash_entry
 {

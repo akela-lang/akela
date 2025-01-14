@@ -3,7 +3,7 @@
 
 #include "api.h"
 #include <stdbool.h>
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/result.h"
 #include "token.h"
 #include "zinc/vector.h"

@@ -4,7 +4,7 @@
 #include "api.h"
 #include <stdbool.h>
 #include "zinc/result.h"
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/error.h"
 
 typedef enum Ake_token_enum {

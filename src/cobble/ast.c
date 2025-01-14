@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "zinc/memory.h"
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 
 void Cob_ast_init(Cob_ast* n)
 {

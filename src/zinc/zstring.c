@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "result.h"
-#include "buffer.h"
+#include "zstring.h"
 #include "memory.h"
 #include "utf8.h"
 #include <stdarg.h>

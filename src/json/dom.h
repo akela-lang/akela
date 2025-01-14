@@ -1,7 +1,7 @@
 #ifndef JSON_DOM_H
 #define JSON_DOM_H
 
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include <stdbool.h>
 #include "zinc/hash.h"
 #include "zinc/error.h"

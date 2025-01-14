@@ -1,4 +1,4 @@
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "akela/symbol_table.h"
 #include "akela/lex.h"
 #include "zinc/memory.h"

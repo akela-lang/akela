@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "api.h"
-#include "buffer.h"
+#include "zstring.h"
 
 struct location {
     size_t start_pos;

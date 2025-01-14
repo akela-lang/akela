@@ -3,7 +3,7 @@
 
 #include "api.h"
 #include <stdbool.h>
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "token.h"
 #include "symbol_table.h"
 #include "lex_tools.h"

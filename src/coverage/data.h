@@ -1,7 +1,7 @@
 #ifndef COVERAGE_DATA_H
 #define COVERAGE_DATA_H
 
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 
 typedef struct Cover_file {
     struct Zinc_string name;

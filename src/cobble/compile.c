@@ -6,7 +6,7 @@
 #include "token.h"
 #include "compile_data.h"
 #include "compile_tools.h"
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include <assert.h>
 
 Cob_ast* Cob_parse_union(Cob_compile_data* cd);

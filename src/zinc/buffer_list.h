@@ -2,7 +2,7 @@
 #define BUFFER_LIST_H
 
 #include "api.h"
-#include "buffer.h"
+#include "zstring.h"
 #include <stdbool.h>
 
 typedef struct Zinc_buffer_node {

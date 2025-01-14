@@ -2,7 +2,7 @@
 # files
 set(SOURCE_FILES
         unit_test.c
-        buffer.c
+        zstring.c
         memory.c
         result.c
         utf8.c

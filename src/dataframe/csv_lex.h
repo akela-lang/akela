@@ -1,7 +1,7 @@
 #ifndef ZINC_CSV_LEX_H
 #define ZINC_CSV_LEX_H
 
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/vector.h"
 #include <stdlib.h>
 #include <stdbool.h>

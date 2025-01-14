@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include "buffer.h"
+#include "zstring.h"
 #include <string.h>
 #include <stdbool.h>
 #include "piece.h"

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "buffer.h"
+#include "zstring.h"
 #include <stdbool.h>
 
 bool is_hex_digit(char c[4], int num)
