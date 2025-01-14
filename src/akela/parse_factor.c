@@ -98,7 +98,7 @@ Ake_ast* Ake_parse_function(struct parse_state* ps, bool is_method, Ake_ast* str
     n->tu = tu;
 
     Ake_ast* stmts_node = NULL;
-    stmts_node = parse_stmts(ps, true);
+    stmts_node = Ake_parse_stmts(ps, true);
 	if (stmts_node && stmts_node->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -199,7 +199,7 @@ Ake_ast* Ake_parse_if(struct parse_state* ps)
     }
 
     Ake_ast* body = NULL;
-    body = parse_stmts(ps, false);
+    body = Ake_parse_stmts(ps, false);
     if (body && body->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
         cb->type = Ake_ast_type_error;
@@ -297,7 +297,7 @@ void Ake_parse_elseif(struct parse_state* ps, Ake_ast* parent)
         }
 
         Ake_ast *body = NULL;
-        body = parse_stmts(ps, false);
+        body = Ake_parse_stmts(ps, false);
         if (body && body->type == Ake_ast_type_error) {
             cb->type = Ake_ast_type_error;
             parent->type = Ake_ast_type_error;
@@ -334,7 +334,7 @@ Ake_ast* Ake_parse_else(struct parse_state* ps)
 
         /* stmts */
         Ake_ast* body = NULL;
-        body = parse_stmts(ps, false);
+        body = Ake_parse_stmts(ps, false);
         if (body && body->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }

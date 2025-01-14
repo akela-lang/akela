@@ -13,24 +13,24 @@
 #include "type_def.h"
 #include <assert.h>
 
-Ake_ast* parse_stmt(struct parse_state* ps);
-Ake_ast* parse_while(struct parse_state* ps);
-Ake_ast* parse_for(struct parse_state* ps);
-void parse_for_range(struct parse_state* ps, Ake_ast* parent);
-void parse_for_iteration(struct parse_state* ps, Ake_ast* parent);
-Ake_ast* parse_module(struct parse_state* ps);
-Ake_ast* parse_struct(struct parse_state* ps);
-Ake_ast* parse_return(struct parse_state* ps);
-Ake_ast* parse_let(struct parse_state* ps);
-Ake_ast* parse_let_lseq(struct parse_state* ps);
-Ake_ast* parse_let_rseq(struct parse_state* ps);
-Ake_ast* parse_extern(struct parse_state* ps);
-Ake_ast* parse_impl(struct parse_state* ps);
+Ake_ast* Ake_parse_stmt(struct parse_state* ps);
+Ake_ast* Ake_parse_while(struct parse_state* ps);
+Ake_ast* Ake_parse_for(struct parse_state* ps);
+void Ake_parse_for_range(struct parse_state* ps, Ake_ast* parent);
+void Ake_parse_for_iteration(struct parse_state* ps, Ake_ast* parent);
+Ake_ast* Ake_parse_module(struct parse_state* ps);
+Ake_ast* Ake_parse_struct(struct parse_state* ps);
+Ake_ast* Ake_parse_return(struct parse_state* ps);
+Ake_ast* Ake_parse_let(struct parse_state* ps);
+Ake_ast* Ake_parse_let_lseq(struct parse_state* ps);
+Ake_ast* Ake_parse_let_rseq(struct parse_state* ps);
+Ake_ast* Ake_parse_extern(struct parse_state* ps);
+Ake_ast* Ake_parse_impl(struct parse_state* ps);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_stmts(struct parse_state* ps, bool suppress_env)
+Ake_ast* Ake_parse_stmts(struct parse_state* ps, bool suppress_env)
 {
 	Ake_ast* n = NULL;
 	Ake_ast* last = NULL;
@@ -45,7 +45,7 @@ Ake_ast* parse_stmts(struct parse_state* ps, bool suppress_env)
 	n->type = Ake_ast_type_stmts;
 
 	Ake_ast* a = NULL;
-	a = parse_stmt(ps);
+	a = Ake_parse_stmt(ps);
     if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -64,7 +64,7 @@ Ake_ast* parse_stmts(struct parse_state* ps, bool suppress_env)
 		}
 
 		Ake_ast* b = NULL;
-		b = parse_stmt(ps);
+		b = Ake_parse_stmt(ps);
         if (b && b->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
@@ -97,7 +97,7 @@ Ake_ast* parse_stmts(struct parse_state* ps, bool suppress_env)
 *       | e
 */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_stmt(struct parse_state* ps)
+Ake_ast* Ake_parse_stmt(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
 
@@ -105,21 +105,21 @@ Ake_ast* parse_stmt(struct parse_state* ps)
     assert(t0);
 
 	if (t0->type == token_while) {
-		n = parse_while(ps);
+		n = Ake_parse_while(ps);
 	} else if (t0->type == token_for) {
-		n = parse_for(ps);
+		n = Ake_parse_for(ps);
 	} else if (t0->type == token_module) {
-		n = parse_module(ps);
+		n = Ake_parse_module(ps);
 	} else if (t0->type == token_struct) {
-		n = parse_struct(ps);
+		n = Ake_parse_struct(ps);
 	} else if (t0->type == token_return) {
-        n = parse_return(ps);
+        n = Ake_parse_return(ps);
     } else if (t0->type == token_let) {
-        n = parse_let(ps);
+        n = Ake_parse_let(ps);
     } else if (t0->type == token_extern) {
-        n = parse_extern(ps);
+        n = Ake_parse_extern(ps);
     } else if (t0->type == token_impl) {
-        n = parse_impl(ps);
+        n = Ake_parse_impl(ps);
 	} else {
         n = Ake_parse_expr(ps);
 	}
@@ -127,7 +127,7 @@ Ake_ast* parse_stmt(struct parse_state* ps)
     return n;
 }
 
-Ake_ast* parse_extern(struct parse_state* ps)
+Ake_ast* Ake_parse_extern(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -206,7 +206,7 @@ Ake_ast* parse_extern(struct parse_state* ps)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_while(struct parse_state* ps)
+Ake_ast* Ake_parse_while(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -233,7 +233,7 @@ Ake_ast* parse_while(struct parse_state* ps)
 	}
 
 	Ake_ast* b = NULL;
-    b = parse_stmts(ps, false);
+    b = Ake_parse_stmts(ps, false);
 	if (b && b->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -257,7 +257,7 @@ Ake_ast* parse_while(struct parse_state* ps)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_for(struct parse_state* ps)
+Ake_ast* Ake_parse_for(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -290,13 +290,13 @@ Ake_ast* parse_for(struct parse_state* ps)
         if (n->type == Ake_ast_type_none) {
             n->type = Ake_ast_type_for_range;
         }
-		parse_for_range(ps, n);
+		Ake_parse_for_range(ps, n);
 
 	} else if (t0 && t0->type == token_in) {
         if (n->type == Ake_ast_type_none) {
             n->type = Ake_ast_type_for_iteration;
         }
-		parse_for_iteration(ps, n);
+		Ake_parse_for_iteration(ps, n);
 
 	} else {
 		struct location loc_error = get_location(ps);
@@ -306,7 +306,7 @@ Ake_ast* parse_for(struct parse_state* ps)
 	}
 
 	Ake_ast* c = NULL;
-    c = parse_stmts(ps, true);
+    c = Ake_parse_stmts(ps, true);
 	if (c && c->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -332,7 +332,7 @@ Ake_ast* parse_for(struct parse_state* ps)
 }
 
 /* for_range -> for id = expr:expr stmts end */
-void parse_for_range(struct parse_state* ps, Ake_ast* parent)
+void Ake_parse_for_range(struct parse_state* ps, Ake_ast* parent)
 {
 	struct token* equal = NULL;
 	if (!match(ps, token_equal, "expected equal", &equal, parent)) {
@@ -424,7 +424,7 @@ void parse_for_range(struct parse_state* ps, Ake_ast* parent)
 }
 
 /* for_iteration -> for id in expr stmts end */
-void parse_for_iteration(struct parse_state* ps, Ake_ast* parent)
+void Ake_parse_for_iteration(struct parse_state* ps, Ake_ast* parent)
 {
 	struct token* in = NULL;
 	if (!match(ps, token_in, "expecting in", &in, parent)) {
@@ -484,7 +484,7 @@ void parse_for_iteration(struct parse_state* ps, Ake_ast* parent)
 
 /* parse_module -> module id stmts end */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_module(struct parse_state* ps)
+Ake_ast* Ake_parse_module(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -508,7 +508,7 @@ Ake_ast* parse_module(struct parse_state* ps)
     }
 
 	Ake_ast* a = NULL;
-    a = parse_stmts(ps, true);
+    a = Ake_parse_stmts(ps, true);
 	if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -573,7 +573,7 @@ Ake_ast* parse_module(struct parse_state* ps)
 /* parse_struct -> struct id struct_stmts end */
 /* struct_stmts -> declaration struct_stmts | e */
 /* struct_stmts' -> separator declaration | e */
-Ake_ast* parse_struct(struct parse_state* ps)
+Ake_ast* Ake_parse_struct(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -666,7 +666,7 @@ Ake_ast* parse_struct(struct parse_state* ps)
 }
 
 /* parse_return -> return expr | return */
-Ake_ast* parse_return(struct parse_state* ps)
+Ake_ast* Ake_parse_return(struct parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -719,7 +719,7 @@ Ake_ast* parse_return(struct parse_state* ps)
 }
 
 /* parse_let = let let_lseq :: type | let let_lseq :: type = let_rseq */
-Ake_ast* parse_let(struct parse_state* ps)
+Ake_ast* Ake_parse_let(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -737,7 +737,7 @@ Ake_ast* parse_let(struct parse_state* ps)
     consume_newline(ps, n);
 
     Ake_ast* a = NULL;
-    a = parse_let_lseq(ps);
+    a = Ake_parse_let_lseq(ps);
     if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -791,7 +791,7 @@ Ake_ast* parse_let(struct parse_state* ps)
         consume_newline(ps, n);
 
         Ake_ast* b = NULL;
-        b = parse_let_rseq(ps);
+        b = Ake_parse_let_rseq(ps);
         if (b && b->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
@@ -854,7 +854,7 @@ Ake_ast* parse_let(struct parse_state* ps)
 
 /* let_lseq -> id let_lseq' */
 /* let_lseq' -> , id let_lseq' */
-Ake_ast* parse_let_lseq(struct parse_state* ps)
+Ake_ast* Ake_parse_let_lseq(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -930,7 +930,7 @@ Ake_ast* parse_let_lseq(struct parse_state* ps)
 
 /* let_rseq -> simple_expr let_rseq' */
 /* let_rseq' -> , simple_expr let_rseq' */
-Ake_ast* parse_let_rseq(struct parse_state* ps)
+Ake_ast* Ake_parse_let_rseq(struct parse_state* ps)
 {
     Ake_ast* a = NULL;
     a = Ake_parse_simple_expr(ps);
@@ -980,7 +980,7 @@ Ake_ast* parse_let_rseq(struct parse_state* ps)
     return n;
 }
 
-Ake_ast* parse_impl(struct parse_state* ps)
+Ake_ast* Ake_parse_impl(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);

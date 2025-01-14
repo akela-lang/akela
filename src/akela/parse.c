@@ -13,7 +13,7 @@ Ake_ast* Ast_parse(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
 
-    n = parse_stmts(ps, true);
+    n = Ake_parse_stmts(ps, true);
 
     struct location next_loc = get_location(ps);
     struct token* t0 = get_lookahead(ps);
