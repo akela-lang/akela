@@ -15,7 +15,7 @@ ZINC_API enum result get_user_app_directory(struct Zinc_string* lower_name, stru
 ZINC_API enum result make_directory(struct Zinc_string* dir);
 ZINC_API enum result delete_directory(struct Zinc_string* dir);
 ZINC_API bool file_exists(struct Zinc_string* filename);
-ZINC_API enum result get_dir_files(struct Zinc_string* dir, struct buffer_list* bl);
+ZINC_API enum result get_dir_files(struct Zinc_string* dir, struct Zinc_string_list* bl);
 ZINC_API enum result get_exe_path(char** path);
 ZINC_API void split_path(struct Zinc_string* path, struct Zinc_string* dir, struct Zinc_string* filename);
 ZINC_API int fopen_s(FILE **f, const char *name, const char *mode);

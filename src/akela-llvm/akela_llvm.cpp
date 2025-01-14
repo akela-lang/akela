@@ -8,7 +8,7 @@ Ake_code_gen_vtable Code_gen_llvm_vtable = {
         .jit_offset = offsetof(Code_gen_llvm, jit),
 };
 
-void Code_gen_llvm_init(Code_gen_llvm* cg, struct error_list* el, struct buffer_list* extern_list)
+void Code_gen_llvm_init(Code_gen_llvm* cg, struct error_list* el, struct Zinc_string_list* extern_list)
 {
     cg->el = el;
     cg->extern_list = extern_list;
@@ -16,7 +16,7 @@ void Code_gen_llvm_init(Code_gen_llvm* cg, struct error_list* el, struct buffer_
     cg->debug = false;
 }
 
-void Code_gen_llvm_create(Code_gen_llvm** cg, struct error_list* el, struct buffer_list* extern_list)
+void Code_gen_llvm_create(Code_gen_llvm** cg, struct error_list* el, struct Zinc_string_list* extern_list)
 {
     *cg = new Code_gen_llvm();
     Code_gen_llvm_init(*cg, el, extern_list);

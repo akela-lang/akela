@@ -52,7 +52,7 @@ typedef struct Cob_stack_list {
 
 typedef struct Cob_result {
     bool matched;
-    struct buffer_list groups;
+    struct Zinc_string_list groups;
 } Cob_result;
 
 void Cob_task_init(Cob_task* task, Cob_task* parent);

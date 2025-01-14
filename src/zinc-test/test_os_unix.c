@@ -180,8 +180,8 @@ void test_os_unix_get_dir_files()
     Zinc_string_init(&dir);
     Zinc_string_add_str(&dir, "/tmp/one");
 
-    struct buffer_list bl;
-    buffer_list_init(&bl);
+    struct Zinc_string_list bl;
+    Zinc_string_list_init(&bl);
 
     enum result r = get_dir_files(&dir, &bl);
     expect_ok(r, "get_dir_files");
@@ -190,7 +190,7 @@ void test_os_unix_get_dir_files()
     bool seen_file2 = false;
     bool seen_file3 = false;
     bool seen_file4 = false;
-    struct buffer_node* bn = bl.head;
+    struct Zinc_buffer_node* bn = bl.head;
     while (bn) {
         if (Zinc_string_compare_str(&bn->value, "/tmp/one/file1"))
             seen_file1 = true;
@@ -210,7 +210,7 @@ void test_os_unix_get_dir_files()
 
     system("rm -rf /tmp/one");
     Zinc_string_destroy(&dir);
-    buffer_list_destroy(&bl);
+    Zinc_string_list_destroy(&bl);
 }
 
 void test_os_unix()

@@ -13,14 +13,14 @@ typedef struct Ake_parse_state {
 	struct Ake_token* lookahead;
 	struct error_list* el;
 	struct Ake_symbol_table* st;
-    struct buffer_list* extern_list;
+    struct Zinc_string_list* extern_list;
 } Ake_parse_state;
 
 AKELA_API void Ake_parse_state_init(
         struct Ake_parse_state* ps,
         struct Ake_lex_state* ls,
         struct error_list* el,
-        struct buffer_list* extern_list,
+        struct Zinc_string_list* extern_list,
         struct Ake_symbol_table* st);
 AKELA_API void Ake_parse_state_destroy(struct Ake_parse_state* ps);
 AKELA_API bool Ake_match(

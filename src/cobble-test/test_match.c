@@ -1024,7 +1024,7 @@ void test_match_character_type_newline_opposite_not_match()
 void test_match_scan_all()
 {
     test_name(__func__);
-    struct buffer_list* groups = NULL;
+    struct Zinc_string_list* groups = NULL;
     Cob_result mr = match_run("a", "za");
     expect_true(mr.matched, "m");
     expect_buffer_list_count(&mr.groups, 1, "count groups");

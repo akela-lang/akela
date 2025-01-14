@@ -11,7 +11,7 @@ void Ake_parse_state_init(
         struct Ake_parse_state* ps,
         struct Ake_lex_state* ls,
         struct error_list* el,
-        struct buffer_list* extern_list,
+        struct Zinc_string_list* extern_list,
         struct Ake_symbol_table* st)
 {
 	ps->ls = ls;

@@ -12,7 +12,7 @@ typedef struct Ake_comp_unit {
 	bool valid;
 	Ake_ast* root;
 	struct error_list el;
-    struct buffer_list extern_list;
+    struct Zinc_string_list extern_list;
 	struct Ake_symbol_table st;
     void* input_obj;
 	struct Zinc_string path;

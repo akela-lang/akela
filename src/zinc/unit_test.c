@@ -506,18 +506,18 @@ void expect_utf8_char_str(char a[4], int num, char* b, char* message)
 	fprintf(stderr, "utf8 chars not equal: %s\n", message);
 }
 
-void expect_buffer_list_count(struct buffer_list* bl, size_t count, char* message)
+void expect_buffer_list_count(struct Zinc_string_list* bl, size_t count, char* message)
 {
 	test_called();
-	size_t actual_count = buffer_list_count(bl);
+	size_t actual_count = Zinc_string_list_count(bl);
 	if (actual_count == count) return;
 	error_triggered();
 	fprintf(stderr, "buffer list count not equal: %zu != %zu: %s\n", actual_count, count, message);
 }
 
-void expect_buffer_list_item(struct buffer_list* bl, size_t index, char* text, char* message)
+void expect_buffer_list_item(struct Zinc_string_list* bl, size_t index, char* text, char* message)
 {
-	struct Zinc_string* bf = buffer_list_get(bl, index);
+	struct Zinc_string* bf = Zinc_string_list_get(bl, index);
 	if (!bf) {
 		error_triggered();
 		fprintf(stderr, "buffer list index out of bounds: %zu: %s\n", index, message);

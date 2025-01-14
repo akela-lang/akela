@@ -199,7 +199,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
 
     if (n->type != Ake_ast_type_error) {
         Ake_ast* id = Ast_node_get(proto, 0);
-        buffer_list_add_bf(ps->extern_list, &id->value);
+        Zinc_string_list_add_bf(ps->extern_list, &id->value);
     }
 
     return n;

@@ -40,7 +40,7 @@ void test_parse_line_zero()
         4,
         "/home/username/workspace/trade/akela/coverage-test/test_data.c", "item groups");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -84,7 +84,7 @@ void test_parse_not_covered_line()
         "#include \"zinc/unit_test.h\"",
         "item groups");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -128,7 +128,7 @@ void test_parse_covered_line()
         "void test_data_file_list_add()",
         "item groups");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -172,7 +172,7 @@ void test_parse_covered_line2()
         "    expect_true(is_word(\"x  \", NUM_BYTES(\"x\"[0])), \"ascii letter\");",
         "item groups");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -192,7 +192,7 @@ void test_parse_gcov_ext1()
     expect_buffer_list_count(&mr.groups, 1, "count groups");
     expect_buffer_list_item(&mr.groups, 0, ".gcov", "item groups");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -212,7 +212,7 @@ void test_parse_gcov_ext2()
     expect_buffer_list_count(&mr.groups, 1, "count groups");
     expect_buffer_list_item(&mr.groups, 0, ".gcov", "item groups");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -230,7 +230,7 @@ void test_parse_gcov_ext3_not_match()
 
     expect_false(mr.matched, "m");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -250,7 +250,7 @@ void test_parse_test_dir1()
     expect_buffer_list_count(&mr.groups, 1, "count groups");
     expect_buffer_list_item(&mr.groups, 0, "-test", "item groups");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -270,7 +270,7 @@ void test_parse_test_dir2()
     expect_buffer_list_count(&mr.groups, 1, "count groups");
     expect_buffer_list_item(&mr.groups, 0, "-test", "item groups");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -288,7 +288,7 @@ void test_parse_test_dir3_not_match()
 
     expect_false(mr.matched, "m");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 
@@ -306,7 +306,7 @@ void test_parse_test_dir4_not_match()
 
     expect_false(mr.matched, "m");
 
-    buffer_list_destroy(&mr.groups);
+    Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
 }
 

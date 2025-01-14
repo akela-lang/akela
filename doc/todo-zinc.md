@@ -1,7 +1,8 @@
 # Zinc Todo
 * namespace zinc
   * api [x]
-  * buffer []
+  * buffer [x]
+  * buffer_list [x]
   * datetime []
   * error []
   * error_unit_test []

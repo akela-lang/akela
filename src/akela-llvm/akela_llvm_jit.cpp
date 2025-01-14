@@ -18,13 +18,13 @@ namespace Akela_llvm {
         Jit_data jd;
         Jit_data_init(&jd, cg->el);
 
-        if (!buffer_list_contains_str(cg->extern_list, "abort")) {
+        if (!Zinc_string_list_contains_str(cg->extern_list, "abort")) {
             declare_abort(&jd);
         }
-        if (!buffer_list_contains_str(cg->extern_list, "printf")) {
+        if (!Zinc_string_list_contains_str(cg->extern_list, "printf")) {
             declare_printf(&jd);
         }
-        if (!buffer_list_contains_str(cg->extern_list, "exit")) {
+        if (!Zinc_string_list_contains_str(cg->extern_list, "exit")) {
             declare_exit(&jd);
         }
 

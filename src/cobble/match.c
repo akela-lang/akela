@@ -8,13 +8,13 @@
 #include "match_tools.h"
 #include "json/lex_tools.h"
 
-bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct buffer_list* groups);
+bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct Zinc_string_list* groups);
 Cob_stack_list* Cob_init_stacks(Cob_re* re, String_slice slice);
 void Check_group_tasks(Cob_ast* root, Cob_stack_node* sn, Cob_task* task);
 void Cob_remove_finished(Cob_stack* mts, Cob_task* task);
 void Cob_cleanup_finished(Cob_task* task);
 void Cob_check_if_done(Cob_stack* mts, Cob_task* task, bool* done, bool* matched);
-void Cob_get_groups(Cob_stack_node* sn, struct buffer_list* groups);
+void Cob_get_groups(Cob_stack_node* sn, struct Zinc_string_list* groups);
 Cob_task* Cob_add_task(
     Cob_ast* n,
     String_slice slice,
@@ -71,7 +71,7 @@ Cob_result Cob_match(Cob_re* re, String_slice slice)
     return mr;
 }
 
-bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct buffer_list* groups)
+bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct Zinc_string_list* groups)
 {
     bool matched = false;
 
@@ -162,13 +162,13 @@ void Cob_check_if_done(Cob_stack* mts, Cob_task* task, bool* done, bool* matched
     }
 }
 
-void Cob_get_groups(Cob_stack_node* sn, struct buffer_list* groups)
+void Cob_get_groups(Cob_stack_node* sn, struct Zinc_string_list* groups)
 {
     size_t index = 0;
     while (true) {
         struct Zinc_string* bf = Hash_map_size_t_get(&sn->groups, index);
         if (!bf) break;
-        buffer_list_add_bf(groups, bf);
+        Zinc_string_list_add_bf(groups, bf);
         index++;
     }
 }

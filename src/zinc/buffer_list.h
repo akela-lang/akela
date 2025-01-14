@@ -5,34 +5,34 @@
 #include "buffer.h"
 #include <stdbool.h>
 
-struct buffer_node {
-    struct Zinc_string value;
-    struct buffer_node* next;
-    struct buffer_node* prev;
-};
+typedef struct Zinc_buffer_node {
+    Zinc_string value;
+    struct Zinc_buffer_node* next;
+    struct Zinc_buffer_node* prev;
+} Zinc_buffer_node;
 
-struct buffer_list {
-    struct buffer_node* head;
-    struct buffer_node* tail;
-};
+typedef struct Zinc_string_list {
+    Zinc_buffer_node* head;
+    Zinc_buffer_node* tail;
+} Zinc_string_list;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-ZINC_API void buffer_node_init(struct buffer_node* bn);
-ZINC_API void buffer_node_destroy(struct buffer_node* bn);
-ZINC_API void buffer_list_init(struct buffer_list *bl);
-ZINC_API void buffer_list_create(struct buffer_list** bl);
-ZINC_API void buffer_list_destroy(struct buffer_list* bl);
-ZINC_API void buffer_list_add(struct buffer_list* bl, struct buffer_node* bn);
-ZINC_API void buffer_list_add_str(struct buffer_list* bl, const char* str);
-ZINC_API void buffer_list_add_bf(struct buffer_list* bl, struct Zinc_string* bf);
-ZINC_API size_t buffer_list_count(struct buffer_list* bl);
-ZINC_API void buffer_split(struct Zinc_string* bf, struct buffer_list* bl);
-ZINC_API struct Zinc_string* buffer_list_get(struct buffer_list* bl, size_t num);
-ZINC_API bool buffer_list_contains(struct buffer_list* bl, struct Zinc_string* value);
-ZINC_API bool buffer_list_contains_str(struct buffer_list* bl, const char* str);
+ZINC_API void Zinc_string_node_init(Zinc_buffer_node* bn);
+ZINC_API void Zinc_string_node_destroy(Zinc_buffer_node* bn);
+ZINC_API void Zinc_string_list_init(Zinc_string_list *bl);
+ZINC_API void Zinc_string_list_create(Zinc_string_list** bl);
+ZINC_API void Zinc_string_list_destroy(Zinc_string_list* bl);
+ZINC_API void Zinc_string_list_add(Zinc_string_list* bl, Zinc_buffer_node* bn);
+ZINC_API void Zinc_string_list_add_str(Zinc_string_list* bl, const char* str);
+ZINC_API void Zinc_string_list_add_bf(Zinc_string_list* bl, Zinc_string* bf);
+ZINC_API size_t Zinc_string_list_count(Zinc_string_list* bl);
+ZINC_API void Zinc_string_split(Zinc_string* bf, Zinc_string_list* bl);
+ZINC_API Zinc_string* Zinc_string_list_get(Zinc_string_list* bl, size_t num);
+ZINC_API bool Zinc_string_list_contains(Zinc_string_list* bl, Zinc_string* value);
+ZINC_API bool Zinc_string_list_contains_str(Zinc_string_list* bl, const char* str);
 
 #ifdef __cplusplus
 }

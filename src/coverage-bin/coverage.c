@@ -25,7 +25,7 @@ void Cover_append_path(struct Zinc_string* bf, char* path);
 void Cover_get_libraries(char* dir_name, Cover_app* test, Cover_app* app);
 void Cover_get_files(Cover_library* lib);
 void Cover_read_file(Cover_file* file);
-void Cover_print_match(struct buffer_list* groups);
+void Cover_print_match(struct Zinc_string_list* groups);
 void Cover_app_print(Cover_app* app);
 void Cover_agg_files(Cover_library* lib);
 void Cover_agg_libraries(Cover_app* app);
@@ -233,10 +233,10 @@ void Cover_read_file(Cover_file* file)
             slice.size = bf.size;
             Cob_result mr = Cob_match(&re, slice);
             if (mr.matched) {
-                struct Zinc_string* count = buffer_list_get(&mr.groups, 1);
-                struct Zinc_string* line_number = buffer_list_get(&mr.groups, 2);
-                struct Zinc_string* source = buffer_list_get(&mr.groups, 3);
-                struct Zinc_string* source_path = buffer_list_get(&mr.groups, 4);
+                struct Zinc_string* count = Zinc_string_list_get(&mr.groups, 1);
+                struct Zinc_string* line_number = Zinc_string_list_get(&mr.groups, 2);
+                struct Zinc_string* source = Zinc_string_list_get(&mr.groups, 3);
+                struct Zinc_string* source_path = Zinc_string_list_get(&mr.groups, 4);
 
                 assert(line_number && count && source && source_path);
 
@@ -297,11 +297,11 @@ void Cover_read_file(Cover_file* file)
     }
 }
 
-void Cover_print_match(struct buffer_list* groups)
+void Cover_print_match(struct Zinc_string_list* groups)
 {
     printf("matched:\n");
 
-    struct Zinc_string* string = buffer_list_get(groups, 0);
+    struct Zinc_string* string = Zinc_string_list_get(groups, 0);
     if (string) {
         Zinc_string_finish(string);
         printf("\tstring: %s\n", string->buf);
@@ -309,7 +309,7 @@ void Cover_print_match(struct buffer_list* groups)
         printf("\tcould not get string\n");
     }
 
-    struct Zinc_string* count = buffer_list_get(groups, 1);
+    struct Zinc_string* count = Zinc_string_list_get(groups, 1);
     if (count) {
         Zinc_string_finish(count);
         printf("\tcount: %s\n", count->buf);
@@ -317,7 +317,7 @@ void Cover_print_match(struct buffer_list* groups)
         printf("\tcould not get count\n");
     }
 
-    struct Zinc_string* line_number = buffer_list_get(groups, 2);
+    struct Zinc_string* line_number = Zinc_string_list_get(groups, 2);
     if (line_number) {
         Zinc_string_finish(line_number);
         printf("\tline number: %s\n", line_number->buf);
@@ -325,7 +325,7 @@ void Cover_print_match(struct buffer_list* groups)
         printf("\tcould not get line number\n");
     }
 
-    struct Zinc_string* source = buffer_list_get(groups, 3);
+    struct Zinc_string* source = Zinc_string_list_get(groups, 3);
     if (source) {
         Zinc_string_finish(source);
         printf("\tsource: %s\n", source->buf);
@@ -333,7 +333,7 @@ void Cover_print_match(struct buffer_list* groups)
         printf("\tcould not get source\n");
     }
 
-    struct Zinc_string* filename = buffer_list_get(groups, 4);
+    struct Zinc_string* filename = Zinc_string_list_get(groups, 4);
     if (filename) {
         Zinc_string_finish(filename);
         printf("\tfilename: %s\n", filename->buf);

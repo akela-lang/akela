@@ -214,7 +214,7 @@ bool file_exists(struct Zinc_string* filename)
     }
 }
 
-enum result get_dir_files(struct Zinc_string* dir, struct buffer_list* bl)   /* NOLINT(misc-no-recursion) */
+enum result get_dir_files(struct Zinc_string* dir, struct Zinc_string_list* bl)   /* NOLINT(misc-no-recursion) */
 {
     enum result r = result_ok;
 
@@ -258,7 +258,7 @@ enum result get_dir_files(struct Zinc_string* dir, struct buffer_list* bl)   /* 
                 return r;
             }
         } else {
-            buffer_list_add_str(bl, path.buf);
+            Zinc_string_list_add_str(bl, path.buf);
         }
 
         Zinc_string_destroy(&name);
