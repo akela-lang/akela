@@ -12,8 +12,8 @@ void test_comp_table_compile()
 {
 	test_name(__func__);
 
-	struct comp_table ct;
-	comp_table_init(&ct);
+	struct Ake_comp_table ct;
+	Ake_comp_table_init(&ct);
 
     Vector* text = NULL;
     VectorCreate(&text, sizeof(char));
@@ -27,7 +27,7 @@ void test_comp_table_compile()
 	comp_unit_init(cu);
 	array2buffer("|main|", &cu->path);
 
-	comp_table_put(&ct, &cu->path, cu);
+	Ake_comp_table_put(&ct, &cu->path, cu);
 
 	bool valid = comp_unit_compile(cu, input, input->input_vtable);
 	expect_true(valid, "valid");
@@ -42,7 +42,7 @@ void test_comp_table_compile()
 	expect_str(&number->value, "10", "10 number");
 
     free(input);
-	comp_table_destroy(&ct);
+	Ake_comp_table_destroy(&ct);
     VectorDestroy(text);
     free(text);
 }
@@ -51,8 +51,8 @@ void test_comp_table_include()
 {
 	test_name(__func__);
 
-	struct comp_table ct;
-	comp_table_init(&ct);
+	struct Ake_comp_table ct;
+	Ake_comp_table_init(&ct);
 
 	/* base */
     Vector* base_text = NULL;
@@ -67,7 +67,7 @@ void test_comp_table_include()
 	malloc_safe((void**)&cu_base, sizeof(struct comp_unit));
 	comp_unit_init(cu_base);
 	array2buffer("|base|", &cu_base->path);
-	comp_table_put(&ct, &cu_base->path, cu_base);
+	Ake_comp_table_put(&ct, &cu_base->path, cu_base);
 
 	bool valid_base = comp_unit_compile(cu_base, base_input, base_input->input_vtable);
 
@@ -88,7 +88,7 @@ void test_comp_table_include()
 	malloc_safe((void**)&cu_main, sizeof(struct comp_unit));
 	comp_unit_init(cu_main);
 	array2buffer("|main|", &cu_main->path);
-	comp_table_put(&ct, &cu_main->path, cu_main);
+	Ake_comp_table_put(&ct, &cu_main->path, cu_main);
 
 	transfer_global_symbols(&cu_base->st, &cu_main->st);
 
@@ -126,15 +126,15 @@ void test_comp_table_include()
     free(base_text);
     VectorDestroy(main_vector);
     free(main_vector);
-	comp_table_destroy(&ct);
+	Ake_comp_table_destroy(&ct);
 }
 
 void test_comp_table_include_base()
 {
 	test_name(__func__);
 
-	struct comp_table ct;
-	comp_table_init(&ct);
+	struct Ake_comp_table ct;
+	Ake_comp_table_init(&ct);
 
 	/* main */
     char main_string[] = "sqrt(25)";
@@ -148,10 +148,10 @@ void test_comp_table_include_base()
 	malloc_safe((void**)&cu_main, sizeof(struct comp_unit));
 	comp_unit_init(cu_main);
 	array2buffer("|main|", &cu_main->path);
-	comp_table_put(&ct, &cu_main->path, cu_main);
+	Ake_comp_table_put(&ct, &cu_main->path, cu_main);
 
 	struct comp_unit* cu_base = NULL;
-	bool valid = include_base(&ct, cu_main, &cu_base);
+	bool valid = Ake_include_base(&ct, cu_main, &cu_base);
 	assert_true(valid, "include_base valid");
 	expect_no_errors(&cu_base->el);
 	expect_true(cu_base->valid, "valid_base");
@@ -187,7 +187,7 @@ void test_comp_table_include_base()
 	VectorDestroy(main_vector);
     free(main_vector);
     free(input);
-	comp_table_destroy(&ct);
+	Ake_comp_table_destroy(&ct);
 }
 
 void test_comp_table()

@@ -5,34 +5,34 @@
 #include <stdio.h>
 #include "zinc/input_unicode_file.h"
 
-void comp_table_init(struct comp_table* ct)
+void Ake_comp_table_init(struct Ake_comp_table* ct)
 {
 	hash_table_init(&ct->ht, COMP_TABLE_HASH_TABLE_SIZE);
 }
 
-void comp_table_put(struct comp_table* ct, struct buffer* path, struct comp_unit* cu)
+void Ake_comp_table_put(struct Ake_comp_table* ct, struct buffer* path, struct comp_unit* cu)
 {
 	hash_table_add(&ct->ht, path, (void*)cu);
 }
 
-struct comp_unit* comp_table_get(struct comp_table* ct, struct buffer* path)
+struct comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct buffer* path)
 {
 	return (struct comp_unit*)hash_table_get(&ct->ht, path);
 }
 
-void comp_table_destroy_comp_unit(struct comp_unit* cu)
+void Ake_comp_table_destroy_comp_unit(struct comp_unit* cu)
 {
 	comp_unit_destroy(cu);
 	free(cu);
 }
 
-void comp_table_destroy(struct comp_table* ct)
+void Ake_comp_table_destroy(struct Ake_comp_table* ct)
 {
-	hash_table_map(&ct->ht, (void (*)(void*))comp_table_destroy_comp_unit);
+	hash_table_map(&ct->ht, (void (*)(void*))Ake_comp_table_destroy_comp_unit);
 	hash_table_destroy(&ct->ht);
 }
 
-bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit** cu_base)
+bool Ake_include_base(struct Ake_comp_table* ct, struct comp_unit* cu, struct comp_unit** cu_base)
 {
 	bool valid = true;
     enum result r;
@@ -78,7 +78,7 @@ bool include_base(struct comp_table* ct, struct comp_unit* cu, struct comp_unit*
 
 	malloc_safe((void**)cu_base, sizeof(struct comp_unit));
 	comp_unit_init(*cu_base);
-	comp_table_put(ct, &math_path, *cu_base);
+	Ake_comp_table_put(ct, &math_path, *cu_base);
 
 	comp_unit_compile(*cu_base, input, input->input_vtable);
 

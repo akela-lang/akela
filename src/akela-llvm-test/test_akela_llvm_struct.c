@@ -6,9 +6,9 @@
 void test_akela_llvm_struct_assign_elements()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -19,9 +19,9 @@ void test_akela_llvm_struct_assign_elements()
              "a.x\n",
              &result);
     expect_str(&result.value, "1.000000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -32,15 +32,15 @@ void test_akela_llvm_struct_assign_elements()
              "a.y\n",
              &result);
     expect_str(&result.value, "2.000000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_literal()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -52,9 +52,9 @@ void test_akela_llvm_struct_literal()
              "a.x\n",
              &result);
     expect_str(&result.value, "1.000000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -66,101 +66,101 @@ void test_akela_llvm_struct_literal()
              "a.y\n",
              &result);
     expect_str(&result.value, "2.000000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array2()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [6 const]u8 = \"hello\"\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "104", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array3()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [6 const]u8 = \"John\"\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array4()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [100 const]u8 = \"John\"\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array5()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [100 const]u8 = \"John\"\n"
              "a[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array6()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [100 const]u8 = \"John\"\n"
              "let b: [100 const]u8 = a\n"
              "b[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array7()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [4 const]u8 = [1,2,3,4]\n"
              "let b: [4 const]u8 = a\n"
              "b[0]\n",
              &result);
     expect_str(&result.value, "1", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array8()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup(""
              "struct Foo\n"
              "  x: u8\n"
@@ -171,15 +171,15 @@ void test_akela_llvm_struct_array8()
              &result);
     expect_str(&result.value, "5", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array9()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Foo\n"
              "  x: [4]u8\n"
              "end\n"
@@ -189,15 +189,15 @@ void test_akela_llvm_struct_array9()
              "foo.x[0]\n",
              &result);
     expect_str(&result.value, "1", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array10()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [4]i32 = [1,2,3,4]\n"
             "struct Foo\n"
              "  x: [4]u8\n"
@@ -208,15 +208,15 @@ void test_akela_llvm_struct_array10()
              "foo.x[0]\n",
              &result);
     expect_str(&result.value, "1", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array11()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Foo\n"
             "  x: [4]i32\n"
             "end\n"
@@ -228,9 +228,9 @@ void test_akela_llvm_struct_array11()
             "foo.x[0]\n",
              &result);
     expect_str(&result.value, "1", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [4]u8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]u8\n"
@@ -240,9 +240,9 @@ void test_akela_llvm_struct_array11()
              "foo.x[1]\n",
              &result);
     expect_str(&result.value, "2", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [4]u8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]u8\n"
@@ -252,9 +252,9 @@ void test_akela_llvm_struct_array11()
              "foo.x[2]\n",
              &result);
     expect_str(&result.value, "3", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: [4]u8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]u8\n"
@@ -264,15 +264,15 @@ void test_akela_llvm_struct_array11()
              "foo.x[3]\n",
              &result);
     expect_str(&result.value, "4", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array12()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Person\n"
              "  first_name: [100 const]u8\n"
              "  last_name: [100 const]u8\n"
@@ -286,9 +286,9 @@ void test_akela_llvm_struct_array12()
              "p.first_name[0]\n",
              &result);
     expect_str(&result.value, "74", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Person\n"
              "  first_name: [100 const]u8\n"
              "  last_name: [100 const]u8\n"
@@ -302,9 +302,9 @@ void test_akela_llvm_struct_array12()
              "p.last_name[0]\n",
              &result);
     expect_str(&result.value, "83", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Person\n"
              "  first_name: [100 const]u8\n"
              "  last_name: [100 const]u8\n"
@@ -318,15 +318,15 @@ void test_akela_llvm_struct_array12()
              "p.age\n",
              &result);
     expect_str(&result.value, "35", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_struct()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -348,9 +348,9 @@ void test_akela_llvm_struct_struct()
              "line.p0.x\n",
              &result);
     expect_str(&result.value, "1.500000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -372,9 +372,9 @@ void test_akela_llvm_struct_struct()
              "line.p0.y\n",
              &result);
     expect_str(&result.value, "2.500000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -396,9 +396,9 @@ void test_akela_llvm_struct_struct()
              "line.p1.x\n",
              &result);
     expect_str(&result.value, "3.000000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -420,15 +420,15 @@ void test_akela_llvm_struct_struct()
              "line.p1.y\n",
              &result);
     expect_str(&result.value, "4.000000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct2()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -441,15 +441,15 @@ void test_akela_llvm_struct2()
              "p.x\n",
              &result);
     expect_str(&result.value, "1.600000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_struct2()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Point\n"
              "  x: f64\n"
              "  y: f64\n"
@@ -472,14 +472,14 @@ void test_akela_llvm_struct_struct2()
              "line.p0.x\n",
              &result);
     expect_str(&result.value, "1.600000", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_function() {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Foo\n"
              "  compute: fn(i64)->i64\n"
              "end\n"
@@ -491,9 +491,9 @@ void test_akela_llvm_struct_function() {
              "foo.compute(77)\n",
              &result);
     expect_str(&result.value, "78", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("struct Foo\n"
              "  compute: fn(i64)->i64\n"
              "end\n"
@@ -505,7 +505,7 @@ void test_akela_llvm_struct_function() {
              "foo.compute(77)\n",
              &result);
     expect_str(&result.value, "79", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct()

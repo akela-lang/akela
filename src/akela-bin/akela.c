@@ -53,9 +53,9 @@ int main(int argc, char** argv)
 
     Code_gen_llvm* cg = NULL;
     Code_gen_llvm_create(&cg, &cu.el, &cu.extern_list);
-    Code_gen_result result;
-    Code_gen_result_init(&result);
-    Code_gen_jit(cg, &Code_gen_llvm_vtable, cu.root, &result);
+    Ake_code_gen_result result;
+    Ake_code_gen_result_init(&result);
+    Ake_code_gen_jit(cg, &Code_gen_llvm_vtable, cu.root, &result);
 
     if (cu.el.head) {
         struct error* e = cu.el.head;
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     if (result.value.size > 0) {
         printf("%s\n", result.value.buf);
     }
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
     comp_unit_destroy(&cu);
 

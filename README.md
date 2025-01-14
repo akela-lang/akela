@@ -17,8 +17,8 @@ software engineers more than dynamically typed or gradually typed
 * An AOT compiler for standalone execution
 * A JIT compiler for embeddable or interactive execution
 * Hot reloading for a quick development / test cycle
-* Meta programming: generics and macros
-* Object-Oriented programming: methods and traits
+* Meta programming: compile time expressions
+* Object-Oriented programming: methods and static dispatch
 * No nulls:  Rust-like enums and matching
 * Memory management with allocators including arena allocators, garbage collection, and user-defined allocators
 * Series / Vector data types for financial data

@@ -6,8 +6,8 @@
 void test_code_gen_last()
 {
     test_name(__func__);
-    Code_gen_result result;
-    Code_gen_result_init(&result);
+    Ake_code_gen_result result;
+    Ake_code_gen_result_init(&result);
 
     cg_setup("let a: i64 = 1\n"
              "let b: i64 = 2\n"
@@ -15,14 +15,14 @@ void test_code_gen_last()
              &result);
     expect_str(&result.value, "3", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if()
 {
     test_name(__func__);
-    Code_gen_result result;
-    Code_gen_result_init(&result);
+    Ake_code_gen_result result;
+    Ake_code_gen_result_init(&result);
 
     cg_setup("if true\n"
              "  1\n"
@@ -30,15 +30,15 @@ void test_code_gen_if()
              &result);
     expect_str(&result.value, "", "value");
 
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_else()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("if true\n"
              "  1\n"
              "else\n"
@@ -46,9 +46,9 @@ void test_code_gen_if_else()
              "end\n",
              &result);
     expect_str(&result.value, "1", "1 value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("if false\n"
              "  1\n"
              "else\n"
@@ -56,15 +56,15 @@ void test_code_gen_if_else()
              "end\n",
              &result);
     expect_str(&result.value, "2", "2 value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_elseif_else()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("if true\n"
              "  1\n"
              "elseif true\n"
@@ -74,9 +74,9 @@ void test_code_gen_if_elseif_else()
              "end\n",
              &result);
     expect_str(&result.value, "1", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("if false\n"
              "  1\n"
              "elseif true\n"
@@ -86,9 +86,9 @@ void test_code_gen_if_elseif_else()
              "end\n",
              &result);
     expect_str(&result.value, "2", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("if false\n"
              "  1\n"
              "elseif false\n"
@@ -98,41 +98,41 @@ void test_code_gen_if_elseif_else()
              "end\n",
              &result);
     expect_str(&result.value, "3", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_expression()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: i64 = if true 1 else 2 end\n"
              "a\n",
              &result);
     expect_str(&result.value, "1", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("let a: i64 = if false 1 else 2 end\n"
              "a\n",
              &result);
     expect_str(&result.value, "2", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void akela_llvm_stmts_printf()
 {
     test_name(__func__);
-    Code_gen_result result;
+    Ake_code_gen_result result;
 
-    Code_gen_result_init(&result);
+    Ake_code_gen_result_init(&result);
     cg_setup("extern printf([100 const]u8, ...)\n"
              "let s: [100 const]u8 = \"test printf\n\"\n"
              "printf(s)\n",
              &result);
     expect_str(&result.value, "", "value");
-    Code_gen_result_destroy(&result);
+    Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_stmts()

@@ -2,6 +2,24 @@
 * namespace symbols
   * api [x]
   * ast [x]
+  * code_gen [x]
+  * comp_table [x]
+  * comp_unit []
+  * environment []
+  * lex []
+  * lex_tools []
+  * parse []
+  * parse_expr []
+  * parse_factor []
+  * parse_stmts []
+  * parse_tools []
+  * parse_types []
+  * struct_element []
+  * symbol []
+  * symbol_table []
+  * token []
+  * type_def []
+  * type_use []
 * new syntax
 * refactor array type
 * pointer type
