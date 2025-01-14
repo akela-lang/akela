@@ -19,8 +19,8 @@ void test_symbol_table_env()
 
 	struct Ake_symbol* sym;
 	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
-	symbol_init(sym);
-	sym->type = Symbol_type_variable;
+	Ake_symbol_init(sym);
+	sym->type = Ake_symbol_type_variable;
 
 	struct Ake_symbol* x;
 	x = Ake_environment_get(env, &value);

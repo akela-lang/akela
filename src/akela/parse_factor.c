@@ -147,8 +147,8 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
                 } else {
                     struct Ake_symbol* new_sym = NULL;
                     malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
-                    symbol_init(new_sym);
-                    new_sym->type = Symbol_type_variable;
+                    Ake_symbol_init(new_sym);
+                    new_sym->type = Ake_symbol_type_variable;
                     new_sym->tu = Type_use_clone(tu);
                     Ake_environment_put(ps->st->top, &id_node->value, new_sym);
                     n->sym = new_sym;

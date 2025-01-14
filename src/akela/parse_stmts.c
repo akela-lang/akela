@@ -188,8 +188,8 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
             } else {
                 struct Ake_symbol *new_sym = NULL;
                 malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
-                symbol_init(new_sym);
-                new_sym->type = Symbol_type_variable;
+                Ake_symbol_init(new_sym);
+                new_sym->type = Ake_symbol_type_variable;
                 new_sym->tu = Type_use_clone(n->tu);
                 Ake_environment_put(ps->st->top, &id_node->value, new_sym);
                 n->sym = new_sym;
@@ -557,7 +557,7 @@ Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
 
 			struct Ake_symbol* new_sym = NULL;
 			malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
-			symbol_init(new_sym);
+			Ake_symbol_init(new_sym);
 			new_sym->tk_type = token_id;
 			new_sym->tu = tu;
 			Ake_environment_put(ps->st->top, &id->value, new_sym);
@@ -647,8 +647,8 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 
 			struct Ake_symbol* sym = NULL;
 			malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
-			symbol_init(sym);
-			sym->type = Symbol_type_type;
+			Ake_symbol_init(sym);
+			sym->type = Ake_symbol_type_type;
 			sym->td = td;
 			Ake_environment_put(ps->st->top, &id->value, sym);
             n->sym = sym;
@@ -1004,7 +1004,7 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
     Ake_ast* struct_type = NULL;
     if (id) {
         struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id->value);
-        if (sym->type == Symbol_type_type) {
+        if (sym->type == Ake_symbol_type_type) {
             if (sym->td->type == type_struct) {
                 Ake_ast* type_node = NULL;
                 Ake_ast_create(&type_node);

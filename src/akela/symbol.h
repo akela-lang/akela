@@ -4,16 +4,16 @@
 #include "token.h"
 #include "ast.h"
 
-typedef enum Symbol_type {
-    Symbol_type_none,
-    Symbol_type_reserved_word,
-    Symbol_type_type,
-    Symbol_type_variable,
-    Symbol_type_info,
-} Symbol_type;
+typedef enum Ake_symbol_type {
+    Ake_symbol_type_none,
+    Ake_symbol_type_reserved_word,
+    Ake_symbol_type_type,
+    Ake_symbol_type_variable,
+    Ake_symbol_type_info,
+} Ake_symbol_type;
 
-struct Ake_symbol {
-    Symbol_type type;
+typedef struct Ake_symbol {
+    Ake_symbol_type type;
     enum token_enum tk_type;
     struct type_def* td;
     struct Type_use* tu;
@@ -23,10 +23,10 @@ struct Ake_symbol {
     void* value;
     void* reference;
     size_t assign_count;
-};
+} Ake_symbol;
 
-AKELA_API void symbol_init(struct Ake_symbol* sym);
-AKELA_API void symbol_create(struct Ake_symbol** sym);
-AKELA_API struct Ake_symbol* symbol_copy(struct Ake_symbol* sym);
+AKELA_API void Ake_symbol_init(struct Ake_symbol* sym);
+AKELA_API void Ake_symbol_create(struct Ake_symbol** sym);
+AKELA_API struct Ake_symbol* Ake_symbol_copy(struct Ake_symbol* sym);
 
 #endif

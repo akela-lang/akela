@@ -5,7 +5,7 @@
 
 void Cent_symbol_init(Cent_symbol *sym)
 {
-    sym->type = Symbol_type_none;
+    sym->type = Ake_symbol_type_none;
     sym->is_copy = false;
 }
 

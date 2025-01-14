@@ -18,7 +18,7 @@ void Ake_environment_create(struct Ake_environment** env, struct Ake_environment
 
 void Ake_environment_put(struct Ake_environment* env, struct buffer* value, struct Ake_symbol* sym)
 {
-    assert(sym->type != Symbol_type_none);
+    assert(sym->type != Ake_symbol_type_none);
     hash_table_add(&env->ht, value, sym);
 }
 

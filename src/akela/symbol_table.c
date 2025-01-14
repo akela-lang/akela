@@ -33,8 +33,8 @@ void symbol_table_add_reserved_word(struct Ake_environment* env, const char* nam
 
     struct Ake_symbol* sym = NULL;
     malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
-    symbol_init(sym);
-    sym->type = Symbol_type_reserved_word;
+    Ake_symbol_init(sym);
+    sym->type = Ake_symbol_type_reserved_word;
     sym->tk_type = tk_type;
 
     Ake_environment_put(env, &bf, sym);
@@ -51,8 +51,8 @@ void symbol_table_add_type(struct Ake_environment* env, const char* name, struct
 
 	struct Ake_symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
-	symbol_init(sym);
-    sym->type = Symbol_type_type;
+	Ake_symbol_init(sym);
+    sym->type = Ake_symbol_type_type;
 	sym->td = td;
 
 	Ake_environment_put(env, &bf, sym);
@@ -484,7 +484,7 @@ void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest
 		struct hash_entry* p = src->global->ht.buckets[i].head;
 		while (p) {
 			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
-			struct Ake_symbol* dest_sym = symbol_copy(src_sym);
+			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
 			Ake_environment_put(dest->global, &p->value, dest_sym);
 			p = p->next;
 		}
@@ -497,7 +497,7 @@ void transfer_module_symbols(struct Ake_environment* src, struct Ake_environment
 		struct hash_entry* p = src->ht.buckets[i].head;
 		while (p) {
 			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
-			struct Ake_symbol* dest_sym = symbol_copy(src_sym);
+			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
 
 			/* value is module_name.sym_name */
 			struct buffer value;
@@ -516,8 +516,8 @@ void set_current_function(struct Ake_environment* env, Ake_ast* fd)
 {
 	struct Ake_symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
-	symbol_init(sym);
-	sym->type = Symbol_type_info;
+	Ake_symbol_init(sym);
+	sym->type = Ake_symbol_type_info;
 	sym->root_ptr = fd;
 
 	struct buffer bf;

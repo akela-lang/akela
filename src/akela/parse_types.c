@@ -600,8 +600,8 @@ void create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_
         } else {
             struct Ake_symbol* new_sym = NULL;
             malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
-            symbol_init(new_sym);
-            new_sym->type = Symbol_type_variable;
+            Ake_symbol_init(new_sym);
+            new_sym->type = Ake_symbol_type_variable;
             new_sym->tu = Type_use_clone(type_node->tu);
             Ake_environment_put(ps->st->top, &id_node->value, new_sym);
             id_node->sym = new_sym;
