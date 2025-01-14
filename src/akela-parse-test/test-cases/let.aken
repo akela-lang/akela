@@ -2,7 +2,6 @@ use lib::base::*;
 
 Test_suite {
     .name = @file_name()
-    .mute = true
 
     Test {
         .name = "declare and use an integer"

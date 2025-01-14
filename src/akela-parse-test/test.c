@@ -16,6 +16,7 @@
 #include "centipede/module_file.h"
 #include "centipede/comp_table.h"
 #include "zinc/os_unix.h"
+#include <assert.h>
 
 #define NAME "akela-parse-test"
 
@@ -23,6 +24,8 @@ bool Parse_test_validate_directory(char* path);
 void Parse_test_append_path(struct buffer* bf, char* path);
 void Parse_test_get_files(char* dir_name);
 void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct buffer* file_name);
+void Apt_run(Cent_comp_unit* cu);
+void Apt_run_test(Cent_value* test_value);
 
 int main(int argc, char **argv)
 {
@@ -139,6 +142,7 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
         Cent_comp_unit_build(cu);
         if (!cu->errors.head) {
             printf("success!\n");
+            Apt_run(cu);
         }
     }
 
@@ -152,4 +156,39 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     }
 
     fclose(fp);
+}
+
+void Apt_run(Cent_comp_unit* cu)
+{
+    if (!cu->value) return;
+
+    Cent_value* test_suite_value = cu->value;
+    assert(test_suite_value->type == Cent_value_type_dag);
+
+    Cent_value* mute = Cent_value_get_str(test_suite_value, "mute");
+    if (mute && mute->data.boolean) return;
+
+    Cent_value* name = Cent_value_get_str(test_suite_value, "name");
+    buffer_finish(&name->data.string);
+    printf("%s\n", name->data.string.buf);
+
+    Cent_value* test_value = test_suite_value->data.dag.head;
+    while (test_value) {
+        Apt_run_test(test_value);
+        test_value = test_value->next;
+    }
+}
+
+void Apt_run_test(Cent_value* test_value)
+{
+    Cent_value* name = Cent_value_get_str(test_value, "name");
+    buffer_finish(&name->data.string);
+    printf("%s\n", name->data.string.buf);
+    Cent_value* source = Cent_value_get_str(test_value, "source");
+    Cent_value* line = source->data.dag.head;
+    while (line) {
+        buffer_finish(&line->data.string);
+        printf("%s", line->data.string.buf);
+        line = line->next;
+    }
 }
