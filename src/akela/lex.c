@@ -7,23 +7,23 @@
 #include "zinc/memory.h"
 #include "symbol.h"
 
-bool lex_start(struct lex_state* ls,
+bool Ake_lex_start(struct lex_state* ls,
                enum state_enum* state,
                bool* done,
                struct token* t);
-bool lex_word(struct lex_state* ls,
+bool Ake_lex_word(struct lex_state* ls,
               enum state_enum* state,
               bool* done,
               struct token* t);
-bool lex_number(struct lex_state* ls,
+bool Ake_lex_number(struct lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t);
-bool lex_string(struct lex_state* ls,
+bool Ake_lex_string(struct lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t);
-bool lex_compound_operator(struct lex_state* ls,
+bool Ake_lex_compound_operator(struct lex_state* ls,
                         enum state_enum* state,
                         bool* done,
                         struct token* t);
@@ -36,7 +36,7 @@ bool lex_compound_operator(struct lex_state* ls,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex_start(struct lex_state* ls,
+bool Ake_lex_start(struct lex_state* ls,
                enum state_enum* state,
                bool* done,
                struct token* t)
@@ -78,7 +78,7 @@ bool lex_start(struct lex_state* ls,
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc = loc;
-            return lex_word(ls, state, done, t);
+            return Ake_lex_word(ls, state, done, t);
         } else if (*c == '_') {
             *state = state_id_underscore;
             t->type = token_id;
@@ -86,7 +86,7 @@ bool lex_start(struct lex_state* ls,
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc = loc;
-            return lex_word(ls, state, done, t);
+            return Ake_lex_word(ls, state, done, t);
         } else if (is_num(c, num)) {
             *state = state_number_whole;
             t->type = token_number;
@@ -95,16 +95,16 @@ bool lex_start(struct lex_state* ls,
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc = loc;
-            return lex_number(ls, state, done, t);
+            return Ake_lex_number(ls, state, done, t);
         } else if (*c == '"') {
             *state = state_string;
             t->type = token_string;
             t->loc = loc;
-            return lex_string(ls, state, done, t);
+            return Ake_lex_string(ls, state, done, t);
         } else if (compound_operator_start(num, c)) {
             *state = state_compound_operator;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-            return lex_compound_operator(ls, state, done, t);
+            return Ake_lex_compound_operator(ls, state, done, t);
         } else if (*c == '+') {
             t->type = token_plus;
             t->loc = loc;
@@ -199,7 +199,7 @@ bool lex_start(struct lex_state* ls,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex_word(struct lex_state* ls,
+bool Ake_lex_word(struct lex_state* ls,
               enum state_enum* state,
               bool* done,
               struct token* t)
@@ -291,7 +291,7 @@ bool lex_word(struct lex_state* ls,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex_number(struct lex_state* ls,
+bool Ake_lex_number(struct lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t)
@@ -409,7 +409,7 @@ bool lex_number(struct lex_state* ls,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex_string(
+bool Ake_lex_string(
         struct lex_state* ls,
         enum state_enum* state,
         bool* done,
@@ -481,7 +481,7 @@ bool lex_string(
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex_compound_operator(
+bool Ake_lex_compound_operator(
         struct lex_state* ls,
         enum state_enum* state,
         bool* done,
@@ -638,7 +638,7 @@ bool lex_compound_operator(
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool lex(struct lex_state* ls, struct token** t)
+bool Ake_lex(struct lex_state* ls, struct token** t)
 {
     bool valid = true;
     enum state_enum state = state_start;
@@ -649,7 +649,7 @@ bool lex(struct lex_state* ls, struct token** t)
     malloc_safe((void**)&tf, sizeof(struct token));
     token_init(tf);
 
-    valid = lex_start(ls, &state, &done, tf);
+    valid = Ake_lex_start(ls, &state, &done, tf);
     if (!valid) {
         token_destroy(tf);
         free(tf);

@@ -17,7 +17,7 @@ void test_lex_blank()
 
 	lex_setup("", &ls, &el);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex 0");
 	expect_int_equal(t->type, token_eof, "none");
@@ -44,7 +44,7 @@ void test_lex_assign()
 
 	lex_setup("a = 1", &ls, &el);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
@@ -53,7 +53,7 @@ void test_lex_assign()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal");
@@ -61,7 +61,7 @@ void test_lex_assign()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -70,7 +70,7 @@ void test_lex_assign()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -100,7 +100,7 @@ void test_lex_addition()
 	lex_setup("speed + 1", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
@@ -111,7 +111,7 @@ void test_lex_addition()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_plus, "plus");
@@ -121,7 +121,7 @@ void test_lex_addition()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -132,7 +132,7 @@ void test_lex_addition()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
     assert_int_equal(t->type, token_eof, "eof");
 	assert_true(valid, "lex valid");
@@ -159,7 +159,7 @@ void test_lex_subtraction()
 	lex_setup("100 - delta", &ls, &el);
 
 	/* allocate ls t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -170,7 +170,7 @@ void test_lex_subtraction()
 	free(t);
 
 	/* allocate ls t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_minus, "minus");
@@ -180,7 +180,7 @@ void test_lex_subtraction()
 	free(t);
 
 	/* allocate ls t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
@@ -191,7 +191,7 @@ void test_lex_subtraction()
 	free(t);
 
 	/* allocate ls t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -219,7 +219,7 @@ void test_lex_multiplication()
 	lex_setup("100 * 20", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -230,7 +230,7 @@ void test_lex_multiplication()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_mult, "mult");
@@ -240,7 +240,7 @@ void test_lex_multiplication()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -251,7 +251,7 @@ void test_lex_multiplication()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -279,7 +279,7 @@ void test_lex_divide()
 	lex_setup("45 / 11", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -290,7 +290,7 @@ void test_lex_divide()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_divide, "divide");
@@ -300,7 +300,7 @@ void test_lex_divide()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "is number");
@@ -311,7 +311,7 @@ void test_lex_divide()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -339,7 +339,7 @@ void test_lex_stmts_expr()
 	lex_setup("i + 1\nx * 4", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
@@ -350,7 +350,7 @@ void test_lex_stmts_expr()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_plus, "plus");
@@ -360,7 +360,7 @@ void test_lex_stmts_expr()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -371,7 +371,7 @@ void test_lex_stmts_expr()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
@@ -381,7 +381,7 @@ void test_lex_stmts_expr()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id2");
@@ -392,7 +392,7 @@ void test_lex_stmts_expr()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_mult, "mult");
@@ -402,7 +402,7 @@ void test_lex_stmts_expr()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number2");
@@ -413,7 +413,7 @@ void test_lex_stmts_expr()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -441,7 +441,7 @@ void test_lex_stmts_expr2()
 	lex_setup("i + 1\nx * 4\n", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
@@ -452,7 +452,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_plus, "plus");
@@ -462,7 +462,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -473,7 +473,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
@@ -483,7 +483,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id2");
@@ -494,7 +494,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_mult, "mult");
@@ -504,7 +504,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number2");
@@ -515,7 +515,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline2");
@@ -525,7 +525,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -536,7 +536,7 @@ void test_lex_stmts_expr2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -564,7 +564,7 @@ void test_lex_stmts_assign()
 	lex_setup("i + 1\nx = 4", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
@@ -575,7 +575,7 @@ void test_lex_stmts_assign()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_plus, "plus");
@@ -585,7 +585,7 @@ void test_lex_stmts_assign()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number");
@@ -596,7 +596,7 @@ void test_lex_stmts_assign()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
@@ -606,7 +606,7 @@ void test_lex_stmts_assign()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id2");
@@ -617,7 +617,7 @@ void test_lex_stmts_assign()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal");
@@ -627,7 +627,7 @@ void test_lex_stmts_assign()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number2");
@@ -638,7 +638,7 @@ void test_lex_stmts_assign()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -663,7 +663,7 @@ void test_lex_function()
 
 	lex_setup("fn foo () \n end", &ls, &el);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_fn, "fn");
@@ -671,7 +671,7 @@ void test_lex_function()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id");
@@ -680,7 +680,7 @@ void test_lex_function()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_left_paren, "left paren");
@@ -688,7 +688,7 @@ void test_lex_function()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_right_paren, "right paren");
@@ -696,7 +696,7 @@ void test_lex_function()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_newline, "newline");
@@ -704,7 +704,7 @@ void test_lex_function()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_end, "end");
@@ -712,7 +712,7 @@ void test_lex_function()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -738,7 +738,7 @@ void test_lex_comma()
 	lex_setup(",", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_comma, "comma");
@@ -748,7 +748,7 @@ void test_lex_comma()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -776,7 +776,7 @@ void test_lex_semicolon()
 	lex_setup(";", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_semicolon, "semicolon");
@@ -786,7 +786,7 @@ void test_lex_semicolon()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -813,7 +813,7 @@ void test_lex_if() {
 	lex_setup("if elseif else", &ls, &el);
 	
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_if, "if");
@@ -823,7 +823,7 @@ void test_lex_if() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_elseif, "elseif");
@@ -833,7 +833,7 @@ void test_lex_if() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_else, "else");
@@ -843,7 +843,7 @@ void test_lex_if() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
     assert_ptr(t, "ptr t");
@@ -867,7 +867,7 @@ void test_lex_compound_operators() {
 
 	lex_setup("== != <= >= && || ->", &ls, &el);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_double_equal, "double equal");
@@ -875,7 +875,7 @@ void test_lex_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_not_equal, "not equal");
@@ -883,7 +883,7 @@ void test_lex_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_less_than_or_equal, "less than or equal");
@@ -891,7 +891,7 @@ void test_lex_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_greater_than_or_equal, "greater than or equal");
@@ -899,7 +899,7 @@ void test_lex_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_and, "and");
@@ -907,7 +907,7 @@ void test_lex_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_or, "or");
@@ -915,7 +915,7 @@ void test_lex_compound_operators() {
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_arrow, "arrow");
@@ -939,7 +939,7 @@ void test_lex_compound_operators2() {
 	lex_setup("= ! < > & | :", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal");
@@ -949,7 +949,7 @@ void test_lex_compound_operators2() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_not, "not");
@@ -959,7 +959,7 @@ void test_lex_compound_operators2() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_less_than, "less than");
@@ -969,7 +969,7 @@ void test_lex_compound_operators2() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_greater_than, "greater_than");
@@ -979,7 +979,7 @@ void test_lex_compound_operators2() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_ampersand, "ampersand");
@@ -989,7 +989,7 @@ void test_lex_compound_operators2() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_vertical_bar, "vertical_bar");
@@ -999,7 +999,7 @@ void test_lex_compound_operators2() {
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_colon, "colon");
@@ -1023,7 +1023,7 @@ void test_lex_for_range()
 
 	lex_setup("for i = 0:10 1 end", &ls, &el);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_for, "for");
@@ -1031,7 +1031,7 @@ void test_lex_for_range()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 1");
@@ -1040,7 +1040,7 @@ void test_lex_for_range()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal 2");
@@ -1048,7 +1048,7 @@ void test_lex_for_range()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 3");
@@ -1056,7 +1056,7 @@ void test_lex_for_range()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_colon, "colon 4");
@@ -1064,7 +1064,7 @@ void test_lex_for_range()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 5");
@@ -1073,7 +1073,7 @@ void test_lex_for_range()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 6");
@@ -1082,7 +1082,7 @@ void test_lex_for_range()
 	token_destroy(t);
 	free(t);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_end, "end 7");
@@ -1107,7 +1107,7 @@ void test_lex_for_iteration()
 	lex_setup("for x in list 1 end", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_for, "for");
@@ -1117,7 +1117,7 @@ void test_lex_for_iteration()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 1");
@@ -1128,7 +1128,7 @@ void test_lex_for_iteration()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_in, "in 2");
@@ -1138,7 +1138,7 @@ void test_lex_for_iteration()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 3");
@@ -1149,7 +1149,7 @@ void test_lex_for_iteration()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_number, "number 4");
@@ -1160,7 +1160,7 @@ void test_lex_for_iteration()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_end, "end 5");
@@ -1184,7 +1184,7 @@ void test_lex_error_unrecognized_character()
 
 	lex_setup("$", &ls, &el);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_false(valid, "lex");
 	assert_has_errors(ls.el);
 	assert_null(t, "t");
@@ -1207,7 +1207,7 @@ void test_lex_square_brackets()
 	lex_setup("[]", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_left_square_bracket, "left-square-bracket 0");
@@ -1217,7 +1217,7 @@ void test_lex_square_brackets()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_right_square_bracket, "right-square-bracket 1");
@@ -1244,7 +1244,7 @@ void test_lex_string()
 	lex_setup("\"hello\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_string, "string 0");
@@ -1272,7 +1272,7 @@ void test_lex_string2()
 	lex_setup("x = \"\\\\hello\n\r\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_id, "id 0");
@@ -1283,7 +1283,7 @@ void test_lex_string2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_equal, "equal 1");
@@ -1293,7 +1293,7 @@ void test_lex_string2()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	expect_int_equal(t->type, token_string, "string 2");
@@ -1321,7 +1321,7 @@ void test_lex_string_escape_error()
 	lex_setup("\"\\x\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_false(valid, "lex");
 	assert_has_errors(ls.el);
 	expect_source_error(&el, "Unrecognized escape sequence: x");
@@ -1346,7 +1346,7 @@ void test_lex_line_col()
 	lex_setup("10 + 20\n30 + 40", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t 10");
@@ -1360,7 +1360,7 @@ void test_lex_line_col()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t +");
@@ -1373,7 +1373,7 @@ void test_lex_line_col()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t 20");
@@ -1386,7 +1386,7 @@ void test_lex_line_col()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t newline");
@@ -1399,7 +1399,7 @@ void test_lex_line_col()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t 30");
@@ -1412,7 +1412,7 @@ void test_lex_line_col()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t +");
@@ -1425,7 +1425,7 @@ void test_lex_line_col()
 	free(t);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_no_errors(ls.el);
 	assert_true(valid, "lex valid");
 	assert_ptr(t, "ptr t 40");
@@ -1454,7 +1454,7 @@ void test_lex_error_underscore_letter()
 	lex_setup("_1", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_has_errors(ls.el);
 	expect_false(valid, "lex valid");
 	expect_null(t, "null t");
@@ -1477,7 +1477,7 @@ void test_lex_error_underscore_letter2()
 	lex_setup("__", &ls, &el);
 
 	/* allocate ls{} t t{} */
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_has_errors(ls.el);
 	expect_false(valid, "lex valid");
 	expect_null(t, "null t");
@@ -1498,7 +1498,7 @@ void test_lex_error_exponent_sign()
 
 	lex_setup("100e-a", &ls, &el);
 
-	valid = lex(&ls, &t);
+	valid = Ake_lex(&ls, &t);
 	assert_has_errors(ls.el);
 	expect_false(valid, "lex valid");
 	expect_null(t, "null t");
@@ -1518,7 +1518,7 @@ void test_lex_module()
 	lex_setup("module 1 end", &ls, &el);
 
 	struct token* module;
-	valid = lex(&ls, &module);
+	valid = Ake_lex(&ls, &module);
 	assert_no_errors(ls.el);
 	assert_true(valid, "valid module");
 	assert_ptr(module, "ptr module");
@@ -1528,7 +1528,7 @@ void test_lex_module()
 	free(module);
 
 	struct token* number;
-	valid = lex(&ls, &number);
+	valid = Ake_lex(&ls, &number);
 	assert_no_errors(ls.el);
 	assert_true(valid, "valid number");
 	assert_ptr(number, "ptr number");
@@ -1539,7 +1539,7 @@ void test_lex_module()
 	free(number);
 
 	struct token* end;
-	valid = lex(&ls, &end);
+	valid = Ake_lex(&ls, &end);
 	assert_no_errors(ls.el);
 	assert_true(valid, "valid end");
 	assert_ptr(end, "ptr end");
@@ -1564,7 +1564,7 @@ void test_lex_comment()
               &ls, &el);
 
     struct token* number0;
-    valid = lex(&ls, &number0);
+    valid = Ake_lex(&ls, &number0);
     assert_no_errors(ls.el);
     assert_true(valid, "valid number0");
     assert_ptr(number0, "ptr number0");
@@ -1575,7 +1575,7 @@ void test_lex_comment()
     free(number0);
 
     struct token* newline0;
-    valid = lex(&ls, &newline0);
+    valid = Ake_lex(&ls, &newline0);
     assert_no_errors(ls.el);
     assert_true(valid, "valid newline0");
     assert_ptr(newline0, "ptr newline0");
@@ -1585,7 +1585,7 @@ void test_lex_comment()
     free(newline0);
 
     struct token* number1;
-    valid = lex(&ls, &number1);
+    valid = Ake_lex(&ls, &number1);
     assert_no_errors(ls.el);
     assert_true(valid, "valid number1");
     assert_ptr(number1, "ptr number1");
@@ -1596,7 +1596,7 @@ void test_lex_comment()
     free(number1);
 
     struct token* newline1;
-    valid = lex(&ls, &newline1);
+    valid = Ake_lex(&ls, &newline1);
     assert_no_errors(ls.el);
     assert_true(valid, "valid newline1");
     assert_ptr(newline1, "ptr newline1");
@@ -1606,7 +1606,7 @@ void test_lex_comment()
     free(newline1);
 
     struct token* eof;
-    valid = lex(&ls, &eof);
+    valid = Ake_lex(&ls, &eof);
     assert_no_errors(ls.el);
     assert_true(valid, "valid eof");
     assert_ptr(eof, "ptr eof");

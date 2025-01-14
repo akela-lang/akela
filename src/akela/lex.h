@@ -8,6 +8,6 @@
 #include "symbol_table.h"
 #include "lex_tools.h"
 
-AKELA_API bool lex(struct lex_state* ls, struct token** t);
+AKELA_API bool Ake_lex(struct lex_state* ls, struct token** t);
 
 #endif
