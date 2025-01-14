@@ -1,88 +1,88 @@
-element Test_suite
-    properties
+element Test_suite {
+    properties {
         name: String `required`
         solo: Bool      # only run this suite
         mute: Bool      # exclude this suite from running
-    end
+    }
 
-    children
+    children {
         Test
-    end
-end
+    }
+}
 
-element Test
-    properties
+element Test {
+    properties {
         name: String `required`
         source: Source `required`
         has_error: Bool `required`
         solo: Bool      # only run this test
         mute: Bool      # exclude this test from running
         errors: Errors
-    end
+    }
 
-    children
+    children {
         Ast
-    end
-end
+    }
+}
 
-element Source
-    children
+element Source {
+    children {
         String
-    end
-end
+    }
+}
 
-element Errors
-    children
+element Errors {
+    children {
         Error
-    end
-end
+    }
+}
 
-element Error
-    properties
+element Error {
+    properties {
         message: String
         start_pos: Integer
         end_pos: Integer
         line: Integer
         col: Integer
-    end
-end
+    }
+}
 
-element Ast
-    properties
+element Ast {
+    properties {
         type: Ast_type `required`
         value: String
         tu: Type_use
-    end
-end
+    }
+}
 
-enum Ast_type
+enum Ast_type {
     Stmts
     Let
     Number
     Type
     Id
-end
+}
 
-element Type_use
-    properties
+element Type_use {
+    properties {
         td: Type_def
         dim: Integer        # array dimension if td is type Array
-    end
-end
+    }
+}
 
-element Type_def
-    properties
+element Type_def {
+    properties {
         name: String `required`
         type: Type_def_type `required`
         bit_count: Integer
         is_signed: Bool
-    end
-end
+    }
+}
 
-enum Type_def_type
+enum Type_def_type {
     Int32
     Real64
-end
+}
 
 # built-in element defs
 let _Int32 = Type_def {
@@ -90,11 +90,11 @@ let _Int32 = Type_def {
     .name = "Int32"
     .bit_count = 32
     .is_signed = true
-}
+};
 
 let _Real64 = Type_def {
     .type = Type_def_type::Real64
     .name = "Real64"
     .bit_count = 64
     .is_signed = true
-}
+};

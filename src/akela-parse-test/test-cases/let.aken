@@ -1,4 +1,4 @@
-use lib::base::*
+use lib::base::*;
 
 Test_suite {
     .name = @file_name()
