@@ -14,7 +14,7 @@ void Ake_lex_state_init(
         void* input_obj,
         InputUnicodeVTable* input_vtable,
         struct error_list* el,
-        struct symbol_table* st)
+        struct Ake_symbol_table* st)
 {
     ls->input_obj = input_obj;
     ls->input_vtable = input_vtable;

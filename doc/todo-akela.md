@@ -16,7 +16,7 @@
   * parse_types []
   * struct_element [x]
   * symbol [x]
-  * symbol_table []
+  * symbol_table [x]
   * token []
   * type_def []
   * type_use []

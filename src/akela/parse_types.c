@@ -13,7 +13,7 @@
 
 bool token_is_type(struct Ake_parse_state* ps, struct token* t);
 Type_use* Type_use_add_proto(
-        struct symbol_table* st,
+        struct Ake_symbol_table* st,
         Type_use* func,
         Ake_ast* proto,
         Ake_ast* struct_type);
@@ -62,7 +62,7 @@ Ake_ast* parse_prototype(
             buffer_add_format(
                     &id_node->value,
                     "__anonymous_function_%zu",
-                    symbol_table_generate_id(ps->st)
+                    Ake_symbol_table_generate_id(ps->st)
             );
         }
         Ake_ast_add(n, id_node);
@@ -631,14 +631,14 @@ void declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_no
     }
 }
 
-Type_use* proto2type_use(struct symbol_table* st, Ake_ast* proto, Ake_ast* struct_type) {
+Type_use* proto2type_use(struct Ake_symbol_table* st, Ake_ast* proto, Ake_ast* struct_type) {
     Type_use *func = NULL;
     Type_use_create(&func);
     return Type_use_add_proto(st, func, proto, struct_type);
 }
 
 Type_use* Type_use_add_proto(
-    struct symbol_table* st,
+    struct Ake_symbol_table* st,
     Type_use* func,
     Ake_ast* proto,
     Ake_ast* struct_type)
@@ -713,7 +713,7 @@ bool check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmt
         Ake_ast *dret = Ast_node_get(proto, 2);
         Ake_ast *ret_type = Ast_node_get(dret, 0);
         if (ret_type) {
-            if (!type_use_can_cast(ret_type->tu, stmts_node->tu)) {
+            if (!Ake_type_use_can_cast(ret_type->tu, stmts_node->tu)) {
                 valid = error_list_set(ps->el, loc, "returned type does not match function return type");
             }
         }
@@ -772,7 +772,7 @@ bool check_input_type(
 		if (tu0) {
 			Type_use* call_tu0 = a->tu;
 			if (call_tu0) {
-				if (!type_use_can_cast(tu0, call_tu0)) {
+				if (!Ake_type_use_can_cast(tu0, call_tu0)) {
 					valid = error_list_set(ps->el, &a->loc, "parameter and aguments types do not match");
 					/* test case: test_parse_types_error_param */
 				}

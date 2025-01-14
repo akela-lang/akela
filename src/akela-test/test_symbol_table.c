@@ -41,12 +41,12 @@ void test_symbol_table_global()
 {
 	test_name(__func__);
 
-	struct symbol_table st;
-	symbol_table_init(&st);
+	struct Ake_symbol_table st;
+	Ake_symbol_table_init(&st);
 
-	expect_true(symbol_table_is_global(&st), "is global");
+	expect_true(Ake_symbol_table_is_global(&st), "is global");
 
-	symbol_table_destroy(&st);
+	Ake_symbol_table_destroy(&st);
 }
 
 void test_symbol_table()

@@ -82,7 +82,7 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
 
 	Ake_comp_unit_compile(*cu_base, input, input->input_vtable);
 
-	transfer_global_symbols(&(*cu_base)->st, &cu->st);
+	Ake_transfer_global_symbols(&(*cu_base)->st, &cu->st);
 
     free(input);
 

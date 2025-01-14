@@ -91,9 +91,9 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
         n->type = Ake_ast_type_error;
     }
 
-    environment_begin(ps->st);
+    Ake_environment_begin(ps->st);
     declare_params(ps, proto, struct_type);
-    set_current_function(ps->st->top, n);
+    Ake_set_current_function(ps->st->top, n);
     Type_use* tu = proto2type_use(ps->st, proto, struct_type);
     n->tu = tu;
 
@@ -108,7 +108,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
         Ake_ast_add(n, stmts_node);
     }
 
-    environment_end(ps->st);
+    Ake_environment_end(ps->st);
 
     struct token* end = NULL;
 	if (!Ake_match(ps, token_end, "expected end", &end, n)) {
@@ -241,7 +241,7 @@ Ake_ast* Ake_parse_if(struct Ake_parse_state* ps)
                 p = p->next;
             }
             while (p) {
-                if (!type_find_whole(ps->st, tu, p->tu)) {
+                if (!Ake_type_find_whole(ps->st, tu, p->tu)) {
                     error_list_set(ps->el, &p->loc,
                                    "branch type does not match type of previous branch");
                     n->type = Ake_ast_type_error;
@@ -654,7 +654,7 @@ void Ake_parse_struct_literal_elements(
             Ake_ast_add(field, expr);
 
             if (parent->type != Ake_ast_type_error) {
-                if (!type_use_can_cast(sfr.tu, expr->tu)) {
+                if (!Ake_type_use_can_cast(sfr.tu, expr->tu)) {
                     error_list_set(ps->el, &expr->loc, "invalid type for field");
                     parent->type = Ake_ast_type_error;
                 }
@@ -802,7 +802,7 @@ Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             count++;
             while (x) {
                 tu_x = x->tu;
-                if (!type_find_whole(ps->st, tu_first, tu_x)) {
+                if (!Ake_type_find_whole(ps->st, tu_first, tu_x)) {
                     error_list_set(ps->el, &first->loc, "array elements not the same type");
                     /* test case: test_parse_array_literal_mixed_error */
                     n->type = Ake_ast_type_error;

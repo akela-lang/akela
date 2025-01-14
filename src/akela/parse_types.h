@@ -33,7 +33,7 @@ AKELA_API Ake_ast* parse_type(struct Ake_parse_state* ps);
 AKELA_API void declare_type(struct Ake_parse_state* ps, Ake_ast* n, Ake_ast* id_node);
 AKELA_API bool check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, struct location* loc);
 AKELA_API void get_function_children(Type_use* func, Type_use** inputs, Type_use** outputs);
-AKELA_API Type_use* proto2type_use(struct symbol_table* st, Ake_ast* proto, Ake_ast* struct_type);
+AKELA_API Type_use* proto2type_use(struct Ake_symbol_table* st, Ake_ast* proto, Ake_ast* struct_type);
 AKELA_API Type_use* get_function_input_type(Type_use* func, int index);
 AKELA_API bool check_input_type(
         struct Ake_parse_state* ps,

@@ -12,7 +12,7 @@ typedef struct Ake_parse_state {
 	struct Ake_lex_state* ls;
 	struct token* lookahead;
 	struct error_list* el;
-	struct symbol_table* st;
+	struct Ake_symbol_table* st;
     struct buffer_list* extern_list;
 } Ake_parse_state;
 
@@ -21,7 +21,7 @@ AKELA_API void Ake_parse_state_init(
         struct Ake_lex_state* ls,
         struct error_list* el,
         struct buffer_list* extern_list,
-        struct symbol_table* st);
+        struct Ake_symbol_table* st);
 AKELA_API void Ake_parse_state_destroy(struct Ake_parse_state* ps);
 AKELA_API bool Ake_match(
     struct Ake_parse_state* ps,

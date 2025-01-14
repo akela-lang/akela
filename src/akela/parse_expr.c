@@ -140,7 +140,7 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                         n->type = Ake_ast_type_error;
                     }
                     Override_rhs(lhs2->tu, rhs2);
-                    if (!type_use_can_cast(lhs2->tu, rhs2->tu)) {
+                    if (!Ake_type_use_can_cast(lhs2->tu, rhs2->tu)) {
                         error_list_set(ps->el, &rhs2->loc, "values in assignment not compatible");
                     }
                     lhs2 = lhs2->next;
@@ -151,7 +151,7 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                     n->type = Ake_ast_type_error;
                 }
 
-                if (!type_use_can_cast(lhs->tu, rhs->tu)) {
+                if (!Ake_type_use_can_cast(lhs->tu, rhs->tu)) {
                     error_list_set(ps->el, &rhs->loc, "values in assignment not compatible");
                     n->type = Ake_ast_type_error;
                 }
@@ -454,17 +454,17 @@ Ake_ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 				/* test case: test_parse_comparison_error_right_no_value */
                 n->type = Ake_ast_type_error;
 			} else {
-				if (!Ake_is_identity_comparison(type) && !is_numeric(left->tu->td)) {
+				if (!Ake_is_identity_comparison(type) && !Ake_is_numeric(left->tu->td)) {
 					error_list_set(ps->el, &left->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_left_not_numeric */
                     n->type = Ake_ast_type_error;
-				} else if (!Ake_is_identity_comparison(type) && !is_numeric(b->tu->td)) {
+				} else if (!Ake_is_identity_comparison(type) && !Ake_is_numeric(b->tu->td)) {
 					error_list_set(ps->el, &b->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_right_not_numeric */
                     n->type = Ake_ast_type_error;
 				} else {
 					Type_use* tu = Type_use_clone(left->tu);
-					type_find_whole(ps->st, tu, b->tu);
+					Ake_type_find_whole(ps->st, tu, b->tu);
 					n->tu = tu;
 				}
 			}
@@ -561,7 +561,7 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
 				error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_left_no_value */
                 n->type = Ake_ast_type_error;
-			} else if (!is_numeric(tu_a->td)) {
+			} else if (!Ake_is_numeric(tu_a->td)) {
 				error_list_set(ps->el, &a->loc, "%s on non-numeric operand", op_name);
                 n->type = Ake_ast_type_error;
 			}
@@ -570,7 +570,7 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
 				error_list_set(ps->el, &b->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_right_no_value */
                 n->type = Ake_ast_type_error;
-			} else if (!is_numeric(tu_b->td)) {
+			} else if (!Ake_is_numeric(tu_b->td)) {
 				error_list_set(ps->el, &b->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_add_error_right_not_numeric */
                 n->type = Ake_ast_type_error;
@@ -578,7 +578,7 @@ Ake_ast* Ake_parse_add(struct Ake_parse_state* ps)
 
 			if (n->type != Ake_ast_type_error) {
 				Type_use* tu = Type_use_clone(tu_a);
-				if (!type_find_whole(ps->st, tu, tu_b)) {
+				if (!Ake_type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
                     n->type = Ake_ast_type_error;
@@ -685,7 +685,7 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
 				error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_mult_error_left_no_value */
                 n->type = Ake_ast_type_error;
-			} else if (!is_numeric(tu_a->td)) {
+			} else if (!Ake_is_numeric(tu_a->td)) {
 				error_list_set(ps->el, &a->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_mult_error_left_not_numeric */
                 n->type = Ake_ast_type_error;
@@ -695,7 +695,7 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
 				error_list_set(ps->el, &b->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_mult_error_right_no_value*/
                 n->type = Ake_ast_type_error;
-			} else if (!is_numeric(tu_b->td)) {
+			} else if (!Ake_is_numeric(tu_b->td)) {
 				error_list_set(ps->el, &b->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_mult_error_right_not_numeric */
                 n->type = Ake_ast_type_error;
@@ -703,7 +703,7 @@ Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps)
 
 			if (n->type != Ake_ast_type_error) {
 				Type_use* tu = Type_use_clone(tu_a);
-				if (!type_find_whole(ps->st, tu, tu_b)) {
+				if (!Ake_type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
                     n->type = Ake_ast_type_error;
@@ -796,7 +796,7 @@ Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
 				error_list_set(ps->el, &left->loc, "power operand has no value");
 				/* test case: test_parse_power_error_left_no_value */
                 n->type = Ake_ast_type_error;
-			} else if (!is_numeric(tu_left->td)) {
+			} else if (!Ake_is_numeric(tu_left->td)) {
 				error_list_set(ps->el, &left->loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_left_not_numeric */
                 n->type = Ake_ast_type_error;
@@ -806,7 +806,7 @@ Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
 				error_list_set(ps->el, &b->loc, "power operand has no value");
 				/* test case: test_parse_power_error_right_no_value */
                 n->type = Ake_ast_type_error;
-			} else if (!is_numeric(tu_b->td)) {
+			} else if (!Ake_is_numeric(tu_b->td)) {
 				error_list_set(ps->el, &b->loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_right_not_numeric */
                 n->type = Ake_ast_type_error;
@@ -814,7 +814,7 @@ Ake_ast* Ake_parse_power(struct Ake_parse_state* ps)
 
 			if (n->type != Ake_ast_type_error) {
 				Type_use* tu = Type_use_clone(tu_left);
-				if (!type_find_whole(ps->st, tu, tu_b)) {
+				if (!Ake_type_find_whole(ps->st, tu, tu_b)) {
 					error_list_set(ps->el, &b->loc, "invalid power types");
 					/* test case: no test case needed */
                     n->type = Ake_ast_type_error;

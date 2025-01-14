@@ -38,7 +38,7 @@ Ake_ast* Ake_parse_stmts(struct Ake_parse_state* ps, bool suppress_env)
 	struct Ake_environment* saved = NULL;
 	struct Ake_environment* env = NULL;
 	if (!suppress_env) {
-        environment_begin(ps->st);
+        Ake_environment_begin(ps->st);
 	}
 
     Ake_ast_create(&n);
@@ -76,7 +76,7 @@ Ake_ast* Ake_parse_stmts(struct Ake_parse_state* ps, bool suppress_env)
 	}
 
 	if (!suppress_env) {
-        environment_end(ps->st);
+        Ake_environment_end(ps->st);
 	}
 
 	if (n->type != Ake_ast_type_error) {
@@ -268,7 +268,7 @@ Ake_ast* Ake_parse_for(struct Ake_parse_state* ps)
         n->type = Ake_ast_type_error;
     }
 
-    environment_begin(ps->st);
+    Ake_environment_begin(ps->st);
 
     Ake_consume_newline(ps, n);
 
@@ -326,7 +326,7 @@ Ake_ast* Ake_parse_for(struct Ake_parse_state* ps)
 	token_destroy(end);
 	free(end);
 
-    environment_end(ps->st);
+    Ake_environment_end(ps->st);
 
 	return n;
 }
@@ -400,7 +400,7 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_ast* parent)
 			/* test case: test_parse_for_range_error_start_no_value */
 		} else {
 			assert(a->tu->td);
-			if (!is_numeric(a->tu->td)) {
+			if (!Ake_is_numeric(a->tu->td)) {
 				error_list_set(ps->el, &a->loc, "start range expression is not numeric");
                 parent->type = Ake_ast_type_error;
 				/* test case: test_parse_for_range_error_start_not_numeric */
@@ -414,7 +414,7 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_ast* parent)
 			/* test case: test_parse_for_range_error_end_no_value */
 		} else {
 			assert(b->tu->td);
-			if (!is_numeric(b->tu->td)) {
+			if (!Ake_is_numeric(b->tu->td)) {
 				error_list_set(ps->el, &b->loc, "end range expression is not numeric");
                 parent->type = Ake_ast_type_error;
 				/* test case: test_parse_for_range_error_end_not_numeric */
@@ -469,7 +469,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
 		} else {
             Type_use* element_tu2 = Type_use_clone(list_tu);
             Type_use_reduce_dimension(element_tu2);
-			if (!type_use_can_cast(element_tu2, element_type_node->tu)) {
+			if (!Ake_type_use_can_cast(element_tu2, element_type_node->tu)) {
                 parent->type = Ake_ast_type_error;
 				error_list_set(ps->el, &list->loc, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
@@ -499,7 +499,7 @@ Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
 	token_destroy(module);
 	free(module);
 
-    environment_begin(ps->st);
+    Ake_environment_begin(ps->st);
 
 	struct token* id = NULL;
 	if (!Ake_match(ps, token_id, "expected identifier after module", &id, n)) {
@@ -513,9 +513,9 @@ Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
         n->type = Ake_ast_type_error;
     }
 
-	transfer_module_symbols(ps->st->top, ps->st->top->prev, &id->value);
+	Ake_transfer_module_symbols(ps->st->top, ps->st->top->prev, &id->value);
 
-    environment_end(ps->st);
+    Ake_environment_end(ps->st);
 
 	struct token* end = NULL;
 	if (!Ake_match(ps, token_end, "expected end", &end, n)) {
@@ -696,7 +696,7 @@ Ake_ast* Ake_parse_return(struct Ake_parse_state* ps)
                 n->type = Ake_ast_type_error;
 			} else {
 				n->tu = Type_use_clone(a->tu);
-				Ake_ast* fd = get_current_function(ps->st->top);
+				Ake_ast* fd = Ake_get_current_function(ps->st->top);
 				if (!fd) {
 					error_list_set(ps->el, &ret->loc, "return statement outside of function");
 					/* test case: test_parse_return_error_outside_of_function */
@@ -816,7 +816,7 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
                     if (!y->tu) {
                         error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
                         n->type = Ake_ast_type_error;
-                    } else if (!type_use_can_cast(type_node->tu, y->tu)) {
+                    } else if (!Ake_type_use_can_cast(type_node->tu, y->tu)) {
                         error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
                         n->type = Ake_ast_type_error;
                     }

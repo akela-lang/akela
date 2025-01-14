@@ -41,6 +41,6 @@ AKELA_API void type_def_create(struct type_def** n);
 AKELA_API void type_def_destroy(struct type_def* n);
 AKELA_API void type_def_init(struct type_def* n);
 AKELA_API struct type_def* type_def_copy(struct type_def* n);
-AKELA_API bool type_def_match(struct type_def* a, struct type_def* b);
+AKELA_API bool Ake_type_def_match(struct type_def* a, struct type_def* b);
 
 #endif

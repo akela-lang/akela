@@ -12,7 +12,7 @@ void Ake_comp_unit_init(struct Ake_comp_unit* cu)
 	error_list_init(&cu->el);
     buffer_list_init(&cu->extern_list);
 	buffer_init(&cu->path);
-	symbol_table_init(&cu->st);
+	Ake_symbol_table_init(&cu->st);
     cu->input_obj = NULL;
 	cu->next = NULL;
 	cu->prev = NULL;
@@ -30,7 +30,7 @@ void Ake_comp_unit_destroy(struct Ake_comp_unit* cu)
         Ake_ast_destroy(cu->root);
         error_list_destroy(&cu->el);
         buffer_destroy(&cu->path);
-        symbol_table_destroy(&cu->st);
+        Ake_symbol_table_destroy(&cu->st);
         buffer_list_destroy(&cu->extern_list);
     }
 }

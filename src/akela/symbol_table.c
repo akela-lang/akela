@@ -6,17 +6,17 @@
 #include "ast.h"
 #include "symbol.h"
 
-bool type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b);
-bool type_use_match(Type_use* a, Type_use* b);
+bool Ake_type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b);
+bool Ake_type_use_match(Type_use* a, Type_use* b);
 
-void environment_begin(struct symbol_table* st)
+void Ake_environment_begin(struct Ake_symbol_table* st)
 {
     struct Ake_environment* env = NULL;
     Ake_environment_create(&env, st->top);
     st->top = env;
 }
 
-void environment_end(struct symbol_table* st)
+void Ake_environment_end(struct Ake_symbol_table* st)
 {
     struct Ake_environment* env = st->top;
     st->top = env->prev;
@@ -24,7 +24,7 @@ void environment_end(struct symbol_table* st)
     st->deactivated = env;
 }
 
-void symbol_table_add_reserved_word(struct Ake_environment* env, const char* name, enum token_enum tk_type)
+void Ake_symbol_table_add_reserved_word(struct Ake_environment* env, const char* name, enum token_enum tk_type)
 {
     struct buffer bf;
 
@@ -42,7 +42,7 @@ void symbol_table_add_reserved_word(struct Ake_environment* env, const char* nam
     buffer_destroy(&bf);
 }
 
-void symbol_table_add_type(struct Ake_environment* env, const char* name, struct type_def* td)
+void Ake_symbol_table_add_type(struct Ake_environment* env, const char* name, struct type_def* td)
 {
 	struct buffer bf;
 
@@ -60,30 +60,30 @@ void symbol_table_add_type(struct Ake_environment* env, const char* name, struct
 	buffer_destroy(&bf);
 }
 
-void symbol_table_init_reserved(struct Ake_environment* env)
+void Ake_symbol_table_init_reserved(struct Ake_environment* env)
 {
-	symbol_table_add_reserved_word(env, "fn", token_fn);
-	symbol_table_add_reserved_word(env, "end", token_end);
-	symbol_table_add_reserved_word(env, "if", token_if);
-	symbol_table_add_reserved_word(env, "elseif", token_elseif);
-	symbol_table_add_reserved_word(env, "else", token_else);
-	symbol_table_add_reserved_word(env, "while", token_while);
-	symbol_table_add_reserved_word(env, "for", token_for);
-	symbol_table_add_reserved_word(env, "in", token_in);
-	symbol_table_add_reserved_word(env, "let", token_let);
-	symbol_table_add_reserved_word(env, "true", token_boolean);
-	symbol_table_add_reserved_word(env, "false", token_boolean);
-	symbol_table_add_reserved_word(env, "module", token_module);
-	symbol_table_add_reserved_word(env, "struct", token_struct);
-	symbol_table_add_reserved_word(env, "return", token_return);
-    symbol_table_add_reserved_word(env, "extern", token_extern);
-    symbol_table_add_reserved_word(env, "mut", token_mut);
-    symbol_table_add_reserved_word(env, "const", token_const);
-    symbol_table_add_reserved_word(env, "impl", token_impl);
-    symbol_table_add_reserved_word(env, "self", token_self);
+	Ake_symbol_table_add_reserved_word(env, "fn", token_fn);
+	Ake_symbol_table_add_reserved_word(env, "end", token_end);
+	Ake_symbol_table_add_reserved_word(env, "if", token_if);
+	Ake_symbol_table_add_reserved_word(env, "elseif", token_elseif);
+	Ake_symbol_table_add_reserved_word(env, "else", token_else);
+	Ake_symbol_table_add_reserved_word(env, "while", token_while);
+	Ake_symbol_table_add_reserved_word(env, "for", token_for);
+	Ake_symbol_table_add_reserved_word(env, "in", token_in);
+	Ake_symbol_table_add_reserved_word(env, "let", token_let);
+	Ake_symbol_table_add_reserved_word(env, "true", token_boolean);
+	Ake_symbol_table_add_reserved_word(env, "false", token_boolean);
+	Ake_symbol_table_add_reserved_word(env, "module", token_module);
+	Ake_symbol_table_add_reserved_word(env, "struct", token_struct);
+	Ake_symbol_table_add_reserved_word(env, "return", token_return);
+    Ake_symbol_table_add_reserved_word(env, "extern", token_extern);
+    Ake_symbol_table_add_reserved_word(env, "mut", token_mut);
+    Ake_symbol_table_add_reserved_word(env, "const", token_const);
+    Ake_symbol_table_add_reserved_word(env, "impl", token_impl);
+    Ake_symbol_table_add_reserved_word(env, "self", token_self);
 }
 
-void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environment* env)
+void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake_environment* env)
 {
 	const char* name;
 	struct type_def* td = NULL;
@@ -95,7 +95,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environ
 	buffer_copy_str(&td->name, name);
 	td->is_signed = true;
 	td->bit_count = 32;
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
 
 	name = "i64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -104,7 +104,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environ
 	buffer_copy_str(&td->name, name);
 	td->is_signed = true;
 	td->bit_count = 64;
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
 
     name = "u8";
     malloc_safe((void**)&td, sizeof(struct type_def));
@@ -112,7 +112,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environ
     td->type = type_integer;
     buffer_copy_str(&td->name, name);
     td->bit_count = 8;
-    symbol_table_add_type(env, name, td);
+    Ake_symbol_table_add_type(env, name, td);
 
     name = "u32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -120,7 +120,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environ
 	td->type = type_integer;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 32;
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
 
 	name = "u64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -128,7 +128,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environ
 	td->type = type_integer;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 64;
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
 
 	name = "f32";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -136,7 +136,7 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environ
 	td->type = type_float;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 32;
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
 
 	name = "f64";
 	malloc_safe((void**)&td, sizeof(struct type_def));
@@ -144,21 +144,21 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environ
 	td->type = type_float;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 64;
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
 
 	name = "bool";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_boolean;
 	buffer_copy_str(&td->name, name);
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
 
     name = "Function";
 	malloc_safe((void**)&td, sizeof(struct type_def));
 	type_def_init(td);
 	td->type = type_function;
 	buffer_copy_str(&td->name, name);
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
     st->function_type_def = td;
 
 	name = "Module";
@@ -166,10 +166,10 @@ void symbol_table_init_builtin_types(struct symbol_table* st, struct Ake_environ
 	type_def_init(td);
 	td->type = type_module;
 	buffer_copy_str(&td->name, name);
-	symbol_table_add_type(env, name, td);
+	Ake_symbol_table_add_type(env, name, td);
 }
 
-void symbol_table_add_numeric(struct symbol_table* st, const char* name)
+void Ake_symbol_table_add_numeric(struct Ake_symbol_table* st, const char* name)
 {
 	struct buffer bf;
 	buffer_init(&bf);
@@ -184,31 +184,31 @@ void symbol_table_add_numeric(struct symbol_table* st, const char* name)
     buffer_destroy(&bf);
 }
 
-void symbol_table_numeric_pool_init(struct symbol_table* st)
+void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
 {
 	Type_use* pool = NULL;
 	Type_use_create(&pool);
 	st->numeric_pool = pool;
 
-	symbol_table_add_numeric(st, "i32");
-	symbol_table_add_numeric(st, "i64");
-    symbol_table_add_numeric(st, "u8");
-	symbol_table_add_numeric(st, "u32");
-	symbol_table_add_numeric(st, "u64");
-	symbol_table_add_numeric(st, "f32");
-	symbol_table_add_numeric(st, "f64");
+	Ake_symbol_table_add_numeric(st, "i32");
+	Ake_symbol_table_add_numeric(st, "i64");
+    Ake_symbol_table_add_numeric(st, "u8");
+	Ake_symbol_table_add_numeric(st, "u32");
+	Ake_symbol_table_add_numeric(st, "u64");
+	Ake_symbol_table_add_numeric(st, "f32");
+	Ake_symbol_table_add_numeric(st, "f64");
 }
 
-void symbol_table_init(struct symbol_table* st)
+void Ake_symbol_table_init(struct Ake_symbol_table* st)
 {
 	struct Ake_environment* env = NULL;
 	malloc_safe((void**)&env, sizeof(struct Ake_environment));
 	Ake_environment_init(env, NULL);
 	st->top = env;
 	st->initial = env;
-	symbol_table_init_reserved(env);
-	symbol_table_init_builtin_types(st, env);
-	symbol_table_numeric_pool_init(st);
+	Ake_symbol_table_init_reserved(env);
+	Ake_symbol_table_init_builtin_types(st, env);
+	Ake_symbol_table_numeric_pool_init(st);
 
 	env = NULL;
 	malloc_safe((void**)&env, sizeof(struct Ake_environment));
@@ -219,13 +219,13 @@ void symbol_table_init(struct symbol_table* st)
     st->id_count = 0;
 }
 
-void symbol_table_create(struct symbol_table** st)
+void Ake_symbol_table_create(struct Ake_symbol_table** st)
 {
-    malloc_safe((void**)st, sizeof(struct symbol_table));
-    symbol_table_init(*st);
+    malloc_safe((void**)st, sizeof(struct Ake_symbol_table));
+    Ake_symbol_table_init(*st);
 }
 
-void symbol_table_destroy(struct symbol_table* st)
+void Ake_symbol_table_destroy(struct Ake_symbol_table* st)
 {
 	struct Ake_environment* env = st->top;
 	while (env) {
@@ -242,17 +242,17 @@ void symbol_table_destroy(struct symbol_table* st)
     Type_use_destroy(st->numeric_pool);
 }
 
-bool symbol_table_is_global(struct symbol_table* st)
+bool Ake_symbol_table_is_global(struct Ake_symbol_table* st)
 {
 	return st->top == st->global;
 }
 
-bool is_numeric(struct type_def* td)
+bool Ake_is_numeric(struct type_def* td)
 {
 	return td->type == type_integer || td->type == type_float;
 }
 
-bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, bool *promote, struct type_def** c)
+bool Ake_type_find(struct Ake_symbol_table* st, struct type_def* a, struct type_def* b, bool *promote, struct type_def** c)
 {
 	*promote = false;
 	*c = NULL;
@@ -261,7 +261,7 @@ bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, 
 		return true;
 	}
 
-	if (is_numeric(a) && is_numeric(b)) {
+	if (Ake_is_numeric(a) && Ake_is_numeric(b)) {
 		enum type type = a->type;
 
 		if (b->type == type_float) {
@@ -299,12 +299,12 @@ bool type_find(struct symbol_table* st, struct type_def* a, struct type_def* b, 
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool type_find_whole(struct symbol_table* st, Type_use* a, Type_use* b)
+bool Ake_type_find_whole(struct Ake_symbol_table* st, Type_use* a, Type_use* b)
 {
 	if (a && b) {
 		bool promote;
 		struct type_def* td = NULL;
-		if (!type_find(st, a->td, b->td, &promote, &td)) {
+		if (!Ake_type_find(st, a->td, b->td, &promote, &td)) {
 			return false;
 		}
 		if (promote) {
@@ -315,7 +315,7 @@ bool type_find_whole(struct symbol_table* st, Type_use* a, Type_use* b)
             Type_use* x = a->head;
             Type_use* y = b->head;
             do {
-                if (!type_find_whole(st, x, y)) {
+                if (!Ake_type_find_whole(st, x, y)) {
                     return false;
                 }
                 if (x) x = x->next;
@@ -336,20 +336,20 @@ bool type_find_whole(struct symbol_table* st, Type_use* a, Type_use* b)
 	}
 }
 
-bool type_def_can_cast(struct type_def* a, struct type_def* b)
+bool Ake_type_def_can_cast(struct type_def* a, struct type_def* b)
 {
 	if (a == b) {
 		return true;
 	}
 
-	if (a && b && is_numeric(a) && is_numeric(b)) {
+	if (a && b && Ake_is_numeric(a) && Ake_is_numeric(b)) {
 		return true;
 	}
 
 	return false;
 }
 
-bool type_def_match(struct type_def* a, struct type_def* b)
+bool Ake_type_def_match(struct type_def* a, struct type_def* b)
 {
     if (a == b) {
         return true;
@@ -358,7 +358,7 @@ bool type_def_match(struct type_def* a, struct type_def* b)
     return false;
 }
 
-bool type_def_should_match(Type_use* a, Type_use* b)
+bool Ake_type_def_should_match(Type_use* a, Type_use* b)
 {
     if (a->type == Type_use_function_inputs || a->type == Type_use_function_outputs) {
         return true;
@@ -372,10 +372,10 @@ bool type_def_should_match(Type_use* a, Type_use* b)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool type_use_can_cast(Type_use* a, Type_use* b)
+bool Ake_type_use_can_cast(Type_use* a, Type_use* b)
 {
     if (a && b) {
-        if (!type_def_can_cast(a->td, b->td)) {
+        if (!Ake_type_def_can_cast(a->td, b->td)) {
             return false;
         }
 
@@ -383,12 +383,12 @@ bool type_use_can_cast(Type_use* a, Type_use* b)
             Type_use* x = a->head;
             Type_use* y = b->head;
             while (x || y) {
-                if (type_def_should_match(a, b)) {
-                    if (!type_use_match(x, y)) {
+                if (Ake_type_def_should_match(a, b)) {
+                    if (!Ake_type_use_match(x, y)) {
                         return false;
                     }
                 } else {
-                    if (!type_use_can_cast(x, y)) {
+                    if (!Ake_type_use_can_cast(x, y)) {
                         return false;
                     }
                 }
@@ -409,7 +409,8 @@ bool type_use_can_cast(Type_use* a, Type_use* b)
     return true;
 }
 
-bool type_use_match(Type_use* a, Type_use* b)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool Ake_type_use_match(Type_use* a, Type_use* b)
 {
     if (a && b) {
         if (a->td != b->td) {
@@ -419,12 +420,12 @@ bool type_use_match(Type_use* a, Type_use* b)
         Type_use* x = a->head;
         Type_use* y = b->head;
         while (x || y) {
-            if (type_def_should_match(a, b)) {
-                if (!type_use_match(x, y)) {
+            if (Ake_type_def_should_match(a, b)) {
+                if (!Ake_type_use_match(x, y)) {
                     return false;
                 }
             } else {
-                if (!type_use_can_cast(x, y)) {
+                if (!Ake_type_use_can_cast(x, y)) {
                     return false;
                 }
             }
@@ -453,17 +454,17 @@ bool type_use_match(Type_use* a, Type_use* b)
  * @return
  */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b)
+bool Ake_type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b)
 {
 	if (a && b) {
-        if (!type_use_match(a->tu, b->tu)) {
+        if (!Ake_type_use_match(a->tu, b->tu)) {
             return false;
         }
 
         Ake_ast *x = a->head;
         Ake_ast *y = b->head;
         do {
-            if (!type_use_can_cast_prototype(x, y)) {
+            if (!Ake_type_use_can_cast_prototype(x, y)) {
                 return false;
             }
             if (x) x = x->next;
@@ -478,7 +479,7 @@ bool type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b)
     }
 }
 
-void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest)
+void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol_table* dest)
 {
 	for (int i = 0; i < src->global->ht.size; i++) {
 		struct hash_entry* p = src->global->ht.buckets[i].head;
@@ -491,7 +492,7 @@ void transfer_global_symbols(struct symbol_table* src, struct symbol_table* dest
 	}
 }
 
-void transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct buffer* module_name)
+void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct buffer* module_name)
 {
 	for (int i = 0; i < src->ht.size; i++) {
 		struct hash_entry* p = src->ht.buckets[i].head;
@@ -512,7 +513,7 @@ void transfer_module_symbols(struct Ake_environment* src, struct Ake_environment
 	}
 }
 
-void set_current_function(struct Ake_environment* env, Ake_ast* fd)
+void Ake_set_current_function(struct Ake_environment* env, Ake_ast* fd)
 {
 	struct Ake_symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
@@ -527,7 +528,7 @@ void set_current_function(struct Ake_environment* env, Ake_ast* fd)
 	buffer_destroy(&bf);
 }
 
-Ake_ast* get_current_function(struct Ake_environment* env)
+Ake_ast* Ake_get_current_function(struct Ake_environment* env)
 {
 	struct buffer bf;
 	buffer_init(&bf);
@@ -541,12 +542,12 @@ Ake_ast* get_current_function(struct Ake_environment* env)
 	}
 }
 
-size_t symbol_table_generate_id(struct symbol_table* st)
+size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st)
 {
     return st->id_count++;
 }
 
-void symbol_table_print(struct symbol_table* st)
+void Ake_symbol_table_print(struct Ake_symbol_table* st)
 {
     printf("\n");
     struct Ake_environment* p = st->top;

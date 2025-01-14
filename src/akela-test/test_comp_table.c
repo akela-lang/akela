@@ -90,7 +90,7 @@ void test_comp_table_include()
 	array2buffer("|main|", &cu_main->path);
 	Ake_comp_table_put(&ct, &cu_main->path, cu_main);
 
-	transfer_global_symbols(&cu_base->st, &cu_main->st);
+	Ake_transfer_global_symbols(&cu_base->st, &cu_main->st);
 
 	bool valid_main = Ake_comp_unit_compile(cu_main, main_input, main_input->input_vtable);
 

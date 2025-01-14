@@ -13,7 +13,7 @@ typedef struct Ake_comp_unit {
 	Ake_ast* root;
 	struct error_list el;
     struct buffer_list extern_list;
-	struct symbol_table st;
+	struct Ake_symbol_table st;
     void* input_obj;
 	struct buffer path;
 	struct Ake_comp_unit* next;
