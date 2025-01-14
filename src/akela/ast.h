@@ -69,75 +69,70 @@ typedef enum Ake_ast_type {
 	Ake_ast_type_count		/* keep at end */
 } Ake_ast_type;
 
-static enum result Ast_set_names(char** names)
+static char const* Ast_type_name(Ake_ast_type type)
 {
-    for (int i = 0; i < Ake_ast_type_count; i++) {
-        names[i] = NULL;
-    }
+	char const* name[Ake_ast_type_count];
+    name[Ake_ast_type_none] = "none";
+    name[Ake_ast_type_id] = "id";
+    name[Ake_ast_type_sign] = "sign";
+    name[Ake_ast_type_number] = "number";
+    name[Ake_ast_type_string] = "string";
+    name[Ake_ast_type_assign] = "assign";
+    name[Ake_ast_type_plus] = "plus";
+    name[Ake_ast_type_minus] = "minus";
+    name[Ake_ast_type_mult] = "mult";
+    name[Ake_ast_type_divide] = "divide";
+    name[Ake_ast_type_stmts] = "parse_stmts";
+    name[Ake_ast_type_function] = "function";
+    name[Ake_ast_type_dseq] = "dseq";
+    name[Ake_ast_type_dret] = "dret";
+    name[Ake_ast_type_call] = "call";
+    name[Ake_ast_type_cseq] = "cseq";
+    name[Ake_ast_type_if] = "if";
+    name[Ake_ast_type_conditional_branch] = "conditional-branch";
+    name[Ake_ast_type_default_branch] = "default-branch";
+    name[Ake_ast_type_equality] = "equality";
+    name[Ake_ast_type_not_equal] = "not-equal";
+    name[Ake_ast_type_less_than] = "less-than";
+    name[Ake_ast_type_less_than_or_equal] = "less-than-or-equal";
+    name[Ake_ast_type_greater_than] = "greater-than";
+    name[Ake_ast_type_greater_than_or_equal] = "greater-than-or-equal";
+    name[Ake_ast_type_not] = "not";
+    name[Ake_ast_type_and] = "and";
+    name[Ake_ast_type_or] = "or";
+    name[Ake_ast_type_while] = "while";
+    name[Ake_ast_type_for_range] = "for-range";
+    name[Ake_ast_type_for_iteration] = "for-iteration";
+    name[Ake_ast_type_declaration] = "declaration";
+    name[Ake_ast_type_array_literal] = "array-literal";
+    name[Ake_ast_type_array_subscript] = "array-subscript";
+    name[Ake_ast_type_let] = "let";
+    name[Ake_ast_type_boolean] = "boolean";
+    name[Ake_ast_type_parenthesis] = "parenthesis";
+    name[Ake_ast_type_type] = "type";
+    name[Ake_ast_type_power] = "power";
+    name[Ake_ast_type_type_pool] = "type-pool";
+    name[Ake_ast_type_dot] = "dot";
+    name[Ake_ast_type_module] = "module";
+    name[Ake_ast_type_struct] = "struct";
+    name[Ake_ast_type_return] = "return";
+    name[Ake_ast_type_eseq] = "eseq";
+    name[Ake_ast_type_let_lseq] = "let_lseq";
+    name[Ake_ast_type_let_rseq] = "let_rseq";
+    name[Ake_ast_type_error] = "error";
+    name[Ake_ast_type_prototype] = "prototype";
+    name[Ake_ast_type_extern] = "extern";
+    name[Ake_ast_type_struct_literal] = "struct-literal";
+    name[Ake_ast_type_struct_literal_field] = "struct-literal-field";
+    name[Ake_ast_type_ellipsis] = "ellipsis";
+    name[Ake_ast_type_impl] = "impl";
+    name[Ake_ast_type_self] = "self";
 
-    names[Ake_ast_type_none] = "none";
-    names[Ake_ast_type_id] = "id";
-    names[Ake_ast_type_sign] = "sign";
-    names[Ake_ast_type_number] = "number";
-    names[Ake_ast_type_string] = "string";
-    names[Ake_ast_type_assign] = "assign";
-    names[Ake_ast_type_plus] = "plus";
-    names[Ake_ast_type_minus] = "minus";
-    names[Ake_ast_type_mult] = "mult";
-    names[Ake_ast_type_divide] = "divide";
-    names[Ake_ast_type_stmts] = "parse_stmts";
-    names[Ake_ast_type_function] = "function";
-    names[Ake_ast_type_dseq] = "dseq";
-    names[Ake_ast_type_dret] = "dret";
-    names[Ake_ast_type_call] = "call";
-    names[Ake_ast_type_cseq] = "cseq";
-    names[Ake_ast_type_if] = "if";
-    names[Ake_ast_type_conditional_branch] = "conditional-branch";
-    names[Ake_ast_type_default_branch] = "default-branch";
-    names[Ake_ast_type_equality] = "equality";
-    names[Ake_ast_type_not_equal] = "not-equal";
-    names[Ake_ast_type_less_than] = "less-than";
-    names[Ake_ast_type_less_than_or_equal] = "less-than-or-equal";
-    names[Ake_ast_type_greater_than] = "greater-than";
-    names[Ake_ast_type_greater_than_or_equal] = "greater-than-or-equal";
-    names[Ake_ast_type_not] = "not";
-    names[Ake_ast_type_and] = "and";
-    names[Ake_ast_type_or] = "or";
-    names[Ake_ast_type_while] = "while";
-    names[Ake_ast_type_for_range] = "for-range";
-    names[Ake_ast_type_for_iteration] = "for-iteration";
-    names[Ake_ast_type_declaration] = "declaration";
-    names[Ake_ast_type_array_literal] = "array-literal";
-    names[Ake_ast_type_array_subscript] = "array-subscript";
-    names[Ake_ast_type_let] = "let";
-    names[Ake_ast_type_boolean] = "boolean";
-    names[Ake_ast_type_parenthesis] = "parenthesis";
-    names[Ake_ast_type_type] = "type";
-    names[Ake_ast_type_power] = "power";
-    names[Ake_ast_type_type_pool] = "type-pool";
-    names[Ake_ast_type_dot] = "dot";
-    names[Ake_ast_type_module] = "module";
-    names[Ake_ast_type_struct] = "struct";
-    names[Ake_ast_type_return] = "return";
-    names[Ake_ast_type_eseq] = "eseq";
-    names[Ake_ast_type_let_lseq] = "let_lseq";
-    names[Ake_ast_type_let_rseq] = "let_rseq";
-    names[Ake_ast_type_error] = "error";
-    names[Ake_ast_type_prototype] = "prototype";
-    names[Ake_ast_type_extern] = "extern";
-    names[Ake_ast_type_struct_literal] = "struct-literal";
-    names[Ake_ast_type_struct_literal_field] = "struct-literal-field";
-    names[Ake_ast_type_ellipsis] = "ellipsis";
-    names[Ake_ast_type_impl] = "impl";
-    names[Ake_ast_type_self] = "self";
+	if (type >= 0 && type < Ake_ast_type_count) {
+		return name[type];
+	}
 
-    for (int i = 0; i < Ake_ast_type_count; i++) {
-        if (names[i] == NULL) {
-            return set_error("missing dag name: %d", i);
-        }
-    }
-
-    return result_ok;
+	return "Invalid Ake_ast_type";
 }
 
 typedef struct Ake_ast {
@@ -157,7 +152,7 @@ typedef struct Ake_ast {
 extern "C" {
 #endif
 
-AKELA_API enum result Ast_set_names(char** names);
+//AKELA_API enum result Ast_set_names(char const** names);
 AKELA_API void Ake_ast_create(Ake_ast** n);
 AKELA_API void Ake_ast_destroy(Ake_ast* n);
 AKELA_API void Ake_ast_init(Ake_ast* n);

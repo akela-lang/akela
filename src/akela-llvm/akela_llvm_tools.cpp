@@ -284,9 +284,7 @@ namespace Akela_llvm {
         } else if (n->type == Ake_ast_type_string) {
             return Handle_string(jd, n);
         } else {
-            char* names[Ake_ast_type_count];
-            Ast_set_names(names);
-            printf("code gen: unhandled ast node type: %s", names[n->type]);
+            printf("code gen: unhandled ast node type: %s", Ast_type_name(n->type));
             exit(1);
         }
     }

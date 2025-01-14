@@ -136,20 +136,12 @@ void Ake_token_list_reset(struct Ake_token_list* tl)
 
 enum result Ake_token_list_print(struct Ake_token_list* tl)
 {
-    enum result r;
-
-    char* token_name[Ake_token_count];
-    r = Ake_token_name_init(token_name);
-    if (r == result_error) {
-        return r;
-    }
-
     struct Ake_token* t = tl->head;
     while (t) {
         char* a;
 
         buffer2array(&t->value, &a);
-        printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, token_name[t->type], a);
+        printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, Ake_token_name(t->type), a);
 
         free(a);
 
@@ -158,24 +150,12 @@ enum result Ake_token_list_print(struct Ake_token_list* tl)
     return result_ok;
 }
 
-enum result Ake_print_token(struct Ake_token* t)
+void Ake_print_token(struct Ake_token* t)
 {
-    enum result r;
-
-    char* token_name[Ake_token_count];
-    r = Ake_token_name_init(token_name);
-    if (r == result_error) {
-        return r;
-    }
-
     char* a;
-
     buffer2array(&t->value, &a);
-    printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, token_name[t->type], a);
-
+    printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, Ake_token_name(t->type), a);
     free(a);
-
-    return r;
 }
 
 void Ake_get_token_location(struct Ake_token* t, struct location* loc)

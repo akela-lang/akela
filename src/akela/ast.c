@@ -84,14 +84,11 @@ void Ake_type_use_print(Ake_type_use* tu);
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_print(Ake_ast* n)
 {
-    char* names[Ake_ast_type_count];
-    Ast_set_names(names);
-
     if (n == NULL) return;
 
 	printf("<ast ");
     printf("[%p]", n);
-    printf("%s", names[n->type]);
+    printf("%s", Ast_type_name(n->type));
 
 	for (Ake_ast* p = n->head; p; p = p->next) {
 		printf(" <%p>", p);
@@ -110,7 +107,7 @@ void Ake_ast_print(Ake_ast* n)
 void Ake_type_use_print(Ake_type_use* tu)
 {
     if (tu) {
-        char* names[Ake_type_use_count];
+        char const* names[Ake_type_use_count];
         Ake_type_use_names(names);
 
         printf(" <tu ");
@@ -135,9 +132,6 @@ void Ake_type_use_print_pointers(Ake_type_use* tu, struct list* l);
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_print_pointers(Ake_ast* root, struct list* l)
 {
-    char* names[Ake_ast_type_count];
-    Ast_set_names(names);
-
     bool created = false;
     if (!l) {
         list_create(&l);

@@ -29,7 +29,7 @@ typedef enum Ake_type_use_type {
     Ake_type_use_count,                 /* keep at end */
 } Ake_type_use_type;
 
-void static Ake_type_use_names(char* names[])
+void static Ake_type_use_names(char const* names[])
 {
     names[Ake_type_use_type_def] = "Type_use_type_def";
     names[Ake_type_use_function_inputs] = "Type_use_function_inputs";

@@ -65,76 +65,73 @@ typedef enum Ake_token_enum {
     Ake_token_count     /* keep at the end */
 } Ake_token_enum;
 
-static enum result Ake_token_name_init(char** token_name)
+static char const* Ake_token_name(Ake_token_enum type)
 {
-    for (int i = 0; i < Ake_token_count; i++) {
-        token_name[i] = NULL;
+    char const* name[Ake_token_count];
+
+    name[Ake_token_none] = "none";
+    name[Ake_token_number] = "number";
+    name[Ake_token_id] = "id";
+    name[Ake_token_equal] = "equal";
+    name[Ake_token_plus] = "plus";
+    name[Ake_token_minus] = "minus";
+    name[Ake_token_mult] = "mult";
+    name[Ake_token_divide] = "divide";
+    name[Ake_token_left_paren] = "left-parenthesis";
+    name[Ake_token_right_paren] = "right-parenthesis";
+    name[Ake_token_newline] = "newline";
+    name[Ake_token_fn] = "fn";
+    name[Ake_token_end] = "end";
+    name[Ake_token_if] = "if";
+    name[Ake_token_elseif] = "elseif";
+    name[Ake_token_else] = "else";
+    name[Ake_token_comma] = "comma";
+    name[Ake_token_semicolon] = "semicolon";
+    name[Ake_token_if] = "if";
+    name[Ake_token_elseif] = "elseif";
+    name[Ake_token_else] = "else";
+    name[Ake_token_double_equal] = "double-equal";
+    name[Ake_token_not_equal] = "not-equal";
+    name[Ake_token_less_than] = "less-than";
+    name[Ake_token_less_than_or_equal] = "less-than-or-equal";
+    name[Ake_token_greater_than] = "greater-than";
+    name[Ake_token_greater_than_or_equal] = "greater-than-or-equal";
+    name[Ake_token_not] = "not";
+    name[Ake_token_ampersand] = "ampersand";
+    name[Ake_token_and] = "and";
+    name[Ake_token_vertical_bar] = "vertical-bar";
+    name[Ake_token_or] = "or";
+    name[Ake_token_while] = "while";
+    name[Ake_token_for] = "for";
+    name[Ake_token_in] = "in";
+    name[Ake_token_colon] = ":";
+    name[Ake_token_left_square_bracket] = "[";
+    name[Ake_token_right_square_bracket] = "]";
+    name[Ake_token_string] = "string";
+    name[Ake_token_let] = "var";
+    name[Ake_token_left_curly_brace] = "{";
+    name[Ake_token_right_curly_brace] = "}";
+    name[Ake_token_boolean] = "boolean";
+    name[Ake_token_caret] = "^";
+    name[Ake_token_module] = "module";
+    name[Ake_token_dot] = "dot";
+    name[Ake_token_struct] = "struct";
+    name[Ake_token_return] = "return";
+    name[Ake_token_eof] = "EOF";
+    name[Ake_token_extern] = "extern";
+    name[Ake_token_mut] = "mut";
+    name[Ake_token_const] = "const";
+    name[Ake_token_arrow] = "arrow";
+    name[Ake_token_ellipsis] = "ellipsis";
+    name[Ake_token_range] = "range";
+    name[Ake_token_impl] = "impl";
+    name[Ake_token_self] = "self";
+
+    if (type >= 0 && type <= Ake_token_count) {
+        return name[type];
     }
 
-    token_name[Ake_token_none] = "none";
-    token_name[Ake_token_number] = "number";
-    token_name[Ake_token_id] = "id";
-    token_name[Ake_token_equal] = "equal";
-    token_name[Ake_token_plus] = "plus";
-    token_name[Ake_token_minus] = "minus";
-    token_name[Ake_token_mult] = "mult";
-    token_name[Ake_token_divide] = "divide";
-    token_name[Ake_token_left_paren] = "left-parenthesis";
-    token_name[Ake_token_right_paren] = "right-parenthesis";
-    token_name[Ake_token_newline] = "newline";
-    token_name[Ake_token_fn] = "fn";
-    token_name[Ake_token_end] = "end";
-    token_name[Ake_token_if] = "if";
-    token_name[Ake_token_elseif] = "elseif";
-    token_name[Ake_token_else] = "else";
-    token_name[Ake_token_comma] = "comma";
-    token_name[Ake_token_semicolon] = "semicolon";
-    token_name[Ake_token_if] = "if";
-    token_name[Ake_token_elseif] = "elseif";
-    token_name[Ake_token_else] = "else";
-    token_name[Ake_token_double_equal] = "double-equal";
-    token_name[Ake_token_not_equal] = "not-equal";
-    token_name[Ake_token_less_than] = "less-than";
-    token_name[Ake_token_less_than_or_equal] = "less-than-or-equal";
-    token_name[Ake_token_greater_than] = "greater-than";
-    token_name[Ake_token_greater_than_or_equal] = "greater-than-or-equal";
-    token_name[Ake_token_not] = "not";
-    token_name[Ake_token_ampersand] = "ampersand";
-    token_name[Ake_token_and] = "and";
-    token_name[Ake_token_vertical_bar] = "vertical-bar";
-    token_name[Ake_token_or] = "or";
-    token_name[Ake_token_while] = "while";
-    token_name[Ake_token_for] = "for";
-    token_name[Ake_token_in] = "in";
-    token_name[Ake_token_colon] = ":";
-    token_name[Ake_token_left_square_bracket] = "[";
-    token_name[Ake_token_right_square_bracket] = "]";
-    token_name[Ake_token_string] = "string";
-    token_name[Ake_token_let] = "var";
-    token_name[Ake_token_left_curly_brace] = "{";
-    token_name[Ake_token_right_curly_brace] = "}";
-    token_name[Ake_token_boolean] = "boolean";
-    token_name[Ake_token_caret] = "^";
-    token_name[Ake_token_module] = "module";
-    token_name[Ake_token_dot] = "dot";
-    token_name[Ake_token_struct] = "struct";
-    token_name[Ake_token_return] = "return";
-    token_name[Ake_token_eof] = "EOF";
-    token_name[Ake_token_extern] = "extern";
-    token_name[Ake_token_mut] = "mut";
-    token_name[Ake_token_const] = "const";
-    token_name[Ake_token_arrow] = "arrow";
-    token_name[Ake_token_ellipsis] = "ellipsis";
-    token_name[Ake_token_range] = "range";
-    token_name[Ake_token_impl] = "impl";
-    token_name[Ake_token_self] = "self";
-
-    for (int i = 0; i < Ake_token_count; i++) {
-        if (token_name[i] == NULL) {
-            return set_error("token name missing: %d\n", i);
-        }
-    }
-    return result_ok;
+    return "invalid Ake_token_enum";
 }
 
 typedef struct Ake_token {
@@ -165,7 +162,7 @@ AKELA_API void Ake_token_list_add(struct Ake_token_list* tl, struct Ake_token* t
 AKELA_API struct Ake_token* Ake_token_list_pop(struct Ake_token_list* tl);
 AKELA_API void Ake_token_list_reset(struct Ake_token_list* tl);
 AKELA_API enum result Ake_token_list_print(struct Ake_token_list* tl);
-AKELA_API enum result Ake_print_token(struct Ake_token* t);
+AKELA_API void Ake_print_token(struct Ake_token* t);
 AKELA_API void Ake_get_token_location(struct Ake_token* t, struct location* loc);
 
 #endif
