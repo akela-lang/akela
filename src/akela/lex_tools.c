@@ -9,8 +9,8 @@
  * @param el error list
  * @param st symbol table
  */
-void lex_state_init(
-        struct lex_state* ls,
+void Ake_lex_state_init(
+        struct Ake_lex_state* ls,
         void* input_obj,
         InputUnicodeVTable* input_vtable,
         struct error_list* el,
@@ -27,7 +27,7 @@ void lex_state_init(
  * @param uc utf32 character
  * @return true if a compound operator, otherwise false
  */
-bool compound_operator_start(int num, const char c[4])
+bool Ake_compound_operator_start(int num, const char c[4])
 {
     if (num != 1) return false;
     return *c == '=' ||
@@ -40,7 +40,7 @@ bool compound_operator_start(int num, const char c[4])
         *c == '.';
 }
 
-bool utf8_match(const char a[4], int a_num, const char b[4], int b_num)
+bool Ake_utf8_match(const char a[4], int a_num, const char b[4], int b_num)
 {
     if (a_num != b_num) return false;
     for (int i = 0; i < a_num; i++) {
@@ -49,7 +49,7 @@ bool utf8_match(const char a[4], int a_num, const char b[4], int b_num)
     return true;
 }
 
-bool is_word(const char c[4], int num)
+bool Ake_is_word(const char c[4], int num)
 {
     if (num == 1 && isalpha(c[0])) {
         return true;
@@ -64,7 +64,7 @@ bool is_word(const char c[4], int num)
             if (num2 != num) {
                 return false;
             }
-            if (utf8_match(c, num, greek+pos, num2)) {
+            if (Ake_utf8_match(c, num, greek+pos, num2)) {
                 return true;
             }
             pos += num2;
@@ -74,7 +74,7 @@ bool is_word(const char c[4], int num)
     return false;
 }
 
-bool is_num(const char c[4], int num)
+bool Ake_is_num(const char c[4], int num)
 {
     if (num != 1) return false;
     return isdigit(*c);

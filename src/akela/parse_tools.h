@@ -9,7 +9,7 @@
 #include "ast.h"
 
 struct parse_state {
-	struct lex_state* ls;
+	struct Ake_lex_state* ls;
 	struct token* lookahead;
 	struct error_list* el;
 	struct symbol_table* st;
@@ -18,7 +18,7 @@ struct parse_state {
 
 AKELA_API void parse_state_init(
         struct parse_state* ps,
-        struct lex_state* ls,
+        struct Ake_lex_state* ls,
         struct error_list* el,
         struct buffer_list* extern_list,
         struct symbol_table* st);

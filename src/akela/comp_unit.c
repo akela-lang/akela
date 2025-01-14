@@ -42,9 +42,9 @@ void Ake_comp_unit_setup(struct Ake_comp_unit* cu, void* input_obj, InputUnicode
     Ake_ast_destroy(cu->root);
 	cu->root = NULL;
 
-	struct lex_state* ls = NULL;
-	malloc_safe((void**)&ls, sizeof(struct lex_state));
-    lex_state_init(ls, input_obj, input_vtable, &cu->el, &cu->st);
+	struct Ake_lex_state* ls = NULL;
+	malloc_safe((void**)&ls, sizeof(struct Ake_lex_state));
+    Ake_lex_state_init(ls, input_obj, input_vtable, &cu->el, &cu->st);
 
 	malloc_safe((void**)ps, sizeof(struct parse_state));
 	parse_state_init(*ps, ls, &cu->el, &cu->extern_list, &cu->st);

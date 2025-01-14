@@ -7,23 +7,23 @@
 #include "zinc/memory.h"
 #include "symbol.h"
 
-bool Ake_lex_start(struct lex_state* ls,
+bool Ake_lex_start(struct Ake_lex_state* ls,
                enum state_enum* state,
                bool* done,
                struct token* t);
-bool Ake_lex_word(struct lex_state* ls,
+bool Ake_lex_word(struct Ake_lex_state* ls,
               enum state_enum* state,
               bool* done,
               struct token* t);
-bool Ake_lex_number(struct lex_state* ls,
+bool Ake_lex_number(struct Ake_lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t);
-bool Ake_lex_string(struct lex_state* ls,
+bool Ake_lex_string(struct Ake_lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t);
-bool Ake_lex_compound_operator(struct lex_state* ls,
+bool Ake_lex_compound_operator(struct Ake_lex_state* ls,
                         enum state_enum* state,
                         bool* done,
                         struct token* t);
@@ -36,7 +36,7 @@ bool Ake_lex_compound_operator(struct lex_state* ls,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool Ake_lex_start(struct lex_state* ls,
+bool Ake_lex_start(struct Ake_lex_state* ls,
                enum state_enum* state,
                bool* done,
                struct token* t)
@@ -71,8 +71,8 @@ bool Ake_lex_start(struct lex_state* ls,
                 }
             }
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
-        } else if (is_word(c, num)) {
-            *state = state_id;
+        } else if (Ake_is_word(c, num)) {
+            *state = Ake_state_id;
             t->type = token_id;
             for (int i = 0; i < num; i++) {
                 buffer_add_char(&t->value, c[i]);
@@ -80,15 +80,15 @@ bool Ake_lex_start(struct lex_state* ls,
             t->loc = loc;
             return Ake_lex_word(ls, state, done, t);
         } else if (*c == '_') {
-            *state = state_id_underscore;
+            *state = Ake_state_id_underscore;
             t->type = token_id;
             for (int i = 0; i < num; i++) {
                 buffer_add_char(&t->value, c[i]);
             }
             t->loc = loc;
             return Ake_lex_word(ls, state, done, t);
-        } else if (is_num(c, num)) {
-            *state = state_number_whole;
+        } else if (Ake_is_num(c, num)) {
+            *state = Ake_state_number_whole;
             t->type = token_number;
             t->is_integer = true;
             for (int i = 0; i < num; i++) {
@@ -97,12 +97,12 @@ bool Ake_lex_start(struct lex_state* ls,
             t->loc = loc;
             return Ake_lex_number(ls, state, done, t);
         } else if (*c == '"') {
-            *state = state_string;
+            *state = Ake_state_string;
             t->type = token_string;
             t->loc = loc;
             return Ake_lex_string(ls, state, done, t);
-        } else if (compound_operator_start(num, c)) {
-            *state = state_compound_operator;
+        } else if (Ake_compound_operator_start(num, c)) {
+            *state = Ake_state_compound_operator;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
             return Ake_lex_compound_operator(ls, state, done, t);
         } else if (*c == '+') {
@@ -199,7 +199,7 @@ bool Ake_lex_start(struct lex_state* ls,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool Ake_lex_word(struct lex_state* ls,
+bool Ake_lex_word(struct Ake_lex_state* ls,
               enum state_enum* state,
               bool* done,
               struct token* t)
@@ -224,20 +224,20 @@ bool Ake_lex_word(struct lex_state* ls,
             } else {
                 t->type = token_id;
             }
-            *state = state_start;
+            *state = Ake_state_start;
             break;
         }
 
-        if (*state == state_id) {
+        if (*state == Ake_state_id) {
             if (*c == '_') {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
-            } else if (is_word(c, num)) {
+            } else if (Ake_is_word(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
-            } else if (is_num(c, num)) {
+            } else if (Ake_is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
@@ -248,21 +248,21 @@ bool Ake_lex_word(struct lex_state* ls,
                 } else {
                     t->type = token_id;
                 }
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
-        } else if (*state == state_id_underscore) {
+        } else if (*state == Ake_state_id_underscore) {
             if (*c == '_') {
                 error_list_set(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_lex_error_underscore_letter2 */
-            } else if (is_num(c, num)) {
+            } else if (Ake_is_num(c, num)) {
                 error_list_set(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_lex_error_underscore_letter */
-            } else if (is_word(c, num)) {
-                *state = state_id;
+            } else if (Ake_is_word(c, num)) {
+                *state = Ake_state_id;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
@@ -273,7 +273,7 @@ bool Ake_lex_word(struct lex_state* ls,
                 } else {
                     t->type = token_id;
                 }
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -291,7 +291,7 @@ bool Ake_lex_word(struct lex_state* ls,
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool Ake_lex_number(struct lex_state* ls,
+bool Ake_lex_number(struct Ake_lex_state* ls,
                 enum state_enum* state,
                 bool* done,
                 struct token* t)
@@ -309,88 +309,88 @@ bool Ake_lex_number(struct lex_state* ls,
             break;
         }
 
-        if (*state == state_number_whole) {
-            if (!*done && is_num(c, num)) {
+        if (*state == Ake_state_number_whole) {
+            if (!*done && Ake_is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
             } else if (!*done && *c == '.') {
-                *state = state_number_fraction_start;
+                *state = Ake_state_number_fraction_start;
                 t->is_integer = false;
                 t->is_float = true;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
             } else if (!*done && *c == 'e') {
-                *state = state_number_exponent_start;
+                *state = Ake_state_number_exponent_start;
                 t->is_integer = false;
                 t->is_float = true;
                 buffer_add_char(&t->value, 'e');
             } else {
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
-        } else if (*state == state_number_fraction_start) {
-            if (!*done && is_num(c, num)) {
-                *state = state_number_fraction;
+        } else if (*state == Ake_state_number_fraction_start) {
+            if (!*done && Ake_is_num(c, num)) {
+                *state = Ake_state_number_fraction;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
             } else {
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
-        } else if (*state == state_number_fraction) {
-            if (!*done && is_num(c, num)) {
+        } else if (*state == Ake_state_number_fraction) {
+            if (!*done && Ake_is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
             } else if (!*done && *c == 'e') {
-                *state = state_number_exponent_start;
+                *state = Ake_state_number_exponent_start;
                 buffer_add_char(&t->value, 'e');
             } else {
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
-        } else if (*state == state_number_exponent_start) {
-            if (!*done && is_num(c, num)) {
-                *state = state_number_exponent;
+        } else if (*state == Ake_state_number_exponent_start) {
+            if (!*done && Ake_is_num(c, num)) {
+                *state = Ake_state_number_exponent;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
             } else if (!*done && (*c == '-' || *c == '+')) {
-                *state = state_number_exponent_sign_start;
+                *state = Ake_state_number_exponent_sign_start;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
             } else {
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
-        } else if (*state == state_number_exponent_sign_start) {
-            if (!*done && is_num(c, num)) {
-                *state = state_number_exponent;
+        } else if (*state == Ake_state_number_exponent_sign_start) {
+            if (!*done && Ake_is_num(c, num)) {
+                *state = Ake_state_number_exponent;
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
             } else {
                 valid = error_list_set(ls->el, &loc, "expected number after exponent sign");
                 /* test case: test_lex_error_exponent_sign */
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
-        } else if (*state == state_number_exponent) {
-            if (!*done && is_num(c, num)) {
+        } else if (*state == Ake_state_number_exponent) {
+            if (!*done && Ake_is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
                     buffer_add_char(&t->value, c[i]);
                 }
             } else {
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
                 break;
             }
@@ -410,7 +410,7 @@ bool Ake_lex_number(struct lex_state* ls,
  * @return true if valid, otherwise false
  */
 bool Ake_lex_string(
-        struct lex_state* ls,
+        struct Ake_lex_state* ls,
         enum state_enum* state,
         bool* done,
         struct token* t)
@@ -435,11 +435,11 @@ bool Ake_lex_string(
             break;
         }
 
-        if (*state == state_string) {
+        if (*state == Ake_state_string) {
             if (*c == '\\') {
-                *state = state_string_backslash;
+                *state = Ake_state_string_backslash;
             } else if (*c == '"') {
-                *state = state_start;
+                *state = Ake_state_start;
                 t->loc = loc;
                 break;
             } else {
@@ -447,7 +447,7 @@ bool Ake_lex_string(
                     buffer_add_char(&t->value, c[i]);
                 }
             }
-        } else if (*state == state_string_backslash) {
+        } else if (*state == Ake_state_string_backslash) {
             if (*c == '\\') {
                 buffer_add_char(&t->value, '\\');
             } else if (*c == 'n') {
@@ -466,7 +466,7 @@ bool Ake_lex_string(
                 /* test case: test_lex_string_escape_error */
                 break;
             }
-            *state = state_string;
+            *state = Ake_state_string;
         }
     }
 
@@ -482,7 +482,7 @@ bool Ake_lex_string(
  * @return true if valid, otherwise false
  */
 bool Ake_lex_compound_operator(
-        struct lex_state* ls,
+        struct Ake_lex_state* ls,
         enum state_enum* state,
         bool* done,
         struct token* t)
@@ -508,10 +508,10 @@ bool Ake_lex_compound_operator(
 
         if (num == 1 && *c == '=') {
             t->type = token_double_equal;
-            *state = state_start;
+            *state = Ake_state_start;
         } else {
             t->type = token_equal;
-            *state = state_start;
+            *state = Ake_state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '!') {
@@ -522,10 +522,10 @@ bool Ake_lex_compound_operator(
 
         if (num == 1 && *c == '=') {
             t->type = token_not_equal;
-            *state = state_start;
+            *state = Ake_state_start;
         } else {
             t->type = token_not;
-            *state = state_start;
+            *state = Ake_state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '<') {
@@ -536,10 +536,10 @@ bool Ake_lex_compound_operator(
 
         if (num == 1 && *c == '=') {
             t->type = token_less_than_or_equal;
-            *state = state_start;
+            *state = Ake_state_start;
         } else {
             t->type = token_less_than;
-            *state = state_start;
+            *state = Ake_state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '>') {
@@ -550,10 +550,10 @@ bool Ake_lex_compound_operator(
 
         if (num == 1 && *c == '=') {
             t->type = token_greater_than_or_equal;
-            *state = state_start;
+            *state = Ake_state_start;
         } else {
             t->type = token_greater_than;
-            *state = state_start;
+            *state = Ake_state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '&') {
@@ -564,10 +564,10 @@ bool Ake_lex_compound_operator(
 
         if (num == 1 && *c == '&') {
             t->type = token_and;
-            *state = state_start;
+            *state = Ake_state_start;
         } else {
             t->type = token_ampersand;
-            *state = state_start;
+            *state = Ake_state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '|') {
@@ -578,10 +578,10 @@ bool Ake_lex_compound_operator(
 
         if (num == 1 && *c == '|') {
             t->type = token_or;
-            *state = state_start;
+            *state = Ake_state_start;
         } else {
             t->type = token_vertical_bar;
-            *state = state_start;
+            *state = Ake_state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '-') {
@@ -592,10 +592,10 @@ bool Ake_lex_compound_operator(
 
         if (num == 1 && *c == '>') {
             t->type = token_arrow;
-            *state = state_start;
+            *state = Ake_state_start;
         } else {
             t->type = token_minus;
-            *state = state_start;
+            *state = Ake_state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '.') {
@@ -612,15 +612,15 @@ bool Ake_lex_compound_operator(
 
             if (num == 1 && *c == '.') {
                 t->type = token_ellipsis;
-                *state = state_start;
+                *state = Ake_state_start;
             } else {
                 t->type = token_range;
-                *state = state_start;
+                *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
             }
         } else {
             t->type = token_dot;
-            *state = state_start;
+            *state = Ake_state_start;
             InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
         }
 
@@ -638,10 +638,10 @@ bool Ake_lex_compound_operator(
  * @param t the token
  * @return true if valid, otherwise false
  */
-bool Ake_lex(struct lex_state* ls, struct token** t)
+bool Ake_lex(struct Ake_lex_state* ls, struct token** t)
 {
     bool valid = true;
-    enum state_enum state = state_start;
+    enum state_enum state = Ake_state_start;
     *t = NULL;
     struct token* tf;
     bool done = false;

@@ -9,7 +9,7 @@
 
 void parse_state_init(
         struct parse_state* ps,
-        struct lex_state* ls,
+        struct Ake_lex_state* ls,
         struct error_list* el,
         struct buffer_list* extern_list,
         struct symbol_table* st)
