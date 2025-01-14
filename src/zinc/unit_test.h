@@ -2,8 +2,8 @@
 #define _UNIT_TEST_H
 
 #include "api.h"
-#include "string.h"
-#include "buffer_list.h"
+#include "zstring.h"
+#include "string_list.h"
 #include "vector.h"
 #include "String_slice.h"
 

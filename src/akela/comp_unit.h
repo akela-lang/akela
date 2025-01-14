@@ -6,7 +6,7 @@
 #include "symbol_table.h"
 #include <stdbool.h>
 #include "zinc/input_unicode.h"
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 
 typedef struct Ake_comp_unit {
 	bool valid;

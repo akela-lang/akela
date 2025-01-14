@@ -14,7 +14,7 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 #include <dirent.h>
-#include "buffer_list.h"
+#include "string_list.h"
 #include <fcntl.h>
 #include "memory.h"
 #include <assert.h>

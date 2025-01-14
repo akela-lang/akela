@@ -2,7 +2,7 @@
 #define COBBLE_MATCH_H
 
 #include "match_tools.h"
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 #include "compile_tools.h"
 
 Cob_result Cob_match(Cob_re* re, String_slice slice);

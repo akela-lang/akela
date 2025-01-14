@@ -11,7 +11,7 @@ set(SOURCE_FILES
         os_win.c
         datetime.c
         piece.c
-        buffer_list.c
+        string_list.c
         error.c
         error_unit_test.c
         list.c

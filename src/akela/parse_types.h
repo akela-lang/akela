@@ -4,7 +4,7 @@
 #include "api.h"
 #include <stdbool.h>
 #include "zinc/zstring.h"
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 #include "ast.h"
 
 #ifdef __cplusplus

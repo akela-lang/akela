@@ -2,7 +2,7 @@
 #include "zinc/memory.h"
 #include <assert.h>
 #include "zinc/hash.h"
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 #include "zinc/result.h"
 
 #include <unicode/uchar.h>

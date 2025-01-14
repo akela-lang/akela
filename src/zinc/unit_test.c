@@ -4,8 +4,8 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include "result.h"
-#include "string.h"
-#include "buffer_list.h"
+#include "zstring.h"
+#include "string_list.h"
 #include "vector.h"
 #include "unit_test.h"
 #include <assert.h>

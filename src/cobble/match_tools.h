@@ -7,7 +7,7 @@
 #include "zinc/hash_map_size_t.h"
 #include "zinc/String_slice.h"
 #include <unicode/uchar.h>
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 
 typedef enum Cob_task_status {
     Cob_task_status_initial,

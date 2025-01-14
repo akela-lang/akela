@@ -1,7 +1,7 @@
 #include "akela_llvm.h"
 #include "akela_llvm_jit.h"
 #include <cstddef>
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 
 
 Ake_code_gen_vtable Code_gen_llvm_vtable = {

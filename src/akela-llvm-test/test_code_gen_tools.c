@@ -8,7 +8,7 @@
 #include "akela-llvm/akela_llvm.h"
 #include <string.h>
 #include "zinc/input_unicode_string.h"
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 
 bool cg_setup(const char* text, Ake_code_gen_result* result)
 {

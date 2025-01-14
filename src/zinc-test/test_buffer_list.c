@@ -1,4 +1,4 @@
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 #include "zinc/unit_test.h"
 #include "zinc/memory.h"
 

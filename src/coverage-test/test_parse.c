@@ -3,7 +3,7 @@
 #include "zinc/unit_test.h"
 #include "coverage/parse.h"
 #include "cobble/match.h"
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 
 void test_parse_line_zero()
 {

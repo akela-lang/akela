@@ -5,7 +5,7 @@
 #include <string.h>
 #include <linux/limits.h>
 #include <unistd.h>
-#include "zinc/buffer_list.h"
+#include "zinc/string_list.h"
 #include "zinc/result.h"
 #include "coverage/data.h"
 #include <sys/stat.h>
