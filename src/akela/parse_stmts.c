@@ -143,13 +143,13 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
 
     Ake_ast* proto = NULL;
     bool has_id;
-    proto = parse_prototype(ps, false, true, false, false, &has_id);
+    proto = Ake_parse_prototype(ps, false, true, false, false, &has_id);
     if (proto) {
         Ake_ast_add(n, proto);
         if (proto->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
-        Type_use* tu = proto2type_use(ps->st, proto, NULL);
+        Type_use* tu = Ake_proto2type_use(ps->st, proto, NULL);
         n->tu = tu;
     }
 
@@ -273,7 +273,7 @@ Ake_ast* Ake_parse_for(struct Ake_parse_state* ps)
     Ake_consume_newline(ps, n);
 
 	Ake_ast* dec = NULL;
-    dec = parse_declaration(ps, true, false, true);
+    dec = Ake_parse_declaration(ps, true, false, true);
 	if (dec && dec->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -595,7 +595,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
     }
 
 	Ake_ast* a = NULL;
-    a = parse_declaration(ps, false, false, true);
+    a = Ake_parse_declaration(ps, false, false, true);
 	if (a && a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -613,7 +613,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 		}
 
 		Ake_ast* b = NULL;
-        b = parse_declaration(ps, false, false, true);
+        b = Ake_parse_declaration(ps, false, false, true);
 		if (b && b->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
@@ -703,7 +703,7 @@ Ake_ast* Ake_parse_return(struct Ake_parse_state* ps)
                     n->type = Ake_ast_type_error;
 				} else {
                     Ake_ast* proto = Ast_node_get(fd, 0);
-                    if (!check_return_type(ps, proto, n, &ret->loc)) {
+                    if (!Ake_check_return_type(ps, proto, n, &ret->loc)) {
                         /* test case: test_parse_return_error_type_does_not_match */
                         n->type = Ake_ast_type_error;
                     }
@@ -762,8 +762,8 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
     Ake_consume_newline(ps, n);
 
     Ake_ast* type_node = NULL;
-    type_node = parse_type(ps);
-    declare_type(ps, type_node, a);
+    type_node = Ake_parse_type(ps);
+    Ake_declare_type(ps, type_node, a);
     if (type_node && type_node->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -829,7 +829,7 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
             if (a && type_node && b) {
                 Ake_ast* rhs = b->head;
                 while (rhs) {
-                    Override_rhs(type_node->tu, rhs);
+                    Ake_Override_rhs(type_node->tu, rhs);
                     rhs = rhs->next;
                 }
             }

@@ -85,16 +85,16 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
     /* 0 prototype */
     Ake_ast* proto = NULL;
     bool has_id;
-    proto = parse_prototype(ps, true, false, is_method, true, &has_id);
+    proto = Ake_parse_prototype(ps, true, false, is_method, true, &has_id);
     Ake_ast_add(n, proto);
     if (proto->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
 
     Ake_environment_begin(ps->st);
-    declare_params(ps, proto, struct_type);
+    Ake_declare_params(ps, proto, struct_type);
     Ake_set_current_function(ps->st->top, n);
-    Type_use* tu = proto2type_use(ps->st, proto, struct_type);
+    Type_use* tu = Ake_proto2type_use(ps->st, proto, struct_type);
     n->tu = tu;
 
     Ake_ast* stmts_node = NULL;
@@ -122,7 +122,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
     if (n->type != Ake_ast_type_error) {
         /* check return type */
         Ake_ast* dret = Ast_node_get(proto, 2);
-        if (!check_return_type(ps, proto, stmts_node, &dret->loc)) {
+        if (!Ake_check_return_type(ps, proto, stmts_node, &dret->loc)) {
             n->type = Ake_ast_type_error;
         }
     }

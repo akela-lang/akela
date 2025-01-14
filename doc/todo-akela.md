@@ -13,7 +13,7 @@
   * parse_factor [x]
   * parse_stmts [x]
   * parse_tools [x]
-  * parse_types []
+  * parse_types [x]
   * struct_element [x]
   * symbol [x]
   * symbol_table [x]

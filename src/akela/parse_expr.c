@@ -136,10 +136,10 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                 Ake_ast* lhs2 = lhs->head;
                 Ake_ast* rhs2 = rhs->head;
                 while (lhs2) {
-                    if (!check_lvalue(ps, lhs2, &n->loc)) {
+                    if (!Ake_check_lvalue(ps, lhs2, &n->loc)) {
                         n->type = Ake_ast_type_error;
                     }
-                    Override_rhs(lhs2->tu, rhs2);
+                    Ake_Override_rhs(lhs2->tu, rhs2);
                     if (!Ake_type_use_can_cast(lhs2->tu, rhs2->tu)) {
                         error_list_set(ps->el, &rhs2->loc, "values in assignment not compatible");
                     }
@@ -147,7 +147,7 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                     rhs2 = rhs2->next;
                 }
             } else {
-                if (!check_lvalue(ps, lhs, &n->loc)) {
+                if (!Ake_check_lvalue(ps, lhs, &n->loc)) {
                     n->type = Ake_ast_type_error;
                 }
 
@@ -168,7 +168,7 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
         }
 
         if (prev_lhs && prev_lhs->type != Ake_ast_type_eseq) {
-            Override_rhs(prev_lhs->tu, rhs);
+            Ake_Override_rhs(prev_lhs->tu, rhs);
         }
     }
 
@@ -990,7 +990,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
         } else {
             Type_use *inputs = NULL;
             Type_use *outputs = NULL;
-            get_function_children(tu, &inputs, &outputs);
+            Ake_get_function_children(tu, &inputs, &outputs);
 
             /* input */
             size_t tcount = 0;
@@ -1061,7 +1061,7 @@ Ake_ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_ast* left)
         return n;
     }
     int i = 0;
-    if (!check_input_type(ps, left->tu, i, a)) {
+    if (!Ake_check_input_type(ps, left->tu, i, a)) {
         n->type = Ake_ast_type_error;
     }
     i++;
@@ -1102,7 +1102,7 @@ Ake_ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_ast* left)
             /* transfer a -> parent */
             Ake_ast_add(n, a);
 
-            if (!check_input_type(ps, left->tu, i, a)) {
+            if (!Ake_check_input_type(ps, left->tu, i, a)) {
                 n->type = Ake_ast_type_error;
             }
         }

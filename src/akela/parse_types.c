@@ -11,8 +11,8 @@
 #include "type_def.h"
 #include <assert.h>
 
-bool token_is_type(struct Ake_parse_state* ps, struct Ake_token* t);
-Type_use* Type_use_add_proto(
+bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t);
+Type_use* Ake_Type_use_add_proto(
         struct Ake_symbol_table* st,
         Type_use* func,
         Ake_ast* proto,
@@ -26,7 +26,7 @@ Type_use* Type_use_add_proto(
  * @return struct ast_node*
  */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_prototype(
+Ake_ast* Ake_parse_prototype(
         struct Ake_parse_state* ps,
         bool is_function,
         bool is_extern,
@@ -81,7 +81,7 @@ Ake_ast* parse_prototype(
 
     /* 1 dseq */
     Ake_ast* dseq_node = NULL;
-    dseq_node = parse_dseq(ps, require_param_name, is_extern, is_method);
+    dseq_node = Ake_parse_dseq(ps, require_param_name, is_extern, is_method);
     if (dseq_node && dseq_node->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -118,7 +118,7 @@ Ake_ast* parse_prototype(
             n->type = Ake_ast_type_error;
         }
 
-        ret_type = parse_type(ps);
+        ret_type = Ake_parse_type(ps);
         if (ret_type && ret_type->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
@@ -147,7 +147,7 @@ Ake_ast* parse_prototype(
  * @param ps
  * @param proto
  */
-void declare_params(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_type)
+void Ake_declare_params(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_type)
 {
     Ake_ast* dseq = Ast_node_get(proto, 1);
     Ake_ast* dec = dseq->head;
@@ -163,7 +163,7 @@ void declare_params(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_
             }
         }
         if (dec->type != Ake_ast_type_error && type_node->type != Ake_ast_type_error) {
-            declare_type(ps, type_node, id_node);
+            Ake_declare_type(ps, type_node, id_node);
         }
         dec = dec->next;
     }
@@ -178,7 +178,7 @@ void declare_params(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_
 /* dseq -> declaration dseq' | e */
 /* dseq' -> , declaration dseq' | , ... | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_dseq(
+Ake_ast* Ake_parse_dseq(
         struct Ake_parse_state* ps,
         bool require_param_name,
         bool is_extern,
@@ -189,7 +189,7 @@ Ake_ast* parse_dseq(
 	n->type = Ake_ast_type_dseq;
 
 	Ake_ast* dec = NULL;
-	dec = parse_declaration(ps, false, is_method, require_param_name);
+	dec = Ake_parse_declaration(ps, false, is_method, require_param_name);
     if (dec && dec->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -240,7 +240,7 @@ Ake_ast* parse_dseq(
             }
         }
 
-		dec = parse_declaration(ps, false, is_method, require_param_name);
+		dec = Ake_parse_declaration(ps, false, is_method, require_param_name);
         if (dec && dec->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
@@ -265,7 +265,7 @@ Ake_ast* parse_dseq(
  * @param t
  * @return true if a type, otherwise false
  */
-bool token_is_type(struct Ake_parse_state* ps, struct Ake_token* t)
+bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t)
 {
     /* array type */
     if (t->type == Ake_token_left_square_bracket) {
@@ -297,7 +297,7 @@ bool token_is_type(struct Ake_parse_state* ps, struct Ake_token* t)
  */
 /* declaration -> id :: type | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_declaration(
+Ake_ast* Ake_parse_declaration(
         struct Ake_parse_state* ps,
         bool add_symbol,
         bool is_method,
@@ -306,7 +306,7 @@ Ake_ast* parse_declaration(
 	Ake_ast* n = NULL;
 
 	struct Ake_token* t0 = Ake_get_lookahead(ps);
-    bool type_only = !require_param_name && token_is_type(ps, t0);
+    bool type_only = !require_param_name && Ake_token_is_type(ps, t0);
     bool is_self = is_method && t0->type == Ake_token_self;
     if (t0->type == Ake_token_id || type_only || is_self) {
         Ake_ast_create(&n);
@@ -336,7 +336,7 @@ Ake_ast* parse_declaration(
             Ake_ast_add(n, id_node);
 
             Ake_ast* type_use = NULL;
-            type_use = parse_type(ps);
+            type_use = Ake_parse_type(ps);
             if (type_use && type_use->type == Ake_ast_type_error) {
                 n->type = Ake_ast_type_error;
             }
@@ -379,13 +379,13 @@ Ake_ast* parse_declaration(
             Ake_consume_newline(ps, n);
 
             Ake_ast* type_use = NULL;
-            type_use = parse_type(ps);
+            type_use = Ake_parse_type(ps);
             if (type_use && type_use->type == Ake_ast_type_error) {
                 n->type = Ake_ast_type_error;
             }
             if (add_symbol) {
                 if (n->type != Ake_ast_type_error) {
-                    declare_type(ps, type_use, id_node);
+                    Ake_declare_type(ps, type_use, id_node);
                 }
             }
 
@@ -415,7 +415,7 @@ Ake_ast* parse_declaration(
  */
 /* type -> id | id { tseq } */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* parse_type(struct Ake_parse_state* ps)
+Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
@@ -510,14 +510,14 @@ Ake_ast* parse_type(struct Ake_parse_state* ps)
         free(fn);
 
         bool has_id;
-        Ake_ast* proto = parse_prototype(ps, false, false, false, false, &has_id);
+        Ake_ast* proto = Ake_parse_prototype(ps, false, false, false, false, &has_id);
         if (has_id) {
             error_list_set(ps->el, &proto->loc, "function type has name");
         }
         if (proto->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         } else {
-            Type_use_add_proto(ps->st, n->tu, proto, NULL);
+            Ake_Type_use_add_proto(ps->st, n->tu, proto, NULL);
         }
         Ake_ast_destroy(proto);
 
@@ -578,7 +578,7 @@ Ake_ast* parse_type(struct Ake_parse_state* ps)
  * @param n type node
  * @param id_node ID node
  */
-void create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
+void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
 {
     struct Ake_symbol* dup = Ake_environment_get_local(ps->st->top, &id_node->value);
     if (dup) {
@@ -612,16 +612,16 @@ void create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_
     }
 }
 
-void declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
+void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
 {
     if (type_node && type_node->type != Ake_ast_type_error) {
         if (id_node) {
             if (id_node->type == Ake_ast_type_id) {
-                create_variable_symbol(ps, type_node, id_node);
+                Ake_create_variable_symbol(ps, type_node, id_node);
             } else if (id_node->type == Ake_ast_type_let_lseq) {
                 Ake_ast* p = id_node->head;
                 while (p) {
-                    create_variable_symbol(ps, type_node, p);
+                    Ake_create_variable_symbol(ps, type_node, p);
                     p = p->next;
                 }
             } else {
@@ -631,13 +631,13 @@ void declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_no
     }
 }
 
-Type_use* proto2type_use(struct Ake_symbol_table* st, Ake_ast* proto, Ake_ast* struct_type) {
+Type_use* Ake_proto2type_use(struct Ake_symbol_table* st, Ake_ast* proto, Ake_ast* struct_type) {
     Type_use *func = NULL;
     Type_use_create(&func);
-    return Type_use_add_proto(st, func, proto, struct_type);
+    return Ake_Type_use_add_proto(st, func, proto, struct_type);
 }
 
-Type_use* Type_use_add_proto(
+Type_use* Ake_Type_use_add_proto(
     struct Ake_symbol_table* st,
     Type_use* func,
     Ake_ast* proto,
@@ -705,7 +705,7 @@ Type_use* Type_use_add_proto(
     return func;
 }
 
-bool check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, struct location* loc)
+bool Ake_check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, struct location* loc)
 {
     bool valid = true;
 
@@ -722,7 +722,7 @@ bool check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmt
     return valid;
 }
 
-void get_function_children(Type_use* func, Type_use** inputs, Type_use** outputs)
+void Ake_get_function_children(Type_use* func, Type_use** inputs, Type_use** outputs)
 {
     *inputs = NULL;
     *outputs = NULL;
@@ -738,11 +738,11 @@ void get_function_children(Type_use* func, Type_use** inputs, Type_use** outputs
     }
 }
 
-Type_use* get_function_input_type(Type_use* func, int index)
+Type_use* Ake_get_function_input_type(Type_use* func, int index)
 {
 	Type_use* inputs = NULL;
 	Type_use* outputs = NULL;
-	get_function_children(func, &inputs, &outputs);
+	Ake_get_function_children(func, &inputs, &outputs);
 
 	if (!inputs) return NULL;
 
@@ -759,7 +759,7 @@ Type_use* get_function_input_type(Type_use* func, int index)
 	return NULL;
 }
 
-bool check_input_type(
+bool Ake_check_input_type(
     struct Ake_parse_state* ps,
     Type_use* func,
     int index,
@@ -768,7 +768,7 @@ bool check_input_type(
 	bool valid = true;
 
 	if (func) {
-		Type_use* tu0 = get_function_input_type(func, index);
+		Type_use* tu0 = Ake_get_function_input_type(func, index);
 		if (tu0) {
 			Type_use* call_tu0 = a->tu;
 			if (call_tu0) {
@@ -787,24 +787,24 @@ bool check_input_type(
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Override_rhs(Type_use* tu, Ake_ast* rhs)
+void Ake_Override_rhs(Type_use* tu, Ake_ast* rhs)
 {
     if (tu->td->type == type_integer || tu->td->type == type_float) {
         rhs->tu->td = tu->td;
         if (rhs->type == Ake_ast_type_sign) {
             Ake_ast* p = Ast_node_get(rhs, 1);
-            Override_rhs(tu, p);
+            Ake_Override_rhs(tu, p);
         } else if (tu->is_array && rhs->type == Ake_ast_type_array_literal) {
             Ake_ast* p = rhs->head;
             while (p) {
-                Override_rhs(tu, p);
+                Ake_Override_rhs(tu, p);
                 p = p->next;
             }
         }
     }
 }
 
-bool is_lvalue(enum Ake_ast_type type)
+bool Ake_is_lvalue(enum Ake_ast_type type)
 {
     if (type == Ake_ast_type_id) {
         return true;
@@ -825,13 +825,13 @@ bool is_lvalue(enum Ake_ast_type type)
     return false;
 }
 
-bool check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct location* loc)
+bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct location* loc)
 {
     Ake_ast* p = n;
     struct Ake_symbol* sym = NULL;
     Ake_ast* first = NULL;
     while (p) {
-        if (!is_lvalue(p->type)) {
+        if (!Ake_is_lvalue(p->type)) {
             error_list_set(ps->el, loc, "invalid lvalue");
             return false;
         }
@@ -878,7 +878,7 @@ bool check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct location* loc)
     return true;
 }
 
-bool Is_placeholder_node(Ake_ast* n)
+bool Ake_is_placeholder_node(Ake_ast* n)
 {
     if (n->type == Ake_ast_type_id && buffer_compare_str(&n->value, "_")) {
         return true;
@@ -887,7 +887,7 @@ bool Is_placeholder_node(Ake_ast* n)
     }
 }
 
-bool Is_placeholder_token(struct Ake_token* t)
+bool Ake_is_placeholder_token(struct Ake_token* t)
 {
     if (t->type == Ake_token_id && buffer_compare_str(&t->value, "_")) {
         return true;

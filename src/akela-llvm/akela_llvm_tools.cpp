@@ -29,7 +29,7 @@ namespace Akela_llvm {
     FunctionType *Get_function_type(Jit_data *jd, Type_use *tu) {
         Type_use *inputs = nullptr;
         Type_use *outputs = nullptr;
-        get_function_children(tu, &inputs, &outputs);
+        Ake_get_function_children(tu, &inputs, &outputs);
         bool is_variadic = false;
 
         std::vector<Type *> param_types = std::vector<Type *>();
