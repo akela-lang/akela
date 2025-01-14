@@ -3,7 +3,7 @@
 
 #define COMP_TABLE_HASH_TABLE_SIZE 32
 
-#include "akela_api.h"
+#include "api.h"
 #include "zinc/hash.h"
 #include <stdbool.h>
 #include "comp_unit.h"

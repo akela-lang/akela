@@ -637,7 +637,7 @@ Ake_ast* parse_struct(struct parse_state* ps)
             /* test case: test_parse_struct_error_duplicate */
             n->type = Ake_ast_type_error;
 		} else {
-			Ake_ast* tu = Ast_node_clone(n);
+			Ake_ast* tu = Ake_ast_clone(n);
 			struct type_def* td = NULL;
 			malloc_safe((void**)&td, sizeof(struct type_def));
 			type_def_init(td);
@@ -805,8 +805,8 @@ Ake_ast* parse_let(struct parse_state* ps)
         }
 
         if (n->type != Ake_ast_type_error) {
-            size_t a_count = Ast_node_count_children(a);
-            size_t b_count = Ast_node_count_children(b);
+            size_t a_count = Ake_ast_count_children(a);
+            size_t b_count = Ake_ast_count_children(b);
             if (a_count != b_count) {
                 error_list_set(ps->el, &a->loc, "lvalue count does not equal rvalue count");
                 n->type = Ake_ast_type_error;

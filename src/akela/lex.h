@@ -1,7 +1,7 @@
 #ifndef _SCAN_H
 #define _SCAN_H
 
-#include "akela_api.h"
+#include "api.h"
 #include <stdbool.h>
 #include "zinc/buffer.h"
 #include "token.h"

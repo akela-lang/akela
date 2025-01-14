@@ -1,7 +1,7 @@
 #ifndef _TOKEN_H
 #define _TOKEN_H
 
-#include "akela_api.h"
+#include "api.h"
 #include <stdbool.h>
 #include "zinc/result.h"
 #include "zinc/buffer.h"

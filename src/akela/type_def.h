@@ -1,7 +1,7 @@
 #ifndef AKELA_TYPE_DEF_H
 #define AKELA_TYPE_DEF_H
 
-#include "akela_api.h"
+#include "api.h"
 #include <stdbool.h>
 #include "zinc/buffer.h"
 #include "zinc/result.h"

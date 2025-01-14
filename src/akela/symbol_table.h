@@ -1,7 +1,7 @@
 #ifndef AKELA_SYMBOL_TABLE_H
 #define AKELA_SYMBOL_TABLE_H
 
-#include "akela_api.h"
+#include "api.h"
 #include <stdbool.h>
 #include "zinc/hash.h"
 #include "token.h"

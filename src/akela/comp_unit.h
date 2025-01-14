@@ -1,7 +1,7 @@
 	#ifndef _COMP_UNIT_H
 #define _COMP_UNIT_H
 
-#include "akela_api.h"
+#include "api.h"
 #include "ast.h"
 #include "symbol_table.h"
 #include <stdbool.h>

@@ -1,7 +1,7 @@
 #ifndef AKELA_ENVIRONMENT_H
 #define AKELA_ENVIRONMENT_H
 
-#include "akela_api.h"
+#include "api.h"
 #include "zinc/hash.h"
 #include "symbol.h"
 

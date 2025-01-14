@@ -996,7 +996,7 @@ void parse_call(struct parse_state* ps, Ake_ast* left, Ake_ast* n) {
             }
             size_t ccount = 0;
             if (cseq_node) {
-                ccount = Ast_node_count_children(cseq_node);
+                ccount = Ake_ast_count_children(cseq_node);
             }
 
             if (ccount < tcount) {

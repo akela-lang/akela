@@ -79,10 +79,10 @@ Ake_ast* Ast_node_get(Ake_ast* p, size_t pos)
 	return NULL;
 }
 
-void Type_use_print(Type_use* tu);
+void Ake_type_use_print(Type_use* tu);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_print(Ake_ast* n)
+void Ake_ast_print(Ake_ast* n)
 {
     char* names[Ake_ast_type_count];
     Ast_set_names(names);
@@ -98,16 +98,16 @@ void Ast_node_print(Ake_ast* n)
 	}
     printf(">");
 
-    Type_use_print(n->tu);
+    Ake_type_use_print(n->tu);
 
     printf("\n");
 
     for (Ake_ast* p = n->head; p; p = p->next) {
-        Ast_node_print(p);
+        Ake_ast_print(p);
 	}
 }
 
-void Type_use_print(Type_use* tu)
+void Ake_type_use_print(Type_use* tu)
 {
     if (tu) {
         char* names[Type_use_count];
@@ -124,16 +124,16 @@ void Type_use_print(Type_use* tu)
 
         Type_use* p = tu->head;
         while (p) {
-            Type_use_print(p);
+            Ake_type_use_print(p);
             p = p->next;
         }
     }
 }
 
-void Type_use_print_pointers(Type_use* tu, struct list* l);
+void Ake_type_use_print_pointers(Type_use* tu, struct list* l);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_print_pointers(Ake_ast* root, struct list* l)
+void Ake_ast_print_pointers(Ake_ast* root, struct list* l)
 {
     char* names[Ake_ast_type_count];
     Ast_set_names(names);
@@ -148,10 +148,10 @@ void Ast_node_print_pointers(Ake_ast* root, struct list* l)
 //    if (list_has_item(l, root)) abort();
     list_add_item(l, root);
 
-    Type_use_print_pointers(root->tu, l);
+    Ake_type_use_print_pointers(root->tu, l);
 
     for (Ake_ast* p = root->head; p; p = p->next) {
-        Ast_node_print_pointers(p, l);
+        Ake_ast_print_pointers(p, l);
     }
 
     if (created) {
@@ -159,7 +159,8 @@ void Ast_node_print_pointers(Ake_ast* root, struct list* l)
     }
 }
 
-void Type_use_print_pointers(Type_use* tu, struct list* l)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Ake_type_use_print_pointers(Type_use* tu, struct list* l)
 {
     if (tu) {
         printf("(%p)\n", tu);
@@ -168,13 +169,13 @@ void Type_use_print_pointers(Type_use* tu, struct list* l)
 
         Type_use* tu2 = tu->head;
         while (tu2) {
-            Type_use_print_pointers(tu2, l);
+            Ake_type_use_print_pointers(tu2, l);
             tu2 = tu2->next;
         }
     }
 }
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ast_node_copy(Ake_ast* src, Ake_ast* dest)
+void Ake_ast_copy(Ake_ast* src, Ake_ast* dest)
 {
     dest->type = src->type;
     dest->tu = Type_use_clone(src->tu);
@@ -183,18 +184,18 @@ void Ast_node_copy(Ake_ast* src, Ake_ast* dest)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ast_node_clone(Ake_ast* n)
+Ake_ast* Ake_ast_clone(Ake_ast* n)
 {
 	Ake_ast* copy = NULL;
 
 	if (n) {
         Ake_ast_create(&copy);
-        Ast_node_copy(n, copy);
+        Ake_ast_copy(n, copy);
 
 		Ake_ast* p = n->head;
 		while (p) {
 			Ake_ast* p_copy = NULL;
-			p_copy = Ast_node_clone(p);
+			p_copy = Ake_ast_clone(p);
             Ake_ast_add(copy, p_copy);
 			p = p->next;
 		}
@@ -204,7 +205,7 @@ Ake_ast* Ast_node_clone(Ake_ast* n)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Ast_node_match(Ake_ast* a, Ake_ast* b)
+bool Ake_ast_match(Ake_ast* a, Ake_ast* b)
 {
 	if (a && b) {
 		if (a->type != b->type) {
@@ -228,7 +229,7 @@ bool Ast_node_match(Ake_ast* a, Ake_ast* b)
 		Ake_ast* c = a->head;
 		Ake_ast* d = b->head;
 		do {
-			if (!Ast_node_match(c, d)) {
+			if (!Ake_ast_match(c, d)) {
 				return false;
 			}
 			if (c) c = c->next;
@@ -243,7 +244,7 @@ bool Ast_node_match(Ake_ast* a, Ake_ast* b)
 	return true;
 }
 
-size_t Ast_node_count_children(Ake_ast* n)
+size_t Ake_ast_count_children(Ake_ast* n)
 {
     size_t count = 0;
     if (n) {

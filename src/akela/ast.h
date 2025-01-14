@@ -1,7 +1,7 @@
 #ifndef AKELA_AST_H
 #define AKELA_AST_H
 
-#include "akela_api.h"
+#include "api.h"
 #include <stdbool.h>
 #include "zinc/buffer.h"
 #include "zinc/result.h"
@@ -166,12 +166,12 @@ AKELA_API void Ake_ast_init(Ake_ast* n);
 AKELA_API void Ake_ast_add(Ake_ast* p, Ake_ast* c);
 AKELA_API void Ast_node_push(Ake_ast* parent, Ake_ast* child);
 AKELA_API Ake_ast* Ast_node_get(Ake_ast* p, size_t pos);
-AKELA_API void Ast_node_print(Ake_ast* n);
-AKELA_API void Ast_node_print_pointers(Ake_ast* root, struct list* l);
-AKELA_API void Ast_node_copy(Ake_ast* src, Ake_ast* dest);
-AKELA_API Ake_ast* Ast_node_clone(Ake_ast* n);
-AKELA_API bool Ast_node_match(Ake_ast* a, Ake_ast* b);
-AKELA_API size_t Ast_node_count_children(Ake_ast* n);
+AKELA_API void Ake_ast_print(Ake_ast* n);
+AKELA_API void Ake_ast_print_pointers(Ake_ast* root, struct list* l);
+AKELA_API void Ake_ast_copy(Ake_ast* src, Ake_ast* dest);
+AKELA_API Ake_ast* Ake_ast_clone(Ake_ast* n);
+AKELA_API bool Ake_ast_match(Ake_ast* a, Ake_ast* b);
+AKELA_API size_t Ake_ast_count_children(Ake_ast* n);
 AKELA_API void Ast_node_validate(Ake_ast* n, struct list* l);
 
 #ifdef __cplusplus
