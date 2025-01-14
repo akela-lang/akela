@@ -1,5 +1,5 @@
-#ifndef	_PARSE_FACTOR_H
-#define _PARSE_FACTOR_H
+#ifndef	AKELA_PARSE_FACTOR_H
+#define AKELA_PARSE_FACTOR_H
 
 #include "api.h"
 

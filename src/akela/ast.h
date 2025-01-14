@@ -69,8 +69,7 @@ typedef enum Ake_ast_type {
 	Ake_ast_type_count		/* keep at end */
 } Ake_ast_type;
 
-#ifdef AKELA_AST_C
-enum result Ast_set_names(char** names)
+static enum result Ast_set_names(char** names)
 {
     for (int i = 0; i < Ake_ast_type_count; i++) {
         names[i] = NULL;
@@ -140,7 +139,6 @@ enum result Ast_set_names(char** names)
 
     return result_ok;
 }
-#endif
 
 typedef struct Ake_ast {
 	Ake_ast_type type;

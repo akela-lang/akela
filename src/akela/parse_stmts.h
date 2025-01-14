@@ -1,5 +1,5 @@
-#ifndef _STMT_H
-#define _STMT_H
+#ifndef AKELA_PARSE_STMTS_H
+#define AKELA_PARSE_STMTS_H
 
 #include "api.h"
 #include <stdbool.h>

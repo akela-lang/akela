@@ -1,5 +1,5 @@
-#ifndef _AKELA_API_H
-#define _AKELA_API_H
+#ifndef AKELA_API_H
+#define AKELA_API_H
 
 #if defined(WIN32)
 	#ifdef AKELA_EXPORT

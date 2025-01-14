@@ -1,5 +1,5 @@
-#ifndef _SCAN_H
-#define _SCAN_H
+#ifndef AKELA_LEX_H
+#define AKELA_LEX_H
 
 #include "api.h"
 #include <stdbool.h>

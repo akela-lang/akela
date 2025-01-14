@@ -1,5 +1,5 @@
-#ifndef _PARSE_H
-#define _PARSE_H
+#ifndef AKELA_PARSE_H
+#define AKELA_PARSE_H
 
 #include "api.h"
 #include <stdbool.h>

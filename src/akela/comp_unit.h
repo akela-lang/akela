@@ -1,5 +1,5 @@
-	#ifndef _COMP_UNIT_H
-#define _COMP_UNIT_H
+#ifndef AKELA_COMP_UNIT_H
+#define AKELA_COMP_UNIT_H
 
 #include "api.h"
 #include "ast.h"
