@@ -10,7 +10,7 @@
 void Ake_parse_state_init(
         struct Ake_parse_state* ps,
         struct Ake_lex_state* ls,
-        struct error_list* el,
+        struct Zinc_error_list* el,
         struct Zinc_string_list* extern_list,
         struct Ake_symbol_table* st)
 {
@@ -55,7 +55,7 @@ bool Ake_match(
     Ake_ast* n)
 {
 	bool valid = true;
-	struct location loc;
+	struct Zinc_location loc;
 
 	if (!ps->lookahead) {
         Ake_get_lookahead_one(ps);
@@ -64,13 +64,13 @@ bool Ake_match(
     *t = ps->lookahead;
 	if ((*t)->type == type) {
 		ps->lookahead = NULL;
-        location_combine(&n->loc, &(*t)->loc);
+        Zinc_location_combine(&n->loc, &(*t)->loc);
 		return valid;
 	}
 
 	valid = false;
 	Ake_get_token_location(*t, &loc);
-	error_list_set(ps->el, &loc, "%s", reason);
+	Zinc_error_list_set(ps->el, &loc, "%s", reason);
 	*t = NULL;
 	return valid;
 }
@@ -94,7 +94,7 @@ bool Ake_consume_newline(struct Ake_parse_state* ps, Ake_ast* n)
     return valid;
 }
 
-struct location Ake_get_location(struct Ake_parse_state* ps)
+struct Zinc_location Ake_get_location(struct Ake_parse_state* ps)
 {
     Ake_get_lookahead_one(ps);
     return ps->lookahead->loc;

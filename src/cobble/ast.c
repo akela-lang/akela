@@ -8,7 +8,7 @@ void Cob_ast_init(Cob_ast* n)
 {
     n->type = Cob_ast_type_none;
     n->num = 0;
-    location_init(&n->loc);
+    Zinc_location_init(&n->loc);
     n->is_root = false;
     n->is_group = false;
     n->group = 0;
@@ -50,7 +50,7 @@ void Cob_ast_add(Cob_ast* p, Cob_ast* c)
         p->tail = c;
     }
     c->parent = p;
-    location_combine(&p->loc, &c->loc);
+    Zinc_location_combine(&p->loc, &c->loc);
 
     if (c->type == Cob_ast_type_error) {
         p->type = Cob_ast_type_error;

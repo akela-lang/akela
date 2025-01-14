@@ -4,7 +4,7 @@
   * buffer [x]
   * buffer_list [x]
   * datetime [x]
-  * error []
+  * error [x]
   * error_unit_test []
   * hash []
   * hash_map_size_t []

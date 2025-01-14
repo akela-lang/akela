@@ -35,7 +35,7 @@ void FieldLexDataCreate(struct FieldLexData** lex_data)
 void FieldLexStart(struct FieldLexData* lex_data, enum FieldType* type)
 {
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
@@ -57,7 +57,7 @@ void FieldLexStart(struct FieldLexData* lex_data, enum FieldType* type)
 void FieldLexSign(struct FieldLexData* lex_data, enum FieldType* type)
 {
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
@@ -76,7 +76,7 @@ void FieldLexSign(struct FieldLexData* lex_data, enum FieldType* type)
 void FieldLexInteger(struct FieldLexData* lex_data, enum FieldType* type)
 {
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {
@@ -106,7 +106,7 @@ void FieldLexInteger(struct FieldLexData* lex_data, enum FieldType* type)
 void FieldLexPoint(struct FieldLexData* lex_data, enum FieldType* type)
 {
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
@@ -130,7 +130,7 @@ void FieldLexPoint(struct FieldLexData* lex_data, enum FieldType* type)
 void FieldLexFraction(struct FieldLexData* lex_data, enum FieldType* type)
 {
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {
@@ -155,7 +155,7 @@ void FieldLexFraction(struct FieldLexData* lex_data, enum FieldType* type)
 void FieldLexExponentE(struct FieldLexData* lex_data, enum FieldType* type)
 {
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
@@ -178,7 +178,7 @@ void FieldLexExponentE(struct FieldLexData* lex_data, enum FieldType* type)
 void FieldLexExponentSign(struct FieldLexData* lex_data, enum FieldType* type)
 {
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
@@ -199,7 +199,7 @@ void FieldLexExponentSign(struct FieldLexData* lex_data, enum FieldType* type)
 void FieldLexExponent(struct FieldLexData* lex_data, enum FieldType* type)
 {
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {

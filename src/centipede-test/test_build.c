@@ -16,7 +16,7 @@ void test_build_number_integer()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -38,7 +38,7 @@ void test_build_number_fp()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -60,7 +60,7 @@ void test_build_string()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -81,7 +81,7 @@ void test_build_boolean_true()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -102,7 +102,7 @@ void test_build_boolean_false()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -130,7 +130,7 @@ void test_build_enum0()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -160,7 +160,7 @@ void test_build_enum1()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -190,7 +190,7 @@ void test_build_enum2()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -216,7 +216,7 @@ void test_build_assign()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -250,7 +250,7 @@ void test_build_object()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -274,7 +274,7 @@ void test_build_object_prop_set()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -304,7 +304,7 @@ void test_build_object_assign()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -337,7 +337,7 @@ void test_build_object_child_of()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -376,7 +376,7 @@ void test_build_object_property_of()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -409,7 +409,7 @@ void test_build_object_function_file_name()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -445,7 +445,7 @@ void test_build_property_set_variable()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -493,7 +493,7 @@ void test_build_namespace_enum()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -531,7 +531,7 @@ void test_build_namespace_variable()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -560,7 +560,7 @@ void test_build_namespace_submodules()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -589,7 +589,7 @@ void test_build_namespace_glob_value()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -614,7 +614,7 @@ void test_build_let()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);
@@ -641,7 +641,7 @@ void test_build_object_let()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     expect_no_errors(errors);

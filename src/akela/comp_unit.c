@@ -9,7 +9,7 @@ void Ake_comp_unit_init(struct Ake_comp_unit* cu)
 {
 	cu->valid = true;
 	cu->root = NULL;
-	error_list_init(&cu->el);
+	Zinc_error_list_init(&cu->el);
     Zinc_string_list_init(&cu->extern_list);
 	Zinc_string_init(&cu->path);
 	Ake_symbol_table_init(&cu->st);
@@ -28,7 +28,7 @@ void Ake_comp_unit_destroy(struct Ake_comp_unit* cu)
 {
     if (cu) {
         Ake_ast_destroy(cu->root);
-        error_list_destroy(&cu->el);
+        Zinc_error_list_destroy(&cu->el);
         Zinc_string_destroy(&cu->path);
         Ake_symbol_table_destroy(&cu->st);
         Zinc_string_list_destroy(&cu->extern_list);

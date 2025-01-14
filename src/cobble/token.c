@@ -10,7 +10,7 @@ void Cob_token_init(Cob_token* t)
 {
     t->type = Cob_token_none;
     t->num = 0;
-    location_init(&t->loc);
+    Zinc_location_init(&t->loc);
 }
 
 Cob_token_type Cob_token_classify(char c[4], int num, bool done)

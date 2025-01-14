@@ -2,14 +2,14 @@
 #include "error.h"
 #include <string.h>
 
-void assert_no_errors(struct error_list* el)
+void assert_no_errors(struct Zinc_error_list* el)
 {
     test_called();
 
     if (!el->head) return;
     error_triggered();
     fprintf(stderr, "assert no errors: has errors\n");
-    struct error* e = el->head;
+    struct Zinc_error* e = el->head;
     while (e) {
         Zinc_string_finish(&e->message);
         fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -20,14 +20,14 @@ void assert_no_errors(struct error_list* el)
     panic();
 }
 
-void expect_no_errors(struct error_list* el)
+void expect_no_errors(struct Zinc_error_list* el)
 {
     test_called();
 
     if (!el->head) return;
     error_triggered();
     fprintf(stderr, "expect no errors: has errors\n");
-    struct error* e = el->head;
+    struct Zinc_error* e = el->head;
     while (e) {
         Zinc_string_finish(&e->message);
         fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -37,12 +37,12 @@ void expect_no_errors(struct error_list* el)
     error_triggered();
 }
 
-void expect_error_count(struct error_list* el, size_t count)
+void expect_error_count(struct Zinc_error_list* el, size_t count)
 {
     test_called();
 
     size_t actual_count = 0;
-    struct error* e = el->head;
+    struct Zinc_error* e = el->head;
     while (e) {
         actual_count++;
         e = e->next;
@@ -53,7 +53,7 @@ void expect_error_count(struct error_list* el, size_t count)
     fprintf(stderr, "expected error count (%zu) (%zu)\n", actual_count, count);
 }
 
-void assert_has_errors(struct error_list* el)
+void assert_has_errors(struct Zinc_error_list* el)
 {
     test_called();
 
@@ -65,7 +65,7 @@ void assert_has_errors(struct error_list* el)
     panic();
 }
 
-void expect_has_errors(struct error_list* el)
+void expect_has_errors(struct Zinc_error_list* el)
 {
     test_called();
 
@@ -76,10 +76,10 @@ void expect_has_errors(struct error_list* el)
     error_triggered();
 }
 
-struct error* assert_source_error(struct error_list* el, const char message[])
+struct Zinc_error* assert_source_error(struct Zinc_error_list* el, const char message[])
 {
     test_called();
-    struct error* e = el->head;
+    struct Zinc_error* e = el->head;
     while (e) {
         Zinc_string_finish(&e->message);
         if (strcmp(e->message.buf, message) == 0) {
@@ -93,10 +93,10 @@ struct error* assert_source_error(struct error_list* el, const char message[])
     return NULL;
 }
 
-struct error* expect_source_error(struct error_list* el, const char message[])
+struct Zinc_error* expect_source_error(struct Zinc_error_list* el, const char message[])
 {
     test_called();
-    struct error* e = el->head;
+    struct Zinc_error* e = el->head;
     while (e) {
         Zinc_string_finish(&e->message);
         if (strcmp(e->message.buf, message) == 0) {

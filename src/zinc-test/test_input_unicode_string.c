@@ -20,7 +20,7 @@ void test_input_unicode_string_next()
     bool done;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
 
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
@@ -200,7 +200,7 @@ void test_input_unicode_string_next_multibyte()
     bool done;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
 
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
@@ -357,7 +357,7 @@ void test_input_unicode_string_repeat()
     bool done;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
 
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
@@ -473,7 +473,7 @@ void test_input_unicode_string_seek()
     bool done;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
 
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
@@ -488,7 +488,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "0 line");
     expect_size_t_equal(loc.col, 1, "0 col");
 
-    struct location save_loc = loc;
+    struct Zinc_location save_loc = loc;
 
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
@@ -671,7 +671,7 @@ void test_input_unicode_string_get_location()
     bool done;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
 
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
@@ -683,7 +683,7 @@ void test_input_unicode_string_get_location()
     expect_size_t_equal(loc.line, 1, "0 line");
     expect_size_t_equal(loc.col, 1, "0 col");
 
-    struct location next_loc;
+    struct Zinc_location next_loc;
     next_loc = InputUnicodeGetLocation(input, input->input_vtable);
     expect_size_t_equal(next_loc.start_pos, 1, "1 start_pos");
     expect_size_t_equal(next_loc.end_pos, 0, "1 end_pos");

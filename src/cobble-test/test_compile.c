@@ -87,7 +87,7 @@ void test_compile_union_single_error()
     expect_ptr(re.root, "ptr root");
     expect_has_errors(cd->el);
 
-    struct error* e = NULL;
+    struct Zinc_error* e = NULL;
     e = assert_source_error(cd->el, "expected term after union");
     expect_size_t_equal(e->loc.start_pos, 2, "start pos");
     expect_size_t_equal(e->loc.line, 1, "line");
@@ -416,7 +416,7 @@ void test_compile_repeat_num_error()
     expect_has_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
-    struct error* e = assert_source_error(cd->el, "expected digit");
+    struct Zinc_error* e = assert_source_error(cd->el, "expected digit");
     expect_size_t_equal(e->loc.start_pos, 2, "start_pos");
     expect_size_t_equal(e->loc.line, 1, "line");
     expect_size_t_equal(e->loc.col, 3, "col");
@@ -472,7 +472,7 @@ void test_compile_repeat_range_num_error()
     expect_has_errors(cd->el);
     expect_size_t_equal(re.group_count, 1, "group_count");
 
-    struct error* e = assert_source_error(cd->el, "expected digit");
+    struct Zinc_error* e = assert_source_error(cd->el, "expected digit");
     expect_size_t_equal(e->loc.start_pos, 4, "byte_pos");
     expect_size_t_equal(e->loc.line, 1, "line");
     expect_size_t_equal(e->loc.col, 5, "col");

@@ -5,7 +5,7 @@ void Cent_enum_value_init(Cent_enum_value* ev)
 {
     Zinc_string_init(&ev->display);
     ev->value = 0;
-    location_init(&ev->loc);
+    Zinc_location_init(&ev->loc);
     ev->next = NULL;
     ev->prev = NULL;
 }
@@ -24,7 +24,7 @@ void Cent_enum_value_destroy(Cent_enum_value* ev)
 void Cent_enumerate_init(Cent_enum_type* en)
 {
     Zinc_string_init(&en->name);
-    location_init(&en->loc);
+    Zinc_location_init(&en->loc);
     en->head = NULL;
     en->tail = NULL;
 }
@@ -72,7 +72,7 @@ size_t Cent_enumerate_count(Cent_enum_type* en)
     return count;
 }
 
-void Cent_enumerate_add_name(Cent_enum_type* en, struct Zinc_string* name, struct location* loc)
+void Cent_enumerate_add_name(Cent_enum_type* en, struct Zinc_string* name, struct Zinc_location* loc)
 {
     Cent_enum_value* ev = NULL;
     Cent_enum_value_create(&ev);

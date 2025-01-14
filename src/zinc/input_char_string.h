@@ -8,8 +8,8 @@
 #include "input_char.h"
 
 typedef struct {
-    struct location loc;
-    struct location prev_loc;
+    struct Zinc_location loc;
+    struct Zinc_location prev_loc;
     bool repeat_char;
     size_t pos;
     Vector* text;
@@ -25,10 +25,10 @@ extern InputCharVTable InputCharStringVTable;
 
 void InputCharStringInit(InputCharString* input_string, Vector* text);
 void InputCharStringCreate(InputCharString** input_string, Vector* text);
-bool InputCharStringNext(InputCharString* data, char* c, struct location* loc);
+bool InputCharStringNext(InputCharString* data, char* c, struct Zinc_location* loc);
 void InputCharStringRepeat(InputCharString* data);
-void InputCharStringSeek(InputCharString* data, struct location* loc);
+void InputCharStringSeek(InputCharString* data, struct Zinc_location* loc);
 void InputCharStringGetAll(InputCharString* data, Vector** text);
-struct location InputCharStringGetLocation(InputCharString* data);
+struct Zinc_location InputCharStringGetLocation(InputCharString* data);
 
 #endif

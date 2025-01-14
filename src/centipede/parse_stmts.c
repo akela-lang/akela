@@ -69,7 +69,7 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
             if (pd->lookahead->type != Cent_token_eof
                 && pd->lookahead->type != Cent_token_right_curly_brace
             ) {
-                error_list_set(pd->errors, &pd->lookahead->loc, "expected semicolon");
+                Zinc_error_list_set(pd->errors, &pd->lookahead->loc, "expected semicolon");
                 n->has_error = true;
             }
         }
@@ -162,7 +162,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
         sym = Cent_environment_get(pd->top, &n->text);
         if (sym) {
             Zinc_string_finish(&n->text);
-            error_list_set(pd->errors, &n->loc, "name already exists: %s", n->text.buf);
+            Zinc_error_list_set(pd->errors, &n->loc, "name already exists: %s", n->text.buf);
             n->has_error = true;
             return n;
             /* test case: test_parse_element_error_name_already_exits */

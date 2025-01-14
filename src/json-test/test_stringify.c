@@ -14,8 +14,8 @@ void test_stringify_null()
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_null);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -26,7 +26,7 @@ void test_stringify_null()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -39,8 +39,8 @@ void test_stringify_true()
     Json_dom_set_type(dom, Json_dom_type_boolean);
     dom->value.boolean = true;
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -51,7 +51,7 @@ void test_stringify_true()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -64,8 +64,8 @@ void test_stringify_false()
     Json_dom_set_type(dom, Json_dom_type_boolean);
     dom->value.boolean = false;
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -76,7 +76,7 @@ void test_stringify_false()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -89,8 +89,8 @@ void test_stringify_string()
     Json_dom_set_type(dom, Json_dom_type_string);
     Zinc_string_add_str(&dom->value.string, "hello");
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -102,7 +102,7 @@ void test_stringify_string()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -115,8 +115,8 @@ void test_stringify_string2()
     Json_dom_set_type(dom, Json_dom_type_string);
     Zinc_string_add_str(&dom->value.string, "θθθ");
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -128,7 +128,7 @@ void test_stringify_string2()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -141,8 +141,8 @@ void test_stringify_string3()
     Json_dom_set_type(dom, Json_dom_type_string);
     Zinc_string_add_str(&dom->value.string, "🩒");
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -154,7 +154,7 @@ void test_stringify_string3()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -167,8 +167,8 @@ void test_stringify_string4()
     Json_dom_set_type(dom, Json_dom_type_string);
     Zinc_string_add_str(&dom->value.string, "\t");
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -180,7 +180,7 @@ void test_stringify_string4()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -194,8 +194,8 @@ void test_stringify_string_error_invalid_char()
     char c[2] = {7, '\0'};      /* bell */
     Zinc_string_add_str(&dom->value.string, c);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -203,12 +203,12 @@ void test_stringify_string_error_invalid_char()
     Json_stringify(el, dom, &bf);
 
     expect_has_errors(el);
-    struct error* e = expect_source_error(el, "invalid string character");
+    struct Zinc_error* e = expect_source_error(el, "invalid string character");
     assert_ptr(e, "ptr e");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -222,8 +222,8 @@ void test_stringify_number_integer()
     dom->number_type = Json_number_type_integer;
     dom->value.integer = 123;
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -235,7 +235,7 @@ void test_stringify_number_integer()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -249,8 +249,8 @@ void test_stringify_number_fraction()
     dom->number_type = Json_number_type_fp;
     dom->value.fp = 5.1;
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -262,7 +262,7 @@ void test_stringify_number_fraction()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -276,8 +276,8 @@ void test_stringify_number_exponent()
     dom->number_type = Json_number_type_fp;
     dom->value.fp = 5.1e1;
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -289,7 +289,7 @@ void test_stringify_number_exponent()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -301,8 +301,8 @@ void test_stringify_array_empty()
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_array);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -314,7 +314,7 @@ void test_stringify_array_empty()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -333,8 +333,8 @@ void test_stringify_array_one()
     dom0->value.integer = 3;
     Json_dom_add_element(dom, dom0);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -346,7 +346,7 @@ void test_stringify_array_one()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -395,8 +395,8 @@ void test_stringify_array2()
     Json_dom_set_type(dom5, Json_dom_type_null);
     Json_dom_add_element(dom, dom5);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -408,7 +408,7 @@ void test_stringify_array2()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -420,8 +420,8 @@ void test_stringify_object_empty()
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_object);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -433,7 +433,7 @@ void test_stringify_object_empty()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -457,8 +457,8 @@ void test_stringify_object_one()
 
     Json_dom_add_property(dom, &name0, value0);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -471,7 +471,7 @@ void test_stringify_object_one()
     Zinc_string_destroy(&name0);
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 
@@ -516,8 +516,8 @@ void test_stringify_object_many()
     Json_dom_add_property(dom, &name1, value1);
     Json_dom_add_property(dom, &name2, value2);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -539,7 +539,7 @@ void test_stringify_object_many()
     Zinc_string_destroy(&name2);
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
 }
 

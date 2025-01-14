@@ -94,7 +94,7 @@ typedef struct Cent_token {
     Cent_number_type number_type;
     Cent_builtin_type builtin_type;
     struct Zinc_string value;
-    struct location loc;
+    struct Zinc_location loc;
     union {
         long long integer;
         double fp;

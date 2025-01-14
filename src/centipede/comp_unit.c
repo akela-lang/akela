@@ -16,7 +16,7 @@ void Cent_comp_unit_init(
     Cent_environment* base)
 {
     cu->status = Cent_comp_unit_status_start;
-    error_list_init(&cu->errors);
+    Zinc_error_list_init(&cu->errors);
     cu->input = input;
     cu->input_vtable = input_vtable;
     Cent_lex_data_init(&cu->ld, &cu->errors, input, input_vtable);
@@ -52,7 +52,7 @@ void Cent_comp_unit_destroy(Cent_comp_unit* cu)
     Cent_ast_destroy(cu->pr.root);
     free(cu->pr.root);
 
-    error_list_destroy(&cu->errors);
+    Zinc_error_list_destroy(&cu->errors);
     Cent_lex_data_destroy(&cu->ld);
 }
 

@@ -139,7 +139,7 @@ typedef struct Ake_token {
     struct Zinc_string value;
     bool is_integer;
     bool is_float;
-    struct location loc;
+    struct Zinc_location loc;
     struct Ake_token* prev;
     struct Ake_token* next;
 } Ake_token;
@@ -163,6 +163,6 @@ AKELA_API struct Ake_token* Ake_token_list_pop(struct Ake_token_list* tl);
 AKELA_API void Ake_token_list_reset(struct Ake_token_list* tl);
 AKELA_API void Ake_token_list_print(struct Ake_token_list* tl);
 AKELA_API void Ake_print_token(struct Ake_token* t);
-AKELA_API void Ake_get_token_location(struct Ake_token* t, struct location* loc);
+AKELA_API void Ake_get_token_location(struct Ake_token* t, struct Zinc_location* loc);
 
 #endif

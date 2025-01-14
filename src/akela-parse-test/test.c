@@ -147,7 +147,7 @@ void Parse_test_test_case(struct Zinc_string* dir_path, struct Zinc_string* path
     }
 
     if (cu->errors.head) {
-        struct error* e = cu->errors.head;
+        struct Zinc_error* e = cu->errors.head;
         while (e) {
             Zinc_string_finish(&e->message);
             printf("(%zu,%zu) %s\n", e->loc.line, e->loc.col, e->message.buf);

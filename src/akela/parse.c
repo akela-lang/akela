@@ -15,11 +15,11 @@ Ake_ast* Ast_parse(struct Ake_parse_state* ps)
 
     n = Ake_parse_stmts(ps, true);
 
-    struct location next_loc = Ake_get_location(ps);
+    struct Zinc_location next_loc = Ake_get_location(ps);
     struct Ake_token* t0 = Ake_get_lookahead(ps);
     assert(t0);
 	if (t0->type != Ake_token_eof) {
-		error_list_set(ps->el, &next_loc, "Couldn't process token: %s", Ake_token_name(t0->type));
+		Zinc_error_list_set(ps->el, &next_loc, "Couldn't process token: %s", Ake_token_name(t0->type));
         n->type = Ake_ast_type_error;
  	}
 

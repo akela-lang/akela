@@ -16,7 +16,7 @@ typedef enum result (*InputUnicodeNextInterface)(
         void*,
         char[4],
         int*,
-        struct location*,
+        struct Zinc_location*,
         bool*);
 
 /**
@@ -30,7 +30,7 @@ typedef void (*InputUnicodeRepeatInterface)(void*);
  * @param data the interface data
  * @param pos the position to go to
  */
-typedef void (*InputUnicodeSeekInterface)(void*, struct location*);
+typedef void (*InputUnicodeSeekInterface)(void*, struct Zinc_location*);
 
 /**
  * Get the entire input.
@@ -42,7 +42,7 @@ typedef void (*InputUnicodeGetAllInterface)(void*, Vector**);
 /**
  * Get the current location.
  */
-typedef struct location(*InputUnicodeGetLocationInterface)(void*);
+typedef struct Zinc_location(*InputUnicodeGetLocationInterface)(void*);
 
 typedef struct {
     u_int8_t loc_offset;
@@ -53,16 +53,16 @@ typedef struct {
     u_int8_t get_location_offset;
 } InputUnicodeVTable;
 
-struct location* InputUnicodeLocation(void* input_obj, InputUnicodeVTable* input_vtable);
+struct Zinc_location* InputUnicodeLocation(void* input_obj, InputUnicodeVTable* input_vtable);
 enum result InputUnicodeNext(void* input_obj,
                       InputUnicodeVTable* input_vtable,
                       char c[4],
                       int* num,
-                      struct location* loc,
+                      struct Zinc_location* loc,
                       bool* done);
 void InputUnicodeRepeat(void* input_obj, InputUnicodeVTable* input_vtable);
-void InputUnicodeSeek(void* input_obj, InputUnicodeVTable* input_vtable, struct location* loc);
+void InputUnicodeSeek(void* input_obj, InputUnicodeVTable* input_vtable, struct Zinc_location* loc);
 void InputUnicodeGetAll(void* input_obj, InputUnicodeVTable* input_vtable, Vector** text);
-struct location InputUnicodeGetLocation(void* input_obj, InputUnicodeVTable* input_vtable);
+struct Zinc_location InputUnicodeGetLocation(void* input_obj, InputUnicodeVTable* input_vtable);
 
 #endif

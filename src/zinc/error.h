@@ -7,42 +7,42 @@
 #include "api.h"
 #include "zstring.h"
 
-struct location {
+typedef struct Zinc_location {
     size_t start_pos;
     size_t end_pos;
     size_t line;
     size_t col;
-};
+} Zinc_location;
 
-struct error {
-    struct Zinc_string message;
-    struct location loc;
-    struct error* next;
-    struct error* prev;
-};
+typedef struct Zinc_error {
+    Zinc_string message;
+    Zinc_location loc;
+    struct Zinc_error* next;
+    struct Zinc_error* prev;
+} Zinc_error;
 
-struct error_list {
-    struct error* head;
-    struct error* tail;
-};
+typedef struct Zinc_error_list {
+    Zinc_error* head;
+    Zinc_error* tail;
+} Zinc_error_list;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-ZINC_API void error_init(struct error* e);
-ZINC_API void error_create(struct error** e);
-ZINC_API void error_destroy(struct error* e);
-ZINC_API void error_list_init(struct error_list* el);
-ZINC_API void error_list_create(struct error_list** el);
-ZINC_API void error_list_add(struct error_list *el, struct error* e);
-ZINC_API void error_list_destroy(struct error_list* el);
-ZINC_API bool error_list_set(struct error_list *el, struct location* loc, const char* fmt, ...);
-ZINC_API void error_list_print(struct error_list* el);
-ZINC_API void location_init(struct location* loc);
-ZINC_API void location_create(struct location** loc);
-ZINC_API const char* plural(size_t number);
-ZINC_API void location_combine(struct location* p, struct location* c);
+ZINC_API void Zinc_error_init(Zinc_error* e);
+ZINC_API void Zinc_error_create(Zinc_error** e);
+ZINC_API void Zinc_error_destroy(Zinc_error* e);
+ZINC_API void Zinc_error_list_init(Zinc_error_list* el);
+ZINC_API void Zinc_error_list_create(Zinc_error_list** el);
+ZINC_API void Zinc_error_list_add(Zinc_error_list *el, Zinc_error* e);
+ZINC_API void Zinc_error_list_destroy(Zinc_error_list* el);
+ZINC_API bool Zinc_error_list_set(Zinc_error_list *el, Zinc_location* loc, const char* fmt, ...);
+ZINC_API void Zinc_error_list_print(Zinc_error_list* el);
+ZINC_API void Zinc_location_init(Zinc_location* loc);
+ZINC_API void Zinc_location_create(Zinc_location** loc);
+ZINC_API const char* Zinc_plural(size_t number);
+ZINC_API void Zinc_location_combine(Zinc_location* p, Zinc_location* c);
 
 #ifdef __cplusplus
 }

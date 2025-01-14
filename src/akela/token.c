@@ -10,7 +10,7 @@ void Ake_token_init(struct Ake_token* t)
     Zinc_string_init(&t->value);
     t->is_integer = false;
     t->is_float = false;
-    location_init(&t->loc);
+    Zinc_location_init(&t->loc);
     t->next = NULL;
     t->prev = NULL;
 }
@@ -157,7 +157,7 @@ void Ake_print_token(struct Ake_token* t)
     free(a);
 }
 
-void Ake_get_token_location(struct Ake_token* t, struct location* loc)
+void Ake_get_token_location(struct Ake_token* t, struct Zinc_location* loc)
 {
     *loc = t->loc;
 }

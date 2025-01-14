@@ -9,7 +9,7 @@ void Cent_element_init(Cent_element_type* et)
     et->number_type = Cent_number_type_none;
     hash_table_init(&et->properties, 32);
     Cent_types_list_init(&et->children);
-    location_init(&et->loc);
+    Zinc_location_init(&et->loc);
     et->has_error = false;
 }
 
@@ -55,7 +55,7 @@ void Cent_element_add(Cent_element_type* et, Cent_types_node* node)
 void Cent_element_add_et(
     Cent_element_type* et,
     Cent_element_type* et2,
-    struct location* loc,
+    struct Zinc_location* loc,
     bool has_error)
 {
     Cent_types_list_add_et(&et->children, et2, loc, has_error);
@@ -64,7 +64,7 @@ void Cent_element_add_et(
 void Cent_element_add_en(
     Cent_element_type* et,
     Cent_enum_type* en,
-    struct location* loc,
+    struct Zinc_location* loc,
     bool has_error)
 {
     Cent_types_list_add_en(&et->children, en, loc, has_error);
@@ -75,7 +75,7 @@ void Cent_property_type_init(Cent_property_type* pt)
     Zinc_string_init(&pt->name);
     pt->type = Cent_types_none;
     pt->required = false;
-    location_init(&pt->loc);
+    Zinc_location_init(&pt->loc);
     pt->has_error = false;
 }
 
@@ -111,7 +111,7 @@ void Cent_property_type_free(Cent_property_type* pt)
 void Cent_types_node_init(Cent_types_node* node)
 {
     node->type = Cent_types_none;
-    location_init(&node->loc);
+    Zinc_location_init(&node->loc);
     node->has_error = false;
     node->next = NULL;
     node->prev = NULL;
@@ -172,7 +172,7 @@ void Cent_types_list_add(Cent_types_list* list, Cent_types_node* node)
 void Cent_types_list_add_et(
     Cent_types_list* list,
     Cent_element_type* et2,
-    struct location* loc,
+    struct Zinc_location* loc,
     bool has_error)
 {
     Cent_types_node* node = NULL;
@@ -187,7 +187,7 @@ void Cent_types_list_add_et(
 void Cent_types_list_add_en(
     Cent_types_list* list,
     struct Cent_enum_type* en,
-    struct location* loc,
+    struct Zinc_location* loc,
     bool has_error)
 {
     Cent_types_node* node = NULL;

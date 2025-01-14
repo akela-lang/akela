@@ -13,7 +13,7 @@ void Ake_lex_state_init(
         struct Ake_lex_state* ls,
         void* input_obj,
         InputUnicodeVTable* input_vtable,
-        struct error_list* el,
+        struct Zinc_error_list* el,
         struct Ake_symbol_table* st)
 {
     ls->input_obj = input_obj;

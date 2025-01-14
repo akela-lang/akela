@@ -6,7 +6,7 @@
 #include "zinc/input_unicode_string.h"
 #include <string.h>
 
-void lex_setup(char* line, struct Ake_lex_state* ls, struct error_list* el)
+void lex_setup(char* line, struct Ake_lex_state* ls, struct Zinc_error_list* el)
 {
     Vector* text = NULL;
     VectorCreate(&text, sizeof(char));
@@ -15,7 +15,7 @@ void lex_setup(char* line, struct Ake_lex_state* ls, struct error_list* el)
     InputUnicodeString* input_string = NULL;
     InputUnicodeStringCreate(&input_string, text);
 
-	error_list_init(el);
+	Zinc_error_list_init(el);
 
 	struct Ake_symbol_table* st = NULL;
 	malloc_safe((void**)&st, sizeof(struct Ake_symbol_table));
@@ -31,9 +31,9 @@ void lex_teardown(struct Ake_lex_state* ls)
     free(input_string->text);
     free(input_string);
 
-	struct error_list* el = ls->el;
+	struct Zinc_error_list* el = ls->el;
 
-	error_list_destroy(el);
+	Zinc_error_list_destroy(el);
 	Ake_symbol_table_destroy(ls->st);
 	free(ls->st);
 }

@@ -4,11 +4,11 @@
 #include "dom.h"
 
 typedef struct Json_stringify_property_data {
-    struct error_list* el;
+    struct Zinc_error_list* el;
     Json_dom* dom;
     struct Zinc_string* bf;
 } Json_stringify_property_data;
 
-void Json_stringify(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf);
 
 #endif

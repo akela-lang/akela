@@ -40,7 +40,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     Zinc_string_add_str(&path, ".aken");
     Cent_comp_unit* cu = Cent_comp_table_find_unit(pd->ct, &path);
     if (!cu) {
-        error_list_set(pd->errors, &n->loc, "could not find module: %b", &path);
+        Zinc_error_list_set(pd->errors, &n->loc, "could not find module: %b", &path);
         n->has_error = true;
         return;
     }
@@ -55,9 +55,9 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
 
     Cent_comp_unit_parse(cu);
     if (&cu->errors.head) {
-        struct error* e = cu->errors.head;
+        struct Zinc_error* e = cu->errors.head;
         while (e) {
-            error_list_set(pd->errors, &e->loc, "%b: %b", &path, &e->message);
+            Zinc_error_list_set(pd->errors, &e->loc, "%b: %b", &path, &e->message);
             e = e->next;
         }
     }
@@ -81,7 +81,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         Zinc_string_copy(&p->text, &base_name);
         Cent_symbol* sym = Cent_environment_get(pd->top, &base_name);
         if (sym) {
-            error_list_set(pd->errors, &p->loc, "module identifier collides with existing identifier: %b", &base_name);
+            Zinc_error_list_set(pd->errors, &p->loc, "module identifier collides with existing identifier: %b", &base_name);
             p->has_error = true;
             Zinc_string_destroy(&base_name);
         } else {

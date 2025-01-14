@@ -40,7 +40,7 @@ typedef struct Cob_ast {
     char c[4];
     int num;
     unsigned long num_value;
-    struct location loc;
+    struct Zinc_location loc;
     bool is_root;
     bool is_group;
     size_t group;

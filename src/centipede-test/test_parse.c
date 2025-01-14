@@ -28,7 +28,7 @@ void test_parse_element()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     expect_error_count(errors, 1);
@@ -127,7 +127,7 @@ void test_parse_enumerate()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     /* root */
@@ -184,7 +184,7 @@ void test_parse_top_level_assignment()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     /* root */
@@ -313,7 +313,7 @@ void test_parse_error_unhandled_token()
     test_parse_setup(&ct, "1 }");
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "unhandled token: right-curly-brace");
@@ -329,7 +329,7 @@ void test_parse_element_error_expected_id()
     test_parse_setup(&ct, "element 1");
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected id");
@@ -347,7 +347,7 @@ void test_parse_element_error_expected_left_curly_brace()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected left curly-brace");
@@ -368,7 +368,7 @@ void test_parse_element_error_name_already_exits()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "name already exists: Test");
@@ -387,7 +387,7 @@ void test_parse_element_error_properties_expected_right_curly_brace()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected right curly-brace");
@@ -409,7 +409,7 @@ void test_parse_element_error_property_expected_colon()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected colon");
@@ -431,7 +431,7 @@ void test_parse_element_error_property_expected_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected id");
@@ -450,7 +450,7 @@ void test_parse_element_error_children_expected_right_curly_brace()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected right curly-brace");
@@ -469,7 +469,7 @@ void test_parse_enumerate_error_expected_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected id");
@@ -487,7 +487,7 @@ void test_parse_enumerate_error_expected_right_curly_brace()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected right curly-brace");
@@ -507,7 +507,7 @@ void test_parse_value_error_enum_expected_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected id");
@@ -525,7 +525,7 @@ void test_parse_value_error_object_expected_rcb()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected right curly brace");
@@ -545,7 +545,7 @@ void test_parse_value_error_object_property_expected_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected id");
@@ -565,7 +565,7 @@ void test_parse_value_error_object_property_expected_equal()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected equal");
@@ -587,7 +587,7 @@ void test_parse_element_property_unknown_type()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "unknown type: Abc");
@@ -610,7 +610,7 @@ void test_parse_element_property_type_not_element()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "type is not an element or enum type: Abc");
@@ -632,7 +632,7 @@ void test_parse_element_child_unknown_type()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "unknown type: Abc");
@@ -655,7 +655,7 @@ void test_parse_element_child_type_not_an_element_type()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "type is not an element type: Abc");
@@ -679,7 +679,7 @@ void test_parse_enum_error_duplicate_enum_value()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "duplicate enum value: Symbol_type::Info");
@@ -700,7 +700,7 @@ void test_parse_object_method_call()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     expect_no_errors(errors);
@@ -751,7 +751,7 @@ void test_parse_object_method_call2()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     expect_no_errors(errors);
@@ -807,7 +807,7 @@ void test_parse_function_call()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     expect_no_errors(errors);
@@ -864,10 +864,10 @@ void test_parse_enum_duplicate_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
-    struct error* e = expect_source_error(errors, "duplicate enum value: Foo::Two");
+    struct Zinc_error* e = expect_source_error(errors, "duplicate enum value: Foo::Two");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 4, "line e");
     expect_size_t_equal(e->loc.col, 5, "col e");
@@ -890,10 +890,10 @@ void test_parse_enum_error_could_not_find_enum()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
-    struct error* e = expect_source_error(errors, "id is not a variable: Bar");
+    struct Zinc_error* e = expect_source_error(errors, "id is not a variable: Bar");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 6, "line e");
     expect_size_t_equal(e->loc.col, 1, "col e");
@@ -916,10 +916,10 @@ void test_parse_enum_error_could_not_find_enum_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
-    struct error* e = expect_source_error(errors, "invalid enum id: Four");
+    struct Zinc_error* e = expect_source_error(errors, "invalid enum id: Four");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.line, 6, "line e");
     expect_size_t_equal(e->loc.col, 6, "col e");
@@ -950,7 +950,7 @@ void test_parse_include()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     expect_no_errors(errors);
@@ -1025,7 +1025,7 @@ void test_parse_include_multiple_namespace()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     expect_no_errors(errors);
@@ -1102,7 +1102,7 @@ void test_parse_include_value()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     expect_no_errors(errors);
@@ -1154,7 +1154,7 @@ void test_parse_include_value_error()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "not a valid id: b");
@@ -1177,7 +1177,7 @@ void test_parse_include_glob()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_no_errors(errors);
 
@@ -1199,7 +1199,7 @@ void test_parse_include_error_expected_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected id");
@@ -1222,7 +1222,7 @@ void test_parse_namespace_error_expected_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected id");
@@ -1245,7 +1245,7 @@ void test_parse_namespace_error_expected_id2()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "expected id");
@@ -1264,7 +1264,7 @@ void test_parse_let()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
     
     expect_no_errors(errors);
@@ -1308,7 +1308,7 @@ void test_parse_let_error_shadow_type()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "shadowing of type: Foo");
@@ -1330,7 +1330,7 @@ void test_parse_let_error_shadow_module()
     test_parse_add_comp_unit(ct->module_finder_obj, "base.aken", "");
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "shadowing of module: base");
@@ -1349,7 +1349,7 @@ void test_parse_let_error_shadow_local()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "shadowing of local variable: a");
@@ -1370,7 +1370,7 @@ void test_parse_object_let()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
     
     expect_no_errors(errors);
@@ -1427,7 +1427,7 @@ void test_parse_module_id_error()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_ast* root = ct->primary->pr.root;
 
     expect_has_errors(errors);
@@ -1447,7 +1447,7 @@ void test_parse_bad_id()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "unknown variable: b");
@@ -1470,7 +1470,7 @@ void test_parse_bad_id_child_of()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "unknown variable: x");
@@ -1493,7 +1493,7 @@ void test_parse_bad_id_property_of()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct error_list* errors = &ct->primary->errors;
+    struct Zinc_error_list* errors = &ct->primary->errors;
 
     expect_has_errors(errors);
     expect_source_error(errors, "unknown variable: x");

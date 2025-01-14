@@ -7,7 +7,7 @@ Cob_token* Cob_lex(void* input_obj, InputUnicodeVTable *input_vtable)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r = result_error;
     while (r == result_error) {
@@ -49,24 +49,24 @@ bool Cob_match_token(
     if (cd->lookahead->type == type) {
         *t = cd->lookahead;
         cd->lookahead = NULL;
-        location_combine(&n->loc, &(*t)->loc);
+        Zinc_location_combine(&n->loc, &(*t)->loc);
         return true;
     } else {
         *t = NULL;
-        error_list_set(cd->el, &cd->lookahead->loc, "%s", reason);
-        location_combine(&n->loc, &n->loc);
+        Zinc_error_list_set(cd->el, &cd->lookahead->loc, "%s", reason);
+        Zinc_location_combine(&n->loc, &n->loc);
         return false;
     }
 }
 
-void Cob_location_update(struct location* dest, struct location* src)
+void Cob_location_update(struct Zinc_location* dest, struct Zinc_location* src)
 {
     if (dest->line == 0) {
         *dest = *src;
     }
 }
 
-void Cob_location_update_token(struct location* dest, Cob_token* t)
+void Cob_location_update_token(struct Zinc_location* dest, Cob_token* t)
 {
     if (dest->line == 0 && t) {
         *dest = t->loc;

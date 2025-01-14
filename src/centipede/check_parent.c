@@ -13,7 +13,7 @@ void Cent_check_parent(Cent_comp_unit* cu)
         while (p) {
             if (p->type == Cent_ast_type_expr_object) {
                 if (p != cu->pr.root->tail) {
-                    error_list_set(&cu->errors, &p->loc, "value is not used");
+                    Zinc_error_list_set(&cu->errors, &p->loc, "value is not used");
                     p->has_error = true;
                 }
             }
@@ -50,7 +50,7 @@ void Cent_check_parent_symbol(Cent_symbol* sym)
         Cent_value* value = sym->data.variable.value;
         if (!value->parent && value != cu->value) {
             Cent_ast* n = value->n;
-            error_list_set(&cu->errors, &n->loc, "value is not used");
+            Zinc_error_list_set(&cu->errors, &n->loc, "value is not used");
             n->has_error = true;
             /* test case: test_check_value_types_not_attached */
         }

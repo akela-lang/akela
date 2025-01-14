@@ -94,7 +94,7 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
     Zinc_string_finish(name);
     if (!prop_type) {
         Cent_ast* n = value->n;
-        error_list_set(
+        Zinc_error_list_set(
             pr->errors,
             &n->loc,
             "invalid property type: %b--%b--%b",
@@ -112,7 +112,7 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
         Cent_symbol* value_sym = Cent_environment_get(top, &value->name);
         if (!value_sym) {
             Cent_ast* n = value->n;
-            error_list_set(
+            Zinc_error_list_set(
                 pr->errors,
                 &n->loc,
                 "invalid property type: %b--%b--%b",
@@ -130,7 +130,7 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
 
         if (prop_element != value_element) {
             Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "invalid property type: %b", &value_element->name);
+            Zinc_error_list_set(pr->errors, &n->loc, "invalid property type: %b", &value_element->name);
             value->has_error = true;
             n->has_error = true;
             /* test case: test_check_types_property_error_number */
@@ -140,7 +140,7 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
 
         if (value->type != Cent_value_type_enum) {
             Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "value is not an enum value: %b", &value->name);
+            Zinc_error_list_set(pr->errors, &n->loc, "value is not an enum value: %b", &value->name);
             value->has_error = true;
             n->has_error = true;
             return;
@@ -155,7 +155,7 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
 
         if (prop_en != value_en) {
             Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "invalid value enum type: %b", &value_en->name);
+            Zinc_error_list_set(pr->errors, &n->loc, "invalid value enum type: %b", &value_en->name);
             value->has_error = true;
             n->has_error = true;
             /* test case: test_check_types_property_enum_error_not_match */
@@ -205,7 +205,7 @@ void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_valu
                     }
                     p = p->next;
                 }
-                error_list_set(pr->errors, &n->loc, "value has no type; looking for %b", &bf);
+                Zinc_error_list_set(pr->errors, &n->loc, "value has no type; looking for %b", &bf);
                 value->has_error = true;
                 n->has_error = true;
                 Zinc_string_destroy(&bf);
@@ -244,7 +244,7 @@ void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_valu
 
         if (!found) {
             Cent_ast* n = value->n;
-            error_list_set(pr->errors, &n->loc, "invalid child type: %b", &value->name);
+            Zinc_error_list_set(pr->errors, &n->loc, "invalid child type: %b", &value->name);
             value->has_error = true;
             n->has_error = true;
             /* test case: test_check_types_child_error_number */

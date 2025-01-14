@@ -12,19 +12,19 @@ typedef enum Json_lex_state {
 } Json_lex_state;
 
 typedef struct Json_lex_data {
-    struct error_list* el;
+    struct Zinc_error_list* el;
     void* input_obj;
     InputUnicodeVTable* input_vtable;
 } Json_lex_data;
 
 enum result Json_lex_data_init(
     Json_lex_data* ld,
-    struct error_list* el,
+    struct Zinc_error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable);
 void Json_lex_data_create(
     Json_lex_data** ld,
-    struct error_list* el,
+    struct Zinc_error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable);
 enum result Json_convert_slice(String_slice slice, UChar32* c);

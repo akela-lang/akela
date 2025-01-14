@@ -5,7 +5,7 @@ void Json_token_init(Json_token* t)
 {
     t->type = Json_token_type_none;
     Zinc_string_init(&t->value);
-    location_init(&t->loc);
+    Zinc_location_init(&t->loc);
     t->number_type = Json_number_type_none;
 }
 

@@ -31,7 +31,7 @@ Cent_token* lex(Cent_lex_data* ld)
             if (bt) {
                 t->builtin_type = *bt;
             } else {
-                error_list_set(ld->errors, &t->loc, "invalid builtin id: %b", &t->value);
+                Zinc_error_list_set(ld->errors, &t->loc, "invalid builtin id: %b", &t->value);
             }
         } else {
             Cent_token_type* p = Cent_lex_get_reserved_word(ld, &t->value);
@@ -60,7 +60,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {
@@ -223,7 +223,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
-        error_list_set(ld->errors, &loc, "invalid character: %b", &bf);
+        Zinc_error_list_set(ld->errors, &loc, "invalid character: %b", &bf);
         Zinc_string_destroy(&bf);
     }
 }
@@ -232,7 +232,7 @@ void lex_id(Cent_lex_data* ld, Cent_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {
@@ -266,7 +266,7 @@ void Cent_lex_string(Cent_lex_data* ld, Cent_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {
@@ -293,9 +293,9 @@ void Cent_lex_string(Cent_lex_data* ld, Cent_token* t)
         UChar32 cp;
         Json_convert_char(c, num, &cp);
         if (cp < 0x20) {
-            error_list_set(ld->errors, &loc, "code point is less than \\u0020");
+            Zinc_error_list_set(ld->errors, &loc, "code point is less than \\u0020");
         } else if (cp > 0x10FFFF) {
-            error_list_set(ld->errors, &loc, "code point greater than \\u10FFFF");
+            Zinc_error_list_set(ld->errors, &loc, "code point greater than \\u10FFFF");
         } else {
             Zinc_string_add(&t->value, c, num);
         }
@@ -308,7 +308,7 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
     enum result r;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
     if (r == result_error) {
@@ -317,7 +317,7 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
     }
 
     if (done) {
-        error_list_set(ld->errors, &loc, "missing escape character");
+        Zinc_error_list_set(ld->errors, &loc, "missing escape character");
         InputUnicodeRepeat(ld->input, ld->input_vtable);
         return;
     }
@@ -326,7 +326,7 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
-        error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
+        Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
         Zinc_string_destroy(&bf);
         return;
     }
@@ -374,7 +374,7 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
     struct Zinc_string bf;
     Zinc_string_init(&bf);
     Zinc_string_add(&bf, c, num);
-    error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
+    Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
     Zinc_string_destroy(&bf);
 }
 
@@ -382,7 +382,7 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
 
@@ -390,7 +390,7 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
     Zinc_string_init(&bf);
     Zinc_string_add_str(&bf, "\\u");
     bool valid = true;
-    struct location first_loc;
+    struct Zinc_location first_loc;
     first_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
     first_loc.start_pos -= 2;
     first_loc.col -= 2;
@@ -404,14 +404,14 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
             exit(1);
         }
         if (done) {
-            error_list_set(ld->errors, &loc, "unicode escape not finished");
+            Zinc_error_list_set(ld->errors, &loc, "unicode escape not finished");
             Zinc_string_destroy(&bf);
             return;
         }
         if (is_hex_digit(c, num)) {
             Zinc_string_add(&bf, c, num);
         } else {
-            error_list_set(ld->errors, &loc, "invalid hex digit: %c", c[0]);
+            Zinc_error_list_set(ld->errors, &loc, "invalid hex digit: %c", c[0]);
             valid = false;
         }
     }
@@ -434,16 +434,16 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
     }
     Zinc_string_finish(&bf);
 
-    struct location end_loc;
+    struct Zinc_location end_loc;
     end_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
     first_loc.end_pos = end_loc.start_pos;
 
     if (valid) {
         unsigned int cp = char4_to_hex(bf.buf + 2, (int)bf.size - 2);
         if (cp < 0x20) {
-            error_list_set(ld->errors, &first_loc, "code point is less than \\u0020: %s", bf.buf);
+            Zinc_error_list_set(ld->errors, &first_loc, "code point is less than \\u0020: %s", bf.buf);
         } else if (cp > 0x10FFFF) {
-            error_list_set(ld->errors, &first_loc, "code point greater than \\u10FFFF: %s", bf.buf);
+            Zinc_error_list_set(ld->errors, &first_loc, "code point greater than \\u10FFFF: %s", bf.buf);
         } else {
             char dest[4];
             num = code_to_utf8(dest, cp);
@@ -470,13 +470,13 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
 
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
 
     size_t digit_count = 0;
     char first_digit;
-    struct location first_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
+    struct Zinc_location first_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
     first_loc.end_pos = first_loc.start_pos;
     first_loc.start_pos--;
     first_loc.col--;
@@ -485,13 +485,13 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
     num = NUM_BYTES(first);
 
     if (num == 1 && first == '.') {
-        error_list_set(ld->errors, &first_loc, "number starts with period");
+        Zinc_error_list_set(ld->errors, &first_loc, "number starts with period");
         Cent_lex_number_fraction(ld, t);
         return;
     }
 
     if (num == 1 && first == '+') {
-        error_list_set(ld->errors, &first_loc, "number starts with plus sign");
+        Zinc_error_list_set(ld->errors, &first_loc, "number starts with plus sign");
     }
 
     if (isdigit(first)) {
@@ -516,7 +516,7 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
                 t->value.size--;
                 first_digit = c[0];
                 digit_count--;
-                error_list_set(ld->errors, &first_loc, "leading zero with no other digits or faction");
+                Zinc_error_list_set(ld->errors, &first_loc, "leading zero with no other digits or faction");
             }
             Zinc_string_add_char(&t->value, c[0]);
             digit_count++;
@@ -543,12 +543,12 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
     }
 
     if (t->value.size == 1 && first == '-') {
-        error_list_set(ld->errors, &first_loc, "invalid number");
+        Zinc_error_list_set(ld->errors, &first_loc, "invalid number");
         t->value.buf[0] = '0';
     }
 
     if (t->value.size == 1 && first == '+') {
-        error_list_set(ld->errors, &first_loc, "invalid number");
+        Zinc_error_list_set(ld->errors, &first_loc, "invalid number");
         t->value.buf[0] = '0';
     }
 }
@@ -559,7 +559,7 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
 
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
     size_t digit_count = 0;
@@ -593,7 +593,7 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
     }
 
     if (digit_count == 0) {
-        error_list_set(ld->errors, &t->loc, "no digits in fraction");
+        Zinc_error_list_set(ld->errors, &t->loc, "no digits in fraction");
     }
 }
 
@@ -603,7 +603,7 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
 
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
     size_t digit_count = 0;
@@ -628,11 +628,11 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
                     has_sign = true;
                     continue;
                 } else {
-                    error_list_set(ld->errors, &loc, "exponent already has a sign");
+                    Zinc_error_list_set(ld->errors, &loc, "exponent already has a sign");
                     continue;
                 }
             } else {
-                error_list_set(ld->errors, &loc, "sign after exponent digits");
+                Zinc_error_list_set(ld->errors, &loc, "sign after exponent digits");
                 continue;
             }
         }
@@ -648,7 +648,7 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
     }
 
     if (digit_count == 0) {
-        error_list_set(ld->errors, &t->loc, "no digits in exponent");
+        Zinc_error_list_set(ld->errors, &t->loc, "no digits in exponent");
     }
 }
 
@@ -656,7 +656,7 @@ void Cent_lex_modifier(Cent_lex_data* ld, Cent_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
 

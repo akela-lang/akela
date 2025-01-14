@@ -48,7 +48,7 @@ typedef struct Cent_ast {
     Cent_variable_type variable_type;
     Cent_data data;
     struct Cent_environment* env;
-    struct location loc;
+    struct Zinc_location loc;
     bool has_error;
     struct Cent_ast* next;
     struct Cent_ast* prev;

@@ -19,7 +19,7 @@ typedef struct Cent_types_node {
         struct Cent_element_type* et;
         struct Cent_enum_type* en;
     } data;
-    struct location loc;
+    struct Zinc_location loc;
     bool has_error;
     struct Cent_types_node* next;
     struct Cent_types_node* prev;
@@ -38,7 +38,7 @@ typedef struct Cent_property_type {
         struct Cent_enum_type* en;
     } data;
     bool required;
-    struct location loc;
+    struct Zinc_location loc;
     bool has_error;
 } Cent_property_type;
 
@@ -48,7 +48,7 @@ typedef struct Cent_element_type {
     Cent_number_type number_type;
     struct hash_table properties;
     struct Cent_types_list children;
-    struct location loc;
+    struct Zinc_location loc;
     bool has_error;
 } Cent_element_type;
 
@@ -63,12 +63,12 @@ void Cent_element_add(Cent_element_type* et, Cent_types_node* node);
 void Cent_element_add_et(
     Cent_element_type* et,
     Cent_element_type* et2,
-    struct location* loc,
+    struct Zinc_location* loc,
     bool has_error);
 void Cent_element_add_en(
     Cent_element_type* et,
     Cent_enum_type* en,
-    struct location* loc,
+    struct Zinc_location* loc,
     bool has_error);
 
 void Cent_property_type_init(Cent_property_type* pt);
@@ -88,12 +88,12 @@ void Cent_types_list_add(Cent_types_list* list, Cent_types_node* node);
 void Cent_types_list_add_et(
     Cent_types_list* list,
     Cent_element_type* et2,
-    struct location* loc,
+    struct Zinc_location* loc,
     bool has_error);
 void Cent_types_list_add_en(
     Cent_types_list* list,
     struct Cent_enum_type* en,
-    struct location* loc,
+    struct Zinc_location* loc,
     bool has_error);
 
 #endif

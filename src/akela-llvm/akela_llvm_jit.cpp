@@ -41,9 +41,9 @@ namespace Akela_llvm {
         std::string error_str;
         raw_string_ostream error_os(error_str);
         if (verifyFunction(*toplevel, &error_os)) {
-            struct location loc = {};
-            location_init(&loc);
-            error_list_set(cg->el, &loc, "%s", error_str.c_str());
+            struct Zinc_location loc = {};
+            Zinc_location_init(&loc);
+            Zinc_error_list_set(cg->el, &loc, "%s", error_str.c_str());
         }
 
         jd.current_function.push_back(toplevel);
@@ -72,9 +72,9 @@ namespace Akela_llvm {
         std::string str;
         raw_string_ostream os(str);
         if  (verifyModule(*jd.TheModule, &os)) {
-            struct location loc = {};
-            location_init(&loc);
-            error_list_set(cg->el, &loc, "%s", str.c_str());
+            struct Zinc_location loc = {};
+            Zinc_location_init(&loc);
+            Zinc_error_list_set(cg->el, &loc, "%s", str.c_str());
             valid = false;
         }
 

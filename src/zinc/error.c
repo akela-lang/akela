@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "zstring.h"
 
-void location_init(struct location* loc)
+void Zinc_location_init(Zinc_location* loc)
 {
     loc->start_pos = 0;
     loc->end_pos = 0;
@@ -14,38 +14,38 @@ void location_init(struct location* loc)
     loc->col = 0;
 }
 
-void error_init(struct error* e)
+void Zinc_error_init(Zinc_error* e)
 {
     Zinc_string_init(&e->message);
-    location_init(&e->loc);
+    Zinc_location_init(&e->loc);
     e->next = NULL;
     e->prev = NULL;
 }
 
-void error_create(struct error** e)
+void Zinc_error_create(Zinc_error** e)
 {
-    malloc_safe((void**)e, sizeof(struct error));
-    error_init(*e);
+    malloc_safe((void**)e, sizeof(Zinc_error));
+    Zinc_error_init(*e);
 }
 
-void error_destroy(struct error* e)
+void Zinc_error_destroy(Zinc_error* e)
 {
     Zinc_string_destroy(&e->message);
 }
 
-void error_list_init(struct error_list* el)
+void Zinc_error_list_init(Zinc_error_list* el)
 {
     el->head = NULL;
     el->tail = NULL;
 }
 
-void error_list_create(struct error_list** el)
+void Zinc_error_list_create(Zinc_error_list** el)
 {
-    malloc_safe((void**)el, sizeof(struct error_list));
-    error_list_init(*el);
+    malloc_safe((void**)el, sizeof(Zinc_error_list));
+    Zinc_error_list_init(*el);
 }
 
-void error_list_add(struct error_list *el, struct error* e)
+void Zinc_error_list_add(Zinc_error_list *el, Zinc_error* e)
 {
     if (el->head && el->tail) {
         el->tail->next = e;
@@ -57,26 +57,26 @@ void error_list_add(struct error_list *el, struct error* e)
     }
 }
 
-void error_list_destroy(struct error_list* el)
+void Zinc_error_list_destroy(Zinc_error_list* el)
 {
-    struct error* p = el->head;
+    Zinc_error* p = el->head;
     while (p) {
-        struct error* temp = p;
+        Zinc_error* temp = p;
         p = p->next;
-        error_destroy(temp);
+        Zinc_error_destroy(temp);
         free(temp);
     }
 }
 
-bool error_list_set(struct error_list *el, struct location* loc, const char* fmt, ...)
+bool Zinc_error_list_set(Zinc_error_list *el, Zinc_location* loc, const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    struct Zinc_string bf;
+    Zinc_string bf;
     Zinc_string_init(&bf);
     int len;
-    struct error* e = NULL;
-    error_create(&e);
+    Zinc_error* e = NULL;
+    Zinc_error_create(&e);
 
     char last_last = 0;
     char last = 0;
@@ -127,7 +127,7 @@ bool error_list_set(struct error_list *el, struct location* loc, const char* fmt
             }
             Zinc_string_add(&e->message, bf.buf, bf.size);
         } else if (last == '%' && *fmt == 'b') {
-            struct Zinc_string* src = va_arg(args, struct Zinc_string*);
+            Zinc_string* src = va_arg(args, Zinc_string*);
             Zinc_string_finish(src);
             while (true) {
                 Zinc_string_clear(&bf);
@@ -153,7 +153,7 @@ bool error_list_set(struct error_list *el, struct location* loc, const char* fmt
 
     va_end(args);
 
-    error_list_add(el, e);
+    Zinc_error_list_add(el, e);
     if (loc) {
         e->loc = *loc;
     }
@@ -163,9 +163,9 @@ bool error_list_set(struct error_list *el, struct location* loc, const char* fmt
     return false;
 }
 
-void error_list_print(struct error_list* el)
+void Zinc_error_list_print(Zinc_error_list* el)
 {
-    struct error* e = el->head;
+    Zinc_error* e = el->head;
     while (e) {
         Zinc_string_finish(&e->message);
         fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -173,19 +173,19 @@ void error_list_print(struct error_list* el)
     }
 }
 
-void location_create(struct location** loc)
+void Zinc_location_create(Zinc_location** loc)
 {
-    malloc_safe((void**)loc, sizeof(struct location));
-    location_init(*loc);
+    malloc_safe((void**)loc, sizeof(Zinc_location));
+    Zinc_location_init(*loc);
 }
 
-const char* plural(size_t number)
+const char* Zinc_plural(size_t number)
 {
     if (number == 1) return "";
     else return "s";
 }
 
-void location_combine(struct location* p, struct location* c)
+void Zinc_location_combine(Zinc_location* p, Zinc_location* c)
 {
     if (!p->line && !p->col) {
         *p = *c;

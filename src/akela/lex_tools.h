@@ -9,9 +9,9 @@
 typedef struct Ake_lex_state {
     void* input_obj;
     InputUnicodeVTable* input_vtable;
-    struct location loc;
+    struct Zinc_location loc;
     struct Ake_symbol_table* st;
-    struct error_list* el;
+    struct Zinc_error_list* el;
 } Ake_lex_state;
 
 enum state_enum {
@@ -33,7 +33,7 @@ void Ake_lex_state_init(
         struct Ake_lex_state* ls,
         void* input_obj,
         InputUnicodeVTable* input_vtable,
-        struct error_list* el,
+        struct Zinc_error_list* el,
         struct Ake_symbol_table* st);
 bool Ake_compound_operator_start(int num, const char c[4]);
 bool Ake_is_word(const char c[4], int num);

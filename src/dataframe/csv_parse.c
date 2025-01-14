@@ -113,7 +113,7 @@ bool CSVParseRow(struct CSVParseData* parse_data, DataFrame* df)
         } else if (token->type == CSVTokenTypeField) {
             Series* s = DataFrameSeriesByIndex(df, i);
             if (!s) {
-                error_list_set(parse_data->el, &token->loc, "Row has more fields than header");
+                Zinc_error_list_set(parse_data->el, &token->loc, "Row has more fields than header");
             } else {
                 /* field type */
                 enum FieldType field_type;

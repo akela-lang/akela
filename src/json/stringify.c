@@ -5,14 +5,14 @@
 #include "zinc/unicode.h"
 #include "stringify.h"
 
-void Json_stringify_string(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
-void Json_stringify_number(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
-void Json_stringify_array(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
-void Json_stringify_object(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify_string(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify_number(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify_array(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify_object(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf);
 void Json_stringify_property(struct Zinc_string* name, Json_dom* value);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Json_stringify(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
+void Json_stringify(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
     if (dom->type == Json_dom_type_null) {
         Zinc_string_add_str(bf, "null");
@@ -98,7 +98,7 @@ bool Json_must_escape(char c[4], int num, char* escape_char)
     return false;
 }
 
-void Json_escape_buffer(struct error_list* el, struct Zinc_string* src, struct Zinc_string *bf)
+void Json_escape_buffer(struct Zinc_error_list* el, struct Zinc_string* src, struct Zinc_string *bf)
 {
     size_t i = 0;
     while (i < src->size) {
@@ -113,9 +113,9 @@ void Json_escape_buffer(struct error_list* el, struct Zinc_string* src, struct Z
         char escape_char;
         bool must_escape = Json_must_escape(c, num, &escape_char);
         if (!must_escape && (cp < 0x20 || cp > 0x10ffff)) {
-            struct location loc;
-            location_init(&loc);
-            error_list_set(el, &loc, "invalid string character");
+            struct Zinc_location loc;
+            Zinc_location_init(&loc);
+            Zinc_error_list_set(el, &loc, "invalid string character");
             i += num;
             continue;
         }
@@ -147,28 +147,28 @@ void Json_escape_buffer(struct error_list* el, struct Zinc_string* src, struct Z
     }
 }
 
-void Json_stringify_string(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
+void Json_stringify_string(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
     Zinc_string_add_char(bf, '"');
     Json_escape_buffer(el, &dom->value.string, bf);
     Zinc_string_add_char(bf, '"');
 }
 
-void Json_stringify_number(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
+void Json_stringify_number(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
     if (dom->number_type == Json_dom_number_type_integer) {
         Zinc_string_add_format(bf, "%lld", dom->value.integer);
     } else if (dom->number_type == Json_dom_number_type_fp) {
         Zinc_string_add_format(bf, "%lf", dom->value.fp);
     } else {
-        struct location loc;
-        location_init(&loc);
-        error_list_set(el, &loc, "invalid number type");
+        struct Zinc_location loc;
+        Zinc_location_init(&loc);
+        Zinc_error_list_set(el, &loc, "invalid number type");
     }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Json_stringify_array(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
+void Json_stringify_array(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
     Zinc_string_add_char(bf, '[');
     Json_dom* p = dom->head;
@@ -185,9 +185,9 @@ void Json_stringify_array(struct error_list* el, Json_dom* dom, struct Zinc_stri
 }
 
 size_t Json_stringify_object_index = 0;
-struct error_list* Json_stringify_object_el = NULL;
+struct Zinc_error_list* Json_stringify_object_el = NULL;
 struct Zinc_string* Json_stringify_object_bf = NULL;
-void Json_stringify_object(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
+void Json_stringify_object(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
     Zinc_string_add_char(bf, '{');
     Json_stringify_object_el = el;

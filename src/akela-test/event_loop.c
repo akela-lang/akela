@@ -24,7 +24,7 @@ void event_loop(void* input_obj, InputUnicodeVTable* input_vtable)
     enum result r;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {

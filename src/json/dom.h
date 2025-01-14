@@ -35,7 +35,7 @@ typedef struct Json_dom {
         struct hash_table object;       /* object: hash struct buffer -> Json_dom */
     } value;
     bool has_error;
-    struct location loc;
+    struct Zinc_location loc;
     struct Json_dom *next;
     struct Json_dom *prev;
     struct Json_dom *head;

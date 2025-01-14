@@ -8,8 +8,8 @@
 #include "input_unicode.h"
 
 typedef struct {
-    struct location loc;
-    struct location prev_loc;
+    struct Zinc_location loc;
+    struct Zinc_location prev_loc;
     bool repeat_char;
     size_t pos;
     Vector* text;
@@ -29,11 +29,11 @@ void InputUnicodeStringClear(InputUnicodeString* data);
 enum result InputUnicodeStringNext(InputUnicodeString* data,
         char c[4],
         int* num,
-        struct location* loc,
+        struct Zinc_location* loc,
         bool* done);
 void InputUnicodeStringRepeat(InputUnicodeString* data);
-void InputUnicodeStringSeek(InputUnicodeString* data, struct location* loc);
+void InputUnicodeStringSeek(InputUnicodeString* data, struct Zinc_location* loc);
 void InputUnicodeStringGetAll(InputUnicodeString* data, Vector** text);
-struct location InputUnicodeStringGetLocation(InputUnicodeString* data);
+struct Zinc_location InputUnicodeStringGetLocation(InputUnicodeString* data);
 
 #endif

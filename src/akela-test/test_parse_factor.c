@@ -282,7 +282,7 @@ void test_parse_id_cyrillic()
     parse_setup("let я: i64; я", &cu);
     expect_false(cu.valid, "parse_setup valid");
     assert_has_errors(&cu.el);
-    struct error* e = expect_source_error(&cu.el, "Unrecognized character: я");
+    struct Zinc_error* e = expect_source_error(&cu.el, "Unrecognized character: я");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 4, "start_pos");
     expect_size_t_equal(e->loc.end_pos, 6, "size");
@@ -701,7 +701,7 @@ void test_parse_paren_error_empty()
     parse_setup("()", &cu);
 	assert_has_errors(&cu.el);
 	expect_false(cu.valid, "parse_setup valid");
-	struct error* e = expect_source_error(&cu.el, "empty parenthesis");
+	struct Zinc_error* e = expect_source_error(&cu.el, "empty parenthesis");
     if (e) {
         expect_size_t_equal(e->loc.line, 1, "line");
         expect_size_t_equal(e->loc.col, 2, "col");

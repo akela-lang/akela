@@ -12,9 +12,9 @@ void setup_compile(Cob_compile_data** cd, const char* s)
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, text);
 
-    struct error_list* el = NULL;
-    malloc_safe((void**)&el, sizeof(struct error_list));
-    error_list_init(el);
+    struct Zinc_error_list* el = NULL;
+    malloc_safe((void**)&el, sizeof(struct Zinc_error_list));
+    Zinc_error_list_init(el);
 
     malloc_safe((void**)cd, sizeof(struct Cob_compile_data));
     Cob_compile_data_init(*cd, input, input->input_vtable, el);

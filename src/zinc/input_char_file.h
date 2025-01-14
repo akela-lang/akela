@@ -9,8 +9,8 @@
 #include <stdio.h>
 
 typedef struct {
-    struct location loc;
-    struct location prev_loc;
+    struct Zinc_location loc;
+    struct Zinc_location prev_loc;
     bool repeat_char;
     char prev_c;
     FILE* fp;
@@ -26,10 +26,10 @@ extern InputCharVTable InputCharFileVTable;
 
 void InputCharFileCreate(InputCharFile** input_string, FILE* fp);
 void InputCharFileClear(InputCharFile* data);
-bool InputCharFileNext(InputCharFile* data, char* c, struct location* loc);
+bool InputCharFileNext(InputCharFile* data, char* c, struct Zinc_location* loc);
 void InputCharFileRepeat(InputCharFile* data);
-void InputCharFileSeek(InputCharFile* data, struct location* loc);
+void InputCharFileSeek(InputCharFile* data, struct Zinc_location* loc);
 void InputCharFileGetAll(InputCharFile* data, Vector** text);
-struct location InputCharFileGetLocation(InputCharFile* input);
+struct Zinc_location InputCharFileGetLocation(InputCharFile* input);
 
 #endif

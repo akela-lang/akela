@@ -194,7 +194,7 @@ void test_lex_start_error_multibyte()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "invalid character: θ");
+    struct Zinc_error* e = expect_source_error(ld.el, "invalid character: θ");
     expect_int_equal(token->type, Json_token_type_eof, "type token");
     expect_str(&token->value, "", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
@@ -215,7 +215,7 @@ void test_lex_start_error_single_byte()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "invalid character: |");
+    struct Zinc_error* e = expect_source_error(ld.el, "invalid character: |");
     expect_int_equal(token->type, Json_token_type_eof, "type token");
     expect_str(&token->value, "", "value token");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
@@ -236,7 +236,7 @@ void test_lex_string_error_missing_escape_character()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "missing escape character");
+    struct Zinc_error* e = expect_source_error(ld.el, "missing escape character");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
     expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
@@ -257,7 +257,7 @@ void test_lex_string_error_invalid_escape_character_multibyte()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "invalid escape character: θ");
+    struct Zinc_error* e = expect_source_error(ld.el, "invalid escape character: θ");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
     expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
@@ -278,7 +278,7 @@ void test_lex_string_error_invalid_unicode_escape_not_finished()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "unicode escape not finished");
+    struct Zinc_error* e = expect_source_error(ld.el, "unicode escape not finished");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
     expect_size_t_equal(e->loc.start_pos, 6, "start pos token");
@@ -299,7 +299,7 @@ void test_lex_string_error_unicode_escape_invalid_hex_digit()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "invalid hex digit: G");
+    struct Zinc_error* e = expect_source_error(ld.el, "invalid hex digit: G");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
     expect_size_t_equal(e->loc.start_pos, 6, "start pos token");
@@ -320,7 +320,7 @@ void test_lex_string_error_unicode_code_point_less_that_0x20()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "code point is less than \\u0020: \\u0019");
+    struct Zinc_error* e = expect_source_error(ld.el, "code point is less than \\u0020: \\u0019");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
     expect_size_t_equal(e->loc.start_pos, 1, "start pos token");
@@ -386,7 +386,7 @@ void test_lex_string_unicode_error_code_point_too_large()
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
     expect_int_equal(token->type, Json_token_type_string, "type token");
-    struct error* e = expect_source_error(
+    struct Zinc_error* e = expect_source_error(
         ld.el,
         "code point greater than \\u10FFFF: \\u110000"
     );
@@ -408,7 +408,7 @@ void test_lex_string_error_invalid_escape_character_single_byte()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "invalid escape character: |");
+    struct Zinc_error* e = expect_source_error(ld.el, "invalid escape character: |");
     expect_int_equal(token->type, Json_token_type_string, "type token");
     expect_str(&token->value, "", "value token");
     expect_size_t_equal(e->loc.start_pos, 2, "start pos token");
@@ -583,7 +583,7 @@ void test_lex_number_error_starts_with_period()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "number starts with period");
+    struct Zinc_error* e = expect_source_error(ld.el, "number starts with period");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, ".1", "value token");
     expect_int_equal(token->number_type, Json_number_type_fp, "number type");
@@ -606,7 +606,7 @@ void test_lex_number_error_starts_with_plus_sign()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "number starts with plus sign");
+    struct Zinc_error* e = expect_source_error(ld.el, "number starts with plus sign");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "+1", "value token");
     expect_int_equal(token->number_type, Json_number_type_integer, "number type");
@@ -629,7 +629,7 @@ void test_lex_number_error_minus_no_digits()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "invalid number");
+    struct Zinc_error* e = expect_source_error(ld.el, "invalid number");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "0", "value token");
     expect_int_equal(token->number_type, Json_number_type_integer, "number type");
@@ -652,7 +652,7 @@ void test_lex_number_error_plus_no_digits()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "invalid number");
+    struct Zinc_error* e = expect_source_error(ld.el, "invalid number");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "0", "value token");
     expect_int_equal(token->number_type, Json_number_type_integer, "number type");
@@ -675,7 +675,7 @@ void test_lex_number_error_leading_zero()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e =expect_source_error(ld.el, "leading zero with no other digits or faction");
+    struct Zinc_error* e =expect_source_error(ld.el, "leading zero with no other digits or faction");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1", "value token");
     expect_int_equal(token->number_type, Json_number_type_integer, "number type");
@@ -698,7 +698,7 @@ void test_lex_number_error_leading_zero2()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e =expect_source_error(ld.el, "leading zero with no other digits or faction");
+    struct Zinc_error* e =expect_source_error(ld.el, "leading zero with no other digits or faction");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1", "value token");
     expect_int_equal(token->number_type, Json_number_type_integer, "number type");
@@ -721,7 +721,7 @@ void test_lex_number_error_no_digits_in_fraction()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "no digits in fraction");
+    struct Zinc_error* e = expect_source_error(ld.el, "no digits in fraction");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1.", "value token");
     expect_int_equal(token->number_type, Json_number_type_fp, "number type");
@@ -744,7 +744,7 @@ void test_lex_number_error_exponent_multiple_signs()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "exponent already has a sign");
+    struct Zinc_error* e = expect_source_error(ld.el, "exponent already has a sign");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1e-1", "value token");
     expect_int_equal(token->number_type, Json_number_type_fp, "number type");
@@ -767,7 +767,7 @@ void test_lex_number_error_exponent_sign_after_digits()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "sign after exponent digits");
+    struct Zinc_error* e = expect_source_error(ld.el, "sign after exponent digits");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1e-1", "value token");
     expect_int_equal(token->number_type, Json_number_type_fp, "number type");
@@ -790,7 +790,7 @@ void test_lex_number_error_exponent_no_digits()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e =expect_source_error(ld.el, "no digits in exponent");
+    struct Zinc_error* e =expect_source_error(ld.el, "no digits in exponent");
     expect_int_equal(token->type, Json_token_type_number, "type token");
     expect_str(&token->value, "1e", "value token");
     expect_int_equal(token->number_type, Json_number_type_fp, "number type");
@@ -984,7 +984,7 @@ void test_lex_word_error()
 
     Json_token* token = Json_lex(&ld);
     expect_has_errors(ld.el);
-    struct error* e = expect_source_error(ld.el, "invalid word (abc), expecting true, false, or null");
+    struct Zinc_error* e = expect_source_error(ld.el, "invalid word (abc), expecting true, false, or null");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos token");
     expect_size_t_equal(e->loc.end_pos, 3, "end pos token");
     expect_size_t_equal(e->loc.line, 1, "line token");

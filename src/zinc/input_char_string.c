@@ -13,8 +13,8 @@ InputCharVTable InputCharStringVTable = {
 
 void InputCharStringInit(InputCharString* input_string, Vector* text)
 {
-    location_init(&input_string->loc);
-    location_init(&input_string->prev_loc);
+    Zinc_location_init(&input_string->loc);
+    Zinc_location_init(&input_string->prev_loc);
     input_string->repeat_char = false;
     input_string->pos = 0;
     input_string->text = text;
@@ -34,8 +34,8 @@ void InputCharStringCreate(InputCharString** input_string, Vector* text)
 
 void InputCharStringClear(InputCharString* data)
 {
-    location_init(&data->loc);
-    location_init(&data->prev_loc);
+    Zinc_location_init(&data->loc);
+    Zinc_location_init(&data->prev_loc);
     data->loc.end_pos = 1;
     data->loc.line = 1;
     data->loc.col = 1;
@@ -47,7 +47,7 @@ void InputCharStringClear(InputCharString* data)
  * @param c the next char
  * @return done
  */
-bool InputCharStringNext(InputCharString* data, char* c, struct location* loc)
+bool InputCharStringNext(InputCharString* data, char* c, struct Zinc_location* loc)
 {
     if (data->loc.start_pos == 0) {
         InputCharStringClear(data);
@@ -93,7 +93,7 @@ void InputCharStringRepeat(InputCharString* data)
  * @param data the data
  * @param pos position to go to
  */
-void InputCharStringSeek(InputCharString* data, struct location* loc)
+void InputCharStringSeek(InputCharString* data, struct Zinc_location* loc)
 {
     if (loc->start_pos < data->text->count)
     {
@@ -116,7 +116,7 @@ void InputCharStringGetAll(InputCharString* data, Vector** text)
     *text = data->text;
 }
 
-struct location InputCharStringGetLocation(InputCharString* data)
+struct Zinc_location InputCharStringGetLocation(InputCharString* data)
 {
     return data->loc;
 }

@@ -11,7 +11,7 @@ using namespace llvm;
 using namespace llvm::orc;
 
 namespace Akela_llvm {
-    void Jit_data_init(Jit_data *jd, struct error_list *el) {
+    void Jit_data_init(Jit_data *jd, struct Zinc_error_list *el) {
         jd->el = el;
         jd->TheJIT = jd->ExitOnErr(KaleidoscopeJIT::Create());
         jd->TheContext = std::make_unique<LLVMContext>();
@@ -230,9 +230,9 @@ namespace Akela_llvm {
                 void* v = fp();
                 Zinc_string_add_format(bf, "Function");
             } else {
-                struct location loc{};
-                location_init(&loc);
-                error_list_set(jd->el, &loc, "type not handled");
+                struct Zinc_location loc{};
+                Zinc_location_init(&loc);
+                Zinc_error_list_set(jd->el, &loc, "type not handled");
             }
         } else {
             void (*fp)() = ExprSymbol.getAddress().toPtr <void(*)()>();

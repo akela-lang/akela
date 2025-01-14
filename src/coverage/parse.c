@@ -16,8 +16,8 @@ Cob_re Cover_gcov_line_re()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, text);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     Cob_compile_data* cd = NULL;
     Cob_compile_data_create(&cd, input, input->input_vtable, el);
@@ -45,8 +45,8 @@ Cob_re Cover_gcov_ext_re()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, text);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     Cob_compile_data* cd = NULL;
     Cob_compile_data_create(&cd, input, input->input_vtable, el);
@@ -74,8 +74,8 @@ Cob_re Cover_test_dir_re()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, text);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     Cob_compile_data* cd = NULL;
     Cob_compile_data_create(&cd, input, input->input_vtable, el);
@@ -93,7 +93,7 @@ Cob_re Cover_test_dir_re()
 
 void Cover_re_cleanup(Cob_re* cr)
 {
-    error_list_destroy(cr->el);
+    Zinc_error_list_destroy(cr->el);
     free(cr->el);
     Cob_ast_destroy(cr->root);
     free(cr->root);

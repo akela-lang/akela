@@ -154,13 +154,13 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
     }
 
     if (!has_id) {
-        error_list_set(ps->el, &proto->loc, "expected an identifier after extern");
+        Zinc_error_list_set(ps->el, &proto->loc, "expected an identifier after extern");
         n->type = Ake_ast_type_error;
     }
 
     if (n->type != Ake_ast_type_error) {
         if (ps->st->top != ps->st->global) {
-            error_list_set(ps->el, &n->loc, "extern only allowed at top level scope");
+            Zinc_error_list_set(ps->el, &n->loc, "extern only allowed at top level scope");
             n->type = Ake_ast_type_error;
         }
 
@@ -169,7 +169,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
         struct Ake_symbol *search = Ake_environment_get_local(ps->st->top, &id_node->value);
         if (search) {
             Zinc_string_finish(&id_node->value);
-            error_list_set(
+            Zinc_error_list_set(
                 ps->el,
                 &id_node->loc,
                 "duplicate declaration in same scope: %s",
@@ -179,7 +179,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
             struct Ake_symbol *sym = Ake_environment_get(ps->st->top, &id_node->value);
             if (sym && sym->td) {
                 Zinc_string_finish(&id_node->value);
-                error_list_set(
+                Zinc_error_list_set(
                     ps->el,
                     &id_node->loc,
                     "identifier reserved as a type: %s",
@@ -226,8 +226,8 @@ Ake_ast* Ake_parse_while(struct Ake_parse_state* ps)
     if (a) {
         Ake_ast_add(n, a);
     } else {
-        struct location a_loc = Ake_get_location(ps);
-		error_list_set(ps->el, &a_loc, "expected expression after while");
+        struct Zinc_location a_loc = Ake_get_location(ps);
+		Zinc_error_list_set(ps->el, &a_loc, "expected expression after while");
         n->type = Ake_ast_type_error;
 		/* test case: test_parse_while_error_expected_expression */
 	}
@@ -299,8 +299,8 @@ Ake_ast* Ake_parse_for(struct Ake_parse_state* ps)
 		Ake_parse_for_iteration(ps, n);
 
 	} else {
-		struct location loc_error = Ake_get_location(ps);
-		error_list_set(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
+		struct Zinc_location loc_error = Ake_get_location(ps);
+		Zinc_error_list_set(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
         n->type = Ake_ast_type_error;
 		/* test case: test_parse_for_error_after_declaration */
 	}
@@ -350,8 +350,8 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_ast* parent)
     }
 
 	if (!a) {
-        struct location a_loc = Ake_get_location(ps);
-		error_list_set(ps->el, &a_loc, "expected range start");
+        struct Zinc_location a_loc = Ake_get_location(ps);
+		Zinc_error_list_set(ps->el, &a_loc, "expected range start");
         parent->type = Ake_ast_type_error;
 		/* test case: test_parse_for_error_expected_range_start */
 	}
@@ -374,8 +374,8 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_ast* parent)
     }
 
 	if (!b) {
-        struct location b_loc = Ake_get_location(ps);
-		error_list_set(ps->el, &b_loc, "expected range end");
+        struct Zinc_location b_loc = Ake_get_location(ps);
+		Zinc_error_list_set(ps->el, &b_loc, "expected range end");
         parent->type = Ake_ast_type_error;
 		/* test case: test_parse_for_error_expected_range_end */
 	}
@@ -395,13 +395,13 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_ast* parent)
 	if (parent->type != Ake_ast_type_error) {
 		assert(a);
 		if (!a->tu) {
-			error_list_set(ps->el, &a->loc, "start range expression has no value");
+			Zinc_error_list_set(ps->el, &a->loc, "start range expression has no value");
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_range_error_start_no_value */
 		} else {
 			assert(a->tu->td);
 			if (!Ake_is_numeric(a->tu->td)) {
-				error_list_set(ps->el, &a->loc, "start range expression is not numeric");
+				Zinc_error_list_set(ps->el, &a->loc, "start range expression is not numeric");
                 parent->type = Ake_ast_type_error;
 				/* test case: test_parse_for_range_error_start_not_numeric */
 			}
@@ -409,13 +409,13 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_ast* parent)
 
 		assert(b);
 		if (!b->tu) {
-			error_list_set(ps->el, &b->loc, "end range expression has no value");
+			Zinc_error_list_set(ps->el, &b->loc, "end range expression has no value");
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_range_error_end_no_value */
 		} else {
 			assert(b->tu->td);
 			if (!Ake_is_numeric(b->tu->td)) {
-				error_list_set(ps->el, &b->loc, "end range expression is not numeric");
+				Zinc_error_list_set(ps->el, &b->loc, "end range expression is not numeric");
                 parent->type = Ake_ast_type_error;
 				/* test case: test_parse_for_range_error_end_not_numeric */
 			}
@@ -442,8 +442,8 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
     }
 
 	if (!list) {
-        struct location list_loc = Ake_get_location(ps);
-		error_list_set(ps->el, &list_loc, "expected for iteration expression");
+        struct Zinc_location list_loc = Ake_get_location(ps);
+		Zinc_error_list_set(ps->el, &list_loc, "expected for iteration expression");
         parent->type = Ake_ast_type_error;
         /* test case: test_parse_for_error_expected_iteration_expression */
 	}
@@ -459,11 +459,11 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
 		Ake_type_use* list_tu = list->tu;
 
 		if (!list_tu) {
-			error_list_set(ps->el, &list->loc, "iteration expression has no value");
+			Zinc_error_list_set(ps->el, &list->loc, "iteration expression has no value");
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_value */
 		} else if (!list_tu->is_array) {
-			error_list_set(ps->el, &list->loc, "iteration expression is not an array");
+			Zinc_error_list_set(ps->el, &list->loc, "iteration expression is not an array");
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
@@ -471,7 +471,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
             Ake_type_use_reduce_dimension(element_tu2);
 			if (!Ake_type_use_can_cast(element_tu2, element_type_node->tu)) {
                 parent->type = Ake_ast_type_error;
-				error_list_set(ps->el, &list->loc, "cannot cast list element");
+				Zinc_error_list_set(ps->el, &list->loc, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
             Ake_type_use_destroy(element_tu2);
@@ -539,7 +539,7 @@ Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
 		struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id->value);
 		if (sym) {
 			Zinc_string_finish(&id->value);
-			error_list_set(ps->el, &id->loc, "variable already used: %s", id->value.buf);
+			Zinc_error_list_set(ps->el, &id->loc, "variable already used: %s", id->value.buf);
             /* test case: test_parse_module_duplicate_declaration */
             n->type = Ake_ast_type_error;
 		} else {
@@ -633,7 +633,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 		struct Ake_symbol* search = Ake_environment_get_local(ps->st->top, &id->value);
 		if (search) {
 			Zinc_string_finish(&id->value);
-			error_list_set(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
+			Zinc_error_list_set(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
             /* test case: test_parse_struct_error_duplicate */
             n->type = Ake_ast_type_error;
 		} else {
@@ -691,14 +691,14 @@ Ake_ast* Ake_parse_return(struct Ake_parse_state* ps)
 	if (n->type != Ake_ast_type_error) {
 		if (a) {
 			if (!a->tu) {
-				error_list_set(ps->el, &a->loc, "return expression has no value");
+				Zinc_error_list_set(ps->el, &a->loc, "return expression has no value");
 				/* test case: test_parse_return_error_no_value */
                 n->type = Ake_ast_type_error;
 			} else {
 				n->tu = Ake_type_use_clone(a->tu);
 				Ake_ast* fd = Ake_get_current_function(ps->st->top);
 				if (!fd) {
-					error_list_set(ps->el, &ret->loc, "return statement outside of function");
+					Zinc_error_list_set(ps->el, &ret->loc, "return statement outside of function");
 					/* test case: test_parse_return_error_outside_of_function */
                     n->type = Ake_ast_type_error;
 				} else {
@@ -746,7 +746,7 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
     Ake_ast_add(n, a);
 
     if (!a->head) {
-        error_list_set(ps->el, &a->loc, "expected variable(s) after let");
+        Zinc_error_list_set(ps->el, &a->loc, "expected variable(s) after let");
         n->type = Ake_ast_type_error;
     }
 
@@ -770,8 +770,8 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
     if (type_node) {
         Ake_ast_add(n, type_node);
     } else {
-        struct location type_use_loc = Ake_get_location(ps);
-        error_list_set(ps->el, &type_use_loc, "expected type");
+        struct Zinc_location type_use_loc = Ake_get_location(ps);
+        Zinc_error_list_set(ps->el, &type_use_loc, "expected type");
         n->type = Ake_ast_type_error;
     }
 
@@ -799,8 +799,8 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
         if (b) {
             Ake_ast_add(n, b);
         } else {
-            struct location b_loc = Ake_get_location(ps);
-            error_list_set(ps->el, &b_loc, "expected expression");
+            struct Zinc_location b_loc = Ake_get_location(ps);
+            Zinc_error_list_set(ps->el, &b_loc, "expected expression");
             n->type = Ake_ast_type_error;
         }
 
@@ -808,16 +808,16 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
             size_t a_count = Ake_ast_count_children(a);
             size_t b_count = Ake_ast_count_children(b);
             if (a_count != b_count) {
-                error_list_set(ps->el, &a->loc, "lvalue count does not equal rvalue count");
+                Zinc_error_list_set(ps->el, &a->loc, "lvalue count does not equal rvalue count");
                 n->type = Ake_ast_type_error;
             } else {
                 for (int i = 0; i < a_count; i++) {
                     Ake_ast* y = Ast_node_get(b, i);
                     if (!y->tu) {
-                        error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
+                        Zinc_error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
                         n->type = Ake_ast_type_error;
                     } else if (!Ake_type_use_can_cast(type_node->tu, y->tu)) {
-                        error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
+                        Zinc_error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
                         n->type = Ake_ast_type_error;
                     }
                 }
@@ -909,7 +909,7 @@ Ake_ast* Ake_parse_let_lseq(struct Ake_parse_state* ps)
 
         id = NULL;
         if (!Ake_match(ps, Ake_token_id, "expected id", &id, n)) {
-            error_list_set(ps->el, &id->loc, "expected id");
+            Zinc_error_list_set(ps->el, &id->loc, "expected id");
             n->type = Ake_ast_type_error;
             break;
         }
@@ -971,8 +971,8 @@ Ake_ast* Ake_parse_let_rseq(struct Ake_parse_state* ps)
         if (b) {
             Ake_ast_add(n, b);
         } else {
-            struct location b_loc = Ake_get_location(ps);
-            error_list_set(ps->el, &b_loc, "expected an expression");
+            struct Zinc_location b_loc = Ake_get_location(ps);
+            Zinc_error_list_set(ps->el, &b_loc, "expected an expression");
             n->type = Ake_ast_type_error;
         }
     }
@@ -1040,7 +1040,7 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
                 bool has_sep;
                 Ake_parse_separator(ps, n, &has_sep);
                 if (!has_sep) {
-                    error_list_set(ps->el, &t->loc, "expected separator");
+                    Zinc_error_list_set(ps->el, &t->loc, "expected separator");
                     n->type = Ake_ast_type_error;
                 }
             }
@@ -1053,7 +1053,7 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
             free(end);
             break;
         } else {
-            error_list_set(ps->el, &t->loc, "expected fn or end");
+            Zinc_error_list_set(ps->el, &t->loc, "expected fn or end");
             n->type = Ake_ast_type_error;
             break;
         }

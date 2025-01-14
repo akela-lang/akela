@@ -18,7 +18,7 @@ void Ake_ast_init(Ake_ast* n)
 	Zinc_string_init(&n->value);
 	n->tu = NULL;
     n->is_mut = false;
-    location_init(&n->loc);
+    Zinc_location_init(&n->loc);
     n->sym = NULL;
 	n->next = NULL;
 	n->prev = NULL;
@@ -53,7 +53,7 @@ void Ake_ast_add(Ake_ast* p, Ake_ast* c)
         p->head = c;
         p->tail = c;
     }
-    location_combine(&p->loc, &c->loc);
+    Zinc_location_combine(&p->loc, &c->loc);
 }
 
 /* assume parent and child are not NULL */

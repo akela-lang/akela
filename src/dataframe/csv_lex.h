@@ -27,17 +27,17 @@ enum CSVStateType {
 struct CSVToken {
     enum CSVTokenType type;
     Vector value;
-    struct location loc;
+    struct Zinc_location loc;
 };
 
 struct CSVLexData {
-    struct error_list* el;
+    struct Zinc_error_list* el;
     enum CSVStateType state;
     void* input_data;
     InputCharVTable* input_vtable;
 };
 
-bool CSVLexNextChar(struct CSVLexData* lex_data, char* c, struct location* loc);
+bool CSVLexNextChar(struct CSVLexData* lex_data, char* c, struct Zinc_location* loc);
 void CSVLexRepeatChar(struct CSVLexData* lex_data);
 void CSVTokenInit(struct CSVToken* token);
 void CSVTokenCreate(struct CSVToken** token);

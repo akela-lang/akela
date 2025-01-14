@@ -42,13 +42,13 @@ void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
     Cent_ast* p = n->head;
     assert(p);
     if (p->type != Cent_ast_type_id) {
-        error_list_set(pr->errors, &p->loc, "expected id");
+        Zinc_error_list_set(pr->errors, &p->loc, "expected id");
         n->has_error = true;
     }
     Cent_environment* top = Cent_get_environment(n);
     Cent_symbol* sym = Cent_environment_get(top, &p->text);
     if (!sym) {
-        error_list_set(
+        Zinc_error_list_set(
             pr->errors,
             &p->loc,
             "id is not a variable: %b",
@@ -67,7 +67,7 @@ void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
             Cent_environment* top2 = mod->env;
             Cent_symbol* sym2 = Cent_environment_get(top2, &p->text);
             if (mod2 && sym2) {
-                error_list_set(
+                Zinc_error_list_set(
                     pr->errors,
                     &p->loc,
                     "ambiguous id (%b) is both a submodule and variable",
@@ -87,13 +87,13 @@ void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
             }
 
             if (sym2 && sym2->type != Cent_symbol_type_enumerate && p->next) {
-                error_list_set(pr->errors, &p->loc, "expected module or enum", &p->text);
+                Zinc_error_list_set(pr->errors, &p->loc, "expected module or enum", &p->text);
                 n->has_error = true;
                 break;
             }
 
             if (!sym2 && !mod2) {
-                error_list_set(pr->errors, &p->loc, "not a valid id: %b", &p->text);
+                Zinc_error_list_set(pr->errors, &p->loc, "not a valid id: %b", &p->text);
                 n->has_error = true;
             }
 
@@ -105,7 +105,7 @@ void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
             p = p->next;
         }
     } else {
-        error_list_set(pr->errors,
+        Zinc_error_list_set(pr->errors,
             &p->loc,
             "namespace does not start with an enum or module");
         n->has_error = true;
@@ -115,7 +115,7 @@ void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
 bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, Cent_ast* id2)
 {
     if (!id2) {
-        error_list_set(pr->errors, &id1->loc, "expecting enum id after enum");
+        Zinc_error_list_set(pr->errors, &id1->loc, "expecting enum id after enum");
         return false;
     }
 
@@ -129,12 +129,12 @@ bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, C
         val = val->next;
     }
     if (!found) {
-        error_list_set(pr->errors, &id2->loc, "invalid enum id: %b", &id2->text);
+        Zinc_error_list_set(pr->errors, &id2->loc, "invalid enum id: %b", &id2->text);
         return false;
     }
 
     if (id2->next) {
-        error_list_set(
+        Zinc_error_list_set(
             pr->errors,
             &id2->next->loc,
             "namespace after enum id: %b",
@@ -150,7 +150,7 @@ void Cent_check_types_variables(Cent_parse_result* pr, Cent_ast* n)
     Cent_environment* top = Cent_get_environment(n);
     Cent_symbol* sym = Cent_environment_get(top, &n->text);
     if (!sym) {
-        error_list_set(pr->errors, &n->loc, "unknown variable: %b", &n->text);
+        Zinc_error_list_set(pr->errors, &n->loc, "unknown variable: %b", &n->text);
         n->has_error = true;
     }
 }

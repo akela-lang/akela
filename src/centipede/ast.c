@@ -12,7 +12,7 @@ void Cent_ast_init(Cent_ast *ast)
     ast->variable_type = Cent_variable_type_none,
     Zinc_string_init(&ast->text);
     ast->env = NULL;
-    location_init(&ast->loc);
+    Zinc_location_init(&ast->loc);
     ast->has_error = false;
     ast->next = NULL;
     ast->prev = NULL;
@@ -74,7 +74,7 @@ void Cent_ast_add(Cent_ast *p, Cent_ast *c)
         p->has_error = true;
     }
 
-    location_combine(&p->loc, &c->loc);
+    Zinc_location_combine(&p->loc, &c->loc);
 
     c->parent = p;
 }

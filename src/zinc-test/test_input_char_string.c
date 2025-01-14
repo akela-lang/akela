@@ -20,7 +20,7 @@ void TestInputCharStringGetCharWord()
 
     bool done;
     char c;
-    struct location loc;
+    struct Zinc_location loc;
 
     done = InputCharStringNext(&input_string, &c, &loc);
     expect_false(done, "done 0");
@@ -90,7 +90,7 @@ void TestInputCharStringGetCharLine()
 
     bool done;
     char c;
-    struct location loc;
+    struct Zinc_location loc;
 
     done = InputCharStringNext(&input_string, &c, &loc);
     expect_false(done, "done 0");
@@ -144,7 +144,7 @@ void TestInputCharStringRepeat()
 
     bool done;
     char c;
-    struct location loc;
+    struct Zinc_location loc;
 
     done = InputCharStringNext(&input_string, &c, &loc);
     expect_false(done, "done 0");

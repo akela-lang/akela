@@ -30,7 +30,7 @@ Cob_re Cob_compile(Cob_compile_data* cd)
 
     Cob_lookahead(cd);
     if (cd->lookahead->type != Cob_token_eof) {
-        error_list_set(cd->el, &cd->lookahead->loc,
+        Zinc_error_list_set(cd->el, &cd->lookahead->loc,
         "unhandled token: %d, %c", cd->lookahead->type, cd->lookahead->c);
     }
 
@@ -74,7 +74,7 @@ Cob_ast* Cob_parse_union(Cob_compile_data* cd)
         b = NULL;
         b = Cob_parse_concat(cd);
         if (!b) {
-            error_list_set(cd->el, &cd->lookahead->loc, "expected term after union");
+            Zinc_error_list_set(cd->el, &cd->lookahead->loc, "expected term after union");
             n->type = Cob_ast_type_error;
         } else {
             Cob_ast_add(n, b);
@@ -325,7 +325,7 @@ void Cob_parse_seq(Cob_compile_data* cd, Cob_ast* parent)
     Cob_ast* a = NULL;
     a = Cob_parse_char(cd, true);
     if (!a) {
-        error_list_set(cd->el, &cd->lookahead->loc, "expected character in class sequence");
+        Zinc_error_list_set(cd->el, &cd->lookahead->loc, "expected character in class sequence");
         parent->type = Cob_ast_type_error;
         return;
     }
@@ -392,7 +392,7 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
         }
 
         if (strict) {
-            error_list_set(cd->el, &wc->loc, "unexpected wildcard");
+            Zinc_error_list_set(cd->el, &wc->loc, "unexpected wildcard");
             n->type = Cob_ast_type_error;
             free(wc);
             return n;
@@ -408,7 +408,7 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
         }
 
         if (strict) {
-            error_list_set(cd->el, &begin->loc, "unexpected begin");
+            Zinc_error_list_set(cd->el, &begin->loc, "unexpected begin");
             n->type = Cob_ast_type_error;
             free(begin);
             return n;
@@ -424,7 +424,7 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
         }
 
         if (strict) {
-            error_list_set(cd->el, &end->loc, "unexpected end");
+            Zinc_error_list_set(cd->el, &end->loc, "unexpected end");
             n->type = Cob_ast_type_error;
             free(end);
             return n;
@@ -482,7 +482,7 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
             }
 
             if (!done) {
-                error_list_set(cd->el, &cd->lookahead->loc, "missing character in escape sequence");
+                Zinc_error_list_set(cd->el, &cd->lookahead->loc, "missing character in escape sequence");
                 n->type = Cob_ast_type_error;
             }
         }
@@ -503,7 +503,7 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
             n->type = Cob_ast_type_character_range;
             Cob_ast_add(n, a);
             if (a->num != 1) {
-                error_list_set(cd->el, &a->loc, "character range must use ascii characters");
+                Zinc_error_list_set(cd->el, &a->loc, "character range must use ascii characters");
                 n->type = Cob_ast_type_error;
             }
 
@@ -512,12 +512,12 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
             if (b) {
                 Cob_ast_add(n, b);
                 if (b->num != 1) {
-                    error_list_set(cd->el, &b->loc, "character range must use ascii characters");
+                    Zinc_error_list_set(cd->el, &b->loc, "character range must use ascii characters");
                     n->type = Cob_ast_type_error;
                 }
             } else {
                 Cob_lookahead(cd);
-                error_list_set(cd->el, &cd->lookahead->loc, "expected end character in character range");
+                Zinc_error_list_set(cd->el, &cd->lookahead->loc, "expected end character in character range");
                 n->type = Cob_ast_type_error;
             }
         }

@@ -15,8 +15,8 @@ void CSVParseSetup(struct CSVParseOutput** parse_output, const char* text)
 
     struct CSVLexData* lex_data = NULL;
     CSVLexDataCreate(&lex_data);
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
     lex_data->el = el;
     lex_data->input_data = input_data;
     lex_data->input_vtable = input_data->input_vtable;
@@ -43,7 +43,7 @@ void CSVParseTeardown(struct CSVParseOutput* parse_output)
 {
     VectorDestroy(parse_output->input_text);
     free(parse_output->input_text);
-    error_list_destroy(parse_output->el);
+    Zinc_error_list_destroy(parse_output->el);
     free(parse_output->el);
     DataFrameDestroy(parse_output->df);
     free(parse_output->df);

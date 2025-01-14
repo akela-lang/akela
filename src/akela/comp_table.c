@@ -38,12 +38,12 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
     enum result r;
 	char* path = NULL;
 
-    struct location loc;
-    location_init(&loc);
+    struct Zinc_location loc;
+    Zinc_location_init(&loc);
 
 	r = get_exe_path(&path);
     if (r == result_error) {
-        valid = error_list_set(&cu->el, &loc, "could not get executable path");
+        valid = Zinc_error_list_set(&cu->el, &loc, "could not get executable path");
     }
 
 	struct Zinc_string path2;
@@ -69,7 +69,7 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
 	FILE* fp = NULL;
 	int err = fopen_s(&fp, math_path.buf, "r");
 	if (err || !fp) {
-		valid = error_list_set(&cu->el, &loc, "could not open file: %s\n", math_path.buf);
+		valid = Zinc_error_list_set(&cu->el, &loc, "could not open file: %s\n", math_path.buf);
 		goto exit;
 	}
 

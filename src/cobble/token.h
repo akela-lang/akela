@@ -30,7 +30,7 @@ typedef struct Cob_token {
     Cob_token_type type;
     int num;
     char c[4];
-    struct location loc;
+    struct Zinc_location loc;
 } Cob_token;
 
 void Cob_token_init(Cob_token* t);

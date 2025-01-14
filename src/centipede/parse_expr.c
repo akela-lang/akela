@@ -42,7 +42,7 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
     while (pd->lookahead->type == Cent_token_double_colon) {
         if (!n) {
             if (a->type != Cent_ast_type_id) {
-                error_list_set(pd->errors, &a->loc, "expected id");
+                Zinc_error_list_set(pd->errors, &a->loc, "expected id");
                 a->has_error = true;
                 /* test case: test_parse_namespace_error_expected_id */
             }
@@ -61,7 +61,7 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
 
         b = Cent_parse_factor(pd);
         if (b->type != Cent_ast_type_id) {
-            error_list_set(pd->errors, &b->loc, "expected id");
+            Zinc_error_list_set(pd->errors, &b->loc, "expected id");
             b->has_error = true;
             /* test case: test_parse_namespace_error_expected_id2 */
         }
@@ -253,7 +253,7 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
         n->type = Cent_ast_type_expr_function_file_name;
     } else {
         n->type = Cent_ast_type_none;
-        error_list_set(pd->errors, &id->loc, "invalid builtin function");
+        Zinc_error_list_set(pd->errors, &id->loc, "invalid builtin function");
         n->has_error = true;
     }
 
@@ -265,7 +265,7 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
     free(lp);
 
     if (id->builtin_type == Cent_builtin_type_none) {
-        error_list_set(
+        Zinc_error_list_set(
             pd->errors,
             &id->loc,
             "id is not a builtin function which are denoted by an id starting with '@'");

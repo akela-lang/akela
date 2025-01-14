@@ -140,7 +140,7 @@ typedef struct Ake_ast {
 	struct Zinc_string value;
 	struct Ake_type_use* tu;
     bool is_mut;
-    struct location loc;
+    struct Zinc_location loc;
     struct Ake_symbol* sym;
 	struct Ake_ast* next;
 	struct Ake_ast* prev;

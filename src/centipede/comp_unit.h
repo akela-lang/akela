@@ -17,7 +17,7 @@ typedef struct Cent_comp_unit {
     Cent_parse_data pd;
     void* input;
     InputUnicodeVTable* input_vtable;
-    struct error_list errors;
+    struct Zinc_error_list errors;
     Cent_lex_data ld;
     Cent_parse_result pr;
     Cent_value* value;

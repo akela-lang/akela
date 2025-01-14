@@ -48,7 +48,7 @@
 
 namespace Akela_llvm {
     typedef struct {
-        struct error_list* el;
+        struct Zinc_error_list* el;
         std::unique_ptr<llvm::LLVMContext> TheContext;
         std::unique_ptr<llvm::Module> TheModule;
         std::unique_ptr<llvm::IRBuilder<>> Builder;
@@ -61,7 +61,7 @@ namespace Akela_llvm {
         std::vector<llvm::Function*> current_function;
     } Jit_data;
 
-    void Jit_data_init(Jit_data* jd, struct error_list* el);
+    void Jit_data_init(Jit_data* jd, struct Zinc_error_list* el);
     llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_type_use* tu);
     llvm::Type* Get_scalar_type(Jit_data * jd, Ake_type_use* tu);
     llvm::Type* Get_type(Jit_data * jd, Ake_type_use* tu);

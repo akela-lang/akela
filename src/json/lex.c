@@ -39,13 +39,13 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {
         enum result r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(jld->el, &loc, error_message);
+            Zinc_error_list_set(jld->el, &loc, error_message);
             continue;
         }
 
@@ -60,7 +60,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             struct Zinc_string bf;
             Zinc_string_init(&bf);
             Zinc_string_add(&bf, c, num);
-            error_list_set(jld->el, &loc, "invalid character: %b", &bf);
+            Zinc_error_list_set(jld->el, &loc, "invalid character: %b", &bf);
             Zinc_string_destroy(&bf);
             continue;
         }
@@ -147,7 +147,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             return;
         }
 
-        error_list_set(jld->el, &loc, "invalid character: %c", c[0]);
+        Zinc_error_list_set(jld->el, &loc, "invalid character: %c", c[0]);
     }
 }
 
@@ -155,13 +155,13 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
 
     while (true) {
         enum result r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(jld->el, &loc, error_message);
+            Zinc_error_list_set(jld->el, &loc, error_message);
             continue;
         }
 
@@ -182,9 +182,9 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
         UChar32 cp;
         Json_convert_char(c, num, &cp);
         if (cp < 0x20) {
-            error_list_set(jld->el, &loc, "code point is less than \\u0020");
+            Zinc_error_list_set(jld->el, &loc, "code point is less than \\u0020");
         } else if (cp > 0x10FFFF) {
-            error_list_set(jld->el, &loc, "code point greater than \\u10FFFF");
+            Zinc_error_list_set(jld->el, &loc, "code point greater than \\u10FFFF");
         } else {
             Zinc_string_add(&t->value, c, num);
         }
@@ -197,16 +197,16 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
     enum result r;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
     if (r == result_error) {
-        error_list_set(jld->el, &loc, error_message);
+        Zinc_error_list_set(jld->el, &loc, error_message);
         return;
     }
 
     if (done) {
-        error_list_set(jld->el, &loc, "missing escape character");
+        Zinc_error_list_set(jld->el, &loc, "missing escape character");
         InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
         return;
     }
@@ -215,7 +215,7 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
-        error_list_set(jld->el, &loc, "invalid escape character: %b", &bf);
+        Zinc_error_list_set(jld->el, &loc, "invalid escape character: %b", &bf);
         Zinc_string_destroy(&bf);
         return;
     }
@@ -263,7 +263,7 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
     struct Zinc_string bf;
     Zinc_string_init(&bf);
     Zinc_string_add(&bf, c, num);
-    error_list_set(jld->el, &loc, "invalid escape character: %b", &bf);
+    Zinc_error_list_set(jld->el, &loc, "invalid escape character: %b", &bf);
     Zinc_string_destroy(&bf);
 }
 
@@ -271,7 +271,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
 
@@ -279,7 +279,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     Zinc_string_init(&bf);
     Zinc_string_add_str(&bf, "\\u");
     bool valid = true;
-    struct location first_loc;
+    struct Zinc_location first_loc;
     first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
     first_loc.start_pos -= 2;
     first_loc.col -= 2;
@@ -289,17 +289,17 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
         r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
 
         if (r == result_error) {
-            error_list_set(jld->el, &loc, error_message);
+            Zinc_error_list_set(jld->el, &loc, error_message);
         } else {
             if (done) {
-                error_list_set(jld->el, &loc, "unicode escape not finished");
+                Zinc_error_list_set(jld->el, &loc, "unicode escape not finished");
                 Zinc_string_destroy(&bf);
                 return;
             }
             if (is_hex_digit(c, num)) {
                 Zinc_string_add(&bf, c, num);
             } else {
-                error_list_set(jld->el, &loc, "invalid hex digit: %c", c[0]);
+                Zinc_error_list_set(jld->el, &loc, "invalid hex digit: %c", c[0]);
                 valid = false;
             }
         }
@@ -308,7 +308,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     for (int i = 0; i < 2; i++) {
         r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(jld->el, &loc, error_message);
+            Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
         if (done) {
@@ -323,16 +323,16 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     }
     Zinc_string_finish(&bf);
 
-    struct location end_loc;
+    struct Zinc_location end_loc;
     end_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
     first_loc.end_pos = end_loc.start_pos;
 
     if (valid) {
         unsigned int cp = char4_to_hex(bf.buf + 2, (int)bf.size - 2);
         if (cp < 0x20) {
-            error_list_set(jld->el, &first_loc, "code point is less than \\u0020: %s", bf.buf);
+            Zinc_error_list_set(jld->el, &first_loc, "code point is less than \\u0020: %s", bf.buf);
         } else if (cp > 0x10FFFF) {
-            error_list_set(jld->el, &first_loc, "code point greater than \\u10FFFF: %s", bf.buf);
+            Zinc_error_list_set(jld->el, &first_loc, "code point greater than \\u10FFFF: %s", bf.buf);
         } else {
             char dest[4];
             num = code_to_utf8(dest, cp);
@@ -359,13 +359,13 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
 
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
 
     size_t digit_count = 0;
     char first_digit;
-    struct location first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    struct Zinc_location first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
     first_loc.end_pos = first_loc.start_pos;
     first_loc.start_pos--;
     first_loc.col--;
@@ -374,13 +374,13 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     num = NUM_BYTES(first);
 
     if (num == 1 && first == '.') {
-        error_list_set(jld->el, &first_loc, "number starts with period");
+        Zinc_error_list_set(jld->el, &first_loc, "number starts with period");
         Json_lex_number_fraction(jld, t);
         return;
     }
 
     if (num == 1 && first == '+') {
-        error_list_set(jld->el, &first_loc, "number starts with plus sign");
+        Zinc_error_list_set(jld->el, &first_loc, "number starts with plus sign");
     }
 
     if (isdigit(first)) {
@@ -391,7 +391,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     while (true) {
         r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(jld->el, &loc, error_message);
+            Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
 
@@ -405,7 +405,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
                 t->value.size--;
                 first_digit = c[0];
                 digit_count--;
-                error_list_set(jld->el, &first_loc, "leading zero with no other digits or faction");
+                Zinc_error_list_set(jld->el, &first_loc, "leading zero with no other digits or faction");
             }
             Zinc_string_add_char(&t->value, c[0]);
             digit_count++;
@@ -432,12 +432,12 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     }
 
     if (t->value.size == 1 && first == '-') {
-        error_list_set(jld->el, &first_loc, "invalid number");
+        Zinc_error_list_set(jld->el, &first_loc, "invalid number");
         t->value.buf[0] = '0';
     }
 
     if (t->value.size == 1 && first == '+') {
-        error_list_set(jld->el, &first_loc, "invalid number");
+        Zinc_error_list_set(jld->el, &first_loc, "invalid number");
         t->value.buf[0] = '0';
     }
 }
@@ -448,7 +448,7 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
 
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
     size_t digit_count = 0;
@@ -456,7 +456,7 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
     while (true) {
         r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(jld->el, &loc, error_message);
+            Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
 
@@ -482,7 +482,7 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
     }
 
     if (digit_count == 0) {
-        error_list_set(jld->el, &t->loc, "no digits in fraction");
+        Zinc_error_list_set(jld->el, &t->loc, "no digits in fraction");
     }
 }
 
@@ -492,7 +492,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
 
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
     size_t digit_count = 0;
@@ -501,7 +501,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
     while (true) {
         r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(jld->el, &loc, error_message);
+            Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
 
@@ -517,11 +517,11 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
                     has_sign = true;
                     continue;
                 } else {
-                    error_list_set(jld->el, &loc, "exponent already has a sign");
+                    Zinc_error_list_set(jld->el, &loc, "exponent already has a sign");
                     continue;
                 }
             } else {
-                error_list_set(jld->el, &loc, "sign after exponent digits");
+                Zinc_error_list_set(jld->el, &loc, "sign after exponent digits");
                 continue;
             }
         }
@@ -537,7 +537,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
     }
 
     if (digit_count == 0) {
-        error_list_set(jld->el, &t->loc, "no digits in exponent");
+        Zinc_error_list_set(jld->el, &t->loc, "no digits in exponent");
     }
 }
 
@@ -545,14 +545,14 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
 {
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     bool done;
     enum result r;
 
     while (true) {
         r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
-            error_list_set(jld->el, &loc, error_message);
+            Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
 
@@ -588,7 +588,7 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
     loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
     t->loc.end_pos = loc.start_pos;
 
-    error_list_set(jld->el, &t->loc, "invalid word (%b), expecting true, false, or null", &t->value);
+    Zinc_error_list_set(jld->el, &t->loc, "invalid word (%b), expecting true, false, or null", &t->value);
     t->type = Json_token_type_none;
     Zinc_string_clear(&t->value);
     return false;

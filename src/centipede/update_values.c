@@ -59,7 +59,7 @@ void Cent_update_values_enum(
     n->data.enumeration.enum_type = en;
 
     if (!id2) {
-        error_list_set(pr->errors, &n->loc, "missing enum id");
+        Zinc_error_list_set(pr->errors, &n->loc, "missing enum id");
         n->has_error = true;
         return;
     }
@@ -76,13 +76,13 @@ void Cent_update_values_enum(
     }
 
     if (!found) {
-        error_list_set(pr->errors, &id2->loc, "could not find enum id: %b", &id2->text);
+        Zinc_error_list_set(pr->errors, &id2->loc, "could not find enum id: %b", &id2->text);
         n->has_error = true;
     }
 
     Cent_ast* p = id2->next;
     if (p) {
-        error_list_set(pr->errors, &p->loc, "invalid namespace");
+        Zinc_error_list_set(pr->errors, &p->loc, "invalid namespace");
         n->has_error = true;
     }
 }

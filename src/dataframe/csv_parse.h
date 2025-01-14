@@ -6,13 +6,13 @@
 #include "data_frame.h"
 
 struct CSVParseData {
-    struct error_list* el;
+    struct Zinc_error_list* el;
     struct CSVLexData* lex_data;
 };
 
 struct CSVParseOutput {
     Vector* input_text;
-    struct error_list* el;
+    struct Zinc_error_list* el;
     DataFrame* df;
 };
 

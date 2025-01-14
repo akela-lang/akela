@@ -17,8 +17,8 @@ void CSVLexSetup(struct CSVLexData** lex_data, const char* text)
     InputCharString* input_data;
     InputCharStringCreate(&input_data, input);
     CSVLexDataCreate(lex_data);
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
     (*lex_data)->el = el;
     (*lex_data)->input_data = input_data;
     (*lex_data)->input_vtable = input_data->input_vtable;
@@ -26,7 +26,7 @@ void CSVLexSetup(struct CSVLexData** lex_data, const char* text)
 
 void CSVLexTeardown(struct CSVLexData* lex_data)
 {
-    error_list_destroy(lex_data->el);
+    Zinc_error_list_destroy(lex_data->el);
     free(lex_data->el);
     InputCharString* input_data = lex_data->input_data;
     VectorDestroy(input_data->text);
@@ -416,7 +416,7 @@ void TestCSVLexErrorQuote()
     free(token);
 
     expect_has_errors(lex_data->el);
-    struct error* e = expect_source_error(lex_data->el, "quote found in unquoted field");
+    struct Zinc_error* e = expect_source_error(lex_data->el, "quote found in unquoted field");
     if (e) {
         expect_size_t_equal(e->loc.start_pos, 3, "byte_pos");
         expect_size_t_equal(e->loc.end_pos, 4, "end_pos");
@@ -450,7 +450,7 @@ void TestCSVLexErrorExtraCharactersAfterQuote()
     expect_vector_str(&token->value, "", "vector 1");
     CSVTokenDestroy(token);
     free(token);
-    struct error* e = expect_source_error(lex_data->el,
+    struct Zinc_error* e = expect_source_error(lex_data->el,
                                           "extra characters after field ending quote");
     if (e) {
         expect_size_t_equal(e->loc.start_pos, 5, "byte_pos");
@@ -486,7 +486,7 @@ void TestCSVLexErrorEOFBeforeQuote()
     CSVTokenDestroy(token);
     free(token);
 
-    struct error* e = expect_source_error(lex_data->el,
+    struct Zinc_error* e = expect_source_error(lex_data->el,
                                           "End of file found before end of quoted field");
     if (e) {
         expect_size_t_equal(e->loc.start_pos, 4, "byte_pos");

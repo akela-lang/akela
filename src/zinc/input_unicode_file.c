@@ -16,11 +16,11 @@ InputUnicodeVTable InputUnicodeFileVTable = {
 
 void InputUnicodeFileInit(InputUnicodeFile* input, FILE* fp)
 {
-    location_init(&input->loc);
+    Zinc_location_init(&input->loc);
     input->repeat_char = false;
     memset(input->prev_c, 0, 4);
     input->prev_num = 0;
-    location_init(&input->prev_loc);
+    Zinc_location_init(&input->prev_loc);
     input->prev_done = false;
     input->fp = fp;
     input->Next = (InputUnicodeNextInterface) InputUnicodeFileNext;
@@ -39,8 +39,8 @@ void InputUnicodeFileCreate(InputUnicodeFile** input, FILE* fp)
 
 void InputUnicodeFileClear(InputUnicodeFile* input)
 {
-    location_init(&input->loc);
-    location_init(&input->prev_loc);
+    Zinc_location_init(&input->loc);
+    Zinc_location_init(&input->prev_loc);
     input->loc.line = 1;
     input->loc.col = 1;
 }
@@ -55,7 +55,7 @@ enum result InputUnicodeFileNext(
         InputUnicodeFile* input,
         char c[4],
         int* num,
-        struct location* loc,
+        struct Zinc_location* loc,
         bool* done)
 {
     enum result r = result_ok;
@@ -123,7 +123,7 @@ void InputUnicodeFileRepeat(InputUnicodeFile* input)
  * @param input the input
  * @param pos position to go to
  */
-void InputUnicodeFileSeek(InputUnicodeFile* input, struct location* loc)
+void InputUnicodeFileSeek(InputUnicodeFile* input, struct Zinc_location* loc)
 {
     input->loc = *loc;
     input->prev_loc = *loc;
@@ -159,7 +159,7 @@ void InputUnicodeFileGetAll(InputUnicodeFile* input, Vector** text)
     *text = v;
 }
 
-struct location InputUnicodeFileGetLocation(InputUnicodeFile* input)
+struct Zinc_location InputUnicodeFileGetLocation(InputUnicodeFile* input)
 {
     return input->loc;
 }

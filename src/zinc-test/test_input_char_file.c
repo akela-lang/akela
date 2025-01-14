@@ -24,7 +24,7 @@ void TestInputCharFileNext()
     VectorCreate(&text_actual, sizeof(char));
     bool done;
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     size_t start_pos = 0;
     size_t col = 1;
     size_t line = 1;
@@ -76,7 +76,7 @@ void TestInputCharFileRepeat()
     VectorCreate(&text_actual, sizeof(char));
     bool done;
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     size_t start_pos = 0;
     size_t col = 1;
     size_t line = 1;
@@ -134,7 +134,7 @@ void TestInputCharFileSeek()
     VectorCreate(&text_actual, sizeof(char));
     bool done;
     char c;
-    struct location loc;
+    struct Zinc_location loc;
     loc.start_pos = 6;
     InputCharSeek(input, input->input_vtable, &loc);
     do {

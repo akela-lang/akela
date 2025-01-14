@@ -814,7 +814,7 @@ void test_lex_error_invalid_character()
     free(t);
 
     expect_has_errors(ld.errors);
-    struct error* e = expect_source_error(ld.errors, "invalid character: ~");
+    struct Zinc_error* e = expect_source_error(ld.errors, "invalid character: ~");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 0, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 1, "start pos e");

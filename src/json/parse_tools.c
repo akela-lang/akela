@@ -5,14 +5,14 @@
 #include "dom.h"
 #include "general.h"
 
-void Json_parse_data_init(Json_parse_data* pd, struct error_list* el, Json_lex_data* ld)
+void Json_parse_data_init(Json_parse_data* pd, struct Zinc_error_list* el, Json_lex_data* ld)
 {
     pd->el = el;
     pd->ld = ld;
     pd->lookahead = NULL;
 }
 
-void Json_parse_data_create(Json_parse_data** pd, struct error_list* el, Json_lex_data* ld)
+void Json_parse_data_create(Json_parse_data** pd, struct Zinc_error_list* el, Json_lex_data* ld)
 {
     malloc_safe((void**)pd, sizeof(Json_parse_data));
     Json_parse_data_init(*pd, el, ld);

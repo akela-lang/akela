@@ -1,6 +1,6 @@
 #include "zinc/error.h"
 
-void Json_location_combine(struct location* loc, struct location* new_loc)
+void Json_location_combine(struct Zinc_location* loc, struct Zinc_location* new_loc)
 {
     if (loc->line == 0) {
         *loc = *new_loc;

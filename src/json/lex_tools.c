@@ -9,7 +9,7 @@
 
 enum result Json_lex_data_init(
     Json_lex_data* ld,
-    struct error_list* el,
+    struct Zinc_error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable)
 {
@@ -21,7 +21,7 @@ enum result Json_lex_data_init(
 
 void Json_lex_data_create(
     Json_lex_data** ld,
-    struct error_list* el,
+    struct Zinc_error_list* el,
     void* input_obj,
     InputUnicodeVTable* input_vtable)
 {

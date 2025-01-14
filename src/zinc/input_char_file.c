@@ -14,8 +14,8 @@ InputCharVTable InputCharFileVTable = {
 
 void InputCharFileInit(InputCharFile* input, FILE* fp)
 {
-    location_init(&input->loc);
-    location_init(&input->prev_loc);
+    Zinc_location_init(&input->loc);
+    Zinc_location_init(&input->prev_loc);
     input->repeat_char = false;
     input->prev_c = 0;
     input->fp = fp;
@@ -35,8 +35,8 @@ void InputCharFileCreate(InputCharFile** input, FILE* fp)
 
 void InputCharFileClear(InputCharFile* input)
 {
-    location_init(&input->loc);
-    location_init(&input->prev_loc);
+    Zinc_location_init(&input->loc);
+    Zinc_location_init(&input->prev_loc);
     input->loc.line = 1;
     input->loc.col = 1;
     input->loc.end_pos = 1;
@@ -48,7 +48,7 @@ void InputCharFileClear(InputCharFile* input)
  * @param c the next char
  * @return done
  */
-bool InputCharFileNext(InputCharFile* input, char* c, struct location* loc)
+bool InputCharFileNext(InputCharFile* input, char* c, struct Zinc_location* loc)
 {
     if (input->loc.start_pos == 0) {
         InputCharFileClear(input);
@@ -95,7 +95,7 @@ void InputCharFileRepeat(InputCharFile* input)
  * @param input the input
  * @param pos position to go to
  */
-void InputCharFileSeek(InputCharFile* input, struct location* loc)
+void InputCharFileSeek(InputCharFile* input, struct Zinc_location* loc)
 {
     input->loc = *loc;
     input->prev_loc = *loc;
@@ -123,7 +123,7 @@ void InputCharFileGetAll(InputCharFile* input, Vector** text)
     *text = v;
 }
 
-struct location InputCharFileGetLocation(InputCharFile* input)
+struct Zinc_location InputCharFileGetLocation(InputCharFile* input)
 {
     return input->loc;
 }

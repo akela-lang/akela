@@ -1,12 +1,12 @@
 #include <stdbool.h>
 #include "input_char.h"
 
-struct location* InputCharLocation(void* input_obj, InputCharVTable* input_vtable)
+struct Zinc_location* InputCharLocation(void* input_obj, InputCharVTable* input_vtable)
 {
     return input_obj + input_vtable->loc_offset;
 }
 
-bool InputCharNext(void* input_obj, InputCharVTable* input_vtable, char* c, struct location* loc)
+bool InputCharNext(void* input_obj, InputCharVTable* input_vtable, char* c, struct Zinc_location* loc)
 {
     InputCharNextInterface *get_char = input_obj + input_vtable->next_offset;
     return (*get_char)(input_obj, c, loc);
@@ -18,7 +18,7 @@ void InputCharRepeat(void* input_obj, InputCharVTable* input_vtable)
     (*repeat_char)(input_obj);
 }
 
-void InputCharSeek(void* input_obj, InputCharVTable* input_vtable, struct location* loc)
+void InputCharSeek(void* input_obj, InputCharVTable* input_vtable, struct Zinc_location* loc)
 {
     InputCharSeekInterface *seek = input_obj + input_vtable->seek_offset;
     (*seek)(input_obj, loc);
@@ -30,7 +30,7 @@ void InputCharGetAll(void* input_obj, InputCharVTable* input_vtable, Vector** te
     (*get_all)(input_obj, text);
 }
 
-struct location InputCharGetLocation(void* input_obj, InputCharVTable* input_vtable)
+struct Zinc_location InputCharGetLocation(void* input_obj, InputCharVTable* input_vtable)
 {
     InputCharGetLocationInterface *get_location = input_obj + input_vtable->get_location_offset;
     return (*get_location)(input_obj);

@@ -14,7 +14,7 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
     pd->top = pd->base;
     Cent_ast* root = Cent_parse_stmts(pd);
     if (pd->lookahead->type != Cent_token_eof) {
-        error_list_set(
+        Zinc_error_list_set(
             pd->errors,
             &pd->lookahead->loc,
             "unhandled token: %s",

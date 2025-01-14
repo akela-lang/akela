@@ -19,7 +19,7 @@ Json_dom* Json_parse(Json_parse_data* pd)
     Json_dom* root = Json_parse_value(pd);
     Json_get_lookahead(pd);
     if (pd->lookahead->type != Json_token_type_eof) {
-        error_list_set(
+        Zinc_error_list_set(
             pd->el,
             &pd->lookahead->loc,
             "Could not process token: %s",
@@ -190,7 +190,7 @@ Json_dom* Json_parse_array(Json_parse_data* pd)
 
     Json_token* rsb = NULL;
     if (!Json_match(pd, Json_token_type_right_square_bracket, &rsb, dom)) {
-        error_list_set(pd->el, &pd->lookahead->loc, "expected right square bracket");
+        Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected right square bracket");
         dom->has_error = true;
     }
     Json_token_destroy(rsb);
@@ -224,7 +224,7 @@ void Json_parse_array_seq(Json_parse_data* pd, Json_dom* parent)
         if (b) {
             Json_dom_add_element(parent, b);
         } else {
-            error_list_set(pd->el, &pd->lookahead->loc, "expected value");
+            Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected value");
             parent->has_error = true;
         }
 
@@ -251,7 +251,7 @@ Json_dom* Json_parse_object(Json_parse_data* pd)
 
     Json_token* rcb = NULL;
     if (!Json_match(pd, Json_token_type_right_curly_brace, &rcb, dom)) {
-        error_list_set(pd->el, &pd->lookahead->loc, "expected right curly brace");
+        Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected right curly brace");
         dom->has_error = true;
     }
     Json_token_destroy(rcb);
@@ -274,7 +274,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
 
     Json_token* colon = NULL;
     if (!Json_match(pd, Json_token_type_colon, &colon, parent)) {
-        error_list_set(pd->el, &pd->lookahead->loc, "expected colon");
+        Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected colon");
         parent->has_error = true;
     }
     Json_token_destroy(colon);
@@ -284,7 +284,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
     if (value) {
         hash_table_add(&parent->value.object, &s->value, value);
     } else {
-        error_list_set(pd->el, &pd->lookahead->loc, "expected value");
+        Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected value");
         parent->has_error = true;
     }
 
@@ -302,7 +302,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
 
         Json_get_lookahead(pd);
         if (pd->lookahead->type != Json_token_type_string) {
-            error_list_set(pd->el, &pd->lookahead->loc, "expected string");
+            Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected string");
             parent->has_error = true;
             continue;
         }
@@ -311,7 +311,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
 
         colon = NULL;
         if (!Json_match(pd, Json_token_type_colon, &colon, parent)) {
-            error_list_set(pd->el, &pd->lookahead->loc, "expected colon");
+            Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected colon");
             parent->has_error = true;
         }
         Json_token_destroy(colon);
@@ -321,7 +321,7 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent)
         if (value) {
             hash_table_add(&parent->value.object, &s->value, value);
         } else {
-            error_list_set(pd->el, &pd->lookahead->loc, "expected value");
+            Zinc_error_list_set(pd->el, &pd->lookahead->loc, "expected value");
             parent->has_error = true;
         }
 

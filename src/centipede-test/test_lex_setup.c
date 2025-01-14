@@ -17,8 +17,8 @@ void test_lex_setup(Cent_lex_data* ld, char* text)
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, v);
 
-    struct error_list* errors = NULL;
-    error_list_create(&errors);
+    struct Zinc_error_list* errors = NULL;
+    Zinc_error_list_create(&errors);
 
     Cent_lex_data_init(ld, errors, input, input->input_vtable);
 }
@@ -32,7 +32,7 @@ void test_lex_teardown(Cent_lex_data* ld)
 
     free(input);
 
-    error_list_destroy(ld->errors);
+    Zinc_error_list_destroy(ld->errors);
     free(ld->errors);
     Cent_lex_data_destroy(ld);
 }

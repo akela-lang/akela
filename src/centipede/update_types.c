@@ -73,7 +73,7 @@ void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et,
     Zinc_string_copy(&name->text, &prop->name);
     Cent_symbol* sym = Cent_environment_get(env, &type->text);
     if (!sym) {
-        error_list_set(pr->errors, &n->loc, "unknown type: %b", &type->text);
+        Zinc_error_list_set(pr->errors, &n->loc, "unknown type: %b", &type->text);
         n->has_error = true;
         /* test case: test_parse_element_property_unknown_type */
     } else {
@@ -84,7 +84,7 @@ void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et,
             Cent_property_type_set_type(prop, Cent_types_enum);
             prop->data.en = sym->data.enumerate;
         } else {
-            error_list_set(pr->errors, &n->loc, "type is not an element or enum type: %b", &type->text);
+            Zinc_error_list_set(pr->errors, &n->loc, "type is not an element or enum type: %b", &type->text);
             n->has_error = true;
             /* test case: test_parse_element_property_type_not_element */
         }
@@ -105,7 +105,7 @@ void Cent_update_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et
 {
     Cent_symbol* sym = Cent_environment_get(env, &n->text);
     if (!sym) {
-        error_list_set(pr->errors, &n->loc, "unknown type: %b", &n->text);
+        Zinc_error_list_set(pr->errors, &n->loc, "unknown type: %b", &n->text);
         n->has_error = true;
         /* test case: test_parse_element_child_unknown_type */
     } else {
@@ -114,7 +114,7 @@ void Cent_update_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et
         } else if (sym->type == Cent_symbol_type_enumerate) {
             Cent_element_add_en(et, sym->data.enumerate, &n->loc, n->has_error);
         } else {
-            error_list_set(pr->errors, &n->loc, "type is not an element type: %b", &n->text);
+            Zinc_error_list_set(pr->errors, &n->loc, "type is not an element type: %b", &n->text);
             /* test case: test_parse_element_child_type_not_an_element_type */
             n->has_error = true;
         }
@@ -132,7 +132,7 @@ void Cent_update_enum(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
     while (p) {
         Cent_enum_value* ev = Cent_enumerate_get(en, &p->text);
         if (ev) {
-            error_list_set(pr->errors, &p->loc, "duplicate enum value: %b::%b", &n->text, &p->text);
+            Zinc_error_list_set(pr->errors, &p->loc, "duplicate enum value: %b::%b", &n->text, &p->text);
             n->has_error = true;
             p->has_error = true;
             /* test case: test_parse_enum_duplicate_id */

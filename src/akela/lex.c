@@ -44,13 +44,13 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
     bool valid = true;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     enum result r;
 
     while (true) {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
             break;
         }
 
@@ -63,7 +63,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
             while (!(num == 1 && *c == '\n')) {
                 r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
                 if (r == result_error) {
-                    valid = error_list_set(ls->el, &loc, error_message);
+                    valid = Zinc_error_list_set(ls->el, &loc, error_message);
                     break;
                 }
                 if (*done) {
@@ -182,7 +182,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
             }
             a[i] = '\0';
 
-            error_list_set(ls->el, &loc, "Unrecognized character: %s", a);
+            Zinc_error_list_set(ls->el, &loc, "Unrecognized character: %s", a);
             /* error test case: test_lex_error_unrecognized_character */
             valid = false;
             break;
@@ -207,13 +207,13 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
     bool valid = true;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     enum result r;
 
     while (true) {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
             break;
         }
 
@@ -254,11 +254,11 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
             }
         } else if (*state == Ake_state_id_underscore) {
             if (*c == '_') {
-                error_list_set(ls->el, &loc, "Must have a letter following underscore at start of id");
+                Zinc_error_list_set(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_lex_error_underscore_letter2 */
             } else if (Ake_is_num(c, num)) {
-                error_list_set(ls->el, &loc, "Must have a letter following underscore at start of id");
+                Zinc_error_list_set(ls->el, &loc, "Must have a letter following underscore at start of id");
                 valid = false;
                 /* test case: test_lex_error_underscore_letter */
             } else if (Ake_is_word(c, num)) {
@@ -299,13 +299,13 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
     bool valid = true;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     enum result r;
 
     while (true) {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
             break;
         }
 
@@ -378,7 +378,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
                     Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
-                valid = error_list_set(ls->el, &loc, "expected number after exponent sign");
+                valid = Zinc_error_list_set(ls->el, &loc, "expected number after exponent sign");
                 /* test case: test_lex_error_exponent_sign */
                 *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
@@ -418,20 +418,20 @@ bool Ake_lex_string(
     bool valid = true;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     enum result r;
 
     while (true) {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (*done) {
             for (int i = 0; i < num; i++) {
                 Zinc_string_add_char(&t->value, c[i]);
             }
-            valid = error_list_set(ls->el, &loc, "Unclosed string");
+            valid = Zinc_error_list_set(ls->el, &loc, "Unclosed string");
             break;
         }
 
@@ -462,7 +462,7 @@ bool Ake_lex_string(
                     i++;
                 }
                 a[i] = '\0';
-                valid = error_list_set(ls->el, &loc, "Unrecognized escape sequence: %s", a);
+                valid = Zinc_error_list_set(ls->el, &loc, "Unrecognized escape sequence: %s", a);
                 /* test case: test_lex_string_escape_error */
                 break;
             }
@@ -490,12 +490,12 @@ bool Ake_lex_compound_operator(
     bool valid = true;
     char c[4];
     int num;
-    struct location loc;
+    struct Zinc_location loc;
     enum result r;
 
     r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
     if (r == result_error) {
-        valid = error_list_set(ls->el, &loc, error_message);
+        valid = Zinc_error_list_set(ls->el, &loc, error_message);
     }
 
     assert(!*done);
@@ -503,7 +503,7 @@ bool Ake_lex_compound_operator(
     if (num == 1 && *c == '=') {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '=') {
@@ -517,7 +517,7 @@ bool Ake_lex_compound_operator(
     } else if (num == 1 && *c == '!') {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '=') {
@@ -531,7 +531,7 @@ bool Ake_lex_compound_operator(
     } else if (num == 1 && *c == '<') {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '=') {
@@ -545,7 +545,7 @@ bool Ake_lex_compound_operator(
     } else if (num == 1 && *c == '>') {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '=') {
@@ -559,7 +559,7 @@ bool Ake_lex_compound_operator(
     } else if (num == 1 && *c == '&') {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '&') {
@@ -573,7 +573,7 @@ bool Ake_lex_compound_operator(
     } else if (num == 1 && *c == '|') {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '|') {
@@ -587,7 +587,7 @@ bool Ake_lex_compound_operator(
     } else if (num == 1 && *c == '-') {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '>') {
@@ -601,13 +601,13 @@ bool Ake_lex_compound_operator(
     } else if (num == 1 && *c == '.') {
         r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
-            valid = error_list_set(ls->el, &loc, error_message);
+            valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '.') {
             r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
             if (r == result_error) {
-                valid = error_list_set(ls->el, &loc, error_message);
+                valid = Zinc_error_list_set(ls->el, &loc, error_message);
             }
 
             if (num == 1 && *c == '.') {
@@ -664,7 +664,7 @@ bool Ake_lex(struct Ake_lex_state* ls, struct Ake_token** t)
 
     *t = tf;
 
-    struct location end = InputUnicodeGetLocation(ls->input_obj, ls->input_vtable);
+    struct Zinc_location end = InputUnicodeGetLocation(ls->input_obj, ls->input_vtable);
     (*t)->loc.end_pos = end.start_pos;
     if ((*t)->loc.end_pos == (*t)->loc.start_pos) {
         (*t)->loc.end_pos++;

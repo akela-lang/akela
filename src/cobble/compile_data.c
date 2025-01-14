@@ -6,7 +6,7 @@ void Cob_compile_data_init(
     Cob_compile_data* cd,
     void* input_obj,
     InputUnicodeVTable* input_vtable,
-    struct error_list* el)
+    struct Zinc_error_list* el)
 {
     cd->input_obj = input_obj;
     cd->input_vtable = input_vtable;
@@ -19,7 +19,7 @@ void Cob_compile_data_create(
     Cob_compile_data** cd,
     void* input_obj,
     InputUnicodeVTable* input_vtable,
-    struct error_list* el)
+    struct Zinc_error_list* el)
 {
     malloc_safe((void**)cd, sizeof(Cob_compile_data));
     Cob_compile_data_init(*cd, input_obj, input_vtable, el);
@@ -30,13 +30,13 @@ void Cob_compile_data_destroy(Cob_compile_data* cd)
     free(cd->lookahead);
 }
 
-void Cob_re_init(Cob_re* re, struct error_list* el, Cob_ast* root)
+void Cob_re_init(Cob_re* re, struct Zinc_error_list* el, Cob_ast* root)
 {
     re->el = el;
     re->root = root;
 }
 
-void Cob_re_reeate(Cob_re** re, struct error_list* el, Cob_ast* root)
+void Cob_re_reeate(Cob_re** re, struct Zinc_error_list* el, Cob_ast* root)
 {
     malloc_safe((void**)re, sizeof(Cob_re));
     Cob_re_init(*re, el, root);
@@ -44,7 +44,7 @@ void Cob_re_reeate(Cob_re** re, struct error_list* el, Cob_ast* root)
 
 void Cob_re_destroy(Cob_re* re)
 {
-    error_list_destroy(re->el);
+    Zinc_error_list_destroy(re->el);
     free(re->el);
     Cob_ast_destroy(re->root);
     free(re->root);

@@ -7,7 +7,7 @@ void test_lex_number_negative_start()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -32,7 +32,7 @@ void test_lex_number_whole()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -63,7 +63,7 @@ void test_lex_number_fraction_start()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -94,7 +94,7 @@ void test_lex_number_fraction()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -124,7 +124,7 @@ void test_lex_number_exponent_start()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -158,7 +158,7 @@ void test_lex_number_fraction_exponent_start()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -192,7 +192,7 @@ void test_lex_number_fraction_exponent()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -218,7 +218,7 @@ void test_lex_number_fraction_exponent_sign_start_negative()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -240,7 +240,7 @@ void test_lex_number_fraction_exponent_sign_start_positive()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -263,7 +263,7 @@ void test_lex_number_fraction_exponent_negative()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -295,7 +295,7 @@ void test_lex_number_exponent_positive()
 	test_name(__func__);
 
 	struct Ake_lex_state ls;
-	struct error_list el;
+	struct Zinc_error_list el;
 	bool valid;
 	struct Ake_token* t;
 
@@ -324,7 +324,7 @@ void test_lex_number_exponent_add()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;

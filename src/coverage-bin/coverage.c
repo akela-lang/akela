@@ -199,7 +199,7 @@ void Cover_read_file(Cover_file* file)
 
     if (re.el->head) {
         printf("compile() error:\n");
-        struct error* e = re.el->head;
+        struct Zinc_error* e = re.el->head;
         while (e) {
             Zinc_string_finish(&e->message);
             printf("%s\n", e->message.buf);

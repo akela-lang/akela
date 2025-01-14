@@ -11,8 +11,8 @@ void test_parse_setup(Json_parse_data* pd, char* text)
     InputUnicodeString* input;
     InputUnicodeStringCreate(&input, v);
 
-    struct error_list* el = NULL;
-    error_list_create(&el);
+    struct Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
 
     Json_lex_data* ld = NULL;
     Json_lex_data_create(&ld, el, input, input->input_vtable);
@@ -27,13 +27,13 @@ void test_parse_destroy(Json_parse_data* pd)
         free(pd->lookahead);
     }
     Json_lex_data* ld = pd->ld;
-    struct error_list* el = pd->el;
+    struct Zinc_error_list* el = pd->el;
     InputUnicodeString* input = ld->input_obj;
     Vector* v = input->text;
     VectorDestroy(v);
     free(v);
     free(input);
-    error_list_destroy(el);
+    Zinc_error_list_destroy(el);
     free(el);
     free(ld);
 }

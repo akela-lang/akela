@@ -9,11 +9,11 @@
 #include <stdio.h>
 
 typedef struct {
-    struct location loc;
+    struct Zinc_location loc;
     bool repeat_char;
     char prev_c[4];
     int prev_num;
-    struct location prev_loc;
+    struct Zinc_location prev_loc;
     bool prev_done;
     FILE* fp;
     InputUnicodeNextInterface Next;
@@ -32,11 +32,11 @@ enum result InputUnicodeFileNext(
         InputUnicodeFile* data,
         char c[4],
         int* num,
-        struct location* loc,
+        struct Zinc_location* loc,
         bool* done);
 void InputUnicodeFileRepeat(InputUnicodeFile* data);
-void InputUnicodeFileSeek(InputUnicodeFile* data, struct location* loc);
+void InputUnicodeFileSeek(InputUnicodeFile* data, struct Zinc_location* loc);
 void InputUnicodeFileGetAll(InputUnicodeFile* data, Vector** text);
-struct location InputUnicodeFileGetLocation(InputUnicodeFile* input);
+struct Zinc_location InputUnicodeFileGetLocation(InputUnicodeFile* input);
 
 #endif

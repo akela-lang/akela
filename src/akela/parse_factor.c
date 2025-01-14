@@ -134,14 +134,14 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
             struct Ake_symbol* search = Ake_environment_get_local(ps->st->top, &id_node->value);
             if (search) {
                 Zinc_string_finish(&id_node->value);
-                error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
+                Zinc_error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
                 n->type = Ake_ast_type_error;
                 /* test case: test_parse_function_error_duplicate_declaration */
             } else {
                 struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id_node->value);
                 if (sym && sym->td) {
                     Zinc_string_finish(&id_node->value);
-                    error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
+                    Zinc_error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
                     n->type = Ake_ast_type_error;
                     /* test case: test_parse_function_error_identifier_reserved */
                 } else {
@@ -189,8 +189,8 @@ Ake_ast* Ake_parse_if(struct Ake_parse_state* ps)
     }
 
     if (cond == NULL) {
-        struct location cond_loc = Ake_get_location(ps);
-        error_list_set(ps->el, &cond_loc, "expected condition after if");
+        struct Zinc_location cond_loc = Ake_get_location(ps);
+        Zinc_error_list_set(ps->el, &cond_loc, "expected condition after if");
         /* test case: test_parse_if_error_expected_expression */
         n->type = Ake_ast_type_error;
         cb->type = Ake_ast_type_error;
@@ -242,7 +242,7 @@ Ake_ast* Ake_parse_if(struct Ake_parse_state* ps)
             }
             while (p) {
                 if (!Ake_type_find_whole(ps->st, tu, p->tu)) {
-                    error_list_set(ps->el, &p->loc,
+                    Zinc_error_list_set(ps->el, &p->loc,
                                    "branch type does not match type of previous branch");
                     n->type = Ake_ast_type_error;
                     break;
@@ -287,8 +287,8 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_ast* parent)
         }
 
         if (!cond) {
-            struct location cond_loc = Ake_get_location(ps);
-            error_list_set(ps->el, &cond_loc, "expected condition after elseif");
+            struct Zinc_location cond_loc = Ake_get_location(ps);
+            Zinc_error_list_set(ps->el, &cond_loc, "expected condition after elseif");
             /* test case: test_parse_if_error_expected_elseif_expression */
             cb->type = Ake_ast_type_error;
             parent->type = Ake_ast_type_error;
@@ -374,8 +374,8 @@ Ake_ast* Ake_parse_not(struct Ake_parse_state* ps)
     }
 
 	if (!a) {
-        struct location a_loc = Ake_get_location(ps);
-		error_list_set(ps->el, &a_loc, "expected parse_factor after !");
+        struct Zinc_location a_loc = Ake_get_location(ps);
+		Zinc_error_list_set(ps->el, &a_loc, "expected parse_factor after !");
 		/* test case: test_parse_not_error_expected_factor */
         n->type = Ake_ast_type_error;
 	}
@@ -390,13 +390,13 @@ Ake_ast* Ake_parse_not(struct Ake_parse_state* ps)
 		assert(a);
 		Ake_type_use* tu = a->tu;
 		if (!tu) {
-			error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
+			Zinc_error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
 			/* test case: test_parse_not_error_no_value */
             n->type = Ake_ast_type_error;
 		} else {
 			assert(tu->td);
 			if (tu->td->type != Ake_type_boolean) {
-				error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
+				Zinc_error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = Ake_ast_type_error;
 			} else {
@@ -535,12 +535,12 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
 
         if (!sym) {
             Zinc_string_finish(&id->value);
-            error_list_set(ps->el, &id->loc, "variable not declared: %s", id->value.buf);
+            Zinc_error_list_set(ps->el, &id->loc, "variable not declared: %s", id->value.buf);
             /* test case: test_parse_types_missing_declaration */
             n->type = Ake_ast_type_error;
         } else if (sym->td) {
             Zinc_string_finish(&id->value);
-            error_list_set(ps->el, &id->loc, "expected struct or variable but found type: %s", id->value.buf);
+            Zinc_error_list_set(ps->el, &id->loc, "expected struct or variable but found type: %s", id->value.buf);
             /* test case: test_parse_types_missing_declaration */
             n->type = Ake_ast_type_error;
         } else {
@@ -600,7 +600,7 @@ void Ake_find_missing_fields(struct Ake_parse_state* ps, struct Ake_type_def* td
             field = field->next;
         }
         if (!found) {
-            error_list_set(ps->el, &id->loc, "struct field missing: %b", &id->value);
+            Zinc_error_list_set(ps->el, &id->loc, "struct field missing: %b", &id->value);
             n->type = Ake_ast_type_error;
         }
         dec = dec->next;
@@ -628,7 +628,7 @@ void Ake_parse_struct_literal_elements(
 
         Ake_struct_field_result sfr = Ake_get_struct_field(td, &name->value);
         if (!sfr.found) {
-            error_list_set(ps->el, &name->loc, "Not a valid field for %b: %b", &td->name, &name->value);
+            Zinc_error_list_set(ps->el, &name->loc, "Not a valid field for %b: %b", &td->name, &name->value);
             parent->type = Ake_ast_type_error;
         }
 
@@ -655,14 +655,14 @@ void Ake_parse_struct_literal_elements(
 
             if (parent->type != Ake_ast_type_error) {
                 if (!Ake_type_use_can_cast(sfr.tu, expr->tu)) {
-                    error_list_set(ps->el, &expr->loc, "invalid type for field");
+                    Zinc_error_list_set(ps->el, &expr->loc, "invalid type for field");
                     parent->type = Ake_ast_type_error;
                 }
 
             }
         } else {
-            struct location expr_loc = Ake_get_location(ps);
-            error_list_set(ps->el, &expr_loc, "expected an expression");
+            struct Zinc_location expr_loc = Ake_get_location(ps);
+            Zinc_error_list_set(ps->el, &expr_loc, "expected an expression");
             parent->type = Ake_ast_type_error;
         }
 
@@ -680,8 +680,8 @@ void Ake_parse_struct_literal_elements(
         }
 
         if (!has_sep) {
-            struct location sep_loc = Ake_get_location(ps);
-            error_list_set(ps->el, &sep_loc, "expected a separator");
+            struct Zinc_location sep_loc = Ake_get_location(ps);
+            Zinc_error_list_set(ps->el, &sep_loc, "expected a separator");
             parent->type = Ake_ast_type_error;
         }
     }
@@ -716,8 +716,8 @@ Ake_ast* Ake_parse_sign(struct Ake_parse_state* ps)
     }
 
 	if (!right) {
-        struct location right_loc = Ake_get_location(ps);
-		error_list_set(ps->el, &right_loc, "expected parse_factor after sign");
+        struct Zinc_location right_loc = Ake_get_location(ps);
+		Zinc_error_list_set(ps->el, &right_loc, "expected parse_factor after sign");
         n->type = Ake_ast_type_error;
 	}
 
@@ -741,7 +741,7 @@ Ake_ast* Ake_parse_sign(struct Ake_parse_state* ps)
 		assert(right);
 		Ake_type_use* tu = right->tu;
 		if (!tu) {
-			error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
+			Zinc_error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
 			/* test case: test_parse_sign_error */
             n->type = Ake_ast_type_error;
 		} else {
@@ -792,7 +792,7 @@ Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
         Ake_ast* first = n->head;
 
         if (!first) {
-            error_list_set(ps->el, &rsb->loc, "array literal has no elements");
+            Zinc_error_list_set(ps->el, &rsb->loc, "array literal has no elements");
             /* test case: test_parse_array_literal_empty_error */
             n->type = Ake_ast_type_error;
         } else {
@@ -803,7 +803,7 @@ Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             while (x) {
                 tu_x = x->tu;
                 if (!Ake_type_find_whole(ps->st, tu_first, tu_x)) {
-                    error_list_set(ps->el, &first->loc, "array elements not the same type");
+                    Zinc_error_list_set(ps->el, &first->loc, "array elements not the same type");
                     /* test case: test_parse_array_literal_mixed_error */
                     n->type = Ake_ast_type_error;
                     break;
@@ -861,8 +861,8 @@ void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_ast* parent)
             }
 
 			if (!a) {
-                struct location a_loc = Ake_get_location(ps);
-				error_list_set(ps->el, &a_loc, "expected expr after comma");
+                struct Zinc_location a_loc = Ake_get_location(ps);
+				Zinc_error_list_set(ps->el, &a_loc, "expected expr after comma");
                 parent->type = Ake_ast_type_error;
 				/* test cases: test_parse_array_literal_error_expected_expr */
 				break;
@@ -896,8 +896,8 @@ Ake_ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
     }
 
 	if (!a) {
-        struct location a_loc = Ake_get_location(ps);
-		error_list_set(ps->el, &a_loc, "empty parenthesis");
+        struct Zinc_location a_loc = Ake_get_location(ps);
+		Zinc_error_list_set(ps->el, &a_loc, "empty parenthesis");
         n->type = Ake_ast_type_error;
 		/* test case: test_parse_paren_error_empty */
 	}
@@ -915,7 +915,7 @@ Ake_ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 		assert(a);
 		Ake_type_use* tu = a->tu;
 		if (!tu) {
-			error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
+			Zinc_error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
             n->type = Ake_ast_type_error;
 		} else {
 			n->tu = Ake_type_use_clone(tu);

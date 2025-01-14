@@ -7,7 +7,7 @@ void Cent_token_init(Cent_token *t)
     t->number_type = Cent_number_type_none;
     t->builtin_type = Cent_builtin_type_none;
     Zinc_string_init(&t->value);
-    location_init(&t->loc);
+    Zinc_location_init(&t->loc);
 }
 
 void Cent_token_create(Cent_token **t)

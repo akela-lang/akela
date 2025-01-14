@@ -10,7 +10,7 @@ void test_lex_blank()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	struct Ake_token* t;
 	bool valid;
@@ -37,7 +37,7 @@ void test_lex_assign()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -91,7 +91,7 @@ void test_lex_addition()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -150,7 +150,7 @@ void test_lex_subtraction()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -210,7 +210,7 @@ void test_lex_multiplication()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -270,7 +270,7 @@ void test_lex_divide()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -330,7 +330,7 @@ void test_lex_stmts_expr()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -432,7 +432,7 @@ void test_lex_stmts_expr2()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -555,7 +555,7 @@ void test_lex_stmts_assign()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -656,7 +656,7 @@ void test_lex_function()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -729,7 +729,7 @@ void test_lex_comma()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -767,7 +767,7 @@ void test_lex_semicolon()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -804,7 +804,7 @@ void test_lex_semicolon()
 void test_lex_if() {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -860,7 +860,7 @@ void test_lex_if() {
 void test_lex_compound_operators() {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -930,7 +930,7 @@ void test_lex_compound_operators() {
 void test_lex_compound_operators2() {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1016,7 +1016,7 @@ void test_lex_for_range()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1098,7 +1098,7 @@ void test_lex_for_iteration()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1177,7 +1177,7 @@ void test_lex_error_unrecognized_character()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1198,7 +1198,7 @@ void test_lex_square_brackets()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1235,7 +1235,7 @@ void test_lex_string()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1263,7 +1263,7 @@ void test_lex_string2()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1312,7 +1312,7 @@ void test_lex_string_escape_error()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1337,7 +1337,7 @@ void test_lex_line_col()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1445,7 +1445,7 @@ void test_lex_error_underscore_letter()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1468,7 +1468,7 @@ void test_lex_error_underscore_letter2()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1491,7 +1491,7 @@ void test_lex_error_exponent_sign()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 	struct Ake_token* t;
@@ -1511,7 +1511,7 @@ void test_lex_module()
 {
 	test_name(__func__);
 
-	struct error_list el;
+	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
 	bool valid;
 
@@ -1555,7 +1555,7 @@ void test_lex_comment()
 {
     test_name(__func__);
 
-    struct error_list el;
+    struct Zinc_error_list el;
     struct Ake_lex_state ls;
     bool valid;
 

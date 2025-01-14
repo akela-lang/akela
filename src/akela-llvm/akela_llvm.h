@@ -4,7 +4,7 @@
 #include "akela/code_gen.h"
 
 typedef struct Code_gen_llvm {
-    struct error_list* el;
+    struct Zinc_error_list* el;
     struct Zinc_string_list* extern_list;
     Ake_code_gen_interface jit;
     bool debug;
@@ -16,7 +16,7 @@ extern Ake_code_gen_vtable Code_gen_llvm_vtable;
 extern "C" {
 #endif
 
-void Code_gen_llvm_create(Code_gen_llvm** cg, struct error_list* el, struct Zinc_string_list* extern_list);
+void Code_gen_llvm_create(Code_gen_llvm** cg, struct Zinc_error_list* el, struct Zinc_string_list* extern_list);
 void Code_gen_llvm_destroy(Code_gen_llvm* cg);
 
 #ifdef __cplusplus

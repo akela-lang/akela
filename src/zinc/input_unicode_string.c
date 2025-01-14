@@ -14,8 +14,8 @@ InputUnicodeVTable InputUnicodeStringVTable = {
 
 void InputUnicodeStringInit(InputUnicodeString* input_string, Vector* text)
 {
-    location_init(&input_string->loc);
-    location_init(&input_string->prev_loc);
+    Zinc_location_init(&input_string->loc);
+    Zinc_location_init(&input_string->prev_loc);
     input_string->repeat_char = false;
     input_string->pos = 0;
     input_string->text = text;
@@ -35,8 +35,8 @@ void InputUnicodeStringCreate(InputUnicodeString** input_string, Vector* text)
 
 void InputUnicodeStringClear(InputUnicodeString* data)
 {
-    location_init(&data->loc);
-    location_init(&data->prev_loc);
+    Zinc_location_init(&data->loc);
+    Zinc_location_init(&data->prev_loc);
     data->loc.line = 1;
     data->loc.col = 1;
 }
@@ -51,7 +51,7 @@ enum result InputUnicodeStringNext(
         InputUnicodeString* data,
         char c[4],
         int* num,
-        struct location* loc,
+        struct Zinc_location* loc,
         bool* done)
 {
     enum result r = result_ok;
@@ -122,7 +122,7 @@ void InputUnicodeStringRepeat(InputUnicodeString* data)
  * @param data the data
  * @param pos position to go to
  */
-void InputUnicodeStringSeek(InputUnicodeString* data, struct location* loc)
+void InputUnicodeStringSeek(InputUnicodeString* data, struct Zinc_location* loc)
 {
     if (loc->start_pos < data->text->count)
     {
@@ -145,7 +145,7 @@ void InputUnicodeStringGetAll(InputUnicodeString* data, Vector** text)
     *text = data->text;
 }
 
-struct location InputUnicodeStringGetLocation(InputUnicodeString* data)
+struct Zinc_location InputUnicodeStringGetLocation(InputUnicodeString* data)
 {
     return data->loc;
 }

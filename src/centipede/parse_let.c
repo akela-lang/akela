@@ -39,7 +39,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
         Cent_symbol* sym = Cent_environment_get(pd->top, &id_node->text);
         if (sym) {
             if (sym->type == Cent_symbol_type_element || sym->type == Cent_symbol_type_enumerate) {
-                error_list_set(
+                Zinc_error_list_set(
                     pd->errors,
                     &id_node->loc,
                     "shadowing of type: %b",
@@ -47,7 +47,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
                 n->has_error = true;
                 /* test case: test_parse_let_error_shadow_type */
             } else if (sym->type == Cent_symbol_type_module) {
-                error_list_set(
+                Zinc_error_list_set(
                     pd->errors,
                     &id_node->loc,
                     "shadowing of module: %b",
@@ -57,7 +57,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
             } else {
                 sym = Cent_environment_get_local(pd->top, &id_node->text);
                 if (sym) {
-                    error_list_set(
+                    Zinc_error_list_set(
                         pd->errors,
                         &id_node->loc,
                         "shadowing of local variable: %b",

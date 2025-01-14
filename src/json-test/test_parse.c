@@ -148,7 +148,7 @@ void test_parse_array_error_no_right_square_bracket()
 
     Json_dom* dom = Json_parse(&pd);
     expect_has_errors(pd.el);
-    struct error* e = expect_source_error(pd.el, "expected right square bracket");
+    struct Zinc_error* e = expect_source_error(pd.el, "expected right square bracket");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 13, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 16, "end pos e");
@@ -167,7 +167,7 @@ void test_parse_array_error_expected_value_after_comma()
 
     Json_dom* dom = Json_parse(&pd);
     expect_has_errors(pd.el);
-    struct error* e = expect_source_error(pd.el, "expected value");
+    struct Zinc_error* e = expect_source_error(pd.el, "expected value");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 14, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 17, "end pos e");
@@ -230,7 +230,7 @@ void test_parse_error_token()
 
     Json_dom* dom = Json_parse(&pd);
     expect_has_errors(pd.el);
-    struct error* e = expect_source_error(pd.el, "Could not process token: left curly brace");
+    struct Zinc_error* e = expect_source_error(pd.el, "Could not process token: left curly brace");
     assert_ptr(e, "ptr e");
     expect_size_t_equal(e->loc.start_pos, 4, "start pos e");
     expect_size_t_equal(e->loc.end_pos, 5, "end pos e");
