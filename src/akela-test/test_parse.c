@@ -11,7 +11,7 @@
 #include <string.h>
 #include "test_parse.h"
 
-bool parse_setup(char* line, struct comp_unit* cu)
+bool parse_setup(char* line, struct Ake_comp_unit* cu)
 {
     Vector* text = NULL;
     VectorCreate(&text, sizeof(char));
@@ -20,18 +20,18 @@ bool parse_setup(char* line, struct comp_unit* cu)
     InputUnicodeString* input_obj = NULL;
     InputUnicodeStringCreate(&input_obj, text);
 
-	comp_unit_init(cu);
-	bool valid = comp_unit_compile(cu, input_obj, input_obj->input_vtable);
+	Ake_comp_unit_init(cu);
+	bool valid = Ake_comp_unit_compile(cu, input_obj, input_obj->input_vtable);
 
 	return valid;
 }
 
-void parse_teardown(struct comp_unit* cu)
+void parse_teardown(struct Ake_comp_unit* cu)
 {
     InputUnicodeString* input = cu->input_obj;
     Vector* text = input->text;
     VectorDestroy(text);
     free(text);
     free(input);
-	comp_unit_destroy(cu);
+	Ake_comp_unit_destroy(cu);
 }

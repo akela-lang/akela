@@ -22,14 +22,14 @@ void test_comp_table_compile()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, text);
 
-	struct comp_unit* cu = NULL;
-	malloc_safe((void**)&cu, sizeof(struct comp_unit));
-	comp_unit_init(cu);
+	struct Ake_comp_unit* cu = NULL;
+	malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
+	Ake_comp_unit_init(cu);
 	array2buffer("|main|", &cu->path);
 
 	Ake_comp_table_put(&ct, &cu->path, cu);
 
-	bool valid = comp_unit_compile(cu, input, input->input_vtable);
+	bool valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
 	expect_true(valid, "valid");
 
 	Ake_ast* root = cu->root;
@@ -63,13 +63,13 @@ void test_comp_table_include()
     InputUnicodeString* base_input = NULL;
     InputUnicodeStringCreate(&base_input, base_text);
 
-	struct comp_unit* cu_base = NULL;
-	malloc_safe((void**)&cu_base, sizeof(struct comp_unit));
-	comp_unit_init(cu_base);
+	struct Ake_comp_unit* cu_base = NULL;
+	malloc_safe((void**)&cu_base, sizeof(struct Ake_comp_unit));
+	Ake_comp_unit_init(cu_base);
 	array2buffer("|base|", &cu_base->path);
 	Ake_comp_table_put(&ct, &cu_base->path, cu_base);
 
-	bool valid_base = comp_unit_compile(cu_base, base_input, base_input->input_vtable);
+	bool valid_base = Ake_comp_unit_compile(cu_base, base_input, base_input->input_vtable);
 
 	/* test base */
 	expect_no_errors(&cu_base->el);
@@ -84,15 +84,15 @@ void test_comp_table_include()
     InputUnicodeString* main_input = NULL;
     InputUnicodeStringCreate(&main_input, main_vector);
 
-	struct comp_unit* cu_main = NULL;
-	malloc_safe((void**)&cu_main, sizeof(struct comp_unit));
-	comp_unit_init(cu_main);
+	struct Ake_comp_unit* cu_main = NULL;
+	malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
+	Ake_comp_unit_init(cu_main);
 	array2buffer("|main|", &cu_main->path);
 	Ake_comp_table_put(&ct, &cu_main->path, cu_main);
 
 	transfer_global_symbols(&cu_base->st, &cu_main->st);
 
-	bool valid_main = comp_unit_compile(cu_main, main_input, main_input->input_vtable);
+	bool valid_main = Ake_comp_unit_compile(cu_main, main_input, main_input->input_vtable);
 
 	/* test main */
 	expect_no_errors(&cu_main->el);
@@ -144,19 +144,19 @@ void test_comp_table_include_base()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, main_vector);
 
-	struct comp_unit* cu_main = NULL;
-	malloc_safe((void**)&cu_main, sizeof(struct comp_unit));
-	comp_unit_init(cu_main);
+	struct Ake_comp_unit* cu_main = NULL;
+	malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
+	Ake_comp_unit_init(cu_main);
 	array2buffer("|main|", &cu_main->path);
 	Ake_comp_table_put(&ct, &cu_main->path, cu_main);
 
-	struct comp_unit* cu_base = NULL;
+	struct Ake_comp_unit* cu_base = NULL;
 	bool valid = Ake_include_base(&ct, cu_main, &cu_base);
 	assert_true(valid, "include_base valid");
 	expect_no_errors(&cu_base->el);
 	expect_true(cu_base->valid, "valid_base");
 
-	bool valid_main = comp_unit_compile(cu_main, input, input->input_vtable);
+	bool valid_main = Ake_comp_unit_compile(cu_main, input, input->input_vtable);
 
 	/* test main */
 	expect_no_errors(&cu_main->el);

@@ -11,7 +11,7 @@ void test_parse_blank()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("", &cu);
 	assert_no_errors(&cu.el);
@@ -30,7 +30,7 @@ void test_parse_add()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64 = 100; speed + 1", &cu);
 	assert_no_errors(&cu.el);
@@ -68,7 +68,7 @@ void test_parse_add_error_expected_term()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 +", &cu);
 	assert_has_errors(&cu.el);
@@ -82,7 +82,7 @@ void test_parse_add_error_left_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() + 1", &cu);
 	assert_has_errors(&cu.el);
@@ -96,7 +96,7 @@ void test_parse_add_error_left_not_numeric()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true + 1", &cu);
 	assert_has_errors(&cu.el);
@@ -110,7 +110,7 @@ void test_parse_add_error_right_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 1 + foo()", &cu);
 	assert_has_errors(&cu.el);
@@ -124,7 +124,7 @@ void test_parse_add_error_right_not_numeric()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 + true", &cu);
 	assert_has_errors(&cu.el);
@@ -138,7 +138,7 @@ void test_parse_add_mixed_types()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 + 5.0", &cu);
 	assert_no_errors(&cu.el);
@@ -176,7 +176,7 @@ void test_parse_add_positive()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64 = 100; speed + +1", &cu);
 	assert_no_errors(&cu.el);
@@ -215,7 +215,7 @@ void test_parse_add_negative()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed + -1", &cu);
 	assert_no_errors(&cu.el);
@@ -254,7 +254,7 @@ void test_parse_sub()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let delta: i64 = 3; 100 - delta", &cu);
 	assert_no_errors(&cu.el);
@@ -286,7 +286,7 @@ void test_parse_sub_positive()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed - +1", &cu);
 	assert_no_errors(&cu.el);
@@ -325,7 +325,7 @@ void test_parse_sub_negative()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed - -1", &cu);
 	assert_no_errors(&cu.el);
@@ -364,7 +364,7 @@ void test_parse_mult()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("5 * 2", &cu);
 	assert_no_errors(&cu.el);
@@ -402,7 +402,7 @@ void test_parse_mult_error_expected_term()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("5*", &cu);
 	assert_has_errors(&cu.el);
@@ -417,7 +417,7 @@ void test_parse_mult_error_left_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() * 1", &cu);
 	assert_has_errors(&cu.el);
@@ -431,7 +431,7 @@ void test_parse_mult_error_left_not_numeric()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true * 1", &cu);
 	assert_has_errors(&cu.el);
@@ -445,7 +445,7 @@ void test_parse_mult_error_right_no_value()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 1 * foo()", &cu);
 	assert_has_errors(&cu.el);
@@ -459,7 +459,7 @@ void test_parse_mult_error_right_not_numeric()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 * true", &cu);
 	assert_has_errors(&cu.el);
@@ -473,7 +473,7 @@ void test_parse_mult_positive()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed * +1", &cu);
 	assert_no_errors(&cu.el);
@@ -512,7 +512,7 @@ void test_parse_mult_negative()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed * -1", &cu);
 	assert_no_errors(&cu.el);
@@ -551,7 +551,7 @@ void test_parse_divide()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("52 / 2", &cu);
 	assert_no_errors(&cu.el);
@@ -581,7 +581,7 @@ void test_parse_add_add()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 + 2 + 3", &cu);
 	assert_no_errors(&cu.el);
@@ -620,7 +620,7 @@ void test_parse_mult_mult()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 * 2 * 3", &cu);
 	assert_no_errors(&cu.el);
@@ -659,7 +659,7 @@ void test_parse_add_mult()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("5 + 3 * 2", &cu);
 	assert_no_errors(&cu.el);
@@ -698,7 +698,7 @@ void test_parse_mult_add()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("4 * 3 + 2", &cu);
 	assert_no_errors(&cu.el);
@@ -737,7 +737,7 @@ void test_parse_power()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("5 ^ 2", &cu);
 	assert_no_errors(&cu.el);
@@ -775,7 +775,7 @@ void test_parse_power_error_expected_term()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("5^", &cu);
 	assert_has_errors(&cu.el);
@@ -789,7 +789,7 @@ void test_parse_power_error_left_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 5 ^ foo()", &cu);
 	assert_has_errors(&cu.el);
@@ -803,7 +803,7 @@ void test_parse_power_error_left_not_numeric()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true ^ 2", &cu);
 	assert_has_errors(&cu.el);
@@ -817,7 +817,7 @@ void test_parse_power_error_right_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 5 ^ foo()", &cu);
 	assert_has_errors(&cu.el);
@@ -831,7 +831,7 @@ void test_parse_power_error_right_not_numeric()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("5 ^ true", &cu);
 	assert_has_errors(&cu.el);
@@ -845,7 +845,7 @@ void test_parse_paren_add()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; (speed + 1)", &cu);
 	expect_no_errors(&cu.el);
@@ -881,7 +881,7 @@ void test_parse_paren_add2()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; (speed) + 1", &cu);
 	assert_no_errors(&cu.el);
@@ -917,7 +917,7 @@ void test_parse_paren_add3()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let speed: i64; speed + (1)", &cu);
 	assert_no_errors(&cu.el);
@@ -951,7 +951,7 @@ void test_parse_paren_add_add()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 + (2 + 3)", &cu);
 	assert_no_errors(&cu.el);
@@ -996,7 +996,7 @@ void test_parse_paren_add_add2()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("(1 + 2) + 3", &cu);
 	assert_no_errors(&cu.el);
@@ -1039,7 +1039,7 @@ void test_parse_paren_mult()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("(5 * 2)", &cu);
 	assert_no_errors(&cu.el);
@@ -1073,7 +1073,7 @@ void test_parse_paren_mult_mult()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 * (2 * 3)", &cu);
 	assert_no_errors(&cu.el);
@@ -1116,7 +1116,7 @@ void test_parse_paren_mult_mult2()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("(1 * 2) * 3", &cu);
 	assert_no_errors(&cu.el);
@@ -1159,7 +1159,7 @@ void test_parse_comparison()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let count: i64 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &cu);
 	assert_no_errors(&cu.el);
@@ -1244,7 +1244,7 @@ void test_parse_comparison_identity()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true == true; true != true", &cu);
 	expect_no_errors(&cu.el);
@@ -1273,7 +1273,7 @@ void test_parse_comparison_error_no_term()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("100 <", &cu);
 	expect_has_errors(&cu.el);
@@ -1287,7 +1287,7 @@ void test_parse_comparison_error_left_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() < 100", &cu);
 	expect_has_errors(&cu.el);
@@ -1301,7 +1301,7 @@ void test_parse_comparison_error_right_no_value()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 100 < foo()", &cu);
 	expect_has_errors(&cu.el);
@@ -1315,7 +1315,7 @@ void test_parse_comparison_error_left_not_numeric()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true < 100", &cu);
 	expect_has_errors(&cu.el);
@@ -1329,7 +1329,7 @@ void test_parse_comparison_error_right_not_numeric()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true < 100", &cu);
 	expect_has_errors(&cu.el);
@@ -1343,7 +1343,7 @@ void test_parse_and()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool; let b: bool; a && b", &cu);
 	assert_no_errors(&cu.el);
@@ -1372,7 +1372,7 @@ void test_parse_or()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool; let b: bool; a || b", &cu);
 	assert_no_errors(&cu.el);
@@ -1410,7 +1410,7 @@ void test_parse_or_or()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool; let b: bool; let c: bool; a || b || c", &cu);
 	assert_no_errors(&cu.el);
@@ -1449,7 +1449,7 @@ void test_parse_boolean_error_expected_term()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true &&", &cu);
 	assert_has_errors(&cu.el);
@@ -1464,7 +1464,7 @@ void test_parse_boolean_error_left_no_value()
 	test_name(__func__);
 
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
 
     parse_setup("fn foo() end; foo() && true", &cu);
@@ -1480,7 +1480,7 @@ void test_parse_boolean_error_right_no_value()
 	test_name(__func__);
 
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
 
     parse_setup("fn foo() end; true && foo()", &cu);
@@ -1495,7 +1495,7 @@ void test_parse_boolean_error_left_not_boolean()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("1 && true", &cu);
 	assert_has_errors(&cu.el);
@@ -1509,7 +1509,7 @@ void test_parse_boolean_error_right_not_boolean()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true && 1", &cu);
 	assert_has_errors(&cu.el);
@@ -1523,7 +1523,7 @@ void test_parse_array_declare()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: [5]i64\n"
                 "a[0]\n",
@@ -1541,7 +1541,7 @@ void test_parse_array_subscript()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: [10]i64; a[1]", &cu);
 	expect_no_errors(&cu.el);
@@ -1579,7 +1579,7 @@ void test_parse_array_subscript2()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: [10][10]i64; a[0][1]", &cu);
 	assert_no_errors(&cu.el);
@@ -1624,7 +1624,7 @@ void test_parse_array_subscript3()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: [5]i64; let b: i64; a[b]", &cu);
 	assert_no_errors(&cu.el);
@@ -1657,7 +1657,7 @@ void test_parse_expr_array_subscript_3d()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let mut x: [2][3][4 const]i64 = \n"
                 "[\n"
@@ -1770,7 +1770,7 @@ void test_parse_subscript_error_no_type()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo()[1]", &cu);
 	assert_has_errors(&cu.el);
@@ -1784,7 +1784,7 @@ void test_parse_subscript_error_not_array()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: i64; a[1]", &cu);
 	assert_has_errors(&cu.el);
@@ -1798,7 +1798,7 @@ void test_parse_subscript_error_expected_right_square_bracket()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: [10]i64; a[1", &cu);
 	assert_has_errors(&cu.el);
@@ -1812,7 +1812,7 @@ void test_parse_assign_string()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let mut a: [6 const]u8; a = \"hello\"", &cu);
 	assert_no_errors(&cu.el);
@@ -1850,7 +1850,7 @@ void test_parse_assign_multiple()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let mut a: i64; let mut b: i64; let mut c: i64; a = b = c = 0", &cu);
 	assert_no_errors(&cu.el);
@@ -1898,7 +1898,7 @@ void test_parse_expr_assignment_eseq_error_eseq_count()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let mut a: i64; let mut b: i64; let mut c: i64; a, b, c = 1, 2", &cu);
     expect_has_errors(&cu.el);
@@ -1912,7 +1912,7 @@ void test_parse_let_assign_error_term()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool =", &cu);
 	assert_has_errors(&cu.el);
@@ -1926,7 +1926,7 @@ void test_parse_assign_error_no_value_right()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; let a: [10]u8 = foo()", &cu);
 	assert_has_errors(&cu.el);
@@ -1940,7 +1940,7 @@ void test_parse_assign_error_not_compatible()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let x: i64 = true", &cu);
 	assert_has_errors(&cu.el);
@@ -1954,7 +1954,7 @@ void test_parse_assign_error_lvalue()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true = true", &cu);
 	assert_has_errors(&cu.el);
@@ -1968,7 +1968,7 @@ void test_parse_expr_newline_assignment()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let mut a: i64; a =\n1", &cu);
     assert_no_errors(&cu.el);
@@ -1995,7 +1995,7 @@ void test_parse_expr_newline_boolean()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("true &&\nfalse", &cu);
     assert_no_errors(&cu.el);
@@ -2022,7 +2022,7 @@ void test_parse_expr_newline_comparison()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("1 <\n2", &cu);
     assert_no_errors(&cu.el);
@@ -2049,7 +2049,7 @@ void test_parse_expr_newline_add()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("1 +\n2", &cu);
     assert_no_errors(&cu.el);
@@ -2076,7 +2076,7 @@ void test_parse_expr_newline_mult()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("1 *\n2", &cu);
     assert_no_errors(&cu.el);
@@ -2103,7 +2103,7 @@ void test_parse_expr_newline_power()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("1^\n2", &cu);
     assert_no_errors(&cu.el);
@@ -2130,7 +2130,7 @@ void test_parse_expr_newline_subscript()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: [1]i64; a[\n0\n]", &cu);
     assert_no_errors(&cu.el);
@@ -2157,7 +2157,7 @@ void test_parse_expr_newline_function_call()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64, b: i64)->i64 a+b end; foo(\n1,\n2\n)", &cu);
     assert_no_errors(&cu.el);
@@ -2193,7 +2193,7 @@ void test_parse_expr_assign_eseq()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let mut a: i64\n"
                 "let mut b: i64\n"
@@ -2235,7 +2235,7 @@ void test_parse_expr_error_lvalue()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: i64\n"
                 "1 = 1", &cu);
@@ -2250,7 +2250,7 @@ void test_parse_expr_error_eseq_lvalue()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: i64\n"
                 "let b: i64\n"
@@ -2267,7 +2267,7 @@ void test_parse_array_string_return()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64, b: i64, c: i64)->[6 const]u8\n"
                 "  \"hello\"\n"

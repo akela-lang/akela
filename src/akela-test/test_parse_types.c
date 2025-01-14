@@ -8,7 +8,7 @@ void test_parse_types_missing_declaration()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("x + 1", &cu);
 	expect_has_errors(&cu.el);
@@ -22,7 +22,7 @@ void test_parse_types_missing_declaration2()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("foo() + 1", &cu);
 	expect_has_errors(&cu.el);
@@ -36,7 +36,7 @@ void test_parse_types_missing_declaration3()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("x = fn() end", &cu);
 	expect_has_errors(&cu.el);
@@ -50,7 +50,7 @@ void test_parse_types_double_function()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; fn foo() end", &cu);
 	expect_has_errors(&cu.el);
@@ -64,7 +64,7 @@ void test_parse_types_reserved_type()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let i64: i64", &cu);
 	expect_has_errors(&cu.el);
@@ -78,7 +78,7 @@ void test_parse_types_reserved_type2()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn i64() end", &cu);
 	expect_has_errors(&cu.el);
@@ -92,7 +92,7 @@ void test_parse_types_reserved_type3()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("for i64: i64 = 1:10 end", &cu);
 	expect_has_errors(&cu.el);
@@ -106,7 +106,7 @@ void test_parse_types_reserved_type4()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let list: [10]i64; for i64: i64 in list end", &cu);
 	expect_has_errors(&cu.el);
@@ -120,7 +120,7 @@ void test_parse_types_exists()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let x: SuperInt; x + 1", &cu);
 	expect_has_errors(&cu.el);
@@ -134,7 +134,7 @@ void test_parse_types_array()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: [10]i64; a[1]", &cu);
 	assert_no_errors(&cu.el);
@@ -181,7 +181,7 @@ void test_parse_error_dseq_comma()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64,) end", &cu);
 	expect_has_errors(&cu.el);
@@ -195,7 +195,7 @@ void test_parse_error_declaration_colon()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a", &cu);
 	expect_has_errors(&cu.el);
@@ -209,7 +209,7 @@ void test_parse_error_declaration_type()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: ", &cu);
 	expect_has_errors(&cu.el);
@@ -223,7 +223,7 @@ void test_parse_error_type_not_defined()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: Foo", &cu);
 	expect_has_errors(&cu.el);
@@ -237,7 +237,7 @@ void test_parse_error_not_a_type()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let foo: i64; let a: foo", &cu);
 	expect_has_errors(&cu.el);
@@ -251,7 +251,7 @@ void test_parse_error_duplicate_declarations()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let x: i64; let x: i64", &cu);
 	expect_has_errors(&cu.el);
@@ -265,7 +265,7 @@ void test_parse_error_return_type()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo()->i64 true end", &cu);
 	expect_has_errors(&cu.el);
@@ -279,7 +279,7 @@ void test_parse_types_error_param()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64) true end; foo(true)", &cu);
 	expect_has_errors(&cu.el);
@@ -293,7 +293,7 @@ void test_parse_types_error_param_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64) true end; foo(foo(1))", &cu);
 	expect_has_errors(&cu.el);
@@ -307,7 +307,7 @@ void test_parse_types_newline_declaration()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a\n: \ni64", &cu);
     expect_no_errors(&cu.el);

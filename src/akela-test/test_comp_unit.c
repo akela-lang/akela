@@ -14,11 +14,11 @@ void test_comp_unit_compile()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, text);
 
-	struct comp_unit* cu = NULL;
-	malloc_safe((void**)&cu, sizeof(struct comp_unit));
-	comp_unit_init(cu);
+	struct Ake_comp_unit* cu = NULL;
+	malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
+	Ake_comp_unit_init(cu);
 
-	bool valid = comp_unit_compile(cu, input, input->input_vtable);
+	bool valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
 	expect_true(valid, "valid");
 	
 	Ake_ast* root = cu->root;
@@ -31,7 +31,7 @@ void test_comp_unit_compile()
 	expect_str(&number->value, "10", "10 number");
 
     free(input);
-	comp_unit_destroy(cu);
+	Ake_comp_unit_destroy(cu);
 	free(cu);
     VectorDestroy(text);
     free(text);

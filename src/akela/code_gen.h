@@ -10,7 +10,7 @@ typedef struct {
 } Ake_code_gen_vtable;
 
 typedef struct {
-    struct comp_unit* cu;
+    struct Ake_comp_unit* cu;
     struct buffer value;
     struct buffer text;
     bool debug;

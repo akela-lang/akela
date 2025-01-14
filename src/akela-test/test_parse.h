@@ -8,11 +8,11 @@
 #include "akela/parse_tools.h"
 #include "akela/comp_unit.h"
 typedef struct Parse_test_result {
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
     bool debug;
 } Parse_test_result;
 
-bool parse_setup(char* line, struct comp_unit* cu);
-void parse_teardown(struct comp_unit* cu);
+bool parse_setup(char* line, struct Ake_comp_unit* cu);
+void parse_teardown(struct Ake_comp_unit* cu);
 
 #endif

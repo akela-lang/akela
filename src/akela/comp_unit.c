@@ -5,7 +5,7 @@
 #include "parse.h"
 #include <assert.h>
 
-void comp_unit_init(struct comp_unit* cu)
+void Ake_comp_unit_init(struct Ake_comp_unit* cu)
 {
 	cu->valid = true;
 	cu->root = NULL;
@@ -18,13 +18,13 @@ void comp_unit_init(struct comp_unit* cu)
 	cu->prev = NULL;
 }
 
-void comp_unit_create(struct comp_unit** cu)
+void Ake_comp_unit_create(struct Ake_comp_unit** cu)
 {
-    malloc_safe((void**)cu, sizeof(struct comp_unit));
-    comp_unit_init(*cu);
+    malloc_safe((void**)cu, sizeof(struct Ake_comp_unit));
+    Ake_comp_unit_init(*cu);
 }
 
-void comp_unit_destroy(struct comp_unit* cu)
+void Ake_comp_unit_destroy(struct Ake_comp_unit* cu)
 {
     if (cu) {
         Ake_ast_destroy(cu->root);
@@ -35,7 +35,7 @@ void comp_unit_destroy(struct comp_unit* cu)
     }
 }
 
-void comp_unit_setup(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable, struct parse_state** ps)
+void Ake_comp_unit_setup(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable, struct parse_state** ps)
 {
 	*ps = NULL;
 
@@ -50,7 +50,7 @@ void comp_unit_setup(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* 
 	parse_state_init(*ps, ls, &cu->el, &cu->extern_list, &cu->st);
 }
 
-void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
+void Ake_comp_unit_teardown(struct Ake_comp_unit* cu, struct parse_state* ps)
 {
 	assert(ps);
 	assert(ps->ls);
@@ -61,18 +61,18 @@ void comp_unit_teardown(struct comp_unit* cu, struct parse_state* ps)
 	free(ps);
 }
 
-bool comp_unit_compile(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable)
+bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable)
 {
 	bool valid = true;
 	struct parse_state* ps = NULL;
     cu->input_obj = input_obj;
-	comp_unit_setup(cu, input_obj, input_vtable, &ps);
+	Ake_comp_unit_setup(cu, input_obj, input_vtable, &ps);
     cu->root = parse(ps);
     if (cu->root->type == Ake_ast_type_error || cu->el.head) {
         valid = false;
     }
 
-	comp_unit_teardown(cu, ps);
+	Ake_comp_unit_teardown(cu, ps);
 	cu->valid = valid;
 	return valid;
 }

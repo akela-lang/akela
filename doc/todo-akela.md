@@ -4,7 +4,7 @@
   * ast [x]
   * code_gen [x]
   * comp_table [x]
-  * comp_unit []
+  * comp_unit [x]
   * environment []
   * lex []
   * lex_tools []

@@ -8,7 +8,7 @@
 #include "zinc/input_unicode.h"
 #include "zinc/buffer_list.h"
 
-struct comp_unit {
+typedef struct Ake_comp_unit {
 	bool valid;
 	Ake_ast* root;
 	struct error_list el;
@@ -16,13 +16,13 @@ struct comp_unit {
 	struct symbol_table st;
     void* input_obj;
 	struct buffer path;
-	struct comp_unit* next;
-	struct comp_unit* prev;
-};
+	struct Ake_comp_unit* next;
+	struct Ake_comp_unit* prev;
+} Ake_comp_unit;
 
-AKELA_API void comp_unit_init(struct comp_unit* cu);
-AKELA_API void comp_unit_create(struct comp_unit** cu);
-AKELA_API void comp_unit_destroy(struct comp_unit* cu);
-AKELA_API bool comp_unit_compile(struct comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable);
+AKELA_API void Ake_comp_unit_init(struct Ake_comp_unit* cu);
+AKELA_API void Ake_comp_unit_create(struct Ake_comp_unit** cu);
+AKELA_API void Ake_comp_unit_destroy(struct Ake_comp_unit* cu);
+AKELA_API bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable);
 
 #endif

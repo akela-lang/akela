@@ -13,10 +13,10 @@ typedef struct Ake_comp_table {
 } Ake_comp_table;
 
 AKELA_API void Ake_comp_table_init(struct Ake_comp_table* ct);
-AKELA_API void Ake_comp_table_put(struct Ake_comp_table* ct, struct buffer* path, struct comp_unit* cu);
-AKELA_API struct comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct buffer* path);
-AKELA_API void Ake_comp_table_destroy_comp_unit(struct comp_unit* cu);
+AKELA_API void Ake_comp_table_put(struct Ake_comp_table* ct, struct buffer* path, struct Ake_comp_unit* cu);
+AKELA_API struct Ake_comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct buffer* path);
+AKELA_API void Ake_comp_table_destroy_comp_unit(struct Ake_comp_unit* cu);
 AKELA_API void Ake_comp_table_destroy(struct Ake_comp_table* ct);
-AKELA_API bool Ake_include_base(struct Ake_comp_table* ct, struct comp_unit* cu, struct comp_unit** base);
+AKELA_API bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struct Ake_comp_unit** base);
 
 #endif

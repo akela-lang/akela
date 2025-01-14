@@ -11,7 +11,7 @@ void test_parse_number_integer()
 {
 	test_name(__func__);
 	
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("32", &cu);
 	assert_no_errors(&cu.el);
@@ -41,7 +41,7 @@ void test_parse_number_float()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
 	/* allocate ps{} cu.root cu.root{} */
     parse_setup("5.0e0", &cu);
@@ -73,7 +73,7 @@ void test_parse_string()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("\"hello\"", &cu);
 	assert_no_errors(&cu.el);
@@ -109,7 +109,7 @@ void test_parse_boolean_true()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("true", &cu);
 	assert_no_errors(&cu.el);
@@ -138,7 +138,7 @@ void test_parse_boolean_false()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("false", &cu);
 	assert_no_errors(&cu.el);
@@ -167,7 +167,7 @@ void test_parse_id()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let x: i64; x", &cu);
 	assert_no_errors(&cu.el);
@@ -214,7 +214,7 @@ void test_parse_id2()
 	test_name(__func__);
 
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let _a23: i64; _a23", &cu);
 	assert_no_errors(&cu.el);
@@ -235,7 +235,7 @@ void test_parse_id3()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a2: i64; a2", &cu);
 	assert_no_errors(&cu.el);
@@ -257,7 +257,7 @@ void test_parse_id_greek()
     test_name(__func__);
 
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let αβγ: i64; αβγ", &cu);
     assert_no_errors(&cu.el);
@@ -277,7 +277,7 @@ void test_parse_id_greek()
 void test_parse_id_cyrillic()
 {
     test_name(__func__);
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let я: i64; я", &cu);
     expect_false(cu.valid, "parse_setup valid");
@@ -297,7 +297,7 @@ void test_parse_sign_negative()
 	test_name(__func__);
 
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("-30", &cu);
 	assert_no_errors(&cu.el);
@@ -335,7 +335,7 @@ void test_parse_sign_positive()
 	test_name(__func__);
 
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("+30", &cu);
 	assert_no_errors(&cu.el);
@@ -373,7 +373,7 @@ void test_parse_sign_error_no_value()
 	test_name(__func__);
 
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end\n-foo()", &cu);
 	expect_has_errors(&cu.el);
@@ -388,7 +388,7 @@ void test_parse_sign_expected_factor()
 	test_name(__func__);
 
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("-", &cu);
 	expect_has_errors(&cu.el);
@@ -402,7 +402,7 @@ void test_parse_not_id()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("let a: bool; !a", &cu);
 	assert_no_errors(&cu.el);
@@ -435,7 +435,7 @@ void test_parse_not_literal()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("!true", &cu);
 	assert_no_errors(&cu.el);
@@ -468,7 +468,7 @@ void test_parse_not_error()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
@@ -482,7 +482,7 @@ void test_parse_array_literal_integer()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("[1,2,3]", &cu);
 	assert_no_errors(&cu.el);
@@ -528,7 +528,7 @@ void test_parse_array_literal_float()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("[1.0,2.5,3.2]", &cu);
 	assert_no_errors(&cu.el);
@@ -571,7 +571,7 @@ void test_parse_array_literal_numeric()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("[1, 2.5, 3]", &cu);
 	expect_no_errors(&cu.el);
@@ -614,7 +614,7 @@ void test_parse_array_literal_mixed_error()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("[1,true,3]", &cu);
 	expect_has_errors(&cu.el);
@@ -628,7 +628,7 @@ void test_parse_array_literal_empty_error()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("[]", &cu);
 	expect_has_errors(&cu.el);
@@ -643,7 +643,7 @@ void test_parse_array_literal_error_right_square_bracket()
 	test_name(__func__);
 
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("[1,2", &cu);
 	expect_has_errors(&cu.el);
@@ -658,7 +658,7 @@ void test_parse_array_literal_error_expected_expr()
 	test_name(__func__);
 
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("[1,]", &cu);
 	expect_has_errors(&cu.el);
@@ -672,7 +672,7 @@ void test_parse_paren_num()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("(32)", &cu);
 	assert_no_errors(&cu.el);
@@ -696,7 +696,7 @@ void test_parse_paren_error_empty()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("()", &cu);
 	assert_has_errors(&cu.el);
@@ -716,7 +716,7 @@ void test_parse_paren_error_right_parenthesis()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("(1", &cu);
 	assert_has_errors(&cu.el);
@@ -730,7 +730,7 @@ void test_parse_paren_error_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; (foo())", &cu);
 	assert_has_errors(&cu.el);
@@ -745,7 +745,7 @@ void test_parse_not_error_expected_factor()
 	test_name(__func__);
 
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("!", &cu);
 	expect_has_errors(&cu.el);
@@ -759,7 +759,7 @@ void test_parse_not_error_no_value()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; !foo()", &cu);
 	expect_has_errors(&cu.el);
@@ -773,7 +773,7 @@ void test_parse_not_error_not_boolean()
 {
 	test_name(__func__);
 
-	struct comp_unit cu;
+	struct Ake_comp_unit cu;
 
     parse_setup("!1", &cu);
 	expect_has_errors(&cu.el);
@@ -787,7 +787,7 @@ void test_parse_factor_newline_let()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let\nx: i64", &cu);
     expect_true(cu.valid, "parse_setup valid");
@@ -800,7 +800,7 @@ void test_parse_factor_newline_let_assign()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let\nx: i64 =\n1", &cu);
     expect_true(cu.valid, "parse_setup valid");
@@ -813,7 +813,7 @@ void test_parse_factor_newline_not()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("!\ntrue", &cu);
     expect_true(cu.valid, "parse_setup valid");
@@ -839,7 +839,7 @@ void test_parse_factor_newline_sign()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("-\n1", &cu);
     expect_true(cu.valid, "parse_setup valid");
@@ -864,7 +864,7 @@ void test_parse_factor_newline_array_literal()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("[\n1,\n2,\n3\n]", &cu);
     expect_true(cu.valid, "parse_setup valid");
@@ -900,7 +900,7 @@ void test_parse_factor_newline_array_parenthesis()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("(\n1+2)", &cu);
     expect_true(cu.valid, "parse_setup valid");
@@ -924,7 +924,7 @@ void test_parse_factor_newline_array_parenthesis()
 void test_parse_factor_array_element_const()
 {
     test_name(__func__);
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let mut a: [4 const]i64 = [1, 2, 3, 4]\n"
                 "a[0]\n",
@@ -952,7 +952,7 @@ void test_parse_factor_array_element_const()
 void test_parse_factor_array_element_const_error()
 {
     test_name(__func__);
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let mut a: [4 const]i64 = [1, 2, 3, 4]\n"
                 "a[0] = 10\n",

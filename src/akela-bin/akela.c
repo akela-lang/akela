@@ -12,7 +12,7 @@
 int main(int argc, char** argv)
 {
     char* filename;
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: akela <filename>\n");
@@ -35,8 +35,8 @@ int main(int argc, char** argv)
     InputUnicodeFile* input = NULL;
     InputUnicodeFileCreate(&input, fp);
 
-    comp_unit_init(&cu);
-    comp_unit_compile(&cu, input, input->input_vtable);
+    Ake_comp_unit_init(&cu);
+    Ake_comp_unit_compile(&cu, input, input->input_vtable);
 
     if (!cu.valid) {
         struct error* e = cu.el.head;
@@ -72,7 +72,7 @@ int main(int argc, char** argv)
     }
     Ake_code_gen_result_destroy(&result);
 
-    comp_unit_destroy(&cu);
+    Ake_comp_unit_destroy(&cu);
 
     free(input);
     fclose(fp);

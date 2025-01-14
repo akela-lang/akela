@@ -12,8 +12,8 @@
 
 bool cg_setup(const char* text, Ake_code_gen_result* result)
 {
-    struct comp_unit* cu = NULL;
-    malloc_safe((void**)&cu, sizeof(struct comp_unit));
+    struct Ake_comp_unit* cu = NULL;
+    malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
 
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));
@@ -23,8 +23,8 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
 
     bool valid;
 
-    comp_unit_init(cu);
-    valid = comp_unit_compile(cu, input, input->input_vtable);
+    Ake_comp_unit_init(cu);
+    valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
     expect_true(valid, "valid");
 
     result->cu = cu;

@@ -7,7 +7,7 @@ void test_parse_function_no_inputs_no_outputs()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo() let x: i64; x+1; 5+4 end", &cu);
     assert_no_errors(&cu.el);
@@ -83,7 +83,7 @@ void test_parse_function_input()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(x: i64) x+1; 5+4 end", &cu);
     assert_no_errors(&cu.el);
@@ -170,7 +170,7 @@ void test_parse_function_multiple_inputs()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(x: i32, y: i32) x+1; 5+4 end", &cu);
     assert_no_errors(&cu.el);
@@ -254,7 +254,7 @@ void test_parse_function_three_inputs()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(x: i32, y: i32, z: i32)->i32 x+1; 5+4 end", &cu);
     assert_no_errors(&cu.el);
@@ -291,7 +291,7 @@ void test_parse_function_error_duplicate_variable_declarations()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(x: i64) let x: i64 end", &cu);
     expect_has_errors(&cu.el);
@@ -305,7 +305,7 @@ void test_parse_function_return_type_error()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(x: i64)->i64 true end", &cu);
     expect_has_errors(&cu.el);
@@ -319,7 +319,7 @@ void test_parse_function_error_expected_left_parenthesis()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo", &cu);
     expect_has_errors(&cu.el);
@@ -333,7 +333,7 @@ void test_parse_function_error_expected_right_parenthesis()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(", &cu);
     expect_has_errors(&cu.el);
@@ -347,7 +347,7 @@ void test_parse_function_error_duplicate_declaration()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; fn foo() end", &cu);
     expect_has_errors(&cu.el);
@@ -361,7 +361,7 @@ void test_parse_function_error_identifier_reserved()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn i64() end", &cu);
     expect_has_errors(&cu.el);
@@ -375,7 +375,7 @@ void test_parse_function_error_expected_end()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo()", &cu);
     expect_has_errors(&cu.el);
@@ -389,7 +389,7 @@ void test_parse_return_error_outside_of_function()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("return true", &cu);
     expect_has_errors(&cu.el);
@@ -406,7 +406,7 @@ void test_parse_return_error_type_does_not_match()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo()->i64 return true end", &cu);
     expect_has_errors(&cu.el);
@@ -423,7 +423,7 @@ void test_parse_stmts_newline_function()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn\nfoo\n(\na: i64,\nb: i64\n)->\ni64 1 end", &cu);
     expect_no_errors(&cu.el);
@@ -436,7 +436,7 @@ void test_parse_return()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo()->i64 return 1 end", &cu);
     expect_no_errors(&cu.el);
@@ -452,7 +452,7 @@ void test_parse_return_error_no_value()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn bar() end; fn foo()->i64 return bar() end", &cu);
     expect_has_errors(&cu.el);
@@ -469,7 +469,7 @@ void test_parse_anonymous_function()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let mut a: fn(i32, i32, i32)\n"
         "a = fn (x: i32,y: i32,z: i32)\n"
@@ -568,7 +568,7 @@ void test_parse_anonymous_function2()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup(
             "let mut a: fn (i32, i32, i32)->i32\n"
@@ -671,7 +671,7 @@ void test_parse_anonymous_function3()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: Function; a = fn(x: i64) let x: i64 = 1 end", &cu);
     expect_has_errors(&cu.el);
@@ -685,7 +685,7 @@ void test_parse_anonymous_function_assignment_error()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: fn(bool) = fn(x: i64) end", &cu);
     expect_has_errors(&cu.el);
@@ -700,7 +700,7 @@ void test_parse_anonymous_function_return_error()
     test_name(__func__);
 
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let f: fn()->i64 = fn()->i64 true end", &cu);
     expect_has_errors(&cu.el);
@@ -715,7 +715,7 @@ void test_parse_anonymous_function_expected_right_paren()
     test_name(__func__);
 
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn(", &cu);
     expect_has_errors(&cu.el);
@@ -729,7 +729,7 @@ void test_parse_anonymous_function_expected_end()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn()", &cu);
     expect_has_errors(&cu.el);
@@ -743,7 +743,7 @@ void test_parse_function_proto()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
     parse_setup("let foo: fn (a: i64)->i64\n"
                 "foo = fn (a: i64)->i64\n"
                 "  a + 1\n"
@@ -792,7 +792,7 @@ void test_parse_function_error_let_assign()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
     parse_setup("let foo: fn (a: bool)->i64 =\n"
                 "  fn (a: i64)->i64\n"
                 "    a + 1\n"
@@ -809,7 +809,7 @@ void test_parse_function_error_assign()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
     parse_setup("let a: i64\n"
                 "a = true\n",
                 &cu);
@@ -824,7 +824,7 @@ void test_parse_call()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo() 1 end; foo()", &cu);
     assert_no_errors(&cu.el);
@@ -875,7 +875,7 @@ void test_parse_call_return_type()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo()->i64 1 end; foo() + 2", &cu);
     assert_no_errors(&cu.el);
@@ -906,7 +906,7 @@ void test_parse_call_return_type_error()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo()->bool true end; foo() + 2", &cu);
     assert_has_errors(&cu.el);
@@ -920,7 +920,7 @@ void test_parse_call2()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(arg1: i64) arg1 end; foo(2)", &cu);
     assert_no_errors(&cu.el);
@@ -999,7 +999,7 @@ void test_parse_call3()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(arg1: i64, arg2: i64)->i64 1 end; let x: i64; let y: i64; foo(x,y)", &cu);
     assert_no_errors(&cu.el);
@@ -1078,7 +1078,7 @@ void test_parse_call4()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup(
             "fn foo(arg0: i64, arg1: i64, arg2: i64)->i64 100 end; let x: i64; let y: i64; foo(x, y, 1)",
@@ -1188,7 +1188,7 @@ void test_parse_call_missing_arguments()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64, b: i64) end; foo(1)", &cu);
     expect_has_errors(&cu.el);
@@ -1202,7 +1202,7 @@ void test_parse_call_too_many_arguments()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64) end; foo(1, 2)", &cu);
     expect_has_errors(&cu.el);
@@ -1216,7 +1216,7 @@ void test_parse_call_type_error()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(a: i64) end; foo(true)", &cu);
     expect_has_errors(&cu.el);
@@ -1230,7 +1230,7 @@ void test_parse_call_anonymous_function_type_error()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let foo: fn (a: i64) = fn (a: i64) end; foo(true)", &cu);
     expect_has_errors(&cu.el);
@@ -1244,7 +1244,7 @@ void test_parse_call_error_right_paren()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo(", &cu);
     expect_has_errors(&cu.el);
@@ -1258,7 +1258,7 @@ void test_parse_call_error_function_not_declared()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("foo()", &cu);
     expect_has_errors(&cu.el);
@@ -1272,7 +1272,7 @@ void test_parse_call_error_not_function()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let foo: i64; foo()", &cu);
     expect_has_errors(&cu.el);
@@ -1286,7 +1286,7 @@ void test_parse_call_error_not_enough_arguments()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(x: i64) end; foo()", &cu);
     expect_has_errors(&cu.el);
@@ -1300,7 +1300,7 @@ void test_parse_call_error_too_many_arguments()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo(1)", &cu);
     expect_has_errors(&cu.el);
@@ -1314,7 +1314,7 @@ void test_parse_call_error_expected_expression()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn foo(x: i64) end; foo(1,)", &cu);
     expect_has_errors(&cu.el);
@@ -1328,7 +1328,7 @@ void test_parse_factor_newline_anonymous_function()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("fn\n(\na: i64,\nb: i64,\nc: i64\n)->\ni64\na+b+c\nend", &cu);
     expect_true(cu.valid, "parse_setup valid");
@@ -1341,7 +1341,7 @@ void test_parse_factor_newline_anonymous_function_let()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup(
             "let foo: fn (a: i64, b: i64, c: i64)->i64 = fn\n"
@@ -1363,7 +1363,7 @@ void test_parse_function_error_use_fn()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: Function = fn(x: i64) end", &cu);
     expect_has_errors(&cu.el);
@@ -1379,7 +1379,7 @@ void test_parse_function_error_require_params_name()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: fn(i64) = fn(i64: i64) end", &cu);
     expect_has_errors(&cu.el);
@@ -1393,7 +1393,7 @@ void test_parse_function_error_input_type_non_numeric()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: fn(i64) = fn(x: bool) end", &cu);
     expect_has_errors(&cu.el);
@@ -1407,7 +1407,7 @@ void test_parse_function_error_output_type_non_numeric()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: fn()->i64 = fn()->bool true end", &cu);
     expect_has_errors(&cu.el);
@@ -1421,7 +1421,7 @@ void test_parse_function_error_input_type_numeric()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: fn(i64) = fn(x: i32) end", &cu);
     expect_has_errors(&cu.el);
@@ -1435,7 +1435,7 @@ void test_parse_function_error_output_type_numeric()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let a: fn()->i64 = fn()->i32 1 end", &cu);
     expect_has_errors(&cu.el);

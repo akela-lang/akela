@@ -10,7 +10,7 @@ void Ake_code_gen_result_init(Ake_code_gen_result* result)
 
 void Ake_code_gen_result_destroy(Ake_code_gen_result* result)
 {
-    comp_unit_destroy(result->cu);
+    Ake_comp_unit_destroy(result->cu);
     free(result->cu);
     buffer_destroy(&result->value);
     buffer_destroy(&result->text);

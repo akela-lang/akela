@@ -10,19 +10,19 @@ void Ake_comp_table_init(struct Ake_comp_table* ct)
 	hash_table_init(&ct->ht, COMP_TABLE_HASH_TABLE_SIZE);
 }
 
-void Ake_comp_table_put(struct Ake_comp_table* ct, struct buffer* path, struct comp_unit* cu)
+void Ake_comp_table_put(struct Ake_comp_table* ct, struct buffer* path, struct Ake_comp_unit* cu)
 {
 	hash_table_add(&ct->ht, path, (void*)cu);
 }
 
-struct comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct buffer* path)
+struct Ake_comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct buffer* path)
 {
-	return (struct comp_unit*)hash_table_get(&ct->ht, path);
+	return (struct Ake_comp_unit*)hash_table_get(&ct->ht, path);
 }
 
-void Ake_comp_table_destroy_comp_unit(struct comp_unit* cu)
+void Ake_comp_table_destroy_comp_unit(struct Ake_comp_unit* cu)
 {
-	comp_unit_destroy(cu);
+	Ake_comp_unit_destroy(cu);
 	free(cu);
 }
 
@@ -32,7 +32,7 @@ void Ake_comp_table_destroy(struct Ake_comp_table* ct)
 	hash_table_destroy(&ct->ht);
 }
 
-bool Ake_include_base(struct Ake_comp_table* ct, struct comp_unit* cu, struct comp_unit** cu_base)
+bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struct Ake_comp_unit** cu_base)
 {
 	bool valid = true;
     enum result r;
@@ -76,11 +76,11 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct comp_unit* cu, struct co
     InputUnicodeFile* input = NULL;
     InputUnicodeFileCreate(&input, fp);
 
-	malloc_safe((void**)cu_base, sizeof(struct comp_unit));
-	comp_unit_init(*cu_base);
+	malloc_safe((void**)cu_base, sizeof(struct Ake_comp_unit));
+	Ake_comp_unit_init(*cu_base);
 	Ake_comp_table_put(ct, &math_path, *cu_base);
 
-	comp_unit_compile(*cu_base, input, input->input_vtable);
+	Ake_comp_unit_compile(*cu_base, input, input->input_vtable);
 
 	transfer_global_symbols(&(*cu_base)->st, &cu->st);
 

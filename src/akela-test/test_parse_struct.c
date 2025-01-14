@@ -10,7 +10,7 @@ void test_parse_struct_field_assign()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
     parse_setup("struct Person\n"
                 "  firstName: [100 const]u8\n"
                 "  lastName: [100 const]u8\n"
@@ -129,7 +129,7 @@ void test_parse_struct_let_literal()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
     parse_setup("struct Person\n"
         "  first_name: [100 const]u8\n"
         "  last_name: [100 const]u8\n"
@@ -224,7 +224,7 @@ void test_parse_struct_error_invalid_field()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
     parse_setup("struct Person\n"
                 "  first_name: [100 const]u8\n"
                 "  last_name: [100 const]u8\n"
@@ -248,7 +248,7 @@ void test_parse_struct_error_field_missing()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
     parse_setup("struct Person\n"
                 "  first_name: [100 const]u8\n"
                 "  last_name: [100 const]u8\n"
@@ -270,7 +270,7 @@ void test_parse_struct_error_dot_invalid_field()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup(
             "struct Person\n"
@@ -292,7 +292,7 @@ void test_parse_struct_error_expected_identifier()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("struct end", &cu);
     expect_has_errors(&cu.el);
@@ -306,7 +306,7 @@ void test_parse_struct_error_expected_end()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("struct Person", &cu);
     expect_has_errors(&cu.el);
@@ -320,7 +320,7 @@ void test_parse_struct_error_expected_end2()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("struct Person x: i64", &cu);
     expect_has_errors(&cu.el);
@@ -334,7 +334,7 @@ void test_parse_struct_error_duplicate()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup("let Person: i64 = 1; struct Person end", &cu);
     expect_has_errors(&cu.el);
@@ -348,7 +348,7 @@ void test_parse_struct_impl()
 {
     test_name(__func__);
 
-    struct comp_unit cu;
+    struct Ake_comp_unit cu;
 
     parse_setup(
             "extern pow(f64, f64)->f64\n"
