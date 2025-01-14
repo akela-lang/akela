@@ -3,21 +3,21 @@
 
 #include "ast.h"
 
-typedef enum Struct_element_type {
-    Struct_element_type_none,
-    Struct_element_type_field,
-    Struct_element_type_method,
-} Struct_element_type;
+typedef enum Ake_struct_element_type {
+    Ake_struct_element_type_none,
+    Ake_struct_element_type_field,
+    Ake_struct_element_type_method,
+} Ake_struct_element_type;
 
-typedef struct Struct_element {
-    Struct_element_type type;
+typedef struct Ake_struct_element {
+    Ake_struct_element_type type;
     Ake_ast* tu;
     Ake_ast* func;
     size_t index;
-} Struct_element;
+} Ake_struct_element;
 
-void Struct_element_init(Struct_element* se);
-void Struct_element_create(Struct_element** se);
-void Struct_element_destroy(Struct_element* se);
+void Ake_struct_element_init(Ake_struct_element* se);
+void Ake_struct_element_create(Ake_struct_element** se);
+void Ake_struct_element_destroy(Ake_struct_element* se);
 
 #endif

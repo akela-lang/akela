@@ -28,7 +28,7 @@ void type_def_destroy(struct type_def* n)
 	if (n) {
 		buffer_destroy(&n->name);
         Ake_ast_destroy(n->composite);
-        hash_table_map(&n->struct_impl, (hash_table_func)Struct_element_destroy);
+        hash_table_map(&n->struct_impl, (hash_table_func)Ake_struct_element_destroy);
         hash_table_destroy(&n->struct_impl);
         hash_table_map(&n->type_impl, (hash_table_func)Ake_ast_destroy);
         hash_table_destroy(&n->type_impl);
