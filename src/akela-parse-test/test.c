@@ -21,9 +21,9 @@
 #define NAME "akela-parse-test"
 
 bool Parse_test_validate_directory(char* path);
-void Parse_test_append_path(struct buffer* bf, char* path);
+void Parse_test_append_path(struct Zinc_string* bf, char* path);
 void Parse_test_get_files(char* dir_name);
-void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct buffer* file_name);
+void Parse_test_test_case(struct Zinc_string* dir_path, struct Zinc_string* path, struct Zinc_string* file_name);
 void Apt_run(Cent_comp_unit* cu);
 void Apt_run_test(Cent_value* test_value);
 
@@ -49,12 +49,12 @@ bool Parse_test_validate_directory(char* path)
     struct stat sb;
     if (stat(path, &sb) == -1) {
         perror(path);
-        struct buffer cwd;
-        buffer_init(&cwd);
+        struct Zinc_string cwd;
+        Zinc_string_init(&cwd);
         Zinc_get_cwd(&cwd);
-        buffer_finish(&cwd);
+        Zinc_string_finish(&cwd);
         fprintf(stderr, "current working directory: %s\n", cwd.buf);
-        buffer_destroy(&cwd);
+        Zinc_string_destroy(&cwd);
         return false;
     }
 
@@ -68,49 +68,49 @@ bool Parse_test_validate_directory(char* path)
     return true;
 }
 
-void Parse_test_append_path(struct buffer* bf, char* path)
+void Parse_test_append_path(struct Zinc_string* bf, char* path)
 {
-    buffer_add_char(bf, '/');
-    buffer_add_str(bf, path);
+    Zinc_string_add_char(bf, '/');
+    Zinc_string_add_str(bf, path);
 }
 
 void Parse_test_get_files(char* dir_name)
 {
-    struct buffer dir_path;
-    buffer_init(&dir_path);
-    buffer_copy_str(&dir_path, dir_name);
+    struct Zinc_string dir_path;
+    Zinc_string_init(&dir_path);
+    Zinc_string_add_str(&dir_path, dir_name);
     DIR* d;
     struct dirent* dir;
     d = opendir(dir_name);
     if (d) {
         while ((dir = readdir(d)) != NULL) {
             if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
-                struct buffer path;
-                buffer_init(&path);
-                buffer_add_str(&path, dir_name);
+                struct Zinc_string path;
+                Zinc_string_init(&path);
+                Zinc_string_add_str(&path, dir_name);
                 Parse_test_append_path(&path, dir->d_name);
-                buffer_finish(&path);
+                Zinc_string_finish(&path);
 
-                struct buffer file_name;
-                buffer_init(&file_name);
-                buffer_copy_str(&file_name, dir->d_name);
-                buffer_finish(&file_name);
+                struct Zinc_string file_name;
+                Zinc_string_init(&file_name);
+                Zinc_string_add_str(&file_name, dir->d_name);
+                Zinc_string_finish(&file_name);
 
                 struct stat sb;
                 if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
                     Parse_test_test_case(&dir_path, &path, &file_name);
                 }
 
-                buffer_destroy(&path);
-                buffer_destroy(&file_name);
+                Zinc_string_destroy(&path);
+                Zinc_string_destroy(&file_name);
             }
         }
     }
 
-    buffer_destroy(&dir_path);
+    Zinc_string_destroy(&dir_path);
 }
 
-void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct buffer* file_name)
+void Parse_test_test_case(struct Zinc_string* dir_path, struct Zinc_string* path, struct Zinc_string* file_name)
 {
     printf("%s\n", path->buf);
 
@@ -149,7 +149,7 @@ void Parse_test_test_case(struct buffer* dir_path, struct buffer* path, struct b
     if (cu->errors.head) {
         struct error* e = cu->errors.head;
         while (e) {
-            buffer_finish(&e->message);
+            Zinc_string_finish(&e->message);
             printf("(%zu,%zu) %s\n", e->loc.line, e->loc.col, e->message.buf);
             e = e->next;
         }
@@ -169,7 +169,7 @@ void Apt_run(Cent_comp_unit* cu)
     if (mute && mute->data.boolean) return;
 
     Cent_value* name = Cent_value_get_str(test_suite_value, "name");
-    buffer_finish(&name->data.string);
+    Zinc_string_finish(&name->data.string);
     printf("%s\n", name->data.string.buf);
 
     Cent_value* test_value = test_suite_value->data.dag.head;
@@ -182,12 +182,12 @@ void Apt_run(Cent_comp_unit* cu)
 void Apt_run_test(Cent_value* test_value)
 {
     Cent_value* name = Cent_value_get_str(test_value, "name");
-    buffer_finish(&name->data.string);
+    Zinc_string_finish(&name->data.string);
     printf("%s\n", name->data.string.buf);
     Cent_value* source = Cent_value_get_str(test_value, "source");
     Cent_value* line = source->data.dag.head;
     while (line) {
-        buffer_finish(&line->data.string);
+        Zinc_string_finish(&line->data.string);
         printf("%s", line->data.string.buf);
         line = line->next;
     }

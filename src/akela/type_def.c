@@ -14,7 +14,7 @@ void Ake_type_def_create(struct Ake_type_def** n)
 void Ake_type_def_init(struct Ake_type_def* n)
 {
 	n->type = Ake_type_none;
-	buffer_init(&n->name);
+	Zinc_string_init(&n->name);
 	n->is_signed = false;
 	n->bit_count = 0;
 	n->composite = NULL;
@@ -26,7 +26,7 @@ void Ake_type_def_init(struct Ake_type_def* n)
 void Ake_type_def_destroy(struct Ake_type_def* n)
 {
 	if (n) {
-		buffer_destroy(&n->name);
+		Zinc_string_destroy(&n->name);
         Ake_ast_destroy(n->composite);
         hash_table_map(&n->struct_impl, (hash_table_func)Ake_struct_element_destroy);
         hash_table_destroy(&n->struct_impl);
@@ -44,7 +44,7 @@ struct Ake_type_def* Ake_type_def_copy(struct Ake_type_def* n)
 	if (n) {
 		Ake_type_def_create(&copy);
 		copy->type = n->type;
-		buffer_copy(&n->name, &copy->name);
+		Zinc_string_copy(&n->name, &copy->name);
 		copy->is_signed = n->is_signed;
 		copy->bit_count = n->bit_count;
 	}

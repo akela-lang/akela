@@ -168,7 +168,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
         /* check and save symbol */
         struct Ake_symbol *search = Ake_environment_get_local(ps->st->top, &id_node->value);
         if (search) {
-            buffer_finish(&id_node->value);
+            Zinc_string_finish(&id_node->value);
             error_list_set(
                 ps->el,
                 &id_node->loc,
@@ -178,7 +178,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
         } else {
             struct Ake_symbol *sym = Ake_environment_get(ps->st->top, &id_node->value);
             if (sym && sym->td) {
-                buffer_finish(&id_node->value);
+                Zinc_string_finish(&id_node->value);
                 error_list_set(
                     ps->el,
                     &id_node->loc,
@@ -530,7 +530,7 @@ Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
     Ake_ast_create(&id_node);
     id_node->type = Ake_ast_type_id;
     if (id) {
-        buffer_copy(&id->value, &id_node->value);
+        Zinc_string_copy(&id->value, &id_node->value);
     }
     Ake_ast_add(n, id_node);
     Ake_ast_add(n, a);
@@ -538,16 +538,16 @@ Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
 	if (n->type != Ake_ast_type_error) {
 		struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id->value);
 		if (sym) {
-			buffer_finish(&id->value);
+			Zinc_string_finish(&id->value);
 			error_list_set(ps->el, &id->loc, "variable already used: %s", id->value.buf);
             /* test case: test_parse_module_duplicate_declaration */
             n->type = Ake_ast_type_error;
 		} else {
-			struct buffer bf;
-			buffer_init(&bf);
-			buffer_copy_str(&bf, "Module");
+			struct Zinc_string bf;
+			Zinc_string_init(&bf);
+			Zinc_string_add_str(&bf, "Module");
 			sym = Ake_environment_get(ps->st->top, &bf);
-			buffer_destroy(&bf);
+			Zinc_string_destroy(&bf);
 			assert(sym);
 			assert(sym->td);
 
@@ -591,7 +591,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
         n->type = Ake_ast_type_error;
     }
     if (id) {
-        buffer_copy(&id->value, &n->value);
+        Zinc_string_copy(&id->value, &n->value);
     }
 
 	Ake_ast* a = NULL;
@@ -632,7 +632,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 	if (n->type != Ake_ast_type_error) {
 		struct Ake_symbol* search = Ake_environment_get_local(ps->st->top, &id->value);
 		if (search) {
-			buffer_finish(&id->value);
+			Zinc_string_finish(&id->value);
 			error_list_set(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
             /* test case: test_parse_struct_error_duplicate */
             n->type = Ake_ast_type_error;
@@ -642,7 +642,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 			malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 			Ake_type_def_init(td);
 			td->type = Ake_type_struct;
-			buffer_copy(&id->value, &td->name);
+			Zinc_string_copy(&id->value, &td->name);
 			td->composite = tu;
 
 			struct Ake_symbol* sym = NULL;
@@ -886,7 +886,7 @@ Ake_ast* Ake_parse_let_lseq(struct Ake_parse_state* ps)
     Ake_ast_create(&a);
     a->type = Ake_ast_type_id;
     a->is_mut = is_mut;
-    buffer_copy(&id->value, &a->value);
+    Zinc_string_copy(&id->value, &a->value);
     Ake_ast_add(n, a);
     a->loc = id->loc;
 
@@ -917,7 +917,7 @@ Ake_ast* Ake_parse_let_lseq(struct Ake_parse_state* ps)
         a = NULL;
         Ake_ast_create(&a);
         a->type = Ake_ast_type_id;
-        buffer_copy(&id->value, &a->value);
+        Zinc_string_copy(&id->value, &a->value);
         Ake_ast_add(n, a);
         a->loc = id->loc;
 

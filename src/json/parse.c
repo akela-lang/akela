@@ -127,7 +127,7 @@ Json_dom* Json_parse_string(Json_parse_data* pd)
     if (!Json_match(pd, Json_token_type_string, &s, dom)) {
         assert(false && "not possible");
     }
-    buffer_copy(&s->value, &dom->value.string);
+    Zinc_string_copy(&s->value, &dom->value.string);
     Json_token_destroy(s);
     free(s);
 

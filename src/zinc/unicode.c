@@ -96,14 +96,14 @@ char num4_to_hex_char(u_int8_t cp)
     return '0';
 }
 
-int num32_to_hex_str(u_int32_t cp, struct buffer* bf)
+int num32_to_hex_str(u_int32_t cp, struct Zinc_string* bf)
 {
-    struct buffer temp;
-    buffer_init(&temp);
+    struct Zinc_string temp;
+    Zinc_string_init(&temp);
     int len = 0;
 
     while (cp) {
-        buffer_add_char(&temp, num4_to_hex_char(cp & 0xf));
+        Zinc_string_add_char(&temp, num4_to_hex_char(cp & 0xf));
         cp = cp >> 4;
         len++;
     }
@@ -111,13 +111,13 @@ int num32_to_hex_str(u_int32_t cp, struct buffer* bf)
     if (temp.size > 0) {
         size_t i = temp.size - 1;
         while (true) {
-            buffer_add_char(bf, temp.buf[i]);
+            Zinc_string_add_char(bf, temp.buf[i]);
             if (i == 0) break;
             i--;
         }
     }
 
-    buffer_destroy(&temp);
+    Zinc_string_destroy(&temp);
 
     return len;
 }

@@ -235,8 +235,8 @@ void test_match_tools_clone()
     Cob_stack_push(mts, mt2);
     Cob_stack_push(mts, mt3);
 
-    struct buffer* bf = NULL;
-    buffer_create(&bf);
+    struct Zinc_string* bf = NULL;
+    Zinc_string_create(&bf);
 
     struct hash_table ht;
     hash_table_init(&ht, 32);
@@ -263,7 +263,7 @@ void test_match_tools_clone()
 
     Cob_stack_destroy(mts);
     Cob_stack_destroy(new_mts);
-    buffer_destroy(bf);
+    Zinc_string_destroy(bf);
     free(bf);
     hash_table_destroy(&ht);
 }
@@ -272,9 +272,9 @@ void test_match_tools_stack_node_clone()
 {
     test_name(__func__);
 
-    struct buffer* bf = NULL;
-    buffer_create(&bf);
-    buffer_copy_str(bf, "abc");
+    struct Zinc_string* bf = NULL;
+    Zinc_string_create(&bf);
+    Zinc_string_add_str(bf, "abc");
 
     Cob_stack_node* sn0 = NULL;
     Cob_stack_node_create(&sn0);
@@ -282,7 +282,7 @@ void test_match_tools_stack_node_clone()
 
     Cob_stack_node* sn1 = Cob_stack_node_clone(sn0);
 
-    struct buffer* bf2 = Hash_map_size_t_get(&sn0->groups, 0);
+    struct Zinc_string* bf2 = Hash_map_size_t_get(&sn0->groups, 0);
     expect_ptr(bf2, "ptr bf2");
     expect_str(bf2, "abc", "str bf2");
 

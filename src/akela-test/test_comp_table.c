@@ -25,7 +25,7 @@ void test_comp_table_compile()
 	struct Ake_comp_unit* cu = NULL;
 	malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu);
-	array2buffer("|main|", &cu->path);
+	Zinc_string_add_str2("|main|", &cu->path);
 
 	Ake_comp_table_put(&ct, &cu->path, cu);
 
@@ -66,7 +66,7 @@ void test_comp_table_include()
 	struct Ake_comp_unit* cu_base = NULL;
 	malloc_safe((void**)&cu_base, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu_base);
-	array2buffer("|base|", &cu_base->path);
+	Zinc_string_add_str2("|base|", &cu_base->path);
 	Ake_comp_table_put(&ct, &cu_base->path, cu_base);
 
 	bool valid_base = Ake_comp_unit_compile(cu_base, base_input, base_input->input_vtable);
@@ -87,7 +87,7 @@ void test_comp_table_include()
 	struct Ake_comp_unit* cu_main = NULL;
 	malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu_main);
-	array2buffer("|main|", &cu_main->path);
+	Zinc_string_add_str2("|main|", &cu_main->path);
 	Ake_comp_table_put(&ct, &cu_main->path, cu_main);
 
 	Ake_transfer_global_symbols(&cu_base->st, &cu_main->st);
@@ -147,7 +147,7 @@ void test_comp_table_include_base()
 	struct Ake_comp_unit* cu_main = NULL;
 	malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu_main);
-	array2buffer("|main|", &cu_main->path);
+	Zinc_string_add_str2("|main|", &cu_main->path);
 	Ake_comp_table_put(&ct, &cu_main->path, cu_main);
 
 	struct Ake_comp_unit* cu_base = NULL;

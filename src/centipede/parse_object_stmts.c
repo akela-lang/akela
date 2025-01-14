@@ -89,7 +89,7 @@ Cent_ast* Cent_parse_property(Cent_parse_data* pd)
         Cent_ast_create(&a);
         a->type = Cent_ast_type_id;
         if (id) {
-            buffer_copy(&id->value, &a->text);
+            Zinc_string_copy(&id->value, &a->text);
             Cent_token_destroy(id);
             free(id);
         }

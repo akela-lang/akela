@@ -9,7 +9,7 @@ namespace Akela_llvm {
     Value* Handle_struct(Jit_data* jd, Ake_ast* n)
     {
         std::vector<Type*> type_list;
-        buffer_finish(&n->value);
+        Zinc_string_finish(&n->value);
         struct Ake_ast* element_dec = n->head;
         while (element_dec) {
             Ake_ast* element_type_node = Ast_node_get(element_dec, 1);
@@ -50,7 +50,7 @@ namespace Akela_llvm {
             dec_id = Ast_node_get(dec, 0);
             dec_type = Ast_node_get(dec, 1);
             dec_tu = dec_type->tu;
-            if (buffer_compare(&dec_id->value, &right->value)) {
+            if (Zinc_string_compare(&dec_id->value, &right->value)) {
                 found = true;
                 break;
             }
@@ -66,7 +66,7 @@ namespace Akela_llvm {
             return gep_value;
         } else {
             Type* dot_type = Get_type_pointer(jd, n->tu);
-            buffer_finish(&right->value);
+            Zinc_string_finish(&right->value);
             return jd->Builder->CreateLoad(dot_type, gep_value, right->value.buf);
         }
     }
@@ -78,25 +78,25 @@ namespace Akela_llvm {
         assert(n->tu->td->composite_type);
         assert(n->tu->td->composite);
         auto t = (StructType*)n->tu->td->composite_type;
-        struct buffer bf;
-        buffer_init(&bf);
-        buffer_copy(&n->tu->td->name, &bf);
-        buffer_copy_str(&bf, ".tmp");
-        buffer_finish(&bf);
+        struct Zinc_string bf;
+        Zinc_string_init(&bf);
+        Zinc_string_copy(&n->tu->td->name, &bf);
+        Zinc_string_add_str(&bf, ".tmp");
+        Zinc_string_finish(&bf);
         Value* value;
         if (n->tu->lhs_allocation) {
             value = (Value*)n->tu->lhs_allocation;
         } else {
             value = jd->Builder->CreateAlloca(t, nullptr, bf.buf);
         }
-        buffer_destroy(&bf);
+        Zinc_string_destroy(&bf);
         size_t i = 0;
         Ake_ast* field = n->head;
         while (field) {
             Ake_ast* id = Ast_node_get(field, 0);
             Ake_ast* expr = Ast_node_get(field, 1);
 
-            buffer_finish(&id->value);
+            Zinc_string_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
             if (expr->tu->td->type == Ake_type_struct) {
                 Handle_struct_literal_element(jd, gep_value, expr);
@@ -125,7 +125,7 @@ namespace Akela_llvm {
             Ake_ast* id = Ast_node_get(field, 0);
             Ake_ast* expr = Ast_node_get(field, 1);
 
-            buffer_finish(&id->value);
+            Zinc_string_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->value.buf);
             if (expr->tu->td->type == Ake_type_struct) {
                 Handle_struct_literal_element(jd, gep_value, expr);

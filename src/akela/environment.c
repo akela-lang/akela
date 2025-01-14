@@ -16,13 +16,13 @@ void Ake_environment_create(struct Ake_environment** env, struct Ake_environment
     Ake_environment_init(*env, p);
 }
 
-void Ake_environment_put(struct Ake_environment* env, struct buffer* value, struct Ake_symbol* sym)
+void Ake_environment_put(struct Ake_environment* env, Zinc_string* value, struct Ake_symbol* sym)
 {
     assert(sym->type != Ake_symbol_type_none);
     hash_table_add(&env->ht, value, sym);
 }
 
-struct Ake_symbol* Ake_environment_get(struct Ake_environment* env, struct buffer* value)
+struct Ake_symbol* Ake_environment_get(struct Ake_environment* env, Zinc_string* value)
 {
     for (struct Ake_environment* p = env; p; p = p->prev) {
         struct Ake_symbol* found = (struct Ake_symbol*)hash_table_get(&p->ht, value);
@@ -34,7 +34,7 @@ struct Ake_symbol* Ake_environment_get(struct Ake_environment* env, struct buffe
     return NULL;
 }
 
-struct Ake_symbol* Ake_environment_get_local(struct Ake_environment* env, struct buffer* value)
+struct Ake_symbol* Ake_environment_get_local(struct Ake_environment* env, Zinc_string* value)
 {
     return (struct Ake_symbol*)hash_table_get(&env->ht, value);
 }

@@ -8,7 +8,7 @@
 
 void Cent_value_init(Cent_value *value)
 {
-    buffer_init(&value->name);
+    Zinc_string_init(&value->name);
     value->type = Cent_value_type_none;
     value->number_type = Cent_number_type_none;
     value->has_error = false;
@@ -27,7 +27,7 @@ void Cent_value_create(Cent_value **value)
 void Cent_data_init(Cent_data *data, Cent_value_type type)
 {
     if (type == Cent_value_type_string) {
-        buffer_init(&data->string);
+        Zinc_string_init(&data->string);
     } else if (type == Cent_value_type_enum) {
         data->enumeration.enum_type = NULL;
         data->enumeration.enum_value = NULL;
@@ -47,7 +47,7 @@ void Cent_data_init(Cent_data *data, Cent_value_type type)
 void Cent_data_destroy(Cent_data *data, Cent_value_type type)
 {
     if (type == Cent_value_type_string) {
-        buffer_destroy(&data->string);
+        Zinc_string_destroy(&data->string);
     } else if (type == Cent_value_type_list) {
         Cent_value* p = data->list.head;
         while (p) {
@@ -113,7 +113,7 @@ void Cent_value_destroy(Cent_value *value)
             }
         }
 
-        buffer_destroy(&value->name);
+        Zinc_string_destroy(&value->name);
         Cent_data_destroy(&value->data, value->type);
 
         if (Cent_value_hash_map) {
@@ -142,7 +142,7 @@ void Cent_value_free(Cent_value *value)
     }
 }
 
-void Cent_value_set(Cent_value* value, struct buffer* name, Cent_value* value2)
+void Cent_value_set(Cent_value* value, struct Zinc_string* name, Cent_value* value2)
 {
     assert(value->type == Cent_value_type_dag);
     hash_table_add(&value->data.dag.properties, name, value2);
@@ -156,7 +156,7 @@ void Cent_value_set_str(Cent_value* value, char* name, Cent_value* value2)
     value2->parent = value;
 }
 
-Cent_value* Cent_value_get(Cent_value* value, struct buffer* name)
+Cent_value* Cent_value_get(Cent_value* value, struct Zinc_string* name)
 {
     assert(value->type == Cent_value_type_dag);
     return hash_table_get(&value->data.dag.properties, name);

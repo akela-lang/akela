@@ -11,8 +11,8 @@ void test_os_unix_get_temp_file()
 {
     test_name(__func__);
     FILE* fp;
-    struct buffer name;
-    buffer_init(&name);
+    struct Zinc_string name;
+    Zinc_string_init(&name);
 
     enum result r = get_temp_file(&fp, &name);
     assert_ok(r, "get_temp_file");
@@ -45,7 +45,7 @@ void test_os_unix_get_temp_file()
 
     free(out);
 
-    buffer_destroy(&name);
+    Zinc_string_destroy(&name);
 }
 
 void test_os_unix_get_user_home_directory()
@@ -55,12 +55,12 @@ void test_os_unix_get_user_home_directory()
     const char* temp = getenv("HOME");
     setenv("HOME", "/home/abc", 1);
 
-    struct buffer dir;
-    buffer_init(&dir);
+    struct Zinc_string dir;
+    Zinc_string_init(&dir);
     enum result r = get_user_home_directory(&dir);
     assert_ok(r, "get_user_home_directory");
     expect_str(&dir, "/home/abc", "/home/abc");
-    buffer_destroy(&dir);
+    Zinc_string_destroy(&dir);
 
     setenv("HOME", temp, 1);
 }
@@ -69,44 +69,44 @@ void test_os_unix_path_join()
 {
     test_name(__func__);
 
-    struct buffer a;
-    struct buffer b;
-    struct buffer c;
+    struct Zinc_string a;
+    struct Zinc_string b;
+    struct Zinc_string c;
 
-    buffer_init(&a);
-    buffer_init(&b);
-    buffer_init(&c);
+    Zinc_string_init(&a);
+    Zinc_string_init(&b);
+    Zinc_string_init(&c);
 
-    buffer_copy_str(&a, "/home");
-    buffer_copy_str(&b, "alf");
+    Zinc_string_add_str(&a, "/home");
+    Zinc_string_add_str(&b, "alf");
 
     path_join(&a, &b, &c);
 
     expect_str(&c, "/home/alf", "/home/alf");
 
-    buffer_destroy(&a);
-    buffer_destroy(&b);
-    buffer_destroy(&c);
+    Zinc_string_destroy(&a);
+    Zinc_string_destroy(&b);
+    Zinc_string_destroy(&c);
 }
 
 void test_os_unix_get_user_app_directory()
 {
     test_name(__func__);
 
-    struct buffer app_name;
-    buffer_init(&app_name);
-    buffer_copy_str(&app_name, "stone");
+    struct Zinc_string app_name;
+    Zinc_string_init(&app_name);
+    Zinc_string_add_str(&app_name, "stone");
 
-    struct buffer dir;
-    buffer_init(&dir);
+    struct Zinc_string dir;
+    Zinc_string_init(&dir);
 
     const char* temp = getenv("HOME");
     setenv("HOME", "/home/abc", 1);
     get_user_app_directory(&app_name, &dir);
     expect_str(&dir, "/home/abc/.app/stone", "/home/abc/.app/stone");
 
-    buffer_destroy(&app_name);
-    buffer_destroy(&dir);
+    Zinc_string_destroy(&app_name);
+    Zinc_string_destroy(&dir);
 
     setenv("HOME", temp, 1);
 }
@@ -115,16 +115,16 @@ void test_os_unix_make_directory()
 {
     test_name(__func__);
 
-    struct buffer dir;
-    buffer_init(&dir);
-    buffer_copy_str(&dir, "/tmp/apple/bear/creek/doe/eddy");
-    buffer_finish(&dir);
+    struct Zinc_string dir;
+    Zinc_string_init(&dir);
+    Zinc_string_add_str(&dir, "/tmp/apple/bear/creek/doe/eddy");
+    Zinc_string_finish(&dir);
     enum result r = make_directory(&dir);
     assert_ok(r, "make directory");
     DIR* dp = opendir(dir.buf);
     assert_ptr(dp, "ptr dp");
     closedir(dp);
-    buffer_destroy(&dir);
+    Zinc_string_destroy(&dir);
     system("cd /tmp && rmdir -p apple/bear/creek/doe/eddy");
 }
 
@@ -135,9 +135,9 @@ void test_os_unix_delete_directory()
     system("mkdir -p /tmp/one/two");
     system("touch /tmp/one/two/file");
 
-    struct buffer dir;
-    buffer_init(&dir);
-    buffer_copy_str(&dir, "/tmp/one");
+    struct Zinc_string dir;
+    Zinc_string_init(&dir);
+    Zinc_string_add_str(&dir, "/tmp/one");
     enum result r = delete_directory(&dir);
     assert_ok(r, "delete_directory");
     DIR* dp = opendir("/tmp/one");
@@ -145,17 +145,17 @@ void test_os_unix_delete_directory()
     if (dp) {
         closedir(dp);
     }
-    buffer_destroy(&dir);
+    Zinc_string_destroy(&dir);
 }
 
 void test_os_unix_file_exists()
 {
     test_name(__func__);
 
-    struct buffer filename;
-    buffer_init(&filename);
-    buffer_copy_str(&filename, "/tmp/test_os_unix_file_exits");
-    buffer_finish(&filename);
+    struct Zinc_string filename;
+    Zinc_string_init(&filename);
+    Zinc_string_add_str(&filename, "/tmp/test_os_unix_file_exits");
+    Zinc_string_finish(&filename);
 
     system("touch /tmp/test_os_unix_file_exits");
     expect_true(file_exists(&filename), "file exists true");
@@ -163,7 +163,7 @@ void test_os_unix_file_exists()
     system("rm /tmp/test_os_unix_file_exits");
     expect_false(file_exists(&filename), "file exits false");
 
-    buffer_destroy(&filename);
+    Zinc_string_destroy(&filename);
 }
 
 void test_os_unix_get_dir_files()
@@ -176,9 +176,9 @@ void test_os_unix_get_dir_files()
     system("touch /tmp/one/two/file3");
     system("touch /tmp/one/two/file4");
 
-    struct buffer dir;
-    buffer_init(&dir);
-    buffer_copy_str(&dir, "/tmp/one");
+    struct Zinc_string dir;
+    Zinc_string_init(&dir);
+    Zinc_string_add_str(&dir, "/tmp/one");
 
     struct buffer_list bl;
     buffer_list_init(&bl);
@@ -192,13 +192,13 @@ void test_os_unix_get_dir_files()
     bool seen_file4 = false;
     struct buffer_node* bn = bl.head;
     while (bn) {
-        if (buffer_compare_str(&bn->value, "/tmp/one/file1"))
+        if (Zinc_string_compare_str(&bn->value, "/tmp/one/file1"))
             seen_file1 = true;
-        if (buffer_compare_str(&bn->value, "/tmp/one/file2"))
+        if (Zinc_string_compare_str(&bn->value, "/tmp/one/file2"))
             seen_file2 = true;
-        if (buffer_compare_str(&bn->value, "/tmp/one/two/file3"))
+        if (Zinc_string_compare_str(&bn->value, "/tmp/one/two/file3"))
             seen_file3 = true;
-        if (buffer_compare_str(&bn->value, "/tmp/one/two/file4"))
+        if (Zinc_string_compare_str(&bn->value, "/tmp/one/two/file4"))
             seen_file4 = true;
         bn = bn->next;
     }
@@ -209,7 +209,7 @@ void test_os_unix_get_dir_files()
     expect_true(seen_file4, "seen_file4");
 
     system("rm -rf /tmp/one");
-    buffer_destroy(&dir);
+    Zinc_string_destroy(&dir);
     buffer_list_destroy(&bl);
 }
 

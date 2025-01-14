@@ -28,9 +28,9 @@ void Cent_lex_data_create(
 void Cent_lex_data_destroy();
 
 void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type type);
-Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, struct buffer* word);
+Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, struct Zinc_string* word);
 
 void Cent_lex_add_builtin(Cent_lex_data* ld, char* name, Cent_builtin_type type);
-Cent_builtin_type* Cent_lex_get_builtin(Cent_lex_data* ld, struct buffer* name);
+Cent_builtin_type* Cent_lex_get_builtin(Cent_lex_data* ld, struct Zinc_string* name);
 
 #endif

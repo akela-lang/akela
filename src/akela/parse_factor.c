@@ -133,14 +133,14 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
             /* check and save symbol */
             struct Ake_symbol* search = Ake_environment_get_local(ps->st->top, &id_node->value);
             if (search) {
-                buffer_finish(&id_node->value);
+                Zinc_string_finish(&id_node->value);
                 error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", id_node->value.buf);
                 n->type = Ake_ast_type_error;
                 /* test case: test_parse_function_error_duplicate_declaration */
             } else {
                 struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id_node->value);
                 if (sym && sym->td) {
-                    buffer_finish(&id_node->value);
+                    Zinc_string_finish(&id_node->value);
                     error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", id_node->value.buf);
                     n->type = Ake_ast_type_error;
                     /* test case: test_parse_function_error_identifier_reserved */
@@ -445,14 +445,14 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
 		} else {
             assert(false);
         }
-		buffer_copy(&x->value, &n->value);
+		Zinc_string_copy(&x->value, &n->value);
 	}
 
 	if (n->type != Ake_ast_type_error) {
 		assert(type_name);
-        struct buffer bf;
-        buffer_init(&bf);
-        buffer_copy_str(&bf, type_name);
+        struct Zinc_string bf;
+        Zinc_string_init(&bf);
+        Zinc_string_add_str(&bf, type_name);
         struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &bf);
         assert(sym);
         assert(sym->td);
@@ -460,7 +460,7 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
         Ake_type_use_create(&tu);
         tu->td = sym->td;
         n->tu = tu;
-        buffer_destroy(&bf);
+        Zinc_string_destroy(&bf);
 
         if (is_string) {
             tu->is_array = true;
@@ -530,16 +530,16 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
         n->type = Ake_ast_type_id;
 
         if (id) {
-            buffer_copy(&id->value, &n->value);
+            Zinc_string_copy(&id->value, &n->value);
         }
 
         if (!sym) {
-            buffer_finish(&id->value);
+            Zinc_string_finish(&id->value);
             error_list_set(ps->el, &id->loc, "variable not declared: %s", id->value.buf);
             /* test case: test_parse_types_missing_declaration */
             n->type = Ake_ast_type_error;
         } else if (sym->td) {
-            buffer_finish(&id->value);
+            Zinc_string_finish(&id->value);
             error_list_set(ps->el, &id->loc, "expected struct or variable but found type: %s", id->value.buf);
             /* test case: test_parse_types_missing_declaration */
             n->type = Ake_ast_type_error;
@@ -562,7 +562,7 @@ typedef struct Ake_struct_field_result {
     Ake_type_use* tu;
 } Ake_struct_field_result;
 
-Ake_struct_field_result Ake_get_struct_field(struct Ake_type_def* td, struct buffer* name) {
+Ake_struct_field_result Ake_get_struct_field(struct Ake_type_def* td, struct Zinc_string* name) {
     assert(td->type == Ake_type_struct);
     assert(td->composite);
     size_t index = 0;
@@ -571,7 +571,7 @@ Ake_struct_field_result Ake_get_struct_field(struct Ake_type_def* td, struct buf
         assert(dec->type == Ake_ast_type_declaration);
         Ake_ast* id = Ast_node_get(dec, 0);
         Ake_ast* type_node = Ast_node_get(dec, 1);
-        if (buffer_compare(&id->value, name)) {
+        if (Zinc_string_compare(&id->value, name)) {
             Ake_struct_field_result res = {true, index, id, type_node->tu};
             return res;
         }
@@ -593,7 +593,7 @@ void Ake_find_missing_fields(struct Ake_parse_state* ps, struct Ake_type_def* td
         Ake_ast *field = n->head;
         while (field) {
             Ake_ast *id2 = Ast_node_get(field, 0);
-            if (buffer_compare(&id2->value, &id->value)) {
+            if (Zinc_string_compare(&id2->value, &id->value)) {
                 found = true;
                 break;
             }
@@ -635,7 +635,7 @@ void Ake_parse_struct_literal_elements(
         Ake_ast* id = NULL;
         Ake_ast_create(&id);
         id->type = Ake_ast_type_id;
-        buffer_copy(&name->value, &id->value);
+        Zinc_string_copy(&name->value, &id->value);
         Ake_ast_add(field, id);
 
         Ake_token_destroy(name);

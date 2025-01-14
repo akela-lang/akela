@@ -75,7 +75,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
             *state = Ake_state_id;
             t->type = Ake_token_id;
             for (int i = 0; i < num; i++) {
-                buffer_add_char(&t->value, c[i]);
+                Zinc_string_add_char(&t->value, c[i]);
             }
             t->loc = loc;
             return Ake_lex_word(ls, state, done, t);
@@ -83,7 +83,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
             *state = Ake_state_id_underscore;
             t->type = Ake_token_id;
             for (int i = 0; i < num; i++) {
-                buffer_add_char(&t->value, c[i]);
+                Zinc_string_add_char(&t->value, c[i]);
             }
             t->loc = loc;
             return Ake_lex_word(ls, state, done, t);
@@ -92,7 +92,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
             t->type = Ake_token_number;
             t->is_integer = true;
             for (int i = 0; i < num; i++) {
-                buffer_add_char(&t->value, c[i]);
+                Zinc_string_add_char(&t->value, c[i]);
             }
             t->loc = loc;
             return Ake_lex_number(ls, state, done, t);
@@ -231,15 +231,15 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
         if (*state == Ake_state_id) {
             if (*c == '_') {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else if (Ake_is_word(c, num)) {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else if (Ake_is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
                 struct Ake_symbol* sym = Ake_environment_get(ls->st->top, &t->value);
@@ -264,7 +264,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
             } else if (Ake_is_word(c, num)) {
                 *state = Ake_state_id;
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
                 struct Ake_symbol* sym = Ake_environment_get(ls->st->top, &t->value);
@@ -312,20 +312,20 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
         if (*state == Ake_state_number_whole) {
             if (!*done && Ake_is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else if (!*done && *c == '.') {
                 *state = Ake_state_number_fraction_start;
                 t->is_integer = false;
                 t->is_float = true;
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else if (!*done && *c == 'e') {
                 *state = Ake_state_number_exponent_start;
                 t->is_integer = false;
                 t->is_float = true;
-                buffer_add_char(&t->value, 'e');
+                Zinc_string_add_char(&t->value, 'e');
             } else {
                 *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
@@ -335,7 +335,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
             if (!*done && Ake_is_num(c, num)) {
                 *state = Ake_state_number_fraction;
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
                 *state = Ake_state_start;
@@ -345,11 +345,11 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
         } else if (*state == Ake_state_number_fraction) {
             if (!*done && Ake_is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else if (!*done && *c == 'e') {
                 *state = Ake_state_number_exponent_start;
-                buffer_add_char(&t->value, 'e');
+                Zinc_string_add_char(&t->value, 'e');
             } else {
                 *state = Ake_state_start;
                 InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
@@ -359,12 +359,12 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
             if (!*done && Ake_is_num(c, num)) {
                 *state = Ake_state_number_exponent;
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else if (!*done && (*c == '-' || *c == '+')) {
                 *state = Ake_state_number_exponent_sign_start;
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
                 *state = Ake_state_start;
@@ -375,7 +375,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
             if (!*done && Ake_is_num(c, num)) {
                 *state = Ake_state_number_exponent;
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
                 valid = error_list_set(ls->el, &loc, "expected number after exponent sign");
@@ -387,7 +387,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
         } else if (*state == Ake_state_number_exponent) {
             if (!*done && Ake_is_num(c, num)) {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
                 *state = Ake_state_start;
@@ -429,7 +429,7 @@ bool Ake_lex_string(
 
         if (*done) {
             for (int i = 0; i < num; i++) {
-                buffer_add_char(&t->value, c[i]);
+                Zinc_string_add_char(&t->value, c[i]);
             }
             valid = error_list_set(ls->el, &loc, "Unclosed string");
             break;
@@ -444,16 +444,16 @@ bool Ake_lex_string(
                 break;
             } else {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(&t->value, c[i]);
+                    Zinc_string_add_char(&t->value, c[i]);
                 }
             }
         } else if (*state == Ake_state_string_backslash) {
             if (*c == '\\') {
-                buffer_add_char(&t->value, '\\');
+                Zinc_string_add_char(&t->value, '\\');
             } else if (*c == 'n') {
-                buffer_add_char(&t->value, '\n');
+                Zinc_string_add_char(&t->value, '\n');
             } else if (*c == 'r') {
-                buffer_add_char(&t->value, '\r');
+                Zinc_string_add_char(&t->value, '\r');
             } else {
                 char a[5];
                 int i = 0;

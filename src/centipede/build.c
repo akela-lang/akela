@@ -86,11 +86,11 @@ Cent_value* Cent_build_number(Cent_ast* n)
     Cent_value_set_type(value, Cent_value_type_number);
 
     if (n->number_type == Cent_number_type_integer) {
-        buffer_copy_str(&value->name, "Integer");
+        Zinc_string_add_str(&value->name, "Integer");
         value->number_type = Cent_number_type_integer;
         value->data.integer = n->data.integer;
     } else if (n->number_type == Cent_number_type_fp) {
-        buffer_copy_str(&value->name, "Float");
+        Zinc_string_add_str(&value->name, "Float");
         value->number_type = Cent_number_type_fp;
         value->data.fp = n->data.fp;
     } else {
@@ -106,8 +106,8 @@ Cent_value* Cent_build_string(Cent_ast* n)
     Cent_value* value = NULL;
     Cent_value_create(&value);
     Cent_value_set_type(value, Cent_value_type_string);
-    buffer_copy(&n->data.string, &value->data.string);
-    buffer_copy_str(&value->name, "String");
+    Zinc_string_copy(&n->data.string, &value->data.string);
+    Zinc_string_add_str(&value->name, "String");
     value->n = n;
     return value;
 }
@@ -118,7 +118,7 @@ Cent_value* Cent_build_boolean(Cent_ast* n)
     Cent_value_create(&value);
     Cent_value_set_type(value, Cent_value_type_boolean);
     value->data.boolean = n->data.boolean;
-    buffer_copy_str(&value->name, "Bool");
+    Zinc_string_add_str(&value->name, "Bool");
     value->n = n;
     return value;
 }
@@ -133,7 +133,7 @@ Cent_value* Cent_build_namespace(Cent_ast* n)
         value->data.enumeration.enum_type = n->data.enumeration.enum_type;
         value->data.enumeration.enum_value = n->data.enumeration.enum_value;
         value->data.enumeration.number = n->data.enumeration.number;
-        buffer_copy(&n->data.enumeration.enum_type->name, &value->name);
+        Zinc_string_copy(&n->data.enumeration.enum_type->name, &value->name);
         value->n = n;
         return value;
     }
@@ -200,8 +200,8 @@ Cent_value* Cent_build_function_file_name(Cent_ast* n)
     Cent_value_create(&value);
     Cent_value_set_type(value, Cent_value_type_string);
     Cent_ast* a = Cent_ast_get(n, 0);
-    buffer_add(&value->data.string, a->data.string.buf, a->data.string.size);
-    buffer_copy_str(&value->name, "String");
+    Zinc_string_add(&value->data.string, a->data.string.buf, a->data.string.size);
+    Zinc_string_add_str(&value->name, "String");
     value->n = n;
     return value;
 }
@@ -212,7 +212,7 @@ Cent_value* Cent_build_object(Cent_ast* n)
     Cent_value* value = NULL;
     Cent_value_create(&value);
     Cent_value_set_type(value, Cent_value_type_dag);
-    buffer_copy(&n->text, &value->name);
+    Zinc_string_copy(&n->text, &value->name);
 
     Cent_ast* stmts = Cent_ast_get(n, 0);
     assert(stmts->type == Cent_ast_type_object_stmts);

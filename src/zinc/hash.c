@@ -4,7 +4,7 @@
 #include "memory.h"
 #include <string.h>
 
-unsigned int hash_calc_buffer(struct buffer* value, unsigned int size)
+unsigned int hash_calc_buffer(struct Zinc_string* value, unsigned int size)
 {
     unsigned int val = 0;
 
@@ -32,14 +32,14 @@ unsigned int hash_calc_str(char* str, unsigned int size)
 void hash_entry_init(struct hash_entry* ent)
 {
     ent->item = NULL;
-    buffer_init(&ent->value);
+    Zinc_string_init(&ent->value);
     ent->next = NULL;
     ent->prev = NULL;
 }
 
 void hash_entry_destroy(struct hash_entry* ent)
 {
-    buffer_destroy(&ent->value);
+    Zinc_string_destroy(&ent->value);
 }
 
 void hash_list_init(struct hash_list* hl)
@@ -109,7 +109,7 @@ void hash_table_map_name(struct hash_table* ht, hash_table_func_name f)
 }
 
 /* assume entry is not in table so call hash_table_get before if not sure */
-void hash_table_add(struct hash_table* ht, struct buffer* value, void* item)
+void hash_table_add(struct hash_table* ht, struct Zinc_string* value, void* item)
 {
     unsigned int val = hash_calc_buffer(value, ht->size);
 
@@ -118,7 +118,7 @@ void hash_table_add(struct hash_table* ht, struct buffer* value, void* item)
     hash_entry_init(ent);
     ent->item = item;
 
-    buffer_copy(value, &ent->value);
+    Zinc_string_copy(value, &ent->value);
 
     /* add to beginning of bucket */
     struct hash_entry* next = ht->buckets[val].head;
@@ -142,7 +142,7 @@ void hash_table_add_str(struct hash_table* ht, char* str, void* item)
     hash_entry_init(ent);
     ent->item = item;
 
-    buffer_copy_str(&ent->value, str);
+    Zinc_string_add_str(&ent->value, str);
 
     /* add to beginning of bucket */
     struct hash_entry* next = ht->buckets[val].head;
@@ -156,7 +156,7 @@ void hash_table_add_str(struct hash_table* ht, char* str, void* item)
     }
 }
 
-void* hash_table_get(struct hash_table* ht, struct buffer* value)
+void* hash_table_get(struct hash_table* ht, struct Zinc_string* value)
 {
     struct hash_entry* ent;
 
@@ -164,7 +164,7 @@ void* hash_table_get(struct hash_table* ht, struct buffer* value)
 
     ent = ht->buckets[val].head;
     while (ent) {
-        if (buffer_compare(&ent->value, value)) {
+        if (Zinc_string_compare(&ent->value, value)) {
             return ent->item;
         }
         ent = ent->next;
@@ -181,7 +181,7 @@ void* hash_table_get_str(struct hash_table* ht, char* str)
 
     ent = ht->buckets[val].head;
     while (ent) {
-        if (buffer_compare_str(&ent->value, str)) {
+        if (Zinc_string_compare_str(&ent->value, str)) {
             return ent->item;
         }
         ent = ent->next;

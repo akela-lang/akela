@@ -7,7 +7,7 @@
 void Ake_token_init(struct Ake_token* t)
 {
     t->type = Ake_token_none;
-    buffer_init(&t->value);
+    Zinc_string_init(&t->value);
     t->is_integer = false;
     t->is_float = false;
     location_init(&t->loc);
@@ -19,7 +19,7 @@ void Ake_token_destroy(struct Ake_token* t)
 {
     /* destroy t{value{}} */
     if (t) {
-        buffer_destroy(&t->value);
+        Zinc_string_destroy(&t->value);
     }
 }
 
@@ -27,7 +27,7 @@ void Ake_token_reset(struct Ake_token* t)
 {
     t->type = Ake_token_none;
     /* destroy t{value{}} */
-    buffer_reset(&t->value);
+    Zinc_string_reset(&t->value);
 }
 
 void Ake_token_list_init(struct Ake_token_list* tl)
@@ -134,26 +134,25 @@ void Ake_token_list_reset(struct Ake_token_list* tl)
     Ake_token_list_init(tl);
 }
 
-enum result Ake_token_list_print(struct Ake_token_list* tl)
+void Ake_token_list_print(struct Ake_token_list* tl)
 {
     struct Ake_token* t = tl->head;
     while (t) {
         char* a;
 
-        buffer2array(&t->value, &a);
+        Zinc_string_create_str(&t->value, &a);
         printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, Ake_token_name(t->type), a);
 
         free(a);
 
         t = t->next;
     }
-    return result_ok;
 }
 
 void Ake_print_token(struct Ake_token* t)
 {
     char* a;
-    buffer2array(&t->value, &a);
+    Zinc_string_create_str(&t->value, &a);
     printf("%zu, %zu: token: %s, value: %s\n", t->loc.line, t->loc.col, Ake_token_name(t->type), a);
     free(a);
 }

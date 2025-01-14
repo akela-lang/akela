@@ -122,7 +122,7 @@ bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, C
     Cent_enum_value* val = en->head;
     bool found = false;
     while (val) {
-        if (buffer_compare(&val->display, &id2->text)) {
+        if (Zinc_string_compare(&val->display, &id2->text)) {
             found = true;
             break;
         }

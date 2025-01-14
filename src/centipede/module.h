@@ -12,7 +12,7 @@ typedef struct Cent_input_data {
     InputUnicodeVTable* input_vtable;
 } Cent_input_data;
 
-typedef Cent_input_data (*Cent_module_find)(void* obj, struct buffer* name);
-Cent_input_data Cent_module_find_interface(void* obj, Cent_module_vtable *vtable, struct buffer* name);
+typedef Cent_input_data (*Cent_module_find)(void* obj, struct Zinc_string* name);
+Cent_input_data Cent_module_find_interface(void* obj, Cent_module_vtable *vtable, struct Zinc_string* name);
 
 #endif

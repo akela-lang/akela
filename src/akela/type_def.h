@@ -26,7 +26,7 @@ typedef enum Ake_type {
 
 typedef struct Ake_type_def {
 	enum Ake_type type;
-	struct buffer name;
+	struct Zinc_string name;
     int bit_count;
     bool is_signed;
     struct Ake_ast* composite;

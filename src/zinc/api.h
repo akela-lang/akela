@@ -1,5 +1,5 @@
-#ifndef _API_H
-#define _API_H
+#ifndef ZINC_API_H
+#define ZINC_API_H
 
 #if defined(_WIN32) || defined(WIN32)
 	#ifdef ZINC_EXPORT

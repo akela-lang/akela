@@ -40,7 +40,7 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
     if (!valid && result->text.size > 0) {
         struct location loc;
         location_init(&loc);
-        buffer_finish(&result->text);
+        Zinc_string_finish(&result->text);
         error_list_set(&cu->el, &loc, "Module:\n%s", result->text.buf);
     }
     expect_no_errors(&cu->el);

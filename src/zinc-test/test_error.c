@@ -29,9 +29,9 @@ void test_error_list_set_buffer()
     test_name(__func__);
     struct error_list* el;
     error_list_create(&el);
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_add_format(&bf, "hello");
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add_format(&bf, "hello");
     struct location loc;
     location_init(&loc);
     error_list_set(el, &loc, "abc %b xyz", &bf);
@@ -41,7 +41,7 @@ void test_error_list_set_buffer()
 
     error_list_destroy(el);
     free(el);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void test_error()

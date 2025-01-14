@@ -12,13 +12,13 @@ void test_ast1()
 	Ake_ast* a;
     Ake_ast_create(&a);
 	a->type = Ake_ast_type_number;
-	buffer_copy_str(&a->value, "a");
+	Zinc_string_add_str(&a->value, "a");
     Ake_ast_add(n, a);
 
 	Ake_ast* b;
     Ake_ast_create(&b);
 	b->type = Ake_ast_type_number;
-	buffer_copy_str(&b->value, "b");
+	Zinc_string_add_str(&b->value, "b");
     Ake_ast_add(n, b);
 
 	assert_ptr(n, "ptr n");

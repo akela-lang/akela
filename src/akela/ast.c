@@ -15,7 +15,7 @@ void Ake_ast_create(Ake_ast** n)
 void Ake_ast_init(Ake_ast* n)
 {
 	n->type = Ake_ast_type_none;
-	buffer_init(&n->value);
+	Zinc_string_init(&n->value);
 	n->tu = NULL;
     n->is_mut = false;
     location_init(&n->loc);
@@ -37,7 +37,7 @@ void Ake_ast_destroy(Ake_ast* n)
             Ake_ast_destroy(temp);
         }
 
-        buffer_destroy(&n->value);
+        Zinc_string_destroy(&n->value);
         Ake_type_use_destroy(n->tu);
         free(n);
     }
@@ -114,7 +114,7 @@ void Ake_type_use_print(Ake_type_use* tu)
         printf("[%p]", tu);
         printf(" %s", names[tu->type]);
         if (tu->td) {
-            buffer_finish(&tu->td->name);
+            Zinc_string_finish(&tu->td->name);
             printf(" %s", tu->td->name.buf);
         }
         printf(">");
@@ -174,7 +174,7 @@ void Ake_ast_copy(Ake_ast* src, Ake_ast* dest)
     dest->type = src->type;
     dest->tu = Ake_type_use_clone(src->tu);
     dest->loc = src->loc;
-    buffer_copy(&src->value, &dest->value);
+    Zinc_string_copy(&src->value, &dest->value);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -206,7 +206,7 @@ bool Ake_ast_match(Ake_ast* a, Ake_ast* b)
 			return false;
 		}
 
-		if (!buffer_compare(&a->value, &b->value)) {
+		if (!Zinc_string_compare(&a->value, &b->value)) {
 			return false;
 		}
 

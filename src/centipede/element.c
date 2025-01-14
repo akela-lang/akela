@@ -4,7 +4,7 @@
 
 void Cent_element_init(Cent_element_type* et)
 {
-    buffer_init(&et->name);
+    Zinc_string_init(&et->name);
     et->type = Cent_value_type_none;
     et->number_type = Cent_number_type_none;
     hash_table_init(&et->properties, 32);
@@ -21,13 +21,13 @@ void Cent_element_create(Cent_element_type** et)
 
 void Cent_element_destroy(Cent_element_type* et)
 {
-    buffer_destroy(&et->name);
+    Zinc_string_destroy(&et->name);
     hash_table_map(&et->properties, (hash_table_func)Cent_property_type_free);
     hash_table_destroy(&et->properties);
     Cent_types_list_destroy(&et->children);
 }
 
-void Cent_element_set(Cent_element_type* et, struct buffer* name, Cent_property_type* value)
+void Cent_element_set(Cent_element_type* et, struct Zinc_string* name, Cent_property_type* value)
 {
     hash_table_add(&et->properties, name, value);
 }
@@ -37,7 +37,7 @@ void Cent_element_set_str(Cent_element_type* et, char* name, Cent_property_type*
     hash_table_add_str(&et->properties, name, value);
 }
 
-Cent_property_type* Cent_element_get(Cent_element_type* et, struct buffer* name)
+Cent_property_type* Cent_element_get(Cent_element_type* et, struct Zinc_string* name)
 {
     return hash_table_get(&et->properties, name);
 }
@@ -72,7 +72,7 @@ void Cent_element_add_en(
 
 void Cent_property_type_init(Cent_property_type* pt)
 {
-    buffer_init(&pt->name);
+    Zinc_string_init(&pt->name);
     pt->type = Cent_types_none;
     pt->required = false;
     location_init(&pt->loc);
@@ -99,7 +99,7 @@ void Cent_property_type_set_type(Cent_property_type* pt, Cent_types type)
 
 void Cent_property_type_destroy(Cent_property_type* pt)
 {
-    buffer_destroy(&pt->name);
+    Zinc_string_destroy(&pt->name);
 }
 
 void Cent_property_type_free(Cent_property_type* pt)

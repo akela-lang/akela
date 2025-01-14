@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 struct buffer_node {
-    struct buffer value;
+    struct Zinc_string value;
     struct buffer_node* next;
     struct buffer_node* prev;
 };
@@ -27,11 +27,11 @@ ZINC_API void buffer_list_create(struct buffer_list** bl);
 ZINC_API void buffer_list_destroy(struct buffer_list* bl);
 ZINC_API void buffer_list_add(struct buffer_list* bl, struct buffer_node* bn);
 ZINC_API void buffer_list_add_str(struct buffer_list* bl, const char* str);
-ZINC_API void buffer_list_add_bf(struct buffer_list* bl, struct buffer* bf);
+ZINC_API void buffer_list_add_bf(struct buffer_list* bl, struct Zinc_string* bf);
 ZINC_API size_t buffer_list_count(struct buffer_list* bl);
-ZINC_API void buffer_split(struct buffer* bf, struct buffer_list* bl);
-ZINC_API struct buffer* buffer_list_get(struct buffer_list* bl, size_t num);
-ZINC_API bool buffer_list_contains(struct buffer_list* bl, struct buffer* value);
+ZINC_API void buffer_split(struct Zinc_string* bf, struct buffer_list* bl);
+ZINC_API struct Zinc_string* buffer_list_get(struct buffer_list* bl, size_t num);
+ZINC_API bool buffer_list_contains(struct buffer_list* bl, struct Zinc_string* value);
 ZINC_API bool buffer_list_contains_str(struct buffer_list* bl, const char* str);
 
 #ifdef __cplusplus

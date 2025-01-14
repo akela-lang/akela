@@ -8,7 +8,7 @@
 #include "zinc/input_unicode_string.h"
 #include "zinc/input_unicode_file.h"
 
-void translate(struct buffer* bf)
+void translate(struct Zinc_string* bf)
 {
     for (int i = 0; i < bf->size; i++) {
         int c = toupper(bf->buf[i]);
@@ -18,8 +18,8 @@ void translate(struct buffer* bf)
 
 void event_loop(void* input_obj, InputUnicodeVTable* input_vtable)
 {
-    struct buffer* bf = NULL;
-    buffer_create(&bf);
+    struct Zinc_string* bf = NULL;
+    Zinc_string_create(&bf);
 
     enum result r;
     char c[4];
@@ -34,11 +34,11 @@ void event_loop(void* input_obj, InputUnicodeVTable* input_vtable)
         }
 
         if (num == 1 && c[0] == '\n') {
-            buffer_add_char(bf, '\n');
+            Zinc_string_add_char(bf, '\n');
             translate(bf);
-            buffer_clear(bf);
+            Zinc_string_clear(bf);
         } else {
-            buffer_add(bf, c, num);
+            Zinc_string_add(bf, c, num);
         }
     }
 
@@ -46,7 +46,7 @@ void event_loop(void* input_obj, InputUnicodeVTable* input_vtable)
         translate(bf);
     }
 
-    buffer_destroy(bf);
+    Zinc_string_destroy(bf);
     free(bf);
 }
 

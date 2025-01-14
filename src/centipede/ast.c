@@ -10,7 +10,7 @@ void Cent_ast_init(Cent_ast *ast)
     ast->value_type = Cent_value_type_none;
     ast->number_type = Cent_number_type_none;
     ast->variable_type = Cent_variable_type_none,
-    buffer_init(&ast->text);
+    Zinc_string_init(&ast->text);
     ast->env = NULL;
     location_init(&ast->loc);
     ast->has_error = false;
@@ -37,7 +37,7 @@ void Cent_ast_value_set_type(Cent_ast *ast, Cent_value_type type)
 void Cent_ast_destroy(Cent_ast *ast)
 {
     if (ast) {
-        buffer_destroy(&ast->text);
+        Zinc_string_destroy(&ast->text);
 
         if (ast->env) {
             /* do not destroy shared base */

@@ -136,7 +136,7 @@ static char const* Ake_token_name(Ake_token_enum type)
 
 typedef struct Ake_token {
     enum Ake_token_enum type;
-    struct buffer value;
+    struct Zinc_string value;
     bool is_integer;
     bool is_float;
     struct location loc;
@@ -161,7 +161,7 @@ AKELA_API void Ake_token_list_make(struct Ake_token_list** tl);
 AKELA_API void Ake_token_list_add(struct Ake_token_list* tl, struct Ake_token* t);
 AKELA_API struct Ake_token* Ake_token_list_pop(struct Ake_token_list* tl);
 AKELA_API void Ake_token_list_reset(struct Ake_token_list* tl);
-AKELA_API enum result Ake_token_list_print(struct Ake_token_list* tl);
+AKELA_API void Ake_token_list_print(struct Ake_token_list* tl);
 AKELA_API void Ake_print_token(struct Ake_token* t);
 AKELA_API void Ake_get_token_location(struct Ake_token* t, struct location* loc);
 

@@ -31,7 +31,7 @@ typedef struct Cent_types_list {
 } Cent_types_list;
 
 typedef struct Cent_property_type {
-    struct buffer name;
+    struct Zinc_string name;
     Cent_types type;
     union {
         struct Cent_element_type* et;
@@ -43,7 +43,7 @@ typedef struct Cent_property_type {
 } Cent_property_type;
 
 typedef struct Cent_element_type {
-    struct buffer name;
+    struct Zinc_string name;
     Cent_value_type type;
     Cent_number_type number_type;
     struct hash_table properties;
@@ -55,9 +55,9 @@ typedef struct Cent_element_type {
 void Cent_element_init(Cent_element_type* et);
 void Cent_element_create(Cent_element_type** et);
 void Cent_element_destroy(Cent_element_type* et);
-void Cent_element_set(Cent_element_type* et, struct buffer* name, Cent_property_type* value);
+void Cent_element_set(Cent_element_type* et, struct Zinc_string* name, Cent_property_type* value);
 void Cent_element_set_str(Cent_element_type* et, char* name, Cent_property_type* value);
-Cent_property_type* Cent_element_get(Cent_element_type* et, struct buffer* name);
+Cent_property_type* Cent_element_get(Cent_element_type* et, struct Zinc_string* name);
 Cent_property_type* Cent_element_get_str(Cent_element_type* et, char* name);
 void Cent_element_add(Cent_element_type* et, Cent_types_node* node);
 void Cent_element_add_et(

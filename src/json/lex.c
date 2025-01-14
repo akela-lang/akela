@@ -25,10 +25,10 @@ Json_token* Json_lex(Json_lex_data* jld)
     Json_lex_start(jld, t);
     if (t->type == Json_token_type_number) {
         if (t->number_type == Json_number_type_integer) {
-            buffer_finish(&t->value);
+            Zinc_string_finish(&t->value);
             t->number.integer = strtoll(t->value.buf, NULL, 10);
         } else if (t->number_type == Json_number_type_fp) {
-            buffer_finish(&t->value);
+            Zinc_string_finish(&t->value);
             t->number.fp = strtod(t->value.buf, NULL);
         }
     }
@@ -57,11 +57,11 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
         }
 
         if (num != 1) {
-            struct buffer bf;
-            buffer_init(&bf);
-            buffer_add(&bf, c, num);
+            struct Zinc_string bf;
+            Zinc_string_init(&bf);
+            Zinc_string_add(&bf, c, num);
             error_list_set(jld->el, &loc, "invalid character: %b", &bf);
-            buffer_destroy(&bf);
+            Zinc_string_destroy(&bf);
             continue;
         }
 
@@ -77,7 +77,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
         if (Json_is_number(c, num)) {
             t->type = Json_token_type_number;
             t->loc = loc;
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             Json_lex_number(jld, t);
             loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
             t->loc.end_pos = loc.start_pos;
@@ -85,7 +85,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
         }
 
         if (num == 1 && isalpha(c[0])) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             t->loc = loc;
             if (Json_lex_word(jld, t)) {
                 loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
@@ -186,7 +186,7 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
         } else if (cp > 0x10FFFF) {
             error_list_set(jld->el, &loc, "code point greater than \\u10FFFF");
         } else {
-            buffer_add(&t->value, c, num);
+            Zinc_string_add(&t->value, c, num);
         }
     }
 
@@ -212,46 +212,46 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
     }
 
     if (num != 1) {
-        struct buffer bf;
-        buffer_init(&bf);
-        buffer_add(&bf, c, num);
+        struct Zinc_string bf;
+        Zinc_string_init(&bf);
+        Zinc_string_add(&bf, c, num);
         error_list_set(jld->el, &loc, "invalid escape character: %b", &bf);
-        buffer_destroy(&bf);
+        Zinc_string_destroy(&bf);
         return;
     }
 
     if (c[0] == '\\') {
-        buffer_add(&t->value, c, num);
+        Zinc_string_add(&t->value, c, num);
         return;
     }
 
     if (c[0] == '/') {
-        buffer_add_char(&t->value, '/');
+        Zinc_string_add_char(&t->value, '/');
         return;
     }
 
     if (c[0] == 'b') {
-        buffer_add_char(&t->value, '\b');
+        Zinc_string_add_char(&t->value, '\b');
         return;
     }
 
     if (c[0] == 'f') {
-        buffer_add_char(&t->value, '\f');
+        Zinc_string_add_char(&t->value, '\f');
         return;
     }
 
     if (c[0] == 'n') {
-        buffer_add_char(&t->value, '\n');
+        Zinc_string_add_char(&t->value, '\n');
         return;
     }
 
     if (c[0] == 'r') {
-        buffer_add_char(&t->value, '\r');
+        Zinc_string_add_char(&t->value, '\r');
         return;
     }
 
     if (c[0] == 't') {
-        buffer_add_char(&t->value, '\t');
+        Zinc_string_add_char(&t->value, '\t');
         return;
     }
 
@@ -260,11 +260,11 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
         return;
     }
 
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_add(&bf, c, num);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add(&bf, c, num);
     error_list_set(jld->el, &loc, "invalid escape character: %b", &bf);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
@@ -275,9 +275,9 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     bool done;
     enum result r;
 
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_copy_str(&bf, "\\u");
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add_str(&bf, "\\u");
     bool valid = true;
     struct location first_loc;
     first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
@@ -293,11 +293,11 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
         } else {
             if (done) {
                 error_list_set(jld->el, &loc, "unicode escape not finished");
-                buffer_destroy(&bf);
+                Zinc_string_destroy(&bf);
                 return;
             }
             if (is_hex_digit(c, num)) {
-                buffer_add(&bf, c, num);
+                Zinc_string_add(&bf, c, num);
             } else {
                 error_list_set(jld->el, &loc, "invalid hex digit: %c", c[0]);
                 valid = false;
@@ -319,9 +319,9 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
             InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
             break;
         }
-        buffer_add(&bf, c, num);
+        Zinc_string_add(&bf, c, num);
     }
-    buffer_finish(&bf);
+    Zinc_string_finish(&bf);
 
     struct location end_loc;
     end_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
@@ -336,11 +336,11 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
         } else {
             char dest[4];
             num = code_to_utf8(dest, cp);
-            buffer_add(&t->value, dest, num);
+            Zinc_string_add(&t->value, dest, num);
         }
     }
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 bool Json_is_number(char c[4], int num)
@@ -407,7 +407,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
                 digit_count--;
                 error_list_set(jld->el, &first_loc, "leading zero with no other digits or faction");
             }
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             digit_count++;
             if (digit_count == 1) {
                 first_digit = c[0];
@@ -416,13 +416,13 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
         }
 
         if (num == 1 && c[0] == '.') {
-            buffer_add_char(&t->value, '.');
+            Zinc_string_add_char(&t->value, '.');
             Json_lex_number_fraction(jld, t);
             break;;
         }
 
         if (num == 1 && (c[0] == 'E' || c[0] == 'e')) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             Json_lex_number_exponent(jld, t);
             break;
         }
@@ -466,13 +466,13 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
         }
 
         if (num == 1 && isdigit(c[0])) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             digit_count++;
             continue;
         }
 
         if (num == 1 && (c[0] == 'E' || c[0] == 'e')) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             Json_lex_number_exponent(jld, t);
             break;
         }
@@ -513,7 +513,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
         if (num == 1 && (c[0] == '+' || c[0] == '-')) {
             if (digit_count == 0) {
                 if (!has_sign) {
-                    buffer_add_char(&t->value, c[0]);
+                    Zinc_string_add_char(&t->value, c[0]);
                     has_sign = true;
                     continue;
                 } else {
@@ -527,7 +527,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
         }
 
         if (num == 1 && isdigit(c[0])) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             digit_count++;
             continue;
         }
@@ -562,7 +562,7 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
         }
 
         if (num == 1 && isalpha(c[0])) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             continue;
         }
 
@@ -570,17 +570,17 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
         break;
     }
 
-    if (buffer_compare_str(&t->value, "true")) {
+    if (Zinc_string_compare_str(&t->value, "true")) {
         t->type = Json_token_type_true;
         return true;
     }
 
-    if (buffer_compare_str(&t->value, "false")) {
+    if (Zinc_string_compare_str(&t->value, "false")) {
         t->type = Json_token_type_false;
         return true;
     }
 
-    if (buffer_compare_str(&t->value, "null")) {
+    if (Zinc_string_compare_str(&t->value, "null")) {
         t->type = Json_token_type_null;
         return true;
     }
@@ -590,6 +590,6 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
 
     error_list_set(jld->el, &t->loc, "invalid word (%b), expecting true, false, or null", &t->value);
     t->type = Json_token_type_none;
-    buffer_clear(&t->value);
+    Zinc_string_clear(&t->value);
     return false;
 }

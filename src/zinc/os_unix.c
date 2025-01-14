@@ -20,11 +20,11 @@
 #include "buffer.h"
 #include <assert.h>
 
-enum result get_temp_file(FILE** fp_out, struct buffer* name)
+enum result get_temp_file(FILE** fp_out, struct Zinc_string* name)
 {
     enum result r = result_ok;
-    buffer_copy_str(name, "/tmp/zinc-XXXXXX");
-    buffer_finish(name);
+    Zinc_string_add_str(name, "/tmp/zinc-XXXXXX");
+    Zinc_string_finish(name);
     errno = 0;
     int fd = mkstemp(name->buf);
     if (fd < 1) {
@@ -47,7 +47,7 @@ enum result close_temp_file(FILE* fp)
     return result_ok;
 }
 
-enum result delete_temp_file(struct buffer* name)
+enum result delete_temp_file(struct Zinc_string* name)
 {
     if (unlink(name->buf)) {
         return set_error("removal of temp file failed with error [%s]", strerror(errno));
@@ -55,51 +55,51 @@ enum result delete_temp_file(struct buffer* name)
     return result_ok;
 }
 
-enum result get_user_home_directory(struct buffer* dir)
+enum result get_user_home_directory(struct Zinc_string* dir)
 {
     const char *homedir;
     if ((homedir = getenv("HOME")) == NULL) {
         return set_error("Could not get home directory");
     }
 
-    buffer_copy_str(dir, homedir);
+    Zinc_string_add_str(dir, homedir);
     return result_ok;
 }
 
-void path_join(struct buffer* src1, struct buffer* src2, struct buffer* dest)
+void path_join(struct Zinc_string* src1, struct Zinc_string* src2, struct Zinc_string* dest)
 {
-    buffer_copy(src1, dest);
-    buffer_add_char(dest, '/');
-    buffer_copy(src2, dest);
+    Zinc_string_copy(src1, dest);
+    Zinc_string_add_char(dest, '/');
+    Zinc_string_copy(src2, dest);
 }
 
-enum result get_user_app_directory(struct buffer* lower_name, struct buffer* dir)
+enum result get_user_app_directory(struct Zinc_string* lower_name, struct Zinc_string* dir)
 {
-    struct buffer home;
-    buffer_init(&home);
+    struct Zinc_string home;
+    Zinc_string_init(&home);
     enum result r = get_user_home_directory(&home);
     if (r == result_error) {
         return r;
     }
 
-    struct buffer app;
-    buffer_init(&app);
-    buffer_copy_str(&app, ".app");
+    struct Zinc_string app;
+    Zinc_string_init(&app);
+    Zinc_string_add_str(&app, ".app");
 
-    struct buffer temp;
-    buffer_init(&temp);
+    struct Zinc_string temp;
+    Zinc_string_init(&temp);
 
     path_join(&home, &app, &temp);
     path_join(&temp, lower_name, dir);
 
-    buffer_destroy(&home);
-    buffer_destroy(&app);
-    buffer_destroy(&temp);
+    Zinc_string_destroy(&home);
+    Zinc_string_destroy(&app);
+    Zinc_string_destroy(&temp);
 
     return result_ok;
 }
 
-enum result make_directory(struct buffer* dir)
+enum result make_directory(struct Zinc_string* dir)
 {
     for (int i = 0; i < dir->size; i++) {
         bool is_subdir = false;
@@ -112,12 +112,12 @@ enum result make_directory(struct buffer* dir)
             end = i + 1;
         }
         if (is_subdir) {
-            struct buffer subdir;
-            buffer_init(&subdir);
+            struct Zinc_string subdir;
+            Zinc_string_init(&subdir);
             for (int j = 0; j < end; j++) {
-                buffer_add_char(&subdir, dir->buf[j]);
+                Zinc_string_add_char(&subdir, dir->buf[j]);
             }
-            buffer_finish(&subdir);
+            Zinc_string_finish(&subdir);
             DIR* dp = opendir(subdir.buf);
             bool exists;
             if (dp) {
@@ -127,28 +127,28 @@ enum result make_directory(struct buffer* dir)
                 exists = false;
             } else {
                 exists = true;
-                buffer_destroy(&subdir);
+                Zinc_string_destroy(&subdir);
                 return set_error("Could not check directory [%s]: %s",
                      strerror(errno), subdir.buf);
             }
             if (!exists) {
                 if (mkdir(subdir.buf, 0700)) {
-                    buffer_destroy(&subdir);
+                    Zinc_string_destroy(&subdir);
                     return set_error("Could not make directory [%s]: %s",
                          strerror(errno), subdir.buf);
                 }
             }
-            buffer_destroy(&subdir);
+            Zinc_string_destroy(&subdir);
         }
     }
 
     return result_ok;
 }
 
-enum result delete_directory(struct buffer* dir)  /* NOLINT(misc-no-recursion) */
+enum result delete_directory(struct Zinc_string* dir)  /* NOLINT(misc-no-recursion) */
 {
     enum result r;
-    buffer_finish(dir);
+    Zinc_string_finish(dir);
     DIR* dp = opendir(dir->buf);
     if (!dp) {
         return set_error("Could not open directory: [%s]: %s", strerror(errno), dir->buf);
@@ -163,16 +163,16 @@ enum result delete_directory(struct buffer* dir)  /* NOLINT(misc-no-recursion) *
             continue;
         }
 
-        struct buffer name;
-        buffer_init(&name);
-        buffer_copy_str(&name, de->d_name);
+        struct Zinc_string name;
+        Zinc_string_init(&name);
+        Zinc_string_add_str(&name, de->d_name);
 
-        struct buffer path;
-        buffer_init(&path);
+        struct Zinc_string path;
+        Zinc_string_init(&path);
 
         path_join(dir, &name, &path);
 
-        buffer_finish(&path);
+        Zinc_string_finish(&path);
         DIR* dp2 = opendir(path.buf);
         if (dp2) {
             if (closedir(dp2)) {
@@ -189,8 +189,8 @@ enum result delete_directory(struct buffer* dir)  /* NOLINT(misc-no-recursion) *
             }
         }
 
-        buffer_destroy(&name);
-        buffer_destroy(&path);
+        Zinc_string_destroy(&name);
+        Zinc_string_destroy(&path);
     }
 
     if (closedir(dp)) {
@@ -204,9 +204,9 @@ enum result delete_directory(struct buffer* dir)  /* NOLINT(misc-no-recursion) *
     return result_ok;
 }
 
-bool file_exists(struct buffer* filename)
+bool file_exists(struct Zinc_string* filename)
 {
-    buffer_finish(filename);
+    Zinc_string_finish(filename);
     if (access(filename->buf, F_OK) == 0) {
         return true;
     } else {
@@ -214,11 +214,11 @@ bool file_exists(struct buffer* filename)
     }
 }
 
-enum result get_dir_files(struct buffer* dir, struct buffer_list* bl)   /* NOLINT(misc-no-recursion) */
+enum result get_dir_files(struct Zinc_string* dir, struct buffer_list* bl)   /* NOLINT(misc-no-recursion) */
 {
     enum result r = result_ok;
 
-    buffer_finish(dir);
+    Zinc_string_finish(dir);
     DIR* dp = opendir(dir->buf);
     if (!dp) {
         return set_error("Could not open directory: [%s]: %s", strerror(errno), dir->buf);
@@ -233,36 +233,36 @@ enum result get_dir_files(struct buffer* dir, struct buffer_list* bl)   /* NOLIN
             continue;
         }
 
-        struct buffer name;
-        buffer_init(&name);
-        buffer_copy_str(&name, de->d_name);
+        struct Zinc_string name;
+        Zinc_string_init(&name);
+        Zinc_string_add_str(&name, de->d_name);
 
-        struct buffer path;
-        buffer_init(&path);
+        struct Zinc_string path;
+        Zinc_string_init(&path);
 
         path_join(dir, &name, &path);
-        buffer_finish(&path);
+        Zinc_string_finish(&path);
 
         DIR* dp2 = opendir(path.buf);
         if (dp2) {
             if (closedir(dp2)) {
-                buffer_destroy(&name);
-                buffer_destroy(&path);
+                Zinc_string_destroy(&name);
+                Zinc_string_destroy(&path);
                 return set_error("Could not check type directory item: [%s]: %s", strerror(errno), path.buf);
             }
 
             r = get_dir_files(&path, bl);
             if (r == result_error) {
-                buffer_destroy(&name);
-                buffer_destroy(&path);
+                Zinc_string_destroy(&name);
+                Zinc_string_destroy(&path);
                 return r;
             }
         } else {
             buffer_list_add_str(bl, path.buf);
         }
 
-        buffer_destroy(&name);
-        buffer_destroy(&path);
+        Zinc_string_destroy(&name);
+        Zinc_string_destroy(&path);
     }
 
     if (closedir(dp)) {
@@ -289,7 +289,7 @@ enum result get_exe_path(char** path)
     return r;
 }
 
-void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename)
+void split_path(struct Zinc_string* path, struct Zinc_string* dir, struct Zinc_string* filename)
 {
     int sep_pos = -1;
 
@@ -301,15 +301,15 @@ void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename
 
     if (sep_pos >= 0) {
         for (int i = 0; i < sep_pos; i++) {
-            buffer_add_char(dir, path->buf[i]);
+            Zinc_string_add_char(dir, path->buf[i]);
         }
     }
-    buffer_finish(dir);
+    Zinc_string_finish(dir);
 
     for (int i = sep_pos + 1; i < path->size; i++) {
-        buffer_add_char(filename, path->buf[i]);
+        Zinc_string_add_char(filename, path->buf[i]);
     }
-    buffer_finish(filename);
+    Zinc_string_finish(filename);
 }
 
 int fopen_s(FILE **f, const char *name, const char *mode)
@@ -323,11 +323,11 @@ int fopen_s(FILE **f, const char *name, const char *mode)
     return ret;
 }
 
-void Zinc_get_cwd(struct buffer* cwd)
+void Zinc_get_cwd(struct Zinc_string* cwd)
 {
     char buffer[PATH_MAX];
     if (getcwd(buffer, sizeof(buffer)) != NULL) {
-        buffer_copy_str(cwd, buffer);
+        Zinc_string_add_str(cwd, buffer);
     } else {
         perror("getcwd() error");
     }

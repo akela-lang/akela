@@ -7,23 +7,23 @@ void test_datetime_utc()
 {
     test_name(__func__);
 
-    struct buffer dt;
-    buffer_init(&dt);
+    struct Zinc_string dt;
+    Zinc_string_init(&dt);
     time_t t;
     t = 0;
     struct tm tm;
     datetime_get_utc_tm(&t, &tm);
     datetime_format(&tm, &dt);
     expect_str(&dt, "1970-01-01T00:00:00Z", "1970-01-01T00:00:00Z");
-    buffer_destroy(&dt);
+    Zinc_string_destroy(&dt);
 }
 
 void test_datetime_utc2()
 {
     test_name(__func__);
 
-    struct buffer dt;
-    buffer_init(&dt);
+    struct Zinc_string dt;
+    Zinc_string_init(&dt);
     time_t t;
     t = 25200;
     struct tm tm;
@@ -32,7 +32,7 @@ void test_datetime_utc2()
     tm.tm_gmtoff = -25200;
     datetime_format(&tm, &dt);
     expect_str(&dt, "1970-01-01T00:00:00-07:00", "1970-01-01T00:00:00-0700");
-    buffer_destroy(&dt);
+    Zinc_string_destroy(&dt);
 }
 
 void test_datetime_utc3()
@@ -42,13 +42,13 @@ void test_datetime_utc3()
     datetime_get_current_t(&t);
     struct tm tm;
     datetime_get_utc_tm(&t, &tm);
-    struct buffer dt;
-    buffer_init(&dt);
+    struct Zinc_string dt;
+    Zinc_string_init(&dt);
     datetime_format(&tm, &dt);
     struct tm tm2;
     time_t t2 = datetime_to_tm(&dt, &tm2);
     expect_true(t == t2, "t == t2");
-    buffer_destroy(&dt);
+    Zinc_string_destroy(&dt);
 }
 
 void test_datetime_local()
@@ -58,17 +58,17 @@ void test_datetime_local()
     datetime_get_current_t(&t);
     struct tm tm;
     datetime_get_local_tm(&t, &tm);
-    struct buffer dt;
-    buffer_init(&dt);
+    struct Zinc_string dt;
+    Zinc_string_init(&dt);
     datetime_format(&tm, &dt);
     struct tm tm2;
     time_t t2 = datetime_to_tm(&dt, &tm2);
-    struct buffer dt2;
-    buffer_init(&dt2);
+    struct Zinc_string dt2;
+    Zinc_string_init(&dt2);
     datetime_format(&tm2, &dt2);
     expect_long_equal(t, t2, "t == t2");
-    buffer_destroy(&dt);
-    buffer_destroy(&dt2);
+    Zinc_string_destroy(&dt);
+    Zinc_string_destroy(&dt2);
 }
 
 void test_datetime()

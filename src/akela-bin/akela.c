@@ -41,15 +41,15 @@ int main(int argc, char** argv)
     if (!cu.valid) {
         struct error* e = cu.el.head;
         while (e) {
-            buffer_finish(&e->message);
+            Zinc_string_finish(&e->message);
             fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
             e = e->next;
         }
         return 1;
     }
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Code_gen_llvm* cg = NULL;
     Code_gen_llvm_create(&cg, &cu.el, &cu.extern_list);
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
     if (cu.el.head) {
         struct error* e = cu.el.head;
         while (e) {
-            buffer_finish(&e->message);
+            Zinc_string_finish(&e->message);
             fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
             e = e->next;
         }

@@ -129,7 +129,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
     /* test case: test_parse_element_error_expected_id */
 
     if (id) {
-        buffer_copy(&id->value, &n->text);
+        Zinc_string_copy(&id->value, &n->text);
         Cent_token_destroy(id);
         free(id);
     }
@@ -161,7 +161,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
         Cent_symbol* sym = NULL;
         sym = Cent_environment_get(pd->top, &n->text);
         if (sym) {
-            buffer_finish(&n->text);
+            Zinc_string_finish(&n->text);
             error_list_set(pd->errors, &n->loc, "name already exists: %s", n->text.buf);
             n->has_error = true;
             return n;
@@ -170,7 +170,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
 
         Cent_element_type* element = NULL;
         Cent_element_create(&element);
-        buffer_copy(&n->text, &element->name);
+        Zinc_string_copy(&n->text, &element->name);
         element->loc = n->loc;
 
         Cent_symbol_create(&sym);
@@ -252,7 +252,7 @@ Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
     Cent_ast* a = NULL;
     Cent_ast_create(&a);
     a->type = Cent_ast_type_id;
-    buffer_copy(&id->value, &a->text);
+    Zinc_string_copy(&id->value, &a->text);
     Cent_ast_add(n, a);
 
     Cent_token_destroy(id);
@@ -272,7 +272,7 @@ Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
     Cent_ast_create(&b);
     b->type = Cent_ast_type_id;
     if (type) {
-        buffer_copy(&type->value, &b->text);
+        Zinc_string_copy(&type->value, &b->text);
         Cent_token_destroy(type);
         free(type);
     }
@@ -287,7 +287,7 @@ Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
         Cent_ast* c = NULL;
         Cent_ast_create(&c);
         c->type = Cent_ast_type_modifier;
-        buffer_copy(&mod->value, &c->text);
+        Zinc_string_copy(&mod->value, &c->text);
         Cent_ast_add(n, c);
         Cent_token_destroy(mod);
         free(mod);
@@ -328,7 +328,7 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
             assert(false && "not possible");
         }
         a->type = Cent_ast_type_id;
-        buffer_copy(&id->value, &a->text);
+        Zinc_string_copy(&id->value, &a->text);
         Cent_ast_add(n, a);
         Cent_token_destroy(id);
         free(id);
@@ -372,7 +372,7 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, n);
     if (id) {
-        buffer_copy(&id->value, &n->text);
+        Zinc_string_copy(&id->value, &n->text);
         Cent_token_destroy(id);
         free(id);
     }
@@ -400,7 +400,7 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
             assert(false && "not possible");
         }
 
-        buffer_copy(&id->value, &a->text);
+        Zinc_string_copy(&id->value, &a->text);
         Cent_token_destroy(id);
         free(id);
         Cent_ast_add(n, a);
@@ -428,7 +428,7 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
     if (!n->has_error) {
         Cent_enum_type* enumerate = NULL;
         Cent_enumerate_create(&enumerate);
-        buffer_copy(&n->text, &enumerate->name);
+        Zinc_string_copy(&n->text, &enumerate->name);
 
 
         Cent_symbol* sym = NULL;
@@ -472,7 +472,7 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
     Cent_match(pd, Cent_token_id, "expected id", &id, a);
     /* test case: test_parse_include_error_expected_id */
     if (id) {
-        buffer_copy(&id->value, &a->text);
+        Zinc_string_copy(&id->value, &a->text);
         Cent_token_destroy(id);
         free(id);
     }
@@ -498,7 +498,7 @@ void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n)
                 assert(false && "not possible");
             }
             if (id2) {
-                buffer_copy(&id2->value, &b->text);
+                Zinc_string_copy(&id2->value, &b->text);
                 Cent_token_destroy(id2);
                 free(id2);
             }

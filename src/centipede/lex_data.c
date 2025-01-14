@@ -57,7 +57,7 @@ void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type t
     hash_table_add_str(&ld->reserved, word, p);
 }
 
-Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, struct buffer* word)
+Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, struct Zinc_string* word)
 {
     return hash_table_get(&ld->reserved, word);
 }
@@ -70,7 +70,7 @@ void Cent_lex_add_builtin(Cent_lex_data* ld, char* name, Cent_builtin_type type)
     hash_table_add_str(&ld->builtin, name, bt);
 }
 
-Cent_builtin_type* Cent_lex_get_builtin(Cent_lex_data* ld, struct buffer* name)
+Cent_builtin_type* Cent_lex_get_builtin(Cent_lex_data* ld, struct Zinc_string* name)
 {
     return hash_table_get(&ld->builtin, name);
 }

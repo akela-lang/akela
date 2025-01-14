@@ -6,7 +6,7 @@ void Ake_type_use_init(Ake_type_use* tu)
 {
     tu->type = Ake_type_use_type_def;
     tu->td = NULL;
-    buffer_init(&tu->name);
+    Zinc_string_init(&tu->name);
     VectorInit(&tu->dim, sizeof(Ake_type_dimension));
     tu->is_ref = false;
     tu->is_mut = false;
@@ -37,7 +37,7 @@ void Ake_type_use_destroy(Ake_type_use* tu)
             p = p->next;
             Ake_type_use_destroy(temp);
         }
-        buffer_destroy(&tu->name);
+        Zinc_string_destroy(&tu->name);
         VectorDestroy(&tu->dim);
         free(tu);
     }
@@ -59,7 +59,7 @@ void Ake_type_use_copy(Ake_type_use* src, Ake_type_use* dest)
 {
     dest->type = src->type;
     dest->td = src->td;
-    buffer_copy(&src->name, &dest->name);
+    Zinc_string_copy(&src->name, &dest->name);
     VectorCopy(&src->dim, &dest->dim);
     dest->is_ref = src->is_ref;
     dest->is_mut = src->is_mut;

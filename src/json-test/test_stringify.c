@@ -17,14 +17,14 @@ void test_stringify_null()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
     expect_no_errors(el);
     expect_str(&bf, "null", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -42,14 +42,14 @@ void test_stringify_true()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
     expect_no_errors(el);
     expect_str(&bf, "true", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -67,14 +67,14 @@ void test_stringify_false()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
     expect_no_errors(el);
     expect_str(&bf, "false", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -87,20 +87,20 @@ void test_stringify_string()
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_string);
-    buffer_copy_str(&dom->value.string, "hello");
+    Zinc_string_add_str(&dom->value.string, "hello");
 
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "\"hello\"", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -113,20 +113,20 @@ void test_stringify_string2()
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_string);
-    buffer_copy_str(&dom->value.string, "θθθ");
+    Zinc_string_add_str(&dom->value.string, "θθθ");
 
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -139,20 +139,20 @@ void test_stringify_string3()
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_string);
-    buffer_copy_str(&dom->value.string, "🩒");
+    Zinc_string_add_str(&dom->value.string, "🩒");
 
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "\"\\u1fa52\"", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -165,20 +165,20 @@ void test_stringify_string4()
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_string);
-    buffer_copy_str(&dom->value.string, "\t");
+    Zinc_string_add_str(&dom->value.string, "\t");
 
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "\"\\t\"", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -192,13 +192,13 @@ void test_stringify_string_error_invalid_char()
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_string);
     char c[2] = {7, '\0'};      /* bell */
-    buffer_copy_str(&dom->value.string, c);
+    Zinc_string_add_str(&dom->value.string, c);
 
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
@@ -206,7 +206,7 @@ void test_stringify_string_error_invalid_char()
     struct error* e = expect_source_error(el, "invalid string character");
     assert_ptr(e, "ptr e");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -225,15 +225,15 @@ void test_stringify_number_integer()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "123", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -252,15 +252,15 @@ void test_stringify_number_fraction()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "5.100000", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -279,15 +279,15 @@ void test_stringify_number_exponent()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "51.000000", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -304,15 +304,15 @@ void test_stringify_array_empty()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "[]", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -336,15 +336,15 @@ void test_stringify_array_one()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "[3]", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -375,7 +375,7 @@ void test_stringify_array2()
     Json_dom* dom2 = NULL;
     Json_dom_create(&dom2);
     Json_dom_set_type(dom2, Json_dom_type_string);
-    buffer_copy_str(&dom2->value.string, "hello");
+    Zinc_string_add_str(&dom2->value.string, "hello");
     Json_dom_add_element(dom, dom2);
 
     Json_dom* dom3 = NULL;
@@ -398,15 +398,15 @@ void test_stringify_array2()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -423,15 +423,15 @@ void test_stringify_object_empty()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "{}", "bf");
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -445,9 +445,9 @@ void test_stringify_object_one()
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_object);
 
-    struct buffer name0;
-    buffer_init(&name0);
-    buffer_copy_str(&name0, "one");
+    struct Zinc_string name0;
+    Zinc_string_init(&name0);
+    Zinc_string_add_str(&name0, "one");
 
     Json_dom* value0 = NULL;
     Json_dom_create(&value0);
@@ -460,16 +460,16 @@ void test_stringify_object_one()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_str(&bf, "{\"one\":1}", "bf");
 
-    buffer_destroy(&name0);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&name0);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);
@@ -483,9 +483,9 @@ void test_stringify_object_many()
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_object);
 
-    struct buffer name0;
-    buffer_init(&name0);
-    buffer_copy_str(&name0, "one");
+    struct Zinc_string name0;
+    Zinc_string_init(&name0);
+    Zinc_string_add_str(&name0, "one");
 
     Json_dom* value0 = NULL;
     Json_dom_create(&value0);
@@ -493,9 +493,9 @@ void test_stringify_object_many()
     value0->number_type = Json_number_type_integer;
     value0->value.integer = 1;
 
-    struct buffer name1;
-    buffer_init(&name1);
-    buffer_copy_str(&name1, "two");
+    struct Zinc_string name1;
+    Zinc_string_init(&name1);
+    Zinc_string_add_str(&name1, "two");
 
     Json_dom* value1 = NULL;
     Json_dom_create(&value1);
@@ -503,14 +503,14 @@ void test_stringify_object_many()
     value1->number_type = Json_number_type_fp;
     value1->value.fp = 5.5;
 
-    struct buffer name2;
-    buffer_init(&name2);
-    buffer_copy_str(&name2, "three");
+    struct Zinc_string name2;
+    Zinc_string_init(&name2);
+    Zinc_string_add_str(&name2, "three");
 
     Json_dom* value2 = NULL;
     Json_dom_create(&value2);
     Json_dom_set_type(value2, Json_dom_type_string);
-    buffer_copy_str(&value2->value.string, "hello");
+    Zinc_string_add_str(&value2->value.string, "hello");
 
     Json_dom_add_property(dom, &name0, value0);
     Json_dom_add_property(dom, &name1, value1);
@@ -519,25 +519,25 @@ void test_stringify_object_many()
     struct error_list* el = NULL;
     error_list_create(&el);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
     expect_no_errors(el);
     expect_true(
-        buffer_compare_str(&bf, "{\"one\":1,\"two\":5.500000,\"three\":\"hello\"}")
-        || buffer_compare_str(&bf, "{\"one\":1,\"three\":\"hello\",\"two\":5.500000}")
-        || buffer_compare_str(&bf, "{\"two\":5.500000,\"one\":1,\"three\":\"hello\"}")
-        || buffer_compare_str(&bf, "{\"two\":5.500000,\"three\":\"hello\",\"one\":1}")
-        || buffer_compare_str(&bf, "{\"three\":\"hello\",\"one\":1,\"two\":5.500000}")
-        || buffer_compare_str(&bf, "{\"three\":\"hello\",\"two\":5.500000},\"one\":1"),
+        Zinc_string_compare_str(&bf, "{\"one\":1,\"two\":5.500000,\"three\":\"hello\"}")
+        || Zinc_string_compare_str(&bf, "{\"one\":1,\"three\":\"hello\",\"two\":5.500000}")
+        || Zinc_string_compare_str(&bf, "{\"two\":5.500000,\"one\":1,\"three\":\"hello\"}")
+        || Zinc_string_compare_str(&bf, "{\"two\":5.500000,\"three\":\"hello\",\"one\":1}")
+        || Zinc_string_compare_str(&bf, "{\"three\":\"hello\",\"one\":1,\"two\":5.500000}")
+        || Zinc_string_compare_str(&bf, "{\"three\":\"hello\",\"two\":5.500000},\"one\":1"),
         "bf");
 
-    buffer_destroy(&name0);
-    buffer_destroy(&name1);
-    buffer_destroy(&name2);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&name0);
+    Zinc_string_destroy(&name1);
+    Zinc_string_destroy(&name2);
+    Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
     error_list_destroy(el);
     free(el);

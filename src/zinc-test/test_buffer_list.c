@@ -9,14 +9,14 @@ void test_buffer_list1()
     struct buffer_node* bn0 = NULL;
     malloc_safe((void**)&bn0, sizeof(struct buffer_node));
     buffer_node_init(bn0);
-    buffer_init(&bn0->value);
-    buffer_copy_str(&bn0->value, "one");
+    Zinc_string_init(&bn0->value);
+    Zinc_string_add_str(&bn0->value, "one");
 
     struct buffer_node* bn1 = NULL;
     malloc_safe((void**)&bn1, sizeof(struct buffer_node));
     buffer_node_init(bn1);
-    buffer_init(&bn1->value);
-    buffer_copy_str(&bn1->value, "two");
+    Zinc_string_init(&bn1->value);
+    Zinc_string_add_str(&bn1->value, "two");
 
     struct buffer_list bl;
     buffer_list_init(&bl);
@@ -66,13 +66,13 @@ void test_buffer_list_add_bf()
     struct buffer_list bl;
     buffer_list_init(&bl);
 
-    struct buffer bf0;
-    buffer_init(&bf0);
-    buffer_copy_str(&bf0, "one");
+    struct Zinc_string bf0;
+    Zinc_string_init(&bf0);
+    Zinc_string_add_str(&bf0, "one");
 
-    struct buffer bf1;
-    buffer_init(&bf1);
-    buffer_copy_str(&bf1, "two");
+    struct Zinc_string bf1;
+    Zinc_string_init(&bf1);
+    Zinc_string_add_str(&bf1, "two");
 
     buffer_list_add_bf(&bl, &bf0);
     buffer_list_add_bf(&bl, &bf1);
@@ -83,8 +83,8 @@ void test_buffer_list_add_bf()
     struct buffer_node* bn1 = bn0->next;
     expect_str(&bn1->value, "two", "two");
 
-    buffer_destroy(&bf0);
-    buffer_destroy(&bf1);
+    Zinc_string_destroy(&bf0);
+    Zinc_string_destroy(&bf1);
     buffer_list_destroy(&bl);
 }
 
@@ -104,9 +104,9 @@ void test_buffer_list_split()
 {
     test_name(__func__);
 
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_copy_str(&bf, "one two three");
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add_str(&bf, "one two three");
 
     struct buffer_list bl;
     buffer_list_init(&bl);
@@ -126,36 +126,36 @@ void test_buffer_list_split()
     expect_str(&bn2->value, "three", "three bn2");
 
     buffer_list_destroy(&bl);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void test_buffer_list_get()
 {
     test_name(__func__);
 
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_copy_str(&bf, "one two three");
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add_str(&bf, "one two three");
 
     struct buffer_list bl;
     buffer_list_init(&bl);
 
     buffer_split(&bf, &bl);
 
-    struct buffer* bf0 = buffer_list_get(&bl, 0);
+    struct Zinc_string* bf0 = buffer_list_get(&bl, 0);
     assert_ptr(bf0, "ptr bf0");
     expect_str(bf0, "one", "one bf0");
 
-    struct buffer* bf1 = buffer_list_get(&bl, 1);
+    struct Zinc_string* bf1 = buffer_list_get(&bl, 1);
     assert_ptr(bf1, "ptr bf1");
     expect_str(bf1, "two", "two bf1");
 
-    struct buffer* bf2 = buffer_list_get(&bl, 2);
+    struct Zinc_string* bf2 = buffer_list_get(&bl, 2);
     assert_ptr(bf2, "ptr bf2");
     expect_str(bf2, "three", "three bf2");
 
     buffer_list_destroy(&bl);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void test_buffer_list()

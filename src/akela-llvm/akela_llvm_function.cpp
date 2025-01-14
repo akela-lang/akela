@@ -10,7 +10,7 @@ namespace Akela_llvm {
         FunctionType* func_type = Get_function_type(jd, n->tu);
         Ake_ast *proto = Ast_node_get(n, 0);
         Ake_ast *id = Ast_node_get(proto, 0);
-        buffer_finish(&id->value);
+        Zinc_string_finish(&id->value);
         Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->value.buf, *jd->TheModule);
 
         BasicBlock* last_block = Get_last_block(jd, jd->toplevel);
@@ -27,7 +27,7 @@ namespace Akela_llvm {
         FunctionType* func_type = Get_function_type(jd, n->tu);
         Ake_ast *proto = Ast_node_get(n, 0);
         Ake_ast *id = Ast_node_get(proto, 0);
-        buffer_finish(&id->value);
+        Zinc_string_finish(&id->value);
         Function* f = Function::Create(func_type,
                                        GlobalValue::ExternalLinkage,
                                        id->value.buf,
@@ -43,7 +43,7 @@ namespace Akela_llvm {
             Ake_ast* dec_type = Ast_node_get(dec, 1);
             Value* dec_value = &f->arg_begin()[i];
 
-            buffer_finish(&dec_id->value);
+            Zinc_string_finish(&dec_id->value);
             Type* t = Get_type_pointer(jd, dec_type->tu);
             Value* lhs = jd->Builder->CreateAlloca(t,
                                                    nullptr,

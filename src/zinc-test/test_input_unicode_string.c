@@ -13,8 +13,8 @@ void test_input_unicode_string_next()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, vector);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     enum result r;
     bool done;
@@ -25,7 +25,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "0 done");
     expect_int_equal(num, 1, "0 num");
@@ -38,7 +38,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "1 done");
     expect_int_equal(num, 1, "1 num");
@@ -51,7 +51,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "2 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "2 done");
     expect_int_equal(num, 1, "2 num");
@@ -64,7 +64,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "3 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "3 done");
     expect_int_equal(num, 1, "3 num");
@@ -77,7 +77,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "4 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "4 done");
     expect_int_equal(num, 1, "4 num");
@@ -90,7 +90,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "5 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "5 done");
     expect_int_equal(num, 1, "5 num");
@@ -103,7 +103,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "6 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "6 done");
     expect_int_equal(num, 1, "6 num");
@@ -116,7 +116,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "7 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "7 done");
     expect_int_equal(num, 1, "7 num");
@@ -129,7 +129,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "8 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "8 done");
     expect_int_equal(num, 1, "8 num");
@@ -142,7 +142,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "9 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "9 done");
     expect_int_equal(num, 1, "9 num");
@@ -155,7 +155,7 @@ void test_input_unicode_string_next()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "10 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "10 done");
     expect_int_equal(num, 1, "10 num");
@@ -179,7 +179,7 @@ void test_input_unicode_string_next()
     free(input);
     VectorDestroy(vector);
     free(vector);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void test_input_unicode_string_next_multibyte()
@@ -193,8 +193,8 @@ void test_input_unicode_string_next_multibyte()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, vector);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     enum result r;
     bool done;
@@ -205,7 +205,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "0 done");
     expect_int_equal(num, 1, "0 num");
@@ -218,7 +218,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "1 done");
     expect_int_equal(num, 1, "1 num");
@@ -231,7 +231,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "2 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "2 done");
     expect_int_equal(num, 1, "2 num");
@@ -244,7 +244,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "3 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "3 done");
     expect_int_equal(num, 1, "3 num");
@@ -257,7 +257,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "4 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "4 done");
     expect_int_equal(num, 1, "4 num");
@@ -270,7 +270,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "5 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "5 done");
     expect_int_equal(num, 1, "5 num");
@@ -283,7 +283,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "6 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "6 done");
     expect_int_equal(num, 2, "6 num");
@@ -297,7 +297,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "7 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "7 done");
     expect_int_equal(num, 2, "7 num");
@@ -311,7 +311,7 @@ void test_input_unicode_string_next_multibyte()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "8 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "8 done");
     expect_int_equal(num, 2, "8 num");
@@ -336,7 +336,7 @@ void test_input_unicode_string_next_multibyte()
     free(input);
     VectorDestroy(vector);
     free(vector);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void test_input_unicode_string_repeat()
@@ -350,8 +350,8 @@ void test_input_unicode_string_repeat()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, vector);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     enum result r;
     bool done;
@@ -362,7 +362,7 @@ void test_input_unicode_string_repeat()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "0 done");
     expect_int_equal(num, 1, "0 num");
@@ -376,7 +376,7 @@ void test_input_unicode_string_repeat()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0r input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "0r done");
     expect_int_equal(num, 1, "0r num");
@@ -389,7 +389,7 @@ void test_input_unicode_string_repeat()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "1 done");
     expect_int_equal(num, 1, "1 num");
@@ -402,7 +402,7 @@ void test_input_unicode_string_repeat()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "2 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "2 done");
     expect_int_equal(num, 1, "2 num");
@@ -415,7 +415,7 @@ void test_input_unicode_string_repeat()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "3 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "3 done");
     expect_int_equal(num, 1, "3 num");
@@ -428,7 +428,7 @@ void test_input_unicode_string_repeat()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "4 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "4 done");
     expect_int_equal(num, 1, "4 num");
@@ -452,7 +452,7 @@ void test_input_unicode_string_repeat()
     free(input);
     VectorDestroy(vector);
     free(vector);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void test_input_unicode_string_seek()
@@ -466,8 +466,8 @@ void test_input_unicode_string_seek()
     InputUnicodeString* input = NULL;
     InputUnicodeStringCreate(&input, vector);
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     enum result r;
     bool done;
@@ -478,7 +478,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "0 done");
     expect_int_equal(num, 1, "0 num");
@@ -493,7 +493,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "1 done");
     expect_int_equal(num, 1, "1 num");
@@ -506,7 +506,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "2 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "2 done");
     expect_int_equal(num, 1, "2 num");
@@ -519,7 +519,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "3 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "3 done");
     expect_int_equal(num, 1, "3 num");
@@ -532,7 +532,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "4 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "4 done");
     expect_int_equal(num, 1, "4 num");
@@ -556,7 +556,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "0 done");
     expect_int_equal(num, 1, "0 num");
@@ -569,7 +569,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "1 done");
     expect_int_equal(num, 1, "1 num");
@@ -582,7 +582,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "2 done");
     expect_int_equal(num, 1, "2 num");
@@ -595,7 +595,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "3 done");
     expect_int_equal(num, 1, "3 num");
@@ -608,7 +608,7 @@ void test_input_unicode_string_seek()
     r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
-        buffer_add_char(&bf, c[i]);
+        Zinc_string_add_char(&bf, c[i]);
     }
     expect_false(done, "4 done");
     expect_int_equal(num, 1, "4 num");
@@ -632,7 +632,7 @@ void test_input_unicode_string_seek()
     free(input);
     VectorDestroy(vector);
     free(vector);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void test_input_unicode_string_get_all()

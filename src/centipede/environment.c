@@ -28,7 +28,7 @@ void Cent_environment_free(Cent_environment* env)
     free(env);
 }
 
-void Cent_environment_add_symbol(Cent_environment* environment, struct buffer* name, Cent_symbol* symbol)
+void Cent_environment_add_symbol(Cent_environment* environment, struct Zinc_string* name, Cent_symbol* symbol)
 {
     hash_table_add(&environment->symbols, name, symbol);
 }
@@ -38,7 +38,7 @@ void Cent_environment_add_symbol_str(Cent_environment* environment, char* name, 
     hash_table_add_str(&environment->symbols, name, symbol);
 }
 
-Cent_symbol* Cent_environment_get(Cent_environment* top, struct buffer* name)
+Cent_symbol* Cent_environment_get(Cent_environment* top, struct Zinc_string* name)
 {
     Cent_environment* env = top;
     while (env) {
@@ -66,7 +66,7 @@ Cent_symbol* Cent_environment_get_str(Cent_environment* top, char* name)
     return NULL;
 }
 
-Cent_symbol* Cent_environment_get_local(Cent_environment* top, struct buffer* name)
+Cent_symbol* Cent_environment_get_local(Cent_environment* top, struct Zinc_string* name)
 {
     return hash_table_get(&top->symbols, name);
 }

@@ -3,7 +3,7 @@
 
 void Cent_enum_value_init(Cent_enum_value* ev)
 {
-    buffer_init(&ev->display);
+    Zinc_string_init(&ev->display);
     ev->value = 0;
     location_init(&ev->loc);
     ev->next = NULL;
@@ -18,12 +18,12 @@ void Cent_enum_value_create(Cent_enum_value** ev)
 
 void Cent_enum_value_destroy(Cent_enum_value* ev)
 {
-    buffer_destroy(&ev->display);
+    Zinc_string_destroy(&ev->display);
 }
 
 void Cent_enumerate_init(Cent_enum_type* en)
 {
-    buffer_init(&en->name);
+    Zinc_string_init(&en->name);
     location_init(&en->loc);
     en->head = NULL;
     en->tail = NULL;
@@ -37,7 +37,7 @@ void Cent_enumerate_create(Cent_enum_type** en)
 
 void Cent_enumerate_destroy(Cent_enum_type* en)
 {
-    buffer_destroy(&en->name);
+    Zinc_string_destroy(&en->name);
 
     Cent_enum_value* ev = en->head;
     while (ev) {
@@ -72,21 +72,21 @@ size_t Cent_enumerate_count(Cent_enum_type* en)
     return count;
 }
 
-void Cent_enumerate_add_name(Cent_enum_type* en, struct buffer* name, struct location* loc)
+void Cent_enumerate_add_name(Cent_enum_type* en, struct Zinc_string* name, struct location* loc)
 {
     Cent_enum_value* ev = NULL;
     Cent_enum_value_create(&ev);
-    buffer_copy(name, &ev->display);
+    Zinc_string_copy(name, &ev->display);
     ev->value = Cent_enumerate_count(en);
     ev->loc = *loc;
     Cent_enumerate_add(en, ev);
 }
 
-Cent_enum_value* Cent_enumerate_get(Cent_enum_type* en, struct buffer* name)
+Cent_enum_value* Cent_enumerate_get(Cent_enum_type* en, struct Zinc_string* name)
 {
     Cent_enum_value* ev = en->head;
     while (ev) {
-        if (buffer_compare(name, &ev->display)) {
+        if (Zinc_string_compare(name, &ev->display)) {
             return ev;
         }
         ev = ev->next;

@@ -25,10 +25,10 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     String_slice file_name;
     file_name.p = "**string**";
     file_name.size = strlen(file_name.p);
-    struct buffer name;
-    buffer_init(&name);
-    buffer_add(&name, file_name.p, file_name.size);
-    buffer_finish(&name);
+    struct Zinc_string name;
+    Zinc_string_init(&name);
+    Zinc_string_add(&name, file_name.p, file_name.size);
+    Zinc_string_finish(&name);
 
     test_parse_add_comp_unit(ms, name.buf, s);
     Cent_input_data data = Cent_module_find_interface(
@@ -51,7 +51,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     cu->pd.ct = *ct;
     (*ct)->primary = cu;
     Cent_comp_table_add(*ct, &name, cu);
-    buffer_destroy(&name);
+    Zinc_string_destroy(&name);
 }
 
 void test_parse_teardown_input(Cent_comp_unit* cu)

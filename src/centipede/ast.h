@@ -42,7 +42,7 @@ typedef enum Cent_variable_type {
 
 typedef struct Cent_ast {
     Cent_ast_type type;
-    struct buffer text;
+    struct Zinc_string text;
     Cent_value_type value_type;
     Cent_number_type number_type;
     Cent_variable_type variable_type;

@@ -21,7 +21,7 @@
 #include <assert.h>
 
 void Cover_cwd();
-void Cover_append_path(struct buffer* bf, char* path);
+void Cover_append_path(struct Zinc_string* bf, char* path);
 void Cover_get_libraries(char* dir_name, Cover_app* test, Cover_app* app);
 void Cover_get_files(Cover_library* lib);
 void Cover_read_file(Cover_file* file);
@@ -44,13 +44,13 @@ int main(int argc, char** argv)
 
     Cover_app app;
     Cover_app_init(&app);
-    buffer_copy_str(&app.data_path, dir_name);
-    buffer_finish(&app.data_path);
+    Zinc_string_add_str(&app.data_path, dir_name);
+    Zinc_string_finish(&app.data_path);
 
     Cover_app test;
     Cover_app_init(&test);
-    buffer_copy_str(&test.data_path, dir_name);
-    buffer_finish(&test.data_path);
+    Zinc_string_add_str(&test.data_path, dir_name);
+    Zinc_string_finish(&test.data_path);
 
     Cover_get_libraries(dir_name, &test, &app);
 
@@ -69,10 +69,10 @@ void Cover_cwd()
     }
 }
 
-void Cover_append_path(struct buffer* bf, char* path)
+void Cover_append_path(struct Zinc_string* bf, char* path)
 {
-    buffer_add_char(bf, '/');
-    buffer_add_str(bf, path);
+    Zinc_string_add_char(bf, '/');
+    Zinc_string_add_str(bf, path);
 }
 
 void Cover_get_libraries(char* dir_name, Cover_app* test, Cover_app *app)
@@ -84,19 +84,19 @@ void Cover_get_libraries(char* dir_name, Cover_app* test, Cover_app *app)
     if (d) {
         while ((dir = readdir(d)) != NULL) {
             if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
-                struct buffer bf;
-                buffer_init(&bf);
-                buffer_add_str(&bf, dir_name);
+                struct Zinc_string bf;
+                Zinc_string_init(&bf);
+                Zinc_string_add_str(&bf, dir_name);
                 Cover_append_path(&bf, dir->d_name);
-                buffer_finish(&bf);
+                Zinc_string_finish(&bf);
                 struct stat sb;
                 if (stat(bf.buf, &sb) == 0 && S_ISDIR(sb.st_mode)) {
                     Cover_library* lib = NULL;
                     Cover_library_create(&lib);
-                    buffer_copy(&bf, &lib->path);
-                    buffer_add_str(&lib->name, dir->d_name);
-                    buffer_finish(&lib->path);
-                    buffer_finish(&lib->name);
+                    Zinc_string_copy(&bf, &lib->path);
+                    Zinc_string_add_str(&lib->name, dir->d_name);
+                    Zinc_string_finish(&lib->path);
+                    Zinc_string_finish(&lib->name);
 
                     String_slice slice = {bf.buf, bf.size};
                     Cob_result mr = Cob_match(&test_re, slice);
@@ -109,7 +109,7 @@ void Cover_get_libraries(char* dir_name, Cover_app* test, Cover_app *app)
                     Cob_result_destroy(&mr);
                 }
 
-                buffer_destroy(&bf);
+                Zinc_string_destroy(&bf);
             }
         }
         closedir(d);
@@ -132,11 +132,11 @@ void Cover_get_files(Cover_library* lib)
     if (d) {
         while ((dir = readdir(d)) != NULL) {
             if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
-                struct buffer bf;
-                buffer_init(&bf);
-                buffer_copy(&lib->path, &bf);
+                struct Zinc_string bf;
+                Zinc_string_init(&bf);
+                Zinc_string_copy(&lib->path, &bf);
                 Cover_append_path(&bf, dir->d_name);
-                buffer_finish(&bf);
+                Zinc_string_finish(&bf);
                 struct stat sb;
                 if (stat(bf.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
                     String_slice slice = {bf.buf, bf.size};
@@ -144,17 +144,17 @@ void Cover_get_files(Cover_library* lib)
                     if (mr.matched) {
                         Cover_file* file = NULL;
                         Cover_file_create(&file);
-                        buffer_copy(&bf, &file->path);
-                        buffer_copy_str(&file->name, dir->d_name);
-                        buffer_finish(&file->path);
-                        buffer_finish(&file->name);
+                        Zinc_string_copy(&bf, &file->path);
+                        Zinc_string_add_str(&file->name, dir->d_name);
+                        Zinc_string_finish(&file->path);
+                        Zinc_string_finish(&file->name);
                         Cover_file_list_add_sorted(&lib->files, file);
                         Cover_read_file(file);
                         Cover_print_file_results(file);
                     }
                     Cob_result_destroy(&mr);
                 }
-                buffer_destroy(&bf);
+                Zinc_string_destroy(&bf);
             }
         }
     }
@@ -201,7 +201,7 @@ void Cover_read_file(Cover_file* file)
         printf("compile() error:\n");
         struct error* e = re.el->head;
         while (e) {
-            buffer_finish(&e->message);
+            Zinc_string_finish(&e->message);
             printf("%s\n", e->message.buf);
             e = e->next;
         }
@@ -211,8 +211,8 @@ void Cover_read_file(Cover_file* file)
     }
 
     bool done = false;
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     while (!done) {
         while (true) {
@@ -224,7 +224,7 @@ void Cover_read_file(Cover_file* file)
             if (c == '\n') {
                 break;
             }
-            buffer_add_char(&bf, (char)c);
+            Zinc_string_add_char(&bf, (char)c);
         }
 
         if (bf.size > 0) {
@@ -233,23 +233,23 @@ void Cover_read_file(Cover_file* file)
             slice.size = bf.size;
             Cob_result mr = Cob_match(&re, slice);
             if (mr.matched) {
-                struct buffer* count = buffer_list_get(&mr.groups, 1);
-                struct buffer* line_number = buffer_list_get(&mr.groups, 2);
-                struct buffer* source = buffer_list_get(&mr.groups, 3);
-                struct buffer* source_path = buffer_list_get(&mr.groups, 4);
+                struct Zinc_string* count = buffer_list_get(&mr.groups, 1);
+                struct Zinc_string* line_number = buffer_list_get(&mr.groups, 2);
+                struct Zinc_string* source = buffer_list_get(&mr.groups, 3);
+                struct Zinc_string* source_path = buffer_list_get(&mr.groups, 4);
 
                 assert(line_number && count && source && source_path);
 
-                buffer_finish(line_number);
-                buffer_finish(count);
-                buffer_finish(source);
-                buffer_finish(source_path);
+                Zinc_string_finish(line_number);
+                Zinc_string_finish(count);
+                Zinc_string_finish(source);
+                Zinc_string_finish(source_path);
 
                 bool should_count_line;
                 size_t count_value = 0;
                 if (count->size > 0 && count->buf[0] == '-') {
                     should_count_line = false;
-                } else if (buffer_compare_str(count, "#####")) {
+                } else if (Zinc_string_compare_str(count, "#####")) {
                     should_count_line = true;
                     count_value = 0;
                 } else {
@@ -266,26 +266,26 @@ void Cover_read_file(Cover_file* file)
                     }
                 }
 
-                buffer_finish(line_number);
+                Zinc_string_finish(line_number);
                 unsigned long long num = strtoull(line_number->buf, NULL, 10);
-                if (buffer_compare_str(source, "Source:") && num == 0) {
-                    buffer_copy(source_path, &file->source_path);
+                if (Zinc_string_compare_str(source, "Source:") && num == 0) {
+                    Zinc_string_copy(source_path, &file->source_path);
                 }
-                buffer_finish(&file->source_path);
+                Zinc_string_finish(&file->source_path);
             } else {
-                buffer_finish(&bf);
+                Zinc_string_finish(&bf);
                 fprintf(stderr, "\n%s\n", file->path.buf);
                 fprintf(stderr, "%s\n", bf.buf);
                 fprintf(stderr, "did not match\n");
             }
 
             Cob_result_destroy(&mr);
-            buffer_clear(&bf);
+            Zinc_string_clear(&bf);
 
         }
     }
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 
     fclose(fp);
 
@@ -301,41 +301,41 @@ void Cover_print_match(struct buffer_list* groups)
 {
     printf("matched:\n");
 
-    struct buffer* string = buffer_list_get(groups, 0);
+    struct Zinc_string* string = buffer_list_get(groups, 0);
     if (string) {
-        buffer_finish(string);
+        Zinc_string_finish(string);
         printf("\tstring: %s\n", string->buf);
     } else {
         printf("\tcould not get string\n");
     }
 
-    struct buffer* count = buffer_list_get(groups, 1);
+    struct Zinc_string* count = buffer_list_get(groups, 1);
     if (count) {
-        buffer_finish(count);
+        Zinc_string_finish(count);
         printf("\tcount: %s\n", count->buf);
     } else {
         printf("\tcould not get count\n");
     }
 
-    struct buffer* line_number = buffer_list_get(groups, 2);
+    struct Zinc_string* line_number = buffer_list_get(groups, 2);
     if (line_number) {
-        buffer_finish(line_number);
+        Zinc_string_finish(line_number);
         printf("\tline number: %s\n", line_number->buf);
     } else {
         printf("\tcould not get line number\n");
     }
 
-    struct buffer* source = buffer_list_get(groups, 3);
+    struct Zinc_string* source = buffer_list_get(groups, 3);
     if (source) {
-        buffer_finish(source);
+        Zinc_string_finish(source);
         printf("\tsource: %s\n", source->buf);
     } else {
         printf("\tcould not get source\n");
     }
 
-    struct buffer* filename = buffer_list_get(groups, 4);
+    struct Zinc_string* filename = buffer_list_get(groups, 4);
     if (filename) {
-        buffer_finish(filename);
+        Zinc_string_finish(filename);
         printf("\tfilename: %s\n", filename->buf);
     } else {
         printf("\tcould not get filename\n");

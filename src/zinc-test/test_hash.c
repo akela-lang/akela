@@ -7,17 +7,17 @@ void test_hash1()
 	test_name(__func__);
 
 	struct hash_table ht;
-	struct buffer one;
-	struct buffer two;
+	struct Zinc_string one;
+	struct Zinc_string two;
 	int one_item = 1;
 	int two_item = 2;
 
-	buffer_init(&one);
-	buffer_init(&two);
+	Zinc_string_init(&one);
+	Zinc_string_init(&two);
 
 	/* allocate one{} two{} */
-	buffer_copy_str(&one, "one");
-	buffer_copy_str(&two, "two");
+	Zinc_string_add_str(&one, "one");
+	Zinc_string_add_str(&two, "two");
 
 	/* allocate ht{} */
 	hash_table_init(&ht, 10);
@@ -38,8 +38,8 @@ void test_hash1()
 	expect_int_equal(*two_item_ptr, two_item, "2");
 
 	/* destroy one{} two{} ht{} */
-	buffer_destroy(&one);
-	buffer_destroy(&two);
+	Zinc_string_destroy(&one);
+	Zinc_string_destroy(&two);
 	hash_table_destroy(&ht);
 }
 

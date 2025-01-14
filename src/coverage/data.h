@@ -4,9 +4,9 @@
 #include "zinc/buffer.h"
 
 typedef struct Cover_file {
-    struct buffer name;
-    struct buffer path;
-    struct buffer source_path;
+    struct Zinc_string name;
+    struct Zinc_string path;
+    struct Zinc_string source_path;
     size_t line_count;
     size_t covered_count;
     size_t not_covered_count;
@@ -21,8 +21,8 @@ typedef struct Cover_file_list {
 } Cover_file_list;
 
 typedef struct Cover_library {
-    struct buffer name;
-    struct buffer path;
+    struct Zinc_string name;
+    struct Zinc_string path;
     Cover_file_list files;
     size_t line_count;
     size_t covered_count;
@@ -39,7 +39,7 @@ typedef struct Cover_library_list
 } Cover_library_list;
 
 typedef struct Cover_app {
-    struct buffer data_path;
+    struct Zinc_string data_path;
     Cover_library_list libraries;
     size_t line_count;
     size_t covered_count;

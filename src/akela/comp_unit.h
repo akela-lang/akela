@@ -15,7 +15,7 @@ typedef struct Ake_comp_unit {
     struct buffer_list extern_list;
 	struct Ake_symbol_table st;
     void* input_obj;
-	struct buffer path;
+	struct Zinc_string path;
 	struct Ake_comp_unit* next;
 	struct Ake_comp_unit* prev;
 } Ake_comp_unit;

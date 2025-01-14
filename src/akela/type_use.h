@@ -40,7 +40,7 @@ void static Ake_type_use_names(char const* names[])
 typedef struct Ake_type_use {
     Ake_type_use_type type;
     struct Ake_type_def* td;
-    struct buffer name;
+    struct Zinc_string name;
     Vector dim;
     bool is_ref;
     bool is_mut;

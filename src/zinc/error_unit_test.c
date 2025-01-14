@@ -11,7 +11,7 @@ void assert_no_errors(struct error_list* el)
     fprintf(stderr, "assert no errors: has errors\n");
     struct error* e = el->head;
     while (e) {
-        buffer_finish(&e->message);
+        Zinc_string_finish(&e->message);
         fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
         e = e->next;
     }
@@ -29,7 +29,7 @@ void expect_no_errors(struct error_list* el)
     fprintf(stderr, "expect no errors: has errors\n");
     struct error* e = el->head;
     while (e) {
-        buffer_finish(&e->message);
+        Zinc_string_finish(&e->message);
         fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
         e = e->next;
     }
@@ -81,7 +81,7 @@ struct error* assert_source_error(struct error_list* el, const char message[])
     test_called();
     struct error* e = el->head;
     while (e) {
-        buffer_finish(&e->message);
+        Zinc_string_finish(&e->message);
         if (strcmp(e->message.buf, message) == 0) {
             return e;
         }
@@ -98,7 +98,7 @@ struct error* expect_source_error(struct error_list* el, const char message[])
     test_called();
     struct error* e = el->head;
     while (e) {
-        buffer_finish(&e->message);
+        Zinc_string_finish(&e->message);
         if (strcmp(e->message.buf, message) == 0) {
             return e;
         }
@@ -111,7 +111,7 @@ struct error* expect_source_error(struct error_list* el, const char message[])
         fprintf(stderr, "Errors:\n");
     }
     while (e) {
-        buffer_finish(&e->message);
+        Zinc_string_finish(&e->message);
         fprintf(stderr, "%s\n", e->message.buf);
         e = e->next;
     }

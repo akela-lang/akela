@@ -16,7 +16,7 @@ void location_init(struct location* loc)
 
 void error_init(struct error* e)
 {
-    buffer_init(&e->message);
+    Zinc_string_init(&e->message);
     location_init(&e->loc);
     e->next = NULL;
     e->prev = NULL;
@@ -30,7 +30,7 @@ void error_create(struct error** e)
 
 void error_destroy(struct error* e)
 {
-    buffer_destroy(&e->message);
+    Zinc_string_destroy(&e->message);
 }
 
 void error_list_init(struct error_list* el)
@@ -72,8 +72,8 @@ bool error_list_set(struct error_list *el, struct location* loc, const char* fmt
 {
     va_list args;
     va_start(args, fmt);
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
     int len;
     struct error* e = NULL;
     error_create(&e);
@@ -82,7 +82,7 @@ bool error_list_set(struct error_list *el, struct location* loc, const char* fmt
     char last = 0;
     while (*fmt != '\0') {
         if (last == '%' && *fmt == '%') {
-            buffer_add_char(&e->message, '%');
+            Zinc_string_add_char(&e->message, '%');
         } else if (*fmt == '%') {
             /* nothing */
         } else if (last == '%' && *fmt == 'z') {
@@ -90,61 +90,61 @@ bool error_list_set(struct error_list *el, struct location* loc, const char* fmt
         } else if (last == '%' && *fmt == 'd') {
             int x = va_arg(args, int);
             while (true) {
-                buffer_clear(&bf);
+                Zinc_string_clear(&bf);
                 len = snprintf(bf.buf, bf.buf_size, "%d", x);
                 if (len < bf.buf_size) {
                     bf.size = len;
                     break;
                 } else {
-                    buffer_expand(&bf, len + BUFFER_CHUNK);
+                    Zinc_string_expand(&bf, len + BUFFER_CHUNK);
                 }
             }
-            buffer_add(&e->message, bf.buf, bf.size);
+            Zinc_string_add(&e->message, bf.buf, bf.size);
         } else if (last_last == '%' && last == 'z' && *fmt == 'u') {
             size_t x = va_arg(args, size_t);
             while (true) {
-                buffer_clear(&bf);
+                Zinc_string_clear(&bf);
                 len = snprintf(bf.buf, bf.buf_size, "%zu", x);
                 if (len < bf.buf_size) {
                     bf.size = len;
                     break;
                 } else {
-                    buffer_expand(&bf, len + BUFFER_CHUNK);
+                    Zinc_string_expand(&bf, len + BUFFER_CHUNK);
                 }
             }
-            buffer_add(&e->message, bf.buf, bf.size);
+            Zinc_string_add(&e->message, bf.buf, bf.size);
         } else if (last == '%' && *fmt == 's') {
             char* x = va_arg(args, char*);
             while (true) {
-                buffer_clear(&bf);
+                Zinc_string_clear(&bf);
                 len = snprintf(bf.buf, bf.buf_size, "%s", x);
                 if (len + 1 < bf.buf_size) {
                     bf.size = len;
                     break;
                 } else {
-                    buffer_expand(&bf, len + 1 + BUFFER_CHUNK);
+                    Zinc_string_expand(&bf, len + 1 + BUFFER_CHUNK);
                 }
             }
-            buffer_add(&e->message, bf.buf, bf.size);
+            Zinc_string_add(&e->message, bf.buf, bf.size);
         } else if (last == '%' && *fmt == 'b') {
-            struct buffer* src = va_arg(args, struct buffer*);
-            buffer_finish(src);
+            struct Zinc_string* src = va_arg(args, struct Zinc_string*);
+            Zinc_string_finish(src);
             while (true) {
-                buffer_clear(&bf);
+                Zinc_string_clear(&bf);
                 len = snprintf(bf.buf, bf.buf_size, "%s", src->buf);
                 if (len < bf.buf_size) {
                     bf.size = len;
                     break;
                 } else {
-                    buffer_expand(&bf, len + BUFFER_CHUNK);
+                    Zinc_string_expand(&bf, len + BUFFER_CHUNK);
                 }
             }
-            buffer_add(&e->message, bf.buf, bf.size);
+            Zinc_string_add(&e->message, bf.buf, bf.size);
         } else if (last == '%' && *fmt == 'c') {
             char c = (char)va_arg(args, int);
-            buffer_add_char(&e->message, c);
+            Zinc_string_add_char(&e->message, c);
         } else {
-            buffer_add_char(&e->message, *fmt);
+            Zinc_string_add_char(&e->message, *fmt);
         }
         last_last = last;
         last = *fmt;
@@ -158,7 +158,7 @@ bool error_list_set(struct error_list *el, struct location* loc, const char* fmt
         e->loc = *loc;
     }
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 
     return false;
 }
@@ -167,7 +167,7 @@ void error_list_print(struct error_list* el)
 {
     struct error* e = el->head;
     while (e) {
-        buffer_finish(&e->message);
+        Zinc_string_finish(&e->message);
         fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
         e = e->next;
     }

@@ -26,10 +26,10 @@ void Ake_environment_end(struct Ake_symbol_table* st)
 
 void Ake_symbol_table_add_reserved_word(struct Ake_environment* env, const char* name, enum Ake_token_enum tk_type)
 {
-    struct buffer bf;
+    struct Zinc_string bf;
 
-    buffer_init(&bf);
-    buffer_copy_str(&bf, name);
+    Zinc_string_init(&bf);
+    Zinc_string_add_str(&bf, name);
 
     struct Ake_symbol* sym = NULL;
     malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
@@ -39,15 +39,15 @@ void Ake_symbol_table_add_reserved_word(struct Ake_environment* env, const char*
 
     Ake_environment_put(env, &bf, sym);
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void Ake_symbol_table_add_type(struct Ake_environment* env, const char* name, struct Ake_type_def* td)
 {
-	struct buffer bf;
+	struct Zinc_string bf;
 
-	buffer_init(&bf);
-	buffer_copy_str(&bf, name);
+	Zinc_string_init(&bf);
+	Zinc_string_add_str(&bf, name);
 
 	struct Ake_symbol* sym = NULL;
 	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
@@ -57,7 +57,7 @@ void Ake_symbol_table_add_type(struct Ake_environment* env, const char* name, st
 
 	Ake_environment_put(env, &bf, sym);
 
-	buffer_destroy(&bf);
+	Zinc_string_destroy(&bf);
 }
 
 void Ake_symbol_table_init_reserved(struct Ake_environment* env)
@@ -92,7 +92,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	td->is_signed = true;
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
@@ -101,7 +101,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	td->is_signed = true;
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
@@ -110,7 +110,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
     malloc_safe((void**)&td, sizeof(struct Ake_type_def));
     Ake_type_def_init(td);
     td->type = Ake_type_integer;
-    buffer_copy_str(&td->name, name);
+    Zinc_string_add_str(&td->name, name);
     td->bit_count = 8;
     Ake_symbol_table_add_type(env, name, td);
 
@@ -118,7 +118,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
 
@@ -126,7 +126,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
 
@@ -134,7 +134,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_float;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
 
@@ -142,7 +142,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_float;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
 
@@ -150,14 +150,14 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_boolean;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	Ake_symbol_table_add_type(env, name, td);
 
     name = "Function";
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_function;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	Ake_symbol_table_add_type(env, name, td);
     st->function_type_def = td;
 
@@ -165,15 +165,15 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_module;
-	buffer_copy_str(&td->name, name);
+	Zinc_string_add_str(&td->name, name);
 	Ake_symbol_table_add_type(env, name, td);
 }
 
 void Ake_symbol_table_add_numeric(struct Ake_symbol_table* st, const char* name)
 {
-	struct buffer bf;
-	buffer_init(&bf);
-	buffer_copy_str(&bf, name);
+	struct Zinc_string bf;
+	Zinc_string_init(&bf);
+	Zinc_string_add_str(&bf, name);
 	struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
 	assert(sym);
 	assert(sym->td);
@@ -181,7 +181,7 @@ void Ake_symbol_table_add_numeric(struct Ake_symbol_table* st, const char* name)
     Ake_type_use_create(&tu);
 	tu->td = sym->td;
     Ake_type_use_add(st->numeric_pool, tu);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
@@ -492,7 +492,7 @@ void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol
 	}
 }
 
-void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct buffer* module_name)
+void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct Zinc_string* module_name)
 {
 	for (int i = 0; i < src->ht.size; i++) {
 		struct hash_entry* p = src->ht.buckets[i].head;
@@ -501,13 +501,13 @@ void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environ
 			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
 
 			/* value is module_name.sym_name */
-			struct buffer value;
-			buffer_init(&value);
-			buffer_copy(module_name, &value);
-			buffer_add_char(&value, '.');
-			buffer_copy(&p->value, &value);
+			struct Zinc_string value;
+			Zinc_string_init(&value);
+			Zinc_string_copy(module_name, &value);
+			Zinc_string_add_char(&value, '.');
+			Zinc_string_copy(&p->value, &value);
 			Ake_environment_put(dest, &value, dest_sym);
-            buffer_destroy(&value);
+            Zinc_string_destroy(&value);
 			p = p->next;
 		}
 	}
@@ -521,20 +521,20 @@ void Ake_set_current_function(struct Ake_environment* env, Ake_ast* fd)
 	sym->type = Ake_symbol_type_info;
 	sym->root_ptr = fd;
 
-	struct buffer bf;
-	buffer_init(&bf);
-	buffer_copy_str(&bf, "|current_function|");
+	struct Zinc_string bf;
+	Zinc_string_init(&bf);
+	Zinc_string_add_str(&bf, "|current_function|");
 	Ake_environment_put(env, &bf, sym);
-	buffer_destroy(&bf);
+	Zinc_string_destroy(&bf);
 }
 
 Ake_ast* Ake_get_current_function(struct Ake_environment* env)
 {
-	struct buffer bf;
-	buffer_init(&bf);
-	buffer_copy_str(&bf, "|current_function|");
+	struct Zinc_string bf;
+	Zinc_string_init(&bf);
+	Zinc_string_add_str(&bf, "|current_function|");
 	struct Ake_symbol* sym = Ake_environment_get(env, &bf);
-	buffer_destroy(&bf);
+	Zinc_string_destroy(&bf);
 	if (sym) {
 		return sym->root_ptr;
 	} else {
@@ -557,11 +557,11 @@ void Ake_symbol_table_print(struct Ake_symbol_table* st)
             struct hash_list* list = &ht->buckets[i];
             struct hash_entry* entry = list->head;
             while (entry) {
-                buffer_finish(&entry->value);
+                Zinc_string_finish(&entry->value);
                 printf("%s ", entry->value.buf);
                 struct Ake_symbol* sym = entry->item;
                 if (sym->td) {
-                    buffer_finish(&sym->td->name);
+                    Zinc_string_finish(&sym->td->name);
                     printf("%s %d %d %d", sym->td->name.buf, sym->td->type, sym->td->bit_count, sym->td->is_signed);
                 }
                 printf("\n");
@@ -571,12 +571,12 @@ void Ake_symbol_table_print(struct Ake_symbol_table* st)
         p = p->prev;
     }
 
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_copy_str(&bf, "Int64");
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add_str(&bf, "Int64");
     struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
     assert(sym && sym->td);
     assert(sym->td->bit_count == 64);
     assert(sym->td->is_signed);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }

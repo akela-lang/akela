@@ -15,7 +15,7 @@ struct location {
 };
 
 struct error {
-    struct buffer message;
+    struct Zinc_string message;
     struct location loc;
     struct error* next;
     struct error* prev;

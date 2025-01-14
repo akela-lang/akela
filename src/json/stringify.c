@@ -5,25 +5,25 @@
 #include "zinc/unicode.h"
 #include "stringify.h"
 
-void Json_stringify_string(struct error_list* el, Json_dom* dom, struct buffer *bf);
-void Json_stringify_number(struct error_list* el, Json_dom* dom, struct buffer *bf);
-void Json_stringify_array(struct error_list* el, Json_dom* dom, struct buffer *bf);
-void Json_stringify_object(struct error_list* el, Json_dom* dom, struct buffer *bf);
-void Json_stringify_property(struct buffer* name, Json_dom* value);
+void Json_stringify_string(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify_number(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify_array(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify_object(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
+void Json_stringify_property(struct Zinc_string* name, Json_dom* value);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Json_stringify(struct error_list* el, Json_dom* dom, struct buffer *bf)
+void Json_stringify(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
     if (dom->type == Json_dom_type_null) {
-        buffer_add_str(bf, "null");
+        Zinc_string_add_str(bf, "null");
         return;
     }
 
     if (dom->type == Json_dom_type_boolean) {
         if (dom->value.boolean) {
-            buffer_add_str(bf, "true");
+            Zinc_string_add_str(bf, "true");
         } else {
-            buffer_add_str(bf, "false");
+            Zinc_string_add_str(bf, "false");
         }
         return;
     }
@@ -98,7 +98,7 @@ bool Json_must_escape(char c[4], int num, char* escape_char)
     return false;
 }
 
-void Json_escape_buffer(struct error_list* el, struct buffer* src, struct buffer *bf)
+void Json_escape_buffer(struct error_list* el, struct Zinc_string* src, struct Zinc_string *bf)
 {
     size_t i = 0;
     while (i < src->size) {
@@ -121,45 +121,45 @@ void Json_escape_buffer(struct error_list* el, struct buffer* src, struct buffer
         }
         if (num == 1) {
             if (must_escape) {
-                buffer_add_char(bf, '\\');
-                buffer_add_char(bf, escape_char);
+                Zinc_string_add_char(bf, '\\');
+                Zinc_string_add_char(bf, escape_char);
             } else {
-                buffer_add_char(bf, c[0]);
+                Zinc_string_add_char(bf, c[0]);
             }
         } else {
-            struct buffer num_bf;
-            buffer_init(&num_bf);
+            struct Zinc_string num_bf;
+            Zinc_string_init(&num_bf);
             int len = num32_to_hex_str(cp, &num_bf);
 
-            struct buffer seq_bf;
-            buffer_init(&seq_bf);
-            buffer_copy_str(&seq_bf, "\\u");
+            struct Zinc_string seq_bf;
+            Zinc_string_init(&seq_bf);
+            Zinc_string_add_str(&seq_bf, "\\u");
             for (int j = 0; j < 4 - len; j++) {
-                buffer_add_char(&seq_bf, '0');
+                Zinc_string_add_char(&seq_bf, '0');
             }
-            buffer_copy(&num_bf, &seq_bf);
-            buffer_copy(&seq_bf, bf);
+            Zinc_string_copy(&num_bf, &seq_bf);
+            Zinc_string_copy(&seq_bf, bf);
 
-            buffer_destroy(&num_bf);
-            buffer_destroy(&seq_bf);
+            Zinc_string_destroy(&num_bf);
+            Zinc_string_destroy(&seq_bf);
         }
         i += num;
     }
 }
 
-void Json_stringify_string(struct error_list* el, Json_dom* dom, struct buffer *bf)
+void Json_stringify_string(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
-    buffer_add_char(bf, '"');
+    Zinc_string_add_char(bf, '"');
     Json_escape_buffer(el, &dom->value.string, bf);
-    buffer_add_char(bf, '"');
+    Zinc_string_add_char(bf, '"');
 }
 
-void Json_stringify_number(struct error_list* el, Json_dom* dom, struct buffer *bf)
+void Json_stringify_number(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
     if (dom->number_type == Json_dom_number_type_integer) {
-        buffer_add_format(bf, "%lld", dom->value.integer);
+        Zinc_string_add_format(bf, "%lld", dom->value.integer);
     } else if (dom->number_type == Json_dom_number_type_fp) {
-        buffer_add_format(bf, "%lf", dom->value.fp);
+        Zinc_string_add_format(bf, "%lf", dom->value.fp);
     } else {
         struct location loc;
         location_init(&loc);
@@ -168,46 +168,46 @@ void Json_stringify_number(struct error_list* el, Json_dom* dom, struct buffer *
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Json_stringify_array(struct error_list* el, Json_dom* dom, struct buffer *bf)
+void Json_stringify_array(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
-    buffer_add_char(bf, '[');
+    Zinc_string_add_char(bf, '[');
     Json_dom* p = dom->head;
     size_t i = 0;
     while (p) {
         if (i != 0) {
-            buffer_add_char(bf, ',');
+            Zinc_string_add_char(bf, ',');
         }
         Json_stringify(el, p, bf);
         p = p->next;
         i++;
     }
-    buffer_add_char(bf, ']');
+    Zinc_string_add_char(bf, ']');
 }
 
 size_t Json_stringify_object_index = 0;
 struct error_list* Json_stringify_object_el = NULL;
-struct buffer* Json_stringify_object_bf = NULL;
-void Json_stringify_object(struct error_list* el, Json_dom* dom, struct buffer *bf)
+struct Zinc_string* Json_stringify_object_bf = NULL;
+void Json_stringify_object(struct error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
-    buffer_add_char(bf, '{');
+    Zinc_string_add_char(bf, '{');
     Json_stringify_object_el = el;
     Json_stringify_object_bf = bf;
     Json_stringify_object_index = 0;
     hash_table_map_name(&dom->value.object, (hash_table_func_name)Json_stringify_property);
-    buffer_add_char(bf, '}');
+    Zinc_string_add_char(bf, '}');
 }
 
-void Json_stringify_property(struct buffer* name, Json_dom* value)
+void Json_stringify_property(struct Zinc_string* name, Json_dom* value)
 {
     if (Json_stringify_object_index >= 1) {
-        buffer_add_char(Json_stringify_object_bf, ',');
+        Zinc_string_add_char(Json_stringify_object_bf, ',');
     }
 
-    buffer_add_char(Json_stringify_object_bf, '"');
+    Zinc_string_add_char(Json_stringify_object_bf, '"');
     Json_escape_buffer(Json_stringify_object_el, name, Json_stringify_object_bf);
-    buffer_add_char(Json_stringify_object_bf, '"');
+    Zinc_string_add_char(Json_stringify_object_bf, '"');
 
-    buffer_add_char(Json_stringify_object_bf, ':');
+    Zinc_string_add_char(Json_stringify_object_bf, ':');
 
     Json_stringify(Json_stringify_object_el, value, Json_stringify_object_bf);
 

@@ -1156,7 +1156,7 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
         Ake_ast_create(&b);
         b->type = Ake_ast_type_id;
         if (id) {
-            buffer_copy(&id->value, &b->value);
+            Zinc_string_copy(&id->value, &b->value);
         }
 
         Ake_ast_add(n, left);
@@ -1190,7 +1190,7 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
                 while (dec) {
                     dec_id = Ast_node_get(dec, 0);
                     dec_type = Ast_node_get(dec, 1);
-                    if (buffer_compare(&dec_id->value, &b->value)) {
+                    if (Zinc_string_compare(&dec_id->value, &b->value)) {
                         found = true;
                         break;
                     }

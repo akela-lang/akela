@@ -73,19 +73,19 @@ void test_data_file_add_sort()
 
     Cover_file* file_c = NULL;
     Cover_file_create(&file_c);
-    buffer_copy_str(&file_c->name, "c");
+    Zinc_string_add_str(&file_c->name, "c");
 
     Cover_file* file_a = NULL;
     Cover_file_create(&file_a);
-    buffer_copy_str(&file_a->name, "a");
+    Zinc_string_add_str(&file_a->name, "a");
 
     Cover_file* file_d = NULL;
     Cover_file_create(&file_d);
-    buffer_copy_str(&file_d->name, "d");
+    Zinc_string_add_str(&file_d->name, "d");
 
     Cover_file* file_b = NULL;
     Cover_file_create(&file_b);
-    buffer_copy_str(&file_b->name, "b");
+    Zinc_string_add_str(&file_b->name, "b");
 
     Cover_file_list* list = NULL;
     Cover_file_list_create(&list);
@@ -116,19 +116,19 @@ void test_data_library_add_sort()
 
     Cover_library* lib_c = NULL;
     Cover_library_create(&lib_c);
-    buffer_copy_str(&lib_c->name, "c");
+    Zinc_string_add_str(&lib_c->name, "c");
 
     Cover_library* lib_a = NULL;
     Cover_library_create(&lib_a);
-    buffer_copy_str(&lib_a->name, "a");
+    Zinc_string_add_str(&lib_a->name, "a");
 
     Cover_library* lib_d = NULL;
     Cover_library_create(&lib_d);
-    buffer_copy_str(&lib_d->name, "d");
+    Zinc_string_add_str(&lib_d->name, "d");
 
     Cover_library* lib_b = NULL;
     Cover_library_create(&lib_b);
-    buffer_copy_str(&lib_b->name, "b");
+    Zinc_string_add_str(&lib_b->name, "b");
 
     Cover_library_list* list = NULL;
     Cover_library_list_create(&list);

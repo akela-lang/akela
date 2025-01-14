@@ -21,7 +21,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, id_node);
     if (id) {
-        buffer_copy(&id->value, &id_node->text);
+        Zinc_string_copy(&id->value, &id_node->text);
         Cent_token_destroy(id);
         free(id);
     }

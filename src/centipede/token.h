@@ -93,7 +93,7 @@ typedef struct Cent_token {
     Cent_token_type type;
     Cent_number_type number_type;
     Cent_builtin_type builtin_type;
-    struct buffer value;
+    struct Zinc_string value;
     struct location loc;
     union {
         long long integer;

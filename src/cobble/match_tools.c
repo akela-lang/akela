@@ -143,31 +143,31 @@ void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice sl
     int num = NUM_BYTES(slice.p[0]);
     while (task) {
         if (task->n->is_root) {
-            struct buffer* bf = Hash_map_size_t_get(&sn->groups, 0);
+            struct Zinc_string* bf = Hash_map_size_t_get(&sn->groups, 0);
             if (!bf) {
-                buffer_create(&bf);
+                Zinc_string_create(&bf);
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(bf, slice.p[i]);
+                    Zinc_string_add_char(bf, slice.p[i]);
                 }
                 Hash_map_size_t_add(&sn->groups, 0, bf);
             } else {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(bf, slice.p[i]);
+                    Zinc_string_add_char(bf, slice.p[i]);
                 }
             }
         }
 
         if (task->n->is_group) {
-            struct buffer* bf = Hash_map_size_t_get(&sn->groups, task->n->group);
+            struct Zinc_string* bf = Hash_map_size_t_get(&sn->groups, task->n->group);
             if (!bf) {
-                buffer_create(&bf);
+                Zinc_string_create(&bf);
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(bf, slice.p[i]);
+                    Zinc_string_add_char(bf, slice.p[i]);
                 }
                 Hash_map_size_t_add(&sn->groups, task->n->group, bf);
             } else {
                 for (int i = 0; i < num; i++) {
-                    buffer_add_char(bf, slice.p[i]);
+                    Zinc_string_add_char(bf, slice.p[i]);
                 }
             }
         }
@@ -182,8 +182,8 @@ Cob_stack* Cob_stack_clone(Cob_stack* mts, struct hash_table* ht, Cob_stack_node
         Cob_stack* new_mts = NULL;
         Cob_stack_create(&new_mts, sn);
 
-        struct buffer bf;
-        buffer_init(&bf);
+        struct Zinc_string bf;
+        Zinc_string_init(&bf);
 
         Cob_task* task = mts->bottom;
         while (task) {
@@ -192,13 +192,13 @@ Cob_stack* Cob_stack_clone(Cob_stack* mts, struct hash_table* ht, Cob_stack_node
             Cob_task_copy(task, new_task);
             Cob_stack_push(new_mts, new_task);
 
-            buffer_clear(&bf);
-            buffer_add_format(&bf, "%lx", task);
+            Zinc_string_clear(&bf);
+            Zinc_string_add_format(&bf, "%lx", task);
             hash_table_add(ht, &bf, new_task);
 
             if (task->parent) {
-                buffer_clear(&bf);
-                buffer_add_format(&bf, "%lx", task->parent);
+                Zinc_string_clear(&bf);
+                Zinc_string_add_format(&bf, "%lx", task->parent);
                 new_task->parent = hash_table_get(ht, &bf);
             }
 
@@ -206,7 +206,7 @@ Cob_stack* Cob_stack_clone(Cob_stack* mts, struct hash_table* ht, Cob_stack_node
         }
 
 
-        buffer_destroy(&bf);
+        Zinc_string_destroy(&bf);
 
         return new_mts;
     }
@@ -230,9 +230,9 @@ void Cob_stack_node_create(Cob_stack_node** sn)
     Cob_stack_node_init(*sn);
 }
 
-void Cob_stack_node_groups_item_destroy(size_t index, struct buffer* bf)
+void Cob_stack_node_groups_item_destroy(size_t index, struct Zinc_string* bf)
 {
-    buffer_destroy(bf);
+    Zinc_string_destroy(bf);
     free(bf);
 }
 
@@ -245,9 +245,9 @@ void Cob_stack_node_destroy(Cob_stack_node* sn)
 }
 
 Hash_map_size_t* Stack_target_hash = NULL;
-void Cob_stack_node_group_copy(size_t index, struct buffer* bf)
+void Cob_stack_node_group_copy(size_t index, struct Zinc_string* bf)
 {
-    struct buffer* bf2 = buffer_clone(bf);
+    struct Zinc_string* bf2 = Zinc_string_clone(bf);
     Hash_map_size_t_add(Stack_target_hash, index, bf2);
 }
 
@@ -270,9 +270,9 @@ Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn)
     return new_sn;
 }
 
-void Cob_stack_node_dump_group_buffer(size_t index, struct buffer* bf)
+void Cob_stack_node_dump_group_buffer(size_t index, struct Zinc_string* bf)
 {
-    buffer_finish(bf);
+    Zinc_string_finish(bf);
     printf("%zu: %s\n", index, bf->buf);
 }
 

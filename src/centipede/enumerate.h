@@ -5,7 +5,7 @@
 #include "zinc/error.h"
 
 typedef struct Cent_enum_value {
-    struct buffer display;
+    struct Zinc_string display;
     size_t value;
     struct location loc;
     struct Cent_enum_value* next;
@@ -13,7 +13,7 @@ typedef struct Cent_enum_value {
 } Cent_enum_value;
 
 typedef struct Cent_enum_type {
-    struct buffer name;
+    struct Zinc_string name;
     struct location loc;
     Cent_enum_value* head;
     Cent_enum_value* tail;
@@ -28,7 +28,7 @@ void Cent_enumerate_create(Cent_enum_type** en);
 void Cent_enumerate_destroy(Cent_enum_type* en);
 void Cent_enumerate_add(Cent_enum_type* en, Cent_enum_value* ev);
 size_t Cent_enumerate_count(Cent_enum_type* en);
-void Cent_enumerate_add_name(Cent_enum_type* en, struct buffer* name, struct location* loc);
-Cent_enum_value* Cent_enumerate_get(Cent_enum_type* en, struct buffer* name);
+void Cent_enumerate_add_name(Cent_enum_type* en, struct Zinc_string* name, struct location* loc);
+Cent_enum_value* Cent_enumerate_get(Cent_enum_type* en, struct Zinc_string* name);
 
 #endif

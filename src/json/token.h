@@ -51,7 +51,7 @@ typedef enum Json_number_type {
 
 typedef struct Json_token {
     Json_token_type type;
-    struct buffer value;
+    struct Zinc_string value;
     struct location loc;
     Json_number_type number_type;
     union {

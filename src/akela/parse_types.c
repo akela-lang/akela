@@ -49,7 +49,7 @@ Ake_ast* Ake_parse_prototype(
         }
         Ake_ast_create(&id_node);
         id_node->type = Ake_ast_type_id;
-        buffer_copy(&id->value, &id_node->value);
+        Zinc_string_copy(&id->value, &id_node->value);
         Ake_ast_add(n, id_node);
         Ake_token_destroy(id);
         free(id);
@@ -59,7 +59,7 @@ Ake_ast* Ake_parse_prototype(
         Ake_ast_create(&id_node);
         id_node->type = Ake_ast_type_id;
         if (is_function) {
-            buffer_add_format(
+            Zinc_string_add_format(
                     &id_node->value,
                     "__anonymous_function_%zu",
                     Ake_symbol_table_generate_id(ps->st)
@@ -323,7 +323,7 @@ Ake_ast* Ake_parse_declaration(
             Ake_ast* id_node = NULL;
             Ake_ast_create(&id_node);
             id_node->type = Ake_ast_type_id;
-            buffer_copy_str(&id_node->value, "self");
+            Zinc_string_add_str(&id_node->value, "self");
             Ake_ast_add(n, id_node);
 
             Ake_token_destroy(self);
@@ -362,7 +362,7 @@ Ake_ast* Ake_parse_declaration(
                 assert(false);
                 /* test case: no test case needed */
             }
-            buffer_copy(&id->value, &id_node->value);
+            Zinc_string_copy(&id->value, &id_node->value);
             Ake_token_destroy(id);
             free(id);
 
@@ -449,7 +449,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
                 assert(false);
             }
             has_number = true;
-            buffer_finish(&dim_size->value);
+            Zinc_string_finish(&dim_size->value);
             dim_size_number = (size_t) strtol(dim_size->value.buf, NULL, 10);
             Ake_token_destroy(dim_size);
             free(dim_size);
@@ -533,14 +533,14 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
             sym = Ake_environment_get(ps->st->top, &name->value);
             if (!sym) {
                 char* a;
-                buffer2array(&name->value, &a);
+                Zinc_string_create_str(&name->value, &a);
                 error_list_set(ps->el, &name->loc, "type not defined: %s", a);
                 free(a);
                 n->type = Ake_ast_type_error;
                 /* test case: test_parse_error_type_not_defined */
             } else if (!sym->td) {
                 char *a;
-                buffer2array(&name->value, &a);
+                Zinc_string_create_str(&name->value, &a);
                 error_list_set(ps->el, &name->loc, "identifier is not a type: %s", a);
                 free(a);
                 n->type = Ake_ast_type_error;
@@ -583,7 +583,7 @@ void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, 
     struct Ake_symbol* dup = Ake_environment_get_local(ps->st->top, &id_node->value);
     if (dup) {
         char* a;
-        buffer2array(&id_node->value, &a);
+        Zinc_string_create_str(&id_node->value, &a);
         error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
         free(a);
         type_node->type = Ake_ast_type_error;
@@ -592,7 +592,7 @@ void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, 
         struct Ake_symbol* sym2 = Ake_environment_get(ps->st->top, &id_node->value);
         if (sym2 && sym2->td) {
             char* a;
-            buffer2array(&id_node->value, &a);
+            Zinc_string_create_str(&id_node->value, &a);
             error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
             free(a);
             type_node->type = Ake_ast_type_error;
@@ -643,11 +643,11 @@ Ake_type_use* Ake_Type_use_add_proto(
     Ake_ast* proto,
     Ake_ast* struct_type)
 {
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_copy_str(&bf, "Function");
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add_str(&bf, "Function");
     struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
     assert(sym);
     assert(sym->td);
     func->td = sym->td;
@@ -656,7 +656,7 @@ Ake_type_use* Ake_Type_use_add_proto(
     Ake_ast* dseq = Ast_node_get(proto, 1);
     Ake_ast* dret = Ast_node_get(proto, 2);
 
-    buffer_copy(&id->value, &func->name);
+    Zinc_string_copy(&id->value, &func->name);
 
     if (dseq->head) {
         Ake_type_use* inputs = NULL;
@@ -683,7 +683,7 @@ Ake_type_use* Ake_Type_use_add_proto(
                 tu2->type = Ake_type_use_function_ellipsis;
             } else {
                 tu2 = Ake_type_use_clone(type_node->tu);
-                buffer_copy(&id_node->value, &tu2->name);
+                Zinc_string_copy(&id_node->value, &tu2->name);
             }
 
             Ake_type_use_add(inputs, tu2);
@@ -880,7 +880,7 @@ bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct location* l
 
 bool Ake_is_placeholder_node(Ake_ast* n)
 {
-    if (n->type == Ake_ast_type_id && buffer_compare_str(&n->value, "_")) {
+    if (n->type == Ake_ast_type_id && Zinc_string_compare_str(&n->value, "_")) {
         return true;
     } else {
         return false;
@@ -889,7 +889,7 @@ bool Ake_is_placeholder_node(Ake_ast* n)
 
 bool Ake_is_placeholder_token(struct Ake_token* t)
 {
-    if (t->type == Ake_token_id && buffer_compare_str(&t->value, "_")) {
+    if (t->type == Ake_token_id && Zinc_string_compare_str(&t->value, "_")) {
         return true;
     } else {
         return false;

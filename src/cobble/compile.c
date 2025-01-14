@@ -213,18 +213,18 @@ Cob_ast* Cob_parse_num(Cob_compile_data* cd)
     Cob_ast_create(&n);
     n->type = Cob_ast_type_number;
 
-    struct buffer bf;
-    buffer_init(&bf);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
 
     Cob_token* d = NULL;
     if (!Cob_match_token(cd, Cob_token_digit, "expected digit", &d, n)) {
         n->type = Cob_ast_type_error;
-        buffer_destroy(&bf);
+        Zinc_string_destroy(&bf);
         return n;
     }
 
     if (d) {
-        buffer_add_char(&bf, d->c[0]);
+        Zinc_string_add_char(&bf, d->c[0]);
     }
 
     free(d);
@@ -235,14 +235,14 @@ Cob_ast* Cob_parse_num(Cob_compile_data* cd)
         if (!Cob_match_token(cd, Cob_token_digit, "expected digit", &d, n)) {
             assert(false);
         }
-        buffer_add_char(&bf, d->c[0]);
+        Zinc_string_add_char(&bf, d->c[0]);
         free(d);
         Cob_lookahead(cd);
     }
 
-    buffer_finish(&bf);
+    Zinc_string_finish(&bf);
     n->num_value = strtoul(bf.buf, NULL, 10);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 
     return n;
 }

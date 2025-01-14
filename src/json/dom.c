@@ -26,7 +26,7 @@ void Json_dom_set_type(Json_dom* dom, Json_dom_type type)
             dom->value.boolean = false;
             break;
         case Json_dom_type_string:
-            buffer_init(&dom->value.string);
+            Zinc_string_init(&dom->value.string);
             break;
         case Json_dom_type_number:
             dom->value.integer = 0;
@@ -57,7 +57,7 @@ void Json_dom_destroy(Json_dom* dom)
     case Json_dom_type_boolean:
         break;
     case Json_dom_type_string:
-        buffer_destroy(&dom->value.string);
+        Zinc_string_destroy(&dom->value.string);
         break;
     case Json_dom_type_number:
     case Json_dom_type_array:
@@ -117,13 +117,13 @@ Json_dom* Json_dom_get_element(Json_dom* dom, size_t index)
     return NULL;
 }
 
-void Json_dom_add_property(Json_dom* dom, struct buffer* name, Json_dom* value)
+void Json_dom_add_property(Json_dom* dom, struct Zinc_string* name, Json_dom* value)
 {
     assert(dom->type == Json_dom_type_object);
     hash_table_add(&dom->value.object, name, value);
 }
 
-Json_dom* Json_dom_get_property(Json_dom* dom, struct buffer* name)
+Json_dom* Json_dom_get_property(Json_dom* dom, struct Zinc_string* name)
 {
     assert(dom->type == Json_dom_type_object);
     return hash_table_get(&dom->value.object, name);

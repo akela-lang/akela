@@ -152,7 +152,7 @@ Cent_ast* Cent_parse_expr_string(Cent_parse_data* pd)
     }
 
     Cent_ast_value_set_type(n, Cent_value_type_string);
-    buffer_copy(&str->value, &n->data.string);
+    Zinc_string_copy(&str->value, &n->data.string);
     Cent_token_destroy(str);
     free(str);
 
@@ -220,7 +220,7 @@ void Cent_parse_expr_object(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
 {
     n->type = Cent_ast_type_expr_object;
 
-    buffer_copy(&id->value, &n->text);
+    Zinc_string_copy(&id->value, &n->text);
     Cent_token_destroy(id);
     free(id);
 
@@ -279,7 +279,7 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
     Cent_ast_create(&a);
     a->type = Cent_ast_type_expr_string;
     Cent_ast_value_set_type(a, Cent_value_type_string);
-    buffer_add(&a->data.string, pd->file_name.p, pd->file_name.size);
+    Zinc_string_add(&a->data.string, pd->file_name.p, pd->file_name.size);
     Cent_ast_add(n, a);
 
     Cent_token* rp = NULL;
@@ -291,7 +291,7 @@ void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_
 void Cent_parse_expr_variable(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
 {
     n->type = Cent_ast_type_id;
-    buffer_copy(&id->value, &n->text);
+    Zinc_string_copy(&id->value, &n->text);
     Cent_token_destroy(id);
     free(id);
 }

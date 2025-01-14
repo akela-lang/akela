@@ -12,10 +12,10 @@ void test_symbol_table_env()
 	malloc_safe((void**)&env, sizeof(struct Ake_environment));
 	Ake_environment_init(env, NULL);
 
-	struct buffer value;
-	buffer_init(&value);
+	struct Zinc_string value;
+	Zinc_string_init(&value);
 
-	buffer_copy_str(&value, "index");
+	Zinc_string_add_str(&value, "index");
 
 	struct Ake_symbol* sym;
 	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
@@ -34,7 +34,7 @@ void test_symbol_table_env()
 	assert_true(x == sym, "x == sym");
 
 	Ake_environment_destroy(env);
-	buffer_destroy(&value);
+	Zinc_string_destroy(&value);
 }
 
 void test_symbol_table_global()

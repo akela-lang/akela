@@ -21,15 +21,15 @@ void test_akela_llvm_literal_double()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    struct buffer v_exp;
-    buffer_init(&v_exp);
-    buffer_add_format(&v_exp, "%lf", 1.5);
-    buffer_finish(&v_exp);
+    struct Zinc_string v_exp;
+    Zinc_string_init(&v_exp);
+    Zinc_string_add_format(&v_exp, "%lf", 1.5);
+    Zinc_string_finish(&v_exp);
 
     cg_setup("1.5", &result);
     expect_str(&result.value, v_exp.buf, "1.5");
 
-    buffer_destroy(&v_exp);
+    Zinc_string_destroy(&v_exp);
     Ake_code_gen_result_destroy(&result);
 }
 

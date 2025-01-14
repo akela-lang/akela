@@ -22,37 +22,37 @@ void Cent_module_string_create(Cent_module_string** ms)
 
 void Cent_module_string_destroy(Cent_module_string* ms)
 {
-    hash_table_map(&ms->ht, (hash_table_func)buffer_free);
+    hash_table_map(&ms->ht, (hash_table_func)Zinc_string_free);
     hash_table_destroy(&ms->ht);
 }
 
-void Cent_module_string_add_module(Cent_module_string* ms, struct buffer* name, struct buffer* text)
+void Cent_module_string_add_module(Cent_module_string* ms, struct Zinc_string* name, struct Zinc_string* text)
 {
-    struct buffer* text2 = NULL;
-    buffer_create(&text2);
-    buffer_copy(text, text2);
+    struct Zinc_string* text2 = NULL;
+    Zinc_string_create(&text2);
+    Zinc_string_copy(text, text2);
     hash_table_add(&ms->ht, name, text2);
 }
 
-void Cent_module_string_add_module_str(Cent_module_string* ms, char* name, struct buffer* text)
+void Cent_module_string_add_module_str(Cent_module_string* ms, char* name, struct Zinc_string* text)
 {
-    struct buffer* text2 = NULL;
-    buffer_create(&text2);
-    buffer_copy(text, text2);
+    struct Zinc_string* text2 = NULL;
+    Zinc_string_create(&text2);
+    Zinc_string_copy(text, text2);
     hash_table_add_str(&ms->ht, name, text2);
 }
 
 void Cent_module_string_add_module_str_str(Cent_module_string* ms, char* name, char* text)
 {
-    struct buffer* text2 = NULL;
-    buffer_create(&text2);
-    buffer_copy_str(text2, text);
+    struct Zinc_string* text2 = NULL;
+    Zinc_string_create(&text2);
+    Zinc_string_add_str(text2, text);
     hash_table_add_str(&ms->ht, name, text2);
 }
 
-Cent_input_data Cent_module_find_string(Cent_module_string* ms, struct buffer* name)
+Cent_input_data Cent_module_find_string(Cent_module_string* ms, struct Zinc_string* name)
 {
-    struct buffer* text = hash_table_get(&ms->ht, name);
+    struct Zinc_string* text = hash_table_get(&ms->ht, name);
     Cent_input_data data = {NULL, NULL};
 
     if (!text) {

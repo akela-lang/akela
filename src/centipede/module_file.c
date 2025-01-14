@@ -16,15 +16,15 @@ Cent_module_vtable Cent_module_file_vtable = {
     .find_offset = offsetof(Cent_module_file, find),
 };
 
-void Cent_module_file_init(Cent_module_file *mf, struct buffer* dir_path)
+void Cent_module_file_init(Cent_module_file *mf, struct Zinc_string* dir_path)
 {
-    buffer_copy(dir_path, &mf->dir_path);
-    buffer_finish(&mf->dir_path);
+    Zinc_string_copy(dir_path, &mf->dir_path);
+    Zinc_string_finish(&mf->dir_path);
     mf->find = (Cent_module_find)Cent_module_file_find;
     mf->vtable = &Cent_module_file_vtable;
 }
 
-void Cent_module_file_create(Cent_module_file** mf, struct buffer* dir_path)
+void Cent_module_file_create(Cent_module_file** mf, struct Zinc_string* dir_path)
 {
     malloc_safe((void**)mf, sizeof(struct Cent_module_file));
     Cent_module_file_init(*mf, dir_path);
@@ -32,23 +32,23 @@ void Cent_module_file_create(Cent_module_file** mf, struct buffer* dir_path)
 
 void Cent_module_file_destroy(Cent_module_file* mf)
 {
-    buffer_destroy(&mf->dir_path);
+    Zinc_string_destroy(&mf->dir_path);
 }
 
-void Cent_module_file_append_path(struct buffer* path1, struct buffer* path2)
+void Cent_module_file_append_path(struct Zinc_string* path1, struct Zinc_string* path2)
 {
-    buffer_add_char(path1, '/');
-    buffer_copy(path2, path1);
+    Zinc_string_add_char(path1, '/');
+    Zinc_string_copy(path2, path1);
 }
 
-Cent_input_data Cent_module_file_find(Cent_module_file* mf, struct buffer* name)
+Cent_input_data Cent_module_file_find(Cent_module_file* mf, struct Zinc_string* name)
 {
     Cent_input_data data = {NULL, NULL};
-    struct buffer path;
-    buffer_init(&path);
-    buffer_copy(&mf->dir_path, &path);
+    struct Zinc_string path;
+    Zinc_string_init(&path);
+    Zinc_string_copy(&mf->dir_path, &path);
     Cent_module_file_append_path(&path, name);
-    buffer_finish(&path);
+    Zinc_string_finish(&path);
     struct stat sb;
     if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
         FILE* fp = fopen(path.buf, "r");
@@ -60,6 +60,6 @@ Cent_input_data Cent_module_file_find(Cent_module_file* mf, struct buffer* name)
             return data;
         }
     }
-    buffer_destroy(&path);
+    Zinc_string_destroy(&path);
     return data;
 }

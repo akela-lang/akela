@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "buffer.h"
 
-void get_piece(struct buffer* bf, char delim, size_t num, struct buffer* out)
+void get_piece(struct Zinc_string* bf, char delim, size_t num, struct Zinc_string* out)
 {
     size_t count = 0;
     for (int i = 0; i < bf->size; i++) {
@@ -10,7 +10,7 @@ void get_piece(struct buffer* bf, char delim, size_t num, struct buffer* out)
             i++;
         }
         if (count == num && i < bf->size) {
-            buffer_add_char(out, bf->buf[i]);
+            Zinc_string_add_char(out, bf->buf[i]);
         }
     }
 }

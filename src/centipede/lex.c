@@ -43,10 +43,10 @@ Cent_token* lex(Cent_lex_data* ld)
 
     if (t->type == Cent_token_number) {
         if (t->number_type == Cent_number_type_integer) {
-            buffer_finish(&t->value);
+            Zinc_string_finish(&t->value);
             t->number_value.integer = strtoll(t->value.buf, NULL, 10);
         } else if (t->number_type == Cent_number_type_fp) {
-            buffer_finish(&t->value);
+            Zinc_string_finish(&t->value);
             t->number_value.fp = strtod(t->value.buf, NULL);
         } else {
             assert(false && "not possible");
@@ -192,7 +192,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
             if (isalpha(c[0]) || c[0] == '_' || c[0] == '@') {
                 t->type = Cent_token_id;
                 t->loc = loc;
-                buffer_add(&t->value, c, num);
+                Zinc_string_add(&t->value, c, num);
                 lex_id(ld, t);
                 return;
             }
@@ -207,7 +207,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
             if (Cent_is_number(c, num)) {
                 t->type = Cent_token_number;
                 t->loc = loc;
-                buffer_add(&t->value, c, num);
+                Zinc_string_add(&t->value, c, num);
                 Cent_lex_number(ld, t);
                 return;
             }
@@ -220,11 +220,11 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
             }
         }
 
-        struct buffer bf;
-        buffer_init(&bf);
-        buffer_add(&bf, c, num);
+        struct Zinc_string bf;
+        Zinc_string_init(&bf);
+        Zinc_string_add(&bf, c, num);
         error_list_set(ld->errors, &loc, "invalid character: %b", &bf);
-        buffer_destroy(&bf);
+        Zinc_string_destroy(&bf);
     }
 }
 
@@ -250,7 +250,7 @@ void lex_id(Cent_lex_data* ld, Cent_token* t)
 
         if (num == 1) {
             if (isalpha(c[0]) || isdigit(c[0]) || c[0] == '_' || c[0] == '.') {
-                buffer_add(&t->value, c, num);
+                Zinc_string_add(&t->value, c, num);
                 continue;
             }
         }
@@ -297,7 +297,7 @@ void Cent_lex_string(Cent_lex_data* ld, Cent_token* t)
         } else if (cp > 0x10FFFF) {
             error_list_set(ld->errors, &loc, "code point greater than \\u10FFFF");
         } else {
-            buffer_add(&t->value, c, num);
+            Zinc_string_add(&t->value, c, num);
         }
     }
 
@@ -323,46 +323,46 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
     }
 
     if (num != 1) {
-        struct buffer bf;
-        buffer_init(&bf);
-        buffer_add(&bf, c, num);
+        struct Zinc_string bf;
+        Zinc_string_init(&bf);
+        Zinc_string_add(&bf, c, num);
         error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
-        buffer_destroy(&bf);
+        Zinc_string_destroy(&bf);
         return;
     }
 
     if (c[0] == '\\') {
-        buffer_add(&t->value, c, num);
+        Zinc_string_add(&t->value, c, num);
         return;
     }
 
     if (c[0] == '/') {
-        buffer_add_char(&t->value, '/');
+        Zinc_string_add_char(&t->value, '/');
         return;
     }
 
     if (c[0] == 'b') {
-        buffer_add_char(&t->value, '\b');
+        Zinc_string_add_char(&t->value, '\b');
         return;
     }
 
     if (c[0] == 'f') {
-        buffer_add_char(&t->value, '\f');
+        Zinc_string_add_char(&t->value, '\f');
         return;
     }
 
     if (c[0] == 'n') {
-        buffer_add_char(&t->value, '\n');
+        Zinc_string_add_char(&t->value, '\n');
         return;
     }
 
     if (c[0] == 'r') {
-        buffer_add_char(&t->value, '\r');
+        Zinc_string_add_char(&t->value, '\r');
         return;
     }
 
     if (c[0] == 't') {
-        buffer_add_char(&t->value, '\t');
+        Zinc_string_add_char(&t->value, '\t');
         return;
     }
 
@@ -371,11 +371,11 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
         return;
     }
 
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_add(&bf, c, num);
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add(&bf, c, num);
     error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
@@ -386,9 +386,9 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
     bool done;
     enum result r;
 
-    struct buffer bf;
-    buffer_init(&bf);
-    buffer_copy_str(&bf, "\\u");
+    struct Zinc_string bf;
+    Zinc_string_init(&bf);
+    Zinc_string_add_str(&bf, "\\u");
     bool valid = true;
     struct location first_loc;
     first_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
@@ -405,11 +405,11 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
         }
         if (done) {
             error_list_set(ld->errors, &loc, "unicode escape not finished");
-            buffer_destroy(&bf);
+            Zinc_string_destroy(&bf);
             return;
         }
         if (is_hex_digit(c, num)) {
-            buffer_add(&bf, c, num);
+            Zinc_string_add(&bf, c, num);
         } else {
             error_list_set(ld->errors, &loc, "invalid hex digit: %c", c[0]);
             valid = false;
@@ -430,9 +430,9 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
             InputUnicodeRepeat(ld->input, ld->input_vtable);
             break;
         }
-        buffer_add(&bf, c, num);
+        Zinc_string_add(&bf, c, num);
     }
-    buffer_finish(&bf);
+    Zinc_string_finish(&bf);
 
     struct location end_loc;
     end_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
@@ -447,11 +447,11 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
         } else {
             char dest[4];
             num = code_to_utf8(dest, cp);
-            buffer_add(&t->value, dest, num);
+            Zinc_string_add(&t->value, dest, num);
         }
     }
 
-    buffer_destroy(&bf);
+    Zinc_string_destroy(&bf);
 }
 
 bool Cent_is_number(char c[4], int num)
@@ -518,7 +518,7 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
                 digit_count--;
                 error_list_set(ld->errors, &first_loc, "leading zero with no other digits or faction");
             }
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             digit_count++;
             if (digit_count == 1) {
                 first_digit = c[0];
@@ -527,13 +527,13 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
         }
 
         if (num == 1 && c[0] == '.') {
-            buffer_add_char(&t->value, '.');
+            Zinc_string_add_char(&t->value, '.');
             Cent_lex_number_fraction(ld, t);
             break;;
         }
 
         if (num == 1 && (c[0] == 'E' || c[0] == 'e')) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             Cent_lex_number_exponent(ld, t);
             break;
         }
@@ -577,13 +577,13 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
         }
 
         if (num == 1 && isdigit(c[0])) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             digit_count++;
             continue;
         }
 
         if (num == 1 && (c[0] == 'E' || c[0] == 'e')) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             Cent_lex_number_exponent(ld, t);
             break;
         }
@@ -624,7 +624,7 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
         if (num == 1 && (c[0] == '+' || c[0] == '-')) {
             if (digit_count == 0) {
                 if (!has_sign) {
-                    buffer_add_char(&t->value, c[0]);
+                    Zinc_string_add_char(&t->value, c[0]);
                     has_sign = true;
                     continue;
                 } else {
@@ -638,7 +638,7 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
         }
 
         if (num == 1 && isdigit(c[0])) {
-            buffer_add_char(&t->value, c[0]);
+            Zinc_string_add_char(&t->value, c[0]);
             digit_count++;
             continue;
         }
@@ -677,6 +677,6 @@ void Cent_lex_modifier(Cent_lex_data* ld, Cent_token* t)
             return;
         }
 
-        buffer_add(&t->value, c, num);
+        Zinc_string_add(&t->value, c, num);
     }
 }

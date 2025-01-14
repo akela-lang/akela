@@ -10,12 +10,12 @@ void Ake_comp_table_init(struct Ake_comp_table* ct)
 	hash_table_init(&ct->ht, COMP_TABLE_HASH_TABLE_SIZE);
 }
 
-void Ake_comp_table_put(struct Ake_comp_table* ct, struct buffer* path, struct Ake_comp_unit* cu)
+void Ake_comp_table_put(struct Ake_comp_table* ct, struct Zinc_string* path, struct Ake_comp_unit* cu)
 {
 	hash_table_add(&ct->ht, path, (void*)cu);
 }
 
-struct Ake_comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct buffer* path)
+struct Ake_comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct Zinc_string* path)
 {
 	return (struct Ake_comp_unit*)hash_table_get(&ct->ht, path);
 }
@@ -46,25 +46,25 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
         valid = error_list_set(&cu->el, &loc, "could not get executable path");
     }
 
-	struct buffer path2;
-	struct buffer dir;
-	struct buffer filename;
-	buffer_init(&path2);
-	buffer_init(&dir);
-	buffer_init(&filename);
+	struct Zinc_string path2;
+	struct Zinc_string dir;
+	struct Zinc_string filename;
+	Zinc_string_init(&path2);
+	Zinc_string_init(&dir);
+	Zinc_string_init(&filename);
 
-	buffer_copy_str(&path2, path);
+	Zinc_string_add_str(&path2, path);
 	split_path(&path2, &dir, &filename);
 
-	struct buffer math_dir;
-	buffer_init(&math_dir);
-	buffer_copy(&dir, &math_dir);
-	buffer_clear(&filename);
-	buffer_copy_str(&filename, "math.ake");
-    struct buffer math_path;
-    buffer_init(&math_path);
+	struct Zinc_string math_dir;
+	Zinc_string_init(&math_dir);
+	Zinc_string_copy(&dir, &math_dir);
+	Zinc_string_clear(&filename);
+	Zinc_string_add_str(&filename, "math.ake");
+    struct Zinc_string math_path;
+    Zinc_string_init(&math_path);
 	path_join(&math_dir, &filename, &math_path);
-	buffer_finish(&math_path);
+	Zinc_string_finish(&math_path);
 
 	FILE* fp = NULL;
 	int err = fopen_s(&fp, math_path.buf, "r");
@@ -88,11 +88,11 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
 
 exit:
 	free(path);
-	buffer_destroy(&path2);
-	buffer_destroy(&dir);
-	buffer_destroy(&filename);
-	buffer_destroy(&math_path);
-    buffer_destroy(&math_dir);
+	Zinc_string_destroy(&path2);
+	Zinc_string_destroy(&dir);
+	Zinc_string_destroy(&filename);
+	Zinc_string_destroy(&math_path);
+    Zinc_string_destroy(&math_dir);
 	if (fp) fclose(fp);
 	return valid;
 }

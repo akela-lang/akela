@@ -330,15 +330,15 @@ void expect_ok(enum result r, const char* message)
 
 /* static-output */
 /* dynamic-temp temp */
-void expect_str(struct buffer* a, const char* b, const char* message)
+void expect_str(struct Zinc_string* a, const char* b, const char* message)
 {
 	test_called();
-	if (buffer_compare_str(a, b)) return;
+	if (Zinc_string_compare_str(a, b)) return;
 	error_triggered();
 	char* temp;
 
 	/* allocate temp */
-	buffer2array(a, &temp);
+	Zinc_string_create_str(a, &temp);
 	fprintf(stderr, "%s equals %s error: %s\n", temp, b, message);
 
 	/* destroy temp */
@@ -517,22 +517,22 @@ void expect_buffer_list_count(struct buffer_list* bl, size_t count, char* messag
 
 void expect_buffer_list_item(struct buffer_list* bl, size_t index, char* text, char* message)
 {
-	struct buffer* bf = buffer_list_get(bl, index);
+	struct Zinc_string* bf = buffer_list_get(bl, index);
 	if (!bf) {
 		error_triggered();
 		fprintf(stderr, "buffer list index out of bounds: %zu: %s\n", index, message);
 		return;
 	}
 
-	if (!buffer_compare_str(bf, text)) {
+	if (!Zinc_string_compare_str(bf, text)) {
 		error_triggered();
-		buffer_finish(bf);
+		Zinc_string_finish(bf);
 		fprintf(stderr,
 			"buffer list item (%zu) text not equal: (%s) (%s): %s\n", index, bf->buf, text, message);
 	}
 }
 
-void expect_string_slice(String_slice* sl, struct buffer* bf, char* message)
+void expect_string_slice(String_slice* sl, struct Zinc_string* bf, char* message)
 {
 	test_called();
 	bool has_error = false;
@@ -550,16 +550,16 @@ void expect_string_slice(String_slice* sl, struct buffer* bf, char* message)
 
 	if (has_error) {
 		error_triggered();
-		struct buffer actual;
-		buffer_init(&actual);
+		struct Zinc_string actual;
+		Zinc_string_init(&actual);
 		for (size_t i = 0; i < sl->size; i++) {
-			buffer_add_char(&actual, sl->p[i]);
+			Zinc_string_add_char(&actual, sl->p[i]);
 		}
-		buffer_finish(&actual);
+		Zinc_string_finish(&actual);
 
-		buffer_finish(bf);
+		Zinc_string_finish(bf);
 		fprintf(stderr, "%s = %s error: %s\n", actual.buf, bf->buf, message);
-		buffer_destroy(&actual);
+		Zinc_string_destroy(&actual);
 	}
 }
 
@@ -582,14 +582,14 @@ void expect_string_slice_str(String_slice* sl, char* expected, char* message)
 
 	if (has_error) {
 		error_triggered();
-		struct buffer actual;
-		buffer_init(&actual);
+		struct Zinc_string actual;
+		Zinc_string_init(&actual);
 		for (size_t i = 0; i < sl->size; i++) {
-			buffer_add_char(&actual, sl->p[i]);
+			Zinc_string_add_char(&actual, sl->p[i]);
 		}
-		buffer_finish(&actual);
+		Zinc_string_finish(&actual);
 
 		fprintf(stderr, "%s = %s error: %s\n", actual.buf, expected, message);
-		buffer_destroy(&actual);
+		Zinc_string_destroy(&actual);
 	}
 }

@@ -16,9 +16,9 @@ struct Ake_symbol;
 
 AKELA_API void Ake_environment_init(struct Ake_environment* env, struct Ake_environment* p);
 AKELA_API void Ake_environment_create(struct Ake_environment** env, struct Ake_environment* p);
-AKELA_API void Ake_environment_put(struct Ake_environment* env, struct buffer* value, struct Ake_symbol* sym);
-AKELA_API struct Ake_symbol* Ake_environment_get(struct Ake_environment* env, struct buffer* value);
-AKELA_API struct Ake_symbol* Ake_environment_get_local(struct Ake_environment* env, struct buffer* value);
+AKELA_API void Ake_environment_put(struct Ake_environment* env, struct Zinc_string* value, struct Ake_symbol* sym);
+AKELA_API struct Ake_symbol* Ake_environment_get(struct Ake_environment* env, struct Zinc_string* value);
+AKELA_API struct Ake_symbol* Ake_environment_get_local(struct Ake_environment* env, struct Zinc_string* value);
 AKELA_API void Ake_environment_destroy(struct Ake_environment* env);
 AKELA_API void Ake_environment_destroy_symbol(struct Ake_symbol* sym);
 

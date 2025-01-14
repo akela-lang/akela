@@ -139,7 +139,7 @@ namespace Akela_llvm {
         return last_block;
     }
 
-    void Run(Jit_data* jd, Ake_ast* n, struct buffer* bf)
+    void Run(Jit_data* jd, Ake_ast* n, struct Zinc_string* bf)
     {
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOPLEVEL_NAME));
         if (n->tu) {
@@ -157,14 +157,14 @@ namespace Akela_llvm {
                             auto dim = (Ake_type_dimension*)VECTOR_PTR(dim_vector, i);
                             count *= dim->size;
                         }
-                        buffer_add_char(bf, '[');
+                        Zinc_string_add_char(bf, '[');
                         for (int i = 0; i < count; i++) {
                             if (i >= 1) {
-                                buffer_add_char(bf, ',');
+                                Zinc_string_add_char(bf, ',');
                             }
-                            buffer_add_format(bf, "%ld", *p++);
+                            Zinc_string_add_format(bf, "%ld", *p++);
                         }
-                        buffer_add_char(bf, ']');
+                        Zinc_string_add_char(bf, ']');
                     } else if (bit_count == 32) {
                         int* (*fp)() = ExprSymbol.getAddress().toPtr<int*(*)()>();
                         int* p = fp();
@@ -174,18 +174,18 @@ namespace Akela_llvm {
                             auto dim = (Ake_type_dimension*)VECTOR_PTR(dim_vector, i);
                             count *= dim->size;
                         }
-                        buffer_add_char(bf, '[');
+                        Zinc_string_add_char(bf, '[');
                         for (int i = 0; i < count; i++) {
                             if (i >= 1) {
-                                buffer_add_char(bf, ',');
+                                Zinc_string_add_char(bf, ',');
                             }
-                            buffer_add_format(bf, "%d", *p++);
+                            Zinc_string_add_format(bf, "%d", *p++);
                         }
-                        buffer_add_char(bf, ']');
+                        Zinc_string_add_char(bf, ']');
                     } else if (bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
                         char* p = fp();
-                        buffer_add_format(bf, "%s", p);
+                        Zinc_string_add_format(bf, "%s", p);
                     } else {
                         assert(false);
                     }
@@ -193,16 +193,16 @@ namespace Akela_llvm {
                     if (n->tu->td->bit_count == 64) {
                         long (*fp)() = ExprSymbol.getAddress().toPtr<long(*)()>();
                         long v = fp();
-                        buffer_add_format(bf, "%d", v);
+                        Zinc_string_add_format(bf, "%d", v);
                     } else if (n->tu->td->bit_count == 32) {
                         int (*fp)() = ExprSymbol.getAddress().toPtr < int(*)
                         () > ();
                         int v = fp();
-                        buffer_add_format(bf, "%d", v);
+                        Zinc_string_add_format(bf, "%d", v);
                     } else if (bit_count == 8) {
                         char (*fp)() = ExprSymbol.getAddress().toPtr<char(*)()> ();
                         char v = fp();
-                        buffer_add_format(bf, "%hhd", (int)v);
+                        Zinc_string_add_format(bf, "%hhd", (int)v);
                     } else {
                         assert(false);
                     }
@@ -211,24 +211,24 @@ namespace Akela_llvm {
                 if (is_array) {
                     double* (*fp)() = ExprSymbol.getAddress().toPtr <double*(*)()>();
                     double* p = fp();
-                    buffer_add_format(bf, "%lf", *p);
+                    Zinc_string_add_format(bf, "%lf", *p);
                 } else {
                     double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
                     double v = fp();
-                    buffer_add_format(bf, "%lf", v);
+                    Zinc_string_add_format(bf, "%lf", v);
                 }
             } else if (type == Ake_type_boolean) {
                 bool (*fp)() = ExprSymbol.getAddress().toPtr <bool(*)()>();
                 bool v = fp();
                 if (v) {
-                    buffer_add_format(bf, "true", v);
+                    Zinc_string_add_format(bf, "true", v);
                 } else {
-                    buffer_add_format(bf, "false", v);
+                    Zinc_string_add_format(bf, "false", v);
                 }
             } else if (type == Ake_type_function) {
                 void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
                 void* v = fp();
-                buffer_add_format(bf, "Function");
+                Zinc_string_add_format(bf, "Function");
             } else {
                 struct location loc{};
                 location_init(&loc);

@@ -46,7 +46,7 @@ ZINC_API void expect_false(int value, const char* message);
 ZINC_API void expect_ptr(void* p, const char* message);
 ZINC_API void expect_null(void* p, const char* message);
 ZINC_API void expect_ok(enum result r, const char* message);
-ZINC_API void expect_str(struct buffer* a, const char* b, const char* message);
+ZINC_API void expect_str(struct Zinc_string* a, const char* b, const char* message);
 ZINC_API void expect_vector_str(Vector* a, const char* b, const char* message);
 ZINC_API void expect_vector(Vector* a, Vector* b, const char* message);
 ZINC_API void expect_strcmp(const char* a, const char* b, const char* message);
@@ -57,7 +57,7 @@ ZINC_API void expect_utf8_char(char* a, char* b, char* message);
 ZINC_API void expect_utf8_char_str(char a[4], int num, char* b, char* message);
 ZINC_API void expect_buffer_list_count(struct buffer_list* bl, size_t count, char* message);
 ZINC_API void expect_buffer_list_item(struct buffer_list* bl, size_t index, char* text, char* message);
-ZINC_API void expect_string_slice(String_slice* sl, struct buffer* bf, char* message);
+ZINC_API void expect_string_slice(String_slice* sl, struct Zinc_string* bf, char* message);
 ZINC_API void expect_string_slice_str(String_slice* sl, char* expected, char* message);
 
 #endif

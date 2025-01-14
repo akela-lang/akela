@@ -1,5 +1,5 @@
 #include "parse_data.h"
-#include "akela/Ake_environment.h"
+#include "akela/environment.h"
 #include <assert.h>
 #include "zinc/hash.h"
 
@@ -70,7 +70,7 @@ void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et,
 
     Cent_property_type* prop = NULL;
     Cent_property_type_create(&prop);
-    buffer_copy(&name->text, &prop->name);
+    Zinc_string_copy(&name->text, &prop->name);
     Cent_symbol* sym = Cent_environment_get(env, &type->text);
     if (!sym) {
         error_list_set(pr->errors, &n->loc, "unknown type: %b", &type->text);
@@ -89,7 +89,7 @@ void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et,
             /* test case: test_parse_element_property_type_not_element */
         }
 
-        if (modifier && buffer_compare_str(&modifier->text, "required")) {
+        if (modifier && Zinc_string_compare_str(&modifier->text, "required")) {
             prop->required = true;
         }
     }

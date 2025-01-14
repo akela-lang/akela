@@ -7,7 +7,7 @@
 struct hash_entry
 {
     void* item;
-    struct buffer value;
+    struct Zinc_string value;
     struct hash_entry* next;
     struct hash_entry* prev;
 };
@@ -23,9 +23,9 @@ struct hash_table {
 };
 
 typedef void (*hash_table_func)(void*);
-typedef void (*hash_table_func_name)(struct buffer*, void*);
+typedef void (*hash_table_func_name)(struct Zinc_string*, void*);
 
-ZINC_API unsigned int hash_calc_buffer(struct buffer* value, unsigned int size);
+ZINC_API unsigned int hash_calc_buffer(struct Zinc_string* value, unsigned int size);
 ZINC_API unsigned int hash_calc_str(char* str, unsigned int size);
 ZINC_API void hash_entry_init(struct hash_entry* ent);
 ZINC_API void hash_entry_destroy(struct hash_entry* ent);
@@ -36,9 +36,9 @@ ZINC_API void hash_table_map_name(struct hash_table* ht, hash_table_func_name f)
 ZINC_API void hash_table_init(struct hash_table* ht, unsigned int size);
 ZINC_API void hash_table_create(struct hash_table** ht, unsigned int size);
 ZINC_API void hash_table_destroy(struct hash_table* ht);
-ZINC_API void hash_table_add(struct hash_table* ht, struct buffer* value, void* item);
+ZINC_API void hash_table_add(struct hash_table* ht, struct Zinc_string* value, void* item);
 ZINC_API void hash_table_add_str(struct hash_table* ht, char* str, void* item);
-ZINC_API void* hash_table_get(struct hash_table* ht, struct buffer* value);
+ZINC_API void* hash_table_get(struct hash_table* ht, struct Zinc_string* value);
 ZINC_API void* hash_table_get_str(struct hash_table* ht, char* str);
 
 #endif

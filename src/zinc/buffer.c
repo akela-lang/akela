@@ -7,20 +7,20 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-void buffer_init(struct buffer* bf)
+void Zinc_string_init(struct Zinc_string* bf)
 {
     bf->buf = NULL;
     bf->buf_size = 0;
     bf->size = 0;
 }
 
-void buffer_create(struct buffer** bf)
+void Zinc_string_create(struct Zinc_string** bf)
 {
-    malloc_safe((void*)bf, sizeof(struct buffer));
-    buffer_init(*bf);
+    malloc_safe((void*)bf, sizeof(struct Zinc_string));
+    Zinc_string_init(*bf);
 }
 
-void buffer_destroy(struct buffer* bf)
+void Zinc_string_destroy(struct Zinc_string* bf)
 {
     if (bf) {
         if (bf->buf) {
@@ -29,15 +29,15 @@ void buffer_destroy(struct buffer* bf)
     }
 }
 
-void buffer_free(struct buffer* bf)
+void Zinc_string_free(struct Zinc_string* bf)
 {
     if (bf) {
-        buffer_destroy(bf);
+        Zinc_string_destroy(bf);
         free(bf);
     }
 }
 
-void buffer_expand(struct buffer* bf, size_t new_size)
+void Zinc_string_expand(struct Zinc_string* bf, size_t new_size)
 {
     size_t num = new_size - bf->size;
     if (num > 0) {
@@ -54,15 +54,15 @@ void buffer_expand(struct buffer* bf, size_t new_size)
     }
 }
 
-void buffer_add(struct buffer* bf, const char* s, size_t num)
+void Zinc_string_add(struct Zinc_string* bf, const char* s, size_t num)
 {
     size_t new_size = bf->size + num;
-    buffer_expand(bf, new_size);
+    Zinc_string_expand(bf, new_size);
     memcpy(bf->buf + bf->size, s, num);
     bf->size = new_size;
 }
 
-void buffer_add_char(struct buffer* bf, char c)
+void Zinc_string_add_char(struct Zinc_string* bf, char c)
 {
     if (bf->size + 1 > bf->buf_size) {
         if (bf->buf == NULL) {
@@ -75,54 +75,46 @@ void buffer_add_char(struct buffer* bf, char c)
     bf->buf[bf->size++] = c;
 }
 
-void buffer_add_str(struct buffer* bf, char* str)
+void Zinc_string_add_str(struct Zinc_string* bf, const char* str)
 {
     while (*str) {
-        buffer_add_char(bf, *str);
+        Zinc_string_add_char(bf, *str);
         str++;
     }
 }
 
-void buffer_finish(struct buffer* bf)
+void Zinc_string_finish(struct Zinc_string* bf)
 {
-    buffer_add_char(bf, '\0');
+    Zinc_string_add_char(bf, '\0');
     bf->size--;
 }
 
-void buffer_reset(struct buffer* bf)
+void Zinc_string_reset(struct Zinc_string* bf)
 {
     if (bf != NULL) {
         if (bf->buf != NULL) {
             /* destroy bf{} */
             free(bf->buf);
-            buffer_init(bf);
+            Zinc_string_init(bf);
         }
     }
 }
 
-void buffer_clear(struct buffer* bf)
+void Zinc_string_clear(struct Zinc_string* bf)
 {
     if (bf != NULL) {
         bf->size = 0;
     }
 }
 
-void buffer_copy(struct buffer* src, struct buffer* dest)
+void Zinc_string_copy(struct Zinc_string* src, struct Zinc_string* dest)
 {
     for (int i = 0; i < src->size; i++) {
-        buffer_add_char(dest, src->buf[i]);
+        Zinc_string_add_char(dest, src->buf[i]);
     }
 }
 
-void buffer_copy_str(struct buffer* a, const char* b)
-{
-    while (*b) {
-        buffer_add_char(a, *b);
-        b++;
-    }
-}
-
-void buffer2array(struct buffer* bf, char** a)
+void Zinc_string_create_str(struct Zinc_string* bf, char** a)
 {
     malloc_safe((void**)a, bf->size + 1);
     for (int i = 0; i < bf->size; i++) {
@@ -133,17 +125,17 @@ void buffer2array(struct buffer* bf, char** a)
 
 /* bf must be initialized */
 /* dynamic-output bf{} */
-void array2buffer(const char* a, struct buffer* bf)
+void Zinc_string_add_str2(const char* a, struct Zinc_string* bf)
 {
     const char* p = a;
     while (*p != '\0') {
         /* allocate b{} */
-        buffer_add_char(bf, *p);
+        Zinc_string_add_char(bf, *p);
         p++;
     }
 }
 
-enum result next_char(struct buffer* bf, size_t* pos, struct buffer* bf2)
+enum result Zinc_next_char(struct Zinc_string* bf, size_t* pos, struct Zinc_string* bf2)
 {
     char c = bf->buf[(*pos)++];
     int count;
@@ -151,9 +143,9 @@ enum result next_char(struct buffer* bf, size_t* pos, struct buffer* bf2)
     if (r == result_error) {
         return r;
     }
-    buffer_clear(bf2);
+    Zinc_string_clear(bf2);
 
-    buffer_add_char(bf2, c);
+    Zinc_string_add_char(bf2, c);
     for (int i = 1; i < count; i++) {
         c = bf->buf[(*pos)++];
         r = check_extra_byte(c);
@@ -161,7 +153,7 @@ enum result next_char(struct buffer* bf, size_t* pos, struct buffer* bf2)
             return r;
         }
 
-        buffer_add_char(bf2, c);
+        Zinc_string_add_char(bf2, c);
     }
     return result_ok;
 }
@@ -170,7 +162,7 @@ enum result next_char(struct buffer* bf, size_t* pos, struct buffer* bf2)
 * if strings are equal, return 1
 * otherwise, return 0
 */
-int buffer_compare(struct buffer* a, struct buffer* b)
+int Zinc_string_compare(struct Zinc_string* a, struct Zinc_string* b)
 {
     if (a->size != b->size) {
         return 0;
@@ -184,7 +176,7 @@ int buffer_compare(struct buffer* a, struct buffer* b)
     return 1;
 }
 
-int buffer_order(struct buffer* a, struct buffer* b)
+int Zinc_string_order(struct Zinc_string* a, struct Zinc_string* b)
 {
     size_t size = 0;
     if (a->size > size) size = a->size;
@@ -204,7 +196,7 @@ int buffer_order(struct buffer* a, struct buffer* b)
 * if strings are equal, return 1
 * otherwise, return 0
 */
-int buffer_compare_str(struct buffer* a, const char* b)
+int Zinc_string_compare_str(struct Zinc_string* a, const char* b)
 {
     size_t size = strlen(b);
     if (a->size != size) {
@@ -219,7 +211,7 @@ int buffer_compare_str(struct buffer* a, const char* b)
     return 1;
 }
 
-enum result buffer_uslice(struct buffer* src, struct buffer* dest, size_t start, size_t end)
+enum result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string* dest, size_t start, size_t end)
 {
     enum result r = result_ok;
     char c;
@@ -233,7 +225,7 @@ enum result buffer_uslice(struct buffer* src, struct buffer* dest, size_t start,
         if (r == result_error) return r;
 
         if (index >= start && index < end) {
-            buffer_add_char(dest, c);
+            Zinc_string_add_char(dest, c);
         }
 
 
@@ -243,7 +235,7 @@ enum result buffer_uslice(struct buffer* src, struct buffer* dest, size_t start,
             if (r == result_error) return r;
 
             if (index >= start && index < end) {
-                buffer_add_char(dest, c);
+                Zinc_string_add_char(dest, c);
             }
         }
 
@@ -253,7 +245,7 @@ enum result buffer_uslice(struct buffer* src, struct buffer* dest, size_t start,
     return r;
 }
 
-void buffer_add_format(struct buffer *bf, const char* fmt, ...)
+void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -268,14 +260,14 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
     char last = 0;
     while (*fmt != '\0') {
         if (last == '%' && *fmt == '%') {
-            buffer_add_char(bf, '%');
+            Zinc_string_add_char(bf, '%');
         } else if (*fmt == '%') {
         } else if (last == '%' && *fmt == 'l') {
         } else if (last_last == '%' && last == 'l' && *fmt == 'l') {
         } else if (last == '%' && *fmt == 'h') {
         } else if (last_last == '%' && last == 'h' && *fmt == 'h') {
         } else if (last == '%' && *fmt == '%') {
-            buffer_add_char(bf, '%');
+            Zinc_string_add_char(bf, '%');
         } else if (last_last == '%' && last == 'l' && *fmt == 'f') {
             double lf = va_arg(args, double);
             while (true) {
@@ -287,7 +279,7 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else if (last == '%' && *fmt == 'd') {
             int d = va_arg(args, int);
@@ -300,7 +292,7 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else if (last_last == '%' && last == 'l' && *fmt == 'd') {
             long d = va_arg(args, int);
@@ -313,7 +305,7 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else if (last_last_last == '%' && last_last == 'l' && last == 'l' && *fmt == 'd') {
             long long lld = va_arg(args, long long);
@@ -326,7 +318,7 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else if (last == '%' && *fmt == 'z') {
         } else if (last_last == '%' && last == 'z' && *fmt == 'u') {
@@ -340,13 +332,13 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else if (last == '%' && *fmt == 'b') {
             /* nothing */
         } else if (last_last == '%' && last == 'b' && *fmt == 'f') {
-            struct buffer* bf_in = va_arg(args, struct buffer*);
-            buffer_copy(bf_in, bf);
+            struct Zinc_string* bf_in = va_arg(args, struct Zinc_string*);
+            Zinc_string_copy(bf_in, bf);
         } else if (last == '%' && *fmt == 's') {
             char* s = va_arg(args, char*);
             while (true) {
@@ -358,7 +350,7 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else if (last == '%' && *fmt == 'c') {
             char c = va_arg(args, int);
@@ -371,7 +363,7 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else if (last_last == '%' && last == 'l' && *fmt == 'x') {
             unsigned long x = va_arg(args, unsigned long);
@@ -384,7 +376,7 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else if (last_last_last == '%' && last_last == 'h' && last == 'h' && *fmt == 'd') {
             char x = va_arg(args, int);
@@ -397,10 +389,10 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
                 realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
-                buffer_add_char(bf, buf[j]);
+                Zinc_string_add_char(bf, buf[j]);
             }
         } else {
-            buffer_add_char(bf, *fmt);
+            Zinc_string_add_char(bf, *fmt);
         }
         last_last_last = last_last;
         last_last = last;
@@ -412,10 +404,10 @@ void buffer_add_format(struct buffer *bf, const char* fmt, ...)
     free(buf);
 }
 
-struct buffer* buffer_clone(struct buffer* bf)
+struct Zinc_string* Zinc_string_clone(struct Zinc_string* bf)
 {
-    struct buffer* new_bf = NULL;
-    buffer_create(&new_bf);
-    buffer_copy(bf, new_bf);
+    struct Zinc_string* new_bf = NULL;
+    Zinc_string_create(&new_bf);
+    Zinc_string_copy(bf, new_bf);
     return new_bf;
 }

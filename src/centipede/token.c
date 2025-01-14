@@ -6,7 +6,7 @@ void Cent_token_init(Cent_token *t)
     t->type = Cent_token_none;
     t->number_type = Cent_number_type_none;
     t->builtin_type = Cent_builtin_type_none;
-    buffer_init(&t->value);
+    Zinc_string_init(&t->value);
     location_init(&t->loc);
 }
 
@@ -19,7 +19,7 @@ void Cent_token_create(Cent_token **t)
 void Cent_token_destroy(Cent_token *t)
 {
     if (t) {
-        buffer_destroy(&t->value);
+        Zinc_string_destroy(&t->value);
     }
 }
 
@@ -27,7 +27,7 @@ void Cent_print_token(Cent_token *t)
 {
     printf("%s", Cent_token_name(t->type));
     if (t->value.size > 0) {
-        buffer_finish(&t->value);
+        Zinc_string_finish(&t->value);
         printf("-%s", t->value.buf);
     }
 }

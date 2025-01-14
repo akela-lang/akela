@@ -6,9 +6,9 @@
 typedef struct Json_stringify_property_data {
     struct error_list* el;
     Json_dom* dom;
-    struct buffer* bf;
+    struct Zinc_string* bf;
 } Json_stringify_property_data;
 
-void Json_stringify(struct error_list* el, Json_dom* dom, struct buffer *bf);
+void Json_stringify(struct error_list* el, Json_dom* dom, struct Zinc_string *bf);
 
 #endif

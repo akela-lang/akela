@@ -67,7 +67,7 @@ void Cent_update_values_enum(
     bool found = false;
     Cent_enum_value* v = en->head;
     while (v) {
-        if (buffer_compare(&v->display, &id2->text)) {
+        if (Zinc_string_compare(&v->display, &id2->text)) {
             n->data.enumeration.enum_value = v;
             n->data.enumeration.number = v->value;
             found = true;

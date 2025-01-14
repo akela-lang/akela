@@ -15,9 +15,9 @@ extern Cent_module_vtable Cent_module_string_vtable;
 void Cent_module_string_init(Cent_module_string* ms);
 void Cent_module_string_create(Cent_module_string** ms);
 void Cent_module_string_destroy(Cent_module_string* ms);
-void Cent_module_string_add_module(Cent_module_string* ms, struct buffer* name, struct buffer* text);
-void Cent_module_string_add_module_str(Cent_module_string* ms, char* name, struct buffer* text);
+void Cent_module_string_add_module(Cent_module_string* ms, struct Zinc_string* name, struct Zinc_string* text);
+void Cent_module_string_add_module_str(Cent_module_string* ms, char* name, struct Zinc_string* text);
 void Cent_module_string_add_module_str_str(Cent_module_string* ms, char* name, char* text);
-Cent_input_data Cent_module_find_string(Cent_module_string* ms, struct buffer* name);
+Cent_input_data Cent_module_find_string(Cent_module_string* ms, struct Zinc_string* name);
 
 #endif

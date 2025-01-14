@@ -33,7 +33,7 @@ void Cent_comp_table_destroy(Cent_comp_table* table)
     free(table->base);
 }
 
-void Cent_comp_table_add(Cent_comp_table* table, struct buffer* name, Cent_comp_unit *unit)
+void Cent_comp_table_add(Cent_comp_table* table, struct Zinc_string* name, Cent_comp_unit *unit)
 {
     hash_table_add(&table->ht, name, unit);
 }
@@ -43,7 +43,7 @@ void Cent_comp_table_add_str(Cent_comp_table* table, char* name, Cent_comp_unit 
     hash_table_add_str(&table->ht, name, unit);
 }
 
-Cent_comp_unit* Cent_comp_table_get(Cent_comp_table* table, struct buffer* name)
+Cent_comp_unit* Cent_comp_table_get(Cent_comp_table* table, struct Zinc_string* name)
 {
     return hash_table_get(&table->ht, name);
 }
@@ -63,7 +63,7 @@ void Cent_comp_table_map_name(Cent_comp_table* table, Cent_comp_table_func_name 
     hash_table_map_name(&table->ht, (hash_table_func_name)func);
 }
 
-Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct buffer* name)
+Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct Zinc_string* name)
 {
     Cent_comp_unit* cu = Cent_comp_table_get(ct, name);
     if (cu) return cu;

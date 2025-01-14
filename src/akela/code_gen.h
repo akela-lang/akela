@@ -11,8 +11,8 @@ typedef struct {
 
 typedef struct {
     struct Ake_comp_unit* cu;
-    struct buffer value;
-    struct buffer text;
+    Zinc_string value;
+    Zinc_string text;
     bool debug;
 } Ake_code_gen_result;
 

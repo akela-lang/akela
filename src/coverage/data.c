@@ -3,9 +3,9 @@
 
 void Cover_file_init(Cover_file *file)
 {
-    buffer_init(&file->name);
-    buffer_init(&file->path);
-    buffer_init(&file->source_path);
+    Zinc_string_init(&file->name);
+    Zinc_string_init(&file->path);
+    Zinc_string_init(&file->source_path);
     file->line_count = 0;
     file->covered_count = 0;
     file->not_covered_count = 0;
@@ -22,9 +22,9 @@ void Cover_file_create(Cover_file **file)
 
 void Cover_file_destroy(Cover_file *file)
 {
-    buffer_destroy(&file->name);
-    buffer_destroy(&file->path);
-    buffer_destroy(&file->source_path);
+    Zinc_string_destroy(&file->name);
+    Zinc_string_destroy(&file->path);
+    Zinc_string_destroy(&file->source_path);
 }
 
 void Cover_file_list_init(Cover_file_list *list)
@@ -67,7 +67,7 @@ void Cover_file_list_add_sorted(Cover_file_list* list, Cover_file *file)
     if (list->head && list->tail) {
         Cover_file* p = list->tail;
         while (p) {
-            int order = buffer_order(&p->name, &file->name);
+            int order = Zinc_string_order(&p->name, &file->name);
             if (order == -1 || order == 0) {
                 break;
             }
@@ -97,8 +97,8 @@ void Cover_file_list_add_sorted(Cover_file_list* list, Cover_file *file)
 
 void Cover_library_init(Cover_library *lib)
 {
-    buffer_init(&lib->name);
-    buffer_init(&lib->path);
+    Zinc_string_init(&lib->name);
+    Zinc_string_init(&lib->path);
     Cover_file_list_init(&lib->files);
     lib->line_count = 0;
     lib->covered_count = 0;
@@ -116,8 +116,8 @@ void Cover_library_create(Cover_library **lib)
 
 void Cover_library_destroy(Cover_library *lib)
 {
-    buffer_destroy(&lib->name);
-    buffer_destroy(&lib->path);
+    Zinc_string_destroy(&lib->name);
+    Zinc_string_destroy(&lib->path);
     Cover_file_list_destroy(&lib->files);
 }
 
@@ -161,7 +161,7 @@ void Cover_library_list_add_sorted(Cover_library_list* list, Cover_library *lib)
     if (list->head && list->tail) {
         Cover_library* p = list->tail;
         while (p) {
-            int order = buffer_order(&p->name, &lib->name);
+            int order = Zinc_string_order(&p->name, &lib->name);
             if (order == -1 || order == 0) {
                 break;
             }
@@ -191,7 +191,7 @@ void Cover_library_list_add_sorted(Cover_library_list* list, Cover_library *lib)
 
 void Cover_app_init(Cover_app *app)
 {
-    buffer_init(&app->data_path);
+    Zinc_string_init(&app->data_path);
     Cover_library_list_init(&app->libraries);
     app->line_count = 0;
     app->covered_count = 0;
@@ -207,6 +207,6 @@ void Cover_app_create(Cover_app **app)
 
 void Cover_app_destroy(Cover_app *app)
 {
-    buffer_destroy(&app->data_path);
+    Zinc_string_destroy(&app->data_path);
     Cover_library_list_destroy(&app->libraries);
 }

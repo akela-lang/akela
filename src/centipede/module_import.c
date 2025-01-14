@@ -9,7 +9,7 @@
 
 Cent_environment* Cent_module_dest_env = NULL;
 
-void Cent_module_copy_symbol(struct buffer* name, Cent_symbol* sym)
+void Cent_module_copy_symbol(struct Zinc_string* name, Cent_symbol* sym)
 {
     if (Cent_symbol_should_copy(sym)) {
         Cent_symbol* new_sym = Cent_symbol_clone_shallow(sym);
@@ -19,8 +19,8 @@ void Cent_module_copy_symbol(struct buffer* name, Cent_symbol* sym)
 
 void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
 {
-    struct buffer path;
-    buffer_init(&path);
+    struct Zinc_string path;
+    Zinc_string_init(&path);
 
     /* find module */
     bool is_glob = false;
@@ -31,13 +31,13 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
             break;
         }
         if (path.size > 0) {
-            buffer_add_char(&path, '/');
+            Zinc_string_add_char(&path, '/');
         }
-        buffer_copy(&p->text, &path);
+        Zinc_string_copy(&p->text, &path);
         p = p->next;
     }
 
-    buffer_copy_str(&path, ".aken");
+    Zinc_string_add_str(&path, ".aken");
     Cent_comp_unit* cu = Cent_comp_table_find_unit(pd->ct, &path);
     if (!cu) {
         error_list_set(pd->errors, &n->loc, "could not find module: %b", &path);
@@ -62,7 +62,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         }
     }
 
-    buffer_destroy(&path);
+    Zinc_string_destroy(&path);
 
     Cent_value* value = NULL;
     if (!cu->errors.head) {
@@ -76,14 +76,14 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         hash_table_map_name(&src_env->symbols, (hash_table_func_name)Cent_module_copy_symbol);
     } else {
         p = n->head;
-        struct buffer base_name;
-        buffer_init(&base_name);
-        buffer_copy(&p->text, &base_name);
+        struct Zinc_string base_name;
+        Zinc_string_init(&base_name);
+        Zinc_string_copy(&p->text, &base_name);
         Cent_symbol* sym = Cent_environment_get(pd->top, &base_name);
         if (sym) {
             error_list_set(pd->errors, &p->loc, "module identifier collides with existing identifier: %b", &base_name);
             p->has_error = true;
-            buffer_destroy(&base_name);
+            Zinc_string_destroy(&base_name);
         } else {
             /* create module and symbol */
             Cent_module* mod = NULL;
@@ -92,7 +92,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
             Cent_symbol_set_type(sym, Cent_symbol_type_module);
             sym->data.module = mod;
             Cent_environment_add_symbol(pd->top, &base_name, sym);
-            buffer_destroy(&base_name);
+            Zinc_string_destroy(&base_name);
 
             /* create submodules */
             Cent_module* last_mod = mod;
