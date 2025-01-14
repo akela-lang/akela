@@ -15,7 +15,7 @@ namespace Akela_llvm {
             Ake_ast* element_type_node = Ast_node_get(element_dec, 1);
             Type_use* element_tu = element_type_node->tu;
             Type* element_type = Get_type(jd, element_tu);
-            if (element_tu->td->type == type_function) {
+            if (element_tu->td->type == Ake_type_function) {
                 element_type = element_type->getPointerTo();
             }
             type_list.push_back(element_type);
@@ -33,7 +33,7 @@ namespace Akela_llvm {
         Ake_ast* left = Ast_node_get(n, 0);
         Type_use* left_tu = left->tu;
         assert(left_tu);
-        struct type_def* left_td = left_tu->td;
+        struct Ake_type_def* left_td = left_tu->td;
         assert(left_td);
         left->tu->context = Type_context_ptr;
         Value* struct_value = Dispatch(jd, left);
@@ -74,7 +74,7 @@ namespace Akela_llvm {
     Value* Handle_struct_literal(Jit_data* jd, Ake_ast* n)
     {
         assert(n && n->tu && n->tu->td);
-        assert(n->tu->td->type == type_struct);
+        assert(n->tu->td->type == Ake_type_struct);
         assert(n->tu->td->composite_type);
         assert(n->tu->td->composite);
         auto t = (StructType*)n->tu->td->composite_type;
@@ -98,7 +98,7 @@ namespace Akela_llvm {
 
             buffer_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
-            if (expr->tu->td->type == type_struct) {
+            if (expr->tu->td->type == Ake_type_struct) {
                 Handle_struct_literal_element(jd, gep_value, expr);
             } else if (expr->tu->is_array) {
                 Value* expr_value = Dispatch(jd, expr);
@@ -127,7 +127,7 @@ namespace Akela_llvm {
 
             buffer_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->value.buf);
-            if (expr->tu->td->type == type_struct) {
+            if (expr->tu->td->type == Ake_type_struct) {
                 Handle_struct_literal_element(jd, gep_value, expr);
             } else if (expr->tu->is_array) {
                 Value* expr_value = Dispatch(jd, expr);

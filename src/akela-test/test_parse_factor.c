@@ -28,9 +28,9 @@ void test_parse_number_integer()
 	Type_use* tu = number->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
     parse_teardown(&cu);
@@ -59,9 +59,9 @@ void test_parse_number_float()
 	Type_use* tu = number->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_float, "integer td");
+	expect_int_equal(td->type, Ake_type_float, "integer td");
 	expect_str(&td->name, "f64", "f64 td");
 
 	/* destroy ps{} cu.root cu.root{} */
@@ -97,9 +97,9 @@ void test_parse_string()
     expect_size_t_equal(dim->size, 6, "size dim");
     expect_int_equal(dim->option, Array_element_const, "option dim");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "type td");
+	expect_int_equal(td->type, Ake_type_integer, "type td");
 	expect_str(&td->name, "u8", "name td");
 
     parse_teardown(&cu);
@@ -126,9 +126,9 @@ void test_parse_boolean_true()
 	Type_use* tu = true_node->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_int_equal(td->type, Ake_type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
 
     parse_teardown(&cu);
@@ -155,9 +155,9 @@ void test_parse_boolean_false()
 	Type_use* tu = false_node->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_int_equal(td->type, Ake_type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
 
     parse_teardown(&cu);
@@ -201,9 +201,9 @@ void test_parse_id()
 	Type_use* tu = id2->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
     parse_teardown(&cu);
@@ -313,9 +313,9 @@ void test_parse_sign_negative()
 	Type_use* tu = sign->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
 	Ake_ast* left = Ast_node_get(sign, 0);
@@ -351,9 +351,9 @@ void test_parse_sign_positive()
 	Type_use* tu = sign->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
 	Ake_ast* left = Ast_node_get(sign, 0);
@@ -418,9 +418,9 @@ void test_parse_not_id()
 	Type_use* tu = not->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_int_equal(td->type, Ake_type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
 
 	Ake_ast* id = Ast_node_get(not, 0);
@@ -451,9 +451,9 @@ void test_parse_not_literal()
 	Type_use* tu = not->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_int_equal(td->type, Ake_type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
 
 	Ake_ast* lit_bool = Ast_node_get(not, 0);
@@ -501,9 +501,9 @@ void test_parse_array_literal_integer()
     expect_size_t_equal(a_tu->dim.count, 1, "dim.count a_tu");
     expect_size_t_equal(*(size_t*)VECTOR_PTR(&a_tu->dim, 0), 3, "dim[0] a_tu");
 
-	struct type_def* a_td = a_tu->td;
+	struct Ake_type_def* a_td = a_tu->td;
 	assert_ptr(a_td, "ptr array_td");
-	expect_int_equal(a_td->type, type_integer, "integer array_td");
+	expect_int_equal(a_td->type, Ake_type_integer, "integer array_td");
 	expect_str(&a_td->name, "i64", "i64 array_td");
 
 	Ake_ast* a0 = Ast_node_get(a, 0);
@@ -544,9 +544,9 @@ void test_parse_array_literal_float()
 	Type_use* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
-	struct type_def* array_td = array_tu->td;
+	struct Ake_type_def* array_td = array_tu->td;
 	assert_ptr(array_td, "ptr array_td");
-	expect_int_equal(array_td->type, type_float, "float array_td");
+	expect_int_equal(array_td->type, Ake_type_float, "float array_td");
 	expect_str(&array_td->name, "f64", "f64 array_td");
 
 	Ake_ast* a0 = Ast_node_get(a, 0);
@@ -587,9 +587,9 @@ void test_parse_array_literal_numeric()
 	Type_use* array_tu = a->tu;
 	assert_ptr(array_tu, "ptr array_tu");
 
-	struct type_def* array_td = array_tu->td;
+	struct Ake_type_def* array_td = array_tu->td;
 	assert_ptr(array_td, "ptr array_td");
-	expect_int_equal(array_td->type, type_float, "float array_td");
+	expect_int_equal(array_td->type, Ake_type_float, "float array_td");
 	expect_str(&array_td->name, "f64", "f64 array_td");
 
 	Ake_ast* a0 = Ast_node_get(a, 0);

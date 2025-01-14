@@ -42,7 +42,7 @@ void Ake_symbol_table_add_reserved_word(struct Ake_environment* env, const char*
     buffer_destroy(&bf);
 }
 
-void Ake_symbol_table_add_type(struct Ake_environment* env, const char* name, struct type_def* td)
+void Ake_symbol_table_add_type(struct Ake_environment* env, const char* name, struct Ake_type_def* td)
 {
 	struct buffer bf;
 
@@ -86,85 +86,85 @@ void Ake_symbol_table_init_reserved(struct Ake_environment* env)
 void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake_environment* env)
 {
 	const char* name;
-	struct type_def* td = NULL;
+	struct Ake_type_def* td = NULL;
 
 	name = "i32";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_integer;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_integer;
 	buffer_copy_str(&td->name, name);
 	td->is_signed = true;
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "i64";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_integer;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_integer;
 	buffer_copy_str(&td->name, name);
 	td->is_signed = true;
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
 
     name = "u8";
-    malloc_safe((void**)&td, sizeof(struct type_def));
-    type_def_init(td);
-    td->type = type_integer;
+    malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+    Ake_type_def_init(td);
+    td->type = Ake_type_integer;
     buffer_copy_str(&td->name, name);
     td->bit_count = 8;
     Ake_symbol_table_add_type(env, name, td);
 
     name = "u32";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_integer;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_integer;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "u64";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_integer;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_integer;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "f32";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_float;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_float;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "f64";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_float;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_float;
 	buffer_copy_str(&td->name, name);
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "bool";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_boolean;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_boolean;
 	buffer_copy_str(&td->name, name);
 	Ake_symbol_table_add_type(env, name, td);
 
     name = "Function";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_function;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_function;
 	buffer_copy_str(&td->name, name);
 	Ake_symbol_table_add_type(env, name, td);
     st->function_type_def = td;
 
 	name = "Module";
-	malloc_safe((void**)&td, sizeof(struct type_def));
-	type_def_init(td);
-	td->type = type_module;
+	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_module;
 	buffer_copy_str(&td->name, name);
 	Ake_symbol_table_add_type(env, name, td);
 }
@@ -247,12 +247,12 @@ bool Ake_symbol_table_is_global(struct Ake_symbol_table* st)
 	return st->top == st->global;
 }
 
-bool Ake_is_numeric(struct type_def* td)
+bool Ake_is_numeric(struct Ake_type_def* td)
 {
-	return td->type == type_integer || td->type == type_float;
+	return td->type == Ake_type_integer || td->type == Ake_type_float;
 }
 
-bool Ake_type_find(struct Ake_symbol_table* st, struct type_def* a, struct type_def* b, bool *promote, struct type_def** c)
+bool Ake_type_find(struct Ake_symbol_table* st, struct Ake_type_def* a, struct Ake_type_def* b, bool *promote, struct Ake_type_def** c)
 {
 	*promote = false;
 	*c = NULL;
@@ -262,14 +262,14 @@ bool Ake_type_find(struct Ake_symbol_table* st, struct type_def* a, struct type_
 	}
 
 	if (Ake_is_numeric(a) && Ake_is_numeric(b)) {
-		enum type type = a->type;
+		enum Ake_type type = a->type;
 
-		if (b->type == type_float) {
+		if (b->type == Ake_type_float) {
 			type = b->type;
 		}
 
 		bool is_signed = false;
-		if (type == type_integer) {
+		if (type == Ake_type_integer) {
 			is_signed = a->is_signed;
 			if (b->is_signed) {
 				is_signed = b->is_signed;
@@ -284,7 +284,7 @@ bool Ake_type_find(struct Ake_symbol_table* st, struct type_def* a, struct type_
 		Type_use* tu = st->numeric_pool->head;
 		assert(tu);
 		do {
-			struct type_def* x = tu->td;
+			struct Ake_type_def* x = tu->td;
 			assert(x);
 			if (x->type == type && x->is_signed == is_signed && x->bit_count == bit_count) {
 				*promote = true;
@@ -303,7 +303,7 @@ bool Ake_type_find_whole(struct Ake_symbol_table* st, Type_use* a, Type_use* b)
 {
 	if (a && b) {
 		bool promote;
-		struct type_def* td = NULL;
+		struct Ake_type_def* td = NULL;
 		if (!Ake_type_find(st, a->td, b->td, &promote, &td)) {
 			return false;
 		}
@@ -336,7 +336,7 @@ bool Ake_type_find_whole(struct Ake_symbol_table* st, Type_use* a, Type_use* b)
 	}
 }
 
-bool Ake_type_def_can_cast(struct type_def* a, struct type_def* b)
+bool Ake_type_def_can_cast(struct Ake_type_def* a, struct Ake_type_def* b)
 {
 	if (a == b) {
 		return true;
@@ -349,7 +349,7 @@ bool Ake_type_def_can_cast(struct type_def* a, struct type_def* b)
 	return false;
 }
 
-bool Ake_type_def_match(struct type_def* a, struct type_def* b)
+bool Ake_type_def_match(struct Ake_type_def* a, struct Ake_type_def* b)
 {
     if (a == b) {
         return true;

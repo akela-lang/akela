@@ -22,7 +22,7 @@ namespace Akela_llvm {
         }
         while (lhs) {
             assert(lhs->sym);
-            if (tu->td->type == type_function) {
+            if (tu->td->type == Ake_type_function) {
                 if (rhs) {
                     FunctionType *func_type = Get_function_type(jd, tu);
                     PointerType *pt = func_type->getPointerTo();
@@ -63,7 +63,7 @@ namespace Akela_llvm {
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     lhs->sym->value = lhs_value;
                 }
-            } else if (tu->td->type == type_struct) {
+            } else if (tu->td->type == Ake_type_struct) {
                 if (rhs) {
                     Type *t = Get_type(jd, tu);
                     buffer_finish(&lhs->value);
@@ -133,7 +133,7 @@ namespace Akela_llvm {
 /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Assign_lhs_rhs_value(Jit_data* jd, Ake_ast* lhs, Ake_ast* rhs, Value* rhs_value)
     {
-        if (lhs->tu->td->type == type_function) {
+        if (lhs->tu->td->type == Ake_type_function) {
             if (lhs->type == Ake_ast_type_id) {
                 AllocaInst *lhs_value;
                 if (lhs->sym->reference) {
@@ -244,7 +244,7 @@ namespace Akela_llvm {
     Value* Handle_subscript(Jit_data* jd, Ake_ast* n)
     {
         Type* element_type = Get_type(jd, n->tu);
-        if (n->tu->td->type == type_function) {
+        if (n->tu->td->type == Ake_type_function) {
             element_type = element_type->getPointerTo();
         }
 

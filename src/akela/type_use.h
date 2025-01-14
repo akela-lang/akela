@@ -43,7 +43,7 @@ void Type_use_names(char* names[]);
 
 typedef struct Type_use {
     Type_use_type type;
-    struct type_def* td;
+    struct Ake_type_def* td;
     struct buffer name;
     Vector dim;
     bool is_ref;

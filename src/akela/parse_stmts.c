@@ -638,10 +638,10 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
             n->type = Ake_ast_type_error;
 		} else {
 			Ake_ast* tu = Ake_ast_clone(n);
-			struct type_def* td = NULL;
-			malloc_safe((void**)&td, sizeof(struct type_def));
-			type_def_init(td);
-			td->type = type_struct;
+			struct Ake_type_def* td = NULL;
+			malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+			Ake_type_def_init(td);
+			td->type = Ake_type_struct;
 			buffer_copy(&id->value, &td->name);
 			td->composite = tu;
 
@@ -1005,7 +1005,7 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
     if (id) {
         struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id->value);
         if (sym->type == Ake_symbol_type_type) {
-            if (sym->td->type == type_struct) {
+            if (sym->td->type == Ake_type_struct) {
                 Ake_ast* type_node = NULL;
                 Ake_ast_create(&type_node);
                 type_node->type = Ake_ast_type_type;

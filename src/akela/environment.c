@@ -43,7 +43,7 @@ struct Ake_symbol* Ake_environment_get_local(struct Ake_environment* env, struct
 void Ake_environment_destroy_symbol(struct Ake_symbol* sym)
 {
     Type_use_destroy(sym->tu);
-    type_def_destroy(sym->td);
+    Ake_type_def_destroy(sym->td);
     if (sym->constructor) {
         Ake_environment_destroy_symbol(sym->constructor);
     }

@@ -79,7 +79,7 @@ namespace Akela_llvm {
         Ake_ast* callee = Ast_node_get(n, 0);
         Ake_ast* cseq = Ast_node_get(n, 1);
 
-        assert(callee && callee->tu && callee->tu->td && callee->tu->td->type == type_function);
+        assert(callee && callee->tu && callee->tu->td && callee->tu->td->type == Ake_type_function);
         Value* callee_value = Dispatch(jd, callee);
 
         std::vector<Value*> arg_list;

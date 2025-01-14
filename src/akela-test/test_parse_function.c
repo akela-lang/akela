@@ -23,9 +23,9 @@ void test_parse_function_no_inputs_no_outputs()
     Type_use* tu = f->tu;
     assert_ptr(tu, "ptr tu");
 
-    struct type_def* td = tu->td;
+    struct Ake_type_def* td = tu->td;
     assert_ptr(td, "ptr td");
-    expect_int_equal(td->type, type_function, "function td");
+    expect_int_equal(td->type, Ake_type_function, "function td");
     expect_str(&td->name, "Function", "Function td");
 
     Ake_ast* proto = Ast_node_get(f, 0);
@@ -123,7 +123,7 @@ void test_parse_function_input()
     Type_use* x_tu = x_type_node->tu;
     assert_ptr(x_tu, "ptr x_tu");
 
-    struct type_def* x_td = x_tu->td;
+    struct Ake_type_def* x_td = x_tu->td;
     assert_ptr(x_td, "ptr x_td");
     expect_str(&x_td->name, "i64", "i64 tu_x");
 
@@ -271,9 +271,9 @@ void test_parse_function_three_inputs()
     assert_ptr(tu, "ptr tu");
     expect_str(&tu->name, "foo", "name tu");
 
-    struct type_def* td = tu->td;
+    struct Ake_type_def* td = tu->td;
     assert_ptr(td, "ptr td");
-    expect_int_equal(td->type, type_function, "function td");
+    expect_int_equal(td->type, Ake_type_function, "function td");
     expect_str(&td->name, "Function", "Function td");
 
     Type_use* inputs = tu->head;
@@ -768,9 +768,9 @@ void test_parse_function_proto()
     Type_use* let_tu = let_type->tu;
     assert_ptr(let_tu, "ptr let_tu");
 
-    struct type_def* let_td = let_tu->td;
+    struct Ake_type_def* let_td = let_tu->td;
     assert_ptr(let_td, "ptr let_td");
-    expect_int_equal(let_td->type, type_function, "type let_td");
+    expect_int_equal(let_td->type, Ake_type_function, "type let_td");
 
     Type_use* inputs = let_tu->head;
     assert_ptr(inputs, "ptr inputs");
@@ -894,9 +894,9 @@ void test_parse_call_return_type()
     Type_use* add_tu = add->tu;
     assert_ptr(add_tu, "patr add_tu");
 
-    struct type_def* add_td = add_tu->td;
+    struct Ake_type_def* add_td = add_tu->td;
     assert_ptr(add_td, "ptr add_td");
-    expect_int_equal(add_td->type, type_integer, "integer add_td");
+    expect_int_equal(add_td->type, Ake_type_integer, "integer add_td");
     expect_str(&add_td->name, "i64", "i64 add_td");
 
     parse_teardown(&cu);
@@ -961,9 +961,9 @@ void test_parse_call2()
     Type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
-    struct type_def* td = tu->td;
+    struct Ake_type_def* td = tu->td;
     assert_ptr(td, "ptr td");
-    expect_int_equal(td->type, type_integer, "integer td");
+    expect_int_equal(td->type, Ake_type_integer, "integer td");
     expect_str(&td->name, "i64", "i64 td");
 
     Ake_ast* dret = Ast_node_get(proto, 2);

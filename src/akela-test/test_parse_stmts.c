@@ -350,9 +350,9 @@ void test_parse_stmts_type()
 	Type_use* tu = cu.root->tu;
 	assert_ptr(tu, "ptr tu");
 	
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "type td");
+	expect_int_equal(td->type, Ake_type_integer, "type td");
 	expect_str(&td->name, "u8", "name td");
 
     parse_teardown(&cu);
@@ -975,9 +975,9 @@ void test_parse_for_iteration()
     Type_use* i_tu = i_type_node->tu;
     assert_ptr(i_tu, "ptr i_tu");
 
-	struct type_def* i_td = i_tu->td;
+	struct Ake_type_def* i_td = i_tu->td;
 	assert_ptr(i_td, "ptr i_td");
-	expect_int_equal(i_td->type, type_integer, "integer i_td");
+	expect_int_equal(i_td->type, Ake_type_integer, "integer i_td");
 	expect_str(&i_td->name, "i64", "i64 i_td");
 
 	/* expr */
@@ -1254,7 +1254,7 @@ void test_parse_let()
     Type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
-    struct type_def* td = tu->td;
+    struct Ake_type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_str(&td->name, "i32", "i32 td");
 
@@ -1294,7 +1294,7 @@ void test_parse_let2()
     Type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
-    struct type_def* td = tu->td;
+    struct Ake_type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_str(&td->name, "i32", "i32 td");
 
@@ -1344,7 +1344,7 @@ void test_parse_let3()
     Type_use* tu = type_node->tu;
     assert_ptr(tu, "ptr tu");
 
-    struct type_def* td = tu->td;
+    struct Ake_type_def* td = tu->td;
     assert_ptr(td, "ptr td");
     expect_str(&td->name, "i32", "i32 td");
 
@@ -1406,9 +1406,9 @@ void test_parse_extern()
     Type_use* tu = f->tu;
     assert_ptr(tu, "ptr tu");
 
-    struct type_def* td = tu->td;
+    struct Ake_type_def* td = tu->td;
     assert_ptr(td, "ptr td");
-    expect_int_equal(td->type, type_function, "type td");
+    expect_int_equal(td->type, Ake_type_function, "type td");
     expect_str(&td->name, "Function", "name td");
 
     Ake_ast* proto = Ast_node_get(f, 0);

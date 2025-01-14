@@ -46,9 +46,9 @@ void test_parse_add()
 	Type_use* tu = add->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
 	Ake_ast* left = Ast_node_get(add, 0);
@@ -154,9 +154,9 @@ void test_parse_add_mixed_types()
 	Type_use* add_tu = add->tu;
 	assert_ptr(add_tu, "ptr add_tu");
 
-	struct type_def* add_td = add_tu->td;
+	struct Ake_type_def* add_td = add_tu->td;
 	assert_ptr(add_td, "ptr add_td");
-	expect_int_equal(add_td->type, type_float, "float add_td");
+	expect_int_equal(add_td->type, Ake_type_float, "float add_td");
 	expect_str(&add_td->name, "f64", "f64 add_td");
 
 	Ake_ast* left = Ast_node_get(add, 0);
@@ -380,9 +380,9 @@ void test_parse_mult()
 	Type_use* tu = mult->tu;
 	assert_ptr(tu, "ptr tu");
 	
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
 	Ake_ast* left = Ast_node_get(mult, 0);
@@ -753,9 +753,9 @@ void test_parse_power()
 	Type_use* tu = pow->tu;
 	assert_ptr(tu, "ptr tu");
 	
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
 	Ake_ast* number0 = Ast_node_get(pow, 0);
@@ -1172,9 +1172,9 @@ void test_parse_comparison()
 	Type_use* cond0_tu = cond0->tu;
 	assert_ptr(cond0_tu, "ptr cond0_tu");
 	
-	struct type_def* cond0_td = cond0_tu->td;
+	struct Ake_type_def* cond0_td = cond0_tu->td;
 	assert_ptr(cond0_td, "ptr cond0_td");
-	expect_int_equal(cond0_td->type, type_integer, "integer cond0_td");
+	expect_int_equal(cond0_td->type, Ake_type_integer, "integer cond0_td");
 	expect_str(&cond0_td->name, "i64", "i64 cond0_td");
 
 	Ake_ast* left0 = Ast_node_get(cond0, 0);
@@ -1194,9 +1194,9 @@ void test_parse_comparison()
 	Type_use* cond1_tu = cond1->tu;
 	assert_ptr(cond1_tu, "ptr cond1_tu");
 
-	struct type_def* cond1_td = cond1_tu->td;
+	struct Ake_type_def* cond1_td = cond1_tu->td;
 	assert_ptr(cond1_td, "ptr cond0_td");
-	expect_int_equal(cond1_td->type, type_float, "float cond1_td");
+	expect_int_equal(cond1_td->type, Ake_type_float, "float cond1_td");
 	expect_str(&cond1_td->name, "f64", "f64 cond1_td");
 
 	Ake_ast* left1 = Ast_node_get(cond1, 0);
@@ -1256,14 +1256,14 @@ void test_parse_comparison_identity()
 	assert_ptr(comp0, "ptr comp0");
 	assert_ptr(comp0->tu, "ptr comp0->tu");
 	assert_ptr(comp0->tu->td, "ptr comp0->tu->td");
-	expect_int_equal(comp0->tu->td->type, type_boolean, "boolean comp0->tu->td->type");
+	expect_int_equal(comp0->tu->td->type, Ake_type_boolean, "boolean comp0->tu->td->type");
 	expect_str(&comp0->tu->td->name, "bool", "bool comp0->tu->td->name");
 
 	Ake_ast* comp1 = Ast_node_get(cu.root, 1);
 	assert_ptr(comp1, "ptr comp1");
 	assert_ptr(comp1->tu, "ptr comp->tu1");
 	assert_ptr(comp1->tu->td, "ptr comp1->tu->td");
-	expect_int_equal(comp1->tu->td->type, type_boolean, "boolean comp1->tu->td->type");
+	expect_int_equal(comp1->tu->td->type, Ake_type_boolean, "boolean comp1->tu->td->type");
 	expect_str(&comp1->tu->td->name, "bool", "bool comp1->tu->td->name");
 
     parse_teardown(&cu);
@@ -1388,9 +1388,9 @@ void test_parse_or()
 	Type_use* tu = or->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_boolean, "boolean td");
+	expect_int_equal(td->type, Ake_type_boolean, "boolean td");
 	expect_str(&td->name, "bool", "bool td");
 
 	Ake_ast* a = Ast_node_get(or, 0);
@@ -1557,9 +1557,9 @@ void test_parse_array_subscript()
 	Type_use* tu = as->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
 	Ake_ast* name = Ast_node_get(as, 0);
@@ -1593,9 +1593,9 @@ void test_parse_array_subscript2()
 	assert_ptr(a_tu, "ptr tu");
     expect_false(a_tu->is_array, "is array to");
 
-	struct type_def* td = a_tu->td;
+	struct Ake_type_def* td = a_tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
 	Ake_ast* b = Ast_node_get(a, 0);
@@ -1637,9 +1637,9 @@ void test_parse_array_subscript3()
 	Type_use* tu = a->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "integer td");
+	expect_int_equal(td->type, Ake_type_integer, "integer td");
 	expect_str(&td->name, "i64", "i64 td");
 
 	Ake_ast* b = Ast_node_get(a, 0);
@@ -1695,9 +1695,9 @@ void test_parse_expr_array_subscript_3d()
     expect_false(a_tu->is_array, "is_array a_tu");
     expect_size_t_equal(a_tu->dim.count, 0, "dim.count a_tu");
 
-    struct type_def* a_td = a_tu->td;
+    struct Ake_type_def* a_td = a_tu->td;
     assert_ptr(a_td, "ptr a_td");
-    expect_int_equal(a_td->type, type_integer, "type a_td");
+    expect_int_equal(a_td->type, Ake_type_integer, "type a_td");
     expect_str(&a_td->name, "i64", "name a_td");
 
     Ake_ast* b = Ast_node_get(a, 0);
@@ -1828,9 +1828,9 @@ void test_parse_assign_string()
 	Type_use* tu = assign->tu;
 	assert_ptr(tu, "ptr tu");
 
-	struct type_def* td = tu->td;
+	struct Ake_type_def* td = tu->td;
 	assert_ptr(td, "ptr td");
-	expect_int_equal(td->type, type_integer, "type td");
+	expect_int_equal(td->type, Ake_type_integer, "type td");
 	expect_str(&td->name, "u8", "name td");
 		
 	Ake_ast* lhv = Ast_node_get(assign, 0);
@@ -1866,9 +1866,9 @@ void test_parse_assign_multiple()
 	Type_use* assign_tu = assign->tu;
 	assert_ptr(assign_tu, "ptr assign_tu");
 
-	struct type_def* assign_td = assign_tu->td;
+	struct Ake_type_def* assign_td = assign_tu->td;
 	assert_ptr(assign_td, "ptr assign_td");
-	expect_int_equal(assign_td->type, type_integer, "integer assign_td");
+	expect_int_equal(assign_td->type, Ake_type_integer, "integer assign_td");
 	expect_str(&assign_td->name, "i64", "i64 assign_td");
 
 	Ake_ast* assign0 = Ast_node_get(assign, 0);

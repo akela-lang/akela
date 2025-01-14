@@ -64,9 +64,9 @@ namespace Akela_llvm {
             return Type::getVoidTy(*jd->TheContext);
         }
 
-        struct type_def *td = tu->td;
+        struct Ake_type_def *td = tu->td;
 
-        if (td->type == type_integer) {
+        if (td->type == Ake_type_integer) {
             Type *t;
             if (td->bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
@@ -78,17 +78,17 @@ namespace Akela_llvm {
                 assert(false);
             }
             return t;
-        } else if (td->type == type_float) {
+        } else if (td->type == Ake_type_float) {
             if (td->bit_count == 64) {
                 return Type::getDoubleTy(*jd->TheContext);
             } else if (td->bit_count == 32) {
                 return Type::getFloatTy(*jd->TheContext);
             }
-        } else if (td->type == type_boolean) {
+        } else if (td->type == Ake_type_boolean) {
             return Type::getInt1Ty(*jd->TheContext);
-        } else if (td->type == type_function) {
+        } else if (td->type == Ake_type_function) {
             return Get_function_type(jd, tu);
-        } else if (td->type == type_struct) {
+        } else if (td->type == Ake_type_struct) {
             return (Type *) (StructType *) td->composite_type;
         } else {
             assert(false);
@@ -102,7 +102,7 @@ namespace Akela_llvm {
     {
         Type* t = Get_type(jd, tu);
         if (tu) {
-            if (tu->is_array || tu->td->type == type_function || tu->td->type == type_struct) {
+            if (tu->is_array || tu->td->type == Ake_type_function || tu->td->type == Ake_type_struct) {
                 t = t->getPointerTo();
             }
         }
@@ -117,7 +117,7 @@ namespace Akela_llvm {
             size_t i = tu->dim.count - 1;
             while (true) {
                 auto dim = (Type_dimension*)VECTOR_PTR(&tu->dim, i);
-                if (tu->td->type == type_function) {
+                if (tu->td->type == Ake_type_function) {
                     t = t->getPointerTo();
                 }
                 t = ArrayType::get(t, dim->size);
@@ -143,10 +143,10 @@ namespace Akela_llvm {
     {
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOPLEVEL_NAME));
         if (n->tu) {
-            enum type type = n->tu->td->type;
+            enum Ake_type type = n->tu->td->type;
             bool is_array = n->tu->is_array;
             int bit_count = n->tu->td->bit_count;
-            if (type == type_integer) {
+            if (type == Ake_type_integer) {
                 if (is_array) {
                     if (bit_count == 64) {
                         long* (*fp)() = ExprSymbol.getAddress().toPtr<long*(*)()>();
@@ -207,7 +207,7 @@ namespace Akela_llvm {
                         assert(false);
                     }
                 }
-            } else if (type == type_float) {
+            } else if (type == Ake_type_float) {
                 if (is_array) {
                     double* (*fp)() = ExprSymbol.getAddress().toPtr <double*(*)()>();
                     double* p = fp();
@@ -217,7 +217,7 @@ namespace Akela_llvm {
                     double v = fp();
                     buffer_add_format(bf, "%lf", v);
                 }
-            } else if (type == type_boolean) {
+            } else if (type == Ake_type_boolean) {
                 bool (*fp)() = ExprSymbol.getAddress().toPtr <bool(*)()>();
                 bool v = fp();
                 if (v) {
@@ -225,7 +225,7 @@ namespace Akela_llvm {
                 } else {
                     buffer_add_format(bf, "false", v);
                 }
-            } else if (type == type_function) {
+            } else if (type == Ake_type_function) {
                 void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
                 void* v = fp();
                 buffer_add_format(bf, "Function");

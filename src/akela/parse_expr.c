@@ -335,10 +335,10 @@ Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 				error_list_set(ps->el, &b->loc, "operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_right_no_value */
                 n->type = Ake_ast_type_error;
-			} else if (left->tu->td->type != type_boolean) {
+			} else if (left->tu->td->type != Ake_type_boolean) {
 				error_list_set(ps->el, &left->loc, "left-side expression of boolean operator is not boolean");
                 n->type = Ake_ast_type_error;
-			} else if (b->tu->td->type != type_boolean) {
+			} else if (b->tu->td->type != Ake_type_boolean) {
 				error_list_set(ps->el, &b->loc, "expression of boolean operator is not boolean");
                 n->type = Ake_ast_type_error;
 			} else {
@@ -982,8 +982,8 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
         Type_use *tu = left->tu;
         assert(tu);
         assert(tu->td);
-        struct type_def *td = tu->td;
-        if (td->type != type_function) {
+        struct Ake_type_def *td = tu->td;
+        if (td->type != Ake_type_function) {
             error_list_set(ps->el, &left->loc, "not a function type");
             /* test case: test_parse_call_error_not_function */
             n->type = Ake_ast_type_error;
@@ -1044,7 +1044,7 @@ Ake_ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_ast* left)
     Ake_ast_create(&n);
     n->type = Ake_ast_type_cseq;
 
-    if (!left->tu || !left->tu->td || left->tu->td->type != type_function) {
+    if (!left->tu || !left->tu->td || left->tu->td->type != Ake_type_function) {
         error_list_set(ps->el, &left->loc, "not a function type");
         /* test case: no test case needed */
         n->type = Ake_ast_type_error;
@@ -1171,12 +1171,12 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
                 error_list_set(ps->el, &left->loc, "dot operand has no value");
                 /* test case: no test case necessary */
                 n->type = Ake_ast_type_error;
-            } else if (left->tu->td->type != type_struct) {
+            } else if (left->tu->td->type != Ake_type_struct) {
                 error_list_set(ps->el, &left->loc, "dot operand is not a struct");
                 /* test case: test_parse_dot_error_left_non_module */
                 n->type = Ake_ast_type_error;
             } else {
-                struct type_def* td = left->tu->td;
+                struct Ake_type_def* td = left->tu->td;
                 assert(td);
                 struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &td->name);
                 assert(sym);

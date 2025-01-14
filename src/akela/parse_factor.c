@@ -18,7 +18,7 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps);
 void Ake_parse_struct_literal_elements(
         struct Ake_parse_state* ps,
         struct Ake_ast* parent,
-        struct type_def* td);
+        struct Ake_type_def* td);
 Ake_ast* Ake_parse_sign(struct Ake_parse_state* ps);
 Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps);
 void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_ast* parent);
@@ -395,7 +395,7 @@ Ake_ast* Ake_parse_not(struct Ake_parse_state* ps)
             n->type = Ake_ast_type_error;
 		} else {
 			assert(tu->td);
-			if (tu->td->type != type_boolean) {
+			if (tu->td->type != Ake_type_boolean) {
 				error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = Ake_ast_type_error;
@@ -499,7 +499,7 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
     }
 
     struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id->value);
-    if (sym && sym->td && sym->td->type == type_struct) {
+    if (sym && sym->td && sym->td->type == Ake_type_struct) {
         /* struct literal */
 
         Ake_consume_newline(ps, n);
@@ -562,8 +562,8 @@ typedef struct Ake_struct_field_result {
     Type_use* tu;
 } Ake_struct_field_result;
 
-Ake_struct_field_result Ake_get_struct_field(struct type_def* td, struct buffer* name) {
-    assert(td->type == type_struct);
+Ake_struct_field_result Ake_get_struct_field(struct Ake_type_def* td, struct buffer* name) {
+    assert(td->type == Ake_type_struct);
     assert(td->composite);
     size_t index = 0;
     Ake_ast* dec = td->composite->head;
@@ -583,8 +583,8 @@ Ake_struct_field_result Ake_get_struct_field(struct type_def* td, struct buffer*
     return res;
 }
 
-void Ake_find_missing_fields(struct Ake_parse_state* ps, struct type_def* td, Ake_ast* n) {
-    assert(td->type == type_struct);
+void Ake_find_missing_fields(struct Ake_parse_state* ps, struct Ake_type_def* td, Ake_ast* n) {
+    assert(td->type == Ake_type_struct);
     assert(td->composite);
     Ake_ast *dec = td->composite->head;
     while (dec) {
@@ -610,7 +610,7 @@ void Ake_find_missing_fields(struct Ake_parse_state* ps, struct type_def* td, Ak
 void Ake_parse_struct_literal_elements(
         struct Ake_parse_state* ps,
         struct Ake_ast* parent,
-        struct type_def* td)
+        struct Ake_type_def* td)
 {
     struct Ake_token* t0;
 

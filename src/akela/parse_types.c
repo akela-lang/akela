@@ -789,7 +789,7 @@ bool Ake_check_input_type(
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_Override_rhs(Type_use* tu, Ake_ast* rhs)
 {
-    if (tu->td->type == type_integer || tu->td->type == type_float) {
+    if (tu->td->type == Ake_type_integer || tu->td->type == Ake_type_float) {
         rhs->tu->td = tu->td;
         if (rhs->type == Ake_ast_type_sign) {
             Ake_ast* p = Ast_node_get(rhs, 1);

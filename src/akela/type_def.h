@@ -12,20 +12,20 @@
 #include "zinc/hash.h"
 #include "ast.h"
 
-enum type {
-	type_none,
-	type_integer,
-	type_float,
-    type_boolean,
-    type_struct,
-    type_function,
-    type_enum,
-    type_tuple,
-    type_module,
-};
+typedef enum Ake_type {
+	Ake_type_none,
+	Ake_type_integer,
+	Ake_type_float,
+    Ake_type_boolean,
+    Ake_type_struct,
+    Ake_type_function,
+    Ake_type_enum,
+    Ake_type_tuple,
+    Ake_type_module,
+} Ake_type;
 
-struct type_def {
-	enum type type;
+typedef struct Ake_type_def {
+	enum Ake_type type;
 	struct buffer name;
     int bit_count;
     bool is_signed;
@@ -33,14 +33,14 @@ struct type_def {
     void* composite_type;
     struct hash_table struct_impl;
     struct hash_table type_impl;
-};
+} Ake_type_def;
 
 #define IMPL_HASH_SIZE 32
 
-AKELA_API void type_def_create(struct type_def** n);
-AKELA_API void type_def_destroy(struct type_def* n);
-AKELA_API void type_def_init(struct type_def* n);
-AKELA_API struct type_def* type_def_copy(struct type_def* n);
-AKELA_API bool Ake_type_def_match(struct type_def* a, struct type_def* b);
+AKELA_API void Ake_type_def_create(struct Ake_type_def** n);
+AKELA_API void Ake_type_def_destroy(struct Ake_type_def* n);
+AKELA_API void Ake_type_def_init(struct Ake_type_def* n);
+AKELA_API struct Ake_type_def* Ake_type_def_copy(struct Ake_type_def* n);
+AKELA_API bool Ake_type_def_match(struct Ake_type_def* a, struct Ake_type_def* b);
 
 #endif
