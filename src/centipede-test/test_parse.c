@@ -1436,6 +1436,71 @@ void test_parse_module_id_error()
     test_parse_teardown(ct);
 }
 
+void test_parse_bad_id()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "let a = 1;\n"
+        "b\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_has_errors(errors);
+    expect_source_error(errors, "unknown variable: b");
+
+    test_parse_teardown(ct);
+}
+
+void test_parse_bad_id_child_of()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "Foo {\n"
+        "    let bar = Bar {\n"
+        "        .@child_of(x)\n"
+        "    }\n"
+        "    bar\n"
+        "}\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_has_errors(errors);
+    expect_source_error(errors, "unknown variable: x");
+
+    test_parse_teardown(ct);
+}
+
+void test_parse_bad_id_property_of()
+{
+    test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "Foo {\n"
+        "    let bar = Bar {\n"
+        "        .@property_of(x, \"a\")\n"
+        "    }\n"
+        "    bar\n"
+        "}\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    struct error_list* errors = &ct->primary->errors;
+
+    expect_has_errors(errors);
+    expect_source_error(errors, "unknown variable: x");
+
+    test_parse_teardown(ct);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1487,4 +1552,8 @@ void test_parse()
     test_parse_object_let();
 
     test_parse_module_id_error();
+
+    test_parse_bad_id();
+    test_parse_bad_id_child_of();
+    test_parse_bad_id_property_of();
 }
