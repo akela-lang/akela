@@ -9,7 +9,7 @@
 #include "parse_tools.h"
 #include <assert.h>
 
-Ake_ast* parse(struct parse_state* ps)
+Ake_ast* Ast_parse(struct parse_state* ps)
 {
     Ake_ast* n = NULL;
 

@@ -67,7 +67,7 @@ bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, InputUnico
 	struct parse_state* ps = NULL;
     cu->input_obj = input_obj;
 	Ake_comp_unit_setup(cu, input_obj, input_vtable, &ps);
-    cu->root = parse(ps);
+    cu->root = Ast_parse(ps);
     if (cu->root->type == Ake_ast_type_error || cu->el.head) {
         valid = false;
     }
