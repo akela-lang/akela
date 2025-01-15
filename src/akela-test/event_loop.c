@@ -16,7 +16,7 @@ void translate(struct Zinc_string* bf)
     }
 }
 
-void event_loop(void* input_obj, InputUnicodeVTable* input_vtable)
+void event_loop(void* input_obj, Zinc_input_unicode_vtable* input_vtable)
 {
     struct Zinc_string* bf = NULL;
     Zinc_string_create(&bf);
@@ -28,7 +28,7 @@ void event_loop(void* input_obj, InputUnicodeVTable* input_vtable)
     bool done;
 
     while (true) {
-        InputUnicodeNext(input_obj, input_vtable, c, &num, &loc, &done);
+        Zinc_input_unicode_next(input_obj, input_vtable, c, &num, &loc, &done);
         if (done) {
             break;
         }
@@ -62,7 +62,7 @@ void usage()
 int main(int argc, char** argv)
 {
     void* input_obj = NULL;
-    InputUnicodeVTable* input_vtable;
+    Zinc_input_unicode_vtable* input_vtable;
     InputUnicodeFile* input_file = NULL;
     InputUnicodeString* input_string = NULL;
 

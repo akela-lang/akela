@@ -5,7 +5,7 @@
 #include "utf8.h"
 #include <string.h>
 
-InputUnicodeVTable InputUnicodeFileVTable = {
+Zinc_input_unicode_vtable InputUnicodeFileVTable = {
         .loc_offset = offsetof(InputUnicodeFile, loc),
         .next_offset = offsetof(InputUnicodeFile, Next),
         .repeat_offset = offsetof(InputUnicodeFile, Repeat),
@@ -23,11 +23,11 @@ void InputUnicodeFileInit(InputUnicodeFile* input, FILE* fp)
     Zinc_location_init(&input->prev_loc);
     input->prev_done = false;
     input->fp = fp;
-    input->Next = (InputUnicodeNextInterface) InputUnicodeFileNext;
-    input->Repeat = (InputUnicodeRepeatInterface) InputUnicodeFileRepeat;
-    input->Seek = (InputUnicodeSeekInterface) InputUnicodeFileSeek;
-    input->GetAll = (InputUnicodeGetAllInterface) InputUnicodeFileGetAll;
-    input->GetLocation = (InputUnicodeGetLocationInterface) InputUnicodeFileGetLocation;
+    input->Next = (Zinc_input_unicode_next_interface) InputUnicodeFileNext;
+    input->Repeat = (Zinc_input_unicode_repeat_interface) InputUnicodeFileRepeat;
+    input->Seek = (Zinc_input_unicode_seek_interface) InputUnicodeFileSeek;
+    input->GetAll = (Zinc_input_unicode_get_all_interface) InputUnicodeFileGetAll;
+    input->GetLocation = (Zinc_input_unicode_get_location_interface) InputUnicodeFileGetLocation;
     input->input_vtable = &InputUnicodeFileVTable;
 }
 

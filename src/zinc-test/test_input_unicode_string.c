@@ -22,7 +22,7 @@ void test_input_unicode_string_next()
     int num;
     struct Zinc_location loc;
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -35,7 +35,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 1, "0 line");
     expect_size_t_equal(loc.col, 1, "0 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -48,7 +48,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 1, "1 line");
     expect_size_t_equal(loc.col, 2, "1 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "2 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -61,7 +61,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 1, "2 line");
     expect_size_t_equal(loc.col, 3, "2 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "3 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -74,7 +74,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 1, "3 line");
     expect_size_t_equal(loc.col, 4, "3 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "4 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -87,7 +87,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 1, "4 line");
     expect_size_t_equal(loc.col, 5, "4 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "5 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -100,7 +100,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 1, "5 line");
     expect_size_t_equal(loc.col, 6, "5 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "6 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -113,7 +113,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 2, "6 line");
     expect_size_t_equal(loc.col, 1, "6 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "7 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -126,7 +126,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 2, "7 line");
     expect_size_t_equal(loc.col, 2, "7 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "8 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -139,7 +139,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 2, "8 line");
     expect_size_t_equal(loc.col, 3, "8 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "9 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -152,7 +152,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 2, "9 line");
     expect_size_t_equal(loc.col, 4, "9 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "10 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -165,7 +165,7 @@ void test_input_unicode_string_next()
     expect_size_t_equal(loc.line, 2, "10 line");
     expect_size_t_equal(loc.col, 5, "10 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "11 input unicode next");
     expect_true(done, "11 done");
     expect_int_equal(num, 0, "11 num");
@@ -202,7 +202,7 @@ void test_input_unicode_string_next_multibyte()
     int num;
     struct Zinc_location loc;
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -215,7 +215,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 1, "0 line");
     expect_size_t_equal(loc.col, 1, "0 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -228,7 +228,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 1, "1 line");
     expect_size_t_equal(loc.col, 2, "1 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "2 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -241,7 +241,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 1, "2 line");
     expect_size_t_equal(loc.col, 3, "2 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "3 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -254,7 +254,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 1, "3 line");
     expect_size_t_equal(loc.col, 4, "3 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "4 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -267,7 +267,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 1, "4 line");
     expect_size_t_equal(loc.col, 5, "4 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "5 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -280,7 +280,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 1, "5 line");
     expect_size_t_equal(loc.col, 6, "5 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "6 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -294,7 +294,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 2, "6 line");
     expect_size_t_equal(loc.col, 1, "6 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "7 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -308,7 +308,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 2, "7 line");
     expect_size_t_equal(loc.col, 2, "7 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "8 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -322,7 +322,7 @@ void test_input_unicode_string_next_multibyte()
     expect_size_t_equal(loc.line, 2, "8 line");
     expect_size_t_equal(loc.col, 3, "8 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "9 input unicode next");
     expect_true(done, "9 done");
     expect_int_equal(num, 0, "9 num");
@@ -359,7 +359,7 @@ void test_input_unicode_string_repeat()
     int num;
     struct Zinc_location loc;
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -372,8 +372,8 @@ void test_input_unicode_string_repeat()
     expect_size_t_equal(loc.line, 1, "0 line");
     expect_size_t_equal(loc.col, 1, "0 col");
 
-    InputUnicodeRepeat(input, input->input_vtable);
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    Zinc_input_unicode_repeat(input, input->input_vtable);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0r input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -386,7 +386,7 @@ void test_input_unicode_string_repeat()
     expect_size_t_equal(loc.line, 1, "0r line");
     expect_size_t_equal(loc.col, 1, "0r col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -399,7 +399,7 @@ void test_input_unicode_string_repeat()
     expect_size_t_equal(loc.line, 1, "1 line");
     expect_size_t_equal(loc.col, 2, "1 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "2 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -412,7 +412,7 @@ void test_input_unicode_string_repeat()
     expect_size_t_equal(loc.line, 1, "2 line");
     expect_size_t_equal(loc.col, 3, "2 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "3 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -425,7 +425,7 @@ void test_input_unicode_string_repeat()
     expect_size_t_equal(loc.line, 1, "3 line");
     expect_size_t_equal(loc.col, 4, "3 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "4 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -438,7 +438,7 @@ void test_input_unicode_string_repeat()
     expect_size_t_equal(loc.line, 1, "4 line");
     expect_size_t_equal(loc.col, 5, "4 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "5 input unicode next");
     expect_true(done, "5 done");
     expect_int_equal(num, 0, "5 num");
@@ -475,7 +475,7 @@ void test_input_unicode_string_seek()
     int num;
     struct Zinc_location loc;
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -490,7 +490,7 @@ void test_input_unicode_string_seek()
 
     struct Zinc_location save_loc = loc;
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "1 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -503,7 +503,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.end_pos, 2, "1 end_pos");
     expect_size_t_equal(loc.col, 2, "1 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "2 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -516,7 +516,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "2 line");
     expect_size_t_equal(loc.col, 3, "2 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "3 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -529,7 +529,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "3 line");
     expect_size_t_equal(loc.col, 4, "3 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "4 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -542,7 +542,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "4 line");
     expect_size_t_equal(loc.col, 5, "4 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "5 input unicode next");
     expect_true(done, "5 done");
     expect_int_equal(num, 0, "5 num");
@@ -551,9 +551,9 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "5 line");
     expect_size_t_equal(loc.col, 6, "5 col");
 
-    InputUnicodeSeek(input, input->input_vtable, &save_loc);
+    Zinc_input_unicode_seek(input, input->input_vtable, &save_loc);
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -566,7 +566,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "0 line");
     expect_size_t_equal(loc.col, 1, "0 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -579,7 +579,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "1 line");
     expect_size_t_equal(loc.col, 2, "1 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -592,7 +592,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "2 line");
     expect_size_t_equal(loc.col, 3, "2 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -605,7 +605,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "3 line");
     expect_size_t_equal(loc.col, 4, "3 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     for (int i = 0; i < num; i++) {
         Zinc_string_add_char(&bf, c[i]);
@@ -618,7 +618,7 @@ void test_input_unicode_string_seek()
     expect_size_t_equal(loc.line, 1, "4 line");
     expect_size_t_equal(loc.col, 5, "4 col");
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     expect_true(done, "5 done");
     expect_int_equal(num, 0, "5 num");
@@ -648,7 +648,7 @@ void test_input_unicode_string_get_all()
 
     Vector* output = NULL;
 
-    InputUnicodeGetAll(input, input->input_vtable, &output);
+    Zinc_input_unicode_get_all(input, input->input_vtable, &output);
     expect_true(VectorMatch(vector, output), "match");
 
     free(input);
@@ -673,7 +673,7 @@ void test_input_unicode_string_get_location()
     int num;
     struct Zinc_location loc;
 
-    r = InputUnicodeNext(input, input->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(input, input->input_vtable, c, &num, &loc, &done);
     assert_ok(r, "0 input unicode next");
     expect_false(done, "0 done");
     expect_int_equal(num, 1, "0 num");
@@ -684,7 +684,7 @@ void test_input_unicode_string_get_location()
     expect_size_t_equal(loc.col, 1, "0 col");
 
     struct Zinc_location next_loc;
-    next_loc = InputUnicodeGetLocation(input, input->input_vtable);
+    next_loc = Zinc_input_unicode_get_location(input, input->input_vtable);
     expect_size_t_equal(next_loc.start_pos, 1, "1 start_pos");
     expect_size_t_equal(next_loc.end_pos, 0, "1 end_pos");
     expect_size_t_equal(next_loc.line, 1, "1 line");

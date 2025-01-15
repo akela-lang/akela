@@ -5,7 +5,7 @@
 void Cob_compile_data_init(
     Cob_compile_data* cd,
     void* input_obj,
-    InputUnicodeVTable* input_vtable,
+    Zinc_input_unicode_vtable* input_vtable,
     struct Zinc_error_list* el)
 {
     cd->input_obj = input_obj;
@@ -18,7 +18,7 @@ void Cob_compile_data_init(
 void Cob_compile_data_create(
     Cob_compile_data** cd,
     void* input_obj,
-    InputUnicodeVTable* input_vtable,
+    Zinc_input_unicode_vtable* input_vtable,
     struct Zinc_error_list* el)
 {
     malloc_safe((void**)cd, sizeof(Cob_compile_data));

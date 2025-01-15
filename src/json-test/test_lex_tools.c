@@ -15,7 +15,7 @@ void test_lex_setup(Json_lex_data* jld, char* text)
 
     InputUnicodeString* input_obj = NULL;
     InputUnicodeStringCreate(&input_obj, v);
-    InputUnicodeVTable* input_vtable = &InputUnicodeStringVTable;
+    Zinc_input_unicode_vtable* input_vtable = &InputUnicodeStringVTable;
 
     enum result r = Json_lex_data_init(jld, el, input_obj, input_vtable);
     if (r == result_error) {

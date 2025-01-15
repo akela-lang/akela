@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include "utf8.h"
 
-InputUnicodeVTable InputUnicodeStringVTable = {
+Zinc_input_unicode_vtable InputUnicodeStringVTable = {
         .loc_offset = offsetof(InputUnicodeString, loc),
         .next_offset = offsetof(InputUnicodeString, Next),
         .repeat_offset = offsetof(InputUnicodeString, Repeat),
@@ -19,11 +19,11 @@ void InputUnicodeStringInit(InputUnicodeString* input_string, Vector* text)
     input_string->repeat_char = false;
     input_string->pos = 0;
     input_string->text = text;
-    input_string->Next = (InputUnicodeNextInterface) InputUnicodeStringNext;
-    input_string->Repeat = (InputUnicodeRepeatInterface) InputUnicodeStringRepeat;
-    input_string->Seek = (InputUnicodeSeekInterface) InputUnicodeStringSeek;
-    input_string->GetAll = (InputUnicodeGetAllInterface) InputUnicodeStringGetAll;
-    input_string->GetLocation = (InputUnicodeGetLocationInterface) InputUnicodeStringGetLocation;
+    input_string->Next = (Zinc_input_unicode_next_interface) InputUnicodeStringNext;
+    input_string->Repeat = (Zinc_input_unicode_repeat_interface) InputUnicodeStringRepeat;
+    input_string->Seek = (Zinc_input_unicode_seek_interface) InputUnicodeStringSeek;
+    input_string->GetAll = (Zinc_input_unicode_get_all_interface) InputUnicodeStringGetAll;
+    input_string->GetLocation = (Zinc_input_unicode_get_location_interface) InputUnicodeStringGetLocation;
     input_string->input_vtable = &InputUnicodeStringVTable;
 }
 

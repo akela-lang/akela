@@ -11,7 +11,7 @@ enum result Json_lex_data_init(
     Json_lex_data* ld,
     struct Zinc_error_list* el,
     void* input_obj,
-    InputUnicodeVTable* input_vtable)
+    Zinc_input_unicode_vtable* input_vtable)
 {
     ld->el = el;
     ld->input_obj = input_obj;
@@ -23,7 +23,7 @@ void Json_lex_data_create(
     Json_lex_data** ld,
     struct Zinc_error_list* el,
     void* input_obj,
-    InputUnicodeVTable* input_vtable)
+    Zinc_input_unicode_vtable* input_vtable)
 {
     malloc_safe((void**)ld, sizeof(Json_lex_data));
     Json_lex_data_init(*ld, el, input_obj, input_vtable);

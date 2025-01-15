@@ -43,7 +43,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
     bool done;
 
     while (true) {
-        enum result r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        enum result r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             Zinc_error_list_set(jld->el, &loc, error_message);
             continue;
@@ -69,7 +69,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             t->type = Json_token_type_string;
             t->loc = loc;
             Json_lex_string(jld, t);
-            loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+            loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
             t->loc.end_pos = loc.start_pos;
             return;
         }
@@ -79,7 +79,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             t->loc = loc;
             Zinc_string_add_char(&t->value, c[0]);
             Json_lex_number(jld, t);
-            loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+            loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
             t->loc.end_pos = loc.start_pos;
             return;
         }
@@ -88,7 +88,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             Zinc_string_add_char(&t->value, c[0]);
             t->loc = loc;
             if (Json_lex_word(jld, t)) {
-                loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+                loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
                 t->loc.end_pos = loc.start_pos;
                 return;
             }
@@ -159,14 +159,14 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
     bool done;
 
     while (true) {
-        enum result r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        enum result r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             Zinc_error_list_set(jld->el, &loc, error_message);
             continue;
         }
 
         if (done) {
-            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             return;
         }
 
@@ -199,7 +199,7 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
     int num;
     struct Zinc_location loc;
     bool done;
-    r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
     if (r == result_error) {
         Zinc_error_list_set(jld->el, &loc, error_message);
         return;
@@ -207,7 +207,7 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
 
     if (done) {
         Zinc_error_list_set(jld->el, &loc, "missing escape character");
-        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+        Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
         return;
     }
 
@@ -280,13 +280,13 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     Zinc_string_add_str(&bf, "\\u");
     bool valid = true;
     struct Zinc_location first_loc;
-    first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    first_loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
     first_loc.start_pos -= 2;
     first_loc.col -= 2;
 
     /* first four hex digits */
     for (int i = 0; i < 4; i++) {
-        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
 
         if (r == result_error) {
             Zinc_error_list_set(jld->el, &loc, error_message);
@@ -306,17 +306,17 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     }
     /* optional two hex digits */
     for (int i = 0; i < 2; i++) {
-        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
         if (done) {
-            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             break;
         }
         if (!is_hex_digit(c, num)) {
-            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             break;
         }
         Zinc_string_add(&bf, c, num);
@@ -324,7 +324,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     Zinc_string_finish(&bf);
 
     struct Zinc_location end_loc;
-    end_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    end_loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
     first_loc.end_pos = end_loc.start_pos;
 
     if (valid) {
@@ -365,7 +365,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
 
     size_t digit_count = 0;
     char first_digit;
-    struct Zinc_location first_loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    struct Zinc_location first_loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
     first_loc.end_pos = first_loc.start_pos;
     first_loc.start_pos--;
     first_loc.col--;
@@ -389,14 +389,14 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     }
 
     while (true) {
-        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
 
         if (done) {
-            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             break;
         }
 
@@ -427,7 +427,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
             break;
         }
 
-        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+        Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
         break;
     }
 
@@ -454,14 +454,14 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
     size_t digit_count = 0;
 
     while (true) {
-        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
 
         if (done) {
-            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             break;
         }
 
@@ -477,7 +477,7 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
             break;
         }
 
-        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+        Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
         break;
     }
 
@@ -499,14 +499,14 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
     bool has_sign = false;
 
     while (true) {
-        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
 
         if (done) {
-            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             break;
         }
 
@@ -532,7 +532,7 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
             continue;
         }
 
-        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+        Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
         break;
     }
 
@@ -550,14 +550,14 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             Zinc_error_list_set(jld->el, &loc, error_message);
             break;
         }
 
         if (done) {
-            InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+            Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             break;
         }
 
@@ -566,7 +566,7 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
             continue;
         }
 
-        InputUnicodeRepeat(jld->input_obj, jld->input_vtable);
+        Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
         break;
     }
 
@@ -585,7 +585,7 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
         return true;
     }
 
-    loc = InputUnicodeGetLocation(jld->input_obj, jld->input_vtable);
+    loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
     t->loc.end_pos = loc.start_pos;
 
     Zinc_error_list_set(jld->el, &t->loc, "invalid word (%b), expecting true, false, or null", &t->value);

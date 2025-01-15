@@ -16,7 +16,7 @@ typedef struct Cent_comp_unit {
     Cent_comp_unit_status status;
     Cent_parse_data pd;
     void* input;
-    InputUnicodeVTable* input_vtable;
+    Zinc_input_unicode_vtable* input_vtable;
     struct Zinc_error_list errors;
     Cent_lex_data ld;
     Cent_parse_result pr;
@@ -27,7 +27,7 @@ typedef struct Cent_comp_unit {
 void Cent_comp_unit_init(
     Cent_comp_unit *cu,
     void* input,
-    InputUnicodeVTable* input_vtable,
+    Zinc_input_unicode_vtable* input_vtable,
     String_slice file_name,
     void* module_finder_obj,
     Cent_module_vtable* module_finder_vtable,
@@ -35,7 +35,7 @@ void Cent_comp_unit_init(
 void Cent_comp_unit_create(
     Cent_comp_unit **cu,
     void* input,
-    InputUnicodeVTable* input_vtable,
+    Zinc_input_unicode_vtable* input_vtable,
     String_slice file_name,
     void* module_finder_obj,
     Cent_module_vtable* module_finder_vtable,

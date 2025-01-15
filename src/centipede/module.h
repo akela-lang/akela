@@ -9,7 +9,7 @@ typedef struct Cent_module_vtable {
 
 typedef struct Cent_input_data {
     void* input;
-    InputUnicodeVTable* input_vtable;
+    Zinc_input_unicode_vtable* input_vtable;
 } Cent_input_data;
 
 typedef Cent_input_data (*Cent_module_find)(void* obj, struct Zinc_string* name);

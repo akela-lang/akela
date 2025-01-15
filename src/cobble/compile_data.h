@@ -8,7 +8,7 @@
 
 typedef struct Cob_compile_data {
     void* input_obj;
-    InputUnicodeVTable* input_vtable;
+    Zinc_input_unicode_vtable* input_vtable;
     Cob_token* lookahead;
     struct Zinc_error_list* el;
     size_t group_number;
@@ -23,12 +23,12 @@ typedef struct Cob_re {
 void Cob_compile_data_init(
     Cob_compile_data* cd,
     void* input_obj,
-    InputUnicodeVTable* input_vtable,
+    Zinc_input_unicode_vtable* input_vtable,
     struct Zinc_error_list* el);
 void Cob_compile_data_create(
     Cob_compile_data** cd,
     void* input_obj,
-    InputUnicodeVTable* input_vtable,
+    Zinc_input_unicode_vtable* input_vtable,
     struct Zinc_error_list* el);
 void Cob_compile_data_destroy(Cob_compile_data* cd);
 

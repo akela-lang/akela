@@ -3,7 +3,7 @@
 #include "token.h"
 #include "ast.h"
 
-Cob_token* Cob_lex(void* input_obj, InputUnicodeVTable *input_vtable)
+Cob_token* Cob_lex(void* input_obj, Zinc_input_unicode_vtable *input_vtable)
 {
     char c[4];
     int num;
@@ -11,7 +11,7 @@ Cob_token* Cob_lex(void* input_obj, InputUnicodeVTable *input_vtable)
     bool done;
     enum result r = result_error;
     while (r == result_error) {
-        r = InputUnicodeNext(input_obj, input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(input_obj, input_vtable, c, &num, &loc, &done);
     }
 
     Cob_token* t = NULL;

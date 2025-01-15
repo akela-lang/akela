@@ -6,7 +6,7 @@ void Cent_lex_data_init(
     Cent_lex_data *ld,
     struct Zinc_error_list* errors,
     void* input,
-    InputUnicodeVTable* input_vtable)
+    Zinc_input_unicode_vtable* input_vtable)
 {
     ld->errors = errors;
     ld->input = input;
@@ -34,7 +34,7 @@ void Cent_lex_data_create(
     Cent_lex_data **ld,
     struct Zinc_error_list* errors,
     void* input,
-    InputUnicodeVTable* input_vtable)
+    Zinc_input_unicode_vtable* input_vtable)
 {
     malloc_safe((void**)ld, sizeof(Cent_lex_data));
     Cent_lex_data_init(*ld, errors, input, input_vtable);

@@ -13,15 +13,15 @@ typedef struct {
     bool repeat_char;
     size_t pos;
     Vector* text;
-    InputUnicodeNextInterface Next;
-    InputUnicodeRepeatInterface Repeat;
-    InputUnicodeSeekInterface Seek;
-    InputUnicodeGetAllInterface GetAll;
-    InputUnicodeGetLocationInterface GetLocation;
-    InputUnicodeVTable* input_vtable;
+    Zinc_input_unicode_next_interface Next;
+    Zinc_input_unicode_repeat_interface Repeat;
+    Zinc_input_unicode_seek_interface Seek;
+    Zinc_input_unicode_get_all_interface GetAll;
+    Zinc_input_unicode_get_location_interface GetLocation;
+    Zinc_input_unicode_vtable* input_vtable;
 } InputUnicodeString;
 
-extern InputUnicodeVTable InputUnicodeStringVTable;
+extern Zinc_input_unicode_vtable InputUnicodeStringVTable;
 
 void InputUnicodeStringInit(InputUnicodeString* input_string, Vector* text);
 void InputUnicodeStringCreate(InputUnicodeString** input_string, Vector* text);

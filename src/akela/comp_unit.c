@@ -35,7 +35,7 @@ void Ake_comp_unit_destroy(struct Ake_comp_unit* cu)
     }
 }
 
-void Ake_comp_unit_setup(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable, struct Ake_parse_state** ps)
+void Ake_comp_unit_setup(struct Ake_comp_unit* cu, void* input_obj, Zinc_input_unicode_vtable* input_vtable, struct Ake_parse_state** ps)
 {
 	*ps = NULL;
 
@@ -61,7 +61,7 @@ void Ake_comp_unit_teardown(struct Ake_comp_unit* cu, struct Ake_parse_state* ps
 	free(ps);
 }
 
-bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable)
+bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, Zinc_input_unicode_vtable* input_vtable)
 {
 	bool valid = true;
 	struct Ake_parse_state* ps = NULL;

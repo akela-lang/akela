@@ -23,6 +23,6 @@ typedef struct Ake_comp_unit {
 AKELA_API void Ake_comp_unit_init(struct Ake_comp_unit* cu);
 AKELA_API void Ake_comp_unit_create(struct Ake_comp_unit** cu);
 AKELA_API void Ake_comp_unit_destroy(struct Ake_comp_unit* cu);
-AKELA_API bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, InputUnicodeVTable* input_vtable);
+AKELA_API bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, Zinc_input_unicode_vtable* input_vtable);
 
 #endif

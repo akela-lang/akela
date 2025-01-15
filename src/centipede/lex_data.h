@@ -9,7 +9,7 @@
 typedef struct Cent_lex_data {
     struct Zinc_error_list* errors;
     void* input;
-    InputUnicodeVTable* input_vtable;
+    Zinc_input_unicode_vtable* input_vtable;
     struct Zinc_hash_table reserved;
     struct Zinc_hash_table builtin;
     size_t process_newline_count;
@@ -19,12 +19,12 @@ void Cent_lex_data_init(
     Cent_lex_data *ld,
     struct Zinc_error_list* errors,
     void* input,
-    InputUnicodeVTable* input_vtable);
+    Zinc_input_unicode_vtable* input_vtable);
 void Cent_lex_data_create(
     Cent_lex_data **ld,
     struct Zinc_error_list* errors,
     void* input,
-    InputUnicodeVTable* input_vtable);
+    Zinc_input_unicode_vtable* input_vtable);
 void Cent_lex_data_destroy();
 
 void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type type);

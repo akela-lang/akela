@@ -64,7 +64,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
     bool done;
 
     while (true) {
-        enum result r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        enum result r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
 
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
@@ -95,14 +95,14 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
                 t->type = Cent_token_colon;
                 t->loc = loc;
 
-                r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+                r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
                 if (r == result_error) {
                     fprintf(stderr, "%s\n", error_message);
                     exit(1);
                 }
 
                 if (done) {
-                    InputUnicodeRepeat(ld->input, ld->input_vtable);
+                    Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
                     return;
                 }
 
@@ -170,7 +170,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
 
             if (c[0] == '#') {
                 while (true) {
-                    r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+                    r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
                     if (r == result_error) {
                         fprintf(stderr, "%s\n", error_message);
                         exit(1);
@@ -181,7 +181,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
                         return;
                     }
                     if (num == 1 && c[0] == '\n') {
-                        InputUnicodeRepeat(ld->input, ld->input_vtable);
+                        Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
                         break;
                     }
                 }
@@ -236,7 +236,7 @@ void lex_id(Cent_lex_data* ld, Cent_token* t)
     bool done;
 
     while (true) {
-        enum result r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        enum result r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
 
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
@@ -244,7 +244,7 @@ void lex_id(Cent_lex_data* ld, Cent_token* t)
         }
 
         if (done) {
-            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
             return;
         }
 
@@ -255,9 +255,9 @@ void lex_id(Cent_lex_data* ld, Cent_token* t)
             }
         }
 
-        loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
+        loc = Zinc_input_unicode_get_location(ld->input, ld->input_vtable);
         t->loc.end_pos = loc.start_pos;
-        InputUnicodeRepeat(ld->input, ld->input_vtable);
+        Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
         return;
     }
 }
@@ -270,14 +270,14 @@ void Cent_lex_string(Cent_lex_data* ld, Cent_token* t)
     bool done;
 
     while (true) {
-        enum result r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        enum result r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             exit(1);
         }
 
         if (done) {
-            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
             return;
         }
 
@@ -310,7 +310,7 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
     int num;
     struct Zinc_location loc;
     bool done;
-    r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+    r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
     if (r == result_error) {
         fprintf(stderr, "%s\n", error_message);
         exit(1);
@@ -318,7 +318,7 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
 
     if (done) {
         Zinc_error_list_set(ld->errors, &loc, "missing escape character");
-        InputUnicodeRepeat(ld->input, ld->input_vtable);
+        Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
         return;
     }
 
@@ -391,13 +391,13 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
     Zinc_string_add_str(&bf, "\\u");
     bool valid = true;
     struct Zinc_location first_loc;
-    first_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
+    first_loc = Zinc_input_unicode_get_location(ld->input, ld->input_vtable);
     first_loc.start_pos -= 2;
     first_loc.col -= 2;
 
     /* first four hex digits */
     for (int i = 0; i < 4; i++) {
-        r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
 
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
@@ -417,17 +417,17 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
     }
     /* optional two hex digits */
     for (int i = 0; i < 2; i++) {
-        r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             exit(1);
         }
         if (done) {
-            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
             break;
         }
         if (!is_hex_digit(c, num)) {
-            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
             break;
         }
         Zinc_string_add(&bf, c, num);
@@ -435,7 +435,7 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
     Zinc_string_finish(&bf);
 
     struct Zinc_location end_loc;
-    end_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
+    end_loc = Zinc_input_unicode_get_location(ld->input, ld->input_vtable);
     first_loc.end_pos = end_loc.start_pos;
 
     if (valid) {
@@ -476,7 +476,7 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
 
     size_t digit_count = 0;
     char first_digit;
-    struct Zinc_location first_loc = InputUnicodeGetLocation(ld->input, ld->input_vtable);
+    struct Zinc_location first_loc = Zinc_input_unicode_get_location(ld->input, ld->input_vtable);
     first_loc.end_pos = first_loc.start_pos;
     first_loc.start_pos--;
     first_loc.col--;
@@ -500,14 +500,14 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
     }
 
     while (true) {
-        r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             exit(1);
         }
 
         if (done) {
-            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
             break;
         }
 
@@ -538,7 +538,7 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
             break;
         }
 
-        InputUnicodeRepeat(ld->input, ld->input_vtable);
+        Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
         break;
     }
 
@@ -565,14 +565,14 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
     size_t digit_count = 0;
 
     while (true) {
-        r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             exit(1);
         }
 
         if (done) {
-            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
             break;
         }
 
@@ -588,7 +588,7 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
             break;
         }
 
-        InputUnicodeRepeat(ld->input, ld->input_vtable);
+        Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
         break;
     }
 
@@ -610,14 +610,14 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
     bool has_sign = false;
 
     while (true) {
-        r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             exit(1);
         }
 
         if (done) {
-            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
             break;
         }
 
@@ -643,7 +643,7 @@ void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
             continue;
         }
 
-        InputUnicodeRepeat(ld->input, ld->input_vtable);
+        Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
         break;
     }
 
@@ -661,14 +661,14 @@ void Cent_lex_modifier(Cent_lex_data* ld, Cent_token* t)
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(ld->input, ld->input_vtable, c, &num, &loc, &done);
+        r = Zinc_input_unicode_next(ld->input, ld->input_vtable, c, &num, &loc, &done);
         if (r == result_error) {
             fprintf(stderr, "%s\n", error_message);
             exit(1);
         }
 
         if (done) {
-            InputUnicodeRepeat(ld->input, ld->input_vtable);
+            Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
             break;
         }
 

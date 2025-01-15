@@ -48,7 +48,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
             break;
@@ -61,7 +61,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
         if (num == 1 && *c == '#') {
             /* comment */
             while (!(num == 1 && *c == '\n')) {
-                r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+                r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
                 if (r == result_error) {
                     valid = Zinc_error_list_set(ls->el, &loc, error_message);
                     break;
@@ -70,7 +70,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
                     break;
                 }
             }
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         } else if (Ake_is_word(c, num)) {
             *state = Ake_state_id;
             t->type = Ake_token_id;
@@ -103,7 +103,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
             return Ake_lex_string(ls, state, done, t);
         } else if (Ake_compound_operator_start(num, c)) {
             *state = Ake_state_compound_operator;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
             return Ake_lex_compound_operator(ls, state, done, t);
         } else if (*c == '+') {
             t->type = Ake_token_plus;
@@ -211,7 +211,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
             break;
@@ -249,7 +249,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
                     t->type = Ake_token_id;
                 }
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == Ake_state_id_underscore) {
@@ -274,7 +274,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
                     t->type = Ake_token_id;
                 }
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         }
@@ -303,7 +303,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
             break;
@@ -328,7 +328,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
                 Zinc_string_add_char(&t->value, 'e');
             } else {
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == Ake_state_number_fraction_start) {
@@ -339,7 +339,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
                 }
             } else {
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == Ake_state_number_fraction) {
@@ -352,7 +352,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
                 Zinc_string_add_char(&t->value, 'e');
             } else {
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == Ake_state_number_exponent_start) {
@@ -368,7 +368,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
                 }
             } else {
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == Ake_state_number_exponent_sign_start) {
@@ -381,7 +381,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
                 valid = Zinc_error_list_set(ls->el, &loc, "expected number after exponent sign");
                 /* test case: test_lex_error_exponent_sign */
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         } else if (*state == Ake_state_number_exponent) {
@@ -391,7 +391,7 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
                 }
             } else {
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
                 break;
             }
         }
@@ -422,7 +422,7 @@ bool Ake_lex_string(
     enum result r;
 
     while (true) {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
@@ -493,7 +493,7 @@ bool Ake_lex_compound_operator(
     struct Zinc_location loc;
     enum result r;
 
-    r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+    r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
     if (r == result_error) {
         valid = Zinc_error_list_set(ls->el, &loc, error_message);
     }
@@ -501,7 +501,7 @@ bool Ake_lex_compound_operator(
     assert(!*done);
 
     if (num == 1 && *c == '=') {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
@@ -512,10 +512,10 @@ bool Ake_lex_compound_operator(
         } else {
             t->type = Ake_token_equal;
             *state = Ake_state_start;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '!') {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
@@ -526,10 +526,10 @@ bool Ake_lex_compound_operator(
         } else {
             t->type = Ake_token_not;
             *state = Ake_state_start;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '<') {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
@@ -540,10 +540,10 @@ bool Ake_lex_compound_operator(
         } else {
             t->type = Ake_token_less_than;
             *state = Ake_state_start;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '>') {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
@@ -554,10 +554,10 @@ bool Ake_lex_compound_operator(
         } else {
             t->type = Ake_token_greater_than;
             *state = Ake_state_start;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '&') {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
@@ -568,10 +568,10 @@ bool Ake_lex_compound_operator(
         } else {
             t->type = Ake_token_ampersand;
             *state = Ake_state_start;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '|') {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
@@ -582,10 +582,10 @@ bool Ake_lex_compound_operator(
         } else {
             t->type = Ake_token_vertical_bar;
             *state = Ake_state_start;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '-') {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
@@ -596,16 +596,16 @@ bool Ake_lex_compound_operator(
         } else {
             t->type = Ake_token_minus;
             *state = Ake_state_start;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         }
     } else if (num == 1 && *c == '.') {
-        r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+        r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
         if (r == result_error) {
             valid = Zinc_error_list_set(ls->el, &loc, error_message);
         }
 
         if (num == 1 && *c == '.') {
-            r = InputUnicodeNext(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
+            r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
             if (r == result_error) {
                 valid = Zinc_error_list_set(ls->el, &loc, error_message);
             }
@@ -616,12 +616,12 @@ bool Ake_lex_compound_operator(
             } else {
                 t->type = Ake_token_range;
                 *state = Ake_state_start;
-                InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+                Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
             }
         } else {
             t->type = Ake_token_dot;
             *state = Ake_state_start;
-            InputUnicodeRepeat(ls->input_obj, ls->input_vtable);
+            Zinc_input_unicode_repeat(ls->input_obj, ls->input_vtable);
         }
 
     } else {
@@ -659,12 +659,12 @@ bool Ake_lex(struct Ake_lex_state* ls, struct Ake_token** t)
     if (tf->type == Ake_token_none) {
         assert(valid);
         tf->type = Ake_token_eof;
-        tf->loc = InputUnicodeGetLocation(ls->input_obj, ls->input_vtable);
+        tf->loc = Zinc_input_unicode_get_location(ls->input_obj, ls->input_vtable);
     }
 
     *t = tf;
 
-    struct Zinc_location end = InputUnicodeGetLocation(ls->input_obj, ls->input_vtable);
+    struct Zinc_location end = Zinc_input_unicode_get_location(ls->input_obj, ls->input_vtable);
     (*t)->loc.end_pos = end.start_pos;
     if ((*t)->loc.end_pos == (*t)->loc.start_pos) {
         (*t)->loc.end_pos++;
