@@ -38,7 +38,7 @@ void FieldLexStart(struct FieldLexData* lex_data, enum FieldType* type)
     struct Zinc_location loc;
     bool done;
 
-    done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+    done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
     if (done) {
         *type = FieldTypeEmpty;
     } else if (c == '+' || c == '-') {
@@ -60,7 +60,7 @@ void FieldLexSign(struct FieldLexData* lex_data, enum FieldType* type)
     struct Zinc_location loc;
     bool done;
 
-    done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+    done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
     if (done) {
         *type = FieldTypeString;
     } else if (isdigit(c)) {
@@ -80,7 +80,7 @@ void FieldLexInteger(struct FieldLexData* lex_data, enum FieldType* type)
     bool done;
 
     while (true) {
-        done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
         if (done) {
             if (lex_data->has_sign) {
                 *type = FieldTypeInt;
@@ -109,7 +109,7 @@ void FieldLexPoint(struct FieldLexData* lex_data, enum FieldType* type)
     struct Zinc_location loc;
     bool done;
 
-    done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+    done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
 
     if (done) {
         if (lex_data->has_digit) {
@@ -134,7 +134,7 @@ void FieldLexFraction(struct FieldLexData* lex_data, enum FieldType* type)
     bool done;
 
     while (true) {
-        done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
 
         if (done) {
             *type = FieldTypeFloat;
@@ -158,7 +158,7 @@ void FieldLexExponentE(struct FieldLexData* lex_data, enum FieldType* type)
     struct Zinc_location loc;
     bool done;
 
-    done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+    done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
 
     if (done) {
         if (lex_data->has_digit) {
@@ -181,7 +181,7 @@ void FieldLexExponentSign(struct FieldLexData* lex_data, enum FieldType* type)
     struct Zinc_location loc;
     bool done;
 
-    done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+    done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
 
     if (done) {
         if (lex_data->has_digit) {
@@ -203,7 +203,7 @@ void FieldLexExponent(struct FieldLexData* lex_data, enum FieldType* type)
     bool done;
 
     while (true) {
-        done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
 
         if (done) {
             if (lex_data->has_digit) {
@@ -224,7 +224,7 @@ void FieldLexExponent(struct FieldLexData* lex_data, enum FieldType* type)
 void FieldLexString(struct FieldLexData* lex_data, enum FieldType* type)
 {
     Vector* text = NULL;
-    InputCharGetAll(lex_data->input_data, lex_data->input_vtable, &text);
+    Zinc_input_char_get_all(lex_data->input_data, lex_data->input_vtable, &text);
     if (VectorMatchStr(text, "True") || VectorMatchStr(text, "False")) {
         *type = FieldTypeBool;
     } else {

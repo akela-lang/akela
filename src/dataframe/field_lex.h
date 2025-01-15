@@ -10,7 +10,7 @@ struct FieldLexData {
     bool has_digit;
     bool has_sign;
     void* input_data;
-    InputCharVTable* input_vtable;
+    Zinc_input_char_vtable* input_vtable;
 };
 
 void FieldLexDataInit(struct FieldLexData* lex_data);

@@ -34,7 +34,7 @@ struct CSVLexData {
     struct Zinc_error_list* el;
     enum CSVStateType state;
     void* input_data;
-    InputCharVTable* input_vtable;
+    Zinc_input_char_vtable* input_vtable;
 };
 
 bool CSVLexNextChar(struct CSVLexData* lex_data, char* c, struct Zinc_location* loc);

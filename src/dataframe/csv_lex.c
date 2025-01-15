@@ -48,13 +48,13 @@ void CSVLexStart(struct CSVLexData* lex_data, struct CSVToken* token)
 {
     char c;
     struct Zinc_location loc;
-    InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+    Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
     if (c == '"') {
         lex_data->state = CSVStateTypeFieldQuoted;
-        token->loc = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+        token->loc = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
     } else {
         lex_data->state = CSVStateTypeField;
-        InputCharRepeat(lex_data->input_data, lex_data->input_vtable);
+        Zinc_input_char_repeat(lex_data->input_data, lex_data->input_vtable);
     }
     token->type = CSVTokenTypeField;
     CSVLexDispatch(lex_data, token);
@@ -65,11 +65,11 @@ void CSVLexField(struct CSVLexData* lex_data, struct CSVToken* token) {
     bool done = false;
     char c;
 
-    token->loc = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    token->loc = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
 
     while (true) {
         struct Zinc_location loc;
-        done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
         if (done) {
             lex_data->state = CSVStateTypeEOF;
             break;
@@ -78,7 +78,7 @@ void CSVLexField(struct CSVLexData* lex_data, struct CSVToken* token) {
             break;
         } else if (c == '\n') {
             lex_data->state = CSVStateTypeEndOfRow;
-            InputCharRepeat(lex_data->input_data, lex_data->input_vtable);
+            Zinc_input_char_repeat(lex_data->input_data, lex_data->input_vtable);
             break;
         } else if (c == '"') {
             Zinc_error_list_set(lex_data->el, &loc, "quote found in unquoted field");
@@ -88,7 +88,7 @@ void CSVLexField(struct CSVLexData* lex_data, struct CSVToken* token) {
         }
     }
 
-    struct Zinc_location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
     token->loc.end_pos = end.start_pos;
 }
 
@@ -99,7 +99,7 @@ void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
     struct Zinc_location loc;
 
     while (true) {
-        done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
         if (done) {
             Zinc_error_list_set(lex_data->el, &loc,
                            "End of file found before end of quoted field");
@@ -107,7 +107,7 @@ void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
             lex_data->state = CSVStateTypeEOF;
             break;
         } else if (c == '"') {
-            done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+            done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
             if (done) {
                 lex_data->state = CSVStateTypeEOF;
                 break;
@@ -116,7 +116,7 @@ void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
                 VectorAdd(&token->value, &c, 1);
             } else {
                 lex_data->state = CSVStateTypeFieldEndOfQuote;
-                InputCharRepeat(lex_data->input_data, lex_data->input_vtable);
+                Zinc_input_char_repeat(lex_data->input_data, lex_data->input_vtable);
                 break;
             }
         } else {
@@ -124,7 +124,7 @@ void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
         }
     }
 
-    struct Zinc_location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
     token->loc.end_pos = end.start_pos;
 }
 
@@ -136,7 +136,7 @@ void CSVLexFieldEndOfQuote(struct CSVLexData* lex_data, struct CSVToken* token)
     struct Zinc_location loc;
 
     while (true) {
-        done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
         if (done) {
             token->type = CSVTokenTypeEOF;
             lex_data->state = CSVStateTypeEOF;
@@ -147,7 +147,7 @@ void CSVLexFieldEndOfQuote(struct CSVLexData* lex_data, struct CSVToken* token)
             break;
         } else if (c == '\n') {
             lex_data->state = CSVStateTypeEndOfRow;
-            InputCharRepeat(lex_data->input_data, lex_data->input_vtable);
+            Zinc_input_char_repeat(lex_data->input_data, lex_data->input_vtable);
             CSVLexDispatch(lex_data, token);
             break;
         } else {
@@ -156,7 +156,7 @@ void CSVLexFieldEndOfQuote(struct CSVLexData* lex_data, struct CSVToken* token)
         }
     }
 
-    struct Zinc_location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
     token->loc.end_pos = end.start_pos;
 }
 
@@ -166,11 +166,11 @@ void CSVLexEndOfRow(struct CSVLexData* lex_data, struct CSVToken* token)
     char c;
     struct Zinc_location loc;
 
-    InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+    Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
     if (c == '\n') {
         token->type = CSVTokenTypeNewline;
-        done = InputCharNext(lex_data->input_data, lex_data->input_vtable, &c, &loc);
-        InputCharRepeat(lex_data->input_data, lex_data->input_vtable);
+        done = Zinc_input_char_next(lex_data->input_data, lex_data->input_vtable, &c, &loc);
+        Zinc_input_char_repeat(lex_data->input_data, lex_data->input_vtable);
         if (done) {
             lex_data->state = CSVStateTypeEOF;
         } else {
@@ -180,14 +180,14 @@ void CSVLexEndOfRow(struct CSVLexData* lex_data, struct CSVToken* token)
         assert(false);
     }
 
-    struct Zinc_location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
     token->loc.end_pos = end.start_pos;
 }
 
 void CSVLexEOF(struct CSVLexData* lex_data, struct CSVToken* token)
 {
     token->type = CSVTokenTypeEOF;
-    struct Zinc_location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
     token->loc.end_pos = end.start_pos;
 }
 
@@ -222,7 +222,7 @@ void CSVLex(struct CSVLexData* lex_data, struct CSVToken** token)
 {
     CSVTokenCreate(token);
     CSVLexDispatch(lex_data, *token);
-    struct Zinc_location end = *InputCharLocation(lex_data->input_data, lex_data->input_vtable);
+    struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
     (*token)->loc.end_pos = end.start_pos;
 }
 

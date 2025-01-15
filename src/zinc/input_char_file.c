@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include "vector.h"
 
-InputCharVTable InputCharFileVTable = {
+Zinc_input_char_vtable InputCharFileVTable = {
         .loc_offset = offsetof(InputCharFile, loc),
         .next_offset = offsetof(InputCharFile, Next),
         .repeat_offset = offsetof(InputCharFile, Repeat),
@@ -19,11 +19,11 @@ void InputCharFileInit(InputCharFile* input, FILE* fp)
     input->repeat_char = false;
     input->prev_c = 0;
     input->fp = fp;
-    input->Next = (InputCharNextInterface) InputCharFileNext;
-    input->Repeat = (InputCharRepeatInterface) InputCharFileRepeat;
-    input->Seek = (InputCharSeekInterface) InputCharFileSeek;
-    input->GetAll = (InputCharGetAllInterface) InputCharFileGetAll;
-    input->GetLocation = (InputCharGetLocationInterface) InputCharFileGetLocation;
+    input->Next = (Zinc_input_char_next_interface) InputCharFileNext;
+    input->Repeat = (Zinc_input_char_repeat_interface) InputCharFileRepeat;
+    input->Seek = (Zinc_input_char_seek_interface) InputCharFileSeek;
+    input->GetAll = (Zinc_input_char_get_all_interface) InputCharFileGetAll;
+    input->GetLocation = (Zinc_input_char_get_location_interface) InputCharFileGetLocation;
     input->input_vtable = &InputCharFileVTable;
 }
 

@@ -14,15 +14,15 @@ typedef struct {
     bool repeat_char;
     char prev_c;
     FILE* fp;
-    InputCharNextInterface Next;
-    InputCharRepeatInterface Repeat;
-    InputCharSeekInterface Seek;
-    InputCharGetAllInterface GetAll;
-    InputCharGetLocationInterface GetLocation;
-    InputCharVTable* input_vtable;
+    Zinc_input_char_next_interface Next;
+    Zinc_input_char_repeat_interface Repeat;
+    Zinc_input_char_seek_interface Seek;
+    Zinc_input_char_get_all_interface GetAll;
+    Zinc_input_char_get_location_interface GetLocation;
+    Zinc_input_char_vtable* input_vtable;
 } InputCharFile;
 
-extern InputCharVTable InputCharFileVTable;
+extern Zinc_input_char_vtable InputCharFileVTable;
 
 void InputCharFileCreate(InputCharFile** input_string, FILE* fp);
 void InputCharFileClear(InputCharFile* data);

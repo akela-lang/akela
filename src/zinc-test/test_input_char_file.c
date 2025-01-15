@@ -30,7 +30,7 @@ void TestInputCharFileNext()
     size_t line = 1;
     size_t end_pos = 1;
     do {
-        done = InputCharNext(input, input->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
         VectorAdd(text_actual, &c, 1);
         expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
@@ -83,7 +83,7 @@ void TestInputCharFileRepeat()
     size_t end_pos = 1;
     bool did_repeat = false;
     do {
-        done = InputCharNext(input, input->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
         VectorAdd(text_actual, &c, 1);
         expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
@@ -136,9 +136,9 @@ void TestInputCharFileSeek()
     char c;
     struct Zinc_location loc;
     loc.start_pos = 6;
-    InputCharSeek(input, input->input_vtable, &loc);
+    Zinc_input_char_seek(input, input->input_vtable, &loc);
     do {
-        done = InputCharNext(input, input->input_vtable, &c, &loc);
+        done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
         VectorAdd(text_actual, &c, 1);
     } while (true);
