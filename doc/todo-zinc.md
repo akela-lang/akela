@@ -12,7 +12,7 @@
   * input_char_file [x]
   * input_char_string [x]
   * input_unicode [x]
-  * input_unicode_file []
+  * input_unicode_file [x]
   * input_unicode_string []
   * list []
   * memory []

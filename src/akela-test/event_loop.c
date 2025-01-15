@@ -63,11 +63,11 @@ int main(int argc, char** argv)
 {
     void* input_obj = NULL;
     Zinc_input_unicode_vtable* input_vtable;
-    InputUnicodeFile* input_file = NULL;
+    Zinc_input_unicode_file* input_file = NULL;
     InputUnicodeString* input_string = NULL;
 
     if (argc <= 1) {
-        InputUnicodeFileCreate(&input_file, stdin);
+        Zinc_input_unicode_file_create(&input_file, stdin);
         input_obj = input_file;
         input_vtable = input_file->input_vtable;
     } else if (argc >= 3 && strcmp(argv[1], "string") == 0) {

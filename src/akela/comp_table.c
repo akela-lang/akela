@@ -73,8 +73,8 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
 		goto exit;
 	}
 
-    InputUnicodeFile* input = NULL;
-    InputUnicodeFileCreate(&input, fp);
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
 
 	malloc_safe((void**)cu_base, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(*cu_base);

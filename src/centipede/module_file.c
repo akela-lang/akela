@@ -53,8 +53,8 @@ Cent_input_data Cent_module_file_find(Cent_module_file* mf, struct Zinc_string* 
     if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
         FILE* fp = fopen(path.buf, "r");
         if (fp) {
-            InputUnicodeFile* input = NULL;
-            InputUnicodeFileCreate(&input, fp);
+            Zinc_input_unicode_file* input = NULL;
+            Zinc_input_unicode_file_create(&input, fp);
             data.input = input;
             data.input_vtable = input->input_vtable;
             return data;

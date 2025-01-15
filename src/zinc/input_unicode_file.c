@@ -5,16 +5,16 @@
 #include "utf8.h"
 #include <string.h>
 
-Zinc_input_unicode_vtable InputUnicodeFileVTable = {
-        .loc_offset = offsetof(InputUnicodeFile, loc),
-        .next_offset = offsetof(InputUnicodeFile, Next),
-        .repeat_offset = offsetof(InputUnicodeFile, Repeat),
-        .seek_offset = offsetof(InputUnicodeFile, Seek),
-        .get_all_offset = offsetof(InputUnicodeFile, GetAll),
-        .get_location_offset = offsetof(InputUnicodeFile, GetLocation),
+Zinc_input_unicode_vtable Zinc_input_unicode_file_vtable = {
+        .loc_offset = offsetof(Zinc_input_unicode_file, loc),
+        .next_offset = offsetof(Zinc_input_unicode_file, Next),
+        .repeat_offset = offsetof(Zinc_input_unicode_file, Repeat),
+        .seek_offset = offsetof(Zinc_input_unicode_file, Seek),
+        .get_all_offset = offsetof(Zinc_input_unicode_file, GetAll),
+        .get_location_offset = offsetof(Zinc_input_unicode_file, GetLocation),
 };
 
-void InputUnicodeFileInit(InputUnicodeFile* input, FILE* fp)
+void Zinc_input_unicode_file_init(Zinc_input_unicode_file* input, FILE* fp)
 {
     Zinc_location_init(&input->loc);
     input->repeat_char = false;
@@ -23,21 +23,22 @@ void InputUnicodeFileInit(InputUnicodeFile* input, FILE* fp)
     Zinc_location_init(&input->prev_loc);
     input->prev_done = false;
     input->fp = fp;
-    input->Next = (Zinc_input_unicode_next_interface) InputUnicodeFileNext;
-    input->Repeat = (Zinc_input_unicode_repeat_interface) InputUnicodeFileRepeat;
-    input->Seek = (Zinc_input_unicode_seek_interface) InputUnicodeFileSeek;
-    input->GetAll = (Zinc_input_unicode_get_all_interface) InputUnicodeFileGetAll;
-    input->GetLocation = (Zinc_input_unicode_get_location_interface) InputUnicodeFileGetLocation;
-    input->input_vtable = &InputUnicodeFileVTable;
+    input->Next = (Zinc_input_unicode_next_interface) Zinc_input_unicode_file_next;
+    input->Repeat = (Zinc_input_unicode_repeat_interface) Zinc_input_unicode_file_repeat;
+    input->Seek = (Zinc_input_unicode_seek_interface) Zinc_input_unicode_file_seek;
+    input->GetAll = (Zinc_input_unicode_get_all_interface) Zinc_input_unicode_file_get_all;
+    input->GetLocation =
+        (Zinc_input_unicode_get_location_interface) Zinc_input_unicode_file_get_location;
+    input->input_vtable = &Zinc_input_unicode_file_vtable;
 }
 
-void InputUnicodeFileCreate(InputUnicodeFile** input, FILE* fp)
+void Zinc_input_unicode_file_create(Zinc_input_unicode_file** input, FILE* fp)
 {
-    malloc_safe((void**)input, sizeof(InputUnicodeFile));
-    InputUnicodeFileInit(*input, fp);
+    malloc_safe((void**)input, sizeof(Zinc_input_unicode_file));
+    Zinc_input_unicode_file_init(*input, fp);
 }
 
-void InputUnicodeFileClear(InputUnicodeFile* input)
+void Zinc_input_unicode_file_clear(Zinc_input_unicode_file* input)
 {
     Zinc_location_init(&input->loc);
     Zinc_location_init(&input->prev_loc);
@@ -47,21 +48,23 @@ void InputUnicodeFileClear(InputUnicodeFile* input)
 
 /**
  * Get the next character.
- * @param lex_data lexer data
+ * @param input input object
  * @param c the next char
- * @return done
+ * @param num the number of bytes
+ * @param done true if input is done
+ * @return result_ok if successful, otherwise result_error
  */
-enum result InputUnicodeFileNext(
-        InputUnicodeFile* input,
+enum result Zinc_input_unicode_file_next(
+        Zinc_input_unicode_file* input,
         char c[4],
         int* num,
-        struct Zinc_location* loc,
+        Zinc_location* loc,
         bool* done)
 {
     enum result r = result_ok;
     *done = false;
     if (input->loc.start_pos == 0) {
-        InputUnicodeFileClear(input);
+        Zinc_input_unicode_file_clear(input);
     }
 
     if (input->repeat_char) {
@@ -113,7 +116,7 @@ enum result InputUnicodeFileNext(
  * Repeat the previous character.
  * @param input lexer data
  */
-void InputUnicodeFileRepeat(InputUnicodeFile* input)
+void Zinc_input_unicode_file_repeat(Zinc_input_unicode_file* input)
 {
     input->repeat_char = true;
 }
@@ -123,7 +126,7 @@ void InputUnicodeFileRepeat(InputUnicodeFile* input)
  * @param input the input
  * @param pos position to go to
  */
-void InputUnicodeFileSeek(InputUnicodeFile* input, struct Zinc_location* loc)
+void Zinc_input_unicode_file_seek(Zinc_input_unicode_file* input, Zinc_location* loc)
 {
     input->loc = *loc;
     input->prev_loc = *loc;
@@ -135,9 +138,9 @@ void InputUnicodeFileSeek(InputUnicodeFile* input, struct Zinc_location* loc)
  * @param input the input
  * @param v the output vector
  */
-void InputUnicodeFileGetAll(InputUnicodeFile* input, Vector** text)
+void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* input, Vector** text)
 {
-    InputUnicodeFileClear(input);
+    Zinc_input_unicode_file_clear(input);
     Vector* v = NULL;
     VectorCreate(&v, sizeof(char));
     fseek(input->fp, 0, SEEK_SET);
@@ -159,7 +162,7 @@ void InputUnicodeFileGetAll(InputUnicodeFile* input, Vector** text)
     *text = v;
 }
 
-struct Zinc_location InputUnicodeFileGetLocation(InputUnicodeFile* input)
+Zinc_location Zinc_input_unicode_file_get_location(Zinc_input_unicode_file* input)
 {
     return input->loc;
 }

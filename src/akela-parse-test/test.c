@@ -115,8 +115,8 @@ void Parse_test_test_case(struct Zinc_string* dir_path, struct Zinc_string* path
     printf("%s\n", path->buf);
 
     FILE* fp = fopen(path->buf, "r");
-    InputUnicodeFile* input = NULL;
-    InputUnicodeFileCreate(&input, fp);
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
 
     String_slice slice;
     slice.p = file_name->buf;

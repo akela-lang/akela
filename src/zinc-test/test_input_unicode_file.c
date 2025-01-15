@@ -22,8 +22,8 @@ void test_input_unicode_file_next()
     fp = fopen(name.buf, "r");
     assert_ptr(fp, "open file");
 
-    InputUnicodeFile* input = NULL;
-    InputUnicodeFileCreate(&input, fp);
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -210,8 +210,8 @@ void test_input_unicode_file_next_multibyte()
     fclose(fp);
     fp = fopen(name.buf, "r");
     assert_ptr(fp, "open file");
-    InputUnicodeFile* input = NULL;
-    InputUnicodeFileCreate(&input, fp);
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -375,8 +375,8 @@ void test_input_unicode_file_repeat()
     fclose(fp);
     fp = fopen(name.buf, "r");
     assert_ptr(fp, "open file");
-    InputUnicodeFile* input = NULL;
-    InputUnicodeFileCreate(&input, fp);
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -499,8 +499,8 @@ void test_input_unicode_file_seek()
     fclose(fp);
     fp = fopen(name.buf, "r");
     assert_ptr(fp, "open file");
-    InputUnicodeFile* input = NULL;
-    InputUnicodeFileCreate(&input, fp);
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -687,8 +687,8 @@ void test_input_unicode_file_get_all()
     fclose(fp);
     fp = fopen(name.buf, "r");
     assert_ptr(fp, "open file");
-    InputUnicodeFile* input = NULL;
-    InputUnicodeFileCreate(&input, fp);
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -723,8 +723,8 @@ void test_input_unicode_file_get_location()
     fclose(fp);
     fp = fopen(name.buf, "r");
     assert_ptr(fp, "open file");
-    InputUnicodeFile* input = NULL;
-    InputUnicodeFileCreate(&input, fp);
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
 
     bool done;
     char c[4];
