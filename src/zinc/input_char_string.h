@@ -8,8 +8,8 @@
 #include "input_char.h"
 
 typedef struct {
-    struct Zinc_location loc;
-    struct Zinc_location prev_loc;
+    Zinc_location loc;
+    Zinc_location prev_loc;
     bool repeat_char;
     size_t pos;
     Vector* text;
@@ -19,16 +19,16 @@ typedef struct {
     Zinc_input_char_get_all_interface GetAll;
     Zinc_input_char_get_location_interface GetLocation;
     Zinc_input_char_vtable* input_vtable;
-} InputCharString;
+} Zinc_input_char_string;
 
 extern Zinc_input_char_vtable InputCharStringVTable;
 
-void InputCharStringInit(InputCharString* input_string, Vector* text);
-void InputCharStringCreate(InputCharString** input_string, Vector* text);
-bool InputCharStringNext(InputCharString* data, char* c, struct Zinc_location* loc);
-void InputCharStringRepeat(InputCharString* data);
-void InputCharStringSeek(InputCharString* data, struct Zinc_location* loc);
-void InputCharStringGetAll(InputCharString* data, Vector** text);
-struct Zinc_location InputCharStringGetLocation(InputCharString* data);
+void Zinc_input_char_string_init(Zinc_input_char_string* input_string, Vector* text);
+void Zinc_input_char_string_create(Zinc_input_char_string** input_string, Vector* text);
+bool Zinc_input_char_string_next(Zinc_input_char_string* data, char* c, Zinc_location* loc);
+void Zinc_input_char_string_repeat(Zinc_input_char_string* data);
+void Zinc_input_char_string_seek(Zinc_input_char_string* data, Zinc_location* loc);
+void Zinc_input_char_string_get_all(Zinc_input_char_string* data, Vector** text);
+Zinc_location Zinc_input_char_string_get_location(Zinc_input_char_string* data);
 
 #endif
