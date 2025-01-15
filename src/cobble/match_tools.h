@@ -37,7 +37,7 @@ typedef struct Cob_stack {
 typedef struct Cob_stack_node {
     Cob_stack* stack;
     struct Cob_stack_list* sl;
-    Hash_map_size_t groups;
+    Zinc_hash_map_size_t groups;
     size_t priority;
     struct Cob_stack_node* next;
     struct Cob_stack_node* prev;

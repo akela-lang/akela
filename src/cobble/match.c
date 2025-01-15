@@ -125,7 +125,7 @@ Cob_stack_list* Cob_init_stacks(Cob_re* re, String_slice slice)
     for (size_t i = 0; i < re->group_count; i++) {
         struct Zinc_string* bf = NULL;
         Zinc_string_create(&bf);
-        Hash_map_size_t_add(&sn->groups, i, bf);
+        Zinc_hash_map_size_t_add(&sn->groups, i, bf);
     }
 
     Cob_stack_list_add(sl, sn);
@@ -166,7 +166,7 @@ void Cob_get_groups(Cob_stack_node* sn, struct Zinc_string_list* groups)
 {
     size_t index = 0;
     while (true) {
-        struct Zinc_string* bf = Hash_map_size_t_get(&sn->groups, index);
+        struct Zinc_string* bf = Zinc_hash_map_size_t_get(&sn->groups, index);
         if (!bf) break;
         Zinc_string_list_add_bf(groups, bf);
         index++;

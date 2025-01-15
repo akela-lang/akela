@@ -9,20 +9,20 @@ void Cent_check_value_types_property2(Cent_value* value);
 void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_value, Cent_value* value);
 
 Cent_parse_result* Cent_check_value_types_pr = NULL;
-Hash_map_size_t* Cent_check_value_types_hm = NULL;
+Zinc_hash_map_size_t* Cent_check_value_types_hm = NULL;
 void Cent_check_value_types(Cent_parse_result* pr, Cent_value* value)
 {
     if (!pr->errors->head) {
         if (value) {
             Cent_check_value_types_pr = pr;
 
-            Hash_map_size_t* hm = NULL;
-            Hash_map_size_t_create(&hm, 64);
+            Zinc_hash_map_size_t* hm = NULL;
+            Zinc_hash_map_size_t_create(&hm, 64);
             Cent_check_value_types_hm = hm;
 
             Cent_check_value_types_value(value);
 
-            Hash_map_size_t_destroy(hm);
+            Zinc_hash_map_size_t_destroy(hm);
             free(hm);
         }
     }
@@ -33,9 +33,9 @@ Cent_value* Cent_parse_types_object_value = NULL;
 void Cent_check_value_types_value(Cent_value* value)
 {
     Cent_parse_result* pr = Cent_check_value_types_pr;
-    Hash_map_size_t* hm = Cent_check_value_types_hm;
+    Zinc_hash_map_size_t* hm = Cent_check_value_types_hm;
 
-    Hash_map_size_t_add(hm, (size_t)value, value);
+    Zinc_hash_map_size_t_add(hm, (size_t)value, value);
 
     if (value->type == Cent_value_type_dag) {
         Cent_parse_types_object_value = value;
@@ -167,8 +167,8 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
 
 void Cent_check_value_types_property2(Cent_value* value)
 {
-    Hash_map_size_t* hm = Cent_check_value_types_hm;
-    Cent_value* value2 = Hash_map_size_t_get(hm, (size_t)value);
+    Zinc_hash_map_size_t* hm = Cent_check_value_types_hm;
+    Cent_value* value2 = Zinc_hash_map_size_t_get(hm, (size_t)value);
     if (!value2) {
         Cent_check_value_types_value(value);
     }
@@ -251,8 +251,8 @@ void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_valu
         }
     }
 
-    Hash_map_size_t* hm = Cent_check_value_types_hm;
-    Cent_value* value2 = Hash_map_size_t_get(hm, (size_t)value);
+    Zinc_hash_map_size_t* hm = Cent_check_value_types_hm;
+    Cent_value* value2 = Zinc_hash_map_size_t_get(hm, (size_t)value);
     if (!value2) {
         Cent_check_value_types_value(value);
     }

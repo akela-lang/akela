@@ -143,13 +143,13 @@ void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice sl
     int num = NUM_BYTES(slice.p[0]);
     while (task) {
         if (task->n->is_root) {
-            struct Zinc_string* bf = Hash_map_size_t_get(&sn->groups, 0);
+            struct Zinc_string* bf = Zinc_hash_map_size_t_get(&sn->groups, 0);
             if (!bf) {
                 Zinc_string_create(&bf);
                 for (int i = 0; i < num; i++) {
                     Zinc_string_add_char(bf, slice.p[i]);
                 }
-                Hash_map_size_t_add(&sn->groups, 0, bf);
+                Zinc_hash_map_size_t_add(&sn->groups, 0, bf);
             } else {
                 for (int i = 0; i < num; i++) {
                     Zinc_string_add_char(bf, slice.p[i]);
@@ -158,13 +158,13 @@ void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice sl
         }
 
         if (task->n->is_group) {
-            struct Zinc_string* bf = Hash_map_size_t_get(&sn->groups, task->n->group);
+            struct Zinc_string* bf = Zinc_hash_map_size_t_get(&sn->groups, task->n->group);
             if (!bf) {
                 Zinc_string_create(&bf);
                 for (int i = 0; i < num; i++) {
                     Zinc_string_add_char(bf, slice.p[i]);
                 }
-                Hash_map_size_t_add(&sn->groups, task->n->group, bf);
+                Zinc_hash_map_size_t_add(&sn->groups, task->n->group, bf);
             } else {
                 for (int i = 0; i < num; i++) {
                     Zinc_string_add_char(bf, slice.p[i]);
@@ -218,7 +218,7 @@ void Cob_stack_node_init(Cob_stack_node* sn)
 {
     sn->stack = NULL;
     sn->sl = NULL;
-    Hash_map_size_t_init(&sn->groups, 16);
+    Zinc_hash_map_size_t_init(&sn->groups, 16);
     sn->priority = 0;
     sn->next = NULL;
     sn->prev = NULL;
@@ -239,16 +239,16 @@ void Cob_stack_node_groups_item_destroy(size_t index, struct Zinc_string* bf)
 void Cob_stack_node_destroy(Cob_stack_node* sn)
 {
     Cob_stack_destroy(sn->stack);
-    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Cob_stack_node_groups_item_destroy);
-    Hash_map_size_t_destroy(&sn->groups);
+    Zinc_hash_map_size_t_map(&sn->groups, (Zinc_hash_map_size_t_func)Cob_stack_node_groups_item_destroy);
+    Zinc_hash_map_size_t_destroy(&sn->groups);
     free(sn);
 }
 
-Hash_map_size_t* Stack_target_hash = NULL;
+Zinc_hash_map_size_t* Stack_target_hash = NULL;
 void Cob_stack_node_group_copy(size_t index, struct Zinc_string* bf)
 {
     struct Zinc_string* bf2 = Zinc_string_clone(bf);
-    Hash_map_size_t_add(Stack_target_hash, index, bf2);
+    Zinc_hash_map_size_t_add(Stack_target_hash, index, bf2);
 }
 
 Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn)
@@ -263,7 +263,7 @@ Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn)
     new_sn->sl = sn->sl;
 
     Stack_target_hash = &new_sn->groups;
-    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Cob_stack_node_group_copy);
+    Zinc_hash_map_size_t_map(&sn->groups, (Zinc_hash_map_size_t_func)Cob_stack_node_group_copy);
 
     Zinc_hash_map_string_destroy(&ht);
 
@@ -278,7 +278,7 @@ void Cob_stack_node_dump_group_buffer(size_t index, struct Zinc_string* bf)
 
 void Cob_stack_node_dump_groups(Cob_stack_node* sn)
 {
-    Hash_map_size_t_map(&sn->groups, (Hash_map_size_t_func)Cob_stack_node_dump_group_buffer);
+    Zinc_hash_map_size_t_map(&sn->groups, (Zinc_hash_map_size_t_func)Cob_stack_node_dump_group_buffer);
 }
 
 void Cob_stack_list_init(Cob_stack_list* sl)

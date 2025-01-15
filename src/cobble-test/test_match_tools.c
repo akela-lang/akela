@@ -278,11 +278,11 @@ void test_match_tools_stack_node_clone()
 
     Cob_stack_node* sn0 = NULL;
     Cob_stack_node_create(&sn0);
-    Hash_map_size_t_add(&sn0->groups, 0, bf);
+    Zinc_hash_map_size_t_add(&sn0->groups, 0, bf);
 
     Cob_stack_node* sn1 = Cob_stack_node_clone(sn0);
 
-    struct Zinc_string* bf2 = Hash_map_size_t_get(&sn0->groups, 0);
+    struct Zinc_string* bf2 = Zinc_hash_map_size_t_get(&sn0->groups, 0);
     expect_ptr(bf2, "ptr bf2");
     expect_str(bf2, "abc", "str bf2");
 

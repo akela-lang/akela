@@ -81,12 +81,12 @@ void Cent_value_set_type(Cent_value *value, Cent_value_type type)
     Cent_data_init(&value->data, type);
 }
 
-Hash_map_size_t* Cent_value_hash_map = NULL;
+Zinc_hash_map_size_t* Cent_value_hash_map = NULL;
 
 bool Cent_value_destroy_setup()
 {
     if (!Cent_value_hash_map) {
-        Hash_map_size_t_create(&Cent_value_hash_map, 32);
+        Zinc_hash_map_size_t_create(&Cent_value_hash_map, 32);
         return true;
     }
 
@@ -96,7 +96,7 @@ bool Cent_value_destroy_setup()
 void Cent_value_destroy_teardown()
 {
     if (Cent_value_hash_map) {
-        Hash_map_size_t_destroy(Cent_value_hash_map);
+        Zinc_hash_map_size_t_destroy(Cent_value_hash_map);
         free(Cent_value_hash_map);
         Cent_value_hash_map = NULL;
     }
@@ -107,7 +107,7 @@ void Cent_value_destroy(Cent_value *value)
 {
     if (value) {
         if (Cent_value_hash_map) {
-            Cent_value* value2 = Hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
+            Cent_value* value2 = Zinc_hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
             if (value2) {
                 return;
             }
@@ -117,7 +117,7 @@ void Cent_value_destroy(Cent_value *value)
         Cent_data_destroy(&value->data, value->type);
 
         if (Cent_value_hash_map) {
-            Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
+            Zinc_hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
         }
     }
 }
@@ -126,7 +126,7 @@ void Cent_value_destroy(Cent_value *value)
 void Cent_value_free(Cent_value *value)
 {
     if (Cent_value_hash_map) {
-        Cent_value* value2 = Hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
+        Cent_value* value2 = Zinc_hash_map_size_t_get(Cent_value_hash_map, (size_t)value);
         if (value2) {
             return;
         }
@@ -138,7 +138,7 @@ void Cent_value_free(Cent_value *value)
     }
 
     if (Cent_value_hash_map) {
-        Hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
+        Zinc_hash_map_size_t_add(Cent_value_hash_map, (size_t)value, value);
     }
 }
 
