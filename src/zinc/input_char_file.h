@@ -9,8 +9,8 @@
 #include <stdio.h>
 
 typedef struct {
-    struct Zinc_location loc;
-    struct Zinc_location prev_loc;
+    Zinc_location loc;
+    Zinc_location prev_loc;
     bool repeat_char;
     char prev_c;
     FILE* fp;
@@ -20,16 +20,16 @@ typedef struct {
     Zinc_input_char_get_all_interface GetAll;
     Zinc_input_char_get_location_interface GetLocation;
     Zinc_input_char_vtable* input_vtable;
-} InputCharFile;
+} Zinc_input_char_file;
 
-extern Zinc_input_char_vtable InputCharFileVTable;
+extern Zinc_input_char_vtable Zinc_input_char_file_vtable;
 
-void InputCharFileCreate(InputCharFile** input_string, FILE* fp);
-void InputCharFileClear(InputCharFile* data);
-bool InputCharFileNext(InputCharFile* data, char* c, struct Zinc_location* loc);
-void InputCharFileRepeat(InputCharFile* data);
-void InputCharFileSeek(InputCharFile* data, struct Zinc_location* loc);
-void InputCharFileGetAll(InputCharFile* data, Vector** text);
-struct Zinc_location InputCharFileGetLocation(InputCharFile* input);
+void Zinc_input_char_file_create(Zinc_input_char_file** input_string, FILE* fp);
+void Zinc_input_char_file_clear(Zinc_input_char_file* data);
+bool Zinc_input_char_file_next(Zinc_input_char_file* data, char* c, Zinc_location* loc);
+void Zinc_input_char_file_repeat(Zinc_input_char_file* data);
+void Zinc_input_char_file_seek(Zinc_input_char_file* data, Zinc_location* loc);
+void Zinc_input_char_file_get_all(Zinc_input_char_file* data, Vector** text);
+Zinc_location Zinc_input_char_file_get_location(Zinc_input_char_file* input);
 
 #endif

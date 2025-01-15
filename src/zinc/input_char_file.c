@@ -3,37 +3,37 @@
 #include <stddef.h>
 #include "vector.h"
 
-Zinc_input_char_vtable InputCharFileVTable = {
-        .loc_offset = offsetof(InputCharFile, loc),
-        .next_offset = offsetof(InputCharFile, Next),
-        .repeat_offset = offsetof(InputCharFile, Repeat),
-        .seek_offset = offsetof(InputCharFile, Seek),
-        .get_all_offset = offsetof(InputCharFile, GetAll),
-        .get_location_offset = offsetof(InputCharFile, GetLocation),
+Zinc_input_char_vtable Zinc_input_char_file_vtable = {
+        .loc_offset = offsetof(Zinc_input_char_file, loc),
+        .next_offset = offsetof(Zinc_input_char_file, Next),
+        .repeat_offset = offsetof(Zinc_input_char_file, Repeat),
+        .seek_offset = offsetof(Zinc_input_char_file, Seek),
+        .get_all_offset = offsetof(Zinc_input_char_file, GetAll),
+        .get_location_offset = offsetof(Zinc_input_char_file, GetLocation),
 };
 
-void InputCharFileInit(InputCharFile* input, FILE* fp)
+void Zinc_input_char_file_init(Zinc_input_char_file* input, FILE* fp)
 {
     Zinc_location_init(&input->loc);
     Zinc_location_init(&input->prev_loc);
     input->repeat_char = false;
     input->prev_c = 0;
     input->fp = fp;
-    input->Next = (Zinc_input_char_next_interface) InputCharFileNext;
-    input->Repeat = (Zinc_input_char_repeat_interface) InputCharFileRepeat;
-    input->Seek = (Zinc_input_char_seek_interface) InputCharFileSeek;
-    input->GetAll = (Zinc_input_char_get_all_interface) InputCharFileGetAll;
-    input->GetLocation = (Zinc_input_char_get_location_interface) InputCharFileGetLocation;
-    input->input_vtable = &InputCharFileVTable;
+    input->Next = (Zinc_input_char_next_interface) Zinc_input_char_file_next;
+    input->Repeat = (Zinc_input_char_repeat_interface) Zinc_input_char_file_repeat;
+    input->Seek = (Zinc_input_char_seek_interface) Zinc_input_char_file_seek;
+    input->GetAll = (Zinc_input_char_get_all_interface) Zinc_input_char_file_get_all;
+    input->GetLocation = (Zinc_input_char_get_location_interface) Zinc_input_char_file_get_location;
+    input->input_vtable = &Zinc_input_char_file_vtable;
 }
 
-void InputCharFileCreate(InputCharFile** input, FILE* fp)
+void Zinc_input_char_file_create(Zinc_input_char_file** input, FILE* fp)
 {
-    malloc_safe((void**)input, sizeof(InputCharFile));
-    InputCharFileInit(*input, fp);
+    malloc_safe((void**)input, sizeof(Zinc_input_char_file));
+    Zinc_input_char_file_init(*input, fp);
 }
 
-void InputCharFileClear(InputCharFile* input)
+void Zinc_input_char_file_clear(Zinc_input_char_file* input)
 {
     Zinc_location_init(&input->loc);
     Zinc_location_init(&input->prev_loc);
@@ -48,10 +48,10 @@ void InputCharFileClear(InputCharFile* input)
  * @param c the next char
  * @return done
  */
-bool InputCharFileNext(InputCharFile* input, char* c, struct Zinc_location* loc)
+bool Zinc_input_char_file_next(Zinc_input_char_file* input, char* c, struct Zinc_location* loc)
 {
     if (input->loc.start_pos == 0) {
-        InputCharFileClear(input);
+        Zinc_input_char_file_clear(input);
     }
 
     if (input->repeat_char) {
@@ -85,7 +85,7 @@ bool InputCharFileNext(InputCharFile* input, char* c, struct Zinc_location* loc)
  * Repeat the previous character.
  * @param input lexer data
  */
-void InputCharFileRepeat(InputCharFile* input)
+void Zinc_input_char_file_repeat(Zinc_input_char_file* input)
 {
     input->repeat_char = true;
 }
@@ -95,7 +95,7 @@ void InputCharFileRepeat(InputCharFile* input)
  * @param input the input
  * @param pos position to go to
  */
-void InputCharFileSeek(InputCharFile* input, struct Zinc_location* loc)
+void Zinc_input_char_file_seek(Zinc_input_char_file* input, struct Zinc_location* loc)
 {
     input->loc = *loc;
     input->prev_loc = *loc;
@@ -107,9 +107,9 @@ void InputCharFileSeek(InputCharFile* input, struct Zinc_location* loc)
  * @param input the input
  * @param v the output vector
  */
-void InputCharFileGetAll(InputCharFile* input, Vector** text)
+void Zinc_input_char_file_get_all(Zinc_input_char_file* input, Vector** text)
 {
-    InputCharFileClear(input);
+    Zinc_input_char_file_clear(input);
     Vector* v = NULL;
     VectorCreate(&v, sizeof(char));
     fseek(input->fp, 0, SEEK_SET);
@@ -123,7 +123,7 @@ void InputCharFileGetAll(InputCharFile* input, Vector** text)
     *text = v;
 }
 
-struct Zinc_location InputCharFileGetLocation(InputCharFile* input)
+Zinc_location Zinc_input_char_file_get_location(Zinc_input_char_file* input)
 {
     return input->loc;
 }

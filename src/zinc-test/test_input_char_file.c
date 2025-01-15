@@ -17,8 +17,8 @@ void TestInputCharFileNext()
 
     fp = fopen(filename, "r");
     assert_ptr(fp, "fp");
-    InputCharFile* input;
-    InputCharFileCreate(&input, fp);
+    Zinc_input_char_file* input;
+    Zinc_input_char_file_create(&input, fp);
 
     Vector* text_actual;
     VectorCreate(&text_actual, sizeof(char));
@@ -69,8 +69,8 @@ void TestInputCharFileRepeat()
 
     fp = fopen(filename, "r");
     assert_ptr(fp, "fp");
-    InputCharFile* input;
-    InputCharFileCreate(&input, fp);
+    Zinc_input_char_file* input;
+    Zinc_input_char_file_create(&input, fp);
 
     Vector* text_actual;
     VectorCreate(&text_actual, sizeof(char));
@@ -91,7 +91,7 @@ void TestInputCharFileRepeat()
         expect_size_t_equal(loc.col, col, "col");
         expect_size_t_equal(loc.end_pos, end_pos, "end_pos");
         if (!did_repeat) {
-            InputCharFileRepeat(input);
+            Zinc_input_char_file_repeat(input);
             did_repeat = true;
             continue;
         }
@@ -127,8 +127,8 @@ void TestInputCharFileSeek()
 
     fp = fopen(filename, "r");
     assert_ptr(fp, "fp");
-    InputCharFile* input;
-    InputCharFileCreate(&input, fp);
+    Zinc_input_char_file* input;
+    Zinc_input_char_file_create(&input, fp);
 
     Vector* text_actual;
     VectorCreate(&text_actual, sizeof(char));
@@ -165,11 +165,11 @@ void TestInputCharFileGetAll()
     fclose(fp);
 
     fp = fopen(filename, "r");
-    InputCharFile* input;
-    InputCharFileCreate(&input, fp);
+    Zinc_input_char_file* input;
+    Zinc_input_char_file_create(&input, fp);
 
     Vector* text_actual;
-    InputCharFileGetAll(input, &text_actual);
+    Zinc_input_char_file_get_all(input, &text_actual);
 
     expect_vector_str(text_actual, text, "text");
 
