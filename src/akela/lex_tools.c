@@ -60,7 +60,7 @@ bool Ake_is_word(const char c[4], int num)
         int pos = 0;
         int num2;
         while (greek[pos]) {
-            num2 = NUM_BYTES(greek[pos]);
+            num2 = ZINC_NUM_BYTES(greek[pos]);
             if (num2 != num) {
                 return false;
             }

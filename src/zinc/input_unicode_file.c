@@ -82,7 +82,7 @@ enum Zinc_result Zinc_input_unicode_file_next(
             *done = true;
         }
         c[0] = (char)x;
-        *num = NUM_BYTES(c[0]);
+        *num = ZINC_NUM_BYTES(c[0]);
         for (int i = 1; i < *num; i++) {
             x = getc(input->fp);
             if (x == EOF) {
@@ -92,7 +92,7 @@ enum Zinc_result Zinc_input_unicode_file_next(
                 break;
             }
             c[i] = (char)x;
-            if (!IS_EXTRA_BYTE(c[i])) {
+            if (!ZINC_IS_EXTRA_BYTE(c[i])) {
                 r = Zinc_set_error("utf8 trailing byte invalid");
             }
         }
@@ -151,7 +151,7 @@ void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* input, Vector** te
         x = getc(input->fp);
         if (x == EOF) break;
         c[0] = (char)x;
-        num = NUM_BYTES(c[0]);
+        num = ZINC_NUM_BYTES(c[0]);
         for (int i = 1; i < num; i++) {
             x = getc(input->fp);
             c[i] = (char)x;

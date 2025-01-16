@@ -596,7 +596,7 @@ void Cob_child_finish_option(Cob_stack_node* sn, Cob_task* parent, Cob_task* chi
 
 void Cob_increment_slice(Zinc_string_slice* slice)
 {
-    int num = NUM_BYTES(slice->p[0]);
+    int num = ZINC_NUM_BYTES(slice->p[0]);
     slice->p += num;
     slice->size -= num;
 }
@@ -608,7 +608,7 @@ void Cob_run_literal(Cob_stack_node* sn)
     if (task->start_slice.size > 0) {
         Zinc_string_slice slice = task->start_slice;
         bool matched = true;
-        int num = NUM_BYTES(slice.p[0]);
+        int num = ZINC_NUM_BYTES(slice.p[0]);
         if (task->n->num == num) {
             for (int i = 0; i < num; i++) {
                 if (task->n->c[i] != slice.p[i]) {
@@ -641,7 +641,7 @@ void Cob_run_wildcard(Cob_stack_node* sn)
     Cob_task* task = sn->stack->top;
 
     Zinc_string_slice slice = task->start_slice;
-    int num = NUM_BYTES(slice.p[0]);
+    int num = ZINC_NUM_BYTES(slice.p[0]);
     if (slice.size > 0) {
         if (!(num == 1 && slice.p[0] == '\n')) {
             Cob_stack_node_add_char(sn, task, slice);
@@ -685,7 +685,7 @@ void Cob_run_escape(Cob_stack_node* sn)
     if (task->start_slice.size > 0) {
         Zinc_string_slice slice = task->start_slice;
         bool matched = true;
-        int num = NUM_BYTES(slice.p[0]);
+        int num = ZINC_NUM_BYTES(slice.p[0]);
         if (task->n->num == num) {
             for (int i = 0; i < num; i++) {
                 if (task->n->c[i] != slice.p[i]) {
@@ -794,7 +794,7 @@ void Cob_run_character_range(Cob_stack_node* sn)
         Zinc_string_slice slice = task->start_slice;
         Cob_ast* a = task->n->head;
         Cob_ast* b = a->next;
-        bool matched = IS_ONE_BYTE(a->c[0]) && IS_ONE_BYTE(b->c[0]) && IS_ONE_BYTE(slice.p[0])
+        bool matched = ZINC_IS_ONE_BYTE(a->c[0]) && ZINC_IS_ONE_BYTE(b->c[0]) && ZINC_IS_ONE_BYTE(slice.p[0])
             && slice.p[0] >= a->c[0] && slice.p[0] <= b->c[0];
         if (task->opposite) {
             matched = !matched;
@@ -882,7 +882,7 @@ void Cob_run_character_type_newline_opposite(Cob_stack_node* sn)
 
     if (task->start_slice.size > 0) {
         Zinc_string_slice slice = task->start_slice;
-        bool is_space = IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
+        bool is_space = ZINC_IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
         if (!is_space) {
             task->matched = true;
             Cob_stack_node_add_char(sn, task, slice);

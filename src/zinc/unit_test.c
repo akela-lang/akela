@@ -440,8 +440,8 @@ void Zinc_expect_error_message(const char* s)
 void Zinc_expect_utf8_char(char* a, char* b, char* message)
 {
     Zinc_test_called();
-    int count_a = NUM_BYTES(a[0]);
-    int count_b = NUM_BYTES(b[0]);
+    int count_a = ZINC_NUM_BYTES(a[0]);
+    int count_b = ZINC_NUM_BYTES(b[0]);
     if (count_a == count_b) {
         for (int i = 0; i < count_a; i++) {
             if (a[i] != b[i]) {
@@ -459,8 +459,8 @@ void Zinc_expect_utf8_char(char* a, char* b, char* message)
 void Zinc_expect_utf8_char_str(char a[4], int num, char* b, char* message)
 {
 	Zinc_test_called();
-	int count_a = NUM_BYTES(a[0]);
-	int count_b = NUM_BYTES(b[0]);
+	int count_a = ZINC_NUM_BYTES(a[0]);
+	int count_b = ZINC_NUM_BYTES(b[0]);
 	size_t len = strlen(b);
 	if (num == count_a && num == count_b && num == len) {
 		for (int i = 0; i < num; i++) {

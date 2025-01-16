@@ -103,7 +103,7 @@ void Json_escape_buffer(struct Zinc_error_list* el, struct Zinc_string* src, str
     size_t i = 0;
     while (i < src->size) {
         char* c = src->buf + i;
-        int num = NUM_BYTES(c[0]);
+        int num = ZINC_NUM_BYTES(c[0]);
         int byte_count = num;
         while (i + byte_count - 1 >= src->size) {
             byte_count--;

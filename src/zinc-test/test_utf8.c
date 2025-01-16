@@ -13,12 +13,12 @@ void test_utf8_one_byte()
 	int num = strlen(s);
 
 	for (int i = 0; i < num; i++) {
-		Zinc_expect_false(IS_EXTRA_BYTE(s[i]), "not extra byte");
-		Zinc_expect_true(IS_ONE_BYTE(s[i]), "is one byte");
-		Zinc_expect_false(IS_TWO_BYTES(s[i]), "is two byte");
-		Zinc_expect_false(IS_THREE_BYTES(s[i]), "is three byte");
-		Zinc_expect_false(IS_FOUR_BYTES(s[i]), "is four byte");
-		Zinc_expect_int_equal(NUM_BYTES(s[i]), 1, "num bytes");
+		Zinc_expect_false(ZINC_IS_EXTRA_BYTE(s[i]), "not extra byte");
+		Zinc_expect_true(ZINC_IS_ONE_BYTE(s[i]), "is one byte");
+		Zinc_expect_false(ZINC_IS_TWO_BYTES(s[i]), "is two byte");
+		Zinc_expect_false(ZINC_IS_THREE_BYTES(s[i]), "is three byte");
+		Zinc_expect_false(ZINC_IS_FOUR_BYTES(s[i]), "is four byte");
+		Zinc_expect_int_equal(ZINC_NUM_BYTES(s[i]), 1, "num bytes");
 	}
 }
 
@@ -33,7 +33,7 @@ void test_utf8_two_byte()
 
 	int i = 0;
 	while (i < num) {
-		int byte_count = NUM_BYTES(s[i]);
+		int byte_count = ZINC_NUM_BYTES(s[i]);
 		Zinc_assert_true(byte_count > 0 && byte_count <= 4, "byte_count");
 
 		int j = 0;
@@ -46,26 +46,26 @@ void test_utf8_two_byte()
 		Zinc_assert_int_equal(byte_count, 2, Zinc_error_message);
 
 		Zinc_set_error("not extra byte for (%s)", c);
-		Zinc_expect_false(IS_EXTRA_BYTE(c[0]), Zinc_error_message);
+		Zinc_expect_false(ZINC_IS_EXTRA_BYTE(c[0]), Zinc_error_message);
 
 		j = 1;
 		while (j < byte_count) {
 			Zinc_set_error("extra byte for (%s)", c);
-			Zinc_expect_true(IS_EXTRA_BYTE(c[j]), Zinc_error_message);
+			Zinc_expect_true(ZINC_IS_EXTRA_BYTE(c[j]), Zinc_error_message);
 			j++;
 		}
 
 		Zinc_set_error("one byte for (%s)", c);
-		Zinc_expect_false(IS_ONE_BYTE(c[0]), Zinc_error_message);
+		Zinc_expect_false(ZINC_IS_ONE_BYTE(c[0]), Zinc_error_message);
 
 		Zinc_set_error("two bytes for (%s)", c);
-		Zinc_expect_true(IS_TWO_BYTES(c[0]), Zinc_error_message);
+		Zinc_expect_true(ZINC_IS_TWO_BYTES(c[0]), Zinc_error_message);
 
 		Zinc_set_error("three bytes for (%s)", c);
-		Zinc_expect_false(IS_THREE_BYTES(c[0]), Zinc_error_message);
+		Zinc_expect_false(ZINC_IS_THREE_BYTES(c[0]), Zinc_error_message);
 
 		Zinc_set_error("four bytes for (%s)", c);
-		Zinc_expect_false(IS_FOUR_BYTES(c[0]), Zinc_error_message);
+		Zinc_expect_false(ZINC_IS_FOUR_BYTES(c[0]), Zinc_error_message);
 	}
 }
 
@@ -76,33 +76,33 @@ void test_utf8_three_byte()
 
 	char* s = "€";
 
-	int byte_count = NUM_BYTES(s[0]);
+	int byte_count = ZINC_NUM_BYTES(s[0]);
 	Zinc_assert_true(byte_count > 0 && byte_count <= 4, "byte_count");
 
 	Zinc_set_error("num bytes for (%s)", s);
 	Zinc_assert_int_equal(byte_count, 3, Zinc_error_message);
 
 	Zinc_set_error("not extra byte for (%s)", s);
-	Zinc_expect_false(IS_EXTRA_BYTE(s[0]), Zinc_error_message);
+	Zinc_expect_false(ZINC_IS_EXTRA_BYTE(s[0]), Zinc_error_message);
 
 	int j = 1;
 	while (j < byte_count) {
 		Zinc_set_error("extra byte for (%s)", s);
-		Zinc_expect_true(IS_EXTRA_BYTE(s[j]), Zinc_error_message);
+		Zinc_expect_true(ZINC_IS_EXTRA_BYTE(s[j]), Zinc_error_message);
 		j++;
 	}
 
 	Zinc_set_error("one byte for (%s)", s);
-	Zinc_expect_false(IS_ONE_BYTE(s[0]), Zinc_error_message);
+	Zinc_expect_false(ZINC_IS_ONE_BYTE(s[0]), Zinc_error_message);
 
 	Zinc_set_error("two bytes for (%s)", s);
-	Zinc_expect_false(IS_TWO_BYTES(s[0]), Zinc_error_message);
+	Zinc_expect_false(ZINC_IS_TWO_BYTES(s[0]), Zinc_error_message);
 
 	Zinc_set_error("three bytes for (%s)", s);
-	Zinc_expect_true(IS_THREE_BYTES(s[0]), Zinc_error_message);
+	Zinc_expect_true(ZINC_IS_THREE_BYTES(s[0]), Zinc_error_message);
 
 	Zinc_set_error("four bytes for (%s)", s);
-	Zinc_expect_false(IS_FOUR_BYTES(s[0]), Zinc_error_message);
+	Zinc_expect_false(ZINC_IS_FOUR_BYTES(s[0]), Zinc_error_message);
 }
 
 /* dynamic-output-none */
@@ -112,33 +112,33 @@ void test_utf8_four_byte()
 
 	char* s = "𐍈";
 
-	int byte_count = NUM_BYTES(s[0]);
+	int byte_count = ZINC_NUM_BYTES(s[0]);
 	Zinc_assert_true(byte_count > 0 && byte_count <= 4, "byte_count");
 
 	Zinc_set_error("num bytes for (%s)", s);
 	Zinc_assert_int_equal(byte_count, 4, Zinc_error_message);
 
 	Zinc_set_error("not extra byte for (%s)", s);
-	Zinc_expect_false(IS_EXTRA_BYTE(s[0]), Zinc_error_message);
+	Zinc_expect_false(ZINC_IS_EXTRA_BYTE(s[0]), Zinc_error_message);
 
 	int j = 1;
 	while (j < byte_count) {
 		Zinc_set_error("extra byte for (%s)", s);
-		Zinc_expect_true(IS_EXTRA_BYTE(s[j]), Zinc_error_message);
+		Zinc_expect_true(ZINC_IS_EXTRA_BYTE(s[j]), Zinc_error_message);
 		j++;
 	}
 
 	Zinc_set_error("one byte for (%s)", s);
-	Zinc_expect_false(IS_ONE_BYTE(s[0]), Zinc_error_message);
+	Zinc_expect_false(ZINC_IS_ONE_BYTE(s[0]), Zinc_error_message);
 
 	Zinc_set_error("two bytes for (%s)", s);
-	Zinc_expect_false(IS_TWO_BYTES(s[0]), Zinc_error_message);
+	Zinc_expect_false(ZINC_IS_TWO_BYTES(s[0]), Zinc_error_message);
 
 	Zinc_set_error("three bytes for (%s)", s);
-	Zinc_expect_false(IS_THREE_BYTES(s[0]), Zinc_error_message);
+	Zinc_expect_false(ZINC_IS_THREE_BYTES(s[0]), Zinc_error_message);
 
 	Zinc_set_error("four bytes for (%s)", s);
-	Zinc_expect_true(IS_FOUR_BYTES(s[0]), Zinc_error_message);
+	Zinc_expect_true(ZINC_IS_FOUR_BYTES(s[0]), Zinc_error_message);
 }
 
 /* dynamic-output-none */

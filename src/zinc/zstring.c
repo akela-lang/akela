@@ -139,7 +139,7 @@ enum Zinc_result Zinc_next_char(struct Zinc_string* bf, size_t* pos, struct Zinc
 {
     char c = bf->buf[(*pos)++];
     int count;
-    enum Zinc_result r = check_num_bytes(c, &count);
+    enum Zinc_result r = Zinc_check_num_bytes(c, &count);
     if (r == Zinc_result_error) {
         return r;
     }
@@ -148,7 +148,7 @@ enum Zinc_result Zinc_next_char(struct Zinc_string* bf, size_t* pos, struct Zinc
     Zinc_string_add_char(bf2, c);
     for (int i = 1; i < count; i++) {
         c = bf->buf[(*pos)++];
-        r = check_extra_byte(c);
+        r = Zinc_check_extra_byte(c);
         if (r == Zinc_result_error) {
             return r;
         }
@@ -221,7 +221,7 @@ enum Zinc_result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string*
     size_t index = 0;
     while (i < src->size && index < end) {
         c = src->buf[i++];
-        r = check_num_bytes(c, &count);
+        r = Zinc_check_num_bytes(c, &count);
         if (r == Zinc_result_error) return r;
 
         if (index >= start && index < end) {
@@ -231,7 +231,7 @@ enum Zinc_result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string*
 
         for (int j = 1; j < count; j++) {
             c = src->buf[i++];
-            r = check_extra_byte(c);
+            r = Zinc_check_extra_byte(c);
             if (r == Zinc_result_error) return r;
 
             if (index >= start && index < end) {

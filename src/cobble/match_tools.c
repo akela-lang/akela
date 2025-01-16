@@ -140,7 +140,7 @@ void Cob_stack_pop_to(Cob_stack* mts, Cob_task* marker)
 
 void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, Zinc_string_slice slice)
 {
-    int num = NUM_BYTES(slice.p[0]);
+    int num = ZINC_NUM_BYTES(slice.p[0]);
     while (task) {
         if (task->n->is_root) {
             struct Zinc_string* bf = Zinc_hash_map_size_t_get(&sn->groups, 0);

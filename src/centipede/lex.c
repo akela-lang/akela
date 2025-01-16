@@ -482,7 +482,7 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
     first_loc.col--;
 
     char first = t->value.buf[0];
-    num = NUM_BYTES(first);
+    num = ZINC_NUM_BYTES(first);
 
     if (num == 1 && first == '.') {
         Zinc_error_list_set(ld->errors, &first_loc, "number starts with period");

@@ -23,8 +23,5 @@
   * String_slice [x]
   * unicode [x]
   * unit_test [x]
-  * utf8 []
+  * utf8 [x]
   * vector []
-* make next_char into buffer_next_utf8 and output pos, c, num, done, r
-* coverage
-* get temp file for test_input_char_file

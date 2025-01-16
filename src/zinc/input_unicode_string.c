@@ -75,7 +75,7 @@ enum Zinc_result Zinc_input_unicode_string_next(
     if (data->pos < data->text->count) {
         /* first byte */
         c[0] = VECTOR_CHAR(data->text, data->pos++);
-        *num = NUM_BYTES(c[0]);
+        *num = ZINC_NUM_BYTES(c[0]);
         *loc = data->loc;
         data->loc.start_pos++;
         if (c[0] == '\n') {
@@ -91,7 +91,7 @@ enum Zinc_result Zinc_input_unicode_string_next(
             if (data->pos < data->text->count) {
                 c[i] = VECTOR_CHAR(data->text, data->pos++);
                 data->loc.start_pos++;
-                if (!IS_EXTRA_BYTE(c[i])) {
+                if (!ZINC_IS_EXTRA_BYTE(c[i])) {
                     r = Zinc_set_error("invalid utf8 trailing byte");
                 }
             } else {

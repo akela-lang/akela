@@ -1,8 +1,7 @@
 #include "utf8.h"
 #include "result.h"
 
-/* static-output */
-enum Zinc_result check_num_bytes(unsigned char c, int* count)
+Zinc_result Zinc_check_num_bytes(unsigned char c, int* count)
 {
     /* 1 byte: 0xxx xxxx */
     if ((c & 0x80) == 0x00) {
@@ -32,8 +31,7 @@ enum Zinc_result check_num_bytes(unsigned char c, int* count)
     return Zinc_set_error("Not utf8: could not detect number bytes in character");
 }
 
-/* static-output */
-enum Zinc_result check_extra_byte(char c)
+Zinc_result Zinc_check_extra_byte(char c)
 {
     /* 10xx xxxx */
     if ((c & 0xc0) == 0x80) {

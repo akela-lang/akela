@@ -364,7 +364,7 @@ void test_lex_string_unicode_code_point_six_digits()
     Zinc_expect_int_equal(token->type, Json_token_type_string, "type token");
     char dest[5];
     Zinc_code_to_utf8(dest, 0x10ffff);
-    int num = NUM_BYTES(dest[0]);
+    int num = ZINC_NUM_BYTES(dest[0]);
     dest[num] = '\0';
     Zinc_expect_str(&token->value, dest, "value token");
     Zinc_expect_size_t_equal(token->loc.start_pos, 0, "start pos token");
