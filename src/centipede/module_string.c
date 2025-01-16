@@ -63,8 +63,8 @@ Cent_input_data Cent_module_find_string(Cent_module_string* ms, struct Zinc_stri
     VectorCreate(&v, sizeof(char));
     VectorAdd(v, text->buf, text->size);
 
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, v);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, v);
 
     data.input = input;
     data.input_vtable = input->input_vtable;

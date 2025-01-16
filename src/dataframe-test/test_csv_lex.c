@@ -14,8 +14,8 @@ void CSVLexSetup(struct CSVLexData** lex_data, const char* text)
         VectorAdd(input, (char*)(text+i), 1);
     }
     VectorAddNull(input);
-    InputCharString* input_data;
-    InputCharStringCreate(&input_data, input);
+    Zinc_input_char_string* input_data;
+    Zinc_input_char_string_create(&input_data, input);
     CSVLexDataCreate(lex_data);
     struct Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
@@ -28,7 +28,7 @@ void CSVLexTeardown(struct CSVLexData* lex_data)
 {
     Zinc_error_list_destroy(lex_data->el);
     free(lex_data->el);
-    InputCharString* input_data = lex_data->input_data;
+    Zinc_input_char_string* input_data = lex_data->input_data;
     VectorDestroy(input_data->text);
     free(input_data->text);
     free(input_data);

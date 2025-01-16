@@ -10,8 +10,8 @@ void CSVParseSetup(struct CSVParseOutput** parse_output, const char* text)
     VectorAdd(input, (char*)(text), len);
     VectorAddNull(input);
 
-    InputCharString* input_data;
-    InputCharStringCreate(&input_data, input);
+    Zinc_input_char_string* input_data;
+    Zinc_input_char_string_create(&input_data, input);
 
     struct CSVLexData* lex_data = NULL;
     CSVLexDataCreate(&lex_data);

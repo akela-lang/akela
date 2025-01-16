@@ -8,8 +8,8 @@ void test_parse_setup(Json_parse_data* pd, char* text)
     VectorCreate(&v, sizeof(char));
     VectorAdd(v, text, strlen(text));
 
-    InputUnicodeString* input;
-    InputUnicodeStringCreate(&input, v);
+    Zinc_input_unicode_string* input;
+    Zinc_input_unicode_string_create(&input, v);
 
     struct Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
@@ -28,7 +28,7 @@ void test_parse_destroy(Json_parse_data* pd)
     }
     Json_lex_data* ld = pd->ld;
     struct Zinc_error_list* el = pd->el;
-    InputUnicodeString* input = ld->input_obj;
+    Zinc_input_unicode_string* input = ld->input_obj;
     Vector* v = input->text;
     VectorDestroy(v);
     free(v);

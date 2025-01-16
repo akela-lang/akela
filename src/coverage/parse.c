@@ -13,8 +13,8 @@ Cob_re Cover_gcov_line_re()
     VectorCreate(&text, 1);
     VectorAdd(text, s, len);
 
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, text);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, text);
 
     struct Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
@@ -42,8 +42,8 @@ Cob_re Cover_gcov_ext_re()
     VectorCreate(&text, 1);
     VectorAdd(text, s, len);
 
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, text);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, text);
 
     struct Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
@@ -71,8 +71,8 @@ Cob_re Cover_test_dir_re()
     VectorCreate(&text, 1);
     VectorAdd(text, s, len);
 
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, text);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, text);
 
     struct Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);

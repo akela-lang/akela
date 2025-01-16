@@ -18,8 +18,8 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));
     VectorAdd(vector, text, strlen(text));
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, vector);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, vector);
 
     bool valid;
 

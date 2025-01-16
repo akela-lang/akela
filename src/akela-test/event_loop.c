@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     void* input_obj = NULL;
     Zinc_input_unicode_vtable* input_vtable;
     Zinc_input_unicode_file* input_file = NULL;
-    InputUnicodeString* input_string = NULL;
+    Zinc_input_unicode_string* input_string = NULL;
 
     if (argc <= 1) {
         Zinc_input_unicode_file_create(&input_file, stdin);
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
             VectorAdd(text, str, len);
         }
         VectorAdd(text, "\n", 1);
-        InputUnicodeStringCreate(&input_string, text);
+        Zinc_input_unicode_string_create(&input_string, text);
         input_obj = input_string;
         input_vtable = input_string->input_vtable;
     } else {

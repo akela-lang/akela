@@ -13,7 +13,7 @@
   * input_char_string [x]
   * input_unicode [x]
   * input_unicode_file [x]
-  * input_unicode_string []
+  * input_unicode_string [x]
   * list []
   * memory []
   * os_unix []

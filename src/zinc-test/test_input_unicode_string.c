@@ -10,8 +10,8 @@ void test_input_unicode_string_next()
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));
     VectorAdd(vector, s, strlen(s));
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, vector);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, vector);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -190,8 +190,8 @@ void test_input_unicode_string_next_multibyte()
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));
     VectorAdd(vector, s, strlen(s));
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, vector);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, vector);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -347,8 +347,8 @@ void test_input_unicode_string_repeat()
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));
     VectorAdd(vector, s, strlen(s));
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, vector);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, vector);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -463,8 +463,8 @@ void test_input_unicode_string_seek()
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));
     VectorAdd(vector, s, strlen(s));
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, vector);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, vector);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -643,8 +643,8 @@ void test_input_unicode_string_get_all()
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));
     VectorAdd(vector, s, strlen(s));
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, vector);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, vector);
 
     Vector* output = NULL;
 
@@ -664,8 +664,8 @@ void test_input_unicode_string_get_location()
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));
     VectorAdd(vector, s, strlen(s));
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, vector);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, vector);
 
     enum result r;
     bool done;

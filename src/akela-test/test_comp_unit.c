@@ -11,8 +11,8 @@ void test_comp_unit_compile()
     VectorCreate(&text, sizeof(char));
     VectorAdd(text, "10", 2);
 
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, text);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, text);
 
 	struct Ake_comp_unit* cu = NULL;
 	malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));

@@ -8,8 +8,8 @@
 #include "input_unicode.h"
 
 typedef struct {
-    struct Zinc_location loc;
-    struct Zinc_location prev_loc;
+    Zinc_location loc;
+    Zinc_location prev_loc;
     bool repeat_char;
     size_t pos;
     Vector* text;
@@ -19,21 +19,21 @@ typedef struct {
     Zinc_input_unicode_get_all_interface GetAll;
     Zinc_input_unicode_get_location_interface GetLocation;
     Zinc_input_unicode_vtable* input_vtable;
-} InputUnicodeString;
+} Zinc_input_unicode_string;
 
-extern Zinc_input_unicode_vtable InputUnicodeStringVTable;
+extern Zinc_input_unicode_vtable Zinc_input_unicode_string_vtable;
 
-void InputUnicodeStringInit(InputUnicodeString* input_string, Vector* text);
-void InputUnicodeStringCreate(InputUnicodeString** input_string, Vector* text);
-void InputUnicodeStringClear(InputUnicodeString* data);
-enum result InputUnicodeStringNext(InputUnicodeString* data,
+void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Vector* text);
+void Zinc_input_unicode_string_create(Zinc_input_unicode_string** input_string, Vector* text);
+void Zinc_input_unicode_string_clear(Zinc_input_unicode_string* data);
+enum result Zinc_input_unicode_string_next(Zinc_input_unicode_string* data,
         char c[4],
         int* num,
-        struct Zinc_location* loc,
+        Zinc_location* loc,
         bool* done);
-void InputUnicodeStringRepeat(InputUnicodeString* data);
-void InputUnicodeStringSeek(InputUnicodeString* data, struct Zinc_location* loc);
-void InputUnicodeStringGetAll(InputUnicodeString* data, Vector** text);
-struct Zinc_location InputUnicodeStringGetLocation(InputUnicodeString* data);
+void Zinc_input_unicode_string_repeat(Zinc_input_unicode_string* data);
+void Zinc_input_unicode_string_seek(Zinc_input_unicode_string* data, Zinc_location* loc);
+void Zinc_input_unicode_string_get_all(Zinc_input_unicode_string* data, Vector** text);
+Zinc_location Zinc_input_unicode_string_get_location(Zinc_input_unicode_string* data);
 
 #endif

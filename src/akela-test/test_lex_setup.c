@@ -12,8 +12,8 @@ void lex_setup(char* line, struct Ake_lex_state* ls, struct Zinc_error_list* el)
     VectorCreate(&text, sizeof(char));
     VectorAdd(text, line, strlen(line));
 
-    InputUnicodeString* input_string = NULL;
-    InputUnicodeStringCreate(&input_string, text);
+    Zinc_input_unicode_string* input_string = NULL;
+    Zinc_input_unicode_string_create(&input_string, text);
 
 	Zinc_error_list_init(el);
 
@@ -26,7 +26,7 @@ void lex_setup(char* line, struct Ake_lex_state* ls, struct Zinc_error_list* el)
 
 void lex_teardown(struct Ake_lex_state* ls)
 {
-    InputUnicodeString* input_string = ls->input_obj;
+    Zinc_input_unicode_string* input_string = ls->input_obj;
     VectorDestroy(input_string->text);
     free(input_string->text);
     free(input_string);

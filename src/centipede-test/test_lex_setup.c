@@ -14,8 +14,8 @@ void test_lex_setup(Cent_lex_data* ld, char* text)
     VectorCreate(&v, 1);
     VectorAdd(v, text, len);
 
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, v);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, v);
 
     struct Zinc_error_list* errors = NULL;
     Zinc_error_list_create(&errors);
@@ -25,7 +25,7 @@ void test_lex_setup(Cent_lex_data* ld, char* text)
 
 void test_lex_teardown(Cent_lex_data* ld)
 {
-    InputUnicodeString* input = ld->input;
+    Zinc_input_unicode_string* input = ld->input;
     Vector* v = input->text;
     VectorDestroy(v);
     free(v);

@@ -241,8 +241,8 @@ void FieldLex(struct FieldLexData* lex_data, enum FieldType* type)
 
 void FieldGetType(Vector* text, enum FieldType* type)
 {
-    InputCharString input_string;
-    InputCharStringInit(&input_string, text);
+    Zinc_input_char_string input_string;
+    Zinc_input_char_string_init(&input_string, text);
 
     struct FieldLexData lex_data;
     FieldLexDataInit(&lex_data);

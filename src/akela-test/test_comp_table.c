@@ -19,8 +19,8 @@ void test_comp_table_compile()
     VectorCreate(&text, sizeof(char));
     VectorAdd(text, "10", 2);
 
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, text);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, text);
 
 	struct Ake_comp_unit* cu = NULL;
 	malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
@@ -60,8 +60,8 @@ void test_comp_table_include()
     char base_string[] = "fn sqrt(x: i64)->i64 1 end";
     VectorAdd(base_text, base_string, strlen(base_string));
     VectorAddNull(base_text);
-    InputUnicodeString* base_input = NULL;
-    InputUnicodeStringCreate(&base_input, base_text);
+    Zinc_input_unicode_string* base_input = NULL;
+    Zinc_input_unicode_string_create(&base_input, base_text);
 
 	struct Ake_comp_unit* cu_base = NULL;
 	malloc_safe((void**)&cu_base, sizeof(struct Ake_comp_unit));
@@ -81,8 +81,8 @@ void test_comp_table_include()
     VectorCreate(&main_vector, sizeof(char));
     VectorAdd(main_vector, main_string, strlen(main_string));
     VectorAddNull(main_vector);
-    InputUnicodeString* main_input = NULL;
-    InputUnicodeStringCreate(&main_input, main_vector);
+    Zinc_input_unicode_string* main_input = NULL;
+    Zinc_input_unicode_string_create(&main_input, main_vector);
 
 	struct Ake_comp_unit* cu_main = NULL;
 	malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
@@ -141,8 +141,8 @@ void test_comp_table_include_base()
     Vector* main_vector = NULL;
     VectorCreate(&main_vector, sizeof(char));
     VectorAdd(main_vector, main_string, strlen(main_string));
-    InputUnicodeString* input = NULL;
-    InputUnicodeStringCreate(&input, main_vector);
+    Zinc_input_unicode_string* input = NULL;
+    Zinc_input_unicode_string_create(&input, main_vector);
 
 	struct Ake_comp_unit* cu_main = NULL;
 	malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
