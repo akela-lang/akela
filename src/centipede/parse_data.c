@@ -5,7 +5,7 @@ void Cent_parse_data_init(
     Cent_parse_data *pd,
     struct Zinc_error_list* errors,
     Cent_lex_data* ld,
-    String_slice file_name,
+    Zinc_string_slice file_name,
     Cent_environment* base)
 {
     pd->ld = ld;
@@ -24,7 +24,7 @@ void Cent_parse_data_create(
     Cent_parse_data **pd,
     struct Zinc_error_list* errors,
     Cent_lex_data* ld,
-    String_slice file_name,
+    Zinc_string_slice file_name,
     Cent_environment* base)
 {
     Zinc_malloc_safe((void**)pd, sizeof(Cent_parse_data));

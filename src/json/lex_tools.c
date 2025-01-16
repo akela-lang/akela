@@ -33,7 +33,7 @@ void Json_lex_data_destroy(Json_lex_data* ld)
 {
 }
 
-enum Zinc_result Json_convert_slice(String_slice slice, UChar32* c)
+enum Zinc_result Json_convert_slice(Zinc_string_slice slice, UChar32* c)
 {
     UErrorCode status = U_ZERO_ERROR;
     UConverter *conv = ucnv_open("utf8", &status);
@@ -54,7 +54,7 @@ enum Zinc_result Json_convert_slice(String_slice slice, UChar32* c)
 
 enum Zinc_result Json_convert_char(char c[4], int num, UChar32* cp)
 {
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = c;
     slice.size = num;
     return Json_convert_slice(slice, cp);

@@ -20,7 +20,7 @@
   * os_win [x]
   * piece [x]
   * result [x]
-  * String_slice []
+  * String_slice [x]
   * unicode []
   * unit_test []
   * utf8 []

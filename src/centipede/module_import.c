@@ -49,7 +49,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
 
     Cent_comp_table_add(pd->ct, &path, cu);
 
-    String_slice file_name;
+    Zinc_string_slice file_name;
     file_name.p = path.buf;
     file_name.size = path.size;
 

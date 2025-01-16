@@ -9,7 +9,7 @@
 #include "json/lex_tools.h"
 
 bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct Zinc_string_list* groups);
-Cob_stack_list* Cob_init_stacks(Cob_re* re, String_slice slice);
+Cob_stack_list* Cob_init_stacks(Cob_re* re, Zinc_string_slice slice);
 void Check_group_tasks(Cob_ast* root, Cob_stack_node* sn, Cob_task* task);
 void Cob_remove_finished(Cob_stack* mts, Cob_task* task);
 void Cob_cleanup_finished(Cob_task* task);
@@ -17,11 +17,11 @@ void Cob_check_if_done(Cob_stack* mts, Cob_task* task, bool* done, bool* matched
 void Cob_get_groups(Cob_stack_node* sn, struct Zinc_string_list* groups);
 Cob_task* Cob_add_task(
     Cob_ast* n,
-    String_slice slice,
+    Zinc_string_slice slice,
     Cob_stack* mts,
     Cob_task* parent,
     Cob_stack_node* sn);
-void Cob_increment_slice(String_slice* slice);
+void Cob_increment_slice(Zinc_string_slice* slice);
 void Cob_run_dispatch(Cob_stack_node* sn);
 void Cob_run_union(Cob_stack_node* sn);
 void Cob_child_finish_union(Cob_stack_node* sn, Cob_task* parent, Cob_task* child);
@@ -54,7 +54,7 @@ void Cob_run_character_type_digit(Cob_stack_node* sn, bool opposite);
 void Cob_run_character_type_space(Cob_stack_node* sn, bool opposite);
 void Cob_run_character_type_newline_opposite(Cob_stack_node* sn);
 
-Cob_result Cob_match(Cob_re* re, String_slice slice)
+Cob_result Cob_match(Cob_re* re, Zinc_string_slice slice)
 {
     Cob_result mr;
     Cob_result_init(&mr);
@@ -109,7 +109,7 @@ bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct Zinc_string_list*
     return matched;
 }
 
-Cob_stack_list* Cob_init_stacks(Cob_re* re, String_slice slice)
+Cob_stack_list* Cob_init_stacks(Cob_re* re, Zinc_string_slice slice)
 {
     Cob_stack_list* sl;
     Cob_stack_list_create(&sl);
@@ -175,7 +175,7 @@ void Cob_get_groups(Cob_stack_node* sn, struct Zinc_string_list* groups)
 
 Cob_task* Cob_add_task(
     Cob_ast* n,
-    String_slice slice,
+    Zinc_string_slice slice,
     Cob_stack* mts,
     Cob_task* parent,
     Cob_stack_node* sn)
@@ -594,7 +594,7 @@ void Cob_child_finish_option(Cob_stack_node* sn, Cob_task* parent, Cob_task* chi
     }
 }
 
-void Cob_increment_slice(String_slice* slice)
+void Cob_increment_slice(Zinc_string_slice* slice)
 {
     int num = NUM_BYTES(slice->p[0]);
     slice->p += num;
@@ -606,7 +606,7 @@ void Cob_run_literal(Cob_stack_node* sn)
     Cob_task* task = sn->stack->top;
 
     if (task->start_slice.size > 0) {
-        String_slice slice = task->start_slice;
+        Zinc_string_slice slice = task->start_slice;
         bool matched = true;
         int num = NUM_BYTES(slice.p[0]);
         if (task->n->num == num) {
@@ -640,7 +640,7 @@ void Cob_run_wildcard(Cob_stack_node* sn)
 {
     Cob_task* task = sn->stack->top;
 
-    String_slice slice = task->start_slice;
+    Zinc_string_slice slice = task->start_slice;
     int num = NUM_BYTES(slice.p[0]);
     if (slice.size > 0) {
         if (!(num == 1 && slice.p[0] == '\n')) {
@@ -683,7 +683,7 @@ void Cob_run_escape(Cob_stack_node* sn)
     Cob_task* task = sn->stack->top;
 
     if (task->start_slice.size > 0) {
-        String_slice slice = task->start_slice;
+        Zinc_string_slice slice = task->start_slice;
         bool matched = true;
         int num = NUM_BYTES(slice.p[0]);
         if (task->n->num == num) {
@@ -791,7 +791,7 @@ void Cob_run_character_range(Cob_stack_node* sn)
     Cob_task* task = sn->stack->top;
 
     if (task->start_slice.size > 0) {
-        String_slice slice = task->start_slice;
+        Zinc_string_slice slice = task->start_slice;
         Cob_ast* a = task->n->head;
         Cob_ast* b = a->next;
         bool matched = IS_ONE_BYTE(a->c[0]) && IS_ONE_BYTE(b->c[0]) && IS_ONE_BYTE(slice.p[0])
@@ -818,7 +818,7 @@ void Cob_run_character_type_word(Cob_stack_node* sn, bool opposite)
     Cob_task* task = sn->stack->top;
 
     if (task->start_slice.size > 0) {
-        String_slice slice = task->start_slice;
+        Zinc_string_slice slice = task->start_slice;
         UChar32 cp;
         Json_convert_slice(slice, &cp);
         bool is_word = u_isalpha(cp) || u_isdigit(cp) || cp == '_';
@@ -839,7 +839,7 @@ void Cob_run_character_type_digit(Cob_stack_node* sn, bool opposite)
     Cob_task* task = sn->stack->top;
 
     if (task->start_slice.size > 0) {
-        String_slice slice = task->start_slice;
+        Zinc_string_slice slice = task->start_slice;
         UChar32 cp;
         Json_convert_slice(slice, &cp);
         bool is_digit = u_isdigit(cp);
@@ -860,7 +860,7 @@ void Cob_run_character_type_space(Cob_stack_node* sn, bool opposite)
     Cob_task* task = sn->stack->top;
 
     if (task->start_slice.size > 0) {
-        String_slice slice = task->start_slice;
+        Zinc_string_slice slice = task->start_slice;
         UChar32 cp;
         Json_convert_slice(slice, &cp);
         bool is_space = u_isspace(cp);
@@ -881,7 +881,7 @@ void Cob_run_character_type_newline_opposite(Cob_stack_node* sn)
     Cob_task* task = sn->stack->top;
 
     if (task->start_slice.size > 0) {
-        String_slice slice = task->start_slice;
+        Zinc_string_slice slice = task->start_slice;
         bool is_space = IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
         if (!is_space) {
             task->matched = true;

@@ -5,6 +5,6 @@
 #include "zinc/string_list.h"
 #include "compile_tools.h"
 
-Cob_result Cob_match(Cob_re* re, String_slice slice);
+Cob_result Cob_match(Cob_re* re, Zinc_string_slice slice);
 
 #endif //COBBLE_MATCH_H

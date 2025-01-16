@@ -98,7 +98,7 @@ void Cover_get_libraries(char* dir_name, Cover_app* test, Cover_app *app)
                     Zinc_string_finish(&lib->path);
                     Zinc_string_finish(&lib->name);
 
-                    String_slice slice = {bf.buf, bf.size};
+                    Zinc_string_slice slice = {bf.buf, bf.size};
                     Cob_result mr = Cob_match(&test_re, slice);
                     if (mr.matched) {
                         Cover_library_list_add_sorted(&test->libraries, lib);
@@ -139,7 +139,7 @@ void Cover_get_files(Cover_library* lib)
                 Zinc_string_finish(&bf);
                 struct stat sb;
                 if (stat(bf.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
-                    String_slice slice = {bf.buf, bf.size};
+                    Zinc_string_slice slice = {bf.buf, bf.size};
                     Cob_result mr = Cob_match(&re, slice);
                     if (mr.matched) {
                         Cover_file* file = NULL;
@@ -228,7 +228,7 @@ void Cover_read_file(Cover_file* file)
         }
 
         if (bf.size > 0) {
-            String_slice slice;
+            Zinc_string_slice slice;
             slice.p = bf.buf;
             slice.size = bf.size;
             Cob_result mr = Cob_match(&re, slice);

@@ -532,7 +532,7 @@ void expect_buffer_list_item(struct Zinc_string_list* bl, size_t index, char* te
 	}
 }
 
-void expect_string_slice(String_slice* sl, struct Zinc_string* bf, char* message)
+void expect_string_slice(Zinc_string_slice* sl, struct Zinc_string* bf, char* message)
 {
 	test_called();
 	bool has_error = false;
@@ -563,7 +563,7 @@ void expect_string_slice(String_slice* sl, struct Zinc_string* bf, char* message
 	}
 }
 
-void expect_string_slice_str(String_slice* sl, char* expected, char* message)
+void expect_string_slice_str(Zinc_string_slice* sl, char* expected, char* message)
 {
 	test_called();
 	bool has_error = false;

@@ -3,9 +3,9 @@
 
 #include <stdlib.h>
 
-typedef struct String_slice {
+typedef struct Zinc_string_slice {
     const char* p;
     size_t size;
-} String_slice;
+} Zinc_string_slice;
 
 #endif

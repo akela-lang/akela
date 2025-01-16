@@ -11,7 +11,7 @@ void test_parse_line_zero()
 
     Cob_re cr = Cover_gcov_line_re();
     char s[] = "        -:    0:Source:/home/username/workspace/trade/akela/coverage-test/test_data.c";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -50,7 +50,7 @@ void test_parse_not_covered_line()
 
     Cob_re cr = Cover_gcov_line_re();
     char s[] = "        -:    1:#include \"zinc/unit_test.h\"";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -94,7 +94,7 @@ void test_parse_covered_line()
 
     Cob_re cr = Cover_gcov_line_re();
     char s[] = "1:    4:void test_data_file_list_add()";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -138,7 +138,7 @@ void test_parse_covered_line2()
 
     Cob_re cr = Cover_gcov_line_re();
     char s[] = "       1*:    9:    expect_true(is_word(\"x  \", NUM_BYTES(\"x\"[0])), \"ascii letter\");";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -182,7 +182,7 @@ void test_parse_gcov_ext1()
 
     Cob_re cr = Cover_gcov_ext_re();
     char s[] = ".gcov";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -202,7 +202,7 @@ void test_parse_gcov_ext2()
 
     Cob_re cr = Cover_gcov_ext_re();
     char s[] = "ast.c.gcov";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -222,7 +222,7 @@ void test_parse_gcov_ext3_not_match()
 
     Cob_re cr = Cover_gcov_ext_re();
     char s[] = "abc.gcovabc";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -240,7 +240,7 @@ void test_parse_test_dir1()
 
     Cob_re cr = Cover_test_dir_re();
     char s[] = "-test";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -260,7 +260,7 @@ void test_parse_test_dir2()
 
     Cob_re cr = Cover_test_dir_re();
     char s[] = "akela-test";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -280,7 +280,7 @@ void test_parse_test_dir3_not_match()
 
     Cob_re cr = Cover_test_dir_re();
     char s[] = "akela";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 
@@ -298,7 +298,7 @@ void test_parse_test_dir4_not_match()
 
     Cob_re cr = Cover_test_dir_re();
     char s[] = "akela-test-abc";
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = s;
     slice.size = strlen(s);
 

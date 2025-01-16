@@ -27,7 +27,7 @@ typedef struct Cent_symbol {
         Cent_element_type* element;
         Cent_enum_type* enumerate;
         Cent_value* object_value;
-        String_slice file_name;
+        Zinc_string_slice file_name;
         Cent_module* module;
     } data;
     bool is_copy;

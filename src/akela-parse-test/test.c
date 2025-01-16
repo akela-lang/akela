@@ -118,7 +118,7 @@ void Parse_test_test_case(struct Zinc_string* dir_path, struct Zinc_string* path
     Zinc_input_unicode_file* input = NULL;
     Zinc_input_unicode_file_create(&input, fp);
 
-    String_slice slice;
+    Zinc_string_slice slice;
     slice.p = file_name->buf;
     slice.size = file_name->size;
 

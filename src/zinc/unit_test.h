@@ -57,7 +57,7 @@ ZINC_API void expect_utf8_char(char* a, char* b, char* message);
 ZINC_API void expect_utf8_char_str(char a[4], int num, char* b, char* message);
 ZINC_API void expect_buffer_list_count(Zinc_string_list* bl, size_t count, char* message);
 ZINC_API void expect_buffer_list_item(Zinc_string_list* bl, size_t index, char* text, char* message);
-ZINC_API void expect_string_slice(String_slice* sl, struct Zinc_string* bf, char* message);
-ZINC_API void expect_string_slice_str(String_slice* sl, char* expected, char* message);
+ZINC_API void expect_string_slice(Zinc_string_slice* sl, struct Zinc_string* bf, char* message);
+ZINC_API void expect_string_slice_str(Zinc_string_slice* sl, char* expected, char* message);
 
 #endif

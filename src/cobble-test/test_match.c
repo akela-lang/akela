@@ -14,7 +14,7 @@ Cob_result match_run(char* pattern, char* text)
     Zinc_assert_no_errors(re.el);
 
     const size_t size = strlen(text);
-    const String_slice slice = {text, size};
+    const Zinc_string_slice slice = {text, size};
     Cob_result mr = Cob_match(&re, slice);
     teardown_compile(cd, &re);
     return mr;

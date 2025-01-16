@@ -10,7 +10,7 @@ void Cent_comp_unit_init(
     Cent_comp_unit *cu,
     void* input,
     Zinc_input_unicode_vtable* input_vtable,
-    String_slice file_name,
+    Zinc_string_slice file_name,
     void* module_finder_obj,
     Cent_module_vtable* module_finder_vtable,
     Cent_environment* base)
@@ -28,7 +28,7 @@ void Cent_comp_unit_create(
     Cent_comp_unit **cu,
     void* input,
     Zinc_input_unicode_vtable* input_vtable,
-    String_slice file_name,
+    Zinc_string_slice file_name,
     void* module_finder_obj,
     Cent_module_vtable* module_finder_vtable,
     Cent_environment* base)

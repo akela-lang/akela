@@ -22,7 +22,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
 
     Cent_comp_table_create(ct, ms, ms->vtable, base);
 
-    String_slice file_name;
+    Zinc_string_slice file_name;
     file_name.p = "**string**";
     file_name.size = strlen(file_name.p);
     struct Zinc_string name;

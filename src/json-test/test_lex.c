@@ -998,7 +998,7 @@ void test_lex_word_error()
 void test_match_tools_convert_char1()
 {
     test_name(__func__);
-    String_slice slice = {"A", 1};
+    Zinc_string_slice slice = {"A", 1};
     UChar32 cp;
     Json_convert_slice(slice, &cp);
     expect_int_equal(cp, 0x41, "cp");
@@ -1007,7 +1007,7 @@ void test_match_tools_convert_char1()
 void test_match_tools_convert_char2()
 {
     test_name(__func__);
-    String_slice slice = {"θ", 2};
+    Zinc_string_slice slice = {"θ", 2};
     UChar32 cp;
     Json_convert_slice(slice, &cp);
     expect_int_equal(cp, 0x3B8, "cp");

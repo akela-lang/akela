@@ -138,7 +138,7 @@ void Cob_stack_pop_to(Cob_stack* mts, Cob_task* marker)
     }
 }
 
-void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice slice)
+void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, Zinc_string_slice slice)
 {
     int num = NUM_BYTES(slice.p[0]);
     while (task) {

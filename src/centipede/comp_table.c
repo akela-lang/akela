@@ -75,7 +75,7 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct Zinc_strin
     assert(data.input);
     assert(data.input_vtable);
 
-    String_slice file_name;
+    Zinc_string_slice file_name;
     file_name.p = name->buf;
     file_name.size = name->size;
     Cent_comp_unit_create(

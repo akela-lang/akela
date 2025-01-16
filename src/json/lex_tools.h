@@ -27,7 +27,7 @@ void Json_lex_data_create(
     struct Zinc_error_list* el,
     void* input_obj,
     Zinc_input_unicode_vtable* input_vtable);
-enum Zinc_result Json_convert_slice(String_slice slice, UChar32* c);
+enum Zinc_result Json_convert_slice(Zinc_string_slice slice, UChar32* c);
 enum Zinc_result Json_convert_char(char c[4], int num, UChar32* cp);
 
 #endif

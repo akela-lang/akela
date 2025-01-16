@@ -21,8 +21,8 @@ typedef struct Cob_task {
     Cob_ast* n;
     Cob_ast* p;
     size_t count;
-    String_slice start_slice;
-    String_slice end_slice;
+    Zinc_string_slice start_slice;
+    Zinc_string_slice end_slice;
     bool opposite;
     struct Cob_task* parent;
     struct Cob_task* next;
@@ -46,7 +46,7 @@ typedef struct Cob_stack_node {
 typedef struct Cob_stack_list {
     Cob_stack_node* head;
     Cob_stack_node* tail;
-    String_slice slice;
+    Zinc_string_slice slice;
     size_t top_priority;
 } Cob_stack_list;
 
@@ -65,7 +65,7 @@ void Cob_stack_push(Cob_stack *mts, Cob_task *new_task);
 Cob_task* Cob_stack_pop(Cob_stack* mts);
 Cob_task* Cob_stack_remove(Cob_stack* mts, Cob_task* task);
 void Cob_stack_pop_to(Cob_stack* mts, Cob_task* marker);
-void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, String_slice slice);
+void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, Zinc_string_slice slice);
 Cob_stack* Cob_stack_clone(Cob_stack* mts, struct Zinc_hash_table* ht, Cob_stack_node* sn);
 
 void Cob_stack_node_init(Cob_stack_node* sn);
@@ -84,6 +84,6 @@ size_t Cob_stack_list_next_priority(Cob_stack_list* sl);
 void Cob_stack_list_remove(Cob_stack_list* sl, Cob_stack_node* sn);
 void Cob_stack_list_destroy(Cob_stack_list* sl);
 
-enum Zinc_result match_convert_char(String_slice slice, UChar32* c);
+enum Zinc_result match_convert_char(Zinc_string_slice slice, UChar32* c);
 
 #endif
