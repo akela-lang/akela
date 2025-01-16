@@ -20,7 +20,7 @@ void Ake_comp_unit_init(struct Ake_comp_unit* cu)
 
 void Ake_comp_unit_create(struct Ake_comp_unit** cu)
 {
-    malloc_safe((void**)cu, sizeof(struct Ake_comp_unit));
+    Zinc_malloc_safe((void**)cu, sizeof(struct Ake_comp_unit));
     Ake_comp_unit_init(*cu);
 }
 
@@ -43,10 +43,10 @@ void Ake_comp_unit_setup(struct Ake_comp_unit* cu, void* input_obj, Zinc_input_u
 	cu->root = NULL;
 
 	struct Ake_lex_state* ls = NULL;
-	malloc_safe((void**)&ls, sizeof(struct Ake_lex_state));
+	Zinc_malloc_safe((void**)&ls, sizeof(struct Ake_lex_state));
     Ake_lex_state_init(ls, input_obj, input_vtable, &cu->el, &cu->st);
 
-	malloc_safe((void**)ps, sizeof(struct Ake_parse_state));
+	Zinc_malloc_safe((void**)ps, sizeof(struct Ake_parse_state));
 	Ake_parse_state_init(*ps, ls, &cu->el, &cu->extern_list, &cu->st);
 }
 

@@ -16,7 +16,7 @@ void Cent_module_string_init(Cent_module_string* ms)
 
 void Cent_module_string_create(Cent_module_string** ms)
 {
-    malloc_safe((void**)ms, sizeof(Cent_module_string));
+    Zinc_malloc_safe((void**)ms, sizeof(Cent_module_string));
     Cent_module_string_init(*ms);
 }
 

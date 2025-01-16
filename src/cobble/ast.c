@@ -21,7 +21,7 @@ void Cob_ast_init(Cob_ast* n)
 
 void Cob_ast_create(Cob_ast** n)
 {
-    malloc_safe((void**)n, sizeof(Cob_ast));
+    Zinc_malloc_safe((void**)n, sizeof(Cob_ast));
     Cob_ast_init(*n);
 }
 

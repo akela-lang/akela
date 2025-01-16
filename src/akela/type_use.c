@@ -23,7 +23,7 @@ void Ake_type_use_init(Ake_type_use* tu)
 
 void Ake_type_use_create(Ake_type_use** tu)
 {
-    malloc_safe((void**)tu, sizeof(Ake_type_use));
+    Zinc_malloc_safe((void**)tu, sizeof(Ake_type_use));
     Ake_type_use_init(*tu);
 }
 

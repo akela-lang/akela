@@ -12,7 +12,7 @@ void Cent_enum_value_init(Cent_enum_value* ev)
 
 void Cent_enum_value_create(Cent_enum_value** ev)
 {
-    malloc_safe((void**)ev, sizeof(Cent_enum_value));
+    Zinc_malloc_safe((void**)ev, sizeof(Cent_enum_value));
     Cent_enum_value_init(*ev);
 }
 
@@ -31,7 +31,7 @@ void Cent_enumerate_init(Cent_enum_type* en)
 
 void Cent_enumerate_create(Cent_enum_type** en)
 {
-    malloc_safe((void**)en, sizeof(Cent_enum_type));
+    Zinc_malloc_safe((void**)en, sizeof(Cent_enum_type));
     Cent_enumerate_init(*en);
 }
 

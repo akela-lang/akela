@@ -13,7 +13,7 @@
 bool cg_setup(const char* text, Ake_code_gen_result* result)
 {
     struct Ake_comp_unit* cu = NULL;
-    malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
+    Zinc_malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
 
     Vector* vector = NULL;
     VectorCreate(&vector, sizeof(char));

@@ -33,7 +33,7 @@ void Cob_task_init(Cob_task* task, Cob_task* parent)
 
 void Cob_task_create(Cob_task** task, Cob_task* parent)
 {
-    malloc_safe((void**)task, sizeof(Cob_task));
+    Zinc_malloc_safe((void**)task, sizeof(Cob_task));
     Cob_task_init(*task, parent);
 }
 
@@ -56,7 +56,7 @@ void Cob_stack_init(Cob_stack* mts, Cob_stack_node* sn)
 
 void Cob_stack_create(Cob_stack** mts, Cob_stack_node* sn)
 {
-    malloc_safe((void**)mts, sizeof(Cob_stack));
+    Zinc_malloc_safe((void**)mts, sizeof(Cob_stack));
     Cob_stack_init(*mts, sn);
 }
 
@@ -226,7 +226,7 @@ void Cob_stack_node_init(Cob_stack_node* sn)
 
 void Cob_stack_node_create(Cob_stack_node** sn)
 {
-    malloc_safe((void**)sn, sizeof(Cob_stack_node));
+    Zinc_malloc_safe((void**)sn, sizeof(Cob_stack_node));
     Cob_stack_node_init(*sn);
 }
 
@@ -292,7 +292,7 @@ void Cob_stack_list_init(Cob_stack_list* sl)
 
 void Cob_stack_list_create(Cob_stack_list** sl)
 {
-    malloc_safe((void**)sl, sizeof(Cob_stack_list));
+    Zinc_malloc_safe((void**)sl, sizeof(Cob_stack_list));
     Cob_stack_list_init(*sl);
 }
 

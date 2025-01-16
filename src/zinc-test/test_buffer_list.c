@@ -7,13 +7,13 @@ void test_buffer_list1()
     test_name(__func__ );
 
     struct Zinc_buffer_node* bn0 = NULL;
-    malloc_safe((void**)&bn0, sizeof(struct Zinc_buffer_node));
+    Zinc_malloc_safe((void**)&bn0, sizeof(struct Zinc_buffer_node));
     Zinc_string_node_init(bn0);
     Zinc_string_init(&bn0->value);
     Zinc_string_add_str(&bn0->value, "one");
 
     struct Zinc_buffer_node* bn1 = NULL;
-    malloc_safe((void**)&bn1, sizeof(struct Zinc_buffer_node));
+    Zinc_malloc_safe((void**)&bn1, sizeof(struct Zinc_buffer_node));
     Zinc_string_node_init(bn1);
     Zinc_string_init(&bn1->value);
     Zinc_string_add_str(&bn1->value, "two");

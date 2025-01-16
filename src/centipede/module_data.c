@@ -11,7 +11,7 @@ void Cent_module_init(Cent_module* mod)
 
 void Cent_module_create(Cent_module** mod)
 {
-    malloc_safe((void**)mod, sizeof(Cent_module));
+    Zinc_malloc_safe((void**)mod, sizeof(Cent_module));
     Cent_module_init(*mod);
 }
 

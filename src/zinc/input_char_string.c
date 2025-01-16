@@ -29,7 +29,7 @@ void Zinc_input_char_string_init(Zinc_input_char_string* input_string, Vector* t
 
 void Zinc_input_char_string_create(Zinc_input_char_string** input_string, Vector* text)
 {
-    malloc_safe((void**)input_string, sizeof(Zinc_input_char_string));
+    Zinc_malloc_safe((void**)input_string, sizeof(Zinc_input_char_string));
     Zinc_input_char_string_init(*input_string, text);
 }
 

@@ -14,7 +14,7 @@ void VectorInit(Vector* v, size_t value_size)
 
 void VectorCreate(Vector** v, size_t value_size)
 {
-    malloc_safe((void**)v, sizeof(Vector));
+    Zinc_malloc_safe((void**)v, sizeof(Vector));
     VectorInit(*v, value_size);
 }
 
@@ -37,9 +37,9 @@ void VectorExpand(Vector* v, size_t count)
             v->container_size = current_size + copy_size;
         }
         if (old_container_size == 0) {
-            malloc_safe(&v->buffer, v->container_size);
+            Zinc_malloc_safe(&v->buffer, v->container_size);
         } else {
-            realloc_safe(&v->buffer, v->container_size);
+            Zinc_realloc_safe(&v->buffer, v->container_size);
         }
     }
 }
@@ -76,14 +76,14 @@ void VectorDestroy(Vector* v)
 
 bool VectorMatch(Vector* a, Vector* b)
 {
-    return memory_match(
+    return Zinc_memory_match(
             a->buffer, a->count * a->value_size,
             b->buffer, b->count * b->value_size);
 }
 
 bool VectorMatchStr(Vector* a, const char b[])
 {
-    return memory_match(
+    return Zinc_memory_match(
             a->buffer, a->count * a->value_size,
             (u_int8_t *) b, strlen(b));
 }

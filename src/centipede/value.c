@@ -20,7 +20,7 @@ void Cent_value_init(Cent_value *value)
 
 void Cent_value_create(Cent_value **value)
 {
-    malloc_safe((void**)value, sizeof(Cent_value));
+    Zinc_malloc_safe((void**)value, sizeof(Cent_value));
     Cent_value_init(*value);
 }
 

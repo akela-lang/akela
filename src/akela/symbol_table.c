@@ -32,7 +32,7 @@ void Ake_symbol_table_add_reserved_word(struct Ake_environment* env, const char*
     Zinc_string_add_str(&bf, name);
 
     struct Ake_symbol* sym = NULL;
-    malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
+    Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
     Ake_symbol_init(sym);
     sym->type = Ake_symbol_type_reserved_word;
     sym->tk_type = tk_type;
@@ -50,7 +50,7 @@ void Ake_symbol_table_add_type(struct Ake_environment* env, const char* name, st
 	Zinc_string_add_str(&bf, name);
 
 	struct Ake_symbol* sym = NULL;
-	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
+	Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
 	Ake_symbol_init(sym);
     sym->type = Ake_symbol_type_type;
 	sym->td = td;
@@ -89,7 +89,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	struct Ake_type_def* td = NULL;
 
 	name = "i32";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
 	Zinc_string_add_str(&td->name, name);
@@ -98,7 +98,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "i64";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
 	Zinc_string_add_str(&td->name, name);
@@ -107,7 +107,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	Ake_symbol_table_add_type(env, name, td);
 
     name = "u8";
-    malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+    Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
     Ake_type_def_init(td);
     td->type = Ake_type_integer;
     Zinc_string_add_str(&td->name, name);
@@ -115,7 +115,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
     Ake_symbol_table_add_type(env, name, td);
 
     name = "u32";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
 	Zinc_string_add_str(&td->name, name);
@@ -123,7 +123,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "u64";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
 	Zinc_string_add_str(&td->name, name);
@@ -131,7 +131,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "f32";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_float;
 	Zinc_string_add_str(&td->name, name);
@@ -139,7 +139,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "f64";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_float;
 	Zinc_string_add_str(&td->name, name);
@@ -147,14 +147,14 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "bool";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_boolean;
 	Zinc_string_add_str(&td->name, name);
 	Ake_symbol_table_add_type(env, name, td);
 
     name = "Function";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_function;
 	Zinc_string_add_str(&td->name, name);
@@ -162,7 +162,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
     st->function_type_def = td;
 
 	name = "Module";
-	malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_module;
 	Zinc_string_add_str(&td->name, name);
@@ -202,7 +202,7 @@ void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
 void Ake_symbol_table_init(struct Ake_symbol_table* st)
 {
 	struct Ake_environment* env = NULL;
-	malloc_safe((void**)&env, sizeof(struct Ake_environment));
+	Zinc_malloc_safe((void**)&env, sizeof(struct Ake_environment));
 	Ake_environment_init(env, NULL);
 	st->top = env;
 	st->initial = env;
@@ -211,7 +211,7 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 	Ake_symbol_table_numeric_pool_init(st);
 
 	env = NULL;
-	malloc_safe((void**)&env, sizeof(struct Ake_environment));
+	Zinc_malloc_safe((void**)&env, sizeof(struct Ake_environment));
 	Ake_environment_init(env, st->top);
 	st->top = env;
 	st->global = env;
@@ -221,7 +221,7 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 
 void Ake_symbol_table_create(struct Ake_symbol_table** st)
 {
-    malloc_safe((void**)st, sizeof(struct Ake_symbol_table));
+    Zinc_malloc_safe((void**)st, sizeof(struct Ake_symbol_table));
     Ake_symbol_table_init(*st);
 }
 
@@ -516,7 +516,7 @@ void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environ
 void Ake_set_current_function(struct Ake_environment* env, Ake_ast* fd)
 {
 	struct Ake_symbol* sym = NULL;
-	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
+	Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
 	Ake_symbol_init(sym);
 	sym->type = Ake_symbol_type_info;
 	sym->root_ptr = fd;

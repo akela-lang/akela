@@ -16,7 +16,7 @@ void Zinc_string_init(struct Zinc_string* bf)
 
 void Zinc_string_create(struct Zinc_string** bf)
 {
-    malloc_safe((void*)bf, sizeof(struct Zinc_string));
+    Zinc_malloc_safe((void*)bf, sizeof(struct Zinc_string));
     Zinc_string_init(*bf);
 }
 
@@ -48,7 +48,7 @@ void Zinc_string_expand(struct Zinc_string* bf, size_t new_size)
             } else {
                 new_buf_size += BUFFER_CHUNK;
             }
-            realloc_safe((void**)&bf->buf, new_buf_size);
+            Zinc_realloc_safe((void**)&bf->buf, new_buf_size);
             bf->buf_size = new_buf_size;
         }
     }
@@ -66,9 +66,9 @@ void Zinc_string_add_char(struct Zinc_string* bf, char c)
 {
     if (bf->size + 1 > bf->buf_size) {
         if (bf->buf == NULL) {
-            malloc_safe((void**)&bf->buf, BUFFER_CHUNK);
+            Zinc_malloc_safe((void**)&bf->buf, BUFFER_CHUNK);
         } else {
-            realloc_safe((void**)&bf->buf, bf->buf_size + BUFFER_CHUNK);
+            Zinc_realloc_safe((void**)&bf->buf, bf->buf_size + BUFFER_CHUNK);
         }
         bf->buf_size += BUFFER_CHUNK;
     }
@@ -116,7 +116,7 @@ void Zinc_string_copy(struct Zinc_string* src, struct Zinc_string* dest)
 
 void Zinc_string_create_str(struct Zinc_string* bf, char** a)
 {
-    malloc_safe((void**)a, bf->size + 1);
+    Zinc_malloc_safe((void**)a, bf->size + 1);
     for (int i = 0; i < bf->size; i++) {
         (*a)[i] = bf->buf[i];
     }
@@ -253,7 +253,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
     size_t buf_size = BUFFER_CHUNK;
     int len;
 
-    malloc_safe((void**)&buf, buf_size);
+    Zinc_malloc_safe((void**)&buf, buf_size);
 
     char last_last_last = 0;
     char last_last = 0;
@@ -276,7 +276,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
@@ -289,7 +289,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
@@ -302,7 +302,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
@@ -315,7 +315,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
@@ -329,7 +329,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
@@ -347,7 +347,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
@@ -360,7 +360,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
@@ -373,7 +373,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
@@ -386,7 +386,7 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
                     break;
                 }
                 buf_size *= 2;
-                realloc_safe((void**)&buf, buf_size);
+                Zinc_realloc_safe((void**)&buf, buf_size);
             }
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);

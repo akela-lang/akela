@@ -11,7 +11,7 @@ void Cent_environment_init(Cent_environment* environment)
 
 void Cent_environment_create(Cent_environment** environment)
 {
-    malloc_safe((void**)environment, sizeof(Cent_environment));
+    Zinc_malloc_safe((void**)environment, sizeof(Cent_environment));
     Cent_environment_init(*environment);
 }
 

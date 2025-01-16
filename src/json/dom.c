@@ -44,7 +44,7 @@ void Json_dom_set_type(Json_dom* dom, Json_dom_type type)
 
 void Json_dom_create(Json_dom** dom)
 {
-    malloc_safe((void**)dom, sizeof(Json_dom));
+    Zinc_malloc_safe((void**)dom, sizeof(Json_dom));
     Json_dom_init(*dom);
 }
 

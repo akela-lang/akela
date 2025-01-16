@@ -4,10 +4,8 @@
 #include "result.h"
 #include <stdbool.h>
 
-/* dynamic-output buf */
-void malloc_safe(void** buf, size_t size)
+void Zinc_malloc_safe(void** buf, size_t size)
 {
-    /* allocate buf */
     *buf = malloc(size);
     if (*buf == NULL) {
         fprintf(stderr, "Out of memory\n");
@@ -15,11 +13,9 @@ void malloc_safe(void** buf, size_t size)
     }
 }
 
-/* dynamic-output buf */
-void realloc_safe(void** buf, size_t size)
+void Zinc_realloc_safe(void** buf, size_t size)
 {
     void* new_buf;
-    /* allocate buf */
     new_buf = realloc(*buf, size);
     if (new_buf == NULL) {
         fprintf(stderr, "Out of memory\n");
@@ -41,7 +37,7 @@ void free_safe(void* p)
  * @param b_size second array size
  * @return true if they memory_match, otherwise false
  */
-bool memory_match(const u_int8_t a[], size_t a_size, const u_int8_t b[], size_t b_size)
+bool Zinc_memory_match(const u_int8_t a[], size_t a_size, const u_int8_t b[], size_t b_size)
 {
     if (a_size != b_size) {
         return false;

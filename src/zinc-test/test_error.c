@@ -9,7 +9,7 @@ void test_error_list()
     test_name(__func__);
 
     struct Zinc_error* e = NULL;
-    malloc_safe((void**)&e, sizeof(struct Zinc_error));
+    Zinc_malloc_safe((void**)&e, sizeof(struct Zinc_error));
     Zinc_error_init(e);
 
     struct Zinc_error_list el;

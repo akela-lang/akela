@@ -11,7 +11,7 @@ void Ake_struct_element_init(Ake_struct_element* se)
 
 void Ake_struct_element_create(Ake_struct_element** se)
 {
-    malloc_safe((void**)se, sizeof(Ake_struct_element));
+    Zinc_malloc_safe((void**)se, sizeof(Ake_struct_element));
     Ake_struct_element_init(*se);
 }
 

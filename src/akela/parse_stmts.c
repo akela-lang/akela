@@ -187,7 +187,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
                 n->type = Ake_ast_type_error;
             } else {
                 struct Ake_symbol *new_sym = NULL;
-                malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
+                Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
                 Ake_symbol_init(new_sym);
                 new_sym->type = Ake_symbol_type_variable;
                 new_sym->tu = Ake_type_use_clone(n->tu);
@@ -556,7 +556,7 @@ Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
 			tu->td = sym->td;
 
 			struct Ake_symbol* new_sym = NULL;
-			malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
+			Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
 			Ake_symbol_init(new_sym);
 			new_sym->tk_type = Ake_token_id;
 			new_sym->tu = tu;
@@ -639,14 +639,14 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 		} else {
 			Ake_ast* tu = Ake_ast_clone(n);
 			struct Ake_type_def* td = NULL;
-			malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+			Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 			Ake_type_def_init(td);
 			td->type = Ake_type_struct;
 			Zinc_string_copy(&id->value, &td->name);
 			td->composite = tu;
 
 			struct Ake_symbol* sym = NULL;
-			malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
+			Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
 			Ake_symbol_init(sym);
 			sym->type = Ake_symbol_type_type;
 			sym->td = td;

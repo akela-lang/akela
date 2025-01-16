@@ -15,7 +15,7 @@ void Cent_element_init(Cent_element_type* et)
 
 void Cent_element_create(Cent_element_type** et)
 {
-    malloc_safe((void**)et, sizeof(Cent_element_type));
+    Zinc_malloc_safe((void**)et, sizeof(Cent_element_type));
     Cent_element_init(*et);
 }
 
@@ -81,7 +81,7 @@ void Cent_property_type_init(Cent_property_type* pt)
 
 void Cent_property_type_create(Cent_property_type** pt)
 {
-    malloc_safe((void**)pt, sizeof(Cent_property_type));
+    Zinc_malloc_safe((void**)pt, sizeof(Cent_property_type));
     Cent_property_type_init(*pt);
 }
 
@@ -119,7 +119,7 @@ void Cent_types_node_init(Cent_types_node* node)
 
 void Cent_types_node_create(Cent_types_node** node)
 {
-    malloc_safe((void**)node, sizeof(Cent_types_node));
+    Zinc_malloc_safe((void**)node, sizeof(Cent_types_node));
     Cent_types_node_init(*node);
 }
 
@@ -143,7 +143,7 @@ void Cent_types_list_init(Cent_types_list* list)
 
 void Cent_types_list_create(Cent_types_list** list)
 {
-    malloc_safe((void**)list, sizeof(Cent_types_list));
+    Zinc_malloc_safe((void**)list, sizeof(Cent_types_list));
     Cent_types_list_init(*list);
 }
 

@@ -18,7 +18,7 @@ void lex_setup(char* line, struct Ake_lex_state* ls, struct Zinc_error_list* el)
 	Zinc_error_list_init(el);
 
 	struct Ake_symbol_table* st = NULL;
-	malloc_safe((void**)&st, sizeof(struct Ake_symbol_table));
+	Zinc_malloc_safe((void**)&st, sizeof(struct Ake_symbol_table));
 	Ake_symbol_table_init(st);
 
     Ake_lex_state_init(ls, input_string, input_string->input_vtable, el, st);

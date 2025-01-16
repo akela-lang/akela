@@ -17,7 +17,7 @@ void Zinc_list_init(Zinc_list* l)
 
 void Zinc_list_create(Zinc_list** l)
 {
-    malloc_safe((void**)l, sizeof(Zinc_list));
+    Zinc_malloc_safe((void**)l, sizeof(Zinc_list));
     Zinc_list_init(*l);
 }
 
@@ -35,7 +35,7 @@ void Zinc_list_add(Zinc_list* l, Zinc_list_node* ln)
 void Zinc_list_add_item(Zinc_list* l, void* item)
 {
     Zinc_list_node* ln = NULL;
-    malloc_safe((void**)&ln, sizeof(Zinc_list_node));
+    Zinc_malloc_safe((void**)&ln, sizeof(Zinc_list_node));
     Zinc_list_node_init(ln);
     ln->item = item;
     Zinc_list_add(l, ln);

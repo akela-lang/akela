@@ -15,7 +15,7 @@ void CSVParseDataInit(struct CSVParseData* parse_data)
 
 void CSVParseDataCreate(struct CSVParseData** parse_data)
 {
-    malloc_safe((void**)parse_data, sizeof(struct CSVParseData));
+    Zinc_malloc_safe((void**)parse_data, sizeof(struct CSVParseData));
     CSVParseDataInit(*parse_data);
 }
 
@@ -28,7 +28,7 @@ void CSVParseOutputInit(struct CSVParseOutput* parse_output)
 
 void CSVParseOutputCreate(struct CSVParseOutput** parse_output)
 {
-    malloc_safe((void**)parse_output, sizeof(struct CSVParseOutput));
+    Zinc_malloc_safe((void**)parse_output, sizeof(struct CSVParseOutput));
     CSVParseOutputInit(*parse_output);
 }
 

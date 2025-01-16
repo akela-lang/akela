@@ -15,7 +15,7 @@ Cob_token* Cob_lex(void* input_obj, Zinc_input_unicode_vtable *input_vtable)
     }
 
     Cob_token* t = NULL;
-    malloc_safe((void**)&t, sizeof(Cob_token));
+    Zinc_malloc_safe((void**)&t, sizeof(Cob_token));
     Cob_token_init(t);
     t->type = Cob_token_classify(c, num, done);
     for (int i = 0; i < num; i++) {

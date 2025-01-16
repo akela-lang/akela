@@ -27,7 +27,7 @@ void Cent_parse_data_create(
     String_slice file_name,
     Cent_environment* base)
 {
-    malloc_safe((void**)pd, sizeof(Cent_parse_data));
+    Zinc_malloc_safe((void**)pd, sizeof(Cent_parse_data));
     Cent_parse_data_init(*pd, errors, ld, file_name, base);
 }
 
@@ -40,6 +40,6 @@ void Cent_parse_result_init(Cent_parse_result *pr, struct Zinc_error_list* error
 
 void Cent_parse_result_create(Cent_parse_result **pr, struct Zinc_error_list* errors)
 {
-    malloc_safe((void**)pr, sizeof(Cent_parse_result));
+    Zinc_malloc_safe((void**)pr, sizeof(Cent_parse_result));
     Cent_parse_result_init(*pr, errors);
 }

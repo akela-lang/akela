@@ -8,7 +8,7 @@
 
 void Ake_ast_create(Ake_ast** n)
 {
-	malloc_safe((void**)n, sizeof(Ake_ast));
+	Zinc_malloc_safe((void**)n, sizeof(Ake_ast));
 	Ake_ast_init(*n);
 }
 

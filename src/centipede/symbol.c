@@ -11,7 +11,7 @@ void Cent_symbol_init(Cent_symbol *sym)
 
 void Cent_symbol_create(Cent_symbol** sym)
 {
-    malloc_safe((void**)sym, sizeof(Cent_symbol));
+    Zinc_malloc_safe((void**)sym, sizeof(Cent_symbol));
     Cent_symbol_init(*sym);
 }
 
@@ -104,7 +104,7 @@ void Cent_symbol_copy_shallow(Cent_symbol *src, Cent_symbol *dest)
 Cent_symbol* Cent_symbol_clone_shallow(Cent_symbol *sym)
 {
     Cent_symbol *new_sym = NULL;
-    malloc_safe((void**)&new_sym, sizeof(Cent_symbol));
+    Zinc_malloc_safe((void**)&new_sym, sizeof(Cent_symbol));
     Cent_symbol_copy_shallow(sym, new_sym);
     return new_sym;
 }

@@ -36,7 +36,7 @@ void Cent_lex_data_create(
     void* input,
     Zinc_input_unicode_vtable* input_vtable)
 {
-    malloc_safe((void**)ld, sizeof(Cent_lex_data));
+    Zinc_malloc_safe((void**)ld, sizeof(Cent_lex_data));
     Cent_lex_data_init(*ld, errors, input, input_vtable);
 }
 
@@ -52,7 +52,7 @@ void Cent_lex_data_destroy(Cent_lex_data* ld)
 void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type type)
 {
     Cent_token_type* p = NULL;
-    malloc_safe((void**)&p, sizeof(Cent_token_type));
+    Zinc_malloc_safe((void**)&p, sizeof(Cent_token_type));
     *p = type;
     Zinc_hash_map_string_add_str(&ld->reserved, word, p);
 }
@@ -65,7 +65,7 @@ Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, struct Zinc_strin
 void Cent_lex_add_builtin(Cent_lex_data* ld, char* name, Cent_builtin_type type)
 {
     Cent_builtin_type* bt = NULL;
-    malloc_safe((void**)&bt, sizeof(Cent_builtin_type));
+    Zinc_malloc_safe((void**)&bt, sizeof(Cent_builtin_type));
     *bt = type;
     Zinc_hash_map_string_add_str(&ld->builtin, name, bt);
 }

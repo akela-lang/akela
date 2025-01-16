@@ -72,7 +72,7 @@ int Ake_token_list_count(struct Ake_token_list* tl)
 
 void Ake_token_list_make(struct Ake_token_list** tl)
 {
-    malloc_safe((void**)tl, sizeof(**tl));
+    Zinc_malloc_safe((void**)tl, sizeof(**tl));
     Ake_token_list_init(*tl);
 }
 

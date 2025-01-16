@@ -28,7 +28,7 @@ void Zinc_hash_map_size_t_list_destroy(Zinc_hash_map_size_t_list* list)
 void Zinc_hash_map_size_t_init(Zinc_hash_map_size_t* set, size_t bucket_count)
 {
     set->bucket_count = bucket_count;
-    malloc_safe((void**)&set->buckets, sizeof(Zinc_hash_map_size_t_list) * bucket_count);
+    Zinc_malloc_safe((void**)&set->buckets, sizeof(Zinc_hash_map_size_t_list) * bucket_count);
 
     for (int i = 0; i < bucket_count; i++) {
         Zinc_hash_map_size_t_list_init(&set->buckets[i]);
@@ -37,7 +37,7 @@ void Zinc_hash_map_size_t_init(Zinc_hash_map_size_t* set, size_t bucket_count)
 
 void Zinc_hash_map_size_t_create(Zinc_hash_map_size_t** set, size_t bucket_count)
 {
-    malloc_safe((void**)set, sizeof(Zinc_hash_map_size_t));
+    Zinc_malloc_safe((void**)set, sizeof(Zinc_hash_map_size_t));
     Zinc_hash_map_size_t_init(*set, bucket_count);
 }
 
@@ -76,7 +76,7 @@ void Zinc_hash_map_size_t_add(Zinc_hash_map_size_t* set, size_t value, void* ite
 
     if (!found) {
         Zinc_hash_map_size_t_entry* entry = NULL;
-        malloc_safe((void**)&entry, sizeof(Zinc_hash_map_size_t_entry));
+        Zinc_malloc_safe((void**)&entry, sizeof(Zinc_hash_map_size_t_entry));
         Zinc_hash_map_size_t_entry_init(entry);
         entry->value = value;
         entry->item = item;

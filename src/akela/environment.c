@@ -12,7 +12,7 @@ void Ake_environment_init(struct Ake_environment* env, struct Ake_environment* p
 
 void Ake_environment_create(struct Ake_environment** env, struct Ake_environment* p)
 {
-    malloc_safe((void**)env, sizeof(struct Ake_environment));
+    Zinc_malloc_safe((void**)env, sizeof(struct Ake_environment));
     Ake_environment_init(*env, p);
 }
 

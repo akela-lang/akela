@@ -24,7 +24,7 @@ void Zinc_error_init(Zinc_error* e)
 
 void Zinc_error_create(Zinc_error** e)
 {
-    malloc_safe((void**)e, sizeof(Zinc_error));
+    Zinc_malloc_safe((void**)e, sizeof(Zinc_error));
     Zinc_error_init(*e);
 }
 
@@ -41,7 +41,7 @@ void Zinc_error_list_init(Zinc_error_list* el)
 
 void Zinc_error_list_create(Zinc_error_list** el)
 {
-    malloc_safe((void**)el, sizeof(Zinc_error_list));
+    Zinc_malloc_safe((void**)el, sizeof(Zinc_error_list));
     Zinc_error_list_init(*el);
 }
 
@@ -175,7 +175,7 @@ void Zinc_error_list_print(Zinc_error_list* el)
 
 void Zinc_location_create(Zinc_location** loc)
 {
-    malloc_safe((void**)loc, sizeof(Zinc_location));
+    Zinc_malloc_safe((void**)loc, sizeof(Zinc_location));
     Zinc_location_init(*loc);
 }
 

@@ -63,7 +63,7 @@ void Zinc_hash_map_string_init(struct Zinc_hash_table* ht, unsigned int size)
 {
     ht->size = size;
 
-    malloc_safe((void**)&ht->buckets, sizeof(struct Zinc_hash_map_string_list) * size);
+    Zinc_malloc_safe((void**)&ht->buckets, sizeof(struct Zinc_hash_map_string_list) * size);
 
     for (int i = 0; i < size; i++) {
         Zinc_hash_map_string_list_init(&ht->buckets[i]);
@@ -72,7 +72,7 @@ void Zinc_hash_map_string_init(struct Zinc_hash_table* ht, unsigned int size)
 
 void Zinc_hash_map_string_create(struct Zinc_hash_table** ht, unsigned int size)
 {
-    malloc_safe((void**)ht, sizeof(struct Zinc_hash_table));
+    Zinc_malloc_safe((void**)ht, sizeof(struct Zinc_hash_table));
     Zinc_hash_map_string_init(*ht, size);
 }
 
@@ -114,7 +114,7 @@ void Zinc_hash_map_string_add(struct Zinc_hash_table* ht, struct Zinc_string* va
     unsigned int val = Zinc_hash_calc_string(value, ht->size);
 
     struct Zinc_hash_map_string_entry* ent;
-    malloc_safe((void**)&ent, sizeof(struct Zinc_hash_map_string_entry));
+    Zinc_malloc_safe((void**)&ent, sizeof(struct Zinc_hash_map_string_entry));
     Zinc_hash_map_string_entry_init(ent);
     ent->item = item;
 
@@ -138,7 +138,7 @@ void Zinc_hash_map_string_add_str(struct Zinc_hash_table* ht, char* str, void* i
     unsigned int val = Zinc_hash_calc_str(str, ht->size);
 
     struct Zinc_hash_map_string_entry* ent;
-    malloc_safe((void**)&ent, sizeof(struct Zinc_hash_map_string_entry));
+    Zinc_malloc_safe((void**)&ent, sizeof(struct Zinc_hash_map_string_entry));
     Zinc_hash_map_string_entry_init(ent);
     ent->item = item;
 

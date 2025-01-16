@@ -22,7 +22,7 @@ void Zinc_string_list_init(Zinc_string_list *bl)
 
 void Zinc_string_list_create(Zinc_string_list** bl)
 {
-    malloc_safe((void**)bl, sizeof(Zinc_string_list));
+    Zinc_malloc_safe((void**)bl, sizeof(Zinc_string_list));
     Zinc_string_list_init(*bl);
 }
 
@@ -55,7 +55,7 @@ void Zinc_string_list_add(Zinc_string_list* bl, Zinc_buffer_node* bn)
 void Zinc_string_list_add_str(Zinc_string_list* bl, const char* str)
 {
     Zinc_buffer_node* bn = NULL;
-    malloc_safe((void**)&bn, sizeof(Zinc_buffer_node));
+    Zinc_malloc_safe((void**)&bn, sizeof(Zinc_buffer_node));
     Zinc_string_node_init(bn);
     Zinc_string_add_str(&bn->value, str);
     Zinc_string_list_add(bl, bn);
@@ -64,7 +64,7 @@ void Zinc_string_list_add_str(Zinc_string_list* bl, const char* str)
 void Zinc_string_list_add_bf(Zinc_string_list* bl, Zinc_string* bf)
 {
     Zinc_buffer_node* bn = NULL;
-    malloc_safe((void**)&bn, sizeof(Zinc_buffer_node));
+    Zinc_malloc_safe((void**)&bn, sizeof(Zinc_buffer_node));
     Zinc_string_node_init(bn);
     Zinc_string_copy(bf, &bn->value);
     Zinc_string_list_add(bl, bn);

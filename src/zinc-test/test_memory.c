@@ -9,7 +9,7 @@ void test_memory_malloc()
 
 	char* p = NULL;
 
-	malloc_safe((void**)&p, 10);
+	Zinc_malloc_safe((void**)&p, 10);
 
 	for (int i = 0; i < 10; i++) {
 		p[i] = 0;

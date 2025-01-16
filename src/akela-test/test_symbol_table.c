@@ -9,7 +9,7 @@ void test_symbol_table_env()
 
 	struct Ake_environment* env;
 
-	malloc_safe((void**)&env, sizeof(struct Ake_environment));
+	Zinc_malloc_safe((void**)&env, sizeof(struct Ake_environment));
 	Ake_environment_init(env, NULL);
 
 	struct Zinc_string value;
@@ -18,7 +18,7 @@ void test_symbol_table_env()
 	Zinc_string_add_str(&value, "index");
 
 	struct Ake_symbol* sym;
-	malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
+	Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
 	Ake_symbol_init(sym);
 	sym->type = Ake_symbol_type_variable;
 

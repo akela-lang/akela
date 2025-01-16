@@ -146,7 +146,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
                     /* test case: test_parse_function_error_identifier_reserved */
                 } else {
                     struct Ake_symbol* new_sym = NULL;
-                    malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
+                    Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
                     Ake_symbol_init(new_sym);
                     new_sym->type = Ake_symbol_type_variable;
                     new_sym->tu = Ake_type_use_clone(tu);

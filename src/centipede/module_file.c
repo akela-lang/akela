@@ -26,7 +26,7 @@ void Cent_module_file_init(Cent_module_file *mf, struct Zinc_string* dir_path)
 
 void Cent_module_file_create(Cent_module_file** mf, struct Zinc_string* dir_path)
 {
-    malloc_safe((void**)mf, sizeof(struct Cent_module_file));
+    Zinc_malloc_safe((void**)mf, sizeof(struct Cent_module_file));
     Cent_module_file_init(*mf, dir_path);
 }
 

@@ -16,7 +16,7 @@ void SeriesInit(Series* s)
 
 void SeriesCreate(Series** s)
 {
-    malloc_safe((void**)s, sizeof(Series));
+    Zinc_malloc_safe((void**)s, sizeof(Series));
     SeriesInit(*s);
 }
 

@@ -599,7 +599,7 @@ void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, 
             /* test case: test_parse_types_reserved_type */
         } else {
             struct Ake_symbol* new_sym = NULL;
-            malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
+            Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
             Ake_symbol_init(new_sym);
             new_sym->type = Ake_symbol_type_variable;
             new_sym->tu = Ake_type_use_clone(type_node->tu);

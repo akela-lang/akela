@@ -23,7 +23,7 @@ void test_comp_table_compile()
     Zinc_input_unicode_string_create(&input, text);
 
 	struct Ake_comp_unit* cu = NULL;
-	malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
+	Zinc_malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu);
 	Zinc_string_add_str2("|main|", &cu->path);
 
@@ -64,7 +64,7 @@ void test_comp_table_include()
     Zinc_input_unicode_string_create(&base_input, base_text);
 
 	struct Ake_comp_unit* cu_base = NULL;
-	malloc_safe((void**)&cu_base, sizeof(struct Ake_comp_unit));
+	Zinc_malloc_safe((void**)&cu_base, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu_base);
 	Zinc_string_add_str2("|base|", &cu_base->path);
 	Ake_comp_table_put(&ct, &cu_base->path, cu_base);
@@ -85,7 +85,7 @@ void test_comp_table_include()
     Zinc_input_unicode_string_create(&main_input, main_vector);
 
 	struct Ake_comp_unit* cu_main = NULL;
-	malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
+	Zinc_malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu_main);
 	Zinc_string_add_str2("|main|", &cu_main->path);
 	Ake_comp_table_put(&ct, &cu_main->path, cu_main);
@@ -145,7 +145,7 @@ void test_comp_table_include_base()
     Zinc_input_unicode_string_create(&input, main_vector);
 
 	struct Ake_comp_unit* cu_main = NULL;
-	malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
+	Zinc_malloc_safe((void**)&cu_main, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu_main);
 	Zinc_string_add_str2("|main|", &cu_main->path);
 	Ake_comp_table_put(&ct, &cu_main->path, cu_main);

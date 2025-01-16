@@ -21,7 +21,7 @@ void Cent_comp_table_create(
     Cent_module_vtable* module_finder_vtable,
     Cent_environment* base)
 {
-    malloc_safe((void**)ct, sizeof(Cent_comp_table));
+    Zinc_malloc_safe((void**)ct, sizeof(Cent_comp_table));
     Cent_comp_table_init(*ct, module_finder_obj, module_finder_vtable, base);
 }
 

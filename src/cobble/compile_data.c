@@ -21,7 +21,7 @@ void Cob_compile_data_create(
     Zinc_input_unicode_vtable* input_vtable,
     struct Zinc_error_list* el)
 {
-    malloc_safe((void**)cd, sizeof(Cob_compile_data));
+    Zinc_malloc_safe((void**)cd, sizeof(Cob_compile_data));
     Cob_compile_data_init(*cd, input_obj, input_vtable, el);
 }
 
@@ -38,7 +38,7 @@ void Cob_re_init(Cob_re* re, struct Zinc_error_list* el, Cob_ast* root)
 
 void Cob_re_reeate(Cob_re** re, struct Zinc_error_list* el, Cob_ast* root)
 {
-    malloc_safe((void**)re, sizeof(Cob_re));
+    Zinc_malloc_safe((void**)re, sizeof(Cob_re));
     Cob_re_init(*re, el, root);
 }
 

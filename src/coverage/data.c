@@ -16,7 +16,7 @@ void Cover_file_init(Cover_file *file)
 
 void Cover_file_create(Cover_file **file)
 {
-    malloc_safe((void**)file, sizeof(Cover_file));
+    Zinc_malloc_safe((void**)file, sizeof(Cover_file));
     Cover_file_init(*file);
 }
 
@@ -35,7 +35,7 @@ void Cover_file_list_init(Cover_file_list *list)
 
 void Cover_file_list_create(Cover_file_list **list)
 {
-    malloc_safe((void**)list, sizeof(Cover_file_list));
+    Zinc_malloc_safe((void**)list, sizeof(Cover_file_list));
     Cover_file_list_init(*list);
 }
 
@@ -110,7 +110,7 @@ void Cover_library_init(Cover_library *lib)
 
 void Cover_library_create(Cover_library **lib)
 {
-    malloc_safe((void**)lib, sizeof(Cover_library));
+    Zinc_malloc_safe((void**)lib, sizeof(Cover_library));
     Cover_library_init(*lib);
 }
 
@@ -129,7 +129,7 @@ void Cover_library_list_init(Cover_library_list *list)
 
 void Cover_library_list_create(Cover_library_list **list)
 {
-    malloc_safe((void**)list, sizeof(Cover_library_list));
+    Zinc_malloc_safe((void**)list, sizeof(Cover_library_list));
     Cover_library_list_init(*list);
 }
 
@@ -201,7 +201,7 @@ void Cover_app_init(Cover_app *app)
 
 void Cover_app_create(Cover_app **app)
 {
-    malloc_safe((void**)app, sizeof(Cover_app));
+    Zinc_malloc_safe((void**)app, sizeof(Cover_app));
     Cover_app_init(*app);
 }
 

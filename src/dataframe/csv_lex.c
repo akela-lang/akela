@@ -20,7 +20,7 @@ void CSVTokenInit(struct CSVToken* token)
 
 void CSVTokenCreate(struct CSVToken** token)
 {
-    malloc_safe((void**)token, sizeof(struct CSVToken));
+    Zinc_malloc_safe((void**)token, sizeof(struct CSVToken));
     CSVTokenInit(*token);
 }
 
@@ -39,7 +39,7 @@ void CSVLexDataInit(struct CSVLexData* lex_data)
 
 void CSVLexDataCreate(struct CSVLexData** lex_data)
 {
-    malloc_safe((void**)lex_data, sizeof(struct CSVLexData));
+    Zinc_malloc_safe((void**)lex_data, sizeof(struct CSVLexData));
     CSVLexDataInit(*lex_data);
 }
 

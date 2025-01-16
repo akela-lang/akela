@@ -14,7 +14,7 @@ void Json_parse_data_init(Json_parse_data* pd, struct Zinc_error_list* el, Json_
 
 void Json_parse_data_create(Json_parse_data** pd, struct Zinc_error_list* el, Json_lex_data* ld)
 {
-    malloc_safe((void**)pd, sizeof(Json_parse_data));
+    Zinc_malloc_safe((void**)pd, sizeof(Json_parse_data));
     Json_parse_data_init(*pd, el, ld);
 }
 

@@ -18,7 +18,7 @@ void Ake_symbol_init(struct Ake_symbol* sym)
 
 void Ake_symbol_create(struct Ake_symbol** sym)
 {
-    malloc_safe((void**)sym, sizeof(struct Ake_symbol));
+    Zinc_malloc_safe((void**)sym, sizeof(struct Ake_symbol));
     Ake_symbol_init(*sym);
 }
 
@@ -26,7 +26,7 @@ struct Ake_symbol* Ake_symbol_copy(struct Ake_symbol* sym)
 {
     struct Ake_symbol* new_sym = NULL;
     if (sym) {
-        malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
+        Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
         Ake_symbol_init(new_sym);
         new_sym->type = sym->type;
         new_sym->tk_type = sym->tk_type;

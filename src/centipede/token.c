@@ -12,7 +12,7 @@ void Cent_token_init(Cent_token *t)
 
 void Cent_token_create(Cent_token **t)
 {
-    malloc_safe((void**)t, sizeof(Cent_token));
+    Zinc_malloc_safe((void**)t, sizeof(Cent_token));
     Cent_token_init(*t);
 }
 

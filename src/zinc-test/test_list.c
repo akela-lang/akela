@@ -15,17 +15,17 @@ void test_list_1()
     Zinc_list_init(&l);
 
     int* n0 = NULL;
-    malloc_safe((void**)&n0, sizeof(int));
+    Zinc_malloc_safe((void**)&n0, sizeof(int));
     *n0 = 0;
     Zinc_list_add_item(&l, n0);
 
     int* n1 = NULL;
-    malloc_safe((void**)&n1, sizeof(int));
+    Zinc_malloc_safe((void**)&n1, sizeof(int));
     *n1 = 1;
     Zinc_list_add_item(&l, n1);
 
     int* n2 = NULL;
-    malloc_safe((void**)&n2, sizeof(int));
+    Zinc_malloc_safe((void**)&n2, sizeof(int));
     *n2 = 2;
     Zinc_list_add_item(&l, n2);
 

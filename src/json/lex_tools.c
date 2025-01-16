@@ -25,7 +25,7 @@ void Json_lex_data_create(
     void* input_obj,
     Zinc_input_unicode_vtable* input_vtable)
 {
-    malloc_safe((void**)ld, sizeof(Json_lex_data));
+    Zinc_malloc_safe((void**)ld, sizeof(Json_lex_data));
     Json_lex_data_init(*ld, el, input_obj, input_vtable);
 }
 

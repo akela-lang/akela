@@ -33,7 +33,7 @@ void Cent_comp_unit_create(
     Cent_module_vtable* module_finder_vtable,
     Cent_environment* base)
 {
-    malloc_safe((void**)cu, sizeof(Cent_comp_unit));
+    Zinc_malloc_safe((void**)cu, sizeof(Cent_comp_unit));
     Cent_comp_unit_init(
         *cu,
         input,

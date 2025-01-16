@@ -646,7 +646,7 @@ bool Ake_lex(struct Ake_lex_state* ls, struct Ake_token** t)
     struct Ake_token* tf;
     bool done = false;
 
-    malloc_safe((void**)&tf, sizeof(struct Ake_token));
+    Zinc_malloc_safe((void**)&tf, sizeof(struct Ake_token));
     Ake_token_init(tf);
 
     valid = Ake_lex_start(ls, &state, &done, tf);

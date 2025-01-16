@@ -29,7 +29,7 @@ void test_os_unix_get_temp_file()
     assert_ptr(fp, "ptr fp");
 
     char* out = NULL;
-    malloc_safe((void**)&out, count + 1);
+    Zinc_malloc_safe((void**)&out, count + 1);
     memset(out, 0, count + 1);
     n = fread(out, 1, count, fp);
 

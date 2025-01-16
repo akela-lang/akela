@@ -276,7 +276,7 @@ enum result get_exe_path(char** path)
     enum result r = result_ok;
     int buf_size = 1024;
 
-    malloc_safe((void**)path, buf_size+1);
+    Zinc_malloc_safe((void**)path, buf_size+1);
 
     size_t size = readlink("/proc/self/exe", *path, buf_size);
     if (size == -1) {

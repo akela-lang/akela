@@ -11,7 +11,7 @@ void Json_token_init(Json_token* t)
 
 void Json_token_create(Json_token** t)
 {
-    malloc_safe((void**)t, sizeof(Json_token));
+    Zinc_malloc_safe((void**)t, sizeof(Json_token));
     Json_token_init(*t);
 }
 

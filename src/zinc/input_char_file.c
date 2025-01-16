@@ -29,7 +29,7 @@ void Zinc_input_char_file_init(Zinc_input_char_file* input, FILE* fp)
 
 void Zinc_input_char_file_create(Zinc_input_char_file** input, FILE* fp)
 {
-    malloc_safe((void**)input, sizeof(Zinc_input_char_file));
+    Zinc_malloc_safe((void**)input, sizeof(Zinc_input_char_file));
     Zinc_input_char_file_init(*input, fp);
 }
 

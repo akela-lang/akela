@@ -14,7 +14,7 @@ void DataFrameInit(DataFrame* df)
 
 void DataFrameCreate(DataFrame** df)
 {
-    malloc_safe((void**)df, sizeof(DataFrame));
+    Zinc_malloc_safe((void**)df, sizeof(DataFrame));
     DataFrameInit(*df);
 }
 

@@ -27,7 +27,7 @@ void FieldLexDataInit(struct FieldLexData* lex_data)
 
 void FieldLexDataCreate(struct FieldLexData** lex_data)
 {
-    malloc_safe((void**)lex_data, sizeof(struct FieldLexData));
+    Zinc_malloc_safe((void**)lex_data, sizeof(struct FieldLexData));
     FieldLexDataInit(*lex_data);
 }
 

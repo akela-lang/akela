@@ -13,10 +13,10 @@ void setup_compile(Cob_compile_data** cd, const char* s)
     Zinc_input_unicode_string_create(&input, text);
 
     struct Zinc_error_list* el = NULL;
-    malloc_safe((void**)&el, sizeof(struct Zinc_error_list));
+    Zinc_malloc_safe((void**)&el, sizeof(struct Zinc_error_list));
     Zinc_error_list_init(el);
 
-    malloc_safe((void**)cd, sizeof(struct Cob_compile_data));
+    Zinc_malloc_safe((void**)cd, sizeof(struct Cob_compile_data));
     Cob_compile_data_init(*cd, input, input->input_vtable, el);
 }
 

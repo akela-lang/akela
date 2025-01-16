@@ -23,7 +23,7 @@ void Cent_ast_init(Cent_ast *ast)
 
 void Cent_ast_create(Cent_ast **ast)
 {
-    malloc_safe((void**)ast, sizeof(Cent_ast));
+    Zinc_malloc_safe((void**)ast, sizeof(Cent_ast));
     Cent_ast_init(*ast);
 }
 

@@ -7,7 +7,7 @@
 
 void Ake_type_def_create(struct Ake_type_def** n)
 {
-	malloc_safe((void**)n, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)n, sizeof(struct Ake_type_def));
 	Ake_type_def_init(*n);
 }
 

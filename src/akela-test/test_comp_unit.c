@@ -15,7 +15,7 @@ void test_comp_unit_compile()
     Zinc_input_unicode_string_create(&input, text);
 
 	struct Ake_comp_unit* cu = NULL;
-	malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
+	Zinc_malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu);
 
 	bool valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
