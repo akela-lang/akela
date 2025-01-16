@@ -12,7 +12,7 @@
  * @param loc location of character
  * @return true if done, otherwise false
  */
-typedef enum result (*Zinc_input_unicode_next_interface)(
+typedef enum Zinc_result (*Zinc_input_unicode_next_interface)(
         void*,
         char[4],
         int*,
@@ -54,7 +54,7 @@ typedef struct {
 } Zinc_input_unicode_vtable;
 
 Zinc_location* Zinc_input_unicode_location(void* input_obj, Zinc_input_unicode_vtable* input_vtable);
-enum result Zinc_input_unicode_next(void* input_obj,
+enum Zinc_result Zinc_input_unicode_next(void* input_obj,
                       Zinc_input_unicode_vtable* input_vtable,
                       char c[4],
                       int* num,

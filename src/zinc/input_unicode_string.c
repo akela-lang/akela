@@ -51,14 +51,14 @@ void Zinc_input_unicode_string_clear(Zinc_input_unicode_string* data)
  * @param done stream is done
  * @return result
  */
-enum result Zinc_input_unicode_string_next(
+enum Zinc_result Zinc_input_unicode_string_next(
         Zinc_input_unicode_string* data,
         char c[4],
         int* num,
         Zinc_location* loc,
         bool* done)
 {
-    enum result r = result_ok;
+    enum Zinc_result r = Zinc_result_ok;
 
     if (data->loc.line == 0) {
         Zinc_input_unicode_string_clear(data);
@@ -92,11 +92,11 @@ enum result Zinc_input_unicode_string_next(
                 c[i] = VECTOR_CHAR(data->text, data->pos++);
                 data->loc.start_pos++;
                 if (!IS_EXTRA_BYTE(c[i])) {
-                    r = set_error("invalid utf8 trailing byte");
+                    r = Zinc_set_error("invalid utf8 trailing byte");
                 }
             } else {
                 *done = true;
-                r = set_error("EOF before utf8 trailing byte(s)");
+                r = Zinc_set_error("EOF before utf8 trailing byte(s)");
                 break;
             }
         }

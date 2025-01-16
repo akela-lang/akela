@@ -35,14 +35,14 @@ void Ake_comp_table_destroy(struct Ake_comp_table* ct)
 bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struct Ake_comp_unit** cu_base)
 {
 	bool valid = true;
-    enum result r;
+    enum Zinc_result r;
 	char* path = NULL;
 
     struct Zinc_location loc;
     Zinc_location_init(&loc);
 
 	r = Zinc_get_exe_path(&path);
-    if (r == result_error) {
+    if (r == Zinc_result_error) {
         valid = Zinc_error_list_set(&cu->el, &loc, "could not get executable path");
     }
 

@@ -43,9 +43,9 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
     bool done;
 
     while (true) {
-        enum result r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
-        if (r == result_error) {
-            Zinc_error_list_set(jld->el, &loc, error_message);
+        enum Zinc_result r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        if (r == Zinc_result_error) {
+            Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
             continue;
         }
 
@@ -159,9 +159,9 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
     bool done;
 
     while (true) {
-        enum result r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
-        if (r == result_error) {
-            Zinc_error_list_set(jld->el, &loc, error_message);
+        enum Zinc_result r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
+        if (r == Zinc_result_error) {
+            Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
             continue;
         }
 
@@ -194,14 +194,14 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
 
 void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
 {
-    enum result r;
+    enum Zinc_result r;
     char c[4];
     int num;
     struct Zinc_location loc;
     bool done;
     r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
-    if (r == result_error) {
-        Zinc_error_list_set(jld->el, &loc, error_message);
+    if (r == Zinc_result_error) {
+        Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
         return;
     }
 
@@ -273,7 +273,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     int num;
     struct Zinc_location loc;
     bool done;
-    enum result r;
+    enum Zinc_result r;
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -288,8 +288,8 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     for (int i = 0; i < 4; i++) {
         r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
 
-        if (r == result_error) {
-            Zinc_error_list_set(jld->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
         } else {
             if (done) {
                 Zinc_error_list_set(jld->el, &loc, "unicode escape not finished");
@@ -307,8 +307,8 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     /* optional two hex digits */
     for (int i = 0; i < 2; i++) {
         r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
-        if (r == result_error) {
-            Zinc_error_list_set(jld->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
             break;
         }
         if (done) {
@@ -361,7 +361,7 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     int num;
     struct Zinc_location loc;
     bool done;
-    enum result r;
+    enum Zinc_result r;
 
     size_t digit_count = 0;
     char first_digit;
@@ -390,8 +390,8 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
 
     while (true) {
         r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
-        if (r == result_error) {
-            Zinc_error_list_set(jld->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
             break;
         }
 
@@ -450,13 +450,13 @@ void Json_lex_number_fraction(Json_lex_data* jld, Json_token* t)
     int num;
     struct Zinc_location loc;
     bool done;
-    enum result r;
+    enum Zinc_result r;
     size_t digit_count = 0;
 
     while (true) {
         r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
-        if (r == result_error) {
-            Zinc_error_list_set(jld->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
             break;
         }
 
@@ -494,14 +494,14 @@ void Json_lex_number_exponent(Json_lex_data* jld, Json_token* t)
     int num;
     struct Zinc_location loc;
     bool done;
-    enum result r;
+    enum Zinc_result r;
     size_t digit_count = 0;
     bool has_sign = false;
 
     while (true) {
         r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
-        if (r == result_error) {
-            Zinc_error_list_set(jld->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
             break;
         }
 
@@ -547,12 +547,12 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
     int num;
     struct Zinc_location loc;
     bool done;
-    enum result r;
+    enum Zinc_result r;
 
     while (true) {
         r = Zinc_input_unicode_next(jld->input_obj, jld->input_vtable, c, &num, &loc, &done);
-        if (r == result_error) {
-            Zinc_error_list_set(jld->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            Zinc_error_list_set(jld->el, &loc, Zinc_error_message);
             break;
         }
 

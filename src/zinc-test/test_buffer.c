@@ -211,7 +211,7 @@ void test_buffer_next_char()
 {
 	test_name(__func__);
 
-	enum result r;
+	enum Zinc_result r;
 	struct Zinc_string bf;
 	Zinc_string_init(&bf);
 
@@ -314,7 +314,7 @@ void test_buffer_uslice()
 
 	struct Zinc_string bf;
 	struct Zinc_string bf2;
-	enum result r;
+	enum Zinc_result r;
 
 	Zinc_string_init(&bf);
 
@@ -349,7 +349,7 @@ void test_buffer_uslice2()
 
 	struct Zinc_string bf;
 	struct Zinc_string bf2;
-	enum result r;
+	enum Zinc_result r;
 
 	Zinc_string_init(&bf);
 

@@ -19,50 +19,50 @@
 #include "memory.h"
 #include <assert.h>
 
-enum result Zinc_get_temp_file(FILE** fp_out, Zinc_string* name)
+enum Zinc_result Zinc_get_temp_file(FILE** fp_out, Zinc_string* name)
 {
-    enum result r = result_ok;
+    enum Zinc_result r = Zinc_result_ok;
     Zinc_string_add_str(name, "/tmp/zinc-XXXXXX");
     Zinc_string_finish(name);
     errno = 0;
     int fd = mkstemp(name->buf);
     if (fd < 1) {
-        return set_error("creation of temp file failed with error [%s]", strerror(errno));
+        return Zinc_set_error("creation of temp file failed with error [%s]", strerror(errno));
     }
     FILE* fp = fdopen(fd, "w");
     if (!fp) {
-        return set_error("creation of temp file failed with error [%s]", strerror(errno));
+        return Zinc_set_error("creation of temp file failed with error [%s]", strerror(errno));
     }
     *fp_out = fp;
 
     return r;
 }
 
-enum result Zinc_close_temp_file(FILE* fp)
+enum Zinc_result Zinc_close_temp_file(FILE* fp)
 {
     if (fclose(fp)) {
-        return set_error("close of temp file failed with error [%s]", strerror(errno));
+        return Zinc_set_error("close of temp file failed with error [%s]", strerror(errno));
     }
-    return result_ok;
+    return Zinc_result_ok;
 }
 
-enum result Zinc_delete_temp_file(Zinc_string* name)
+enum Zinc_result Zinc_delete_temp_file(Zinc_string* name)
 {
     if (unlink(name->buf)) {
-        return set_error("removal of temp file failed with error [%s]", strerror(errno));
+        return Zinc_set_error("removal of temp file failed with error [%s]", strerror(errno));
     }
-    return result_ok;
+    return Zinc_result_ok;
 }
 
-enum result Zinc_get_user_home_directory(Zinc_string* dir)
+enum Zinc_result Zinc_get_user_home_directory(Zinc_string* dir)
 {
     const char *homedir;
     if ((homedir = getenv("HOME")) == NULL) {
-        return set_error("Could not get home directory");
+        return Zinc_set_error("Could not get home directory");
     }
 
     Zinc_string_add_str(dir, homedir);
-    return result_ok;
+    return Zinc_result_ok;
 }
 
 void Zinc_path_join(Zinc_string* src1, Zinc_string* src2, Zinc_string* dest)
@@ -72,12 +72,12 @@ void Zinc_path_join(Zinc_string* src1, Zinc_string* src2, Zinc_string* dest)
     Zinc_string_copy(src2, dest);
 }
 
-enum result Zinc_get_user_app_directory(Zinc_string* lower_name, Zinc_string* dir)
+enum Zinc_result Zinc_get_user_app_directory(Zinc_string* lower_name, Zinc_string* dir)
 {
     Zinc_string home;
     Zinc_string_init(&home);
-    enum result r = Zinc_get_user_home_directory(&home);
-    if (r == result_error) {
+    enum Zinc_result r = Zinc_get_user_home_directory(&home);
+    if (r == Zinc_result_error) {
         return r;
     }
 
@@ -95,10 +95,10 @@ enum result Zinc_get_user_app_directory(Zinc_string* lower_name, Zinc_string* di
     Zinc_string_destroy(&app);
     Zinc_string_destroy(&temp);
 
-    return result_ok;
+    return Zinc_result_ok;
 }
 
-enum result Zinc_make_directory(Zinc_string* dir)
+enum Zinc_result Zinc_make_directory(Zinc_string* dir)
 {
     for (int i = 0; i < dir->size; i++) {
         bool is_subdir = false;
@@ -127,13 +127,13 @@ enum result Zinc_make_directory(Zinc_string* dir)
             } else {
                 exists = true;
                 Zinc_string_destroy(&subdir);
-                return set_error("Could not check directory [%s]: %s",
+                return Zinc_set_error("Could not check directory [%s]: %s",
                      strerror(errno), subdir.buf);
             }
             if (!exists) {
                 if (mkdir(subdir.buf, 0700)) {
                     Zinc_string_destroy(&subdir);
-                    return set_error("Could not make directory [%s]: %s",
+                    return Zinc_set_error("Could not make directory [%s]: %s",
                          strerror(errno), subdir.buf);
                 }
             }
@@ -141,16 +141,16 @@ enum result Zinc_make_directory(Zinc_string* dir)
         }
     }
 
-    return result_ok;
+    return Zinc_result_ok;
 }
 
-enum result Zinc_delete_directory(Zinc_string* dir)  /* NOLINT(misc-no-recursion) */
+enum Zinc_result Zinc_delete_directory(Zinc_string* dir)  /* NOLINT(misc-no-recursion) */
 {
-    enum result r;
+    enum Zinc_result r;
     Zinc_string_finish(dir);
     DIR* dp = opendir(dir->buf);
     if (!dp) {
-        return set_error("Could not open directory: [%s]: %s", strerror(errno), dir->buf);
+        return Zinc_set_error("Could not open directory: [%s]: %s", strerror(errno), dir->buf);
     }
 
     struct dirent *de = NULL;
@@ -175,16 +175,16 @@ enum result Zinc_delete_directory(Zinc_string* dir)  /* NOLINT(misc-no-recursion
         DIR* dp2 = opendir(path.buf);
         if (dp2) {
             if (closedir(dp2)) {
-                return set_error("Could not check type directory item: [%s]: %s", strerror(errno), path.buf);
+                return Zinc_set_error("Could not check type directory item: [%s]: %s", strerror(errno), path.buf);
             }
 
             r = Zinc_delete_directory(&path);
-            if (r == result_error) {
+            if (r == Zinc_result_error) {
                 return r;
             }
         } else {
             if (remove(path.buf)) {
-                return set_error("Could not remove file: [%s]: %s", strerror(errno), path.buf);
+                return Zinc_set_error("Could not remove file: [%s]: %s", strerror(errno), path.buf);
             }
         }
 
@@ -193,14 +193,14 @@ enum result Zinc_delete_directory(Zinc_string* dir)  /* NOLINT(misc-no-recursion
     }
 
     if (closedir(dp)) {
-        return set_error("Error closing directory: [%s]: %s", strerror(errno), dir->buf);
+        return Zinc_set_error("Error closing directory: [%s]: %s", strerror(errno), dir->buf);
     }
 
     if (remove(dir->buf)) {
-        return set_error("Could not remove directory: [%s]: %s", strerror(errno), dir->buf);
+        return Zinc_set_error("Could not remove directory: [%s]: %s", strerror(errno), dir->buf);
     }
 
-    return result_ok;
+    return Zinc_result_ok;
 }
 
 bool Zinc_file_exists(Zinc_string* filename)
@@ -213,14 +213,14 @@ bool Zinc_file_exists(Zinc_string* filename)
     }
 }
 
-enum result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLINT(misc-no-recursion) */
+enum Zinc_result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLINT(misc-no-recursion) */
 {
-    enum result r = result_ok;
+    enum Zinc_result r = Zinc_result_ok;
 
     Zinc_string_finish(dir);
     DIR* dp = opendir(dir->buf);
     if (!dp) {
-        return set_error("Could not open directory: [%s]: %s", strerror(errno), dir->buf);
+        return Zinc_set_error("Could not open directory: [%s]: %s", strerror(errno), dir->buf);
     }
 
     struct dirent *de = NULL;
@@ -247,11 +247,11 @@ enum result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLI
             if (closedir(dp2)) {
                 Zinc_string_destroy(&name);
                 Zinc_string_destroy(&path);
-                return set_error("Could not check type directory item: [%s]: %s", strerror(errno), path.buf);
+                return Zinc_set_error("Could not check type directory item: [%s]: %s", strerror(errno), path.buf);
             }
 
             r = Zinc_get_dir_files(&path, bl);
-            if (r == result_error) {
+            if (r == Zinc_result_error) {
                 Zinc_string_destroy(&name);
                 Zinc_string_destroy(&path);
                 return r;
@@ -265,22 +265,22 @@ enum result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLI
     }
 
     if (closedir(dp)) {
-        return set_error("Error closing directory: [%s]: %s", strerror(errno), dir->buf);
+        return Zinc_set_error("Error closing directory: [%s]: %s", strerror(errno), dir->buf);
     }
 
-    return result_ok;
+    return Zinc_result_ok;
 }
 
-enum result Zinc_get_exe_path(char** path)
+enum Zinc_result Zinc_get_exe_path(char** path)
 {
-    enum result r = result_ok;
+    enum Zinc_result r = Zinc_result_ok;
     int buf_size = 1024;
 
     Zinc_malloc_safe((void**)path, buf_size+1);
 
     size_t size = readlink("/proc/self/exe", *path, buf_size);
     if (size == -1) {
-        r = set_error("path not read");
+        r = Zinc_set_error("path not read");
     } else {
         (*path)[size] = '\0';
     }

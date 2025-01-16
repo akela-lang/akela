@@ -7,7 +7,7 @@
 #include "zinc/String_slice.h"
 #include "token.h"
 
-enum result Json_lex_data_init(
+enum Zinc_result Json_lex_data_init(
     Json_lex_data* ld,
     struct Zinc_error_list* el,
     void* input_obj,
@@ -16,7 +16,7 @@ enum result Json_lex_data_init(
     ld->el = el;
     ld->input_obj = input_obj;
     ld->input_vtable = input_vtable;
-    return result_ok;
+    return Zinc_result_ok;
 }
 
 void Json_lex_data_create(
@@ -33,13 +33,13 @@ void Json_lex_data_destroy(Json_lex_data* ld)
 {
 }
 
-enum result Json_convert_slice(String_slice slice, UChar32* c)
+enum Zinc_result Json_convert_slice(String_slice slice, UChar32* c)
 {
     UErrorCode status = U_ZERO_ERROR;
     UConverter *conv = ucnv_open("utf8", &status);
     if (status != U_ZERO_ERROR) {
-        set_error("ucnv_open() failed with error code: %s", u_errorName(status));
-        return result_error;
+        Zinc_set_error("ucnv_open() failed with error code: %s", u_errorName(status));
+        return Zinc_result_error;
     }
 
     UChar dest[4];
@@ -49,10 +49,10 @@ enum result Json_convert_slice(String_slice slice, UChar32* c)
 
     ucnv_close(conv);
 
-    return result_ok;
+    return Zinc_result_ok;
 }
 
-enum result Json_convert_char(char c[4], int num, UChar32* cp)
+enum Zinc_result Json_convert_char(char c[4], int num, UChar32* cp)
 {
     String_slice slice;
     slice.p = c;

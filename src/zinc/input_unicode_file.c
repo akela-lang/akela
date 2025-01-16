@@ -54,14 +54,14 @@ void Zinc_input_unicode_file_clear(Zinc_input_unicode_file* input)
  * @param done true if input is done
  * @return result_ok if successful, otherwise result_error
  */
-enum result Zinc_input_unicode_file_next(
+enum Zinc_result Zinc_input_unicode_file_next(
         Zinc_input_unicode_file* input,
         char c[4],
         int* num,
         Zinc_location* loc,
         bool* done)
 {
-    enum result r = result_ok;
+    enum Zinc_result r = Zinc_result_ok;
     *done = false;
     if (input->loc.start_pos == 0) {
         Zinc_input_unicode_file_clear(input);
@@ -86,14 +86,14 @@ enum result Zinc_input_unicode_file_next(
         for (int i = 1; i < *num; i++) {
             x = getc(input->fp);
             if (x == EOF) {
-                r = set_error("EOF before last utf8 trailing byte");
+                r = Zinc_set_error("EOF before last utf8 trailing byte");
                 *num = i;
                 *done = true;
                 break;
             }
             c[i] = (char)x;
             if (!IS_EXTRA_BYTE(c[i])) {
-                r = set_error("utf8 trailing byte invalid");
+                r = Zinc_set_error("utf8 trailing byte invalid");
             }
         }
         memcpy(input->prev_c, c, *num);

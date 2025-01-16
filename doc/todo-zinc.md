@@ -19,7 +19,7 @@
   * os_unix [x]
   * os_win [x]
   * piece [x]
-  * result []
+  * result [x]
   * String_slice []
   * unicode []
   * unit_test []

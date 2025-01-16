@@ -45,25 +45,25 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
     char c[4];
     int num;
     struct Zinc_location loc;
-    enum result r;
+    enum Zinc_result r;
 
     while (true) {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
             break;
         }
 
         if (*done) {
-            return result_ok;
+            return Zinc_result_ok;
         }
 
         if (num == 1 && *c == '#') {
             /* comment */
             while (!(num == 1 && *c == '\n')) {
                 r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-                if (r == result_error) {
-                    valid = Zinc_error_list_set(ls->el, &loc, error_message);
+                if (r == Zinc_result_error) {
+                    valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
                     break;
                 }
                 if (*done) {
@@ -208,12 +208,12 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
     char c[4];
     int num;
     struct Zinc_location loc;
-    enum result r;
+    enum Zinc_result r;
 
     while (true) {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
             break;
         }
 
@@ -300,12 +300,12 @@ bool Ake_lex_number(struct Ake_lex_state* ls,
     char c[4];
     int num;
     struct Zinc_location loc;
-    enum result r;
+    enum Zinc_result r;
 
     while (true) {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
             break;
         }
 
@@ -419,12 +419,12 @@ bool Ake_lex_string(
     char c[4];
     int num;
     struct Zinc_location loc;
-    enum result r;
+    enum Zinc_result r;
 
     while (true) {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (*done) {
@@ -491,19 +491,19 @@ bool Ake_lex_compound_operator(
     char c[4];
     int num;
     struct Zinc_location loc;
-    enum result r;
+    enum Zinc_result r;
 
     r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-    if (r == result_error) {
-        valid = Zinc_error_list_set(ls->el, &loc, error_message);
+    if (r == Zinc_result_error) {
+        valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
     }
 
     assert(!*done);
 
     if (num == 1 && *c == '=') {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (num == 1 && *c == '=') {
@@ -516,8 +516,8 @@ bool Ake_lex_compound_operator(
         }
     } else if (num == 1 && *c == '!') {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (num == 1 && *c == '=') {
@@ -530,8 +530,8 @@ bool Ake_lex_compound_operator(
         }
     } else if (num == 1 && *c == '<') {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (num == 1 && *c == '=') {
@@ -544,8 +544,8 @@ bool Ake_lex_compound_operator(
         }
     } else if (num == 1 && *c == '>') {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (num == 1 && *c == '=') {
@@ -558,8 +558,8 @@ bool Ake_lex_compound_operator(
         }
     } else if (num == 1 && *c == '&') {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (num == 1 && *c == '&') {
@@ -572,8 +572,8 @@ bool Ake_lex_compound_operator(
         }
     } else if (num == 1 && *c == '|') {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (num == 1 && *c == '|') {
@@ -586,8 +586,8 @@ bool Ake_lex_compound_operator(
         }
     } else if (num == 1 && *c == '-') {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (num == 1 && *c == '>') {
@@ -600,14 +600,14 @@ bool Ake_lex_compound_operator(
         }
     } else if (num == 1 && *c == '.') {
         r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-        if (r == result_error) {
-            valid = Zinc_error_list_set(ls->el, &loc, error_message);
+        if (r == Zinc_result_error) {
+            valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
         }
 
         if (num == 1 && *c == '.') {
             r = Zinc_input_unicode_next(ls->input_obj, ls->input_vtable, c, &num, &loc, done);
-            if (r == result_error) {
-                valid = Zinc_error_list_set(ls->el, &loc, error_message);
+            if (r == Zinc_result_error) {
+                valid = Zinc_error_list_set(ls->el, &loc, Zinc_error_message);
             }
 
             if (num == 1 && *c == '.') {

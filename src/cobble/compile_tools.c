@@ -9,8 +9,8 @@ Cob_token* Cob_lex(void* input_obj, Zinc_input_unicode_vtable *input_vtable)
     int num;
     struct Zinc_location loc;
     bool done;
-    enum result r = result_error;
-    while (r == result_error) {
+    enum Zinc_result r = Zinc_result_error;
+    while (r == Zinc_result_error) {
         r = Zinc_input_unicode_next(input_obj, input_vtable, c, &num, &loc, &done);
     }
 

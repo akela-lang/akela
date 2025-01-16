@@ -14,7 +14,7 @@ void test_os_unix_get_temp_file()
     struct Zinc_string name;
     Zinc_string_init(&name);
 
-    enum result r = Zinc_get_temp_file(&fp, &name);
+    enum Zinc_result r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get_temp_file");
 
     const char* in = "hello";
@@ -57,7 +57,7 @@ void test_os_unix_get_user_home_directory()
 
     struct Zinc_string dir;
     Zinc_string_init(&dir);
-    enum result r = Zinc_get_user_home_directory(&dir);
+    enum Zinc_result r = Zinc_get_user_home_directory(&dir);
     assert_ok(r, "get_user_home_directory");
     expect_str(&dir, "/home/abc", "/home/abc");
     Zinc_string_destroy(&dir);
@@ -119,7 +119,7 @@ void test_os_unix_make_directory()
     Zinc_string_init(&dir);
     Zinc_string_add_str(&dir, "/tmp/apple/bear/creek/doe/eddy");
     Zinc_string_finish(&dir);
-    enum result r = Zinc_make_directory(&dir);
+    enum Zinc_result r = Zinc_make_directory(&dir);
     assert_ok(r, "make directory");
     DIR* dp = opendir(dir.buf);
     assert_ptr(dp, "ptr dp");
@@ -138,7 +138,7 @@ void test_os_unix_delete_directory()
     struct Zinc_string dir;
     Zinc_string_init(&dir);
     Zinc_string_add_str(&dir, "/tmp/one");
-    enum result r = Zinc_delete_directory(&dir);
+    enum Zinc_result r = Zinc_delete_directory(&dir);
     assert_ok(r, "delete_directory");
     DIR* dp = opendir("/tmp/one");
     assert_null(dp, "null dp");
@@ -183,7 +183,7 @@ void test_os_unix_get_dir_files()
     struct Zinc_string_list bl;
     Zinc_string_list_init(&bl);
 
-    enum result r = Zinc_get_dir_files(&dir, &bl);
+    enum Zinc_result r = Zinc_get_dir_files(&dir, &bl);
     expect_ok(r, "get_dir_files");
 
     bool seen_file1 = false;

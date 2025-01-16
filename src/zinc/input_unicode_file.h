@@ -28,7 +28,7 @@ extern Zinc_input_unicode_vtable Zinc_input_unicode_file_vtable;
 
 void Zinc_input_unicode_file_create(Zinc_input_unicode_file** input_string, FILE* fp);
 void Zinc_input_unicode_file_clear(Zinc_input_unicode_file* data);
-enum result Zinc_input_unicode_file_next(
+enum Zinc_result Zinc_input_unicode_file_next(
         Zinc_input_unicode_file* data,
         char c[4],
         int* num,

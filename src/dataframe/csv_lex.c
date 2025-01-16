@@ -226,12 +226,12 @@ void CSVLex(struct CSVLexData* lex_data, struct CSVToken** token)
     (*token)->loc.end_pos = end.start_pos;
 }
 
-enum result CSVLoad(const char* filename, Vector* text)
+enum Zinc_result CSVLoad(const char* filename, Vector* text)
 {
     FILE *fp = NULL;
     fp = fopen(filename, "r");
     if (!fp) {
-        return set_error("Could not open file: %v", filename);
+        return Zinc_set_error("Could not open file: %v", filename);
     }
 
     while (true) {
@@ -245,5 +245,5 @@ enum result CSVLoad(const char* filename, Vector* text)
         }
     }
     VectorAddNull(text);
-    return result_ok;
+    return Zinc_result_ok;
 }

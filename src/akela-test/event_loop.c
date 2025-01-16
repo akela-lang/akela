@@ -21,7 +21,7 @@ void event_loop(void* input_obj, Zinc_input_unicode_vtable* input_vtable)
     struct Zinc_string* bf = NULL;
     Zinc_string_create(&bf);
 
-    enum result r;
+    enum Zinc_result r;
     char c[4];
     int num;
     struct Zinc_location loc;

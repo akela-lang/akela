@@ -84,6 +84,6 @@ size_t Cob_stack_list_next_priority(Cob_stack_list* sl);
 void Cob_stack_list_remove(Cob_stack_list* sl, Cob_stack_node* sn);
 void Cob_stack_list_destroy(Cob_stack_list* sl);
 
-enum result match_convert_char(String_slice slice, UChar32* c);
+enum Zinc_result match_convert_char(String_slice slice, UChar32* c);
 
 #endif

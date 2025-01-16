@@ -42,30 +42,30 @@ void test_utf8_two_byte()
 		}
 		c[j] = '\0';
 
-		set_error("num bytes for (%s)", c);
-		assert_int_equal(byte_count, 2, error_message);
+		Zinc_set_error("num bytes for (%s)", c);
+		assert_int_equal(byte_count, 2, Zinc_error_message);
 
-		set_error("not extra byte for (%s)", c);
-		expect_false(IS_EXTRA_BYTE(c[0]), error_message);
+		Zinc_set_error("not extra byte for (%s)", c);
+		expect_false(IS_EXTRA_BYTE(c[0]), Zinc_error_message);
 
 		j = 1;
 		while (j < byte_count) {
-			set_error("extra byte for (%s)", c);
-			expect_true(IS_EXTRA_BYTE(c[j]), error_message);
+			Zinc_set_error("extra byte for (%s)", c);
+			expect_true(IS_EXTRA_BYTE(c[j]), Zinc_error_message);
 			j++;
 		}
 
-		set_error("one byte for (%s)", c);
-		expect_false(IS_ONE_BYTE(c[0]), error_message);
+		Zinc_set_error("one byte for (%s)", c);
+		expect_false(IS_ONE_BYTE(c[0]), Zinc_error_message);
 
-		set_error("two bytes for (%s)", c);
-		expect_true(IS_TWO_BYTES(c[0]), error_message);
+		Zinc_set_error("two bytes for (%s)", c);
+		expect_true(IS_TWO_BYTES(c[0]), Zinc_error_message);
 
-		set_error("three bytes for (%s)", c);
-		expect_false(IS_THREE_BYTES(c[0]), error_message);
+		Zinc_set_error("three bytes for (%s)", c);
+		expect_false(IS_THREE_BYTES(c[0]), Zinc_error_message);
 
-		set_error("four bytes for (%s)", c);
-		expect_false(IS_FOUR_BYTES(c[0]), error_message);
+		Zinc_set_error("four bytes for (%s)", c);
+		expect_false(IS_FOUR_BYTES(c[0]), Zinc_error_message);
 	}
 }
 
@@ -79,30 +79,30 @@ void test_utf8_three_byte()
 	int byte_count = NUM_BYTES(s[0]);
 	assert_true(byte_count > 0 && byte_count <= 4, "byte_count");
 
-	set_error("num bytes for (%s)", s);
-	assert_int_equal(byte_count, 3, error_message);
+	Zinc_set_error("num bytes for (%s)", s);
+	assert_int_equal(byte_count, 3, Zinc_error_message);
 
-	set_error("not extra byte for (%s)", s);
-	expect_false(IS_EXTRA_BYTE(s[0]), error_message);
+	Zinc_set_error("not extra byte for (%s)", s);
+	expect_false(IS_EXTRA_BYTE(s[0]), Zinc_error_message);
 
 	int j = 1;
 	while (j < byte_count) {
-		set_error("extra byte for (%s)", s);
-		expect_true(IS_EXTRA_BYTE(s[j]), error_message);
+		Zinc_set_error("extra byte for (%s)", s);
+		expect_true(IS_EXTRA_BYTE(s[j]), Zinc_error_message);
 		j++;
 	}
 
-	set_error("one byte for (%s)", s);
-	expect_false(IS_ONE_BYTE(s[0]), error_message);
+	Zinc_set_error("one byte for (%s)", s);
+	expect_false(IS_ONE_BYTE(s[0]), Zinc_error_message);
 
-	set_error("two bytes for (%s)", s);
-	expect_false(IS_TWO_BYTES(s[0]), error_message);
+	Zinc_set_error("two bytes for (%s)", s);
+	expect_false(IS_TWO_BYTES(s[0]), Zinc_error_message);
 
-	set_error("three bytes for (%s)", s);
-	expect_true(IS_THREE_BYTES(s[0]), error_message);
+	Zinc_set_error("three bytes for (%s)", s);
+	expect_true(IS_THREE_BYTES(s[0]), Zinc_error_message);
 
-	set_error("four bytes for (%s)", s);
-	expect_false(IS_FOUR_BYTES(s[0]), error_message);
+	Zinc_set_error("four bytes for (%s)", s);
+	expect_false(IS_FOUR_BYTES(s[0]), Zinc_error_message);
 }
 
 /* dynamic-output-none */
@@ -115,30 +115,30 @@ void test_utf8_four_byte()
 	int byte_count = NUM_BYTES(s[0]);
 	assert_true(byte_count > 0 && byte_count <= 4, "byte_count");
 
-	set_error("num bytes for (%s)", s);
-	assert_int_equal(byte_count, 4, error_message);
+	Zinc_set_error("num bytes for (%s)", s);
+	assert_int_equal(byte_count, 4, Zinc_error_message);
 
-	set_error("not extra byte for (%s)", s);
-	expect_false(IS_EXTRA_BYTE(s[0]), error_message);
+	Zinc_set_error("not extra byte for (%s)", s);
+	expect_false(IS_EXTRA_BYTE(s[0]), Zinc_error_message);
 
 	int j = 1;
 	while (j < byte_count) {
-		set_error("extra byte for (%s)", s);
-		expect_true(IS_EXTRA_BYTE(s[j]), error_message);
+		Zinc_set_error("extra byte for (%s)", s);
+		expect_true(IS_EXTRA_BYTE(s[j]), Zinc_error_message);
 		j++;
 	}
 
-	set_error("one byte for (%s)", s);
-	expect_false(IS_ONE_BYTE(s[0]), error_message);
+	Zinc_set_error("one byte for (%s)", s);
+	expect_false(IS_ONE_BYTE(s[0]), Zinc_error_message);
 
-	set_error("two bytes for (%s)", s);
-	expect_false(IS_TWO_BYTES(s[0]), error_message);
+	Zinc_set_error("two bytes for (%s)", s);
+	expect_false(IS_TWO_BYTES(s[0]), Zinc_error_message);
 
-	set_error("three bytes for (%s)", s);
-	expect_false(IS_THREE_BYTES(s[0]), error_message);
+	Zinc_set_error("three bytes for (%s)", s);
+	expect_false(IS_THREE_BYTES(s[0]), Zinc_error_message);
 
-	set_error("four bytes for (%s)", s);
-	expect_true(IS_FOUR_BYTES(s[0]), error_message);
+	Zinc_set_error("four bytes for (%s)", s);
+	expect_true(IS_FOUR_BYTES(s[0]), Zinc_error_message);
 }
 
 /* dynamic-output-none */

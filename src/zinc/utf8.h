@@ -13,7 +13,7 @@
 
 #define IS_EXTRA_BYTE(c) (((c) & 0xc0) == 0x80)
 
-ZINC_API enum result check_num_bytes(unsigned char c, int* count);
-ZINC_API enum result check_extra_byte(char c);
+ZINC_API enum Zinc_result check_num_bytes(unsigned char c, int* count);
+ZINC_API enum Zinc_result check_extra_byte(char c);
 
 #endif

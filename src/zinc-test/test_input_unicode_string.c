@@ -16,7 +16,7 @@ void test_input_unicode_string_next()
     struct Zinc_string bf;
     Zinc_string_init(&bf);
 
-    enum result r;
+    enum Zinc_result r;
     bool done;
     char c[4];
     int num;
@@ -196,7 +196,7 @@ void test_input_unicode_string_next_multibyte()
     struct Zinc_string bf;
     Zinc_string_init(&bf);
 
-    enum result r;
+    enum Zinc_result r;
     bool done;
     char c[4];
     int num;
@@ -353,7 +353,7 @@ void test_input_unicode_string_repeat()
     struct Zinc_string bf;
     Zinc_string_init(&bf);
 
-    enum result r;
+    enum Zinc_result r;
     bool done;
     char c[4];
     int num;
@@ -469,7 +469,7 @@ void test_input_unicode_string_seek()
     struct Zinc_string bf;
     Zinc_string_init(&bf);
 
-    enum result r;
+    enum Zinc_result r;
     bool done;
     char c[4];
     int num;
@@ -667,7 +667,7 @@ void test_input_unicode_string_get_location()
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, vector);
 
-    enum result r;
+    enum Zinc_result r;
     bool done;
     char c[4];
     int num;

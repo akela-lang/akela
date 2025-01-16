@@ -45,6 +45,6 @@ void CSVTokenDestroy(struct CSVToken* token);
 void CSVLexDataInit(struct CSVLexData* lex_data);
 void CSVLexDataCreate(struct CSVLexData** lex_data);
 void CSVLex(struct CSVLexData* lex_data, struct CSVToken** token);
-enum result CSVLoad(const char* filename, Vector* text);
+enum Zinc_result CSVLoad(const char* filename, Vector* text);
 
 #endif

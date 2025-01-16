@@ -26,7 +26,7 @@ extern Zinc_input_unicode_vtable Zinc_input_unicode_string_vtable;
 void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Vector* text);
 void Zinc_input_unicode_string_create(Zinc_input_unicode_string** input_string, Vector* text);
 void Zinc_input_unicode_string_clear(Zinc_input_unicode_string* data);
-enum result Zinc_input_unicode_string_next(Zinc_input_unicode_string* data,
+enum Zinc_result Zinc_input_unicode_string_next(Zinc_input_unicode_string* data,
         char c[4],
         int* num,
         Zinc_location* loc,

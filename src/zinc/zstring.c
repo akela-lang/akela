@@ -135,12 +135,12 @@ void Zinc_string_add_str2(const char* a, struct Zinc_string* bf)
     }
 }
 
-enum result Zinc_next_char(struct Zinc_string* bf, size_t* pos, struct Zinc_string* bf2)
+enum Zinc_result Zinc_next_char(struct Zinc_string* bf, size_t* pos, struct Zinc_string* bf2)
 {
     char c = bf->buf[(*pos)++];
     int count;
-    enum result r = check_num_bytes(c, &count);
-    if (r == result_error) {
+    enum Zinc_result r = check_num_bytes(c, &count);
+    if (r == Zinc_result_error) {
         return r;
     }
     Zinc_string_clear(bf2);
@@ -149,13 +149,13 @@ enum result Zinc_next_char(struct Zinc_string* bf, size_t* pos, struct Zinc_stri
     for (int i = 1; i < count; i++) {
         c = bf->buf[(*pos)++];
         r = check_extra_byte(c);
-        if (r == result_error) {
+        if (r == Zinc_result_error) {
             return r;
         }
 
         Zinc_string_add_char(bf2, c);
     }
-    return result_ok;
+    return Zinc_result_ok;
 }
 
 /*
@@ -211,9 +211,9 @@ int Zinc_string_compare_str(struct Zinc_string* a, const char* b)
     return 1;
 }
 
-enum result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string* dest, size_t start, size_t end)
+enum Zinc_result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string* dest, size_t start, size_t end)
 {
-    enum result r = result_ok;
+    enum Zinc_result r = Zinc_result_ok;
     char c;
     int count;
 
@@ -222,7 +222,7 @@ enum result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string* dest
     while (i < src->size && index < end) {
         c = src->buf[i++];
         r = check_num_bytes(c, &count);
-        if (r == result_error) return r;
+        if (r == Zinc_result_error) return r;
 
         if (index >= start && index < end) {
             Zinc_string_add_char(dest, c);
@@ -232,7 +232,7 @@ enum result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string* dest
         for (int j = 1; j < count; j++) {
             c = src->buf[i++];
             r = check_extra_byte(c);
-            if (r == result_error) return r;
+            if (r == Zinc_result_error) return r;
 
             if (index >= start && index < end) {
                 Zinc_string_add_char(dest, c);

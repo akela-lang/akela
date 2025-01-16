@@ -13,7 +13,7 @@ void test_input_unicode_file_next()
     FILE* fp = NULL;
     struct Zinc_string name;
     Zinc_string_init(&name);
-    enum result r;
+    enum Zinc_result r;
     r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
@@ -202,7 +202,7 @@ void test_input_unicode_file_next_multibyte()
     FILE* fp = NULL;
     struct Zinc_string name;
     Zinc_string_init(&name);
-    enum result r;
+    enum Zinc_result r;
     r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
@@ -367,7 +367,7 @@ void test_input_unicode_file_repeat()
     FILE* fp = NULL;
     struct Zinc_string name;
     Zinc_string_init(&name);
-    enum result r;
+    enum Zinc_result r;
     r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
@@ -491,7 +491,7 @@ void test_input_unicode_file_seek()
     FILE* fp = NULL;
     struct Zinc_string name;
     Zinc_string_init(&name);
-    enum result r;
+    enum Zinc_result r;
     r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
@@ -679,7 +679,7 @@ void test_input_unicode_file_get_all()
     FILE* fp = NULL;
     struct Zinc_string name;
     Zinc_string_init(&name);
-    enum result r;
+    enum Zinc_result r;
     r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
@@ -715,7 +715,7 @@ void test_input_unicode_file_get_location()
     FILE* fp = NULL;
     struct Zinc_string name;
     Zinc_string_init(&name);
-    enum result r;
+    enum Zinc_result r;
     r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);

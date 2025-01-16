@@ -174,22 +174,22 @@ void assert_null(void* p, const char* message)
 }
 
 /* static-output */
-void assert_ok(enum result r, const char* message)
+void assert_ok(enum Zinc_result r, const char* message)
 {
 	test_called();
 
-	if (r == result_ok) return;
+	if (r == Zinc_result_ok) return;
 	error_triggered();
-	fprintf(stderr, "ok assertion error: %s: %s\n", message, error_message);
+	fprintf(stderr, "ok assertion error: %s: %s\n", message, Zinc_error_message);
 	panic();
 }
 
 /* static-output */
-void assert_error(enum result r, const char* message)
+void assert_error(enum Zinc_result r, const char* message)
 {
 	test_called();
 
-	if (r == result_error) return;
+	if (r == Zinc_result_error) return;
 	error_triggered();
 	fprintf(stderr, "no error detected assertion error: %s\n", message);
 	panic();
@@ -320,12 +320,12 @@ void expect_null(void* p, const char* message)
 }
 
 /* static-output */
-void expect_ok(enum result r, const char* message)
+void expect_ok(enum Zinc_result r, const char* message)
 {
 	test_called();
-	if (r == result_ok) return;
+	if (r == Zinc_result_ok) return;
 	error_triggered();
-	fprintf(stderr, "ok error: %s: %s\n", message, error_message);
+	fprintf(stderr, "ok error: %s: %s\n", message, Zinc_error_message);
 }
 
 /* static-output */
@@ -462,9 +462,9 @@ void expect_nts(const char* a, const char* b, const char* message)
 void expect_error_message(const char* s)
 {
 	test_called();
-	if (strcmp(error_message, s) == 0) return;
+	if (strcmp(Zinc_error_message, s) == 0) return;
 	error_triggered();
-	fprintf(stderr, "(%s) = (%s): error message does not memory_match\n", error_message, s);
+	fprintf(stderr, "(%s) = (%s): error message does not memory_match\n", Zinc_error_message, s);
 }
 
 void expect_utf8_char(char* a, char* b, char* message)
