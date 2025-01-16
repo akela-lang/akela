@@ -37,7 +37,7 @@ void Zinc_input_unicode_seek(
 void Zinc_input_unicode_get_all(
     void* input_obj,
     Zinc_input_unicode_vtable* input_vtable,
-    Vector** text)
+    Zinc_vector** text)
 {
     Zinc_input_unicode_get_all_interface *get_all = input_obj + input_vtable->get_all_offset;
     (*get_all)(input_obj, text);

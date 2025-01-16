@@ -92,7 +92,7 @@ void test_parse_string()
     Zinc_expect_true(tu->is_array, "is_array tu");
     Zinc_expect_size_t_equal(tu->dim.count, 1, "dim.count tu");
 
-    Ake_type_dimension* dim = (Ake_type_dimension*)VECTOR_PTR(&tu->dim, 0);
+    Ake_type_dimension* dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(&tu->dim, 0);
     Zinc_assert_ptr(dim, "ptr dim");
     Zinc_expect_size_t_equal(dim->size, 6, "size dim");
     Zinc_expect_int_equal(dim->option, Ake_array_element_const, "option dim");
@@ -499,7 +499,7 @@ void test_parse_array_literal_integer()
 	Zinc_assert_ptr(a_tu, "ptr array_tu");
     Zinc_expect_true(a_tu->is_array, "is_array a_tu");
     Zinc_expect_size_t_equal(a_tu->dim.count, 1, "dim.count a_tu");
-    Zinc_expect_size_t_equal(*(size_t*)VECTOR_PTR(&a_tu->dim, 0), 3, "dim[0] a_tu");
+    Zinc_expect_size_t_equal(*(size_t*)ZINC_VECTOR_PTR(&a_tu->dim, 0), 3, "dim[0] a_tu");
 
 	struct Ake_type_def* a_td = a_tu->td;
 	Zinc_assert_ptr(a_td, "ptr array_td");
@@ -942,7 +942,7 @@ void test_parse_factor_array_element_const()
     Zinc_expect_true(let_type->tu->is_array, "is_array type");
     Zinc_expect_size_t_equal(let_type->tu->dim.count, 1, "dim.count type");
 
-    struct Ake_type_dimension* let_type_dim = (Ake_type_dimension*)VECTOR_PTR(&let_type->tu->dim, 0);
+    struct Ake_type_dimension* let_type_dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(&let_type->tu->dim, 0);
     Zinc_expect_size_t_equal(let_type_dim->size, 4, "size let_type_dim");
     Zinc_expect_int_equal(let_type_dim->option, Ake_array_element_const, "option let_type_dim");
 

@@ -13,9 +13,9 @@
 
 bool parse_setup(char* line, struct Ake_comp_unit* cu)
 {
-    Vector* text = NULL;
-    VectorCreate(&text, sizeof(char));
-    VectorAdd(text, line, strlen(line));
+    Zinc_vector* text = NULL;
+    Zinc_vector_create(&text, sizeof(char));
+    Zinc_vector_add(text, line, strlen(line));
 
     Zinc_input_unicode_string* input_obj = NULL;
     Zinc_input_unicode_string_create(&input_obj, text);
@@ -29,8 +29,8 @@ bool parse_setup(char* line, struct Ake_comp_unit* cu)
 void parse_teardown(struct Ake_comp_unit* cu)
 {
     Zinc_input_unicode_string* input = cu->input_obj;
-    Vector* text = input->text;
-    VectorDestroy(text);
+    Zinc_vector* text = input->text;
+    Zinc_vector_destroy(text);
     free(text);
     free(input);
 	Ake_comp_unit_destroy(cu);

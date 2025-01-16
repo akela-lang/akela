@@ -37,7 +37,7 @@ typedef void (*Zinc_input_unicode_seek_interface)(void*, Zinc_location*);
  * @param data the data
  * @param text the input text
  */
-typedef void (*Zinc_input_unicode_get_all_interface)(void*, Vector**);
+typedef void (*Zinc_input_unicode_get_all_interface)(void*, Zinc_vector**);
 
 /**
  * Get the current location.
@@ -67,7 +67,7 @@ void Zinc_input_unicode_seek(
     Zinc_location* loc);
 void Zinc_input_unicode_get_all(void* input_obj,
     Zinc_input_unicode_vtable* input_vtable,
-    Vector** text);
+    Zinc_vector** text);
 Zinc_location Zinc_input_unicode_get_location(
     void* input_obj,
     Zinc_input_unicode_vtable* input_vtable);

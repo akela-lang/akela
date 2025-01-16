@@ -71,17 +71,17 @@ int main(int argc, char** argv)
         input_obj = input_file;
         input_vtable = input_file->input_vtable;
     } else if (argc >= 3 && strcmp(argv[1], "string") == 0) {
-        Vector* text = NULL;
-        VectorCreate(&text, sizeof(char));
+        Zinc_vector* text = NULL;
+        Zinc_vector_create(&text, sizeof(char));
         for (int i = 2; i < argc; i++) {
             char* str = argv[i];
             size_t len = strlen(str);
             if (i >= 3) {
-                VectorAdd(text, " ", 1);
+                Zinc_vector_add(text, " ", 1);
             }
-            VectorAdd(text, str, len);
+            Zinc_vector_add(text, str, len);
         }
-        VectorAdd(text, "\n", 1);
+        Zinc_vector_add(text, "\n", 1);
         Zinc_input_unicode_string_create(&input_string, text);
         input_obj = input_string;
         input_vtable = input_string->input_vtable;
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
     event_loop(input_obj, input_vtable);
 
     if (input_string) {
-        VectorDestroy(input_string->text);
+        Zinc_vector_destroy(input_string->text);
         free(input_string->text);
     }
 

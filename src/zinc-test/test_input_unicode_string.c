@@ -7,9 +7,9 @@ void test_input_unicode_string_next()
     Zinc_test_name(__func__);
 
     char s[] = "hello\nworld";
-    Vector* vector = NULL;
-    VectorCreate(&vector, sizeof(char));
-    VectorAdd(vector, s, strlen(s));
+    Zinc_vector* vector = NULL;
+    Zinc_vector_create(&vector, sizeof(char));
+    Zinc_vector_add(vector, s, strlen(s));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, vector);
 
@@ -177,7 +177,7 @@ void test_input_unicode_string_next()
     Zinc_expect_str(&bf, "hello\nworld", "bf");
 
     free(input);
-    VectorDestroy(vector);
+    Zinc_vector_destroy(vector);
     free(vector);
     Zinc_string_destroy(&bf);
 }
@@ -187,9 +187,9 @@ void test_input_unicode_string_next_multibyte()
     Zinc_test_name(__func__);
 
     char s[] = "hello\nαβγ";
-    Vector* vector = NULL;
-    VectorCreate(&vector, sizeof(char));
-    VectorAdd(vector, s, strlen(s));
+    Zinc_vector* vector = NULL;
+    Zinc_vector_create(&vector, sizeof(char));
+    Zinc_vector_add(vector, s, strlen(s));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, vector);
 
@@ -334,7 +334,7 @@ void test_input_unicode_string_next_multibyte()
     Zinc_expect_str(&bf, "hello\nαβγ", "bf");
 
     free(input);
-    VectorDestroy(vector);
+    Zinc_vector_destroy(vector);
     free(vector);
     Zinc_string_destroy(&bf);
 }
@@ -344,9 +344,9 @@ void test_input_unicode_string_repeat()
     Zinc_test_name(__func__);
 
     char s[] = "hello";
-    Vector* vector = NULL;
-    VectorCreate(&vector, sizeof(char));
-    VectorAdd(vector, s, strlen(s));
+    Zinc_vector* vector = NULL;
+    Zinc_vector_create(&vector, sizeof(char));
+    Zinc_vector_add(vector, s, strlen(s));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, vector);
 
@@ -450,7 +450,7 @@ void test_input_unicode_string_repeat()
     Zinc_expect_str(&bf, "hhello", "bf");
 
     free(input);
-    VectorDestroy(vector);
+    Zinc_vector_destroy(vector);
     free(vector);
     Zinc_string_destroy(&bf);
 }
@@ -460,9 +460,9 @@ void test_input_unicode_string_seek()
     Zinc_test_name(__func__);
 
     char s[] = "hello";
-    Vector* vector = NULL;
-    VectorCreate(&vector, sizeof(char));
-    VectorAdd(vector, s, strlen(s));
+    Zinc_vector* vector = NULL;
+    Zinc_vector_create(&vector, sizeof(char));
+    Zinc_vector_add(vector, s, strlen(s));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, vector);
 
@@ -630,7 +630,7 @@ void test_input_unicode_string_seek()
     Zinc_expect_str(&bf, "hellohello", "bf");
 
     free(input);
-    VectorDestroy(vector);
+    Zinc_vector_destroy(vector);
     free(vector);
     Zinc_string_destroy(&bf);
 }
@@ -640,19 +640,19 @@ void test_input_unicode_string_get_all()
     Zinc_test_name(__func__);
 
     char s[] = "hello";
-    Vector* vector = NULL;
-    VectorCreate(&vector, sizeof(char));
-    VectorAdd(vector, s, strlen(s));
+    Zinc_vector* vector = NULL;
+    Zinc_vector_create(&vector, sizeof(char));
+    Zinc_vector_add(vector, s, strlen(s));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, vector);
 
-    Vector* output = NULL;
+    Zinc_vector* output = NULL;
 
     Zinc_input_unicode_get_all(input, input->input_vtable, &output);
-    Zinc_expect_true(VectorMatch(vector, output), "match");
+    Zinc_expect_true(Zinc_vector_match(vector, output), "match");
 
     free(input);
-    VectorDestroy(vector);
+    Zinc_vector_destroy(vector);
     free(vector);
 }
 
@@ -661,9 +661,9 @@ void test_input_unicode_string_get_location()
     Zinc_test_name(__func__);
 
     char s[] = "hello";
-    Vector* vector = NULL;
-    VectorCreate(&vector, sizeof(char));
-    VectorAdd(vector, s, strlen(s));
+    Zinc_vector* vector = NULL;
+    Zinc_vector_create(&vector, sizeof(char));
+    Zinc_vector_add(vector, s, strlen(s));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, vector);
 
@@ -691,7 +691,7 @@ void test_input_unicode_string_get_location()
     Zinc_expect_size_t_equal(next_loc.col, 2, "1 col");
 
     free(input);
-    VectorDestroy(vector);
+    Zinc_vector_destroy(vector);
     free(vector);
 }
 

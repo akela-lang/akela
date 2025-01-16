@@ -318,7 +318,7 @@ void Zinc_expect_str(struct Zinc_string* a, const char* b, const char* message)
 	free(temp);
 }
 
-void Zinc_expect_vector_str(Vector* a, const char* b, const char* message)
+void Zinc_expect_vector_str(Zinc_vector* a, const char* b, const char* message)
 {
     Zinc_test_called();
     if (a->value_size != sizeof(char)) {
@@ -328,19 +328,19 @@ void Zinc_expect_vector_str(Vector* a, const char* b, const char* message)
         Zinc_error_triggered();
         return;
     }
-    VectorAddNull(a);
+    Zinc_vector_add_null(a);
     size_t len = strlen(b);
     if (a->count != len) {
         fprintf(stderr,
                 "Vector and string not the same size: (%s) (%s): %s\n",
-                VECTOR_STRING(a), b, message);
+                ZINC_VECTOR_STRING(a), b, message);
         Zinc_error_triggered();
     } else {
         for (int i = 0; i < a->count; i++) {
-            if (VECTOR_CHAR(a, i) != b[i]) {
+            if (ZINC_VECTOR_CHAR(a, i) != b[i]) {
                 fprintf(stderr,
                         "Vector and string not equal: (%s) (%s): %s\n",
-                        VECTOR_STRING(a), b, message);
+                        ZINC_VECTOR_STRING(a), b, message);
                 Zinc_error_triggered();
                 break;
             }
@@ -348,7 +348,7 @@ void Zinc_expect_vector_str(Vector* a, const char* b, const char* message)
     }
 }
 
-void Zinc_expect_vector(Vector* a, Vector* b, const char* message)
+void Zinc_expect_vector(Zinc_vector* a, Zinc_vector* b, const char* message)
 {
     Zinc_test_called();
     if (a->value_size != b->value_size) {
@@ -365,7 +365,7 @@ void Zinc_expect_vector(Vector* a, Vector* b, const char* message)
         Zinc_error_triggered();
     } else {
         for (int i = 0; i < a->count * a->value_size; i++) {
-            if (VECTOR_CHAR(a, i) != VECTOR_CHAR(b, i)) {
+            if (ZINC_VECTOR_CHAR(a, i) != ZINC_VECTOR_CHAR(b, i)) {
                 fprintf(stderr,
                         "Vectors not equal: %d: %s\n",
                         i, message);
@@ -376,7 +376,7 @@ void Zinc_expect_vector(Vector* a, Vector* b, const char* message)
     }
 }
 
-void Zinc_expect_vector_double(Vector* a, Vector* b, double threshold, const char* message)
+void Zinc_expect_vector_double(Zinc_vector* a, Zinc_vector* b, double threshold, const char* message)
 {
     Zinc_test_called();
     if (a->value_size != b->value_size) {
@@ -393,8 +393,8 @@ void Zinc_expect_vector_double(Vector* a, Vector* b, double threshold, const cha
         Zinc_error_triggered();
     } else {
         for (size_t i = 0; i < a->count; i++) {
-            double a_value = VECTOR_DOUBLE(a, i);
-            double b_value = VECTOR_DOUBLE(b, i);
+            double a_value = ZINC_VECTOR_DOUBLE(a, i);
+            double b_value = ZINC_VECTOR_DOUBLE(b, i);
             if (isnan(a_value) && isnan(b_value)) {
                 continue;
             }

@@ -12,7 +12,7 @@ typedef struct {
     Zinc_location prev_loc;
     bool repeat_char;
     size_t pos;
-    Vector* text;
+    Zinc_vector* text;
     Zinc_input_char_next_interface Next;
     Zinc_input_char_repeat_interface Repeat;
     Zinc_input_char_seek_interface Seek;
@@ -23,12 +23,12 @@ typedef struct {
 
 extern Zinc_input_char_vtable InputCharStringVTable;
 
-void Zinc_input_char_string_init(Zinc_input_char_string* input_string, Vector* text);
-void Zinc_input_char_string_create(Zinc_input_char_string** input_string, Vector* text);
+void Zinc_input_char_string_init(Zinc_input_char_string* input_string, Zinc_vector* text);
+void Zinc_input_char_string_create(Zinc_input_char_string** input_string, Zinc_vector* text);
 bool Zinc_input_char_string_next(Zinc_input_char_string* data, char* c, Zinc_location* loc);
 void Zinc_input_char_string_repeat(Zinc_input_char_string* data);
 void Zinc_input_char_string_seek(Zinc_input_char_string* data, Zinc_location* loc);
-void Zinc_input_char_string_get_all(Zinc_input_char_string* data, Vector** text);
+void Zinc_input_char_string_get_all(Zinc_input_char_string* data, Zinc_vector** text);
 Zinc_location Zinc_input_char_string_get_location(Zinc_input_char_string* data);
 
 #endif

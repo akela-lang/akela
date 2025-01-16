@@ -20,8 +20,8 @@ void TestInputCharFileNext()
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
-    Vector* text_actual;
-    VectorCreate(&text_actual, sizeof(char));
+    Zinc_vector* text_actual;
+    Zinc_vector_create(&text_actual, sizeof(char));
     bool done;
     char c;
     struct Zinc_location loc;
@@ -32,7 +32,7 @@ void TestInputCharFileNext()
     do {
         done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
-        VectorAdd(text_actual, &c, 1);
+        Zinc_vector_add(text_actual, &c, 1);
         Zinc_expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
         Zinc_expect_size_t_equal(loc.line, line, "line");
         Zinc_expect_size_t_equal(loc.col, col, "col");
@@ -49,7 +49,7 @@ void TestInputCharFileNext()
     Zinc_expect_vector_str(text_actual, text, "text");
 
     fclose(fp);
-    VectorDestroy(text_actual);
+    Zinc_vector_destroy(text_actual);
     free(text_actual);
     free(input);
 }
@@ -72,8 +72,8 @@ void TestInputCharFileRepeat()
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
-    Vector* text_actual;
-    VectorCreate(&text_actual, sizeof(char));
+    Zinc_vector* text_actual;
+    Zinc_vector_create(&text_actual, sizeof(char));
     bool done;
     char c;
     struct Zinc_location loc;
@@ -85,7 +85,7 @@ void TestInputCharFileRepeat()
     do {
         done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
-        VectorAdd(text_actual, &c, 1);
+        Zinc_vector_add(text_actual, &c, 1);
         Zinc_expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
         Zinc_expect_size_t_equal(loc.line, line, "line");
         Zinc_expect_size_t_equal(loc.col, col, "col");
@@ -107,7 +107,7 @@ void TestInputCharFileRepeat()
     Zinc_expect_vector_str(text_actual, text_expected, "text");
 
     fclose(fp);
-    VectorDestroy(text_actual);
+    Zinc_vector_destroy(text_actual);
     free(text_actual);
     free(input);
 }
@@ -130,8 +130,8 @@ void TestInputCharFileSeek()
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
-    Vector* text_actual;
-    VectorCreate(&text_actual, sizeof(char));
+    Zinc_vector* text_actual;
+    Zinc_vector_create(&text_actual, sizeof(char));
     bool done;
     char c;
     struct Zinc_location loc;
@@ -140,13 +140,13 @@ void TestInputCharFileSeek()
     do {
         done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
-        VectorAdd(text_actual, &c, 1);
+        Zinc_vector_add(text_actual, &c, 1);
     } while (true);
 
     Zinc_expect_vector_str(text_actual, text_expected, "text");
 
     fclose(fp);
-    VectorDestroy(text_actual);
+    Zinc_vector_destroy(text_actual);
     free(text_actual);
     free(input);
 }
@@ -168,13 +168,13 @@ void TestInputCharFileGetAll()
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
-    Vector* text_actual;
+    Zinc_vector* text_actual;
     Zinc_input_char_file_get_all(input, &text_actual);
 
     Zinc_expect_vector_str(text_actual, text, "text");
 
     fclose(fp);
-    VectorDestroy(text_actual);
+    Zinc_vector_destroy(text_actual);
     free(text_actual);
     free(input);
 }

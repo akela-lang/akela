@@ -5,11 +5,11 @@
 #include "field.h"
 
 typedef struct Series {
-    Vector name;
+    Zinc_vector name;
     enum FieldType type;
-    Vector types;
-    Vector raw;
-    Vector value;
+    Zinc_vector types;
+    Zinc_vector raw;
+    Zinc_vector value;
     struct Series* next;
     struct Series* prev;
 } Series;

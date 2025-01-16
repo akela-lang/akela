@@ -6,9 +6,9 @@
 
 void setup_compile(Cob_compile_data** cd, const char* s)
 {
-    Vector* text = NULL;
-    VectorCreate(&text, sizeof(char));
-    VectorAdd(text, s, strlen(s));
+    Zinc_vector* text = NULL;
+    Zinc_vector_create(&text, sizeof(char));
+    Zinc_vector_add(text, s, strlen(s));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, text);
 
@@ -23,7 +23,7 @@ void setup_compile(Cob_compile_data** cd, const char* s)
 void teardown_compile(Cob_compile_data* cd, Cob_re* result)
 {
     Zinc_input_unicode_string* input = cd->input_obj;
-    VectorDestroy(input->text);
+    Zinc_vector_destroy(input->text);
     free(input->text);
     free(input);
     free(cd->lookahead);

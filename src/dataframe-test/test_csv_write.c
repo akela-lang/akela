@@ -19,11 +19,11 @@ void TestCSVWrite1()
     Zinc_expect_size_t_equal(DataFrameColumnCount(parse_output->df), 6, "column count");
     Zinc_expect_size_t_equal(DataFrameRowCount(parse_output->df), 2, "row count");
 
-    Vector* output_text = CSVWrite(parse_output->df);
+    Zinc_vector* output_text = CSVWrite(parse_output->df);
     Zinc_expect_vector(parse_output->input_text, output_text, "text");
 
     CSVParseTeardown(parse_output);
-    VectorDestroy(output_text);
+    Zinc_vector_destroy(output_text);
     free(output_text);
 }
 

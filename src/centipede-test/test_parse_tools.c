@@ -57,8 +57,8 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
 void test_parse_teardown_input(Cent_comp_unit* cu)
 {
     Zinc_input_unicode_string* input = cu->input;
-    Vector* v = input->text;
-    VectorDestroy(v);
+    Zinc_vector* v = input->text;
+    Zinc_vector_destroy(v);
     free(v);
     free(input);
 }

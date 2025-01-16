@@ -1709,7 +1709,7 @@ void test_parse_expr_array_subscript_3d()
     Zinc_expect_true(b_tu->is_array, "is_array b_tu");
     Zinc_expect_size_t_equal(b_tu->dim.count, 1, "dim.count b_tu");
 
-    Ake_type_dimension* b_dim0 = (Ake_type_dimension*)VECTOR_PTR(&b_tu->dim, 0);
+    Ake_type_dimension* b_dim0 = (Ake_type_dimension*)ZINC_VECTOR_PTR(&b_tu->dim, 0);
     Zinc_assert_ptr(b_dim0, "ptr b_dim0");
     Zinc_expect_size_t_equal(b_dim0->size, 4, "size b_dim0");
     Zinc_expect_size_t_equal(b_dim0->option, Ake_array_element_const, "option b_dim0");
@@ -1724,12 +1724,12 @@ void test_parse_expr_array_subscript_3d()
     Zinc_expect_true(c_tu->is_array, "is_array c_tu");
     Zinc_expect_size_t_equal(c_tu->dim.count, 2, "dim.count c_tu");
 
-    Ake_type_dimension* c_dim0 = (Ake_type_dimension*)VECTOR_PTR(&c_tu->dim, 0);
+    Ake_type_dimension* c_dim0 = (Ake_type_dimension*)ZINC_VECTOR_PTR(&c_tu->dim, 0);
     Zinc_assert_ptr(c_dim0, "ptr c_dim0");
     Zinc_expect_size_t_equal(c_dim0->size, 3, "size c_dim0");
     Zinc_expect_int_equal(c_dim0->option, Ake_array_element_default, "option c_dim0");
 
-    Ake_type_dimension* c_dim1 = (Ake_type_dimension*)VECTOR_PTR(&c_tu->dim, 1);
+    Ake_type_dimension* c_dim1 = (Ake_type_dimension*)ZINC_VECTOR_PTR(&c_tu->dim, 1);
     Zinc_assert_ptr(c_dim1, "ptr c_dim1");
     Zinc_expect_size_t_equal(c_dim1->size, 4, "size c_dim1");
     Zinc_expect_int_equal(c_dim1->option, Ake_array_element_const, "option c_dim1");
@@ -1744,17 +1744,17 @@ void test_parse_expr_array_subscript_3d()
     Zinc_expect_true(d_tu->is_array, "is_array d_tu");
     Zinc_expect_size_t_equal(d_tu->dim.count, 3, "dim.count d_tu");
 
-    Ake_type_dimension* d_dim0 = (Ake_type_dimension*)VECTOR_PTR(&d_tu->dim, 0);
+    Ake_type_dimension* d_dim0 = (Ake_type_dimension*)ZINC_VECTOR_PTR(&d_tu->dim, 0);
     Zinc_assert_ptr(d_dim0, "ptr d_dim0");
     Zinc_expect_size_t_equal(d_dim0->size, 2, "size d_dim0");
     Zinc_expect_int_equal(d_dim0->option, Ake_array_element_default, "option d_dim0");
 
-    Ake_type_dimension* d_dim1 = (Ake_type_dimension*)VECTOR_PTR(&d_tu->dim, 1);
+    Ake_type_dimension* d_dim1 = (Ake_type_dimension*)ZINC_VECTOR_PTR(&d_tu->dim, 1);
     Zinc_assert_ptr(d_dim1, "ptr d_dim1");
     Zinc_expect_size_t_equal(d_dim1->size, 3, "size d_dim1");
     Zinc_expect_int_equal(d_dim1->option, Ake_array_element_default, "option d_dim1");
 
-    Ake_type_dimension* d_dim2 = (Ake_type_dimension*)VECTOR_PTR(&d_tu->dim, 2);
+    Ake_type_dimension* d_dim2 = (Ake_type_dimension*)ZINC_VECTOR_PTR(&d_tu->dim, 2);
     Zinc_assert_ptr(d_dim2, "ptr d_dim2");
     Zinc_expect_size_t_equal(d_dim2->size, 4, "size d_dim2");
     Zinc_expect_int_equal(d_dim2->option, Ake_array_element_const, "option d_dim2");

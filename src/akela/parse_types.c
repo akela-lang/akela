@@ -484,7 +484,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
             } else {
                 dim.option = Ake_array_element_default;
             }
-            VectorAdd(&n->tu->dim, &dim, 1);
+            Zinc_vector_add(&n->tu->dim, &dim, 1);
         } else {
             n->tu->is_slice = true;
             Ake_type_dimension dim;
@@ -494,7 +494,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
             } else {
                 dim.option = Ake_array_element_default;
             }
-            VectorAdd(&n->tu->dim, &dim, 1);
+            Zinc_vector_add(&n->tu->dim, &dim, 1);
         }
 
         t0 = Ake_get_lookahead(ps);
@@ -861,7 +861,7 @@ bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct Zinc_locati
         if (n->type == Ake_ast_type_array_subscript) {
             Ake_ast* left = n->head;
             if (left->tu->is_array) {
-                Ake_type_dimension* type_dim = (Ake_type_dimension*)VECTOR_PTR(&left->tu->dim, 0);
+                Ake_type_dimension* type_dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(&left->tu->dim, 0);
                 if (type_dim->option == Ake_array_element_const) {
                     Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
                 }

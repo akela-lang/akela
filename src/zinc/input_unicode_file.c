@@ -138,11 +138,11 @@ void Zinc_input_unicode_file_seek(Zinc_input_unicode_file* input, Zinc_location*
  * @param input the input
  * @param v the output vector
  */
-void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* input, Vector** text)
+void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* input, Zinc_vector** text)
 {
     Zinc_input_unicode_file_clear(input);
-    Vector* v = NULL;
-    VectorCreate(&v, sizeof(char));
+    Zinc_vector* v = NULL;
+    Zinc_vector_create(&v, sizeof(char));
     fseek(input->fp, 0, SEEK_SET);
     int x;
     int num;
@@ -156,9 +156,9 @@ void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* input, Vector** te
             x = getc(input->fp);
             c[i] = (char)x;
         }
-        VectorAdd(v, c, num);
+        Zinc_vector_add(v, c, num);
     } while (true);
-    VectorAddNull(v);
+    Zinc_vector_add_null(v);
     *text = v;
 }
 

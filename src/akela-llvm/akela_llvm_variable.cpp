@@ -258,7 +258,7 @@ namespace Akela_llvm {
         Value* subscript_value = Dispatch(jd, subscript);
 
         assert(array->tu->dim.count >= 1);
-        size_t size = *(size_t*)VECTOR_PTR(&array->tu->dim, 0);
+        size_t size = *(size_t*)ZINC_VECTOR_PTR(&array->tu->dim, 0);
         Type* size_type = Type::getInt64Ty(*jd->TheContext);
         Value* size_value = ConstantInt::get(size_type, APInt(64, size, false));
 

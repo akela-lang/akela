@@ -5,10 +5,10 @@
 
 void TestFieldLexRun(char* text, enum FieldType* type)
 {
-    Vector* text2 = NULL;
-    VectorCreate(&text2, sizeof(char));
+    Zinc_vector* text2 = NULL;
+    Zinc_vector_create(&text2, sizeof(char));
     size_t len = strlen(text);
-    VectorAdd(text2, text, len);
+    Zinc_vector_add(text2, text, len);
 
     Zinc_input_char_string* input_string = NULL;
     Zinc_input_char_string_create(&input_string, text2);
@@ -20,7 +20,7 @@ void TestFieldLexRun(char* text, enum FieldType* type)
 
     FieldLex(lex_data, type);
 
-    VectorDestroy(text2);
+    Zinc_vector_destroy(text2);
     free(text2);
     free(input_string);
     free(lex_data);

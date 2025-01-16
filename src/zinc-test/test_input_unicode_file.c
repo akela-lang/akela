@@ -693,13 +693,13 @@ void test_input_unicode_file_get_all()
     struct Zinc_string bf;
     Zinc_string_init(&bf);
 
-    Vector* output = NULL;
+    Zinc_vector* output = NULL;
 
     Zinc_input_unicode_get_all(input, input->input_vtable, &output);
-    Zinc_expect_true(VectorMatchStr(output, s), "match");
+    Zinc_expect_true(Zinc_vector_match_str(output, s), "match");
 
     free(input);
-    VectorDestroy(output);
+    Zinc_vector_destroy(output);
     free(output);
     Zinc_string_destroy(&name);
     fclose(fp);

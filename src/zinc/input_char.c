@@ -28,7 +28,7 @@ void Zinc_input_char_seek(void* input_obj, Zinc_input_char_vtable* input_vtable,
     (*seek)(input_obj, loc);
 }
 
-void Zinc_input_char_get_all(void* input_obj, Zinc_input_char_vtable* input_vtable, Vector** text)
+void Zinc_input_char_get_all(void* input_obj, Zinc_input_char_vtable* input_vtable, Zinc_vector** text)
 {
     Zinc_input_char_get_all_interface *get_all = input_obj + input_vtable->get_all_offset;
     (*get_all)(input_obj, text);

@@ -26,7 +26,7 @@ enum CSVStateType {
 
 struct CSVToken {
     enum CSVTokenType type;
-    Vector value;
+    Zinc_vector value;
     struct Zinc_location loc;
 };
 
@@ -45,6 +45,6 @@ void CSVTokenDestroy(struct CSVToken* token);
 void CSVLexDataInit(struct CSVLexData* lex_data);
 void CSVLexDataCreate(struct CSVLexData** lex_data);
 void CSVLex(struct CSVLexData* lex_data, struct CSVToken** token);
-enum Zinc_result CSVLoad(const char* filename, Vector* text);
+enum Zinc_result CSVLoad(const char* filename, Zinc_vector* text);
 
 #endif

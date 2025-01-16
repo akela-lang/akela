@@ -6,12 +6,12 @@
 
 Cob_re Cover_gcov_line_re()
 {
-    Vector* text = NULL;
+    Zinc_vector* text = NULL;
     char* s = "\\s*(\\-|#####|\\d+)\\*?:\\s*(\\d+):(Source:)?(.*)";
     size_t len = strlen(s);
 
-    VectorCreate(&text, 1);
-    VectorAdd(text, s, len);
+    Zinc_vector_create(&text, 1);
+    Zinc_vector_add(text, s, len);
 
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, text);
@@ -24,7 +24,7 @@ Cob_re Cover_gcov_line_re()
 
     Cob_re re = Cob_compile(cd);
 
-    VectorDestroy(text);
+    Zinc_vector_destroy(text);
     free(text);
     free(input);
     Cob_compile_data_destroy(cd);
@@ -35,12 +35,12 @@ Cob_re Cover_gcov_line_re()
 
 Cob_re Cover_gcov_ext_re()
 {
-    Vector* text = NULL;
+    Zinc_vector* text = NULL;
     char* s = "\\.gcov$";
     size_t len = strlen(s);
 
-    VectorCreate(&text, 1);
-    VectorAdd(text, s, len);
+    Zinc_vector_create(&text, 1);
+    Zinc_vector_add(text, s, len);
 
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, text);
@@ -53,7 +53,7 @@ Cob_re Cover_gcov_ext_re()
 
     Cob_re re = Cob_compile(cd);
 
-    VectorDestroy(text);
+    Zinc_vector_destroy(text);
     free(text);
     free(input);
     Cob_compile_data_destroy(cd);
@@ -64,12 +64,12 @@ Cob_re Cover_gcov_ext_re()
 
 Cob_re Cover_test_dir_re()
 {
-    Vector* text = NULL;
+    Zinc_vector* text = NULL;
     char* s = "\\-test$";
     size_t len = strlen(s);
 
-    VectorCreate(&text, 1);
-    VectorAdd(text, s, len);
+    Zinc_vector_create(&text, 1);
+    Zinc_vector_add(text, s, len);
 
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, text);
@@ -82,7 +82,7 @@ Cob_re Cover_test_dir_re()
 
     Cob_re re = Cob_compile(cd);
 
-    VectorDestroy(text);
+    Zinc_vector_destroy(text);
     free(text);
     free(input);
     Cob_compile_data_destroy(cd);

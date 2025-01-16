@@ -107,19 +107,19 @@ void Zinc_input_char_file_seek(Zinc_input_char_file* input, struct Zinc_location
  * @param input the input
  * @param v the output vector
  */
-void Zinc_input_char_file_get_all(Zinc_input_char_file* input, Vector** text)
+void Zinc_input_char_file_get_all(Zinc_input_char_file* input, Zinc_vector** text)
 {
     Zinc_input_char_file_clear(input);
-    Vector* v = NULL;
-    VectorCreate(&v, sizeof(char));
+    Zinc_vector* v = NULL;
+    Zinc_vector_create(&v, sizeof(char));
     fseek(input->fp, 0, SEEK_SET);
     do {
         int x = getc(input->fp);
         if (x == EOF) break;
         char c = (char)x;
-        VectorAdd(v, &c, 1);
+        Zinc_vector_add(v, &c, 1);
     } while (true);
-    VectorAddNull(v);
+    Zinc_vector_add_null(v);
     *text = v;
 }
 

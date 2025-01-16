@@ -4,11 +4,11 @@
 
 void CSVParseSetup(struct CSVParseOutput** parse_output, const char* text)
 {
-    Vector* input = NULL;
+    Zinc_vector* input = NULL;
     size_t len = strlen(text);
-    VectorCreate(&input, sizeof(char));
-    VectorAdd(input, (char*)(text), len);
-    VectorAddNull(input);
+    Zinc_vector_create(&input, sizeof(char));
+    Zinc_vector_add(input, (char*)(text), len);
+    Zinc_vector_add_null(input);
 
     Zinc_input_char_string* input_data;
     Zinc_input_char_string_create(&input_data, input);
@@ -41,7 +41,7 @@ void CSVParseSetup(struct CSVParseOutput** parse_output, const char* text)
 
 void CSVParseTeardown(struct CSVParseOutput* parse_output)
 {
-    VectorDestroy(parse_output->input_text);
+    Zinc_vector_destroy(parse_output->input_text);
     free(parse_output->input_text);
     Zinc_error_list_destroy(parse_output->el);
     free(parse_output->el);

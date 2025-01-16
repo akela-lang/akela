@@ -15,9 +15,9 @@ void test_comp_table_compile()
 	struct Ake_comp_table ct;
 	Ake_comp_table_init(&ct);
 
-    Vector* text = NULL;
-    VectorCreate(&text, sizeof(char));
-    VectorAdd(text, "10", 2);
+    Zinc_vector* text = NULL;
+    Zinc_vector_create(&text, sizeof(char));
+    Zinc_vector_add(text, "10", 2);
 
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, text);
@@ -43,7 +43,7 @@ void test_comp_table_compile()
 
     free(input);
 	Ake_comp_table_destroy(&ct);
-    VectorDestroy(text);
+    Zinc_vector_destroy(text);
     free(text);
 }
 
@@ -55,11 +55,11 @@ void test_comp_table_include()
 	Ake_comp_table_init(&ct);
 
 	/* base */
-    Vector* base_text = NULL;
-    VectorCreate(&base_text, sizeof(char));
+    Zinc_vector* base_text = NULL;
+    Zinc_vector_create(&base_text, sizeof(char));
     char base_string[] = "fn sqrt(x: i64)->i64 1 end";
-    VectorAdd(base_text, base_string, strlen(base_string));
-    VectorAddNull(base_text);
+    Zinc_vector_add(base_text, base_string, strlen(base_string));
+    Zinc_vector_add_null(base_text);
     Zinc_input_unicode_string* base_input = NULL;
     Zinc_input_unicode_string_create(&base_input, base_text);
 
@@ -77,10 +77,10 @@ void test_comp_table_include()
 
 	/* main */
     char main_string[] = "sqrt(25)";
-    Vector* main_vector = NULL;
-    VectorCreate(&main_vector, sizeof(char));
-    VectorAdd(main_vector, main_string, strlen(main_string));
-    VectorAddNull(main_vector);
+    Zinc_vector* main_vector = NULL;
+    Zinc_vector_create(&main_vector, sizeof(char));
+    Zinc_vector_add(main_vector, main_string, strlen(main_string));
+    Zinc_vector_add_null(main_vector);
     Zinc_input_unicode_string* main_input = NULL;
     Zinc_input_unicode_string_create(&main_input, main_vector);
 
@@ -122,9 +122,9 @@ void test_comp_table_include()
 	/* destroy */
     free(base_input);
     free(main_input);
-    VectorDestroy(base_text);
+    Zinc_vector_destroy(base_text);
     free(base_text);
-    VectorDestroy(main_vector);
+    Zinc_vector_destroy(main_vector);
     free(main_vector);
 	Ake_comp_table_destroy(&ct);
 }
@@ -138,9 +138,9 @@ void test_comp_table_include_base()
 
 	/* main */
     char main_string[] = "sqrt(25)";
-    Vector* main_vector = NULL;
-    VectorCreate(&main_vector, sizeof(char));
-    VectorAdd(main_vector, main_string, strlen(main_string));
+    Zinc_vector* main_vector = NULL;
+    Zinc_vector_create(&main_vector, sizeof(char));
+    Zinc_vector_add(main_vector, main_string, strlen(main_string));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, main_vector);
 
@@ -184,7 +184,7 @@ void test_comp_table_include_base()
 	Zinc_expect_str(&number_main->value, "25", "25 number_main");
 
 	/* destroy */
-	VectorDestroy(main_vector);
+	Zinc_vector_destroy(main_vector);
     free(main_vector);
     free(input);
 	Ake_comp_table_destroy(&ct);

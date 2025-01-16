@@ -36,7 +36,7 @@ enum Zinc_result Zinc_input_unicode_file_next(
         bool* done);
 void Zinc_input_unicode_file_repeat(Zinc_input_unicode_file* data);
 void Zinc_input_unicode_file_seek(Zinc_input_unicode_file* data, Zinc_location* loc);
-void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* data, Vector** text);
+void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* data, Zinc_vector** text);
 Zinc_location Zinc_input_unicode_file_get_location(Zinc_input_unicode_file* input);
 
 #endif

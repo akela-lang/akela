@@ -80,7 +80,7 @@ bool CSVParseHeader(struct CSVParseData* parse_data, DataFrame* df)
             Series* s = NULL;
             SeriesCreate(&s);
             s->type = FieldTypeEmpty;
-            VectorAdd(&s->name, token->value.buffer, token->value.count);
+            Zinc_vector_add(&s->name, token->value.buffer, token->value.count);
             DataFrameAdd(df, s);
             CSVTokenDestroy(token);
             free(token);
@@ -118,15 +118,15 @@ bool CSVParseRow(struct CSVParseData* parse_data, DataFrame* df)
                 /* field type */
                 enum FieldType field_type;
                 FieldGetType(&token->value, &field_type);
-                VectorAdd(&s->types, &field_type, 1);
+                Zinc_vector_add(&s->types, &field_type, 1);
                 s->type = FieldPromotion(field_type, s->type);
 
                 /* field raw */
-                Vector* raw = NULL;
-                VectorCreate(&raw, sizeof(char));
-                VectorAdd(raw, token->value.buffer, token->value.count);
-                VectorAddNull(raw);
-                VectorAdd(&s->raw, &raw, 1);
+                Zinc_vector* raw = NULL;
+                Zinc_vector_create(&raw, sizeof(char));
+                Zinc_vector_add(raw, token->value.buffer, token->value.count);
+                Zinc_vector_add_null(raw);
+                Zinc_vector_add(&s->raw, &raw, 1);
             }
             i++;
             CSVTokenDestroy(token);

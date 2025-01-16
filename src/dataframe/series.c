@@ -5,11 +5,11 @@
 
 void SeriesInit(Series* s)
 {
-    VectorInit(&s->name, sizeof(char));
+    Zinc_vector_init(&s->name, sizeof(char));
     s->type = FieldTypeNone;
-    VectorInit(&s->types, sizeof(enum FieldType));
-    VectorInit(&s->raw, sizeof(Vector*));
-    VectorInit(&s->value, 0);
+    Zinc_vector_init(&s->types, sizeof(enum FieldType));
+    Zinc_vector_init(&s->raw, sizeof(Zinc_vector*));
+    Zinc_vector_init(&s->value, 0);
     s->next = NULL;
     s->prev = NULL;
 }
@@ -23,14 +23,14 @@ void SeriesCreate(Series** s)
 void SeriesDestroy(Series* s)
 {
     for (size_t i = 0; i < s->raw.count; i++) {
-        Vector* v = VECTOR_VECTOR(&s->raw, i);
-        VectorDestroy(v);
+        Zinc_vector* v = ZINC_VECTOR_VECTOR(&s->raw, i);
+        Zinc_vector_destroy(v);
         free(v);
     }
-    VectorDestroy(&s->name);
-    VectorDestroy(&s->types);
-    VectorDestroy(&s->raw);
-    VectorDestroy(&s->value);
+    Zinc_vector_destroy(&s->name);
+    Zinc_vector_destroy(&s->types);
+    Zinc_vector_destroy(&s->raw);
+    Zinc_vector_destroy(&s->value);
 }
 
 void SeriesRefreshValues(Series* s)
@@ -49,7 +49,7 @@ void SeriesRefreshValues(Series* s)
             s->value.value_size = sizeof(u_int8_t);
             break;
         case FieldTypeString:
-            s->value.value_size = sizeof(Vector*);
+            s->value.value_size = sizeof(Zinc_vector*);
             break;
         case FieldTypeEmpty:
             s->value.value_size = 0;
@@ -65,39 +65,39 @@ void SeriesRefreshValues(Series* s)
     for (size_t i = 0; i < s->raw.count; i++) {
         switch (s->type) {
             case FieldTypeFloat: {
-                Vector* raw = *(Vector**)VECTOR_PTR(&s->raw, i);
+                Zinc_vector* raw = *(Zinc_vector**)ZINC_VECTOR_PTR(&s->raw, i);
                 double value = strtod(raw->buffer, NULL);
-                VectorAdd(&s->value, &value, 1);
+                Zinc_vector_add(&s->value, &value, 1);
                 break;
             }
             case FieldTypeInt: {
-                Vector* raw = *(Vector**)VECTOR_PTR(&s->raw, i);
+                Zinc_vector* raw = *(Zinc_vector**)ZINC_VECTOR_PTR(&s->raw, i);
                 long value = strtol(raw->buffer, NULL, 10);
-                VectorAdd(&s->value, &value, 1);
+                Zinc_vector_add(&s->value, &value, 1);
                 break;
             }
             case FieldTypeIntU: {
-                Vector* raw = *(Vector**)VECTOR_PTR(&s->raw, i);
+                Zinc_vector* raw = *(Zinc_vector**)ZINC_VECTOR_PTR(&s->raw, i);
                 unsigned long value = strtoul(raw->buffer, NULL, 10);
-                VectorAdd(&s->value, &value, 1);
+                Zinc_vector_add(&s->value, &value, 1);
                 break;
             }
             case FieldTypeBool: {
-                Vector* raw = *(Vector**)VECTOR_PTR(&s->raw, i);
+                Zinc_vector* raw = *(Zinc_vector**)ZINC_VECTOR_PTR(&s->raw, i);
                 u_int8_t value;
-                if (VectorMatchStr(raw, "True")) {
+                if (Zinc_vector_match_str(raw, "True")) {
                     value = 1;
-                } else if (VectorMatchStr(raw, "False")) {
+                } else if (Zinc_vector_match_str(raw, "False")) {
                     value = 0;
                 } else {
                     assert(false);
                 }
-                VectorAdd(&s->value, &value, 1);
+                Zinc_vector_add(&s->value, &value, 1);
                 break;
             }
             case FieldTypeString: {
-                Vector* raw = *(Vector**)VECTOR_PTR(&s->raw, i);
-                VectorAdd(&s->value, &raw, 1);
+                Zinc_vector* raw = *(Zinc_vector**)ZINC_VECTOR_PTR(&s->raw, i);
+                Zinc_vector_add(&s->value, &raw, 1);
             }
             case FieldTypeEmpty:
                 break;

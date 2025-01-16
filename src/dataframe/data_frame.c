@@ -85,7 +85,7 @@ void DataFramePrint(DataFrame* df)
         if (i > 0) {
             printf(" ");
         }
-        printf("%10s", VECTOR_STRING(&s->name));
+        printf("%10s", ZINC_VECTOR_STRING(&s->name));
         s = s->next;
         i++;
     }
@@ -115,14 +115,14 @@ void DataFramePrint(DataFrame* df)
                 printf(" ");
             }
             if (s->type == FieldTypeString) {
-                Vector *v = VECTOR_VECTOR(&s->raw, i);
-                printf("%s", VECTOR_STRING(v));
+                Zinc_vector *v = ZINC_VECTOR_VECTOR(&s->raw, i);
+                printf("%s", ZINC_VECTOR_STRING(v));
             } else if (s->type == FieldTypeInt) {
-                printf("%10ld", VECTOR_LONG(&s->value, i));
+                printf("%10ld", ZINC_VECTOR_LONG(&s->value, i));
             } else if (s->type == FieldTypeInt || s->type == FieldTypeIntU) {
-                printf("%10lu", VECTOR_LONG_U(&s->value, i));
+                printf("%10lu", ZINC_VECTOR_LONG_U(&s->value, i));
             } else if (s->type == FieldTypeFloat) {
-                printf("%10.4lf", VECTOR_DOUBLE(&s->value, i));
+                printf("%10.4lf", ZINC_VECTOR_DOUBLE(&s->value, i));
             }
             s = s->next;
             j++;

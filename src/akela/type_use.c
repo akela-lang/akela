@@ -7,7 +7,7 @@ void Ake_type_use_init(Ake_type_use* tu)
     tu->type = Ake_type_use_type_def;
     tu->td = NULL;
     Zinc_string_init(&tu->name);
-    VectorInit(&tu->dim, sizeof(Ake_type_dimension));
+    Zinc_vector_init(&tu->dim, sizeof(Ake_type_dimension));
     tu->is_ref = false;
     tu->is_mut = false;
     tu->original_is_mut = false;
@@ -38,7 +38,7 @@ void Ake_type_use_destroy(Ake_type_use* tu)
             Ake_type_use_destroy(temp);
         }
         Zinc_string_destroy(&tu->name);
-        VectorDestroy(&tu->dim);
+        Zinc_vector_destroy(&tu->dim);
         free(tu);
     }
 }
@@ -60,7 +60,7 @@ void Ake_type_use_copy(Ake_type_use* src, Ake_type_use* dest)
     dest->type = src->type;
     dest->td = src->td;
     Zinc_string_copy(&src->name, &dest->name);
-    VectorCopy(&src->dim, &dest->dim);
+    Zinc_vector_copy(&src->dim, &dest->dim);
     dest->is_ref = src->is_ref;
     dest->is_mut = src->is_mut;
     dest->original_is_mut = src->original_is_mut;
@@ -92,7 +92,7 @@ void Ake_type_use_reduce_dimension(Ake_type_use* tu)
 {
     if (tu->dim.count > 0) {
         Ake_type_dimension current;
-        Ake_type_dimension *first = (Ake_type_dimension*)VECTOR_PTR(&tu->dim, 0);
+        Ake_type_dimension *first = (Ake_type_dimension*)ZINC_VECTOR_PTR(&tu->dim, 0);
         current = *first;
 
         if (!tu->original_is_mut || current.option == Ake_array_element_const) {
@@ -102,8 +102,8 @@ void Ake_type_use_reduce_dimension(Ake_type_use* tu)
         }
 
         for (size_t i = 0; i < tu->dim.count - 1; i++) {
-            Ake_type_dimension* dest = (Ake_type_dimension*)VECTOR_PTR(&tu->dim, i);
-            Ake_type_dimension* src = (Ake_type_dimension*)VECTOR_PTR(&tu->dim, i + 1);
+            Ake_type_dimension* dest = (Ake_type_dimension*)ZINC_VECTOR_PTR(&tu->dim, i);
+            Ake_type_dimension* src = (Ake_type_dimension*)ZINC_VECTOR_PTR(&tu->dim, i + 1);
             *dest = *src;
         }
         if (tu->dim.count > 0) {

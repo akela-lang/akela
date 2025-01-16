@@ -12,7 +12,7 @@ Zinc_input_unicode_vtable Zinc_input_unicode_string_vtable = {
         .get_location_offset = offsetof(Zinc_input_unicode_string, GetLocation),
 };
 
-void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Vector* text)
+void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Zinc_vector* text)
 {
     Zinc_location_init(&input_string->loc);
     Zinc_location_init(&input_string->prev_loc);
@@ -28,7 +28,7 @@ void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Vec
     input_string->input_vtable = &Zinc_input_unicode_string_vtable;
 }
 
-void Zinc_input_unicode_string_create(Zinc_input_unicode_string** input_string, Vector* text)
+void Zinc_input_unicode_string_create(Zinc_input_unicode_string** input_string, Zinc_vector* text)
 {
     Zinc_malloc_safe((void**)input_string, sizeof(Zinc_input_unicode_string));
     Zinc_input_unicode_string_init(*input_string, text);
@@ -74,7 +74,7 @@ enum Zinc_result Zinc_input_unicode_string_next(
     data->prev_loc = data->loc;
     if (data->pos < data->text->count) {
         /* first byte */
-        c[0] = VECTOR_CHAR(data->text, data->pos++);
+        c[0] = ZINC_VECTOR_CHAR(data->text, data->pos++);
         *num = ZINC_NUM_BYTES(c[0]);
         *loc = data->loc;
         data->loc.start_pos++;
@@ -89,7 +89,7 @@ enum Zinc_result Zinc_input_unicode_string_next(
         *done = false;
         for (int i = 1; i < *num; i++) {
             if (data->pos < data->text->count) {
-                c[i] = VECTOR_CHAR(data->text, data->pos++);
+                c[i] = ZINC_VECTOR_CHAR(data->text, data->pos++);
                 data->loc.start_pos++;
                 if (!ZINC_IS_EXTRA_BYTE(c[i])) {
                     r = Zinc_set_error("invalid utf8 trailing byte");
@@ -142,7 +142,7 @@ void Zinc_input_unicode_string_seek(Zinc_input_unicode_string* data, Zinc_locati
  * @param data the data
  * @param v the output vector
  */
-void Zinc_input_unicode_string_get_all(Zinc_input_unicode_string* data, Vector** text)
+void Zinc_input_unicode_string_get_all(Zinc_input_unicode_string* data, Zinc_vector** text)
 {
     Zinc_input_unicode_string_clear(data);
     data->pos = data->text->count;

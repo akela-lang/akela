@@ -16,6 +16,6 @@ struct FieldLexData {
 void FieldLexDataInit(struct FieldLexData* lex_data);
 void FieldLexDataCreate(struct FieldLexData** lex_data);
 void FieldLex(struct FieldLexData* lex_data, enum FieldType* type);
-void FieldGetType(Vector* text, enum FieldType* type);
+void FieldGetType(Zinc_vector* text, enum FieldType* type);
 
 #endif

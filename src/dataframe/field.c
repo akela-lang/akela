@@ -5,12 +5,12 @@
 void FieldInit(struct Field* field)
 {
     field->type = FieldTypeNone;
-    VectorInit(&field->raw, sizeof(char));
+    Zinc_vector_init(&field->raw, sizeof(char));
 }
 
 void FieldDestroy(struct Field* field)
 {
-    VectorDestroy(&field->raw);
+    Zinc_vector_destroy(&field->raw);
 }
 
 bool FieldIsNumber(enum FieldType type)

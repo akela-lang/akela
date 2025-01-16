@@ -11,7 +11,7 @@ struct CSVParseData {
 };
 
 struct CSVParseOutput {
-    Vector* input_text;
+    Zinc_vector* input_text;
     struct Zinc_error_list* el;
     DataFrame* df;
 };

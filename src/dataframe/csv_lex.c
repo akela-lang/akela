@@ -14,7 +14,7 @@ void CSVLexDispatch(struct CSVLexData* lex_data, struct CSVToken* token);
 void CSVTokenInit(struct CSVToken* token)
 {
     token->type = CSVTokenTypeNone;
-    VectorInit(&token->value, sizeof(char));
+    Zinc_vector_init(&token->value, sizeof(char));
     Zinc_location_init(&token->loc);
 }
 
@@ -26,7 +26,7 @@ void CSVTokenCreate(struct CSVToken** token)
 
 void CSVTokenDestroy(struct CSVToken* token)
 {
-    VectorDestroy(&token->value);
+    Zinc_vector_destroy(&token->value);
 }
 
 void CSVLexDataInit(struct CSVLexData* lex_data)
@@ -84,7 +84,7 @@ void CSVLexField(struct CSVLexData* lex_data, struct CSVToken* token) {
             Zinc_error_list_set(lex_data->el, &loc, "quote found in unquoted field");
             /* test case: CSVLexErrorQuote */
         } else {
-            VectorAdd(&token->value, &c, 1);
+            Zinc_vector_add(&token->value, &c, 1);
         }
     }
 
@@ -113,14 +113,14 @@ void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
                 break;
             }
             if (c == '"') {
-                VectorAdd(&token->value, &c, 1);
+                Zinc_vector_add(&token->value, &c, 1);
             } else {
                 lex_data->state = CSVStateTypeFieldEndOfQuote;
                 Zinc_input_char_repeat(lex_data->input_data, lex_data->input_vtable);
                 break;
             }
         } else {
-            VectorAdd(&token->value, &c, 1);
+            Zinc_vector_add(&token->value, &c, 1);
         }
     }
 
@@ -226,7 +226,7 @@ void CSVLex(struct CSVLexData* lex_data, struct CSVToken** token)
     (*token)->loc.end_pos = end.start_pos;
 }
 
-enum Zinc_result CSVLoad(const char* filename, Vector* text)
+enum Zinc_result CSVLoad(const char* filename, Zinc_vector* text)
 {
     FILE *fp = NULL;
     fp = fopen(filename, "r");
@@ -235,8 +235,8 @@ enum Zinc_result CSVLoad(const char* filename, Vector* text)
     }
 
     while (true) {
-        VectorExpand(text, CSV_CHUNK_SIZE);
-        size_t n = fread(VECTOR_PTR(text, text->count),
+        Zinc_vector_expand(text, CSV_CHUNK_SIZE);
+        size_t n = fread(ZINC_VECTOR_PTR(text, text->count),
                          text->value_size, CSV_CHUNK_SIZE,
                          fp);
         text->count += n;
@@ -244,6 +244,6 @@ enum Zinc_result CSVLoad(const char* filename, Vector* text)
             break;
         }
     }
-    VectorAddNull(text);
+    Zinc_vector_add_null(text);
     return Zinc_result_ok;
 }

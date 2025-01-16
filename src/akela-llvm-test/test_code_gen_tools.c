@@ -15,9 +15,9 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
     struct Ake_comp_unit* cu = NULL;
     Zinc_malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
 
-    Vector* vector = NULL;
-    VectorCreate(&vector, sizeof(char));
-    VectorAdd(vector, text, strlen(text));
+    Zinc_vector* vector = NULL;
+    Zinc_vector_create(&vector, sizeof(char));
+    Zinc_vector_add(vector, text, strlen(text));
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, vector);
 
@@ -45,7 +45,7 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
     }
     Zinc_expect_no_errors(&cu->el);
 
-    VectorDestroy(vector);
+    Zinc_vector_destroy(vector);
     free(vector);
     free(input);
 

@@ -59,9 +59,9 @@ Cent_input_data Cent_module_find_string(Cent_module_string* ms, struct Zinc_stri
         return data;
     }
 
-    Vector* v = NULL;
-    VectorCreate(&v, sizeof(char));
-    VectorAdd(v, text->buf, text->size);
+    Zinc_vector* v = NULL;
+    Zinc_vector_create(&v, sizeof(char));
+    Zinc_vector_add(v, text->buf, text->size);
 
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, v);

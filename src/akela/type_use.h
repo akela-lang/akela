@@ -41,7 +41,7 @@ typedef struct Ake_type_use {
     Ake_type_use_type type;
     struct Ake_type_def* td;
     struct Zinc_string name;
-    Vector dim;
+    Zinc_vector dim;
     bool is_ref;
     bool is_mut;
     bool original_is_mut;

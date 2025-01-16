@@ -11,7 +11,7 @@ Zinc_input_char_vtable Zinc_input_char_stringVTable = {
         .get_location_offset = offsetof(Zinc_input_char_string, GetLocation),
 };
 
-void Zinc_input_char_string_init(Zinc_input_char_string* input_string, Vector* text)
+void Zinc_input_char_string_init(Zinc_input_char_string* input_string, Zinc_vector* text)
 {
     Zinc_location_init(&input_string->loc);
     Zinc_location_init(&input_string->prev_loc);
@@ -27,7 +27,7 @@ void Zinc_input_char_string_init(Zinc_input_char_string* input_string, Vector* t
     input_string->input_vtable = &Zinc_input_char_stringVTable;
 }
 
-void Zinc_input_char_string_create(Zinc_input_char_string** input_string, Vector* text)
+void Zinc_input_char_string_create(Zinc_input_char_string** input_string, Zinc_vector* text)
 {
     Zinc_malloc_safe((void**)input_string, sizeof(Zinc_input_char_string));
     Zinc_input_char_string_init(*input_string, text);
@@ -63,7 +63,7 @@ bool Zinc_input_char_string_next(Zinc_input_char_string* data, char* c, Zinc_loc
 
     data->prev_loc = data->loc;
     if (data->pos < data->text->count) {
-        *c = VECTOR_CHAR(data->text, data->pos++);
+        *c = ZINC_VECTOR_CHAR(data->text, data->pos++);
         *loc = data->loc;
         data->loc.start_pos++;
         data->loc.end_pos = data->loc.start_pos + 1;
@@ -111,7 +111,7 @@ void Zinc_input_char_string_seek(Zinc_input_char_string* data, Zinc_location* lo
  * @param data the data
  * @param text the output vector
  */
-void Zinc_input_char_string_get_all(Zinc_input_char_string* data, Vector** text)
+void Zinc_input_char_string_get_all(Zinc_input_char_string* data, Zinc_vector** text)
 {
     Zinc_input_char_string_clear(data);
     data->pos = data->text->count;

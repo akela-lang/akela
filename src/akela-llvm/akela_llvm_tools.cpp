@@ -116,7 +116,7 @@ namespace Akela_llvm {
         if (tu && tu->is_array) {
             size_t i = tu->dim.count - 1;
             while (true) {
-                auto dim = (Ake_type_dimension*)VECTOR_PTR(&tu->dim, i);
+                auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(&tu->dim, i);
                 if (tu->td->type == Ake_type_function) {
                     t = t->getPointerTo();
                 }
@@ -151,10 +151,10 @@ namespace Akela_llvm {
                     if (bit_count == 64) {
                         long* (*fp)() = ExprSymbol.getAddress().toPtr<long*(*)()>();
                         long* p = fp();
-                        Vector* dim_vector = &n->tu->dim;
+                        Zinc_vector* dim_vector = &n->tu->dim;
                         size_t count = 1;
                         for (int i = 0; i < dim_vector->count; i++) {
-                            auto dim = (Ake_type_dimension*)VECTOR_PTR(dim_vector, i);
+                            auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(dim_vector, i);
                             count *= dim->size;
                         }
                         Zinc_string_add_char(bf, '[');
@@ -168,10 +168,10 @@ namespace Akela_llvm {
                     } else if (bit_count == 32) {
                         int* (*fp)() = ExprSymbol.getAddress().toPtr<int*(*)()>();
                         int* p = fp();
-                        Vector* dim_vector = &n->tu->dim;
+                        Zinc_vector* dim_vector = &n->tu->dim;
                         size_t count = 1;
                         for (int i = 0; i < dim_vector->count; i++) {
-                            auto dim = (Ake_type_dimension*)VECTOR_PTR(dim_vector, i);
+                            auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(dim_vector, i);
                             count *= dim->size;
                         }
                         Zinc_string_add_char(bf, '[');
@@ -297,7 +297,7 @@ namespace Akela_llvm {
             Value* lhs_ptr,
             Value* rhs_ptr)
     {
-        size_t size = *(size_t*)VECTOR_PTR(&lhs_tu->dim, 0);
+        size_t size = *(size_t*)ZINC_VECTOR_PTR(&lhs_tu->dim, 0);
 
         Ake_type_use* lhs_tu2 = Ake_type_use_clone(lhs_tu);
         Ake_type_use_reduce_dimension(lhs_tu2);

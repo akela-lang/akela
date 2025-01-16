@@ -467,7 +467,7 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
             Ake_type_dimension dim;
             dim.size = n->value.size + 1;
             dim.option = Ake_array_element_const;
-            VectorAdd(&tu->dim, &dim, 1);
+            Zinc_vector_add(&tu->dim, &dim, 1);
         }
 	}
 
@@ -813,7 +813,7 @@ Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             }
             n->tu = tu_first;
             n->tu->is_array = true;
-            VectorAdd(&n->tu->dim, &count, 1);
+            Zinc_vector_add(&n->tu->dim, &count, 1);
         }
     }
 

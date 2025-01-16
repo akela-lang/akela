@@ -7,9 +7,9 @@ void test_comp_unit_compile()
 {
 	Zinc_test_name(__func__);
 
-    Vector* text = NULL;
-    VectorCreate(&text, sizeof(char));
-    VectorAdd(text, "10", 2);
+    Zinc_vector* text = NULL;
+    Zinc_vector_create(&text, sizeof(char));
+    Zinc_vector_add(text, "10", 2);
 
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, text);
@@ -33,7 +33,7 @@ void test_comp_unit_compile()
     free(input);
 	Ake_comp_unit_destroy(cu);
 	free(cu);
-    VectorDestroy(text);
+    Zinc_vector_destroy(text);
     free(text);
 }
 

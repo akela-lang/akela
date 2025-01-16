@@ -10,10 +10,10 @@ void TestInputCharStringGetCharWord()
     size_t buffer_len = strlen(buffer);
 
     Zinc_input_char_string input_string;
-    Vector text;
-    VectorInit(&text, sizeof(char));
-    VectorAdd(&text, buffer, buffer_len);
-    VectorAddNull(&text);
+    Zinc_vector text;
+    Zinc_vector_init(&text, sizeof(char));
+    Zinc_vector_add(&text, buffer, buffer_len);
+    Zinc_vector_add_null(&text);
     Zinc_input_char_string_init(&input_string, &text);
 
     Zinc_expect_vector_str(&text, buffer, buffer);
@@ -69,7 +69,7 @@ void TestInputCharStringGetCharWord()
     Zinc_expect_size_t_equal(loc.start_pos, 5, "start_pos 5");
     Zinc_expect_size_t_equal(loc.end_pos, 6, "end_pos 5");
 
-    VectorDestroy(&text);
+    Zinc_vector_destroy(&text);
 }
 
 void TestInputCharStringGetCharLine()
@@ -80,10 +80,10 @@ void TestInputCharStringGetCharLine()
     size_t buffer_len = strlen(buffer);
 
     Zinc_input_char_string input_string;
-    Vector text;
-    VectorInit(&text, sizeof(char));
-    VectorAdd(&text, buffer, buffer_len);
-    VectorAddNull(&text);
+    Zinc_vector text;
+    Zinc_vector_init(&text, sizeof(char));
+    Zinc_vector_add(&text, buffer, buffer_len);
+    Zinc_vector_add_null(&text);
     Zinc_input_char_string_init(&input_string, &text);
 
     Zinc_expect_vector_str(&text, buffer, buffer);
@@ -123,7 +123,7 @@ void TestInputCharStringGetCharLine()
     Zinc_expect_size_t_equal(loc.start_pos, 3, "start_pos 5");
     Zinc_expect_size_t_equal(loc.end_pos, 4, "end_pos 5");
 
-    VectorDestroy(&text);
+    Zinc_vector_destroy(&text);
 }
 
 void TestInputCharStringRepeat()
@@ -134,10 +134,10 @@ void TestInputCharStringRepeat()
     size_t buffer_len = strlen(buffer);
 
     Zinc_input_char_string input_string;
-    Vector text;
-    VectorInit(&text, sizeof(char));
-    VectorAdd(&text, buffer, buffer_len);
-    VectorAddNull(&text);
+    Zinc_vector text;
+    Zinc_vector_init(&text, sizeof(char));
+    Zinc_vector_add(&text, buffer, buffer_len);
+    Zinc_vector_add_null(&text);
     Zinc_input_char_string_init(&input_string, &text);
 
     Zinc_expect_vector_str(&text, buffer, buffer);
@@ -187,7 +187,7 @@ void TestInputCharStringRepeat()
     Zinc_expect_size_t_equal(loc.start_pos, 3, "start_pos 3");
     Zinc_expect_size_t_equal(loc.end_pos, 4, "end_pos 3");
 
-    VectorDestroy(&text);
+    Zinc_vector_destroy(&text);
 }
 
 void TestInputCharString()
