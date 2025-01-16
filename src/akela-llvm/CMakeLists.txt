@@ -8,7 +8,7 @@ set(lib_files
         stmts.cpp
         operator.cpp
         jit.cpp
-        akela_llvm_struct.cpp
+        struct.cpp
 )
 
 add_library(akela-llvm STATIC ${lib_files})

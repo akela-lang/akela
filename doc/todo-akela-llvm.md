@@ -6,6 +6,6 @@
   * literal [x]
   * operator [x]
   * stmts [x]
-  * struct []
+  * struct [x]
   * tools []
   * variable []
