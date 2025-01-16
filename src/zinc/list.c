@@ -2,26 +2,26 @@
 #include <stdlib.h>
 #include "memory.h"
 
-void list_node_init(struct list_node* ln)
+void Zinc_list_node_init(Zinc_list_node* ln)
 {
     ln->item = NULL;
     ln->next = NULL;
     ln->prev = NULL;
 }
 
-void list_init(struct list* l)
+void Zinc_list_init(Zinc_list* l)
 {
     l->head = NULL;
     l->tail = NULL;
 }
 
-void list_create(struct list** l)
+void Zinc_list_create(Zinc_list** l)
 {
-    malloc_safe((void**)l, sizeof(struct list));
-    list_init(*l);
+    malloc_safe((void**)l, sizeof(Zinc_list));
+    Zinc_list_init(*l);
 }
 
-void list_add(struct list* l, struct list_node* ln)
+void Zinc_list_add(Zinc_list* l, Zinc_list_node* ln)
 {
     if (l->head && l->tail) {
         ln->prev = l->tail->next;
@@ -32,18 +32,18 @@ void list_add(struct list* l, struct list_node* ln)
     }
 }
 
-void list_add_item(struct list* l, void* item)
+void Zinc_list_add_item(Zinc_list* l, void* item)
 {
-    struct list_node* ln = NULL;
-    malloc_safe((void**)&ln, sizeof(struct list_node));
-    list_node_init(ln);
+    Zinc_list_node* ln = NULL;
+    malloc_safe((void**)&ln, sizeof(Zinc_list_node));
+    Zinc_list_node_init(ln);
     ln->item = item;
-    list_add(l, ln);
+    Zinc_list_add(l, ln);
 }
 
-bool list_has_item(struct list* l, void* item)
+bool Zinc_list_has_item(Zinc_list* l, void* item)
 {
-    struct list_node* ln = l->head;
+    Zinc_list_node* ln = l->head;
     while (ln) {
         if (ln->item == item) {
             return true;
@@ -54,19 +54,19 @@ bool list_has_item(struct list* l, void* item)
     return false;
 }
 
-struct list_node* list_remove_first(struct list* l)
+Zinc_list_node* list_remove_first(Zinc_list* l)
 {
     if (l->head && l->tail) {
         /* has a node */
         if (l->head == l->tail) {
             /* one node in list */
-            struct list_node* n = l->head;
+            struct Zinc_list_node* n = l->head;
             l->head = NULL;
             l->tail = NULL;
             return n;
         } else {
             /* more than one node in list */
-            struct list_node* n = l->head;
+            struct Zinc_list_node* n = l->head;
             l->head = n->next;
             n->next->prev = NULL;
             n->next = NULL;
@@ -77,9 +77,9 @@ struct list_node* list_remove_first(struct list* l)
     return NULL;
 }
 
-void* list_remove_first_item(struct list* l)
+void* list_remove_first_item(Zinc_list* l)
 {
-    struct list_node* n = list_remove_first(l);
+    Zinc_list_node* n = list_remove_first(l);
     if (n) {
         void* item = n->item;
         free(n);
@@ -89,11 +89,11 @@ void* list_remove_first_item(struct list* l)
     }
 }
 
-void list_destroy(struct list* l, list_node_destroy lnd)
+void Zinc_list_destroy(Zinc_list* l, Zinc_list_node_destroy lnd)
 {
-    struct list_node* ln = l->head;
+    Zinc_list_node* ln = l->head;
     while (ln) {
-        struct list_node* temp = ln;
+        Zinc_list_node* temp = ln;
         ln = ln->next;
         if (lnd) {
             lnd(temp->item);
@@ -102,10 +102,10 @@ void list_destroy(struct list* l, list_node_destroy lnd)
     }
 }
 
-void* list_get(struct list* l, int index)
+void* Zinc_list_get(Zinc_list* l, int index)
 {
     int i = 0;
-    struct list_node* ln = l->head;
+    Zinc_list_node* ln = l->head;
     while (ln) {
         if (i == index) {
             return ln->item;

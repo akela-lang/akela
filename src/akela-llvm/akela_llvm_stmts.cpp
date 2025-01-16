@@ -31,8 +31,8 @@ namespace Akela_llvm {
             ptr = jd->Builder->CreateAlloca(type, nullptr, "ifresult");
         }
 
-        struct list l{};
-        list_init(&l);
+        struct Zinc_list l{};
+        Zinc_list_init(&l);
 
         BasicBlock* cond_block = nullptr;
         BasicBlock* then_block = nullptr;
@@ -69,7 +69,7 @@ namespace Akela_llvm {
                 if (type) {
                     jd->Builder->CreateStore(body_value, ptr);
                 }
-                list_add_item(&l, then_block);      /* branch to end after end_block is created */
+                Zinc_list_add_item(&l, then_block);      /* branch to end after end_block is created */
 
                 jd->Builder->SetInsertPoint(next_block);
 
@@ -80,7 +80,7 @@ namespace Akela_llvm {
                 if (type) {
                     jd->Builder->CreateStore(body_value, ptr);
                 }
-                list_add_item(&l, next_block);      /* branch to end after end_block is created */
+                Zinc_list_add_item(&l, next_block);      /* branch to end after end_block is created */
                 has_else = true;
 
             } else {
@@ -96,7 +96,7 @@ namespace Akela_llvm {
         } else {
             end_block = next_block;
         }
-        struct list_node* ln = l.head;
+        struct Zinc_list_node* ln = l.head;
         while (ln) {
             auto p = (BasicBlock*)ln->item;
             jd->Builder->SetInsertPoint(p);
@@ -110,7 +110,7 @@ namespace Akela_llvm {
             value = jd->Builder->CreateLoad(type, ptr);
         }
 
-        list_destroy(&l, nullptr);
+        Zinc_list_destroy(&l, nullptr);
 
         return value;
     }

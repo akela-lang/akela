@@ -14,7 +14,7 @@
   * input_unicode [x]
   * input_unicode_file [x]
   * input_unicode_string [x]
-  * list []
+  * list [x]
   * memory []
   * os_unix []
   * os_win []

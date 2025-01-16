@@ -127,20 +127,20 @@ void Ake_type_use_print(Ake_type_use* tu)
     }
 }
 
-void Ake_type_use_print_pointers(Ake_type_use* tu, struct list* l);
+void Ake_type_use_print_pointers(Ake_type_use* tu, struct Zinc_list* l);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_ast_print_pointers(Ake_ast* root, struct list* l)
+void Ake_ast_print_pointers(Ake_ast* root, struct Zinc_list* l)
 {
     bool created = false;
     if (!l) {
-        list_create(&l);
+        Zinc_list_create(&l);
         created = true;
     }
 
     printf("(%p)\n", root);
 //    if (list_has_item(l, root)) abort();
-    list_add_item(l, root);
+    Zinc_list_add_item(l, root);
 
     Ake_type_use_print_pointers(root->tu, l);
 
@@ -149,17 +149,17 @@ void Ake_ast_print_pointers(Ake_ast* root, struct list* l)
     }
 
     if (created) {
-        list_destroy(l, NULL);
+        Zinc_list_destroy(l, NULL);
     }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_type_use_print_pointers(Ake_type_use* tu, struct list* l)
+void Ake_type_use_print_pointers(Ake_type_use* tu, struct Zinc_list* l)
 {
     if (tu) {
         printf("(%p)\n", tu);
 //        if (list_has_item(l, tu)) abort();
-        list_add_item(l, tu);
+        Zinc_list_add_item(l, tu);
 
         Ake_type_use* tu2 = tu->head;
         while (tu2) {

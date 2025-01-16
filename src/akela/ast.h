@@ -160,12 +160,12 @@ AKELA_API void Ake_ast_add(Ake_ast* p, Ake_ast* c);
 AKELA_API void Ast_node_push(Ake_ast* parent, Ake_ast* child);
 AKELA_API Ake_ast* Ast_node_get(Ake_ast* p, size_t pos);
 AKELA_API void Ake_ast_print(Ake_ast* n);
-AKELA_API void Ake_ast_print_pointers(Ake_ast* root, struct list* l);
+AKELA_API void Ake_ast_print_pointers(Ake_ast* root, struct Zinc_list* l);
 AKELA_API void Ake_ast_copy(Ake_ast* src, Ake_ast* dest);
 AKELA_API Ake_ast* Ake_ast_clone(Ake_ast* n);
 AKELA_API bool Ake_ast_match(Ake_ast* a, Ake_ast* b);
 AKELA_API size_t Ake_ast_count_children(Ake_ast* n);
-AKELA_API void Ast_node_validate(Ake_ast* n, struct list* l);
+AKELA_API void Ast_node_validate(Ake_ast* n, struct Zinc_list* l);
 
 #ifdef __cplusplus
 }
