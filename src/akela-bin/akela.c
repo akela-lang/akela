@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     /* resource fp */
     filename = argv[1];
     FILE* fp;
-    int err = fopen_s(&fp, filename, "r");
+    int err = Zinc_fopen_s(&fp, filename, "r");
     if (err || fp == NULL) {
         fprintf(stderr, "Could not open file: %s\n", filename);
         return 1;

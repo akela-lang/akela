@@ -41,7 +41,7 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
     struct Zinc_location loc;
     Zinc_location_init(&loc);
 
-	r = get_exe_path(&path);
+	r = Zinc_get_exe_path(&path);
     if (r == result_error) {
         valid = Zinc_error_list_set(&cu->el, &loc, "could not get executable path");
     }
@@ -54,7 +54,7 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
 	Zinc_string_init(&filename);
 
 	Zinc_string_add_str(&path2, path);
-	split_path(&path2, &dir, &filename);
+	Zinc_split_path(&path2, &dir, &filename);
 
 	struct Zinc_string math_dir;
 	Zinc_string_init(&math_dir);
@@ -63,11 +63,11 @@ bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struc
 	Zinc_string_add_str(&filename, "math.ake");
     struct Zinc_string math_path;
     Zinc_string_init(&math_path);
-	path_join(&math_dir, &filename, &math_path);
+	Zinc_path_join(&math_dir, &filename, &math_path);
 	Zinc_string_finish(&math_path);
 
 	FILE* fp = NULL;
-	int err = fopen_s(&fp, math_path.buf, "r");
+	int err = Zinc_fopen_s(&fp, math_path.buf, "r");
 	if (err || !fp) {
 		valid = Zinc_error_list_set(&cu->el, &loc, "could not open file: %s\n", math_path.buf);
 		goto exit;

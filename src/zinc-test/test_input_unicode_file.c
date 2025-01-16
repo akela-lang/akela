@@ -14,7 +14,7 @@ void test_input_unicode_file_next()
     struct Zinc_string name;
     Zinc_string_init(&name);
     enum result r;
-    r = get_temp_file(&fp, &name);
+    r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
     expect_size_t_equal(s_len, n, "len");
@@ -203,7 +203,7 @@ void test_input_unicode_file_next_multibyte()
     struct Zinc_string name;
     Zinc_string_init(&name);
     enum result r;
-    r = get_temp_file(&fp, &name);
+    r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
     expect_size_t_equal(s_len, n, "len");
@@ -368,7 +368,7 @@ void test_input_unicode_file_repeat()
     struct Zinc_string name;
     Zinc_string_init(&name);
     enum result r;
-    r = get_temp_file(&fp, &name);
+    r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
     expect_size_t_equal(s_len, n, "len");
@@ -492,7 +492,7 @@ void test_input_unicode_file_seek()
     struct Zinc_string name;
     Zinc_string_init(&name);
     enum result r;
-    r = get_temp_file(&fp, &name);
+    r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
     expect_size_t_equal(s_len, n, "len");
@@ -680,7 +680,7 @@ void test_input_unicode_file_get_all()
     struct Zinc_string name;
     Zinc_string_init(&name);
     enum result r;
-    r = get_temp_file(&fp, &name);
+    r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
     expect_size_t_equal(s_len, n, "len");
@@ -716,7 +716,7 @@ void test_input_unicode_file_get_location()
     struct Zinc_string name;
     Zinc_string_init(&name);
     enum result r;
-    r = get_temp_file(&fp, &name);
+    r = Zinc_get_temp_file(&fp, &name);
     assert_ok(r, "get temp file");
     size_t n = fwrite(s, 1, strlen(s), fp);
     expect_size_t_equal(s_len, n, "len");

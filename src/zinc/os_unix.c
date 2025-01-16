@@ -19,7 +19,7 @@
 #include "memory.h"
 #include <assert.h>
 
-enum result get_temp_file(FILE** fp_out, struct Zinc_string* name)
+enum result Zinc_get_temp_file(FILE** fp_out, Zinc_string* name)
 {
     enum result r = result_ok;
     Zinc_string_add_str(name, "/tmp/zinc-XXXXXX");
@@ -38,7 +38,7 @@ enum result get_temp_file(FILE** fp_out, struct Zinc_string* name)
     return r;
 }
 
-enum result close_temp_file(FILE* fp)
+enum result Zinc_close_temp_file(FILE* fp)
 {
     if (fclose(fp)) {
         return set_error("close of temp file failed with error [%s]", strerror(errno));
@@ -46,7 +46,7 @@ enum result close_temp_file(FILE* fp)
     return result_ok;
 }
 
-enum result delete_temp_file(struct Zinc_string* name)
+enum result Zinc_delete_temp_file(Zinc_string* name)
 {
     if (unlink(name->buf)) {
         return set_error("removal of temp file failed with error [%s]", strerror(errno));
@@ -54,7 +54,7 @@ enum result delete_temp_file(struct Zinc_string* name)
     return result_ok;
 }
 
-enum result get_user_home_directory(struct Zinc_string* dir)
+enum result Zinc_get_user_home_directory(Zinc_string* dir)
 {
     const char *homedir;
     if ((homedir = getenv("HOME")) == NULL) {
@@ -65,31 +65,31 @@ enum result get_user_home_directory(struct Zinc_string* dir)
     return result_ok;
 }
 
-void path_join(struct Zinc_string* src1, struct Zinc_string* src2, struct Zinc_string* dest)
+void Zinc_path_join(Zinc_string* src1, Zinc_string* src2, Zinc_string* dest)
 {
     Zinc_string_copy(src1, dest);
     Zinc_string_add_char(dest, '/');
     Zinc_string_copy(src2, dest);
 }
 
-enum result get_user_app_directory(struct Zinc_string* lower_name, struct Zinc_string* dir)
+enum result Zinc_get_user_app_directory(Zinc_string* lower_name, Zinc_string* dir)
 {
-    struct Zinc_string home;
+    Zinc_string home;
     Zinc_string_init(&home);
-    enum result r = get_user_home_directory(&home);
+    enum result r = Zinc_get_user_home_directory(&home);
     if (r == result_error) {
         return r;
     }
 
-    struct Zinc_string app;
+    Zinc_string app;
     Zinc_string_init(&app);
     Zinc_string_add_str(&app, ".app");
 
-    struct Zinc_string temp;
+    Zinc_string temp;
     Zinc_string_init(&temp);
 
-    path_join(&home, &app, &temp);
-    path_join(&temp, lower_name, dir);
+    Zinc_path_join(&home, &app, &temp);
+    Zinc_path_join(&temp, lower_name, dir);
 
     Zinc_string_destroy(&home);
     Zinc_string_destroy(&app);
@@ -98,7 +98,7 @@ enum result get_user_app_directory(struct Zinc_string* lower_name, struct Zinc_s
     return result_ok;
 }
 
-enum result make_directory(struct Zinc_string* dir)
+enum result Zinc_make_directory(Zinc_string* dir)
 {
     for (int i = 0; i < dir->size; i++) {
         bool is_subdir = false;
@@ -111,7 +111,7 @@ enum result make_directory(struct Zinc_string* dir)
             end = i + 1;
         }
         if (is_subdir) {
-            struct Zinc_string subdir;
+            Zinc_string subdir;
             Zinc_string_init(&subdir);
             for (int j = 0; j < end; j++) {
                 Zinc_string_add_char(&subdir, dir->buf[j]);
@@ -144,7 +144,7 @@ enum result make_directory(struct Zinc_string* dir)
     return result_ok;
 }
 
-enum result delete_directory(struct Zinc_string* dir)  /* NOLINT(misc-no-recursion) */
+enum result Zinc_delete_directory(Zinc_string* dir)  /* NOLINT(misc-no-recursion) */
 {
     enum result r;
     Zinc_string_finish(dir);
@@ -169,7 +169,7 @@ enum result delete_directory(struct Zinc_string* dir)  /* NOLINT(misc-no-recursi
         struct Zinc_string path;
         Zinc_string_init(&path);
 
-        path_join(dir, &name, &path);
+        Zinc_path_join(dir, &name, &path);
 
         Zinc_string_finish(&path);
         DIR* dp2 = opendir(path.buf);
@@ -178,7 +178,7 @@ enum result delete_directory(struct Zinc_string* dir)  /* NOLINT(misc-no-recursi
                 return set_error("Could not check type directory item: [%s]: %s", strerror(errno), path.buf);
             }
 
-            r = delete_directory(&path);
+            r = Zinc_delete_directory(&path);
             if (r == result_error) {
                 return r;
             }
@@ -203,7 +203,7 @@ enum result delete_directory(struct Zinc_string* dir)  /* NOLINT(misc-no-recursi
     return result_ok;
 }
 
-bool file_exists(struct Zinc_string* filename)
+bool Zinc_file_exists(Zinc_string* filename)
 {
     Zinc_string_finish(filename);
     if (access(filename->buf, F_OK) == 0) {
@@ -213,7 +213,7 @@ bool file_exists(struct Zinc_string* filename)
     }
 }
 
-enum result get_dir_files(struct Zinc_string* dir, struct Zinc_string_list* bl)   /* NOLINT(misc-no-recursion) */
+enum result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLINT(misc-no-recursion) */
 {
     enum result r = result_ok;
 
@@ -232,14 +232,14 @@ enum result get_dir_files(struct Zinc_string* dir, struct Zinc_string_list* bl) 
             continue;
         }
 
-        struct Zinc_string name;
+        Zinc_string name;
         Zinc_string_init(&name);
         Zinc_string_add_str(&name, de->d_name);
 
-        struct Zinc_string path;
+        Zinc_string path;
         Zinc_string_init(&path);
 
-        path_join(dir, &name, &path);
+        Zinc_path_join(dir, &name, &path);
         Zinc_string_finish(&path);
 
         DIR* dp2 = opendir(path.buf);
@@ -250,7 +250,7 @@ enum result get_dir_files(struct Zinc_string* dir, struct Zinc_string_list* bl) 
                 return set_error("Could not check type directory item: [%s]: %s", strerror(errno), path.buf);
             }
 
-            r = get_dir_files(&path, bl);
+            r = Zinc_get_dir_files(&path, bl);
             if (r == result_error) {
                 Zinc_string_destroy(&name);
                 Zinc_string_destroy(&path);
@@ -271,7 +271,7 @@ enum result get_dir_files(struct Zinc_string* dir, struct Zinc_string_list* bl) 
     return result_ok;
 }
 
-enum result get_exe_path(char** path)
+enum result Zinc_get_exe_path(char** path)
 {
     enum result r = result_ok;
     int buf_size = 1024;
@@ -288,7 +288,7 @@ enum result get_exe_path(char** path)
     return r;
 }
 
-void split_path(struct Zinc_string* path, struct Zinc_string* dir, struct Zinc_string* filename)
+void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename)
 {
     int sep_pos = -1;
 
@@ -311,7 +311,7 @@ void split_path(struct Zinc_string* path, struct Zinc_string* dir, struct Zinc_s
     Zinc_string_finish(filename);
 }
 
-int fopen_s(FILE **f, const char *name, const char *mode)
+int Zinc_fopen_s(FILE **f, const char *name, const char *mode)
 {
     int ret = 0;
     assert(f);
@@ -322,7 +322,7 @@ int fopen_s(FILE **f, const char *name, const char *mode)
     return ret;
 }
 
-void Zinc_get_cwd(struct Zinc_string* cwd)
+void Zinc_get_cwd(Zinc_string* cwd)
 {
     char buffer[PATH_MAX];
     if (getcwd(buffer, sizeof(buffer)) != NULL) {
