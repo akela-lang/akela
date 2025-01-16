@@ -7,7 +7,7 @@
 #include "akela/comp_unit.h"
 #include "akela/code_gen.h"
 #include "zinc/input_unicode_file.h"
-#include "akela-llvm/akela_llvm.h"
+#include "akela-llvm/cg.h"
 
 int main(int argc, char** argv)
 {
@@ -52,10 +52,10 @@ int main(int argc, char** argv)
     Zinc_string_init(&bf);
 
     Akela_llvm_cg* cg = NULL;
-    Akela_llvm_create(&cg, &cu.el, &cu.extern_list);
+    Akela_llvm_cg_create(&cg, &cu.el, &cu.extern_list);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
-    Ake_code_gen_jit(cg, &Akela_llvm_vtable_data, cu.root, &result);
+    Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu.root, &result);
 
     if (cu.el.head) {
         struct Zinc_error* e = cu.el.head;
