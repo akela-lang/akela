@@ -3,21 +3,21 @@
 
 #include "akela/code_gen.h"
 
-typedef struct Code_gen_llvm {
-    struct Zinc_error_list* el;
-    struct Zinc_string_list* extern_list;
+typedef struct Akela_llvm_cg {
+    Zinc_error_list* el;
+    Zinc_string_list* extern_list;
     Ake_code_gen_interface jit;
     bool debug;
-} Code_gen_llvm;
+} Akela_llvm_cg;
 
-extern Ake_code_gen_vtable Code_gen_llvm_vtable;
+extern Code_gen_vtable Akela_llvm_vtable;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void Code_gen_llvm_create(Code_gen_llvm** cg, struct Zinc_error_list* el, struct Zinc_string_list* extern_list);
-void Code_gen_llvm_destroy(Code_gen_llvm* cg);
+void Akela_llvm_cg_create(Akela_llvm_cg** cg, Zinc_error_list* el, Zinc_string_list* extern_list);
+void Akela_llvm_cg_destroy(Akela_llvm_cg* cg);
 
 #ifdef __cplusplus
 }

@@ -16,7 +16,7 @@ void Ake_code_gen_result_destroy(Ake_code_gen_result* result)
     Zinc_string_destroy(&result->text);
 }
 
-bool Ake_code_gen_jit(void* cg_obj, Ake_code_gen_vtable* cg_vtable, Ake_ast* n, Ake_code_gen_result* result)
+bool Ake_code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Ake_ast* n, Ake_code_gen_result* result)
 {
     if (cg_obj && cg_vtable) {
         Ake_code_gen_interface* code_gen_jit = cg_obj + cg_vtable->jit_offset;

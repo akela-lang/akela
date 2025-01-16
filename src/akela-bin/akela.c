@@ -51,11 +51,11 @@ int main(int argc, char** argv)
     struct Zinc_string bf;
     Zinc_string_init(&bf);
 
-    Code_gen_llvm* cg = NULL;
-    Code_gen_llvm_create(&cg, &cu.el, &cu.extern_list);
+    Akela_llvm_cg* cg = NULL;
+    Akela_llvm_create(&cg, &cu.el, &cu.extern_list);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
-    Ake_code_gen_jit(cg, &Code_gen_llvm_vtable, cu.root, &result);
+    Ake_code_gen_jit(cg, &Akela_llvm_vtable_data, cu.root, &result);
 
     if (cu.el.head) {
         struct Zinc_error* e = cu.el.head;

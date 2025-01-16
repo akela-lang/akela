@@ -4,25 +4,25 @@
 #include "zinc/string_list.h"
 
 
-Ake_code_gen_vtable Code_gen_llvm_vtable = {
-        .jit_offset = offsetof(Code_gen_llvm, jit),
+Code_gen_vtable Akela_llvm_vtable = {
+        .jit_offset = offsetof(Akela_llvm_cg, jit),
 };
 
-void Code_gen_llvm_init(Code_gen_llvm* cg, struct Zinc_error_list* el, struct Zinc_string_list* extern_list)
+void Akela_llvm_cg_init(Akela_llvm_cg* cg, Zinc_error_list* el, Zinc_string_list* extern_list)
 {
     cg->el = el;
     cg->extern_list = extern_list;
-    cg->jit = (Ake_code_gen_interface) Akela_llvm::Jit;
+    cg->jit = reinterpret_cast<Ake_code_gen_interface>(Akela_llvm::Jit);
     cg->debug = false;
 }
 
-void Code_gen_llvm_create(Code_gen_llvm** cg, struct Zinc_error_list* el, struct Zinc_string_list* extern_list)
+void Akela_llvm_cg_create(Akela_llvm_cg** cg, Zinc_error_list* el, Zinc_string_list* extern_list)
 {
-    *cg = new Code_gen_llvm();
-    Code_gen_llvm_init(*cg, el, extern_list);
+    *cg = new Akela_llvm_cg();
+    Akela_llvm_cg_init(*cg, el, extern_list);
 }
 
-void Code_gen_llvm_destroy(Code_gen_llvm* cg)
+void Akela_llvm_cg_destroy(Akela_llvm_cg* cg)
 {
     delete cg;
 }

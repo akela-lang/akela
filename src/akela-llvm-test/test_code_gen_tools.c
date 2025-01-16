@@ -30,10 +30,10 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
     result->cu = cu;
 
     if (valid) {
-        Code_gen_llvm* cg = NULL;
-        Code_gen_llvm_create(&cg, &cu->el, &cu->extern_list);
-        valid = Ake_code_gen_jit(cg, &Code_gen_llvm_vtable, cu->root, result);
-        Code_gen_llvm_destroy(cg);
+        Akela_llvm_cg* cg = NULL;
+        Akela_llvm_cg_create(&cg, &cu->el, &cu->extern_list);
+        valid = Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu->root, result);
+        Akela_llvm_cg_destroy(cg);
         Zinc_expect_true(valid, "valid");
     }
 
