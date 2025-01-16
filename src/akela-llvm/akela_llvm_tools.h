@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 #include "akela/code_gen.h"
-#include "akela_llvm.h"
+#include "cg.h"
 #include "akela/type_def.h"
 #include "zinc/error.h"
 #include "zinc/list.h"

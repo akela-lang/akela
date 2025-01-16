@@ -1,7 +1,7 @@
 # Akela LLVM Todo
 * namespace
   * akela_llvm [x]
-  * function []
+  * function [x]
   * jit []
   * literal []
   * operator []

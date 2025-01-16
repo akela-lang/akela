@@ -1,6 +1,6 @@
 #include "akela/parse_types.h"
 #include "akela_llvm_tools.h"
-#include "akela_llvm_function.h"
+#include "function.h"
 #include "akela_llvm_literal.h"
 #include "akela_llvm_variable.h"
 #include "akela_llvm_stmts.h"

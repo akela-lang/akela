@@ -1,9 +1,9 @@
 # library
 set(lib_files
-        akela_llvm.cpp
+        cg.cpp
         akela_llvm_tools.cpp
         akela_llvm_literal.cpp
-        akela_llvm_function.cpp
+        function.cpp
         akela_llvm_variable.cpp
         akela_llvm_stmts.cpp
         akela_llvm_operator.cpp
