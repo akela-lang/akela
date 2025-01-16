@@ -30,8 +30,8 @@ void test_parse_number_integer()
 
 	struct Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_str(&td->name, "i64", "i64 td");
+	Zinc_expect_int_equal(td->type, Ake_type_integer, "type td");
+	Zinc_expect_str(&td->name, "Int32", "str td");
 
     parse_teardown(&cu);
 }
@@ -41,9 +41,8 @@ void test_parse_number_float()
 {
 	Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
-	/* allocate ps{} cu.root cu.root{} */
     parse_setup("5.0e0", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
@@ -59,12 +58,10 @@ void test_parse_number_float()
 	Ake_type_use* tu = number->tu;
 	Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
+	Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_float, "integer td");
-	Zinc_expect_str(&td->name, "f64", "f64 td");
-
-	/* destroy ps{} cu.root cu.root{} */
+	Zinc_expect_str(&td->name, "Real64", "str td");
 
     parse_teardown(&cu);
 }
@@ -73,7 +70,7 @@ void test_parse_string()
 {
 	Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
     parse_setup("\"hello\"", &cu);
 	Zinc_assert_no_errors(&cu.el);
@@ -97,10 +94,10 @@ void test_parse_string()
     Zinc_expect_size_t_equal(dim->size, 6, "size dim");
     Zinc_expect_int_equal(dim->option, Ake_array_element_const, "option dim");
 
-	struct Ake_type_def* td = tu->td;
+	Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_integer, "type td");
-	Zinc_expect_str(&td->name, "u8", "name td");
+	Zinc_expect_str(&td->name, "Nat8", "name td");
 
     parse_teardown(&cu);
 }
@@ -109,7 +106,7 @@ void test_parse_boolean_true()
 {
 	Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
     parse_setup("true", &cu);
 	Zinc_assert_no_errors(&cu.el);
@@ -126,10 +123,10 @@ void test_parse_boolean_true()
 	Ake_type_use* tu = true_node->tu;
 	Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
+	Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_boolean, "boolean td");
-	Zinc_expect_str(&td->name, "bool", "bool td");
+	Zinc_expect_str(&td->name, "Bool", "name td");
 
     parse_teardown(&cu);
 }
@@ -138,7 +135,7 @@ void test_parse_boolean_false()
 {
 	Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
     parse_setup("false", &cu);
 	Zinc_assert_no_errors(&cu.el);
@@ -155,10 +152,10 @@ void test_parse_boolean_false()
 	Ake_type_use* tu = false_node->tu;
 	Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
+	Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_boolean, "boolean td");
-	Zinc_expect_str(&td->name, "bool", "bool td");
+	Zinc_expect_str(&td->name, "Bool", "name td");
 
     parse_teardown(&cu);
 }
@@ -167,9 +164,9 @@ void test_parse_id()
 {
 	Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
-    parse_setup("let x: i64; x", &cu);
+    parse_setup("let x: Int64; x", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -201,10 +198,10 @@ void test_parse_id()
 	Ake_type_use* tu = id2->tu;
 	Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
+	Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_str(&td->name, "i64", "i64 td");
+	Zinc_expect_str(&td->name, "Int64", "name td");
 
     parse_teardown(&cu);
 }
@@ -213,10 +210,9 @@ void test_parse_id2()
 {
 	Zinc_test_name(__func__);
 
+	Ake_comp_unit cu;
 
-	struct Ake_comp_unit cu;
-
-    parse_setup("let _a23: i64; _a23", &cu);
+    parse_setup("let _a23: Int64; _a23", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -237,7 +233,7 @@ void test_parse_id3()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let a2: i64; a2", &cu);
+    parse_setup("let a2: Int64; a2", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -259,7 +255,7 @@ void test_parse_id_greek()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let αβγ: i64; αβγ", &cu);
+    parse_setup("let αβγ: Int64; αβγ", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -277,12 +273,12 @@ void test_parse_id_greek()
 void test_parse_id_cyrillic()
 {
     Zinc_test_name(__func__);
-    struct Ake_comp_unit cu;
+    Ake_comp_unit cu;
 
-    parse_setup("let я: i64; я", &cu);
+    parse_setup("let я: Int32; я", &cu);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_assert_has_errors(&cu.el);
-    struct Zinc_error* e = Zinc_expect_source_error(&cu.el, "Unrecognized character: я");
+    Zinc_error* e = Zinc_expect_source_error(&cu.el, "Unrecognized character: я");
     Zinc_assert_ptr(e, "ptr e");
     Zinc_expect_size_t_equal(e->loc.start_pos, 4, "start_pos");
     Zinc_expect_size_t_equal(e->loc.end_pos, 6, "size");
@@ -297,7 +293,7 @@ void test_parse_sign_negative()
 	Zinc_test_name(__func__);
 
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
     parse_setup("-30", &cu);
 	Zinc_assert_no_errors(&cu.el);
@@ -313,10 +309,10 @@ void test_parse_sign_negative()
 	Ake_type_use* tu = sign->tu;
 	Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
+	Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_str(&td->name, "i64", "i64 td");
+	Zinc_expect_str(&td->name, "Int32", "Int32 td");
 
 	Ake_ast* left = Ast_node_get(sign, 0);
 	Zinc_assert_ptr(left, "left");
@@ -354,7 +350,7 @@ void test_parse_sign_positive()
 	struct Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_str(&td->name, "i64", "i64 td");
+	Zinc_expect_str(&td->name, "Int32", "Int32 td");
 
 	Ake_ast* left = Ast_node_get(sign, 0);
 	Zinc_assert_ptr(left, "left");
@@ -372,8 +368,7 @@ void test_parse_sign_error_no_value()
 {
 	Zinc_test_name(__func__);
 
-
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
     parse_setup("fn foo() end\n-foo()", &cu);
 	Zinc_expect_has_errors(&cu.el);
@@ -387,8 +382,7 @@ void test_parse_sign_expected_factor()
 {
 	Zinc_test_name(__func__);
 
-
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
     parse_setup("-", &cu);
 	Zinc_expect_has_errors(&cu.el);
@@ -402,9 +396,9 @@ void test_parse_not_id()
 {
 	Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
-    parse_setup("let a: bool; !a", &cu);
+    parse_setup("let a: Bool; !a", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -418,10 +412,10 @@ void test_parse_not_id()
 	Ake_type_use* tu = not->tu;
 	Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
+	Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_boolean, "boolean td");
-	Zinc_expect_str(&td->name, "bool", "bool td");
+	Zinc_expect_str(&td->name, "Bool", "name td");
 
 	Ake_ast* id = Ast_node_get(not, 0);
 	Zinc_assert_ptr(id, "ptr id");
@@ -454,7 +448,7 @@ void test_parse_not_literal()
 	struct Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_boolean, "boolean td");
-	Zinc_expect_str(&td->name, "bool", "bool td");
+	Zinc_expect_str(&td->name, "Bool", "name td");
 
 	Ake_ast* lit_bool = Ast_node_get(not, 0);
 	Zinc_assert_ptr(lit_bool, "ptr lit_bool");
@@ -504,7 +498,7 @@ void test_parse_array_literal_integer()
 	struct Ake_type_def* a_td = a_tu->td;
 	Zinc_assert_ptr(a_td, "ptr array_td");
 	Zinc_expect_int_equal(a_td->type, Ake_type_integer, "integer array_td");
-	Zinc_expect_str(&a_td->name, "i64", "i64 array_td");
+	Zinc_expect_str(&a_td->name, "Int32", "Int32 array_td");
 
 	Ake_ast* a0 = Ast_node_get(a, 0);
 	Zinc_assert_ptr(a0, "ptr a0");
@@ -547,7 +541,7 @@ void test_parse_array_literal_float()
 	struct Ake_type_def* array_td = array_tu->td;
 	Zinc_assert_ptr(array_td, "ptr array_td");
 	Zinc_expect_int_equal(array_td->type, Ake_type_float, "float array_td");
-	Zinc_expect_str(&array_td->name, "f64", "f64 array_td");
+	Zinc_expect_str(&array_td->name, "Real64", "name array_td");
 
 	Ake_ast* a0 = Ast_node_get(a, 0);
 	Zinc_assert_ptr(a0, "ptr a0");
@@ -590,7 +584,7 @@ void test_parse_array_literal_numeric()
 	struct Ake_type_def* array_td = array_tu->td;
 	Zinc_assert_ptr(array_td, "ptr array_td");
 	Zinc_expect_int_equal(array_td->type, Ake_type_float, "float array_td");
-	Zinc_expect_str(&array_td->name, "f64", "f64 array_td");
+	Zinc_expect_str(&array_td->name, "Real64", "name array_td");
 
 	Ake_ast* a0 = Ast_node_get(a, 0);
 	Zinc_assert_ptr(a0, "ptr a0");
@@ -789,7 +783,7 @@ void test_parse_factor_newline_let()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let\nx: i64", &cu);
+    parse_setup("let\nx: Int32", &cu);
     Zinc_expect_true(cu.valid, "parse_setup valid");
     Zinc_expect_no_errors(&cu.el);
 
@@ -802,7 +796,7 @@ void test_parse_factor_newline_let_assign()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let\nx: i64 =\n1", &cu);
+    parse_setup("let\nx: Int32 =\n1", &cu);
     Zinc_expect_true(cu.valid, "parse_setup valid");
     Zinc_expect_no_errors(&cu.el);
 
@@ -926,7 +920,7 @@ void test_parse_factor_array_element_const()
     Zinc_test_name(__func__);
     struct Ake_comp_unit cu;
 
-    parse_setup("let mut a: [4 const]i64 = [1, 2, 3, 4]\n"
+    parse_setup("let mut a: [4 const]Int32 = [1, 2, 3, 4]\n"
                 "a[0]\n",
                 &cu);
     Zinc_expect_true(cu.valid, "valid");
@@ -954,7 +948,7 @@ void test_parse_factor_array_element_const_error()
     Zinc_test_name(__func__);
     struct Ake_comp_unit cu;
 
-    parse_setup("let mut a: [4 const]i64 = [1, 2, 3, 4]\n"
+    parse_setup("let mut a: [4 const]Int32 = [1, 2, 3, 4]\n"
                 "a[0] = 10\n",
                 &cu);
     Zinc_expect_false(cu.valid, "valid");

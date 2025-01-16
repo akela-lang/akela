@@ -57,7 +57,7 @@ void test_comp_table_include()
 	/* base */
     Zinc_vector* base_text = NULL;
     Zinc_vector_create(&base_text, sizeof(char));
-    char base_string[] = "fn sqrt(x: i64)->i64 1 end";
+    char base_string[] = "fn sqrt(x: Int64)->Int64 1 end";
     Zinc_vector_add(base_text, base_string, strlen(base_string));
     Zinc_vector_add_null(base_text);
     Zinc_input_unicode_string* base_input = NULL;

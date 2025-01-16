@@ -12,9 +12,9 @@ void test_parse_struct_field_assign()
 
     struct Ake_comp_unit cu;
     parse_setup("struct Person\n"
-                "  firstName: [100 const]u8\n"
-                "  lastName: [100 const]u8\n"
-                "  age: i64\n"
+                "  firstName: [100 const]Nat8\n"
+                "  lastName: [100 const]Nat8\n"
+                "  age: Int32\n"
                 "end\n"
                 "let p: Person\n"
                 "p.firstName = \"John\"\n"
@@ -50,7 +50,7 @@ void test_parse_struct_field_assign()
     struct Ake_type_def* td0 = tu0->td;
     Zinc_assert_ptr(td0, "ptr td0");
     Zinc_expect_int_equal(td0->type, Ake_type_integer, "type td0");
-    Zinc_expect_str(&td0->name, "u8", "name td0");
+    Zinc_expect_str(&td0->name, "Nat8", "name td0");
 
     /* lastName */
     Ake_ast* d1 = Ast_node_get(st, 1);
@@ -72,7 +72,7 @@ void test_parse_struct_field_assign()
     struct Ake_type_def* td1 = tu1->td;
     Zinc_assert_ptr(td1, "ptr td1");
     Zinc_expect_int_equal(td1->type, Ake_type_integer, "type td1");
-    Zinc_expect_str(&td1->name, "u8", "name td1");
+    Zinc_expect_str(&td1->name, "Nat8", "name td1");
 
     /* age */
     Ake_ast* d2 = Ast_node_get(st, 2);
@@ -94,7 +94,7 @@ void test_parse_struct_field_assign()
     struct Ake_type_def* td2 = tu2->td;
     Zinc_assert_ptr(td2, "ptr td2");
     Zinc_expect_int_equal(td2->type, Ake_type_integer, "integer td2");
-    Zinc_expect_str(&td2->name, "i64", "i64 td2");
+    Zinc_expect_str(&td2->name, "Int32", "Int32 td2");
 
     /* let */
     Ake_ast* let = Ast_node_get(cu.root, 1);
@@ -131,9 +131,9 @@ void test_parse_struct_let_literal()
 
     struct Ake_comp_unit cu;
     parse_setup("struct Person\n"
-        "  first_name: [100 const]u8\n"
-        "  last_name: [100 const]u8\n"
-        "  age: i64\n"
+        "  first_name: [100 const]Nat8\n"
+        "  last_name: [100 const]Nat8\n"
+        "  age: Int32\n"
         "end\n"
         "let p: Person = Person\n"
         "  first_name: \"John\"\n"
@@ -226,9 +226,9 @@ void test_parse_struct_error_invalid_field()
 
     struct Ake_comp_unit cu;
     parse_setup("struct Person\n"
-                "  first_name: [100 const]u8\n"
-                "  last_name: [100 const]u8\n"
-                "  age: i64\n"
+                "  first_name: [100 const]Nat8\n"
+                "  last_name: [100 const]Nat8\n"
+                "  age: Int32\n"
                 "end\n"
                 "let p: Person = Person\n"
                 "  first_name: \"John\"\n"
@@ -250,9 +250,9 @@ void test_parse_struct_error_field_missing()
 
     struct Ake_comp_unit cu;
     parse_setup("struct Person\n"
-                "  first_name: [100 const]u8\n"
-                "  last_name: [100 const]u8\n"
-                "  age: i64\n"
+                "  first_name: [100 const]Nat8\n"
+                "  last_name: [100 const]Nat8\n"
+                "  age: Int32\n"
                 "end\n"
                 "let p: Person = Person\n"
                 "  first_name: \"John\"\n"
@@ -274,9 +274,9 @@ void test_parse_struct_error_dot_invalid_field()
 
     parse_setup(
             "struct Person\n"
-            "  firstName: [100 const]u8\n"
-            "  lastName: [100 const]u8\n"
-            "  age: i64\n"
+            "  firstName: [100 const]Nat8\n"
+            "  lastName: [100 const]Nat8\n"
+            "  age: Int32\n"
             "end\n"
             "let p: Person\n"
             "p.abc\n",
@@ -322,7 +322,7 @@ void test_parse_struct_error_expected_end2()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("struct Person x: i64", &cu);
+    parse_setup("struct Person x: Int32", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "valid");
     Zinc_expect_source_error(&cu.el, "expected end");
@@ -336,7 +336,7 @@ void test_parse_struct_error_duplicate()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let Person: i64 = 1; struct Person end", &cu);
+    parse_setup("let Person: Int32 = 1; struct Person end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "valid");
     Zinc_expect_source_error(&cu.el, "duplicate variable in scope: Person");
@@ -351,18 +351,18 @@ void test_parse_struct_impl()
     struct Ake_comp_unit cu;
 
     parse_setup(
-            "extern pow(f64, f64)->f64\n"
-            "extern sqrt(f64)->f64\n"
+            "extern pow(Real64, Real64)->Real64\n"
+            "extern sqrt(Real64)->Real64\n"
             "struct Point\n"
-            "  x: f64\n"
-            "  y: f64\n"
+            "  x: Real64\n"
+            "  y: Real64\n"
             "end\n"
             "struct Line\n"
             "  p0: Point\n"
             "  p1: Point\n"
             " end\n"
             "impl Line\n"
-            "  fn length(self)->f64\n"
+            "  fn length(self)->Real64\n"
             "    sqrt(pow(self.p1.x - self.p0.x, 2) + pow(self.p1.y - self.p0.y, 2))\n"
             "  end\n"
             "end\n",

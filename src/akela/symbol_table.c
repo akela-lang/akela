@@ -88,7 +88,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	const char* name;
 	struct Ake_type_def* td = NULL;
 
-	name = "i32";
+	name = "Int32";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
@@ -97,7 +97,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
 
-	name = "i64";
+	name = "Int64";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
@@ -106,7 +106,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
 
-    name = "u8";
+    name = "Nat8";
     Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
     Ake_type_def_init(td);
     td->type = Ake_type_integer;
@@ -114,7 +114,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
     td->bit_count = 8;
     Ake_symbol_table_add_type(env, name, td);
 
-    name = "u32";
+    name = "Nat32";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
@@ -122,7 +122,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
 
-	name = "u64";
+	name = "Nat64";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_integer;
@@ -130,7 +130,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
 
-	name = "f32";
+	name = "Real32";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_float;
@@ -138,7 +138,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->bit_count = 32;
 	Ake_symbol_table_add_type(env, name, td);
 
-	name = "f64";
+	name = "Real64";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_float;
@@ -146,7 +146,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->bit_count = 64;
 	Ake_symbol_table_add_type(env, name, td);
 
-	name = "bool";
+	name = "Bool";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
 	td->type = Ake_type_boolean;
@@ -190,13 +190,13 @@ void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
 	Ake_type_use_create(&pool);
 	st->numeric_pool = pool;
 
-	Ake_symbol_table_add_numeric(st, "i32");
-	Ake_symbol_table_add_numeric(st, "i64");
-    Ake_symbol_table_add_numeric(st, "u8");
-	Ake_symbol_table_add_numeric(st, "u32");
-	Ake_symbol_table_add_numeric(st, "u64");
-	Ake_symbol_table_add_numeric(st, "f32");
-	Ake_symbol_table_add_numeric(st, "f64");
+	Ake_symbol_table_add_numeric(st, "Int32");
+	Ake_symbol_table_add_numeric(st, "Int64");
+    Ake_symbol_table_add_numeric(st, "Nat8");
+	Ake_symbol_table_add_numeric(st, "Nat32");
+	Ake_symbol_table_add_numeric(st, "Nat64");
+	Ake_symbol_table_add_numeric(st, "Real32");
+	Ake_symbol_table_add_numeric(st, "Real64");
 }
 
 void Ake_symbol_table_init(struct Ake_symbol_table* st)

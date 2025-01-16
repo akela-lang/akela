@@ -431,17 +431,17 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
 		if (x->type == Ake_token_number) {
 			n->type = Ake_ast_type_number;
 			if (x->is_integer) {
-				type_name = "i64";
+				type_name = "Int32";
 			} else if (x->is_float) {
-				type_name = "f64";
+				type_name = "Real64";
 			}
 		} else if (x->type == Ake_token_string) {
 			n->type = Ake_ast_type_string;
-			type_name = "u8";
+			type_name = "Nat8";
             is_string = true;
 		} else if (x->type == Ake_token_boolean) {
 			n->type = Ake_ast_type_boolean;
-			type_name = "bool";
+			type_name = "Bool";
 		} else {
             assert(false);
         }

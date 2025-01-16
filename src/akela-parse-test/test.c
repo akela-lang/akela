@@ -17,6 +17,9 @@
 #include "centipede/comp_table.h"
 #include "zinc/os_unix.h"
 #include <assert.h>
+#include <akela/comp_unit.h>
+
+#include "zinc/input_unicode_string.h"
 
 #define NAME "akela-parse-test"
 
@@ -185,13 +188,45 @@ void Apt_run_test(Cent_value* test_value)
     Zinc_string_finish(&name->data.string);
     printf("%s\n", name->data.string.buf);
     Cent_value* source = Cent_value_get_str(test_value, "source");
-    Cent_value* line = source->data.dag.head;
     Zinc_string source_string;
     Zinc_string_init(&source_string);
+    Cent_value* line = source->data.dag.head;
     while (line) {
         Zinc_string_add_string(&source_string, &line->data.string);
         line = line->next;
     }
     Zinc_string_finish(&source_string);
     printf("%s", source_string.buf);
+
+    Zinc_vector* text = NULL;
+    Zinc_vector_create(&text, sizeof(char));
+    Zinc_vector_add(text, source_string.buf, source_string.size);
+
+    Zinc_input_unicode_string* input_obj = NULL;
+    Zinc_input_unicode_string_create(&input_obj, text);
+
+    Ake_comp_unit* cu = NULL;
+    Ake_comp_unit_create(&cu);
+    bool valid = Ake_comp_unit_compile(cu, input_obj, input_obj->input_vtable);
+    if (valid) {
+        printf("compile valid!\n");
+    } else {
+        printf("compile has errors!\n");
+        Zinc_error* e = cu->el.head;
+        while (e) {
+            Zinc_string_finish(&e->message);
+            printf("(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
+            e = e->next;
+        }
+    }
+
+    Ake_comp_unit_destroy(cu);
+    free(cu);
+
+    free(input_obj);
+
+    Zinc_vector_destroy(text);
+    free(text);
+
+    Zinc_string_destroy(&source_string);
 }

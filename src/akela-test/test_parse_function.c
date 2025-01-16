@@ -9,7 +9,7 @@ void test_parse_function_no_inputs_no_outputs()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo() let x: i64; x+1; 5+4 end", &cu);
+    parse_setup("fn foo() let x: Int32; x+1; 5+4 end", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -85,7 +85,7 @@ void test_parse_function_input()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(x: i64) x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x: Int32) x+1; 5+4 end", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -125,7 +125,7 @@ void test_parse_function_input()
 
     struct Ake_type_def* x_td = x_tu->td;
     Zinc_assert_ptr(x_td, "ptr x_td");
-    Zinc_expect_str(&x_td->name, "i64", "i64 tu_x");
+    Zinc_expect_str(&x_td->name, "Int32", "Int32 tu_x");
 
     Ake_ast* dret = Ast_node_get(proto, 2);
     Zinc_assert_ptr(dret, "ptr dret");
@@ -172,7 +172,7 @@ void test_parse_function_multiple_inputs()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(x: i32, y: i32) x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x: Int32, y: Int32) x+1; 5+4 end", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -256,7 +256,7 @@ void test_parse_function_three_inputs()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(x: i32, y: i32, z: i32)->i32 x+1; 5+4 end", &cu);
+    parse_setup("fn foo(x: Int32, y: Int32, z: Int32)->Int32 x+1; 5+4 end", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "parse valid");
 
@@ -293,7 +293,7 @@ void test_parse_function_error_duplicate_variable_declarations()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(x: i64) let x: i64 end", &cu);
+    parse_setup("fn foo(x: Int32) let x: Int32 end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "duplicate declaration in same scope: x");
@@ -307,7 +307,7 @@ void test_parse_function_return_type_error()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(x: i64)->i64 true end", &cu);
+    parse_setup("fn foo(x: Int32)->Int32 true end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "returned type does not match function return type");
@@ -363,10 +363,10 @@ void test_parse_function_error_identifier_reserved()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn i64() end", &cu);
+    parse_setup("fn Int32() end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "valid");
-    Zinc_expect_source_error(&cu.el, "identifier reserved as a type: i64");
+    Zinc_expect_source_error(&cu.el, "identifier reserved as a type: Int32");
 
     parse_teardown(&cu);
 }
@@ -408,7 +408,7 @@ void test_parse_return_error_type_does_not_match()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo()->i64 return true end", &cu);
+    parse_setup("fn foo()->Int32 return true end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "valid");
     Zinc_expect_source_error(&cu.el, "returned type does not match function return type");
@@ -425,7 +425,7 @@ void test_parse_stmts_newline_function()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn\nfoo\n(\na: i64,\nb: i64\n)->\ni64 1 end", &cu);
+    parse_setup("fn\nfoo\n(\na: Int32,\nb: Int32\n)->\nInt32 1 end", &cu);
     Zinc_expect_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "valid");
 
@@ -438,7 +438,7 @@ void test_parse_return()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo()->i64 return 1 end", &cu);
+    parse_setup("fn foo()->Int32 return 1 end", &cu);
     Zinc_expect_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "valid");
 
@@ -454,7 +454,7 @@ void test_parse_return_error_no_value()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn bar() end; fn foo()->i64 return bar() end", &cu);
+    parse_setup("fn bar() end; fn foo()->Int32 return bar() end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "valid");
     Zinc_expect_source_error(&cu.el, "return expression has no value");
@@ -471,8 +471,8 @@ void test_parse_anonymous_function()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let mut a: fn(i32, i32, i32)\n"
-        "a = fn (x: i32,y: i32,z: i32)\n"
+    parse_setup("let mut a: fn(Int32, Int32, Int32)\n"
+        "a = fn (x: Int32,y: Int32,z: Int32)\n"
         "    1\n"
         "  end\n",
         &cu
@@ -571,8 +571,8 @@ void test_parse_anonymous_function2()
     struct Ake_comp_unit cu;
 
     parse_setup(
-            "let mut a: fn (i32, i32, i32)->i32\n"
-            "a = fn(x: i32, y: i32, z: i32)->i32\n"
+            "let mut a: fn (Int32, Int32, Int32)->Int32\n"
+            "a = fn(x: Int32, y: Int32, z: Int32)->Int32\n"
             "  1\n"
             "end\n",
             &cu);
@@ -673,7 +673,7 @@ void test_parse_anonymous_function3()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a: Function; a = fn(x: i64) let x: i64 = 1 end", &cu);
+    parse_setup("let a: Function; a = fn(x: Int32) let x: Int32 = 1 end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "duplicate declaration in same scope: x");
@@ -687,7 +687,7 @@ void test_parse_anonymous_function_assignment_error()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a: fn(bool) = fn(x: i64) end", &cu);
+    parse_setup("let a: fn(Bool) = fn(x: Int32) end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "values in assignment are not compatible");
@@ -702,7 +702,7 @@ void test_parse_anonymous_function_return_error()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let f: fn()->i64 = fn()->i64 true end", &cu);
+    parse_setup("let f: fn()->Int32 = fn()->Int32 true end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "returned type does not match function return type");
@@ -744,8 +744,8 @@ void test_parse_function_proto()
     Zinc_test_name(__func__);
 
     struct Ake_comp_unit cu;
-    parse_setup("let foo: fn (a: i64)->i64\n"
-                "foo = fn (a: i64)->i64\n"
+    parse_setup("let foo: fn (a: Int32)->Int32\n"
+                "foo = fn (a: Int32)->Int32\n"
                 "  a + 1\n"
                 "end\n",
                 &cu);
@@ -793,8 +793,8 @@ void test_parse_function_error_let_assign()
     Zinc_test_name(__func__);
 
     struct Ake_comp_unit cu;
-    parse_setup("let foo: fn (a: bool)->i64 =\n"
-                "  fn (a: i64)->i64\n"
+    parse_setup("let foo: fn (a: Bool)->Int32 =\n"
+                "  fn (a: Int32)->Int32\n"
                 "    a + 1\n"
                 "  end\n",
                 &cu);
@@ -810,7 +810,7 @@ void test_parse_function_error_assign()
     Zinc_test_name(__func__);
 
     struct Ake_comp_unit cu;
-    parse_setup("let a: i64\n"
+    parse_setup("let a: Int32\n"
                 "a = true\n",
                 &cu);
     Zinc_expect_false(cu.valid, "valid");
@@ -877,7 +877,7 @@ void test_parse_call_return_type()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo()->i64 1 end; foo() + 2", &cu);
+    parse_setup("fn foo()->Int32 1 end; foo() + 2", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -897,7 +897,7 @@ void test_parse_call_return_type()
     struct Ake_type_def* add_td = add_tu->td;
     Zinc_assert_ptr(add_td, "ptr add_td");
     Zinc_expect_int_equal(add_td->type, Ake_type_integer, "integer add_td");
-    Zinc_expect_str(&add_td->name, "i64", "i64 add_td");
+    Zinc_expect_str(&add_td->name, "Int32", "Int32 add_td");
 
     parse_teardown(&cu);
 }
@@ -908,7 +908,7 @@ void test_parse_call_return_type_error()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo()->bool true end; foo() + 2", &cu);
+    parse_setup("fn foo()->Bool true end; foo() + 2", &cu);
     Zinc_assert_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_expect_source_error(&cu.el, "addition on non-numeric operand");
@@ -922,7 +922,7 @@ void test_parse_call2()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(arg1: i64) arg1 end; foo(2)", &cu);
+    parse_setup("fn foo(arg1: Int32) arg1 end; foo(2)", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -964,7 +964,7 @@ void test_parse_call2()
     struct Ake_type_def* td = tu->td;
     Zinc_assert_ptr(td, "ptr td");
     Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-    Zinc_expect_str(&td->name, "i64", "i64 td");
+    Zinc_expect_str(&td->name, "Int32", "Int32 td");
 
     Ake_ast* dret = Ast_node_get(proto, 2);
     Zinc_assert_ptr(dret, "ptr dret");
@@ -1001,7 +1001,7 @@ void test_parse_call3()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(arg1: i64, arg2: i64)->i64 1 end; let x: i64; let y: i64; foo(x,y)", &cu);
+    parse_setup("fn foo(arg1: Int32, arg2: Int32)->Int32 1 end; let x: Int32; let y: Int32; foo(x,y)", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -1081,7 +1081,7 @@ void test_parse_call4()
     struct Ake_comp_unit cu;
 
     parse_setup(
-            "fn foo(arg0: i64, arg1: i64, arg2: i64)->i64 100 end; let x: i64; let y: i64; foo(x, y, 1)",
+            "fn foo(arg0: Int32, arg1: Int32, arg2: Int32)->Int32 100 end; let x: Int32; let y: Int32; foo(x, y, 1)",
             &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_assert_true(cu.valid, "parse_setup valid");
@@ -1190,7 +1190,7 @@ void test_parse_call_missing_arguments()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(a: i64, b: i64) end; foo(1)", &cu);
+    parse_setup("fn foo(a: Int32, b: Int32) end; foo(1)", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_expect_source_error(&cu.el, "not enough arguments in function call");
@@ -1204,7 +1204,7 @@ void test_parse_call_too_many_arguments()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(a: i64) end; foo(1, 2)", &cu);
+    parse_setup("fn foo(a: Int32) end; foo(1, 2)", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_expect_source_error(&cu.el, "too many arguments in function call");
@@ -1218,7 +1218,7 @@ void test_parse_call_type_error()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(a: i64) end; foo(true)", &cu);
+    parse_setup("fn foo(a: Int32) end; foo(true)", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_expect_source_error(&cu.el, "parameter and aguments types do not match");
@@ -1232,7 +1232,7 @@ void test_parse_call_anonymous_function_type_error()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let foo: fn (a: i64) = fn (a: i64) end; foo(true)", &cu);
+    parse_setup("let foo: fn (a: Int32) = fn (a: Int32) end; foo(true)", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_expect_source_error(&cu.el, "parameter and aguments types do not match");
@@ -1274,7 +1274,7 @@ void test_parse_call_error_not_function()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let foo: i64; foo()", &cu);
+    parse_setup("let foo: Int32; foo()", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_expect_source_error(&cu.el, "not a function type");
@@ -1288,7 +1288,7 @@ void test_parse_call_error_not_enough_arguments()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(x: i64) end; foo()", &cu);
+    parse_setup("fn foo(x: Int32) end; foo()", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_expect_source_error(&cu.el, "not enough arguments in function call");
@@ -1316,7 +1316,7 @@ void test_parse_call_error_expected_expression()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(x: i64) end; foo(1,)", &cu);
+    parse_setup("fn foo(x: Int32) end; foo(1,)", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_expect_source_error(&cu.el, "expected expression after comma");
@@ -1330,7 +1330,7 @@ void test_parse_factor_newline_anonymous_function()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("fn\n(\na: i64,\nb: i64,\nc: i64\n)->\ni64\na+b+c\nend", &cu);
+    parse_setup("fn\n(\na: Int32,\nb: Int32,\nc: Int32\n)->\nInt32\na+b+c\nend", &cu);
     Zinc_expect_true(cu.valid, "parse_setup valid");
     Zinc_expect_no_errors(&cu.el);
 
@@ -1344,13 +1344,13 @@ void test_parse_factor_newline_anonymous_function_let()
     struct Ake_comp_unit cu;
 
     parse_setup(
-            "let foo: fn (a: i64, b: i64, c: i64)->i64 = fn\n"
+            "let foo: fn (a: Int32, b: Int32, c: Int32)->Int32 = fn\n"
             "(\n"
-            "a: i64,\n"
-            "b: i64,\n"
-            "c: i64\n"
+            "a: Int32,\n"
+            "b: Int32,\n"
+            "c: Int32\n"
             ")->\n"
-            "i64\n"
+            "Int32\n"
             "a+b+c\n"
             "end", &cu);
     Zinc_expect_true(cu.valid, "parse_setup valid");
@@ -1365,7 +1365,7 @@ void test_parse_function_error_use_fn()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a: Function = fn(x: i64) end", &cu);
+    parse_setup("let a: Function = fn(x: Int32) end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(
@@ -1381,10 +1381,10 @@ void test_parse_function_error_require_params_name()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a: fn(i64) = fn(i64: i64) end", &cu);
+    parse_setup("let a: fn(Int32) = fn(Int32: Int32) end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
-    Zinc_expect_source_error(&cu.el, "identifier reserved as a type: i64");
+    Zinc_expect_source_error(&cu.el, "identifier reserved as a type: Int32");
 
     parse_teardown(&cu);
 }
@@ -1395,7 +1395,7 @@ void test_parse_function_error_input_type_non_numeric()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a: fn(i64) = fn(x: bool) end", &cu);
+    parse_setup("let a: fn(Int32) = fn(x: Bool) end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "values in assignment are not compatible");
@@ -1409,7 +1409,7 @@ void test_parse_function_error_output_type_non_numeric()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a: fn()->i64 = fn()->bool true end", &cu);
+    parse_setup("let a: fn()->Int32 = fn()->Bool true end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "values in assignment are not compatible");
@@ -1421,9 +1421,9 @@ void test_parse_function_error_input_type_numeric()
 {
     Zinc_test_name(__func__);
 
-    struct Ake_comp_unit cu;
+    Ake_comp_unit cu;
 
-    parse_setup("let a: fn(i64) = fn(x: i32) end", &cu);
+    parse_setup("let a: fn(Int64) = fn(x: Int32) end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "values in assignment are not compatible");
@@ -1437,7 +1437,7 @@ void test_parse_function_error_output_type_numeric()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a: fn()->i64 = fn()->i32 1 end", &cu);
+    parse_setup("let a: fn()->Int64 = fn()->Int32 1 end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "parse valid");
     Zinc_expect_source_error(&cu.el, "values in assignment are not compatible");

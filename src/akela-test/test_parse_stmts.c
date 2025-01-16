@@ -12,7 +12,7 @@ void test_parse_assign()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let mut a: i64; a = 1", &cu);
+    parse_setup("let mut a: Int32; a = 1", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -42,7 +42,7 @@ void test_parse_assign2()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let a: i64; a = 1 + 2", &cu);
+    parse_setup("let a: Int32; a = 1 + 2", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -82,7 +82,7 @@ void test_parse_stmts()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let i: i64; let x: i64; i + 1; x * 1", &cu);
+    parse_setup("let i: Int32; let x: Int32; i + 1; x * 1", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -127,7 +127,7 @@ void test_parse_stmts2()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: i64; x+1\n5-4\n", &cu);
+    parse_setup("let x: Int32; x+1\n5-4\n", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -172,7 +172,7 @@ void test_parse_stmts3()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: i64; let y: i64; let z: i64; x+1; 5-4; y+z", &cu);
+    parse_setup("let x: Int32; let y: Int32; let z: Int32; x+1; 5-4; y+z", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -230,7 +230,7 @@ void test_parse_stmts4()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: i64; let y: i64; let z: i64; x+1; 5-4; y+z", &cu);
+    parse_setup("let x: Int32; let y: Int32; let z: Int32; x+1; 5-4; y+z", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -338,7 +338,7 @@ void test_parse_stmts_type()
 {
 	Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
     parse_setup("1; true; \"hello\"", &cu);
 	Zinc_assert_no_errors(&cu.el);
@@ -350,10 +350,10 @@ void test_parse_stmts_type()
 	Ake_type_use* tu = cu.root->tu;
 	Zinc_assert_ptr(tu, "ptr tu");
 	
-	struct Ake_type_def* td = tu->td;
+	Ake_type_def* td = tu->td;
 	Zinc_assert_ptr(td, "ptr td");
 	Zinc_expect_int_equal(td->type, Ake_type_integer, "type td");
-	Zinc_expect_str(&td->name, "u8", "name td");
+	Zinc_expect_str(&td->name, "Nat8", "name td");
 
     parse_teardown(&cu);
 }
@@ -365,7 +365,7 @@ void test_parse_if()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("if true let x: i64; let y: i64; 10 + 20; x * y end", &cu);
+    parse_setup("if true let x: Int32; let y: Int32; 10 + 20; x * y end", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -430,7 +430,7 @@ void test_parse_elseif()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: i64; let y: i64; if true 10 + 20; x * y elseif true 1; 2 end", &cu);
+    parse_setup("let x: Int32; let y: Int32; if true 10 + 20; x * y elseif true 1; 2 end", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -514,8 +514,8 @@ void test_parse_elseif2()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: i64\n"
-        "let y: i64\n"
+    parse_setup("let x: Int32\n"
+        "let y: Int32\n"
         "if true\n"
         "  10 + 20\n"
         "  x * y\n"
@@ -636,7 +636,7 @@ void test_parse_else()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: i64; let y: i64; if false 10 else x; y end", &cu);
+    parse_setup("let x: Int32; let y: Int32; if false 10 else x; y end", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -693,7 +693,7 @@ void test_parse_else2()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: i64; let y: i64; if false 10 elseif false 20 else x; y end", &cu);
+    parse_setup("let x: Int32; let y: Int32; if false 10 elseif false 20 else x; y end", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -879,7 +879,7 @@ void test_parse_for_range()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("for i: i64 = 0:10 1 end", &cu);
+    parse_setup("for i: Int32 = 0:10 1 end", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_assert_true(cu.valid, "parse_setup valid");
 
@@ -932,7 +932,7 @@ void test_parse_for_range2()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("for i: i64 = 0:10 let i: i64 = 1 end", &cu);
+    parse_setup("for i: Int32 = 0:10 let i: Int32 = 1 end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "duplicate declaration in same scope: i");
@@ -946,7 +946,7 @@ void test_parse_for_iteration()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]i64; for i: i64 in list i end", &cu);
+    parse_setup("let list: [10]Int32; for i: Int32 in list i end", &cu);
 	Zinc_expect_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -978,7 +978,7 @@ void test_parse_for_iteration()
 	struct Ake_type_def* i_td = i_tu->td;
 	Zinc_assert_ptr(i_td, "ptr i_td");
 	Zinc_expect_int_equal(i_td->type, Ake_type_integer, "integer i_td");
-	Zinc_expect_str(&i_td->name, "i64", "i64 i_td");
+	Zinc_expect_str(&i_td->name, "Int32", "Int32 i_td");
 
 	/* expr */
 	Ake_ast* expr = Ast_node_get(node, 1);
@@ -1006,7 +1006,7 @@ void test_parse_for_iteration2()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]i64; for i: i64 in list let i: i64 = 1 end", &cu);
+    parse_setup("let list: [10]Int32; for i: Int32 in list let i: Int32 = 1 end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "duplicate declaration in same scope: i");
@@ -1020,7 +1020,7 @@ void test_parse_for_iteration_error_no_value()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn list() end; for i: i64 in list() end", &cu);
+    parse_setup("fn list() end; for i: Int32 in list() end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "iteration expression has no value");
@@ -1034,7 +1034,7 @@ void test_parse_for_iteration_error_no_child_element()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: i64; for i: i64 in list end", &cu);
+    parse_setup("let list: Int32; for i: Int32 in list end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "iteration expression is not an array");
@@ -1046,9 +1046,9 @@ void test_parse_for_iteration_error_cannot_cast()
 {
 	Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+	Ake_comp_unit cu;
 
-    parse_setup("let list: [10]bool; for i: i64 in list end", &cu);
+    parse_setup("let list: [10]Bool; for i: Int32 in list end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "cannot cast list element");
@@ -1062,7 +1062,7 @@ void test_parse_for_error_after_declaration()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]i64; for i: i64 end", &cu);
+    parse_setup("let list: [10]Int32; for i: Int32 end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "expected '=' or 'in' after for element declaration");
@@ -1076,7 +1076,7 @@ void test_parse_for_error_expected_end()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]i64; for i: i64 = 1:10", &cu);
+    parse_setup("let list: [10]Int32; for i: Int32 = 1:10", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "expected end");
@@ -1090,7 +1090,7 @@ void test_parse_for_error_expected_range_start()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]i64; for i: i64 =", &cu);
+    parse_setup("let list: [10]Int32; for i: Int32 =", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "expected range start");
@@ -1104,7 +1104,7 @@ void test_parse_for_error_expected_colon()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]i64; for i: i64 = 1", &cu);
+    parse_setup("let list: [10]Int32; for i: Int32 = 1", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "expected colon");
@@ -1118,7 +1118,7 @@ void test_parse_for_error_expected_range_end()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]i64; for i: i64 = 1:", &cu);
+    parse_setup("let list: [10]Int32; for i: Int32 = 1:", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "expected range end");
@@ -1132,7 +1132,7 @@ void test_parse_for_range_error_start_no_value()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn foo() end; for i: i64 = foo():10 end", &cu);
+    parse_setup("fn foo() end; for i: Int32 = foo():10 end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "start range expression has no value");
@@ -1146,7 +1146,7 @@ void test_parse_for_range_error_start_not_numeric()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("for i: i64 = true:10 end", &cu);
+    parse_setup("for i: Int32 = true:10 end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "start range expression is not numeric");
@@ -1160,7 +1160,7 @@ void test_parse_for_range_error_end_no_value()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn foo() end; for i: i64 = 1:foo() end", &cu);
+    parse_setup("fn foo() end; for i: Int32 = 1:foo() end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "end range expression has no value");
@@ -1174,7 +1174,7 @@ void test_parse_for_range_error_end_not_numeric()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("for i: i64 = 1:true end", &cu);
+    parse_setup("for i: Int32 = 1:true end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "end range expression is not numeric");
@@ -1188,7 +1188,7 @@ void test_parse_for_error_expected_iteration_expression()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]i64; for i: i64 in:", &cu);
+    parse_setup("let list: [10]Int32; for i: Int32 in:", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_false(cu.valid, "parse_setup valid");
 	Zinc_expect_source_error(&cu.el, "expected for iteration expression");
@@ -1202,7 +1202,7 @@ void test_parse_stmts_newline_for_range()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("for\ni\n: \ni64\n=\n0\n:\n10 i end", &cu);
+    parse_setup("for\ni\n: \nInt32\n=\n0\n:\n10 i end", &cu);
     Zinc_expect_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "valid");
 
@@ -1215,7 +1215,7 @@ void test_parse_stmts_newline_for_iteration()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let v: [10]i64; for\nx\n: \ni64\nin\nv x end", &cu);
+    parse_setup("let v: [10]Int32; for\nx\n: \nInt32\nin\nv x end", &cu);
     Zinc_expect_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "valid");
 
@@ -1226,9 +1226,9 @@ void test_parse_let()
 {
     Zinc_test_name(__func__);
 
-    struct Ake_comp_unit cu;
+    Ake_comp_unit cu;
 
-    parse_setup("let a: i32", &cu);
+    parse_setup("let a: Int32", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "valid");
 
@@ -1256,7 +1256,7 @@ void test_parse_let()
 
     struct Ake_type_def* td = tu->td;
     Zinc_assert_ptr(td, "ptr td");
-    Zinc_expect_str(&td->name, "i32", "i32 td");
+    Zinc_expect_str(&td->name, "Int32", "Int32 td");
 
     parse_teardown(&cu);
 }
@@ -1268,7 +1268,7 @@ void test_parse_let2()
     struct Ake_comp_unit cu;
 
     /* allocate ps{} cu.root cu.root{} */
-    parse_setup("let a: i32 = 1", &cu);
+    parse_setup("let a: Int32 = 1", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "parse valid");
 
@@ -1296,7 +1296,7 @@ void test_parse_let2()
 
     struct Ake_type_def* td = tu->td;
     Zinc_assert_ptr(td, "ptr td");
-    Zinc_expect_str(&td->name, "i32", "i32 td");
+    Zinc_expect_str(&td->name, "Int32", "Int32 td");
 
     Ake_ast* let_rseq = Ast_node_get(let, 2);
     Zinc_assert_ptr(let_rseq, "ptr let_rseq");
@@ -1318,7 +1318,7 @@ void test_parse_let3()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a,b: i32 = 1,2", &cu);
+    parse_setup("let a,b: Int32 = 1,2", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "parse valid");
 
@@ -1346,7 +1346,7 @@ void test_parse_let3()
 
     struct Ake_type_def* td = tu->td;
     Zinc_assert_ptr(td, "ptr td");
-    Zinc_expect_str(&td->name, "i32", "i32 td");
+    Zinc_expect_str(&td->name, "Int32", "Int32 td");
 
     Ake_ast* id2 = Ast_node_get(let_lseq, 1);
     Zinc_assert_ptr(id2, "ptr id2");
@@ -1390,7 +1390,7 @@ void test_parse_extern()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("extern foo(a: i64)\n"
+    parse_setup("extern foo(a: Int32)\n"
                 "foo(1)\n",
                 &cu);
     Zinc_assert_no_errors(&cu.el);
@@ -1438,7 +1438,7 @@ void test_parse_stmts_mut() {
     Zinc_test_name(__func__);
     struct Ake_comp_unit cu;
 
-    parse_setup("let mut x: i64 = 10\n"
+    parse_setup("let mut x: Int32 = 10\n"
                 "x = 5\n"
                 "x",
                 &cu);
@@ -1482,7 +1482,7 @@ void test_parse_stmts_error_mut()
     Zinc_test_name(__func__);
     struct Ake_comp_unit cu;
 
-    parse_setup("let x: i64 = 10\n"
+    parse_setup("let x: Int32 = 10\n"
                 "x = 5\n"
                 "x",
                 &cu);
