@@ -1,5 +1,5 @@
-#ifndef STRING_SLICE_H
-#define STRING_SLICE_H
+#ifndef ZINC_STRING_SLICE_H
+#define ZINC_STRING_SLICE_H
 
 #include <stdlib.h>
 

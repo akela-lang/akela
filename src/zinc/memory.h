@@ -1,5 +1,5 @@
-#ifndef _MEMORY_H
-#define _MEMORY_H
+#ifndef ZINC_MEMORY_H
+#define ZINC_MEMORY_H
 
 #include "api.h"
 #include <stdlib.h>

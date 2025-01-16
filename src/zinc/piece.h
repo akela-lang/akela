@@ -1,5 +1,5 @@
-#ifndef PIECE_H
-#define PIECE_H
+#ifndef ZINC_PIECE_H
+#define ZINC_PIECE_H
 
 #include "zstring.h"
 #include <stdlib.h>

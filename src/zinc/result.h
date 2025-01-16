@@ -1,5 +1,5 @@
-#ifndef _RESULT_H
-#define _RESULT_H
+#ifndef ZINC_RESULT_H
+#define ZINC_RESULT_H
 
 #include "api.h"
 

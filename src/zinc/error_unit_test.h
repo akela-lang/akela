@@ -1,5 +1,5 @@
-#ifndef _PARSE_UNIT_TEST_H
-#define _PARSE_UNIT_TEST_H
+#ifndef ZINC_ERROR_UNIT_TEST_H
+#define ZINC_ERROR_UNIT_TEST_H
 
 #include "api.h"
 #include "error.h"

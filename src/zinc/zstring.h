@@ -1,5 +1,5 @@
-#ifndef _BUFFER_H
-#define _BUFFER_H
+#ifndef ZINC_STRING_H
+#define ZINC_STRING_H
 
 #include <stdio.h>
 #include "api.h"

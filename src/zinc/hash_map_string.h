@@ -1,5 +1,5 @@
-#ifndef _HASH_H
-#define _HASH_H
+#ifndef ZINC_HASH_MAP_STRING_H
+#define ZINC_HASH_MAP_STRING_H
 
 #include "api.h"
 #include "zstring.h"

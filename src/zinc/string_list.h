@@ -1,5 +1,5 @@
-#ifndef BUFFER_LIST_H
-#define BUFFER_LIST_H
+#ifndef ZINC_STRING_LIST_H
+#define ZINC_STRING_LIST_H
 
 #include "api.h"
 #include "zstring.h"

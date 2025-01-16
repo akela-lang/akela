@@ -1,5 +1,5 @@
-#ifndef OS_UNIX_H
-#define OS_UNIX_H
+#ifndef ZINC_OS_UNIX_H
+#define ZINC_OS_UNIX_H
 
 #ifdef __unix__
 #include "api.h"
