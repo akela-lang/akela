@@ -7,11 +7,11 @@
 
 #if defined(_WIN32) || defined(WIN32)
 
-ZINC_API enum result win_temp_filename(char** buff);
-ZINC_API void set_console_utf8();
-ZINC_API char* get_exe_path();
-ZINC_API void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename);
-ZINC_API void path_join(struct buffer* path, struct buffer* filename);
+ZINC_API enum result Zinc_win_temp_filename(char** buff);
+ZINC_API void Zinc_set_console_utf8();
+ZINC_API char* Zinc_get_exe_path();
+ZINC_API void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename);
+ZINC_API void Zinc_path_join(Zinc_string* path, Zinc_string* filename);
 
 #endif
 

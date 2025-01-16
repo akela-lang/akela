@@ -17,7 +17,7 @@
   * list [x]
   * memory [x]
   * os_unix [x]
-  * os_win []
+  * os_win [x]
   * piece []
   * result []
   * String_slice []

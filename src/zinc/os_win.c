@@ -5,9 +5,9 @@
 #include "result.h"
 #include "memory.h"
 #include "os_win.h"
-#include "buffer.h"
+#include "zstring.h"
 
-enum result win_temp_filename(char** buff)
+enum result Zinc_win_temp_filename(char** buff)
 {
 	DWORD dwRetVal = 0;
 	TCHAR temp[MAX_PATH];
@@ -34,12 +34,12 @@ enum result win_temp_filename(char** buff)
 	return result_ok;
 }
 
-void set_console_utf8()
+void Zinc_set_console_utf8()
 {
 	SetConsoleOutputCP(CP_UTF8);
 }
 
-char* get_exe_path()
+char* Zinc_get_exe_path()
 {
     DWORD last_error;
     DWORD result;
@@ -77,7 +77,7 @@ char* get_exe_path()
     return path;
 }
 
-void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename)
+void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename)
 {
     int sep_pos = -1;
 
@@ -100,7 +100,7 @@ void split_path(struct buffer* path, struct buffer* dir, struct buffer* filename
     buffer_finish(filename);
 }
 
-void path_join(struct buffer* path, struct buffer* filename)
+void path_join(Zinc_string* path, Zinc_string* filename)
 {
     buffer_add_char(path, '\\');
     buffer_copy(filename, path);
