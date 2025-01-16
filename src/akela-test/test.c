@@ -31,6 +31,6 @@ int main(void) {
 	test_comp_unit();
 	test_comp_table();
     test_parse_struct();
-	print_results();
+	Zinc_print_results();
 	return 0;
 }

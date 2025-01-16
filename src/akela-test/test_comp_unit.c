@@ -5,7 +5,7 @@
 
 void test_comp_unit_compile()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
     Vector* text = NULL;
     VectorCreate(&text, sizeof(char));
@@ -19,16 +19,16 @@ void test_comp_unit_compile()
 	Ake_comp_unit_init(cu);
 
 	bool valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
-	expect_true(valid, "valid");
+	Zinc_expect_true(valid, "valid");
 	
 	Ake_ast* root = cu->root;
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, Ake_ast_type_stmts, "parse_stmts root");
+	Zinc_assert_ptr(root, "ptr root");
+	Zinc_expect_int_equal(root->type, Ake_ast_type_stmts, "parse_stmts root");
 
 	Ake_ast* number = Ast_node_get(root, 0);
-	assert_ptr(number, "ptr number");
-	expect_int_equal(number->type, Ake_ast_type_number, "number number");
-	expect_str(&number->value, "10", "10 number");
+	Zinc_assert_ptr(number, "ptr number");
+	Zinc_expect_int_equal(number->type, Ake_ast_type_number, "number number");
+	Zinc_expect_str(&number->value, "10", "10 number");
 
     free(input);
 	Ake_comp_unit_destroy(cu);

@@ -3,7 +3,7 @@
 
 void test_ast_add()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
@@ -21,14 +21,14 @@ void test_ast_add()
     Cent_ast_add(n, b);
     Cent_ast_add(n, c);
 
-    expect_ptr_equal(n->head, a, "head n");
-    expect_ptr_equal(a->prev, NULL, "prev a");
-    expect_ptr_equal(a->next, b, "next a");
-    expect_ptr_equal(b->prev, a, "prev b");
-    expect_ptr_equal(b->next, c, "next b");
-    expect_ptr_equal(c->prev, b, "prev c");
-    expect_ptr_equal(c->next, NULL, "next c");
-    expect_ptr_equal(n->tail, c, "tail n");
+    Zinc_expect_ptr_equal(n->head, a, "head n");
+    Zinc_expect_ptr_equal(a->prev, NULL, "prev a");
+    Zinc_expect_ptr_equal(a->next, b, "next a");
+    Zinc_expect_ptr_equal(b->prev, a, "prev b");
+    Zinc_expect_ptr_equal(b->next, c, "next b");
+    Zinc_expect_ptr_equal(c->prev, b, "prev c");
+    Zinc_expect_ptr_equal(c->next, NULL, "next c");
+    Zinc_expect_ptr_equal(n->tail, c, "tail n");
 
     Cent_ast_destroy(n);
     free(n);

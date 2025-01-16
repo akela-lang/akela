@@ -6,8 +6,8 @@
 
 void TestCSVWrite1()
 {
-    test_name(__func__);
-    test_name(__func__);
+    Zinc_test_name(__func__);
+    Zinc_test_name(__func__);
 
     struct CSVParseOutput* parse_output = NULL;
     CSVParseSetup(&parse_output,
@@ -16,11 +16,11 @@ void TestCSVWrite1()
                   "False,5.1,80,1,world,\n");
 
     Zinc_expect_no_errors(parse_output->el);
-    expect_size_t_equal(DataFrameColumnCount(parse_output->df), 6, "column count");
-    expect_size_t_equal(DataFrameRowCount(parse_output->df), 2, "row count");
+    Zinc_expect_size_t_equal(DataFrameColumnCount(parse_output->df), 6, "column count");
+    Zinc_expect_size_t_equal(DataFrameRowCount(parse_output->df), 2, "row count");
 
     Vector* output_text = CSVWrite(parse_output->df);
-    expect_vector(parse_output->input_text, output_text, "text");
+    Zinc_expect_vector(parse_output->input_text, output_text, "text");
 
     CSVParseTeardown(parse_output);
     VectorDestroy(output_text);

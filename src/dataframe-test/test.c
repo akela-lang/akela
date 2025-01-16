@@ -12,6 +12,6 @@ int main()
     TestCSVLex();
     TestCSVParse();
     TestCSVWrite();
-    print_results();
+    Zinc_print_results();
     return 0;
 }

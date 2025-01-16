@@ -4,12 +4,12 @@
 /* static-output */
 void test_result_set_error()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	enum Zinc_result r;
 	r = Zinc_set_error("error x");
-	assert_error(r, "set_error");
-	expect_error_message("error x");
+	Zinc_assert_error(r, "set_error");
+	Zinc_expect_error_message("error x");
 }
 
 /* static-output */

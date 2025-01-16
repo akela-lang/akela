@@ -15,6 +15,6 @@ int main() {
     test_akela_llvm_array();
     test_akela_llvm_function();
     test_akela_llvm_struct();
-    print_results();
+    Zinc_print_results();
     return 0;
 }

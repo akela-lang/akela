@@ -4,10 +4,10 @@
 
 void Zinc_assert_no_errors(Zinc_error_list* el)
 {
-    test_called();
+    Zinc_test_called();
 
     if (!el->head) return;
-    error_triggered();
+    Zinc_error_triggered();
     fprintf(stderr, "assert no errors: has errors\n");
     struct Zinc_error* e = el->head;
     while (e) {
@@ -16,16 +16,16 @@ void Zinc_assert_no_errors(Zinc_error_list* el)
         e = e->next;
     }
 
-    error_triggered();
-    panic();
+    Zinc_error_triggered();
+    Zinc_panic();
 }
 
 void Zinc_expect_no_errors(Zinc_error_list* el)
 {
-    test_called();
+    Zinc_test_called();
 
     if (!el->head) return;
-    error_triggered();
+    Zinc_error_triggered();
     fprintf(stderr, "expect no errors: has errors\n");
     struct Zinc_error* e = el->head;
     while (e) {
@@ -34,12 +34,12 @@ void Zinc_expect_no_errors(Zinc_error_list* el)
         e = e->next;
     }
 
-    error_triggered();
+    Zinc_error_triggered();
 }
 
 void Zinc_expect_error_count(Zinc_error_list* el, size_t count)
 {
-    test_called();
+    Zinc_test_called();
 
     size_t actual_count = 0;
     struct Zinc_error* e = el->head;
@@ -49,36 +49,36 @@ void Zinc_expect_error_count(Zinc_error_list* el, size_t count)
     }
     if (actual_count == count) return;
 
-    error_triggered();
+    Zinc_error_triggered();
     fprintf(stderr, "expected error count (%zu) (%zu)\n", actual_count, count);
 }
 
 void Zinc_assert_has_errors(Zinc_error_list* el)
 {
-    test_called();
+    Zinc_test_called();
 
     if (el->head) return;
-    error_triggered();
+    Zinc_error_triggered();
     fprintf(stderr, "assert has errors: there are no errors\n");
 
-    error_triggered();
-    panic();
+    Zinc_error_triggered();
+    Zinc_panic();
 }
 
 void Zinc_expect_has_errors(Zinc_error_list* el)
 {
-    test_called();
+    Zinc_test_called();
 
     if (el->head) return;
-    error_triggered();
+    Zinc_error_triggered();
     fprintf(stderr, "expect has errors: there are no errors\n");
 
-    error_triggered();
+    Zinc_error_triggered();
 }
 
 struct Zinc_error* Zinc_assert_source_error(Zinc_error_list* el, const char message[])
 {
-    test_called();
+    Zinc_test_called();
     struct Zinc_error* e = el->head;
     while (e) {
         Zinc_string_finish(&e->message);
@@ -87,15 +87,15 @@ struct Zinc_error* Zinc_assert_source_error(Zinc_error_list* el, const char mess
         }
         e = e->next;
     }
-    error_triggered();
+    Zinc_error_triggered();
     fprintf(stderr, "error not found: %s\n", message);
-    panic();
+    Zinc_panic();
     return NULL;
 }
 
 struct Zinc_error* Zinc_expect_source_error(Zinc_error_list* el, const char message[])
 {
-    test_called();
+    Zinc_test_called();
     struct Zinc_error* e = el->head;
     while (e) {
         Zinc_string_finish(&e->message);
@@ -104,7 +104,7 @@ struct Zinc_error* Zinc_expect_source_error(Zinc_error_list* el, const char mess
         }
         e = e->next;
     }
-    error_triggered();
+    Zinc_error_triggered();
     fprintf(stderr, "error not found: %s\n", message);
     e = el->head;
     if (e) {

@@ -40,6 +40,6 @@ int main()
     test_input_unicode_file();
 	test_hash_map_size_t();
 	test_unicode();
-	print_results();
+	Zinc_print_results();
 	return 0;
 }

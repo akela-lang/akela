@@ -5,7 +5,7 @@
 
 void test_memory_malloc()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	char* p = NULL;
 

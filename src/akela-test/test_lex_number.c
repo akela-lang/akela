@@ -5,7 +5,7 @@
 
 void test_lex_number_negative_start()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -16,8 +16,8 @@ void test_lex_number_negative_start()
 	lex_setup("-", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	expect_true(valid, "valid 0");
-	expect_int_equal(t->type, Ake_token_minus, "minus 0");
+	Zinc_expect_true(valid, "valid 0");
+	Zinc_expect_int_equal(t->type, Ake_token_minus, "minus 0");
 
 	/* destroy t t{} */
 	Ake_token_destroy(t);
@@ -30,7 +30,7 @@ void test_lex_number_negative_start()
 /* dynamic-output-none */
 void test_lex_number_whole()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -43,12 +43,12 @@ void test_lex_number_whole()
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "lex valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, Ake_token_number, "number");
-	expect_str(&t->value, "500", "500");
-	expect_size_t_equal(t->loc.line, 1, "line 10");
-	expect_size_t_equal(t->loc.col, 1, "col 10");
+	Zinc_assert_true(valid, "lex valid");
+	Zinc_assert_ptr(t, "ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
+	Zinc_expect_str(&t->value, "500", "500");
+	Zinc_expect_size_t_equal(t->loc.line, 1, "line 10");
+	Zinc_expect_size_t_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	Ake_token_destroy(t);
@@ -61,7 +61,7 @@ void test_lex_number_whole()
 /* dynamic-output-none */
 void test_lex_number_fraction_start()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -74,12 +74,12 @@ void test_lex_number_fraction_start()
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "lex valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, Ake_token_number, "number");
-	expect_str(&t->value, "500.", "500.");
-	expect_int_equal(t->loc.line, 1, "line 10");
-	expect_int_equal(t->loc.col, 1, "col 10");
+	Zinc_assert_true(valid, "lex valid");
+	Zinc_assert_ptr(t, "ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
+	Zinc_expect_str(&t->value, "500.", "500.");
+	Zinc_expect_int_equal(t->loc.line, 1, "line 10");
+	Zinc_expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	Ake_token_destroy(t);
@@ -92,7 +92,7 @@ void test_lex_number_fraction_start()
 /* dynamic-output-none */
 void test_lex_number_fraction()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -105,12 +105,12 @@ void test_lex_number_fraction()
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "lex valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, Ake_token_number, "number");
-	expect_str(&t->value, "500.123", "500.123");
-	expect_int_equal(t->loc.line, 1, "line 10");
-	expect_int_equal(t->loc.col, 1, "col 10");
+	Zinc_assert_true(valid, "lex valid");
+	Zinc_assert_ptr(t, "ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
+	Zinc_expect_str(&t->value, "500.123", "500.123");
+	Zinc_expect_int_equal(t->loc.line, 1, "line 10");
+	Zinc_expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	Ake_token_destroy(t);
@@ -122,7 +122,7 @@ void test_lex_number_fraction()
 
 void test_lex_number_exponent_start()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -133,20 +133,20 @@ void test_lex_number_exponent_start()
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "0 valid");
-	assert_ptr(t, "0 ptr t");
-	expect_int_equal(t->type, Ake_token_number, "0 number");
-	expect_str(&t->value, "500e", "0 value");
+	Zinc_assert_true(valid, "0 valid");
+	Zinc_assert_ptr(t, "0 ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "0 number");
+	Zinc_expect_str(&t->value, "500e", "0 value");
 
     Ake_token_destroy(t);
     free(t);
 
     valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "1 valid");
-	assert_ptr(t, "1 ptr t");
-	expect_int_equal(t->type, Ake_token_eof, "1 eof");
-	expect_str(&t->value, "", "1 value");
+	Zinc_assert_true(valid, "1 valid");
+	Zinc_assert_ptr(t, "1 ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_eof, "1 eof");
+	Zinc_expect_str(&t->value, "", "1 value");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -156,7 +156,7 @@ void test_lex_number_exponent_start()
 
 void test_lex_number_fraction_exponent_start()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -167,20 +167,20 @@ void test_lex_number_fraction_exponent_start()
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "0 valid");
-	assert_ptr(t, "0 ptr t");
-	expect_int_equal(t->type, Ake_token_number, "0 number");
-	expect_str(&t->value, "500.123e", "0 value");
+	Zinc_assert_true(valid, "0 valid");
+	Zinc_assert_ptr(t, "0 ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "0 number");
+	Zinc_expect_str(&t->value, "500.123e", "0 value");
 
     Ake_token_destroy(t);
     free(t);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "1 valid");
-	assert_ptr(t, "1 ptr t");
-	expect_int_equal(t->type, Ake_token_eof, "1 eof");
-	expect_str(&t->value, "", "1 value");
+	Zinc_assert_true(valid, "1 valid");
+	Zinc_assert_ptr(t, "1 ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_eof, "1 eof");
+	Zinc_expect_str(&t->value, "", "1 value");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -190,7 +190,7 @@ void test_lex_number_fraction_exponent_start()
 
 void test_lex_number_fraction_exponent()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -201,12 +201,12 @@ void test_lex_number_fraction_exponent()
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "lex valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, Ake_token_number, "number");
-	expect_str(&t->value, "500.123e2", "500.123e2");
-	expect_int_equal(t->loc.line, 1, "line 10");
-	expect_int_equal(t->loc.col, 1, "col 10");
+	Zinc_assert_true(valid, "lex valid");
+	Zinc_assert_ptr(t, "ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
+	Zinc_expect_str(&t->value, "500.123e2", "500.123e2");
+	Zinc_expect_int_equal(t->loc.line, 1, "line 10");
+	Zinc_expect_int_equal(t->loc.col, 1, "col 10");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -216,7 +216,7 @@ void test_lex_number_fraction_exponent()
 
 void test_lex_number_fraction_exponent_sign_start_negative()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -227,7 +227,7 @@ void test_lex_number_fraction_exponent_sign_start_negative()
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_expect_has_errors(ls.el);
-	expect_false(valid, "0 valid");
+	Zinc_expect_false(valid, "0 valid");
 	Zinc_expect_source_error(ls.el, "expected number after exponent sign");
 
 	Ake_token_destroy(t);
@@ -238,7 +238,7 @@ void test_lex_number_fraction_exponent_sign_start_negative()
 
 void test_lex_number_fraction_exponent_sign_start_positive()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -249,7 +249,7 @@ void test_lex_number_fraction_exponent_sign_start_positive()
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_expect_has_errors(ls.el);
-	expect_false(valid, "0 valid");
+	Zinc_expect_false(valid, "0 valid");
 	Zinc_expect_source_error(ls.el, "expected number after exponent sign");
 
 	Ake_token_destroy(t);
@@ -261,7 +261,7 @@ void test_lex_number_fraction_exponent_sign_start_positive()
 /* dynamic-output-none */
 void test_lex_number_fraction_exponent_negative()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -274,12 +274,12 @@ void test_lex_number_fraction_exponent_negative()
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "lex valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, Ake_token_number, "number");
-	expect_str(&t->value, "500.123e-2", "500.123e-2");
-	expect_int_equal(t->loc.line, 1, "line 10");
-	expect_int_equal(t->loc.col, 1, "col 10");
+	Zinc_assert_true(valid, "lex valid");
+	Zinc_assert_ptr(t, "ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
+	Zinc_expect_str(&t->value, "500.123e-2", "500.123e-2");
+	Zinc_expect_int_equal(t->loc.line, 1, "line 10");
+	Zinc_expect_int_equal(t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	Ake_token_destroy(t);
@@ -292,7 +292,7 @@ void test_lex_number_fraction_exponent_negative()
 /* dynamic-output-none */
 void test_lex_number_exponent_positive()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Ake_lex_state ls;
 	struct Zinc_error_list el;
@@ -305,12 +305,12 @@ void test_lex_number_exponent_positive()
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "lex valid");
-	assert_ptr(t, "ptr t");
-	expect_int_equal(t->type, Ake_token_number, "number");
-	expect_str(&t->value, "500.123e+2", "500.123e+2");
-	expect_int_equal(t->loc.line, 1, "line");
-	expect_int_equal(t->loc.col, 1, "col");
+	Zinc_assert_true(valid, "lex valid");
+	Zinc_assert_ptr(t, "ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
+	Zinc_expect_str(&t->value, "500.123e+2", "500.123e+2");
+	Zinc_expect_int_equal(t->loc.line, 1, "line");
+	Zinc_expect_int_equal(t->loc.col, 1, "col");
 
 	/* destroy t t{} */
 	Ake_token_destroy(t);
@@ -322,7 +322,7 @@ void test_lex_number_exponent_positive()
 
 void test_lex_number_exponent_add()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_error_list el;
 	struct Ake_lex_state ls;
@@ -333,35 +333,35 @@ void test_lex_number_exponent_add()
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "0 valid");
-	assert_ptr(t, "0 ptr t");
-	expect_int_equal(t->type, Ake_token_number, "0 number");
-	expect_str(&t->value, "500.123e", "0 value");
-	expect_int_equal(t->loc.line, 1, "0 line 10");
-	expect_int_equal(t->loc.col, 1, "0 col 10");
+	Zinc_assert_true(valid, "0 valid");
+	Zinc_assert_ptr(t, "0 ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "0 number");
+	Zinc_expect_str(&t->value, "500.123e", "0 value");
+	Zinc_expect_int_equal(t->loc.line, 1, "0 line 10");
+	Zinc_expect_int_equal(t->loc.col, 1, "0 col 10");
 
 	Ake_token_destroy(t);
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "1 valid");
-	assert_ptr(t, "1 ptr t");
-	expect_int_equal(t->type, Ake_token_plus, "1 plus");
-	expect_size_t_equal(t->loc.line, 1, "1 line");
-	expect_size_t_equal(t->loc.col, 10, "1 col");
+	Zinc_assert_true(valid, "1 valid");
+	Zinc_assert_ptr(t, "1 ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_plus, "1 plus");
+	Zinc_expect_size_t_equal(t->loc.line, 1, "1 line");
+	Zinc_expect_size_t_equal(t->loc.col, 10, "1 col");
 
 	Ake_token_destroy(t);
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(ls.el);
-	assert_true(valid, "2 valid");
-	assert_ptr(t, "2 ptr t");
-	expect_int_equal(t->type, Ake_token_number, "2 number");
-	expect_str(&t->value, "1", "2 value");
-	expect_size_t_equal(t->loc.line, 1, "2 line");
-	expect_size_t_equal(t->loc.col, 12, "2 col");
+	Zinc_assert_true(valid, "2 valid");
+	Zinc_assert_ptr(t, "2 ptr t");
+	Zinc_expect_int_equal(t->type, Ake_token_number, "2 number");
+	Zinc_expect_str(&t->value, "1", "2 value");
+	Zinc_expect_size_t_equal(t->loc.line, 1, "2 line");
+	Zinc_expect_size_t_equal(t->loc.col, 12, "2 col");
 
 	Ake_token_destroy(t);
 	free(t);

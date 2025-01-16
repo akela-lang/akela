@@ -5,7 +5,7 @@
 
 void TestInputCharFileNext()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     char filename[] = "/tmp/temp.txt";
     char text[] = "hello file\n";
@@ -16,7 +16,7 @@ void TestInputCharFileNext()
     fclose(fp);
 
     fp = fopen(filename, "r");
-    assert_ptr(fp, "fp");
+    Zinc_assert_ptr(fp, "fp");
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
@@ -33,10 +33,10 @@ void TestInputCharFileNext()
         done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
         VectorAdd(text_actual, &c, 1);
-        expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
-        expect_size_t_equal(loc.line, line, "line");
-        expect_size_t_equal(loc.col, col, "col");
-        expect_size_t_equal(loc.end_pos, end_pos, "end_pos");
+        Zinc_expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
+        Zinc_expect_size_t_equal(loc.line, line, "line");
+        Zinc_expect_size_t_equal(loc.col, col, "col");
+        Zinc_expect_size_t_equal(loc.end_pos, end_pos, "end_pos");
         start_pos++;
         end_pos++;
         col++;
@@ -46,7 +46,7 @@ void TestInputCharFileNext()
         }
     } while (true);
 
-    expect_vector_str(text_actual, text, "text");
+    Zinc_expect_vector_str(text_actual, text, "text");
 
     fclose(fp);
     VectorDestroy(text_actual);
@@ -56,7 +56,7 @@ void TestInputCharFileNext()
 
 void TestInputCharFileRepeat()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     char filename[] = "/tmp/temp.txt";
     char text[] = "hello file\n";
@@ -68,7 +68,7 @@ void TestInputCharFileRepeat()
     fclose(fp);
 
     fp = fopen(filename, "r");
-    assert_ptr(fp, "fp");
+    Zinc_assert_ptr(fp, "fp");
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
@@ -86,10 +86,10 @@ void TestInputCharFileRepeat()
         done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
         VectorAdd(text_actual, &c, 1);
-        expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
-        expect_size_t_equal(loc.line, line, "line");
-        expect_size_t_equal(loc.col, col, "col");
-        expect_size_t_equal(loc.end_pos, end_pos, "end_pos");
+        Zinc_expect_size_t_equal(loc.start_pos, start_pos, "start_pos");
+        Zinc_expect_size_t_equal(loc.line, line, "line");
+        Zinc_expect_size_t_equal(loc.col, col, "col");
+        Zinc_expect_size_t_equal(loc.end_pos, end_pos, "end_pos");
         if (!did_repeat) {
             Zinc_input_char_file_repeat(input);
             did_repeat = true;
@@ -104,7 +104,7 @@ void TestInputCharFileRepeat()
         }
     } while (true);
 
-    expect_vector_str(text_actual, text_expected, "text");
+    Zinc_expect_vector_str(text_actual, text_expected, "text");
 
     fclose(fp);
     VectorDestroy(text_actual);
@@ -114,7 +114,7 @@ void TestInputCharFileRepeat()
 
 void TestInputCharFileSeek()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     char filename[] = "/tmp/temp.txt";
     char text[] = "hello file\n";
@@ -126,7 +126,7 @@ void TestInputCharFileSeek()
     fclose(fp);
 
     fp = fopen(filename, "r");
-    assert_ptr(fp, "fp");
+    Zinc_assert_ptr(fp, "fp");
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
@@ -143,7 +143,7 @@ void TestInputCharFileSeek()
         VectorAdd(text_actual, &c, 1);
     } while (true);
 
-    expect_vector_str(text_actual, text_expected, "text");
+    Zinc_expect_vector_str(text_actual, text_expected, "text");
 
     fclose(fp);
     VectorDestroy(text_actual);
@@ -153,14 +153,14 @@ void TestInputCharFileSeek()
 
 void TestInputCharFileGetAll()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     char filename[] = "/tmp/temp.txt";
     char text[] = "hello file\n";
     FILE *fp;
     size_t len = strlen(text);
     fp = fopen(filename, "w");
-    assert_ptr(fp, "fp");
+    Zinc_assert_ptr(fp, "fp");
     fwrite(text, 1, len, fp);
     fclose(fp);
 
@@ -171,7 +171,7 @@ void TestInputCharFileGetAll()
     Vector* text_actual;
     Zinc_input_char_file_get_all(input, &text_actual);
 
-    expect_vector_str(text_actual, text, "text");
+    Zinc_expect_vector_str(text_actual, text, "text");
 
     fclose(fp);
     VectorDestroy(text_actual);

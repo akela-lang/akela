@@ -14,6 +14,6 @@ int main()
     test_parse();
     test_build();
     test_check_value_types();
-    print_results();
+    Zinc_print_results();
     return 0;
 }

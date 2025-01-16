@@ -4,7 +4,7 @@
 
 void test_type_use1()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	Ake_ast* n;
     Ake_ast_create(&n);
@@ -20,15 +20,15 @@ void test_type_use1()
 	b->type = Ake_ast_type_type;
     Ake_ast_add(n, b);
 
-	assert_ptr(n, "ptr n");
+	Zinc_assert_ptr(n, "ptr n");
 
 	Ake_ast* n0 = Ast_node_get(n, 0);
-	assert_ptr(n0, "ptr a");
-	expect_ptr_equal(n0, a, "a");
+	Zinc_assert_ptr(n0, "ptr a");
+	Zinc_expect_ptr_equal(n0, a, "a");
 
 	Ake_ast* n1 = Ast_node_get(n, 1);
-	assert_ptr(n1, "ptr b");
-	expect_ptr_equal(n1, b, "b");
+	Zinc_assert_ptr(n1, "ptr b");
+	Zinc_expect_ptr_equal(n1, b, "b");
 
     Ake_ast_destroy(n);
 }

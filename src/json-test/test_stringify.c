@@ -8,7 +8,7 @@
 
 void test_stringify_null()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -22,7 +22,7 @@ void test_stringify_null()
 
     Json_stringify(el, dom, &bf);
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "null", "bf");
+    Zinc_expect_str(&bf, "null", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -32,7 +32,7 @@ void test_stringify_null()
 
 void test_stringify_true()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -47,7 +47,7 @@ void test_stringify_true()
 
     Json_stringify(el, dom, &bf);
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "true", "bf");
+    Zinc_expect_str(&bf, "true", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -57,7 +57,7 @@ void test_stringify_true()
 
 void test_stringify_false()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -72,7 +72,7 @@ void test_stringify_false()
 
     Json_stringify(el, dom, &bf);
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "false", "bf");
+    Zinc_expect_str(&bf, "false", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -82,7 +82,7 @@ void test_stringify_false()
 
 void test_stringify_string()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -98,7 +98,7 @@ void test_stringify_string()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "\"hello\"", "bf");
+    Zinc_expect_str(&bf, "\"hello\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -108,7 +108,7 @@ void test_stringify_string()
 
 void test_stringify_string2()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -124,7 +124,7 @@ void test_stringify_string2()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
+    Zinc_expect_str(&bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -134,7 +134,7 @@ void test_stringify_string2()
 
 void test_stringify_string3()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -150,7 +150,7 @@ void test_stringify_string3()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "\"\\u1fa52\"", "bf");
+    Zinc_expect_str(&bf, "\"\\u1fa52\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -160,7 +160,7 @@ void test_stringify_string3()
 
 void test_stringify_string4()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -176,7 +176,7 @@ void test_stringify_string4()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "\"\\t\"", "bf");
+    Zinc_expect_str(&bf, "\"\\t\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -186,7 +186,7 @@ void test_stringify_string4()
 
 void test_stringify_string_error_invalid_char()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -204,7 +204,7 @@ void test_stringify_string_error_invalid_char()
 
     Zinc_expect_has_errors(el);
     struct Zinc_error* e = Zinc_expect_source_error(el, "invalid string character");
-    assert_ptr(e, "ptr e");
+    Zinc_assert_ptr(e, "ptr e");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -214,7 +214,7 @@ void test_stringify_string_error_invalid_char()
 
 void test_stringify_number_integer()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -231,7 +231,7 @@ void test_stringify_number_integer()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "123", "bf");
+    Zinc_expect_str(&bf, "123", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -241,7 +241,7 @@ void test_stringify_number_integer()
 
 void test_stringify_number_fraction()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -258,7 +258,7 @@ void test_stringify_number_fraction()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "5.100000", "bf");
+    Zinc_expect_str(&bf, "5.100000", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -268,7 +268,7 @@ void test_stringify_number_fraction()
 
 void test_stringify_number_exponent()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -285,7 +285,7 @@ void test_stringify_number_exponent()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "51.000000", "bf");
+    Zinc_expect_str(&bf, "51.000000", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -295,7 +295,7 @@ void test_stringify_number_exponent()
 
 void test_stringify_array_empty()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -310,7 +310,7 @@ void test_stringify_array_empty()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "[]", "bf");
+    Zinc_expect_str(&bf, "[]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -320,7 +320,7 @@ void test_stringify_array_empty()
 
 void test_stringify_array_one()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -342,7 +342,7 @@ void test_stringify_array_one()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "[3]", "bf");
+    Zinc_expect_str(&bf, "[3]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -352,7 +352,7 @@ void test_stringify_array_one()
 
 void test_stringify_array2()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -404,7 +404,7 @@ void test_stringify_array2()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
+    Zinc_expect_str(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -414,7 +414,7 @@ void test_stringify_array2()
 
 void test_stringify_object_empty()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -429,7 +429,7 @@ void test_stringify_object_empty()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "{}", "bf");
+    Zinc_expect_str(&bf, "{}", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -439,7 +439,7 @@ void test_stringify_object_empty()
 
 void test_stringify_object_one()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -466,7 +466,7 @@ void test_stringify_object_one()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_str(&bf, "{\"one\":1}", "bf");
+    Zinc_expect_str(&bf, "{\"one\":1}", "bf");
 
     Zinc_string_destroy(&name0);
     Zinc_string_destroy(&bf);
@@ -477,7 +477,7 @@ void test_stringify_object_one()
 
 void test_stringify_object_many()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -525,7 +525,7 @@ void test_stringify_object_many()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    expect_true(
+    Zinc_expect_true(
         Zinc_string_compare_str(&bf, "{\"one\":1,\"two\":5.500000,\"three\":\"hello\"}")
         || Zinc_string_compare_str(&bf, "{\"one\":1,\"three\":\"hello\",\"two\":5.500000}")
         || Zinc_string_compare_str(&bf, "{\"two\":5.500000,\"one\":1,\"three\":\"hello\"}")

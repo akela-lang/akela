@@ -10,6 +10,6 @@ int main()
     test_dom();
     test_parse();
     test_stringify();
-    print_results();
+    Zinc_print_results();
     return 0;
 }

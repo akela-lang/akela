@@ -5,19 +5,19 @@
 
 void test_akela_llvm_literal_integer()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
     cg_setup("1", &result);
-    expect_str(&result.value, "1", "1");
+    Zinc_expect_str(&result.value, "1", "1");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_literal_double()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
@@ -27,7 +27,7 @@ void test_akela_llvm_literal_double()
     Zinc_string_finish(&v_exp);
 
     cg_setup("1.5", &result);
-    expect_str(&result.value, v_exp.buf, "1.5");
+    Zinc_expect_str(&result.value, v_exp.buf, "1.5");
 
     Zinc_string_destroy(&v_exp);
     Ake_code_gen_result_destroy(&result);
@@ -35,26 +35,26 @@ void test_akela_llvm_literal_double()
 
 void test_code_gen_boolean_true()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
     cg_setup("true",
              &result);
-    expect_str(&result.value, "true", "true");
+    Zinc_expect_str(&result.value, "true", "true");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_boolean_false()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
     cg_setup("false",
              &result);
-    expect_str(&result.value, "false", "false");
+    Zinc_expect_str(&result.value, "false", "false");
 
     Ake_code_gen_result_destroy(&result);
 }

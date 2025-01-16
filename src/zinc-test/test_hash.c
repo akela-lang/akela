@@ -4,7 +4,7 @@
 /* dynamic-output-none */
 void test_hash1()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Zinc_hash_table ht;
 	struct Zinc_string one;
@@ -26,16 +26,16 @@ void test_hash1()
 	Zinc_hash_map_string_add(&ht, &one, &one_item);
 
 	int* one_item_ptr = Zinc_hash_map_string_get(&ht, &one);
-	assert_ptr(one_item_ptr, "one ptr");
-	expect_int_equal(*one_item_ptr, one_item, "1");
+	Zinc_assert_ptr(one_item_ptr, "one ptr");
+	Zinc_expect_int_equal(*one_item_ptr, one_item, "1");
 
 	int* two_item_ptr = Zinc_hash_map_string_get(&ht, &two);
-	expect_null(two_item_ptr, "2 null");
+	Zinc_expect_null(two_item_ptr, "2 null");
 
 	Zinc_hash_map_string_add(&ht, &two, &two_item);
 	two_item_ptr = Zinc_hash_map_string_get(&ht, &two);
-	assert_ptr(two_item_ptr, "2 ptr");
-	expect_int_equal(*two_item_ptr, two_item, "2");
+	Zinc_assert_ptr(two_item_ptr, "2 ptr");
+	Zinc_expect_int_equal(*two_item_ptr, two_item, "2");
 
 	/* destroy one{} two{} ht{} */
 	Zinc_string_destroy(&one);

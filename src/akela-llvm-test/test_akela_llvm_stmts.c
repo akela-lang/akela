@@ -5,7 +5,7 @@
 
 void test_code_gen_last()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
@@ -13,14 +13,14 @@ void test_code_gen_last()
              "let b: i64 = 2\n"
              "a + b\n",
              &result);
-    expect_str(&result.value, "3", "value");
+    Zinc_expect_str(&result.value, "3", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
@@ -28,14 +28,14 @@ void test_code_gen_if()
              "  1\n"
              "end\n",
              &result);
-    expect_str(&result.value, "", "value");
+    Zinc_expect_str(&result.value, "", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_else()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -45,7 +45,7 @@ void test_code_gen_if_else()
              "  2\n"
              "end\n",
              &result);
-    expect_str(&result.value, "1", "1 value");
+    Zinc_expect_str(&result.value, "1", "1 value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -55,13 +55,13 @@ void test_code_gen_if_else()
              "  2\n"
              "end\n",
              &result);
-    expect_str(&result.value, "2", "2 value");
+    Zinc_expect_str(&result.value, "2", "2 value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_elseif_else()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -73,7 +73,7 @@ void test_code_gen_if_elseif_else()
              "  3\n"
              "end\n",
              &result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -85,7 +85,7 @@ void test_code_gen_if_elseif_else()
              "  3\n"
              "end\n",
              &result);
-    expect_str(&result.value, "2", "value");
+    Zinc_expect_str(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -97,33 +97,33 @@ void test_code_gen_if_elseif_else()
              "  3\n"
              "end\n",
              &result);
-    expect_str(&result.value, "3", "value");
+    Zinc_expect_str(&result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_if_expression()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: i64 = if true 1 else 2 end\n"
              "a\n",
              &result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: i64 = if false 1 else 2 end\n"
              "a\n",
              &result);
-    expect_str(&result.value, "2", "value");
+    Zinc_expect_str(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void akela_llvm_stmts_printf()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -131,7 +131,7 @@ void akela_llvm_stmts_printf()
              "let s: [100 const]u8 = \"test printf\n\"\n"
              "printf(s)\n",
              &result);
-    expect_str(&result.value, "", "value");
+    Zinc_expect_str(&result.value, "", "value");
     Ake_code_gen_result_destroy(&result);
 }
 

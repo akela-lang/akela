@@ -5,7 +5,7 @@
 
 void test_akela_llvm_struct_assign_elements()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -18,7 +18,7 @@ void test_akela_llvm_struct_assign_elements()
              "a.y = 2.0\n"
              "a.x\n",
              &result);
-    expect_str(&result.value, "1.000000", "value");
+    Zinc_expect_str(&result.value, "1.000000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -31,13 +31,13 @@ void test_akela_llvm_struct_assign_elements()
              "a.y = 2.0\n"
              "a.y\n",
              &result);
-    expect_str(&result.value, "2.000000", "value");
+    Zinc_expect_str(&result.value, "2.000000", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_literal()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -51,7 +51,7 @@ void test_akela_llvm_struct_literal()
              "end\n"
              "a.x\n",
              &result);
-    expect_str(&result.value, "1.000000", "value");
+    Zinc_expect_str(&result.value, "1.000000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -65,69 +65,69 @@ void test_akela_llvm_struct_literal()
              "end\n"
              "a.y\n",
              &result);
-    expect_str(&result.value, "2.000000", "value");
+    Zinc_expect_str(&result.value, "2.000000", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array2()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: [6 const]u8 = \"hello\"\n"
              "a[0]\n",
              &result);
-    expect_str(&result.value, "104", "value");
+    Zinc_expect_str(&result.value, "104", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array3()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: [6 const]u8 = \"John\"\n"
              "a[0]\n",
              &result);
-    expect_str(&result.value, "74", "value");
+    Zinc_expect_str(&result.value, "74", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array4()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: [100 const]u8 = \"John\"\n"
              "a[0]\n",
              &result);
-    expect_str(&result.value, "74", "value");
+    Zinc_expect_str(&result.value, "74", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array5()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: [100 const]u8 = \"John\"\n"
              "a[0]\n",
              &result);
-    expect_str(&result.value, "74", "value");
+    Zinc_expect_str(&result.value, "74", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array6()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -135,14 +135,14 @@ void test_akela_llvm_struct_array6()
              "let b: [100 const]u8 = a\n"
              "b[0]\n",
              &result);
-    expect_str(&result.value, "74", "value");
+    Zinc_expect_str(&result.value, "74", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array7()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -150,14 +150,14 @@ void test_akela_llvm_struct_array7()
              "let b: [4 const]u8 = a\n"
              "b[0]\n",
              &result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array8()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -169,14 +169,14 @@ void test_akela_llvm_struct_array8()
              "foo.x = 5\n"
              "foo.x\n",
              &result);
-    expect_str(&result.value, "5", "value");
+    Zinc_expect_str(&result.value, "5", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array9()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -188,13 +188,13 @@ void test_akela_llvm_struct_array9()
              "end\n"
              "foo.x[0]\n",
              &result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array10()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -207,13 +207,13 @@ void test_akela_llvm_struct_array10()
              "end\n"
              "foo.x[0]\n",
              &result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array11()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -227,7 +227,7 @@ void test_akela_llvm_struct_array11()
             "foo.x[3] = 4\n"
             "foo.x[0]\n",
              &result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -239,7 +239,7 @@ void test_akela_llvm_struct_array11()
              "foo.x = a\n"
              "foo.x[1]\n",
              &result);
-    expect_str(&result.value, "2", "value");
+    Zinc_expect_str(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -251,7 +251,7 @@ void test_akela_llvm_struct_array11()
              "foo.x = a\n"
              "foo.x[2]\n",
              &result);
-    expect_str(&result.value, "3", "value");
+    Zinc_expect_str(&result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -263,13 +263,13 @@ void test_akela_llvm_struct_array11()
              "foo.x = a\n"
              "foo.x[3]\n",
              &result);
-    expect_str(&result.value, "4", "value");
+    Zinc_expect_str(&result.value, "4", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_array12()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -285,7 +285,7 @@ void test_akela_llvm_struct_array12()
              "end\n"
              "p.first_name[0]\n",
              &result);
-    expect_str(&result.value, "74", "value");
+    Zinc_expect_str(&result.value, "74", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -301,7 +301,7 @@ void test_akela_llvm_struct_array12()
              "end\n"
              "p.last_name[0]\n",
              &result);
-    expect_str(&result.value, "83", "value");
+    Zinc_expect_str(&result.value, "83", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -317,13 +317,13 @@ void test_akela_llvm_struct_array12()
              "end\n"
              "p.age\n",
              &result);
-    expect_str(&result.value, "35", "value");
+    Zinc_expect_str(&result.value, "35", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_struct()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -347,7 +347,7 @@ void test_akela_llvm_struct_struct()
              "end\n"
              "line.p0.x\n",
              &result);
-    expect_str(&result.value, "1.500000", "value");
+    Zinc_expect_str(&result.value, "1.500000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -371,7 +371,7 @@ void test_akela_llvm_struct_struct()
              "end\n"
              "line.p0.y\n",
              &result);
-    expect_str(&result.value, "2.500000", "value");
+    Zinc_expect_str(&result.value, "2.500000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -395,7 +395,7 @@ void test_akela_llvm_struct_struct()
              "end\n"
              "line.p1.x\n",
              &result);
-    expect_str(&result.value, "3.000000", "value");
+    Zinc_expect_str(&result.value, "3.000000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -419,13 +419,13 @@ void test_akela_llvm_struct_struct()
              "end\n"
              "line.p1.y\n",
              &result);
-    expect_str(&result.value, "4.000000", "value");
+    Zinc_expect_str(&result.value, "4.000000", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct2()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -440,13 +440,13 @@ void test_akela_llvm_struct2()
              "p.x = 1.6\n"
              "p.x\n",
              &result);
-    expect_str(&result.value, "1.600000", "value");
+    Zinc_expect_str(&result.value, "1.600000", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_struct2()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -471,12 +471,12 @@ void test_akela_llvm_struct_struct2()
              "line.p0.x = 1.6\n"
              "line.p0.x\n",
              &result);
-    expect_str(&result.value, "1.600000", "value");
+    Zinc_expect_str(&result.value, "1.600000", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_llvm_struct_function() {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -490,7 +490,7 @@ void test_akela_llvm_struct_function() {
              "end\n"
              "foo.compute(77)\n",
              &result);
-    expect_str(&result.value, "78", "value");
+    Zinc_expect_str(&result.value, "78", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -504,7 +504,7 @@ void test_akela_llvm_struct_function() {
              "end\n"
              "foo.compute(77)\n",
              &result);
-    expect_str(&result.value, "79", "value");
+    Zinc_expect_str(&result.value, "79", "value");
     Ake_code_gen_result_destroy(&result);
 }
 

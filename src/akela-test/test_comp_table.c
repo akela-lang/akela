@@ -10,7 +10,7 @@
 
 void test_comp_table_compile()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Ake_comp_table ct;
 	Ake_comp_table_init(&ct);
@@ -30,16 +30,16 @@ void test_comp_table_compile()
 	Ake_comp_table_put(&ct, &cu->path, cu);
 
 	bool valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
-	expect_true(valid, "valid");
+	Zinc_expect_true(valid, "valid");
 
 	Ake_ast* root = cu->root;
-	assert_ptr(root, "ptr root");
-	expect_int_equal(root->type, Ake_ast_type_stmts, "parse_stmts root");
+	Zinc_assert_ptr(root, "ptr root");
+	Zinc_expect_int_equal(root->type, Ake_ast_type_stmts, "parse_stmts root");
 
 	Ake_ast* number = Ast_node_get(root, 0);
-	assert_ptr(number, "ptr number");
-	expect_int_equal(number->type, Ake_ast_type_number, "number number");
-	expect_str(&number->value, "10", "10 number");
+	Zinc_assert_ptr(number, "ptr number");
+	Zinc_expect_int_equal(number->type, Ake_ast_type_number, "number number");
+	Zinc_expect_str(&number->value, "10", "10 number");
 
     free(input);
 	Ake_comp_table_destroy(&ct);
@@ -49,7 +49,7 @@ void test_comp_table_compile()
 
 void test_comp_table_include()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Ake_comp_table ct;
 	Ake_comp_table_init(&ct);
@@ -73,7 +73,7 @@ void test_comp_table_include()
 
 	/* test base */
 	Zinc_expect_no_errors(&cu_base->el);
-	expect_true(valid_base, "valid_base");
+	Zinc_expect_true(valid_base, "valid_base");
 
 	/* main */
     char main_string[] = "sqrt(25)";
@@ -96,28 +96,28 @@ void test_comp_table_include()
 
 	/* test main */
 	Zinc_expect_no_errors(&cu_main->el);
-	expect_true(valid_main, "valid valid_main");
+	Zinc_expect_true(valid_main, "valid valid_main");
 	Ake_ast* root_main = cu_main->root;
-	assert_ptr(root_main, "ptr root");
-	expect_int_equal(root_main->type, Ake_ast_type_stmts, "parse_stmts root_main");
+	Zinc_assert_ptr(root_main, "ptr root");
+	Zinc_expect_int_equal(root_main->type, Ake_ast_type_stmts, "parse_stmts root_main");
 
 	Ake_ast* call_main = Ast_node_get(root_main, 0);
-	assert_ptr(call_main, "ptr call_main");
-	expect_int_equal(call_main->type, Ake_ast_type_call, "call call_main");
+	Zinc_assert_ptr(call_main, "ptr call_main");
+	Zinc_expect_int_equal(call_main->type, Ake_ast_type_call, "call call_main");
 
 	Ake_ast* id_main = Ast_node_get(call_main, 0);
-	assert_ptr(id_main, "ptr id_main");
-	expect_int_equal(id_main->type, Ake_ast_type_id, "id id_main");
-	expect_str(&id_main->value, "sqrt", "sqrt id_main");
+	Zinc_assert_ptr(id_main, "ptr id_main");
+	Zinc_expect_int_equal(id_main->type, Ake_ast_type_id, "id id_main");
+	Zinc_expect_str(&id_main->value, "sqrt", "sqrt id_main");
 
 	Ake_ast* cseq_main = Ast_node_get(call_main, 1);
-	assert_ptr(cseq_main, "ptr cseq");
-	expect_int_equal(cseq_main->type, Ake_ast_type_cseq, "cseq cseq_main");
+	Zinc_assert_ptr(cseq_main, "ptr cseq");
+	Zinc_expect_int_equal(cseq_main->type, Ake_ast_type_cseq, "cseq cseq_main");
 
 	Ake_ast* number_main = Ast_node_get(cseq_main, 0);
-	assert_ptr(number_main, "ptr number_main");
-	expect_int_equal(number_main->type, Ake_ast_type_number, "number number_main");
-	expect_str(&number_main->value, "25", "25 number_main");
+	Zinc_assert_ptr(number_main, "ptr number_main");
+	Zinc_expect_int_equal(number_main->type, Ake_ast_type_number, "number number_main");
+	Zinc_expect_str(&number_main->value, "25", "25 number_main");
 
 	/* destroy */
     free(base_input);
@@ -131,7 +131,7 @@ void test_comp_table_include()
 
 void test_comp_table_include_base()
 {
-	test_name(__func__);
+	Zinc_test_name(__func__);
 
 	struct Ake_comp_table ct;
 	Ake_comp_table_init(&ct);
@@ -152,36 +152,36 @@ void test_comp_table_include_base()
 
 	struct Ake_comp_unit* cu_base = NULL;
 	bool valid = Ake_include_base(&ct, cu_main, &cu_base);
-	assert_true(valid, "include_base valid");
+	Zinc_assert_true(valid, "include_base valid");
 	Zinc_expect_no_errors(&cu_base->el);
-	expect_true(cu_base->valid, "valid_base");
+	Zinc_expect_true(cu_base->valid, "valid_base");
 
 	bool valid_main = Ake_comp_unit_compile(cu_main, input, input->input_vtable);
 
 	/* test main */
 	Zinc_expect_no_errors(&cu_main->el);
-	expect_true(valid_main, "valid valid_main");
+	Zinc_expect_true(valid_main, "valid valid_main");
 	Ake_ast* root_main = cu_main->root;
-	assert_ptr(root_main, "ptr root");
-	expect_int_equal(root_main->type, Ake_ast_type_stmts, "parse_stmts root_main");
+	Zinc_assert_ptr(root_main, "ptr root");
+	Zinc_expect_int_equal(root_main->type, Ake_ast_type_stmts, "parse_stmts root_main");
 
 	Ake_ast* call_main = Ast_node_get(root_main, 0);
-	assert_ptr(call_main, "ptr call_main");
-	expect_int_equal(call_main->type, Ake_ast_type_call, "call call_main");
+	Zinc_assert_ptr(call_main, "ptr call_main");
+	Zinc_expect_int_equal(call_main->type, Ake_ast_type_call, "call call_main");
 
 	Ake_ast* id = Ast_node_get(call_main, 0);
-	assert_ptr(id, "ptr id");
-	expect_int_equal(id->type, Ake_ast_type_id, "id id");
-	expect_str(&id->value, "sqrt", "sqrt id");
+	Zinc_assert_ptr(id, "ptr id");
+	Zinc_expect_int_equal(id->type, Ake_ast_type_id, "id id");
+	Zinc_expect_str(&id->value, "sqrt", "sqrt id");
 
 	Ake_ast* cseq_main = Ast_node_get(call_main, 1);
-	assert_ptr(cseq_main, "ptr cseq");
-	expect_int_equal(cseq_main->type, Ake_ast_type_cseq, "cseq cseq_main");
+	Zinc_assert_ptr(cseq_main, "ptr cseq");
+	Zinc_expect_int_equal(cseq_main->type, Ake_ast_type_cseq, "cseq cseq_main");
 
 	Ake_ast* number_main = Ast_node_get(cseq_main, 0);
-	assert_ptr(number_main, "ptr number_main");
-	expect_int_equal(number_main->type, Ake_ast_type_number, "number number_main");
-	expect_str(&number_main->value, "25", "25 number_main");
+	Zinc_assert_ptr(number_main, "ptr number_main");
+	Zinc_expect_int_equal(number_main->type, Ake_ast_type_number, "number number_main");
+	Zinc_expect_str(&number_main->value, "25", "25 number_main");
 
 	/* destroy */
 	VectorDestroy(main_vector);

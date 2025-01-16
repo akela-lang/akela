@@ -3,7 +3,7 @@
 
 void test_vector_double()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Vector* v = NULL;
     VectorCreate(&v, sizeof(double));
@@ -14,12 +14,12 @@ void test_vector_double()
     VectorAdd(v, &v0, 1);
     VectorAdd(v, v1, 4);
     VectorAdd(v, &v2, 1);
-    expect_double_equal(VECTOR_DOUBLE(v, 0), v0, "v0");
-    expect_double_equal(VECTOR_DOUBLE(v, 1), v1[0], "v1[0]");
-    expect_double_equal(VECTOR_DOUBLE(v, 2), v1[1], "v1[1]");
-    expect_double_equal(VECTOR_DOUBLE(v, 3), v1[2], "v1[2]");
-    expect_double_equal(VECTOR_DOUBLE(v, 4), v1[3], "v1[3]");
-    expect_double_equal(VECTOR_DOUBLE(v, 5), v2, "v2");
+    Zinc_expect_double_equal(VECTOR_DOUBLE(v, 0), v0, "v0");
+    Zinc_expect_double_equal(VECTOR_DOUBLE(v, 1), v1[0], "v1[0]");
+    Zinc_expect_double_equal(VECTOR_DOUBLE(v, 2), v1[1], "v1[1]");
+    Zinc_expect_double_equal(VECTOR_DOUBLE(v, 3), v1[2], "v1[2]");
+    Zinc_expect_double_equal(VECTOR_DOUBLE(v, 4), v1[3], "v1[3]");
+    Zinc_expect_double_equal(VECTOR_DOUBLE(v, 5), v2, "v2");
 
     VectorDestroy(v);
     free(v);
@@ -27,7 +27,7 @@ void test_vector_double()
 
 void test_vector_double_large()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Vector* v = NULL;
     VectorCreate(&v, sizeof(double));
@@ -39,7 +39,7 @@ void test_vector_double_large()
     VectorAdd(v, value, 100);
 
     for (int i = 0; i < 100; i++) {
-        expect_double_equal(VECTOR_DOUBLE(v, i), value[i], "value[i]");
+        Zinc_expect_double_equal(VECTOR_DOUBLE(v, i), value[i], "value[i]");
     }
 
     VectorDestroy(v);

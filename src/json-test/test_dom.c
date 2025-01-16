@@ -4,7 +4,7 @@
 
 void test_dom_add()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Json_dom* root = NULL;
     Json_dom_create(&root);
@@ -26,14 +26,14 @@ void test_dom_add()
     Json_dom_add_element(root, b);
     Json_dom_add_element(root, c);
 
-    expect_ptr_equal(root->head, a, "head root");
-    expect_ptr_equal(a->prev, NULL, "prev a");
-    expect_ptr_equal(a->next, b, "next a");
-    expect_ptr_equal(b->prev, a, "prev b");
-    expect_ptr_equal(b->next, c, "next b");
-    expect_ptr_equal(c->prev, b, "prev c");
-    expect_ptr_equal(c->next, NULL, "next c");
-    expect_ptr_equal(root->tail, c, "tail root");
+    Zinc_expect_ptr_equal(root->head, a, "head root");
+    Zinc_expect_ptr_equal(a->prev, NULL, "prev a");
+    Zinc_expect_ptr_equal(a->next, b, "next a");
+    Zinc_expect_ptr_equal(b->prev, a, "prev b");
+    Zinc_expect_ptr_equal(b->next, c, "next b");
+    Zinc_expect_ptr_equal(c->prev, b, "prev c");
+    Zinc_expect_ptr_equal(c->next, NULL, "next c");
+    Zinc_expect_ptr_equal(root->tail, c, "tail root");
 
     Json_dom_destroy(root);
 }

@@ -22,7 +22,7 @@
   * result [x]
   * String_slice [x]
   * unicode [x]
-  * unit_test []
+  * unit_test [x]
   * utf8 []
   * vector []
 * make next_char into buffer_next_utf8 and output pos, c, num, done, r

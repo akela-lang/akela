@@ -25,7 +25,7 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
 
     Ake_comp_unit_init(cu);
     valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
-    expect_true(valid, "valid");
+    Zinc_expect_true(valid, "valid");
 
     result->cu = cu;
 
@@ -34,7 +34,7 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
         Code_gen_llvm_create(&cg, &cu->el, &cu->extern_list);
         valid = Ake_code_gen_jit(cg, &Code_gen_llvm_vtable, cu->root, result);
         Code_gen_llvm_destroy(cg);
-        expect_true(valid, "valid");
+        Zinc_expect_true(valid, "valid");
     }
 
     if (!valid && result->text.size > 0) {

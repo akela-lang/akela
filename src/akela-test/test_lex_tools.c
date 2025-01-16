@@ -4,14 +4,14 @@
 
 void test_lex_tools_is_word()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
-    expect_true(Ake_is_word("x  ", NUM_BYTES("x"[0])), "ascii letter");
-    expect_false(Ake_is_word("1  ", NUM_BYTES("1"[0])), "not a letter");
-    expect_true(Ake_is_word("Α  ", NUM_BYTES("Α"[0])), "0 greek letter");
-    expect_true(Ake_is_word("π  ", NUM_BYTES("π"[0])), "1 greek letter");
-    expect_true(Ake_is_word("ω  ", NUM_BYTES("ω"[0])), "2 greek letter");
-    expect_false(Ake_is_word("я  ", NUM_BYTES("я"[0])), "cyrillic letter");
+    Zinc_expect_true(Ake_is_word("x  ", NUM_BYTES("x"[0])), "ascii letter");
+    Zinc_expect_false(Ake_is_word("1  ", NUM_BYTES("1"[0])), "not a letter");
+    Zinc_expect_true(Ake_is_word("Α  ", NUM_BYTES("Α"[0])), "0 greek letter");
+    Zinc_expect_true(Ake_is_word("π  ", NUM_BYTES("π"[0])), "1 greek letter");
+    Zinc_expect_true(Ake_is_word("ω  ", NUM_BYTES("ω"[0])), "2 greek letter");
+    Zinc_expect_false(Ake_is_word("я  ", NUM_BYTES("я"[0])), "cyrillic letter");
 }
 
 void test_lex_tools()

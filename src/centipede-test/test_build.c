@@ -9,7 +9,7 @@
 
 void test_build_number_integer()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct, "241");
@@ -21,17 +21,17 @@ void test_build_number_integer()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_number, "type root");
-    expect_int_equal(root->number_type, Cent_number_type_integer, "number_type root");
-    expect_long_long_equal(root->data.integer, 241, "integer root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
+    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number_type root");
+    Zinc_expect_long_long_equal(root->data.integer, 241, "integer root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_number_fp()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct, "1.5");
@@ -43,17 +43,17 @@ void test_build_number_fp()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_number, "type root");
-    expect_int_equal(root->number_type, Cent_number_type_fp, "number_type root");
-    expect_double_equal(root->data.fp, 1.5, "fp root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
+    Zinc_expect_int_equal(root->number_type, Cent_number_type_fp, "number_type root");
+    Zinc_expect_double_equal(root->data.fp, 1.5, "fp root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_string()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct, "\"hello\"");
@@ -65,16 +65,16 @@ void test_build_string()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_string, "type root");
-    expect_str(&root->data.string, "hello", "string root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_string, "type root");
+    Zinc_expect_str(&root->data.string, "hello", "string root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_boolean_true()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct, "true");
@@ -86,16 +86,16 @@ void test_build_boolean_true()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_boolean, "type root");
-    expect_true(root->data.boolean, "string root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_boolean, "type root");
+    Zinc_expect_true(root->data.boolean, "string root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_boolean_false()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct, "false");
@@ -107,16 +107,16 @@ void test_build_boolean_false()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_boolean, "type root");
-    expect_false(root->data.boolean, "string root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_boolean, "type root");
+    Zinc_expect_false(root->data.boolean, "string root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_enum0()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -135,18 +135,18 @@ void test_build_enum0()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr root");
-    expect_int_equal(root->type, Cent_value_type_enum, "type root");
-    expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
-    expect_str(&root->data.enumeration.enum_value->display, "Variable", "id2 root");
-    expect_size_t_equal(root->data.enumeration.number, 0, "enumeration number root");
+    Zinc_assert_ptr(root, "ptr root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_enum, "type root");
+    Zinc_expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
+    Zinc_expect_str(&root->data.enumeration.enum_value->display, "Variable", "id2 root");
+    Zinc_expect_size_t_equal(root->data.enumeration.number, 0, "enumeration number root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_enum1()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -165,18 +165,18 @@ void test_build_enum1()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_enum, "type root");
-    expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
-    expect_str(&root->data.enumeration.enum_value->display, "Type", "id2 root");
-    expect_size_t_equal(root->data.enumeration.number, 1, "enumeration number root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_enum, "type root");
+    Zinc_expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
+    Zinc_expect_str(&root->data.enumeration.enum_value->display, "Type", "id2 root");
+    Zinc_expect_size_t_equal(root->data.enumeration.number, 1, "enumeration number root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_enum2()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -195,18 +195,18 @@ void test_build_enum2()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_enum, "type root");
-    expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
-    expect_str(&root->data.enumeration.enum_value->display, "Info", "id2 root");
-    expect_size_t_equal(root->data.enumeration.number, 2, "enumeration number root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_enum, "type root");
+    Zinc_expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
+    Zinc_expect_str(&root->data.enumeration.enum_value->display, "Info", "id2 root");
+    Zinc_expect_size_t_equal(root->data.enumeration.number, 2, "enumeration number root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_assign()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -221,27 +221,27 @@ void test_build_assign()
 
     Zinc_expect_no_errors(errors);
 
-    expect_ptr(root, "ptr");
+    Zinc_expect_ptr(root, "ptr");
 
     Cent_environment* top = Cent_get_environment(ct->primary->pr.root);
-    assert_ptr(top, "ptr top");
+    Zinc_assert_ptr(top, "ptr top");
 
     Cent_symbol* sym = Cent_environment_get_str(top, "a");
-    assert_ptr(sym, "ptr sym");
-    expect_int_equal(sym->type, Cent_symbol_type_variable, "type sym");
+    Zinc_assert_ptr(sym, "ptr sym");
+    Zinc_expect_int_equal(sym->type, Cent_symbol_type_variable, "type sym");
 
     Cent_value* value = sym->data.variable.value;
-    assert_ptr(value, "ptr value");
-    expect_int_equal(value->type, Cent_value_type_number, "type number");
-    expect_int_equal(value->number_type, Cent_number_type_integer, "number_type value");
-    expect_long_long_equal(value->data.integer, 1, "integer value");
+    Zinc_assert_ptr(value, "ptr value");
+    Zinc_expect_int_equal(value->type, Cent_value_type_number, "type number");
+    Zinc_expect_int_equal(value->number_type, Cent_number_type_integer, "number_type value");
+    Zinc_expect_long_long_equal(value->data.integer, 1, "integer value");
 
     test_parse_teardown(ct);
 }
 
 void test_build_object()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -255,15 +255,15 @@ void test_build_object()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr root");
-    expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_assert_ptr(root, "ptr root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_object_prop_set()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -279,20 +279,20 @@ void test_build_object_prop_set()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr root");
-    expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_assert_ptr(root, "ptr root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
     Cent_value* a = Cent_value_get_str(root, "a");
-    assert_ptr(a, "ptr a");
-    expect_int_equal(a->type, Cent_value_type_number, "type number");
-    expect_int_equal(a->number_type, Cent_number_type_integer, "number_type value");
-    expect_long_long_equal(a->data.integer, 1, "integer value");
+    Zinc_assert_ptr(a, "ptr a");
+    Zinc_expect_int_equal(a->type, Cent_value_type_number, "type number");
+    Zinc_expect_int_equal(a->number_type, Cent_number_type_integer, "number_type value");
+    Zinc_expect_long_long_equal(a->data.integer, 1, "integer value");
 
     test_parse_teardown(ct);
 }
 
 void test_build_object_assign()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -309,20 +309,20 @@ void test_build_object_assign()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr root");
-    expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_assert_ptr(root, "ptr root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
     Cent_value* count_value = Cent_value_get_str(root, "count_value");
-    assert_ptr(count_value, "ptr count_value");
-    expect_int_equal(count_value->type, Cent_value_type_number, "type number");
-    expect_int_equal(count_value->number_type, Cent_number_type_integer, "number_type value");
-    expect_long_long_equal(count_value->data.integer, 20, "integer value");
+    Zinc_assert_ptr(count_value, "ptr count_value");
+    Zinc_expect_int_equal(count_value->type, Cent_value_type_number, "type number");
+    Zinc_expect_int_equal(count_value->number_type, Cent_number_type_integer, "number_type value");
+    Zinc_expect_long_long_equal(count_value->data.integer, 20, "integer value");
 
     test_parse_teardown(ct);
 }
 
 void test_build_object_child_of()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -342,26 +342,26 @@ void test_build_object_child_of()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr root");
-    expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    expect_str(&root->name, "Test", "name root");
+    Zinc_assert_ptr(root, "ptr root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_str(&root->name, "Test", "name root");
 
     Cent_value* foo = root->data.dag.head;
-    assert_ptr(foo, "ptr foo");
-    expect_int_equal(foo->type, Cent_value_type_dag, "type foo");
-    expect_str(&foo->name, "Foo", "name foo");
+    Zinc_assert_ptr(foo, "ptr foo");
+    Zinc_expect_int_equal(foo->type, Cent_value_type_dag, "type foo");
+    Zinc_expect_str(&foo->name, "Foo", "name foo");
 
     Cent_value* bar = foo->data.dag.head;
-    assert_ptr(bar, "ptr bar");
-    expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    expect_str(&bar->name, "Bar", "name bar");
+    Zinc_assert_ptr(bar, "ptr bar");
+    Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
+    Zinc_expect_str(&bar->name, "Bar", "name bar");
 
     test_parse_teardown(ct);
 }
 
 void test_build_object_property_of()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -381,26 +381,26 @@ void test_build_object_property_of()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr root");
-    expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    expect_str(&root->name, "Test", "name root");
+    Zinc_assert_ptr(root, "ptr root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_str(&root->name, "Test", "name root");
 
     Cent_value* foo = root->data.dag.head;
-    assert_ptr(foo, "ptr foo");
-    expect_int_equal(foo->type, Cent_value_type_dag, "type foo");
-    expect_str(&foo->name, "Foo", "name foo");
+    Zinc_assert_ptr(foo, "ptr foo");
+    Zinc_expect_int_equal(foo->type, Cent_value_type_dag, "type foo");
+    Zinc_expect_str(&foo->name, "Foo", "name foo");
 
     Cent_value* bar = Cent_value_get_str(foo, "x");
-    assert_ptr(bar, "ptr bar");
-    expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    expect_str(&bar->name, "Bar", "name bar");
+    Zinc_assert_ptr(bar, "ptr bar");
+    Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
+    Zinc_expect_str(&bar->name, "Bar", "name bar");
 
     test_parse_teardown(ct);
 }
 
 void test_build_object_function_file_name()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -414,16 +414,16 @@ void test_build_object_function_file_name()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr root");
-    expect_int_equal(root->type, Cent_value_type_string, "type root");
-    expect_str(&root->data.string, "**string**", "string root");
+    Zinc_assert_ptr(root, "ptr root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_string, "type root");
+    Zinc_expect_str(&root->data.string, "**string**", "string root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_property_set_variable()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -450,27 +450,27 @@ void test_build_property_set_variable()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    expect_str(&root->name, "Test", "name root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_str(&root->name, "Test", "name root");
 
     Cent_value* source = Cent_value_get_str(root, "source");
-    assert_ptr(source, "ptr source");
-    expect_int_equal(source->type, Cent_value_type_dag, "type source");
-    expect_str(&source->name, "Source", "name source");
+    Zinc_assert_ptr(source, "ptr source");
+    Zinc_expect_int_equal(source->type, Cent_value_type_dag, "type source");
+    Zinc_expect_str(&source->name, "Source", "name source");
 
     Cent_value* line0 = source->data.dag.head;
-    assert_ptr(line0, "ptr line0");
-    expect_int_equal(line0->type, Cent_value_type_string, "type line0");
-    expect_str(&line0->name, "String", "name line0");
-    expect_str(&line0->data.string, "x + 5", "string line0");
+    Zinc_assert_ptr(line0, "ptr line0");
+    Zinc_expect_int_equal(line0->type, Cent_value_type_string, "type line0");
+    Zinc_expect_str(&line0->name, "String", "name line0");
+    Zinc_expect_str(&line0->data.string, "x + 5", "string line0");
 
     test_parse_teardown(ct);
 }
 
 void test_build_namespace_enum()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -498,26 +498,26 @@ void test_build_namespace_enum()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    expect_str(&root->name, "Groceries", "name root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_str(&root->name, "Groceries", "name root");
 
     Cent_value* item0 = root->data.dag.head;
-    assert_ptr(item0, "ptr item0");
-    expect_int_equal(item0->type, Cent_value_type_enum, "type item0");
-    expect_size_t_equal(item0->data.enumeration.number, 0, "number item0");
+    Zinc_assert_ptr(item0, "ptr item0");
+    Zinc_expect_int_equal(item0->type, Cent_value_type_enum, "type item0");
+    Zinc_expect_size_t_equal(item0->data.enumeration.number, 0, "number item0");
 
     Cent_value* item1 = item0->next;
-    assert_ptr(item0, "ptr item1");
-    expect_int_equal(item1->type, Cent_value_type_enum, "type item1");
-    expect_size_t_equal(item1->data.enumeration.number, 4, "number item1");
+    Zinc_assert_ptr(item0, "ptr item1");
+    Zinc_expect_int_equal(item1->type, Cent_value_type_enum, "type item1");
+    Zinc_expect_size_t_equal(item1->data.enumeration.number, 4, "number item1");
 
     test_parse_teardown(ct);
 }
 
 void test_build_namespace_variable()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -536,17 +536,17 @@ void test_build_namespace_variable()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_number, "type root");
-    expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
-    expect_long_long_equal(root->data.integer, 190, "integer root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
+    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
+    Zinc_expect_long_long_equal(root->data.integer, 190, "integer root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_namespace_submodules()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -565,17 +565,17 @@ void test_build_namespace_submodules()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_number, "type root");
-    expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
-    expect_long_long_equal(root->data.integer, 190, "integer root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
+    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
+    Zinc_expect_long_long_equal(root->data.integer, 190, "integer root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_namespace_glob_value()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -594,17 +594,17 @@ void test_build_namespace_glob_value()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_number, "type root");
-    expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
-    expect_long_long_equal(root->data.integer, 190, "integer root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
+    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
+    Zinc_expect_long_long_equal(root->data.integer, 190, "integer root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_let()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -619,17 +619,17 @@ void test_build_let()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_number, "type root");
-    expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
-    expect_long_long_equal(root->data.integer, 245, "integer root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
+    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
+    Zinc_expect_long_long_equal(root->data.integer, 245, "integer root");
 
     test_parse_teardown(ct);
 }
 
 void test_build_object_let()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
@@ -646,13 +646,13 @@ void test_build_object_let()
 
     Zinc_expect_no_errors(errors);
 
-    assert_ptr(root, "ptr value");
-    expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    expect_str(&root->name, "Foo", "name root");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_str(&root->name, "Foo", "name root");
 
     Cent_value* bar = root->data.dag.head;
-    expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    expect_str(&bar->name, "Bar", "name bar");
+    Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
+    Zinc_expect_str(&bar->name, "Bar", "name bar");
 
     test_parse_teardown(ct);
 }

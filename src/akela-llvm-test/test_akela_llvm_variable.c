@@ -5,85 +5,85 @@
 
 void test_code_gen_let_void1()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
     cg_setup("let a: i64", &result);
-    expect_str(&result.value, "", "blank");
+    Zinc_expect_str(&result.value, "", "blank");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_let_void2()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
     cg_setup("let a: i64 = 1", &result);
-    expect_str(&result.value, "", "blank");
+    Zinc_expect_str(&result.value, "", "blank");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_let_int()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
     cg_setup("let a: i64 = 31\n"
              "a"
             ,&result);
-    expect_str(&result.value, "31", "31");
+    Zinc_expect_str(&result.value, "31", "31");
 
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_akela_variable_let_assign_multiple()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a, b, c: i64 = 1, 2, 3\n"
              "a\n"
             ,&result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a, b, c: i64 = 1, 2, 3\n"
              "b\n"
             ,&result);
-    expect_str(&result.value, "2", "value");
+    Zinc_expect_str(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a, b, c: i64 = 1, 2, 3\n"
              "c\n"
             ,&result);
-    expect_str(&result.value, "3", "value");
+    Zinc_expect_str(&result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_assign()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: i64\n"
              "a = 44\n",
              &result);
-    expect_str(&result.value, "44", "value");
+    Zinc_expect_str(&result.value, "44", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_assign_multiple()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -91,7 +91,7 @@ void test_code_gen_assign_multiple()
              "a = b = c = 44\n"
              "a",
              &result);
-    expect_str(&result.value, "44", "value");
+    Zinc_expect_str(&result.value, "44", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -99,7 +99,7 @@ void test_code_gen_assign_multiple()
              "a = b = c = 44\n"
              "b",
              &result);
-    expect_str(&result.value, "44", "value");
+    Zinc_expect_str(&result.value, "44", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -107,20 +107,20 @@ void test_code_gen_assign_multiple()
              "a = b = c = 44\n"
              "c",
              &result);
-    expect_str(&result.value, "44", "value");
+    Zinc_expect_str(&result.value, "44", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a,b,c: i64\n"
              "a = b = c = 44\n",
              &result);
-    expect_str(&result.value, "44", "value");
+    Zinc_expect_str(&result.value, "44", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_copy_from_variable()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -128,39 +128,39 @@ void test_code_gen_copy_from_variable()
              "let b: i64 = a\n"
              "a + b\n",
              &result);
-    expect_str(&result.value, "100", "value");
+    Zinc_expect_str(&result.value, "100", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_int64()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: i64 = 2\n"
              "a\n",
              &result);
-    expect_str(&result.value, "2", "value");
+    Zinc_expect_str(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_int32()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("let a: i32 = 2\n"
              "a\n",
              &result);
-    expect_str(&result.value, "2", "value");
+    Zinc_expect_str(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_int32_int64()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -168,13 +168,13 @@ void test_code_gen_int32_int64()
              "let b: i32 = a\n"
              "b\n",
              &result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_assign_scalar_id()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -183,13 +183,13 @@ void test_code_gen_assign_scalar_id()
              "b = a\n"
              "b\n",
              &result);
-    expect_str(&result.value, "11", "value");
+    Zinc_expect_str(&result.value, "11", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
 void test_code_gen_assign_eseq()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -197,7 +197,7 @@ void test_code_gen_assign_eseq()
              "a, b, c, d = 1, 2, 3, 4\n"
              "a",
              &result);
-    expect_str(&result.value, "1", "value");
+    Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -205,7 +205,7 @@ void test_code_gen_assign_eseq()
              "a, b, c, d = 1, 2, 3, 4\n"
              "b",
              &result);
-    expect_str(&result.value, "2", "value");
+    Zinc_expect_str(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -213,7 +213,7 @@ void test_code_gen_assign_eseq()
              "a, b, c, d = 1, 2, 3, 4\n"
              "c",
              &result);
-    expect_str(&result.value, "3", "value");
+    Zinc_expect_str(&result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -221,7 +221,7 @@ void test_code_gen_assign_eseq()
              "a, b, c, d = 1, 2, 3, 4\n"
              "d",
              &result);
-    expect_str(&result.value, "4", "value");
+    Zinc_expect_str(&result.value, "4", "value");
     Ake_code_gen_result_destroy(&result);
 
 }

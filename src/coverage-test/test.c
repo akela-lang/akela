@@ -6,5 +6,5 @@ int main()
 {
     test_data();
     test_parse();
-    print_results();
+    Zinc_print_results();
 }

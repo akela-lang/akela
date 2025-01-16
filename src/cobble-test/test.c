@@ -10,6 +10,6 @@ int main()
     test_compile();
     test_match_tools();
     test_match();
-    print_results();
+    Zinc_print_results();
     return 0;
 }

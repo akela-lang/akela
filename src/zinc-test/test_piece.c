@@ -3,7 +3,7 @@
 
 void test_piece_get()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     struct Zinc_string bf;
     Zinc_string_init(&bf);
@@ -14,19 +14,19 @@ void test_piece_get()
 
     Zinc_string_clear(&x);
     Zinc_get_piece(&bf, ';', 0, &x);
-    expect_str(&x, "zero", "zero");
+    Zinc_expect_str(&x, "zero", "zero");
 
     Zinc_string_clear(&x);
     Zinc_get_piece(&bf, ';', 1, &x);
-    expect_str(&x, "one", "one");
+    Zinc_expect_str(&x, "one", "one");
 
     Zinc_string_clear(&x);
     Zinc_get_piece(&bf, ';', 2, &x);
-    expect_str(&x, "two", "two");
+    Zinc_expect_str(&x, "two", "two");
 
     Zinc_string_clear(&x);
     Zinc_get_piece(&bf, ';', 3, &x);
-    expect_str(&x, "three", "three");
+    Zinc_expect_str(&x, "three", "three");
 
     Zinc_string_destroy(&bf);
     Zinc_string_destroy(&x);

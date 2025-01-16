@@ -6,7 +6,7 @@
 
 void test_error_list()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
 
     struct Zinc_error* e = NULL;
     Zinc_malloc_safe((void**)&e, sizeof(struct Zinc_error));
@@ -17,16 +17,16 @@ void test_error_list()
     Zinc_error_list_add(&el, e);
 
     struct Zinc_error* e0 = el.head;
-    assert_ptr(e0, "ptr e0");
-    expect_true(el.head == e, "head");
-    expect_true(el.tail == e, "tail");
+    Zinc_assert_ptr(e0, "ptr e0");
+    Zinc_expect_true(el.head == e, "head");
+    Zinc_expect_true(el.tail == e, "tail");
 
     Zinc_error_list_destroy(&el);
 }
 
 void test_error_list_set_buffer()
 {
-    test_name(__func__);
+    Zinc_test_name(__func__);
     struct Zinc_error_list* el;
     Zinc_error_list_create(&el);
     struct Zinc_string bf;
