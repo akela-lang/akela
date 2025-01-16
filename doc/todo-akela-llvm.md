@@ -3,7 +3,7 @@
   * akela_llvm [x]
   * function [x]
   * jit [x]
-  * literal []
+  * literal [x]
   * operator []
   * stmts []
   * struct []

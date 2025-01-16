@@ -7,7 +7,7 @@ namespace Akela_llvm {
     Value* Handle_number(Jit_data* jd, Ake_ast* n)
     {
         Ake_type_use* tu = n->tu;
-        struct Ake_type_def *td = tu->td;
+        Ake_type_def *td = tu->td;
         if (td->type == Ake_type_integer) {
             Type* t = Get_type(jd, n->tu);
             Zinc_string_finish(&n->value);

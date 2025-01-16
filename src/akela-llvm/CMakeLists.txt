@@ -2,7 +2,7 @@
 set(lib_files
         cg.cpp
         akela_llvm_tools.cpp
-        akela_llvm_literal.cpp
+        literal.cpp
         function.cpp
         akela_llvm_variable.cpp
         akela_llvm_stmts.cpp
