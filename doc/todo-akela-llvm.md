@@ -4,7 +4,7 @@
   * function [x]
   * jit [x]
   * literal [x]
-  * operator []
+  * operator [x]
   * stmts []
   * struct []
   * tools []

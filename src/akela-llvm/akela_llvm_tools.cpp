@@ -4,7 +4,7 @@
 #include "literal.h"
 #include "akela_llvm_variable.h"
 #include "akela_llvm_stmts.h"
-#include "akela_llvm_operator.h"
+#include "operator.h"
 #include "akela_llvm_struct.h"
 
 using namespace llvm;
