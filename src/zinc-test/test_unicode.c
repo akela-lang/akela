@@ -8,7 +8,7 @@ void test_unicode_num32_to_hex_str()
     struct Zinc_string bf;
     Zinc_string_init(&bf);
 
-    num32_to_hex_str(0x61, &bf);
+    Zinc_num32_to_hex_str(0x61, &bf);
     expect_str(&bf, "61", "str bf");
 
     Zinc_string_destroy(&bf);
@@ -21,7 +21,7 @@ void test_unicode_num32_to_hex_str2()
     struct Zinc_string bf;
     Zinc_string_init(&bf);
 
-    num32_to_hex_str(0x10ffff, &bf);
+    Zinc_num32_to_hex_str(0x10ffff, &bf);
     expect_str(&bf, "10ffff", "str bf");
 
     Zinc_string_destroy(&bf);

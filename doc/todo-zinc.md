@@ -21,7 +21,7 @@
   * piece [x]
   * result [x]
   * String_slice [x]
-  * unicode []
+  * unicode [x]
   * unit_test []
   * utf8 []
   * vector []

@@ -296,7 +296,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
                 Zinc_string_destroy(&bf);
                 return;
             }
-            if (is_hex_digit(c, num)) {
+            if (Zinc_is_hex_digit(c, num)) {
                 Zinc_string_add(&bf, c, num);
             } else {
                 Zinc_error_list_set(jld->el, &loc, "invalid hex digit: %c", c[0]);
@@ -315,7 +315,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
             Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             break;
         }
-        if (!is_hex_digit(c, num)) {
+        if (!Zinc_is_hex_digit(c, num)) {
             Zinc_input_unicode_repeat(jld->input_obj, jld->input_vtable);
             break;
         }
@@ -328,14 +328,14 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     first_loc.end_pos = end_loc.start_pos;
 
     if (valid) {
-        unsigned int cp = char4_to_hex(bf.buf + 2, (int)bf.size - 2);
+        unsigned int cp = Zinc_char4_to_hex(bf.buf + 2, (int)bf.size - 2);
         if (cp < 0x20) {
             Zinc_error_list_set(jld->el, &first_loc, "code point is less than \\u0020: %s", bf.buf);
         } else if (cp > 0x10FFFF) {
             Zinc_error_list_set(jld->el, &first_loc, "code point greater than \\u10FFFF: %s", bf.buf);
         } else {
             char dest[4];
-            num = code_to_utf8(dest, cp);
+            num = Zinc_code_to_utf8(dest, cp);
             Zinc_string_add(&t->value, dest, num);
         }
     }

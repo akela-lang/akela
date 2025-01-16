@@ -129,7 +129,7 @@ void Json_escape_buffer(struct Zinc_error_list* el, struct Zinc_string* src, str
         } else {
             struct Zinc_string num_bf;
             Zinc_string_init(&num_bf);
-            int len = num32_to_hex_str(cp, &num_bf);
+            int len = Zinc_num32_to_hex_str(cp, &num_bf);
 
             struct Zinc_string seq_bf;
             Zinc_string_init(&seq_bf);

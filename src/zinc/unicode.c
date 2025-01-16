@@ -4,7 +4,7 @@
 #include "zstring.h"
 #include <stdbool.h>
 
-bool is_hex_digit(char c[4], int num)
+bool Zinc_is_hex_digit(char c[4], int num)
 {
     if (num != 1)
         return false;
@@ -14,7 +14,7 @@ bool is_hex_digit(char c[4], int num)
     return false;
 }
 
-int code_to_utf8(unsigned char *const buffer, const unsigned int code)
+int Zinc_code_to_utf8(unsigned char *const buffer, const unsigned int code)
 {
     if (code <= 0x7F) {
         buffer[0] = code;
@@ -41,7 +41,7 @@ int code_to_utf8(unsigned char *const buffer, const unsigned int code)
     return 0;
 }
 
-unsigned int char_to_hex(char c)
+unsigned int Zinc_char_to_hex(char c)
 {
     int x = toupper(c);
     if (x == '0') return 0;
@@ -63,19 +63,19 @@ unsigned int char_to_hex(char c)
     return 0;
 }
 
-unsigned int char4_to_hex(char* src, int num)
+unsigned int Zinc_char4_to_hex(char* src, int num)
 {
     unsigned int code = 0;
     if (num > 0) {
-        code = char_to_hex(src[0]);
+        code = Zinc_char_to_hex(src[0]);
     }
     for (int i = 1; i < num; i++) {
-        code = (code << 4) + char_to_hex(src[i]);
+        code = (code << 4) + Zinc_char_to_hex(src[i]);
     }
     return code;
 }
 
-char num4_to_hex_char(u_int8_t cp)
+char Zinc_num4_to_hex_char(u_int8_t cp)
 {
     if (cp == 0) return '0';
     if (cp == 1) return '1';
@@ -96,14 +96,14 @@ char num4_to_hex_char(u_int8_t cp)
     return '0';
 }
 
-int num32_to_hex_str(u_int32_t cp, struct Zinc_string* bf)
+int Zinc_num32_to_hex_str(u_int32_t cp, Zinc_string* bf)
 {
-    struct Zinc_string temp;
+    Zinc_string temp;
     Zinc_string_init(&temp);
     int len = 0;
 
     while (cp) {
-        Zinc_string_add_char(&temp, num4_to_hex_char(cp & 0xf));
+        Zinc_string_add_char(&temp, Zinc_num4_to_hex_char(cp & 0xf));
         cp = cp >> 4;
         len++;
     }
