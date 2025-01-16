@@ -18,7 +18,7 @@
   * memory [x]
   * os_unix [x]
   * os_win [x]
-  * piece []
+  * piece [x]
   * result []
   * String_slice []
   * unicode []

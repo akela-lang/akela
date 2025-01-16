@@ -4,6 +4,6 @@
 #include "zstring.h"
 #include <stdlib.h>
 
-ZINC_API void get_piece(struct Zinc_string* bf, char delim, size_t num, struct Zinc_string* out);
+ZINC_API void Zinc_get_piece(Zinc_string* bf, char delim, size_t num, Zinc_string* out);
 
 #endif

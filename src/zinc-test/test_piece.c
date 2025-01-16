@@ -13,19 +13,19 @@ void test_piece_get()
     Zinc_string_init(&x);
 
     Zinc_string_clear(&x);
-    get_piece(&bf, ';', 0, &x);
+    Zinc_get_piece(&bf, ';', 0, &x);
     expect_str(&x, "zero", "zero");
 
     Zinc_string_clear(&x);
-    get_piece(&bf, ';', 1, &x);
+    Zinc_get_piece(&bf, ';', 1, &x);
     expect_str(&x, "one", "one");
 
     Zinc_string_clear(&x);
-    get_piece(&bf, ';', 2, &x);
+    Zinc_get_piece(&bf, ';', 2, &x);
     expect_str(&x, "two", "two");
 
     Zinc_string_clear(&x);
-    get_piece(&bf, ';', 3, &x);
+    Zinc_get_piece(&bf, ';', 3, &x);
     expect_str(&x, "three", "three");
 
     Zinc_string_destroy(&bf);

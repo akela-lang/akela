@@ -61,8 +61,8 @@ time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
     Zinc_string_init(&date);
     struct Zinc_string time;
     Zinc_string_init(&time);
-    get_piece(dt, 'T', 0, &date);
-    get_piece(dt, 'T', 1, &time);
+    Zinc_get_piece(dt, 'T', 0, &date);
+    Zinc_get_piece(dt, 'T', 1, &time);
 
     struct Zinc_string year;
     Zinc_string_init(&year);
@@ -70,9 +70,9 @@ time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
     Zinc_string_init(&month);
     struct Zinc_string day;
     Zinc_string_init(&day);
-    get_piece(&date, '-', 0, &year);
-    get_piece(&date, '-', 1, &month);
-    get_piece(&date, '-', 2, &day);
+    Zinc_get_piece(&date, '-', 0, &year);
+    Zinc_get_piece(&date, '-', 1, &month);
+    Zinc_get_piece(&date, '-', 2, &day);
 
     struct Zinc_string time_display;
     Zinc_string_init(&time_display);
@@ -89,18 +89,18 @@ time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
     Zinc_string_finish(&time);
     if (strchr(time.buf, 'Z')) {
         is_utc = true;
-        get_piece(&time, 'Z', 0, &time_display);
+        Zinc_get_piece(&time, 'Z', 0, &time_display);
     } else if (strchr(time.buf, '+')) {
-        get_piece(&time, '+', 0, &time_display);
-        get_piece(&time, '+', 1, &time_offset);
-        get_piece(&time_offset, ':', 0, &offset_hours);
-        get_piece(&time_offset, ':', 1, &offset_minutes);
+        Zinc_get_piece(&time, '+', 0, &time_display);
+        Zinc_get_piece(&time, '+', 1, &time_offset);
+        Zinc_get_piece(&time_offset, ':', 0, &offset_hours);
+        Zinc_get_piece(&time_offset, ':', 1, &offset_minutes);
     } else if (strchr(time.buf, '-')) {
         is_negative_offset = true;
-        get_piece(&time, '-', 0, &time_display);;
-        get_piece(&time, '-', 1, &time_offset);
-        get_piece(&time_offset, ':', 0, &offset_hours);
-        get_piece(&time_offset, ':', 1, &offset_minutes);
+        Zinc_get_piece(&time, '-', 0, &time_display);;
+        Zinc_get_piece(&time, '-', 1, &time_offset);
+        Zinc_get_piece(&time_offset, ':', 0, &offset_hours);
+        Zinc_get_piece(&time_offset, ':', 1, &offset_minutes);
     }
 
     struct Zinc_string hour;
@@ -109,9 +109,9 @@ time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
     Zinc_string_init(&minute);
     struct Zinc_string second;
     Zinc_string_init(&second);
-    get_piece(&time_display, ':', 0, &hour);
-    get_piece(&time_display, ':', 1, &minute);
-    get_piece(&time_display, ':', 2, &second);
+    Zinc_get_piece(&time_display, ':', 0, &hour);
+    Zinc_get_piece(&time_display, ':', 1, &minute);
+    Zinc_get_piece(&time_display, ':', 2, &second);
 
     Zinc_string_finish(&year);
     tm->tm_year = (int)strtol(year.buf, NULL, 10) - 1900;
