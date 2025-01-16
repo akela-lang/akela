@@ -83,6 +83,11 @@ void Zinc_string_add_str(struct Zinc_string* bf, const char* str)
     }
 }
 
+void Zinc_string_add_string(Zinc_string* string, Zinc_string* string2)
+{
+    Zinc_string_add(string, string2->buf, string2->size);
+}
+
 void Zinc_string_finish(struct Zinc_string* bf)
 {
     Zinc_string_add_char(bf, '\0');

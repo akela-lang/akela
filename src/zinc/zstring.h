@@ -17,27 +17,28 @@ typedef struct Zinc_string {
 extern "C" {
 #endif
 
-ZINC_API void Zinc_string_init(struct Zinc_string* bf);
-ZINC_API void Zinc_string_create(struct Zinc_string** bf);
-ZINC_API void Zinc_string_expand(struct Zinc_string* bf, size_t new_size);
-ZINC_API void Zinc_string_add(struct Zinc_string* bf, const char* s, size_t num);
-ZINC_API void Zinc_string_destroy(struct Zinc_string* bf);
-ZINC_API void Zinc_string_free(struct Zinc_string* bf);
-ZINC_API void Zinc_string_add_char(struct Zinc_string* bf, char c);
-ZINC_API void Zinc_string_add_str(struct Zinc_string* bf, const char* str);
-ZINC_API void Zinc_string_finish(struct Zinc_string* bf);
-ZINC_API void Zinc_string_reset(struct Zinc_string* bf);
-ZINC_API void Zinc_string_clear(struct Zinc_string* bf);
-ZINC_API void Zinc_string_copy(struct Zinc_string* src, struct Zinc_string* dest);
-ZINC_API void Zinc_string_create_str(struct Zinc_string* bf, char** a);
-ZINC_API void Zinc_string_add_str2(const char* a, struct Zinc_string* bf);
-ZINC_API enum Zinc_result Zinc_next_char(struct Zinc_string* bf, size_t* pos, struct Zinc_string* bf2);
-ZINC_API int Zinc_string_compare(struct Zinc_string* a, struct Zinc_string* b);
-ZINC_API int Zinc_string_compare_str(struct Zinc_string* a, const char* b);
-ZINC_API enum Zinc_result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string* dest, size_t start, size_t end);
-ZINC_API void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...);
-ZINC_API int Zinc_string_order(struct Zinc_string* a, struct Zinc_string* b);
-ZINC_API struct Zinc_string* Zinc_string_clone(struct Zinc_string* bf);
+ZINC_API void Zinc_string_init(Zinc_string* bf);
+ZINC_API void Zinc_string_create(Zinc_string** bf);
+ZINC_API void Zinc_string_expand(Zinc_string* bf, size_t new_size);
+ZINC_API void Zinc_string_add(Zinc_string* bf, const char* s, size_t num);
+ZINC_API void Zinc_string_destroy(Zinc_string* bf);
+ZINC_API void Zinc_string_free(Zinc_string* bf);
+ZINC_API void Zinc_string_add_char(Zinc_string* bf, char c);
+ZINC_API void Zinc_string_add_str(Zinc_string* bf, const char* str);
+ZINC_API void Zinc_string_finish(Zinc_string* bf);
+ZINC_API void Zinc_string_reset(Zinc_string* bf);
+ZINC_API void Zinc_string_clear(Zinc_string* bf);
+ZINC_API void Zinc_string_copy(Zinc_string* src, Zinc_string* dest);
+ZINC_API void Zinc_string_create_str(Zinc_string* bf, char** a);
+ZINC_API void Zinc_string_add_str2(const char* a, Zinc_string* bf);
+ZINC_API void Zinc_string_add_string(Zinc_string* string, Zinc_string* string2);
+ZINC_API Zinc_result Zinc_next_char(Zinc_string* bf, size_t* pos, Zinc_string* bf2);
+ZINC_API int Zinc_string_compare(Zinc_string* a, Zinc_string* b);
+ZINC_API int Zinc_string_compare_str(Zinc_string* a, const char* b);
+ZINC_API Zinc_result Zinc_string_uslice(Zinc_string* src, Zinc_string* dest, size_t start, size_t end);
+ZINC_API void Zinc_string_add_format(Zinc_string *bf, const char* fmt, ...);
+ZINC_API int Zinc_string_order(Zinc_string* a, Zinc_string* b);
+ZINC_API Zinc_string* Zinc_string_clone(Zinc_string* bf);
 
 #ifdef __cplusplus
 }

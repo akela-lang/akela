@@ -21,9 +21,9 @@
 #define NAME "akela-parse-test"
 
 bool Parse_test_validate_directory(char* path);
-void Parse_test_append_path(struct Zinc_string* bf, char* path);
+void Parse_test_append_path(Zinc_string* bf, char* path);
 void Parse_test_get_files(char* dir_name);
-void Parse_test_test_case(struct Zinc_string* dir_path, struct Zinc_string* path, struct Zinc_string* file_name);
+void Parse_test_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name);
 void Apt_run(Cent_comp_unit* cu);
 void Apt_run_test(Cent_value* test_value);
 
@@ -49,7 +49,7 @@ bool Parse_test_validate_directory(char* path)
     struct stat sb;
     if (stat(path, &sb) == -1) {
         perror(path);
-        struct Zinc_string cwd;
+        Zinc_string cwd;
         Zinc_string_init(&cwd);
         Zinc_get_cwd(&cwd);
         Zinc_string_finish(&cwd);
@@ -68,7 +68,7 @@ bool Parse_test_validate_directory(char* path)
     return true;
 }
 
-void Parse_test_append_path(struct Zinc_string* bf, char* path)
+void Parse_test_append_path(Zinc_string* bf, char* path)
 {
     Zinc_string_add_char(bf, '/');
     Zinc_string_add_str(bf, path);
@@ -76,7 +76,7 @@ void Parse_test_append_path(struct Zinc_string* bf, char* path)
 
 void Parse_test_get_files(char* dir_name)
 {
-    struct Zinc_string dir_path;
+    Zinc_string dir_path;
     Zinc_string_init(&dir_path);
     Zinc_string_add_str(&dir_path, dir_name);
     DIR* d;
@@ -85,13 +85,13 @@ void Parse_test_get_files(char* dir_name)
     if (d) {
         while ((dir = readdir(d)) != NULL) {
             if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
-                struct Zinc_string path;
+                Zinc_string path;
                 Zinc_string_init(&path);
                 Zinc_string_add_str(&path, dir_name);
                 Parse_test_append_path(&path, dir->d_name);
                 Zinc_string_finish(&path);
 
-                struct Zinc_string file_name;
+                Zinc_string file_name;
                 Zinc_string_init(&file_name);
                 Zinc_string_add_str(&file_name, dir->d_name);
                 Zinc_string_finish(&file_name);
@@ -110,7 +110,7 @@ void Parse_test_get_files(char* dir_name)
     Zinc_string_destroy(&dir_path);
 }
 
-void Parse_test_test_case(struct Zinc_string* dir_path, struct Zinc_string* path, struct Zinc_string* file_name)
+void Parse_test_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
 {
     printf("%s\n", path->buf);
 
@@ -147,7 +147,7 @@ void Parse_test_test_case(struct Zinc_string* dir_path, struct Zinc_string* path
     }
 
     if (cu->errors.head) {
-        struct Zinc_error* e = cu->errors.head;
+        Zinc_error* e = cu->errors.head;
         while (e) {
             Zinc_string_finish(&e->message);
             printf("(%zu,%zu) %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -186,9 +186,12 @@ void Apt_run_test(Cent_value* test_value)
     printf("%s\n", name->data.string.buf);
     Cent_value* source = Cent_value_get_str(test_value, "source");
     Cent_value* line = source->data.dag.head;
+    Zinc_string source_string;
+    Zinc_string_init(&source_string);
     while (line) {
-        Zinc_string_finish(&line->data.string);
-        printf("%s", line->data.string.buf);
+        Zinc_string_add_string(&source_string, &line->data.string);
         line = line->next;
     }
+    Zinc_string_finish(&source_string);
+    printf("%s", source_string.buf);
 }
