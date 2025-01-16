@@ -4,9 +4,9 @@ using namespace llvm;
 using namespace llvm::orc;
 
 namespace Akela_llvm {
-    void declare_abort(Jit_data* jd);
-    void declare_printf(Jit_data* jd);
-    void declare_exit(Jit_data* jd);
+    void Declare_abort(Jit_data* jd);
+    void Declare_printf(Jit_data* jd);
+    void Declare_exit(Jit_data* jd);
 
     bool Jit(Akela_llvm_cg* cg, Ake_ast* n, Ake_code_gen_result* result)
     {
@@ -19,13 +19,13 @@ namespace Akela_llvm {
         Jit_data_init(&jd, cg->el);
 
         if (!Zinc_string_list_contains_str(cg->extern_list, "abort")) {
-            declare_abort(&jd);
+            Declare_abort(&jd);
         }
         if (!Zinc_string_list_contains_str(cg->extern_list, "printf")) {
-            declare_printf(&jd);
+            Declare_printf(&jd);
         }
         if (!Zinc_string_list_contains_str(cg->extern_list, "exit")) {
-            declare_exit(&jd);
+            Declare_exit(&jd);
         }
 
         std::vector<Type*> param_types = std::vector<Type*>();
@@ -100,7 +100,7 @@ namespace Akela_llvm {
         return true;
     }
 
-    void declare_abort(Jit_data* jd)
+    void Declare_abort(Jit_data* jd)
     {
         std::vector<Type*> param_types = std::vector<Type*>();
         Type* ret_type = Type::getVoidTy(*jd->TheContext);
@@ -109,7 +109,7 @@ namespace Akela_llvm {
         jd->abort_function = f;
     }
 
-    void declare_printf(Jit_data* jd)
+    void Declare_printf(Jit_data* jd)
     {
         std::vector<Type*> param_types = std::vector<Type*>();
         Type* char_type = Type::getInt8Ty(*jd->TheContext);
@@ -121,7 +121,7 @@ namespace Akela_llvm {
         jd->printf_function = f;
     }
 
-    void declare_exit(Jit_data* jd)
+    void Declare_exit(Jit_data* jd)
     {
         std::vector<Type*> param_types = std::vector<Type*>();
         Type* status_type = Type::getInt32Ty(*jd->TheContext);

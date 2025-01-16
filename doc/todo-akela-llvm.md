@@ -2,7 +2,7 @@
 * namespace
   * akela_llvm [x]
   * function [x]
-  * jit []
+  * jit [x]
   * literal []
   * operator []
   * stmts []

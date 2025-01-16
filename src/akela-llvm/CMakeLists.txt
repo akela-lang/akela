@@ -7,7 +7,7 @@ set(lib_files
         akela_llvm_variable.cpp
         akela_llvm_stmts.cpp
         akela_llvm_operator.cpp
-        akela_llvm_jit.cpp
+        jit.cpp
         akela_llvm_struct.cpp
 )
 

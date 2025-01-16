@@ -1,5 +1,5 @@
 #include "cg.h"
-#include "akela_llvm_jit.h"
+#include "jit.h"
 #include <cstddef>
 #include "zinc/string_list.h"
 
