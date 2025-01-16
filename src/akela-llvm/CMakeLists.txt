@@ -4,7 +4,7 @@ set(lib_files
         tools.cpp
         literal.cpp
         function.cpp
-        akela_llvm_variable.cpp
+        variable.cpp
         stmts.cpp
         operator.cpp
         jit.cpp
