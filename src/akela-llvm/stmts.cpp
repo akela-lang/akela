@@ -96,7 +96,7 @@ namespace Akela_llvm {
         } else {
             end_block = next_block;
         }
-        struct Zinc_list_node* ln = l.head;
+        Zinc_list_node* ln = l.head;
         while (ln) {
             auto p = (BasicBlock*)ln->item;
             jd->Builder->SetInsertPoint(p);
