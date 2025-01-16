@@ -1,5 +1,5 @@
 #include "akela/parse_types.h"
-#include "akela_llvm_tools.h"
+#include "tools.h"
 #include "function.h"
 #include "literal.h"
 #include "akela_llvm_variable.h"
@@ -11,7 +11,7 @@ using namespace llvm;
 using namespace llvm::orc;
 
 namespace Akela_llvm {
-    void Jit_data_init(Jit_data *jd, struct Zinc_error_list *el) {
+    void Jit_data_init(Jit_data *jd, Zinc_error_list *el) {
         jd->el = el;
         jd->TheJIT = jd->ExitOnErr(KaleidoscopeJIT::Create());
         jd->TheContext = std::make_unique<LLVMContext>();

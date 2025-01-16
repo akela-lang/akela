@@ -48,7 +48,7 @@
 
 namespace Akela_llvm {
     typedef struct {
-        struct Zinc_error_list* el;
+        Zinc_error_list* el;
         std::unique_ptr<llvm::LLVMContext> TheContext;
         std::unique_ptr<llvm::Module> TheModule;
         std::unique_ptr<llvm::IRBuilder<>> Builder;
@@ -61,13 +61,13 @@ namespace Akela_llvm {
         std::vector<llvm::Function*> current_function;
     } Jit_data;
 
-    void Jit_data_init(Jit_data* jd, struct Zinc_error_list* el);
+    void Jit_data_init(Jit_data* jd, Zinc_error_list* el);
     llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_type_use* tu);
     llvm::Type* Get_scalar_type(Jit_data * jd, Ake_type_use* tu);
     llvm::Type* Get_type(Jit_data * jd, Ake_type_use* tu);
     llvm::Type* Get_type_pointer(Jit_data *jd, Ake_type_use *tu);
     llvm::Type* Get_return_type(Jit_data * jd, Ake_type_use * tu);
-    void Run(Jit_data* jd, Ake_ast* n, struct Zinc_string* bf);
+    void Run(Jit_data* jd, Ake_ast* n, Zinc_string* bf);
     llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);
     llvm::Value* Dispatch(Jit_data* jd, Ake_ast* n);
     void Array_copy(

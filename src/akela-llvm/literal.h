@@ -1,7 +1,7 @@
 #ifndef AKELA_LLVM_LITERAL_H
 #define AKELA_LLVM_LITERAL_H
 
-#include "akela_llvm_tools.h"
+#include "tools.h"
 
 namespace Akela_llvm {
     llvm::Value* Handle_number(Jit_data* jd, Ake_ast* n);

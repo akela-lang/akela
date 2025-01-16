@@ -1,7 +1,7 @@
 # library
 set(lib_files
         cg.cpp
-        akela_llvm_tools.cpp
+        tools.cpp
         literal.cpp
         function.cpp
         akela_llvm_variable.cpp
