@@ -24,6 +24,7 @@ set(SOURCE_FILES
         input_unicode_file.c
         hash_map_size_t.c
         unicode.c
+        spec_error.c
 )
 
 add_definitions(-DZINC_EXPORT)

@@ -82,7 +82,7 @@ static char const* Ast_type_name(Ake_ast_type type)
     name[Ake_ast_type_minus] = "minus";
     name[Ake_ast_type_mult] = "mult";
     name[Ake_ast_type_divide] = "divide";
-    name[Ake_ast_type_stmts] = "parse_stmts";
+    name[Ake_ast_type_stmts] = "stmts";
     name[Ake_ast_type_function] = "function";
     name[Ake_ast_type_dseq] = "dseq";
     name[Ake_ast_type_dret] = "dret";

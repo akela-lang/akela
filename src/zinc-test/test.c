@@ -18,6 +18,7 @@
 #include "test_input_unicode_file.h"
 #include "test_hash_map_size_t.h"
 #include "test_unicode.h"
+#include "test_spec_error.h"
 
 int main()
 {
@@ -40,6 +41,7 @@ int main()
     test_input_unicode_file();
 	test_hash_map_size_t();
 	test_unicode();
+	test_spec_error();
 	Zinc_print_results();
 	return 0;
 }

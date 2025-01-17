@@ -56,11 +56,61 @@ element Ast {
 }
 
 enum Ast_type {
-    Stmts
-    Let
-    Number
-    Type
+    None
     Id
+    Sign
+    Number
+    String
+    Assign
+    Plus
+    Minus
+    Mult
+    Divide
+    Stmts
+    Function
+    Dseq
+    Dret
+    Call
+    Cseq
+    If
+    Conditional_branch
+    Default_branch
+    Equality
+    Not_equal
+    Less_than
+    Less_than_or_equal
+    Greater_than
+    Greater_than_or_equal
+    Not
+    And
+    Or
+    While
+    For_range
+    For_iteration
+    Declaration
+    Array_literal
+    Array_subscript
+    Let
+    Boolean
+    Parenthesis
+    Type
+    Power
+    Type_pool
+    Dot
+    Module
+    Struct
+    Return
+    Eseq
+    Let_lseq
+    Let_rseq
+    Error
+    Prototype
+    Extern
+    Struct_literal
+    Struct_literal_field
+    Ellipsis
+    Impl
+    Self
 }
 
 element Type_use {

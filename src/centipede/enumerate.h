@@ -6,7 +6,7 @@
 
 typedef struct Cent_enum_value {
     struct Zinc_string display;
-    size_t value;
+    int value;
     struct Zinc_location loc;
     struct Cent_enum_value* next;
     struct Cent_enum_value* prev;
