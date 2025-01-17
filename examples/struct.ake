@@ -1,7 +1,7 @@
 # declare a struct
 struct Point
-    x: f64
-    y: f64
+    x: Real64
+    y: Real64
 end
 
 # create a Point value, p

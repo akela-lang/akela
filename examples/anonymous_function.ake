@@ -1,5 +1,5 @@
 # create an anonymous function and assign to foo
-let foo: fn(i64)->i64 = fn (x: i64)->i64
+let foo: fn(Int32)->Int32 = fn (x: Int32)->Int32
     x + 2
 end
 

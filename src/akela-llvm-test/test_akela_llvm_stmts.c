@@ -9,8 +9,8 @@ void test_code_gen_last()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    cg_setup("let a: i64 = 1\n"
-             "let b: i64 = 2\n"
+    cg_setup("let a: Int32 = 1\n"
+             "let b: Int32 = 2\n"
              "a + b\n",
              &result);
     Zinc_expect_str(&result.value, "3", "value");
@@ -107,14 +107,14 @@ void test_code_gen_if_expression()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: i64 = if true 1 else 2 end\n"
+    cg_setup("let a: Int32 = if true 1 else 2 end\n"
              "a\n",
              &result);
     Zinc_expect_str(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: i64 = if false 1 else 2 end\n"
+    cg_setup("let a: Int32 = if false 1 else 2 end\n"
              "a\n",
              &result);
     Zinc_expect_str(&result.value, "2", "value");
@@ -127,8 +127,8 @@ void akela_llvm_stmts_printf()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("extern printf([100 const]u8, ...)\n"
-             "let s: [100 const]u8 = \"test printf\n\"\n"
+    cg_setup("extern printf([100 const]Nat8, ...)\n"
+             "let s: [100 const]Nat8 = \"test printf\n\"\n"
              "printf(s)\n",
              &result);
     Zinc_expect_str(&result.value, "", "value");

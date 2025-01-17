@@ -19,6 +19,7 @@ void Ake_parse_state_init(
 	ps->el = el;
     ps->extern_list = extern_list;
 	ps->st = st;
+    ps->context.is_subscript = false;
 }
 
 void Ake_parse_state_destroy(struct Ake_parse_state* ps)

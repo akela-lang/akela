@@ -431,7 +431,11 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
 		if (x->type == Ake_token_number) {
 			n->type = Ake_ast_type_number;
 			if (x->is_integer) {
-				type_name = "Int32";
+			    if (ps->context.is_subscript) {
+			        type_name = "Nat64";
+			    } else {
+			        type_name = "Int32";
+			    }
 			} else if (x->is_float) {
 				type_name = "Real64";
 			}

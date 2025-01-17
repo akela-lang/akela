@@ -1,3 +1,5 @@
+#include <akela/parse_types.h>
+
 #include "tools.h"
 #include "cg.h"
 
@@ -84,10 +86,28 @@ namespace Akela_llvm {
 
         std::vector<Value*> arg_list;
         Ake_ast* arg = cseq->head;
+        Ake_type_use* func_type = callee->tu;
+        Ake_type_use* inputs = NULL;
+        Ake_type_use* outputs = NULL;
+        Ake_get_function_children(func_type, &inputs, &outputs);
+        Ake_type_use* param_tu = NULL;
+        if (inputs) {
+            param_tu = inputs->head;
+        }
         while (arg) {
+            Ake_type_use* arg_tu = arg->tu;
+            if (arg->type == Ake_ast_type_number) {
+                if (arg_tu->td->type == Ake_type_integer && param_tu->td->type == Ake_type_integer) {
+                    if (arg_tu->td->bit_count == 32 && param_tu->td->bit_count == 64) {
+                        arg_tu->td = param_tu->td;
+                    }
+                }
+            }
+
             Value* value = Dispatch(jd, arg);
             arg_list.push_back(value);
             arg = arg->next;
+            param_tu = param_tu->next;
         }
 
         FunctionType *t = Get_function_type(jd, callee->tu);

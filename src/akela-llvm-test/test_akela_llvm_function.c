@@ -9,7 +9,7 @@ void test_akela_llvm_function_declare()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: i64, b: i64, c: i64)\n"
+    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)\n"
              "end\n",
              &result);
     Zinc_expect_str(&result.value, "Function", "value");
@@ -22,7 +22,7 @@ void test_akela_llvm_function_declare_ret()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: i64, b: i64, c: i64)->i64\n"
+    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Int32\n"
              "  a + b + c\n"
              "end\n",
              &result);
@@ -36,7 +36,7 @@ void test_akela_llvm_function_call()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: i64, b: i64, c: i64)->i64\n"
+    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Int32\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -51,7 +51,7 @@ void test_akela_llvm_function_anonymous_call()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let foo: fn (i64, i64, i64)->i64 = fn (a: i64, b: i64, c: i64)->i64\n"
+    cg_setup("let foo: fn (Int32, Int32, Int32)->Int32 = fn (a: Int32, b: Int32, c: Int32)->Int32\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -66,7 +66,7 @@ void test_akela_llvm_function_ret_boolean()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: i64, b: i64, c: i64)->bool\n"
+    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Bool\n"
              "  true\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -81,7 +81,7 @@ void test_akela_llvm_function_ret_array()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: i64, b: i64, c: i64)->[6 const]u8\n"
+    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->[6 const]Nat8\n"
              "  \"hello\"\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -96,7 +96,7 @@ void test_akela_llvm_function_extern()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("extern pow(x: f64, y: f64)->f64\n"
+    cg_setup("extern pow(x: Real64, y: Real64)->Real64\n"
              "pow(5.0, 2.0)\n",
              &result);
     Zinc_expect_str(&result.value, "25.000000", "value");
@@ -109,8 +109,8 @@ void test_akela_llvm_function_assign()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo()->i64 1 end\n"
-             "let bar: fn ()->i64\n"
+    cg_setup("fn foo()->Int32 1 end\n"
+             "let bar: fn ()->Int32\n"
              "bar = foo\n"
              "bar()\n",
              &result);
@@ -124,8 +124,8 @@ void test_akela_llvm_function_assign2()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo()->i64 1 end\n"
-             "fn bar()->i64 2 end\n"
+    cg_setup("fn foo()->Int32 1 end\n"
+             "fn bar()->Int32 2 end\n"
              "foo = bar\n"
              "foo()\n",
              &result);
@@ -139,10 +139,10 @@ void test_akela_llvm_function_let_assign()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: i64)->i64\n"
+    cg_setup("fn foo(a: Int32)->Int32\n"
              "  a + 1\n"
              "end\n"
-             "let a: fn (i64)->i64 = foo\n"
+             "let a: fn (Int32)->Int32 = foo\n"
              "a(1)\n",
              &result);
     Zinc_expect_str(&result.value, "2", "value");
@@ -155,7 +155,7 @@ void test_akela_llvm_function_expression()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: i64)->i64\n"
+    cg_setup("fn foo(a: Int32)->Int32\n"
              "  a + 1\n"
              "end(1)\n",
              &result);
@@ -169,7 +169,7 @@ void test_akela_llvm_function_anonymous_expression()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn (a: i64)->i64\n"
+    cg_setup("fn (a: Int32)->Int32\n"
              "  a + 1\n"
              "end(1)\n",
              &result);
@@ -183,30 +183,30 @@ void test_akela_llvm_function_array_param()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn add_ten(array: [10]i64, i: i64)->i64\n"
+    cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
-             "let a: [10]i64 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "let a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 0)\n",
              &result);
     Zinc_expect_str(&result.value, "110", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn add_ten(array: [10]i64, i: i64)->i64\n"
+    cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
-             "let a: [10]i64 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "let a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 1)\n",
              &result);
     Zinc_expect_str(&result.value, "210", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn add_ten(array: [10]i64, i: i64)->i64\n"
+    cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
-             "let a: [10]i64 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "let a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 2)\n",
              &result);
     Zinc_expect_str(&result.value, "310", "value");
@@ -221,10 +221,10 @@ void test_akela_llvm_function_struct_param()
     Ake_code_gen_result_init(&result);
     cg_setup(
             "struct Point\n"
-            "  x: f64\n"
-            "  y: f64\n"
+            "  x: Real64\n"
+            "  y: Real64\n"
             "end\n"
-            "fn add_ten(p: Point)->f64\n"
+            "fn add_ten(p: Point)->Real64\n"
              "  p.x + 10.0\n"
              "end\n"
              "let p: Point = Point\n"
@@ -239,10 +239,10 @@ void test_akela_llvm_function_struct_param()
     Ake_code_gen_result_init(&result);
     cg_setup(
             "struct Point\n"
-            "  x: f64\n"
-            "  y: f64\n"
+            "  x: Real64\n"
+            "  y: Real64\n"
             "end\n"
-            "fn add_ten(p: Point)->f64\n"
+            "fn add_ten(p: Point)->Real64\n"
             "  p.y + 10.0\n"
             "end\n"
             "let p: Point = Point\n"
@@ -261,13 +261,13 @@ void test_akela_llvm_function_function_param() {
 
     Ake_code_gen_result_init(&result);
     cg_setup(
-            "fn add_one(x: i64)->i64\n"
+            "fn add_one(x: Int32)->Int32\n"
             "  x + 1\n"
             "end\n"
-            "fn add_two(x: i64)->i64\n"
+            "fn add_two(x: Int32)->Int32\n"
             "  x + 2\n"
             "end\n"
-            "fn compute(foo: fn(i64)->i64, x: i64)->i64\n"
+            "fn compute(foo: fn(Int32)->Int32, x: Int32)->Int32\n"
             "  foo(x)\n"
             "end\n"
             "compute(add_one, 15)\n",
@@ -277,13 +277,13 @@ void test_akela_llvm_function_function_param() {
 
     Ake_code_gen_result_init(&result);
     cg_setup(
-            "fn add_one(x: i64)->i64\n"
+            "fn add_one(x: Int32)->Int32\n"
             "  x + 1\n"
             "end\n"
-            "fn add_two(x: i64)->i64\n"
+            "fn add_two(x: Int32)->Int32\n"
             "  x + 2\n"
             "end\n"
-            "fn compute(foo: fn(i64)->i64, x: i64)->i64\n"
+            "fn compute(foo: fn(Int32)->Int32, x: Int32)->Int32\n"
             "  foo(x)\n"
             "end\n"
             "compute(add_two, 15)\n",
@@ -298,8 +298,8 @@ void test_akela_llvm_function_in_array() {
 
     Ake_code_gen_result_init(&result);
     cg_setup(
-            "let func_array: [5]fn(i64)->i64\n"
-            "func_array[0] = fn (x: i64)->i64 x*2 end\n"
+            "let func_array: [5]fn(Int32)->Int32\n"
+            "func_array[0] = fn (x: Int32)->Int32 x*2 end\n"
             "func_array[0](10)",
             &result);
     Zinc_expect_str(&result.value, "20", "value");

@@ -918,7 +918,9 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n)
     }
 
     Ake_ast* b = NULL;
+	ps->context.is_subscript = true;
     b = Ake_parse_expr(ps);
+	ps->context.is_subscript = false;
     if (b && b->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }

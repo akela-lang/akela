@@ -1,6 +1,6 @@
 # declare a function and call it
 
-fn add(a: i64, b: i64)->i64
+fn add(a: i64, b: Int32)->Int32
     a + b
 end
 

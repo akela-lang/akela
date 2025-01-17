@@ -8,12 +8,17 @@
 #include "zinc/zstring.h"
 #include "ast.h"
 
+typedef struct Ake_parse_context {
+    bool is_subscript;
+} Ake_parse_context;
+
 typedef struct Ake_parse_state {
 	struct Ake_lex_state* ls;
 	struct Ake_token* lookahead;
 	struct Zinc_error_list* el;
 	struct Ake_symbol_table* st;
     struct Zinc_string_list* extern_list;
+    Ake_parse_context context;
 } Ake_parse_state;
 
 AKELA_API void Ake_parse_state_init(
