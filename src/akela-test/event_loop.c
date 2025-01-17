@@ -1,4 +1,4 @@
-#include "zinc/buffer.h"
+#include "zinc/zstring.h"
 #include "zinc/memory.h"
 #include <stdbool.h>
 #include <stdio.h>

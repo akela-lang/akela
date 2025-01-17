@@ -29,6 +29,7 @@ void Parse_test_get_files(char* dir_name);
 void Parse_test_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name);
 void Apt_run(Cent_comp_unit* cu);
 void Apt_run_test(Cent_value* test_value);
+void Apt_compare_root(Ake_ast* root, Cent_value* value);
 
 int main(int argc, char **argv)
 {
@@ -220,6 +221,10 @@ void Apt_run_test(Cent_value* test_value)
         }
     }
 
+    Cent_value* value = test_value->data.dag.head;
+    Ake_ast* root = cu->root;
+    Apt_compare_root(root, value);
+
     Ake_comp_unit_destroy(cu);
     free(cu);
 
@@ -229,4 +234,13 @@ void Apt_run_test(Cent_value* test_value)
     free(text);
 
     Zinc_string_destroy(&source_string);
+}
+
+void Apt_compare_root(Ake_ast* root, Cent_value* value)
+{
+    if (root && !value) {
+        fprintf(stderr, "value is null\n");
+    } else if (!root && value) {
+        fprintf(stderr, "root is null\n");
+    }
 }
