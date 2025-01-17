@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "zinc/error_unit_test.h"
 #include "akela/code_gen.h"
-#include "test_code_gen_tools.h"
+#include "test_cg_tools.h"
 #include <signal.h>
 #include <string.h>
 #include <setjmp.h>

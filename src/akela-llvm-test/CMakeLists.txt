@@ -1,14 +1,14 @@
 # test
 set(test_files
         test.c
-        test_code_gen_tools.c
-        test_akela_llvm_literal.c
-        test_akela_llvm_variable.c
-        test_akela_llvm_operator.c
-        test_akela_llvm_stmts.c
-        test_akela_llvm_function.c
-        test_akela_llvm_array.c
-        test_akela_llvm_struct.c
+        test_cg_tools.c
+        test_literal.c
+        test_variable.c
+        test_operator.c
+        test_stmts.c
+        test_function.c
+        test_array.c
+        test_struct.c
 )
 add_executable(akela-llvm-test ${test_files})
 target_link_libraries(akela-llvm-test akela-llvm akela zinc ${coverage_lib} ${llvm_libs})

@@ -1,11 +1,11 @@
 #include "zinc/unit_test.h"
-#include "test_akela_llvm_literal.h"
-#include "test_akela_llvm_variable.h"
-#include "test_akela_llvm_operator.h"
-#include "test_akela_llvm_stmts.h"
-#include "test_akela_llvm_function.h"
-#include "test_akela_llvm_array.h"
-#include "test_akela_llvm_struct.h"
+#include "test_literal.h"
+#include "test_variable.h"
+#include "test_operator.h"
+#include "test_stmts.h"
+#include "test_function.h"
+#include "test_array.h"
+#include "test_struct.h"
 
 int main() {
     test_akela_llvm_literal();
