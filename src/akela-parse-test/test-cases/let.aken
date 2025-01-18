@@ -70,4 +70,53 @@ Test_suite {
             }
         }
     }
+    Test {
+        .name = "declare and use an integer 2"
+        .source = Source {
+            "let a: Int32 = 105\n"
+            "a\n"
+        }
+        .solo = true
+        .has_error = false
+
+        Ast {
+            .type = Ast_type::Stmts
+            .tu = Type_use {
+                .td = Td_int32
+            }
+            Ast {
+                .type = Ast_type::Let
+                Ast {
+                    .type = Ast_type::Let_lseq
+                    Ast {
+                        .type = Ast_type::Id
+                        .value = "a"
+                    }
+                }
+                Ast {
+                    .type = Ast_type::Type
+                    .tu = Type_use {
+                        .td = Td_int32
+                    }
+                }
+                Ast {
+                    .type = Ast_type::Let_rseq
+                    Ast {
+                        .type = Ast_type::Number
+                        .value = "105"
+                        .tu = Type_use {
+                            .td = Td_int32
+                        }
+                    }
+                }
+            }
+            Ast {
+                .type = Ast_type::Id
+                .value = "a"
+                .tu = Type_use {
+                    .td = Td_int32
+                }
+            }
+        }
+    }
 }

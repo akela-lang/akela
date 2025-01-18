@@ -53,6 +53,9 @@ element Ast {
         value: String
         tu: Type_use
     }
+    children {
+        Ast
+    }
 }
 
 enum Ast_type {
