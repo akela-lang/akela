@@ -338,4 +338,85 @@ void Apt_compare_type_def(Apt_test_data* data, Ake_type_def* td, Cent_value* val
         Apt_error(data, NULL, value, &message);
         Zinc_string_destroy(&message);
     }
+
+    Cent_value* name_value = Cent_value_get_str(value, "name");
+    if (!name_value) {
+        Zinc_string message;
+        Zinc_string_init(&message);
+        Zinc_string_add_format(&message, "name not set");
+        Apt_error(data, NULL, value, &message);
+        Zinc_string_destroy(&message);
+    } else {
+        if (!Zinc_string_compare(&td->name, &name_value->data.string)) {
+            assert(name_value->type == Cent_value_type_string);
+            Zinc_string message;
+            Zinc_string_init(&message);
+            Zinc_string_add_format(
+                &message,
+                "type def name does not match (%bf) (%bf)",
+                &td->name,
+                &name_value->data.string);
+            Apt_error(data, NULL, value, &message);
+            Zinc_string_destroy(&message);
+        }
+    }
+
+    Cent_value* type_value = Cent_value_get_str(value, "type");
+    if (!type_value) {
+        Zinc_string message;
+        Zinc_string_init(&message);
+        Zinc_string_add_format(&message, "type not set");
+        Apt_error(data, NULL, value, &message);
+        Zinc_string_destroy(&message);
+    } else {
+        assert(type_value->type == Cent_value_type_enum);
+        if (td->type != type_value->data.enumeration.enum_value->value) {
+            Zinc_string message;
+            Zinc_string_init(&message);
+            Zinc_string_add_format(&message,
+                "type def type does not match (%d) (%d)",
+                td->type,
+                type_value->data.enumeration.enum_value->value);
+            Apt_error(data, NULL, value, &message);
+            Zinc_string_destroy(&message);
+        }
+    }
+
+    Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
+    if (bit_count_value) {
+        assert(bit_count_value->type == Cent_value_type_number);
+        assert(bit_count_value->number_type == Cent_number_type_integer);
+        if (td->bit_count != bit_count_value->data.integer) {
+            Zinc_string message;
+            Zinc_string_init(&message);
+            Zinc_string_add_format(&message,
+                "type def bit_count does not match (%d) (%d)",
+                td->bit_count,
+                bit_count_value->data.integer);
+            Apt_error(data, NULL, value, &message);
+            Zinc_string_destroy(&message);
+        }
+    } else if (td->bit_count > 0) {
+        Zinc_string message;
+        Zinc_string_init(&message);
+        Zinc_string_add_format(&message,
+            "bit_count not set");
+        Apt_error(data, NULL, value, &message);
+        Zinc_string_destroy(&message);
+    }
+
+    Cent_value* is_signed_value = Cent_value_get_str(value, "is_signed");
+    if (is_signed_value) {
+        assert(is_signed_value->type == Cent_value_type_boolean);
+        if (td->is_signed != is_signed_value->data.boolean) {
+            Zinc_string message;
+            Zinc_string_init(&message);
+            Zinc_string_add_format(&message,
+                "type def is_signed does not match (%d) (%d)",
+                td->is_signed,
+                is_signed_value->data.boolean);
+            Apt_error(data, NULL, value, &message);
+            Zinc_string_destroy(&message);
+        }
+    }
 }

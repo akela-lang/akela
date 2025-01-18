@@ -12,18 +12,18 @@ Test_suite {
         .solo = true
         .has_error = false
 
-        let root = Ast {
+        let stmts = Ast {
             .type = Ast_type::Stmts
             .tu = Type_use {
-                .td = _Int32
+                .td = Td_int32
             }
         }
 
-        root
+        stmts
 
         # line 1
         let let_stmt = Ast {
-            .@child_of(root)
+            .@child_of(stmts)
             .type = Ast_type::Let
         }
 
@@ -42,7 +42,7 @@ Test_suite {
             .@child_of(let_stmt)
             .type = Ast_type::Type
             .tu = Type_use {
-                .td = _Int32
+                .td = Td_int32
             }
         }
 
@@ -56,17 +56,17 @@ Test_suite {
             .type = Ast_type::Number
             .value = "105"
             .tu = Type_use {
-                .td = _Int32
+                .td = Td_int32
             }
         }
 
         # line 2
         let add_a = Ast {
-            .@child_of(root)
+            .@child_of(stmts)
             .type = Ast_type::Id
             .value = "a"
             .tu = Type_use {
-                .td = _Int32
+                .td = Td_int32
             }
         }
     }

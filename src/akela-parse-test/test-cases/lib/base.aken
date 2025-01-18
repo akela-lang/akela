@@ -130,20 +130,27 @@ element Type_def {
 }
 
 enum Type_def_type {
-    Int32
-    Real64
+    None
+    Integer
+    Float
+    Boolean
+    Struct
+    Function
+    Enum
+    Tuple
+    Module
 }
 
 # built-in element defs
-let _Int32 = Type_def {
-    .type = Type_def_type::Int32
+let Td_int32 = Type_def {
+    .type = Type_def_type::Integer
     .name = "Int32"
     .bit_count = 32
     .is_signed = true
 };
 
-let _Real64 = Type_def {
-    .type = Type_def_type::Real64
+let Td_real64 = Type_def {
+    .type = Type_def_type::Float
     .name = "Real64"
     .bit_count = 64
     .is_signed = true
