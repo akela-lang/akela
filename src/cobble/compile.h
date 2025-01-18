@@ -5,6 +5,7 @@
 #include "compile_data.h"
 #include "ast.h"
 
-Cob_re Cob_compile(Cob_compile_data* cd);
+Cob_re Cob_compile(Zinc_string* text);
+Cob_re Cob_compile_str(char const* s);
 
 #endif

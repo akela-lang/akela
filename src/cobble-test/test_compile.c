@@ -1,3 +1,5 @@
+#include <cobble/match_tools.h>
+
 #include "zinc/unit_test.h"
 #include "cobble/compile_data.h"
 #include "cobble/compile.h"
@@ -9,28 +11,22 @@ void test_compile_empty()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "");
+    Cob_re re = Cob_compile_str("");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.errors);
     Zinc_assert_null(re.root, "root");
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_literal()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a");
+    Cob_re re = Cob_compile_str("a");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.errors);
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_true(re.root->is_root, "is_group root");
     Zinc_expect_false(re.root->is_group, "is_group root");
@@ -40,19 +36,16 @@ void test_compile_literal()
 
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_union_single()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a|b");
+    Cob_re re = Cob_compile_str("a|b");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.errors);
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_union, "union root");
@@ -71,42 +64,36 @@ void test_compile_union_single()
 
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_union_single_error()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a|");
+    Cob_re re = Cob_compile_str("a|");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_has_errors(re.el);
+    Zinc_expect_has_errors(re.errors);
     Zinc_expect_ptr(re.root, "ptr root");
-    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_has_errors(re.errors);
 
     struct Zinc_error* e = NULL;
-    e = Zinc_assert_source_error(cd->el, "expected term after union");
+    e = Zinc_assert_source_error(re.errors, "expected term after union");
     Zinc_expect_size_t_equal(e->loc.start_pos, 2, "start pos");
     Zinc_expect_size_t_equal(e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(e->loc.col, 3, "col");
     Zinc_expect_size_t_equal(e->loc.end_pos, 3, "end_pos");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_union_double()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a|b|c");
+    Cob_re re = Cob_compile_str("a|b|c");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.errors);
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_union, "union root");
 
@@ -128,19 +115,16 @@ void test_compile_union_double()
     Zinc_expect_int_equal(c->num, 1, "num c");
     Zinc_expect_char_equal(c->c[0], 'c', "c c");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_concat_single()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "ab");
+    Cob_re re = Cob_compile_str("ab");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.errors);
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_concat, "concat root");
 
@@ -158,19 +142,16 @@ void test_compile_concat_single()
 
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_concat_double()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "abc");
+    Cob_re re = Cob_compile_str("abc");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.errors);
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_concat, "concat root");
 
@@ -192,19 +173,16 @@ void test_compile_concat_double()
     Zinc_expect_int_equal(c->num, 1, "num c");
     Zinc_expect_char_equal(c->c[0], 'c', "c c");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_union_concat()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "ab|cd");
+    Cob_re re = Cob_compile_str("ab|cd");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.errors);
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_union, "union root");
 
@@ -242,20 +220,17 @@ void test_compile_union_concat()
 
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_closure()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a*");
+    Cob_re re = Cob_compile_str("a*");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_closure, "closure root");
@@ -268,19 +243,16 @@ void test_compile_closure()
 
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_concat_closure()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a*b*");
+    Cob_re re = Cob_compile_str("a*b*");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -307,20 +279,17 @@ void test_compile_concat_closure()
     Zinc_expect_char_equal(b->c[0], 'b', "c b");
 
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_union_closure()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a*|b*");
+    Cob_re re = Cob_compile_str("a*|b*");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -346,20 +315,17 @@ void test_compile_union_closure()
     Zinc_expect_int_equal(b->num, 1, "num b");
     Zinc_expect_char_equal(b->c[0], 'b', "c b");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_positive_closure()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a+");
+    Cob_re re = Cob_compile_str("a+");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -371,20 +337,17 @@ void test_compile_positive_closure()
     Zinc_expect_int_equal(lit->num, 1, "num lit");
     Zinc_expect_char_equal(lit->c[0], 'a', "c a");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_repeat()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a{5}");
+    Cob_re re = Cob_compile_str("a{5}");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -400,42 +363,36 @@ void test_compile_repeat()
     Zinc_assert_ptr(num, "ptr num");
     Zinc_expect_u_long_equal(num->num_value, 5, "num1 5 root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_repeat_num_error()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a{x}");
+    Cob_re re = Cob_compile_str("a{x}");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_has_errors(re.el);
-    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_has_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
-    struct Zinc_error* e = Zinc_assert_source_error(cd->el, "expected digit");
+    struct Zinc_error* e = Zinc_assert_source_error(re.errors, "expected digit");
     Zinc_expect_size_t_equal(e->loc.start_pos, 2, "start_pos");
     Zinc_expect_size_t_equal(e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(e->loc.col, 3, "col");
     Zinc_expect_size_t_equal(e->loc.end_pos, 3, "end_pos");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_repeat_range()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a{5,10}");
+    Cob_re re = Cob_compile_str("a{5,10}");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -456,42 +413,36 @@ void test_compile_repeat_range()
     Zinc_expect_int_equal(num2->type, Cob_ast_type_number, "type num2");
     Zinc_expect_u_long_equal(num2->num_value, 10, "num num2");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_repeat_range_num_error()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a{1,x}");
+    Cob_re re = Cob_compile_str("a{1,x}");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_has_errors(re.el);
-    Zinc_expect_has_errors(cd->el);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_has_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
-    struct Zinc_error* e = Zinc_assert_source_error(cd->el, "expected digit");
+    struct Zinc_error* e = Zinc_assert_source_error(re.errors, "expected digit");
     Zinc_expect_size_t_equal(e->loc.start_pos, 4, "byte_pos");
     Zinc_expect_size_t_equal(e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(e->loc.col, 5, "col");
     Zinc_expect_size_t_equal(e->loc.end_pos, 5, "end_pos");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_group_concat()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a(b|c)d");
+    Cob_re re = Cob_compile_str("a(b|c)d");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 2, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -530,20 +481,17 @@ void test_compile_group_concat()
     Zinc_expect_int_equal(d->type, Cob_ast_type_literal, "literal d");
     Zinc_expect_char_equal(d->c[0], 'd', "c d");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_group_empty()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a()b");
+    Cob_re re = Cob_compile_str("a()b");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 2, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -569,20 +517,17 @@ void test_compile_group_empty()
     Zinc_expect_int_equal(b->num, 1, "num b");
     Zinc_expect_char_equal(b->c[0], 'b', "c b");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_option()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "a?");
+    Cob_re re = Cob_compile_str("a?");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -594,77 +539,65 @@ void test_compile_option()
     Zinc_expect_int_equal(lit->num, 1, "num lit");
     Zinc_expect_char_equal(lit->c[0], 'a', "c a");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_wildcard()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, ".");
+    Cob_re re = Cob_compile_str(".");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_wildcard, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_begin()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "^");
+    Cob_re re = Cob_compile_str("^");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_begin, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_end()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "$");
+    Cob_re re = Cob_compile_str("$");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_end, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_escape_backslash()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\\\");
+    Cob_re re = Cob_compile_str("\\\\");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -672,20 +605,17 @@ void test_compile_escape_backslash()
     Zinc_expect_int_equal(re.root->num, 1, "num root");
     Zinc_expect_char_equal(re.root->c[0], '\\', "c root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_escape_asterisk()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\*");
+    Cob_re re = Cob_compile_str("\\*");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -693,20 +623,17 @@ void test_compile_escape_asterisk()
     Zinc_expect_int_equal(re.root->num, 1, "num root");
     Zinc_expect_char_equal(re.root->c[0], '*', "c root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_class()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "[abc]");
+    Cob_re re = Cob_compile_str("[abc]");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -730,68 +657,56 @@ void test_compile_character_class()
     Zinc_expect_int_equal(c2->num, 1, "num c2");
     Zinc_expect_char_equal(c2->c[0], 'c', "c c2");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_class_wildcard_error()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "[.]");
+    Cob_re re = Cob_compile_str("[.]");
 
-    Cob_re re = Cob_compile(cd);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_source_error(re.errors, "unexpected wildcard");
 
-    Zinc_expect_has_errors(re.el);
-    Zinc_expect_has_errors(cd->el);
-    Zinc_expect_source_error(cd->el, "unexpected wildcard");
-
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_class_begin_error()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "[a^]");
+    Cob_re re = Cob_compile_str("[a^]");
 
-    Cob_re re = Cob_compile(cd);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_source_error(re.errors, "unexpected begin");
 
-    Zinc_expect_has_errors(re.el);
-    Zinc_expect_has_errors(cd->el);
-    Zinc_expect_source_error(cd->el, "unexpected begin");
-
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_class_end_error()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "[$]");
+    Cob_re re = Cob_compile_str("[$]");
 
-    Cob_re re = Cob_compile(cd);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_source_error(re.errors, "unexpected end");
 
-    Zinc_expect_has_errors(re.el);
-    Zinc_expect_has_errors(cd->el);
-    Zinc_expect_source_error(cd->el, "unexpected end");
-
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_range()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "[a-z]");
+    Cob_re re = Cob_compile_str("[a-z]");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -814,201 +729,168 @@ void test_compile_character_range()
     Zinc_expect_int_equal(c01->num, 1, "num c01");
     Zinc_expect_char_equal(c01->c[0], 'z', "c c01");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_range_error()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "[a-]");
+    Cob_re re = Cob_compile_str("[a-]");
 
-    Cob_re re = Cob_compile(cd);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_source_error(re.errors, "expected end character in character range");
 
-    Zinc_expect_has_errors(re.el);
-    Zinc_expect_has_errors(cd->el);
-    Zinc_expect_source_error(cd->el, "expected end character in character range");
-
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_range_non_ascii_error_left()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "[á-z]");
+    Cob_re re = Cob_compile_str("[á-z]");
 
-    Cob_re re = Cob_compile(cd);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_source_error(re.errors, "character range must use ascii characters");
 
-    Zinc_expect_has_errors(re.el);
-    Zinc_expect_has_errors(cd->el);
-    Zinc_expect_source_error(cd->el, "character range must use ascii characters");
-
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_range_non_ascii_error_right()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "[a-ź]");
+    Cob_re re = Cob_compile_str("[a-ź]");
 
-    Cob_re re = Cob_compile(cd);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_has_errors(re.errors);
+    Zinc_expect_source_error(re.errors, "character range must use ascii characters");
 
-    Zinc_expect_has_errors(re.el);
-    Zinc_expect_has_errors(cd->el);
-    Zinc_expect_source_error(cd->el, "character range must use ascii characters");
-
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_type_word()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\w");
+    Cob_re re = Cob_compile_str("\\w");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_character_type_word, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_type_word_opposite()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\W");
+    Cob_re re = Cob_compile_str("\\W");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_character_type_word_opposite, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_type_digit()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\d");
+    Cob_re re = Cob_compile_str("\\d");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_character_type_digit, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_type_digit_opposite()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\D");
+    Cob_re re = Cob_compile_str("\\D");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_character_type_digit_opposite, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_type_space()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\s");
+    Cob_re re = Cob_compile_str("\\s");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_character_type_space, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_type_space_opposite()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\S");
+    Cob_re re = Cob_compile_str("\\S");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_character_type_space_opposite, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_character_type_newline_opposite()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\N");
+    Cob_re re = Cob_compile_str("\\N");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
     Zinc_expect_int_equal(re.root->type, Cob_ast_type_character_type_newline_opposite, "type root");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_coverage_line()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\s*(\\-):\\s*(\\d+):Source:(.+)");
+    Cob_re re = Cob_compile_str("\\s*(\\-):\\s*(\\d+):Source:(.+)");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 4, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -1155,20 +1037,17 @@ void test_compile_coverage_line()
     Zinc_expect_false(wc0->is_root, "is_root wc0");
     Zinc_expect_false(wc0->is_group, "is_group wc0");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_coverage_line2()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "\\s*(\\-):\\s*(\\d+):(Source:)?(.+)");
+    Cob_re re = Cob_compile_str("\\s*(\\-):\\s*(\\d+):(Source:)?(.+)");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 5, "group_count");
 
     Zinc_assert_ptr(re.root, "ptr root");
@@ -1332,22 +1211,19 @@ void test_compile_coverage_line2()
     Zinc_expect_false(wc0->is_root, "is_root wc0");
     Zinc_expect_false(wc0->is_group, "is_group wc0");
 
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile_missing_group()
 {
     Zinc_test_name(__func__);
 
-    Cob_compile_data* cd = NULL;
-    setup_compile(&cd, "(c|xyx()|a)");
+    Cob_re re = Cob_compile_str("(c|xyx()|a)");
 
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_expect_no_errors(re.el);
-    Zinc_expect_no_errors(cd->el);
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_no_errors(re.errors);
     Zinc_expect_size_t_equal(re.group_count, 3, "group_count");
-    teardown_compile(cd, &re);
+    Cob_re_destroy(&re);
 }
 
 void test_compile()

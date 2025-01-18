@@ -2,27 +2,22 @@
 #include "zinc/memory.h"
 #include "token.h"
 
-void Cob_compile_data_init(
-    Cob_compile_data* cd,
-    void* input_obj,
-    Zinc_input_unicode_vtable* input_vtable,
-    struct Zinc_error_list* el)
+void Cob_compile_data_init(Cob_compile_data* cd, Zinc_string* text, Zinc_error_list* errors)
 {
-    cd->input_obj = input_obj;
-    cd->input_vtable = input_vtable;
+    cd->text = text;
     cd->lookahead = NULL;
-    cd->el = el;
+    cd->errors = errors;
     cd->group_number = 0;
+    cd->pos = 0;
+    Zinc_location_init(&cd->loc);
+    cd->loc.line = 1;
+    cd->loc.col = 1;
 }
 
-void Cob_compile_data_create(
-    Cob_compile_data** cd,
-    void* input_obj,
-    Zinc_input_unicode_vtable* input_vtable,
-    struct Zinc_error_list* el)
+void Cob_compile_data_create(Cob_compile_data** cd, Zinc_string* text, struct Zinc_error_list* errors)
 {
     Zinc_malloc_safe((void**)cd, sizeof(Cob_compile_data));
-    Cob_compile_data_init(*cd, input_obj, input_vtable, el);
+    Cob_compile_data_init(*cd, text, errors);
 }
 
 void Cob_compile_data_destroy(Cob_compile_data* cd)
@@ -30,22 +25,22 @@ void Cob_compile_data_destroy(Cob_compile_data* cd)
     free(cd->lookahead);
 }
 
-void Cob_re_init(Cob_re* re, struct Zinc_error_list* el, Cob_ast* root)
+void Cob_re_init(Cob_re* re, Zinc_error_list* errors, Cob_ast* root)
 {
-    re->el = el;
+    re->errors = errors;
     re->root = root;
 }
 
-void Cob_re_reeate(Cob_re** re, struct Zinc_error_list* el, Cob_ast* root)
+void Cob_re_create(Cob_re** re, Zinc_error_list* errors, Cob_ast* root)
 {
     Zinc_malloc_safe((void**)re, sizeof(Cob_re));
-    Cob_re_init(*re, el, root);
+    Cob_re_init(*re, errors, root);
 }
 
 void Cob_re_destroy(Cob_re* re)
 {
-    Zinc_error_list_destroy(re->el);
-    free(re->el);
+    Zinc_error_list_destroy(re->errors);
+    free(re->errors);
     Cob_ast_destroy(re->root);
     free(re->root);
 }

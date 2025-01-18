@@ -11,11 +11,11 @@ int main(int argc, char **argv)
     }
 
     char* path = argv[1];
-    if (!Apt_validate_directory(path)) {
+    if (!Run_validate_directory(path)) {
         return 1;
     }
 
-    Apt_parse_files(path);
+    Run_parse_files(path);
 
     return 0;
 }

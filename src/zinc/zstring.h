@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "api.h"
 #include "result.h"
+#include <stdbool.h>
 
 #define BUFFER_CHUNK 64
 
@@ -32,7 +33,7 @@ ZINC_API void Zinc_string_copy(Zinc_string* src, Zinc_string* dest);
 ZINC_API void Zinc_string_create_str(Zinc_string* bf, char** a);
 ZINC_API void Zinc_string_add_str2(const char* a, Zinc_string* bf);
 ZINC_API void Zinc_string_add_string(Zinc_string* string, Zinc_string* string2);
-ZINC_API Zinc_result Zinc_next_char(Zinc_string* bf, size_t* pos, Zinc_string* bf2);
+ZINC_API Zinc_result Zinc_string_next(Zinc_string* text, size_t* pos, char c[5], int* num, bool* done);
 ZINC_API int Zinc_string_compare(Zinc_string* a, Zinc_string* b);
 ZINC_API int Zinc_string_compare_str(Zinc_string* a, const char* b);
 ZINC_API Zinc_result Zinc_string_uslice(Zinc_string* src, Zinc_string* dest, size_t start, size_t end);

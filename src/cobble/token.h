@@ -29,7 +29,7 @@ typedef enum Cob_token_type {
 typedef struct Cob_token {
     Cob_token_type type;
     int num;
-    char c[4];
+    char c[5];
     struct Zinc_location loc;
 } Cob_token;
 

@@ -17,10 +17,10 @@
 #define NAME "akela-parse-test"
 
 
-void Apt_append_path(Zinc_string* bf, char* path);
-void Apt_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name);
+void Run_append_path(Zinc_string* bf, char* path);
+void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name);
 
-bool Apt_validate_directory(char* path)
+bool Run_validate_directory(char* path)
 {
     struct stat sb;
     if (stat(path, &sb) == -1) {
@@ -44,7 +44,7 @@ bool Apt_validate_directory(char* path)
     return true;
 }
 
-void Apt_parse_files(char* dir_name)
+void Run_parse_files(char* dir_name)
 {
     Zinc_string dir_path;
     Zinc_string_init(&dir_path);
@@ -58,7 +58,7 @@ void Apt_parse_files(char* dir_name)
                 Zinc_string path;
                 Zinc_string_init(&path);
                 Zinc_string_add_str(&path, dir_name);
-                Apt_append_path(&path, dir->d_name);
+                Run_append_path(&path, dir->d_name);
                 Zinc_string_finish(&path);
 
                 Zinc_string file_name;
@@ -68,7 +68,7 @@ void Apt_parse_files(char* dir_name)
 
                 struct stat sb;
                 if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
-                    Apt_test_case(&dir_path, &path, &file_name);
+                    Run_test_case(&dir_path, &path, &file_name);
                 }
 
                 Zinc_string_destroy(&path);
@@ -80,13 +80,13 @@ void Apt_parse_files(char* dir_name)
     Zinc_string_destroy(&dir_path);
 }
 
-void Apt_append_path(Zinc_string* bf, char* path)
+void Run_append_path(Zinc_string* bf, char* path)
 {
     Zinc_string_add_char(bf, '/');
     Zinc_string_add_str(bf, path);
 }
 
-void Apt_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
+void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
 {
     printf("%s\n", path->buf);
 

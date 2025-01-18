@@ -140,26 +140,43 @@ void Zinc_string_add_str2(const char* a, struct Zinc_string* bf)
     }
 }
 
-enum Zinc_result Zinc_next_char(struct Zinc_string* bf, size_t* pos, struct Zinc_string* bf2)
+Zinc_result Zinc_string_next(Zinc_string* text, size_t* pos, char c[5], int* num, bool* done)
 {
-    char c = bf->buf[(*pos)++];
-    int count;
-    enum Zinc_result r = Zinc_check_num_bytes(c, &count);
-    if (r == Zinc_result_error) {
-        return r;
-    }
-    Zinc_string_clear(bf2);
+    *done = false;
 
-    Zinc_string_add_char(bf2, c);
-    for (int i = 1; i < count; i++) {
-        c = bf->buf[(*pos)++];
-        r = Zinc_check_extra_byte(c);
-        if (r == Zinc_result_error) {
-            return r;
+    if (*pos >= text->size) {
+        *done = true;
+        return Zinc_result_ok;
+    }
+
+    char byte = text->buf[(*pos)++];
+    *num = ZINC_NUM_BYTES(byte);
+    if (*num == 0) {
+        Zinc_set_error("invalid utf8 byte count");
+        return Zinc_result_error;
+    }
+
+    c[0] = byte;
+    for (int i = 1; i < *num; i++) {
+        if (*pos >= text->size) {
+            *done = true;
+            Zinc_set_error("expecting extra utf8 bytes");
+            return Zinc_result_error;
         }
 
-        Zinc_string_add_char(bf2, c);
+        byte = text->buf[(*pos)++];
+        if (!ZINC_IS_EXTRA_BYTE(byte)) {
+            Zinc_set_error("invalid utf8 extra byte");
+            return Zinc_result_error;
+        }
+
+        c[i] = byte;
     }
+
+    for (int i = *num; i < 5; i++) {
+        c[i] = '\0';
+    }
+
     return Zinc_result_ok;
 }
 

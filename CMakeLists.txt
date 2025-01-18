@@ -107,6 +107,7 @@ add_subdirectory(src/akela)
 add_subdirectory(src/akela-test)
 add_subdirectory(src/akela-bin)
 add_subdirectory(src/akela-parse-test)
+add_subdirectory(src/akela-run-test)
 
 add_subdirectory(src/akela-llvm)
 add_subdirectory(src/akela-llvm-test)

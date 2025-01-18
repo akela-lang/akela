@@ -205,46 +205,62 @@ void test_buffer_array2buffer()
 	Zinc_string_destroy(&bf);
 }
 
-/* static-output */
-/* dynamic-temp bf{} x{} */
-void test_buffer_next_char()
+void test_string_next()
 {
 	Zinc_test_name(__func__);
 
-	enum Zinc_result r;
-	struct Zinc_string bf;
+	Zinc_result r;
+	Zinc_string bf;
 	Zinc_string_init(&bf);
 
-	/* allocate bf{} */
-	Zinc_string_add_char(&bf, 'x');
-	Zinc_string_add_char(&bf, 'y');
-	Zinc_string_add_char(&bf, 'z');
+	Zinc_string_add_str(&bf, "abcαβγ");
 
-	struct Zinc_string x;
-	Zinc_string_init(&x);
+	char c[5];
+	int num;
+	bool done;
 	size_t pos = 0;
 
-	/* allocate x{} */
-	r = Zinc_next_char(&bf, &pos, &x);
-	Zinc_assert_ok(r, "next_char");
+	r = Zinc_string_next(&bf, &pos, c, &num, &done);
+	Zinc_assert_ok(r, "ok 0");
+	Zinc_expect_strcmp(c, "a", "str 0");
+	Zinc_expect_int_equal(num, 1, "num 0");
+	Zinc_expect_false(done, "done 0");
 
-	Zinc_expect_str(&x, "x", "x");
+	r = Zinc_string_next(&bf, &pos, c, &num, &done);
+	Zinc_assert_ok(r, "ok 1");
+	Zinc_expect_strcmp(c, "b", "str 1");
+	Zinc_expect_int_equal(num, 1, "num 1");
+	Zinc_expect_false(done, "done 1");
 
-	/* allocate x{} */
-	r = Zinc_next_char(&bf, &pos, &x);
-	Zinc_assert_ok(r, "y");
+	r = Zinc_string_next(&bf, &pos, c, &num, &done);
+	Zinc_assert_ok(r, "ok 2");
+	Zinc_expect_strcmp(c, "c", "str 2");
+	Zinc_expect_int_equal(num, 1, "num 2");
+	Zinc_expect_false(done, "done 2");
 
-	Zinc_expect_str(&x, "y", "y");
+	r = Zinc_string_next(&bf, &pos, c, &num, &done);
+	Zinc_assert_ok(r, "ok 3");
+	Zinc_expect_strcmp(c, "α", "str 3");
+	Zinc_expect_int_equal(num, 2, "num 3");
+	Zinc_expect_false(done, "done 3");
 
-	/* allocate x{} */
-	r = Zinc_next_char(&bf, &pos, &x);
-	Zinc_assert_ok(r, "z");
+	r = Zinc_string_next(&bf, &pos, c, &num, &done);
+	Zinc_assert_ok(r, "ok 4");
+	Zinc_expect_strcmp(c, "β", "str 4");
+	Zinc_expect_int_equal(num, 2, "num 4");
+	Zinc_expect_false(done, "done 4");
 
-	Zinc_expect_str(&x, "z", "z");
+	r = Zinc_string_next(&bf, &pos, c, &num, &done);
+	Zinc_assert_ok(r, "ok 5");
+	Zinc_expect_strcmp(c, "γ", "str 5");
+	Zinc_expect_int_equal(num, 2, "num 5");
+	Zinc_expect_false(done, "done 5");
 
-	/* destroy bf{} x{} */
+	r = Zinc_string_next(&bf, &pos, c, &num, &done);
+	Zinc_assert_ok(r, "ok 6");
+	Zinc_expect_true(done, "done 6");
+
 	Zinc_string_destroy(&bf);
-	Zinc_string_destroy(&x);
 }
 
 /* static-output */
@@ -591,7 +607,7 @@ void test_buffer()
 	test_buffer_copy();
 	test_buffer_buffer2array();
 	test_buffer_array2buffer();
-	test_buffer_next_char();
+	test_string_next();
 	test_buffer_buffer_compare();
 	test_buffer_str_compare();
 	test_buffer_uslice();

@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-bool Apt_validate_directory(char* path);
-void Apt_parse_files(char* dir_name);
+bool Run_validate_directory(char* path);
+void Run_parse_files(char* dir_name);
 
 #endif

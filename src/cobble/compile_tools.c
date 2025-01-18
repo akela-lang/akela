@@ -3,22 +3,33 @@
 #include "token.h"
 #include "ast.h"
 
-Cob_token* Cob_lex(void* input_obj, Zinc_input_unicode_vtable *input_vtable)
+Cob_token* Cob_lex(Cob_compile_data* cd)
 {
-    char c[4];
+    char c[5];
     int num;
-    struct Zinc_location loc;
     bool done;
-    enum Zinc_result r = Zinc_result_error;
+    Zinc_location loc;
+    Zinc_result r = Zinc_result_error;
+    loc = cd->loc;
     while (r == Zinc_result_error) {
-        r = Zinc_input_unicode_next(input_obj, input_vtable, c, &num, &loc, &done);
+        r = Zinc_string_next(cd->text, &cd->pos, c, &num, &done);
+        if (r == Zinc_result_ok) {
+            cd->loc.start_pos = cd->pos;
+            cd->loc.end_pos = cd->pos + 1;
+            if (num == 1 && c[0] == '\n') {
+                cd->loc.line++;
+                cd->loc.col = 0;
+            } else {
+                cd->loc.col++;
+            }
+        }
     }
 
     Cob_token* t = NULL;
     Zinc_malloc_safe((void**)&t, sizeof(Cob_token));
     Cob_token_init(t);
     t->type = Cob_token_classify(c, num, done);
-    for (int i = 0; i < num; i++) {
+    for (int i = 0; i < 5; i++) {
         t->c[i] = c[i];
     }
     t->num = num;
@@ -32,7 +43,7 @@ void Cob_lookahead(Cob_compile_data* cd)
         return;
     }
 
-    cd->lookahead = Cob_lex(cd->input_obj, cd->input_vtable);
+    cd->lookahead = Cob_lex(cd);
 }
 
 bool Cob_match_token(
@@ -53,7 +64,7 @@ bool Cob_match_token(
         return true;
     } else {
         *t = NULL;
-        Zinc_error_list_set(cd->el, &cd->lookahead->loc, "%s", reason);
+        Zinc_error_list_set(cd->errors, &cd->lookahead->loc, "%s", reason);
         Zinc_location_combine(&n->loc, &n->loc);
         return false;
     }

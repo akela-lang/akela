@@ -1,3 +1,6 @@
 # Akela Run Test Todo
-* parse
-* test harness
+* parse ake
+* code gen ake
+* compare llvm
+* run ake
+* compare output
