@@ -148,6 +148,9 @@ Cent_ast* Cent_parse_property(Cent_parse_data* pd)
 void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n)
 {
     Cent_ast* a = Cent_parse_expr(pd);
+    if (!a) {
+        return;
+    }
     Cent_ast_add(n, a);
 
     Cent_lookahead(pd);

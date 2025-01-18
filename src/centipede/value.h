@@ -20,7 +20,7 @@ typedef union Cent_data
 {
     long long integer;
     double fp;
-    struct Zinc_string string;
+    Zinc_string string;
     bool boolean;
     struct {
         Cent_enum_type* enum_type;

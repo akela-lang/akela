@@ -27,8 +27,13 @@ Test_suite {
             .type = Ast_type::Let
         }
 
-        let let_a = Ast {
+        let let_lseq = Ast {
             .@child_of(let_stmt)
+            .type = Ast_type::Let_lseq
+        }
+
+        let let_a = Ast {
+            .@child_of(let_lseq)
             .type = Ast_type::Id
             .value = "a"
         }
@@ -41,8 +46,13 @@ Test_suite {
             }
         }
 
-        let let_number = Ast {
+        let let_rseq = Ast {
             .@child_of(let_stmt)
+            .type = Ast_type::Let_rseq
+        }
+
+        let let_number = Ast {
+            .@child_of(let_rseq)
             .type = Ast_type::Number
             .value = "105"
             .tu = Type_use {

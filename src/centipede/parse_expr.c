@@ -37,6 +37,9 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
     Cent_ast* b = NULL;
 
     a = Cent_parse_factor(pd);
+    if (!a) {
+        return a;
+    }
 
     Cent_lookahead(pd);
     while (pd->lookahead->type == Cent_token_double_colon) {
@@ -60,13 +63,16 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
         free(dc);
 
         b = Cent_parse_factor(pd);
+        if (!b) {
+            break;
+        }
         if (b->type != Cent_ast_type_id) {
             Zinc_error_list_set(pd->errors, &b->loc, "expected id");
             b->has_error = true;
             /* test case: test_parse_namespace_error_expected_id2 */
         }
-
         Cent_ast_add(n, b);
+
 
         Cent_lookahead(pd);
     }

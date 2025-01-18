@@ -33,7 +33,12 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
     free(eq);
 
     Cent_ast* a = Cent_parse_expr(pd);
-    Cent_ast_add(n, a);
+    if (a) {
+        Cent_ast_add(n, a);
+    } else {
+        Zinc_error_list_set(pd->errors, &pd->lookahead->loc, "expected expression");
+        n->has_error = true;
+    }
 
     if (!n->has_error) {
         Cent_symbol* sym = Cent_environment_get(pd->top, &id_node->text);
