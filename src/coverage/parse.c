@@ -6,95 +6,26 @@
 
 Cob_re Cover_gcov_line_re()
 {
-    Zinc_vector* text = NULL;
     char* s = "\\s*(\\-|#####|\\d+)\\*?:\\s*(\\d+):(Source:)?(.*)";
-    size_t len = strlen(s);
-
-    Zinc_vector_create(&text, 1);
-    Zinc_vector_add(text, s, len);
-
-    Zinc_input_unicode_string* input = NULL;
-    Zinc_input_unicode_string_create(&input, text);
-
-    struct Zinc_error_list* el = NULL;
-    Zinc_error_list_create(&el);
-
-    Cob_compile_data* cd = NULL;
-    Cob_compile_data_create(&cd, input, input->input_vtable, el);
-
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_vector_destroy(text);
-    free(text);
-    free(input);
-    Cob_compile_data_destroy(cd);
-    free(cd);
-
-    return re;
+    return Cob_compile_str(s);
 }
 
 Cob_re Cover_gcov_ext_re()
 {
-    Zinc_vector* text = NULL;
     char* s = "\\.gcov$";
-    size_t len = strlen(s);
-
-    Zinc_vector_create(&text, 1);
-    Zinc_vector_add(text, s, len);
-
-    Zinc_input_unicode_string* input = NULL;
-    Zinc_input_unicode_string_create(&input, text);
-
-    struct Zinc_error_list* el = NULL;
-    Zinc_error_list_create(&el);
-
-    Cob_compile_data* cd = NULL;
-    Cob_compile_data_create(&cd, input, input->input_vtable, el);
-
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_vector_destroy(text);
-    free(text);
-    free(input);
-    Cob_compile_data_destroy(cd);
-    free(cd);
-
-    return re;
+    return Cob_compile_str(s);
 }
 
 Cob_re Cover_test_dir_re()
 {
-    Zinc_vector* text = NULL;
     char* s = "\\-test$";
-    size_t len = strlen(s);
-
-    Zinc_vector_create(&text, 1);
-    Zinc_vector_add(text, s, len);
-
-    Zinc_input_unicode_string* input = NULL;
-    Zinc_input_unicode_string_create(&input, text);
-
-    struct Zinc_error_list* el = NULL;
-    Zinc_error_list_create(&el);
-
-    Cob_compile_data* cd = NULL;
-    Cob_compile_data_create(&cd, input, input->input_vtable, el);
-
-    Cob_re re = Cob_compile(cd);
-
-    Zinc_vector_destroy(text);
-    free(text);
-    free(input);
-    Cob_compile_data_destroy(cd);
-    free(cd);
-
-    return re;
+    return Cob_compile_str(s);
 }
 
-void Cover_re_cleanup(Cob_re* cr)
+void Cover_re_cleanup(Cob_re* re)
 {
-    Zinc_error_list_destroy(cr->el);
-    free(cr->el);
-    Cob_ast_destroy(cr->root);
-    free(cr->root);
+    Zinc_error_list_destroy(re->errors);
+    free(re->errors);
+    Cob_ast_destroy(re->root);
+    free(re->root);
 }

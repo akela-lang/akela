@@ -197,9 +197,9 @@ void Cover_read_file(Cover_file* file)
 
     Cob_re re = Cover_gcov_line_re();
 
-    if (re.el->head) {
+    if (re.errors->head) {
         printf("compile() error:\n");
-        struct Zinc_error* e = re.el->head;
+        struct Zinc_error* e = re.errors->head;
         while (e) {
             Zinc_string_finish(&e->message);
             printf("%s\n", e->message.buf);

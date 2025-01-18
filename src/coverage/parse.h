@@ -6,7 +6,7 @@
 
 Cob_re Cover_gcov_line_re();
 Cob_re Cover_gcov_ext_re();
-void Cover_re_cleanup(Cob_re* cr);
+void Cover_re_cleanup(Cob_re* re);
 Cob_re Cover_test_dir_re();
 
 #endif
