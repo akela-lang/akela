@@ -25,7 +25,7 @@
 #include <vector>
 #include <iostream>
 
-#define TOPLEVEL_NAME "__toplevel"
+#define TOP_LEVEL_NAME "__toplevel"
 #define MODULE_NAME "Akela JIT"
 
 using namespace llvm;
@@ -58,7 +58,7 @@ void CreateTopLevel(JITData* jd)
     PointerType* pt = array_type->getPointerTo();
     Type* ret_type = pt;
     FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
-    Function *f = Function::Create(func_type, Function::ExternalLinkage, TOPLEVEL_NAME, *jd->TheModule);
+    Function *f = Function::Create(func_type, Function::ExternalLinkage, TOP_LEVEL_NAME, *jd->TheModule);
     BasicBlock* entry = BasicBlock::Create(*jd->TheContext, "entry", f);
     jd->Builder->SetInsertPoint(entry);
 
@@ -68,7 +68,7 @@ void CreateTopLevel(JITData* jd)
 
 void Run(JITData* jd, std::string* s)
 {
-    auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOPLEVEL_NAME));
+    auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOP_LEVEL_NAME));
     char* (*fp)() = ExprSymbol.getAddress().toPtr <char*(*)()>();
     char* p = fp();
     printf("%s\n", p);

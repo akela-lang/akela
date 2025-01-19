@@ -21,3 +21,24 @@ void Run_data_destroy(Run_data* data)
     Cob_re_destroy(&data->llvm_re);
     Cob_re_destroy(&data->result_re);
 }
+
+void Run_pair_init(Run_pair* pair)
+{
+    pair->matched = true;
+    pair->actual = NULL;
+    pair->expected = NULL;
+}
+
+void Run_pair_create(Run_pair** pair)
+{
+    Zinc_malloc_safe((void**)pair, sizeof(Run_pair));
+    Run_pair_init(*pair);
+}
+
+void Run_pair_destroy(Run_pair* pair)
+{
+    Zinc_string_destroy(pair->actual);
+    free(pair->actual);
+    Zinc_string_destroy(pair->expected);
+    free(pair->expected);
+}

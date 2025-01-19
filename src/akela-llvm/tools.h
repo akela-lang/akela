@@ -43,7 +43,7 @@
 #include <iostream>
 #include "akela/symbol.h"
 
-#define TOPLEVEL_NAME "__toplevel"
+#define TOP_LEVEL_NAME "__top_level"
 #define MODULE_NAME "Akela JIT"
 
 namespace Akela_llvm {

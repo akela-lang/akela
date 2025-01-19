@@ -182,7 +182,7 @@ namespace Akela_llvm {
             auto v = (AllocaInst*)sym->reference;
             Type* t = v->getAllocatedType();
             Zinc_string_finish(&n->value);
-            return jd->Builder->CreateLoad(t, v, n->value.buf);
+            return jd->Builder->CreateLoad(t, v);
         } else {
             assert(false);
         }

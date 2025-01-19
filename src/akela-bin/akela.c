@@ -48,9 +48,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    struct Zinc_string bf;
-    Zinc_string_init(&bf);
-
     Akela_llvm_cg* cg = NULL;
     Akela_llvm_cg_create(&cg, &cu.el, &cu.extern_list);
     Ake_code_gen_result result;

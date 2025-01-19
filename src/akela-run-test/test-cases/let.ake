@@ -1,6 +1,6 @@
 let a: Int32 = 1401
 a
-##define dso_local i32 @top_level() #0 {
+##define i32 @__top_level() {
 ##entry:
 ##  %a = alloca i32, align 4
 ##  store i32 1401, ptr %a, align 4

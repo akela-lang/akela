@@ -4,7 +4,7 @@ set(files
         data.c
 )
 add_executable(akela-run-test ${files})
-target_link_libraries(akela-run-test cobble zinc)
+target_link_libraries(akela-run-test akela-llvm ${llvm_libs} akela cobble zinc)
 set_target_properties(akela-run-test
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin

@@ -34,7 +34,7 @@ namespace Akela_llvm {
         Function *toplevel = Function::Create(
                 func_type,
                 Function::ExternalLinkage,
-                TOPLEVEL_NAME,
+                TOP_LEVEL_NAME,
                 *jd.TheModule);
         jd.toplevel = toplevel;
 
@@ -81,11 +81,17 @@ namespace Akela_llvm {
         std::string str2;
         raw_string_ostream os2(str2);
         jd.TheModule->print(os2, nullptr);
-        Zinc_string_add_format(&result->text, "%s", str2.c_str());
-        Zinc_string_finish(&result->text);
+        Zinc_string_add_format(&result->module_text, "%s", str2.c_str());
+        Zinc_string_finish(&result->module_text);
+
+        std::string str4;
+        raw_string_ostream os4(str4);
+        jd.toplevel->print(os4, nullptr);
+        Zinc_string_add_str(&result->function_text, str4.c_str());
+        Zinc_string_finish(&result->function_text);
 
         if (result->debug) {
-            fprintf(stderr, "\n%s", result->text.buf);
+            fprintf(stderr, "\n%s", result->module_text.buf);
         }
 
         if (valid) {

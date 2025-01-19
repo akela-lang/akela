@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include "memory.h"
 
-void Zinc_string_node_init(Zinc_buffer_node* bn)
+void Zinc_string_node_init(Zinc_string_node* bn)
 {
     Zinc_string_init(&bn->value);
     bn->next = NULL;
     bn->prev = NULL;
 }
 
-void Zinc_string_node_destroy(Zinc_buffer_node* bn)
+void Zinc_string_node_destroy(Zinc_string_node* bn)
 {
     Zinc_string_destroy(&bn->value);
 }
@@ -28,16 +28,16 @@ void Zinc_string_list_create(Zinc_string_list** bl)
 
 void Zinc_string_list_destroy(Zinc_string_list* bl)
 {
-    Zinc_buffer_node* bn = bl->head;
+    Zinc_string_node* bn = bl->head;
     while (bn) {
-        Zinc_buffer_node* temp = bn;
+        Zinc_string_node* temp = bn;
         bn = bn->next;
         Zinc_string_node_destroy(temp);
         free(temp);
     }
 }
 
-void Zinc_string_list_add(Zinc_string_list* bl, Zinc_buffer_node* bn)
+void Zinc_string_list_add(Zinc_string_list* bl, Zinc_string_node* bn)
 {
     if (!bl->head && !bl->tail) {
         /* empty */
@@ -45,7 +45,7 @@ void Zinc_string_list_add(Zinc_string_list* bl, Zinc_buffer_node* bn)
         bl->tail = bn;
     } else {
         /* not empty */
-        Zinc_buffer_node* prev = bl->tail;
+        Zinc_string_node* prev = bl->tail;
         prev->next = bn;
         bn->prev = prev;
         bl->tail = bn;
@@ -54,8 +54,8 @@ void Zinc_string_list_add(Zinc_string_list* bl, Zinc_buffer_node* bn)
 
 void Zinc_string_list_add_str(Zinc_string_list* bl, const char* str)
 {
-    Zinc_buffer_node* bn = NULL;
-    Zinc_malloc_safe((void**)&bn, sizeof(Zinc_buffer_node));
+    Zinc_string_node* bn = NULL;
+    Zinc_malloc_safe((void**)&bn, sizeof(Zinc_string_node));
     Zinc_string_node_init(bn);
     Zinc_string_add_str(&bn->value, str);
     Zinc_string_list_add(bl, bn);
@@ -63,8 +63,8 @@ void Zinc_string_list_add_str(Zinc_string_list* bl, const char* str)
 
 void Zinc_string_list_add_bf(Zinc_string_list* bl, Zinc_string* bf)
 {
-    Zinc_buffer_node* bn = NULL;
-    Zinc_malloc_safe((void**)&bn, sizeof(Zinc_buffer_node));
+    Zinc_string_node* bn = NULL;
+    Zinc_malloc_safe((void**)&bn, sizeof(Zinc_string_node));
     Zinc_string_node_init(bn);
     Zinc_string_copy(bf, &bn->value);
     Zinc_string_list_add(bl, bn);
@@ -74,7 +74,7 @@ size_t Zinc_string_list_count(Zinc_string_list* bl)
 {
     size_t count = 0;
 
-    Zinc_buffer_node* bn = bl->head;
+    Zinc_string_node* bn = bl->head;
     while (bn) {
         count++;
         bn = bn->next;
@@ -110,7 +110,7 @@ void Zinc_string_split(Zinc_string* bf, Zinc_string_list* bl)
 
 Zinc_string* Zinc_string_list_get(Zinc_string_list* bl, size_t num)
 {
-    Zinc_buffer_node* bn = bl->head;
+    Zinc_string_node* bn = bl->head;
     size_t i = 0;
     while (bn) {
         if (i == num) {
@@ -124,7 +124,7 @@ Zinc_string* Zinc_string_list_get(Zinc_string_list* bl, size_t num)
 
 bool Zinc_string_list_contains(Zinc_string_list* bl, Zinc_string* value)
 {
-    Zinc_buffer_node* bn = bl->head;
+    Zinc_string_node* bn = bl->head;
     while (bn) {
         if (Zinc_string_compare(&bn->value, value)) {
             return true;
@@ -137,7 +137,7 @@ bool Zinc_string_list_contains(Zinc_string_list* bl, Zinc_string* value)
 
 bool Zinc_string_list_contains_str(Zinc_string_list* bl, const char* str)
 {
-    Zinc_buffer_node* bn = bl->head;
+    Zinc_string_node* bn = bl->head;
     while (bn) {
         if (Zinc_string_compare_str(&bn->value, str)) {
             return true;

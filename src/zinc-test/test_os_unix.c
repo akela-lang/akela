@@ -190,7 +190,7 @@ void test_os_unix_get_dir_files()
     bool seen_file2 = false;
     bool seen_file3 = false;
     bool seen_file4 = false;
-    struct Zinc_buffer_node* bn = bl.head;
+    struct Zinc_string_node* bn = bl.head;
     while (bn) {
         if (Zinc_string_compare_str(&bn->value, "/tmp/one/file1"))
             seen_file1 = true;

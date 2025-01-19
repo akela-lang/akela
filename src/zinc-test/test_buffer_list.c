@@ -6,14 +6,14 @@ void test_buffer_list1()
 {
     Zinc_test_name(__func__ );
 
-    struct Zinc_buffer_node* bn0 = NULL;
-    Zinc_malloc_safe((void**)&bn0, sizeof(struct Zinc_buffer_node));
+    struct Zinc_string_node* bn0 = NULL;
+    Zinc_malloc_safe((void**)&bn0, sizeof(struct Zinc_string_node));
     Zinc_string_node_init(bn0);
     Zinc_string_init(&bn0->value);
     Zinc_string_add_str(&bn0->value, "one");
 
-    struct Zinc_buffer_node* bn1 = NULL;
-    Zinc_malloc_safe((void**)&bn1, sizeof(struct Zinc_buffer_node));
+    struct Zinc_string_node* bn1 = NULL;
+    Zinc_malloc_safe((void**)&bn1, sizeof(struct Zinc_string_node));
     Zinc_string_node_init(bn1);
     Zinc_string_init(&bn1->value);
     Zinc_string_add_str(&bn1->value, "two");
@@ -50,10 +50,10 @@ void test_buffer_list_add_str()
     Zinc_string_list_add_str(&bl, "one");
     Zinc_string_list_add_str(&bl, "two");
 
-    struct Zinc_buffer_node* bn0 = bl.head;
+    struct Zinc_string_node* bn0 = bl.head;
     Zinc_expect_str(&bn0->value, "one", "one");
 
-    struct Zinc_buffer_node* bn1 = bn0->next;
+    struct Zinc_string_node* bn1 = bn0->next;
     Zinc_expect_str(&bn1->value, "two", "two");
 
     Zinc_string_list_destroy(&bl);
@@ -77,10 +77,10 @@ void test_buffer_list_add_bf()
     Zinc_string_list_add_bf(&bl, &bf0);
     Zinc_string_list_add_bf(&bl, &bf1);
 
-    struct Zinc_buffer_node* bn0 = bl.head;
+    struct Zinc_string_node* bn0 = bl.head;
     Zinc_expect_str(&bn0->value, "one", "one");
 
-    struct Zinc_buffer_node* bn1 = bn0->next;
+    struct Zinc_string_node* bn1 = bn0->next;
     Zinc_expect_str(&bn1->value, "two", "two");
 
     Zinc_string_destroy(&bf0);
@@ -113,15 +113,15 @@ void test_buffer_list_split()
 
     Zinc_string_split(&bf, &bl);
 
-    struct Zinc_buffer_node* bn0 = bl.head;
+    struct Zinc_string_node* bn0 = bl.head;
     Zinc_assert_ptr(bn0, "ptr bn0");
     Zinc_expect_str(&bn0->value, "one", "one bn0");
 
-    struct Zinc_buffer_node* bn1 = bn0->next;
+    struct Zinc_string_node* bn1 = bn0->next;
     Zinc_assert_ptr(bn1, "ptr bn1");
     Zinc_expect_str(&bn1->value, "two", "two bn1");
 
-    struct Zinc_buffer_node* bn2 = bn1->next;
+    struct Zinc_string_node* bn2 = bn1->next;
     Zinc_assert_ptr(bn2, "ptr bn2");
     Zinc_expect_str(&bn2->value, "three", "three bn2");
 

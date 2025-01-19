@@ -12,7 +12,8 @@ typedef struct {
 typedef struct {
     Ake_comp_unit* cu;
     Zinc_string value;
-    Zinc_string text;
+    Zinc_string module_text;
+    Zinc_string function_text;
     bool debug;
 } Ake_code_gen_result;
 
