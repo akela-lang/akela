@@ -26,13 +26,14 @@ void Run_test_case(
     Zinc_string* dir_path,
     Zinc_string* path,
     Zinc_string* file_name);
-void Run_akela(Zinc_string* ake, Zinc_string* llvm, Zinc_string* result);
+void Run_akela(Run_data* data, Zinc_string* ake, Zinc_string* llvm, Zinc_string* result);
 Run_pair Run_diff(Zinc_string* actual, Zinc_string* expected);
 Zinc_string_list* Run_split(Zinc_string* string);
 Zinc_string* Run_join(Zinc_string_list* list);
 void Run_print_akela(Run_pair* llvm_pair, Run_pair* result_pair, Zinc_string* ake);
 void Run_print_llvm(Run_pair* pair);
 void Run_print_result(Run_pair* pair);
+void Run_print_results(Run_data* data);
 
 bool Run_validate_directory(const char* path)
 {
@@ -98,7 +99,16 @@ void Run_parse_files(char* dir_name)
         }
     }
 
+    Run_print_results(&data);
+
     Zinc_string_destroy(&dir_path);
+}
+
+void Run_print_results(Run_data* data)
+{
+    printf("test case count: %zu\n", data->test_count);
+    printf("test case passed count: %zu\n", data->test_passed_count);
+    printf("test case failed count: %zu\n", data->test_failed_count);
 }
 
 void Run_append_path(Zinc_string* bf, char* path)
@@ -156,7 +166,7 @@ void Run_test_case(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zin
         }
     }
 
-    Run_akela(&ake, &llvm, &result);
+    Run_akela(data, &ake, &llvm, &result);
 
     Zinc_string_destroy(&line);
     Zinc_string_destroy(&ake);
@@ -166,7 +176,7 @@ void Run_test_case(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zin
     fclose(fp);
 }
 
-void Run_akela(Zinc_string* ake, Zinc_string* llvm, Zinc_string* result)
+void Run_akela(Run_data* data, Zinc_string* ake, Zinc_string* llvm, Zinc_string* result)
 {
     Zinc_vector* text = NULL;
     Zinc_vector_create(&text, sizeof(char));
@@ -179,6 +189,8 @@ void Run_akela(Zinc_string* ake, Zinc_string* llvm, Zinc_string* result)
     Ake_comp_unit_create(&cu);
     Ake_comp_unit_compile(cu, input, input->input_vtable);
 
+    data->test_count++;
+
     if (!cu->valid) {
         Zinc_error* e = cu->el.head;
         while (e) {
@@ -186,6 +198,7 @@ void Run_akela(Zinc_string* ake, Zinc_string* llvm, Zinc_string* result)
             fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
             e = e->next;
         }
+        data->test_failed_count++;
         return;
     } else {
         Akela_llvm_cg* cg = NULL;
@@ -194,7 +207,11 @@ void Run_akela(Zinc_string* ake, Zinc_string* llvm, Zinc_string* result)
         Ake_code_gen_result_init(&cg_result);
         Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu->root, &cg_result);
 
+        bool passed = true;
         Run_pair llvm_pair = Run_diff(&cg_result.function_text, llvm);
+        if (!llvm_pair.matched) {
+            passed = false;
+        }
 
         if (cu->el.head) {
             struct Zinc_error* e = cu->el.head;
@@ -203,9 +220,19 @@ void Run_akela(Zinc_string* ake, Zinc_string* llvm, Zinc_string* result)
                 fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
                 e = e->next;
             }
+            passed = false;
         }
 
         Run_pair result_pair = Run_diff(&cg_result.value, result);
+        if (!result_pair.matched) {
+            passed = false;
+        }
+
+        if (passed) {
+            data->test_passed_count++;
+        } else {
+            data->test_failed_count++;
+        }
 
         Run_print_akela(&llvm_pair, &result_pair, ake);
         Run_print_llvm(&llvm_pair);

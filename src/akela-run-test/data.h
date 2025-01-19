@@ -7,6 +7,9 @@ typedef struct Run_data {
     Cob_re ext_re;
     Cob_re llvm_re;
     Cob_re result_re;
+    size_t test_count;
+    size_t test_passed_count;
+    size_t test_failed_count;
 } Run_data;
 
 typedef struct {
