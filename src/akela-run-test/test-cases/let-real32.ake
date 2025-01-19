@@ -1,0 +1,10 @@
+let a: Real32 = 1.54
+a
+##define float @__top_level() {
+##entry:
+##  %a = alloca float, align 4
+##  store float 0x3FF8A3D700000000, ptr %a, align 4
+##  %0 = load float, ptr %a, align 4
+##  ret float %0
+##}
+###1.540000

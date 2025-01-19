@@ -1,0 +1,10 @@
+let a: Real64 = 1.54
+a
+##define double @__top_level() {
+##entry:
+##  %a = alloca double, align 8
+##  store double 1.540000e+00, ptr %a, align 8
+##  %0 = load double, ptr %a, align 8
+##  ret double %0
+##}
+###1.540000

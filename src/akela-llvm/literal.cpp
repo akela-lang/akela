@@ -15,8 +15,16 @@ namespace Akela_llvm {
             return ConstantInt::get(t, APInt(td->bit_count, v, n->tu->td->is_signed));
         } else if (td->type == Ake_type_float) {
             Zinc_string_finish(&n->value);
-            double v = strtod(n->value.buf, nullptr);
-            return ConstantFP::get(*jd->TheContext, APFloat(v));
+            if (td->bit_count == 64) {
+                double v = strtod(n->value.buf, nullptr);
+                Type* t = Get_type(jd, n->tu);
+                return ConstantFP::get(*jd->TheContext, APFloat(v));
+            } else if (td->bit_count == 32) {
+                float v = strtof(n->value.buf, nullptr);
+                return ConstantFP::get(*jd->TheContext, APFloat(v));
+            } else {
+                assert(false && "unhandled floating point value");
+            }
         }
         assert(false);
     }

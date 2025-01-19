@@ -1,0 +1,10 @@
+let a: Nat32 = 1234
+a
+##define i32 @__top_level() {
+##entry:
+##  %a = alloca i32, align 4
+##  store i32 1234, ptr %a, align 4
+##  %0 = load i32, ptr %a, align 4
+##  ret i32 %0
+##}
+###1234

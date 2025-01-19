@@ -107,8 +107,8 @@ void Run_parse_files(char* dir_name)
 void Run_print_results(Run_data* data)
 {
     printf("test case count: %zu\n", data->test_count);
-    printf("test case passed count: %zu\n", data->test_passed_count);
-    printf("test case failed count: %zu\n", data->test_failed_count);
+    printf("passed count: %zu\n", data->test_passed_count);
+    printf("failed count: %zu\n", data->test_failed_count);
 }
 
 void Run_append_path(Zinc_string* bf, char* path)

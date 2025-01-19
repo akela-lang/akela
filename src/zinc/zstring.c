@@ -303,6 +303,20 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
             }
+        } else if (last == '%' && *fmt == 'f') {
+            /* float is promoted to double */
+            double f = va_arg(args, double);
+            while (true) {
+                len = snprintf(buf, buf_size, "%f", f);
+                if (len < buf_size) {
+                    break;
+                }
+                buf_size *= 2;
+                Zinc_realloc_safe((void**)&buf, buf_size);
+            }
+            for (int j = 0; j < len; j++) {
+                Zinc_string_add_char(bf, buf[j]);
+            }
         } else if (last == '%' && *fmt == 'd') {
             int d = va_arg(args, int);
             while (true) {

@@ -220,10 +220,17 @@ namespace Akela_llvm {
                     Zinc_string_add_format(bf, "%lf", *p);
                     Zinc_string_add_char(bf, '\n');
                 } else {
-                    double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
-                    double v = fp();
-                    Zinc_string_add_format(bf, "%lf", v);
-                    Zinc_string_add_char(bf, '\n');
+                    if (n->tu->td->bit_count == 64) {
+                        double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
+                        double v = fp();
+                        Zinc_string_add_format(bf, "%lf", v);
+                        Zinc_string_add_char(bf, '\n');
+                    } else if (n->tu->td->bit_count == 32) {
+                        float (*fp)() = ExprSymbol.getAddress().toPtr <float(*)()>();
+                        float v = fp();
+                        Zinc_string_add_format(bf, "%f", v);
+                        Zinc_string_add_char(bf, '\n');
+                    }
                 }
             } else if (type == Ake_type_boolean) {
                 bool (*fp)() = ExprSymbol.getAddress().toPtr <bool(*)()>();
