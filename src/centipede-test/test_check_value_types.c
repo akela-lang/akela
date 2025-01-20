@@ -707,7 +707,7 @@ void test_check_value_types_not_attached_import()
     test_parse_setup(&ct,
         "use bar;\n"
     );
-    test_parse_add_comp_unit(ct->module_finder_obj, "bar.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "bar.cent",
         "let a = Foo {};\n"
     );
 
@@ -728,7 +728,7 @@ void test_check_value_types_not_attached_import_glob()
     test_parse_setup(&ct,
         "use bar::*;\n"
     );
-    test_parse_add_comp_unit(ct->module_finder_obj, "bar.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "bar.cent",
         "let a = Foo {};\n"
     );
 

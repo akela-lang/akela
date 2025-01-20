@@ -939,7 +939,7 @@ void test_parse_include()
         "}\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "types.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "types.cent",
         "enum Grocery_item {\n"
         "    Milk\n"
         "    Cereal\n"
@@ -1014,7 +1014,7 @@ void test_parse_include_multiple_namespace()
         "}\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "lib/types.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "lib/types.cent",
         "enum Grocery_item {\n"
         "    Milk\n"
         "    Cereal\n"
@@ -1097,7 +1097,7 @@ void test_parse_include_value()
         "data::a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
         "let a = 12597;\n"
     );
 
@@ -1149,7 +1149,7 @@ void test_parse_include_value_error()
         "data::b\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
         "let a = 12597;\n"
     );
 
@@ -1172,7 +1172,7 @@ void test_parse_include_glob()
         "a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
         "let a = 12597;\n"
     );
 
@@ -1194,7 +1194,7 @@ void test_parse_include_error_expected_id()
         "a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "1/2.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "1/2.cent",
         "let a = 12597;\n"
     );
 
@@ -1217,7 +1217,7 @@ void test_parse_namespace_error_expected_id()
         "1::a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.cent",
         "let a = 12597;\n"
     );
 
@@ -1240,7 +1240,7 @@ void test_parse_namespace_error_expected_id2()
         "data::1\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.cent",
         "let a = 12597;\n"
     );
 
@@ -1327,7 +1327,7 @@ void test_parse_let_error_shadow_module()
         "base\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "base.aken", "");
+    test_parse_add_comp_unit(ct->module_finder_obj, "base.cent", "");
 
     Cent_comp_unit_parse(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
@@ -1422,7 +1422,7 @@ void test_parse_module_id_error()
         "math::Pi\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "math.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "math.cent",
         "let Pi = 3.14;\n"
     );
 

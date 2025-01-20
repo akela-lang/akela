@@ -481,7 +481,7 @@ void test_build_namespace_enum()
         "}\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "types.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "types.cent",
         "enum Grocery_item {\n"
         "    Milk\n"
         "    Cereal\n"
@@ -525,7 +525,7 @@ void test_build_namespace_variable()
         "variables::a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "variables.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "variables.cent",
         "let a = 190;\n"
     );
 
@@ -554,7 +554,7 @@ void test_build_namespace_submodules()
         "foo::bar::a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.cent",
         "let a = 190;\n"
     );
 
@@ -583,7 +583,7 @@ void test_build_namespace_glob_value()
         "a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.aken",
+    test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.cent",
         "let a = 190;\n"
     );
 
