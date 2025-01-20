@@ -11,6 +11,8 @@ ZINC_API enum Zinc_result Zinc_close_temp_file(FILE* fp);
 ZINC_API enum Zinc_result Zinc_delete_temp_file(struct Zinc_string* name);
 ZINC_API enum Zinc_result Zinc_get_user_home_directory(struct Zinc_string* dir);
 ZINC_API void Zinc_path_join(struct Zinc_string* src1, struct Zinc_string* src2, struct Zinc_string* dest);
+ZINC_API void Zinc_path_append(Zinc_string* path, Zinc_string* path2);
+ZINC_API void Zinc_path_append_str(Zinc_string* path, const char* path2);
 ZINC_API enum Zinc_result Zinc_get_user_app_directory(struct Zinc_string* lower_name, struct Zinc_string* dir);
 ZINC_API enum Zinc_result Zinc_make_directory(struct Zinc_string* dir);
 ZINC_API enum Zinc_result Zinc_delete_directory(struct Zinc_string* dir);

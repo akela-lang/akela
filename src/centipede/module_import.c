@@ -37,7 +37,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         p = p->next;
     }
 
-    Zinc_string_add_str(&path, ".aken");
+    Zinc_string_add_str(&path, ".cent");
     Cent_comp_unit* cu = Cent_comp_table_find_unit(pd->ct, &path);
     if (!cu) {
         Zinc_error_list_set(pd->errors, &n->loc, "could not find module: %b", &path);

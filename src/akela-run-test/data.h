@@ -1,16 +1,32 @@
 #ifndef AKELA_RUN_TEST_DATA_H
 #define AKELA_RUN_TEST_DATA_H
 
+#include <centipede/module.h>
+
 #include "cobble/compile.h"
 #include "centipede/value.h"
+#include "centipede/module_file.h"
+#include "centipede/comp_table.h"
+#include "zinc/input_unicode_string.h"
+
+typedef struct Run_config_data {
+    Cent_module_file* mf;
+    Cent_comp_table* ct;
+    Zinc_vector* v;
+    Zinc_input_unicode_string* input;
+    Zinc_string file_name;
+    bool valid;
+} Run_config_data;
 
 typedef struct Run_test {
     Zinc_string ake;
     Zinc_string llvm;
-    Zinc_string config_string;
-    Cent_value* config;
+    Zinc_string config;
     struct Run_test* next;
     struct Run_test* prev;
+    Run_config_data* config_data;
+    bool solo;
+    bool mute;
 } Run_test;
 
 typedef struct Run_test_list {
@@ -34,6 +50,10 @@ typedef struct {
     Zinc_string* actual;
     Zinc_string* expected;
 } Run_pair;
+
+void Run_config_data_init(Run_config_data* config_data, Zinc_string* file_name);
+void Run_config_data_create(Run_config_data** config_data, Zinc_string* file_name);
+void Run_config_data_destroy(Run_config_data* config_data);
 
 void Run_test_init(Run_test *test);
 void Run_test_create(Run_test** test);

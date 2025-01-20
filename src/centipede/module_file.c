@@ -18,6 +18,7 @@ Cent_module_vtable Cent_module_file_vtable = {
 
 void Cent_module_file_init(Cent_module_file *mf, struct Zinc_string* dir_path)
 {
+    Zinc_string_init(&mf->dir_path);
     Zinc_string_copy(dir_path, &mf->dir_path);
     Zinc_string_finish(&mf->dir_path);
     mf->find = (Cent_module_find)Cent_module_file_find;

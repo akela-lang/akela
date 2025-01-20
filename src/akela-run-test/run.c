@@ -1,6 +1,9 @@
 #include "zinc/os_unix.h"
 #include "zinc/zstring.h"
 #include "parse.h"
+#include "test_case.h"
+#include "data.h"
+#include "type_info.h"
 
 #define NAME "akela-run-test"
 
@@ -16,7 +19,15 @@ int main(int argc, const char* argv[])
         return 1;
     }
 
-    Run_parse_files(dir_name);
+    Run_data data;
+    Run_data_init(&data);
+
+    Run_parse_files(&data, dir_name);
+    Run_get_type_info(&data, dir_name);
+    Run_test_cases(&data);
+    Run_print_results(&data);
+
+    Run_data_destroy(&data);
 
     return 0;
 }

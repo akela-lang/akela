@@ -5,6 +5,12 @@ a
 /source_filename/
 /target datalayout/
 
+declare void @abort()
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
 define i32 @__top_level() {
 entry:
   %a = alloca i32, align 4
@@ -13,12 +19,12 @@ entry:
   ret i32 %0
 }
 ###
-use lib::base::*
+use lib::base::*;
 Test {
     .solo = false
     .mute = false
     Field {
-        .type = Field_type::Int32
+        .type = Type::Int32
         .value = "-104"
      }
 }

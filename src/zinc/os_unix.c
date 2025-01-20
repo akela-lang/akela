@@ -72,6 +72,18 @@ void Zinc_path_join(Zinc_string* src1, Zinc_string* src2, Zinc_string* dest)
     Zinc_string_copy(src2, dest);
 }
 
+void Zinc_path_append(Zinc_string* path, Zinc_string* path2)
+{
+    Zinc_string_add_char(path, '/');
+    Zinc_string_add_string(path, path2);
+}
+
+void Zinc_path_append_str(Zinc_string* path, const char* path2)
+{
+    Zinc_string_add_char(path, '/');
+    Zinc_string_add_str(path, path2);
+}
+
 enum Zinc_result Zinc_get_user_app_directory(Zinc_string* lower_name, Zinc_string* dir)
 {
     Zinc_string home;
