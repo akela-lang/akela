@@ -1,0 +1,46 @@
+Data_type_list {
+    Data_type {
+        .type = Type_type::Int8
+        .align = 1
+    }
+    Data_type {
+        .type = Type_type::Int16
+        .align = 2
+    }
+    Data_type {
+        .type = Type_type::Int32
+        .align = 4
+    }
+    Data_type {
+        .type = Type_type::Int64
+        .align = 8
+    }
+    Data_type {
+        .type = Type_type::Nat8
+        .align = 1
+    }
+    Data_type {
+        .type = Type_type::Nat16
+        .align = 2
+    }
+    Data_type {
+        .type = Type_type::Nat32
+        .align = 4
+    }
+    Data_type {
+        .type = Type_type::Nat64
+        .align = 8
+    }
+    Data_type {
+        .type = Type_type::Real16
+        .align = 2
+    }
+    Data_type {
+        .type = Type_type::Real32
+        .align = 4
+    }
+    Data_type {
+        .type = Type_type::Real64
+        .align = 8
+    }
+}

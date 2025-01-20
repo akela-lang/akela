@@ -1,0 +1,50 @@
+element Test {
+    properties {
+        solo: Bool
+        mute: Bool
+    }
+    children {
+        Struct
+        Field
+    }
+}
+
+element Struct {
+    children {
+        Field
+    }
+}
+
+element Field {
+    properties {
+        type: Type
+        value: String
+    }
+}
+
+element Data_type_list {
+    children {
+        Data_type
+    }
+}
+
+element Data_type {
+    properties {
+        type: Type
+        align: Integer
+    }
+}
+
+enum Type {
+    Int8
+    Int16
+    Int32
+    Int64
+    Nat8
+    Nat16
+    Nat32
+    Nat64
+    Real16
+    Real32
+    Real64
+}
