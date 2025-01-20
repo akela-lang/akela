@@ -86,7 +86,16 @@ void Ake_symbol_table_init_reserved(struct Ake_environment* env)
 void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake_environment* env)
 {
 	const char* name;
-	struct Ake_type_def* td = NULL;
+	Ake_type_def* td = NULL;
+
+	name = "Int16";
+	Zinc_malloc_safe((void**)&td, sizeof(Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_integer;
+	Zinc_string_add_str(&td->name, name);
+	td->is_signed = true;
+	td->bit_count = 16;
+	Ake_symbol_table_add_type(env, name, td);
 
 	name = "Int32";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
@@ -114,6 +123,14 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
     td->bit_count = 8;
     Ake_symbol_table_add_type(env, name, td);
 
+	name = "Nat16";
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_integer;
+	Zinc_string_add_str(&td->name, name);
+	td->bit_count = 16;
+	Ake_symbol_table_add_type(env, name, td);
+
     name = "Nat32";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
 	Ake_type_def_init(td);
@@ -128,6 +145,14 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->type = Ake_type_integer;
 	Zinc_string_add_str(&td->name, name);
 	td->bit_count = 64;
+	Ake_symbol_table_add_type(env, name, td);
+
+	name = "Real16";
+	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_float;
+	Zinc_string_add_str(&td->name, name);
+	td->bit_count = 16;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "Real32";

@@ -1,0 +1,10 @@
+let a: Real16 = 1.54
+a
+##define half @__top_level() {
+##entry:
+##  %a = alloca half, align 2
+##  store half 0xH3E29, ptr %a, align 2
+##  %0 = load half, ptr %a, align 2
+##  ret half %0
+##}
+###1.540039

@@ -356,6 +356,71 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
             for (int j = 0; j < len; j++) {
                 Zinc_string_add_char(bf, buf[j]);
             }
+        } else if (last_last == '%' && last == 'l' && *fmt == 'u') {
+            unsigned long lu = va_arg(args, unsigned long);
+            while (true) {
+                len = snprintf(buf, buf_size, "%lu", lu);
+                if (len < buf_size) {
+                    break;
+                }
+                buf_size *= 2;
+                Zinc_realloc_safe((void**)&buf, buf_size);
+            }
+            for (int j = 0; j < len; j++) {
+                Zinc_string_add_char(bf, buf[j]);
+            }
+        } else if (last == '%' && *fmt == 'u') {
+            unsigned int u = va_arg(args, unsigned int);
+            while (true) {
+                len = snprintf(buf, buf_size, "%u", u);
+                if (len < buf_size) {
+                    break;
+                }
+                buf_size *= 2;
+                Zinc_realloc_safe((void**)&buf, buf_size);
+            }
+            for (int j = 0; j < len; j++) {
+                Zinc_string_add_char(bf, buf[j]);
+            }
+        } else if (last_last == '%' && last == 'h' && *fmt == 'u') {
+            unsigned int hu = va_arg(args, unsigned int);
+            while (true) {
+                len = snprintf(buf, buf_size, "%hu", hu);
+                if (len < buf_size) {
+                    break;
+                }
+                buf_size *= 2;
+                Zinc_realloc_safe((void**)&buf, buf_size);
+            }
+            for (int j = 0; j < len; j++) {
+                Zinc_string_add_char(bf, buf[j]);
+            }
+        } else if (last_last_last == '%' && last_last == 'h' && last == 'h' && *fmt == 'u') {
+            unsigned int hhu = va_arg(args, unsigned int);
+            while (true) {
+                len = snprintf(buf, buf_size, "%hhu", hhu);
+                if (len < buf_size) {
+                    break;
+                }
+                buf_size *= 2;
+                Zinc_realloc_safe((void**)&buf, buf_size);
+            }
+            for (int j = 0; j < len; j++) {
+                Zinc_string_add_char(bf, buf[j]);
+            }
+        } else if (last_last == '%' && last == 'h' && *fmt == 'd') {
+            int hd = va_arg(args, int);
+            while (true) {
+                len = snprintf(buf, buf_size, "%hd", hd);
+                if (len < buf_size) {
+                    break;
+                }
+                buf_size *= 2;
+                Zinc_realloc_safe((void**)&buf, buf_size);
+            }
+            for (int j = 0; j < len; j++) {
+                Zinc_string_add_char(bf, buf[j]);
+            }
         } else if (last == '%' && *fmt == 'z') {
         } else if (last_last == '%' && last == 'z' && *fmt == 'u') {
             size_t zu = va_arg(args, size_t);

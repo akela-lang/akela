@@ -22,6 +22,10 @@ namespace Akela_llvm {
             } else if (td->bit_count == 32) {
                 float v = strtof(n->value.buf, nullptr);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
+            } else if (td->bit_count == 16) {
+                _Float16 v = strtof(n->value.buf, nullptr);
+                Type* t = Type::getHalfTy(*jd->TheContext);
+                return ConstantFP::get(t, v);
             } else {
                 assert(false && "unhandled floating point value");
             }
