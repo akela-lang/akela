@@ -220,8 +220,8 @@ namespace Akela_llvm {
                             Zinc_string_add_format(bf, "%hd", v);
                             Zinc_string_add_char(bf, '\n');
                         } else if (bit_count == 8) {
-                            char (*fp)() = ExprSymbol.getAddress().toPtr<char(*)()> ();
-                            char v = fp();
+                            int32_t (*fp)() = ExprSymbol.getAddress().toPtr<int32_t(*)()> ();
+                            int32_t v = fp();
                             Zinc_string_add_format(bf, "%hhd", (int)v);
                             Zinc_string_add_char(bf, '\n');
                         } else {
@@ -246,8 +246,8 @@ namespace Akela_llvm {
                             Zinc_string_add_format(bf, "%hu", (unsigned int)v);
                             Zinc_string_add_char(bf, '\n');
                         } else if (bit_count == 8) {
-                            unsigned char (*fp)() = ExprSymbol.getAddress().toPtr<unsigned char(*)()> ();
-                            unsigned char v = fp();
+                            u_int8_t (*fp)() = ExprSymbol.getAddress().toPtr<u_int8_t(*)()> ();
+                            u_int8_t v = fp();
                             Zinc_string_add_format(bf, "%hhu", (unsigned int)v);
                             Zinc_string_add_char(bf, '\n');
                         } else {

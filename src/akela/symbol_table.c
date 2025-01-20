@@ -88,6 +88,15 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	const char* name;
 	Ake_type_def* td = NULL;
 
+	name = "Int8";
+	Zinc_malloc_safe((void**)&td, sizeof(Ake_type_def));
+	Ake_type_def_init(td);
+	td->type = Ake_type_integer;
+	Zinc_string_add_str(&td->name, name);
+	td->is_signed = true;
+	td->bit_count = 8;
+	Ake_symbol_table_add_type(env, name, td);
+
 	name = "Int16";
 	Zinc_malloc_safe((void**)&td, sizeof(Ake_type_def));
 	Ake_type_def_init(td);
