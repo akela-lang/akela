@@ -1,4 +1,4 @@
-let a: Int8 = 102
+const a: Int8 = 102
 a
 ##define i8 @__top_level() {
 ##entry:

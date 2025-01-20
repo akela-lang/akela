@@ -6,7 +6,7 @@ Test_suite {
     Test {
         .name = "declare and use an integer"
         .source = Source {
-            "let a: Int32 = 105\n"
+            "const a: Int32 = 105\n"
             "a\n"
         }
         .solo = true
@@ -24,7 +24,7 @@ Test_suite {
         # line 1
         let let_stmt = Ast {
             .@child_of(stmts)
-            .type = Ast_type::Let
+            .type = Ast_type::Const
         }
 
         let let_lseq = Ast {
@@ -73,7 +73,7 @@ Test_suite {
     Test {
         .name = "declare and use an integer 2"
         .source = Source {
-            "let a: Int32 = 105\n"
+            "const a: Int32 = 105\n"
             "a\n"
         }
         .solo = true
@@ -85,7 +85,7 @@ Test_suite {
                 .td = Td_int32
             }
             Ast {
-                .type = Ast_type::Let
+                .type = Ast_type::Const
                 Ast {
                     .type = Ast_type::Let_lseq
                     Ast {

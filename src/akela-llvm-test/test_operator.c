@@ -21,7 +21,7 @@ void test_code_gen_add2()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    cg_setup("let a: Int32 = 4\n"
+    cg_setup("const a: Int32 = 4\n"
              "a + 61\n",
              &result);
     Zinc_expect_str(&result.value, "65", "65");
@@ -47,7 +47,7 @@ void test_code_gen_sub2()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    cg_setup("let a: Int32 = 10\n"
+    cg_setup("const a: Int32 = 10\n"
              "a - 2\n",
              &result);
     Zinc_expect_str(&result.value, "8", "8");

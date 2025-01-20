@@ -114,7 +114,7 @@ Ake_ast* Ake_parse_stmt(struct Ake_parse_state* ps)
 		n = Ake_parse_struct(ps);
 	} else if (t0->type == Ake_token_return) {
         n = Ake_parse_return(ps);
-    } else if (t0->type == Ake_token_let) {
+    } else if (t0->type == Ake_token_const || t0->type == Ake_token_var) {
         n = Ake_parse_let(ps);
     } else if (t0->type == Ake_token_extern) {
         n = Ake_parse_extern(ps);
@@ -723,16 +723,27 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
-    n->type = Ake_ast_type_let;
 
-    struct Ake_token* vrt = NULL;
-    if (!Ake_match(ps, Ake_token_let, "expected let", &vrt, n)) {
-        /* test case: no test case needed */
-        assert(false);
-    }
-
-    Ake_token_destroy(vrt);
-    free(vrt);
+	Ake_get_lookahead(ps);
+	if (ps->lookahead->type == Ake_token_const) {
+		Ake_token* t = NULL;
+		if (!Ake_match(ps, Ake_token_const, "expected const", &t, n)) {
+			assert(false && "expected const");
+		}
+		Ake_token_destroy(t);
+		free(t);
+		n->type = Ake_ast_type_const;
+	} else if (ps->lookahead->type == Ake_token_var) {
+		Ake_token* t = NULL;
+		if (!Ake_match(ps, Ake_token_var, "expected var", &t, n)) {
+			assert(false && "expected var");;
+		}
+		Ake_token_destroy(t);
+		free(t);
+		n->type = Ake_ast_type_var;
+	} else {
+		assert(false && "expected const or var");
+	}
 
     Ake_consume_newline(ps, n);
 

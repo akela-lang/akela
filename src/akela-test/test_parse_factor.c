@@ -166,7 +166,7 @@ void test_parse_id()
 
 	Ake_comp_unit cu;
 
-    parse_setup("let x: Int64; x", &cu);
+    parse_setup("const x: Int64; x", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -175,7 +175,7 @@ void test_parse_id()
 
 	Ake_ast* let = Ast_node_get(cu.root, 0);
 	Zinc_assert_ptr(let, "ptr let");
-	Zinc_assert_int_equal(let->type, Ake_ast_type_let, "type let");
+	Zinc_assert_int_equal(let->type, Ake_ast_type_const, "type let");
 
 	Ake_ast* let_lseq = Ast_node_get(let, 0);
 	Zinc_assert_ptr(let_lseq, "ptr let_lseq");
@@ -212,7 +212,7 @@ void test_parse_id2()
 
 	Ake_comp_unit cu;
 
-    parse_setup("let _a23: Int64; _a23", &cu);
+    parse_setup("const _a23: Int64; _a23", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -233,7 +233,7 @@ void test_parse_id3()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let a2: Int64; a2", &cu);
+    parse_setup("const a2: Int64; a2", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -255,7 +255,7 @@ void test_parse_id_greek()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let αβγ: Int64; αβγ", &cu);
+    parse_setup("const αβγ: Int64; αβγ", &cu);
     Zinc_assert_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -275,15 +275,15 @@ void test_parse_id_cyrillic()
     Zinc_test_name(__func__);
     Ake_comp_unit cu;
 
-    parse_setup("let я: Int32; я", &cu);
+    parse_setup("const я: Int32; я", &cu);
     Zinc_expect_false(cu.valid, "parse_setup valid");
     Zinc_assert_has_errors(&cu.el);
     Zinc_error* e = Zinc_expect_source_error(&cu.el, "Unrecognized character: я");
     Zinc_assert_ptr(e, "ptr e");
-    Zinc_expect_size_t_equal(e->loc.start_pos, 4, "start_pos");
-    Zinc_expect_size_t_equal(e->loc.end_pos, 6, "size");
+    Zinc_expect_size_t_equal(e->loc.start_pos, 6, "start_pos");
+    Zinc_expect_size_t_equal(e->loc.end_pos, 8, "size");
     Zinc_expect_size_t_equal(e->loc.line, 1, "line");
-    Zinc_expect_size_t_equal(e->loc.col, 5, "col");
+    Zinc_expect_size_t_equal(e->loc.col, 7, "col");
 
     parse_teardown(&cu);
 }
@@ -398,7 +398,7 @@ void test_parse_not_id()
 
 	Ake_comp_unit cu;
 
-    parse_setup("let a: Bool; !a", &cu);
+    parse_setup("const a: Bool; !a", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
@@ -783,20 +783,20 @@ void test_parse_factor_newline_let()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let\nx: Int32", &cu);
+    parse_setup("const\nx: Int32", &cu);
     Zinc_expect_true(cu.valid, "parse_setup valid");
     Zinc_expect_no_errors(&cu.el);
 
     parse_teardown(&cu);
 }
 
-void test_parse_factor_newline_let_assign()
+void test_parse_factor_newline_const_assign()
 {
     Zinc_test_name(__func__);
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let\nx: Int32 =\n1", &cu);
+    parse_setup("const\nx: Int32 =\n1", &cu);
     Zinc_expect_true(cu.valid, "parse_setup valid");
     Zinc_expect_no_errors(&cu.el);
 
@@ -920,7 +920,7 @@ void test_parse_factor_array_element_const()
     Zinc_test_name(__func__);
     struct Ake_comp_unit cu;
 
-    parse_setup("let mut a: [4 const]Int32 = [1, 2, 3, 4]\n"
+    parse_setup("const mut a: [4 const]Int32 = [1, 2, 3, 4]\n"
                 "a[0]\n",
                 &cu);
     Zinc_expect_true(cu.valid, "valid");
@@ -928,7 +928,7 @@ void test_parse_factor_array_element_const()
 
     Ake_ast* let = Ast_node_get(cu.root, 0);
     Zinc_assert_ptr(let, "ptr let");
-    Zinc_expect_int_equal(let->type, Ake_ast_type_let, "type let");
+    Zinc_expect_int_equal(let->type, Ake_ast_type_const, "type let");
 
     Ake_ast* let_type = Ast_node_get(let, 1);
     Zinc_assert_ptr(let_type, "ptr type");
@@ -948,7 +948,7 @@ void test_parse_factor_array_element_const_error()
     Zinc_test_name(__func__);
     struct Ake_comp_unit cu;
 
-    parse_setup("let mut a: [4 const]Int32 = [1, 2, 3, 4]\n"
+    parse_setup("const mut a: [4 const]Int32 = [1, 2, 3, 4]\n"
                 "a[0] = 10\n",
                 &cu);
     Zinc_expect_false(cu.valid, "valid");
@@ -991,7 +991,7 @@ void test_parse_factor()
 	test_parse_not_error_no_value();
 	test_parse_not_error_not_boolean();
     test_parse_factor_newline_let();
-    test_parse_factor_newline_let_assign();
+    test_parse_factor_newline_const_assign();
     test_parse_factor_newline_not();
     test_parse_factor_newline_sign();
     test_parse_factor_newline_array_literal();

@@ -93,7 +93,6 @@ enum Ast_type {
     Declaration
     Array_literal
     Array_subscript
-    Let
     Boolean
     Parenthesis
     Type
@@ -114,6 +113,8 @@ enum Ast_type {
     Ellipsis
     Impl
     Self
+    Const
+    Var
 }
 
 element Type_use {

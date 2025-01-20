@@ -8,7 +8,7 @@ namespace Akela_llvm {
     void Array_literal_element(Jit_data* jd, Ake_ast* n, Value* ptr);
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_let(Jit_data* jd, Ake_ast* n)
+    Value* Handle_variable_dec(Jit_data* jd, Ake_ast* n)
     {
         Ake_ast* lseq = Ast_node_get(n, 0);
         Ake_ast* type_node = Ast_node_get(n, 1);

@@ -1,4 +1,4 @@
-let a: Real32 = 1.54
+const a: Real32 = 1.54
 a
 ##define float @__top_level() {
 ##entry:

@@ -44,7 +44,6 @@ typedef enum Ake_token_enum {
     Ake_token_left_square_bracket,
     Ake_token_right_square_bracket,
     Ake_token_string,
-    Ake_token_let,
     Ake_token_left_curly_brace,
     Ake_token_right_curly_brace,
     Ake_token_boolean,
@@ -57,6 +56,7 @@ typedef enum Ake_token_enum {
     Ake_token_extern,
     Ake_token_mut,
     Ake_token_const,
+    Ake_token_var,
     Ake_token_arrow,
     Ake_token_ellipsis,
     Ake_token_range,
@@ -108,7 +108,6 @@ static char const* Ake_token_name(Ake_token_enum type)
     name[Ake_token_left_square_bracket] = "[";
     name[Ake_token_right_square_bracket] = "]";
     name[Ake_token_string] = "string";
-    name[Ake_token_let] = "var";
     name[Ake_token_left_curly_brace] = "{";
     name[Ake_token_right_curly_brace] = "}";
     name[Ake_token_boolean] = "boolean";
@@ -121,6 +120,7 @@ static char const* Ake_token_name(Ake_token_enum type)
     name[Ake_token_extern] = "extern";
     name[Ake_token_mut] = "mut";
     name[Ake_token_const] = "const";
+    name[Ake_token_var] = "var";
     name[Ake_token_arrow] = "arrow";
     name[Ake_token_ellipsis] = "ellipsis";
     name[Ake_token_range] = "range";

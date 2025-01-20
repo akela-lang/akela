@@ -70,7 +70,6 @@ void Ake_symbol_table_init_reserved(struct Ake_environment* env)
 	Ake_symbol_table_add_reserved_word(env, "while", Ake_token_while);
 	Ake_symbol_table_add_reserved_word(env, "for", Ake_token_for);
 	Ake_symbol_table_add_reserved_word(env, "in", Ake_token_in);
-	Ake_symbol_table_add_reserved_word(env, "let", Ake_token_let);
 	Ake_symbol_table_add_reserved_word(env, "true", Ake_token_boolean);
 	Ake_symbol_table_add_reserved_word(env, "false", Ake_token_boolean);
 	Ake_symbol_table_add_reserved_word(env, "module", Ake_token_module);
@@ -79,6 +78,7 @@ void Ake_symbol_table_init_reserved(struct Ake_environment* env)
     Ake_symbol_table_add_reserved_word(env, "extern", Ake_token_extern);
     Ake_symbol_table_add_reserved_word(env, "mut", Ake_token_mut);
     Ake_symbol_table_add_reserved_word(env, "const", Ake_token_const);
+	Ake_symbol_table_add_reserved_word(env, "var", Ake_token_var);
     Ake_symbol_table_add_reserved_word(env, "impl", Ake_token_impl);
     Ake_symbol_table_add_reserved_word(env, "self", Ake_token_self);
 }

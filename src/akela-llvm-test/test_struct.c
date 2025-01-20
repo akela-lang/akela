@@ -13,7 +13,7 @@ void test_akela_llvm_struct_assign_elements()
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
-             "let a: Point\n"
+             "const a: Point\n"
              "a.x = 1.0\n"
              "a.y = 2.0\n"
              "a.x\n",
@@ -26,7 +26,7 @@ void test_akela_llvm_struct_assign_elements()
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
-             "let a: Point\n"
+             "const a: Point\n"
              "a.x = 1.0\n"
              "a.y = 2.0\n"
              "a.y\n",
@@ -45,7 +45,7 @@ void test_akela_llvm_struct_literal()
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
-             "let a: Point = Point\n"
+             "const a: Point = Point\n"
              "  x: 1.0\n"
              "  y: 2.0\n"
              "end\n"
@@ -59,7 +59,7 @@ void test_akela_llvm_struct_literal()
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
-             "let a: Point = Point\n"
+             "const a: Point = Point\n"
              "  x: 1.0\n"
              "  y: 2.0\n"
              "end\n"
@@ -75,7 +75,7 @@ void test_akela_llvm_struct_array2()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [6 const]Nat8 = \"hello\"\n"
+    cg_setup("const a: [6 const]Nat8 = \"hello\"\n"
              "a[0]\n",
              &result);
     Zinc_expect_str(&result.value, "104", "value");
@@ -89,7 +89,7 @@ void test_akela_llvm_struct_array3()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [6 const]Nat8 = \"John\"\n"
+    cg_setup("const a: [6 const]Nat8 = \"John\"\n"
              "a[0]\n",
              &result);
     Zinc_expect_str(&result.value, "74", "value");
@@ -103,7 +103,7 @@ void test_akela_llvm_struct_array4()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [100 const]Nat8 = \"John\"\n"
+    cg_setup("const a: [100 const]Nat8 = \"John\"\n"
              "a[0]\n",
              &result);
     Zinc_expect_str(&result.value, "74", "value");
@@ -117,7 +117,7 @@ void test_akela_llvm_struct_array5()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [100 const]Nat8 = \"John\"\n"
+    cg_setup("const a: [100 const]Nat8 = \"John\"\n"
              "a[0]\n",
              &result);
     Zinc_expect_str(&result.value, "74", "value");
@@ -131,8 +131,8 @@ void test_akela_llvm_struct_array6()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [100 const]Nat8 = \"John\"\n"
-             "let b: [100 const]Nat8 = a\n"
+    cg_setup("const a: [100 const]Nat8 = \"John\"\n"
+             "const b: [100 const]Nat8 = a\n"
              "b[0]\n",
              &result);
     Zinc_expect_str(&result.value, "74", "value");
@@ -146,8 +146,8 @@ void test_akela_llvm_struct_array7()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [4 const]Nat8 = [1,2,3,4]\n"
-             "let b: [4 const]Nat8 = a\n"
+    cg_setup("const a: [4 const]Nat8 = [1,2,3,4]\n"
+             "const b: [4 const]Nat8 = a\n"
              "b[0]\n",
              &result);
     Zinc_expect_str(&result.value, "1", "value");
@@ -165,7 +165,7 @@ void test_akela_llvm_struct_array8()
              "struct Foo\n"
              "  x: Nat8\n"
              "end\n"
-             "let foo: Foo\n"
+             "const foo: Foo\n"
              "foo.x = 5\n"
              "foo.x\n",
              &result);
@@ -183,7 +183,7 @@ void test_akela_llvm_struct_array9()
     cg_setup("struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
-             "let foo: Foo = Foo\n"
+             "const foo: Foo = Foo\n"
              "  x: [1,2,3,4]\n"
              "end\n"
              "foo.x[0]\n",
@@ -198,11 +198,11 @@ void test_akela_llvm_struct_array10()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [4]Int32 = [1,2,3,4]\n"
+    cg_setup("const a: [4]Int32 = [1,2,3,4]\n"
             "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
-             "let foo: Foo = Foo\n"
+             "const foo: Foo = Foo\n"
              "  x: a\n"
              "end\n"
              "foo.x[0]\n",
@@ -220,7 +220,7 @@ void test_akela_llvm_struct_array11()
     cg_setup("struct Foo\n"
             "  x: [4]Int32\n"
             "end\n"
-            "let foo: Foo\n"
+            "const foo: Foo\n"
             "foo.x[0] = 1\n"
             "foo.x[1] = 2\n"
             "foo.x[2] = 3\n"
@@ -231,11 +231,11 @@ void test_akela_llvm_struct_array11()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [4]Nat8 = [1,2,3,4]\n"
+    cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
-             "let foo: Foo\n"
+             "const foo: Foo\n"
              "foo.x = a\n"
              "foo.x[1]\n",
              &result);
@@ -243,11 +243,11 @@ void test_akela_llvm_struct_array11()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [4]Nat8 = [1,2,3,4]\n"
+    cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
-             "let foo: Foo\n"
+             "const foo: Foo\n"
              "foo.x = a\n"
              "foo.x[2]\n",
              &result);
@@ -255,11 +255,11 @@ void test_akela_llvm_struct_array11()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let a: [4]Nat8 = [1,2,3,4]\n"
+    cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
-             "let foo: Foo\n"
+             "const foo: Foo\n"
              "foo.x = a\n"
              "foo.x[3]\n",
              &result);
@@ -278,7 +278,7 @@ void test_akela_llvm_struct_array12()
              "  last_name: [100 const]Nat8\n"
              "  age: Nat32\n"
              "end\n"
-             "let p: Person = Person\n"
+             "const p: Person = Person\n"
              "  first_name: \"John\"\n"
              "  last_name: \"Smith\"\n"
              "  age: 35\n"
@@ -294,7 +294,7 @@ void test_akela_llvm_struct_array12()
              "  last_name: [100 const]Nat8\n"
              "  age: Nat32\n"
              "end\n"
-             "let p: Person = Person\n"
+             "const p: Person = Person\n"
              "  first_name: \"John\"\n"
              "  last_name: \"Smith\"\n"
              "  age: 35\n"
@@ -310,7 +310,7 @@ void test_akela_llvm_struct_array12()
              "  last_name: [100 const]Nat8\n"
              "  age: Nat32\n"
              "end\n"
-             "let p: Person = Person\n"
+             "const p: Person = Person\n"
              "  first_name: \"John\"\n"
              "  last_name: \"Smith\"\n"
              "  age: 35\n"
@@ -335,7 +335,7 @@ void test_akela_llvm_struct_struct()
              "  p0: Point\n"
              "  p1: Point\n"
              "end\n"
-             "let line: Line = Line\n"
+             "const line: Line = Line\n"
              "  p0: Point\n"
              "    x: 1.5\n"
              "    y: 2.5\n"
@@ -359,7 +359,7 @@ void test_akela_llvm_struct_struct()
              "  p0: Point\n"
              "  p1: Point\n"
              "end\n"
-             "let line: Line = Line\n"
+             "const line: Line = Line\n"
              "  p0: Point\n"
              "    x: 1.5\n"
              "    y: 2.5\n"
@@ -383,7 +383,7 @@ void test_akela_llvm_struct_struct()
              "  p0: Point\n"
              "  p1: Point\n"
              "end\n"
-             "let line: Line = Line\n"
+             "const line: Line = Line\n"
              "  p0: Point\n"
              "    x: 1.5\n"
              "    y: 2.5\n"
@@ -407,7 +407,7 @@ void test_akela_llvm_struct_struct()
              "  p0: Point\n"
              "  p1: Point\n"
              "end\n"
-             "let line: Line = Line\n"
+             "const line: Line = Line\n"
              "  p0: Point\n"
              "    x: 1.5\n"
              "    y: 2.5\n"
@@ -433,7 +433,7 @@ void test_akela_llvm_struct2()
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
-             "let mut p: Point = Point\n"
+             "const mut p: Point = Point\n"
              "  x: 1.5\n"
              "  y: 2.5\n"
              "end\n"
@@ -458,7 +458,7 @@ void test_akela_llvm_struct_struct2()
              "  p0: Point\n"
              "  p1: Point\n"
              "end\n"
-             "let mut line: Line = Line\n"
+             "const mut line: Line = Line\n"
              "  p0: Point\n"
              "    x: 1.5\n"
              "    y: 2.5\n"
@@ -483,7 +483,7 @@ void test_akela_llvm_struct_function() {
     cg_setup("struct Foo\n"
              "  compute: fn(Int32)->Int32\n"
              "end\n"
-             "let foo: Foo = Foo\n"
+             "const foo: Foo = Foo\n"
              "  compute: fn (x: Int32)->Int32\n"
              "    x + 1\n"
              "  end\n"
@@ -497,7 +497,7 @@ void test_akela_llvm_struct_function() {
     cg_setup("struct Foo\n"
              "  compute: fn(Int32)->Int32\n"
              "end\n"
-             "let foo: Foo = Foo\n"
+             "const foo: Foo = Foo\n"
              "  compute: fn (x: Int32)->Int32\n"
              "    x + 2\n"
              "  end\n"

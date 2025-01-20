@@ -10,6 +10,13 @@
 #include "zinc/input_unicode_string.h"
 #include "zinc/string_list.h"
 
+void test_chomp(Zinc_string* string)
+{
+    while (string->size > 0 && string->buf[string->size - 1] == '\n') {
+        string->size--;
+    }
+}
+
 bool cg_setup(const char* text, Ake_code_gen_result* result)
 {
     struct Ake_comp_unit* cu = NULL;
@@ -37,17 +44,19 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
         Zinc_expect_true(valid, "valid");
     }
 
-    if (!valid && result->text.size > 0) {
+    if (!valid && result->module_text.size > 0) {
         struct Zinc_location loc;
         Zinc_location_init(&loc);
-        Zinc_string_finish(&result->text);
-        Zinc_error_list_set(&cu->el, &loc, "Module:\n%s", result->text.buf);
+        Zinc_string_finish(&result->module_text);
+        Zinc_error_list_set(&cu->el, &loc, "Module:\n%s", result->module_text.buf);
     }
     Zinc_expect_no_errors(&cu->el);
 
     Zinc_vector_destroy(vector);
     free(vector);
     free(input);
+
+    test_chomp(&result->value);
 
     return valid;
 }

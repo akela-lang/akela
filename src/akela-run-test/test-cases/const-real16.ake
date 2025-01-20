@@ -1,4 +1,4 @@
-let a: Real16 = 1.54
+const a: Real16 = 1.54
 a
 ##define half @__top_level() {
 ##entry:

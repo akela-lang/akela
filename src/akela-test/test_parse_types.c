@@ -66,7 +66,7 @@ void test_parse_types_reserved_type()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let Int32: Int32", &cu);
+    parse_setup("const Int32: Int32", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_source_error(&cu.el, "identifier reserved as a type: Int32");
 	Zinc_expect_false(cu.valid, "valid");
@@ -108,7 +108,7 @@ void test_parse_types_reserved_type4()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let list: [10]Int32; for Int32: Int32 in list end", &cu);
+    parse_setup("const list: [10]Int32; for Int32: Int32 in list end", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_source_error(&cu.el, "identifier reserved as a type: Int32");
 	Zinc_expect_false(cu.valid, "valid");
@@ -122,7 +122,7 @@ void test_parse_types_exists()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: SuperInt; x + 1", &cu);
+    parse_setup("const x: SuperInt; x + 1", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_source_error(&cu.el, "type not defined: SuperInt");
 	Zinc_expect_false(cu.valid, "valid");
@@ -136,18 +136,18 @@ void test_parse_types_array()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let a: [10]Int32; a[1]", &cu);
+    parse_setup("const a: [10]Int32; a[1]", &cu);
 	Zinc_assert_no_errors(&cu.el);
 	Zinc_expect_true(cu.valid, "parse_setup valid");
 
 	Zinc_assert_ptr(cu.root, "ptr cu.root");
 	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* let = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(let, "ptr let");
-	Zinc_expect_int_equal(let->type, Ake_ast_type_let, "type let");
+	Ake_ast* const_ = Ast_node_get(cu.root, 0);
+	Zinc_assert_ptr(const_, "ptr const");
+	Zinc_expect_int_equal(const_->type, Ake_ast_type_const, "type const");
 
-	Ake_ast* let_lseq = Ast_node_get(let, 0);
+	Ake_ast* let_lseq = Ast_node_get(const_, 0);
 	Zinc_assert_ptr(let_lseq, "ptr let_lseq");
 	Zinc_expect_int_equal(let_lseq->type, Ake_ast_type_let_lseq, "type let_lseq");
 
@@ -156,7 +156,7 @@ void test_parse_types_array()
 	Zinc_expect_int_equal(name->type, Ake_ast_type_id, "id name");
 	Zinc_expect_str(&name->value, "a", "a name");
 
-	Ake_ast* let_type = Ast_node_get(let, 1);
+	Ake_ast* let_type = Ast_node_get(const_, 1);
 	Zinc_assert_ptr(let_type, "ptr let_type");
 	Zinc_expect_int_equal(let_type->type, Ake_ast_type_type, "type let_type");
 
@@ -197,7 +197,7 @@ void test_parse_error_declaration_colon()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let a", &cu);
+    parse_setup("const a", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_source_error(&cu.el, "expected colon after variable(s)");
 	Zinc_expect_false(cu.valid, "valid");
@@ -211,7 +211,7 @@ void test_parse_error_declaration_type()
 	
 	struct Ake_comp_unit cu;
 
-    parse_setup("let a: ", &cu);
+    parse_setup("const a: ", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_source_error(&cu.el, "expected type identifier or fn");
 	Zinc_expect_false(cu.valid, "valid");
@@ -225,7 +225,7 @@ void test_parse_error_type_not_defined()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let a: Foo", &cu);
+    parse_setup("const a: Foo", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_source_error(&cu.el, "type not defined: Foo");
 	Zinc_expect_false(cu.valid, "valid");
@@ -239,7 +239,7 @@ void test_parse_error_not_a_type()
 	
 	struct Ake_comp_unit cu;
 
-    parse_setup("let foo: Int32; let a: foo", &cu);
+    parse_setup("const foo: Int32; const a: foo", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_source_error(&cu.el, "identifier is not a type: foo");
 	Zinc_expect_false(cu.valid, "valid");
@@ -253,7 +253,7 @@ void test_parse_error_duplicate_declarations()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("let x: Int32; let x: Int32", &cu);
+    parse_setup("const x: Int32; const x: Int32", &cu);
 	Zinc_expect_has_errors(&cu.el);
 	Zinc_expect_source_error(&cu.el, "duplicate declaration in same scope: x");
 	Zinc_expect_false(cu.valid, "valid");
@@ -309,13 +309,13 @@ void test_parse_types_newline_declaration()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let a\n: \nInt32", &cu);
+    parse_setup("const a\n: \nInt32", &cu);
     Zinc_expect_no_errors(&cu.el);
     Zinc_expect_true(cu.valid, "valid");
 
-    Ake_ast* let = Ast_node_get(cu.root, 0);
-    Zinc_assert_ptr(let, "ptr let");
-    Zinc_expect_int_equal(let->type, Ake_ast_type_let, "type let");
+    Ake_ast* const_ = Ast_node_get(cu.root, 0);
+    Zinc_assert_ptr(const_, "ptr let");
+    Zinc_expect_int_equal(const_->type, Ake_ast_type_const, "type let");
 
     parse_teardown(&cu);
 }

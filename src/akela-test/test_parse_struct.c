@@ -16,7 +16,7 @@ void test_parse_struct_field_assign()
                 "  lastName: [100 const]Nat8\n"
                 "  age: Int32\n"
                 "end\n"
-                "let p: Person\n"
+                "var p: Person\n"
                 "p.firstName = \"John\"\n"
                 "p.firstName\n", &cu);
     Zinc_expect_no_errors(&cu.el);
@@ -97,15 +97,15 @@ void test_parse_struct_field_assign()
     Zinc_expect_str(&td2->name, "Int32", "Int32 td2");
 
     /* let */
-    Ake_ast* let = Ast_node_get(cu.root, 1);
-    Zinc_assert_ptr(let, "ptr let");
-    Zinc_expect_int_equal(let->type, Ake_ast_type_let, "type let");
+    Ake_ast* var = Ast_node_get(cu.root, 1);
+    Zinc_assert_ptr(var, "ptr let");
+    Zinc_expect_int_equal(var->type, Ake_ast_type_var, "type let");
 
-    Ake_ast* let_lseq = Ast_node_get(let, 0);
+    Ake_ast* let_lseq = Ast_node_get(var, 0);
     Zinc_assert_ptr(let_lseq, "ptr let_lseq");
     Zinc_expect_int_equal(let_lseq->type, Ake_ast_type_let_lseq, "let_lseq let_lseq");
 
-    Ake_ast* let_type = Ast_node_get(let, 1);
+    Ake_ast* let_type = Ast_node_get(var, 1);
     Zinc_assert_ptr(let_type, "ptr let_type");
     Zinc_expect_int_equal(let_type->type, Ake_ast_type_type, "type let_type");
 
@@ -135,7 +135,7 @@ void test_parse_struct_let_literal()
         "  last_name: [100 const]Nat8\n"
         "  age: Int32\n"
         "end\n"
-        "let p: Person = Person\n"
+        "const p: Person = Person\n"
         "  first_name: \"John\"\n"
         "  last_name: \"Smith\"\n"
         "  age: 35\n"
@@ -153,7 +153,7 @@ void test_parse_struct_let_literal()
 
     Ake_ast* let = Ast_node_get(cu.root, 1);
     Zinc_assert_ptr(let, "ptr let");
-    Zinc_expect_int_equal(let->type, Ake_ast_type_let, "type let");
+    Zinc_expect_int_equal(let->type, Ake_ast_type_const, "type let");
 
     Ake_ast* let_lseq = Ast_node_get(let, 0);
     Zinc_assert_ptr(let_lseq, "ptr let_lseq");
@@ -230,7 +230,7 @@ void test_parse_struct_error_invalid_field()
                 "  last_name: [100 const]Nat8\n"
                 "  age: Int32\n"
                 "end\n"
-                "let p: Person = Person\n"
+                "const p: Person = Person\n"
                 "  first_name: \"John\"\n"
                 "  middle_name: \"Freddy\"\n"
                 "  last_name: \"Smith\"\n"
@@ -254,7 +254,7 @@ void test_parse_struct_error_field_missing()
                 "  last_name: [100 const]Nat8\n"
                 "  age: Int32\n"
                 "end\n"
-                "let p: Person = Person\n"
+                "const p: Person = Person\n"
                 "  first_name: \"John\"\n"
                 "  age: 35\n"
                 "end\n",
@@ -278,7 +278,7 @@ void test_parse_struct_error_dot_invalid_field()
             "  lastName: [100 const]Nat8\n"
             "  age: Int32\n"
             "end\n"
-            "let p: Person\n"
+            "var p: Person\n"
             "p.abc\n",
             &cu);
     Zinc_expect_has_errors(&cu.el);
@@ -336,7 +336,7 @@ void test_parse_struct_error_duplicate()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("let Person: Int32 = 1; struct Person end", &cu);
+    parse_setup("const Person: Int32 = 1; struct Person end", &cu);
     Zinc_expect_has_errors(&cu.el);
     Zinc_expect_false(cu.valid, "valid");
     Zinc_expect_source_error(&cu.el, "duplicate variable in scope: Person");

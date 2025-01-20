@@ -315,8 +315,8 @@ namespace Akela_llvm {
             return Handle_extern(jd, n);
         } else if (n->type == Ake_ast_type_if) {
             return Handle_if(jd, n);
-        } else if (n->type == Ake_ast_type_let) {
-            return Handle_let(jd, n);
+        } else if (n->type == Ake_ast_type_const || n->type == Ake_ast_type_var) {
+            return Handle_variable_dec(jd, n);
         } else if (n->type == Ake_ast_type_function) {
             return Handle_function(jd, n);
         } else if (n->type == Ake_ast_type_assign) {

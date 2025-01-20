@@ -1,4 +1,4 @@
-let a: Real64 = 1.54
+const a: Real64 = 1.54
 a
 ##define double @__top_level() {
 ##entry:

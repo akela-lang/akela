@@ -51,7 +51,7 @@ void test_akela_llvm_function_anonymous_call()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("let foo: fn (Int32, Int32, Int32)->Int32 = fn (a: Int32, b: Int32, c: Int32)->Int32\n"
+    cg_setup("const foo: fn (Int32, Int32, Int32)->Int32 = fn (a: Int32, b: Int32, c: Int32)->Int32\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -110,7 +110,7 @@ void test_akela_llvm_function_assign()
 
     Ake_code_gen_result_init(&result);
     cg_setup("fn foo()->Int32 1 end\n"
-             "let bar: fn ()->Int32\n"
+             "const bar: fn ()->Int32\n"
              "bar = foo\n"
              "bar()\n",
              &result);
@@ -133,7 +133,7 @@ void test_akela_llvm_function_assign2()
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_akela_llvm_function_let_assign()
+void test_akela_llvm_function_const_assign()
 {
     Zinc_test_name(__func__);
     Ake_code_gen_result result;
@@ -142,7 +142,7 @@ void test_akela_llvm_function_let_assign()
     cg_setup("fn foo(a: Int32)->Int32\n"
              "  a + 1\n"
              "end\n"
-             "let a: fn (Int32)->Int32 = foo\n"
+             "const a: fn (Int32)->Int32 = foo\n"
              "a(1)\n",
              &result);
     Zinc_expect_str(&result.value, "2", "value");
@@ -186,7 +186,7 @@ void test_akela_llvm_function_array_param()
     cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
-             "let a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 0)\n",
              &result);
     Zinc_expect_str(&result.value, "110", "value");
@@ -196,7 +196,7 @@ void test_akela_llvm_function_array_param()
     cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
-             "let a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 1)\n",
              &result);
     Zinc_expect_str(&result.value, "210", "value");
@@ -206,7 +206,7 @@ void test_akela_llvm_function_array_param()
     cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
-             "let a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
+             "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 2)\n",
              &result);
     Zinc_expect_str(&result.value, "310", "value");
@@ -227,7 +227,7 @@ void test_akela_llvm_function_struct_param()
             "fn add_ten(p: Point)->Real64\n"
              "  p.x + 10.0\n"
              "end\n"
-             "let p: Point = Point\n"
+             "const p: Point = Point\n"
              "  x: 2.5\n"
              "  y: 3.5\n"
              "end\n"
@@ -245,7 +245,7 @@ void test_akela_llvm_function_struct_param()
             "fn add_ten(p: Point)->Real64\n"
             "  p.y + 10.0\n"
             "end\n"
-            "let p: Point = Point\n"
+            "const p: Point = Point\n"
             "  x: 2.5\n"
             "  y: 3.5\n"
             "end\n"
@@ -298,7 +298,7 @@ void test_akela_llvm_function_in_array() {
 
     Ake_code_gen_result_init(&result);
     cg_setup(
-            "let func_array: [5]fn(Int32)->Int32\n"
+            "const func_array: [5]fn(Int32)->Int32\n"
             "func_array[0] = fn (x: Int32)->Int32 x*2 end\n"
             "func_array[0](10)",
             &result);
@@ -317,7 +317,7 @@ void test_akela_llvm_function()
     test_akela_llvm_function_extern();
     test_akela_llvm_function_assign();
     test_akela_llvm_function_assign2();
-    test_akela_llvm_function_let_assign();
+    test_akela_llvm_function_const_assign();
     test_akela_llvm_function_expression();
     test_akela_llvm_function_anonymous_expression();
     test_akela_llvm_function_array_param();

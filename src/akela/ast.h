@@ -45,7 +45,6 @@ typedef enum Ake_ast_type {
 	Ake_ast_type_declaration,
 	Ake_ast_type_array_literal,
 	Ake_ast_type_array_subscript,
-	Ake_ast_type_let,
 	Ake_ast_type_boolean,
 	Ake_ast_type_parenthesis,
 	Ake_ast_type_type,
@@ -66,6 +65,8 @@ typedef enum Ake_ast_type {
     Ake_ast_type_ellipsis,
     Ake_ast_type_impl,
     Ake_ast_type_self,
+	Ake_ast_type_const,
+	Ake_ast_type_var,
 	Ake_ast_type_count		/* keep at end */
 } Ake_ast_type;
 
@@ -106,7 +107,6 @@ static char const* Ast_type_name(Ake_ast_type type)
     name[Ake_ast_type_declaration] = "declaration";
     name[Ake_ast_type_array_literal] = "array-literal";
     name[Ake_ast_type_array_subscript] = "array-subscript";
-    name[Ake_ast_type_let] = "let";
     name[Ake_ast_type_boolean] = "boolean";
     name[Ake_ast_type_parenthesis] = "parenthesis";
     name[Ake_ast_type_type] = "type";
@@ -127,6 +127,8 @@ static char const* Ast_type_name(Ake_ast_type type)
     name[Ake_ast_type_ellipsis] = "ellipsis";
     name[Ake_ast_type_impl] = "impl";
     name[Ake_ast_type_self] = "self";
+	name[Ake_ast_type_const] = "const";
+	name[Ake_ast_type_var] = "var";
 
 	if (type >= 0 && type < Ake_ast_type_count) {
 		return name[type];
