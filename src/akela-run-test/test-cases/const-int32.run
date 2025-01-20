@@ -1,6 +1,10 @@
 const a: Int32 = -104
 a
 ###
+/; ModuleID/
+/source_filename/
+/target datalayout/
+
 define i32 @__top_level() {
 entry:
   %a = alloca i32, align 4

@@ -27,7 +27,8 @@ void Run_test_case(
     Zinc_string* path,
     Zinc_string* file_name);
 void Run_akela(Run_data* data, Run_test* test);
-Run_pair Run_diff(Zinc_string* actual, Zinc_string* expected);
+Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
+bool Run_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 Zinc_string_list* Run_split(Zinc_string* string);
 Zinc_string* Run_join(Zinc_string_list* list);
 void Run_print_akela(Zinc_string* ake);
@@ -161,6 +162,10 @@ void Run_test_case(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zin
         }
     }
 
+    Zinc_string_finish(&test->ake);
+    Zinc_string_finish(&test->llvm);
+    Zinc_string_finish(&test->config_string);
+
     Run_akela(data, test);
 
     Zinc_string_destroy(&line);
@@ -183,7 +188,10 @@ void Run_akela(Run_data* data, Run_test* test)
 
     data->test_count++;
 
+    bool passed = true;
+
     if (!cu->valid) {
+        /* is parsing valid */
         Zinc_error* e = cu->el.head;
         while (e) {
             Zinc_string_finish(&e->message);
@@ -191,22 +199,24 @@ void Run_akela(Run_data* data, Run_test* test)
             e = e->next;
         }
         data->test_failed_count++;
-        return;
+        passed = false;
     } else {
+        /* run program on jit */
         Akela_llvm_cg* cg = NULL;
         Akela_llvm_cg_create(&cg, &cu->el, &cu->extern_list);
         Ake_code_gen_result cg_result;
         Ake_code_gen_result_init(&cg_result);
         Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu->root, &cg_result);
 
-        bool passed = true;
-        Run_pair llvm_pair = Run_diff(&cg_result.function_text, &test->llvm);
+        /* check llvm output */
+        Run_pair llvm_pair = Run_diff(data->regex_re, &cg_result.module_text, &test->llvm);
         if (!llvm_pair.matched) {
             passed = false;
         }
 
         if (cu->el.head) {
-            struct Zinc_error* e = cu->el.head;
+            /* any other errors */
+            Zinc_error* e = cu->el.head;
             while (e) {
                 Zinc_string_finish(&e->message);
                 fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -215,10 +225,25 @@ void Run_akela(Run_data* data, Run_test* test)
             passed = false;
         }
 
-        Run_print_akela(&test->ake);
+        printf("Akela:\n");
+        printf("%s\n", test->ake.buf);
+        printf("LLVM:\n");
+        printf("%s\n", test->llvm.buf);
+        printf("Config:\n");
+        printf("%s\n", test->config_string.buf);
+
+        if (!llvm_pair.matched) {
+            Run_print_llvm(&llvm_pair);
+        }
 
         Ake_code_gen_result_destroy(&cg_result);
 
+    }
+
+    if (passed) {
+        data->test_passed_count++;
+    } else {
+        data->test_failed_count++;
     }
 
     Ake_comp_unit_destroy(cu);
@@ -227,40 +252,7 @@ void Run_akela(Run_data* data, Run_test* test)
     free(input);
 }
 
-void Run_print_akela(Zinc_string* ake)
-{
-    fprintf(stderr, "Source:\n");
-    Zinc_string_finish(ake);
-    fprintf(stderr, "%s\n", ake->buf);
-}
-
-void Run_print_llvm(Run_pair* pair)
-{
-    if (!pair->matched) {
-        fprintf(stderr, "llvm is different.\n");
-        fprintf(stderr, "Actual:\n");
-        Zinc_string_finish(pair->actual);
-        fprintf(stderr, "%s\n", pair->actual->buf);
-        fprintf(stderr, "Expected:\n");
-        Zinc_string_finish(pair->expected);
-        fprintf(stderr, "%s\n", pair->expected->buf);
-    }
-}
-
-void Run_print_result(Run_pair* pair)
-{
-    if (!pair->matched) {
-        fprintf(stderr, "result different.\n");
-        fprintf(stderr, "Actual:\n");
-        Zinc_string_finish(pair->actual);
-        fprintf(stderr, "%s\n", pair->actual->buf);
-        fprintf(stderr, "Expected:\n");
-        Zinc_string_finish(pair->expected);
-        fprintf(stderr, "%s\n", pair->expected->buf);
-    }
-}
-
-Run_pair Run_diff(Zinc_string* actual, Zinc_string* expected)
+Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
 {
     Zinc_string_list* actual_list = Run_split(actual);
     Zinc_string_list* expected_list = Run_split(expected);
@@ -293,7 +285,7 @@ Run_pair Run_diff(Zinc_string* actual, Zinc_string* expected)
             Zinc_string expected_line2;
             Zinc_string_init(&expected_line2);
 
-            if (Zinc_string_compare(actual_line, expected_line)) {
+            if (Run_diff_value(regex_re, actual_line, expected_line)) {
                 Zinc_string_add_str(&actual_line2, "s ");
                 Zinc_string_add_str(&expected_line2, "s ");
             } else {
@@ -337,6 +329,26 @@ Run_pair Run_diff(Zinc_string* actual, Zinc_string* expected)
     pair.actual = actual_diff;
     pair.expected = expected_diff;
     return pair;
+}
+
+bool Run_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
+{
+    Zinc_string_slice expected_slice = {expected->buf, expected->size};
+    Cob_result regex_mr = Cob_match(&regex_re, expected_slice);
+    if (regex_mr.matched) {
+        Zinc_string* expected_inner = Zinc_string_list_get(&regex_mr.groups, 1);
+        Cob_re expected_re = Cob_compile(expected_inner);
+        Zinc_string_slice actual_slice = {actual->buf, actual->size};
+        Cob_result expected_mr = Cob_match(&expected_re, actual_slice);
+        bool matched = expected_mr.matched;
+        Cob_re_destroy(&expected_re);
+        Cob_result_destroy(&regex_mr);
+        Cob_result_destroy(&expected_mr);
+        return matched;
+    }
+
+    Cob_result_destroy(&regex_mr);
+    return Zinc_string_compare(actual, expected);
 }
 
 Zinc_string_list* Run_split(Zinc_string* string)
@@ -387,4 +399,37 @@ Zinc_string* Run_join(Zinc_string_list* list)
     }
 
     return result;
+}
+
+void Run_print_akela(Zinc_string* ake)
+{
+    fprintf(stderr, "Source:\n");
+    Zinc_string_finish(ake);
+    fprintf(stderr, "%s\n", ake->buf);
+}
+
+void Run_print_llvm(Run_pair* pair)
+{
+    if (!pair->matched) {
+        fprintf(stderr, "llvm is different.\n");
+        fprintf(stderr, "Actual:\n");
+        Zinc_string_finish(pair->actual);
+        fprintf(stderr, "%s\n", pair->actual->buf);
+        fprintf(stderr, "Expected:\n");
+        Zinc_string_finish(pair->expected);
+        fprintf(stderr, "%s\n", pair->expected->buf);
+    }
+}
+
+void Run_print_result(Run_pair* pair)
+{
+    if (!pair->matched) {
+        fprintf(stderr, "result different.\n");
+        fprintf(stderr, "Actual:\n");
+        Zinc_string_finish(pair->actual);
+        fprintf(stderr, "%s\n", pair->actual->buf);
+        fprintf(stderr, "Expected:\n");
+        Zinc_string_finish(pair->expected);
+        fprintf(stderr, "%s\n", pair->expected->buf);
+    }
 }

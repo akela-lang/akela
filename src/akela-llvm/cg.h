@@ -8,6 +8,9 @@ typedef struct Akela_llvm_cg {
     Zinc_string_list* extern_list;
     Ake_code_gen_interface jit;
     bool debug;
+    bool add_abort;
+    bool add_printf;
+    bool add_exit;
 } Akela_llvm_cg;
 
 extern Code_gen_vtable Akela_llvm_vtable;

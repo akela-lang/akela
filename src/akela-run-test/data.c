@@ -66,7 +66,7 @@ void Run_data_init(Run_data* data)
 {
     data->ext_re = Cob_compile_str("\\.run$");
     data->separator_re = Cob_compile_str("^###");
-    data->regex_re = Cob_compile_str("^/(.*)/\n$");
+    data->regex_re = Cob_compile_str("^/(.*)/\n?$");
     data->test_count = 0;
     data->test_failed_count = 0;
     data->test_passed_count = 0;

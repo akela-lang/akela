@@ -14,6 +14,9 @@ void Akela_llvm_cg_init(Akela_llvm_cg* cg, Zinc_error_list* el, Zinc_string_list
     cg->extern_list = extern_list;
     cg->jit = reinterpret_cast<Ake_code_gen_interface>(Akela_llvm::Jit);
     cg->debug = false;
+    cg->add_abort = false;
+    cg->add_printf = false;
+    cg->add_exit = false;
 }
 
 void Akela_llvm_cg_create(Akela_llvm_cg** cg, Zinc_error_list* el, Zinc_string_list* extern_list)
