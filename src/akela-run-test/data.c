@@ -41,6 +41,8 @@ void Run_test_init(Run_test *test)
     Zinc_string_init(&test->config);
     test->next = NULL;
     test->prev = NULL;
+    test->return_address = NULL;
+    test->return_size = 0;
 }
 
 void Run_test_create(Run_test** test)
@@ -56,6 +58,7 @@ void Run_test_destroy(Run_test* test)
     Zinc_string_destroy(&test->config);
     Run_cent_data_destroy(test->config_data);
     free(test->config_data);
+    free(test->return_address);
 }
 
 void Run_test_list_init(Run_test_list* list)

@@ -128,9 +128,15 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
         assert(value_sym->type == Cent_symbol_type_element);
         Cent_element_type* value_element = value_sym->data.element;
 
-        if (prop_element != value_element) {
+        if ((prop_element->type != Cent_value_type_any) && (prop_element != value_element)) {
             Cent_ast* n = value->n;
-            Zinc_error_list_set(pr->errors, &n->loc, "invalid property type: %b", &value_element->name);
+            Zinc_error_list_set(
+                pr->errors,
+                &n->loc,
+                "invalid property type: %b--%b--%b",
+                &object_value->name,
+                name,
+                &value_element->name);
             value->has_error = true;
             n->has_error = true;
             /* test case: test_check_types_property_error_number */

@@ -147,8 +147,9 @@ namespace Akela_llvm {
         return last_block;
     }
 
-    void Run(Jit_data* jd, Ake_ast* n, struct Zinc_string* bf)
+    void Run(Jit_data* jd, Ake_ast* n, Ake_code_gen_result* result)
     {
+        Zinc_string* value = &result->value;
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOP_LEVEL_NAME));
         if (n->tu) {
             enum Ake_type type = n->tu->td->type;
@@ -165,15 +166,15 @@ namespace Akela_llvm {
                             auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(dim_vector, i);
                             count *= dim->size;
                         }
-                        Zinc_string_add_char(bf, '[');
+                        Zinc_string_add_char(value, '[');
                         for (int i = 0; i < count; i++) {
                             if (i >= 1) {
-                                Zinc_string_add_char(bf, ',');
+                                Zinc_string_add_char(value, ',');
                             }
-                            Zinc_string_add_format(bf, "%ld", *p++);
+                            Zinc_string_add_format(value, "%ld", *p++);
                         }
-                        Zinc_string_add_char(bf, ']');
-                        Zinc_string_add_char(bf, '\n');
+                        Zinc_string_add_char(value, ']');
+                        Zinc_string_add_char(value, '\n');
                     } else if (bit_count == 32) {
                         int* (*fp)() = ExprSymbol.getAddress().toPtr<int*(*)()>();
                         int* p = fp();
@@ -183,20 +184,20 @@ namespace Akela_llvm {
                             auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(dim_vector, i);
                             count *= dim->size;
                         }
-                        Zinc_string_add_char(bf, '[');
+                        Zinc_string_add_char(value, '[');
                         for (int i = 0; i < count; i++) {
                             if (i >= 1) {
-                                Zinc_string_add_char(bf, ',');
+                                Zinc_string_add_char(value, ',');
                             }
-                            Zinc_string_add_format(bf, "%d", *p++);
+                            Zinc_string_add_format(value, "%d", *p++);
                         }
-                        Zinc_string_add_char(bf, ']');
-                        Zinc_string_add_char(bf, '\n');
+                        Zinc_string_add_char(value, ']');
+                        Zinc_string_add_char(value, '\n');
                     } else if (bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
                         char* p = fp();
-                        Zinc_string_add_format(bf, "%s", p);
-                        Zinc_string_add_char(bf, '\n');
+                        Zinc_string_add_format(value, "%s", p);
+                        Zinc_string_add_char(value, '\n');
                     } else {
                         assert(false);
                     }
@@ -205,25 +206,27 @@ namespace Akela_llvm {
                         if (n->tu->td->bit_count == 64) {
                             long (*fp)() = ExprSymbol.getAddress().toPtr<long(*)()>();
                             long v = fp();
-                            Zinc_string_add_format(bf, "%ld", v);
-                            Zinc_string_add_char(bf, '\n');
+                            Zinc_string_add_format(value, "%ld", v);
+                            Zinc_string_add_char(value, '\n');
                         } else if (n->tu->td->bit_count == 32) {
                             int (*fp)() = ExprSymbol.getAddress().toPtr < int(*)
                             () > ();
                             int v = fp();
-                            Zinc_string_add_format(bf, "%d", v);
-                            Zinc_string_add_char(bf, '\n');
+                            Zinc_string_add_format(value, "%d", v);
+                            Zinc_string_add_char(value, '\n');
+                            *(int*)result->return_address = v;
+
                         } else if (n->tu->td->bit_count == 16) {
                             short int (*fp)() = ExprSymbol.getAddress().toPtr < short int(*)
                             () > ();
                             short int v = fp();
-                            Zinc_string_add_format(bf, "%hd", v);
-                            Zinc_string_add_char(bf, '\n');
+                            Zinc_string_add_format(value, "%hd", v);
+                            Zinc_string_add_char(value, '\n');
                         } else if (bit_count == 8) {
                             int32_t (*fp)() = ExprSymbol.getAddress().toPtr<int32_t(*)()> ();
                             int32_t v = fp();
-                            Zinc_string_add_format(bf, "%hhd", (int)v);
-                            Zinc_string_add_char(bf, '\n');
+                            Zinc_string_add_format(value, "%hhd", (int)v);
+                            Zinc_string_add_char(value, '\n');
                         } else {
                             assert(false);
                         }
@@ -231,25 +234,25 @@ namespace Akela_llvm {
                         if (n->tu->td->bit_count == 64) {
                             unsigned long (*fp)() = ExprSymbol.getAddress().toPtr<unsigned long(*)()>();
                             unsigned long v = fp();
-                            Zinc_string_add_format(bf, "%lu", v);
-                            Zinc_string_add_char(bf, '\n');
+                            Zinc_string_add_format(value, "%lu", v);
+                            Zinc_string_add_char(value, '\n');
                         } else if (n->tu->td->bit_count == 32) {
                             unsigned int (*fp)() = ExprSymbol.getAddress().toPtr < unsigned int(*)
                             () > ();
                             unsigned int v = fp();
-                            Zinc_string_add_format(bf, "%u", v);
-                            Zinc_string_add_char(bf, '\n');
+                            Zinc_string_add_format(value, "%u", v);
+                            Zinc_string_add_char(value, '\n');
                         } else if (n->tu->td->bit_count == 16) {
                             short unsigned int (*fp)() = ExprSymbol.getAddress().toPtr < short unsigned int(*)
                             () > ();
                             short unsigned int v = fp();
-                            Zinc_string_add_format(bf, "%hu", (unsigned int)v);
-                            Zinc_string_add_char(bf, '\n');
+                            Zinc_string_add_format(value, "%hu", (unsigned int)v);
+                            Zinc_string_add_char(value, '\n');
                         } else if (bit_count == 8) {
                             u_int8_t (*fp)() = ExprSymbol.getAddress().toPtr<u_int8_t(*)()> ();
                             u_int8_t v = fp();
-                            Zinc_string_add_format(bf, "%hhu", (unsigned int)v);
-                            Zinc_string_add_char(bf, '\n');
+                            Zinc_string_add_format(value, "%hhu", (unsigned int)v);
+                            Zinc_string_add_char(value, '\n');
                         } else {
                             assert(false);
                         }
@@ -259,50 +262,50 @@ namespace Akela_llvm {
                 if (is_array) {
                     double* (*fp)() = ExprSymbol.getAddress().toPtr <double*(*)()>();
                     double* p = fp();
-                    Zinc_string_add_format(bf, "%lf", *p);
-                    Zinc_string_add_char(bf, '\n');
+                    Zinc_string_add_format(value, "%lf", *p);
+                    Zinc_string_add_char(value, '\n');
                 } else {
                     if (n->tu->td->bit_count == 64) {
                         double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
                         double v = fp();
-                        Zinc_string_add_format(bf, "%lf", v);
-                        Zinc_string_add_char(bf, '\n');
+                        Zinc_string_add_format(value, "%lf", v);
+                        Zinc_string_add_char(value, '\n');
                     } else if (n->tu->td->bit_count == 32) {
                         float (*fp)() = ExprSymbol.getAddress().toPtr <float(*)()>();
                         float v = fp();
-                        Zinc_string_add_format(bf, "%f", v);
-                        Zinc_string_add_char(bf, '\n');
+                        Zinc_string_add_format(value, "%f", v);
+                        Zinc_string_add_char(value, '\n');
                     } else if (n->tu->td->bit_count == 16) {
                         _Float16 (*fp)() = ExprSymbol.getAddress().toPtr <_Float16(*)()>();
                         _Float16 v = fp();
-                        Zinc_string_add_format(bf, "%f", (float)v);
-                        Zinc_string_add_char(bf, '\n');
+                        Zinc_string_add_format(value, "%f", (float)v);
+                        Zinc_string_add_char(value, '\n');
                     }
                 }
             } else if (type == Ake_type_boolean) {
                 bool (*fp)() = ExprSymbol.getAddress().toPtr <bool(*)()>();
                 bool v = fp();
                 if (v) {
-                    Zinc_string_add_format(bf, "true", v);
+                    Zinc_string_add_format(value, "true", v);
                 } else {
-                    Zinc_string_add_format(bf, "false", v);
+                    Zinc_string_add_format(value, "false", v);
                 }
-                Zinc_string_add_char(bf, '\n');
+                Zinc_string_add_char(value, '\n');
             } else if (type == Ake_type_function) {
                 void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
                 void* v = fp();
-                Zinc_string_add_format(bf, "Function");
-                Zinc_string_add_char(bf, '\n');
+                Zinc_string_add_format(value, "Function");
+                Zinc_string_add_char(value, '\n');
             } else {
                 struct Zinc_location loc{};
                 Zinc_location_init(&loc);
                 Zinc_error_list_set(jd->el, &loc, "type not handled");
-                Zinc_string_add_char(bf, '\n');
+                Zinc_string_add_char(value, '\n');
             }
         } else {
             void (*fp)() = ExprSymbol.getAddress().toPtr <void(*)()>();
             fp();
-            Zinc_string_add_char(bf, '\n');
+            Zinc_string_add_char(value, '\n');
         }
     }
 

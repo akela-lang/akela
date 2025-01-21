@@ -25,6 +25,6 @@ Test {
     .mute = false
     Field {
         .type = Type::Int32
-        .value = "-104"
+        .value = -104
      }
 }

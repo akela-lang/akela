@@ -27,6 +27,8 @@ typedef struct Run_test {
     Run_cent_data* config_data;
     bool solo;
     bool mute;
+    void* return_address;
+    long long return_size;
 } Run_test;
 
 typedef struct Run_test_list {
@@ -51,6 +53,20 @@ typedef struct {
     Zinc_string* actual;
     Zinc_string* expected;
 } Run_pair;
+
+typedef enum {
+    Run_type_int8,
+    Run_type_int16,
+    Run_type_int32,
+    Run_type_int64,
+    Run_type_nat8,
+    Run_type_nat16,
+    Run_type_nat32,
+    Run_type_nat64,
+    Run_type_real16,
+    Run_type_real32,
+    Run_type_real64,
+} Run_type;
 
 void Run_config_data_init(Run_cent_data* config_data, Zinc_string* file_name);
 void Run_cent_data_create(Run_cent_data** config_data, Zinc_string* file_name);

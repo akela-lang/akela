@@ -1,3 +1,3 @@
 # Akela Run Test Todo
-* check result
+* print solo and muted test case names
 * regex in config

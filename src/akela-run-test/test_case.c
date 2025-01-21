@@ -5,6 +5,7 @@
 #include "akela-llvm/cg.h"
 #include "cobble/compile.h"
 #include "cobble/match.h"
+#include <assert.h>
 
 void Run_akela(Run_data* data, Run_test* test);
 Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
@@ -15,6 +16,8 @@ void Run_print_akela(Zinc_string* ake);
 void Run_print_llvm(Run_pair* pair);
 void Run_print_result(Run_pair* pair);
 void Run_print_results(Run_data* data);
+void Run_setup_address(Run_data* data, Run_test* test);
+bool Run_check_address(Run_data* data, Run_test* test);
 
 void Run_test_cases(Run_data* data)
 {
@@ -31,6 +34,10 @@ void Run_test_cases(Run_data* data)
 
 void Run_akela(Run_data* data, Run_test* test)
 {
+    if (!test->config_data) {
+        return;
+    }
+
     Zinc_vector* text = NULL;
     Zinc_vector_create(&text, sizeof(char));
     Zinc_vector_add(text, test->ake.buf, test->ake.size);
@@ -57,17 +64,23 @@ void Run_akela(Run_data* data, Run_test* test)
         data->test_failed_count++;
         passed = false;
     } else {
+        Run_setup_address(data, test);
+
         /* run program on jit */
         Akela_llvm_cg* cg = NULL;
         Akela_llvm_cg_create(&cg, &cu->el, &cu->extern_list);
         Ake_code_gen_result cg_result;
         Ake_code_gen_result_init(&cg_result);
+        cg_result.return_address = test->return_address;
+        cg_result.return_size = test->return_size;
+
         Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu->root, &cg_result);
 
         /* check llvm output */
         Run_pair llvm_pair = Run_diff(data->regex_re, &cg_result.module_text, &test->llvm);
         if (!llvm_pair.matched) {
             passed = false;
+            Run_print_llvm(&llvm_pair);
         }
 
         if (cu->el.head) {
@@ -81,8 +94,8 @@ void Run_akela(Run_data* data, Run_test* test)
             passed = false;
         }
 
-        if (!llvm_pair.matched) {
-            Run_print_llvm(&llvm_pair);
+        if (!Run_check_address(data, test)) {
+            passed = false;
         }
 
         Ake_code_gen_result_destroy(&cg_result);
@@ -99,6 +112,105 @@ void Run_akela(Run_data* data, Run_test* test)
     Zinc_vector_destroy(text);
     free(text);
     free(input);
+}
+
+void Run_setup_address(Run_data* data, Run_test* test)
+{
+    Cent_value* data_type_list_value = data->type_info->ct->primary->value;
+    assert(data_type_list_value);
+
+    Cent_value* test_value = test->config_data->ct->primary->value;
+    assert(test_value);
+
+    long long byte_count = 0;
+
+    Cent_value* field = test_value->data.dag.head;
+    assert(field);
+    while (field) {
+        Cent_value* type_value = Cent_value_get_str(field, "type");
+        assert(type_value);
+
+        int type = type_value->data.enumeration.enum_value->value;
+        Zinc_string* type_string = &type_value->data.enumeration.enum_value->display;
+
+        bool found = false;
+        Cent_value* found_value = NULL;
+        Cent_value* data_type_value = data_type_list_value->data.dag.head;
+        while (data_type_value) {
+            Cent_value* type_value2 = Cent_value_get_str(data_type_value, "type");
+            assert(type_value2);
+            int type2 = type_value2->data.enumeration.enum_value->value;
+            if (type2 == type) {
+                found = true;
+                found_value = data_type_value;
+                break;
+            }
+            data_type_value = data_type_value->next;
+        }
+        if (!found) {
+            Zinc_string_finish(type_string);
+            fprintf(stderr, "Could not find field type %d-%s", type, type_string->buf);
+            return;
+        }
+
+        Cent_value* align_value = Cent_value_get_str(found_value, "align");
+        assert(align_value);
+        long long align = align_value->data.integer;
+        byte_count += align;
+        test->return_size = byte_count;
+        Zinc_malloc_safe((void**)&test->return_address, byte_count);
+
+        field = field->next;
+    }
+}
+
+bool Run_check_address(Run_data* data, Run_test* test)
+{
+    bool matched = true;
+
+    Cent_value* data_type_list_value = data->type_info->ct->primary->value;
+    assert(data_type_list_value);
+
+    Cent_value* test_value = test->config_data->ct->primary->value;
+    assert(test_value);
+
+    long long byte_count = 0;
+
+    Cent_value* field = test_value->data.dag.head;
+    assert(field);
+    while (field) {
+        Cent_value* type_value = Cent_value_get_str(field, "type");
+        assert(type_value);
+
+        int type = type_value->data.enumeration.enum_value->value;
+        Zinc_string* type_string = &type_value->data.enumeration.enum_value->display;
+
+        Cent_value* value_value = Cent_value_get_str(field, "value");
+        assert(value_value);
+        if (type == Run_type_int32) {
+            int actual = *(int*)test->return_address;
+            int expected = (int)value_value->data.integer;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
+            }
+        } else {
+            assert(false && "unhandled type");
+        }
+
+        field = field->next;
+    }
+
+    return matched;
+}
+
+void Run_check_result(Run_data* data, Run_test* test)
+{
+    Cent_value* test_element = test->config_data->ct->primary->value;
+    Cent_value* field = test_element->data.dag.head;
+    while (field) {
+        field = field->next;
+    }
 }
 
 Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)

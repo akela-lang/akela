@@ -14,6 +14,7 @@ typedef enum Cent_value_type {
     Cent_value_type_dict,
     Cent_value_type_dag,
     Cent_value_type_enum,
+    Cent_value_type_any,
 } Cent_value_type;
 
 typedef union Cent_data

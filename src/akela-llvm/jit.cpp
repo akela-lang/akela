@@ -98,7 +98,7 @@ namespace Akela_llvm {
             auto rt = jd.TheJIT->getMainJITDylib().createResourceTracker();
             auto tsm = ThreadSafeModule(std::move(jd.TheModule), std::move(jd.TheContext));
             jd.ExitOnErr(jd.TheJIT->addModule(std::move(tsm), rt));
-            Run(&jd, n, &result->value);
+            Run(&jd, n, result);
             jd.ExitOnErr(rt->remove());
             Zinc_string_finish(&result->value);
         }

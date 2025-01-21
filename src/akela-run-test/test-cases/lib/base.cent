@@ -4,7 +4,6 @@ element Test {
         mute: Bool
     }
     children {
-        Struct
         Field
     }
 }
@@ -18,7 +17,7 @@ element Struct {
 element Field {
     properties {
         type: Type
-        value: String
+        value: Any
     }
 }
 

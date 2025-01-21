@@ -14,6 +14,8 @@ typedef struct {
     Zinc_string value;
     Zinc_string module_text;
     Zinc_string function_text;
+    void* return_address;
+    long long return_size;
     bool debug;
 } Ake_code_gen_result;
 
