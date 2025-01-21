@@ -301,6 +301,9 @@ namespace Akela_llvm {
                         _Float16 v = fp();
                         Zinc_string_add_format(value, "%f", (float)v);
                         Zinc_string_add_char(value, '\n');
+                        if (result->return_address) {
+                            *(_Float16*)result->return_address = v;
+                        }
                     }
                 }
             } else if (type == Ake_type_boolean) {

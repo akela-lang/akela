@@ -6,6 +6,7 @@
 #include "cobble/compile.h"
 #include "cobble/match.h"
 #include <assert.h>
+#include <float.h>
 
 void Run_akela(Run_data* data, Run_test* test);
 Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
@@ -237,6 +238,13 @@ bool Run_check_address(Run_data* data, Run_test* test)
             if (actual != expected) {
                 matched = false;
                 fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
+            }
+        } else if (type == Run_type_real16) {
+            _Float16 actual = *(_Float16*)test->return_address;
+            _Float16 expected = (_Float16)value_value->data.fp;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%f) (%f)\n", (float)actual, (float)expected);
             }
         } else {
             assert(false && "unhandled type");
