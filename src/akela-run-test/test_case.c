@@ -190,22 +190,22 @@ bool Run_check_address(Run_data* data, Run_test* test)
                 fprintf(stderr, "result does not match: (%hhd) (%hhd)\n", actual, expected);
             }
         } else if (type == Run_type_int16) {
-            short int actual = *(short int*)test->return_address;
-            short int expected = (short int)value_value->data.integer;
+            int16_t actual = *(int16_t*)test->return_address;
+            int16_t expected = (int16_t)value_value->data.integer;
             if (actual != expected) {
                 matched = false;
                 fprintf(stderr, "result does not match: (%hd) (%hd)\n", actual, expected);
             }
         } else if (type == Run_type_int32) {
-            int actual = *(int*)test->return_address;
-            int expected = (int)value_value->data.integer;
+            int32_t actual = *(int32_t*)test->return_address;
+            int32_t expected = (int32_t)value_value->data.integer;
             if (actual != expected) {
                 matched = false;
                 fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
             }
         } else if (type == Run_type_int64) {
-            long actual = *(long*)test->return_address;
-            long expected = (long)value_value->data.integer;
+            int64_t actual = *(int64_t*)test->return_address;
+            int64_t expected = (int64_t)value_value->data.integer;
             if (actual != expected) {
                 matched = false;
                 fprintf(stderr, "result does not match: (%ld) (%ld)\n", actual, expected);
@@ -230,6 +230,13 @@ bool Run_check_address(Run_data* data, Run_test* test)
             if (actual != expected) {
                 matched = false;
                 fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
+            }
+        } else if (type == Run_type_nat64) {
+            u_int64_t actual = *(u_int64_t*)test->return_address;
+            u_int64_t expected = (u_int64_t)value_value->data.integer;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
             }
         } else {
             assert(false && "unhandled type");
