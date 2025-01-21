@@ -296,6 +296,9 @@ namespace Akela_llvm {
                         float v = fp();
                         Zinc_string_add_format(value, "%f", v);
                         Zinc_string_add_char(value, '\n');
+                        if (result->return_address) {
+                            *(float*)result->return_address = v;
+                        }
                     } else if (n->tu->td->bit_count == 16) {
                         _Float16 (*fp)() = ExprSymbol.getAddress().toPtr <_Float16(*)()>();
                         _Float16 v = fp();
@@ -304,6 +307,8 @@ namespace Akela_llvm {
                         if (result->return_address) {
                             *(_Float16*)result->return_address = v;
                         }
+                    } else {
+                        assert(false);
                     }
                 }
             } else if (type == Ake_type_boolean) {
