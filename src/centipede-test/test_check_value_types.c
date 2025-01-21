@@ -66,7 +66,7 @@ void test_check_value_types_property_error_number()
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Test--source--Integer");
     test_parse_teardown(ct);
 }
 
@@ -99,7 +99,7 @@ void test_check_value_types_property_error_string()
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: String");
+    Zinc_expect_source_error(errors, "invalid property type: Test--source--String");
     test_parse_teardown(ct);
 }
 
@@ -131,7 +131,7 @@ void test_check_value_types_property_error_boolean()
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: Bool");
+    Zinc_expect_source_error(errors, "invalid property type: Test--source--Bool");
     test_parse_teardown(ct);
 }
 
@@ -647,7 +647,7 @@ void test_check_value_types_not_nested()
 
     Zinc_expect_has_errors(errors);
 
-    Zinc_expect_source_error(errors, "invalid property type: Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Bar--a--Integer");
 
     test_parse_teardown(ct);
 }
@@ -674,7 +674,7 @@ void test_check_value_types_nested()
 
     Zinc_expect_has_errors(errors);
 
-    Zinc_expect_source_error(errors, "invalid property type: Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Bar--a--Integer");
 
     test_parse_teardown(ct);
 }

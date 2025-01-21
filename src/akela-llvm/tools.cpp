@@ -214,8 +214,9 @@ namespace Akela_llvm {
                             int v = fp();
                             Zinc_string_add_format(value, "%d", v);
                             Zinc_string_add_char(value, '\n');
-                            *(int*)result->return_address = v;
-
+                            if (result->return_address) {
+                                *(int*)result->return_address = v;
+                            }
                         } else if (n->tu->td->bit_count == 16) {
                             short int (*fp)() = ExprSymbol.getAddress().toPtr < short int(*)
                             () > ();
