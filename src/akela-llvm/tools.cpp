@@ -263,6 +263,9 @@ namespace Akela_llvm {
                             u_int8_t v = fp();
                             Zinc_string_add_format(value, "%hhu", (unsigned int)v);
                             Zinc_string_add_char(value, '\n');
+                            if (result->return_address) {
+                                *(u_int8_t*)result->return_address = v;
+                            }
                         } else {
                             assert(false);
                         }

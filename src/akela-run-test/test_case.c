@@ -168,13 +168,8 @@ bool Run_check_address(Run_data* data, Run_test* test)
 {
     bool matched = true;
 
-    Cent_value* data_type_list_value = data->type_info->ct->primary->value;
-    assert(data_type_list_value);
-
     Cent_value* test_value = test->config_data->ct->primary->value;
     assert(test_value);
-
-    long long byte_count = 0;
 
     Cent_value* field = test_value->data.dag.head;
     assert(field);
@@ -214,6 +209,13 @@ bool Run_check_address(Run_data* data, Run_test* test)
             if (actual != expected) {
                 matched = false;
                 fprintf(stderr, "result does not match: (%ld) (%ld)\n", actual, expected);
+            }
+        } else if (type == Run_type_nat8) {
+            u_int8_t actual = *(u_int8_t*)test->return_address;
+            u_int8_t expected = (u_int8_t)value_value->data.integer;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
             }
         } else {
             assert(false && "unhandled type");
