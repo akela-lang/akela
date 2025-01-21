@@ -1,3 +1,3 @@
 # Akela Run Test Todo
-* parse type info
+* check result
 * regex in config

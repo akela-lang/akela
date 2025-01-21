@@ -3,7 +3,7 @@
 #include "cobble/compile_data.h"
 #include "centipede/module_file.h"
 
-void Run_config_data_init(Run_config_data* config_data, Zinc_string* file_name)
+void Run_config_data_init(Run_cent_data* config_data, Zinc_string* file_name)
 {
     config_data->mf = NULL;
     config_data->ct = NULL;
@@ -14,13 +14,13 @@ void Run_config_data_init(Run_config_data* config_data, Zinc_string* file_name)
     config_data->valid = false;
 }
 
-void Run_config_data_create(Run_config_data** config_data, Zinc_string* file_name)
+void Run_cent_data_create(Run_cent_data** config_data, Zinc_string* file_name)
 {
-    Zinc_malloc_safe((void**)config_data, sizeof(Run_config_data));
+    Zinc_malloc_safe((void**)config_data, sizeof(Run_cent_data));
     Run_config_data_init(*config_data, file_name);
 }
 
-void Run_config_data_destroy(Run_config_data* config_data)
+void Run_cent_data_destroy(Run_cent_data* config_data)
 {
     if (config_data) {
         Cent_module_file_destroy(config_data->mf);
@@ -54,7 +54,7 @@ void Run_test_destroy(Run_test* test)
     Zinc_string_destroy(&test->ake);
     Zinc_string_destroy(&test->llvm);
     Zinc_string_destroy(&test->config);
-    Run_config_data_destroy(test->config_data);
+    Run_cent_data_destroy(test->config_data);
     free(test->config_data);
 }
 
@@ -103,6 +103,7 @@ void Run_data_init(Run_data* data)
     data->test_passed_count = 0;
     data->has_solo = false;
     Run_test_list_init(&data->tests);
+    data->type_info = NULL;
 }
 
 void Run_data_create(Run_data** data)
@@ -117,6 +118,8 @@ void Run_data_destroy(Run_data* data)
     Cob_re_destroy(&data->separator_re);
     Cob_re_destroy(&data->regex_re);
     Run_test_list_destroy(&data->tests);
+    Run_cent_data_destroy(data->type_info);
+    free(data->type_info);
 }
 
 void Run_pair_init(Run_pair* pair)

@@ -1,46 +1,48 @@
+use lib::base::*;
+
 Data_type_list {
     Data_type {
-        .type = Type_type::Int8
+        .type = Type::Int8
         .align = 1
     }
     Data_type {
-        .type = Type_type::Int16
+        .type = Type::Int16
         .align = 2
     }
     Data_type {
-        .type = Type_type::Int32
+        .type = Type::Int32
         .align = 4
     }
     Data_type {
-        .type = Type_type::Int64
+        .type = Type::Int64
         .align = 8
     }
     Data_type {
-        .type = Type_type::Nat8
+        .type = Type::Nat8
         .align = 1
     }
     Data_type {
-        .type = Type_type::Nat16
+        .type = Type::Nat16
         .align = 2
     }
     Data_type {
-        .type = Type_type::Nat32
+        .type = Type::Nat32
         .align = 4
     }
     Data_type {
-        .type = Type_type::Nat64
+        .type = Type::Nat64
         .align = 8
     }
     Data_type {
-        .type = Type_type::Real16
+        .type = Type::Real16
         .align = 2
     }
     Data_type {
-        .type = Type_type::Real32
+        .type = Type::Real32
         .align = 4
     }
     Data_type {
-        .type = Type_type::Real64
+        .type = Type::Real64
         .align = 8
     }
 }

@@ -344,4 +344,19 @@ void Zinc_get_cwd(Zinc_string* cwd)
     }
 }
 
+Zinc_result Zinc_is_reg_file(Zinc_string* path)
+{
+    Zinc_string_finish(path);
+    struct stat sb;
+    if (stat(path->buf, &sb) == -1) {
+        return Zinc_set_error("Could not stat file: [%s]: %s", strerror(errno), path->buf);
+    }
+
+    if (!S_ISREG(sb.st_mode)) {
+        return Zinc_set_error("Not a regular file: %s", path->buf);
+    }
+
+    return Zinc_result_ok;
+}
+
 #endif

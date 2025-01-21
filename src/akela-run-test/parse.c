@@ -5,33 +5,22 @@
 #include <sys/types.h>
 #include <string.h>
 #include <unistd.h>
-#include <centipede/base.h>
 #include <sys/stat.h>
 #include <zinc/input_unicode_string.h>
-
-#include "zinc/input_unicode_file.h"
 #include "zinc/os_unix.h"
 #include "zinc/spec_error.h"
-#include "cobble/compile.h"
 #include "cobble/match.h"
 #include "data.h"
 #include "zinc/String_slice.h"
 #include <assert.h>
-#include <centipede/comp_table.h>
-#include <centipede/module_file.h>
+#include "cent.h"
+#include "zinc/os_unix.h"
 
-#include "centipede/base.h"
-
-#include "akela/comp_unit.h"
-#include "akela-llvm/cg.h"
-
-void Run_append_path(Zinc_string* bf, char* path);
 void Run_collect(
     Run_data* data,
     Zinc_string* dir_path,
     Zinc_string* path,
     Zinc_string* file_name);
-Run_config_data* Run_get_config(Zinc_string* dir_path, Zinc_string* file_name, Zinc_string* config_string);
 
 bool Run_validate_directory(const char* path)
 {
@@ -74,7 +63,7 @@ void Run_parse_files(Run_data* data, char* dir_name)
                     Zinc_string path;
                     Zinc_string_init(&path);
                     Zinc_string_add_str(&path, dir_name);
-                    Run_append_path(&path, dir->d_name);
+                    Zinc_path_append_str(&path, dir->d_name);
                     Zinc_string_finish(&path);
 
                     Zinc_string file_name;
@@ -96,12 +85,6 @@ void Run_parse_files(Run_data* data, char* dir_name)
     }
 
     Zinc_string_destroy(&dir_path);
-}
-
-void Run_append_path(Zinc_string* bf, char* path)
-{
-    Zinc_string_add_char(bf, '/');
-    Zinc_string_add_str(bf, path);
 }
 
 void Run_collect(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
@@ -155,7 +138,7 @@ void Run_collect(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
     Zinc_string_destroy(&line);
     fclose(fp);
 
-    test->config_data = Run_get_config(dir_path, file_name, &test->config);
+    test->config_data = Run_get_cent(dir_path, file_name, &test->config);
     Run_test_list_add(&data->tests, test);
 
     if (test->config_data) {
@@ -176,74 +159,4 @@ void Run_collect(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
             }
         }
     }
-}
-
-Run_config_data* Run_get_config(Zinc_string* dir_path, Zinc_string* file_name, Zinc_string* config_string)
-{
-    Cent_module_file* mf = NULL;
-    Cent_module_file_create(&mf, dir_path);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create(&ct, mf, mf->vtable, Cent_base_create());
-
-    Zinc_vector* v = NULL;
-    Zinc_vector_create(&v, sizeof(char));
-    Zinc_vector_add(v, config_string->buf, config_string->size);
-
-    Zinc_input_unicode_string* input = NULL;
-    Zinc_input_unicode_string_create(&input, v);
-
-    Zinc_string_slice file_name_slice = {file_name->buf, file_name->size};
-    Cent_comp_unit* cu = NULL;
-    Cent_comp_unit_create(
-        &cu,
-        input,
-        input->input_vtable,
-        file_name_slice,
-        mf,
-        mf->vtable, ct->base);
-    Cent_comp_table_add_str(ct, "*config*", cu);
-    ct->primary = cu;
-    cu->ct = ct;
-    cu->pd.cu = cu;
-    cu->pd.ct = ct;
-
-    bool valid = false;
-    Cent_comp_unit_parse(cu);
-    if (cu->errors.head) {
-        Zinc_error* e = cu->errors.head;
-        while (e) {
-            Zinc_string_finish(&e->message);
-            printf("(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
-            e = e->next;
-        }
-    } else {
-        Cent_comp_unit_build(cu);
-        if (cu->errors.head) {
-            Zinc_error* e = cu->errors.head;
-            while (e) {
-                Zinc_string_finish(&e->message);
-                printf("(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
-                e = e->next;
-            }
-        } else {
-            valid = true;
-        }
-    }
-
-    Run_config_data* config_data = NULL;
-    Run_config_data_create(&config_data, file_name);
-    config_data->mf = mf;
-    config_data->ct = ct;
-    config_data->v = v;
-    config_data->input = input;
-    config_data->valid = valid;
-
-    if (valid) {
-        return config_data;
-    }
-
-    Run_config_data_destroy(config_data);
-
-    return NULL;
 }

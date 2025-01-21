@@ -22,6 +22,7 @@ ZINC_API enum Zinc_result Zinc_get_exe_path(char** path);
 ZINC_API void Zinc_split_path(struct Zinc_string* path, struct Zinc_string* dir, struct Zinc_string* filename);
 ZINC_API int Zinc_fopen_s(FILE **f, const char *name, const char *mode);
 ZINC_API void Zinc_get_cwd(struct Zinc_string* cwd);
+ZINC_API Zinc_result Zinc_is_reg_file(Zinc_string* path);
 
 #endif
 
