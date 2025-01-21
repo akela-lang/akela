@@ -217,6 +217,20 @@ bool Run_check_address(Run_data* data, Run_test* test)
                 matched = false;
                 fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
             }
+        } else if (type == Run_type_nat16) {
+            u_int16_t actual = *(u_int16_t*)test->return_address;
+            u_int16_t expected = (u_int16_t)value_value->data.integer;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%hu) (%hu)\n", actual, expected);
+            }
+        } else if (type == Run_type_nat32) {
+            u_int32_t actual = *(u_int32_t*)test->return_address;
+            u_int32_t expected = (u_int32_t)value_value->data.integer;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
+            }
         } else {
             assert(false && "unhandled type");
         }

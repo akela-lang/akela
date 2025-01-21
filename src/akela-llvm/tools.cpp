@@ -247,17 +247,22 @@ namespace Akela_llvm {
                             Zinc_string_add_format(value, "%lu", v);
                             Zinc_string_add_char(value, '\n');
                         } else if (n->tu->td->bit_count == 32) {
-                            unsigned int (*fp)() = ExprSymbol.getAddress().toPtr < unsigned int(*)
-                            () > ();
-                            unsigned int v = fp();
+                            u_int32_t (*fp)() = ExprSymbol.getAddress().toPtr<u_int32_t(*)() > ();
+                            u_int32_t v = fp();
                             Zinc_string_add_format(value, "%u", v);
                             Zinc_string_add_char(value, '\n');
+                            if (result->return_address) {
+                                *(u_int32_t*)result->return_address = v;
+                            }
                         } else if (n->tu->td->bit_count == 16) {
-                            short unsigned int (*fp)() = ExprSymbol.getAddress().toPtr < short unsigned int(*)
+                            u_int16_t (*fp)() = ExprSymbol.getAddress().toPtr < u_int16_t(*)
                             () > ();
-                            short unsigned int v = fp();
-                            Zinc_string_add_format(value, "%hu", (unsigned int)v);
+                            u_int16_t v = fp();
+                            Zinc_string_add_format(value, "%hu", v);
                             Zinc_string_add_char(value, '\n');
+                            if (result->return_address) {
+                                *(u_int16_t*)result->return_address = v;
+                            }
                         } else if (bit_count == 8) {
                             u_int8_t (*fp)() = ExprSymbol.getAddress().toPtr<u_int8_t(*)()> ();
                             u_int8_t v = fp();
