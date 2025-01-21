@@ -41,8 +41,6 @@ bool Run_validate_directory(const char* path)
         return false;
     }
 
-    printf("%s\n", path);
-
     return true;
 }
 
@@ -89,10 +87,10 @@ void Run_parse_files(Run_data* data, char* dir_name)
 
 void Run_collect(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
 {
-    printf("%s\n", path->buf);
-
     Run_test* test = NULL;
     Run_test_create(&test);
+    Zinc_string_add_string(&test->name, file_name);
+    Zinc_string_finish(&test->name);
 
     FILE* fp = fopen(path->buf, "r");
 

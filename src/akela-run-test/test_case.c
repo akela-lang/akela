@@ -24,9 +24,15 @@ void Run_test_cases(Run_data* data)
 {
     Run_test* test = data->tests.head;
     while (test) {
+        if (test->mute) {
+            printf("Muting: %s\n", test->name.buf);
+        }
         bool can_run = !test->mute
             && ((data->has_solo && test->solo) || !data->has_solo);
         if (can_run) {
+            if (test->solo) {
+                printf("Running solo: %s\n", test->name.buf);
+            }
             Run_akela(data, test);
         }
         test = test->next;

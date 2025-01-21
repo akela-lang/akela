@@ -20,7 +20,6 @@ void Run_get_type_info(Run_data* data, const char* dir_name)
     Zinc_path_append(&path, &file_name);
     Zinc_string_finish(&path);
 
-    printf("%s\n", path.buf);
     if (Zinc_is_reg_file(&path) == Zinc_result_error) {
         printf("%s\n", Zinc_error_message);
         return;

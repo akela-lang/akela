@@ -29,6 +29,7 @@ typedef struct Run_test {
     bool mute;
     void* return_address;
     long long return_size;
+    Zinc_string name;
 } Run_test;
 
 typedef struct Run_test_list {
