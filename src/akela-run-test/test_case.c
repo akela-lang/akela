@@ -194,6 +194,13 @@ bool Run_check_address(Run_data* data, Run_test* test)
                 matched = false;
                 fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
             }
+        } else if (type == Run_type_int64) {
+            long actual = *(long*)test->return_address;
+            long expected = (long)value_value->data.integer;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%ld) (%ld)\n", actual, expected);
+            }
         } else {
             assert(false && "unhandled type");
         }

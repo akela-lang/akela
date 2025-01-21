@@ -208,6 +208,9 @@ namespace Akela_llvm {
                             long v = fp();
                             Zinc_string_add_format(value, "%ld", v);
                             Zinc_string_add_char(value, '\n');
+                            if (result->return_address) {
+                                *(long*)result->return_address = v;
+                            }
                         } else if (n->tu->td->bit_count == 32) {
                             int (*fp)() = ExprSymbol.getAddress().toPtr < int(*)
                             () > ();
