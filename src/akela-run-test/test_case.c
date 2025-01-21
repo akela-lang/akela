@@ -187,7 +187,14 @@ bool Run_check_address(Run_data* data, Run_test* test)
 
         Cent_value* value_value = Cent_value_get_str(field, "value");
         assert(value_value);
-        if (type == Run_type_int32) {
+        if (type == Run_type_int16) {
+            short int actual = *(short int*)test->return_address;
+            short int expected = (short int)value_value->data.integer;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%hd) (%hd)\n", actual, expected);
+            }
+        } else if (type == Run_type_int32) {
             int actual = *(int*)test->return_address;
             int expected = (int)value_value->data.integer;
             if (actual != expected) {

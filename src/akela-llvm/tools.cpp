@@ -226,11 +226,17 @@ namespace Akela_llvm {
                             short int v = fp();
                             Zinc_string_add_format(value, "%hd", v);
                             Zinc_string_add_char(value, '\n');
+                            if (result->return_address) {
+                                *(short int*)result->return_address = v;
+                            }
                         } else if (bit_count == 8) {
-                            int32_t (*fp)() = ExprSymbol.getAddress().toPtr<int32_t(*)()> ();
-                            int32_t v = fp();
+                            int8_t (*fp)() = ExprSymbol.getAddress().toPtr<int8_t(*)()> ();
+                            int8_t v = fp();
                             Zinc_string_add_format(value, "%hhd", (int)v);
                             Zinc_string_add_char(value, '\n');
+                            if (result->return_address) {
+                                *(int8_t*)result->return_address = v;
+                            }
                         } else {
                             assert(false);
                         }
