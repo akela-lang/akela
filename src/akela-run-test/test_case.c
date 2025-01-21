@@ -253,6 +253,13 @@ bool Run_check_address(Run_data* data, Run_test* test)
                 matched = false;
                 fprintf(stderr, "result does not match: (%f) (%f)\n", actual, expected);
             }
+        } else if (type == Run_type_real64) {
+            double actual = *(double*)test->return_address;
+            double expected = (double)value_value->data.fp;
+            if (actual != expected) {
+                matched = false;
+                fprintf(stderr, "result does not match: (%lf) (%lf)\n", actual, expected);
+            }
         } else {
             assert(false && "unhandled type");
         }

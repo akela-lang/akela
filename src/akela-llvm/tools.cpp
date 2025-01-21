@@ -291,6 +291,9 @@ namespace Akela_llvm {
                         double v = fp();
                         Zinc_string_add_format(value, "%lf", v);
                         Zinc_string_add_char(value, '\n');
+                        if (result->return_address) {
+                            *(double*)result->return_address = v;
+                        }
                     } else if (n->tu->td->bit_count == 32) {
                         float (*fp)() = ExprSymbol.getAddress().toPtr <float(*)()>();
                         float v = fp();
