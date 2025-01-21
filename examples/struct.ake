@@ -5,7 +5,7 @@ struct Point
 end
 
 # create a Point value, p
-let p: Point = Point
+const p: Point = Point
     x: 1.5
     y: 2.7
 end
