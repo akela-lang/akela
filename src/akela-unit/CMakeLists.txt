@@ -1,5 +1,5 @@
-# akela-test
-set(files
+# akela-unit
+set(akela_unit_files
         test.c
         test_ast.c
         test_parse.c
@@ -19,11 +19,11 @@ set(files
         test_parse_function.c
         test_parse_struct.c
 )
-add_executable(akela-test ${files})
+add_executable(akela-unit ${akela_unit_files})
 if(${COVERAGE} MATCHES On)
-    target_link_libraries(akela-test akela zinc ${converage_lib})
+    target_link_libraries(akela-unit akela zinc ${converage_lib})
 else()
-    target_link_libraries(akela-test akela zinc ${converage_lib})
+    target_link_libraries(akela-unit akela zinc ${converage_lib})
 endif()
 
 # event loop
@@ -35,7 +35,7 @@ else()
     target_link_libraries(event_loop zinc)
 endif()
 
-set_target_properties(akela-test event_loop
+set_target_properties(akela-unit event_loop
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
