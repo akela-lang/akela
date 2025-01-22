@@ -126,4 +126,4 @@ add_subdirectory(src/coverage-bin)
 add_subdirectory(src/coverage-unit)
 
 add_subdirectory(src/centipede)
-add_subdirectory(src/centipede-test)
+add_subdirectory(src/centipede-unit)
