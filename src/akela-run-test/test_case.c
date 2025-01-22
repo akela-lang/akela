@@ -347,6 +347,17 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
             } else {
                 assert(false && "expected real or string value type");
             }
+        } else if (type == Run_type_bool) {
+            if (value_value->type == Cent_value_type_boolean) {
+                bool actual = *(bool*)test->return_address;
+                bool expected = (bool)value_value->data.boolean;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected boolean or string value type");
+            }
         } else {
             assert(false && "unhandled type");
         }

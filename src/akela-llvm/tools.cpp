@@ -306,6 +306,9 @@ namespace Akela_llvm {
                 } else {
                     Zinc_string_add_format(value, "false", v);
                 }
+                if (result->return_address) {
+                    *(bool*)result->return_address = v;
+                }
             } else if (type == Ake_type_function) {
                 void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
                 void* v = fp();

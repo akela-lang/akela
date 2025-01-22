@@ -1,0 +1,30 @@
+const a: Bool = false
+a
+###
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+/abort/
+
+/printf/
+
+/exit/
+
+define i1 @__top_level() {
+entry:
+  %a = alloca i1, align 1
+  store i1 false, ptr %a, align 1
+  %0 = load i1, ptr %a, align 1
+  ret i1 %0
+}
+###
+use lib::base::*;
+Test {
+    .solo = false
+    .mute = false
+    Field {
+        .type = Type::Bool
+        .value = false
+    }
+}

@@ -46,4 +46,5 @@ enum Type {
     Real16
     Real32
     Real64
+    Bool
 }

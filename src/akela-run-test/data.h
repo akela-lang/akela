@@ -67,6 +67,7 @@ typedef enum {
     Run_type_real16,
     Run_type_real32,
     Run_type_real64,
+    Run_type_bool,
 } Run_type;
 
 void Run_config_data_init(Run_cent_data* config_data, Zinc_string* file_name);
