@@ -123,7 +123,7 @@ add_subdirectory(src/json-unit)
 
 add_subdirectory(src/coverage)
 add_subdirectory(src/coverage-bin)
-add_subdirectory(src/coverage-test)
+add_subdirectory(src/coverage-unit)
 
 add_subdirectory(src/centipede)
 add_subdirectory(src/centipede-test)
