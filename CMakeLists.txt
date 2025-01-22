@@ -116,7 +116,7 @@ add_subdirectory(src/cobble)
 add_subdirectory(src/cobble-test)
 
 add_subdirectory(src/dataframe)
-add_subdirectory(src/dataframe-test)
+add_subdirectory(src/dataframe-unit)
 
 add_subdirectory(src/json)
 add_subdirectory(src/json-unit)

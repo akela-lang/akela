@@ -63,12 +63,12 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     ninja -C cmake-build-debug
 
 ## Run Tests
-    cmake-build-debug/bin/zinc-test
+    cmake-build-debug/bin/zinc-unit
     cmake-build-debug/bin/akela-test
     cmake-build-debug/bin/akela-llvm-test
     cmake-build-debug/bin/dataframe-test
     cmake-build-debug/bin/cobble-test
-    cmake-build-debug/bin/json-test
+    cmake-build-debug/bin/json-unit
     cmake-build-debug/bin/coverage-test
     cmake-build-debug/bin/centipede-test
 

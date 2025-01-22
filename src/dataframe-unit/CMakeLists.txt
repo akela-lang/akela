@@ -1,4 +1,4 @@
-set(dataframe_test_files
+set(dataframe_unit_files
         test.c
         test_csv_lex.c
         test_csv_parse.c
@@ -8,9 +8,9 @@ set(dataframe_test_files
         test_field_lex.c
 )
 
-add_executable(dataframe-test ${dataframe_test_files})
-target_link_libraries(dataframe-test dataframe zinc ${coverage_lib})
-set_target_properties(dataframe-test
+add_executable(dataframe-unit ${dataframe_unit_files})
+target_link_libraries(dataframe-unit dataframe zinc ${coverage_lib})
+set_target_properties(dataframe-unit
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
