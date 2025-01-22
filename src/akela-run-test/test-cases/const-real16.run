@@ -25,6 +25,6 @@ Test {
     .mute = false
     Field {
         .type = Type::Real16
-        .value = 1.540039
+        .value = "/^1\\.54\\d*$/"
     }
 }

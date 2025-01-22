@@ -141,7 +141,7 @@ bool Zinc_error_list_set(Zinc_error_list *el, Zinc_location* loc, const char* fm
             }
             Zinc_string_add(&e->message, bf.buf, bf.size);
         } else if (last == '%' && *fmt == 'c') {
-            char c = (char)va_arg(args, int);
+            char c = va_arg(args, int);
             Zinc_string_add_char(&e->message, c);
         } else {
             Zinc_string_add_char(&e->message, *fmt);

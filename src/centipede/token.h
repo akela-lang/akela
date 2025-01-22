@@ -78,7 +78,7 @@ static char* Cent_token_name(Cent_token_type type)
 typedef enum Cent_number_type {
     Cent_number_type_none,
     Cent_number_type_integer,
-    Cent_number_type_fp,
+    Cent_number_type_real,
 } Cent_number_type;
 
 typedef enum Cent_builtin_type {

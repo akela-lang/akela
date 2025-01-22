@@ -174,7 +174,7 @@ void test_input_unicode_string_next()
     Zinc_expect_size_t_equal(loc.line, 2, "10 line");
     Zinc_expect_size_t_equal(loc.col, 6, "10 col");
 
-    Zinc_expect_str(&bf, "hello\nworld", "bf");
+    Zinc_expect_string(&bf, "hello\nworld", "bf");
 
     free(input);
     Zinc_vector_destroy(vector);
@@ -331,7 +331,7 @@ void test_input_unicode_string_next_multibyte()
     Zinc_expect_size_t_equal(loc.line, 2, "8 line");
     Zinc_expect_size_t_equal(loc.col, 4, "8 col");
 
-    Zinc_expect_str(&bf, "hello\nαβγ", "bf");
+    Zinc_expect_string(&bf, "hello\nαβγ", "bf");
 
     free(input);
     Zinc_vector_destroy(vector);
@@ -447,7 +447,7 @@ void test_input_unicode_string_repeat()
     Zinc_expect_size_t_equal(loc.line, 1, "5 line");
     Zinc_expect_size_t_equal(loc.col, 6, "5 col");
 
-    Zinc_expect_str(&bf, "hhello", "bf");
+    Zinc_expect_string(&bf, "hhello", "bf");
 
     free(input);
     Zinc_vector_destroy(vector);
@@ -627,7 +627,7 @@ void test_input_unicode_string_seek()
     Zinc_expect_size_t_equal(loc.line, 1, "5 line");
     Zinc_expect_size_t_equal(loc.col, 6, "5 col");
 
-    Zinc_expect_str(&bf, "hellohello", "bf");
+    Zinc_expect_string(&bf, "hellohello", "bf");
 
     free(input);
     Zinc_vector_destroy(vector);

@@ -12,7 +12,7 @@ void test_akela_llvm_function_declare()
     cg_setup("fn foo(a: Int32, b: Int32, c: Int32)\n"
              "end\n",
              &result);
-    Zinc_expect_str(&result.value, "Function", "value");
+    Zinc_expect_string(&result.value, "Function", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -26,7 +26,7 @@ void test_akela_llvm_function_declare_ret()
              "  a + b + c\n"
              "end\n",
              &result);
-    Zinc_expect_str(&result.value, "Function", "value");
+    Zinc_expect_string(&result.value, "Function", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -41,7 +41,7 @@ void test_akela_llvm_function_call()
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
-    Zinc_expect_str(&result.value, "6", "value");
+    Zinc_expect_string(&result.value, "6", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -56,7 +56,7 @@ void test_akela_llvm_function_anonymous_call()
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
-    Zinc_expect_str(&result.value, "6", "value");
+    Zinc_expect_string(&result.value, "6", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -71,7 +71,7 @@ void test_akela_llvm_function_ret_boolean()
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
-    Zinc_expect_str(&result.value, "true", "value");
+    Zinc_expect_string(&result.value, "true", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -86,7 +86,7 @@ void test_akela_llvm_function_ret_array()
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
-    Zinc_expect_str(&result.value, "hello", "value");
+    Zinc_expect_string(&result.value, "hello", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -99,7 +99,7 @@ void test_akela_llvm_function_extern()
     cg_setup("extern pow(x: Real64, y: Real64)->Real64\n"
              "pow(5.0, 2.0)\n",
              &result);
-    Zinc_expect_str(&result.value, "25.000000", "value");
+    Zinc_expect_string(&result.value, "25.000000", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -114,7 +114,7 @@ void test_akela_llvm_function_assign()
              "bar = foo\n"
              "bar()\n",
              &result);
-    Zinc_expect_str(&result.value, "1", "value");
+    Zinc_expect_string(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -129,7 +129,7 @@ void test_akela_llvm_function_assign2()
              "foo = bar\n"
              "foo()\n",
              &result);
-    Zinc_expect_str(&result.value, "2", "value");
+    Zinc_expect_string(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -145,7 +145,7 @@ void test_akela_llvm_function_const_assign()
              "const a: fn (Int32)->Int32 = foo\n"
              "a(1)\n",
              &result);
-    Zinc_expect_str(&result.value, "2", "value");
+    Zinc_expect_string(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -159,7 +159,7 @@ void test_akela_llvm_function_expression()
              "  a + 1\n"
              "end(1)\n",
              &result);
-    Zinc_expect_str(&result.value, "2", "value");
+    Zinc_expect_string(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -173,7 +173,7 @@ void test_akela_llvm_function_anonymous_expression()
              "  a + 1\n"
              "end(1)\n",
              &result);
-    Zinc_expect_str(&result.value, "2", "value");
+    Zinc_expect_string(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -189,7 +189,7 @@ void test_akela_llvm_function_array_param()
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 0)\n",
              &result);
-    Zinc_expect_str(&result.value, "110", "value");
+    Zinc_expect_string(&result.value, "110", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -199,7 +199,7 @@ void test_akela_llvm_function_array_param()
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 1)\n",
              &result);
-    Zinc_expect_str(&result.value, "210", "value");
+    Zinc_expect_string(&result.value, "210", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -209,7 +209,7 @@ void test_akela_llvm_function_array_param()
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 2)\n",
              &result);
-    Zinc_expect_str(&result.value, "310", "value");
+    Zinc_expect_string(&result.value, "310", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -233,7 +233,7 @@ void test_akela_llvm_function_struct_param()
              "end\n"
              "add_ten(p)",
              &result);
-    Zinc_expect_str(&result.value, "12.500000", "value");
+    Zinc_expect_string(&result.value, "12.500000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -251,7 +251,7 @@ void test_akela_llvm_function_struct_param()
             "end\n"
             "add_ten(p)",
             &result);
-    Zinc_expect_str(&result.value, "13.500000", "value");
+    Zinc_expect_string(&result.value, "13.500000", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -272,7 +272,7 @@ void test_akela_llvm_function_function_param() {
             "end\n"
             "compute(add_one, 15)\n",
             &result);
-    Zinc_expect_str(&result.value, "16", "value");
+    Zinc_expect_string(&result.value, "16", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -288,7 +288,7 @@ void test_akela_llvm_function_function_param() {
             "end\n"
             "compute(add_two, 15)\n",
             &result);
-    Zinc_expect_str(&result.value, "17", "value");
+    Zinc_expect_string(&result.value, "17", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -302,7 +302,7 @@ void test_akela_llvm_function_in_array() {
             "func_array[0] = fn (x: Int32)->Int32 x*2 end\n"
             "func_array[0](10)",
             &result);
-    Zinc_expect_str(&result.value, "20", "value");
+    Zinc_expect_string(&result.value, "20", "value");
     Ake_code_gen_result_destroy(&result);
 }
 

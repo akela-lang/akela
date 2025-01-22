@@ -37,7 +37,7 @@ typedef enum Cob_ast_type {
 
 typedef struct Cob_ast {
     Cob_ast_type type;
-    char c[4];
+    char c[5];
     int num;
     unsigned long num_value;
     struct Zinc_location loc;

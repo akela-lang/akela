@@ -20,6 +20,7 @@ set(lib_files
         environment.c
         struct_element.c
         type_use.c
+        format.c
 )
 
 add_library(akela STATIC ${lib_files})

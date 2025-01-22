@@ -185,7 +185,7 @@ void test_input_unicode_file_next()
     Zinc_expect_size_t_equal(loc.col, 6, "11 col");
     Zinc_expect_size_t_equal(loc.end_pos, 0, "11 end_pos");
 
-    Zinc_expect_str(&bf, "hello\nworld", "bf");
+    Zinc_expect_string(&bf, "hello\nworld", "bf");
 
     fclose(fp);
     Zinc_string_destroy(&name);
@@ -350,7 +350,7 @@ void test_input_unicode_file_next_multibyte()
     Zinc_expect_size_t_equal(loc.col, 4, "8 col");
     Zinc_expect_size_t_equal(loc.end_pos, 0, "8 end_pos");
 
-    Zinc_expect_str(&bf, "hello\nαβγ", "bf");
+    Zinc_expect_string(&bf, "hello\nαβγ", "bf");
 
     fclose(fp);
     Zinc_string_destroy(&name);
@@ -474,7 +474,7 @@ void test_input_unicode_file_repeat()
     Zinc_expect_size_t_equal(loc.col, 6, "5 col");
     Zinc_expect_size_t_equal(loc.end_pos, 0, "5 end_pos");
 
-    Zinc_expect_str(&bf, "hhello", "bf");
+    Zinc_expect_string(&bf, "hhello", "bf");
 
     fclose(fp);
     Zinc_string_destroy(&name);
@@ -662,7 +662,7 @@ void test_input_unicode_file_seek()
     Zinc_expect_size_t_equal(loc.col, 6, "5 col");
     Zinc_expect_size_t_equal(loc.end_pos, 0, "5 end_pos");
 
-    Zinc_expect_str(&bf, "hellohello", "bf");
+    Zinc_expect_string(&bf, "hellohello", "bf");
 
     Zinc_string_destroy(&bf);
     fclose(fp);

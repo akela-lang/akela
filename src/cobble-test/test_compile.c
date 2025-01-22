@@ -1214,6 +1214,37 @@ void test_compile_coverage_line2()
     Cob_re_destroy(&re);
 }
 
+void test_compile_number()
+{
+    Zinc_test_name(__func__);
+
+    Cob_re re = Cob_compile_str("1234");
+
+    Zinc_expect_no_errors(re.errors);
+    Zinc_expect_size_t_equal(re.group_count, 1, "group_count");
+
+    Zinc_assert_ptr(re.root, "ptr root");
+    Zinc_expect_int_equal(re.root->type, Cob_ast_type_concat, "type root");
+
+    Cob_ast* one = Cob_ast_get(re.root, 0);
+    Zinc_expect_int_equal(one->type, Cob_ast_type_literal, "type one");
+    Zinc_expect_strcmp(one->c, "1", "c one");
+
+    Cob_ast* two = Cob_ast_get(re.root, 1);
+    Zinc_expect_int_equal(two->type, Cob_ast_type_literal, "type two");
+    Zinc_expect_strcmp(two->c, "2", "c two");
+
+    Cob_ast* three = Cob_ast_get(re.root, 2);
+    Zinc_expect_int_equal(three->type, Cob_ast_type_literal, "type three");
+    Zinc_expect_strcmp(three->c, "3", "c three");
+
+    Cob_ast* four = Cob_ast_get(re.root, 3);
+    Zinc_expect_int_equal(four->type, Cob_ast_type_literal, "type four");
+    Zinc_expect_strcmp(four->c, "4", "c four");
+
+    Cob_re_destroy(&re);
+}
+
 void test_compile_missing_group()
 {
     Zinc_test_name(__func__);
@@ -1272,4 +1303,6 @@ void test_compile()
     test_compile_coverage_line2();
 
     test_compile_missing_group();
+
+    test_compile_number();
 }

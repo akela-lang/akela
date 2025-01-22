@@ -10,7 +10,7 @@ void test_code_gen_add()
     Ake_code_gen_result_init(&result);
 
     cg_setup("1 + 40", &result);
-    Zinc_expect_str(&result.value, "41", "41");
+    Zinc_expect_string(&result.value, "41", "41");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -24,7 +24,7 @@ void test_code_gen_add2()
     cg_setup("const a: Int32 = 4\n"
              "a + 61\n",
              &result);
-    Zinc_expect_str(&result.value, "65", "65");
+    Zinc_expect_string(&result.value, "65", "65");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -36,7 +36,7 @@ void test_code_gen_sub()
     Ake_code_gen_result_init(&result);
 
     cg_setup("15-2", &result);
-    Zinc_expect_str(&result.value, "13", "13");
+    Zinc_expect_string(&result.value, "13", "13");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -50,7 +50,7 @@ void test_code_gen_sub2()
     cg_setup("const a: Int32 = 10\n"
              "a - 2\n",
              &result);
-    Zinc_expect_str(&result.value, "8", "8");
+    Zinc_expect_string(&result.value, "8", "8");
 
     Ake_code_gen_result_destroy(&result);
 }

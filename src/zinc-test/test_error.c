@@ -44,8 +44,22 @@ void test_error_list_set_buffer()
     Zinc_string_destroy(&bf);
 }
 
+void test_error_set()
+{
+    Zinc_test_name(__func__);
+
+    Zinc_error_list errors;
+    Zinc_error_list_init(&errors);
+    Zinc_location loc;
+    Zinc_location_init(&loc);
+    Zinc_error_list_set(&errors, &loc, "%c", '1');
+    Zinc_error* e = errors.head;
+    Zinc_expect_string(&e->message, "1", "message e");
+}
+
 void test_error()
 {
     test_error_list();
     test_error_list_set_buffer();
+    test_error_set();
 }

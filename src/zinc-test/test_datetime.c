@@ -14,7 +14,7 @@ void test_datetime_utc()
     struct tm tm;
     Zinc_datetime_get_utc_tm(&t, &tm);
     Zinc_datetime_format(&tm, &dt);
-    Zinc_expect_str(&dt, "1970-01-01T00:00:00Z", "1970-01-01T00:00:00Z");
+    Zinc_expect_string(&dt, "1970-01-01T00:00:00Z", "1970-01-01T00:00:00Z");
     Zinc_string_destroy(&dt);
 }
 
@@ -31,7 +31,7 @@ void test_datetime_utc2()
     tm.tm_hour = 0;
     tm.tm_gmtoff = -25200;
     Zinc_datetime_format(&tm, &dt);
-    Zinc_expect_str(&dt, "1970-01-01T00:00:00-07:00", "1970-01-01T00:00:00-0700");
+    Zinc_expect_string(&dt, "1970-01-01T00:00:00-07:00", "1970-01-01T00:00:00-0700");
     Zinc_string_destroy(&dt);
 }
 

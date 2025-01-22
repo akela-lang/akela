@@ -45,7 +45,7 @@ Cent_token* lex(Cent_lex_data* ld)
         if (t->number_type == Cent_number_type_integer) {
             Zinc_string_finish(&t->value);
             t->number_value.integer = strtoll(t->value.buf, NULL, 10);
-        } else if (t->number_type == Cent_number_type_fp) {
+        } else if (t->number_type == Cent_number_type_real) {
             Zinc_string_finish(&t->value);
             t->number_value.fp = strtod(t->value.buf, NULL);
         } else {
@@ -555,7 +555,7 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
 
 void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
 {
-    t->number_type = Cent_number_type_fp;
+    t->number_type = Cent_number_type_real;
 
     char c[4];
     int num;
@@ -599,7 +599,7 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
 
 void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
 {
-    t->number_type = Cent_number_type_fp;
+    t->number_type = Cent_number_type_real;
 
     char c[4];
     int num;

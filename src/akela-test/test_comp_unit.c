@@ -28,7 +28,7 @@ void test_comp_unit_compile()
 	Ake_ast* number = Ast_node_get(root, 0);
 	Zinc_assert_ptr(number, "ptr number");
 	Zinc_expect_int_equal(number->type, Ake_ast_type_number, "number number");
-	Zinc_expect_str(&number->value, "10", "10 number");
+	Zinc_expect_string(&number->value, "10", "10 number");
 
     free(input);
 	Ake_comp_unit_destroy(cu);

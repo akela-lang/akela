@@ -22,7 +22,7 @@ void test_stringify_null()
 
     Json_stringify(el, dom, &bf);
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "null", "bf");
+    Zinc_expect_string(&bf, "null", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -47,7 +47,7 @@ void test_stringify_true()
 
     Json_stringify(el, dom, &bf);
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "true", "bf");
+    Zinc_expect_string(&bf, "true", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -72,7 +72,7 @@ void test_stringify_false()
 
     Json_stringify(el, dom, &bf);
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "false", "bf");
+    Zinc_expect_string(&bf, "false", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -98,7 +98,7 @@ void test_stringify_string()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "\"hello\"", "bf");
+    Zinc_expect_string(&bf, "\"hello\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -124,7 +124,7 @@ void test_stringify_string2()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
+    Zinc_expect_string(&bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -150,7 +150,7 @@ void test_stringify_string3()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "\"\\u1fa52\"", "bf");
+    Zinc_expect_string(&bf, "\"\\u1fa52\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -176,7 +176,7 @@ void test_stringify_string4()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "\"\\t\"", "bf");
+    Zinc_expect_string(&bf, "\"\\t\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -231,7 +231,7 @@ void test_stringify_number_integer()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "123", "bf");
+    Zinc_expect_string(&bf, "123", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -258,7 +258,7 @@ void test_stringify_number_fraction()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "5.100000", "bf");
+    Zinc_expect_string(&bf, "5.100000", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -285,7 +285,7 @@ void test_stringify_number_exponent()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "51.000000", "bf");
+    Zinc_expect_string(&bf, "51.000000", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -310,7 +310,7 @@ void test_stringify_array_empty()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "[]", "bf");
+    Zinc_expect_string(&bf, "[]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -342,7 +342,7 @@ void test_stringify_array_one()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "[3]", "bf");
+    Zinc_expect_string(&bf, "[3]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -404,7 +404,7 @@ void test_stringify_array2()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
+    Zinc_expect_string(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -429,7 +429,7 @@ void test_stringify_object_empty()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "{}", "bf");
+    Zinc_expect_string(&bf, "{}", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -466,7 +466,7 @@ void test_stringify_object_one()
     Json_stringify(el, dom, &bf);
 
     Zinc_expect_no_errors(el);
-    Zinc_expect_str(&bf, "{\"one\":1}", "bf");
+    Zinc_expect_string(&bf, "{\"one\":1}", "bf");
 
     Zinc_string_destroy(&name0);
     Zinc_string_destroy(&bf);

@@ -31,7 +31,7 @@ void test_buffer_add_char()
 	Zinc_string_add_char(&bf, 'y');
 	Zinc_string_add_char(&bf, 'z');
 
-	Zinc_expect_str(&bf, "xyz", "str");
+	Zinc_expect_string(&bf, "xyz", "str");
 
 	/* destroy bf{} */
 	Zinc_string_destroy(&bf);
@@ -46,7 +46,7 @@ void test_buffer_add()
     Zinc_string_add(bf, "abc", 3);
     Zinc_string_add(bf, "123", 3);
 
-    Zinc_expect_str(bf, "abc123", "bf");
+    Zinc_expect_string(bf, "abc123", "bf");
 
     Zinc_string_destroy(bf);
     free(bf);
@@ -80,7 +80,7 @@ void test_buffer_finish()
 	Zinc_string_add_char(&bf, 'z');
 	Zinc_string_finish(&bf);
 
-	Zinc_expect_str(&bf, "xyz", "str");
+	Zinc_expect_string(&bf, "xyz", "str");
 	Zinc_expect_true(strcmp(bf.buf, "xyz") == 0, "strcmp");
 
 	/* destroy bf{} */
@@ -101,9 +101,9 @@ void test_buffer_clear()
 	Zinc_string_add_char(&bf, 'y');
 	Zinc_string_add_char(&bf, 'z');
 
-	Zinc_expect_str(&bf, "xyz", "str");
+	Zinc_expect_string(&bf, "xyz", "str");
 	Zinc_string_clear(&bf);
-	Zinc_expect_str(&bf, "", "clear");
+	Zinc_expect_string(&bf, "", "clear");
 
 	/* destroy bf{} */
 	Zinc_string_destroy(&bf);
@@ -118,10 +118,10 @@ void test_buffer_reset()
 
     Zinc_string_add_str(&bf, "hello");
 
-    Zinc_expect_str(&bf, "hello", "hello");
+    Zinc_expect_string(&bf, "hello", "hello");
     Zinc_string_reset(&bf);
 
-    Zinc_expect_str(&bf, "", "");
+    Zinc_expect_string(&bf, "", "");
 
     Zinc_string_destroy(&bf);
 }
@@ -142,14 +142,14 @@ void test_buffer_copy()
 	Zinc_string_add_char(&bf, 'y');
 	Zinc_string_add_char(&bf, 'z');
 
-	Zinc_expect_str(&bf, "xyz", "str");
+	Zinc_expect_string(&bf, "xyz", "str");
 
 	Zinc_string_init(&bf2);
 
 	/* allocate bf2{} */
 	Zinc_string_copy(&bf, &bf2);
 
-	Zinc_expect_str(&bf2, "xyz", "copy");
+	Zinc_expect_string(&bf2, "xyz", "copy");
 
 	/* destroy bf{} bf2{} */
 	Zinc_string_destroy(&bf);
@@ -172,7 +172,7 @@ void test_buffer_buffer2array()
 	Zinc_string_add_char(&bf, 'y');
 	Zinc_string_add_char(&bf, 'z');
 
-	Zinc_expect_str(&bf, "xyz", "str");
+	Zinc_expect_string(&bf, "xyz", "str");
 
 	/* allocate a */
 	Zinc_string_create_str(&bf, &a);
@@ -198,7 +198,7 @@ void test_buffer_array2buffer()
 	/* allocate bf{} */
 	Zinc_string_add_str2(a, &bf);
 
-	Zinc_expect_str(&bf, "xyz", "str");
+	Zinc_expect_string(&bf, "xyz", "str");
 
 
 	/* destroy bf{} */
@@ -350,7 +350,7 @@ void test_buffer_uslice()
 
 	Zinc_assert_ptr(bf2.buf, "ptr buf2.buf");
 	Zinc_expect_size_t_equal(bf2.size, 3, "3 bf2.size");
-	Zinc_expect_str(&bf2, "cde", "cde bf2");
+	Zinc_expect_string(&bf2, "cde", "cde bf2");
 
 	/* destory bf{} bf2{} */
 	Zinc_string_destroy(&bf);
@@ -385,7 +385,7 @@ void test_buffer_uslice2()
 
 	Zinc_assert_ptr(bf2.buf, "ptr buf2.buf");
 	Zinc_expect_int_equal(bf2.size, 4, "4 bf2.size");
-	Zinc_expect_str(&bf2, "cdef", "cdef bf2");
+	Zinc_expect_string(&bf2, "cdef", "cdef bf2");
 
 	/* destroy bf{} bf2{} */
 	Zinc_string_destroy(&bf);
@@ -400,7 +400,7 @@ void test_buffer_add_format()
     Zinc_string_init(&bf);
 
     Zinc_string_add_format(&bf, "%% %c %s %d %lf", 'x', "hello", 10, 5.1);
-    Zinc_expect_str(&bf, "% x hello 10 5.100000", "bf");
+    Zinc_expect_string(&bf, "% x hello 10 5.100000", "bf");
 
     Zinc_string_destroy(&bf);
 }

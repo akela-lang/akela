@@ -46,7 +46,7 @@ void test_lex_number_whole()
 	Zinc_assert_true(valid, "lex valid");
 	Zinc_assert_ptr(t, "ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
-	Zinc_expect_str(&t->value, "500", "500");
+	Zinc_expect_string(&t->value, "500", "500");
 	Zinc_expect_size_t_equal(t->loc.line, 1, "line 10");
 	Zinc_expect_size_t_equal(t->loc.col, 1, "col 10");
 
@@ -77,7 +77,7 @@ void test_lex_number_fraction_start()
 	Zinc_assert_true(valid, "lex valid");
 	Zinc_assert_ptr(t, "ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
-	Zinc_expect_str(&t->value, "500.", "500.");
+	Zinc_expect_string(&t->value, "500.", "500.");
 	Zinc_expect_int_equal(t->loc.line, 1, "line 10");
 	Zinc_expect_int_equal(t->loc.col, 1, "col 10");
 
@@ -108,7 +108,7 @@ void test_lex_number_fraction()
 	Zinc_assert_true(valid, "lex valid");
 	Zinc_assert_ptr(t, "ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
-	Zinc_expect_str(&t->value, "500.123", "500.123");
+	Zinc_expect_string(&t->value, "500.123", "500.123");
 	Zinc_expect_int_equal(t->loc.line, 1, "line 10");
 	Zinc_expect_int_equal(t->loc.col, 1, "col 10");
 
@@ -136,7 +136,7 @@ void test_lex_number_exponent_start()
 	Zinc_assert_true(valid, "0 valid");
 	Zinc_assert_ptr(t, "0 ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "0 number");
-	Zinc_expect_str(&t->value, "500e", "0 value");
+	Zinc_expect_string(&t->value, "500e", "0 value");
 
     Ake_token_destroy(t);
     free(t);
@@ -146,7 +146,7 @@ void test_lex_number_exponent_start()
 	Zinc_assert_true(valid, "1 valid");
 	Zinc_assert_ptr(t, "1 ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_eof, "1 eof");
-	Zinc_expect_str(&t->value, "", "1 value");
+	Zinc_expect_string(&t->value, "", "1 value");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -170,7 +170,7 @@ void test_lex_number_fraction_exponent_start()
 	Zinc_assert_true(valid, "0 valid");
 	Zinc_assert_ptr(t, "0 ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "0 number");
-	Zinc_expect_str(&t->value, "500.123e", "0 value");
+	Zinc_expect_string(&t->value, "500.123e", "0 value");
 
     Ake_token_destroy(t);
     free(t);
@@ -180,7 +180,7 @@ void test_lex_number_fraction_exponent_start()
 	Zinc_assert_true(valid, "1 valid");
 	Zinc_assert_ptr(t, "1 ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_eof, "1 eof");
-	Zinc_expect_str(&t->value, "", "1 value");
+	Zinc_expect_string(&t->value, "", "1 value");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -204,7 +204,7 @@ void test_lex_number_fraction_exponent()
 	Zinc_assert_true(valid, "lex valid");
 	Zinc_assert_ptr(t, "ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
-	Zinc_expect_str(&t->value, "500.123e2", "500.123e2");
+	Zinc_expect_string(&t->value, "500.123e2", "500.123e2");
 	Zinc_expect_int_equal(t->loc.line, 1, "line 10");
 	Zinc_expect_int_equal(t->loc.col, 1, "col 10");
 
@@ -277,7 +277,7 @@ void test_lex_number_fraction_exponent_negative()
 	Zinc_assert_true(valid, "lex valid");
 	Zinc_assert_ptr(t, "ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
-	Zinc_expect_str(&t->value, "500.123e-2", "500.123e-2");
+	Zinc_expect_string(&t->value, "500.123e-2", "500.123e-2");
 	Zinc_expect_int_equal(t->loc.line, 1, "line 10");
 	Zinc_expect_int_equal(t->loc.col, 1, "col 10");
 
@@ -308,7 +308,7 @@ void test_lex_number_exponent_positive()
 	Zinc_assert_true(valid, "lex valid");
 	Zinc_assert_ptr(t, "ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "number");
-	Zinc_expect_str(&t->value, "500.123e+2", "500.123e+2");
+	Zinc_expect_string(&t->value, "500.123e+2", "500.123e+2");
 	Zinc_expect_int_equal(t->loc.line, 1, "line");
 	Zinc_expect_int_equal(t->loc.col, 1, "col");
 
@@ -336,7 +336,7 @@ void test_lex_number_exponent_add()
 	Zinc_assert_true(valid, "0 valid");
 	Zinc_assert_ptr(t, "0 ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "0 number");
-	Zinc_expect_str(&t->value, "500.123e", "0 value");
+	Zinc_expect_string(&t->value, "500.123e", "0 value");
 	Zinc_expect_int_equal(t->loc.line, 1, "0 line 10");
 	Zinc_expect_int_equal(t->loc.col, 1, "0 col 10");
 
@@ -359,7 +359,7 @@ void test_lex_number_exponent_add()
 	Zinc_assert_true(valid, "2 valid");
 	Zinc_assert_ptr(t, "2 ptr t");
 	Zinc_expect_int_equal(t->type, Ake_token_number, "2 number");
-	Zinc_expect_str(&t->value, "1", "2 value");
+	Zinc_expect_string(&t->value, "1", "2 value");
 	Zinc_expect_size_t_equal(t->loc.line, 1, "2 line");
 	Zinc_expect_size_t_equal(t->loc.col, 12, "2 col");
 

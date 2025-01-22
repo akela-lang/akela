@@ -13,7 +13,7 @@ void test_code_gen_last()
              "const b: Int32 = 2\n"
              "a + b\n",
              &result);
-    Zinc_expect_str(&result.value, "3", "value");
+    Zinc_expect_string(&result.value, "3", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -28,7 +28,7 @@ void test_code_gen_if()
              "  1\n"
              "end\n",
              &result);
-    Zinc_expect_str(&result.value, "", "value");
+    Zinc_expect_string(&result.value, "", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -45,7 +45,7 @@ void test_code_gen_if_else()
              "  2\n"
              "end\n",
              &result);
-    Zinc_expect_str(&result.value, "1", "1 value");
+    Zinc_expect_string(&result.value, "1", "1 value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -55,7 +55,7 @@ void test_code_gen_if_else()
              "  2\n"
              "end\n",
              &result);
-    Zinc_expect_str(&result.value, "2", "2 value");
+    Zinc_expect_string(&result.value, "2", "2 value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -73,7 +73,7 @@ void test_code_gen_if_elseif_else()
              "  3\n"
              "end\n",
              &result);
-    Zinc_expect_str(&result.value, "1", "value");
+    Zinc_expect_string(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -85,7 +85,7 @@ void test_code_gen_if_elseif_else()
              "  3\n"
              "end\n",
              &result);
-    Zinc_expect_str(&result.value, "2", "value");
+    Zinc_expect_string(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -97,7 +97,7 @@ void test_code_gen_if_elseif_else()
              "  3\n"
              "end\n",
              &result);
-    Zinc_expect_str(&result.value, "3", "value");
+    Zinc_expect_string(&result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -110,14 +110,14 @@ void test_code_gen_if_expression()
     cg_setup("const a: Int32 = if true 1 else 2 end\n"
              "a\n",
              &result);
-    Zinc_expect_str(&result.value, "1", "value");
+    Zinc_expect_string(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: Int32 = if false 1 else 2 end\n"
              "a\n",
              &result);
-    Zinc_expect_str(&result.value, "2", "value");
+    Zinc_expect_string(&result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -131,7 +131,7 @@ void akela_llvm_stmts_printf()
              "const s: [100 const]Nat8 = \"test printf\n\"\n"
              "printf(s)\n",
              &result);
-    Zinc_expect_str(&result.value, "", "value");
+    Zinc_expect_string(&result.value, "", "value");
     Ake_code_gen_result_destroy(&result);
 }
 

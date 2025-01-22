@@ -36,7 +36,7 @@ void test_lex_element()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.2");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 1.2");
-    Zinc_expect_str(&t->value, "Test_suite", "value 1.2");
+    Zinc_expect_string(&t->value, "Test_suite", "value 1.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -63,7 +63,7 @@ void test_lex_element()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 3.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 3.1");
-    Zinc_expect_str(&t->value, "name", "value 3.1");
+    Zinc_expect_string(&t->value, "name", "value 3.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -76,7 +76,7 @@ void test_lex_element()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 3.3");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 3.3");
-    Zinc_expect_str(&t->value, "String", "value 3.3");
+    Zinc_expect_string(&t->value, "String", "value 3.3");
     Cent_token_destroy(t);
     free(t);
 
@@ -96,7 +96,7 @@ void test_lex_element()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 4.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 4.1");
-    Zinc_expect_str(&t->value, "solo", "value 4.1");
+    Zinc_expect_string(&t->value, "solo", "value 4.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -109,7 +109,7 @@ void test_lex_element()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 4.3");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 4.3");
-    Zinc_expect_str(&t->value, "Bool", "value 4.3");
+    Zinc_expect_string(&t->value, "Bool", "value 4.3");
     Cent_token_destroy(t);
     free(t);
 
@@ -123,7 +123,7 @@ void test_lex_element()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 5.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 5.1");
-    Zinc_expect_str(&t->value, "mute", "value 5.1");
+    Zinc_expect_string(&t->value, "mute", "value 5.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -136,7 +136,7 @@ void test_lex_element()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 5.3");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 5.3");
-    Zinc_expect_str(&t->value, "Bool", "value 5.3");
+    Zinc_expect_string(&t->value, "Bool", "value 5.3");
     Cent_token_destroy(t);
     free(t);
 
@@ -170,7 +170,7 @@ void test_lex_element()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 8.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 8.1");
-    Zinc_expect_str(&t->value, "Test", "value 8.1");
+    Zinc_expect_string(&t->value, "Test", "value 8.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -230,7 +230,7 @@ void test_lex_enum()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.2");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 1.2");
-    Zinc_expect_str(&t->value, "Symbol_type", "value 1.2");
+    Zinc_expect_string(&t->value, "Symbol_type", "value 1.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -238,7 +238,7 @@ void test_lex_enum()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 2.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 2.1");
-    Zinc_expect_str(&t->value, "Variable", "value 2.1");
+    Zinc_expect_string(&t->value, "Variable", "value 2.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -246,7 +246,7 @@ void test_lex_enum()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 3.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 3.1");
-    Zinc_expect_str(&t->value, "Type", "value 3.1");
+    Zinc_expect_string(&t->value, "Type", "value 3.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -254,7 +254,7 @@ void test_lex_enum()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 4.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 4.1");
-    Zinc_expect_str(&t->value, "Info", "value 4.1");
+    Zinc_expect_string(&t->value, "Info", "value 4.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -297,7 +297,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 2.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 2.1");
-    Zinc_expect_str(&t->value, "i32", "value 2.1");
+    Zinc_expect_string(&t->value, "i32", "value 2.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -329,7 +329,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 3.2");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 3.2");
-    Zinc_expect_str(&t->value, "type", "value 3.2");
+    Zinc_expect_string(&t->value, "type", "value 3.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -342,7 +342,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 3.4");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 3.4");
-    Zinc_expect_str(&t->value, "Type_def_type", "value 3.4");
+    Zinc_expect_string(&t->value, "Type_def_type", "value 3.4");
     Cent_token_destroy(t);
     free(t);
 
@@ -355,7 +355,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 3.6");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 3.6");
-    Zinc_expect_str(&t->value, "Integer", "value 3.6");
+    Zinc_expect_string(&t->value, "Integer", "value 3.6");
     Cent_token_destroy(t);
     free(t);
 
@@ -369,7 +369,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 4.2");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 4.2");
-    Zinc_expect_str(&t->value, "name", "value 4.2");
+    Zinc_expect_string(&t->value, "name", "value 4.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -382,7 +382,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 4.4");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 4.4");
-    Zinc_expect_str(&t->value, "i32", "value 4.4");
+    Zinc_expect_string(&t->value, "i32", "value 4.4");
     Cent_token_destroy(t);
     free(t);
 
@@ -396,7 +396,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 5.2");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 5.2");
-    Zinc_expect_str(&t->value, "bit_count", "value 5.2");
+    Zinc_expect_string(&t->value, "bit_count", "value 5.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -409,7 +409,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 5.4");
     Zinc_expect_int_equal(t->type, Cent_token_number, "type 5.4");
-    Zinc_expect_str(&t->value, "32", "value 5.4");
+    Zinc_expect_string(&t->value, "32", "value 5.4");
     Zinc_expect_int_equal(t->number_type, Cent_number_type_integer, "number type 5.4");
     Zinc_expect_long_long_equal(t->number_value.integer, 32, "integer 5.4");
     Cent_token_destroy(t);
@@ -425,7 +425,7 @@ void test_lex_top_level_assign()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 6.2");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 6.2");
-    Zinc_expect_str(&t->value, "is_signed", "value 6.2");
+    Zinc_expect_string(&t->value, "is_signed", "value 6.2");
     Cent_token_destroy(t);
     free(t);
 
@@ -556,7 +556,7 @@ void test_lex_escape_backslash()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 1.1");
-    Zinc_expect_str(&t->value, "\\", "value 1.1");
+    Zinc_expect_string(&t->value, "\\", "value 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -581,7 +581,7 @@ void test_lex_escape_forward_slash()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 1.1");
-    Zinc_expect_str(&t->value, "/", "value 1.1");
+    Zinc_expect_string(&t->value, "/", "value 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -606,7 +606,7 @@ void test_lex_escape_backspace()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 1.1");
-    Zinc_expect_str(&t->value, "\b", "value 1.1");
+    Zinc_expect_string(&t->value, "\b", "value 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -631,7 +631,7 @@ void test_lex_escape_form_feed()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 1.1");
-    Zinc_expect_str(&t->value, "\f", "value 1.1");
+    Zinc_expect_string(&t->value, "\f", "value 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -656,7 +656,7 @@ void test_lex_escape_newline()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 1.1");
-    Zinc_expect_str(&t->value, "\n", "value 1.1");
+    Zinc_expect_string(&t->value, "\n", "value 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -681,7 +681,7 @@ void test_lex_escape_carriage_return()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 1.1");
-    Zinc_expect_str(&t->value, "\r", "value 1.1");
+    Zinc_expect_string(&t->value, "\r", "value 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -706,7 +706,7 @@ void test_lex_escape_tab()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 1.1");
-    Zinc_expect_str(&t->value, "\t", "value 1.1");
+    Zinc_expect_string(&t->value, "\t", "value 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -731,7 +731,7 @@ void test_lex_escape_unicode()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_string, "type 1.1");
-    Zinc_expect_str(&t->value, "θ", "value 1.1");
+    Zinc_expect_string(&t->value, "θ", "value 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -860,7 +860,7 @@ void test_lex_number_fraction()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_number, "type 1.1");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_fp, "number type 1.1");
+    Zinc_expect_int_equal(t->number_type, Cent_number_type_real, "number type 1.1");
     Zinc_expect_double_equal(t->number_value.fp, 5.123, "integer 1.1");
     Cent_token_destroy(t);
     free(t);
@@ -888,7 +888,7 @@ void test_lex_number_exponent()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_number, "type 1.1");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_fp, "number type 1.1");
+    Zinc_expect_int_equal(t->number_type, Cent_number_type_real, "number type 1.1");
     Zinc_expect_double_equal(t->number_value.fp, 5.123e3, "integer 1.1");
     Cent_token_destroy(t);
     free(t);

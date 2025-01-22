@@ -42,7 +42,7 @@ void test_parse_element()
     Cent_ast* element = Cent_ast_get(root, 0);
     Zinc_assert_ptr(element, "ptr element");
     Zinc_expect_int_equal(element->type, Cent_ast_type_element_type, "type element");
-    Zinc_expect_str(&element->text, "Test_suite", "value element");
+    Zinc_expect_string(&element->text, "Test_suite", "value element");
 
     /* properties */
     Cent_ast* prop = Cent_ast_get(element, 0);
@@ -57,17 +57,17 @@ void test_parse_element()
     Cent_ast* name0 = Cent_ast_get(dec0, 0);
     Zinc_assert_ptr(name0, "ptr name0");
     Zinc_expect_int_equal(name0->type, Cent_ast_type_id, "type name0");
-    Zinc_expect_str(&name0->text, "name", "value name0");
+    Zinc_expect_string(&name0->text, "name", "value name0");
 
     Cent_ast* type0 = Cent_ast_get(dec0, 1);
     Zinc_assert_ptr(type0, "ptr type0");
     Zinc_expect_int_equal(type0->type, Cent_ast_type_id, "type type0");
-    Zinc_expect_str(&type0->text, "String", "value type0");
+    Zinc_expect_string(&type0->text, "String", "value type0");
 
     Cent_ast* mod0 = Cent_ast_get(dec0, 2);
     Zinc_assert_ptr(mod0, "ptr mod0");
     Zinc_expect_int_equal(mod0->type, Cent_ast_type_modifier, "type mod0");
-    Zinc_expect_str(&mod0->text, "required", "value mod0");
+    Zinc_expect_string(&mod0->text, "required", "value mod0");
 
     /* solo */
     Cent_ast* dec1 = Cent_ast_get(prop, 1);
@@ -77,12 +77,12 @@ void test_parse_element()
     Cent_ast* name1 = Cent_ast_get(dec1, 0);
     Zinc_assert_ptr(name1, "ptr name1");
     Zinc_expect_int_equal(name1->type, Cent_ast_type_id, "type name1");
-    Zinc_expect_str(&name1->text, "solo", "value name1");
+    Zinc_expect_string(&name1->text, "solo", "value name1");
 
     Cent_ast* type1 = Cent_ast_get(dec1, 1);
     Zinc_assert_ptr(type1, "ptr type1");
     Zinc_expect_int_equal(type1->type, Cent_ast_type_id, "type type1");
-    Zinc_expect_str(&type1->text, "Bool", "value type1");
+    Zinc_expect_string(&type1->text, "Bool", "value type1");
 
     /* mute */
     Cent_ast* dec2 = Cent_ast_get(prop, 2);
@@ -92,12 +92,12 @@ void test_parse_element()
     Cent_ast* name2 = Cent_ast_get(dec2, 0);
     Zinc_assert_ptr(name2, "ptr name2");
     Zinc_expect_int_equal(name2->type, Cent_ast_type_id, "type name2");
-    Zinc_expect_str(&name2->text, "mute", "value name2");
+    Zinc_expect_string(&name2->text, "mute", "value name2");
 
     Cent_ast* type2 = Cent_ast_get(dec2, 1);
     Zinc_assert_ptr(type2, "ptr type2");
     Zinc_expect_int_equal(type2->type, Cent_ast_type_id, "type type2");
-    Zinc_expect_str(&type2->text, "Bool", "value type2");
+    Zinc_expect_string(&type2->text, "Bool", "value type2");
 
     /* children */
     Cent_ast* children = Cent_ast_get(element, 1);
@@ -108,7 +108,7 @@ void test_parse_element()
     Cent_ast* test = Cent_ast_get(children, 0);
     Zinc_assert_ptr(test, "ptr test");
     Zinc_expect_int_equal(test->type, Cent_ast_type_id, "type test");
-    Zinc_expect_str(&test->text, "Test", "value test");
+    Zinc_expect_string(&test->text, "Test", "value test");
 
     test_parse_teardown(ct);
 }
@@ -139,25 +139,25 @@ void test_parse_enumerate()
     Cent_ast* enumerate = Cent_ast_get(root, 0);
     Zinc_assert_ptr(enumerate, "ptr enumerate");
     Zinc_expect_int_equal(enumerate->type, Cent_ast_type_enum_type, "type enumerate");
-    Zinc_expect_str(&enumerate->text, "Symbol_type", "value enumerate");
+    Zinc_expect_string(&enumerate->text, "Symbol_type", "value enumerate");
 
     /* Variable */
     Cent_ast* value0 = Cent_ast_get(enumerate, 0);
     Zinc_assert_ptr(value0, "ptr value0");
     Zinc_expect_int_equal(value0->type, Cent_ast_type_id, "type value0");
-    Zinc_expect_str(&value0->text, "Variable", "value value0");
+    Zinc_expect_string(&value0->text, "Variable", "value value0");
 
     /* Type */
     Cent_ast* value1 = Cent_ast_get(enumerate, 1);
     Zinc_assert_ptr(value1, "ptr value1");
     Zinc_expect_int_equal(value1->type, Cent_ast_type_id, "type value1");
-    Zinc_expect_str(&value1->text, "Type", "value value1");
+    Zinc_expect_string(&value1->text, "Type", "value value1");
 
     /* Info */
     Cent_ast* value2 = Cent_ast_get(enumerate, 2);
     Zinc_assert_ptr(value2, "ptr value2");
     Zinc_expect_int_equal(value2->type, Cent_ast_type_id, "type value2");
-    Zinc_expect_str(&value2->text, "Info", "value value2");
+    Zinc_expect_string(&value2->text, "Info", "value value2");
 
     test_parse_teardown(ct);
 }
@@ -196,7 +196,7 @@ void test_parse_top_level_assignment()
     Cent_ast* enum_type = Cent_ast_get(root, 0);
     Zinc_assert_ptr(enum_type, "ptr enum_type");
     Zinc_expect_int_equal(enum_type->type, Cent_ast_type_enum_type, "type enum_type");
-    Zinc_expect_str(&enum_type->text, "Type_def_type", "text enum_type");
+    Zinc_expect_string(&enum_type->text, "Type_def_type", "text enum_type");
 
     /* let */
     Cent_ast* let = Cent_ast_get(root, 1);
@@ -207,7 +207,7 @@ void test_parse_top_level_assignment()
     Cent_ast* name = Cent_ast_get(let, 0);
     Zinc_assert_ptr(name, "ptr name");
     Zinc_expect_int_equal(name->type, Cent_ast_type_id, "type name");
-    Zinc_expect_str(&name->text, "i32", "value name");
+    Zinc_expect_string(&name->text, "i32", "value name");
 
     /* value */
     Cent_ast* value = Cent_ast_get(let, 1);
@@ -228,7 +228,7 @@ void test_parse_top_level_assignment()
     Cent_ast* type = Cent_ast_get(type_prop_set, 0);
     Zinc_assert_ptr(type, "ptr type");
     Zinc_expect_int_equal(type->type, Cent_ast_type_id, "type type");
-    Zinc_expect_str(&type->text, "type", "value type");
+    Zinc_expect_string(&type->text, "type", "value type");
 
     /* enum namespace */
     Cent_ast* ns = Cent_ast_get(type_prop_set, 1);
@@ -239,13 +239,13 @@ void test_parse_top_level_assignment()
     Cent_ast* enum_id = Cent_ast_get(ns, 0);
     Zinc_assert_ptr(enum_id, "ptr enum_id");
     Zinc_expect_int_equal(enum_id->type, Cent_ast_type_id, "type enum_id");
-    Zinc_expect_str(&enum_id->text, "Type_def_type", "text enum_id");
+    Zinc_expect_string(&enum_id->text, "Type_def_type", "text enum_id");
 
     /* enum value */
     Cent_ast* enum_value_id = Cent_ast_get(ns, 1);
     Zinc_assert_ptr(enum_value_id, "ptr enum_value_id");
     Zinc_expect_int_equal(enum_value_id->type, Cent_ast_type_id, "type enum_value_id");
-    Zinc_expect_str(&enum_value_id->text, "Integer", "text enum_value_id");
+    Zinc_expect_string(&enum_value_id->text, "Integer", "text enum_value_id");
 
     /* name prop set */
     Cent_ast* name_prop_set = Cent_ast_get(object_stmts, 1);
@@ -256,14 +256,14 @@ void test_parse_top_level_assignment()
     Cent_ast* name1 = Cent_ast_get(name_prop_set, 0);
     Zinc_assert_ptr(name1, "ptr type");
     Zinc_expect_int_equal(name1->type, Cent_ast_type_id, "type name1");
-    Zinc_expect_str(&name1->text, "name", "text name");
+    Zinc_expect_string(&name1->text, "name", "text name");
 
     /* name value */
     Cent_ast* name_value = Cent_ast_get(name_prop_set, 1);
     Zinc_assert_ptr(name_value, "ptr name_value");
     Zinc_expect_int_equal(name_value->type, Cent_ast_type_expr_string, "type name_value");
     Zinc_expect_int_equal(name_value->value_type, Cent_value_type_string, "value_type name_value");
-    Zinc_expect_str(&name_value->data.string, "i32", "string name_value");
+    Zinc_expect_string(&name_value->data.string, "i32", "string name_value");
 
     /* bit_count prop set */
     Cent_ast* bit_count_prop_set = Cent_ast_get(object_stmts, 2);
@@ -274,7 +274,7 @@ void test_parse_top_level_assignment()
     Cent_ast* bit_count = Cent_ast_get(bit_count_prop_set, 0);
     Zinc_assert_ptr(bit_count, "ptr bit_count");
     Zinc_expect_int_equal(bit_count->type, Cent_ast_type_id, "type bit_count");
-    Zinc_expect_str(&bit_count->text, "bit_count", "text bit_count");
+    Zinc_expect_string(&bit_count->text, "bit_count", "text bit_count");
 
     /* bit_count value */
     Cent_ast* bit_count_value = Cent_ast_get(bit_count_prop_set, 1);
@@ -293,7 +293,7 @@ void test_parse_top_level_assignment()
     Cent_ast* is_signed = Cent_ast_get(is_signed_prop_set, 0);
     Zinc_assert_ptr(is_signed, "ptr is_signed");
     Zinc_expect_int_equal(is_signed->type, Cent_ast_type_id, "type is_signed");
-    Zinc_expect_str(&is_signed->text, "is_signed", "text is_signed");
+    Zinc_expect_string(&is_signed->text, "is_signed", "text is_signed");
 
     /* is_signed value */
     Cent_ast* is_signed_value = Cent_ast_get(is_signed_prop_set, 1);
@@ -733,7 +733,7 @@ void test_parse_object_method_call()
     Cent_ast* value = Cent_ast_get(method, 0);
     Zinc_assert_ptr(value, "ptr value");
     Zinc_expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
-    Zinc_expect_str(&value->text, "a", "text id");
+    Zinc_expect_string(&value->text, "a", "text id");
 
     test_parse_teardown(ct);
 }
@@ -784,13 +784,13 @@ void test_parse_object_method_call2()
     Cent_ast* value = Cent_ast_get(method, 0);
     Zinc_assert_ptr(value, "ptr value");
     Zinc_expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
-    Zinc_expect_str(&value->text, "a", "text id");
+    Zinc_expect_string(&value->text, "a", "text id");
 
     /* argument 2 string b */
     Cent_ast* name = Cent_ast_get(method, 1);
     Zinc_assert_ptr(name, "ptr name");
     Zinc_expect_int_equal(name->type, Cent_ast_type_expr_string, "type name");
-    Zinc_expect_str(&name->data.string, "b", "text name");
+    Zinc_expect_string(&name->data.string, "b", "text name");
 
     test_parse_teardown(ct);
 }
@@ -820,7 +820,7 @@ void test_parse_function_call()
     Cent_ast* foo = Cent_ast_get(root, 0);
     Zinc_assert_ptr(foo, "ptr foo");
     Zinc_expect_int_equal(foo->type, Cent_ast_type_expr_object, "type foo");
-    Zinc_expect_str(&foo->text, "Foo", "text foo");
+    Zinc_expect_string(&foo->text, "Foo", "text foo");
 
     /* object stmts */
     Cent_ast* stmts = Cent_ast_get(foo, 0);
@@ -836,7 +836,7 @@ void test_parse_function_call()
     Cent_ast* b = Cent_ast_get(prop_set1, 0);
     Zinc_assert_ptr(b, "ptr b");
     Zinc_expect_int_equal(b->type, Cent_ast_type_id, "type b");
-    Zinc_expect_str(&b->text, "b", "text b");
+    Zinc_expect_string(&b->text, "b", "text b");
 
     /* file_name() */
     Cent_ast* file_name_call = Cent_ast_get(prop_set1, 1);
@@ -967,13 +967,13 @@ void test_parse_include()
     Cent_ast* module = Cent_ast_get(use, 0);
     Zinc_assert_ptr(module, "ptr module");
     Zinc_expect_int_equal(module->type, Cent_ast_type_id, "type module");
-    Zinc_expect_str(&module->text, "types", "text module");
+    Zinc_expect_string(&module->text, "types", "text module");
 
     /* Groceries object */
     Cent_ast* object = Cent_ast_get(root, 1);
     Zinc_assert_ptr(object, "ptr object");
     Zinc_expect_int_equal(object->type, Cent_ast_type_expr_object, "type object");
-    Zinc_expect_str(&object->text, "Groceries", "text object");
+    Zinc_expect_string(&object->text, "Groceries", "text object");
 
     Cent_ast* obj_stmts = Cent_ast_get(object, 0);
     Zinc_assert_ptr(obj_stmts, "ptr obj_stmts");
@@ -987,17 +987,17 @@ void test_parse_include()
     Cent_ast* types = Cent_ast_get(ns, 0);
     Zinc_assert_ptr(types, "ptr types");
     Zinc_expect_int_equal(types->type, Cent_ast_type_id, "type types");
-    Zinc_expect_str(&types->text, "types", "text types");
+    Zinc_expect_string(&types->text, "types", "text types");
 
     Cent_ast* grocery_item = Cent_ast_get(ns, 1);
     Zinc_assert_ptr(grocery_item, "ptr grocery_item");
     Zinc_expect_int_equal(grocery_item->type, Cent_ast_type_id, "type grocery_item");
-    Zinc_expect_str(&grocery_item->text, "Grocery_item", "text grocery_item");
+    Zinc_expect_string(&grocery_item->text, "Grocery_item", "text grocery_item");
 
     Cent_ast* milk = Cent_ast_get(ns, 2);
     Zinc_assert_ptr(milk, "ptr milk");
     Zinc_expect_int_equal(milk->type, Cent_ast_type_id, "type milk");
-    Zinc_expect_str(&milk->text, "Milk", "text milk");
+    Zinc_expect_string(&milk->text, "Milk", "text milk");
 
     test_parse_teardown(ct);
 }
@@ -1042,18 +1042,18 @@ void test_parse_include_multiple_namespace()
     Cent_ast* lib_mod = Cent_ast_get(use, 0);
     Zinc_assert_ptr(lib_mod, "ptr lib_mod");
     Zinc_expect_int_equal(lib_mod->type, Cent_ast_type_id, "type lib_mod");
-    Zinc_expect_str(&lib_mod->text, "lib", "text lib_mod");
+    Zinc_expect_string(&lib_mod->text, "lib", "text lib_mod");
 
     Cent_ast* types_mod = Cent_ast_get(use, 1);
     Zinc_assert_ptr(types_mod, "ptr types_mod");
     Zinc_expect_int_equal(types_mod->type, Cent_ast_type_id, "type types_mod");
-    Zinc_expect_str(&types_mod->text, "types", "text types_mod");
+    Zinc_expect_string(&types_mod->text, "types", "text types_mod");
 
     /* Groceries object */
     Cent_ast* object = Cent_ast_get(root, 1);
     Zinc_assert_ptr(object, "ptr object");
     Zinc_expect_int_equal(object->type, Cent_ast_type_expr_object, "type object");
-    Zinc_expect_str(&object->text, "Groceries", "text object");
+    Zinc_expect_string(&object->text, "Groceries", "text object");
 
     Cent_ast* obj_stmts = Cent_ast_get(object, 0);
     Zinc_assert_ptr(obj_stmts, "ptr obj_stmts");
@@ -1067,22 +1067,22 @@ void test_parse_include_multiple_namespace()
     Cent_ast* lib = Cent_ast_get(ns, 0);
     Zinc_assert_ptr(lib, "ptr lib");
     Zinc_expect_int_equal(lib->type, Cent_ast_type_id, "type lib");
-    Zinc_expect_str(&lib->text, "lib", "text lib");
+    Zinc_expect_string(&lib->text, "lib", "text lib");
 
     Cent_ast* types = Cent_ast_get(ns, 1);
     Zinc_assert_ptr(types, "ptr types");
     Zinc_expect_int_equal(types->type, Cent_ast_type_id, "type types");
-    Zinc_expect_str(&types->text, "types", "text types");
+    Zinc_expect_string(&types->text, "types", "text types");
 
     Cent_ast* grocery_item = Cent_ast_get(ns, 2);
     Zinc_assert_ptr(grocery_item, "ptr grocery_item");
     Zinc_expect_int_equal(grocery_item->type, Cent_ast_type_id, "type grocery_item");
-    Zinc_expect_str(&grocery_item->text, "Grocery_item", "text grocery_item");
+    Zinc_expect_string(&grocery_item->text, "Grocery_item", "text grocery_item");
 
     Cent_ast* milk = Cent_ast_get(ns, 3);
     Zinc_assert_ptr(milk, "ptr milk");
     Zinc_expect_int_equal(milk->type, Cent_ast_type_id, "type milk");
-    Zinc_expect_str(&milk->text, "Milk", "text milk");
+    Zinc_expect_string(&milk->text, "Milk", "text milk");
 
     test_parse_teardown(ct);
 }
@@ -1119,7 +1119,7 @@ void test_parse_include_value()
     Cent_ast* data_mod = Cent_ast_get(use, 0);
     Zinc_assert_ptr(data_mod, "ptr data_mod");
     Zinc_expect_int_equal(data_mod->type, Cent_ast_type_id, "type data_mod");
-    Zinc_expect_str(&data_mod->text, "data", "text data_mod");
+    Zinc_expect_string(&data_mod->text, "data", "text data_mod");
 
     /* namespace */
     Cent_ast* ns = Cent_ast_get(root, 1);
@@ -1129,12 +1129,12 @@ void test_parse_include_value()
     Cent_ast* data = Cent_ast_get(ns, 0);
     Zinc_assert_ptr(data, "ptr data");
     Zinc_expect_int_equal(data->type, Cent_ast_type_id, "type data");
-    Zinc_expect_str(&data->text, "data", "text data");
+    Zinc_expect_string(&data->text, "data", "text data");
 
     Cent_ast* a = Cent_ast_get(ns, 1);
     Zinc_assert_ptr(a, "ptr a");
     Zinc_expect_int_equal(a->type, Cent_ast_type_id, "type a");
-    Zinc_expect_str(&a->text, "a", "text a");
+    Zinc_expect_string(&a->text, "a", "text a");
 
     test_parse_teardown(ct);
 }
@@ -1279,7 +1279,7 @@ void test_parse_let()
     Cent_ast* id = Cent_ast_get(let, 0);
     Zinc_assert_ptr(id, "ptr id");
     Zinc_expect_int_equal(id->type, Cent_ast_type_id, "type id");
-    Zinc_expect_str(&id->text, "a", "text id");
+    Zinc_expect_string(&id->text, "a", "text id");
 
     Cent_ast* number = Cent_ast_get(let, 1);
     Zinc_assert_ptr(number, "ptr number");
@@ -1290,7 +1290,7 @@ void test_parse_let()
     Cent_ast* variable = Cent_ast_get(root, 1);
     Zinc_assert_ptr(variable, "ptr variable");
     Zinc_expect_int_equal(variable->type, Cent_ast_type_expr_variable, "type variable");
-    Zinc_expect_str(&variable->text, "a", "text variable");
+    Zinc_expect_string(&variable->text, "a", "text variable");
 
     test_parse_teardown(ct);
 }
@@ -1400,13 +1400,13 @@ void test_parse_object_let()
     Cent_ast* bar_object = Cent_ast_get(foo_let, 1);
     Zinc_assert_ptr(bar_object, "ptr bar_object");
     Zinc_expect_int_equal(bar_object->type, Cent_ast_type_expr_object, "type bar_object");
-    Zinc_expect_str(&bar_object->text, "Bar", "text bar_object");
+    Zinc_expect_string(&bar_object->text, "Bar", "text bar_object");
 
     /* line 3 */
     Cent_ast* bar_variable = Cent_ast_get(foo_stmts, 1);
     Zinc_assert_ptr(bar_variable, "ptr bar_variable");
     Zinc_expect_int_equal(bar_variable->type, Cent_ast_type_expr_variable, "type bar_variable");
-    Zinc_expect_str(&bar_variable->text, "bar", "text bar_variable");
+    Zinc_expect_string(&bar_variable->text, "bar", "text bar_variable");
 
     test_parse_teardown(ct);
 }

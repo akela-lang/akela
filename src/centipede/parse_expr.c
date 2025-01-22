@@ -132,8 +132,8 @@ Cent_ast* Cent_parse_expr_number(Cent_parse_data* pd)
         if (num->number_type == Cent_number_type_integer) {
             n->number_type = Cent_number_type_integer;
             n->data.integer = num->number_value.integer;
-        } else if (num->number_type == Cent_number_type_fp) {
-            n->number_type = Cent_number_type_fp;
+        } else if (num->number_type == Cent_number_type_real) {
+            n->number_type = Cent_number_type_real;
             n->data.fp = num->number_value.fp;
         } else {
             assert(false && "not possible");

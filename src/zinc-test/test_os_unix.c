@@ -59,7 +59,7 @@ void test_os_unix_get_user_home_directory()
     Zinc_string_init(&dir);
     enum Zinc_result r = Zinc_get_user_home_directory(&dir);
     Zinc_assert_ok(r, "get_user_home_directory");
-    Zinc_expect_str(&dir, "/home/abc", "/home/abc");
+    Zinc_expect_string(&dir, "/home/abc", "/home/abc");
     Zinc_string_destroy(&dir);
 
     setenv("HOME", temp, 1);
@@ -82,7 +82,7 @@ void test_os_unix_path_join()
 
     Zinc_path_join(&a, &b, &c);
 
-    Zinc_expect_str(&c, "/home/alf", "/home/alf");
+    Zinc_expect_string(&c, "/home/alf", "/home/alf");
 
     Zinc_string_destroy(&a);
     Zinc_string_destroy(&b);
@@ -103,7 +103,7 @@ void test_os_unix_get_user_app_directory()
     const char* temp = getenv("HOME");
     setenv("HOME", "/home/abc", 1);
     Zinc_get_user_app_directory(&app_name, &dir);
-    Zinc_expect_str(&dir, "/home/abc/.app/stone", "/home/abc/.app/stone");
+    Zinc_expect_string(&dir, "/home/abc/.app/stone", "/home/abc/.app/stone");
 
     Zinc_string_destroy(&app_name);
     Zinc_string_destroy(&dir);

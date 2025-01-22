@@ -51,10 +51,10 @@ void test_buffer_list_add_str()
     Zinc_string_list_add_str(&bl, "two");
 
     struct Zinc_string_node* bn0 = bl.head;
-    Zinc_expect_str(&bn0->value, "one", "one");
+    Zinc_expect_string(&bn0->value, "one", "one");
 
     struct Zinc_string_node* bn1 = bn0->next;
-    Zinc_expect_str(&bn1->value, "two", "two");
+    Zinc_expect_string(&bn1->value, "two", "two");
 
     Zinc_string_list_destroy(&bl);
 }
@@ -78,10 +78,10 @@ void test_buffer_list_add_bf()
     Zinc_string_list_add_bf(&bl, &bf1);
 
     struct Zinc_string_node* bn0 = bl.head;
-    Zinc_expect_str(&bn0->value, "one", "one");
+    Zinc_expect_string(&bn0->value, "one", "one");
 
     struct Zinc_string_node* bn1 = bn0->next;
-    Zinc_expect_str(&bn1->value, "two", "two");
+    Zinc_expect_string(&bn1->value, "two", "two");
 
     Zinc_string_destroy(&bf0);
     Zinc_string_destroy(&bf1);
@@ -115,15 +115,15 @@ void test_buffer_list_split()
 
     struct Zinc_string_node* bn0 = bl.head;
     Zinc_assert_ptr(bn0, "ptr bn0");
-    Zinc_expect_str(&bn0->value, "one", "one bn0");
+    Zinc_expect_string(&bn0->value, "one", "one bn0");
 
     struct Zinc_string_node* bn1 = bn0->next;
     Zinc_assert_ptr(bn1, "ptr bn1");
-    Zinc_expect_str(&bn1->value, "two", "two bn1");
+    Zinc_expect_string(&bn1->value, "two", "two bn1");
 
     struct Zinc_string_node* bn2 = bn1->next;
     Zinc_assert_ptr(bn2, "ptr bn2");
-    Zinc_expect_str(&bn2->value, "three", "three bn2");
+    Zinc_expect_string(&bn2->value, "three", "three bn2");
 
     Zinc_string_list_destroy(&bl);
     Zinc_string_destroy(&bf);
@@ -144,15 +144,15 @@ void test_buffer_list_get()
 
     struct Zinc_string* bf0 = Zinc_string_list_get(&bl, 0);
     Zinc_assert_ptr(bf0, "ptr bf0");
-    Zinc_expect_str(bf0, "one", "one bf0");
+    Zinc_expect_string(bf0, "one", "one bf0");
 
     struct Zinc_string* bf1 = Zinc_string_list_get(&bl, 1);
     Zinc_assert_ptr(bf1, "ptr bf1");
-    Zinc_expect_str(bf1, "two", "two bf1");
+    Zinc_expect_string(bf1, "two", "two bf1");
 
     struct Zinc_string* bf2 = Zinc_string_list_get(&bl, 2);
     Zinc_assert_ptr(bf2, "ptr bf2");
-    Zinc_expect_str(bf2, "three", "three bf2");
+    Zinc_expect_string(bf2, "three", "three bf2");
 
     Zinc_string_list_destroy(&bl);
     Zinc_string_destroy(&bf);

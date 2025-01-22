@@ -45,7 +45,7 @@ void test_build_number_fp()
 
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
-    Zinc_expect_int_equal(root->number_type, Cent_number_type_fp, "number_type root");
+    Zinc_expect_int_equal(root->number_type, Cent_number_type_real, "number_type root");
     Zinc_expect_double_equal(root->data.fp, 1.5, "fp root");
 
     test_parse_teardown(ct);
@@ -67,7 +67,7 @@ void test_build_string()
 
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_string, "type root");
-    Zinc_expect_str(&root->data.string, "hello", "string root");
+    Zinc_expect_string(&root->data.string, "hello", "string root");
 
     test_parse_teardown(ct);
 }
@@ -137,8 +137,8 @@ void test_build_enum0()
 
     Zinc_assert_ptr(root, "ptr root");
     Zinc_expect_int_equal(root->type, Cent_value_type_enum, "type root");
-    Zinc_expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
-    Zinc_expect_str(&root->data.enumeration.enum_value->display, "Variable", "id2 root");
+    Zinc_expect_string(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
+    Zinc_expect_string(&root->data.enumeration.enum_value->display, "Variable", "id2 root");
     Zinc_expect_size_t_equal(root->data.enumeration.number, 0, "enumeration number root");
 
     test_parse_teardown(ct);
@@ -167,8 +167,8 @@ void test_build_enum1()
 
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_enum, "type root");
-    Zinc_expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
-    Zinc_expect_str(&root->data.enumeration.enum_value->display, "Type", "id2 root");
+    Zinc_expect_string(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
+    Zinc_expect_string(&root->data.enumeration.enum_value->display, "Type", "id2 root");
     Zinc_expect_size_t_equal(root->data.enumeration.number, 1, "enumeration number root");
 
     test_parse_teardown(ct);
@@ -197,8 +197,8 @@ void test_build_enum2()
 
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_enum, "type root");
-    Zinc_expect_str(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
-    Zinc_expect_str(&root->data.enumeration.enum_value->display, "Info", "id2 root");
+    Zinc_expect_string(&root->data.enumeration.enum_type->name, "Symbol_type", "id1 root");
+    Zinc_expect_string(&root->data.enumeration.enum_value->display, "Info", "id2 root");
     Zinc_expect_size_t_equal(root->data.enumeration.number, 2, "enumeration number root");
 
     test_parse_teardown(ct);
@@ -344,17 +344,17 @@ void test_build_object_child_of()
 
     Zinc_assert_ptr(root, "ptr root");
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Zinc_expect_str(&root->name, "Test", "name root");
+    Zinc_expect_string(&root->name, "Test", "name root");
 
     Cent_value* foo = root->data.dag.head;
     Zinc_assert_ptr(foo, "ptr foo");
     Zinc_expect_int_equal(foo->type, Cent_value_type_dag, "type foo");
-    Zinc_expect_str(&foo->name, "Foo", "name foo");
+    Zinc_expect_string(&foo->name, "Foo", "name foo");
 
     Cent_value* bar = foo->data.dag.head;
     Zinc_assert_ptr(bar, "ptr bar");
     Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    Zinc_expect_str(&bar->name, "Bar", "name bar");
+    Zinc_expect_string(&bar->name, "Bar", "name bar");
 
     test_parse_teardown(ct);
 }
@@ -383,17 +383,17 @@ void test_build_object_property_of()
 
     Zinc_assert_ptr(root, "ptr root");
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Zinc_expect_str(&root->name, "Test", "name root");
+    Zinc_expect_string(&root->name, "Test", "name root");
 
     Cent_value* foo = root->data.dag.head;
     Zinc_assert_ptr(foo, "ptr foo");
     Zinc_expect_int_equal(foo->type, Cent_value_type_dag, "type foo");
-    Zinc_expect_str(&foo->name, "Foo", "name foo");
+    Zinc_expect_string(&foo->name, "Foo", "name foo");
 
     Cent_value* bar = Cent_value_get_str(foo, "x");
     Zinc_assert_ptr(bar, "ptr bar");
     Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    Zinc_expect_str(&bar->name, "Bar", "name bar");
+    Zinc_expect_string(&bar->name, "Bar", "name bar");
 
     test_parse_teardown(ct);
 }
@@ -416,7 +416,7 @@ void test_build_object_function_file_name()
 
     Zinc_assert_ptr(root, "ptr root");
     Zinc_expect_int_equal(root->type, Cent_value_type_string, "type root");
-    Zinc_expect_str(&root->data.string, "**string**", "string root");
+    Zinc_expect_string(&root->data.string, "**string**", "string root");
 
     test_parse_teardown(ct);
 }
@@ -452,18 +452,18 @@ void test_build_property_set_variable()
 
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Zinc_expect_str(&root->name, "Test", "name root");
+    Zinc_expect_string(&root->name, "Test", "name root");
 
     Cent_value* source = Cent_value_get_str(root, "source");
     Zinc_assert_ptr(source, "ptr source");
     Zinc_expect_int_equal(source->type, Cent_value_type_dag, "type source");
-    Zinc_expect_str(&source->name, "Source", "name source");
+    Zinc_expect_string(&source->name, "Source", "name source");
 
     Cent_value* line0 = source->data.dag.head;
     Zinc_assert_ptr(line0, "ptr line0");
     Zinc_expect_int_equal(line0->type, Cent_value_type_string, "type line0");
-    Zinc_expect_str(&line0->name, "String", "name line0");
-    Zinc_expect_str(&line0->data.string, "x + 5", "string line0");
+    Zinc_expect_string(&line0->name, "String", "name line0");
+    Zinc_expect_string(&line0->data.string, "x + 5", "string line0");
 
     test_parse_teardown(ct);
 }
@@ -500,7 +500,7 @@ void test_build_namespace_enum()
 
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Zinc_expect_str(&root->name, "Groceries", "name root");
+    Zinc_expect_string(&root->name, "Groceries", "name root");
 
     Cent_value* item0 = root->data.dag.head;
     Zinc_assert_ptr(item0, "ptr item0");
@@ -648,11 +648,11 @@ void test_build_object_let()
 
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Zinc_expect_str(&root->name, "Foo", "name root");
+    Zinc_expect_string(&root->name, "Foo", "name root");
 
     Cent_value* bar = root->data.dag.head;
     Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    Zinc_expect_str(&bar->name, "Bar", "name bar");
+    Zinc_expect_string(&bar->name, "Bar", "name bar");
 
     test_parse_teardown(ct);
 }

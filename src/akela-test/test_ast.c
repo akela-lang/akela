@@ -27,12 +27,12 @@ void test_ast1()
 	a = Ast_node_get(n, 0);
 	Zinc_assert_ptr(a, "ptr a");
 	Zinc_expect_int_equal(a->type, Ake_ast_type_number, "number");
-	Zinc_expect_str(&a->value, "a", "a");
+	Zinc_expect_string(&a->value, "a", "a");
 
 	b = Ast_node_get(n, 1);
 	Zinc_assert_ptr(b, "ptr b");
 	Zinc_expect_int_equal(b->type, Ake_ast_type_number, "number");
-	Zinc_expect_str(&b->value, "b", "b");
+	Zinc_expect_string(&b->value, "b", "b");
 
     Ake_ast_destroy(n);
 }

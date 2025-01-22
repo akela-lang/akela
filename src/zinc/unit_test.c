@@ -305,7 +305,7 @@ void Zinc_expect_ok(enum Zinc_result r, const char* message)
 	fprintf(stderr, "ok error: %s: %s\n", message, Zinc_error_message);
 }
 
-void Zinc_expect_str(struct Zinc_string* a, const char* b, const char* message)
+void Zinc_expect_string(struct Zinc_string* a, const char* b, const char* message)
 {
 	Zinc_test_called();
 	if (Zinc_string_compare_str(a, b)) return;

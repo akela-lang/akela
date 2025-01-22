@@ -18,7 +18,7 @@ void Run_print_llvm(Run_pair* pair);
 void Run_print_result(Run_pair* pair);
 void Run_print_results(Run_data* data);
 void Run_setup_address(Run_data* data, Run_test* test);
-bool Run_check_address(Run_data* data, Run_test* test);
+bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_result);
 
 void Run_test_cases(Run_data* data)
 {
@@ -101,7 +101,7 @@ void Run_akela(Run_data* data, Run_test* test)
             passed = false;
         }
 
-        if (!Run_check_address(data, test)) {
+        if (!Run_check_address(data, test, &cg_result)) {
             passed = false;
         }
 
@@ -171,7 +171,7 @@ void Run_setup_address(Run_data* data, Run_test* test)
     }
 }
 
-bool Run_check_address(Run_data* data, Run_test* test)
+bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_result)
 {
     bool matched = true;
 
@@ -189,82 +189,163 @@ bool Run_check_address(Run_data* data, Run_test* test)
 
         Cent_value* value_value = Cent_value_get_str(field, "value");
         assert(value_value);
-        if (type == Run_type_int8) {
-            int8_t actual = *(int8_t*)test->return_address;
-            int8_t expected = (int8_t)value_value->data.integer;
-            if (actual != expected) {
+
+        /* handle case of string which could be regex */
+        if (value_value->type == Cent_value_type_string) {
+            Zinc_string* actual = &cg_result->value;
+            Zinc_string* expected = &value_value->data.string;
+            if (!Run_diff_value(data->regex_re, actual, expected)) {
                 matched = false;
-                fprintf(stderr, "result does not match: (%hhd) (%hhd)\n", actual, expected);
+                Zinc_string_finish(actual);
+                Zinc_string_finish(expected);
+                fprintf(stderr, "result does not match: (%s) (%s)\n", actual->buf, expected->buf);
+            }
+            return matched;
+        }
+
+        /* otherwise look at type */
+        if (type == Run_type_int8) {
+            if (value_value->type == Cent_value_type_number
+                && value_value->type == Cent_number_type_integer
+            ) {
+                int8_t actual = *(int8_t*)test->return_address;
+                int8_t expected = (int8_t)value_value->data.integer;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%hhd) (%hhd)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_int16) {
-            int16_t actual = *(int16_t*)test->return_address;
-            int16_t expected = (int16_t)value_value->data.integer;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%hd) (%hd)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->type == Cent_number_type_integer
+            ) {
+                int16_t actual = *(int16_t*)test->return_address;
+                int16_t expected = (int16_t)value_value->data.integer;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%hd) (%hd)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_int32) {
-            int32_t actual = *(int32_t*)test->return_address;
-            int32_t expected = (int32_t)value_value->data.integer;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->type == Cent_number_type_integer
+            ) {
+                int32_t actual = *(int32_t*)test->return_address;
+                int32_t expected = (int32_t)value_value->data.integer;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_int64) {
-            int64_t actual = *(int64_t*)test->return_address;
-            int64_t expected = (int64_t)value_value->data.integer;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%ld) (%ld)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->type == Cent_number_type_integer
+            ) {
+                int64_t actual = *(int64_t*)test->return_address;
+                int64_t expected = (int64_t)value_value->data.integer;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%ld) (%ld)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_nat8) {
-            u_int8_t actual = *(u_int8_t*)test->return_address;
-            u_int8_t expected = (u_int8_t)value_value->data.integer;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->type == Cent_number_type_integer
+            ) {
+                u_int8_t actual = *(u_int8_t*)test->return_address;
+                u_int8_t expected = (u_int8_t)value_value->data.integer;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_nat16) {
-            u_int16_t actual = *(u_int16_t*)test->return_address;
-            u_int16_t expected = (u_int16_t)value_value->data.integer;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%hu) (%hu)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->type == Cent_number_type_integer
+            ) {
+                u_int16_t actual = *(u_int16_t*)test->return_address;
+                u_int16_t expected = (u_int16_t)value_value->data.integer;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%hu) (%hu)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_nat32) {
-            u_int32_t actual = *(u_int32_t*)test->return_address;
-            u_int32_t expected = (u_int32_t)value_value->data.integer;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->type == Cent_number_type_integer
+            ) {
+                u_int32_t actual = *(u_int32_t*)test->return_address;
+                u_int32_t expected = (u_int32_t)value_value->data.integer;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_nat64) {
-            u_int64_t actual = *(u_int64_t*)test->return_address;
-            u_int64_t expected = (u_int64_t)value_value->data.integer;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->type == Cent_number_type_integer
+            ) {
+                u_int64_t actual = *(u_int64_t*)test->return_address;
+                u_int64_t expected = (u_int64_t)value_value->data.integer;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_real16) {
-            _Float16 actual = *(_Float16*)test->return_address;
-            _Float16 expected = (_Float16)value_value->data.fp;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%f) (%f)\n", (float)actual, (float)expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->number_type == Cent_number_type_real
+            ) {
+                _Float16 actual = *(_Float16*)test->return_address;
+                _Float16 expected = (_Float16)value_value->data.fp;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%f) (%f)\n", (float)actual, (float)expected);
+                }
+            } else {
+                assert(false && "expected real or string value type");
             }
         } else if (type == Run_type_real32) {
-            float actual = *(float*)test->return_address;
-            float expected = (float)value_value->data.fp;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%f) (%f)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->number_type == Cent_number_type_real
+            ) {
+                float actual = *(float*)test->return_address;
+                float expected = (float)value_value->data.fp;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%f) (%f)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected real or string value type");
             }
         } else if (type == Run_type_real64) {
-            double actual = *(double*)test->return_address;
-            double expected = (double)value_value->data.fp;
-            if (actual != expected) {
-                matched = false;
-                fprintf(stderr, "result does not match: (%lf) (%lf)\n", actual, expected);
+            if (value_value->type == Cent_value_type_number
+                && value_value->number_type == Cent_number_type_real
+            ) {
+                double actual = *(double*)test->return_address;
+                double expected = (double)value_value->data.fp;
+                if (actual != expected) {
+                    matched = false;
+                    fprintf(stderr, "result does not match: (%lf) (%lf)\n", actual, expected);
+                }
+            } else {
+                assert(false && "expected real or string value type");
             }
         } else {
             assert(false && "unhandled type");
@@ -371,6 +452,15 @@ bool Run_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
     if (regex_mr.matched) {
         Zinc_string* expected_inner = Zinc_string_list_get(&regex_mr.groups, 1);
         Cob_re expected_re = Cob_compile(expected_inner);
+        if (expected_re.errors->head) {
+            Zinc_error* e = expected_re.errors->head;
+            while (e) {
+                Zinc_string_finish(&e->message);
+                fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
+                e = e->next;
+            }
+            return false;
+        }
         Zinc_string_slice actual_slice = {actual->buf, actual->size};
         Cob_result expected_mr = Cob_match(&expected_re, actual_slice);
         bool matched = expected_mr.matched;

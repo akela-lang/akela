@@ -39,7 +39,7 @@ void test_comp_table_compile()
 	Ake_ast* number = Ast_node_get(root, 0);
 	Zinc_assert_ptr(number, "ptr number");
 	Zinc_expect_int_equal(number->type, Ake_ast_type_number, "number number");
-	Zinc_expect_str(&number->value, "10", "10 number");
+	Zinc_expect_string(&number->value, "10", "10 number");
 
     free(input);
 	Ake_comp_table_destroy(&ct);
@@ -108,7 +108,7 @@ void test_comp_table_include()
 	Ake_ast* id_main = Ast_node_get(call_main, 0);
 	Zinc_assert_ptr(id_main, "ptr id_main");
 	Zinc_expect_int_equal(id_main->type, Ake_ast_type_id, "id id_main");
-	Zinc_expect_str(&id_main->value, "sqrt", "sqrt id_main");
+	Zinc_expect_string(&id_main->value, "sqrt", "sqrt id_main");
 
 	Ake_ast* cseq_main = Ast_node_get(call_main, 1);
 	Zinc_assert_ptr(cseq_main, "ptr cseq");
@@ -117,7 +117,7 @@ void test_comp_table_include()
 	Ake_ast* number_main = Ast_node_get(cseq_main, 0);
 	Zinc_assert_ptr(number_main, "ptr number_main");
 	Zinc_expect_int_equal(number_main->type, Ake_ast_type_number, "number number_main");
-	Zinc_expect_str(&number_main->value, "25", "25 number_main");
+	Zinc_expect_string(&number_main->value, "25", "25 number_main");
 
 	/* destroy */
     free(base_input);
@@ -172,7 +172,7 @@ void test_comp_table_include_base()
 	Ake_ast* id = Ast_node_get(call_main, 0);
 	Zinc_assert_ptr(id, "ptr id");
 	Zinc_expect_int_equal(id->type, Ake_ast_type_id, "id id");
-	Zinc_expect_str(&id->value, "sqrt", "sqrt id");
+	Zinc_expect_string(&id->value, "sqrt", "sqrt id");
 
 	Ake_ast* cseq_main = Ast_node_get(call_main, 1);
 	Zinc_assert_ptr(cseq_main, "ptr cseq");
@@ -181,7 +181,7 @@ void test_comp_table_include_base()
 	Ake_ast* number_main = Ast_node_get(cseq_main, 0);
 	Zinc_assert_ptr(number_main, "ptr number_main");
 	Zinc_expect_int_equal(number_main->type, Ake_ast_type_number, "number number_main");
-	Zinc_expect_str(&number_main->value, "25", "25 number_main");
+	Zinc_expect_string(&number_main->value, "25", "25 number_main");
 
 	/* destroy */
 	Zinc_vector_destroy(main_vector);

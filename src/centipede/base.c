@@ -29,7 +29,7 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     Cent_element_create(&element);
     Zinc_string_add_str(&element->name, "Float");
     element->type = Cent_value_type_number;
-    element->number_type = Cent_number_type_fp;
+    element->number_type = Cent_number_type_real;
     Cent_symbol_create(&sym);
     Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;

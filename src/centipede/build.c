@@ -89,9 +89,9 @@ Cent_value* Cent_build_number(Cent_ast* n)
         Zinc_string_add_str(&value->name, "Integer");
         value->number_type = Cent_number_type_integer;
         value->data.integer = n->data.integer;
-    } else if (n->number_type == Cent_number_type_fp) {
+    } else if (n->number_type == Cent_number_type_real) {
         Zinc_string_add_str(&value->name, "Float");
-        value->number_type = Cent_number_type_fp;
+        value->number_type = Cent_number_type_real;
         value->data.fp = n->data.fp;
     } else {
         assert(false && "not possible");

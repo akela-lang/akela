@@ -154,7 +154,7 @@ void test_parse_types_array()
 	Ake_ast* name = Ast_node_get(let_lseq, 0);
 	Zinc_assert_ptr(name, "ptr name");
 	Zinc_expect_int_equal(name->type, Ake_ast_type_id, "id name");
-	Zinc_expect_str(&name->value, "a", "a name");
+	Zinc_expect_string(&name->value, "a", "a name");
 
 	Ake_ast* let_type = Ast_node_get(const_, 1);
 	Zinc_assert_ptr(let_type, "ptr let_type");
@@ -167,12 +167,12 @@ void test_parse_types_array()
 	Ake_ast* id = Ast_node_get(as, 0);
 	Zinc_assert_ptr(id, "ptr id");
 	Zinc_expect_int_equal(id->type, Ake_ast_type_id, "id id");
-	Zinc_expect_str(&id->value, "a", "a id");
+	Zinc_expect_string(&id->value, "a", "a id");
 
 	Ake_ast* index = Ast_node_get(as, 1);
 	Zinc_assert_ptr(index, "ptr index");
 	Zinc_expect_int_equal(index->type, Ake_ast_type_number, "number index");
-	Zinc_expect_str(&index->value, "1", "1 index");
+	Zinc_expect_string(&index->value, "1", "1 index");
 
     parse_teardown(&cu);
 }

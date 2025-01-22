@@ -1,3 +1,7 @@
 # Akela Run Test Todo
-* regex in config
-* support checking for other field types
+* boolean
+* worm file
+* type testing with worm
+* parse testing with worm
+* array
+* string

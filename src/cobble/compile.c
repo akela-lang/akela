@@ -36,7 +36,7 @@ Cob_re Cob_compile(Zinc_string* text)
     Cob_lookahead(cd);
     if (cd->lookahead->type != Cob_token_eof) {
         Zinc_error_list_set(cd->errors, &cd->lookahead->loc,
-        "unhandled token: %d, %c", cd->lookahead->type, cd->lookahead->c);
+        "unhandled token: %d %s", cd->lookahead->type, cd->lookahead->c);
     }
 
     Cob_re result = {cd->errors, root, cd->group_number + 1 };
@@ -374,6 +374,8 @@ bool Cob_is_char(const Cob_token_type type)
         return true;
     if (type == Cob_token_backslash)
         return true;
+    if (type == Cob_token_digit)
+        return true;
 
     return false;
 }
@@ -401,6 +403,22 @@ Cob_ast* Cob_parse_char(Cob_compile_data* cd, bool strict)
             }
         }
         free(lit);
+    } else if (cd->lookahead->type == Cob_token_digit) {
+        Cob_ast_create(&n);
+        n->type = Cob_ast_type_literal;
+
+        Cob_token* digit = NULL;
+        if (!Cob_match_token(cd, Cob_token_digit, "expected literal", &digit, n)) {
+            assert(false && "not possible");
+        }
+
+        if (digit) {
+            n->num = digit->num;
+            for (int i = 0; i < 5; i++) {
+                n->c[i] = digit->c[i];
+            }
+        }
+        free(digit);
     } else if (cd->lookahead->type == Cob_token_wildcard) {
         Cob_ast_create(&n);
         n->type = Cob_ast_type_wildcard;

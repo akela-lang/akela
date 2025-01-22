@@ -46,7 +46,7 @@ ZINC_API void Zinc_expect_false(int value, const char* message);
 ZINC_API void Zinc_expect_ptr(void* p, const char* message);
 ZINC_API void Zinc_expect_null(void* p, const char* message);
 ZINC_API void Zinc_expect_ok(Zinc_result r, const char* message);
-ZINC_API void Zinc_expect_str(Zinc_string* a, const char* b, const char* message);
+ZINC_API void Zinc_expect_string(Zinc_string* a, const char* b, const char* message);
 ZINC_API void Zinc_expect_vector_str(Zinc_vector* a, const char* b, const char* message);
 ZINC_API void Zinc_expect_vector(Zinc_vector* a, Zinc_vector* b, const char* message);
 ZINC_API void Zinc_expect_strcmp(const char* a, const char* b, const char* message);

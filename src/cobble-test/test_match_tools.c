@@ -284,7 +284,7 @@ void test_match_tools_stack_node_clone()
 
     struct Zinc_string* bf2 = Zinc_hash_map_size_t_get(&sn0->groups, 0);
     Zinc_expect_ptr(bf2, "ptr bf2");
-    Zinc_expect_str(bf2, "abc", "str bf2");
+    Zinc_expect_string(bf2, "abc", "str bf2");
 
     Cob_stack_node_destroy(sn0);
     Cob_stack_node_destroy(sn1);

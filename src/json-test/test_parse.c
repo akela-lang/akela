@@ -13,7 +13,7 @@ void test_parse_string()
     Json_dom* dom = Json_parse(&pd);
     Zinc_expect_no_errors(pd.el);
     Zinc_expect_int_equal(dom->type, Json_dom_type_string, "type dom");
-    Zinc_expect_str(&dom->value.string, "hello", "string dom");
+    Zinc_expect_string(&dom->value.string, "hello", "string dom");
 
     Json_dom_destroy(dom);
     test_parse_destroy(&pd);
@@ -28,7 +28,7 @@ void test_parse_string_escape()
     Json_dom* dom = Json_parse(&pd);
     Zinc_expect_no_errors(pd.el);
     Zinc_expect_int_equal(dom->type, Json_dom_type_string, "type dom");
-    Zinc_expect_str(&dom->value.string, "hello\tworld", "string dom");
+    Zinc_expect_string(&dom->value.string, "hello\tworld", "string dom");
 
     Json_dom_destroy(dom);
     test_parse_destroy(&pd);
@@ -43,7 +43,7 @@ void test_parse_string_escape_unicode()
     Json_dom* dom = Json_parse(&pd);
     Zinc_expect_no_errors(pd.el);
     Zinc_expect_int_equal(dom->type, Json_dom_type_string, "type dom");
-    Zinc_expect_str(&dom->value.string, "a", "string dom");
+    Zinc_expect_string(&dom->value.string, "a", "string dom");
 
     Json_dom_destroy(dom);
     test_parse_destroy(&pd);
@@ -134,7 +134,7 @@ void test_parse_array_two()
     Json_dom* b = a->next;
     Zinc_assert_ptr(b, "ptr b");
     Zinc_expect_int_equal(b->type, Json_dom_type_string, "type b");
-    Zinc_expect_str(&b->value.string, "hello", "string b");
+    Zinc_expect_string(&b->value.string, "hello", "string b");
 
     Json_dom_destroy(dom);
     test_parse_destroy(&pd);
@@ -300,12 +300,12 @@ void test_parse_object_two_properties()
     Json_dom* first_name = Zinc_hash_map_string_get_str(&dom->value.object, "first_name");
     Zinc_assert_ptr(first_name, "ptr first_name");
     Zinc_expect_int_equal(first_name->type, Json_dom_type_string, "type first_name");
-    Zinc_expect_str(&first_name->value.string, "Fred", "str first_name");
+    Zinc_expect_string(&first_name->value.string, "Fred", "str first_name");
 
     Json_dom* last_name = Zinc_hash_map_string_get_str(&dom->value.object, "last_name");
     Zinc_assert_ptr(last_name, "ptr last_name");
     Zinc_expect_int_equal(last_name->type, Json_dom_type_string, "type last_name");
-    Zinc_expect_str(&last_name->value.string, "Smith", "str last_name");
+    Zinc_expect_string(&last_name->value.string, "Smith", "str last_name");
 
     Json_dom_destroy(dom);
     test_parse_destroy(&pd);
@@ -331,12 +331,12 @@ void test_parse_object_three_properties()
     Json_dom* first_name = Zinc_hash_map_string_get_str(&dom->value.object, "first_name");
     Zinc_assert_ptr(first_name, "ptr first_name");
     Zinc_expect_int_equal(first_name->type, Json_dom_type_string, "type first_name");
-    Zinc_expect_str(&first_name->value.string, "Fred", "str first_name");
+    Zinc_expect_string(&first_name->value.string, "Fred", "str first_name");
 
     Json_dom* last_name = Zinc_hash_map_string_get_str(&dom->value.object, "last_name");
     Zinc_assert_ptr(last_name, "ptr last_name");
     Zinc_expect_int_equal(last_name->type, Json_dom_type_string, "type last_name");
-    Zinc_expect_str(&last_name->value.string, "Smith", "str last_name");
+    Zinc_expect_string(&last_name->value.string, "Smith", "str last_name");
 
     Json_dom* age = Zinc_hash_map_string_get_str(&dom->value.object, "age");
     Zinc_assert_ptr(age, "ptr age");
