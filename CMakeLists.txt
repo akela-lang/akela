@@ -113,7 +113,7 @@ add_subdirectory(src/akela-llvm)
 add_subdirectory(src/akela-llvm-test)
 
 add_subdirectory(src/cobble)
-add_subdirectory(src/cobble-test)
+add_subdirectory(src/cobble-unit)
 
 add_subdirectory(src/dataframe)
 add_subdirectory(src/dataframe-unit)

@@ -67,7 +67,7 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     cmake-build-debug/bin/akela-llvm-test
     cmake-build-debug/bin/cobble-test
     cmake-build-debug/bin/centipede-test
-    cmake-build-debug/bin/coverage-test
+    cmake-build-debug/bin/coverage-unit
     cmake-build-debug/bin/dataframe-unit
     cmake-build-debug/bin/json-unit
     cmake-build-debug/bin/zinc-unit
