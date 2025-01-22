@@ -11,6 +11,7 @@
     \x - escape sequence
     [xyz] - character class
     [^xyz] - opposite character class
+    [a-zA-Z] - ranges in character classes
     . - wildcard (match anything but newline)
     \w, \W - alphanumeric or underscore, opposite
     \s, \S - space, opposite

@@ -1,0 +1,12 @@
+set(worm_files
+        lex.c
+        token.c
+)
+
+add_library(worm ${worm_files})
+target_link_libraries(worm centipede)
+set_target_properties(worm
+        PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)

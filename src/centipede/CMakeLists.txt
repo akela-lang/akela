@@ -33,3 +33,8 @@ set(centipede_files
 
 add_library(centipede ${centipede_files})
 target_link_libraries(centipede json zinc)
+set_target_properties(centipede
+        PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)

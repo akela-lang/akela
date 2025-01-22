@@ -9,3 +9,8 @@ set(dataframe_files
 )
 
 add_library(dataframe ${dataframe_files})
+set_target_properties(dataframe
+        PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)
