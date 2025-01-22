@@ -1,4 +1,4 @@
-set(json_test_sources
+set(json_unit_files
         test.c
         test_lex.c
         test_lex_tools.c
@@ -7,9 +7,9 @@ set(json_test_sources
         test_parse_tools.c
         test_stringify.c
 )
-add_executable(json-test ${json_test_sources})
-target_link_libraries(json-test json ${coverage_lib})
-set_target_properties(json-test
+add_executable(json-unit ${json_unit_files})
+target_link_libraries(json-unit json ${coverage_lib})
+set_target_properties(json-unit
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )

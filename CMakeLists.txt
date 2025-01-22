@@ -119,7 +119,7 @@ add_subdirectory(src/dataframe)
 add_subdirectory(src/dataframe-test)
 
 add_subdirectory(src/json)
-add_subdirectory(src/json-test)
+add_subdirectory(src/json-unit)
 
 add_subdirectory(src/coverage)
 add_subdirectory(src/coverage-bin)
