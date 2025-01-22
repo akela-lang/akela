@@ -195,23 +195,48 @@ void Cover_read_file(Cover_file* file)
         return;
     }
 
-    Cob_re re = Cover_gcov_line_re();
-
-    if (re.errors->head) {
+    Cob_re count_line_re = Cover_gcov_line_re();
+    if (count_line_re.errors->head) {
         printf("compile() error:\n");
-        struct Zinc_error* e = re.errors->head;
+        Zinc_error* e = count_line_re.errors->head;
         while (e) {
             Zinc_string_finish(&e->message);
             printf("%s\n", e->message.buf);
             e = e->next;
         }
 
-        Cover_re_cleanup(&re);
+        Cover_re_cleanup(&count_line_re);
+        return;
+    }
+
+    Cob_re static_sep_re = Cob_compile_str("^\\-+$");
+    if (static_sep_re.errors->head) {
+        printf("compile() error:\n");
+        Zinc_error* e = static_sep_re.errors->head;
+        while (e) {
+            Zinc_string_finish(&e->message);
+            printf("%s\n", e->message.buf);
+            e = e->next;
+        }
+        Cover_re_cleanup(&static_sep_re);
+        return;
+    }
+
+    Cob_re function_name_re = Cob_compile_str("^\\w+:$");
+    if (function_name_re.errors->head) {
+        printf("compile() error:\n");
+        Zinc_error* e = function_name_re.errors->head;
+        while (e) {
+            Zinc_string_finish(&e->message);
+            printf("%s\n", e->message.buf);
+            e = e->next;
+        }
+        Cover_re_cleanup(&function_name_re);
         return;
     }
 
     bool done = false;
-    struct Zinc_string bf;
+    Zinc_string bf;
     Zinc_string_init(&bf);
 
     while (!done) {
@@ -231,12 +256,12 @@ void Cover_read_file(Cover_file* file)
             Zinc_string_slice slice;
             slice.p = bf.buf;
             slice.size = bf.size;
-            Cob_result mr = Cob_match(&re, slice);
-            if (mr.matched) {
-                struct Zinc_string* count = Zinc_string_list_get(&mr.groups, 1);
-                struct Zinc_string* line_number = Zinc_string_list_get(&mr.groups, 2);
-                struct Zinc_string* source = Zinc_string_list_get(&mr.groups, 3);
-                struct Zinc_string* source_path = Zinc_string_list_get(&mr.groups, 4);
+            Cob_result count_line_mr = Cob_match(&count_line_re, slice);
+            if (count_line_mr.matched) {
+                struct Zinc_string* count = Zinc_string_list_get(&count_line_mr.groups, 1);
+                struct Zinc_string* line_number = Zinc_string_list_get(&count_line_mr.groups, 2);
+                struct Zinc_string* source = Zinc_string_list_get(&count_line_mr.groups, 3);
+                struct Zinc_string* source_path = Zinc_string_list_get(&count_line_mr.groups, 4);
 
                 assert(line_number && count && source && source_path);
 
@@ -273,18 +298,27 @@ void Cover_read_file(Cover_file* file)
                 }
                 Zinc_string_finish(&file->source_path);
             } else {
-                Zinc_string_finish(&bf);
-                fprintf(stderr, "\n%s\n", file->path.buf);
-                fprintf(stderr, "%s\n", bf.buf);
-                fprintf(stderr, "did not match\n");
+                Cob_result static_sep_mr = Cob_match(&static_sep_re, slice);
+                Cob_result function_name_mr = Cob_match(&function_name_re, slice);
+
+                if (!static_sep_mr.matched && !function_name_mr.matched) {
+                    fprintf(stderr, "\n%s\n", file->path.buf);
+                    fprintf(stderr, "%s\n", bf.buf);
+                    fprintf(stderr, "did not match\n");
+                }
+
+                Cob_result_destroy(&static_sep_mr);
+                Cob_result_destroy(&function_name_mr);
             }
 
-            Cob_result_destroy(&mr);
+            Cob_result_destroy(&count_line_mr);
             Zinc_string_clear(&bf);
 
         }
     }
 
+    Cob_re_destroy(&static_sep_re);
+    Cob_re_destroy(&function_name_re);
     Zinc_string_destroy(&bf);
 
     fclose(fp);

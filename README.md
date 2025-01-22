@@ -62,15 +62,19 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
     ninja -C cmake-build-debug
 
-## Run Tests
-    cmake-build-debug/bin/akela-test
-    cmake-build-debug/bin/akela-llvm-test
-    cmake-build-debug/bin/cobble-test
-    cmake-build-debug/bin/centipede-test
+## Run Unit Test
+    cmake-build-debug/bin/zinc-unit
+    cmake-build-debug/bin/akela-unit
+    cmake-build-debug/bin/akela-llvm-unit
+    cmake-build-debug/bin/cobble-unit
+    cmake-build-debug/bin/centipede-unit
     cmake-build-debug/bin/coverage-unit
     cmake-build-debug/bin/dataframe-unit
     cmake-build-debug/bin/json-unit
-    cmake-build-debug/bin/zinc-unit
+
+## Run Integration and End-to-End Tests
+    cmake-build-debug/bin/akela-parse-test
+    cmake-build-debug/bin/akela-run-test
 
 ## Run JIT on file
     cmake-build-debug/bin/akela examples/addition.ake
@@ -84,6 +88,9 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/json-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/coverage-test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/centipede-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-parse-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-run-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela examples/addition.ake
 
 ## Code Coverage
     ./generate-coverage.sh
