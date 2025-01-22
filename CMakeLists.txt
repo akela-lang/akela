@@ -101,7 +101,7 @@ endif()
 include_directories(src)
 
 add_subdirectory(src/zinc)
-add_subdirectory(src/zinc-test)
+add_subdirectory(src/zinc-unit)
 
 add_subdirectory(src/akela)
 add_subdirectory(src/akela-test)
