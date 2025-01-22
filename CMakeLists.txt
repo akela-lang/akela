@@ -110,7 +110,7 @@ add_subdirectory(src/akela-parse-test)
 add_subdirectory(src/akela-run-test)
 
 add_subdirectory(src/akela-llvm)
-add_subdirectory(src/akela-llvm-test)
+add_subdirectory(src/akela-llvm-unit)
 
 add_subdirectory(src/cobble)
 add_subdirectory(src/cobble-unit)
