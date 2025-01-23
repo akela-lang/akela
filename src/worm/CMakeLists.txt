@@ -1,6 +1,7 @@
 set(worm_files
         lex.c
         token.c
+        lex_data.c
 )
 
 add_library(worm ${worm_files})

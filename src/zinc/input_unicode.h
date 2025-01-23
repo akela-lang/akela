@@ -12,7 +12,7 @@
  * @param loc location of character
  * @return true if done, otherwise false
  */
-typedef enum Zinc_result (*Zinc_input_unicode_next_interface)(
+typedef Zinc_result (*Zinc_input_unicode_next_interface)(
         void*,
         char[4],
         int*,

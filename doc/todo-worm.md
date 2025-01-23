@@ -1,17 +1,8 @@
 # Worm Todo
-* parse
+* worm lex
+* parse parse file
   * ake section
-  * ast section
-* ast lex
-  * newline
-  * id
-  * dot
-  * left-curly-brace
-  * right-curly-brace
-  * equal
-  * string
-  * number
-  * eof
+  * worm section
 * ast
 * parse
 * compare

@@ -7,7 +7,7 @@ Zinc_location* Zinc_input_unicode_location(void* input_obj, Zinc_input_unicode_v
     return input_obj + input_vtable->loc_offset;
 }
 
-enum Zinc_result Zinc_input_unicode_next(
+Zinc_result Zinc_input_unicode_next(
     void* input_obj,
     Zinc_input_unicode_vtable* input_vtable,
     char c[4],
