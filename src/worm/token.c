@@ -5,7 +5,6 @@ void Worm_token_init(Worm_token *t)
 {
     t->type = Worm_token_type_none;
     Zinc_string_init(&t->value);
-    t->number_type = Worm_number_type_none;
     Zinc_location_init(&t->loc);
 }
 

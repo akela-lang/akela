@@ -55,6 +55,7 @@ void test_error_set()
     Zinc_error_list_set(&errors, &loc, "%c", '1');
     Zinc_error* e = errors.head;
     Zinc_expect_string(&e->message, "1", "message e");
+    Zinc_error_list_destroy(&errors);
 }
 
 void test_error()

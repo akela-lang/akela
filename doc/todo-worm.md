@@ -1,5 +1,5 @@
 # Worm Todo
-* worm lex unit
+* worm unit lex parse struct
 * parse parse file
   * split sections
   * ake section

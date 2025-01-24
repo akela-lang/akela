@@ -33,6 +33,7 @@ ZINC_API void Zinc_assert_ok(Zinc_result r, const char* message);
 ZINC_API void Zinc_assert_error(Zinc_result r, const char* message);
 ZINC_API void Zinc_expect_int_equal(int a, int b, const char* message);
 ZINC_API void Zinc_expect_long_equal(long a, long b, const char* message);
+ZINC_API void Zinc_expect_unsigned_long_equal(unsigned long a, unsigned long b, const char* message);
 ZINC_API void Zinc_expect_long_long_equal(long long a, long long b, const char* message);
 ZINC_API void Zinc_expect_u_long_equal(unsigned long a, unsigned long b, const char* message);
 ZINC_API void Zinc_expect_double_equal(double a, double b, const char* message);

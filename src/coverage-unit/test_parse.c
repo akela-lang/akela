@@ -247,7 +247,7 @@ void test_parse_test_dir1()
     Cob_result mr = Cob_match(&cr, slice);
 
     Zinc_expect_true(mr.matched, "m");
-    Zinc_expect_buffer_list_count(&mr.groups, 1, "count groups");
+    Zinc_expect_buffer_list_count(&mr.groups, 2, "count groups");
     Zinc_expect_buffer_list_item(&mr.groups, 0, "-test", "item groups");
 
     Zinc_string_list_destroy(&mr.groups);
@@ -267,7 +267,7 @@ void test_parse_test_dir2()
     Cob_result mr = Cob_match(&cr, slice);
 
     Zinc_expect_true(mr.matched, "m");
-    Zinc_expect_buffer_list_count(&mr.groups, 1, "count groups");
+    Zinc_expect_buffer_list_count(&mr.groups, 2, "count groups");
     Zinc_expect_buffer_list_item(&mr.groups, 0, "-test", "item groups");
 
     Zinc_string_list_destroy(&mr.groups);

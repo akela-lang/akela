@@ -11,7 +11,9 @@ typedef enum {
     Worm_token_type_none,
     Worm_token_type_id,
     Worm_token_type_string,
-    Worm_token_type_number,
+    Worm_token_type_integer,
+    Worm_token_type_natural,
+    Worm_token_type_real,
     Worm_token_type_dot,
     Worm_token_type_left_curly_brace,
     Worm_token_type_right_curly_brace,
@@ -34,7 +36,6 @@ typedef enum {
 typedef struct {
     Worm_token_type type;
     Zinc_string value;
-    Worm_number_type number_type;
     union {
         int64_t integer;
         u_int64_t natural;

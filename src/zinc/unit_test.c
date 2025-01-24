@@ -199,6 +199,14 @@ void Zinc_expect_long_equal(long a, long b, const char* message)
     fprintf(stderr, "%ld = %ld error: %s\n", a, b, message);
 }
 
+void Zinc_expect_unsigned_long_equal(unsigned long a, unsigned long b, const char* message)
+{
+    Zinc_test_called();
+    if (a == b) return;
+    Zinc_error_triggered();
+    fprintf(stderr, "%lu = %lu error: %s\n", a, b, message);
+}
+
 void Zinc_expect_long_long_equal(long long a, long long b, const char* message)
 {
 	Zinc_test_called();

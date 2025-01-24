@@ -12,6 +12,7 @@ void Worm_lex_id(Worm_lex_data* ld, Worm_token* t);
 void Worm_lex_string(Worm_lex_data* ld, Worm_token* t);
 void Worm_lex_string_escape(Worm_lex_data* ld, Worm_token* t);
 void Worm_lex_string_escape_unicode(Worm_lex_data* ld, Worm_token* t);
+bool Worm_is_number(char c[5], int num);
 void Worm_lex_number(Worm_lex_data* ld, Worm_token* t);
 void Worm_lex_number_fraction(Worm_lex_data* ld, Worm_token* t);
 void Worm_lex_number_exponent(Worm_lex_data* ld, Worm_token* t);
@@ -28,6 +29,15 @@ Worm_token* Worm_lex(Worm_lex_data* ld)
         if (type) {
             t->type = *type;
         }
+    } else if (t->type == Worm_token_type_natural) {
+        Zinc_string_finish(&t->value);
+        t->number.natural = strtoul(t->value.buf, NULL, 10);
+    } else if (t->type == Worm_token_type_integer) {
+        Zinc_string_finish(&t->value);
+        t->number.integer = strtol(t->value.buf, NULL, 10);
+    } else if (t->type == Worm_token_type_real) {
+        Zinc_string_finish(&t->value);
+        t->number.real = strtod(t->value.buf, NULL);
     }
     return t;
 }
@@ -72,9 +82,35 @@ void Worm_lex_start(Worm_lex_data* ld, Worm_token* t)
             return;
         }
 
-        if (isdigit(c[0])) {
-            t->type = Worm_token_type_number;
+        if (Worm_is_number(c, num)) {
+            if (c[0] == '-') {
+                t->type = Worm_token_type_integer;
+            } else {
+                t->type = Worm_token_type_natural;
+            }
+            t->loc = loc;
             Zinc_string_add(&t->value, c, num);
+            if (c[0] == '.') {
+                r = Zinc_input_unicode_next(ld->input, ld->vtable, c, &num, &loc, &done);
+                if (r == Zinc_result_error) {
+                    fprintf(stderr, "%s\n", Zinc_error_message);
+                    exit(1);
+                }
+                if (done) {
+                    t->type = Worm_token_type_dot;
+                    Zinc_input_unicode_repeat(ld->input, ld->vtable);
+                    Zinc_string_clear(&t->value);
+                    return;
+                }
+                if (!isdigit(c[0])) {
+                    t->type = Worm_token_type_dot;
+                    Zinc_input_unicode_repeat(ld->input, ld->vtable);
+                    Zinc_string_clear(&t->value);
+                    return;
+                }
+                Zinc_input_unicode_repeat(ld->input, ld->vtable);
+            }
+
             Worm_lex_number(ld, t);
             return;
         }
@@ -361,7 +397,7 @@ void Worm_lex_string_escape_unicode(Worm_lex_data* ld, Worm_token* t)
     Zinc_string_destroy(&bf);
 }
 
-bool Worm_is_number(char c[4], int num)
+bool Worm_is_number(char c[5], int num)
 {
     if (num != 1) return false;
     if (c[0] == '-') return true;
@@ -373,8 +409,6 @@ bool Worm_is_number(char c[4], int num)
 
 void Worm_lex_number(Worm_lex_data* ld, Worm_token* t)
 {
-    t->number_type = Worm_number_type_int;
-
     char c[4];
     int num;
     struct Zinc_location loc;
@@ -462,7 +496,7 @@ void Worm_lex_number(Worm_lex_data* ld, Worm_token* t)
 
 void Worm_lex_number_fraction(Worm_lex_data* ld, Worm_token* t)
 {
-    t->number_type = Worm_number_type_real;
+    t->type = Worm_token_type_real;
 
     char c[4];
     int num;
@@ -506,7 +540,7 @@ void Worm_lex_number_fraction(Worm_lex_data* ld, Worm_token* t)
 
 void Worm_lex_number_exponent(Worm_lex_data* ld, Worm_token* t)
 {
-    t->number_type = Worm_number_type_real;
+    t->type = Worm_token_type_real;
 
     char c[4];
     int num;
