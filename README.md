@@ -71,10 +71,11 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     cmake-build-debug/bin/coverage-unit
     cmake-build-debug/bin/dataframe-unit
     cmake-build-debug/bin/json-unit
+    cmake-build-debug/bin/worm-unit
 
 ## Run Integration and End-to-End Tests
-    cmake-build-debug/bin/akela-parse-test
-    cmake-build-debug/bin/akela-run-test
+    cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
+    cmake-build-debug/bin/akela-run-test src/akela-run-test/test-cases
 
 ## Run JIT on file
     cmake-build-debug/bin/akela examples/addition.ake

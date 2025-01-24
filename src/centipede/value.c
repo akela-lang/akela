@@ -58,7 +58,7 @@ void Cent_data_destroy(Cent_data *data, Cent_value_type type)
     } else if (type == Cent_value_type_dict) {
         Zinc_hash_map_string_destroy(&data->dict.properties);
     } else if (type == Cent_value_type_dag) {
-        Zinc_hash_map_str_map(&data->dag.properties, (Zinc_hash_map_string_func)Cent_value_free);
+        Zinc_hash_map_string_map(&data->dag.properties, (Zinc_hash_map_string_func)Cent_value_free);
         Cent_value* p = data->dag.head;
         while (p) {
             Cent_value* temp = p;

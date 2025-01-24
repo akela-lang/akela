@@ -43,7 +43,7 @@ void Cent_check_value_types_value(Cent_value* value)
         Zinc_hash_map_string_map_name(
             &value->data.dag.properties,
             (Zinc_hash_map_string_func_name)Cent_check_value_types_property);
-        Zinc_hash_map_str_map(
+        Zinc_hash_map_string_map(
             &value->data.dag.properties,
             (Zinc_hash_map_string_func)Cent_check_value_types_property2);
 
@@ -57,7 +57,7 @@ void Cent_check_value_types_value(Cent_value* value)
         Zinc_hash_map_string_map_name(
             &value->data.dict.properties,
             (Zinc_hash_map_string_func_name)Cent_check_value_types_property);
-        Zinc_hash_map_str_map(
+        Zinc_hash_map_string_map(
             &value->data.dict.properties,
             (Zinc_hash_map_string_func)Cent_check_value_types_property2);
     } else if (value->type == Cent_value_type_list) {

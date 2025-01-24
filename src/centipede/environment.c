@@ -17,13 +17,13 @@ void Cent_environment_create(Cent_environment** environment)
 
 void Cent_environment_destroy(Cent_environment* env)
 {
-    Zinc_hash_map_str_map(&env->symbols, (Zinc_hash_map_string_func)Cent_symbol_free);
+    Zinc_hash_map_string_map(&env->symbols, (Zinc_hash_map_string_func)Cent_symbol_free);
     Zinc_hash_map_string_destroy(&env->symbols);
 }
 
 void Cent_environment_free(Cent_environment* env)
 {
-    Zinc_hash_map_str_map(&env->symbols, (Zinc_hash_map_string_func)Cent_symbol_free);
+    Zinc_hash_map_string_map(&env->symbols, (Zinc_hash_map_string_func)Cent_symbol_free);
     Zinc_hash_map_string_destroy(&env->symbols);
     free(env);
 }

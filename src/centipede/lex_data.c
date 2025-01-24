@@ -42,10 +42,10 @@ void Cent_lex_data_create(
 
 void Cent_lex_data_destroy(Cent_lex_data* ld)
 {
-    Zinc_hash_map_str_map(&ld->reserved, free);
+    Zinc_hash_map_string_map(&ld->reserved, free);
     Zinc_hash_map_string_destroy(&ld->reserved);
 
-    Zinc_hash_map_str_map(&ld->builtin, free);
+    Zinc_hash_map_string_map(&ld->builtin, free);
     Zinc_hash_map_string_destroy(&ld->builtin);
 }
 

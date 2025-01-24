@@ -28,7 +28,7 @@ void Ake_comp_table_destroy_comp_unit(struct Ake_comp_unit* cu)
 
 void Ake_comp_table_destroy(struct Ake_comp_table* ct)
 {
-	Zinc_hash_map_str_map(&ct->ht, (void (*)(void*))Ake_comp_table_destroy_comp_unit);
+	Zinc_hash_map_string_map(&ct->ht, (void (*)(void*))Ake_comp_table_destroy_comp_unit);
 	Zinc_hash_map_string_destroy(&ct->ht);
 }
 

@@ -11,7 +11,7 @@ set(centipede_unit_files
 )
 
 add_executable(centipede-unit ${centipede_unit_files})
-target_link_libraries(centipede-unit centipede zinc)
+target_link_libraries(centipede-unit centipede zinc ${coverage_lib})
 set_target_properties(centipede-unit
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin

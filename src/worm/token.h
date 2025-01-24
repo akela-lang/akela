@@ -19,6 +19,8 @@ typedef enum {
     Worm_token_type_semicolon,
     Worm_token_type_newline,
     Worm_token_type_modifier,
+    Worm_token_type_true,
+    Worm_token_type_false,
     Worm_token_type_eof,
 } Worm_token_type;
 

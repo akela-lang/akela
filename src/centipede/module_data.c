@@ -17,7 +17,7 @@ void Cent_module_create(Cent_module** mod)
 
 void Cent_module_destroy(Cent_module* mod)
 {
-    Zinc_hash_map_str_map(&mod->submodules, (Zinc_hash_map_string_func)Cent_module_free);
+    Zinc_hash_map_string_map(&mod->submodules, (Zinc_hash_map_string_func)Cent_module_free);
     Zinc_hash_map_string_destroy(&mod->submodules);
 }
 

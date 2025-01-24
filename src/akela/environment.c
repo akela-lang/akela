@@ -53,7 +53,7 @@ void Ake_environment_destroy_symbol(struct Ake_symbol* sym)
 
 void Ake_environment_destroy(struct Ake_environment* env)
 {
-    Zinc_hash_map_str_map(&env->ht, (void (*)(void*))Ake_environment_destroy_symbol);
+    Zinc_hash_map_string_map(&env->ht, (void (*)(void*))Ake_environment_destroy_symbol);
     Zinc_hash_map_string_destroy(&env->ht);
     free(env);
 }

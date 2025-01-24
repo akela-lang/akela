@@ -69,7 +69,7 @@ void Json_dom_destroy(Json_dom* dom)
         }
         break;
     case Json_dom_type_object:
-        Zinc_hash_map_str_map(&dom->value.object, (Zinc_hash_map_string_func)Json_dom_destroy);
+        Zinc_hash_map_string_map(&dom->value.object, (Zinc_hash_map_string_func)Json_dom_destroy);
         Zinc_hash_map_string_destroy(&dom->value.object);
         break;
     default:

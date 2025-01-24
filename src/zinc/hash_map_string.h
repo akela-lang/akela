@@ -30,7 +30,7 @@ ZINC_API void Zinc_hash_map_string_entry_init(Zinc_hash_map_string_entry* ent);
 ZINC_API void Zinc_hash_map_string_entry_destroy(Zinc_hash_map_string_entry* ent);
 ZINC_API void Zinc_hash_map_string_list_init(Zinc_hash_map_string_list* hl);
 ZINC_API void Zinc_hash_map_string_list_destroy(Zinc_hash_map_string_list* hl);
-ZINC_API void Zinc_hash_map_str_map(Zinc_hash_map_string* ht, Zinc_hash_map_string_func f);
+ZINC_API void Zinc_hash_map_string_map(Zinc_hash_map_string* ht, Zinc_hash_map_string_func f);
 ZINC_API void Zinc_hash_map_string_map_name(Zinc_hash_map_string* ht, Zinc_hash_map_string_func_name f);
 ZINC_API void Zinc_hash_map_string_init(Zinc_hash_map_string* ht, unsigned int size);
 ZINC_API void Zinc_hash_map_string_create(Zinc_hash_map_string** ht, unsigned int size);

@@ -22,7 +22,7 @@ void Cent_module_string_create(Cent_module_string** ms)
 
 void Cent_module_string_destroy(Cent_module_string* ms)
 {
-    Zinc_hash_map_str_map(&ms->ht, (Zinc_hash_map_string_func)Zinc_string_free);
+    Zinc_hash_map_string_map(&ms->ht, (Zinc_hash_map_string_func)Zinc_string_free);
     Zinc_hash_map_string_destroy(&ms->ht);
 }
 

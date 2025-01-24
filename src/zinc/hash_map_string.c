@@ -86,7 +86,7 @@ void Zinc_hash_map_string_destroy(struct Zinc_hash_table* ht)
     }
 }
 
-void Zinc_hash_map_str_map(struct Zinc_hash_table* ht, Zinc_hash_map_string_func f)
+void Zinc_hash_map_string_map(struct Zinc_hash_table* ht, Zinc_hash_map_string_func f)
 {
     for (int i = 0; i < ht->size; i++) {
         struct Zinc_hash_map_string_entry* p = ht->buckets[i].head;

@@ -22,7 +22,7 @@ void Cent_element_create(Cent_element_type** et)
 void Cent_element_destroy(Cent_element_type* et)
 {
     Zinc_string_destroy(&et->name);
-    Zinc_hash_map_str_map(&et->properties, (Zinc_hash_map_string_func)Cent_property_type_free);
+    Zinc_hash_map_string_map(&et->properties, (Zinc_hash_map_string_func)Cent_property_type_free);
     Zinc_hash_map_string_destroy(&et->properties);
     Cent_types_list_destroy(&et->children);
 }

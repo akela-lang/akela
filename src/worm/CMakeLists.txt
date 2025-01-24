@@ -5,7 +5,7 @@ set(worm_files
 )
 
 add_library(worm ${worm_files})
-target_link_libraries(worm centipede)
+target_link_libraries(worm centipede zinc)
 set_target_properties(worm
         PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib

@@ -27,7 +27,7 @@ void Cent_comp_table_create(
 
 void Cent_comp_table_destroy(Cent_comp_table* table)
 {
-    Zinc_hash_map_str_map(&table->ht, (Zinc_hash_map_string_func)Cent_comp_unit_free);
+    Zinc_hash_map_string_map(&table->ht, (Zinc_hash_map_string_func)Cent_comp_unit_free);
     Zinc_hash_map_string_destroy(&table->ht);
     Cent_environment_destroy(table->base);
     free(table->base);
@@ -55,7 +55,7 @@ Cent_comp_unit* Cent_comp_table_get_str(Cent_comp_table* table, char* name)
 
 void Cent_comp_table_map(Cent_comp_table* table, Cent_comp_table_func func)
 {
-    Zinc_hash_map_str_map(&table->ht, (Zinc_hash_map_string_func)func);
+    Zinc_hash_map_string_map(&table->ht, (Zinc_hash_map_string_func)func);
 }
 
 void Cent_comp_table_map_name(Cent_comp_table* table, Cent_comp_table_func_name func)

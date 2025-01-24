@@ -22,6 +22,13 @@ Worm_token* Worm_lex(Worm_lex_data* ld)
     Worm_token* t = NULL;
     Worm_token_create(&t);
     Worm_lex_start(ld, t);
+
+    if (t->type == Worm_token_type_id) {
+        Worm_token_type* type = Worm_lex_data_get_reserved(ld, &t->value);
+        if (type) {
+            t->type = *type;
+        }
+    }
     return t;
 }
 
@@ -53,17 +60,20 @@ void Worm_lex_start(Worm_lex_data* ld, Worm_token* t)
         }
 
         if (c[0] == '_' || isalpha(c[0])) {
+            t->type = Worm_token_type_id;
             Zinc_string_add(&t->value, c, num);
             Worm_lex_id(ld, t);
             return;
         }
 
         if (c[0] == '"') {
+            t->type = Worm_token_type_string;
             Worm_lex_string(ld, t);
             return;
         }
 
         if (isdigit(c[0])) {
+            t->type = Worm_token_type_number;
             Zinc_string_add(&t->value, c, num);
             Worm_lex_number(ld, t);
             return;
@@ -84,7 +94,7 @@ void Worm_lex_start(Worm_lex_data* ld, Worm_token* t)
         }
 
         if (c[0] == '{') {
-            t->type == Worm_token_type_left_curly_brace;
+            t->type = Worm_token_type_left_curly_brace;
             t->loc = loc;
             return;
         }
@@ -139,8 +149,7 @@ void Worm_lex_id(Worm_lex_data* ld, Worm_token* t)
         }
 
         if (done) {
-            t->type = Worm_token_type_eof;
-            t->loc = loc;
+            Zinc_input_unicode_repeat(ld->input, ld->vtable);
             return;
         }
 
@@ -155,7 +164,8 @@ void Worm_lex_id(Worm_lex_data* ld, Worm_token* t)
             continue;
         }
 
-        break;
+        Zinc_input_unicode_repeat(ld->input, ld->vtable);
+        return;
     }
 }
 

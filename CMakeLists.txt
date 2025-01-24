@@ -129,3 +129,4 @@ add_subdirectory(src/centipede)
 add_subdirectory(src/centipede-unit)
 
 add_subdirectory(src/worm)
+add_subdirectory(src/worm-unit)

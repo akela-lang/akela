@@ -28,9 +28,9 @@ void Ake_type_def_destroy(struct Ake_type_def* n)
 	if (n) {
 		Zinc_string_destroy(&n->name);
         Ake_ast_destroy(n->composite);
-        Zinc_hash_map_str_map(&n->struct_impl, (Zinc_hash_map_string_func)Ake_struct_element_destroy);
+        Zinc_hash_map_string_map(&n->struct_impl, (Zinc_hash_map_string_func)Ake_struct_element_destroy);
         Zinc_hash_map_string_destroy(&n->struct_impl);
-        Zinc_hash_map_str_map(&n->type_impl, (Zinc_hash_map_string_func)Ake_ast_destroy);
+        Zinc_hash_map_string_map(&n->type_impl, (Zinc_hash_map_string_func)Ake_ast_destroy);
         Zinc_hash_map_string_destroy(&n->type_impl);
         free(n);
 	}
