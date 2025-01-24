@@ -5,25 +5,15 @@
 #include "zinc/unit_test.h"
 #include "zinc/error.h"
 #include "worm/lex.h"
+#include "test_tools.h"
 
 void test_int32()
 {
     Zinc_test_name(__func__);
-    Zinc_error_list* errors = NULL;
-    Zinc_error_list_create(&errors);
-
-    Zinc_vector* text = NULL;
-    Zinc_vector_create(&text, sizeof(char));
-
-    Zinc_input_unicode_string* input = NULL;
-    Zinc_input_unicode_string_create(&input, text);
 
     Worm_lex_data* ld = NULL;
-    Worm_lex_data_create(&ld, input, input->input_vtable, errors);
-
-    char* s = "Scaler {}\n"
-    ".Integer {.name=\"Int32\";.bit_count=32;.is_signed=true}\n";
-    Zinc_vector_add(text, s, strlen(s));
+    test_setup(&ld, "Scaler {}\n"
+    ".Integer {.name=\"Int32\";.bit_count=32;.is_signed=true}\n");
 
     Worm_token* t;
 
@@ -108,12 +98,7 @@ void test_int32()
     t = Worm_lex(ld);
     Zinc_expect_int_equal(t->type, Worm_token_type_eof, "type 2 12");
 
-    Zinc_error_list_destroy(errors);
-    free(errors);
-    Zinc_vector_destroy(text);
-    free(text);
-    free(input);
-    free(ld);
+    test_teardown(ld);
 }
 
 void test_lex()

@@ -1,10 +1,9 @@
 # Worm Todo
-* worm lex
-* worm unit
+* worm lex unit
 * parse parse file
+  * split sections
   * ake section
   * worm section
-* ast
-* parse
+* build value
 * compare
 * output results
