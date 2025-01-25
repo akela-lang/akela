@@ -5,6 +5,8 @@ void Worm_ast_init(Worm_ast* n)
 {
     n->type = Worm_ast_type_none;
     Zinc_string_init(&n->value);
+    Zinc_location_init(&n->loc);
+    n->has_error = false;
     n->next = NULL;
     n->prev = NULL;
     n->head = NULL;

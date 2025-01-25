@@ -24,14 +24,31 @@ typedef enum {
     Worm_token_type_true,
     Worm_token_type_false,
     Worm_token_type_eof,
+    Worm_token_type_count,      /* leave at end */
 } Worm_token_type;
 
-typedef enum {
-    Worm_number_type_none,
-    Worm_number_type_int,
-    Worm_number_type_nat,
-    Worm_number_type_real,
-} Worm_number_type;
+static char const* Worm_token_name(Worm_token_type type)
+{
+    char const* name[Worm_token_type_count];
+    name[Worm_token_type_none] = "none";
+    name[Worm_token_type_id] = "id";
+    name[Worm_token_type_string] = "string";
+    name[Worm_token_type_integer] = "integer";
+    name[Worm_token_type_natural] = "natural";
+    name[Worm_token_type_real] = "real";
+    name[Worm_token_type_dot] = "dot";
+    name[Worm_token_type_left_curly_brace] = "left-curly-brace";
+    name[Worm_token_type_right_curly_brace] = "right-curly-brace";
+    name[Worm_token_type_equal] = "equal";
+    name[Worm_token_type_semicolon] = "semicolon";
+    name[Worm_token_type_newline] = "newline";
+    name[Worm_token_type_modifier] = "modifier";
+    name[Worm_token_type_true] = "true";
+    name[Worm_token_type_false] = "false";
+    name[Worm_token_type_eof] = "eof";
+
+    return name[type];
+}
 
 typedef struct {
     Worm_token_type type;

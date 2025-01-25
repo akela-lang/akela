@@ -3,6 +3,9 @@ set(worm_files
         token.c
         lex_data.c
         ast.c
+        parse.c
+        parse_tools.c
+        parse_stmts.c
 )
 
 add_library(worm ${worm_files})

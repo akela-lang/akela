@@ -4,9 +4,11 @@
 #include <stdbool.h>
 #include "zinc/zstring.h"
 #include <stdint.h>
+#include "zinc/error.h"
 
 typedef enum Worm_ast_type {
     Worm_ast_type_none,
+    Worm_ast_type_stmts,
     Worm_ast_type_id,
     Worm_ast_type_string,
     Worm_ast_type_integer,
@@ -26,6 +28,8 @@ typedef struct Worm_ast {
         double real;
         bool boolean;
     } number;
+    Zinc_location loc;
+    bool has_error;
     struct Worm_ast* next;
     struct Worm_ast* prev;
     struct Worm_ast* head;

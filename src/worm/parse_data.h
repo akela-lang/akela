@@ -1,6 +1,9 @@
 #ifndef WORM_PARSE_DATA_H
 #define WORM_PARSE_DATA_H
 
+#include "zinc/error.h"
+#include "lex_data.h"
+
 typedef struct {
     Zinc_error_list* errors;
     Worm_lex_data* ld;
