@@ -62,7 +62,7 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
     ninja -C cmake-build-debug
 
-## Run Unit Test
+## Run Unit Tests
     cmake-build-debug/bin/zinc-unit
     cmake-build-debug/bin/akela-unit
     cmake-build-debug/bin/akela-llvm-unit
