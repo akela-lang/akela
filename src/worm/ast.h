@@ -10,11 +10,12 @@ typedef enum Worm_ast_type {
     Worm_ast_type_none,
     Worm_ast_type_stmts,
     Worm_ast_type_id,
-    Worm_ast_type_string,
     Worm_ast_type_integer,
     Worm_ast_type_natural,
     Worm_ast_type_real,
     Worm_ast_type_boolean,
+    Worm_ast_type_string,
+    Worm_ast_type_level,
     Worm_ast_type_object,
     Worm_ast_type_count,
 } Worm_ast_type;

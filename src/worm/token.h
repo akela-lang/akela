@@ -24,6 +24,7 @@ typedef enum {
     Worm_token_type_true,
     Worm_token_type_false,
     Worm_token_type_eof,
+    Worm_token_type_property,
     Worm_token_type_count,      /* leave at end */
 } Worm_token_type;
 
@@ -46,6 +47,7 @@ static char const* Worm_token_name(Worm_token_type type)
     name[Worm_token_type_true] = "true";
     name[Worm_token_type_false] = "false";
     name[Worm_token_type_eof] = "eof";
+    name[Worm_token_type_property] = "property";
 
     return name[type];
 }
