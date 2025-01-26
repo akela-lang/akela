@@ -39,3 +39,9 @@ Worm_token_type* Worm_lex_data_get_reserved(Worm_lex_data* ld, Zinc_string* word
 {
     return Zinc_hash_map_string_get(&ld->reserved, word);
 }
+
+void Worm_lex_data_destroy(Worm_lex_data* ld)
+{
+    Zinc_hash_map_string_map(&ld->reserved, free);
+    Zinc_hash_map_string_destroy(&ld->reserved);
+}

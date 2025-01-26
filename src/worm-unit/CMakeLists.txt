@@ -1,8 +1,10 @@
 set(worm_test_files
         test.c
         test_lex.c
-        test_tools.c
+        test_lex_tools.c
         test_ast.c
+        test_parse.c
+        test_parse_tools.c
 )
 
 add_executable(worm-unit ${worm_test_files})

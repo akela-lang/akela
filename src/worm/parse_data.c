@@ -5,6 +5,7 @@ void Worm_parse_data_init(Worm_parse_data* pd, Worm_lex_data* ld, Zinc_error_lis
 {
     pd->ld = ld;
     pd->errors = errors;
+    pd->lookahead = NULL;
 }
 
 void Worm_parse_data_create(Worm_parse_data** pd, Worm_lex_data* ld, Zinc_error_list* errors)

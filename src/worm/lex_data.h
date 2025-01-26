@@ -36,5 +36,6 @@ void Worm_lex_data_create(
     Zinc_error_list* errors);
 void Worm_lex_data_add_reserved(Worm_lex_data* ld, char* word, Worm_token_type type);
 Worm_token_type* Worm_lex_data_get_reserved(Worm_lex_data* ld, Zinc_string* word);
+void Worm_lex_data_destroy(Worm_lex_data* ld);
 
 #endif

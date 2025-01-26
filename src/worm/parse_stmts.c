@@ -124,12 +124,15 @@ Worm_ast* Worm_parse_object(Worm_parse_data* pd)
     while (pd->lookahead->type == Worm_token_type_dot) {
         Worm_ast* a = Worm_parse_property(pd);
         Worm_ast_add(n, a);
+        Worm_lookahead(pd);
     }
 
     Worm_token* rcb = NULL;
     Worm_match(pd, Worm_token_type_right_curly_brace, "expected right-curly-brace", &rcb, n);
     Worm_token_destroy(rcb);
     free(rcb);
+
+    return n;
 }
 
 Worm_ast* Worm_parse_property(Worm_parse_data* pd)

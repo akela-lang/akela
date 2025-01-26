@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <zinc/error.h>
-
 #include "zinc/zstring.h"
+#include <assert.h>
 
 typedef enum {
     Worm_token_type_none,
@@ -49,6 +49,7 @@ static char const* Worm_token_name(Worm_token_type type)
     name[Worm_token_type_eof] = "eof";
     name[Worm_token_type_property] = "property";
 
+    assert(type < Worm_token_type_count);
     return name[type];
 }
 

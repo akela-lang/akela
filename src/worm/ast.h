@@ -41,5 +41,6 @@ void Worm_ast_init(Worm_ast* n);
 void Worm_ast_create(Worm_ast** n);
 void Worm_ast_add(Worm_ast* p, Worm_ast* c);
 void Worm_ast_destroy(Worm_ast* n);
+Worm_ast* Worm_ast_get(Worm_ast* n, size_t index);
 
 #endif

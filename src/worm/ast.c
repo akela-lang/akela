@@ -43,3 +43,18 @@ void Worm_ast_destroy(Worm_ast* n)
         free(temp);
     }
 }
+
+Worm_ast* Worm_ast_get(Worm_ast* n, size_t index)
+{
+    Worm_ast* p = n->head;
+    size_t i = 0;
+    while (p) {
+        if (i == index) {
+            return p;
+        }
+        p = p->next;
+        i++;
+    }
+
+    return NULL;
+}

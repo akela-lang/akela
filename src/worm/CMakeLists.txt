@@ -4,6 +4,7 @@ set(worm_files
         lex_data.c
         ast.c
         parse.c
+        parse_data.c
         parse_tools.c
         parse_stmts.c
 )

@@ -16,5 +16,7 @@ void Worm_token_create(Worm_token** t)
 
 void Worm_token_destroy(Worm_token *t)
 {
-    Zinc_string_destroy(&t->value);
+    if (t) {
+        Zinc_string_destroy(&t->value);
+    }
 }

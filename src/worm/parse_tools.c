@@ -23,6 +23,7 @@ bool Worm_match(Worm_parse_data* pd,
 
     if (pd->lookahead->type == type) {
         *t = pd->lookahead;
+        pd->lookahead = NULL;
         Zinc_location_combine(&n->loc, &(*t)->loc);
         return true;
     }

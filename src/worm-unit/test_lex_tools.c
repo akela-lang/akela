@@ -4,7 +4,7 @@
 #include <zinc/input_unicode_string.h>
 #include <zinc/vector.h>
 
-void test_setup(Worm_lex_data** ld, char* s)
+void test_lex_setup(Worm_lex_data** ld, char* s)
 {
     Zinc_error_list* errors = NULL;
     Zinc_error_list_create(&errors);
@@ -19,16 +19,17 @@ void test_setup(Worm_lex_data** ld, char* s)
     Worm_lex_data_create(ld, input, input->input_vtable, errors);
 }
 
-void test_teardown(Worm_lex_data* ld)
+void test_lex_teardown(Worm_lex_data* ld)
 {
     Zinc_error_list* errors = ld->errors;
-    Zinc_error_list_destroy(errors);
-    free(errors);
-
     Zinc_input_unicode_string* input = ld->input;
     Zinc_vector* text = input->text;
 
+    Zinc_error_list_destroy(errors);
+    free(errors);
     Zinc_vector_destroy(text);
     free(text);
     free(input);
+    Worm_lex_data_destroy(ld);
+    free(ld);
 }
