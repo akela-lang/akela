@@ -103,8 +103,7 @@ void Zinc_error_triggered()
 void Zinc_print_results()
 {
 	fprintf(stdout, "test case count: %d\n", tr.test_case_count);
-	fprintf(stdout, "test case error count: %d\n\n", tr.test_case_error_count);
-
+	fprintf(stdout, "test case error count: %d\n", tr.test_case_error_count);
 	fprintf(stdout, "check count: %d\n", tr.check_count);
 	fprintf(stdout, "check error count: %d\n\n", tr.check_error_count);
     if (tr.test_case_error_count || tr.check_error_count) {
