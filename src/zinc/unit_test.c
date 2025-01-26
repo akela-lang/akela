@@ -12,6 +12,7 @@
 #include <math.h>
 #include "utf8.h"
 #include "String_slice.h"
+#include <stdint.h>
 
 Zinc_test_run tr;
 
@@ -102,10 +103,11 @@ void Zinc_error_triggered()
 
 void Zinc_print_results()
 {
-	fprintf(stdout, "test case count: %d\n", tr.test_case_count);
-	fprintf(stdout, "test case error count: %d\n", tr.test_case_error_count);
-	fprintf(stdout, "check count: %d\n", tr.check_count);
-	fprintf(stdout, "check error count: %d\n\n", tr.check_error_count);
+    double test_case_percent = (double)(tr.test_case_count - tr.test_case_error_count) / (double)tr.test_case_count * 100.0;
+    double check_percent = (double)(tr.check_count - tr.check_error_count) / (double)tr.check_count * 100.0;
+    fprintf(stdout, "test cases passed: %.0lf%% (%d/%d)\n", test_case_percent, tr.test_case_count - tr.test_case_error_count, tr.test_case_count);
+    fprintf(stdout, "checks passed    : %.0lf%% (%d/%d)\n\n", check_percent, tr.check_count - tr.check_error_count, tr.check_count);
+
     if (tr.test_case_error_count || tr.check_error_count) {
         exit(1);
     }

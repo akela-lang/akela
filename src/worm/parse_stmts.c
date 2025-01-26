@@ -5,7 +5,7 @@
 
 bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n);
 Worm_ast* Worm_parse_stmt(Worm_parse_data* pd);
-Worm_ast* Worm_parse_level(Worm_parse_data* pd);
+Worm_ast* Worm_parse_node(Worm_parse_data* pd);
 Worm_ast* Worm_parse_object(Worm_parse_data* pd);
 Worm_ast* Worm_parse_property(Worm_parse_data* pd);
 Worm_ast* Worm_parse_expr(Worm_parse_data* pd);
@@ -66,17 +66,17 @@ Worm_ast* Worm_parse_stmt(Worm_parse_data* pd)
     Worm_lookahead(pd);
 
     if (pd->lookahead->type == Worm_token_type_dot || pd->lookahead->type == Worm_token_type_id) {
-        return Worm_parse_level(pd);
+        return Worm_parse_node(pd);
     }
     
     return NULL;
 }
 
-Worm_ast* Worm_parse_level(Worm_parse_data* pd)
+Worm_ast* Worm_parse_node(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
     Worm_ast_create(&n);
-    n->type = Worm_ast_type_level;
+    n->type = Worm_ast_type_node;
 
     size_t dot_count = 0;
     Worm_token* dot = NULL;
@@ -84,6 +84,7 @@ Worm_ast* Worm_parse_level(Worm_parse_data* pd)
         if (!Worm_match(pd, Worm_token_type_dot, "expected dot", &dot, n)) {
             assert(false && "not possible");
         }
+        dot_count++;
         Worm_token_destroy(dot);
         free(dot);
         Worm_lookahead(pd);
@@ -125,6 +126,17 @@ Worm_ast* Worm_parse_object(Worm_parse_data* pd)
         Worm_ast* a = Worm_parse_property(pd);
         Worm_ast_add(n, a);
         Worm_lookahead(pd);
+        if (pd->lookahead->type == Worm_token_type_semicolon) {
+            Worm_token* sc = NULL;
+            if (!Worm_match(pd, Worm_token_type_semicolon, "expected semicolon", &sc, n)) {
+                assert(false && "not possible");
+            }
+            Worm_token_destroy(sc);
+            free(sc);
+        } else {
+            break;
+        }
+        Worm_lookahead(pd);
     }
 
     Worm_token* rcb = NULL;
@@ -139,7 +151,7 @@ Worm_ast* Worm_parse_property(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
     Worm_ast_create(&n);
-    n->type = Worm_token_type_property;
+    n->type = Worm_ast_type_property;
 
     Worm_token* dot = NULL;
     Worm_match(pd, Worm_token_type_dot, "expected dot", &dot, n);
