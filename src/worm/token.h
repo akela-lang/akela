@@ -27,6 +27,7 @@ typedef enum {
     Worm_token_type_element,
     Worm_token_type_properties,
     Worm_token_type_children,
+    Worm_token_type_colon,
     Worm_token_type_count,      /* leave at end */
 } Worm_token_type;
 
@@ -52,6 +53,7 @@ static char const* Worm_token_name(Worm_token_type type)
     name[Worm_token_type_element] = "element";
     name[Worm_token_type_properties] = "properties";
     name[Worm_token_type_children] = "children";
+    name[Worm_token_type_colon] = "colon";
 
     assert(type < Worm_token_type_count);
     return name[type];

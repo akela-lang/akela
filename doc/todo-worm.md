@@ -1,4 +1,4 @@
 # Worm Todo
-* parse element definition
+* test element definition
 * value data type
 * build value

@@ -5,9 +5,12 @@
 
 bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n);
 Worm_ast* Worm_parse_stmt(Worm_parse_data* pd);
+
 Worm_ast* Worm_parse_element(Worm_parse_data* pd);
 Worm_ast* Worm_parse_properties(Worm_parse_data* pd);
+Worm_ast* Worm_parse_property_type(Worm_parse_data* pd);
 Worm_ast* Worm_parse_children(Worm_parse_data* pd);
+
 Worm_ast* Worm_parse_node(Worm_parse_data* pd);
 Worm_ast* Worm_parse_object(Worm_parse_data* pd);
 Worm_ast* Worm_parse_property(Worm_parse_data* pd);
@@ -18,10 +21,9 @@ Worm_ast* Worm_parse_real(Worm_parse_data* pd);
 Worm_ast* Worm_parse_boolean(Worm_parse_data* pd);
 Worm_ast* Worm_parse_string(Worm_parse_data* pd);
 
-// stmts => stmts sep stmt | e
-//
-// stmts => stmt stmts' | e
-// stmts' => seps stmt stmts' | e
+// stmts -> stmt? stmts'
+// stmts' -> sep stmt? stmts' | e
+// stmt? -> stmt | e
 Worm_ast* Worm_parse_stmts(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
@@ -33,13 +35,7 @@ Worm_ast* Worm_parse_stmts(Worm_parse_data* pd)
         Worm_ast_add(n, a);
     }
 
-    while (true) {
-        if (Worm_parse_sep(pd, n))  {
-            while (Worm_parse_sep(pd, n));
-        } else {
-            break;
-        }
-
+    while (Worm_parse_sep(pd, n)) {
         Worm_ast* b = Worm_parse_stmt(pd);
         if (b) {
             Worm_ast_add(n, b);
@@ -49,7 +45,7 @@ Worm_ast* Worm_parse_stmts(Worm_parse_data* pd)
     return n;
 }
 
-// sep -> \n | ;
+// sep -> '\n' | ';'
 bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n)
 {
     Worm_lookahead(pd);
@@ -67,7 +63,7 @@ bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n)
     return false;
 }
 
-// stmt -> node | e
+// stmt -> element | node | e
 Worm_ast* Worm_parse_stmt(Worm_parse_data* pd)
 {
     Worm_lookahead(pd);
@@ -83,6 +79,10 @@ Worm_ast* Worm_parse_stmt(Worm_parse_data* pd)
     return NULL;
 }
 
+// element -> 'element' id { element_stmt? element_stmts' }
+// element_stmt? -> properties | children | e
+// element_stmts' -> sep element_stmt? element_stmts' | e
+// note: limited to one properties and one children
 Worm_ast* Worm_parse_element(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
@@ -137,14 +137,14 @@ Worm_ast* Worm_parse_element(Worm_parse_data* pd)
             Worm_ast* a = Worm_parse_properties(pd);
             Worm_ast_add(n, a);
             properties_count++;
-            if (properties_count > 1) {
+            if (properties_count == 2) {
                 Zinc_error_list_set(pd->errors, &a->loc, "duplicate properties declaration");
             }
         } else if (pd->lookahead->type == Worm_token_type_children) {
             Worm_ast* b = Worm_parse_children(pd);
             Worm_ast_add(n, b);
             children_count++;
-            if (children_count > 1) {
+            if (children_count == 2) {
                 Zinc_error_list_set(pd->errors, &b->loc, "duplicate children declaration");
             }
         }
@@ -165,20 +165,138 @@ Worm_ast* Worm_parse_properties(Worm_parse_data* pd)
     Worm_ast_create(&n);
     n->type = Worm_ast_type_properties;
 
+    Worm_token* pr = NULL;
+    if (!Worm_match(pd, Worm_token_type_properties, "expected properties", &pr, n)) {
+        assert(false && "not possible");
+    }
+    Worm_token_destroy(pr);
+    free(pr);
+
+    Worm_token* lcb = NULL;
+    Worm_match(pd, Worm_token_type_left_curly_brace, "expected left-curly-brace", &lcb, n);
+    Worm_token_destroy(lcb);
+    free(lcb);
+
+    Worm_lookahead(pd);
+    if (pd->lookahead->type == Worm_token_type_id) {
+        Worm_ast* a = Worm_parse_property_type(pd);
+
+        while (Worm_parse_sep(pd, n)) {
+            Worm_lookahead(pd);
+            if (pd->lookahead->type == Worm_token_type_id) {
+                Worm_ast* b = Worm_parse_property_type(pd);
+            }
+        }
+    }
+
+    Worm_token* rcb = NULL;
+    Worm_match(pd, Worm_token_type_right_curly_brace, "expected right-curly-brace", &rcb, n);
+    Worm_token_destroy(rcb);
+    free(rcb);
+
+
     return n;
 }
 
+Worm_ast* Worm_parse_property_type(Worm_parse_data* pd)
+{
+    Worm_ast* n = NULL;
+    Worm_ast_create(&n);
+    n->type = Worm_ast_type_property_type;
+
+    Worm_token* id = NULL;
+    if (!Worm_match(pd, Worm_token_type_id, "expected id", &id, n)) {
+        assert(false && "not possible");
+    }
+    Worm_ast* a = NULL;
+    Worm_ast_create(&a);
+    a->type = Worm_ast_type_id;
+    if (id) {
+        Zinc_string_add_string(&a->value, &id->value);
+        Worm_token_destroy(id);
+        free(id);
+    }
+    Worm_ast_add(n, a);
+
+    Worm_token* colon = NULL;
+    Worm_match(pd, Worm_token_type_colon, "expected colon", &colon, n);
+    Worm_token_destroy(colon);
+    free(colon);
+
+    Worm_token* id2 = NULL;
+    Worm_match(pd, Worm_token_type_id, "expected id", &id2, n);
+    Worm_ast* b = NULL;
+    Worm_ast_create(&b);
+    a->type = Worm_ast_type_id;
+    if (id2) {
+        Zinc_string_add_string(&b->value, &id2->value);
+        Worm_token_destroy(id2);
+        free(id2);
+    }
+    Worm_ast_add(n, b);
+}
+
+// Children -> children { Types }
+// Types -> Id? Types' | e
+// Types' -> sep Id? Types' | e
+// Id? -> id | e
 Worm_ast* Worm_parse_children(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
     Worm_ast_create(&n);
     n->type = Worm_ast_type_children;
 
+    Worm_token* ch = NULL;
+    if (!Worm_match(pd, Worm_token_type_children, "expected children", &ch, n)) {
+        assert(false && "not possible");
+    }
+    Worm_token_destroy(ch);
+    free(ch);
+
+    Worm_token* lcb = NULL;
+    Worm_match(pd, Worm_token_type_left_curly_brace, "expected left-curly-brace", &lcb, n);
+    Worm_token_destroy(lcb);
+    free(lcb);
+
+    Worm_lookahead(pd);
+    if (pd->lookahead->type == Worm_token_type_id) {
+        Worm_token* id = NULL;
+        if (!Worm_match(pd, Worm_token_type_id, "expected id", &id, n)) {
+            assert(false && "not possible");
+        }
+        Worm_ast* a = NULL;
+        Worm_ast_create(&a);
+        a->type = Worm_ast_type_id;
+        Zinc_string_add_string(&a->value, &id->value);
+        Worm_ast_add(n, a);
+    }
+
+    Worm_lookahead(pd);
+    while (Worm_parse_sep(pd, n)) {
+        Worm_lookahead(pd);
+        if (pd->lookahead->type == Worm_token_type_id) {
+            Worm_token* id = NULL;
+            if (!Worm_match(pd, Worm_token_type_id, "expected id", &id, n)) {
+                assert(false && "not possible");
+            }
+            Worm_ast* b = NULL;
+            Worm_ast_create(&b);
+            b->type = Worm_ast_type_id;
+            Zinc_string_add_string(&b->value, &id->value);
+            Worm_ast_add(n, b);
+        }
+    }
+
+    Worm_token* rcb = NULL;
+    Worm_match(pd, Worm_token_type_right_curly_brace, "expected right-curly-brace", &rcb, n);
+    Worm_token_destroy(rcb);
+    free(rcb);
+
     return n;
 }
 
 // node -> dots object
-// dots -> . dots | e
+// dots -> '.' dots | e
 Worm_ast* Worm_parse_node(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
