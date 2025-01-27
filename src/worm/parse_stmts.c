@@ -5,6 +5,9 @@
 
 bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n);
 Worm_ast* Worm_parse_stmt(Worm_parse_data* pd);
+Worm_ast* Worm_parse_element(Worm_parse_data* pd);
+Worm_ast* Worm_parse_properties(Worm_parse_data* pd);
+Worm_ast* Worm_parse_children(Worm_parse_data* pd);
 Worm_ast* Worm_parse_node(Worm_parse_data* pd);
 Worm_ast* Worm_parse_object(Worm_parse_data* pd);
 Worm_ast* Worm_parse_property(Worm_parse_data* pd);
@@ -15,35 +18,38 @@ Worm_ast* Worm_parse_real(Worm_parse_data* pd);
 Worm_ast* Worm_parse_boolean(Worm_parse_data* pd);
 Worm_ast* Worm_parse_string(Worm_parse_data* pd);
 
-/* stmts => opt-seps stmts' */
-/* stmts' => stmt seps stmts' | stmt | e */
+// stmts => stmts sep stmt | e
+//
+// stmts => stmt stmts' | e
+// stmts' => seps stmt stmts' | e
 Worm_ast* Worm_parse_stmts(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
     Worm_ast_create(&n);
     n->type = Worm_ast_type_stmts;
 
-    if (Worm_parse_sep(pd, n)) {
-        while (Worm_parse_sep(pd, n));
+    Worm_ast* a = Worm_parse_stmt(pd);
+    if (a) {
+        Worm_ast_add(n, a);
     }
 
-
     while (true) {
-        Worm_ast* a = Worm_parse_stmt(pd);
-        if (a) {
-            Worm_ast_add(n, a);
-        }
-
         if (Worm_parse_sep(pd, n))  {
             while (Worm_parse_sep(pd, n));
         } else {
             break;
+        }
+
+        Worm_ast* b = Worm_parse_stmt(pd);
+        if (b) {
+            Worm_ast_add(n, b);
         }
     }
 
     return n;
 }
 
+// sep -> \n | ;
 bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n)
 {
     Worm_lookahead(pd);
@@ -61,9 +67,14 @@ bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n)
     return false;
 }
 
+// stmt -> node | e
 Worm_ast* Worm_parse_stmt(Worm_parse_data* pd)
 {
     Worm_lookahead(pd);
+
+    if (pd->lookahead->type == Worm_token_type_element) {
+        return Worm_parse_element(pd);
+    }
 
     if (pd->lookahead->type == Worm_token_type_dot || pd->lookahead->type == Worm_token_type_id) {
         return Worm_parse_node(pd);
@@ -72,6 +83,102 @@ Worm_ast* Worm_parse_stmt(Worm_parse_data* pd)
     return NULL;
 }
 
+Worm_ast* Worm_parse_element(Worm_parse_data* pd)
+{
+    Worm_ast* n = NULL;
+    Worm_ast_create(&n);
+    n->type = Worm_ast_type_element;
+
+    Worm_token* el = NULL;
+    if (!Worm_match(pd, Worm_token_type_element, "expected element", &el, n)) {
+        assert(false && "not possible");
+    }
+    Worm_token_destroy(el);
+    free(el);
+
+    Worm_token* id = NULL;
+    Worm_match(pd, Worm_token_type_id, "expected id", &id, n);
+    if (id) {
+        Worm_ast* a = NULL;
+        Worm_ast_create(&a);
+        a->type = Worm_ast_type_id;
+        Zinc_string_add_string(&a->value, &id->value);
+        Worm_ast_add(n, a);
+        Worm_token_destroy(id);
+        free(id);
+    }
+
+    Worm_token* lcb = NULL;
+    Worm_match(pd, Worm_token_type_left_curly_brace, "expected left-curly-brace", &lcb, n);
+    Worm_token_destroy(lcb);
+    free(lcb);
+
+    if (Worm_parse_sep(pd, n)) {
+        while (Worm_parse_sep(pd, n));
+    }
+
+    int properties_count = 0;
+    int children_count = 0;
+
+    Worm_lookahead(pd);
+    if (pd->lookahead->type == Worm_token_type_properties) {
+        Worm_ast* a = Worm_parse_properties(pd);
+        Worm_ast_add(n, a);
+        properties_count++;
+    } else if (pd->lookahead->type == Worm_token_type_children) {
+        Worm_ast* b = Worm_parse_children(pd);
+        Worm_ast_add(n, b);
+        children_count++;
+    }
+
+    while (Worm_parse_sep(pd, n)) {
+        Worm_lookahead(pd);
+        if (pd->lookahead->type == Worm_token_type_properties) {
+            Worm_ast* a = Worm_parse_properties(pd);
+            Worm_ast_add(n, a);
+            properties_count++;
+            if (properties_count > 1) {
+                Zinc_error_list_set(pd->errors, &a->loc, "duplicate properties declaration");
+            }
+        } else if (pd->lookahead->type == Worm_token_type_children) {
+            Worm_ast* b = Worm_parse_children(pd);
+            Worm_ast_add(n, b);
+            children_count++;
+            if (children_count > 1) {
+                Zinc_error_list_set(pd->errors, &b->loc, "duplicate children declaration");
+            }
+        }
+    }
+
+
+    Worm_token* rcb = NULL;
+    Worm_match(pd, Worm_token_type_right_curly_brace, "expected right-curly-brace", &rcb, n);
+    Worm_token_destroy(rcb);
+    free(rcb);
+
+    return n;
+}
+
+Worm_ast* Worm_parse_properties(Worm_parse_data* pd)
+{
+    Worm_ast* n = NULL;
+    Worm_ast_create(&n);
+    n->type = Worm_ast_type_properties;
+
+    return n;
+}
+
+Worm_ast* Worm_parse_children(Worm_parse_data* pd)
+{
+    Worm_ast* n = NULL;
+    Worm_ast_create(&n);
+    n->type = Worm_ast_type_children;
+
+    return n;
+}
+
+// node -> dots object
+// dots -> . dots | e
 Worm_ast* Worm_parse_node(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
@@ -102,6 +209,11 @@ Worm_ast* Worm_parse_node(Worm_parse_data* pd)
     return n;
 }
 
+// object -> id { properties } | id {}
+// properties -> properties ; property | property
+//
+// properties -> property properties'
+// properties' -> ; property | e
 Worm_ast* Worm_parse_object(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;

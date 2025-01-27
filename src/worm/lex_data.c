@@ -15,6 +15,9 @@ void Worm_lex_data_init(
 
     Worm_lex_data_add_reserved(ld, "true", Worm_token_type_true);
     Worm_lex_data_add_reserved(ld, "false", Worm_token_type_false);
+    Worm_lex_data_add_reserved(ld, "element", Worm_token_type_element);
+    Worm_lex_data_add_reserved(ld, "properties", Worm_token_type_properties);
+    Worm_lex_data_add_reserved(ld, "children", Worm_token_type_children);
 }
 
 void Worm_lex_data_create(

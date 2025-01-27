@@ -1,6 +1,4 @@
 # Worm Todo
-* parse
-    * parse data
-    * comp unit
-    * comp table
-* akela-type-test
+* parse element definition
+* value data type
+* build value

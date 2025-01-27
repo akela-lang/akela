@@ -18,6 +18,9 @@ typedef enum Worm_ast_type {
     Worm_ast_type_node,
     Worm_ast_type_object,
     Worm_ast_type_property,
+    Worm_ast_type_element,
+    Worm_ast_type_properties,
+    Worm_ast_type_children,
     Worm_ast_type_count,
 } Worm_ast_type;
 
