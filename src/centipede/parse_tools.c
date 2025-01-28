@@ -44,8 +44,8 @@ void Cent_ignore_newlines(Cent_parse_data* pd)
     }
 }
 
-/* sep -> \n | ; | e */
-bool Cent_has_separator(Cent_parse_data* pd, Cent_ast* n)
+// Sep -> '\n' | ';' | e
+bool Cent_parse_sep(Cent_parse_data* pd, Cent_ast* n)
 {
     Cent_token_type type;
 

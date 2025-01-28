@@ -1,3 +1,3 @@
 # Centipede Todo
-* @import
+* separators: newline and semicolon
 * priority queue for parse and build checks

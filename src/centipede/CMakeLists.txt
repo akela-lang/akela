@@ -15,7 +15,7 @@ set(centipede_files
         update_types.c
         parse_stmts.c
         parse_expr.c
-        parse_object_stmts.c
+        parse_object.c
         build.c
         update_values.c
         check_value_types.c

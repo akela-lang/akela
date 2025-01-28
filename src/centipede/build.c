@@ -214,17 +214,14 @@ Cent_value* Cent_build_object(Cent_ast* n)
     Cent_value_set_type(value, Cent_value_type_dag);
     Zinc_string_copy(&n->text, &value->name);
 
-    Cent_ast* stmts = Cent_ast_get(n, 0);
-    assert(stmts->type == Cent_ast_type_object_stmts);
-
     Cent_symbol* sym = NULL;
     Cent_symbol_create(&sym);
     Cent_symbol_set_type(sym, Cent_symbol_type_object_value);
     sym->data.object_value = value;
-    Cent_environment* top = Cent_get_environment(stmts);
+    Cent_environment* top = Cent_get_environment(n);
     Cent_environment_add_symbol_str(top, "#object_value#", sym);
 
-    Cent_ast* p = stmts->head;
+    Cent_ast* p = n->head;
     while (p) {
         if (p->type == Cent_ast_type_prop_set) {
             Cent_build_object_prop_set(p, value);

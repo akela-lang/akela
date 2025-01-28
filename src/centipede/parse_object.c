@@ -5,16 +5,26 @@
 #include <assert.h>
 #include "parse_let.h"
 
+Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd);
 Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_property(Cent_parse_data* pd);
 void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd)
+void Cent_parse_object(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
 {
-    Cent_ast* n = NULL;
-    Cent_ast_create(&n);
-    n->type = Cent_ast_type_object_stmts;
+    n->type = Cent_ast_type_expr_object;
+
+    Zinc_string_copy(&id->value, &n->text);
+    Cent_token_destroy(id);
+    free(id);
+
+    Cent_token* lcb = NULL;
+    if (!Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n)) {
+        assert(false && "not possible");
+    }
+    Cent_token_destroy(lcb);
+    free(lcb);
 
     Cent_environment* env = NULL;
     Cent_environment_create(&env);
@@ -22,31 +32,25 @@ Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd)
     pd->top = env;
     n->env = env;
 
-    if (Cent_has_separator(pd, n)) {
-        while (Cent_has_separator(pd, n));
+    Cent_ast* a = Cent_parse_object_stmt(pd);
+    if (a) {
+        Cent_ast_add(n, a);
     }
 
-    while (true) {
-        Cent_lookahead(pd);
-        if (pd->lookahead->type == Cent_token_right_curly_brace) {
-            break;
-        }
-
-        Cent_ast* a = Cent_parse_object_stmt(pd);
-        if (a) {
-            Cent_ast_add(n, a);
-        }
-
-        if (Cent_has_separator(pd, n)) {
-            while (Cent_has_separator(pd, n));
-        } else {
-            break;
+    while (Cent_parse_sep(pd, n)) {
+        Cent_ast* b = Cent_parse_object_stmt(pd);
+        if (b) {
+            Cent_ast_add(n, b);
         }
     }
 
     pd->top = env->prev;
 
-    return n;
+    Cent_token* rcb = NULL;
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
+    Cent_token_destroy(rcb);
+    free(rcb);
+    /* test case: test_parse_value_error_object_expected_rcb */
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

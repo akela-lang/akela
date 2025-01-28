@@ -2,7 +2,7 @@
 #include "parse_data.h"
 #include "parse_tools.h"
 #include <assert.h>
-#include "parse_object_stmts.h"
+#include "parse_object.h"
 
 Cent_ast* Cent_parse_assign(Cent_parse_data* pd);
 void Cent_parse_check_lvalue(Cent_parse_data* pd, Cent_ast* n);
@@ -15,7 +15,6 @@ Cent_ast* Cent_parse_expr_boolean(Cent_parse_data* pd);
 Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd);
 void Cent_parse_expr_enum(Cent_parse_data* pd, Cent_token* id, Cent_ast* n);
 void Cent_parse_expr_assign(Cent_parse_data* pd, Cent_token* id, Cent_ast* n);
-void Cent_parse_expr_object(Cent_parse_data* pd, Cent_token* id, Cent_ast* n);
 void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_ast* n);
 void Cent_parse_expr_variable(Cent_parse_data* pd, Cent_token* id, Cent_ast* n);
 
@@ -96,8 +95,6 @@ Cent_ast* Cent_parse_factor(Cent_parse_data* pd)
 
     Cent_lookahead(pd);
 
-    pd->ld->process_newline_count++;
-
     if (pd->lookahead->type == Cent_token_number) {
         n = Cent_parse_expr_number(pd);
     } else if (pd->lookahead->type == Cent_token_string) {
@@ -106,12 +103,6 @@ Cent_ast* Cent_parse_factor(Cent_parse_data* pd)
         n = Cent_parse_expr_boolean(pd);
     } else if (pd->lookahead->type == Cent_token_id) {
         n = Cent_parse_expr_id(pd);
-    }
-
-    pd->ld->process_newline_count--;
-
-    if (pd->ld->process_newline_count == 0) {
-        Cent_ignore_newlines(pd);
     }
 
     return n;
@@ -208,7 +199,7 @@ Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd)
     Cent_lookahead(pd);
 
     if (pd->lookahead->type == Cent_token_left_curly_brace) {
-        Cent_parse_expr_object(pd, id, n);
+        Cent_parse_object(pd, id, n);
         return n;
     }
 
@@ -219,38 +210,6 @@ Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd)
 
     Cent_parse_expr_variable(pd, id, n);
     return n;
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Cent_parse_expr_object(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
-{
-    n->type = Cent_ast_type_expr_object;
-
-    Zinc_string_copy(&id->value, &n->text);
-    Cent_token_destroy(id);
-    free(id);
-
-    Cent_token* lcb = NULL;
-    if (!Cent_match(
-        pd,
-        Cent_token_left_curly_brace,
-        "expected left curly brace",
-        &lcb,
-        n)
-    ) {
-        assert(false && "not possible");
-    }
-    Cent_token_destroy(lcb);
-    free(lcb);
-
-    Cent_ast* a = Cent_parse_object_stmts(pd);
-    Cent_ast_add(n, a);
-
-    Cent_token* rcb = NULL;
-    Cent_match(pd, Cent_token_right_curly_brace, "expected right curly brace", &rcb, n);
-    Cent_token_destroy(rcb);
-    free(rcb);
-    /* test case: test_parse_value_error_object_expected_rcb */
 }
 
 void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)

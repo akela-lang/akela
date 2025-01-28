@@ -7,8 +7,7 @@
 #include "parse_let.h"
 #include "zinc/list.h"
 
-Cent_ast* Cent_parse_complex_stmt(Cent_parse_data* pd);
-Cent_ast* Cent_parse_simple_stmt(Cent_parse_data* pd);
+Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element_type(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd);
 Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd);
@@ -19,8 +18,8 @@ void Cent_parse_include_stmts(Cent_parse_data* pd, Cent_ast* n, Cent_comp_unit* 
 void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n);
 void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n);
 
-/* stmts -> stmt stmts' | e */
-/* stmts' -> sep stmt stmts' | e */
+/* Stmts -> Stmt? Stmts' */
+/* Stmts' -> Sep Stmt? Stmts' | e */
 Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
@@ -33,45 +32,15 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
     pd->top = env;
     n->env = env;
 
-    while (true) {
-        Cent_lookahead(pd);
-        Cent_ast* a = Cent_parse_complex_stmt(pd);
-        if (a) {
-            Cent_ast_add(n, a);
-            continue;
-        }
-
-        a = Cent_parse_simple_stmt(pd);
-        if (!a) {
-            break;
-        }
-
+    Cent_ast* a = Cent_parse_stmt(pd);
+    if (a) {
         Cent_ast_add(n, a);
+    }
 
-        Cent_lookahead(pd);
-        if (pd->lookahead->type == Cent_token_semicolon) {
-            Cent_token* sc = NULL;
-            if (!Cent_match(pd, Cent_token_semicolon,"expected semicolon", &sc, n)) {
-                assert(false && "not possible");
-            }
-            Cent_token_destroy(sc);
-            free(sc);
-
-            Cent_lookahead(pd);
-            if (pd->lookahead->type == Cent_token_eof
-                || pd->lookahead->type == Cent_token_right_curly_brace) {
-                Cent_ast_create(&a);
-                a->type = Cent_ast_type_pass;
-                Cent_ast_add(n, a);
-                break;
-            }
-        } else {
-            if (pd->lookahead->type != Cent_token_eof
-                && pd->lookahead->type != Cent_token_right_curly_brace
-            ) {
-                Zinc_error_list_set(pd->errors, &pd->lookahead->loc, "expected semicolon");
-                n->has_error = true;
-            }
+    while (Cent_parse_sep(pd, n)) {
+        Cent_ast* b = Cent_parse_stmt(pd);
+        if (b) {
+            Cent_ast_add(n, b);
         }
     }
 
@@ -80,8 +49,10 @@ Cent_ast* Cent_parse_stmts(Cent_parse_data* pd)
     return n;
 }
 
-Cent_ast* Cent_parse_complex_stmt(Cent_parse_data* pd)
+Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
 {
+    Cent_lookahead(pd);
+
     if (pd->lookahead->type == Cent_token_element) {
         return Cent_parse_element_type(pd);
     }
@@ -90,11 +61,6 @@ Cent_ast* Cent_parse_complex_stmt(Cent_parse_data* pd)
         return Cent_parse_enumerate(pd);
     }
 
-    return NULL;
-}
-
-Cent_ast* Cent_parse_simple_stmt(Cent_parse_data* pd)
-{
     if (pd->lookahead->type == Cent_token_eof) {
         return NULL;
     }
@@ -110,7 +76,10 @@ Cent_ast* Cent_parse_simple_stmt(Cent_parse_data* pd)
     return Cent_parse_expr(pd);
 }
 
-/* parse_element -> element name { element_seq } */
+// Element -> element id { Element_stmt? Element_stmts } */
+// Element_stmt? -> Element_stmt | e
+// Element_stmt -> Properties | Children
+// Element_stmts -> Sep Element_stmt? Element_stmts | e
 Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
@@ -135,24 +104,47 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
     }
 
     Cent_token* lcb = NULL;
-    Cent_match(pd, Cent_token_left_curly_brace, "expected left curly-brace", &lcb, n);
+    Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n);
     Cent_token_destroy(lcb);
     free(lcb);
+
+    size_t properties_count = 0;
+    size_t children_count = 0;
 
     Cent_lookahead(pd);
     if (pd->lookahead->type == Cent_token_properties) {
         Cent_ast* a = Cent_parse_element_properties(pd);
         Cent_ast_add(n, a);
-    }
-
-    Cent_lookahead(pd);
-    if (pd->lookahead->type == Cent_token_children) {
+        properties_count++;
+    } else if (pd->lookahead->type == Cent_token_children) {
         Cent_ast* b = Cent_parse_children(pd);
         Cent_ast_add(n, b);
+        children_count++;
+    }
+
+    while (Cent_parse_sep(pd, n)) {
+        Cent_lookahead(pd);
+        if (pd->lookahead->type == Cent_token_properties) {
+            Cent_ast* a = Cent_parse_element_properties(pd);
+            Cent_ast_add(n, a);
+            properties_count++;
+            if (properties_count == 2) {
+                Zinc_error_list_set(pd->errors, &a->loc, "more than one properties");
+                n->has_error = true;
+            }
+        } else if (pd->lookahead->type == Cent_token_children) {
+            Cent_ast* b = Cent_parse_children(pd);
+            Cent_ast_add(n, b);
+            children_count++;
+            if (children_count == 2) {
+                Zinc_error_list_set(pd->errors, &b->loc, "more than one children");
+                n->has_error = true;
+            }
+        }
     }
 
     Cent_token* rcb = NULL;
-    Cent_match(pd, Cent_token_right_curly_brace, "expected right curly-brace", &rcb, n);
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
     Cent_token_destroy(rcb);
     free(rcb);
     /* test case: test_parse_element_error_expected_end */
@@ -182,8 +174,9 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
     return n;
 }
 
-/* element_seq -> id : element element_seq' | e */
-/* element_seq' -> sep id : element element_seq | e */
+// Properties -> properties { Property_dec? Properties' }
+// Property_dec? -> Property_dec | e
+// Properties' -> Sep Property_dec? Properties' | e
 Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
@@ -198,39 +191,26 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
     free(prop);
 
     Cent_token* lcb = NULL;
-    Cent_match(pd, Cent_token_left_curly_brace, "expected left curly-brace", &lcb, n);
+    Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n);
     Cent_token_destroy(lcb);
     free(lcb);
 
-    pd->ld->process_newline_count++;
-
-    if (Cent_has_separator(pd, n)) {
-        while (Cent_has_separator(pd, n));
-    }
-
-    while (true) {
-        Cent_lookahead(pd);
-        if (pd->lookahead->type != Cent_token_id) {
-            break;
-        }
-
+    Cent_lookahead(pd);
+    if (pd->lookahead->type == Cent_token_id) {
         Cent_ast* a = Cent_parse_property_dec(pd);
         Cent_ast_add(n, a);
-
-        if (Cent_has_separator(pd, n)) {
-            while (Cent_has_separator(pd, n));
-        } else {
-            break;
-        }
     }
 
-    pd->ld->process_newline_count--;
-    if (pd->ld->process_newline_count == 0) {
-        Cent_ignore_newlines(pd);
+    while (Cent_parse_sep(pd, n)) {
+        Cent_lookahead(pd);
+        if (pd->lookahead->type == Cent_token_id) {
+            Cent_ast* b = Cent_parse_property_dec(pd);
+            Cent_ast_add(n, b);
+        }
     }
 
     Cent_token* rcb = NULL;
-    Cent_match(pd, Cent_token_right_curly_brace, "expected right curly-brace", &rcb, n);
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
     Cent_token_destroy(rcb);
     free(rcb);
     /* test case: test_parse_element_error_properties_expected_end */
@@ -238,6 +218,8 @@ Cent_ast* Cent_parse_element_properties(Cent_parse_data* pd)
     return n;
 }
 
+// Property_dec -> id colon id modifier?
+// modifier? -> modifier | e
 Cent_ast* Cent_parse_property_dec(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
@@ -310,17 +292,12 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
     free(ch);
 
     Cent_token* lcb = NULL;
-    Cent_match(pd, Cent_token_left_curly_brace, "expected left curly-brace", &lcb, n);
+    Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n);
     Cent_token_destroy(lcb);
     free(lcb);
 
-    pd->ld->process_newline_count++;
-    if (Cent_has_separator(pd, n)) {
-        while (Cent_has_separator(pd, n));
-    }
-
     Cent_lookahead(pd);
-    while (pd->lookahead->type == Cent_token_id) {
+    if (pd->lookahead->type == Cent_token_id) {
         Cent_ast* a = NULL;
         Cent_ast_create(&a);
         Cent_token* id = NULL;
@@ -332,23 +309,27 @@ Cent_ast* Cent_parse_children(Cent_parse_data* pd)
         Cent_ast_add(n, a);
         Cent_token_destroy(id);
         free(id);
+   }
 
-        if (Cent_has_separator(pd, n)) {
-            while (Cent_has_separator(pd, n));
-        } else {
-            break;
-        }
-
+    while (Cent_parse_sep(pd, n)) {
         Cent_lookahead(pd);
-    }
-
-    pd->ld->process_newline_count--;
-    if (pd->ld->process_newline_count == 0) {
-        Cent_ignore_newlines(pd);
+        if (pd->lookahead->type == Cent_token_id) {
+            Cent_ast* b = NULL;
+            Cent_ast_create(&b);
+            Cent_token* id2 = NULL;
+            if (!Cent_match(pd, Cent_token_id, "expected id", &id2, b)) {
+                assert(false && "not possible");
+            }
+            b->type = Cent_ast_type_id;
+            Zinc_string_copy(&id2->value, &b->text);
+            Cent_ast_add(n, b);
+            Cent_token_destroy(id2);
+            free(id2);
+        }
     }
 
     Cent_token* rcb = NULL;
-    Cent_match(pd, Cent_token_right_curly_brace, "expected right curly-brace", &rcb, n);
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
     Cent_token_destroy(rcb);
     free(rcb);
     /* test case: test_parse_element_error_children_expected_end */
@@ -379,22 +360,15 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
     /* test case: test_parse_enumerate_error_expected_id */
 
     Cent_token* lcb = NULL;
-    Cent_match(pd, Cent_token_left_curly_brace, "expected left curly-brace", &lcb, n);
+    Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n);
     Cent_token_destroy(lcb);
     free(lcb);
 
-    pd->ld->process_newline_count++;
-
-    if (Cent_has_separator(pd, n)) {
-        while (Cent_has_separator(pd, n));
-    }
-
     Cent_lookahead(pd);
-    while (pd->lookahead->type == Cent_token_id) {
+    if (pd->lookahead->type == Cent_token_id) {
         Cent_ast* a = NULL;
         Cent_ast_create(&a);
         a->type = Cent_ast_type_id;
-
         id = NULL;
         if (!Cent_match(pd, Cent_token_id, "expected id", &id, a)) {
             assert(false && "not possible");
@@ -404,23 +378,29 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
         Cent_token_destroy(id);
         free(id);
         Cent_ast_add(n, a);
+   }
 
-        if (Cent_has_separator(pd, n)) {
-            while (Cent_has_separator(pd, n));
-        } else {
-            break;
-        }
-
+    while (Cent_parse_sep(pd, n)) {
         Cent_lookahead(pd);
-    }
-
-    pd->ld->process_newline_count--;
-    if (pd->ld->process_newline_count == 0) {
-        Cent_ignore_newlines(pd);
+        if (pd->lookahead->type == Cent_token_id) {
+            Cent_ast* b = NULL;
+            Cent_ast_create(&b);
+            b->type = Cent_ast_type_id;
+    
+            Cent_token* id2 = NULL;
+            if (!Cent_match(pd, Cent_token_id, "expected id", &id2, b)) {
+                assert(false && "not possible");
+            }
+    
+            Zinc_string_copy(&id2->value, &b->text);
+            Cent_token_destroy(id2);
+            free(id2);
+            Cent_ast_add(n, b);
+        }
     }
 
     Cent_token* rcb = NULL;
-    Cent_match(pd, Cent_token_right_curly_brace, "expected right curly-brace", &rcb, n);
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
     Cent_token_destroy(rcb);
     free(rcb);
     /* test case: test_parse_enumerate_error_expected_end */

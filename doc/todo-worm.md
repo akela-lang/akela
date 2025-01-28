@@ -1,4 +1,2 @@
 # Worm Todo
-* test element definition
-* value data type
-* build value
+* merge with centipede as dot operator for objects

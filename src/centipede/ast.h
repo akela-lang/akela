@@ -15,7 +15,6 @@ typedef enum Cent_ast_type {
     Cent_ast_type_enum_type,
     Cent_ast_type_id,
     Cent_ast_type_modifier,
-    Cent_ast_type_object_stmts,
     Cent_ast_type_prop_set,
     Cent_ast_type_value_enum,
     Cent_ast_type_method_child_of,

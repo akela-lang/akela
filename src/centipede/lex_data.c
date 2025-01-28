@@ -11,7 +11,6 @@ void Cent_lex_data_init(
     ld->errors = errors;
     ld->input = input;
     ld->input_vtable = input_vtable;
-    ld->process_newline_count = 0;
 
     Zinc_hash_map_string_init(&ld->reserved, 16);
     Cent_lex_add_reserved_word(ld, "element", Cent_token_element);

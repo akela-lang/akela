@@ -7,6 +7,7 @@ set(worm_files
         parse_data.c
         parse_tools.c
         parse_stmts.c
+        symbol.c
 )
 
 add_library(worm ${worm_files})

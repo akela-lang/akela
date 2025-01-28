@@ -12,7 +12,6 @@ typedef struct Cent_lex_data {
     Zinc_input_unicode_vtable* input_vtable;
     struct Zinc_hash_table reserved;
     struct Zinc_hash_table builtin;
-    size_t process_newline_count;
 } Cent_lex_data;
 
 void Cent_lex_data_init(
