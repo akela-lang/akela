@@ -15,6 +15,18 @@ void test_parse_type_int32()
     Worm_parse_data* pd = NULL;
 
     test_parse_setup(&pd,
+        "element Scalar {\n"
+        "    children {\n"
+        "        Integer\n"
+        "    }\n"
+        "}\n"
+        "element Integer {\n"
+        "    properties {\n"
+        "        name: String\n"
+        "        bit_count: Nat32\n"
+        "        is_signed: Bool\n"
+        "    }\n"
+        "}\n"
         "Scalar {}\n"
         ".Integer {.name=\"Int32\";.bit_count=32;.is_signed=true}\n"
     );
@@ -23,11 +35,50 @@ void test_parse_type_int32()
     Zinc_expect_no_errors(pd->errors);
 
     /* root */
-    Zinc_expect_ptr(root, "ptr root");
+    Zinc_assert_ptr(root, "ptr root");
     Zinc_expect_int_equal(root->type, Worm_ast_type_stmts, "type root");
 
-    /* line 1 */
-    Worm_ast* node0 = Worm_ast_get(root, 0);
+    /* Scaler type */
+    Worm_ast* element0 = Worm_ast_get(root, 0);
+    Zinc_assert_ptr(element0, "ptr element0");
+    Zinc_expect_int_equal(element0->type, Worm_ast_type_element, "type element0");
+    Zinc_expect_string(&element0->value, "Scalar", "value element0");
+
+    Worm_ast* children0 = Worm_ast_get(element0, 0);
+    Zinc_assert_ptr(children0, "ptr children0");
+    Zinc_expect_int_equal(children0->type, Worm_ast_type_children, "type children0");
+
+    Worm_ast* type0 = Worm_ast_get(children0, 0);
+    Zinc_assert_ptr(type0, "ptr type0");
+    Zinc_expect_int_equal(type0->type, Worm_ast_type_id, "type type0");
+    Zinc_expect_string(&type0->value, "Integer", "value type0");
+
+    /* Integer type */
+    Worm_ast* int_type = Worm_ast_get(root, 1);
+    Zinc_assert_ptr(int_type, "ptr int_type");
+    Zinc_expect_int_equal(int_type->type, Worm_ast_type_element, "type int_type");
+    Zinc_expect_string(&int_type->value, "Integer", "value int_type");
+
+    Worm_ast* int_type_props = Worm_ast_get(int_type, 0);
+    Zinc_assert_ptr(int_type_props, "ptr int_type_props");
+    Zinc_expect_int_equal(int_type_props->type, Worm_ast_type_properties, "type int_type_props");
+
+    Worm_ast* int_type_prop0 = Worm_ast_get(int_type_props, 0);
+    Zinc_assert_ptr(int_type_prop0, "ptr int_type_prop0");
+    Zinc_expect_int_equal(int_type_prop0->type, Worm_ast_type_property_type, "type int_type_prop0");
+
+    Worm_ast* int_type_prop0_id0 = Worm_ast_get(int_type_prop0, 0);
+    Zinc_assert_ptr(int_type_prop0_id0, "ptr int_type_prop0_id0");
+    Zinc_expect_int_equal(int_type_prop0_id0->type, Worm_ast_type_id, "type int_type_prop0_id0");
+    Zinc_expect_string(&int_type_prop0_id0->value, "name", "value int_type_prop0_id0");
+
+    Worm_ast* int_type_prop0_id1 = Worm_ast_get(int_type_prop0, 1);
+    Zinc_assert_ptr(int_type_prop0_id1, "ptr int_type_prop0_id1");
+    Zinc_expect_int_equal(int_type_prop0_id1->type, Worm_ast_type_id, "type int_type_prop0_id1");
+    Zinc_expect_string(&int_type_prop0_id1->value, "String", "value int_type_prop0_id1");
+
+    /* Scaler */
+    Worm_ast* node0 = Worm_ast_get(root, 2);
     Zinc_assert_ptr(node0, "ptr node0");
     Zinc_expect_int_equal(node0->type, Worm_ast_type_node, "type node0");
 
@@ -41,8 +92,8 @@ void test_parse_type_int32()
     Zinc_expect_int_equal(scalar0->type, Worm_ast_type_object, "type scalar0");
     Zinc_expect_string(&scalar0->value, "Scalar", "value scalar0");
 
-    /* line 2 */
-    Worm_ast* node1 = Worm_ast_get(root, 1);
+    /* Integer */
+    Worm_ast* node1 = Worm_ast_get(root, 3);
     Zinc_assert_ptr(node1, "ptr node1");
     Zinc_expect_int_equal(node1->type, Worm_ast_type_node, "type node1");
 

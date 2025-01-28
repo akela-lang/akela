@@ -129,6 +129,12 @@ void Worm_lex_start(Worm_lex_data* ld, Worm_token* t)
             return;
         }
 
+        if (c[0] == ':') {
+            t->type = Worm_token_type_colon;
+            t->loc = loc;
+            return;
+        }
+
         if (c[0] == '{') {
             t->type = Worm_token_type_left_curly_brace;
             t->loc = loc;

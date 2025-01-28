@@ -21,9 +21,9 @@ Worm_ast* Worm_parse_real(Worm_parse_data* pd);
 Worm_ast* Worm_parse_boolean(Worm_parse_data* pd);
 Worm_ast* Worm_parse_string(Worm_parse_data* pd);
 
-// stmts -> stmt? stmts'
-// stmts' -> sep stmt? stmts' | e
-// stmt? -> stmt | e
+// Stmts -> Stmt? Stmts'
+// Stmt? -> Stmt | e
+// Stmts' -> Sep Stmt? Stmts' | e
 Worm_ast* Worm_parse_stmts(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
@@ -45,7 +45,7 @@ Worm_ast* Worm_parse_stmts(Worm_parse_data* pd)
     return n;
 }
 
-// sep -> '\n' | ';'
+// Sep -> newline | semicolon
 bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n)
 {
     Worm_lookahead(pd);
@@ -63,7 +63,7 @@ bool Worm_parse_sep(Worm_parse_data* pd, Worm_ast* n)
     return false;
 }
 
-// stmt -> element | node | e
+// Stmt -> Element | Node | e
 Worm_ast* Worm_parse_stmt(Worm_parse_data* pd)
 {
     Worm_lookahead(pd);
@@ -79,10 +79,10 @@ Worm_ast* Worm_parse_stmt(Worm_parse_data* pd)
     return NULL;
 }
 
-// element -> 'element' id { element_stmt? element_stmts' }
-// element_stmt? -> properties | children | e
-// element_stmts' -> sep element_stmt? element_stmts' | e
-// note: limited to one properties and one children
+// Element -> element id { Element_stmt? Element_stmts' }
+// Element_stmt? -> Properties | Children | e
+// Element_stmts' -> Sep Element_stmt? Element_stmts' | e
+// note: limited to one Properties and one Children
 Worm_ast* Worm_parse_element(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
@@ -99,11 +99,7 @@ Worm_ast* Worm_parse_element(Worm_parse_data* pd)
     Worm_token* id = NULL;
     Worm_match(pd, Worm_token_type_id, "expected id", &id, n);
     if (id) {
-        Worm_ast* a = NULL;
-        Worm_ast_create(&a);
-        a->type = Worm_ast_type_id;
-        Zinc_string_add_string(&a->value, &id->value);
-        Worm_ast_add(n, a);
+        Zinc_string_add_string(&n->value, &id->value);
         Worm_token_destroy(id);
         free(id);
     }
@@ -159,6 +155,10 @@ Worm_ast* Worm_parse_element(Worm_parse_data* pd)
     return n;
 }
 
+// Properties -> properties { Seps Property_type? Property_types}
+// Seps -> Sep Seps | e
+// Property_type? -> Property_type | e
+// Property_types -> Sep Property_type? Property_types | e
 Worm_ast* Worm_parse_properties(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
@@ -177,14 +177,18 @@ Worm_ast* Worm_parse_properties(Worm_parse_data* pd)
     Worm_token_destroy(lcb);
     free(lcb);
 
+    while (Worm_parse_sep(pd, n));
+
     Worm_lookahead(pd);
     if (pd->lookahead->type == Worm_token_type_id) {
         Worm_ast* a = Worm_parse_property_type(pd);
+        Worm_ast_add(n, a);
 
         while (Worm_parse_sep(pd, n)) {
             Worm_lookahead(pd);
             if (pd->lookahead->type == Worm_token_type_id) {
                 Worm_ast* b = Worm_parse_property_type(pd);
+                Worm_ast_add(n, b);
             }
         }
     }
@@ -198,6 +202,7 @@ Worm_ast* Worm_parse_properties(Worm_parse_data* pd)
     return n;
 }
 
+// Property_type -> id : id
 Worm_ast* Worm_parse_property_type(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
@@ -227,7 +232,7 @@ Worm_ast* Worm_parse_property_type(Worm_parse_data* pd)
     Worm_match(pd, Worm_token_type_id, "expected id", &id2, n);
     Worm_ast* b = NULL;
     Worm_ast_create(&b);
-    a->type = Worm_ast_type_id;
+    b->type = Worm_ast_type_id;
     if (id2) {
         Zinc_string_add_string(&b->value, &id2->value);
         Worm_token_destroy(id2);
@@ -236,10 +241,10 @@ Worm_ast* Worm_parse_property_type(Worm_parse_data* pd)
     Worm_ast_add(n, b);
 }
 
-// Children -> children { Types }
-// Types -> Id? Types' | e
-// Types' -> sep Id? Types' | e
+// Children -> children { Seps id? Ids }
+// Seps -> Sep Seps | e
 // Id? -> id | e
+// Ids -> Sep id? Ids | e
 Worm_ast* Worm_parse_children(Worm_parse_data* pd)
 {
     Worm_ast* n = NULL;
@@ -257,6 +262,8 @@ Worm_ast* Worm_parse_children(Worm_parse_data* pd)
     Worm_match(pd, Worm_token_type_left_curly_brace, "expected left-curly-brace", &lcb, n);
     Worm_token_destroy(lcb);
     free(lcb);
+
+    while (Worm_parse_sep(pd, n));
 
     Worm_lookahead(pd);
     if (pd->lookahead->type == Worm_token_type_id) {
