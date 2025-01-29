@@ -61,10 +61,6 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
         return Cent_parse_enumerate(pd);
     }
 
-    if (pd->lookahead->type == Cent_token_eof) {
-        return NULL;
-    }
-
     if (pd->lookahead->type == Cent_token_use) {
         return Cent_parse_use(pd);
     }

@@ -1,3 +1,5 @@
 # Centipede Todo
-* separators: newline and semicolon
+* follow-on objects
+* tagged objects
+* folow-on properties
 * priority queue for parse and build checks
