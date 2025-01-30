@@ -72,9 +72,11 @@ void Cent_comp_unit_parse(Cent_comp_unit* cu)
 
 void Cent_comp_unit_build(Cent_comp_unit* cu)
 {
-    if (cu->status == Cent_comp_unit_status_parse) {
-        cu->value = Cent_build(&cu->pr);
-        Cent_check_parent(cu);
-        cu->status = Cent_comp_unit_status_build;
+    if (!cu->errors.head) {
+        if (cu->status == Cent_comp_unit_status_parse) {
+            cu->value = Cent_build(&cu->pr);
+            Cent_check_parent(cu);
+            cu->status = Cent_comp_unit_status_build;
+        }
     }
 }

@@ -5,5 +5,6 @@
 #include "parse_data.h"
 
 Cent_ast* Cent_parse_stmts(Cent_parse_data* pd);
+Cent_ast* Cent_parse_follow_on(Cent_parse_data* pd);
 
 #endif

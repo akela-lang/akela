@@ -1,4 +1,5 @@
 #include "comp_unit.h"
+#include <assert.h>
 
 void Cent_check_parent_node(Cent_comp_unit* cu, Cent_ast* n);
 void Cent_check_parent_environment(Cent_comp_unit* cu, Cent_environment* env);
@@ -48,6 +49,7 @@ void Cent_check_parent_symbol(Cent_symbol* sym)
     Cent_comp_unit* cu = Cent_check_parent_cu;
     if (sym->type == Cent_symbol_type_variable && !sym->is_copy) {
         Cent_value* value = sym->data.variable.value;
+        assert(value && "variable should have value");
         if (!value->parent && value != cu->value) {
             Cent_ast* n = value->n;
             Zinc_error_list_set(&cu->errors, &n->loc, "value is not used");

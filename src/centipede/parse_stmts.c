@@ -6,6 +6,7 @@
 #include "comp_unit.h"
 #include "parse_let.h"
 #include "zinc/list.h"
+#include "parse_object.h"
 
 Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element_type(Cent_parse_data* pd);
@@ -67,6 +68,10 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
 
     if (pd->lookahead->type == Cent_token_let) {
         return Cent_parse_let(pd);
+    }
+
+    if (pd->lookahead->type == Cent_token_dot) {
+        return Cent_parse_follow_on(pd);
     }
 
     return Cent_parse_expr(pd);

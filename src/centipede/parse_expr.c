@@ -199,7 +199,7 @@ Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd)
     Cent_lookahead(pd);
 
     if (pd->lookahead->type == Cent_token_left_curly_brace) {
-        Cent_parse_object(pd, id, n);
+        Cent_parse_object_finish(pd, id, n);
         return n;
     }
 

@@ -9,9 +9,10 @@ Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd);
 Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_property(Cent_parse_data* pd);
 void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n);
+Cent_ast* Cent_parse_object_level(Cent_parse_data* pd, size_t level);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Cent_parse_object(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
+void Cent_parse_object_finish(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
 {
     n->type = Cent_ast_type_expr_object;
 
@@ -208,4 +209,43 @@ void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n)
             }
         }
     }
+}
+
+Cent_ast* Cent_parse_follow_on(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_node;
+
+    Cent_ast* a = NULL;
+    Cent_ast_create(&a);
+    a->type = Cent_ast_type_expr_number;
+    a->number_type = Cent_number_type_integer;
+
+    size_t level = 0;
+    Cent_lookahead(pd);
+    while (pd->lookahead->type == Cent_token_dot) {
+        Cent_token* dot = NULL;
+        if (!Cent_match(pd, Cent_token_dot, "expected dot", &dot, a)) {
+            assert(false && "not possible");
+        }
+        Cent_token_destroy(dot);
+        free(dot);
+        level++;
+        Cent_lookahead(pd);
+    }
+
+    a->data.integer = level;
+    Cent_ast_add(n, a);
+
+    Cent_token* id = NULL;
+    Cent_match(pd, Cent_token_id, "expected id", &id, n);
+
+    Cent_ast* b = NULL;
+    Cent_ast_create(&b);
+    b->type = Cent_ast_type_expr_object;
+    Cent_parse_object_finish(pd, id, b);
+    Cent_ast_add(n, b);
+
+    return n;
 }
