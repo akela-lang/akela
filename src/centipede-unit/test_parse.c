@@ -1545,7 +1545,7 @@ void test_parse_follow_on()
     /* number 0 node */
     Cent_ast* node0 = Cent_ast_get(root, 3);
     Zinc_assert_ptr(node0, "ptr node0");
-    Zinc_expect_int_equal(node0->type, Cent_ast_type_node, "type node0");
+    Zinc_expect_int_equal(node0->type, Cent_ast_type_follow_on, "type node0");
     
     /* number 0 level */
     Cent_ast* level0 = Cent_ast_get(node0, 0);
@@ -1606,7 +1606,7 @@ void test_parse_follow_on()
     /* number 1 node */
     Cent_ast* node1 = Cent_ast_get(root, 4);
     Zinc_assert_ptr(node1, "ptr node1");
-    Zinc_expect_int_equal(node1->type, Cent_ast_type_node, "type node1");
+    Zinc_expect_int_equal(node1->type, Cent_ast_type_follow_on, "type node1");
 
     /* number 1 level */
     Cent_ast* level1 = Cent_ast_get(node1, 0);

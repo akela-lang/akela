@@ -215,7 +215,7 @@ Cent_ast* Cent_parse_follow_on(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
-    n->type = Cent_ast_type_node;
+    n->type = Cent_ast_type_follow_on;
 
     Cent_ast* a = NULL;
     Cent_ast_create(&a);
