@@ -25,6 +25,7 @@ set(SOURCE_FILES
         hash_map_size_t.c
         unicode.c
         spec_error.c
+        priority_queue.c
 )
 
 add_definitions(-DZINC_EXPORT)
