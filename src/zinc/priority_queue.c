@@ -16,16 +16,16 @@ void Zinc_priority_task_create(Zinc_priority_task** task)
     Zinc_priority_task_init(*task);
 }
 
-void Zinc_priority_queue_init(Zinc_priority_queue *q)
+void Zinc_priority_queue_init(Zinc_priority_queue *pq)
 {
-    q->head = NULL;
-    q->tail = NULL;
+    pq->head = NULL;
+    pq->tail = NULL;
 }
 
-void Zinc_priority_queue_create(Zinc_priority_queue** q)
+void Zinc_priority_queue_create(Zinc_priority_queue** pq)
 {
-    Zinc_malloc_safe((void**)q, sizeof(Zinc_priority_queue));
-    Zinc_priority_queue_init(*q);
+    Zinc_malloc_safe((void**)pq, sizeof(Zinc_priority_queue));
+    Zinc_priority_queue_init(*pq);
 }
 
 void Zinc_priority_queue_add(Zinc_priority_queue *pq, Zinc_priority_task *task)
@@ -59,18 +59,38 @@ void Zinc_priority_queue_add(Zinc_priority_queue *pq, Zinc_priority_task *task)
     }
 }
 
-void Zinc_priority_queue_map(Zinc_priority_queue *q, Zinc_priority_queue_func func)
+Zinc_priority_task* Zinc_priority_queue_pop(Zinc_priority_queue *pq)
 {
-    Zinc_priority_task* p = q->head;
+    if (pq->tail) {
+        Zinc_priority_task *p = pq->tail;
+        if (p->prev) {
+            pq->tail = p->prev;
+            pq->tail->next = NULL;
+        } else {
+            pq->head = NULL;
+            pq->tail = NULL;
+        }
+
+        p->next = NULL;
+        p->prev = NULL;
+        return p;
+    }
+
+    return NULL;
+}
+
+void Zinc_priority_queue_map(Zinc_priority_queue *pq, Zinc_priority_queue_func func)
+{
+    Zinc_priority_task* p = pq->head;
     while (p) {
         func(p->data);
         p = p->next;
     }
 }
 
-void Zinc_priority_queue_destroy(Zinc_priority_queue *q)
+void Zinc_priority_queue_destroy(Zinc_priority_queue *pq)
 {
-    Zinc_priority_task* p = q->head;
+    Zinc_priority_task* p = pq->head;
     while (p) {
         Zinc_priority_task* temp = p;
         p = p->next;
