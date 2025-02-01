@@ -28,10 +28,10 @@ void Zinc_priority_queue_create(Zinc_priority_queue** q)
     Zinc_priority_queue_init(*q);
 }
 
-void Zinc_priority_queue_add(Zinc_priority_queue *q, Zinc_priority_task *task)
+void Zinc_priority_queue_add(Zinc_priority_queue *pq, Zinc_priority_task *task)
 {
-    if (q->head && q->tail) {
-        Zinc_priority_task *p = q->tail;
+    if (pq->head && pq->tail) {
+        Zinc_priority_task *p = pq->tail;
         while (p) {
             if (task->priority >= p->priority) {
                 break;
@@ -43,14 +43,19 @@ void Zinc_priority_queue_add(Zinc_priority_queue *q, Zinc_priority_task *task)
             task->next = p->next;
             p->next = task;
             task->prev = p;
+            if (task->next) {
+                task->next->prev = task;
+            } else {
+                pq->tail = task;
+            }
         } else {
-            task->next = q->head;
-            q->head->prev = task;
-            q->head = task;
+            task->next = pq->head;
+            pq->head->prev = task;
+            pq->head = task;
         }
     } else {
-        q->head = task;
-        q->tail = task;
+        pq->head = task;
+        pq->tail = task;
     }
 }
 

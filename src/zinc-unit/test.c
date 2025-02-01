@@ -19,6 +19,7 @@
 #include "test_hash_map_size_t.h"
 #include "test_unicode.h"
 #include "test_spec_error.h"
+#include "test_priority_queue.h"
 
 int main()
 {
@@ -42,6 +43,7 @@ int main()
 	test_hash_map_size_t();
 	test_unicode();
 	test_spec_error();
+	test_priority_queue();
 	Zinc_print_results();
 	return 0;
 }

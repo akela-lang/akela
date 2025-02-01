@@ -4,7 +4,7 @@
 * validate tasks
 * errors for follow-on
 * build follow-on
-* folow-on properties
+* follow-on properties
 * tagged objects
 * variant objects
 * priority queue for parse and build checks

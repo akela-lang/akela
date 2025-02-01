@@ -21,6 +21,7 @@ set(SOURCE_FILES
         test_hash_map_size_t.c
         test_unicode.c
         test_spec_error.c
+        test_priority_queue.c
 )
 
 add_executable(zinc-unit ${SOURCE_FILES})

@@ -1,10 +1,8 @@
 #ifndef ZINC_PRIORITY_QUEUE_H
 #define ZINC_PRIORITY_QUEUE_H
 
-#include <stdint.h>
-
 typedef struct Zinc_priority_task {
-    uint8_t priority;
+    int priority;
     void* data;
     struct Zinc_priority_task* next;
     struct Zinc_priority_task* prev;
@@ -21,7 +19,7 @@ void Zinc_priority_task_init(Zinc_priority_task *task);
 void Zinc_priority_task_create(Zinc_priority_task** task);
 void Zinc_priority_queue_init(Zinc_priority_queue *q);
 void Zinc_priority_queue_create(Zinc_priority_queue** q);
-void Zinc_priority_queue_add(Zinc_priority_queue *q, Zinc_priority_task *task);
+void Zinc_priority_queue_add(Zinc_priority_queue *pq, Zinc_priority_task *task);
 void Zinc_priority_queue_map(Zinc_priority_queue *q, Zinc_priority_queue_func func);
 void Zinc_priority_queue_destroy(Zinc_priority_queue *q);
 
