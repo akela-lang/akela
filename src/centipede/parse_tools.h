@@ -6,6 +6,11 @@
 #include "ast.h"
 #include "lex.h"
 
+typedef enum Cent_task_type {
+    Cent_task_type_none,
+    Cent_task_type_update_types,
+} Cent_task_type;
+
 void Cent_lookahead(Cent_parse_data* pd);
 bool Cent_match(Cent_parse_data* pd, Cent_token_type type, char* message, Cent_token** t, Cent_ast* n);
 void Cent_ignore_newlines(Cent_parse_data* pd);

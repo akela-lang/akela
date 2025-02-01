@@ -59,13 +59,33 @@ void Zinc_priority_queue_add(Zinc_priority_queue *pq, Zinc_priority_task *task)
     }
 }
 
-Zinc_priority_task* Zinc_priority_queue_pop(Zinc_priority_queue *pq)
+Zinc_priority_task* Zinc_priority_queue_pop_highest(Zinc_priority_queue *pq)
 {
     if (pq->tail) {
         Zinc_priority_task *p = pq->tail;
         if (p->prev) {
             pq->tail = p->prev;
             pq->tail->next = NULL;
+        } else {
+            pq->head = NULL;
+            pq->tail = NULL;
+        }
+
+        p->next = NULL;
+        p->prev = NULL;
+        return p;
+    }
+
+    return NULL;
+}
+
+Zinc_priority_task* Zinc_priority_queue_pop_lowest(Zinc_priority_queue *pq)
+{
+    if (pq->head) {
+        Zinc_priority_task *p = pq->head;
+        if (p->next) {
+            pq->head = p->next;
+            pq->head->prev = NULL;
         } else {
             pq->head = NULL;
             pq->tail = NULL;
