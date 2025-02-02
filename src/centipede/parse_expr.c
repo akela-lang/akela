@@ -87,12 +87,21 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
 
     if (!n->has_error) {
         if (n->type == Cent_ast_type_namespace) {
+            // check namespace
             Zinc_priority_task* task = NULL;
             Zinc_priority_task_create(&task);
             task->priority = Cent_task_type_check_namespace;
             task->data = n;
             Zinc_priority_queue_add(&pd->pq, task);
+
+            // update namespace
+            Zinc_priority_task* task2 = NULL;
+            Zinc_priority_task_create(&task2);
+            task2->priority = Cent_task_type_update_namespace;
+            task2->data = n;
+            Zinc_priority_queue_add(&pd->pq, task2);
         } else if (n->type == Cent_ast_type_expr_variable) {
+            // check variable
             Zinc_priority_task* task = NULL;
             Zinc_priority_task_create(&task);
             task->priority = Cent_task_type_check_variable;

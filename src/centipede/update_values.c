@@ -3,37 +3,14 @@
 #include "parse_tools.h"
 #include <assert.h>
 
-void Cent_update_values_ast(Cent_parse_result* pr, Cent_ast* n);
-void Cent_update_values_namespace(Cent_parse_result* pr, Cent_ast* n);
-void Cent_update_values_enum(
+void Cent_update_enum_value(
     Cent_parse_result* pr,
     Cent_ast* n,
     Cent_enum_type* en,
     Cent_ast* id1,
     Cent_ast* id2);
 
-void Cent_update_values(Cent_parse_result* pr)
-{
-    if (pr->root) {
-        Cent_update_values_ast(pr, pr->root);
-    }
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Cent_update_values_ast(Cent_parse_result* pr, Cent_ast* n)
-{
-    Cent_ast* p = n->head;
-    while (p) {
-        Cent_update_values_ast(pr, p);
-        p = p->next;
-    }
-
-    if (n->type == Cent_ast_type_namespace) {
-        Cent_update_values_namespace(pr, n);
-    }
-}
-
-void Cent_update_values_namespace(Cent_parse_result* pr, Cent_ast* n)
+void Cent_update_namespace(Cent_parse_result* pr, Cent_ast* n)
 {
     if (!n->has_error) {
         Cent_namespace_result nr = Cent_namespace_lookup(n);
@@ -43,12 +20,12 @@ void Cent_update_values_namespace(Cent_parse_result* pr, Cent_ast* n)
             Cent_enum_type* en = nr.sym->data.enumerate;
             Cent_ast* id1 = nr.node;
             Cent_ast* id2 = id1->next;
-            Cent_update_values_enum(pr, n, en, id1, id2);
+            Cent_update_enum_value(pr, n, en, id1, id2);
         }
     }
 }
 
-void Cent_update_values_enum(
+void Cent_update_enum_value(
     Cent_parse_result* pr,
     Cent_ast* n,
     Cent_enum_type* en,

@@ -6,6 +6,7 @@
 #include "parse_tools.h"
 #include "update_types.h"
 #include "check_types.h"
+#include "update_values.h"
 
 void Cent_lookahead(Cent_parse_data* pd)
 {
@@ -133,6 +134,8 @@ void Cent_parse_process_tasks(Cent_parse_data* pd, Cent_parse_result* pr)
             Cent_check_namespace(pr, task->data);
         } else if (task->priority == Cent_task_type_check_variable) {
             Cent_check_variables(pr, task->data);
+        } else if (task->priority == Cent_task_type_update_namespace) {
+            Cent_update_namespace(pr, task->data);
         } else {
             assert(false && "unhandled task");
         }

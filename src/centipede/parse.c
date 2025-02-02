@@ -38,9 +38,5 @@ Cent_parse_result Cent_parse(Cent_parse_data* pd)
         Cent_parse_process_tasks(pd, &pr);
     }
 
-    if (!pr.errors->head) {
-        Cent_update_values(&pr);
-    }
-
     return pr;
 }

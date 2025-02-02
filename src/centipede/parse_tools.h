@@ -12,7 +12,7 @@ typedef enum Cent_task_type {
     Cent_task_type_update_enum_type,
     Cent_task_type_check_namespace,
     Cent_task_type_check_variable,
-    Cent_task_update_value,
+    Cent_task_type_update_namespace,
 } Cent_task_type;
 
 void Cent_lookahead(Cent_parse_data* pd);
