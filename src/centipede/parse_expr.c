@@ -85,6 +85,22 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
         }
     }
 
+    if (!n->has_error) {
+        if (n->type == Cent_ast_type_namespace) {
+            Zinc_priority_task* task = NULL;
+            Zinc_priority_task_create(&task);
+            task->priority = Cent_task_type_check_namespace;
+            task->data = n;
+            Zinc_priority_queue_add(&pd->pq, task);
+        } else if (n->type == Cent_ast_type_expr_variable) {
+            Zinc_priority_task* task = NULL;
+            Zinc_priority_task_create(&task);
+            task->priority = Cent_task_type_check_variable;
+            task->data = n;
+            Zinc_priority_queue_add(&pd->pq, task);
+        }
+    }
+
     return n;
 }
 

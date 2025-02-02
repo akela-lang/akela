@@ -4,37 +4,7 @@
 
 #include "parse_tools.h"
 
-void Cent_check_types_node(Cent_parse_result* pr, Cent_ast* n);
-void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n);
 bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, Cent_ast* id2);
-void Cent_check_types_variables(Cent_parse_result* pr, Cent_ast* n);
-
-void Cent_check_types(Cent_parse_result* pr)
-{
-    if (pr->root) {
-        Cent_check_types_node(pr, pr->root);
-    }
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Cent_check_types_node(Cent_parse_result* pr, Cent_ast* n)
-{
-    Cent_ast* p = n->head;
-    while (p) {
-        Cent_check_types_node(pr, p);
-        p = p->next;
-    }
-
-    if (n->type == Cent_ast_type_namespace) {
-        Cent_check_namespace(pr, n);
-        return;
-    }
-
-    if (n->type == Cent_ast_type_expr_variable) {
-        Cent_check_types_variables(pr, n);
-        return;
-    }
-}
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
@@ -145,7 +115,7 @@ bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, C
     return true;
 }
 
-void Cent_check_types_variables(Cent_parse_result* pr, Cent_ast* n)
+void Cent_check_variables(Cent_parse_result* pr, Cent_ast* n)
 {
     Cent_environment* top = Cent_get_environment(n);
     Cent_symbol* sym = Cent_environment_get(top, &n->text);

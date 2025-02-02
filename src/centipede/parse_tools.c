@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "parse_tools.h"
 #include "update_types.h"
+#include "check_types.h"
 
 void Cent_lookahead(Cent_parse_data* pd)
 {
@@ -128,6 +129,10 @@ void Cent_parse_process_tasks(Cent_parse_data* pd, Cent_parse_result* pr)
             Cent_update_element_type(pr, task->data);
         } else if (task->priority == Cent_task_type_update_enum_type) {
             Cent_update_enum(pr, task->data);
+        } else if (task->priority == Cent_task_type_check_namespace) {
+            Cent_check_namespace(pr, task->data);
+        } else if (task->priority == Cent_task_type_check_variable) {
+            Cent_check_variables(pr, task->data);
         } else {
             assert(false && "unhandled task");
         }
