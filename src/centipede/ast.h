@@ -64,5 +64,6 @@ void Cent_ast_destroy(Cent_ast *ast);
 void Cent_ast_add(Cent_ast *p, Cent_ast *c);
 Cent_ast* Cent_ast_get(Cent_ast *n, size_t index);
 size_t Cent_ast_count(Cent_ast* n);
+bool Cent_ast_get_index(Cent_ast* parent, Cent_ast* child, size_t* index);
 
 #endif

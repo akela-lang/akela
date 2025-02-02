@@ -104,3 +104,19 @@ size_t Cent_ast_count(Cent_ast* n)
     }
     return count;
 }
+
+bool Cent_ast_get_index(Cent_ast* parent, Cent_ast* child, size_t* index)
+{
+    size_t i = 0;
+    Cent_ast* p = parent->head;
+    while (p) {
+        if (p == child) {
+            *index = i;
+            return true;
+        }
+        p = p->next;
+        i++;
+    }
+
+    return false;
+}

@@ -247,5 +247,13 @@ Cent_ast* Cent_parse_follow_on(Cent_parse_data* pd)
     Cent_parse_object_finish(pd, id, b);
     Cent_ast_add(n, b);
 
+    if (!n->has_error) {
+        Zinc_priority_task* task = NULL;
+        Zinc_priority_task_create(&task);
+        task->priority = Cent_task_type_check_follow_on;
+        task->data = n;
+        Zinc_priority_queue_add(&pd->pq, task);
+    }
+
     return n;
 }

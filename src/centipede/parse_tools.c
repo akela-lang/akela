@@ -135,6 +135,8 @@ void Cent_parse_process_tasks(Cent_parse_data* pd, Cent_parse_result* pr)
             Cent_check_variables(pr, task->data);
         } else if (task->priority == Cent_task_type_update_namespace) {
             Cent_update_namespace(pr, task->data);
+        } else if (task->priority == Cent_task_type_check_follow_on) {
+            Cent_check_follow_on(pr, task->data);
         } else {
             assert(false && "unhandled task");
         }

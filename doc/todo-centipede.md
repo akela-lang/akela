@@ -1,7 +1,7 @@
 # Centipede Todo
-* errors for follow-on
+* integer, natural, and real ast type
 * build follow-on
 * follow-on properties
 * tagged objects
 * variant objects
-* priority queue for parse and build checks
+* limit lines in lexer for multi-test files

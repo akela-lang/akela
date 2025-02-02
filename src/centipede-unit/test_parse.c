@@ -1667,6 +1667,79 @@ void test_parse_follow_on()
     test_parse_teardown(ct);
 }
 
+void test_parse_follow_on_error_no_previous_object()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        ".Ast {.type=Ast_type::Add}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "follow-on has no previous object");
+
+    test_parse_teardown(ct);
+}
+
+void test_parse_follow_on_error_follow_on_is_to_non_object()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "element Ast {\n"
+        "}\n"
+        ".Ast {.type=Ast_type::Add}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "follow-on is to non-object");
+
+    test_parse_teardown(ct);
+}
+
+void test_parse_follow_on_error_follow_on_increased_level_greater_than_one()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "element Ast {\n"
+        "}\n"
+        "Ast {}\n"
+        "..Ast {}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "follow-on increased level greater than one");
+
+    test_parse_teardown(ct);
+}
+
+void test_parse_follow_on_error_follow_on_increased_level_greater_than_one2()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "element Ast {\n"
+        "}\n"
+        "Ast{}\n"
+        ".Ast {}\n"
+        "...Ast {}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "follow-on increased level greater than one");
+
+    test_parse_teardown(ct);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1724,4 +1797,8 @@ void test_parse()
     test_parse_bad_id_property_of();
 
     test_parse_follow_on();
+    test_parse_follow_on_error_no_previous_object();
+    test_parse_follow_on_error_follow_on_is_to_non_object();
+    test_parse_follow_on_error_follow_on_increased_level_greater_than_one();
+    test_parse_follow_on_error_follow_on_increased_level_greater_than_one2();
 }
