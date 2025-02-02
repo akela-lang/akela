@@ -4,10 +4,9 @@
 #include <akela/parse_tools.h>
 #include "base.h"
 #include "token.h"
-#include "update_types.h"
+#include "parse_transform.h"
 #include "parse_stmts.h"
-#include "update_values.h"
-#include "check_types.h"
+#include "parse_validation.h"
 
 Cent_parse_result Cent_parse(Cent_parse_data* pd)
 {

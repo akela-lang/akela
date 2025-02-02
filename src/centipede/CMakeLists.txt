@@ -12,12 +12,10 @@ set(centipede_files
         ast.c
         parse_tools.c
         base.c
-        update_types.c
         parse_stmts.c
         parse_expr.c
         parse_object.c
         build.c
-        update_values.c
         check_value_types.c
         comp_unit.c
         module.c
@@ -25,10 +23,11 @@ set(centipede_files
         module_file.c
         module_data.c
         module_import.c
-        check_types.c
         parse_let.c
         comp_table.c
         check_parent.c
+        parse_validation.c
+        parse_transform.c
 )
 
 add_library(centipede ${centipede_files})

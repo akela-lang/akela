@@ -7,7 +7,7 @@
 #include "parse_let.h"
 #include "zinc/list.h"
 #include "parse_object.h"
-#include "update_types.h"
+#include "parse_transform.h"
 
 Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element_type(Cent_parse_data* pd);

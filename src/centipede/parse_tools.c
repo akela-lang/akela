@@ -4,9 +4,8 @@
 #include "lex.h"
 #include <assert.h>
 #include "parse_tools.h"
-#include "update_types.h"
-#include "check_types.h"
-#include "update_values.h"
+#include "parse_transform.h"
+#include "parse_validation.h"
 
 void Cent_lookahead(Cent_parse_data* pd)
 {
