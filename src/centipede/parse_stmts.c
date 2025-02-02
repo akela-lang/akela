@@ -7,6 +7,7 @@
 #include "parse_let.h"
 #include "zinc/list.h"
 #include "parse_object.h"
+#include "update_types.h"
 
 Cent_ast* Cent_parse_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_element_type(Cent_parse_data* pd);
@@ -170,7 +171,16 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
         Cent_symbol_set_type(sym, Cent_symbol_type_element);
         sym->data.element = element;
         Cent_environment_add_symbol(pd->top, &element->name, sym);
+
+        if (!n->has_error) {
+            Zinc_priority_task* task = NULL;
+            Zinc_priority_task_create(&task);
+            task->priority = Cent_task_type_update_element_type;
+            task->data = n;
+            Zinc_priority_queue_add(&pd->pq, task);
+        }
     }
+
 
     return n;
 }
@@ -417,6 +427,12 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
         Cent_symbol_set_type(sym, Cent_symbol_type_enumerate);
         sym->data.enumerate = enumerate;
         Cent_environment_add_symbol(pd->top, &enumerate->name, sym);
+
+        Zinc_priority_task* task = NULL;
+        Zinc_priority_task_create(&task);
+        task->priority = Cent_task_type_update_enum_type;
+        task->data = n;
+        Zinc_priority_queue_add(&pd->pq, task);
     }
 
     return n;

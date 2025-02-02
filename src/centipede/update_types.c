@@ -1,41 +1,17 @@
 #include "parse_data.h"
 #include "akela/environment.h"
 #include <assert.h>
+
+#include "parse_tools.h"
 #include "zinc/hash_map_string.h"
 
-void Cent_update_stmts(Cent_parse_result* pr, Cent_ast* n);
-void Cent_update_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env);
 void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env);
 void Cent_update_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env);
-void Cent_update_enum(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env);
 
-void Cent_update_types(Cent_parse_result* pr)
+void Cent_update_element_type(Cent_parse_result* pr, Cent_ast* n)
 {
-    if (pr->root && pr->root->type == Cent_ast_type_stmts) {
-        Cent_update_stmts(pr, pr->root);
-    }
-}
-
-void Cent_update_stmts(Cent_parse_result* pr, Cent_ast* n)
-{
-    Cent_environment* env = n->env;
-    Cent_ast* stmt = n->head;
-    while (stmt) {
-        if (stmt->type == Cent_ast_type_element_type) {
-            if (!stmt->has_error) {
-                Cent_update_et(pr, stmt, env);
-            }
-        } else if (stmt->type == Cent_ast_type_enum_type) {
-            if (!stmt->has_error) {
-                Cent_update_enum(pr, stmt, env);
-            }
-        }
-        stmt = stmt->next;
-    }
-}
-
-void Cent_update_et(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
-{
+    assert(n->type == Cent_ast_type_element_type);
+    Cent_environment* env = Cent_get_environment(n);
     Cent_symbol* sym = Cent_environment_get(env, &n->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_element);
@@ -121,8 +97,10 @@ void Cent_update_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et
     }
 }
 
-void Cent_update_enum(Cent_parse_result* pr, Cent_ast* n, Cent_environment* env)
+void Cent_update_enum(Cent_parse_result* pr, Cent_ast* n)
 {
+    assert(n->type == Cent_ast_type_enum_type);
+    Cent_environment* env = Cent_get_environment(n);
     Cent_symbol* sym = Cent_environment_get(env, &n->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_enumerate);

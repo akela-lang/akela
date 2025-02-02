@@ -8,7 +8,10 @@
 
 typedef enum Cent_task_type {
     Cent_task_type_none,
-    Cent_task_type_update_types,
+    Cent_task_type_update_element_type,
+    Cent_task_type_update_enum_type,
+    Cent_task_type_check_type,
+    Cent_task_update_value,
 } Cent_task_type;
 
 void Cent_lookahead(Cent_parse_data* pd);
@@ -17,5 +20,6 @@ void Cent_ignore_newlines(Cent_parse_data* pd);
 bool Cent_parse_sep(Cent_parse_data* pd, Cent_ast* n);
 Cent_environment* Cent_get_environment(Cent_ast* n);
 Cent_namespace_result Cent_namespace_lookup(Cent_ast* n);
+void Cent_parse_process_tasks(Cent_parse_data* pd, Cent_parse_result* pr);
 
 #endif

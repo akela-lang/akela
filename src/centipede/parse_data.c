@@ -18,6 +18,7 @@ void Cent_parse_data_init(
     pd->errors = errors;
     pd->file_name = file_name;
     pd->base = base;
+    Zinc_priority_queue_init(&pd->pq);
 }
 
 void Cent_parse_data_create(
@@ -29,6 +30,11 @@ void Cent_parse_data_create(
 {
     Zinc_malloc_safe((void**)pd, sizeof(Cent_parse_data));
     Cent_parse_data_init(*pd, errors, ld, file_name, base);
+}
+
+void Cent_parse_data_destroy(Cent_parse_data* pd)
+{
+    Zinc_priority_queue_destroy(&pd->pq);
 }
 
 void Cent_parse_result_init(Cent_parse_result *pr, struct Zinc_error_list* errors)

@@ -3,6 +3,8 @@
 #include "ast.h"
 #include "lex.h"
 #include <assert.h>
+#include "parse_tools.h"
+#include "update_types.h"
 
 void Cent_lookahead(Cent_parse_data* pd)
 {
@@ -116,4 +118,19 @@ Cent_namespace_result Cent_namespace_lookup(Cent_ast* n)
     }
 
     return nr;
+}
+
+void Cent_parse_process_tasks(Cent_parse_data* pd, Cent_parse_result* pr)
+{
+    while (pd->pq.head) {
+        Zinc_priority_task* task = Zinc_priority_queue_pop_lowest(&pd->pq);
+        if (task->priority == Cent_task_type_update_element_type) {
+            Cent_update_element_type(pr, task->data);
+        } else if (task->priority == Cent_task_type_update_enum_type) {
+            Cent_update_enum(pr, task->data);
+        } else {
+            assert(false && "unhandled task");
+        }
+        free(task);
+    }
 }

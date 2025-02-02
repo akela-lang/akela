@@ -9,6 +9,7 @@
 #include "ast.h"
 #include "zinc/String_slice.h"
 #include "module.h"
+#include "zinc/priority_queue.h"
 
 typedef struct Cent_parse_data {
     Cent_lex_data *ld;
@@ -19,6 +20,7 @@ typedef struct Cent_parse_data {
     Cent_environment* base;
     void* cu;
     void* ct;
+    Zinc_priority_queue pq;
 } Cent_parse_data;
 
 typedef struct Cent_parse_result {
