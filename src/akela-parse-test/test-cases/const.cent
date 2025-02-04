@@ -22,37 +22,37 @@ Test_suite {
         stmts
 
         # line 1
-        const let_stmt = Ast {
+        const const_stmt = Ast {
             .@child_of(stmts)
             .type = Ast_type::Const
         }
 
-        const let_lseq = Ast {
-            .@child_of(let_stmt)
+        const const_lseq = Ast {
+            .@child_of(const_stmt)
             .type = Ast_type::Let_lseq
         }
 
-        const let_a = Ast {
-            .@child_of(let_lseq)
+        const const_a = Ast {
+            .@child_of(const_lseq)
             .type = Ast_type::Id
             .value = "a"
         }
 
-        const let_type = Ast {
-            .@child_of(let_stmt)
+        const const_type = Ast {
+            .@child_of(const_stmt)
             .type = Ast_type::Type
             .tu = Type_use {
                 .td = Td_int32
             }
         }
 
-        const let_rseq = Ast {
-            .@child_of(let_stmt)
+        const const_rseq = Ast {
+            .@child_of(const_stmt)
             .type = Ast_type::Let_rseq
         }
 
-        const let_number = Ast {
-            .@child_of(let_rseq)
+        const const_number = Ast {
+            .@child_of(const_rseq)
             .type = Ast_type::Number
             .value = "105"
             .tu = Type_use {
