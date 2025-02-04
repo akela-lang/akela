@@ -1,6 +1,6 @@
 # Centipede Todo
+* transform follow-ons to child objects
 * integer, natural, and real ast type
-* build follow-on
 * follow-on properties
 * tagged objects
 * variant objects
