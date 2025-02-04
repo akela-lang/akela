@@ -53,14 +53,22 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     cd ..
     git clone https://github.com/llvm/llvm-project
     cd llvm-project
-    git checkout tags/llvmorg-19.1.6
 	cmake -S llvm -B build-release -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -G Ninja
 	ninja -C build-release check-llvm -j 8
     cd ../akela
 
-## Build
-    cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
-    ninja -C cmake-build-debug
+## Build Full Compiler
+```
+cmake -B cmake-build-debug -DLLVM_SEARCH=../llvm-project/build-release -DCMAKE_BUILD_TYPE=Debug -G Ninja
+ninja -C cmake-build-debug
+```
+
+## Build Without LLVM 
+To build only subprojects that do not require LLVM (for example Zinc and Centipede)
+```
+cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
+ninja -C cmake-build-debug
+```
 
 ## Run Unit Tests
     cmake-build-debug/bin/zinc-unit

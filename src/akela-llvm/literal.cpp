@@ -37,10 +37,10 @@ namespace Akela_llvm {
     {
         if (Zinc_string_compare_str(&n->value, "true")) {
             Type* t = Type::getInt1Ty(*jd->TheContext);
-            return ConstantInt::get(t, APInt(1, 1, true));
+            return ConstantInt::get(t, APInt(1, 1, false));
         } else if (Zinc_string_compare_str(&n->value, "false")) {
             Type* t = Type::getInt1Ty(*jd->TheContext);
-            return ConstantInt::get(t, APInt(1, 0, true));
+            return ConstantInt::get(t, APInt(1, 0, false));
         }
         assert(false && "invalid boolean identifier");
     }
