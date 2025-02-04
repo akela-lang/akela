@@ -12,7 +12,7 @@ Test_suite {
         .solo = true
         .has_error = false
 
-        let stmts = Ast {
+        const stmts = Ast {
             .type = Ast_type::Stmts
             .tu = Type_use {
                 .td = Td_int32
@@ -22,23 +22,23 @@ Test_suite {
         stmts
 
         # line 1
-        let let_stmt = Ast {
+        const let_stmt = Ast {
             .@child_of(stmts)
             .type = Ast_type::Const
         }
 
-        let let_lseq = Ast {
+        const let_lseq = Ast {
             .@child_of(let_stmt)
             .type = Ast_type::Let_lseq
         }
 
-        let let_a = Ast {
+        const let_a = Ast {
             .@child_of(let_lseq)
             .type = Ast_type::Id
             .value = "a"
         }
 
-        let let_type = Ast {
+        const let_type = Ast {
             .@child_of(let_stmt)
             .type = Ast_type::Type
             .tu = Type_use {
@@ -46,12 +46,12 @@ Test_suite {
             }
         }
 
-        let let_rseq = Ast {
+        const let_rseq = Ast {
             .@child_of(let_stmt)
             .type = Ast_type::Let_rseq
         }
 
-        let let_number = Ast {
+        const let_number = Ast {
             .@child_of(let_rseq)
             .type = Ast_type::Number
             .value = "105"
@@ -61,7 +61,7 @@ Test_suite {
         }
 
         # line 2
-        let add_a = Ast {
+        const add_a = Ast {
             .@child_of(stmts)
             .type = Ast_type::Id
             .value = "a"

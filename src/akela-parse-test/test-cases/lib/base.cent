@@ -146,14 +146,14 @@ enum Type_def_type {
 }
 
 # built-in element defs
-let Td_int32 = Type_def {
+const Td_int32 = Type_def {
     .type = Type_def_type::Integer
     .name = "Int32"
     .bit_count = 32
     .is_signed = true
 };
 
-let Td_real64 = Type_def {
+const Td_real64 = Type_def {
     .type = Type_def_type::Float
     .name = "Real64"
     .bit_count = 64
