@@ -11,7 +11,7 @@ Cent_value* Cent_build_string(Cent_ast* n);
 Cent_value* Cent_build_boolean(Cent_ast* n);
 Cent_value* Cent_build_namespace(Cent_ast* n);
 Cent_value* Cent_build_assign(Cent_ast* n);
-Cent_value* Cent_build_let(Cent_ast* n);
+Cent_value* Cent_build_const(Cent_ast* n);
 Cent_value* Cent_build_variable(Cent_ast* n);
 Cent_value* Cent_build_function_top(Cent_ast* n);
 Cent_value* Cent_build_function_file_name(Cent_ast* n);
@@ -27,7 +27,7 @@ Cent_value* Cent_build(Cent_parse_result* pr)
     if (!pr->errors->head) {
         Cent_ast* p = pr->root->head;
         while (p) {
-            if (p->type == Cent_ast_type_let || p == pr->root->tail) {
+            if (p->type == Cent_ast_type_const || p == pr->root->tail) {
                 value = Cent_build_dispatch(p);
             }
             p = p->next;
@@ -60,8 +60,8 @@ Cent_value* Cent_build_dispatch(Cent_ast* n)
         return Cent_build_namespace(n);
     }
 
-    if (n->type == Cent_ast_type_let) {
-        return Cent_build_let(n);
+    if (n->type == Cent_ast_type_const) {
+        return Cent_build_const(n);
     }
 
     if (n->type == Cent_ast_type_expr_function_file_name) {
@@ -171,7 +171,7 @@ Cent_value* Cent_build_assign(Cent_ast* n)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Cent_value* Cent_build_let(Cent_ast* n)
+Cent_value* Cent_build_const(Cent_ast* n)
 {
     Cent_ast* a = Cent_ast_get(n, 0);
     Cent_ast* b = Cent_ast_get(n, 1);

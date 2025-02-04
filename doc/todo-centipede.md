@@ -1,4 +1,5 @@
 # Centipede Todo
+* parse struct
 * transform follow-ons to child objects
 * integer, natural, and real ast type
 * follow-on properties

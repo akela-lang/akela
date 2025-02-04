@@ -23,7 +23,7 @@ set(centipede_files
         module_file.c
         module_data.c
         module_import.c
-        parse_let.c
+        parse_const.c
         comp_table.c
         check_parent.c
         parse_validation.c

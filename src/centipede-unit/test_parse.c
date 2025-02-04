@@ -175,7 +175,7 @@ void test_parse_top_level_assignment()
         "    Boolean\n"
         "}\n"
         "# built-in element defs\n"
-        "let i32 = Type_def {\n"
+        "const i32 = Type_def {\n"
         "    .type = Type_def_type::Integer\n"
         "    .name = \"i32\"\n"
         "    .bit_count = 32\n"
@@ -198,19 +198,19 @@ void test_parse_top_level_assignment()
     Zinc_expect_int_equal(enum_type->type, Cent_ast_type_enum_type, "type enum_type");
     Zinc_expect_string(&enum_type->text, "Type_def_type", "text enum_type");
 
-    /* let */
-    Cent_ast* let = Cent_ast_get(root, 1);
-    Zinc_assert_ptr(let, "ptr let");
-    Zinc_expect_int_equal(let->type, Cent_ast_type_let, "type let");
+    /* const */
+    Cent_ast* const_ = Cent_ast_get(root, 1);
+    Zinc_assert_ptr(const_, "ptr const_");
+    Zinc_expect_int_equal(const_->type, Cent_ast_type_const, "type const_");
 
     /* name */
-    Cent_ast* name = Cent_ast_get(let, 0);
+    Cent_ast* name = Cent_ast_get(const_, 0);
     Zinc_assert_ptr(name, "ptr name");
     Zinc_expect_int_equal(name->type, Cent_ast_type_id, "type name");
     Zinc_expect_string(&name->text, "i32", "value name");
 
     /* object */
-    Cent_ast* object = Cent_ast_get(let, 1);
+    Cent_ast* object = Cent_ast_get(const_, 1);
     Zinc_assert_ptr(object, "ptr object");
     Zinc_expect_int_equal(object->type, Cent_ast_type_expr_object, "type object");
 
@@ -596,7 +596,7 @@ void test_parse_element_property_type_not_element()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let Abc = 1;\n"
+        "const Abc = 1;\n"
         "element Test {\n"
         "   properties {\n"
         "        a: Abc\n"
@@ -641,7 +641,7 @@ void test_parse_element_child_type_not_an_element_type()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let Abc = 1;\n"
+        "const Abc = 1;\n"
         "element Test {\n"
         "   children {\n"
         "        Abc\n"
@@ -688,7 +688,7 @@ void test_parse_object_method_call()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = Foo {};\n"
+        "const a = Foo {};\n"
         "Bar {\n"
         "    .@child_of(a)\n"
         "}\n"
@@ -704,10 +704,10 @@ void test_parse_object_method_call()
     Zinc_assert_ptr(root, "ptr pr.root");
     Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
-    /* let */
-    Cent_ast* let = Cent_ast_get(root, 0);
-    Zinc_assert_ptr(let, "ptr let");
-    Zinc_expect_int_equal(let->type, Cent_ast_type_let, "type let");
+    /* const */
+    Cent_ast* const_ = Cent_ast_get(root, 0);
+    Zinc_assert_ptr(const_, "ptr const_");
+    Zinc_expect_int_equal(const_->type, Cent_ast_type_const, "type const_");
 
     /* Bar object */
     Cent_ast* bar = Cent_ast_get(root, 1);
@@ -734,7 +734,7 @@ void test_parse_object_method_call2()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = Foo {};\n"
+        "const a = Foo {};\n"
         "Bar {\n"
         "    .@property_of(a, \"b\")\n"
         "}\n"
@@ -750,10 +750,10 @@ void test_parse_object_method_call2()
     Zinc_assert_ptr(root, "ptr pr.root");
     Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
 
-    /* let */
-    Cent_ast* let = Cent_ast_get(root, 0);
-    Zinc_assert_ptr(let, "ptr assign");
-    Zinc_expect_int_equal(let->type, Cent_ast_type_let, "type let");
+    /* const */
+    Cent_ast* const_ = Cent_ast_get(root, 0);
+    Zinc_assert_ptr(const_, "ptr assign");
+    Zinc_expect_int_equal(const_->type, Cent_ast_type_const, "type const_");
 
     /* Bar object */
     Cent_ast* bar = Cent_ast_get(root, 1);
@@ -1070,7 +1070,7 @@ void test_parse_include_value()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
-        "let a = 12597;\n"
+        "const a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1122,7 +1122,7 @@ void test_parse_include_value_error()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
-        "let a = 12597;\n"
+        "const a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1145,7 +1145,7 @@ void test_parse_include_glob()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
-        "let a = 12597;\n"
+        "const a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1167,7 +1167,7 @@ void test_parse_include_error_expected_id()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "1/2.cent",
-        "let a = 12597;\n"
+        "const a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1190,7 +1190,7 @@ void test_parse_namespace_error_expected_id()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.cent",
-        "let a = 12597;\n"
+        "const a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1213,7 +1213,7 @@ void test_parse_namespace_error_expected_id2()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.cent",
-        "let a = 12597;\n"
+        "const a = 12597;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1225,13 +1225,13 @@ void test_parse_namespace_error_expected_id2()
     test_parse_teardown(ct);
 }
 
-void test_parse_let()
+void test_parse_const()
 {
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 45;\n"
+        "const a = 45;\n"
         "a\n"
     );
 
@@ -1244,16 +1244,16 @@ void test_parse_let()
     Zinc_assert_ptr(root, "ptr root");
     Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type root");
 
-    Cent_ast* let = Cent_ast_get(root, 0);
-    Zinc_assert_ptr(let, "ptr let");
-    Zinc_expect_int_equal(let->type, Cent_ast_type_let, "type let");
+    Cent_ast* const_ = Cent_ast_get(root, 0);
+    Zinc_assert_ptr(const_, "ptr const_");
+    Zinc_expect_int_equal(const_->type, Cent_ast_type_const, "type const_");
 
-    Cent_ast* id = Cent_ast_get(let, 0);
+    Cent_ast* id = Cent_ast_get(const_, 0);
     Zinc_assert_ptr(id, "ptr id");
     Zinc_expect_int_equal(id->type, Cent_ast_type_id, "type id");
     Zinc_expect_string(&id->text, "a", "text id");
 
-    Cent_ast* number = Cent_ast_get(let, 1);
+    Cent_ast* number = Cent_ast_get(const_, 1);
     Zinc_assert_ptr(number, "ptr number");
     Zinc_expect_int_equal(number->type, Cent_ast_type_expr_number, "type number");
     Zinc_expect_int_equal(number->number_type, Cent_number_type_integer, "number type");
@@ -1267,7 +1267,7 @@ void test_parse_let()
     test_parse_teardown(ct);
 }
 
-void test_parse_let_error_shadow_type()
+void test_parse_const_error_shadow_type()
 {
     Zinc_test_name(__func__);
 
@@ -1275,7 +1275,7 @@ void test_parse_let_error_shadow_type()
     test_parse_setup(&ct,
         "element Foo {\n"
         "}\n"
-        "let Foo = 45;\n"
+        "const Foo = 45;\n"
         "Foo\n"
     );
 
@@ -1288,14 +1288,14 @@ void test_parse_let_error_shadow_type()
     test_parse_teardown(ct);
 }
 
-void test_parse_let_error_shadow_module()
+void test_parse_const_error_shadow_module()
 {
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "use base;\n"
-        "let base = 45;\n"
+        "const base = 45;\n"
         "base\n"
     );
 
@@ -1310,14 +1310,14 @@ void test_parse_let_error_shadow_module()
     test_parse_teardown(ct);
 }
 
-void test_parse_let_error_shadow_local()
+void test_parse_const_error_shadow_local()
 {
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 1;\n"
-        "let a = 2;\n"
+        "const a = 1;\n"
+        "const a = 2;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1329,14 +1329,14 @@ void test_parse_let_error_shadow_local()
     test_parse_teardown(ct);
 }
 
-void test_parse_object_let()
+void test_parse_object_const()
 {
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Foo {\n"
-        "    let bar = Bar {};\n"
+        "    const bar = Bar {};\n"
         "    bar\n"
         "}\n"
     );
@@ -1357,15 +1357,15 @@ void test_parse_object_let()
     Zinc_expect_int_equal(foo->type, Cent_ast_type_expr_object, "type foo");
 
     /* line 2 */
-    Cent_ast* foo_let = Cent_ast_get(foo, 0);
-    Zinc_assert_ptr(foo_let, "ptr foo_let");
-    Zinc_expect_int_equal(foo_let->type, Cent_ast_type_let, "type foo_let");
+    Cent_ast* foo_const = Cent_ast_get(foo, 0);
+    Zinc_assert_ptr(foo_const, "ptr foo_const");
+    Zinc_expect_int_equal(foo_const->type, Cent_ast_type_const, "type foo_const");
 
-    Cent_ast* bar = Cent_ast_get(foo_let, 0);
+    Cent_ast* bar = Cent_ast_get(foo_const, 0);
     Zinc_assert_ptr(bar, "ptr bar");
     Zinc_expect_int_equal(bar->type, Cent_ast_type_id, "type bar");
 
-    Cent_ast* bar_object = Cent_ast_get(foo_let, 1);
+    Cent_ast* bar_object = Cent_ast_get(foo_const, 1);
     Zinc_assert_ptr(bar_object, "ptr bar_object");
     Zinc_expect_int_equal(bar_object->type, Cent_ast_type_expr_object, "type bar_object");
     Zinc_expect_string(&bar_object->text, "Bar", "text bar_object");
@@ -1385,13 +1385,13 @@ void test_parse_module_id_error()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let math = 1;\n"
+        "const math = 1;\n"
         "use math;\n"
         "math::Pi\n"
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "math.cent",
-        "let Pi = 3.14;\n"
+        "const Pi = 3.14;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -1410,7 +1410,7 @@ void test_parse_bad_id()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 1;\n"
+        "const a = 1;\n"
         "b\n"
     );
 
@@ -1430,7 +1430,7 @@ void test_parse_bad_id_child_of()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Foo {\n"
-        "    let bar = Bar {\n"
+        "    const bar = Bar {\n"
         "        .@child_of(x)\n"
         "    }\n"
         "    bar\n"
@@ -1453,7 +1453,7 @@ void test_parse_bad_id_property_of()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Foo {\n"
-        "    let bar = Bar {\n"
+        "    const bar = Bar {\n"
         "        .@property_of(x, \"a\")\n"
         "    }\n"
         "    bar\n"
@@ -1783,12 +1783,12 @@ void test_parse()
     test_parse_namespace_error_expected_id();
     test_parse_namespace_error_expected_id2();
 
-    test_parse_let();
-    test_parse_let_error_shadow_type();
-    test_parse_let_error_shadow_module();
-    test_parse_let_error_shadow_local();
+    test_parse_const();
+    test_parse_const_error_shadow_type();
+    test_parse_const_error_shadow_module();
+    test_parse_const_error_shadow_local();
 
-    test_parse_object_let();
+    test_parse_object_const();
 
     test_parse_module_id_error();
 

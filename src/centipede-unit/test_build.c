@@ -210,7 +210,7 @@ void test_build_assign()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 1;\n"
+        "const a = 1;\n"
         "a\n"
     );
 
@@ -297,7 +297,7 @@ void test_build_object_assign()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Test {\n"
-        "    let count = 20\n"
+        "    const count = 20\n"
         "    .count_value = count\n"
         "}\n"
     );
@@ -327,8 +327,8 @@ void test_build_object_child_of()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Test {\n"
-        "    let foo = Foo {}\n"
-        "    let bar = Bar {\n"
+        "    const foo = Foo {}\n"
+        "    const bar = Bar {\n"
         "        .@child_of(foo)\n"
         "    }\n"
         "    foo\n"
@@ -366,8 +366,8 @@ void test_build_object_property_of()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Test {\n"
-        "    let foo = Foo {}\n"
-        "    let bar = Bar {\n"
+        "    const foo = Foo {}\n"
+        "    const bar = Bar {\n"
         "        .@property_of(foo, \"x\")\n"
         "    }\n"
         "    foo\n"
@@ -437,7 +437,7 @@ void test_build_property_set_variable()
         "        source: Source\n"
         "    }\n"
         "}\n"
-        "let a = Source {\"x + 5\"};\n"
+        "const a = Source {\"x + 5\"};\n"
         "Test {\n"
         "    .source = a\n"
         "}\n"
@@ -526,7 +526,7 @@ void test_build_namespace_variable()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "variables.cent",
-        "let a = 190;\n"
+        "const a = 190;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -555,7 +555,7 @@ void test_build_namespace_submodules()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.cent",
-        "let a = 190;\n"
+        "const a = 190;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -584,7 +584,7 @@ void test_build_namespace_glob_value()
     );
 
     test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.cent",
-        "let a = 190;\n"
+        "const a = 190;\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -602,13 +602,13 @@ void test_build_namespace_glob_value()
     test_parse_teardown(ct);
 }
 
-void test_build_let()
+void test_build_const()
 {
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = 245;\n"
+        "const a = 245;\n"
         "a\n"
     );
 
@@ -627,14 +627,14 @@ void test_build_let()
     test_parse_teardown(ct);
 }
 
-void test_build_object_let()
+void test_build_object_const()
 {
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Foo {\n"
-        "    let bar = Bar {}\n"
+        "    const bar = Bar {}\n"
         "    bar\n"
         "}\n"
     );
@@ -679,6 +679,6 @@ void test_build()
     test_build_namespace_variable();
     test_build_namespace_submodules();
     test_build_namespace_glob_value();
-    test_build_let();
-    test_build_object_let();
+    test_build_const();
+    test_build_object_const();
 }

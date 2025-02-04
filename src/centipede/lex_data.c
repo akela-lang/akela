@@ -21,7 +21,7 @@ void Cent_lex_data_init(
     Cent_lex_add_reserved_word(ld, "true", Cent_token_true);
     Cent_lex_add_reserved_word(ld, "false", Cent_token_false);
     Cent_lex_add_reserved_word(ld, "use", Cent_token_use);
-    Cent_lex_add_reserved_word(ld, "let", Cent_token_let);
+    Cent_lex_add_reserved_word(ld, "const", Cent_token_const);
 
     Zinc_hash_map_string_init(&ld->builtin, 8);
     Cent_lex_add_builtin(ld, "@child_of", Cent_builtin_type_child_of);

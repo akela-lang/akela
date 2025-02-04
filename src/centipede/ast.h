@@ -29,7 +29,7 @@ typedef enum Cent_ast_type {
     Cent_ast_type_module_seq,
     Cent_ast_type_namespace,
     Cent_ast_type_glob,
-    Cent_ast_type_let,
+    Cent_ast_type_const,
     Cent_ast_type_pass,
     Cent_ast_type_follow_on,
 } Cent_ast_type;

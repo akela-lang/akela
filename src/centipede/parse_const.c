@@ -3,16 +3,16 @@
 #include "parse_expr.h"
 #include "environment.h"
 
-Cent_ast* Cent_parse_let(Cent_parse_data* pd)
+Cent_ast* Cent_parse_const(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
-    n->type = Cent_ast_type_let;
+    n->type = Cent_ast_type_const;
 
-    Cent_token* let = NULL;
-    Cent_match(pd, Cent_token_let, "expected let", &let, n);
-    Cent_token_destroy(let);
-    free(let);
+    Cent_token* co = NULL;
+    Cent_match(pd, Cent_token_const, "expected const", &co, n);
+    Cent_token_destroy(co);
+    free(co);
 
     Cent_ast* id_node = NULL;
     Cent_ast_create(&id_node);
@@ -50,7 +50,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
                     "shadowing of type: %b",
                     &id_node->text);
                 n->has_error = true;
-                /* test case: test_parse_let_error_shadow_type */
+                /* test case: test_parse_const_error_shadow_type */
             } else if (sym->type == Cent_symbol_type_module) {
                 Zinc_error_list_set(
                     pd->errors,
@@ -58,7 +58,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
                     "shadowing of module: %b",
                     &id_node->text);
                 n->has_error = true;
-                /* test case: test_parse_let_error_shadow_module */
+                /* test case: test_parse_const_error_shadow_module */
             } else {
                 sym = Cent_environment_get_local(pd->top, &id_node->text);
                 if (sym) {
@@ -68,7 +68,7 @@ Cent_ast* Cent_parse_let(Cent_parse_data* pd)
                         "shadowing of local variable: %b",
                         &id_node->text);
                     n->has_error = true;
-                    /* test case: test_parse_let_error_shadow_local */
+                    /* test case: test_parse_const_error_shadow_local */
                 }
             }
         }

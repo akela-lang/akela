@@ -183,7 +183,7 @@ void test_check_value_types_property_variable()
         "        source: Source\n"
         "    }\n"
         "}\n"
-        "let a = Source {\"x + 5\"};\n"
+        "const a = Source {\"x + 5\"};\n"
         "Test {\n"
         "    .source = a\n"
         "}\n"
@@ -216,7 +216,7 @@ void test_check_value_types_property_error_variable_object()
         "        source: Source\n"
         "    }\n"
         "}\n"
-        "let a = Foo {};\n"
+        "const a = Foo {};\n"
         "Test {\n"
         "    .source = a\n"
         "}\n"
@@ -685,7 +685,7 @@ void test_check_value_types_not_attached()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = Foo {};\n"
+        "const a = Foo {};\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -708,7 +708,7 @@ void test_check_value_types_not_attached_import()
         "use bar;\n"
     );
     test_parse_add_comp_unit(ct->module_finder_obj, "bar.cent",
-        "let a = Foo {};\n"
+        "const a = Foo {};\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -729,7 +729,7 @@ void test_check_value_types_not_attached_import_glob()
         "use bar::*;\n"
     );
     test_parse_add_comp_unit(ct->module_finder_obj, "bar.cent",
-        "let a = Foo {};\n"
+        "const a = Foo {};\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
@@ -747,7 +747,7 @@ void test_check_value_types_not_attached_not_last()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "let a = Foo {};\n"
+        "const a = Foo {};\n"
         "a;\n"
         "Bar {}\n"
     );
@@ -791,7 +791,7 @@ void test_check_value_types_not_attached_in_object()
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
         "Bar {\n"
-        "    let a = 1\n"
+        "    const a = 1\n"
         "}\n"
     );
 

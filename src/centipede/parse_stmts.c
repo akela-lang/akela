@@ -4,7 +4,7 @@
 #include "parse_expr.h"
 #include <assert.h>
 #include "comp_unit.h"
-#include "parse_let.h"
+#include "parse_const.h"
 #include "zinc/list.h"
 #include "parse_object.h"
 #include "parse_transform.h"
@@ -67,8 +67,8 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
         return Cent_parse_use(pd);
     }
 
-    if (pd->lookahead->type == Cent_token_let) {
-        return Cent_parse_let(pd);
+    if (pd->lookahead->type == Cent_token_const) {
+        return Cent_parse_const(pd);
     }
 
     if (pd->lookahead->type == Cent_token_dot) {

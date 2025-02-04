@@ -3,7 +3,7 @@
 #include "parse_tools.h"
 #include "parse_expr.h"
 #include <assert.h>
-#include "parse_let.h"
+#include "parse_const.h"
 
 Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd);
 Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd);
@@ -63,8 +63,8 @@ Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd)
         return Cent_parse_property(pd);
     }
 
-    if (pd->lookahead->type == Cent_token_let) {
-        return Cent_parse_let(pd);
+    if (pd->lookahead->type == Cent_token_const) {
+        return Cent_parse_const(pd);
     }
 
     return Cent_parse_expr(pd);
