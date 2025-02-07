@@ -119,7 +119,8 @@ namespace Akela_llvm {
     {
         std::vector<Type*> param_types = std::vector<Type*>();
         Type* char_type = Type::getInt8Ty(*jd->TheContext);
-        Type* string_type = char_type->getPointerTo();
+        //Type* string_type = char_type->getPointerTo();
+        Type* string_type = PointerType::get(char_type, 0);
         param_types.push_back(string_type);
         Type* ret_type = Type::getVoidTy(*jd->TheContext);
         FunctionType *func_type = FunctionType::get(ret_type, param_types, true);

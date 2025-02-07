@@ -25,7 +25,8 @@ namespace Akela_llvm {
             if (tu->td->type == Ake_type_function) {
                 if (rhs) {
                     FunctionType *func_type = Get_function_type(jd, tu);
-                    PointerType *pt = func_type->getPointerTo();
+                    //PointerType *pt = func_type->getPointerTo();
+                    PointerType *pt = PointerType::get(func_type, 0);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst* lhs_value = jd->Builder->CreateAlloca(pt, nullptr, lhs->value.buf);
                     lhs->sym->reference = lhs_value;
@@ -141,7 +142,8 @@ namespace Akela_llvm {
                 } else {
                     lhs->sym->value = nullptr;
                     FunctionType *func_type = Get_function_type(jd, rhs->tu);
-                    PointerType *pt = func_type->getPointerTo();
+                    //PointerType *pt = func_type->getPointerTo();
+                    PointerType *pt = PointerType::get(func_type, 0);
                     Zinc_string_finish(&rhs->value);
                     lhs_value = jd->Builder->CreateAlloca(pt, nullptr, rhs->value.buf);
                     lhs->sym->reference = lhs_value;
@@ -245,7 +247,8 @@ namespace Akela_llvm {
     {
         Type* element_type = Get_type(jd, n->tu);
         if (n->tu->td->type == Ake_type_function) {
-            element_type = element_type->getPointerTo();
+            //element_type = element_type->getPointerTo();
+            element_type = PointerType::get(element_type, 0);
         }
 
         Ake_ast* array = n->head;

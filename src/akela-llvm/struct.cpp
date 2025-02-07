@@ -16,7 +16,8 @@ namespace Akela_llvm {
             Ake_type_use* element_tu = element_type_node->tu;
             Type* element_type = Get_type(jd, element_tu);
             if (element_tu->td->type == Ake_type_function) {
-                element_type = element_type->getPointerTo();
+                //element_type = element_type->getPointerTo();
+                element_type = PointerType::get(element_type, 0);
             }
             type_list.push_back(element_type);
             element_dec = element_dec->next;
@@ -78,7 +79,7 @@ namespace Akela_llvm {
         assert(n->tu->td->composite_type);
         assert(n->tu->td->composite);
         auto t = (StructType*)n->tu->td->composite_type;
-        struct Zinc_string bf;
+        Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_copy(&n->tu->td->name, &bf);
         Zinc_string_add_str(&bf, ".tmp");
