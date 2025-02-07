@@ -111,7 +111,8 @@ namespace Akela_llvm {
         Type* t = Get_type(jd, tu);
         if (tu) {
             if (tu->is_array || tu->td->type == Ake_type_function || tu->td->type == Ake_type_struct) {
-                t = t->getPointerTo();
+                //t = t->getPointerTo();
+                t = PointerType::get(t, 0);
             }
         }
         return t;
@@ -126,7 +127,8 @@ namespace Akela_llvm {
             while (true) {
                 auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(&tu->dim, i);
                 if (tu->td->type == Ake_type_function) {
-                    t = t->getPointerTo();
+                    //t = t->getPointerTo();
+                    t = PointerType::get(t, 0);
                 }
                 t = ArrayType::get(t, dim->size);
                 if (i == 0) break;

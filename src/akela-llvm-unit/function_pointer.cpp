@@ -55,14 +55,16 @@ void CreateTopLevel(JITData* jd)
     std::vector<Type*> param_types = std::vector<Type*>();
     Type* element_type = Type::getInt8Ty(*jd->TheContext);
     ArrayType* array_type = ArrayType::get(element_type, 6);
-    PointerType* pt = array_type->getPointerTo();
+    //PointerType* pt = array_type->getPointerTo();
+    PointerType* pt = PointerType::get(array_type, 0);
     Type* ret_type = pt;
     FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
     Function *f = Function::Create(func_type, Function::ExternalLinkage, TOP_LEVEL_NAME, *jd->TheModule);
     BasicBlock* entry = BasicBlock::Create(*jd->TheContext, "entry", f);
     jd->Builder->SetInsertPoint(entry);
 
-    Value* value = jd->Builder->CreateGlobalStringPtr("hello", ".str");
+    //Value* value = jd->Builder->CreateGlobalStringPtr("hello", ".str");
+    Value* value = jd->Builder->CreateGlobalString("hello", ".str");
     jd->Builder->CreateRet(value);
 }
 
