@@ -36,10 +36,10 @@ typedef union Cent_data
         struct Cent_value* tail;
     } list;
     struct {
-        struct Zinc_hash_table properties;
+        Zinc_hash_map_string properties;
     } dict;
     struct {
-        struct Zinc_hash_table properties;
+        Zinc_hash_map_string properties;
         struct Cent_value* head;
         struct Cent_value* tail;
     } dag;

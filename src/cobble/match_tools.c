@@ -176,7 +176,7 @@ void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, Zinc_string_sli
     }
 }
 
-Cob_stack* Cob_stack_clone(Cob_stack* mts, struct Zinc_hash_table* ht, Cob_stack_node* sn)
+Cob_stack* Cob_stack_clone(Cob_stack* mts, Zinc_hash_map_string* ht, Cob_stack_node* sn)
 {
     if (mts) {
         Cob_stack* new_mts = NULL;
@@ -253,7 +253,7 @@ void Cob_stack_node_group_copy(size_t index, struct Zinc_string* bf)
 
 Cob_stack_node* Cob_stack_node_clone(Cob_stack_node* sn)
 {
-    struct Zinc_hash_table ht;
+    Zinc_hash_map_string ht;
     Zinc_hash_map_string_init(&ht, 32);
 
     Cob_stack_node* new_sn = NULL;

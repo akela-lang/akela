@@ -10,8 +10,8 @@ typedef struct Cent_lex_data {
     struct Zinc_error_list* errors;
     void* input;
     Zinc_input_unicode_vtable* input_vtable;
-    struct Zinc_hash_table reserved;
-    struct Zinc_hash_table builtin;
+    Zinc_hash_map_string reserved;
+    Zinc_hash_map_string builtin;
 } Cent_lex_data;
 
 void Cent_lex_data_init(

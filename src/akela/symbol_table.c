@@ -52,7 +52,7 @@ void Ake_symbol_table_add_type(struct Ake_environment* env, const char* name, st
 	struct Ake_symbol* sym = NULL;
 	Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
 	Ake_symbol_init(sym);
-    sym->type = Ake_symbol_type_type;
+        sym->type = Ake_symbol_type_type;
 	sym->td = td;
 
 	Ake_environment_put(env, &bf, sym);
@@ -586,7 +586,7 @@ void Ake_symbol_table_print(struct Ake_symbol_table* st)
     printf("\n");
     struct Ake_environment* p = st->top;
     while (p) {
-        struct Zinc_hash_table* ht = &p->ht;
+        Zinc_hash_map_string* ht = &p->ht;
         for (int i = 0; i < ht->size; i++) {
             struct Zinc_hash_map_string_list* list = &ht->buckets[i];
             struct Zinc_hash_map_string_entry* entry = list->head;

@@ -59,7 +59,7 @@ void Zinc_hash_map_string_list_destroy(struct Zinc_hash_map_string_list* hl)
     }
 }
 
-void Zinc_hash_map_string_init(struct Zinc_hash_table* ht, unsigned int size)
+void Zinc_hash_map_string_init(Zinc_hash_map_string* ht, unsigned int size)
 {
     ht->size = size;
 
@@ -70,13 +70,13 @@ void Zinc_hash_map_string_init(struct Zinc_hash_table* ht, unsigned int size)
     }
 }
 
-void Zinc_hash_map_string_create(struct Zinc_hash_table** ht, unsigned int size)
+void Zinc_hash_map_string_create(Zinc_hash_map_string** ht, unsigned int size)
 {
-    Zinc_malloc_safe((void**)ht, sizeof(struct Zinc_hash_table));
+    Zinc_malloc_safe((void**)ht, sizeof(Zinc_hash_map_string));
     Zinc_hash_map_string_init(*ht, size);
 }
 
-void Zinc_hash_map_string_destroy(struct Zinc_hash_table* ht)
+void Zinc_hash_map_string_destroy(Zinc_hash_map_string* ht)
 {
     if (ht) {
         for (int i = 0; i < ht->size; i++) {
@@ -86,7 +86,7 @@ void Zinc_hash_map_string_destroy(struct Zinc_hash_table* ht)
     }
 }
 
-void Zinc_hash_map_string_map(struct Zinc_hash_table* ht, Zinc_hash_map_string_func f)
+void Zinc_hash_map_string_map(Zinc_hash_map_string* ht, Zinc_hash_map_string_func f)
 {
     for (int i = 0; i < ht->size; i++) {
         struct Zinc_hash_map_string_entry* p = ht->buckets[i].head;
@@ -97,7 +97,7 @@ void Zinc_hash_map_string_map(struct Zinc_hash_table* ht, Zinc_hash_map_string_f
     }
 }
 
-void Zinc_hash_map_string_map_name(struct Zinc_hash_table* ht, Zinc_hash_map_string_func_name f)
+void Zinc_hash_map_string_map_name(Zinc_hash_map_string* ht, Zinc_hash_map_string_func_name f)
 {
     for (int i = 0; i < ht->size; i++) {
         struct Zinc_hash_map_string_entry* p = ht->buckets[i].head;
@@ -109,7 +109,7 @@ void Zinc_hash_map_string_map_name(struct Zinc_hash_table* ht, Zinc_hash_map_str
 }
 
 /* assume entry is not in table so call hash_table_get before if not sure */
-void Zinc_hash_map_string_add(struct Zinc_hash_table* ht, struct Zinc_string* value, void* item)
+void Zinc_hash_map_string_add(Zinc_hash_map_string* ht, struct Zinc_string* value, void* item)
 {
     unsigned int val = Zinc_hash_calc_string(value, ht->size);
 
@@ -133,7 +133,7 @@ void Zinc_hash_map_string_add(struct Zinc_hash_table* ht, struct Zinc_string* va
 }
 
 /* assume entry is not in table so call hash_table_get before if not sure */
-void Zinc_hash_map_string_add_str(struct Zinc_hash_table* ht, char* str, void* item)
+void Zinc_hash_map_string_add_str(Zinc_hash_map_string* ht, char* str, void* item)
 {
     unsigned int val = Zinc_hash_calc_str(str, ht->size);
 
@@ -156,7 +156,7 @@ void Zinc_hash_map_string_add_str(struct Zinc_hash_table* ht, char* str, void* i
     }
 }
 
-void* Zinc_hash_map_string_get(struct Zinc_hash_table* ht, struct Zinc_string* value)
+void* Zinc_hash_map_string_get(Zinc_hash_map_string* ht, struct Zinc_string* value)
 {
     struct Zinc_hash_map_string_entry* ent;
 
@@ -173,7 +173,7 @@ void* Zinc_hash_map_string_get(struct Zinc_hash_table* ht, struct Zinc_string* v
     return NULL;
 }
 
-void* Zinc_hash_map_string_get_str(struct Zinc_hash_table* ht, char* str)
+void* Zinc_hash_map_string_get_str(Zinc_hash_map_string* ht, char* str)
 {
     struct Zinc_hash_map_string_entry* ent;
 

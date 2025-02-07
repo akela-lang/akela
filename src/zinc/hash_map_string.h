@@ -16,7 +16,7 @@ typedef struct Zinc_hash_map_string_list {
     Zinc_hash_map_string_entry* tail;
 } Zinc_hash_map_string_list;
 
-typedef struct Zinc_hash_table {
+typedef struct Zinc_hash_map_string {
     unsigned int size;
      Zinc_hash_map_string_list* buckets;
 } Zinc_hash_map_string;

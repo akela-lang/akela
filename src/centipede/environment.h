@@ -5,7 +5,7 @@
 #include "symbol.h"
 
 typedef struct Cent_environment {
-    struct Zinc_hash_table symbols;
+    Zinc_hash_map_string symbols;
     struct Cent_environment* prev;
 } Cent_environment;
 

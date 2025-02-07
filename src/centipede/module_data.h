@@ -4,7 +4,7 @@
 #include "zinc/hash_map_string.h"
 
 typedef struct Cent_module {
-    struct Zinc_hash_table submodules;
+    Zinc_hash_map_string submodules;
     void* env;
     void* pr;
     void* value;

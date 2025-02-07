@@ -31,8 +31,8 @@ typedef struct Ake_type_def {
     bool is_signed;
     struct Ake_ast* composite;
     void* composite_type;
-    struct Zinc_hash_table struct_impl;
-    struct Zinc_hash_table type_impl;
+    Zinc_hash_map_string struct_impl;
+    Zinc_hash_map_string type_impl;
 } Ake_type_def;
 
 #define IMPL_HASH_SIZE 32

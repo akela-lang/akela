@@ -66,7 +66,7 @@ Cob_task* Cob_stack_pop(Cob_stack* mts);
 Cob_task* Cob_stack_remove(Cob_stack* mts, Cob_task* task);
 void Cob_stack_pop_to(Cob_stack* mts, Cob_task* marker);
 void Cob_stack_node_add_char(Cob_stack_node* sn, Cob_task* task, Zinc_string_slice slice);
-Cob_stack* Cob_stack_clone(Cob_stack* mts, struct Zinc_hash_table* ht, Cob_stack_node* sn);
+Cob_stack* Cob_stack_clone(Cob_stack* mts, Zinc_hash_map_string* ht, Cob_stack_node* sn);
 
 void Cob_stack_node_init(Cob_stack_node* sn);
 void Cob_stack_node_create(Cob_stack_node** sn);

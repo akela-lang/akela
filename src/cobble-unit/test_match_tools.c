@@ -238,7 +238,7 @@ void test_match_tools_clone()
     struct Zinc_string* bf = NULL;
     Zinc_string_create(&bf);
 
-    struct Zinc_hash_table ht;
+    Zinc_hash_map_string ht;
     Zinc_hash_map_string_init(&ht, 32);
 
     Cob_stack* new_mts = Cob_stack_clone(mts, &ht, NULL);

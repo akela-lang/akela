@@ -9,7 +9,7 @@
 #include "comp_unit.h"
 
 typedef struct Ake_comp_table {
-	struct Zinc_hash_table ht;
+	Zinc_hash_map_string ht;
 } Ake_comp_table;
 
 AKELA_API void Ake_comp_table_init(struct Ake_comp_table* ct);

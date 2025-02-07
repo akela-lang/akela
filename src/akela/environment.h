@@ -8,7 +8,7 @@
 #define ENVIRONMENT_HASH_TABLE_SIZE 32
 
 typedef struct Ake_environment {
-    struct Zinc_hash_table ht;
+    Zinc_hash_map_string ht;
     struct Ake_environment* prev;
 } Ake_environment;
 

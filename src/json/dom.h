@@ -32,7 +32,7 @@ typedef struct Json_dom {
         double fp;                      /* number fp */
         struct Zinc_string string;           /* string */
         /* array: use head and tail */  /* array */
-        struct Zinc_hash_table object;       /* object: hash struct buffer -> Json_dom */
+        Zinc_hash_map_string object;       /* object: hash struct buffer -> Json_dom */
     } value;
     bool has_error;
     struct Zinc_location loc;

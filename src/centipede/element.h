@@ -7,49 +7,56 @@
 #include "value.h"
 #include "enumerate.h"
 
-typedef enum Cent_types {
+typedef struct Cent_element_type Cent_element_type;
+typedef struct Cent_enum_type Cent_enum_type;
+typedef struct Cent_types_node Cent_types_node;
+typedef struct Cent_types_list Cent_types_list;
+typedef struct Cent_property_type Cent_property_type;
+typedef enum Cent_types Cent_types;
+
+enum Cent_types {
     Cent_types_none,
     Cent_types_element,
     Cent_types_enum,
-} Cent_types;
+};
 
-typedef struct Cent_types_node {
+struct Cent_types_node {
     Cent_types type;
     union {
-        struct Cent_element_type* et;
-        struct Cent_enum_type* en;
+        Cent_element_type* et;
+        Cent_enum_type* en;
     } data;
-    struct Zinc_location loc;
+    Zinc_location loc;
     bool has_error;
-    struct Cent_types_node* next;
-    struct Cent_types_node* prev;
-} Cent_types_node;
+    Cent_types_node* next;
+    Cent_types_node* prev;
+};
 
-typedef struct Cent_types_list {
+struct Cent_types_list {
     Cent_types_node* head;
     Cent_types_node* tail;
-} Cent_types_list;
+};
 
-typedef struct Cent_property_type {
-    struct Zinc_string name;
+struct Cent_property_type {
+    Zinc_string name;
     Cent_types type;
     union {
-        struct Cent_element_type* et;
-        struct Cent_enum_type* en;
+        Cent_element_type* et;
+        Cent_enum_type* en;
     } data;
     bool required;
-    struct Zinc_location loc;
+    Zinc_location loc;
     bool has_error;
-} Cent_property_type;
+};
 
-typedef struct Cent_element_type {
-    struct Zinc_string name;
+struct Cent_element_type {
+    Zinc_string name;
     Cent_value_type type;
-    struct Zinc_hash_table properties;
-    struct Cent_types_list children;
-    struct Zinc_location loc;
+    Zinc_hash_map_string properties;
+    Cent_types_list children;
+    Zinc_location loc;
     bool has_error;
-} Cent_element_type;
+};
 
 void Cent_element_init(Cent_element_type* et);
 void Cent_element_create(Cent_element_type** et);

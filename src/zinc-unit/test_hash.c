@@ -6,7 +6,7 @@ void test_hash1()
 {
 	Zinc_test_name(__func__);
 
-	struct Zinc_hash_table ht;
+	Zinc_hash_map_string ht;
 	struct Zinc_string one;
 	struct Zinc_string two;
 	int one_item = 1;
