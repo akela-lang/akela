@@ -33,6 +33,7 @@ void Cent_update_element_type(Cent_parse_result* pr, Cent_ast* n)
                 child = child->next;
             }
         } else if (p->type == Cent_ast_type_element_tag) {
+            Cent_update_prop(pr, p, et, env);
         } else {
             assert(false && "unexpected type");
         }
@@ -55,12 +56,18 @@ void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et,
         n->has_error = true;
         /* test case: test_parse_element_property_unknown_type */
     } else {
-        if (sym->type == Cent_symbol_type_element) {
+        if (n->type == Cent_ast_type_element_tag && sym->type != Cent_symbol_type_enumerate) {
+            Zinc_error_list_set(pr->errors, &n->loc, "expected enum type as tag");
+            n->has_error = true;
+        } else if (sym->type == Cent_symbol_type_element) {
             Cent_property_type_set_type(prop, Cent_types_element);
             prop->data.et = sym->data.element;
         } else if (sym->type == Cent_symbol_type_enumerate) {
             Cent_property_type_set_type(prop, Cent_types_enum);
             prop->data.en = sym->data.enumerate;
+            if (n->type == Cent_ast_type_element_tag) {
+                et->tag = sym->data.enumerate;
+            }
         } else {
             Zinc_error_list_set(pr->errors, &n->loc, "type is not an element or enum type: %b", &type->text);
             n->has_error = true;

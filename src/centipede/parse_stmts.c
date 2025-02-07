@@ -124,8 +124,6 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
 
         Cent_token* id2 = NULL;
         Cent_match(pd, Cent_token_id, "expected id", &id2, n);
-        Cent_token_destroy(id2);
-        free(id2);
 
         Cent_ast* tag = NULL;
         Cent_ast_create(&tag);
@@ -144,7 +142,9 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
             Zinc_string_add_string(&tag_type->text, &id2->value);
         }
         Cent_ast_add(tag, tag_type);
-        
+        Cent_token_destroy(id2);
+        free(id2);
+
         Cent_ast_add(n, tag);
 
         Cent_token* rp = NULL;

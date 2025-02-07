@@ -1744,7 +1744,7 @@ void test_parse_element_tagged()
 
     Cent_comp_table* ct = NULL;
     test_parse_setup(&ct,
-        "element Vehicle(VehicleType) {\n"
+        "element Vehicle(Vehicle_type) {\n"
         "}\n"
         "enum Vehicle_type {\n"
         "    Car\n"
