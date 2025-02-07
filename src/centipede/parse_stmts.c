@@ -84,7 +84,7 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
     return Cent_parse_expr(pd);
 }
 
-// Element -> element id { Element_stmt? Element_stmts } */
+// Element -> element id { Element_stmt? Element_stmts }
 // Element_stmt? -> Element_stmt | e
 // Element_stmt -> Properties | Children
 // Element_stmts -> Sep Element_stmt? Element_stmts | e
@@ -126,6 +126,26 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
         Cent_match(pd, Cent_token_id, "expected id", &id2, n);
         Cent_token_destroy(id2);
         free(id2);
+
+        Cent_ast* tag = NULL;
+        Cent_ast_create(&tag);
+        tag->type = Cent_ast_type_element_tag;
+
+        Cent_ast* tag_id = NULL;
+        Cent_ast_create(&tag_id);
+        tag_id->type = Cent_ast_type_id;
+        Zinc_string_add_str(&tag_id->text, "@tag");
+        Cent_ast_add(tag, tag_id);
+
+        Cent_ast* tag_type = NULL;
+        Cent_ast_create(&tag_type);
+        tag_type->type = Cent_ast_type_id;
+        if (id2) {
+            Zinc_string_add_string(&tag_type->text, &id2->value);
+        }
+        Cent_ast_add(tag, tag_type);
+        
+        Cent_ast_add(n, tag);
 
         Cent_token* rp = NULL;
         Cent_match(pd, Cent_token_right_paren, "expected right parenthesis", &rp, n);

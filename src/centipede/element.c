@@ -6,6 +6,7 @@ void Cent_element_init(Cent_element_type* et)
 {
     Zinc_string_init(&et->name);
     et->type = Cent_value_type_none;
+    et->tag = NULL;
     Zinc_hash_map_string_init(&et->properties, 32);
     Cent_types_list_init(&et->children);
     Zinc_location_init(&et->loc);
@@ -26,7 +27,7 @@ void Cent_element_destroy(Cent_element_type* et)
     Cent_types_list_destroy(&et->children);
 }
 
-void Cent_element_set(Cent_element_type* et, struct Zinc_string* name, Cent_property_type* value)
+void Cent_element_set(Cent_element_type* et, Zinc_string* name, Cent_property_type* value)
 {
     Zinc_hash_map_string_add(&et->properties, name, value);
 }
@@ -36,7 +37,7 @@ void Cent_element_set_str(Cent_element_type* et, char* name, Cent_property_type*
     Zinc_hash_map_string_add_str(&et->properties, name, value);
 }
 
-Cent_property_type* Cent_element_get(Cent_element_type* et, struct Zinc_string* name)
+Cent_property_type* Cent_element_get(Cent_element_type* et, Zinc_string* name)
 {
     return Zinc_hash_map_string_get(&et->properties, name);
 }
@@ -54,7 +55,7 @@ void Cent_element_add(Cent_element_type* et, Cent_types_node* node)
 void Cent_element_add_et(
     Cent_element_type* et,
     Cent_element_type* et2,
-    struct Zinc_location* loc,
+    Zinc_location* loc,
     bool has_error)
 {
     Cent_types_list_add_et(&et->children, et2, loc, has_error);
@@ -63,7 +64,7 @@ void Cent_element_add_et(
 void Cent_element_add_en(
     Cent_element_type* et,
     Cent_enum_type* en,
-    struct Zinc_location* loc,
+    Zinc_location* loc,
     bool has_error)
 {
     Cent_types_list_add_en(&et->children, en, loc, has_error);
@@ -171,7 +172,7 @@ void Cent_types_list_add(Cent_types_list* list, Cent_types_node* node)
 void Cent_types_list_add_et(
     Cent_types_list* list,
     Cent_element_type* et2,
-    struct Zinc_location* loc,
+    Zinc_location* loc,
     bool has_error)
 {
     Cent_types_node* node = NULL;
@@ -185,8 +186,8 @@ void Cent_types_list_add_et(
 
 void Cent_types_list_add_en(
     Cent_types_list* list,
-    struct Cent_enum_type* en,
-    struct Zinc_location* loc,
+    Cent_enum_type* en,
+    Zinc_location* loc,
     bool has_error)
 {
     Cent_types_node* node = NULL;

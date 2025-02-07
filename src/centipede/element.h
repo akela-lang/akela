@@ -51,6 +51,7 @@ struct Cent_property_type {
 
 struct Cent_element_type {
     Zinc_string name;
+    Cent_enum_type* tag;
     Cent_value_type type;
     Zinc_hash_map_string properties;
     Cent_types_list children;
@@ -61,20 +62,20 @@ struct Cent_element_type {
 void Cent_element_init(Cent_element_type* et);
 void Cent_element_create(Cent_element_type** et);
 void Cent_element_destroy(Cent_element_type* et);
-void Cent_element_set(Cent_element_type* et, struct Zinc_string* name, Cent_property_type* value);
+void Cent_element_set(Cent_element_type* et, Zinc_string* name, Cent_property_type* value);
 void Cent_element_set_str(Cent_element_type* et, char* name, Cent_property_type* value);
-Cent_property_type* Cent_element_get(Cent_element_type* et, struct Zinc_string* name);
+Cent_property_type* Cent_element_get(Cent_element_type* et, Zinc_string* name);
 Cent_property_type* Cent_element_get_str(Cent_element_type* et, char* name);
 void Cent_element_add(Cent_element_type* et, Cent_types_node* node);
 void Cent_element_add_et(
     Cent_element_type* et,
     Cent_element_type* et2,
-    struct Zinc_location* loc,
+    Zinc_location* loc,
     bool has_error);
 void Cent_element_add_en(
     Cent_element_type* et,
     Cent_enum_type* en,
-    struct Zinc_location* loc,
+    Zinc_location* loc,
     bool has_error);
 
 void Cent_property_type_init(Cent_property_type* pt);
@@ -94,12 +95,12 @@ void Cent_types_list_add(Cent_types_list* list, Cent_types_node* node);
 void Cent_types_list_add_et(
     Cent_types_list* list,
     Cent_element_type* et2,
-    struct Zinc_location* loc,
+    Zinc_location* loc,
     bool has_error);
 void Cent_types_list_add_en(
     Cent_types_list* list,
-    struct Cent_enum_type* en,
-    struct Zinc_location* loc,
+    Cent_enum_type* en,
+    Zinc_location* loc,
     bool has_error);
 
 #endif

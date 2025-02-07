@@ -32,6 +32,7 @@ void Cent_update_element_type(Cent_parse_result* pr, Cent_ast* n)
                 Cent_update_child(pr, child, et, env);
                 child = child->next;
             }
+        } else if (p->type == Cent_ast_type_element_tag) {
         } else {
             assert(false && "unexpected type");
         }
