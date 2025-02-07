@@ -30,7 +30,7 @@ element Data_type_list {
 element Data_type {
     properties {
         type: Type
-        align: Integer
+        align: Natural
     }
 }
 

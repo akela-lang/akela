@@ -7,6 +7,7 @@
 #include "cobble/match.h"
 #include <assert.h>
 #include <float.h>
+#include <stdint.h>
 
 void Run_akela(Run_data* data, Run_test* test);
 Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
@@ -205,9 +206,13 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
 
         /* otherwise look at type */
         if (type == Run_type_int8) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->type == Cent_number_type_integer
-            ) {
+            if (value_value->type == Cent_value_type_natural) {
+                if (value_value->data.natural <= INT64_MAX) {
+                    value_value->type = Cent_value_type_integer;
+                    value_value->data.integer = (int64_t)value_value->data.natural;
+                }
+            }
+            if (value_value->type == Cent_value_type_integer) {
                 int8_t actual = *(int8_t*)test->return_address;
                 int8_t expected = (int8_t)value_value->data.integer;
                 if (actual != expected) {
@@ -218,9 +223,13 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_int16) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->type == Cent_number_type_integer
-            ) {
+            if (value_value->type == Cent_value_type_natural) {
+                if (value_value->data.natural <= INT64_MAX) {
+                    value_value->type = Cent_value_type_integer;
+                    value_value->data.integer = (int64_t)value_value->data.natural;
+                }
+            }
+            if (value_value->type == Cent_value_type_integer) {
                 int16_t actual = *(int16_t*)test->return_address;
                 int16_t expected = (int16_t)value_value->data.integer;
                 if (actual != expected) {
@@ -231,9 +240,13 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_int32) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->type == Cent_number_type_integer
-            ) {
+            if (value_value->type == Cent_value_type_natural) {
+                if (value_value->data.natural <= INT64_MAX) {
+                    value_value->type = Cent_value_type_integer;
+                    value_value->data.integer = (int64_t)value_value->data.natural;
+                }
+            }
+            if (value_value->type == Cent_value_type_integer) {
                 int32_t actual = *(int32_t*)test->return_address;
                 int32_t expected = (int32_t)value_value->data.integer;
                 if (actual != expected) {
@@ -244,9 +257,13 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_int64) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->type == Cent_number_type_integer
-            ) {
+            if (value_value->type == Cent_value_type_natural) {
+                if (value_value->data.natural <= INT64_MAX) {
+                    value_value->type = Cent_value_type_integer;
+                    value_value->data.integer = (int64_t)value_value->data.natural;
+                }
+            }
+            if (value_value->type == Cent_value_type_integer) {
                 int64_t actual = *(int64_t*)test->return_address;
                 int64_t expected = (int64_t)value_value->data.integer;
                 if (actual != expected) {
@@ -257,11 +274,9 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_nat8) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->type == Cent_number_type_integer
-            ) {
+            if (value_value->type == Cent_value_type_natural) {
                 u_int8_t actual = *(u_int8_t*)test->return_address;
-                u_int8_t expected = (u_int8_t)value_value->data.integer;
+                u_int8_t expected = (u_int8_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
@@ -270,11 +285,9 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_nat16) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->type == Cent_number_type_integer
-            ) {
+            if (value_value->type == Cent_value_type_natural) {
                 u_int16_t actual = *(u_int16_t*)test->return_address;
-                u_int16_t expected = (u_int16_t)value_value->data.integer;
+                u_int16_t expected = (u_int16_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%hu) (%hu)\n", actual, expected);
@@ -283,11 +296,9 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_nat32) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->type == Cent_number_type_integer
-            ) {
+            if (value_value->type == Cent_value_type_natural) {
                 u_int32_t actual = *(u_int32_t*)test->return_address;
-                u_int32_t expected = (u_int32_t)value_value->data.integer;
+                u_int32_t expected = (u_int32_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
@@ -296,11 +307,9 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_nat64) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->type == Cent_number_type_integer
-            ) {
+            if (value_value->type == Cent_value_type_natural) {
                 u_int64_t actual = *(u_int64_t*)test->return_address;
-                u_int64_t expected = (u_int64_t)value_value->data.integer;
+                u_int64_t expected = (u_int64_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
@@ -309,11 +318,9 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected integer or string value type");
             }
         } else if (type == Run_type_real16) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->number_type == Cent_number_type_real
-            ) {
+            if (value_value->type == Cent_value_type_real) {
                 _Float16 actual = *(_Float16*)test->return_address;
-                _Float16 expected = (_Float16)value_value->data.fp;
+                _Float16 expected = (_Float16)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%f) (%f)\n", (float)actual, (float)expected);
@@ -322,11 +329,9 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected real or string value type");
             }
         } else if (type == Run_type_real32) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->number_type == Cent_number_type_real
-            ) {
+            if (value_value->type == Cent_value_type_real) {
                 float actual = *(float*)test->return_address;
-                float expected = (float)value_value->data.fp;
+                float expected = (float)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%f) (%f)\n", actual, expected);
@@ -335,11 +340,9 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
                 assert(false && "expected real or string value type");
             }
         } else if (type == Run_type_real64) {
-            if (value_value->type == Cent_value_type_number
-                && value_value->number_type == Cent_number_type_real
-            ) {
+            if (value_value->type == Cent_value_type_real) {
                 double actual = *(double*)test->return_address;
-                double expected = (double)value_value->data.fp;
+                double expected = (double)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%lf) (%lf)\n", actual, expected);
