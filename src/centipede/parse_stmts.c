@@ -19,6 +19,8 @@ Cent_ast* Cent_parse_use(Cent_parse_data* pd);
 void Cent_parse_include_stmts(Cent_parse_data* pd, Cent_ast* n, Cent_comp_unit* cu);
 void Cent_parse_module_seq(Cent_parse_data* pd, Cent_ast* n);
 void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n);
+Cent_ast* Cent_parse_struct(Cent_parse_data* pd);
+Cent_ast* Cent_parse_param(Cent_parse_data* pd);
 
 /* Stmts -> Stmt? Stmts' */
 /* Stmts' -> Sep Stmt? Stmts' | e */
@@ -61,6 +63,10 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
 
     if (pd->lookahead->type == Cent_token_enum) {
         return Cent_parse_enumerate(pd);
+    }
+
+    if (pd->lookahead->type == Cent_token_struct) {
+        return Cent_parse_struct(pd);
     }
 
     if (pd->lookahead->type == Cent_token_use) {
@@ -434,6 +440,89 @@ Cent_ast* Cent_parse_enumerate(Cent_parse_data* pd)
         task->data = n;
         Zinc_priority_queue_add(&pd->pq, task);
     }
+
+    return n;
+}
+
+Cent_ast* Cent_parse_struct(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_struct;
+
+    Cent_token* st = NULL;
+    if (!Cent_match(pd, Cent_token_struct, "expected struct", &st, n)) {
+        assert(false && "not possible");
+    }
+    Cent_token_destroy(st);
+    free(st);
+
+    Cent_token* lcb = NULL;
+    Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n);
+    Cent_token_destroy(lcb);
+    free(lcb);
+
+    Cent_ast* a = Cent_parse_param(pd);
+    if (a) {
+        Cent_ast_add(n, a);
+    }
+
+    while (Cent_parse_sep(pd, n)) {
+        Cent_ast* b = Cent_parse_param(pd);
+        if (b) {
+            Cent_ast_add(n, b);
+        }
+    }
+
+    Cent_token* rcb = NULL;
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
+    Cent_token_destroy(rcb);
+    free(rcb);
+
+    return n;
+}
+
+Cent_ast* Cent_parse_param(Cent_parse_data* pd)
+{
+    Cent_lookahead(pd);
+    if (pd->lookahead->type != Cent_token_id) {
+        return NULL;
+    }
+
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_param;
+
+    Cent_token* id = NULL;
+    if (!Cent_match(pd, Cent_token_id, "expected id", &id, n)) {
+        assert(false && "not possible");
+    }
+
+    Cent_ast* a = NULL;
+    Cent_ast_create(&a);
+    a->type = Cent_ast_type_id;
+    Zinc_string_add_string(&a->text, &id->value);
+    Cent_ast_add(n, a);
+
+    Cent_token* co = NULL;
+    Cent_match(pd, Cent_token_colon, "expected colon", &co, n);
+    Cent_token_destroy(co);
+    free(co);
+
+    Cent_token* id2 = NULL;
+    Cent_match(pd, Cent_token_id, "expected id", &id2, n);
+    if (id2) {
+        Cent_ast* b = NULL;
+        Cent_ast_create(&b); 
+        b->type = Cent_ast_type_id;
+        Zinc_string_add_string(&b->text, &id2->value);
+        Cent_ast_add(n, b);
+        Cent_token_destroy(id2);
+        free(id2);
+    }
+
+    Cent_token_destroy(id);
+    free(id);
 
     return n;
 }

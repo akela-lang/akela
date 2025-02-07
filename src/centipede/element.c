@@ -6,7 +6,6 @@ void Cent_element_init(Cent_element_type* et)
 {
     Zinc_string_init(&et->name);
     et->type = Cent_value_type_none;
-    et->number_type = Cent_number_type_none;
     Zinc_hash_map_string_init(&et->properties, 32);
     Cent_types_list_init(&et->children);
     Zinc_location_init(&et->loc);

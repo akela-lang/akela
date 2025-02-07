@@ -219,8 +219,7 @@ Cent_ast* Cent_parse_follow_on(Cent_parse_data* pd)
 
     Cent_ast* a = NULL;
     Cent_ast_create(&a);
-    a->type = Cent_ast_type_expr_number;
-    a->number_type = Cent_number_type_integer;
+    a->type = Cent_ast_type_expr_natural;
 
     size_t level = 0;
     Cent_lookahead(pd);

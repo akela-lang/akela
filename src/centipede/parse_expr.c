@@ -9,7 +9,9 @@ void Cent_parse_check_lvalue(Cent_parse_data* pd, Cent_ast* n);
 void Cent_parse_check_rvalue(Cent_parse_data* pd, Cent_ast* n);
 Cent_ast* Cent_parse_namespace(Cent_parse_data* pd);
 Cent_ast* Cent_parse_factor(Cent_parse_data* pd);
-Cent_ast* Cent_parse_expr_number(Cent_parse_data* pd);
+Cent_ast* Cent_parse_expr_integer(Cent_parse_data* pd);
+Cent_ast* Cent_parse_expr_natural(Cent_parse_data* pd);
+Cent_ast* Cent_parse_expr_real(Cent_parse_data* pd);
 Cent_ast* Cent_parse_expr_string(Cent_parse_data* pd);
 Cent_ast* Cent_parse_expr_boolean(Cent_parse_data* pd);
 Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd);
@@ -120,8 +122,12 @@ Cent_ast* Cent_parse_factor(Cent_parse_data* pd)
 
     Cent_lookahead(pd);
 
-    if (pd->lookahead->type == Cent_token_number) {
-        n = Cent_parse_expr_number(pd);
+    if (pd->lookahead->type == Cent_token_integer) {
+        n = Cent_parse_expr_integer(pd);
+    } else if (pd->lookahead->type == Cent_token_natural) {
+        n = Cent_parse_expr_natural(pd);
+    } else if (pd->lookahead->type == Cent_token_real) {
+        n = Cent_parse_expr_real(pd);
     } else if (pd->lookahead->type == Cent_token_string) {
         n = Cent_parse_expr_string(pd);
     } else if (pd->lookahead->type == Cent_token_true || pd->lookahead->type == Cent_token_false) {
@@ -133,34 +139,66 @@ Cent_ast* Cent_parse_factor(Cent_parse_data* pd)
     return n;
 }
 
-Cent_ast* Cent_parse_expr_number(Cent_parse_data* pd)
+Cent_ast* Cent_parse_expr_integer(Cent_parse_data* pd)
 {
     Cent_ast* n = NULL;
     Cent_ast_create(&n);
-    n->type = Cent_ast_type_expr_number;
-    Cent_ast_value_set_type(n, Cent_value_type_number);
+    n->type = Cent_ast_type_expr_integer;
+    Cent_ast_value_set_type(n, Cent_value_type_integer);
 
     Cent_token* num = NULL;
-    if (!Cent_match(pd, Cent_token_number, "expected number", &num, n)) {
+    if (!Cent_match(pd, Cent_token_integer, "expected integer", &num, n)) {
         assert(false && "not possible");
     }
     if (num) {
-        if (num->number_type == Cent_number_type_integer) {
-            n->number_type = Cent_number_type_integer;
-            n->data.integer = num->number_value.integer;
-        } else if (num->number_type == Cent_number_type_real) {
-            n->number_type = Cent_number_type_real;
-            n->data.fp = num->number_value.fp;
-        } else {
-            assert(false && "not possible");
-        }
-
+        n->data.integer = num->data.integer;
         Cent_token_destroy(num);
         free(num);
     }
 
     return n;
 }
+
+Cent_ast* Cent_parse_expr_natural(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_expr_natural;
+    Cent_ast_value_set_type(n, Cent_value_type_natural);
+
+    Cent_token* num = NULL;
+    if (!Cent_match(pd, Cent_token_natural, "expected natural", &num, n)) {
+        assert(false && "not possible");
+    }
+    if (num) {
+        n->data.natural = num->data.natural;
+        Cent_token_destroy(num);
+        free(num);
+    }
+
+    return n;
+}
+
+Cent_ast* Cent_parse_expr_real(Cent_parse_data* pd)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_expr_real;
+    Cent_ast_value_set_type(n, Cent_value_type_real);
+
+    Cent_token* num = NULL;
+    if (!Cent_match(pd, Cent_token_real, "expected real", &num, n)) {
+        assert(false && "not possible");
+    }
+    if (num) {
+        n->data.real = num->data.real;
+        Cent_token_destroy(num);
+        free(num);
+    }
+
+    return n;
+}
+
 
 Cent_ast* Cent_parse_expr_string(Cent_parse_data* pd)
 {

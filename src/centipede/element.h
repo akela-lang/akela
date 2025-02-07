@@ -45,7 +45,6 @@ typedef struct Cent_property_type {
 typedef struct Cent_element_type {
     struct Zinc_string name;
     Cent_value_type type;
-    Cent_number_type number_type;
     struct Zinc_hash_table properties;
     struct Cent_types_list children;
     struct Zinc_location loc;

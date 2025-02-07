@@ -274,10 +274,9 @@ void test_parse_top_level_assignment()
     /* bit_count value */
     Cent_ast* bit_count_value = Cent_ast_get(bit_count_prop_set, 1);
     Zinc_assert_ptr(bit_count_value, "ptr bit_count_value");
-    Zinc_expect_int_equal(bit_count_value->type, Cent_ast_type_expr_number, "type bit_count_value");
-    Zinc_expect_int_equal(bit_count_value->value_type, Cent_value_type_number, "value_type bit_count_value");
-    Zinc_expect_int_equal(bit_count_value->number_type, Cent_number_type_integer, "number_type bit_count_value");
-    Zinc_expect_long_long_equal(bit_count_value->data.integer, 32, "integer bit_count_value");
+    Zinc_expect_int_equal(bit_count_value->type, Cent_ast_type_expr_natural, "type bit_count_value");
+    Zinc_expect_int_equal(bit_count_value->value_type, Cent_value_type_natural, "value_type bit_count_value");
+    Zinc_expect_uint64_t_equal(bit_count_value->data.natural, 32, "integer bit_count_value");
 
     /* is_signed prop set */
     Cent_ast* is_signed_prop_set = Cent_ast_get(object, 3);
@@ -1255,9 +1254,8 @@ void test_parse_const()
 
     Cent_ast* number = Cent_ast_get(const_, 1);
     Zinc_assert_ptr(number, "ptr number");
-    Zinc_expect_int_equal(number->type, Cent_ast_type_expr_number, "type number");
-    Zinc_expect_int_equal(number->number_type, Cent_number_type_integer, "number type");
-    Zinc_expect_long_long_equal(number->data.integer, 45, "integer number");
+    Zinc_expect_int_equal(number->type, Cent_ast_type_expr_natural, "type number");
+    Zinc_expect_uint64_t_equal(number->data.natural, 45, "integer number");
 
     Cent_ast* variable = Cent_ast_get(root, 1);
     Zinc_assert_ptr(variable, "ptr variable");
@@ -1550,8 +1548,8 @@ void test_parse_follow_on()
     /* number 0 level */
     Cent_ast* level0 = Cent_ast_get(node0, 0);
     Zinc_assert_ptr(level0, "ptr level0");
-    Zinc_expect_int_equal(level0->type, Cent_ast_type_expr_number, "type level0");
-    Zinc_expect_long_equal(level0->data.integer, 1, "integer level0");
+    Zinc_expect_int_equal(level0->type, Cent_ast_type_expr_natural, "type level0");
+    Zinc_expect_uint64_t_equal(level0->data.natural, 1, "integer level0");
 
     /* number 0 object */
     Cent_ast* number0 = Cent_ast_get(node0, 1);
@@ -1611,8 +1609,8 @@ void test_parse_follow_on()
     /* number 1 level */
     Cent_ast* level1 = Cent_ast_get(node1, 0);
     Zinc_assert_ptr(level1, "ptr level1");
-    Zinc_expect_int_equal(level1->type, Cent_ast_type_expr_number, "type level1");
-    Zinc_expect_long_equal(level1->data.integer, 1, "integer level1");
+    Zinc_expect_int_equal(level1->type, Cent_ast_type_expr_natural, "type level1");
+    Zinc_expect_uint64_t_equal(level1->data.natural, 1, "integer level1");
 
     /* number 1 object */
     Cent_ast* number1 = Cent_ast_get(node1, 1);

@@ -22,9 +22,8 @@ void test_build_number_integer()
     Zinc_expect_no_errors(errors);
 
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
-    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number_type root");
-    Zinc_expect_long_long_equal(root->data.integer, 241, "integer root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
+    Zinc_expect_uint64_t_equal(root->data.natural, 241, "integer root");
 
     test_parse_teardown(ct);
 }
@@ -44,9 +43,8 @@ void test_build_number_fp()
     Zinc_expect_no_errors(errors);
 
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
-    Zinc_expect_int_equal(root->number_type, Cent_number_type_real, "number_type root");
-    Zinc_expect_double_equal(root->data.fp, 1.5, "fp root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_real, "type root");
+    Zinc_expect_double_equal(root->data.real, 1.5, "fp root");
 
     test_parse_teardown(ct);
 }
@@ -232,9 +230,8 @@ void test_build_assign()
 
     Cent_value* value = sym->data.variable.value;
     Zinc_assert_ptr(value, "ptr value");
-    Zinc_expect_int_equal(value->type, Cent_value_type_number, "type number");
-    Zinc_expect_int_equal(value->number_type, Cent_number_type_integer, "number_type value");
-    Zinc_expect_long_long_equal(value->data.integer, 1, "integer value");
+    Zinc_expect_int_equal(value->type, Cent_value_type_natural, "type number");
+    Zinc_expect_uint64_t_equal(value->data.natural, 1, "integer value");
 
     test_parse_teardown(ct);
 }
@@ -283,9 +280,8 @@ void test_build_object_prop_set()
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
     Cent_value* a = Cent_value_get_str(root, "a");
     Zinc_assert_ptr(a, "ptr a");
-    Zinc_expect_int_equal(a->type, Cent_value_type_number, "type number");
-    Zinc_expect_int_equal(a->number_type, Cent_number_type_integer, "number_type value");
-    Zinc_expect_long_long_equal(a->data.integer, 1, "integer value");
+    Zinc_expect_int_equal(a->type, Cent_value_type_natural, "type number");
+    Zinc_expect_long_long_equal(a->data.natural, 1, "integer value");
 
     test_parse_teardown(ct);
 }
@@ -313,9 +309,8 @@ void test_build_object_assign()
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
     Cent_value* count_value = Cent_value_get_str(root, "count_value");
     Zinc_assert_ptr(count_value, "ptr count_value");
-    Zinc_expect_int_equal(count_value->type, Cent_value_type_number, "type number");
-    Zinc_expect_int_equal(count_value->number_type, Cent_number_type_integer, "number_type value");
-    Zinc_expect_long_long_equal(count_value->data.integer, 20, "integer value");
+    Zinc_expect_int_equal(count_value->type, Cent_value_type_natural, "type number");
+    Zinc_expect_long_long_equal(count_value->data.natural, 20, "integer value");
 
     test_parse_teardown(ct);
 }
@@ -537,9 +532,8 @@ void test_build_namespace_variable()
     Zinc_expect_no_errors(errors);
 
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
-    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
-    Zinc_expect_long_long_equal(root->data.integer, 190, "integer root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
+    Zinc_expect_uint64_t_equal(root->data.natural, 190, "integer root");
 
     test_parse_teardown(ct);
 }
@@ -566,9 +560,8 @@ void test_build_namespace_submodules()
     Zinc_expect_no_errors(errors);
 
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
-    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
-    Zinc_expect_long_long_equal(root->data.integer, 190, "integer root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
+    Zinc_expect_uint64_t_equal(root->data.natural, 190, "integer root");
 
     test_parse_teardown(ct);
 }
@@ -595,9 +588,8 @@ void test_build_namespace_glob_value()
     Zinc_expect_no_errors(errors);
 
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
-    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
-    Zinc_expect_long_long_equal(root->data.integer, 190, "integer root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
+    Zinc_expect_uint64_t_equal(root->data.integer, 190, "integer root");
 
     test_parse_teardown(ct);
 }
@@ -620,9 +612,8 @@ void test_build_const()
     Zinc_expect_no_errors(errors);
 
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_int_equal(root->type, Cent_value_type_number, "type root");
-    Zinc_expect_int_equal(root->number_type, Cent_number_type_integer, "number root");
-    Zinc_expect_long_long_equal(root->data.integer, 245, "integer root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
+    Zinc_expect_uint64_t_equal(root->data.natural, 245, "integer root");
 
     test_parse_teardown(ct);
 }

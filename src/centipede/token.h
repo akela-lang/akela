@@ -3,11 +3,16 @@
 
 #include "zinc/zstring.h"
 #include "zinc/error.h"
+#include <stdint.h>
 
 typedef enum Cent_token_type {
     Cent_token_none,
-    Cent_token_eof,
+    Cent_token_string,
+    Cent_token_integer,
+    Cent_token_natural,
+    Cent_token_real,
     Cent_token_id,
+    Cent_token_eof,
     Cent_token_element,
     Cent_token_end,
     Cent_token_newline,
@@ -20,8 +25,6 @@ typedef enum Cent_token_type {
     Cent_token_right_curly_brace,
     Cent_token_dot,
     Cent_token_double_colon,
-    Cent_token_string,
-    Cent_token_number,
     Cent_token_true,
     Cent_token_false,
     Cent_token_modifier,
@@ -32,6 +35,7 @@ typedef enum Cent_token_type {
     Cent_token_use,
     Cent_token_asterisk,
     Cent_token_const,
+    Cent_token_struct,
     Cent_token_count,       /* keep at end */
 } Cent_token_type;
 
@@ -40,6 +44,10 @@ static char* Cent_token_name(Cent_token_type type)
     char *name[] = {
         "none",
         "eof",
+        "string",
+        "integer",
+        "natural",
+        "real",
         "id",
         "element",
         "end",
@@ -53,8 +61,6 @@ static char* Cent_token_name(Cent_token_type type)
         "right-curly-brace",
         "dot",
         "double-colon",
-        "string",
-        "number",
         "true",
         "false",
         "modifier",
@@ -65,6 +71,7 @@ static char* Cent_token_name(Cent_token_type type)
         "asterisk",
         "use",
         "const",
+        "struct",
     };
 
     if (type < Cent_token_count) {
@@ -74,12 +81,6 @@ static char* Cent_token_name(Cent_token_type type)
     fprintf(stderr, "invalid token: %d\n", type);
     exit(1);
 }
-
-typedef enum Cent_number_type {
-    Cent_number_type_none,
-    Cent_number_type_integer,
-    Cent_number_type_real,
-} Cent_number_type;
 
 typedef enum Cent_builtin_type {
     Cent_builtin_type_none,
@@ -91,14 +92,14 @@ typedef enum Cent_builtin_type {
 
 typedef struct Cent_token {
     Cent_token_type type;
-    Cent_number_type number_type;
     Cent_builtin_type builtin_type;
     struct Zinc_string value;
     struct Zinc_location loc;
     union {
-        long long integer;
-        double fp;
-    } number_value;
+        int64_t integer;
+        uint64_t natural;
+        double real;
+    } data;
 } Cent_token;
 
 void Cent_token_init(Cent_token *t);

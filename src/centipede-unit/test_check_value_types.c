@@ -66,7 +66,7 @@ void test_check_value_types_property_error_number()
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: Test--source--Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Test--source--Natural");
     test_parse_teardown(ct);
 }
 
@@ -374,12 +374,14 @@ void test_check_value_types_child_error_number()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_error_list* errors = &ct->primary->errors;
 
     Zinc_expect_has_errors(errors);
-    struct Zinc_error* e =Zinc_expect_source_error(errors, "invalid child type: Float");
-    Zinc_expect_size_t_equal(e->loc.line, 8, "line e");
-    Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
+    Zinc_error* e = Zinc_expect_source_error(errors, "invalid child type: Real");
+    if (e) {
+        Zinc_expect_size_t_equal(e->loc.line, 8, "line e");
+        Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
+    }
 
     test_parse_teardown(ct);
 }
@@ -553,7 +555,7 @@ void test_check_value_types_property_error_not_enum()
     struct Zinc_error_list* errors = &ct->primary->errors;
 
     Zinc_expect_has_errors(errors);
-    struct Zinc_error* e = Zinc_expect_source_error(errors, "value is not an enum value: Integer");
+    struct Zinc_error* e = Zinc_expect_source_error(errors, "value is not an enum value: Natural");
     Zinc_assert_ptr(e, "ptr e");
     Zinc_expect_size_t_equal(e->loc.line, 10, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 10, "col e");
@@ -647,7 +649,7 @@ void test_check_value_types_not_nested()
 
     Zinc_expect_has_errors(errors);
 
-    Zinc_expect_source_error(errors, "invalid property type: Bar--a--Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Bar--a--Natural");
 
     test_parse_teardown(ct);
 }
@@ -674,7 +676,7 @@ void test_check_value_types_nested()
 
     Zinc_expect_has_errors(errors);
 
-    Zinc_expect_source_error(errors, "invalid property type: Bar--a--Integer");
+    Zinc_expect_source_error(errors, "invalid property type: Bar--a--Natural");
 
     test_parse_teardown(ct);
 }

@@ -19,7 +19,9 @@ typedef enum Cent_ast_type {
     Cent_ast_type_value_enum,
     Cent_ast_type_method_child_of,
     Cent_ast_type_method_property_of,
-    Cent_ast_type_expr_number,
+    Cent_ast_type_expr_integer,
+    Cent_ast_type_expr_natural,
+    Cent_ast_type_expr_real,
     Cent_ast_type_expr_string,
     Cent_ast_type_expr_boolean,
     Cent_ast_type_expr_object,
@@ -32,6 +34,8 @@ typedef enum Cent_ast_type {
     Cent_ast_type_const,
     Cent_ast_type_pass,
     Cent_ast_type_follow_on,
+    Cent_ast_type_struct,
+    Cent_ast_type_param,
 } Cent_ast_type;
 
 typedef enum Cent_variable_type {
@@ -44,7 +48,6 @@ typedef struct Cent_ast {
     Cent_ast_type type;
     struct Zinc_string text;
     Cent_value_type value_type;
-    Cent_number_type number_type;
     Cent_variable_type variable_type;
     Cent_data data;
     struct Cent_environment* env;

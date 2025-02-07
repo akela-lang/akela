@@ -8,6 +8,7 @@ set(centipede_unit_files
         test_parse_tools.c
         test_build.c
         test_check_value_types.c
+        test_type.c
 )
 
 add_executable(centipede-unit ${centipede_unit_files})

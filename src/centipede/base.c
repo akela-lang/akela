@@ -11,8 +11,23 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
 
     Cent_element_create(&element);
     Zinc_string_add_str(&element->name, "Integer");
-    element->type = Cent_value_type_number;
-    element->number_type = Cent_number_type_integer;
+    element->type = Cent_value_type_integer;
+    Cent_symbol_create(&sym);
+    Cent_symbol_set_type(sym, Cent_symbol_type_element);
+    sym->data.element = element;
+    Zinc_hash_map_string_add(&env->symbols, &element->name, sym);
+
+    Cent_element_create(&element);
+    Zinc_string_add_str(&element->name, "Natural");
+    element->type = Cent_value_type_natural;
+    Cent_symbol_create(&sym);
+    Cent_symbol_set_type(sym, Cent_symbol_type_element);
+    sym->data.element = element;
+    Zinc_hash_map_string_add(&env->symbols, &element->name, sym);
+
+    Cent_element_create(&element);
+    Zinc_string_add_str(&element->name, "Real");
+    element->type = Cent_value_type_real;
     Cent_symbol_create(&sym);
     Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;
@@ -21,15 +36,6 @@ Cent_environment* Cent_base_create(Cent_parse_data* pd)
     Cent_element_create(&element);
     Zinc_string_add_str(&element->name, "Any");
     element->type = Cent_value_type_any;
-    Cent_symbol_create(&sym);
-    Cent_symbol_set_type(sym, Cent_symbol_type_element);
-    sym->data.element = element;
-    Zinc_hash_map_string_add(&env->symbols, &element->name, sym);
-
-    Cent_element_create(&element);
-    Zinc_string_add_str(&element->name, "Float");
-    element->type = Cent_value_type_number;
-    element->number_type = Cent_number_type_real;
     Cent_symbol_create(&sym);
     Cent_symbol_set_type(sym, Cent_symbol_type_element);
     sym->data.element = element;

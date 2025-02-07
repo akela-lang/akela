@@ -16,7 +16,7 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t);
 void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t);
 void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t);
 bool Cent_is_number(char c[4], int num);
-void Cent_lex_number(Cent_lex_data* ld, Cent_token* t);
+void Cent_lex_integer(Cent_lex_data* ld, Cent_token* t);
 void Cent_lex_modifier(Cent_lex_data* ld, Cent_token* t);
 
 Cent_token* lex(Cent_lex_data* ld)
@@ -41,16 +41,15 @@ Cent_token* lex(Cent_lex_data* ld)
         }
     }
 
-    if (t->type == Cent_token_number) {
-        if (t->number_type == Cent_number_type_integer) {
-            Zinc_string_finish(&t->value);
-            t->number_value.integer = strtoll(t->value.buf, NULL, 10);
-        } else if (t->number_type == Cent_number_type_real) {
-            Zinc_string_finish(&t->value);
-            t->number_value.fp = strtod(t->value.buf, NULL);
-        } else {
-            assert(false && "not possible");
-        }
+    if (t->type == Cent_token_integer) {
+        Zinc_string_finish(&t->value);
+        t->data.integer = strtoll(t->value.buf, NULL, 10);
+    } else if (t->type == Cent_token_natural) {
+        Zinc_string_finish(&t->value);
+        t->data.natural = strtoull(t->value.buf, NULL, 10);
+    } else if (t->type == Cent_token_real) {
+        Zinc_string_finish(&t->value);
+        t->data.real = strtod(t->value.buf, NULL);
     }
 
     return t;
@@ -202,10 +201,10 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
             }
 
             if (Cent_is_number(c, num)) {
-                t->type = Cent_token_number;
+                t->type = Cent_token_integer;
                 t->loc = loc;
                 Zinc_string_add(&t->value, c, num);
-                Cent_lex_number(ld, t);
+                Cent_lex_integer(ld, t);
                 return;
             }
 
@@ -461,10 +460,8 @@ bool Cent_is_number(char c[4], int num)
     return false;
 }
 
-void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
+void Cent_lex_integer(Cent_lex_data* ld, Cent_token* t)
 {
-    t->number_type = Cent_number_type_integer;
-
     char c[4];
     int num;
     struct Zinc_location loc;
@@ -480,6 +477,12 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
 
     char first = t->value.buf[0];
     num = ZINC_NUM_BYTES(first);
+
+    if (first == '-') {
+        t->type = Cent_token_integer;
+    } else {
+        t->type = Cent_token_natural;
+    }
 
     if (num == 1 && first == '.') {
         Zinc_error_list_set(ld->errors, &first_loc, "number starts with period");
@@ -552,7 +555,7 @@ void Cent_lex_number(Cent_lex_data* ld, Cent_token* t)
 
 void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
 {
-    t->number_type = Cent_number_type_real;
+    t->type = Cent_token_real;
 
     char c[4];
     int num;
@@ -596,7 +599,7 @@ void Cent_lex_number_fraction(Cent_lex_data* ld, Cent_token* t)
 
 void Cent_lex_number_exponent(Cent_lex_data* ld, Cent_token* t)
 {
-    t->number_type = Cent_number_type_real;
+    t->type = Cent_token_real;
 
     char c[4];
     int num;

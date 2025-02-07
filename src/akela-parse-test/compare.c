@@ -384,8 +384,7 @@ void Apt_compare_type_def(Apt_test_data* data, Ake_type_def* td, Cent_value* val
 
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
-        assert(bit_count_value->type == Cent_value_type_number);
-        assert(bit_count_value->number_type == Cent_number_type_integer);
+        assert(bit_count_value->type == Cent_value_type_natural);
         if (td->bit_count != bit_count_value->data.integer) {
             Zinc_string message;
             Zinc_string_init(&message);

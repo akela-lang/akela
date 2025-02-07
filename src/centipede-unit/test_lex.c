@@ -489,10 +489,9 @@ void test_lex_top_level_assign()
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 5.4");
-    Zinc_expect_int_equal(t->type, Cent_token_number, "type 5.4");
+    Zinc_expect_int_equal(t->type, Cent_token_natural, "type 5.4");
     Zinc_expect_string(&t->value, "32", "value 5.4");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_integer, "number type 5.4");
-    Zinc_expect_long_long_equal(t->number_value.integer, 32, "integer 5.4");
+    Zinc_expect_int64_t_equal(t->data.natural, 32, "integer 5.4");
     Cent_token_destroy(t);
     free(t);
 
@@ -875,9 +874,8 @@ void test_lex_semicolon()
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
-    Zinc_expect_int_equal(t->type, Cent_token_number, "type 1.1");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.1");
-    Zinc_expect_long_long_equal(t->number_value.integer, 1, "integer 1.1");
+    Zinc_expect_int_equal(t->type, Cent_token_natural, "type 1.1");
+    Zinc_expect_uint64_t_equal(t->data.natural, 1, "natural 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -889,9 +887,8 @@ void test_lex_semicolon()
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.3");
-    Zinc_expect_int_equal(t->type, Cent_token_number, "type 1.3");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.3");
-    Zinc_expect_long_long_equal(t->number_value.integer, 2, "integer 1.3");
+    Zinc_expect_int_equal(t->type, Cent_token_natural, "type 1.3");
+    Zinc_expect_uint64_t_equal(t->data.natural, 2, "integer 1.3");
     Cent_token_destroy(t);
     free(t);
 
@@ -903,9 +900,8 @@ void test_lex_semicolon()
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.5");
-    Zinc_expect_int_equal(t->type, Cent_token_number, "type 1.5");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.5");
-    Zinc_expect_long_long_equal(t->number_value.integer, 3, "integer 1.5");
+    Zinc_expect_int_equal(t->type, Cent_token_natural, "type 1.5");
+    Zinc_expect_uint64_t_equal(t->data.natural, 3, "integer 1.5");
     Cent_token_destroy(t);
     free(t);
 
@@ -953,9 +949,7 @@ void test_lex_number_integer()
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
-    Zinc_expect_int_equal(t->type, Cent_token_number, "type 1.1");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_integer, "number type 1.1");
-    Zinc_expect_long_long_equal(t->number_value.integer, 2918, "integer 1.1");
+    Zinc_expect_uint64_t_equal(t->data.integer, 2918, "integer 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -979,9 +973,8 @@ void test_lex_number_fraction()
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
-    Zinc_expect_int_equal(t->type, Cent_token_number, "type 1.1");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_real, "number type 1.1");
-    Zinc_expect_double_equal(t->number_value.fp, 5.123, "integer 1.1");
+    Zinc_expect_int_equal(t->type, Cent_token_real, "type 1.1");
+    Zinc_expect_double_equal(t->data.real, 5.123, "real 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -1007,9 +1000,8 @@ void test_lex_number_exponent()
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
-    Zinc_expect_int_equal(t->type, Cent_token_number, "type 1.1");
-    Zinc_expect_int_equal(t->number_type, Cent_number_type_real, "number type 1.1");
-    Zinc_expect_double_equal(t->number_value.fp, 5.123e3, "integer 1.1");
+    Zinc_expect_int_equal(t->type, Cent_token_real, "type 1.1");
+    Zinc_expect_double_equal(t->data.real, 5.123e3, "integer 1.1");
     Cent_token_destroy(t);
     free(t);
 

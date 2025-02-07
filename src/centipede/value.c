@@ -10,7 +10,6 @@ void Cent_value_init(Cent_value *value)
 {
     Zinc_string_init(&value->name);
     value->type = Cent_value_type_none;
-    value->number_type = Cent_number_type_none;
     value->has_error = false;
     value->next = NULL;
     value->prev = NULL;

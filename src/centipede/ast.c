@@ -8,7 +8,6 @@ void Cent_ast_init(Cent_ast *ast)
 {
     ast->type = Cent_ast_type_none;
     ast->value_type = Cent_value_type_none;
-    ast->number_type = Cent_number_type_none;
     ast->variable_type = Cent_variable_type_none,
     Zinc_string_init(&ast->text);
     ast->env = NULL;

@@ -7,7 +7,9 @@
 
 typedef enum Cent_value_type {
     Cent_value_type_none,
-    Cent_value_type_number,
+    Cent_value_type_integer,
+    Cent_value_type_natural,
+    Cent_value_type_real,
     Cent_value_type_string,
     Cent_value_type_boolean,
     Cent_value_type_list,
@@ -19,8 +21,9 @@ typedef enum Cent_value_type {
 
 typedef union Cent_data
 {
-    long long integer;
-    double fp;
+    int64_t integer;
+    uint64_t natural;
+    double real;
     Zinc_string string;
     bool boolean;
     struct {
@@ -45,7 +48,6 @@ typedef union Cent_data
 typedef struct Cent_value {
     struct Zinc_string name;
     Cent_value_type type;
-    Cent_number_type number_type;
     bool has_error;
     Cent_data data;
     struct Cent_value* next;

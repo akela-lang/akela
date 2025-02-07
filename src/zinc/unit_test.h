@@ -6,6 +6,7 @@
 #include "string_list.h"
 #include "vector.h"
 #include "String_slice.h"
+#include <stdint.h>
 
 #define TEST_NAME_SIZE 100
 
@@ -60,5 +61,7 @@ ZINC_API void Zinc_expect_buffer_list_count(Zinc_string_list* bl, size_t count, 
 ZINC_API void Zinc_expect_buffer_list_item(Zinc_string_list* bl, size_t index, char* text, char* message);
 ZINC_API void Zinc_expect_string_slice(Zinc_string_slice* sl, Zinc_string* bf, char* message);
 ZINC_API void Zinc_expect_string_slice_str(Zinc_string_slice* sl, char* expected, char* message);
+ZINC_API void Zinc_expect_int64_t_equal(int64_t a, int64_t b, const char* message);
+ZINC_API void Zinc_expect_uint64_t_equal(uint64_t a, uint64_t b, const char* message);
 
 #endif

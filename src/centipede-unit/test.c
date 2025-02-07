@@ -5,6 +5,7 @@
 #include "test_parse.h"
 #include "test_build.h"
 #include "test_check_value_types.h"
+#include "test_type.h"
 
 int main()
 {
@@ -14,6 +15,7 @@ int main()
     test_parse();
     test_build();
     test_check_value_types();
+    test_type();
     Zinc_print_results();
     return 0;
 }
