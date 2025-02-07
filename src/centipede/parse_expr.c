@@ -81,10 +81,16 @@ Cent_ast* Cent_parse_namespace(Cent_parse_data* pd)
     if (!n) {
         if (a) {
             n = a;
-            if (n->type == Cent_ast_type_id) {
-                n->type = Cent_ast_type_expr_variable;
-            }
         }
+    }
+
+    Cent_lookahead(pd);
+    if (pd->lookahead->type == Cent_token_left_curly_brace) {
+        n = Cent_parse_object(pd, n); 
+    }
+
+    if (n->type == Cent_ast_type_id) {
+        n->type = Cent_ast_type_expr_variable;
     }
 
     if (!n->has_error) {
@@ -260,12 +266,6 @@ Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd)
     /* test case: test_parse_value_error_expected_id */
 
     Cent_lookahead(pd);
-
-    if (pd->lookahead->type == Cent_token_left_curly_brace) {
-        Cent_parse_object_finish(pd, id, n);
-        return n;
-    }
-
     if (pd->lookahead->type == Cent_token_left_paren) {
         Cent_parse_expr_builtin_function(pd, id, n);
         return n;

@@ -10,6 +10,7 @@ Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd);
 Cent_ast* Cent_parse_property(Cent_parse_data* pd);
 void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n);
 Cent_ast* Cent_parse_object_level(Cent_parse_data* pd, size_t level);
+void Cent_parse_object_finish(Cent_parse_data* pd, Cent_token* id, Cent_ast* n);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Cent_parse_object_finish(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
@@ -17,6 +18,7 @@ void Cent_parse_object_finish(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
     n->type = Cent_ast_type_expr_object;
 
     Zinc_string_copy(&id->value, &n->text);
+
     Cent_token_destroy(id);
     free(id);
 
@@ -51,7 +53,64 @@ void Cent_parse_object_finish(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
     Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
     Cent_token_destroy(rcb);
     free(rcb);
-    /* test case: test_parse_value_error_object_expected_rcb */
+}
+
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Cent_ast* Cent_parse_object(Cent_parse_data* pd, Cent_ast* ns)
+{
+    Cent_ast* n = NULL;
+    Cent_ast_create(&n);
+    n->type = Cent_ast_type_expr_object;
+    n->loc = ns->loc;
+
+    if (ns->type == Cent_ast_type_namespace) {
+        Cent_ast* id = Cent_ast_get(ns, 0);
+        assert(id);
+        Cent_ast* variant = Cent_ast_get(ns, 1);
+        assert(variant);
+
+        Zinc_string_copy(&id->text, &n->text);
+    } else if (ns->type == Cent_ast_type_id) {
+        Zinc_string_copy(&ns->text, &n->text);
+    }
+
+    Cent_ast_destroy(ns);
+    free(ns);
+
+    Cent_token* lcb = NULL;
+    if (!Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n)) {
+        assert(false && "not possible");
+    }
+    Cent_token_destroy(lcb);
+    free(lcb);
+
+    Cent_environment* env = NULL;
+    Cent_environment_create(&env);
+    env->prev = pd->top;
+    pd->top = env;
+    n->env = env;
+
+    Cent_ast* a = Cent_parse_object_stmt(pd);
+    if (a) {
+        Cent_ast_add(n, a);
+    }
+
+    while (Cent_parse_sep(pd, n)) {
+        Cent_ast* b = Cent_parse_object_stmt(pd);
+        if (b) {
+            Cent_ast_add(n, b);
+        }
+    }
+
+    pd->top = env->prev;
+
+    Cent_token* rcb = NULL;
+    Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
+    Cent_token_destroy(rcb);
+    free(rcb);
+
+    return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

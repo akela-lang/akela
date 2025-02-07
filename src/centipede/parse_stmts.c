@@ -101,6 +101,7 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
     Cent_token_destroy(e);
     free(e);
 
+    // name
     Cent_token* id = NULL;
     Cent_match(pd, Cent_token_id, "expected id", &id, n);
     /* test case: test_parse_element_error_expected_id */
@@ -109,6 +110,27 @@ Cent_ast* Cent_parse_element_type(Cent_parse_data* pd)
         Zinc_string_copy(&id->value, &n->text);
         Cent_token_destroy(id);
         free(id);
+    }
+
+    // tag
+    Cent_lookahead(pd);
+    if (pd->lookahead->type == Cent_token_left_paren) {
+        Cent_token* lp = NULL;
+        if (!Cent_match(pd, Cent_token_left_paren, "expected left parenthesis", &lp, n)) {
+            assert(false && "not possible");
+        }
+        Cent_token_destroy(lp);
+        free(lp);
+
+        Cent_token* id2 = NULL;
+        Cent_match(pd, Cent_token_id, "expected id", &id2, n);
+        Cent_token_destroy(id2);
+        free(id2);
+
+        Cent_token* rp = NULL;
+        Cent_match(pd, Cent_token_right_paren, "expected right parenthesis", &rp, n);
+        Cent_token_destroy(rp);
+        free(rp);
     }
 
     Cent_token* lcb = NULL;

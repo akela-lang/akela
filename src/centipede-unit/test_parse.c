@@ -1738,6 +1738,35 @@ void test_parse_follow_on_error_follow_on_increased_level_greater_than_one2()
     test_parse_teardown(ct);
 }
 
+void test_parse_element_tagged()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+        "element Vehicle(VehicleType) {\n"
+        "}\n"
+        "enum Vehicle_type {\n"
+        "    Car\n"
+        "    Truck\n"
+        "    Van\n"
+        "    Bike\n"
+        "}\n"
+        "Vehicle::Car {}\n"
+        "Vehicle::Bike {}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_expect_no_errors(errors);
+
+    /* root */
+    Cent_ast* root = ct->primary->pr.root;
+    Zinc_assert_ptr(root, "ptr root");
+    Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type root");
+
+    test_parse_teardown(ct);
+}
+
 void test_parse()
 {
     test_parse_element();
@@ -1799,4 +1828,6 @@ void test_parse()
     test_parse_follow_on_error_follow_on_is_to_non_object();
     test_parse_follow_on_error_follow_on_increased_level_greater_than_one();
     test_parse_follow_on_error_follow_on_increased_level_greater_than_one2();
+
+    test_parse_element_tagged();
 }
