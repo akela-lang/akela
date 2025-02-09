@@ -1,10 +1,12 @@
+set(PROJECT_VERSION 0.0.0)
+
 target_include_directories(akela PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<INSTALL_INTERFACE:include>
 )
 
 ## akela
-install(TARGETS akela zinc
+install(TARGETS akela
         EXPORT akela-targets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
@@ -20,6 +22,46 @@ install(EXPORT akela-targets
 
 export(EXPORT akela-targets
         FILE "${CMAKE_BINARY_DIR}/akela-akela-targets.cmake"
+        NAMESPACE akela::
+)
+
+## cobble
+install(TARGETS cobble
+        EXPORT cobble-targets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include
+)
+
+install(EXPORT cobble-targets
+        FILE akela-cobble-targets.cmake
+        NAMESPACE akela::
+        DESTINATION lib/cmake/akela
+)
+
+export(EXPORT cobble-targets
+        FILE "${CMAKE_BINARY_DIR}/akela-cobble-targets.cmake"
+        NAMESPACE akela::
+)
+
+## json
+install(TARGETS json
+        EXPORT json-targets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include
+)
+
+install(EXPORT json-targets
+        FILE akela-json-targets.cmake
+        NAMESPACE akela::
+        DESTINATION lib/cmake/akela
+)
+
+export(EXPORT json-targets
+        FILE "${CMAKE_BINARY_DIR}/akela-json-targets.cmake"
         NAMESPACE akela::
 )
 

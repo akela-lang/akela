@@ -128,6 +128,4 @@ add_subdirectory(src/centipede-unit)
 add_subdirectory(src/worm)
 add_subdirectory(src/worm-unit)
 
-include(package/all.cmake)
 include(package/akela.cmake)
-#include(package/zinc.cmake)

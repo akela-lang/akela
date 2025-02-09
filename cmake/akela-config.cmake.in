@@ -1,6 +1,6 @@
 @PACKAGE_INIT@
 
-set(AKELA_AVAILABLE_COMPONENTS akela zinc)
+set(AKELA_AVAILABLE_COMPONENTS zinc json cobble akela)
 
 # make sure that components are in a curtain order
 foreach(comp IN LISTS AKELA_AVAILABLE_COMPONENTS)
