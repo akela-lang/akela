@@ -1,0 +1,20 @@
+@PACKAGE_INIT@
+
+set(AKELA_AVAILABLE_COMPONENTS akela zinc)
+include(CMakeFindDependencyMacro)
+foreach(comp IN LISTS akela_FIND_COMPONENTS)
+    if(comp IN_LIST AKELA_AVAILABLE_COMPONENTS)
+        set("akela_${comp}_FOUND" True)
+        message(STATUS "found: ${comp}")
+    else()
+        set("akela_${comp}_FOUND" False)
+        set(akela_NOT_FOUND_MESSAGE "Requested component '${comp}' is not available in akela")
+    endif()
+
+    include("${CMAKE_CURRENT_LIST_DIR}/akela-${comp}-targets.cmake")
+    list(APPEND AKELA_LIB "akela::${comp}")
+endforeach()
+
+message("AKELA_LIB: ${AKELA_LIB}")
+set(AKELA_INCLUDE_DIRS @CMAKE_SOURCE_DIR@/src)
+check_required_components(akela)

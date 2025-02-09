@@ -93,7 +93,6 @@ set(STD_DIR ${CMAKE_SOURCE_DIR}/std)
 set(AKELA_MATH ${STD_DIR}/math.ake)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 configure_file(${AKELA_MATH} ${CMAKE_BINARY_DIR}/bin COPYONLY)
-
 include_directories(src)
 
 add_subdirectory(src/zinc)
@@ -128,3 +127,7 @@ add_subdirectory(src/centipede-unit)
 
 add_subdirectory(src/worm)
 add_subdirectory(src/worm-unit)
+
+include(package/all.cmake)
+include(package/akela.cmake)
+#include(package/zinc.cmake)
