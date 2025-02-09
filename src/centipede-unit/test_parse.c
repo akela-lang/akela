@@ -1764,6 +1764,16 @@ void test_parse_element_tagged()
     Zinc_assert_ptr(root, "ptr root");
     Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type root");
 
+    /* element type */
+    Cent_ast* element = Cent_ast_get(root, 0);
+    Zinc_assert_ptr(element, "ptr element");
+    Zinc_expect_int_equal(element->type, Cent_ast_type_element_type, "type element");
+    Zinc_expect_string(&element->text, "Vehicle", "text element");
+
+    /* enum type */
+    /* object car */
+    /* object bike */
+
     test_parse_teardown(ct);
 }
 

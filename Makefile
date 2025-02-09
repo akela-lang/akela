@@ -1,6 +1,6 @@
 # default targets
-default:
-	cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
+all:
+	cmake -B cmake-build-debug -DLLVM_SEARCH=../llvm-project/build-release -DCMAKE_BUILD_TYPE=Debug -G Ninja
 	ninja -C cmake-build-debug
 unit:
 	cmake-build-debug/bin/zinc-unit
@@ -11,14 +11,14 @@ unit:
 	cmake-build-debug/bin/worm-unit
 	cmake-build-debug/bin/json-unit
 	cmake-build-debug/bin/coverage-unit
+	cmake-build-debug/bin/akela-llvm-unit
 test:
 	cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
-
-# all targets including those that require LLVM
-all:
-	cmake -B cmake-build-debug -DLLVM_SEARCH=../llvm-project/build-release -DCMAKE_BUILD_TYPE=Debug -G Ninja
+	cmake-build-debug/bin/akela-run-test src/akela-run-test/test-cases
+part:
+	cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
 	ninja -C cmake-build-debug
-unit-all:
+unit-part:
 	cmake-build-debug/bin/zinc-unit
 	cmake-build-debug/bin/akela-unit
 	cmake-build-debug/bin/dataframe-unit
@@ -27,7 +27,5 @@ unit-all:
 	cmake-build-debug/bin/worm-unit
 	cmake-build-debug/bin/json-unit
 	cmake-build-debug/bin/coverage-unit
-	cmake-build-debug/bin/akela-llvm-unit
-test-all:
+test-part:
 	cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
-	cmake-build-debug/bin/akela-run-test src/akela-run-test/test-cases
