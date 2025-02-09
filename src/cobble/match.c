@@ -483,12 +483,12 @@ void Cob_child_finish_repeat(Cob_stack_node* sn, Cob_task* parent, Cob_task* chi
         if (repeat_node->num_value == parent->count) {
             parent->matched = true;
             parent->status = Cob_task_status_finished;
+            Cob_child_finish_dispatch(sn, parent->parent, parent);
         }
     } else {
         parent->status = Cob_task_status_finished;
+        Cob_child_finish_dispatch(sn, parent->parent, parent);
     }
-
-    Cob_child_finish_dispatch(sn, parent->parent, parent);
 }
 
 void Cob_run_repeat_range(Cob_stack_node* sn)

@@ -1,10 +1,5 @@
 set(PROJECT_VERSION 0.0.0)
 
-target_include_directories(akela PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-        $<INSTALL_INTERFACE:include>
-)
-
 ## akela
 install(TARGETS akela
         EXPORT akela-targets
