@@ -1,11 +1,30 @@
 @PACKAGE_INIT@
 
 set(AKELA_AVAILABLE_COMPONENTS akela zinc)
+
+# make sure that components are in a curtain order
+foreach(comp IN LISTS AKELA_AVAILABLE_COMPONENTS)
+    if (comp IN_LIST akela_FIND_COMPONENTS)
+        list(APPEND TEMP_COMP ${comp})
+    endif()
+endforeach()
+
+foreach(comp IN LISTS akela_FIND_COMPONENTS)
+    if(NOT comp IN_LIST TEMP_COMP)
+        list(APPEND TEMP_COMP ${comp})
+    endif()
+endforeach()
+
+set(akela_FIND_COMPONENTS)
+foreach(comp IN LISTS TEMP_COMP)
+    list(APPEND akela_FIND_COMPONENTS ${comp})
+endforeach()
+
 include(CMakeFindDependencyMacro)
 foreach(comp IN LISTS akela_FIND_COMPONENTS)
     if(comp IN_LIST AKELA_AVAILABLE_COMPONENTS)
         set("akela_${comp}_FOUND" True)
-        message(STATUS "found: ${comp}")
+        message(STATUS "component found: ${comp}")
     else()
         set("akela_${comp}_FOUND" False)
         set(akela_NOT_FOUND_MESSAGE "Requested component '${comp}' is not available in akela")
@@ -15,6 +34,5 @@ foreach(comp IN LISTS akela_FIND_COMPONENTS)
     list(APPEND AKELA_LIB "akela::${comp}")
 endforeach()
 
-message("AKELA_LIB: ${AKELA_LIB}")
 set(AKELA_INCLUDE_DIRS @CMAKE_SOURCE_DIR@/src)
 check_required_components(akela)
