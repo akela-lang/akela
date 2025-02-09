@@ -1,5 +1,25 @@
 set(PROJECT_VERSION 0.0.0)
 
+## akela-llvm
+install(TARGETS akela-llvm
+        EXPORT akela-llvm-targets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include
+)
+
+install(EXPORT akela-llvm-targets
+        FILE akela-akela-llvm-targets.cmake
+        NAMESPACE akela::
+        DESTINATION lib/cmake/akela
+)
+
+export(EXPORT akela-llvm-targets
+        FILE "${CMAKE_BINARY_DIR}/akela-akela-llvm-targets.cmake"
+        NAMESPACE akela::
+)
+
 ## akela
 install(TARGETS akela
         EXPORT akela-targets
