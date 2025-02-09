@@ -40,3 +40,22 @@ bool Json_match(Json_parse_data* pd, Json_token_type type, Json_token** t, Json_
 
     return false;
 }
+
+void Json_result_init(Json_result* res)
+{
+    res->el = NULL;
+    res->root = NULL;
+}
+
+void Json_result_create(Json_result** res)
+{
+    Zinc_malloc_safe((void**)res, sizeof(Json_result));
+    Json_result_init(*res);
+}
+
+void Json_result_destroy(Json_result* res)
+{
+    Zinc_error_list_destroy(res->el);
+    free(res->el);
+    Json_dom_destroy(res->root);
+}

@@ -1,7 +1,7 @@
-# default targets
-all:
-	cmake -B cmake-build-debug -DLLVM_SEARCH=../llvm-project/build-release -DCMAKE_BUILD_TYPE=Debug -G Ninja
+build:
 	ninja -C cmake-build-debug
+config:
+	cmake -B cmake-build-debug -DLLVM_SEARCH=../llvm-project/build-release -DCMAKE_BUILD_TYPE=Debug -G Ninja
 unit:
 	cmake-build-debug/bin/zinc-unit
 	cmake-build-debug/bin/akela-unit

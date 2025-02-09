@@ -3,7 +3,10 @@
 #include "parse_tools.h"
 #include <assert.h>
 #include "zinc/hash_map_string.h"
+#include <string.h>
+#include "zinc/input_unicode_string.h"
 
+Json_result Json_parse(Json_parse_data* pd);
 Json_dom* Json_parse_value(Json_parse_data* pd);
 Json_dom* Json_parse_string(Json_parse_data* pd);
 Json_dom* Json_parse_number(Json_parse_data* pd);
@@ -14,7 +17,34 @@ Json_dom* Json_parse_null(Json_parse_data* pd);
 Json_dom* Json_parse_object(Json_parse_data* pd);
 void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent);
 
-Json_dom* Json_parse(Json_parse_data* pd)
+Json_result Json_parse_str(char* s)
+{
+    size_t len = strlen(s);
+
+    Zinc_error_list* el = NULL;
+    Zinc_error_list_create(&el);
+
+    Zinc_vector v;
+    Zinc_vector_init(&v, sizeof(char));
+    Zinc_vector_add(&v, s, len);
+
+    Zinc_input_unicode_string input;
+    Zinc_input_unicode_string_init(&input, &v);
+
+    Json_lex_data ld;
+    Json_lex_data_init(&ld, el, &input, input.input_vtable);
+
+    Json_parse_data pd;
+    Json_parse_data_init(&pd, el, &ld);
+
+    Json_result res = Json_parse(&pd);
+
+    Zinc_vector_destroy(&v);
+
+    return res;
+}
+
+Json_result Json_parse(Json_parse_data* pd)
 {
     Json_dom* root = Json_parse_value(pd);
     Json_get_lookahead(pd);
@@ -30,7 +60,12 @@ Json_dom* Json_parse(Json_parse_data* pd)
     free(pd->lookahead);
     pd->lookahead = NULL;
 
-    return root;
+    Json_result res = {
+        .el = pd->el,
+        .root = root,
+    };
+
+    return res;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

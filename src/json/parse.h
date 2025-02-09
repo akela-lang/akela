@@ -4,6 +4,7 @@
 #include "dom.h"
 #include "parse_tools.h"
 
-Json_dom* Json_parse(Json_parse_data* pd);
+Json_result Json_parse_str(char* s);
+Json_result Json_parse(Json_parse_data* pd);
 
 #endif
