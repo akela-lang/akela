@@ -1,13 +1,6 @@
 @PACKAGE_INIT@
 
-set(LLVM_SEARCH @LLVM_SEARCH@)
-if(DEFINED LLVM_SEARCH)
-    message("LLVM enabled")
-    set(AKELA_AVAILABLE_COMPONENTS zinc json cobble akela akela-llvm)
-else()
-    message("LLVM disabled")
-    set(AKELA_AVAILABLE_COMPONENTS zinc json cobble akela)
-endif()
+set(AKELA_AVAILABLE_COMPONENTS @AKELA_AVAILABLE_COMPONENTS@)
 
 # make sure that components are in a curtain order
 foreach(comp IN LISTS AKELA_AVAILABLE_COMPONENTS)

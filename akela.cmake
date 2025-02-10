@@ -1,104 +1,31 @@
 set(PROJECT_VERSION 0.0.0)
 
-## akela-llvm
-install(TARGETS akela-llvm
-        EXPORT akela-llvm-targets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include
-)
+if(DEFINED LLVM_SEARCH)
+    set(AKELA_AVAILABLE_COMPONENTS zinc json cobble centipede coverage dataframe akela akela-llvm)
+else()
+    set(AKELA_AVAILABLE_COMPONENTS zinc json cobble centipede coverage dataframe akela)
+endif()
 
-install(EXPORT akela-llvm-targets
-        FILE akela-akela-llvm-targets.cmake
-        NAMESPACE akela::
-        DESTINATION lib/cmake/akela
-)
+foreach(comp IN LISTS AKELA_AVAILABLE_COMPONENTS)
+    install(TARGETS ${comp}
+            EXPORT ${comp}-targets
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib
+            RUNTIME DESTINATION bin
+            INCLUDES DESTINATION include
+    )
 
-export(EXPORT akela-llvm-targets
-        FILE "${CMAKE_BINARY_DIR}/akela-akela-llvm-targets.cmake"
-        NAMESPACE akela::
-)
+    install(EXPORT ${comp}-targets
+            FILE akela-${comp}-targets.cmake
+            NAMESPACE akela::
+            DESTINATION lib/cmake/akela
+    )
 
-## akela
-install(TARGETS akela
-        EXPORT akela-targets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include
-)
-
-install(EXPORT akela-targets
-        FILE akela-akela-targets.cmake
-        NAMESPACE akela::
-        DESTINATION lib/cmake/akela
-)
-
-export(EXPORT akela-targets
-        FILE "${CMAKE_BINARY_DIR}/akela-akela-targets.cmake"
-        NAMESPACE akela::
-)
-
-## cobble
-install(TARGETS cobble
-        EXPORT cobble-targets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include
-)
-
-install(EXPORT cobble-targets
-        FILE akela-cobble-targets.cmake
-        NAMESPACE akela::
-        DESTINATION lib/cmake/akela
-)
-
-export(EXPORT cobble-targets
-        FILE "${CMAKE_BINARY_DIR}/akela-cobble-targets.cmake"
-        NAMESPACE akela::
-)
-
-## json
-install(TARGETS json
-        EXPORT json-targets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include
-)
-
-install(EXPORT json-targets
-        FILE akela-json-targets.cmake
-        NAMESPACE akela::
-        DESTINATION lib/cmake/akela
-)
-
-export(EXPORT json-targets
-        FILE "${CMAKE_BINARY_DIR}/akela-json-targets.cmake"
-        NAMESPACE akela::
-)
-
-## zinc
-install(TARGETS zinc
-        EXPORT zinc-targets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include
-)
-
-export(EXPORT zinc-targets
-        FILE "${CMAKE_BINARY_DIR}/akela-zinc-targets.cmake"
-        NAMESPACE akela::
-)
-
-install(EXPORT zinc-targets
-        FILE akela-zinc-targets.cmake
-        NAMESPACE akela::
-        DESTINATION lib/cmake/akela
-)
+    export(EXPORT ${comp}-targets
+            FILE "${CMAKE_BINARY_DIR}/akela-${comp}-targets.cmake"
+            NAMESPACE akela::
+    )
+endforeach ()
 
 ## config
 include(CMakePackageConfigHelpers)
