@@ -19,6 +19,7 @@ extern Code_gen_vtable Akela_llvm_vtable;
 extern "C" {
 #endif
 
+void Akela_llvm_cg_init(Akela_llvm_cg* cg, Zinc_error_list* el, Zinc_string_list* extern_list);
 void Akela_llvm_cg_create(Akela_llvm_cg** cg, Zinc_error_list* el, Zinc_string_list* extern_list);
 void Akela_llvm_cg_destroy(Akela_llvm_cg* cg);
 
