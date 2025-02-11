@@ -190,3 +190,91 @@ void Cent_update_enum_value(
         n->has_error = true;
     }
 }
+
+void Cent_parse_transform_variant_set(Cent_parse_data* pd, Cent_parse_result* pr, Cent_ast* n)
+{
+    if (n->has_error) {
+        return;
+    }
+
+    Cent_ast* object = n->parent;
+    if (object->has_error) {
+        return;
+    }
+
+    // get the enum
+    Cent_environment* top = Cent_get_environment(n);
+    Cent_symbol* sym = Cent_environment_get(top, &object->text);
+    assert(sym->type == Cent_symbol_type_element);
+    Cent_element_type* et = sym->data.element;
+    assert(et);
+    Cent_enum_type* en = et->tag;
+    assert(en);
+
+    // validate enum value
+    Cent_enum_value* val = en->head;
+    while (val) {
+       if (Zinc_string_compare(&val->display, &n->text)) {
+            break;
+       }
+        val = val->next;
+    }
+
+    if (!val) {
+        Zinc_error_list_set(pr->errors,
+                &n->loc,
+                "invalid element tag: %bf::%bf",
+                &object->text,
+                &n->text);
+        n->has_error = true;
+        object->has_error = true;
+        return;
+    }
+
+    // create property
+    Cent_ast* prop = NULL;
+    Cent_ast_create(&prop);
+    prop->type = Cent_ast_type_prop_set;
+
+    Cent_ast* name = NULL;
+    Cent_ast_create(&name);
+    name->type = Cent_ast_type_id;
+    Zinc_string_add_str(&name->text, "@tag");
+    Cent_ast_add(prop, name);
+
+    Cent_ast* ns = NULL;
+    Cent_ast_create(&ns);
+    ns->type = Cent_ast_type_namespace;
+
+    Cent_ast* id1 = NULL;
+    Cent_ast_create(&id1);
+    id1->type = Cent_ast_type_id;
+    Zinc_string_add_string(&id1->text, &en->name);
+    Cent_ast_add(ns, id1);
+
+
+    Cent_ast* id2 = NULL;
+    Cent_ast_create(&id2);
+    id2->type = Cent_ast_type_id;
+    Zinc_string_add_string(&id2->text, &n->text);
+    Cent_ast_add(ns, id2);
+
+    Cent_ast_add(prop, ns);
+
+    Cent_ast_add(object, prop);
+
+    // check namespace
+    Zinc_priority_task* task = NULL;
+    Zinc_priority_task_create(&task);
+    task->priority = Cent_task_type_check_namespace;
+    task->data = ns;
+    Zinc_priority_queue_add(&pd->pq, task);
+
+    // update namespace
+    Zinc_priority_task* task2 = NULL;
+    Zinc_priority_task_create(&task2);
+    task2->priority = Cent_task_type_update_namespace;
+    task2->data = ns;
+    Zinc_priority_queue_add(&pd->pq, task2);
+ 
+}

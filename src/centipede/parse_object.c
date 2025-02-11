@@ -71,6 +71,18 @@ Cent_ast* Cent_parse_object(Cent_parse_data* pd, Cent_ast* ns)
         assert(variant);
 
         Zinc_string_copy(&id->text, &n->text);
+
+        Cent_ast* vset = NULL;
+        Cent_ast_create(&vset);
+        vset->type = Cent_ast_type_variant_set;
+        Zinc_string_add_string(&vset->text, &variant->text);
+        Cent_ast_add(n, vset);
+
+        Zinc_priority_task* task = NULL;
+        Zinc_priority_task_create(&task);
+        task->priority = Cent_task_type_transform_variant_set;
+        task->data = vset;
+        Zinc_priority_queue_add(&pd->pq, task);
     } else if (ns->type == Cent_ast_type_id) {
         Zinc_string_copy(&ns->text, &n->text);
     }

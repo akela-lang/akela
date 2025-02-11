@@ -129,6 +129,8 @@ void Cent_parse_process_tasks(Cent_parse_data* pd, Cent_parse_result* pr)
             Cent_update_element_type(pr, task->data);
         } else if (task->priority == Cent_task_type_update_enum_type) {
             Cent_update_enum(pr, task->data);
+        } else if (task->priority == Cent_task_type_transform_variant_set) {
+            Cent_parse_transform_variant_set(pd, pr, task->data);
         } else if (task->priority == Cent_task_type_check_namespace) {
             Cent_check_namespace(pr, task->data);
         } else if (task->priority == Cent_task_type_check_variable) {
