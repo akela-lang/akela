@@ -10,6 +10,7 @@ typedef enum Cent_task_type {
     Cent_task_type_none,
     Cent_task_type_update_element_type,
     Cent_task_type_update_enum_type,
+    Cent_task_type_transform_variant_set,
     Cent_task_type_check_namespace,
     Cent_task_type_check_variable,
     Cent_task_type_update_namespace,

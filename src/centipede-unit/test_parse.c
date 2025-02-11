@@ -1771,8 +1771,76 @@ void test_parse_element_tagged()
     Zinc_expect_string(&element->text, "Vehicle", "text element");
 
     /* enum type */
+    Cent_ast* enum_ = Cent_ast_get(root, 1);
+    Zinc_assert_ptr(enum_, "ptr enum_");
+    Zinc_expect_int_equal(enum_->type, Cent_ast_type_enum_type, "type enum_");
+    Zinc_expect_string(&enum_->text, "Vehicle_type", "text enum_");
+
+    /* Car */
+    Cent_ast* item0 = Cent_ast_get(enum_, 0);
+    Zinc_assert_ptr(item0, "ptr item0");
+    Zinc_expect_int_equal(item0->type, Cent_ast_type_id, "type item0");
+    Zinc_expect_string(&item0->text, "Car", "text item0");
+
+    /* Truck */
+    Cent_ast* item1 = Cent_ast_get(enum_, 1);
+    Zinc_assert_ptr(item1, "ptr item1");
+    Zinc_expect_int_equal(item1->type, Cent_ast_type_id, "type item1");
+    Zinc_expect_string(&item1->text, "Truck", "text item1");
+    
+    /* Van */
+    Cent_ast* item2 = Cent_ast_get(enum_, 2);
+    Zinc_assert_ptr(item2, "ptr item2");
+    Zinc_expect_int_equal(item2->type, Cent_ast_type_id, "type item2");
+    Zinc_expect_string(&item2->text, "Van", "text item2");
+
+    /* Bike */
+    Cent_ast* item3 = Cent_ast_get(enum_, 3);
+    Zinc_assert_ptr(item3, "ptr item3");
+    Zinc_expect_int_equal(item3->type, Cent_ast_type_id, "type item3");
+    Zinc_expect_string(&item3->text, "Bike", "text item3");
+
     /* object car */
-    /* object bike */
+    Cent_ast* car = Cent_ast_get(root, 2);
+    Zinc_assert_ptr(car, "ptr car");
+    Zinc_expect_int_equal(car->type, Cent_ast_type_expr_object, "type car");
+    Zinc_expect_string(&car->text, "Vehicle", "text car");
+
+    /* car variant set */
+    Cent_ast* car_var_set = Cent_ast_get(car, 0);
+    Zinc_assert_ptr(car_var_set, "ptr car_var_set");
+    Zinc_expect_int_equal(car_var_set->type, Cent_ast_type_variant_set, "type car_var_set");
+
+    /* car @tag */
+    Cent_ast* car_tag = Cent_ast_get(car, 1);
+    Zinc_assert_ptr(car_tag, "ptr car_tag");
+    Zinc_expect_int_equal(car_tag->type, Cent_ast_type_prop_set, "type car_tag");
+    
+    /* car @tag name */
+    Cent_ast* car_tag_name = Cent_ast_get(car_tag, 0);
+    Zinc_assert_ptr(car_tag_name, "ptr car_tag_name");
+    Zinc_expect_int_equal(car_tag_name->type, Cent_ast_type_id, "type, car_tag_name");
+    Zinc_expect_string(&car_tag_name->text, "@tag", "text car_tag_name");
+
+    /* car @tag namespace */
+    Cent_ast* car_tag_ns = Cent_ast_get(car_tag, 1);
+    Zinc_assert_ptr(car_tag_ns, "ptr car_tag_ns");
+    Zinc_expect_int_equal(car_tag_ns->type, Cent_ast_type_namespace, "type, car_tag_ns");
+    Zinc_expect_int_equal(car_tag_ns->value_type, Cent_value_type_enum, "value_type car_tag_ns");
+    Zinc_expect_size_t_equal(car_tag_ns->data.enumeration.number, 0, "enumeration number car_tag_ns");
+
+    /* car @tag namespace id1 */
+    Cent_ast* car_tag_ns_id1 = Cent_ast_get(car_tag_ns, 0);
+    Zinc_assert_ptr(car_tag_ns_id1, "ptr car_tag_ns_id1");
+    Zinc_expect_int_equal(car_tag_ns_id1->type, Cent_ast_type_id, "type car_tag_ns_id1");
+    Zinc_expect_string(&car_tag_ns_id1->text, "Vehicle_type", "text car_tag_ns_id1");
+
+    /* car @tag namespace id2 */
+    Cent_ast* car_tag_ns_id2 = Cent_ast_get(car_tag_ns, 1);
+    Zinc_assert_ptr(car_tag_ns_id2, "ptr car_tag_ns_id2");
+    Zinc_expect_int_equal(car_tag_ns_id2->type, Cent_ast_type_id, "type car_tag_ns_id2");
+    Zinc_expect_string(&car_tag_ns_id2->text, "Car", "text car_tag_ns_id2");
+
 
     test_parse_teardown(ct);
 }
