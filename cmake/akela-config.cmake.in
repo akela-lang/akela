@@ -37,4 +37,6 @@ endforeach()
 list(REVERSE AKELA_LIBS)
 
 set(AKELA_INCLUDE_DIRS @CMAKE_SOURCE_DIR@/src)
+message("AKELA_INCLUDE_DIRS defined")
+message("AKELA_LIBS defined")
 check_required_components(akela)
