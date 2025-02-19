@@ -1,28 +1,28 @@
 #include "comp_table.h"
 #include "zinc/memory.h"
 #include <assert.h>
+#include "base.h"
 
 void Cent_comp_table_init(
     Cent_comp_table* ct,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable,
-    Cent_environment* base)
+    Cent_module_vtable* module_finder_vtable)
 {
     ct->primary = NULL;
     Zinc_hash_map_string_init(&ct->ht, 32);
     ct->module_finder_obj = module_finder_obj;
     ct->module_finder_vtable = module_finder_vtable;
-    ct->base = base;
+    ct->base = Cent_base_create();
+
 }
 
 void Cent_comp_table_create(
     Cent_comp_table** ct,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable,
-    Cent_environment* base)
+    Cent_module_vtable* module_finder_vtable)
 {
     Zinc_malloc_safe((void**)ct, sizeof(Cent_comp_table));
-    Cent_comp_table_init(*ct, module_finder_obj, module_finder_vtable, base);
+    Cent_comp_table_init(*ct, module_finder_obj, module_finder_vtable);
 }
 
 void Cent_comp_table_destroy(Cent_comp_table* table)

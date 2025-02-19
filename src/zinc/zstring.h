@@ -27,6 +27,7 @@ ZINC_API void Zinc_string_free(Zinc_string* bf);
 ZINC_API void Zinc_string_add_char(Zinc_string* bf, char c);
 ZINC_API void Zinc_string_add_str(Zinc_string* bf, const char* str);
 ZINC_API void Zinc_string_finish(Zinc_string* bf);
+ZINC_API char* Zinc_string_c_str(Zinc_string* bf);
 ZINC_API void Zinc_string_reset(Zinc_string* bf);
 ZINC_API void Zinc_string_clear(Zinc_string* bf);
 ZINC_API void Zinc_string_copy(Zinc_string* src, Zinc_string* dest);

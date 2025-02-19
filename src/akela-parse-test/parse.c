@@ -101,13 +101,11 @@ void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_n
     Cent_module_file* mf = NULL;
     Cent_module_file_create(&mf, dir_path);
 
-    Cent_environment* base = Cent_base_create();
-
     Cent_comp_table* ct = NULL;
-    Cent_comp_table_create(&ct, mf, mf->vtable, base);
+    Cent_comp_table_create(&ct, mf, mf->vtable);
 
     Cent_comp_unit* cu = NULL;
-    Cent_comp_unit_create(&cu, input, input->input_vtable, slice, mf, mf->vtable, base);
+    Cent_comp_unit_create(&cu, input, input->input_vtable, slice, mf, mf->vtable, ct->base);
     cu->pd.cu = cu;
     cu->pd.ct = ct;
 

@@ -94,6 +94,13 @@ void Zinc_string_finish(struct Zinc_string* bf)
     bf->size--;
 }
 
+char* Zinc_string_c_str(Zinc_string* bf)
+{
+    Zinc_string_add_char(bf, '\0');
+    bf->size--;
+    return bf->buf;
+}
+
 void Zinc_string_reset(struct Zinc_string* bf)
 {
     if (bf != NULL) {

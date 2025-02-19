@@ -18,9 +18,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     Cent_module_string* ms = NULL;
     Cent_module_string_create(&ms);
 
-    Cent_environment* base = Cent_base_create();
-
-    Cent_comp_table_create(ct, ms, ms->vtable, base);
+    Cent_comp_table_create(ct, ms, ms->vtable);
 
     Zinc_string_slice file_name;
     file_name.p = "**string**";
@@ -46,7 +44,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
         file_name,
         ms,
         ms->vtable,
-        base);
+        (*ct)->base);
     cu->ct = *ct;
     cu->pd.ct = *ct;
     (*ct)->primary = cu;
