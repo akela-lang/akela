@@ -23,7 +23,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     Zinc_string_slice file_name;
     file_name.p = "**string**";
     file_name.size = strlen(file_name.p);
-    struct Zinc_string name;
+    Zinc_string name;
     Zinc_string_init(&name);
     Zinc_string_add(&name, file_name.p, file_name.size);
     Zinc_string_finish(&name);
@@ -59,20 +59,15 @@ void test_parse_teardown_input(Cent_comp_unit* cu)
     free(input);
 }
 
-void test_parse_teardown_module(Cent_comp_table* ct)
-{
-    Cent_module_string* ms = ct->module_finder_obj;
-    Cent_module_string_destroy(ms);
-    free(ms);
-}
-
 void test_parse_teardown(Cent_comp_table* ct)
 {
     Cent_value_destroy_setup();
 
     Cent_comp_table_map(ct, test_parse_teardown_input);
     Cent_comp_table_destroy(ct);
-    test_parse_teardown_module(ct);
+    Cent_module_string* ms = ct->module_finder_obj;
+    Cent_module_string_destroy(ms);
+    free(ms);
     free(ct);
 
     Cent_value_destroy_teardown();
