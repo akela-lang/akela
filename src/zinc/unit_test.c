@@ -103,9 +103,15 @@ void Zinc_error_triggered()
 
 void Zinc_print_results()
 {
-    double test_case_percent = (double)(tr.test_case_count - tr.test_case_error_count) / (double)tr.test_case_count * 100.0;
-    double check_percent = (double)(tr.check_count - tr.check_error_count) / (double)tr.check_count * 100.0;
-    fprintf(stdout, "test cases passed: %.0lf%% (%d/%d)\n", test_case_percent, tr.test_case_count - tr.test_case_error_count, tr.test_case_count);
+    double test_case_percent = 100.0;
+    double check_percent = 100.0;
+	if (tr.test_case_count > 0) {
+		test_case_percent = (double)(tr.test_case_count - tr.test_case_error_count) / (double)tr.test_case_count * 100.0;
+	}
+	if (tr.check_count > 0) {
+		check_percent = (double)(tr.check_count - tr.check_error_count) / (double)tr.check_count * 100.0;
+	}
+	fprintf(stdout, "test cases passed: %.0lf%% (%d/%d)\n", test_case_percent, tr.test_case_count - tr.test_case_error_count, tr.test_case_count);
     fprintf(stdout, "checks passed    : %.0lf%% (%d/%d)\n\n", check_percent, tr.check_count - tr.check_error_count, tr.check_count);
 
     if (tr.test_case_error_count || tr.check_error_count) {
