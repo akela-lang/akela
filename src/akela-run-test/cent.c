@@ -7,7 +7,7 @@ Run_cent_data* Run_get_cent(Zinc_string* dir_path, Zinc_string* file_name, Zinc_
     Cent_module_file_create(&mf, dir_path);
 
     Cent_comp_table* ct = NULL;
-    Cent_comp_table_create(&ct, mf, mf->vtable, Cent_base_create());
+    Cent_comp_table_create(&ct, mf, mf->vtable);
 
     Zinc_vector* v = NULL;
     Zinc_vector_create(&v, sizeof(char));
@@ -23,8 +23,7 @@ Run_cent_data* Run_get_cent(Zinc_string* dir_path, Zinc_string* file_name, Zinc_
         input,
         input->input_vtable,
         file_name_slice,
-        mf,
-        mf->vtable, ct->base);
+        ct->base);
     Cent_comp_table_add_str(ct, "*config*", cu);
     ct->primary = cu;
     cu->ct = ct;

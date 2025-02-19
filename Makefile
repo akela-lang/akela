@@ -1,7 +1,10 @@
-build:
+.PHONY: all config clean unit test part unit-part test-part
+all:
 	ninja -C cmake-build-debug
 config:
 	cmake -B cmake-build-debug -DLLVM_SEARCH=../llvm-project/build-release -DCMAKE_BUILD_TYPE=Debug -G Ninja
+clean:
+	rm -r cmake-build-debug
 unit:
 	cmake-build-debug/bin/zinc-unit
 	cmake-build-debug/bin/akela-unit
