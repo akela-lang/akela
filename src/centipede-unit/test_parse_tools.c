@@ -42,8 +42,6 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
         data.input,
         data.input_vtable,
         file_name,
-        ms,
-        ms->vtable,
         (*ct)->base);
     cu->ct = *ct;
     cu->pd.ct = *ct;

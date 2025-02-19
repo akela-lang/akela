@@ -83,8 +83,6 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct Zinc_strin
         data.input,
         data.input_vtable,
         file_name,
-        ct->module_finder_obj,
-        ct->module_finder_vtable,
         ct->base);
     cu->input = data.input;
     cu->input_vtable = data.input_vtable;

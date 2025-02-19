@@ -11,8 +11,6 @@ void Cent_comp_unit_init(
     void* input,
     Zinc_input_unicode_vtable* input_vtable,
     Zinc_string_slice file_name,
-    void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable,
     Cent_environment* base)
 {
     cu->status = Cent_comp_unit_status_start;
@@ -29,8 +27,6 @@ void Cent_comp_unit_create(
     void* input,
     Zinc_input_unicode_vtable* input_vtable,
     Zinc_string_slice file_name,
-    void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable,
     Cent_environment* base)
 {
     Zinc_malloc_safe((void**)cu, sizeof(Cent_comp_unit));
@@ -39,8 +35,6 @@ void Cent_comp_unit_create(
         input,
         input_vtable,
         file_name,
-        module_finder_obj,
-        module_finder_vtable,
         base);
 }
 
