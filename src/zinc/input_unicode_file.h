@@ -21,6 +21,7 @@ typedef struct {
     Zinc_input_unicode_seek_interface Seek;
     Zinc_input_unicode_get_all_interface GetAll;
     Zinc_input_unicode_get_location_interface GetLocation;
+    Zinc_input_unicode_destroy_interface Destroy;
     Zinc_input_unicode_vtable* input_vtable;
 } Zinc_input_unicode_file;
 
@@ -38,5 +39,6 @@ void Zinc_input_unicode_file_repeat(Zinc_input_unicode_file* data);
 void Zinc_input_unicode_file_seek(Zinc_input_unicode_file* data, Zinc_location* loc);
 void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* data, Zinc_vector** text);
 Zinc_location Zinc_input_unicode_file_get_location(Zinc_input_unicode_file* input);
+void Zinc_input_unicode_file_destroy(Zinc_input_unicode_file* input);
 
 #endif

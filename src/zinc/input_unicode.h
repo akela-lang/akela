@@ -42,7 +42,9 @@ typedef void (*Zinc_input_unicode_get_all_interface)(void*, Zinc_vector**);
 /**
  * Get the current location.
  */
-typedef Zinc_location(*Zinc_input_unicode_get_location_interface)(void*);
+typedef Zinc_location (*Zinc_input_unicode_get_location_interface)(void*);
+
+typedef void (*Zinc_input_unicode_destroy_interface)(void*);
 
 typedef struct {
     u_int8_t loc_offset;
@@ -51,6 +53,7 @@ typedef struct {
     u_int8_t seek_offset;
     u_int8_t get_all_offset;
     u_int8_t get_location_offset;
+    u_int8_t destroy_offset;
 } Zinc_input_unicode_vtable;
 
 Zinc_location* Zinc_input_unicode_location(void* input_obj, Zinc_input_unicode_vtable* input_vtable);
@@ -71,5 +74,6 @@ void Zinc_input_unicode_get_all(void* input_obj,
 Zinc_location Zinc_input_unicode_get_location(
     void* input_obj,
     Zinc_input_unicode_vtable* input_vtable);
+void Zinc_input_unicode_destroy(void* input_obj, Zinc_input_unicode_vtable* input_vtable);
 
 #endif

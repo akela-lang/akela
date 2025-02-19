@@ -6,12 +6,13 @@
 #include <string.h>
 
 Zinc_input_unicode_vtable Zinc_input_unicode_file_vtable = {
-        .loc_offset = offsetof(Zinc_input_unicode_file, loc),
-        .next_offset = offsetof(Zinc_input_unicode_file, Next),
-        .repeat_offset = offsetof(Zinc_input_unicode_file, Repeat),
-        .seek_offset = offsetof(Zinc_input_unicode_file, Seek),
-        .get_all_offset = offsetof(Zinc_input_unicode_file, GetAll),
-        .get_location_offset = offsetof(Zinc_input_unicode_file, GetLocation),
+    .loc_offset = offsetof(Zinc_input_unicode_file, loc),
+    .next_offset = offsetof(Zinc_input_unicode_file, Next),
+    .repeat_offset = offsetof(Zinc_input_unicode_file, Repeat),
+    .seek_offset = offsetof(Zinc_input_unicode_file, Seek),
+    .get_all_offset = offsetof(Zinc_input_unicode_file, GetAll),
+    .get_location_offset = offsetof(Zinc_input_unicode_file, GetLocation),
+    .destroy_offset = offsetof(Zinc_input_unicode_file, Destroy),
 };
 
 void Zinc_input_unicode_file_init(Zinc_input_unicode_file* input, FILE* fp)
@@ -29,6 +30,7 @@ void Zinc_input_unicode_file_init(Zinc_input_unicode_file* input, FILE* fp)
     input->GetAll = (Zinc_input_unicode_get_all_interface) Zinc_input_unicode_file_get_all;
     input->GetLocation =
         (Zinc_input_unicode_get_location_interface) Zinc_input_unicode_file_get_location;
+    input->Destroy = (Zinc_input_unicode_destroy_interface) Zinc_input_unicode_file_destroy;
     input->input_vtable = &Zinc_input_unicode_file_vtable;
 }
 
@@ -165,4 +167,9 @@ void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* input, Zinc_vector
 Zinc_location Zinc_input_unicode_file_get_location(Zinc_input_unicode_file* input)
 {
     return input->loc;
+}
+
+void Zinc_input_unicode_file_destroy(Zinc_input_unicode_file* input)
+{
+    fclose(input->fp);
 }

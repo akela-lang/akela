@@ -51,3 +51,9 @@ Zinc_location Zinc_input_unicode_get_location(
         input_obj + input_vtable->get_location_offset;
     return (*get_location)(input_obj);
 }
+
+void Zinc_input_unicode_destroy(void* input_obj, Zinc_input_unicode_vtable* input_vtable)
+{
+    Zinc_input_unicode_destroy_interface *destroy = input_obj + input_vtable->destroy_offset;
+    (*destroy)(input_obj);
+}

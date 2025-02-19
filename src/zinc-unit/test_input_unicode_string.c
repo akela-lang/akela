@@ -176,9 +176,8 @@ void test_input_unicode_string_next()
 
     Zinc_expect_string(&bf, "hello\nworld", "bf");
 
+    Zinc_input_unicode_destroy(input, input->input_vtable);
     free(input);
-    Zinc_vector_destroy(vector);
-    free(vector);
     Zinc_string_destroy(&bf);
 }
 
@@ -333,9 +332,8 @@ void test_input_unicode_string_next_multibyte()
 
     Zinc_expect_string(&bf, "hello\nαβγ", "bf");
 
+    Zinc_input_unicode_destroy(input, input->input_vtable);
     free(input);
-    Zinc_vector_destroy(vector);
-    free(vector);
     Zinc_string_destroy(&bf);
 }
 
@@ -449,9 +447,8 @@ void test_input_unicode_string_repeat()
 
     Zinc_expect_string(&bf, "hhello", "bf");
 
+    Zinc_input_unicode_destroy(input, input->input_vtable);
     free(input);
-    Zinc_vector_destroy(vector);
-    free(vector);
     Zinc_string_destroy(&bf);
 }
 
@@ -629,9 +626,8 @@ void test_input_unicode_string_seek()
 
     Zinc_expect_string(&bf, "hellohello", "bf");
 
+    Zinc_input_unicode_destroy(input, input->input_vtable);
     free(input);
-    Zinc_vector_destroy(vector);
-    free(vector);
     Zinc_string_destroy(&bf);
 }
 
@@ -651,9 +647,8 @@ void test_input_unicode_string_get_all()
     Zinc_input_unicode_get_all(input, input->input_vtable, &output);
     Zinc_expect_true(Zinc_vector_match(vector, output), "match");
 
+    Zinc_input_unicode_destroy(input, input->input_vtable);
     free(input);
-    Zinc_vector_destroy(vector);
-    free(vector);
 }
 
 void test_input_unicode_string_get_location()
@@ -690,9 +685,8 @@ void test_input_unicode_string_get_location()
     Zinc_expect_size_t_equal(next_loc.line, 1, "1 line");
     Zinc_expect_size_t_equal(next_loc.col, 2, "1 col");
 
+    Zinc_input_unicode_destroy(input, input->input_vtable);
     free(input);
-    Zinc_vector_destroy(vector);
-    free(vector);
 }
 
 void test_input_unicode_string()

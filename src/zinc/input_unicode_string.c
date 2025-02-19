@@ -4,12 +4,13 @@
 #include "utf8.h"
 
 Zinc_input_unicode_vtable Zinc_input_unicode_string_vtable = {
-        .loc_offset = offsetof(Zinc_input_unicode_string, loc),
-        .next_offset = offsetof(Zinc_input_unicode_string, Next),
-        .repeat_offset = offsetof(Zinc_input_unicode_string, Repeat),
-        .seek_offset = offsetof(Zinc_input_unicode_string, Seek),
-        .get_all_offset = offsetof(Zinc_input_unicode_string, GetAll),
-        .get_location_offset = offsetof(Zinc_input_unicode_string, GetLocation),
+    .loc_offset = offsetof(Zinc_input_unicode_string, loc),
+    .next_offset = offsetof(Zinc_input_unicode_string, Next),
+    .repeat_offset = offsetof(Zinc_input_unicode_string, Repeat),
+    .seek_offset = offsetof(Zinc_input_unicode_string, Seek),
+    .get_all_offset = offsetof(Zinc_input_unicode_string, GetAll),
+    .get_location_offset = offsetof(Zinc_input_unicode_string, GetLocation),
+    .destroy_offset = offsetof(Zinc_input_unicode_string, Destroy),
 };
 
 void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Zinc_vector* text)
@@ -25,6 +26,7 @@ void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Zin
     input_string->GetAll = (Zinc_input_unicode_get_all_interface) Zinc_input_unicode_string_get_all;
     input_string->GetLocation =
         (Zinc_input_unicode_get_location_interface) Zinc_input_unicode_string_get_location;
+    input_string->Destroy = (Zinc_input_unicode_destroy_interface) Zinc_input_unicode_string_destroy;
     input_string->input_vtable = &Zinc_input_unicode_string_vtable;
 }
 
@@ -152,4 +154,10 @@ void Zinc_input_unicode_string_get_all(Zinc_input_unicode_string* data, Zinc_vec
 Zinc_location Zinc_input_unicode_string_get_location(Zinc_input_unicode_string* data)
 {
     return data->loc;
+}
+
+void Zinc_input_unicode_string_destroy(Zinc_input_unicode_string* input)
+{
+    Zinc_vector_destroy(input->text);
+    free(input->text);
 }
