@@ -21,6 +21,7 @@ void Cent_comp_unit_init(
     Cent_lex_data_init(&cu->ld, &cu->errors, input, input_vtable);
     Cent_parse_data_init(&cu->pd, &cu->errors, &cu->ld, file_name, base);
     cu->value = NULL;
+    Cent_parse_result_init(&cu->pr, &cu->errors);
 }
 
 void Cent_comp_unit_create(

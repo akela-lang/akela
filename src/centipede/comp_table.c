@@ -3,6 +3,8 @@
 #include <assert.h>
 #include "base.h"
 #include "module_finder_string.h"
+#include "module_finder_file.h"
+#include "zinc/input_unicode_file.h"
 #include <string.h>
 
 void Cent_comp_table_init(
@@ -68,6 +70,43 @@ void Cent_comp_table_create_str(Cent_comp_table** ct, char* s)
 {
     Zinc_malloc_safe((void**)ct, sizeof(Cent_comp_table));
     Cent_comp_table_init_str(*ct, s);
+}
+
+void Cent_comp_table_init_fp(Cent_comp_table* ct, Zinc_string* dir_path, Zinc_string* name, FILE* fp)
+{
+    Cent_module_finder_file* mff = NULL;
+    Cent_module_finder_file_create(&mff, dir_path);
+
+    Cent_comp_table_init(ct, mff, mff->vtable);
+
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
+
+    Zinc_string_slice name_slice;
+    name_slice.p = name->buf;
+    name_slice.size = name->size;
+
+    Cent_comp_unit* cu = NULL;
+    Cent_comp_unit_create(
+        &cu,
+        input,
+        input->input_vtable,
+        name_slice,
+        ct->base);
+    cu->ct = ct;
+    cu->pd.ct = ct;
+    ct->primary = cu;
+    Cent_comp_table_add(ct, name, cu);
+}
+
+void Cent_comp_table_create_fp(
+    Cent_comp_table** ct,
+    Zinc_string* dir_path,
+    Zinc_string* name,
+    FILE* fp)
+{
+    Zinc_malloc_safe((void**)ct, sizeof(Cent_comp_table));
+    Cent_comp_table_init_fp(*ct, dir_path, name, fp);
 }
 
 void Cent_comp_table_add_module_str(Cent_comp_table* ct, char* name, char* s)
