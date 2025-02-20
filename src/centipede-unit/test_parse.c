@@ -918,7 +918,7 @@ void test_parse_include()
         "}\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "types.cent",
+    test_parse_add_comp_unit(ct, "types.cent",
         "enum Grocery_item {\n"
         "    Milk\n"
         "    Cereal\n"
@@ -989,7 +989,7 @@ void test_parse_include_multiple_namespace()
         "}\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "lib/types.cent",
+    test_parse_add_comp_unit(ct, "lib/types.cent",
         "enum Grocery_item {\n"
         "    Milk\n"
         "    Cereal\n"
@@ -1068,7 +1068,7 @@ void test_parse_include_value()
         "data::a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
+    test_parse_add_comp_unit(ct, "data.cent",
         "const a = 12597;\n"
     );
 
@@ -1120,7 +1120,7 @@ void test_parse_include_value_error()
         "data::b\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
+    test_parse_add_comp_unit(ct, "data.cent",
         "const a = 12597;\n"
     );
 
@@ -1143,7 +1143,7 @@ void test_parse_include_glob()
         "a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "data.cent",
+    test_parse_add_comp_unit(ct, "data.cent",
         "const a = 12597;\n"
     );
 
@@ -1165,7 +1165,7 @@ void test_parse_include_error_expected_id()
         "a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "1/2.cent",
+    test_parse_add_comp_unit(ct, "1/2.cent",
         "const a = 12597;\n"
     );
 
@@ -1188,7 +1188,7 @@ void test_parse_namespace_error_expected_id()
         "1::a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.cent",
+    test_parse_add_comp_unit(ct, "lib/data.cent",
         "const a = 12597;\n"
     );
 
@@ -1211,7 +1211,7 @@ void test_parse_namespace_error_expected_id2()
         "data::1\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "lib/data.cent",
+    test_parse_add_comp_unit(ct, "lib/data.cent",
         "const a = 12597;\n"
     );
 
@@ -1297,7 +1297,7 @@ void test_parse_const_error_shadow_module()
         "base\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "base.cent", "");
+    test_parse_add_comp_unit(ct, "base.cent", "");
 
     Cent_comp_unit_parse(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
@@ -1377,31 +1377,6 @@ void test_parse_object_const()
     test_parse_teardown(ct);
 }
 
-void test_parse_module_id_error()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
-        "const math = 1;\n"
-        "use math;\n"
-        "math::Pi\n"
-    );
-
-    test_parse_add_comp_unit(ct->module_finder_obj, "math.cent",
-        "const Pi = 3.14;\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_ast* root = ct->primary->pr.root;
-
-    Zinc_expect_has_errors(errors);
-
-    Zinc_expect_source_error(errors, "module identifier collides with existing identifier: math");
-    test_parse_teardown(ct);
-}
-
 void test_parse_bad_id()
 {
     Zinc_test_name(__func__);
@@ -1418,6 +1393,30 @@ void test_parse_bad_id()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "unknown variable: b");
 
+    test_parse_teardown(ct);
+}
+
+void test_parse_module_id_error()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    test_parse_setup(&ct,
+                     "const math = 1;\n"
+                     "use math;\n"
+                     "math::Pi\n"
+    );
+
+    test_parse_add_comp_unit(ct, "math.cent",
+                             "const Pi = 3.14;\n"
+    );
+
+    Cent_comp_unit_parse(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+
+    Zinc_expect_has_errors(errors);
+
+    Zinc_expect_source_error(errors, "module identifier collides with existing identifier: math");
     test_parse_teardown(ct);
 }
 

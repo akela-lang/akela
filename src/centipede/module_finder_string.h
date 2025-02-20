@@ -11,7 +11,7 @@ typedef struct Cent_module_finder_string {
     Cent_module_finder_vtable* vtable;
 } Cent_module_finder_string;
 
-extern Cent_module_finder_vtable Cent_module_string_vtable;
+extern Cent_module_finder_vtable Cent_module_finder_string_vtable;
 
 void Cent_module_finder_string_init(Cent_module_finder_string* ms);
 void Cent_module_finder_string_create(Cent_module_finder_string** ms);

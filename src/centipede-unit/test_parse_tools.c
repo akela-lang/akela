@@ -8,9 +8,10 @@
 #include <assert.h>
 #include <centipede/base.h>
 
-void test_parse_add_comp_unit(Cent_module_finder_string* ms, char* name, char* s)
+void test_parse_add_comp_unit(Cent_comp_table* ct, char* name, char* s)
 {
-    Cent_module_finder_string_add_module_str_str(ms, name, s);
+    assert(ct->module_finder_vtable == &Cent_module_finder_string_vtable);
+    Cent_module_finder_string_add_module_str_str(ct->module_finder_obj, name, s);
 }
 
 void test_parse_setup(Cent_comp_table** ct, char* s)
@@ -28,7 +29,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     Zinc_string_add(&name, file_name.p, file_name.size);
     Zinc_string_finish(&name);
 
-    test_parse_add_comp_unit(ms, name.buf, s);
+    test_parse_add_comp_unit(*ct, name.buf, s);
     Cent_input_data data = Cent_module_finder_find(
         ms,
         ms->vtable,

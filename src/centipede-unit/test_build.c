@@ -476,7 +476,7 @@ void test_build_namespace_enum()
         "}\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "types.cent",
+    test_parse_add_comp_unit(ct, "types.cent",
         "enum Grocery_item {\n"
         "    Milk\n"
         "    Cereal\n"
@@ -520,7 +520,7 @@ void test_build_namespace_variable()
         "variables::a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "variables.cent",
+    test_parse_add_comp_unit(ct, "variables.cent",
         "const a = 190;\n"
     );
 
@@ -548,7 +548,7 @@ void test_build_namespace_submodules()
         "foo::bar::a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.cent",
+    test_parse_add_comp_unit(ct, "foo/bar.cent",
         "const a = 190;\n"
     );
 
@@ -576,7 +576,7 @@ void test_build_namespace_glob_value()
         "a\n"
     );
 
-    test_parse_add_comp_unit(ct->module_finder_obj, "foo/bar.cent",
+    test_parse_add_comp_unit(ct, "foo/bar.cent",
         "const a = 190;\n"
     );
 
