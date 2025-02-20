@@ -2,6 +2,8 @@
 #include "zinc/memory.h"
 #include <assert.h>
 #include "base.h"
+#include "module_finder_string.h"
+#include <string.h>
 
 void Cent_comp_table_init(
     Cent_comp_table* ct,
@@ -23,6 +25,49 @@ void Cent_comp_table_create(
 {
     Zinc_malloc_safe((void**)ct, sizeof(Cent_comp_table));
     Cent_comp_table_init(*ct, module_finder_obj, module_finder_vtable);
+}
+
+void Cent_comp_table_init_str(Cent_comp_table* ct, char* s)
+{
+    Cent_module_finder_string* ms = NULL;
+    Cent_module_finder_string_create(&ms);
+
+    Cent_comp_table_init(ct, ms, ms->vtable);
+
+    Zinc_string_slice file_name;
+    file_name.p = "**string**";
+    file_name.size = strlen(file_name.p);
+    Zinc_string name;
+    Zinc_string_init(&name);
+    Zinc_string_add(&name, file_name.p, file_name.size);
+    Zinc_string_finish(&name);
+
+    Cent_module_finder_string_add_module_str_str(ct->module_finder_obj, name.buf, s);
+    Cent_input_data data = Cent_module_finder_find(
+        ms,
+        ms->vtable,
+        &name);
+    assert(data.input);
+    assert(data.input_vtable);
+
+    Cent_comp_unit* cu = NULL;
+    Cent_comp_unit_create(
+        &cu,
+        data.input,
+        data.input_vtable,
+        file_name,
+        ct->base);
+    cu->ct = ct;
+    cu->pd.ct = ct;
+    ct->primary = cu;
+    Cent_comp_table_add(ct, &name, cu);
+    Zinc_string_destroy(&name);
+}
+
+void Cent_comp_table_create_str(Cent_comp_table** ct, char* s)
+{
+    Zinc_malloc_safe((void**)ct, sizeof(Cent_comp_table));
+    Cent_comp_table_init_str(*ct, s);
 }
 
 void Cent_comp_table_destroy(Cent_comp_table* table)

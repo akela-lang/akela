@@ -9,7 +9,7 @@ void test_check_value_types_property()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -35,7 +35,8 @@ void test_check_value_types_property()
 
     Zinc_expect_no_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_error_number()
@@ -43,7 +44,7 @@ void test_check_value_types_property_error_number()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -67,7 +68,8 @@ void test_check_value_types_property_error_number()
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_source_error(errors, "invalid property type: Test--source--Natural");
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 
@@ -76,7 +78,7 @@ void test_check_value_types_property_error_string()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -100,7 +102,8 @@ void test_check_value_types_property_error_string()
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_source_error(errors, "invalid property type: Test--source--String");
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_error_boolean()
@@ -108,7 +111,7 @@ void test_check_value_types_property_error_boolean()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -132,7 +135,8 @@ void test_check_value_types_property_error_boolean()
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_source_error(errors, "invalid property type: Test--source--Bool");
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_error_object()
@@ -140,7 +144,7 @@ void test_check_value_types_property_error_object()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -164,7 +168,8 @@ void test_check_value_types_property_error_object()
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_source_error(errors, "invalid property type: Test--source--Foo");
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_variable()
@@ -172,7 +177,7 @@ void test_check_value_types_property_variable()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -197,7 +202,8 @@ void test_check_value_types_property_variable()
     Zinc_expect_no_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_no_errors(errors);
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_error_variable_object()
@@ -205,7 +211,7 @@ void test_check_value_types_property_error_variable_object()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -230,7 +236,8 @@ void test_check_value_types_property_error_variable_object()
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_source_error(errors, "invalid property type: Test--source--Foo");
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_enum()
@@ -238,7 +245,7 @@ void test_check_value_types_property_enum()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Vehicle_type {\n"
         "    Car\n"
         "    Truck\n"
@@ -263,7 +270,8 @@ void test_check_value_types_property_enum()
     Zinc_expect_no_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_enum_error_id1()
@@ -271,7 +279,7 @@ void test_check_value_types_property_enum_error_id1()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Vehicle_type {\n"
         "    Car\n"
         "    Truck\n"
@@ -295,7 +303,8 @@ void test_check_value_types_property_enum_error_id1()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "id is not a variable: Coin_type");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_enum_error_id2()
@@ -303,7 +312,7 @@ void test_check_value_types_property_enum_error_id2()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Vehicle_type {\n"
         "    Car\n"
         "    Truck\n"
@@ -327,7 +336,8 @@ void test_check_value_types_property_enum_error_id2()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "invalid enum id: Pencil");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_child()
@@ -335,7 +345,7 @@ void test_check_value_types_child()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -352,7 +362,8 @@ void test_check_value_types_child()
 
     Zinc_expect_no_errors(errors);
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_child_error_number()
@@ -360,7 +371,7 @@ void test_check_value_types_child_error_number()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -383,7 +394,8 @@ void test_check_value_types_child_error_number()
         Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
     }
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_child_enum()
@@ -391,7 +403,7 @@ void test_check_value_types_child_enum()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Vehicle_type {\n"
         "    Car\n"
         "    Truck\n"
@@ -415,7 +427,8 @@ void test_check_value_types_child_enum()
 
     Zinc_expect_no_errors(errors);
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_child_enum_error_id1_not_found()
@@ -423,7 +436,7 @@ void test_check_value_types_child_enum_error_id1_not_found()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Vehicle_type {\n"
         "    Car\n"
         "    Truck\n"
@@ -451,7 +464,8 @@ void test_check_value_types_child_enum_error_id1_not_found()
     Zinc_expect_size_t_equal(e->loc.line, 14, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_child_enum_error_id1_not_match()
@@ -459,7 +473,7 @@ void test_check_value_types_child_enum_error_id1_not_match()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Vehicle_type {\n"
         "    Car\n"
         "    Truck\n"
@@ -492,7 +506,8 @@ void test_check_value_types_child_enum_error_id1_not_match()
     Zinc_expect_size_t_equal(e->loc.line, 19, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_child_enum_error_id2_not_valid()
@@ -500,7 +515,7 @@ void test_check_value_types_child_enum_error_id2_not_valid()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Vehicle_type {\n"
         "    Car\n"
         "    Truck\n"
@@ -528,7 +543,8 @@ void test_check_value_types_child_enum_error_id2_not_valid()
     Zinc_expect_size_t_equal(e->loc.line, 14, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 19, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_error_not_enum()
@@ -536,7 +552,7 @@ void test_check_value_types_property_error_not_enum()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Bar {\n"
         "    Filler\n"
         "}\n"
@@ -560,7 +576,8 @@ void test_check_value_types_property_error_not_enum()
     Zinc_expect_size_t_equal(e->loc.line, 10, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 10, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_property_enum_error_not_match()
@@ -568,7 +585,7 @@ void test_check_value_types_property_enum_error_not_match()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Apparel {\n"
         "    Shoes\n"
         "}\n"
@@ -595,7 +612,8 @@ void test_check_value_types_property_enum_error_not_match()
     Zinc_expect_size_t_equal(e->loc.line, 13, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 10, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_child_error_no_type()
@@ -603,7 +621,7 @@ void test_check_value_types_child_error_no_type()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Bar {\n"
         "}\n"
         "element Foo {\n"
@@ -626,7 +644,8 @@ void test_check_value_types_child_error_no_type()
     Zinc_expect_size_t_equal(e->loc.line, 9, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_not_nested()
@@ -634,7 +653,7 @@ void test_check_value_types_not_nested()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Bar {\n"
         "    properties {\n"
         "        a: Bool\n"
@@ -651,7 +670,8 @@ void test_check_value_types_not_nested()
 
     Zinc_expect_source_error(errors, "invalid property type: Bar--a--Natural");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_nested()
@@ -659,7 +679,7 @@ void test_check_value_types_nested()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Bar {\n"
         "    properties {\n"
         "        a: Bool\n"
@@ -678,7 +698,8 @@ void test_check_value_types_nested()
 
     Zinc_expect_source_error(errors, "invalid property type: Bar--a--Natural");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_not_attached()
@@ -686,7 +707,7 @@ void test_check_value_types_not_attached()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = Foo {};\n"
     );
 
@@ -698,7 +719,8 @@ void test_check_value_types_not_attached()
 
     Zinc_expect_source_error(errors, "value is not used");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_not_attached_import()
@@ -706,7 +728,7 @@ void test_check_value_types_not_attached_import()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use bar;\n"
     );
     test_parse_add_comp_unit(ct, "bar.cent",
@@ -719,7 +741,8 @@ void test_check_value_types_not_attached_import()
 
     Zinc_expect_no_errors(errors);
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_not_attached_import_glob()
@@ -727,7 +750,7 @@ void test_check_value_types_not_attached_import_glob()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use bar::*;\n"
     );
     test_parse_add_comp_unit(ct, "bar.cent",
@@ -740,7 +763,8 @@ void test_check_value_types_not_attached_import_glob()
 
     Zinc_expect_no_errors(errors);
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_not_attached_not_last()
@@ -748,7 +772,7 @@ void test_check_value_types_not_attached_not_last()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = Foo {};\n"
         "a;\n"
         "Bar {}\n"
@@ -762,7 +786,8 @@ void test_check_value_types_not_attached_not_last()
 
     Zinc_expect_source_error(errors, "value is not used");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_not_attached_not_last2()
@@ -770,7 +795,7 @@ void test_check_value_types_not_attached_not_last2()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Foo {};\n"
         "Bar {};\n"
     );
@@ -783,7 +808,8 @@ void test_check_value_types_not_attached_not_last2()
 
     Zinc_expect_source_error(errors, "value is not used");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types_not_attached_in_object()
@@ -791,7 +817,7 @@ void test_check_value_types_not_attached_in_object()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Bar {\n"
         "    const a = 1\n"
         "}\n"
@@ -805,7 +831,8 @@ void test_check_value_types_not_attached_in_object()
 
     Zinc_expect_source_error(errors, "value is not used");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_check_value_types()

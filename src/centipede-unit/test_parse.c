@@ -14,7 +14,7 @@ void test_parse_element()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test_suite {\n"
         "    properties {\n"
         "        name: String `required`\n"
@@ -110,7 +110,8 @@ void test_parse_element()
     Zinc_expect_int_equal(test->type, Cent_ast_type_id, "type test");
     Zinc_expect_string(&test->text, "Test", "value test");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_enumerate()
@@ -118,7 +119,7 @@ void test_parse_enumerate()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
     "enum Symbol_type {\n"
     "    Variable\n"
     "    Type\n"
@@ -159,7 +160,8 @@ void test_parse_enumerate()
     Zinc_expect_int_equal(value2->type, Cent_ast_type_id, "type value2");
     Zinc_expect_string(&value2->text, "Info", "value value2");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_top_level_assignment()
@@ -167,7 +169,7 @@ void test_parse_top_level_assignment()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Type_def_type {\n"
         "    Integer\n"
         "    Float\n"
@@ -296,7 +298,8 @@ void test_parse_top_level_assignment()
     Zinc_expect_int_equal(is_signed_value->value_type, Cent_value_type_boolean, "value_type is_signed_value");
     Zinc_expect_long_long_equal(is_signed_value->data.boolean, true, "boolean is_signed_value");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_error_unhandled_token()
@@ -304,7 +307,7 @@ void test_parse_error_unhandled_token()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct, "1 }");
+    Cent_comp_table_create_str(&ct, "1 }");
 
     Cent_comp_unit_parse(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
@@ -312,7 +315,8 @@ void test_parse_error_unhandled_token()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "unhandled token: right-curly-brace");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_error_expected_id()
@@ -320,7 +324,7 @@ void test_parse_element_error_expected_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct, "element 1");
+    Cent_comp_table_create_str(&ct, "element 1");
 
     Cent_comp_unit_parse(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
@@ -328,7 +332,8 @@ void test_parse_element_error_expected_id()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_error_expected_left_curly_brace()
@@ -336,7 +341,7 @@ void test_parse_element_error_expected_left_curly_brace()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test\n"
     );
 
@@ -346,7 +351,8 @@ void test_parse_element_error_expected_left_curly_brace()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected left-curly-brace");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_error_name_already_exits()
@@ -354,7 +360,7 @@ void test_parse_element_error_name_already_exits()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test {\n"
         "}\n"
         "element Test {\n"
@@ -367,7 +373,8 @@ void test_parse_element_error_name_already_exits()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "name already exists: Test");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_error_properties_expected_right_curly_brace()
@@ -375,7 +382,7 @@ void test_parse_element_error_properties_expected_right_curly_brace()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test {\n"
         "    properties {\n"
     );
@@ -386,7 +393,8 @@ void test_parse_element_error_properties_expected_right_curly_brace()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected right-curly-brace");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_error_property_expected_colon()
@@ -394,7 +402,7 @@ void test_parse_element_error_property_expected_colon()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test {\n"
         "    properties {\n"
         "        count Integer\n"
@@ -403,12 +411,13 @@ void test_parse_element_error_property_expected_colon()
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_error_list* errors = &ct->primary->errors;
 
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected colon");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_error_property_expected_id()
@@ -416,7 +425,7 @@ void test_parse_element_error_property_expected_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test {\n"
         "    properties {\n"
         "        count:\n"
@@ -430,7 +439,8 @@ void test_parse_element_error_property_expected_id()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_error_children_expected_right_curly_brace()
@@ -438,7 +448,7 @@ void test_parse_element_error_children_expected_right_curly_brace()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test {\n"
         "    children {\n"
     );
@@ -449,7 +459,8 @@ void test_parse_element_error_children_expected_right_curly_brace()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected right-curly-brace");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_enumerate_error_expected_id()
@@ -457,7 +468,7 @@ void test_parse_enumerate_error_expected_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum {\n"
         "}\n"
     );
@@ -468,7 +479,8 @@ void test_parse_enumerate_error_expected_id()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_enumerate_error_expected_right_curly_brace()
@@ -476,7 +488,7 @@ void test_parse_enumerate_error_expected_right_curly_brace()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Ast_type {\n"
     );
 
@@ -486,7 +498,8 @@ void test_parse_enumerate_error_expected_right_curly_brace()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected right-curly-brace");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_value_error_enum_expected_id()
@@ -494,19 +507,20 @@ void test_parse_value_error_enum_expected_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Test_type {\n"
         "}\n"
         "Test_type::1\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_error_list* errors = &ct->primary->errors;
 
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_value_error_object_expected_rcb()
@@ -514,17 +528,18 @@ void test_parse_value_error_object_expected_rcb()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Test {\n"
     );
 
     Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_error_list* errors = &ct->primary->errors;
 
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected right-curly-brace");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_value_error_object_property_expected_id()
@@ -532,7 +547,7 @@ void test_parse_value_error_object_property_expected_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Test {\n"
         "   . = 1\n"
         "}\n"
@@ -544,7 +559,8 @@ void test_parse_value_error_object_property_expected_id()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_value_error_object_property_expected_equal()
@@ -552,7 +568,7 @@ void test_parse_value_error_object_property_expected_equal()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Test {\n"
         "   .a 1\n"
         "}\n"
@@ -564,7 +580,8 @@ void test_parse_value_error_object_property_expected_equal()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected equal");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_property_unknown_type()
@@ -572,7 +589,7 @@ void test_parse_element_property_unknown_type()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test {\n"
         "   properties {\n"
         "        a: Abc\n"
@@ -586,7 +603,8 @@ void test_parse_element_property_unknown_type()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "unknown type: Abc");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_property_type_not_element()
@@ -594,7 +612,7 @@ void test_parse_element_property_type_not_element()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const Abc = 1;\n"
         "element Test {\n"
         "   properties {\n"
@@ -609,7 +627,8 @@ void test_parse_element_property_type_not_element()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "type is not an element or enum type: Abc");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_child_unknown_type()
@@ -617,7 +636,7 @@ void test_parse_element_child_unknown_type()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Test {\n"
         "   children {\n"
         "        Abc\n"
@@ -631,7 +650,8 @@ void test_parse_element_child_unknown_type()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "unknown type: Abc");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_child_type_not_an_element_type()
@@ -639,7 +659,7 @@ void test_parse_element_child_type_not_an_element_type()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const Abc = 1;\n"
         "element Test {\n"
         "   children {\n"
@@ -654,7 +674,8 @@ void test_parse_element_child_type_not_an_element_type()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "type is not an element type: Abc");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_enum_error_duplicate_enum_value()
@@ -662,7 +683,7 @@ void test_parse_enum_error_duplicate_enum_value()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Symbol_type {\n"
         "   Element\n"
         "   Enumerate\n"
@@ -678,7 +699,8 @@ void test_parse_enum_error_duplicate_enum_value()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "duplicate enum value: Symbol_type::Info");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_object_method_call()
@@ -686,7 +708,7 @@ void test_parse_object_method_call()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = Foo {};\n"
         "Bar {\n"
         "    .@child_of(a)\n"
@@ -724,7 +746,8 @@ void test_parse_object_method_call()
     Zinc_expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
     Zinc_expect_string(&value->text, "a", "text id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_object_method_call2()
@@ -732,7 +755,7 @@ void test_parse_object_method_call2()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = Foo {};\n"
         "Bar {\n"
         "    .@property_of(a, \"b\")\n"
@@ -776,7 +799,8 @@ void test_parse_object_method_call2()
     Zinc_expect_int_equal(name->type, Cent_ast_type_expr_string, "type name");
     Zinc_expect_string(&name->data.string, "b", "text name");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_function_call()
@@ -784,7 +808,7 @@ void test_parse_function_call()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Foo {\n"
         "    .b = @file_name()\n"
         "}\n"
@@ -825,7 +849,8 @@ void test_parse_function_call()
         Cent_ast_type_expr_function_file_name,
         "type file_name_call");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_enum_duplicate_id()
@@ -833,7 +858,7 @@ void test_parse_enum_duplicate_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Foo {\n"
         "    One\n"
         "    Two\n"
@@ -851,7 +876,8 @@ void test_parse_enum_duplicate_id()
     Zinc_expect_size_t_equal(e->loc.line, 4, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_enum_error_could_not_find_enum()
@@ -859,7 +885,7 @@ void test_parse_enum_error_could_not_find_enum()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Foo {\n"
         "    One\n"
         "    Two\n"
@@ -877,7 +903,8 @@ void test_parse_enum_error_could_not_find_enum()
     Zinc_expect_size_t_equal(e->loc.line, 6, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 1, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_enum_error_could_not_find_enum_id()
@@ -885,7 +912,7 @@ void test_parse_enum_error_could_not_find_enum_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Foo {\n"
         "    One\n"
         "    Two\n"
@@ -903,7 +930,8 @@ void test_parse_enum_error_could_not_find_enum_id()
     Zinc_expect_size_t_equal(e->loc.line, 6, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 6, "col e");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_include()
@@ -911,7 +939,7 @@ void test_parse_include()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use types;\n"
         "Groceries {\n"
         "    types::Grocery_item::Milk\n"
@@ -974,7 +1002,8 @@ void test_parse_include()
     Zinc_expect_int_equal(milk->type, Cent_ast_type_id, "type milk");
     Zinc_expect_string(&milk->text, "Milk", "text milk");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_include_multiple_namespace()
@@ -982,7 +1011,7 @@ void test_parse_include_multiple_namespace()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use lib::types;\n"
         "Groceries {\n"
         "    lib::types::Grocery_item::Milk\n"
@@ -1055,7 +1084,8 @@ void test_parse_include_multiple_namespace()
     Zinc_expect_int_equal(milk->type, Cent_ast_type_id, "type milk");
     Zinc_expect_string(&milk->text, "Milk", "text milk");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_include_value()
@@ -1063,7 +1093,7 @@ void test_parse_include_value()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use data;\n"
         "data::a\n"
     );
@@ -1107,7 +1137,8 @@ void test_parse_include_value()
     Zinc_expect_int_equal(a->type, Cent_ast_type_id, "type a");
     Zinc_expect_string(&a->text, "a", "text a");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_include_value_error()
@@ -1115,7 +1146,7 @@ void test_parse_include_value_error()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use data;\n"
         "data::b\n"
     );
@@ -1130,7 +1161,8 @@ void test_parse_include_value_error()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "not a valid id: b");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_include_glob()
@@ -1138,7 +1170,7 @@ void test_parse_include_glob()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use data::*;\n"
         "a\n"
     );
@@ -1152,7 +1184,8 @@ void test_parse_include_glob()
 
     Zinc_expect_no_errors(errors);
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_include_error_expected_id()
@@ -1160,7 +1193,7 @@ void test_parse_include_error_expected_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use 1::2;\n"
         "a\n"
     );
@@ -1175,7 +1208,8 @@ void test_parse_include_error_expected_id()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_namespace_error_expected_id()
@@ -1183,7 +1217,7 @@ void test_parse_namespace_error_expected_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use lib::data;\n"
         "1::a\n"
     );
@@ -1198,7 +1232,8 @@ void test_parse_namespace_error_expected_id()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_namespace_error_expected_id2()
@@ -1206,7 +1241,7 @@ void test_parse_namespace_error_expected_id2()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use lib::data;\n"
         "data::1\n"
     );
@@ -1221,7 +1256,8 @@ void test_parse_namespace_error_expected_id2()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "expected id");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_const()
@@ -1229,7 +1265,7 @@ void test_parse_const()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = 45;\n"
         "a\n"
     );
@@ -1262,7 +1298,8 @@ void test_parse_const()
     Zinc_expect_int_equal(variable->type, Cent_ast_type_expr_variable, "type variable");
     Zinc_expect_string(&variable->text, "a", "text variable");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_const_error_shadow_type()
@@ -1270,7 +1307,7 @@ void test_parse_const_error_shadow_type()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Foo {\n"
         "}\n"
         "const Foo = 45;\n"
@@ -1283,7 +1320,8 @@ void test_parse_const_error_shadow_type()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "shadowing of type: Foo");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_const_error_shadow_module()
@@ -1291,7 +1329,7 @@ void test_parse_const_error_shadow_module()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use base;\n"
         "const base = 45;\n"
         "base\n"
@@ -1305,7 +1343,8 @@ void test_parse_const_error_shadow_module()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "shadowing of module: base");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_const_error_shadow_local()
@@ -1313,7 +1352,7 @@ void test_parse_const_error_shadow_local()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = 1;\n"
         "const a = 2;\n"
     );
@@ -1324,7 +1363,8 @@ void test_parse_const_error_shadow_local()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "shadowing of local variable: a");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_object_const()
@@ -1332,7 +1372,7 @@ void test_parse_object_const()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Foo {\n"
         "    const bar = Bar {};\n"
         "    bar\n"
@@ -1374,7 +1414,8 @@ void test_parse_object_const()
     Zinc_expect_int_equal(bar_variable->type, Cent_ast_type_expr_variable, "type bar_variable");
     Zinc_expect_string(&bar_variable->text, "bar", "text bar_variable");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_bad_id()
@@ -1382,7 +1423,7 @@ void test_parse_bad_id()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = 1;\n"
         "b\n"
     );
@@ -1393,7 +1434,8 @@ void test_parse_bad_id()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "unknown variable: b");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_module_id_error()
@@ -1401,7 +1443,7 @@ void test_parse_module_id_error()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
                      "const math = 1;\n"
                      "use math;\n"
                      "math::Pi\n"
@@ -1417,7 +1459,8 @@ void test_parse_module_id_error()
     Zinc_expect_has_errors(errors);
 
     Zinc_expect_source_error(errors, "module identifier collides with existing identifier: math");
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_bad_id_child_of()
@@ -1425,7 +1468,7 @@ void test_parse_bad_id_child_of()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Foo {\n"
         "    const bar = Bar {\n"
         "        .@child_of(x)\n"
@@ -1440,7 +1483,8 @@ void test_parse_bad_id_child_of()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "unknown variable: x");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_bad_id_property_of()
@@ -1448,7 +1492,7 @@ void test_parse_bad_id_property_of()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Foo {\n"
         "    const bar = Bar {\n"
         "        .@property_of(x, \"a\")\n"
@@ -1463,7 +1507,8 @@ void test_parse_bad_id_property_of()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "unknown variable: x");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_follow_on()
@@ -1471,7 +1516,7 @@ void test_parse_follow_on()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Ast {\n"
         "    properties {\n"
         "        type: Ast_type\n"
@@ -1661,7 +1706,8 @@ void test_parse_follow_on()
     Zinc_expect_int_equal(n1_prop1_string->type, Cent_ast_type_expr_string, "type n1_prop1_string");
     Zinc_expect_string(&n1_prop1_string->data.string, "5", "value n1_prop1_string");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_follow_on_error_no_previous_object()
@@ -1669,7 +1715,7 @@ void test_parse_follow_on_error_no_previous_object()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         ".Ast {.type=Ast_type::Add}\n"
     );
     Cent_comp_unit_parse(ct->primary);
@@ -1677,7 +1723,8 @@ void test_parse_follow_on_error_no_previous_object()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "follow-on has no previous object");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_follow_on_error_follow_on_is_to_non_object()
@@ -1685,7 +1732,7 @@ void test_parse_follow_on_error_follow_on_is_to_non_object()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Ast {\n"
         "}\n"
         ".Ast {.type=Ast_type::Add}\n"
@@ -1695,7 +1742,8 @@ void test_parse_follow_on_error_follow_on_is_to_non_object()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "follow-on is to non-object");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_follow_on_error_follow_on_increased_level_greater_than_one()
@@ -1703,7 +1751,7 @@ void test_parse_follow_on_error_follow_on_increased_level_greater_than_one()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Ast {\n"
         "}\n"
         "Ast {}\n"
@@ -1714,7 +1762,8 @@ void test_parse_follow_on_error_follow_on_increased_level_greater_than_one()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "follow-on increased level greater than one");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_follow_on_error_follow_on_increased_level_greater_than_one2()
@@ -1722,7 +1771,7 @@ void test_parse_follow_on_error_follow_on_increased_level_greater_than_one2()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Ast {\n"
         "}\n"
         "Ast{}\n"
@@ -1734,7 +1783,8 @@ void test_parse_follow_on_error_follow_on_increased_level_greater_than_one2()
     Zinc_expect_has_errors(errors);
     Zinc_expect_source_error(errors, "follow-on increased level greater than one");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse_element_tagged()
@@ -1742,7 +1792,7 @@ void test_parse_element_tagged()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Vehicle(Vehicle_type) {\n"
         "}\n"
         "enum Vehicle_type {\n"
@@ -1841,7 +1891,8 @@ void test_parse_element_tagged()
     Zinc_expect_string(&car_tag_ns_id2->text, "Car", "text car_tag_ns_id2");
 
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_parse()

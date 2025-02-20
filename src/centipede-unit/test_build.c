@@ -1,18 +1,15 @@
 #include <zinc/error_unit_test.h>
-
-#include "centipede/build.h"
 #include "zinc/unit_test.h"
 #include "test_parse_tools.h"
 #include "centipede/parse.h"
 #include "centipede/parse_tools.h"
-#include "centipede/check_value_types.h"
 
 void test_build_number_integer()
 {
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct, "241");
+    Cent_comp_table_create_str(&ct, "241");
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
@@ -25,7 +22,8 @@ void test_build_number_integer()
     Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
     Zinc_expect_uint64_t_equal(root->data.natural, 241, "integer root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_number_fp()
@@ -33,7 +31,7 @@ void test_build_number_fp()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct, "1.5");
+    Cent_comp_table_create_str(&ct, "1.5");
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
@@ -46,7 +44,8 @@ void test_build_number_fp()
     Zinc_expect_int_equal(root->type, Cent_value_type_real, "type root");
     Zinc_expect_double_equal(root->data.real, 1.5, "fp root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_string()
@@ -54,7 +53,7 @@ void test_build_string()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct, "\"hello\"");
+    Cent_comp_table_create_str(&ct, "\"hello\"");
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
@@ -67,7 +66,8 @@ void test_build_string()
     Zinc_expect_int_equal(root->type, Cent_value_type_string, "type root");
     Zinc_expect_string(&root->data.string, "hello", "string root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_boolean_true()
@@ -75,7 +75,7 @@ void test_build_boolean_true()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct, "true");
+    Cent_comp_table_create_str(&ct, "true");
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
@@ -88,7 +88,8 @@ void test_build_boolean_true()
     Zinc_expect_int_equal(root->type, Cent_value_type_boolean, "type root");
     Zinc_expect_true(root->data.boolean, "string root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_boolean_false()
@@ -96,7 +97,7 @@ void test_build_boolean_false()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct, "false");
+    Cent_comp_table_create_str(&ct, "false");
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
@@ -109,7 +110,8 @@ void test_build_boolean_false()
     Zinc_expect_int_equal(root->type, Cent_value_type_boolean, "type root");
     Zinc_expect_false(root->data.boolean, "string root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_enum0()
@@ -117,7 +119,7 @@ void test_build_enum0()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Symbol_type {\n"
         "    Variable\n"
         "    Type\n"
@@ -139,7 +141,8 @@ void test_build_enum0()
     Zinc_expect_string(&root->data.enumeration.enum_value->display, "Variable", "id2 root");
     Zinc_expect_size_t_equal(root->data.enumeration.number, 0, "enumeration number root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_enum1()
@@ -147,7 +150,7 @@ void test_build_enum1()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Symbol_type {\n"
         "    Variable\n"
         "    Type\n"
@@ -169,7 +172,8 @@ void test_build_enum1()
     Zinc_expect_string(&root->data.enumeration.enum_value->display, "Type", "id2 root");
     Zinc_expect_size_t_equal(root->data.enumeration.number, 1, "enumeration number root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_enum2()
@@ -177,7 +181,7 @@ void test_build_enum2()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "enum Symbol_type {\n"
         "    Variable\n"
         "    Type\n"
@@ -199,7 +203,8 @@ void test_build_enum2()
     Zinc_expect_string(&root->data.enumeration.enum_value->display, "Info", "id2 root");
     Zinc_expect_size_t_equal(root->data.enumeration.number, 2, "enumeration number root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_assign()
@@ -207,7 +212,7 @@ void test_build_assign()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = 1;\n"
         "a\n"
     );
@@ -233,7 +238,8 @@ void test_build_assign()
     Zinc_expect_int_equal(value->type, Cent_value_type_natural, "type number");
     Zinc_expect_uint64_t_equal(value->data.natural, 1, "integer value");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_object()
@@ -241,7 +247,7 @@ void test_build_object()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Test {}\n"
     );
 
@@ -255,7 +261,8 @@ void test_build_object()
     Zinc_assert_ptr(root, "ptr root");
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_object_prop_set()
@@ -263,7 +270,7 @@ void test_build_object_prop_set()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Test {\n"
         "    .a = 1\n"
         "}\n"
@@ -283,7 +290,8 @@ void test_build_object_prop_set()
     Zinc_expect_int_equal(a->type, Cent_value_type_natural, "type number");
     Zinc_expect_long_long_equal(a->data.natural, 1, "integer value");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_object_assign()
@@ -291,7 +299,7 @@ void test_build_object_assign()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Test {\n"
         "    const count = 20\n"
         "    .count_value = count\n"
@@ -312,7 +320,8 @@ void test_build_object_assign()
     Zinc_expect_int_equal(count_value->type, Cent_value_type_natural, "type number");
     Zinc_expect_long_long_equal(count_value->data.natural, 20, "integer value");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_object_child_of()
@@ -320,7 +329,7 @@ void test_build_object_child_of()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Test {\n"
         "    const foo = Foo {}\n"
         "    const bar = Bar {\n"
@@ -351,7 +360,8 @@ void test_build_object_child_of()
     Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
     Zinc_expect_string(&bar->name, "Bar", "name bar");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_object_property_of()
@@ -359,7 +369,7 @@ void test_build_object_property_of()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Test {\n"
         "    const foo = Foo {}\n"
         "    const bar = Bar {\n"
@@ -390,7 +400,8 @@ void test_build_object_property_of()
     Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
     Zinc_expect_string(&bar->name, "Bar", "name bar");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_object_function_file_name()
@@ -398,7 +409,7 @@ void test_build_object_function_file_name()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "@file_name()\n"
     );
 
@@ -413,7 +424,8 @@ void test_build_object_function_file_name()
     Zinc_expect_int_equal(root->type, Cent_value_type_string, "type root");
     Zinc_expect_string(&root->data.string, "**string**", "string root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_property_set_variable()
@@ -421,7 +433,7 @@ void test_build_property_set_variable()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "element Source {\n"
         "    children {\n"
         "        String\n"
@@ -460,7 +472,8 @@ void test_build_property_set_variable()
     Zinc_expect_string(&line0->name, "String", "name line0");
     Zinc_expect_string(&line0->data.string, "x + 5", "string line0");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_namespace_enum()
@@ -468,7 +481,7 @@ void test_build_namespace_enum()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use types;\n"
         "Groceries {\n"
         "    types::Grocery_item::Milk\n"
@@ -507,7 +520,8 @@ void test_build_namespace_enum()
     Zinc_expect_int_equal(item1->type, Cent_value_type_enum, "type item1");
     Zinc_expect_size_t_equal(item1->data.enumeration.number, 4, "number item1");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_namespace_variable()
@@ -515,7 +529,7 @@ void test_build_namespace_variable()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use variables;\n"
         "variables::a\n"
     );
@@ -535,7 +549,8 @@ void test_build_namespace_variable()
     Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
     Zinc_expect_uint64_t_equal(root->data.natural, 190, "integer root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_namespace_submodules()
@@ -543,7 +558,7 @@ void test_build_namespace_submodules()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use foo::bar;\n"
         "foo::bar::a\n"
     );
@@ -563,7 +578,8 @@ void test_build_namespace_submodules()
     Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
     Zinc_expect_uint64_t_equal(root->data.natural, 190, "integer root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_namespace_glob_value()
@@ -571,7 +587,7 @@ void test_build_namespace_glob_value()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "use foo::bar::*;\n"
         "a\n"
     );
@@ -591,7 +607,8 @@ void test_build_namespace_glob_value()
     Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
     Zinc_expect_uint64_t_equal(root->data.integer, 190, "integer root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_const()
@@ -599,7 +616,7 @@ void test_build_const()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "const a = 245;\n"
         "a\n"
     );
@@ -615,7 +632,8 @@ void test_build_const()
     Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
     Zinc_expect_uint64_t_equal(root->data.natural, 245, "integer root");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_object_const()
@@ -623,7 +641,7 @@ void test_build_object_const()
     Zinc_test_name(__func__);
 
     Cent_comp_table* ct = NULL;
-    test_parse_setup(&ct,
+    Cent_comp_table_create_str(&ct,
         "Foo {\n"
         "    const bar = Bar {}\n"
         "    bar\n"
@@ -645,7 +663,8 @@ void test_build_object_const()
     Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
     Zinc_expect_string(&bar->name, "Bar", "name bar");
 
-    test_parse_teardown(ct);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build()
