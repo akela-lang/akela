@@ -1,8 +1,7 @@
 #include "zinc/unit_test.h"
 #include <zinc/error_unit_test.h>
-#include "test_parse_tools.h"
-#include "centipede/parse.h"
 #include "centipede/build.h"
+#include "centipede/comp_table.h"
 
 void test_check_value_types_property()
 {
@@ -731,7 +730,7 @@ void test_check_value_types_not_attached_import()
     Cent_comp_table_create_str(&ct,
         "use bar;\n"
     );
-    test_parse_add_comp_unit(ct, "bar.cent",
+    Cent_comp_table_add_module_str(ct, "bar.cent",
         "const a = Foo {};\n"
     );
 
@@ -753,7 +752,7 @@ void test_check_value_types_not_attached_import_glob()
     Cent_comp_table_create_str(&ct,
         "use bar::*;\n"
     );
-    test_parse_add_comp_unit(ct, "bar.cent",
+    Cent_comp_table_add_module_str(ct, "bar.cent",
         "const a = Foo {};\n"
     );
 

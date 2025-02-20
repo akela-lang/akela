@@ -70,6 +70,12 @@ void Cent_comp_table_create_str(Cent_comp_table** ct, char* s)
     Cent_comp_table_init_str(*ct, s);
 }
 
+void Cent_comp_table_add_module_str(Cent_comp_table* ct, char* name, char* s)
+{
+    assert(ct->module_finder_vtable == &Cent_module_finder_string_vtable);
+    Cent_module_finder_string_add_module_str_str(ct->module_finder_obj, name, s);
+}
+
 void Cent_comp_table_destroy(Cent_comp_table* table)
 {
     Cent_value_destroy_setup();

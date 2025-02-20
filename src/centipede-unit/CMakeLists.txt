@@ -5,7 +5,6 @@ set(centipede_unit_files
         test_value.c
         test_ast.c
         test_parse.c
-        test_parse_tools.c
         test_build.c
         test_check_value_types.c
         test_type.c

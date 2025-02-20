@@ -1,8 +1,7 @@
 #include <zinc/error_unit_test.h>
 #include "zinc/unit_test.h"
-#include "test_parse_tools.h"
-#include "centipede/parse.h"
 #include "centipede/parse_tools.h"
+#include "centipede/comp_table.h"
 
 void test_build_number_integer()
 {
@@ -489,7 +488,7 @@ void test_build_namespace_enum()
         "}\n"
     );
 
-    test_parse_add_comp_unit(ct, "types.cent",
+    Cent_comp_table_add_module_str(ct, "types.cent",
         "enum Grocery_item {\n"
         "    Milk\n"
         "    Cereal\n"
@@ -534,7 +533,7 @@ void test_build_namespace_variable()
         "variables::a\n"
     );
 
-    test_parse_add_comp_unit(ct, "variables.cent",
+    Cent_comp_table_add_module_str(ct, "variables.cent",
         "const a = 190;\n"
     );
 
@@ -563,7 +562,7 @@ void test_build_namespace_submodules()
         "foo::bar::a\n"
     );
 
-    test_parse_add_comp_unit(ct, "foo/bar.cent",
+    Cent_comp_table_add_module_str(ct, "foo/bar.cent",
         "const a = 190;\n"
     );
 
@@ -592,7 +591,7 @@ void test_build_namespace_glob_value()
         "a\n"
     );
 
-    test_parse_add_comp_unit(ct, "foo/bar.cent",
+    Cent_comp_table_add_module_str(ct, "foo/bar.cent",
         "const a = 190;\n"
     );
 

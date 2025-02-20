@@ -19,7 +19,6 @@
 * string
 
 # Centipede
-* simplify parsing and building
 * variant objects
 * limit lines in lexer for multi-test files
 
