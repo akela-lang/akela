@@ -8,7 +8,7 @@
 #include <centipede/base.h>
 #include <sys/stat.h>
 #include "zinc/input_unicode_file.h"
-#include "centipede/module_file.h"
+#include "centipede/module_finder_file.h"
 #include "centipede/comp_table.h"
 #include "zinc/os_unix.h"
 #include "zinc/spec_error.h"
@@ -98,8 +98,8 @@ void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_n
     slice.p = file_name->buf;
     slice.size = file_name->size;
 
-    Cent_module_file* mf = NULL;
-    Cent_module_file_create(&mf, dir_path);
+    Cent_module_finder_file* mf = NULL;
+    Cent_module_finder_file_create(&mf, dir_path);
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create(&ct, mf, mf->vtable);

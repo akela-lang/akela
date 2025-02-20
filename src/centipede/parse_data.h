@@ -8,7 +8,7 @@
 #include "environment.h"
 #include "ast.h"
 #include "zinc/String_slice.h"
-#include "module.h"
+#include "module_finder.h"
 #include "zinc/priority_queue.h"
 
 typedef struct Cent_parse_data {

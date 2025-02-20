@@ -1,7 +1,7 @@
 #include "data.h"
 #include "zinc/memory.h"
 #include "cobble/compile_data.h"
-#include "centipede/module_file.h"
+#include "centipede/module_finder_file.h"
 
 void Run_config_data_init(Run_cent_data* config_data, Zinc_string* file_name)
 {
@@ -23,7 +23,7 @@ void Run_cent_data_create(Run_cent_data** config_data, Zinc_string* file_name)
 void Run_cent_data_destroy(Run_cent_data* config_data)
 {
     if (config_data) {
-        Cent_module_file_destroy(config_data->mf);
+        Cent_module_finder_file_destroy(config_data->mf);
         free(config_data->mf);
         Cent_comp_table_destroy(config_data->ct);
         free(config_data->ct);

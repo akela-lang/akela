@@ -6,7 +6,7 @@
 void Cent_comp_table_init(
     Cent_comp_table* ct,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable)
+    Cent_module_finder_vtable* module_finder_vtable)
 {
     ct->primary = NULL;
     Zinc_hash_map_string_init(&ct->ht, 32);
@@ -19,7 +19,7 @@ void Cent_comp_table_init(
 void Cent_comp_table_create(
     Cent_comp_table** ct,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable)
+    Cent_module_finder_vtable* module_finder_vtable)
 {
     Zinc_malloc_safe((void**)ct, sizeof(Cent_comp_table));
     Cent_comp_table_init(*ct, module_finder_obj, module_finder_vtable);
@@ -68,7 +68,7 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct Zinc_strin
     Cent_comp_unit* cu = Cent_comp_table_get(ct, name);
     if (cu) return cu;
 
-    Cent_input_data data = Cent_module_find_interface(
+    Cent_input_data data = Cent_module_finder_find(
         ct->module_finder_obj,
         ct->module_finder_vtable, name);
 

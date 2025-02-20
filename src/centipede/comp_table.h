@@ -2,13 +2,13 @@
 #define CENTIPEDE_COMP_TABLE_H
 
 #include "comp_unit.h"
-#include "module.h"
+#include "module_finder.h"
 
 typedef struct Cent_comp_table {
     Cent_comp_unit* primary;
     Zinc_hash_map_string ht;
     void* module_finder_obj;
-    Cent_module_vtable* module_finder_vtable;
+    Cent_module_finder_vtable* module_finder_vtable;
     Cent_environment* base;
 } Cent_comp_table;
 
@@ -17,11 +17,11 @@ typedef void (*Cent_comp_table_func_name)(struct Zinc_string* name, Cent_comp_un
 void Cent_comp_table_init(
     Cent_comp_table* ct,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable);
+    Cent_module_finder_vtable* module_finder_vtable);
 void Cent_comp_table_create(
     Cent_comp_table** ct,
     void* module_finder_obj,
-    Cent_module_vtable* module_finder_vtable);
+    Cent_module_finder_vtable* module_finder_vtable);
 void Cent_comp_table_destroy(Cent_comp_table* table);
 void Cent_comp_table_add(Cent_comp_table* table, struct Zinc_string* name, Cent_comp_unit *unit);
 void Cent_comp_table_add_str(Cent_comp_table* table, char* name, Cent_comp_unit *unit);

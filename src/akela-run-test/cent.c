@@ -3,8 +3,8 @@
 
 Run_cent_data* Run_get_cent(Zinc_string* dir_path, Zinc_string* file_name, Zinc_string* config_string)
 {
-    Cent_module_file* mf = NULL;
-    Cent_module_file_create(&mf, dir_path);
+    Cent_module_finder_file* mf = NULL;
+    Cent_module_finder_file_create(&mf, dir_path);
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create(&ct, mf, mf->vtable);

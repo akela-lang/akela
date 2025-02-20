@@ -18,9 +18,9 @@ set(centipede_files
         build.c
         check_value_types.c
         comp_unit.c
-        module.c
-        module_string.c
-        module_file.c
+        module_finder.c
+        module_finder_string.c
+        module_finder_file.c
         module_data.c
         module_import.c
         parse_const.c

@@ -3,20 +3,20 @@
 #include "zinc/unit_test.h"
 #include "centipede/parse_data.h"
 #include "zinc/input_unicode_string.h"
-#include "centipede/module_string.h"
+#include "centipede/module_finder_string.h"
 #include "centipede/comp_table.h"
 #include <assert.h>
 #include <centipede/base.h>
 
-void test_parse_add_comp_unit(Cent_module_string* ms, char* name, char* s)
+void test_parse_add_comp_unit(Cent_module_finder_string* ms, char* name, char* s)
 {
-    Cent_module_string_add_module_str_str(ms, name, s);
+    Cent_module_finder_string_add_module_str_str(ms, name, s);
 }
 
 void test_parse_setup(Cent_comp_table** ct, char* s)
 {
-    Cent_module_string* ms = NULL;
-    Cent_module_string_create(&ms);
+    Cent_module_finder_string* ms = NULL;
+    Cent_module_finder_string_create(&ms);
 
     Cent_comp_table_create(ct, ms, ms->vtable);
 
@@ -29,7 +29,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     Zinc_string_finish(&name);
 
     test_parse_add_comp_unit(ms, name.buf, s);
-    Cent_input_data data = Cent_module_find_interface(
+    Cent_input_data data = Cent_module_finder_find(
         ms,
         ms->vtable,
         &name);
@@ -53,9 +53,7 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
 void test_parse_teardown_input(Cent_comp_unit* cu)
 {
     Zinc_input_unicode_string* input = cu->input;
-    Zinc_vector* v = input->text;
-    Zinc_vector_destroy(v);
-    free(v);
+    Zinc_input_unicode_destroy(input, input->input_vtable);
     free(input);
 }
 
@@ -63,11 +61,12 @@ void test_parse_teardown(Cent_comp_table* ct)
 {
     Cent_value_destroy_setup();
 
+    Cent_module_finder_destroy(ct->module_finder_obj, ct->module_finder_vtable);
+    free(ct->module_finder_obj);
+
     Cent_comp_table_map(ct, test_parse_teardown_input);
     Cent_comp_table_destroy(ct);
-    Cent_module_string* ms = ct->module_finder_obj;
-    Cent_module_string_destroy(ms);
-    free(ms);
+
     free(ct);
 
     Cent_value_destroy_teardown();

@@ -57,4 +57,3 @@
 # Worm
 
 # Zinc
-* add destroy function to input unicode and find module

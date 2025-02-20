@@ -1,6 +1,6 @@
 #include "parse.h"
 #include "build.h"
-#include "module.h"
+#include "module_finder.h"
 #include "module_data.h"
 #include <assert.h>
 #include "ast.h"

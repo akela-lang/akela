@@ -1,16 +1,16 @@
 #ifndef AKELA_RUN_TEST_DATA_H
 #define AKELA_RUN_TEST_DATA_H
 
-#include <centipede/module.h>
+#include <centipede/module_finder.h>
 
 #include "cobble/compile.h"
 #include "centipede/value.h"
-#include "centipede/module_file.h"
+#include "centipede/module_finder_file.h"
 #include "centipede/comp_table.h"
 #include "zinc/input_unicode_string.h"
 
 typedef struct Run_cent_data {
-    Cent_module_file* mf;
+    Cent_module_finder_file* mf;
     Cent_comp_table* ct;
     Zinc_vector* v;
     Zinc_input_unicode_string* input;
