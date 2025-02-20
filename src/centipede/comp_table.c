@@ -27,10 +27,14 @@ void Cent_comp_table_create(
 
 void Cent_comp_table_destroy(Cent_comp_table* table)
 {
+    Cent_value_destroy_setup();
+    Cent_module_finder_destroy(table->module_finder_obj, table->module_finder_vtable);
+    free(table->module_finder_obj);
     Zinc_hash_map_string_map(&table->ht, (Zinc_hash_map_string_func)Cent_comp_unit_free);
     Zinc_hash_map_string_destroy(&table->ht);
     Cent_environment_destroy(table->base);
     free(table->base);
+    Cent_value_destroy_teardown();
 }
 
 void Cent_comp_table_add(Cent_comp_table* table, struct Zinc_string* name, Cent_comp_unit *unit)

@@ -50,24 +50,8 @@ void test_parse_setup(Cent_comp_table** ct, char* s)
     Zinc_string_destroy(&name);
 }
 
-void test_parse_teardown_input(Cent_comp_unit* cu)
-{
-    Zinc_input_unicode_string* input = cu->input;
-    Zinc_input_unicode_destroy(input, input->input_vtable);
-    free(input);
-}
-
 void test_parse_teardown(Cent_comp_table* ct)
 {
-    Cent_value_destroy_setup();
-
-    Cent_module_finder_destroy(ct->module_finder_obj, ct->module_finder_vtable);
-    free(ct->module_finder_obj);
-
-    Cent_comp_table_map(ct, test_parse_teardown_input);
     Cent_comp_table_destroy(ct);
-
     free(ct);
-
-    Cent_value_destroy_teardown();
 }

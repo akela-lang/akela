@@ -5,6 +5,7 @@
 #include "build.h"
 #include "lex_data.h"
 #include "check_parent.h"
+#include "zinc/input_unicode.h"
 
 void Cent_comp_unit_init(
     Cent_comp_unit *cu,
@@ -48,6 +49,9 @@ void Cent_comp_unit_destroy(Cent_comp_unit* cu)
 
     Zinc_error_list_destroy(&cu->errors);
     Cent_lex_data_destroy(&cu->ld);
+
+    Zinc_input_unicode_destroy(cu->input, cu->input_vtable);
+    free(cu->input);
 }
 
 void Cent_comp_unit_free(Cent_comp_unit* cu)
