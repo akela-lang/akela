@@ -5,8 +5,10 @@
 #include "zinc/hash_map_string.h"
 #include <string.h>
 #include "zinc/input_unicode_string.h"
+#include "zinc/String_slice.h"
 
 Json_result Json_parse(Json_parse_data* pd);
+Json_result Json_parse_slice(Zinc_string_slice slice);
 Json_dom* Json_parse_value(Json_parse_data* pd);
 Json_dom* Json_parse_string(Json_parse_data* pd);
 Json_dom* Json_parse_number(Json_parse_data* pd);
@@ -19,14 +21,17 @@ void Json_parse_object_seq(Json_parse_data* pd, Json_dom* parent);
 
 Json_result Json_parse_str(char* s)
 {
-    size_t len = strlen(s);
+    return Json_parse_slice((Zinc_string_slice){.p=s, .size=strlen(s)});
+}
 
+Json_result Json_parse_slice(Zinc_string_slice slice)
+{
     Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
 
     Zinc_vector v;
     Zinc_vector_init(&v, sizeof(char));
-    Zinc_vector_add(&v, s, len);
+    Zinc_vector_add(&v, slice.p, slice.size);
 
     Zinc_input_unicode_string input;
     Zinc_input_unicode_string_init(&input, &v);
