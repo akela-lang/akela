@@ -188,3 +188,20 @@ void Zinc_datetime_print_tm(struct tm* tm)
     printf("w day: %d\n", tm->tm_wday);
     printf("y day: %d\n", tm->tm_yday);
 }
+
+void Zinc_t_to_ny_tm(time_t t, struct tm* ny_tm)
+{
+    char* current_tz = getenv("TZ");
+    setenv("TZ", "America/New_York", 1);
+    tzset();
+    localtime_r(&t, ny_tm);
+    if (current_tz) {
+        setenv("TZ", current_tz, 1);
+    }
+}
+
+void Zinc_tm_local_minus_year(struct tm* tm)
+{
+    tm->tm_year--;
+    mktime(tm);
+}

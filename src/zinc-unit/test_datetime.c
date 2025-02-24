@@ -58,17 +58,45 @@ void test_datetime_local()
     Zinc_datetime_get_current_t(&t);
     struct tm tm;
     Zinc_datetime_get_local_tm(&t, &tm);
-    struct Zinc_string dt;
+    Zinc_string dt;
     Zinc_string_init(&dt);
     Zinc_datetime_format(&tm, &dt);
     struct tm tm2;
     time_t t2 = Zinc_datetime_to_tm(&dt, &tm2);
-    struct Zinc_string dt2;
+    Zinc_string dt2;
     Zinc_string_init(&dt2);
     Zinc_datetime_format(&tm2, &dt2);
     Zinc_expect_long_equal(t, t2, "t == t2");
     Zinc_string_destroy(&dt);
     Zinc_string_destroy(&dt2);
+}
+
+void test_datetime_current_ny()
+{
+    Zinc_test_name(__func__);
+
+    time_t t;
+    Zinc_datetime_get_current_t(&t);
+    struct tm ny_tm;
+    Zinc_t_to_ny_tm(t, &ny_tm);
+
+    Zinc_string dt;
+    Zinc_string_init(&dt);
+    Zinc_datetime_format(&ny_tm, &dt);
+
+    printf("t: %ld\n", t);
+    printf("ny time: %s\n", Zinc_string_c_str(&dt));
+
+    Zinc_tm_local_minus_year(&ny_tm);
+
+    Zinc_string_clear(&dt);
+    Zinc_datetime_format(&ny_tm, &dt);
+
+    printf("ny time last year: %s\n", Zinc_string_c_str(&dt));
+
+    Zinc_string_destroy(&dt);
+
+    Zinc_expect_true(true, "true");
 }
 
 void test_datetime()
@@ -77,4 +105,5 @@ void test_datetime()
     test_datetime_utc2();
     test_datetime_utc3();
     test_datetime_local();
+    test_datetime_current_ny();
 }

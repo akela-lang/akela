@@ -123,8 +123,20 @@ void Json_dom_add_property(Json_dom* dom, struct Zinc_string* name, Json_dom* va
     Zinc_hash_map_string_add(&dom->value.object, name, value);
 }
 
+void Json_dom_add_property_str(Json_dom* dom, char* name, Json_dom* value)
+{
+    assert(dom->type == Json_dom_type_object);
+    Zinc_hash_map_string_add_str(&dom->value.object, name, value);
+}
+
 Json_dom* Json_dom_get_property(Json_dom* dom, struct Zinc_string* name)
 {
     assert(dom->type == Json_dom_type_object);
     return Zinc_hash_map_string_get(&dom->value.object, name);
+}
+
+Json_dom* Json_dom_get_property_str(Json_dom* dom, char* name)
+{
+    assert(dom->type == Json_dom_type_object);
+    return Zinc_hash_map_string_get_str(&dom->value.object, name);
 }

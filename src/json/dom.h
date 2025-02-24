@@ -49,6 +49,8 @@ void Json_dom_destroy(Json_dom* dom);
 void Json_dom_add_element(Json_dom* p, Json_dom* c);
 Json_dom* Json_dom_get_element(Json_dom* dom, size_t index);
 void Json_dom_add_property(Json_dom* dom, struct Zinc_string* name, Json_dom* value);
+void Json_dom_add_property_str(Json_dom* dom, char* name, Json_dom* value);
 Json_dom* Json_dom_get_property(Json_dom* dom, struct Zinc_string* name);
+Json_dom* Json_dom_get_property_str(Json_dom* dom, char* name);
 
 #endif
