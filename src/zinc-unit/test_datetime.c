@@ -75,26 +75,37 @@ void test_datetime_current_ny()
 {
     Zinc_test_name(__func__);
 
-    time_t t;
-    Zinc_datetime_get_current_t(&t);
+    struct tm local_tm;
     struct tm ny_tm;
-    Zinc_t_to_ny_tm(t, &ny_tm);
+    struct tm gmt_tm;
+    Zinc_string local_dt;
+    Zinc_string ny_dt;
+    Zinc_string gmt_dt;
 
-    Zinc_string dt;
-    Zinc_string_init(&dt);
-    Zinc_datetime_format(&ny_tm, &dt);
+    time_t current = Zinc_datetime_current();
+    time_t end = Zinc_last_ny_eod(current);
+    time_t end_minus_year = Zinc_ny_minus_year(end);
+    time_t start = Zinc_last_ny_sod(end_minus_year);
 
-    printf("t: %ld\n", t);
-    printf("ny time: %s\n", Zinc_string_c_str(&dt));
+    Zinc_string_init(&local_dt);
+    Zinc_string_init(&ny_dt);
+    Zinc_string_init(&gmt_dt);
 
-    Zinc_tm_local_minus_year(&ny_tm);
+    Zinc_datetime_triple(start, &local_tm, &ny_tm, &gmt_tm, &local_dt, &ny_dt, &gmt_dt);
+    // printf("start t: %ld\n", start);
+    // printf("start local time: %s\n", Zinc_string_c_str(&local_dt));
+    // printf("start ny time: %s\n", Zinc_string_c_str(&ny_dt));
+    // printf("start gmt time: %s\n", Zinc_string_c_str(&gmt_dt));
 
-    Zinc_string_clear(&dt);
-    Zinc_datetime_format(&ny_tm, &dt);
+    Zinc_datetime_triple(end, &local_tm, &ny_tm, &gmt_tm, &local_dt, &ny_dt, &gmt_dt);
+    // printf("end t: %ld\n", end);
+    // printf("end local time: %s\n", Zinc_string_c_str(&local_dt));
+    // printf("end ny time: %s\n", Zinc_string_c_str(&ny_dt));
+    // printf("end gmt time: %s\n", Zinc_string_c_str(&gmt_dt));
 
-    printf("ny time last year: %s\n", Zinc_string_c_str(&dt));
-
-    Zinc_string_destroy(&dt);
+    Zinc_string_destroy(&local_dt);
+    Zinc_string_destroy(&ny_dt);
+    Zinc_string_destroy(&gmt_dt);
 
     Zinc_expect_true(true, "true");
 }

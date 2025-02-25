@@ -40,6 +40,11 @@ void Zinc_datetime_get_current_t(time_t* t)
     time(t);
 }
 
+time_t Zinc_datetime_current()
+{
+    return time(NULL);
+}
+
 void Zinc_datetime_get_utc_tm(time_t* t, struct tm* tm)
 {
     gmtime_r(t, tm);
@@ -189,19 +194,102 @@ void Zinc_datetime_print_tm(struct tm* tm)
     printf("y day: %d\n", tm->tm_yday);
 }
 
-void Zinc_t_to_ny_tm(time_t t, struct tm* ny_tm)
+char* Zinc_datetime_to_ny()
 {
     char* current_tz = getenv("TZ");
     setenv("TZ", "America/New_York", 1);
     tzset();
-    localtime_r(&t, ny_tm);
-    if (current_tz) {
-        setenv("TZ", current_tz, 1);
-    }
+    return current_tz;
 }
 
-void Zinc_tm_local_minus_year(struct tm* tm)
+void Zinc_datetime_from_ny(char* old_tz)
 {
-    tm->tm_year--;
-    mktime(tm);
+    if (old_tz) {
+        setenv("TZ", old_tz, 1);
+    } else {
+        unsetenv("TZ");
+    }
+    tzset();
+}
+
+time_t Zinc_ny_minus_year(time_t t)
+{
+    char* tz = Zinc_datetime_to_ny();
+
+    struct tm tm;
+    localtime_r(&t, &tm);
+
+    tm.tm_year--;
+
+    t = mktime(&tm);
+
+    Zinc_datetime_from_ny(tz);
+
+    return t;
+}
+
+time_t Zinc_tm_to_gmt_t(struct tm* tm)
+{
+    return timegm(tm);
+}
+
+void Zinc_datetime_triple(
+    time_t t,
+    struct tm* local_tm,
+    struct tm* ny_tm,
+    struct tm* gmt_tm,
+    Zinc_string* local_dt,
+    Zinc_string* ny_dt,
+    Zinc_string* gmt_dt)
+{
+    localtime_r(&t, local_tm);
+    char* old_tz = Zinc_datetime_to_ny();
+    localtime_r(&t, ny_tm);
+    Zinc_datetime_from_ny(old_tz);
+    gmtime_r(&t, gmt_tm);
+
+    Zinc_string_clear(local_dt);
+    Zinc_string_clear(ny_dt);
+    Zinc_string_clear(gmt_dt);
+    Zinc_datetime_format(local_tm, local_dt);
+    Zinc_datetime_format(ny_tm, ny_dt);
+    Zinc_datetime_format(gmt_tm, gmt_dt);
+}
+
+time_t Zinc_last_ny_eod(time_t t)
+{
+    char* tz = Zinc_datetime_to_ny();
+
+    struct tm tm;
+    localtime_r(&t, &tm);
+
+    if (tm.tm_hour < 17) {
+        tm.tm_mday--;
+    }
+    tm.tm_hour = 17;
+    tm.tm_min = 0;
+    tm.tm_sec = 0;
+
+    t = mktime(&tm);
+
+    Zinc_datetime_from_ny(tz);
+
+    return t;
+}
+
+time_t Zinc_last_ny_sod(time_t t)
+{
+    char* tz = Zinc_datetime_to_ny();
+
+    struct tm tm;
+    localtime_r(&t, &tm);
+
+    tm.tm_hour = 0;
+    tm.tm_min = 0;
+    tm.tm_sec = 0;
+
+    t = mktime(&tm);
+    Zinc_datetime_from_ny(tz);
+
+    return t;
 }
