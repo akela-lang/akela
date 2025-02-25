@@ -26,6 +26,7 @@ set(SOURCE_FILES
         unicode.c
         spec_error.c
         priority_queue.c
+        dbl_vector.c
 )
 
 add_definitions(-DZINC_EXPORT)

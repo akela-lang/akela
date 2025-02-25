@@ -239,6 +239,7 @@ Worm_ast* Worm_parse_property_type(Worm_parse_data* pd)
         free(id2);
     }
     Worm_ast_add(n, b);
+    return n;
 }
 
 // Children -> children { Seps id? Ids }
@@ -414,6 +415,8 @@ Worm_ast* Worm_parse_property(Worm_parse_data* pd)
 
     Worm_ast* c = Worm_parse_expr(pd);
     Worm_ast_add(n, c);
+
+    return n;
 }
 
 Worm_ast* Worm_parse_expr(Worm_parse_data* pd)

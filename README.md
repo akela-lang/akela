@@ -54,7 +54,7 @@ When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
     git clone https://github.com/llvm/llvm-project
     cd llvm-project
 	cmake -S llvm -B build-release -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -G Ninja
-	ninja -C build-release check-llvm -j 8
+	ninja -C build-release check-llvm
     cd ../akela
 
 ## Build Full Compiler
