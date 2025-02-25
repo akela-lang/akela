@@ -22,6 +22,7 @@ set(SOURCE_FILES
         test_unicode.c
         test_spec_error.c
         test_priority_queue.c
+        test_dbl_vector.c
 )
 
 add_executable(zinc-unit ${SOURCE_FILES})
