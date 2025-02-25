@@ -22,6 +22,7 @@ ZINC_API void Zinc_datetime_triple(
     Zinc_string* local_dt,
     Zinc_string* ny_dt,
     Zinc_string* gmt_dt);
+void Zinc_datetime_gmt_format(time_t t, Zinc_string* dt);
 time_t Zinc_last_ny_eod(time_t t);
 time_t Zinc_last_ny_sod(time_t t);
 char* Zinc_datetime_to_ny();

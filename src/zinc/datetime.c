@@ -256,6 +256,13 @@ void Zinc_datetime_triple(
     Zinc_datetime_format(gmt_tm, gmt_dt);
 }
 
+void Zinc_datetime_gmt_format(time_t t, Zinc_string* dt)
+{
+    struct tm tm;
+    gmtime_r(&t, &tm);
+    Zinc_datetime_format(&tm, dt);
+}
+
 time_t Zinc_last_ny_eod(time_t t)
 {
     char* tz = Zinc_datetime_to_ny();
