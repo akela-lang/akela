@@ -5,8 +5,6 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-#define ZINC_SERIES_CHUNK_SIZE 64
-
 typedef struct {
     void* buffer;
     size_t value_size;
@@ -22,6 +20,7 @@ void Zinc_vector_create(Zinc_vector** v, size_t value_size);
 void Zinc_vector_expand(Zinc_vector* v, size_t count);
 void Zinc_vector_add(Zinc_vector* v, const void* buffer, size_t count);
 void Zinc_vector_add_null(Zinc_vector* v);
+void Zinc_vector_shift(Zinc_vector* v, const void* buffer, size_t count);
 void Zinc_vector_destroy(Zinc_vector* v);
 bool Zinc_vector_match(Zinc_vector* a, Zinc_vector* b);
 bool Zinc_vector_match_str(Zinc_vector* a, const char b[]);

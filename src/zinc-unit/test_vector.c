@@ -46,8 +46,39 @@ void test_vector_double_large()
     free(v);
 }
 
+void test_vector_shift()
+{
+    Zinc_test_name(__func__);
+
+    Zinc_vector* v = NULL;
+    Zinc_vector_create(&v, sizeof(double));
+
+    double x = 0.5;
+    for (int i = 0; i < 100; i++) {
+        Zinc_vector_add(v, &x, 1);
+        x += 1.0;
+    }
+
+    x = -0.5;
+    for (int i = 0; i < 100; i++) {
+        Zinc_vector_shift(v, &x, 1);
+        x -= 1.0;
+    }
+
+    x = -99.5;
+    Zinc_expect_size_t_equal(v->count, 200, "count");
+    for (int i = 0; i < 200; i++) {
+        Zinc_expect_double_equal(ZINC_VECTOR_DOUBLE(v, i), x, "x");
+        x += 1.0;
+    }
+
+    Zinc_vector_destroy(v);
+    free(v);
+}
+
 void test_vector()
 {
     test_vector_double();
     test_vector_double_large();
+    test_vector_shift();
 }
