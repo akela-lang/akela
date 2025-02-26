@@ -6,7 +6,7 @@ set(SOURCE_FILES
         test_memory.c
         test_unit_test.c
         test_utf8.c
-        test_hash.c
+        test_hash_map_string.c
         test_os_unix.c
         test_datetime.c
         test_piece.c

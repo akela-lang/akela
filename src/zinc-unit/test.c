@@ -4,7 +4,7 @@
 #include "test_memory.h"
 #include "test_unit_test.h"
 #include "test_utf8.h"
-#include "test_hash.h"
+#include "test_hash_map_string.h"
 #include "test_os_unix.h"
 #include "test_datetime.h"
 #include "test_piece.h"

@@ -39,5 +39,7 @@ ZINC_API void Zinc_hash_map_string_add(Zinc_hash_map_string* ht, Zinc_string* va
 ZINC_API void Zinc_hash_map_string_add_str(Zinc_hash_map_string* ht, char* str, void* item);
 ZINC_API void* Zinc_hash_map_string_get(Zinc_hash_map_string* ht, Zinc_string* value);
 ZINC_API void* Zinc_hash_map_string_get_str(Zinc_hash_map_string* ht, char* str);
+ZINC_API void* Zinc_hash_map_string_remove(Zinc_hash_map_string* ht, Zinc_string* value);
+ZINC_API void* Zinc_hash_map_string_remove_str(Zinc_hash_map_string* ht, char* value);
 
 #endif

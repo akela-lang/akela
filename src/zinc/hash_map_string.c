@@ -158,7 +158,7 @@ void Zinc_hash_map_string_add_str(Zinc_hash_map_string* ht, char* str, void* ite
 
 void* Zinc_hash_map_string_get(Zinc_hash_map_string* ht, struct Zinc_string* value)
 {
-    struct Zinc_hash_map_string_entry* ent;
+    Zinc_hash_map_string_entry* ent;
 
     unsigned int val = Zinc_hash_calc_string(value, ht->size);
 
@@ -188,4 +188,51 @@ void* Zinc_hash_map_string_get_str(Zinc_hash_map_string* ht, char* str)
     }
 
     return NULL;
+}
+
+void* Zinc_hash_map_string_remove(Zinc_hash_map_string* ht, Zinc_string* value)
+{
+    unsigned int val = Zinc_hash_calc_string(value, ht->size);
+
+    Zinc_hash_map_string_entry* ent = ht->buckets[val].head;
+    while (ent) {
+        if (Zinc_string_compare(&ent->value, value)) {
+            break;
+        }
+        ent = ent->next;
+    }
+
+    if (ent) {
+        if (ent->prev) {
+            ent->prev->next = ent->next;
+        } else {
+            ht->buckets[val].head = ent->next;
+        }
+
+        if (ent->next) {
+            ent->next->prev = ent->prev;
+        } else {
+            ht->buckets[val].tail = ent->prev;
+        }
+
+        void* item = ent->item;
+        Zinc_hash_map_string_entry_destroy(ent);
+        free(ent);
+        return item;
+    }
+
+    return NULL;
+}
+
+void* Zinc_hash_map_string_remove_str(Zinc_hash_map_string* ht, char* value)
+{
+    Zinc_string value_string;
+    Zinc_string_init(&value_string);
+    Zinc_string_add_str(&value_string, value);
+
+    void* item = Zinc_hash_map_string_remove(ht, &value_string);
+
+    Zinc_string_destroy(&value_string);
+
+    return item;
 }
