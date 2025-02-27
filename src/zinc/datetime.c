@@ -212,7 +212,7 @@ void Zinc_datetime_from_ny(char* old_tz)
     tzset();
 }
 
-time_t Zinc_ny_minus_year(time_t t)
+time_t Zinc_datetime_ny_minus_year(time_t t)
 {
     char* tz = Zinc_datetime_to_ny();
 
@@ -220,6 +220,22 @@ time_t Zinc_ny_minus_year(time_t t)
     localtime_r(&t, &tm);
 
     tm.tm_year--;
+
+    t = mktime(&tm);
+
+    Zinc_datetime_from_ny(tz);
+
+    return t;
+}
+
+time_t Zinc_datetime_ny_minus_day(time_t t)
+{
+    char* tz = Zinc_datetime_to_ny();
+
+    struct tm tm;
+    localtime_r(&t, &tm);
+
+    tm.tm_mday--;
 
     t = mktime(&tm);
 

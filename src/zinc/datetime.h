@@ -12,7 +12,8 @@ ZINC_API void Zinc_datetime_get_utc_tm(time_t* t, struct tm* tm);
 ZINC_API void Zinc_datetime_get_local_tm(time_t* t, struct tm* tm);
 ZINC_API time_t Zinc_datetime_to_tm(struct Zinc_string* dto, struct tm* tm);
 ZINC_API void Zinc_datetime_print_tm(struct tm* tm);
-ZINC_API time_t Zinc_ny_minus_year(time_t t);
+ZINC_API time_t Zinc_datetime_ny_minus_year(time_t t);
+ZINC_API time_t Zinc_datetime_ny_minus_day(time_t t);
 ZINC_API time_t Zinc_tm_to_gmt_t(struct tm* tm);
 ZINC_API void Zinc_datetime_triple(
     time_t t,
