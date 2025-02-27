@@ -89,10 +89,11 @@ void Zinc_hash_map_string_destroy(Zinc_hash_map_string* ht)
 void Zinc_hash_map_string_map(Zinc_hash_map_string* ht, Zinc_hash_map_string_func f)
 {
     for (int i = 0; i < ht->size; i++) {
-        struct Zinc_hash_map_string_entry* p = ht->buckets[i].head;
+        Zinc_hash_map_string_entry* p = ht->buckets[i].head;
         while (p) {
-            f(p->item);
+            Zinc_hash_map_string_entry* temp = p;
             p = p->next;
+            f(temp->item);
         }
     }
 }
@@ -100,10 +101,11 @@ void Zinc_hash_map_string_map(Zinc_hash_map_string* ht, Zinc_hash_map_string_fun
 void Zinc_hash_map_string_map_name(Zinc_hash_map_string* ht, Zinc_hash_map_string_func_name f)
 {
     for (int i = 0; i < ht->size; i++) {
-        struct Zinc_hash_map_string_entry* p = ht->buckets[i].head;
+        Zinc_hash_map_string_entry* p = ht->buckets[i].head;
         while (p) {
-            f(&p->value, p->item);
+            Zinc_hash_map_string_entry* temp = p;
             p = p->next;
+            f(&temp->value, temp->item);
         }
     }
 }

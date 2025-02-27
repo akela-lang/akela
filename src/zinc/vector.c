@@ -93,6 +93,9 @@ void Zinc_vector_expand(Zinc_vector* v, size_t count)
  */
 void Zinc_vector_add(Zinc_vector* v, const void* buffer, size_t count)
 {
+    if (count == 0) {
+        return;
+    }
     Zinc_vector_expand(v, count);
     memcpy(v->buffer + v->count * v->value_size, buffer, count * v->value_size);
     v->count += count;
@@ -112,6 +115,9 @@ void Zinc_vector_add_null(Zinc_vector* v)
 
 void Zinc_vector_shift(Zinc_vector* v, const void* buffer, size_t count)
 {
+    if (count == 0) {
+        return;
+    }
 #ifdef ZINC_VECTOR_CALC_SIZE_LINEAR
     size_t container_size = Zinc_vector_calc_size_linear(v, count);
 #elif defined(ZINC_VECTOR_CALC_SIZE_EXPO)
