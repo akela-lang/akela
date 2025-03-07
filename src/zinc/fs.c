@@ -1,13 +1,18 @@
 #include "os.h"
 #include <assert.h>
+#include <errno.h>
 #include <stdbool.h>
+#include <string.h>
+
 #include "result.h"
 #include "zstring.h"
 #include "memory.h"
 #include "string_list.h"
 
 #if IS_UNIX
+#include <unistd.h>
 #include <dirent.h>
+#include <sys/stat.h>
 #elif IS_WIN
 #include <locale.h>
 #include "windows.h"
@@ -35,8 +40,7 @@ void Zinc_path_join(Zinc_string* src1, Zinc_string* src2, Zinc_string* dest)
 bool Zinc_file_exists(const char* filename)
 {
 #if IS_UNIX
-    Zinc_string_finish(filename);
-    if (access(filename->buf, F_OK) == 0) {
+    if (access(filename, F_OK) == 0) {
         return true;
     } else {
         return false;
@@ -60,7 +64,7 @@ Zinc_result Zinc_is_directory(const char* path, bool* is_dir)
         return Zinc_set_error("Could not stat file: [%s]: %s", strerror(errno), path);
     }
 
-    is_dir* = S_ISDIR(sb.st_mode)
+    *is_dir = S_ISDIR(sb.st_mode);
     return Zinc_result_ok;
 #elif IS_WIN
     DWORD attributes = GetFileAttributesA(path);
@@ -118,7 +122,7 @@ Zinc_result Zinc_get_cwd(Zinc_string* cwd)
         Zinc_string_add_str(cwd, buffer);
         return Zinc_result_ok;
     } else {
-        return Zinc_set_error("getcwd: %s\n", strerror());
+        return Zinc_set_error("getcwd: %s\n", strerror(errno));
     }
 #elif IS_WIN
     char buffer[MAX_PATH];
@@ -297,11 +301,11 @@ void Zinc_list_files2(const wchar_t* directory, Zinc_string_list* files);
 void Zinc_list_files(const char* directory, Zinc_string_list* files)
 {
 #if IS_UNIX
-    struct dirent* dir;
-    dir = opendir(dir_name);
-    if (dir) {
-        while ((dir = readdir(dir)) != NULL) {
-            Zinc_string_list_add_str(list, dir->d_name);
+    DIR* dir = opendir(directory);
+    struct dirent* d;
+    if (d) {
+        while ((d = readdir(dir)) != NULL) {
+            Zinc_string_list_add_str(files, d->d_name);
         }
     }
 #elif IS_WIN

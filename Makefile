@@ -2,7 +2,7 @@
 all:
 	ninja -C cmake-build-debug
 config:
-	cmake -B cmake-build-debug -DLLVM_SEARCH=../llvm-project/build-release -DCMAKE_BUILD_TYPE=Debug -G Ninja
+	cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
 clean:
 	rm -r cmake-build-debug
 unit:

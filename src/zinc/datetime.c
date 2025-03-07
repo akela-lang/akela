@@ -73,7 +73,7 @@ void Zinc_get_offset(time_t t, struct tm* tm, char offset[7], Zinc_time_type typ
 void Zinc_datetime_format(time_t t, Zinc_string* dt, Zinc_time_type type)
 {
     bool is_ny = false;
-    char tz = NULL;
+    char* tz = NULL;
     if (type == Zinc_time_type_ny) {
         tz = Zinc_datetime_to_ny();
         is_ny = true;
@@ -429,9 +429,6 @@ time_t Zinc_datetime_last_ny_eod(time_t t)
 #elif IS_WIN
     localtime_s(&tm, &t);
 #endif
-    TIME_ZONE_INFORMATION tz2;
-    DWORD result = GetTimeZoneInformation(&tz2);
-    printf("\n");
 
     if (tm.tm_hour < 17) {
         tm.tm_mday--;

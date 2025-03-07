@@ -1,6 +1,7 @@
-#ifdef __unix__
+#include "os.h"
 
-#include "api.h"
+#ifdef IS_UNIX
+#include "fs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -8,16 +9,12 @@
 #include <errno.h>
 #include "result.h"
 #include "zstring.h"
-#include <unistd.h>
 #include <sys/types.h>
-#include <pwd.h>
 #include <sys/stat.h>
 #include <stdbool.h>
 #include <dirent.h>
 #include "string_list.h"
 #include <fcntl.h>
-#include "memory.h"
-#include <assert.h>
 
 enum Zinc_result Zinc_get_user_home_directory(Zinc_string* dir)
 {
@@ -56,7 +53,7 @@ enum Zinc_result Zinc_get_user_app_directory(Zinc_string* lower_name, Zinc_strin
     return Zinc_result_ok;
 }
 
-enum Zinc_result Zinc_make_directory(Zinc_string* dir)
+Zinc_result Zinc_make_directory(Zinc_string* dir)
 {
     for (int i = 0; i < dir->size; i++) {
         bool is_subdir = false;
@@ -161,9 +158,9 @@ enum Zinc_result Zinc_delete_directory(Zinc_string* dir)  /* NOLINT(misc-no-recu
     return Zinc_result_ok;
 }
 
-enum Zinc_result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLINT(misc-no-recursion) */
+Zinc_result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLINT(misc-no-recursion) */
 {
-    enum Zinc_result r = Zinc_result_ok;
+    Zinc_result r;
 
     Zinc_string_finish(dir);
     DIR* dp = opendir(dir->buf);

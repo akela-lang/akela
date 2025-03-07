@@ -1,19 +1,13 @@
-#if defined(__unix__) || defined(__unix) || defined(__APPLE__) || defined(__MACH__) || defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
-#define IS_UNIX 1
-#else
-#define IS_UNIX 0
-#endif
+#include "zinc/os.h"
 
 #if (IS_UNIX)
-
 #include "zinc/unit_test.h"
 #include "zinc/os_unix.h"
 #include <string.h>
 #include "zinc/memory.h"
 #include <stdlib.h>
-#include <sys/types.h>
 #include <dirent.h>
-#include <errno.h>
+#include "zinc/fs.h"
 
 void test_os_unix_get_temp_file()
 {
@@ -160,16 +154,16 @@ void test_os_unix_file_exists()
 {
     Zinc_test_name(__func__);
 
-    struct Zinc_string filename;
+    Zinc_string filename;
     Zinc_string_init(&filename);
     Zinc_string_add_str(&filename, "/tmp/test_os_unix_file_exits");
     Zinc_string_finish(&filename);
 
     system("touch /tmp/test_os_unix_file_exits");
-    Zinc_expect_true(Zinc_file_exists(&filename), "file exists true");
+    Zinc_expect_true(Zinc_file_exists(Zinc_string_c_str(&filename)), "file exists true");
 
     system("rm /tmp/test_os_unix_file_exits");
-    Zinc_expect_false(Zinc_file_exists(&filename), "file exits false");
+    Zinc_expect_false(Zinc_file_exists(Zinc_string_c_str(&filename)), "file exits false");
 
     Zinc_string_destroy(&filename);
 }
@@ -184,21 +178,21 @@ void test_os_unix_get_dir_files()
     system("touch /tmp/one/two/file3");
     system("touch /tmp/one/two/file4");
 
-    struct Zinc_string dir;
+    Zinc_string dir;
     Zinc_string_init(&dir);
     Zinc_string_add_str(&dir, "/tmp/one");
 
-    struct Zinc_string_list bl;
+    Zinc_string_list bl;
     Zinc_string_list_init(&bl);
 
-    enum Zinc_result r = Zinc_get_dir_files(&dir, &bl);
+    Zinc_result r = Zinc_get_dir_files(&dir, &bl);
     Zinc_expect_ok(r, "get_dir_files");
 
     bool seen_file1 = false;
     bool seen_file2 = false;
     bool seen_file3 = false;
     bool seen_file4 = false;
-    struct Zinc_string_node* bn = bl.head;
+    Zinc_string_node* bn = bl.head;
     while (bn) {
         if (Zinc_string_compare_str(&bn->value, "/tmp/one/file1"))
             seen_file1 = true;

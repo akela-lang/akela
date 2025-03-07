@@ -3,6 +3,7 @@
 #include "zinc/os_unix.h"
 #include <stdio.h>
 #include <string.h>
+#include "zinc/fs.h"
 
 void test_input_unicode_file_next()
 {
