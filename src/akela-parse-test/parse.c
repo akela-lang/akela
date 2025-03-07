@@ -5,6 +5,8 @@
 #include <string.h>
 #include <centipede/base.h>
 #include <sys/stat.h>
+#include <zinc/os_win.h>
+
 #include "zinc/input_unicode_file.h"
 #include "centipede/module_finder_file.h"
 #include "centipede/comp_table.h"
@@ -67,10 +69,8 @@ void Run_parse_files(char* dir_name)
             Zinc_string_init(&path);
             Zinc_string_add_str(&path, dir_name);
             Zinc_path_append(&path, &node->value);
-            Zinc_string_finish(&path);
 
-            struct stat sb;
-            if (Zinc_is_reg_file(&node->value)) {
+            if (Zinc_is_reg_file(&path)) {
                 Run_test_case(&dir_path, &path, &node->value);
             }
 

@@ -3,13 +3,20 @@
 #include <stdbool.h>
 #include "result.h"
 #include "zstring.h"
+#include "memory.h"
+#include "string_list.h"
 
 #if IS_UNIX
-    #include <sys/stat.h>
-    #include <unistd.h>
+#include <dirent.h>
 #elif IS_WIN
-    #include "windows.h"
-    #include <io.h>
+#include <locale.h>
+#include "windows.h"
+#include <io.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <wchar.h>
+#else
+#error "unsupported OS"
 #endif
 
 void Zinc_path_join(Zinc_string* src1, Zinc_string* src2, Zinc_string* dest)
@@ -247,3 +254,98 @@ enum Zinc_result Zinc_get_exe_path(char** path)
 #else #error "unknown OS"
 #endif
 }
+
+#if IS_WIN
+wchar_t* Zinc_char_to_wchar(const char* str) {
+    int len = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+    if (len == 0) return NULL;  // Conversion failed
+
+    wchar_t* wstr = (wchar_t*)malloc(len * sizeof(wchar_t));
+    if (!wstr) return NULL;  // Memory allocation failed
+
+    MultiByteToWideChar(CP_ACP, 0, str, -1, wstr, len);
+    return wstr;  // Caller must free this memory
+}
+
+char* Zinc_wchar_to_char(wchar_t* wstr) {
+    setlocale(LC_ALL, "");  // Set locale to support multibyte encoding
+
+#pragma warning(suppress : 4996)
+    size_t len = wcstombs(NULL, wstr, 0) + 1;  // Get required buffer size
+
+    if (len == (size_t)-1) {
+        perror("wcstombs failed");
+        return NULL;
+    }
+
+    char* mbstr = malloc(len);
+    if (!mbstr) {
+        perror("malloc failed");
+        return NULL;
+    }
+
+#pragma warning(suppress : 4996)
+    wcstombs(mbstr, wstr, len);  // Convert wide string to multibyte
+
+    // free mbstr after call
+    return mbstr;
+}
+
+void Zinc_list_files2(const wchar_t* directory, Zinc_string_list* files);
+#endif
+
+void Zinc_list_files(const char* directory, Zinc_string_list* files)
+{
+#if IS_UNIX
+    struct dirent* dir;
+    dir = opendir(dir_name);
+    if (dir) {
+        while ((dir = readdir(dir)) != NULL) {
+            Zinc_string_list_add_str(list, dir->d_name);
+        }
+    }
+#elif IS_WIN
+    Zinc_list_files2(Zinc_char_to_wchar(directory), files);
+#else
+#error "unsupported OS"
+#endif
+}
+
+#if IS_WIN
+void Zinc_list_files2(const wchar_t* directory, Zinc_string_list* files) {
+    WIN32_FIND_DATAW findFileData;
+    HANDLE hFind;
+    wchar_t searchPath[MAX_PATH];
+
+    swprintf(searchPath, MAX_PATH, L"%s\\*", directory);
+
+    DWORD attributes = GetFileAttributesW(directory);
+    if (attributes == INVALID_FILE_ATTRIBUTES) {
+        wprintf(L"Error: Directory does not exist. GetLastError() = %lu\n", GetLastError());
+        return;
+    }
+    if (!(attributes & FILE_ATTRIBUTE_DIRECTORY)) {
+        wprintf(L"Error: Path is not a directory.\n");
+        return;
+    }
+
+    hFind = FindFirstFileW(searchPath, &findFileData);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        wprintf(L"Failed to open directory: %s\n", directory);
+        wprintf(L"Error Code: %lu\n", GetLastError());
+        return;
+    }
+
+    Zinc_string file;
+    Zinc_string_init(&file);
+    do {
+        Zinc_string_clear(&file);
+        char* file_str = Zinc_wchar_to_char(findFileData.cFileName);
+        Zinc_string_add_str(&file, file_str);
+        free(file_str);
+        Zinc_string_list_add_bf(files, &file);
+    } while (FindNextFileW(hFind, &findFileData) != 0);
+
+    FindClose(hFind);
+}
+#endif

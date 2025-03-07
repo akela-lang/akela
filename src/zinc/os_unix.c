@@ -256,16 +256,4 @@ Zinc_result Zinc_is_reg_file(Zinc_string* path)
 
     return Zinc_result_ok;
 }
-
-void Zinc_list_files(char* dir_name, Zinc_string_list* list)
-{
-    struct dirent* dir;
-    d = opendir(dir_name);
-    if (d) {
-        while ((dir = readdir(d)) != NULL) {
-            Zinc_string_list_add_str(list, dir->d_name);
-        }
-    }
-}
-
 #endif

@@ -14,7 +14,6 @@ ZINC_API bool Zinc_file_exists(struct Zinc_string* filename);
 ZINC_API enum Zinc_result Zinc_get_dir_files(struct Zinc_string* dir, Zinc_string_list* bl);
 ZINC_API void Zinc_split_path(struct Zinc_string* path, struct Zinc_string* dir, struct Zinc_string* filename);
 ZINC_API Zinc_result Zinc_is_reg_file(Zinc_string* path);
-ZINC_API void Zinc_list_files(char* dir_name, Zinc_string_list* list);
 
 #endif
 
