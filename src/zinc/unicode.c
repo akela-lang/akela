@@ -42,6 +42,36 @@ int Zinc_code_to_utf8(unsigned char *const buffer, const unsigned int code)
     return 0;
 }
 
+int Zinc_utf8_to_utf32(const char *utf8, uint32_t *cp)
+{
+    uint32_t codepoint = 0;
+    unsigned char c = (unsigned char)utf8[0];
+    int bytes = 0;
+
+    if (c < 0x80) {  // 1-byte sequence
+        codepoint = c;
+        bytes = 1;
+    } else if ((c & 0xE0) == 0xC0) {  // 2-byte sequence
+        codepoint = (utf8[0] & 0x1F) << 6 |
+                    (utf8[1] & 0x3F);
+        bytes = 2;
+    } else if ((c & 0xF0) == 0xE0) {  // 3-byte sequence
+        codepoint = (utf8[0] & 0x0F) << 12 |
+                    (utf8[1] & 0x3F) << 6 |
+                    (utf8[2] & 0x3F);
+        bytes = 3;
+    } else if ((c & 0xF8) == 0xF0) {  // 4-byte sequence
+        codepoint = (utf8[0] & 0x07) << 18 |
+                    (utf8[1] & 0x3F) << 12 |
+                    (utf8[2] & 0x3F) << 6 |
+                    (utf8[3] & 0x3F);
+        bytes = 4;
+    }
+
+    *cp = codepoint;
+    return bytes;
+}
+
 unsigned int Zinc_char_to_hex(char c)
 {
     int x = toupper(c);

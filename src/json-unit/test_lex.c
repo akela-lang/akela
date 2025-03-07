@@ -998,19 +998,19 @@ void test_lex_word_error()
 void test_match_tools_convert_char1()
 {
     Zinc_test_name(__func__);
-    Zinc_string_slice slice = {"A", 1};
-    UChar32 cp;
-    Json_convert_slice(slice, &cp);
-    Zinc_expect_int_equal(cp, 0x41, "cp");
+    uint32_t cp;
+    int num = Zinc_utf8_to_utf32("A", &cp);
+    Zinc_assert_true(num, "valid utf8");
+    Zinc_expect_uint32_t_equal(cp, 0x41, "cp");
 }
 
 void test_match_tools_convert_char2()
 {
     Zinc_test_name(__func__);
-    Zinc_string_slice slice = {"θ", 2};
-    UChar32 cp;
-    Json_convert_slice(slice, &cp);
-    Zinc_expect_int_equal(cp, 0x3B8, "cp");
+    uint32_t cp;
+    int num = Zinc_utf8_to_utf32("θ", &cp);
+    Zinc_assert_true(num, "valid utf8");
+    Zinc_expect_uint32_t_equal(cp, 0x3B8, "cp");
 }
 
 void test_lex()

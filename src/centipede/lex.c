@@ -5,8 +5,6 @@
 #include <assert.h>
 #include "zinc/input_unicode.h"
 #include "zinc/error.h"
-#include <unicode/ucnv.h>
-#include "json/lex_tools.h"
 
 void lex_start(Cent_lex_data* ld, Cent_token* t);
 void lex_id(Cent_lex_data* ld, Cent_token* t);
@@ -286,9 +284,11 @@ void Cent_lex_string(Cent_lex_data* ld, Cent_token* t)
             continue;
         }
 
-        UChar32 cp;
-        Json_convert_char(c, num, &cp);
-        if (cp < 0x20) {
+        uint32_t cp;
+        int num2 = Zinc_utf8_to_utf32(c, &cp);
+        if (!num2) {
+            Zinc_error_list_set(ld->errors, &loc, "invalid utf-8 character");
+        } else if (cp < 0x20) {
             Zinc_error_list_set(ld->errors, &loc, "code point is less than \\u0020");
         } else if (cp > 0x10FFFF) {
             Zinc_error_list_set(ld->errors, &loc, "code point greater than \\u10FFFF");

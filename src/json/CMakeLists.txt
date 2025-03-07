@@ -9,7 +9,7 @@ set(json_files
         stringify.c
 )
 add_library(json ${json_files})
-target_link_libraries(json zinc ${ICU_LIBS})
+target_link_libraries(json zinc)
 set_target_properties(json
         PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib

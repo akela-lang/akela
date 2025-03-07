@@ -2,8 +2,6 @@
 #include "lex_data.h"
 #include "zinc/input_unicode.h"
 #include "zinc/result.h"
-#include <unicode/ucnv.h>
-#include "json/lex_tools.h"
 #include "zinc/unicode.h"
 #include "zinc/utf8.h"
 
@@ -239,9 +237,11 @@ void Worm_lex_string(Worm_lex_data* ld, Worm_token* t)
             continue;
         }
 
-        UChar32 cp;
-        Json_convert_char(c, num, &cp);
-        if (cp < 0x20) {
+        uint32_t cp;
+        int num2 = Zinc_utf8_to_utf32(c, &cp);
+        if (num2 == 0) {
+            Zinc_error_list_set(ld->errors, &loc, "invalid character");
+        } else if (cp < 0x20) {
             Zinc_error_list_set(ld->errors, &loc, "code point is less than \\u0020");
         } else if (cp > 0x10FFFF) {
             Zinc_error_list_set(ld->errors, &loc, "code point greater than \\u10FFFF");

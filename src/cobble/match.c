@@ -6,7 +6,6 @@
 #include <zinc/utf8.h>
 #include <ctype.h>
 #include "match_tools.h"
-#include "json/lex_tools.h"
 
 bool Cob_match_slice(Cob_ast* root, Cob_stack_list* sl, struct Zinc_string_list* groups);
 Cob_stack_list* Cob_init_stacks(Cob_re* re, Zinc_string_slice slice);
@@ -819,9 +818,8 @@ void Cob_run_character_type_word(Cob_stack_node* sn, bool opposite)
 
     if (task->start_slice.size > 0) {
         Zinc_string_slice slice = task->start_slice;
-        UChar32 cp;
-        Json_convert_slice(slice, &cp);
-        bool is_word = u_isalpha(cp) || u_isdigit(cp) || cp == '_';
+		int num = ZINC_NUM_BYTES(slice.p[0]);
+        bool is_word = num == 1 && (isalpha(slice.p[0]) || isdigit(slice.p[0]) || slice.p[0] == '_');
         if ((!opposite && is_word) || (opposite && !is_word)) {
             task->matched = true;
             Cob_stack_node_add_char(sn, task, slice);
@@ -840,9 +838,8 @@ void Cob_run_character_type_digit(Cob_stack_node* sn, bool opposite)
 
     if (task->start_slice.size > 0) {
         Zinc_string_slice slice = task->start_slice;
-        UChar32 cp;
-        Json_convert_slice(slice, &cp);
-        bool is_digit = u_isdigit(cp);
+		int num = ZINC_NUM_BYTES(slice.p[0]);
+        bool is_digit = num == 1 && isdigit(slice.p[0]);
         if ((is_digit && !opposite) || (!is_digit && opposite)) {
             task->matched = true;
             Cob_stack_node_add_char(sn, task, slice);
@@ -861,9 +858,8 @@ void Cob_run_character_type_space(Cob_stack_node* sn, bool opposite)
 
     if (task->start_slice.size > 0) {
         Zinc_string_slice slice = task->start_slice;
-        UChar32 cp;
-        Json_convert_slice(slice, &cp);
-        bool is_space = u_isspace(cp);
+		int num = ZINC_NUM_BYTES(slice.p[0]);
+        bool is_space = num == 1 && isspace(slice.p[0]);
         if ((is_space && !opposite) || (!is_space && opposite)) {
             task->matched = true;
             Cob_stack_node_add_char(sn, task, slice);
@@ -882,8 +878,8 @@ void Cob_run_character_type_newline_opposite(Cob_stack_node* sn)
 
     if (task->start_slice.size > 0) {
         Zinc_string_slice slice = task->start_slice;
-        bool is_space = ZINC_IS_ONE_BYTE(slice.p[0]) && isspace(slice.p[0]);
-        if (!is_space) {
+        bool is_newline = ZINC_IS_ONE_BYTE(slice.p[0]) && (slice.p[0] == '\n' || slice.p[0] == '\r');
+        if (!is_newline) {
             task->matched = true;
             Cob_stack_node_add_char(sn, task, slice);
             Cob_increment_slice(&slice);

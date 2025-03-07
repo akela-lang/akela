@@ -108,8 +108,8 @@ void Json_escape_buffer(struct Zinc_error_list* el, struct Zinc_string* src, str
         while (i + byte_count - 1 >= src->size) {
             byte_count--;
         }
-        UChar32 cp;
-        Json_convert_char(c, byte_count, &cp);
+        uint32_t cp;
+        Zinc_utf8_to_utf32(c, &cp);
         char escape_char;
         bool must_escape = Json_must_escape(c, num, &escape_char);
         if (!must_escape && (cp < 0x20 || cp > 0x10ffff)) {

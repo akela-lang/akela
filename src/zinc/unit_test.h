@@ -63,5 +63,7 @@ ZINC_API void Zinc_expect_string_slice(Zinc_string_slice* sl, Zinc_string* bf, c
 ZINC_API void Zinc_expect_string_slice_str(Zinc_string_slice* sl, char* expected, char* message);
 ZINC_API void Zinc_expect_int64_t_equal(int64_t a, int64_t b, const char* message);
 ZINC_API void Zinc_expect_uint64_t_equal(uint64_t a, uint64_t b, const char* message);
+void Zinc_expect_int32_t_equal(int32_t a, int32_t b, const char* message);
+void Zinc_expect_uint32_t_equal(uint32_t a, uint32_t b, const char* message);
 
 #endif

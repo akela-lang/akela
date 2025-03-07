@@ -179,9 +179,11 @@ void Json_lex_string(Json_lex_data* jld, Json_token* t)
             continue;
         }
 
-        UChar32 cp;
-        Json_convert_char(c, num, &cp);
-        if (cp < 0x20) {
+        uint32_t cp;
+        int num2 = Zinc_utf8_to_utf32(c, &cp);
+        if (num2 == 0) {
+            Zinc_error_list_set(jld->el, &loc, "invalid utf-8 character");
+        } else if (cp < 0x20) {
             Zinc_error_list_set(jld->el, &loc, "code point is less than \\u0020");
         } else if (cp > 0x10FFFF) {
             Zinc_error_list_set(jld->el, &loc, "code point greater than \\u10FFFF");
