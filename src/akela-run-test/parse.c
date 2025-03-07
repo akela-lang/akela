@@ -76,7 +76,7 @@ void Run_parse_files(Run_data* data, char* dir_name)
                 Zinc_path_append(&path, &node->value);
                 Zinc_string_finish(&path);
 
-                if (Zinc_is_reg_file(&node->value)) {
+                if (Zinc_is_reg_file(&path)) {
                     Run_collect(data, &dir_path, &path, &node->value);
                 }
 

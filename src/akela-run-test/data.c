@@ -23,13 +23,8 @@ void Run_cent_data_create(Run_cent_data** config_data, Zinc_string* file_name)
 void Run_cent_data_destroy(Run_cent_data* config_data)
 {
     if (config_data) {
-        Cent_module_finder_file_destroy(config_data->mf);
-        free(config_data->mf);
         Cent_comp_table_destroy(config_data->ct);
         free(config_data->ct);
-        Zinc_vector_destroy(config_data->v);
-        free(config_data->v);
-        free(config_data->input);
         Zinc_string_destroy(&config_data->file_name);
     }
 }
