@@ -46,7 +46,7 @@ void SeriesRefreshValues(Series* s)
             s->value.value_size = sizeof(unsigned long);
             break;
         case FieldTypeBool:
-            s->value.value_size = sizeof(u_int8_t);
+            s->value.value_size = sizeof(uint8_t);
             break;
         case FieldTypeString:
             s->value.value_size = sizeof(Zinc_vector*);
@@ -84,7 +84,7 @@ void SeriesRefreshValues(Series* s)
             }
             case FieldTypeBool: {
                 Zinc_vector* raw = *(Zinc_vector**)ZINC_VECTOR_PTR(&s->raw, i);
-                u_int8_t value;
+                uint8_t value;
                 if (Zinc_vector_match_str(raw, "True")) {
                     value = 1;
                 } else if (Zinc_vector_match_str(raw, "False")) {

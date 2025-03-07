@@ -4,9 +4,10 @@
 #include "akela/ast.h"
 #include "symbol_table.h"
 #include "comp_unit.h"
+#include <stdint.h>
 
 typedef struct {
-    u_int8_t jit_offset;
+    uint8_t jit_offset;
 } Code_gen_vtable;
 
 typedef struct {

@@ -97,7 +97,7 @@ void Zinc_vector_add(Zinc_vector* v, const void* buffer, size_t count)
         return;
     }
     Zinc_vector_expand(v, count);
-    memcpy(v->buffer + v->count * v->value_size, buffer, count * v->value_size);
+    memcpy((uint8_t*)v->buffer + v->count * v->value_size, buffer, count * v->value_size);
     v->count += count;
 }
 
@@ -107,8 +107,8 @@ void Zinc_vector_add(Zinc_vector* v, const void* buffer, size_t count)
  */
 void Zinc_vector_add_null(Zinc_vector* v)
 {
-    assert(v->value_size == sizeof(u_int8_t));
-    u_int8_t value = 0x0;
+    assert(v->value_size == sizeof(uint8_t));
+    uint8_t value = 0x0;
     Zinc_vector_add(v, &value, 1);
     v->count--;
 }
@@ -129,7 +129,7 @@ void Zinc_vector_shift(Zinc_vector* v, const void* buffer, size_t count)
     // shift
     void* new_buffer = NULL;
     Zinc_malloc_safe(&new_buffer, container_size);
-    memcpy(new_buffer + count * v->value_size, v->buffer, v->count * v->value_size);
+    memcpy((uint8_t*)new_buffer + count * v->value_size, v->buffer, v->count * v->value_size);
     free(v->buffer);
     v->buffer = new_buffer;
 
@@ -154,7 +154,7 @@ bool Zinc_vector_match_str(Zinc_vector* a, const char b[])
 {
     return Zinc_memory_match(
             a->buffer, a->count * a->value_size,
-            (u_int8_t *) b, strlen(b));
+            (uint8_t *) b, strlen(b));
 }
 
 void Zinc_vector_copy(Zinc_vector* src, Zinc_vector* dest)

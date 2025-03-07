@@ -1,3 +1,4 @@
+#include "os.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -18,10 +19,12 @@ Zinc_test_run tr;
 
 void Zinc_test_name(const char* fmt, ...)
 {
-#if defined(WIN32)
+#if IS_WIN
 	va_list args = NULL;
-#elif defined(unix)
+#elif IS_UNIX
 		va_list args;
+#else
+	#error "unsupported OS"
 #endif
 	va_start(args, fmt);
 	char buf[TEST_NAME_SIZE];

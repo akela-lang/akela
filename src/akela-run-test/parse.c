@@ -1,10 +1,8 @@
 #include "centipede/parse.h"
 #include "centipede/build.h"
 #include <stdio.h>
-#include <dirent.h>
 #include <sys/types.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <zinc/input_unicode_string.h>
 #include "zinc/os_unix.h"
@@ -15,6 +13,8 @@
 #include <assert.h>
 #include "cent.h"
 #include "zinc/os_unix.h"
+#include "zinc/os_win.h"
+#include "zinc/fs.h"
 
 void Run_collect(
     Run_data* data,
@@ -25,7 +25,7 @@ void Run_collect(
 bool Run_validate_directory(const char* path)
 {
     struct stat sb;
-    if (stat(path, &sb) == -1) {
+    if (!Zinc_file_exists(path)) {
         perror(path);
         Zinc_string cwd;
         Zinc_string_init(&cwd);
@@ -36,7 +36,14 @@ bool Run_validate_directory(const char* path)
         return false;
     }
 
-    if (!S_ISDIR(sb.st_mode)) {
+    bool is_dir;
+    Zinc_result r = Zinc_is_directory(path, &is_dir);
+    if (r == Zinc_result_error) {
+        fprintf(stderr, "%s\n", Zinc_error_message);
+        return false;
+    }
+
+    if (!is_dir) {
         fprintf(stderr, "%s is not a directory", path);
         return false;
     }
@@ -49,37 +56,35 @@ void Run_parse_files(Run_data* data, char* dir_name)
     Zinc_string dir_path;
     Zinc_string_init(&dir_path);
     Zinc_string_add_str(&dir_path, dir_name);
-    DIR* d;
-    struct dirent* dir;
-    d = opendir(dir_name);
-    if (d) {
-        while ((dir = readdir(d)) != NULL) {
-            if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
-                Zinc_string_slice name_slice = {dir->d_name, strlen(dir->d_name)};
-                Cob_result ext_mr = Cob_match(&data->ext_re, name_slice);
-                if (ext_mr.matched) {
-                    Zinc_string path;
-                    Zinc_string_init(&path);
-                    Zinc_string_add_str(&path, dir_name);
-                    Zinc_path_append_str(&path, dir->d_name);
-                    Zinc_string_finish(&path);
 
-                    Zinc_string file_name;
-                    Zinc_string_init(&file_name);
-                    Zinc_string_add_str(&file_name, dir->d_name);
-                    Zinc_string_finish(&file_name);
+    Zinc_string_list files;
+    Zinc_string_list_init(&files);
+    Zinc_list_files(Zinc_string_c_str(&dir_path), &files);
 
-                    struct stat sb;
-                    if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
-                        Run_collect(data, &dir_path, &path, &file_name);
-                    }
+    Zinc_string_node* node = files.head;
+    while (node) {
+        if (!Zinc_string_compare_str(&node->value, ".") && !Zinc_string_compare_str(&node->value, "..")) {
+            Zinc_string_slice name_slice = {
+                .p = Zinc_string_c_str(&node->value),
+                .size = node->value.size,
+            };
+            Cob_result ext_mr = Cob_match(&data->ext_re, name_slice);
+            if (ext_mr.matched) {
+                Zinc_string path;
+                Zinc_string_init(&path);
+                Zinc_string_add_str(&path, dir_name);
+                Zinc_path_append(&path, &node->value);
+                Zinc_string_finish(&path);
 
-                    Zinc_string_destroy(&path);
-                    Zinc_string_destroy(&file_name);
+                if (Zinc_is_reg_file(&node->value)) {
+                    Run_collect(data, &dir_path, &path, &node->value);
                 }
-                Cob_result_destroy(&ext_mr);
+
+                Zinc_string_destroy(&path);
             }
+            Cob_result_destroy(&ext_mr);
         }
+        node = node->next;
     }
 
     Zinc_string_destroy(&dir_path);

@@ -6,75 +6,12 @@
 #include "memory.h"
 #include "os_win.h"
 #include "zstring.h"
-
-enum result Zinc_win_temp_filename(char** buff)
-{
-	DWORD dwRetVal = 0;
-	TCHAR temp[MAX_PATH];
-	dwRetVal = GetTempPath(MAX_PATH, temp);
-	if (dwRetVal <= 0 || dwRetVal > MAX_PATH) {
-		return set_error("could not get temp directory");
-	}
-
-	UINT uRetVal = 0;
-	TCHAR szTempFileName[MAX_PATH];
-	uRetVal = GetTempFileName(temp, // directory for tmp files
-		TEXT("ALBA"),     // temp file name prefix
-		0,                // create unique name
-		szTempFileName);  // buffer for name
-
-	if (!uRetVal) {
-		return set_error("could not get temp path");
-	}
-
-	malloc_safe((void**)buff, MAX_PATH);
-
-	strncpy_s(*buff, MAX_PATH, szTempFileName, MAX_PATH);
-
-	return result_ok;
-}
+#include <locale.h>
+#include "string_list.h"
 
 void Zinc_set_console_utf8()
 {
 	SetConsoleOutputCP(CP_UTF8);
-}
-
-char* Zinc_get_exe_path()
-{
-    DWORD last_error;
-    DWORD result;
-    DWORD path_size = 1024;
-    char* path = NULL;
-    malloc_safe((void**)&path, path_size);
-
-    for (;;)
-    {
-        #pragma warning(suppress:6387)
-        memset(path, 0, path_size);
-        #pragma warning(suppress:6387)
-        result = GetModuleFileName(0, path, path_size - 1);
-        last_error = GetLastError();
-
-        if (0 == result) {
-            free(path);
-            path = 0;
-            break;
-        } else if (result == path_size - 1) {
-            free(path);
-            /* May need to also check for ERROR_SUCCESS here if XP/2K */
-            if (ERROR_INSUFFICIENT_BUFFER != last_error)
-            {
-                path = 0;
-                break;
-            }
-            path_size = path_size * 2;
-            malloc_safe((void**)&path, path_size);
-        } else {
-            break;
-        }
-    }
-
-    return path;
 }
 
 void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename)
@@ -89,21 +26,134 @@ void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename)
 
     if (sep_pos >= 0) {
         for (int i = 0; i < sep_pos; i++) {
-            buffer_add_char(dir, path->buf[i]);
+            Zinc_string_add_char(dir, path->buf[i]);
         }
     }
-    buffer_finish(dir);
+    Zinc_string_finish(dir);
 
     for (int i = sep_pos + 1; i < path->size; i++) {
-        buffer_add_char(filename, path->buf[i]);
+        Zinc_string_add_char(filename, path->buf[i]);
     }
-    buffer_finish(filename);
+    Zinc_string_finish(filename);
 }
 
-void path_join(Zinc_string* path, Zinc_string* filename)
+Zinc_result Zinc_is_reg_file(Zinc_string* path)
 {
-    buffer_add_char(path, '\\');
-    buffer_copy(filename, path);
+    char* path_str = Zinc_string_c_str(path);
+    DWORD attributes = GetFileAttributesA(path_str);
+    if (attributes == INVALID_FILE_ATTRIBUTES) {
+        return Zinc_set_error("invalid file path: %s", path);
+    }
+    if (attributes & FILE_ATTRIBUTE_DIRECTORY) {
+        return Zinc_set_error("path is a directory: %s", path);
+    }
+
+    return Zinc_result_ok;
+}
+
+wchar_t* Zinc_char_to_wchar(const char* str) {
+    int len = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+    if (len == 0) return NULL;  // Conversion failed
+
+    wchar_t* wstr = (wchar_t*)malloc(len * sizeof(wchar_t));
+    if (!wstr) return NULL;  // Memory allocation failed
+
+    MultiByteToWideChar(CP_ACP, 0, str, -1, wstr, len);
+    return wstr;  // Caller must free this memory
+}
+
+char* Zinc_wchar_to_char(wchar_t* wstr) {
+    setlocale(LC_ALL, "");  // Set locale to support multibyte encoding
+
+#pragma warning(suppress : 4996)
+    size_t len = wcstombs(NULL, wstr, 0) + 1;  // Get required buffer size
+
+    if (len == (size_t)-1) {
+        perror("wcstombs failed");
+        return NULL;
+    }
+
+    char* mbstr = malloc(len);
+    if (!mbstr) {
+        perror("malloc failed");
+        return NULL;
+    }
+
+#pragma warning(suppress : 4996)
+    wcstombs(mbstr, wstr, len);  // Convert wide string to multibyte
+    printf("Converted string: %s\n", mbstr);
+
+    // free mbstr after call
+    return mbstr;
+}
+
+void Zinc_list_files(const char* directory, Zinc_string_list* files) {
+    WIN32_FIND_DATA findFileData;
+    HANDLE hFind;
+    char searchPath[MAX_PATH];
+
+    snprintf(searchPath, sizeof(searchPath), "%s\\*", directory);
+    printf("Searching: %s\n", searchPath);
+
+    hFind = FindFirstFileA(searchPath, &findFileData);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        printf("Failed to open directory: %s\n", directory);
+        printf("Error Code: %lu\n", GetLastError());
+        return;
+    }
+
+    Zinc_string file;
+    Zinc_string_init(&file);
+    do {
+        char* file_str = Zinc_wchar_to_char(findFileData.cFileName);
+        Zinc_string_clear(&file);
+        Zinc_string_add_str(&file, file_str);
+        free(file_str);
+        Zinc_string_list_add(files, &file);
+        printf("%ls\n", findFileData.cFileName);
+    } while (FindNextFileA(hFind, &findFileData) != 0);
+
+    FindClose(hFind);
+}
+
+void Zinc_list_files2(const wchar_t* directory, Zinc_string_list* files) {
+    WIN32_FIND_DATAW findFileData;
+    HANDLE hFind;
+    wchar_t searchPath[MAX_PATH];
+
+    swprintf(searchPath, MAX_PATH, L"%s\\*", directory);
+    wprintf(L"Directory: [%s]\n", directory);
+    wprintf(L"Search Path: [%s]\n", searchPath);
+
+    DWORD attributes = GetFileAttributesW(directory);
+    if (attributes == INVALID_FILE_ATTRIBUTES) {
+        wprintf(L"Error: Directory does not exist. GetLastError() = %lu\n", GetLastError());
+        return;
+    }
+    if (!(attributes & FILE_ATTRIBUTE_DIRECTORY)) {
+        wprintf(L"Error: Path is not a directory.\n");
+        return;
+    }
+
+    hFind = FindFirstFileW(searchPath, &findFileData);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        wprintf(L"Failed to open directory: %s\n", directory);
+        wprintf(L"Error Code: %lu\n", GetLastError());
+        return;
+    }
+
+    Zinc_string file;
+    Zinc_string_init(&file);
+    do {
+        Zinc_string_clear(&file);
+        char* file_str = Zinc_wchar_to_char(findFileData.cFileName);
+        Zinc_string_add_str(&file, file_str);
+        free(file_str);
+        Zinc_string_list_add(files, &file);
+        wprintf(L"%s\n", findFileData.cFileName);
+    } while (FindNextFileW(hFind, &findFileData) != 0);
+
+    FindClose(hFind);
 }
 
 #endif

@@ -6,6 +6,7 @@
 #include <zinc/error.h>
 #include "zinc/zstring.h"
 #include <assert.h>
+#include <stdint.h>
 
 typedef enum {
     Worm_token_type_none,
@@ -64,7 +65,7 @@ typedef struct {
     Zinc_string value;
     union {
         int64_t integer;
-        u_int64_t natural;
+        uint64_t natural;
         double real;
     } number;
     Zinc_location loc;

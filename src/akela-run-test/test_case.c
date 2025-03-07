@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <float.h>
 #include <stdint.h>
+#include "zinc/os.h"
 
 void Run_akela(Run_data* data, Run_test* test);
 Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
@@ -275,8 +276,8 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
             }
         } else if (type == Run_type_nat8) {
             if (value_value->type == Cent_value_type_natural) {
-                u_int8_t actual = *(u_int8_t*)test->return_address;
-                u_int8_t expected = (u_int8_t)value_value->data.natural;
+                uint8_t actual = *(uint8_t*)test->return_address;
+                uint8_t expected = (uint8_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
@@ -286,8 +287,8 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
             }
         } else if (type == Run_type_nat16) {
             if (value_value->type == Cent_value_type_natural) {
-                u_int16_t actual = *(u_int16_t*)test->return_address;
-                u_int16_t expected = (u_int16_t)value_value->data.natural;
+                uint16_t actual = *(uint16_t*)test->return_address;
+                uint16_t expected = (uint16_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%hu) (%hu)\n", actual, expected);
@@ -297,8 +298,8 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
             }
         } else if (type == Run_type_nat32) {
             if (value_value->type == Cent_value_type_natural) {
-                u_int32_t actual = *(u_int32_t*)test->return_address;
-                u_int32_t expected = (u_int32_t)value_value->data.natural;
+                uint32_t actual = *(uint32_t*)test->return_address;
+                uint32_t expected = (uint32_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
@@ -308,8 +309,8 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
             }
         } else if (type == Run_type_nat64) {
             if (value_value->type == Cent_value_type_natural) {
-                u_int64_t actual = *(u_int64_t*)test->return_address;
-                u_int64_t expected = (u_int64_t)value_value->data.natural;
+                uint64_t actual = *(uint64_t*)test->return_address;
+                uint64_t expected = (uint64_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
@@ -319,12 +320,18 @@ bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_r
             }
         } else if (type == Run_type_real16) {
             if (value_value->type == Cent_value_type_real) {
+#if IS_UNIX
                 _Float16 actual = *(_Float16*)test->return_address;
                 _Float16 expected = (_Float16)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
                     fprintf(stderr, "result does not match: (%f) (%f)\n", (float)actual, (float)expected);
                 }
+#elif IS_WIN
+                assert(false && "16-bit floats not supported");
+#else
+#error "unsupported OS"
+#endif
             } else {
                 assert(false && "expected real or string value type");
             }

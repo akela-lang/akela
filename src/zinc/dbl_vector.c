@@ -39,7 +39,7 @@ void Zinc_dbl_vector_expand_right(Zinc_dbl_vector* dv, size_t size)
         void* new_buffer = NULL;
         Zinc_malloc_safe(&new_buffer, dv->capacity);
         if (dv->end > dv->start) {
-            memcpy(new_buffer + dv->start, dv->buffer + dv->start, dv->end - dv->start);
+            memcpy((uint8_t*)new_buffer + dv->start, (uint8_t*)dv->buffer + dv->start, dv->end - dv->start);
         }
         free(dv->buffer);
         dv->buffer = new_buffer;
@@ -63,7 +63,7 @@ void Zinc_dbl_vector_expand_left(Zinc_dbl_vector* dv, size_t size)
     void* new_buffer = NULL;
     Zinc_malloc_safe(&new_buffer, capacity);
     if (dv->end > dv->start) {
-        memcpy(new_buffer + start, dv->buffer + dv->start, dv->end - dv->start);
+        memcpy((uint8_t*)new_buffer + start, (uint8_t*)dv->buffer + dv->start, dv->end - dv->start);
     }
     free(dv->buffer);
     dv->start = start;
@@ -75,7 +75,7 @@ void Zinc_dbl_vector_expand_left(Zinc_dbl_vector* dv, size_t size)
 void Zinc_dbl_vector_append(Zinc_dbl_vector* dv, void* item, size_t num)
 {
     Zinc_dbl_vector_expand_right(dv, dv->item_size * num);
-    memcpy(dv->buffer + dv->end, item, dv->item_size * num);
+    memcpy((uint8_t*)dv->buffer + dv->end, item, dv->item_size * num);
     dv->count += num;
     dv->end += num * dv->item_size;
 }
@@ -84,12 +84,12 @@ void Zinc_dbl_vector_prepend(Zinc_dbl_vector* dv, void* item, size_t num)
 {
     Zinc_dbl_vector_expand_left(dv, dv->item_size * num);
     dv->start -= num * dv->item_size;
-    memcpy(dv->buffer + dv->start, item, dv->item_size * num);
+    memcpy((uint8_t*)dv->buffer + dv->start, item, dv->item_size * num);
     dv->count += num;
 }
 
 void* Zinc_dbl_vector_slice(Zinc_dbl_vector* dv, size_t* size)
 {
     *size = dv->end - dv->start;
-    return dv->buffer + dv->start;
+    return (uint8_t*)dv->buffer + dv->start;
 }

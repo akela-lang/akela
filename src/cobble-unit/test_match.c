@@ -5,6 +5,8 @@
 #include "cobble/match.h"
 #include <string.h>
 #include "zinc/error_unit_test.h"
+#include "zinc/os.h"
+#include <Windows.h>
 
 Cob_result match_run(char* pattern, char* text)
 {
@@ -898,10 +900,10 @@ void test_match_character_type_digit3()
 void test_match_character_type_digit_unicode()
 {
     Zinc_test_name(__func__);
-    Cob_result mr = match_run("\\d", "\u0660");  /* Arabic-Indic Digit Zero */
+    Cob_result mr = match_run("\\d", "٠");  /* Arabic-Indic Digit Zero: \u0660 */
     Zinc_expect_true(mr.matched, "m");
     Zinc_expect_buffer_list_count(&mr.groups, 1, "count groups");
-    Zinc_expect_buffer_list_item(&mr.groups, 0, "\u0660", "item groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 0, "٠", "item groups");
     match_teardown(&mr);
 }
 
@@ -946,10 +948,10 @@ void test_match_character_type_space()
 void test_match_character_type_space_unicode()
 {
     Zinc_test_name(__func__);
-    Cob_result mr = match_run("\\s", "\u1680");
+	Cob_result mr = match_run("\\s", " ");  // Ogham Space Mark : \u1680
     Zinc_expect_true(mr.matched, "m");
     Zinc_expect_buffer_list_count(&mr.groups, 1, "count groups");
-    Zinc_expect_buffer_list_item(&mr.groups, 0, "\u1680", "item groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 0, " ", "item groups");
     match_teardown(&mr);
 }
 

@@ -2,20 +2,26 @@
 #include "zinc/input_char_file.h"
 #include "zinc/input_char_string.h"
 #include <string.h>
+#include "zinc/fs.h"
 
 void TestInputCharFileNext()
 {
     Zinc_test_name(__func__);
 
-    char filename[] = "/tmp/temp.txt";
+    FILE* fp = NULL;
+    Zinc_string path;
+    Zinc_string_init(&path);
+
+    Zinc_result r = Zinc_get_temp_file(&fp, &path);
+    Zinc_assert_ok(r, "get temp file");
+    Zinc_assert_ptr(fp, "fp");
+
     char text[] = "hello file\n";
-    FILE *fp;
     size_t len = strlen(text);
-    fp = fopen(filename, "w");
     fwrite(text, 1, len, fp);
     fclose(fp);
 
-    fp = fopen(filename, "r");
+    fp = fopen(Zinc_string_c_str(&path), "r");
     Zinc_assert_ptr(fp, "fp");
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
@@ -58,16 +64,19 @@ void TestInputCharFileRepeat()
 {
     Zinc_test_name(__func__);
 
-    char filename[] = "/tmp/temp.txt";
-    char text[] = "hello file\n";
+    FILE* fp = NULL;
+    Zinc_string name;
+    Zinc_string_init(&name);
+
+    Zinc_result r = Zinc_get_temp_file(&fp, &name);
+    Zinc_assert_ok(r, "get temp file");
+	char text[] = "hello file\n";
     char text_expected[] = "hhello file\n";
-    FILE *fp;
     size_t len = strlen(text);
-    fp = fopen(filename, "w");
     fwrite(text, 1, len, fp);
     fclose(fp);
 
-    fp = fopen(filename, "r");
+    fp = fopen(Zinc_string_c_str(&name), "r");
     Zinc_assert_ptr(fp, "fp");
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
@@ -116,16 +125,18 @@ void TestInputCharFileSeek()
 {
     Zinc_test_name(__func__);
 
-    char filename[] = "/tmp/temp.txt";
+    FILE* fp = NULL;
+    Zinc_string name;
+    Zinc_string_init(&name);
+    Zinc_result r = Zinc_get_temp_file(&fp, &name);
+    Zinc_assert_ok(r, "get temp file");
     char text[] = "hello file\n";
     char text_expected[] = "file\n";
-    FILE *fp;
     size_t len = strlen(text);
-    fp = fopen(filename, "w");
     fwrite(text, 1, len, fp);
     fclose(fp);
 
-    fp = fopen(filename, "r");
+    fp = fopen(Zinc_string_c_str(&name), "r");
     Zinc_assert_ptr(fp, "fp");
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
@@ -155,16 +166,20 @@ void TestInputCharFileGetAll()
 {
     Zinc_test_name(__func__);
 
-    char filename[] = "/tmp/temp.txt";
+    Zinc_string name;
+    Zinc_string_init(&name);
+    FILE* fp = NULL;
+	Zinc_result r = Zinc_get_temp_file(&fp, &name);
+    Zinc_assert_ok(r, "get temp file");
+    Zinc_assert_ptr(fp, "fp");
     char text[] = "hello file\n";
-    FILE *fp;
     size_t len = strlen(text);
-    fp = fopen(filename, "w");
     Zinc_assert_ptr(fp, "fp");
     fwrite(text, 1, len, fp);
     fclose(fp);
 
-    fp = fopen(filename, "r");
+    fp = fopen(Zinc_string_c_str(&name), "r");
+    Zinc_assert_ptr(fp, "fp");
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 

@@ -1,10 +1,8 @@
 #include "centipede/parse.h"
 #include "centipede/build.h"
 #include <stdio.h>
-#include <dirent.h>
 #include <sys/types.h>
 #include <string.h>
-#include <unistd.h>
 #include <centipede/base.h>
 #include <sys/stat.h>
 #include "zinc/input_unicode_file.h"
@@ -13,6 +11,8 @@
 #include "zinc/os_unix.h"
 #include "zinc/spec_error.h"
 #include "compare.h"
+#include "zinc/fs.h"
+#include "zinc/string_list.h"
 
 #define NAME "akela-parse-test"
 
@@ -22,8 +22,7 @@ void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_n
 
 bool Run_validate_directory(char* path)
 {
-    struct stat sb;
-    if (stat(path, &sb) == -1) {
+    if (!Zinc_file_exists(path)) {
         perror(path);
         Zinc_string cwd;
         Zinc_string_init(&cwd);
@@ -34,7 +33,14 @@ bool Run_validate_directory(char* path)
         return false;
     }
 
-    if (!S_ISDIR(sb.st_mode)) {
+    bool is_dir;
+    Zinc_result r = Zinc_is_directory(path, &is_dir);
+    if (r == Zinc_result_error) {
+        printf("%s\n", Zinc_error_message);
+        return false;
+    }
+
+    if (!is_dir) {
         fprintf(stderr, "%s is not a directory", path);
         return false;
     }
@@ -49,41 +55,32 @@ void Run_parse_files(char* dir_name)
     Zinc_string dir_path;
     Zinc_string_init(&dir_path);
     Zinc_string_add_str(&dir_path, dir_name);
-    DIR* d;
-    struct dirent* dir;
-    d = opendir(dir_name);
-    if (d) {
-        while ((dir = readdir(d)) != NULL) {
-            if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
-                Zinc_string path;
-                Zinc_string_init(&path);
-                Zinc_string_add_str(&path, dir_name);
-                Run_append_path(&path, dir->d_name);
-                Zinc_string_finish(&path);
 
-                Zinc_string file_name;
-                Zinc_string_init(&file_name);
-                Zinc_string_add_str(&file_name, dir->d_name);
-                Zinc_string_finish(&file_name);
+    Zinc_string_list files;
+    Zinc_string_list_init(&files);
+    Zinc_list_files(dir_name, &files);
 
-                struct stat sb;
-                if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
-                    Run_test_case(&dir_path, &path, &file_name);
-                }
+    Zinc_string_node* node = files.head;
+    while (node) {
+        if (!Zinc_string_compare_str(&node->value, ".") && !Zinc_string_compare_str(&node->value, "..")) {
+            Zinc_string path;
+            Zinc_string_init(&path);
+            Zinc_string_add_str(&path, dir_name);
+            Zinc_path_append(&path, &node->value);
+            Zinc_string_finish(&path);
 
-                Zinc_string_destroy(&path);
-                Zinc_string_destroy(&file_name);
+            struct stat sb;
+            if (Zinc_is_reg_file(&node->value)) {
+                Run_test_case(&dir_path, &path, &node->value);
             }
+
+            Zinc_string_destroy(&path);
         }
+
+        node = node->next;
     }
 
     Zinc_string_destroy(&dir_path);
-}
-
-void Run_append_path(Zinc_string* bf, char* path)
-{
-    Zinc_string_add_char(bf, '/');
-    Zinc_string_add_str(bf, path);
 }
 
 void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)

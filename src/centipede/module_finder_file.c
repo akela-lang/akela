@@ -1,16 +1,15 @@
 #include "module_finder_file.h"
 #include <zinc/memory.h>
-#include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "zinc/piece.h"
 #include "zinc/input_unicode_file.h"
 #include <stddef.h>
 #include <string.h>
-#include <unistd.h>
-#include <linux/limits.h>
 #include <errno.h>
 #include "zinc/String_slice.h"
+#include "zinc/os_unix.h"
+#include "zinc/os_win.h"
 
 Cent_module_finder_vtable Cent_module_finder_file_vtable = {
     .find_offset = offsetof(Cent_module_finder_file, find),
@@ -48,7 +47,8 @@ Cent_input_data Cent_module_finder_file_find(Cent_module_finder_file* mf, Zinc_s
     Cent_module_finder_file_append_path(&path, name);
     Zinc_string_finish(&path);
     struct stat sb;
-    if (stat(path.buf, &sb) == 0 && S_ISREG(sb.st_mode)) {
+	Zinc_result r = Zinc_is_reg_file(&path);
+    if (r == Zinc_result_ok) {
         FILE* fp = fopen(path.buf, "r");
         if (fp) {
             Zinc_input_unicode_file* input = NULL;

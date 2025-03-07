@@ -1,17 +1,65 @@
+#include "os.h"
 #include <stdio.h>
 #include <time.h>
 #include "zstring.h"
 #include <string.h>
 #include <stdbool.h>
 #include "piece.h"
+#include <stdlib.h>
+#include "datetime.h"
+#include <stdint.h>
 
-void Zinc_get_offset(struct tm* tm, char offset[7])
+#if IS_WIN
+#include <windows.h>
+#endif
+
+time_t Zinc_datetime_get_local_t(struct tm* tm);
+time_t Zinc_datetime_get_gmt_t(struct tm* tm);
+
+long get_gmtoff(time_t t, struct tm* tm, Zinc_time_type type)
 {
-    if (tm->tm_gmtoff == 0) {
+#if IS_WIN
+    if (type == Zinc_time_type_local) {
+        TIME_ZONE_INFORMATION tz;
+        DWORD result = GetTimeZoneInformation(&tz);
+
+        // Convert the base UTC offset from minutes to seconds
+        long base_offset = -tz.Bias * 60;
+
+        // Check if daylight saving time is in effect for this specific time
+        struct tm local_tm;
+        localtime_s(&local_tm, &t);
+        if (local_tm.tm_isdst > 0) {
+            base_offset -= tz.DaylightBias * 60;
+        }
+        else {
+            base_offset -= tz.StandardBias * 60;
+        }
+
+        return base_offset;
+    }
+    else if (type == Zinc_time_type_ny) {
+        time_t t2 = Zinc_datetime_get_gmt_t(tm);
+        int64_t delta = t2 - t;
+        return delta;
+    }
+    else {
+        return 0;
+    }
+#elif IS_UNIX
+    return tm->tm_gmtoff;
+#else
+    #error "unsupported OS"
+#endif
+}
+
+void Zinc_get_offset(time_t t, struct tm* tm, char offset[7], Zinc_time_type type)
+{
+    long tm_gmtoff = get_gmtoff(t, tm, type);
+    if (tm_gmtoff == 0) {
         strncpy(offset, "Z", 7);
     } else {
         bool is_negative = false;
-        long tm_gmtoff = tm->tm_gmtoff;
         if (tm_gmtoff < 0) {
             is_negative = true;
             tm_gmtoff *= -1;
@@ -22,22 +70,37 @@ void Zinc_get_offset(struct tm* tm, char offset[7])
     }
 }
 
-void Zinc_datetime_format(struct tm* tm, struct Zinc_string* dt)
+void Zinc_datetime_format(time_t t, Zinc_string* dt, Zinc_time_type type)
 {
+    bool is_ny = false;
+    char tz = NULL;
+    if (type == Zinc_time_type_ny) {
+        tz = Zinc_datetime_to_ny();
+        is_ny = true;
+    }
+
+    struct tm tm;
+
+    if (type == Zinc_time_type_local || type == Zinc_time_type_ny) {
+        Zinc_datetime_get_local_tm(&t, &tm);
+    }
+
+    if (type == Zinc_time_type_gmt) {
+        Zinc_datetime_get_gmt_tm(&t, &tm);
+    }
+
     char s[100];
     char offset[7];
-
-    Zinc_get_offset(tm, offset);
+    Zinc_get_offset(t, &tm, offset, type);
 
     snprintf(s, 100, "%d-%02d-%02dT%02d:%02d:%02d%s",
-        tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-        tm->tm_hour, tm->tm_min, tm->tm_sec, offset);
+        tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+        tm.tm_hour, tm.tm_min, tm.tm_sec, offset);
     Zinc_string_add_str(dt, s);
-}
 
-void Zinc_datetime_get_current_t(time_t* t)
-{
-    time(t);
+    if (is_ny) {
+        Zinc_datetime_from_ny(tz);
+    }
 }
 
 time_t Zinc_datetime_current()
@@ -45,20 +108,49 @@ time_t Zinc_datetime_current()
     return time(NULL);
 }
 
-void Zinc_datetime_get_utc_tm(time_t* t, struct tm* tm)
+void Zinc_datetime_get_gmt_tm(time_t* t, struct tm* tm)
 {
+#if IS_UNIX
     gmtime_r(t, tm);
+#elif IS_WIN
+    gmtime_s(tm, t);
+#else
+    #error "unsupported OS"
+#endif
 }
+
 void Zinc_datetime_get_local_tm(time_t* t, struct tm* tm)
 {
+#if IS_UNIX
     localtime_r(t, tm);
+#elif IS_WIN
+    localtime_s(tm, t);
+#else
+    #error "unsupported OS"
+#endif
+}
+
+time_t Zinc_datetime_get_local_t(struct tm* tm)
+{
+    return mktime(tm);
+}
+
+time_t Zinc_datetime_get_gmt_t(struct tm* tm)
+{
+#if IS_UNIX
+    return timegm(tm);
+#elif IS_WIN
+    return _mkgmtime(tm);
+#else
+#error "unsupported OS"
+#endif
 }
 
 time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
 {
     time_t t0;
     struct tm tm0;
-    Zinc_datetime_get_current_t(&t0);
+    t0 = Zinc_datetime_current();
     Zinc_datetime_get_local_tm(&t0, &tm0);
     int isdst = tm0.tm_isdst;
 
@@ -141,10 +233,17 @@ time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
 
     time_t t;
     if (is_utc) {
+#if IS_UNIX
         tm->tm_gmtoff = 0;
-        tm->tm_isdst = 0;
         tm->tm_zone = NULL;
+        tm->tm_isdst = 0;
         t = timegm(tm);
+#elif IS_WIN
+        tm->tm_isdst = 0;
+        t = _mkgmtime(tm);
+#else
+    #error "unsupported OS"
+#endif
     } else {
         Zinc_string_finish(&offset_hours);
         long offset_hours_l = strtol(offset_hours.buf, NULL, 10);
@@ -158,9 +257,14 @@ time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
         if (is_negative_offset) {
             tm_gmtoff = tm_gmtoff * -1;
         }
+#if IS_UNIX
         tm->tm_gmtoff = tm_gmtoff;
-        tm->tm_isdst = isdst;
         tm->tm_zone = NULL;
+#elif IS_WIN
+#else
+        #error "unsupported OS"
+#endif
+        tm->tm_isdst = isdst;
         t = mktime(tm);
     }
 
@@ -181,6 +285,7 @@ time_t Zinc_datetime_to_tm(struct Zinc_string* dt, struct tm* tm)
 
 void Zinc_datetime_print_tm(struct tm* tm)
 {
+#if IS_UNIX
     printf("year: %d\n", tm->tm_year);
     printf("month: %d\n", tm->tm_mon);
     printf("day: %d\n", tm->tm_mday);
@@ -192,24 +297,57 @@ void Zinc_datetime_print_tm(struct tm* tm)
     printf("zone: %s\n", tm->tm_zone);
     printf("w day: %d\n", tm->tm_wday);
     printf("y day: %d\n", tm->tm_yday);
+#elif IS_WIN
+    printf("year: %d\n", tm->tm_year);
+    printf("month: %d\n", tm->tm_mon);
+    printf("day: %d\n", tm->tm_mday);
+    printf("hour: %d\n", tm->tm_hour);
+    printf("min: %d\n", tm->tm_min);
+    printf("sec: %d\n", tm->tm_sec);
+    printf("is dst: %d\n", tm->tm_isdst);
+    printf("w day: %d\n", tm->tm_wday);
+    printf("y day: %d\n", tm->tm_yday);
+#else
+    #error "unsupported OS"
+#endif
 }
 
 char* Zinc_datetime_to_ny()
 {
+#if IS_UNIX
     char* current_tz = getenv("TZ");
     setenv("TZ", "America/New_York", 1);
     tzset();
     return current_tz;
+#elif IS_WIN
+    char* current_tz = getenv("TZ");
+    _putenv("TZ=EST5EDT");
+    _tzset();
+    return current_tz;
+#else
+    #error "unsupported OS"
+#endif
 }
 
 void Zinc_datetime_from_ny(char* old_tz)
 {
+#if IS_UNIX
     if (old_tz) {
         setenv("TZ", old_tz, 1);
     } else {
         unsetenv("TZ");
     }
     tzset();
+#elif IS_WIN
+    if (old_tz) {
+        _putenv_s("TZ", old_tz);
+    } else {
+        putenv("TZ=");
+    }
+    _tzset();
+#else
+        #error "unsupported OS"
+#endif
 }
 
 time_t Zinc_datetime_ny_minus_year(time_t t)
@@ -217,7 +355,13 @@ time_t Zinc_datetime_ny_minus_year(time_t t)
     char* tz = Zinc_datetime_to_ny();
 
     struct tm tm;
+#if IS_UNIX
     localtime_r(&t, &tm);
+#elif IS_WIN
+	localtime_s(&tm, &t);
+#else
+    #error "unsupported OS"
+#endif
 
     tm.tm_year--;
 
@@ -233,7 +377,13 @@ time_t Zinc_datetime_ny_minus_day(time_t t)
     char* tz = Zinc_datetime_to_ny();
 
     struct tm tm;
+#if IS_UNIX
     localtime_r(&t, &tm);
+#elif IS_WIN
+    localtime_s(&tm, &t);
+#else
+    #error "unsupported OS"
+#endif
 
     tm.tm_mday--;
 
@@ -246,45 +396,42 @@ time_t Zinc_datetime_ny_minus_day(time_t t)
 
 time_t Zinc_tm_to_gmt_t(struct tm* tm)
 {
+#if IS_UNIX
     return timegm(tm);
+#elif IS_WIN
+	return _mkgmtime(tm);
+#else
+    #error "unsupported OS"
+#endif
 }
 
 void Zinc_datetime_triple(
     time_t t,
-    struct tm* local_tm,
-    struct tm* ny_tm,
-    struct tm* gmt_tm,
     Zinc_string* local_dt,
     Zinc_string* ny_dt,
     Zinc_string* gmt_dt)
 {
-    localtime_r(&t, local_tm);
-    char* old_tz = Zinc_datetime_to_ny();
-    localtime_r(&t, ny_tm);
-    Zinc_datetime_from_ny(old_tz);
-    gmtime_r(&t, gmt_tm);
-
     Zinc_string_clear(local_dt);
     Zinc_string_clear(ny_dt);
     Zinc_string_clear(gmt_dt);
-    Zinc_datetime_format(local_tm, local_dt);
-    Zinc_datetime_format(ny_tm, ny_dt);
-    Zinc_datetime_format(gmt_tm, gmt_dt);
+    Zinc_datetime_format(t, local_dt, Zinc_time_type_local);
+    Zinc_datetime_format(t, ny_dt, Zinc_time_type_ny);
+    Zinc_datetime_format(t, gmt_dt, Zinc_time_type_gmt);
 }
 
-void Zinc_datetime_gmt_format(time_t t, Zinc_string* dt)
-{
-    struct tm tm;
-    gmtime_r(&t, &tm);
-    Zinc_datetime_format(&tm, dt);
-}
-
-time_t Zinc_last_ny_eod(time_t t)
+time_t Zinc_datetime_last_ny_eod(time_t t)
 {
     char* tz = Zinc_datetime_to_ny();
 
     struct tm tm;
+#if IS_UNIX
     localtime_r(&t, &tm);
+#elif IS_WIN
+    localtime_s(&tm, &t);
+#endif
+    TIME_ZONE_INFORMATION tz2;
+    DWORD result = GetTimeZoneInformation(&tz2);
+    printf("\n");
 
     if (tm.tm_hour < 17) {
         tm.tm_mday--;
@@ -305,7 +452,11 @@ time_t Zinc_last_ny_sod(time_t t)
     char* tz = Zinc_datetime_to_ny();
 
     struct tm tm;
+#if IS_UNIX
     localtime_r(&t, &tm);
+#elif IS_WIN
+    localtime_s(&tm, &t);
+#endif
 
     tm.tm_hour = 0;
     tm.tm_min = 0;

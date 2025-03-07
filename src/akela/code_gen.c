@@ -1,4 +1,5 @@
 #include "code_gen.h"
+#include <stdint.h>
 
 void Ake_code_gen_result_init(Ake_code_gen_result* result)
 {
@@ -22,7 +23,7 @@ void Ake_code_gen_result_destroy(Ake_code_gen_result* result)
 bool Ake_code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Ake_ast* n, Ake_code_gen_result* result)
 {
     if (cg_obj && cg_vtable) {
-        Ake_code_gen_interface* code_gen_jit = cg_obj + cg_vtable->jit_offset;
+        Ake_code_gen_interface* code_gen_jit = (Ake_code_gen_interface*)((uint8_t*)cg_obj + cg_vtable->jit_offset);
         return (*code_gen_jit)(cg_obj, n, result);
     }
     return true;

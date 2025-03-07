@@ -4,8 +4,10 @@
 #if defined(WIN32)
 	#ifdef AKELA_EXPORT
 		#define AKELA_API __declspec(dllexport)
-	#else
+	#elif AKELA_IMPORT
 		#define AKELA_API __declspec(dllimport)
+	#else
+		#define AKELA_API
 	#endif
 #else
 	#define AKELA_API

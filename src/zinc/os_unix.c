@@ -19,41 +19,6 @@
 #include "memory.h"
 #include <assert.h>
 
-enum Zinc_result Zinc_get_temp_file(FILE** fp_out, Zinc_string* name)
-{
-    enum Zinc_result r = Zinc_result_ok;
-    Zinc_string_add_str(name, "/tmp/zinc-XXXXXX");
-    Zinc_string_finish(name);
-    errno = 0;
-    int fd = mkstemp(name->buf);
-    if (fd < 1) {
-        return Zinc_set_error("creation of temp file failed with error [%s]", strerror(errno));
-    }
-    FILE* fp = fdopen(fd, "w");
-    if (!fp) {
-        return Zinc_set_error("creation of temp file failed with error [%s]", strerror(errno));
-    }
-    *fp_out = fp;
-
-    return r;
-}
-
-enum Zinc_result Zinc_close_temp_file(FILE* fp)
-{
-    if (fclose(fp)) {
-        return Zinc_set_error("close of temp file failed with error [%s]", strerror(errno));
-    }
-    return Zinc_result_ok;
-}
-
-enum Zinc_result Zinc_delete_temp_file(Zinc_string* name)
-{
-    if (unlink(name->buf)) {
-        return Zinc_set_error("removal of temp file failed with error [%s]", strerror(errno));
-    }
-    return Zinc_result_ok;
-}
-
 enum Zinc_result Zinc_get_user_home_directory(Zinc_string* dir)
 {
     const char *homedir;
@@ -63,25 +28,6 @@ enum Zinc_result Zinc_get_user_home_directory(Zinc_string* dir)
 
     Zinc_string_add_str(dir, homedir);
     return Zinc_result_ok;
-}
-
-void Zinc_path_join(Zinc_string* src1, Zinc_string* src2, Zinc_string* dest)
-{
-    Zinc_string_copy(src1, dest);
-    Zinc_string_add_char(dest, '/');
-    Zinc_string_copy(src2, dest);
-}
-
-void Zinc_path_append(Zinc_string* path, Zinc_string* path2)
-{
-    Zinc_string_add_char(path, '/');
-    Zinc_string_add_string(path, path2);
-}
-
-void Zinc_path_append_str(Zinc_string* path, const char* path2)
-{
-    Zinc_string_add_char(path, '/');
-    Zinc_string_add_str(path, path2);
 }
 
 enum Zinc_result Zinc_get_user_app_directory(Zinc_string* lower_name, Zinc_string* dir)
@@ -215,16 +161,6 @@ enum Zinc_result Zinc_delete_directory(Zinc_string* dir)  /* NOLINT(misc-no-recu
     return Zinc_result_ok;
 }
 
-bool Zinc_file_exists(Zinc_string* filename)
-{
-    Zinc_string_finish(filename);
-    if (access(filename->buf, F_OK) == 0) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 enum Zinc_result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLINT(misc-no-recursion) */
 {
     enum Zinc_result r = Zinc_result_ok;
@@ -283,23 +219,6 @@ enum Zinc_result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /*
     return Zinc_result_ok;
 }
 
-enum Zinc_result Zinc_get_exe_path(char** path)
-{
-    enum Zinc_result r = Zinc_result_ok;
-    int buf_size = 1024;
-
-    Zinc_malloc_safe((void**)path, buf_size+1);
-
-    size_t size = readlink("/proc/self/exe", *path, buf_size);
-    if (size == -1) {
-        r = Zinc_set_error("path not read");
-    } else {
-        (*path)[size] = '\0';
-    }
-
-    return r;
-}
-
 void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename)
 {
     int sep_pos = -1;
@@ -323,27 +242,6 @@ void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename)
     Zinc_string_finish(filename);
 }
 
-int Zinc_fopen_s(FILE **f, const char *name, const char *mode)
-{
-    int ret = 0;
-    assert(f);
-    *f = fopen(name, mode);
-    /* Can't be sure about 1-to-1 mapping of errno and MS' errno_t */
-    if (!*f)
-        ret = errno;
-    return ret;
-}
-
-void Zinc_get_cwd(Zinc_string* cwd)
-{
-    char buffer[PATH_MAX];
-    if (getcwd(buffer, sizeof(buffer)) != NULL) {
-        Zinc_string_add_str(cwd, buffer);
-    } else {
-        perror("getcwd() error");
-    }
-}
-
 Zinc_result Zinc_is_reg_file(Zinc_string* path)
 {
     Zinc_string_finish(path);
@@ -357,6 +255,17 @@ Zinc_result Zinc_is_reg_file(Zinc_string* path)
     }
 
     return Zinc_result_ok;
+}
+
+void Zinc_list_files(char* dir_name, Zinc_string_list* list)
+{
+    struct dirent* dir;
+    d = opendir(dir_name);
+    if (d) {
+        while ((dir = readdir(d)) != NULL) {
+            Zinc_string_list_add_str(list, dir->d_name);
+        }
+    }
 }
 
 #endif

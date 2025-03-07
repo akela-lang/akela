@@ -8,7 +8,7 @@ set (cobble_files
         match_tools.c
 )
 add_library(cobble ${cobble_files})
-target_link_libraries(cobble json zinc icudata icui18n icuio icutu icuuc)
+target_link_libraries(cobble json zinc ${ICU_LIBS})
 set_target_properties(cobble
         PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib

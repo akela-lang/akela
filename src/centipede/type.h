@@ -75,7 +75,7 @@ struct Cent_type {
         struct { Cent_type* type; } CENT_TYPE_SLICE;
         struct { Cent_type* type; } CENT_TYPE_POINTER;
         struct { Zinc_string name; Cent_type_param_list inputs; Cent_type_list outputs; } CENT_TYPE_FUNCTION;
-        struct {} CENT_TYPE_TYPE;
+        int8_t CENT_TYPE_TYPE;
     } data;
 };
 
@@ -93,8 +93,8 @@ struct Cent_type_def {
         struct { uint8_t bit_count; } CENT_TYPE_DEF_INTEGER;
         struct { uint8_t bit_count; } CENT_TYPE_DEF_NATURAL;
         struct { uint8_t bit_count; } CENT_TYPE_DEF_REAL;
-        struct { } CENT_TYPE_DEF_BOOLEAN;
-        struct { } CENT_TYPE_DEF_STRING;
+        uint8_t CENT_TYPE_DEF_BOOLEAN;
+        uint8_t CENT_TYPE_DEF_STRING;
         struct { Cent_type_field_list fields; } CENT_TYPE_DEF_STRUCT;
     } data;
 };

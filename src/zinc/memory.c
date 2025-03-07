@@ -3,6 +3,7 @@
 #include "memory.h"
 #include "result.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 void Zinc_malloc_safe(void** buf, size_t size)
 {
@@ -37,7 +38,7 @@ void free_safe(void* p)
  * @param b_size second array size
  * @return true if they memory_match, otherwise false
  */
-bool Zinc_memory_match(const u_int8_t a[], size_t a_size, const u_int8_t b[], size_t b_size)
+bool Zinc_memory_match(const uint8_t a[], size_t a_size, const uint8_t b[], size_t b_size)
 {
     if (a_size != b_size) {
         return false;

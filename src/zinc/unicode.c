@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include "zstring.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 bool Zinc_is_hex_digit(char c[4], int num)
 {
@@ -75,7 +76,7 @@ unsigned int Zinc_char4_to_hex(char* src, int num)
     return code;
 }
 
-char Zinc_num4_to_hex_char(u_int8_t cp)
+char Zinc_num4_to_hex_char(uint8_t cp)
 {
     if (cp == 0) return '0';
     if (cp == 1) return '1';
@@ -96,7 +97,7 @@ char Zinc_num4_to_hex_char(u_int8_t cp)
     return '0';
 }
 
-int Zinc_num32_to_hex_str(u_int32_t cp, Zinc_string* bf)
+int Zinc_num32_to_hex_str(uint32_t cp, Zinc_string* bf)
 {
     Zinc_string temp;
     Zinc_string_init(&temp);

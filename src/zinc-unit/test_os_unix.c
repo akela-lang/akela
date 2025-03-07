@@ -1,3 +1,11 @@
+#if defined(__unix__) || defined(__unix) || defined(__APPLE__) || defined(__MACH__) || defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+#define IS_UNIX 1
+#else
+#define IS_UNIX 0
+#endif
+
+#if (IS_UNIX)
+
 #include "zinc/unit_test.h"
 #include "zinc/os_unix.h"
 #include <string.h>
@@ -212,9 +220,11 @@ void test_os_unix_get_dir_files()
     Zinc_string_destroy(&dir);
     Zinc_string_list_destroy(&bl);
 }
+#endif
 
 void test_os_unix()
 {
+#if IS_UNIX
     test_os_unix_get_temp_file();
     test_os_unix_get_user_home_directory();
     test_os_unix_path_join();
@@ -223,4 +233,5 @@ void test_os_unix()
     test_os_unix_delete_directory();
     test_os_unix_file_exists();
     test_os_unix_get_dir_files();
+#endif
 }

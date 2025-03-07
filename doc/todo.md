@@ -56,4 +56,5 @@
 # Worm
 
 # Zinc
-Performance test vector algorithm
+* performance test vector algorithm
+* standardize all variatic functions

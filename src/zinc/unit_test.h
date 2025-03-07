@@ -24,7 +24,7 @@ ZINC_API void Zinc_test_name(const char* fmt, ...);
 ZINC_API void Zinc_panic();
 ZINC_API void Zinc_test_called();
 ZINC_API void Zinc_error_triggered();
-ZINC_API void Zinc_print_results();
+void Zinc_print_results();
 ZINC_API void Zinc_assert_int_equal(int a, int b, const char* message);
 ZINC_API void Zinc_assert_true(int value, const char* message);
 ZINC_API void Zinc_assert_false(int value, const char* message);

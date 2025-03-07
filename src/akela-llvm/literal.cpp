@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "zinc/os.h"
 
 using namespace llvm;
 using namespace llvm::orc;
@@ -23,9 +24,13 @@ namespace Akela_llvm {
                 float v = strtof(n->value.buf, nullptr);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             } else if (td->bit_count == 16) {
+#if IS_UNIX
                 _Float16 v = (_Float16)strtof(n->value.buf, nullptr);
                 Type* t = Type::getHalfTy(*jd->TheContext);
                 return ConstantFP::get(t, v);
+#elif IS_WIN
+				assert(false && "16-bit float not supported");
+#endif
             } else {
                 assert(false && "unhandled floating point value");
             }

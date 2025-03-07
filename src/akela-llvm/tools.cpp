@@ -1,3 +1,4 @@
+#include "zinc/os.h"
 #include "akela/parse_types.h"
 #include "tools.h"
 #include "function.h"
@@ -8,6 +9,7 @@
 #include "struct.h"
 #include <stdfloat>
 #include <float.h>
+#include <stdint.h>
 
 using namespace llvm;
 using namespace llvm::orc;
@@ -237,32 +239,32 @@ namespace Akela_llvm {
                         }
                     } else {
                         if (n->tu->td->bit_count == 64) {
-                            u_int64_t (*fp)() = ExprSymbol.getAddress().toPtr<u_int64_t(*)()>();
-                            u_int64_t v = fp();
+                            uint64_t (*fp)() = ExprSymbol.getAddress().toPtr<uint64_t(*)()>();
+                            uint64_t v = fp();
                             Zinc_string_add_format(value, "%lu", v);
                             if (result->return_address) {
-                                *(u_int64_t*)result->return_address = v;
+                                *(uint64_t*)result->return_address = v;
                             }
                         } else if (n->tu->td->bit_count == 32) {
-                            u_int32_t (*fp)() = ExprSymbol.getAddress().toPtr<u_int32_t(*)()>();
-                            u_int32_t v = fp();
+                            uint32_t (*fp)() = ExprSymbol.getAddress().toPtr<uint32_t(*)()>();
+                            uint32_t v = fp();
                             Zinc_string_add_format(value, "%u", v);
                             if (result->return_address) {
-                                *(u_int32_t*)result->return_address = v;
+                                *(uint32_t*)result->return_address = v;
                             }
                         } else if (n->tu->td->bit_count == 16) {
-                            u_int16_t (*fp)() = ExprSymbol.getAddress().toPtr<u_int16_t(*)()>();
-                            u_int16_t v = fp();
+                            uint16_t (*fp)() = ExprSymbol.getAddress().toPtr<uint16_t(*)()>();
+                            uint16_t v = fp();
                             Zinc_string_add_format(value, "%hu", v);
                             if (result->return_address) {
-                                *(u_int16_t*)result->return_address = v;
+                                *(uint16_t*)result->return_address = v;
                             }
                         } else if (bit_count == 8) {
-                            u_int8_t (*fp)() = ExprSymbol.getAddress().toPtr<u_int8_t(*)()>();
-                            u_int8_t v = fp();
+                            uint8_t (*fp)() = ExprSymbol.getAddress().toPtr<uint8_t(*)()>();
+                            uint8_t v = fp();
                             Zinc_string_add_format(value, "%hhu", v);
                             if (result->return_address) {
-                                *(u_int8_t*)result->return_address = v;
+                                *(uint8_t*)result->return_address = v;
                             }
                         } else {
                             assert(false);
@@ -290,12 +292,16 @@ namespace Akela_llvm {
                             *(float*)result->return_address = v;
                         }
                     } else if (n->tu->td->bit_count == 16) {
+#if IS_UNIX
                         _Float16 (*fp)() = ExprSymbol.getAddress().toPtr <_Float16(*)()>();
                         _Float16 v = fp();
                         Zinc_string_add_format(value, "%f", (float)v);
                         if (result->return_address) {
                             *(_Float16*)result->return_address = v;
                         }
+#elif IS_WIN
+						assert(false && "16-bit float not supported");
+#endif
                     } else {
                         assert(false);
                     }

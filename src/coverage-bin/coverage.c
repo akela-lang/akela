@@ -1,10 +1,7 @@
 #include <stdio.h>
-#include <dirent.h>
 #include <sys/types.h>
 #include <errno.h>
 #include <string.h>
-#include <linux/limits.h>
-#include <unistd.h>
 #include "zinc/string_list.h"
 #include "zinc/result.h"
 #include "coverage/data.h"
@@ -19,6 +16,12 @@
 #include "zinc/vector.h"
 #include "coverage/parse.h"
 #include <assert.h>
+#include "zinc/os_unix.h"
+#if IS_UNIX
+#include <dirent.h>
+#include <linux/limits.h>
+#include <unistd.h>
+#endif
 
 void Cover_cwd();
 void Cover_append_path(struct Zinc_string* bf, char* path);
@@ -35,6 +38,7 @@ void Cover_print_file_results(Cover_file* file);
 
 int main(int argc, char** argv)
 {
+#if IS_UNIX
     char usage[] = "coverage <input-dir>";
     if (argc != 2) {
         fprintf(stderr, "Usage: %s\n", usage);
@@ -55,10 +59,11 @@ int main(int argc, char** argv)
     Cover_get_libraries(dir_name, &test, &app);
 
     Cover_app_destroy(&app);
-
+#endif
     return 0;
 }
 
+#if IS_UNIX
 void Cover_cwd()
 {
     char cwd[PATH_MAX];
@@ -413,3 +418,4 @@ void Cover_print_file_results(Cover_file* file)
     printf("\tcoverage (%%): %lf\n", file->coverage_percentage);
     printf("\n");
 }
+#endif

@@ -13,11 +13,12 @@ typedef struct Akela_llvm_cg {
     bool add_exit;
 } Akela_llvm_cg;
 
-extern Code_gen_vtable Akela_llvm_vtable;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+extern Code_gen_vtable Akela_llvm_vtable;
+
 
 void Akela_llvm_cg_init(Akela_llvm_cg* cg, Zinc_error_list* el, Zinc_string_list* extern_list);
 void Akela_llvm_cg_create(Akela_llvm_cg** cg, Zinc_error_list* el, Zinc_string_list* extern_list);

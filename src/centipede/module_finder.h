@@ -2,10 +2,11 @@
 #define CENTIPEDE_MODULE_H
 
 #include "zinc/input_unicode.h"
+#include <stdint.h>
 
 typedef struct Cent_module_finder_vtable {
-    u_int8_t find_offset;
-    u_int8_t destroy_offset;
+    uint8_t find_offset;
+    uint8_t destroy_offset;
 } Cent_module_finder_vtable;
 
 typedef struct Cent_input_data {

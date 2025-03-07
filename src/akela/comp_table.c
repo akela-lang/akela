@@ -4,6 +4,8 @@
 #include "zinc/os_unix.h"
 #include <stdio.h>
 #include "zinc/input_unicode_file.h"
+#include "zinc/os_win.h"
+#include "zinc/fs.h"
 
 void Ake_comp_table_init(struct Ake_comp_table* ct)
 {

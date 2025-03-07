@@ -3,7 +3,6 @@
 #include <cstddef>
 #include "zinc/string_list.h"
 
-
 Code_gen_vtable Akela_llvm_vtable = {
         .jit_offset = offsetof(Akela_llvm_cg, jit),
 };

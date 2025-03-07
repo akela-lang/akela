@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <stdint.h>
 
 typedef struct {
     void* buffer;
@@ -31,16 +32,16 @@ void Zinc_vector_print_double(Zinc_vector* v);
 }
 #endif
 
-#define ZINC_VECTOR_PTR(s, index) ((u_int8_t*)(s)->buffer + ((s)->value_size * (index)))
-#define ZINC_VECTOR_DOUBLE(s, index) (*(double*)((s)->buffer + ((s)->value_size * (index))))
-#define ZINC_VECTOR_U_LONG(s, index) (*(unsigned long*)((s)->buffer + ((s)->value_size * (index))))
-#define ZINC_VECTOR_INT(s, index) (*(int*)((s)->buffer + ((s)->value_size * (index))))
-#define ZINC_VECTOR_INT_U(s, index) (*(unsigned int*)((s)->buffer + ((s)->value_size * (index))))
-#define ZINC_VECTOR_LONG(s, index) (*(long*)((s)->buffer + ((s)->value_size * (index))))
-#define ZINC_VECTOR_LONG_U(s, index) (*(unsigned long*)((s)->buffer + ((s)->value_size * (index))))
-#define ZINC_VECTOR_BOOL(s, index) (*(u_int8_t*)((s)->buffer + ((s)->value_size * (index))))
-#define ZINC_VECTOR_CHAR(s, index) (*(char*)((s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_PTR(s, index) ((uint8_t*)(s)->buffer + ((s)->value_size * (index)))
+#define ZINC_VECTOR_DOUBLE(s, index) (*(double*)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_U_LONG(s, index) (*(unsigned long*)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_INT(s, index) (*(int*)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_INT_U(s, index) (*(unsigned int*)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_LONG(s, index) (*(long*)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_LONG_U(s, index) (*(unsigned long*)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_BOOL(s, index) (*(bool*)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_CHAR(s, index) (*(char*)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
 #define ZINC_VECTOR_STRING(s) ((char*)(s)->buffer)
-#define ZINC_VECTOR_VECTOR(s, index) (*(Zinc_vector**)((s)->buffer + ((s)->value_size * (index))))
+#define ZINC_VECTOR_VECTOR(s, index) (*(Zinc_vector**)((uint8_t*)(s)->buffer + ((s)->value_size * (index))))
 
 #endif

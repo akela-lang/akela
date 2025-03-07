@@ -1,7 +1,7 @@
 #ifndef ZINC_FIELD_LEX_H
 #define ZINC_FIELD_LEX_H
 
-#include "error.h"
+#include "zinc/error.h"
 #include "zinc/input_char_string.h"
 #include "zinc/input_char.h"
 #include "field.h"

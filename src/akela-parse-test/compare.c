@@ -1,9 +1,6 @@
 #include "centipede/parse.h"
 #include "centipede/build.h"
 #include <stdio.h>
-#include <dirent.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <centipede/base.h>
 #include "zinc/input_unicode_file.h"
 #include "centipede/comp_table.h"

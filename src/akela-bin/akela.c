@@ -8,6 +8,11 @@
 #include "akela/code_gen.h"
 #include "zinc/input_unicode_file.h"
 #include "akela-llvm/cg.h"
+#include "zinc/os.h"
+
+#if IS_WIN
+#include <windows.h>
+#endif
 
 int main(int argc, char** argv)
 {
@@ -19,8 +24,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
-#if defined(_WIN32) || defined(WIN32)
-    set_console_utf8();
+#if IS_WIN
+    SetConsoleOutputCP(CP_UTF8);
 #endif
 
     /* resource fp */
