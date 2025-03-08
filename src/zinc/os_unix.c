@@ -1,6 +1,6 @@
 #include "os.h"
 
-#ifdef IS_UNIX
+#if IS_UNIX
 #include "fs.h"
 #include <stdio.h>
 #include <stdlib.h>
