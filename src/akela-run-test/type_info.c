@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <zinc/fs.h>
+
 #include "data.h"
 #include "zinc/os_unix.h"
 #include "cent.h"

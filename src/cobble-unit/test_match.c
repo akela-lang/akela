@@ -1,12 +1,8 @@
 #include "zinc/unit_test.h"
-#include <stdbool.h>
-#include "test_compile_tools.h"
 #include "cobble/compile.h"
 #include "cobble/match.h"
 #include <string.h>
 #include "zinc/error_unit_test.h"
-#include "zinc/os.h"
-#include <Windows.h>
 
 Cob_result match_run(char* pattern, char* text)
 {

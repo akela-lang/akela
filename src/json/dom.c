@@ -61,13 +61,15 @@ void Json_dom_destroy(Json_dom* dom)
         break;
     case Json_dom_type_number:
     case Json_dom_type_array:
-        Json_dom* p = dom->head;
-        while (p) {
-            Json_dom* temp = p;
-            p = p->next;
-            Json_dom_destroy(temp);
+        {
+            Json_dom* p = dom->head;
+            while (p) {
+                Json_dom* temp = p;
+                p = p->next;
+                Json_dom_destroy(temp);
+            }
+            break;
         }
-        break;
     case Json_dom_type_object:
         Zinc_hash_map_string_map(&dom->value.object, (Zinc_hash_map_string_func)Json_dom_destroy);
         Zinc_hash_map_string_destroy(&dom->value.object);

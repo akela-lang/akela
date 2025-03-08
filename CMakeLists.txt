@@ -60,20 +60,17 @@ set(AKELA_DIR ${CMAKE_SOURCE_DIR})
 set(STD_DIR ${CMAKE_SOURCE_DIR}/std)
 set(AKELA_MATH ${STD_DIR}/math.ake)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-#configure_file(${AKELA_MATH} ${CMAKE_BINARY_DIR})
-#configure_file(${AKELA_MATH} ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE} COPYONLY)
-# Set the runtime output directory (this handles multi-config automatically)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-# Copy math.ake at build time
-add_custom_command(
-        OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/math.ake
-        COMMAND ${CMAKE_COMMAND} -E copy ${AKELA_MATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/math.ake
-        DEPENDS ${AKELA_MATH}
-)
-
-# Ensure it runs by attaching to a dummy target
-add_custom_target(copy_math ALL DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/math.ake)
+configure_file(${AKELA_MATH} ${CMAKE_BINARY_DIR}/bin COPYONLY)
+if(WIN32)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+        add_custom_command(
+                OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/math.ake
+                COMMAND ${CMAKE_COMMAND} -E copy ${AKELA_MATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/math.ake
+                DEPENDS ${AKELA_MATH}
+        )
+        # Ensure it runs by attaching to a dummy target
+        add_custom_target(copy_math ALL DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/math.ake)
+endif()
 
 add_subdirectory(src/zinc)
 add_subdirectory(src/zinc-unit)

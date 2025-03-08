@@ -337,7 +337,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
             Zinc_error_list_set(jld->el, &first_loc, "code point greater than \\u10FFFF: %s", bf.buf);
         } else {
             char dest[4];
-            num = Zinc_code_to_utf8(dest, cp);
+            num = Zinc_code_to_utf8((unsigned char*)dest, cp);
             Zinc_string_add(&t->value, dest, num);
         }
     }
