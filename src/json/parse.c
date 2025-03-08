@@ -24,6 +24,11 @@ Json_result Json_parse_str(char* s)
     return Json_parse_slice((Zinc_string_slice){.p=s, .size=strlen(s)});
 }
 
+Json_result Json_parse_zstring(Zinc_string* string)
+{
+    return Json_parse_slice((Zinc_string_slice){.p=string->buf, .size=string->size});
+}
+
 Json_result Json_parse_slice(Zinc_string_slice slice)
 {
     Zinc_error_list* el = NULL;

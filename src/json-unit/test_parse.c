@@ -300,6 +300,24 @@ void test_parse_object_three_properties()
     Json_result_destroy(&res);
 }
 
+void test_parse_string_true()
+{
+    Zinc_test_name(__func__);
+
+    Zinc_string string;
+    Zinc_string_init(&string);
+    Zinc_string_add_str(&string, "true");
+    Json_result res = Json_parse_zstring(&string);
+
+    Zinc_expect_no_errors(res.el);
+    Zinc_assert_ptr(res.root, "ptr dom");
+    Zinc_expect_int_equal(res.root->type, Json_dom_type_boolean, "type dom");
+    Zinc_expect_true(res.root->value.boolean, "root true");
+
+    Json_result_destroy(&res);
+    Zinc_string_destroy(&string);
+}
+
 void test_parse()
 {
     test_parse_string();
@@ -325,4 +343,6 @@ void test_parse()
     test_parse_object_one_property();
     test_parse_object_two_properties();
     test_parse_object_three_properties();
+
+    test_parse_string_true();
 }

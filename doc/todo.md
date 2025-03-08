@@ -12,9 +12,6 @@
 * check expected errors
 
 # Akela Run Test
-* worm file parser
-* type testing with worm
-* parse testing with worm
 * array
 * string
 
@@ -47,10 +44,9 @@
 # Dataframe
 
 # JSON
-* create `Json_parse_string`
 
 # Worm
 
 # Zinc
 * performance test vector algorithm
-* standardize all variatic functions
+* standardize all variadic functions
