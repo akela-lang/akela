@@ -195,11 +195,11 @@ Json_dom* Json_parse_number(Json_parse_data* pd)
         assert(false && "not possible");
     }
 
-    if (n->number_type == Json_dom_number_type_integer) {
-        dom->number_type = Json_dom_number_type_integer;
+    if (n->number_type == Json_number_type_integer) {
+        dom->number_type = Json_number_type_integer;
         dom->value.integer = n->number.integer;
-    } else if (n->number_type == Json_dom_number_type_fp) {
-        dom->number_type = Json_dom_number_type_fp;
+    } else if (n->number_type == Json_number_type_fp) {
+        dom->number_type = Json_number_type_fp;
         dom->value.fp = n->number.fp;
     } else {
         assert(false && "invalid number type");

@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "zinc/hash_map_string.h"
 #include "zinc/error.h"
+#include "number.h"
 
 typedef enum Json_dom_type {
     Json_dom_type_none,
@@ -16,15 +17,9 @@ typedef enum Json_dom_type {
     Json_dom_type_object,
 } Json_dom_type;
 
-typedef enum Json_dom_number_type {
-    Json_dom_number_type_none,
-    Json_dom_number_type_integer,
-    Json_dom_number_type_fp,
-} Json_dom_number_type;
-
 typedef struct Json_dom {
     Json_dom_type type;
-    Json_dom_number_type number_type;
+    Json_number_type number_type;
     union {
         /* null: no value */            /* null */
         bool boolean;                   /* boolean */

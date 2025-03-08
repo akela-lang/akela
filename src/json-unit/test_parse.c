@@ -51,7 +51,7 @@ void test_parse_number_integer()
 
     Zinc_expect_no_errors(res.el);
     Zinc_expect_int_equal(res.root->type, Json_dom_type_number, "type dom");
-    Zinc_expect_int_equal(res.root->number_type, Json_dom_number_type_integer, "number_type dom");
+    Zinc_expect_int_equal(res.root->number_type, Json_number_type_integer, "number_type dom");
     Zinc_expect_long_long_equal(res.root->value.integer, 30, "integer dom");
 
     Json_result_destroy(&res);
@@ -64,7 +64,7 @@ void test_parse_number_fp()
 
     Zinc_expect_no_errors(res.el);
     Zinc_expect_int_equal(res.root->type, Json_dom_type_number, "type dom");
-    Zinc_expect_int_equal(res.root->number_type, Json_dom_number_type_fp, "number_type dom");
+    Zinc_expect_int_equal(res.root->number_type, Json_number_type_fp, "number_type dom");
     Zinc_expect_double_equal(res.root->value.fp, 1.8, "fp dom");
 
     Json_result_destroy(&res);
@@ -294,7 +294,7 @@ void test_parse_object_three_properties()
     Json_dom* age = Zinc_hash_map_string_get_str(&res.root->value.object, "age");
     Zinc_assert_ptr(age, "ptr age");
     Zinc_expect_int_equal(age->type, Json_dom_type_number, "type age");
-    Zinc_expect_int_equal(age->number_type, Json_dom_number_type_integer, "type age");
+    Zinc_expect_int_equal(age->number_type, Json_number_type_integer, "type age");
     Zinc_expect_long_long_equal(age->value.integer, 31, "str age");
 
     Json_result_destroy(&res);

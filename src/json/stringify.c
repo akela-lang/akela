@@ -156,9 +156,9 @@ void Json_stringify_string(struct Zinc_error_list* el, Json_dom* dom, struct Zin
 
 void Json_stringify_number(struct Zinc_error_list* el, Json_dom* dom, struct Zinc_string *bf)
 {
-    if (dom->number_type == Json_dom_number_type_integer) {
+    if (dom->number_type == Json_number_type_integer) {
         Zinc_string_add_format(bf, "%lld", dom->value.integer);
-    } else if (dom->number_type == Json_dom_number_type_fp) {
+    } else if (dom->number_type == Json_number_type_fp) {
         Zinc_string_add_format(bf, "%lf", dom->value.fp);
     } else {
         struct Zinc_location loc;

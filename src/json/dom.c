@@ -6,7 +6,7 @@
 void Json_dom_init(Json_dom* dom)
 {
     dom->type = Json_dom_type_none;
-    dom->number_type = Json_dom_number_type_none;
+    dom->number_type = Json_number_type_none;
     dom->has_error = false;
     Zinc_location_init(&dom->loc);
     dom->next = NULL;

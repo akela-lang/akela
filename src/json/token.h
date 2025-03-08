@@ -3,6 +3,7 @@
 
 #include "zinc/zstring.h"
 #include "zinc/error.h"
+#include "number.h"
 
 typedef enum Json_token_type {
     Json_token_type_none,
@@ -42,12 +43,6 @@ static char* Json_token_type_name(Json_token_type type)
 
     return name_array[type];
 }
-
-typedef enum Json_number_type {
-    Json_number_type_none,
-    Json_number_type_integer,
-    Json_number_type_fp,
-} Json_number_type;
 
 typedef struct Json_token {
     Json_token_type type;
