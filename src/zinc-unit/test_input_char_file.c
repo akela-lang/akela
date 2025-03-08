@@ -58,6 +58,7 @@ void TestInputCharFileNext()
     Zinc_vector_destroy(text_actual);
     free(text_actual);
     free(input);
+    Zinc_string_destroy(&path);
 }
 
 void TestInputCharFileRepeat()
@@ -119,6 +120,7 @@ void TestInputCharFileRepeat()
     Zinc_vector_destroy(text_actual);
     free(text_actual);
     free(input);
+    Zinc_string_destroy(&name);
 }
 
 void TestInputCharFileSeek()
@@ -160,6 +162,7 @@ void TestInputCharFileSeek()
     Zinc_vector_destroy(text_actual);
     free(text_actual);
     free(input);
+    Zinc_string_destroy(&name);
 }
 
 void TestInputCharFileGetAll()
@@ -192,6 +195,7 @@ void TestInputCharFileGetAll()
     Zinc_vector_destroy(text_actual);
     free(text_actual);
     free(input);
+    Zinc_string_destroy(&name);
 }
 
 void TestInputCharFile()

@@ -85,6 +85,9 @@ void test_datetime_ny_standard()
     //Zinc_expect_string(&local_dt, "2024-12-31T17:00:00-07:00", "local_dt");
     Zinc_expect_string(&ny_dt, "2024-12-31T19:00:00-05:00", "ny_dt");
     Zinc_expect_string(&gmt_dt, "2025-01-01T00:00:00Z", "gmt_dt");
+    Zinc_string_destroy(&local_dt);
+    Zinc_string_destroy(&ny_dt);
+    Zinc_string_destroy(&gmt_dt);
 }
 
 void test_datetime_ny_dst()
