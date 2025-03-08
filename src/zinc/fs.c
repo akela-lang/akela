@@ -302,12 +302,13 @@ void Zinc_list_files(const char* directory, Zinc_string_list* files)
 {
 #if IS_UNIX
     DIR* dir = opendir(directory);
-    struct dirent* d;
-    if (d) {
+    if (dir) {
+        struct dirent* d;
         while ((d = readdir(dir)) != NULL) {
             Zinc_string_list_add_str(files, d->d_name);
         }
     }
+    free(dir);
 #elif IS_WIN
     Zinc_list_files2(Zinc_char_to_wchar(directory), files);
 #else

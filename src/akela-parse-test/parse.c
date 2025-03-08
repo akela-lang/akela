@@ -81,6 +81,7 @@ void Run_parse_files(char* dir_name)
     }
 
     Zinc_string_destroy(&dir_path);
+    Zinc_string_list_destroy(&files);
 }
 
 void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)

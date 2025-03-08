@@ -41,7 +41,7 @@ void Cent_module_finder_file_append_path(Zinc_string* path1, Zinc_string* path2)
 Cent_input_data Cent_module_finder_file_find(Cent_module_finder_file* mf, Zinc_string* name)
 {
     Cent_input_data data = {NULL, NULL};
-    struct Zinc_string path;
+    Zinc_string path;
     Zinc_string_init(&path);
     Zinc_string_copy(&mf->dir_path, &path);
     Cent_module_finder_file_append_path(&path, name);
@@ -55,6 +55,7 @@ Cent_input_data Cent_module_finder_file_find(Cent_module_finder_file* mf, Zinc_s
             Zinc_input_unicode_file_create(&input, fp);
             data.input = input;
             data.input_vtable = input->input_vtable;
+            Zinc_string_destroy(&path);
             return data;
         }
     }
