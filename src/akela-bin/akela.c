@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 
     free(input);
     fclose(fp);
-    free(cg);
+    Akela_llvm_cg_destroy(cg);
 
     return 0;
 }
