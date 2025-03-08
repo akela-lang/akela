@@ -4,7 +4,7 @@
 
 void Cent_lex_data_init(
     Cent_lex_data *ld,
-    struct Zinc_error_list* errors,
+    Zinc_error_list* errors,
     void* input,
     Zinc_input_unicode_vtable* input_vtable)
 {
@@ -32,7 +32,7 @@ void Cent_lex_data_init(
 
 void Cent_lex_data_create(
     Cent_lex_data **ld,
-    struct Zinc_error_list* errors,
+    Zinc_error_list* errors,
     void* input,
     Zinc_input_unicode_vtable* input_vtable)
 {

@@ -19,7 +19,7 @@ void Cent_module_copy_symbol(struct Zinc_string* name, Cent_symbol* sym)
 
 void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
 {
-    struct Zinc_string path;
+    Zinc_string path;
     Zinc_string_init(&path);
 
     /* find module */
@@ -54,8 +54,8 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
     file_name.size = path.size;
 
     Cent_comp_unit_parse(cu);
-    if (&cu->errors.head) {
-        struct Zinc_error* e = cu->errors.head;
+    if (cu->errors.head) {
+        Zinc_error* e = cu->errors.head;
         while (e) {
             Zinc_error_list_set(pd->errors, &e->loc, "%b: %b", &path, &e->message);
             e = e->next;
@@ -76,7 +76,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         Zinc_hash_map_string_map_name(&src_env->symbols, (Zinc_hash_map_string_func_name)Cent_module_copy_symbol);
     } else {
         p = n->head;
-        struct Zinc_string base_name;
+        Zinc_string base_name;
         Zinc_string_init(&base_name);
         Zinc_string_copy(&p->text, &base_name);
         Cent_symbol* sym = Cent_environment_get(pd->top, &base_name);

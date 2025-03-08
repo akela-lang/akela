@@ -7,7 +7,7 @@
 #include "token.h"
 
 typedef struct Cent_lex_data {
-    struct Zinc_error_list* errors;
+    Zinc_error_list* errors;
     void* input;
     Zinc_input_unicode_vtable* input_vtable;
     Zinc_hash_map_string reserved;
@@ -16,20 +16,20 @@ typedef struct Cent_lex_data {
 
 void Cent_lex_data_init(
     Cent_lex_data *ld,
-    struct Zinc_error_list* errors,
+    Zinc_error_list* errors,
     void* input,
     Zinc_input_unicode_vtable* input_vtable);
 void Cent_lex_data_create(
     Cent_lex_data **ld,
-    struct Zinc_error_list* errors,
+    Zinc_error_list* errors,
     void* input,
     Zinc_input_unicode_vtable* input_vtable);
-void Cent_lex_data_destroy();
+void Cent_lex_data_destroy(Cent_lex_data* ld);
 
 void Cent_lex_add_reserved_word(Cent_lex_data* ld, char* word, Cent_token_type type);
-Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, struct Zinc_string* word);
+Cent_token_type* Cent_lex_get_reserved_word(Cent_lex_data* ld, Zinc_string* word);
 
 void Cent_lex_add_builtin(Cent_lex_data* ld, char* name, Cent_builtin_type type);
-Cent_builtin_type* Cent_lex_get_builtin(Cent_lex_data* ld, struct Zinc_string* name);
+Cent_builtin_type* Cent_lex_get_builtin(Cent_lex_data* ld, Zinc_string* name);
 
 #endif
