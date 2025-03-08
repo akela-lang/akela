@@ -58,4 +58,5 @@ void Json_result_destroy(Json_result* res)
     Zinc_error_list_destroy(res->el);
     free(res->el);
     Json_dom_destroy(res->root);
+    free(res->root);
 }

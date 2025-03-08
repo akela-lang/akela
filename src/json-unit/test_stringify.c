@@ -26,6 +26,7 @@ void test_stringify_null()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -51,6 +52,7 @@ void test_stringify_true()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -76,6 +78,7 @@ void test_stringify_false()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -102,6 +105,7 @@ void test_stringify_string()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -128,6 +132,7 @@ void test_stringify_string2()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -154,6 +159,7 @@ void test_stringify_string3()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -180,6 +186,7 @@ void test_stringify_string4()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -208,6 +215,7 @@ void test_stringify_string_error_invalid_char()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -235,6 +243,7 @@ void test_stringify_number_integer()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -262,6 +271,7 @@ void test_stringify_number_fraction()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -289,6 +299,7 @@ void test_stringify_number_exponent()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -314,6 +325,7 @@ void test_stringify_array_empty()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -346,6 +358,7 @@ void test_stringify_array_one()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -408,6 +421,7 @@ void test_stringify_array2()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -433,6 +447,7 @@ void test_stringify_object_empty()
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -471,6 +486,7 @@ void test_stringify_object_one()
     Zinc_string_destroy(&name0);
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }
@@ -539,6 +555,7 @@ void test_stringify_object_many()
     Zinc_string_destroy(&name2);
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
+    free(dom);
     Zinc_error_list_destroy(el);
     free(el);
 }

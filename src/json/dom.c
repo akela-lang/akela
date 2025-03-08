@@ -67,17 +67,22 @@ void Json_dom_destroy(Json_dom* dom)
                 Json_dom* temp = p;
                 p = p->next;
                 Json_dom_destroy(temp);
+                free(temp);
             }
             break;
         }
     case Json_dom_type_object:
-        Zinc_hash_map_string_map(&dom->value.object, (Zinc_hash_map_string_func)Json_dom_destroy);
+        Zinc_hash_map_string_map(&dom->value.object, (Zinc_hash_map_string_func)Json_dom_free);
         Zinc_hash_map_string_destroy(&dom->value.object);
         break;
     default:
         assert(false && "invalid type");
     }
+}
 
+void Json_dom_free(Json_dom* dom)
+{
+    Json_dom_destroy(dom);
     free(dom);
 }
 

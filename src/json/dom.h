@@ -41,6 +41,7 @@ void Json_dom_init(Json_dom* dom);
 void Json_dom_set_type(Json_dom* dom, Json_dom_type type);
 void Json_dom_create(Json_dom** dom);
 void Json_dom_destroy(Json_dom* dom);
+void Json_dom_free(Json_dom* dom);
 void Json_dom_add_element(Json_dom* p, Json_dom* c);
 Json_dom* Json_dom_get_element(Json_dom* dom, size_t index);
 void Json_dom_add_property(Json_dom* dom, struct Zinc_string* name, Json_dom* value);

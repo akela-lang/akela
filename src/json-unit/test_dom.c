@@ -36,6 +36,7 @@ void test_dom_add()
     Zinc_expect_ptr_equal(root->tail, c, "tail root");
 
     Json_dom_destroy(root);
+    free(root);
 }
 
 void test_dom()

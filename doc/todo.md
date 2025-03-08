@@ -24,9 +24,6 @@
 
 # Cobble
 * test if repeat and repeat range are greedy
-* create converter once
-* JSON compile tests
-* JSON match tests
 * performance testing
     * cobble
     * rust
@@ -50,7 +47,6 @@
 # Dataframe
 
 # JSON
-* make `Json_dom_destroy` follow conventions and not free top object
 * create `Json_parse_string`
 
 # Worm
