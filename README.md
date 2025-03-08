@@ -61,13 +61,6 @@ cd ../akela
 
 ## Build Full Compiler
 ```
-cmake -B cmake-build-debug -DLLVM_SEARCH=../llvm-project/build-release -DCMAKE_BUILD_TYPE=Debug -G Ninja
-ninja -C cmake-build-debug
-```
-
-## Build Without LLVM 
-To build only subprojects that do not require LLVM (for example Zinc and Centipede)
-```
 cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
 ninja -C cmake-build-debug
 ```
