@@ -206,7 +206,12 @@ void Zinc_expect_int64_t_equal(int64_t a, int64_t b, const char* message)
 	Zinc_test_called();
 	if (a == b) return;
 	Zinc_error_triggered();
+#if IS_UNIX
+	fprintf(stderr, "%ld = %ld error: %s\n", a, b, message);
+#elif IS_WIN
 	fprintf(stderr, "%lld = %lld error: %s\n", a, b, message);
+#else #error unsupported platform
+#endif
 }
 
 
@@ -215,7 +220,13 @@ void Zinc_expect_uint64_t_equal(uint64_t a, uint64_t b, const char* message)
 	Zinc_test_called();
 	if (a == b) return;
 	Zinc_error_triggered();
+
+#if IS_UNIX
+	fprintf(stderr, "%lu = %lu error: %s\n", a, b, message);
+#elif IS_WIN
 	fprintf(stderr, "%llu = %llu error: %s\n", a, b, message);
+#else #error unsupported platform
+#endif
 }
 
 void Zinc_expect_int32_t_equal(int32_t a, int32_t b, const char* message)
