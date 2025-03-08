@@ -88,6 +88,7 @@ void Run_parse_files(Run_data* data, char* dir_name)
     }
 
     Zinc_string_destroy(&dir_path);
+    Zinc_string_list_destroy(&files);
 }
 
 void Run_collect(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
@@ -128,6 +129,8 @@ void Run_collect(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
                 Zinc_string_add_string(&test->config, &line);
             }
         }
+
+        Cob_result_destroy(&sep);
 
         if (c == EOF) {
             break;

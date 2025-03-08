@@ -84,6 +84,7 @@ void Run_akela(Run_data* data, Run_test* test)
         cg_result.return_size = test->return_size;
 
         Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu->root, &cg_result);
+        Akela_llvm_cg_destroy(cg);
 
         /* check llvm output */
         Run_pair llvm_pair = Run_diff(data->regex_re, &cg_result.module_text, &test->llvm);
@@ -91,6 +92,7 @@ void Run_akela(Run_data* data, Run_test* test)
             passed = false;
             Run_print_llvm(&llvm_pair);
         }
+        Run_pair_destroy(&llvm_pair);
 
         if (cu->el.head) {
             /* any other errors */
@@ -118,6 +120,7 @@ void Run_akela(Run_data* data, Run_test* test)
     }
 
     Ake_comp_unit_destroy(cu);
+    free(cu);
     Zinc_vector_destroy(text);
     free(text);
     free(input);
@@ -463,6 +466,15 @@ Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
 
     pair.actual = actual_diff;
     pair.expected = expected_diff;
+
+    Zinc_string_list_destroy(&expected_diff_list);
+    Zinc_string_list_destroy(&actual_diff_list);
+
+    Zinc_string_list_destroy(actual_list);
+    free(actual_list);
+    Zinc_string_list_destroy(expected_list);
+    free(expected_list);
+
     return pair;
 }
 

@@ -94,7 +94,7 @@ ninja -C cmake-build-debug
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/centipede-unit
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/worm-unit
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-run-test
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-run-test src/akela-run-test/test-cases
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela examples/addition.ake
 
 ## Code Coverage
