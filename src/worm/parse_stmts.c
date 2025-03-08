@@ -277,6 +277,8 @@ Worm_ast* Worm_parse_children(Worm_parse_data* pd)
         a->type = Worm_ast_type_id;
         Zinc_string_add_string(&a->value, &id->value);
         Worm_ast_add(n, a);
+        Worm_token_destroy(id);
+        free(id);
     }
 
     Worm_lookahead(pd);
@@ -292,6 +294,8 @@ Worm_ast* Worm_parse_children(Worm_parse_data* pd)
             b->type = Worm_ast_type_id;
             Zinc_string_add_string(&b->value, &id->value);
             Worm_ast_add(n, b);
+            Worm_token_destroy(id);
+            free(id);
         }
     }
 

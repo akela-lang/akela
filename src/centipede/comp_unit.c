@@ -53,6 +53,8 @@ void Cent_comp_unit_destroy(Cent_comp_unit* cu)
 
     Zinc_input_unicode_destroy(cu->input, cu->input_vtable);
     free(cu->input);
+
+    Cent_parse_data_destroy(&cu->pd);
 }
 
 void Cent_comp_unit_free(Cent_comp_unit* cu)

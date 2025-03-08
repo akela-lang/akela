@@ -46,6 +46,7 @@ void Cent_parse_data_create(
     Cent_lex_data *ld,
     Zinc_string_slice file_name,
     Cent_environment* base);
+void Cent_parse_data_destroy(Cent_parse_data* pd);
 
 void Cent_parse_result_init(Cent_parse_result *pr, struct Zinc_error_list* errors);
 void Cent_parse_result_create(Cent_parse_result **pr, struct Zinc_error_list* errors);

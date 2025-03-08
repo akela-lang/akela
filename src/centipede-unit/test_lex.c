@@ -61,6 +61,8 @@ void test_lex_element()
 
     t = lex(&ld);
     Zinc_expect_int_equal(t->type, Cent_token_newline, "type 2.3");
+    Cent_token_destroy(t);
+    free(t);
 
     /* line 3 */
     t = lex(&ld);
