@@ -205,6 +205,7 @@ void Cent_parse_transform_variant_set(Cent_parse_data* pd, Cent_parse_result* pr
     // get the enum
     Cent_environment* top = Cent_get_environment(n);
     Cent_symbol* sym = Cent_environment_get(top, &object->text);
+    assert(sym);
     assert(sym->type == Cent_symbol_type_element);
     Cent_element_type* et = sym->data.element;
     assert(et);

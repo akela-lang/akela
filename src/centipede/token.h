@@ -36,6 +36,7 @@ typedef enum Cent_token_type {
     Cent_token_asterisk,
     Cent_token_const,
     Cent_token_struct,
+    Cent_token_variant,
     Cent_token_count,       /* keep at end */
 } Cent_token_type;
 
@@ -43,12 +44,12 @@ static char* Cent_token_name(Cent_token_type type)
 {
     char *name[] = {
         "none",
-        "eof",
         "string",
         "integer",
         "natural",
         "real",
         "id",
+        "eof",
         "element",
         "end",
         "newline",
@@ -72,6 +73,7 @@ static char* Cent_token_name(Cent_token_type type)
         "use",
         "const",
         "struct",
+        "variant",
     };
 
     if (type < Cent_token_count) {

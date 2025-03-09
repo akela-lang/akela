@@ -38,6 +38,7 @@ typedef enum Cent_ast_type {
     Cent_ast_type_follow_on,
     Cent_ast_type_struct,
     Cent_ast_type_param,
+    Cent_ast_type_variant,
 } Cent_ast_type;
 
 typedef enum Cent_variable_type {

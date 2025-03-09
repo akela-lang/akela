@@ -5,8 +5,10 @@
 * refactor array type
 * pointer type
 * new syntax
+* remove event loop test
 
 # Akela LLVM
+* remove function pointer test
 
 # Akela Parse Test
 * check expected errors
@@ -21,22 +23,7 @@
 
 # Cobble
 * test if repeat and repeat range are greedy
-* performance testing
-    * cobble
-    * rust
-    * pcre2
-* syntax tree to NFA generation
-* NFA generation and matching
-* performance testing 2
-    * grep
-    * awk
-    * sed
-    * perl
-    * zig
-    * python
-    * julia
-    * go
-    * dart
+* NFA generation
 * single pass NFA generation
 
 # Coverage
@@ -46,6 +33,7 @@
 # JSON
 
 # Worm
+* remove worm
 
 # Zinc
 * performance test vector algorithm
