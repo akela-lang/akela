@@ -61,12 +61,13 @@ void test_check_value_types_property_error_number()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: Test--source--Natural");
+    Zinc_expect_source_error(errors,
+        "for property (Test--source), found type (Natural) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
@@ -100,7 +101,8 @@ void test_check_value_types_property_error_string()
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: Test--source--String");
+    Zinc_expect_source_error(errors,
+        "for property (Test--source), found type (String) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
@@ -133,7 +135,8 @@ void test_check_value_types_property_error_boolean()
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: Test--source--Bool");
+    Zinc_expect_source_error(errors,
+        "for property (Test--source), found type (Bool) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
@@ -166,7 +169,8 @@ void test_check_value_types_property_error_object()
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: Test--source--Foo");
+    Zinc_expect_source_error(errors,
+        "for property (Test--source), found type (Foo) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
@@ -234,7 +238,8 @@ void test_check_value_types_property_error_variable_object()
 
     Zinc_expect_has_errors(errors);
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors, "invalid property type: Test--source--Foo");
+    Zinc_expect_source_error(errors,
+        "for property (Test--source), found type (Foo) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
@@ -667,7 +672,7 @@ void test_check_value_types_not_nested()
 
     Zinc_expect_has_errors(errors);
 
-    Zinc_expect_source_error(errors, "invalid property type: Bar--a--Natural");
+    Zinc_expect_source_error(errors, "for property (Bar--a), found type (Natural) but expected (Bool)");
 
     Cent_comp_table_destroy(ct);
     free(ct);
@@ -695,7 +700,8 @@ void test_check_value_types_nested()
 
     Zinc_expect_has_errors(errors);
 
-    Zinc_expect_source_error(errors, "invalid property type: Bar--a--Natural");
+    Zinc_expect_source_error(errors,
+        "for property (Bar--a), found type (Natural) but expected (Bool)");
 
     Cent_comp_table_destroy(ct);
     free(ct);

@@ -1921,16 +1921,19 @@ void test_parse_variant()
         "        siphon: Integer\n"
         "    }\n"
         "}\n"
-        "Monster::Bat {"
-        "   .hp = 10\n"
-        "   .attack = 2\n"
-        "   .defense = 1\n"
-        "   .siphon = 1\n"
-        "}\n"
-        "Monster::Human {"
-        "    .hp = 20\n"
-        "    .attack = 1\n"
-        "    .defense = 1\n"
+        "Monsters {\n"
+        "    Monster::Bat {"
+        "       .hp = 10\n"
+        "       .attack = 2\n"
+        "       .defense = 1\n"
+        "       .siphon = 1\n"
+        "    }\n"
+        "    Monster::Human {"
+        "        .hp = 20\n"
+        "        .attack = 1\n"
+        "        .defense = 1\n"
+        "        .name = \"Tom\"\n"
+        "    }\n"
         "}\n"
     );
     Cent_comp_unit_parse(ct->primary);
@@ -1953,6 +1956,47 @@ void test_parse_variant()
     Zinc_assert_ptr(enum_, "ptr enum_");
     Zinc_expect_int_equal(enum_->type, Cent_ast_type_enum_type, "type enum_");
     Zinc_expect_string(&enum_->text, "MonsterKind", "text enum_");
+
+    /* variant */
+    Cent_ast* variant = Cent_ast_get(root, 2);
+    Zinc_assert_ptr(variant, "ptr variant");
+    Zinc_expect_int_equal(variant->type, Cent_ast_type_variant, "type variant");
+
+    /* ns */
+    Cent_ast* vns = Cent_ast_get(variant, 0);
+    Zinc_assert_ptr(vns, "ptr vns");
+    Zinc_expect_int_equal(vns->type, Cent_ast_type_namespace, "type vns");
+
+    /* el */
+    Cent_ast* el = Cent_ast_get(vns, 0);
+    Zinc_assert_ptr(el, "ptr el");
+    Zinc_expect_int_equal(el->type, Cent_ast_type_id, "type el");
+    Zinc_expect_string(&el->text, "Monster", "text el");
+
+    /* kind */
+    Cent_ast* kind = Cent_ast_get(vns, 1);
+    Zinc_assert_ptr(kind, "ptr kind");
+    Zinc_expect_int_equal(kind->type, Cent_ast_type_id, "type kind");
+    Zinc_expect_string(&kind->text, "Bat", "text kind");
+
+    /* variant properties */
+    Cent_ast* vnt_properties = Cent_ast_get(variant, 1);
+    Zinc_assert_ptr(vnt_properties, "ptr vnt_properties");
+    Zinc_expect_int_equal(vnt_properties->type, Cent_ast_type_prop, "type vnt_properties");
+
+    Cent_ast* siphon_prop = Cent_ast_get(vnt_properties, 0);
+    Zinc_assert_ptr(siphon_prop, "ptr siphon_prop");
+    Zinc_expect_int_equal(siphon_prop->type, Cent_ast_type_prop_dec, "type siphon_prop");
+
+    Cent_ast* siphon_id = Cent_ast_get(siphon_prop, 0);
+    Zinc_assert_ptr(siphon_id, "ptr siphon");
+    Zinc_expect_int_equal(siphon_id->type, Cent_ast_type_id, "type siphon");
+    Zinc_expect_string(&siphon_id->text, "siphon", "text siphon");
+
+    Cent_ast* siphon_type = Cent_ast_get(siphon_prop, 1);
+    Zinc_assert_ptr(siphon_type, "ptr siphon_type");
+    Zinc_expect_int_equal(siphon_type->type, Cent_ast_type_id, "type siphon_type");
+    Zinc_expect_string(&siphon_type->text, "Integer", "text siphon_type");
 
     Cent_comp_table_destroy(ct);
     free(ct);

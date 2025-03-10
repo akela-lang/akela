@@ -666,6 +666,58 @@ void test_build_object_const()
     free(ct);
 }
 
+void test_build_variant()
+{
+    Zinc_test_name(__func__);
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+    "element Monster(MonsterKind) {\n"
+    "    properties {\n"
+    "        hp: Integer\n"
+    "        attack: Integer\n"
+    "        defense: Integer\n"
+    "    }\n"
+    "}\n"
+    "enum MonsterKind {\n"
+    "    Bat\n"
+    "    Rat\n"
+    "    Orc\n"
+    "    Goblin\n"
+    "    Skeleton\n"
+    "    Human\n"
+    "    Dog\n"
+    "}\n"
+    "variant Monster::Bat {\n"
+    "    properties {\n"
+    "        siphon: Integer\n"
+    "    }\n"
+    "}\n"
+    "Monsters {\n"
+    "    Monster::Bat {"
+    "       .hp = 10\n"
+    "       .attack = 2\n"
+    "       .defense = 1\n"
+    "       .siphon = 1\n"
+    "    }\n"
+    "    Monster::Human {"
+    "        .hp = 20\n"
+    "        .attack = 1\n"
+    "        .defense = 1\n"
+    "        .name = \"Tom\"\n"
+    "    }\n"
+    "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+    Zinc_expect_no_errors(errors);
+
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_string(&root->name, "Monsters", "name root");
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -690,4 +742,5 @@ void test_build()
     test_build_namespace_glob_value();
     test_build_const();
     test_build_object_const();
+    test_build_variant();
 }

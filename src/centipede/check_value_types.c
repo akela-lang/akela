@@ -97,10 +97,9 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
         Zinc_error_list_set(
             pr->errors,
             &n->loc,
-            "invalid property type: %b--%b--%b",
-            &object_value->name,
+            "property name (%b) not defined in element (%b)",
             name,
-            &value->name);
+            &object_value->name);
         value->has_error = true;
         n->has_error = true;
         return;
@@ -115,10 +114,11 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
             Zinc_error_list_set(
                 pr->errors,
                 &n->loc,
-                "invalid property type: %b--%b--%b",
+                "for property (%b--%b), found type (%b) but expected (%b)",
                 &object_value->name,
                 name,
-                &value->name);
+                &value->name,
+                &prop_element->name);
             value->has_error = true;
             n->has_error = true;
             return;
@@ -133,10 +133,11 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
             Zinc_error_list_set(
                 pr->errors,
                 &n->loc,
-                "invalid property type: %b--%b--%b",
+                "for property (%b--%b), found type (%b) but expected (%b)",
                 &object_value->name,
                 name,
-                &value_element->name);
+                &value_element->name,
+                &prop_element->name);
             value->has_error = true;
             n->has_error = true;
             /* test case: test_check_types_property_error_number */
