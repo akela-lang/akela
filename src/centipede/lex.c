@@ -29,7 +29,7 @@ Cent_token* lex(Cent_lex_data* ld)
             if (bt) {
                 t->builtin_type = *bt;
             } else {
-                Zinc_error_list_set(ld->errors, &t->loc, "invalid builtin id: %b", &t->value);
+                Zinc_error_list_set(ld->errors, &t->loc, "invalid builtin id: %bf", &t->value);
             }
         } else {
             Cent_token_type* p = Cent_lex_get_reserved_word(ld, &t->value);
@@ -217,7 +217,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
-        Zinc_error_list_set(ld->errors, &loc, "invalid character: %b", &bf);
+        Zinc_error_list_set(ld->errors, &loc, "invalid character: %bf", &bf);
         Zinc_string_destroy(&bf);
     }
 }
@@ -322,7 +322,7 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
-        Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
+        Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %bf", &bf);
         Zinc_string_destroy(&bf);
         return;
     }
@@ -370,7 +370,7 @@ void Cent_lex_string_escape(Cent_lex_data* ld, Cent_token* t)
     struct Zinc_string bf;
     Zinc_string_init(&bf);
     Zinc_string_add(&bf, c, num);
-    Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
+    Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %bf", &bf);
     Zinc_string_destroy(&bf);
 }
 

@@ -29,6 +29,7 @@ set(centipede_files
         parse_validation.c
         parse_transform.c
         type.c
+        cast.c
 )
 
 add_library(centipede ${centipede_files})

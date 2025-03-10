@@ -34,7 +34,7 @@ void test_error_list_set_buffer()
     Zinc_string_add_format(&bf, "hello");
     struct Zinc_location loc;
     Zinc_location_init(&loc);
-    Zinc_error_list_set(el, &loc, "abc %b xyz", &bf);
+    Zinc_error_list_set(el, &loc, "abc %bf xyz", &bf);
 
     Zinc_expect_has_errors(el);
     Zinc_expect_source_error(el, "abc hello xyz");

@@ -191,7 +191,7 @@ Cent_ast* Cent_parse_property(Cent_parse_data* pd)
         } else if (id->builtin_type == Cent_builtin_type_property_of) {
             n->type = Cent_ast_type_method_property_of;
         } else {
-            Zinc_error_list_set(pd->errors, &id->loc, "invalid method: %b", id->value);
+            Zinc_error_list_set(pd->errors, &id->loc, "invalid method: %bf", id->value);
             n->has_error = true;
         }
 

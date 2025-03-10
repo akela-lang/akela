@@ -39,6 +39,7 @@ ZINC_API int Zinc_string_compare(Zinc_string* a, Zinc_string* b);
 ZINC_API int Zinc_string_compare_str(Zinc_string* a, const char* b);
 ZINC_API Zinc_result Zinc_string_uslice(Zinc_string* src, Zinc_string* dest, size_t start, size_t end);
 ZINC_API void Zinc_string_add_format(Zinc_string *bf, const char* fmt, ...);
+ZINC_API void Zinc_string_add_vformat(struct Zinc_string *bf, const char* fmt, va_list args);
 ZINC_API int Zinc_string_order(Zinc_string* a, Zinc_string* b);
 ZINC_API Zinc_string* Zinc_string_clone(Zinc_string* bf);
 

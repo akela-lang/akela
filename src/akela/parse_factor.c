@@ -604,7 +604,7 @@ void Ake_find_missing_fields(struct Ake_parse_state* ps, struct Ake_type_def* td
             field = field->next;
         }
         if (!found) {
-            Zinc_error_list_set(ps->el, &id->loc, "struct field missing: %b", &id->value);
+            Zinc_error_list_set(ps->el, &id->loc, "struct field missing: %bf", &id->value);
             n->type = Ake_ast_type_error;
         }
         dec = dec->next;
@@ -632,7 +632,7 @@ void Ake_parse_struct_literal_elements(
 
         Ake_struct_field_result sfr = Ake_get_struct_field(td, &name->value);
         if (!sfr.found) {
-            Zinc_error_list_set(ps->el, &name->loc, "Not a valid field for %b: %b", &td->name, &name->value);
+            Zinc_error_list_set(ps->el, &name->loc, "Not a valid field for %bf: %bf", &td->name, &name->value);
             parent->type = Ake_ast_type_error;
         }
 

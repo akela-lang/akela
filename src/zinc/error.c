@@ -68,98 +68,20 @@ void Zinc_error_list_destroy(Zinc_error_list* el)
     }
 }
 
-bool Zinc_error_list_set(Zinc_error_list *el, Zinc_location* loc, const char* fmt, ...)
+bool Zinc_error_list_set(Zinc_error_list* el, Zinc_location* loc, const char* fmt, ...)
 {
-    va_list args;
-    va_start(args, fmt);
-    Zinc_string bf;
-    Zinc_string_init(&bf);
-    int len;
     Zinc_error* e = NULL;
     Zinc_error_create(&e);
 
-    char last_last = 0;
-    char last = 0;
-    while (*fmt != '\0') {
-        if (last == '%' && *fmt == '%') {
-            Zinc_string_add_char(&e->message, '%');
-        } else if (*fmt == '%') {
-            /* nothing */
-        } else if (last == '%' && *fmt == 'z') {
-            /* nothing */
-        } else if (last == '%' && *fmt == 'd') {
-            int x = va_arg(args, int);
-            while (true) {
-                Zinc_string_clear(&bf);
-                len = snprintf(bf.buf, bf.buf_size, "%d", x);
-                if (len < bf.buf_size) {
-                    bf.size = len;
-                    break;
-                } else {
-                    Zinc_string_expand(&bf, len + BUFFER_CHUNK);
-                }
-            }
-            Zinc_string_add(&e->message, bf.buf, bf.size);
-        } else if (last_last == '%' && last == 'z' && *fmt == 'u') {
-            size_t x = va_arg(args, size_t);
-            while (true) {
-                Zinc_string_clear(&bf);
-                len = snprintf(bf.buf, bf.buf_size, "%zu", x);
-                if (len < bf.buf_size) {
-                    bf.size = len;
-                    break;
-                } else {
-                    Zinc_string_expand(&bf, len + BUFFER_CHUNK);
-                }
-            }
-            Zinc_string_add(&e->message, bf.buf, bf.size);
-        } else if (last == '%' && *fmt == 's') {
-            char* x = va_arg(args, char*);
-            while (true) {
-                Zinc_string_clear(&bf);
-                len = snprintf(bf.buf, bf.buf_size, "%s", x);
-                if (len + 1 < bf.buf_size) {
-                    bf.size = len;
-                    break;
-                } else {
-                    Zinc_string_expand(&bf, len + 1 + BUFFER_CHUNK);
-                }
-            }
-            Zinc_string_add(&e->message, bf.buf, bf.size);
-        } else if (last == '%' && *fmt == 'b') {
-            Zinc_string* src = va_arg(args, Zinc_string*);
-            Zinc_string_finish(src);
-            while (true) {
-                Zinc_string_clear(&bf);
-                len = snprintf(bf.buf, bf.buf_size, "%s", src->buf);
-                if (len < bf.buf_size) {
-                    bf.size = len;
-                    break;
-                } else {
-                    Zinc_string_expand(&bf, len + BUFFER_CHUNK);
-                }
-            }
-            Zinc_string_add(&e->message, bf.buf, bf.size);
-        } else if (last == '%' && *fmt == 'c') {
-            char c = va_arg(args, int);
-            Zinc_string_add_char(&e->message, c);
-        } else {
-            Zinc_string_add_char(&e->message, *fmt);
-        }
-        last_last = last;
-        last = *fmt;
-        fmt++;
-    }
-
+    va_list args;
+    va_start(args, fmt);
+    Zinc_string_add_vformat(&e->message, fmt, args);
     va_end(args);
 
-    Zinc_error_list_add(el, e);
     if (loc) {
         e->loc = *loc;
     }
-
-    Zinc_string_destroy(&bf);
-
+    Zinc_error_list_add(el, e);
     return false;
 }
 

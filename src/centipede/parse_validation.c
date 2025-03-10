@@ -21,7 +21,7 @@ void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
         Zinc_error_list_set(
             pr->errors,
             &p->loc,
-            "id is not a variable: %b",
+            "id is not a variable: %bf",
             &p->text);
         n->has_error = true;
     } else if (sym->type == Cent_symbol_type_enumerate) {
@@ -40,7 +40,7 @@ void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
                 Zinc_error_list_set(
                     pr->errors,
                     &p->loc,
-                    "ambiguous id (%b) is both a submodule and variable",
+                    "ambiguous id (%bf) is both a submodule and variable",
                     &p->text);
                 n->has_error = true;
                 break;
@@ -63,7 +63,7 @@ void Cent_check_namespace(Cent_parse_result* pr, Cent_ast* n)
             }
 
             if (!sym2 && !mod2) {
-                Zinc_error_list_set(pr->errors, &p->loc, "not a valid id: %b", &p->text);
+                Zinc_error_list_set(pr->errors, &p->loc, "not a valid id: %bf", &p->text);
                 n->has_error = true;
             }
 
@@ -99,7 +99,7 @@ bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, C
         val = val->next;
     }
     if (!found) {
-        Zinc_error_list_set(pr->errors, &id2->loc, "invalid enum id: %b", &id2->text);
+        Zinc_error_list_set(pr->errors, &id2->loc, "invalid enum id: %bf", &id2->text);
         return false;
     }
 
@@ -107,7 +107,7 @@ bool Cent_check_enum(Cent_parse_result* pr, Cent_enum_type* en, Cent_ast* id1, C
         Zinc_error_list_set(
             pr->errors,
             &id2->next->loc,
-            "namespace after enum id: %b",
+            "namespace after enum id: %bf",
             &id2->next->text);
         return false;
     }
@@ -120,7 +120,7 @@ void Cent_check_variables(Cent_parse_result* pr, Cent_ast* n)
     Cent_environment* top = Cent_get_environment(n);
     Cent_symbol* sym = Cent_environment_get(top, &n->text);
     if (!sym) {
-        Zinc_error_list_set(pr->errors, &n->loc, "unknown variable: %b", &n->text);
+        Zinc_error_list_set(pr->errors, &n->loc, "unknown variable: %bf", &n->text);
         n->has_error = true;
     }
 }

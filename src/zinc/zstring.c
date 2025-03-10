@@ -274,10 +274,16 @@ enum Zinc_result Zinc_string_uslice(struct Zinc_string* src, struct Zinc_string*
     return r;
 }
 
-void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
+void Zinc_string_add_format(Zinc_string *bf, const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
+    Zinc_string_add_vformat(bf, fmt, args);
+    va_end(args);
+}
+
+void Zinc_string_add_vformat(Zinc_string *bf, const char* fmt, va_list args)
+{
     char* buf = NULL;
     size_t buf_size = BUFFER_CHUNK;
     int len;
@@ -508,7 +514,6 @@ void Zinc_string_add_format(struct Zinc_string *bf, const char* fmt, ...)
         fmt++;
     }
 
-    va_end(args);
     free(buf);
 }
 

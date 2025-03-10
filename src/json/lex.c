@@ -60,7 +60,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             struct Zinc_string bf;
             Zinc_string_init(&bf);
             Zinc_string_add(&bf, c, num);
-            Zinc_error_list_set(jld->el, &loc, "invalid character: %b", &bf);
+            Zinc_error_list_set(jld->el, &loc, "invalid character: %bf", &bf);
             Zinc_string_destroy(&bf);
             continue;
         }
@@ -217,7 +217,7 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
-        Zinc_error_list_set(jld->el, &loc, "invalid escape character: %b", &bf);
+        Zinc_error_list_set(jld->el, &loc, "invalid escape character: %bf", &bf);
         Zinc_string_destroy(&bf);
         return;
     }
@@ -265,7 +265,7 @@ void Json_lex_string_escape(Json_lex_data* jld, Json_token* t)
     struct Zinc_string bf;
     Zinc_string_init(&bf);
     Zinc_string_add(&bf, c, num);
-    Zinc_error_list_set(jld->el, &loc, "invalid escape character: %b", &bf);
+    Zinc_error_list_set(jld->el, &loc, "invalid escape character: %bf", &bf);
     Zinc_string_destroy(&bf);
 }
 
@@ -590,7 +590,7 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
     loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
     t->loc.end_pos = loc.start_pos;
 
-    Zinc_error_list_set(jld->el, &t->loc, "invalid word (%b), expecting true, false, or null", &t->value);
+    Zinc_error_list_set(jld->el, &t->loc, "invalid word (%bf), expecting true, false, or null", &t->value);
     t->type = Json_token_type_none;
     Zinc_string_clear(&t->value);
     return false;

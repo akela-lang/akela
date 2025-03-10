@@ -18,6 +18,7 @@
 * string
 
 # Centipede
+* cast number to number (compare value to max and min of target type)
 * variant objects
 * limit lines in lexer for multi-test files
 

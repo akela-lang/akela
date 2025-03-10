@@ -47,7 +47,7 @@ Cent_ast* Cent_parse_const(Cent_parse_data* pd)
                 Zinc_error_list_set(
                     pd->errors,
                     &id_node->loc,
-                    "shadowing of type: %b",
+                    "shadowing of type: %bf",
                     &id_node->text);
                 n->has_error = true;
                 /* test case: test_parse_const_error_shadow_type */
@@ -55,7 +55,7 @@ Cent_ast* Cent_parse_const(Cent_parse_data* pd)
                 Zinc_error_list_set(
                     pd->errors,
                     &id_node->loc,
-                    "shadowing of module: %b",
+                    "shadowing of module: %bf",
                     &id_node->text);
                 n->has_error = true;
                 /* test case: test_parse_const_error_shadow_module */
@@ -65,7 +65,7 @@ Cent_ast* Cent_parse_const(Cent_parse_data* pd)
                     Zinc_error_list_set(
                         pd->errors,
                         &id_node->loc,
-                        "shadowing of local variable: %b",
+                        "shadowing of local variable: %bf",
                         &id_node->text);
                     n->has_error = true;
                     /* test case: test_parse_const_error_shadow_local */

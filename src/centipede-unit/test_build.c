@@ -666,6 +666,63 @@ void test_build_object_const()
     free(ct);
 }
 
+void test_build_cast_natural_to_integer()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Integer\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = 100\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+    Zinc_expect_no_errors(errors);
+
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_string(&root->name, "Foo", "name root");
+
+    Cent_value* x = Cent_value_get_str(root, "x");
+    Zinc_assert_ptr(x, "ptr x");
+    Zinc_expect_int_equal(x->type, Cent_value_type_integer, "type x");
+    Zinc_expect_string(&x->name, "Integer", "name x");
+    Zinc_expect_int64_t_equal(x->data.integer, 100, "integer x");
+}
+
+void test_build_cast_natural_to_integer_error_too_large()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Integer\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = 9223372036854775808\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(
+        errors,
+        "Natural (9223372036854775808) too large to cast to Integer");
+}
+
 void test_build_variant()
 {
     Zinc_test_name(__func__);
@@ -742,5 +799,7 @@ void test_build()
     test_build_namespace_glob_value();
     test_build_const();
     test_build_object_const();
+    test_build_cast_natural_to_integer();
+    test_build_cast_natural_to_integer_error_too_large();
     test_build_variant();
 }

@@ -275,7 +275,7 @@ void Worm_lex_string_escape(Worm_lex_data* ld, Worm_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
-        Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
+        Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %bf", &bf);
         Zinc_string_destroy(&bf);
         return;
     }
@@ -323,7 +323,7 @@ void Worm_lex_string_escape(Worm_lex_data* ld, Worm_token* t)
     struct Zinc_string bf;
     Zinc_string_init(&bf);
     Zinc_string_add(&bf, c, num);
-    Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %b", &bf);
+    Zinc_error_list_set(ld->errors, &loc, "invalid escape character: %bf", &bf);
     Zinc_string_destroy(&bf);
 }
 

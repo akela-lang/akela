@@ -1202,7 +1202,7 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
                     Zinc_error_list_set(
                             ps->el,
                             &id->loc,
-                            "identifier not a field of struct: %b", &id->value);
+                            "identifier not a field of struct: %bf", &id->value);
                     n->type = Ake_ast_type_error;
                 } else {
                     n->tu = Ake_type_use_clone(dec_type->tu);
