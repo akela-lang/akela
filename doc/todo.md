@@ -18,8 +18,6 @@
 * string
 
 # Centipede
-* check variant properties
-* check variant children
 * limit lines in lexer for multi-test files
 
 # Cobble

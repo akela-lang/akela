@@ -70,7 +70,7 @@ void Cent_check_value_types_value(Cent_value* value)
     }
 }
 
-void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value)
+void Cent_check_value_types_property(Zinc_string* name, Cent_value* value)
 {
     Cent_parse_result* pr = Cent_check_value_types_pr;
 
@@ -83,9 +83,61 @@ void Cent_check_value_types_property(struct Zinc_string* name, Cent_value* value
     assert(object_sym->type == Cent_symbol_type_element);
     Cent_element_type* object_element = object_sym->data.element;
 
-    Cent_property_type* prop_type = Zinc_hash_map_string_get(&object_element->properties, name);
+    Cent_ast* p = object_n->head;
+    Cent_ast* tag = NULL;
+    while (p) {
+        if (p->type == Cent_ast_type_variant_set) {
+            tag = p;
+            break;
+        }
+
+        if (p->type == Cent_ast_type_prop_set) {
+            Cent_ast* prop_name = Cent_ast_get(p, 0);
+            if (Zinc_string_compare_str(&prop_name->text, "@tag")) {
+                Cent_ast* ns = Cent_ast_get(p, 1);
+                Cent_ast* id1 = Cent_ast_get(ns, 0);
+                Cent_ast* id2 = Cent_ast_get(ns, 1);
+                tag = id2;
+                break;
+            }
+        }
+        p = p->next;
+    }
+
+    Cent_variant_type* vt = NULL;
+    if (tag) {
+        vt = object_element->variants.head;
+        while (vt) {
+            if (Zinc_string_compare(&vt->tag_name, &tag->text)) {
+                break;
+            }
+            vt = vt->next;
+        }
+    }
+
+    Cent_property_type* prop_type = NULL;
+    // variant
+    if (vt) {
+        prop_type = Cent_variant_type_get(vt, name);
+    }
+
+    // element
     if (!prop_type) {
-        struct Zinc_string name2;
+        prop_type = Zinc_hash_map_string_get(&object_element->properties, name);
+    }
+
+    // catch all variant
+    if (vt && !prop_type) {
+        Zinc_string name2;
+        Zinc_string_init(&name2);
+        Zinc_string_add_str(&name2, "_");
+        prop_type = Cent_variant_type_get(vt, &name2);
+        Zinc_string_destroy(&name2);
+    }
+
+    // catch all element
+    if (!prop_type) {
+        Zinc_string name2;
         Zinc_string_init(&name2);
         Zinc_string_add_str(&name2, "_");
         prop_type = Zinc_hash_map_string_get(&object_element->properties, &name2);

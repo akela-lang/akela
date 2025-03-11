@@ -310,6 +310,7 @@ void Cent_parse_transform_variant_type(Cent_parse_data* pd, Cent_parse_result* p
             found = true;
             break;
         }
+        val = val->next;
     }
 
     if (!found) {

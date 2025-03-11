@@ -160,7 +160,12 @@ Cent_ast* Cent_parse_property(Cent_parse_data* pd)
     /* test case: test_parse_value_error_object_property_expected_id */
 
     /* property set */
-    if (id && id->builtin_type == Cent_builtin_type_none) {
+    if (id &&
+        (
+            id->builtin_type == Cent_builtin_type_none
+            || id->builtin_type == Cent_builtin_type_tag
+        )
+    ) {
         Cent_ast* a = NULL;
         Cent_ast_create(&a);
         a->type = Cent_ast_type_id;
@@ -191,7 +196,7 @@ Cent_ast* Cent_parse_property(Cent_parse_data* pd)
         } else if (id->builtin_type == Cent_builtin_type_property_of) {
             n->type = Cent_ast_type_method_property_of;
         } else {
-            Zinc_error_list_set(pd->errors, &id->loc, "invalid method: %bf", id->value);
+            Zinc_error_list_set(pd->errors, &id->loc, "invalid method: %bf", &id->value);
             n->has_error = true;
         }
 

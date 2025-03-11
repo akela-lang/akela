@@ -90,6 +90,7 @@ typedef enum Cent_builtin_type {
     Cent_builtin_type_property_of,
     Cent_builtin_type_top,
     Cent_builtin_type_file_name,
+    Cent_builtin_type_tag,
 } Cent_builtin_type;
 
 typedef struct Cent_token {
