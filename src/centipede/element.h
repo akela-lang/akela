@@ -8,11 +8,12 @@
 #include "enumerate.h"
 
 typedef struct Cent_element_type Cent_element_type;
-typedef struct Cent_enum_type Cent_enum_type;
 typedef struct Cent_types_node Cent_types_node;
 typedef struct Cent_types_list Cent_types_list;
 typedef struct Cent_property_type Cent_property_type;
 typedef enum Cent_types Cent_types;
+typedef struct Cent_variant_type Cent_variant_type;
+typedef struct Cent_variant_list Cent_variant_list;
 
 enum Cent_types {
     Cent_types_none,
@@ -49,12 +50,28 @@ struct Cent_property_type {
     bool has_error;
 };
 
+struct Cent_variant_type {
+    Zinc_string name;
+    Zinc_hash_map_string properties;
+    Cent_types_list children;
+    Zinc_location loc;
+    bool has_error;
+    Cent_variant_type* next;
+    Cent_variant_type* prev;
+};
+
+struct Cent_variant_list {
+    Cent_variant_type* head;
+    Cent_variant_type* tail;
+};
+
 struct Cent_element_type {
     Zinc_string name;
     Cent_enum_type* tag;
     Cent_value_type type;
     Zinc_hash_map_string properties;
     Cent_types_list children;
+    Cent_variant_list variants;
     Zinc_location loc;
     bool has_error;
 };

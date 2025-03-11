@@ -277,5 +277,22 @@ void Cent_parse_transform_variant_set(Cent_parse_data* pd, Cent_parse_result* pr
     task2->priority = Cent_task_type_update_namespace;
     task2->data = ns;
     Zinc_priority_queue_add(&pd->pq, task2);
- 
+}
+
+void Cent_parse_transform_variant_type(Cent_parse_data* pd, Cent_parse_result* pr, Cent_ast* n)
+{
+    if (n->has_error) {
+        return;
+    }
+
+    Cent_ast* ns = Cent_ast_get(n, 0);
+    assert(ns);
+    Cent_ast* el = Cent_ast_get(ns, 0);
+    assert(el);
+    Cent_ast* kind = Cent_ast_get(ns, 1);
+    assert(kind);
+
+    Cent_environment* top = Cent_get_environment(n);
+    Cent_symbol* el_sym = Cent_environment_get(top, &el->text);
+    assert(el_sym);
 }

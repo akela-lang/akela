@@ -18,7 +18,9 @@
 * string
 
 # Centipede
-* variant objects
+* build variant type from ast node
+* check variant properties
+* check variant children
 * limit lines in lexer for multi-test files
 
 # Cobble

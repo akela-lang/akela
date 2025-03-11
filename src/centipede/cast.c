@@ -89,7 +89,7 @@ void Cent_cast_value(Cent_value* value, Cent_element_type* declared, Zinc_error_
     }
 
     if (value->type == Cent_value_type_real && declared->type == Cent_value_type_integer) {
-        if (value->data.real < INT64_MIN) {
+        if (value->data.real < (double)INT64_MIN) {
             Zinc_error_list_set(
                 errors,
                 &n->loc,
@@ -97,7 +97,7 @@ void Cent_cast_value(Cent_value* value, Cent_element_type* declared, Zinc_error_
                 value->data.real);
             return;
         }
-        if (value->data.real > INT64_MAX) {
+        if (value->data.real > (double)INT64_MAX) {
             Zinc_error_list_set(
                 errors,
                 &n->loc,
