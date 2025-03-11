@@ -1,3 +1,5 @@
+#include <centipede/element.h>
+
 #include "zinc/unit_test.h"
 #include "centipede/type.h"
 
@@ -100,9 +102,42 @@ void test_type_field_list_add()
     free(list);
 }
 
+void test_variant_list_add()
+{
+    Zinc_test_name(__func__);
+
+    Cent_variant_list list;
+    Cent_variant_list_init(&list);
+
+    Cent_variant_type* vt0 = NULL;
+    Cent_variant_type_create(&vt0);
+
+    Cent_variant_type* vt1 = NULL;
+    Cent_variant_type_create(&vt1);
+
+    Cent_variant_type* vt2 = NULL;
+    Cent_variant_type_create(&vt2);
+
+    Cent_variant_list_add(&list, vt0);
+    Cent_variant_list_add(&list, vt1);
+    Cent_variant_list_add(&list, vt2);
+
+    Zinc_expect_ptr_equal(list.head, vt0, "head list");
+    Zinc_expect_ptr_equal(vt0->prev, NULL, "prev vt0");
+    Zinc_expect_ptr_equal(vt0->next, vt1, "next vt0");
+    Zinc_expect_ptr_equal(vt1->prev, vt0, "prev vt1");
+    Zinc_expect_ptr_equal(vt1->next, vt2, "next vt1");
+    Zinc_expect_ptr_equal(vt2->prev, vt1, "prev vt2");
+    Zinc_expect_ptr_equal(vt2->next, NULL, "next vt2");
+    Zinc_expect_ptr_equal(list.tail, vt2, "tail list");
+
+    Cent_variant_list_destroy(&list);
+}
+
 void test_type()
 {
     test_type_param_list_add();
     test_type_list_add();
     test_type_field_list_add();
+    test_variant_list_add();
 }
