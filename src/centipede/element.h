@@ -120,4 +120,20 @@ void Cent_types_list_add_en(
     Zinc_location* loc,
     bool has_error);
 
+void Cent_variant_type_init(Cent_variant_type* vt);
+void Cent_variant_type_create(Cent_variant_type** vt);
+void Cent_variant_type_destroy(Cent_variant_type* vt);
+void Cent_variant_type_set(Cent_variant_type* vt, Zinc_string* name, Cent_property_type* pt);
+void Cent_variant_type_set_str(Cent_variant_type* vt, char* name, Cent_property_type* pt);
+Cent_property_type* Cent_variant_type_get(Cent_variant_type* vt, Zinc_string* name);
+Cent_property_type* Cent_variant_type_get_str(Cent_variant_type* vt, char* name);
+void Cent_variant_type_add(Cent_variant_type* vt, Cent_types_node* node);
+void Cent_variant_type_add_et(Cent_variant_type* vt, Cent_element_type* et, Zinc_location* loc, bool has_error);
+void Cent_variant_type_add_en(Cent_variant_type* vt, Cent_enum_type* en, Zinc_location* loc, bool has_error);
+
+void Cent_variant_list_init(Cent_variant_list* list);
+void Cent_variant_list_create(Cent_variant_list** list);
+void Cent_variant_list_add(Cent_variant_list* list, Cent_variant_type* vt);
+void Cent_variant_list_destroy(Cent_variant_list* list);
+
 #endif

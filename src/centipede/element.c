@@ -198,3 +198,98 @@ void Cent_types_list_add_en(
     node->has_error = has_error;
     Cent_types_list_add(list, node);
 }
+
+void Cent_variant_type_init(Cent_variant_type* vt)
+{
+    Zinc_string_init(&vt->name);
+    Zinc_hash_map_string_init(&vt->properties, 32);
+    Cent_types_list_init(&vt->children);
+    Zinc_location_init(&vt->loc);
+    vt->has_error = false;
+    vt->next = NULL;
+    vt->prev = NULL;
+}
+
+void Cent_variant_type_create(Cent_variant_type** vt)
+{
+    Zinc_malloc_safe((void**)vt, sizeof(Cent_variant_type));
+    Cent_variant_type_init(*vt);
+}
+
+void Cent_variant_type_destroy(Cent_variant_type* vt)
+{
+    Zinc_string_destroy(&vt->name);
+    Zinc_hash_map_string_map(&vt->properties, (Zinc_hash_map_string_func)Cent_property_type_free);
+    Zinc_hash_map_string_destroy(&vt->properties);
+    Cent_types_list_destroy(&vt->children);
+}
+
+void Cent_variant_type_set(Cent_variant_type* vt, Zinc_string* name, Cent_property_type* pt)
+{
+    Zinc_hash_map_string_add(&vt->properties, name, pt);
+}
+
+void Cent_variant_type_set_str(Cent_variant_type* vt, char* name, Cent_property_type* pt)
+{
+    Zinc_hash_map_string_add_str(&vt->properties, name, pt);
+}
+
+Cent_property_type* Cent_variant_type_get(Cent_variant_type* vt, Zinc_string* name)
+{
+    return Zinc_hash_map_string_get(&vt->properties, name);
+}
+
+Cent_property_type* Cent_variant_type_get_str(Cent_variant_type* vt, char* name)
+{
+    return Zinc_hash_map_string_get_str(&vt->properties, name);
+}
+
+void Cent_variant_type_add(Cent_variant_type* vt, Cent_types_node* node)
+{
+    Cent_types_list_add(&vt->children, node);
+}
+
+void Cent_variant_type_add_et(Cent_variant_type* vt, Cent_element_type* et, Zinc_location* loc, bool has_error)
+{
+    Cent_types_list_add_et(&vt->children, et, loc, has_error);
+}
+
+void Cent_variant_type_add_en(Cent_variant_type* vt, Cent_enum_type* en, Zinc_location* loc, bool has_error)
+{
+    Cent_types_list_add_en(&vt->children, en, loc, has_error);
+}
+
+void Cent_variant_list_init(Cent_variant_list* list)
+{
+    list->head = NULL;
+    list->tail = NULL;
+}
+
+void Cent_variant_list_create(Cent_variant_list** list)
+{
+    Zinc_malloc_safe((void**)list, sizeof(Cent_variant_list));
+    Cent_variant_list_init(*list);
+}
+
+void Cent_variant_list_add(Cent_variant_list* list, Cent_variant_type* vt)
+{
+    if (list->head && list->tail) {
+        list->tail->next = vt;
+        vt->prev = list->tail;
+        list->tail = vt;
+    } else {
+        list->head = vt;
+        list->tail = vt;
+    }
+}
+
+void Cent_variant_list_destroy(Cent_variant_list* list)
+{
+    Cent_variant_type* node = list->head;
+    while (node) {
+        Cent_variant_type* temp = node;
+        node = node->next;
+        Cent_variant_type_destroy(temp);
+        free(temp);
+    }
+}
