@@ -51,7 +51,7 @@ struct Cent_property_type {
 };
 
 struct Cent_variant_type {
-    Zinc_string name;
+    Zinc_string tag_name;
     Zinc_hash_map_string properties;
     Cent_types_list children;
     Zinc_location loc;

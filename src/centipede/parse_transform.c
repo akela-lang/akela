@@ -8,6 +8,8 @@
 
 void Cent_update_prop(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env);
 void Cent_update_child(Cent_parse_result* pr, Cent_ast* n, Cent_element_type* et, Cent_environment* env);
+void Cent_update_variant_prop(Cent_parse_result* pr, Cent_ast* n, Cent_variant_type* vt, Cent_environment* env);
+void Cent_update_variant_child(Cent_parse_result* pr, Cent_ast* n, Cent_variant_type* vt, Cent_environment* env);
 
 void Cent_update_element_type(Cent_parse_result* pr, Cent_ast* n)
 {
@@ -295,4 +297,106 @@ void Cent_parse_transform_variant_type(Cent_parse_data* pd, Cent_parse_result* p
     Cent_environment* top = Cent_get_environment(n);
     Cent_symbol* el_sym = Cent_environment_get(top, &el->text);
     assert(el_sym);
+    assert(el_sym->type == Cent_symbol_type_element);
+    Cent_element_type* et = el_sym->data.element;
+
+    Cent_enum_type* en = et->tag;
+    assert(en);
+
+    bool found = false;
+    Cent_enum_value* val = en->head;
+    while (val) {
+        if (Zinc_string_compare(&val->display, &kind->text)) {
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        Zinc_error_list_set(pr->errors, &n->loc, "invalid element tag: %bf::%bf", &kind->text);
+        n->has_error = true;
+        return;
+    }
+
+    Cent_variant_type* vt = NULL;
+    Cent_variant_type_create(&vt);
+    Zinc_string_add_string(&vt->tag_name, &kind->text);
+
+    Cent_ast* p = n->head;
+    while (p) {
+        if (p->type == Cent_ast_type_namespace) {
+            // expected
+        } else if (p->type == Cent_ast_type_prop) {
+            Cent_ast* prop_dec = p->head;
+            while (prop_dec) {
+                Cent_update_variant_prop(pr, prop_dec, vt, top);
+                prop_dec = prop_dec->next;
+            }
+        } else if (p->type == Cent_ast_type_children) {
+            Cent_ast* child = p->head;
+            while (child) {
+                Cent_update_variant_child(pr, child, et, top);
+                child = child->next;
+            }
+        } else {
+            assert(false && "unknown child node of variant");
+        }
+        p = p->next;
+    }
+
+    Cent_variant_list_add(&et->variants, vt);
+}
+
+void Cent_update_variant_prop(Cent_parse_result* pr, Cent_ast* n, Cent_variant_type* vt, Cent_environment* env)
+{
+    Cent_ast* name = Cent_ast_get(n, 0);
+    Cent_ast* type = Cent_ast_get(n, 1);
+    Cent_ast* modifier = Cent_ast_get(n, 2);
+
+    Cent_property_type* prop = NULL;
+    Cent_property_type_create(&prop);
+    Zinc_string_copy(&name->text, &prop->name);
+    Cent_symbol* sym = Cent_environment_get(env, &type->text);
+    if (!sym) {
+        Zinc_error_list_set(pr->errors, &n->loc, "unknown type: %bf", &type->text);
+        n->has_error = true;
+    } else {
+        if (sym->type == Cent_symbol_type_element) {
+            Cent_property_type_set_type(prop, Cent_types_element);
+            prop->data.et = sym->data.element;
+        } else if (sym->type == Cent_symbol_type_enumerate) {
+            Cent_property_type_set_type(prop, Cent_types_enum);
+            prop->data.en = sym->data.enumerate;
+        } else {
+            Zinc_error_list_set(pr->errors, &n->loc, "type is not an element or enum type: %bf", &type->text);
+            n->has_error = true;
+        }
+
+        if (modifier && Zinc_string_compare_str(&modifier->text, "required")) {
+            prop->required = true;
+        }
+    }
+
+    prop->loc = n->loc;
+    prop->has_error = n->has_error;
+
+    Cent_variant_type_set(vt, &name->text, prop);
+}
+
+void Cent_update_variant_child(Cent_parse_result* pr, Cent_ast* n, Cent_variant_type* vt, Cent_environment* env)
+{
+    Cent_symbol* sym = Cent_environment_get(env, &n->text);
+    if (!sym) {
+        Zinc_error_list_set(pr->errors, &n->loc, "unknown type: %bf", &n->text);
+        n->has_error = true;
+    } else {
+        if (sym->type == Cent_symbol_type_element) {
+            Cent_variant_type_add_et(vt, sym->data.element, &n->loc, n->has_error);
+        } else if (sym->type == Cent_symbol_type_enumerate) {
+            Cent_variant_type_add_en(vt, sym->data.enumerate, &n->loc, n->has_error);
+        } else {
+            Zinc_error_list_set(pr->errors, &n->loc, "type is not an element type: %bf", &n->text);
+            n->has_error = true;
+        }
+    }
 }

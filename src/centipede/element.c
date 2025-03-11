@@ -9,6 +9,7 @@ void Cent_element_init(Cent_element_type* et)
     et->tag = NULL;
     Zinc_hash_map_string_init(&et->properties, 32);
     Cent_types_list_init(&et->children);
+    Cent_variant_list_init(&et->variants);
     Zinc_location_init(&et->loc);
     et->has_error = false;
 }
@@ -25,6 +26,7 @@ void Cent_element_destroy(Cent_element_type* et)
     Zinc_hash_map_string_map(&et->properties, (Zinc_hash_map_string_func)Cent_property_type_free);
     Zinc_hash_map_string_destroy(&et->properties);
     Cent_types_list_destroy(&et->children);
+    Cent_variant_list_destroy(&et->variants);
 }
 
 void Cent_element_set(Cent_element_type* et, Zinc_string* name, Cent_property_type* value)
@@ -201,7 +203,7 @@ void Cent_types_list_add_en(
 
 void Cent_variant_type_init(Cent_variant_type* vt)
 {
-    Zinc_string_init(&vt->name);
+    Zinc_string_init(&vt->tag_name);
     Zinc_hash_map_string_init(&vt->properties, 32);
     Cent_types_list_init(&vt->children);
     Zinc_location_init(&vt->loc);
@@ -218,7 +220,7 @@ void Cent_variant_type_create(Cent_variant_type** vt)
 
 void Cent_variant_type_destroy(Cent_variant_type* vt)
 {
-    Zinc_string_destroy(&vt->name);
+    Zinc_string_destroy(&vt->tag_name);
     Zinc_hash_map_string_map(&vt->properties, (Zinc_hash_map_string_func)Cent_property_type_free);
     Zinc_hash_map_string_destroy(&vt->properties);
     Cent_types_list_destroy(&vt->children);

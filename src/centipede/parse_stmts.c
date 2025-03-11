@@ -328,6 +328,13 @@ Cent_ast* Cent_parse_variant_type(Cent_parse_data* pd)
     Cent_token* rcb = NULL;
     Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
 
+    if (!n->has_error) {
+        Zinc_priority_task* task = NULL;
+        Zinc_priority_task_create(&task);
+        task->priority = Cent_task_type_transform_variant_type;
+        task->data = n;
+        Zinc_priority_queue_add(&pd->pq, task);
+    }
     return n;
 }
 
