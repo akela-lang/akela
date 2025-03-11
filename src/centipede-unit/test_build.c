@@ -696,6 +696,9 @@ void test_build_cast_natural_to_integer()
     Zinc_expect_int_equal(x->type, Cent_value_type_integer, "type x");
     Zinc_expect_string(&x->name, "Integer", "name x");
     Zinc_expect_int64_t_equal(x->data.integer, 100, "integer x");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_cast_natural_to_integer_error_too_large()
@@ -721,6 +724,163 @@ void test_build_cast_natural_to_integer_error_too_large()
     Zinc_expect_source_error(
         errors,
         "Natural (9223372036854775808) too large to cast to Integer");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
+void test_build_cast_integer_to_natural_error()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Natural\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = -100\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "Integer (-100) is negative; cannot cast to Natural");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
+void test_build_cast_natural_to_real()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Real\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = 100\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+
+    Zinc_expect_no_errors(errors);
+
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_string(&root->name, "Foo", "name root");
+
+    Cent_value* x = Cent_value_get_str(root, "x");
+    Zinc_assert_ptr(x, "ptr x");
+    Zinc_expect_int_equal(x->type, Cent_value_type_real, "type x");
+    Zinc_expect_string(&x->name, "Real", "name x");
+    Zinc_expect_double_equal(x->data.real, 100, "integer x");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
+void test_build_cast_real_to_natural()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Natural\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = 100.0\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+
+    Zinc_expect_no_errors(errors);
+
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_string(&root->name, "Foo", "name root");
+
+    Cent_value* x = Cent_value_get_str(root, "x");
+    Zinc_assert_ptr(x, "ptr x");
+    Zinc_expect_int_equal(x->type, Cent_value_type_natural, "type x");
+    Zinc_expect_string(&x->name, "Natural", "name x");
+    Zinc_expect_uint64_t_equal(x->data.natural, 100, "integer x");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
+void test_build_cast_real_to_natural_error_negative()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Natural\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = -100.0\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "Real (-100.000000) is negative; cannot cast to Natural");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
+void test_build_cast_real_to_natural_error_too_large()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Natural\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = 1.0e20\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(
+        errors,
+        "Real (100000000000000000000.000000) is too large; cannot cast to Natural");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_variant()
@@ -775,6 +935,136 @@ void test_build_variant()
     Zinc_expect_string(&root->name, "Monsters", "name root");
 }
 
+void test_build_cast_integer_to_real()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Real\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = -100\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+
+    Zinc_expect_no_errors(errors);
+
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_string(&root->name, "Foo", "name root");
+
+    Cent_value* x = Cent_value_get_str(root, "x");
+    Zinc_assert_ptr(x, "ptr x");
+    Zinc_expect_int_equal(x->type, Cent_value_type_real, "type x");
+    Zinc_expect_string(&x->name, "Real", "name x");
+    Zinc_expect_double_equal(x->data.real, -100.000000, "integer x");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
+void test_build_cast_real_to_integer()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Integer\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = 100.0\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+
+    Zinc_expect_no_errors(errors);
+
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+    Zinc_expect_string(&root->name, "Foo", "name root");
+
+    Cent_value* x = Cent_value_get_str(root, "x");
+    Zinc_assert_ptr(x, "ptr x");
+    Zinc_expect_int_equal(x->type, Cent_value_type_integer, "type x");
+    Zinc_expect_string(&x->name, "Integer", "name x");
+    Zinc_expect_int64_t_equal(x->data.integer, 100, "integer x");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
+void test_build_cast_real_to_integer_too_large_of_a_negative()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Integer\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = -1.0e20\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(
+        errors,
+        "Real (-100000000000000000000.000000) is too large of a negative; cannot cast to Integer");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
+void test_build_cast_real_to_integer_too_large()
+{
+    Zinc_test_name(__func__);
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+        "element Foo {\n"
+        "    properties {\n"
+        "        x: Integer\n"
+        "    }\n"
+        "}\n"
+        "Foo {\n"
+        "    .x = 1.0e20\n"
+        "}\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(
+        errors,
+        "Real (100000000000000000000.000000) is too large; cannot cast to Integer");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -799,7 +1089,20 @@ void test_build()
     test_build_namespace_glob_value();
     test_build_const();
     test_build_object_const();
+
     test_build_cast_natural_to_integer();
     test_build_cast_natural_to_integer_error_too_large();
+    test_build_cast_integer_to_natural_error();
+
+    test_build_cast_natural_to_real();
+    test_build_cast_real_to_natural();
+    test_build_cast_real_to_natural_error_negative();
+    test_build_cast_real_to_natural_error_too_large();
+
+    test_build_cast_integer_to_real();
+    test_build_cast_real_to_integer();
+    test_build_cast_real_to_integer_too_large_of_a_negative();
+    test_build_cast_real_to_integer_too_large();
+
     test_build_variant();
 }
