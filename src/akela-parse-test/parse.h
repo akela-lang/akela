@@ -2,8 +2,9 @@
 #define APT_PARSE_H
 
 #include <stdbool.h>
+#include "data.h"
 
-bool Run_validate_directory(char* path);
-void Run_parse_files(char* dir_name);
+bool Apt_validate_directory(char* path);
+void Apt_parse_files(Apt_data* data);
 
 #endif

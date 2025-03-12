@@ -17,15 +17,16 @@
 #include "zinc/string_list.h"
 #include "cobble/compile.h"
 #include "cobble/match.h"
+#include "parse_tools.h"
+
+#include "data.h"
 
 #define NAME "akela-parse-test"
 
 
-void Run_append_path(Zinc_string* bf, char* path);
-void Parse_test_suite(Zinc_string* path);
-void Apt_get_line(FILE* fp, Zinc_string* line, bool* done);
+void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name);
 
-bool Run_validate_directory(char* path)
+bool Apt_validate_directory(char* path)
 {
     if (!Zinc_file_exists(path)) {
         perror(path);
@@ -55,26 +56,22 @@ bool Run_validate_directory(char* path)
     return true;
 }
 
-void Run_parse_files(char* dir_name)
+void Apt_parse_files(Apt_data* data)
 {
-    Zinc_string dir_path;
-    Zinc_string_init(&dir_path);
-    Zinc_string_add_str(&dir_path, dir_name);
-
     Zinc_string_list files;
     Zinc_string_list_init(&files);
-    Zinc_list_files(dir_name, &files);
+    Zinc_list_files(Zinc_string_c_str(&data->dir_path), &files);
 
     Zinc_string_node* node = files.head;
     while (node) {
         if (!Zinc_string_compare_str(&node->value, ".") && !Zinc_string_compare_str(&node->value, "..")) {
             Zinc_string path;
             Zinc_string_init(&path);
-            Zinc_string_add_str(&path, dir_name);
+            Zinc_string_add_string(&path, &data->dir_path);
             Zinc_path_append(&path, &node->value);
 
             if (Zinc_is_reg_file(&path)) {
-                Parse_test_suite(&path);
+                Apt_parse_test_suite(data, &path, &node->value);
             }
 
             Zinc_string_destroy(&path);
@@ -83,49 +80,31 @@ void Run_parse_files(char* dir_name)
         node = node->next;
     }
 
-    Zinc_string_destroy(&dir_path);
     Zinc_string_list_destroy(&files);
 }
 
-void Parse_test_suite(Zinc_string* path)
+void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
 {
+    Apt_test_suite* ts = NULL;
+    Apt_test_suite_create(&ts);
+    Zinc_string_add_string(&ts->path, path);
+    Zinc_string_add_string(&ts->name, name);
+
     printf("%s\n", path->buf);
-    Cob_re test_suite_seq = Cob_compile_str("^======\n$");
-    Cob_re test_case_sep = Cob_compile_str("^######\n$");
-    Cob_re section_sep = Cob_compile_str("^###\n$");
-
-    Zinc_string test_suite;
-    Zinc_string_init(&test_suite);
-
-    Zinc_string section;
-    Zinc_string_init(&section);
 
     FILE* fp = fopen(path->buf, "r");
     while (true) {
         Zinc_string line;
         Zinc_string_init(&line);
-        bool done = false;
-        Apt_get_line(fp, &line, &done);
-        if (done) {
+        Apt_line_kind kind;
+        Apt_get_line(data, fp, &line, &kind);
+        if (kind != Apt_line_kind_regular) {
             break;
         }
+        Zinc_string_add_string(&ts->text, &line);
     }
 
-    Zinc_string_destroy(&test_suite);
-    Zinc_string_destroy(&section);
+    Apt_suite_list_add(&data->suites, ts);
+
     fclose(fp);
-}
-
-void Apt_get_line(FILE* fp, Zinc_string* line, bool* done)
-{
-    int c;
-    while ((c = fgetc(fp)) != EOF) {
-        Zinc_string_add_char(line, (char)c);
-        if (c == '\n') {
-            break;
-        }
-    }
-    if (c == EOF) {
-        *done = true;
-    }
 }

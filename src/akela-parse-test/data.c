@@ -70,6 +70,8 @@ void Apt_test_list_destroy(Apt_test_list* list)
 
 void Apt_test_suite_init(Apt_test_suite *ts)
 {
+    Zinc_string_init(&ts->path);
+    Zinc_string_init(&ts->name);
     Zinc_string_init(&ts->text);
     Apt_test_list_init(&ts->list);
     ts->solo = false;
@@ -87,9 +89,10 @@ void Apt_test_suite_create(Apt_test_suite** ts)
 
 void Apt_test_suite_destroy(Apt_test_suite* ts)
 {
+    Zinc_string_destroy(&ts->path);
+    Zinc_string_destroy(&ts->name);
     Zinc_string_destroy(&ts->text);
     Apt_test_list_destroy(&ts->list);
-    Zinc_string_destroy(&ts->name);
 }
 
 void Apt_suite_list_init(Apt_suite_list* list)
@@ -125,4 +128,28 @@ void Apt_suite_list_destroy(Apt_suite_list* list)
         Apt_test_suite_destroy(temp);
         free(temp);
     }
+}
+
+void Apt_data_init(Apt_data* data)
+{
+    Zinc_string_init(&data->dir_path);
+    data->test_suite_sep = Cob_compile_str("^======\n?$");
+    data->test_case_sep = Cob_compile_str("^######\n?$");
+    data->section_sep = Cob_compile_str("^###\n?$");
+    Apt_suite_list_init(&data->suites);
+}
+
+void Apt_data_create(Apt_data** data)
+{
+    Zinc_malloc_safe((void**)data, sizeof(Apt_data));
+    Apt_data_init(*data);
+}
+
+void Apt_data_destroy(Apt_data* data)
+{
+    Zinc_string_destroy(&data->dir_path);
+    Cob_re_destroy(&data->test_suite_sep);
+    Cob_re_destroy(&data->test_case_sep);
+    Cob_re_destroy(&data->section_sep);
+    Apt_suite_list_destroy(&data->suites);
 }

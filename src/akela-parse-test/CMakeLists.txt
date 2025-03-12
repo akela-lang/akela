@@ -3,6 +3,7 @@ set(files
         data.c
         parse.c
         compare.c
+        parse_tools.c
 )
 add_executable(akela-parse-test ${files})
 target_link_libraries(akela-parse-test akela centipede zinc cobble)

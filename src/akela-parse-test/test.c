@@ -1,4 +1,6 @@
 #include <stdio.h>
+
+#include "data.h"
 #include "parse.h"
 
 #define NAME "akela-parse-test"
@@ -11,11 +13,17 @@ int main(int argc, char **argv)
     }
 
     char* path = argv[1];
-    if (!Run_validate_directory(path)) {
+    if (!Apt_validate_directory(path)) {
         return 1;
     }
 
-    Run_parse_files(path);
+    Apt_data data;
+    Apt_data_init(&data);
+    Zinc_string_add_str(&data.dir_path, path);
+
+    Apt_parse_files(&data);
+
+    Apt_data_destroy(&data);
 
     return 0;
 }
