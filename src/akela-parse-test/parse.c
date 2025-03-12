@@ -15,12 +15,15 @@
 #include "compare.h"
 #include "zinc/fs.h"
 #include "zinc/string_list.h"
+#include "cobble/compile.h"
+#include "cobble/match.h"
 
 #define NAME "akela-parse-test"
 
 
 void Run_append_path(Zinc_string* bf, char* path);
-void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name);
+void Parse_test_suite(Zinc_string* path);
+void Apt_get_line(FILE* fp, Zinc_string* line, bool* done);
 
 bool Run_validate_directory(char* path)
 {
@@ -71,7 +74,7 @@ void Run_parse_files(char* dir_name)
             Zinc_path_append(&path, &node->value);
 
             if (Zinc_is_reg_file(&path)) {
-                Run_test_case(&dir_path, &path, &node->value);
+                Parse_test_suite(&path);
             }
 
             Zinc_string_destroy(&path);
@@ -84,47 +87,45 @@ void Run_parse_files(char* dir_name)
     Zinc_string_list_destroy(&files);
 }
 
-void Run_test_case(Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
+void Parse_test_suite(Zinc_string* path)
 {
     printf("%s\n", path->buf);
+    Cob_re test_suite_seq = Cob_compile_str("^======\n$");
+    Cob_re test_case_sep = Cob_compile_str("^######\n$");
+    Cob_re section_sep = Cob_compile_str("^###\n$");
+
+    Zinc_string test_suite;
+    Zinc_string_init(&test_suite);
+
+    Zinc_string section;
+    Zinc_string_init(&section);
 
     FILE* fp = fopen(path->buf, "r");
-    Zinc_input_unicode_file* input = NULL;
-    Zinc_input_unicode_file_create(&input, fp);
-
-    Zinc_string_slice slice;
-    slice.p = file_name->buf;
-    slice.size = file_name->size;
-
-    Cent_module_finder_file* mf = NULL;
-    Cent_module_finder_file_create(&mf, dir_path);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create(&ct, mf, mf->vtable);
-
-    Cent_comp_unit* cu = NULL;
-    Cent_comp_unit_create(&cu, input, input->input_vtable, slice, ct->base);
-    cu->pd.cu = cu;
-    cu->pd.ct = ct;
-
-    Cent_comp_table_add(ct, file_name, cu);
-
-    Cent_comp_unit_parse(cu);
-    if (!cu->errors.head) {
-        Cent_comp_unit_build(cu);
-        if (!cu->errors.head) {
-            Apt_run(file_name, cu);
+    while (true) {
+        Zinc_string line;
+        Zinc_string_init(&line);
+        bool done = false;
+        Apt_get_line(fp, &line, &done);
+        if (done) {
+            break;
         }
     }
 
-    if (cu->errors.head) {
-        Zinc_error* e = cu->errors.head;
-        while (e) {
-            Zinc_string_finish(&e->message);
-            printf("(%zu,%zu) %s\n", e->loc.line, e->loc.col, e->message.buf);
-            e = e->next;
-        }
-    }
-
+    Zinc_string_destroy(&test_suite);
+    Zinc_string_destroy(&section);
     fclose(fp);
+}
+
+void Apt_get_line(FILE* fp, Zinc_string* line, bool* done)
+{
+    int c;
+    while ((c = fgetc(fp)) != EOF) {
+        Zinc_string_add_char(line, (char)c);
+        if (c == '\n') {
+            break;
+        }
+    }
+    if (c == EOF) {
+        *done = true;
+    }
 }

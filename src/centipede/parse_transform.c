@@ -336,7 +336,7 @@ void Cent_parse_transform_variant_type(Cent_parse_data* pd, Cent_parse_result* p
         } else if (p->type == Cent_ast_type_children) {
             Cent_ast* child = p->head;
             while (child) {
-                Cent_update_variant_child(pr, child, et, top);
+                Cent_update_variant_child(pr, child, vt, top);
                 child = child->next;
             }
         } else {

@@ -1,161 +1,147 @@
-element Test_suite {
-    properties {
-        name: String `required`
-        solo: Bool      # only run this suite
-        mute: Bool      # exclude this suite from running
-    }
-
-    children {
-        Test
-    }
+element TestSuite {
+  properties {
+    name: String `required`
+    solo: Bool      # only run this suite
+    mute: Bool      # exclude this suite from running
+  }
 }
 
 element Test {
-    properties {
-        name: String `required`
-        source: Source `required`
-        has_error: Bool `required`
-        solo: Bool      # only run this test
-        mute: Bool      # exclude this test from running
-        errors: Errors
-    }
-
-    children {
-        Ast
-    }
-}
-
-element Source {
-    children {
-        String
-    }
+  properties {
+    name: String `required`
+    source: Source `required`
+    has_error: Bool `required`
+    solo: Bool      # only run this test
+    mute: Bool      # exclude this test from running
+    errors: Errors
+  }
 }
 
 element Errors {
-    children {
-        Error
-    }
+  children {
+    Error
+  }
 }
 
 element Error {
-    properties {
-        message: String
-        start_pos: Integer
-        end_pos: Integer
-        line: Integer
-        col: Integer
-    }
+  properties {
+    message: String
+    start_pos: Integer
+    end_pos: Integer
+    line: Integer
+    col: Integer
+  }
 }
 
 element Ast {
-    properties {
-        type: Ast_type `required`
-        value: String
-        tu: Type_use
-    }
-    children {
-        Ast
-    }
+  properties {
+    type: AstType `required`
+    value: String
+    tu: Type_use
+  }
+  children {
+    Ast
+  }
 }
 
-enum Ast_type {
-    None
-    Id
-    Sign
-    Number
-    String
-    Assign
-    Plus
-    Minus
-    Mult
-    Divide
-    Stmts
-    Function
-    Dseq
-    Dret
-    Call
-    Cseq
-    If
-    Conditional_branch
-    Default_branch
-    Equality
-    Not_equal
-    Less_than
-    Less_than_or_equal
-    Greater_than
-    Greater_than_or_equal
-    Not
-    And
-    Or
-    While
-    For_range
-    For_iteration
-    Declaration
-    Array_literal
-    Array_subscript
-    Boolean
-    Parenthesis
-    Type
-    Power
-    Type_pool
-    Dot
-    Module
-    Struct
-    Return
-    Eseq
-    Let_lseq
-    Let_rseq
-    Error
-    Prototype
-    Extern
-    Struct_literal
-    Struct_literal_field
-    Ellipsis
-    Impl
-    Self
-    Const
-    Var
+enum AstType {
+  None
+  Id
+  Sign
+  Number
+  String
+  Assign
+  Plus
+  Minus
+  Mult
+  Divide
+  Stmts
+  Function
+  Dseq
+  Dret
+  Call
+  Cseq
+  If
+  ConditionalBranch
+  DefaultBranch
+  Equality
+  NotEqual
+  LessThan
+  LessThanOrEqual
+  GreaterThan
+  GreaterThanOrEqual
+  Not
+  And
+  Or
+  While
+  ForRange
+  ForIteration
+  Declaration
+  ArrayLiteral
+  ArraySubscript
+  Boolean
+  Parenthesis
+  Type
+  Power
+  Type_pool
+  Dot
+  Module
+  Struct
+  Return
+  Eseq
+  LetLseq
+  LetRseq
+  Error
+  Prototype
+  Extern
+  StructLiteral
+  StructLiteralField
+  Ellipsis
+  Impl
+  Self
+  Const
+  Var
 }
 
-element Type_use {
-    properties {
-        td: Type_def
-        dim: Integer        # array dimension if td is type Array
-    }
+element TypeUse {
+  properties {
+    td: TypeDef
+    dim: Integer        # array dimension if td is type Array
+  }
 }
 
-element Type_def {
-    properties {
-        name: String `required`
-        type: Type_def_type `required`
-        bit_count: Integer
-        is_signed: Bool
-    }
+element TypeDef {
+  properties {
+    name: String `required`
+    type: TypeDefType `required`
+    bit_count: Integer
+    is_signed: Bool
+  }
 }
 
-enum Type_def_type {
-    None
-    Integer
-    Float
-    Boolean
-    Struct
-    Function
-    Enum
-    Tuple
-    Module
+enum TypeDefType {
+  None
+  Integer
+  Float
+  Boolean
+  Struct
+  Function
+  Enum
+  Tuple
+  Module
 }
 
 # built-in element defs
-const Td_int32 = Type_def {
-    .type = Type_def_type::Integer
-    .name = "Int32"
-    .bit_count = 32
-    .is_signed = true
+const Int32 = TypeDef {
+  .type = TypeDefType::Integer
+  .name = "Int32"
+  .bit_count = 32
+  .is_signed = true
 };
 
-const Td_real64 = Type_def {
-    .type = Type_def_type::Float
-    .name = "Real64"
-    .bit_count = 64
-    .is_signed = true
+const Real64 = TypeDef {
+  .type = TypeDefType::Float
+  .name = "Real64"
+  .bit_count = 64
+  .is_signed = true
 };

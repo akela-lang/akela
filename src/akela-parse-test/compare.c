@@ -8,96 +8,12 @@
 #include <akela/comp_unit.h>
 #include "zinc/spec_error.h"
 #include "zinc/input_unicode_string.h"
-#include "test_data.h"
+#include "data.h"
 
-void Apt_run_test(Apt_test_data* data, Cent_value* test_value);
-void Apt_error(Apt_test_data* data, Ake_ast* n, Cent_value* value, Zinc_string* message);
-void Apt_compare_ast(Apt_test_data* data, Ake_ast* n, Cent_value* value);
-void Apt_print_errors(Zinc_spec_error_list* list);
+typedef struct {Zinc_string name1; Zinc_string name2; void* list} Apt_test_data;
+
 void Apt_compare_type_use(Apt_test_data* data, Ake_type_use* tu, Cent_value* value);
 void Apt_compare_type_def(Apt_test_data* data, Ake_type_def* td, Cent_value* value);
-
-void Apt_run(Zinc_string* file_name, Cent_comp_unit* cu)
-{
-    if (!cu->value) return;
-
-    Cent_value* test_suite_value = cu->value;
-    assert(test_suite_value->type == Cent_value_type_dag);
-
-    Cent_value* mute = Cent_value_get_str(test_suite_value, "mute");
-    if (mute && mute->data.boolean) return;
-
-    Cent_value* name = Cent_value_get_str(test_suite_value, "name");
-    Zinc_string_finish(&name->data.string);
-    printf("%s\n", name->data.string.buf);
-
-    Cent_value* test_value = test_suite_value->data.dag.head;
-    while (test_value) {
-        Apt_test_data data;
-        Apt_test_data_init(&data);
-
-        Zinc_string_add_str(&data.name1, "source");
-        Zinc_string_add_string(&data.name2, file_name);
-        Apt_run_test(&data, test_value);
-
-        Apt_test_data_destroy(&data);
-
-        test_value = test_value->next;
-    }
-}
-
-void Apt_run_test(Apt_test_data* data, Cent_value* test_value)
-{
-    Cent_value* name = Cent_value_get_str(test_value, "name");
-    Zinc_string_finish(&name->data.string);
-    printf("%s\n", name->data.string.buf);
-    Cent_value* source = Cent_value_get_str(test_value, "source");
-    Zinc_string source_string;
-    Zinc_string_init(&source_string);
-    Cent_value* line = source->data.dag.head;
-    while (line) {
-        Zinc_string_add_string(&source_string, &line->data.string);
-        line = line->next;
-    }
-    Zinc_string_finish(&source_string);
-    printf("%s", source_string.buf);
-
-    Zinc_vector* text = NULL;
-    Zinc_vector_create(&text, sizeof(char));
-    Zinc_vector_add(text, source_string.buf, source_string.size);
-
-    Zinc_input_unicode_string* input_obj = NULL;
-    Zinc_input_unicode_string_create(&input_obj, text);
-
-    Ake_comp_unit* cu = NULL;
-    Ake_comp_unit_create(&cu);
-    bool valid = Ake_comp_unit_compile(cu, input_obj, input_obj->input_vtable);
-    if (valid) {
-        printf("compile is valid\n");
-    } else {
-        printf("compile has errors\n");
-        Zinc_error* e = cu->el.head;
-        while (e) {
-            Zinc_string_finish(&e->message);
-            printf("(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
-            e = e->next;
-        }
-    }
-
-    Cent_value* value = test_value->data.dag.head;
-    Ake_ast* root = cu->root;
-
-    Apt_compare_ast(data, root, value);
-
-    Apt_print_errors(&data->list);
-
-    Ake_comp_unit_destroy(cu);
-    free(cu);
-    free(input_obj);
-    Zinc_vector_destroy(text);
-    free(text);
-    Zinc_string_destroy(&source_string);
-}
 
 void Apt_print_errors(Zinc_spec_error_list* list)
 {

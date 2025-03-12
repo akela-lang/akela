@@ -6,7 +6,7 @@
 int main(int argc, char **argv)
 {
     if (argc != 2) {
-        fprintf(stderr, "Usage: %s [filename]\n", NAME);
+        fprintf(stderr, "Usage: %s [DIR]\n", NAME);
         return 1;
     }
 

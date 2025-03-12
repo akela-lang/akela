@@ -1,0 +1,37 @@
+use lib::base::*;
+TestSuite {
+  .name = @file_name()
+  .solo = false
+  .mute = false
+}
+======
+use lib::base::*;
+Test {
+  .name = "declare and use an integer"
+  .solo = false
+  .mute = false
+  .has_error = false
+}
+###
+const a: Int32 = 105
+a
+###
+use lib::base::*;
+Ast::Stmts {
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .tu = Type_use {
+        .td = Int32
+      }
+    }
+    Ast::Number {
+      .value = "105"
+    }
+  }
+  Ast::Id {
+    .value = "a"
+  }
+}
