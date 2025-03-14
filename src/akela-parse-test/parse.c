@@ -25,6 +25,7 @@
 
 
 void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name);
+void Apt_parse_test(Apt_data* data, Apt_test_suite* ts);
 
 bool Apt_validate_directory(char* path)
 {
@@ -85,26 +86,8 @@ void Apt_parse_files(Apt_data* data)
 
 void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
 {
-    Apt_test_suite* ts = NULL;
-    Apt_test_suite_create(&ts);
-    Zinc_string_add_string(&ts->path, path);
-    Zinc_string_add_string(&ts->name, name);
+}
 
-    printf("%s\n", path->buf);
-
-    FILE* fp = fopen(path->buf, "r");
-    while (true) {
-        Zinc_string line;
-        Zinc_string_init(&line);
-        Apt_line_kind kind;
-        Apt_get_line(data, fp, &line, &kind);
-        if (kind != Apt_line_kind_regular) {
-            break;
-        }
-        Zinc_string_add_string(&ts->text, &line);
-    }
-
-    Apt_suite_list_add(&data->suites, ts);
-
-    fclose(fp);
+void Apt_parse_test(Apt_data* data, Apt_test_suite* ts)
+{
 }

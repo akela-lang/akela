@@ -1,21 +1,34 @@
+# Test Suite
+Define constant and ID expression
+```
 use lib::base::*;
 TestSuite {
   .name = @file_name()
   .solo = false
   .mute = false
+  .headers = headers
 }
-======
+```
+
+## Test
+Declare and use an integer
+```
 use lib::base::*;
 Test {
-  .name = "declare and use an integer"
   .solo = false
   .mute = false
   .has_error = false
 }
-###
+```
+
+### Source
+```
 const a: Int32 = 105
 a
-###
+```
+
+### Ast
+```
 use lib::base::*;
 Ast::Stmts {
   Ast::Const {
@@ -35,3 +48,4 @@ Ast::Stmts {
     .value = "a"
   }
 }
+```

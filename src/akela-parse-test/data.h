@@ -55,6 +55,7 @@ struct Apt_data
     Cob_re test_case_sep;
     Cob_re section_sep;
     Apt_suite_list suites;
+    FILE* fp;
 };
 
 void Apt_test_case_init(Apt_test_case *tc);

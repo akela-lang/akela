@@ -86,6 +86,7 @@ add_subdirectory(src/akela-llvm-unit)
 
 add_subdirectory(src/cobble)
 add_subdirectory(src/cobble-unit)
+add_subdirectory(src/cobble-bin)
 
 add_subdirectory(src/dataframe)
 add_subdirectory(src/dataframe-unit)
@@ -102,5 +103,8 @@ add_subdirectory(src/centipede-unit)
 
 add_subdirectory(src/worm)
 add_subdirectory(src/worm-unit)
+
+add_subdirectory(src/lava)
+add_subdirectory(src/lava-unit)
 
 include(akela.cmake)

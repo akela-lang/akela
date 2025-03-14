@@ -21,6 +21,7 @@
 * limit lines in lexer for multi-test files
 
 # Cobble
+* create command line regex utility
 * test if repeat and repeat range are greedy
 * NFA generation
 * single pass NFA generation

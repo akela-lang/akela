@@ -137,6 +137,7 @@ void Apt_data_init(Apt_data* data)
     data->test_case_sep = Cob_compile_str("^######\n?$");
     data->section_sep = Cob_compile_str("^###\n?$");
     Apt_suite_list_init(&data->suites);
+    data->fp = NULL;
 }
 
 void Apt_data_create(Apt_data** data)
