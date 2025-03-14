@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <math.h>
 #include "utf8.h"
-#include "String_slice.h"
+#include "string_slice.h"
 #include <stdint.h>
 
 Zinc_test_run tr;
@@ -286,7 +286,7 @@ void Zinc_expect_double_equal(double a, double b, const char* message)
     fprintf(stderr, "%lf = %lf error: %s\n", a, b, message);
 }
 
-void Zinc_expect_ptr_equal(void* a, void* b, const char* message)
+void Zinc_expect_ptr_equal(const void* a, const void* b, const char* message)
 {
 	Zinc_test_called();
 	if (a == b) return;

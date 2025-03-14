@@ -5,7 +5,7 @@
 #include "zstring.h"
 #include "string_list.h"
 #include "vector.h"
-#include "String_slice.h"
+#include "string_slice.h"
 #include <stdint.h>
 
 #define TEST_NAME_SIZE 100
@@ -38,7 +38,7 @@ ZINC_API void Zinc_expect_unsigned_long_equal(unsigned long a, unsigned long b, 
 ZINC_API void Zinc_expect_long_long_equal(long long a, long long b, const char* message);
 ZINC_API void Zinc_expect_u_long_equal(unsigned long a, unsigned long b, const char* message);
 ZINC_API void Zinc_expect_double_equal(double a, double b, const char* message);
-ZINC_API void Zinc_expect_ptr_equal(void* a, void* b, const char* message);
+ZINC_API void Zinc_expect_ptr_equal(const void* a, const void* b, const char* message);
 ZINC_API void Zinc_expect_char_equal(char a, char b, const char* message);
 ZINC_API void Zinc_expect_uint_equal(unsigned int a, unsigned int b, const char* message);
 ZINC_API void Zinc_assert_size_t_equal(size_t a, size_t b, const char* message);

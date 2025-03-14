@@ -28,6 +28,7 @@ set(SOURCE_FILES
         priority_queue.c
         dbl_vector.c
         fs.c
+        string_slice.c
 )
 
 add_definitions(-DZINC_EXPORT)

@@ -64,9 +64,7 @@ void Lava_lex_header(Lava_lex_data* ld, Lava_token* t)
     Zinc_location loc;
     bool done;
 
-    Zinc_string title;
-    Zinc_string_init(&title);
-
+    int level = 0;
     // ###
     for (int i = 0; i < 3; i++) {
         Zinc_result r = Zinc_input_unicode_next(ld->input, ld->vtable, c, &num, &loc, &done);
@@ -76,16 +74,18 @@ void Lava_lex_header(Lava_lex_data* ld, Lava_token* t)
         }
 
         if (done) {
-            Zinc_error_list_set(ld->errors, &loc, "expected beginning of header");
             Zinc_input_unicode_repeat(ld->input, ld->vtable);
             return;
         }
 
         if (num != 1 || c[0] != '#') {
-            Zinc_error_list_set(ld->errors, &loc, "expected beginning of header");
+            break;
         }
+        level++;
     }
 
+    Zinc_string title;
+    Zinc_string_init(&title);
     while (true) {
         Zinc_result r = Zinc_input_unicode_next(ld->input, ld->vtable, c, &num, &loc, &done);
         if (r == Zinc_result_error) {
@@ -94,9 +94,8 @@ void Lava_lex_header(Lava_lex_data* ld, Lava_token* t)
         }
 
         if (done) {
-            Zinc_error_list_set(ld->errors, &loc, "expected beginning of header");
             Zinc_input_unicode_repeat(ld->input, ld->vtable);
-            return;
+            break;
         }
 
         if (num == 1 && c[0] == '\n') {
@@ -105,6 +104,7 @@ void Lava_lex_header(Lava_lex_data* ld, Lava_token* t)
 
         Zinc_string_add(&title, c, num);
     }
+
 
 
 }

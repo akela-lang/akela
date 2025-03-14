@@ -8,4 +8,8 @@ typedef struct Zinc_string_slice {
     size_t size;
 } Zinc_string_slice;
 
+Zinc_string_slice Zinc_trim_left(Zinc_string_slice in);
+Zinc_string_slice Zinc_trim_right(Zinc_string_slice in);
+Zinc_string_slice Zinc_trim(Zinc_string_slice in);
+
 #endif

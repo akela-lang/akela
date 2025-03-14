@@ -21,6 +21,7 @@
 #include "test_spec_error.h"
 #include "test_priority_queue.h"
 #include "test_dbl_vector.h"
+#include "test_string_slice.h"
 
 int main()
 {
@@ -46,6 +47,7 @@ int main()
 	test_spec_error();
 	test_priority_queue();
 	test_dbl_vector();
+    test_string_slice();
 	Zinc_print_results();
 	return 0;
 }
