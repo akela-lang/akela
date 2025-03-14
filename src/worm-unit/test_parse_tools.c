@@ -15,7 +15,7 @@ void test_parse_setup(Worm_parse_data** pd, char const* s)
     Zinc_input_unicode_string_create(&input, text);
 
     Worm_lex_data* ld = NULL;
-    Worm_lex_data_create(&ld, input, input->input_vtable, errors);
+    Worm_lex_data_create(&ld, input, input->vtable, errors);
 
     Worm_parse_data_create(pd, ld, errors);
 }

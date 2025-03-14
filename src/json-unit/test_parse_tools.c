@@ -15,7 +15,7 @@ void test_parse_setup(Json_parse_data* pd, char* text)
     Zinc_error_list_create(&el);
 
     Json_lex_data* ld = NULL;
-    Json_lex_data_create(&ld, el, input, input->input_vtable);
+    Json_lex_data_create(&ld, el, input, input->vtable);
 
     Json_parse_data_init(pd, el, ld);
 }

@@ -84,7 +84,7 @@ int main(int argc, char** argv)
         Zinc_vector_add(text, "\n", 1);
         Zinc_input_unicode_string_create(&input_string, text);
         input_obj = input_string;
-        input_vtable = input_string->input_vtable;
+        input_vtable = input_string->vtable;
     } else {
         usage();
         return 1;

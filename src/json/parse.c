@@ -42,7 +42,7 @@ Json_result Json_parse_slice(Zinc_string_slice slice)
     Zinc_input_unicode_string_init(&input, &v);
 
     Json_lex_data ld;
-    Json_lex_data_init(&ld, el, &input, input.input_vtable);
+    Json_lex_data_init(&ld, el, &input, input.vtable);
 
     Json_parse_data pd;
     Json_parse_data_init(&pd, el, &ld);

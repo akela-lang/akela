@@ -56,7 +56,7 @@ void Run_akela(Run_data* data, Run_test* test)
 
     Ake_comp_unit* cu = NULL;
     Ake_comp_unit_create(&cu);
-    Ake_comp_unit_compile(cu, input, input->input_vtable);
+    Ake_comp_unit_compile(cu, input, input->vtable);
 
     data->test_count++;
 

@@ -31,7 +31,7 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
     bool valid;
 
     Ake_comp_unit_init(cu);
-    valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
+    valid = Ake_comp_unit_compile(cu, input, input->vtable);
     Zinc_expect_true(valid, "valid");
 
     result->cu = cu;

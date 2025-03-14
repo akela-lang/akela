@@ -29,7 +29,7 @@ void test_comp_table_compile()
 
 	Ake_comp_table_put(&ct, &cu->path, cu);
 
-	bool valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
+	bool valid = Ake_comp_unit_compile(cu, input, input->vtable);
 	Zinc_expect_true(valid, "valid");
 
 	Ake_ast* root = cu->root;
@@ -69,7 +69,7 @@ void test_comp_table_include()
 	Zinc_string_add_str2("|base|", &cu_base->path);
 	Ake_comp_table_put(&ct, &cu_base->path, cu_base);
 
-	bool valid_base = Ake_comp_unit_compile(cu_base, base_input, base_input->input_vtable);
+	bool valid_base = Ake_comp_unit_compile(cu_base, base_input, base_input->vtable);
 
 	/* test base */
 	Zinc_expect_no_errors(&cu_base->el);
@@ -92,7 +92,7 @@ void test_comp_table_include()
 
 	Ake_transfer_global_symbols(&cu_base->st, &cu_main->st);
 
-	bool valid_main = Ake_comp_unit_compile(cu_main, main_input, main_input->input_vtable);
+	bool valid_main = Ake_comp_unit_compile(cu_main, main_input, main_input->vtable);
 
 	/* test main */
 	Zinc_expect_no_errors(&cu_main->el);
@@ -156,7 +156,7 @@ void test_comp_table_include_base()
 	Zinc_expect_no_errors(&cu_base->el);
 	Zinc_expect_true(cu_base->valid, "valid_base");
 
-	bool valid_main = Ake_comp_unit_compile(cu_main, input, input->input_vtable);
+	bool valid_main = Ake_comp_unit_compile(cu_main, input, input->vtable);
 
 	/* test main */
 	Zinc_expect_no_errors(&cu_main->el);

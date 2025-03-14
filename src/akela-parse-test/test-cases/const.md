@@ -1,9 +1,8 @@
 # Test Suite
-Define constant and ID expression
+Define constant and use
 ```
-use lib::base::*;
+use lib::base::*
 TestSuite {
-  .name = @file_name()
   .solo = false
   .mute = false
   .headers = headers
@@ -29,7 +28,7 @@ a
 
 ### Ast
 ```
-use lib::base::*;
+use lib::base::*
 Ast::Stmts {
   Ast::Const {
     Ast::Id {

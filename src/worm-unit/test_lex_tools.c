@@ -16,7 +16,7 @@ void test_lex_setup(Worm_lex_data** ld, char* s)
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, text);
 
-    Worm_lex_data_create(ld, input, input->input_vtable, errors);
+    Worm_lex_data_create(ld, input, input->vtable, errors);
 }
 
 void test_lex_teardown(Worm_lex_data* ld)

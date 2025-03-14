@@ -21,7 +21,7 @@ Run_cent_data* Run_get_cent(Zinc_string* dir_path, Zinc_string* file_name, Zinc_
     Cent_comp_unit_create(
         &cu,
         input,
-        input->input_vtable,
+        input->vtable,
         file_name_slice,
         ct->base);
     Cent_comp_table_add_str(ct, "*config*", cu);

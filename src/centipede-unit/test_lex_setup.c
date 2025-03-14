@@ -20,7 +20,7 @@ void test_lex_setup(Cent_lex_data* ld, char* text)
     struct Zinc_error_list* errors = NULL;
     Zinc_error_list_create(&errors);
 
-    Cent_lex_data_init(ld, errors, input, input->input_vtable);
+    Cent_lex_data_init(ld, errors, input, input->vtable);
 }
 
 void test_lex_teardown(Cent_lex_data* ld)

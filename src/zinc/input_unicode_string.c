@@ -27,7 +27,7 @@ void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Zin
     input_string->GetLocation =
         (Zinc_input_unicode_get_location_interface) Zinc_input_unicode_string_get_location;
     input_string->Destroy = (Zinc_input_unicode_destroy_interface) Zinc_input_unicode_string_destroy;
-    input_string->input_vtable = &Zinc_input_unicode_string_vtable;
+    input_string->vtable = &Zinc_input_unicode_string_vtable;
 }
 
 void Zinc_input_unicode_string_create(Zinc_input_unicode_string** input_string, Zinc_vector* text)

@@ -18,7 +18,7 @@ void test_comp_unit_compile()
 	Zinc_malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
 	Ake_comp_unit_init(cu);
 
-	bool valid = Ake_comp_unit_compile(cu, input, input->input_vtable);
+	bool valid = Ake_comp_unit_compile(cu, input, input->vtable);
 	Zinc_expect_true(valid, "valid");
 	
 	Ake_ast* root = cu->root;

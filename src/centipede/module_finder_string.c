@@ -79,7 +79,7 @@ Cent_input_data Cent_module_finder_string_find(
     Zinc_input_unicode_string_create(&input, v);
 
     data.input = input;
-    data.input_vtable = input->input_vtable;
+    data.input_vtable = input->vtable;
 
     return data;
 }
