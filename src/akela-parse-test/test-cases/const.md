@@ -12,7 +12,7 @@ TestSuite {
 ## Test
 Declare and use an integer
 ```
-use lib::base::*;
+use lib::base::*
 Test {
   .solo = false
   .mute = false
