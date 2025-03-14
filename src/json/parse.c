@@ -5,7 +5,7 @@
 #include "zinc/hash_map_string.h"
 #include <string.h>
 #include "zinc/input_unicode_string.h"
-#include "zinc/String_slice.h"
+#include "zinc/string_slice.h"
 
 Json_result Json_parse(Json_parse_data* pd);
 Json_result Json_parse_slice(Zinc_string_slice slice);

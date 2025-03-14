@@ -2,7 +2,7 @@
 #define JSON_PARSE_H
 
 #include "parse_tools.h"
-#include "zinc/String_slice.h"
+#include "zinc/string_slice.h"
 
 Json_result Json_parse_str(char* s);
 Json_result Json_parse_zstring(Zinc_string* string);

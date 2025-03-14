@@ -1,7 +1,7 @@
 #ifndef CENTIPEDE_SYMBOL_H
 #define CENTIPEDE_SYMBOL_H
 
-#include <zinc/String_slice.h>
+#include <zinc/string_slice.h>
 
 #include "element.h"
 #include "enumerate.h"

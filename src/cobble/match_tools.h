@@ -5,7 +5,7 @@
 #include "ast.h"
 #include "zinc/hash_map_string.h"
 #include "zinc/hash_map_size_t.h"
-#include "zinc/String_slice.h"
+#include "zinc/string_slice.h"
 #include <unicode/uchar.h>
 #include "zinc/string_list.h"
 

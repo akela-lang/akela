@@ -9,7 +9,7 @@
 #include "zinc/spec_error.h"
 #include "cobble/match.h"
 #include "data.h"
-#include "zinc/String_slice.h"
+#include "zinc/string_slice.h"
 #include <assert.h>
 #include "cent.h"
 #include "zinc/os_unix.h"

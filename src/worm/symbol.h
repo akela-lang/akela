@@ -1,7 +1,7 @@
 #ifndef WORM_SYMBOL_H
 #define WORM_SYMBOL_H
 
-#include "zinc/String_slice.h"
+#include "zinc/string_slice.h"
 #include <stdbool.h>
 
 typedef enum Worm_symbol_type {

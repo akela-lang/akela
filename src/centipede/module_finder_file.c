@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
-#include "zinc/String_slice.h"
+#include "zinc/string_slice.h"
 #include "zinc/os_unix.h"
 #include "zinc/os_win.h"
 

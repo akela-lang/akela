@@ -4,7 +4,7 @@
 #include "zinc/error.h"
 #include "zinc/input_unicode.h"
 #include <unicode/ucnv.h>
-#include "zinc/String_slice.h"
+#include "zinc/string_slice.h"
 
 typedef enum Json_lex_state {
     Json_lex_state_start,

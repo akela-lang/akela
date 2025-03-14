@@ -10,7 +10,7 @@
 #include "zinc/input_unicode_string.h"
 #include "data.h"
 
-typedef struct {Zinc_string name1; Zinc_string name2; void* list} Apt_test_data;
+typedef struct {Zinc_string name1; Zinc_string name2; Zinc_spec_error_list* list;} Apt_test_data;
 
 void Apt_compare_type_use(Apt_test_data* data, Ake_type_use* tu, Cent_value* value);
 void Apt_compare_type_def(Apt_test_data* data, Ake_type_def* td, Cent_value* value);
@@ -52,7 +52,7 @@ void Apt_error(Apt_test_data* data, Ake_ast* n, Cent_value* value, Zinc_string* 
     Zinc_string_add_string(&error->name1, &data->name1);
     Zinc_string_add_string(&error->name2, &data->name2);
     Zinc_string_add_string(&error->message, message);
-    Zinc_spec_error_list_add(&data->list, error);
+    Zinc_spec_error_list_add(data->list, error);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
