@@ -45,15 +45,22 @@ void Lava_lex_start(Lava_lex_data* ld, Lava_token* t)
 
             if (c[0] == '`' && loc.col == 1) {
                 Zinc_input_unicode_repeat(ld->input, ld->vtable);
-                Lava_lex_backquote(ld, t);
+                Lava_lex_text(ld, t);
+                if (Zinc_string_compare_str(&t->text, "```")) {
+                    t->kind = Lava_token_kind_backquote;
+                }
+                return;
             }
 
-            if ((isalpha(c[0]) || isdigit(c[0]) || c[0] == '_') && loc.col == 1) {
-                Zinc_input_unicode_repeat(ld->input, ld->vtable);
-                Lava_lex_text(ld, t);
+            if (c[0] == '\n') {
+                t->kind = Lava_token_kind_newline;
                 return;
             }
         }
+
+        Zinc_input_unicode_repeat(ld->input, ld->vtable);
+        Lava_lex_text(ld, t);
+        return;
     }
 }
 
@@ -64,9 +71,9 @@ void Lava_lex_header(Lava_lex_data* ld, Lava_token* t)
     Zinc_location loc;
     bool done;
 
-    int level = 0;
-    // ###
-    for (int i = 0; i < 3; i++) {
+    t->kind = Lava_token_kind_header;
+
+    while (true) {
         Zinc_result r = Zinc_input_unicode_next(ld->input, ld->vtable, c, &num, &loc, &done);
         if (r == Zinc_result_error) {
             Zinc_error_list_set(ld->errors, &loc, Zinc_error_message);
@@ -79,13 +86,22 @@ void Lava_lex_header(Lava_lex_data* ld, Lava_token* t)
         }
 
         if (num != 1 || c[0] != '#') {
+            Zinc_input_unicode_repeat(ld->input, ld->vtable);
             break;
         }
-        level++;
-    }
 
-    Zinc_string title;
-    Zinc_string_init(&title);
+        Zinc_string_add(&t->text, c, num);
+    }
+}
+
+void Lava_lex_text(Lava_lex_data* ld, Lava_token* t)
+{
+    char c[4];
+    int num;
+    Zinc_location loc;
+    bool done;
+
+    t->kind = Lava_token_kind_text;
     while (true) {
         Zinc_result r = Zinc_input_unicode_next(ld->input, ld->vtable, c, &num, &loc, &done);
         if (r == Zinc_result_error) {
@@ -99,22 +115,10 @@ void Lava_lex_header(Lava_lex_data* ld, Lava_token* t)
         }
 
         if (num == 1 && c[0] == '\n') {
+            Zinc_input_unicode_repeat(ld->input, ld->vtable);
             break;
         }
 
-        Zinc_string_add(&title, c, num);
+        Zinc_string_add(&t->text, c, num);
     }
-
-
-
-}
-
-void Lava_lex_text(Lava_lex_data* ld, Lava_token* t)
-{
-
-}
-
-void Lava_lex_backquote(Lava_lex_data* ld, Lava_token* t)
-{
-
 }

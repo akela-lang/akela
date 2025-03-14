@@ -10,7 +10,6 @@ void Lava_lex_data_init(
     ld->errors = errors;
     ld->input = input;
     ld->vtable = vtable;
-    ld->header_re = Cob_compile_str("^(#+) *(.+) *\n?$");
 }
 
 void Lava_lex_data_create(
@@ -21,9 +20,4 @@ void Lava_lex_data_create(
 {
     Zinc_malloc_safe((void**)ld, sizeof(Lava_lex_data));
     Lava_lex_data_init(*ld, errors, input, vtable);
-}
-
-void Lava_lex_data_destroy(Lava_lex_data* ld)
-{
-    Cob_re_destroy(&ld->header_re);
 }
