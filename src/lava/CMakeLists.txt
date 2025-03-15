@@ -2,6 +2,7 @@ set(files
         token.c
         lex.c
         lex_data.c
+        section.c
 )
 
 add_library(lava ${files})
