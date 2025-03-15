@@ -54,3 +54,22 @@ void Lava_item_list_destroy(Lava_item_list* list)
         free(temp);
     }
 }
+
+void Lava_section_init(Lava_section* section)
+{
+    Zinc_string_init(&section->title);
+    section->level = 0;
+    Lava_item_list_init(&section->items);
+}
+
+void Lava_section_create(Lava_section** section)
+{
+    Zinc_malloc_safe((void**)section, sizeof(Lava_section));
+    Lava_section_init(*section);
+}
+
+void Lava_section_destroy(Lava_section* section)
+{
+    Zinc_string_destroy(&section->title);
+    Lava_item_list_destroy(&section->items);
+}
