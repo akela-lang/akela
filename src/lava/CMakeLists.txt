@@ -3,6 +3,8 @@ set(files
         lex.c
         lex_data.c
         section.c
+        parse.c
+        parse_data.c
 )
 
 add_library(lava ${files})
