@@ -5,6 +5,7 @@ set(files
         section.c
         parse.c
         parse_data.c
+        parse_tools.c
 )
 
 add_library(lava ${files})

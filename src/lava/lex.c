@@ -13,7 +13,8 @@ Lava_token* Lava_lex(Lava_lex_data* ld)
     Lava_token_create(&t);
 
     Lava_lex_start(ld, t);
-
+    Zinc_location loc = Zinc_input_unicode_get_location(ld->input, ld->vtable);
+    t->loc.end_pos = loc.start_pos;
     return t;
 }
 
@@ -39,23 +40,27 @@ void Lava_lex_start(Lava_lex_data* ld, Lava_token* t)
         if (num == 1) {
             if (c[0] == '#' && loc.col == 1) {
                 Zinc_input_unicode_repeat(ld->input, ld->vtable);
+                t->loc = loc;
                 Lava_lex_header(ld, t);
                 return;
             }
 
             if (c[0] == '`' && loc.col == 1) {
                 Zinc_input_unicode_repeat(ld->input, ld->vtable);
+                t->loc = loc;
                 Lava_lex_backquote(ld, t);
                 return;
             }
 
             if (c[0] == '\n') {
+                t->loc = loc;
                 t->kind = Lava_token_kind_newline;
                 return;
             }
         }
 
         Zinc_input_unicode_repeat(ld->input, ld->vtable);
+        t->loc = loc;
         Lava_lex_text(ld, t);
         return;
     }

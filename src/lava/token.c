@@ -5,6 +5,7 @@ void Lava_token_init(Lava_token* t)
 {
     t->kind = Lava_token_kind_none;
     Zinc_string_init(&t->text);
+    Zinc_location_init(&t->loc);
 }
 
 void Lava_token_create(Lava_token** t)

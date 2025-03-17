@@ -2,6 +2,7 @@
 #define LAVA_TOKEN_H
 
 #include <zinc/zstring.h>
+#include <zinc/error.h>
 
 typedef enum Lava_token_kind Lava_token_kind;
 enum Lava_token_kind {
@@ -18,6 +19,7 @@ struct Lava_token
 {
     Lava_token_kind kind;
     Zinc_string text;
+    Zinc_location loc;
 };
 
 void Lava_token_init(Lava_token* t);
