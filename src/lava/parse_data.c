@@ -14,13 +14,13 @@ void Lava_parse_data_create(Lava_parse_data** pd, Lava_lex_data* ld, Zinc_error_
     Lava_parse_data_init(*pd, ld, errors);
 }
 
-void Lava_result_init(Lava_result* lr, Zinc_error_list* errors, Lava_section* root)
+void Lava_result_init(Lava_result* lr, Zinc_error_list* errors, Lava_dom* root)
 {
     lr->errors = errors;
     lr->root = root;
 }
 
-void Lava_result_create(Lava_result** lr, Zinc_error_list* errors, Lava_section* root)
+void Lava_result_create(Lava_result** lr, Zinc_error_list* errors, Lava_dom* root)
 {
     Zinc_malloc_safe((void**)lr, sizeof(Lava_result));
     Lava_result_init(*lr, errors, root);
@@ -29,5 +29,7 @@ void Lava_result_create(Lava_result** lr, Zinc_error_list* errors, Lava_section*
 void Lava_result_destroy(Lava_result* lr)
 {
     Zinc_error_list_destroy(lr->errors);
-    Lava_section_destroy(lr->root);
+    free(lr->errors);
+    Lava_dom_destroy(lr->root);
+    free(lr->root);
 }

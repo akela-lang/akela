@@ -2,7 +2,7 @@ set(files
         token.c
         lex.c
         lex_data.c
-        section.c
+        dom.c
         parse.c
         parse_data.c
         parse_tools.c
