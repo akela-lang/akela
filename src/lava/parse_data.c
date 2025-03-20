@@ -6,6 +6,7 @@ void Lava_parse_data_init(Lava_parse_data* pd, Lava_lex_data* ld, Zinc_error_lis
     pd->ld = ld;
     pd->errors = errors;
     pd->lookahead = NULL;
+    pd->stack = NULL;
 }
 
 void Lava_parse_data_create(Lava_parse_data** pd, Lava_lex_data* ld, Zinc_error_list* errors)
@@ -32,4 +33,30 @@ void Lava_result_destroy(Lava_result* lr)
     free(lr->errors);
     Lava_dom_destroy(lr->root);
     free(lr->root);
+}
+
+void Lava_stack_push(Lava_stack** stack, Lava_dom* dom)
+{
+    Lava_stack* node = NULL;
+    Zinc_malloc_safe((void**)&node, sizeof(Lava_stack));
+    node->dom = dom;
+    node->prev = *stack;
+    *stack = node;
+}
+
+void Lava_stack_pop(Lava_stack** stack)
+{
+    Lava_stack* node = *stack;
+    *stack = (*stack)->prev;
+    free(node);
+}
+
+void Lava_stack_destroy(Lava_stack* stack)
+{
+    Lava_stack* node = stack;
+    while (node) {
+        Lava_stack* temp = node;
+        node = node->prev;
+        free(temp);
+    }
 }

@@ -20,15 +20,16 @@ void Lava_dom_init(Lava_dom* dom, Lava_dom_kind kind)
     default:
         assert(false && "not possible");
     }
+    Zinc_location_init(&dom->loc);
 }
 
-void Lava_item_create(Lava_dom** dom, Lava_dom_kind kind)
+void Lava_dom_create(Lava_dom** dom, Lava_dom_kind kind)
 {
     Zinc_malloc_safe((void**)dom, sizeof(Lava_dom));
     Lava_dom_init(*dom, kind);
 }
 
-void Lava_item_destroy(Lava_dom* dom)
+void Lava_dom_destroy(Lava_dom* dom)
 {
     switch (dom->kind) {
     case LAVA_DOM_HEADER:

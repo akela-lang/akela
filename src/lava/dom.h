@@ -1,5 +1,6 @@
 #ifndef LAVA_AST_H
 #define LAVA_AST_H
+#include <zinc/error.h>
 #include <zinc/vector.h>
 #include <zinc/zstring.h>
 
@@ -18,6 +19,7 @@ struct Lava_dom {
         Zinc_string LAVA_DOM_TEXT;
         struct { Zinc_string format; Zinc_string text; } LAVA_DOM_BACKQUOTE;
     } data;
+    Zinc_location loc;
 };
 
 void Lava_dom_init(Lava_dom* dom, Lava_dom_kind kind);

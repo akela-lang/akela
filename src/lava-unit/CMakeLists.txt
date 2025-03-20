@@ -1,6 +1,7 @@
 set(files
         unit.c
         unit_lex.c
+        unit_parse.c
 )
 
 add_executable(lava-unit ${files})
