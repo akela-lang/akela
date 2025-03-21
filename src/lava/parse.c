@@ -43,72 +43,18 @@ Lava_result Lava_parse_str(char* s)
 Lava_result Lava_parse(Lava_parse_data* pd)
 {
     Lava_result result;
-    Lava_result_init(&result, pd->errors, NULL);
 
-    while (true) {
-        Lava_lookahead(pd);
-        if (pd->lookahead->kind == Lava_token_kind_header) {
-            Lava_dom* dom = Lava_parse_header(pd);
-            int level = dom->data.LAVA_DOM_HEADER.level;
-
-            if (pd->stack) {
-                if (level == 1) {
-                    Zinc_error_list_set(pd->errors, &dom->loc, "there are multiple level ones", level);
-                    Lava_dom_destroy(dom);
-                    free(dom);
-                }
-
-                int current_level = pd->stack->dom->data.LAVA_DOM_HEADER.level;
-                while (level <= current_level) {
-                    Lava_stack_pop(&pd->stack);
-                    current_level = pd->stack->dom->data.LAVA_DOM_HEADER.level;
-                }
-
-                if (level > current_level + 1) {
-                    Zinc_error_list_set(pd->errors, &dom->loc, "level is too high: %d", level);
-                } else if (level == current_level + 1) {
-                    Zinc_vector_add(&pd->stack->dom->data.LAVA_DOM_HEADER.items, dom, 1);
-                    Lava_stack_push(&pd->stack, dom);
-                } else {
-                    assert(false && "not possible");
-                }
-            } else {
-                Lava_stack_push(&pd->stack, dom);
-                result.root = dom;
-            }
-        } else if (pd->lookahead->kind == Lava_token_kind_text) {
-            if (pd->stack) {
-                Lava_dom* dom = Lava_parse_text(pd);
-                Zinc_vector_add(&pd->stack->dom->data.LAVA_DOM_HEADER.items, dom, 1);
-            } else {
-                Zinc_error_list_set(pd->errors, &pd->lookahead->loc, "text without header");
-            }
-        } else if (pd->lookahead->kind == Lava_token_kind_backquote) {
-            if (pd->stack) {
-                Lava_dom* dom = Lava_parse_backquote(pd);
-                Zinc_vector_add(&pd->stack->dom->data.LAVA_DOM_HEADER.items, dom, 1);
-            } else {
-                Zinc_error_list_set(pd->errors, &pd->lookahead->loc, "backquote without header");
-            }
-        } else if (pd->lookahead->kind == Lava_token_kind_newline) {
-            if (pd->stack) {
-                Lava_token* nl = NULL;
-                if (!Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, pd->stack->dom)) {
-                    assert(false && "not possible");
-                }
-                Lava_token_destroy(nl);
-                free(nl);
-            } else {
-                Zinc_error_list_set(pd->errors, &pd->lookahead->loc, "newline without header");
-            }
-        } else if (pd->lookahead->kind == Lava_token_kind_eof) {
-            break;
-        }
+    Lava_dom* root = Lava_parse_header(pd);
+    if (root->data.LAVA_DOM_HEADER.level != 1) {
+        Zinc_error_list_set(pd->errors, &root->loc, "expected top level header");
     }
+
+    Lava_result_init(&result, pd->errors, root);
 
     return result;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Lava_dom* Lava_parse_header(Lava_parse_data* pd)
 {
     Lava_dom* n = NULL;
@@ -136,6 +82,41 @@ Lava_dom* Lava_parse_header(Lava_parse_data* pd)
     Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n);
     Lava_token_destroy(nl);
     free(nl);
+
+    while (true) {
+        Lava_lookahead(pd);
+        if (pd->lookahead->kind == Lava_token_kind_header) {
+            if (pd->lookahead->text.size <= n->data.LAVA_DOM_HEADER.level) {
+                break;
+            }
+
+            Lava_dom* dom = Lava_parse_header(pd);
+            int level = dom->data.LAVA_DOM_HEADER.level;
+            int current_level = n->data.LAVA_DOM_HEADER.level;
+            if (level > current_level + 1) {
+                Zinc_error_list_set(pd->errors, &dom->loc, "level is too high: %d", level);
+            } else if (level == current_level + 1) {
+                Zinc_vector_add(&n->data.LAVA_DOM_HEADER.items, dom, 1);
+            } else {
+                assert(false && "not possible");
+            }
+        } else if (pd->lookahead->kind == Lava_token_kind_text) {
+            Lava_dom* dom = Lava_parse_text(pd);
+            Zinc_vector_add(&n->data.LAVA_DOM_HEADER.items, dom, 1);
+        } else if (pd->lookahead->kind == Lava_token_kind_backquote) {
+            Lava_dom* dom = Lava_parse_backquote(pd);
+            Zinc_vector_add(&n->data.LAVA_DOM_HEADER.items, dom, 1);
+        } else if (pd->lookahead->kind == Lava_token_kind_newline) {
+            Lava_token* nl = NULL;
+            if (!Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n)) {
+                assert(false && "not possible");
+            }
+            Lava_token_destroy(nl);
+            free(nl);
+        } else if (pd->lookahead->kind == Lava_token_kind_eof) {
+            break;
+        }
+    }
 
     return n;
 }
@@ -169,6 +150,7 @@ Lava_dom* Lava_parse_text(Lava_parse_data* pd)
                 if (!Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n)) {
                     assert(false && "not possible");
                 }
+                Lava_lookahead(pd);
             }
             break;
         }

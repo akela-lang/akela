@@ -19,6 +19,7 @@
 
 # Centipede
 * limit lines in lexer for multi-test files
+* make variables copy only and the root value independent of variables
 
 # Cobble
 * create command line regex utility
@@ -31,6 +32,8 @@
 # Dataframe
 
 # JSON
+
+# Lava
 
 # Worm
 * remove worm

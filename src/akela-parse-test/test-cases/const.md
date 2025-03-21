@@ -1,17 +1,18 @@
 # Test Suite
 Define constant and use
-```
+
+```cent
 use lib::base::*
 TestSuite {
   .solo = false
   .mute = false
-  .headers = headers
 }
 ```
 
 ## Test
 Declare and use an integer
-```
+
+```cent
 use lib::base::*
 Test {
   .solo = false
@@ -20,14 +21,12 @@ Test {
 }
 ```
 
-### Source
-```
+```akela
 const a: Int32 = 105
 a
 ```
 
-### Ast
-```
+```cent
 use lib::base::*
 Ast::Stmts {
   Ast::Const {
