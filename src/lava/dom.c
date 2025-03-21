@@ -17,6 +17,7 @@ void Lava_dom_init(Lava_dom* dom, Lava_dom_kind kind)
     case LAVA_DOM_BACKQUOTE:
         Zinc_string_init(&dom->data.LAVA_DOM_BACKQUOTE.format);
         Zinc_string_init(&dom->data.LAVA_DOM_BACKQUOTE.text);
+        break;
     default:
         assert(false && "not possible");
     }

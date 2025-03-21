@@ -178,6 +178,9 @@ Lava_dom* Lava_parse_text(Lava_parse_data* pd)
             if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
                 assert(false && "not possible");
             }
+            Zinc_string_add_format(&n->data.LAVA_DOM_TEXT, " %bf", &txt->text);
+            Lava_token_destroy(txt);
+            free(txt);
         }
 
         Lava_lookahead(pd);
@@ -196,12 +199,13 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
         assert(false && "not possible");
     }
 
-    Zinc_string_add_string(&n->data.LAVA_DOM_BACKQUOTE.format, &bq->text);
-
     Lava_token* txt = NULL;
-    Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n);
 
-    if (txt) {
+    Lava_lookahead(pd);
+    if (pd->lookahead->kind == Lava_token_kind_text) {
+        if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
+            assert(false && "not possible");
+        }
         Zinc_string_add_string(&n->data.LAVA_DOM_BACKQUOTE.format, &txt->text);
         Lava_token_destroy(txt);
         free(txt);
@@ -217,11 +221,18 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
         if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
             assert(false && "not possible");
         }
+        if (txt) {
+            Zinc_string_add_string(&n->data.LAVA_DOM_BACKQUOTE.text, &txt->text);
+            Lava_token_destroy(txt);
+            free(txt);
+        }
     }
 
+    Lava_lookahead(pd);
     while (pd->lookahead->kind == Lava_token_kind_newline) {
         nl = NULL;
         Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n);
+        Zinc_string_add_char(&n->data.LAVA_DOM_BACKQUOTE.text, '\n');
         Lava_token_destroy(nl);
         free(nl);
 
@@ -230,7 +241,9 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
             if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
                 assert(false && "not possible");
             }
+            Zinc_string_add_string(&n->data.LAVA_DOM_BACKQUOTE.text, &txt->text);
         }
+        Lava_lookahead(pd);
     }
 
     Lava_match(pd, Lava_token_kind_backquote, "expected backquote", &bq, n);
