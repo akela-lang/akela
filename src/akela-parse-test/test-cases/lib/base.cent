@@ -9,10 +9,10 @@ element TestSuite {
 element Test {
   properties {
     name: String `required`
-    source: Source `required`
-    has_error: Bool `required`
     solo: Bool      # only run this test
     mute: Bool      # exclude this test from running
+    snapshot: Bool  # output snapshot
+    has_error: Bool `required`
     errors: Errors
   }
 }

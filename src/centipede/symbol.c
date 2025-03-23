@@ -7,6 +7,7 @@ void Cent_symbol_init(Cent_symbol *sym)
 {
     sym->type = Cent_symbol_type_none;
     sym->is_copy = false;
+    sym->is_used = false;
 }
 
 void Cent_symbol_create(Cent_symbol** sym)
@@ -22,6 +23,7 @@ void Cent_symbol_set_type(Cent_symbol *sym, Cent_symbol_type type)
     if (type == Cent_symbol_type_variable) {
         sym->data.variable.n = NULL;
         sym->data.variable.value = NULL;
+        sym->data.variable.used_value = NULL;
     } else if (type == Cent_symbol_type_element) {
         sym->data.element = NULL;
     } else if (type == Cent_symbol_type_enumerate) {

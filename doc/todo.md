@@ -18,8 +18,8 @@
 * string
 
 # Centipede
-* limit lines in lexer for multi-test files
-* make variables copy only and the root value independent of variables
+* cleanup variables
+* cleanup root value
 
 # Cobble
 * create command line regex utility
@@ -34,10 +34,12 @@
 # JSON
 
 # Lava
+* save the location information of a blockquote
 
 # Worm
 * remove worm
 
 # Zinc
+* set initial input location
 * performance test vector algorithm
 * standardize all variadic functions

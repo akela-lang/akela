@@ -1,27 +1,8 @@
 #include "value.h"
-
 #include <akela/type_def.h>
-
 #include "zinc/memory.h"
 #include "zinc/hash_map_size_t.h"
 #include <assert.h>
-
-void Cent_value_init(Cent_value *value)
-{
-    Zinc_string_init(&value->name);
-    value->type = Cent_value_type_none;
-    value->has_error = false;
-    value->next = NULL;
-    value->prev = NULL;
-    value->n = NULL;
-    value->parent = NULL;
-}
-
-void Cent_value_create(Cent_value **value)
-{
-    Zinc_malloc_safe((void**)value, sizeof(Cent_value));
-    Cent_value_init(*value);
-}
 
 void Cent_data_init(Cent_data *data, Cent_value_type type)
 {
@@ -72,6 +53,23 @@ void Cent_data_free(Cent_data *data, Cent_value_type type)
 {
     Cent_data_destroy(data, type);
     free(data);
+}
+
+void Cent_value_init(Cent_value *value)
+{
+    Zinc_string_init(&value->name);
+    value->type = Cent_value_type_none;
+    value->has_error = false;
+    value->next = NULL;
+    value->prev = NULL;
+    value->n = NULL;
+    value->parent = NULL;
+}
+
+void Cent_value_create(Cent_value **value)
+{
+    Zinc_malloc_safe((void**)value, sizeof(Cent_value));
+    Cent_value_init(*value);
 }
 
 void Cent_value_set_type(Cent_value *value, Cent_value_type type)
@@ -179,4 +177,69 @@ void Cent_value_add(Cent_value* parent, Cent_value* child)
         parent->data.dag.tail = child;
     }
     child->parent = parent;
+}
+
+Cent_value* Cent__data_copy_dst = NULL;
+void Cent_data_copy_property(Zinc_string* name, Cent_value* value)
+{
+    Cent_value* value2 = Cent_value_clone(value);
+    Zinc_hash_map_string_add(&Cent__data_copy_dst->data.dag.properties, name, value2);
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Cent_value_copy(Cent_value* src, Cent_value* dst)
+{
+    Zinc_string_add_string(&dst->name, &src->name);
+    Cent_value_set_type(dst, src->type);
+    dst->has_error = src->has_error;
+    dst->next = NULL;
+    dst->prev = NULL;
+    dst->n = src->n;
+    dst->parent = NULL;
+
+    switch (src->type) {
+    case Cent_value_type_integer:
+        dst->data.integer = src->data.integer;
+        break;
+    case Cent_value_type_natural:
+        dst->data.natural = src->data.natural;
+        break;
+    case Cent_value_type_real:
+        dst->data.real = src->data.real;
+        break;
+    case Cent_value_type_string:
+        Zinc_string_add_string(&dst->data.string, &src->data.string);
+        break;
+    case Cent_value_type_boolean:
+        dst->data.boolean = src->data.boolean;
+        break;
+    case Cent_value_type_enum:
+        dst->data.enumeration = src->data.enumeration;
+        break;
+    case Cent_value_type_dag:
+        // properties
+        Cent__data_copy_dst = dst;
+        Zinc_hash_map_string_map_name(
+            &src->data.dag.properties,
+            (Zinc_hash_map_string_func_name)Cent_data_copy_property);
+        // children
+        Cent_value* p = src->data.dag.head;
+        while (p) {
+            Cent_value* p2 = Cent_value_clone(p);
+            Cent_value_add(dst, p2);
+            p = p->next;
+        }
+        break;
+    default:
+        assert(false && "invalid type");
+    }
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Cent_value* Cent_value_clone(Cent_value* value)
+{
+    Cent_value* value2;
+    Cent_value_create(&value2);
+    Cent_value_copy(value, value2);
+    return value2;
 }

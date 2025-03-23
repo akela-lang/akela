@@ -86,6 +86,7 @@ void Apt_parse_files(Apt_data* data)
 
 void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
 {
+    printf("%s\n", Zinc_string_c_str(path));
 }
 
 void Apt_parse_test(Apt_data* data, Apt_test_suite* ts)

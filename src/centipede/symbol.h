@@ -23,6 +23,7 @@ typedef struct Cent_symbol {
         struct {
             void* n;
             Cent_value* value;
+            Cent_value* used_value;
         } variable;
         Cent_element_type* element;
         Cent_enum_type* enumerate;
@@ -31,6 +32,7 @@ typedef struct Cent_symbol {
         Cent_module* module;
     } data;
     bool is_copy;
+    bool is_used;
 } Cent_symbol;
 
 void Cent_symbol_init(Cent_symbol *sym);

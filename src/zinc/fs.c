@@ -255,7 +255,8 @@ enum Zinc_result Zinc_get_exe_path(char** path)
     }
 
     return Zinc_result_ok;
-#else #error "unknown OS"
+#else
+    #error "unknown OS"
 #endif
 }
 

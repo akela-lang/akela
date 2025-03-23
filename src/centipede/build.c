@@ -219,7 +219,14 @@ Cent_value* Cent_build_variable(Cent_ast* n)
     Cent_symbol* sym = Cent_environment_get(top, &n->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_variable);
-    return sym->data.variable.value;
+    if (!sym->data.variable.used_value) {
+        sym->is_used = true;
+        Cent_value* value = sym->data.variable.value;
+        Cent_value* value2 = Cent_value_clone(value);
+        sym->data.variable.used_value = value2;
+
+    }
+    return sym->data.variable.used_value;
 }
 
 Cent_value* Cent_build_function_file_name(Cent_ast* n)
@@ -299,7 +306,11 @@ void Cent_build_object_method_property_of(Cent_ast* n, Cent_value* value)
     Cent_symbol* sym = Cent_environment_get(top, &a->text);
     assert(sym);
     assert(sym->type == Cent_symbol_type_variable);
-    Cent_value* object = sym->data.variable.value;
+    if (!sym->data.variable.used_value) {
+        sym->data.variable.used_value = Cent_value_clone(sym->data.variable.value);
+        sym->is_used = true;
+    }
+    Cent_value* object = sym->data.variable.used_value;
 
     Cent_ast* b = Cent_ast_get(n, 1);
     assert(b->type == Cent_ast_type_expr_string);
