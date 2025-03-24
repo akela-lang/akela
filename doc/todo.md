@@ -18,8 +18,8 @@
 * string
 
 # Centipede
-* cleanup variables
-* cleanup root value
+* support parent property and parent child
+* detect cycles in parent property and parent child
 
 # Cobble
 * create command line regex utility
