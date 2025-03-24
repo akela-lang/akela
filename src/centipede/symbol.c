@@ -22,8 +22,6 @@ void Cent_symbol_set_type(Cent_symbol *sym, Cent_symbol_type type)
 
     if (type == Cent_symbol_type_variable) {
         sym->data.variable.n = NULL;
-        sym->data.variable.value = NULL;
-        sym->data.variable.used_value = NULL;
     } else if (type == Cent_symbol_type_element) {
         sym->data.element = NULL;
     } else if (type == Cent_symbol_type_enumerate) {
@@ -54,9 +52,6 @@ void Cent_symbol_destroy(Cent_symbol *sym)
                 free(sym->data.enumerate);
             }
         } else if (sym->type == Cent_symbol_type_variable) {
-            if (sym->data.variable.value) {
-                Cent_value_free(sym->data.variable.value);
-            }
         } else if (sym->type == Cent_symbol_type_module) {
             if (sym->data.module) {
                 Cent_module_free(sym->data.module);

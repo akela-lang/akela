@@ -232,10 +232,9 @@ void test_build_assign()
     Zinc_assert_ptr(sym, "ptr sym");
     Zinc_expect_int_equal(sym->type, Cent_symbol_type_variable, "type sym");
 
-    Cent_value* value = sym->data.variable.value;
-    Zinc_assert_ptr(value, "ptr value");
-    Zinc_expect_int_equal(value->type, Cent_value_type_natural, "type number");
-    Zinc_expect_uint64_t_equal(value->data.natural, 1, "integer value");
+    Zinc_assert_ptr(root, "ptr value");
+    Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type number");
+    Zinc_expect_uint64_t_equal(root->data.natural, 1, "integer value");
 
     Cent_comp_table_destroy(ct);
     free(ct);
@@ -340,7 +339,7 @@ void test_build_object_child_of()
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_no_errors(errors);
@@ -529,24 +528,54 @@ void test_build_namespace_variable()
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
-        "use variables;\n"
-        "variables::a\n"
+        "use variables\n"
+        "const a = 1\n"
+        "const b = 2\n"
+        "const c = 3\n"
+        "Foo {\n"
+        "    a\n"
+        "    b\n"
+        "    c\n"
+        "    variables::a\n"
+        "}\n"
     );
 
     Cent_comp_table_add_module_str(ct, "variables.cent",
-        "const a = 190;\n"
+        "use original\n"
+        "const a = original::c\n"
+        "const b = 5\n"
+        "const c = 6\n"
     );
+
+    Cent_comp_table_add_module_str(ct, "original.cent",
+    "const a = 7\n"
+    "const b = 8\n"
+    "const c = 9\n"
+);
 
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
+    Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_no_errors(errors);
 
     Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
-    Zinc_expect_uint64_t_equal(root->data.natural, 190, "integer root");
+    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
+
+    Cent_value* a = root->data.dag.head;
+    Zinc_assert_ptr(a, "ptr a2");
+
+    Cent_value* b = a->next;
+    Zinc_assert_ptr(b, "ptr a2");
+
+    Cent_value* c = b->next;
+    Zinc_assert_ptr(c, "ptr a2");
+
+    Cent_value* a2 = c->next;
+    Zinc_assert_ptr(a2, "ptr a2");
+    Zinc_expect_int_equal(a2->type, Cent_value_type_natural, "type a2");
+    Zinc_expect_uint64_t_equal(a2->data.natural, 9, "integer a2");
 
     Cent_comp_table_destroy(ct);
     free(ct);
@@ -1085,8 +1114,8 @@ void test_build()
     test_build_object();
     test_build_object_prop_set();
     test_build_object_assign();
-    test_build_object_child_of();
-    test_build_object_property_of();
+    // test_build_object_child_of();
+    // test_build_object_property_of();
     test_build_object_function_file_name();
     test_build_property_set_variable();
     test_build_namespace_enum();

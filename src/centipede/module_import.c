@@ -73,7 +73,9 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         /* copy symbols */
         Cent_environment* src_env = cu->pr.root->env;
         Cent_module_dest_env = pd->top;
-        Zinc_hash_map_string_map_name(&src_env->symbols, (Zinc_hash_map_string_func_name)Cent_module_copy_symbol);
+        Zinc_hash_map_string_map_name(
+            &src_env->symbols,
+            (Zinc_hash_map_string_func_name)Cent_module_copy_symbol);
     } else {
         p = n->head;
         Zinc_string base_name;
@@ -81,7 +83,11 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         Zinc_string_copy(&p->text, &base_name);
         Cent_symbol* sym = Cent_environment_get(pd->top, &base_name);
         if (sym) {
-            Zinc_error_list_set(pd->errors, &p->loc, "module identifier collides with existing identifier: %bf", &base_name);
+            Zinc_error_list_set(
+                pd->errors,
+                &p->loc,
+                "module identifier collides with existing identifier: %bf",
+                &base_name);
             p->has_error = true;
             Zinc_string_destroy(&base_name);
         } else {

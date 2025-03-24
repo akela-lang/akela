@@ -48,13 +48,9 @@ void Cent_check_parent_symbol(Cent_symbol* sym)
 {
     Cent_comp_unit* cu = Cent_check_parent_cu;
     if (sym->type == Cent_symbol_type_variable && !sym->is_copy && !sym->is_used) {
-        Cent_value* value = sym->data.variable.value;
-        assert(value && "variable should have value");
-        if (!value->parent && value != cu->value) {
-            Cent_ast* n = value->n;
-            Zinc_error_list_set(&cu->errors, &n->loc, "value is not used");
-            n->has_error = true;
-            /* test case: test_check_value_types_not_attached */
-        }
+        Cent_ast* n = sym->data.variable.n;
+        Zinc_error_list_set(&cu->errors, &n->loc, "value is not used");
+        n->has_error = true;
+        /* test case: test_check_value_types_not_attached */
     }
 }

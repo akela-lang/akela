@@ -1,4 +1,6 @@
 #include "parse_data.h"
+
+#include "comp_unit.h"
 #include "zinc/memory.h"
 
 void Cent_parse_data_init(
@@ -6,7 +8,8 @@ void Cent_parse_data_init(
     struct Zinc_error_list* errors,
     Cent_lex_data* ld,
     Zinc_string_slice file_name,
-    Cent_environment* base)
+    Cent_environment* base
+    )
 {
     pd->ld = ld;
     pd->lookahead = NULL;

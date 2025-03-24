@@ -22,8 +22,6 @@ typedef struct Cent_symbol {
     union {
         struct {
             void* n;
-            Cent_value* value;
-            Cent_value* used_value;
         } variable;
         Cent_element_type* element;
         Cent_enum_type* enumerate;
