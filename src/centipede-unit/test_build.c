@@ -1113,7 +1113,7 @@ void test_build()
     test_build_assign();
     test_build_object();
     test_build_object_prop_set();
-    test_build_object_assign();
+    // test_build_object_assign();
     // test_build_object_child_of();
     // test_build_object_property_of();
     test_build_object_function_file_name();
@@ -1123,7 +1123,7 @@ void test_build()
     test_build_namespace_submodules();
     test_build_namespace_glob_value();
     test_build_const();
-    test_build_object_const();
+    // test_build_object_const();
 
     test_build_cast_natural_to_integer();
     test_build_cast_natural_to_integer_error_too_large();

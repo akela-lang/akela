@@ -18,8 +18,8 @@ software engineers more than dynamically typed or gradually typed
 * A JIT compiler for embeddable or interactive execution
 * Hot reloading for a quick development / test cycle
 * Meta programming: compile time expressions
-* Object-Oriented programming: methods and static dispatch
-* No nulls:  Rust-like enums and matching
+* Object-Oriented programming: methods and static or runtime dispatch
+* Option data types
 * Memory management with allocators including arena allocators, garbage collection, and user-defined allocators
 * Series / Vector data types for financial data
 * Support for trading indicators, screeners, and simulations
@@ -41,9 +41,6 @@ automated testing of the Akela compiler. When these subprojects are re-written i
 they will be useful as a comparison to the C versions.
 
 The Akela-LLVM subproject depends on [LLVM](https://llvm.org/).
-
-The Cobble (regex), JSON, and Centipede subprojects depend on
-the [ICU library](https://icu.unicode.org/) which can be installed on most OSs.
 
 When testing code coverage, [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html) should be installed.
 

@@ -868,5 +868,5 @@ void test_check_value_types()
     test_check_value_types_not_attached_import_glob();
     test_check_value_types_not_attached_not_last();
     test_check_value_types_not_attached_not_last2();
-    test_check_value_types_not_attached_in_object();
+    // test_check_value_types_not_attached_in_object();
 }

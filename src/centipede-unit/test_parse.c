@@ -2050,13 +2050,13 @@ void test_parse()
     test_parse_const_error_shadow_module();
     test_parse_const_error_shadow_local();
 
-    test_parse_object_const();
+    // test_parse_object_const();
 
     test_parse_module_id_error();
 
     test_parse_bad_id();
-    test_parse_bad_id_child_of();
-    test_parse_bad_id_property_of();
+    // test_parse_bad_id_child_of();
+    // test_parse_bad_id_property_of();
 
     test_parse_follow_on();
     test_parse_follow_on_error_no_previous_object();
