@@ -4,6 +4,7 @@
 #include "parse_data.h"
 
 Lava_result Lava_parse_str(char* s);
+Lava_result Lava_parse_file(FILE* fp);
 Lava_result Lava_parse(Lava_parse_data* pd);
 
 #endif

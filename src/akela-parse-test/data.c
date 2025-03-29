@@ -72,6 +72,7 @@ void Apt_test_suite_init(Apt_test_suite *ts)
 {
     Zinc_string_init(&ts->path);
     Zinc_string_init(&ts->name);
+    Zinc_string_init(&ts->description);
     Zinc_string_init(&ts->text);
     Apt_test_list_init(&ts->list);
     ts->solo = false;
@@ -91,6 +92,7 @@ void Apt_test_suite_destroy(Apt_test_suite* ts)
 {
     Zinc_string_destroy(&ts->path);
     Zinc_string_destroy(&ts->name);
+    Zinc_string_destroy(&ts->description);
     Zinc_string_destroy(&ts->text);
     Apt_test_list_destroy(&ts->list);
 }

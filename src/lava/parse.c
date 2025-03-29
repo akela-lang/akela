@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "zinc/input_unicode_string.h"
 #include <string.h>
+#include <zinc/input_unicode_file.h>
 
 Lava_result Lava_parse(Lava_parse_data* pd);
 Lava_dom* Lava_parse_header(Lava_parse_data* pd);
@@ -35,6 +36,30 @@ Lava_result Lava_parse_str(char* s)
 
     free(ld);
 
+    free(pd);
+
+    return pr;
+}
+
+Lava_result Lava_parse_file(FILE* fp)
+{
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
+
+    Zinc_error_list* errors = NULL;
+    Zinc_error_list_create(&errors);
+
+    Lava_lex_data* ld = NULL;
+    Lava_lex_data_create(&ld, errors, input, input->vtable);
+
+    Lava_parse_data* pd = NULL;
+    Lava_parse_data_create(&pd, ld, errors);
+
+    Lava_result pr = Lava_parse(pd);
+
+    Zinc_input_unicode_file_destroy(input);
+    free(input);
+    free(ld);
     free(pd);
 
     return pr;

@@ -69,7 +69,7 @@ int main(int argc, char** argv)
     if (argc <= 1) {
         Zinc_input_unicode_file_create(&input_file, stdin);
         input_obj = input_file;
-        input_vtable = input_file->input_vtable;
+        input_vtable = input_file->vtable;
     } else if (argc >= 3 && strcmp(argv[1], "string") == 0) {
         Zinc_vector* text = NULL;
         Zinc_vector_create(&text, sizeof(char));

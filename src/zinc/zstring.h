@@ -5,6 +5,7 @@
 #include "api.h"
 #include "result.h"
 #include <stdbool.h>
+#include "string_slice.h"
 
 #define BUFFER_CHUNK 64
 
@@ -42,6 +43,7 @@ ZINC_API void Zinc_string_add_format(Zinc_string *bf, const char* fmt, ...);
 ZINC_API void Zinc_string_add_vformat(struct Zinc_string *bf, const char* fmt, va_list args);
 ZINC_API int Zinc_string_order(Zinc_string* a, Zinc_string* b);
 ZINC_API Zinc_string* Zinc_string_clone(Zinc_string* bf);
+ZINC_API Zinc_string_slice Zinc_string_get_slice(Zinc_string* bf);
 
 #ifdef __cplusplus
 }

@@ -22,7 +22,7 @@ typedef struct {
     Zinc_input_unicode_get_all_interface GetAll;
     Zinc_input_unicode_get_location_interface GetLocation;
     Zinc_input_unicode_destroy_interface Destroy;
-    Zinc_input_unicode_vtable* input_vtable;
+    Zinc_input_unicode_vtable* vtable;
 } Zinc_input_unicode_file;
 
 extern Zinc_input_unicode_vtable Zinc_input_unicode_file_vtable;

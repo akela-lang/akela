@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     Zinc_input_unicode_file_create(&input, fp);
 
     Ake_comp_unit_init(&cu);
-    Ake_comp_unit_compile(&cu, input, input->input_vtable);
+    Ake_comp_unit_compile(&cu, input, input->vtable);
 
     if (!cu.valid) {
         struct Zinc_error* e = cu.el.head;

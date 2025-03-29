@@ -33,6 +33,7 @@ typedef struct Apt_test_suite Apt_test_suite;
 struct Apt_test_suite {
     Zinc_string path;
     Zinc_string name;
+    Zinc_string description;
     Zinc_string text;
     Apt_test_list list;
     bool solo;

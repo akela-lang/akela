@@ -54,7 +54,7 @@ Cent_input_data Cent_module_finder_file_find(Cent_module_finder_file* mf, Zinc_s
             Zinc_input_unicode_file* input = NULL;
             Zinc_input_unicode_file_create(&input, fp);
             data.input = input;
-            data.input_vtable = input->input_vtable;
+            data.input_vtable = input->vtable;
             Zinc_string_destroy(&path);
             return data;
         }

@@ -6,6 +6,7 @@
 #include "utf8.h"
 #include <stdarg.h>
 #include <stdbool.h>
+#include "string_slice.h"
 
 void Zinc_string_init(struct Zinc_string* bf)
 {
@@ -517,10 +518,18 @@ void Zinc_string_add_vformat(Zinc_string *bf, const char* fmt, va_list args)
     free(buf);
 }
 
-struct Zinc_string* Zinc_string_clone(struct Zinc_string* bf)
+Zinc_string* Zinc_string_clone(Zinc_string* bf)
 {
-    struct Zinc_string* new_bf = NULL;
+    Zinc_string* new_bf = NULL;
     Zinc_string_create(&new_bf);
     Zinc_string_copy(bf, new_bf);
     return new_bf;
+}
+
+Zinc_string_slice Zinc_string_get_slice(Zinc_string* bf)
+{
+    return (Zinc_string_slice) {
+        .p = bf->buf,
+        .size = bf->size,
+    };
 }

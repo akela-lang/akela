@@ -31,7 +31,7 @@ void Zinc_input_unicode_file_init(Zinc_input_unicode_file* input, FILE* fp)
     input->GetLocation =
         (Zinc_input_unicode_get_location_interface) Zinc_input_unicode_file_get_location;
     input->Destroy = (Zinc_input_unicode_destroy_interface) Zinc_input_unicode_file_destroy;
-    input->input_vtable = &Zinc_input_unicode_file_vtable;
+    input->vtable = &Zinc_input_unicode_file_vtable;
 }
 
 void Zinc_input_unicode_file_create(Zinc_input_unicode_file** input, FILE* fp)

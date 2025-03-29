@@ -18,6 +18,7 @@
 * string
 
 # Centipede
+remove object const and other used code
 
 # Cobble
 * create command line regex utility

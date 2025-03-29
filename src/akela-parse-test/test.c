@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "data.h"
 #include "parse.h"
 

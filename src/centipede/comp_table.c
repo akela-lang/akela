@@ -90,7 +90,7 @@ void Cent_comp_table_init_fp(Cent_comp_table* ct, Zinc_string* dir_path, Zinc_st
     Cent_comp_unit_create(
         &cu,
         input,
-        input->input_vtable,
+        input->vtable,
         name_slice,
         ct->base);
     cu->ct = ct;
@@ -166,6 +166,9 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct Zinc_strin
         ct->module_finder_obj,
         ct->module_finder_vtable, name);
 
+    if (!data.input) {
+        return NULL;
+    }
     assert(data.input);
     assert(data.input_vtable);
 
