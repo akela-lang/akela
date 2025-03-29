@@ -16,6 +16,7 @@ set(centipede_files
         parse_expr.c
         parse_object.c
         build.c
+        build_data.c
         check_value_types.c
         comp_unit.c
         module_finder.c

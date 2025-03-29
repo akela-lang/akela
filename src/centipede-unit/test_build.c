@@ -1100,6 +1100,49 @@ void test_build_variant()
     Zinc_expect_string(&root->name, "Monsters", "name root");
 }
 
+void test_build_cycle()
+{
+    Zinc_test_name(__func__);
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+    "const foo = Foo {\n"
+    "    bar\n"
+    "}\n"
+    "const bar = Bar {\n"
+    "    foo\n"
+    "}\n"
+    "foo\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "cycle detected");
+
+    Cent_comp_table_destroy(ct);
+}
+
+void test_build_cycle2()
+{
+    Zinc_test_name(__func__);
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_str(&ct,
+    "const foo = Foo {\n"
+    "    foo\n"
+    "}\n"
+    "foo\n"
+    );
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Zinc_error_list* errors = &ct->primary->errors;
+    Cent_value* root = ct->primary->value;
+    Zinc_expect_has_errors(errors);
+    Zinc_expect_source_error(errors, "cycle detected");
+
+    Cent_comp_table_destroy(ct);
+}
+
 void test_build()
 {
     test_build_number_integer();
@@ -1140,4 +1183,7 @@ void test_build()
     test_build_cast_real_to_integer_too_large();
 
     test_build_variant();
+
+    test_build_cycle();
+    test_build_cycle2();
 }

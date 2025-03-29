@@ -18,7 +18,6 @@
 * string
 
 # Centipede
-* test cycle
 
 # Cobble
 * create command line regex utility
