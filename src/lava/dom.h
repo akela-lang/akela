@@ -17,7 +17,11 @@ struct Lava_dom {
     union {
         struct { Zinc_string title; int level; Zinc_vector items; } LAVA_DOM_HEADER;
         Zinc_string LAVA_DOM_TEXT;
-        struct { Zinc_string format; Zinc_string text; } LAVA_DOM_BACKQUOTE;
+        struct {
+            Zinc_string format;
+            Zinc_string text;
+            Zinc_location loc;
+        } LAVA_DOM_BACKQUOTE;
     } data;
     Zinc_location loc;
 };

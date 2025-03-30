@@ -11,14 +11,15 @@
 * remove function pointer test
 
 # Akela Parse Test
-* check expected errors
+* parse test suite
+* parse test case
 
 # Akela Run Test
 * array
 * string
 
 # Centipede
-remove object const and other used code
+remove object const and other unused code
 
 # Cobble
 * create command line regex utility
@@ -33,7 +34,7 @@ remove object const and other used code
 # JSON
 
 # Lava
-* save the location information of a blockquote
+* save start and end of blockquote
 
 # Worm
 * remove worm
@@ -41,4 +42,3 @@ remove object const and other used code
 # Zinc
 * set initial input location
 * performance test vector algorithm
-* standardize all variadic functions

@@ -53,8 +53,7 @@ void unit_parse_header_text()
 void unit_parse_header_text_backquote()
 {
     Zinc_test_name(__func__);
-
-    Lava_result pr = Lava_parse_str(
+    char* s =
         "# Test Suite\n"
         "Define constant and use\n"
         "\n"
@@ -64,8 +63,9 @@ void unit_parse_header_text_backquote()
         "  .solo = false\n"
         "  .mute = false\n"
         "}\n"
-        "```\n"
-        );
+        "```\n";
+
+    Lava_result pr = Lava_parse_str(s);
 
     Zinc_expect_no_errors(pr.errors);
 
@@ -96,6 +96,34 @@ void unit_parse_header_text_backquote()
         "  .mute = false\n"
         "}\n",
         "text header_backquote");
+    Zinc_location loc = header_backquote->data.LAVA_DOM_BACKQUOTE.loc;
+    Zinc_expect_size_t_equal(loc.start_pos, 46, "start");
+    Zinc_expect_size_t_equal(loc.end_pos, 109, "end");
+    Zinc_expect_size_t_equal(loc.line, 5, "line");
+    Zinc_expect_size_t_equal(loc.col, 1, "col");
+
+    Zinc_string_slice quoted_actual_slice = {
+        .p = s + loc.start_pos,
+        .size = loc.end_pos - loc.start_pos,
+    };
+
+    char* quoted_expected =
+        "use lib::base::*\n"
+        "TestSuite {\n"
+        "  .solo = false\n"
+        "  .mute = false\n"
+        "}\n";
+
+    Zinc_string_slice quoted_expected_slice = {
+        .p = quoted_expected,
+        .size = strlen(quoted_expected),
+    };
+
+    Zinc_expect_true(
+        Zinc_string_slice_compare(
+            &quoted_actual_slice,
+            &quoted_expected_slice),
+            "quoted");
 
     Lava_result_destroy(&pr);
 }
