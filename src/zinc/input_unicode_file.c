@@ -13,6 +13,7 @@ Zinc_input_unicode_vtable Zinc_input_unicode_file_vtable = {
     .get_all_offset = offsetof(Zinc_input_unicode_file, GetAll),
     .get_location_offset = offsetof(Zinc_input_unicode_file, GetLocation),
     .destroy_offset = offsetof(Zinc_input_unicode_file, Destroy),
+    .set_bounds_offset = offsetof(Zinc_input_unicode_file, SetBounds),
 };
 
 void Zinc_input_unicode_file_init(Zinc_input_unicode_file* input, FILE* fp)
@@ -24,6 +25,8 @@ void Zinc_input_unicode_file_init(Zinc_input_unicode_file* input, FILE* fp)
     Zinc_location_init(&input->prev_loc);
     input->prev_done = false;
     input->fp = fp;
+    Zinc_location_init(&input->bounds);
+    input->has_bounds = false;
     input->Next = (Zinc_input_unicode_next_interface) Zinc_input_unicode_file_next;
     input->Repeat = (Zinc_input_unicode_repeat_interface) Zinc_input_unicode_file_repeat;
     input->Seek = (Zinc_input_unicode_seek_interface) Zinc_input_unicode_file_seek;
@@ -31,6 +34,7 @@ void Zinc_input_unicode_file_init(Zinc_input_unicode_file* input, FILE* fp)
     input->GetLocation =
         (Zinc_input_unicode_get_location_interface) Zinc_input_unicode_file_get_location;
     input->Destroy = (Zinc_input_unicode_destroy_interface) Zinc_input_unicode_file_destroy;
+    input->SetBounds = (Zinc_input_unicode_set_bounds_interface) Zinc_input_unicode_file_set_bounds;
     input->vtable = &Zinc_input_unicode_file_vtable;
 }
 
@@ -69,6 +73,13 @@ enum Zinc_result Zinc_input_unicode_file_next(
         Zinc_input_unicode_file_clear(input);
     }
 
+    if (input->has_bounds && input->loc.start_pos >= input->bounds.end_pos) {
+        *num = 0;
+        *done = true;
+        *loc = input->loc;
+        return Zinc_result_ok;
+    }
+
     if (input->repeat_char) {
         input->repeat_char = false;
         memcpy(c, input->prev_c, 4);
@@ -82,7 +93,9 @@ enum Zinc_result Zinc_input_unicode_file_next(
         if (x == EOF) {
             *num = 0;
             *done = true;
+            return Zinc_result_ok;
         }
+
         c[0] = (char)x;
         *num = ZINC_NUM_BYTES(c[0]);
         for (int i = 1; i < *num; i++) {
@@ -172,4 +185,14 @@ Zinc_location Zinc_input_unicode_file_get_location(Zinc_input_unicode_file* inpu
 void Zinc_input_unicode_file_destroy(Zinc_input_unicode_file* input)
 {
     fclose(input->fp);
+}
+
+void Zinc_input_unicode_file_set_bounds(Zinc_input_unicode_file* input, Zinc_location* loc)
+{
+    input->has_bounds = true;
+    input->bounds = *loc;
+    input->loc = input->bounds;
+    input->loc.end_pos = 0;
+    input->prev_loc = input->loc;
+    Zinc_input_unicode_file_seek(input, &input->loc);
 }

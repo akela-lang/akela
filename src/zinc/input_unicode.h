@@ -46,6 +46,8 @@ typedef Zinc_location (*Zinc_input_unicode_get_location_interface)(void*);
 
 typedef void (*Zinc_input_unicode_destroy_interface)(void*);
 
+typedef void (*Zinc_input_unicode_set_bounds_interface)(void*, Zinc_location*);
+
 typedef struct {
     uint8_t loc_offset;
     uint8_t next_offset;
@@ -54,6 +56,7 @@ typedef struct {
     uint8_t get_all_offset;
     uint8_t get_location_offset;
     uint8_t destroy_offset;
+    uint8_t set_bounds_offset;
 } Zinc_input_unicode_vtable;
 
 Zinc_location* Zinc_input_unicode_location(void* input_obj, Zinc_input_unicode_vtable* input_vtable);
@@ -75,5 +78,7 @@ Zinc_location Zinc_input_unicode_get_location(
     void* input_obj,
     Zinc_input_unicode_vtable* input_vtable);
 void Zinc_input_unicode_destroy(void* input_obj, Zinc_input_unicode_vtable* input_vtable);
+
+void Zinc_input_unicode_set_bounds(void* input, Zinc_input_unicode_vtable* vtable, Zinc_location* loc);
 
 #endif

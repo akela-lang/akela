@@ -22,7 +22,6 @@
 remove object const and other unused code
 
 # Cobble
-* create command line regex utility
 * test if repeat and repeat range are greedy
 * NFA generation
 * single pass NFA generation
@@ -34,11 +33,13 @@ remove object const and other unused code
 # JSON
 
 # Lava
-* save start and end of blockquote
 
 # Worm
 * remove worm
 
 # Zinc
-* set initial input location
-* performance test vector algorithm
+* set input bounds
+  * file [x]
+  * string []
+* performance test vector
+* performance test hash map

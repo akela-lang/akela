@@ -754,6 +754,89 @@ void test_input_unicode_file_get_location()
     free(input);
 }
 
+void test_input_unicode_file_set_bounds()
+{
+    Zinc_test_name(__func__);
+
+    char s[] = "one\n"
+        "two\n"
+        "three\n";
+    size_t s_len = strlen(s);
+    FILE* fp = NULL;
+    Zinc_string name;
+    Zinc_string_init(&name);
+    Zinc_result r;
+    r = Zinc_get_temp_file(&fp, &name);
+    Zinc_assert_ok(r, "get temp file");
+    size_t n = fwrite(s, 1, strlen(s), fp);
+    Zinc_expect_size_t_equal(s_len, n, "len");
+    fclose(fp);
+    fp = fopen(name.buf, "r");
+    Zinc_assert_ptr(fp, "open file");
+    Zinc_input_unicode_file* input = NULL;
+    Zinc_input_unicode_file_create(&input, fp);
+
+    bool done;
+    char c[4];
+    int num;
+    Zinc_location loc;
+
+    loc.start_pos = 4;
+    loc.end_pos = 8;
+    loc.line = 1;
+    loc.col = 5;
+
+    Zinc_input_unicode_set_bounds(input, input->vtable, &loc);
+
+    r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);
+    Zinc_assert_ok(r, "0 input unicode next");
+    Zinc_expect_false(done, "0 done");
+    Zinc_expect_int_equal(num, 1, "0 num");
+    Zinc_expect_char_equal(c[0], 't', "0 char 0");
+    Zinc_expect_size_t_equal(loc.start_pos, 4, "0 start_pos");
+    Zinc_expect_size_t_equal(loc.line, 1, "0 line");
+    Zinc_expect_size_t_equal(loc.col, 5, "0 col");
+    Zinc_expect_size_t_equal(loc.end_pos, 0, "0 end_pos");
+
+    r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);
+    Zinc_assert_ok(r, "0 input unicode next");
+    Zinc_expect_false(done, "0 done");
+    Zinc_expect_int_equal(num, 1, "0 num");
+    Zinc_expect_char_equal(c[0], 'w', "0 char 0");
+    Zinc_expect_size_t_equal(loc.start_pos, 5, "0 start_pos");
+    Zinc_expect_size_t_equal(loc.line, 1, "0 line");
+    Zinc_expect_size_t_equal(loc.col, 6, "0 col");
+    Zinc_expect_size_t_equal(loc.end_pos, 0, "0 end_pos");
+
+    r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);
+    Zinc_assert_ok(r, "0 input unicode next");
+    Zinc_expect_false(done, "0 done");
+    Zinc_expect_int_equal(num, 1, "0 num");
+    Zinc_expect_char_equal(c[0], 'o', "0 char 0");
+    Zinc_expect_size_t_equal(loc.start_pos, 6, "0 start_pos");
+    Zinc_expect_size_t_equal(loc.line, 1, "0 line");
+    Zinc_expect_size_t_equal(loc.col, 7, "0 col");
+    Zinc_expect_size_t_equal(loc.end_pos, 0, "0 end_pos");
+
+    r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);
+    Zinc_assert_ok(r, "0 input unicode next");
+    Zinc_expect_false(done, "0 done");
+    Zinc_expect_int_equal(num, 1, "0 num");
+    Zinc_expect_char_equal(c[0], '\n', "0 char 0");
+    Zinc_expect_size_t_equal(loc.start_pos, 7, "0 start_pos");
+    Zinc_expect_size_t_equal(loc.line, 1, "0 line");
+    Zinc_expect_size_t_equal(loc.col, 8, "0 col");
+    Zinc_expect_size_t_equal(loc.end_pos, 0, "0 end_pos");
+
+    r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);
+    Zinc_assert_ok(r, "0 input unicode next");
+    Zinc_expect_true(done, "0 done");
+
+    Zinc_string_destroy(&name);
+    Zinc_input_unicode_destroy(input, input->vtable);
+    free(input);
+}
+
 void test_input_unicode_file()
 {
     test_input_unicode_file_next();
@@ -762,4 +845,5 @@ void test_input_unicode_file()
     test_input_unicode_file_seek();
     test_input_unicode_file_get_all();
     test_input_unicode_file_get_location();
+    test_input_unicode_file_set_bounds();
 }
