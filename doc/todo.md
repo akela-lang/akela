@@ -38,8 +38,5 @@ remove object const and other unused code
 * remove worm
 
 # Zinc
-* set input bounds
-  * file [x]
-  * string []
 * performance test vector
 * performance test hash map

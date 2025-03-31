@@ -783,8 +783,8 @@ void test_input_unicode_file_set_bounds()
 
     loc.start_pos = 4;
     loc.end_pos = 8;
-    loc.line = 1;
-    loc.col = 5;
+    loc.line = 2;
+    loc.col = 1;
 
     Zinc_input_unicode_set_bounds(input, input->vtable, &loc);
 
@@ -794,8 +794,8 @@ void test_input_unicode_file_set_bounds()
     Zinc_expect_int_equal(num, 1, "0 num");
     Zinc_expect_char_equal(c[0], 't', "0 char 0");
     Zinc_expect_size_t_equal(loc.start_pos, 4, "0 start_pos");
-    Zinc_expect_size_t_equal(loc.line, 1, "0 line");
-    Zinc_expect_size_t_equal(loc.col, 5, "0 col");
+    Zinc_expect_size_t_equal(loc.line, 2, "0 line");
+    Zinc_expect_size_t_equal(loc.col, 1, "0 col");
     Zinc_expect_size_t_equal(loc.end_pos, 0, "0 end_pos");
 
     r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);
@@ -804,8 +804,8 @@ void test_input_unicode_file_set_bounds()
     Zinc_expect_int_equal(num, 1, "0 num");
     Zinc_expect_char_equal(c[0], 'w', "0 char 0");
     Zinc_expect_size_t_equal(loc.start_pos, 5, "0 start_pos");
-    Zinc_expect_size_t_equal(loc.line, 1, "0 line");
-    Zinc_expect_size_t_equal(loc.col, 6, "0 col");
+    Zinc_expect_size_t_equal(loc.line, 2, "0 line");
+    Zinc_expect_size_t_equal(loc.col, 2, "0 col");
     Zinc_expect_size_t_equal(loc.end_pos, 0, "0 end_pos");
 
     r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);
@@ -814,8 +814,8 @@ void test_input_unicode_file_set_bounds()
     Zinc_expect_int_equal(num, 1, "0 num");
     Zinc_expect_char_equal(c[0], 'o', "0 char 0");
     Zinc_expect_size_t_equal(loc.start_pos, 6, "0 start_pos");
-    Zinc_expect_size_t_equal(loc.line, 1, "0 line");
-    Zinc_expect_size_t_equal(loc.col, 7, "0 col");
+    Zinc_expect_size_t_equal(loc.line, 2, "0 line");
+    Zinc_expect_size_t_equal(loc.col, 3, "0 col");
     Zinc_expect_size_t_equal(loc.end_pos, 0, "0 end_pos");
 
     r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);
@@ -824,8 +824,8 @@ void test_input_unicode_file_set_bounds()
     Zinc_expect_int_equal(num, 1, "0 num");
     Zinc_expect_char_equal(c[0], '\n', "0 char 0");
     Zinc_expect_size_t_equal(loc.start_pos, 7, "0 start_pos");
-    Zinc_expect_size_t_equal(loc.line, 1, "0 line");
-    Zinc_expect_size_t_equal(loc.col, 8, "0 col");
+    Zinc_expect_size_t_equal(loc.line, 2, "0 line");
+    Zinc_expect_size_t_equal(loc.col, 4, "0 col");
     Zinc_expect_size_t_equal(loc.end_pos, 0, "0 end_pos");
 
     r = Zinc_input_unicode_next(input, input->vtable, c, &num, &loc, &done);

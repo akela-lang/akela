@@ -11,23 +11,27 @@ Zinc_input_unicode_vtable Zinc_input_unicode_string_vtable = {
     .get_all_offset = offsetof(Zinc_input_unicode_string, GetAll),
     .get_location_offset = offsetof(Zinc_input_unicode_string, GetLocation),
     .destroy_offset = offsetof(Zinc_input_unicode_string, Destroy),
+    .set_bounds_offset = offsetof(Zinc_input_unicode_string, SetBounds),
 };
 
-void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input_string, Zinc_vector* text)
+void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input, Zinc_vector* text)
 {
-    Zinc_location_init(&input_string->loc);
-    Zinc_location_init(&input_string->prev_loc);
-    input_string->repeat_char = false;
-    input_string->pos = 0;
-    input_string->text = text;
-    input_string->Next = (Zinc_input_unicode_next_interface) Zinc_input_unicode_string_next;
-    input_string->Repeat = (Zinc_input_unicode_repeat_interface) Zinc_input_unicode_string_repeat;
-    input_string->Seek = (Zinc_input_unicode_seek_interface) Zinc_input_unicode_string_seek;
-    input_string->GetAll = (Zinc_input_unicode_get_all_interface) Zinc_input_unicode_string_get_all;
-    input_string->GetLocation =
+    Zinc_location_init(&input->loc);
+    Zinc_location_init(&input->prev_loc);
+    input->repeat_char = false;
+    input->pos = 0;
+    input->text = text;
+    input->has_bounds = false;
+    Zinc_location_init(&input->bounds);
+    input->Next = (Zinc_input_unicode_next_interface) Zinc_input_unicode_string_next;
+    input->Repeat = (Zinc_input_unicode_repeat_interface) Zinc_input_unicode_string_repeat;
+    input->Seek = (Zinc_input_unicode_seek_interface) Zinc_input_unicode_string_seek;
+    input->GetAll = (Zinc_input_unicode_get_all_interface) Zinc_input_unicode_string_get_all;
+    input->GetLocation =
         (Zinc_input_unicode_get_location_interface) Zinc_input_unicode_string_get_location;
-    input_string->Destroy = (Zinc_input_unicode_destroy_interface) Zinc_input_unicode_string_destroy;
-    input_string->vtable = &Zinc_input_unicode_string_vtable;
+    input->Destroy = (Zinc_input_unicode_destroy_interface) Zinc_input_unicode_string_destroy;
+    input->SetBounds = (Zinc_input_unicode_set_bounds_interface)Zinc_input_unicode_string_set_bounds;
+    input->vtable = &Zinc_input_unicode_string_vtable;
 }
 
 void Zinc_input_unicode_string_create(Zinc_input_unicode_string** input_string, Zinc_vector* text)
@@ -53,14 +57,23 @@ void Zinc_input_unicode_string_clear(Zinc_input_unicode_string* data)
  * @param done stream is done
  * @return result
  */
-enum Zinc_result Zinc_input_unicode_string_next(
+Zinc_result Zinc_input_unicode_string_next(
         Zinc_input_unicode_string* data,
         char c[4],
         int* num,
         Zinc_location* loc,
         bool* done)
 {
-    enum Zinc_result r = Zinc_result_ok;
+    Zinc_result r = Zinc_result_ok;
+
+    if (data->has_bounds) {
+        if (data->loc.start_pos >= data->bounds.end_pos) {
+            *loc = data->loc;
+            *num = 0;
+            *done = true;
+            return Zinc_result_ok;
+        }
+    }
 
     if (data->loc.line == 0) {
         Zinc_input_unicode_string_clear(data);
@@ -102,11 +115,9 @@ enum Zinc_result Zinc_input_unicode_string_next(
                 break;
             }
         }
-        loc->end_pos = data->loc.start_pos;
     } else {
         *num = 0;
         *loc = data->loc;
-        loc->end_pos = loc->start_pos + 1;
         *done = true;
     }
 
@@ -132,7 +143,6 @@ void Zinc_input_unicode_string_seek(Zinc_input_unicode_string* data, Zinc_locati
 {
     if (loc->start_pos < data->text->count)
     {
-        Zinc_input_unicode_string_clear(data);
         data->loc = *loc;
         data->prev_loc = *loc;
         data->pos = loc->start_pos;
@@ -160,4 +170,14 @@ void Zinc_input_unicode_string_destroy(Zinc_input_unicode_string* input)
 {
     Zinc_vector_destroy(input->text);
     free(input->text);
+}
+
+void Zinc_input_unicode_string_set_bounds(Zinc_input_unicode_string* input, Zinc_location* loc)
+{
+    input->has_bounds = true;
+    input->bounds = *loc;
+    input->loc = *loc;
+    input->loc.end_pos = 0;
+    input->prev_loc = input->loc;
+    Zinc_input_unicode_string_seek(input, &input->loc);
 }
