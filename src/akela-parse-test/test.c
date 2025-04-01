@@ -21,6 +21,7 @@ int main(int argc, char **argv)
     Zinc_string_add_str(&data.dir_path, path);
 
     Apt_parse_files(&data);
+    Zinc_error_list_print(&data.errors);
 
     Apt_data_destroy(&data);
 

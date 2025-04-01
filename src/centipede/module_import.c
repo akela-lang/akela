@@ -45,7 +45,7 @@ void Cent_parse_import_module(Cent_parse_data* pd, Cent_ast* n)
         return;
     }
     assert(cu->input);
-    assert(cu->input_vtable);
+    assert(cu->vtable);
 
     Cent_comp_table_add(pd->ct, &path, cu);
 

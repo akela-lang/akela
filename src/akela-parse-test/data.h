@@ -7,6 +7,7 @@
 #include "zinc/spec_error.h"
 #include "centipede/value.h"
 #include "centipede/comp_table.h"
+#include "zinc/error.h"
 
 typedef struct Apt_test_case Apt_test_case;
 struct Apt_test_case {
@@ -57,6 +58,7 @@ struct Apt_data
     Cob_re section_sep;
     Apt_suite_list suites;
     FILE* fp;
+    Zinc_error_list errors;
 };
 
 void Apt_test_case_init(Apt_test_case *tc);

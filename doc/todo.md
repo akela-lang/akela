@@ -11,8 +11,10 @@
 * remove function pointer test
 
 # Akela Parse Test
-* parse test suite
 * parse test case
+  * test meta []
+  * source []
+  * ast []
 
 # Akela Run Test
 * array

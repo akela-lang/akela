@@ -17,7 +17,7 @@ void Cent_comp_unit_init(
     cu->status = Cent_comp_unit_status_start;
     Zinc_error_list_init(&cu->errors);
     cu->input = input;
-    cu->input_vtable = input_vtable;
+    cu->vtable = input_vtable;
     Cent_lex_data_init(&cu->ld, &cu->errors, input, input_vtable);
     Cent_parse_data_init(&cu->pd, &cu->errors, &cu->ld, file_name, base);
     cu->value = NULL;
@@ -51,7 +51,7 @@ void Cent_comp_unit_destroy(Cent_comp_unit* cu)
     Zinc_error_list_destroy(&cu->errors);
     Cent_lex_data_destroy(&cu->ld);
 
-    Zinc_input_unicode_destroy(cu->input, cu->input_vtable);
+    Zinc_input_unicode_destroy(cu->input, cu->vtable);
     free(cu->input);
 
     Cent_parse_data_destroy(&cu->pd);
@@ -80,4 +80,9 @@ void Cent_comp_unit_build(Cent_comp_unit* cu)
             cu->status = Cent_comp_unit_status_build;
         }
     }
+}
+
+void Cent_comp_unit_set_bounds(Cent_comp_unit* cu, Zinc_location bounds)
+{
+    Zinc_input_unicode_set_bounds(cu->input, cu->vtable, &bounds);
 }

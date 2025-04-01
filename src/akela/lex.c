@@ -182,6 +182,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
             }
             a[i] = '\0';
 
+            loc.end_pos = loc.start_pos + num;
             Zinc_error_list_set(ls->el, &loc, "Unrecognized character: %s", a);
             /* error test case: test_lex_error_unrecognized_character */
             valid = false;

@@ -27,6 +27,7 @@
 
 void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name);
 void Apt_parse_test(Apt_data* data, Apt_test_suite* ts);
+void Apt_parse_test_suite_meta(Apt_data* data, Apt_test_suite *suite, Cent_value* value);
 
 bool Apt_validate_directory(char* path)
 {
@@ -153,12 +154,17 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
                     return;
                 }
                 Cent_comp_table* ct = NULL;
-                Cent_comp_table_create_str(&ct, Zinc_string_c_str(&item->data.LAVA_DOM_BACKQUOTE.text));
+                fp = fopen(Zinc_string_c_str(path), "r");
+                Cent_comp_table_create_fp(&ct, &data->dir_path, name, fp);
+                Cent_comp_unit_set_bounds(ct->primary, item->data.LAVA_DOM_BACKQUOTE.loc);
                 Cent_comp_unit_parse(ct->primary);
                 Cent_comp_unit_build(ct->primary);
                 if (ct->primary->errors.head) {
                     Zinc_error_list_print(&ct->primary->errors);
                 }
+                Apt_parse_test_suite_meta(data, suite, ct->primary->value);
+                Cent_comp_table_destroy(ct);
+                free(ct);
             }
         }
     }
@@ -166,6 +172,46 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
     printf("%s\n", Zinc_string_c_str(&suite->description));
 
     Lava_result_destroy(&pr);
+}
+
+void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop);
+Apt_data* Apt__parse_test_suite_meta_prop_data = NULL;
+Apt_test_suite* Apt__parse_test_suite_meta_prop_suite = NULL;
+void Apt_parse_test_suite_meta(Apt_data* data, Apt_test_suite *suite, Cent_value* value)
+{
+    if (value->type == Cent_value_type_dag) {
+        if (Zinc_string_compare_str(&value->name, "TestSuite")) {
+            Apt__parse_test_suite_meta_prop_data = data;
+            Apt__parse_test_suite_meta_prop_suite = suite;
+            Zinc_hash_map_string_map_name(
+                &value->data.dag.properties,
+                (Zinc_hash_map_string_func_name)Apt__parse_test_suite_meta_prop);
+        }
+    }
+}
+
+void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop)
+{
+    Apt_data* data = Apt__parse_test_suite_meta_prop_data;
+    Apt_test_suite* suite = Apt__parse_test_suite_meta_prop_suite;
+    if (Zinc_string_compare_str(name, "solo")) {
+        if (prop->type == Cent_value_type_boolean) {
+            suite->solo = prop->data.boolean;
+        } else {
+            Cent_ast* n = prop->n;
+            Zinc_error_list_set(&data->errors, &n->loc, "expected boolean");
+        }
+    } else if (Zinc_string_compare_str(name, "mute")) {
+        if (prop->type == Cent_value_type_boolean) {
+            suite->mute = prop->data.boolean;
+        } else {
+            Cent_ast* n = prop->n;
+            Zinc_error_list_set(&data->errors, &n->loc, "expected boolean");
+        }
+    } else {
+        Cent_ast* n = prop->n;
+        Zinc_error_list_set(&data->errors, &n->loc, "expected solo or mute");
+    }
 }
 
 void Apt_parse_test(Apt_data* data, Apt_test_suite* ts)

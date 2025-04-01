@@ -37,7 +37,7 @@ element Ast {
   properties {
     type: AstType `required`
     value: String
-    tu: Type_use
+    tu: TypeUse
   }
   children {
     Ast

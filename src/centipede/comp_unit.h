@@ -16,7 +16,7 @@ typedef struct Cent_comp_unit {
     Cent_comp_unit_status status;
     Cent_parse_data pd;
     void* input;
-    Zinc_input_unicode_vtable* input_vtable;
+    Zinc_input_unicode_vtable* vtable;
     Zinc_error_list errors;
     Cent_lex_data ld;
     Cent_parse_result pr;
@@ -40,6 +40,7 @@ void Cent_comp_unit_destroy(Cent_comp_unit* cu);
 void Cent_comp_unit_free(Cent_comp_unit* cu);
 void Cent_comp_unit_parse(Cent_comp_unit* cu);
 void Cent_comp_unit_build(Cent_comp_unit* cu);
+void Cent_comp_unit_set_bounds(Cent_comp_unit* cu, Zinc_location bounds);
 
 
 #endif

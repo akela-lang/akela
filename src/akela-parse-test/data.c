@@ -140,6 +140,7 @@ void Apt_data_init(Apt_data* data)
     data->section_sep = Cob_compile_str("^###\n?$");
     Apt_suite_list_init(&data->suites);
     data->fp = NULL;
+    Zinc_error_list_init(&data->errors);
 }
 
 void Apt_data_create(Apt_data** data)
