@@ -26,7 +26,7 @@
 
 
 void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name);
-void Apt_parse_test(Apt_data* data, Apt_test_suite* ts);
+void Apt_parse_test(Apt_data* data, Apt_test_suite* ts, Lava_dom* dom);
 void Apt_parse_test_suite_meta(Apt_data* data, Apt_test_suite *suite, Cent_value* value);
 
 bool Apt_validate_directory(char* path)
@@ -165,6 +165,17 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
                 Apt_parse_test_suite_meta(data, suite, ct->primary->value);
                 Cent_comp_table_destroy(ct);
                 free(ct);
+            } else if (item->kind == LAVA_DOM_HEADER) {
+                Zinc_string_slice test_title = Zinc_string_get_slice(&item->data.LAVA_DOM_HEADER.title);
+                test_title = Zinc_trim(test_title);
+                Zinc_string_slice expected_title = Zinc_string_slice_from_str("Test");
+                if (!Zinc_string_slice_compare(&test_title, &expected_title)) {
+                    Zinc_error_list_set(&data->errors, &item->loc, "expected Test");
+                } else if (item->data.LAVA_DOM_HEADER.level != 2) {
+                    Zinc_error_list_set(&data->errors, &item->loc, "expected level 2");
+                } else {
+                    Apt_parse_test(data, suite, item);
+                }
             }
         }
     }
@@ -186,6 +197,9 @@ void Apt_parse_test_suite_meta(Apt_data* data, Apt_test_suite *suite, Cent_value
             Zinc_hash_map_string_map_name(
                 &value->data.dag.properties,
                 (Zinc_hash_map_string_func_name)Apt__parse_test_suite_meta_prop);
+        } else {
+            Cent_ast* n = value->n;
+            Zinc_error_list_set(&data->errors, &n->loc, "expected TestSuite");
         }
     }
 }
@@ -214,8 +228,22 @@ void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop)
     }
 }
 
-void Apt_parse_test(Apt_data* data, Apt_test_suite* ts)
+void Apt_parse_test(Apt_data* data, Apt_test_suite* ts, Lava_dom* dom)
 {
+    Apt_test_case* tc = NULL;
+    Apt_test_case_create(&tc);
+
+    for (size_t i = 0; i < dom->data.LAVA_DOM_HEADER.items.count; i++) {
+        Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&dom->data.LAVA_DOM_HEADER.items, i);
+        if (item->kind == LAVA_DOM_TEXT) {
+            if (tc->description.size > 0) {
+                Zinc_string_add_char(&tc->description, '\n');
+            }
+            Zinc_string_add_string(&tc->description, &item->data.LAVA_DOM_TEXT);
+        }
+    }
+
+    printf("%s\n", Zinc_string_c_str(&tc->description));
 }
 
 void Apt_parse_print_errors(Zinc_error_list* errors)

@@ -16,7 +16,7 @@ struct Apt_test_case {
     Zinc_string text;
     Zinc_string source;
     Zinc_string expected;
-    Zinc_string name;
+    Zinc_string description;
     Zinc_error_list expected_errors;
     Cent_comp_table* text_ct;
     Cent_comp_table* expected_ct;

@@ -12,6 +12,7 @@
 
 # Akela Parse Test
 * parse test case
+  * description [x]
   * test meta []
   * source []
   * ast []

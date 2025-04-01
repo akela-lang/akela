@@ -8,7 +8,7 @@ void Apt_test_case_init(Apt_test_case *tc)
     Zinc_string_init(&tc->text);
     Zinc_string_init(&tc->source);
     Zinc_string_init(&tc->expected);
-    Zinc_string_init(&tc->name);
+    Zinc_string_init(&tc->description);
     Zinc_error_list_init(&tc->expected_errors);
     tc->text_ct = NULL;
     tc->expected_ct = NULL;
@@ -27,7 +27,7 @@ void Apt_test_case_destroy(Apt_test_case *tc)
     Zinc_string_destroy(&tc->text);
     Zinc_string_destroy(&tc->source);
     Zinc_string_destroy(&tc->expected);
-    Zinc_string_destroy(&tc->name);
+    Zinc_string_destroy(&tc->description);
     Zinc_error_list_destroy(&tc->expected_errors);
     Cent_comp_table_destroy(tc->text_ct);
     Cent_comp_table_destroy(tc->expected_ct);
