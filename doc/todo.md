@@ -11,7 +11,7 @@
 * remove function pointer test
 
 # Akela Parse Test
-* loop on active tests
+* check solo and mute
 * compare ast to expected ast
 
 # Akela Run Test

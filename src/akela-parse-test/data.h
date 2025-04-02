@@ -14,12 +14,10 @@ struct Apt_test_case {
     bool solo;
     bool mute;
     bool has_error;
-    Zinc_string text;
     Zinc_string source_path;
     Zinc_location source_bounds;
     Zinc_string ast_path;
     Zinc_location ast_bounds;
-    Zinc_string expected;
     Zinc_string description;
     Zinc_error_list expected_errors;
     Apt_test_case* next;
@@ -55,12 +53,11 @@ typedef struct Apt_data Apt_data;
 struct Apt_data
 {
     Zinc_string dir_path;
-    Cob_re test_suite_sep;
-    Cob_re test_case_sep;
-    Cob_re section_sep;
     Apt_suite_list suites;
     FILE* fp;
     Zinc_error_list errors;
+    bool has_test_solo;
+    bool has_suite_solo;
 };
 
 void Apt_test_case_init(Apt_test_case *tc);

@@ -150,7 +150,6 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
                     Zinc_string_add_char(&suite->description, '\n');
                 }
                 Zinc_string_add_string(&suite->description, &item->data.LAVA_DOM_TEXT);
-                printf("%s\n", Zinc_string_c_str(&suite->description));
             } else if (item->kind == LAVA_DOM_BACKQUOTE) {
                 Zinc_string_slice format = Zinc_string_get_slice(&item->data.LAVA_DOM_BACKQUOTE.format);
                 format = Zinc_trim(format);
@@ -280,8 +279,6 @@ void Apt_parse_test(
             }
         }
     }
-
-    printf("%s\n", Zinc_string_c_str(&tc->description));
 }
 
 Apt_data* Apt__parse_test_case_data = NULL;

@@ -6,12 +6,10 @@ void Apt_test_case_init(Apt_test_case *tc)
     tc->solo = false;
     tc->mute = false;
     tc->has_error = false;
-    Zinc_string_init(&tc->text);
     Zinc_string_init(&tc->source_path);
     Zinc_location_init(&tc->source_bounds);
     Zinc_string_init(&tc->ast_path);
     Zinc_location_init(&tc->ast_bounds);
-    Zinc_string_init(&tc->expected);
     Zinc_string_init(&tc->description);
     Zinc_error_list_init(&tc->expected_errors);
     tc->next = NULL;
@@ -26,10 +24,8 @@ void Apt_test_case_create(Apt_test_case** tc)
 
 void Apt_test_case_destroy(Apt_test_case *tc)
 {
-    Zinc_string_destroy(&tc->text);
     Zinc_string_destroy(&tc->source_path);
     Zinc_string_destroy(&tc->ast_path);
-    Zinc_string_destroy(&tc->expected);
     Zinc_string_destroy(&tc->description);
     Zinc_error_list_destroy(&tc->expected_errors);
 }
@@ -136,12 +132,11 @@ void Apt_suite_list_destroy(Apt_suite_list* list)
 void Apt_data_init(Apt_data* data)
 {
     Zinc_string_init(&data->dir_path);
-    data->test_suite_sep = Cob_compile_str("^======\n?$");
-    data->test_case_sep = Cob_compile_str("^######\n?$");
-    data->section_sep = Cob_compile_str("^###\n?$");
     Apt_suite_list_init(&data->suites);
     data->fp = NULL;
     Zinc_error_list_init(&data->errors);
+    data->has_suite_solo = false;
+    data->has_test_solo = false;
 }
 
 void Apt_data_create(Apt_data** data)
@@ -153,8 +148,5 @@ void Apt_data_create(Apt_data** data)
 void Apt_data_destroy(Apt_data* data)
 {
     Zinc_string_destroy(&data->dir_path);
-    Cob_re_destroy(&data->test_suite_sep);
-    Cob_re_destroy(&data->test_case_sep);
-    Cob_re_destroy(&data->section_sep);
     Apt_suite_list_destroy(&data->suites);
 }

@@ -3,7 +3,8 @@
 
 #include "zinc/zstring.h"
 #include "centipede/comp_unit.h"
+#include "data.h"
 
-void Apt_run(Zinc_string* file_name, Cent_comp_unit* cu);
+void Apt_run(Apt_data* data);
 
 #endif

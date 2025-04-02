@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "data.h"
 #include "parse.h"
+#include "compare.h"
 
 #define NAME "akela-parse-test"
 
@@ -22,6 +23,12 @@ int main(int argc, char **argv)
 
     Apt_parse_files(&data);
     Zinc_error_list_print(&data.errors);
+
+    if (data.errors.head) {
+        Zinc_error_list_print(&data.errors);
+    } else {
+        Apt_run(&data);
+    }
 
     Apt_data_destroy(&data);
 
