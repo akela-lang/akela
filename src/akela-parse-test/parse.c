@@ -26,8 +26,15 @@
 
 
 void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name);
-void Apt_parse_test(Apt_data* data, Apt_test_suite* ts, Lava_dom* dom);
+void Apt_parse_test(
+    Apt_data* data,
+    Zinc_string* path,
+    Apt_test_suite* ts,
+    Lava_dom* dom,
+    Zinc_string* name);
 void Apt_parse_test_suite_meta(Apt_data* data, Apt_test_suite *suite, Cent_value* value);
+void Apt_parse_test_case_meta(Apt_data* data, Apt_test_case* tc, Cent_value* value);
+void Apt_parse_test_case_meta_prop(Zinc_string* name, Cent_value* prop);
 
 bool Apt_validate_directory(char* path)
 {
@@ -143,6 +150,7 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
                     Zinc_string_add_char(&suite->description, '\n');
                 }
                 Zinc_string_add_string(&suite->description, &item->data.LAVA_DOM_TEXT);
+                printf("%s\n", Zinc_string_c_str(&suite->description));
             } else if (item->kind == LAVA_DOM_BACKQUOTE) {
                 Zinc_string_slice format = Zinc_string_get_slice(&item->data.LAVA_DOM_BACKQUOTE.format);
                 format = Zinc_trim(format);
@@ -156,7 +164,7 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
                 Cent_comp_table* ct = NULL;
                 fp = fopen(Zinc_string_c_str(path), "r");
                 Cent_comp_table_create_fp(&ct, &data->dir_path, name, fp);
-                Cent_comp_unit_set_bounds(ct->primary, item->data.LAVA_DOM_BACKQUOTE.loc);
+                Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.loc);
                 Cent_comp_unit_parse(ct->primary);
                 Cent_comp_unit_build(ct->primary);
                 if (ct->primary->errors.head) {
@@ -174,13 +182,11 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
                 } else if (item->data.LAVA_DOM_HEADER.level != 2) {
                     Zinc_error_list_set(&data->errors, &item->loc, "expected level 2");
                 } else {
-                    Apt_parse_test(data, suite, item);
+                    Apt_parse_test(data, path, suite, item, name);
                 }
             }
         }
     }
-
-    printf("%s\n", Zinc_string_c_str(&suite->description));
 
     Lava_result_destroy(&pr);
 }
@@ -228,10 +234,19 @@ void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop)
     }
 }
 
-void Apt_parse_test(Apt_data* data, Apt_test_suite* ts, Lava_dom* dom)
+void Apt_parse_test(
+    Apt_data* data,
+    Zinc_string* path,
+    Apt_test_suite* ts,
+    Lava_dom* dom,
+    Zinc_string* name)
 {
     Apt_test_case* tc = NULL;
     Apt_test_case_create(&tc);
+    Apt_test_list_add(&ts->list, tc);
+    bool seen_meta = false;
+    bool seen_source = false;
+    bool seen_ast = false;
 
     for (size_t i = 0; i < dom->data.LAVA_DOM_HEADER.items.count; i++) {
         Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&dom->data.LAVA_DOM_HEADER.items, i);
@@ -240,13 +255,78 @@ void Apt_parse_test(Apt_data* data, Apt_test_suite* ts, Lava_dom* dom)
                 Zinc_string_add_char(&tc->description, '\n');
             }
             Zinc_string_add_string(&tc->description, &item->data.LAVA_DOM_TEXT);
+        } else if (item->kind == LAVA_DOM_BACKQUOTE) {
+            if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
+                if (!seen_meta) {
+                    seen_meta = true;
+                    Cent_comp_table* ct = NULL;
+                    FILE* fp = fopen(Zinc_string_c_str(path), "r");
+                    Cent_comp_table_create_fp(&ct, &data->dir_path, name, fp);
+                    Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.loc);
+                    Cent_comp_unit_parse(ct->primary);
+                    Cent_comp_unit_build(ct->primary);
+                    Apt_parse_test_case_meta(data, tc, ct->primary->value);
+                    Cent_comp_table_destroy(ct);
+                    free(ct);
+                }
+            }
         }
     }
 
     printf("%s\n", Zinc_string_c_str(&tc->description));
 }
 
-void Apt_parse_print_errors(Zinc_error_list* errors)
+Apt_data* Apt__parse_test_case_data = NULL;
+Apt_test_case* Apt__parse_test_case_tc = NULL;
+void Apt_parse_test_case_meta(Apt_data* data, Apt_test_case* tc, Cent_value* value)
 {
+    if (value->type != Cent_value_type_dag) {
+        Cent_ast* n = value->n;
+        Zinc_error_list_set(&data->errors, &n->loc, "expected DAG type");
+        return;
+    }
 
+    if (!Zinc_string_compare_str(&value->name, "Test")) {
+        Cent_ast* n = value->n;
+        Zinc_error_list_set(&data->errors, &n->loc, "expected Test");
+        return;
+    }
+
+    Apt__parse_test_case_data = data;
+    Apt__parse_test_case_tc = tc;
+    Zinc_hash_map_string_map_name(
+        &value->data.dag.properties,
+        (Zinc_hash_map_string_func_name)Apt_parse_test_case_meta_prop);
+}
+
+void Apt_parse_test_case_meta_prop(Zinc_string* name, Cent_value* prop)
+{
+    Apt_data* data = Apt__parse_test_suite_meta_prop_data;
+    Apt_test_case* tc = Apt__parse_test_case_tc;
+
+    if (Zinc_string_compare_str(name, "solo")) {
+        if (prop->type == Cent_value_type_boolean) {
+            tc->solo = prop->data.boolean;
+        } else {
+            Cent_ast* n = prop->n;
+            Zinc_error_list_set(&data->errors, &n->loc, "expected boolean");
+        }
+    } else if (Zinc_string_compare_str(name, "mute")) {
+        if (prop->type == Cent_value_type_boolean) {
+            tc->mute = prop->data.boolean;
+        } else {
+            Cent_ast* n = prop->n;
+            Zinc_error_list_set(&data->errors, &n->loc, "expected boolean");
+        }
+    } else if (Zinc_string_compare_str(name, "has_error")) {
+        if (prop->type == Cent_value_type_boolean) {
+            tc->has_error = prop->data.boolean;
+        } else {
+            Cent_ast* n = prop->n;
+            Zinc_error_list_set(&data->errors, &n->loc, "expected boolean");
+        }
+    } else {
+        Cent_ast* n = prop->n;
+        Zinc_error_list_set(&data->errors, &n->loc, "invalid property: %bf", name);
+    }
 }

@@ -13,13 +13,12 @@ typedef struct Apt_test_case Apt_test_case;
 struct Apt_test_case {
     bool solo;
     bool mute;
+    bool has_error;
     Zinc_string text;
     Zinc_string source;
     Zinc_string expected;
     Zinc_string description;
     Zinc_error_list expected_errors;
-    Cent_comp_table* text_ct;
-    Cent_comp_table* expected_ct;
     Apt_test_case* next;
     Apt_test_case* prev;
 };

@@ -82,7 +82,7 @@ void Cent_comp_unit_build(Cent_comp_unit* cu)
     }
 }
 
-void Cent_comp_unit_set_bounds(Cent_comp_unit* cu, Zinc_location bounds)
+void Cent_comp_unit_set_bounds(Cent_comp_unit* cu, Zinc_location* bounds)
 {
-    Zinc_input_unicode_set_bounds(cu->input, cu->vtable, &bounds);
+    Zinc_input_unicode_set_bounds(cu->input, cu->vtable, bounds);
 }
