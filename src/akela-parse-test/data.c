@@ -7,7 +7,10 @@ void Apt_test_case_init(Apt_test_case *tc)
     tc->mute = false;
     tc->has_error = false;
     Zinc_string_init(&tc->text);
-    Zinc_string_init(&tc->source);
+    Zinc_string_init(&tc->source_path);
+    Zinc_location_init(&tc->source_bounds);
+    Zinc_string_init(&tc->ast_path);
+    Zinc_location_init(&tc->ast_bounds);
     Zinc_string_init(&tc->expected);
     Zinc_string_init(&tc->description);
     Zinc_error_list_init(&tc->expected_errors);
@@ -24,7 +27,8 @@ void Apt_test_case_create(Apt_test_case** tc)
 void Apt_test_case_destroy(Apt_test_case *tc)
 {
     Zinc_string_destroy(&tc->text);
-    Zinc_string_destroy(&tc->source);
+    Zinc_string_destroy(&tc->source_path);
+    Zinc_string_destroy(&tc->ast_path);
     Zinc_string_destroy(&tc->expected);
     Zinc_string_destroy(&tc->description);
     Zinc_error_list_destroy(&tc->expected_errors);

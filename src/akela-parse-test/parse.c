@@ -268,7 +268,15 @@ void Apt_parse_test(
                     Apt_parse_test_case_meta(data, tc, ct->primary->value);
                     Cent_comp_table_destroy(ct);
                     free(ct);
+                } else {
+                    seen_ast = true;
+                    Zinc_string_add_string(&tc->ast_path, path);
+                    tc->ast_bounds = item->data.LAVA_DOM_BACKQUOTE.loc;
                 }
+            } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "akela")) {
+                seen_source = true;
+                Zinc_string_add_string(&tc->source_path, path);
+                tc->source_bounds = item->data.LAVA_DOM_BACKQUOTE.loc;
             }
         }
     }
