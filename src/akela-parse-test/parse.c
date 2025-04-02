@@ -188,6 +188,10 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
     }
 
     Lava_result_destroy(&pr);
+
+    if (suite->solo) {
+        data->has_suite_solo = true;
+    }
 }
 
 void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop);
@@ -278,6 +282,10 @@ void Apt_parse_test(
                 tc->source_bounds = item->data.LAVA_DOM_BACKQUOTE.loc;
             }
         }
+    }
+
+    if (tc->solo) {
+        data->has_test_solo = true;
     }
 }
 

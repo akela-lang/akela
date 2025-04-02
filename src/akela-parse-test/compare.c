@@ -17,7 +17,9 @@ void Apt_run(Apt_data* data)
 {
     Apt_test_suite* suite = data->suites.head;
     while (suite) {
-        Apt_run_suite(data, suite);
+        if (!suite->mute && (!data->has_suite_solo || (suite->solo))) {
+            Apt_run_suite(data, suite);
+        }
         suite = suite->next;
     }
 }
@@ -27,7 +29,9 @@ void Apt_run_suite(Apt_data* data, Apt_test_suite* suite)
     printf("%s\n", Zinc_string_c_str(&suite->description));
     Apt_test_case* tc = suite->list.head;
     while (tc) {
-        Apt_run_test(data, tc);
+        if (!tc->mute && (!data->has_test_solo || (tc->solo))) {
+            Apt_run_test(data, tc);
+        }
         tc = tc->next;
     }
 }
