@@ -217,6 +217,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
+        loc.end_pos = loc.start_pos + num;
         Zinc_error_list_set(ld->errors, &loc, "invalid character: %bf", &bf);
         Zinc_string_destroy(&bf);
     }

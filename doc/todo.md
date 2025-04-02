@@ -11,7 +11,10 @@
 * remove function pointer test
 
 # Akela Parse Test
-* compare ast to expected ast
+* generate ast
+* compare ast
+* compare type use
+* compare type def
 
 # Akela Run Test
 * array

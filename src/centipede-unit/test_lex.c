@@ -935,7 +935,7 @@ void test_lex_error_invalid_character()
     struct Zinc_error* e = Zinc_expect_source_error(ld.errors, "invalid character: ~");
     Zinc_assert_ptr(e, "ptr e");
     Zinc_expect_size_t_equal(e->loc.start_pos, 0, "start pos e");
-    Zinc_expect_size_t_equal(e->loc.end_pos, 1, "start pos e");
+    Zinc_expect_size_t_equal(e->loc.end_pos, 1, "end pos e");
     Zinc_expect_size_t_equal(e->loc.line, 1, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 1, "col e");
     test_lex_teardown(&ld);

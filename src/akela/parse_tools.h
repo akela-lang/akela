@@ -6,18 +6,20 @@
 #include "token.h"
 #include "symbol_table.h"
 #include "zinc/zstring.h"
+#include "zinc/string_list.h"
 #include "ast.h"
+#include "lex_tools.h"
 
 typedef struct Ake_parse_context {
     bool is_subscript;
 } Ake_parse_context;
 
 typedef struct Ake_parse_state {
-	struct Ake_lex_state* ls;
-	struct Ake_token* lookahead;
-	struct Zinc_error_list* el;
-	struct Ake_symbol_table* st;
-    struct Zinc_string_list* extern_list;
+	Ake_lex_state* ls;
+	Ake_token* lookahead;
+	Zinc_error_list* el;
+	Ake_symbol_table* st;
+    Zinc_string_list* extern_list;
     Ake_parse_context context;
 } Ake_parse_state;
 
