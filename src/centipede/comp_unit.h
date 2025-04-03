@@ -40,7 +40,7 @@ void Cent_comp_unit_destroy(Cent_comp_unit* cu);
 void Cent_comp_unit_free(Cent_comp_unit* cu);
 void Cent_comp_unit_parse(Cent_comp_unit* cu);
 void Cent_comp_unit_build(Cent_comp_unit* cu);
-void Cent_comp_unit_set_bounds(Cent_comp_unit* cu, Zinc_location* bounds);
+void Cent_comp_unit_set_bounds(Cent_comp_unit* cu, Zinc_input_bounds* bounds);
 
 
 #endif

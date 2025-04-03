@@ -16,7 +16,7 @@ typedef struct {
     Zinc_location prev_loc;
     bool prev_done;
     FILE* fp;
-    Zinc_location bounds;
+    Zinc_input_bounds bounds;
     bool has_bounds;
     Zinc_input_unicode_next_interface Next;
     Zinc_input_unicode_repeat_interface Repeat;
@@ -43,6 +43,6 @@ void Zinc_input_unicode_file_seek(Zinc_input_unicode_file* data, Zinc_location* 
 void Zinc_input_unicode_file_get_all(Zinc_input_unicode_file* data, Zinc_vector** text);
 Zinc_location Zinc_input_unicode_file_get_location(Zinc_input_unicode_file* input);
 void Zinc_input_unicode_file_destroy(Zinc_input_unicode_file* input);
-void Zinc_input_unicode_file_set_bounds(Zinc_input_unicode_file* input, Zinc_location* loc);
+void Zinc_input_unicode_file_set_bounds(Zinc_input_unicode_file* input, Zinc_input_bounds* bounds);
 
 #endif

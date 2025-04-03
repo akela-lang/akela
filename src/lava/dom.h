@@ -3,6 +3,7 @@
 #include <zinc/error.h>
 #include <zinc/vector.h>
 #include <zinc/zstring.h>
+#include "zinc/input_bounds.h"
 
 typedef enum Lava_dom_kind Lava_dom_kind;
 enum Lava_dom_kind {
@@ -20,7 +21,7 @@ struct Lava_dom {
         struct {
             Zinc_string format;
             Zinc_string text;
-            Zinc_location loc;
+            Zinc_input_bounds bounds;
         } LAVA_DOM_BACKQUOTE;
     } data;
     Zinc_location loc;

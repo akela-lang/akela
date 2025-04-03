@@ -163,7 +163,7 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
                 Cent_comp_table* ct = NULL;
                 fp = fopen(Zinc_string_c_str(path), "r");
                 Cent_comp_table_create_fp(&ct, &data->dir_path, name, fp);
-                Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.loc);
+                Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
                 Cent_comp_unit_parse(ct->primary);
                 Cent_comp_unit_build(ct->primary);
                 if (ct->primary->errors.head) {
@@ -265,7 +265,7 @@ void Apt_parse_test(
                     Cent_comp_table* ct = NULL;
                     FILE* fp = fopen(Zinc_string_c_str(path), "r");
                     Cent_comp_table_create_fp(&ct, &data->dir_path, name, fp);
-                    Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.loc);
+                    Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
                     Cent_comp_unit_parse(ct->primary);
                     Cent_comp_unit_build(ct->primary);
                     Apt_parse_test_case_meta(data, tc, ct->primary->value);
@@ -274,12 +274,12 @@ void Apt_parse_test(
                 } else {
                     seen_ast = true;
                     Zinc_string_add_string(&tc->ast_path, path);
-                    tc->ast_bounds = item->data.LAVA_DOM_BACKQUOTE.loc;
+                    tc->ast_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
                 }
             } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "akela")) {
                 seen_source = true;
                 Zinc_string_add_string(&tc->source_path, path);
-                tc->source_bounds = item->data.LAVA_DOM_BACKQUOTE.loc;
+                tc->source_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
             }
         }
     }

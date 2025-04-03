@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "error.h"
 #include "vector.h"
+#include "input_bounds.h"
 
 /**
  * Get the next character.
@@ -46,7 +47,7 @@ typedef Zinc_location (*Zinc_input_unicode_get_location_interface)(void*);
 
 typedef void (*Zinc_input_unicode_destroy_interface)(void*);
 
-typedef void (*Zinc_input_unicode_set_bounds_interface)(void*, Zinc_location*);
+typedef void (*Zinc_input_unicode_set_bounds_interface)(void*, Zinc_input_bounds*);
 
 typedef struct {
     uint8_t loc_offset;
@@ -79,6 +80,6 @@ Zinc_location Zinc_input_unicode_get_location(
     Zinc_input_unicode_vtable* input_vtable);
 void Zinc_input_unicode_destroy(void* input_obj, Zinc_input_unicode_vtable* input_vtable);
 
-void Zinc_input_unicode_set_bounds(void* input, Zinc_input_unicode_vtable* vtable, Zinc_location* loc);
+void Zinc_input_unicode_set_bounds(void* input, Zinc_input_unicode_vtable* vtable, Zinc_input_bounds* bounds);
 
 #endif

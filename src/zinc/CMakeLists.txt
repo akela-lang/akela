@@ -29,6 +29,7 @@ set(SOURCE_FILES
         dbl_vector.c
         fs.c
         string_slice.c
+        input_bounds.c
 )
 
 add_definitions(-DZINC_EXPORT)

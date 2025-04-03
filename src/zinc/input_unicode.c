@@ -102,7 +102,7 @@ void Zinc_input_unicode_destroy(void* input_obj, Zinc_input_unicode_vtable* inpu
     (*destroy)(input_obj);
 }
 
-void Zinc_input_unicode_set_bounds(void* input, Zinc_input_unicode_vtable* vtable, Zinc_location* loc)
+void Zinc_input_unicode_set_bounds(void* input, Zinc_input_unicode_vtable* vtable, Zinc_input_bounds* bounds)
 {
 #if IS_UNIX
     Zinc_input_unicode_set_bounds_interface *set_bounds = input + vtable->set_bounds_offset;
@@ -111,5 +111,5 @@ void Zinc_input_unicode_set_bounds(void* input, Zinc_input_unicode_vtable* vtabl
 #else
     #error "unsupported OS"
 #endif
-    (*set_bounds)(input, loc);
+    (*set_bounds)(input, bounds);
 }

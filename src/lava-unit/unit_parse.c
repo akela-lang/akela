@@ -96,15 +96,16 @@ void unit_parse_header_text_backquote()
         "  .mute = false\n"
         "}\n",
         "text header_backquote");
-    Zinc_location loc = header_backquote->data.LAVA_DOM_BACKQUOTE.loc;
-    Zinc_expect_size_t_equal(loc.start_pos, 46, "start");
-    Zinc_expect_size_t_equal(loc.end_pos, 109, "end");
-    Zinc_expect_size_t_equal(loc.line, 5, "line");
-    Zinc_expect_size_t_equal(loc.col, 1, "col");
+    Zinc_input_bounds bounds = header_backquote->data.LAVA_DOM_BACKQUOTE.bounds;
+    Zinc_expect_size_t_equal(bounds.loc.start_pos, 46, "loc start");
+    Zinc_expect_size_t_equal(bounds.loc.end_pos, 62, "loc end");
+    Zinc_expect_size_t_equal(bounds.loc.line, 5, "loc line");
+    Zinc_expect_size_t_equal(bounds.loc.col, 1, "loc col");
+    Zinc_expect_size_t_equal(bounds.end, 109, "end");
 
     Zinc_string_slice quoted_actual_slice = {
-        .p = s + loc.start_pos,
-        .size = loc.end_pos - loc.start_pos,
+        .p = s + bounds.loc.start_pos,
+        .size = bounds.end - bounds.loc.start_pos,
     };
 
     char* quoted_expected =

@@ -22,7 +22,7 @@ void Zinc_input_unicode_string_init(Zinc_input_unicode_string* input, Zinc_vecto
     input->pos = 0;
     input->text = text;
     input->has_bounds = false;
-    Zinc_location_init(&input->bounds);
+    Zinc_input_bounds_init(&input->bounds);
     input->Next = (Zinc_input_unicode_next_interface) Zinc_input_unicode_string_next;
     input->Repeat = (Zinc_input_unicode_repeat_interface) Zinc_input_unicode_string_repeat;
     input->Seek = (Zinc_input_unicode_seek_interface) Zinc_input_unicode_string_seek;
@@ -67,7 +67,7 @@ Zinc_result Zinc_input_unicode_string_next(
     Zinc_result r = Zinc_result_ok;
 
     if (data->has_bounds) {
-        if (data->loc.start_pos >= data->bounds.end_pos) {
+        if (data->loc.start_pos >= data->bounds.end) {
             *loc = data->loc;
             *num = 0;
             *done = true;
@@ -75,8 +75,10 @@ Zinc_result Zinc_input_unicode_string_next(
         }
     }
 
+    bool cleared = false;
     if (data->loc.line == 0) {
         Zinc_input_unicode_string_clear(data);
+        cleared = true;
     }
 
     if (data->repeat_char && data->pos > 0) {
@@ -115,8 +117,11 @@ Zinc_result Zinc_input_unicode_string_next(
                 break;
             }
         }
+
+        loc->end_pos = data->prev_loc.start_pos + *num;
     } else {
         *num = 0;
+        data->loc.end_pos = data->loc.start_pos + 1;
         *loc = data->loc;
         *done = true;
     }
@@ -172,12 +177,11 @@ void Zinc_input_unicode_string_destroy(Zinc_input_unicode_string* input)
     free(input->text);
 }
 
-void Zinc_input_unicode_string_set_bounds(Zinc_input_unicode_string* input, Zinc_location* loc)
+void Zinc_input_unicode_string_set_bounds(Zinc_input_unicode_string* input, Zinc_input_bounds* bounds)
 {
     input->has_bounds = true;
-    input->bounds = *loc;
-    input->loc = *loc;
-    input->loc.end_pos = 0;
+    input->bounds = *bounds;
+    input->loc = bounds->loc;
     input->prev_loc = input->loc;
     Zinc_input_unicode_string_seek(input, &input->loc);
 }

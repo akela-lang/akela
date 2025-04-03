@@ -14,7 +14,7 @@ typedef struct {
     size_t pos;
     Zinc_vector* text;
     bool has_bounds;
-    Zinc_location bounds;
+    Zinc_input_bounds bounds;
     Zinc_input_unicode_next_interface Next;
     Zinc_input_unicode_repeat_interface Repeat;
     Zinc_input_unicode_seek_interface Seek;
@@ -40,6 +40,6 @@ void Zinc_input_unicode_string_seek(Zinc_input_unicode_string* data, Zinc_locati
 void Zinc_input_unicode_string_get_all(Zinc_input_unicode_string* data, Zinc_vector** text);
 Zinc_location Zinc_input_unicode_string_get_location(Zinc_input_unicode_string* data);
 void Zinc_input_unicode_string_destroy(Zinc_input_unicode_string* input);
-void Zinc_input_unicode_string_set_bounds(Zinc_input_unicode_string* input, Zinc_location* loc);
+void Zinc_input_unicode_string_set_bounds(Zinc_input_unicode_string* input, Zinc_input_bounds* bounds);
 
 #endif

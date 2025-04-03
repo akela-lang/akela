@@ -4,6 +4,7 @@
 #include "vector.h"
 #include "utf8.h"
 #include <string.h>
+#include "input_bounds.h"
 
 Zinc_input_unicode_vtable Zinc_input_unicode_file_vtable = {
     .loc_offset = offsetof(Zinc_input_unicode_file, loc),
@@ -25,7 +26,7 @@ void Zinc_input_unicode_file_init(Zinc_input_unicode_file* input, FILE* fp)
     Zinc_location_init(&input->prev_loc);
     input->prev_done = false;
     input->fp = fp;
-    Zinc_location_init(&input->bounds);
+    Zinc_input_bounds_init(&input->bounds);
     input->has_bounds = false;
     input->Next = (Zinc_input_unicode_next_interface) Zinc_input_unicode_file_next;
     input->Repeat = (Zinc_input_unicode_repeat_interface) Zinc_input_unicode_file_repeat;
@@ -73,7 +74,7 @@ enum Zinc_result Zinc_input_unicode_file_next(
         Zinc_input_unicode_file_clear(input);
     }
 
-    if (input->has_bounds && input->loc.start_pos >= input->bounds.end_pos) {
+    if (input->has_bounds && input->loc.start_pos >= input->bounds.end) {
         *num = 0;
         *done = true;
         *loc = input->loc;
@@ -91,6 +92,8 @@ enum Zinc_result Zinc_input_unicode_file_next(
         int x = getc(input->fp);
         *loc = input->loc;
         if (x == EOF) {
+            input->loc.end_pos = input->loc.start_pos + 1;
+            (*loc).end_pos = (*loc).start_pos + 1;
             *num = 0;
             *done = true;
             return Zinc_result_ok;
@@ -111,6 +114,10 @@ enum Zinc_result Zinc_input_unicode_file_next(
                 r = Zinc_set_error("utf8 trailing byte invalid");
             }
         }
+
+        loc->end_pos = loc->start_pos + *num;
+        input->loc.end_pos = loc->start_pos + *num;
+
         memcpy(input->prev_c, c, *num);
         input->prev_num = *num;
         input->prev_loc = input->loc;
@@ -187,12 +194,11 @@ void Zinc_input_unicode_file_destroy(Zinc_input_unicode_file* input)
     fclose(input->fp);
 }
 
-void Zinc_input_unicode_file_set_bounds(Zinc_input_unicode_file* input, Zinc_location* loc)
+void Zinc_input_unicode_file_set_bounds(Zinc_input_unicode_file* input, Zinc_input_bounds* bounds)
 {
     input->has_bounds = true;
-    input->bounds = *loc;
-    input->loc = input->bounds;
-    input->loc.end_pos = 0;
+    input->bounds = *bounds;
+    input->loc = input->bounds.loc;
     input->prev_loc = input->loc;
     Zinc_input_unicode_file_seek(input, &input->loc);
 }

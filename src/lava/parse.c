@@ -224,7 +224,7 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
     free(nl);
 
     Lava_lookahead(pd);
-    n->data.LAVA_DOM_BACKQUOTE.loc = pd->lookahead->loc;
+    n->data.LAVA_DOM_BACKQUOTE.bounds.loc = pd->lookahead->loc;
     if (pd->lookahead->kind == Lava_token_kind_text) {
         if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
             assert(false && "not possible");
@@ -255,7 +255,7 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
     }
 
     Lava_lookahead(pd);
-    n->data.LAVA_DOM_BACKQUOTE.loc.end_pos = pd->lookahead->loc.start_pos;
+    n->data.LAVA_DOM_BACKQUOTE.bounds.end = pd->lookahead->loc.start_pos;
     Lava_match(pd, Lava_token_kind_backquote, "expected backquote", &bq, n);
     Lava_token_destroy(bq);
     free(bq);

@@ -7,9 +7,9 @@ void Apt_test_case_init(Apt_test_case *tc)
     tc->mute = false;
     tc->has_error = false;
     Zinc_string_init(&tc->source_path);
-    Zinc_location_init(&tc->source_bounds);
+    Zinc_input_bounds_init(&tc->source_bounds);
     Zinc_string_init(&tc->ast_path);
-    Zinc_location_init(&tc->ast_bounds);
+    Zinc_input_bounds_init(&tc->ast_bounds);
     Zinc_string_init(&tc->description);
     Zinc_error_list_init(&tc->expected_errors);
     tc->next = NULL;
