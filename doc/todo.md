@@ -40,5 +40,3 @@ remove object const and other unused code
 * remove worm
 
 # Zinc
-* performance test vector
-* performance test hash map

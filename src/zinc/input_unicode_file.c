@@ -116,7 +116,7 @@ enum Zinc_result Zinc_input_unicode_file_next(
         }
 
         loc->end_pos = loc->start_pos + *num;
-        input->loc.end_pos = loc->start_pos + *num;
+        input->loc = *loc;
 
         memcpy(input->prev_c, c, *num);
         input->prev_num = *num;
