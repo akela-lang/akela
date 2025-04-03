@@ -6,7 +6,8 @@
 #include "parse_tools.h"
 #include "ast.h"
 #include "zinc/result.h"
+#include "parse_data.h"
 
-AKELA_API Ake_ast* Ast_parse(struct Ake_parse_state* ps);
+AKELA_API Ake_parse_result Ast_parse(struct Ake_parse_state* ps);
 
 #endif

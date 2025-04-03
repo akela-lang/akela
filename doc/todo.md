@@ -1,10 +1,6 @@
 # Akela
-* require assignment in const or var
-* one declaration per const or var
-* symbol table embedded into syntax tree
-* refactor array type
-* pointer type
-* new syntax
+* parse string
+* parse file
 * remove event loop test
 
 # Akela LLVM

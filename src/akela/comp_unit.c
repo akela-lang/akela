@@ -61,13 +61,14 @@ void Ake_comp_unit_teardown(struct Ake_comp_unit* cu, struct Ake_parse_state* ps
 	free(ps);
 }
 
-bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, Zinc_input_unicode_vtable* input_vtable)
+bool Ake_comp_unit_compile(Ake_comp_unit* cu, void* input_obj, Zinc_input_unicode_vtable* input_vtable)
 {
 	bool valid = true;
-	struct Ake_parse_state* ps = NULL;
+	Ake_parse_state* ps = NULL;
     cu->input_obj = input_obj;
 	Ake_comp_unit_setup(cu, input_obj, input_vtable, &ps);
-    cu->root = Ast_parse(ps);
+	Ake_parse_result pr = Ast_parse(ps);
+    cu->root = pr.root;
     if (cu->root->type == Ake_ast_type_error || cu->el.head) {
         valid = false;
     }
