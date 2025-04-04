@@ -17,8 +17,8 @@ void Ake_lex_state_init(
         Zinc_error_list* el,
         Ake_symbol_table* st)
 {
-    ls->input_obj = input_obj;
-    ls->input_vtable = input_vtable;
+    ls->input = input_obj;
+    ls->vtable = input_vtable;
     ls->el = el;
     ls->st = st;
 }

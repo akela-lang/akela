@@ -15,6 +15,8 @@ void Ake_comp_unit_init(Ake_comp_unit* cu)
     Zinc_string_list_init(&cu->extern_list);
 	Zinc_string_init(&cu->path);
 	Ake_symbol_table_init(&cu->st);
+	cu->ps = NULL;
+	cu->ls = NULL;
     cu->input_obj = NULL;
 	cu->next = NULL;
 	cu->prev = NULL;
@@ -34,6 +36,14 @@ void Ake_comp_unit_destroy(Ake_comp_unit* cu)
         Zinc_string_destroy(&cu->path);
         Ake_symbol_table_destroy(&cu->st);
         Zinc_string_list_destroy(&cu->extern_list);
+    	if (cu->ps) {
+    		free(cu->ps);
+    	}
+    	if (cu->ls) {
+    		Zinc_input_unicode_string_destroy(cu->ls->input);
+    		free(cu->ls->input);
+    		free(cu->ls);
+    	}
     }
 }
 
@@ -82,5 +92,7 @@ bool Ake_comp_unit_compile(Ake_comp_unit* cu, void* input_obj, Zinc_input_unicod
 
 Ake_parse_result Ake_comp_unit_parse(Ake_comp_unit* cu)
 {
-	return Ake_parse(cu->ps);
+	Ake_parse_result pr = Ake_parse(cu->ps);
+	cu->root = pr.root;
+	return pr;
 }

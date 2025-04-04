@@ -26,7 +26,7 @@ void lex_setup(char* line, struct Ake_lex_state* ls, struct Zinc_error_list* el)
 
 void lex_teardown(struct Ake_lex_state* ls)
 {
-    Zinc_input_unicode_string* input_string = ls->input_obj;
+    Zinc_input_unicode_string* input_string = ls->input;
     Zinc_vector_destroy(input_string->text);
     free(input_string->text);
     free(input_string);

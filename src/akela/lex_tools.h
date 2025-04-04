@@ -7,8 +7,8 @@
 #include "zinc/error.h"
 
 typedef struct Ake_lex_state {
-    void* input_obj;
-    Zinc_input_unicode_vtable* input_vtable;
+    void* input;
+    Zinc_input_unicode_vtable* vtable;
     Zinc_location loc;
     Ake_symbol_table* st;
     Zinc_error_list* el;
