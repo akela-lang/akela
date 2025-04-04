@@ -6,13 +6,14 @@
 #include "ast.h"
 #include <assert.h>
 #include "zinc/string_list.h"
+#include "zinc/memory.h"
 
 void Ake_parse_state_init(
-        struct Ake_parse_state* ps,
-        struct Ake_lex_state* ls,
-        struct Zinc_error_list* el,
-        struct Zinc_string_list* extern_list,
-        struct Ake_symbol_table* st)
+        Ake_parse_state* ps,
+        Ake_lex_state* ls,
+        Zinc_error_list* el,
+        Zinc_string_list* extern_list,
+        Ake_symbol_table* st)
 {
 	ps->ls = ls;
 	ps->lookahead = NULL;
@@ -20,6 +21,17 @@ void Ake_parse_state_init(
     ps->extern_list = extern_list;
 	ps->st = st;
     ps->context.is_subscript = false;
+}
+
+void Ake_parse_state_create(
+    Ake_parse_state** ps,
+    Ake_lex_state* ls,
+    Zinc_error_list* el,
+    Zinc_string_list* extern_list,
+    Ake_symbol_table* st)
+{
+    Zinc_malloc_safe((void**)ps, sizeof(Ake_parse_state));
+    Ake_parse_state_init(*ps, ls, el, extern_list, st);
 }
 
 void Ake_parse_state_destroy(struct Ake_parse_state* ps)

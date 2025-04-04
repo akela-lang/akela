@@ -38,7 +38,7 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
 
     if (valid) {
         Akela_llvm_cg* cg = NULL;
-        Akela_llvm_cg_create(&cg, &cu->el, &cu->extern_list);
+        Akela_llvm_cg_create(&cg, &cu->errors, &cu->extern_list);
         valid = Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu->root, result);
         Akela_llvm_cg_destroy(cg);
         Zinc_expect_true(valid, "valid");
@@ -48,9 +48,9 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
         struct Zinc_location loc;
         Zinc_location_init(&loc);
         Zinc_string_finish(&result->module_text);
-        Zinc_error_list_set(&cu->el, &loc, "Module:\n%s", result->module_text.buf);
+        Zinc_error_list_set(&cu->errors, &loc, "Module:\n%s", result->module_text.buf);
     }
-    Zinc_expect_no_errors(&cu->el);
+    Zinc_expect_no_errors(&cu->errors);
 
     Zinc_vector_destroy(vector);
     free(vector);

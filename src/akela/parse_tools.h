@@ -29,6 +29,12 @@ AKELA_API void Ake_parse_state_init(
         struct Zinc_error_list* el,
         struct Zinc_string_list* extern_list,
         struct Ake_symbol_table* st);
+AKELA_API void Ake_parse_state_create(
+    Ake_parse_state** ps,
+    Ake_lex_state* ls,
+    Zinc_error_list* el,
+    Zinc_string_list* extern_list,
+    Ake_symbol_table* st);
 AKELA_API void Ake_parse_state_destroy(struct Ake_parse_state* ps);
 AKELA_API bool Ake_match(
     struct Ake_parse_state* ps,

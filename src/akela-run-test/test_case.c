@@ -64,7 +64,7 @@ void Run_akela(Run_data* data, Run_test* test)
 
     if (!cu->valid) {
         /* is parsing valid */
-        Zinc_error* e = cu->el.head;
+        Zinc_error* e = cu->errors.head;
         while (e) {
             Zinc_string_finish(&e->message);
             fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -77,7 +77,7 @@ void Run_akela(Run_data* data, Run_test* test)
 
         /* run program on jit */
         Akela_llvm_cg* cg = NULL;
-        Akela_llvm_cg_create(&cg, &cu->el, &cu->extern_list);
+        Akela_llvm_cg_create(&cg, &cu->errors, &cu->extern_list);
         Ake_code_gen_result cg_result;
         Ake_code_gen_result_init(&cg_result);
         cg_result.return_address = test->return_address;
@@ -94,9 +94,9 @@ void Run_akela(Run_data* data, Run_test* test)
         }
         Run_pair_destroy(&llvm_pair);
 
-        if (cu->el.head) {
+        if (cu->errors.head) {
             /* any other errors */
-            Zinc_error* e = cu->el.head;
+            Zinc_error* e = cu->errors.head;
             while (e) {
                 Zinc_string_finish(&e->message);
                 fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);

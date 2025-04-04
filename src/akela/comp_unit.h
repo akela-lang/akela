@@ -7,22 +7,27 @@
 #include <stdbool.h>
 #include "zinc/input_unicode.h"
 #include "zinc/string_list.h"
+#include "parse_tools.h"
+#include "parse_data.h"
 
 typedef struct Ake_comp_unit {
 	bool valid;
 	Ake_ast* root;
-	struct Zinc_error_list el;
-    struct Zinc_string_list extern_list;
-	struct Ake_symbol_table st;
+	Zinc_error_list errors;
+    Zinc_string_list extern_list;
+	Ake_symbol_table st;
     void* input_obj;
-	struct Zinc_string path;
+	Zinc_string path;
+	Ake_lex_state* ls;
+	Ake_parse_state* ps;
 	struct Ake_comp_unit* next;
 	struct Ake_comp_unit* prev;
 } Ake_comp_unit;
 
-AKELA_API void Ake_comp_unit_init(struct Ake_comp_unit* cu);
-AKELA_API void Ake_comp_unit_create(struct Ake_comp_unit** cu);
-AKELA_API void Ake_comp_unit_destroy(struct Ake_comp_unit* cu);
-AKELA_API bool Ake_comp_unit_compile(struct Ake_comp_unit* cu, void* input_obj, Zinc_input_unicode_vtable* input_vtable);
+AKELA_API void Ake_comp_unit_init(Ake_comp_unit* cu);
+AKELA_API void Ake_comp_unit_create(Ake_comp_unit** cu);
+AKELA_API void Ake_comp_unit_destroy(Ake_comp_unit* cu);
+AKELA_API bool Ake_comp_unit_compile(Ake_comp_unit* cu, void* input_obj, Zinc_input_unicode_vtable* input_vtable);
+Ake_parse_result Ake_comp_unit_parse(Ake_comp_unit* cu);
 
 #endif

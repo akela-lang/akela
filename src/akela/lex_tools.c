@@ -1,6 +1,7 @@
-    #include "lex_tools.h"
+#include "lex_tools.h"
 #include "zinc/utf8.h"
 #include <ctype.h>
+#include "zinc/memory.h"
 
 /**
  * initialize lexer state
@@ -10,16 +11,27 @@
  * @param st symbol table
  */
 void Ake_lex_state_init(
-        struct Ake_lex_state* ls,
+        Ake_lex_state* ls,
         void* input_obj,
         Zinc_input_unicode_vtable* input_vtable,
-        struct Zinc_error_list* el,
-        struct Ake_symbol_table* st)
+        Zinc_error_list* el,
+        Ake_symbol_table* st)
 {
     ls->input_obj = input_obj;
     ls->input_vtable = input_vtable;
     ls->el = el;
     ls->st = st;
+}
+
+void Ake_lex_state_create(
+    Ake_lex_state** ls,
+    void* input,
+    Zinc_input_unicode_vtable* vtable,
+    Zinc_error_list* el,
+    Ake_symbol_table* st)
+{
+    Zinc_malloc_safe((void**)ls, sizeof(Ake_lex_state));
+    Ake_lex_state_init(*ls, input, vtable, el, st);
 }
 
 /**

@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     Ake_comp_unit_compile(&cu, input, input->vtable);
 
     if (!cu.valid) {
-        struct Zinc_error* e = cu.el.head;
+        struct Zinc_error* e = cu.errors.head;
         while (e) {
             Zinc_string_finish(&e->message);
             fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -53,13 +53,13 @@ int main(int argc, char** argv)
     }
 
     Akela_llvm_cg* cg = NULL;
-    Akela_llvm_cg_create(&cg, &cu.el, &cu.extern_list);
+    Akela_llvm_cg_create(&cg, &cu.errors, &cu.extern_list);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
     Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu.root, &result);
 
-    if (cu.el.head) {
-        struct Zinc_error* e = cu.el.head;
+    if (cu.errors.head) {
+        struct Zinc_error* e = cu.errors.head;
         while (e) {
             Zinc_string_finish(&e->message);
             fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);

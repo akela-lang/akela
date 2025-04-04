@@ -1,6 +1,5 @@
 # Akela
-* parse string
-* parse file
+* parse file directly
 * remove event loop test
 
 # Akela LLVM
@@ -13,8 +12,7 @@
 * compare type def
 
 # Akela Run Test
-* array
-* string
+* new file format
 
 # Centipede
 remove object const and other unused code

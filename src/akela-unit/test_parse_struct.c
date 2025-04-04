@@ -19,7 +19,7 @@ void test_parse_struct_field_assign()
                 "var p: Person\n"
                 "p.firstName = \"John\"\n"
                 "p.firstName\n", &cu);
-    Zinc_expect_no_errors(&cu.el);
+    Zinc_expect_no_errors(&cu.errors);
     Zinc_expect_true(cu.valid, "valid");
 
     Zinc_assert_ptr(cu.root, "ptr cu.root");
@@ -141,7 +141,7 @@ void test_parse_struct_let_literal()
         "  age: 35\n"
         "end\n",
         &cu);
-    Zinc_expect_no_errors(&cu.el);
+    Zinc_expect_no_errors(&cu.errors);
     Zinc_expect_true(cu.valid, "valid");
 
     Zinc_assert_ptr(cu.root, "ptr cu.root");
@@ -237,9 +237,9 @@ void test_parse_struct_error_invalid_field()
                 "  age: 35\n"
                 "end\n",
                 &cu);
-    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_has_errors(&cu.errors);
     Zinc_expect_false(cu.valid, "valid");
-    Zinc_expect_source_error(&cu.el, "Not a valid field for Person: middle_name");
+    Zinc_expect_source_error(&cu.errors, "Not a valid field for Person: middle_name");
 
     parse_teardown(&cu);
 }
@@ -259,9 +259,9 @@ void test_parse_struct_error_field_missing()
                 "  age: 35\n"
                 "end\n",
                 &cu);
-    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_has_errors(&cu.errors);
     Zinc_expect_false(cu.valid, "valid");
-    Zinc_expect_source_error(&cu.el, "struct field missing: last_name");
+    Zinc_expect_source_error(&cu.errors, "struct field missing: last_name");
 
     parse_teardown(&cu);
 }
@@ -281,9 +281,9 @@ void test_parse_struct_error_dot_invalid_field()
             "var p: Person\n"
             "p.abc\n",
             &cu);
-    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_has_errors(&cu.errors);
     Zinc_expect_false(cu.valid, "valid");
-    Zinc_expect_source_error(&cu.el, "identifier not a field of struct: abc");
+    Zinc_expect_source_error(&cu.errors, "identifier not a field of struct: abc");
 
     parse_teardown(&cu);
 }
@@ -295,9 +295,9 @@ void test_parse_struct_error_expected_identifier()
     struct Ake_comp_unit cu;
 
     parse_setup("struct end", &cu);
-    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_has_errors(&cu.errors);
     Zinc_expect_false(cu.valid, "valid");
-    Zinc_expect_source_error(&cu.el, "expected identifier");
+    Zinc_expect_source_error(&cu.errors, "expected identifier");
 
     parse_teardown(&cu);
 }
@@ -309,9 +309,9 @@ void test_parse_struct_error_expected_end()
     struct Ake_comp_unit cu;
 
     parse_setup("struct Person", &cu);
-    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_has_errors(&cu.errors);
     Zinc_expect_false(cu.valid, "valid");
-    Zinc_expect_source_error(&cu.el, "expected end");
+    Zinc_expect_source_error(&cu.errors, "expected end");
 
     parse_teardown(&cu);
 }
@@ -323,9 +323,9 @@ void test_parse_struct_error_expected_end2()
     struct Ake_comp_unit cu;
 
     parse_setup("struct Person x: Int32", &cu);
-    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_has_errors(&cu.errors);
     Zinc_expect_false(cu.valid, "valid");
-    Zinc_expect_source_error(&cu.el, "expected end");
+    Zinc_expect_source_error(&cu.errors, "expected end");
 
     parse_teardown(&cu);
 }
@@ -337,9 +337,9 @@ void test_parse_struct_error_duplicate()
     struct Ake_comp_unit cu;
 
     parse_setup("const Person: Int32 = 1; struct Person end", &cu);
-    Zinc_expect_has_errors(&cu.el);
+    Zinc_expect_has_errors(&cu.errors);
     Zinc_expect_false(cu.valid, "valid");
-    Zinc_expect_source_error(&cu.el, "duplicate variable in scope: Person");
+    Zinc_expect_source_error(&cu.errors, "duplicate variable in scope: Person");
 
     parse_teardown(&cu);
 }
@@ -367,7 +367,7 @@ void test_parse_struct_impl()
             "  end\n"
             "end\n",
             &cu);
-    Zinc_expect_no_errors(&cu.el);
+    Zinc_expect_no_errors(&cu.errors);
     Zinc_expect_true(cu.valid, "valid");
 
     parse_teardown(&cu);

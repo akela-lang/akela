@@ -8,6 +8,6 @@
 #include "zinc/result.h"
 #include "parse_data.h"
 
-AKELA_API Ake_parse_result Ast_parse(struct Ake_parse_state* ps);
+AKELA_API Ake_parse_result Ake_parse(struct Ake_parse_state* ps);
 
 #endif
