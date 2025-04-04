@@ -22,6 +22,7 @@ Zinc_result Zinc_set_error(const char* fmt, ...)
     Zinc_error_message[n] = '\0';
     va_end(args);
 
+    Zinc_string_destroy(&s);
     return Zinc_result_error;
 }
 
