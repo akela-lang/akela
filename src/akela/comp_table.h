@@ -15,6 +15,8 @@ typedef struct Ake_comp_table {
 
 AKELA_API void Ake_comp_table_init_str(Ake_comp_table* ct, char* s);
 AKELA_API void Ake_comp_table_create_str(Ake_comp_table** ct, char* s);
+AKELA_API void Ake_comp_table_init_fp(Ake_comp_table* ct, Zinc_string path, FILE* fp);
+AKELA_API void Ake_comp_table_create_fp(Ake_comp_table** ct, Zinc_string path, FILE* fp);
 AKELA_API void Ake_comp_table_init(struct Ake_comp_table* ct);
 AKELA_API void Ake_comp_table_put(struct Ake_comp_table* ct, struct Zinc_string* path, struct Ake_comp_unit* cu);
 AKELA_API struct Ake_comp_unit* Ake_comp_table_get(struct Ake_comp_table* ct, struct Zinc_string* path);

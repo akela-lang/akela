@@ -1,5 +1,4 @@
 # Akela
-* parse file directly
 * remove event loop test
 
 # Akela LLVM

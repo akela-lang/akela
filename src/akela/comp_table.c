@@ -48,6 +48,35 @@ void Ake_comp_table_create_str(Ake_comp_table** ct, char* s)
 	Ake_comp_table_init_str(*ct, s);
 }
 
+void Ake_comp_table_init_fp(Ake_comp_table* ct, Zinc_string path, FILE* fp)
+{
+	Ake_comp_table_init(ct);
+
+	Ake_comp_unit* cu = NULL;
+	Ake_comp_unit_create(&cu);
+
+	Zinc_input_unicode_file* input = NULL;
+	Zinc_input_unicode_file_create(&input, fp);
+
+	Ake_lex_state* ls = NULL;
+	Ake_lex_state_create(&ls, input, input->vtable, &cu->errors, &cu->st);
+
+	Ake_parse_state* ps = NULL;
+	Ake_parse_state_create(&ps, ls, &cu->errors, &cu->extern_list, &cu->st);
+
+	cu->ls = ls;
+	cu->ps = ps;
+	ct->primary = cu;
+
+	Ake_comp_table_put(ct, &path, cu);
+}
+
+void Ake_comp_table_create_fp(Ake_comp_table** ct, Zinc_string path, FILE* fp)
+{
+	Zinc_malloc_safe((void**)ct, sizeof(Ake_comp_table));
+	Ake_comp_table_init_fp(*ct, path, fp);
+}
+
 void Ake_comp_table_init(Ake_comp_table* ct)
 {
 	ct->primary = NULL;
