@@ -10,409 +10,409 @@
 
 void test_parse_blank()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	Ake_comp_table* ct = NULL;
-	Ake_comp_table_create_str(&ct, "");
+     Ake_comp_table* ct = NULL;
+     Ake_comp_table_create_str(&ct, "");
 
-	Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
+     Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
 
-	Zinc_assert_no_errors(pr.errors);
+     Zinc_assert_no_errors(pr.errors);
 
-	Zinc_assert_ptr(pr.root, "ptr cu.root");
-	Zinc_expect_int_equal(pr.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(pr.root, "ptr cu.root");
+     Zinc_expect_int_equal(pr.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* node = Ast_node_get(pr.root, 0);
-	Zinc_assert_null(node, "null node");
+     Ake_ast* node = Ast_node_get(pr.root, 0);
+     Zinc_assert_null(node, "null node");
 
-    Ake_comp_table_destroy(ct);
+    Ake_comp_table_free(ct);
 }
 
 void test_parse_add()
 {
-	Zinc_test_name(__func__);
-	
-	Ake_comp_table* ct = NULL;
-	Ake_comp_table_create_str(&ct,
-		"var speed: Int32 = 100; speed + 1"
-	);
+     Zinc_test_name(__func__);
+     
+     Ake_comp_table* ct = NULL;
+     Ake_comp_table_create_str(&ct,
+          "var speed: Int32 = 100; speed + 1"
+     );
 
-	Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
+     Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
 
-	Zinc_assert_no_errors(pr.errors);
+     Zinc_assert_no_errors(pr.errors);
 
-	Zinc_assert_ptr(pr.root, "ptr cu.root");
-	Zinc_assert_int_equal(pr.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(pr.root, "ptr cu.root");
+     Zinc_assert_int_equal(pr.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* add = Ast_node_get(pr.root, 1);
-	Zinc_assert_ptr(add, "ptr add");
-	Zinc_expect_int_equal(add->type, Ake_ast_type_plus, "plus add");
+     Ake_ast* add = Ast_node_get(pr.root, 1);
+     Zinc_assert_ptr(add, "ptr add");
+     Zinc_expect_int_equal(add->type, Ake_ast_type_plus, "plus add");
 
-	Ake_type_use* tu = add->tu;
-	Zinc_assert_ptr(tu, "ptr tu");
+     Ake_type_use* tu = add->tu;
+     Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
-	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_string(&td->name, "Int32", "Int32 td");
+     struct Ake_type_def* td = tu->td;
+     Zinc_assert_ptr(td, "ptr td");
+     Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
+     Zinc_expect_string(&td->name, "Int32", "Int32 td");
 
-	Ake_ast* left = Ast_node_get(add, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(add, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(add, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&right->value, "1", "1");
+     Ake_ast* right = Ast_node_get(add, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&right->value, "1", "1");
 
-    Ake_comp_table_destroy(ct);
+    Ake_comp_table_free(ct);
 }
 
 void test_parse_add_error_expected_term()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("1 +", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "expected term after additive operator");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "expected term after additive operator");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_error_left_no_value()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() + 1", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "addition operand has no value");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "addition operand has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_error_left_not_numeric()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("true + 1", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "addition on non-numeric operand");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "addition on non-numeric operand");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_error_right_no_value()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 1 + foo()", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "addition operand has no value");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "addition operand has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_error_right_not_numeric()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("1 + true", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "addition on non-numeric operand");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "addition on non-numeric operand");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_mixed_types()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("1 + 5.0", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* add = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(add, "ptr add");
-	Zinc_expect_int_equal(add->type, Ake_ast_type_plus, "plus add");
+     Ake_ast* add = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(add, "ptr add");
+     Zinc_expect_int_equal(add->type, Ake_ast_type_plus, "plus add");
 
-	Ake_type_use* add_tu = add->tu;
-	Zinc_assert_ptr(add_tu, "ptr add_tu");
+     Ake_type_use* add_tu = add->tu;
+     Zinc_assert_ptr(add_tu, "ptr add_tu");
 
-	struct Ake_type_def* add_td = add_tu->td;
-	Zinc_assert_ptr(add_td, "ptr add_td");
-	Zinc_expect_int_equal(add_td->type, Ake_type_float, "float add_td");
-	Zinc_expect_string(&add_td->name, "Real64", "Real64 add_td");
+     struct Ake_type_def* add_td = add_tu->td;
+     Zinc_assert_ptr(add_td, "ptr add_td");
+     Zinc_expect_int_equal(add_td->type, Ake_type_float, "float add_td");
+     Zinc_expect_string(&add_td->name, "Real64", "Real64 add_td");
 
-	Ake_ast* left = Ast_node_get(add, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number left");
-	Zinc_expect_string(&left->value, "1", "1 left");
+     Ake_ast* left = Ast_node_get(add, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number left");
+     Zinc_expect_string(&left->value, "1", "1 left");
 
-	Ake_ast* right = Ast_node_get(add, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&right->value, "5.0", "5.0 right");
+     Ake_ast* right = Ast_node_get(add, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&right->value, "5.0", "5.0 right");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_positive()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("var speed: Int32 = 100; speed + +1", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* add = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(add, "ptr add");
-	Zinc_expect_int_equal(add->type, Ake_ast_type_plus, "plus add");
+     Ake_ast* add = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(add, "ptr add");
+     Zinc_expect_int_equal(add->type, Ake_ast_type_plus, "plus add");
 
-	Ake_ast* left = Ast_node_get(add, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(add, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(add, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
+     Ake_ast* right = Ast_node_get(add, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
 
-	Zinc_assert_null(Ast_node_get(cu.root, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(cu.root, 2), "only 2 children");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_plus, "plus2");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_plus, "plus2");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_string(&right2->value, "1", "1");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_string(&right2->value, "1", "1");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_negative()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const speed: Int32; speed + -1", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* add = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(add, "ptr add");
-	Zinc_expect_int_equal(add->type, Ake_ast_type_plus, "plus add");
+     Ake_ast* add = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(add, "ptr add");
+     Zinc_expect_int_equal(add->type, Ake_ast_type_plus, "plus add");
 
-	Ake_ast* left = Ast_node_get(add, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(add, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(add, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
+     Ake_ast* right = Ast_node_get(add, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
 
-	Zinc_assert_null(Ast_node_get(add, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(add, 2), "only 2 children");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_minus, "minus");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_minus, "minus");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_string(&right2->value, "1", "1");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_string(&right2->value, "1", "1");
 
     parse_teardown(&cu);
 }
 
 void test_parse_sub()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const delta: Int32 = 3; 100 - delta", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* sub = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(sub, "ptr sub");
-	Zinc_expect_int_equal(sub->type, Ake_ast_type_minus, "minus sub");
+     Ake_ast* sub = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(sub, "ptr sub");
+     Zinc_expect_int_equal(sub->type, Ake_ast_type_minus, "minus sub");
 
-	Ake_ast* left = Ast_node_get(sub, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left->value, "100", "100");
+     Ake_ast* left = Ast_node_get(sub, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left->value, "100", "100");
 
-	Ake_ast* right = Ast_node_get(sub, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&right->value, "delta", "delta");
+     Ake_ast* right = Ast_node_get(sub, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&right->value, "delta", "delta");
 
-	Zinc_assert_null(Ast_node_get(cu.root, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(cu.root, 2), "only 2 children");
 
     parse_teardown(&cu);
 }
 
 void test_parse_sub_positive()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const speed: Int32; speed - +1", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* sub = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(sub, "cu.root");
-	Zinc_expect_int_equal(sub->type, Ake_ast_type_minus, "minus sub");
+     Ake_ast* sub = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(sub, "cu.root");
+     Zinc_expect_int_equal(sub->type, Ake_ast_type_minus, "minus sub");
 
-	Ake_ast* left = Ast_node_get(sub, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(sub, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(sub, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
+     Ake_ast* right = Ast_node_get(sub, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
 
-	Zinc_assert_null(Ast_node_get(sub, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(sub, 2), "only 2 children");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_plus, "plus");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_plus, "plus");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_string(&right2->value, "1", "1");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_string(&right2->value, "1", "1");
 
     parse_teardown(&cu);
 }
 
 void test_parse_sub_negative()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("const speed: Int32; speed - -1", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* sub = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(sub, "ptr sub");
-	Zinc_expect_int_equal(sub->type, Ake_ast_type_minus, "minus sub");
+     Ake_ast* sub = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(sub, "ptr sub");
+     Zinc_expect_int_equal(sub->type, Ake_ast_type_minus, "minus sub");
 
-	Ake_ast* left = Ast_node_get(sub, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(sub, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(sub, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
+     Ake_ast* right = Ast_node_get(sub, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
 
-	Zinc_assert_null(Ast_node_get(sub, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(sub, 2), "only 2 children");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_minus, "minus2");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_minus, "minus2");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_string(&right2->value, "1", "1");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_string(&right2->value, "1", "1");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("5 * 2", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* mult = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(mult, "cu.root");
-	Zinc_expect_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
+     Ake_ast* mult = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(mult, "cu.root");
+     Zinc_expect_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
 
-	Ake_type_use* tu = mult->tu;
-	Zinc_assert_ptr(tu, "ptr tu");
-	
-	struct Ake_type_def* td = tu->td;
-	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_string(&td->name, "Int32", "Int32 td");
+     Ake_type_use* tu = mult->tu;
+     Zinc_assert_ptr(tu, "ptr tu");
+     
+     struct Ake_type_def* td = tu->td;
+     Zinc_assert_ptr(td, "ptr td");
+     Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
+     Zinc_expect_string(&td->name, "Int32", "Int32 td");
 
-	Ake_ast* left = Ast_node_get(mult, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left->value, "5", "5");
+     Ake_ast* left = Ast_node_get(mult, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left->value, "5", "5");
 
-	Ake_ast* right = Ast_node_get(mult, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&right->value, "2", "2");
+     Ake_ast* right = Ast_node_get(mult, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&right->value, "2", "2");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult_error_expected_term()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("5*", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "expected term after operator");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "expected term after operator");
 
     parse_teardown(&cu);
 }
@@ -420,1106 +420,1106 @@ void test_parse_mult_error_expected_term()
 /* dynamic-output-none */
 void test_parse_mult_error_left_no_value()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() * 1", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "multiplication operand has no value");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "multiplication operand has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult_error_left_not_numeric()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("true * 1", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "multiplication on non-numeric operand");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "multiplication on non-numeric operand");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult_error_right_no_value()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 1 * foo()", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "multiplication operand has no value");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "multiplication operand has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult_error_right_not_numeric()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("1 * true", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "multiplication on non-numeric operand");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "multiplication on non-numeric operand");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult_positive()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const speed: Int32; speed * +1", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* mult = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(mult, "ptr mult");
-	Zinc_expect_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
+     Ake_ast* mult = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(mult, "ptr mult");
+     Zinc_expect_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
 
-	Ake_ast* left = Ast_node_get(mult, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(mult, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(mult, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
+     Ake_ast* right = Ast_node_get(mult, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
 
-	Zinc_assert_null(Ast_node_get(mult, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(mult, 2), "only 2 children");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_plus, "plus");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_plus, "plus");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_string(&right2->value, "1", "1");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_string(&right2->value, "1", "1");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult_negative()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const speed: Int32; speed * -1", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* mult = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(mult, "ptr mult");
-	Zinc_expect_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
+     Ake_ast* mult = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(mult, "ptr mult");
+     Zinc_expect_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
 
-	Ake_ast* left = Ast_node_get(mult, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(mult, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(mult, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
+     Ake_ast* right = Ast_node_get(mult, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_sign, "sign");
 
-	Zinc_assert_null(Ast_node_get(mult, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(mult, 2), "only 2 children");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_minus, "minus2");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_minus, "minus2");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_string(&right2->value, "1", "1");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_string(&right2->value, "1", "1");
 
     parse_teardown(&cu);
 }
 
 void test_parse_divide()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("52 / 2", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* divide = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(divide, "ptr divide");
-	Zinc_assert_int_equal(divide->type, Ake_ast_type_divide, "divide divide");
+     Ake_ast* divide = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(divide, "ptr divide");
+     Zinc_assert_int_equal(divide->type, Ake_ast_type_divide, "divide divide");
 
-	Ake_ast* left = Ast_node_get(divide, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left->value, "52", "52");
+     Ake_ast* left = Ast_node_get(divide, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left->value, "52", "52");
 
-	Ake_ast* right = Ast_node_get(divide, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&right->value, "2", "2");
+     Ake_ast* right = Ast_node_get(divide, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&right->value, "2", "2");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_add()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("1 + 2 + 3", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* plus0 = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(plus0, "ptr plus0");
-	Zinc_assert_int_equal(plus0->type, Ake_ast_type_plus, "plus plus0");
+     Ake_ast* plus0 = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(plus0, "ptr plus0");
+     Zinc_assert_int_equal(plus0->type, Ake_ast_type_plus, "plus plus0");
 
-	Ake_ast* left = Ast_node_get(plus0, 0);
-	Zinc_assert_ptr(left, "ptr left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_plus, "plus left");
+     Ake_ast* left = Ast_node_get(plus0, 0);
+     Zinc_assert_ptr(left, "ptr left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_plus, "plus left");
 
-	Ake_ast* left2 = Ast_node_get(left, 0);
-	Zinc_assert_ptr(left2, "ptr left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number left2");
-	Zinc_expect_string(&left2->value, "1", "1 left2");
+     Ake_ast* left2 = Ast_node_get(left, 0);
+     Zinc_assert_ptr(left2, "ptr left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number left2");
+     Zinc_expect_string(&left2->value, "1", "1 left2");
 
-	Ake_ast* right = Ast_node_get(left, 1);
-	Zinc_assert_ptr(right, "ptr right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number right");
-	Zinc_expect_string(&right->value, "2", "2 right");
+     Ake_ast* right = Ast_node_get(left, 1);
+     Zinc_assert_ptr(right, "ptr right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number right");
+     Zinc_expect_string(&right->value, "2", "2 right");
 
-	Ake_ast* right2 = Ast_node_get(plus0, 1);
-	Zinc_assert_ptr(right2, "ptr right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number right2");
-	Zinc_expect_string(&right2->value, "3", "3 right2");
+     Ake_ast* right2 = Ast_node_get(plus0, 1);
+     Zinc_assert_ptr(right2, "ptr right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number right2");
+     Zinc_expect_string(&right2->value, "3", "3 right2");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult_mult()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("1 * 2 * 3", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* mult = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(mult, "ptr mult");
-	Zinc_assert_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
+     Ake_ast* mult = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(mult, "ptr mult");
+     Zinc_assert_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
 
-	Ake_ast* left = Ast_node_get(mult, 0);
-	Zinc_assert_ptr(left, "ptr left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_mult, "mult left");
+     Ake_ast* left = Ast_node_get(mult, 0);
+     Zinc_assert_ptr(left, "ptr left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_mult, "mult left");
 
-	Ake_ast* left2 = Ast_node_get(left, 0);
-	Zinc_assert_ptr(left2, "ptr left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number left2");
-	Zinc_expect_string(&left2->value, "1", "1 left2");
+     Ake_ast* left2 = Ast_node_get(left, 0);
+     Zinc_assert_ptr(left2, "ptr left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number left2");
+     Zinc_expect_string(&left2->value, "1", "1 left2");
 
-	Ake_ast* right = Ast_node_get(left, 1);
-	Zinc_assert_ptr(right, "ptr right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number right");
-	Zinc_expect_string(&right->value, "2", "2 right");
+     Ake_ast* right = Ast_node_get(left, 1);
+     Zinc_assert_ptr(right, "ptr right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number right");
+     Zinc_expect_string(&right->value, "2", "2 right");
 
-	Ake_ast* right2 = Ast_node_get(mult, 1);
-	Zinc_assert_ptr(right2, "ptr right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number right2");
-	Zinc_expect_string(&right2->value, "3", "3 right2");
+     Ake_ast* right2 = Ast_node_get(mult, 1);
+     Zinc_assert_ptr(right2, "ptr right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number right2");
+     Zinc_expect_string(&right2->value, "3", "3 right2");
 
     parse_teardown(&cu);
 }
 
 void test_parse_add_mult()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("5 + 3 * 2", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* plus = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(plus, "cu.root");
-	Zinc_assert_int_equal(plus->type, Ake_ast_type_plus, "plus");
+     Ake_ast* plus = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(plus, "cu.root");
+     Zinc_assert_int_equal(plus->type, Ake_ast_type_plus, "plus");
 
-	Ake_ast* left = Ast_node_get(plus, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left->value, "5", "5");
+     Ake_ast* left = Ast_node_get(plus, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left->value, "5", "5");
 
-	Ake_ast* right = Ast_node_get(plus, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_mult, "mult");
+     Ake_ast* right = Ast_node_get(plus, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_mult, "mult");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number 2");
-	Zinc_expect_string(&left2->value, "3", "3");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number 2");
+     Zinc_expect_string(&left2->value, "3", "3");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
-	Zinc_expect_string(&right2->value, "2", "2");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
+     Zinc_expect_string(&right2->value, "2", "2");
 
     parse_teardown(&cu);
 }
 
 void test_parse_mult_add()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("4 * 3 + 2", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* plus = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(plus, "ptr plus");
-	Zinc_assert_int_equal(plus->type, Ake_ast_type_plus, "plus plus");
+     Ake_ast* plus = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(plus, "ptr plus");
+     Zinc_assert_int_equal(plus->type, Ake_ast_type_plus, "plus plus");
 
-	Ake_ast* left = Ast_node_get(plus, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_mult, "mult");
+     Ake_ast* left = Ast_node_get(plus, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_mult, "mult");
 
-	Ake_ast* left2 = Ast_node_get(left, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number 4");
-	Zinc_expect_string(&left2->value, "4", "4");
+     Ake_ast* left2 = Ast_node_get(left, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number 4");
+     Zinc_expect_string(&left2->value, "4", "4");
 
-	Ake_ast* right2 = Ast_node_get(left, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
-	Zinc_expect_string(&right2->value, "3", "3");
+     Ake_ast* right2 = Ast_node_get(left, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
+     Zinc_expect_string(&right2->value, "3", "3");
 
-	Ake_ast* right = Ast_node_get(plus, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number 2");
-	Zinc_expect_string(&right->value, "2", "2");
+     Ake_ast* right = Ast_node_get(plus, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number 2");
+     Zinc_expect_string(&right->value, "2", "2");
 
     parse_teardown(&cu);
 }
 
 void test_parse_power()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("5 ^ 2", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "cu.valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "cu.valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* pow = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(pow, "ptr pow");
-	Zinc_expect_int_equal(pow->type, Ake_ast_type_power, "power pow");
+     Ake_ast* pow = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(pow, "ptr pow");
+     Zinc_expect_int_equal(pow->type, Ake_ast_type_power, "power pow");
 
-	Ake_type_use* tu = pow->tu;
-	Zinc_assert_ptr(tu, "ptr tu");
-	
-	struct Ake_type_def* td = tu->td;
-	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_string(&td->name, "Int32", "Int32 td");
+     Ake_type_use* tu = pow->tu;
+     Zinc_assert_ptr(tu, "ptr tu");
+     
+     struct Ake_type_def* td = tu->td;
+     Zinc_assert_ptr(td, "ptr td");
+     Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
+     Zinc_expect_string(&td->name, "Int32", "Int32 td");
 
-	Ake_ast* number0 = Ast_node_get(pow, 0);
-	Zinc_assert_ptr(number0, "ptr number0");
-	Zinc_expect_int_equal(number0->type, Ake_ast_type_number, "number number0");
-	Zinc_expect_string(&number0->value, "5", "5 number0");
+     Ake_ast* number0 = Ast_node_get(pow, 0);
+     Zinc_assert_ptr(number0, "ptr number0");
+     Zinc_expect_int_equal(number0->type, Ake_ast_type_number, "number number0");
+     Zinc_expect_string(&number0->value, "5", "5 number0");
 
-	Ake_ast* number1 = Ast_node_get(pow, 1);
-	Zinc_assert_ptr(number1, "ptr number1");
-	Zinc_expect_int_equal(number1->type, Ake_ast_type_number, "number number1");
-	Zinc_expect_string(&number1->value, "2", "2 number1");
+     Ake_ast* number1 = Ast_node_get(pow, 1);
+     Zinc_assert_ptr(number1, "ptr number1");
+     Zinc_expect_int_equal(number1->type, Ake_ast_type_number, "number number1");
+     Zinc_expect_string(&number1->value, "2", "2 number1");
 
     parse_teardown(&cu);
 }
 
 void test_parse_power_error_expected_term()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("5^", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "expected term after caret");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "expected term after caret");
 
     parse_teardown(&cu);
 }
 
 void test_parse_power_error_left_no_value()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 5 ^ foo()", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "power operand has no value");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "power operand has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_power_error_left_not_numeric()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("true ^ 2", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "power on non-numeric operand");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "power on non-numeric operand");
 
     parse_teardown(&cu);
 }
 
 void test_parse_power_error_right_no_value()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 5 ^ foo()", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "power operand has no value");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "power operand has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_power_error_right_not_numeric()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("5 ^ true", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "power on non-numeric operand");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "power on non-numeric operand");
 
     parse_teardown(&cu);
 }
 
 void test_parse_paren_add()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const speed: Int32; (speed + 1)", &cu);
-	Zinc_expect_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_expect_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* paren = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(paren, "ptr paren");
-	Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+     Ake_ast* paren = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(paren, "ptr paren");
+     Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* plus = Ast_node_get(paren, 0);
-	Zinc_assert_ptr(plus, "cu.root");
-	Zinc_expect_int_equal(plus->type, Ake_ast_type_plus, "plus");
+     Ake_ast* plus = Ast_node_get(paren, 0);
+     Zinc_assert_ptr(plus, "cu.root");
+     Zinc_expect_int_equal(plus->type, Ake_ast_type_plus, "plus");
 
-	Ake_ast* left = Ast_node_get(plus, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(plus, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(plus, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&right->value, "1", "1");
+     Ake_ast* right = Ast_node_get(plus, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&right->value, "1", "1");
 
-	Zinc_assert_null(Ast_node_get(cu.root, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(cu.root, 2), "only 2 children");
 
     parse_teardown(&cu);
 }
 
 void test_parse_paren_add2()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const speed: Int32; (speed) + 1", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* plus = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(plus, "cu.root");
-	Zinc_expect_int_equal(plus->type, Ake_ast_type_plus, "plus");
+     Ake_ast* plus = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(plus, "cu.root");
+     Zinc_expect_int_equal(plus->type, Ake_ast_type_plus, "plus");
 
-	Ake_ast* paren = Ast_node_get(plus, 0);
-	Zinc_assert_ptr(paren, "ptr paren");
-	Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+     Ake_ast* paren = Ast_node_get(plus, 0);
+     Zinc_assert_ptr(paren, "ptr paren");
+     Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* left = Ast_node_get(paren, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(paren, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* right = Ast_node_get(plus, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&right->value, "1", "1");
+     Ake_ast* right = Ast_node_get(plus, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&right->value, "1", "1");
 
-	Zinc_assert_null(Ast_node_get(cu.root, 2), "only 2 children");
+     Zinc_assert_null(Ast_node_get(cu.root, 2), "only 2 children");
 
     parse_teardown(&cu);
 }
 
 void test_parse_paren_add3()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const speed: Int32; speed + (1)", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* plus = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(plus, "cu.root");
-	Zinc_expect_int_equal(plus->type, Ake_ast_type_plus, "plus");
+     Ake_ast* plus = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(plus, "cu.root");
+     Zinc_expect_int_equal(plus->type, Ake_ast_type_plus, "plus");
 
-	Ake_ast* left = Ast_node_get(plus, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
-	Zinc_expect_string(&left->value, "speed", "speed");
+     Ake_ast* left = Ast_node_get(plus, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_id, "id");
+     Zinc_expect_string(&left->value, "speed", "speed");
 
-	Ake_ast* paren = Ast_node_get(plus, 1);
-	Zinc_assert_ptr(paren, "ptr paren");
-	Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+     Ake_ast* paren = Ast_node_get(plus, 1);
+     Zinc_assert_ptr(paren, "ptr paren");
+     Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* right = Ast_node_get(paren, 0);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&right->value, "1", "1");
+     Ake_ast* right = Ast_node_get(paren, 0);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&right->value, "1", "1");
 
     parse_teardown(&cu);
 }
 
 void test_parse_paren_add_add()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("1 + (2 + 3)", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* plus = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(plus, "ptr plus");
-	Zinc_assert_int_equal(plus->type, Ake_ast_type_plus, "plus plus");
+     Ake_ast* plus = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(plus, "ptr plus");
+     Zinc_assert_int_equal(plus->type, Ake_ast_type_plus, "plus plus");
 
-	Ake_ast* left = Ast_node_get(plus, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left->value, "1", "1");
+     Ake_ast* left = Ast_node_get(plus, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left->value, "1", "1");
 
-	Ake_ast* paren = Ast_node_get(plus, 1);
-	Zinc_assert_ptr(paren, "ptr paren");
-	Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+     Ake_ast* paren = Ast_node_get(plus, 1);
+     Zinc_assert_ptr(paren, "ptr paren");
+     Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* right = Ast_node_get(paren, 0);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_plus, "plus 2");
+     Ake_ast* right = Ast_node_get(paren, 0);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_plus, "plus 2");
 
-	Zinc_assert_null(Ast_node_get(cu.root, 2), "null");
+     Zinc_assert_null(Ast_node_get(cu.root, 2), "null");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "right");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number 2");
-	Zinc_expect_string(&left2->value, "2", "2");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "right");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number 2");
+     Zinc_expect_string(&left2->value, "2", "2");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
-	Zinc_expect_string(&right2->value, "3", "3");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
+     Zinc_expect_string(&right2->value, "3", "3");
 
     parse_teardown(&cu);
 }
 
 void test_parse_paren_add_add2()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("(1 + 2) + 3", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* plus = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(plus, "ptr plus");
-	Zinc_assert_int_equal(plus->type, Ake_ast_type_plus, "plus plus");
+     Ake_ast* plus = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(plus, "ptr plus");
+     Zinc_assert_int_equal(plus->type, Ake_ast_type_plus, "plus plus");
 
-	Ake_ast* paren = Ast_node_get(plus, 0);
-	Zinc_assert_ptr(paren, "ptr paren");
-	Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+     Ake_ast* paren = Ast_node_get(plus, 0);
+     Zinc_assert_ptr(paren, "ptr paren");
+     Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* left = Ast_node_get(paren, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_plus, "plus 2");
+     Ake_ast* left = Ast_node_get(paren, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_plus, "plus 2");
 
-	Ake_ast* left2 = Ast_node_get(left, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left2->value, "1", "1");
+     Ake_ast* left2 = Ast_node_get(left, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left2->value, "1", "1");
 
-	Ake_ast* right = Ast_node_get(left, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number 2");
-	Zinc_expect_string(&right->value, "2", "2");
+     Ake_ast* right = Ast_node_get(left, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number 2");
+     Zinc_expect_string(&right->value, "2", "2");
 
-	Ake_ast* right2 = Ast_node_get(plus, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
-	Zinc_expect_string(&right2->value, "3", "3");
+     Ake_ast* right2 = Ast_node_get(plus, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
+     Zinc_expect_string(&right2->value, "3", "3");
 
     parse_teardown(&cu);
 }
 
 void test_parse_paren_mult()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("(5 * 2)", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* paren = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(paren, "ptr paren");
-	Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+     Ake_ast* paren = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(paren, "ptr paren");
+     Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* mult = Ast_node_get(paren, 0);
-	Zinc_assert_ptr(mult, "ptr mult");
-	Zinc_expect_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
+     Ake_ast* mult = Ast_node_get(paren, 0);
+     Zinc_assert_ptr(mult, "ptr mult");
+     Zinc_expect_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
 
-	Ake_ast* left = Ast_node_get(mult, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left->value, "5", "5");
+     Ake_ast* left = Ast_node_get(mult, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left->value, "5", "5");
 
-	Ake_ast* right = Ast_node_get(mult, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&right->value, "2", "2");
+     Ake_ast* right = Ast_node_get(mult, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&right->value, "2", "2");
 
     parse_teardown(&cu);
 }
 
 void test_parse_paren_mult_mult()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("1 * (2 * 3)", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* mult = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(mult, "ptr mult");
-	Zinc_assert_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
+     Ake_ast* mult = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(mult, "ptr mult");
+     Zinc_assert_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
 
-	Ake_ast* left = Ast_node_get(mult, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left->value, "1", "1");
+     Ake_ast* left = Ast_node_get(mult, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left->value, "1", "1");
 
-	Ake_ast* paren = Ast_node_get(mult, 1);
-	Zinc_assert_ptr(paren, "ptr paren");
-	Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+     Ake_ast* paren = Ast_node_get(mult, 1);
+     Zinc_assert_ptr(paren, "ptr paren");
+     Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* right = Ast_node_get(paren, 0);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_mult, "mult 2");
+     Ake_ast* right = Ast_node_get(paren, 0);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_mult, "mult 2");
 
-	Ake_ast* left2 = Ast_node_get(right, 0);
-	Zinc_assert_ptr(left2, "left 2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number 2");
-	Zinc_expect_string(&left2->value, "2", "2");
+     Ake_ast* left2 = Ast_node_get(right, 0);
+     Zinc_assert_ptr(left2, "left 2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number 2");
+     Zinc_expect_string(&left2->value, "2", "2");
 
-	Ake_ast* right2 = Ast_node_get(right, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
-	Zinc_expect_string(&right2->value, "3", "3");
+     Ake_ast* right2 = Ast_node_get(right, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
+     Zinc_expect_string(&right2->value, "3", "3");
 
     parse_teardown(&cu);
 }
 
 void test_parse_paren_mult_mult2()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("(1 * 2) * 3", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* mult = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(mult, "ptr mult");
-	Zinc_assert_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
+     Ake_ast* mult = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(mult, "ptr mult");
+     Zinc_assert_int_equal(mult->type, Ake_ast_type_mult, "mult mult");
 
-	Ake_ast* paren = Ast_node_get(mult, 0);
-	Zinc_assert_ptr(paren, "ptr paren");
-	Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+     Ake_ast* paren = Ast_node_get(mult, 0);
+     Zinc_assert_ptr(paren, "ptr paren");
+     Zinc_expect_int_equal(paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* left = Ast_node_get(paren, 0);
-	Zinc_assert_ptr(left, "left");
-	Zinc_expect_int_equal(left->type, Ake_ast_type_mult, "mult 2");
+     Ake_ast* left = Ast_node_get(paren, 0);
+     Zinc_assert_ptr(left, "left");
+     Zinc_expect_int_equal(left->type, Ake_ast_type_mult, "mult 2");
 
-	Ake_ast* left2 = Ast_node_get(left, 0);
-	Zinc_assert_ptr(left2, "left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number");
-	Zinc_expect_string(&left2->value, "1", "1");
+     Ake_ast* left2 = Ast_node_get(left, 0);
+     Zinc_assert_ptr(left2, "left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_number, "number");
+     Zinc_expect_string(&left2->value, "1", "1");
 
-	Ake_ast* right = Ast_node_get(left, 1);
-	Zinc_assert_ptr(right, "right");
-	Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number 2");
-	Zinc_expect_string(&right->value, "2", "2");
+     Ake_ast* right = Ast_node_get(left, 1);
+     Zinc_assert_ptr(right, "right");
+     Zinc_expect_int_equal(right->type, Ake_ast_type_number, "number 2");
+     Zinc_expect_string(&right->value, "2", "2");
 
-	Ake_ast* right2 = Ast_node_get(mult, 1);
-	Zinc_assert_ptr(right2, "right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
-	Zinc_expect_string(&right2->value, "3", "3");
+     Ake_ast* right2 = Ast_node_get(mult, 1);
+     Zinc_assert_ptr(right2, "right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number 3");
+     Zinc_expect_string(&right2->value, "3", "3");
 
     parse_teardown(&cu);
 }
 
 void test_parse_comparison()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("var count: Int32 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Ake_ast* cond0 = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(cond0, "ptr cond0");
-	Zinc_expect_int_equal(cond0->type, Ake_ast_type_equality, "equality cond0");
+     Ake_ast* cond0 = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(cond0, "ptr cond0");
+     Zinc_expect_int_equal(cond0->type, Ake_ast_type_equality, "equality cond0");
 
-	Ake_type_use* cond0_tu = cond0->tu;
-	Zinc_assert_ptr(cond0_tu, "ptr cond0_tu");
-	
-	struct Ake_type_def* cond0_td = cond0_tu->td;
-	Zinc_assert_ptr(cond0_td, "ptr cond0_td");
-	Zinc_expect_int_equal(cond0_td->type, Ake_type_integer, "integer cond0_td");
-	Zinc_expect_string(&cond0_td->name, "Int32", "Int32 cond0_td");
+     Ake_type_use* cond0_tu = cond0->tu;
+     Zinc_assert_ptr(cond0_tu, "ptr cond0_tu");
+     
+     struct Ake_type_def* cond0_td = cond0_tu->td;
+     Zinc_assert_ptr(cond0_td, "ptr cond0_td");
+     Zinc_expect_int_equal(cond0_td->type, Ake_type_integer, "integer cond0_td");
+     Zinc_expect_string(&cond0_td->name, "Int32", "Int32 cond0_td");
 
-	Ake_ast* left0 = Ast_node_get(cond0, 0);
-	Zinc_assert_ptr(left0, "ptr left0");
-	Zinc_expect_int_equal(left0->type, Ake_ast_type_id, "id left0");
-	Zinc_expect_string(&left0->value, "count", "count left0");
+     Ake_ast* left0 = Ast_node_get(cond0, 0);
+     Zinc_assert_ptr(left0, "ptr left0");
+     Zinc_expect_int_equal(left0->type, Ake_ast_type_id, "id left0");
+     Zinc_expect_string(&left0->value, "count", "count left0");
 
-	Ake_ast* right0 = Ast_node_get(cond0, 1);
-	Zinc_assert_ptr(right0, "ptr right0");
-	Zinc_expect_int_equal(right0->type, Ake_ast_type_number, "number right0");
-	Zinc_expect_string(&right0->value, "10", "10 right0");
+     Ake_ast* right0 = Ast_node_get(cond0, 1);
+     Zinc_assert_ptr(right0, "ptr right0");
+     Zinc_expect_int_equal(right0->type, Ake_ast_type_number, "number right0");
+     Zinc_expect_string(&right0->value, "10", "10 right0");
 
-	Ake_ast* cond1 = Ast_node_get(cu.root, 2);
-	Zinc_assert_ptr(cond1, "ptr cond1");
-	Zinc_expect_int_equal(cond1->type, Ake_ast_type_not_equal, "not equal cond1");
+     Ake_ast* cond1 = Ast_node_get(cu.root, 2);
+     Zinc_assert_ptr(cond1, "ptr cond1");
+     Zinc_expect_int_equal(cond1->type, Ake_ast_type_not_equal, "not equal cond1");
 
-	Ake_type_use* cond1_tu = cond1->tu;
-	Zinc_assert_ptr(cond1_tu, "ptr cond1_tu");
+     Ake_type_use* cond1_tu = cond1->tu;
+     Zinc_assert_ptr(cond1_tu, "ptr cond1_tu");
 
-	struct Ake_type_def* cond1_td = cond1_tu->td;
-	Zinc_assert_ptr(cond1_td, "ptr cond0_td");
-	Zinc_expect_int_equal(cond1_td->type, Ake_type_float, "float cond1_td");
-	Zinc_expect_string(&cond1_td->name, "Real64", "Real64 cond1_td");
+     struct Ake_type_def* cond1_td = cond1_tu->td;
+     Zinc_assert_ptr(cond1_td, "ptr cond0_td");
+     Zinc_expect_int_equal(cond1_td->type, Ake_type_float, "float cond1_td");
+     Zinc_expect_string(&cond1_td->name, "Real64", "Real64 cond1_td");
 
-	Ake_ast* left1 = Ast_node_get(cond1, 0);
-	Zinc_assert_ptr(left1, "ptr left1");
-	Zinc_expect_int_equal(left1->type, Ake_ast_type_id, "id left1");
-	Zinc_expect_string(&left1->value, "count", "count left1");
+     Ake_ast* left1 = Ast_node_get(cond1, 0);
+     Zinc_assert_ptr(left1, "ptr left1");
+     Zinc_expect_int_equal(left1->type, Ake_ast_type_id, "id left1");
+     Zinc_expect_string(&left1->value, "count", "count left1");
 
-	Ake_ast* right1 = Ast_node_get(cond1, 1);
-	Zinc_assert_ptr(right1, "ptr right1");
-	Zinc_expect_int_equal(right1->type, Ake_ast_type_number, "number right1");
-	Zinc_expect_string(&right1->value, "11.1", "11.1 right1");
+     Ake_ast* right1 = Ast_node_get(cond1, 1);
+     Zinc_assert_ptr(right1, "ptr right1");
+     Zinc_expect_int_equal(right1->type, Ake_ast_type_number, "number right1");
+     Zinc_expect_string(&right1->value, "11.1", "11.1 right1");
 
-	Ake_ast* cond2 = Ast_node_get(cu.root, 3);
-	Zinc_assert_ptr(cond2, "ptr cond2");
-	Zinc_expect_int_equal(cond2->type, Ake_ast_type_less_than_or_equal, "less than or equal cond2");
+     Ake_ast* cond2 = Ast_node_get(cu.root, 3);
+     Zinc_assert_ptr(cond2, "ptr cond2");
+     Zinc_expect_int_equal(cond2->type, Ake_ast_type_less_than_or_equal, "less than or equal cond2");
 
-	Ake_ast* left2 = Ast_node_get(cond2, 0);
-	Zinc_assert_ptr(left2, "ptr left2");
-	Zinc_expect_int_equal(left2->type, Ake_ast_type_id, "id left2");
-	Zinc_expect_string(&left2->value, "count", "count left2");
+     Ake_ast* left2 = Ast_node_get(cond2, 0);
+     Zinc_assert_ptr(left2, "ptr left2");
+     Zinc_expect_int_equal(left2->type, Ake_ast_type_id, "id left2");
+     Zinc_expect_string(&left2->value, "count", "count left2");
 
-	Ake_ast* right2 = Ast_node_get(cond2, 1);
-	Zinc_assert_ptr(right2, "ptr right2");
-	Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number right2");
-	Zinc_expect_string(&right2->value, "12", "12 right2");
+     Ake_ast* right2 = Ast_node_get(cond2, 1);
+     Zinc_assert_ptr(right2, "ptr right2");
+     Zinc_expect_int_equal(right2->type, Ake_ast_type_number, "number right2");
+     Zinc_expect_string(&right2->value, "12", "12 right2");
 
-	Ake_ast* cond3 = Ast_node_get(cu.root, 4);
-	Zinc_assert_ptr(cond3, "ptr cond3");
-	Zinc_expect_int_equal(cond3->type, Ake_ast_type_greater_than_or_equal, "greater than or equal cond3");
+     Ake_ast* cond3 = Ast_node_get(cu.root, 4);
+     Zinc_assert_ptr(cond3, "ptr cond3");
+     Zinc_expect_int_equal(cond3->type, Ake_ast_type_greater_than_or_equal, "greater than or equal cond3");
 
-	Ake_ast* left3 = Ast_node_get(cond3, 0);
-	Zinc_assert_ptr(left3, "ptr left3");
-	Zinc_expect_int_equal(left3->type, Ake_ast_type_id, "id left3");
-	Zinc_expect_string(&left3->value, "count", "count left3");
+     Ake_ast* left3 = Ast_node_get(cond3, 0);
+     Zinc_assert_ptr(left3, "ptr left3");
+     Zinc_expect_int_equal(left3->type, Ake_ast_type_id, "id left3");
+     Zinc_expect_string(&left3->value, "count", "count left3");
 
-	Ake_ast* right3 = Ast_node_get(cond3, 1);
-	Zinc_assert_ptr(right3, "ptr right3");
-	Zinc_expect_int_equal(right3->type, Ake_ast_type_number, "number right3");
-	Zinc_expect_string(&right3->value, "13", "13 right3");
+     Ake_ast* right3 = Ast_node_get(cond3, 1);
+     Zinc_assert_ptr(right3, "ptr right3");
+     Zinc_expect_int_equal(right3->type, Ake_ast_type_number, "number right3");
+     Zinc_expect_string(&right3->value, "13", "13 right3");
 
     parse_teardown(&cu);
 }
 
 void test_parse_comparison_identity()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("true == true; true != true", &cu);
-	Zinc_expect_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_expect_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
 
-	Ake_ast* comp0 = Ast_node_get(cu.root, 0);
-	Zinc_assert_ptr(comp0, "ptr comp0");
-	Zinc_assert_ptr(comp0->tu, "ptr comp0->tu");
-	Zinc_assert_ptr(comp0->tu->td, "ptr comp0->tu->td");
-	Zinc_expect_int_equal(comp0->tu->td->type, Ake_type_boolean, "boolean comp0->tu->td->type");
-	Zinc_expect_string(&comp0->tu->td->name, "Bool", "Bool comp0->tu->td->name");
+     Ake_ast* comp0 = Ast_node_get(cu.root, 0);
+     Zinc_assert_ptr(comp0, "ptr comp0");
+     Zinc_assert_ptr(comp0->tu, "ptr comp0->tu");
+     Zinc_assert_ptr(comp0->tu->td, "ptr comp0->tu->td");
+     Zinc_expect_int_equal(comp0->tu->td->type, Ake_type_boolean, "boolean comp0->tu->td->type");
+     Zinc_expect_string(&comp0->tu->td->name, "Bool", "Bool comp0->tu->td->name");
 
-	Ake_ast* comp1 = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(comp1, "ptr comp1");
-	Zinc_assert_ptr(comp1->tu, "ptr comp->tu1");
-	Zinc_assert_ptr(comp1->tu->td, "ptr comp1->tu->td");
-	Zinc_expect_int_equal(comp1->tu->td->type, Ake_type_boolean, "boolean comp1->tu->td->type");
-	Zinc_expect_string(&comp1->tu->td->name, "Bool", "Bool comp1->tu->td->name");
+     Ake_ast* comp1 = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(comp1, "ptr comp1");
+     Zinc_assert_ptr(comp1->tu, "ptr comp->tu1");
+     Zinc_assert_ptr(comp1->tu->td, "ptr comp1->tu->td");
+     Zinc_expect_int_equal(comp1->tu->td->type, Ake_type_boolean, "boolean comp1->tu->td->type");
+     Zinc_expect_string(&comp1->tu->td->name, "Bool", "Bool comp1->tu->td->name");
 
     parse_teardown(&cu);
 }
 
 void test_parse_comparison_error_no_term()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("100 <", &cu);
-	Zinc_expect_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "expected term after comparison operator");
+     Zinc_expect_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "expected term after comparison operator");
 
     parse_teardown(&cu);
 }
 
 void test_parse_comparison_error_left_no_value()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo() < 100", &cu);
-	Zinc_expect_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "operand has no value");
+     Zinc_expect_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "operand has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_comparison_error_right_no_value()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; 100 < foo()", &cu);
-	Zinc_expect_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "operand has no value");
+     Zinc_expect_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "operand has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_comparison_error_left_not_numeric()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("true < 100", &cu);
-	Zinc_expect_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "comparison operand is not numeric");
+     Zinc_expect_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "comparison operand is not numeric");
 
     parse_teardown(&cu);
 }
 
 void test_parse_comparison_error_right_not_numeric()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("true < 100", &cu);
-	Zinc_expect_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "comparison operand is not numeric");
+     Zinc_expect_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "comparison operand is not numeric");
 
     parse_teardown(&cu);
 }
 
 void test_parse_and()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: Bool; const b: Bool; a && b", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
 
-	Ake_ast* and = Ast_node_get(cu.root, 2);
-	Zinc_assert_ptr(and, "ptr and");
-	Zinc_expect_int_equal(and->type, Ake_ast_type_and, "and and");
+     Ake_ast* and = Ast_node_get(cu.root, 2);
+     Zinc_assert_ptr(and, "ptr and");
+     Zinc_expect_int_equal(and->type, Ake_ast_type_and, "and and");
 
-	Ake_ast* a = Ast_node_get(and, 0);
-	Zinc_assert_ptr(a, "ptr a");
-	Zinc_expect_int_equal(a->type, Ake_ast_type_id, "id a");
-	Zinc_expect_string(&a->value, "a", "a a");
+     Ake_ast* a = Ast_node_get(and, 0);
+     Zinc_assert_ptr(a, "ptr a");
+     Zinc_expect_int_equal(a->type, Ake_ast_type_id, "id a");
+     Zinc_expect_string(&a->value, "a", "a a");
 
-	Ake_ast* b = Ast_node_get(and, 1);
-	Zinc_assert_ptr(b, "ptr b");
-	Zinc_expect_int_equal(b->type, Ake_ast_type_id, "id b");
-	Zinc_expect_string(&b->value, "b", "b b");
+     Ake_ast* b = Ast_node_get(and, 1);
+     Zinc_assert_ptr(b, "ptr b");
+     Zinc_expect_int_equal(b->type, Ake_ast_type_id, "id b");
+     Zinc_expect_string(&b->value, "b", "b b");
 
     parse_teardown(&cu);
 }
 
 void test_parse_or()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: Bool; const b: Bool; a || b", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* or = Ast_node_get(cu.root, 2);
-	Zinc_assert_ptr(or, "ptr or");
-	Zinc_expect_int_equal(or->type, Ake_ast_type_or, "or or");
+     Ake_ast* or = Ast_node_get(cu.root, 2);
+     Zinc_assert_ptr(or, "ptr or");
+     Zinc_expect_int_equal(or->type, Ake_ast_type_or, "or or");
 
-	Ake_type_use* tu = or->tu;
-	Zinc_assert_ptr(tu, "ptr tu");
+     Ake_type_use* tu = or->tu;
+     Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
-	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_boolean, "boolean td");
-	Zinc_expect_string(&td->name, "Bool", "Bool td");
+     struct Ake_type_def* td = tu->td;
+     Zinc_assert_ptr(td, "ptr td");
+     Zinc_expect_int_equal(td->type, Ake_type_boolean, "boolean td");
+     Zinc_expect_string(&td->name, "Bool", "Bool td");
 
-	Ake_ast* a = Ast_node_get(or, 0);
-	Zinc_assert_ptr(a, "ptr a");
-	Zinc_expect_int_equal(a->type, Ake_ast_type_id, "id a");
-	Zinc_expect_string(&a->value, "a", "a a");
+     Ake_ast* a = Ast_node_get(or, 0);
+     Zinc_assert_ptr(a, "ptr a");
+     Zinc_expect_int_equal(a->type, Ake_ast_type_id, "id a");
+     Zinc_expect_string(&a->value, "a", "a a");
 
-	Ake_ast* b = Ast_node_get(or, 1);
-	Zinc_assert_ptr(b, "ptr b");
-	Zinc_expect_int_equal(b->type, Ake_ast_type_id, "id b");
-	Zinc_expect_string(&b->value, "b", "b b");
+     Ake_ast* b = Ast_node_get(or, 1);
+     Zinc_assert_ptr(b, "ptr b");
+     Zinc_expect_int_equal(b->type, Ake_ast_type_id, "id b");
+     Zinc_expect_string(&b->value, "b", "b b");
 
     parse_teardown(&cu);
 }
 
 void test_parse_or_or()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: Bool; const b: Bool; const c: Bool; a || b || c", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* or0 = Ast_node_get(cu.root, 3);
-	Zinc_assert_ptr(or0 , "ptr or0");
-	Zinc_expect_int_equal(or0->type, Ake_ast_type_or, "or or0");
+     Ake_ast* or0 = Ast_node_get(cu.root, 3);
+     Zinc_assert_ptr(or0 , "ptr or0");
+     Zinc_expect_int_equal(or0->type, Ake_ast_type_or, "or or0");
 
-	Ake_ast* or1 = Ast_node_get(or0, 0);
-	Zinc_assert_ptr(or1, "ptr or1");
-	Zinc_expect_int_equal(or1->type, Ake_ast_type_or, "or or1");
+     Ake_ast* or1 = Ast_node_get(or0, 0);
+     Zinc_assert_ptr(or1, "ptr or1");
+     Zinc_expect_int_equal(or1->type, Ake_ast_type_or, "or or1");
 
-	Ake_ast* a = Ast_node_get(or1, 0);
-	Zinc_assert_ptr(a, "ptr a");
-	Zinc_expect_int_equal(a->type, Ake_ast_type_id, "id a");
-	Zinc_expect_string(&a->value, "a", "a a");
+     Ake_ast* a = Ast_node_get(or1, 0);
+     Zinc_assert_ptr(a, "ptr a");
+     Zinc_expect_int_equal(a->type, Ake_ast_type_id, "id a");
+     Zinc_expect_string(&a->value, "a", "a a");
 
-	Ake_ast* b = Ast_node_get(or1, 1);
-	Zinc_assert_ptr(b, "ptr b");
-	Zinc_expect_int_equal(b->type, Ake_ast_type_id, "id b");
-	Zinc_expect_string(&b->value, "b", "b b");
+     Ake_ast* b = Ast_node_get(or1, 1);
+     Zinc_assert_ptr(b, "ptr b");
+     Zinc_expect_int_equal(b->type, Ake_ast_type_id, "id b");
+     Zinc_expect_string(&b->value, "b", "b b");
 
-	Ake_ast* c = Ast_node_get(or0, 1);
-	Zinc_assert_ptr(c, "ptr c");
-	Zinc_expect_int_equal(c->type, Ake_ast_type_id, "id c");
-	Zinc_expect_string(&c->value, "c", "c c");
+     Ake_ast* c = Ast_node_get(or0, 1);
+     Zinc_assert_ptr(c, "ptr c");
+     Zinc_expect_int_equal(c->type, Ake_ast_type_id, "id c");
+     Zinc_expect_string(&c->value, "c", "c c");
 
     parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_expected_term()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("true &&", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "expected term after && or ||");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "expected term after && or ||");
 
     parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_left_no_value()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	
-	struct Ake_comp_unit cu;
+     
+     struct Ake_comp_unit cu;
 
 
     parse_setup("fn foo() end; foo() && true", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "left-side operand of boolean operator has no type");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "left-side operand of boolean operator has no type");
 
     parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_right_no_value()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	
-	struct Ake_comp_unit cu;
+     
+     struct Ake_comp_unit cu;
 
 
     parse_setup("fn foo() end; true && foo()", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "operand of boolean operator has no type");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "operand of boolean operator has no type");
 
     parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_left_not_boolean()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("1 && true", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "left-side expression of boolean operator is not boolean");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "left-side expression of boolean operator is not boolean");
 
     parse_teardown(&cu);
 }
 
 void test_parse_boolean_error_right_not_boolean()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("true && 1", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "cu.valid");
-	Zinc_expect_source_error(&cu.errors, "expression of boolean operator is not boolean");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "cu.valid");
+     Zinc_expect_source_error(&cu.errors, "expression of boolean operator is not boolean");
 
     parse_teardown(&cu);
 }
@@ -1544,68 +1544,68 @@ void test_parse_array_declare()
 
 void test_parse_array_subscript()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: [10]Int32; a[1]", &cu);
-	Zinc_expect_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_expect_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
     Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* as = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(as, "ptr as");
-	Zinc_expect_int_equal(as->type, Ake_ast_type_array_subscript, "array-subscript as");
+     Ake_ast* as = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(as, "ptr as");
+     Zinc_expect_int_equal(as->type, Ake_ast_type_array_subscript, "array-subscript as");
 
-	Ake_type_use* tu = as->tu;
-	Zinc_assert_ptr(tu, "ptr tu");
+     Ake_type_use* tu = as->tu;
+     Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
-	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_string(&td->name, "Int32", "Int32 td");
+     struct Ake_type_def* td = tu->td;
+     Zinc_assert_ptr(td, "ptr td");
+     Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
+     Zinc_expect_string(&td->name, "Int32", "Int32 td");
 
-	Ake_ast* name = Ast_node_get(as, 0);
-	Zinc_assert_ptr(name, "ptr name");
-	Zinc_expect_int_equal(name->type, Ake_ast_type_id, "id name");
-	Zinc_expect_string(&name->value, "a", "a name");
+     Ake_ast* name = Ast_node_get(as, 0);
+     Zinc_assert_ptr(name, "ptr name");
+     Zinc_expect_int_equal(name->type, Ake_ast_type_id, "id name");
+     Zinc_expect_string(&name->value, "a", "a name");
 
-	Ake_ast* index = Ast_node_get(as, 1);
-	Zinc_assert_ptr(index, "ptr index");
-	Zinc_expect_int_equal(index->type, Ake_ast_type_number, "number index");
-	Zinc_expect_string(&index->value, "1", "1 index");
+     Ake_ast* index = Ast_node_get(as, 1);
+     Zinc_assert_ptr(index, "ptr index");
+     Zinc_expect_int_equal(index->type, Ake_ast_type_number, "number index");
+     Zinc_expect_string(&index->value, "1", "1 index");
 
     parse_teardown(&cu);
 }
 
 void test_parse_array_subscript2()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: [10][10]Int32; a[0][1]", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
     Ake_ast* a = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(a, "ptr a");
-	Zinc_assert_int_equal(a->type, Ake_ast_type_array_subscript, "array-subscript a");
+     Zinc_assert_ptr(a, "ptr a");
+     Zinc_assert_int_equal(a->type, Ake_ast_type_array_subscript, "array-subscript a");
 
-	Ake_type_use* a_tu = a->tu;
-	Zinc_assert_ptr(a_tu, "ptr tu");
+     Ake_type_use* a_tu = a->tu;
+     Zinc_assert_ptr(a_tu, "ptr tu");
     Zinc_expect_false(a_tu->is_array, "is array to");
 
-	struct Ake_type_def* td = a_tu->td;
-	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_string(&td->name, "Int32", "Int32 td");
+     struct Ake_type_def* td = a_tu->td;
+     Zinc_assert_ptr(td, "ptr td");
+     Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
+     Zinc_expect_string(&td->name, "Int32", "Int32 td");
 
-	Ake_ast* b = Ast_node_get(a, 0);
-	Zinc_assert_ptr(b, "ptr b");
-	Zinc_expect_int_equal(b->type, Ake_ast_type_array_subscript, "array_subscript b");
+     Ake_ast* b = Ast_node_get(a, 0);
+     Zinc_assert_ptr(b, "ptr b");
+     Zinc_expect_int_equal(b->type, Ake_ast_type_array_subscript, "array_subscript b");
 
     Ake_ast* c = Ast_node_get(b, 0);
     Zinc_assert_ptr(c, "ptr c");
@@ -1617,9 +1617,9 @@ void test_parse_array_subscript2()
     Zinc_expect_int_equal(d->type, Ake_ast_type_number, "type d");
     Zinc_expect_string(&d->value, "0", "value d");
 
-	Ake_ast* e = Ast_node_get(a, 1);
-	Zinc_assert_ptr(e, "ptr e");
-	Zinc_expect_int_equal(d->type, Ake_ast_type_number, "number e");
+     Ake_ast* e = Ast_node_get(a, 1);
+     Zinc_assert_ptr(e, "ptr e");
+     Zinc_expect_int_equal(d->type, Ake_ast_type_number, "number e");
     Zinc_expect_string(&e->value, "1", "value e");
 
     parse_teardown(&cu);
@@ -1627,33 +1627,33 @@ void test_parse_array_subscript2()
 
 void test_parse_array_subscript3()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: [5]Int32; const b: Int32; a[b]", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Ake_ast* a = Ast_node_get(cu.root, 2);
-	Zinc_assert_ptr(a, "ptr a");
-	Zinc_expect_int_equal(a->type, Ake_ast_type_array_subscript, "type a");
+     Ake_ast* a = Ast_node_get(cu.root, 2);
+     Zinc_assert_ptr(a, "ptr a");
+     Zinc_expect_int_equal(a->type, Ake_ast_type_array_subscript, "type a");
 
-	Ake_type_use* tu = a->tu;
-	Zinc_assert_ptr(tu, "ptr tu");
+     Ake_type_use* tu = a->tu;
+     Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
-	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
-	Zinc_expect_string(&td->name, "Int32", "Int32 td");
+     struct Ake_type_def* td = tu->td;
+     Zinc_assert_ptr(td, "ptr td");
+     Zinc_expect_int_equal(td->type, Ake_type_integer, "integer td");
+     Zinc_expect_string(&td->name, "Int32", "Int32 td");
 
-	Ake_ast* b = Ast_node_get(a, 0);
-	Zinc_expect_int_equal(b->type, Ake_ast_type_id, "type b");
-	Zinc_expect_string(&b->value, "a", "a b");
+     Ake_ast* b = Ast_node_get(a, 0);
+     Zinc_expect_int_equal(b->type, Ake_ast_type_id, "type b");
+     Zinc_expect_string(&b->value, "a", "a b");
 
-	Ake_ast* c = Ast_node_get(a, 1);
-	Zinc_expect_int_equal(c->type, Ake_ast_type_id, "type c");
-	Zinc_expect_string(&c->value, "b", "value c");
+     Ake_ast* c = Ast_node_get(a, 1);
+     Zinc_expect_int_equal(c->type, Ake_ast_type_id, "type c");
+     Zinc_expect_string(&c->value, "b", "value c");
 
     parse_teardown(&cu);
 }
@@ -1773,117 +1773,117 @@ void test_parse_expr_array_subscript_3d()
 
 void test_parse_subscript_error_no_type()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; foo()[1]", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "expression has subscript but has no value");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "expression has subscript but has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_subscript_error_not_array()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: Int32; a[1]", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "expression has subscript but is not an array or slice");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "expression has subscript but is not an array or slice");
 
     parse_teardown(&cu);
 }
 
 void test_parse_subscript_error_expected_right_square_bracket()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: [10]Int32; a[1", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "expected right-square-bracket");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "expected right-square-bracket");
 
     parse_teardown(&cu);
 }
 
 void test_parse_assign_string()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("var mut a: [6 const]Nat8; a = \"hello\"", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts root");
+     Zinc_assert_ptr(cu.root, "ptr root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts root");
 
-	Ake_ast* assign = Ast_node_get(cu.root, 1);
-	Zinc_assert_ptr(assign, "ptr assign");
-	Zinc_expect_int_equal(assign->type, Ake_ast_type_assign, "assign assign");
+     Ake_ast* assign = Ast_node_get(cu.root, 1);
+     Zinc_assert_ptr(assign, "ptr assign");
+     Zinc_expect_int_equal(assign->type, Ake_ast_type_assign, "assign assign");
 
-	Ake_type_use* tu = assign->tu;
-	Zinc_assert_ptr(tu, "ptr tu");
+     Ake_type_use* tu = assign->tu;
+     Zinc_assert_ptr(tu, "ptr tu");
 
-	struct Ake_type_def* td = tu->td;
-	Zinc_assert_ptr(td, "ptr td");
-	Zinc_expect_int_equal(td->type, Ake_type_integer, "type td");
-	Zinc_expect_string(&td->name, "Nat8", "name td");
-		
-	Ake_ast* lhv = Ast_node_get(assign, 0);
-	Zinc_assert_ptr(lhv, "ptr lhv");
-	Zinc_expect_int_equal(lhv->type, Ake_ast_type_id, "id lhv");
-	Zinc_expect_string(&lhv->value, "a", "a lhv");
+     struct Ake_type_def* td = tu->td;
+     Zinc_assert_ptr(td, "ptr td");
+     Zinc_expect_int_equal(td->type, Ake_type_integer, "type td");
+     Zinc_expect_string(&td->name, "Nat8", "name td");
+          
+     Ake_ast* lhv = Ast_node_get(assign, 0);
+     Zinc_assert_ptr(lhv, "ptr lhv");
+     Zinc_expect_int_equal(lhv->type, Ake_ast_type_id, "id lhv");
+     Zinc_expect_string(&lhv->value, "a", "a lhv");
 
-	Ake_ast* rhv = Ast_node_get(assign, 1);
-	Zinc_assert_ptr(rhv, "ptr rhv");
-	Zinc_expect_int_equal(rhv->type, Ake_ast_type_string, "string rhv");
-	Zinc_expect_string(&rhv->value, "hello", "hello rhv");
+     Ake_ast* rhv = Ast_node_get(assign, 1);
+     Zinc_assert_ptr(rhv, "ptr rhv");
+     Zinc_expect_int_equal(rhv->type, Ake_ast_type_string, "string rhv");
+     Zinc_expect_string(&rhv->value, "hello", "hello rhv");
 
     parse_teardown(&cu);
 }
 
 void test_parse_assign_multiple()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("var mut a: Int32; var mut b: Int32; var mut c: Int32; a = b = c = 0", &cu);
-	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "valid");
+     Zinc_assert_no_errors(&cu.errors);
+     Zinc_expect_true(cu.valid, "valid");
 
-	Zinc_assert_ptr(cu.root, "ptr cu.root");
-	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+     Zinc_assert_ptr(cu.root, "ptr cu.root");
+     Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* assign = Ast_node_get(cu.root, 3);
-	Zinc_assert_ptr(assign, "ptr assign");
-	Zinc_expect_int_equal(assign->type, Ake_ast_type_assign, "assign assign");
+     Ake_ast* assign = Ast_node_get(cu.root, 3);
+     Zinc_assert_ptr(assign, "ptr assign");
+     Zinc_expect_int_equal(assign->type, Ake_ast_type_assign, "assign assign");
 
-	Ake_type_use* assign_tu = assign->tu;
-	Zinc_assert_ptr(assign_tu, "ptr assign_tu");
+     Ake_type_use* assign_tu = assign->tu;
+     Zinc_assert_ptr(assign_tu, "ptr assign_tu");
 
-	struct Ake_type_def* assign_td = assign_tu->td;
-	Zinc_assert_ptr(assign_td, "ptr assign_td");
-	Zinc_expect_int_equal(assign_td->type, Ake_type_integer, "integer assign_td");
-	Zinc_expect_string(&assign_td->name, "Int32", "Int32 assign_td");
+     struct Ake_type_def* assign_td = assign_tu->td;
+     Zinc_assert_ptr(assign_td, "ptr assign_td");
+     Zinc_expect_int_equal(assign_td->type, Ake_type_integer, "integer assign_td");
+     Zinc_expect_string(&assign_td->name, "Int32", "Int32 assign_td");
 
-	Ake_ast* assign0 = Ast_node_get(assign, 0);
-	Zinc_assert_ptr(assign0, "ptr lhv0");
-	Zinc_expect_int_equal(assign0->type, Ake_ast_type_id, "id assign0");
-	Zinc_expect_string(&assign0->value, "a", "assign0 value");
+     Ake_ast* assign0 = Ast_node_get(assign, 0);
+     Zinc_assert_ptr(assign0, "ptr lhv0");
+     Zinc_expect_int_equal(assign0->type, Ake_ast_type_id, "id assign0");
+     Zinc_expect_string(&assign0->value, "a", "assign0 value");
 
-	Ake_ast* assign1 = Ast_node_get(assign, 1);
-	Zinc_assert_ptr(assign1, "ptr assign1");
-	Zinc_expect_int_equal(assign1->type, Ake_ast_type_id, "assign assign1");
+     Ake_ast* assign1 = Ast_node_get(assign, 1);
+     Zinc_assert_ptr(assign1, "ptr assign1");
+     Zinc_expect_int_equal(assign1->type, Ake_ast_type_id, "assign assign1");
     Zinc_expect_string(&assign1->value, "b", "assign1 value");
 
     Ake_ast* assign2 = Ast_node_get(assign, 2);
@@ -1915,56 +1915,56 @@ void test_parse_expr_assignment_eseq_error_eseq_count()
 
 void test_parse_const_assign_error_term()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("const a: Bool =", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "expected expression");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "expected expression");
 
     parse_teardown(&cu);
 }
 
 void test_parse_assign_error_no_value_right()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("fn foo() end; const a: [10]Nat8 = foo()", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "cannot assign with operand that has no value");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "cannot assign with operand that has no value");
 
     parse_teardown(&cu);
 }
 
 void test_parse_assign_error_not_compatible()
 {
-	Zinc_test_name(__func__);
+     Zinc_test_name(__func__);
 
-	struct Ake_comp_unit cu;
+     struct Ake_comp_unit cu;
 
     parse_setup("const x: Int32 = true", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "values in assignment are not compatible");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "values in assignment are not compatible");
 
     parse_teardown(&cu);
 }
 
 void test_parse_assign_error_lvalue()
 {
-	Zinc_test_name(__func__);
-	
-	struct Ake_comp_unit cu;
+     Zinc_test_name(__func__);
+     
+     struct Ake_comp_unit cu;
 
     parse_setup("true = true", &cu);
-	Zinc_assert_has_errors(&cu.errors);
-	Zinc_expect_false(cu.valid, "valid");
-	Zinc_expect_source_error(&cu.errors, "invalid lvalue");
+     Zinc_assert_has_errors(&cu.errors);
+     Zinc_expect_false(cu.valid, "valid");
+     Zinc_expect_source_error(&cu.errors, "invalid lvalue");
 
     parse_teardown(&cu);
 }
@@ -2287,86 +2287,86 @@ void test_parse_array_string_return()
 
 void test_parse_expression()
 {
-	// test_parse_blank();
-	test_parse_add();
-	// test_parse_add_error_expected_term();
-	// test_parse_add_error_left_no_value();
-	// test_parse_add_error_left_not_numeric();
-	// test_parse_add_error_right_no_value();
- //    test_parse_add_error_right_not_numeric();
-	// test_parse_add_mixed_types();
-	// test_parse_add_positive();
-	// test_parse_add_negative();
-	// test_parse_sub();
-	// test_parse_sub_positive();
-	// test_parse_sub_negative();
-	// test_parse_mult();
-	// test_parse_mult_error_expected_term();
-	// test_parse_mult_error_left_no_value();
-	// test_parse_mult_error_left_not_numeric();
-	// test_parse_mult_error_right_no_value();
-	// test_parse_mult_error_right_not_numeric();
-	// test_parse_mult_positive();
-	// test_parse_mult_negative();
-	// test_parse_divide();
-	// test_parse_add_add();
-	// test_parse_mult_mult();
-	// test_parse_add_mult();
-	// test_parse_mult_add();
-	// test_parse_power();
-	// test_parse_power_error_expected_term();
-	// test_parse_power_error_left_no_value();
-	// test_parse_power_error_left_not_numeric();
-	// test_parse_power_error_right_no_value();
-	// test_parse_power_error_right_not_numeric();
-	// test_parse_paren_add();
-	// test_parse_paren_add2();
-	// test_parse_paren_add3();
-	// test_parse_paren_add_add();
-	// test_parse_paren_add_add2();
-	// test_parse_paren_mult();
-	// test_parse_paren_mult_mult();
-	// test_parse_paren_mult_mult2();
-	// test_parse_comparison();
-	// test_parse_comparison_identity();
-	// test_parse_comparison_error_no_term();
-	// test_parse_comparison_error_left_no_value();
-	// test_parse_comparison_error_right_no_value();
-	// test_parse_comparison_error_left_not_numeric();
-	// test_parse_comparison_error_right_not_numeric();
-	// test_parse_and();
-	// test_parse_or();
-	// test_parse_or_or();
-	// test_parse_boolean_error_expected_term();
-	// test_parse_boolean_error_left_no_value();
-	// test_parse_boolean_error_right_no_value();
-	// test_parse_boolean_error_left_not_boolean();
-	// test_parse_boolean_error_right_not_boolean();
- //    test_parse_array_declare();
-	// test_parse_array_subscript();
-	// test_parse_array_subscript2();
-	// test_parse_array_subscript3();
- //    test_parse_expr_array_subscript_3d();
-	// test_parse_subscript_error_no_type();
-	// test_parse_subscript_error_not_array();
-	// test_parse_subscript_error_expected_right_square_bracket();
-	// test_parse_assign_string();
-	// test_parse_assign_multiple();
- //    test_parse_expr_assignment_eseq_error_eseq_count();
- //    test_parse_const_assign_error_term();
-	// test_parse_assign_error_no_value_right();
-	// test_parse_assign_error_not_compatible();
-	// test_parse_assign_error_lvalue();
- //    test_parse_expr_newline_assignment();
- //    test_parse_expr_newline_boolean();
- //    test_parse_expr_newline_comparison();
- //    test_parse_expr_newline_add();
- //    test_parse_expr_newline_mult();
- //    test_parse_expr_newline_power();
- //    test_parse_expr_newline_subscript();
- //    test_parse_expr_newline_function_call();
- //    test_parse_expr_assign_eseq();
- //    test_parse_expr_error_lvalue();
- //    test_parse_expr_error_eseq_lvalue();
- //    test_parse_array_string_return();
+     test_parse_blank();
+     test_parse_add();
+     test_parse_add_error_expected_term();
+     test_parse_add_error_left_no_value();
+     test_parse_add_error_left_not_numeric();
+     test_parse_add_error_right_no_value();
+     test_parse_add_error_right_not_numeric();
+     test_parse_add_mixed_types();
+     test_parse_add_positive();
+     test_parse_add_negative();
+     test_parse_sub();
+     test_parse_sub_positive();
+     test_parse_sub_negative();
+     test_parse_mult();
+     test_parse_mult_error_expected_term();
+     test_parse_mult_error_left_no_value();
+     test_parse_mult_error_left_not_numeric();
+     test_parse_mult_error_right_no_value();
+     test_parse_mult_error_right_not_numeric();
+     test_parse_mult_positive();
+     test_parse_mult_negative();
+     test_parse_divide();
+     test_parse_add_add();
+     test_parse_mult_mult();
+     test_parse_add_mult();
+     test_parse_mult_add();
+     test_parse_power();
+     test_parse_power_error_expected_term();
+     test_parse_power_error_left_no_value();
+     test_parse_power_error_left_not_numeric();
+     test_parse_power_error_right_no_value();
+     test_parse_power_error_right_not_numeric();
+     test_parse_paren_add();
+     test_parse_paren_add2();
+     test_parse_paren_add3();
+     test_parse_paren_add_add();
+     test_parse_paren_add_add2();
+     test_parse_paren_mult();
+     test_parse_paren_mult_mult();
+     test_parse_paren_mult_mult2();
+     test_parse_comparison();
+     test_parse_comparison_identity();
+     test_parse_comparison_error_no_term();
+     test_parse_comparison_error_left_no_value();
+     test_parse_comparison_error_right_no_value();
+     test_parse_comparison_error_left_not_numeric();
+     test_parse_comparison_error_right_not_numeric();
+     test_parse_and();
+     test_parse_or();
+     test_parse_or_or();
+     test_parse_boolean_error_expected_term();
+     test_parse_boolean_error_left_no_value();
+     test_parse_boolean_error_right_no_value();
+     test_parse_boolean_error_left_not_boolean();
+     test_parse_boolean_error_right_not_boolean();
+     test_parse_array_declare();
+     test_parse_array_subscript();
+     test_parse_array_subscript2();
+     test_parse_array_subscript3();
+     test_parse_expr_array_subscript_3d();
+     test_parse_subscript_error_no_type();
+     test_parse_subscript_error_not_array();
+     test_parse_subscript_error_expected_right_square_bracket();
+     test_parse_assign_string();
+     test_parse_assign_multiple();
+     test_parse_expr_assignment_eseq_error_eseq_count();
+     test_parse_const_assign_error_term();
+     test_parse_assign_error_no_value_right();
+     test_parse_assign_error_not_compatible();
+     test_parse_assign_error_lvalue();
+     test_parse_expr_newline_assignment();
+     test_parse_expr_newline_boolean();
+     test_parse_expr_newline_comparison();
+     test_parse_expr_newline_add();
+     test_parse_expr_newline_mult();
+     test_parse_expr_newline_power();
+     test_parse_expr_newline_subscript();
+     test_parse_expr_newline_function_call();
+     test_parse_expr_assign_eseq();
+     test_parse_expr_error_lvalue();
+     test_parse_expr_error_eseq_lvalue();
+     test_parse_array_string_return();
 }

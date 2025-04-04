@@ -38,6 +38,8 @@ void Ake_comp_table_init_str(Ake_comp_table* ct, char* s)
 	Zinc_string_add_str(&path, "**string**");
 
 	Ake_comp_table_put(ct, &path, cu);
+
+	Zinc_string_destroy(&path);
 }
 
 void Ake_comp_table_create_str(Ake_comp_table** ct, char* s)
@@ -68,10 +70,16 @@ void Ake_comp_table_destroy_comp_unit(Ake_comp_unit* cu)
 	free(cu);
 }
 
-void Ake_comp_table_destroy(struct Ake_comp_table* ct)
+void Ake_comp_table_destroy(Ake_comp_table* ct)
 {
 	Zinc_hash_map_string_map(&ct->ht, (void (*)(void*))Ake_comp_table_destroy_comp_unit);
 	Zinc_hash_map_string_destroy(&ct->ht);
+}
+
+void Ake_comp_table_free(Ake_comp_table* ct)
+{
+	Ake_comp_table_destroy(ct);
+	free(ct);
 }
 
 bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struct Ake_comp_unit** cu_base)
