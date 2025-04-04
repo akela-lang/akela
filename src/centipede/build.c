@@ -84,7 +84,7 @@ Cent_value* Cent_build_dispatch(Cent_build_data* bd, Cent_ast* n)
     }
 
     if (n->type == Cent_ast_type_const) {
-        value = Cent_build_const(bd, n);
+        //value = Cent_build_const(bd, n);
     }
 
     if (n->type == Cent_ast_type_expr_function_file_name) {

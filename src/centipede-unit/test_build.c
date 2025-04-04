@@ -1124,6 +1124,7 @@ void test_build_cycle()
     Zinc_expect_source_error(errors, "cycle detected");
 
     Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_cycle2()
@@ -1144,6 +1145,7 @@ void test_build_cycle2()
     Zinc_expect_source_error(errors, "cycle detected");
 
     Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build()
