@@ -289,6 +289,8 @@ Cent_ast* Cent_parse_variant_type(Cent_parse_data* pd)
 
     Cent_token* lcb = NULL;
     Cent_match(pd, Cent_token_left_curly_brace, "expected left-curly-brace", &lcb, n);
+    Cent_token_destroy(lcb);
+    free(lcb);
 
     size_t properties_count = 0;
     size_t children_count = 0;
@@ -327,6 +329,8 @@ Cent_ast* Cent_parse_variant_type(Cent_parse_data* pd)
 
     Cent_token* rcb = NULL;
     Cent_match(pd, Cent_token_right_curly_brace, "expected right-curly-brace", &rcb, n);
+    Cent_token_destroy(rcb);
+    free(rcb);
 
     if (!n->has_error) {
         Zinc_priority_task* task = NULL;
