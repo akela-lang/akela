@@ -1098,6 +1098,9 @@ void test_build_variant()
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
     Zinc_expect_string(&root->name, "Monsters", "name root");
+
+    Cent_comp_table_destroy(ct);
+    free(ct);
 }
 
 void test_build_cycle()
