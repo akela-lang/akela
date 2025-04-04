@@ -235,7 +235,7 @@ void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
 
 void Ake_symbol_table_init(struct Ake_symbol_table* st)
 {
-	struct Ake_environment* env = NULL;
+	Ake_environment* env = NULL;
 	Zinc_malloc_safe((void**)&env, sizeof(struct Ake_environment));
 	Ake_environment_init(env, NULL);
 	st->top = env;
@@ -253,23 +253,23 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
     st->id_count = 0;
 }
 
-void Ake_symbol_table_create(struct Ake_symbol_table** st)
+void Ake_symbol_table_create(Ake_symbol_table** st)
 {
-    Zinc_malloc_safe((void**)st, sizeof(struct Ake_symbol_table));
+    Zinc_malloc_safe((void**)st, sizeof(Ake_symbol_table));
     Ake_symbol_table_init(*st);
 }
 
-void Ake_symbol_table_destroy(struct Ake_symbol_table* st)
+void Ake_symbol_table_destroy(Ake_symbol_table* st)
 {
-	struct Ake_environment* env = st->top;
+	Ake_environment* env = st->top;
 	while (env) {
-		struct Ake_environment* prev = env->prev;
+		Ake_environment* prev = env->prev;
 		Ake_environment_destroy(env);
 		env = prev;
 	}
     env = st->deactivated;
     while (env) {
-        struct Ake_environment* prev = env->prev;
+        Ake_environment* prev = env->prev;
         Ake_environment_destroy(env);
         env = prev;
     }

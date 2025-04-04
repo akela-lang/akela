@@ -23,10 +23,6 @@ void Ake_comp_table_init_str(Ake_comp_table* ct, char* s)
 	Zinc_input_unicode_string* input = NULL;
 	Zinc_input_unicode_string_create(&input, v);
 
-	Ake_symbol_table_init(&cu->st);
-
-	Zinc_error_list_init(&cu->errors);
-
 	Ake_lex_state* ls = NULL;
 	Ake_lex_state_create(&ls, input, input->vtable, &cu->errors, &cu->st);
 
