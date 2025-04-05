@@ -5,13 +5,18 @@
 #include "zinc/input_unicode_file.h"
 #include "centipede/comp_table.h"
 #include <assert.h>
+#include <string.h>
 #include <akela/comp_unit.h>
 #include "zinc/spec_error.h"
 #include "zinc/input_unicode_string.h"
 #include "data.h"
+#include <errno.h>
+#include <akela/comp_table.h>
 
 void Apt_run_suite(Apt_data* data, Apt_test_suite* suite);
 void Apt_run_test(Apt_data* data, Apt_test_case* tc);
+void Apt_compare_type_use(Apt_data* data, Ake_type_use* tu, Cent_value* value);
+void Apt_compare_type_def(Apt_data* data, Ake_type_def* td, Cent_value* value);
 
 void Apt_run(Apt_data* data)
 {
@@ -39,55 +44,75 @@ void Apt_run_suite(Apt_data* data, Apt_test_suite* suite)
 void Apt_run_test(Apt_data* data, Apt_test_case* tc)
 {
     printf("%s\n", Zinc_string_c_str(&tc->description));
+    FILE* fp = fopen(Zinc_string_c_str(&tc->source_path), "r");
+    if (!fp) {
+        Zinc_location loc;
+        Zinc_location_init(&loc);
+        Zinc_error_list_set(
+            &data->errors,
+            &loc,
+            "fopen: %s: %s",
+            Zinc_string_c_str(&tc->source_path),
+            strerror(errno));
+        return;
+    }
+
+    Ake_comp_table* ct = NULL;
+    Ake_comp_table_create_fp(&ct, tc->source_path, fp);
+    Ake_comp_unit_set_bounds(ct->primary, &tc->source_bounds);
+    Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
+    if (pr.errors->head) {
+        Zinc_error* e = pr.errors->head;
+        while (e) {
+            Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
+            e = e->next;
+        }
+        Ake_comp_table_free(ct);
+        return;
+    }
+
+    // close file before reopening
+    Ake_comp_unit_destroy_input(ct->primary);
+
+    Cent_comp_table* ast_ct = NULL;
+    fp = fopen(Zinc_string_c_str(&tc->source_path), "r");
+    if (!fp) {
+        Zinc_location loc;
+        Zinc_location_init(&loc);
+        Zinc_error_list_set(
+            &data->errors,
+            &loc,
+            "fopen: %s: %s",
+            Zinc_string_c_str(&tc->source_path),
+            strerror(errno));
+        Ake_comp_table_free(ct);
+        return;
+    }
+    Cent_comp_table_create_fp(&ast_ct, &data->dir_path, &tc->source_name, fp);
+    Cent_comp_unit_set_bounds(ast_ct->primary, &tc->source_bounds);
+    Cent_comp_unit_parse(ast_ct->primary);
+    Cent_comp_unit_build(ast_ct->primary);
+    if (ast_ct->primary->errors.head) {
+        Zinc_error* e = ast_ct->primary->errors.head;
+        while (e) {
+            Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
+            e = e->next;
+        }
+        Ake_comp_table_free(ct);
+        Cent_comp_table_destroy(ast_ct);
+        free(ast_ct);
+        return;
+    }
+
+    Ake_comp_table_free(ct);
+    Cent_comp_table_destroy(ast_ct);
+    free(ast_ct);
 }
 
-typedef struct {Zinc_string name1; Zinc_string name2; Zinc_spec_error_list* list;} Apt_test_data;
-
-void Apt_compare_type_use(Apt_test_data* data, Ake_type_use* tu, Cent_value* value);
-void Apt_compare_type_def(Apt_test_data* data, Ake_type_def* td, Cent_value* value);
-
-void Apt_print_errors(Zinc_spec_error_list* list)
-{
-    Zinc_spec_error* e = list->head;
-    while (e) {
-        Zinc_string_finish(&e->message);
-        Zinc_string_finish(&e->name1);
-        Zinc_string_finish(&e->name2);
-        fprintf(
-            stderr,
-            "(%zu,%zu): %s\n"
-            "(%zu,%zu): %s\n"
-            "\t%s\n",
-            e->loc1.line,
-            e->loc1.col,
-            e->name1.buf,
-            e->loc2.line,
-            e->loc2.col,
-            e->name2.buf,
-            e->message.buf);
-        e = e->next;
-    }
-}
-
-void Apt_error(Apt_test_data* data, Ake_ast* n, Cent_value* value, Zinc_string* message)
-{
-    Zinc_spec_error* error = NULL;
-    Zinc_spec_error_create(&error);
-    if (n) {
-        error->loc1 = n->loc;
-    }
-    if (value) {
-        Cent_ast* n2 = value->n;
-        error->loc2 = n2->loc;
-    }
-    Zinc_string_add_string(&error->name1, &data->name1);
-    Zinc_string_add_string(&error->name2, &data->name2);
-    Zinc_string_add_string(&error->message, message);
-    Zinc_spec_error_list_add(data->list, error);
-}
+#define Apt_error(data, n, value, message)
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Apt_compare_ast(Apt_test_data* data, Ake_ast* n, Cent_value* value)
+void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
 {
     if (!n && !value) {
         return;
@@ -193,7 +218,7 @@ void Apt_compare_ast(Apt_test_data* data, Ake_ast* n, Cent_value* value)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Apt_compare_type_use(Apt_test_data* data, Ake_type_use* tu, Cent_value* value)
+void Apt_compare_type_use(Apt_data* data, Ake_type_use* tu, Cent_value* value)
 {
     if (!tu && !value) {
         return;
@@ -251,7 +276,7 @@ void Apt_compare_type_use(Apt_test_data* data, Ake_type_use* tu, Cent_value* val
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Apt_compare_type_def(Apt_test_data* data, Ake_type_def* td, Cent_value* value)
+void Apt_compare_type_def(Apt_data* data, Ake_type_def* td, Cent_value* value)
 {
     if (!td && !value) {
         return;
@@ -361,5 +386,24 @@ void Apt_compare_type_def(Apt_test_data* data, Ake_type_def* td, Cent_value* val
             Apt_error(data, NULL, value, &message);
             Zinc_string_destroy(&message);
         }
+    }
+}
+
+void Apt_print_errors(Zinc_spec_error_list* list)
+{
+    Zinc_spec_error* e = list->head;
+    while (e) {
+        Zinc_string_finish(&e->message);
+        fprintf(
+            stderr,
+            "(%zu,%zu)\n"
+            "(%zu,%zu)\n"
+            "\t%s\n",
+            e->loc1.line,
+            e->loc1.col,
+            e->loc2.line,
+            e->loc2.col,
+            e->message.buf);
+        e = e->next;
     }
 }

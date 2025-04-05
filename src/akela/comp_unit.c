@@ -17,7 +17,9 @@ void Ake_comp_unit_init(Ake_comp_unit* cu)
 	Ake_symbol_table_init(&cu->st);
 	cu->ps = NULL;
 	cu->ls = NULL;
-    cu->input_obj = NULL;
+    cu->input = NULL;
+	cu->vtable = NULL;
+	cu->input_destroyed = false;
 	cu->next = NULL;
 	cu->prev = NULL;
 }
@@ -40,7 +42,9 @@ void Ake_comp_unit_destroy(Ake_comp_unit* cu)
     		free(cu->ps);
     	}
     	if (cu->ls) {
-    		Zinc_input_unicode_string_destroy(cu->ls->input);
+    		if (!cu->input_destroyed) {
+    			Zinc_input_unicode_destroy(cu->ls->input, cu->ls->vtable);
+    		}
     		free(cu->ls->input);
     		free(cu->ls);
     	}
@@ -77,7 +81,7 @@ bool Ake_comp_unit_compile(Ake_comp_unit* cu, void* input_obj, Zinc_input_unicod
 {
 	bool valid = true;
 	Ake_parse_state* ps = NULL;
-    cu->input_obj = input_obj;
+    cu->input = input_obj;
 	Ake_comp_unit_setup(cu, input_obj, input_vtable, &ps);
 	Ake_parse_result pr = Ake_parse(ps);
     cu->root = pr.root;
@@ -90,9 +94,22 @@ bool Ake_comp_unit_compile(Ake_comp_unit* cu, void* input_obj, Zinc_input_unicod
 	return valid;
 }
 
+void Ake_comp_unit_set_bounds(Ake_comp_unit* cu, Zinc_input_bounds* bounds)
+{
+	Zinc_input_unicode_set_bounds(cu->input, cu->vtable, bounds);
+}
+
 Ake_parse_result Ake_comp_unit_parse(Ake_comp_unit* cu)
 {
 	Ake_parse_result pr = Ake_parse(cu->ps);
 	cu->root = pr.root;
 	return pr;
+}
+
+void Ake_comp_unit_destroy_input(Ake_comp_unit* cu)
+{
+	if (!cu->input_destroyed) {
+		cu->input_destroyed = true;
+		Zinc_input_unicode_destroy(cu->input, cu->vtable);
+	}
 }

@@ -15,6 +15,7 @@ struct Apt_test_case {
     bool mute;
     bool has_error;
     Zinc_string source_path;
+    Zinc_string source_name;
     Zinc_input_bounds source_bounds;
     Zinc_string ast_path;
     Zinc_input_bounds ast_bounds;

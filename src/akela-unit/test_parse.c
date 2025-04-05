@@ -28,7 +28,7 @@ bool parse_setup(char* line, struct Ake_comp_unit* cu)
 
 void parse_teardown(struct Ake_comp_unit* cu)
 {
-    Zinc_input_unicode_string* input = cu->input_obj;
+    Zinc_input_unicode_string* input = cu->input;
     Zinc_vector* text = input->text;
     Zinc_vector_destroy(text);
     free(text);

@@ -66,6 +66,8 @@ void Ake_comp_table_init_fp(Ake_comp_table* ct, Zinc_string path, FILE* fp)
 
 	cu->ls = ls;
 	cu->ps = ps;
+	cu->input = input;
+	cu->vtable = input->vtable;
 	ct->primary = cu;
 
 	Ake_comp_table_put(ct, &path, cu);

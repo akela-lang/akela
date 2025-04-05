@@ -6,9 +6,7 @@
 
 typedef struct Zinc_spec_error {
     Zinc_string message;
-    Zinc_string name1;
     Zinc_location loc1;
-    Zinc_string name2;
     Zinc_location loc2;
     struct Zinc_spec_error *next;
     struct Zinc_spec_error *prev;
@@ -26,5 +24,10 @@ void Zinc_spec_error_list_init(Zinc_spec_error_list* list);
 void Zinc_spec_error_list_create(Zinc_spec_error_list** list);
 void Zinc_spec_error_list_add(Zinc_spec_error_list* list, Zinc_spec_error* error);
 void Zinc_spec_error_list_destroy(Zinc_spec_error_list* list);
+void Zinc_spec_error_list_set(
+    Zinc_spec_error_list* errors,
+    Zinc_location* loc1,
+    Zinc_location* loc2,
+    const char* fmt, ...);
 
 #endif
