@@ -5,10 +5,7 @@
 * remove function pointer test
 
 # Akela Parse Test
-* generate ast
-* compare ast
-* compare type use
-* compare type def
+* create errors
 
 # Akela Run Test
 * new file format

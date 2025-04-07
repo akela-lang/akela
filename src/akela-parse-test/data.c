@@ -135,8 +135,8 @@ void Apt_data_init(Apt_data* data)
 {
     Zinc_string_init(&data->dir_path);
     Apt_suite_list_init(&data->suites);
-    data->fp = NULL;
     Zinc_error_list_init(&data->errors);
+    Zinc_spec_error_list_init(&data->spec_errors);
     data->has_suite_solo = false;
     data->has_test_solo = false;
 }
@@ -151,4 +151,6 @@ void Apt_data_destroy(Apt_data* data)
 {
     Zinc_string_destroy(&data->dir_path);
     Apt_suite_list_destroy(&data->suites);
+    Zinc_error_list_destroy(&data->errors);
+    Zinc_spec_error_list_destroy(&data->spec_errors);
 }

@@ -64,8 +64,14 @@ void Zinc_spec_error_list_set(
 {
     Zinc_spec_error* e = NULL;
     Zinc_spec_error_create(&e);
-    e->loc1 = *loc1;
-    e->loc2 = *loc2;
+
+    if (loc1) {
+        e->loc1 = *loc1;
+    }
+
+    if (loc2) {
+        e->loc2 = *loc2;
+    }
 
     va_list args;
     va_start(args, fmt);

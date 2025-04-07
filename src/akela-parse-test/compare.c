@@ -119,68 +119,59 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
     }
 
     if (n && !value) {
-        Zinc_string message;
-        Zinc_string_init(&message);
-        Zinc_string_add_format(&message, "value is null");
-        Apt_error(data, n, value, &message);
-        Zinc_string_destroy(&message);
+        Zinc_spec_error_list_set(&data->spec_errors, &n->loc, NULL, "value is null");
         return;
     }
 
+    Cent_ast* value_n = value->n;
+
     if (!n && value) {
-        Zinc_string message;
-        Zinc_string_init(&message);
-        Zinc_string_add_format(&message, "node is null");
-        Apt_error(data, n, value, &message);
-        Zinc_string_destroy(&message);
+        Zinc_spec_error_list_set(&data->spec_errors, NULL, &value_n->loc, "node is null");
         return;
     }
 
     if (!Zinc_string_compare_str(&value->name, "Ast")) {
-        Zinc_string message;
-        Zinc_string_init(&message);
-        Zinc_string_add_format(&message, "expected AST value: %bf", &value->name);
-        Apt_error(data, n, value, &message);
-        Zinc_string_destroy(&message);
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            &n->loc,
+            &value_n->loc,
+            "expected AST value: %bf",
+            &value->name);
     }
 
     /* properties */
     Cent_value* type = Cent_value_get_str(value, "type");
     assert(type);
     if (n->type != type->data.enumeration.enum_value->value) {
-        Zinc_string message;
-        Zinc_string_init(&message);
-        Zinc_string_add_format(
-            &message,
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            &n->loc,
+            &value_n->loc,
             "Ast type does not match (%d-%s) (%d-%bf)\n",
             n->type,
             Ast_type_name(n->type),
             type->data.enumeration.enum_value->value,
             &type->data.enumeration.enum_value->display);
-        Apt_error(data, n, value, &message);
-        Zinc_string_destroy(&message);
     }
 
     Cent_value* value_prop = Cent_value_get_str(value, "value");
     if (n->value.size > 0) {
         if (!value_prop) {
-            Zinc_string message;
-            Zinc_string_init(&message);
-            Zinc_string_add_format(&message, "value not expected");
-            Apt_error(data, n, value, &message);
-            Zinc_string_destroy(&message);
+            Zinc_spec_error_list_set(
+                &data->spec_errors,
+                &n->loc,
+                &value_n->loc,
+                "value not expected");
         } else {
             assert(value_prop->type == Cent_value_type_string);
             if (!Zinc_string_compare(&n->value, &value_prop->data.string)) {
-                Zinc_string message;
-                Zinc_string_init(&message);
-                Zinc_string_add_format(
-                    &message,
+                Zinc_spec_error_list_set(
+                    &data->spec_errors,
+                    &n->loc,
+                    &value_n->loc,
                     "AST values do not match (%bf) (%bf)",
                     &n->value,
                     &value_prop->data.string);
-                Apt_error(data, n, value, &message);
-                Zinc_string_destroy(&message);
             }
         }
     } else {

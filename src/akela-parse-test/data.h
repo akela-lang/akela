@@ -55,8 +55,8 @@ struct Apt_data
 {
     Zinc_string dir_path;
     Apt_suite_list suites;
-    FILE* fp;
     Zinc_error_list errors;
+    Zinc_spec_error_list spec_errors;
     bool has_test_solo;
     bool has_suite_solo;
 };
