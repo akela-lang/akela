@@ -5,7 +5,6 @@
 * remove function pointer test
 
 # Akela Parse Test
-* create errors
 
 # Akela Run Test
 * new file format

@@ -162,6 +162,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->type = Ake_type_float;
 	Zinc_string_add_str(&td->name, name);
 	td->bit_count = 16;
+	td->is_signed = true;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "Real32";
@@ -170,6 +171,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->type = Ake_type_float;
 	Zinc_string_add_str(&td->name, name);
 	td->bit_count = 32;
+	td->is_signed = true;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "Real64";
@@ -178,6 +180,7 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->type = Ake_type_float;
 	Zinc_string_add_str(&td->name, name);
 	td->bit_count = 64;
+	td->is_signed = true;
 	Ake_symbol_table_add_type(env, name, td);
 
 	name = "Bool";
