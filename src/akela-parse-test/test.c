@@ -30,6 +30,10 @@ int main(int argc, char **argv)
         Apt_run(&data);
     }
 
+    if (data.spec_errors.head) {
+        Zinc_spec_error_list_print(&data.spec_errors);
+    }
+
     Apt_data_destroy(&data);
 
     return 0;

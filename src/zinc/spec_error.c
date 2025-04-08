@@ -80,3 +80,22 @@ void Zinc_spec_error_list_set(
 
     Zinc_spec_error_list_add(errors, e);
 }
+
+void Zinc_spec_error_list_print(Zinc_spec_error_list* list)
+{
+    Zinc_spec_error* e = list->head;
+    while (e) {
+        Zinc_string_finish(&e->message);
+        fprintf(
+            stderr,
+            "(%zu,%zu)\n"
+            "(%zu,%zu)\n"
+            "\t%s\n",
+            e->loc1.line,
+            e->loc1.col,
+            e->loc2.line,
+            e->loc2.col,
+            e->message.buf);
+        e = e->next;
+    }
+}

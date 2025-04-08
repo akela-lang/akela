@@ -29,5 +29,6 @@ void Zinc_spec_error_list_set(
     Zinc_location* loc1,
     Zinc_location* loc2,
     const char* fmt, ...);
+void Zinc_spec_error_list_print(Zinc_spec_error_list* list);
 
 #endif

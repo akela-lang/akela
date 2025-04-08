@@ -45,5 +45,8 @@ Ast::Stmts {
   Ast::Id {
     .value = "a"
   }
+  .tu = TypeUse {
+    .td = Int32
+  }
 }
 ```
