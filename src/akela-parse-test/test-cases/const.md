@@ -30,20 +30,30 @@ a
 use lib::base::*
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
-      .value = "a"
+    Ast::LetLseq {
+      Ast::Id {
+        .value = "a"
+      }
     }
     Ast::Type {
       .tu = TypeUse {
         .td = Int32
       }
     }
-    Ast::Number {
-      .value = "105"
+    Ast::LetRseq {
+      Ast::Number {
+        .value = "105"
+        .tu = TypeUse {
+          .td = Int32
+        }
+      }
     }
   }
   Ast::Id {
     .value = "a"
+    .tu = TypeUse {
+      .td = Int32
+    }
   }
   .tu = TypeUse {
     .td = Int32
