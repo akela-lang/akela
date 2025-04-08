@@ -175,10 +175,11 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
         } else {
             assert(value_prop->type == Cent_value_type_string);
             if (!Zinc_string_compare(&n->value, &value_prop->data.string)) {
+                Cent_ast* prop_n = value_prop->n;
                 Zinc_spec_error_list_set(
                     &data->spec_errors,
                     &n->loc,
-                    &value_n->loc,
+                    &prop_n->loc,
                     "AST values do not match (%bf) (%bf)",
                     &n->value,
                     &value_prop->data.string);
