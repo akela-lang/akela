@@ -10,7 +10,7 @@ TestSuite {
 ```
 
 ## Test
-Declare and use an integer
+Integer constant
 
 ```cent
 use lib::base::*
@@ -34,7 +34,7 @@ Ast::Stmts {
       .value = "a"
     }
     Ast::Type {
-      .tu = Type_use {
+      .tu = TypeUse {
         .td = Int32
       }
     }

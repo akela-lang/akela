@@ -33,9 +33,8 @@ element Error {
   }
 }
 
-element Ast {
+element Ast(AstType) {
   properties {
-    type: AstType `required`
     value: String
     tu: TypeUse
   }

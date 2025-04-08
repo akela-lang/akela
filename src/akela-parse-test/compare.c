@@ -15,7 +15,8 @@
 
 void Apt_run_suite(Apt_data* data, Apt_test_suite* suite);
 void Apt_run_test(Apt_data* data, Apt_test_case* tc);
-void Apt_compare_type_use(Apt_data* data, Ake_type_use* tu, Cent_value* value);
+void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value);
+void Apt_compare_type_use(Apt_data* data, Zinc_location* loc, Ake_type_use* tu, Cent_value* value);
 void Apt_compare_type_def(Apt_data* data, Ake_type_def* td, Cent_value* value);
 
 void Apt_run(Apt_data* data)
@@ -67,6 +68,7 @@ void Apt_run_test(Apt_data* data, Apt_test_case* tc)
             Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
             e = e->next;
         }
+        Zinc_error_list_print(&data->errors);
         Ake_comp_table_free(ct);
         return;
     }
@@ -74,7 +76,7 @@ void Apt_run_test(Apt_data* data, Apt_test_case* tc)
     // close file before reopening
     Ake_comp_unit_destroy_input(ct->primary);
 
-    Cent_comp_table* ast_ct = NULL;
+    Cent_comp_table* expected_ct = NULL;
     fp = fopen(Zinc_string_c_str(&tc->source_path), "r");
     if (!fp) {
         Zinc_location loc;
@@ -88,25 +90,29 @@ void Apt_run_test(Apt_data* data, Apt_test_case* tc)
         Ake_comp_table_free(ct);
         return;
     }
-    Cent_comp_table_create_fp(&ast_ct, &data->dir_path, &tc->source_name, fp);
-    Cent_comp_unit_set_bounds(ast_ct->primary, &tc->source_bounds);
-    Cent_comp_unit_parse(ast_ct->primary);
-    Cent_comp_unit_build(ast_ct->primary);
-    if (ast_ct->primary->errors.head) {
-        Zinc_error* e = ast_ct->primary->errors.head;
+    Cent_comp_table_create_fp(&expected_ct, &data->dir_path, &tc->source_name, fp);
+    Cent_comp_unit_set_bounds(expected_ct->primary, &tc->ast_bounds);
+    Cent_comp_unit_parse(expected_ct->primary);
+    Cent_comp_unit_build(expected_ct->primary);
+    if (expected_ct->primary->errors.head) {
+        Zinc_error* e = expected_ct->primary->errors.head;
         while (e) {
             Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
             e = e->next;
         }
+        Zinc_error_list_print(&data->errors);
+
         Ake_comp_table_free(ct);
-        Cent_comp_table_destroy(ast_ct);
-        free(ast_ct);
+        Cent_comp_table_destroy(expected_ct);
+        free(expected_ct);
         return;
     }
 
+    Apt_compare_ast(data, ct->primary->root, expected_ct->primary->value);
+
     Ake_comp_table_free(ct);
-    Cent_comp_table_destroy(ast_ct);
-    free(ast_ct);
+    Cent_comp_table_destroy(expected_ct);
+    free(expected_ct);
 }
 
 #define Apt_error(data, n, value, message)
@@ -140,7 +146,7 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
     }
 
     /* properties */
-    Cent_value* type = Cent_value_get_str(value, "type");
+    Cent_value* type = Cent_value_get_str(value, "@tag");
     assert(type);
     if (n->type != type->data.enumeration.enum_value->value) {
         Zinc_spec_error_list_set(
@@ -176,17 +182,17 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
         }
     } else {
         if (value_prop && value_prop->data.string.size > 0) {
-            Zinc_string message;
-            Zinc_string_init(&message);
-            Zinc_string_add_format(&message, "value expected");
-            Apt_error(data, n, value, &message);
-            Zinc_string_destroy(&message);
+            Zinc_spec_error_list_set(
+                &data->spec_errors,
+                &n->loc,
+                &value_n->loc,
+                "value expected");
         }
     }
 
     Ake_type_use* tu = n->tu;
     Cent_value* tu_value = Cent_value_get_str(value, "tu");
-    Apt_compare_type_use(data, tu, tu_value);
+    Apt_compare_type_use(data, &n->loc, tu, tu_value);
 
     /* children */
     Ake_ast* n2 = NULL;
@@ -209,36 +215,39 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Apt_compare_type_use(Apt_data* data, Ake_type_use* tu, Cent_value* value)
+void Apt_compare_type_use(Apt_data* data, Zinc_location* loc, Ake_type_use* tu, Cent_value* value)
 {
     if (!tu && !value) {
         return;
     }
 
     if (tu && !value) {
-        Zinc_string message;
-        Zinc_string_init(&message);
-        Zinc_string_add_format(&message, "type use value is null");
-        Apt_error(data, NULL, value, &message);
-        Zinc_string_destroy(&message);
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            loc,
+            NULL,
+            "type use value is null");
         return;
     }
 
+    Ake_ast* value_n = value->n;
+
     if (!tu && value) {
-        Zinc_string message;
-        Zinc_string_init(&message);
-        Zinc_string_add_format(&message, "type use node is null");
-        Apt_error(data, NULL, value, &message);
-        Zinc_string_destroy(&message);
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            loc,
+            &value_n->loc,
+            "type use node is null");
         return;
     }
 
     if (!Zinc_string_compare_str(&value->name, "Type_use")) {
-        Zinc_string message;
-        Zinc_string_init(&message);
-        Zinc_string_add_format(&message, "expected type use value: %bf", &value->name);
-        Apt_error(data, NULL, value, &message);
-        Zinc_string_destroy(&message);
+            Zinc_spec_error_list_set(
+            &data->spec_errors,
+            loc,
+            &value_n->loc,
+            "expected type use value: %bf",
+            &value->name);
     }
 
     /* properties */
@@ -256,7 +265,7 @@ void Apt_compare_type_use(Apt_data* data, Ake_type_use* tu, Cent_value* value)
     }
 
     while (tu2 || value2) {
-        Apt_compare_type_use(data, tu2, value2);
+        Apt_compare_type_use(data, loc, tu2, value2);
         if (tu2) {
             tu2 = tu2->next;
         }
@@ -344,7 +353,7 @@ void Apt_compare_type_def(Apt_data* data, Ake_type_def* td, Cent_value* value)
 
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
-        assert(bit_count_value->type == Cent_value_type_natural);
+        assert(bit_count_value->type == Cent_value_type_integer);
         if (td->bit_count != bit_count_value->data.integer) {
             Zinc_string message;
             Zinc_string_init(&message);
