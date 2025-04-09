@@ -101,9 +101,6 @@ add_subdirectory(src/coverage-unit)
 add_subdirectory(src/centipede)
 add_subdirectory(src/centipede-unit)
 
-add_subdirectory(src/worm)
-add_subdirectory(src/worm-unit)
-
 add_subdirectory(src/lava)
 add_subdirectory(src/lava-unit)
 

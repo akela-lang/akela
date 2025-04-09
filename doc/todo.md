@@ -1,10 +1,9 @@
 # Akela
-* remove event loop test
 
 # Akela LLVM
-* remove function pointer test
 
 # Akela Parse Test
+* support snapshot
 
 # Akela Run Test
 * new file format
