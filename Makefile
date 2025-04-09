@@ -11,7 +11,6 @@ unit:
 	cmake-build-debug/bin/dataframe-unit
 	cmake-build-debug/bin/cobble-unit
 	cmake-build-debug/bin/centipede-unit
-	cmake-build-debug/bin/worm-unit
 	cmake-build-debug/bin/json-unit
 	cmake-build-debug/bin/coverage-unit
 	cmake-build-debug/bin/akela-llvm-unit
