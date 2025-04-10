@@ -2,6 +2,7 @@
 #define AKELA_RUN_TEST_DATA_H
 
 #include <centipede/module_finder.h>
+#include <zinc/spec_error.h>
 
 #include "cobble/compile.h"
 #include "centipede/value.h"
@@ -47,6 +48,8 @@ typedef struct Run_data {
     size_t test_failed_count;
     bool has_solo;
     Run_cent_data* type_info;
+    Zinc_error_list errors;
+    Zinc_spec_error_list spec_errors;
 } Run_data;
 
 typedef struct {

@@ -97,7 +97,7 @@ void Run_test_list_destroy(Run_test_list* list)
 
 void Run_data_init(Run_data* data)
 {
-    data->ext_re = Cob_compile_str("\\.run$");
+    data->ext_re = Cob_compile_str("\\.md$");
     data->separator_re = Cob_compile_str("^###");
     data->regex_re = Cob_compile_str("^/(.*)/\n?$");
     data->test_count = 0;
@@ -106,6 +106,8 @@ void Run_data_init(Run_data* data)
     data->has_solo = false;
     Run_test_list_init(&data->tests);
     data->type_info = NULL;
+    Zinc_error_list_init(&data->errors);
+    Zinc_spec_error_list_init(&data->spec_errors);
 }
 
 void Run_data_create(Run_data** data)
@@ -122,6 +124,8 @@ void Run_data_destroy(Run_data* data)
     Run_test_list_destroy(&data->tests);
     Run_cent_data_destroy(data->type_info);
     free(data->type_info);
+    Zinc_error_list_destroy(&data->errors);
+    Zinc_spec_error_list_destroy(&data->spec_errors);
 }
 
 void Run_pair_init(Run_pair* pair)

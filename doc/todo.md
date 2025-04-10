@@ -6,7 +6,7 @@
 * support snapshot
 
 # Akela Run Test
-* new file format
+* new file format (use lava)
 
 # Centipede
 remove object const and other unused code
@@ -23,8 +23,5 @@ remove object const and other unused code
 # JSON
 
 # Lava
-
-# Worm
-* remove worm
 
 # Zinc

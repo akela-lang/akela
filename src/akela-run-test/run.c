@@ -23,9 +23,23 @@ int main(int argc, const char* argv[])
     Run_data_init(&data);
 
     Run_parse_files(&data, dir_name);
+
+    if (data.errors.head) {
+        Zinc_error_list_print(&data.errors);
+        Run_data_destroy(&data);
+        return 0;
+    }
+
     Run_get_type_info(&data, dir_name);
-    Run_test_cases(&data);
-    Run_print_results(&data);
+
+    if (data.spec_errors.head) {
+        Zinc_error_list_print(&data.errors);
+        Run_data_destroy(&data);
+        return 0;
+    }
+
+    //Run_test_cases(&data);
+    //Run_print_results(&data);
 
     Run_data_destroy(&data);
 

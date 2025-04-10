@@ -15,6 +15,7 @@
 #include "zinc/os_unix.h"
 #include "zinc/os_win.h"
 #include "zinc/fs.h"
+#include "lava/parse.h"
 
 void Run_collect(
     Run_data* data,
@@ -77,6 +78,7 @@ void Run_parse_files(Run_data* data, char* dir_name)
                 Zinc_string_finish(&path);
 
                 if (Zinc_is_reg_file(&path)) {
+                    printf("%s\n", Zinc_string_c_str(&path));
                     Run_collect(data, &dir_path, &path, &node->value);
                 }
 
@@ -99,70 +101,39 @@ void Run_collect(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
     Zinc_string_finish(&test->name);
 
     FILE* fp = fopen(path->buf, "r");
-
-    Zinc_string line;
-    Zinc_string_init(&line);
-
-    int part_count = 0;
-
-    while (true) {
-        int c;
-        Zinc_string_clear(&line);
-        while ((c = fgetc(fp)) != EOF) {
-            Zinc_string_add_char(&line, (char)c);
-            if (c == '\n') {
-                break;
-            }
-        }
-        Zinc_string_slice line_slice = {line.buf, line.size};
-
-        Cob_result sep = Cob_match(&data->separator_re, line_slice);
-
-        if (sep.matched) {
-            part_count++;
-        } else {
-            if (part_count == 0) {
-                Zinc_string_add_string(&test->ake, &line);
-            } else if (part_count == 1) {
-                Zinc_string_add_string(&test->llvm, &line);
-            } else if (part_count == 2) {
-                Zinc_string_add_string(&test->config, &line);
-            }
-        }
-
-        Cob_result_destroy(&sep);
-
-        if (c == EOF) {
-            break;
-        }
+    if (!fp) {
+        perror(path->buf);
+        return;
     }
 
-    Zinc_string_finish(&test->ake);
-    Zinc_string_finish(&test->llvm);
-    Zinc_string_finish(&test->config);
+    Lava_result lr = Lava_parse_file(fp);
 
-    Zinc_string_destroy(&line);
-    fclose(fp);
-
-    test->config_data = Run_get_cent(dir_path, file_name, &test->config);
-    Run_test_list_add(&data->tests, test);
-
-    if (test->config_data) {
-        if (test->config_data->valid) {
-            Cent_value* value = test->config_data->ct->primary->value;
-            assert(value);
-
-            Cent_value* solo = Cent_value_get_str(value, "solo");
-
-            if (solo && solo->data.boolean) {
-                test->solo = true;
-                data->has_solo = true;
-            }
-
-            Cent_value* mute = Cent_value_get_str(value, "mute");
-            if (mute && mute->data.boolean) {
-                test->mute = true;
-            }
-        }
+    if (!lr.root) {
+        Zinc_error_list_set(&data->errors, NULL, "root is null");
+        Lava_result_destroy(&lr);
+        return;
     }
+
+    if (lr.root->kind != LAVA_DOM_HEADER) {
+        Zinc_error_list_set(&data->errors, NULL, "expected top level header");
+        Lava_result_destroy(&lr);
+        return;
+    }
+
+    if (lr.root->data.LAVA_DOM_HEADER.level != 1) {
+        Zinc_error_list_set(&data->errors, &lr.root->loc, "expected top level header");
+        Lava_result_destroy(&lr);
+        return;
+    }
+
+    Zinc_string_slice title = Zinc_string_get_slice(&lr.root->data.LAVA_DOM_HEADER.title);
+    title = Zinc_trim(title);
+    Zinc_string_slice title_ref = Zinc_string_slice_from_str("Test Suite");
+    if (!Zinc_string_slice_compare(&title, &title_ref)) {
+        Zinc_error_list_set(&data->errors, &lr.root->loc, "expected test suite");
+        Lava_result_destroy(&lr);
+        return;
+    }
+
+    Lava_result_destroy(&lr);
 }
