@@ -148,3 +148,42 @@ void Run_pair_destroy(Run_pair* pair)
     Zinc_string_destroy(pair->expected);
     free(pair->expected);
 }
+
+void Art_test_init(Art_test* test)
+{
+    test->solo = false;
+    test->mute = false;
+    test->snapshot = false;
+    Zinc_error_list_init(&test->errors);
+    Zinc_spec_error_list_init(&test->spec_errors);
+}
+
+void Art_test_destroy(Art_test* test)
+{
+    Zinc_error_list_destroy(&test->errors);
+    Zinc_spec_error_list_destroy(&test->spec_errors);
+}
+
+void Art_suite_init(Art_suite* suite)
+{
+    suite->solo = false;
+    suite->mute = false;
+    suite->has_solo = false;
+    Zinc_vector_init(&suite->tests, sizeof(Art_test));
+}
+
+void Art_suite_destroy(Art_suite* suite)
+{
+    Zinc_vector_destroy(&suite->tests);
+}
+
+void Art_data_init(Art_data* data)
+{
+    data->has_solo = false;
+    Zinc_vector_init(&data->suites, sizeof(Art_suite));
+}
+
+void Art_data_destroy(Art_data* data)
+{
+    Zinc_vector_destroy(&data->suites);
+}

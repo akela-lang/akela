@@ -58,6 +58,29 @@ typedef struct {
     Zinc_string* expected;
 } Run_pair;
 
+typedef struct Art_test Art_test;
+struct Art_test {
+    bool solo;
+    bool mute;
+    bool snapshot;
+    Zinc_error_list errors;
+    Zinc_spec_error_list spec_errors;
+};
+
+typedef struct Art_suite Art_suite;
+struct Art_suite {
+    bool solo;
+    bool mute;
+    bool has_solo;
+    Zinc_vector tests;
+};
+
+typedef struct Art_data Art_data;
+struct Art_data {
+    bool has_solo;
+    Zinc_vector suites;
+};
+
 typedef enum {
     Run_type_int8,
     Run_type_int16,
@@ -93,5 +116,14 @@ void Run_data_destroy(Run_data* data);
 void Run_pair_init(Run_pair* pair);
 void Run_pair_create(Run_pair** pair);
 void Run_pair_destroy(Run_pair* pair);
+
+void Art_test_init(Art_test* test);
+void Art_test_destroy(Art_test* test);
+
+void Art_suite_init(Art_suite* suite);
+void Art_suite_destroy(Art_suite* suite);
+
+void Art_data_init(Art_data* data);
+void Art_data_destroy(Art_data* data);
 
 #endif

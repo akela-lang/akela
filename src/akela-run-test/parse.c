@@ -17,6 +17,8 @@
 #include "zinc/fs.h"
 #include "lava/parse.h"
 
+void Art_test_suite_header(Run_data* data, Lava_dom* suite);
+
 void Run_collect(
     Run_data* data,
     Zinc_string* dir_path,
@@ -135,5 +137,17 @@ void Run_collect(Run_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
         return;
     }
 
+    Art_test_suite_header(data, lr.root);
+
     Lava_result_destroy(&lr);
+}
+
+void Art_test_suite_header(Run_data* data, Lava_dom* suite)
+{
+    for (size_t i = 0; i < suite->data.LAVA_DOM_HEADER.items.count; i++) {
+        Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&suite->data.LAVA_DOM_HEADER.items, i);
+        if (item->kind == LAVA_DOM_TEXT) {
+            
+        }
+    }
 }
