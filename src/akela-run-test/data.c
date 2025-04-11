@@ -154,26 +154,30 @@ void Art_test_init(Art_test* test)
     test->solo = false;
     test->mute = false;
     test->snapshot = false;
-    Zinc_error_list_init(&test->errors);
     Zinc_spec_error_list_init(&test->spec_errors);
 }
 
 void Art_test_destroy(Art_test* test)
 {
-    Zinc_error_list_destroy(&test->errors);
     Zinc_spec_error_list_destroy(&test->spec_errors);
 }
 
 void Art_suite_init(Art_suite* suite)
 {
+    Zinc_string_init(&suite->path);
+    Zinc_string_init(&suite->description);
     suite->solo = false;
     suite->mute = false;
     suite->has_solo = false;
+    Zinc_error_list_init(&suite->errors);
     Zinc_vector_init(&suite->tests, sizeof(Art_test));
 }
 
 void Art_suite_destroy(Art_suite* suite)
 {
+    Zinc_string_destroy(&suite->path);
+    Zinc_string_destroy(&suite->description);
+    Zinc_error_list_destroy(&suite->errors);
     Zinc_vector_destroy(&suite->tests);
 }
 

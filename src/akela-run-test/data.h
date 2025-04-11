@@ -63,15 +63,17 @@ struct Art_test {
     bool solo;
     bool mute;
     bool snapshot;
-    Zinc_error_list errors;
     Zinc_spec_error_list spec_errors;
 };
 
 typedef struct Art_suite Art_suite;
 struct Art_suite {
+    Zinc_string path;
+    Zinc_string description;
     bool solo;
     bool mute;
     bool has_solo;
+    Zinc_error_list errors;
     Zinc_vector tests;
 };
 
