@@ -18,15 +18,16 @@ int main(int argc, const char* argv[])
         return 1;
     }
 
-    const char* dir_name = argv[1];
-    if (!Run_validate_directory(dir_name)) {
+    const char* dir_path = argv[1];
+    if (!Run_validate_directory(dir_path)) {
         return 1;
     }
 
     Art_data data;
     Art_data_init(&data);
 
-    Run_parse_files(&data, dir_name);
+    Zinc_string_add_str(&data.dir_path, dir_path);
+    Run_parse_files(&data, dir_path);
 
     if (Art_print_errors(&data)) {
         Art_data_destroy(&data);

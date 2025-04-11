@@ -79,6 +79,7 @@ struct Art_suite {
 
 typedef struct Art_data Art_data;
 struct Art_data {
+    Zinc_string dir_path;
     bool has_solo;
     Zinc_vector suites;
 };

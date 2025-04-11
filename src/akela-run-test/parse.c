@@ -17,7 +17,7 @@
 #include "zinc/fs.h"
 #include "lava/parse.h"
 
-void Art_test_suite_header(Art_data* data, Lava_dom* suite);
+void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header);
 
 void Run_collect(
     Art_data* data,
@@ -142,17 +142,49 @@ void Run_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
         return;
     }
 
-    Art_test_suite_header(data, lr.root);
+    Art_test_suite_header(data, suite, lr.root);
 
     Lava_result_destroy(&lr);
 }
 
-void Art_test_suite_header(Art_data* data, Lava_dom* suite)
+void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
 {
-    for (size_t i = 0; i < suite->data.LAVA_DOM_HEADER.items.count; i++) {
-        Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&suite->data.LAVA_DOM_HEADER.items, i);
+    for (size_t i = 0; i < header->data.LAVA_DOM_HEADER.items.count; i++) {
+        Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&header->data.LAVA_DOM_HEADER.items, i);
         if (item->kind == LAVA_DOM_TEXT) {
-
+            if (suite->description.size > 0) {
+                Zinc_string_add_char(&suite->description, '\n');
+            }
+            Zinc_string_add_string(&suite->description, &item->data.LAVA_DOM_TEXT);
+        } else if (item->kind == LAVA_DOM_BACKQUOTE) {
+            if (!Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
+                Zinc_error_list_set(&suite->errors, &item->loc, "expected cent backquote");
+                break;
+            }
+            Cent_comp_table* ct = NULL;
+            FILE* fp = fopen(Zinc_string_c_str(&data->dir_path), "r");
+            Zinc_string name;
+            Zinc_string_init(&name);
+            Cent_comp_table_create_fp(&ct, &data->dir_path, &name, fp);
+            Zinc_string_destroy(&name);
+            Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
+            Cent_comp_unit_parse(ct->primary);
+            Cent_comp_unit_build(ct->primary);
+            if (ct->primary->pr.errors) {
+                Zinc_error* e = ct->primary->pr.errors->head;
+                while (e) {
+                    Zinc_error_list_set(&suite->errors, &e->loc, Zinc_string_c_str(&e->message));
+                    e = e->next;
+                }
+                Cent_comp_table_destroy(ct);
+                break;
+            }
+            Cent_comp_table_destroy(ct);
         }
     }
+}
+
+void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value)
+{
+
 }
