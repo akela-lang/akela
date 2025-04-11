@@ -18,6 +18,7 @@
 #include "lava/parse.h"
 
 void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header);
+void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value);
 
 void Run_collect(
     Art_data* data,
@@ -162,7 +163,15 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
                 break;
             }
             Cent_comp_table* ct = NULL;
-            FILE* fp = fopen(Zinc_string_c_str(&data->dir_path), "r");
+            FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
+            if (!fp) {
+                Zinc_error_list_set(
+                    &suite->errors,
+                    &item->loc,
+                    "failed to open file: %bf",
+                    &suite->path);
+                break;
+            }
             Zinc_string name;
             Zinc_string_init(&name);
             Cent_comp_table_create_fp(&ct, &data->dir_path, &name, fp);
@@ -170,7 +179,7 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
             Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
             Cent_comp_unit_parse(ct->primary);
             Cent_comp_unit_build(ct->primary);
-            if (ct->primary->pr.errors) {
+            if (ct->primary->pr.errors->head) {
                 Zinc_error* e = ct->primary->pr.errors->head;
                 while (e) {
                     Zinc_error_list_set(&suite->errors, &e->loc, Zinc_string_c_str(&e->message));
@@ -179,6 +188,7 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
                 Cent_comp_table_destroy(ct);
                 break;
             }
+            Art_test_suite_meta(data, suite, ct->primary->value);
             Cent_comp_table_destroy(ct);
         }
     }
@@ -186,5 +196,48 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
 
 void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value)
 {
+    if (!value) {
+        Zinc_error_list_set(&suite->errors, NULL, "expected test suite in backquote");
+        return;
+    }
 
+    Cent_ast* value_n = value->n;
+    if (value->type != Cent_value_type_dag) {
+        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected dag in backquote");
+        return;
+    }
+
+    if (!Zinc_string_compare_str(&value->name, "TestSuite")) {
+        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected test suite");
+        return;
+    }
+
+    Cent_value* solo = Cent_value_get_str(value, "solo");
+    if (!solo) {
+        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected solo property");
+        return;
+    }
+
+    if (solo->type != Cent_value_type_boolean) {
+        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected solo to be boolean");
+        return;
+    }
+
+    suite->solo = solo->data.boolean;
+    if (suite->solo) {
+        data->has_solo = true;
+    }
+
+    Cent_value* mute = Cent_value_get_str(value, "mute");
+    if (!mute) {
+        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected mute");
+        return;
+    }
+
+    if (mute->type != Cent_value_type_boolean) {
+        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected mute to be boolean");
+        return;
+    }
+
+    suite->mute = mute->data.boolean;
 }
