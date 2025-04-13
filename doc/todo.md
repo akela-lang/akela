@@ -7,6 +7,10 @@
 
 # Akela Run Test
 * new file format (use lava)
+  * suite meta [x]
+  * test meta []
+  * test source []
+  * test llvm []
 
 # Centipede
 remove object const and other unused code

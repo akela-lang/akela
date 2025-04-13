@@ -63,6 +63,8 @@ struct Art_test {
     bool solo;
     bool mute;
     bool snapshot;
+    bool has_error;
+    Cent_value* value;
     Zinc_spec_error_list spec_errors;
 };
 

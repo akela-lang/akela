@@ -2,6 +2,7 @@ element Test {
     properties {
         solo: Bool
         mute: Bool
+        snapshot: Bool
     }
     children {
         Field

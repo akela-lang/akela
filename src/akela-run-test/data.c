@@ -154,11 +154,14 @@ void Art_test_init(Art_test* test)
     test->solo = false;
     test->mute = false;
     test->snapshot = false;
+    test->has_error = false;
+    test->value = NULL;
     Zinc_spec_error_list_init(&test->spec_errors);
 }
 
 void Art_test_destroy(Art_test* test)
 {
+    Cent_value_free(test->value);
     Zinc_spec_error_list_destroy(&test->spec_errors);
 }
 

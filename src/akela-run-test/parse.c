@@ -19,6 +19,8 @@
 
 void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header);
 void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value);
+void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header);
+void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value* value);
 
 void Run_collect(
     Art_data* data,
@@ -190,6 +192,8 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
             }
             Art_test_suite_meta(data, suite, ct->primary->value);
             Cent_comp_table_destroy(ct);
+        } else if (item->kind == LAVA_DOM_HEADER) {
+            Art_test_header(data, suite, item);
         }
     }
 }
@@ -240,4 +244,129 @@ void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value)
     }
 
     suite->mute = mute->data.boolean;
+}
+
+void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
+{
+    Zinc_string_slice title = Zinc_string_get_slice(&header->data.LAVA_DOM_HEADER.title);
+    title = Zinc_trim(title);
+    Zinc_string_slice title_ref = Zinc_string_slice_from_str("Test");
+    if (!Zinc_string_slice_compare(&title, &title_ref)) {
+        Zinc_error_list_set(&suite->errors, &header->loc, "expected test header");
+        return;
+    }
+
+    if (header->data.LAVA_DOM_HEADER.level != 2) {
+        Zinc_error_list_set(&suite->errors, &header->loc, "expected level 2 test header");
+        return;
+    }
+
+    Art_test* test = NULL;
+    size_t index = suite->tests.count;
+    Zinc_vector_expand(&suite->tests, 1);
+    suite->tests.count++;
+    test = (Art_test*)ZINC_VECTOR_PTR(&suite->tests, index);
+    Art_test_init(test);
+
+    for (size_t i = 0; i < header->data.LAVA_DOM_HEADER.items.count; i++) {
+        Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&header->data.LAVA_DOM_HEADER.items, i);
+        if (item->kind == LAVA_DOM_TEXT) {
+            if (suite->description.size > 0) {
+                Zinc_string_add_char(&suite->description, '\n');
+            }
+            Zinc_string_add_string(&suite->description, &item->data.LAVA_DOM_TEXT);
+        } else if (item->kind == LAVA_DOM_BACKQUOTE) {
+            if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
+                FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
+                if (!fp) {
+                    Zinc_error_list_set(
+                        &suite->errors,
+                        &item->loc,
+                        "failed to open file: %bf",
+                        &suite->path);
+                }
+                Cent_comp_table* ct = NULL;
+                Zinc_string name;
+                Zinc_string_init(&name);
+                Cent_comp_table_create_fp(&ct, &data->dir_path, &name, fp);
+                Zinc_string_destroy(&name);
+                Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
+                Cent_comp_unit_parse(ct->primary);
+                Cent_comp_unit_build(ct->primary);
+                if (ct->primary->pr.errors->head) {
+                    Zinc_error* e = ct->primary->pr.errors->head;
+                    while (e) {
+                        Zinc_error_list_set(&suite->errors, &e->loc, Zinc_string_c_str(&e->message));
+                        e = e->next;
+                    }
+                } else {
+                    if (!ct->primary->value) {
+                        Zinc_error_list_set(&suite->errors, &item->loc, "expected value");
+                    } else {
+                        Art_test_meta(data, suite, test, ct->primary->value);
+                    }
+                }
+                Cent_comp_table_destroy(ct);
+            }
+        }
+    }
+}
+
+void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value* value)
+{
+    Cent_ast* n = value->n;
+    if (value->type != Cent_value_type_dag) {
+        Zinc_error_list_set(&suite->errors, &n->loc, "expected DAG");
+        test->has_error = true;
+        return;
+    }
+
+    if (!Zinc_string_compare_str(&value->name, "Test")) {
+        Zinc_error_list_set(&suite->errors, &n->loc, "expected Test");
+        test->has_error = true;
+        return;
+    }
+
+    Cent_value* solo = Cent_value_get_str(value, "solo");
+    if (!solo) {
+        Zinc_error_list_set(&suite->errors, &n->loc, "expected solo");
+        test->has_error = true;
+    } else {
+        if (solo->type != Cent_value_type_boolean) {
+            Zinc_error_list_set(&suite->errors, &n->loc, "expected solo to be boolean");
+            test->has_error = true;
+        } else {
+            test->solo = solo->data.boolean;
+        }
+    }
+
+    Cent_value* mute = Cent_value_get_str(value, "mute");
+    if (!mute) {
+        Zinc_error_list_set(&suite->errors, &n->loc, "expected mute");
+        test->has_error = true;
+    } else {
+        if (mute->type != Cent_value_type_boolean) {
+            Zinc_error_list_set(&suite->errors, &n->loc, "expected mute to be boolean");
+            test->has_error = true;
+        } else {
+            test->mute = mute->data.boolean;
+        }
+    }
+
+    Cent_value* snapshot = Cent_value_get_str(value, "snapshot");
+    if (!snapshot) {
+        Zinc_error_list_set(&suite->errors, &n->loc, "expected snapshot");
+        test->has_error = true;
+    } else {
+        if (snapshot->type != Cent_value_type_boolean) {
+            Zinc_error_list_set(&suite->errors, &n->loc, "expected snapshot to be boolean");
+            test->has_error = true;
+        } else {
+            test->snapshot = snapshot->data.boolean;
+        }
+    }
+
+    if (!test->has_error) {
+        test->value = Cent_value_clone(value->data.dag.tail);
+    }
 }
