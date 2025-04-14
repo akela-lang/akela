@@ -191,10 +191,12 @@ void Art_data_init(Art_data* data)
     Zinc_string_init(&data->dir_path);
     data->has_solo = false;
     Zinc_vector_init(&data->suites, sizeof(Art_suite));
+    data->type_info = NULL;
 }
 
 void Art_data_destroy(Art_data* data)
 {
     Zinc_string_destroy(&data->dir_path);
     Zinc_vector_destroy(&data->suites);
+    Cent_comp_table_destroy(data->type_info);
 }

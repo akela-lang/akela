@@ -3,6 +3,6 @@
 
 #include "data.h"
 
-void Run_get_type_info(Run_data* data, const char* dir_name);
+void Run_get_type_info(Art_data* data);
 
 #endif

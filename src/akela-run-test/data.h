@@ -86,6 +86,7 @@ struct Art_data {
     Zinc_string dir_path;
     bool has_solo;
     Zinc_vector suites;
+    Cent_comp_table* type_info;
 };
 
 typedef enum {

@@ -31,14 +31,14 @@ int main(int argc, const char* argv[])
 
     if (Art_print_errors(&data)) {
         Art_data_destroy(&data);
-        return 0;
+        return 1;
     }
 
-    //Run_get_type_info(&data, dir_name);
+    Run_get_type_info(&data);
 
     if (Art_print_errors(&data)) {
         Art_data_destroy(&data);
-        return 0;
+        return 1;
     }
 
     //Run_test_cases(&data);
