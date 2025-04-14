@@ -276,7 +276,11 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
             }
             Zinc_string_add_string(&suite->description, &item->data.LAVA_DOM_TEXT);
         } else if (item->kind == LAVA_DOM_BACKQUOTE) {
-            if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
+            if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "akela")) {
+                test->source_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
+            } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "llvm")) {
+                test->llvm_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
+            } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
                 FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
                 if (!fp) {
                     Zinc_error_list_set(
@@ -307,6 +311,12 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
                     }
                 }
                 Cent_comp_table_destroy(ct);
+            } else {
+                Zinc_error_list_set(
+                    &suite->errors,
+                    &item->loc,
+                    "unexpected format: %bf",
+                    &item->data.LAVA_DOM_BACKQUOTE.format);
             }
         }
     }

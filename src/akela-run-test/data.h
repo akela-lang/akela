@@ -64,6 +64,8 @@ struct Art_test {
     bool mute;
     bool snapshot;
     bool has_error;
+    Zinc_input_bounds source_bounds;
+    Zinc_input_bounds llvm_bounds;
     Cent_value* value;
     Zinc_spec_error_list spec_errors;
 };

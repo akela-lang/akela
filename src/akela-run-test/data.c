@@ -156,6 +156,8 @@ void Art_test_init(Art_test* test)
     test->snapshot = false;
     test->has_error = false;
     test->value = NULL;
+    Zinc_input_bounds_init(&test->source_bounds);
+    Zinc_input_bounds_init(&test->llvm_bounds);
     Zinc_spec_error_list_init(&test->spec_errors);
 }
 

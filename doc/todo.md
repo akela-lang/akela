@@ -6,11 +6,10 @@
 * support snapshot
 
 # Akela Run Test
-* new file format (use lava)
-  * suite meta [x]
-  * test meta []
-  * test source []
-  * test llvm []
+* parse source
+* parse llvm
+* check llvm
+* check return value
 
 # Centipede
 remove object const and other unused code
