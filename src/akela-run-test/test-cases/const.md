@@ -29,10 +29,10 @@ declare void @exit(i32)
 
 define i32 @__top_level() {
 entry:
-%a = alloca i32, align 4
-store i32 -104, ptr %a, align 4
-%0 = load i32, ptr %a, align 4
-ret i32 %0
+  %a = alloca i32, align 4
+  store i32 -104, ptr %a, align 4
+  %0 = load i32, ptr %a, align 4
+  ret i32 %0
 }
 ```
 
