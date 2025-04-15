@@ -8,9 +8,12 @@
 #include <assert.h>
 #include <float.h>
 #include <stdint.h>
+#include <akela/comp_table.h>
+
 #include "zinc/os.h"
 
-void Run_akela(Run_data* data, Run_test* test);
+void Art_run_suite(Art_data* data, Art_suite* suite);
+void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test);
 Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 bool Run_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 Zinc_string_list* Run_split(Zinc_string* string);
@@ -18,53 +21,73 @@ Zinc_string* Run_join(Zinc_string_list* list);
 void Run_print_akela(Zinc_string* ake);
 void Run_print_llvm(Run_pair* pair);
 void Run_print_result(Run_pair* pair);
-void Run_print_results(Run_data* data);
-void Run_setup_address(Run_data* data, Run_test* test);
-bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_result);
+void Art_print_results(Art_data* data);
+void Art_setup_address(Art_data* data, Art_suite* suite, Art_test* test);
+bool Art_check_address(
+    Art_data* data,
+    Art_test* test,
+    Ake_comp_table* ct,
+    Ake_code_gen_result* cg_result);
 
-void Run_test_cases(Run_data* data)
+void Art_run(Art_data* data)
 {
-    Run_test* test = data->tests.head;
-    while (test) {
-        if (test->mute) {
-            printf("Muting: %s\n", test->name.buf);
+    for (size_t i = 0; i < data->suites.count; i++) {
+        Art_suite* suite = (Art_suite*)ZINC_VECTOR_PTR(&data->suites, i);
+        if (suite->mute) {
+            printf("Muting: %s\n", Zinc_string_c_str(&suite->path));
         }
-        bool can_run = !test->mute
-            && ((data->has_solo && test->solo) || !data->has_solo);
+        bool can_run = !suite->mute
+            && ((data->has_solo && suite->solo) || !data->has_solo);
         if (can_run) {
-            if (test->solo) {
-                printf("Running solo: %s\n", test->name.buf);
+            if (suite->solo) {
+                printf("Running solo: %s\n", Zinc_string_c_str(&suite->path));
             }
-            Run_akela(data, test);
+            Art_run_suite(data, suite);
         }
-        test = test->next;
     }
 }
 
-void Run_akela(Run_data* data, Run_test* test)
+void Art_run_suite(Art_data* data, Art_suite* suite)
 {
-    if (!test->config_data) {
+    for (size_t i = 0; i < suite->tests.count; i++) {
+        Art_test* test = (Art_test*)ZINC_VECTOR_PTR(&suite->tests, i);
+        if (test->mute) {
+            printf("Muting: %s\n", Zinc_string_c_str(&test->description));
+        }
+        bool can_run = !suite->mute
+            && ((data->has_solo && suite->solo) || !data->has_solo);
+        if (can_run) {
+            if (suite->solo) {
+                printf("Running solo: %s\n", Zinc_string_c_str(&test->description));
+            }
+            Art_run_test(data, suite, test);
+        }
+    }
+}
+
+void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
+{
+    data->test_count++;
+
+    FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
+    if (!fp) {
+        Zinc_error_list_set(
+            &suite->errors,
+            NULL,
+            "could not open: %bf",
+            Zinc_string_c_str(&suite->path));
         return;
     }
 
-    Zinc_vector* text = NULL;
-    Zinc_vector_create(&text, sizeof(char));
-    Zinc_vector_add(text, test->ake.buf, test->ake.size);
-
-    Zinc_input_unicode_string* input = NULL;
-    Zinc_input_unicode_string_create(&input, text);
-
-    Ake_comp_unit* cu = NULL;
-    Ake_comp_unit_create(&cu);
-    Ake_comp_unit_compile(cu, input, input->vtable);
-
-    data->test_count++;
+    Ake_comp_table* ct = NULL;
+    Ake_comp_table_create_fp(&ct, suite->path, fp);
+    Ake_comp_unit_set_bounds(ct->primary, &test->source_bounds);
+    Ake_comp_unit_parse(ct->primary);
 
     bool passed = true;
-
-    if (!cu->valid) {
+    if (!ct->primary->valid) {
         /* is parsing valid */
-        Zinc_error* e = cu->errors.head;
+        Zinc_error* e = ct->primary->errors.head;
         while (e) {
             Zinc_string_finish(&e->message);
             fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -73,17 +96,17 @@ void Run_akela(Run_data* data, Run_test* test)
         data->test_failed_count++;
         passed = false;
     } else {
-        Run_setup_address(data, test);
+        Art_setup_address(data, suite, test);
 
         /* run program on jit */
         Akela_llvm_cg* cg = NULL;
-        Akela_llvm_cg_create(&cg, &cu->errors, &cu->extern_list);
+        Akela_llvm_cg_create(&cg, &ct->primary->errors, &ct->primary->extern_list);
         Ake_code_gen_result cg_result;
         Ake_code_gen_result_init(&cg_result);
         cg_result.return_address = test->return_address;
         cg_result.return_size = test->return_size;
 
-        Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu->root, &cg_result);
+        Ake_code_gen_jit(cg, &Akela_llvm_vtable, ct->primary->root, &cg_result);
         Akela_llvm_cg_destroy(cg);
 
         /* check llvm output */
@@ -94,9 +117,9 @@ void Run_akela(Run_data* data, Run_test* test)
         }
         Run_pair_destroy(&llvm_pair);
 
-        if (cu->errors.head) {
+        if (ct->primary->errors.head) {
             /* any other errors */
-            Zinc_error* e = cu->errors.head;
+            Zinc_error* e = ct->primary->errors.head;
             while (e) {
                 Zinc_string_finish(&e->message);
                 fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
@@ -105,7 +128,7 @@ void Run_akela(Run_data* data, Run_test* test)
             passed = false;
         }
 
-        if (!Run_check_address(data, test, &cg_result)) {
+        if (!Art_check_address(data, test, ct, &cg_result)) {
             passed = false;
         }
 
@@ -119,24 +142,19 @@ void Run_akela(Run_data* data, Run_test* test)
         data->test_failed_count++;
     }
 
-    Ake_comp_unit_destroy(cu);
-    free(cu);
-    Zinc_vector_destroy(text);
-    free(text);
-    free(input);
+    Ake_comp_table_destroy(ct);
 }
 
-void Run_setup_address(Run_data* data, Run_test* test)
+void Art_setup_address(Art_data* data, Art_suite* suite, Art_test* test)
 {
-    Cent_value* data_type_list_value = data->type_info->ct->primary->value;
+    Cent_value* data_type_list_value = data->type_info->primary->value;
     assert(data_type_list_value);
 
-    Cent_value* test_value = test->config_data->ct->primary->value;
-    assert(test_value);
+    assert(test->value);
 
     long long byte_count = 0;
 
-    Cent_value* field = test_value->data.dag.head;
+    Cent_value* field = test->value;
     assert(field);
     while (field) {
         Cent_value* type_value = Cent_value_get_str(field, "type");
@@ -176,14 +194,15 @@ void Run_setup_address(Run_data* data, Run_test* test)
     }
 }
 
-bool Run_check_address(Run_data* data, Run_test* test, Ake_code_gen_result* cg_result)
+bool Art_check_address(
+    Art_data* data,
+    Art_test* test,
+    Ake_comp_table* ct,
+    Ake_code_gen_result* cg_result)
 {
     bool matched = true;
 
-    Cent_value* test_value = test->config_data->ct->primary->value;
-    assert(test_value);
-
-    Cent_value* field = test_value->data.dag.head;
+    Cent_value* field = test->value;
     assert(field);
     while (field) {
         Cent_value* type_value = Cent_value_get_str(field, "type");
@@ -595,7 +614,7 @@ void Run_print_result(Run_pair* pair)
     }
 }
 
-void Run_print_results(Run_data* data)
+void Art_print_results(Art_data* data)
 {
     printf("test case count: %zu\n", data->test_count);
     printf("passed count: %zu\n", data->test_passed_count);

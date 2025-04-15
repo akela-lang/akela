@@ -41,8 +41,8 @@ int main(int argc, const char* argv[])
         return 1;
     }
 
-    //Run_test_cases(&data);
-    //Run_print_results(&data);
+    Art_run(&data);
+    Art_print_results(&data);
 
     Art_data_destroy(&data);
 

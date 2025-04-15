@@ -109,6 +109,7 @@ void Run_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
     Art_suite_init(suite);
 
     Zinc_string_add_string(&suite->path, path);
+    Zinc_string_add_string(&suite->name, file_name);
 
     FILE* fp = fopen(path->buf, "r");
     if (!fp) {
@@ -271,15 +272,16 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
     for (size_t i = 0; i < header->data.LAVA_DOM_HEADER.items.count; i++) {
         Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&header->data.LAVA_DOM_HEADER.items, i);
         if (item->kind == LAVA_DOM_TEXT) {
-            if (suite->description.size > 0) {
-                Zinc_string_add_char(&suite->description, '\n');
+            if (test->description.size > 0) {
+                Zinc_string_add_char(&test->description, '\n');
             }
-            Zinc_string_add_string(&suite->description, &item->data.LAVA_DOM_TEXT);
+            Zinc_string_add_string(&test->description, &item->data.LAVA_DOM_TEXT);
         } else if (item->kind == LAVA_DOM_BACKQUOTE) {
             if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "akela")) {
                 test->source_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
             } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "llvm")) {
                 test->llvm_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
+                Zinc_string_add_string(&test->llvm, &item->data.LAVA_DOM_BACKQUOTE.text);
             } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
                 FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
                 if (!fp) {

@@ -60,20 +60,25 @@ typedef struct {
 
 typedef struct Art_test Art_test;
 struct Art_test {
+    Zinc_string description;
     bool solo;
     bool mute;
     bool snapshot;
     bool has_error;
     Zinc_input_bounds source_bounds;
     Zinc_input_bounds llvm_bounds;
+    Zinc_string llvm;
     Cent_value* value;
     Zinc_spec_error_list spec_errors;
+    void* return_address;
+    long long return_size;
 };
 
 typedef struct Art_suite Art_suite;
 struct Art_suite {
     Zinc_string path;
     Zinc_string description;
+    Zinc_string name;
     bool solo;
     bool mute;
     bool has_solo;
@@ -87,6 +92,10 @@ struct Art_data {
     bool has_solo;
     Zinc_vector suites;
     Cent_comp_table* type_info;
+    Cob_re regex_re;
+    size_t test_count;
+    size_t test_passed_count;
+    size_t test_failed_count;
 };
 
 typedef enum {
