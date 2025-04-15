@@ -250,6 +250,8 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
                 assert(false && "not possible");
             }
             Zinc_string_add_string(&n->data.LAVA_DOM_BACKQUOTE.text, &txt->text);
+            Lava_token_destroy(txt);
+            free(txt);
         }
         Lava_lookahead(pd);
     }

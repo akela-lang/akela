@@ -6,10 +6,6 @@
 * support snapshot
 
 # Akela Run Test
-* parse source
-* parse llvm
-* check llvm
-* check return value
 
 # Centipede
 remove object const and other unused code
