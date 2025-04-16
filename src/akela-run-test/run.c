@@ -52,20 +52,23 @@ int main(int argc, const char* argv[])
 bool Art_print_errors(Art_data* data)
 {
     bool has_errors = false;
-    for (size_t i = 0; i < data->suites.count; i++) {
-        Art_suite* suite = (Art_suite*)ZINC_VECTOR_PTR(&data->suites, i);
+    Art_suite* suite = data->head;
+    while (suite) {
         if (suite->errors.head) {
             has_errors = true;
             Zinc_error_list_print(&suite->errors);
         }
 
-        for (size_t j = 0; j < suite->tests.count; j++) {
-            Art_test* test = (Art_test*)ZINC_VECTOR_PTR(&suite->tests, j);
+        Art_test* test = suite->head;
+        while (test) {
             if (test->spec_errors.head) {
                 has_errors = true;
                 Zinc_spec_error_list_print(&test->spec_errors);
             }
+            test = test->next;
         }
+
+        suite = suite->next;
     }
     return has_errors;
 }

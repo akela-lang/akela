@@ -156,17 +156,26 @@ void Art_test_init(Art_test* test)
     test->mute = false;
     test->snapshot = false;
     test->has_error = false;
+    test->ct = NULL;
     test->value = NULL;
     Zinc_input_bounds_init(&test->source_bounds);
     Zinc_input_bounds_init(&test->llvm_bounds);
     Zinc_string_init(&test->llvm);
     Zinc_spec_error_list_init(&test->spec_errors);
+    test->next = NULL;
+    test->prev = NULL;
+}
+
+void Art_test_create(Art_test** test)
+{
+    Zinc_malloc_safe((void**)test, sizeof(Art_test));
+    Art_test_init(*test);
 }
 
 void Art_test_destroy(Art_test* test)
 {
     Zinc_string_destroy(&test->description);
-    Cent_value_free(test->value);
+    Cent_comp_table_destroy(test->ct);
     Zinc_string_destroy(&test->llvm);
     Zinc_spec_error_list_destroy(&test->spec_errors);
 }
@@ -180,7 +189,16 @@ void Art_suite_init(Art_suite* suite)
     suite->mute = false;
     suite->has_solo = false;
     Zinc_error_list_init(&suite->errors);
-    Zinc_vector_init(&suite->tests, sizeof(Art_test));
+    suite->next = NULL;
+    suite->prev = NULL;
+    suite->head = NULL;
+    suite->tail = NULL;
+}
+
+void Art_suite_create(Art_suite** suite)
+{
+    Zinc_malloc_safe((void**)suite, sizeof(Art_suite));
+    Art_suite_init(*suite);
 }
 
 void Art_suite_destroy(Art_suite* suite)
@@ -189,7 +207,25 @@ void Art_suite_destroy(Art_suite* suite)
     Zinc_string_destroy(&suite->description);
     Zinc_string_destroy(&suite->name);
     Zinc_error_list_destroy(&suite->errors);
-    Zinc_vector_destroy(&suite->tests);
+    Art_test* test = suite->head;
+    while (test) {
+        Art_test* temp = test;
+        test = test->next;
+        Art_test_destroy(temp);
+        free(temp);
+    }
+}
+
+void Art_suite_add(Art_suite* suite, Art_test* test)
+{
+    if (suite->head && suite->tail) {
+        suite->tail->next = test;
+        test->prev = suite->tail;
+        suite->tail = test;
+    } else {
+        suite->head = test;
+        suite->tail = test;
+    }
 }
 
 void Art_data_init(Art_data* data)
@@ -199,15 +235,35 @@ void Art_data_init(Art_data* data)
     data->test_passed_count = 0;
     data->test_failed_count = 0;
     data->has_solo = false;
-    Zinc_vector_init(&data->suites, sizeof(Art_suite));
     data->type_info = NULL;
     data->regex_re = Cob_compile_str("^/(.*)/\n?$");
+    data->head = NULL;
+    data->tail = NULL;
 }
 
 void Art_data_destroy(Art_data* data)
 {
     Zinc_string_destroy(&data->dir_path);
-    Zinc_vector_destroy(&data->suites);
     Cent_comp_table_destroy(data->type_info);
     Cob_re_destroy(&data->regex_re);
+
+    Art_suite* suite = data->head;
+    while (suite) {
+        Art_suite* temp = suite;
+        suite = suite->next;
+        Art_suite_destroy(temp);
+        free(temp);
+    }
+}
+
+void Art_data_add(Art_data* data, Art_suite* suite)
+{
+    if (data->head && data->tail) {
+        data->tail->next = suite;
+        suite->prev = data->tail;
+        data->tail = suite;
+    } else {
+        data->head = suite;
+        data->tail = suite;
+    }
 }

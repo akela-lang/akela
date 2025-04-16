@@ -8,7 +8,8 @@
 # Akela Run Test
 
 # Centipede
-remove object const and other unused code
+* print value function
+* remove object const and other unused code
 
 # Cobble
 * test if repeat and repeat range are greedy

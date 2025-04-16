@@ -243,3 +243,80 @@ Cent_value* Cent_value_clone(Cent_value* value)
     Cent_value_copy(value, value2);
     return value2;
 }
+
+size_t Cent_value_print_level = 0;
+void Cent_value_property_print(Zinc_string* name, Cent_value* value);
+void Cent_value_indent_print(bool is_property);
+void Cent_value_print(Cent_value* value, bool is_property)
+{
+    if (value->type == Cent_value_type_dag) {
+        Cent_value_indent_print(is_property);
+        printf("%s {\n", Zinc_string_c_str(&value->name));
+
+        Cent_value_print_level++;
+
+        Zinc_hash_map_string_map_name(
+            &value->data.dag.properties,
+            (Zinc_hash_map_string_func_name)Cent_value_property_print);
+
+        Cent_value* child = value->data.dag.head;
+        while (child) {
+            Cent_value_print(child, false);
+            child = child->next;
+        }
+
+        Cent_value_print_level--;
+
+        Cent_value_indent_print(is_property);
+        printf("}\n");
+    } else if (value->type == Cent_value_type_integer) {
+        Cent_value_indent_print(is_property);
+        printf("%ld\n", value->data.integer);
+    } else if (value->type == Cent_value_type_natural) {
+        Cent_value_indent_print(is_property);
+        printf("%lu\n", value->data.natural);
+    } else if (value->type == Cent_value_type_real) {
+        Cent_value_indent_print(is_property);
+        printf("%lf\n", value->data.real);
+    } else if (value->type == Cent_value_type_boolean) {
+        Cent_value_indent_print(is_property);
+        printf("%s\n", value->data.boolean ? "true" : "false");
+    } else if (value->type == Cent_value_type_enum) {
+        Cent_value_indent_print(is_property);
+        printf("%zu", value->data.enumeration.number);
+        if (value->data.enumeration.enum_type || value->data.enumeration.enum_value) {
+            printf(" [");
+        }
+        if (value->data.enumeration.enum_type) {
+            printf("%s", Zinc_string_c_str(&value->data.enumeration.enum_type->name));
+        }
+        if (value->data.enumeration.enum_value) {
+            printf("::%s", Zinc_string_c_str(&value->data.enumeration.enum_value->display));
+        }
+        if (value->data.enumeration.enum_type || value->data.enumeration.enum_value) {
+            printf("]");
+        }
+        printf("\n");
+    } else if (value->type == Cent_value_type_string) {
+        Cent_value_indent_print(is_property);
+        printf("%s\n", Zinc_string_c_str(&value->data.string));
+    } else {
+        assert(false && "invalid type");
+    }
+}
+
+void Cent_value_property_print(Zinc_string* name, Cent_value* value)
+{
+    Cent_value_indent_print(false);
+    printf(".%s = ", Zinc_string_c_str(name));
+    Cent_value_print(value, true);
+}
+
+void Cent_value_indent_print(bool is_property)
+{
+    if (!is_property) {
+        for (size_t i = 0; i < Cent_value_print_level; i++) {
+            printf("  ");
+        }
+    }
+}

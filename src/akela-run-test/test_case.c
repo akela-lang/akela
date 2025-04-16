@@ -31,8 +31,8 @@ bool Art_check_address(
 
 void Art_run(Art_data* data)
 {
-    for (size_t i = 0; i < data->suites.count; i++) {
-        Art_suite* suite = (Art_suite*)ZINC_VECTOR_PTR(&data->suites, i);
+    Art_suite* suite = data->head;
+    while (suite) {
         if (suite->mute) {
             printf("Muting: %s\n", Zinc_string_c_str(&suite->path));
         }
@@ -44,24 +44,29 @@ void Art_run(Art_data* data)
             }
             Art_run_suite(data, suite);
         }
+
+        suite = suite->next;
     }
 }
 
 void Art_run_suite(Art_data* data, Art_suite* suite)
 {
-    for (size_t i = 0; i < suite->tests.count; i++) {
-        Art_test* test = (Art_test*)ZINC_VECTOR_PTR(&suite->tests, i);
+    Art_test* test = suite->head;
+
+    while (test) {
         if (test->mute) {
             printf("Muting: %s\n", Zinc_string_c_str(&test->description));
         }
-        bool can_run = !suite->mute
-            && ((data->has_solo && suite->solo) || !data->has_solo);
+        bool can_run = !test->mute
+            && ((suite->has_solo && test->solo) || !suite->has_solo);
         if (can_run) {
             if (suite->solo) {
                 printf("Running solo: %s\n", Zinc_string_c_str(&test->description));
             }
             Art_run_test(data, suite, test);
         }
+
+        test = test->next;
     }
 }
 

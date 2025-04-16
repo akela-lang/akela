@@ -78,4 +78,6 @@ void Cent_value_destroy_teardown();
 void Cent_value_copy(Cent_value* src, Cent_value* dst);
 Cent_value* Cent_value_clone(Cent_value* value);
 
+void Cent_value_print(Cent_value* value, bool is_property);
+
 #endif

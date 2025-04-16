@@ -68,10 +68,13 @@ struct Art_test {
     Zinc_input_bounds source_bounds;
     Zinc_input_bounds llvm_bounds;
     Zinc_string llvm;
+    Cent_comp_table* ct;
     Cent_value* value;
     Zinc_spec_error_list spec_errors;
     void* return_address;
     long long return_size;
+    Art_test* next;
+    Art_test* prev;
 };
 
 typedef struct Art_suite Art_suite;
@@ -83,19 +86,23 @@ struct Art_suite {
     bool mute;
     bool has_solo;
     Zinc_error_list errors;
-    Zinc_vector tests;
+    Art_suite* next;
+    Art_suite* prev;
+    Art_test* head;
+    Art_test* tail;
 };
 
 typedef struct Art_data Art_data;
 struct Art_data {
     Zinc_string dir_path;
     bool has_solo;
-    Zinc_vector suites;
     Cent_comp_table* type_info;
     Cob_re regex_re;
     size_t test_count;
     size_t test_passed_count;
     size_t test_failed_count;
+    Art_suite* head;
+    Art_suite* tail;
 };
 
 typedef enum {
@@ -135,12 +142,16 @@ void Run_pair_create(Run_pair** pair);
 void Run_pair_destroy(Run_pair* pair);
 
 void Art_test_init(Art_test* test);
+void Art_test_create(Art_test** test);
 void Art_test_destroy(Art_test* test);
 
 void Art_suite_init(Art_suite* suite);
+void Art_suite_create(Art_suite** suite);
 void Art_suite_destroy(Art_suite* suite);
+void Art_suite_add(Art_suite* suite, Art_test* test);
 
 void Art_data_init(Art_data* data);
 void Art_data_destroy(Art_data* data);
+void Art_data_add(Art_data* data, Art_suite* suite);
 
 #endif

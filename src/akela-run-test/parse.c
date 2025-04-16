@@ -102,11 +102,9 @@ void Run_parse_files(Art_data* data, char* dir_name)
 
 void Run_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
 {
-    Zinc_vector_expand(&data->suites, 1);
-    size_t index = data->suites.count;
-    data->suites.count++;
-    Art_suite* suite = (Art_suite*)ZINC_VECTOR_PTR(&data->suites, index);
-    Art_suite_init(suite);
+    Art_suite* suite = NULL;
+    Art_suite_create(&suite);
+    Art_data_add(data, suite);
 
     Zinc_string_add_string(&suite->path, path);
     Zinc_string_add_string(&suite->name, file_name);
@@ -263,11 +261,8 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
     }
 
     Art_test* test = NULL;
-    size_t index = suite->tests.count;
-    Zinc_vector_expand(&suite->tests, 1);
-    suite->tests.count++;
-    test = (Art_test*)ZINC_VECTOR_PTR(&suite->tests, index);
-    Art_test_init(test);
+    Art_test_create(&test);
+    Art_suite_add(suite, test);
 
     for (size_t i = 0; i < header->data.LAVA_DOM_HEADER.items.count; i++) {
         Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&header->data.LAVA_DOM_HEADER.items, i);
@@ -312,7 +307,6 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
                         Art_test_meta(data, suite, test, ct->primary->value);
                     }
                 }
-                Cent_comp_table_destroy(ct);
             } else {
                 Zinc_error_list_set(
                     &suite->errors,
@@ -349,6 +343,9 @@ void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value*
             test->has_error = true;
         } else {
             test->solo = solo->data.boolean;
+            if (test->solo) {
+                suite->has_solo = true;
+            }
         }
     }
 
@@ -379,6 +376,6 @@ void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value*
     }
 
     if (!test->has_error) {
-        test->value = Cent_value_clone(value->data.dag.tail);
+        test->value = value->data.dag.tail;
     }
 }
