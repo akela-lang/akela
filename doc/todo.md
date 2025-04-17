@@ -6,9 +6,14 @@
 * support snapshot
 
 # Akela Run Test
+* const
+  * int []
+  * nat []
+  * real []
+  * bool []
+* support snapshot
 
 # Centipede
-* print value function
 * remove object const and other unused code
 
 # Cobble
