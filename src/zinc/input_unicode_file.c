@@ -96,6 +96,8 @@ enum Zinc_result Zinc_input_unicode_file_next(
             (*loc).end_pos = (*loc).start_pos + 1;
             *num = 0;
             *done = true;
+            input->prev_num = *num;
+            input->prev_done = *done;
             return Zinc_result_ok;
         }
 
