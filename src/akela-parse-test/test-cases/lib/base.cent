@@ -142,5 +142,5 @@ const Real64 = TypeDef {
   .type = TypeDefType::Float
   .name = "Real64"
   .bit_count = 64
-  .is_signed = true
+  .is_signed = false
 };
