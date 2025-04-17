@@ -6,11 +6,6 @@
 * support snapshot
 
 # Akela Run Test
-* const
-  * int []
-  * nat []
-  * real []
-  * bool []
 * support snapshot
 
 # Centipede
