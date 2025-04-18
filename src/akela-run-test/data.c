@@ -158,6 +158,7 @@ void Art_test_init(Art_test* test)
     test->has_error = false;
     test->ct = NULL;
     test->value = NULL;
+    test->return_address = NULL;
     Zinc_input_bounds_init(&test->source_bounds);
     Zinc_input_bounds_init(&test->llvm_bounds);
     Zinc_string_init(&test->llvm);
@@ -179,6 +180,7 @@ void Art_test_destroy(Art_test* test)
     free(test->ct);
     Zinc_string_destroy(&test->llvm);
     Zinc_spec_error_list_destroy(&test->spec_errors);
+    free(test->return_address);
 }
 
 void Art_suite_init(Art_suite* suite)
