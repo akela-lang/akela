@@ -292,116 +292,6 @@ void test_build_object_prop_set()
     free(ct);
 }
 
-void test_build_object_assign()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Test {\n"
-        "    const count = 20\n"
-        "    .count_value = count\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_value* root = ct->primary->value;
-
-    Zinc_expect_no_errors(errors);
-
-    Zinc_assert_ptr(root, "ptr root");
-    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Cent_value* count_value = Cent_value_get_str(root, "count_value");
-    Zinc_assert_ptr(count_value, "ptr count_value");
-    Zinc_expect_int_equal(count_value->type, Cent_value_type_natural, "type number");
-    Zinc_expect_long_long_equal(count_value->data.natural, 20, "integer value");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
-void test_build_object_child_of()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Test {\n"
-        "    const foo = Foo {}\n"
-        "    const bar = Bar {\n"
-        "        .@child_of(foo)\n"
-        "    }\n"
-        "    foo\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    Cent_comp_unit_build(ct->primary);
-    Zinc_error_list* errors = &ct->primary->errors;
-    Cent_value* root = ct->primary->value;
-
-    Zinc_expect_no_errors(errors);
-
-    Zinc_assert_ptr(root, "ptr root");
-    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Zinc_expect_string(&root->name, "Test", "name root");
-
-    Cent_value* foo = root->data.dag.head;
-    Zinc_assert_ptr(foo, "ptr foo");
-    Zinc_expect_int_equal(foo->type, Cent_value_type_dag, "type foo");
-    Zinc_expect_string(&foo->name, "Foo", "name foo");
-
-    Cent_value* bar = foo->data.dag.head;
-    Zinc_assert_ptr(bar, "ptr bar");
-    Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    Zinc_expect_string(&bar->name, "Bar", "name bar");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
-void test_build_object_property_of()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Test {\n"
-        "    const foo = Foo {}\n"
-        "    const bar = Bar {\n"
-        "        .@property_of(foo, \"x\")\n"
-        "    }\n"
-        "    foo\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_value* root = ct->primary->value;
-
-    Zinc_expect_no_errors(errors);
-
-    Zinc_assert_ptr(root, "ptr root");
-    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Zinc_expect_string(&root->name, "Test", "name root");
-
-    Cent_value* foo = root->data.dag.head;
-    Zinc_assert_ptr(foo, "ptr foo");
-    Zinc_expect_int_equal(foo->type, Cent_value_type_dag, "type foo");
-    Zinc_expect_string(&foo->name, "Foo", "name foo");
-
-    Cent_value* bar = Cent_value_get_str(foo, "x");
-    Zinc_assert_ptr(bar, "ptr bar");
-    Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    Zinc_expect_string(&bar->name, "Bar", "name bar");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
 void test_build_object_function_file_name()
 {
     Zinc_test_name(__func__);
@@ -659,37 +549,6 @@ void test_build_const()
     Zinc_assert_ptr(root, "ptr value");
     Zinc_expect_int_equal(root->type, Cent_value_type_natural, "type root");
     Zinc_expect_uint64_t_equal(root->data.natural, 245, "integer root");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
-void test_build_object_const()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Foo {\n"
-        "    const bar = Bar {}\n"
-        "    bar\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_value* root = ct->primary->value;
-
-    Zinc_expect_no_errors(errors);
-
-    Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_int_equal(root->type, Cent_value_type_dag, "type root");
-    Zinc_expect_string(&root->name, "Foo", "name root");
-
-    Cent_value* bar = root->data.dag.head;
-    Zinc_expect_int_equal(bar->type, Cent_value_type_dag, "type bar");
-    Zinc_expect_string(&bar->name, "Bar", "name bar");
 
     Cent_comp_table_destroy(ct);
     free(ct);
@@ -1161,9 +1020,6 @@ void test_build()
     test_build_assign();
     test_build_object();
     test_build_object_prop_set();
-    // test_build_object_assign();
-    // test_build_object_child_of();
-    // test_build_object_property_of();
     test_build_object_function_file_name();
     test_build_property_set_variable();
     test_build_namespace_enum();
@@ -1171,7 +1027,6 @@ void test_build()
     test_build_namespace_submodules();
     test_build_namespace_glob_value();
     test_build_const();
-    // test_build_object_const();
 
     test_build_cast_natural_to_integer();
     test_build_cast_natural_to_integer_error_too_large();

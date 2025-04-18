@@ -134,10 +134,6 @@ Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd)
         return Cent_parse_property(pd);
     }
 
-    // if (pd->lookahead->type == Cent_token_const) {
-    //     return Cent_parse_const(pd);
-    // }
-
     return Cent_parse_expr(pd);
 }
 

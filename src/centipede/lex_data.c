@@ -26,8 +26,6 @@ void Cent_lex_data_init(
     Cent_lex_add_reserved_word(ld, "variant", Cent_token_variant);
 
     Zinc_hash_map_string_init(&ld->builtin, 8);
-    Cent_lex_add_builtin(ld, "@child_of", Cent_builtin_type_child_of);
-    Cent_lex_add_builtin(ld, "@property_of", Cent_builtin_type_property_of);
     Cent_lex_add_builtin(ld, "@file_name", Cent_builtin_type_file_name);
     Cent_lex_add_builtin(ld, "@tag", Cent_builtin_type_tag);
 }

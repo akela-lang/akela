@@ -702,106 +702,6 @@ void test_parse_enum_error_duplicate_enum_value()
     free(ct);
 }
 
-void test_parse_object_method_call()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "const a = Foo {};\n"
-        "Bar {\n"
-        "    .@child_of(a)\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_ast* root = ct->primary->pr.root;
-
-    Zinc_expect_no_errors(errors);
-
-    /* root */
-    Zinc_assert_ptr(root, "ptr pr.root");
-    Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
-
-    /* const */
-    Cent_ast* const_ = Cent_ast_get(root, 0);
-    Zinc_assert_ptr(const_, "ptr const_");
-    Zinc_expect_int_equal(const_->type, Cent_ast_type_const, "type const_");
-
-    /* Bar object */
-    Cent_ast* bar = Cent_ast_get(root, 1);
-    Zinc_assert_ptr(bar, "ptr bar");
-    Zinc_expect_int_equal(bar->type, Cent_ast_type_expr_object, "type bar");
-
-    /* method child of */
-    Cent_ast* method = Cent_ast_get(bar, 0);
-    Zinc_assert_ptr(method, "ptr method");
-    Zinc_expect_int_equal(method->type, Cent_ast_type_method_child_of, "type method");
-
-    /* variable a */
-    Cent_ast* value = Cent_ast_get(method, 0);
-    Zinc_assert_ptr(value, "ptr value");
-    Zinc_expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
-    Zinc_expect_string(&value->text, "a", "text id");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
-void test_parse_object_method_call2()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "const a = Foo {};\n"
-        "Bar {\n"
-        "    .@property_of(a, \"b\")\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_ast* root = ct->primary->pr.root;
-
-    Zinc_expect_no_errors(errors);
-
-    /* root */
-    Zinc_assert_ptr(root, "ptr pr.root");
-    Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
-
-    /* const */
-    Cent_ast* const_ = Cent_ast_get(root, 0);
-    Zinc_assert_ptr(const_, "ptr assign");
-    Zinc_expect_int_equal(const_->type, Cent_ast_type_const, "type const_");
-
-    /* Bar object */
-    Cent_ast* bar = Cent_ast_get(root, 1);
-    Zinc_assert_ptr(bar, "ptr bar");
-    Zinc_expect_int_equal(bar->type, Cent_ast_type_expr_object, "type bar");
-
-    /* method child of */
-    Cent_ast* method = Cent_ast_get(bar, 0);
-    Zinc_assert_ptr(method, "ptr method");
-    Zinc_expect_int_equal(method->type, Cent_ast_type_method_property_of, "type method");
-
-    /* argument 1 a */
-    Cent_ast* value = Cent_ast_get(method, 0);
-    Zinc_assert_ptr(value, "ptr value");
-    Zinc_expect_int_equal(value->type, Cent_ast_type_expr_variable, "type value");
-    Zinc_expect_string(&value->text, "a", "text id");
-
-    /* argument 2 string b */
-    Cent_ast* name = Cent_ast_get(method, 1);
-    Zinc_assert_ptr(name, "ptr name");
-    Zinc_expect_int_equal(name->type, Cent_ast_type_expr_string, "type name");
-    Zinc_expect_string(&name->data.string, "b", "text name");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
 void test_parse_function_call()
 {
     Zinc_test_name(__func__);
@@ -1366,57 +1266,6 @@ void test_parse_const_error_shadow_local()
     free(ct);
 }
 
-void test_parse_object_const()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Foo {\n"
-        "    const bar = Bar {};\n"
-        "    bar\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_ast* root = ct->primary->pr.root;
-    
-    Zinc_expect_no_errors(errors);
-
-    /* root */
-    Zinc_assert_ptr(root, "ptr root");
-    Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type root");
-
-    /* line 1 */
-    Cent_ast* foo = Cent_ast_get(root, 0);
-    Zinc_assert_ptr(foo, "ptr foo");
-    Zinc_expect_int_equal(foo->type, Cent_ast_type_expr_object, "type foo");
-
-    /* line 2 */
-    Cent_ast* foo_const = Cent_ast_get(foo, 0);
-    Zinc_assert_ptr(foo_const, "ptr foo_const");
-    Zinc_expect_int_equal(foo_const->type, Cent_ast_type_const, "type foo_const");
-
-    Cent_ast* bar = Cent_ast_get(foo_const, 0);
-    Zinc_assert_ptr(bar, "ptr bar");
-    Zinc_expect_int_equal(bar->type, Cent_ast_type_id, "type bar");
-
-    Cent_ast* bar_object = Cent_ast_get(foo_const, 1);
-    Zinc_assert_ptr(bar_object, "ptr bar_object");
-    Zinc_expect_int_equal(bar_object->type, Cent_ast_type_expr_object, "type bar_object");
-    Zinc_expect_string(&bar_object->text, "Bar", "text bar_object");
-
-    /* line 3 */
-    Cent_ast* bar_variable = Cent_ast_get(foo, 1);
-    Zinc_assert_ptr(bar_variable, "ptr bar_variable");
-    Zinc_expect_int_equal(bar_variable->type, Cent_ast_type_expr_variable, "type bar_variable");
-    Zinc_expect_string(&bar_variable->text, "bar", "text bar_variable");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
 void test_parse_bad_id()
 {
     Zinc_test_name(__func__);
@@ -1458,54 +1307,6 @@ void test_parse_module_id_error()
     Zinc_expect_has_errors(errors);
 
     Zinc_expect_source_error(errors, "module identifier collides with existing identifier: math");
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
-void test_parse_bad_id_child_of()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Foo {\n"
-        "    const bar = Bar {\n"
-        "        .@child_of(x)\n"
-        "    }\n"
-        "    bar\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-
-    Zinc_expect_has_errors(errors);
-    Zinc_expect_source_error(errors, "unknown variable: x");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
-void test_parse_bad_id_property_of()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Foo {\n"
-        "    const bar = Bar {\n"
-        "        .@property_of(x, \"a\")\n"
-        "    }\n"
-        "    bar\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-
-    Zinc_expect_has_errors(errors);
-    Zinc_expect_source_error(errors, "unknown variable: x");
-
     Cent_comp_table_destroy(ct);
     free(ct);
 }
@@ -2026,8 +1827,6 @@ void test_parse()
     test_parse_element_child_unknown_type();
     test_parse_element_child_type_not_an_element_type();
     test_parse_enum_error_duplicate_enum_value();
-    test_parse_object_method_call();
-    test_parse_object_method_call2();
     test_parse_function_call();
     test_parse_enum_duplicate_id();
     test_parse_enum_error_could_not_find_enum();
@@ -2050,13 +1849,9 @@ void test_parse()
     test_parse_const_error_shadow_module();
     test_parse_const_error_shadow_local();
 
-    // test_parse_object_const();
-
     test_parse_module_id_error();
 
     test_parse_bad_id();
-    // test_parse_bad_id_child_of();
-    // test_parse_bad_id_property_of();
 
     test_parse_follow_on();
     test_parse_follow_on_error_no_previous_object();

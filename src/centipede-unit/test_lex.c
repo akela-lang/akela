@@ -563,16 +563,15 @@ void test_lex_builtin()
     Cent_lex_data ld;
 
     test_lex_setup(&ld,
-        "@child_of\n"
-        "@property_of\n"
         "@file_name\n"
         "abc\n"
     );
 
     /* line 1 */
     t = lex(&ld);
+    Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 1.1");
-    Zinc_expect_int_equal(t->builtin_type, Cent_builtin_type_child_of, "builtin type 1.1");
+    Zinc_expect_int_equal(t->builtin_type, Cent_builtin_type_file_name, "builtin type 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -581,42 +580,16 @@ void test_lex_builtin()
     Cent_token_destroy(t);
     free(t);
 
-    /* line 2 */
+    /* line 4 */
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 2.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 2.1");
-    Zinc_expect_int_equal(t->builtin_type, Cent_builtin_type_property_of, "builtin type 2.1");
+    Zinc_expect_int_equal(t->builtin_type, Cent_builtin_type_none, "builtin type 2.1");
     Cent_token_destroy(t);
     free(t);
 
     t = lex(&ld);
     Zinc_expect_int_equal(t->type, Cent_token_newline, "type 2.2");
-    Cent_token_destroy(t);
-    free(t);
-
-    /* line 3 */
-    t = lex(&ld);
-    Zinc_assert_ptr(t, "ptr 3.1");
-    Zinc_expect_int_equal(t->type, Cent_token_id, "type 3.1");
-    Zinc_expect_int_equal(t->builtin_type, Cent_builtin_type_file_name, "builtin type 3.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    Zinc_expect_int_equal(t->type, Cent_token_newline, "type 3.2");
-    Cent_token_destroy(t);
-    free(t);
-
-    /* line 4 */
-    t = lex(&ld);
-    Zinc_assert_ptr(t, "ptr 4.1");
-    Zinc_expect_int_equal(t->type, Cent_token_id, "type 4.1");
-    Zinc_expect_int_equal(t->builtin_type, Cent_builtin_type_none, "builtin type 4.1");
-    Cent_token_destroy(t);
-    free(t);
-
-    t = lex(&ld);
-    Zinc_expect_int_equal(t->type, Cent_token_newline, "type 4.2");
     Cent_token_destroy(t);
     free(t);
 

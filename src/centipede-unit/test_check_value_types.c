@@ -817,29 +817,6 @@ void test_check_value_types_not_attached_not_last2()
     free(ct);
 }
 
-void test_check_value_types_not_attached_in_object()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Bar {\n"
-        "    const a = 1\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-
-    Zinc_expect_has_errors(errors);
-
-    Zinc_expect_source_error(errors, "value is not used");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
 void test_check_value_types()
 {
     test_check_value_types_property();
@@ -868,5 +845,4 @@ void test_check_value_types()
     test_check_value_types_not_attached_import_glob();
     test_check_value_types_not_attached_not_last();
     test_check_value_types_not_attached_not_last2();
-    // test_check_value_types_not_attached_in_object();
 }

@@ -19,8 +19,6 @@ Cent_value* Cent_build_function_top(Cent_build_data* bd, Cent_ast* n);
 Cent_value* Cent_build_function_file_name(Cent_build_data* bd, Cent_ast* n);
 Cent_value* Cent_build_object(Cent_build_data* bd, Cent_ast* n);
 void Cent_build_object_prop_set(Cent_build_data* bd, Cent_ast* n, Cent_value* value);
-void Cent_build_object_method_child_of(Cent_build_data* bd, Cent_ast* n, Cent_value* value);
-void Cent_build_object_method_property_of(Cent_build_data* bd, Cent_ast* n, Cent_value* value);
 
 Cent_value* Cent_build(Cent_parse_result* pr)
 {
@@ -252,10 +250,6 @@ Cent_value* Cent_build_object(Cent_build_data* bd, Cent_ast* n)
     while (p) {
         if (p->type == Cent_ast_type_prop_set) {
             Cent_build_object_prop_set(bd, p, value);
-        } else if (p->type == Cent_ast_type_method_child_of) {
-            // Cent_build_object_method_child_of(p, value);
-        } else if (p->type == Cent_ast_type_method_property_of) {
-            // Cent_build_object_method_property_of(p, value);
         } else {
             Cent_value* value2 = Cent_build_dispatch(bd, p);
             if (value2) {
@@ -277,42 +271,4 @@ void Cent_build_object_prop_set(Cent_build_data* bd, Cent_ast* n, Cent_value* va
     Cent_ast* expr = Cent_ast_get(n, 1);
     Cent_value* expr_value = Cent_build_dispatch(bd, expr);
     Cent_value_set(value, &id->text, expr_value);
-}
-
-void Cent_build_object_method_child_of(Cent_build_data* bd, Cent_ast* n, Cent_value* value)
-{
-    // Cent_ast* a = Cent_ast_get(n, 0);
-    // assert(a->type == Cent_ast_type_expr_variable);
-    // Cent_environment* top = Cent_get_environment(n);
-    // Cent_symbol* sym = Cent_environment_get(top, &a->text);
-    // assert(sym);
-    // assert(sym->type == Cent_symbol_type_variable);
-    // if (!sym->data.variable.used_value) {
-    //     sym->data.variable.used_value = Cent_value_clone(sym->data.variable.value);
-    //     sym->is_used = true;
-    // }
-    // Cent_value* object = sym->data.variable.used_value;
-    // Cent_value_add(sym->data.variable.value, value);
-    // Cent_value_add(object, value);
-}
-
-void Cent_build_object_method_property_of(Cent_build_data* bd, Cent_ast* n, Cent_value* value)
-{
-    // Cent_ast* a = Cent_ast_get(n, 0);
-    // assert(a->type == Cent_ast_type_expr_variable);
-    // Cent_environment* top = Cent_get_environment(n);
-    // Cent_symbol* sym = Cent_environment_get(top, &a->text);
-    // assert(sym);
-    // assert(sym->type == Cent_symbol_type_variable);
-    // if (!sym->data.variable.used_value) {
-    //     sym->data.variable.used_value = Cent_value_clone(sym->data.variable.value);
-    //     sym->is_used = true;
-    // }
-    // Cent_value* object = sym->data.variable.used_value;
-    //
-    // Cent_ast* b = Cent_ast_get(n, 1);
-    // assert(b->type == Cent_ast_type_expr_string);
-    // assert(b->data.string.size > 0);
-    //
-    // Cent_value_set(object, &b->data.string, value);
 }

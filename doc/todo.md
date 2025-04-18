@@ -9,7 +9,8 @@
 * support snapshot
 
 # Centipede
-* remove object const and other unused code
+* remove @file_name
+* remove follow-on
 
 # Cobble
 * test if repeat and repeat range are greedy
