@@ -185,35 +185,6 @@ Cent_ast* Cent_parse_property(Cent_parse_data* pd)
         return n;
     }
 
-    /* builtin method call */
-    if (id) {
-        if (id->builtin_type == Cent_builtin_type_child_of) {
-            n->type = Cent_ast_type_method_child_of;
-        } else if (id->builtin_type == Cent_builtin_type_property_of) {
-            n->type = Cent_ast_type_method_property_of;
-        } else {
-            Zinc_error_list_set(pd->errors, &id->loc, "invalid method: %bf", &id->value);
-            n->has_error = true;
-        }
-
-        Cent_token_destroy(id);
-        free(id);
-
-        Cent_token* lp = NULL;
-        Cent_match(pd, Cent_token_left_paren, "expected left parenthesis", &lp, n);
-        Cent_token_destroy(lp);
-        free(lp);
-
-        Cent_parse_method_call_seq(pd, n);
-
-        Cent_token* rp = NULL;
-        Cent_match(pd, Cent_token_right_paren, "expected right parenthesis", &rp, n);
-        Cent_token_destroy(rp);
-        free(rp);
-
-        return n;
-    }
-
     Zinc_error_list_set(pd->errors, &pd->lookahead->loc, "expected a property set or method call");
     n->has_error = true;
 
@@ -244,42 +215,6 @@ void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n)
         Cent_ast_add(n, b);
 
         Cent_lookahead(pd);
-    }
-
-    if (!n->has_error) {
-        if (n->type == Cent_ast_type_method_child_of || n->type == Cent_ast_type_method_property_of) {
-            Cent_ast* p = Cent_ast_get(n, 0);
-            if (!p) {
-                Zinc_error_list_set(pd->errors, &p->loc, "expected argument to method");
-                n->has_error = true;
-            } else if (p->type != Cent_ast_type_expr_variable) {
-                Zinc_error_list_set(pd->errors, &p->loc, "expected a variable");
-                n->has_error = true;
-            } else {
-                p = Cent_ast_get(n, 1);
-                if (n->type == Cent_ast_type_method_child_of) {
-                    if (p) {
-                        Zinc_error_list_set(pd->errors, &p->loc, "too many arguments for @child_of");
-                        n->has_error = true;
-                    }
-                }
-                if (n->type == Cent_ast_type_method_property_of) {
-                    if (!p) {
-                        Zinc_error_list_set(
-                            pd->errors,
-                            &pd->lookahead->loc,
-                            "not enough arguments for @property_of()");
-                        n->has_error = true;
-                    } else if (p->type != Cent_ast_type_expr_string) {
-                        Zinc_error_list_set(pd->errors, &p->loc, "expecting a string expression for @property_of");
-                        n->has_error = true;
-                    } else if (p->data.string.size == 0) {
-                        Zinc_error_list_set(pd->errors, &p->loc, "string should not be empty");
-                        n->has_error = true;
-                    }
-                }
-            }
-        }
     }
 }
 

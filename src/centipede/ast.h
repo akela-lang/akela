@@ -18,8 +18,6 @@ typedef enum Cent_ast_type {
     Cent_ast_type_modifier,
     Cent_ast_type_prop_set,
     Cent_ast_type_value_enum,
-    Cent_ast_type_method_child_of,
-    Cent_ast_type_method_property_of,
     Cent_ast_type_expr_integer,
     Cent_ast_type_expr_natural,
     Cent_ast_type_expr_real,
