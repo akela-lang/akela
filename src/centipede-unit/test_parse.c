@@ -702,56 +702,6 @@ void test_parse_enum_error_duplicate_enum_value()
     free(ct);
 }
 
-void test_parse_function_call()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "Foo {\n"
-        "    .b = @file_name()\n"
-        "}\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_ast* root = ct->primary->pr.root;
-
-    Zinc_expect_no_errors(errors);
-
-    /* root */
-    Zinc_assert_ptr(root, "ptr pr.root");
-    Zinc_expect_int_equal(root->type, Cent_ast_type_stmts, "type pr.root");
-
-    /* Foo object */
-    Cent_ast* foo = Cent_ast_get(root, 0);
-    Zinc_assert_ptr(foo, "ptr foo");
-    Zinc_expect_int_equal(foo->type, Cent_ast_type_expr_object, "type foo");
-    Zinc_expect_string(&foo->text, "Foo", "text foo");
-
-    /* property set b */
-    Cent_ast* prop_set1 = Cent_ast_get(foo, 0);
-    Zinc_assert_ptr(prop_set1, "ptr prop_set1");
-    Zinc_expect_int_equal(prop_set1->type, Cent_ast_type_prop_set, "type prop_set1");
-
-    /* b id */
-    Cent_ast* b = Cent_ast_get(prop_set1, 0);
-    Zinc_assert_ptr(b, "ptr b");
-    Zinc_expect_int_equal(b->type, Cent_ast_type_id, "type b");
-    Zinc_expect_string(&b->text, "b", "text b");
-
-    /* file_name() */
-    Cent_ast* file_name_call = Cent_ast_get(prop_set1, 1);
-    Zinc_assert_ptr(file_name_call, "ptr file_name_call");
-    Zinc_expect_int_equal(
-        file_name_call->type,
-        Cent_ast_type_expr_function_file_name,
-        "type file_name_call");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
 void test_parse_enum_duplicate_id()
 {
     Zinc_test_name(__func__);
@@ -1827,7 +1777,6 @@ void test_parse()
     test_parse_element_child_unknown_type();
     test_parse_element_child_type_not_an_element_type();
     test_parse_enum_error_duplicate_enum_value();
-    test_parse_function_call();
     test_parse_enum_duplicate_id();
     test_parse_enum_error_could_not_find_enum();
     test_parse_enum_error_could_not_find_enum_id();

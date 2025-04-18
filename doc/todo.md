@@ -9,7 +9,6 @@
 * support snapshot
 
 # Centipede
-* remove @file_name
 * remove follow-on
 
 # Cobble

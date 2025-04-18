@@ -292,30 +292,6 @@ void test_build_object_prop_set()
     free(ct);
 }
 
-void test_build_object_function_file_name()
-{
-    Zinc_test_name(__func__);
-
-    Cent_comp_table* ct = NULL;
-    Cent_comp_table_create_str(&ct,
-        "@file_name()\n"
-    );
-
-    Cent_comp_unit_parse(ct->primary);
-    Cent_comp_unit_build(ct->primary);
-    struct Zinc_error_list* errors = &ct->primary->errors;
-    Cent_value* root = ct->primary->value;
-
-    Zinc_expect_no_errors(errors);
-
-    Zinc_assert_ptr(root, "ptr root");
-    Zinc_expect_int_equal(root->type, Cent_value_type_string, "type root");
-    Zinc_expect_string(&root->data.string, "**string**", "string root");
-
-    Cent_comp_table_destroy(ct);
-    free(ct);
-}
-
 void test_build_property_set_variable()
 {
     Zinc_test_name(__func__);
@@ -1020,7 +996,6 @@ void test_build()
     test_build_assign();
     test_build_object();
     test_build_object_prop_set();
-    test_build_object_function_file_name();
     test_build_property_set_variable();
     test_build_namespace_enum();
     test_build_namespace_variable();

@@ -86,15 +86,14 @@ static char* Cent_token_name(Cent_token_type type)
 
 typedef enum Cent_builtin_type {
     Cent_builtin_type_none,
-    Cent_builtin_type_file_name,
     Cent_builtin_type_tag,
 } Cent_builtin_type;
 
 typedef struct Cent_token {
     Cent_token_type type;
     Cent_builtin_type builtin_type;
-    struct Zinc_string value;
-    struct Zinc_location loc;
+    Zinc_string value;
+    Zinc_location loc;
     union {
         int64_t integer;
         uint64_t natural;

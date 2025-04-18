@@ -11,7 +11,6 @@ void Cent_comp_unit_init(
     Cent_comp_unit *cu,
     void* input,
     Zinc_input_unicode_vtable* input_vtable,
-    Zinc_string_slice file_name,
     Cent_environment* base)
 {
     cu->status = Cent_comp_unit_status_start;
@@ -19,7 +18,7 @@ void Cent_comp_unit_init(
     cu->input = input;
     cu->vtable = input_vtable;
     Cent_lex_data_init(&cu->ld, &cu->errors, input, input_vtable);
-    Cent_parse_data_init(&cu->pd, &cu->errors, &cu->ld, file_name, base);
+    Cent_parse_data_init(&cu->pd, &cu->errors, &cu->ld, base);
     cu->value = NULL;
     Cent_parse_result_init(&cu->pr, &cu->errors);
 }
@@ -28,7 +27,6 @@ void Cent_comp_unit_create(
     Cent_comp_unit **cu,
     void* input,
     Zinc_input_unicode_vtable* input_vtable,
-    Zinc_string_slice file_name,
     Cent_environment* base)
 {
     Zinc_malloc_safe((void**)cu, sizeof(Cent_comp_unit));
@@ -36,7 +34,6 @@ void Cent_comp_unit_create(
         *cu,
         input,
         input_vtable,
-        file_name,
         base);
 }
 

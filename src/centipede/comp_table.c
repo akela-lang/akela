@@ -57,7 +57,6 @@ void Cent_comp_table_init_str(Cent_comp_table* ct, char* s)
         &cu,
         data.input,
         data.input_vtable,
-        file_name,
         ct->base);
     cu->ct = ct;
     cu->pd.ct = ct;
@@ -91,7 +90,6 @@ void Cent_comp_table_init_fp(Cent_comp_table* ct, Zinc_string* dir_path, Zinc_st
         &cu,
         input,
         input->vtable,
-        name_slice,
         ct->base);
     cu->ct = ct;
     cu->pd.ct = ct;
@@ -129,7 +127,7 @@ void Cent_comp_table_destroy(Cent_comp_table* table)
     }
 }
 
-void Cent_comp_table_add(Cent_comp_table* table, struct Zinc_string* name, Cent_comp_unit *unit)
+void Cent_comp_table_add(Cent_comp_table* table, Zinc_string* name, Cent_comp_unit *unit)
 {
     Zinc_hash_map_string_add(&table->ht, name, unit);
 }
@@ -139,7 +137,7 @@ void Cent_comp_table_add_str(Cent_comp_table* table, char* name, Cent_comp_unit 
     Zinc_hash_map_string_add_str(&table->ht, name, unit);
 }
 
-Cent_comp_unit* Cent_comp_table_get(Cent_comp_table* table, struct Zinc_string* name)
+Cent_comp_unit* Cent_comp_table_get(Cent_comp_table* table, Zinc_string* name)
 {
     return Zinc_hash_map_string_get(&table->ht, name);
 }
@@ -159,7 +157,7 @@ void Cent_comp_table_map_name(Cent_comp_table* table, Cent_comp_table_func_name 
     Zinc_hash_map_string_map_name(&table->ht, (Zinc_hash_map_string_func_name)func);
 }
 
-Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct Zinc_string* name)
+Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, Zinc_string* name)
 {
     Cent_comp_unit* cu = Cent_comp_table_get(ct, name);
     if (cu) return cu;
@@ -181,7 +179,6 @@ Cent_comp_unit* Cent_comp_table_find_unit(Cent_comp_table* ct, struct Zinc_strin
         &cu,
         data.input,
         data.input_vtable,
-        file_name,
         ct->base);
     cu->input = data.input;
     cu->vtable = data.input_vtable;

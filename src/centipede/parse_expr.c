@@ -265,55 +265,8 @@ Cent_ast* Cent_parse_expr_id(Cent_parse_data* pd)
     }
     /* test case: test_parse_value_error_expected_id */
 
-    Cent_lookahead(pd);
-    if (pd->lookahead->type == Cent_token_left_paren) {
-        Cent_parse_expr_builtin_function(pd, id, n);
-        return n;
-    }
-
     Cent_parse_expr_variable(pd, id, n);
     return n;
-}
-
-void Cent_parse_expr_builtin_function(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)
-{
-    if (id->builtin_type == Cent_builtin_type_file_name) {
-        n->type = Cent_ast_type_expr_function_file_name;
-    } else {
-        n->type = Cent_ast_type_none;
-        Zinc_error_list_set(pd->errors, &id->loc, "invalid builtin function");
-        n->has_error = true;
-    }
-
-    Cent_token* lp = NULL;
-    if (!Cent_match(pd, Cent_token_left_paren, "expected left paren", &lp, n)) {
-        assert(false && "not possible");
-    }
-    Cent_token_destroy(lp);
-    free(lp);
-
-    if (id->builtin_type == Cent_builtin_type_none) {
-        Zinc_error_list_set(
-            pd->errors,
-            &id->loc,
-            "id is not a builtin function which are denoted by an id starting with '@'");
-        n->has_error = true;
-    }
-
-    Cent_token_destroy(id);
-    free(id);
-
-    Cent_ast* a = NULL;
-    Cent_ast_create(&a);
-    a->type = Cent_ast_type_expr_string;
-    Cent_ast_value_set_type(a, Cent_value_type_string);
-    Zinc_string_add(&a->data.string, pd->file_name.p, pd->file_name.size);
-    Cent_ast_add(n, a);
-
-    Cent_token* rp = NULL;
-    Cent_match(pd, Cent_token_right_paren, "expected right paren", &rp, n);
-    Cent_token_destroy(rp);
-    free(rp);
 }
 
 void Cent_parse_expr_variable(Cent_parse_data* pd, Cent_token* id, Cent_ast* n)

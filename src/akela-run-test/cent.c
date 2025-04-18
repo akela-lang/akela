@@ -16,13 +16,11 @@ Run_cent_data* Run_get_cent(Zinc_string* dir_path, Zinc_string* file_name, Zinc_
     Zinc_input_unicode_string* input = NULL;
     Zinc_input_unicode_string_create(&input, v);
 
-    Zinc_string_slice file_name_slice = {file_name->buf, file_name->size};
     Cent_comp_unit* cu = NULL;
     Cent_comp_unit_create(
         &cu,
         input,
         input->vtable,
-        file_name_slice,
         ct->base);
     Cent_comp_table_add_str(ct, "*config*", cu);
     ct->primary = cu;

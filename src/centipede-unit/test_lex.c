@@ -563,7 +563,7 @@ void test_lex_builtin()
     Cent_lex_data ld;
 
     test_lex_setup(&ld,
-        "@file_name\n"
+        "@tag\n"
         "abc\n"
     );
 
@@ -571,7 +571,7 @@ void test_lex_builtin()
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 1.1");
-    Zinc_expect_int_equal(t->builtin_type, Cent_builtin_type_file_name, "builtin type 1.1");
+    Zinc_expect_int_equal(t->builtin_type, Cent_builtin_type_tag, "builtin type 1.1");
     Cent_token_destroy(t);
     free(t);
 
@@ -580,7 +580,7 @@ void test_lex_builtin()
     Cent_token_destroy(t);
     free(t);
 
-    /* line 4 */
+    /* line 2 */
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 2.1");
     Zinc_expect_int_equal(t->type, Cent_token_id, "type 2.1");

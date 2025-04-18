@@ -28,13 +28,11 @@ void Cent_comp_unit_init(
     Cent_comp_unit *cu,
     void* input,
     Zinc_input_unicode_vtable* input_vtable,
-    Zinc_string_slice file_name,
     Cent_environment* base);
 void Cent_comp_unit_create(
     Cent_comp_unit **cu,
     void* input,
     Zinc_input_unicode_vtable* input_vtable,
-    Zinc_string_slice file_name,
     Cent_environment* base);
 void Cent_comp_unit_destroy(Cent_comp_unit* cu);
 void Cent_comp_unit_free(Cent_comp_unit* cu);
