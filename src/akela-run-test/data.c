@@ -176,6 +176,7 @@ void Art_test_destroy(Art_test* test)
 {
     Zinc_string_destroy(&test->description);
     Cent_comp_table_destroy(test->ct);
+    free(test->ct);
     Zinc_string_destroy(&test->llvm);
     Zinc_spec_error_list_destroy(&test->spec_errors);
 }

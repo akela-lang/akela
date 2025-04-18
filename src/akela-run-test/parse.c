@@ -289,10 +289,7 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
                         &suite->path);
                 }
                 Cent_comp_table* ct = NULL;
-                Zinc_string name;
-                Zinc_string_init(&name);
-                Cent_comp_table_create_fp(&ct, &data->dir_path, &name, fp);
-                Zinc_string_destroy(&name);
+                Cent_comp_table_create_fp(&ct, &data->dir_path, &suite->name, fp);
                 Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
                 Cent_comp_unit_parse(ct->primary);
                 Cent_comp_unit_build(ct->primary);
@@ -309,6 +306,7 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
                         Art_test_meta(data, suite, test, ct->primary->value);
                     }
                 }
+                test->ct = ct;
             } else {
                 Zinc_error_list_set(
                     &suite->errors,
