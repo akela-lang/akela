@@ -1,4 +1,4 @@
-.PHONY: all config clean unit test part unit-part test-part
+.PHONY: all config clean unit test bin
 all:
 	ninja -C cmake-build-debug
 config:
@@ -18,3 +18,5 @@ unit:
 test:
 	cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
 	cmake-build-debug/bin/akela-run-test src/akela-run-test/test-cases
+bin:
+	cmake-build-debug/bin/akela examples/addition.ake
