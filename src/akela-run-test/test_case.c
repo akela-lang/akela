@@ -148,6 +148,7 @@ void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
     }
 
     Ake_comp_table_destroy(ct);
+    free(ct);
 }
 
 void Art_setup_address(Art_data* data, Art_suite* suite, Art_test* test)
