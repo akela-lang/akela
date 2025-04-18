@@ -246,6 +246,7 @@ void Art_data_destroy(Art_data* data)
 {
     Zinc_string_destroy(&data->dir_path);
     Cent_comp_table_destroy(data->type_info);
+    free(data->type_info);
     Cob_re_destroy(&data->regex_re);
 
     Art_suite* suite = data->head;

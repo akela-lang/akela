@@ -192,6 +192,7 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
             }
             Art_test_suite_meta(data, suite, ct->primary->value);
             Cent_comp_table_destroy(ct);
+            free(ct);
         } else if (item->kind == LAVA_DOM_HEADER) {
             Art_test_header(data, suite, item);
         }
