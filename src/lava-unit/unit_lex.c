@@ -100,6 +100,8 @@ void unit_lex_test_suite()
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_text, "kind line 4 token 1");
     Zinc_expect_string(&t->text, "use lib::base::*", "string line 4 token 1");
+    Lava_token_destroy(t);
+    free(t);
 
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_newline, "kind line 4 token 2");
@@ -110,6 +112,8 @@ void unit_lex_test_suite()
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_text, "kind line 5 token 1");
     Zinc_expect_string(&t->text, "TestSuite {", "string line 5 token 1");
+    Lava_token_destroy(t);
+    free(t);
 
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_newline, "kind line 5 token 2");
@@ -120,6 +124,8 @@ void unit_lex_test_suite()
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_text, "kind line 6 token 1");
     Zinc_expect_string(&t->text, "  .solo = false", "string line 6 token 1");
+    Lava_token_destroy(t);
+    free(t);
 
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_newline, "kind line 6 token 2");
@@ -130,6 +136,8 @@ void unit_lex_test_suite()
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_text, "kind line 7 token 1");
     Zinc_expect_string(&t->text, "  .mute = false", "string line 7 token 1");
+    Lava_token_destroy(t);
+    free(t);
 
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_newline, "kind line 7 token 2");
@@ -140,6 +148,8 @@ void unit_lex_test_suite()
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_text, "kind line 8 token 1");
     Zinc_expect_string(&t->text, "  .headers = headers", "string line 8 token 1");
+    Lava_token_destroy(t);
+    free(t);
 
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_newline, "kind line 8 token 2");
@@ -150,6 +160,8 @@ void unit_lex_test_suite()
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_text, "kind line 9 token 1");
     Zinc_expect_string(&t->text, "}", "string line 9 token 1");
+    Lava_token_destroy(t);
+    free(t);
 
     t = Lava_lex(ld);
     Zinc_expect_int_equal(t->kind, Lava_token_kind_newline, "kind line 9 token 2");

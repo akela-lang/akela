@@ -74,6 +74,19 @@ Lava_result Lava_parse(Lava_parse_data* pd)
         Zinc_error_list_set(pd->errors, &root->loc, "expected top level header");
     }
 
+    if (pd->lookahead) {
+        if (pd->lookahead->kind != Lava_token_kind_eof) {
+            Zinc_error_list_set(
+                pd->errors,
+                &pd->lookahead->loc,
+                "could not process token: %d-%s",
+                pd->lookahead->kind,
+                Lava_token_kind_name(pd->lookahead->kind));
+        }
+        Lava_token_destroy(pd->lookahead);
+        free(pd->lookahead);
+    }
+
     Lava_result_init(&result, pd->errors, root);
 
     return result;
@@ -175,6 +188,8 @@ Lava_dom* Lava_parse_text(Lava_parse_data* pd)
                 if (!Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n)) {
                     assert(false && "not possible");
                 }
+                Lava_token_destroy(nl);
+                free(nl);
                 Lava_lookahead(pd);
             }
             break;
@@ -205,6 +220,8 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
     if (!Lava_match(pd, Lava_token_kind_backquote, "expected backquote", &bq, n)) {
         assert(false && "not possible");
     }
+    Lava_token_destroy(bq);
+    free(bq);
 
     Lava_token* txt = NULL;
 
