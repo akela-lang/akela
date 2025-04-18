@@ -98,6 +98,7 @@ void Run_parse_files(Art_data* data, char* dir_name)
 
     Zinc_string_destroy(&dir_path);
     Zinc_string_list_destroy(&files);
+    Cob_re_destroy(&ext_re);
 }
 
 void Run_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
