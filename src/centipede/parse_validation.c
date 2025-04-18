@@ -124,39 +124,3 @@ void Cent_check_variables(Cent_parse_result* pr, Cent_ast* n)
         n->has_error = true;
     }
 }
-
-void Cent_check_follow_on(Cent_parse_result* pr, Cent_ast* n)
-{
-    assert(n->type == Cent_ast_type_follow_on);
-
-    Cent_ast* last = n->prev;
-    if (!last) {
-        Zinc_error_list_set(pr->errors, &n->loc, "follow-on has no previous object");
-        n->has_error = true;
-        return;
-        // test case: test_parse_follow_on_error_no_previous_object
-    }
-    size_t last_level;
-    if (last->type == Cent_ast_type_expr_object) {
-        last_level = 0;
-    } else if (last->type == Cent_ast_type_follow_on) {
-        Cent_ast* last_level_node = last->head;
-        last_level = last_level_node->data.integer;
-    } else {
-        Zinc_error_list_set(pr->errors, &n->loc, "follow-on is to non-object");
-        n->has_error = true;
-        return;
-        // test case: test_parse_follow_on_error_follow_on_is_to_non_object
-    }
-
-    Cent_ast* level_node = n->head;
-    assert(level_node);
-    size_t level = level_node->data.integer;
-
-    if (level > last_level && level > last_level + 1) {
-        Zinc_error_list_set(pr->errors, &n->loc, "follow-on increased level greater than one");
-        n->has_error = true;
-        // test case: test_parse_follow_on_error_follow_on_increased_level_greater_than_one
-        // test case: test_parse_follow_on_error_follow_on_increased_level_greater_than_one2
-    }
-}

@@ -33,7 +33,6 @@ typedef enum Cent_ast_type {
     Cent_ast_type_glob,
     Cent_ast_type_const,
     Cent_ast_type_pass,
-    Cent_ast_type_follow_on,
     Cent_ast_type_struct,
     Cent_ast_type_param,
     Cent_ast_type_variant,

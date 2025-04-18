@@ -3,7 +3,6 @@
 #include "parse_tools.h"
 #include "parse_expr.h"
 #include <assert.h>
-#include "parse_const.h"
 
 Cent_ast* Cent_parse_object_stmts(Cent_parse_data* pd);
 Cent_ast* Cent_parse_object_stmt(Cent_parse_data* pd);
@@ -216,50 +215,4 @@ void Cent_parse_method_call_seq(Cent_parse_data* pd, Cent_ast* n)
 
         Cent_lookahead(pd);
     }
-}
-
-Cent_ast* Cent_parse_follow_on(Cent_parse_data* pd)
-{
-    Cent_ast* n = NULL;
-    Cent_ast_create(&n);
-    n->type = Cent_ast_type_follow_on;
-
-    Cent_ast* a = NULL;
-    Cent_ast_create(&a);
-    a->type = Cent_ast_type_expr_natural;
-
-    size_t level = 0;
-    Cent_lookahead(pd);
-    while (pd->lookahead->type == Cent_token_dot) {
-        Cent_token* dot = NULL;
-        if (!Cent_match(pd, Cent_token_dot, "expected dot", &dot, a)) {
-            assert(false && "not possible");
-        }
-        Cent_token_destroy(dot);
-        free(dot);
-        level++;
-        Cent_lookahead(pd);
-    }
-
-    a->data.integer = level;
-    Cent_ast_add(n, a);
-
-    Cent_token* id = NULL;
-    Cent_match(pd, Cent_token_id, "expected id", &id, n);
-
-    Cent_ast* b = NULL;
-    Cent_ast_create(&b);
-    b->type = Cent_ast_type_expr_object;
-    Cent_parse_object_finish(pd, id, b);
-    Cent_ast_add(n, b);
-
-    if (!n->has_error) {
-        Zinc_priority_task* task = NULL;
-        Zinc_priority_task_create(&task);
-        task->priority = Cent_task_type_check_follow_on;
-        task->data = n;
-        Zinc_priority_queue_add(&pd->pq, task);
-    }
-
-    return n;
 }

@@ -9,7 +9,6 @@
 * support snapshot
 
 # Centipede
-* remove follow-on
 
 # Cobble
 * test if repeat and repeat range are greedy

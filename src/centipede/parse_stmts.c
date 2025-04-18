@@ -82,10 +82,6 @@ Cent_ast* Cent_parse_stmt(Cent_parse_data* pd)
         return Cent_parse_const(pd);
     }
 
-    if (pd->lookahead->type == Cent_token_dot) {
-        return Cent_parse_follow_on(pd);
-    }
-
     return Cent_parse_expr(pd);
 }
 
