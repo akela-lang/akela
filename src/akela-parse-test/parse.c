@@ -143,8 +143,8 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
     if (pr.root->kind == LAVA_DOM_HEADER) {
         Zinc_string_add_string(&suite->name, path);
 
-        for (size_t i = 0; i < header->data.LAVA_DOM_HEADER.items.count; i++) {
-            Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&header->data.LAVA_DOM_HEADER.items, i);
+        Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
+        while (item) {
             if (item->kind == LAVA_DOM_TEXT) {
                 if (suite->description.size > 0) {
                     Zinc_string_add_char(&suite->description, '\n');
@@ -184,6 +184,8 @@ void Apt_parse_test_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
                     Apt_parse_test(data, path, suite, item, name);
                 }
             }
+
+            item = item->next;
         }
     }
 
@@ -251,8 +253,8 @@ void Apt_parse_test(
     bool seen_source = false;
     bool seen_ast = false;
 
-    for (size_t i = 0; i < dom->data.LAVA_DOM_HEADER.items.count; i++) {
-        Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&dom->data.LAVA_DOM_HEADER.items, i);
+    Lava_dom* item = dom->data.LAVA_DOM_HEADER.head;
+    while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
             if (tc->description.size > 0) {
                 Zinc_string_add_char(&tc->description, '\n');
@@ -282,6 +284,8 @@ void Apt_parse_test(
                 tc->source_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
             }
         }
+
+        item = item->next;
     }
 
     if (tc->solo) {

@@ -151,8 +151,8 @@ void Run_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
 
 void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
 {
-    for (size_t i = 0; i < header->data.LAVA_DOM_HEADER.items.count; i++) {
-        Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&header->data.LAVA_DOM_HEADER.items, i);
+    Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
+    while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
             if (suite->description.size > 0) {
                 Zinc_string_add_char(&suite->description, '\n');
@@ -194,6 +194,8 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
         } else if (item->kind == LAVA_DOM_HEADER) {
             Art_test_header(data, suite, item);
         }
+
+        item = item->next;
     }
 }
 
@@ -264,8 +266,8 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
     Art_test_create(&test);
     Art_suite_add(suite, test);
 
-    for (size_t i = 0; i < header->data.LAVA_DOM_HEADER.items.count; i++) {
-        Lava_dom* item = (Lava_dom*)ZINC_VECTOR_PTR(&header->data.LAVA_DOM_HEADER.items, i);
+    Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
+    while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
             if (test->description.size > 0) {
                 Zinc_string_add_char(&test->description, '\n');
@@ -315,6 +317,8 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
                     &item->data.LAVA_DOM_BACKQUOTE.format);
             }
         }
+
+        item = item->next;
     }
 }
 
