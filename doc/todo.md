@@ -6,7 +6,6 @@
 * support snapshot
 
 # Akela Run Test
-* delete unused data structures
 * support snapshot
 
 # Centipede
