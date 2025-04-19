@@ -11,7 +11,6 @@
 # Centipede
 
 # Cobble
-* test if repeat and repeat range are greedy
 
 # Coverage
 

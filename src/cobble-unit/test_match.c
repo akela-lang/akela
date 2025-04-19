@@ -1146,6 +1146,60 @@ void test_match_missing_group()
     match_teardown(&mr);
 }
 
+void test_match_group_empty()
+{
+    Zinc_test_name(__func__);
+    Cob_result mr = match_run(
+        "()",
+        "");
+    Zinc_expect_true(mr.matched, "m");
+    Zinc_expect_buffer_list_count(&mr.groups, 2, "count groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 0, "", "item groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 1, "", "item groups");
+    match_teardown(&mr);
+}
+
+void test_match_group_closure_empty()
+{
+    Zinc_test_name(__func__);
+    Cob_result mr = match_run(
+        "(a*)",
+        "");
+    Zinc_expect_true(mr.matched, "m");
+    Zinc_expect_buffer_list_count(&mr.groups, 2, "count groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 0, "", "item groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 1, "", "item groups");
+    match_teardown(&mr);
+}
+
+void test_match_repeat_range_greedy()
+{
+    Zinc_test_name(__func__);
+    Cob_result mr = match_run(
+        "(a{1,2})(a*)",
+        "aa");
+    Zinc_expect_true(mr.matched, "m");
+    Zinc_expect_buffer_list_count(&mr.groups, 3, "count groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 0, "aa", "item groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 1, "aa", "item groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 2, "", "item groups");
+    match_teardown(&mr);
+}
+
+void test_match_repeat_range_greedy2()
+{
+    Zinc_test_name(__func__);
+    Cob_result mr = match_run(
+        "(a{1,2})(a*)",
+        "aaa");
+    Zinc_expect_true(mr.matched, "m");
+    Zinc_expect_buffer_list_count(&mr.groups, 3, "count groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 0, "aaa", "item groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 1, "aa", "item groups");
+    Zinc_expect_buffer_list_item(&mr.groups, 2, "a", "item groups");
+    match_teardown(&mr);
+}
+
 void test_match()
 {
      test_match_empty();
@@ -1285,4 +1339,9 @@ void test_match()
      test_match_coverage_line3();
 
     test_match_missing_group();
+
+    test_match_group_empty();
+    test_match_group_closure_empty();
+    test_match_repeat_range_greedy();
+    test_match_repeat_range_greedy2();
 }
