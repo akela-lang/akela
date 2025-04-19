@@ -6,14 +6,13 @@
 * support snapshot
 
 # Akela Run Test
+* delete unused data structures
 * support snapshot
 
 # Centipede
 
 # Cobble
 * test if repeat and repeat range are greedy
-* NFA generation
-* single pass NFA generation
 
 # Coverage
 

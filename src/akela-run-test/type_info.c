@@ -3,7 +3,6 @@
 
 #include "data.h"
 #include "zinc/os_unix.h"
-#include "cent.h"
 
 void Run_get_type_info(Art_data* data)
 {

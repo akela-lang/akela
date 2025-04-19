@@ -3,7 +3,7 @@
 
 #include "data.h"
 
-bool Run_validate_directory(const char* path);
-void Run_parse_files(Art_data* data, const char* dir_name);
+bool Art_validate_directory(const char* path);
+void Art_parse_files(Art_data* data, const char* dir_name);
 
 #endif

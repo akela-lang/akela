@@ -11,7 +11,6 @@
 #include "data.h"
 #include "zinc/string_slice.h"
 #include <assert.h>
-#include "cent.h"
 #include "zinc/os_unix.h"
 #include "zinc/os_win.h"
 #include "zinc/fs.h"
@@ -22,13 +21,13 @@ void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value);
 void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header);
 void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value* value);
 
-void Run_collect(
+void Art_collect(
     Art_data* data,
     Zinc_string* dir_path,
     Zinc_string* path,
     Zinc_string* file_name);
 
-bool Run_validate_directory(const char* path)
+bool Art_validate_directory(const char* path)
 {
     struct stat sb;
     if (!Zinc_file_exists(path)) {
@@ -57,7 +56,7 @@ bool Run_validate_directory(const char* path)
     return true;
 }
 
-void Run_parse_files(Art_data* data, char* dir_name)
+void Art_parse_files(Art_data* data, char* dir_name)
 {
     Cob_re ext_re = Cob_compile_str("\\.md$");
 
@@ -86,7 +85,7 @@ void Run_parse_files(Art_data* data, char* dir_name)
 
                 if (Zinc_is_reg_file(&path)) {
                     printf("%s\n", Zinc_string_c_str(&path));
-                    Run_collect(data, &dir_path, &path, &node->value);
+                    Art_collect(data, &dir_path, &path, &node->value);
                 }
 
                 Zinc_string_destroy(&path);
@@ -101,7 +100,7 @@ void Run_parse_files(Art_data* data, char* dir_name)
     Cob_re_destroy(&ext_re);
 }
 
-void Run_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
+void Art_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
 {
     Art_suite* suite = NULL;
     Art_suite_create(&suite);

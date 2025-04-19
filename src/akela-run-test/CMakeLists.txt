@@ -4,7 +4,6 @@ set(run_files
         data.c
         test_case.c
         type_info.c
-        cent.c
 )
 add_executable(akela-run-test ${run_files})
 target_link_libraries(akela-run-test akela-llvm ${llvm_libs} akela centipede cobble lava zinc)

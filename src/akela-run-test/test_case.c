@@ -14,13 +14,13 @@
 
 void Art_run_suite(Art_data* data, Art_suite* suite);
 void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test);
-Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
-bool Run_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
-Zinc_string_list* Run_split(Zinc_string* string);
-Zinc_string* Run_join(Zinc_string_list* list);
-void Run_print_akela(Zinc_string* ake);
-void Run_print_llvm(Run_pair* pair);
-void Run_print_result(Run_pair* pair);
+Art_pair Art_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
+bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
+Zinc_string_list* Art_split(Zinc_string* string);
+Zinc_string* Art_join(Zinc_string_list* list);
+void Art_print_akela(Zinc_string* ake);
+void Art_print_llvm(Art_pair* pair);
+void Art_print_result(Art_pair* pair);
 void Art_print_results(Art_data* data);
 void Art_setup_address(Art_data* data, Art_suite* suite, Art_test* test);
 bool Art_check_address(
@@ -115,12 +115,12 @@ void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
         Akela_llvm_cg_destroy(cg);
 
         /* check llvm output */
-        Run_pair llvm_pair = Run_diff(data->regex_re, &cg_result.module_text, &test->llvm);
+        Art_pair llvm_pair = Art_diff(data->regex_re, &cg_result.module_text, &test->llvm);
         if (!llvm_pair.matched) {
             passed = false;
-            Run_print_llvm(&llvm_pair);
+            Art_print_llvm(&llvm_pair);
         }
-        Run_pair_destroy(&llvm_pair);
+        Art_pair_destroy(&llvm_pair);
 
         if (ct->primary->errors.head) {
             /* any other errors */
@@ -224,7 +224,7 @@ bool Art_check_address(
         if (value_value->type == Cent_value_type_string) {
             Zinc_string* actual = &cg_result->value;
             Zinc_string* expected = &value_value->data.string;
-            if (!Run_diff_value(data->regex_re, actual, expected)) {
+            if (!Art_diff_value(data->regex_re, actual, expected)) {
                 matched = false;
                 Zinc_string_finish(actual);
                 Zinc_string_finish(expected);
@@ -406,19 +406,10 @@ bool Art_check_address(
     return matched;
 }
 
-void Run_check_result(Run_data* data, Run_test* test)
+Art_pair Art_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
 {
-    Cent_value* test_element = test->config_data->ct->primary->value;
-    Cent_value* field = test_element->data.dag.head;
-    while (field) {
-        field = field->next;
-    }
-}
-
-Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
-{
-    Zinc_string_list* actual_list = Run_split(actual);
-    Zinc_string_list* expected_list = Run_split(expected);
+    Zinc_string_list* actual_list = Art_split(actual);
+    Zinc_string_list* expected_list = Art_split(expected);
 
     size_t actual_count = Zinc_string_list_count(actual_list);
     size_t expected_count = Zinc_string_list_count(expected_list);
@@ -429,8 +420,8 @@ Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
         count = expected_count;
     }
 
-    Run_pair pair;
-    Run_pair_init(&pair);
+    Art_pair pair;
+    Art_pair_init(&pair);
 
     Zinc_string_list actual_diff_list;
     Zinc_string_list_init(&actual_diff_list);
@@ -448,7 +439,7 @@ Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
             Zinc_string expected_line2;
             Zinc_string_init(&expected_line2);
 
-            if (Run_diff_value(regex_re, actual_line, expected_line)) {
+            if (Art_diff_value(regex_re, actual_line, expected_line)) {
                 Zinc_string_add_str(&actual_line2, "s ");
                 Zinc_string_add_str(&expected_line2, "s ");
             } else {
@@ -486,8 +477,8 @@ Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
         }
     }
 
-    Zinc_string* actual_diff = Run_join(&actual_diff_list);
-    Zinc_string* expected_diff = Run_join(&expected_diff_list);
+    Zinc_string* actual_diff = Art_join(&actual_diff_list);
+    Zinc_string* expected_diff = Art_join(&expected_diff_list);
 
     pair.actual = actual_diff;
     pair.expected = expected_diff;
@@ -503,7 +494,7 @@ Run_pair Run_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
     return pair;
 }
 
-bool Run_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
+bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
 {
     Zinc_string_slice expected_slice = {expected->buf, expected->size};
     Cob_result regex_mr = Cob_match(&regex_re, expected_slice);
@@ -532,7 +523,7 @@ bool Run_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
     return Zinc_string_compare(actual, expected);
 }
 
-Zinc_string_list* Run_split(Zinc_string* string)
+Zinc_string_list* Art_split(Zinc_string* string)
 {
     Zinc_string_list* list = NULL;
     Zinc_string_list_create(&list);
@@ -568,7 +559,7 @@ Zinc_string_list* Run_split(Zinc_string* string)
     return list;
 }
 
-Zinc_string* Run_join(Zinc_string_list* list)
+Zinc_string* Art_join(Zinc_string_list* list)
 {
     Zinc_string* result = NULL;
     Zinc_string_create(&result);
@@ -587,14 +578,14 @@ void Run_compare_result(Zinc_string* result, Cent_value* config)
 
 }
 
-void Run_print_akela(Zinc_string* ake)
+void Art_print_akela(Zinc_string* ake)
 {
     fprintf(stderr, "Source:\n");
     Zinc_string_finish(ake);
     fprintf(stderr, "%s\n", ake->buf);
 }
 
-void Run_print_llvm(Run_pair* pair)
+void Art_print_llvm(Art_pair* pair)
 {
     if (!pair->matched) {
         fprintf(stderr, "llvm is different.\n");
@@ -607,7 +598,7 @@ void Run_print_llvm(Run_pair* pair)
     }
 }
 
-void Run_print_result(Run_pair* pair)
+void Art_print_result(Art_pair* pair)
 {
     if (!pair->matched) {
         fprintf(stderr, "result different.\n");
