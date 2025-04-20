@@ -3,7 +3,7 @@
 
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_ast_type type);
-void Ake_type_use_cent_print(Ake_type_use* tu, size_t level);
+void Ake_type_use_cent_print(Ake_type_use* tu, size_t level, bool is_property);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_cent_print(Ake_ast* n, size_t level)
