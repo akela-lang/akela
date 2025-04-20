@@ -5,6 +5,7 @@ void Apt_test_case_init(Apt_test_case *tc)
 {
     tc->solo = false;
     tc->mute = false;
+    tc->snapshot = false;
     tc->has_error = false;
     Zinc_string_init(&tc->source_path);
     Zinc_string_init(&tc->source_name);

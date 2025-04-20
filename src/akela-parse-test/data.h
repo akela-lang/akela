@@ -13,6 +13,7 @@ typedef struct Apt_test_case Apt_test_case;
 struct Apt_test_case {
     bool solo;
     bool mute;
+    bool snapshot;
     bool has_error;
     Zinc_string source_path;
     Zinc_string source_name;

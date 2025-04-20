@@ -335,6 +335,13 @@ void Apt_parse_test_case_meta_prop(Zinc_string* name, Cent_value* prop)
             Cent_ast* n = prop->n;
             Zinc_error_list_set(&data->errors, &n->loc, "expected boolean");
         }
+    } else if (Zinc_string_compare_str(name, "snapshot")) {
+        if (prop->type == Cent_value_type_boolean) {
+            tc->snapshot = prop->data.boolean;
+        } else {
+            Cent_ast* n = prop->n;
+            Zinc_error_list_set(&data->errors, &n->loc, "expected boolean");
+        }
     } else if (Zinc_string_compare_str(name, "has_error")) {
         if (prop->type == Cent_value_type_boolean) {
             tc->has_error = prop->data.boolean;

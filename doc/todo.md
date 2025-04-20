@@ -3,10 +3,11 @@
 # Akela LLVM
 
 # Akela Parse Test
-* support snapshot
+* snapshot AST
+* check errors
 
 # Akela Run Test
-* support snapshot
+* snapshot LLVM
 
 # Centipede
 

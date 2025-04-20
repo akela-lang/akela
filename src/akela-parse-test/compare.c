@@ -12,6 +12,7 @@
 #include "data.h"
 #include <errno.h>
 #include <akela/comp_table.h>
+#include <akela/ast_to_cent.h>
 
 void Apt_run_suite(Apt_data* data, Apt_test_suite* suite);
 void Apt_run_test(Apt_data* data, Apt_test_case* tc);
@@ -115,6 +116,10 @@ void Apt_run_test(Apt_data* data, Apt_test_case* tc)
     }
 
     Apt_compare_ast(data, ct->primary->root, expected_ct->primary->value);
+
+    if (tc->snapshot) {
+        Ake_ast_cent_print(ct->primary->root, 0);
+    }
 
     Ake_comp_table_free(ct);
     Cent_comp_table_destroy(expected_ct);

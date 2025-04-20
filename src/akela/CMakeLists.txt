@@ -21,6 +21,7 @@ set(lib_files
         struct_element.c
         type_use.c
         parse_data.c
+        ast_to_cent.c
 )
 
 add_library(akela STATIC ${lib_files})

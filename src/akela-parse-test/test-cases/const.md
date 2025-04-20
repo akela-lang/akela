@@ -17,6 +17,7 @@ use lib::base::*
 Test {
   .solo = false
   .mute = false
+  .snapshot = true
   .has_error = false
 }
 ```

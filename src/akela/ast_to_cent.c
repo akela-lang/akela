@@ -1,0 +1,280 @@
+#include "ast.h"
+#include <assert.h>
+
+void Ake_indent_print(size_t level);
+char* Ake_ast_cent_name(Ake_ast_type type);
+void Ake_type_use_cent_print(Ake_type_use* tu, size_t level);
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Ake_ast_cent_print(Ake_ast* n, size_t level)
+{
+    if (n) {
+        Ake_indent_print(level);
+        printf("%s {\n", Ake_ast_cent_name(n->type));
+
+        level++;
+
+        if (n->value.size > 0) {
+            Ake_indent_print(level);
+            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->value));
+        }
+
+        Ake_ast* p = n->head;
+        while (p) {
+            Ake_ast_cent_print(p, level);
+            p = p->next;
+        }
+
+        level--;
+
+        Ake_indent_print(level);
+        printf("}\n");
+    } else {
+        printf("null\n");
+    }
+}
+
+void Ake_indent_print(size_t level)
+{
+    for (size_t i = 0; i < level; i++) {
+        printf("  ");
+    }
+}
+
+char* Ake_ast_cent_name(Ake_ast_type type)
+{
+    if (type == Ake_ast_type_id) {
+        return "Ast::Id";
+    }
+
+    if (type == Ake_ast_type_sign) {
+        return "Ast::Sign";
+    }
+
+    if (type == Ake_ast_type_number) {
+        return "Ast::Number";
+    }
+
+    if (type == Ake_ast_type_string) {
+        return "Ast::String";
+    }
+
+    if (type == Ake_ast_type_assign) {
+        return "Ast::Assign";
+    }
+
+    if (type == Ake_ast_type_plus) {
+        return "Ast::Plus";
+    }
+
+    if (type == Ake_ast_type_minus) {
+        return "Ast::Minus";
+    }
+
+    if (type == Ake_ast_type_mult) {
+        return "Ast::Mult";
+    }
+
+    if (type == Ake_ast_type_divide) {
+        return "Ast::Divide";
+    }
+
+    if (type == Ake_ast_type_stmts) {
+        return "Ast::Stmts";
+    }
+
+    if (type == Ake_ast_type_function) {
+        return "Ast::Function";
+    }
+
+    if (type == Ake_ast_type_dseq) {
+        return "Ast::DSeq";
+    }
+
+    if (type == Ake_ast_type_dret) {
+        return "Ast::DRet";
+    }
+
+    if (type == Ake_ast_type_call) {
+        return "Ast::Call";
+    }
+
+    if (type == Ake_ast_type_cseq) {
+        return "Ast::CSeq";
+    }
+
+    if (type == Ake_ast_type_if) {
+        return "Ast::If";
+    }
+
+    if (type == Ake_ast_type_conditional_branch) {
+        return "Ast::ConditionalBranch";
+    }
+
+    if (type == Ake_ast_type_default_branch) {
+        return "Ast::DefaultBranch";
+    }
+
+    if (type == Ake_ast_type_equality) {
+        return "Ast::Equality";
+    }
+
+    if (type == Ake_ast_type_not_equal) {
+        return "Ast::NotEqual";
+    }
+
+    if (type == Ake_ast_type_less_than) {
+        return "Ast::LessThan";
+    }
+
+    if (type == Ake_ast_type_less_than_or_equal) {
+        return "Ast::LessThanOrEqual";
+    }
+
+    if (type == Ake_ast_type_greater_than) {
+        return "Ast::GreaterThan";
+    }
+
+    if (type == Ake_ast_type_greater_than_or_equal) {
+        return "Ast::GreaterThanOrEqual";
+    }
+
+    if (type == Ake_ast_type_not) {
+        return "Ast::Not";
+    }
+
+    if (type == Ake_ast_type_and) {
+        return "Ast::And";
+    }
+
+    if (type == Ake_ast_type_or) {
+        return "Ast::Or";
+    }
+
+    if (type == Ake_ast_type_while) {
+        return "Ast::While";
+    }
+
+    if (type == Ake_ast_type_for_range) {
+        return "Ast::ForRange";
+    }
+
+    if (type == Ake_ast_type_for_iteration) {
+        return "Ast::ForIteration";
+    }
+
+    if (type == Ake_ast_type_declaration) {
+        return "Ast::Declaration";
+    }
+
+    if (type == Ake_ast_type_array_literal) {
+        return "Ast::ArrayLiteral";
+    }
+
+    if (type == Ake_ast_type_array_subscript) {
+        return "Ast::ArraySubscript";
+    }
+
+    if (type == Ake_ast_type_boolean) {
+        return "Ast::Boolean";
+    }
+
+    if (type == Ake_ast_type_parenthesis) {
+        return "Ast::Parenthesis";
+    }
+
+    if (type == Ake_ast_type_type) {
+        return "Ast::Type";
+    }
+
+    if (type == Ake_ast_type_power) {
+        return "Ast::Power";
+    }
+
+    if (type == Ake_ast_type_type_pool) {
+        return "Ast::TypePool";
+    }
+
+    if (type == Ake_ast_type_dot) {
+        return "Ast::Dot";
+    }
+
+    if (type == Ake_ast_type_module) {
+        return "Ast::Module";
+    }
+
+    if (type == Ake_ast_type_struct) {
+        return "Ast::Struct";
+    }
+
+    if (type == Ake_ast_type_return) {
+        return "Ast::Return";
+    }
+
+    if (type == Ake_ast_type_eseq) {
+        return "Ast::Eseq";
+    }
+
+    if (type == Ake_ast_type_let_lseq) {
+        return "Ast::LetLseq";
+    }
+
+    if (type == Ake_ast_type_let_rseq) {
+        return "Ast::LetRseq";
+    }
+
+    if (type == Ake_ast_type_error) {
+        return "Ast::Error";
+    }
+
+    if (type == Ake_ast_type_prototype) {
+        return "Ast::Prototype";
+    }
+
+    if (type == Ake_ast_type_extern) {
+        return "Ast::Extern";
+    }
+
+    if (type == Ake_ast_type_struct_literal) {
+        return "Ast::StructLiteral";
+    }
+
+    if (type == Ake_ast_type_struct_literal_field) {
+        return "Ast::StructLiteralField";
+    }
+
+    if (type == Ake_ast_type_ellipsis) {
+        return "Ast::Ellipsis";
+    }
+
+    if (type == Ake_ast_type_impl) {
+        return "Ast::Impl";
+    }
+
+    if (type == Ake_ast_type_self) {
+        return "Ast::Self";
+    }
+
+    if (type == Ake_ast_type_const) {
+        return "Ast::Const";
+    }
+
+    if (type == Ake_ast_type_var) {
+        return "Ast::Var";
+    }
+
+    assert(false && "unknown type");
+}
+
+void Ake_type_use_cent_print(Ake_type_use* tu, size_t level, bool is_property)
+{
+    if (tu) {
+        if (!is_property) {
+            Ake_indent_print(level);
+        }
+        printf("TypeUse {\n");
+
+        Ake_indent_print(level);
+        printf("}\n");
+    }
+}
