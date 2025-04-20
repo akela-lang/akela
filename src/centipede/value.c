@@ -1,5 +1,4 @@
 #include "value.h"
-#include <akela/type_def.h>
 #include "zinc/memory.h"
 #include "zinc/hash_map_size_t.h"
 #include <assert.h>

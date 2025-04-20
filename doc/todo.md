@@ -3,7 +3,10 @@
 # Akela LLVM
 
 # Akela Parse Test
-* snapshot AST
+* test count
+* pass count
+* fail count
+* percentage pass
 * check errors
 
 # Akela Run Test

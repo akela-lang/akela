@@ -83,47 +83,48 @@ void Apt_run_test(Apt_data* data, Apt_test_case* tc)
     // close file before reopening
     Ake_comp_unit_destroy_input(ct->primary);
 
-    Cent_comp_table* expected_ct = NULL;
-    fp = fopen(Zinc_string_c_str(&tc->source_path), "r");
-    if (!fp) {
-        Zinc_location loc;
-        Zinc_location_init(&loc);
-        Zinc_error_list_set(
-            &data->errors,
-            &loc,
-            "fopen: %s: %s",
-            Zinc_string_c_str(&tc->source_path),
-            strerror(errno));
-        Ake_comp_table_free(ct);
-        return;
-    }
-    Cent_comp_table_create_fp(&expected_ct, &data->dir_path, &tc->source_name, fp);
-    Cent_comp_unit_set_bounds(expected_ct->primary, &tc->ast_bounds);
-    Cent_comp_unit_parse(expected_ct->primary);
-    Cent_comp_unit_build(expected_ct->primary);
-    if (expected_ct->primary->errors.head) {
-        Zinc_error* e = expected_ct->primary->errors.head;
-        while (e) {
-            Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
-            e = e->next;
-        }
-        Zinc_error_list_print(&data->errors);
-
-        Ake_comp_table_free(ct);
-        Cent_comp_table_destroy(expected_ct);
-        free(expected_ct);
-        return;
-    }
-
-    Apt_compare_ast(data, ct->primary->root, expected_ct->primary->value);
-
     if (tc->snapshot) {
         Ake_ast_cent_print(ct->primary->root, 0);
+    } else {
+        Cent_comp_table* expected_ct = NULL;
+        fp = fopen(Zinc_string_c_str(&tc->source_path), "r");
+        if (!fp) {
+            Zinc_location loc;
+            Zinc_location_init(&loc);
+            Zinc_error_list_set(
+                &data->errors,
+                &loc,
+                "fopen: %s: %s",
+                Zinc_string_c_str(&tc->source_path),
+                strerror(errno));
+            Ake_comp_table_free(ct);
+            return;
+        }
+        Cent_comp_table_create_fp(&expected_ct, &data->dir_path, &tc->source_name, fp);
+        Cent_comp_unit_set_bounds(expected_ct->primary, &tc->ast_bounds);
+        Cent_comp_unit_parse(expected_ct->primary);
+        Cent_comp_unit_build(expected_ct->primary);
+        if (expected_ct->primary->errors.head) {
+            Zinc_error* e = expected_ct->primary->errors.head;
+            while (e) {
+                Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
+                e = e->next;
+            }
+            Zinc_error_list_print(&data->errors);
+
+            Ake_comp_table_free(ct);
+            Cent_comp_table_destroy(expected_ct);
+            free(expected_ct);
+            return;
+        }
+
+        Apt_compare_ast(data, ct->primary->root, expected_ct->primary->value);
+
+        Cent_comp_table_destroy(expected_ct);
+        free(expected_ct);
     }
 
     Ake_comp_table_free(ct);
-    Cent_comp_table_destroy(expected_ct);
-    free(expected_ct);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -338,7 +339,7 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
         }
     }
 
-    Cent_value* type_value = Cent_value_get_str(value, "type");
+    Cent_value* type_value = Cent_value_get_str(value, "@tag");
     if (!type_value) {
         Zinc_spec_error_list_set(&data->spec_errors, loc, &value_n->loc, "type not set");
     } else {

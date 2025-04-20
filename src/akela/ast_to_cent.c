@@ -1,9 +1,14 @@
 #include "ast.h"
+#include "type_use.h"
+#include "type_def.h"
 #include <assert.h>
 
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_ast_type type);
 void Ake_type_use_cent_print(Ake_type_use* tu, size_t level, bool is_property);
+char* Ake_type_use_cent_name(Ake_type_use_type type);
+void Ake_type_def_cent_print(Ake_type_def* td, size_t level, bool is_property);
+char* Ake_type_def_cent_name(Ake_type type);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_cent_print(Ake_ast* n, size_t level)
@@ -17,6 +22,12 @@ void Ake_ast_cent_print(Ake_ast* n, size_t level)
         if (n->value.size > 0) {
             Ake_indent_print(level);
             printf(".value = \"%s\"\n", Zinc_string_c_str(&n->value));
+        }
+
+        if (n->tu) {
+            Ake_indent_print(level);
+            printf(".tu = ");
+            Ake_type_use_cent_print(n->tu, level, true);
         }
 
         Ake_ast* p = n->head;
@@ -268,13 +279,128 @@ char* Ake_ast_cent_name(Ake_ast_type type)
 
 void Ake_type_use_cent_print(Ake_type_use* tu, size_t level, bool is_property)
 {
-    if (tu) {
-        if (!is_property) {
-            Ake_indent_print(level);
-        }
-        printf("TypeUse {\n");
-
+    if (!is_property) {
         Ake_indent_print(level);
-        printf("}\n");
     }
+    printf("%s {\n", Ake_type_use_cent_name(tu->type));
+
+    level++;
+
+    if (tu->name.size > 0) {
+        Ake_indent_print(level);
+        printf(".name = \"%s\"\n", Zinc_string_c_str(&tu->name));
+    }
+
+    if (tu->dim.count > 0) {
+        Ake_indent_print(level);
+        printf("dim ");
+        for (size_t i = 0; i < tu->dim.count; i++) {
+            printf("%zu ", *(size_t*)ZINC_VECTOR_PTR(&tu->dim, i));
+        }
+        printf("\n");
+    }
+
+    if (tu->td) {
+        Ake_indent_print(level);
+        printf(".td = ");
+        Ake_type_def_cent_print(tu->td, level, true);
+    }
+
+    level--;
+
+    Ake_indent_print(level);
+    printf("}\n");
+}
+
+char* Ake_type_use_cent_name(Ake_type_use_type type)
+{
+    if (type == Ake_type_use_type_def) {
+        return "TypeUse::TypeDef";
+    }
+
+    if (type == Ake_type_use_function_inputs) {
+        return "TypeUse::FunctionInputs";
+    }
+
+    if (type == Ake_type_use_function_outputs) {
+        return "TypeUse::FunctionOutputs";
+    }
+
+    if (type == Ake_type_use_function_ellipsis) {
+        return "TypeUse::FunctionEllipsis";
+    }
+
+    assert(false && "unknown type");
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Ake_type_def_cent_print(Ake_type_def* td, size_t level, bool is_property)
+{
+    if (!is_property) {
+        Ake_indent_print(level);
+    }
+    printf("%s {\n", Ake_type_def_cent_name(td->type));
+
+    level++;
+
+    if (td->name.size > 0) {
+        Ake_indent_print(level);
+        printf(".name = \"%s\"\n", Zinc_string_c_str(&td->name));
+    }
+
+    Ake_indent_print(level);
+    printf(".bit_count = %d\n", td->bit_count);
+
+    Ake_indent_print(level);
+    printf(".is_signed = %s\n", td->is_signed ? "true": "false");
+
+    if (td->composite) {
+        Ake_ast_cent_print(td->composite, level);
+    }
+
+    level--;
+
+    Ake_indent_print(level);
+    printf("}\n");
+}
+
+char* Ake_type_def_cent_name(Ake_type type)
+{
+    if (type == Ake_type_none) {
+        return "TypeDef::None";
+    }
+
+    if (type == Ake_type_integer) {
+        return "TypeDef::Integer";
+    }
+
+    if (type == Ake_type_float) {
+        return "TypeDef::Float";
+    }
+
+    if (type == Ake_type_boolean) {
+        return "TypeDef::Boolean";
+    }
+
+    if (type == Ake_type_struct) {
+        return "TypeDef::Struct";
+    }
+
+    if (type == Ake_type_function) {
+        return "TypeDef::Function";
+    }
+
+    if (type == Ake_type_enum) {
+        return "TypeDef::Enum";
+    }
+
+    if (type == Ake_type_tuple) {
+        return "TypeDef::Tuple";
+    }
+
+    if (type == Ake_type_module) {
+        return "TypeDef::Module";
+    }
+
+    assert(false && "unknown type");
 }

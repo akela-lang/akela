@@ -1,3 +1,5 @@
+typedef struct Ake_type_def Ake_type_def;
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include "type_def.h"
@@ -5,13 +7,13 @@
 #include "ast.h"
 #include "struct_element.h"
 
-void Ake_type_def_create(struct Ake_type_def** n)
+void Ake_type_def_create(Ake_type_def** n)
 {
-	Zinc_malloc_safe((void**)n, sizeof(struct Ake_type_def));
+	Zinc_malloc_safe((void**)n, sizeof(Ake_type_def));
 	Ake_type_def_init(*n);
 }
 
-void Ake_type_def_init(struct Ake_type_def* n)
+void Ake_type_def_init(Ake_type_def* n)
 {
 	n->type = Ake_type_none;
 	Zinc_string_init(&n->name);
@@ -23,7 +25,7 @@ void Ake_type_def_init(struct Ake_type_def* n)
     Zinc_hash_map_string_init(&n->type_impl, IMPL_HASH_SIZE);
 }
 
-void Ake_type_def_destroy(struct Ake_type_def* n)
+void Ake_type_def_destroy(Ake_type_def* n)
 {
 	if (n) {
 		Zinc_string_destroy(&n->name);
@@ -37,9 +39,9 @@ void Ake_type_def_destroy(struct Ake_type_def* n)
 }
 
 /* copy dag excluding etype */
-struct Ake_type_def* Ake_type_def_copy(struct Ake_type_def* n)
+Ake_type_def* Ake_type_def_copy(Ake_type_def* n)
 {
-	struct Ake_type_def* copy = NULL;
+	Ake_type_def* copy = NULL;
 
 	if (n) {
 		Ake_type_def_create(&copy);

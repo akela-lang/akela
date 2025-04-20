@@ -39,8 +39,8 @@ void static Ake_type_use_names(char const* names[])
 
 typedef struct Ake_type_use {
     Ake_type_use_type type;
-    struct Ake_type_def* td;
-    struct Zinc_string name;
+    Ake_type_def* td;
+    Zinc_string name;
     Zinc_vector dim;
     bool is_ref;
     bool is_mut;
@@ -49,10 +49,10 @@ typedef struct Ake_type_use {
     bool is_slice;
     Ake_type_context context;
     void* lhs_allocation;
-    struct Ake_type_use* next;
-    struct Ake_type_use* prev;
-    struct Ake_type_use* head;
-    struct Ake_type_use* tail;
+    Ake_type_use* next;
+    Ake_type_use* prev;
+    Ake_type_use* head;
+    Ake_type_use* tail;
 } Ake_type_use;
 
 #ifdef __cplusplus

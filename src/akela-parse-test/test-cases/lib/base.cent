@@ -102,17 +102,23 @@ enum AstType {
   Var
 }
 
-element TypeUse {
+element TypeUse(TypeUseType) {
   properties {
     td: TypeDef
     dim: Integer        # array dimension if td is type Array
   }
 }
 
-element TypeDef {
+enum TypeUseType {
+    TypeDef
+    FunctionInputs
+    FunctionOutputs
+    FunctionEllipsis
+}
+
+element TypeDef(TypeDefType) {
   properties {
     name: String `required`
-    type: TypeDefType `required`
     bit_count: Integer
     is_signed: Bool
   }
@@ -131,15 +137,13 @@ enum TypeDefType {
 }
 
 # built-in element defs
-const Int32 = TypeDef {
-  .type = TypeDefType::Integer
+const Int32 = TypeDef::Integer {
   .name = "Int32"
   .bit_count = 32
   .is_signed = true
 };
 
-const Real64 = TypeDef {
-  .type = TypeDefType::Float
+const Real64 = TypeDef::Float {
   .name = "Real64"
   .bit_count = 64
   .is_signed = false
