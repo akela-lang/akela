@@ -22,6 +22,7 @@
 #include "test_priority_queue.h"
 #include "test_dbl_vector.h"
 #include "test_string_slice.h"
+#include "test_test.h"
 
 int main()
 {
@@ -48,6 +49,7 @@ int main()
 	test_priority_queue();
 	test_dbl_vector();
     test_string_slice();
+	test_test();
 	Zinc_print_results();
 	return 0;
 }

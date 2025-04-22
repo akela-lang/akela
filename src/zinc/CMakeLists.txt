@@ -30,6 +30,7 @@ set(SOURCE_FILES
         fs.c
         string_slice.c
         input_bounds.c
+        test.c
 )
 
 add_definitions(-DZINC_EXPORT)
