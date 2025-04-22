@@ -14,8 +14,8 @@
 #include <akela/comp_table.h>
 #include <akela/ast_to_cent.h>
 
-void Apt_run_suite(Apt_data* data, Apt_test_suite* suite);
-void Apt_run_test(Apt_data* data, Apt_test_case* tc);
+void Apt_run_suite(Apt_data* data, Apt_suite* suite);
+void Apt_run_test(Apt_data* data, Apt_test* tc);
 void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value);
 void Apt_compare_type_use(
     Apt_data* data,
@@ -28,28 +28,28 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
 
 void Apt_run(Apt_data* data)
 {
-    Apt_test_suite* suite = data->suites.head;
+    Apt_suite* suite = data->suites.head;
     while (suite) {
-        if (!suite->mute && (!data->has_suite_solo || (suite->solo))) {
+        if (!suite->test->mute && (!data->test->has_solo || (suite->test->solo))) {
             Apt_run_suite(data, suite);
         }
         suite = suite->next;
     }
 }
 
-void Apt_run_suite(Apt_data* data, Apt_test_suite* suite)
+void Apt_run_suite(Apt_data* data, Apt_suite* suite)
 {
     printf("%s\n", Zinc_string_c_str(&suite->description));
-    Apt_test_case* tc = suite->list.head;
+    Apt_test* tc = suite->list.head;
     while (tc) {
-        if (!tc->mute && (!data->has_test_solo || (tc->solo))) {
+        if (!tc->test->mute && (!suite->test->has_solo || (tc->test->solo))) {
             Apt_run_test(data, tc);
         }
         tc = tc->next;
     }
 }
 
-void Apt_run_test(Apt_data* data, Apt_test_case* tc)
+void Apt_run_test(Apt_data* data, Apt_test* tc)
 {
     printf("%s\n", Zinc_string_c_str(&tc->description));
     FILE* fp = fopen(Zinc_string_c_str(&tc->source_path), "r");
