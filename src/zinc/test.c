@@ -8,9 +8,8 @@ void Zinc_test_init(Zinc_test* test)
     test->mute = false;
 
     test->has_solo = false;
-    test->test_count = 0;
-    test->pass_count = 0;
-    test->fail_count = 0;
+    test->ran = false;
+    test->pass = true;
 
     test->next = NULL;
     test->prev = NULL;
@@ -54,4 +53,47 @@ void Zinc_test_destroy(Zinc_test* test)
 bool Zinc_test_should_run(Zinc_test* test)
 {
     return !test->mute && (!test->parent || !test->parent->has_solo || (test->solo));
+}
+
+void Zinc_test_stat_init(Zinc_test_stat* stat)
+{
+    stat->count = 0;
+    stat->skip = 0;
+    stat->pass = 0;
+    stat->fail = 0;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Zinc_test_count(Zinc_test* test, Zinc_test_stat* stat)
+{
+    if (test->head) {
+        Zinc_test* p = test->head;
+        while (p) {
+            Zinc_test_count(p, stat);
+            p = p->next;
+        }
+    } else {
+        if (test->ran) {
+            stat->count++;
+            if (test->pass) {
+                stat->pass++;
+            } else {
+                stat->fail++;
+            }
+        } else {
+            stat->skip++;
+        }
+    }
+}
+
+void Zinc_test_print(Zinc_test_stat* stat)
+{
+    double pct = 100.0;
+    if (stat->pass + stat->fail > 0) {
+        pct = (double)stat->pass / ((double)stat->pass + (double)stat->fail) * 100.0;
+    }
+    printf("pct: %.1f%%\n", pct);
+    printf("pass: %zu\n", stat->pass);
+    printf("fail: %zu\n", stat->fail);
+    printf("skip: %zu\n", stat->skip);
 }

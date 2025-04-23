@@ -15,7 +15,7 @@
 #include <akela/ast_to_cent.h>
 
 void Apt_run_suite(Apt_data* data, Apt_suite* suite);
-void Apt_run_test(Apt_data* data, Apt_test* tc);
+void Apt_run_test(Apt_data* data, Apt_test* test);
 void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value);
 void Apt_compare_type_use(
     Apt_data* data,
@@ -28,6 +28,7 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
 
 void Apt_run(Apt_data* data)
 {
+    data->test->ran = true;
     Apt_suite* suite = data->suites.head;
     while (suite) {
         if (!suite->test->mute && (!data->test->has_solo || (suite->test->solo))) {
@@ -39,6 +40,7 @@ void Apt_run(Apt_data* data)
 
 void Apt_run_suite(Apt_data* data, Apt_suite* suite)
 {
+    suite->test->ran = true;
     printf("%s\n", Zinc_string_c_str(&suite->description));
     Apt_test* tc = suite->list.head;
     while (tc) {
@@ -49,10 +51,11 @@ void Apt_run_suite(Apt_data* data, Apt_suite* suite)
     }
 }
 
-void Apt_run_test(Apt_data* data, Apt_test* tc)
+void Apt_run_test(Apt_data* data, Apt_test* test)
 {
-    printf("%s\n", Zinc_string_c_str(&tc->description));
-    FILE* fp = fopen(Zinc_string_c_str(&tc->source_path), "r");
+    test->test->ran = true;
+    printf("%s\n", Zinc_string_c_str(&test->description));
+    FILE* fp = fopen(Zinc_string_c_str(&test->source_path), "r");
     if (!fp) {
         Zinc_location loc;
         Zinc_location_init(&loc);
@@ -60,14 +63,14 @@ void Apt_run_test(Apt_data* data, Apt_test* tc)
             &data->errors,
             &loc,
             "fopen: %s: %s",
-            Zinc_string_c_str(&tc->source_path),
+            Zinc_string_c_str(&test->source_path),
             strerror(errno));
         return;
     }
 
     Ake_comp_table* ct = NULL;
-    Ake_comp_table_create_fp(&ct, tc->source_path, fp);
-    Ake_comp_unit_set_bounds(ct->primary, &tc->source_bounds);
+    Ake_comp_table_create_fp(&ct, test->source_path, fp);
+    Ake_comp_unit_set_bounds(ct->primary, &test->source_bounds);
     Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
     if (pr.errors->head) {
         Zinc_error* e = pr.errors->head;
@@ -83,11 +86,11 @@ void Apt_run_test(Apt_data* data, Apt_test* tc)
     // close file before reopening
     Ake_comp_unit_destroy_input(ct->primary);
 
-    if (tc->snapshot) {
+    if (test->snapshot) {
         Ake_ast_cent_print(ct->primary->root, 0);
     } else {
         Cent_comp_table* expected_ct = NULL;
-        fp = fopen(Zinc_string_c_str(&tc->source_path), "r");
+        fp = fopen(Zinc_string_c_str(&test->source_path), "r");
         if (!fp) {
             Zinc_location loc;
             Zinc_location_init(&loc);
@@ -95,13 +98,13 @@ void Apt_run_test(Apt_data* data, Apt_test* tc)
                 &data->errors,
                 &loc,
                 "fopen: %s: %s",
-                Zinc_string_c_str(&tc->source_path),
+                Zinc_string_c_str(&test->source_path),
                 strerror(errno));
             Ake_comp_table_free(ct);
             return;
         }
-        Cent_comp_table_create_fp(&expected_ct, &data->dir_path, &tc->source_name, fp);
-        Cent_comp_unit_set_bounds(expected_ct->primary, &tc->ast_bounds);
+        Cent_comp_table_create_fp(&expected_ct, &data->dir_path, &test->source_name, fp);
+        Cent_comp_unit_set_bounds(expected_ct->primary, &test->ast_bounds);
         Cent_comp_unit_parse(expected_ct->primary);
         Cent_comp_unit_build(expected_ct->primary);
         if (expected_ct->primary->errors.head) {

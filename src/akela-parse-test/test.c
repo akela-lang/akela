@@ -34,6 +34,11 @@ int main(int argc, char **argv)
         Zinc_spec_error_list_print(&data.spec_errors);
     }
 
+    Zinc_test_stat stat;
+    Zinc_test_stat_init(&stat);
+    Zinc_test_count(data.test, &stat);
+    Zinc_test_print(&stat);
+
     Apt_data_destroy(&data);
 
     return 0;
