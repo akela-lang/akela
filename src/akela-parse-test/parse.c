@@ -68,6 +68,11 @@ bool Apt_validate_directory(char* path)
 
 void Apt_parse_files(Apt_data* data)
 {
+    Zinc_test* data2 = NULL;
+    Zinc_test_create(&data2);
+    data->test = data2;
+    Zinc_string_add_str(&data2->name, "akela-parse-test");
+
     Zinc_string_list files;
     Zinc_string_list_init(&files);
     Zinc_list_files(Zinc_string_c_str(&data->dir_path), &files);
@@ -101,10 +106,6 @@ void Apt_parse_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
         perror(Zinc_string_c_str(path));
         return;
     }
-
-    Zinc_test* data2 = NULL;
-    Zinc_test_create(&data2);
-    data->test = data2;
 
     Lava_result pr = Lava_parse_file(fp);
     if (pr.errors->head) {

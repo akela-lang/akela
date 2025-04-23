@@ -1,5 +1,6 @@
 #include "test.h"
 #include "memory.h"
+#include "list.h"
 
 void Zinc_test_init(Zinc_test* test)
 {
@@ -98,4 +99,24 @@ void Zinc_test_print(Zinc_test_stat* stat)
     printf("pass: %zu\n", stat->pass);
     printf("fail: %zu\n", stat->fail);
     printf("skip: %zu\n", stat->skip);
+}
+
+void Zinc_test_print_unseen(Zinc_test* test)
+{
+    Zinc_list tests;
+    Zinc_list_init(&tests);
+    Zinc_test* p = test;
+    while (p) {
+        Zinc_list_add_item(&tests, p);
+        p = p->parent;
+    }
+    Zinc_list_node* node = tests.tail;
+    while (node) {
+        Zinc_test* test2 = node->item;
+        if (!test2->has_printed) {
+            test2->has_printed = true;
+            fprintf(stderr, "%s\n", Zinc_string_c_str(&test2->name));
+        }
+        node = node->prev;
+    }
 }

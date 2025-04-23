@@ -1,8 +1,10 @@
 #include "spec_error.h"
 #include "memory.h"
+#include "list.h"
 
 void Zinc_spec_error_init(Zinc_spec_error* error)
 {
+    error->test = NULL;
     Zinc_string_init(&error->message);
     Zinc_location_init(&error->loc1);
     Zinc_location_init(&error->loc2);
@@ -58,12 +60,15 @@ void Zinc_spec_error_list_destroy(Zinc_spec_error_list* list)
 
 void Zinc_spec_error_list_set(
     Zinc_spec_error_list* errors,
+    Zinc_test* test,
     Zinc_location* loc1,
     Zinc_location* loc2,
     const char* fmt, ...)
 {
     Zinc_spec_error* e = NULL;
     Zinc_spec_error_create(&e);
+
+    e->test = test;
 
     if (loc1) {
         e->loc1 = *loc1;
@@ -85,6 +90,9 @@ void Zinc_spec_error_list_print(Zinc_spec_error_list* list)
 {
     Zinc_spec_error* e = list->head;
     while (e) {
+        if (e->test) {
+            Zinc_test_print_unseen(e->test);
+        }
         Zinc_string_finish(&e->message);
         fprintf(
             stderr,

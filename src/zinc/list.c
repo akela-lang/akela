@@ -9,6 +9,12 @@ void Zinc_list_node_init(Zinc_list_node* ln)
     ln->prev = NULL;
 }
 
+void Zinc_list_node_create(Zinc_list_node** ln)
+{
+    Zinc_malloc_safe((void**)ln, sizeof(Zinc_list_node));
+    Zinc_list_node_init(*ln);
+}
+
 void Zinc_list_init(Zinc_list* l)
 {
     l->head = NULL;
@@ -24,7 +30,7 @@ void Zinc_list_create(Zinc_list** l)
 void Zinc_list_add(Zinc_list* l, Zinc_list_node* ln)
 {
     if (l->head && l->tail) {
-        ln->prev = l->tail->next;
+        ln->prev = l->tail;
         l->tail->next = ln;
         l->tail = ln;
     } else {
@@ -54,7 +60,7 @@ bool Zinc_list_has_item(Zinc_list* l, void* item)
     return false;
 }
 
-Zinc_list_node* list_remove_first(Zinc_list* l)
+Zinc_list_node* Zinc_list_remove_first(Zinc_list* l)
 {
     if (l->head && l->tail) {
         /* has a node */
@@ -77,9 +83,9 @@ Zinc_list_node* list_remove_first(Zinc_list* l)
     return NULL;
 }
 
-void* list_remove_first_item(Zinc_list* l)
+void* Zinc_list_remove_first_item(Zinc_list* l)
 {
-    Zinc_list_node* n = list_remove_first(l);
+    Zinc_list_node* n = Zinc_list_remove_first(l);
     if (n) {
         void* item = n->item;
         free(n);

@@ -23,7 +23,7 @@ Test {
 ```
 
 ```akela
-const a: Int32 = 105
+const a: Int32 = 104
 a
 ```
 

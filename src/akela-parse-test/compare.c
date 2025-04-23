@@ -16,15 +16,21 @@
 
 void Apt_run_suite(Apt_data* data, Apt_suite* suite);
 void Apt_run_test(Apt_data* data, Apt_test* test);
-bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value);
+bool Apt_compare_ast(Apt_data* data, Zinc_test* test, Ake_ast* n, Cent_value* value);
 bool Apt_compare_type_use(
     Apt_data* data,
+    Zinc_test* test,
     Zinc_location* loc,
     Ake_type_use* tu,
     Ake_ast* parent_n,
     Cent_value* value,
     Cent_value* parent_value);
-bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, Cent_value* value);
+bool Apt_compare_type_def(
+    Apt_data* data,
+    Zinc_test* test,
+    Zinc_location* loc,
+    Ake_type_def* td,
+    Cent_value* value);
 
 void Apt_run(Apt_data* data)
 {
@@ -123,7 +129,11 @@ void Apt_run_test(Apt_data* data, Apt_test* test)
             return;
         }
 
-        test->test->pass = Apt_compare_ast(data, ct->primary->root, expected_ct->primary->value);
+        test->test->pass = Apt_compare_ast(
+            data,
+            test->test,
+            ct->primary->root,
+            expected_ct->primary->value);
 
         Cent_comp_table_destroy(expected_ct);
         free(expected_ct);
@@ -133,7 +143,7 @@ void Apt_run_test(Apt_data* data, Apt_test* test)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
+bool Apt_compare_ast(Apt_data* data, Zinc_test* test, Ake_ast* n, Cent_value* value)
 {
     bool pass = true;
 
@@ -142,20 +152,31 @@ bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
     }
 
     if (n && !value) {
-        Zinc_spec_error_list_set(&data->spec_errors, &n->loc, NULL, "value is null");
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            test,
+            &n->loc,
+            NULL,
+            "value is null");
         return false;
     }
 
     Cent_ast* value_n = value->n;
 
     if (!n && value) {
-        Zinc_spec_error_list_set(&data->spec_errors, NULL, &value_n->loc, "node is null");
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            test,
+            NULL,
+            &value_n->loc,
+            "node is null");
         return false;
     }
 
     if (!Zinc_string_compare_str(&value->name, "Ast")) {
         Zinc_spec_error_list_set(
             &data->spec_errors,
+            test,
             &n->loc,
             &value_n->loc,
             "expected AST value: %bf",
@@ -169,6 +190,7 @@ bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
     if (n->type != type->data.enumeration.enum_value->value) {
         Zinc_spec_error_list_set(
             &data->spec_errors,
+            test,
             &n->loc,
             &value_n->loc,
             "Ast type does not match (%d-%s) (%d-%bf)",
@@ -184,6 +206,7 @@ bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
         if (!value_prop) {
             Zinc_spec_error_list_set(
                 &data->spec_errors,
+                test,
                 &n->loc,
                 &value_n->loc,
                 "value not expected");
@@ -194,6 +217,7 @@ bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
                 Cent_ast* prop_n = value_prop->n;
                 Zinc_spec_error_list_set(
                     &data->spec_errors,
+                    test,
                     &n->loc,
                     &prop_n->loc,
                     "AST values do not match (%bf) (%bf)",
@@ -206,6 +230,7 @@ bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
         if (value_prop && value_prop->data.string.size > 0) {
             Zinc_spec_error_list_set(
                 &data->spec_errors,
+                test,
                 &n->loc,
                 &value_n->loc,
                 "value expected");
@@ -215,7 +240,7 @@ bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
 
     Ake_type_use* tu = n->tu;
     Cent_value* tu_value = Cent_value_get_str(value, "tu");
-    pass = Apt_compare_type_use(data, &n->loc, tu, n, tu_value, value) && pass;
+    pass = Apt_compare_type_use(data, test, &n->loc, tu, n, tu_value, value) && pass;
 
     /* children */
     Ake_ast* n2 = NULL;
@@ -227,7 +252,7 @@ bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
     }
 
     while (n2 || value2) {
-        pass = Apt_compare_ast(data, n2, value2) && pass;
+        pass = Apt_compare_ast(data, test, n2, value2) && pass;
         if (n2) {
             n2 = n2->next;
         }
@@ -242,6 +267,7 @@ bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool Apt_compare_type_use(
     Apt_data* data,
+    Zinc_test* test,
     Zinc_location* loc,
     Ake_type_use* tu,
     Ake_ast* parent_n,
@@ -257,6 +283,7 @@ bool Apt_compare_type_use(
     if (tu && !value) {
         Zinc_spec_error_list_set(
             &data->spec_errors,
+            test,
             loc,
             NULL,
             "type use value is null: (%d-%s)-(NULL)",
@@ -270,6 +297,7 @@ bool Apt_compare_type_use(
     if (!tu && value) {
         Zinc_spec_error_list_set(
             &data->spec_errors,
+            test,
             loc,
             &value_n->loc,
             "type use node is null: %d-%s");
@@ -279,6 +307,7 @@ bool Apt_compare_type_use(
     if (!Zinc_string_compare_str(&value->name, "TypeUse")) {
             Zinc_spec_error_list_set(
             &data->spec_errors,
+            test,
             loc,
             &value_n->loc,
             "expected type use value: %bf",
@@ -289,7 +318,7 @@ bool Apt_compare_type_use(
     /* properties */
     Ake_type_def* td = tu->td;
     Cent_value* td_value = Cent_value_get_str(value, "td");
-    pass = Apt_compare_type_def(data, loc, td, td_value) && pass;
+    pass = Apt_compare_type_def(data, test, loc, td, td_value) && pass;
 
     /* children */
     Ake_type_use* tu2 = NULL;
@@ -301,7 +330,7 @@ bool Apt_compare_type_use(
     }
 
     while (tu2 || value2) {
-        pass = Apt_compare_type_use(data, loc, tu2, parent_n, value2, parent_value) && pass;
+        pass = Apt_compare_type_use(data, test, loc, tu2, parent_n, value2, parent_value) && pass;
         if (tu2) {
             tu2 = tu2->next;
         }
@@ -314,7 +343,12 @@ bool Apt_compare_type_use(
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, Cent_value* value)
+bool Apt_compare_type_def(
+    Apt_data* data,
+    Zinc_test* test,
+    Zinc_location* loc,
+    Ake_type_def* td,
+    Cent_value* value)
 {
     bool pass = true;
 
@@ -323,7 +357,7 @@ bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
     }
 
     if (td && !value) {
-        Zinc_spec_error_list_set(&data->spec_errors, loc, NULL, "type def value is null");
+        Zinc_spec_error_list_set(&data->spec_errors, test, loc, NULL, "type def value is null");
         return false;
     }
 
@@ -331,6 +365,7 @@ bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
     if (!td && value) {
         Zinc_spec_error_list_set(
             &data->spec_errors,
+            test,
             loc,
             &value_n->loc,
             "type def node is null");
@@ -340,6 +375,7 @@ bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
     if (!Zinc_string_compare_str(&value->name, "TypeDef")) {
         Zinc_spec_error_list_set(
             &data->spec_errors,
+            test,
             loc,
             &value_n->loc,
             "expected type def value: %bf", &value->name);
@@ -348,11 +384,17 @@ bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
 
     Cent_value* name_value = Cent_value_get_str(value, "name");
     if (!name_value) {
-        Zinc_spec_error_list_set(&data->spec_errors, loc, &value_n->loc, "name not set");
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            test,
+            loc,
+            &value_n->loc,
+            "name not set");
     } else {
         if (!Zinc_string_compare(&td->name, &name_value->data.string)) {
             Zinc_spec_error_list_set(
                 &data->spec_errors,
+                test,
                 loc,
                 &value_n->loc,
                 "type def name does not match (%bf) (%bf)",
@@ -364,12 +406,18 @@ bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
 
     Cent_value* type_value = Cent_value_get_str(value, "@tag");
     if (!type_value) {
-        Zinc_spec_error_list_set(&data->spec_errors, loc, &value_n->loc, "type not set");
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            test,
+            loc,
+            &value_n->loc,
+            "type not set");
     } else {
         assert(type_value->type == Cent_value_type_enum);
         if (td->type != type_value->data.enumeration.enum_value->value) {
             Zinc_spec_error_list_set(
                 &data->spec_errors,
+                test,
                 loc,
                 &value_n->loc,
                 "type def type does not match (%d) (%d)",
@@ -385,6 +433,7 @@ bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
         if (td->bit_count != bit_count_value->data.integer) {
             Zinc_spec_error_list_set(
                 &data->spec_errors,
+                test,
                 loc,
                 &value_n->loc,
                 "type def bit_count does not match (%d) (%d)",
@@ -395,6 +444,7 @@ bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
     } else if (td->bit_count > 0) {
         Zinc_spec_error_list_set(
             &data->spec_errors,
+            test,
             loc,
             &value_n->loc,
             "bit_count not set");
@@ -407,6 +457,7 @@ bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
         if (td->is_signed != is_signed_value->data.boolean) {
             Zinc_spec_error_list_set(
                 &data->spec_errors,
+                test,
                 loc,
                 &value_n->loc,
                 "type def is_signed does not match (%d) (%d)",

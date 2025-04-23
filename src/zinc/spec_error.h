@@ -3,8 +3,10 @@
 
 #include "error.h"
 #include "zstring.h"
+#include "test.h"
 
 typedef struct Zinc_spec_error {
+    Zinc_test* test;
     Zinc_string message;
     Zinc_location loc1;
     Zinc_location loc2;
@@ -26,6 +28,7 @@ void Zinc_spec_error_list_add(Zinc_spec_error_list* list, Zinc_spec_error* error
 void Zinc_spec_error_list_destroy(Zinc_spec_error_list* list);
 void Zinc_spec_error_list_set(
     Zinc_spec_error_list* errors,
+    Zinc_test* test,
     Zinc_location* loc1,
     Zinc_location* loc2,
     const char* fmt, ...);
