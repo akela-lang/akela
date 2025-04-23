@@ -16,15 +16,15 @@
 
 void Apt_run_suite(Apt_data* data, Apt_suite* suite);
 void Apt_run_test(Apt_data* data, Apt_test* test);
-void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value);
-void Apt_compare_type_use(
+bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value);
+bool Apt_compare_type_use(
     Apt_data* data,
     Zinc_location* loc,
     Ake_type_use* tu,
     Ake_ast* parent_n,
     Cent_value* value,
     Cent_value* parent_value);
-void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, Cent_value* value);
+bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, Cent_value* value);
 
 void Apt_run(Apt_data* data)
 {
@@ -40,8 +40,8 @@ void Apt_run(Apt_data* data)
 
 void Apt_run_suite(Apt_data* data, Apt_suite* suite)
 {
+    Zinc_string_add_string(&suite->test->name, &suite->description);
     suite->test->ran = true;
-    printf("%s\n", Zinc_string_c_str(&suite->description));
     Apt_test* tc = suite->list.head;
     while (tc) {
         if (!tc->test->mute && (!suite->test->has_solo || (tc->test->solo))) {
@@ -53,8 +53,10 @@ void Apt_run_suite(Apt_data* data, Apt_suite* suite)
 
 void Apt_run_test(Apt_data* data, Apt_test* test)
 {
+    bool pass = true;
+
+    Zinc_string_add_string(&test->test->name, &test->description);
     test->test->ran = true;
-    printf("%s\n", Zinc_string_c_str(&test->description));
     FILE* fp = fopen(Zinc_string_c_str(&test->source_path), "r");
     if (!fp) {
         Zinc_location loc;
@@ -121,7 +123,7 @@ void Apt_run_test(Apt_data* data, Apt_test* test)
             return;
         }
 
-        Apt_compare_ast(data, ct->primary->root, expected_ct->primary->value);
+        test->test->pass = Apt_compare_ast(data, ct->primary->root, expected_ct->primary->value);
 
         Cent_comp_table_destroy(expected_ct);
         free(expected_ct);
@@ -131,22 +133,24 @@ void Apt_run_test(Apt_data* data, Apt_test* test)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
+bool Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
 {
+    bool pass = true;
+
     if (!n && !value) {
-        return;
+        return true;
     }
 
     if (n && !value) {
         Zinc_spec_error_list_set(&data->spec_errors, &n->loc, NULL, "value is null");
-        return;
+        return false;
     }
 
     Cent_ast* value_n = value->n;
 
     if (!n && value) {
         Zinc_spec_error_list_set(&data->spec_errors, NULL, &value_n->loc, "node is null");
-        return;
+        return false;
     }
 
     if (!Zinc_string_compare_str(&value->name, "Ast")) {
@@ -156,6 +160,7 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
             &value_n->loc,
             "expected AST value: %bf",
             &value->name);
+        pass = false;
     }
 
     /* properties */
@@ -171,6 +176,7 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
             Ast_type_name(n->type),
             type->data.enumeration.enum_value->value,
             &type->data.enumeration.enum_value->display);
+        pass = false;
     }
 
     Cent_value* value_prop = Cent_value_get_str(value, "value");
@@ -181,6 +187,7 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
                 &n->loc,
                 &value_n->loc,
                 "value not expected");
+                pass = false;
         } else {
             assert(value_prop->type == Cent_value_type_string);
             if (!Zinc_string_compare(&n->value, &value_prop->data.string)) {
@@ -192,6 +199,7 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
                     "AST values do not match (%bf) (%bf)",
                     &n->value,
                     &value_prop->data.string);
+                pass = false;
             }
         }
     } else {
@@ -201,12 +209,13 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
                 &n->loc,
                 &value_n->loc,
                 "value expected");
+            pass = false;
         }
     }
 
     Ake_type_use* tu = n->tu;
     Cent_value* tu_value = Cent_value_get_str(value, "tu");
-    Apt_compare_type_use(data, &n->loc, tu, n, tu_value, value);
+    pass = Apt_compare_type_use(data, &n->loc, tu, n, tu_value, value) && pass;
 
     /* children */
     Ake_ast* n2 = NULL;
@@ -218,7 +227,7 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
     }
 
     while (n2 || value2) {
-        Apt_compare_ast(data, n2, value2);
+        pass = Apt_compare_ast(data, n2, value2) && pass;
         if (n2) {
             n2 = n2->next;
         }
@@ -226,10 +235,12 @@ void Apt_compare_ast(Apt_data* data, Ake_ast* n, Cent_value* value)
             value2 = value2->next;
         }
     }
+
+    return pass;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Apt_compare_type_use(
+bool Apt_compare_type_use(
     Apt_data* data,
     Zinc_location* loc,
     Ake_type_use* tu,
@@ -237,8 +248,10 @@ void Apt_compare_type_use(
     Cent_value* value,
     Cent_value* parent_value)
 {
+    bool pass = true;
+
     if (!tu && !value) {
-        return;
+        return true;
     }
 
     if (tu && !value) {
@@ -249,7 +262,7 @@ void Apt_compare_type_use(
             "type use value is null: (%d-%s)-(NULL)",
             parent_n->type,
             Ast_type_name(parent_n->type));
-        return;
+        return false;
     }
 
     Ake_ast* value_n = value->n;
@@ -260,7 +273,7 @@ void Apt_compare_type_use(
             loc,
             &value_n->loc,
             "type use node is null: %d-%s");
-        return;
+        return false;
     }
 
     if (!Zinc_string_compare_str(&value->name, "TypeUse")) {
@@ -270,12 +283,13 @@ void Apt_compare_type_use(
             &value_n->loc,
             "expected type use value: %bf",
             &value->name);
+        pass = false;
     }
 
     /* properties */
     Ake_type_def* td = tu->td;
     Cent_value* td_value = Cent_value_get_str(value, "td");
-    Apt_compare_type_def(data, loc, td, td_value);
+    pass = Apt_compare_type_def(data, loc, td, td_value) && pass;
 
     /* children */
     Ake_type_use* tu2 = NULL;
@@ -287,7 +301,7 @@ void Apt_compare_type_use(
     }
 
     while (tu2 || value2) {
-        Apt_compare_type_use(data, loc, tu2, parent_n, value2, parent_value);
+        pass = Apt_compare_type_use(data, loc, tu2, parent_n, value2, parent_value) && pass;
         if (tu2) {
             tu2 = tu2->next;
         }
@@ -295,18 +309,22 @@ void Apt_compare_type_use(
             value2 = value2->next;
         }
     }
+
+    return pass;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, Cent_value* value)
+bool Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, Cent_value* value)
 {
+    bool pass = true;
+
     if (!td && !value) {
-        return;
+        return true;
     }
 
     if (td && !value) {
         Zinc_spec_error_list_set(&data->spec_errors, loc, NULL, "type def value is null");
-        return;
+        return false;
     }
 
     Cent_ast* value_n = value->n;
@@ -316,7 +334,7 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
             loc,
             &value_n->loc,
             "type def node is null");
-        return;
+        return false;
     }
 
     if (!Zinc_string_compare_str(&value->name, "TypeDef")) {
@@ -325,6 +343,7 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
             loc,
             &value_n->loc,
             "expected type def value: %bf", &value->name);
+        pass = false;
     }
 
     Cent_value* name_value = Cent_value_get_str(value, "name");
@@ -339,6 +358,7 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
                 "type def name does not match (%bf) (%bf)",
                 &td->name,
                 &name_value->data.string);
+            pass = false;
         }
     }
 
@@ -355,6 +375,7 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
                 "type def type does not match (%d) (%d)",
                 td->type,
                 type_value->data.enumeration.enum_value->value);
+            pass = false;
         }
     }
 
@@ -369,6 +390,7 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
                 "type def bit_count does not match (%d) (%d)",
                 td->bit_count,
                 bit_count_value->data.integer);
+            pass = false;
         }
     } else if (td->bit_count > 0) {
         Zinc_spec_error_list_set(
@@ -376,6 +398,7 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
             loc,
             &value_n->loc,
             "bit_count not set");
+        pass = false;
     }
 
     Cent_value* is_signed_value = Cent_value_get_str(value, "is_signed");
@@ -389,6 +412,9 @@ void Apt_compare_type_def(Apt_data* data, Zinc_location* loc, Ake_type_def* td, 
                 "type def is_signed does not match (%d) (%d)",
                 td->is_signed,
                 is_signed_value->data.boolean);
+            pass = false;
         }
     }
+
+    return pass;
 }

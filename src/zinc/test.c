@@ -9,7 +9,9 @@ void Zinc_test_init(Zinc_test* test)
 
     test->has_solo = false;
     test->ran = false;
-    test->pass = true;
+    test->pass = false;
+
+    test->has_printed = false;
 
     test->next = NULL;
     test->prev = NULL;

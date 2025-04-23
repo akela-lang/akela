@@ -15,6 +15,8 @@ struct Zinc_test {
     bool ran;
     bool pass;
 
+    bool has_printed;
+
     Zinc_test *next;
     Zinc_test *prev;
     Zinc_test *head;
