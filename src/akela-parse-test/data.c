@@ -6,10 +6,8 @@ void Apt_test_init(Apt_test *test)
     test->test = NULL;
     test->snapshot = false;
     test->has_error = false;
-    Zinc_string_init(&test->source_path);
     Zinc_string_init(&test->source_name);
     Zinc_input_bounds_init(&test->source_bounds);
-    Zinc_string_init(&test->ast_path);
     Zinc_input_bounds_init(&test->ast_bounds);
     Zinc_string_init(&test->description);
     Zinc_error_list_init(&test->expected_errors);
@@ -25,9 +23,7 @@ void Apt_test_create(Apt_test** test)
 
 void Apt_test_destroy(Apt_test *test)
 {
-    Zinc_string_destroy(&test->source_path);
     Zinc_string_destroy(&test->source_name);
-    Zinc_string_destroy(&test->ast_path);
     Zinc_string_destroy(&test->description);
     Zinc_error_list_destroy(&test->expected_errors);
 }

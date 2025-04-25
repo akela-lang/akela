@@ -22,12 +22,15 @@ int main(int argc, char **argv)
     Zinc_string_add_str(&data.dir_path, path);
 
     Apt_parse_files(&data);
-    Zinc_error_list_print(&data.errors);
 
     if (data.errors.head) {
         Zinc_error_list_print(&data.errors);
     } else {
         Apt_run(&data);
+
+        if (data.errors.head) {
+            Zinc_error_list_print(&data.errors);
+        }
     }
 
     if (data.spec_errors.head) {

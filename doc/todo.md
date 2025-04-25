@@ -23,4 +23,5 @@
 # Zinc
 
 # Unit
-* create unit bin for test all unit tests
+* create bin for test all unit tests
+* add integration tests end-to-end tests 

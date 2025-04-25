@@ -15,7 +15,7 @@
 #include <akela/ast_to_cent.h>
 
 void Apt_run_suite(Apt_data* data, Apt_suite* suite);
-void Apt_run_test(Apt_data* data, Apt_test* test);
+void Apt_run_test(Apt_data* data, Apt_suite* suite, Apt_test* test);
 bool Apt_compare_ast(Apt_data* data, Zinc_test* test, Ake_ast* n, Cent_value* value);
 bool Apt_compare_type_use(
     Apt_data* data,
@@ -31,6 +31,16 @@ bool Apt_compare_type_def(
     Zinc_location* loc,
     Ake_type_def* td,
     Cent_value* value);
+bool Apt_check_errors(
+    Apt_data* data,
+    Apt_test* test,
+    Zinc_error_list* errors,
+    Cent_value* expected);
+bool Apt_check_error(
+    Apt_data* data,
+    Apt_test* test,
+    Zinc_error_list* errors,
+    Cent_value* expected_error);
 
 void Apt_run(Apt_data* data)
 {
@@ -51,19 +61,19 @@ void Apt_run_suite(Apt_data* data, Apt_suite* suite)
     Apt_test* tc = suite->list.head;
     while (tc) {
         if (!tc->test->mute && (!suite->test->has_solo || (tc->test->solo))) {
-            Apt_run_test(data, tc);
+            Apt_run_test(data, suite, tc);
         }
         tc = tc->next;
     }
 }
 
-void Apt_run_test(Apt_data* data, Apt_test* test)
+void Apt_run_test(Apt_data* data, Apt_suite* suite, Apt_test* test)
 {
     bool pass = true;
 
     Zinc_string_add_string(&test->test->name, &test->description);
     test->test->ran = true;
-    FILE* fp = fopen(Zinc_string_c_str(&test->source_path), "r");
+    FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
     if (!fp) {
         Zinc_location loc;
         Zinc_location_init(&loc);
@@ -71,25 +81,15 @@ void Apt_run_test(Apt_data* data, Apt_test* test)
             &data->errors,
             &loc,
             "fopen: %s: %s",
-            Zinc_string_c_str(&test->source_path),
+            Zinc_string_c_str(&suite->path),
             strerror(errno));
         return;
     }
 
     Ake_comp_table* ct = NULL;
-    Ake_comp_table_create_fp(&ct, test->source_path, fp);
+    Ake_comp_table_create_fp(&ct, suite->path, fp);
     Ake_comp_unit_set_bounds(ct->primary, &test->source_bounds);
     Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
-    if (pr.errors->head) {
-        Zinc_error* e = pr.errors->head;
-        while (e) {
-            Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
-            e = e->next;
-        }
-        Zinc_error_list_print(&data->errors);
-        Ake_comp_table_free(ct);
-        return;
-    }
 
     // close file before reopening
     Ake_comp_unit_destroy_input(ct->primary);
@@ -98,7 +98,7 @@ void Apt_run_test(Apt_data* data, Apt_test* test)
         Ake_ast_cent_print(ct->primary->root, 0);
     } else {
         Cent_comp_table* expected_ct = NULL;
-        fp = fopen(Zinc_string_c_str(&test->source_path), "r");
+        fp = fopen(Zinc_string_c_str(&suite->path), "r");
         if (!fp) {
             Zinc_location loc;
             Zinc_location_init(&loc);
@@ -106,7 +106,7 @@ void Apt_run_test(Apt_data* data, Apt_test* test)
                 &data->errors,
                 &loc,
                 "fopen: %s: %s",
-                Zinc_string_c_str(&test->source_path),
+                Zinc_string_c_str(&suite->path),
                 strerror(errno));
             Ake_comp_table_free(ct);
             return;
@@ -115,31 +115,174 @@ void Apt_run_test(Apt_data* data, Apt_test* test)
         Cent_comp_unit_set_bounds(expected_ct->primary, &test->ast_bounds);
         Cent_comp_unit_parse(expected_ct->primary);
         Cent_comp_unit_build(expected_ct->primary);
-        if (expected_ct->primary->errors.head) {
-            Zinc_error* e = expected_ct->primary->errors.head;
-            while (e) {
-                Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
-                e = e->next;
+
+        if (test->has_error) {
+            test->test->pass = Apt_check_errors(
+                data,
+                test,
+                &ct->primary->errors,
+                expected_ct->primary->value);
+        } else {
+            if (pr.errors->head) {
+                Zinc_error* e = pr.errors->head;
+                while (e) {
+                    Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
+                    e = e->next;
+                }
+                Zinc_error_list_print(&data->errors);
+                Ake_comp_table_free(ct);
+                return;
             }
-            Zinc_error_list_print(&data->errors);
 
-            Ake_comp_table_free(ct);
-            Cent_comp_table_destroy(expected_ct);
-            free(expected_ct);
-            return;
+            if (expected_ct->primary->errors.head) {
+                Zinc_error* e = expected_ct->primary->errors.head;
+                while (e) {
+                    Zinc_error_list_set(&data->errors, &e->loc, "%bf", &e->message);
+                    e = e->next;
+                }
+                Zinc_error_list_print(&data->errors);
+
+                Ake_comp_table_free(ct);
+                Cent_comp_table_destroy(expected_ct);
+                free(expected_ct);
+                return;
+            }
+
+            test->test->pass = Apt_compare_ast(
+                data,
+                test->test,
+                ct->primary->root,
+                expected_ct->primary->value);
         }
-
-        test->test->pass = Apt_compare_ast(
-            data,
-            test->test,
-            ct->primary->root,
-            expected_ct->primary->value);
 
         Cent_comp_table_destroy(expected_ct);
         free(expected_ct);
     }
 
     Ake_comp_table_free(ct);
+}
+
+bool Apt_check_errors(Apt_data* data, Apt_test* test, Zinc_error_list* errors, Cent_value* expected)
+{
+    printf("check errors\n");
+    if (!expected) {
+        Zinc_error_list_set(&data->errors, NULL, "expected Errors");
+        return false;
+    }
+
+    Cent_ast* n = expected->n;
+
+    if (!Zinc_string_compare_str(&expected->name, "Errors")) {
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            test->test,
+            NULL,
+            &n->loc,
+            "expected Errors");
+        return false;
+    }
+
+    if (expected->type != Cent_value_type_dag) {
+        Zinc_spec_error_list_set(
+            &data->spec_errors,
+            test->test,
+            NULL,
+            &n->loc,
+            "expected Dict");
+        return false;
+    }
+
+    bool pass = true;
+    Cent_value* expected_error = expected->data.dag.head;
+    while (expected_error) {
+        pass = Apt_check_error(data, test, errors, expected_error) && pass;
+        expected_error = expected_error->next;
+    }
+
+    return pass;
+}
+
+bool Apt_check_error(
+    Apt_data* data,
+    Apt_test* test,
+    Zinc_error_list* errors,
+    Cent_value* expected_error)
+{
+    Cent_ast* n = expected_error->n;
+    Cent_value* message = Cent_value_get_str(expected_error, "message");
+    bool valid = true;
+
+    if (!message) {
+        Zinc_error_list_set(&data->errors, &n->loc, "expected message");
+        valid = false;
+    }
+
+    if (message && message->type != Cent_value_type_string) {
+        Zinc_error_list_set(&data->errors, &n->loc, "message is not a string");
+        valid = false;
+    }
+
+    Cent_value* line = Cent_value_get_str(expected_error, "line");
+    if (!line) {
+        Zinc_error_list_set(&data->errors, &n->loc, "expected line");
+        valid = false;
+    }
+
+    if (line && line->type != Cent_value_type_natural) {
+        Zinc_error_list_set(&data->errors, &n->loc, "expected line to be a natural");
+        valid = false;
+    }
+
+    Cent_value* col = Cent_value_get_str(expected_error, "col");
+    if (!col) {
+        Zinc_error_list_set(&data->errors, &n->loc, "expected col");
+        valid = false;
+    }
+
+    if (col && col->type != Cent_value_type_natural) {
+        Zinc_error_list_set(&data->errors, &n->loc, "expected col to be a natural");
+        valid = false;
+    }
+
+    if (!valid) {
+        return valid;
+    }
+
+    Zinc_error* e = errors->head;
+    bool found = false;
+    while (e) {
+        if (Zinc_string_compare(&e->message, &message->data.string)) {
+            found = true;
+            break;
+        }
+        e = e->next;
+    }
+
+    if (found) {
+        if (line->data.natural != e->loc.line) {
+            Zinc_error_list_set(
+                &data->errors,
+                &n->loc,
+                "line does not match: (%zu), (%zu)",
+                e->loc.line,
+                line->data.natural);
+        }
+
+        if (col->data.natural != e->loc.col) {
+            Zinc_error_list_set(
+                &data->errors,
+                &n->loc,
+                "col does not match: (%zu) (%zu)",
+                e->loc.col,
+                col->data.natural);
+        }
+    } else {
+        Zinc_error_list_set(
+            &data->errors,
+            &n->loc,
+            "could not find error: %bf",
+            &message->data.string);
+    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

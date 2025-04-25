@@ -16,10 +16,8 @@ struct Apt_test {
     Zinc_test* test;
     bool snapshot;
     bool has_error;
-    Zinc_string source_path;
     Zinc_string source_name;
     Zinc_input_bounds source_bounds;
-    Zinc_string ast_path;
     Zinc_input_bounds ast_bounds;
     Zinc_string description;
     Zinc_error_list expected_errors;

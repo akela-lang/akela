@@ -33,7 +33,7 @@ void Apt_parse_test(
     Lava_dom* dom,
     Zinc_string* name);
 void Apt_parse_suite_meta(Apt_data* data, Apt_suite *suite, Cent_value* value);
-void Apt_parse_test_meta(Apt_data* data, Apt_test* tc, Cent_value* value);
+void Apt_parse_test_meta(Apt_data* data, Apt_test* test, Cent_value* value);
 void Apt_parse_test_meta_prop(Zinc_string* name, Cent_value* prop);
 
 bool Apt_validate_directory(char* path)
@@ -117,6 +117,7 @@ void Apt_parse_suite(Apt_data* data, Zinc_string* path, Zinc_string* name)
     Apt_suite* suite = NULL;
     Apt_suite_create(&suite);
     Apt_suite_list_add(&data->suites, suite);
+    Zinc_string_add_string(&suite->path, path);
 
     Zinc_test* suite2 = NULL;
     Zinc_test_create(&suite2);
@@ -282,16 +283,25 @@ void Apt_parse_test(
                     Cent_comp_table_create_fp(&ct, &data->dir_path, name, fp);
                     Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
                     Cent_comp_unit_parse(ct->primary);
-                    Cent_comp_unit_build(ct->primary);
-                    Apt_parse_test_meta(data, test, ct->primary->value);
+                    if (!ct->primary->errors.head) {
+                        Cent_comp_unit_build(ct->primary);
+                        Apt_parse_test_meta(data, test, ct->primary->value);
+                    } else {
+                        Zinc_error* e = ct->primary->errors.head;
+                        while (e) {
+                            Zinc_error_list_set(
+                                &data->errors,
+                                &e->loc,
+                                "%s", Zinc_string_c_str(&e->message));
+                            e = e->next;
+                        }
+                    }
                     Cent_comp_table_destroy(ct);
                     free(ct);
                 } else {
-                    Zinc_string_add_string(&test->ast_path, path);
                     test->ast_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
                 }
             } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "akela")) {
-                Zinc_string_add_string(&test->source_path, path);
                 test->source_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
             }
         }
@@ -306,8 +316,13 @@ void Apt_parse_test(
 
 Apt_data* Apt__parse_test_case_data = NULL;
 Apt_test* Apt__parse_test_case_tc = NULL;
-void Apt_parse_test_meta(Apt_data* data, Apt_test* tc, Cent_value* value)
+void Apt_parse_test_meta(Apt_data* data, Apt_test* test, Cent_value* value)
 {
+    if (!value) {
+        Zinc_error_list_set(&data->errors, NULL, "expected a value");
+        return;
+    }
+
     if (value->type != Cent_value_type_dag) {
         Cent_ast* n = value->n;
         Zinc_error_list_set(&data->errors, &n->loc, "expected DAG type");
@@ -321,7 +336,7 @@ void Apt_parse_test_meta(Apt_data* data, Apt_test* tc, Cent_value* value)
     }
 
     Apt__parse_test_case_data = data;
-    Apt__parse_test_case_tc = tc;
+    Apt__parse_test_case_tc = test;
     Zinc_hash_map_string_map_name(
         &value->data.dag.properties,
         (Zinc_hash_map_string_func_name)Apt_parse_test_meta_prop);
