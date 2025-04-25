@@ -2,6 +2,7 @@
 #define AKELA_AST_H
 
 #include "api.h"
+#include "forward_declare.h"
 #include <stdbool.h>
 #include "zinc/zstring.h"
 #include "zinc/result.h"
