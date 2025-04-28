@@ -23,34 +23,43 @@ void Zinc_unit_buffer_init(Zinc_test* test)
 	Zinc_test_expect_null(test, bf.buf, "buf");
 }
 
-void test_buffer_add_char()
+void Zinc_unit_buffer_add_char(Zinc_test* test)
 {
-	Zinc_test_name(__func__);
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
 
-	struct Zinc_string bf;
+	Zinc_string bf;
 	Zinc_string_init(&bf);
 
-	/* allocate bf{} */
 	Zinc_string_add_char(&bf, 'x');
 	Zinc_string_add_char(&bf, 'y');
 	Zinc_string_add_char(&bf, 'z');
 
-	Zinc_expect_string(&bf, "xyz", "str");
+	Zinc_test_expect_string(test, &bf, "xyz", "str");
 
-	/* destroy bf{} */
 	Zinc_string_destroy(&bf);
 }
 
-void test_buffer_add()
+void Zinc_unit_test_buffer_add(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
-    struct Zinc_string* bf = NULL;
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Zinc_string* bf = NULL;
     Zinc_string_create(&bf);
 
     Zinc_string_add(bf, "abc", 3);
     Zinc_string_add(bf, "123", 3);
 
-    Zinc_expect_string(bf, "abc123", "bf");
+    Zinc_test_expect_string(test, bf, "abc123", "bf");
 
     Zinc_string_destroy(bf);
     free(bf);
@@ -601,9 +610,6 @@ void test_buffer_order_greater_than()
 /* static-output */
 void test_buffer()
 {
-	// test_buffer_init();
-	test_buffer_add_char();
-    test_buffer_add();
     test_buffer_expand();
 	test_buffer_finish();
 	test_buffer_clear();
@@ -637,7 +643,9 @@ void Zinc_unit_buffer(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_call(test, Zinc_unit_buffer_init);
+		Zinc_test_register(test, Zinc_unit_buffer_init);
+		Zinc_test_register(test, Zinc_unit_buffer_add_char);
+		Zinc_test_register(test, Zinc_unit_test_buffer_add);
 		return;
 	}
 

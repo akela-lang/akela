@@ -7,7 +7,7 @@ void Zinc_unit(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_call(test, Zinc_unit_buffer);
+        Zinc_test_register(test, Zinc_unit_buffer);
 
         return;
     }

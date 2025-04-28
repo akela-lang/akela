@@ -102,25 +102,13 @@ void Zinc_test_print(Zinc_test_stat* stat)
         pct = (double)stat->passed / ((double)stat->passed + (double)stat->failed) * 100.0;
     }
     printf(
-        "test cases: %.1f%% (%zu/%zu) (%zu skipped)\n",
+        "%.1f%% (%zu/%zu test cases) (%zu skipped) (%zu/%zu checks)\n",
         pct,
         stat->passed,
         stat->passed + stat->failed,
-        stat->skip);
-
-
-    pct = 100.0;
-    if (stat->check_passed + stat->check_failed > 0) {
-        pct =
-            (double)stat->check_passed /
-                ((double)stat->check_passed + (double)stat->check_failed) * 100.0;
-    }
-    printf(
-        "checks    : %.1f%% (%zu/%zu)\n",
-        pct,
+        stat->skip,
         stat->check_passed,
         stat->check_passed + stat->check_failed);
-
 }
 
 void Zinc_test_print_unseen(Zinc_test* test)
@@ -143,7 +131,7 @@ void Zinc_test_print_unseen(Zinc_test* test)
     }
 }
 
-void Zinc_test_call(Zinc_test* test, Zinc_func func)
+void Zinc_test_register(Zinc_test* test, Zinc_func func)
 {
     Zinc_test* new_test = NULL;
     Zinc_test_create(&new_test);

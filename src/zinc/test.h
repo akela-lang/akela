@@ -51,7 +51,7 @@ void Zinc_test_stat_init(Zinc_test_stat* stat);
 void Zinc_test_count(Zinc_test* test, Zinc_test_stat* stat);
 void Zinc_test_print(Zinc_test_stat* stat);
 void Zinc_test_print_unseen(Zinc_test* test);
-void Zinc_test_call(Zinc_test* test, Zinc_func func);
+void Zinc_test_register(Zinc_test* test, Zinc_func func);
 void Zinc_test_perform(Zinc_test* test);
 
 #endif
