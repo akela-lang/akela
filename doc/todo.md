@@ -5,7 +5,6 @@
 # Akela Parse Test
 
 # Akela Run Test
-* snapshot LLVM
 
 # Centipede
 

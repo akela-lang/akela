@@ -88,7 +88,6 @@ void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
     Ake_comp_unit_parse(ct->primary);
 
     bool passed = true;
-    test->test->ran = true;
     if (!ct->primary->valid) {
         /* is parsing valid */
         Zinc_error* e = ct->primary->errors.head;
@@ -117,29 +116,32 @@ void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
         Akela_llvm_cg_destroy(cg);
 
         /* check llvm output */
-        Art_pair llvm_pair = Art_diff(data->regex_re, &cg_result.module_text, &test->llvm);
-        if (!llvm_pair.matched) {
-            passed = false;
-            Art_print_llvm(&llvm_pair);
-        }
-        Art_pair_destroy(&llvm_pair);
-
-        if (ct->primary->errors.head) {
-            /* any other errors */
-            Zinc_error* e = ct->primary->errors.head;
-            while (e) {
-                Zinc_string_finish(&e->message);
-                fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
-                e = e->next;
+        if (!test->snapshot) {
+            test->test->ran = true;
+            Art_pair llvm_pair = Art_diff(data->regex_re, &cg_result.module_text, &test->llvm);
+            if (!llvm_pair.matched) {
+                passed = false;
+                Art_print_llvm(&llvm_pair);
             }
-            passed = false;
-        }
+            Art_pair_destroy(&llvm_pair);
 
-        if (!Art_check_address(data, test, ct, &cg_result)) {
-            passed = false;
-        }
+            if (ct->primary->errors.head) {
+                /* any other errors */
+                Zinc_error* e = ct->primary->errors.head;
+                while (e) {
+                    Zinc_string_finish(&e->message);
+                    fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
+                    e = e->next;
+                }
+                passed = false;
+            }
 
-        Ake_code_gen_result_destroy(&cg_result);
+            if (!Art_check_address(data, test, ct, &cg_result)) {
+                passed = false;
+            }
+
+            Ake_code_gen_result_destroy(&cg_result);
+        }
 
     }
 
@@ -228,6 +230,7 @@ bool Art_check_address(
                 matched = false;
                 Zinc_string_finish(actual);
                 Zinc_string_finish(expected);
+                Zinc_test_print_unseen(test->test);
                 fprintf(stderr, "result does not match: (%s) (%s)\n", actual->buf, expected->buf);
             }
             return matched;
@@ -246,6 +249,7 @@ bool Art_check_address(
                 int8_t expected = (int8_t)value_value->data.integer;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%hhd) (%hhd)\n", actual, expected);
                 }
             } else {
@@ -263,6 +267,7 @@ bool Art_check_address(
                 int16_t expected = (int16_t)value_value->data.integer;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%hd) (%hd)\n", actual, expected);
                 }
             } else {
@@ -280,6 +285,7 @@ bool Art_check_address(
                 int32_t expected = (int32_t)value_value->data.integer;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
                 }
             } else {
@@ -297,6 +303,7 @@ bool Art_check_address(
                 int64_t expected = (int64_t)value_value->data.integer;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%ld) (%ld)\n", actual, expected);
                 }
             } else {
@@ -308,6 +315,7 @@ bool Art_check_address(
                 uint8_t expected = (uint8_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
                 }
             } else {
@@ -319,6 +327,7 @@ bool Art_check_address(
                 uint16_t expected = (uint16_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%hu) (%hu)\n", actual, expected);
                 }
             } else {
@@ -330,6 +339,7 @@ bool Art_check_address(
                 uint32_t expected = (uint32_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
                 }
             } else {
@@ -341,6 +351,7 @@ bool Art_check_address(
                 uint64_t expected = (uint64_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
                 }
             } else {
@@ -353,6 +364,7 @@ bool Art_check_address(
                 _Float16 expected = (_Float16)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%f) (%f)\n", (float)actual, (float)expected);
                 }
 #elif IS_WIN
@@ -369,6 +381,7 @@ bool Art_check_address(
                 float expected = (float)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%f) (%f)\n", actual, expected);
                 }
             } else {
@@ -380,6 +393,7 @@ bool Art_check_address(
                 double expected = (double)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%lf) (%lf)\n", actual, expected);
                 }
             } else {
@@ -391,6 +405,7 @@ bool Art_check_address(
                 bool expected = (bool)value_value->data.boolean;
                 if (actual != expected) {
                     matched = false;
+                    Zinc_test_print_unseen(test->test);
                     fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
                 }
             } else {
