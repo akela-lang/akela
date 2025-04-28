@@ -42,7 +42,11 @@ int main(int argc, const char* argv[])
     }
 
     Art_run(&data);
-    Art_print_results(&data);
+
+    Zinc_test_stat stat;
+    Zinc_test_stat_init(&stat);
+    Zinc_test_count(data.test, &stat);
+    Zinc_test_print(&stat);
 
     Art_data_destroy(&data);
 

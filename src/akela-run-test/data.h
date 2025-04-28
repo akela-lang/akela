@@ -50,9 +50,6 @@ struct Art_data {
     bool has_solo;
     Cent_comp_table* type_info;
     Cob_re regex_re;
-    size_t test_count;
-    size_t test_passed_count;
-    size_t test_failed_count;
     Zinc_test* test;
     Art_suite* head;
     Art_suite* tail;

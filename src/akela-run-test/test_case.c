@@ -72,8 +72,6 @@ void Art_run_suite(Art_data* data, Art_suite* suite)
 
 void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
 {
-    data->test_count++;
-
     FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
     if (!fp) {
         Zinc_error_list_set(
@@ -90,6 +88,7 @@ void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
     Ake_comp_unit_parse(ct->primary);
 
     bool passed = true;
+    test->test->ran = true;
     if (!ct->primary->valid) {
         /* is parsing valid */
         Zinc_error* e = ct->primary->errors.head;
@@ -98,7 +97,6 @@ void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
             fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
             e = e->next;
         }
-        data->test_failed_count++;
         passed = false;
     } else {
         Art_setup_address(data, suite, test);
@@ -146,9 +144,7 @@ void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
     }
 
     if (passed) {
-        data->test_passed_count++;
-    } else {
-        data->test_failed_count++;
+        test->test->pass = true;
     }
 
     Ake_comp_table_destroy(ct);
@@ -613,11 +609,4 @@ void Art_print_result(Art_pair* pair)
         Zinc_string_finish(pair->expected);
         fprintf(stderr, "%s\n", pair->expected->buf);
     }
-}
-
-void Art_print_results(Art_data* data)
-{
-    printf("test case count: %zu\n", data->test_count);
-    printf("passed count: %zu\n", data->test_passed_count);
-    printf("failed count: %zu\n", data->test_failed_count);
 }

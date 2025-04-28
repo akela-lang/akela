@@ -106,9 +106,6 @@ void Art_suite_add(Art_suite* suite, Art_test* test)
 void Art_data_init(Art_data* data)
 {
     Zinc_string_init(&data->dir_path);
-    data->test_count = 0;
-    data->test_passed_count = 0;
-    data->test_failed_count = 0;
     data->has_solo = false;
     data->type_info = NULL;
     data->regex_re = Cob_compile_str("^/(.*)/\n?$");

@@ -68,9 +68,10 @@ void Art_parse_files(Art_data* data, char* dir_name)
     Zinc_string_list_init(&files);
     Zinc_list_files(Zinc_string_c_str(&dir_path), &files);
 
-    Zinc_test* test = NULL;
-    Zinc_test_create(&test);
-    data->test = test;
+    Zinc_test* data2 = NULL;
+    Zinc_test_create(&data2);
+    Zinc_string_add_str(&data2->name, "akela-run-test");
+    data->test = data2;
 
     Zinc_string_node* node = files.head;
     while (node) {
@@ -207,6 +208,8 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
 
         item = item->next;
     }
+
+    Zinc_string_add_string(&suite->test->name, &suite->description);
 }
 
 void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value)
@@ -333,6 +336,8 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
 
         item = item->next;
     }
+
+    Zinc_string_add_string(&test2->name, &test->description);
 }
 
 void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value* value)
