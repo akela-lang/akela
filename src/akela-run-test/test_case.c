@@ -33,13 +33,13 @@ void Art_run(Art_data* data)
 {
     Art_suite* suite = data->head;
     while (suite) {
-        if (suite->mute) {
+        if (suite->test->mute) {
             printf("Muting: %s\n", Zinc_string_c_str(&suite->path));
         }
-        bool can_run = !suite->mute
-            && ((data->has_solo && suite->solo) || !data->has_solo);
+        bool can_run = !suite->test->mute
+            && ((data->has_solo && suite->test->solo) || !data->has_solo);
         if (can_run) {
-            if (suite->solo) {
+            if (suite->test->solo) {
                 printf("Running solo: %s\n", Zinc_string_c_str(&suite->path));
             }
             Art_run_suite(data, suite);
@@ -54,13 +54,13 @@ void Art_run_suite(Art_data* data, Art_suite* suite)
     Art_test* test = suite->head;
 
     while (test) {
-        if (test->mute) {
+        if (test->test->mute) {
             printf("Muting: %s\n", Zinc_string_c_str(&test->description));
         }
-        bool can_run = !test->mute
-            && ((suite->has_solo && test->solo) || !suite->has_solo);
+        bool can_run = !test->test->mute
+            && ((suite->test->has_solo && test->test->solo) || !suite->test->has_solo);
         if (can_run) {
-            if (suite->solo) {
+            if (suite->test->solo) {
                 printf("Running solo: %s\n", Zinc_string_c_str(&test->description));
             }
             Art_run_test(data, suite, test);
@@ -110,6 +110,10 @@ void Art_run_test(Art_data* data, Art_suite* suite, Art_test* test)
         Ake_code_gen_result_init(&cg_result);
         cg_result.return_address = test->return_address;
         cg_result.return_size = test->return_size;
+        if (test->snapshot) {
+            cg_result.debug = true;
+            cg_result.dry_run = true;
+        }
 
         Ake_code_gen_jit(cg, &Akela_llvm_vtable, ct->primary->root, &cg_result);
         Akela_llvm_cg_destroy(cg);

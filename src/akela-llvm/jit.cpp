@@ -94,7 +94,7 @@ namespace Akela_llvm {
             fprintf(stderr, "\n%s", result->module_text.buf);
         }
 
-        if (valid) {
+        if (valid && !result->dry_run) {
             auto rt = jd.TheJIT->getMainJITDylib().createResourceTracker();
             auto tsm = ThreadSafeModule(std::move(jd.TheModule), std::move(jd.TheContext));
             jd.ExitOnErr(jd.TheJIT->addModule(std::move(tsm), rt));

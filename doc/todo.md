@@ -3,7 +3,6 @@
 # Akela LLVM
 
 # Akela Parse Test
-* has error - print message if incorrect
 
 # Akela Run Test
 * snapshot LLVM
@@ -23,5 +22,5 @@
 # Zinc
 
 # Test
-* create bin for test all unit tests
-* add integration tests end-to-end tests 
+* create binary for test all unit tests
+* add integration tests end-to-end tests

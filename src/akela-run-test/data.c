@@ -27,8 +27,6 @@ void Art_pair_destroy(Art_pair* pair)
 void Art_test_init(Art_test* test)
 {
     Zinc_string_init(&test->description);
-    test->solo = false;
-    test->mute = false;
     test->snapshot = false;
     test->has_error = false;
     test->ct = NULL;
@@ -38,6 +36,7 @@ void Art_test_init(Art_test* test)
     Zinc_input_bounds_init(&test->llvm_bounds);
     Zinc_string_init(&test->llvm);
     Zinc_spec_error_list_init(&test->spec_errors);
+    test->test = NULL;
     test->next = NULL;
     test->prev = NULL;
 }
@@ -63,10 +62,8 @@ void Art_suite_init(Art_suite* suite)
     Zinc_string_init(&suite->path);
     Zinc_string_init(&suite->description);
     Zinc_string_init(&suite->name);
-    suite->solo = false;
-    suite->mute = false;
-    suite->has_solo = false;
     Zinc_error_list_init(&suite->errors);
+    suite->test = NULL;
     suite->next = NULL;
     suite->prev = NULL;
     suite->head = NULL;
@@ -115,6 +112,7 @@ void Art_data_init(Art_data* data)
     data->has_solo = false;
     data->type_info = NULL;
     data->regex_re = Cob_compile_str("^/(.*)/\n?$");
+    data->test = NULL;
     data->head = NULL;
     data->tail = NULL;
 }
@@ -132,6 +130,11 @@ void Art_data_destroy(Art_data* data)
         suite = suite->next;
         Art_suite_destroy(temp);
         free(temp);
+    }
+
+    if (data->test) {
+        Zinc_test_destroy(data->test);
+        free(data->test);
     }
 }
 

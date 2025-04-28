@@ -18,6 +18,7 @@ typedef struct {
     void* return_address;
     long long return_size;
     bool debug;
+    bool dry_run;
 } Ake_code_gen_result;
 
 typedef bool (*Ake_code_gen_interface)(void* cg_obj, Ake_ast* n, Ake_code_gen_result* result);

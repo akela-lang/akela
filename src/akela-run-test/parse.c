@@ -68,6 +68,10 @@ void Art_parse_files(Art_data* data, char* dir_name)
     Zinc_string_list_init(&files);
     Zinc_list_files(Zinc_string_c_str(&dir_path), &files);
 
+    Zinc_test* test = NULL;
+    Zinc_test_create(&test);
+    data->test = test;
+
     Zinc_string_node* node = files.head;
     while (node) {
         if (!Zinc_string_compare_str(&node->value, ".") && !Zinc_string_compare_str(&node->value, "..")) {
@@ -108,6 +112,11 @@ void Art_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
 
     Zinc_string_add_string(&suite->path, path);
     Zinc_string_add_string(&suite->name, file_name);
+
+    Zinc_test* suite2 = NULL;
+    Zinc_test_create(&suite2);
+    suite->test = suite2;
+    Zinc_test_add(data->test, suite2);
 
     FILE* fp = fopen(path->buf, "r");
     if (!fp) {
@@ -229,8 +238,8 @@ void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value)
         return;
     }
 
-    suite->solo = solo->data.boolean;
-    if (suite->solo) {
+    suite->test->solo = solo->data.boolean;
+    if (suite->test->solo) {
         data->has_solo = true;
     }
 
@@ -245,7 +254,7 @@ void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value)
         return;
     }
 
-    suite->mute = mute->data.boolean;
+    suite->test->mute = mute->data.boolean;
 }
 
 void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
@@ -266,6 +275,11 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
     Art_test* test = NULL;
     Art_test_create(&test);
     Art_suite_add(suite, test);
+
+    Zinc_test* test2 = NULL;
+    Zinc_test_create(&test2);
+    test->test = test2;
+    Zinc_test_add(suite->test, test2);
 
     Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
     while (item) {
@@ -345,9 +359,9 @@ void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value*
             Zinc_error_list_set(&suite->errors, &n->loc, "expected solo to be boolean");
             test->has_error = true;
         } else {
-            test->solo = solo->data.boolean;
-            if (test->solo) {
-                suite->has_solo = true;
+            test->test->solo = solo->data.boolean;
+            if (test->test->solo) {
+                suite->test->has_solo = true;
             }
         }
     }
@@ -361,7 +375,7 @@ void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value*
             Zinc_error_list_set(&suite->errors, &n->loc, "expected mute to be boolean");
             test->has_error = true;
         } else {
-            test->mute = mute->data.boolean;
+            test->test->mute = mute->data.boolean;
         }
     }
 

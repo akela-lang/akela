@@ -16,10 +16,9 @@ typedef struct {
 typedef struct Art_test Art_test;
 struct Art_test {
     Zinc_string description;
-    bool solo;
-    bool mute;
     bool snapshot;
     bool has_error;
+    Zinc_test* test;
     Zinc_input_bounds source_bounds;
     Zinc_input_bounds llvm_bounds;
     Zinc_string llvm;
@@ -37,9 +36,7 @@ struct Art_suite {
     Zinc_string path;
     Zinc_string description;
     Zinc_string name;
-    bool solo;
-    bool mute;
-    bool has_solo;
+    Zinc_test* test;
     Zinc_error_list errors;
     Art_suite* next;
     Art_suite* prev;
@@ -56,6 +53,7 @@ struct Art_data {
     size_t test_count;
     size_t test_passed_count;
     size_t test_failed_count;
+    Zinc_test* test;
     Art_suite* head;
     Art_suite* tail;
 };
