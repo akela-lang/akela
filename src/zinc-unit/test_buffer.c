@@ -4,21 +4,25 @@
 #include "zinc/unit_test.h"
 #include "zinc/zstring.h"
 #include <limits.h>
+#include "zinc/test.h"
+#include "zinc/unit.h"
 
-/* static-output */
-void test_buffer_init()
+void Zinc_unit_buffer_init(Zinc_test* test)
 {
-	Zinc_test_name(__func__);
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
 
-	struct Zinc_string bf;
+	Zinc_string bf;
 	Zinc_string_init(&bf);
-	Zinc_expect_int_equal(bf.size, 0, "size");
-	Zinc_expect_int_equal(bf.buf_size, 0, "buf_size");
-	Zinc_expect_null(bf.buf, "buf");
+	Zinc_test_expect_size_t_equal(test, bf.size, 0, "size");
+	Zinc_test_expect_size_t_equal(test, bf.buf_size, 0, "buf_size");
+	Zinc_test_expect_null(test, bf.buf, "buf");
 }
 
-/* static-output */
-/* dynamic-temp bf{} */
 void test_buffer_add_char()
 {
 	Zinc_test_name(__func__);
@@ -597,7 +601,7 @@ void test_buffer_order_greater_than()
 /* static-output */
 void test_buffer()
 {
-	test_buffer_init();
+	// test_buffer_init();
 	test_buffer_add_char();
     test_buffer_add();
     test_buffer_expand();
@@ -624,4 +628,18 @@ void test_buffer()
     test_buffer_order_greater_size();
     test_buffer_order_less_than();
     test_buffer_order_greater_than();
+}
+
+void Zinc_unit_buffer(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+
+		Zinc_test_call(test, Zinc_unit_buffer_init);
+		return;
+	}
+
+	Zinc_test_perform(test);
 }

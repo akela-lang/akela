@@ -104,4 +104,6 @@ add_subdirectory(src/centipede-unit)
 add_subdirectory(src/lava)
 add_subdirectory(src/lava-unit)
 
+add_subdirectory(src/test)
+
 include(akela.cmake)

@@ -21,5 +21,4 @@
 # Zinc
 
 # Test
-* create binary for test all unit tests
 * add integration tests end-to-end tests

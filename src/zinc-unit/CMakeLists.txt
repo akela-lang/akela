@@ -1,6 +1,5 @@
 # files
 set(SOURCE_FILES
-        test.c
         test_result.c
         test_buffer.c
         test_memory.c
@@ -25,11 +24,21 @@ set(SOURCE_FILES
         test_dbl_vector.c
         test_string_slice.c
         test_test.c
+        unit.c
 )
 
-add_executable(zinc-unit ${SOURCE_FILES})
+add_library(zinc-unit STATIC ${SOURCE_FILES})
 target_link_libraries(zinc-unit zinc ${coverage_lib})
 set_target_properties(zinc-unit
         PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)
+
+add_executable(zinc-unit-bin test.c)
+target_link_libraries(zinc-unit-bin zinc zinc-unit)
+set_target_properties(zinc-unit-bin
+        PROPERTIES
+        OUTPUT_NAME zinc_unit
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
