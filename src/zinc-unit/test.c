@@ -1,5 +1,4 @@
 #include "zinc/unit_test.h"
-#include "unit_string.h"
 #include "test_result.h"
 #include "test_memory.h"
 #include "test_unit_test.h"
@@ -30,7 +29,6 @@ int main()
 	test_memory();
 	test_assert();
 	test_utf8();
-	test_buffer();
 	test_hash();
     test_os_unix();
     test_datetime();

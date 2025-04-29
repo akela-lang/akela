@@ -31,7 +31,7 @@ set(SOURCE_FILES
         string_slice.c
         input_bounds.c
         test.c
-        unit.c
+        expect.c
 )
 
 add_definitions(-DZINC_EXPORT)

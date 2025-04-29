@@ -5,9 +5,9 @@
 #include "zinc/zstring.h"
 #include <limits.h>
 #include "zinc/test.h"
-#include "zinc/unit.h"
+#include "zinc/expect.h"
 
-void Zinc_unit_buffer_init(Zinc_test* test)
+void Zinc_unit_string_init(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -23,7 +23,7 @@ void Zinc_unit_buffer_init(Zinc_test* test)
 	Zinc_test_expect_null(test, bf.buf, "buf");
 }
 
-void Zinc_unit_buffer_add_char(Zinc_test* test)
+void Zinc_unit_string_add_char(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -44,7 +44,7 @@ void Zinc_unit_buffer_add_char(Zinc_test* test)
 	Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_test_buffer_add(Zinc_test* test)
+void Zinc_unit_string_add(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -65,7 +65,7 @@ void Zinc_unit_test_buffer_add(Zinc_test* test)
     free(bf);
 }
 
-void Zinc_unit_buffer_expand(Zinc_test* test)
+void Zinc_unit_string_expand(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -85,7 +85,7 @@ void Zinc_unit_buffer_expand(Zinc_test* test)
     free(bf);
 }
 
-void Zinc_unit_buffer_finish(Zinc_test* test)
+void Zinc_unit_string_finish(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -108,7 +108,7 @@ void Zinc_unit_buffer_finish(Zinc_test* test)
 	Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_clear(Zinc_test* test)
+void Zinc_unit_string_clear(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -131,7 +131,7 @@ void Zinc_unit_buffer_clear(Zinc_test* test)
 	Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_reset(Zinc_test* test)
+void Zinc_unit_string_reset(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -153,7 +153,7 @@ void Zinc_unit_buffer_reset(Zinc_test* test)
     Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_copy(Zinc_test* test)
+void Zinc_unit_string_copy(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -183,7 +183,7 @@ void Zinc_unit_buffer_copy(Zinc_test* test)
 	Zinc_string_destroy(&bf2);
 }
 
-void Zinc_unit_buffer_buffer2array(Zinc_test* test)
+void Zinc_unit_string_buffer2array(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -211,7 +211,7 @@ void Zinc_unit_buffer_buffer2array(Zinc_test* test)
 	free(a);
 }
 
-void Zinc_unit_buffer_array2buffer(Zinc_test* test)
+void Zinc_unit_string_array2buffer(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -295,7 +295,7 @@ void Zinc_unit_string_next(Zinc_test* test)
 	Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_buffer_compare(Zinc_test* test)
+void Zinc_unit_string_compare(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -332,7 +332,7 @@ void Zinc_unit_buffer_buffer_compare(Zinc_test* test)
 	Zinc_string_destroy(&bf2);
 }
 
-void Zinc_unit_buffer_str_compare(Zinc_test* test)
+void Zinc_unit_string_str_compare(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -354,7 +354,7 @@ void Zinc_unit_buffer_str_compare(Zinc_test* test)
 	Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_uslice(Zinc_test* test)
+void Zinc_unit_string_uslice(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -389,7 +389,7 @@ void Zinc_unit_buffer_uslice(Zinc_test* test)
 	Zinc_string_destroy(&bf2);
 }
 
-void Zinc_unit_test_buffer_uslice2(Zinc_test* test)
+void Zinc_unit_string_uslice2(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -424,7 +424,7 @@ void Zinc_unit_test_buffer_uslice2(Zinc_test* test)
 	Zinc_string_destroy(&bf2);
 }
 
-void Zinc_unit_buffer_add_format(Zinc_test* test)
+void Zinc_unit_string_add_format(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -442,7 +442,7 @@ void Zinc_unit_buffer_add_format(Zinc_test* test)
     Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_add_format_d_max(Zinc_test* test)
+void Zinc_unit_string_add_format_d_max(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -462,7 +462,7 @@ void Zinc_unit_buffer_add_format_d_max(Zinc_test* test)
     Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_add_format_d_min(Zinc_test* test)
+void Zinc_unit_string_add_format_d_min(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -482,7 +482,7 @@ void Zinc_unit_buffer_add_format_d_min(Zinc_test* test)
     Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_test_buffer_add_format_zu_max(Zinc_test* test)
+void Zinc_unit_string_add_format_zu_max(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -502,7 +502,7 @@ void Zinc_unit_test_buffer_add_format_zu_max(Zinc_test* test)
     Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_add_format_zu_min(Zinc_test* test)
+void Zinc_unit_string_add_format_zu_min(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -522,7 +522,7 @@ void Zinc_unit_buffer_add_format_zu_min(Zinc_test* test)
     Zinc_string_destroy(&bf);
 }
 
-void Zinc_unit_buffer_add_format_s_large(Zinc_test* test)
+void Zinc_unit_string_add_format_s_large(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -548,7 +548,7 @@ void Zinc_unit_buffer_add_format_s_large(Zinc_test* test)
     Zinc_string_destroy(&input);
 }
 
-void Zinc_unit_buffer_add_format_buffer(Zinc_test* test)
+void Zinc_unit_string_add_format_buffer(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -571,7 +571,7 @@ void Zinc_unit_buffer_add_format_buffer(Zinc_test* test)
     Zinc_string_destroy(&bf_in);
 }
 
-void Zinc_unit_buffer_order_same(Zinc_test* test)
+void Zinc_unit_string_order_same(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -594,7 +594,7 @@ void Zinc_unit_buffer_order_same(Zinc_test* test)
     Zinc_string_destroy(&b);
 }
 
-void Zinc_unit_buffer_order_less_size(Zinc_test* test)
+void Zinc_unit_string_order_less_size(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -617,7 +617,7 @@ void Zinc_unit_buffer_order_less_size(Zinc_test* test)
     Zinc_string_destroy(&b);
 }
 
-void Zinc_unit_test_buffer_order_greater_size(Zinc_test* test)
+void Zinc_unit_string_order_greater_size(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -640,7 +640,7 @@ void Zinc_unit_test_buffer_order_greater_size(Zinc_test* test)
     Zinc_string_destroy(&b);
 }
 
-void Zinc_unit_buffer_order_less_than(Zinc_test* test)
+void Zinc_unit_string_order_less_than(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -663,7 +663,7 @@ void Zinc_unit_buffer_order_less_than(Zinc_test* test)
     Zinc_string_destroy(&b);
 }
 
-void Zinc_unit_test_buffer_order_greater_than(Zinc_test* test)
+void Zinc_unit_string_order_greater_than(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -686,10 +686,6 @@ void Zinc_unit_test_buffer_order_greater_than(Zinc_test* test)
     Zinc_string_destroy(&b);
 }
 
-void test_buffer()
-{
-}
-
 void Zinc_unit_string(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -697,33 +693,33 @@ void Zinc_unit_string(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, Zinc_unit_buffer_init);
-		Zinc_test_register(test, Zinc_unit_buffer_add_char);
-		Zinc_test_register(test, Zinc_unit_test_buffer_add);
-		Zinc_test_register(test, Zinc_unit_buffer_expand);
-		Zinc_test_register(test, Zinc_unit_buffer_finish);
-		Zinc_test_register(test, Zinc_unit_buffer_clear);
-		Zinc_test_register(test, Zinc_unit_buffer_reset);
-		Zinc_test_register(test, Zinc_unit_buffer_copy);
-		Zinc_test_register(test, Zinc_unit_buffer_buffer2array);
-		Zinc_test_register(test, Zinc_unit_buffer_array2buffer);
+		Zinc_test_register(test, Zinc_unit_string_init);
+		Zinc_test_register(test, Zinc_unit_string_add_char);
+		Zinc_test_register(test, Zinc_unit_string_add);
+		Zinc_test_register(test, Zinc_unit_string_expand);
+		Zinc_test_register(test, Zinc_unit_string_finish);
+		Zinc_test_register(test, Zinc_unit_string_clear);
+		Zinc_test_register(test, Zinc_unit_string_reset);
+		Zinc_test_register(test, Zinc_unit_string_copy);
+		Zinc_test_register(test, Zinc_unit_string_buffer2array);
+		Zinc_test_register(test, Zinc_unit_string_array2buffer);
 		Zinc_test_register(test, Zinc_unit_string_next);
-		Zinc_test_register(test, Zinc_unit_buffer_buffer_compare);
-		Zinc_test_register(test, Zinc_unit_buffer_str_compare);
-		Zinc_test_register(test, Zinc_unit_buffer_uslice);
-		Zinc_test_register(test, Zinc_unit_test_buffer_uslice2);
-		Zinc_test_register(test, Zinc_unit_buffer_add_format);
-		Zinc_test_register(test, Zinc_unit_buffer_add_format_d_max);
-		Zinc_test_register(test, Zinc_unit_buffer_add_format_d_min);
-		Zinc_test_register(test, Zinc_unit_test_buffer_add_format_zu_max);
-		Zinc_test_register(test, Zinc_unit_buffer_add_format_zu_min);
-		Zinc_test_register(test, Zinc_unit_buffer_add_format_s_large);
-		Zinc_test_register(test, Zinc_unit_buffer_add_format_buffer);
-		Zinc_test_register(test, Zinc_unit_buffer_order_same);
-		Zinc_test_register(test, Zinc_unit_buffer_order_less_size);
-		Zinc_test_register(test, Zinc_unit_test_buffer_order_greater_size);
-		Zinc_test_register(test, Zinc_unit_buffer_order_less_than);
-		Zinc_test_register(test, Zinc_unit_test_buffer_order_greater_than);
+		Zinc_test_register(test, Zinc_unit_string_compare);
+		Zinc_test_register(test, Zinc_unit_string_str_compare);
+		Zinc_test_register(test, Zinc_unit_string_uslice);
+		Zinc_test_register(test, Zinc_unit_string_uslice2);
+		Zinc_test_register(test, Zinc_unit_string_add_format);
+		Zinc_test_register(test, Zinc_unit_string_add_format_d_max);
+		Zinc_test_register(test, Zinc_unit_string_add_format_d_min);
+		Zinc_test_register(test, Zinc_unit_string_add_format_zu_max);
+		Zinc_test_register(test, Zinc_unit_string_add_format_zu_min);
+		Zinc_test_register(test, Zinc_unit_string_add_format_s_large);
+		Zinc_test_register(test, Zinc_unit_string_add_format_buffer);
+		Zinc_test_register(test, Zinc_unit_string_order_same);
+		Zinc_test_register(test, Zinc_unit_string_order_less_size);
+		Zinc_test_register(test, Zinc_unit_string_order_greater_size);
+		Zinc_test_register(test, Zinc_unit_string_order_less_than);
+		Zinc_test_register(test, Zinc_unit_string_order_greater_than);
 
 		return;
 	}
