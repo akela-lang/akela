@@ -690,7 +690,7 @@ void test_buffer()
 {
 }
 
-void Zinc_unit_buffer(Zinc_test* test)
+void Zinc_unit_string(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);

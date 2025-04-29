@@ -1,7 +1,7 @@
 # files
 set(SOURCE_FILES
         test_result.c
-        test_buffer.c
+        unit_string.c
         test_memory.c
         test_unit_test.c
         test_utf8.c
@@ -39,6 +39,6 @@ add_executable(zinc-unit-bin test.c)
 target_link_libraries(zinc-unit-bin zinc zinc-unit)
 set_target_properties(zinc-unit-bin
         PROPERTIES
-        OUTPUT_NAME zinc_unit
+        OUTPUT_NAME zinc-unit
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )

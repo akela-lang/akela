@@ -19,6 +19,8 @@
 # Lava
 
 # Zinc
+* convert tests
+  * string [x]
 
 # Test
 * add integration tests end-to-end tests
