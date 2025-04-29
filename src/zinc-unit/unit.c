@@ -1,5 +1,6 @@
 #include "unit_string.h"
 #include "test_string_list.h"
+#include "test_string_slice.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -10,6 +11,7 @@ void Zinc_unit(Zinc_test* test)
 
         Zinc_test_register(test, Zinc_unit_string);
         Zinc_test_register(test, Zinc_unit_string_list);
+        Zinc_test_register(test, Zinc_unit_string_slice);
 
         return;
     }

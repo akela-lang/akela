@@ -22,7 +22,7 @@
 * convert unit tests
   * string [x]
   * string list [x]
-  * string slice []
+  * string slice [x]
 
 # Test
 * add integration tests end-to-end tests
