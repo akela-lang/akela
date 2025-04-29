@@ -9,7 +9,7 @@ set(SOURCE_FILES
         test_os_unix.c
         test_datetime.c
         test_piece.c
-        test_string_list.c
+        unit_string_list.c
         test_error.c
         test_list.c
         test_vector.c
@@ -22,7 +22,7 @@ set(SOURCE_FILES
         test_spec_error.c
         test_priority_queue.c
         test_dbl_vector.c
-        test_string_slice.c
+        unit_string_slice.c
         test_test.c
         unit.c
 )

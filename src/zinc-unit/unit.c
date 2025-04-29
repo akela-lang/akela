@@ -1,6 +1,6 @@
 #include "unit_string.h"
-#include "test_string_list.h"
-#include "test_string_slice.h"
+#include "unit_string_list.h"
+#include "unit_string_slice.h"
 
 void Zinc_unit(Zinc_test* test)
 {
