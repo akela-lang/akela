@@ -9,7 +9,7 @@ set(SOURCE_FILES
         test_os_unix.c
         test_datetime.c
         test_piece.c
-        test_buffer_list.c
+        test_string_list.c
         test_error.c
         test_list.c
         test_vector.c

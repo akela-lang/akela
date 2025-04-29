@@ -13,5 +13,6 @@ void Zinc_test_expect_true(Zinc_test* test, int value, const char* message);
 void Zinc_test_expect_false(Zinc_test* test, int value, const char* message);
 void Zinc_test_expect_strcmp(Zinc_test* test, const char* a, const char* b, const char* message);
 void Zinc_test_expect_int_equal(Zinc_test* test, int a, int b, const char* message);
+void Zinc_test_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, const char* message);
 
 #endif

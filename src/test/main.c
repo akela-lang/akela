@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <zinc/unit_test.h>
-
-#include "zinc-unit/unit_string.h"
+#include "zinc-unit/unit.h"
 
 void Test_test(Zinc_test* test);
 
@@ -32,7 +29,7 @@ void Test_test(Zinc_test* test)
     if (test->dry_run) {
         Zinc_string_add_str(&test->name, "Test");
 
-        Zinc_test_register(test, Zinc_unit_string);
+        Zinc_test_register(test, Zinc_unit);
 
         return;
     }

@@ -148,3 +148,18 @@ void Zinc_test_expect_int_equal(Zinc_test* test, int a, int b, const char* messa
     Zinc_test_print_unseen(test);
     fprintf(stderr, "%d = %d error: %s\n", a, b, message);
 }
+
+void Zinc_test_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, const char* message)
+{
+    test->check_count++;
+
+    if (a == b) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "%p = %p error: %s\n", a, b, message);
+}

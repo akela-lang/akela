@@ -19,8 +19,10 @@
 # Lava
 
 # Zinc
-* convert tests
+* convert unit tests
   * string [x]
+  * string list [x]
+  * string slice []
 
 # Test
 * add integration tests end-to-end tests

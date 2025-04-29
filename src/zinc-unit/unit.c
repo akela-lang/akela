@@ -1,4 +1,5 @@
 #include "unit_string.h"
+#include "test_string_list.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -8,6 +9,7 @@ void Zinc_unit(Zinc_test* test)
         test->solo = false;
 
         Zinc_test_register(test, Zinc_unit_string);
+        Zinc_test_register(test, Zinc_unit_string_list);
 
         return;
     }
