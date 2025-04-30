@@ -9,7 +9,7 @@
 
 void Zinc_unit_datetime_utc(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -28,7 +28,7 @@ void Zinc_unit_datetime_utc(Zinc_test* test)
 #if IS_UNIX
 void Zinc_unit_datetime_utc2(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -52,7 +52,7 @@ void Zinc_unit_datetime_utc2(Zinc_test* test)
 
 void Zinc_unit_datetime_utc3(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -72,7 +72,7 @@ void Zinc_unit_datetime_utc3(Zinc_test* test)
 
 void Zinc_unit_datetime_local(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -98,7 +98,7 @@ void Zinc_unit_datetime_local(Zinc_test* test)
 
 void Zinc_unit_datetime_ny_standard(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -125,7 +125,7 @@ void Zinc_unit_datetime_ny_standard(Zinc_test* test)
 
 void Zinc_unit_datetime_ny_dst(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -153,7 +153,7 @@ void Zinc_unit_datetime_ny_dst(Zinc_test* test)
 
 void Zinc_unit_datetime_eod_before_eod(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -178,7 +178,7 @@ void Zinc_unit_datetime_eod_before_eod(Zinc_test* test)
 
 void Zinc_unit_datetime_eod_after_eod(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -203,7 +203,7 @@ void Zinc_unit_datetime_eod_after_eod(Zinc_test* test)
 
 void Zinc_unit_test_datetime_ny_minus_year(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
@@ -230,7 +230,7 @@ void Zinc_unit_test_datetime_ny_minus_year(Zinc_test* test)
 
 void Zinc_unit_datetime_ny_minus_day(Zinc_test* test)
 {
-    if (!test->dry_run) {
+    if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;

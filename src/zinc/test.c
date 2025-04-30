@@ -3,6 +3,9 @@
 #include "list.h"
 #include <assert.h>
 
+void Zinc_test_set_has_solo(Zinc_test* test);
+bool Zinc_test_has_solo(Zinc_test* test);
+
 void Zinc_test_init(Zinc_test* test)
 {
     Zinc_string_init(&test->name);
@@ -139,11 +142,35 @@ void Zinc_test_register(Zinc_test* test, Zinc_func func)
     new_test->dry_run = test->dry_run;
     Zinc_test_add(test, new_test);
     func(new_test);
+    Zinc_test_set_has_solo(new_test);
+}
+
+void Zinc_test_set_has_solo(Zinc_test* test)
+{
+    if (test->solo) {
+        Zinc_test* x = test;
+        while (x) {
+            x->has_solo = true;
+            x = x->parent;
+        }
+    }
 }
 
 bool Zinc_test_should_run(Zinc_test* test)
 {
-    return !test->mute && (!test->parent || !test->parent->has_solo || (test->solo));
+    return !test->mute && (test->head || !Zinc_test_has_solo(test) || (test->solo));
+}
+
+bool Zinc_test_has_solo(Zinc_test* test)
+{
+    Zinc_test* p = test;
+    while (p) {
+        if (p->has_solo) {
+            return true;
+        }
+        p = p->parent;
+    }
+    return false;
 }
 
 void Zinc_test_perform(Zinc_test* test)
