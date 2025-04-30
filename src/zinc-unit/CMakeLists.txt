@@ -21,7 +21,7 @@ set(SOURCE_FILES
         test_unicode.c
         test_spec_error.c
         test_priority_queue.c
-        test_dbl_vector.c
+        unit_dbl_vector.c
         unit_string_slice.c
         test_test.c
         unit.c

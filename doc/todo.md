@@ -24,7 +24,7 @@
   * string list [x]
   * string slice [x]
   * datetime [x]
-  * dbl_vector []
+  * dbl_vector [x]
   * error []
   * hash_map_size_t []
   * hash_map_string []

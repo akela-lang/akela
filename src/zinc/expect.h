@@ -24,5 +24,9 @@ void Zinc_test_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, co
 void Zinc_test_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const char* message);
 void Zinc_test_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, const char* message);
 void Zinc_test_expect_long_equal(Zinc_test* test, long a, long b, const char* message);
+void Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const char* message);
+void Zinc_test_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message);
+void Zinc_test_expect_long_long_equal(Zinc_test* test, long long a, long long b, const char* message);
+void Zinc_test_expect_u_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message);
 
 #endif

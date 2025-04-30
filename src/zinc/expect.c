@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdint.h>
 
 #include "os.h"
@@ -335,39 +336,71 @@ void Zinc_test_expect_long_equal(Zinc_test* test, long a, long b, const char* me
     fprintf(stderr, "\t%ld = %ld error: %s\n", a, b, message);
 }
 
-// void Zinc_expect_unsigned_long_equal(unsigned long a, unsigned long b, const char* message)
-// {
-//     Zinc_test_called();
-//     if (a == b) return;
-//     Zinc_error_triggered();
-//     fprintf(stderr, "%lu = %lu error: %s\n", a, b, message);
-// }
-//
-// void Zinc_expect_long_long_equal(long long a, long long b, const char* message)
-// {
-// 	Zinc_test_called();
-// 	if (a == b) return;
-// 	Zinc_error_triggered();
-// 	fprintf(stderr, "%lld = %lld error: %s\n", a, b, message);
-// }
-//
-// void Zinc_expect_u_long_equal(unsigned long a, unsigned long b, const char* message)
-// {
-//     Zinc_test_called();
-//     if (a == b) return;
-//     Zinc_error_triggered();
-//     fprintf(stderr, "%ld = %ld error: %s\n", a, b, message);
-// }
-//
-// void Zinc_expect_double_equal(double a, double b, const char* message)
-// {
-//     Zinc_test_called();
-//     if (isnan(a) && isnan(b)) return;
-//     if (a == b) return;
-//     Zinc_error_triggered();
-//     fprintf(stderr, "%lf = %lf error: %s\n", a, b, message);
-// }
-//
+void Zinc_test_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message)
+{
+    test->check_count++;
+
+    if (a == b) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\t%lu = %lu error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_long_long_equal(Zinc_test* test, long long a, long long b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+	    test->check_passed++;
+	    return;
+	}
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+	fprintf(stderr, "\t%lld = %lld error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_u_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message)
+{
+    test->check_count++;
+
+    if (a == b) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\t%ld = %ld error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const char* message)
+{
+    test->check_count++;
+
+    if (isnan(a) && isnan(b)) {
+        test->check_passed++;
+        return;
+    }
+
+    if (a == b) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\t%lf = %lf error: %s\n", a, b, message);
+}
+
 // void Zinc_expect_ptr_equal(const void* a, const void* b, const char* message)
 // {
 // 	Zinc_test_called();
