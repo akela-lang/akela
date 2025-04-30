@@ -5,7 +5,6 @@
 #include "test_utf8.h"
 #include "test_hash_map_string.h"
 #include "test_os_unix.h"
-#include "test_datetime.h"
 #include "test_piece.h"
 #include "test_error.h"
 #include "test_list.h"
@@ -29,7 +28,6 @@ int main()
 	test_utf8();
 	test_hash();
     test_os_unix();
-    test_datetime();
     test_piece();
     test_error();
     test_list();

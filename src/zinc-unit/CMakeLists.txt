@@ -7,7 +7,7 @@ set(SOURCE_FILES
         test_utf8.c
         test_hash_map_string.c
         test_os_unix.c
-        test_datetime.c
+        unit_datetime.c
         test_piece.c
         unit_string_list.c
         test_error.c

@@ -5,6 +5,10 @@
 
 void Zinc_test_assert_ok(Zinc_test* test, Zinc_result r, const char* message);
 void Zinc_test_assert_ptr(Zinc_test* test, void* p, const char* message);
+void Zinc_test_assert_true(Zinc_test* test, int value, const char* message);
+void Zinc_test_assert_false(Zinc_test* test, int value, const char* message);
+void Zinc_test_assert_null(Zinc_test* test, void* p, const char* message);
+void Zinc_test_assert_error(Zinc_test* test, Zinc_result r, const char* message);
 
 void Zinc_test_expect_null(Zinc_test* test, void* p, const char* message);
 void Zinc_test_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
@@ -14,5 +18,11 @@ void Zinc_test_expect_false(Zinc_test* test, int value, const char* message);
 void Zinc_test_expect_strcmp(Zinc_test* test, const char* a, const char* b, const char* message);
 void Zinc_test_expect_int_equal(Zinc_test* test, int a, int b, const char* message);
 void Zinc_test_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, const char* message);
+void Zinc_test_assert_int_equal(Zinc_test* test, int a, int b, const char* message);
+void Zinc_test_expect_int64_t_equal(Zinc_test* test, int64_t a, int64_t b, const char* message);
+void Zinc_test_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, const char* message);
+void Zinc_test_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const char* message);
+void Zinc_test_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, const char* message);
+void Zinc_test_expect_long_equal(Zinc_test* test, long a, long b, const char* message);
 
 #endif
