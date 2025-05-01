@@ -4,12 +4,17 @@ capable of standalone and embeddable execution,
 suitable for numerical computation and finance,
 and capable of robust software construction.
 
-Akela is influenced heavily by Julia, Rust, Zig, and Go. The way that Python excels at AI
-and Julia excels at scientific computing, Akela wants to excel at finance.
+Akela is influenced heavily by Julia, Rust, Zig, and Go. 
+The Akela project wants to excel at finance.
+
+## Status
+The Akela project is a work in progress. Most of the work has been focused on fast
+recursive decent parsing and testing tools. The code generation has been lightly worked on.
+A new syntax has been designed and will be implemented very soon. 
 
 ## Project Goals
-The Akela project is a work in progress. Many of the following goals are aspirational.
-There is a rudimentary JIT compiler. There are a lot of automated tests. 
+Many of the following goals are aspirational.
+There is a rudimentary JIT compiler. There are a lot of automated tests.
 
 * Statically typed language and type inference which we think helps
 software engineers more than dynamically typed or gradually typed
@@ -33,10 +38,11 @@ has a handwritten lexer and recursive decent parser
 * Dataframe - For doing vector math and writing and reading vectors to and from CSV files
 * JSON - A JSON parser and stringify library
 * Coverage - Generate and analyze code coverage of tests
-* Centipede - The Centipede DAG description language parser; is a file format for compiler ASTs
-and will be used for testing the AST output of the Akela parser
+* Centipede - The parser for Akela object notation which feels like a light-weight mix of JSON and XML.
+It is used for configuration and to describe DAGs (syntax trees)
+* Lava - A parser of a subset of markdown which is used for testing scripts (automated testing)
 
-The Cobble, Dataframe, JSON, and Centipede subprojects are very useful for the
+The Cobble, Dataframe, JSON, Centipede, and Lava subprojects are very useful for the
 automated testing of the Akela compiler. When these subprojects are re-written in Akela
 they will be useful as a comparison to the C versions.
 
