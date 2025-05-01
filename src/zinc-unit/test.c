@@ -3,7 +3,6 @@
 #include "test_memory.h"
 #include "test_unit_test.h"
 #include "test_utf8.h"
-#include "test_hash_map_string.h"
 #include "test_os_unix.h"
 #include "test_piece.h"
 #include "test_list.h"
@@ -23,7 +22,6 @@ int main()
 	test_memory();
 	test_assert();
 	test_utf8();
-	test_hash();
     test_os_unix();
     test_piece();
     test_list();

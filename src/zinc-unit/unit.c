@@ -5,6 +5,7 @@
 #include "unit_dbl_vector.h"
 #include "unit_error.h"
 #include "unit_hash_map_size_t.h"
+#include "unit_hash_map_string.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -20,6 +21,7 @@ void Zinc_unit(Zinc_test* test)
         Zinc_test_register(test, Zinc_unit_dbl_vector);
         Zinc_test_register(test, Zinc_unit_error);
         Zinc_test_register(test, Zinc_unit_hash_map_size_t);
+        Zinc_test_register(test, Zinc_unit_hash_map_string);
 
         return;
     }
