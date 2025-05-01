@@ -14,7 +14,7 @@ set(SOURCE_FILES
         test_list.c
         test_vector.c
         test_input_char_string.c
-        test_input_char_file.c
+        unit_input_char_file.c
         test_input_unicode_string.c
         test_input_unicode_file.c
         unit_hash_map_size_t.c

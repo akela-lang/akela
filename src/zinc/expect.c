@@ -5,6 +5,7 @@
 #include <string.h>
 #include "error.h"
 #include "test.h"
+#include "vector.h"
 
 void Zinc_test_panic()
 {
@@ -493,37 +494,49 @@ void Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const ch
 //
 // 	free(temp);
 // }
-//
-// void Zinc_expect_vector_str(Zinc_vector* a, const char* b, const char* message)
-// {
-//     Zinc_test_called();
-//     if (a->value_size != sizeof(char)) {
-//         fprintf(stderr,
-//                 "Vector elements must be size of char to compare to string: %s\n",
-//                 message);
-//         Zinc_error_triggered();
-//         return;
-//     }
-//     Zinc_vector_add_null(a);
-//     size_t len = strlen(b);
-//     if (a->count != len) {
-//         fprintf(stderr,
-//                 "Vector and string not the same size: (%s) (%s): %s\n",
-//                 ZINC_VECTOR_STRING(a), b, message);
-//         Zinc_error_triggered();
-//     } else {
-//         for (int i = 0; i < a->count; i++) {
-//             if (ZINC_VECTOR_CHAR(a, i) != b[i]) {
-//                 fprintf(stderr,
-//                         "Vector and string not equal: (%s) (%s): %s\n",
-//                         ZINC_VECTOR_STRING(a), b, message);
-//                 Zinc_error_triggered();
-//                 break;
-//             }
-//         }
-//     }
-// }
-//
+
+void Zinc_test_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b, const char* message)
+{
+    test->check_count++;
+
+    if (a->value_size != sizeof(char)) {
+        test->check_failed++;
+        test->pass = false;
+        Zinc_test_print_unseen(test);
+        fprintf(stderr,
+                "\tVector elements must be size of char to compare to string: %s\n",
+                message);
+        return;
+    }
+
+    Zinc_vector_add_null(a);
+    size_t len = strlen(b);
+    if (a->count != len) {
+        test->check_failed++;
+        test->pass = false;
+        Zinc_test_print_unseen(test);
+        fprintf(stderr,
+                "\tVector and string not the same size: (%s) (%s): %s\n",
+                ZINC_VECTOR_STRING(a), b, message);
+        return;
+    }
+
+    for (int i = 0; i < a->count; i++) {
+        if (ZINC_VECTOR_CHAR(a, i) != b[i]) {
+            test->check_failed++;
+            test->pass = false;
+            Zinc_test_print_unseen(test);
+            fprintf(stderr,
+                    "\tVector and string not equal: (%s) (%s): %s\n",
+                    ZINC_VECTOR_STRING(a), b, message);
+            return;
+        }
+
+    }
+
+    test->check_passed++;
+}
+
 // void Zinc_expect_vector(Zinc_vector* a, Zinc_vector* b, const char* message)
 // {
 //     Zinc_test_called();

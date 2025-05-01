@@ -37,5 +37,6 @@ void Zinc_test_assert_has_errors(Zinc_test* test, Zinc_error_list* el);
 void Zinc_test_expect_has_errors(Zinc_test* test, Zinc_error_list* el);
 Zinc_error* Zinc_test_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
 Zinc_error* Zinc_test_expect_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
+void Zinc_test_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b, const char* message);
 
 #endif

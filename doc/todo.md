@@ -28,7 +28,7 @@
   * error [x]
   * hash_map_size_t [x]
   * hash_map_string [x]
-  * input_char_file []
+  * input_char_file [x]
   * input_char_string []
   * input unicode file []
   * input unicode string []
