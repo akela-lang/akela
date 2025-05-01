@@ -4,6 +4,7 @@
 #include "unit_datetime.h"
 #include "unit_dbl_vector.h"
 #include "unit_error.h"
+#include "unit_hash_map_size_t.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -18,6 +19,7 @@ void Zinc_unit(Zinc_test* test)
         Zinc_test_register(test, Zinc_unit_datetime);
         Zinc_test_register(test, Zinc_unit_dbl_vector);
         Zinc_test_register(test, Zinc_unit_error);
+        Zinc_test_register(test, Zinc_unit_hash_map_size_t);
 
         return;
     }

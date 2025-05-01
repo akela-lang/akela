@@ -26,7 +26,7 @@
   * datetime [x]
   * dbl_vector [x]
   * error [x]
-  * hash_map_size_t []
+  * hash_map_size_t [x]
   * hash_map_string []
   * input_char_file []
   * input_char_string []
