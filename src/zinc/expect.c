@@ -1,10 +1,9 @@
 #include <math.h>
 #include <stdint.h>
-
 #include "os.h"
 #include <stdlib.h>
 #include <string.h>
-
+#include "error.h"
 #include "test.h"
 
 void Zinc_test_panic()
@@ -740,3 +739,151 @@ void Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const ch
 // 		Zinc_string_destroy(&actual);
 // 	}
 // }
+
+void Zinc_test_assert_no_errors(Zinc_test* test, Zinc_error_list* el)
+{
+    test->check_count++;
+
+    if (!el->head) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\tassert no errors: has errors\n");
+    Zinc_error* e = el->head;
+    while (e) {
+        Zinc_string_finish(&e->message);
+        fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
+        e = e->next;
+    }
+
+    Zinc_test_panic();
+}
+
+void Zinc_test_expect_no_errors(Zinc_test* test, Zinc_error_list* el)
+{
+    test->check_count++;
+
+    if (!el->head) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\texpect no errors: has errors\n");
+    Zinc_error* e = el->head;
+    while (e) {
+        Zinc_string_finish(&e->message);
+        fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
+        e = e->next;
+    }
+}
+
+void Zinc_test_expect_error_count(Zinc_test* test, Zinc_error_list* el, size_t count)
+{
+    test->check_count++;
+
+    size_t actual_count = 0;
+    struct Zinc_error* e = el->head;
+    while (e) {
+        actual_count++;
+        e = e->next;
+    }
+    if (actual_count == count) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\texpected error count (%zu) (%zu)\n", actual_count, count);
+}
+
+void Zinc_test_assert_has_errors(Zinc_test* test, Zinc_error_list* el)
+{
+    test->check_count++;
+
+    if (el->head) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\tassert has errors: there are no errors\n");
+    Zinc_test_panic();
+}
+
+void Zinc_test_expect_has_errors(Zinc_test* test, Zinc_error_list* el)
+{
+    test->check_count++;
+
+    if (el->head) {
+        test->check_passed++;
+        return;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\texpect has errors: there are no errors\n");
+}
+
+Zinc_error* Zinc_test_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])
+{
+    test->check_count++;
+
+    Zinc_error* e = el->head;
+    while (e) {
+        Zinc_string_finish(&e->message);
+        if (strcmp(e->message.buf, message) == 0) {
+            test->check_passed++;
+            return e;
+        }
+        e = e->next;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\terror not found: %s\n", message);
+    Zinc_test_panic();
+    return NULL;
+}
+
+Zinc_error* Zinc_test_expect_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])
+{
+    test->check_count++;
+
+    Zinc_error* e = el->head;
+    while (e) {
+        Zinc_string_finish(&e->message);
+        if (strcmp(e->message.buf, message) == 0) {
+            test->check_passed++;
+            return e;
+        }
+        e = e->next;
+    }
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+    fprintf(stderr, "\terror not found: %s\n", message);
+    e = el->head;
+    if (e) {
+        fprintf(stderr, "Errors:\n");
+    }
+    while (e) {
+        Zinc_string_finish(&e->message);
+        fprintf(stderr, "\t%s\n", e->message.buf);
+        e = e->next;
+    }
+    return NULL;
+}

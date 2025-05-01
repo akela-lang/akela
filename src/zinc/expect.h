@@ -2,6 +2,7 @@
 #define ZINC_UNIT_H
 
 #include "test.h"
+#include "error.h"
 
 void Zinc_test_assert_ok(Zinc_test* test, Zinc_result r, const char* message);
 void Zinc_test_assert_ptr(Zinc_test* test, void* p, const char* message);
@@ -28,5 +29,13 @@ void Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const ch
 void Zinc_test_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message);
 void Zinc_test_expect_long_long_equal(Zinc_test* test, long long a, long long b, const char* message);
 void Zinc_test_expect_u_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message);
+
+void Zinc_test_assert_no_errors(Zinc_test* test, Zinc_error_list* el);
+void Zinc_test_expect_no_errors(Zinc_test* test, Zinc_error_list* el);
+void Zinc_test_expect_error_count(Zinc_test* test, Zinc_error_list* el, size_t count);
+void Zinc_test_assert_has_errors(Zinc_test* test, Zinc_error_list* el);
+void Zinc_test_expect_has_errors(Zinc_test* test, Zinc_error_list* el);
+Zinc_error* Zinc_test_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
+Zinc_error* Zinc_test_expect_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
 
 #endif

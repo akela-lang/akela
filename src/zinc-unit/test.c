@@ -6,7 +6,6 @@
 #include "test_hash_map_string.h"
 #include "test_os_unix.h"
 #include "test_piece.h"
-#include "test_error.h"
 #include "test_list.h"
 #include "test_vector.h"
 #include "test_input_char_string.h"
@@ -28,7 +27,6 @@ int main()
 	test_hash();
     test_os_unix();
     test_piece();
-    test_error();
     test_list();
     test_vector();
     TestInputCharString();

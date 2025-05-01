@@ -10,7 +10,7 @@ set(SOURCE_FILES
         unit_datetime.c
         test_piece.c
         unit_string_list.c
-        test_error.c
+        unit_error.c
         test_list.c
         test_vector.c
         test_input_char_string.c

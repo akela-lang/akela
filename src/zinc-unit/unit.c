@@ -3,6 +3,7 @@
 #include "unit_string_slice.h"
 #include "unit_datetime.h"
 #include "unit_dbl_vector.h"
+#include "unit_error.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -16,6 +17,7 @@ void Zinc_unit(Zinc_test* test)
         Zinc_test_register(test, Zinc_unit_string_slice);
         Zinc_test_register(test, Zinc_unit_datetime);
         Zinc_test_register(test, Zinc_unit_dbl_vector);
+        Zinc_test_register(test, Zinc_unit_error);
 
         return;
     }
