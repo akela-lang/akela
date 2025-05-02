@@ -31,7 +31,7 @@
   * input_char_file [x]
   * input_char_string [x]
   * input unicode file [x]
-  * input unicode string []
+  * input unicode string [x]
   * list []
   * memory []
   * os_unix []
