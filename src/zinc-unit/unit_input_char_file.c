@@ -220,7 +220,7 @@ void Zinc_unit_test_input_char_file_get_all(Zinc_test* test)
     Zinc_string_destroy(&name);
 }
 
-void Zinc_unit_test_input_char_file(Zinc_test* test)
+void Zinc_unit_input_char_file(Zinc_test* test)
 {
     if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);

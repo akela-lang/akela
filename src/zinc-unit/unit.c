@@ -8,6 +8,7 @@
 #include "unit_hash_map_string.h"
 #include "unit_input_char_file.h"
 #include "unit_input_char_string.h"
+#include "unit_input_unicode_file.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -24,8 +25,9 @@ void Zinc_unit(Zinc_test* test)
         Zinc_test_register(test, Zinc_unit_error);
         Zinc_test_register(test, Zinc_unit_hash_map_size_t);
         Zinc_test_register(test, Zinc_unit_hash_map_string);
-        Zinc_test_register(test, Zinc_unit_test_input_char_file);
-        Zinc_test_register(test, Zinc_unit_test_input_char_string);
+        Zinc_test_register(test, Zinc_unit_input_char_file);
+        Zinc_test_register(test, Zinc_unit_input_char_string);
+        Zinc_test_register(test, Zinc_unit_input_unicode_file);
 
         return;
     }

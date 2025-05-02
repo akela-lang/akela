@@ -8,7 +8,7 @@
 #include "test_list.h"
 #include "test_vector.h"
 #include "test_input_unicode_string.h"
-#include "test_input_unicode_file.h"
+#include "unit_input_unicode_file.h"
 #include "test_unicode.h"
 #include "test_spec_error.h"
 #include "test_priority_queue.h"

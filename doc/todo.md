@@ -30,7 +30,7 @@
   * hash_map_string [x]
   * input_char_file [x]
   * input_char_string [x]
-  * input unicode file []
+  * input unicode file [x]
   * input unicode string []
   * list []
   * memory []
