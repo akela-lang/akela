@@ -401,22 +401,21 @@ void Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const ch
     fprintf(stderr, "\t%lf = %lf error: %s\n", a, b, message);
 }
 
-// void Zinc_expect_ptr_equal(const void* a, const void* b, const char* message)
-// {
-// 	Zinc_test_called();
-// 	if (a == b) return;
-// 	Zinc_error_triggered();
-// 	fprintf(stderr, "%p = %p error: %s\n", a, b, message);
-// }
-//
-// void Zinc_expect_char_equal(char a, char b, const char* message)
-// {
-// 	Zinc_test_called();
-// 	if (a == b) return;
-// 	Zinc_error_triggered();
-// 	fprintf(stderr, "(%c) = (%c) error: %s\n", a, b, message);
-// }
-//
+void Zinc_test_expect_char_equal(Zinc_test* test, char a, char b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+	    test->check_passed++;
+	    return;
+	}
+
+	test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+	fprintf(stderr, "\t(%c) = (%c) error: %s\n", a, b, message);
+}
+
 // void Zinc_expect_uint_equal(unsigned int a, unsigned int b, const char* message)
 // {
 // 	Zinc_test_called();

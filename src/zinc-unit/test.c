@@ -7,7 +7,6 @@
 #include "test_piece.h"
 #include "test_list.h"
 #include "test_vector.h"
-#include "test_input_char_string.h"
 #include "test_input_unicode_string.h"
 #include "test_input_unicode_file.h"
 #include "test_unicode.h"
@@ -25,7 +24,6 @@ int main()
     test_piece();
     test_list();
     test_vector();
-    TestInputCharString();
     test_input_unicode_string();
     test_input_unicode_file();
 	test_unicode();

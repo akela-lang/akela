@@ -13,7 +13,7 @@ set(SOURCE_FILES
         unit_error.c
         test_list.c
         test_vector.c
-        test_input_char_string.c
+        unit_input_char_string.c
         unit_input_char_file.c
         test_input_unicode_string.c
         test_input_unicode_file.c

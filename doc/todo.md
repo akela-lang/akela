@@ -29,7 +29,7 @@
   * hash_map_size_t [x]
   * hash_map_string [x]
   * input_char_file [x]
-  * input_char_string []
+  * input_char_string [x]
   * input unicode file []
   * input unicode string []
   * list []
