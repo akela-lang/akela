@@ -1,5 +1,3 @@
-#include <zinc-unit/test_hash_map_string.h>
-
 #include "zinc/os_unix.h"
 #include "zinc/zstring.h"
 #include "parse.h"
