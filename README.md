@@ -77,7 +77,7 @@ ninja -C cmake-build-debug
     cmake-build-debug/bin/coverage-unit
     cmake-build-debug/bin/dataframe-unit
     cmake-build-debug/bin/json-unit
-    cmake-build-debug/bin/worm-unit
+    cmake-build-debug/bin/lava-unit
 
 ## Run Integration and End-to-End Tests
     cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
