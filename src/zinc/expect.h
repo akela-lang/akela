@@ -3,6 +3,7 @@
 
 #include "test.h"
 #include "error.h"
+#include "vector.h"
 
 void Zinc_test_assert_ok(Zinc_test* test, Zinc_result r, const char* message);
 void Zinc_test_assert_ptr(Zinc_test* test, void* p, const char* message);

@@ -5,7 +5,6 @@
 #include "test_utf8.h"
 #include "test_os_unix.h"
 #include "test_piece.h"
-#include "test_list.h"
 #include "test_vector.h"
 #include "test_unicode.h"
 #include "test_spec_error.h"
@@ -20,7 +19,6 @@ int main()
 	test_utf8();
     test_os_unix();
     test_piece();
-    test_list();
     test_vector();
 	test_unicode();
 	test_spec_error();

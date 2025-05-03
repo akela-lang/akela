@@ -32,7 +32,7 @@
   * input_char_string [x]
   * input unicode file [x]
   * input unicode string [x]
-  * list []
+  * list [x]
   * memory []
   * os_unix []
   * piece []

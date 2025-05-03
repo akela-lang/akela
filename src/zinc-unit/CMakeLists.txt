@@ -11,7 +11,7 @@ set(SOURCE_FILES
         test_piece.c
         unit_string_list.c
         unit_error.c
-        test_list.c
+        unit_list.c
         test_vector.c
         unit_input_char_string.c
         unit_input_char_file.c
