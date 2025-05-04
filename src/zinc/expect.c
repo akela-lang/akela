@@ -473,14 +473,22 @@ void Zinc_test_expect_char_equal(Zinc_test* test, char a, char b, const char* me
 // 	fprintf(stderr, "%p == null error: %s\n", p, message);
 // }
 //
-// void Zinc_expect_ok(enum Zinc_result r, const char* message)
-// {
-// 	Zinc_test_called();
-// 	if (r == Zinc_result_ok) return;
-// 	Zinc_error_triggered();
-// 	fprintf(stderr, "ok error: %s: %s\n", message, Zinc_error_message);
-// }
-//
+
+void Zinc_test_expect_ok(Zinc_test* test, Zinc_result r, const char* message)
+{
+	test->check_count++;
+
+	if (r == Zinc_result_ok) {
+	    test->check_passed++;
+	    return;
+	}
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+	fprintf(stderr, "\tok error: %s: %s\n", message, Zinc_error_message);
+}
+
 // void Zinc_expect_string(struct Zinc_string* a, const char* b, const char* message)
 // {
 // 	Zinc_test_called();

@@ -2,7 +2,6 @@
 #include "test_result.h"
 #include "test_unit_test.h"
 #include "test_utf8.h"
-#include "test_os_unix.h"
 #include "test_piece.h"
 #include "test_vector.h"
 #include "test_unicode.h"
@@ -15,7 +14,6 @@ int main()
 	test_result();
 	test_assert();
 	test_utf8();
-    test_os_unix();
     test_piece();
     test_vector();
 	test_unicode();

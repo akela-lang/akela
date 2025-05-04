@@ -34,7 +34,7 @@
   * input unicode string [x]
   * list [x]
   * memory [x]
-  * os_unix []
+  * os_unix [x]
   * piece []
   * priority_queue []
   * result []
