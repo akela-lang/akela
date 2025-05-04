@@ -2,7 +2,7 @@
 set(SOURCE_FILES
         test_result.c
         unit_string.c
-        test_memory.c
+        unit_memory.c
         test_unit_test.c
         test_utf8.c
         unit_hash_map_string.c

@@ -11,6 +11,7 @@
 #include "unit_input_unicode_file.h"
 #include "unit_input_unicode_string.h"
 #include "unit_list.h"
+#include "unit_memory.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -32,6 +33,7 @@ void Zinc_unit(Zinc_test* test)
         Zinc_test_register(test, Zinc_unit_input_unicode_file);
         Zinc_test_register(test, Zinc_unit_input_unicode_string);
         Zinc_test_register(test, Zinc_unit_list);
+        Zinc_test_register(test, Zinc_unit_memory);
 
         return;
     }

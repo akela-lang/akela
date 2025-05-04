@@ -33,7 +33,7 @@
   * input unicode file [x]
   * input unicode string [x]
   * list [x]
-  * memory []
+  * memory [x]
   * os_unix []
   * piece []
   * priority_queue []
