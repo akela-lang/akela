@@ -5,7 +5,6 @@
 #include "test_vector.h"
 #include "test_unicode.h"
 #include "test_spec_error.h"
-#include "test_priority_queue.h"
 #include "test_test.h"
 
 int main()
@@ -16,7 +15,6 @@ int main()
     test_vector();
 	test_unicode();
 	test_spec_error();
-	test_priority_queue();
 	test_test();
 	Zinc_print_results();
 	return 0;
