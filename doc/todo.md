@@ -35,7 +35,7 @@
   * list [x]
   * memory [x]
   * os_unix [x]
-  * piece []
+  * piece [x]
   * priority_queue []
   * result []
   * spec error []

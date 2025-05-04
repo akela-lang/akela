@@ -13,6 +13,7 @@
 #include "unit_list.h"
 #include "unit_memory.h"
 #include "unit_os_unix.h"
+#include "unit_piece.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -36,6 +37,7 @@ void Zinc_unit(Zinc_test* test)
         Zinc_test_register(test, Zinc_unit_list);
         Zinc_test_register(test, Zinc_unit_memory);
         Zinc_test_register(test, Zinc_unit_os_unix);
+        Zinc_test_register(test, Zinc_unit_piece);
 
         return;
     }

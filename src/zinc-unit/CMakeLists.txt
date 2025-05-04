@@ -8,7 +8,7 @@ set(SOURCE_FILES
         unit_hash_map_string.c
         unit_os_unix.c
         unit_datetime.c
-        test_piece.c
+        unit_piece.c
         unit_string_list.c
         unit_error.c
         unit_list.c
