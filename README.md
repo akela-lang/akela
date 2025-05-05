@@ -10,7 +10,7 @@ The Akela project wants to excel at finance.
 ## Status
 The Akela project is a work in progress. Most of the work has been focused on fast
 recursive decent parsing, type checking, and testing tools. Code generation has been
-lightly worked on. A new syntax has been designed and will be implemented very soon. 
+lightly worked on. A new syntax has been designed and will be implemented later this year.
 
 ## Project Goals
 Many of the following goals are aspirational.
