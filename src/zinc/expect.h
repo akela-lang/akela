@@ -41,5 +41,6 @@ Zinc_error* Zinc_test_expect_source_error(Zinc_test* test, Zinc_error_list* el, 
 void Zinc_test_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b, const char* message);
 void Zinc_test_expect_char_equal(Zinc_test* test, char a, char b, const char* message);
 void Zinc_test_expect_ok(Zinc_test* test, Zinc_result r, const char* message);
+void Zinc_test_expect_error_message(Zinc_test* test, const char* s);
 
 #endif

@@ -2,6 +2,6 @@
 #define _TEST_RESULT_H
 
 /* static-output */
-void test_result();
+void Zinc_unit_result();
 
 #endif

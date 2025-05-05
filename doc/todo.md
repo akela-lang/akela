@@ -37,7 +37,7 @@
   * os_unix [x]
   * piece [x]
   * priority_queue [x]
-  * result []
+  * result [x]
   * spec error []
   * test []
   * unicode []

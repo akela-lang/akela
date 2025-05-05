@@ -15,6 +15,7 @@
 #include "unit_os_unix.h"
 #include "unit_piece.h"
 #include "unit_priority_queue.h"
+#include "unit_result.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -40,6 +41,7 @@ void Zinc_unit(Zinc_test* test)
         Zinc_test_register(test, Zinc_unit_os_unix);
         Zinc_test_register(test, Zinc_unit_piece);
         Zinc_test_register(test, Zinc_unit_priority_queue);
+        Zinc_test_register(test, Zinc_unit_result);
 
         return;
     }

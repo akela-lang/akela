@@ -1,0 +1,33 @@
+#include "zinc/result.h"
+#include "zinc/test.h"
+#include "zinc/expect.h"
+
+void Zinc_unit_result_set_error(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Zinc_result r;
+	r = Zinc_set_error("error x");
+	Zinc_test_assert_error(test, r, "set_error");
+	Zinc_test_expect_error_message(test, "error x");
+}
+
+void Zinc_unit_result(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+
+		Zinc_test_register(test, Zinc_unit_result_set_error);
+
+		return;
+	}
+
+	Zinc_test_perform(test);
+}

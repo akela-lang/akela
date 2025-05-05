@@ -1,6 +1,6 @@
 # files
 set(SOURCE_FILES
-        test_result.c
+        unit_result.c
         unit_string.c
         unit_memory.c
         test_unit_test.c

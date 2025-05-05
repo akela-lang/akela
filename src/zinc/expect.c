@@ -624,15 +624,22 @@ void Zinc_test_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b,
 // 	Zinc_error_triggered();
 // 	fprintf(stderr, "string compare: (%s) = (%s): %s\n", a, b, message);
 // }
-//
-// void Zinc_expect_error_message(const char* s)
-// {
-// 	Zinc_test_called();
-// 	if (strcmp(Zinc_error_message, s) == 0) return;
-// 	Zinc_error_triggered();
-// 	fprintf(stderr, "(%s) = (%s): error message does not memory_match\n", Zinc_error_message, s);
-// }
-//
+
+void Zinc_test_expect_error_message(Zinc_test* test, const char* s)
+{
+	test->check_count++;
+
+	if (strcmp(Zinc_error_message, s) == 0) {
+	    test->check_passed++;
+	    return;
+	}
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+	fprintf(stderr, "\t(%s) = (%s): error message does not memory_match\n", Zinc_error_message, s);
+}
+
 // void Zinc_expect_utf8_char(char* a, char* b, char* message)
 // {
 //     Zinc_test_called();
