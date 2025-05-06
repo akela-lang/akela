@@ -23,7 +23,7 @@ set(SOURCE_FILES
         unit_priority_queue.c
         unit_dbl_vector.c
         unit_string_slice.c
-        test_test.c
+        unit_test.c
         unit.c
 )
 

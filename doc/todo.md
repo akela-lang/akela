@@ -39,7 +39,7 @@
   * priority_queue [x]
   * result [x]
   * spec error [x]
-  * test []
+  * test [x]
   * unicode []
   * unit test []
   * utf8 []

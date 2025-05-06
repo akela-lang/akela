@@ -3,7 +3,6 @@
 #include "test_utf8.h"
 #include "test_vector.h"
 #include "test_unicode.h"
-#include "test_test.h"
 
 int main()
 {
@@ -11,7 +10,6 @@ int main()
 	test_utf8();
     test_vector();
 	test_unicode();
-	test_test();
 	Zinc_print_results();
 	return 0;
 }
