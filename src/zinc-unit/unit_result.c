@@ -17,6 +17,21 @@ void Zinc_unit_result_set_error(Zinc_test* test)
 	Zinc_test_expect_error_message(test, "error x");
 }
 
+void Zinc_unit_result_set_error2(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	size_t x = 5;
+	Zinc_set_error("%zu", x);
+
+	Zinc_test_expect_strcmp(test, Zinc_error_message, "5", "5");
+}
+
 void Zinc_unit_result(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -25,6 +40,7 @@ void Zinc_unit_result(Zinc_test* test)
 		test->solo = false;
 
 		Zinc_test_register(test, Zinc_unit_result_set_error);
+		Zinc_test_register(test, Zinc_unit_result_set_error2);
 
 		return;
 	}

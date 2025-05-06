@@ -41,7 +41,7 @@
   * spec error [x]
   * test [x]
   * unicode [x]
-  * unit test []
+  * unit test [x]
   * utf8 []
   * vector []
 
