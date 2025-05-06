@@ -11,7 +11,7 @@ set(SOURCE_FILES
         unit_string_list.c
         unit_error.c
         unit_list.c
-        test_vector.c
+        unit_vector.c
         unit_input_char_string.c
         unit_input_char_file.c
         unit_input_unicode_string.c
@@ -32,12 +32,4 @@ set_target_properties(zinc-unit
         PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
-)
-
-add_executable(zinc-unit-bin test.c)
-target_link_libraries(zinc-unit-bin zinc zinc-unit)
-set_target_properties(zinc-unit-bin
-        PROPERTIES
-        OUTPUT_NAME zinc-unit
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )

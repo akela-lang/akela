@@ -20,6 +20,7 @@
 #include "unit_test.h"
 #include "unit_unicode.h"
 #include "unit_utf8.h"
+#include "unit_vector.h"
 
 void Zinc_unit(Zinc_test* test)
 {
@@ -50,6 +51,7 @@ void Zinc_unit(Zinc_test* test)
         Zinc_test_register(test, Zinc_unit_test);
         Zinc_test_register(test, Zinc_unit_unicode);
         Zinc_test_register(test, Zinc_unit_utf8);
+        Zinc_test_register(test, Zinc_unit_vector);
 
         return;
     }

@@ -69,8 +69,10 @@ cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
 ninja -C cmake-build-debug
 ```
 
-## Run Unit Tests
-    cmake-build-debug/bin/zinc-unit
+## Run Tests (new test framework)
+    cmake-build-debug/bin/test
+
+## Run Unit Tests (old framework)
     cmake-build-debug/bin/akela-unit
     cmake-build-debug/bin/akela-llvm-unit
     cmake-build-debug/bin/cobble-unit
@@ -88,7 +90,7 @@ ninja -C cmake-build-debug
     cmake-build-debug/bin/akela examples/addition.ake
 
 ## Valgrind
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/zinc-unit
+    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/test
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-unit
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-llvm-unit
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/dataframe-unit

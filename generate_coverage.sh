@@ -5,7 +5,7 @@ root_dir="../.."
 rm -rf $build_dir &&
     cmake -B $build_dir -DCOVERAGE=On -DCMAKE_BUILD_TYPE=Debug -G Ninja &&
     ninja -C $build_dir &&
-    for name in zinc-unit akela-unit akela-llvm-unit dataframe-unit cobble-unit json-unit coverage-unit centipede-unit
+    for name in "test" akela-unit akela-llvm-unit dataframe-unit cobble-unit json-unit coverage-unit centipede-unit
     do
         $build_dir/bin/$name
     done &&
