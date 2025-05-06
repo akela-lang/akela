@@ -38,7 +38,7 @@
   * piece [x]
   * priority_queue [x]
   * result [x]
-  * spec error []
+  * spec error [x]
   * test []
   * unicode []
   * unit test []
