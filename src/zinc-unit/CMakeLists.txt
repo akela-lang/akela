@@ -18,7 +18,7 @@ set(SOURCE_FILES
         unit_input_unicode_string.c
         unit_input_unicode_file.c
         unit_hash_map_size_t.c
-        test_unicode.c
+        unit_unicode.c
         unit_spec_error.c
         unit_priority_queue.c
         unit_dbl_vector.c

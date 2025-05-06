@@ -40,7 +40,7 @@
   * result [x]
   * spec error [x]
   * test [x]
-  * unicode []
+  * unicode [x]
   * unit test []
   * utf8 []
   * vector []
