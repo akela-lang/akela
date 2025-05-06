@@ -42,7 +42,7 @@
   * test [x]
   * unicode [x]
   * unit test [x]
-  * utf8 []
+  * utf8 [x]
   * vector []
 
 # Test

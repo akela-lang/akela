@@ -3,7 +3,7 @@ set(SOURCE_FILES
         unit_result.c
         unit_string.c
         unit_memory.c
-        test_utf8.c
+        unit_utf8.c
         unit_hash_map_string.c
         unit_os_unix.c
         unit_datetime.c
