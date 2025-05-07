@@ -456,15 +456,21 @@ void Zinc_test_expect_char_equal(Zinc_test* test, char a, char b, const char* me
 // 	Zinc_error_triggered();
 // 	fprintf(stderr, "(%d) = (false) error: %s\n", value, message);
 // }
-//
-// void Zinc_expect_ptr(void* p, const char* message)
-// {
-// 	Zinc_test_called();
-// 	if (p) return;
-// 	Zinc_error_triggered();
-// 	fprintf(stderr, "%p != NULL error: %s\n", p, message);
-// }
-//
+
+void Zinc_test_expect_ptr(Zinc_test* test, void* p, const char* message)
+{
+	test->check_count++;
+	if (p) {
+	    test->check_passed++;
+	    return;
+	}
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+	fprintf(stderr, "\t%p != NULL error: %s\n", p, message);
+}
+
 // void Zinc_expect_null(void* p, const char* message)
 // {
 // 	Zinc_test_called();

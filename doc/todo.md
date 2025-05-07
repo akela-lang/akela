@@ -17,9 +17,6 @@
 # JSON
 
 # Lava
-* new test framework
-  * lex [x]
-  * parse []
 
 # Zinc
 
