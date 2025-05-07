@@ -1,4 +1,5 @@
 #include "zinc-unit/unit.h"
+#include "lava-unit/unit.h"
 
 void Test_test(Zinc_test* test);
 
@@ -30,6 +31,7 @@ void Test_test(Zinc_test* test)
         Zinc_string_add_str(&test->name, "Test");
 
         Zinc_test_register(test, Zinc_unit);
+        Zinc_test_register(test, Lava_unit);
 
         return;
     }

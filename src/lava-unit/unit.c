@@ -1,11 +1,17 @@
+#include "zinc/test.h"
 #include "unit_lex.h"
-#include "zinc/unit_test.h"
-#include "unit_parse.h"
 
-int main()
+void Lava_unit(Zinc_test* test)
 {
-    unit_lex();
-    unit_parse();
-    Zinc_print_results();
-    return 0;
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+
+        Zinc_test_register(test, Lava_unit_lex);
+
+        return;
+    }
+
+    Zinc_test_perform(test);
 }
