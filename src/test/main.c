@@ -1,5 +1,6 @@
 #include "zinc-unit/unit.h"
 #include "lava-unit/unit.h"
+#include "json-unit/unit.h"
 
 void Test_test(Zinc_test* test);
 
@@ -32,6 +33,7 @@ void Test_test(Zinc_test* test)
 
         Zinc_test_register(test, Zinc_unit);
         Zinc_test_register(test, Lava_unit);
+        Zinc_test_register(test, Json_unit);
 
         return;
     }
