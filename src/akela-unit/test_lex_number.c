@@ -90,7 +90,7 @@ void test_lex_number_fraction_start()
 }
 
 /* dynamic-output-none */
-void test_lex_number_fraction()
+void Zinc_unit_lex_number_fraction()
 {
 	Zinc_test_name(__func__);
 
@@ -290,7 +290,7 @@ void test_lex_number_fraction_exponent_negative()
 }
 
 /* dynamic-output-none */
-void test_lex_number_exponent_positive()
+void Zinc_unit_lex_number_exponent_positive()
 {
 	Zinc_test_name(__func__);
 
@@ -374,13 +374,13 @@ void test_lex_number()
 	test_lex_number_negative_start();
 	test_lex_number_whole();
 	test_lex_number_fraction_start();
-	test_lex_number_fraction();
+	Zinc_unit_lex_number_fraction();
 	test_lex_number_exponent_start();
 	test_lex_number_fraction_exponent_start();
 	test_lex_number_fraction_exponent();
 	test_lex_number_fraction_exponent_sign_start_negative();
 	test_lex_number_fraction_exponent_sign_start_positive();
 	test_lex_number_fraction_exponent_negative();
-	test_lex_number_exponent_positive();
+	Zinc_unit_lex_number_exponent_positive();
 	test_lex_number_exponent_add();
 }

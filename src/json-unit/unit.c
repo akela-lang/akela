@@ -1,6 +1,6 @@
 #include <zinc/test.h>
 #include "zinc/unit_test.h"
-#include "test_lex.h"
+#include "unit_lex.h"
 #include "unit_dom.h"
 #include "test_parse.h"
 #include "test_stringify.h"
@@ -13,7 +13,7 @@ void Json_unit(Zinc_test *test)
         test->solo = false;
 
         Zinc_test_register(test, Json_unit_dom);
-        // test_lex();
+        Zinc_test_register(test, Zinc_unit_lex);
         // test_parse();
         // test_stringify();
 

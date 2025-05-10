@@ -1231,7 +1231,7 @@ void test_lex_square_brackets()
 }
 
 /* dynamic-output-none */
-void test_lex_string()
+void Zinc_unit_lex_string()
 {
 	Zinc_test_name(__func__);
 
@@ -1619,7 +1619,7 @@ void test_lex_comment()
 }
 
 /* dynamic-output-none */
-void test_lex()
+void Zinc_unit_lex()
 {
 	test_lex_blank();
 	test_lex_assign();
@@ -1640,7 +1640,7 @@ void test_lex()
 	test_lex_for_iteration();
 	test_lex_error_unrecognized_character();
 	test_lex_square_brackets();
-	test_lex_string();
+	Zinc_unit_lex_string();
 	test_lex_string2();
 	test_lex_string_escape_error();
 	test_lex_line_col();

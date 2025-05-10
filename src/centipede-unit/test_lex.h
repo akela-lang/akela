@@ -1,6 +1,6 @@
 #ifndef CENTIPEDE_TEST_LEX_H
 #define CENTIPEDE_TEST_LEX_H
 
-void test_lex();
+void Zinc_unit_lex();
 
 #endif

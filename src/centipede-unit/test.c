@@ -9,7 +9,7 @@
 
 int main()
 {
-    test_lex();
+    Zinc_unit_lex();
     test_value();
     test_ast();
     test_parse();

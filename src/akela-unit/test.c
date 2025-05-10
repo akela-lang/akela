@@ -17,7 +17,7 @@
 
 int main(void) {
     test_token();
-    test_lex();
+    Zinc_unit_lex();
     test_lex_number();
     test_lex_tools();
     test_ast();

@@ -15,6 +15,13 @@
 # Dataframe
 
 # JSON
+* convert tests
+  * dom [x]
+  * lex []
+  * lex tools []
+  * parse []
+  * parse tools []
+  * stringify []
 
 # Lava
 

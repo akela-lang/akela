@@ -1,6 +1,8 @@
 #ifndef JSON_TEST_TEST_LEX_H
 #define JSON_TEST_TEST_LEX_H
 
-void test_lex();
+#include "zinc/test.h"
+
+void Zinc_unit_lex(Zinc_test* test);
 
 #endif

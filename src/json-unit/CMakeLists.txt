@@ -1,6 +1,6 @@
 set(json_unit_files
         unit.c
-        test_lex.c
+        unit_lex.c
         test_lex_tools.c
         unit_dom.c
         test_parse.c

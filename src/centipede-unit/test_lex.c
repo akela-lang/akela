@@ -914,7 +914,7 @@ void test_lex_error_invalid_character()
     test_lex_teardown(&ld);
 }
 
-void test_lex_number_integer()
+void Zinc_unit_lex_number_integer()
 {
     Zinc_test_name(__func__);
 
@@ -938,7 +938,7 @@ void test_lex_number_integer()
     test_lex_teardown(&ld);
 }
 
-void test_lex_number_fraction()
+void Zinc_unit_lex_number_fraction()
 {
     Zinc_test_name(__func__);
 
@@ -963,7 +963,7 @@ void test_lex_number_fraction()
     test_lex_teardown(&ld);
 }
 
-void test_lex_number_exponent()
+void Zinc_unit_lex_number_exponent()
 {
     Zinc_test_name(__func__);
 
@@ -990,7 +990,7 @@ void test_lex_number_exponent()
     test_lex_teardown(&ld);
 }
 
-void test_lex()
+void Zinc_unit_lex()
 {
     test_lex_element();
     test_lex_enum();
@@ -1012,7 +1012,7 @@ void test_lex()
 
     test_lex_error_invalid_character();
 
-    test_lex_number_integer();
-    test_lex_number_fraction();
-    test_lex_number_exponent();
+    Zinc_unit_lex_number_integer();
+    Zinc_unit_lex_number_fraction();
+    Zinc_unit_lex_number_exponent();
 }
