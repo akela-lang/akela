@@ -15,7 +15,7 @@ void Json_unit_lex_string(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"hello\"");
+    Zinc_unit_lex_setup(&ld, "\"hello\"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -28,7 +28,7 @@ void Json_unit_lex_string(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_escape_backslash(Zinc_test* test)
@@ -41,7 +41,7 @@ void Json_unit_lex_string_escape_backslash(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\" \\\\ \"");
+    Zinc_unit_lex_setup(&ld, "\" \\\\ \"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -54,7 +54,7 @@ void Json_unit_lex_string_escape_backslash(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_escape_slash(Zinc_test* test)
@@ -67,7 +67,7 @@ void Json_unit_lex_string_escape_slash(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\" \\/ \"");
+    Zinc_unit_lex_setup(&ld, "\" \\/ \"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -80,7 +80,7 @@ void Json_unit_lex_string_escape_slash(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_escape_backspace(Zinc_test* test)
@@ -93,7 +93,7 @@ void Json_unit_lex_string_escape_backspace(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\" \\b \"");
+    Zinc_unit_lex_setup(&ld, "\" \\b \"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -106,7 +106,7 @@ void Json_unit_lex_string_escape_backspace(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_escape_form_feed(Zinc_test* test)
@@ -119,7 +119,7 @@ void Json_unit_lex_string_escape_form_feed(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\" \\f \"");
+    Zinc_unit_lex_setup(&ld, "\" \\f \"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -132,7 +132,7 @@ void Json_unit_lex_string_escape_form_feed(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_escape_newline(Zinc_test* test)
@@ -145,7 +145,7 @@ void Json_unit_lex_string_escape_newline(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\" \\n \"");
+    Zinc_unit_lex_setup(&ld, "\" \\n \"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -158,7 +158,7 @@ void Json_unit_lex_string_escape_newline(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_escape_carriage_return(Zinc_test* test)
@@ -171,7 +171,7 @@ void Json_unit_lex_string_escape_carriage_return(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\" \\r \"");
+    Zinc_unit_lex_setup(&ld, "\" \\r \"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -184,7 +184,7 @@ void Json_unit_lex_string_escape_carriage_return(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_escape_tab(Zinc_test* test)
@@ -197,7 +197,7 @@ void Json_unit_lex_string_escape_tab(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\" \\t \"");
+    Zinc_unit_lex_setup(&ld, "\" \\t \"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -210,7 +210,7 @@ void Json_unit_lex_string_escape_tab(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_escape_unicode(Zinc_test* test)
@@ -223,7 +223,7 @@ void Json_unit_lex_string_escape_unicode(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\" \\u0391 \"");
+    Zinc_unit_lex_setup(&ld, "\" \\u0391 \"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -236,7 +236,7 @@ void Json_unit_lex_string_escape_unicode(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_start_error_multibyte(Zinc_test* test)
@@ -249,7 +249,7 @@ void Json_unit_lex_start_error_multibyte(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "θ");
+    Zinc_unit_lex_setup(&ld, "θ");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -263,7 +263,7 @@ void Json_unit_lex_start_error_multibyte(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_start_error_single_byte(Zinc_test* test)
@@ -276,7 +276,7 @@ void Json_unit_lex_start_error_single_byte(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "|");
+    Zinc_unit_lex_setup(&ld, "|");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -290,7 +290,7 @@ void Json_unit_lex_start_error_single_byte(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_error_missing_escape_character(Zinc_test* test)
@@ -303,7 +303,7 @@ void Json_unit_lex_string_error_missing_escape_character(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\");
+    Zinc_unit_lex_setup(&ld, "\"\\");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -317,7 +317,7 @@ void Json_unit_lex_string_error_missing_escape_character(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_error_invalid_escape_character_multibyte(Zinc_test* test)
@@ -330,7 +330,7 @@ void Json_unit_lex_string_error_invalid_escape_character_multibyte(Zinc_test* te
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\θ\"");
+    Zinc_unit_lex_setup(&ld, "\"\\θ\"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -344,7 +344,7 @@ void Json_unit_lex_string_error_invalid_escape_character_multibyte(Zinc_test* te
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_error_invalid_unicode_escape_not_finished(Zinc_test* test)
@@ -357,7 +357,7 @@ void Json_unit_lex_string_error_invalid_unicode_escape_not_finished(Zinc_test* t
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\u039");
+    Zinc_unit_lex_setup(&ld, "\"\\u039");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -371,7 +371,7 @@ void Json_unit_lex_string_error_invalid_unicode_escape_not_finished(Zinc_test* t
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_error_unicode_escape_invalid_hex_digit(Zinc_test* test)
@@ -384,7 +384,7 @@ void Json_unit_lex_string_error_unicode_escape_invalid_hex_digit(Zinc_test* test
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\u039G\"");
+    Zinc_unit_lex_setup(&ld, "\"\\u039G\"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -398,7 +398,7 @@ void Json_unit_lex_string_error_unicode_escape_invalid_hex_digit(Zinc_test* test
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_error_unicode_code_point_less_that_0x20(Zinc_test* test)
@@ -411,7 +411,7 @@ void Json_unit_lex_string_error_unicode_code_point_less_that_0x20(Zinc_test* tes
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\u0019\"");
+    Zinc_unit_lex_setup(&ld, "\"\\u0019\"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -425,7 +425,7 @@ void Json_unit_lex_string_error_unicode_code_point_less_that_0x20(Zinc_test* tes
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_unicode_code_point_five_digits(Zinc_test *test)
@@ -438,7 +438,7 @@ void Json_unit_lex_string_unicode_code_point_five_digits(Zinc_test *test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\u1fa89\"");
+    Zinc_unit_lex_setup(&ld, "\"\\u1fa89\"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -451,7 +451,7 @@ void Json_unit_lex_string_unicode_code_point_five_digits(Zinc_test *test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_unicode_code_point_six_digits(Zinc_test* test)
@@ -464,7 +464,7 @@ void Json_unit_lex_string_unicode_code_point_six_digits(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\u10ffff\"");
+    Zinc_unit_lex_setup(&ld, "\"\\u10ffff\"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -481,7 +481,7 @@ void Json_unit_lex_string_unicode_code_point_six_digits(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_unicode_error_code_point_too_large(Zinc_test* test)
@@ -494,7 +494,7 @@ void Json_unit_lex_string_unicode_error_code_point_too_large(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\u110000\"");
+    Zinc_unit_lex_setup(&ld, "\"\\u110000\"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -510,7 +510,7 @@ void Json_unit_lex_string_unicode_error_code_point_too_large(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_string_error_invalid_escape_character_single_byte(Zinc_test* test)
@@ -523,7 +523,7 @@ void Json_unit_lex_string_error_invalid_escape_character_single_byte(Zinc_test* 
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "\"\\|\"");
+    Zinc_unit_lex_setup(&ld, "\"\\|\"");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -537,7 +537,7 @@ void Json_unit_lex_string_error_invalid_escape_character_single_byte(Zinc_test* 
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_integer(Zinc_test* test)
@@ -550,7 +550,7 @@ void Json_unit_lex_number_integer(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "315");
+    Zinc_unit_lex_setup(&ld, "315");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -565,7 +565,7 @@ void Json_unit_lex_number_integer(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_integer_negative(Zinc_test* test)
@@ -578,7 +578,7 @@ void Json_unit_lex_number_integer_negative(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "-35");
+    Zinc_unit_lex_setup(&ld, "-35");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -593,7 +593,7 @@ void Json_unit_lex_number_integer_negative(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_fraction(Zinc_test* test)
@@ -606,7 +606,7 @@ void Json_unit_lex_number_fraction(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "5.13");
+    Zinc_unit_lex_setup(&ld, "5.13");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -621,7 +621,7 @@ void Json_unit_lex_number_fraction(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_fraction_leading_zero(Zinc_test* test)
@@ -634,7 +634,7 @@ void Json_unit_lex_number_fraction_leading_zero(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "0.5");
+    Zinc_unit_lex_setup(&ld, "0.5");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -649,7 +649,7 @@ void Json_unit_lex_number_fraction_leading_zero(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_exponent(Zinc_test* test)
@@ -662,7 +662,7 @@ void Json_unit_lex_number_exponent(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "1.5e2");
+    Zinc_unit_lex_setup(&ld, "1.5e2");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -677,7 +677,7 @@ void Json_unit_lex_number_exponent(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_exponent_positive(Zinc_test* test)
@@ -690,7 +690,7 @@ void Json_unit_lex_number_exponent_positive(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "4.5e+2");
+    Zinc_unit_lex_setup(&ld, "4.5e+2");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -705,7 +705,7 @@ void Json_unit_lex_number_exponent_positive(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_exponent_negative(Zinc_test* test)
@@ -718,7 +718,7 @@ void Json_unit_lex_number_exponent_negative(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "4.5e-2");
+    Zinc_unit_lex_setup(&ld, "4.5e-2");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -733,7 +733,7 @@ void Json_unit_lex_number_exponent_negative(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_starts_with_period(Zinc_test* test)
@@ -746,7 +746,7 @@ void Json_unit_lex_number_error_starts_with_period(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, ".1");
+    Zinc_unit_lex_setup(&ld, ".1");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -762,7 +762,7 @@ void Json_unit_lex_number_error_starts_with_period(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_starts_with_plus_sign(Zinc_test* test)
@@ -775,7 +775,7 @@ void Json_unit_lex_number_error_starts_with_plus_sign(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "+1");
+    Zinc_unit_lex_setup(&ld, "+1");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -791,7 +791,7 @@ void Json_unit_lex_number_error_starts_with_plus_sign(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_minus_no_digits(Zinc_test* test)
@@ -804,7 +804,7 @@ void Json_unit_lex_number_error_minus_no_digits(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "-");
+    Zinc_unit_lex_setup(&ld, "-");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -820,7 +820,7 @@ void Json_unit_lex_number_error_minus_no_digits(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_plus_no_digits(Zinc_test* test)
@@ -833,7 +833,7 @@ void Json_unit_lex_number_error_plus_no_digits(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "+");
+    Zinc_unit_lex_setup(&ld, "+");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -849,7 +849,7 @@ void Json_unit_lex_number_error_plus_no_digits(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_leading_zero(Zinc_test* test)
@@ -862,7 +862,7 @@ void Json_unit_lex_number_error_leading_zero(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "01");
+    Zinc_unit_lex_setup(&ld, "01");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -878,7 +878,7 @@ void Json_unit_lex_number_error_leading_zero(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_leading_zero2(Zinc_test* test)
@@ -891,7 +891,7 @@ void Json_unit_lex_number_error_leading_zero2(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "001");
+    Zinc_unit_lex_setup(&ld, "001");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -907,7 +907,7 @@ void Json_unit_lex_number_error_leading_zero2(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_no_digits_in_fraction(Zinc_test* test)
@@ -920,7 +920,7 @@ void Json_unit_lex_number_error_no_digits_in_fraction(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "1.");
+    Zinc_unit_lex_setup(&ld, "1.");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -936,7 +936,7 @@ void Json_unit_lex_number_error_no_digits_in_fraction(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_exponent_multiple_signs(Zinc_test* test)
@@ -949,7 +949,7 @@ void Json_unit_lex_number_error_exponent_multiple_signs(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "1e--1");
+    Zinc_unit_lex_setup(&ld, "1e--1");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -965,7 +965,7 @@ void Json_unit_lex_number_error_exponent_multiple_signs(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_exponent_sign_after_digits(Zinc_test* test)
@@ -978,7 +978,7 @@ void Json_unit_lex_number_error_exponent_sign_after_digits(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "1e-1-");
+    Zinc_unit_lex_setup(&ld, "1e-1-");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -994,7 +994,7 @@ void Json_unit_lex_number_error_exponent_sign_after_digits(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_number_error_exponent_no_digits(Zinc_test* test)
@@ -1007,7 +1007,7 @@ void Json_unit_lex_number_error_exponent_no_digits(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "1e");
+    Zinc_unit_lex_setup(&ld, "1e");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -1023,7 +1023,7 @@ void Json_unit_lex_number_error_exponent_no_digits(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_left_square_bracket(Zinc_test* test)
@@ -1036,7 +1036,7 @@ void Json_unit_lex_left_square_bracket(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "[");
+    Zinc_unit_lex_setup(&ld, "[");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1048,7 +1048,7 @@ void Json_unit_lex_left_square_bracket(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_right_square_bracket(Zinc_test* test)
@@ -1061,7 +1061,7 @@ void Json_unit_lex_right_square_bracket(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "]");
+    Zinc_unit_lex_setup(&ld, "]");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1073,7 +1073,7 @@ void Json_unit_lex_right_square_bracket(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_comma(Zinc_test* test)
@@ -1086,7 +1086,7 @@ void Json_unit_lex_comma(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, ",");
+    Zinc_unit_lex_setup(&ld, ",");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1098,7 +1098,7 @@ void Json_unit_lex_comma(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_left_curly_brace(Zinc_test* test)
@@ -1111,7 +1111,7 @@ void Json_unit_lex_left_curly_brace(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "{");
+    Zinc_unit_lex_setup(&ld, "{");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1123,7 +1123,7 @@ void Json_unit_lex_left_curly_brace(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_right_curly_brace(Zinc_test* test)
@@ -1136,7 +1136,7 @@ void Json_unit_lex_right_curly_brace(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "}");
+    Zinc_unit_lex_setup(&ld, "}");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1148,7 +1148,7 @@ void Json_unit_lex_right_curly_brace(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_right_colon(Zinc_test* test)
@@ -1161,7 +1161,7 @@ void Json_unit_lex_right_colon(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, ":");
+    Zinc_unit_lex_setup(&ld, ":");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1173,7 +1173,7 @@ void Json_unit_lex_right_colon(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_true(Zinc_test* test)
@@ -1186,7 +1186,7 @@ void Json_unit_lex_true(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "true");
+    Zinc_unit_lex_setup(&ld, "true");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1198,7 +1198,7 @@ void Json_unit_lex_true(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_false(Zinc_test* test)
@@ -1211,7 +1211,7 @@ void Json_unit_lex_false(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "false");
+    Zinc_unit_lex_setup(&ld, "false");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1223,7 +1223,7 @@ void Json_unit_lex_false(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_null(Zinc_test* test)
@@ -1236,7 +1236,7 @@ void Json_unit_lex_null(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "null");
+    Zinc_unit_lex_setup(&ld, "null");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_no_errors(test, ld.el);
@@ -1248,7 +1248,7 @@ void Json_unit_lex_null(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_lex_word_error(Zinc_test* test)
@@ -1261,7 +1261,7 @@ void Json_unit_lex_word_error(Zinc_test* test)
     }
 
     Json_lex_data ld;
-    test_lex_setup(&ld, "abc");
+    Zinc_unit_lex_setup(&ld, "abc");
 
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
@@ -1273,7 +1273,7 @@ void Json_unit_lex_word_error(Zinc_test* test)
 
     Json_token_destroy(token);
     free(token);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Json_unit_match_tools_convert_char1(Zinc_test* test)

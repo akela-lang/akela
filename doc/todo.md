@@ -17,8 +17,8 @@
 # JSON
 * convert tests
   * dom [x]
-  * lex []
-  * lex tools []
+  * lex [x]
+  * lex tools [x]
   * parse []
   * parse tools []
   * stringify []

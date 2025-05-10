@@ -4,7 +4,7 @@
 #include "zinc/input_unicode_string.h"
 #include <string.h>
 
-void test_lex_setup(Json_lex_data* jld, char* text)
+void Zinc_unit_lex_setup(Json_lex_data* jld, char* text)
 {
     struct Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
@@ -25,7 +25,7 @@ void test_lex_setup(Json_lex_data* jld, char* text)
     }
 }
 
-void test_lex_teardown(Json_lex_data* jld)
+void Zinc_unit_lex_teardown(Json_lex_data* jld)
 {
     Zinc_error_list_destroy(jld->el);
     free(jld->el);

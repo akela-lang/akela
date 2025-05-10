@@ -3,7 +3,7 @@
 
 #include <json/lex_tools.h>
 
-void test_lex_setup(Json_lex_data* jld, char* text);
-void test_lex_teardown(Json_lex_data* jld);
+void Zinc_unit_lex_setup(Json_lex_data* jld, char* text);
+void Zinc_unit_lex_teardown(Json_lex_data* jld);
 
 #endif

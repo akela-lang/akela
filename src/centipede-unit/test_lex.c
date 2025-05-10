@@ -13,7 +13,7 @@ void test_lex_element()
     Cent_lex_data ld;
     Cent_token* t = NULL;
 
-    test_lex_setup(&ld,
+    Zinc_unit_lex_setup(&ld,
         "element Test_suite {\n"
         "   properties {\n"
         "       name: String `required`,\n"
@@ -244,7 +244,7 @@ void test_lex_element()
 
     Zinc_expect_no_errors(ld.errors);
 
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_enum()
@@ -253,7 +253,7 @@ void test_lex_enum()
     Cent_token* t = NULL;
     Cent_lex_data ld;
 
-    test_lex_setup(&ld,
+    Zinc_unit_lex_setup(&ld,
         "enum Symbol_type\n"
         "   Variable\n"
         "   Type\n"
@@ -337,7 +337,7 @@ void test_lex_enum()
 
     Zinc_expect_no_errors(ld.errors);
 
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_top_level_assign()
@@ -346,7 +346,7 @@ void test_lex_top_level_assign()
     Cent_token* t = NULL;
     Cent_lex_data ld;
 
-    test_lex_setup(&ld,
+    Zinc_unit_lex_setup(&ld,
         "# built-in element defs\n"
         "i32 = Type_def {\n"
         "   .type = Type_def_type::Integer\n"
@@ -553,7 +553,7 @@ void test_lex_top_level_assign()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_builtin()
@@ -562,7 +562,7 @@ void test_lex_builtin()
     Cent_token* t = NULL;
     Cent_lex_data ld;
 
-    test_lex_setup(&ld,
+    Zinc_unit_lex_setup(&ld,
         "@tag\n"
         "abc\n"
     );
@@ -601,7 +601,7 @@ void test_lex_builtin()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_builtin_error()
@@ -610,7 +610,7 @@ void test_lex_builtin_error()
     Cent_token* t = NULL;
     Cent_lex_data ld;
 
-    test_lex_setup(&ld,
+    Zinc_unit_lex_setup(&ld,
         "@abc\n"
     );
 
@@ -636,7 +636,7 @@ void test_lex_builtin_error()
 
     Zinc_expect_has_errors(ld.errors);
     Zinc_expect_source_error(ld.errors, "invalid builtin id: @abc");
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_escape_backslash()
@@ -645,7 +645,7 @@ void test_lex_escape_backslash()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "\"\\\\\"");
+    Zinc_unit_lex_setup(&ld, "\"\\\\\"");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -661,7 +661,7 @@ void test_lex_escape_backslash()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_escape_forward_slash()
@@ -670,7 +670,7 @@ void test_lex_escape_forward_slash()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "\"\\/\"");
+    Zinc_unit_lex_setup(&ld, "\"\\/\"");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -686,7 +686,7 @@ void test_lex_escape_forward_slash()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_escape_backspace()
@@ -695,7 +695,7 @@ void test_lex_escape_backspace()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "\"\\b\"");
+    Zinc_unit_lex_setup(&ld, "\"\\b\"");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -711,7 +711,7 @@ void test_lex_escape_backspace()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_escape_form_feed()
@@ -720,7 +720,7 @@ void test_lex_escape_form_feed()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "\"\\f\"");
+    Zinc_unit_lex_setup(&ld, "\"\\f\"");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -736,7 +736,7 @@ void test_lex_escape_form_feed()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_escape_newline()
@@ -745,7 +745,7 @@ void test_lex_escape_newline()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "\"\\n\"");
+    Zinc_unit_lex_setup(&ld, "\"\\n\"");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -761,7 +761,7 @@ void test_lex_escape_newline()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_escape_carriage_return()
@@ -770,7 +770,7 @@ void test_lex_escape_carriage_return()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "\"\\r\"");
+    Zinc_unit_lex_setup(&ld, "\"\\r\"");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -786,7 +786,7 @@ void test_lex_escape_carriage_return()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_escape_tab()
@@ -795,7 +795,7 @@ void test_lex_escape_tab()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "\"\\t\"");
+    Zinc_unit_lex_setup(&ld, "\"\\t\"");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -811,7 +811,7 @@ void test_lex_escape_tab()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_escape_unicode()
@@ -820,7 +820,7 @@ void test_lex_escape_unicode()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "\"\\u03b8\"");
+    Zinc_unit_lex_setup(&ld, "\"\\u03b8\"");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -836,7 +836,7 @@ void test_lex_escape_unicode()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_semicolon()
@@ -845,7 +845,7 @@ void test_lex_semicolon()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "1;2;3");
+    Zinc_unit_lex_setup(&ld, "1;2;3");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -887,7 +887,7 @@ void test_lex_semicolon()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void test_lex_error_invalid_character()
@@ -896,7 +896,7 @@ void test_lex_error_invalid_character()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "~");
+    Zinc_unit_lex_setup(&ld, "~");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -911,7 +911,7 @@ void test_lex_error_invalid_character()
     Zinc_expect_size_t_equal(e->loc.end_pos, 1, "end pos e");
     Zinc_expect_size_t_equal(e->loc.line, 1, "line e");
     Zinc_expect_size_t_equal(e->loc.col, 1, "col e");
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Zinc_unit_lex_number_integer()
@@ -920,7 +920,7 @@ void Zinc_unit_lex_number_integer()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "2918");
+    Zinc_unit_lex_setup(&ld, "2918");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -935,7 +935,7 @@ void Zinc_unit_lex_number_integer()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Zinc_unit_lex_number_fraction()
@@ -944,7 +944,7 @@ void Zinc_unit_lex_number_fraction()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "5.123");
+    Zinc_unit_lex_setup(&ld, "5.123");
 
     t = lex(&ld);
     Zinc_assert_ptr(t, "ptr 1.1");
@@ -960,7 +960,7 @@ void Zinc_unit_lex_number_fraction()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Zinc_unit_lex_number_exponent()
@@ -969,7 +969,7 @@ void Zinc_unit_lex_number_exponent()
 
     Cent_token* t = NULL;
     Cent_lex_data ld;
-    test_lex_setup(&ld, "5.123e3");
+    Zinc_unit_lex_setup(&ld, "5.123e3");
     Cent_token_destroy(t);
     free(t);
 
@@ -987,7 +987,7 @@ void Zinc_unit_lex_number_exponent()
     free(t);
 
     Zinc_expect_no_errors(ld.errors);
-    test_lex_teardown(&ld);
+    Zinc_unit_lex_teardown(&ld);
 }
 
 void Zinc_unit_lex()
