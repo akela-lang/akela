@@ -5,7 +5,7 @@
 #include <string.h>
 #include "zinc/input_unicode_string.h"
 
-void test_parse_setup(Json_parse_data* pd, char* text);
-void test_parse_destroy(Json_parse_data* pd);
+void Zinc_unit_parse_setup(Json_parse_data* pd, char* text);
+void Zinc_unit_parse_destroy(Json_parse_data* pd);
 
 #endif

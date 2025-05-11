@@ -20,7 +20,7 @@
   * lex [x]
   * lex tools [x]
   * parse [x]
-  * parse tools []
+  * parse tools [x]
   * stringify []
 
 # Lava

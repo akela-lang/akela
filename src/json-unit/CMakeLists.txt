@@ -1,10 +1,10 @@
 set(json_unit_files
         unit.c
         unit_lex.c
-        test_lex_tools.c
+        unit_lex_tools.c
         unit_dom.c
         unit_parse.c
-        test_parse_tools.c
+        unit_parse_tools.c
         test_stringify.c
 )
 add_library(json-unit ${json_unit_files})

@@ -2,7 +2,7 @@
 #include <string.h>
 #include "zinc/input_unicode_string.h"
 
-void test_parse_setup(Json_parse_data* pd, char* text)
+void Zinc_unit_parse_setup(Json_parse_data* pd, char* text)
 {
     Zinc_vector* v = NULL;
     Zinc_vector_create(&v, sizeof(char));
@@ -20,7 +20,7 @@ void test_parse_setup(Json_parse_data* pd, char* text)
     Json_parse_data_init(pd, el, ld);
 }
 
-void test_parse_destroy(Json_parse_data* pd)
+void Zinc_unit_parse_destroy(Json_parse_data* pd)
 {
     if (pd->lookahead) {
         Json_token_destroy(pd->lookahead);

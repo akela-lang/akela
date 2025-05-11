@@ -1,5 +1,5 @@
 #include <zinc/utf8.h>
-#include "test_lex_tools.h"
+#include "unit_lex_tools.h"
 #include "json/lex.h"
 #include "zinc/unicode.h"
 #include "zinc/test.h"
@@ -499,7 +499,7 @@ void Json_unit_lex_string_unicode_error_code_point_too_large(Zinc_test* test)
     Json_token* token = Json_lex(&ld);
     Zinc_test_expect_has_errors(test, ld.el);
     Zinc_test_expect_int_equal(test, token->type, Json_token_type_string, "type token");
-    struct Zinc_error* e = Zinc_test_expect_source_error(test, 
+    struct Zinc_error* e = Zinc_test_expect_source_error(test,
         ld.el,
         "code point greater than \\u10FFFF: \\u110000"
     );
