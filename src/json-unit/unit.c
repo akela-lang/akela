@@ -2,7 +2,7 @@
 #include "zinc/unit_test.h"
 #include "unit_lex.h"
 #include "unit_dom.h"
-#include "test_parse.h"
+#include "unit_parse.h"
 #include "test_stringify.h"
 
 void Json_unit(Zinc_test *test)
@@ -14,7 +14,7 @@ void Json_unit(Zinc_test *test)
 
         Zinc_test_register(test, Json_unit_dom);
         Zinc_test_register(test, Zinc_unit_lex);
-        // test_parse();
+        Zinc_test_register(test, Json_unit_parse);
         // test_stringify();
 
         return;

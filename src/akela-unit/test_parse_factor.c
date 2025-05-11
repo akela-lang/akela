@@ -66,7 +66,7 @@ void test_parse_number_float()
     parse_teardown(&cu);
 }
 
-void test_parse_string()
+void Zinc_unit_parse_string()
 {
 	Zinc_test_name(__func__);
 
@@ -961,7 +961,7 @@ void test_parse_factor()
 {
 	test_parse_number_integer();
 	test_parse_number_float();
-	test_parse_string();
+	Zinc_unit_parse_string();
 	test_parse_boolean_true();
 	test_parse_boolean_false();
 	test_parse_id();

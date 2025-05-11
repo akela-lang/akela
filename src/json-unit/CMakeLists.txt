@@ -3,7 +3,7 @@ set(json_unit_files
         unit_lex.c
         test_lex_tools.c
         unit_dom.c
-        test_parse.c
+        unit_parse.c
         test_parse_tools.c
         test_stringify.c
 )

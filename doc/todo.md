@@ -19,7 +19,7 @@
   * dom [x]
   * lex [x]
   * lex tools [x]
-  * parse []
+  * parse [x]
   * parse tools []
   * stringify []
 
