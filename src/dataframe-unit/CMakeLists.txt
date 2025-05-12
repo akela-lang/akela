@@ -1,6 +1,6 @@
 set(dataframe_unit_files
-        test.c
-        test_csv_lex.c
+        unit.c
+        unit_csv_lex.c
         test_csv_parse.c
         test_csv_parse_tools.c
         test_csv_write.c
@@ -8,9 +8,10 @@ set(dataframe_unit_files
         test_field_lex.c
 )
 
-add_executable(dataframe-unit ${dataframe_unit_files})
+add_library(dataframe-unit STATIC ${dataframe_unit_files})
 target_link_libraries(dataframe-unit dataframe zinc ${coverage_lib})
 set_target_properties(dataframe-unit
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
 )
