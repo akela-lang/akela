@@ -1,7 +1,7 @@
 #include "test_data_frame.h"
 #include "test_field_lex.h"
 #include "unit_csv_lex.h"
-#include "test_csv_parse.h"
+#include "unit_csv_parse.h"
 #include "test_csv_write.h"
 #include "zinc/test.h"
 
@@ -15,7 +15,7 @@ void DfUnit(Zinc_test* test)
         // TestDataFrame();
         // TestFieldLex();
         DfUnit_CSVLex(test);
-        // TestCSVParse();
+        DfUnit_CSVParse(test);
         // TestCSVWrite();
         // Zinc_print_results();
 
