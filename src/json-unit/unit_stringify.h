@@ -1,6 +1,8 @@
 #ifndef JSON_TEST_STRINGIFY_H
 #define JSON_TEST_STRINGIFY_H
 
-void test_stringify();
+#include "zinc/test.h"
+
+void Json_unit_stringify(Zinc_test* test);
 
 #endif

@@ -1,28 +1,31 @@
-#include <cobble-unit/test_compile_tools.h>
 #include <json/token.h>
-#include <zinc/error_unit_test.h>
-
-#include "zinc/unit_test.h"
 #include "json/dom.h"
 #include "json/stringify.h"
+#include "zinc/test.h"
+#include "zinc/expect.h"
 
-void test_stringify_null()
+void Json_unit_stringify_null(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_null);
 
-    struct Zinc_error_list* el = NULL;
+    Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
 
-    struct Zinc_string bf;
+    Zinc_string bf;
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "null", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "null", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -31,24 +34,29 @@ void test_stringify_null()
     free(el);
 }
 
-void test_stringify_true()
+void Json_unit_stringify_true(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
     Json_dom_set_type(dom, Json_dom_type_boolean);
     dom->value.boolean = true;
 
-    struct Zinc_error_list* el = NULL;
+    Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
 
-    struct Zinc_string bf;
+    Zinc_string bf;
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "true", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "true", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -57,9 +65,14 @@ void test_stringify_true()
     free(el);
 }
 
-void test_stringify_false()
+void Json_unit_stringify_false(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -73,8 +86,8 @@ void test_stringify_false()
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "false", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "false", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -83,9 +96,14 @@ void test_stringify_false()
     free(el);
 }
 
-void test_stringify_string()
+void Json_unit_stringify_string(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -100,8 +118,8 @@ void test_stringify_string()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "\"hello\"", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "\"hello\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -110,9 +128,14 @@ void test_stringify_string()
     free(el);
 }
 
-void test_stringify_string2()
+void Json_unit_stringify_string2(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -127,8 +150,8 @@ void test_stringify_string2()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -137,9 +160,14 @@ void test_stringify_string2()
     free(el);
 }
 
-void test_stringify_string3()
+void Json_unit_stringify_string3(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -154,8 +182,8 @@ void test_stringify_string3()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "\"\\u1fa52\"", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "\"\\u1fa52\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -164,9 +192,14 @@ void test_stringify_string3()
     free(el);
 }
 
-void test_stringify_string4()
+void Json_unit_stringify_string4(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -181,8 +214,8 @@ void test_stringify_string4()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "\"\\t\"", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "\"\\t\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -191,9 +224,14 @@ void test_stringify_string4()
     free(el);
 }
 
-void test_stringify_string_error_invalid_char()
+void Json_unit_stringify_string_error_invalid_char(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -209,9 +247,9 @@ void test_stringify_string_error_invalid_char()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_has_errors(el);
-    struct Zinc_error* e = Zinc_expect_source_error(el, "invalid string character");
-    Zinc_assert_ptr(e, "ptr e");
+    Zinc_test_expect_has_errors(test, el);
+    Zinc_error* e = Zinc_test_expect_source_error(test, el, "invalid string character");
+    Zinc_test_assert_ptr(test, e, "ptr e");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -220,9 +258,14 @@ void test_stringify_string_error_invalid_char()
     free(el);
 }
 
-void test_stringify_number_integer()
+void Json_unit_stringify_number_integer(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -238,8 +281,8 @@ void test_stringify_number_integer()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "123", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "123", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -248,9 +291,14 @@ void test_stringify_number_integer()
     free(el);
 }
 
-void test_stringify_number_fraction()
+void Json_unit_stringify_number_fraction(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -258,16 +306,16 @@ void test_stringify_number_fraction()
     dom->number_type = Json_number_type_fp;
     dom->value.fp = 5.1;
 
-    struct Zinc_error_list* el = NULL;
+    Zinc_error_list* el = NULL;
     Zinc_error_list_create(&el);
 
-    struct Zinc_string bf;
+    Zinc_string bf;
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "5.100000", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "5.100000", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -276,9 +324,14 @@ void test_stringify_number_fraction()
     free(el);
 }
 
-void test_stringify_number_exponent()
+void Json_unit_stringify_number_exponent(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -294,8 +347,8 @@ void test_stringify_number_exponent()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "51.000000", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "51.000000", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -304,9 +357,14 @@ void test_stringify_number_exponent()
     free(el);
 }
 
-void test_stringify_array_empty()
+void Json_unit_stringify_array_empty(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -320,8 +378,8 @@ void test_stringify_array_empty()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "[]", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "[]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -330,9 +388,14 @@ void test_stringify_array_empty()
     free(el);
 }
 
-void test_stringify_array_one()
+void Json_unit_stringify_array_one(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -353,8 +416,8 @@ void test_stringify_array_one()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "[3]", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "[3]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -363,9 +426,14 @@ void test_stringify_array_one()
     free(el);
 }
 
-void test_stringify_array2()
+void Json_unit_stringify_array2(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -416,8 +484,8 @@ void test_stringify_array2()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -426,9 +494,14 @@ void test_stringify_array2()
     free(el);
 }
 
-void test_stringify_object_empty()
+void Json_unit_stringify_object_empty(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -442,8 +515,8 @@ void test_stringify_object_empty()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "{}", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "{}", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -452,9 +525,14 @@ void test_stringify_object_empty()
     free(el);
 }
 
-void test_stringify_object_one()
+void Json_test_stringify_object_one(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -480,8 +558,8 @@ void test_stringify_object_one()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_string(&bf, "{\"one\":1}", "bf");
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_string(test, &bf, "{\"one\":1}", "bf");
 
     Zinc_string_destroy(&name0);
     Zinc_string_destroy(&bf);
@@ -491,9 +569,14 @@ void test_stringify_object_one()
     free(el);
 }
 
-void test_stringify_object_many()
+void Json_unit_stringify_object_many(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Json_dom* dom = NULL;
     Json_dom_create(&dom);
@@ -540,8 +623,8 @@ void test_stringify_object_many()
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_expect_no_errors(el);
-    Zinc_expect_true(
+    Zinc_test_expect_no_errors(test, el);
+    Zinc_test_expect_true(test, 
         Zinc_string_compare_str(&bf, "{\"one\":1,\"two\":5.500000,\"three\":\"hello\"}")
         || Zinc_string_compare_str(&bf, "{\"one\":1,\"three\":\"hello\",\"two\":5.500000}")
         || Zinc_string_compare_str(&bf, "{\"two\":5.500000,\"one\":1,\"three\":\"hello\"}")
@@ -560,27 +643,37 @@ void test_stringify_object_many()
     free(el);
 }
 
-void test_stringify()
+void Json_unit_stringify(Zinc_test* test)
 {
-    test_stringify_null();
-    test_stringify_true();
-    test_stringify_false();
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
 
-    test_stringify_string();
-    test_stringify_string2();
-    test_stringify_string3();
-    test_stringify_string4();
-    test_stringify_string_error_invalid_char();
+        Zinc_test_register(test, Json_unit_stringify_null);
+        Zinc_test_register(test, Json_unit_stringify_true);
+        Zinc_test_register(test, Json_unit_stringify_false);
 
-    test_stringify_number_integer();
-    test_stringify_number_fraction();
-    test_stringify_number_exponent();
+        Zinc_test_register(test, Json_unit_stringify_string);
+        Zinc_test_register(test, Json_unit_stringify_string2);
+        Zinc_test_register(test, Json_unit_stringify_string3);
+        Zinc_test_register(test, Json_unit_stringify_string4);
+        Zinc_test_register(test, Json_unit_stringify_string_error_invalid_char);
 
-    test_stringify_array_empty();
-    test_stringify_array_one();
-    test_stringify_array2();
+        Zinc_test_register(test, Json_unit_stringify_number_integer);
+        Zinc_test_register(test, Json_unit_stringify_number_fraction);
+        Zinc_test_register(test, Json_unit_stringify_number_exponent);
 
-    test_stringify_object_empty();
-    test_stringify_object_one();
-    test_stringify_object_many();
+        Zinc_test_register(test, Json_unit_stringify_array_empty);
+        Zinc_test_register(test, Json_unit_stringify_array_one);
+        Zinc_test_register(test, Json_unit_stringify_array2);
+
+        Zinc_test_register(test, Json_unit_stringify_object_empty);
+        Zinc_test_register(test, Json_test_stringify_object_one);
+        Zinc_test_register(test, Json_unit_stringify_object_many);
+
+        return;
+    }
+
+    Zinc_test_perform(test);
 }

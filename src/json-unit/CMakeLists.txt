@@ -5,7 +5,7 @@ set(json_unit_files
         unit_dom.c
         unit_parse.c
         unit_parse_tools.c
-        test_stringify.c
+        unit_stringify.c
 )
 add_library(json-unit ${json_unit_files})
 target_link_libraries(json-unit json ${coverage_lib})
