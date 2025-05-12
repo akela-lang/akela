@@ -3,7 +3,7 @@
 #include "dataframe/csv_parse.h"
 #include <string.h>
 #include "zinc/memory.h"
-#include "test_csv_parse_tools.h"
+#include "unit_csv_parse_tools.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
@@ -17,7 +17,7 @@ void DfUnit_CSVParseHeaderName(Zinc_test* test)
     }
 
     struct CSVParseOutput* parse_output = NULL;
-    CSVParseSetup(&parse_output, "First Name\n");
+    DfUnit_CSVParseSetup(&parse_output, "First Name\n");
 
     Zinc_test_expect_no_errors(test, parse_output->el);
     Zinc_test_expect_size_t_equal(test, DataFrameColumnCount(parse_output->df), 1, "column count");
@@ -26,7 +26,7 @@ void DfUnit_CSVParseHeaderName(Zinc_test* test)
     Zinc_test_assert_ptr(test, s, "ptr s");
     Zinc_test_expect_true(test, Zinc_vector_match_str(&s->name, "First Name"), "First Name");
 
-    CSVParseTeardown(parse_output);
+    DfUnit_CSVParseTeardown(parse_output);
 }
 
 void DfUnit_CSVParseRowField(Zinc_test* test)
@@ -39,7 +39,7 @@ void DfUnit_CSVParseRowField(Zinc_test* test)
     }
 
     struct CSVParseOutput* parse_output = NULL;
-    CSVParseSetup(&parse_output,
+    DfUnit_CSVParseSetup(&parse_output,
                   "Count\n"
                   "11\n");
 
@@ -62,7 +62,7 @@ void DfUnit_CSVParseRowField(Zinc_test* test)
 
     Zinc_test_expect_u_long_equal(test, ZINC_VECTOR_U_LONG(&s->value, 0), 11, "11 value");
 
-    CSVParseTeardown(parse_output);
+    DfUnit_CSVParseTeardown(parse_output);
 }
 
 void DfUnit_CSVParseTypes(Zinc_test* test)
@@ -75,7 +75,7 @@ void DfUnit_CSVParseTypes(Zinc_test* test)
     }
 
     struct CSVParseOutput* parse_output = NULL;
-    CSVParseSetup(&parse_output,
+    DfUnit_CSVParseSetup(&parse_output,
                   "Bool,Float,Int,IntU,String,Empty\n"
                   "True,1.2,-3,50,hello,\n"
                   "False,5.1,80,1,world,\n");
@@ -162,7 +162,7 @@ void DfUnit_CSVParseTypes(Zinc_test* test)
 
     Zinc_test_expect_size_t_equal(test, s5->value.count, 0, "s5 value count");
 
-    CSVParseTeardown(parse_output);
+    DfUnit_CSVParseTeardown(parse_output);
 }
 
 void DfUnit_CSVParse(Zinc_test* test)

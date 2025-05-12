@@ -2,7 +2,7 @@
 #include "dataframe/csv_write.h"
 #include "zinc/error_unit_test.h"
 #include "dataframe/csv_parse.h"
-#include "test_csv_parse_tools.h"
+#include "unit_csv_parse_tools.h"
 
 void TestCSVWrite1()
 {
@@ -10,7 +10,7 @@ void TestCSVWrite1()
     Zinc_test_name(__func__);
 
     struct CSVParseOutput* parse_output = NULL;
-    CSVParseSetup(&parse_output,
+    DfUnit_CSVParseSetup(&parse_output,
                   "Bool,Float,Int,IntU,String,Empty\n"
                   "True,1.2,-3,50,hello,\n"
                   "False,5.1,80,1,world,\n");
@@ -22,7 +22,7 @@ void TestCSVWrite1()
     Zinc_vector* output_text = CSVWrite(parse_output->df);
     Zinc_expect_vector(parse_output->input_text, output_text, "text");
 
-    CSVParseTeardown(parse_output);
+    DfUnit_CSVParseTeardown(parse_output);
     Zinc_vector_destroy(output_text);
     free(output_text);
 }

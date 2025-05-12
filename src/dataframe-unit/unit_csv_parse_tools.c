@@ -2,7 +2,7 @@
 #include <string.h>
 #include "zinc/input_char_string.h"
 
-void CSVParseSetup(struct CSVParseOutput** parse_output, const char* text)
+void DfUnit_CSVParseSetup(struct CSVParseOutput** parse_output, const char* text)
 {
     Zinc_vector* input = NULL;
     size_t len = strlen(text);
@@ -39,7 +39,7 @@ void CSVParseSetup(struct CSVParseOutput** parse_output, const char* text)
     free(parse_data);
 }
 
-void CSVParseTeardown(struct CSVParseOutput* parse_output)
+void DfUnit_CSVParseTeardown(struct CSVParseOutput* parse_output)
 {
     Zinc_vector_destroy(parse_output->input_text);
     free(parse_output->input_text);
