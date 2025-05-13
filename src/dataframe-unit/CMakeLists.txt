@@ -3,7 +3,7 @@ set(dataframe_unit_files
         unit_csv_lex.c
         unit_csv_parse.c
         unit_csv_parse_tools.c
-        test_csv_write.c
+        unit_csv_write.c
         test_data_frame.c
         test_field_lex.c
 )

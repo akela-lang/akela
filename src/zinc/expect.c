@@ -550,34 +550,41 @@ void Zinc_test_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b,
     test->check_passed++;
 }
 
-// void Zinc_expect_vector(Zinc_vector* a, Zinc_vector* b, const char* message)
-// {
-//     Zinc_test_called();
-//     if (a->value_size != b->value_size) {
-//         fprintf(stderr,
-//                 "Vector elements must be the same size: %s\n",
-//                 message);
-//         Zinc_error_triggered();
-//         return;
-//     }
-//     if (a->count != b->count) {
-//         fprintf(stderr,
-//                 "Vectors not the same size: (%zu) (%zu): %s\n",
-//                 a->count, b->count, message);
-//         Zinc_error_triggered();
-//     } else {
-//         for (int i = 0; i < a->count * a->value_size; i++) {
-//             if (ZINC_VECTOR_CHAR(a, i) != ZINC_VECTOR_CHAR(b, i)) {
-//                 fprintf(stderr,
-//                         "Vectors not equal: %d: %s\n",
-//                         i, message);
-//                 Zinc_error_triggered();
-//                 break;
-//             }
-//         }
-//     }
-// }
-//
+void Zinc_test_expect_vector(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, const char* message)
+{
+    test->check_count++;
+    if (a->value_size != b->value_size) {
+        fprintf(stderr,
+                "Vector elements must be the same size: %s\n",
+                message);
+        test->check_failed++;
+        test->pass = false;
+        Zinc_test_print_unseen(test);
+        return;
+    }
+    if (a->count != b->count) {
+        fprintf(stderr,
+                "Vectors not the same size: (%zu) (%zu): %s\n",
+                a->count, b->count, message);
+        test->check_failed++;
+        test->pass = false;
+        Zinc_test_print_unseen(test);
+    } else {
+        for (int i = 0; i < a->count * a->value_size; i++) {
+            if (ZINC_VECTOR_CHAR(a, i) != ZINC_VECTOR_CHAR(b, i)) {
+                fprintf(stderr,
+                        "Vectors not equal: %d: %s\n",
+                        i, message);
+                test->check_failed++;
+                test->pass = false;
+                Zinc_test_print_unseen(test);
+                return;
+            }
+        }
+        test->check_passed++;
+    }
+}
+
 // void Zinc_expect_vector_double(Zinc_vector* a, Zinc_vector* b, double threshold, const char* message)
 // {
 //     Zinc_test_called();
