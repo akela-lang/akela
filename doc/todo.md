@@ -11,9 +11,9 @@
 # Cobble
 
 # Coverage
+* use new test framework
 
 # Dataframe
-* use new test framework
 
 # JSON
 

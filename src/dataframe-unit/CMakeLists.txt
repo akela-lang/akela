@@ -5,7 +5,7 @@ set(dataframe_unit_files
         unit_csv_parse_tools.c
         unit_csv_write.c
         unit_data_frame.c
-        test_field_lex.c
+        unit_field_lex.c
 )
 
 add_library(dataframe-unit STATIC ${dataframe_unit_files})

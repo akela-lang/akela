@@ -1,5 +1,5 @@
 #include "unit_data_frame.h"
-#include "test_field_lex.h"
+#include "unit_field_lex.h"
 #include "unit_csv_lex.h"
 #include "unit_csv_parse.h"
 #include "unit_csv_write.h"
@@ -13,7 +13,7 @@ void DfUnit(Zinc_test* test)
         test->solo = false;
 
         DfUnit_DataFrame(test);
-        // TestFieldLex();
+        DfUnit_FieldLex(test);
         DfUnit_CSVLex(test);
         DfUnit_CSVParse(test);
         DfUnit_CSVWrite(test);
