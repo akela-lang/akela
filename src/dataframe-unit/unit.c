@@ -1,4 +1,4 @@
-#include "test_data_frame.h"
+#include "unit_data_frame.h"
 #include "test_field_lex.h"
 #include "unit_csv_lex.h"
 #include "unit_csv_parse.h"
@@ -12,12 +12,11 @@ void DfUnit(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        // TestDataFrame();
+        DfUnit_DataFrame(test);
         // TestFieldLex();
         DfUnit_CSVLex(test);
         DfUnit_CSVParse(test);
         DfUnit_CSVWrite(test);
-        // Zinc_print_results();
 
         return;
     }
