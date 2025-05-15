@@ -6,6 +6,7 @@ target_link_libraries(test
         json-unit
         dataframe-unit
         coverage-unit
+        cobble-unit
 )
 set_target_properties(test
         PROPERTIES

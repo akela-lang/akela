@@ -5,6 +5,6 @@
 #ifndef COBBLE_TEST_AST_NODE_H
 #define COBBLE_TEST_AST_NODE_H
 
-void test_ast_node();
+void CobUnit_ast_node();
 
 #endif //COBBLE_TEST_AST_NODE_H
