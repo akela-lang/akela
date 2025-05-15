@@ -6,6 +6,7 @@
 #include "error.h"
 #include "test.h"
 #include "vector.h"
+#include "string_list.h"
 
 void Zinc_test_panic()
 {
@@ -691,33 +692,51 @@ void Zinc_test_expect_error_message(Zinc_test* test, const char* s)
 // 	Zinc_error_triggered();
 // 	fprintf(stderr, "utf8 chars not equal: %s\n", message);
 // }
-//
-// void Zinc_expect_buffer_list_count(Zinc_string_list* bl, size_t count, char* message)
-// {
-// 	Zinc_test_called();
-// 	size_t actual_count = Zinc_string_list_count(bl);
-// 	if (actual_count == count) return;
-// 	Zinc_error_triggered();
-// 	fprintf(stderr, "buffer list count not equal: %zu != %zu: %s\n", actual_count, count, message);
-// }
-//
-// void Zinc_expect_buffer_list_item(Zinc_string_list* bl, size_t index, char* text, char* message)
-// {
-// 	Zinc_string* bf = Zinc_string_list_get(bl, index);
-// 	if (!bf) {
-// 		Zinc_error_triggered();
-// 		fprintf(stderr, "buffer list index out of bounds: %zu: %s\n", index, message);
-// 		return;
-// 	}
-//
-// 	if (!Zinc_string_compare_str(bf, text)) {
-// 		Zinc_error_triggered();
-// 		Zinc_string_finish(bf);
-// 		fprintf(stderr,
-// 			"buffer list item (%zu) text not equal: (%s) (%s): %s\n", index, bf->buf, text, message);
-// 	}
-// }
-//
+
+void Zinc_test_expect_buffer_list_count(Zinc_test* test, Zinc_string_list* bl, size_t count, char* message)
+{
+	test->check_count++;
+	size_t actual_count = Zinc_string_list_count(bl);
+	if (actual_count == count) {
+	    test->check_passed++;
+	    return;
+	}
+
+    test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+	fprintf(stderr, "\tbuffer list count not equal: %zu != %zu: %s\n", actual_count, count, message);
+}
+
+void Zinc_test_expect_buffer_list_item(Zinc_test* test, Zinc_string_list* bl, size_t index, char* text, char* message)
+{
+    test->check_count++;
+	Zinc_string* bf = Zinc_string_list_get(bl, index);
+	if (!bf) {
+	    test->check_failed++;
+	    test->pass = false;
+	    Zinc_test_print_unseen(test);
+		fprintf(stderr, "\tbuffer list index out of bounds: %zu: %s\n", index, message);
+		return;
+	}
+
+	if (!Zinc_string_compare_str(bf, text)) {
+	    test->check_failed++;
+	    test->pass = false;
+	    Zinc_test_print_unseen(test);
+		Zinc_string_finish(bf);
+		fprintf(stderr,
+			"\tbuffer list item (%zu) text not equal: (%s) (%s): %s\n",
+			index,
+			bf->buf,
+			text,
+			message);
+	    return;
+	}
+
+    test->check_passed++;
+}
+
 // void Zinc_expect_string_slice(Zinc_string_slice* sl, Zinc_string* bf, char* message)
 // {
 // 	Zinc_test_called();

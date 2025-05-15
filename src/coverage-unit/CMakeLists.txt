@@ -1,7 +1,7 @@
 set(coverage_unit_files
         unit.c
         unit_data.c
-        test_parse.c
+        unit_parse.c
 )
 add_library(coverage-unit STATIC ${coverage_unit_files})
 target_link_libraries(coverage-unit coverage zinc ${coverage_lib})

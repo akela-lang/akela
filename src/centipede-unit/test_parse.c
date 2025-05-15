@@ -1476,7 +1476,7 @@ void test_parse_variant()
     free(ct);
 }
 
-void test_parse()
+void CoverUnit_parse()
 {
     test_parse_element();
     test_parse_enumerate();

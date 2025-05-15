@@ -9,9 +9,9 @@
 # Centipede
 
 # Cobble
+* use new test framework
 
 # Coverage
-* use new test framework
 
 # Dataframe
 

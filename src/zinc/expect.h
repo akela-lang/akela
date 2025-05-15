@@ -4,6 +4,7 @@
 #include "test.h"
 #include "error.h"
 #include "vector.h"
+#include "string_list.h"
 
 void Zinc_test_assert_ok(Zinc_test* test, Zinc_result r, const char* message);
 void Zinc_test_assert_ptr(Zinc_test* test, void* p, const char* message);
@@ -44,5 +45,8 @@ void Zinc_test_expect_ok(Zinc_test* test, Zinc_result r, const char* message);
 void Zinc_test_expect_error_message(Zinc_test* test, const char* s);
 void Zinc_test_expect_ptr(Zinc_test* test, void* p, const char* message);
 void Zinc_test_expect_vector(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, const char* message);
+
+void Zinc_test_expect_buffer_list_count(Zinc_test* test, Zinc_string_list* bl, size_t count, char* message);
+void Zinc_test_expect_buffer_list_item(Zinc_test* test, Zinc_string_list* bl, size_t index, char* text, char* message);
 
 #endif

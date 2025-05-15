@@ -1,6 +1,6 @@
 #include "unit_data.h"
 #include "zinc/unit_test.h"
-#include "test_parse.h"
+#include "unit_parse.h"
 
 void CoverUnit(Zinc_test* test)
 {
@@ -10,7 +10,7 @@ void CoverUnit(Zinc_test* test)
         test->solo = false;
 
         Zinc_test_register(test, CoverUnit_data);
-        // test_parse();
+        Zinc_test_register(test, CoverUnit_parse);
 
         return;
     }

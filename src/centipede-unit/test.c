@@ -12,7 +12,7 @@ int main()
     Zinc_unit_lex();
     test_value();
     test_ast();
-    test_parse();
+    CoverUnit_parse();
     test_build();
     test_check_value_types();
     test_type();
