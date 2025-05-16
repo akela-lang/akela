@@ -7,6 +7,7 @@
 #include "test.h"
 #include "vector.h"
 #include "string_list.h"
+#include "zinc/utf8.h"
 
 void Zinc_test_panic()
 {
@@ -672,26 +673,30 @@ void Zinc_test_expect_error_message(Zinc_test* test, const char* s)
 //     Zinc_error_triggered();
 //     fprintf(stderr, "utf8 chars not equal: %s\n", message);
 // }
-//
-// void Zinc_expect_utf8_char_str(char a[4], int num, char* b, char* message)
-// {
-// 	Zinc_test_called();
-// 	int count_a = ZINC_NUM_BYTES(a[0]);
-// 	int count_b = ZINC_NUM_BYTES(b[0]);
-// 	size_t len = strlen(b);
-// 	if (num == count_a && num == count_b && num == len) {
-// 		for (int i = 0; i < num; i++) {
-// 			if (a[i] != b[i]) {
-// 				Zinc_error_triggered();
-// 				fprintf(stderr, "utf8 chars not equal: %s\n", message);
-// 				return;
-// 			}
-// 		}
-// 		return;
-// 	}
-// 	Zinc_error_triggered();
-// 	fprintf(stderr, "utf8 chars not equal: %s\n", message);
-// }
+
+void Zinc_test_expect_utf8_char_str(Zinc_test* test, char a[4], int num, char* b, char* message)
+{
+	test->check_count++;
+	int count_a = ZINC_NUM_BYTES(a[0]);
+	int count_b = ZINC_NUM_BYTES(b[0]);
+	size_t len = strlen(b);
+	if (num == count_a && num == count_b && num == len) {
+		for (int i = 0; i < num; i++) {
+			if (a[i] != b[i]) {
+				test->check_failed++;
+			    test->pass = false;
+			    Zinc_test_print_unseen(test);
+				fprintf(stderr, "\tutf8 chars not equal: %s\n", message);
+				return;
+			}
+		}
+		return;
+	}
+	test->check_failed++;
+    test->pass = false;
+    Zinc_test_print_unseen(test);
+	fprintf(stderr, "\tutf8 chars not equal: %s\n", message);
+}
 
 void Zinc_test_expect_buffer_list_count(Zinc_test* test, Zinc_string_list* bl, size_t count, char* message)
 {

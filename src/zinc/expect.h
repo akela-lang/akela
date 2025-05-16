@@ -49,4 +49,6 @@ void Zinc_test_expect_vector(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, co
 void Zinc_test_expect_buffer_list_count(Zinc_test* test, Zinc_string_list* bl, size_t count, char* message);
 void Zinc_test_expect_buffer_list_item(Zinc_test* test, Zinc_string_list* bl, size_t index, char* text, char* message);
 
+void Zinc_test_expect_utf8_char_str(Zinc_test* test, char a[4], int num, char* b, char* message);
+
 #endif
