@@ -3,7 +3,7 @@ set(cobble_unit_files
         unit_ast_node.c
         unit_compile.c
         unit_match.c
-        test_match_tools.c
+        unit_match_tools.c
 )
 
 add_library(cobble-unit STATIC ${cobble_unit_files})

@@ -7,9 +7,9 @@
 # Akela Run Test
 
 # Centipede
+* use new test framework
 
 # Cobble
-* use new test framework
 
 # Coverage
 
