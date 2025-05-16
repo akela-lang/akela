@@ -2,8 +2,7 @@ set(cobble_unit_files
         unit.c
         unit_ast_node.c
         unit_compile.c
-        test_compile_tools.c
-        test_match.c
+        unit_match.c
         test_match_tools.c
 )
 

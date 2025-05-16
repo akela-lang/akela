@@ -1,6 +1,6 @@
 #include "unit_ast_node.h"
 #include "unit_compile.h"
-#include "test_match.h"
+#include "unit_match.h"
 #include "test_match_tools.h"
 #include "zinc/test.h"
 #include "zinc/os.h"
@@ -18,7 +18,7 @@ void CobUnit(Zinc_test* test)
         Zinc_test_register(test, CobUnit_ast_node);
         Zinc_test_register(test, CobUnit_compile);
         // test_match_tools();
-        // test_match();
+        Zinc_test_register(test, CobUnit_match);
 
         return;
     }

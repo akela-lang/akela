@@ -2,7 +2,6 @@
 #include "cobble/compile_data.h"
 #include "cobble/compile.h"
 #include "cobble/ast.h"
-#include "test_compile_tools.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
