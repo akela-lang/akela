@@ -4,6 +4,7 @@
 #include "dataframe-unit/unit.h"
 #include "coverage-unit/unit.h"
 #include "cobble-unit/unit.h"
+#include "centipede-unit/unit.h"
 
 void Test_test(Zinc_test* test);
 
@@ -40,6 +41,7 @@ void Test_test(Zinc_test* test)
         Zinc_test_register(test, DfUnit);
         Zinc_test_register(test, CoverUnit);
         Zinc_test_register(test, CobUnit);
+        Zinc_test_register(test, CentUnit);
 
         return;
     }

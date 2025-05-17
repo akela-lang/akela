@@ -20,7 +20,7 @@ int main(void) {
     Zinc_unit_lex();
     test_lex_number();
     test_lex_tools();
-    test_ast();
+    CentUnit_ast();
     test_type();
     test_parse_factor();
     test_parse_expression();

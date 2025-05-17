@@ -7,6 +7,7 @@ target_link_libraries(test
         dataframe-unit
         coverage-unit
         cobble-unit
+        centipede-unit
 )
 set_target_properties(test
         PROPERTIES
