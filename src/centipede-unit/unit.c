@@ -1,6 +1,6 @@
 #include "zinc/unit_test.h"
 #include "unit_lex.h"
-#include "test_value.h"
+#include "unit_value.h"
 #include "unit_ast.h"
 #include "unit_parse.h"
 #include "unit_build.h"
@@ -15,13 +15,13 @@ void CentUnit(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        CentUnit_lex(test);
-        // test_value();
+        Zinc_test_register(test, CentUnit_lex);
+        Zinc_test_register(test, CentUnit_value);
         Zinc_test_register(test, CentUnit_ast);
-        CoverUnit_parse(test);
-        CentUnit_build(test);
-        CentUnit_check_value_types(test);
-        CentUnit_type(test);
+        Zinc_test_register(test, CoverUnit_parse);
+        Zinc_test_register(test, CentUnit_build);
+        Zinc_test_register(test, CentUnit_check_value_types);
+        Zinc_test_register(test, CentUnit_type);
 
         return;
     }

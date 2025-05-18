@@ -1,6 +1,8 @@
 #ifndef CENTIPEDE_TEST_VALUE_H
 #define CENTIPEDE_TEST_VALUE_H
 
-void test_value();
+#include "zinc/test.h"
+
+void CentUnit_value(Zinc_test* test);
 
 #endif

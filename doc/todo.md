@@ -1,4 +1,5 @@
 # Akela
+* use new test framework
 
 # Akela LLVM
 
@@ -7,7 +8,6 @@
 # Akela Run Test
 
 # Centipede
-* use new test framework
 
 # Cobble
 
