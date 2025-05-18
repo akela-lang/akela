@@ -2,7 +2,7 @@
 #include "unit_lex.h"
 #include "test_value.h"
 #include "unit_ast.h"
-#include "test_parse.h"
+#include "unit_parse.h"
 #include "unit_build.h"
 #include "unit_check_value_types.h"
 #include "test_type.h"
@@ -18,7 +18,7 @@ void CentUnit(Zinc_test* test)
         CentUnit_lex(test);
         // test_value();
         Zinc_test_register(test, CentUnit_ast);
-        // CoverUnit_parse();
+        CoverUnit_parse(test);
         CentUnit_build(test);
         CentUnit_check_value_types(test);
         // test_type();

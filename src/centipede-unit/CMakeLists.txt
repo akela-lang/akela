@@ -4,7 +4,7 @@ set(centipede_unit_files
         unit_lex_setup.c
         test_value.c
         unit_ast.c
-        test_parse.c
+        unit_parse.c
         unit_build.c
         unit_check_value_types.c
         test_type.c
