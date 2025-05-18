@@ -1,11 +1,16 @@
-#include "zinc/unit_test.h"
-#include <zinc/error_unit_test.h>
 #include "centipede/build.h"
 #include "centipede/comp_table.h"
+#include "zinc/test.h"
+#include "zinc/expect.h"
 
-void test_check_value_types_property()
+void CentUnit_check_value_types_property(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -32,15 +37,20 @@ void test_check_value_types_property()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    Zinc_expect_no_errors(errors);
-    Zinc_assert_ptr(root, "ptr value");
+    Zinc_test_expect_no_errors(test, errors);
+    Zinc_test_assert_ptr(test, root, "ptr value");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_error_number()
+void CentUnit_check_value_types_property_error_number(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -64,18 +74,23 @@ void test_check_value_types_property_error_number()
     Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    Zinc_expect_has_errors(errors);
-    Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors,
+    Zinc_test_expect_has_errors(test, errors);
+    Zinc_test_assert_ptr(test, root, "ptr value");
+    Zinc_test_expect_source_error(test, errors,
         "for property (Test--source), found type (Natural) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
 
-void test_check_value_types_property_error_string()
+void CentUnit_check_value_types_property_error_string(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -99,17 +114,22 @@ void test_check_value_types_property_error_string()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    Zinc_expect_has_errors(errors);
-    Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors,
+    Zinc_test_expect_has_errors(test, errors);
+    Zinc_test_assert_ptr(test, root, "ptr value");
+    Zinc_test_expect_source_error(test, errors,
         "for property (Test--source), found type (String) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_error_boolean()
+void CentUnit_check_value_types_property_error_boolean(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -133,17 +153,22 @@ void test_check_value_types_property_error_boolean()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    Zinc_expect_has_errors(errors);
-    Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors,
+    Zinc_test_expect_has_errors(test, errors);
+    Zinc_test_assert_ptr(test, root, "ptr value");
+    Zinc_test_expect_source_error(test, errors,
         "for property (Test--source), found type (Bool) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_error_object()
+void CentUnit_check_value_types_property_error_object(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -167,17 +192,22 @@ void test_check_value_types_property_error_object()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    Zinc_expect_has_errors(errors);
-    Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors,
+    Zinc_test_expect_has_errors(test, errors);
+    Zinc_test_assert_ptr(test, root, "ptr value");
+    Zinc_test_expect_source_error(test, errors,
         "for property (Test--source), found type (Foo) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_variable()
+void CentUnit_check_value_types_property_variable(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -202,16 +232,21 @@ void test_check_value_types_property_variable()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    Zinc_expect_no_errors(errors);
-    Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_no_errors(errors);
+    Zinc_test_expect_no_errors(test, errors);
+    Zinc_test_assert_ptr(test, root, "ptr value");
+    Zinc_test_expect_no_errors(test, errors);
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_error_variable_object()
+void CentUnit_check_value_types_property_error_variable_object(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -236,17 +271,22 @@ void test_check_value_types_property_error_variable_object()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    Zinc_expect_has_errors(errors);
-    Zinc_assert_ptr(root, "ptr value");
-    Zinc_expect_source_error(errors,
+    Zinc_test_expect_has_errors(test, errors);
+    Zinc_test_assert_ptr(test, root, "ptr value");
+    Zinc_test_expect_source_error(test, errors,
         "for property (Test--source), found type (Foo) but expected (Source)");
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_enum()
+void CentUnit_check_value_types_property_enum(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -271,16 +311,21 @@ void test_check_value_types_property_enum()
     struct Zinc_error_list* errors = &ct->primary->errors;
     Cent_value* root = ct->primary->value;
 
-    Zinc_expect_no_errors(errors);
-    Zinc_assert_ptr(root, "ptr value");
+    Zinc_test_expect_no_errors(test, errors);
+    Zinc_test_assert_ptr(test, root, "ptr value");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_enum_error_id1()
+void CentUnit_check_value_types_property_enum_error_id1(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -304,16 +349,21 @@ void test_check_value_types_property_enum_error_id1()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    Zinc_expect_source_error(errors, "id is not a variable: Coin_type");
+    Zinc_test_expect_has_errors(test, errors);
+    Zinc_test_expect_source_error(test, errors, "id is not a variable: Coin_type");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_enum_error_id2()
+void CentUnit_check_value_types_property_enum_error_id2(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -337,16 +387,21 @@ void test_check_value_types_property_enum_error_id2()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    Zinc_expect_source_error(errors, "invalid enum id: Pencil");
+    Zinc_test_expect_has_errors(test, errors);
+    Zinc_test_expect_source_error(test, errors, "invalid enum id: Pencil");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_child()
+void CentUnit_check_value_types_child(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -364,15 +419,20 @@ void test_check_value_types_child()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_no_errors(errors);
+    Zinc_test_expect_no_errors(test, errors);
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_child_error_number()
+void CentUnit_check_value_types_child_error_number(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -391,20 +451,25 @@ void test_check_value_types_child_error_number()
     Cent_comp_unit_build(ct->primary);
     Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    Zinc_error* e = Zinc_expect_source_error(errors, "invalid child type: Real");
+    Zinc_test_expect_has_errors(test, errors);
+    Zinc_error* e = Zinc_test_expect_source_error(test, errors, "invalid child type: Real");
     if (e) {
-        Zinc_expect_size_t_equal(e->loc.line, 8, "line e");
-        Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
+        Zinc_test_expect_size_t_equal(test, e->loc.line, 8, "line e");
+        Zinc_test_expect_size_t_equal(test, e->loc.col, 5, "col e");
     }
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_child_enum()
+void CentUnit_check_value_types_child_enum(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -429,15 +494,20 @@ void test_check_value_types_child_enum()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_no_errors(errors);
+    Zinc_test_expect_no_errors(test, errors);
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_child_enum_error_id1_not_found()
+void CentUnit_check_value_types_child_enum_error_id1_not_found(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -462,19 +532,24 @@ void test_check_value_types_child_enum_error_id1_not_found()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    struct Zinc_error* e = Zinc_expect_source_error(errors, "id is not a variable: Building_type");
-    Zinc_assert_ptr(e, "ptr e");
-    Zinc_expect_size_t_equal(e->loc.line, 14, "line e");
-    Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
+    Zinc_test_expect_has_errors(test, errors);
+    struct Zinc_error* e = Zinc_test_expect_source_error(test, errors, "id is not a variable: Building_type");
+    Zinc_test_assert_ptr(test, e, "ptr e");
+    Zinc_test_expect_size_t_equal(test, e->loc.line, 14, "line e");
+    Zinc_test_expect_size_t_equal(test, e->loc.col, 5, "col e");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_child_enum_error_id1_not_match()
+void CentUnit_check_value_types_child_enum_error_id1_not_match(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -504,19 +579,24 @@ void test_check_value_types_child_enum_error_id1_not_match()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    struct Zinc_error* e = Zinc_expect_source_error(errors, "invalid child type: Building_type");
-    Zinc_assert_ptr(e, "ptr e");
-    Zinc_expect_size_t_equal(e->loc.line, 19, "line e");
-    Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
+    Zinc_test_expect_has_errors(test, errors);
+    struct Zinc_error* e = Zinc_test_expect_source_error(test, errors, "invalid child type: Building_type");
+    Zinc_test_assert_ptr(test, e, "ptr e");
+    Zinc_test_expect_size_t_equal(test, e->loc.line, 19, "line e");
+    Zinc_test_expect_size_t_equal(test, e->loc.col, 5, "col e");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_child_enum_error_id2_not_valid()
+void CentUnit_check_value_types_child_enum_error_id2_not_valid(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -541,19 +621,24 @@ void test_check_value_types_child_enum_error_id2_not_valid()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    struct Zinc_error* e = Zinc_expect_source_error(errors, "invalid enum id: Bike");
-    Zinc_assert_ptr(e, "ptr e");
-    Zinc_expect_size_t_equal(e->loc.line, 14, "line e");
-    Zinc_expect_size_t_equal(e->loc.col, 19, "col e");
+    Zinc_test_expect_has_errors(test, errors);
+    struct Zinc_error* e = Zinc_test_expect_source_error(test, errors, "invalid enum id: Bike");
+    Zinc_test_assert_ptr(test, e, "ptr e");
+    Zinc_test_expect_size_t_equal(test, e->loc.line, 14, "line e");
+    Zinc_test_expect_size_t_equal(test, e->loc.col, 19, "col e");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_error_not_enum()
+void CentUnit_check_value_types_property_error_not_enum(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -574,19 +659,24 @@ void test_check_value_types_property_error_not_enum()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    struct Zinc_error* e = Zinc_expect_source_error(errors, "value is not an enum value: Natural");
-    Zinc_assert_ptr(e, "ptr e");
-    Zinc_expect_size_t_equal(e->loc.line, 10, "line e");
-    Zinc_expect_size_t_equal(e->loc.col, 10, "col e");
+    Zinc_test_expect_has_errors(test, errors);
+    struct Zinc_error* e = Zinc_test_expect_source_error(test, errors, "value is not an enum value: Natural");
+    Zinc_test_assert_ptr(test, e, "ptr e");
+    Zinc_test_expect_size_t_equal(test, e->loc.line, 10, "line e");
+    Zinc_test_expect_size_t_equal(test, e->loc.col, 10, "col e");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_property_enum_error_not_match()
+void CentUnit_check_value_types_property_enum_error_not_match(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -610,19 +700,24 @@ void test_check_value_types_property_enum_error_not_match()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    struct Zinc_error* e = Zinc_expect_source_error(errors, "invalid value enum type: Apparel");
-    Zinc_assert_ptr(e, "ptr e");
-    Zinc_expect_size_t_equal(e->loc.line, 13, "line e");
-    Zinc_expect_size_t_equal(e->loc.col, 10, "col e");
+    Zinc_test_expect_has_errors(test, errors);
+    struct Zinc_error* e = Zinc_test_expect_source_error(test, errors, "invalid value enum type: Apparel");
+    Zinc_test_assert_ptr(test, e, "ptr e");
+    Zinc_test_expect_size_t_equal(test, e->loc.line, 13, "line e");
+    Zinc_test_expect_size_t_equal(test, e->loc.col, 10, "col e");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_child_error_no_type()
+void CentUnit_check_value_types_child_error_no_type(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -642,19 +737,24 @@ void test_check_value_types_child_error_no_type()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
-    struct Zinc_error* e = Zinc_expect_source_error(errors, "value has no type; looking for Bar");
-    Zinc_assert_ptr(e, "ptr e");
-    Zinc_expect_size_t_equal(e->loc.line, 9, "line e");
-    Zinc_expect_size_t_equal(e->loc.col, 5, "col e");
+    Zinc_test_expect_has_errors(test, errors);
+    struct Zinc_error* e = Zinc_test_expect_source_error(test, errors, "value has no type; looking for Bar");
+    Zinc_test_assert_ptr(test, e, "ptr e");
+    Zinc_test_expect_size_t_equal(test, e->loc.line, 9, "line e");
+    Zinc_test_expect_size_t_equal(test, e->loc.col, 5, "col e");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_not_nested()
+void CentUnit_check_value_types_not_nested(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -670,17 +770,22 @@ void test_check_value_types_not_nested()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
+    Zinc_test_expect_has_errors(test, errors);
 
-    Zinc_expect_source_error(errors, "for property (Bar--a), found type (Natural) but expected (Bool)");
+    Zinc_test_expect_source_error(test, errors, "for property (Bar--a), found type (Natural) but expected (Bool)");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_nested()
+void CentUnit_check_value_types_nested(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -698,18 +803,23 @@ void test_check_value_types_nested()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
+    Zinc_test_expect_has_errors(test, errors);
 
-    Zinc_expect_source_error(errors,
+    Zinc_test_expect_source_error(test, errors,
         "for property (Bar--a), found type (Natural) but expected (Bool)");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_not_attached()
+void CentUnit_check_value_types_not_attached(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -720,17 +830,22 @@ void test_check_value_types_not_attached()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
+    Zinc_test_expect_has_errors(test, errors);
 
-    Zinc_expect_source_error(errors, "value is not used");
+    Zinc_test_expect_source_error(test, errors, "value is not used");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_not_attached_import()
+void CentUnit_check_value_types_not_attached_import(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -744,15 +859,20 @@ void test_check_value_types_not_attached_import()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_no_errors(errors);
+    Zinc_test_expect_no_errors(test, errors);
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_not_attached_import_glob()
+void CentUnit_check_value_types_not_attached_import_glob(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -766,15 +886,20 @@ void test_check_value_types_not_attached_import_glob()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_no_errors(errors);
+    Zinc_test_expect_no_errors(test, errors);
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_not_attached_not_last()
+void CentUnit_check_value_types_not_attached_not_last(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -787,17 +912,22 @@ void test_check_value_types_not_attached_not_last()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
+    Zinc_test_expect_has_errors(test, errors);
 
-    Zinc_expect_source_error(errors, "value is not used");
+    Zinc_test_expect_source_error(test, errors, "value is not used");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types_not_attached_not_last2()
+void CentUnit_check_value_types_not_attached_not_last2(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
 
     Cent_comp_table* ct = NULL;
     Cent_comp_table_create_str(&ct,
@@ -809,40 +939,50 @@ void test_check_value_types_not_attached_not_last2()
     Cent_comp_unit_build(ct->primary);
     struct Zinc_error_list* errors = &ct->primary->errors;
 
-    Zinc_expect_has_errors(errors);
+    Zinc_test_expect_has_errors(test, errors);
 
-    Zinc_expect_source_error(errors, "value is not used");
+    Zinc_test_expect_source_error(test, errors, "value is not used");
 
     Cent_comp_table_destroy(ct);
     free(ct);
 }
 
-void test_check_value_types()
+void CentUnit_check_value_types(Zinc_test* test)
 {
-    test_check_value_types_property();
-    test_check_value_types_property_error_number();
-    test_check_value_types_property_error_string();
-    test_check_value_types_property_error_boolean();
-    test_check_value_types_property_error_object();
-    test_check_value_types_property_variable();
-    test_check_value_types_property_error_variable_object();
-    test_check_value_types_property_enum();
-    test_check_value_types_property_enum_error_id1();
-    test_check_value_types_property_enum_error_id2();
-    test_check_value_types_child();
-    test_check_value_types_child_error_number();
-    test_check_value_types_child_enum();
-    test_check_value_types_child_enum_error_id1_not_found();
-    test_check_value_types_child_enum_error_id1_not_match();
-    test_check_value_types_child_enum_error_id2_not_valid();
-    test_check_value_types_property_error_not_enum();
-    test_check_value_types_property_enum_error_not_match();
-    test_check_value_types_child_error_no_type();
-    test_check_value_types_not_nested();
-    test_check_value_types_nested();
-    test_check_value_types_not_attached();
-    test_check_value_types_not_attached_import();
-    test_check_value_types_not_attached_import_glob();
-    test_check_value_types_not_attached_not_last();
-    test_check_value_types_not_attached_not_last2();
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+
+        Zinc_test_register(test, CentUnit_check_value_types_property);
+        Zinc_test_register(test, CentUnit_check_value_types_property_error_number);
+        Zinc_test_register(test, CentUnit_check_value_types_property_error_string);
+        Zinc_test_register(test, CentUnit_check_value_types_property_error_boolean);
+        Zinc_test_register(test, CentUnit_check_value_types_property_error_object);
+        Zinc_test_register(test, CentUnit_check_value_types_property_variable);
+        Zinc_test_register(test, CentUnit_check_value_types_property_error_variable_object);
+        Zinc_test_register(test, CentUnit_check_value_types_property_enum);
+        Zinc_test_register(test, CentUnit_check_value_types_property_enum_error_id1);
+        Zinc_test_register(test, CentUnit_check_value_types_property_enum_error_id2);
+        Zinc_test_register(test, CentUnit_check_value_types_child);
+        Zinc_test_register(test, CentUnit_check_value_types_child_error_number);
+        Zinc_test_register(test, CentUnit_check_value_types_child_enum);
+        Zinc_test_register(test, CentUnit_check_value_types_child_enum_error_id1_not_found);
+        Zinc_test_register(test, CentUnit_check_value_types_child_enum_error_id1_not_match);
+        Zinc_test_register(test, CentUnit_check_value_types_child_enum_error_id2_not_valid);
+        Zinc_test_register(test, CentUnit_check_value_types_property_error_not_enum);
+        Zinc_test_register(test, CentUnit_check_value_types_property_enum_error_not_match);
+        Zinc_test_register(test, CentUnit_check_value_types_child_error_no_type);
+        Zinc_test_register(test, CentUnit_check_value_types_not_nested);
+        Zinc_test_register(test, CentUnit_check_value_types_nested);
+        Zinc_test_register(test, CentUnit_check_value_types_not_attached);
+        Zinc_test_register(test, CentUnit_check_value_types_not_attached_import);
+        Zinc_test_register(test, CentUnit_check_value_types_not_attached_import_glob);
+        Zinc_test_register(test, CentUnit_check_value_types_not_attached_not_last);
+        Zinc_test_register(test, CentUnit_check_value_types_not_attached_not_last2);
+
+        return;
+    }
+
+    Zinc_test_perform(test);
 }

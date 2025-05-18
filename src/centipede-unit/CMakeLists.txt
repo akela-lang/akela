@@ -6,7 +6,7 @@ set(centipede_unit_files
         unit_ast.c
         test_parse.c
         unit_build.c
-        test_check_value_types.c
+        unit_check_value_types.c
         test_type.c
 )
 
