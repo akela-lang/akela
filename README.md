@@ -75,7 +75,6 @@ ninja -C cmake-build-debug
 ## Run Unit Tests (old framework)
     cmake-build-debug/bin/akela-unit
     cmake-build-debug/bin/akela-llvm-unit
-    cmake-build-debug/bin/centipede-unit
 
 ## Run Integration and End-to-End Tests
     cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases

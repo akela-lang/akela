@@ -3,7 +3,7 @@
 #include "test_value.h"
 #include "unit_ast.h"
 #include "test_parse.h"
-#include "test_build.h"
+#include "unit_build.h"
 #include "test_check_value_types.h"
 #include "test_type.h"
 #include "zinc/test.h"
@@ -19,7 +19,7 @@ void CentUnit(Zinc_test* test)
         // test_value();
         Zinc_test_register(test, CentUnit_ast);
         // CoverUnit_parse();
-        // test_build();
+        CentUnit_build(test);
         // test_check_value_types();
         // test_type();
 
