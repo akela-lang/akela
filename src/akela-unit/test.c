@@ -21,7 +21,7 @@ int main(void) {
     test_lex_number();
     test_lex_tools();
     CentUnit_ast();
-    test_type();
+    CentUnit_type();
     test_parse_factor();
     test_parse_expression();
     test_parse_statements();

@@ -5,7 +5,7 @@
 #include "unit_parse.h"
 #include "unit_build.h"
 #include "unit_check_value_types.h"
-#include "test_type.h"
+#include "unit_type.h"
 #include "zinc/test.h"
 
 void CentUnit(Zinc_test* test)
@@ -21,7 +21,7 @@ void CentUnit(Zinc_test* test)
         CoverUnit_parse(test);
         CentUnit_build(test);
         CentUnit_check_value_types(test);
-        // test_type();
+        CentUnit_type(test);
 
         return;
     }

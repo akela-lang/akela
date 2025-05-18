@@ -34,7 +34,7 @@ void test_type_use1()
 }
 
 
-void test_type()
+void CentUnit_type()
 {
 	test_type_use1();
 }

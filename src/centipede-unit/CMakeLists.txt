@@ -7,7 +7,7 @@ set(centipede_unit_files
         unit_parse.c
         unit_build.c
         unit_check_value_types.c
-        test_type.c
+        unit_type.c
 )
 
 add_library(centipede-unit STATIC ${centipede_unit_files})
