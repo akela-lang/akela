@@ -1619,7 +1619,7 @@ void test_lex_comment()
 }
 
 /* dynamic-output-none */
-void Zinc_unit_lex()
+void CentUnit_unit_lex()
 {
 	test_lex_blank();
 	test_lex_assign();

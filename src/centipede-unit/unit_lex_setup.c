@@ -6,7 +6,7 @@
 #include "centipede/lex.h"
 #include "centipede/lex_data.h"
 
-void Zinc_unit_lex_setup(Cent_lex_data* ld, char* text)
+void CentUnit_lex_setup(Cent_lex_data* ld, char* text)
 {
     size_t len = strlen(text);
 
@@ -23,7 +23,7 @@ void Zinc_unit_lex_setup(Cent_lex_data* ld, char* text)
     Cent_lex_data_init(ld, errors, input, input->vtable);
 }
 
-void Zinc_unit_lex_teardown(Cent_lex_data* ld)
+void CentUnit_lex_teardown(Cent_lex_data* ld)
 {
     Zinc_input_unicode_string* input = ld->input;
     Zinc_vector* v = input->text;

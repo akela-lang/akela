@@ -3,7 +3,7 @@
 
 #include "centipede/lex_data.h"
 
-void Zinc_unit_lex_setup(Cent_lex_data* ld, char* text);
-void Zinc_unit_lex_teardown(Cent_lex_data* ld);
+void CentUnit_lex_setup(Cent_lex_data* ld, char* text);
+void CentUnit_lex_teardown(Cent_lex_data* ld);
 
 #endif

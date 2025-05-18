@@ -2,6 +2,6 @@
 #define _TEST_SCAN_H
 
 /* dynamic-output-none */
-void Zinc_unit_lex();
+void CentUnit_unit_lex();
 
 #endif
