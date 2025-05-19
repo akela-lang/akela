@@ -10,7 +10,7 @@
 #include "test_type.h"
 #include "test_lex_number.h"
 #include "test_comp_unit.h"
-#include "test_comp_table.h"
+#include "unit_comp_table.h"
 #include "test_lex_tools.h"
 #include "test_parse_function.h"
 #include "test_parse_struct.h"
@@ -35,7 +35,7 @@ void AkeUnit(Zinc_test* test)
         // test_symbol_table();
         // test_parse_types();
         // test_comp_unit();
-        // test_comp_table();
+        Zinc_test_register(test, AkeUnit_comp_table);
         // test_parse_struct();
         // Zinc_print_results();
 
