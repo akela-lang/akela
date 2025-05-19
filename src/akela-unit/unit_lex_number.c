@@ -1,5 +1,5 @@
 #include "akela/lex.h"
-#include "test_lex_setup.h"
+#include "unit_lex_setup.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
@@ -18,7 +18,7 @@ void AkeUnit_lex_number_negative_start(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("-", &ls, &el);
+	AkeUnit_lex_setup("-", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_expect_true(test, valid, "valid 0");
@@ -29,7 +29,7 @@ void AkeUnit_lex_number_negative_start(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -48,7 +48,7 @@ void AkeUnit_lex_number_whole(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("500", &ls, &el);
+	AkeUnit_lex_setup("500", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -65,7 +65,7 @@ void AkeUnit_lex_number_whole(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -84,7 +84,7 @@ void AkeUnit_lex_number_fraction_start(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("500.", &ls, &el);
+	AkeUnit_lex_setup("500.", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -101,7 +101,7 @@ void AkeUnit_lex_number_fraction_start(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -120,7 +120,7 @@ void AkeUnit_lex_number_fraction(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("500.123", &ls, &el);
+	AkeUnit_lex_setup("500.123", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -137,7 +137,7 @@ void AkeUnit_lex_number_fraction(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_number_exponent_start(Zinc_test* test)
@@ -154,7 +154,7 @@ void AkeUnit_lex_number_exponent_start(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("500e", &ls, &el);
+	AkeUnit_lex_setup("500e", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -176,7 +176,7 @@ void AkeUnit_lex_number_exponent_start(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_number_fraction_exponent_start(Zinc_test* test)
@@ -193,7 +193,7 @@ void AkeUnit_lex_number_fraction_exponent_start(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("500.123e", &ls, &el);
+	AkeUnit_lex_setup("500.123e", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -215,7 +215,7 @@ void AkeUnit_lex_number_fraction_exponent_start(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_number_fraction_exponent(Zinc_test* test)
@@ -232,7 +232,7 @@ void AkeUnit_lex_number_fraction_exponent(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("500.123e2", &ls, &el);
+	AkeUnit_lex_setup("500.123e2", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -246,7 +246,7 @@ void AkeUnit_lex_number_fraction_exponent(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_number_fraction_exponent_sign_start_negative(Zinc_test* test)
@@ -263,7 +263,7 @@ void AkeUnit_lex_number_fraction_exponent_sign_start_negative(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("500.123e-", &ls, &el);
+	AkeUnit_lex_setup("500.123e-", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_expect_has_errors(test, ls.el);
@@ -273,7 +273,7 @@ void AkeUnit_lex_number_fraction_exponent_sign_start_negative(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_number_fraction_exponent_sign_start_positive(Zinc_test* test)
@@ -290,7 +290,7 @@ void AkeUnit_lex_number_fraction_exponent_sign_start_positive(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("500.123e+", &ls, &el);
+	AkeUnit_lex_setup("500.123e+", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_expect_has_errors(test, ls.el);
@@ -300,7 +300,7 @@ void AkeUnit_lex_number_fraction_exponent_sign_start_positive(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -319,7 +319,7 @@ void AkeUnit_lex_number_fraction_exponent_negative(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("500.123e-2", &ls, &el);
+	AkeUnit_lex_setup("500.123e-2", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -336,7 +336,7 @@ void AkeUnit_lex_number_fraction_exponent_negative(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -355,7 +355,7 @@ void AkeUnit_lex_number_exponent_positive(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("500.123e+2", &ls, &el);
+	AkeUnit_lex_setup("500.123e+2", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -372,7 +372,7 @@ void AkeUnit_lex_number_exponent_positive(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_number_exponent_add(Zinc_test* test)
@@ -389,7 +389,7 @@ void AkeUnit_lex_number_exponent_add(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("500.123e + 1", &ls, &el);
+	AkeUnit_lex_setup("500.123e + 1", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -426,7 +426,7 @@ void AkeUnit_lex_number_exponent_add(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_number(Zinc_test* test)

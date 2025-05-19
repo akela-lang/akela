@@ -6,7 +6,7 @@ set(akela_unit_files
         test_parse_factor.c
         test_parse_expr.c
         test_parse_stmts.c
-        test_lex_setup.c
+        unit_lex_setup.c
         unit_lex.c
         unit_lex_number.c
         test_lex_tools.c

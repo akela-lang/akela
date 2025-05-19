@@ -2,7 +2,7 @@
 #include "zinc/memory.h"
 #include "akela/token.h"
 #include "akela/lex.h"
-#include "test_lex_setup.h"
+#include "unit_lex_setup.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
@@ -20,7 +20,7 @@ void AkeUnit_lex_blank(Zinc_test* test)
 	struct Ake_token* t;
 	bool valid;
 
-	lex_setup("", &ls, &el);
+	AkeUnit_lex_setup("", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -35,7 +35,7 @@ void AkeUnit_lex_blank(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_assign(Zinc_test* test)
@@ -52,7 +52,7 @@ void AkeUnit_lex_assign(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("a = 1", &ls, &el);
+	AkeUnit_lex_setup("a = 1", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -93,7 +93,7 @@ void AkeUnit_lex_assign(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_addition(Zinc_test* test)
@@ -110,7 +110,7 @@ void AkeUnit_lex_addition(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("speed + 1", &ls, &el);
+	AkeUnit_lex_setup("speed + 1", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -146,7 +146,7 @@ void AkeUnit_lex_addition(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_subtraction(Zinc_test* test)
@@ -164,7 +164,7 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("100 - delta", &ls, &el);
+	AkeUnit_lex_setup("100 - delta", &ls, &el);
 
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -210,7 +210,7 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -229,7 +229,7 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("100 * 20", &ls, &el);
+	AkeUnit_lex_setup("100 * 20", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -275,7 +275,7 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -294,7 +294,7 @@ void AkeUnit_lex_divide(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("45 / 11", &ls, &el);
+	AkeUnit_lex_setup("45 / 11", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -340,7 +340,7 @@ void AkeUnit_lex_divide(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -359,7 +359,7 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("i + 1\nx * 4", &ls, &el);
+	AkeUnit_lex_setup("i + 1\nx * 4", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -447,7 +447,7 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -466,7 +466,7 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("i + 1\nx * 4\n", &ls, &el);
+	AkeUnit_lex_setup("i + 1\nx * 4\n", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -575,7 +575,7 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -594,7 +594,7 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("i + 1\nx = 4", &ls, &el);
+	AkeUnit_lex_setup("i + 1\nx = 4", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -682,7 +682,7 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_function(Zinc_test* test)
@@ -699,7 +699,7 @@ void AkeUnit_lex_function(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("fn foo () \n end", &ls, &el);
+	AkeUnit_lex_setup("fn foo () \n end", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -759,7 +759,7 @@ void AkeUnit_lex_function(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -778,7 +778,7 @@ void AkeUnit_lex_comma(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup(",", &ls, &el);
+	AkeUnit_lex_setup(",", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -802,7 +802,7 @@ void AkeUnit_lex_comma(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -821,7 +821,7 @@ void AkeUnit_lex_semicolon(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup(";", &ls, &el);
+	AkeUnit_lex_setup(";", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -845,7 +845,7 @@ void AkeUnit_lex_semicolon(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -864,7 +864,7 @@ void AkeUnit_lex_if(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("if elseif else", &ls, &el);
+	AkeUnit_lex_setup("if elseif else", &ls, &el);
 	
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -908,7 +908,7 @@ void AkeUnit_lex_if(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{}*/
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_compound_operators(Zinc_test* test)
@@ -925,7 +925,7 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("== != <= >= && || ->", &ls, &el);
+	AkeUnit_lex_setup("== != <= >= && || ->", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -983,7 +983,7 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1002,7 +1002,7 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("= ! < > & | :", &ls, &el);
+	AkeUnit_lex_setup("= ! < > & | :", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1075,7 +1075,7 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_for_range(Zinc_test* test)
@@ -1092,7 +1092,7 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("for i = 0:10 1 end", &ls, &el);
+	AkeUnit_lex_setup("for i = 0:10 1 end", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_no_errors(test, ls.el);
@@ -1161,7 +1161,7 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	Ake_token_destroy(t);
 	free(t);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1180,7 +1180,7 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("for x in list 1 end", &ls, &el);
+	AkeUnit_lex_setup("for x in list 1 end", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1246,7 +1246,7 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_error_unrecognized_character(Zinc_test* test)
@@ -1263,7 +1263,7 @@ void AkeUnit_lex_error_unrecognized_character(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("$", &ls, &el);
+	AkeUnit_lex_setup("$", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_false(test, valid, "lex");
@@ -1271,7 +1271,7 @@ void AkeUnit_lex_error_unrecognized_character(Zinc_test* test)
 	Zinc_test_assert_null(test, t, "t");
 	Zinc_test_expect_source_error(test, &el, "Unrecognized character: $");
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1290,7 +1290,7 @@ void AkeUnit_lex_square_brackets(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("[]", &ls, &el);
+	AkeUnit_lex_setup("[]", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1313,7 +1313,7 @@ void AkeUnit_lex_square_brackets(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1332,7 +1332,7 @@ void AkeUnit_lex_string(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("\"hello\"", &ls, &el);
+	AkeUnit_lex_setup("\"hello\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1346,7 +1346,7 @@ void AkeUnit_lex_string(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1365,7 +1365,7 @@ void AkeUnit_lex_string2(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("x = \"\\\\hello\n\r\"", &ls, &el);
+	AkeUnit_lex_setup("x = \"\\\\hello\n\r\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1400,7 +1400,7 @@ void AkeUnit_lex_string2(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1419,7 +1419,7 @@ void AkeUnit_lex_string_escape_error(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("\"\\x\"", &ls, &el);
+	AkeUnit_lex_setup("\"\\x\"", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1430,7 +1430,7 @@ void AkeUnit_lex_string_escape_error(Zinc_test* test)
 	Zinc_test_assert_null(test, t, "t");
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 /* dynamic-output-none */
@@ -1449,7 +1449,7 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("10 + 20\n30 + 40", &ls, &el);
+	AkeUnit_lex_setup("10 + 20\n30 + 40", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1544,7 +1544,7 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	free(t);
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_error_underscore_letter(Zinc_test* test)
@@ -1562,7 +1562,7 @@ void AkeUnit_lex_error_underscore_letter(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("_1", &ls, &el);
+	AkeUnit_lex_setup("_1", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1572,7 +1572,7 @@ void AkeUnit_lex_error_underscore_letter(Zinc_test* test)
 	Zinc_test_expect_source_error(test, &el, "Must have a letter following underscore at start of id");
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_error_underscore_letter2(Zinc_test* test)
@@ -1590,7 +1590,7 @@ void AkeUnit_lex_error_underscore_letter2(Zinc_test* test)
 	struct Ake_token* t;
 
 	/* allocate ls{} */
-	lex_setup("__", &ls, &el);
+	AkeUnit_lex_setup("__", &ls, &el);
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
@@ -1600,7 +1600,7 @@ void AkeUnit_lex_error_underscore_letter2(Zinc_test* test)
 	Zinc_test_expect_source_error(test, &el, "Must have a letter following underscore at start of id");
 
 	/* destroy ls{} */
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_error_exponent_sign(Zinc_test* test)
@@ -1617,7 +1617,7 @@ void AkeUnit_lex_error_exponent_sign(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	lex_setup("100e-a", &ls, &el);
+	AkeUnit_lex_setup("100e-a", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_test_assert_has_errors(test, ls.el);
@@ -1625,7 +1625,7 @@ void AkeUnit_lex_error_exponent_sign(Zinc_test* test)
 	Zinc_test_expect_null(test, t, "null t");
 	Zinc_test_expect_source_error(test, &el, "expected number after exponent sign");
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_module(Zinc_test* test)
@@ -1641,7 +1641,7 @@ void AkeUnit_lex_module(Zinc_test* test)
 	struct Ake_lex_state ls;
 	bool valid;
 
-	lex_setup("module 1 end", &ls, &el);
+	AkeUnit_lex_setup("module 1 end", &ls, &el);
 
 	struct Ake_token* module;
 	valid = Ake_lex(&ls, &module);
@@ -1674,7 +1674,7 @@ void AkeUnit_lex_module(Zinc_test* test)
 	Ake_token_destroy(end);
 	free(end);
 
-	lex_teardown(&ls);
+	AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex_comment(Zinc_test* test)
@@ -1690,7 +1690,7 @@ void AkeUnit_lex_comment(Zinc_test* test)
     struct Ake_lex_state ls;
     bool valid;
 
-    lex_setup("150 # this is 150\n"
+    AkeUnit_lex_setup("150 # this is 150\n"
               "275 # this is 275\n",
               &ls, &el);
 
@@ -1746,7 +1746,7 @@ void AkeUnit_lex_comment(Zinc_test* test)
     Ake_token_destroy(eof);
     free(eof);
 
-    lex_teardown(&ls);
+    AkeUnit_lex_teardown(&ls);
 }
 
 void AkeUnit_lex(Zinc_test* test)
