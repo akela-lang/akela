@@ -12,7 +12,7 @@ typedef struct Parse_test_result {
     bool debug;
 } Parse_test_result;
 
-bool parse_setup(char* line, struct Ake_comp_unit* cu);
-void parse_teardown(struct Ake_comp_unit* cu);
+bool AkeUnit_parse_setup(char* line, struct Ake_comp_unit* cu);
+void AkeUnit_parse_teardown(struct Ake_comp_unit* cu);
 
 #endif

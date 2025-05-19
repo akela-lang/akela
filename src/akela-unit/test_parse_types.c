@@ -10,12 +10,12 @@ void test_parse_types_missing_declaration()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("x + 1", &cu);
+    AkeUnit_parse_setup("x + 1", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "variable not declared: x");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_missing_declaration2()
@@ -24,12 +24,12 @@ void test_parse_types_missing_declaration2()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("foo() + 1", &cu);
+    AkeUnit_parse_setup("foo() + 1", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "variable not declared: foo");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_missing_declaration3()
@@ -38,12 +38,12 @@ void test_parse_types_missing_declaration3()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("x = fn() end", &cu);
+    AkeUnit_parse_setup("x = fn() end", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "variable not declared: x");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_double_function()
@@ -52,12 +52,12 @@ void test_parse_types_double_function()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn foo() end; fn foo() end", &cu);
+    AkeUnit_parse_setup("fn foo() end; fn foo() end", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "duplicate declaration in same scope: foo");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_reserved_type()
@@ -66,12 +66,12 @@ void test_parse_types_reserved_type()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("const Int32: Int32", &cu);
+    AkeUnit_parse_setup("const Int32: Int32", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "identifier reserved as a type: Int32");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_reserved_type2()
@@ -80,12 +80,12 @@ void test_parse_types_reserved_type2()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn Int32() end", &cu);
+    AkeUnit_parse_setup("fn Int32() end", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "identifier reserved as a type: Int32");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_reserved_type3()
@@ -94,12 +94,12 @@ void test_parse_types_reserved_type3()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("for Int32: Int32 = 1:10 end", &cu);
+    AkeUnit_parse_setup("for Int32: Int32 = 1:10 end", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "identifier reserved as a type: Int32");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_reserved_type4()
@@ -108,12 +108,12 @@ void test_parse_types_reserved_type4()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("const list: [10]Int32; for Int32: Int32 in list end", &cu);
+    AkeUnit_parse_setup("const list: [10]Int32; for Int32: Int32 in list end", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "identifier reserved as a type: Int32");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_exists()
@@ -122,12 +122,12 @@ void test_parse_types_exists()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("const x: SuperInt; x + 1", &cu);
+    AkeUnit_parse_setup("const x: SuperInt; x + 1", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "type not defined: SuperInt");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_array()
@@ -136,9 +136,9 @@ void test_parse_types_array()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("const a: [10]Int32; a[1]", &cu);
+    AkeUnit_parse_setup("const a: [10]Int32; a[1]", &cu);
 	Zinc_assert_no_errors(&cu.errors);
-	Zinc_expect_true(cu.valid, "parse_setup valid");
+	Zinc_expect_true(cu.valid, "AkeUnit_parse_setup valid");
 
 	Zinc_assert_ptr(cu.root, "ptr cu.root");
 	Zinc_expect_int_equal(cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
@@ -174,7 +174,7 @@ void test_parse_types_array()
 	Zinc_expect_int_equal(index->type, Ake_ast_type_number, "number index");
 	Zinc_expect_string(&index->value, "1", "1 index");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_error_dseq_comma()
@@ -183,12 +183,12 @@ void test_parse_error_dseq_comma()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(a: Int32,) end", &cu);
+    AkeUnit_parse_setup("fn foo(a: Int32,) end", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "expected declaration after comma");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_error_declaration_colon()
@@ -197,12 +197,12 @@ void test_parse_error_declaration_colon()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("const a", &cu);
+    AkeUnit_parse_setup("const a", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "expected colon after variable(s)");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_error_declaration_type()
@@ -211,12 +211,12 @@ void test_parse_error_declaration_type()
 	
 	struct Ake_comp_unit cu;
 
-    parse_setup("const a: ", &cu);
+    AkeUnit_parse_setup("const a: ", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "expected type identifier or fn");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_error_type_not_defined()
@@ -225,12 +225,12 @@ void test_parse_error_type_not_defined()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("const a: Foo", &cu);
+    AkeUnit_parse_setup("const a: Foo", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "type not defined: Foo");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_error_not_a_type()
@@ -239,12 +239,12 @@ void test_parse_error_not_a_type()
 	
 	struct Ake_comp_unit cu;
 
-    parse_setup("const foo: Int32; const a: foo", &cu);
+    AkeUnit_parse_setup("const foo: Int32; const a: foo", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "identifier is not a type: foo");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_error_duplicate_declarations()
@@ -253,12 +253,12 @@ void test_parse_error_duplicate_declarations()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("const x: Int32; const x: Int32", &cu);
+    AkeUnit_parse_setup("const x: Int32; const x: Int32", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "duplicate declaration in same scope: x");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_error_return_type()
@@ -267,12 +267,12 @@ void test_parse_error_return_type()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn foo()->Int32 true end", &cu);
+    AkeUnit_parse_setup("fn foo()->Int32 true end", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "returned type does not match function return type");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_error_param()
@@ -281,12 +281,12 @@ void test_parse_types_error_param()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(a: Int32) true end; foo(true)", &cu);
+    AkeUnit_parse_setup("fn foo(a: Int32) true end; foo(true)", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "parameter and aguments types do not match");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_error_param_no_value()
@@ -295,12 +295,12 @@ void test_parse_types_error_param_no_value()
 
 	struct Ake_comp_unit cu;
 
-    parse_setup("fn foo(a: Int32) true end; foo(foo(1))", &cu);
+    AkeUnit_parse_setup("fn foo(a: Int32) true end; foo(foo(1))", &cu);
 	Zinc_expect_has_errors(&cu.errors);
 	Zinc_expect_source_error(&cu.errors, "argument expression has no value");
 	Zinc_expect_false(cu.valid, "valid");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types_newline_declaration()
@@ -309,7 +309,7 @@ void test_parse_types_newline_declaration()
 
     struct Ake_comp_unit cu;
 
-    parse_setup("const a\n: \nInt32", &cu);
+    AkeUnit_parse_setup("const a\n: \nInt32", &cu);
     Zinc_expect_no_errors(&cu.errors);
     Zinc_expect_true(cu.valid, "valid");
 
@@ -317,7 +317,7 @@ void test_parse_types_newline_declaration()
     Zinc_assert_ptr(const_, "ptr let");
     Zinc_expect_int_equal(const_->type, Ake_ast_type_const, "type let");
 
-    parse_teardown(&cu);
+    AkeUnit_parse_teardown(&cu);
 }
 
 void test_parse_types()

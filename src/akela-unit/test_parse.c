@@ -11,7 +11,7 @@
 #include <string.h>
 #include "test_parse.h"
 
-bool parse_setup(char* line, struct Ake_comp_unit* cu)
+bool AkeUnit_parse_setup(char* line, struct Ake_comp_unit* cu)
 {
     Zinc_vector* text = NULL;
     Zinc_vector_create(&text, sizeof(char));
@@ -26,7 +26,7 @@ bool parse_setup(char* line, struct Ake_comp_unit* cu)
 	return valid;
 }
 
-void parse_teardown(struct Ake_comp_unit* cu)
+void AkeUnit_parse_teardown(struct Ake_comp_unit* cu)
 {
     Zinc_input_unicode_string* input = cu->input;
     Zinc_vector* text = input->text;
