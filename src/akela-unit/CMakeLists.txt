@@ -8,7 +8,7 @@ set(akela_unit_files
         test_parse_stmts.c
         test_lex_setup.c
         unit_lex.c
-        test_lex_number.c
+        unit_lex_number.c
         test_lex_tools.c
         test_token.c
         test_symbol_table.c
