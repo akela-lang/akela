@@ -3,7 +3,7 @@ set(akela_unit_files
         unit.c
         unit_ast.c
         unit_parse.c
-        test_parse_factor.c
+        unit_parse_factor.c
         unit_parse_expr.c
         test_parse_stmts.c
         unit_lex_setup.c

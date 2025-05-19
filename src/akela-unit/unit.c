@@ -6,7 +6,7 @@
 #include "unit_ast.h"
 #include "test_symbol_table.h"
 #include "test_parse_types.h"
-#include "test_parse_factor.h"
+#include "unit_parse_factor.h"
 #include "test_type.h"
 #include "unit_lex_number.h"
 #include "unit_comp_unit.h"
@@ -28,7 +28,7 @@ void AkeUnit(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_lex_tools);
         Zinc_test_register(test, AkeUnit_ast);
         // CentUnit_type();
-        // test_parse_factor();
+        Zinc_test_register(test, AkeUnit_parse_factor);
         Zinc_test_register(test, AkeUnit_parse_expression);
         // test_parse_statements();
         // test_parse_function();

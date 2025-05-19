@@ -1,6 +1,6 @@
 #ifndef _TEST_PARSE_FACTOR_H
 #define _TEST_PARSE_FACTOR_H
 
-void test_parse_factor();
+void AkeUnit_parse_factor(Zinc_test* test);
 
 #endif
