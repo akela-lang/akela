@@ -14,7 +14,7 @@ set(akela_unit_files
         test_symbol_table.c
         test_parse_types.c
         test_type.c
-        test_comp_unit.c
+        unit_comp_unit.c
         unit_comp_table.c
         test_parse_function.c
         test_parse_struct.c
