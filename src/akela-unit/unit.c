@@ -11,7 +11,7 @@
 #include "unit_lex_number.h"
 #include "unit_comp_unit.h"
 #include "unit_comp_table.h"
-#include "test_lex_tools.h"
+#include "unit_lex_tools.h"
 #include "test_parse_function.h"
 #include "test_parse_struct.h"
 
@@ -25,7 +25,7 @@ void AkeUnit(Zinc_test* test)
         // test_token();
         Zinc_test_register(test, AkeUnit_lex);
         Zinc_test_register(test, AkeUnit_lex_number);
-        // test_lex_tools();
+        Zinc_test_register(test, AkeUnit_lex_tools);
         Zinc_test_register(test, AkeUnit_ast);
         // CentUnit_type();
         // test_parse_factor();
