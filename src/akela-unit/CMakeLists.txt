@@ -1,7 +1,7 @@
 # akela-unit
 set(akela_unit_files
-        test.c
-        test_ast.c
+        unit.c
+        unit_ast.c
         test_parse.c
         test_parse_factor.c
         test_parse_expr.c
@@ -19,12 +19,8 @@ set(akela_unit_files
         test_parse_function.c
         test_parse_struct.c
 )
-add_executable(akela-unit ${akela_unit_files})
-if(${COVERAGE} MATCHES On)
-    target_link_libraries(akela-unit akela zinc ${converage_lib})
-else()
-    target_link_libraries(akela-unit akela zinc ${converage_lib})
-endif()
+add_library(akela-unit STATIC ${akela_unit_files})
+target_link_libraries(akela-unit akela zinc ${coverage_lib})
 
 # event loop
 set(event_loop_files event_loop.c)

@@ -8,6 +8,7 @@ target_link_libraries(test
         coverage-unit
         cobble-unit
         centipede-unit
+        akela-unit
 )
 set_target_properties(test
         PROPERTIES

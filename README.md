@@ -73,7 +73,6 @@ ninja -C cmake-build-debug
     cmake-build-debug/bin/test
 
 ## Run Unit Tests (old framework)
-    cmake-build-debug/bin/akela-unit
     cmake-build-debug/bin/akela-llvm-unit
 
 ## Run Integration and End-to-End Tests
