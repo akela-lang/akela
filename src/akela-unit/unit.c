@@ -1,5 +1,5 @@
 #include "zinc/unit_test.h"
-#include "test_lex.h"
+#include "unit_lex.h"
 #include "test_parse_expr.h"
 #include "test_parse_stmts.h"
 #include "test_token.h"
@@ -23,7 +23,7 @@ void AkeUnit(Zinc_test* test)
         test->solo = false;
 
         // test_token();
-        // CentUnit_unit_lex();
+        Zinc_test_register(test, AkeUnit_lex);
         // test_lex_number();
         // test_lex_tools();
         Zinc_test_register(test, AkeUnit_ast);
