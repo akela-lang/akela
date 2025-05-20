@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "zinc/error_unit_test.h"
 #include "akela/code_gen.h"
-#include "test_cg_tools.h"
+#include "unit_cg_tools.h"
 
 void test_code_gen_last()
 {
@@ -9,7 +9,7 @@ void test_code_gen_last()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    cg_setup("const a: Int32 = 1\n"
+    AkeLlvmUnit_cg_setup("const a: Int32 = 1\n"
              "const b: Int32 = 2\n"
              "a + b\n",
              &result);
@@ -24,7 +24,7 @@ void test_code_gen_if()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    cg_setup("if true\n"
+    AkeLlvmUnit_cg_setup("if true\n"
              "  1\n"
              "end\n",
              &result);
@@ -39,7 +39,7 @@ void test_code_gen_if_else()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("if true\n"
+    AkeLlvmUnit_cg_setup("if true\n"
              "  1\n"
              "else\n"
              "  2\n"
@@ -49,7 +49,7 @@ void test_code_gen_if_else()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("if false\n"
+    AkeLlvmUnit_cg_setup("if false\n"
              "  1\n"
              "else\n"
              "  2\n"
@@ -65,7 +65,7 @@ void test_code_gen_if_elseif_else()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("if true\n"
+    AkeLlvmUnit_cg_setup("if true\n"
              "  1\n"
              "elseif true\n"
              "  2\n"
@@ -77,7 +77,7 @@ void test_code_gen_if_elseif_else()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("if false\n"
+    AkeLlvmUnit_cg_setup("if false\n"
              "  1\n"
              "elseif true\n"
              "  2\n"
@@ -89,7 +89,7 @@ void test_code_gen_if_elseif_else()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("if false\n"
+    AkeLlvmUnit_cg_setup("if false\n"
              "  1\n"
              "elseif false\n"
              "  2\n"
@@ -107,14 +107,14 @@ void test_code_gen_if_expression()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: Int32 = if true 1 else 2 end\n"
+    AkeLlvmUnit_cg_setup("const a: Int32 = if true 1 else 2 end\n"
              "a\n",
              &result);
     Zinc_expect_string(&result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: Int32 = if false 1 else 2 end\n"
+    AkeLlvmUnit_cg_setup("const a: Int32 = if false 1 else 2 end\n"
              "a\n",
              &result);
     Zinc_expect_string(&result.value, "2", "value");
@@ -127,7 +127,7 @@ void akela_llvm_stmts_printf()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("extern printf([100 const]Nat8, ...)\n"
+    AkeLlvmUnit_cg_setup("extern printf([100 const]Nat8, ...)\n"
              "const s: [100 const]Nat8 = \"test printf\n\"\n"
              "printf(s)\n",
              &result);

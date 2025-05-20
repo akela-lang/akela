@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "zinc/error_unit_test.h"
 #include "akela/code_gen.h"
-#include "test_cg_tools.h"
+#include "unit_cg_tools.h"
 
 void test_akela_llvm_function_declare()
 {
@@ -9,7 +9,7 @@ void test_akela_llvm_function_declare()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)\n"
+    AkeLlvmUnit_cg_setup("fn foo(a: Int32, b: Int32, c: Int32)\n"
              "end\n",
              &result);
     Zinc_expect_string(&result.value, "Function", "value");
@@ -22,7 +22,7 @@ void test_akela_llvm_function_declare_ret()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Int32\n"
+    AkeLlvmUnit_cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Int32\n"
              "  a + b + c\n"
              "end\n",
              &result);
@@ -36,7 +36,7 @@ void test_akela_llvm_function_call()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Int32\n"
+    AkeLlvmUnit_cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Int32\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -51,7 +51,7 @@ void test_akela_llvm_function_anonymous_call()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const foo: fn (Int32, Int32, Int32)->Int32 = fn (a: Int32, b: Int32, c: Int32)->Int32\n"
+    AkeLlvmUnit_cg_setup("const foo: fn (Int32, Int32, Int32)->Int32 = fn (a: Int32, b: Int32, c: Int32)->Int32\n"
              "  a + b + c\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -66,7 +66,7 @@ void test_akela_llvm_function_ret_boolean()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Bool\n"
+    AkeLlvmUnit_cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->Bool\n"
              "  true\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -81,7 +81,7 @@ void test_akela_llvm_function_ret_array()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->[6 const]Nat8\n"
+    AkeLlvmUnit_cg_setup("fn foo(a: Int32, b: Int32, c: Int32)->[6 const]Nat8\n"
              "  \"hello\"\n"
              "end\n"
              "foo(1, 2, 3)\n",
@@ -96,7 +96,7 @@ void test_akela_llvm_function_extern()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("extern pow(x: Real64, y: Real64)->Real64\n"
+    AkeLlvmUnit_cg_setup("extern pow(x: Real64, y: Real64)->Real64\n"
              "pow(5.0, 2.0)\n",
              &result);
     Zinc_expect_string(&result.value, "25.000000", "value");
@@ -109,7 +109,7 @@ void test_akela_llvm_function_assign()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo()->Int32 1 end\n"
+    AkeLlvmUnit_cg_setup("fn foo()->Int32 1 end\n"
              "const bar: fn ()->Int32\n"
              "bar = foo\n"
              "bar()\n",
@@ -124,7 +124,7 @@ void test_akela_llvm_function_assign2()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo()->Int32 1 end\n"
+    AkeLlvmUnit_cg_setup("fn foo()->Int32 1 end\n"
              "fn bar()->Int32 2 end\n"
              "foo = bar\n"
              "foo()\n",
@@ -139,7 +139,7 @@ void test_akela_llvm_function_const_assign()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: Int32)->Int32\n"
+    AkeLlvmUnit_cg_setup("fn foo(a: Int32)->Int32\n"
              "  a + 1\n"
              "end\n"
              "const a: fn (Int32)->Int32 = foo\n"
@@ -155,7 +155,7 @@ void test_akela_llvm_function_expression()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn foo(a: Int32)->Int32\n"
+    AkeLlvmUnit_cg_setup("fn foo(a: Int32)->Int32\n"
              "  a + 1\n"
              "end(1)\n",
              &result);
@@ -169,7 +169,7 @@ void test_akela_llvm_function_anonymous_expression()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn (a: Int32)->Int32\n"
+    AkeLlvmUnit_cg_setup("fn (a: Int32)->Int32\n"
              "  a + 1\n"
              "end(1)\n",
              &result);
@@ -183,7 +183,7 @@ void test_akela_llvm_function_array_param()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
+    AkeLlvmUnit_cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
@@ -193,7 +193,7 @@ void test_akela_llvm_function_array_param()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
+    AkeLlvmUnit_cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
@@ -203,7 +203,7 @@ void test_akela_llvm_function_array_param()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
+    AkeLlvmUnit_cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
              "  array[i] + 10\n"
              "end\n"
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
@@ -219,7 +219,7 @@ void test_akela_llvm_function_struct_param()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup(
+    AkeLlvmUnit_cg_setup(
             "struct Point\n"
             "  x: Real64\n"
             "  y: Real64\n"
@@ -237,7 +237,7 @@ void test_akela_llvm_function_struct_param()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup(
+    AkeLlvmUnit_cg_setup(
             "struct Point\n"
             "  x: Real64\n"
             "  y: Real64\n"
@@ -260,7 +260,7 @@ void test_akela_llvm_function_function_param() {
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup(
+    AkeLlvmUnit_cg_setup(
             "fn add_one(x: Int32)->Int32\n"
             "  x + 1\n"
             "end\n"
@@ -276,7 +276,7 @@ void test_akela_llvm_function_function_param() {
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup(
+    AkeLlvmUnit_cg_setup(
             "fn add_one(x: Int32)->Int32\n"
             "  x + 1\n"
             "end\n"
@@ -297,7 +297,7 @@ void test_akela_llvm_function_in_array() {
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup(
+    AkeLlvmUnit_cg_setup(
             "const func_array: [5]fn(Int32)->Int32\n"
             "func_array[0] = fn (x: Int32)->Int32 x*2 end\n"
             "func_array[0](10)",

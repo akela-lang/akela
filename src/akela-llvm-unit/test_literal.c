@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "zinc/error_unit_test.h"
 #include "akela/code_gen.h"
-#include "test_cg_tools.h"
+#include "unit_cg_tools.h"
 
 void test_akela_llvm_literal_integer()
 {
@@ -9,7 +9,7 @@ void test_akela_llvm_literal_integer()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    cg_setup("1", &result);
+    AkeLlvmUnit_cg_setup("1", &result);
     Zinc_expect_string(&result.value, "1", "1");
 
     Ake_code_gen_result_destroy(&result);
@@ -26,7 +26,7 @@ void test_akela_llvm_literal_double()
     Zinc_string_add_format(&v_exp, "%lf", 1.5);
     Zinc_string_finish(&v_exp);
 
-    cg_setup("1.5", &result);
+    AkeLlvmUnit_cg_setup("1.5", &result);
     Zinc_expect_string(&result.value, v_exp.buf, "1.5");
 
     Zinc_string_destroy(&v_exp);
@@ -39,7 +39,7 @@ void test_code_gen_boolean_true()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    cg_setup("true",
+    AkeLlvmUnit_cg_setup("true",
              &result);
     Zinc_expect_string(&result.value, "true", "true");
 
@@ -52,7 +52,7 @@ void test_code_gen_boolean_false()
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
-    cg_setup("false",
+    AkeLlvmUnit_cg_setup("false",
              &result);
     Zinc_expect_string(&result.value, "false", "false");
 

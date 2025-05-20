@@ -5,6 +5,6 @@
 #include "zinc/zstring.h"
 #include "akela/code_gen.h"
 
-bool cg_setup(const char* text, Ake_code_gen_result* result);
+bool AkeLlvmUnit_cg_setup(const char* text, Ake_code_gen_result* result);
 
 #endif

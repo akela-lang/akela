@@ -1,7 +1,7 @@
 #include "zinc/unit_test.h"
 #include "zinc/error_unit_test.h"
 #include "akela/code_gen.h"
-#include "test_cg_tools.h"
+#include "unit_cg_tools.h"
 
 void test_akela_llvm_struct_assign_elements()
 {
@@ -9,7 +9,7 @@ void test_akela_llvm_struct_assign_elements()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -22,7 +22,7 @@ void test_akela_llvm_struct_assign_elements()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -41,7 +41,7 @@ void test_akela_llvm_struct_literal()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -55,7 +55,7 @@ void test_akela_llvm_struct_literal()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -75,7 +75,7 @@ void test_akela_llvm_struct_array2()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [6 const]Nat8 = \"hello\"\n"
+    AkeLlvmUnit_cg_setup("const a: [6 const]Nat8 = \"hello\"\n"
              "a[0]\n",
              &result);
     Zinc_expect_string(&result.value, "104", "value");
@@ -89,7 +89,7 @@ void test_akela_llvm_struct_array3()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [6 const]Nat8 = \"John\"\n"
+    AkeLlvmUnit_cg_setup("const a: [6 const]Nat8 = \"John\"\n"
              "a[0]\n",
              &result);
     Zinc_expect_string(&result.value, "74", "value");
@@ -103,7 +103,7 @@ void test_akela_llvm_struct_array4()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [100 const]Nat8 = \"John\"\n"
+    AkeLlvmUnit_cg_setup("const a: [100 const]Nat8 = \"John\"\n"
              "a[0]\n",
              &result);
     Zinc_expect_string(&result.value, "74", "value");
@@ -117,7 +117,7 @@ void test_akela_llvm_struct_array5()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [100 const]Nat8 = \"John\"\n"
+    AkeLlvmUnit_cg_setup("const a: [100 const]Nat8 = \"John\"\n"
              "a[0]\n",
              &result);
     Zinc_expect_string(&result.value, "74", "value");
@@ -131,7 +131,7 @@ void test_akela_llvm_struct_array6()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [100 const]Nat8 = \"John\"\n"
+    AkeLlvmUnit_cg_setup("const a: [100 const]Nat8 = \"John\"\n"
              "const b: [100 const]Nat8 = a\n"
              "b[0]\n",
              &result);
@@ -146,7 +146,7 @@ void test_akela_llvm_struct_array7()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [4 const]Nat8 = [1,2,3,4]\n"
+    AkeLlvmUnit_cg_setup("const a: [4 const]Nat8 = [1,2,3,4]\n"
              "const b: [4 const]Nat8 = a\n"
              "b[0]\n",
              &result);
@@ -161,7 +161,7 @@ void test_akela_llvm_struct_array8()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup(""
+    AkeLlvmUnit_cg_setup(""
              "struct Foo\n"
              "  x: Nat8\n"
              "end\n"
@@ -180,7 +180,7 @@ void test_akela_llvm_struct_array9()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Foo\n"
+    AkeLlvmUnit_cg_setup("struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
              "const foo: Foo = Foo\n"
@@ -198,7 +198,7 @@ void test_akela_llvm_struct_array10()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [4]Int32 = [1,2,3,4]\n"
+    AkeLlvmUnit_cg_setup("const a: [4]Int32 = [1,2,3,4]\n"
             "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
@@ -217,7 +217,7 @@ void test_akela_llvm_struct_array11()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Foo\n"
+    AkeLlvmUnit_cg_setup("struct Foo\n"
             "  x: [4]Int32\n"
             "end\n"
             "const foo: Foo\n"
@@ -231,7 +231,7 @@ void test_akela_llvm_struct_array11()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
+    AkeLlvmUnit_cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
@@ -243,7 +243,7 @@ void test_akela_llvm_struct_array11()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
+    AkeLlvmUnit_cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
@@ -255,7 +255,7 @@ void test_akela_llvm_struct_array11()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
+    AkeLlvmUnit_cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
@@ -273,7 +273,7 @@ void test_akela_llvm_struct_array12()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Person\n"
+    AkeLlvmUnit_cg_setup("struct Person\n"
              "  first_name: [100 const]Nat8\n"
              "  last_name: [100 const]Nat8\n"
              "  age: Nat32\n"
@@ -289,7 +289,7 @@ void test_akela_llvm_struct_array12()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Person\n"
+    AkeLlvmUnit_cg_setup("struct Person\n"
              "  first_name: [100 const]Nat8\n"
              "  last_name: [100 const]Nat8\n"
              "  age: Nat32\n"
@@ -305,7 +305,7 @@ void test_akela_llvm_struct_array12()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Person\n"
+    AkeLlvmUnit_cg_setup("struct Person\n"
              "  first_name: [100 const]Nat8\n"
              "  last_name: [100 const]Nat8\n"
              "  age: Nat32\n"
@@ -327,7 +327,7 @@ void test_akela_llvm_struct_struct()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -351,7 +351,7 @@ void test_akela_llvm_struct_struct()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -375,7 +375,7 @@ void test_akela_llvm_struct_struct()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -399,7 +399,7 @@ void test_akela_llvm_struct_struct()
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -429,7 +429,7 @@ void test_akela_llvm_struct2()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -450,7 +450,7 @@ void test_akela_llvm_struct_struct2()
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Point\n"
+    AkeLlvmUnit_cg_setup("struct Point\n"
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
@@ -480,7 +480,7 @@ void test_akela_llvm_struct_function() {
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Foo\n"
+    AkeLlvmUnit_cg_setup("struct Foo\n"
              "  compute: fn(Int32)->Int32\n"
              "end\n"
              "const foo: Foo = Foo\n"
@@ -494,7 +494,7 @@ void test_akela_llvm_struct_function() {
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    cg_setup("struct Foo\n"
+    AkeLlvmUnit_cg_setup("struct Foo\n"
              "  compute: fn(Int32)->Int32\n"
              "end\n"
              "const foo: Foo = Foo\n"

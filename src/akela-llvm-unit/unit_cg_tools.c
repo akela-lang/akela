@@ -10,14 +10,14 @@
 #include "zinc/input_unicode_string.h"
 #include "zinc/string_list.h"
 
-void test_chomp(Zinc_string* string)
+void AkeLlvmUnit_chomp(Zinc_string* string)
 {
     while (string->size > 0 && string->buf[string->size - 1] == '\n') {
         string->size--;
     }
 }
 
-bool cg_setup(const char* text, Ake_code_gen_result* result)
+bool AkeLlvmUnit_cg_setup(const char* text, Ake_code_gen_result* result)
 {
     struct Ake_comp_unit* cu = NULL;
     Zinc_malloc_safe((void**)&cu, sizeof(struct Ake_comp_unit));
@@ -56,7 +56,7 @@ bool cg_setup(const char* text, Ake_code_gen_result* result)
     free(vector);
     free(input);
 
-    test_chomp(&result->value);
+    AkeLlvmUnit_chomp(&result->value);
 
     return valid;
 }
