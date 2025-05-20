@@ -1,6 +1,8 @@
 #ifndef TEST_AKELA_LLVM_LITERAL_H
 #define TEST_AKELA_LLVM_LITERAL_H
 
-void test_akela_llvm_literal();
+#include "zinc/test.h"
+
+void AkeLlvmUnit_literal(Zinc_test* test);
 
 #endif

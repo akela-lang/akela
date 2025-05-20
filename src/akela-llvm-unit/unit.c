@@ -1,7 +1,7 @@
 #include <zinc/test.h>
 
 #include "zinc/unit_test.h"
-#include "test_literal.h"
+#include "unit_literal.h"
 #include "test_variable.h"
 #include "test_operator.h"
 #include "test_stmts.h"
@@ -16,7 +16,7 @@ void AkeLlvmUnit(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        // test_akela_llvm_literal();
+        Zinc_test_register(test, AkeLlvmUnit_literal);
         // test_akela_llvm_variable();
         // test_akela_llvm_operator();
         // test_akela_llvm_stmts();
