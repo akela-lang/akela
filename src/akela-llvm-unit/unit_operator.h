@@ -1,6 +1,8 @@
 #ifndef TEST_AKELA_LLVM_OPERATOR
 #define TEST_AKELA_LLVM_OPERATOR
 
-void test_akela_llvm_operator();
+#include "zinc/test.h"
+
+void AkeLlvmUnit_operator(Zinc_test* test);
 
 #endif
