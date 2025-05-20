@@ -5,7 +5,7 @@
 #include "test_variable.h"
 #include "test_operator.h"
 #include "test_stmts.h"
-#include "test_function.h"
+#include "unit_function.h"
 #include "unit_array.h"
 #include "test_struct.h"
 
@@ -21,7 +21,7 @@ void AkeLlvmUnit(Zinc_test* test)
         // test_akela_llvm_operator();
         // test_akela_llvm_stmts();
         Zinc_test_register(test, AkeLlvmUnit_array);
-        // test_akela_llvm_function();
+        Zinc_test_register(test, AkeLlvmUnit_function);
         // test_akela_llvm_struct();
 
         return;
