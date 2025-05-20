@@ -4,7 +4,7 @@
 #include "unit_parse_stmts.h"
 #include "test_token.h"
 #include "unit_ast.h"
-#include "test_symbol_table.h"
+#include "unit_symbol_table.h"
 #include "unit_parse_types.h"
 #include "unit_parse_factor.h"
 #include "test_type.h"
@@ -32,12 +32,11 @@ void AkeUnit(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_parse_expression);
         Zinc_test_register(test, AkeUnit_parse_statements);
         Zinc_test_register(test, AkeUnit_parse_function);
-        // test_symbol_table();
+        Zinc_test_register(test, AkeUnit_symbol_table);
         Zinc_test_register(test, AkeUnit_parse_types);
         Zinc_test_register(test, AkeUnit_comp_unit);
         Zinc_test_register(test, AkeUnit_comp_table);
         Zinc_test_register(test, AkeUnit_parse_struct);
-        // Zinc_print_results();
 
         return;
     }
