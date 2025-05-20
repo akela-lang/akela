@@ -9,6 +9,7 @@ target_link_libraries(test
         cobble-unit
         centipede-unit
         akela-unit
+        akela-llvm-unit
 )
 set_target_properties(test
         PROPERTIES

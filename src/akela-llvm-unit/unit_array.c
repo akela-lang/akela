@@ -1,195 +1,240 @@
-#include "zinc/unit_test.h"
-#include "zinc/error_unit_test.h"
 #include "akela/code_gen.h"
 #include "test_cg_tools.h"
-#include <signal.h>
-#include <string.h>
-#include <setjmp.h>
+#include "zinc/test.h"
+#include "zinc/expect.h"
 
-void test_code_gen_array_const()
+void AkeLlvmUnit_code_gen_array_const(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
+
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4 const]Nat8 = [1,2,3,4]\n"
              "a[1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2", "2");
+    Zinc_test_expect_string(test, &result.value, "2", "2");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_const_string()
+void AkeLlvmUnit_code_gen_const_string(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
+
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
 
     cg_setup("\"hello\"\n", &result);
-    Zinc_expect_string(&result.value, "hello", "value");
+    Zinc_test_expect_string(test, &result.value, "hello", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_const_string2()
+void AkeLlvmUnit_code_gen_const_string2(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
+
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [6 const]Nat8 = \"hello\"\n"
              "a[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "104", "value");
+    Zinc_test_expect_string(test, &result.value, "104", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_array_const2()
+void AkeLlvmUnit_code_gen_array_const2(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5 const]Nat8 = [1,2,3,4,0]\n"
              "a[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "1", "value 0");
+    Zinc_test_expect_string(test, &result.value, "1", "value 0");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5 const]Nat8 = [1,2,3,4,0]\n"
              "a[1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2", "value 1");
+    Zinc_test_expect_string(test, &result.value, "2", "value 1");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5 const]Nat8 = [1,2,3,4,0]\n"
              "a[2]\n",
              &result);
-    Zinc_expect_string(&result.value, "3", "value 2");
+    Zinc_test_expect_string(test, &result.value, "3", "value 2");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5 const]Nat8 = [1,2,3,4,0]\n"
              "a[3]\n",
              &result);
-    Zinc_expect_string(&result.value, "4", "value 3");
+    Zinc_test_expect_string(test, &result.value, "4", "value 3");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5 const]Nat8 = [1,2,3,4,0]\n"
              "a[4]\n",
              &result);
-    Zinc_expect_string(&result.value, "0", "value 4");
+    Zinc_test_expect_string(test, &result.value, "0", "value 4");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_array_literal()
+void AkeLlvmUnit_code_gen_array_literal(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5]Int32 = [1,2,3,4,5]\n"
              "a[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "1", "value");
+    Zinc_test_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5]Int32 = [1,2,3,4,5]\n"
              "a[1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2", "value");
+    Zinc_test_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5]Int32 = [1,2,3,4,5]\n"
              "a[2]\n",
              &result);
-    Zinc_expect_string(&result.value, "3", "value");
+    Zinc_test_expect_string(test, &result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5]Int32 = [1,2,3,4,5]\n"
              "a[3]\n",
              &result);
-    Zinc_expect_string(&result.value, "4", "value");
+    Zinc_test_expect_string(test, &result.value, "4", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [5]Int32 = [1,2,3,4,5]\n"
              "a[4]\n",
              &result);
-    Zinc_expect_string(&result.value, "5", "value");
+    Zinc_test_expect_string(test, &result.value, "5", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_array_literal_multidimensional()
+void AkeLlvmUnit_code_gen_array_literal_multidimensional(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [2][2]Int32 = [[1,2],[3,4]]\n"
              "a[0][0]\n",
              &result);
-    Zinc_expect_string(&result.value, "1", "value");
+    Zinc_test_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [2][2]Int32 = [[1,2],[3,4]]\n"
              "a[0][1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2", "value");
+    Zinc_test_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [2][2]Int32 = [[1,2],[3,4]]\n"
              "a[1][0]\n",
              &result);
-    Zinc_expect_string(&result.value, "3", "value");
+    Zinc_test_expect_string(test, &result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [2][2]Int32 = [[1,2],[3,4]]\n"
              "a[1][1]\n",
              &result);
-    Zinc_expect_string(&result.value, "4", "value");
+    Zinc_test_expect_string(test, &result.value, "4", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_array_literal_signed()
+void AkeLlvmUnit_code_gen_array_literal_signed(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [2][2]Int32 = [[1,-2],[3,4]]\n"
              "a[0][1]\n",
              &result);
-    Zinc_expect_string(&result.value, "-2", "value");
+    Zinc_test_expect_string(test, &result.value, "-2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_array_literal_int32()
+void AkeLlvmUnit_code_gen_array_literal_int32(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [2][2]Int32 = [[1,2],[3,4]]\n"
              "a[0][1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2", "value");
+    Zinc_test_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_array_literal_ptr()
+void AkeLlvmUnit_code_gen_array_literal_ptr(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -197,81 +242,97 @@ void test_code_gen_array_literal_ptr()
              "const b: [4]Int32 = a\n"
              "b[1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2", "value");
+    Zinc_test_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void Test_code_gen_array_boolean()
+void AkeLlvmUnit_code_gen_array_boolean(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Bool = [true,false,true,false]\n"
              "a[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "true", "value");
+    Zinc_test_expect_string(test, &result.value, "true", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Bool = [true,false,true,false]\n"
              "a[1]\n",
              &result);
-    Zinc_expect_string(&result.value, "false", "value");
+    Zinc_test_expect_string(test, &result.value, "false", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Bool = [true,false,true,false]\n"
              "a[2]\n",
              &result);
-    Zinc_expect_string(&result.value, "true", "value");
+    Zinc_test_expect_string(test, &result.value, "true", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Bool = [true,false,true,false]\n"
              "a[3]\n",
              &result);
-    Zinc_expect_string(&result.value, "false", "value");
+    Zinc_test_expect_string(test, &result.value, "false", "value");
     Ake_code_gen_result_destroy(&result);
 
 }
 
-void Test_code_gen_array_float() {
-    Zinc_test_name(__func__);
+void AkeLlvmUnit_code_gen_array_float(Zinc_test* test)
+{
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Real64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "1.000000", "value");
+    Zinc_test_expect_string(test, &result.value, "1.000000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Real64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2.000000", "value");
+    Zinc_test_expect_string(test, &result.value, "2.000000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Real64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[2]\n",
              &result);
-    Zinc_expect_string(&result.value, "3.000000", "value");
+    Zinc_test_expect_string(test, &result.value, "3.000000", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Real64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[3]\n",
              &result);
-    Zinc_expect_string(&result.value, "4.000000", "value");
+    Zinc_test_expect_string(test, &result.value, "4.000000", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_assign_array_id2()
+void AkeLlvmUnit_code_gen_assign_array_id2(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -280,13 +341,18 @@ void test_code_gen_assign_array_id2()
              "a = b\n"
              "a[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "5", "value");
+    Zinc_test_expect_string(test, &result.value, "5", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_assign_array_subscript()
+void AkeLlvmUnit_code_gen_assign_array_subscript(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -294,13 +360,18 @@ void test_code_gen_assign_array_subscript()
              "a[0] = 10\n"
              "a[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "10", "value");
+    Zinc_test_expect_string(test, &result.value, "10", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_assign_array_subscript2()
+void AkeLlvmUnit_code_gen_assign_array_subscript2(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -308,7 +379,7 @@ void test_code_gen_assign_array_subscript2()
              "a[1][2] = 60\n"
              "a[0][0]\n",
              &result);
-    Zinc_expect_string(&result.value, "1", "value");
+    Zinc_test_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -316,7 +387,7 @@ void test_code_gen_assign_array_subscript2()
              "a[1][2] = 60\n"
              "a[0][1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2", "value");
+    Zinc_test_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -324,7 +395,7 @@ void test_code_gen_assign_array_subscript2()
              "a[1][2] = 60\n"
              "a[0][2]\n",
              &result);
-    Zinc_expect_string(&result.value, "3", "value");
+    Zinc_test_expect_string(test, &result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -332,7 +403,7 @@ void test_code_gen_assign_array_subscript2()
              "a[1][2] = 60\n"
              "a[1][0]\n",
              &result);
-    Zinc_expect_string(&result.value, "4", "value");
+    Zinc_test_expect_string(test, &result.value, "4", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -340,7 +411,7 @@ void test_code_gen_assign_array_subscript2()
              "a[1][2] = 60\n"
              "a[1][1]\n",
              &result);
-    Zinc_expect_string(&result.value, "5", "value");
+    Zinc_test_expect_string(test, &result.value, "5", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -348,13 +419,18 @@ void test_code_gen_assign_array_subscript2()
              "a[1][2] = 60\n"
              "a[1][2]\n",
              &result);
-    Zinc_expect_string(&result.value, "60", "value");
+    Zinc_test_expect_string(test, &result.value, "60", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_assign_array_allocate()
+void AkeLlvmUnit_code_gen_assign_array_allocate(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -365,7 +441,7 @@ void test_code_gen_assign_array_allocate()
              "a[3] = 4\n"
              "a[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "1", "value");
+    Zinc_test_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -376,7 +452,7 @@ void test_code_gen_assign_array_allocate()
              "a[3] = 4\n"
              "a[1]\n",
              &result);
-    Zinc_expect_string(&result.value, "2", "value");
+    Zinc_test_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -387,7 +463,7 @@ void test_code_gen_assign_array_allocate()
              "a[3] = 4\n"
              "a[2]\n",
              &result);
-    Zinc_expect_string(&result.value, "3", "value");
+    Zinc_test_expect_string(test, &result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -398,13 +474,18 @@ void test_code_gen_assign_array_allocate()
              "a[3] = 4\n"
              "a[3]\n",
              &result);
-    Zinc_expect_string(&result.value, "4", "value");
+    Zinc_test_expect_string(test, &result.value, "4", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_code_gen_assign_array_id()
+void AkeLlvmUnit_code_gen_assign_array_id(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -413,13 +494,18 @@ void test_code_gen_assign_array_id()
              "b = a\n"
              "b[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "1", "value");
+    Zinc_test_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_akela_llvm_array_assign_sub_array()
+void AkeLlvmUnit_array_assign_sub_array(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -433,7 +519,7 @@ void test_akela_llvm_array_assign_sub_array()
              "b = a[1]\n"
              "b[0]\n",
              &result);
-    Zinc_expect_string(&result.value, "5", "value");
+    Zinc_test_expect_string(test, &result.value, "5", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -447,7 +533,7 @@ void test_akela_llvm_array_assign_sub_array()
              "b = a[1]\n"
              "b[1]\n",
              &result);
-    Zinc_expect_string(&result.value, "6", "value");
+    Zinc_test_expect_string(test, &result.value, "6", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -461,7 +547,7 @@ void test_akela_llvm_array_assign_sub_array()
              "b = a[1]\n"
              "b[2]\n",
              &result);
-    Zinc_expect_string(&result.value, "7", "value");
+    Zinc_test_expect_string(test, &result.value, "7", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -475,27 +561,37 @@ void test_akela_llvm_array_assign_sub_array()
              "b = a[1]\n"
              "b[3]\n",
              &result);
-    Zinc_expect_string(&result.value, "8", "value");
+    Zinc_test_expect_string(test, &result.value, "8", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_akela_llvm_array_subscript_exit()
+void AkeLlvmUnit_array_subscript_exit(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
     cg_setup("const a: [4]Int32 = [1,2,3,4]\n"
              "a[4]\n",
              &result);
-    Zinc_expect_true(true, "exit");
+    Zinc_test_expect_true(test, true, "exit");
 
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_akela_llvm_array_assign_subscript()
+void AkeLlvmUnit_array_assign_subscript(Zinc_test* test)
 {
-    Zinc_test_name(__func__);
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
@@ -508,29 +604,39 @@ void test_akela_llvm_array_assign_subscript()
              "a[1] = b\n"
              "a[1][0]\n",
              &result);
-    Zinc_expect_string(&result.value, "50", "value");
+    Zinc_test_expect_string(test, &result.value, "50", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
-void test_akela_llvm_array()
+void AkeLlvmUnit_array(Zinc_test* test)
 {
-    test_code_gen_array_const();
-    test_code_gen_const_string();
-    test_code_gen_const_string2();
-    test_code_gen_array_const2();
-    test_code_gen_array_literal();
-    test_code_gen_array_literal_multidimensional();
-    test_code_gen_array_literal_signed();
-    test_code_gen_array_literal_int32();
-    test_code_gen_array_literal_ptr();
-    Test_code_gen_array_boolean();
-    Test_code_gen_array_float();
-    test_code_gen_assign_array_id();
-    test_code_gen_assign_array_id2();
-    test_code_gen_assign_array_subscript();
-    test_code_gen_assign_array_subscript2();
-    test_code_gen_assign_array_allocate();
-    test_akela_llvm_array_assign_sub_array();
-    //test_akela_llvm_array_subscript_exit();
-    test_akela_llvm_array_assign_subscript();
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_const);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_const_string);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_const_string2);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_const2);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_literal);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_literal_multidimensional);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_literal_signed);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_literal_int32);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_literal_ptr);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_boolean);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_float);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_assign_array_id);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_assign_array_id2);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_assign_array_subscript);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_assign_array_subscript2);
+        Zinc_test_register(test, AkeLlvmUnit_code_gen_assign_array_allocate);
+        Zinc_test_register(test, AkeLlvmUnit_array_assign_sub_array);
+        //Zinc_test_register(test, AkeLlvmUnit_array_subscript_exit);
+        Zinc_test_register(test, AkeLlvmUnit_array_assign_subscript);
+
+        return;
+    }
+
+    Zinc_test_perform(test);
 }
