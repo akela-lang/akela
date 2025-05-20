@@ -10,7 +10,6 @@ set(akela_unit_files
         unit_lex.c
         unit_lex_number.c
         unit_lex_tools.c
-        test_token.c
         unit_symbol_table.c
         unit_parse_types.c
         test_type.c
