@@ -5,7 +5,7 @@ set(akela_llvm_unit_files
         unit_literal.c
         test_variable.c
         unit_operator.c
-        test_stmts.c
+        unit_stmts.c
         unit_function.c
         unit_array.c
         test_struct.c
