@@ -12,7 +12,7 @@ set(akela_unit_files
         unit_lex_tools.c
         unit_symbol_table.c
         unit_parse_types.c
-        test_type.c
+        unit_type.c
         unit_comp_unit.c
         unit_comp_table.c
         unit_parse_function.c
