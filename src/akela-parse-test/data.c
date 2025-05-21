@@ -1,151 +1,151 @@
 #include "data.h"
 #include "zinc/memory.h"
 
-void Apt_test_init(Apt_test *test)
+void Apt_case_data_init(Apt_case_data *case_data)
 {
-    test->test = NULL;
-    test->snapshot = false;
-    test->has_error = false;
-    Zinc_string_init(&test->source_name);
-    Zinc_input_bounds_init(&test->source_bounds);
-    Zinc_input_bounds_init(&test->ast_bounds);
-    Zinc_string_init(&test->description);
-    Zinc_error_list_init(&test->expected_errors);
-    test->next = NULL;
-    test->prev = NULL;
+    case_data->test = NULL;
+    case_data->snapshot = false;
+    case_data->has_error = false;
+    Zinc_string_init(&case_data->source_name);
+    Zinc_input_bounds_init(&case_data->source_bounds);
+    Zinc_input_bounds_init(&case_data->ast_bounds);
+    Zinc_string_init(&case_data->description);
+    Zinc_error_list_init(&case_data->expected_errors);
+    case_data->next = NULL;
+    case_data->prev = NULL;
 }
 
-void Apt_test_create(Apt_test** test)
+void Apt_case_data_create(Apt_case_data** case_data)
 {
-    Zinc_malloc_safe((void**)test, sizeof(Apt_test));
-    Apt_test_init(*test);
+    Zinc_malloc_safe((void**)case_data, sizeof(Apt_case_data));
+    Apt_case_data_init(*case_data);
 }
 
-void Apt_test_destroy(Apt_test *test)
+void Apt_case_data_destroy(Apt_case_data *case_data)
 {
-    Zinc_string_destroy(&test->source_name);
-    Zinc_string_destroy(&test->description);
-    Zinc_error_list_destroy(&test->expected_errors);
+    Zinc_string_destroy(&case_data->source_name);
+    Zinc_string_destroy(&case_data->description);
+    Zinc_error_list_destroy(&case_data->expected_errors);
 }
 
-void Apt_test_list_init(Apt_test_list* list)
+void Apt_case_data_list_init(Apt_case_data_list* list)
 {
     list->head = NULL;
     list->tail = NULL;
 }
 
-void Apt_test_list_create(Apt_test_list** list)
+void Apt_case_data_list_create(Apt_case_data_list** list)
 {
-    Zinc_malloc_safe((void**)list, sizeof(Apt_test_list));
-    Apt_test_list_init(*list);
+    Zinc_malloc_safe((void**)list, sizeof(Apt_case_data_list));
+    Apt_case_data_list_init(*list);
 }
 
-void Apt_test_list_add(Apt_test_list* list, Apt_test* tc)
+void Apt_case_data_list_add(Apt_case_data_list* list, Apt_case_data* case_data)
 {
     if (list->head && list->tail) {
-        list->tail->next = tc;
-        tc->prev = list->tail;
-        list->tail = tc;
+        list->tail->next = case_data;
+        case_data->prev = list->tail;
+        list->tail = case_data;
     } else {
-        list->head = tc;
-        list->tail = tc;
+        list->head = case_data;
+        list->tail = case_data;
     }
 }
 
-void Apt_test_list_destroy(Apt_test_list* list)
+void Apt_case_data_list_destroy(Apt_case_data_list* list)
 {
-    Apt_test* tc = list->head;
+    Apt_case_data* tc = list->head;
     while (tc) {
-        Apt_test* temp = tc;
+        Apt_case_data* temp = tc;
         tc = tc->next;
-        Apt_test_destroy(temp);
+        Apt_case_data_destroy(temp);
         free(temp);
     }
 }
 
-void Apt_suite_init(Apt_suite *suite)
+void Apt_suite_data_init(Apt_suite_data *suite_data)
 {
-    Zinc_string_init(&suite->path);
-    Zinc_string_init(&suite->name);
-    Zinc_string_init(&suite->description);
-    Zinc_string_init(&suite->text);
-    Apt_test_list_init(&suite->list);
-    suite->test = NULL;
-    Zinc_string_init(&suite->name);
-    suite->next = NULL;
-    suite->prev = NULL;
+    Zinc_string_init(&suite_data->path);
+    Zinc_string_init(&suite_data->name);
+    Zinc_string_init(&suite_data->description);
+    Zinc_string_init(&suite_data->text);
+    Apt_case_data_list_init(&suite_data->list);
+    suite_data->test = NULL;
+    Zinc_string_init(&suite_data->name);
+    suite_data->next = NULL;
+    suite_data->prev = NULL;
 }
 
-void Apt_suite_create(Apt_suite** ts)
+void Apt_suite_data_create(Apt_suite_data** suite_data)
 {
-    Zinc_malloc_safe((void**)ts, sizeof(Apt_suite));
-    Apt_suite_init(*ts);
+    Zinc_malloc_safe((void**)suite_data, sizeof(Apt_suite_data));
+    Apt_suite_data_init(*suite_data);
 }
 
-void Apt_suite_destroy(Apt_suite* ts)
+void Apt_suite_data_destroy(Apt_suite_data* suite_data)
 {
-    Zinc_string_destroy(&ts->path);
-    Zinc_string_destroy(&ts->name);
-    Zinc_string_destroy(&ts->description);
-    Zinc_string_destroy(&ts->text);
-    Apt_test_list_destroy(&ts->list);
+    Zinc_string_destroy(&suite_data->path);
+    Zinc_string_destroy(&suite_data->name);
+    Zinc_string_destroy(&suite_data->description);
+    Zinc_string_destroy(&suite_data->text);
+    Apt_case_data_list_destroy(&suite_data->list);
 }
 
-void Apt_suite_list_init(Apt_suite_list* list)
+void Apt_suite_data_list_init(Apt_suite_data_list* list)
 {
     list->head = NULL;
     list->tail = NULL;
 }
 
-void Apt_suite_list_create(Apt_suite_list** list)
+void Apt_suite_data_list_create(Apt_suite_data_list** list)
 {
-    Zinc_malloc_safe((void**)list, sizeof(Apt_suite_list));
-    Apt_suite_list_init(*list);
+    Zinc_malloc_safe((void**)list, sizeof(Apt_suite_data_list));
+    Apt_suite_data_list_init(*list);
 }
 
-void Apt_suite_list_add(Apt_suite_list* list, Apt_suite* ts)
+void Apt_suite_data_list_add(Apt_suite_data_list* list, Apt_suite_data* suite_data)
 {
     if (list->head && list->tail) {
-        list->tail->next = ts;
-        ts->prev = list->tail;
-        list->tail = ts;
+        list->tail->next = suite_data;
+        suite_data->prev = list->tail;
+        list->tail = suite_data;
     } else {
-        list->head = ts;
-        list->tail = ts;
+        list->head = suite_data;
+        list->tail = suite_data;
     }
 }
 
-void Apt_suite_list_destroy(Apt_suite_list* list)
+void Apt_suite_data_list_destroy(Apt_suite_data_list* list)
 {
-    Apt_suite* ts = list->head;
+    Apt_suite_data* ts = list->head;
     while (ts) {
-        Apt_suite* temp = ts;
+        Apt_suite_data* temp = ts;
         ts = ts->next;
-        Apt_suite_destroy(temp);
+        Apt_suite_data_destroy(temp);
         free(temp);
     }
 }
 
-void Apt_data_init(Apt_data* data)
+void Apt_top_data_init(Apt_top_data* top_data)
 {
-    Zinc_string_init(&data->dir_path);
-    Apt_suite_list_init(&data->suites);
-    Zinc_error_list_init(&data->errors);
-    Zinc_spec_error_list_init(&data->spec_errors);
-    data->test = NULL;
+    Zinc_string_init(&top_data->dir_path);
+    Apt_suite_data_list_init(&top_data->suites);
+    Zinc_error_list_init(&top_data->errors);
+    Zinc_spec_error_list_init(&top_data->spec_errors);
+    top_data->test = NULL;
 }
 
-void Apt_data_create(Apt_data** data)
+void Apt_top_data_create(Apt_top_data** top_data)
 {
-    Zinc_malloc_safe((void**)data, sizeof(Apt_data));
-    Apt_data_init(*data);
+    Zinc_malloc_safe((void**)top_data, sizeof(Apt_top_data));
+    Apt_top_data_init(*top_data);
 }
 
-void Apt_data_destroy(Apt_data* data)
+void Apt_top_data_destroy(Apt_top_data* top_data)
 {
-    Zinc_string_destroy(&data->dir_path);
-    Apt_suite_list_destroy(&data->suites);
-    Zinc_error_list_destroy(&data->errors);
-    Zinc_spec_error_list_destroy(&data->spec_errors);
-    Zinc_test_destroy(data->test);
+    Zinc_string_destroy(&top_data->dir_path);
+    Apt_suite_data_list_destroy(&top_data->suites);
+    Zinc_error_list_destroy(&top_data->errors);
+    Zinc_spec_error_list_destroy(&top_data->spec_errors);
+    Zinc_test_destroy(top_data->test);
 }

@@ -5,6 +5,6 @@
 #include "centipede/comp_unit.h"
 #include "data.h"
 
-void Apt_run(Apt_data* data);
+void Apt_run(Apt_top_data* data);
 
 #endif

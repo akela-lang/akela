@@ -14,11 +14,11 @@
 #include <akela/comp_table.h>
 #include <akela/ast_to_cent.h>
 
-void Apt_run_suite(Apt_data* data, Apt_suite* suite);
-void Apt_run_test(Apt_data* data, Apt_suite* suite, Apt_test* test);
-bool Apt_compare_ast(Apt_data* data, Zinc_test* test, Ake_ast* n, Cent_value* value);
+void Apt_run_suite(Apt_top_data* data, Apt_suite_data* suite);
+void Apt_run_test(Apt_top_data* data, Apt_suite_data* suite, Apt_case_data* test);
+bool Apt_compare_ast(Apt_top_data* data, Zinc_test* test, Ake_ast* n, Cent_value* value);
 bool Apt_compare_type_use(
-    Apt_data* data,
+    Apt_top_data* data,
     Zinc_test* test,
     Zinc_location* loc,
     Ake_type_use* tu,
@@ -26,26 +26,26 @@ bool Apt_compare_type_use(
     Cent_value* value,
     Cent_value* parent_value);
 bool Apt_compare_type_def(
-    Apt_data* data,
+    Apt_top_data* data,
     Zinc_test* test,
     Zinc_location* loc,
     Ake_type_def* td,
     Cent_value* value);
 bool Apt_check_errors(
-    Apt_data* data,
-    Apt_test* test,
+    Apt_top_data* data,
+    Apt_case_data* test,
     Zinc_error_list* errors,
     Cent_value* expected);
 bool Apt_check_error(
-    Apt_data* data,
-    Apt_test* test,
+    Apt_top_data* data,
+    Apt_case_data* test,
     Zinc_error_list* errors,
     Cent_value* expected_error);
 
-void Apt_run(Apt_data* data)
+void Apt_run(Apt_top_data* data)
 {
     data->test->ran = true;
-    Apt_suite* suite = data->suites.head;
+    Apt_suite_data* suite = data->suites.head;
     while (suite) {
         if (!suite->test->mute && (!data->test->has_solo || (suite->test->solo))) {
             Apt_run_suite(data, suite);
@@ -54,11 +54,11 @@ void Apt_run(Apt_data* data)
     }
 }
 
-void Apt_run_suite(Apt_data* data, Apt_suite* suite)
+void Apt_run_suite(Apt_top_data* data, Apt_suite_data* suite)
 {
     Zinc_string_add_string(&suite->test->name, &suite->description);
     suite->test->ran = true;
-    Apt_test* tc = suite->list.head;
+    Apt_case_data* tc = suite->list.head;
     while (tc) {
         if (!tc->test->mute && (!suite->test->has_solo || (tc->test->solo))) {
             Apt_run_test(data, suite, tc);
@@ -67,7 +67,7 @@ void Apt_run_suite(Apt_data* data, Apt_suite* suite)
     }
 }
 
-void Apt_run_test(Apt_data* data, Apt_suite* suite, Apt_test* test)
+void Apt_run_test(Apt_top_data* data, Apt_suite_data* suite, Apt_case_data* test)
 {
     bool pass = true;
 
@@ -162,7 +162,7 @@ void Apt_run_test(Apt_data* data, Apt_suite* suite, Apt_test* test)
     Ake_comp_table_free(ct);
 }
 
-bool Apt_check_errors(Apt_data* data, Apt_test* test, Zinc_error_list* errors, Cent_value* expected)
+bool Apt_check_errors(Apt_top_data* data, Apt_case_data* test, Zinc_error_list* errors, Cent_value* expected)
 {
     printf("check errors\n");
     if (!expected) {
@@ -203,8 +203,8 @@ bool Apt_check_errors(Apt_data* data, Apt_test* test, Zinc_error_list* errors, C
 }
 
 bool Apt_check_error(
-    Apt_data* data,
-    Apt_test* test,
+    Apt_top_data* data,
+    Apt_case_data* test,
     Zinc_error_list* errors,
     Cent_value* expected_error)
 {
@@ -300,7 +300,7 @@ bool Apt_check_error(
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Apt_compare_ast(Apt_data* data, Zinc_test* test, Ake_ast* n, Cent_value* value)
+bool Apt_compare_ast(Apt_top_data* data, Zinc_test* test, Ake_ast* n, Cent_value* value)
 {
     bool pass = true;
 
@@ -423,7 +423,7 @@ bool Apt_compare_ast(Apt_data* data, Zinc_test* test, Ake_ast* n, Cent_value* va
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool Apt_compare_type_use(
-    Apt_data* data,
+    Apt_top_data* data,
     Zinc_test* test,
     Zinc_location* loc,
     Ake_type_use* tu,
@@ -501,7 +501,7 @@ bool Apt_compare_type_use(
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool Apt_compare_type_def(
-    Apt_data* data,
+    Apt_top_data* data,
     Zinc_test* test,
     Zinc_location* loc,
     Ake_type_def* td,

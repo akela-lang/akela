@@ -5,6 +5,6 @@
 #include "data.h"
 
 bool Apt_validate_directory(char* path);
-void Apt_parse_files(Apt_data* data);
+void Apt_parse_files(Apt_top_data* top_data);
 
 #endif

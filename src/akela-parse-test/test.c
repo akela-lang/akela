@@ -17,32 +17,32 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    Apt_data data;
-    Apt_data_init(&data);
-    Zinc_string_add_str(&data.dir_path, path);
+    Apt_top_data top_data;
+    Apt_top_data_init(&top_data);
+    Zinc_string_add_str(&top_data.dir_path, path);
 
-    Apt_parse_files(&data);
+    Apt_parse_files(&top_data);
 
-    if (data.errors.head) {
-        Zinc_error_list_print(&data.errors);
+    if (top_data.errors.head) {
+        Zinc_error_list_print(&top_data.errors);
     } else {
-        Apt_run(&data);
+        Apt_run(&top_data);
 
-        if (data.errors.head) {
-            Zinc_error_list_print(&data.errors);
+        if (top_data.errors.head) {
+            Zinc_error_list_print(&top_data.errors);
         }
     }
 
-    if (data.spec_errors.head) {
-        Zinc_spec_error_list_print(&data.spec_errors);
+    if (top_data.spec_errors.head) {
+        Zinc_spec_error_list_print(&top_data.spec_errors);
     }
 
     Zinc_test_stat stat;
     Zinc_test_stat_init(&stat);
-    Zinc_test_count(data.test, &stat);
+    Zinc_test_count(top_data.test, &stat);
     Zinc_test_print(&stat);
 
-    Apt_data_destroy(&data);
+    Apt_top_data_destroy(&top_data);
 
     return 0;
 }
