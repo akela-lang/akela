@@ -1,26 +1,18 @@
 #include "centipede/parse.h"
 #include "centipede/build.h"
 #include <stdio.h>
-#include <sys/types.h>
-#include <string.h>
-#include <centipede/base.h>
 #include <sys/stat.h>
 #include <zinc/os_win.h>
 
 #include "zinc/input_unicode_file.h"
-#include "centipede/module_finder_file.h"
 #include "centipede/comp_table.h"
 #include "zinc/os_unix.h"
-#include "zinc/spec_error.h"
 #include "compare.h"
 #include "zinc/fs.h"
 #include "zinc/string_list.h"
-#include "cobble/compile.h"
 #include "cobble/match.h"
-#include "parse_tools.h"
 #include "data.h"
 #include "lava/parse.h"
-#include "centipede/parse.h"
 
 #define NAME "akela-parse-test"
 
@@ -34,36 +26,6 @@ void Apt_parse_test(
 void Apt_parse_suite_meta(Apt_top_data* top_data, Apt_suite_data *suite_data, Cent_value* value);
 void Apt_parse_test_meta(Apt_top_data* top_data, Apt_case_data* case_data, Cent_value* value);
 void Apt_parse_test_meta_prop(Zinc_string* name, Cent_value* prop);
-
-bool Apt_validate_directory(char* path)
-{
-    if (!Zinc_file_exists(path)) {
-        perror(path);
-        Zinc_string cwd;
-        Zinc_string_init(&cwd);
-        Zinc_get_cwd(&cwd);
-        Zinc_string_finish(&cwd);
-        fprintf(stderr, "current working directory: %s\n", cwd.buf);
-        Zinc_string_destroy(&cwd);
-        return false;
-    }
-
-    bool is_dir;
-    Zinc_result r = Zinc_is_directory(path, &is_dir);
-    if (r == Zinc_result_error) {
-        printf("%s\n", Zinc_error_message);
-        return false;
-    }
-
-    if (!is_dir) {
-        fprintf(stderr, "%s is not a directory", path);
-        return false;
-    }
-
-    printf("%s\n", path);
-
-    return true;
-}
 
 void Apt_parse_files(Apt_top_data* top_data)
 {
