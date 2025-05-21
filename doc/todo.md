@@ -3,10 +3,10 @@
 # Akela LLVM
 
 # Akela Parse Test
-* use new test framework
+* use register data
 
 # Akela Run Test
-* use new test framework
+* use register data
 
 # Centipede
 

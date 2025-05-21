@@ -17,6 +17,7 @@ struct Zinc_test {
     bool pass;
     bool dry_run;
     Zinc_func func;
+    void* data;
 
     size_t check_count;
     size_t check_passed;
@@ -52,6 +53,7 @@ void Zinc_test_count(Zinc_test* test, Zinc_test_stat* stat);
 void Zinc_test_print(Zinc_test_stat* stat);
 void Zinc_test_print_unseen(Zinc_test* test);
 void Zinc_test_register(Zinc_test* test, Zinc_func func);
+void Zinc_test_register_data(Zinc_test* test, Zinc_func func, void* data);
 void Zinc_test_perform(Zinc_test* test);
 
 #endif

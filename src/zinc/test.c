@@ -17,6 +17,7 @@ void Zinc_test_init(Zinc_test* test)
     test->pass = false;
     test->dry_run = false;
     test->func = NULL;
+    test->data = NULL;
     test->has_printed = false;
     test->check_count = 0;
     test->check_passed = 0;
@@ -139,6 +140,18 @@ void Zinc_test_register(Zinc_test* test, Zinc_func func)
     Zinc_test* new_test = NULL;
     Zinc_test_create(&new_test);
     new_test->func = func;
+    new_test->dry_run = test->dry_run;
+    Zinc_test_add(test, new_test);
+    func(new_test);
+    Zinc_test_set_has_solo(new_test);
+}
+
+void Zinc_test_register_data(Zinc_test* test, Zinc_func func, void* data)
+{
+    Zinc_test* new_test = NULL;
+    Zinc_test_create(&new_test);
+    new_test->func = func;
+    new_test->data = data;
     new_test->dry_run = test->dry_run;
     Zinc_test_add(test, new_test);
     func(new_test);
