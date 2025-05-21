@@ -69,11 +69,8 @@ cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
 ninja -C cmake-build-debug
 ```
 
-## Run Tests (new test framework)
+## Run Tests
     cmake-build-debug/bin/test
-
-## Run Unit Tests (old framework)
-    cmake-build-debug/bin/akela-llvm-unit
 
 ## Run Integration and End-to-End Tests
     cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases

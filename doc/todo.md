@@ -1,11 +1,12 @@
 # Akela
-* use new test framework
 
 # Akela LLVM
 
 # Akela Parse Test
+* use new test framework
 
 # Akela Run Test
+* use new test framework
 
 # Centipede
 
@@ -22,4 +23,3 @@
 # Zinc
 
 # Test
-* add integration tests end-to-end tests

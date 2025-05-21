@@ -6,15 +6,7 @@ config:
 clean:
 	rm -r cmake-build-debug
 unit:
-	cmake-build-debug/bin/zinc-unit
-	cmake-build-debug/bin/akela-unit
-	cmake-build-debug/bin/dataframe-unit
-	cmake-build-debug/bin/cobble-unit
-	cmake-build-debug/bin/centipede-unit
-	cmake-build-debug/bin/json-unit
-	cmake-build-debug/bin/coverage-unit
-	cmake-build-debug/bin/akela-llvm-unit
-	cmake-build-debug/bin/lava-unit
+	cmake-build-debug/bin/test
 test:
 	cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
 	cmake-build-debug/bin/akela-run-test src/akela-run-test/test-cases
