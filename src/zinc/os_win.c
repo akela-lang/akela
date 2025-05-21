@@ -37,18 +37,4 @@ void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename)
     Zinc_string_finish(filename);
 }
 
-Zinc_result Zinc_is_reg_file(Zinc_string* path)
-{
-    char* path_str = Zinc_string_c_str(path);
-    DWORD attributes = GetFileAttributesA(path_str);
-    if (attributes == INVALID_FILE_ATTRIBUTES) {
-        return Zinc_set_error("invalid file path: %s", path);
-    }
-    if (attributes & FILE_ATTRIBUTE_DIRECTORY) {
-        return Zinc_set_error("path is a directory: %s", path);
-    }
-
-    return Zinc_result_ok;
-}
-
 #endif

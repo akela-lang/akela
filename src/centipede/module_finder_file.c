@@ -8,6 +8,7 @@
 #include <string.h>
 #include <errno.h>
 #include "zinc/string_slice.h"
+#include "zinc/fs.h"
 #include "zinc/os_unix.h"
 #include "zinc/os_win.h"
 

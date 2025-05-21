@@ -7,6 +7,7 @@
 #include "centipede-unit/unit.h"
 #include "akela-unit/unit.h"
 #include "akela-llvm-unit/unit.h"
+#include "akela-parse-test/test.h"
 
 void Test_test(Zinc_test* test);
 
@@ -46,6 +47,7 @@ void Test_test(Zinc_test* test)
         Zinc_test_register(test, CentUnit);
         Zinc_test_register(test, AkeUnit);
         Zinc_test_register(test, AkeLlvmUnit);
+        Zinc_test_register(test, Apt);
 
         return;
     }

@@ -216,41 +216,4 @@ Zinc_result Zinc_get_dir_files(Zinc_string* dir, Zinc_string_list* bl)   /* NOLI
     return Zinc_result_ok;
 }
 
-void Zinc_split_path(Zinc_string* path, Zinc_string* dir, Zinc_string* filename)
-{
-    int sep_pos = -1;
-
-    for (int i = 0; i < path->size; i++) {
-        if (path->buf[i] == '/') {
-            sep_pos = i;
-        }
-    }
-
-    if (sep_pos >= 0) {
-        for (int i = 0; i < sep_pos; i++) {
-            Zinc_string_add_char(dir, path->buf[i]);
-        }
-    }
-    Zinc_string_finish(dir);
-
-    for (int i = sep_pos + 1; i < path->size; i++) {
-        Zinc_string_add_char(filename, path->buf[i]);
-    }
-    Zinc_string_finish(filename);
-}
-
-Zinc_result Zinc_is_reg_file(Zinc_string* path)
-{
-    Zinc_string_finish(path);
-    struct stat sb;
-    if (stat(path->buf, &sb) == -1) {
-        return Zinc_set_error("Could not stat file: [%s]: %s", strerror(errno), path->buf);
-    }
-
-    if (!S_ISREG(sb.st_mode)) {
-        return Zinc_set_error("Not a regular file: %s", path->buf);
-    }
-
-    return Zinc_result_ok;
-}
 #endif

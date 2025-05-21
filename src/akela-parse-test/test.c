@@ -3,19 +3,53 @@
 #include "parse.h"
 #include "compare.h"
 #include "zinc/fs.h"
+#include "zinc/test.h"
+#include "errno.h"
+#include <string.h>
+#include "zinc/expect.h"
 
 #define NAME "akela-parse-test"
 
-bool Apt_validate(int argc, char* argv[], Apt_top_data* top_data);
+void Apt_dir_validate(Zinc_test* test, char* path);
 
-int main(int argc, char **argv)
+void Apt(Zinc_test* test)
 {
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, NAME);
+        test->mute = false;
+        test->solo = false;
+        return;
+    }
+
+    char* path_str = NULL;
+    Zinc_get_exe_path(&path_str);
+    Zinc_string path;
+    Zinc_string_init(&path);
+    Zinc_string_add_str(&path, path_str);
+    Zinc_string dir;
+    Zinc_string_init(&dir);
+    Zinc_string filename;
+    Zinc_string_init(&filename);
+    Zinc_split_path(&path, &dir, &filename);
+    Zinc_string_destroy(&path);
+    Zinc_string_destroy(&filename);
+    Zinc_path_append_str(&dir, "akela-parse-config.cent");
+    printf("config: %s\n", Zinc_string_c_str(&dir));
+    Zinc_result r = Zinc_is_reg_file(&dir);
+    Zinc_test_expect_ok(test, r, "is reg file");
+    if (r == Zinc_result_error) {
+        Zinc_string_destroy(&dir);
+        return;
+    }
+
+    // Apt_dir_validate(test, Zinc_string_c_str(&dir));
+
+    Zinc_string_destroy(&dir);
+
+    return;
+
     Apt_top_data top_data;
     Apt_top_data_init(&top_data);
-
-    if (!Apt_validate(argc, argv, &top_data)) {
-        return 1;
-    }
 
     Apt_parse_files(&top_data);
 
@@ -39,44 +73,44 @@ int main(int argc, char **argv)
     Zinc_test_print(&stat);
 
     Apt_top_data_destroy(&top_data);
-
-    return 0;
 }
 
-bool Apt_validate(int argc, char* argv[], Apt_top_data* top_data)
+void Apt_dir_validate(Zinc_test* test, char* path)
 {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s [DIR]\n", NAME);
-        return 1;
-    }
-
-    char* path = argv[1];
-    Zinc_string_add_str(&top_data->dir_path, path);
-
+    test->check_count++;
     if (!Zinc_file_exists(path)) {
-        perror(path);
+        fprintf(stderr, "\t%s:%s", strerror(errno), path);
+
         Zinc_string cwd;
         Zinc_string_init(&cwd);
         Zinc_get_cwd(&cwd);
-        Zinc_string_finish(&cwd);
-        fprintf(stderr, "current working directory: %s\n", cwd.buf);
+        test->check_failed++;
+        test->pass = false;
+        fprintf(stderr, "\tcurrent working directory: %s\n", Zinc_string_c_str(&cwd));
         Zinc_string_destroy(&cwd);
-        return false;
+        return;
     }
+    test->check_passed++;
 
     bool is_dir;
     Zinc_result r = Zinc_is_directory(path, &is_dir);
+    test->check_count++;
     if (r == Zinc_result_error) {
-        printf("%s\n", Zinc_error_message);
-        return false;
+        test->check_failed++;
+        test->pass = false;
+        Zinc_test_print_unseen(test);
+        fprintf(stderr, "\t%s\n", Zinc_error_message);
+        return;
     }
+    test->check_passed++;
 
+    test->check_count++;
     if (!is_dir) {
+        test->check_failed++;
+        test->pass = false;
+        Zinc_test_print_unseen(test);
         fprintf(stderr, "%s is not a directory", path);
-        return false;
+        return;
     }
-
-    printf("%s\n", path);
-
-    return true;
+    test->check_passed++;
 }

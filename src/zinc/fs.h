@@ -14,6 +14,7 @@ enum Zinc_result Zinc_get_temp_file(FILE** fp_out, struct Zinc_string* name);
 enum Zinc_result Zinc_close_temp_file(FILE* fp);
 enum Zinc_result Zinc_delete_temp_file(struct Zinc_string* name);
 enum Zinc_result Zinc_get_exe_path(char** path);
+void Zinc_split_path(struct Zinc_string* path, struct Zinc_string* dir, struct Zinc_string* filename);
 
 #if IS_WIN
 wchar_t* Zinc_char_to_wchar(const char* str);
@@ -22,5 +23,6 @@ void Zinc_list_files2(const wchar_t* directory, Zinc_string_list* files);
 #endif
 
 void Zinc_list_files(const char* directory, Zinc_string_list* files);
+Zinc_result Zinc_is_reg_file(Zinc_string* path);
 
 #endif

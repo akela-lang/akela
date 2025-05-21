@@ -10,6 +10,7 @@ target_link_libraries(test
         centipede-unit
         akela-unit
         akela-llvm-unit
+        akela-parse-test
 )
 set_target_properties(test
         PROPERTIES
