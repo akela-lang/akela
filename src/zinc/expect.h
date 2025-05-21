@@ -51,4 +51,12 @@ void Zinc_test_expect_buffer_list_item(Zinc_test* test, Zinc_string_list* bl, si
 
 void Zinc_test_expect_utf8_char_str(Zinc_test* test, char a[4], int num, char* b, char* message);
 
+void Zinc_test_expect_uint_equal(Zinc_test* test, unsigned int a, unsigned int b, const char* message);
+void Zinc_test_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
+void Zinc_test_expect_string_slice(Zinc_test* test, Zinc_string_slice* sl, Zinc_string* bf, char* message);
+void Zinc_test_expect_string_slice_str(Zinc_test* test, Zinc_string_slice* sl, char* expected, char* message);
+void Zinc_test_expect_utf8_char(Zinc_test* test, char* a, char* b, char* message);
+void Zinc_test_expect_vector_double(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, double threshold, const char* message);
+void Zinc_test_expect_nts(Zinc_test* test, const char* a, const char* b, const char* message);
+
 #endif
