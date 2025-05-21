@@ -7,7 +7,7 @@
 #include "unit_stmts.h"
 #include "unit_function.h"
 #include "unit_array.h"
-#include "test_struct.h"
+#include "unit_struct.h"
 
 void AkeLlvmUnit(Zinc_test* test)
 {
@@ -22,7 +22,7 @@ void AkeLlvmUnit(Zinc_test* test)
         Zinc_test_register(test, AkeLlvmUnit_stmts);
         Zinc_test_register(test, AkeLlvmUnit_array);
         Zinc_test_register(test, AkeLlvmUnit_function);
-        // test_akela_llvm_struct();
+        Zinc_test_register(test, AkeLlvmUnit_struct);
 
         return;
     }
