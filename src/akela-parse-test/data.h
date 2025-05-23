@@ -13,7 +13,6 @@
 
 typedef struct Apt_case_data Apt_case_data;
 struct Apt_case_data {
-    Zinc_test* test;
     bool snapshot;
     bool has_error;
     Zinc_string source_name;
@@ -38,7 +37,6 @@ struct Apt_suite_data {
     Zinc_string description;
     Zinc_string text;
     Apt_case_data_list list;
-    Zinc_test* test;
     Apt_suite_data* next;
     Apt_suite_data* prev;
 };
@@ -53,10 +51,8 @@ typedef struct Apt_top_data Apt_top_data;
 struct Apt_top_data
 {
     Zinc_string dir_path;
-    Apt_suite_data_list suites;
     Zinc_error_list errors;
     Zinc_spec_error_list spec_errors;
-    Zinc_test* test;
 };
 
 void Apt_case_data_init(Apt_case_data *case_data);

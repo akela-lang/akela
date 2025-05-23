@@ -16,38 +16,49 @@
 
 #define NAME "akela-parse-test"
 
-void Apt_parse_suite(Apt_top_data* top_data, Zinc_string* path, Zinc_string* name);
-void Apt_parse_suite_meta(Apt_top_data* top_data, Apt_suite_data *suite_data, Cent_value* value);
-void Apt_parse_case(
-    Apt_top_data* top_data,
+void Apt_parse_suite(
+    Zinc_test* top_test,
+    Zinc_string* test_cases_path,
     Zinc_string* path,
-    Apt_suite_data* suite_data,
+    Zinc_string* name);
+void Apt_parse_suite_meta(
+    Zinc_test* top_test,
+    Zinc_test *suite_test,
+    Cent_value* value);
+void Apt_parse_case(
+    Zinc_test* top_test,
+    Zinc_string* path,
+    Zinc_test* suite_test,
     Lava_dom* dom,
     Zinc_string* name);
-void Apt_parse_case_meta(Apt_top_data* top_data, Apt_case_data* case_data, Cent_value* value);
+void Apt_parse_case_meta(Zinc_test* top_test, Zinc_test* case_test, Cent_value* value);
 void Apt_parse_case_meta_prop(Zinc_string* name, Cent_value* prop);
+void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop);
 
-void Apt_parse_files(Apt_top_data* top_data)
+Zinc_test* Apt__parse_top_test__ = NULL;
+Zinc_test* Apt__parse_suite_test__ = NULL;
+Zinc_test* Apt__parse_case_test__ = NULL;
+
+void Apt_parse_files(Zinc_test* top_test, Zinc_string* test_cases_path)
 {
-    Zinc_test* top_test = NULL;
-    Zinc_test_create(&top_test);
-    top_data->test = top_test;
-    Zinc_string_add_str(&top_test->name, "akela-parse-test");
-
     Zinc_string_list files;
     Zinc_string_list_init(&files);
-    Zinc_list_files(Zinc_string_c_str(&top_data->dir_path), &files);
+    Zinc_list_files(Zinc_string_c_str(test_cases_path), &files);
+
+    Apt_top_data* top_data = NULL;
+    Apt_top_data_create(&top_data);
+    top_test->data = top_data;
 
     Zinc_string_node* node = files.head;
     while (node) {
         if (!Zinc_string_compare_str(&node->value, ".") && !Zinc_string_compare_str(&node->value, "..")) {
             Zinc_string path;
             Zinc_string_init(&path);
-            Zinc_string_add_string(&path, &top_data->dir_path);
+            Zinc_string_add_string(&path, test_cases_path);
             Zinc_path_append(&path, &node->value);
 
             if (Zinc_is_reg_file(&path)) {
-                Apt_parse_suite(top_data, &path, &node->value);
+                Apt_parse_suite(top_test, test_cases_path, &path, &node->value);
             }
 
             Zinc_string_destroy(&path);
@@ -59,8 +70,14 @@ void Apt_parse_files(Apt_top_data* top_data)
     Zinc_string_list_destroy(&files);
 }
 
-void Apt_parse_suite(Apt_top_data* top_data, Zinc_string* path, Zinc_string* name)
+void Apt_parse_suite(
+    Zinc_test* top_test,
+    Zinc_string* test_cases_path,
+    Zinc_string* path,
+    Zinc_string* name)
 {
+    Apt_top_data* top_data = top_test->data;
+
     printf("%s\n", Zinc_string_c_str(path));
     FILE* fp = fopen(Zinc_string_c_str(path), "r");
     if (!fp) {
@@ -75,15 +92,13 @@ void Apt_parse_suite(Apt_top_data* top_data, Zinc_string* path, Zinc_string* nam
         return;
     }
 
-    Apt_suite_data* suite_data = NULL;
-    Apt_suite_data_create(&suite_data);
-    Apt_suite_data_list_add(&top_data->suites, suite_data);
-    Zinc_string_add_string(&suite_data->path, path);
-
     Zinc_test* suite_test = NULL;
     Zinc_test_create(&suite_test);
-    suite_data->test = suite_test;
-    Zinc_test_add(top_data->test, suite_test);
+
+    Apt_suite_data* suite_data = NULL;
+    Apt_suite_data_create(&suite_data);
+    suite_test->data = suite_data;
+    Zinc_string_add_string(&suite_data->path, path);
 
     if (pr.root->kind != LAVA_DOM_HEADER) {
         Zinc_error_list_set(pr.errors, &pr.root->loc, "expected header");
@@ -134,14 +149,14 @@ void Apt_parse_suite(Apt_top_data* top_data, Zinc_string* path, Zinc_string* nam
                 }
                 Cent_comp_table* ct = NULL;
                 fp = fopen(Zinc_string_c_str(path), "r");
-                Cent_comp_table_create_fp(&ct, &top_data->dir_path, name, fp);
+                Cent_comp_table_create_fp(&ct, test_cases_path, name, fp);
                 Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
                 Cent_comp_unit_parse(ct->primary);
                 Cent_comp_unit_build(ct->primary);
                 if (ct->primary->errors.head) {
                     Zinc_error_list_print(&ct->primary->errors);
                 }
-                Apt_parse_suite_meta(top_data, suite_data, ct->primary->value);
+                Apt_parse_suite_meta(top_test, suite_test, ct->primary->value);
                 Cent_comp_table_destroy(ct);
                 free(ct);
             } else if (item->kind == LAVA_DOM_HEADER) {
@@ -153,7 +168,7 @@ void Apt_parse_suite(Apt_top_data* top_data, Zinc_string* path, Zinc_string* nam
                 } else if (item->data.LAVA_DOM_HEADER.level != 2) {
                     Zinc_error_list_set(&top_data->errors, &item->loc, "expected level 2");
                 } else {
-                    Apt_parse_case(top_data, path, suite_data, item, name);
+                    Apt_parse_case(top_test, path, suite_test, item, name);
                 }
             }
 
@@ -163,20 +178,19 @@ void Apt_parse_suite(Apt_top_data* top_data, Zinc_string* path, Zinc_string* nam
 
     Lava_result_destroy(&pr);
 
-    if (suite_data->test->solo) {
-        top_data->test->has_solo = true;
+    if (suite_test->solo) {
+        top_test->has_solo = true;
     }
 }
 
-void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop);
-Apt_top_data* Apt__parse_test_suite_meta_prop_top_data = NULL;
-Apt_suite_data* Apt__parse_test_suite_meta_prop_suite_data = NULL;
-void Apt_parse_suite_meta(Apt_top_data* top_data, Apt_suite_data *suite_data, Cent_value* value)
+void Apt_parse_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value* value)
 {
+    Apt_top_data* top_data = top_test->data;
+
     if (value->type == Cent_value_type_dag) {
         if (Zinc_string_compare_str(&value->name, "TestSuite")) {
-            Apt__parse_test_suite_meta_prop_top_data = top_data;
-            Apt__parse_test_suite_meta_prop_suite_data = suite_data;
+            Apt__parse_top_test__ = top_test;
+            Apt__parse_suite_test__ = suite_test;
             Zinc_hash_map_string_map_name(
                 &value->data.dag.properties,
                 (Zinc_hash_map_string_func_name)Apt__parse_test_suite_meta_prop);
@@ -189,18 +203,21 @@ void Apt_parse_suite_meta(Apt_top_data* top_data, Apt_suite_data *suite_data, Ce
 
 void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop)
 {
-    Apt_top_data* top_data = Apt__parse_test_suite_meta_prop_top_data;
-    Apt_suite_data* suite_data = Apt__parse_test_suite_meta_prop_suite_data;
+    Zinc_test* top_test = Apt__parse_top_test__;
+    Zinc_test* suite_test = Apt__parse_suite_test__;
+    Apt_top_data* top_data = top_test->data;
+    Apt_suite_data* suite_data = suite_test->data;
+
     if (Zinc_string_compare_str(name, "solo")) {
         if (prop->type == Cent_value_type_boolean) {
-            suite_data->test->solo = prop->data.boolean;
+            suite_test->solo = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
             Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
         }
     } else if (Zinc_string_compare_str(name, "mute")) {
         if (prop->type == Cent_value_type_boolean) {
-            suite_data->test->mute = prop->data.boolean;
+            suite_test->mute = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
             Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
@@ -212,23 +229,26 @@ void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop)
 }
 
 void Apt_parse_case(
-    Apt_top_data* top_data,
+    Zinc_test* top_test,
     Zinc_string* path,
-    Apt_suite_data* suite_data,
+    Zinc_test* suite_test,
     Lava_dom* dom,
     Zinc_string* name)
 {
-    Apt_case_data* case_data = NULL;
-    Apt_case_data_create(&case_data);
-    Apt_case_data_list_add(&suite_data->list, case_data);
-    bool seen_meta = false;
+    Apt_top_data* top_data = top_test->data;
+    Apt_suite_data* suite_data = suite_test->data;
 
     Zinc_test* case_test = NULL;
     Zinc_test_create(&case_test);
-    Zinc_test_add(suite_data->test, case_test);
-    case_data->test = case_test;
+    Zinc_test_add(suite_test, case_test);
 
-    Lava_dom* item = dom->data.LAVA_DOM_HEADER.head;
+    Apt_case_data* case_data = NULL;
+    Apt_case_data_create(&case_data);
+    case_test->data = case_data;
+
+    bool seen_meta = false;
+
+     Lava_dom* item = dom->data.LAVA_DOM_HEADER.head;
     while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
             if (case_data->description.size > 0) {
@@ -246,7 +266,7 @@ void Apt_parse_case(
                     Cent_comp_unit_parse(ct->primary);
                     if (!ct->primary->errors.head) {
                         Cent_comp_unit_build(ct->primary);
-                        Apt_parse_case_meta(top_data, case_data, ct->primary->value);
+                        Apt_parse_case_meta(top_test, case_test, ct->primary->value);
                     } else {
                         Zinc_error* e = ct->primary->errors.head;
                         while (e) {
@@ -270,15 +290,16 @@ void Apt_parse_case(
         item = item->next;
     }
 
-    if (case_data->test->solo) {
-        suite_data->test->has_solo = true;
+    if (case_test->solo) {
+        suite_test->has_solo = true;
     }
 }
 
-Apt_top_data* Apt__parse_test_case_data = NULL;
-Apt_case_data* Apt__parse_test_case_tc = NULL;
-void Apt_parse_case_meta(Apt_top_data* top_data, Apt_case_data* case_data, Cent_value* value)
+void Apt_parse_case_meta(Zinc_test* top_test, Zinc_test* case_test, Cent_value* value)
 {
+    Apt_top_data* top_data = top_test->data;
+    Apt_case_data* case_data = case_test->data;
+
     if (!value) {
         Zinc_error_list_set(&top_data->errors, NULL, "expected a value");
         return;
@@ -296,8 +317,8 @@ void Apt_parse_case_meta(Apt_top_data* top_data, Apt_case_data* case_data, Cent_
         return;
     }
 
-    Apt__parse_test_case_data = top_data;
-    Apt__parse_test_case_tc = case_data;
+    Apt__parse_top_test__ = top_test;
+    Apt__parse_case_test__ = case_test;
     Zinc_hash_map_string_map_name(
         &value->data.dag.properties,
         (Zinc_hash_map_string_func_name)Apt_parse_case_meta_prop);
@@ -305,19 +326,21 @@ void Apt_parse_case_meta(Apt_top_data* top_data, Apt_case_data* case_data, Cent_
 
 void Apt_parse_case_meta_prop(Zinc_string* name, Cent_value* prop)
 {
-    Apt_top_data* top_data = Apt__parse_test_suite_meta_prop_top_data;
-    Apt_case_data* case_data = Apt__parse_test_case_tc;
+    Zinc_test* top_test = Apt__parse_top_test__;
+    Zinc_test* case_test = Apt__parse_case_test__;
+    Apt_top_data* top_data = top_test->data;
+    Apt_case_data* case_data = case_test->data;
 
     if (Zinc_string_compare_str(name, "solo")) {
         if (prop->type == Cent_value_type_boolean) {
-            case_data->test->solo = prop->data.boolean;
+            case_test->solo = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
             Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
         }
     } else if (Zinc_string_compare_str(name, "mute")) {
         if (prop->type == Cent_value_type_boolean) {
-            case_data->test->mute = prop->data.boolean;
+            case_test->mute = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
             Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");

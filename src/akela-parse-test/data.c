@@ -3,7 +3,6 @@
 
 void Apt_case_data_init(Apt_case_data *case_data)
 {
-    case_data->test = NULL;
     case_data->snapshot = false;
     case_data->has_error = false;
     Zinc_string_init(&case_data->source_name);
@@ -70,7 +69,6 @@ void Apt_suite_data_init(Apt_suite_data *suite_data)
     Zinc_string_init(&suite_data->description);
     Zinc_string_init(&suite_data->text);
     Apt_case_data_list_init(&suite_data->list);
-    suite_data->test = NULL;
     Zinc_string_init(&suite_data->name);
     suite_data->next = NULL;
     suite_data->prev = NULL;
@@ -129,10 +127,8 @@ void Apt_suite_data_list_destroy(Apt_suite_data_list* list)
 void Apt_top_data_init(Apt_top_data* top_data)
 {
     Zinc_string_init(&top_data->dir_path);
-    Apt_suite_data_list_init(&top_data->suites);
     Zinc_error_list_init(&top_data->errors);
     Zinc_spec_error_list_init(&top_data->spec_errors);
-    top_data->test = NULL;
 }
 
 void Apt_top_data_create(Apt_top_data** top_data)
@@ -144,8 +140,6 @@ void Apt_top_data_create(Apt_top_data** top_data)
 void Apt_top_data_destroy(Apt_top_data* top_data)
 {
     Zinc_string_destroy(&top_data->dir_path);
-    Apt_suite_data_list_destroy(&top_data->suites);
     Zinc_error_list_destroy(&top_data->errors);
     Zinc_spec_error_list_destroy(&top_data->spec_errors);
-    Zinc_test_destroy(top_data->test);
 }

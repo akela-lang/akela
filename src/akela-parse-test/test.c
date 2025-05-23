@@ -1,12 +1,13 @@
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include "zinc/fs.h"
+#include "zinc/test.h"
+#include "zinc/expect.h"
 #include "data.h"
 #include "parse.h"
 #include "compare.h"
-#include "zinc/fs.h"
-#include "zinc/test.h"
-#include "errno.h"
-#include <string.h>
-#include "zinc/expect.h"
+#include "centipede/comp_table.h"
 
 #define NAME "akela-parse-test"
 
@@ -21,56 +22,79 @@ void Apt(Zinc_test* test)
         return;
     }
 
-    char* path_str = NULL;
-    Zinc_get_exe_path(&path_str);
-    Zinc_string path;
-    Zinc_string_init(&path);
-    Zinc_string_add_str(&path, path_str);
+    char* exe_str = NULL;
+    Zinc_get_exe_path(&exe_str);
+
+    Zinc_string exe;
+    Zinc_string_init(&exe);
+    Zinc_string_add_str(&exe, exe_str);
+
     Zinc_string dir;
     Zinc_string_init(&dir);
     Zinc_string filename;
     Zinc_string_init(&filename);
-    Zinc_split_path(&path, &dir, &filename);
-    Zinc_string_destroy(&path);
+    Zinc_split_path(&exe, &dir, &filename);
+
+    Zinc_string_destroy(&exe);
     Zinc_string_destroy(&filename);
-    Zinc_path_append_str(&dir, "akela-parse-config.cent");
-    printf("config: %s\n", Zinc_string_c_str(&dir));
-    Zinc_result r = Zinc_is_reg_file(&dir);
+
+    Zinc_string name;
+    Zinc_string_init(&name);
+    Zinc_string_add_str(&name, "akela-parse-config.cent");
+
+    Zinc_string config_path;
+    Zinc_string_init(&config_path);
+    Zinc_string_add_string(&config_path, &dir);
+    Zinc_path_append(&config_path, &name);
+    printf("config: %s\n", Zinc_string_c_str(&config_path));
+
+    Zinc_result r = Zinc_is_reg_file(&config_path);
     Zinc_test_expect_ok(test, r, "is reg file");
     if (r == Zinc_result_error) {
         Zinc_string_destroy(&dir);
+        Zinc_string_destroy(&name);
+        Zinc_string_destroy(&config_path);
         return;
     }
 
-    // Apt_dir_validate(test, Zinc_string_c_str(&dir));
+    FILE* fp = fopen(Zinc_string_c_str(&config_path), "r");
+    Zinc_test_expect_ptr(test, fp, "fopen");
+    if (!fp) {
+        fprintf(stderr, "could not open file");
+        return;
+    }
+
+    Cent_comp_table* ct = NULL;
+    Cent_comp_table_create_fp(&ct, &dir, &name, fp);
+    Cent_comp_unit_parse(ct->primary);
+    Cent_comp_unit_build(ct->primary);
+    Cent_value* value = ct->primary->value;
+    if (value->type != Cent_value_type_string) {
+        fprintf(stderr, "expected string");
+        return;
+    }
+
+    Zinc_string test_cases_path;
+    Zinc_string_init(&test_cases_path);
+    Zinc_string_add_string(&test_cases_path, &value->data.string);
+    printf("test cases path: %s\n", Zinc_string_c_str(&test_cases_path));
 
     Zinc_string_destroy(&dir);
+    Zinc_string_destroy(&name);
+    Zinc_string_destroy(&config_path);
+    Cent_comp_table_destroy(ct);
+    free(ct);
 
-    return;
+    Apt_dir_validate(test, Zinc_string_c_str(&test_cases_path));
 
     Apt_top_data top_data;
     Apt_top_data_init(&top_data);
 
-    Apt_parse_files(&top_data);
+    Zinc_string_add_string(&top_data.dir_path, &test_cases_path);
 
-    if (top_data.errors.head) {
-        Zinc_error_list_print(&top_data.errors);
-    } else {
-        Apt_run(&top_data);
+    Apt_parse_files(test, &test_cases_path);
 
-        if (top_data.errors.head) {
-            Zinc_error_list_print(&top_data.errors);
-        }
-    }
-
-    if (top_data.spec_errors.head) {
-        Zinc_spec_error_list_print(&top_data.spec_errors);
-    }
-
-    Zinc_test_stat stat;
-    Zinc_test_stat_init(&stat);
-    Zinc_test_count(top_data.test, &stat);
-    Zinc_test_print(&stat);
+    Zinc_string_destroy(&test_cases_path);
 
     Apt_top_data_destroy(&top_data);
 }
