@@ -19,7 +19,8 @@ struct Apt_case_data {
     Zinc_input_bounds source_bounds;
     Zinc_input_bounds ast_bounds;
     Zinc_string description;
-    Zinc_error_list expected_errors;
+    Zinc_error_list errors;
+    Zinc_spec_error_list spec_errors;
     Apt_case_data* next;
     Apt_case_data* prev;
 };
@@ -36,6 +37,7 @@ struct Apt_suite_data {
     Zinc_string name;
     Zinc_string description;
     Zinc_string text;
+    Zinc_error_list errors;
     Apt_case_data_list list;
     Apt_suite_data* next;
     Apt_suite_data* prev;
@@ -52,7 +54,6 @@ struct Apt_top_data
 {
     Zinc_string dir_path;
     Zinc_error_list errors;
-    Zinc_spec_error_list spec_errors;
 };
 
 void Apt_case_data_init(Apt_case_data *case_data);

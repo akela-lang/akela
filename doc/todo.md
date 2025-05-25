@@ -3,7 +3,7 @@
 # Akela LLVM
 
 # Akela Parse Test
-* use register data
+* print out errors
 
 # Akela Run Test
 * use register data
