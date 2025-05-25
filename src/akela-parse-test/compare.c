@@ -41,6 +41,10 @@ bool Apt_check_error(
 
 void Apt_suite_run(Zinc_test* suite_test)
 {
+    Apt_suite_data* suite_data = suite_test->data;
+    if (suite_data->errors.head) {
+        Zinc_error_list_print(&suite_data->errors);
+    }
     Zinc_test_perform(suite_test);
 }
 
@@ -54,7 +58,6 @@ void Apt_case_run(Zinc_test* case_test)
 
     bool pass = true;
 
-    Zinc_string_add_string(&case_test->name, &case_data->description);
     case_test->ran = true;
     FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
     if (!fp) {
@@ -143,6 +146,13 @@ void Apt_case_run(Zinc_test* case_test)
     }
 
     Ake_comp_table_free(ct);
+    if (case_data->errors.head) {
+        Zinc_error_list_print(&case_data->errors);
+    }
+
+    if (case_data->spec_errors.head) {
+        Zinc_spec_error_list_print(&case_data->spec_errors);
+    }
 }
 
 bool Apt_check_errors(

@@ -95,6 +95,10 @@ void Apt(Zinc_test* test)
 
     Apt_parse_files(test, &test_cases_path);
 
+    if (top_data->errors.head) {
+        Zinc_error_list_print(&top_data->errors);
+    }
+
     Zinc_test_perform(test);
 
     Zinc_string_destroy(&test_cases_path);
