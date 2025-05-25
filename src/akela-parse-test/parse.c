@@ -3,18 +3,14 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <zinc/os_win.h>
-
 #include "zinc/input_unicode_file.h"
 #include "centipede/comp_table.h"
-#include "zinc/os_unix.h"
 #include "compare.h"
 #include "zinc/fs.h"
 #include "zinc/string_list.h"
 #include "cobble/match.h"
 #include "data.h"
 #include "lava/parse.h"
-
-#define NAME "akela-parse-test"
 
 void Apt_parse_suite(
     Zinc_test* top_test,
@@ -32,9 +28,9 @@ void Apt_parse_case(
     Lava_dom* dom,
     Zinc_string* name);
 void Apt_parse_case_meta(Zinc_test* top_test, Zinc_test* case_test, Cent_value* value);
-void Apt_parse_case_meta_prop(Zinc_string* name, Cent_value* prop);
-void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop);
 
+void Apt__parse_suite_meta_prop__(Zinc_string* name, Cent_value* prop);
+void Apt__parse_case_meta_prop__(Zinc_string* name, Cent_value* prop);
 Zinc_test* Apt__parse_top_test__ = NULL;
 Zinc_test* Apt__parse_suite_test__ = NULL;
 Zinc_test* Apt__parse_case_test__ = NULL;
@@ -94,6 +90,7 @@ void Apt_parse_suite(
 
     Zinc_test* suite_test = NULL;
     Zinc_test_create(&suite_test);
+    Zinc_test_add(top_test, suite_test);
 
     Apt_suite_data* suite_data = NULL;
     Apt_suite_data_create(&suite_data);
@@ -181,6 +178,8 @@ void Apt_parse_suite(
     if (suite_test->solo) {
         top_test->has_solo = true;
     }
+
+    Zinc_string_add_string(&suite_test->name, &suite_data->description);
 }
 
 void Apt_parse_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value* value)
@@ -193,7 +192,7 @@ void Apt_parse_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value
             Apt__parse_suite_test__ = suite_test;
             Zinc_hash_map_string_map_name(
                 &value->data.dag.properties,
-                (Zinc_hash_map_string_func_name)Apt__parse_test_suite_meta_prop);
+                (Zinc_hash_map_string_func_name)Apt__parse_suite_meta_prop__);
         } else {
             Cent_ast* n = value->n;
             Zinc_error_list_set(&top_data->errors, &n->loc, "expected TestSuite");
@@ -201,7 +200,7 @@ void Apt_parse_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value
     }
 }
 
-void Apt__parse_test_suite_meta_prop(Zinc_string* name, Cent_value* prop)
+void Apt__parse_suite_meta_prop__(Zinc_string* name, Cent_value* prop)
 {
     Zinc_test* top_test = Apt__parse_top_test__;
     Zinc_test* suite_test = Apt__parse_suite_test__;
@@ -248,7 +247,7 @@ void Apt_parse_case(
 
     bool seen_meta = false;
 
-     Lava_dom* item = dom->data.LAVA_DOM_HEADER.head;
+    Lava_dom* item = dom->data.LAVA_DOM_HEADER.head;
     while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
             if (case_data->description.size > 0) {
@@ -293,6 +292,8 @@ void Apt_parse_case(
     if (case_test->solo) {
         suite_test->has_solo = true;
     }
+
+    Zinc_string_add_string(&case_test->name, &case_data->description);
 }
 
 void Apt_parse_case_meta(Zinc_test* top_test, Zinc_test* case_test, Cent_value* value)
@@ -321,10 +322,10 @@ void Apt_parse_case_meta(Zinc_test* top_test, Zinc_test* case_test, Cent_value* 
     Apt__parse_case_test__ = case_test;
     Zinc_hash_map_string_map_name(
         &value->data.dag.properties,
-        (Zinc_hash_map_string_func_name)Apt_parse_case_meta_prop);
+        (Zinc_hash_map_string_func_name)Apt__parse_case_meta_prop__);
 }
 
-void Apt_parse_case_meta_prop(Zinc_string* name, Cent_value* prop)
+void Apt__parse_case_meta_prop__(Zinc_string* name, Cent_value* prop)
 {
     Zinc_test* top_test = Apt__parse_top_test__;
     Zinc_test* case_test = Apt__parse_case_test__;

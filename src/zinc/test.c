@@ -2,9 +2,11 @@
 #include "memory.h"
 #include "list.h"
 #include <assert.h>
+#include "string_list.h"
 
 void Zinc_test_set_has_solo(Zinc_test* test);
 bool Zinc_test_has_solo(Zinc_test* test);
+void Zinc_test_get_names(Zinc_test* test, Zinc_string_list* list);
 
 void Zinc_test_init(Zinc_test* test)
 {
@@ -94,8 +96,31 @@ void Zinc_test_count(Zinc_test* test, Zinc_test_stat* stat)
             stat->check_passed += test->check_passed;
             stat->check_failed += test->check_failed;
         } else {
+            printf("[");
+            Zinc_string_list list;
+            Zinc_string_list_init(&list);
+            Zinc_test_get_names(test, &list);
+            Zinc_string_node* node = list.tail;
+            while (node) {
+                if (node->next) {
+                    printf("/");
+                }
+                printf("%s", Zinc_string_c_str(&node->value));
+                node = node->prev;
+            }
+            printf("] skipped\n");
             stat->skip++;
+            Zinc_string_list_destroy(&list);
         }
+    }
+}
+
+void Zinc_test_get_names(Zinc_test* test, Zinc_string_list* list)
+{
+    Zinc_test* p = test;
+    while (p) {
+        Zinc_string_list_add_bf(list, &p->name);
+        p = p->parent;
     }
 }
 
@@ -194,7 +219,9 @@ void Zinc_test_perform(Zinc_test* test)
             p->dry_run = false;
             p->ran = true;
             p->pass = true;
-            p->func(p);
+            if (p->func) {
+                p->func(p);
+            }
         }
         p = p->next;
     }

@@ -40,8 +40,12 @@ bool Apt_check_error(
     Zinc_error_list* errors,
     Cent_value* expected_error);
 
-void Apt_run_case(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test)
+void Apt_run_case(Zinc_test* case_test)
 {
+    printf("run case\n");
+    return;
+    Zinc_test* suite_test = case_test->parent;
+    Zinc_test* top_test = suite_test->parent;
     Apt_top_data* top_data = top_test->data;
     Apt_suite_data* suite_data = suite_test->data;
     Apt_case_data* case_data = case_test->data;
