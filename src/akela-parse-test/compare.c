@@ -13,7 +13,6 @@
 #include <akela/comp_table.h>
 #include <akela/ast_to_cent.h>
 
-void Apt_run_case(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test);
 bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent_value* value);
 bool Apt_compare_type_use(
     Apt_top_data* top_data,
@@ -40,10 +39,13 @@ bool Apt_check_error(
     Zinc_error_list* errors,
     Cent_value* expected_error);
 
-void Apt_run_case(Zinc_test* case_test)
+void Apt_suite_run(Zinc_test* suite_test)
 {
-    printf("run case\n");
-    return;
+    Zinc_test_perform(suite_test);
+}
+
+void Apt_case_run(Zinc_test* case_test)
+{
     Zinc_test* suite_test = case_test->parent;
     Zinc_test* top_test = suite_test->parent;
     Apt_top_data* top_data = top_test->data;
@@ -148,7 +150,6 @@ bool Apt_check_errors(Zinc_test* top_test, Zinc_test* case_test, Zinc_error_list
     Apt_top_data* top_data = top_test->data;
     Apt_case_data* case_data = case_test->data;
 
-    printf("check errors\n");
     if (!expected) {
         Zinc_error_list_set(&top_data->errors, NULL, "expected Errors");
         return false;

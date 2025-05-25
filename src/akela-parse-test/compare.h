@@ -3,6 +3,7 @@
 
 #include <zinc/test.h>
 
-void Apt_run_case(Zinc_test* case_test);
+void Apt_suite_run(Zinc_test* suite_test);
+void Apt_case_run(Zinc_test* case_test);
 
 #endif

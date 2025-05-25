@@ -87,17 +87,18 @@ void Apt(Zinc_test* test)
 
     Apt_dir_validate(test, Zinc_string_c_str(&test_cases_path));
 
-    Apt_top_data top_data;
-    Apt_top_data_init(&top_data);
+    Apt_top_data* top_data = NULL;
+    Apt_top_data_create(&top_data);
+    test->data = top_data;
 
-    Zinc_string_add_string(&top_data.dir_path, &test_cases_path);
+    Zinc_string_add_string(&top_data->dir_path, &test_cases_path);
 
     Apt_parse_files(test, &test_cases_path);
 
     Zinc_test_perform(test);
 
     Zinc_string_destroy(&test_cases_path);
-    Apt_top_data_destroy(&top_data);
+    Apt_top_data_destroy(top_data);
 }
 
 void Apt_dir_validate(Zinc_test* test, char* path)

@@ -11,6 +11,7 @@
 #include "cobble/match.h"
 #include "data.h"
 #include "lava/parse.h"
+#include "compare.h"
 
 void Apt_parse_suite(
     Zinc_test* top_test,
@@ -41,9 +42,7 @@ void Apt_parse_files(Zinc_test* top_test, Zinc_string* test_cases_path)
     Zinc_string_list_init(&files);
     Zinc_list_files(Zinc_string_c_str(test_cases_path), &files);
 
-    Apt_top_data* top_data = NULL;
-    Apt_top_data_create(&top_data);
-    top_test->data = top_data;
+    Apt_top_data* top_data = top_test->data;
 
     Zinc_string_node* node = files.head;
     while (node) {
@@ -180,6 +179,7 @@ void Apt_parse_suite(
     }
 
     Zinc_string_add_string(&suite_test->name, &suite_data->description);
+    suite_test->func = Apt_suite_run;
 }
 
 void Apt_parse_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value* value)
@@ -294,6 +294,7 @@ void Apt_parse_case(
     }
 
     Zinc_string_add_string(&case_test->name, &case_data->description);
+    case_test->func = Apt_case_run;
 }
 
 void Apt_parse_case_meta(Zinc_test* top_test, Zinc_test* case_test, Cent_value* value)
