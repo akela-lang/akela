@@ -27,35 +27,6 @@ void Art_collect(
     Zinc_string* path,
     Zinc_string* file_name);
 
-bool Art_validate_directory(const char* path)
-{
-    struct stat sb;
-    if (!Zinc_file_exists(path)) {
-        perror(path);
-        Zinc_string cwd;
-        Zinc_string_init(&cwd);
-        Zinc_get_cwd(&cwd);
-        Zinc_string_finish(&cwd);
-        fprintf(stderr, "current working directory: %s\n", cwd.buf);
-        Zinc_string_destroy(&cwd);
-        return false;
-    }
-
-    bool is_dir;
-    Zinc_result r = Zinc_is_directory(path, &is_dir);
-    if (r == Zinc_result_error) {
-        fprintf(stderr, "%s\n", Zinc_error_message);
-        return false;
-    }
-
-    if (!is_dir) {
-        fprintf(stderr, "%s is not a directory", path);
-        return false;
-    }
-
-    return true;
-}
-
 void Art_parse_files(Art_data* data, char* dir_name)
 {
     Cob_re ext_re = Cob_compile_str("\\.md$");

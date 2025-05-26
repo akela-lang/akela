@@ -4,9 +4,11 @@
 #include "test_case.h"
 #include "data.h"
 #include "type_info.h"
+#include "zinc/fs.h"
 
 #define NAME "akela-run-test"
 
+bool Art_validate_directory(const char* path);
 bool Art_print_errors(Art_data* data);
 
 int main(int argc, const char* argv[])
@@ -49,6 +51,34 @@ int main(int argc, const char* argv[])
     Art_data_destroy(&data);
 
     return 0;
+}
+
+bool Art_validate_directory(const char* path)
+{
+    if (!Zinc_file_exists(path)) {
+        perror(path);
+        Zinc_string cwd;
+        Zinc_string_init(&cwd);
+        Zinc_get_cwd(&cwd);
+        Zinc_string_finish(&cwd);
+        fprintf(stderr, "current working directory: %s\n", cwd.buf);
+        Zinc_string_destroy(&cwd);
+        return false;
+    }
+
+    bool is_dir;
+    Zinc_result r = Zinc_is_directory(path, &is_dir);
+    if (r == Zinc_result_error) {
+        fprintf(stderr, "%s\n", Zinc_error_message);
+        return false;
+    }
+
+    if (!is_dir) {
+        fprintf(stderr, "%s is not a directory", path);
+        return false;
+    }
+
+    return true;
 }
 
 bool Art_print_errors(Art_data* data)
