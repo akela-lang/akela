@@ -73,7 +73,6 @@ void Apt_parse_suite(
 {
     Apt_top_data* top_data = top_test->data;
 
-    printf("%s\n", Zinc_string_c_str(path));
     FILE* fp = fopen(Zinc_string_c_str(path), "r");
     if (!fp) {
         perror(Zinc_string_c_str(path));

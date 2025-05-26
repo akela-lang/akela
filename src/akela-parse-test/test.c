@@ -46,7 +46,6 @@ void Apt(Zinc_test* test)
     Zinc_string_init(&config_path);
     Zinc_string_add_string(&config_path, &dir);
     Zinc_path_append(&config_path, &name);
-    printf("config: %s\n", Zinc_string_c_str(&config_path));
 
     Zinc_result r = Zinc_is_reg_file(&config_path);
     Zinc_test_expect_ok(test, r, "is reg file");
@@ -77,7 +76,6 @@ void Apt(Zinc_test* test)
     Zinc_string test_cases_path;
     Zinc_string_init(&test_cases_path);
     Zinc_string_add_string(&test_cases_path, &value->data.string);
-    printf("test cases path: %s\n", Zinc_string_c_str(&test_cases_path));
 
     Zinc_string_destroy(&dir);
     Zinc_string_destroy(&name);
