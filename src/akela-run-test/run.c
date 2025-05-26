@@ -5,6 +5,7 @@
 #include "data.h"
 #include "type_info.h"
 #include "zinc/fs.h"
+#include "centipede/comp_table.h"
 
 #define NAME "akela-run-test"
 
@@ -17,6 +18,33 @@ void Art(Zinc_test* test)
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
+
+        char* exe;
+        Zinc_get_exe_path(&exe);
+        Zinc_string exe_path;
+        Zinc_string_init(&exe_path);
+        Zinc_string_add_str(&exe_path, exe);
+
+        Zinc_string dir_path;
+        Zinc_string_init(&dir_path);
+
+        Zinc_string filename;
+        Zinc_string_init(&filename);
+
+        Zinc_split_path(&exe_path, &dir_path, &filename);
+
+        Zinc_string config_path;
+        Zinc_string_init(&config_path);
+
+        Zinc_string_add_string(&config_path, &dir_path);
+        Zinc_path_append_str(&config_path, "akela-run-test.cent");
+
+        printf("config: %s\n", Zinc_string_c_str(&config_path));
+
+        Zinc_string_destroy(&exe_path);
+        Zinc_string_destroy(&dir_path);
+        Zinc_string_destroy(&filename);
+        Zinc_string_destroy(&config_path);
     } else {
         Zinc_test_perform(test);
     }

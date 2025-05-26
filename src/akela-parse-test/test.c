@@ -40,7 +40,7 @@ void Apt(Zinc_test* test)
 
     Zinc_string name;
     Zinc_string_init(&name);
-    Zinc_string_add_str(&name, "akela-parse-config.cent");
+    Zinc_string_add_str(&name, "test-config.cent");
 
     Zinc_string config_path;
     Zinc_string_init(&config_path);
@@ -68,14 +68,30 @@ void Apt(Zinc_test* test)
     Cent_comp_unit_parse(ct->primary);
     Cent_comp_unit_build(ct->primary);
     Cent_value* value = ct->primary->value;
-    if (value->type != Cent_value_type_string) {
-        fprintf(stderr, "expected string");
+    if (value->type != Cent_value_type_dag) {
+        fprintf(stderr, "expected DAG");
+        return;
+    }
+
+    if (!Zinc_string_compare_str(&value->name, "Test")) {
+        fprintf(stderr, "\texpected Test\n");
+        return;
+    }
+
+    Cent_value* dir_value = Cent_value_get_str(value, "akela_parse_test");
+    if (!dir_value) {
+        fprintf(stderr, "\texpected akela_parse_test\n");
+        return;
+    }
+
+    if (dir_value->type != Cent_value_type_string) {
+        fprintf(stderr, "\texpected string\n");
         return;
     }
 
     Zinc_string test_cases_path;
     Zinc_string_init(&test_cases_path);
-    Zinc_string_add_string(&test_cases_path, &value->data.string);
+    Zinc_string_add_string(&test_cases_path, &dir_value->data.string);
 
     Zinc_string_destroy(&dir);
     Zinc_string_destroy(&name);
