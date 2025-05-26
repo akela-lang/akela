@@ -5,9 +5,10 @@ set(run_files
         test_case.c
         type_info.c
 )
-add_executable(akela-run-test ${run_files})
+add_library(akela-run-test STATIC ${run_files})
 target_link_libraries(akela-run-test akela-llvm ${llvm_libs} akela centipede cobble lava zinc)
 set_target_properties(akela-run-test
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
 )

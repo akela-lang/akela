@@ -11,46 +11,49 @@
 bool Art_validate_directory(const char* path);
 bool Art_print_errors(Art_data* data);
 
-int main(int argc, const char* argv[])
+void Art(Zinc_test* test)
 {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s [DIR]\n", NAME);
-        return 1;
+    if (test->dry_run) {
+        Zinc_string_add_str(&test->name, __func__);
+        test->mute = false;
+        test->solo = false;
+    } else {
+        Zinc_test_perform(test);
     }
 
-    const char* dir_path = argv[1];
-    if (!Art_validate_directory(dir_path)) {
-        return 1;
-    }
-
-    Art_data data;
-    Art_data_init(&data);
-
-    Zinc_string_add_str(&data.dir_path, dir_path);
-    Art_parse_files(&data, dir_path);
-
-    if (Art_print_errors(&data)) {
-        Art_data_destroy(&data);
-        return 1;
-    }
-
-    Run_get_type_info(&data);
-
-    if (Art_print_errors(&data)) {
-        Art_data_destroy(&data);
-        return 1;
-    }
-
-    Art_run(&data);
-
-    Zinc_test_stat stat;
-    Zinc_test_stat_init(&stat);
-    Zinc_test_count(data.test, &stat);
-    Zinc_test_print(&stat);
-
-    Art_data_destroy(&data);
-
-    return 0;
+    return;
+    // if (!Art_validate_directory(dir_path)) {
+    //     return 1;
+    // }
+    //
+    // Art_data data;
+    // Art_data_init(&data);
+    //
+    // Zinc_string_add_str(&data.dir_path, dir_path);
+    // Art_parse_files(&data, dir_path);
+    //
+    // if (Art_print_errors(&data)) {
+    //     Art_data_destroy(&data);
+    //     return 1;
+    // }
+    //
+    // Run_get_type_info(&data);
+    //
+    // if (Art_print_errors(&data)) {
+    //     Art_data_destroy(&data);
+    //     return 1;
+    // }
+    //
+    // Art_run(&data);
+    //
+    // Zinc_test_stat stat;
+    // Zinc_test_stat_init(&stat);
+    // Zinc_test_count(data.test, &stat);
+    // Zinc_test_print(&stat);
+    //
+    // Art_data_destroy(&data);
+    //
+    // return 0;
 }
 
 bool Art_validate_directory(const char* path)

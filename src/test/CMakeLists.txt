@@ -11,6 +11,7 @@ target_link_libraries(test
         akela-unit
         akela-llvm-unit
         akela-parse-test
+        akela-run-test
 )
 set_target_properties(test
         PROPERTIES
