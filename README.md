@@ -72,8 +72,7 @@ ninja -C cmake-build-debug
 ## Run Tests
     cmake-build-debug/bin/test
 
-## Run Integration and End-to-End Tests
-    cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
+## Run End-to-End Tests
     cmake-build-debug/bin/akela-run-test src/akela-run-test/test-cases
 
 ## Run JIT on file
