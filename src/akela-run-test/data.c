@@ -114,6 +114,12 @@ void Art_data_init(Art_top_data* top_data)
     top_data->tail = NULL;
 }
 
+void Art_data_create(Art_top_data** top_data)
+{
+    Zinc_malloc_safe((void**)top_data, sizeof(Art_top_data));
+    Art_data_init(*top_data);
+}
+
 void Art_data_destroy(Art_top_data* top_data)
 {
     Zinc_string_destroy(&top_data->dir_path);

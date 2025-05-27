@@ -108,29 +108,29 @@ void Art(Zinc_test* test)
         Zinc_string_destroy(&config_name);
         Cent_comp_table_destroy(ct);
 
-        Art_top_data data;
-        Art_data_init(&data);
+        Art_top_data* top_data = NULL;
+        Art_data_create(&top_data);
+        test->data = top_data;
 
-        Zinc_string_add_string(&data.dir_path, &akela_run_test_dir);
-        Art_parse_files(&data, Zinc_string_c_str(&akela_run_test_dir));
+        Zinc_string_add_string(&top_data->dir_path, &akela_run_test_dir);
+        Art_parse_files(top_data, Zinc_string_c_str(&akela_run_test_dir));
 
-        if (Art_print_errors(&data)) {
-            Art_data_destroy(&data);
+        if (Art_print_errors(top_data)) {
+            Art_data_destroy(top_data);
             return;
         }
 
-        Run_get_type_info(&data);
+        Run_get_type_info(top_data);
 
-        if (Art_print_errors(&data)) {
-            Art_data_destroy(&data);
+        if (Art_print_errors(top_data)) {
+            Art_data_destroy(top_data);
             return;
         }
 
-        Art_run(&data);
+        Art_run(top_data);
 
-        Art_data_destroy(&data);
-
-        return;
+        Art_data_destroy(top_data);
+        free(top_data);
 
     } else {
         Zinc_test_perform(test);
