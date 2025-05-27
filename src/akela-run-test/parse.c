@@ -16,18 +16,18 @@
 #include "zinc/fs.h"
 #include "lava/parse.h"
 
-void Art_test_suite_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header);
-void Art_test_suite_meta(Art_data* top_data, Art_suite* suite_data, Cent_value* value);
-void Art_test_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header);
-void Art_test_meta(Art_data* top_data, Art_suite* suite_data, Art_test* case_data, Cent_value* value);
+void Art_test_suite_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header);
+void Art_test_suite_meta(Art_top_data* top_data, Art_suite_data* suite_data, Cent_value* value);
+void Art_test_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header);
+void Art_test_meta(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data, Cent_value* value);
 
 void Art_collect(
-    Art_data* top_data,
+    Art_top_data* top_data,
     Zinc_string* dir_path,
     Zinc_string* path,
     Zinc_string* file_name);
 
-void Art_parse_files(Art_data* top_data, char* dir_name)
+void Art_parse_files(Art_top_data* top_data, char* dir_name)
 {
     Cob_re ext_re = Cob_compile_str("\\.md$");
 
@@ -76,9 +76,9 @@ void Art_parse_files(Art_data* top_data, char* dir_name)
     Cob_re_destroy(&ext_re);
 }
 
-void Art_collect(Art_data* top_data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
+void Art_collect(Art_top_data* top_data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
 {
-    Art_suite* suite_data = NULL;
+    Art_suite_data* suite_data = NULL;
     Art_suite_create(&suite_data);
     Art_data_add(top_data, suite_data);
 
@@ -130,7 +130,7 @@ void Art_collect(Art_data* top_data, Zinc_string* dir_path, Zinc_string* path, Z
     Lava_result_destroy(&lr);
 }
 
-void Art_test_suite_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header)
+void Art_test_suite_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header)
 {
     Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
     while (item) {
@@ -183,7 +183,7 @@ void Art_test_suite_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* 
     Zinc_string_add_string(&suite_data->test->name, &suite_data->description);
 }
 
-void Art_test_suite_meta(Art_data* top_data, Art_suite* suite_data, Cent_value* value)
+void Art_test_suite_meta(Art_top_data* top_data, Art_suite_data* suite_data, Cent_value* value)
 {
     if (!value) {
         Zinc_error_list_set(&suite_data->errors, NULL, "expected test suite in backquote");
@@ -231,7 +231,7 @@ void Art_test_suite_meta(Art_data* top_data, Art_suite* suite_data, Cent_value* 
     suite_data->test->mute = mute->data.boolean;
 }
 
-void Art_test_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header)
+void Art_test_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header)
 {
     Zinc_string_slice title = Zinc_string_get_slice(&header->data.LAVA_DOM_HEADER.title);
     title = Zinc_trim(title);
@@ -246,7 +246,7 @@ void Art_test_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header
         return;
     }
 
-    Art_test* case_data = NULL;
+    Art_case_data* case_data = NULL;
     Art_test_create(&case_data);
     Art_suite_add(suite_data, case_data);
 
@@ -311,7 +311,7 @@ void Art_test_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header
     Zinc_string_add_string(&case_test->name, &case_data->description);
 }
 
-void Art_test_meta(Art_data* top_data, Art_suite* suite_data, Art_test* case_data, Cent_value* value)
+void Art_test_meta(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data, Cent_value* value)
 {
     Cent_ast* n = value->n;
     if (value->type != Cent_value_type_dag) {

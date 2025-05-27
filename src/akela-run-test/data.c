@@ -24,125 +24,125 @@ void Art_pair_destroy(Art_pair* pair)
     free(pair->expected);
 }
 
-void Art_test_init(Art_test* test)
+void Art_test_init(Art_case_data* case_data)
 {
-    Zinc_string_init(&test->description);
-    test->snapshot = false;
-    test->has_error = false;
-    test->ct = NULL;
-    test->value = NULL;
-    test->return_address = NULL;
-    Zinc_input_bounds_init(&test->source_bounds);
-    Zinc_input_bounds_init(&test->llvm_bounds);
-    Zinc_string_init(&test->llvm);
-    Zinc_spec_error_list_init(&test->spec_errors);
-    test->test = NULL;
-    test->next = NULL;
-    test->prev = NULL;
+    Zinc_string_init(&case_data->description);
+    case_data->snapshot = false;
+    case_data->has_error = false;
+    case_data->ct = NULL;
+    case_data->value = NULL;
+    case_data->return_address = NULL;
+    Zinc_input_bounds_init(&case_data->source_bounds);
+    Zinc_input_bounds_init(&case_data->llvm_bounds);
+    Zinc_string_init(&case_data->llvm);
+    Zinc_spec_error_list_init(&case_data->spec_errors);
+    case_data->test = NULL;
+    case_data->next = NULL;
+    case_data->prev = NULL;
 }
 
-void Art_test_create(Art_test** test)
+void Art_test_create(Art_case_data** case_data)
 {
-    Zinc_malloc_safe((void**)test, sizeof(Art_test));
-    Art_test_init(*test);
+    Zinc_malloc_safe((void**)case_data, sizeof(Art_case_data));
+    Art_test_init(*case_data);
 }
 
-void Art_test_destroy(Art_test* test)
+void Art_test_destroy(Art_case_data* case_data)
 {
-    Zinc_string_destroy(&test->description);
-    Cent_comp_table_destroy(test->ct);
-    free(test->ct);
-    Zinc_string_destroy(&test->llvm);
-    Zinc_spec_error_list_destroy(&test->spec_errors);
-    free(test->return_address);
+    Zinc_string_destroy(&case_data->description);
+    Cent_comp_table_destroy(case_data->ct);
+    free(case_data->ct);
+    Zinc_string_destroy(&case_data->llvm);
+    Zinc_spec_error_list_destroy(&case_data->spec_errors);
+    free(case_data->return_address);
 }
 
-void Art_suite_init(Art_suite* suite)
+void Art_suite_init(Art_suite_data* suite_data)
 {
-    Zinc_string_init(&suite->path);
-    Zinc_string_init(&suite->description);
-    Zinc_string_init(&suite->name);
-    Zinc_error_list_init(&suite->errors);
-    suite->test = NULL;
-    suite->next = NULL;
-    suite->prev = NULL;
-    suite->head = NULL;
-    suite->tail = NULL;
+    Zinc_string_init(&suite_data->path);
+    Zinc_string_init(&suite_data->description);
+    Zinc_string_init(&suite_data->name);
+    Zinc_error_list_init(&suite_data->errors);
+    suite_data->test = NULL;
+    suite_data->next = NULL;
+    suite_data->prev = NULL;
+    suite_data->head = NULL;
+    suite_data->tail = NULL;
 }
 
-void Art_suite_create(Art_suite** suite)
+void Art_suite_create(Art_suite_data** suite_data)
 {
-    Zinc_malloc_safe((void**)suite, sizeof(Art_suite));
-    Art_suite_init(*suite);
+    Zinc_malloc_safe((void**)suite_data, sizeof(Art_suite_data));
+    Art_suite_init(*suite_data);
 }
 
-void Art_suite_destroy(Art_suite* suite)
+void Art_suite_destroy(Art_suite_data* suite_data)
 {
-    Zinc_string_destroy(&suite->path);
-    Zinc_string_destroy(&suite->description);
-    Zinc_string_destroy(&suite->name);
-    Zinc_error_list_destroy(&suite->errors);
-    Art_test* test = suite->head;
+    Zinc_string_destroy(&suite_data->path);
+    Zinc_string_destroy(&suite_data->description);
+    Zinc_string_destroy(&suite_data->name);
+    Zinc_error_list_destroy(&suite_data->errors);
+    Art_case_data* test = suite_data->head;
     while (test) {
-        Art_test* temp = test;
+        Art_case_data* temp = test;
         test = test->next;
         Art_test_destroy(temp);
         free(temp);
     }
 }
 
-void Art_suite_add(Art_suite* suite, Art_test* test)
+void Art_suite_add(Art_suite_data* suite_data, Art_case_data* case_data)
 {
-    if (suite->head && suite->tail) {
-        suite->tail->next = test;
-        test->prev = suite->tail;
-        suite->tail = test;
+    if (suite_data->head && suite_data->tail) {
+        suite_data->tail->next = case_data;
+        case_data->prev = suite_data->tail;
+        suite_data->tail = case_data;
     } else {
-        suite->head = test;
-        suite->tail = test;
+        suite_data->head = case_data;
+        suite_data->tail = case_data;
     }
 }
 
-void Art_data_init(Art_data* data)
+void Art_data_init(Art_top_data* top_data)
 {
-    Zinc_string_init(&data->dir_path);
-    data->has_solo = false;
-    data->type_info = NULL;
-    data->regex_re = Cob_compile_str("^/(.*)/\n?$");
-    data->test = NULL;
-    data->head = NULL;
-    data->tail = NULL;
+    Zinc_string_init(&top_data->dir_path);
+    top_data->has_solo = false;
+    top_data->type_info = NULL;
+    top_data->regex_re = Cob_compile_str("^/(.*)/\n?$");
+    top_data->test = NULL;
+    top_data->head = NULL;
+    top_data->tail = NULL;
 }
 
-void Art_data_destroy(Art_data* data)
+void Art_data_destroy(Art_top_data* top_data)
 {
-    Zinc_string_destroy(&data->dir_path);
-    Cent_comp_table_destroy(data->type_info);
-    free(data->type_info);
-    Cob_re_destroy(&data->regex_re);
+    Zinc_string_destroy(&top_data->dir_path);
+    Cent_comp_table_destroy(top_data->type_info);
+    free(top_data->type_info);
+    Cob_re_destroy(&top_data->regex_re);
 
-    Art_suite* suite = data->head;
+    Art_suite_data* suite = top_data->head;
     while (suite) {
-        Art_suite* temp = suite;
+        Art_suite_data* temp = suite;
         suite = suite->next;
         Art_suite_destroy(temp);
         free(temp);
     }
 
-    if (data->test) {
-        Zinc_test_destroy(data->test);
-        free(data->test);
+    if (top_data->test) {
+        Zinc_test_destroy(top_data->test);
+        free(top_data->test);
     }
 }
 
-void Art_data_add(Art_data* data, Art_suite* suite)
+void Art_data_add(Art_top_data* top_data, Art_suite_data* suite_data)
 {
-    if (data->head && data->tail) {
-        data->tail->next = suite;
-        suite->prev = data->tail;
-        data->tail = suite;
+    if (top_data->head && top_data->tail) {
+        top_data->tail->next = suite_data;
+        suite_data->prev = top_data->tail;
+        top_data->tail = suite_data;
     } else {
-        data->head = suite;
-        data->tail = suite;
+        top_data->head = suite_data;
+        top_data->tail = suite_data;
     }
 }

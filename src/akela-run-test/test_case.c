@@ -12,8 +12,8 @@
 
 #include "zinc/os.h"
 
-void Art_run_suite(Art_data* top_data, Art_suite* suite_data);
-void Art_run_test(Art_data* top_data, Art_suite* suite_data, Art_test* case_data);
+void Art_run_suite(Art_top_data* top_data, Art_suite_data* suite_data);
+void Art_run_test(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data);
 Art_pair Art_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 Zinc_string_list* Art_split(Zinc_string* string);
@@ -21,17 +21,17 @@ Zinc_string* Art_join(Zinc_string_list* list);
 void Art_print_akela(Zinc_string* ake);
 void Art_print_llvm(Art_pair* pair);
 void Art_print_result(Art_pair* pair);
-void Art_print_results(Art_data* top_data);
-void Art_setup_address(Art_data* top_data, Art_suite* suite_data, Art_test* case_data);
+void Art_print_results(Art_top_data* top_data);
+void Art_setup_address(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data);
 bool Art_check_address(
-    Art_data* top_data,
-    Art_test* case_data,
+    Art_top_data* top_data,
+    Art_case_data* case_data,
     Ake_comp_table* ct,
     Ake_code_gen_result* cg_result);
 
-void Art_run(Art_data* top_data)
+void Art_run(Art_top_data* top_data)
 {
-    Art_suite* suite_data = top_data->head;
+    Art_suite_data* suite_data = top_data->head;
     while (suite_data) {
         if (suite_data->test->mute) {
             printf("Muting: %s\n", Zinc_string_c_str(&suite_data->path));
@@ -49,9 +49,9 @@ void Art_run(Art_data* top_data)
     }
 }
 
-void Art_run_suite(Art_data* top_data, Art_suite* suite_data)
+void Art_run_suite(Art_top_data* top_data, Art_suite_data* suite_data)
 {
-    Art_test* case_data = suite_data->head;
+    Art_case_data* case_data = suite_data->head;
 
     while (case_data) {
         if (case_data->test->mute) {
@@ -70,7 +70,7 @@ void Art_run_suite(Art_data* top_data, Art_suite* suite_data)
     }
 }
 
-void Art_run_test(Art_data* top_data, Art_suite* suite_data, Art_test* case_data)
+void Art_run_test(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data)
 {
     FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
     if (!fp) {
@@ -153,7 +153,7 @@ void Art_run_test(Art_data* top_data, Art_suite* suite_data, Art_test* case_data
     free(ct);
 }
 
-void Art_setup_address(Art_data* top_data, Art_suite* suite_data, Art_test* case_data)
+void Art_setup_address(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data)
 {
     Cent_value* data_type_list_value = top_data->type_info->primary->value;
     assert(data_type_list_value);
@@ -203,8 +203,8 @@ void Art_setup_address(Art_data* top_data, Art_suite* suite_data, Art_test* case
 }
 
 bool Art_check_address(
-    Art_data* top_data,
-    Art_test* case_data,
+    Art_top_data* top_data,
+    Art_case_data* case_data,
     Ake_comp_table* ct,
     Ake_code_gen_result* cg_result)
 {
@@ -586,11 +586,6 @@ Zinc_string* Art_join(Zinc_string_list* list)
     }
 
     return result;
-}
-
-void Run_compare_result(Zinc_string* result, Cent_value* config)
-{
-
 }
 
 void Art_print_akela(Zinc_string* ake)

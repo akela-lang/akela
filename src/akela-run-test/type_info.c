@@ -4,7 +4,7 @@
 #include "data.h"
 #include "zinc/os_unix.h"
 
-void Run_get_type_info(Art_data* data)
+void Run_get_type_info(Art_top_data* data)
 {
     Zinc_string path;
     Zinc_string_init(&path);

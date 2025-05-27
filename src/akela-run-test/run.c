@@ -10,7 +10,7 @@
 #define NAME "akela-run-test"
 
 bool Art_validate_directory(const char* path);
-bool Art_print_errors(Art_data* data);
+bool Art_print_errors(Art_top_data* data);
 
 void Art(Zinc_test* test)
 {
@@ -108,7 +108,7 @@ void Art(Zinc_test* test)
         Zinc_string_destroy(&config_name);
         Cent_comp_table_destroy(ct);
 
-        Art_data data;
+        Art_top_data data;
         Art_data_init(&data);
 
         Zinc_string_add_string(&data.dir_path, &akela_run_test_dir);
@@ -165,17 +165,17 @@ bool Art_validate_directory(const char* path)
     return true;
 }
 
-bool Art_print_errors(Art_data* data)
+bool Art_print_errors(Art_top_data* data)
 {
     bool has_errors = false;
-    Art_suite* suite = data->head;
+    Art_suite_data* suite = data->head;
     while (suite) {
         if (suite->errors.head) {
             has_errors = true;
             Zinc_error_list_print(&suite->errors);
         }
 
-        Art_test* test = suite->head;
+        Art_case_data* test = suite->head;
         while (test) {
             if (test->spec_errors.head) {
                 has_errors = true;

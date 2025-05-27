@@ -13,8 +13,8 @@ typedef struct {
     Zinc_string* expected;
 } Art_pair;
 
-typedef struct Art_test Art_test;
-struct Art_test {
+typedef struct Art_case_data Art_case_data;
+struct Art_case_data {
     Zinc_string description;
     bool snapshot;
     bool has_error;
@@ -27,32 +27,32 @@ struct Art_test {
     Zinc_spec_error_list spec_errors;
     void* return_address;
     long long return_size;
-    Art_test* next;
-    Art_test* prev;
+    Art_case_data* next;
+    Art_case_data* prev;
 };
 
-typedef struct Art_suite Art_suite;
-struct Art_suite {
+typedef struct Art_suite_data Art_suite_data;
+struct Art_suite_data {
     Zinc_string path;
     Zinc_string description;
     Zinc_string name;
     Zinc_test* test;
     Zinc_error_list errors;
-    Art_suite* next;
-    Art_suite* prev;
-    Art_test* head;
-    Art_test* tail;
+    Art_suite_data* next;
+    Art_suite_data* prev;
+    Art_case_data* head;
+    Art_case_data* tail;
 };
 
-typedef struct Art_data Art_data;
-struct Art_data {
+typedef struct Art_top_data Art_top_data;
+struct Art_top_data {
     Zinc_string dir_path;
     bool has_solo;
     Cent_comp_table* type_info;
     Cob_re regex_re;
     Zinc_test* test;
-    Art_suite* head;
-    Art_suite* tail;
+    Art_suite_data* head;
+    Art_suite_data* tail;
 };
 
 typedef enum {
@@ -74,17 +74,17 @@ void Art_pair_init(Art_pair* pair);
 void Art_pair_create(Art_pair** pair);
 void Art_pair_destroy(Art_pair* pair);
 
-void Art_test_init(Art_test* test);
-void Art_test_create(Art_test** test);
-void Art_test_destroy(Art_test* test);
+void Art_test_init(Art_case_data* case_data);
+void Art_test_create(Art_case_data** case_data);
+void Art_test_destroy(Art_case_data* case_data);
 
-void Art_suite_init(Art_suite* suite);
-void Art_suite_create(Art_suite** suite);
-void Art_suite_destroy(Art_suite* suite);
-void Art_suite_add(Art_suite* suite, Art_test* test);
+void Art_suite_init(Art_suite_data* suite_data);
+void Art_suite_create(Art_suite_data** suite_data);
+void Art_suite_destroy(Art_suite_data* suite_data);
+void Art_suite_add(Art_suite_data* suite_data, Art_case_data* case_data);
 
-void Art_data_init(Art_data* data);
-void Art_data_destroy(Art_data* data);
-void Art_data_add(Art_data* data, Art_suite* suite);
+void Art_data_init(Art_top_data* top_data);
+void Art_data_destroy(Art_top_data* top_data);
+void Art_data_add(Art_top_data* top_data, Art_suite_data* suite_data);
 
 #endif
