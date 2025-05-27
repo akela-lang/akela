@@ -33,55 +33,103 @@ void Art(Zinc_test* test)
 
         Zinc_split_path(&exe_path, &dir_path, &filename);
 
+        Zinc_string config_name;
+        Zinc_string_init(&config_name);
+
+        char* config_name_str = "test-config.cent";
+        Zinc_string_add_str(&config_name, config_name_str);
+
         Zinc_string config_path;
         Zinc_string_init(&config_path);
 
         Zinc_string_add_string(&config_path, &dir_path);
-        Zinc_path_append_str(&config_path, "akela-run-test.cent");
+        Zinc_path_append_str(&config_path, config_name_str);
 
         printf("config: %s\n", Zinc_string_c_str(&config_path));
+
+        FILE* fp = fopen(Zinc_string_c_str(&config_path), "r");
+        if (!fp) {
+            fprintf(stderr, "could not open: %s\n", Zinc_string_c_str(&config_path));
+            return;
+        }
+
+        Cent_comp_table* ct = NULL;
+        Cent_comp_table_create_fp(&ct, &dir_path, &config_name, fp);
+        Cent_comp_unit_parse(ct->primary);
+        Cent_comp_unit_build(ct->primary);
+
+        if (ct->primary->errors.head) {
+            fprintf(stderr, "Errors:\n");
+            Zinc_error_list_print(&ct->primary->errors);
+            return;
+        }
+
+        Cent_value* value = ct->primary->value;
+        if (!value) {
+            fprintf(stderr, "expected value\n");
+            return;
+        }
+
+        if (value->type != Cent_value_type_dag) {
+            fprintf(stderr, "expected DAG\n");
+            return;
+        }
+
+        if (!Zinc_string_compare_str(&value->name, "Test")) {
+            fprintf(stderr, "expected Test\n");
+            return;
+        }
+
+        Cent_value* akela_run_test_value = Cent_value_get_str(value, "akela_run_test");
+        if (!akela_run_test_value) {
+            fprintf(stderr, "expected akela_run_test");
+            return;
+        }
+
+        if (akela_run_test_value->type != Cent_value_type_string) {
+            fprintf(stderr, "expected type string for akela_run_test\n");
+            return;
+        }
+
+        Zinc_string akela_run_test_dir;
+        Zinc_string_init(&akela_run_test_dir);
+        Zinc_string_add_string(&akela_run_test_dir, &akela_run_test_value->data.string);
+
+        if (!Art_validate_directory(Zinc_string_c_str(&akela_run_test_dir))) {
+            return;
+        }
+
+        printf("dir: %s\n", Zinc_string_c_str(&akela_run_test_dir));
 
         Zinc_string_destroy(&exe_path);
         Zinc_string_destroy(&dir_path);
         Zinc_string_destroy(&filename);
         Zinc_string_destroy(&config_path);
+        Zinc_string_destroy(&config_name);
+        Cent_comp_table_destroy(ct);
+
+        Art_data data;
+        Art_data_init(&data);
+
+        Zinc_string_add_string(&data.dir_path, &akela_run_test_dir);
+        Art_parse_files(&data, Zinc_string_c_str(&akela_run_test_dir));
+
+        if (Art_print_errors(&data)) {
+            Art_data_destroy(&data);
+            return;
+        }
+
+        Run_get_type_info(&data);
+
+        if (Art_print_errors(&data)) {
+            Art_data_destroy(&data);
+            return;
+        }
+
+        Art_data_destroy(&data);
     } else {
         Zinc_test_perform(test);
     }
-
-    return;
-    // if (!Art_validate_directory(dir_path)) {
-    //     return 1;
-    // }
-    //
-    // Art_data data;
-    // Art_data_init(&data);
-    //
-    // Zinc_string_add_str(&data.dir_path, dir_path);
-    // Art_parse_files(&data, dir_path);
-    //
-    // if (Art_print_errors(&data)) {
-    //     Art_data_destroy(&data);
-    //     return 1;
-    // }
-    //
-    // Run_get_type_info(&data);
-    //
-    // if (Art_print_errors(&data)) {
-    //     Art_data_destroy(&data);
-    //     return 1;
-    // }
-    //
-    // Art_run(&data);
-    //
-    // Zinc_test_stat stat;
-    // Zinc_test_stat_init(&stat);
-    // Zinc_test_count(data.test, &stat);
-    // Zinc_test_print(&stat);
-    //
-    // Art_data_destroy(&data);
-    //
-    // return 0;
 }
 
 bool Art_validate_directory(const char* path)
