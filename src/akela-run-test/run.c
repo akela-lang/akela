@@ -126,7 +126,12 @@ void Art(Zinc_test* test)
             return;
         }
 
+        Art_run(&data);
+
         Art_data_destroy(&data);
+
+        return;
+
     } else {
         Zinc_test_perform(test);
     }

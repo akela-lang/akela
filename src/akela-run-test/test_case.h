@@ -3,7 +3,7 @@
 
 #include "data.h"
 
-void Art_run(Art_data* data);
-void Art_print_results(Art_data* data);
+void Art_run(Art_data* top_data);
+void Art_print_results(Art_data* top_data);
 
 #endif

@@ -16,18 +16,18 @@
 #include "zinc/fs.h"
 #include "lava/parse.h"
 
-void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header);
-void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value);
-void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header);
-void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value* value);
+void Art_test_suite_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header);
+void Art_test_suite_meta(Art_data* top_data, Art_suite* suite_data, Cent_value* value);
+void Art_test_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header);
+void Art_test_meta(Art_data* top_data, Art_suite* suite_data, Art_test* case_data, Cent_value* value);
 
 void Art_collect(
-    Art_data* data,
+    Art_data* top_data,
     Zinc_string* dir_path,
     Zinc_string* path,
     Zinc_string* file_name);
 
-void Art_parse_files(Art_data* data, char* dir_name)
+void Art_parse_files(Art_data* top_data, char* dir_name)
 {
     Cob_re ext_re = Cob_compile_str("\\.md$");
 
@@ -39,10 +39,10 @@ void Art_parse_files(Art_data* data, char* dir_name)
     Zinc_string_list_init(&files);
     Zinc_list_files(Zinc_string_c_str(&dir_path), &files);
 
-    Zinc_test* data2 = NULL;
-    Zinc_test_create(&data2);
-    Zinc_string_add_str(&data2->name, "akela-run-test");
-    data->test = data2;
+    Zinc_test* top_test = NULL;
+    Zinc_test_create(&top_test);
+    Zinc_string_add_str(&top_test->name, "akela-run-test");
+    top_data->test = top_test;
 
     Zinc_string_node* node = files.head;
     while (node) {
@@ -61,7 +61,7 @@ void Art_parse_files(Art_data* data, char* dir_name)
 
                 if (Zinc_is_reg_file(&path)) {
                     printf("%s\n", Zinc_string_c_str(&path));
-                    Art_collect(data, &dir_path, &path, &node->value);
+                    Art_collect(top_data, &dir_path, &path, &node->value);
                 }
 
                 Zinc_string_destroy(&path);
@@ -76,19 +76,19 @@ void Art_parse_files(Art_data* data, char* dir_name)
     Cob_re_destroy(&ext_re);
 }
 
-void Art_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
+void Art_collect(Art_data* top_data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
 {
-    Art_suite* suite = NULL;
-    Art_suite_create(&suite);
-    Art_data_add(data, suite);
+    Art_suite* suite_data = NULL;
+    Art_suite_create(&suite_data);
+    Art_data_add(top_data, suite_data);
 
-    Zinc_string_add_string(&suite->path, path);
-    Zinc_string_add_string(&suite->name, file_name);
+    Zinc_string_add_string(&suite_data->path, path);
+    Zinc_string_add_string(&suite_data->name, file_name);
 
     Zinc_test* suite2 = NULL;
     Zinc_test_create(&suite2);
-    suite->test = suite2;
-    Zinc_test_add(data->test, suite2);
+    suite_data->test = suite2;
+    Zinc_test_add(top_data->test, suite2);
 
     FILE* fp = fopen(path->buf, "r");
     if (!fp) {
@@ -99,19 +99,19 @@ void Art_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
     Lava_result lr = Lava_parse_file(fp);
 
     if (!lr.root) {
-        Zinc_error_list_set(&suite->errors, NULL, "root is null");
+        Zinc_error_list_set(&suite_data->errors, NULL, "root is null");
         Lava_result_destroy(&lr);
         return;
     }
 
     if (lr.root->kind != LAVA_DOM_HEADER) {
-        Zinc_error_list_set(&suite->errors, NULL, "expected top level header");
+        Zinc_error_list_set(&suite_data->errors, NULL, "expected top level header");
         Lava_result_destroy(&lr);
         return;
     }
 
     if (lr.root->data.LAVA_DOM_HEADER.level != 1) {
-        Zinc_error_list_set(&suite->errors, &lr.root->loc, "expected top level header");
+        Zinc_error_list_set(&suite_data->errors, &lr.root->loc, "expected top level header");
         Lava_result_destroy(&lr);
         return;
     }
@@ -120,43 +120,43 @@ void Art_collect(Art_data* data, Zinc_string* dir_path, Zinc_string* path, Zinc_
     title = Zinc_trim(title);
     Zinc_string_slice title_ref = Zinc_string_slice_from_str("Test Suite");
     if (!Zinc_string_slice_compare(&title, &title_ref)) {
-        Zinc_error_list_set(&suite->errors, &lr.root->loc, "expected test suite");
+        Zinc_error_list_set(&suite_data->errors, &lr.root->loc, "expected test suite");
         Lava_result_destroy(&lr);
         return;
     }
 
-    Art_test_suite_header(data, suite, lr.root);
+    Art_test_suite_header(top_data, suite_data, lr.root);
 
     Lava_result_destroy(&lr);
 }
 
-void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
+void Art_test_suite_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header)
 {
     Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
     while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
-            if (suite->description.size > 0) {
-                Zinc_string_add_char(&suite->description, '\n');
+            if (suite_data->description.size > 0) {
+                Zinc_string_add_char(&suite_data->description, '\n');
             }
-            Zinc_string_add_string(&suite->description, &item->data.LAVA_DOM_TEXT);
+            Zinc_string_add_string(&suite_data->description, &item->data.LAVA_DOM_TEXT);
         } else if (item->kind == LAVA_DOM_BACKQUOTE) {
             if (!Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
-                Zinc_error_list_set(&suite->errors, &item->loc, "expected cent backquote");
+                Zinc_error_list_set(&suite_data->errors, &item->loc, "expected cent backquote");
                 break;
             }
             Cent_comp_table* ct = NULL;
-            FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
+            FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
             if (!fp) {
                 Zinc_error_list_set(
-                    &suite->errors,
+                    &suite_data->errors,
                     &item->loc,
                     "failed to open file: %bf",
-                    &suite->path);
+                    &suite_data->path);
                 break;
             }
             Zinc_string name;
             Zinc_string_init(&name);
-            Cent_comp_table_create_fp(&ct, &data->dir_path, &name, fp);
+            Cent_comp_table_create_fp(&ct, &top_data->dir_path, &name, fp);
             Zinc_string_destroy(&name);
             Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
             Cent_comp_unit_parse(ct->primary);
@@ -164,141 +164,141 @@ void Art_test_suite_header(Art_data* data, Art_suite* suite, Lava_dom* header)
             if (ct->primary->pr.errors->head) {
                 Zinc_error* e = ct->primary->pr.errors->head;
                 while (e) {
-                    Zinc_error_list_set(&suite->errors, &e->loc, Zinc_string_c_str(&e->message));
+                    Zinc_error_list_set(&suite_data->errors, &e->loc, Zinc_string_c_str(&e->message));
                     e = e->next;
                 }
                 Cent_comp_table_destroy(ct);
                 break;
             }
-            Art_test_suite_meta(data, suite, ct->primary->value);
+            Art_test_suite_meta(top_data, suite_data, ct->primary->value);
             Cent_comp_table_destroy(ct);
             free(ct);
         } else if (item->kind == LAVA_DOM_HEADER) {
-            Art_test_header(data, suite, item);
+            Art_test_header(top_data, suite_data, item);
         }
 
         item = item->next;
     }
 
-    Zinc_string_add_string(&suite->test->name, &suite->description);
+    Zinc_string_add_string(&suite_data->test->name, &suite_data->description);
 }
 
-void Art_test_suite_meta(Art_data* data, Art_suite* suite, Cent_value* value)
+void Art_test_suite_meta(Art_data* top_data, Art_suite* suite_data, Cent_value* value)
 {
     if (!value) {
-        Zinc_error_list_set(&suite->errors, NULL, "expected test suite in backquote");
+        Zinc_error_list_set(&suite_data->errors, NULL, "expected test suite in backquote");
         return;
     }
 
     Cent_ast* value_n = value->n;
     if (value->type != Cent_value_type_dag) {
-        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected dag in backquote");
+        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected dag in backquote");
         return;
     }
 
     if (!Zinc_string_compare_str(&value->name, "TestSuite")) {
-        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected test suite");
+        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected test suite");
         return;
     }
 
     Cent_value* solo = Cent_value_get_str(value, "solo");
     if (!solo) {
-        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected solo property");
+        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected solo property");
         return;
     }
 
     if (solo->type != Cent_value_type_boolean) {
-        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected solo to be boolean");
+        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected solo to be boolean");
         return;
     }
 
-    suite->test->solo = solo->data.boolean;
-    if (suite->test->solo) {
-        data->has_solo = true;
+    suite_data->test->solo = solo->data.boolean;
+    if (suite_data->test->solo) {
+        top_data->has_solo = true;
     }
 
     Cent_value* mute = Cent_value_get_str(value, "mute");
     if (!mute) {
-        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected mute");
+        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected mute");
         return;
     }
 
     if (mute->type != Cent_value_type_boolean) {
-        Zinc_error_list_set(&suite->errors, &value_n->loc, "expected mute to be boolean");
+        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected mute to be boolean");
         return;
     }
 
-    suite->test->mute = mute->data.boolean;
+    suite_data->test->mute = mute->data.boolean;
 }
 
-void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
+void Art_test_header(Art_data* top_data, Art_suite* suite_data, Lava_dom* header)
 {
     Zinc_string_slice title = Zinc_string_get_slice(&header->data.LAVA_DOM_HEADER.title);
     title = Zinc_trim(title);
     Zinc_string_slice title_ref = Zinc_string_slice_from_str("Test");
     if (!Zinc_string_slice_compare(&title, &title_ref)) {
-        Zinc_error_list_set(&suite->errors, &header->loc, "expected test header");
+        Zinc_error_list_set(&suite_data->errors, &header->loc, "expected test header");
         return;
     }
 
     if (header->data.LAVA_DOM_HEADER.level != 2) {
-        Zinc_error_list_set(&suite->errors, &header->loc, "expected level 2 test header");
+        Zinc_error_list_set(&suite_data->errors, &header->loc, "expected level 2 test header");
         return;
     }
 
-    Art_test* test = NULL;
-    Art_test_create(&test);
-    Art_suite_add(suite, test);
+    Art_test* case_data = NULL;
+    Art_test_create(&case_data);
+    Art_suite_add(suite_data, case_data);
 
-    Zinc_test* test2 = NULL;
-    Zinc_test_create(&test2);
-    test->test = test2;
-    Zinc_test_add(suite->test, test2);
+    Zinc_test* case_test = NULL;
+    Zinc_test_create(&case_test);
+    case_data->test = case_test;
+    Zinc_test_add(suite_data->test, case_test);
 
     Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
     while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
-            if (test->description.size > 0) {
-                Zinc_string_add_char(&test->description, '\n');
+            if (case_data->description.size > 0) {
+                Zinc_string_add_char(&case_data->description, '\n');
             }
-            Zinc_string_add_string(&test->description, &item->data.LAVA_DOM_TEXT);
+            Zinc_string_add_string(&case_data->description, &item->data.LAVA_DOM_TEXT);
         } else if (item->kind == LAVA_DOM_BACKQUOTE) {
             if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "akela")) {
-                test->source_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
+                case_data->source_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
             } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "llvm")) {
-                test->llvm_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
-                Zinc_string_add_string(&test->llvm, &item->data.LAVA_DOM_BACKQUOTE.text);
+                case_data->llvm_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
+                Zinc_string_add_string(&case_data->llvm, &item->data.LAVA_DOM_BACKQUOTE.text);
             } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
-                FILE* fp = fopen(Zinc_string_c_str(&suite->path), "r");
+                FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
                 if (!fp) {
                     Zinc_error_list_set(
-                        &suite->errors,
+                        &suite_data->errors,
                         &item->loc,
                         "failed to open file: %bf",
-                        &suite->path);
+                        &suite_data->path);
                 }
                 Cent_comp_table* ct = NULL;
-                Cent_comp_table_create_fp(&ct, &data->dir_path, &suite->name, fp);
+                Cent_comp_table_create_fp(&ct, &top_data->dir_path, &suite_data->name, fp);
                 Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
                 Cent_comp_unit_parse(ct->primary);
                 Cent_comp_unit_build(ct->primary);
                 if (ct->primary->pr.errors->head) {
                     Zinc_error* e = ct->primary->pr.errors->head;
                     while (e) {
-                        Zinc_error_list_set(&suite->errors, &e->loc, Zinc_string_c_str(&e->message));
+                        Zinc_error_list_set(&suite_data->errors, &e->loc, Zinc_string_c_str(&e->message));
                         e = e->next;
                     }
                 } else {
                     if (!ct->primary->value) {
-                        Zinc_error_list_set(&suite->errors, &item->loc, "expected value");
+                        Zinc_error_list_set(&suite_data->errors, &item->loc, "expected value");
                     } else {
-                        Art_test_meta(data, suite, test, ct->primary->value);
+                        Art_test_meta(top_data, suite_data, case_data, ct->primary->value);
                     }
                 }
-                test->ct = ct;
+                case_data->ct = ct;
             } else {
                 Zinc_error_list_set(
-                    &suite->errors,
+                    &suite_data->errors,
                     &item->loc,
                     "unexpected format: %bf",
                     &item->data.LAVA_DOM_BACKQUOTE.format);
@@ -308,67 +308,67 @@ void Art_test_header(Art_data* data, Art_suite* suite, Lava_dom* header)
         item = item->next;
     }
 
-    Zinc_string_add_string(&test2->name, &test->description);
+    Zinc_string_add_string(&case_test->name, &case_data->description);
 }
 
-void Art_test_meta(Art_data* data, Art_suite* suite, Art_test* test, Cent_value* value)
+void Art_test_meta(Art_data* top_data, Art_suite* suite_data, Art_test* case_data, Cent_value* value)
 {
     Cent_ast* n = value->n;
     if (value->type != Cent_value_type_dag) {
-        Zinc_error_list_set(&suite->errors, &n->loc, "expected DAG");
-        test->has_error = true;
+        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected DAG");
+        case_data->has_error = true;
         return;
     }
 
     if (!Zinc_string_compare_str(&value->name, "Test")) {
-        Zinc_error_list_set(&suite->errors, &n->loc, "expected Test");
-        test->has_error = true;
+        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected Test");
+        case_data->has_error = true;
         return;
     }
 
     Cent_value* solo = Cent_value_get_str(value, "solo");
     if (!solo) {
-        Zinc_error_list_set(&suite->errors, &n->loc, "expected solo");
-        test->has_error = true;
+        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected solo");
+        case_data->has_error = true;
     } else {
         if (solo->type != Cent_value_type_boolean) {
-            Zinc_error_list_set(&suite->errors, &n->loc, "expected solo to be boolean");
-            test->has_error = true;
+            Zinc_error_list_set(&suite_data->errors, &n->loc, "expected solo to be boolean");
+            case_data->has_error = true;
         } else {
-            test->test->solo = solo->data.boolean;
-            if (test->test->solo) {
-                suite->test->has_solo = true;
+            case_data->test->solo = solo->data.boolean;
+            if (case_data->test->solo) {
+                suite_data->test->has_solo = true;
             }
         }
     }
 
     Cent_value* mute = Cent_value_get_str(value, "mute");
     if (!mute) {
-        Zinc_error_list_set(&suite->errors, &n->loc, "expected mute");
-        test->has_error = true;
+        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected mute");
+        case_data->has_error = true;
     } else {
         if (mute->type != Cent_value_type_boolean) {
-            Zinc_error_list_set(&suite->errors, &n->loc, "expected mute to be boolean");
-            test->has_error = true;
+            Zinc_error_list_set(&suite_data->errors, &n->loc, "expected mute to be boolean");
+            case_data->has_error = true;
         } else {
-            test->test->mute = mute->data.boolean;
+            case_data->test->mute = mute->data.boolean;
         }
     }
 
     Cent_value* snapshot = Cent_value_get_str(value, "snapshot");
     if (!snapshot) {
-        Zinc_error_list_set(&suite->errors, &n->loc, "expected snapshot");
-        test->has_error = true;
+        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected snapshot");
+        case_data->has_error = true;
     } else {
         if (snapshot->type != Cent_value_type_boolean) {
-            Zinc_error_list_set(&suite->errors, &n->loc, "expected snapshot to be boolean");
-            test->has_error = true;
+            Zinc_error_list_set(&suite_data->errors, &n->loc, "expected snapshot to be boolean");
+            case_data->has_error = true;
         } else {
-            test->snapshot = snapshot->data.boolean;
+            case_data->snapshot = snapshot->data.boolean;
         }
     }
 
-    if (!test->has_error) {
-        test->value = value->data.dag.tail;
+    if (!case_data->has_error) {
+        case_data->value = value->data.dag.tail;
     }
 }
