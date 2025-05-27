@@ -27,17 +27,13 @@ void Art_collect(
     Zinc_string* path,
     Zinc_string* file_name);
 
-void Art_parse_files(Art_top_data* top_data, char* dir_name)
+void Art_parse_files(Art_top_data* top_data)
 {
     Cob_re ext_re = Cob_compile_str("\\.md$");
 
-    Zinc_string dir_path;
-    Zinc_string_init(&dir_path);
-    Zinc_string_add_str(&dir_path, dir_name);
-
     Zinc_string_list files;
     Zinc_string_list_init(&files);
-    Zinc_list_files(Zinc_string_c_str(&dir_path), &files);
+    Zinc_list_files(Zinc_string_c_str(&top_data->dir_path), &files);
 
     Zinc_test* top_test = NULL;
     Zinc_test_create(&top_test);
@@ -55,13 +51,13 @@ void Art_parse_files(Art_top_data* top_data, char* dir_name)
             if (ext_mr.matched) {
                 Zinc_string path;
                 Zinc_string_init(&path);
-                Zinc_string_add_str(&path, dir_name);
+                Zinc_string_add_string(&path, &top_data->dir_path);
                 Zinc_path_append(&path, &node->value);
                 Zinc_string_finish(&path);
 
                 if (Zinc_is_reg_file(&path)) {
                     printf("%s\n", Zinc_string_c_str(&path));
-                    Art_collect(top_data, &dir_path, &path, &node->value);
+                    Art_collect(top_data, &top_data->dir_path, &path, &node->value);
                 }
 
                 Zinc_string_destroy(&path);
@@ -71,7 +67,6 @@ void Art_parse_files(Art_top_data* top_data, char* dir_name)
         node = node->next;
     }
 
-    Zinc_string_destroy(&dir_path);
     Zinc_string_list_destroy(&files);
     Cob_re_destroy(&ext_re);
 }

@@ -113,7 +113,7 @@ void Art(Zinc_test* test)
         test->data = top_data;
 
         Zinc_string_add_string(&top_data->dir_path, &akela_run_test_dir);
-        Art_parse_files(top_data, Zinc_string_c_str(&akela_run_test_dir));
+        Art_parse_files(top_data);
 
         if (Art_print_errors(top_data)) {
             Art_data_destroy(top_data);

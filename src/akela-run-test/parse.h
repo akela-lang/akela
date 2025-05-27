@@ -3,6 +3,6 @@
 
 #include "data.h"
 
-void Art_parse_files(Art_top_data* data, const char* dir_name);
+void Art_parse_files(Art_top_data* data);
 
 #endif
