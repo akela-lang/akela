@@ -20,25 +20,17 @@ void Art_test_suite_header(Art_top_data* top_data, Art_suite_data* suite_data, L
 void Art_test_suite_meta(Art_top_data* top_data, Art_suite_data* suite_data, Cent_value* value);
 void Art_test_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header);
 void Art_test_meta(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data, Cent_value* value);
+void Art_collect(Art_top_data* top_data, Zinc_string* path, Zinc_string* file_name);
 
-void Art_collect(
-    Art_top_data* top_data,
-    Zinc_string* dir_path,
-    Zinc_string* path,
-    Zinc_string* file_name);
-
-void Art_parse_files(Art_top_data* top_data)
+void Art_parse_files(Zinc_test* top_test)
 {
+    Art_top_data* top_data = top_test->data;
+
     Cob_re ext_re = Cob_compile_str("\\.md$");
 
     Zinc_string_list files;
     Zinc_string_list_init(&files);
     Zinc_list_files(Zinc_string_c_str(&top_data->dir_path), &files);
-
-    Zinc_test* top_test = NULL;
-    Zinc_test_create(&top_test);
-    Zinc_string_add_str(&top_test->name, "akela-run-test");
-    top_data->test = top_test;
 
     Zinc_string_node* node = files.head;
     while (node) {
@@ -57,7 +49,7 @@ void Art_parse_files(Art_top_data* top_data)
 
                 if (Zinc_is_reg_file(&path)) {
                     printf("%s\n", Zinc_string_c_str(&path));
-                    Art_collect(top_data, &top_data->dir_path, &path, &node->value);
+                    Art_collect(top_data, &path, &node->value);
                 }
 
                 Zinc_string_destroy(&path);
@@ -71,7 +63,7 @@ void Art_parse_files(Art_top_data* top_data)
     Cob_re_destroy(&ext_re);
 }
 
-void Art_collect(Art_top_data* top_data, Zinc_string* dir_path, Zinc_string* path, Zinc_string* file_name)
+void Art_collect(Art_top_data* top_data, Zinc_string* path, Zinc_string* file_name)
 {
     Art_suite_data* suite_data = NULL;
     Art_suite_create(&suite_data);
@@ -80,10 +72,10 @@ void Art_collect(Art_top_data* top_data, Zinc_string* dir_path, Zinc_string* pat
     Zinc_string_add_string(&suite_data->path, path);
     Zinc_string_add_string(&suite_data->name, file_name);
 
-    Zinc_test* suite2 = NULL;
-    Zinc_test_create(&suite2);
-    suite_data->test = suite2;
-    Zinc_test_add(top_data->test, suite2);
+    Zinc_test* suite_test = NULL;
+    Zinc_test_create(&suite_test);
+    suite_data->test = suite_test;
+    Zinc_test_add(top_data->test, suite_test);
 
     FILE* fp = fopen(path->buf, "r");
     if (!fp) {
@@ -248,6 +240,7 @@ void Art_test_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_do
     Zinc_test* case_test = NULL;
     Zinc_test_create(&case_test);
     case_data->test = case_test;
+    case_test->data = case_data;
     Zinc_test_add(suite_data->test, case_test);
 
     Lava_dom* item = header->data.LAVA_DOM_HEADER.head;

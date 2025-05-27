@@ -3,6 +3,6 @@
 
 #include "data.h"
 
-void Art_parse_files(Art_top_data* data);
+void Art_parse_files(Zinc_test* top_test);
 
 #endif

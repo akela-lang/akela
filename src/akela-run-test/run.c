@@ -111,9 +111,10 @@ void Art(Zinc_test* test)
         Art_top_data* top_data = NULL;
         Art_data_create(&top_data);
         test->data = top_data;
+        top_data->test = test;
 
         Zinc_string_add_string(&top_data->dir_path, &akela_run_test_dir);
-        Art_parse_files(top_data);
+        Art_parse_files(test);
 
         if (Art_print_errors(top_data)) {
             Art_data_destroy(top_data);
@@ -129,11 +130,11 @@ void Art(Zinc_test* test)
 
         Art_run(top_data);
 
-        Art_data_destroy(top_data);
-        free(top_data);
+        // Art_data_destroy(top_data);
+        // free(top_data);
 
     } else {
-        Zinc_test_perform(test);
+        // Zinc_test_perform(test);
     }
 }
 
