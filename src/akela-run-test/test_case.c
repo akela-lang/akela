@@ -12,7 +12,7 @@
 
 #include "zinc/os.h"
 
-void Art_run_suite(Art_top_data* top_data, Art_suite_data* suite_data);
+void Art_run_suite(Zinc_test* top_test, Zinc_test* suite_test);
 void Art_run_test(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data);
 Art_pair Art_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
@@ -29,7 +29,7 @@ bool Art_check_address(
     Ake_comp_table* ct,
     Ake_code_gen_result* cg_result);
 
-void Art_run(Zinc_test* top_test)
+void Art_run_top(Zinc_test* top_test)
 {
     Art_top_data* top_data = top_test->data;
 
@@ -45,31 +45,34 @@ void Art_run(Zinc_test* top_test)
             if (suite_test->solo) {
                 printf("Running solo: %s\n", Zinc_string_c_str(&suite_data->path));
             }
-            Art_run_suite(top_data, suite_data);
+            Art_run_suite(top_test, suite_test);
         }
 
         suite_test = suite_test->next;
     }
 }
 
-void Art_run_suite(Art_top_data* top_data, Art_suite_data* suite_data)
+void Art_run_suite(Zinc_test* top_test, Zinc_test* suite_test)
 {
-    Art_case_data* case_data = suite_data->head;
+    Art_top_data* top_data = top_test->data;
+    Art_suite_data* suite_data = suite_test->data;
 
-    while (case_data) {
-        if (case_data->test->mute) {
+    Zinc_test* case_test = suite_test->head;
+    while (case_test) {
+        Art_case_data* case_data = case_test->data;
+        if (case_test->mute) {
             printf("Muting: %s\n", Zinc_string_c_str(&case_data->description));
         }
-        bool can_run = !case_data->test->mute
-            && ((suite_data->test->has_solo && case_data->test->solo) || !suite_data->test->has_solo);
+        bool can_run = !case_test->mute
+            && ((suite_test->has_solo && case_test->solo) || !suite_test->has_solo);
         if (can_run) {
-            if (suite_data->test->solo) {
+            if (suite_test->solo) {
                 printf("Running solo: %s\n", Zinc_string_c_str(&case_data->description));
             }
             Art_run_test(top_data, suite_data, case_data);
         }
 
-        case_data = case_data->next;
+        case_test = case_test->next;
     }
 }
 

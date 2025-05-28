@@ -128,7 +128,7 @@ void Art(Zinc_test* test)
             return;
         }
 
-        Art_run(test);
+        Art_run_top(test);
 
         // Art_data_destroy(top_data);
         // free(top_data);
