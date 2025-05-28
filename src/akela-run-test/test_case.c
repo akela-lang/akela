@@ -29,23 +29,26 @@ bool Art_check_address(
     Ake_comp_table* ct,
     Ake_code_gen_result* cg_result);
 
-void Art_run(Art_top_data* top_data)
+void Art_run(Zinc_test* top_test)
 {
-    Art_suite_data* suite_data = top_data->head;
-    while (suite_data) {
-        if (suite_data->test->mute) {
+    Art_top_data* top_data = top_test->data;
+
+    Zinc_test* suite_test = top_test->head;
+    while (suite_test) {
+        Art_suite_data* suite_data = suite_test->data;
+        if (suite_test->mute) {
             printf("Muting: %s\n", Zinc_string_c_str(&suite_data->path));
         }
-        bool can_run = !suite_data->test->mute
-            && ((top_data->has_solo && suite_data->test->solo) || !top_data->has_solo);
+        bool can_run = !suite_test->mute
+            && ((top_data->has_solo && suite_test->solo) || !top_data->has_solo);
         if (can_run) {
-            if (suite_data->test->solo) {
+            if (suite_test->solo) {
                 printf("Running solo: %s\n", Zinc_string_c_str(&suite_data->path));
             }
             Art_run_suite(top_data, suite_data);
         }
 
-        suite_data = suite_data->next;
+        suite_test = suite_test->next;
     }
 }
 
