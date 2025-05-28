@@ -123,10 +123,8 @@ void Art(Zinc_test* test)
             return;
         }
 
-        Art_run_top(test);
-
     } else {
-        // Zinc_test_perform(test);
+        Zinc_test_perform(test);
     }
 }
 

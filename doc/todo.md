@@ -5,8 +5,7 @@
 # Akela Parse Test
 
 # Akela Run Test
-* put test cases location in config file
-* use test perform
+* set error stats
 
 # Centipede
 

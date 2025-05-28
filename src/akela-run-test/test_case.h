@@ -3,6 +3,7 @@
 
 #include "data.h"
 
-void Art_run_top(Zinc_test* top_test);
+void Art_run_suite(Zinc_test* suite_test);
+void Art_run_test(Zinc_test* case_test);
 
 #endif

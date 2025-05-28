@@ -12,8 +12,6 @@
 
 #include "zinc/os.h"
 
-void Art_run_suite(Zinc_test* top_test, Zinc_test* suite_test);
-void Art_run_test(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test);
 Art_pair Art_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 Zinc_string_list* Art_split(Zinc_string* string);
@@ -28,55 +26,24 @@ bool Art_check_address(
     Ake_comp_table* ct,
     Ake_code_gen_result* cg_result);
 
-void Art_run_top(Zinc_test* top_test)
+void Art_run_suite(Zinc_test* suite_test)
 {
-    Art_top_data* top_data = top_test->data;
-
-    Zinc_test* suite_test = top_test->head;
-    while (suite_test) {
-        Art_suite_data* suite_data = suite_test->data;
-        if (suite_test->mute) {
-            printf("Muting: %s\n", Zinc_string_c_str(&suite_data->path));
-        }
-        bool can_run = !suite_test->mute
-            && ((top_data->has_solo && suite_test->solo) || !top_data->has_solo);
-        if (can_run) {
-            if (suite_test->solo) {
-                printf("Running solo: %s\n", Zinc_string_c_str(&suite_data->path));
-            }
-            Art_run_suite(top_test, suite_test);
-        }
-
-        suite_test = suite_test->next;
+    if (suite_test->dry_run) {
+        return;
     }
+
+    Zinc_test_perform(suite_test);
 }
 
-void Art_run_suite(Zinc_test* top_test, Zinc_test* suite_test)
+void Art_run_test(Zinc_test* case_test)
 {
-    Art_top_data* top_data = top_test->data;
-    Art_suite_data* suite_data = suite_test->data;
-
-    Zinc_test* case_test = suite_test->head;
-    while (case_test) {
-        Art_case_data* case_data = case_test->data;
-        if (case_test->mute) {
-            printf("Muting: %s\n", Zinc_string_c_str(&case_data->description));
-        }
-        bool can_run = !case_test->mute
-            && ((suite_test->has_solo && case_test->solo) || !suite_test->has_solo);
-        if (can_run) {
-            if (suite_test->solo) {
-                printf("Running solo: %s\n", Zinc_string_c_str(&case_data->description));
-            }
-            Art_run_test(top_test, suite_test, case_test);
-        }
-
-        case_test = case_test->next;
+    if (case_test->dry_run) {
+        return;
     }
-}
 
-void Art_run_test(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test)
-{
+    Zinc_test* suite_test = case_test->parent;
+    Zinc_test* top_test = suite_test->parent;
+
     Art_top_data* top_data = top_test->data;
     Art_suite_data* suite_data = suite_test->data;
     Art_case_data* case_data = case_test->data;

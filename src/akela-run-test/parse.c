@@ -15,6 +15,8 @@
 #include "zinc/os_win.h"
 #include "zinc/fs.h"
 #include "lava/parse.h"
+#include "test_case.h"
+
 void Art_collect(Zinc_test* top_test, Zinc_string* path, Zinc_string* file_name);
 void Art_test_suite_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* header);
 void Art_test_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value* value);
@@ -171,6 +173,8 @@ void Art_test_suite_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom*
     }
 
     Zinc_string_add_string(&suite_test->name, &suite_data->description);
+
+    suite_test->func = Art_run_suite;
 }
 
 void Art_test_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value* value)
@@ -304,6 +308,8 @@ void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* heade
     }
 
     Zinc_string_add_string(&case_test->name, &case_data->description);
+
+    case_test->func = Art_run_test;
 }
 
 void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test, Cent_value* value)
