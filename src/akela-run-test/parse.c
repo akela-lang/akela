@@ -15,12 +15,11 @@
 #include "zinc/os_win.h"
 #include "zinc/fs.h"
 #include "lava/parse.h"
-
-void Art_test_suite_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header);
-void Art_test_suite_meta(Art_top_data* top_data, Art_suite_data* suite_data, Cent_value* value);
-void Art_test_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header);
-void Art_test_meta(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data, Cent_value* value);
-void Art_collect(Art_top_data* top_data, Zinc_string* path, Zinc_string* file_name);
+void Art_collect(Zinc_test* top_test, Zinc_string* path, Zinc_string* file_name);
+void Art_test_suite_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* header);
+void Art_test_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value* value);
+void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* header);
+void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test, Cent_value* value);
 
 void Art_parse_files(Zinc_test* top_test)
 {
@@ -49,7 +48,7 @@ void Art_parse_files(Zinc_test* top_test)
 
                 if (Zinc_is_reg_file(&path)) {
                     printf("%s\n", Zinc_string_c_str(&path));
-                    Art_collect(top_data, &path, &node->value);
+                    Art_collect(top_test, &path, &node->value);
                 }
 
                 Zinc_string_destroy(&path);
@@ -63,8 +62,10 @@ void Art_parse_files(Zinc_test* top_test)
     Cob_re_destroy(&ext_re);
 }
 
-void Art_collect(Art_top_data* top_data, Zinc_string* path, Zinc_string* file_name)
+void Art_collect(Zinc_test* top_test, Zinc_string* path, Zinc_string* file_name)
 {
+    Art_top_data* top_data = top_test->data;
+
     Art_suite_data* suite_data = NULL;
     Art_suite_create(&suite_data);
     Art_data_add(top_data, suite_data);
@@ -75,6 +76,7 @@ void Art_collect(Art_top_data* top_data, Zinc_string* path, Zinc_string* file_na
     Zinc_test* suite_test = NULL;
     Zinc_test_create(&suite_test);
     suite_data->test = suite_test;
+    suite_test->data = suite_data;
     Zinc_test_add(top_data->test, suite_test);
 
     FILE* fp = fopen(path->buf, "r");
@@ -112,13 +114,16 @@ void Art_collect(Art_top_data* top_data, Zinc_string* path, Zinc_string* file_na
         return;
     }
 
-    Art_test_suite_header(top_data, suite_data, lr.root);
+    Art_test_suite_header(top_test, suite_test, lr.root);
 
     Lava_result_destroy(&lr);
 }
 
-void Art_test_suite_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header)
+void Art_test_suite_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* header)
 {
+    Art_top_data* top_data = top_test->data;
+    Art_suite_data* suite_data = suite_test->data;
+
     Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
     while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
@@ -157,11 +162,11 @@ void Art_test_suite_header(Art_top_data* top_data, Art_suite_data* suite_data, L
                 Cent_comp_table_destroy(ct);
                 break;
             }
-            Art_test_suite_meta(top_data, suite_data, ct->primary->value);
+            Art_test_suite_meta(top_test, suite_test, ct->primary->value);
             Cent_comp_table_destroy(ct);
             free(ct);
         } else if (item->kind == LAVA_DOM_HEADER) {
-            Art_test_header(top_data, suite_data, item);
+            Art_test_header(top_test, suite_test, item);
         }
 
         item = item->next;
@@ -170,8 +175,11 @@ void Art_test_suite_header(Art_top_data* top_data, Art_suite_data* suite_data, L
     Zinc_string_add_string(&suite_data->test->name, &suite_data->description);
 }
 
-void Art_test_suite_meta(Art_top_data* top_data, Art_suite_data* suite_data, Cent_value* value)
+void Art_test_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value* value)
 {
+    Art_top_data* top_data = top_test->data;
+    Art_suite_data* suite_data = suite_test->data;
+
     if (!value) {
         Zinc_error_list_set(&suite_data->errors, NULL, "expected test suite in backquote");
         return;
@@ -218,8 +226,11 @@ void Art_test_suite_meta(Art_top_data* top_data, Art_suite_data* suite_data, Cen
     suite_data->test->mute = mute->data.boolean;
 }
 
-void Art_test_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_dom* header)
+void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* header)
 {
+    Art_top_data* top_data = top_test->data;
+    Art_suite_data* suite_data = suite_test->data;
+
     Zinc_string_slice title = Zinc_string_get_slice(&header->data.LAVA_DOM_HEADER.title);
     title = Zinc_trim(title);
     Zinc_string_slice title_ref = Zinc_string_slice_from_str("Test");
@@ -280,7 +291,7 @@ void Art_test_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_do
                     if (!ct->primary->value) {
                         Zinc_error_list_set(&suite_data->errors, &item->loc, "expected value");
                     } else {
-                        Art_test_meta(top_data, suite_data, case_data, ct->primary->value);
+                        Art_test_meta(top_test, suite_test, case_test, ct->primary->value);
                     }
                 }
                 case_data->ct = ct;
@@ -299,8 +310,12 @@ void Art_test_header(Art_top_data* top_data, Art_suite_data* suite_data, Lava_do
     Zinc_string_add_string(&case_test->name, &case_data->description);
 }
 
-void Art_test_meta(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data, Cent_value* value)
+void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test, Cent_value* value)
 {
+    Art_top_data* top_data = top_test->data;
+    Art_suite_data* suite_data = suite_test->data;
+    Art_case_data* case_data = case_test->data;
+
     Cent_ast* n = value->n;
     if (value->type != Cent_value_type_dag) {
         Zinc_error_list_set(&suite_data->errors, &n->loc, "expected DAG");
