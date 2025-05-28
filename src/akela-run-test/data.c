@@ -62,8 +62,6 @@ void Art_suite_init(Art_suite_data* suite_data)
     Zinc_error_list_init(&suite_data->errors);
     suite_data->next = NULL;
     suite_data->prev = NULL;
-    suite_data->head = NULL;
-    suite_data->tail = NULL;
 }
 
 void Art_suite_create(Art_suite_data** suite_data)

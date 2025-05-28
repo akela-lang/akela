@@ -36,8 +36,6 @@ struct Art_suite_data {
     Zinc_error_list errors;
     Art_suite_data* next;
     Art_suite_data* prev;
-    Art_case_data* head;
-    Art_case_data* tail;
 };
 
 typedef struct Art_top_data Art_top_data;
