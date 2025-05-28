@@ -21,7 +21,6 @@ Zinc_string* Art_join(Zinc_string_list* list);
 void Art_print_akela(Zinc_string* ake);
 void Art_print_llvm(Art_pair* pair);
 void Art_print_result(Art_pair* pair);
-void Art_print_results(Art_top_data* top_data);
 void Art_setup_address(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test);
 bool Art_check_address(
     Zinc_test* top_test,
