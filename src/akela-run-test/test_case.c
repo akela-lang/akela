@@ -13,7 +13,7 @@
 #include "zinc/os.h"
 
 void Art_run_suite(Zinc_test* top_test, Zinc_test* suite_test);
-void Art_run_test(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data);
+void Art_run_test(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test);
 Art_pair Art_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 Zinc_string_list* Art_split(Zinc_string* string);
@@ -22,10 +22,10 @@ void Art_print_akela(Zinc_string* ake);
 void Art_print_llvm(Art_pair* pair);
 void Art_print_result(Art_pair* pair);
 void Art_print_results(Art_top_data* top_data);
-void Art_setup_address(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data);
+void Art_setup_address(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test);
 bool Art_check_address(
-    Art_top_data* top_data,
-    Art_case_data* case_data,
+    Zinc_test* top_test,
+    Zinc_test* case_test,
     Ake_comp_table* ct,
     Ake_code_gen_result* cg_result);
 
@@ -69,15 +69,19 @@ void Art_run_suite(Zinc_test* top_test, Zinc_test* suite_test)
             if (suite_test->solo) {
                 printf("Running solo: %s\n", Zinc_string_c_str(&case_data->description));
             }
-            Art_run_test(top_data, suite_data, case_data);
+            Art_run_test(top_test, suite_test, case_test);
         }
 
         case_test = case_test->next;
     }
 }
 
-void Art_run_test(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data)
+void Art_run_test(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test)
 {
+    Art_top_data* top_data = top_test->data;
+    Art_suite_data* suite_data = suite_test->data;
+    Art_case_data* case_data = case_test->data;
+
     FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
     if (!fp) {
         Zinc_error_list_set(
@@ -104,7 +108,7 @@ void Art_run_test(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_d
         }
         passed = false;
     } else {
-        Art_setup_address(top_data, suite_data, case_data);
+        Art_setup_address(top_test, suite_test, case_test);
 
         /* run program on jit */
         Akela_llvm_cg* cg = NULL;
@@ -142,7 +146,7 @@ void Art_run_test(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_d
                 passed = false;
             }
 
-            if (!Art_check_address(top_data, case_data, ct, &cg_result)) {
+            if (!Art_check_address(top_test, case_test, ct, &cg_result)) {
                 passed = false;
             }
 
@@ -159,8 +163,12 @@ void Art_run_test(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_d
     free(ct);
 }
 
-void Art_setup_address(Art_top_data* top_data, Art_suite_data* suite_data, Art_case_data* case_data)
+void Art_setup_address(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test)
 {
+    Art_top_data* top_data = top_test->data;
+    Art_suite_data* suite_data = suite_test->data;
+    Art_case_data* case_data = case_test->data;
+
     Cent_value* data_type_list_value = top_data->type_info->primary->value;
     assert(data_type_list_value);
 
@@ -209,12 +217,15 @@ void Art_setup_address(Art_top_data* top_data, Art_suite_data* suite_data, Art_c
 }
 
 bool Art_check_address(
-    Art_top_data* top_data,
-    Art_case_data* case_data,
+    Zinc_test* top_test,
+    Zinc_test* case_test,
     Ake_comp_table* ct,
     Ake_code_gen_result* cg_result)
 {
     bool matched = true;
+
+    Art_top_data* top_data = top_test->data;
+    Art_case_data* case_data = case_test->data;
 
     Cent_value* field = case_data->value;
     assert(field);
