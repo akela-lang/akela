@@ -126,7 +126,7 @@ void Art_run_test(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_te
 
         /* check llvm output */
         if (!case_data->snapshot) {
-            case_data->test->ran = true;
+            case_test->ran = true;
             Art_pair llvm_pair = Art_diff(top_data->regex_re, &cg_result.module_text, &case_data->llvm);
             if (!llvm_pair.matched) {
                 passed = false;
@@ -155,7 +155,7 @@ void Art_run_test(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_te
     }
 
     if (passed) {
-        case_data->test->pass = true;
+        case_test->pass = true;
     }
 
     Ake_comp_table_destroy(ct);
@@ -246,7 +246,7 @@ bool Art_check_address(
                 matched = false;
                 Zinc_string_finish(actual);
                 Zinc_string_finish(expected);
-                Zinc_test_print_unseen(case_data->test);
+                Zinc_test_print_unseen(case_test);
                 fprintf(stderr, "result does not match: (%s) (%s)\n", actual->buf, expected->buf);
             }
             return matched;
@@ -265,7 +265,7 @@ bool Art_check_address(
                 int8_t expected = (int8_t)value_value->data.integer;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%hhd) (%hhd)\n", actual, expected);
                 }
             } else {
@@ -283,7 +283,7 @@ bool Art_check_address(
                 int16_t expected = (int16_t)value_value->data.integer;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%hd) (%hd)\n", actual, expected);
                 }
             } else {
@@ -301,7 +301,7 @@ bool Art_check_address(
                 int32_t expected = (int32_t)value_value->data.integer;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
                 }
             } else {
@@ -319,7 +319,7 @@ bool Art_check_address(
                 int64_t expected = (int64_t)value_value->data.integer;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%ld) (%ld)\n", actual, expected);
                 }
             } else {
@@ -331,7 +331,7 @@ bool Art_check_address(
                 uint8_t expected = (uint8_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
                 }
             } else {
@@ -343,7 +343,7 @@ bool Art_check_address(
                 uint16_t expected = (uint16_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%hu) (%hu)\n", actual, expected);
                 }
             } else {
@@ -355,7 +355,7 @@ bool Art_check_address(
                 uint32_t expected = (uint32_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
                 }
             } else {
@@ -367,7 +367,7 @@ bool Art_check_address(
                 uint64_t expected = (uint64_t)value_value->data.natural;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
                 }
             } else {
@@ -380,7 +380,7 @@ bool Art_check_address(
                 _Float16 expected = (_Float16)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%f) (%f)\n", (float)actual, (float)expected);
                 }
 #elif IS_WIN
@@ -397,7 +397,7 @@ bool Art_check_address(
                 float expected = (float)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%f) (%f)\n", actual, expected);
                 }
             } else {
@@ -409,7 +409,7 @@ bool Art_check_address(
                 double expected = (double)value_value->data.real;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%lf) (%lf)\n", actual, expected);
                 }
             } else {
@@ -421,7 +421,7 @@ bool Art_check_address(
                 bool expected = (bool)value_value->data.boolean;
                 if (actual != expected) {
                     matched = false;
-                    Zinc_test_print_unseen(case_data->test);
+                    Zinc_test_print_unseen(case_test);
                     fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
                 }
             } else {

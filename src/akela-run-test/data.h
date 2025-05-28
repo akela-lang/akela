@@ -18,7 +18,6 @@ struct Art_case_data {
     Zinc_string description;
     bool snapshot;
     bool has_error;
-    Zinc_test* test;
     Zinc_input_bounds source_bounds;
     Zinc_input_bounds llvm_bounds;
     Zinc_string llvm;
@@ -36,7 +35,6 @@ struct Art_suite_data {
     Zinc_string path;
     Zinc_string description;
     Zinc_string name;
-    Zinc_test* test;
     Zinc_error_list errors;
     Art_suite_data* next;
     Art_suite_data* prev;
@@ -50,7 +48,6 @@ struct Art_top_data {
     bool has_solo;
     Cent_comp_table* type_info;
     Cob_re regex_re;
-    Zinc_test* test;
     Art_suite_data* head;
     Art_suite_data* tail;
 };

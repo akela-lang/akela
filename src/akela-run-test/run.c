@@ -111,7 +111,6 @@ void Art(Zinc_test* test)
         Art_top_data* top_data = NULL;
         Art_data_create(&top_data);
         test->data = top_data;
-        top_data->test = test;
 
         Zinc_string_add_string(&top_data->dir_path, &akela_run_test_dir);
         Art_parse_files(test);
