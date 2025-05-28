@@ -34,8 +34,6 @@ struct Art_suite_data {
     Zinc_string description;
     Zinc_string name;
     Zinc_error_list errors;
-    Art_suite_data* next;
-    Art_suite_data* prev;
 };
 
 typedef struct Art_top_data Art_top_data;
@@ -44,8 +42,6 @@ struct Art_top_data {
     bool has_solo;
     Cent_comp_table* type_info;
     Cob_re regex_re;
-    Art_suite_data* head;
-    Art_suite_data* tail;
 };
 
 typedef enum {
@@ -74,11 +70,9 @@ void Art_test_destroy(Art_case_data* case_data);
 void Art_suite_init(Art_suite_data* suite_data);
 void Art_suite_create(Art_suite_data** suite_data);
 void Art_suite_destroy(Art_suite_data* suite_data);
-void Art_suite_add(Art_suite_data* suite_data, Art_case_data* case_data);
 
 void Art_data_init(Art_top_data* top_data);
 void Art_data_create(Art_top_data** top_data);
 void Art_data_destroy(Art_top_data* top_data);
-void Art_data_add(Art_top_data* top_data, Art_suite_data* suite_data);
 
 #endif

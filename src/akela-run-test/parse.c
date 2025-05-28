@@ -68,7 +68,6 @@ void Art_collect(Zinc_test* top_test, Zinc_string* path, Zinc_string* file_name)
 
     Art_suite_data* suite_data = NULL;
     Art_suite_create(&suite_data);
-    Art_data_add(top_data, suite_data);
 
     Zinc_string_add_string(&suite_data->path, path);
     Zinc_string_add_string(&suite_data->name, file_name);
