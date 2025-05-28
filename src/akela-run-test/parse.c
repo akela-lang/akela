@@ -245,7 +245,6 @@ void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* heade
 
     Art_case_data* case_data = NULL;
     Art_test_create(&case_data);
-    Art_suite_add(suite_data, case_data);
 
     Zinc_test* case_test = NULL;
     Zinc_test_create(&case_test);

@@ -26,8 +26,6 @@ struct Art_case_data {
     Zinc_spec_error_list spec_errors;
     void* return_address;
     long long return_size;
-    Art_case_data* next;
-    Art_case_data* prev;
 };
 
 typedef struct Art_suite_data Art_suite_data;

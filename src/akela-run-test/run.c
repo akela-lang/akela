@@ -10,7 +10,7 @@
 #define NAME "akela-run-test"
 
 bool Art_validate_directory(const char* path);
-bool Art_print_errors(Art_top_data* data);
+bool Art_print_errors(Zinc_test* top_test);
 
 void Art(Zinc_test* test)
 {
@@ -115,22 +115,15 @@ void Art(Zinc_test* test)
         Zinc_string_add_string(&top_data->dir_path, &akela_run_test_dir);
         Art_parse_files(test);
 
-        if (Art_print_errors(top_data)) {
-            Art_data_destroy(top_data);
-            return;
-        }
+        Zinc_test* top_test = test;
 
         Run_get_type_info(top_data);
 
-        if (Art_print_errors(top_data)) {
-            Art_data_destroy(top_data);
+        if (Art_print_errors(top_test)) {
             return;
         }
 
         Art_run_top(test);
-
-        // Art_data_destroy(top_data);
-        // free(top_data);
 
     } else {
         // Zinc_test_perform(test);
@@ -165,26 +158,28 @@ bool Art_validate_directory(const char* path)
     return true;
 }
 
-bool Art_print_errors(Art_top_data* data)
+bool Art_print_errors(Zinc_test* top_test)
 {
     bool has_errors = false;
-    Art_suite_data* suite = data->head;
-    while (suite) {
-        if (suite->errors.head) {
+    Zinc_test* suite_test = top_test->head;
+    while (suite_test) {
+        Art_suite_data* suite_data = suite_test->data;
+        if (suite_data->errors.head) {
             has_errors = true;
-            Zinc_error_list_print(&suite->errors);
+            Zinc_error_list_print(&suite_data->errors);
         }
 
-        Art_case_data* test = suite->head;
-        while (test) {
-            if (test->spec_errors.head) {
+        Zinc_test* case_test = suite_test->head;
+        while (case_test) {
+            Art_case_data* case_data = case_test->data;
+            if (case_data->spec_errors.head) {
                 has_errors = true;
-                Zinc_spec_error_list_print(&test->spec_errors);
+                Zinc_spec_error_list_print(&case_data->spec_errors);
             }
-            test = test->next;
+            case_test = case_test->next;
         }
 
-        suite = suite->next;
+        suite_test = suite_test->next;
     }
     return has_errors;
 }

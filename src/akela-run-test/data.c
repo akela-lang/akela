@@ -36,8 +36,6 @@ void Art_test_init(Art_case_data* case_data)
     Zinc_input_bounds_init(&case_data->llvm_bounds);
     Zinc_string_init(&case_data->llvm);
     Zinc_spec_error_list_init(&case_data->spec_errors);
-    case_data->next = NULL;
-    case_data->prev = NULL;
 }
 
 void Art_test_create(Art_case_data** case_data)
@@ -80,25 +78,6 @@ void Art_suite_destroy(Art_suite_data* suite_data)
     Zinc_string_destroy(&suite_data->description);
     Zinc_string_destroy(&suite_data->name);
     Zinc_error_list_destroy(&suite_data->errors);
-    Art_case_data* test = suite_data->head;
-    while (test) {
-        Art_case_data* temp = test;
-        test = test->next;
-        Art_test_destroy(temp);
-        free(temp);
-    }
-}
-
-void Art_suite_add(Art_suite_data* suite_data, Art_case_data* case_data)
-{
-    if (suite_data->head && suite_data->tail) {
-        suite_data->tail->next = case_data;
-        case_data->prev = suite_data->tail;
-        suite_data->tail = case_data;
-    } else {
-        suite_data->head = case_data;
-        suite_data->tail = case_data;
-    }
 }
 
 void Art_data_init(Art_top_data* top_data)
