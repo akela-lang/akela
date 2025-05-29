@@ -9,8 +9,8 @@
 #include <float.h>
 #include <stdint.h>
 #include <akela/comp_table.h>
-
 #include "zinc/os.h"
+#include "zinc/expect.h"
 
 Art_pair Art_diff(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
@@ -49,12 +49,12 @@ void Art_run_test(Zinc_test* case_test)
     Art_case_data* case_data = case_test->data;
 
     FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
-    if (!fp) {
-        Zinc_error_list_set(
-            &suite_data->errors,
-            NULL,
-            "could not open: %bf",
-            Zinc_string_c_str(&suite_data->path));
+    bool valid = Zinc_test_expect_ptr(
+        case_test,
+        fp,
+        "could not open file: %s",
+        Zinc_string_c_str(&suite_data->path));
+    if (!valid) {
         return;
     }
 

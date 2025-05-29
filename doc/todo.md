@@ -20,5 +20,7 @@
 # Lava
 
 # Zinc
+* remove unused unit test code
+* shorten expect function names
 
 # Test

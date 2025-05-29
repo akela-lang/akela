@@ -43,7 +43,7 @@ void Zinc_test_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b,
 void Zinc_test_expect_char_equal(Zinc_test* test, char a, char b, const char* message);
 void Zinc_test_expect_ok(Zinc_test* test, Zinc_result r, const char* message);
 void Zinc_test_expect_error_message(Zinc_test* test, const char* s);
-void Zinc_test_expect_ptr(Zinc_test* test, void* p, const char* message);
+bool Zinc_test_expect_ptr(Zinc_test* test, void* p, const char* fmt, ...);
 void Zinc_test_expect_vector(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, const char* message);
 
 void Zinc_test_expect_buffer_list_count(Zinc_test* test, Zinc_string_list* bl, size_t count, char* message);

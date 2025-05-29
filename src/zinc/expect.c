@@ -418,18 +418,25 @@ void Zinc_test_expect_char_equal(Zinc_test* test, char a, char b, const char* me
 	fprintf(stderr, "\t(%c) = (%c) error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_ptr(Zinc_test* test, void* p, const char* message)
+bool Zinc_test_expect_ptr(Zinc_test* test, void* p, const char* fmt, ...)
 {
 	test->check_count++;
 	if (p) {
 	    test->check_passed++;
-	    return;
+	    return true;
 	}
 
     test->check_failed++;
     test->pass = false;
     Zinc_test_print_unseen(test);
-	fprintf(stderr, "\t%p != NULL error: %s\n", p, message);
+	va_list args;
+	fprintf(stderr, "\t%p == NULL\n", p);
+	fprintf(stderr, "\t");
+	va_start(args, fmt);
+	vfprintf(stderr, fmt, args);
+	va_end(args);
+	fprintf(stderr, "\n");
+	return false;
 }
 
 void Zinc_test_expect_ok(Zinc_test* test, Zinc_result r, const char* message)
