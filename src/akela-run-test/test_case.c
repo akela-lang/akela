@@ -64,7 +64,8 @@ void Art_run_test(Zinc_test* case_test)
     Ake_comp_unit_parse(ct->primary);
 
     bool passed = true;
-    if (!ct->primary->valid) {
+    valid = Zinc_test_expect_true(case_test, ct->primary->valid, "parsing failed");
+    if (!valid) {
         /* is parsing valid */
         Zinc_error* e = ct->primary->errors.head;
         while (e) {
@@ -73,52 +74,43 @@ void Art_run_test(Zinc_test* case_test)
             e = e->next;
         }
         passed = false;
-    } else {
-        Art_setup_address(top_test, suite_test, case_test);
+        return;
+    }
 
-        /* run program on jit */
-        Akela_llvm_cg* cg = NULL;
-        Akela_llvm_cg_create(&cg, &ct->primary->errors, &ct->primary->extern_list);
-        Ake_code_gen_result cg_result;
-        Ake_code_gen_result_init(&cg_result);
-        cg_result.return_address = case_data->return_address;
-        cg_result.return_size = case_data->return_size;
-        if (case_data->snapshot) {
-            cg_result.debug = true;
-            cg_result.dry_run = true;
+    Art_setup_address(top_test, suite_test, case_test);
+
+    /* run program on jit */
+    Akela_llvm_cg* cg = NULL;
+    Akela_llvm_cg_create(&cg, &ct->primary->errors, &ct->primary->extern_list);
+    Ake_code_gen_result cg_result;
+    Ake_code_gen_result_init(&cg_result);
+    cg_result.return_address = case_data->return_address;
+    cg_result.return_size = case_data->return_size;
+    if (case_data->snapshot) {
+        cg_result.debug = true;
+        cg_result.dry_run = true;
+    }
+
+    Ake_code_gen_jit(cg, &Akela_llvm_vtable, ct->primary->root, &cg_result);
+    Akela_llvm_cg_destroy(cg);
+
+    /* check llvm output */
+    if (!case_data->snapshot) {
+        case_test->ran = true;
+        Art_pair llvm_pair = Art_diff(top_data->regex_re, &cg_result.module_text, &case_data->llvm);
+        if (!llvm_pair.matched) {
+            passed = false;
+            Art_print_llvm(&llvm_pair);
+        }
+        Art_pair_destroy(&llvm_pair);
+
+        assert(!ct->primary->errors.head);
+
+        if (!Art_check_address(top_test, case_test, ct, &cg_result)) {
+            passed = false;
         }
 
-        Ake_code_gen_jit(cg, &Akela_llvm_vtable, ct->primary->root, &cg_result);
-        Akela_llvm_cg_destroy(cg);
-
-        /* check llvm output */
-        if (!case_data->snapshot) {
-            case_test->ran = true;
-            Art_pair llvm_pair = Art_diff(top_data->regex_re, &cg_result.module_text, &case_data->llvm);
-            if (!llvm_pair.matched) {
-                passed = false;
-                Art_print_llvm(&llvm_pair);
-            }
-            Art_pair_destroy(&llvm_pair);
-
-            if (ct->primary->errors.head) {
-                /* any other errors */
-                Zinc_error* e = ct->primary->errors.head;
-                while (e) {
-                    Zinc_string_finish(&e->message);
-                    fprintf(stderr, "%zu,%zu: %s\n", e->loc.line, e->loc.col, e->message.buf);
-                    e = e->next;
-                }
-                passed = false;
-            }
-
-            if (!Art_check_address(top_test, case_test, ct, &cg_result)) {
-                passed = false;
-            }
-
-            Ake_code_gen_result_destroy(&cg_result);
-        }
-
+        Ake_code_gen_result_destroy(&cg_result);
     }
 
     if (passed) {
@@ -165,9 +157,14 @@ void Art_setup_address(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* ca
             }
             data_type_value = data_type_value->next;
         }
-        if (!found) {
+        bool valid = Zinc_test_expect_true(
+            case_test,
+            found,
+            "type not found: %d: %s",
+            type,
+            type_string->buf);
+        if (!valid) {
             Zinc_string_finish(type_string);
-            fprintf(stderr, "Could not find field type %d-%s", type, type_string->buf);
             return;
         }
 
@@ -209,7 +206,13 @@ bool Art_check_address(
         if (value_value->type == Cent_value_type_string) {
             Zinc_string* actual = &cg_result->value;
             Zinc_string* expected = &value_value->data.string;
-            if (!Art_diff_value(top_data->regex_re, actual, expected)) {
+            case_test->check_count++;
+            if (Art_diff_value(top_data->regex_re, actual, expected)) {
+                case_test->check_passed++;
+            } else {
+                case_test->pass = false;
+                case_test->check_failed++;
+                Zinc_test_print_unseen(case_test);
                 matched = false;
                 Zinc_string_finish(actual);
                 Zinc_string_finish(expected);
@@ -230,13 +233,13 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_integer) {
                 int8_t actual = *(int8_t*)case_data->return_address;
                 int8_t expected = (int8_t)value_value->data.integer;
-                if (actual != expected) {
-                    matched = false;
-                    Zinc_test_print_unseen(case_test);
-                    fprintf(stderr, "result does not match: (%hhd) (%hhd)\n", actual, expected);
-                }
+                Zinc_test_expect_int8_t_equal(
+                    case_test,
+                    actual,
+                    expected,
+                    "result does not match");
             } else {
-                assert(false && "expected integer or string value type");
+                assert(false && "expected integer or natural value type");
             }
         } else if (type == Run_type_int16) {
             if (value_value->type == Cent_value_type_natural) {
@@ -248,11 +251,11 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_integer) {
                 int16_t actual = *(int16_t*)case_data->return_address;
                 int16_t expected = (int16_t)value_value->data.integer;
-                if (actual != expected) {
-                    matched = false;
-                    Zinc_test_print_unseen(case_test);
-                    fprintf(stderr, "result does not match: (%hd) (%hd)\n", actual, expected);
-                }
+                Zinc_test_expect_int16_t_equal(
+                    case_test,
+                    actual,
+                    expected,
+                    "result does not match");
             } else {
                 assert(false && "expected integer or string value type");
             }
@@ -266,11 +269,11 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_integer) {
                 int32_t actual = *(int32_t*)case_data->return_address;
                 int32_t expected = (int32_t)value_value->data.integer;
-                if (actual != expected) {
-                    matched = false;
-                    Zinc_test_print_unseen(case_test);
-                    fprintf(stderr, "result does not match: (%d) (%d)\n", actual, expected);
-                }
+                Zinc_test_expect_int32_t_equal(
+                    case_test,
+                    actual,
+                    expected,
+                    "result does not match");
             } else {
                 assert(false && "expected integer or string value type");
             }
@@ -284,11 +287,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_integer) {
                 int64_t actual = *(int64_t*)case_data->return_address;
                 int64_t expected = (int64_t)value_value->data.integer;
-                if (actual != expected) {
-                    matched = false;
-                    Zinc_test_print_unseen(case_test);
-                    fprintf(stderr, "result does not match: (%ld) (%ld)\n", actual, expected);
-                }
+                Zinc_test_expect_int64_t_equal(case_test, actual, expected, "result does not match");
             } else {
                 assert(false && "expected integer or string value type");
             }
@@ -296,11 +295,11 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_natural) {
                 uint8_t actual = *(uint8_t*)case_data->return_address;
                 uint8_t expected = (uint8_t)value_value->data.natural;
-                if (actual != expected) {
-                    matched = false;
-                    Zinc_test_print_unseen(case_test);
-                    fprintf(stderr, "result does not match: (%hhu) (%hhu)\n", actual, expected);
-                }
+                Zinc_test_expect_uint8_t_equal(
+                    case_test,
+                    actual,
+                    expected,
+                    "result does not match");
             } else {
                 assert(false && "expected integer or string value type");
             }
@@ -308,11 +307,11 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_natural) {
                 uint16_t actual = *(uint16_t*)case_data->return_address;
                 uint16_t expected = (uint16_t)value_value->data.natural;
-                if (actual != expected) {
-                    matched = false;
-                    Zinc_test_print_unseen(case_test);
-                    fprintf(stderr, "result does not match: (%hu) (%hu)\n", actual, expected);
-                }
+                Zinc_test_expect_uint16_t_equal(
+                    case_test,
+                    actual,
+                    expected,
+                    "result does not match");
             } else {
                 assert(false && "expected integer or string value type");
             }
@@ -320,11 +319,11 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_natural) {
                 uint32_t actual = *(uint32_t*)case_data->return_address;
                 uint32_t expected = (uint32_t)value_value->data.natural;
-                if (actual != expected) {
-                    matched = false;
-                    Zinc_test_print_unseen(case_test);
-                    fprintf(stderr, "result does not match: (%u) (%u)\n", actual, expected);
-                }
+                Zinc_test_expect_uint32_t_equal(
+                    case_test,
+                    actual,
+                    expected,
+                    "result does not match");
             } else {
                 assert(false && "expected integer or string value type");
             }
@@ -332,11 +331,11 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_natural) {
                 uint64_t actual = *(uint64_t*)case_data->return_address;
                 uint64_t expected = (uint64_t)value_value->data.natural;
-                if (actual != expected) {
-                    matched = false;
-                    Zinc_test_print_unseen(case_test);
-                    fprintf(stderr, "result does not match: (%lu) (%lu)\n", actual, expected);
-                }
+                Zinc_test_expect_uint64_t_equal(
+                    case_test,
+                    actual,
+                    expected,
+                    "result does not match");
             } else {
                 assert(false && "expected integer or string value type");
             }

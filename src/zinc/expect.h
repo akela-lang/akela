@@ -16,16 +16,12 @@ void Zinc_test_assert_error(Zinc_test* test, Zinc_result r, const char* message)
 void Zinc_test_expect_null(Zinc_test* test, void* p, const char* message);
 void Zinc_test_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
 void Zinc_test_expect_string(Zinc_test* test, Zinc_string* a, const char* b, const char* message);
-void Zinc_test_expect_true(Zinc_test* test, int value, const char* message);
+bool Zinc_test_expect_true(Zinc_test* test, int value, const char* fmt, ...);
 void Zinc_test_expect_false(Zinc_test* test, int value, const char* message);
 void Zinc_test_expect_strcmp(Zinc_test* test, const char* a, const char* b, const char* message);
 void Zinc_test_expect_int_equal(Zinc_test* test, int a, int b, const char* message);
 void Zinc_test_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, const char* message);
 void Zinc_test_assert_int_equal(Zinc_test* test, int a, int b, const char* message);
-void Zinc_test_expect_int64_t_equal(Zinc_test* test, int64_t a, int64_t b, const char* message);
-void Zinc_test_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, const char* message);
-void Zinc_test_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const char* message);
-void Zinc_test_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, const char* message);
 void Zinc_test_expect_long_equal(Zinc_test* test, long a, long b, const char* message);
 void Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const char* message);
 void Zinc_test_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message);
@@ -58,5 +54,21 @@ void Zinc_test_expect_string_slice_str(Zinc_test* test, Zinc_string_slice* sl, c
 void Zinc_test_expect_utf8_char(Zinc_test* test, char* a, char* b, char* message);
 void Zinc_test_expect_vector_double(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, double threshold, const char* message);
 void Zinc_test_expect_nts(Zinc_test* test, const char* a, const char* b, const char* message);
+
+//
+// Sized Integer
+//
+void Zinc_test_expect_int8_t_equal(Zinc_test* test, int8_t a, int8_t b, const char* message);
+void Zinc_test_expect_int16_t_equal(Zinc_test* test, int16_t a, int16_t b, const char* message);
+void Zinc_test_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const char* message);
+void Zinc_test_expect_int64_t_equal(Zinc_test* test, int64_t a, int64_t b, const char* message);
+
+//
+// Sized Unsigned Integer
+//
+void Zinc_test_expect_uint8_t_equal(Zinc_test* test, uint8_t a, uint8_t b, const char* message);
+void Zinc_test_expect_uint16_t_equal(Zinc_test* test, uint16_t a, uint16_t b, const char* message);
+void Zinc_test_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, const char* message);
+void Zinc_test_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, const char* message);
 
 #endif

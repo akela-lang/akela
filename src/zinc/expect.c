@@ -177,19 +177,25 @@ void Zinc_test_expect_string(Zinc_test* test, Zinc_string* a, const char* b, con
         b);
 }
 
-void Zinc_test_expect_true(Zinc_test* test, int value, const char* message)
+bool Zinc_test_expect_true(Zinc_test* test, int value, const char* fmt, ...)
 {
     test->check_count++;
 
     if (value) {
         test->check_passed++;
-        return;
+        return true;
     }
 
     test->check_failed++;
     test->pass = false;
     Zinc_test_print_unseen(test);
-    fprintf(stderr, "\t%d = true error: %s\n", value, message);
+    fprintf(stderr, "\tis true (%d): ", value);
+	va_list args;
+	va_start(args, fmt);
+	vfprintf(stderr, fmt, args);
+	va_end(args);
+	fprintf(stderr, "\n");
+	return false;
 }
 
 void Zinc_test_expect_false(Zinc_test* test, int value, const char* message)
@@ -249,78 +255,6 @@ void Zinc_test_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, c
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t%p = %p error: %s\n", a, b, message);
-}
-
-void Zinc_test_expect_int64_t_equal(Zinc_test* test, int64_t a, int64_t b, const char* message)
-{
-    test->check_count++;
-
-	if (a == b) {
-	    test->check_passed++;
-	    return;
-	}
-
-    test->check_failed++;
-    test->pass = false;
-    Zinc_test_print_unseen(test);
-#if IS_UNIX
-	fprintf(stderr, "%ld = %ld error: %s\n", a, b, message);
-#elif IS_WIN
-	fprintf(stderr, "%lld = %lld error: %s\n", a, b, message);
-#else
-    #error unsupported platform
-#endif
-}
-
-void Zinc_test_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, const char* message)
-{
-	test->check_count++;
-
-	if (a == b) {
-	    test->check_passed++;
-	    return;
-	}
-
-    test->check_failed++;
-    test->pass = false;
-    Zinc_test_print_unseen(test);
-#if IS_UNIX
-	fprintf(stderr, "%lu = %lu error: %s\n", a, b, message);
-#elif IS_WIN
-	fprintf(stderr, "%llu = %llu error: %s\n", a, b, message);
-#else
-    #error unsupported platform
-#endif
-}
-
-void Zinc_test_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const char* message)
-{
-	test->check_count++;
-
-	if (a == b) {
-	    test->check_passed++;
-	    return;
-	}
-
-	test->check_failed++;
-    test->pass = false;
-    Zinc_test_print_unseen(test);
-	fprintf(stderr, "\t%u = %u error: %s\n", a, b, message);
-}
-
-void Zinc_test_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, const char* message)
-{
-	test->check_count++;
-
-	if (a == b) {
-	    test->check_passed++;
-	    return;
-	}
-
-    test->check_failed++;
-    test->pass = false;
-    Zinc_test_print_unseen(test);
-	fprintf(stderr, "\n%u = %u error: %s\n", a, b, message);
 }
 
 void Zinc_test_expect_long_equal(Zinc_test* test, long a, long b, const char* message)
@@ -946,4 +880,144 @@ void Zinc_test_expect_nts(Zinc_test* test, const char* a, const char* b, const c
 	test->pass = false;
 	Zinc_test_print_unseen(test);
 	fprintf(stderr, "\tstring compare: (%s) = (%s): %s\n", a, b, message);
+}
+
+//
+// Sized Integer
+//
+
+void Zinc_test_expect_int8_t_equal(Zinc_test* test, int8_t a, int8_t b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+		test->check_passed++;
+		return;
+	}
+
+	test->check_failed++;
+	test->pass = false;
+	Zinc_test_print_unseen(test);
+	fprintf(stderr, "\t%hhd = %hhd error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_int16_t_equal(Zinc_test* test, int16_t a, int16_t b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+		test->check_passed++;
+		return;
+	}
+
+	test->check_failed++;
+	test->pass = false;
+	Zinc_test_print_unseen(test);
+	fprintf(stderr, "\t%hd = %hd error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+		test->check_passed++;
+		return;
+	}
+
+	test->check_failed++;
+	test->pass = false;
+	Zinc_test_print_unseen(test);
+	fprintf(stderr, "\t%d = %d error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_int64_t_equal(Zinc_test* test, int64_t a, int64_t b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+		test->check_passed++;
+		return;
+	}
+
+	test->check_failed++;
+	test->pass = false;
+	Zinc_test_print_unseen(test);
+#if IS_UNIX
+	fprintf(stderr, "%ld = %ld error: %s\n", a, b, message);
+#elif IS_WIN
+	fprintf(stderr, "%lld = %lld error: %s\n", a, b, message);
+#else
+#error unsupported platform
+#endif
+}
+
+//
+// Sized unsigned int
+//
+
+void Zinc_test_expect_uint8_t_equal(Zinc_test* test, uint8_t a, uint8_t b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+		test->check_passed++;
+		return;
+	}
+
+	test->check_failed++;
+	test->pass = false;
+	Zinc_test_print_unseen(test);
+	fprintf(stderr, "\n%hhu = %hhu error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_uint16_t_equal(Zinc_test* test, uint16_t a, uint16_t b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+		test->check_passed++;
+		return;
+	}
+
+	test->check_failed++;
+	test->pass = false;
+	Zinc_test_print_unseen(test);
+	fprintf(stderr, "\n%hu = %hu error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+		test->check_passed++;
+		return;
+	}
+
+	test->check_failed++;
+	test->pass = false;
+	Zinc_test_print_unseen(test);
+	fprintf(stderr, "\n%u = %u error: %s\n", a, b, message);
+}
+
+void Zinc_test_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, const char* message)
+{
+	test->check_count++;
+
+	if (a == b) {
+		test->check_passed++;
+		return;
+	}
+
+	test->check_failed++;
+	test->pass = false;
+	Zinc_test_print_unseen(test);
+#if IS_UNIX
+	fprintf(stderr, "%lu = %lu error: %s\n", a, b, message);
+#elif IS_WIN
+	fprintf(stderr, "%llu = %llu error: %s\n", a, b, message);
+#else
+#error unsupported platform
+#endif
 }
