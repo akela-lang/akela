@@ -1,4 +1,3 @@
-#include "zinc/unit_test.h"
 #include "unit_lex.h"
 #include "unit_value.h"
 #include "unit_ast.h"

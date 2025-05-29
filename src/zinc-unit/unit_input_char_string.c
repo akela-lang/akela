@@ -1,4 +1,3 @@
-#include "zinc/unit_test.h"
 #include "zinc/input_char_string.h"
 #include <string.h>
 #include "zinc/test.h"
@@ -98,7 +97,7 @@ void Zinc_unit_test_input_char_string_get_char_line(Zinc_test* test)
     Zinc_vector_add_null(&text);
     Zinc_input_char_string_init(&input_string, &text);
 
-    Zinc_expect_vector_str(&text, buffer, buffer);
+    Zinc_test_expect_vector_str(test, &text, buffer, buffer);
 
     bool done;
     char c;

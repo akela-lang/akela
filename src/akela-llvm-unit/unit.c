@@ -1,6 +1,4 @@
 #include <zinc/test.h>
-
-#include "zinc/unit_test.h"
 #include "unit_literal.h"
 #include "unit_variable.h"
 #include "unit_operator.h"

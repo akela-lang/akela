@@ -1,7 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "zinc/result.h"
-#include "zinc/unit_test.h"
 #include "zinc/zstring.h"
 #include <limits.h>
 #include "zinc/test.h"

@@ -1,8 +1,5 @@
 #include <string.h>
-#include <zinc/error_unit_test.h>
 #include <zinc/input_unicode_string.h>
-
-#include "zinc/unit_test.h"
 #include "centipede/lex.h"
 #include "centipede/lex_data.h"
 

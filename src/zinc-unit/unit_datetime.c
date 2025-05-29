@@ -1,6 +1,5 @@
 #include "zinc/os.h"
 #include "zinc/datetime.h"
-#include "zinc/unit_test.h"
 #include <time.h>
 #include "zinc/piece.h"
 #include "zinc/os_unix.h"

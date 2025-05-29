@@ -1,4 +1,3 @@
-#include "zinc/unit_test.h"
 #include "zinc/input_char_file.h"
 #include "zinc/input_char_string.h"
 #include <string.h>
@@ -20,8 +19,8 @@ void Zinc_unit_test_input_char_file_next(Zinc_test* test)
     Zinc_string_init(&path);
 
     Zinc_result r = Zinc_get_temp_file(&fp, &path);
-    Zinc_assert_ok(r, "get temp file");
-    Zinc_assert_ptr(fp, "fp");
+    Zinc_test_assert_ok(test, r, "get temp file");
+    Zinc_test_assert_ptr(test, fp, "fp");
 
     char text[] = "hello file\n";
     size_t len = strlen(text);
@@ -82,7 +81,7 @@ void Zinc_unit_test_input_char_file_repeat(Zinc_test* test)
     Zinc_string_init(&name);
 
     Zinc_result r = Zinc_get_temp_file(&fp, &name);
-    Zinc_assert_ok(r, "get temp file");
+    Zinc_test_assert_ok(test, r, "get temp file");
 	char text[] = "hello file\n";
     char text_expected[] = "hhello file\n";
     size_t len = strlen(text);
@@ -148,7 +147,7 @@ void Zinc_unit_test_input_char_file_seek(Zinc_test* test)
     Zinc_string name;
     Zinc_string_init(&name);
     Zinc_result r = Zinc_get_temp_file(&fp, &name);
-    Zinc_assert_ok(r, "get temp file");
+    Zinc_test_assert_ok(test, r, "get temp file");
     char text[] = "hello file\n";
     char text_expected[] = "file\n";
     size_t len = strlen(text);
@@ -199,7 +198,7 @@ void Zinc_unit_test_input_char_file_get_all(Zinc_test* test)
     Zinc_test_assert_ptr(test, fp, "fp");
     char text[] = "hello file\n";
     size_t len = strlen(text);
-    Zinc_assert_ptr(fp, "fp");
+    Zinc_test_assert_ptr(test, fp, "fp");
     fwrite(text, 1, len, fp);
     fclose(fp);
 

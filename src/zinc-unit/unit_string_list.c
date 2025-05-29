@@ -1,5 +1,4 @@
 #include "zinc/string_list.h"
-#include "zinc/unit_test.h"
 #include "zinc/memory.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"
@@ -28,8 +27,8 @@ void Zinc_unit_string_list_add(Zinc_test* test)
     Zinc_string_list bl;
     Zinc_string_list_init(&bl);
 
-    Zinc_expect_null(bl.head, "head 0");
-    Zinc_expect_null(bl.tail, "tail 0");
+    Zinc_test_expect_null(test, bl.head, "head 0");
+    Zinc_test_expect_null(test, bl.tail, "tail 0");
 
     Zinc_string_list_add(&bl, bn0);
     Zinc_test_expect_ptr_equal(test, bl.head, bn0, "head 1");
@@ -193,7 +192,7 @@ void Zinc_unit_string_list_get(Zinc_test* test)
 void Zinc_unit_string_list(Zinc_test* test)
 {
     if (test->dry_run) {
-        Zinc_test_name(__func__);
+        Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
         test->solo = false;
 

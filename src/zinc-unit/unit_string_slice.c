@@ -1,5 +1,4 @@
 #include <string.h>
-#include "zinc/unit_test.h"
 #include "zinc/string_slice.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"

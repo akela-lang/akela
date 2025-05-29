@@ -1,4 +1,3 @@
-#include "zinc/unit_test.h"
 #include "zinc/hash_map_string.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"

@@ -1,5 +1,4 @@
 #include "zinc/hash_map_size_t.h"
-#include <zinc/unit_test.h>
 #include "zinc/test.h"
 #include "zinc/expect.h"
 

@@ -1,4 +1,3 @@
-#include "zinc/unit_test.h"
 #include "zinc/dbl_vector.h"
 
 #include "zinc/test.h"

@@ -1,5 +1,4 @@
 #include <zinc/test.h>
-#include "zinc/unit_test.h"
 #include "unit_lex.h"
 #include "unit_dom.h"
 #include "unit_parse.h"

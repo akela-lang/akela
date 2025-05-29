@@ -1,7 +1,6 @@
 
 # files
 set(SOURCE_FILES
-        unit_test.c
         zstring.c
         memory.c
         result.c
@@ -13,7 +12,6 @@ set(SOURCE_FILES
         piece.c
         string_list.c
         error.c
-        error_unit_test.c
         list.c
         vector.c
         input_char_string.c

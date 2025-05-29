@@ -1,8 +1,6 @@
 #include "zinc/error.h"
-#include "zinc/error_unit_test.h"
 #include <stdlib.h>
 #include "zinc/memory.h"
-#include "zinc/unit_test.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"
 

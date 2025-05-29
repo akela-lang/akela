@@ -1,6 +1,5 @@
 #include "json/lex.h"
 #include "json/lex_tools.h"
-#include "zinc/unit_test.h"
 #include "zinc/input_unicode_string.h"
 #include <string.h>
 
