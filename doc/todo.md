@@ -5,7 +5,6 @@
 # Akela Parse Test
 
 # Akela Run Test
-* set error stats
 * remove info printing
 
 # Centipede
