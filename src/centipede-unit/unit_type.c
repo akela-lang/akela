@@ -28,14 +28,14 @@ void CentUnit_type_param_list_add(Zinc_test* test)
     Cent_type_param_list_add(list, tp1);
     Cent_type_param_list_add(list, tp2);
 
-    Zinc_test_expect_ptr_equal(test, list->head, tp0, "head list");
-    Zinc_test_expect_ptr_equal(test, tp0->prev, NULL, "prev tp0");
-    Zinc_test_expect_ptr_equal(test, tp0->next, tp1, "next tp0");
-    Zinc_test_expect_ptr_equal(test, tp1->prev, tp0, "prev tp1");
-    Zinc_test_expect_ptr_equal(test, tp1->next, tp2, "next tp1");
-    Zinc_test_expect_ptr_equal(test, tp2->prev, tp1, "prev tp2");
-    Zinc_test_expect_ptr_equal(test, tp2->next, NULL, "next tp2");
-    Zinc_test_expect_ptr_equal(test, list->tail, tp2, "tail list");
+    Zinc_expect_ptr_equal(test, list->head, tp0, "head list");
+    Zinc_expect_ptr_equal(test, tp0->prev, NULL, "prev tp0");
+    Zinc_expect_ptr_equal(test, tp0->next, tp1, "next tp0");
+    Zinc_expect_ptr_equal(test, tp1->prev, tp0, "prev tp1");
+    Zinc_expect_ptr_equal(test, tp1->next, tp2, "next tp1");
+    Zinc_expect_ptr_equal(test, tp2->prev, tp1, "prev tp2");
+    Zinc_expect_ptr_equal(test, tp2->next, NULL, "next tp2");
+    Zinc_expect_ptr_equal(test, list->tail, tp2, "tail list");
 
     Cent_type_param_list_destroy(list);
     free(list);
@@ -66,14 +66,14 @@ void CentUnit_type_list_add(Zinc_test* test)
     Cent_type_list_add(list, tn1);
     Cent_type_list_add(list, tn2);
 
-    Zinc_test_expect_ptr_equal(test, list->head, tn0, "head list");
-    Zinc_test_expect_ptr_equal(test, tn0->prev, NULL, "prev tn0");
-    Zinc_test_expect_ptr_equal(test, tn0->next, tn1, "next tn0");
-    Zinc_test_expect_ptr_equal(test, tn1->prev, tn0, "prev tn1");
-    Zinc_test_expect_ptr_equal(test, tn1->next, tn2, "next tn1");
-    Zinc_test_expect_ptr_equal(test, tn2->prev, tn1, "prev tn2");
-    Zinc_test_expect_ptr_equal(test, tn2->next, NULL, "next tn2");
-    Zinc_test_expect_ptr_equal(test, list->tail, tn2, "tail list");
+    Zinc_expect_ptr_equal(test, list->head, tn0, "head list");
+    Zinc_expect_ptr_equal(test, tn0->prev, NULL, "prev tn0");
+    Zinc_expect_ptr_equal(test, tn0->next, tn1, "next tn0");
+    Zinc_expect_ptr_equal(test, tn1->prev, tn0, "prev tn1");
+    Zinc_expect_ptr_equal(test, tn1->next, tn2, "next tn1");
+    Zinc_expect_ptr_equal(test, tn2->prev, tn1, "prev tn2");
+    Zinc_expect_ptr_equal(test, tn2->next, NULL, "next tn2");
+    Zinc_expect_ptr_equal(test, list->tail, tn2, "tail list");
 
     Cent_type_list_destroy(list);
     free(list);
@@ -104,14 +104,14 @@ void CentUnit_type_field_list_add(Zinc_test* test)
     Cent_type_field_list_add(list, tf1);
     Cent_type_field_list_add(list, tf2);
 
-    Zinc_test_expect_ptr_equal(test, list->head, tf0, "head list");
-    Zinc_test_expect_ptr_equal(test, tf0->prev, NULL, "prev tf0");
-    Zinc_test_expect_ptr_equal(test, tf0->next, tf1, "next tf0");
-    Zinc_test_expect_ptr_equal(test, tf1->prev, tf0, "prev tf1");
-    Zinc_test_expect_ptr_equal(test, tf1->next, tf2, "next tf1");
-    Zinc_test_expect_ptr_equal(test, tf2->prev, tf1, "prev tf2");
-    Zinc_test_expect_ptr_equal(test, tf2->next, NULL, "next tf2");
-    Zinc_test_expect_ptr_equal(test, list->tail, tf2, "tail list");
+    Zinc_expect_ptr_equal(test, list->head, tf0, "head list");
+    Zinc_expect_ptr_equal(test, tf0->prev, NULL, "prev tf0");
+    Zinc_expect_ptr_equal(test, tf0->next, tf1, "next tf0");
+    Zinc_expect_ptr_equal(test, tf1->prev, tf0, "prev tf1");
+    Zinc_expect_ptr_equal(test, tf1->next, tf2, "next tf1");
+    Zinc_expect_ptr_equal(test, tf2->prev, tf1, "prev tf2");
+    Zinc_expect_ptr_equal(test, tf2->next, NULL, "next tf2");
+    Zinc_expect_ptr_equal(test, list->tail, tf2, "tail list");
 
     Cent_type_field_list_destroy(list);
     free(list);
@@ -142,14 +142,14 @@ void CentUnit_variant_list_add(Zinc_test* test)
     Cent_variant_list_add(&list, vt1);
     Cent_variant_list_add(&list, vt2);
 
-    Zinc_test_expect_ptr_equal(test, list.head, vt0, "head list");
-    Zinc_test_expect_ptr_equal(test, vt0->prev, NULL, "prev vt0");
-    Zinc_test_expect_ptr_equal(test, vt0->next, vt1, "next vt0");
-    Zinc_test_expect_ptr_equal(test, vt1->prev, vt0, "prev vt1");
-    Zinc_test_expect_ptr_equal(test, vt1->next, vt2, "next vt1");
-    Zinc_test_expect_ptr_equal(test, vt2->prev, vt1, "prev vt2");
-    Zinc_test_expect_ptr_equal(test, vt2->next, NULL, "next vt2");
-    Zinc_test_expect_ptr_equal(test, list.tail, vt2, "tail list");
+    Zinc_expect_ptr_equal(test, list.head, vt0, "head list");
+    Zinc_expect_ptr_equal(test, vt0->prev, NULL, "prev vt0");
+    Zinc_expect_ptr_equal(test, vt0->next, vt1, "next vt0");
+    Zinc_expect_ptr_equal(test, vt1->prev, vt0, "prev vt1");
+    Zinc_expect_ptr_equal(test, vt1->next, vt2, "next vt1");
+    Zinc_expect_ptr_equal(test, vt2->prev, vt1, "prev vt2");
+    Zinc_expect_ptr_equal(test, vt2->next, NULL, "next vt2");
+    Zinc_expect_ptr_equal(test, list.tail, vt2, "tail list");
 
     Cent_variant_list_destroy(&list);
 }

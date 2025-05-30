@@ -20,7 +20,7 @@ void Zinc_unit_datetime_utc(Zinc_test* test)
     time_t t;
     t = 0;
     Zinc_datetime_format(t, &dt, Zinc_time_type_gmt);
-    Zinc_test_expect_string(test, &dt, "1970-01-01T00:00:00Z", "gmt format");
+    Zinc_expect_string(test, &dt, "1970-01-01T00:00:00Z", "gmt format");
     Zinc_string_destroy(&dt);
 }
 
@@ -44,7 +44,7 @@ void Zinc_unit_datetime_utc2(Zinc_test* test)
     tm.tm_gmtoff = -25200;
     t = mktime(&tm);
     Zinc_datetime_format(t, &dt, Zinc_time_type_local);
-    Zinc_test_expect_string(test, &dt, "1970-01-01T00:00:00-07:00", "1970-01-01T00:00:00-0700");
+    Zinc_expect_string(test, &dt, "1970-01-01T00:00:00-07:00", "1970-01-01T00:00:00-0700");
     Zinc_string_destroy(&dt);
 }
 #endif
@@ -65,7 +65,7 @@ void Zinc_unit_datetime_utc3(Zinc_test* test)
     Zinc_datetime_format(t, &dt, Zinc_time_type_gmt);
     struct tm tm2;
     time_t t2 = Zinc_datetime_to_tm(&dt, &tm2);
-    Zinc_test_expect_true(test, t == t2, "t == t2");
+    Zinc_expect_true(test, t == t2, "t == t2");
     Zinc_string_destroy(&dt);
 }
 
@@ -90,7 +90,7 @@ void Zinc_unit_datetime_local(Zinc_test* test)
     Zinc_string dt2;
     Zinc_string_init(&dt2);
     Zinc_datetime_format(t2, &dt2, Zinc_time_type_local);
-    Zinc_test_expect_long_equal(test, t, t2, "t == t2");
+    Zinc_expect_long_equal(test, t, t2, "t == t2");
     Zinc_string_destroy(&dt);
     Zinc_string_destroy(&dt2);
 }
@@ -115,8 +115,8 @@ void Zinc_unit_datetime_ny_standard(Zinc_test* test)
 
     Zinc_datetime_triple(t, &local_dt, &ny_dt, &gmt_dt);
     //Zinc_test_expect_string(&local_dt, "2024-12-31T17:00:00-07:00", "local_dt");
-    Zinc_test_expect_string(test, &ny_dt, "2024-12-31T19:00:00-05:00", "ny_dt");
-    Zinc_test_expect_string(test, &gmt_dt, "2025-01-01T00:00:00Z", "gmt_dt");
+    Zinc_expect_string(test, &ny_dt, "2024-12-31T19:00:00-05:00", "ny_dt");
+    Zinc_expect_string(test, &gmt_dt, "2025-01-01T00:00:00Z", "gmt_dt");
     Zinc_string_destroy(&local_dt);
     Zinc_string_destroy(&ny_dt);
     Zinc_string_destroy(&gmt_dt);
@@ -142,8 +142,8 @@ void Zinc_unit_datetime_ny_dst(Zinc_test* test)
 
     Zinc_datetime_triple(t, &local_dt, &ny_dt, &gmt_dt);
     //Zinc_expect_string(&local_dt, "2024-06-30T18:00:00-06:00", "local_dt");
-    Zinc_test_expect_string(test, &ny_dt, "2024-06-30T20:00:00-04:00", "ny_dt");
-    Zinc_test_expect_string(test, &gmt_dt, "2024-07-01T00:00:00Z", "gmt_dt");
+    Zinc_expect_string(test, &ny_dt, "2024-06-30T20:00:00-04:00", "ny_dt");
+    Zinc_expect_string(test, &gmt_dt, "2024-07-01T00:00:00Z", "gmt_dt");
 
     Zinc_string_destroy(&local_dt);
     Zinc_string_destroy(&ny_dt);
@@ -164,13 +164,13 @@ void Zinc_unit_datetime_eod_before_eod(Zinc_test* test)
     Zinc_string_init(&dt);
 
     Zinc_datetime_format(t, &dt, Zinc_time_type_ny);
-    Zinc_test_expect_string(test, &dt, "2025-02-15T14:00:00-05:00", "dt");
+    Zinc_expect_string(test, &dt, "2025-02-15T14:00:00-05:00", "dt");
 
     t = Zinc_datetime_last_ny_eod(t);
 
     Zinc_string_clear(&dt);
     Zinc_datetime_format(t, &dt, Zinc_time_type_ny);
-    Zinc_test_expect_string(test, &dt, "2025-02-14T17:00:00-05:00", "dt");
+    Zinc_expect_string(test, &dt, "2025-02-14T17:00:00-05:00", "dt");
 
     Zinc_string_destroy(&dt);
 }
@@ -189,13 +189,13 @@ void Zinc_unit_datetime_eod_after_eod(Zinc_test* test)
     Zinc_string_init(&dt);
 
     Zinc_datetime_format(t, &dt, Zinc_time_type_ny);
-    Zinc_test_expect_string(test, &dt, "2025-02-15T20:00:00-05:00", "dt");
+    Zinc_expect_string(test, &dt, "2025-02-15T20:00:00-05:00", "dt");
 
     t = Zinc_datetime_last_ny_eod(t);
 
     Zinc_string_clear(&dt);
     Zinc_datetime_format(t, &dt, Zinc_time_type_ny);
-    Zinc_test_expect_string(test, &dt, "2025-02-15T17:00:00-05:00", "dt");
+    Zinc_expect_string(test, &dt, "2025-02-15T17:00:00-05:00", "dt");
 
     Zinc_string_destroy(&dt);
 }
@@ -216,13 +216,13 @@ void Zinc_unit_test_datetime_ny_minus_year(Zinc_test* test)
     Zinc_string_init(&dt);
 
     Zinc_datetime_format(t, &dt, Zinc_time_type_ny);
-    Zinc_test_expect_string(test, &dt, "2025-03-15T20:00:00-04:00", "dt");
+    Zinc_expect_string(test, &dt, "2025-03-15T20:00:00-04:00", "dt");
 
     t = Zinc_datetime_ny_minus_year(t);
 
     Zinc_string_clear(&dt);
     Zinc_datetime_format(t, &dt, Zinc_time_type_ny);
-    Zinc_test_expect_string(test, &dt, "2024-03-15T20:00:00-04:00", "dt");
+    Zinc_expect_string(test, &dt, "2024-03-15T20:00:00-04:00", "dt");
 
     Zinc_string_destroy(&dt);
 }
@@ -243,13 +243,13 @@ void Zinc_unit_datetime_ny_minus_day(Zinc_test* test)
     Zinc_string_init(&dt);
 
     Zinc_datetime_format(t, &dt, Zinc_time_type_ny);
-    Zinc_test_expect_string(test, &dt, "2025-03-15T20:00:00-04:00", "dt");
+    Zinc_expect_string(test, &dt, "2025-03-15T20:00:00-04:00", "dt");
 
     t = Zinc_datetime_ny_minus_day(t);
 
     Zinc_string_clear(&dt);
     Zinc_datetime_format(t, &dt, Zinc_time_type_ny);
-    Zinc_test_expect_string(test, &dt, "2025-03-14T20:00:00-04:00", "dt");
+    Zinc_expect_string(test, &dt, "2025-03-14T20:00:00-04:00", "dt");
 
     Zinc_string_destroy(&dt);
 }

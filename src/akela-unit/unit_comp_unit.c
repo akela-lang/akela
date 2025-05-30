@@ -25,16 +25,16 @@ void AkeUnit_comp_unit_compile(Zinc_test* test)
 	Ake_comp_unit_init(cu);
 
 	bool valid = Ake_comp_unit_compile(cu, input, input->vtable);
-	Zinc_test_expect_true(test, valid, "valid");
+	Zinc_expect_true(test, valid, "valid");
 	
 	Ake_ast* root = cu->root;
-	Zinc_test_assert_ptr(test, root, "ptr root");
-	Zinc_test_expect_int_equal(test, root->type, Ake_ast_type_stmts, "parse_stmts root");
+	Zinc_assert_ptr(test, root, "ptr root");
+	Zinc_expect_int_equal(test, root->type, Ake_ast_type_stmts, "parse_stmts root");
 
 	Ake_ast* number = Ast_node_get(root, 0);
-	Zinc_test_assert_ptr(test, number, "ptr number");
-	Zinc_test_expect_int_equal(test, number->type, Ake_ast_type_number, "number number");
-	Zinc_test_expect_string(test, &number->value, "10", "10 number");
+	Zinc_assert_ptr(test, number, "ptr number");
+	Zinc_expect_int_equal(test, number->type, Ake_ast_type_number, "number number");
+	Zinc_expect_string(test, &number->value, "10", "10 number");
 
     free(input);
 	Ake_comp_unit_destroy(cu);

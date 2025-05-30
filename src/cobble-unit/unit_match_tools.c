@@ -23,12 +23,12 @@ void CobUnit_match_tools_match_task_stack(Zinc_test* test)
     Cob_stack_push(mts, mt0);
     Cob_stack_push(mts, mt1);
 
-    Zinc_test_expect_ptr_equal(test, mts->top, mt1, "top mts");
-    Zinc_test_expect_ptr_equal(test, mt1->prev, NULL, "prev mt1");
-    Zinc_test_expect_ptr_equal(test, mt1->next, mt0, "next mt1");
-    Zinc_test_expect_ptr_equal(test, mt0->prev, mt1, "prev mt0");
-    Zinc_test_expect_ptr_equal(test, mt0->next, NULL, "next mt0");
-    Zinc_test_expect_ptr_equal(test, mts->bottom, mt0, "bottom mts");
+    Zinc_expect_ptr_equal(test, mts->top, mt1, "top mts");
+    Zinc_expect_ptr_equal(test, mt1->prev, NULL, "prev mt1");
+    Zinc_expect_ptr_equal(test, mt1->next, mt0, "next mt1");
+    Zinc_expect_ptr_equal(test, mt0->prev, mt1, "prev mt0");
+    Zinc_expect_ptr_equal(test, mt0->next, NULL, "next mt0");
+    Zinc_expect_ptr_equal(test, mts->bottom, mt0, "bottom mts");
 
     Cob_stack_destroy(mts);
 
@@ -44,12 +44,12 @@ void CobUnit_match_tools_match_task_stack(Zinc_test* test)
     Cob_stack_list_add(sl, sn0);
     Cob_stack_list_add(sl, sn1);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, sn0, "head sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
-    Zinc_test_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
-    Zinc_test_expect_ptr_equal(test, sn1->next, NULL, "next sn1");
-    Zinc_test_expect_ptr_equal(test, sl->tail, sn1, "tail sn1");
+    Zinc_expect_ptr_equal(test, sl->head, sn0, "head sn0");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
+    Zinc_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
+    Zinc_expect_ptr_equal(test, sn1->next, NULL, "next sn1");
+    Zinc_expect_ptr_equal(test, sl->tail, sn1, "tail sn1");
 
     Cob_stack_list_destroy(sl);
 }
@@ -79,26 +79,26 @@ void CobUnit_match_tools_stack_list_remove_middle(Zinc_test* test)
     Cob_stack_list_add(sl, sn1);
     Cob_stack_list_add(sl, sn2);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, sn0, "head sl");
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
-    Zinc_test_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
-    Zinc_test_expect_ptr_equal(test, sn1->next, sn2, "next sn1");
-    Zinc_test_expect_ptr_equal(test, sn2->prev, sn1, "prev sn2");
-    Zinc_test_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
-    Zinc_test_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
+    Zinc_expect_ptr_equal(test, sl->head, sn0, "head sl");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
+    Zinc_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
+    Zinc_expect_ptr_equal(test, sn1->next, sn2, "next sn1");
+    Zinc_expect_ptr_equal(test, sn2->prev, sn1, "prev sn2");
+    Zinc_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
+    Zinc_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
 
     Cob_stack_list_remove(sl, sn1);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, sn0, "head sl");
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, sn2, "next sn0");
-    Zinc_test_expect_ptr_equal(test, sn2->prev, sn0, "prev sn2");
-    Zinc_test_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
-    Zinc_test_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
+    Zinc_expect_ptr_equal(test, sl->head, sn0, "head sl");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, sn2, "next sn0");
+    Zinc_expect_ptr_equal(test, sn2->prev, sn0, "prev sn2");
+    Zinc_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
+    Zinc_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
 
-    Zinc_test_expect_ptr_equal(test, sn1->prev, NULL, "prev sn1");
-    Zinc_test_expect_ptr_equal(test, sn1->next, NULL, "next sn1");
+    Zinc_expect_ptr_equal(test, sn1->prev, NULL, "prev sn1");
+    Zinc_expect_ptr_equal(test, sn1->next, NULL, "next sn1");
 
     Cob_stack_node_destroy(sn1);
     Cob_stack_list_destroy(sl);
@@ -129,26 +129,26 @@ void CobUnit_match_tools_stack_list_remove_head(Zinc_test* test)
     Cob_stack_list_add(sl, sn1);
     Cob_stack_list_add(sl, sn2);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, sn0, "head sl");
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
-    Zinc_test_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
-    Zinc_test_expect_ptr_equal(test, sn1->next, sn2, "next sn1");
-    Zinc_test_expect_ptr_equal(test, sn2->prev, sn1, "prev sn2");
-    Zinc_test_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
-    Zinc_test_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
+    Zinc_expect_ptr_equal(test, sl->head, sn0, "head sl");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
+    Zinc_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
+    Zinc_expect_ptr_equal(test, sn1->next, sn2, "next sn1");
+    Zinc_expect_ptr_equal(test, sn2->prev, sn1, "prev sn2");
+    Zinc_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
+    Zinc_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
 
     Cob_stack_list_remove(sl, sn0);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, sn1, "head sl");
-    Zinc_test_expect_ptr_equal(test, sn1->prev, NULL, "prev sn1");
-    Zinc_test_expect_ptr_equal(test, sn1->next, sn2, "next sn1");
-    Zinc_test_expect_ptr_equal(test, sn2->prev, sn1, "prev sn2");
-    Zinc_test_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
-    Zinc_test_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
+    Zinc_expect_ptr_equal(test, sl->head, sn1, "head sl");
+    Zinc_expect_ptr_equal(test, sn1->prev, NULL, "prev sn1");
+    Zinc_expect_ptr_equal(test, sn1->next, sn2, "next sn1");
+    Zinc_expect_ptr_equal(test, sn2->prev, sn1, "prev sn2");
+    Zinc_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
+    Zinc_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
 
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, NULL, "next sn0");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, NULL, "next sn0");
 
     Cob_stack_node_destroy(sn0);
     Cob_stack_list_destroy(sl);
@@ -179,26 +179,26 @@ void CobUnit_match_tools_stack_list_remove_tail(Zinc_test* test)
     Cob_stack_list_add(sl, sn1);
     Cob_stack_list_add(sl, sn2);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, sn0, "head sl");
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
-    Zinc_test_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
-    Zinc_test_expect_ptr_equal(test, sn1->next, sn2, "next sn1");
-    Zinc_test_expect_ptr_equal(test, sn2->prev, sn1, "prev sn2");
-    Zinc_test_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
-    Zinc_test_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
+    Zinc_expect_ptr_equal(test, sl->head, sn0, "head sl");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
+    Zinc_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
+    Zinc_expect_ptr_equal(test, sn1->next, sn2, "next sn1");
+    Zinc_expect_ptr_equal(test, sn2->prev, sn1, "prev sn2");
+    Zinc_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
+    Zinc_expect_ptr_equal(test, sl->tail, sn2, "tail sl");
 
     Cob_stack_list_remove(sl, sn2);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, sn0, "head sl");
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
-    Zinc_test_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
-    Zinc_test_expect_ptr_equal(test, sn1->next, NULL, "next sn1");
-    Zinc_test_expect_ptr_equal(test, sl->tail, sn1, "tail sl");
+    Zinc_expect_ptr_equal(test, sl->head, sn0, "head sl");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, sn1, "next sn0");
+    Zinc_expect_ptr_equal(test, sn1->prev, sn0, "prev sn1");
+    Zinc_expect_ptr_equal(test, sn1->next, NULL, "next sn1");
+    Zinc_expect_ptr_equal(test, sl->tail, sn1, "tail sl");
 
-    Zinc_test_expect_ptr_equal(test, sn2->prev, NULL, "prev sn2");
-    Zinc_test_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
+    Zinc_expect_ptr_equal(test, sn2->prev, NULL, "prev sn2");
+    Zinc_expect_ptr_equal(test, sn2->next, NULL, "next sn2");
 
     Cob_stack_node_destroy(sn2);
     Cob_stack_list_destroy(sl);
@@ -221,18 +221,18 @@ void CobUnit_match_tools_stack_list_remove_single(Zinc_test* test)
 
     Cob_stack_list_add(sl, sn0);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, sn0, "head sl");
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, NULL, "next sn0");
-    Zinc_test_expect_ptr_equal(test, sl->tail, sn0, "tail sl");
+    Zinc_expect_ptr_equal(test, sl->head, sn0, "head sl");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, NULL, "next sn0");
+    Zinc_expect_ptr_equal(test, sl->tail, sn0, "tail sl");
 
     Cob_stack_list_remove(sl, sn0);
 
-    Zinc_test_expect_ptr_equal(test, sl->head, NULL, "head sl");
-    Zinc_test_expect_ptr_equal(test, sl->tail, NULL, "tail sl");
+    Zinc_expect_ptr_equal(test, sl->head, NULL, "head sl");
+    Zinc_expect_ptr_equal(test, sl->tail, NULL, "tail sl");
 
-    Zinc_test_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
-    Zinc_test_expect_ptr_equal(test, sn0->next, NULL, "next sn0");
+    Zinc_expect_ptr_equal(test, sn0->prev, NULL, "prev sn0");
+    Zinc_expect_ptr_equal(test, sn0->next, NULL, "next sn0");
 
     Cob_stack_node_destroy(sn0);
     Cob_stack_list_destroy(sl);
@@ -279,19 +279,19 @@ void CobUnit_match_tools_clone(Zinc_test* test)
     Cob_task* new_mt1 = new_mt2->next;
     Cob_task* new_mt0 = new_mt1->next;
 
-    Zinc_test_expect_ptr_equal(test, new_mts->top, new_mt3, "top new_mts");
-    Zinc_test_expect_ptr_equal(test, new_mt3->prev, NULL, "prev new_mt3");
-    Zinc_test_expect_ptr_equal(test, new_mt3->next, new_mt2, "next new_mt3");
-    Zinc_test_expect_ptr_equal(test, new_mt2->prev, new_mt3, "prev new_mt2");
-    Zinc_test_expect_ptr_equal(test, new_mt2->next, new_mt1, "next new_mt2");
-    Zinc_test_expect_ptr_equal(test, new_mt1->prev, new_mt2, "prev new_mt1");
-    Zinc_test_expect_ptr_equal(test, new_mt1->next, new_mt0, "next new_mt1");
-    Zinc_test_expect_ptr_equal(test, new_mt0->prev, new_mt1, "prev new_mt0");
-    Zinc_test_expect_ptr_equal(test, new_mt0->next, NULL, "next new_mt0");
-    Zinc_test_expect_ptr_equal(test, mts->bottom, mt0, "bottom mts");
+    Zinc_expect_ptr_equal(test, new_mts->top, new_mt3, "top new_mts");
+    Zinc_expect_ptr_equal(test, new_mt3->prev, NULL, "prev new_mt3");
+    Zinc_expect_ptr_equal(test, new_mt3->next, new_mt2, "next new_mt3");
+    Zinc_expect_ptr_equal(test, new_mt2->prev, new_mt3, "prev new_mt2");
+    Zinc_expect_ptr_equal(test, new_mt2->next, new_mt1, "next new_mt2");
+    Zinc_expect_ptr_equal(test, new_mt1->prev, new_mt2, "prev new_mt1");
+    Zinc_expect_ptr_equal(test, new_mt1->next, new_mt0, "next new_mt1");
+    Zinc_expect_ptr_equal(test, new_mt0->prev, new_mt1, "prev new_mt0");
+    Zinc_expect_ptr_equal(test, new_mt0->next, NULL, "next new_mt0");
+    Zinc_expect_ptr_equal(test, mts->bottom, mt0, "bottom mts");
 
-    Zinc_test_expect_ptr_equal(test, new_mt2->parent, new_mt0, "parent new_mt2");
-    Zinc_test_expect_ptr_equal(test, new_mt3->parent, new_mt1, "parent new_mt3");
+    Zinc_expect_ptr_equal(test, new_mt2->parent, new_mt0, "parent new_mt2");
+    Zinc_expect_ptr_equal(test, new_mt3->parent, new_mt1, "parent new_mt3");
 
     Cob_stack_destroy(mts);
     Cob_stack_destroy(new_mts);
@@ -320,8 +320,8 @@ void CobUnit_match_tools_stack_node_clone(Zinc_test* test)
     Cob_stack_node* sn1 = Cob_stack_node_clone(sn0);
 
     struct Zinc_string* bf2 = Zinc_hash_map_size_t_get(&sn0->groups, 0);
-    Zinc_test_expect_ptr(test, bf2, "ptr bf2");
-    Zinc_test_expect_string(test, bf2, "abc", "str bf2");
+    Zinc_expect_ptr(test, bf2, "ptr bf2");
+    Zinc_expect_string(test, bf2, "abc", "str bf2");
 
     Cob_stack_node_destroy(sn0);
     Cob_stack_node_destroy(sn1);
@@ -363,22 +363,22 @@ void CobUnit_match_tools_stack_priority(Zinc_test* test)
     Cob_stack_node* x = NULL;
 
     x = sl->tail;
-    Zinc_test_expect_size_t_equal(test, x->priority, 40, "priority 40");
+    Zinc_expect_size_t_equal(test, x->priority, 40, "priority 40");
     Cob_stack_list_remove(sl, x);
     Cob_stack_node_destroy(x);
 
     x = sl->tail;
-    Zinc_test_expect_size_t_equal(test, x->priority, 30, "priority 40");
+    Zinc_expect_size_t_equal(test, x->priority, 30, "priority 40");
     Cob_stack_list_remove(sl, x);
     Cob_stack_node_destroy(x);
 
     x = sl->tail;
-    Zinc_test_expect_size_t_equal(test, x->priority, 20, "priority 40");
+    Zinc_expect_size_t_equal(test, x->priority, 20, "priority 40");
     Cob_stack_list_remove(sl, x);
     Cob_stack_node_destroy(x);
 
     x = sl->tail;
-    Zinc_test_expect_size_t_equal(test, x->priority, 10, "priority 40");
+    Zinc_expect_size_t_equal(test, x->priority, 10, "priority 40");
     Cob_stack_list_remove(sl, x);
     Cob_stack_node_destroy(x);
 

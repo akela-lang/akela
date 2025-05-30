@@ -24,8 +24,8 @@ void Json_unit_stringify_null(Zinc_test* test)
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "null", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "null", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -55,8 +55,8 @@ void Json_unit_stringify_true(Zinc_test* test)
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "true", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "true", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -86,8 +86,8 @@ void Json_unit_stringify_false(Zinc_test* test)
     Zinc_string_init(&bf);
 
     Json_stringify(el, dom, &bf);
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "false", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "false", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -118,8 +118,8 @@ void Json_unit_stringify_string(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "\"hello\"", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "\"hello\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -150,8 +150,8 @@ void Json_unit_stringify_string2(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "\"\\u03b8\\u03b8\\u03b8\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -182,8 +182,8 @@ void Json_unit_stringify_string3(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "\"\\u1fa52\"", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "\"\\u1fa52\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -214,8 +214,8 @@ void Json_unit_stringify_string4(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "\"\\t\"", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "\"\\t\"", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -247,9 +247,9 @@ void Json_unit_stringify_string_error_invalid_char(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_has_errors(test, el);
-    Zinc_error* e = Zinc_test_expect_source_error(test, el, "invalid string character");
-    Zinc_test_assert_ptr(test, e, "ptr e");
+    Zinc_expect_has_errors(test, el);
+    Zinc_error* e = Zinc_expect_source_error(test, el, "invalid string character");
+    Zinc_assert_ptr(test, e, "ptr e");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -281,8 +281,8 @@ void Json_unit_stringify_number_integer(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "123", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "123", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -314,8 +314,8 @@ void Json_unit_stringify_number_fraction(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "5.100000", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "5.100000", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -347,8 +347,8 @@ void Json_unit_stringify_number_exponent(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "51.000000", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "51.000000", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -378,8 +378,8 @@ void Json_unit_stringify_array_empty(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "[]", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "[]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -416,8 +416,8 @@ void Json_unit_stringify_array_one(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "[3]", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "[3]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -484,8 +484,8 @@ void Json_unit_stringify_array2(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "[1,5.100000,\"hello\",true,false,null]", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -515,8 +515,8 @@ void Json_unit_stringify_object_empty(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "{}", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "{}", "bf");
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);
@@ -558,8 +558,8 @@ void Json_test_stringify_object_one(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_string(test, &bf, "{\"one\":1}", "bf");
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_string(test, &bf, "{\"one\":1}", "bf");
 
     Zinc_string_destroy(&name0);
     Zinc_string_destroy(&bf);
@@ -623,8 +623,8 @@ void Json_unit_stringify_object_many(Zinc_test* test)
 
     Json_stringify(el, dom, &bf);
 
-    Zinc_test_expect_no_errors(test, el);
-    Zinc_test_expect_true(test, 
+    Zinc_expect_no_errors(test, el);
+    Zinc_expect_true(test, 
         Zinc_string_compare_str(&bf, "{\"one\":1,\"two\":5.500000,\"three\":\"hello\"}")
         || Zinc_string_compare_str(&bf, "{\"one\":1,\"three\":\"hello\",\"two\":5.500000}")
         || Zinc_string_compare_str(&bf, "{\"two\":5.500000,\"one\":1,\"three\":\"hello\"}")

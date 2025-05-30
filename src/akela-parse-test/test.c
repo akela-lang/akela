@@ -48,7 +48,7 @@ void Apt(Zinc_test* test)
     Zinc_path_append(&config_path, &name);
 
     Zinc_result r = Zinc_is_reg_file(&config_path);
-    Zinc_test_expect_ok(test, r, "is reg file");
+    Zinc_expect_ok(test, r, "is reg file");
     if (r == Zinc_result_error) {
         Zinc_string_destroy(&dir);
         Zinc_string_destroy(&name);
@@ -57,7 +57,7 @@ void Apt(Zinc_test* test)
     }
 
     FILE* fp = fopen(Zinc_string_c_str(&config_path), "r");
-    Zinc_test_expect_ptr(test, fp, "fopen");
+    Zinc_expect_ptr(test, fp, "fopen");
     if (!fp) {
         fprintf(stderr, "could not open file");
         return;

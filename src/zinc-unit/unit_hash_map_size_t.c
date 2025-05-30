@@ -26,9 +26,9 @@ void Zinc_unit_hash_map_size_t_add(Zinc_test* test)
     char* got_d20 = Zinc_hash_map_size_t_get(&map, 20);
     char* got_d30 = Zinc_hash_map_size_t_get(&map, 30);
 
-    Zinc_test_expect_strcmp(test, got_d10, "ten", "got_d10");
-    Zinc_test_expect_strcmp(test, got_d20, "twenty", "got_d20");
-    Zinc_test_expect_strcmp(test, got_d30, "thirty", "got_d30");
+    Zinc_expect_strcmp(test, got_d10, "ten", "got_d10");
+    Zinc_expect_strcmp(test, got_d20, "twenty", "got_d20");
+    Zinc_expect_strcmp(test, got_d30, "thirty", "got_d30");
 
     Zinc_hash_map_size_t_destroy(&map);
 }
@@ -54,13 +54,13 @@ void Zinc_unit_hash_map_size_t_remove(Zinc_test* test)
     Zinc_hash_map_size_t_add(&map, 30, d30);
 
     char* got_d20 = Zinc_hash_map_size_t_get(&map, 20);
-    Zinc_test_expect_strcmp(test, got_d20, "twenty", "get");
+    Zinc_expect_strcmp(test, got_d20, "twenty", "get");
 
     got_d20 = Zinc_hash_map_size_t_remove(&map, 20);
-    Zinc_test_expect_strcmp(test, got_d20, "twenty", "remove");
+    Zinc_expect_strcmp(test, got_d20, "twenty", "remove");
 
     got_d20 = Zinc_hash_map_size_t_get(&map, 20);
-    Zinc_test_expect_null(test, got_d20, "get 2");
+    Zinc_expect_null(test, got_d20, "get 2");
 
     Zinc_hash_map_size_t_destroy(&map);
 }

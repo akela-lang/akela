@@ -15,13 +15,13 @@ void Lava_unit_parse_header(Zinc_test* test)
 
     Lava_result pr = Lava_parse_str("# Test Suite\n");
 
-    Zinc_test_expect_no_errors(test, pr.errors);
+    Zinc_expect_no_errors(test, pr.errors);
 
-    Zinc_test_expect_ptr(test, pr.root, "ptr root");
-    Zinc_test_expect_int_equal(test, pr.root->kind, LAVA_DOM_HEADER, "kind root");
-    Zinc_test_expect_int_equal(test, pr.root->data.LAVA_DOM_HEADER.level, 1, "level root");
-    Zinc_test_expect_string(test, &pr.root->data.LAVA_DOM_HEADER.title, " Test Suite", "string root");
-    Zinc_test_expect_size_t_equal(test, Lava_dom_count(pr.root), 0, "count root");
+    Zinc_expect_ptr(test, pr.root, "ptr root");
+    Zinc_expect_int_equal(test, pr.root->kind, LAVA_DOM_HEADER, "kind root");
+    Zinc_expect_int_equal(test, pr.root->data.LAVA_DOM_HEADER.level, 1, "level root");
+    Zinc_expect_string(test, &pr.root->data.LAVA_DOM_HEADER.title, " Test Suite", "string root");
+    Zinc_expect_size_t_equal(test, Lava_dom_count(pr.root), 0, "count root");
 
     Lava_result_destroy(&pr);
 }
@@ -40,18 +40,18 @@ void Lava_unit_parse_header_text(Zinc_test* test)
         "Define constant and use\n"
         );
 
-    Zinc_test_expect_no_errors(test, pr.errors);
+    Zinc_expect_no_errors(test, pr.errors);
 
-    Zinc_test_expect_ptr(test, pr.root, "ptr root");
-    Zinc_test_expect_int_equal(test, pr.root->kind, LAVA_DOM_HEADER, "kind root");
-    Zinc_test_expect_int_equal(test, pr.root->data.LAVA_DOM_HEADER.level, 1, "level root");
-    Zinc_test_expect_string(test, &pr.root->data.LAVA_DOM_HEADER.title, " Test Suite", "string root");
-    Zinc_test_expect_size_t_equal(test, Lava_dom_count(pr.root), 1, "count root");
+    Zinc_expect_ptr(test, pr.root, "ptr root");
+    Zinc_expect_int_equal(test, pr.root->kind, LAVA_DOM_HEADER, "kind root");
+    Zinc_expect_int_equal(test, pr.root->data.LAVA_DOM_HEADER.level, 1, "level root");
+    Zinc_expect_string(test, &pr.root->data.LAVA_DOM_HEADER.title, " Test Suite", "string root");
+    Zinc_expect_size_t_equal(test, Lava_dom_count(pr.root), 1, "count root");
 
     Lava_dom* header_text = Lava_dom_get(pr.root, 0);
-    Zinc_test_expect_ptr(test, header_text, "ptr header_text");
-    Zinc_test_expect_int_equal(test, header_text->kind, LAVA_DOM_TEXT, "kind header_text");
-    Zinc_test_expect_string(test, 
+    Zinc_expect_ptr(test, header_text, "ptr header_text");
+    Zinc_expect_int_equal(test, header_text->kind, LAVA_DOM_TEXT, "kind header_text");
+    Zinc_expect_string(test, 
         &header_text->data.LAVA_DOM_TEXT,
         "Define constant and use",
         "text header_text");
@@ -82,29 +82,29 @@ void Lava_unit_parse_header_text_backquote(Zinc_test* test)
 
     Lava_result pr = Lava_parse_str(s);
 
-    Zinc_test_expect_no_errors(test, pr.errors);
+    Zinc_expect_no_errors(test, pr.errors);
 
-    Zinc_test_expect_ptr(test, pr.root, "ptr root");
-    Zinc_test_expect_int_equal(test, pr.root->kind, LAVA_DOM_HEADER, "kind root");
-    Zinc_test_expect_int_equal(test, pr.root->data.LAVA_DOM_HEADER.level, 1, "level root");
-    Zinc_test_expect_string(test, &pr.root->data.LAVA_DOM_HEADER.title, " Test Suite", "string root");
-    Zinc_test_expect_size_t_equal(test, Lava_dom_count(pr.root), 2, "count root");
+    Zinc_expect_ptr(test, pr.root, "ptr root");
+    Zinc_expect_int_equal(test, pr.root->kind, LAVA_DOM_HEADER, "kind root");
+    Zinc_expect_int_equal(test, pr.root->data.LAVA_DOM_HEADER.level, 1, "level root");
+    Zinc_expect_string(test, &pr.root->data.LAVA_DOM_HEADER.title, " Test Suite", "string root");
+    Zinc_expect_size_t_equal(test, Lava_dom_count(pr.root), 2, "count root");
 
     Lava_dom* header_text = Lava_dom_get(pr.root, 0);
-    Zinc_test_expect_ptr(test, header_text, "ptr header_text");
-    Zinc_test_expect_int_equal(test, header_text->kind, LAVA_DOM_TEXT, "kind header_text");
-    Zinc_test_expect_string(test, 
+    Zinc_expect_ptr(test, header_text, "ptr header_text");
+    Zinc_expect_int_equal(test, header_text->kind, LAVA_DOM_TEXT, "kind header_text");
+    Zinc_expect_string(test, 
         &header_text->data.LAVA_DOM_TEXT,
         "Define constant and use",
         "text header_text");
 
     Lava_dom* header_backquote = Lava_dom_get(pr.root, 1);
-    Zinc_test_expect_ptr(test, header_backquote, "ptr header_backquote");
-    Zinc_test_expect_int_equal(test, header_backquote->kind, LAVA_DOM_BACKQUOTE, "kind header_backquote");
-    Zinc_test_expect_string(test, &header_backquote->data.LAVA_DOM_BACKQUOTE.format,
+    Zinc_expect_ptr(test, header_backquote, "ptr header_backquote");
+    Zinc_expect_int_equal(test, header_backquote->kind, LAVA_DOM_BACKQUOTE, "kind header_backquote");
+    Zinc_expect_string(test, &header_backquote->data.LAVA_DOM_BACKQUOTE.format,
         "cent",
         "format header_backquote");
-    Zinc_test_expect_string(test, &header_backquote->data.LAVA_DOM_BACKQUOTE.text,
+    Zinc_expect_string(test, &header_backquote->data.LAVA_DOM_BACKQUOTE.text,
         "use lib::base::*\n"
         "TestSuite {\n"
         "  .solo = false\n"
@@ -112,11 +112,11 @@ void Lava_unit_parse_header_text_backquote(Zinc_test* test)
         "}\n",
         "text header_backquote");
     Zinc_input_bounds bounds = header_backquote->data.LAVA_DOM_BACKQUOTE.bounds;
-    Zinc_test_expect_size_t_equal(test, bounds.loc.start_pos, 46, "loc start");
-    Zinc_test_expect_size_t_equal(test, bounds.loc.end_pos, 62, "loc end");
-    Zinc_test_expect_size_t_equal(test, bounds.loc.line, 5, "loc line");
-    Zinc_test_expect_size_t_equal(test, bounds.loc.col, 1, "loc col");
-    Zinc_test_expect_size_t_equal(test, bounds.end, 109, "end");
+    Zinc_expect_size_t_equal(test, bounds.loc.start_pos, 46, "loc start");
+    Zinc_expect_size_t_equal(test, bounds.loc.end_pos, 62, "loc end");
+    Zinc_expect_size_t_equal(test, bounds.loc.line, 5, "loc line");
+    Zinc_expect_size_t_equal(test, bounds.loc.col, 1, "loc col");
+    Zinc_expect_size_t_equal(test, bounds.end, 109, "end");
 
     Zinc_string_slice quoted_actual_slice = {
         .p = s + bounds.loc.start_pos,
@@ -135,7 +135,7 @@ void Lava_unit_parse_header_text_backquote(Zinc_test* test)
         .size = strlen(quoted_expected),
     };
 
-    Zinc_test_expect_true(
+    Zinc_expect_true(
         test,
         Zinc_string_slice_compare(
             &quoted_actual_slice,
@@ -206,29 +206,29 @@ void Lava_unit_parse_nested_header(Zinc_test* test)
         "```\n"
         );
 
-    Zinc_test_expect_no_errors(test, pr.errors);
+    Zinc_expect_no_errors(test, pr.errors);
 
-    Zinc_test_expect_ptr(test, pr.root, "ptr root");
-    Zinc_test_expect_int_equal(test, pr.root->kind, LAVA_DOM_HEADER, "kind root");
-    Zinc_test_expect_int_equal(test, pr.root->data.LAVA_DOM_HEADER.level, 1, "level root");
-    Zinc_test_expect_string(test, &pr.root->data.LAVA_DOM_HEADER.title, " Test Suite", "string root");
-    Zinc_test_expect_size_t_equal(test, Lava_dom_count(pr.root), 3, "count root");
+    Zinc_expect_ptr(test, pr.root, "ptr root");
+    Zinc_expect_int_equal(test, pr.root->kind, LAVA_DOM_HEADER, "kind root");
+    Zinc_expect_int_equal(test, pr.root->data.LAVA_DOM_HEADER.level, 1, "level root");
+    Zinc_expect_string(test, &pr.root->data.LAVA_DOM_HEADER.title, " Test Suite", "string root");
+    Zinc_expect_size_t_equal(test, Lava_dom_count(pr.root), 3, "count root");
 
     Lava_dom* header_text = Lava_dom_get(pr.root, 0);
-    Zinc_test_expect_ptr(test, header_text, "ptr header_text");
-    Zinc_test_expect_int_equal(test, header_text->kind, LAVA_DOM_TEXT, "kind header_text");
-    Zinc_test_expect_string(test, 
+    Zinc_expect_ptr(test, header_text, "ptr header_text");
+    Zinc_expect_int_equal(test, header_text->kind, LAVA_DOM_TEXT, "kind header_text");
+    Zinc_expect_string(test, 
         &header_text->data.LAVA_DOM_TEXT,
         "Define constant and use",
         "text header_text");
 
     Lava_dom* header_backquote = Lava_dom_get(pr.root, 1);
-    Zinc_test_expect_ptr(test, header_backquote, "ptr header_backquote");
-    Zinc_test_expect_int_equal(test, header_backquote->kind, LAVA_DOM_BACKQUOTE, "kind header_backquote");
-    Zinc_test_expect_string(test, &header_backquote->data.LAVA_DOM_BACKQUOTE.format,
+    Zinc_expect_ptr(test, header_backquote, "ptr header_backquote");
+    Zinc_expect_int_equal(test, header_backquote->kind, LAVA_DOM_BACKQUOTE, "kind header_backquote");
+    Zinc_expect_string(test, &header_backquote->data.LAVA_DOM_BACKQUOTE.format,
         "cent",
         "format header_backquote");
-    Zinc_test_expect_string(test, &header_backquote->data.LAVA_DOM_BACKQUOTE.text,
+    Zinc_expect_string(test, &header_backquote->data.LAVA_DOM_BACKQUOTE.text,
         "use lib::base::*\n"
         "TestSuite {\n"
         "  .solo = false\n"
@@ -237,25 +237,25 @@ void Lava_unit_parse_nested_header(Zinc_test* test)
         "text header_backquote");
 
     Lava_dom* t = Lava_dom_get(pr.root, 2);
-    Zinc_test_expect_ptr(test, t, "ptr test");
-    Zinc_test_expect_int_equal(test, t->kind, LAVA_DOM_HEADER, "kind test");
-    Zinc_test_expect_int_equal(test, t->data.LAVA_DOM_HEADER.level, 2, "level test");
-    Zinc_test_expect_string(test, &t->data.LAVA_DOM_HEADER.title, " Test", "string test");
-    Zinc_test_expect_size_t_equal(test, Lava_dom_count(t), 4, "count test");
+    Zinc_expect_ptr(test, t, "ptr test");
+    Zinc_expect_int_equal(test, t->kind, LAVA_DOM_HEADER, "kind test");
+    Zinc_expect_int_equal(test, t->data.LAVA_DOM_HEADER.level, 2, "level test");
+    Zinc_expect_string(test, &t->data.LAVA_DOM_HEADER.title, " Test", "string test");
+    Zinc_expect_size_t_equal(test, Lava_dom_count(t), 4, "count test");
 
     Lava_dom* test_text = Lava_dom_get(t, 0);
-    Zinc_test_expect_ptr(test, test_text, "ptr test");
-    Zinc_test_expect_int_equal(test, test_text->kind, LAVA_DOM_TEXT, "kind test");
-    Zinc_test_expect_string(test, 
+    Zinc_expect_ptr(test, test_text, "ptr test");
+    Zinc_expect_int_equal(test, test_text->kind, LAVA_DOM_TEXT, "kind test");
+    Zinc_expect_string(test, 
         &test_text->data.LAVA_DOM_TEXT,
         "Declare and use an integer",
         "text test");
 
     Lava_dom* t2 = Lava_dom_get(t, 1);
-    Zinc_test_expect_ptr(test, t2, "ptr test_test");
-    Zinc_test_expect_int_equal(test, t2->kind, LAVA_DOM_BACKQUOTE, "kind t2");
-    Zinc_test_expect_string(test, &t2->data.LAVA_DOM_BACKQUOTE.format, "cent", "format t2");
-    Zinc_test_expect_string(test, &t2->data.LAVA_DOM_BACKQUOTE.text,
+    Zinc_expect_ptr(test, t2, "ptr test_test");
+    Zinc_expect_int_equal(test, t2->kind, LAVA_DOM_BACKQUOTE, "kind t2");
+    Zinc_expect_string(test, &t2->data.LAVA_DOM_BACKQUOTE.format, "cent", "format t2");
+    Zinc_expect_string(test, &t2->data.LAVA_DOM_BACKQUOTE.text,
         "use lib::base::*\n"
         "Test {\n"
         "  .solo = false\n"
@@ -265,23 +265,23 @@ void Lava_unit_parse_nested_header(Zinc_test* test)
         "");
 
     Lava_dom* test_source = Lava_dom_get(t, 2);
-    Zinc_test_expect_ptr(test, test_source, "ptr test_source");
-    Zinc_test_expect_int_equal(test, test_source->kind, LAVA_DOM_BACKQUOTE, "kind test_source");
-    Zinc_test_expect_string(test, 
+    Zinc_expect_ptr(test, test_source, "ptr test_source");
+    Zinc_expect_int_equal(test, test_source->kind, LAVA_DOM_BACKQUOTE, "kind test_source");
+    Zinc_expect_string(test, 
         &test_source->data.LAVA_DOM_BACKQUOTE.format,
         "akela",
         "format test_source");
-    Zinc_test_expect_string(test, 
+    Zinc_expect_string(test, 
         &test_source->data.LAVA_DOM_BACKQUOTE.text,
         "const a: Int32 = 105\n"
         "a\n",
         "text test_source");
 
     Lava_dom* test_ast = Lava_dom_get(t, 3);
-    Zinc_test_expect_ptr(test, test_ast, "ptr test_ast");
-    Zinc_test_expect_int_equal(test, test_ast->kind, LAVA_DOM_BACKQUOTE, "kind test_ast");
-    Zinc_test_expect_string(test, &test_ast->data.LAVA_DOM_BACKQUOTE.format, "cent", "format test_ast");
-    Zinc_test_expect_string(test, 
+    Zinc_expect_ptr(test, test_ast, "ptr test_ast");
+    Zinc_expect_int_equal(test, test_ast->kind, LAVA_DOM_BACKQUOTE, "kind test_ast");
+    Zinc_expect_string(test, &test_ast->data.LAVA_DOM_BACKQUOTE.format, "cent", "format test_ast");
+    Zinc_expect_string(test, 
         &test_ast->data.LAVA_DOM_BACKQUOTE.text,
         "use lib::base::*\n"
         "Ast::Stmts {\n"

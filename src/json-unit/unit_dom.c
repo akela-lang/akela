@@ -31,14 +31,14 @@ void Json_unit_dom_add(Zinc_test* test)
     Json_dom_add_element(root, b);
     Json_dom_add_element(root, c);
 
-    Zinc_test_expect_ptr_equal(test, root->head, a, "head root");
-    Zinc_test_expect_ptr_equal(test, a->prev, NULL, "prev a");
-    Zinc_test_expect_ptr_equal(test, a->next, b, "next a");
-    Zinc_test_expect_ptr_equal(test, b->prev, a, "prev b");
-    Zinc_test_expect_ptr_equal(test, b->next, c, "next b");
-    Zinc_test_expect_ptr_equal(test, c->prev, b, "prev c");
-    Zinc_test_expect_ptr_equal(test, c->next, NULL, "next c");
-    Zinc_test_expect_ptr_equal(test, root->tail, c, "tail root");
+    Zinc_expect_ptr_equal(test, root->head, a, "head root");
+    Zinc_expect_ptr_equal(test, a->prev, NULL, "prev a");
+    Zinc_expect_ptr_equal(test, a->next, b, "next a");
+    Zinc_expect_ptr_equal(test, b->prev, a, "prev b");
+    Zinc_expect_ptr_equal(test, b->next, c, "next b");
+    Zinc_expect_ptr_equal(test, c->prev, b, "prev c");
+    Zinc_expect_ptr_equal(test, c->next, NULL, "next c");
+    Zinc_expect_ptr_equal(test, root->tail, c, "tail root");
 
     Json_dom_destroy(root);
     free(root);

@@ -22,7 +22,7 @@ void Zinc_unit_memory_malloc(Zinc_test* test)
 	}
 
 	// needs at least one test
-	Zinc_test_expect_true(test, true, "true");
+	Zinc_expect_true(test, true, "true");
 
 	free(p);
 }

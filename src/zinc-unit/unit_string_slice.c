@@ -18,8 +18,8 @@ void Zinc_unit_string_slice_trim_left1(Zinc_test* test)
         .size = strlen(title),
     });
 
-    Zinc_test_expect_ptr_equal(test, title2.p, title, "p");
-    Zinc_test_expect_size_t_equal(test, title2.size, strlen(title), "size");
+    Zinc_expect_ptr_equal(test, title2.p, title, "p");
+    Zinc_expect_size_t_equal(test, title2.size, strlen(title), "size");
 }
 
 void Zinc_unit_string_slice_trim_left2(Zinc_test* test)
@@ -37,8 +37,8 @@ void Zinc_unit_string_slice_trim_left2(Zinc_test* test)
         .size = strlen(title),
     });
 
-    Zinc_test_expect_ptr_equal(test, title2.p, title+2, "p");
-    Zinc_test_expect_size_t_equal(test, title2.size, strlen(title)-2, "size");
+    Zinc_expect_ptr_equal(test, title2.p, title+2, "p");
+    Zinc_expect_size_t_equal(test, title2.size, strlen(title)-2, "size");
 }
 
 void Zinc_unit_string_slice_trim_right1(Zinc_test* test)
@@ -56,8 +56,8 @@ void Zinc_unit_string_slice_trim_right1(Zinc_test* test)
         .size = strlen(title),
     });
 
-    Zinc_test_expect_ptr_equal(test, title2.p, title, "p");
-    Zinc_test_expect_size_t_equal(test, title2.size, strlen(title), "size");
+    Zinc_expect_ptr_equal(test, title2.p, title, "p");
+    Zinc_expect_size_t_equal(test, title2.size, strlen(title), "size");
 }
 
 void Zinc_unit_string_slice_trim_right2(Zinc_test* test)
@@ -75,8 +75,8 @@ void Zinc_unit_string_slice_trim_right2(Zinc_test* test)
         .size = strlen(title),
     });
 
-    Zinc_test_expect_ptr_equal(test, title2.p, title, "p");
-    Zinc_test_expect_size_t_equal(test, title2.size, strlen(title) - 2, "size");
+    Zinc_expect_ptr_equal(test, title2.p, title, "p");
+    Zinc_expect_size_t_equal(test, title2.size, strlen(title) - 2, "size");
 }
 
 void Zinc_unit_string_slice_trim1(Zinc_test* test)
@@ -94,8 +94,8 @@ void Zinc_unit_string_slice_trim1(Zinc_test* test)
         .size = strlen(title),
     });
 
-    Zinc_test_expect_ptr_equal(test, title2.p, title, "p");
-    Zinc_test_expect_size_t_equal(test, title2.size, strlen(title), "size");
+    Zinc_expect_ptr_equal(test, title2.p, title, "p");
+    Zinc_expect_size_t_equal(test, title2.size, strlen(title), "size");
 }
 
 void Zinc_unit_string_slice_trim2(Zinc_test* test)
@@ -113,8 +113,8 @@ void Zinc_unit_string_slice_trim2(Zinc_test* test)
         .size = strlen(title),
     });
 
-    Zinc_test_expect_ptr_equal(test, title2.p, title + 2, "p");
-    Zinc_test_expect_size_t_equal(test, title2.size, strlen(title) - 4, "size");
+    Zinc_expect_ptr_equal(test, title2.p, title + 2, "p");
+    Zinc_expect_size_t_equal(test, title2.size, strlen(title) - 4, "size");
 }
 
 void Zinc_unit_string_slice(Zinc_test* test)

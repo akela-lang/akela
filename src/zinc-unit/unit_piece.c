@@ -20,19 +20,19 @@ void Zinc_unit_piece_get(Zinc_test* test)
 
     Zinc_string_clear(&x);
     Zinc_get_piece(&bf, ';', 0, &x);
-    Zinc_test_expect_string(test, &x, "zero", "zero");
+    Zinc_expect_string(test, &x, "zero", "zero");
 
     Zinc_string_clear(&x);
     Zinc_get_piece(&bf, ';', 1, &x);
-    Zinc_test_expect_string(test, &x, "one", "one");
+    Zinc_expect_string(test, &x, "one", "one");
 
     Zinc_string_clear(&x);
     Zinc_get_piece(&bf, ';', 2, &x);
-    Zinc_test_expect_string(test, &x, "two", "two");
+    Zinc_expect_string(test, &x, "two", "two");
 
     Zinc_string_clear(&x);
     Zinc_get_piece(&bf, ';', 3, &x);
-    Zinc_test_expect_string(test, &x, "three", "three");
+    Zinc_expect_string(test, &x, "three", "three");
 
     Zinc_string_destroy(&bf);
     Zinc_string_destroy(&x);

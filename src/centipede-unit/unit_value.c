@@ -25,10 +25,10 @@ void CentUnit_value_set(Zinc_test* test)
     Cent_value_set_str(value, "b", v1);
 
     Cent_value* temp0 = Cent_value_get_str(value, "a");
-    Zinc_test_expect_ptr_equal(test, temp0, v0, "ptr equal temp0");
+    Zinc_expect_ptr_equal(test, temp0, v0, "ptr equal temp0");
 
     Cent_value* temp1 = Cent_value_get_str(value, "b");
-    Zinc_test_expect_ptr_equal(test, temp1, v1, "ptr equal temp1");
+    Zinc_expect_ptr_equal(test, temp1, v1, "ptr equal temp1");
 
     Cent_value_destroy(value);
     free(value);
@@ -60,14 +60,14 @@ void CentUnit_value_add(Zinc_test* test)
     Cent_value_add(value, v1);
     Cent_value_add(value, v2);
 
-    Zinc_test_expect_ptr_equal(test, value->data.dag.head, v0, "head value");
-    Zinc_test_expect_ptr_equal(test, v0->prev, NULL, "prev v0");
-    Zinc_test_expect_ptr_equal(test, v0->next, v1, "next v0");
-    Zinc_test_expect_ptr_equal(test, v1->prev, v0, "prev v1");
-    Zinc_test_expect_ptr_equal(test, v1->next, v2, "next v1");
-    Zinc_test_expect_ptr_equal(test, v2->prev, v1, "prev v2");
-    Zinc_test_expect_ptr_equal(test, v2->next, NULL, "next v2");
-    Zinc_test_expect_ptr_equal(test, value->data.dag.tail, v2, "tail value");
+    Zinc_expect_ptr_equal(test, value->data.dag.head, v0, "head value");
+    Zinc_expect_ptr_equal(test, v0->prev, NULL, "prev v0");
+    Zinc_expect_ptr_equal(test, v0->next, v1, "next v0");
+    Zinc_expect_ptr_equal(test, v1->prev, v0, "prev v1");
+    Zinc_expect_ptr_equal(test, v1->next, v2, "next v1");
+    Zinc_expect_ptr_equal(test, v2->prev, v1, "prev v2");
+    Zinc_expect_ptr_equal(test, v2->next, NULL, "next v2");
+    Zinc_expect_ptr_equal(test, value->data.dag.tail, v2, "tail value");
 
     Cent_value_destroy(value);
     free(value);

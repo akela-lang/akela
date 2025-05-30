@@ -28,14 +28,14 @@ void Zinc_unit_list_1(Zinc_test* test)
     Zinc_list_add(&l, n1);
     Zinc_list_add(&l, n2);
 
-    Zinc_test_expect_ptr_equal(test, l.head, n0, "head l");
-    Zinc_test_expect_ptr_equal(test, n0->prev, NULL, "prev n0");
-    Zinc_test_expect_ptr_equal(test, n0->next, n1, "next n0");
-    Zinc_test_expect_ptr_equal(test, n1->prev, n0, "prev n1");
-    Zinc_test_expect_ptr_equal(test, n1->next, n2, "next n1");
-    Zinc_test_expect_ptr_equal(test, n2->prev, n1, "prev n2");
-    Zinc_test_expect_ptr_equal(test, n2->next, NULL, "next n2");
-    Zinc_test_expect_ptr_equal(test, l.tail, n2, "tail l");
+    Zinc_expect_ptr_equal(test, l.head, n0, "head l");
+    Zinc_expect_ptr_equal(test, n0->prev, NULL, "prev n0");
+    Zinc_expect_ptr_equal(test, n0->next, n1, "next n0");
+    Zinc_expect_ptr_equal(test, n1->prev, n0, "prev n1");
+    Zinc_expect_ptr_equal(test, n1->next, n2, "next n1");
+    Zinc_expect_ptr_equal(test, n2->prev, n1, "prev n2");
+    Zinc_expect_ptr_equal(test, n2->next, NULL, "next n2");
+    Zinc_expect_ptr_equal(test, l.tail, n2, "tail l");
 
     Zinc_list_destroy(&l, (Zinc_list_node_destroy)free);
 }
@@ -63,19 +63,19 @@ void Zinc_unit_list_remove_first_item(Zinc_test* test)
     int *tmp = NULL;
 
     tmp = Zinc_list_remove_first_item(l);
-    Zinc_test_assert_ptr(test, tmp, "ptr 1");
-    Zinc_test_expect_int_equal(test, *tmp, one, "one");
+    Zinc_assert_ptr(test, tmp, "ptr 1");
+    Zinc_expect_int_equal(test, *tmp, one, "one");
 
     tmp = Zinc_list_remove_first_item(l);
-    Zinc_test_assert_ptr(test, tmp, "ptr 2");
-    Zinc_test_expect_int_equal(test, *tmp, two, "two");
+    Zinc_assert_ptr(test, tmp, "ptr 2");
+    Zinc_expect_int_equal(test, *tmp, two, "two");
 
     tmp = Zinc_list_remove_first_item(l);
-    Zinc_test_assert_ptr(test, tmp, "ptr 3");
-    Zinc_test_expect_int_equal(test, *tmp, three, "three");
+    Zinc_assert_ptr(test, tmp, "ptr 3");
+    Zinc_expect_int_equal(test, *tmp, three, "three");
 
     tmp = Zinc_list_remove_first_item(l);
-    Zinc_test_expect_null(test, tmp, "ptr null");
+    Zinc_expect_null(test, tmp, "ptr null");
 
     Zinc_list_destroy(l, NULL);
     free(l);

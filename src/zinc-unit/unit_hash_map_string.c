@@ -28,16 +28,16 @@ void Zinc_unit_hash1(Zinc_test* test)
 	Zinc_hash_map_string_add(&ht, &one, &one_item);
 
 	int* one_item_ptr = Zinc_hash_map_string_get(&ht, &one);
-	Zinc_test_assert_ptr(test, one_item_ptr, "one ptr");
-	Zinc_test_expect_int_equal(test, *one_item_ptr, one_item, "1");
+	Zinc_assert_ptr(test, one_item_ptr, "one ptr");
+	Zinc_expect_int_equal(test, *one_item_ptr, one_item, "1");
 
 	int* two_item_ptr = Zinc_hash_map_string_get(&ht, &two);
-	Zinc_test_expect_null(test, two_item_ptr, "2 null");
+	Zinc_expect_null(test, two_item_ptr, "2 null");
 
 	Zinc_hash_map_string_add(&ht, &two, &two_item);
 	two_item_ptr = Zinc_hash_map_string_get(&ht, &two);
-	Zinc_test_assert_ptr(test, two_item_ptr, "2 ptr");
-	Zinc_test_expect_int_equal(test, *two_item_ptr, two_item, "2");
+	Zinc_assert_ptr(test, two_item_ptr, "2 ptr");
+	Zinc_expect_int_equal(test, *two_item_ptr, two_item, "2");
 
 	Zinc_string_destroy(&one);
 	Zinc_string_destroy(&two);
@@ -69,13 +69,13 @@ void Zinc_unit_hash_map_string_remove(Zinc_test* test)
 
 	for (int i = 0; i < 100; i++) {
 		int* v = Zinc_hash_map_string_get_str(&ht, name[i]);
-		Zinc_test_expect_int_equal(test, *v, value[i], "get");
+		Zinc_expect_int_equal(test, *v, value[i], "get");
 	}
 
 	for (int i = 0; i < 100; i++) {
 		int* v = Zinc_hash_map_string_remove_str(&ht, name[i]);
-		Zinc_test_expect_int_equal(test, *v, value[i], "remove");
-		Zinc_test_expect_null(test, Zinc_hash_map_string_get_str(&ht, name[i]), "null");
+		Zinc_expect_int_equal(test, *v, value[i], "remove");
+		Zinc_expect_null(test, Zinc_hash_map_string_get_str(&ht, name[i]), "null");
 	}
 
 	Zinc_hash_map_string_destroy(&ht);

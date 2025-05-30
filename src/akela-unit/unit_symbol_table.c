@@ -30,14 +30,14 @@ void AkeUnit_symbol_table_env(Zinc_test* test)
 
 	struct Ake_symbol* x;
 	x = Ake_environment_get(env, &value);
-	Zinc_test_expect_null(test, x, "x null");
+	Zinc_expect_null(test, x, "x null");
 
 	Ake_environment_put(env, &value, sym);
 
 	x = Ake_environment_get(env, &value);
-	Zinc_test_assert_ptr(test, x, "x ptr");
+	Zinc_assert_ptr(test, x, "x ptr");
 
-	Zinc_test_assert_true(test, x == sym, "x == sym");
+	Zinc_assert_true(test, x == sym, "x == sym");
 
 	Ake_environment_destroy(env);
 	Zinc_string_destroy(&value);
@@ -55,7 +55,7 @@ void AkeUnit_symbol_table_global(Zinc_test* test)
 	struct Ake_symbol_table st;
 	Ake_symbol_table_init(&st);
 
-	Zinc_test_expect_true(test, Ake_symbol_table_is_global(&st), "is global");
+	Zinc_expect_true(test, Ake_symbol_table_is_global(&st), "is global");
 
 	Ake_symbol_table_destroy(&st);
 }

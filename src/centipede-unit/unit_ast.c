@@ -27,14 +27,14 @@ void CentUnit_ast_add(Zinc_test* test)
     Cent_ast_add(n, b);
     Cent_ast_add(n, c);
 
-    Zinc_test_expect_ptr_equal(test, n->head, a, "head n");
-    Zinc_test_expect_ptr_equal(test, a->prev, NULL, "prev a");
-    Zinc_test_expect_ptr_equal(test, a->next, b, "next a");
-    Zinc_test_expect_ptr_equal(test, b->prev, a, "prev b");
-    Zinc_test_expect_ptr_equal(test, b->next, c, "next b");
-    Zinc_test_expect_ptr_equal(test, c->prev, b, "prev c");
-    Zinc_test_expect_ptr_equal(test, c->next, NULL, "next c");
-    Zinc_test_expect_ptr_equal(test, n->tail, c, "tail n");
+    Zinc_expect_ptr_equal(test, n->head, a, "head n");
+    Zinc_expect_ptr_equal(test, a->prev, NULL, "prev a");
+    Zinc_expect_ptr_equal(test, a->next, b, "next a");
+    Zinc_expect_ptr_equal(test, b->prev, a, "prev b");
+    Zinc_expect_ptr_equal(test, b->next, c, "next b");
+    Zinc_expect_ptr_equal(test, c->prev, b, "prev c");
+    Zinc_expect_ptr_equal(test, c->next, NULL, "next c");
+    Zinc_expect_ptr_equal(test, n->tail, c, "tail n");
 
     Cent_ast_destroy(n);
     free(n);

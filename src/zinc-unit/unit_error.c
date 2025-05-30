@@ -22,9 +22,9 @@ void Zinc_unit_error_list(Zinc_test* test)
     Zinc_error_list_add(&el, e);
 
     Zinc_error* e0 = el.head;
-    Zinc_test_assert_ptr(test, e0, "ptr e0");
-    Zinc_test_expect_true(test, el.head == e, "head");
-    Zinc_test_expect_true(test, el.tail == e, "tail");
+    Zinc_assert_ptr(test, e0, "ptr e0");
+    Zinc_expect_true(test, el.head == e, "head");
+    Zinc_expect_true(test, el.tail == e, "tail");
 
     Zinc_error_list_destroy(&el);
 }
@@ -47,8 +47,8 @@ void Zinc_unit_error_list_set_buffer(Zinc_test* test)
     Zinc_location_init(&loc);
     Zinc_error_list_set(el, &loc, "abc %bf xyz", &bf);
 
-    Zinc_test_expect_has_errors(test, el);
-    Zinc_test_expect_source_error(test, el, "abc hello xyz");
+    Zinc_expect_has_errors(test, el);
+    Zinc_expect_source_error(test, el, "abc hello xyz");
 
     Zinc_error_list_destroy(el);
     free(el);
@@ -70,7 +70,7 @@ void Zinc_unit_error_set(Zinc_test* test)
     Zinc_location_init(&loc);
     Zinc_error_list_set(&errors, &loc, "%c", '1');
     Zinc_error* e = errors.head;
-    Zinc_test_expect_string(test, &e->message, "1", "message e");
+    Zinc_expect_string(test, &e->message, "1", "message e");
     Zinc_error_list_destroy(&errors);
 }
 

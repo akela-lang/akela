@@ -24,16 +24,16 @@ void DfUnit_DataFrame1(Zinc_test* test)
 
     DataFrameAdd(df, s1);
 
-    Zinc_test_assert_ptr(test, s0, "ptr s0");
-    Zinc_test_assert_ptr(test, s1, "ptr s1");
-    Zinc_test_assert_ptr(test, df, "ptr df");
+    Zinc_assert_ptr(test, s0, "ptr s0");
+    Zinc_assert_ptr(test, s1, "ptr s1");
+    Zinc_assert_ptr(test, df, "ptr df");
 
-    Zinc_test_expect_ptr_equal(test, df->head, s0, "head");
-    Zinc_test_expect_ptr_equal(test, s0->prev, NULL, "s0 prev");
-    Zinc_test_expect_ptr_equal(test, s0->next, s1, "s0 next");
-    Zinc_test_expect_ptr_equal(test, s1->prev, s0, "s1 prev");
-    Zinc_test_expect_ptr_equal(test, s1->next, NULL, "s1 next");
-    Zinc_test_expect_ptr_equal(test, df->tail, s1, "tail");
+    Zinc_expect_ptr_equal(test, df->head, s0, "head");
+    Zinc_expect_ptr_equal(test, s0->prev, NULL, "s0 prev");
+    Zinc_expect_ptr_equal(test, s0->next, s1, "s0 next");
+    Zinc_expect_ptr_equal(test, s1->prev, s0, "s1 prev");
+    Zinc_expect_ptr_equal(test, s1->next, NULL, "s1 next");
+    Zinc_expect_ptr_equal(test, df->tail, s1, "tail");
 
     DataFrameDestroy(df);
     free(df);

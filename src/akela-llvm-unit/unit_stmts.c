@@ -18,7 +18,7 @@ void AkeLlvmUnit_stmts_last(Zinc_test* test)
              "const b: Int32 = 2\n"
              "a + b\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "3", "value");
+    Zinc_expect_string(test, &result.value, "3", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -38,7 +38,7 @@ void AkeLlvmUnit_stmts_if(Zinc_test* test)
              "  1\n"
              "end\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "", "value");
+    Zinc_expect_string(test, &result.value, "", "value");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -60,7 +60,7 @@ void AkeLlvmUnit_stmts_if_else(Zinc_test* test)
              "  2\n"
              "end\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "1", "1 value");
+    Zinc_expect_string(test, &result.value, "1", "1 value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -70,7 +70,7 @@ void AkeLlvmUnit_stmts_if_else(Zinc_test* test)
              "  2\n"
              "end\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "2", "2 value");
+    Zinc_expect_string(test, &result.value, "2", "2 value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -93,7 +93,7 @@ void AkeLlvmUnit_stmts_if_elseif_else(Zinc_test* test)
              "  3\n"
              "end\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "1", "value");
+    Zinc_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -105,7 +105,7 @@ void AkeLlvmUnit_stmts_if_elseif_else(Zinc_test* test)
              "  3\n"
              "end\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "2", "value");
+    Zinc_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
@@ -117,7 +117,7 @@ void AkeLlvmUnit_stmts_if_elseif_else(Zinc_test* test)
              "  3\n"
              "end\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "3", "value");
+    Zinc_expect_string(test, &result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -135,14 +135,14 @@ void AkeLlvmUnit_stmts_if_expression(Zinc_test* test)
     AkeLlvmUnit_cg_setup("const a: Int32 = if true 1 else 2 end\n"
              "a\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "1", "value");
+    Zinc_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("const a: Int32 = if false 1 else 2 end\n"
              "a\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "2", "value");
+    Zinc_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
 
@@ -161,7 +161,7 @@ void AkeLlvmUnit_stmts_printf(Zinc_test* test)
              "const s: [100 const]Nat8 = \"test printf\n\"\n"
              "printf(s)\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "", "value");
+    Zinc_expect_string(test, &result.value, "", "value");
     Ake_code_gen_result_destroy(&result);
 }
 

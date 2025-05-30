@@ -61,135 +61,135 @@ void Lava_unit_lex_test_suite(Zinc_test* test)
 
     // line 1
     Lava_token* t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_header, "kind line 1 token 1");
-    Zinc_test_expect_string(test, &t->text, "#", "string line 1 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_header, "kind line 1 token 1");
+    Zinc_expect_string(test, &t->text, "#", "string line 1 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 1 token 2");
-    Zinc_test_expect_string(test, &t->text, " Test Suite", "string line 1 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 1 token 2");
+    Zinc_expect_string(test, &t->text, " Test Suite", "string line 1 token 2");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 1 token 3");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 1 token 3");
     Lava_token_destroy(t);
     free(t);
 
     // line 2
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 2 token 1");
-    Zinc_test_expect_string(test, &t->text, "Declare constant and use", "string line 2 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 2 token 1");
+    Zinc_expect_string(test, &t->text, "Declare constant and use", "string line 2 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 2 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 2 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 3
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_backquote, "kind line 3 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_backquote, "kind line 3 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 3 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 3 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 4
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 4 token 1");
-    Zinc_test_expect_string(test, &t->text, "use lib::base::*", "string line 4 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 4 token 1");
+    Zinc_expect_string(test, &t->text, "use lib::base::*", "string line 4 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 4 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 4 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 5
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 5 token 1");
-    Zinc_test_expect_string(test, &t->text, "TestSuite {", "string line 5 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 5 token 1");
+    Zinc_expect_string(test, &t->text, "TestSuite {", "string line 5 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 5 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 5 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 6
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 6 token 1");
-    Zinc_test_expect_string(test, &t->text, "  .solo = false", "string line 6 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 6 token 1");
+    Zinc_expect_string(test, &t->text, "  .solo = false", "string line 6 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 6 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 6 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 7
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 7 token 1");
-    Zinc_test_expect_string(test, &t->text, "  .mute = false", "string line 7 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 7 token 1");
+    Zinc_expect_string(test, &t->text, "  .mute = false", "string line 7 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 7 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 7 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 8
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 8 token 1");
-    Zinc_test_expect_string(test, &t->text, "  .headers = headers", "string line 8 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 8 token 1");
+    Zinc_expect_string(test, &t->text, "  .headers = headers", "string line 8 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 8 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 8 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 9
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 9 token 1");
-    Zinc_test_expect_string(test, &t->text, "}", "string line 9 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 9 token 1");
+    Zinc_expect_string(test, &t->text, "}", "string line 9 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 9 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 9 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 10
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_backquote, "kind line 10 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_backquote, "kind line 10 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 10 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 10 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // eof
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_eof, "kind eof");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_eof, "kind eof");
     Lava_token_destroy(t);
     free(t);
 
-    Zinc_test_expect_no_errors(test, ld->errors);
+    Zinc_expect_no_errors(test, ld->errors);
     unit_teardown(ld);
 }
 
@@ -217,135 +217,135 @@ void Lava_unit_lex_test(Zinc_test* test)
 
     // line 1
     Lava_token* t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_header, "kind line 1 token 1");
-    Zinc_test_expect_string(test, &t->text, "##", "string line 1 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_header, "kind line 1 token 1");
+    Zinc_expect_string(test, &t->text, "##", "string line 1 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 1 token 2");
-    Zinc_test_expect_string(test, &t->text, " Test", "string line 1 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 1 token 2");
+    Zinc_expect_string(test, &t->text, " Test", "string line 1 token 2");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 1 token 3");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 1 token 3");
     Lava_token_destroy(t);
     free(t);
 
     // line 2
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 2 token 1");
-    Zinc_test_expect_string(test, &t->text, "Declare and use an integer", "string line 2 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 2 token 1");
+    Zinc_expect_string(test, &t->text, "Declare and use an integer", "string line 2 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 2 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 2 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 3
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_backquote, "kind line 3 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_backquote, "kind line 3 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 3 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 3 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 4
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 4 token 1");
-    Zinc_test_expect_string(test, &t->text, "use lib::base::*", "string line 4 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 4 token 1");
+    Zinc_expect_string(test, &t->text, "use lib::base::*", "string line 4 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 4 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 4 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 5
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 5 token 1");
-    Zinc_test_expect_string(test, &t->text, "Test {", "string line 5 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 5 token 1");
+    Zinc_expect_string(test, &t->text, "Test {", "string line 5 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 5 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 5 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 6
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 6 token 1");
-    Zinc_test_expect_string(test, &t->text, "    .solo = false", "string line 6 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 6 token 1");
+    Zinc_expect_string(test, &t->text, "    .solo = false", "string line 6 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 6 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 6 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 7
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 7 token 1");
-    Zinc_test_expect_string(test, &t->text, "    .mute = false", "string line 7 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 7 token 1");
+    Zinc_expect_string(test, &t->text, "    .mute = false", "string line 7 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 7 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 7 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 8
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 8 token 1");
-    Zinc_test_expect_string(test, &t->text, "    .has_error = false", "string line 8 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 8 token 1");
+    Zinc_expect_string(test, &t->text, "    .has_error = false", "string line 8 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 8 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 8 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 9
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 9 token 1");
-    Zinc_test_expect_string(test, &t->text, "}", "string line 9 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_text, "kind line 9 token 1");
+    Zinc_expect_string(test, &t->text, "}", "string line 9 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 9 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 9 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // line 10
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_backquote, "kind line 10 token 1");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_backquote, "kind line 10 token 1");
     Lava_token_destroy(t);
     free(t);
 
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 10 token 2");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_newline, "kind line 10 token 2");
     Lava_token_destroy(t);
     free(t);
 
     // eof
     t = Lava_lex(ld);
-    Zinc_test_expect_int_equal(test, t->kind, Lava_token_kind_eof, "kind eof");
+    Zinc_expect_int_equal(test, t->kind, Lava_token_kind_eof, "kind eof");
     Lava_token_destroy(t);
     free(t);
 
-    Zinc_test_expect_no_errors(test, ld->errors);
+    Zinc_expect_no_errors(test, ld->errors);
     unit_teardown(ld);
 }
 

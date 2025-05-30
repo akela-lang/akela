@@ -49,26 +49,26 @@ void DfUnit_CSVLexEmptyField(Zinc_test* test)
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "", "value 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "", "value 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 2");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 2");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "value 2");
     CSVTokenDestroy(token);
     free(token);
 
@@ -89,26 +89,26 @@ void DfUnit_CSVLexEmptyFieldQuoted(Zinc_test* test)
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "", "value 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "", "value 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 2");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 2");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "value 2");
     CSVTokenDestroy(token);
     free(token);
 
@@ -129,26 +129,26 @@ void DfUnit_CSVLexOneField(Zinc_test* test)
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "25", "value 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "25", "value 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "", "value 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 2");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 2");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "value 2");
     CSVTokenDestroy(token);
     free(token);
 
@@ -169,26 +169,26 @@ void DfUnit_CSVLexOneFieldQuoted(Zinc_test* test)
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "25", "value 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "25", "value 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "", "value 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 2");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 2");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "value 2");
     CSVTokenDestroy(token);
     free(token);
 
@@ -209,34 +209,34 @@ void DfUnit_CSVLexTwoFields(Zinc_test* test)
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "24", "value 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "24", "value 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "11", "value 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "11", "value 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 2");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 2");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "value 2");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 3");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 3");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 3");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 3");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 3");
+    Zinc_expect_vector_str(test, &token->value, "", "value 3");
     CSVTokenDestroy(token);
     free(token);
 
@@ -257,34 +257,34 @@ void DfUnit_CSVLexTwoFieldsQuoted(Zinc_test* test)
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "24", "value 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "24", "value 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "11", "value 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "11", "value 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 2");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 2");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "value 2");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 3");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 3");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 3");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 3");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 3");
+    Zinc_expect_vector_str(test, &token->value, "", "value 3");
     CSVTokenDestroy(token);
     free(token);
 
@@ -308,58 +308,58 @@ void DfUnit_CSVLexTwoRows(Zinc_test* test)
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "24", "value 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "24", "value 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "11", "value 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "11", "value 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "value 2");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 3");
-    Zinc_test_expect_vector_str(test, &token->value, "44", "value 3");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 3");
+    Zinc_expect_vector_str(test, &token->value, "44", "value 3");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 4");
-    Zinc_test_expect_vector_str(test, &token->value, "100", "value 4");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 4");
+    Zinc_expect_vector_str(test, &token->value, "100", "value 4");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 5");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 5");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 5");
+    Zinc_expect_vector_str(test, &token->value, "", "value 5");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 6");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 6");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 6");
+    Zinc_expect_vector_str(test, &token->value, "", "value 6");
     CSVTokenDestroy(token);
     free(token);
 
@@ -383,58 +383,58 @@ void DfUnit_CSVLexTwoRowsQuoted(Zinc_test* test)
     struct CSVToken* token = NULL;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "24", "value 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "24", "value 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "11", "value 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "11", "value 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "value 2");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 3");
-    Zinc_test_expect_vector_str(test, &token->value, "44", "value 3");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 3");
+    Zinc_expect_vector_str(test, &token->value, "44", "value 3");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 4");
-    Zinc_test_expect_vector_str(test, &token->value, "100", "value 4");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 4");
+    Zinc_expect_vector_str(test, &token->value, "100", "value 4");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 5");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 5");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 5");
+    Zinc_expect_vector_str(test, &token->value, "", "value 5");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 6");
-    Zinc_test_expect_vector_str(test, &token->value, "", "value 6");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 6");
+    Zinc_expect_vector_str(test, &token->value, "", "value 6");
     CSVTokenDestroy(token);
     free(token);
 
@@ -455,18 +455,18 @@ void DfUnit_CSVLexErrorQuote(Zinc_test* test)
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
 
     CSVTokenDestroy(token);
     free(token);
 
-    Zinc_test_expect_has_errors(test, lex_data->el);
-    struct Zinc_error* e = Zinc_test_expect_source_error(test, lex_data->el, "quote found in unquoted field");
+    Zinc_expect_has_errors(test, lex_data->el);
+    struct Zinc_error* e = Zinc_expect_source_error(test, lex_data->el, "quote found in unquoted field");
     if (e) {
-        Zinc_test_expect_size_t_equal(test, e->loc.start_pos, 3, "byte_pos");
-        Zinc_test_expect_size_t_equal(test, e->loc.end_pos, 4, "end_pos");
-        Zinc_test_expect_size_t_equal(test, e->loc.line, 1, "line");
-        Zinc_test_expect_size_t_equal(test, e->loc.col, 4, "col");
+        Zinc_expect_size_t_equal(test, e->loc.start_pos, 3, "byte_pos");
+        Zinc_expect_size_t_equal(test, e->loc.end_pos, 4, "end_pos");
+        Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
+        Zinc_expect_size_t_equal(test, e->loc.col, 4, "col");
     }
 
     DfUnit_CSVLexTeardown(lex_data);
@@ -486,27 +486,27 @@ void DfUnit_CSVLexErrorExtraCharactersAfterQuote(Zinc_test* test)
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "one", "vector 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "one", "vector 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_has_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "", "vector 1");
+    Zinc_expect_has_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "", "vector 1");
     CSVTokenDestroy(token);
     free(token);
-    struct Zinc_error* e = Zinc_test_expect_source_error(test, lex_data->el,
+    struct Zinc_error* e = Zinc_expect_source_error(test, lex_data->el,
                                           "extra characters after field ending quote");
     if (e) {
-        Zinc_test_expect_size_t_equal(test, e->loc.start_pos, 5, "byte_pos");
-        Zinc_test_expect_size_t_equal(test, e->loc.end_pos, 6, "size");
-        Zinc_test_expect_size_t_equal(test, e->loc.line, 1, "line");
-        Zinc_test_expect_size_t_equal(test, e->loc.col, 6, "col");
+        Zinc_expect_size_t_equal(test, e->loc.start_pos, 5, "byte_pos");
+        Zinc_expect_size_t_equal(test, e->loc.end_pos, 6, "size");
+        Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
+        Zinc_expect_size_t_equal(test, e->loc.col, 6, "col");
     }
 
     DfUnit_CSVLexTeardown(lex_data);
@@ -526,28 +526,28 @@ void DfUnit_CSVLexErrorEOFBeforeQuote(Zinc_test* test)
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_has_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "one", "vector 0");
+    Zinc_expect_has_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "one", "vector 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_has_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "", "vector 1");
+    Zinc_expect_has_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "", "vector 1");
     CSVTokenDestroy(token);
     free(token);
 
-    struct Zinc_error* e = Zinc_test_expect_source_error(test, lex_data->el,
+    struct Zinc_error* e = Zinc_expect_source_error(test, lex_data->el,
                                           "End of file found before end of quoted field");
     if (e) {
-        Zinc_test_expect_size_t_equal(test, e->loc.start_pos, 4, "byte_pos");
-        Zinc_test_expect_size_t_equal(test, e->loc.end_pos, 5, "size");
-        Zinc_test_expect_size_t_equal(test, e->loc.line, 1, "line");
-        Zinc_test_expect_size_t_equal(test, e->loc.col, 5, "col");
+        Zinc_expect_size_t_equal(test, e->loc.start_pos, 4, "byte_pos");
+        Zinc_expect_size_t_equal(test, e->loc.end_pos, 5, "size");
+        Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
+        Zinc_expect_size_t_equal(test, e->loc.col, 5, "col");
     }
 
     DfUnit_CSVLexTeardown(lex_data);
@@ -567,26 +567,26 @@ void DfUnit_CSVLexQuoteNewline(Zinc_test* test)
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "one\ntwo", "vector 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "one\ntwo", "vector 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "", "vector 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "", "vector 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 2");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "vector 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 2");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "vector 2");
     CSVTokenDestroy(token);
     free(token);
 
@@ -607,26 +607,26 @@ void DfUnit_CSVLexQuoteComma(Zinc_test* test)
     struct CSVToken* token;
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 0");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
-    Zinc_test_expect_vector_str(test, &token->value, "one,two", "vector 0");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 0");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeField, "type 0");
+    Zinc_expect_vector_str(test, &token->value, "one,two", "vector 0");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 1");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
-    Zinc_test_expect_vector_str(test, &token->value, "", "vector 1");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 1");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeNewline, "type 1");
+    Zinc_expect_vector_str(test, &token->value, "", "vector 1");
     CSVTokenDestroy(token);
     free(token);
 
     CSVLex(lex_data, &token);
-    Zinc_test_expect_no_errors(test, lex_data->el);
-    Zinc_test_assert_ptr(test, token, "ptr token 2");
-    Zinc_test_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
-    Zinc_test_expect_vector_str(test, &token->value, "", "vector 2");
+    Zinc_expect_no_errors(test, lex_data->el);
+    Zinc_assert_ptr(test, token, "ptr token 2");
+    Zinc_expect_int_equal(test, token->type, CSVTokenTypeEOF, "type 2");
+    Zinc_expect_vector_str(test, &token->value, "", "vector 2");
     CSVTokenDestroy(token);
     free(token);
 

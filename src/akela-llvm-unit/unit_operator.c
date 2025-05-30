@@ -15,7 +15,7 @@ void AkeLlvmUnit_operator_add(Zinc_test* test)
     Ake_code_gen_result_init(&result);
 
     AkeLlvmUnit_cg_setup("1 + 40", &result);
-    Zinc_test_expect_string(test, &result.value, "41", "41");
+    Zinc_expect_string(test, &result.value, "41", "41");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -34,7 +34,7 @@ void AkeLlvmUnit_operator_add2(Zinc_test* test)
     AkeLlvmUnit_cg_setup("const a: Int32 = 4\n"
              "a + 61\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "65", "65");
+    Zinc_expect_string(test, &result.value, "65", "65");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -51,7 +51,7 @@ void AkeLlvmUnit_operator_sub(Zinc_test* test)
     Ake_code_gen_result_init(&result);
 
     AkeLlvmUnit_cg_setup("15-2", &result);
-    Zinc_test_expect_string(test, &result.value, "13", "13");
+    Zinc_expect_string(test, &result.value, "13", "13");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -70,7 +70,7 @@ void AkeLlvmUnit_operator_sub2(Zinc_test* test)
     AkeLlvmUnit_cg_setup("const a: Int32 = 10\n"
              "a - 2\n",
              &result);
-    Zinc_test_expect_string(test, &result.value, "8", "8");
+    Zinc_expect_string(test, &result.value, "8", "8");
 
     Ake_code_gen_result_destroy(&result);
 }

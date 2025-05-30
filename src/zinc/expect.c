@@ -9,13 +9,13 @@
 #include "string_list.h"
 #include "zinc/utf8.h"
 
-void Zinc_test_panic()
+void Zinc_panic()
 {
     fprintf(stderr, "Exiting because of assertion error.\n");
     exit(1);
 }
 
-void Zinc_test_assert_ok(Zinc_test* test, Zinc_result r, const char* message)
+void Zinc_assert_ok(Zinc_test* test, Zinc_result r, const char* message)
 {
     test->check_count++;
 
@@ -28,10 +28,10 @@ void Zinc_test_assert_ok(Zinc_test* test, Zinc_result r, const char* message)
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\tok assertion error: %s: %s\n", message, Zinc_error_message);
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_assert_ptr(Zinc_test* test, void* p, const char* message)
+void Zinc_assert_ptr(Zinc_test* test, void* p, const char* message)
 {
     test->check_count++;
 
@@ -44,11 +44,11 @@ void Zinc_test_assert_ptr(Zinc_test* test, void* p, const char* message)
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t%p != NULL assertion error: %s\n", p, message);
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
 
-void Zinc_test_assert_int_equal(Zinc_test* test, int a, int b, const char* message)
+void Zinc_assert_int_equal(Zinc_test* test, int a, int b, const char* message)
 {
     test->check_count++;
 
@@ -61,10 +61,10 @@ void Zinc_test_assert_int_equal(Zinc_test* test, int a, int b, const char* messa
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t%d = %d assertion error: %s\n", a, b, message);
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_assert_true(Zinc_test* test, int value, const char* message)
+void Zinc_assert_true(Zinc_test* test, int value, const char* message)
 {
     test->check_count++;
 
@@ -77,10 +77,10 @@ void Zinc_test_assert_true(Zinc_test* test, int value, const char* message)
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t%d = true assertion error: %s\n", value, message);
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_assert_false(Zinc_test* test, int value, const char* message)
+void Zinc_assert_false(Zinc_test* test, int value, const char* message)
 {
     test->check_count++;
 
@@ -93,10 +93,10 @@ void Zinc_test_assert_false(Zinc_test* test, int value, const char* message)
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t%d = false assertion error: %s\n", value, message);
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_assert_null(Zinc_test* test, void* p, const char* message)
+void Zinc_assert_null(Zinc_test* test, void* p, const char* message)
 {
     test->check_count++;
 
@@ -109,10 +109,10 @@ void Zinc_test_assert_null(Zinc_test* test, void* p, const char* message)
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t%p == null assertion error: %s\n", p, message);
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_assert_error(Zinc_test* test, Zinc_result r, const char* message)
+void Zinc_assert_error(Zinc_test* test, Zinc_result r, const char* message)
 {
     test->check_count++;
 
@@ -125,10 +125,10 @@ void Zinc_test_assert_error(Zinc_test* test, Zinc_result r, const char* message)
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\tno error detected assertion error: %s\n", message);
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_expect_null(Zinc_test* test, void* p, const char* message)
+void Zinc_expect_null(Zinc_test* test, void* p, const char* message)
 {
     test->check_count++;
 
@@ -143,7 +143,7 @@ void Zinc_test_expect_null(Zinc_test* test, void* p, const char* message)
     fprintf(stderr, "\t%p == null error: %s\n", p, message);
 }
 
-void Zinc_test_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message)
+void Zinc_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message)
 {
     test->check_count++;
     if (a == b) {
@@ -157,7 +157,7 @@ void Zinc_test_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const ch
     fprintf(stderr, "\t(%zu) = (%zu) error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_string(Zinc_test* test, Zinc_string* a, const char* b, const char* message)
+void Zinc_expect_string(Zinc_test* test, Zinc_string* a, const char* b, const char* message)
 {
     test->check_count++;
 
@@ -177,7 +177,7 @@ void Zinc_test_expect_string(Zinc_test* test, Zinc_string* a, const char* b, con
         b);
 }
 
-bool Zinc_test_expect_true(Zinc_test* test, int value, const char* fmt, ...)
+bool Zinc_expect_true(Zinc_test* test, int value, const char* fmt, ...)
 {
     test->check_count++;
 
@@ -198,7 +198,7 @@ bool Zinc_test_expect_true(Zinc_test* test, int value, const char* fmt, ...)
 	return false;
 }
 
-void Zinc_test_expect_false(Zinc_test* test, int value, const char* message)
+void Zinc_expect_false(Zinc_test* test, int value, const char* message)
 {
     test->check_count++;
 
@@ -213,7 +213,7 @@ void Zinc_test_expect_false(Zinc_test* test, int value, const char* message)
     fprintf(stderr, "\t(%d) = (false) error: %s\n", value, message);
 }
 
-void Zinc_test_expect_strcmp(Zinc_test* test, const char* a, const char* b, const char* message)
+void Zinc_expect_strcmp(Zinc_test* test, const char* a, const char* b, const char* message)
 {
     test->check_count++;
     if (strcmp(a, b) == 0) {
@@ -227,7 +227,7 @@ void Zinc_test_expect_strcmp(Zinc_test* test, const char* a, const char* b, cons
     fprintf(stderr, "\t(%s) = (%s) strcmp error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_int_equal(Zinc_test* test, int a, int b, const char* message)
+void Zinc_expect_int_equal(Zinc_test* test, int a, int b, const char* message)
 {
     test->check_count++;
 
@@ -242,7 +242,7 @@ void Zinc_test_expect_int_equal(Zinc_test* test, int a, int b, const char* messa
     fprintf(stderr, "\t%d = %d error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, const char* message)
+void Zinc_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, const char* message)
 {
     test->check_count++;
 
@@ -257,7 +257,7 @@ void Zinc_test_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, c
     fprintf(stderr, "\t%p = %p error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_long_equal(Zinc_test* test, long a, long b, const char* message)
+void Zinc_expect_long_equal(Zinc_test* test, long a, long b, const char* message)
 {
     test->check_count++;
 
@@ -272,7 +272,7 @@ void Zinc_test_expect_long_equal(Zinc_test* test, long a, long b, const char* me
     fprintf(stderr, "\t%ld = %ld error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message)
+void Zinc_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message)
 {
     test->check_count++;
 
@@ -287,7 +287,7 @@ void Zinc_test_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsi
     fprintf(stderr, "\t%lu = %lu error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_long_long_equal(Zinc_test* test, long long a, long long b, const char* message)
+void Zinc_expect_long_long_equal(Zinc_test* test, long long a, long long b, const char* message)
 {
 	test->check_count++;
 
@@ -302,7 +302,7 @@ void Zinc_test_expect_long_long_equal(Zinc_test* test, long long a, long long b,
 	fprintf(stderr, "\t%lld = %lld error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_u_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message)
+void Zinc_expect_u_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message)
 {
     test->check_count++;
 
@@ -317,7 +317,7 @@ void Zinc_test_expect_u_long_equal(Zinc_test* test, unsigned long a, unsigned lo
     fprintf(stderr, "\t%ld = %ld error: %s\n", a, b, message);
 }
 
-void Zinc_test_expect_char_equal(Zinc_test* test, char a, char b, const char* message)
+void Zinc_expect_char_equal(Zinc_test* test, char a, char b, const char* message)
 {
 	test->check_count++;
 
@@ -332,7 +332,7 @@ void Zinc_test_expect_char_equal(Zinc_test* test, char a, char b, const char* me
 	fprintf(stderr, "\t(%c) = (%c) error: %s\n", a, b, message);
 }
 
-bool Zinc_test_expect_ptr(Zinc_test* test, void* p, const char* fmt, ...)
+bool Zinc_expect_ptr(Zinc_test* test, void* p, const char* fmt, ...)
 {
 	test->check_count++;
 	if (p) {
@@ -353,7 +353,7 @@ bool Zinc_test_expect_ptr(Zinc_test* test, void* p, const char* fmt, ...)
 	return false;
 }
 
-void Zinc_test_expect_ok(Zinc_test* test, Zinc_result r, const char* message)
+void Zinc_expect_ok(Zinc_test* test, Zinc_result r, const char* message)
 {
 	test->check_count++;
 
@@ -368,7 +368,7 @@ void Zinc_test_expect_ok(Zinc_test* test, Zinc_result r, const char* message)
 	fprintf(stderr, "\tok error: %s: %s\n", message, Zinc_error_message);
 }
 
-void Zinc_test_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b, const char* message)
+void Zinc_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b, const char* message)
 {
     test->check_count++;
 
@@ -410,7 +410,7 @@ void Zinc_test_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b,
     test->check_passed++;
 }
 
-void Zinc_test_expect_vector(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, const char* message)
+void Zinc_expect_vector(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, const char* message)
 {
     test->check_count++;
     if (a->value_size != b->value_size) {
@@ -445,7 +445,7 @@ void Zinc_test_expect_vector(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, co
     }
 }
 
-void Zinc_test_expect_error_message(Zinc_test* test, const char* s)
+void Zinc_expect_error_message(Zinc_test* test, const char* s)
 {
 	test->check_count++;
 
@@ -460,7 +460,7 @@ void Zinc_test_expect_error_message(Zinc_test* test, const char* s)
 	fprintf(stderr, "\t(%s) = (%s): error message does not memory_match\n", Zinc_error_message, s);
 }
 
-void Zinc_test_expect_utf8_char_str(Zinc_test* test, char a[4], int num, char* b, char* message)
+void Zinc_expect_utf8_char_str(Zinc_test* test, char a[4], int num, char* b, char* message)
 {
 	test->check_count++;
 	int count_a = ZINC_NUM_BYTES(a[0]);
@@ -484,7 +484,7 @@ void Zinc_test_expect_utf8_char_str(Zinc_test* test, char a[4], int num, char* b
 	fprintf(stderr, "\tutf8 chars not equal: %s\n", message);
 }
 
-void Zinc_test_expect_buffer_list_count(Zinc_test* test, Zinc_string_list* bl, size_t count, char* message)
+void Zinc_expect_buffer_list_count(Zinc_test* test, Zinc_string_list* bl, size_t count, char* message)
 {
 	test->check_count++;
 	size_t actual_count = Zinc_string_list_count(bl);
@@ -499,7 +499,7 @@ void Zinc_test_expect_buffer_list_count(Zinc_test* test, Zinc_string_list* bl, s
 	fprintf(stderr, "\tbuffer list count not equal: %zu != %zu: %s\n", actual_count, count, message);
 }
 
-void Zinc_test_expect_buffer_list_item(Zinc_test* test, Zinc_string_list* bl, size_t index, char* text, char* message)
+void Zinc_expect_buffer_list_item(Zinc_test* test, Zinc_string_list* bl, size_t index, char* text, char* message)
 {
     test->check_count++;
 	Zinc_string* bf = Zinc_string_list_get(bl, index);
@@ -528,7 +528,7 @@ void Zinc_test_expect_buffer_list_item(Zinc_test* test, Zinc_string_list* bl, si
     test->check_passed++;
 }
 
-void Zinc_test_assert_no_errors(Zinc_test* test, Zinc_error_list* el)
+void Zinc_assert_no_errors(Zinc_test* test, Zinc_error_list* el)
 {
     test->check_count++;
 
@@ -548,10 +548,10 @@ void Zinc_test_assert_no_errors(Zinc_test* test, Zinc_error_list* el)
         e = e->next;
     }
 
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_expect_no_errors(Zinc_test* test, Zinc_error_list* el)
+void Zinc_expect_no_errors(Zinc_test* test, Zinc_error_list* el)
 {
     test->check_count++;
 
@@ -572,7 +572,7 @@ void Zinc_test_expect_no_errors(Zinc_test* test, Zinc_error_list* el)
     }
 }
 
-void Zinc_test_expect_error_count(Zinc_test* test, Zinc_error_list* el, size_t count)
+void Zinc_expect_error_count(Zinc_test* test, Zinc_error_list* el, size_t count)
 {
     test->check_count++;
 
@@ -593,7 +593,7 @@ void Zinc_test_expect_error_count(Zinc_test* test, Zinc_error_list* el, size_t c
     fprintf(stderr, "\texpected error count (%zu) (%zu)\n", actual_count, count);
 }
 
-void Zinc_test_assert_has_errors(Zinc_test* test, Zinc_error_list* el)
+void Zinc_assert_has_errors(Zinc_test* test, Zinc_error_list* el)
 {
     test->check_count++;
 
@@ -606,10 +606,10 @@ void Zinc_test_assert_has_errors(Zinc_test* test, Zinc_error_list* el)
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\tassert has errors: there are no errors\n");
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_expect_has_errors(Zinc_test* test, Zinc_error_list* el)
+void Zinc_expect_has_errors(Zinc_test* test, Zinc_error_list* el)
 {
     test->check_count++;
 
@@ -624,7 +624,7 @@ void Zinc_test_expect_has_errors(Zinc_test* test, Zinc_error_list* el)
     fprintf(stderr, "\texpect has errors: there are no errors\n");
 }
 
-Zinc_error* Zinc_test_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])
+Zinc_error* Zinc_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])
 {
     test->check_count++;
 
@@ -642,11 +642,11 @@ Zinc_error* Zinc_test_assert_source_error(Zinc_test* test, Zinc_error_list* el, 
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\terror not found: %s\n", message);
-    Zinc_test_panic();
+    Zinc_panic();
     return NULL;
 }
 
-Zinc_error* Zinc_test_expect_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])
+Zinc_error* Zinc_expect_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])
 {
     test->check_count++;
 
@@ -676,7 +676,7 @@ Zinc_error* Zinc_test_expect_source_error(Zinc_test* test, Zinc_error_list* el, 
     return NULL;
 }
 
-void Zinc_test_expect_uint_equal(Zinc_test* test, unsigned int a, unsigned int b, const char* message)
+void Zinc_expect_uint_equal(Zinc_test* test, unsigned int a, unsigned int b, const char* message)
 {
 	test->check_count++;
 	if (a == b) {
@@ -689,7 +689,7 @@ void Zinc_test_expect_uint_equal(Zinc_test* test, unsigned int a, unsigned int b
 	fprintf(stderr, "\t(%u) = (%u) error: %s\n", a, b, message);
 }
 
-void Zinc_test_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message)
+void Zinc_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message)
 {
     test->check_count++;
     if (a == b) {
@@ -700,10 +700,10 @@ void Zinc_test_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const ch
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t(%zu) = (%zu) error: %s\n", a, b, message);
-    Zinc_test_panic();
+    Zinc_panic();
 }
 
-void Zinc_test_expect_string_slice(Zinc_test* test, Zinc_string_slice* sl, Zinc_string* bf, char* message)
+void Zinc_expect_string_slice(Zinc_test* test, Zinc_string_slice* sl, Zinc_string* bf, char* message)
 {
 	test->check_count++;
 	bool has_error = false;
@@ -740,7 +740,7 @@ void Zinc_test_expect_string_slice(Zinc_test* test, Zinc_string_slice* sl, Zinc_
 	}
 }
 
-void Zinc_test_expect_string_slice_str(Zinc_test* test, Zinc_string_slice* sl, char* expected, char* message)
+void Zinc_expect_string_slice_str(Zinc_test* test, Zinc_string_slice* sl, char* expected, char* message)
 {
 	bool has_error = false;
 
@@ -776,7 +776,7 @@ void Zinc_test_expect_string_slice_str(Zinc_test* test, Zinc_string_slice* sl, c
 	}
 }
 
-void Zinc_test_expect_utf8_char(Zinc_test* test, char* a, char* b, char* message)
+void Zinc_expect_utf8_char(Zinc_test* test, char* a, char* b, char* message)
 {
     int count_a = ZINC_NUM_BYTES(a[0]);
     int count_b = ZINC_NUM_BYTES(b[0]);
@@ -801,7 +801,7 @@ void Zinc_test_expect_utf8_char(Zinc_test* test, char* a, char* b, char* message
     fprintf(stderr, "\tutf8 chars not equal: %s\n", message);
 }
 
-void Zinc_test_expect_vector_double(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, double threshold, const char* message)
+void Zinc_expect_vector_double(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, double threshold, const char* message)
 {
     test->check_count++;
     if (a->value_size != b->value_size) {
@@ -849,7 +849,7 @@ void Zinc_test_expect_vector_double(Zinc_test* test, Zinc_vector* a, Zinc_vector
     }
 }
 
-void Zinc_test_expect_nts(Zinc_test* test, const char* a, const char* b, const char* message)
+void Zinc_expect_nts(Zinc_test* test, const char* a, const char* b, const char* message)
 {
 	test->check_count++;
 	if (strcmp(a, b) == 0) {
@@ -866,7 +866,7 @@ void Zinc_test_expect_nts(Zinc_test* test, const char* a, const char* b, const c
 // Sized Integer
 //
 
-bool Zinc_test_expect_int8_t_equal(Zinc_test* test, int8_t a, int8_t b, const char* message)
+bool Zinc_expect_int8_t_equal(Zinc_test* test, int8_t a, int8_t b, const char* message)
 {
 	test->check_count++;
 
@@ -882,7 +882,7 @@ bool Zinc_test_expect_int8_t_equal(Zinc_test* test, int8_t a, int8_t b, const ch
 	return false;
 }
 
-bool Zinc_test_expect_int16_t_equal(Zinc_test* test, int16_t a, int16_t b, const char* message)
+bool Zinc_expect_int16_t_equal(Zinc_test* test, int16_t a, int16_t b, const char* message)
 {
 	test->check_count++;
 
@@ -898,7 +898,7 @@ bool Zinc_test_expect_int16_t_equal(Zinc_test* test, int16_t a, int16_t b, const
 	return false;
 }
 
-bool Zinc_test_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const char* message)
+bool Zinc_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const char* message)
 {
 	test->check_count++;
 
@@ -914,7 +914,7 @@ bool Zinc_test_expect_int32_t_equal(Zinc_test* test, int32_t a, int32_t b, const
 	return false;
 }
 
-bool Zinc_test_expect_int64_t_equal(Zinc_test* test, int64_t a, int64_t b, const char* message)
+bool Zinc_expect_int64_t_equal(Zinc_test* test, int64_t a, int64_t b, const char* message)
 {
 	test->check_count++;
 
@@ -940,7 +940,7 @@ bool Zinc_test_expect_int64_t_equal(Zinc_test* test, int64_t a, int64_t b, const
 // Sized unsigned int
 //
 
-bool Zinc_test_expect_uint8_t_equal(Zinc_test* test, uint8_t a, uint8_t b, const char* message)
+bool Zinc_expect_uint8_t_equal(Zinc_test* test, uint8_t a, uint8_t b, const char* message)
 {
 	test->check_count++;
 
@@ -956,7 +956,7 @@ bool Zinc_test_expect_uint8_t_equal(Zinc_test* test, uint8_t a, uint8_t b, const
 	return false;
 }
 
-bool Zinc_test_expect_uint16_t_equal(Zinc_test* test, uint16_t a, uint16_t b, const char* message)
+bool Zinc_expect_uint16_t_equal(Zinc_test* test, uint16_t a, uint16_t b, const char* message)
 {
 	test->check_count++;
 
@@ -972,7 +972,7 @@ bool Zinc_test_expect_uint16_t_equal(Zinc_test* test, uint16_t a, uint16_t b, co
 	return false;
 }
 
-bool Zinc_test_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, const char* message)
+bool Zinc_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, const char* message)
 {
 	test->check_count++;
 
@@ -988,7 +988,7 @@ bool Zinc_test_expect_uint32_t_equal(Zinc_test* test, uint32_t a, uint32_t b, co
 	return false;
 }
 
-bool Zinc_test_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, const char* message)
+bool Zinc_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, const char* message)
 {
 	test->check_count++;
 
@@ -1014,7 +1014,7 @@ bool Zinc_test_expect_uint64_t_equal(Zinc_test* test, uint64_t a, uint64_t b, co
 // Float
 //
 
-bool Zinc_test_expect_float_equal(Zinc_test* test, float a, float b, const char* message)
+bool Zinc_expect_float_equal(Zinc_test* test, float a, float b, const char* message)
 {
 	test->check_count++;
 
@@ -1035,7 +1035,7 @@ bool Zinc_test_expect_float_equal(Zinc_test* test, float a, float b, const char*
 	return false;
 }
 
-bool Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const char* message)
+bool Zinc_expect_double_equal(Zinc_test* test, double a, double b, const char* message)
 {
 	test->check_count++;
 
@@ -1060,7 +1060,7 @@ bool Zinc_test_expect_double_equal(Zinc_test* test, double a, double b, const ch
 // Boolean
 //
 
-bool Zinc_test_expect_boolean_equal(Zinc_test* test, bool a, bool b, const char* message)
+bool Zinc_expect_boolean_equal(Zinc_test* test, bool a, bool b, const char* message)
 {
 	test->check_count++;
 

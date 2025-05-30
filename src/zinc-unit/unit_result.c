@@ -13,8 +13,8 @@ void Zinc_unit_result_set_error(Zinc_test* test)
 
 	Zinc_result r;
 	r = Zinc_set_error("error x");
-	Zinc_test_assert_error(test, r, "set_error");
-	Zinc_test_expect_error_message(test, "error x");
+	Zinc_assert_error(test, r, "set_error");
+	Zinc_expect_error_message(test, "error x");
 }
 
 void Zinc_unit_result_set_error2(Zinc_test* test)
@@ -29,7 +29,7 @@ void Zinc_unit_result_set_error2(Zinc_test* test)
 	size_t x = 5;
 	Zinc_set_error("%zu", x);
 
-	Zinc_test_expect_strcmp(test, Zinc_error_message, "5", "5");
+	Zinc_expect_strcmp(test, Zinc_error_message, "5", "5");
 }
 
 void Zinc_unit_result(Zinc_test* test)

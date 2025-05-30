@@ -19,12 +19,12 @@ void DfUnit_CSVWrite1(Zinc_test* test)
                   "True,1.2,-3,50,hello,\n"
                   "False,5.1,80,1,world,\n");
 
-    Zinc_test_expect_no_errors(test, parse_output->el);
-    Zinc_test_expect_size_t_equal(test, DataFrameColumnCount(parse_output->df), 6, "column count");
-    Zinc_test_expect_size_t_equal(test, DataFrameRowCount(parse_output->df), 2, "row count");
+    Zinc_expect_no_errors(test, parse_output->el);
+    Zinc_expect_size_t_equal(test, DataFrameColumnCount(parse_output->df), 6, "column count");
+    Zinc_expect_size_t_equal(test, DataFrameRowCount(parse_output->df), 2, "row count");
 
     Zinc_vector* output_text = CSVWrite(parse_output->df);
-    Zinc_test_expect_vector(test, parse_output->input_text, output_text, "text");
+    Zinc_expect_vector(test, parse_output->input_text, output_text, "text");
 
     DfUnit_CSVParseTeardown(parse_output);
     Zinc_vector_destroy(output_text);

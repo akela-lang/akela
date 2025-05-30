@@ -20,12 +20,12 @@ void Zinc_unit_vector_double(Zinc_test* test)
     Zinc_vector_add(v, &v0, 1);
     Zinc_vector_add(v, v1, 4);
     Zinc_vector_add(v, &v2, 1);
-    Zinc_test_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 0), v0, "v0");
-    Zinc_test_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 1), v1[0], "v1[0]");
-    Zinc_test_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 2), v1[1], "v1[1]");
-    Zinc_test_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 3), v1[2], "v1[2]");
-    Zinc_test_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 4), v1[3], "v1[3]");
-    Zinc_test_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 5), v2, "v2");
+    Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 0), v0, "v0");
+    Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 1), v1[0], "v1[0]");
+    Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 2), v1[1], "v1[1]");
+    Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 3), v1[2], "v1[2]");
+    Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 4), v1[3], "v1[3]");
+    Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, 5), v2, "v2");
 
     Zinc_vector_destroy(v);
     free(v);
@@ -50,7 +50,7 @@ void Zinc_unit_vector_double_large(Zinc_test* test)
     Zinc_vector_add(v, value, 100);
 
     for (int i = 0; i < 100; i++) {
-        Zinc_test_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, i), value[i], "value[i]");
+        Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, i), value[i], "value[i]");
     }
 
     Zinc_vector_destroy(v);
@@ -82,9 +82,9 @@ void Zinc_unit_vector_shift(Zinc_test* test)
     }
 
     x = -99.5;
-    Zinc_test_expect_size_t_equal(test, v->count, 200, "count");
+    Zinc_expect_size_t_equal(test, v->count, 200, "count");
     for (int i = 0; i < 200; i++) {
-        Zinc_test_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, i), x, "x");
+        Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(v, i), x, "x");
         x += 1.0;
     }
 

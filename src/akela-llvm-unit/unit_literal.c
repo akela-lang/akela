@@ -15,7 +15,7 @@ void AkeLlvmUnit_literal_integer(Zinc_test* test)
     Ake_code_gen_result_init(&result);
 
     AkeLlvmUnit_cg_setup("1", &result);
-    Zinc_test_expect_string(test, &result.value, "1", "1");
+    Zinc_expect_string(test, &result.value, "1", "1");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -37,7 +37,7 @@ void AkeLlvmUnit_literal_double(Zinc_test* test)
     Zinc_string_finish(&v_exp);
 
     AkeLlvmUnit_cg_setup("1.5", &result);
-    Zinc_test_expect_string(test, &result.value, v_exp.buf, "1.5");
+    Zinc_expect_string(test, &result.value, v_exp.buf, "1.5");
 
     Zinc_string_destroy(&v_exp);
     Ake_code_gen_result_destroy(&result);
@@ -56,7 +56,7 @@ void AkeLlvmUnit_literal_boolean_true(Zinc_test* test)
 
     AkeLlvmUnit_cg_setup("true",
              &result);
-    Zinc_test_expect_string(test, &result.value, "true", "true");
+    Zinc_expect_string(test, &result.value, "true", "true");
 
     Ake_code_gen_result_destroy(&result);
 }
@@ -74,7 +74,7 @@ void AkeLlvmUnit_literal_boolean_false(Zinc_test* test)
 
     AkeLlvmUnit_cg_setup("false",
              &result);
-    Zinc_test_expect_string(test, &result.value, "false", "false");
+    Zinc_expect_string(test, &result.value, "false", "false");
 
     Ake_code_gen_result_destroy(&result);
 }

@@ -22,25 +22,25 @@ void CoverUnit_parse_line_zero(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_true(test, mr.matched, "m");
-    Zinc_test_expect_buffer_list_count(test, &mr.groups, 5, "count groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_true(test, mr.matched, "m");
+    Zinc_expect_buffer_list_count(test, &mr.groups, 5, "count groups");
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         0,
         "        -:    0:Source:/home/username/workspace/trade/akela/coverage-test/test_data.c", "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         1,
         "-", "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         2,
         "0", "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         3,
         "Source:", "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         4,
         "/home/username/workspace/trade/akela/coverage-test/test_data.c", "item groups");
@@ -66,29 +66,29 @@ void CoverUnit_parse_not_covered_line(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_true(test, mr.matched, "m");
-    Zinc_test_expect_buffer_list_count(test, &mr.groups, 5, "count groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_true(test, mr.matched, "m");
+    Zinc_expect_buffer_list_count(test, &mr.groups, 5, "count groups");
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         0,
         "        -:    1:#include \"zinc/unit_test.h\"",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         1,
         "-",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         2,
         "1",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         3,
         "",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         4,
         "#include \"zinc/unit_test.h\"",
@@ -115,29 +115,29 @@ void CoverUnit_parse_covered_line(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_true(test, mr.matched, "m");
-    Zinc_test_expect_buffer_list_count(test, &mr.groups, 5, "count groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_true(test, mr.matched, "m");
+    Zinc_expect_buffer_list_count(test, &mr.groups, 5, "count groups");
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         0,
         "1:    4:void test_data_file_list_add()",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         1,
         "1",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         2,
         "4",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         3,
         "",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         4,
         "void test_data_file_list_add()",
@@ -164,29 +164,29 @@ void CoverUnit_parse_covered_line2(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_true(test, mr.matched, "m");
-    Zinc_test_expect_buffer_list_count(test, &mr.groups, 5, "count groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_true(test, mr.matched, "m");
+    Zinc_expect_buffer_list_count(test, &mr.groups, 5, "count groups");
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         0,
         "       1*:    9:    expect_true(is_word(\"x  \", NUM_BYTES(\"x\"[0])), \"ascii letter\");",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         1,
         "1",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         2,
         "9",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         3,
         "",
         "item groups");
-    Zinc_test_expect_buffer_list_item(test, 
+    Zinc_expect_buffer_list_item(test, 
         &mr.groups,
         4,
         "    expect_true(is_word(\"x  \", NUM_BYTES(\"x\"[0])), \"ascii letter\");",
@@ -213,9 +213,9 @@ void CoverUnit_parse_gcov_ext1(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_true(test, mr.matched, "m");
-    Zinc_test_expect_buffer_list_count(test, &mr.groups, 1, "count groups");
-    Zinc_test_expect_buffer_list_item(test, &mr.groups, 0, ".gcov", "item groups");
+    Zinc_expect_true(test, mr.matched, "m");
+    Zinc_expect_buffer_list_count(test, &mr.groups, 1, "count groups");
+    Zinc_expect_buffer_list_item(test, &mr.groups, 0, ".gcov", "item groups");
 
     Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
@@ -238,9 +238,9 @@ void CoverUnit_parse_gcov_ext2(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_true(test, mr.matched, "m");
-    Zinc_test_expect_buffer_list_count(test, &mr.groups, 1, "count groups");
-    Zinc_test_expect_buffer_list_item(test, &mr.groups, 0, ".gcov", "item groups");
+    Zinc_expect_true(test, mr.matched, "m");
+    Zinc_expect_buffer_list_count(test, &mr.groups, 1, "count groups");
+    Zinc_expect_buffer_list_item(test, &mr.groups, 0, ".gcov", "item groups");
 
     Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
@@ -263,7 +263,7 @@ void CoverUnit_parse_gcov_ext3_not_match(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_false(test, mr.matched, "m");
+    Zinc_expect_false(test, mr.matched, "m");
 
     Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
@@ -286,9 +286,9 @@ void CoverUnit_parse_test_dir1(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_true(test, mr.matched, "m");
-    Zinc_test_expect_buffer_list_count(test, &mr.groups, 2, "count groups");
-    Zinc_test_expect_buffer_list_item(test, &mr.groups, 0, "-test", "item groups");
+    Zinc_expect_true(test, mr.matched, "m");
+    Zinc_expect_buffer_list_count(test, &mr.groups, 2, "count groups");
+    Zinc_expect_buffer_list_item(test, &mr.groups, 0, "-test", "item groups");
 
     Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
@@ -311,9 +311,9 @@ void CoverUnit_parse_test_dir2(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_true(test, mr.matched, "m");
-    Zinc_test_expect_buffer_list_count(test, &mr.groups, 2, "count groups");
-    Zinc_test_expect_buffer_list_item(test, &mr.groups, 0, "-test", "item groups");
+    Zinc_expect_true(test, mr.matched, "m");
+    Zinc_expect_buffer_list_count(test, &mr.groups, 2, "count groups");
+    Zinc_expect_buffer_list_item(test, &mr.groups, 0, "-test", "item groups");
 
     Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
@@ -336,7 +336,7 @@ void CoverUnit_parse_test_dir3_not_match(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_false(test, mr.matched, "m");
+    Zinc_expect_false(test, mr.matched, "m");
 
     Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);
@@ -359,7 +359,7 @@ void CoverUnit_parse_test_dir4_not_match(Zinc_test* test)
 
     Cob_result mr = Cob_match(&cr, slice);
 
-    Zinc_test_expect_false(test, mr.matched, "m");
+    Zinc_expect_false(test, mr.matched, "m");
 
     Zinc_string_list_destroy(&mr.groups);
     Cover_re_cleanup(&cr);

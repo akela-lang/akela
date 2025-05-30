@@ -15,7 +15,7 @@ void Zinc_unit_unicode_num32_to_hex_str(Zinc_test* test)
     Zinc_string_init(&bf);
 
     Zinc_num32_to_hex_str(0x61, &bf);
-    Zinc_test_expect_string(test, &bf, "61", "str bf");
+    Zinc_expect_string(test, &bf, "61", "str bf");
 
     Zinc_string_destroy(&bf);
 }
@@ -33,7 +33,7 @@ void Zinc_unit_unicode_num32_to_hex_str2(Zinc_test* test)
     Zinc_string_init(&bf);
 
     Zinc_num32_to_hex_str(0x10ffff, &bf);
-    Zinc_test_expect_string(test, &bf, "10ffff", "str bf");
+    Zinc_expect_string(test, &bf, "10ffff", "str bf");
 
     Zinc_string_destroy(&bf);
 }

@@ -49,7 +49,7 @@ void Art_run_test(Zinc_test* case_test)
     Art_case_data* case_data = case_test->data;
 
     FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
-    bool valid = Zinc_test_expect_ptr(
+    bool valid = Zinc_expect_ptr(
         case_test,
         fp,
         "could not open file: %s",
@@ -64,7 +64,7 @@ void Art_run_test(Zinc_test* case_test)
     Ake_comp_unit_parse(ct->primary);
 
     bool passed = true;
-    valid = Zinc_test_expect_true(case_test, ct->primary->valid, "parsing failed");
+    valid = Zinc_expect_true(case_test, ct->primary->valid, "parsing failed");
     if (!valid) {
         /* is parsing valid */
         Zinc_error* e = ct->primary->errors.head;
@@ -161,7 +161,7 @@ void Art_setup_address(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* ca
             }
             data_type_value = data_type_value->next;
         }
-        bool valid = Zinc_test_expect_true(
+        bool valid = Zinc_expect_true(
             case_test,
             found,
             "type not found: %d: %s",
@@ -237,7 +237,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_integer) {
                 int8_t actual = *(int8_t*)case_data->return_address;
                 int8_t expected = (int8_t)value_value->data.integer;
-                matched = Zinc_test_expect_int8_t_equal(
+                matched = Zinc_expect_int8_t_equal(
                     case_test,
                     actual,
                     expected,
@@ -255,7 +255,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_integer) {
                 int16_t actual = *(int16_t*)case_data->return_address;
                 int16_t expected = (int16_t)value_value->data.integer;
-                matched = Zinc_test_expect_int16_t_equal(
+                matched = Zinc_expect_int16_t_equal(
                     case_test,
                     actual,
                     expected,
@@ -273,7 +273,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_integer) {
                 int32_t actual = *(int32_t*)case_data->return_address;
                 int32_t expected = (int32_t)value_value->data.integer;
-                matched = Zinc_test_expect_int32_t_equal(
+                matched = Zinc_expect_int32_t_equal(
                     case_test,
                     actual,
                     expected,
@@ -291,7 +291,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_integer) {
                 int64_t actual = *(int64_t*)case_data->return_address;
                 int64_t expected = (int64_t)value_value->data.integer;
-                matched = Zinc_test_expect_int64_t_equal(case_test, actual, expected, "result does not match");
+                matched = Zinc_expect_int64_t_equal(case_test, actual, expected, "result does not match");
             } else {
                 assert(false && "expected integer or string value type");
             }
@@ -299,7 +299,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_natural) {
                 uint8_t actual = *(uint8_t*)case_data->return_address;
                 uint8_t expected = (uint8_t)value_value->data.natural;
-                matched = Zinc_test_expect_uint8_t_equal(
+                matched = Zinc_expect_uint8_t_equal(
                     case_test,
                     actual,
                     expected,
@@ -311,7 +311,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_natural) {
                 uint16_t actual = *(uint16_t*)case_data->return_address;
                 uint16_t expected = (uint16_t)value_value->data.natural;
-                matched = Zinc_test_expect_uint16_t_equal(
+                matched = Zinc_expect_uint16_t_equal(
                     case_test,
                     actual,
                     expected,
@@ -323,7 +323,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_natural) {
                 uint32_t actual = *(uint32_t*)case_data->return_address;
                 uint32_t expected = (uint32_t)value_value->data.natural;
-                matched = Zinc_test_expect_uint32_t_equal(
+                matched = Zinc_expect_uint32_t_equal(
                     case_test,
                     actual,
                     expected,
@@ -335,7 +335,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_natural) {
                 uint64_t actual = *(uint64_t*)case_data->return_address;
                 uint64_t expected = (uint64_t)value_value->data.natural;
-                matched = Zinc_test_expect_uint64_t_equal(
+                matched = Zinc_expect_uint64_t_equal(
                     case_test,
                     actual,
                     expected,
@@ -370,7 +370,7 @@ bool Art_check_address(
             if (value_value->type == Cent_value_type_real) {
                 float actual = *(float*)case_data->return_address;
                 float expected = (float)value_value->data.real;
-                matched = Zinc_test_expect_float_equal(case_test, actual, expected, "result does not match");
+                matched = Zinc_expect_float_equal(case_test, actual, expected, "result does not match");
             } else {
                 assert(false && "expected real or string value type");
             }
@@ -379,7 +379,7 @@ bool Art_check_address(
                 double actual = *(double*)case_data->return_address;
                 double expected = (double)value_value->data.real;
                                     matched = false;
-Zinc_test_expect_double_equal(
+Zinc_expect_double_equal(
                     case_test,
                     actual,
                     expected,
@@ -391,7 +391,7 @@ Zinc_test_expect_double_equal(
             if (value_value->type == Cent_value_type_boolean) {
                 bool actual = *(bool*)case_data->return_address;
                 bool expected = (bool)value_value->data.boolean;
-                matched = Zinc_test_expect_boolean_equal(
+                matched = Zinc_expect_boolean_equal(
                     case_test,
                     actual,
                     expected,
