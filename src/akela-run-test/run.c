@@ -45,8 +45,6 @@ void Art(Zinc_test* test)
         Zinc_string_add_string(&config_path, &dir_path);
         Zinc_path_append_str(&config_path, config_name_str);
 
-        printf("config: %s\n", Zinc_string_c_str(&config_path));
-
         FILE* fp = fopen(Zinc_string_c_str(&config_path), "r");
         if (!fp) {
             fprintf(stderr, "could not open: %s\n", Zinc_string_c_str(&config_path));
@@ -98,8 +96,6 @@ void Art(Zinc_test* test)
         if (!Art_validate_directory(Zinc_string_c_str(&akela_run_test_dir))) {
             return;
         }
-
-        printf("dir: %s\n", Zinc_string_c_str(&akela_run_test_dir));
 
         Zinc_string_destroy(&exe_path);
         Zinc_string_destroy(&dir_path);

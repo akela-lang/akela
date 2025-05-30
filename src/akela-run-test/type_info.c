@@ -11,7 +11,6 @@ void Run_get_type_info(Art_top_data* data)
     Zinc_string_add_string(&path, &data->dir_path);
     Zinc_path_append_str(&path, "lib");
     Zinc_path_append_str(&path, "data.cent");
-    printf("%s\n", Zinc_string_c_str(&path));
 
     Zinc_string name;
     Zinc_string_init(&name);

@@ -49,7 +49,6 @@ void Art_parse_files(Zinc_test* top_test)
                 Zinc_string_finish(&path);
 
                 if (Zinc_is_reg_file(&path)) {
-                    printf("%s\n", Zinc_string_c_str(&path));
                     Art_collect(top_test, &path, &node->value);
                 }
 
