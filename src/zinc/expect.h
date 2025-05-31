@@ -6,7 +6,7 @@
 #include "vector.h"
 #include "string_list.h"
 
-void Zinc_assert_ok(Zinc_test* test, Zinc_result r, const char* message);
+void Zinc_assert();
 void Zinc_assert_ptr(Zinc_test* test, void* p, const char* message);
 void Zinc_assert_true(Zinc_test* test, int value, const char* message);
 void Zinc_assert_false(Zinc_test* test, int value, const char* message);
@@ -36,7 +36,7 @@ Zinc_error* Zinc_assert_source_error(Zinc_test* test, Zinc_error_list* el, const
 Zinc_error* Zinc_expect_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
 void Zinc_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b, const char* message);
 void Zinc_expect_char_equal(Zinc_test* test, char a, char b, const char* message);
-void Zinc_expect_ok(Zinc_test* test, Zinc_result r, const char* message);
+bool Zinc_expect_ok(Zinc_test* test, Zinc_result r, const char* message);
 void Zinc_expect_error_message(Zinc_test* test, const char* s);
 bool Zinc_expect_ptr(Zinc_test* test, void* p, const char* fmt, ...);
 void Zinc_expect_vector(Zinc_test* test, Zinc_vector* a, Zinc_vector* b, const char* message);

@@ -15,20 +15,9 @@ void Zinc_panic()
     exit(1);
 }
 
-void Zinc_assert_ok(Zinc_test* test, Zinc_result r, const char* message)
+void Zinc_assert()
 {
-    test->check_count++;
-
-    if (r == Zinc_result_ok) {
-        test->check_passed++;
-        return;
-    }
-
-    test->check_failed++;
-    test->pass = false;
-    Zinc_test_print_unseen(test);
-    fprintf(stderr, "\tok assertion error: %s: %s\n", message, Zinc_error_message);
-    Zinc_panic();
+	fprintf(stderr, "Exiting because of assertion error.\n");
 }
 
 void Zinc_assert_ptr(Zinc_test* test, void* p, const char* message)
@@ -353,19 +342,20 @@ bool Zinc_expect_ptr(Zinc_test* test, void* p, const char* fmt, ...)
 	return false;
 }
 
-void Zinc_expect_ok(Zinc_test* test, Zinc_result r, const char* message)
+bool Zinc_expect_ok(Zinc_test* test, Zinc_result r, const char* message)
 {
 	test->check_count++;
 
 	if (r == Zinc_result_ok) {
 	    test->check_passed++;
-	    return;
+	    return true;
 	}
 
     test->check_failed++;
     test->pass = false;
     Zinc_test_print_unseen(test);
 	fprintf(stderr, "\tok error: %s: %s\n", message, Zinc_error_message);
+	return false;
 }
 
 void Zinc_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b, const char* message)

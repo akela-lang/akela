@@ -19,7 +19,9 @@ void Zinc_unit_test_input_char_file_next(Zinc_test* test)
     Zinc_string_init(&path);
 
     Zinc_result r = Zinc_get_temp_file(&fp, &path);
-    Zinc_assert_ok(test, r, "get temp file");
+    if (!Zinc_expect_ok(test, r, "get temp file")) {
+        return Zinc_assert();
+    }
     Zinc_assert_ptr(test, fp, "fp");
 
     char text[] = "hello file\n";
@@ -81,7 +83,9 @@ void Zinc_unit_test_input_char_file_repeat(Zinc_test* test)
     Zinc_string_init(&name);
 
     Zinc_result r = Zinc_get_temp_file(&fp, &name);
-    Zinc_assert_ok(test, r, "get temp file");
+    if (!Zinc_expect_ok(test, r, "get temp file")) {
+        return Zinc_assert();
+    }
 	char text[] = "hello file\n";
     char text_expected[] = "hhello file\n";
     size_t len = strlen(text);
@@ -147,7 +151,9 @@ void Zinc_unit_test_input_char_file_seek(Zinc_test* test)
     Zinc_string name;
     Zinc_string_init(&name);
     Zinc_result r = Zinc_get_temp_file(&fp, &name);
-    Zinc_assert_ok(test, r, "get temp file");
+    if (!Zinc_expect_ok(test, r, "get temp file")) {
+        return Zinc_assert();
+    }
     char text[] = "hello file\n";
     char text_expected[] = "file\n";
     size_t len = strlen(text);
@@ -194,7 +200,9 @@ void Zinc_unit_test_input_char_file_get_all(Zinc_test* test)
     Zinc_string_init(&name);
     FILE* fp = NULL;
 	Zinc_result r = Zinc_get_temp_file(&fp, &name);
-    Zinc_assert_ok(test, r, "get temp file");
+    if (!Zinc_expect_ok(test, r, "get temp file")) {
+        return Zinc_assert();
+    }
     Zinc_assert_ptr(test, fp, "fp");
     char text[] = "hello file\n";
     size_t len = strlen(text);

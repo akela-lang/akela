@@ -252,43 +252,57 @@ void Zinc_unit_string_next(Zinc_test* test)
 	size_t pos = 0;
 
 	r = Zinc_string_next(&bf, &pos, c, &num, &done);
-	Zinc_assert_ok(test, r, "ok 0");
+	if (!Zinc_expect_ok(test, r, "ok 0")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_strcmp(test, c, "a", "str 0");
 	Zinc_expect_int_equal(test, num, 1, "num 0");
 	Zinc_expect_false(test, done, "done 0");
 
 	r = Zinc_string_next(&bf, &pos, c, &num, &done);
-	Zinc_assert_ok(test, r, "ok 1");
+	if (!Zinc_expect_ok(test, r, "ok 1")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_strcmp(test, c, "b", "str 1");
 	Zinc_expect_int_equal(test, num, 1, "num 1");
 	Zinc_expect_false(test, done, "done 1");
 
 	r = Zinc_string_next(&bf, &pos, c, &num, &done);
-	Zinc_assert_ok(test, r, "ok 2");
+	if (!Zinc_expect_ok(test, r, "ok 2")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_strcmp(test, c, "c", "str 2");
 	Zinc_expect_int_equal(test, num, 1, "num 2");
 	Zinc_expect_false(test, done, "done 2");
 
 	r = Zinc_string_next(&bf, &pos, c, &num, &done);
-	Zinc_assert_ok(test, r, "ok 3");
+	if (!Zinc_expect_ok(test, r, "ok 3")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_strcmp(test, c, "α", "str 3");
 	Zinc_expect_int_equal(test, num, 2, "num 3");
 	Zinc_expect_false(test, done, "done 3");
 
 	r = Zinc_string_next(&bf, &pos, c, &num, &done);
-	Zinc_assert_ok(test, r, "ok 4");
+	if (!Zinc_expect_ok(test, r, "ok 4")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_strcmp(test, c, "β", "str 4");
 	Zinc_expect_int_equal(test, num, 2, "num 4");
 	Zinc_expect_false(test, done, "done 4");
 
 	r = Zinc_string_next(&bf, &pos, c, &num, &done);
-	Zinc_assert_ok(test, r, "ok 5");
+	if (!Zinc_expect_ok(test, r, "ok 5")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_strcmp(test, c, "γ", "str 5");
 	Zinc_expect_int_equal(test, num, 2, "num 5");
 	Zinc_expect_false(test, done, "done 5");
 
 	r = Zinc_string_next(&bf, &pos, c, &num, &done);
-	Zinc_assert_ok(test, r, "ok 6");
+	if (!Zinc_expect_ok(test, r, "ok 6")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_true(test, done, "done 6");
 
 	Zinc_string_destroy(&bf);
@@ -378,7 +392,9 @@ void Zinc_unit_string_uslice(Zinc_test* test)
 	Zinc_string_init(&bf2);
 
 	r = Zinc_string_uslice(&bf, &bf2, 2, 5);
-	Zinc_assert_ok(test, r, "buffer_uslice");
+	if (!Zinc_expect_ok(test, r, "buffer_uslice")) {
+		return Zinc_assert();
+	}
 
 	Zinc_assert_ptr(test, bf2.buf, "ptr buf2.buf");
 	Zinc_expect_size_t_equal(test, bf2.size, 3, "3 bf2.size");
@@ -413,7 +429,9 @@ void Zinc_unit_string_uslice2(Zinc_test* test)
 	Zinc_string_init(&bf2);
 
 	r = Zinc_string_uslice(&bf, &bf2, 2, 1000);
-	Zinc_assert_ok(test, r, "buffer_uslice");
+	if (!Zinc_expect_ok(test, r, "buffer_uslice")) {
+		return Zinc_assert();
+	}
 
 	Zinc_assert_ptr(test, bf2.buf, "ptr buf2.buf");
 	Zinc_expect_size_t_equal(test, bf2.size, 4, "4 bf2.size");

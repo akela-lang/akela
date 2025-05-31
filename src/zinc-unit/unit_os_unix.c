@@ -1,6 +1,8 @@
 #include "zinc/os.h"
 
 #if (IS_UNIX)
+#include <assert.h>
+
 #include "zinc/os_unix.h"
 #include <string.h>
 #include "zinc/memory.h"
@@ -24,7 +26,9 @@ void Zinc_unit_os_unix_get_temp_file(Zinc_test* test)
     Zinc_string_init(&name);
 
     Zinc_result r = Zinc_get_temp_file(&fp, &name);
-    Zinc_assert_ok(test, r, "get_temp_file");
+    if (!Zinc_expect_ok(test, r, "get_temp_file")) {
+        return Zinc_assert();
+    }
 
     const char* in = "hello";
     size_t count = strlen(in);
@@ -32,10 +36,14 @@ void Zinc_unit_os_unix_get_temp_file(Zinc_test* test)
     Zinc_expect_size_t_equal(test, n, count, "fwrite");
 
     r = Zinc_close_temp_file(fp);
-    Zinc_assert_ok(test, r, "close_temp_file");
+    if (!Zinc_expect_ok(test, r, "close_temp_file")) {
+        return Zinc_assert();
+    }
 
     fp = fopen(name.buf, "r");
-    Zinc_assert_ptr(test, fp, "ptr fp");
+    if (!Zinc_expect_ptr(test, fp, "ptr fp")) {
+        return Zinc_assert();
+    }
 
     char* out = NULL;
     Zinc_malloc_safe((void**)&out, count + 1);
@@ -45,12 +53,16 @@ void Zinc_unit_os_unix_get_temp_file(Zinc_test* test)
     Zinc_expect_size_t_equal(test, n, count, "fread");
 
     r = Zinc_close_temp_file(fp);
-    Zinc_assert_ok(test, r, "close_temp_file 2");
+    if (!Zinc_expect_ok(test, r, "close_temp_file 2")) {
+        return Zinc_assert();
+    }
 
     Zinc_expect_true(test, strcmp(in, out) == 0, "strcmp");
 
     r = Zinc_delete_temp_file(&name);
-    Zinc_assert_ok(test, r, "delete_temp_file");
+    if (!Zinc_expect_ok(test, r, "delete_temp_file")) {
+        return Zinc_assert();
+    }
 
     free(out);
 
@@ -72,7 +84,9 @@ void Zinc_unit_os_unix_get_user_home_directory(Zinc_test* test)
     struct Zinc_string dir;
     Zinc_string_init(&dir);
     enum Zinc_result r = Zinc_get_user_home_directory(&dir);
-    Zinc_assert_ok(test, r, "get_user_home_directory");
+    if (!Zinc_expect_ok(test, r, "get_user_home_directory")) {
+        return Zinc_assert();
+    }
     Zinc_expect_string(test, &dir, "/home/abc", "/home/abc");
     Zinc_string_destroy(&dir);
 
@@ -149,7 +163,9 @@ void Zinc_unit_os_unix_make_directory(Zinc_test* test)
     Zinc_string_add_str(&dir, "/tmp/apple/bear/creek/doe/eddy");
     Zinc_string_finish(&dir);
     enum Zinc_result r = Zinc_make_directory(&dir);
-    Zinc_assert_ok(test, r, "make directory");
+    if (!Zinc_expect_ok(test, r, "make directory")) {
+        return Zinc_assert();
+    }
     DIR* dp = opendir(dir.buf);
     Zinc_assert_ptr(test, dp, "ptr dp");
     closedir(dp);
@@ -173,7 +189,9 @@ void Zinc_unit_os_unix_delete_directory(Zinc_test* test)
     Zinc_string_init(&dir);
     Zinc_string_add_str(&dir, "/tmp/one");
     enum Zinc_result r = Zinc_delete_directory(&dir);
-    Zinc_assert_ok(test, r, "delete_directory");
+    if (!Zinc_expect_ok(test, r, "delete_directory")) {
+        return Zinc_assert();
+    }
     DIR* dp = opendir("/tmp/one");
     Zinc_assert_null(test, dp, "null dp");
     if (dp) {
