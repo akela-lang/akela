@@ -1322,7 +1322,9 @@ void AkeUnit_parse_call_return_type_error(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo()->Bool true end; foo() + 2", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
     Zinc_expect_source_error(test, &cu.errors, "addition on non-numeric operand");
 

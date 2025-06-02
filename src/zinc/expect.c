@@ -20,22 +20,6 @@ void Zinc_assert()
 	fprintf(stderr, "Exiting because of assertion error.\n");
 }
 
-void Zinc_assert_has_errors(Zinc_test* test, Zinc_error_list* el)
-{
-	test->check_count++;
-
-	if (el->head) {
-		test->check_passed++;
-		return;
-	}
-
-	test->check_failed++;
-	test->pass = false;
-	Zinc_test_print_unseen(test);
-	fprintf(stderr, "\tassert has errors: there are no errors\n");
-	Zinc_panic();
-}
-
 Zinc_error* Zinc_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])
 {
 	test->check_count++;
@@ -536,19 +520,20 @@ void Zinc_expect_error_count(Zinc_test* test, Zinc_error_list* el, size_t count)
     fprintf(stderr, "\texpected error count (%zu) (%zu)\n", actual_count, count);
 }
 
-void Zinc_expect_has_errors(Zinc_test* test, Zinc_error_list* el)
+bool Zinc_expect_has_errors(Zinc_test* test, Zinc_error_list* el)
 {
     test->check_count++;
 
     if (el->head) {
         test->check_passed++;
-        return;
+        return true;
     }
 
     test->check_failed++;
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\texpect has errors: there are no errors\n");
+	return false;
 }
 
 Zinc_error* Zinc_expect_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])

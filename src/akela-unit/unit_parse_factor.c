@@ -431,7 +431,9 @@ void AkeUnit_parse_id_cyrillic(Zinc_test* test)
 
     AkeUnit_parse_setup("const я: Int32; я", &cu);
     Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_error* e = Zinc_expect_source_error(test, &cu.errors, "Unrecognized character: я");
     if (!Zinc_expect_ptr(test, e, "ptr e")) {
 	    return Zinc_assert();
@@ -1035,7 +1037,9 @@ void AkeUnit_parse_paren_error_empty(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("()", &cu);
-	Zinc_assert_has_errors(test, &cu.errors);
+	if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
 	struct Zinc_error* e = Zinc_expect_source_error(test, &cu.errors, "empty parenthesis");
     if (e) {
@@ -1060,7 +1064,9 @@ void AkeUnit_parse_paren_error_right_parenthesis(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("(1", &cu);
-	Zinc_assert_has_errors(test, &cu.errors);
+	if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
 	Zinc_expect_source_error(test, &cu.errors, "expected right parenthesis");
 
@@ -1079,7 +1085,9 @@ void AkeUnit_parse_paren_error_no_value(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; (foo())", &cu);
-	Zinc_assert_has_errors(test, &cu.errors);
+	if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
 	Zinc_expect_source_error(test, &cu.errors, "parenthesis on expression that has no value");
 

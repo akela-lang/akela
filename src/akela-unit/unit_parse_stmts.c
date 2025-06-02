@@ -1157,7 +1157,9 @@ void AkeUnit_parse_if_error_expected_expression(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("if end", &cu);
-	Zinc_assert_has_errors(test, &cu.errors);
+	if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, cu.valid, "valid");
 	Zinc_expect_source_error(test, &cu.errors, "expected condition after if");
 
@@ -1177,7 +1179,9 @@ void AkeUnit_parse_if_error_expected_end(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("if true", &cu);
-	Zinc_assert_has_errors(test, &cu.errors);
+	if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, cu.valid, "valid");
 	Zinc_expect_source_error(test, &cu.errors, "expected end");
 
@@ -1197,7 +1201,9 @@ void AkeUnit_parse_if_error_expected_elseif_expression(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("if true elseif end", &cu);
-	Zinc_assert_has_errors(test, &cu.errors);
+	if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, cu.valid, "valid");
 	Zinc_expect_source_error(test, &cu.errors, "expected condition after elseif");
 
@@ -1273,7 +1279,9 @@ void AkeUnit_parse_while_error_expected_expression(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("while end", &cu);
-	Zinc_assert_has_errors(test, &cu.errors);
+	if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
 	Zinc_expect_source_error(test, &cu.errors, "expected expression after while");
 
@@ -1292,7 +1300,9 @@ void AkeUnit_parse_while_error_expected_end(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("while true", &cu);
-	Zinc_assert_has_errors(test, &cu.errors);
+	if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
 	Zinc_expect_source_error(test, &cu.errors, "expected end");
 
@@ -2021,7 +2031,9 @@ void AkeUnit_parse_let_expected_declaration(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "parse valid");
     Zinc_expect_source_error(test, &cu.errors, "expected variable(s) after let");
 

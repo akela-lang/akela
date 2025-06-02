@@ -113,7 +113,9 @@ void AkeUnit_parse_add_error_expected_term(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 +", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "expected term after additive operator");
 
@@ -132,7 +134,9 @@ void AkeUnit_parse_add_error_left_no_value(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; foo() + 1", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "addition operand has no value");
 
@@ -151,7 +155,9 @@ void AkeUnit_parse_add_error_left_not_numeric(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("true + 1", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "addition on non-numeric operand");
 
@@ -170,7 +176,9 @@ void AkeUnit_parse_add_error_right_no_value(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; 1 + foo()", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "addition operand has no value");
 
@@ -189,7 +197,9 @@ void AkeUnit_parse_add_error_right_not_numeric(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 + true", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "addition on non-numeric operand");
 
@@ -625,7 +635,9 @@ void AkeUnit_parse_mult_error_expected_term(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("5*", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "expected term after operator");
 
@@ -645,7 +657,9 @@ void AkeUnit_parse_mult_error_left_no_value(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; foo() * 1", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "multiplication operand has no value");
 
@@ -664,7 +678,9 @@ void AkeUnit_parse_mult_error_left_not_numeric(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("true * 1", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "multiplication on non-numeric operand");
 
@@ -683,7 +699,9 @@ void AkeUnit_parse_mult_error_right_no_value(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; 1 * foo()", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "multiplication operand has no value");
 
@@ -702,7 +720,9 @@ void AkeUnit_parse_mult_error_right_not_numeric(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 * true", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "multiplication on non-numeric operand");
 
@@ -1197,7 +1217,9 @@ void AkeUnit_parse_power_error_expected_term(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("5^", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "expected term after caret");
 
@@ -1216,7 +1238,9 @@ void AkeUnit_parse_power_error_left_no_value(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; 5 ^ foo()", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "power operand has no value");
 
@@ -1235,7 +1259,9 @@ void AkeUnit_parse_power_error_left_not_numeric(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("true ^ 2", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "power on non-numeric operand");
 
@@ -1254,7 +1280,9 @@ void AkeUnit_parse_power_error_right_no_value(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; 5 ^ foo()", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "power operand has no value");
 
@@ -1273,7 +1301,9 @@ void AkeUnit_parse_power_error_right_not_numeric(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("5 ^ true", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "power on non-numeric operand");
 
@@ -2196,7 +2226,9 @@ void AkeUnit_parse_boolean_error_expected_term(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("true &&", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "expected term after && or ||");
 
@@ -2217,7 +2249,9 @@ void AkeUnit_parse_boolean_error_left_no_value(Zinc_test* test)
 
 
     AkeUnit_parse_setup("fn foo() end; foo() && true", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "left-side operand of boolean operator has no type");
 
@@ -2238,7 +2272,9 @@ void AkeUnit_parse_boolean_error_right_no_value(Zinc_test* test)
 
 
     AkeUnit_parse_setup("fn foo() end; true && foo()", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "operand of boolean operator has no type");
 
@@ -2257,7 +2293,9 @@ void AkeUnit_parse_boolean_error_left_not_boolean(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 && true", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "left-side expression of boolean operator is not boolean");
 
@@ -2276,7 +2314,9 @@ void AkeUnit_parse_boolean_error_right_not_boolean(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("true && 1", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "cu.valid");
     Zinc_expect_source_error(test, &cu.errors, "expression of boolean operator is not boolean");
 
@@ -2647,7 +2687,9 @@ void AkeUnit_parse_subscript_error_no_type(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; foo()[1]", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "expression has subscript but has no value");
 
@@ -2666,7 +2708,9 @@ void AkeUnit_parse_subscript_error_not_array(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: Int32; a[1]", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "expression has subscript but is not an array or slice");
 
@@ -2685,7 +2729,9 @@ void AkeUnit_parse_subscript_error_expected_right_square_bracket(Zinc_test* test
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: [10]Int32; a[1", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "expected right-square-bracket");
 
@@ -2851,7 +2897,9 @@ void AkeUnit_parse_const_assign_error_term(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: Bool =", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "expected expression");
 
@@ -2870,7 +2918,9 @@ void AkeUnit_parse_assign_error_no_value_right(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo() end; const a: [10]Nat8 = foo()", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "cannot assign with operand that has no value");
 
@@ -2889,7 +2939,9 @@ void AkeUnit_parse_assign_error_not_compatible(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const x: Int32 = true", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "values in assignment are not compatible");
 
@@ -2908,7 +2960,9 @@ void AkeUnit_parse_assign_error_lvalue(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("true = true", &cu);
-    Zinc_assert_has_errors(test, &cu.errors);
+    if (!Zinc_expect_has_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "invalid lvalue");
 

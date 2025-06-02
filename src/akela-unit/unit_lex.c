@@ -1644,7 +1644,9 @@ void AkeUnit_lex_error_unrecognized_character(Zinc_test* test)
 	if (!Zinc_expect_false(test, valid, "lex")) {
 		return Zinc_assert();
 	}
-	Zinc_assert_has_errors(test, ls.el);
+	if (!Zinc_expect_has_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_null(test, t, "t")) {
 		return Zinc_assert();
 	}
@@ -1829,7 +1831,9 @@ void AkeUnit_lex_string_escape_error(Zinc_test* test)
 	if (!Zinc_expect_false(test, valid, "lex")) {
 		return Zinc_assert();
 	}
-	Zinc_assert_has_errors(test, ls.el);
+	if (!Zinc_expect_has_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_source_error(test, &el, "Unrecognized escape sequence: x");
 
 	if (!Zinc_expect_null(test, t, "t")) {
@@ -2015,7 +2019,9 @@ void AkeUnit_lex_error_underscore_letter(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_has_errors(test, ls.el);
+	if (!Zinc_expect_has_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, valid, "lex valid");
 	Zinc_expect_null(test, t, "null t");
 	Zinc_expect_source_error(test, &el, "Must have a letter following underscore at start of id");
@@ -2043,7 +2049,9 @@ void AkeUnit_lex_error_underscore_letter2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_has_errors(test, ls.el);
+	if (!Zinc_expect_has_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, valid, "lex valid");
 	Zinc_expect_null(test, t, "null t");
 	Zinc_expect_source_error(test, &el, "Must have a letter following underscore at start of id");
@@ -2069,7 +2077,9 @@ void AkeUnit_lex_error_exponent_sign(Zinc_test* test)
 	AkeUnit_lex_setup("100e-a", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_has_errors(test, ls.el);
+	if (!Zinc_expect_has_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_false(test, valid, "lex valid");
 	Zinc_expect_null(test, t, "null t");
 	Zinc_expect_source_error(test, &el, "expected number after exponent sign");
