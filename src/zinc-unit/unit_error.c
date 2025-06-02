@@ -22,7 +22,9 @@ void Zinc_unit_error_list(Zinc_test* test)
     Zinc_error_list_add(&el, e);
 
     Zinc_error* e0 = el.head;
-    Zinc_assert_ptr(test, e0, "ptr e0");
+    if (!Zinc_expect_ptr(test, e0, "ptr e0")) {
+        return Zinc_assert();
+    }
     Zinc_expect_true(test, el.head == e, "head");
     Zinc_expect_true(test, el.tail == e, "tail");
 

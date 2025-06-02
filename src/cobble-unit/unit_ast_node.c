@@ -61,19 +61,25 @@ void CobUnit_Ast_node_children(Zinc_test* test)
 
     Cob_ast* n = root->head;
 
-    Zinc_assert_ptr(test, n, "0 n ptr");
+    if (!Zinc_expect_ptr(test, n, "0 n ptr")) {
+		return Zinc_assert();
+	}
     Zinc_expect_ptr_equal(test, n, c0, "0 n c1");
     Zinc_expect_ptr_equal(test, n->prev, NULL, "0 n->prev NULL");
     Zinc_expect_ptr_equal(test, n->next, c1, "0 n->next c1");
 
     n = n->next;
-    Zinc_assert_ptr(test, n, "1 n ptr");
+    if (!Zinc_expect_ptr(test, n, "1 n ptr")) {
+		return Zinc_assert();
+	}
     Zinc_expect_ptr_equal(test, n, c1, "1 n c1");
     Zinc_expect_ptr_equal(test, n->prev, c0, "1 n->prev c0");
     Zinc_expect_ptr_equal(test, n->next, c2, "1 n->next c2");
 
     n = n->next;
-    Zinc_assert_ptr(test, n, "2 n ptr");
+    if (!Zinc_expect_ptr(test, n, "2 n ptr")) {
+		return Zinc_assert();
+	}
     Zinc_expect_ptr_equal(test, n, c2, "2 n c2");
     Zinc_expect_ptr_equal(test, n->prev, c1, "2 n->prev c1");
     Zinc_expect_ptr_equal(test, n->next, NULL, "2 n->next NULL");

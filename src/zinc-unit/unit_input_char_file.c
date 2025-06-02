@@ -22,7 +22,9 @@ void Zinc_unit_test_input_char_file_next(Zinc_test* test)
     if (!Zinc_expect_ok(test, r, "get temp file")) {
         return Zinc_assert();
     }
-    Zinc_assert_ptr(test, fp, "fp");
+    if (!Zinc_expect_ptr(test, fp, "fp")) {
+        return Zinc_assert();
+    }
 
     char text[] = "hello file\n";
     size_t len = strlen(text);
@@ -30,7 +32,9 @@ void Zinc_unit_test_input_char_file_next(Zinc_test* test)
     fclose(fp);
 
     fp = fopen(Zinc_string_c_str(&path), "r");
-    Zinc_assert_ptr(test, fp, "fp");
+    if (!Zinc_expect_ptr(test, fp, "fp")) {
+        return Zinc_assert();
+    }
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
@@ -93,7 +97,9 @@ void Zinc_unit_test_input_char_file_repeat(Zinc_test* test)
     fclose(fp);
 
     fp = fopen(Zinc_string_c_str(&name), "r");
-    Zinc_assert_ptr(test, fp, "fp");
+    if (!Zinc_expect_ptr(test, fp, "fp")) {
+        return Zinc_assert();
+    }
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
@@ -161,7 +167,9 @@ void Zinc_unit_test_input_char_file_seek(Zinc_test* test)
     fclose(fp);
 
     fp = fopen(Zinc_string_c_str(&name), "r");
-    Zinc_assert_ptr(test, fp, "fp");
+    if (!Zinc_expect_ptr(test, fp, "fp")) {
+        return Zinc_assert();
+    }
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 
@@ -203,15 +211,21 @@ void Zinc_unit_test_input_char_file_get_all(Zinc_test* test)
     if (!Zinc_expect_ok(test, r, "get temp file")) {
         return Zinc_assert();
     }
-    Zinc_assert_ptr(test, fp, "fp");
+    if (!Zinc_expect_ptr(test, fp, "fp")) {
+        return Zinc_assert();
+    }
     char text[] = "hello file\n";
     size_t len = strlen(text);
-    Zinc_assert_ptr(test, fp, "fp");
+    if (!Zinc_expect_ptr(test, fp, "fp")) {
+        return Zinc_assert();
+    }
     fwrite(text, 1, len, fp);
     fclose(fp);
 
     fp = fopen(Zinc_string_c_str(&name), "r");
-    Zinc_assert_ptr(test, fp, "fp");
+    if (!Zinc_expect_ptr(test, fp, "fp")) {
+        return Zinc_assert();
+    }
     Zinc_input_char_file* input;
     Zinc_input_char_file_create(&input, fp);
 

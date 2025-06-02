@@ -249,7 +249,9 @@ void Json_unit_stringify_string_error_invalid_char(Zinc_test* test)
 
     Zinc_expect_has_errors(test, el);
     Zinc_error* e = Zinc_expect_source_error(test, el, "invalid string character");
-    Zinc_assert_ptr(test, e, "ptr e");
+    if (!Zinc_expect_ptr(test, e, "ptr e")) {
+		return Zinc_assert();
+	}
 
     Zinc_string_destroy(&bf);
     Json_dom_destroy(dom);

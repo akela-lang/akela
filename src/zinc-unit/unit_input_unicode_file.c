@@ -29,7 +29,9 @@ void Zinc_unit_input_unicode_file_next(Zinc_test* test)
     Zinc_expect_size_t_equal(test, s_len, n, "len");
     fclose(fp);
     fp = fopen(name.buf, "r");
-    Zinc_assert_ptr(test, fp, "open file");
+    if (!Zinc_expect_ptr(test, fp, "open file")) {
+        return Zinc_assert();
+    }
 
     Zinc_input_unicode_file* input = NULL;
     Zinc_input_unicode_file_create(&input, fp);
@@ -244,7 +246,9 @@ void Zinc_unit_input_unicode_file_next_multibyte(Zinc_test* test)
     Zinc_expect_size_t_equal(test, s_len, n, "len");
     fclose(fp);
     fp = fopen(name.buf, "r");
-    Zinc_assert_ptr(test, fp, "open file");
+    if (!Zinc_expect_ptr(test, fp, "open file")) {
+        return Zinc_assert();
+    }
     Zinc_input_unicode_file* input = NULL;
     Zinc_input_unicode_file_create(&input, fp);
 
@@ -431,7 +435,9 @@ void Zinc_unit_input_unicode_file_repeat(Zinc_test* test)
     Zinc_expect_size_t_equal(test, s_len, n, "len");
     fclose(fp);
     fp = fopen(name.buf, "r");
-    Zinc_assert_ptr(test, fp, "open file");
+    if (!Zinc_expect_ptr(test, fp, "open file")) {
+        return Zinc_assert();
+    }
     Zinc_input_unicode_file* input = NULL;
     Zinc_input_unicode_file_create(&input, fp);
 
@@ -570,7 +576,9 @@ void Zinc_unit_input_unicode_file_seek(Zinc_test* test)
     Zinc_expect_size_t_equal(test, s_len, n, "len");
     fclose(fp);
     fp = fopen(name.buf, "r");
-    Zinc_assert_ptr(test, fp, "open file");
+    if (!Zinc_expect_ptr(test, fp, "open file")) {
+        return Zinc_assert();
+    }
     Zinc_input_unicode_file* input = NULL;
     Zinc_input_unicode_file_create(&input, fp);
 
@@ -778,7 +786,9 @@ void Zinc_unit_input_unicode_file_get_all(Zinc_test* test)
     Zinc_expect_size_t_equal(test, s_len, n, "len");
     fclose(fp);
     fp = fopen(name.buf, "r");
-    Zinc_assert_ptr(test, fp, "open file");
+    if (!Zinc_expect_ptr(test, fp, "open file")) {
+        return Zinc_assert();
+    }
     Zinc_input_unicode_file* input = NULL;
     Zinc_input_unicode_file_create(&input, fp);
 
@@ -821,7 +831,9 @@ void Zinc_unit_input_unicode_file_get_location(Zinc_test* test)
     Zinc_expect_size_t_equal(test, s_len, n, "len");
     fclose(fp);
     fp = fopen(name.buf, "r");
-    Zinc_assert_ptr(test, fp, "open file");
+    if (!Zinc_expect_ptr(test, fp, "open file")) {
+        return Zinc_assert();
+    }
     Zinc_input_unicode_file* input = NULL;
     Zinc_input_unicode_file_create(&input, fp);
 
@@ -878,7 +890,9 @@ void Zinc_unit_input_unicode_file_set_bounds(Zinc_test* test)
     Zinc_expect_size_t_equal(test, s_len, n, "len");
     fclose(fp);
     fp = fopen(name.buf, "r");
-    Zinc_assert_ptr(test, fp, "open file");
+    if (!Zinc_expect_ptr(test, fp, "open file")) {
+        return Zinc_assert();
+    }
     Zinc_input_unicode_file* input = NULL;
     Zinc_input_unicode_file_create(&input, fp);
 

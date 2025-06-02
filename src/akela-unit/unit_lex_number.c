@@ -54,7 +54,9 @@ void AkeUnit_lex_number_whole(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "lex valid");
-	Zinc_assert_ptr(test, t, "ptr t");
+	if (!Zinc_expect_ptr(test, t, "ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "500", "500");
 	Zinc_expect_size_t_equal(test, t->loc.line, 1, "line 10");
@@ -90,11 +92,13 @@ void AkeUnit_lex_number_fraction_start(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "lex valid");
-	Zinc_assert_ptr(test, t, "ptr t");
+	if (!Zinc_expect_ptr(test, t, "ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "500.", "500.");
-	Zinc_expect_int_equal(test, t->loc.line, 1, "line 10");
-	Zinc_expect_int_equal(test, t->loc.col, 1, "col 10");
+	Zinc_expect_size_t_equal(test, t->loc.line, 1, "line 10");
+	Zinc_expect_size_t_equal(test, t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	Ake_token_destroy(t);
@@ -126,11 +130,13 @@ void AkeUnit_lex_number_fraction(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "lex valid");
-	Zinc_assert_ptr(test, t, "ptr t");
+	if (!Zinc_expect_ptr(test, t, "ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "500.123", "500.123");
-	Zinc_expect_int_equal(test, t->loc.line, 1, "line 10");
-	Zinc_expect_int_equal(test, t->loc.col, 1, "col 10");
+	Zinc_expect_size_t_equal(test, t->loc.line, 1, "line 10");
+	Zinc_expect_size_t_equal(test, t->loc.col, 1, "col 10");
 
 	/* destroy t t{} */
 	Ake_token_destroy(t);
@@ -159,7 +165,9 @@ void AkeUnit_lex_number_exponent_start(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "0 valid");
-	Zinc_assert_ptr(test, t, "0 ptr t");
+	if (!Zinc_expect_ptr(test, t, "0 ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "0 number");
 	Zinc_expect_string(test, &t->value, "500e", "0 value");
 
@@ -169,7 +177,9 @@ void AkeUnit_lex_number_exponent_start(Zinc_test* test)
     valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "1 valid");
-	Zinc_assert_ptr(test, t, "1 ptr t");
+	if (!Zinc_expect_ptr(test, t, "1 ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_eof, "1 eof");
 	Zinc_expect_string(test, &t->value, "", "1 value");
 
@@ -198,7 +208,9 @@ void AkeUnit_lex_number_fraction_exponent_start(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "0 valid");
-	Zinc_assert_ptr(test, t, "0 ptr t");
+	if (!Zinc_expect_ptr(test, t, "0 ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "0 number");
 	Zinc_expect_string(test, &t->value, "500.123e", "0 value");
 
@@ -208,7 +220,9 @@ void AkeUnit_lex_number_fraction_exponent_start(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "1 valid");
-	Zinc_assert_ptr(test, t, "1 ptr t");
+	if (!Zinc_expect_ptr(test, t, "1 ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_eof, "1 eof");
 	Zinc_expect_string(test, &t->value, "", "1 value");
 
@@ -237,11 +251,13 @@ void AkeUnit_lex_number_fraction_exponent(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "lex valid");
-	Zinc_assert_ptr(test, t, "ptr t");
+	if (!Zinc_expect_ptr(test, t, "ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "500.123e2", "500.123e2");
-	Zinc_expect_int_equal(test, t->loc.line, 1, "line 10");
-	Zinc_expect_int_equal(test, t->loc.col, 1, "col 10");
+	Zinc_expect_size_t_equal(test, t->loc.line, 1, "line 10");
+	Zinc_expect_size_t_equal(test, t->loc.col, 1, "col 10");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -303,7 +319,6 @@ void AkeUnit_lex_number_fraction_exponent_sign_start_positive(Zinc_test* test)
 	AkeUnit_lex_teardown(&ls);
 }
 
-/* dynamic-output-none */
 void AkeUnit_lex_number_fraction_exponent_negative(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -318,28 +333,25 @@ void AkeUnit_lex_number_fraction_exponent_negative(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	/* allocate ls{} */
 	AkeUnit_lex_setup("500.123e-2", &ls, &el);
 
-	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "lex valid");
-	Zinc_assert_ptr(test, t, "ptr t");
+	if (!Zinc_expect_ptr(test, t, "ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "500.123e-2", "500.123e-2");
-	Zinc_expect_int_equal(test, t->loc.line, 1, "line 10");
-	Zinc_expect_int_equal(test, t->loc.col, 1, "col 10");
+	Zinc_expect_size_t_equal(test, t->loc.line, 1, "line 10");
+	Zinc_expect_size_t_equal(test, t->loc.col, 1, "col 10");
 
-	/* destroy t t{} */
 	Ake_token_destroy(t);
 	free(t);
 
-	/* destroy ls{} */
 	AkeUnit_lex_teardown(&ls);
 }
 
-/* dynamic-output-none */
 void AkeUnit_lex_number_exponent_positive(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -354,24 +366,22 @@ void AkeUnit_lex_number_exponent_positive(Zinc_test* test)
 	bool valid;
 	struct Ake_token* t;
 
-	/* allocate ls{} */
 	AkeUnit_lex_setup("500.123e+2", &ls, &el);
 
-	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "lex valid");
-	Zinc_assert_ptr(test, t, "ptr t");
+	if (!Zinc_expect_ptr(test, t, "ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "500.123e+2", "500.123e+2");
-	Zinc_expect_int_equal(test, t->loc.line, 1, "line");
-	Zinc_expect_int_equal(test, t->loc.col, 1, "col");
+	Zinc_expect_size_t_equal(test, t->loc.line, 1, "line");
+	Zinc_expect_size_t_equal(test, t->loc.col, 1, "col");
 
-	/* destroy t t{} */
 	Ake_token_destroy(t);
 	free(t);
 
-	/* destroy ls{} */
 	AkeUnit_lex_teardown(&ls);
 }
 
@@ -394,11 +404,13 @@ void AkeUnit_lex_number_exponent_add(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "0 valid");
-	Zinc_assert_ptr(test, t, "0 ptr t");
+	if (!Zinc_expect_ptr(test, t, "0 ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "0 number");
 	Zinc_expect_string(test, &t->value, "500.123e", "0 value");
-	Zinc_expect_int_equal(test, t->loc.line, 1, "0 line 10");
-	Zinc_expect_int_equal(test, t->loc.col, 1, "0 col 10");
+	Zinc_expect_size_t_equal(test, t->loc.line, 1, "0 line 10");
+	Zinc_expect_size_t_equal(test, t->loc.col, 1, "0 col 10");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -406,7 +418,9 @@ void AkeUnit_lex_number_exponent_add(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "1 valid");
-	Zinc_assert_ptr(test, t, "1 ptr t");
+	if (!Zinc_expect_ptr(test, t, "1 ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_plus, "1 plus");
 	Zinc_expect_size_t_equal(test, t->loc.line, 1, "1 line");
 	Zinc_expect_size_t_equal(test, t->loc.col, 10, "1 col");
@@ -417,7 +431,9 @@ void AkeUnit_lex_number_exponent_add(Zinc_test* test)
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
 	Zinc_assert_true(test, valid, "2 valid");
-	Zinc_assert_ptr(test, t, "2 ptr t");
+	if (!Zinc_expect_ptr(test, t, "2 ptr t")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "2 number");
 	Zinc_expect_string(test, &t->value, "1", "2 value");
 	Zinc_expect_size_t_equal(test, t->loc.line, 1, "2 line");

@@ -24,9 +24,15 @@ void DfUnit_DataFrame1(Zinc_test* test)
 
     DataFrameAdd(df, s1);
 
-    Zinc_assert_ptr(test, s0, "ptr s0");
-    Zinc_assert_ptr(test, s1, "ptr s1");
-    Zinc_assert_ptr(test, df, "ptr df");
+    if (!Zinc_expect_ptr(test, s0, "ptr s0")) {
+		return Zinc_assert();
+	}
+    if (!Zinc_expect_ptr(test, s1, "ptr s1")) {
+		return Zinc_assert();
+	}
+    if (!Zinc_expect_ptr(test, df, "ptr df")) {
+		return Zinc_assert();
+	}
 
     Zinc_expect_ptr_equal(test, df->head, s0, "head");
     Zinc_expect_ptr_equal(test, s0->prev, NULL, "s0 prev");

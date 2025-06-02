@@ -35,7 +35,9 @@ void AkeUnit_symbol_table_env(Zinc_test* test)
 	Ake_environment_put(env, &value, sym);
 
 	x = Ake_environment_get(env, &value);
-	Zinc_assert_ptr(test, x, "x ptr");
+	if (!Zinc_expect_ptr(test, x, "x ptr")) {
+		return Zinc_assert();
+	}
 
 	Zinc_assert_true(test, x == sym, "x == sym");
 

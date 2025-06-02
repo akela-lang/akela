@@ -396,7 +396,9 @@ void Zinc_unit_string_uslice(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-	Zinc_assert_ptr(test, bf2.buf, "ptr buf2.buf");
+	if (!Zinc_expect_ptr(test, bf2.buf, "ptr buf2.buf")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_size_t_equal(test, bf2.size, 3, "3 bf2.size");
 	Zinc_expect_string(test, &bf2, "cde", "cde bf2");
 
@@ -433,7 +435,9 @@ void Zinc_unit_string_uslice2(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-	Zinc_assert_ptr(test, bf2.buf, "ptr buf2.buf");
+	if (!Zinc_expect_ptr(test, bf2.buf, "ptr buf2.buf")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_size_t_equal(test, bf2.size, 4, "4 bf2.size");
 	Zinc_expect_string(test, &bf2, "cdef", "cdef bf2");
 

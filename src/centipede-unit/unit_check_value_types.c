@@ -38,7 +38,9 @@ void CentUnit_check_value_types_property(Zinc_test* test)
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_no_errors(test, errors);
-    Zinc_assert_ptr(test, root, "ptr value");
+    if (!Zinc_expect_ptr(test, root, "ptr value")) {
+		return Zinc_assert();
+	}
     Cent_comp_table_destroy(ct);
     free(ct);
 }
@@ -75,7 +77,9 @@ void CentUnit_check_value_types_property_error_number(Zinc_test* test)
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_has_errors(test, errors);
-    Zinc_assert_ptr(test, root, "ptr value");
+    if (!Zinc_expect_ptr(test, root, "ptr value")) {
+		return Zinc_assert();
+	}
     Zinc_expect_source_error(test, errors,
         "for property (Test--source), found type (Natural) but expected (Source)");
     Cent_comp_table_destroy(ct);
@@ -115,7 +119,9 @@ void CentUnit_check_value_types_property_error_string(Zinc_test* test)
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_has_errors(test, errors);
-    Zinc_assert_ptr(test, root, "ptr value");
+    if (!Zinc_expect_ptr(test, root, "ptr value")) {
+		return Zinc_assert();
+	}
     Zinc_expect_source_error(test, errors,
         "for property (Test--source), found type (String) but expected (Source)");
     Cent_comp_table_destroy(ct);
@@ -154,7 +160,9 @@ void CentUnit_check_value_types_property_error_boolean(Zinc_test* test)
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_has_errors(test, errors);
-    Zinc_assert_ptr(test, root, "ptr value");
+    if (!Zinc_expect_ptr(test, root, "ptr value")) {
+		return Zinc_assert();
+	}
     Zinc_expect_source_error(test, errors,
         "for property (Test--source), found type (Bool) but expected (Source)");
     Cent_comp_table_destroy(ct);
@@ -193,7 +201,9 @@ void CentUnit_check_value_types_property_error_object(Zinc_test* test)
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_has_errors(test, errors);
-    Zinc_assert_ptr(test, root, "ptr value");
+    if (!Zinc_expect_ptr(test, root, "ptr value")) {
+		return Zinc_assert();
+	}
     Zinc_expect_source_error(test, errors,
         "for property (Test--source), found type (Foo) but expected (Source)");
     Cent_comp_table_destroy(ct);
@@ -233,7 +243,9 @@ void CentUnit_check_value_types_property_variable(Zinc_test* test)
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_no_errors(test, errors);
-    Zinc_assert_ptr(test, root, "ptr value");
+    if (!Zinc_expect_ptr(test, root, "ptr value")) {
+		return Zinc_assert();
+	}
     Zinc_expect_no_errors(test, errors);
     Cent_comp_table_destroy(ct);
     free(ct);
@@ -272,7 +284,9 @@ void CentUnit_check_value_types_property_error_variable_object(Zinc_test* test)
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_has_errors(test, errors);
-    Zinc_assert_ptr(test, root, "ptr value");
+    if (!Zinc_expect_ptr(test, root, "ptr value")) {
+		return Zinc_assert();
+	}
     Zinc_expect_source_error(test, errors,
         "for property (Test--source), found type (Foo) but expected (Source)");
     Cent_comp_table_destroy(ct);
@@ -312,7 +326,9 @@ void CentUnit_check_value_types_property_enum(Zinc_test* test)
     Cent_value* root = ct->primary->value;
 
     Zinc_expect_no_errors(test, errors);
-    Zinc_assert_ptr(test, root, "ptr value");
+    if (!Zinc_expect_ptr(test, root, "ptr value")) {
+		return Zinc_assert();
+	}
 
     Cent_comp_table_destroy(ct);
     free(ct);
@@ -534,7 +550,9 @@ void CentUnit_check_value_types_child_enum_error_id1_not_found(Zinc_test* test)
 
     Zinc_expect_has_errors(test, errors);
     struct Zinc_error* e = Zinc_expect_source_error(test, errors, "id is not a variable: Building_type");
-    Zinc_assert_ptr(test, e, "ptr e");
+    if (!Zinc_expect_ptr(test, e, "ptr e")) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.line, 14, "line e");
     Zinc_expect_size_t_equal(test, e->loc.col, 5, "col e");
 
@@ -581,7 +599,9 @@ void CentUnit_check_value_types_child_enum_error_id1_not_match(Zinc_test* test)
 
     Zinc_expect_has_errors(test, errors);
     struct Zinc_error* e = Zinc_expect_source_error(test, errors, "invalid child type: Building_type");
-    Zinc_assert_ptr(test, e, "ptr e");
+    if (!Zinc_expect_ptr(test, e, "ptr e")) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.line, 19, "line e");
     Zinc_expect_size_t_equal(test, e->loc.col, 5, "col e");
 
@@ -623,7 +643,9 @@ void CentUnit_check_value_types_child_enum_error_id2_not_valid(Zinc_test* test)
 
     Zinc_expect_has_errors(test, errors);
     struct Zinc_error* e = Zinc_expect_source_error(test, errors, "invalid enum id: Bike");
-    Zinc_assert_ptr(test, e, "ptr e");
+    if (!Zinc_expect_ptr(test, e, "ptr e")) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.line, 14, "line e");
     Zinc_expect_size_t_equal(test, e->loc.col, 19, "col e");
 
@@ -661,7 +683,9 @@ void CentUnit_check_value_types_property_error_not_enum(Zinc_test* test)
 
     Zinc_expect_has_errors(test, errors);
     struct Zinc_error* e = Zinc_expect_source_error(test, errors, "value is not an enum value: Natural");
-    Zinc_assert_ptr(test, e, "ptr e");
+    if (!Zinc_expect_ptr(test, e, "ptr e")) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.line, 10, "line e");
     Zinc_expect_size_t_equal(test, e->loc.col, 10, "col e");
 
@@ -702,7 +726,9 @@ void CentUnit_check_value_types_property_enum_error_not_match(Zinc_test* test)
 
     Zinc_expect_has_errors(test, errors);
     struct Zinc_error* e = Zinc_expect_source_error(test, errors, "invalid value enum type: Apparel");
-    Zinc_assert_ptr(test, e, "ptr e");
+    if (!Zinc_expect_ptr(test, e, "ptr e")) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.line, 13, "line e");
     Zinc_expect_size_t_equal(test, e->loc.col, 10, "col e");
 
@@ -739,7 +765,9 @@ void CentUnit_check_value_types_child_error_no_type(Zinc_test* test)
 
     Zinc_expect_has_errors(test, errors);
     struct Zinc_error* e = Zinc_expect_source_error(test, errors, "value has no type; looking for Bar");
-    Zinc_assert_ptr(test, e, "ptr e");
+    if (!Zinc_expect_ptr(test, e, "ptr e")) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.line, 9, "line e");
     Zinc_expect_size_t_equal(test, e->loc.col, 5, "col e");
 

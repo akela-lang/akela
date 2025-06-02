@@ -28,7 +28,9 @@ void Zinc_unit_hash1(Zinc_test* test)
 	Zinc_hash_map_string_add(&ht, &one, &one_item);
 
 	int* one_item_ptr = Zinc_hash_map_string_get(&ht, &one);
-	Zinc_assert_ptr(test, one_item_ptr, "one ptr");
+	if (!Zinc_expect_ptr(test, one_item_ptr, "one ptr")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, *one_item_ptr, one_item, "1");
 
 	int* two_item_ptr = Zinc_hash_map_string_get(&ht, &two);
@@ -36,7 +38,9 @@ void Zinc_unit_hash1(Zinc_test* test)
 
 	Zinc_hash_map_string_add(&ht, &two, &two_item);
 	two_item_ptr = Zinc_hash_map_string_get(&ht, &two);
-	Zinc_assert_ptr(test, two_item_ptr, "2 ptr");
+	if (!Zinc_expect_ptr(test, two_item_ptr, "2 ptr")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, *two_item_ptr, two_item, "2");
 
 	Zinc_string_destroy(&one);

@@ -167,7 +167,9 @@ void Zinc_unit_os_unix_make_directory(Zinc_test* test)
         return Zinc_assert();
     }
     DIR* dp = opendir(dir.buf);
-    Zinc_assert_ptr(test, dp, "ptr dp");
+    if (!Zinc_expect_ptr(test, dp, "ptr dp")) {
+        return Zinc_assert();
+    }
     closedir(dp);
     Zinc_string_destroy(&dir);
     system("cd /tmp && rmdir -p apple/bear/creek/doe/eddy");

@@ -23,7 +23,9 @@ void DfUnit_CSVParseHeaderName(Zinc_test* test)
     Zinc_expect_size_t_equal(test, DataFrameColumnCount(parse_output->df), 1, "column count");
     Zinc_expect_size_t_equal(test, DataFrameRowCount(parse_output->df), 0, "row count");
     Series* s = DataFrameSeriesByIndex(parse_output->df, 0);
-    Zinc_assert_ptr(test, s, "ptr s");
+    if (!Zinc_expect_ptr(test, s, "ptr s")) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, Zinc_vector_match_str(&s->name, "First Name"), "First Name");
 
     DfUnit_CSVParseTeardown(parse_output);
@@ -49,7 +51,9 @@ void DfUnit_CSVParseRowField(Zinc_test* test)
     Zinc_expect_size_t_equal(test, DataFrameRowCount(parse_output->df), 1, "row count");
 
     Series* s = DataFrameSeriesByIndex(parse_output->df, 0);
-    Zinc_assert_ptr(test, s, "ptr s");
+    if (!Zinc_expect_ptr(test, s, "ptr s")) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, Zinc_vector_match_str(&s->name, "Count"), "Count");
 
     enum FieldType field_type = *(enum FieldType*)ZINC_VECTOR_PTR(&s->types, 0);
@@ -85,7 +89,9 @@ void DfUnit_CSVParseTypes(Zinc_test* test)
     Zinc_expect_size_t_equal(test, DataFrameRowCount(parse_output->df), 2, "row count");
 
     Series* s0 = DataFrameSeriesByIndex(parse_output->df, 0);
-    Zinc_assert_ptr(test, s0, "ptr s0");
+    if (!Zinc_expect_ptr(test, s0, "ptr s0")) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, Zinc_vector_match_str(&s0->name, "Bool"), "s0 name");
     Zinc_expect_int_equal(test, s0->type, FieldTypeBool, "s0 type");
 
@@ -98,7 +104,9 @@ void DfUnit_CSVParseTypes(Zinc_test* test)
     Zinc_expect_int_equal(test, ZINC_VECTOR_BOOL(&s0->value, 1), 0, "s0 value 1");
 
     Series* s1 = DataFrameSeriesByIndex(parse_output->df, 1);
-    Zinc_assert_ptr(test, s1, "ptr s1");
+    if (!Zinc_expect_ptr(test, s1, "ptr s1")) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, Zinc_vector_match_str(&s1->name, "Float"), "s1 name");
     Zinc_expect_int_equal(test, s1->type, FieldTypeFloat, "s1 type");
 
@@ -111,7 +119,9 @@ void DfUnit_CSVParseTypes(Zinc_test* test)
     Zinc_expect_double_equal(test, ZINC_VECTOR_DOUBLE(&s1->value, 1), 5.1, "s1 value 1");
 
     Series* s2 = DataFrameSeriesByIndex(parse_output->df, 2);
-    Zinc_assert_ptr(test, s2, "ptr s2");
+    if (!Zinc_expect_ptr(test, s2, "ptr s2")) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, Zinc_vector_match_str(&s2->name, "Int"), "s2 name");
     Zinc_expect_int_equal(test, s2->type, FieldTypeInt, "s2 type");
 
@@ -124,7 +134,9 @@ void DfUnit_CSVParseTypes(Zinc_test* test)
     Zinc_expect_int_equal(test, ZINC_VECTOR_INT(&s2->value, 1), 80, "s2 value 1");
 
     Series* s3 = DataFrameSeriesByIndex(parse_output->df, 3);
-    Zinc_assert_ptr(test, s3, "ptr s3");
+    if (!Zinc_expect_ptr(test, s3, "ptr s3")) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, Zinc_vector_match_str(&s3->name, "IntU"), "s3 name");
     Zinc_expect_int_equal(test, s3->type, FieldTypeIntU, "s3 type");
 
@@ -137,7 +149,9 @@ void DfUnit_CSVParseTypes(Zinc_test* test)
     Zinc_expect_int_equal(test, ZINC_VECTOR_INT(&s3->value, 1), 1, "s3 value 1");
 
     Series* s4 = DataFrameSeriesByIndex(parse_output->df, 4);
-    Zinc_assert_ptr(test, s4, "ptr s4");
+    if (!Zinc_expect_ptr(test, s4, "ptr s4")) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, Zinc_vector_match_str(&s4->name, "String"), "s4 name");
     Zinc_expect_int_equal(test, s4->type, FieldTypeString, "s4 type");
 
@@ -150,7 +164,9 @@ void DfUnit_CSVParseTypes(Zinc_test* test)
     Zinc_expect_vector_str(test, ZINC_VECTOR_VECTOR(&s4->value, 1), "world", "s4 value 1");
 
     Series* s5 = DataFrameSeriesByIndex(parse_output->df, 5);
-    Zinc_assert_ptr(test, s5, "ptr s5");
+    if (!Zinc_expect_ptr(test, s5, "ptr s5")) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, Zinc_vector_match_str(&s5->name, "Empty"), "s5 name");
     Zinc_expect_int_equal(test, s5->type, FieldTypeEmpty, "s5 type");
 

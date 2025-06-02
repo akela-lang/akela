@@ -63,15 +63,21 @@ void Zinc_unit_list_remove_first_item(Zinc_test* test)
     int *tmp = NULL;
 
     tmp = Zinc_list_remove_first_item(l);
-    Zinc_assert_ptr(test, tmp, "ptr 1");
+    if (!Zinc_expect_ptr(test, tmp, "ptr 1")) {
+        return Zinc_assert();
+    }
     Zinc_expect_int_equal(test, *tmp, one, "one");
 
     tmp = Zinc_list_remove_first_item(l);
-    Zinc_assert_ptr(test, tmp, "ptr 2");
+    if (!Zinc_expect_ptr(test, tmp, "ptr 2")) {
+        return Zinc_assert();
+    }
     Zinc_expect_int_equal(test, *tmp, two, "two");
 
     tmp = Zinc_list_remove_first_item(l);
-    Zinc_assert_ptr(test, tmp, "ptr 3");
+    if (!Zinc_expect_ptr(test, tmp, "ptr 3")) {
+        return Zinc_assert();
+    }
     Zinc_expect_int_equal(test, *tmp, three, "three");
 
     tmp = Zinc_list_remove_first_item(l);

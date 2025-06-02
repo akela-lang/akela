@@ -28,11 +28,15 @@ void AkeUnit_comp_unit_compile(Zinc_test* test)
 	Zinc_expect_true(test, valid, "valid");
 	
 	Ake_ast* root = cu->root;
-	Zinc_assert_ptr(test, root, "ptr root");
+	if (!Zinc_expect_ptr(test, root, "ptr root")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, root->type, Ake_ast_type_stmts, "parse_stmts root");
 
 	Ake_ast* number = Ast_node_get(root, 0);
-	Zinc_assert_ptr(test, number, "ptr number");
+	if (!Zinc_expect_ptr(test, number, "ptr number")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, number->type, Ake_ast_type_number, "number number");
 	Zinc_expect_string(test, &number->value, "10", "10 number");
 

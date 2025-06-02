@@ -27,16 +27,22 @@ void AkeUnit_ast1(Zinc_test* test)
 	Zinc_string_add_str(&b->value, "b");
     Ake_ast_add(n, b);
 
-	Zinc_assert_ptr(test, n, "ptr n");
+	if (!Zinc_expect_ptr(test, n, "ptr n")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, n->type, Ake_ast_type_plus, "plus");
 
 	a = Ast_node_get(n, 0);
-	Zinc_assert_ptr(test, a, "ptr a");
+	if (!Zinc_expect_ptr(test, a, "ptr a")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, a->type, Ake_ast_type_number, "number");
 	Zinc_expect_string(test, &a->value, "a", "a");
 
 	b = Ast_node_get(n, 1);
-	Zinc_assert_ptr(test, b, "ptr b");
+	if (!Zinc_expect_ptr(test, b, "ptr b")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, b->type, Ake_ast_type_number, "number");
 	Zinc_expect_string(test, &b->value, "b", "b");
 
