@@ -20,20 +20,20 @@ void Zinc_assert()
 	fprintf(stderr, "Exiting because of assertion error.\n");
 }
 
-void Zinc_assert_error(Zinc_test* test, Zinc_result r, const char* message)
+bool Zinc_expect_error(Zinc_test* test, Zinc_result r, const char* message)
 {
     test->check_count++;
 
     if (r == Zinc_result_error) {
         test->check_passed++;
-        return;
+        return true;
     }
 
     test->check_failed++;
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\tno error detected assertion error: %s\n", message);
-    Zinc_panic();
+    return false;
 }
 
 bool Zinc_expect_null(Zinc_test* test, void* p, const char* message)
