@@ -195,7 +195,9 @@ void Zinc_unit_os_unix_delete_directory(Zinc_test* test)
         return Zinc_assert();
     }
     DIR* dp = opendir("/tmp/one");
-    Zinc_assert_null(test, dp, "null dp");
+    if (!Zinc_expect_null(test, dp, "null dp")) {
+        return Zinc_assert();
+    }
     if (dp) {
         closedir(dp);
     }

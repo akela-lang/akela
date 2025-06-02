@@ -7,10 +7,9 @@
 #include "string_list.h"
 
 void Zinc_assert();
-void Zinc_assert_null(Zinc_test* test, void* p, const char* message);
 void Zinc_assert_error(Zinc_test* test, Zinc_result r, const char* message);
 
-void Zinc_expect_null(Zinc_test* test, void* p, const char* message);
+bool Zinc_expect_null(Zinc_test* test, void* p, const char* message);
 void Zinc_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
 void Zinc_expect_string(Zinc_test* test, Zinc_string* a, const char* b, const char* message);
 bool Zinc_expect_true(Zinc_test* test, int value, const char* fmt, ...);

@@ -30,7 +30,9 @@ void AkeUnit_parse_blank(Zinc_test* test)
     Zinc_expect_int_equal(test, pr.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
 
     Ake_ast* node = Ast_node_get(pr.root, 0);
-    Zinc_assert_null(test, node, "null node");
+    if (!Zinc_expect_null(test, node, "null node")) {
+		return Zinc_assert();
+	}
 
     Ake_comp_table_free(ct);
 }
@@ -288,7 +290,9 @@ void AkeUnit_parse_add_positive(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_sign, "sign");
 
-    Zinc_assert_null(test, Ast_node_get(cu.root, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(cu.root, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* left2 = Ast_node_get(right, 0);
     if (!Zinc_expect_ptr(test, left2, "left2")) {
@@ -346,7 +350,9 @@ void AkeUnit_parse_add_negative(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_sign, "sign");
 
-    Zinc_assert_null(test, Ast_node_get(add, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(add, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* left2 = Ast_node_get(right, 0);
     if (!Zinc_expect_ptr(test, left2, "left2")) {
@@ -405,7 +411,9 @@ void AkeUnit_parse_sub(Zinc_test* test)
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_id, "id");
     Zinc_expect_string(test, &right->value, "delta", "delta");
 
-    Zinc_assert_null(test, Ast_node_get(cu.root, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(cu.root, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     AkeUnit_parse_teardown(&cu);
 }
@@ -451,7 +459,9 @@ void AkeUnit_parse_sub_positive(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_sign, "sign");
 
-    Zinc_assert_null(test, Ast_node_get(sub, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(sub, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* left2 = Ast_node_get(right, 0);
     if (!Zinc_expect_ptr(test, left2, "left2")) {
@@ -509,7 +519,9 @@ void AkeUnit_parse_sub_negative(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_sign, "sign");
 
-    Zinc_assert_null(test, Ast_node_get(sub, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(sub, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* left2 = Ast_node_get(right, 0);
     if (!Zinc_expect_ptr(test, left2, "left2")) {
@@ -720,7 +732,9 @@ void AkeUnit_parse_mult_positive(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_sign, "sign");
 
-    Zinc_assert_null(test, Ast_node_get(mult, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(mult, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* left2 = Ast_node_get(right, 0);
     if (!Zinc_expect_ptr(test, left2, "left2")) {
@@ -778,7 +792,9 @@ void AkeUnit_parse_mult_negative(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_sign, "sign");
 
-    Zinc_assert_null(test, Ast_node_get(mult, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(mult, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* left2 = Ast_node_get(right, 0);
     if (!Zinc_expect_ptr(test, left2, "left2")) {
@@ -1276,7 +1292,9 @@ void AkeUnit_parse_paren_add(Zinc_test* test)
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_number, "number");
     Zinc_expect_string(test, &right->value, "1", "1");
 
-    Zinc_assert_null(test, Ast_node_get(cu.root, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(cu.root, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     AkeUnit_parse_teardown(&cu);
 }
@@ -1327,7 +1345,9 @@ void AkeUnit_parse_paren_add2(Zinc_test* test)
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_number, "number");
     Zinc_expect_string(test, &right->value, "1", "1");
 
-    Zinc_assert_null(test, Ast_node_get(cu.root, 2), "only 2 children");
+    if (!Zinc_expect_null(test, Ast_node_get(cu.root, 2), "only 2 children")) {
+		return Zinc_assert();
+	}
 
     AkeUnit_parse_teardown(&cu);
 }
@@ -1428,7 +1448,9 @@ void AkeUnit_parse_paren_add_add(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, right->type, Ake_ast_type_plus, "plus 2");
 
-    Zinc_assert_null(test, Ast_node_get(cu.root, 2), "null");
+    if (!Zinc_expect_null(test, Ast_node_get(cu.root, 2), "null")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* left2 = Ast_node_get(right, 0);
     if (!Zinc_expect_ptr(test, left2, "right")) {

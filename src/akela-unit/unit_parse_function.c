@@ -1537,10 +1537,14 @@ void AkeUnit_parse_call3(Zinc_test* test)
     Zinc_expect_string(test, &cseq_b->value, "y", "y cseq_b");
 
     Ake_ast* cseq_c = Ast_node_get(cseq, 2);
-    Zinc_assert_null(test, cseq_c, "null cseq_c");
+    if (!Zinc_expect_null(test, cseq_c, "null cseq_c")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* c = Ast_node_get(a, 2);
-    Zinc_assert_null(test, c, "null c");
+    if (!Zinc_expect_null(test, c, "null c")) {
+		return Zinc_assert();
+	}
 
     AkeUnit_parse_teardown(&cu);
 }

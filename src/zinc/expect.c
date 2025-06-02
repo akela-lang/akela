@@ -20,22 +20,6 @@ void Zinc_assert()
 	fprintf(stderr, "Exiting because of assertion error.\n");
 }
 
-void Zinc_assert_null(Zinc_test* test, void* p, const char* message)
-{
-    test->check_count++;
-
-    if (p == NULL) {
-        test->check_passed++;
-        return;
-    }
-
-    test->check_failed++;
-    test->pass = false;
-    Zinc_test_print_unseen(test);
-    fprintf(stderr, "\t%p == null assertion error: %s\n", p, message);
-    Zinc_panic();
-}
-
 void Zinc_assert_error(Zinc_test* test, Zinc_result r, const char* message)
 {
     test->check_count++;
@@ -52,19 +36,20 @@ void Zinc_assert_error(Zinc_test* test, Zinc_result r, const char* message)
     Zinc_panic();
 }
 
-void Zinc_expect_null(Zinc_test* test, void* p, const char* message)
+bool Zinc_expect_null(Zinc_test* test, void* p, const char* message)
 {
     test->check_count++;
 
     if (p == NULL) {
         test->check_passed++;
-        return;
+        return true;
     }
 
     test->check_failed++;
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t%p == null error: %s\n", p, message);
+	return false;
 }
 
 void Zinc_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message)

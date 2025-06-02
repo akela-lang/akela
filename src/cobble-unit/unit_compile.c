@@ -17,7 +17,9 @@ void CobUnit_test_compile_empty(Zinc_test* test)
     Cob_re re = Cob_compile_str("");
 
     Zinc_expect_no_errors(test, re.errors);
-    Zinc_assert_null(test, re.root, "root");
+    if (!Zinc_expect_null(test, re.root, "root")) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, re.group_count, 1, "group_count");
 
     Cob_re_destroy(&re);
