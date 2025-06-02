@@ -53,7 +53,9 @@ void AkeUnit_lex_number_whole(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t")) {
 		return Zinc_assert();
 	}
@@ -91,7 +93,9 @@ void AkeUnit_lex_number_fraction_start(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t")) {
 		return Zinc_assert();
 	}
@@ -129,7 +133,9 @@ void AkeUnit_lex_number_fraction(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t")) {
 		return Zinc_assert();
 	}
@@ -164,7 +170,9 @@ void AkeUnit_lex_number_exponent_start(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "0 valid");
+	if (!Zinc_expect_true(test, valid, "0 valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "0 ptr t")) {
 		return Zinc_assert();
 	}
@@ -176,7 +184,9 @@ void AkeUnit_lex_number_exponent_start(Zinc_test* test)
 
     valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "1 valid");
+	if (!Zinc_expect_true(test, valid, "1 valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "1 ptr t")) {
 		return Zinc_assert();
 	}
@@ -207,7 +217,9 @@ void AkeUnit_lex_number_fraction_exponent_start(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "0 valid");
+	if (!Zinc_expect_true(test, valid, "0 valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "0 ptr t")) {
 		return Zinc_assert();
 	}
@@ -219,7 +231,9 @@ void AkeUnit_lex_number_fraction_exponent_start(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "1 valid");
+	if (!Zinc_expect_true(test, valid, "1 valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "1 ptr t")) {
 		return Zinc_assert();
 	}
@@ -250,7 +264,9 @@ void AkeUnit_lex_number_fraction_exponent(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t")) {
 		return Zinc_assert();
 	}
@@ -337,7 +353,9 @@ void AkeUnit_lex_number_fraction_exponent_negative(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t")) {
 		return Zinc_assert();
 	}
@@ -370,7 +388,9 @@ void AkeUnit_lex_number_exponent_positive(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t")) {
 		return Zinc_assert();
 	}
@@ -403,7 +423,9 @@ void AkeUnit_lex_number_exponent_add(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "0 valid");
+	if (!Zinc_expect_true(test, valid, "0 valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "0 ptr t")) {
 		return Zinc_assert();
 	}
@@ -417,7 +439,9 @@ void AkeUnit_lex_number_exponent_add(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "1 valid");
+	if (!Zinc_expect_true(test, valid, "1 valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "1 ptr t")) {
 		return Zinc_assert();
 	}
@@ -430,7 +454,9 @@ void AkeUnit_lex_number_exponent_add(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "2 valid");
+	if (!Zinc_expect_true(test, valid, "2 valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "2 ptr t")) {
 		return Zinc_assert();
 	}

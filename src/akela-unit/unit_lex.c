@@ -24,7 +24,9 @@ void AkeUnit_lex_blank(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex 0");
+	if (!Zinc_expect_true(test, valid, "lex 0")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_eof, "none");
 	Zinc_expect_string(test, &t->value, "", "(blank)");
     Zinc_expect_size_t_equal(test, t->loc.line, 1, "line 1");
@@ -56,7 +58,9 @@ void AkeUnit_lex_assign(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id");
 	Zinc_expect_string(test, &t->value, "a", "a");
 
@@ -65,7 +69,9 @@ void AkeUnit_lex_assign(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_equal, "equal");
 
 	Ake_token_destroy(t);
@@ -73,7 +79,9 @@ void AkeUnit_lex_assign(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "1", "1");
 
@@ -82,7 +90,9 @@ void AkeUnit_lex_assign(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -116,7 +126,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id");
 	Zinc_expect_string(test, &t->value, "speed", "speed");
 
@@ -125,7 +137,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_plus, "plus");
 
 	Ake_token_destroy(t);
@@ -133,7 +147,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "1", "1");
 
@@ -145,7 +161,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
     if (!Zinc_expect_int_equal(test, t->type, Ake_token_eof, "eof")) {
 		return Zinc_assert();
 	}
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 
 	Ake_token_destroy(t);
 	free(t);
@@ -173,7 +191,9 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "100", "100");
 
@@ -184,7 +204,9 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_minus, "minus");
 
 	/* destroy t t{} */
@@ -194,7 +216,9 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id");
 	Zinc_expect_string(test, &t->value, "delta", "delta");
 
@@ -205,7 +229,9 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -240,7 +266,9 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "100", "100");
 
@@ -251,7 +279,9 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_mult, "mult");
 
 	/* destroy t t{} */
@@ -261,7 +291,9 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "20", "20");
 
@@ -272,7 +304,9 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -304,7 +338,9 @@ void AkeUnit_lex_divide(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "45", "45");
 
@@ -313,7 +349,9 @@ void AkeUnit_lex_divide(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_divide, "divide");
 
 	Ake_token_destroy(t);
@@ -321,7 +359,9 @@ void AkeUnit_lex_divide(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "is number");
 	Zinc_expect_string(test, &t->value, "11", "11");
 
@@ -330,7 +370,9 @@ void AkeUnit_lex_divide(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -363,7 +405,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id");
 	Zinc_expect_string(test, &t->value, "i", "i");
 
@@ -374,7 +418,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_plus, "plus");
 
 	/* destroy t t{} */
@@ -384,7 +430,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "1", "1");
 
@@ -395,7 +443,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_newline, "newline");
 
 	/* destroy t t{} */
@@ -405,7 +455,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id2");
 	Zinc_expect_string(test, &t->value, "x", "x");
 
@@ -416,7 +468,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_mult, "mult");
 
 	/* destroy t t{} */
@@ -426,7 +480,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number2");
 	Zinc_expect_string(test, &t->value, "4", "4");
 
@@ -437,7 +493,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -472,7 +530,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id");
 	Zinc_expect_string(test, &t->value, "i", "i");
 
@@ -483,7 +543,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_plus, "plus");
 
 	/* destroy t t{} */
@@ -493,7 +555,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "1", "1");
 
@@ -504,7 +568,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_newline, "newline");
 
 	/* destroy t t{} */
@@ -514,7 +580,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id2");
 	Zinc_expect_string(test, &t->value, "x", "x");
 
@@ -525,7 +593,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_mult, "mult");
 
 	/* destroy t t{} */
@@ -535,7 +605,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number2");
 	Zinc_expect_string(test, &t->value, "4", "4");
 
@@ -546,7 +618,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_newline, "newline2");
 
 	/* destroy t t{} */
@@ -556,7 +630,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -569,7 +645,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -604,7 +682,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id");
 	Zinc_expect_string(test, &t->value, "i", "i");
 
@@ -615,7 +695,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_plus, "plus");
 
 	/* destroy t t{} */
@@ -625,7 +707,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number");
 	Zinc_expect_string(test, &t->value, "1", "1");
 
@@ -636,7 +720,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_newline, "newline");
 
 	/* destroy t t{} */
@@ -646,7 +732,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id2");
 	Zinc_expect_string(test, &t->value, "x", "x");
 
@@ -657,7 +745,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_equal, "equal");
 
 	/* destroy t t{} */
@@ -667,7 +757,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number2");
 	Zinc_expect_string(test, &t->value, "4", "4");
 
@@ -678,7 +770,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -710,7 +804,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_fn, "fn");
 
 	Ake_token_destroy(t);
@@ -718,7 +814,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id");
 	Zinc_expect_string(test, &t->value, "foo", "foo");
 
@@ -727,7 +825,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_left_paren, "left paren");
 
 	Ake_token_destroy(t);
@@ -735,7 +835,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_right_paren, "right paren");
 
 	Ake_token_destroy(t);
@@ -743,7 +845,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_newline, "newline");
 
 	Ake_token_destroy(t);
@@ -751,7 +855,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_end, "end");
 
 	Ake_token_destroy(t);
@@ -759,7 +865,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -792,7 +900,9 @@ void AkeUnit_lex_comma(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_comma, "comma");
 
 	/* destroy t t{} */
@@ -802,7 +912,9 @@ void AkeUnit_lex_comma(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -837,7 +949,9 @@ void AkeUnit_lex_semicolon(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_semicolon, "semicolon");
 
 	/* destroy t t{} */
@@ -847,7 +961,9 @@ void AkeUnit_lex_semicolon(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -882,7 +998,9 @@ void AkeUnit_lex_if(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_if, "if");
 
 	/* destroy t t{} */
@@ -892,7 +1010,9 @@ void AkeUnit_lex_if(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_elseif, "elseif");
 
 	/* destroy t t{} */
@@ -902,7 +1022,9 @@ void AkeUnit_lex_if(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_else, "else");
 
 	/* destroy t t{} */
@@ -912,7 +1034,9 @@ void AkeUnit_lex_if(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, t, "ptr t")) {
 	    return Zinc_assert();
     }
@@ -944,7 +1068,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_double_equal, "double equal");
 
 	Ake_token_destroy(t);
@@ -952,7 +1078,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_not_equal, "not equal");
 
 	Ake_token_destroy(t);
@@ -960,7 +1088,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_less_than_or_equal, "less than or equal");
 
 	Ake_token_destroy(t);
@@ -968,7 +1098,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_greater_than_or_equal, "greater than or equal");
 
 	Ake_token_destroy(t);
@@ -976,7 +1108,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_and, "and");
 
 	Ake_token_destroy(t);
@@ -984,7 +1118,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_or, "or");
 
 	Ake_token_destroy(t);
@@ -992,7 +1128,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_arrow, "arrow");
 
 	Ake_token_destroy(t);
@@ -1022,7 +1160,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_equal, "equal");
 
 	/* destroy t t{} */
@@ -1032,7 +1172,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_not, "not");
 
 	/* destroy t t{} */
@@ -1042,7 +1184,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_less_than, "less than");
 
 	/* destroy t t{} */
@@ -1052,7 +1196,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_greater_than, "greater_than");
 
 	/* destroy t t{} */
@@ -1062,7 +1208,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_ampersand, "ampersand");
 
 	/* destroy t t{} */
@@ -1072,7 +1220,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_vertical_bar, "vertical_bar");
 
 	/* destroy t t{} */
@@ -1082,7 +1232,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_colon, "colon");
 
 	/* destroy t t{} */
@@ -1111,7 +1263,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_for, "for");
 
 	Ake_token_destroy(t);
@@ -1119,7 +1273,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id 1");
 	Zinc_expect_string(test, &t->value, "i", "i");
 
@@ -1128,7 +1284,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_equal, "equal 2");
 
 	Ake_token_destroy(t);
@@ -1136,7 +1294,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number 3");
 
 	Ake_token_destroy(t);
@@ -1144,7 +1304,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_colon, "colon 4");
 
 	Ake_token_destroy(t);
@@ -1152,7 +1314,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number 5");
 	Zinc_expect_string(test, &t->value, "10", "10 5");
 
@@ -1161,7 +1325,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number 6");
 	Zinc_expect_string(test, &t->value, "1", "1 6");
 
@@ -1170,7 +1336,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_end, "end 7");
 
 	Ake_token_destroy(t);
@@ -1200,7 +1368,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_for, "for");
 
 	/* destroy t t{} */
@@ -1210,7 +1380,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id 1");
 	Zinc_expect_string(test, &t->value, "x", "x 1");
 
@@ -1221,7 +1393,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_in, "in 2");
 
 	/* destroy t t{} */
@@ -1231,7 +1405,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id 3");
 	Zinc_expect_string(test, &t->value, "list", "list 3");
 
@@ -1242,7 +1418,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_number, "number 4");
 	Zinc_expect_string(test, &t->value, "1", "1 4");
 
@@ -1253,7 +1431,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_end, "end 5");
 
 	/* destroy t t{} */
@@ -1310,7 +1490,9 @@ void AkeUnit_lex_square_brackets(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_left_square_bracket, "left-square-bracket 0");
 
 	/* destroy t t{} */
@@ -1320,7 +1502,9 @@ void AkeUnit_lex_square_brackets(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_right_square_bracket, "right-square-bracket 1");
 
 	/* destroy t t{} */
@@ -1352,7 +1536,9 @@ void AkeUnit_lex_string(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_string, "string 0");
 	Zinc_expect_string(test, &t->value, "hello", "hello 0");
 
@@ -1385,7 +1571,9 @@ void AkeUnit_lex_string2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_id, "id 0");
 	Zinc_expect_string(test, &t->value, "x", "x 0");
 
@@ -1396,7 +1584,9 @@ void AkeUnit_lex_string2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_equal, "equal 1");
 
 	/* destroy t t{} */
@@ -1406,7 +1596,9 @@ void AkeUnit_lex_string2(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_int_equal(test, t->type, Ake_token_string, "string 2");
 	Zinc_expect_string(test, &t->value, "\\hello\n\r", "hello 2");
 
@@ -1469,7 +1661,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t 10")) {
 		return Zinc_assert();
 	}
@@ -1485,7 +1679,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t +")) {
 		return Zinc_assert();
 	}
@@ -1500,7 +1696,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t 20")) {
 		return Zinc_assert();
 	}
@@ -1515,7 +1713,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t newline")) {
 		return Zinc_assert();
 	}
@@ -1530,7 +1730,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t 30")) {
 		return Zinc_assert();
 	}
@@ -1545,7 +1747,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t +")) {
 		return Zinc_assert();
 	}
@@ -1560,7 +1764,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "lex valid");
+	if (!Zinc_expect_true(test, valid, "lex valid")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, t, "ptr t 40")) {
 		return Zinc_assert();
 	}
@@ -1675,7 +1881,9 @@ void AkeUnit_lex_module(Zinc_test* test)
 	struct Ake_token* module;
 	valid = Ake_lex(&ls, &module);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "valid module");
+	if (!Zinc_expect_true(test, valid, "valid module")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, module, "ptr module")) {
 		return Zinc_assert();
 	}
@@ -1687,7 +1895,9 @@ void AkeUnit_lex_module(Zinc_test* test)
 	struct Ake_token* number;
 	valid = Ake_lex(&ls, &number);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "valid number");
+	if (!Zinc_expect_true(test, valid, "valid number")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, number, "ptr number")) {
 		return Zinc_assert();
 	}
@@ -1700,7 +1910,9 @@ void AkeUnit_lex_module(Zinc_test* test)
 	struct Ake_token* end;
 	valid = Ake_lex(&ls, &end);
 	Zinc_assert_no_errors(test, ls.el);
-	Zinc_assert_true(test, valid, "valid end");
+	if (!Zinc_expect_true(test, valid, "valid end")) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_ptr(test, end, "ptr end")) {
 		return Zinc_assert();
 	}
@@ -1732,7 +1944,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
     struct Ake_token* number0;
     valid = Ake_lex(&ls, &number0);
     Zinc_assert_no_errors(test, ls.el);
-    Zinc_assert_true(test, valid, "valid number0");
+    if (!Zinc_expect_true(test, valid, "valid number0")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, number0, "ptr number0")) {
     	return Zinc_assert();
     }
@@ -1745,7 +1959,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
     struct Ake_token* newline0;
     valid = Ake_lex(&ls, &newline0);
     Zinc_assert_no_errors(test, ls.el);
-    Zinc_assert_true(test, valid, "valid newline0");
+    if (!Zinc_expect_true(test, valid, "valid newline0")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, newline0, "ptr newline0")) {
     	return Zinc_assert();
     }
@@ -1757,7 +1973,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
     struct Ake_token* number1;
     valid = Ake_lex(&ls, &number1);
     Zinc_assert_no_errors(test, ls.el);
-    Zinc_assert_true(test, valid, "valid number1");
+    if (!Zinc_expect_true(test, valid, "valid number1")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, number1, "ptr number1")) {
     	return Zinc_assert();
     }
@@ -1770,7 +1988,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
     struct Ake_token* newline1;
     valid = Ake_lex(&ls, &newline1);
     Zinc_assert_no_errors(test, ls.el);
-    Zinc_assert_true(test, valid, "valid newline1");
+    if (!Zinc_expect_true(test, valid, "valid newline1")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, newline1, "ptr newline1")) {
     	return Zinc_assert();
     }
@@ -1782,7 +2002,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
     struct Ake_token* eof;
     valid = Ake_lex(&ls, &eof);
     Zinc_assert_no_errors(test, ls.el);
-    Zinc_assert_true(test, valid, "valid eof");
+    if (!Zinc_expect_true(test, valid, "valid eof")) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_ptr(test, eof, "ptr eof")) {
     	return Zinc_assert();
     }

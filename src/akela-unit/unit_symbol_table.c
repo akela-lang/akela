@@ -39,7 +39,9 @@ void AkeUnit_symbol_table_env(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-	Zinc_assert_true(test, x == sym, "x == sym");
+	if (!Zinc_expect_true(test, x == sym, "x == sym")) {
+		return Zinc_assert();
+	}
 
 	Ake_environment_destroy(env);
 	Zinc_string_destroy(&value);

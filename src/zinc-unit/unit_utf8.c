@@ -41,7 +41,9 @@ void Zinc_unit_utf8_two_byte(Zinc_test* test)
 	int i = 0;
 	while (i < num) {
 		int byte_count = ZINC_NUM_BYTES(s[i]);
-		Zinc_assert_true(test, byte_count > 0 && byte_count <= 4, "byte_count");
+		if (!Zinc_expect_true(test, byte_count > 0 && byte_count <= 4, "byte_count")) {
+			return Zinc_assert();
+		}
 
 		int j = 0;
 		while (j < byte_count) {
@@ -90,7 +92,9 @@ void Zinc_unit_utf8_three_byte(Zinc_test* test)
 	char* s = "€";
 
 	int byte_count = ZINC_NUM_BYTES(s[0]);
-	Zinc_assert_true(test, byte_count > 0 && byte_count <= 4, "byte_count");
+	if (!Zinc_expect_true(test, byte_count > 0 && byte_count <= 4, "byte_count")) {
+		return Zinc_assert();
+	}
 
 	Zinc_set_error("num bytes for (%s)", s);
 	if (!Zinc_expect_int_equal(test, byte_count, 3, Zinc_error_message)) {
@@ -132,7 +136,9 @@ void Zinc_unit_utf8_four_byte(Zinc_test* test)
 	char* s = "𐍈";
 
 	int byte_count = ZINC_NUM_BYTES(s[0]);
-	Zinc_assert_true(test, byte_count > 0 && byte_count <= 4, "byte_count");
+	if (!Zinc_expect_true(test, byte_count > 0 && byte_count <= 4, "byte_count")) {
+		return Zinc_assert();
+	}
 
 	Zinc_set_error("num bytes for (%s)", s);
 	if (!Zinc_expect_int_equal(test, byte_count, 4, Zinc_error_message)) {

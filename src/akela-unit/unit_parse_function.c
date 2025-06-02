@@ -16,7 +16,9 @@ void AkeUnit_parse_function_no_inputs_no_outputs(Zinc_test* test)
 
     AkeUnit_parse_setup("fn foo() const x: Int32; x+1; 5+4 end", &cu);
     Zinc_assert_no_errors(test, &cu.errors);
-    Zinc_assert_true(test, cu.valid, "AkeUnit_parse_setup valid");
+    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
@@ -127,7 +129,9 @@ void AkeUnit_parse_function_input(Zinc_test* test)
 
     AkeUnit_parse_setup("fn foo(x: Int32) x+1; 5+4 end", &cu);
     Zinc_assert_no_errors(test, &cu.errors);
-    Zinc_assert_true(test, cu.valid, "AkeUnit_parse_setup valid");
+    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
@@ -255,7 +259,9 @@ void AkeUnit_parse_function_multiple_inputs(Zinc_test* test)
 
     AkeUnit_parse_setup("fn foo(x: Int32, y: Int32) x+1; 5+4 end", &cu);
     Zinc_assert_no_errors(test, &cu.errors);
-    Zinc_assert_true(test, cu.valid, "AkeUnit_parse_setup valid");
+    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
@@ -1179,7 +1185,9 @@ void AkeUnit_parse_call(Zinc_test* test)
 
     AkeUnit_parse_setup("fn foo() 1 end; foo()", &cu);
     Zinc_assert_no_errors(test, &cu.errors);
-    Zinc_assert_true(test, cu.valid, "AkeUnit_parse_setup valid");
+    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
@@ -1318,7 +1326,9 @@ void AkeUnit_parse_call2(Zinc_test* test)
 
     AkeUnit_parse_setup("fn foo(arg1: Int32) arg1 end; foo(2)", &cu);
     Zinc_assert_no_errors(test, &cu.errors);
-    Zinc_assert_true(test, cu.valid, "AkeUnit_parse_setup valid");
+    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
@@ -1434,7 +1444,9 @@ void AkeUnit_parse_call3(Zinc_test* test)
 
     AkeUnit_parse_setup("fn foo(arg1: Int32, arg2: Int32)->Int32 1 end; const x: Int32; const y: Int32; foo(x,y)", &cu);
     Zinc_assert_no_errors(test, &cu.errors);
-    Zinc_assert_true(test, cu.valid, "AkeUnit_parse_setup valid");
+    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
@@ -1548,7 +1560,9 @@ void AkeUnit_parse_call4(Zinc_test* test)
             "fn foo(arg0: Int32, arg1: Int32, arg2: Int32)->Int32 100 end; const x: Int32; const y: Int32; foo(x, y, 1)",
             &cu);
     Zinc_assert_no_errors(test, &cu.errors);
-    Zinc_assert_true(test, cu.valid, "AkeUnit_parse_setup valid");
+    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();

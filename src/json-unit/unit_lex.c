@@ -1287,7 +1287,9 @@ void Json_unit_match_tools_convert_char1(Zinc_test* test)
 
     uint32_t cp;
     int num = Zinc_utf8_to_utf32("A", &cp);
-    Zinc_assert_true(test, num, "valid utf8");
+    if (!Zinc_expect_true(test, num, "valid utf8")) {
+		return Zinc_assert();
+	}
     Zinc_expect_uint32_t_equal(test, cp, 0x41, "cp");
 }
 
@@ -1302,7 +1304,9 @@ void Json_unit_match_tools_convert_char2(Zinc_test* test)
 
     uint32_t cp;
     int num = Zinc_utf8_to_utf32("θ", &cp);
-    Zinc_assert_true(test, num, "valid utf8");
+    if (!Zinc_expect_true(test, num, "valid utf8")) {
+		return Zinc_assert();
+	}
     Zinc_expect_uint32_t_equal(test, cp, 0x3B8, "cp");
 }
 

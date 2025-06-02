@@ -181,7 +181,9 @@ void AkeUnit_comp_table_include_base(Zinc_test* test)
 
 	struct Ake_comp_unit* cu_base = NULL;
 	bool valid = Ake_include_base(&ct, cu_main, &cu_base);
-	Zinc_assert_true(test, valid, "include_base valid");
+	if (!Zinc_expect_true(test, valid, "include_base valid")) {
+		return Zinc_assert();
+	}
 	Zinc_expect_no_errors(test, &cu_base->errors);
 	Zinc_expect_true(test, cu_base->valid, "valid_base");
 

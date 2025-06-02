@@ -7,7 +7,6 @@
 #include "string_list.h"
 
 void Zinc_assert();
-void Zinc_assert_true(Zinc_test* test, int value, const char* message);
 void Zinc_assert_false(Zinc_test* test, int value, const char* message);
 void Zinc_assert_null(Zinc_test* test, void* p, const char* message);
 void Zinc_assert_error(Zinc_test* test, Zinc_result r, const char* message);
