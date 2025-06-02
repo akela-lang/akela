@@ -50,7 +50,9 @@ void Zinc_unit_utf8_two_byte(Zinc_test* test)
 		c[j] = '\0';
 
 		Zinc_set_error("num bytes for (%s)", c);
-		Zinc_assert_int_equal(test, byte_count, 2, Zinc_error_message);
+		if (!Zinc_expect_int_equal(test, byte_count, 2, Zinc_error_message)) {
+			return Zinc_assert();
+		}
 
 		Zinc_set_error("not extra byte for (%s)", c);
 		Zinc_expect_false(test, ZINC_IS_EXTRA_BYTE(c[0]), Zinc_error_message);
@@ -91,7 +93,9 @@ void Zinc_unit_utf8_three_byte(Zinc_test* test)
 	Zinc_assert_true(test, byte_count > 0 && byte_count <= 4, "byte_count");
 
 	Zinc_set_error("num bytes for (%s)", s);
-	Zinc_assert_int_equal(test, byte_count, 3, Zinc_error_message);
+	if (!Zinc_expect_int_equal(test, byte_count, 3, Zinc_error_message)) {
+		return Zinc_assert();
+	}
 
 	Zinc_set_error("not extra byte for (%s)", s);
 	Zinc_expect_false(test, ZINC_IS_EXTRA_BYTE(s[0]), Zinc_error_message);
@@ -131,7 +135,9 @@ void Zinc_unit_utf8_four_byte(Zinc_test* test)
 	Zinc_assert_true(test, byte_count > 0 && byte_count <= 4, "byte_count");
 
 	Zinc_set_error("num bytes for (%s)", s);
-	Zinc_assert_int_equal(test, byte_count, 4, Zinc_error_message);
+	if (!Zinc_expect_int_equal(test, byte_count, 4, Zinc_error_message)) {
+		return Zinc_assert();
+	}
 
 	Zinc_set_error("not extra byte for (%s)", s);
 	Zinc_expect_false(test, ZINC_IS_EXTRA_BYTE(s[0]), Zinc_error_message);

@@ -20,22 +20,6 @@ void Zinc_assert()
 	fprintf(stderr, "Exiting because of assertion error.\n");
 }
 
-void Zinc_assert_int_equal(Zinc_test* test, int a, int b, const char* message)
-{
-    test->check_count++;
-
-    if (a == b) {
-        test->check_passed++;
-        return;
-    }
-
-    test->check_failed++;
-    test->pass = false;
-    Zinc_test_print_unseen(test);
-    fprintf(stderr, "\t%d = %d assertion error: %s\n", a, b, message);
-    Zinc_panic();
-}
-
 void Zinc_assert_true(Zinc_test* test, int value, const char* message)
 {
     test->check_count++;
@@ -199,19 +183,20 @@ void Zinc_expect_strcmp(Zinc_test* test, const char* a, const char* b, const cha
     fprintf(stderr, "\t(%s) = (%s) strcmp error: %s\n", a, b, message);
 }
 
-void Zinc_expect_int_equal(Zinc_test* test, int a, int b, const char* message)
+bool Zinc_expect_int_equal(Zinc_test* test, int a, int b, const char* message)
 {
     test->check_count++;
 
     if (a == b) {
         test->check_passed++;
-        return;
+        return true;
     }
 
     test->check_failed++;
     test->pass = false;
     Zinc_test_print_unseen(test);
     fprintf(stderr, "\t%d = %d error: %s\n", a, b, message);
+	return false;
 }
 
 void Zinc_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, const char* message)

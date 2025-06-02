@@ -142,7 +142,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
 
 	valid = Ake_lex(&ls, &t);
 	Zinc_assert_no_errors(test, ls.el);
-    Zinc_assert_int_equal(test, t->type, Ake_token_eof, "eof");
+    if (!Zinc_expect_int_equal(test, t->type, Ake_token_eof, "eof")) {
+		return Zinc_assert();
+	}
 	Zinc_assert_true(test, valid, "lex valid");
 
 	Ake_token_destroy(t);

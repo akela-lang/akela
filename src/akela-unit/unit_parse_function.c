@@ -260,7 +260,9 @@ void AkeUnit_parse_function_multiple_inputs(Zinc_test* test)
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-    Zinc_assert_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+    if (!Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root")) {
+		return Zinc_assert();
+	}
 
     Ake_ast* f = Ast_node_get(cu.root, 0);
     if (!Zinc_expect_ptr(test, f, "cu.root")) {

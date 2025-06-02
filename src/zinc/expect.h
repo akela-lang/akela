@@ -18,9 +18,8 @@ void Zinc_expect_string(Zinc_test* test, Zinc_string* a, const char* b, const ch
 bool Zinc_expect_true(Zinc_test* test, int value, const char* fmt, ...);
 void Zinc_expect_false(Zinc_test* test, int value, const char* message);
 void Zinc_expect_strcmp(Zinc_test* test, const char* a, const char* b, const char* message);
-void Zinc_expect_int_equal(Zinc_test* test, int a, int b, const char* message);
+bool Zinc_expect_int_equal(Zinc_test* test, int a, int b, const char* message);
 void Zinc_expect_ptr_equal(Zinc_test* test, const void* a, const void* b, const char* message);
-void Zinc_assert_int_equal(Zinc_test* test, int a, int b, const char* message);
 void Zinc_expect_long_equal(Zinc_test* test, long a, long b, const char* message);
 void Zinc_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message);
 void Zinc_expect_long_long_equal(Zinc_test* test, long long a, long long b, const char* message);
