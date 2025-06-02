@@ -19,7 +19,6 @@
 # Lava
 
 # Zinc
-* remove assert functions and check returned value of expect functions
 * return bool from expect functions
 
 # Test

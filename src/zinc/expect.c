@@ -9,29 +9,9 @@
 #include "string_list.h"
 #include "zinc/utf8.h"
 
-void Zinc_panic()
-{
-    fprintf(stderr, "Exiting because of assertion error.\n");
-    exit(1);
-}
-
 void Zinc_assert()
 {
 	fprintf(stderr, "Exiting because of assertion error.\n");
-}
-
-void Zinc_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message)
-{
-	test->check_count++;
-	if (a == b) {
-		test->check_passed++;
-		return;
-	}
-	test->check_failed++;
-	test->pass = false;
-	Zinc_test_print_unseen(test);
-	fprintf(stderr, "\t(%zu) = (%zu) error: %s\n", a, b, message);
-	Zinc_panic();
 }
 
 bool Zinc_expect_error(Zinc_test* test, Zinc_result r, const char* message)
