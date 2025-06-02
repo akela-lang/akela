@@ -23,7 +23,9 @@ void AkeUnit_lex_blank(Zinc_test* test)
 	AkeUnit_lex_setup("", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex 0")) {
 		return Zinc_assert();
 	}
@@ -57,7 +59,9 @@ void AkeUnit_lex_assign(Zinc_test* test)
 	AkeUnit_lex_setup("a = 1", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -68,7 +72,9 @@ void AkeUnit_lex_assign(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -78,7 +84,9 @@ void AkeUnit_lex_assign(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -89,7 +97,9 @@ void AkeUnit_lex_assign(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -125,7 +135,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
 	AkeUnit_lex_setup("speed + 1", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -136,7 +148,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -146,7 +160,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -157,7 +173,9 @@ void AkeUnit_lex_addition(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_int_equal(test, t->type, Ake_token_eof, "eof")) {
 		return Zinc_assert();
 	}
@@ -190,7 +208,9 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -203,7 +223,9 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -215,7 +237,9 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -228,7 +252,9 @@ void AkeUnit_lex_subtraction(Zinc_test* test)
 
 	/* allocate ls t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -265,7 +291,9 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -278,7 +306,9 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -290,7 +320,9 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -303,7 +335,9 @@ void AkeUnit_lex_multiplication(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -337,7 +371,9 @@ void AkeUnit_lex_divide(Zinc_test* test)
 	AkeUnit_lex_setup("45 / 11", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -348,7 +384,9 @@ void AkeUnit_lex_divide(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -358,7 +396,9 @@ void AkeUnit_lex_divide(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -369,7 +409,9 @@ void AkeUnit_lex_divide(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -404,7 +446,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -417,7 +461,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -429,7 +475,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -442,7 +490,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -454,7 +504,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -467,7 +519,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -479,7 +533,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -492,7 +548,9 @@ void AkeUnit_lex_stmts_expr(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -529,7 +587,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -542,7 +602,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -554,7 +616,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -567,7 +631,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -579,7 +645,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -592,7 +660,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -604,7 +674,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -617,7 +689,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -629,7 +703,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -644,7 +720,9 @@ void AkeUnit_lex_stmts_expr2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -681,7 +759,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -694,7 +774,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -706,7 +788,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -719,7 +803,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -731,7 +817,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -744,7 +832,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -756,7 +846,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -769,7 +861,9 @@ void AkeUnit_lex_stmts_assign(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -803,7 +897,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 	AkeUnit_lex_setup("fn foo () \n end", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -813,7 +909,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -824,7 +922,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -834,7 +934,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -844,7 +946,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -854,7 +958,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -864,7 +970,9 @@ void AkeUnit_lex_function(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -899,7 +1007,9 @@ void AkeUnit_lex_comma(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -911,7 +1021,9 @@ void AkeUnit_lex_comma(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -948,7 +1060,9 @@ void AkeUnit_lex_semicolon(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -960,7 +1074,9 @@ void AkeUnit_lex_semicolon(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -997,7 +1113,9 @@ void AkeUnit_lex_if(Zinc_test* test)
 	
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1009,7 +1127,9 @@ void AkeUnit_lex_if(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1021,7 +1141,9 @@ void AkeUnit_lex_if(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1033,7 +1155,9 @@ void AkeUnit_lex_if(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1067,7 +1191,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	AkeUnit_lex_setup("== != <= >= && || ->", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1077,7 +1203,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1087,7 +1215,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1097,7 +1227,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1107,7 +1239,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1117,7 +1251,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1127,7 +1263,9 @@ void AkeUnit_lex_compound_operators(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1159,7 +1297,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1171,7 +1311,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1183,7 +1325,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1195,7 +1339,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1207,7 +1353,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1219,7 +1367,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1231,7 +1381,9 @@ void AkeUnit_lex_compound_operators2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1262,7 +1414,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	AkeUnit_lex_setup("for i = 0:10 1 end", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1272,7 +1426,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1283,7 +1439,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1293,7 +1451,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1303,7 +1463,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1313,7 +1475,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1324,7 +1488,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1335,7 +1501,9 @@ void AkeUnit_lex_for_range(Zinc_test* test)
 	free(t);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1367,7 +1535,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1379,7 +1549,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1392,7 +1564,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1404,7 +1578,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1417,7 +1593,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1430,7 +1608,9 @@ void AkeUnit_lex_for_iteration(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1493,7 +1673,9 @@ void AkeUnit_lex_square_brackets(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1505,7 +1687,9 @@ void AkeUnit_lex_square_brackets(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1539,7 +1723,9 @@ void AkeUnit_lex_string(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1574,7 +1760,9 @@ void AkeUnit_lex_string2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1587,7 +1775,9 @@ void AkeUnit_lex_string2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1599,7 +1789,9 @@ void AkeUnit_lex_string2(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1668,7 +1860,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1686,7 +1880,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1703,7 +1899,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1720,7 +1918,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1737,7 +1937,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1754,7 +1956,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1771,7 +1975,9 @@ void AkeUnit_lex_line_col(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "lex valid")) {
 		return Zinc_assert();
 	}
@@ -1888,7 +2094,9 @@ void AkeUnit_lex_module(Zinc_test* test)
 
 	struct Ake_token* module;
 	valid = Ake_lex(&ls, &module);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "valid module")) {
 		return Zinc_assert();
 	}
@@ -1902,7 +2110,9 @@ void AkeUnit_lex_module(Zinc_test* test)
 
 	struct Ake_token* number;
 	valid = Ake_lex(&ls, &number);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "valid number")) {
 		return Zinc_assert();
 	}
@@ -1917,7 +2127,9 @@ void AkeUnit_lex_module(Zinc_test* test)
 
 	struct Ake_token* end;
 	valid = Ake_lex(&ls, &end);
-	Zinc_assert_no_errors(test, ls.el);
+	if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
 	if (!Zinc_expect_true(test, valid, "valid end")) {
 		return Zinc_assert();
 	}
@@ -1951,7 +2163,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
 
     struct Ake_token* number0;
     valid = Ake_lex(&ls, &number0);
-    Zinc_assert_no_errors(test, ls.el);
+    if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_true(test, valid, "valid number0")) {
 		return Zinc_assert();
 	}
@@ -1966,7 +2180,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
 
     struct Ake_token* newline0;
     valid = Ake_lex(&ls, &newline0);
-    Zinc_assert_no_errors(test, ls.el);
+    if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_true(test, valid, "valid newline0")) {
 		return Zinc_assert();
 	}
@@ -1980,7 +2196,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
 
     struct Ake_token* number1;
     valid = Ake_lex(&ls, &number1);
-    Zinc_assert_no_errors(test, ls.el);
+    if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_true(test, valid, "valid number1")) {
 		return Zinc_assert();
 	}
@@ -1995,7 +2213,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
 
     struct Ake_token* newline1;
     valid = Ake_lex(&ls, &newline1);
-    Zinc_assert_no_errors(test, ls.el);
+    if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_true(test, valid, "valid newline1")) {
 		return Zinc_assert();
 	}
@@ -2009,7 +2229,9 @@ void AkeUnit_lex_comment(Zinc_test* test)
 
     struct Ake_token* eof;
     valid = Ake_lex(&ls, &eof);
-    Zinc_assert_no_errors(test, ls.el);
+    if (!Zinc_expect_no_errors(test, ls.el)) {
+		return Zinc_assert();
+	}
     if (!Zinc_expect_true(test, valid, "valid eof")) {
 		return Zinc_assert();
 	}

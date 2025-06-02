@@ -22,7 +22,9 @@ void AkeUnit_parse_blank(Zinc_test* test)
 
     Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
 
-    Zinc_assert_no_errors(test, pr.errors);
+    if (!Zinc_expect_no_errors(test, pr.errors)) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, pr.root, "ptr cu.root")) {
 		return Zinc_assert();
@@ -53,7 +55,9 @@ void AkeUnit_parse_add(Zinc_test* test)
 
     Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
 
-    Zinc_assert_no_errors(test, pr.errors);
+    if (!Zinc_expect_no_errors(test, pr.errors)) {
+		return Zinc_assert();
+	}
 
     if (!Zinc_expect_ptr(test, pr.root, "ptr cu.root")) {
 		return Zinc_assert();
@@ -204,7 +208,9 @@ void AkeUnit_parse_add_mixed_types(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 + 5.0", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -261,7 +267,9 @@ void AkeUnit_parse_add_positive(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("var speed: Int32 = 100; speed + +1", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -321,7 +329,9 @@ void AkeUnit_parse_add_negative(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const speed: Int32; speed + -1", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -381,7 +391,9 @@ void AkeUnit_parse_sub(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const delta: Int32 = 3; 100 - delta", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -430,7 +442,9 @@ void AkeUnit_parse_sub_positive(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const speed: Int32; speed - +1", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -490,7 +504,9 @@ void AkeUnit_parse_sub_negative(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const speed: Int32; speed - -1", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -550,7 +566,9 @@ void AkeUnit_parse_mult(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("5 * 2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -703,7 +721,9 @@ void AkeUnit_parse_mult_positive(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const speed: Int32; speed * +1", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -763,7 +783,9 @@ void AkeUnit_parse_mult_negative(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const speed: Int32; speed * -1", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -823,7 +845,9 @@ void AkeUnit_parse_divide(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("52 / 2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -870,7 +894,9 @@ void AkeUnit_parse_add_add(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 + 2 + 3", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -930,7 +956,9 @@ void AkeUnit_parse_mult_mult(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 * 2 * 3", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -990,7 +1018,9 @@ void AkeUnit_parse_add_mult(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("5 + 3 * 2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1050,7 +1080,9 @@ void AkeUnit_parse_mult_add(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("4 * 3 + 2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1108,7 +1140,9 @@ void AkeUnit_parse_power(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("5 ^ 2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "cu.valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1311,7 +1345,9 @@ void AkeUnit_parse_paren_add2(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const speed: Int32; (speed) + 1", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1364,7 +1400,9 @@ void AkeUnit_parse_paren_add3(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const speed: Int32; speed + (1)", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1413,7 +1451,9 @@ void AkeUnit_parse_paren_add_add(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 + (2 + 3)", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1481,7 +1521,9 @@ void AkeUnit_parse_paren_add_add2(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("(1 + 2) + 3", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1545,7 +1587,9 @@ void AkeUnit_parse_paren_mult(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("(5 * 2)", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1594,7 +1638,9 @@ void AkeUnit_parse_paren_mult_mult(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 * (2 * 3)", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1658,7 +1704,9 @@ void AkeUnit_parse_paren_mult_mult2(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("(1 * 2) * 3", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -1722,7 +1770,9 @@ void AkeUnit_parse_comparison(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("var count: Int32 = 5; count == 10; count != 11.1; count <= 12; count >= 13", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* cond0 = Ast_node_get(cu.root, 1);
@@ -1987,7 +2037,9 @@ void AkeUnit_parse_and(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: Bool; const b: Bool; a && b", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -2029,7 +2081,9 @@ void AkeUnit_parse_or(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: Bool; const b: Bool; a || b", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -2084,7 +2138,9 @@ void AkeUnit_parse_or_or(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: Bool; const b: Bool; const c: Bool; a || b || c", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -2319,7 +2375,9 @@ void AkeUnit_parse_array_subscript2(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: [10][10]Int32; a[0][1]", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* a = Ast_node_get(cu.root, 1);
@@ -2385,7 +2443,9 @@ void AkeUnit_parse_array_subscript3(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: [5]Int32; const b: Int32; a[b]", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* a = Ast_node_get(cu.root, 2);
@@ -2443,7 +2503,9 @@ void AkeUnit_parse_expr_array_subscript_3d(Zinc_test* test)
                "]\n"
                "x[1][1][3]\n",
                &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* const_ = Ast_node_get(cu.root, 0);
@@ -2642,7 +2704,9 @@ void AkeUnit_parse_assign_string(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("var mut a: [6 const]Nat8; a = \"hello\"", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr root")) {
@@ -2697,7 +2761,9 @@ void AkeUnit_parse_assign_multiple(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("var mut a: Int32; var mut b: Int32; var mut c: Int32; a = b = c = 0", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
@@ -2861,7 +2927,9 @@ void AkeUnit_parse_expr_newline_assignment(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("var mut a: Int32; a =\n1", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 1);
@@ -2899,7 +2967,9 @@ void AkeUnit_parse_expr_newline_boolean(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("true &&\nfalse", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 0);
@@ -2937,7 +3007,9 @@ void AkeUnit_parse_expr_newline_comparison(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 <\n2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 0);
@@ -2975,7 +3047,9 @@ void AkeUnit_parse_expr_newline_add(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 +\n2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* add = Ast_node_get(cu.root, 0);
@@ -3013,7 +3087,9 @@ void AkeUnit_parse_expr_newline_mult(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1 *\n2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 0);
@@ -3051,7 +3127,9 @@ void AkeUnit_parse_expr_newline_power(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("1^\n2", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* op = Ast_node_get(cu.root, 0);
@@ -3089,7 +3167,9 @@ void AkeUnit_parse_expr_newline_subscript(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: [1]Int32; a[\n0\n]", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* subscript = Ast_node_get(cu.root, 1);
@@ -3127,7 +3207,9 @@ void AkeUnit_parse_expr_newline_function_call(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("fn foo(a: Int32, b: Int32)->Int32 a+b end; foo(\n1,\n2\n)", &cu);
-    Zinc_assert_no_errors(test, &cu.errors);
+    if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
     Zinc_expect_true(test, cu.valid, "valid");
 
     Ake_ast* call = Ast_node_get(cu.root, 1);

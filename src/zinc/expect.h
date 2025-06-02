@@ -8,8 +8,11 @@
 
 void Zinc_assert();
 
-bool Zinc_expect_error(Zinc_test* test, Zinc_result r, const char* message);
+void Zinc_assert_has_errors(Zinc_test* test, Zinc_error_list* el);
+Zinc_error* Zinc_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
+void Zinc_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
 
+bool Zinc_expect_error(Zinc_test* test, Zinc_result r, const char* message);
 bool Zinc_expect_null(Zinc_test* test, void* p, const char* message);
 void Zinc_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
 void Zinc_expect_string(Zinc_test* test, Zinc_string* a, const char* b, const char* message);
@@ -23,12 +26,9 @@ void Zinc_expect_unsigned_long_equal(Zinc_test* test, unsigned long a, unsigned 
 void Zinc_expect_long_long_equal(Zinc_test* test, long long a, long long b, const char* message);
 void Zinc_expect_u_long_equal(Zinc_test* test, unsigned long a, unsigned long b, const char* message);
 
-void Zinc_assert_no_errors(Zinc_test* test, Zinc_error_list* el);
-void Zinc_expect_no_errors(Zinc_test* test, Zinc_error_list* el);
+bool Zinc_expect_no_errors(Zinc_test* test, Zinc_error_list* el);
 void Zinc_expect_error_count(Zinc_test* test, Zinc_error_list* el, size_t count);
-void Zinc_assert_has_errors(Zinc_test* test, Zinc_error_list* el);
 void Zinc_expect_has_errors(Zinc_test* test, Zinc_error_list* el);
-Zinc_error* Zinc_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
 Zinc_error* Zinc_expect_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
 void Zinc_expect_vector_str(Zinc_test* test, Zinc_vector* a, const char* b, const char* message);
 void Zinc_expect_char_equal(Zinc_test* test, char a, char b, const char* message);
@@ -43,7 +43,6 @@ void Zinc_expect_buffer_list_item(Zinc_test* test, Zinc_string_list* bl, size_t 
 void Zinc_expect_utf8_char_str(Zinc_test* test, char a[4], int num, char* b, char* message);
 
 void Zinc_expect_uint_equal(Zinc_test* test, unsigned int a, unsigned int b, const char* message);
-void Zinc_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
 void Zinc_expect_string_slice(Zinc_test* test, Zinc_string_slice* sl, Zinc_string* bf, char* message);
 void Zinc_expect_string_slice_str(Zinc_test* test, Zinc_string_slice* sl, char* expected, char* message);
 void Zinc_expect_utf8_char(Zinc_test* test, char* a, char* b, char* message);

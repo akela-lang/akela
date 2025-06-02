@@ -7,7 +7,10 @@
 Cob_result match_run(Zinc_test* test, char* pattern, char* text)
 {
     Cob_re re = Cob_compile_str(pattern);
-    Zinc_assert_no_errors(test, re.errors);
+    if (!Zinc_expect_no_errors(test, re.errors)) {
+        Zinc_assert();
+		return (Cob_result) {.matched = false, .groups = (Zinc_string_list){.head = NULL, .tail = NULL}};
+	}
 
     const size_t size = strlen(text);
     const Zinc_string_slice slice = {text, size};

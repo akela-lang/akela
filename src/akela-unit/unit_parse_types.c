@@ -187,7 +187,9 @@ void AkeUnit_parse_types_array(Zinc_test* test)
 	struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup("const a: [10]Int32; a[1]", &cu);
-	Zinc_assert_no_errors(test, &cu.errors);
+	if (!Zinc_expect_no_errors(test, &cu.errors)) {
+		return Zinc_assert();
+	}
 	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
 
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
