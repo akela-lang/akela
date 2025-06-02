@@ -20,28 +20,6 @@ void Zinc_assert()
 	fprintf(stderr, "Exiting because of assertion error.\n");
 }
 
-Zinc_error* Zinc_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[])
-{
-	test->check_count++;
-
-	Zinc_error* e = el->head;
-	while (e) {
-		Zinc_string_finish(&e->message);
-		if (strcmp(e->message.buf, message) == 0) {
-			test->check_passed++;
-			return e;
-		}
-		e = e->next;
-	}
-
-	test->check_failed++;
-	test->pass = false;
-	Zinc_test_print_unseen(test);
-	fprintf(stderr, "\terror not found: %s\n", message);
-	Zinc_panic();
-	return NULL;
-}
-
 void Zinc_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message)
 {
 	test->check_count++;

@@ -106,7 +106,10 @@ void CobUnit_compile_union_single_error(Zinc_test* test)
     Zinc_expect_has_errors(test, re.errors);
 
     struct Zinc_error* e = NULL;
-    e = Zinc_assert_source_error(test, re.errors, "expected term after union");
+    e = Zinc_expect_source_error(test, re.errors, "expected term after union");
+	if (!e) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.start_pos, 2, "start pos");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(test, e->loc.col, 3, "col");
@@ -524,7 +527,10 @@ void CobUnit_compile_repeat_num_error(Zinc_test* test)
     Zinc_expect_has_errors(test, re.errors);
     Zinc_expect_size_t_equal(test, re.group_count, 1, "group_count");
 
-    struct Zinc_error* e = Zinc_assert_source_error(test, re.errors, "expected digit");
+    struct Zinc_error* e = Zinc_expect_source_error(test, re.errors, "expected digit");
+	if (!e) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.start_pos, 2, "start_pos");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(test, e->loc.col, 3, "col");
@@ -592,7 +598,10 @@ void CobUnit_compile_repeat_range_num_error(Zinc_test* test)
     Zinc_expect_has_errors(test, re.errors);
     Zinc_expect_size_t_equal(test, re.group_count, 1, "group_count");
 
-    struct Zinc_error* e = Zinc_assert_source_error(test, re.errors, "expected digit");
+    struct Zinc_error* e = Zinc_expect_source_error(test, re.errors, "expected digit");
+	if (!e) {
+		return Zinc_assert();
+	}
     Zinc_expect_size_t_equal(test, e->loc.start_pos, 4, "byte_pos");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(test, e->loc.col, 5, "col");

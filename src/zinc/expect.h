@@ -8,7 +8,6 @@
 
 void Zinc_assert();
 
-Zinc_error* Zinc_assert_source_error(Zinc_test* test, Zinc_error_list* el, const char message[]);
 void Zinc_assert_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
 
 bool Zinc_expect_error(Zinc_test* test, Zinc_result r, const char* message);
