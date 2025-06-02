@@ -1461,7 +1461,9 @@ void AkeUnit_lex_error_unrecognized_character(Zinc_test* test)
 	AkeUnit_lex_setup("$", &ls, &el);
 
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_false(test, valid, "lex");
+	if (!Zinc_expect_false(test, valid, "lex")) {
+		return Zinc_assert();
+	}
 	Zinc_assert_has_errors(test, ls.el);
 	Zinc_assert_null(test, t, "t");
 	Zinc_expect_source_error(test, &el, "Unrecognized character: $");
@@ -1630,7 +1632,9 @@ void AkeUnit_lex_string_escape_error(Zinc_test* test)
 
 	/* allocate ls{} t t{} */
 	valid = Ake_lex(&ls, &t);
-	Zinc_assert_false(test, valid, "lex");
+	if (!Zinc_expect_false(test, valid, "lex")) {
+		return Zinc_assert();
+	}
 	Zinc_assert_has_errors(test, ls.el);
 	Zinc_expect_source_error(test, &el, "Unrecognized escape sequence: x");
 
