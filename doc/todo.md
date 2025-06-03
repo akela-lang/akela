@@ -19,5 +19,12 @@
 # Lava
 
 # Zinc
+* convert os specific to generic functions
 
 # Test
+
+# Example
+* read config
+* parse
+* run
+* check difference
