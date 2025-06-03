@@ -19,6 +19,5 @@
 # Lava
 
 # Zinc
-* return bool from expect functions
 
 # Test
