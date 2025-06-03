@@ -714,7 +714,7 @@ Ake_ast* Ake_parse_sign(struct Ake_parse_state* ps)
     }
 
 	Ake_ast* right = NULL;
-    right = Ake_parse_expr(ps);
+    right = Ake_parse_complex_operators(ps);
 	if (right && right->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }

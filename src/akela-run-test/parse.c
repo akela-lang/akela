@@ -341,7 +341,7 @@ void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_t
         } else {
             case_test->solo = solo->data.boolean;
             if (case_test->solo) {
-                suite_test->has_solo = true;
+                Zinc_test_set_has_solo(case_test);
             }
         }
     }

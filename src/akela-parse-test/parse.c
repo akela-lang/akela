@@ -288,12 +288,12 @@ void Apt_parse_case(
         item = item->next;
     }
 
-    if (case_test->solo) {
-        suite_test->has_solo = true;
-    }
-
     Zinc_string_add_string(&case_test->name, &case_data->description);
     case_test->func = Apt_case_run;
+
+    if (case_test->solo) {
+        Zinc_test_set_has_solo(case_test);
+    }
 }
 
 void Apt_parse_case_meta(Zinc_test* top_test, Zinc_test* case_test, Cent_value* value)
