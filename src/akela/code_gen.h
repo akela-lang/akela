@@ -7,8 +7,10 @@
 #include <stdint.h>
 
 typedef struct {
+    uint8_t init_offset;
     uint8_t jit_offset;
-} Code_gen_vtable;
+    uint8_t destroy_offset;
+} Ake_Vt;
 
 typedef struct {
     Ake_comp_unit* cu;
@@ -21,10 +23,14 @@ typedef struct {
     bool dry_run;
 } Ake_code_gen_result;
 
-typedef bool (*Ake_code_gen_interface)(void* cg_obj, Ake_ast* n, Ake_code_gen_result* result);
+typedef void* (*Ake_code_gen_init_interface)();
+typedef bool (*Ake_code_gen_jit_interface)(void* cg_obj, Ake_ast* n, Ake_code_gen_result* result);
+typedef void (*Ake_code_gen_destroy_interface)(void* cg_jit);
 
 void Ake_code_gen_result_init(Ake_code_gen_result* result);
 void Ake_code_gen_result_destroy(Ake_code_gen_result* result);
-bool Ake_code_gen_jit(void* cg_obj, Code_gen_vtable* cg_vtable, Ake_ast* n, Ake_code_gen_result* result);
+void* Ake_code_gen_init(void* cg_obj, Ake_Vt* cg_vtable);
+bool Ake_code_gen_jit(void* cg_obj, Ake_Vt* cg_vtable, Ake_ast* n, Ake_code_gen_result* result);
+void Ake_code_gen_destroy(void* cg_obj, Ake_Vt* cg_vtable, void* cg_jit);
 
 #endif

@@ -8,6 +8,24 @@ namespace Akela_llvm {
     void Declare_printf(Jit_data* jd);
     void Declare_exit(Jit_data* jd);
 
+    Jit_data* Init()
+    {
+        InitializeNativeTarget();
+        InitializeNativeTargetAsmPrinter();
+        InitializeNativeTargetAsmParser();
+        auto jd = new Jit_data();
+        Zinc_error_list* errors = NULL;
+        Zinc_error_list_create(&errors);
+        Jit_data_init(jd, errors);
+        return jd;
+    }
+
+    void Destroy(Jit_data* jd)
+    {
+        free(jd->el);
+        delete jd;
+    }
+
     bool Jit(Akela_llvm_cg* cg, Ake_ast* n, Ake_code_gen_result* result)
     {
         bool valid = true;

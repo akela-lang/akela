@@ -20,7 +20,7 @@ set_target_properties(akela-llvm-unit
 
 # function_pointer
 add_executable(function_pointer function_pointer.cpp)
-target_link_libraries(function_pointer ${llvm_libs} ${coverage_lib})
+target_link_libraries(function_pointer zinc ${llvm_libs} ${coverage_lib})
 
 add_executable(llvm_abort abort.c)
 target_link_libraries(llvm_abort ${coverage_lib})

@@ -1,6 +1,16 @@
 #ifndef AKELA_LLVM_TOOLS_H
 #define AKELA_LLVM_TOOLS_H
 
+extern "C" {
+#include "zinc/memory.h"
+#include "akela/code_gen.h"
+#include "akela/type_def.h"
+#include "zinc/error.h"
+#include "zinc/list.h"
+#include "zinc/vector.h"
+#include "akela/symbol.h"
+}
+
 #include "../include/KaleidoscopeJIT.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -33,15 +43,9 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "akela/code_gen.h"
-#include "cg.h"
-#include "akela/type_def.h"
-#include "zinc/error.h"
-#include "zinc/list.h"
-#include "zinc/vector.h"
 #include <cassert>
 #include <iostream>
-#include "akela/symbol.h"
+#include "cg.h"
 
 #define TOP_LEVEL_NAME "__top_level"
 #define MODULE_NAME "Akela JIT"
