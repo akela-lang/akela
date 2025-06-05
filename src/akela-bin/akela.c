@@ -56,7 +56,9 @@ int main(int argc, char** argv)
     Akela_llvm_cg_create(&cg, &cu.errors, &cu.extern_list);
     Ake_code_gen_result result;
     Ake_code_gen_result_init(&result);
-    Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu.root, &result);
+    void* jd = Ake_code_gen_init(cg, &Akela_llvm_vtable);
+    Ake_code_gen_jit(cg, &Akela_llvm_vtable, jd, cu.root, &result);
+    Ake_code_gen_destroy(cg, &Akela_llvm_vtable, jd);
 
     if (cu.errors.head) {
         struct Zinc_error* e = cu.errors.head;
