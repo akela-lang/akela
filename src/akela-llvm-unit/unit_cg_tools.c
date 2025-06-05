@@ -39,7 +39,9 @@ bool AkeLlvmUnit_cg_setup(const char* text, Ake_code_gen_result* result)
 
     Akela_llvm_cg* cg = NULL;
     Akela_llvm_cg_create(&cg, &cu->errors, &cu->extern_list);
-    valid = Ake_code_gen_jit(cg, &Akela_llvm_vtable, cu->root, result) && valid;
+    void* jd = Ake_code_gen_init(cg, &Akela_llvm_vtable);
+    valid = Ake_code_gen_jit(cg, &Akela_llvm_vtable, jd, cu->root, result) && valid;
+    Ake_code_gen_destroy(cg, &Akela_llvm_vtable, jd);
     Akela_llvm_cg_destroy(cg);
 
     if (!valid && result->module_text.size > 0) {

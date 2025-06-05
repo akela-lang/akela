@@ -30,12 +30,12 @@ void* Ake_code_gen_init(void* cg_obj, Ake_Vt* cg_vtable)
     return NULL;
 }
 
-bool Ake_code_gen_jit(void* cg_obj, Ake_Vt* cg_vtable, Ake_ast* n, Ake_code_gen_result* result)
+bool Ake_code_gen_jit(void* cg_obj, Ake_Vt* cg_vtable, void* jd, Ake_ast* n, Ake_code_gen_result* result)
 {
     if (cg_obj && cg_vtable) {
         Ake_code_gen_jit_interface* code_gen_jit =
             (Ake_code_gen_jit_interface*)((uint8_t*)cg_obj + cg_vtable->jit_offset);
-        return (*code_gen_jit)(cg_obj, n, result);
+        return (*code_gen_jit)(cg_obj, jd, n, result);
     }
     return true;
 }

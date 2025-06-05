@@ -26,35 +26,35 @@ namespace Akela_llvm {
         delete jd;
     }
 
-    bool Jit(Akela_llvm_cg* cg, Ake_ast* n, Ake_code_gen_result* result)
+    bool Jit(Akela_llvm_cg* cg, Jit_data* jd, Ake_ast* n, Ake_code_gen_result* result)
     {
         bool valid = true;
 
-        InitializeNativeTarget();
-        InitializeNativeTargetAsmPrinter();
-        InitializeNativeTargetAsmParser();
-        Jit_data jd;
-        Jit_data_init(&jd, cg->el);
+        // InitializeNativeTarget();
+        // InitializeNativeTargetAsmPrinter();
+        // InitializeNativeTargetAsmParser();
+        // Jit_data jd;
+        // Jit_data_init(&jd, cg->el);
 
         if (!Zinc_string_list_contains_str(cg->extern_list, "abort")) {
-            Declare_abort(&jd);
+            Declare_abort(jd);
         }
         if (!Zinc_string_list_contains_str(cg->extern_list, "printf")) {
-            Declare_printf(&jd);
+            Declare_printf(jd);
         }
         if (!Zinc_string_list_contains_str(cg->extern_list, "exit")) {
-            Declare_exit(&jd);
+            Declare_exit(jd);
         }
 
         std::vector<Type*> param_types = std::vector<Type*>();
-        Type* ret_type = Get_type_pointer(&jd, n->tu);
+        Type* ret_type = Get_type_pointer(jd, n->tu);
         FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
         Function *toplevel = Function::Create(
                 func_type,
                 Function::ExternalLinkage,
                 TOP_LEVEL_NAME,
-                *jd.TheModule);
-        jd.toplevel = toplevel;
+                *jd->TheModule);
+        jd->toplevel = toplevel;
 
         std::string error_str;
         raw_string_ostream error_os(error_str);
@@ -64,32 +64,32 @@ namespace Akela_llvm {
             Zinc_error_list_set(cg->el, &loc, "%s", error_str.c_str());
         }
 
-        jd.current_function.push_back(toplevel);
-        BasicBlock* entry = BasicBlock::Create(*jd.TheContext, "entry", toplevel);
-        jd.Builder->SetInsertPoint(entry);
-        Value* value = Dispatch(&jd, n);
+        jd->current_function.push_back(toplevel);
+        BasicBlock* entry = BasicBlock::Create(*jd->TheContext, "entry", toplevel);
+        jd->Builder->SetInsertPoint(entry);
+        Value* value = Dispatch(jd, n);
 
         BasicBlock* last_block = nullptr;
-        Function::iterator blocks = jd.toplevel->end();
-        if (blocks != jd.toplevel->begin()) {
+        Function::iterator blocks = jd->toplevel->end();
+        if (blocks != jd->toplevel->begin()) {
             last_block = &*--blocks;
         }
-        jd.Builder->SetInsertPoint(last_block);
+        jd->Builder->SetInsertPoint(last_block);
 
         if (n->tu) {
-            jd.Builder->CreateRet(value);
+            jd->Builder->CreateRet(value);
         } else {
-            jd.Builder->CreateRetVoid();
+            jd->Builder->CreateRetVoid();
         }
 
-        jd.current_function.pop_back();
+        jd->current_function.pop_back();
         if (cg->el->head) {
             valid = false;
         }
 
         std::string str;
         raw_string_ostream os(str);
-        if  (verifyModule(*jd.TheModule, &os)) {
+        if  (verifyModule(*jd->TheModule, &os)) {
             struct Zinc_location loc = {};
             Zinc_location_init(&loc);
             Zinc_error_list_set(cg->el, &loc, "%s", str.c_str());
@@ -98,13 +98,13 @@ namespace Akela_llvm {
 
         std::string str2;
         raw_string_ostream os2(str2);
-        jd.TheModule->print(os2, nullptr);
+        jd->TheModule->print(os2, nullptr);
         Zinc_string_add_format(&result->module_text, "%s", str2.c_str());
         Zinc_string_finish(&result->module_text);
 
         std::string str4;
         raw_string_ostream os4(str4);
-        jd.toplevel->print(os4, nullptr);
+        jd->toplevel->print(os4, nullptr);
         Zinc_string_add_str(&result->function_text, str4.c_str());
         Zinc_string_finish(&result->function_text);
 
@@ -113,11 +113,11 @@ namespace Akela_llvm {
         }
 
         if (valid && !result->dry_run) {
-            auto rt = jd.TheJIT->getMainJITDylib().createResourceTracker();
-            auto tsm = ThreadSafeModule(std::move(jd.TheModule), std::move(jd.TheContext));
-            jd.ExitOnErr(jd.TheJIT->addModule(std::move(tsm), rt));
-            Run(&jd, n, result);
-            jd.ExitOnErr(rt->remove());
+            auto rt = jd->TheJIT->getMainJITDylib().createResourceTracker();
+            auto tsm = ThreadSafeModule(std::move(jd->TheModule), std::move(jd->TheContext));
+            jd->ExitOnErr(jd->TheJIT->addModule(std::move(tsm), rt));
+            Run(jd, n, result);
+            jd->ExitOnErr(rt->remove());
             Zinc_string_finish(&result->value);
         }
 
