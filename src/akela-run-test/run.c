@@ -25,6 +25,7 @@ void Art(Zinc_test* test)
         Zinc_string exe_path;
         Zinc_string_init(&exe_path);
         Zinc_string_add_str(&exe_path, exe);
+        free(exe);
 
         Zinc_string dir_path;
         Zinc_string_init(&dir_path);

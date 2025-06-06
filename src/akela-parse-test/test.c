@@ -26,6 +26,7 @@ void Apt(Zinc_test* test)
         Zinc_string exe;
         Zinc_string_init(&exe);
         Zinc_string_add_str(&exe, exe_str);
+        free(exe_str);
 
         Zinc_string dir;
         Zinc_string_init(&dir);
