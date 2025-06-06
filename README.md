@@ -10,8 +10,7 @@ The Akela project wants to excel at finance.
 ## Status
 The Akela project is a work in progress. Most of the work has been focused on fast
 recursive decent parsing, type checking, and testing tools. Code generation has been
-lightly worked on. Currently, tests are moving to a new test framework. Next, a new syntax
-that has been designed will be adopted.
+lightly worked on.
 
 ## Project Goals
 Many of the following goals are aspirational.
@@ -42,6 +41,9 @@ has a handwritten lexer and recursive decent parser
 * Centipede - The parser for Akela object notation which feels like a light-weight mix of JSON and XML.
 It is used for configuration and to describe DAGs (syntax trees)
 * Lava - A parser of a subset of markdown which is used for testing scripts (automated testing)
+* Akela Parse Test - The automated parsing integration tests which kept in markdown test scripts
+* Akela Run Test - The automated LLVM and end-to-end tests which are kept in markdown test scripts
+* Test - all tests including unit, integration and end-to-end tests are executed by this
 
 The Cobble, Dataframe, JSON, Centipede, and Lava subprojects are very useful for the
 automated testing of the Akela compiler. When these subprojects are re-written in Akela
@@ -63,7 +65,7 @@ ninja -C build-release check-llvm
 cd ../akela
 ```
 
-## Build Full Compiler
+## Build Compiler
 ```
 cmake -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug -G Ninja
 ninja -C cmake-build-debug
@@ -77,16 +79,6 @@ ninja -C cmake-build-debug
 
 ## Valgrind
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/test
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-unit
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-llvm-unit
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/dataframe-unit
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/cobble-unit
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/json-unit
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/coverage-unit
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/centipede-unit
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/lava-unit
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-parse-test src/akela-parse-test/test-cases
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela-run-test src/akela-run-test/test-cases
     valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela examples/addition.ake
 
 ## Code Coverage
