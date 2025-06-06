@@ -12,7 +12,6 @@ typedef enum Cent_symbol_type {
     Cent_symbol_type_variable,
     Cent_symbol_type_element,
     Cent_symbol_type_enumerate,
-    Cent_symbol_type_object_value,
     Cent_symbol_type_file_name,
     Cent_symbol_type_module,
 } Cent_symbol_type;
@@ -25,7 +24,6 @@ typedef struct Cent_symbol {
         } variable;
         Cent_element_type* element;
         Cent_enum_type* enumerate;
-        Cent_value* object_value;
         Zinc_string_slice file_name;
         Cent_module* module;
     } data;

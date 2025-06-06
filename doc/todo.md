@@ -1,4 +1,7 @@
 # Akela
+* new symbol table
+* new type tree
+* new syntax tree
 
 # Akela LLVM
 
@@ -23,6 +26,7 @@
 
 # Zinc
 * convert os specific to generic functions
+* support suite-level mute and solo
 
 # Test
 

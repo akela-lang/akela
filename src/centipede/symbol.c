@@ -26,8 +26,6 @@ void Cent_symbol_set_type(Cent_symbol *sym, Cent_symbol_type type)
         sym->data.element = NULL;
     } else if (type == Cent_symbol_type_enumerate) {
         sym->data.enumerate = NULL;
-    } else if (type == Cent_symbol_type_object_value) {
-        sym->data.object_value = NULL;
     } else if (type == Cent_symbol_type_file_name) {
         sym->data.file_name.p = NULL;
         sym->data.file_name.size = 0;
@@ -78,10 +76,6 @@ bool Cent_symbol_should_copy(Cent_symbol *sym)
     }
 
     if (sym->type == Cent_symbol_type_enumerate) {
-        return true;
-    }
-
-    if (sym->type == Cent_symbol_type_object_value) {
         return true;
     }
 
