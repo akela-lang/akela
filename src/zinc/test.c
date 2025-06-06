@@ -4,7 +4,6 @@
 #include <assert.h>
 #include "string_list.h"
 
-void Zinc_test_set_has_solo(Zinc_test* test);
 bool Zinc_test_has_solo(Zinc_test* test);
 void Zinc_test_get_names(Zinc_test* test, Zinc_string_list* list);
 
@@ -55,6 +54,8 @@ void Zinc_test_add(Zinc_test* p, Zinc_test* c)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Zinc_test_destroy(Zinc_test* test)
 {
+    Zinc_string_destroy(&test->name);
+
     Zinc_test* p = test->head;
     while (p) {
         Zinc_test* temp = p;

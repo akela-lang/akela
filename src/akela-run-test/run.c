@@ -124,8 +124,6 @@ void Art(Zinc_test* test)
         Zinc_test_perform(test);
         Art_destroy(test);
     }
-
-
 }
 
 bool Art_validate_directory(const char* path)
