@@ -11,6 +11,7 @@
 
 bool Art_validate_directory(const char* path);
 bool Art_print_errors(Zinc_test* top_test);
+void Art_destroy(Zinc_test* top_test);
 
 void Art(Zinc_test* test)
 {
@@ -105,7 +106,7 @@ void Art(Zinc_test* test)
         Cent_comp_table_destroy(ct);
 
         Art_top_data* top_data = NULL;
-        Art_data_create(&top_data);
+        Art_top_data_create(&top_data);
         test->data = top_data;
 
         Zinc_string_add_string(&top_data->dir_path, &akela_run_test_dir);
@@ -121,7 +122,10 @@ void Art(Zinc_test* test)
 
     } else {
         Zinc_test_perform(test);
+        Art_destroy(test);
     }
+
+
 }
 
 bool Art_validate_directory(const char* path)
@@ -176,4 +180,29 @@ bool Art_print_errors(Zinc_test* top_test)
         suite_test = suite_test->next;
     }
     return has_errors;
+}
+
+void Art_destroy(Zinc_test* top_test)
+{
+    Art_top_data* top_data = top_test->data;
+    Art_top_data_destroy(top_data);
+    free(top_data);
+
+    Zinc_test* suite_test = top_test->head;
+    while (suite_test) {
+        Art_suite_data* suite_data = suite_test->data;
+        Art_suite_data_destroy(suite_data);
+        free(suite_data);
+
+        Zinc_test* case_test = suite_test->head;
+        while (case_test) {
+            Art_case_data* case_data = case_test->data;
+            Art_case_data_destroy(case_data);
+            free(case_data);
+
+            case_test = case_test->next;
+        }
+
+        suite_test = suite_test->next;
+    }
 }

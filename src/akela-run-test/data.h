@@ -63,16 +63,16 @@ void Art_pair_init(Art_pair* pair);
 void Art_pair_create(Art_pair** pair);
 void Art_pair_destroy(Art_pair* pair);
 
-void Art_test_init(Art_case_data* case_data);
-void Art_test_create(Art_case_data** case_data);
-void Art_test_destroy(Art_case_data* case_data);
+void Art_case_data_init(Art_case_data* case_data);
+void Art_case_data_create(Art_case_data** case_data);
+void Art_case_data_destroy(Art_case_data* case_data);
 
-void Art_suite_init(Art_suite_data* suite_data);
-void Art_suite_create(Art_suite_data** suite_data);
-void Art_suite_destroy(Art_suite_data* suite_data);
+void Art_suite_data_init(Art_suite_data* suite_data);
+void Art_suite_data_create(Art_suite_data** suite_data);
+void Art_suite_data_destroy(Art_suite_data* suite_data);
 
-void Art_data_init(Art_top_data* top_data);
-void Art_data_create(Art_top_data** top_data);
-void Art_data_destroy(Art_top_data* top_data);
+void Art_top_data_init(Art_top_data* top_data);
+void Art_top_data_create(Art_top_data** top_data);
+void Art_top_data_destroy(Art_top_data* top_data);
 
 #endif

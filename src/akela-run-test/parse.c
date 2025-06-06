@@ -68,7 +68,7 @@ void Art_collect(Zinc_test* top_test, Zinc_string* path, Zinc_string* file_name)
     Art_top_data* top_data = top_test->data;
 
     Art_suite_data* suite_data = NULL;
-    Art_suite_create(&suite_data);
+    Art_suite_data_create(&suite_data);
 
     Zinc_string_add_string(&suite_data->path, path);
     Zinc_string_add_string(&suite_data->name, file_name);
@@ -246,7 +246,7 @@ void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* heade
     }
 
     Art_case_data* case_data = NULL;
-    Art_test_create(&case_data);
+    Art_case_data_create(&case_data);
 
     Zinc_test* case_test = NULL;
     Zinc_test_create(&case_test);
