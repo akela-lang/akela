@@ -26,9 +26,6 @@ void Cent_symbol_set_type(Cent_symbol *sym, Cent_symbol_type type)
         sym->data.element = NULL;
     } else if (type == Cent_symbol_type_enumerate) {
         sym->data.enumerate = NULL;
-    } else if (type == Cent_symbol_type_file_name) {
-        sym->data.file_name.p = NULL;
-        sym->data.file_name.size = 0;
     } else if (type == Cent_symbol_type_module) {
         sym->data.module = NULL;
     } else {
