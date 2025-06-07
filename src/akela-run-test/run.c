@@ -105,6 +105,7 @@ void Art(Zinc_test* test)
         Zinc_string_destroy(&config_path);
         Zinc_string_destroy(&config_name);
         Cent_comp_table_destroy(ct);
+        free(ct);
 
         Art_top_data* top_data = NULL;
         Art_top_data_create(&top_data);
