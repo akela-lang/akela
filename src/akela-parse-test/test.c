@@ -12,6 +12,7 @@
 #define NAME "akela-parse-test"
 
 void Apt_dir_validate(Zinc_test* test, char* path);
+void Apt_destroy(Zinc_test* top_test);
 
 void Apt(Zinc_test* test)
 {
@@ -114,6 +115,7 @@ void Apt(Zinc_test* test)
 
     } else {
         Zinc_test_perform(test);
+        Apt_destroy(test);
     }
 }
 
@@ -155,4 +157,28 @@ void Apt_dir_validate(Zinc_test* test, char* path)
         return;
     }
     test->check_passed++;
+}
+
+void Apt_destroy(Zinc_test* top_test)
+{
+    Apt_top_data* top_data = top_test->data;
+    Apt_top_data_destroy(top_data);
+    free(top_data);
+
+    Zinc_test* suite_test = top_test->head;
+    while (suite_test) {
+        Apt_suite_data* suite_data = suite_test->data;
+        Apt_suite_data_destroy(suite_data);
+        free(suite_data);
+
+        Zinc_test* case_test = suite_test->head;
+        while (case_test) {
+            Apt_case_data* case_data = case_test->data;
+            Apt_case_data_destroy(case_data);
+            free(case_data);
+            case_test = case_test->next;
+        }
+
+        suite_test = suite_test->next;
+    }
 }
