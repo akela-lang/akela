@@ -121,6 +121,8 @@ void Art(Zinc_test* test)
             return;
         }
 
+        Zinc_string_destroy(&akela_run_test_dir);
+
     } else {
         Zinc_test_perform(test);
         Art_destroy(test);
