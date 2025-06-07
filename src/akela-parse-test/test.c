@@ -113,6 +113,8 @@ void Apt(Zinc_test* test)
             Zinc_error_list_print(&top_data->errors);
         }
 
+        Zinc_string_destroy(&test_cases_path);
+
     } else {
         Zinc_test_perform(test);
         Apt_destroy(test);
