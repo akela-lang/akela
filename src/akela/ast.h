@@ -1,6 +1,7 @@
 #ifndef AKELA_AST_H
 #define AKELA_AST_H
 
+#include "forward.h"
 #include "api.h"
 #include "forward_declare.h"
 #include <stdbool.h>
@@ -10,6 +11,7 @@
 #include "zinc/vector.h"
 #include "type_use.h"
 #include "zinc/list.h"
+#include "environment2.h"
 
 typedef enum Ake_ast_type {
 	Ake_ast_type_none,
@@ -145,6 +147,7 @@ typedef struct Ake_ast {
     bool is_mut;
     struct Zinc_location loc;
     struct Ake_symbol* sym;
+	Ake_Environment* env;
 	struct Ake_ast* next;
 	struct Ake_ast* prev;
 	struct Ake_ast* head;

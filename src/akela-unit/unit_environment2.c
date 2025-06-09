@@ -12,7 +12,7 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     }
 
     Ake_Environment env;
-    Ake_EnvironmentInit(&env, 10);
+    Ake_EnvironmentInit(&env, 10, NULL);
 
     Ake_symbol* sym0 = NULL;
     Ake_symbol_create(&sym0);

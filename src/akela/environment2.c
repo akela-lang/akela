@@ -60,7 +60,7 @@ void Ake_EnvironmentEntryListDestroy(Ake_EnvironmentEntryList* list)
     }
 }
 
-void Ake_EnvironmentInit(Ake_Environment* env, size_t size)
+void Ake_EnvironmentInit(Ake_Environment* env, size_t size, Ake_Environment* prev)
 {
     env->size = size;
 
@@ -69,12 +69,14 @@ void Ake_EnvironmentInit(Ake_Environment* env, size_t size)
     for (int i = 0; i < size; i++) {
         Ake_EnvironmentEntryListInit(&env->buckets[i]);
     }
+
+    env->prev = prev;
 }
 
-void Ake_EnvironmentCreate(Ake_Environment** env, size_t size)
+void Ake_EnvironmentCreate(Ake_Environment** env, size_t size, Ake_Environment* prev)
 {
     Zinc_malloc_safe((void**)env, sizeof(Ake_Environment));
-    Ake_EnvironmentInit(*env, size);
+    Ake_EnvironmentInit(*env, size, prev);
 }
 
 void Ake_EnvironmentDestroy(Ake_Environment* env)

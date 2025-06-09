@@ -1,6 +1,7 @@
 #ifndef AKELA_ENVIRONMENT2_H
 #define AKELA_ENVIRONMENT2_H
 
+#include "forward.h"
 #include "zinc/zstring.h"
 #include "symbol.h"
 
@@ -23,6 +24,7 @@ typedef struct Ake_Environment Ake_Environment;
 struct Ake_Environment {
     size_t size;
     Ake_EnvironmentEntryList* buckets;
+    Ake_Environment* prev;
 };
 
 typedef void (*Ake_EnvironmentEntryFunc)(void*);
@@ -37,8 +39,8 @@ void Ake_EnvironmentEntryDestroy(Ake_EnvironmentEntry* ent);
 void Ake_EnvironmentEntryListInit(Ake_EnvironmentEntryList* list);
 void Ake_EnvironmentEntryListDestroy(Ake_EnvironmentEntryList* list);
 
-void Ake_EnvironmentInit(Ake_Environment* env, size_t size);
-void Ake_EnvironmentCreate(Ake_Environment** env, size_t size);
+void Ake_EnvironmentInit(Ake_Environment* env, size_t size, Ake_Environment* prev);
+void Ake_EnvironmentCreate(Ake_Environment** env, size_t size, Ake_Environment* prev);
 void Ake_EnvironmentDestroy(Ake_Environment* env);
 void Ake_EnvironmentMap(Ake_Environment* env, Ake_EnvironmentEntryFunc f);
 void Ake_EnvironmentMapName(Ake_Environment* env, Ake_EnvironmentEntryNameFunc f);
