@@ -42,12 +42,7 @@ struct Ake_symbol* Ake_environment_get_local(struct Ake_environment* env, Zinc_s
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_environment_destroy_symbol(struct Ake_symbol* sym)
 {
-    Ake_type_use_destroy(sym->tu);
-    Ake_type_def_destroy(sym->td);
-    if (sym->constructor) {
-        Ake_environment_destroy_symbol(sym->constructor);
-    }
-    Ake_ast_destroy(sym->root);
+    Ake_symbol_destroy(sym);
     free(sym);
 }
 

@@ -27,6 +27,7 @@ typedef struct Ake_symbol {
 
 AKELA_API void Ake_symbol_init(struct Ake_symbol* sym);
 AKELA_API void Ake_symbol_create(struct Ake_symbol** sym);
+AKELA_API void Ake_symbol_destroy(Ake_symbol* sym);
 AKELA_API struct Ake_symbol* Ake_symbol_copy(struct Ake_symbol* sym);
 
 #endif

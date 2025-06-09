@@ -46,6 +46,8 @@ void Ake_EnvironmentMap(Ake_Environment* env, Ake_EnvironmentEntryFunc f);
 void Ake_EnvironmentMapName(Ake_Environment* env, Ake_EnvironmentEntryNameFunc f);
 void Ake_EnvironmentAdd(Ake_Environment* env, Zinc_string* name, Ake_symbol* sym, size_t seq);
 void Ake_EnvironmentAddStr(Ake_Environment* env, char* str, Ake_symbol* sym, size_t seq);
+Ake_symbol* Ake_EnvironmentGetLocal(Ake_Environment* env, Zinc_string* name, size_t seq);
+Ake_symbol* Ake_EnvironmentGetLocalStr(Ake_Environment* env, char* str, size_t seq);
 Ake_symbol* Ake_EnvironmentGet(Ake_Environment* env, Zinc_string* name, size_t seq);
 Ake_symbol* Ake_EnvironmentGetStr(Ake_Environment* env, char* str, size_t seq);
 

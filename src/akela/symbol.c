@@ -16,6 +16,16 @@ void Ake_symbol_init(struct Ake_symbol* sym)
     sym->assign_count = 0;
 }
 
+void Ake_symbol_destroy(Ake_symbol* sym)
+{
+    Ake_type_use_destroy(sym->tu);
+    Ake_type_def_destroy(sym->td);
+    if (sym->constructor) {
+        Ake_environment_destroy_symbol(sym->constructor);
+    }
+    Ake_ast_destroy(sym->root);
+}
+
 void Ake_symbol_create(struct Ake_symbol** sym)
 {
     Zinc_malloc_safe((void**)sym, sizeof(struct Ake_symbol));
