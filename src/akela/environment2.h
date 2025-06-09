@@ -5,6 +5,8 @@
 #include "zinc/zstring.h"
 #include "symbol.h"
 
+#define AKE_ENVIRONMENT_SIZE 32
+
 typedef struct Ake_EnvironmentEntry Ake_EnvironmentEntry;
 struct Ake_EnvironmentEntry {
     Ake_symbol* sym;
@@ -39,8 +41,8 @@ void Ake_EnvironmentEntryDestroy(Ake_EnvironmentEntry* ent);
 void Ake_EnvironmentEntryListInit(Ake_EnvironmentEntryList* list);
 void Ake_EnvironmentEntryListDestroy(Ake_EnvironmentEntryList* list);
 
-void Ake_EnvironmentInit(Ake_Environment* env, size_t size, Ake_Environment* prev);
-void Ake_EnvironmentCreate(Ake_Environment** env, size_t size, Ake_Environment* prev);
+void Ake_EnvironmentInit(Ake_Environment* env, Ake_Environment* prev);
+void Ake_EnvironmentCreate(Ake_Environment** env, Ake_Environment* prev);
 void Ake_EnvironmentDestroy(Ake_Environment* env);
 void Ake_EnvironmentMap(Ake_Environment* env, Ake_EnvironmentEntryFunc f);
 void Ake_EnvironmentMapName(Ake_Environment* env, Ake_EnvironmentEntryNameFunc f);
