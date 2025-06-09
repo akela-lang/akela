@@ -65,8 +65,6 @@ void Ake_EnvironmentInit(Ake_Environment* env, Ake_Environment* prev)
 {
     env->size = AKE_ENVIRONMENT_SIZE;
 
-    Zinc_malloc_safe((void**)&env->buckets, sizeof(Ake_EnvironmentEntryList) * env->size);
-
     for (int i = 0; i < env->size; i++) {
         Ake_EnvironmentEntryListInit(&env->buckets[i]);
     }
@@ -86,7 +84,6 @@ void Ake_EnvironmentDestroy(Ake_Environment* env)
         for (int i = 0; i < env->size; i++) {
             Ake_EnvironmentEntryListDestroy(&env->buckets[i]);
         }
-        free(env->buckets);
     }
 }
 

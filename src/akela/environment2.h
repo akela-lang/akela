@@ -6,6 +6,8 @@
 #include "symbol.h"
 
 #define AKE_ENVIRONMENT_SIZE 32
+#define AKE_SEQ_DEFAULT 0
+#define AKE_SEQ_ANY SIZE_MAX
 
 typedef struct Ake_EnvironmentEntry Ake_EnvironmentEntry;
 struct Ake_EnvironmentEntry {
@@ -25,7 +27,7 @@ struct Ake_EnvironmentEntryList {
 typedef struct Ake_Environment Ake_Environment;
 struct Ake_Environment {
     size_t size;
-    Ake_EnvironmentEntryList* buckets;
+    Ake_EnvironmentEntryList buckets[AKE_ENVIRONMENT_SIZE];
     Ake_Environment* prev;
 };
 
