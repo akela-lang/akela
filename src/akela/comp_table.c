@@ -113,67 +113,67 @@ void Ake_comp_table_free(Ake_comp_table* ct)
 	free(ct);
 }
 
-bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struct Ake_comp_unit** cu_base)
-{
-	bool valid = true;
-    enum Zinc_result r;
-	char* path = NULL;
-
-    struct Zinc_location loc;
-    Zinc_location_init(&loc);
-
-	r = Zinc_get_exe_path(&path);
-    if (r == Zinc_result_error) {
-        valid = Zinc_error_list_set(&cu->errors, &loc, "could not get executable path");
-    }
-
-	struct Zinc_string path2;
-	struct Zinc_string dir;
-	struct Zinc_string filename;
-	Zinc_string_init(&path2);
-	Zinc_string_init(&dir);
-	Zinc_string_init(&filename);
-
-	Zinc_string_add_str(&path2, path);
-	Zinc_split_path(&path2, &dir, &filename);
-
-	struct Zinc_string math_dir;
-	Zinc_string_init(&math_dir);
-	Zinc_string_copy(&dir, &math_dir);
-	Zinc_string_clear(&filename);
-	Zinc_string_add_str(&filename, "math.ake");
-    struct Zinc_string math_path;
-    Zinc_string_init(&math_path);
-	Zinc_path_join(&math_dir, &filename, &math_path);
-	Zinc_string_finish(&math_path);
-
-	FILE* fp = NULL;
-	int err = Zinc_fopen_s(&fp, math_path.buf, "r");
-	if (err || !fp) {
-		valid = Zinc_error_list_set(&cu->errors, &loc, "could not open file: %s\n", math_path.buf);
-		goto exit;
-	}
-
-    Zinc_input_unicode_file* input = NULL;
-    Zinc_input_unicode_file_create(&input, fp);
-
-	Zinc_malloc_safe((void**)cu_base, sizeof(struct Ake_comp_unit));
-	Ake_comp_unit_init(*cu_base);
-	Ake_comp_table_put(ct, &math_path, *cu_base);
-
-	Ake_comp_unit_compile(*cu_base, input, input->vtable);
-
-	Ake_transfer_global_symbols(&(*cu_base)->st, &cu->st);
-
-    free(input);
-
-exit:
-	free(path);
-	Zinc_string_destroy(&path2);
-	Zinc_string_destroy(&dir);
-	Zinc_string_destroy(&filename);
-	Zinc_string_destroy(&math_path);
-    Zinc_string_destroy(&math_dir);
-	if (fp) fclose(fp);
-	return valid;
-}
+// bool Ake_include_base(struct Ake_comp_table* ct, struct Ake_comp_unit* cu, struct Ake_comp_unit** cu_base)
+// {
+// 	bool valid = true;
+//     enum Zinc_result r;
+// 	char* path = NULL;
+//
+//     struct Zinc_location loc;
+//     Zinc_location_init(&loc);
+//
+// 	r = Zinc_get_exe_path(&path);
+//     if (r == Zinc_result_error) {
+//         valid = Zinc_error_list_set(&cu->errors, &loc, "could not get executable path");
+//     }
+//
+// 	struct Zinc_string path2;
+// 	struct Zinc_string dir;
+// 	struct Zinc_string filename;
+// 	Zinc_string_init(&path2);
+// 	Zinc_string_init(&dir);
+// 	Zinc_string_init(&filename);
+//
+// 	Zinc_string_add_str(&path2, path);
+// 	Zinc_split_path(&path2, &dir, &filename);
+//
+// 	struct Zinc_string math_dir;
+// 	Zinc_string_init(&math_dir);
+// 	Zinc_string_copy(&dir, &math_dir);
+// 	Zinc_string_clear(&filename);
+// 	Zinc_string_add_str(&filename, "math.ake");
+//     struct Zinc_string math_path;
+//     Zinc_string_init(&math_path);
+// 	Zinc_path_join(&math_dir, &filename, &math_path);
+// 	Zinc_string_finish(&math_path);
+//
+// 	FILE* fp = NULL;
+// 	int err = Zinc_fopen_s(&fp, math_path.buf, "r");
+// 	if (err || !fp) {
+// 		valid = Zinc_error_list_set(&cu->errors, &loc, "could not open file: %s\n", math_path.buf);
+// 		goto exit;
+// 	}
+//
+//     Zinc_input_unicode_file* input = NULL;
+//     Zinc_input_unicode_file_create(&input, fp);
+//
+// 	Zinc_malloc_safe((void**)cu_base, sizeof(struct Ake_comp_unit));
+// 	Ake_comp_unit_init(*cu_base);
+// 	Ake_comp_table_put(ct, &math_path, *cu_base);
+//
+// 	Ake_comp_unit_compile(*cu_base, input, input->vtable);
+//
+// 	Ake_transfer_global_symbols(&(*cu_base)->st, &cu->st);
+//
+//     free(input);
+//
+// exit:
+// 	free(path);
+// 	Zinc_string_destroy(&path2);
+// 	Zinc_string_destroy(&dir);
+// 	Zinc_string_destroy(&filename);
+// 	Zinc_string_destroy(&math_path);
+//     Zinc_string_destroy(&math_dir);
+// 	if (fp) fclose(fp);
+// 	return valid;
+// }

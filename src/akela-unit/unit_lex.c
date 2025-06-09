@@ -2087,73 +2087,6 @@ void AkeUnit_lex_error_exponent_sign(Zinc_test* test)
 	AkeUnit_lex_teardown(&ls);
 }
 
-void AkeUnit_lex_module(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Zinc_error_list el;
-	struct Ake_lex_state ls;
-	bool valid;
-
-	AkeUnit_lex_setup("module 1 end", &ls, &el);
-
-	struct Ake_token* module;
-	valid = Ake_lex(&ls, &module);
-	if (!Zinc_expect_no_errors(test, ls.el)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, valid, "valid module")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_ptr(test, module, "ptr module")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, module->type, Ake_token_module, "module module");
-
-	Ake_token_destroy(module);
-	free(module);
-
-	struct Ake_token* number;
-	valid = Ake_lex(&ls, &number);
-	if (!Zinc_expect_no_errors(test, ls.el)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, valid, "valid number")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_ptr(test, number, "ptr number")) {
-		return Zinc_assert();
-	}
-		Zinc_expect_int_equal(test, number->type, Ake_token_number, "number number");
-	Zinc_expect_string(test, &number->value, "1", "1 number");
-
-	Ake_token_destroy(number);
-	free(number);
-
-	struct Ake_token* end;
-	valid = Ake_lex(&ls, &end);
-	if (!Zinc_expect_no_errors(test, ls.el)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, valid, "valid end")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_ptr(test, end, "ptr end")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, end->type, Ake_token_end, "end end");
-
-	Ake_token_destroy(end);
-	free(end);
-
-	AkeUnit_lex_teardown(&ls);
-}
-
 void AkeUnit_lex_comment(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -2289,7 +2222,6 @@ void AkeUnit_lex(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_lex_error_underscore_letter);
 		Zinc_test_register(test, AkeUnit_lex_error_underscore_letter2);
 		Zinc_test_register(test, AkeUnit_lex_error_exponent_sign);
-		Zinc_test_register(test, AkeUnit_lex_module);
 		Zinc_test_register(test, AkeUnit_lex_comment);
 
 		return;

@@ -72,7 +72,6 @@ void Ake_symbol_table_init_reserved(struct Ake_environment* env)
 	Ake_symbol_table_add_reserved_word(env, "in", Ake_token_in);
 	Ake_symbol_table_add_reserved_word(env, "true", Ake_token_boolean);
 	Ake_symbol_table_add_reserved_word(env, "false", Ake_token_boolean);
-	Ake_symbol_table_add_reserved_word(env, "module", Ake_token_module);
 	Ake_symbol_table_add_reserved_word(env, "struct", Ake_token_struct);
 	Ake_symbol_table_add_reserved_word(env, "return", Ake_token_return);
     Ake_symbol_table_add_reserved_word(env, "extern", Ake_token_extern);
@@ -516,39 +515,39 @@ bool Ake_type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b)
     }
 }
 
-void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol_table* dest)
-{
-	for (int i = 0; i < src->global->ht.size; i++) {
-		struct Zinc_hash_map_string_entry* p = src->global->ht.buckets[i].head;
-		while (p) {
-			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
-			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
-			Ake_environment_put(dest->global, &p->value, dest_sym);
-			p = p->next;
-		}
-	}
-}
+// void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol_table* dest)
+// {
+// 	for (int i = 0; i < src->global->size; i++) {
+// 		Zinc_hash_map_string_entry* p = src->global->buckets[i].head;
+// 		while (p) {
+// 			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
+// 			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
+// 			Ake_environment_put(dest->global, &p->value, dest_sym);
+// 			p = p->next;
+// 		}
+// 	}
+// }
 
-void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct Zinc_string* module_name)
-{
-	for (int i = 0; i < src->ht.size; i++) {
-		struct Zinc_hash_map_string_entry* p = src->ht.buckets[i].head;
-		while (p) {
-			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
-			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
-
-			/* value is module_name.sym_name */
-			struct Zinc_string value;
-			Zinc_string_init(&value);
-			Zinc_string_copy(module_name, &value);
-			Zinc_string_add_char(&value, '.');
-			Zinc_string_copy(&p->value, &value);
-			Ake_environment_put(dest, &value, dest_sym);
-            Zinc_string_destroy(&value);
-			p = p->next;
-		}
-	}
-}
+// void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct Zinc_string* module_name)
+// {
+// 	for (int i = 0; i < src->ht.size; i++) {
+// 		struct Zinc_hash_map_string_entry* p = src->ht.buckets[i].head;
+// 		while (p) {
+// 			struct Ake_symbol* src_sym = (struct Ake_symbol*)p->item;
+// 			struct Ake_symbol* dest_sym = Ake_symbol_copy(src_sym);
+//
+// 			/* value is module_name.sym_name */
+// 			struct Zinc_string value;
+// 			Zinc_string_init(&value);
+// 			Zinc_string_copy(module_name, &value);
+// 			Zinc_string_add_char(&value, '.');
+// 			Zinc_string_copy(&p->value, &value);
+// 			Ake_environment_put(dest, &value, dest_sym);
+//             Zinc_string_destroy(&value);
+// 			p = p->next;
+// 		}
+// 	}
+// }
 
 void Ake_set_current_function(struct Ake_environment* env, Ake_ast* fd)
 {
@@ -584,36 +583,36 @@ size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st)
     return st->id_count++;
 }
 
-void Ake_symbol_table_print(struct Ake_symbol_table* st)
-{
-    printf("\n");
-    struct Ake_environment* p = st->top;
-    while (p) {
-        Zinc_hash_map_string* ht = &p->ht;
-        for (int i = 0; i < ht->size; i++) {
-            struct Zinc_hash_map_string_list* list = &ht->buckets[i];
-            struct Zinc_hash_map_string_entry* entry = list->head;
-            while (entry) {
-                Zinc_string_finish(&entry->value);
-                printf("%s ", entry->value.buf);
-                struct Ake_symbol* sym = entry->item;
-                if (sym->td) {
-                    Zinc_string_finish(&sym->td->name);
-                    printf("%s %d %d %d", sym->td->name.buf, sym->td->type, sym->td->bit_count, sym->td->is_signed);
-                }
-                printf("\n");
-                entry = entry->next;
-            }
-        }
-        p = p->prev;
-    }
-
-    struct Zinc_string bf;
-    Zinc_string_init(&bf);
-    Zinc_string_add_str(&bf, "Int64");
-    struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
-    assert(sym && sym->td);
-    assert(sym->td->bit_count == 64);
-    assert(sym->td->is_signed);
-    Zinc_string_destroy(&bf);
-}
+// void Ake_symbol_table_print(struct Ake_symbol_table* st)
+// {
+//     printf("\n");
+//     struct Ake_environment* p = st->top;
+//     while (p) {
+//         Zinc_hash_map_string* ht = &p->ht;
+//         for (int i = 0; i < ht->size; i++) {
+//             struct Zinc_hash_map_string_list* list = &ht->buckets[i];
+//             struct Zinc_hash_map_string_entry* entry = list->head;
+//             while (entry) {
+//                 Zinc_string_finish(&entry->value);
+//                 printf("%s ", entry->value.buf);
+//                 struct Ake_symbol* sym = entry->item;
+//                 if (sym->td) {
+//                     Zinc_string_finish(&sym->td->name);
+//                     printf("%s %d %d %d", sym->td->name.buf, sym->td->type, sym->td->bit_count, sym->td->is_signed);
+//                 }
+//                 printf("\n");
+//                 entry = entry->next;
+//             }
+//         }
+//         p = p->prev;
+//     }
+//
+//     struct Zinc_string bf;
+//     Zinc_string_init(&bf);
+//     Zinc_string_add_str(&bf, "Int64");
+//     struct Ake_symbol* sym = Ake_environment_get(st->top, &bf);
+//     assert(sym && sym->td);
+//     assert(sym->td->bit_count == 64);
+//     assert(sym->td->is_signed);
+//     Zinc_string_destroy(&bf);
+// }

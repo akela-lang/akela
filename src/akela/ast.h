@@ -54,7 +54,6 @@ typedef enum Ake_ast_type {
 	Ake_ast_type_power,
 	Ake_ast_type_type_pool,
 	Ake_ast_type_dot,
-	Ake_ast_type_module,
 	Ake_ast_type_struct,
 	Ake_ast_type_return,
     Ake_ast_type_eseq,
@@ -116,7 +115,6 @@ static char const* Ast_type_name(Ake_ast_type type)
     name[Ake_ast_type_power] = "power";
     name[Ake_ast_type_type_pool] = "type-pool";
     name[Ake_ast_type_dot] = "dot";
-    name[Ake_ast_type_module] = "module";
     name[Ake_ast_type_struct] = "struct";
     name[Ake_ast_type_return] = "return";
     name[Ake_ast_type_eseq] = "eseq";

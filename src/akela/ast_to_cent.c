@@ -210,10 +210,6 @@ char* Ake_ast_cent_name(Ake_ast_type type)
         return "Ast::Dot";
     }
 
-    if (type == Ake_ast_type_module) {
-        return "Ast::Module";
-    }
-
     if (type == Ake_ast_type_struct) {
         return "Ast::Struct";
     }

@@ -33,11 +33,11 @@ AKELA_API bool Ake_is_numeric(struct Ake_type_def* td);
 AKELA_API bool Ake_type_find_whole(struct Ake_symbol_table* st, Ake_type_use* a, Ake_type_use* b);
 AKELA_API bool Ake_type_def_can_cast(struct Ake_type_def* a, struct Ake_type_def* b);
 AKELA_API bool Ake_type_use_can_cast(Ake_type_use* a, Ake_type_use* b);
-AKELA_API void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol_table* dest);
-AKELA_API void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct Zinc_string* module_name);
+// AKELA_API void Ake_transfer_global_symbols(struct Ake_symbol_table* src, struct Ake_symbol_table* dest);
+// AKELA_API void Ake_transfer_module_symbols(struct Ake_environment* src, struct Ake_environment* dest, struct Zinc_string* module_name);
 AKELA_API void Ake_set_current_function(struct Ake_environment* env, Ake_ast* fd);
 AKELA_API Ake_ast* Ake_get_current_function(struct Ake_environment* env);
 AKELA_API size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st);
-AKELA_API void Ake_symbol_table_print(struct Ake_symbol_table* st);
+// AKELA_API void Ake_symbol_table_print(struct Ake_symbol_table* st);
 
 #endif

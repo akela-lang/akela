@@ -84,7 +84,6 @@ enum AstType {
   Power
   Type_pool
   Dot
-  Module
   Struct
   Return
   Eseq

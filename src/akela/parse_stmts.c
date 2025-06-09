@@ -108,8 +108,6 @@ Ake_ast* Ake_parse_stmt(struct Ake_parse_state* ps)
 		n = Ake_parse_while(ps);
 	} else if (t0->type == Ake_token_for) {
 		n = Ake_parse_for(ps);
-	} else if (t0->type == Ake_token_module) {
-		n = Ake_parse_module(ps);
 	} else if (t0->type == Ake_token_struct) {
 		n = Ake_parse_struct(ps);
 	} else if (t0->type == Ake_token_return) {
@@ -480,94 +478,6 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
 
 	Ake_token_destroy(in);
 	free(in);
-}
-
-/* parse_module -> module id stmts end */
-/* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_module(struct Ake_parse_state* ps)
-{
-	Ake_ast* n = NULL;
-    Ake_ast_create(&n);
-    n->type = Ake_ast_type_module;
-
-	struct Ake_token* module = NULL;
-	if (!Ake_match(ps, Ake_token_module, "expected module", &module, n)) {
-        assert(false);
-        /* test case: no test case needed */
-    }
-
-	Ake_token_destroy(module);
-	free(module);
-
-    Ake_environment_begin(ps->st);
-
-	struct Ake_token* id = NULL;
-	if (!Ake_match(ps, Ake_token_id, "expected identifier after module", &id, n)) {
-        /* test case: test_parse_module_expected_identifier */
-        n->type = Ake_ast_type_error;
-    }
-
-	Ake_ast* a = NULL;
-    a = Ake_parse_stmts(ps, true);
-	if (a && a->type == Ake_ast_type_error) {
-        n->type = Ake_ast_type_error;
-    }
-
-	Ake_transfer_module_symbols(ps->st->top, ps->st->top->prev, &id->value);
-
-    Ake_environment_end(ps->st);
-
-	struct Ake_token* end = NULL;
-	if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
-        /* test case: test_parse_module_expected_end */
-        n->type = Ake_ast_type_error;
-    }
-
-	Ake_token_destroy(end);
-	free(end);
-
-    Ake_ast* id_node = NULL;
-    Ake_ast_create(&id_node);
-    id_node->type = Ake_ast_type_id;
-    if (id) {
-        Zinc_string_copy(&id->value, &id_node->value);
-    }
-    Ake_ast_add(n, id_node);
-    Ake_ast_add(n, a);
-
-	if (n->type != Ake_ast_type_error) {
-		struct Ake_symbol* sym = Ake_environment_get(ps->st->top, &id->value);
-		if (sym) {
-			Zinc_string_finish(&id->value);
-			Zinc_error_list_set(ps->el, &id->loc, "variable already used: %s", id->value.buf);
-            /* test case: test_parse_module_duplicate_declaration */
-            n->type = Ake_ast_type_error;
-		} else {
-			struct Zinc_string bf;
-			Zinc_string_init(&bf);
-			Zinc_string_add_str(&bf, "Module");
-			sym = Ake_environment_get(ps->st->top, &bf);
-			Zinc_string_destroy(&bf);
-			assert(sym);
-			assert(sym->td);
-
-			Ake_type_use* tu = NULL;
-            Ake_type_use_create(&tu);
-			tu->td = sym->td;
-
-			struct Ake_symbol* new_sym = NULL;
-			Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
-			Ake_symbol_init(new_sym);
-			new_sym->tk_type = Ake_token_id;
-			new_sym->tu = tu;
-			Ake_environment_put(ps->st->top, &id->value, new_sym);
-		}
-	}
-
-	Ake_token_destroy(id);
-	free(id);
-
-	return n;
 }
 
 /* parse_struct -> struct id struct_stmts end */

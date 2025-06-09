@@ -48,7 +48,6 @@ typedef enum Ake_token_enum {
     Ake_token_right_curly_brace,
     Ake_token_boolean,
     Ake_token_caret,
-    Ake_token_module,
     Ake_token_dot,
     Ake_token_struct,
     Ake_token_return,
@@ -112,7 +111,6 @@ static char const* Ake_token_name(Ake_token_enum type)
     name[Ake_token_right_curly_brace] = "}";
     name[Ake_token_boolean] = "boolean";
     name[Ake_token_caret] = "^";
-    name[Ake_token_module] = "module";
     name[Ake_token_dot] = "dot";
     name[Ake_token_struct] = "struct";
     name[Ake_token_return] = "return";
