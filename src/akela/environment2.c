@@ -113,7 +113,7 @@ void Ake_EnvironmentMapName(Ake_Environment* env, Ake_EnvironmentEntryNameFunc f
 
 // seq increases for each creation and use of a symbol
 // calc hash to get bucket and add to the end of the bucket
-void Ake_EnvironmentAdd(Ake_Environment* env, Zinc_string* name, Ake_symbol* sym, size_t seq)
+void Ake_EnvironmentAdd(Ake_symbol_table* st, Ake_Environment* env, Zinc_string* name, Ake_symbol* sym)
 {
     size_t val = Ake_HashCalcString(name, env->size);
 
@@ -121,7 +121,7 @@ void Ake_EnvironmentAdd(Ake_Environment* env, Zinc_string* name, Ake_symbol* sym
     Zinc_malloc_safe((void**)&ent, sizeof(struct Ake_EnvironmentEntry));
     Ake_EnvironmentEntryInit(ent);
     ent->sym = sym;
-    ent->seq = seq;
+    ent->seq = Ake_symbol_table_get_seq_num(st);
 
     Zinc_string_copy(name, &ent->name);
 
@@ -135,19 +135,19 @@ void Ake_EnvironmentAdd(Ake_Environment* env, Zinc_string* name, Ake_symbol* sym
     }
 }
 
-void Ake_EnvironmentAddStr(Ake_Environment* env, char* str, Ake_symbol* sym, size_t seq)
+void Ake_EnvironmentAddStr(Ake_symbol_table* st, Ake_Environment* env, char* str, Ake_symbol* sym)
 {
     Zinc_string name;
     Zinc_string_init(&name);
     Zinc_string_add_str(&name, str);
-    Ake_EnvironmentAdd(env, &name, sym, seq);
+    Ake_EnvironmentAdd(st, env, &name, sym);
     Zinc_string_destroy(&name);
 }
 
 // seq increases for each creation and use of a symbol
 // calc hash to get the bucket
 // start search at the tail and get the first entry that matches name and has smaller or equal seq
-Ake_symbol* Ake_EnvironmentGetLocal(Ake_Environment* env, Zinc_string* name, size_t seq)
+Ake_symbol* Ake_EnvironmentGetLocal(Ake_symbol_table* st, Ake_Environment* env, Zinc_string* name)
 {
     Ake_EnvironmentEntry* ent;
 
@@ -156,7 +156,7 @@ Ake_symbol* Ake_EnvironmentGetLocal(Ake_Environment* env, Zinc_string* name, siz
     ent = env->buckets[val].tail;
     while (ent) {
         if (Zinc_string_compare(&ent->name, name)) {
-            if (ent->seq <= seq) {
+            if (ent->seq <= st->count) {
                 return ent->sym;
             }
         }
@@ -166,21 +166,21 @@ Ake_symbol* Ake_EnvironmentGetLocal(Ake_Environment* env, Zinc_string* name, siz
     return NULL;
 }
 
-Ake_symbol* Ake_EnvironmentGetLocalStr(Ake_Environment* env, char* str, size_t seq)
+Ake_symbol* Ake_EnvironmentGetLocalStr(Ake_symbol_table* st, Ake_Environment* env, char* str)
 {
     Zinc_string name;
     Zinc_string_init(&name);
     Zinc_string_add_str(&name, str);
-    Ake_symbol* sym = Ake_EnvironmentGetLocal(env, &name, seq);
+    Ake_symbol* sym = Ake_EnvironmentGetLocal(st, env, &name);
     Zinc_string_destroy(&name);
     return sym;
 }
 
-Ake_symbol* Ake_EnvironmentGet(Ake_Environment* env, Zinc_string* name, size_t seq)
+Ake_symbol* Ake_EnvironmentGet(Ake_symbol_table* st, Ake_Environment* env, Zinc_string* name)
 {
     Ake_Environment* p = env;
     while (p) {
-        Ake_symbol* sym = Ake_EnvironmentGetLocal(p, name, seq);
+        Ake_symbol* sym = Ake_EnvironmentGetLocal(st, p, name);
         if (sym) {
             return sym;
         }
@@ -190,12 +190,27 @@ Ake_symbol* Ake_EnvironmentGet(Ake_Environment* env, Zinc_string* name, size_t s
     return NULL;
 }
 
-Ake_symbol* Ake_EnvironmentGetStr(Ake_Environment* env, char* str, size_t seq)
+Ake_symbol* Ake_EnvironmentGetStr(Ake_symbol_table* st, Ake_Environment* env, char* str)
 {
     Zinc_string name;
     Zinc_string_init(&name);
     Zinc_string_add_str(&name, str);
-    Ake_symbol* sym = Ake_EnvironmentGet(env, &name, seq);
+    Ake_symbol* sym = Ake_EnvironmentGet(st, env, &name);
     Zinc_string_destroy(&name);
     return sym;
+}
+
+void Ake_EnvironmentBegin(Ake_symbol_table* st)
+{
+    Ake_Environment* env = NULL;
+    Ake_EnvironmentCreate(&env, st->top2);
+    st->top2 = env;
+}
+
+void Ake_EnvironmentEnd(Ake_symbol_table* st)
+{
+    Ake_Environment* env = st->top2;
+    st->top2 = env->prev;
+    env->prev = st->deactivated2;
+    st->deactivated2 = env;
 }

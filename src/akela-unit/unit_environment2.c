@@ -11,8 +11,8 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
         return;
     }
 
-    Ake_Environment* env0 = NULL;
-    Ake_EnvironmentCreate(&env0, NULL);
+    Ake_symbol_table* st;
+    Ake_symbol_table_create(&st);
 
     Ake_symbol* t0 = NULL;
     Ake_symbol_create(&t0);
@@ -23,12 +23,10 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     Ake_symbol* t2 = NULL;
     Ake_symbol_create(&t2);
 
-    Ake_EnvironmentAddStr(env0, "t0", t0, 0);
-    Ake_EnvironmentAddStr(env0, "t1", t1, 0);
-    Ake_EnvironmentAddStr(env0, "t2", t2, 0);
-
-    Ake_Environment* env1 = NULL;
-    Ake_EnvironmentCreate(&env1, env0);
+    Ake_EnvironmentBegin(st);
+    Ake_EnvironmentAddStr(st, st->top2, "t0", t0);
+    Ake_EnvironmentAddStr(st, st->top2, "t1", t1);
+    Ake_EnvironmentAddStr(st, st->top2, "t2", t2);
 
     Ake_symbol* sym0 = NULL;
     Ake_symbol_create(&sym0);
@@ -39,49 +37,51 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     Ake_symbol* sym2 = NULL;
     Ake_symbol_create(&sym2);
 
-    Ake_EnvironmentAddStr(env1, "sym0", sym0, 10);
-    Ake_EnvironmentAddStr(env1, "sym1", sym1, 20);
-    Ake_EnvironmentAddStr(env1, "sym2", sym2, 30);
+    Ake_EnvironmentBegin(st);
+    Ake_EnvironmentAddStr(st, st->top2, "sym0", sym0);
+    Ake_EnvironmentAddStr(st, st->top2, "sym1", sym1);
+    Ake_EnvironmentAddStr(st, st->top2, "sym2", sym2);
 
     Ake_symbol* sym = NULL;
 
-    sym = Ake_EnvironmentGetStr(env1, "sym0", 9);
-    Zinc_expect_null(test, sym, "sym0 seq 9");
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym0");
+    Zinc_expect_ptr_equal(test, sym, sym0, "sym0 seq 9");
 
-    sym = Ake_EnvironmentGetStr(env1, "sym0", 10);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym0");
     Zinc_expect_ptr_equal(test, sym, sym0, "sym0 seq 10");
 
-    sym = Ake_EnvironmentGetStr(env1, "sym0", 11);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym0");
     Zinc_expect_ptr_equal(test, sym, sym0, "sym0 seq 11");
 
-    sym = Ake_EnvironmentGetStr(env1, "sym1", 19);
-    Zinc_expect_null(test, sym, "sym1 seq 19");
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym1");
+    Zinc_expect_ptr_equal(test, sym, sym1, "sym1 seq 19");
 
-    sym = Ake_EnvironmentGetStr(env1, "sym1", 20);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym1");
     Zinc_expect_ptr_equal(test, sym, sym1, "sym1 seq 20");
 
-    sym = Ake_EnvironmentGetStr(env1, "sym1", 21);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym1");
     Zinc_expect_ptr_equal(test, sym, sym1, "sym1 seq 21");
 
-    sym = Ake_EnvironmentGetStr(env1, "sym2", 29);
-    Zinc_expect_null(test, sym, "sym1 seq 29");
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym2");
+    Zinc_expect_ptr_equal(test, sym, sym2, "sym1 seq 29");
 
-    sym = Ake_EnvironmentGetStr(env1, "sym2", 30);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym2");
     Zinc_expect_ptr_equal(test, sym, sym2, "sym1 seq 30");
 
-    sym = Ake_EnvironmentGetStr(env1, "sym2", 31);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "sym2");
     Zinc_expect_ptr_equal(test, sym, sym2, "sym1 seq 31");
 
-    sym = Ake_EnvironmentGetStr(env1, "t0", 0);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "t0");
     Zinc_expect_ptr_equal(test, sym, t0, "t0");
 
-    sym = Ake_EnvironmentGetStr(env1, "t1", 0);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "t1");
     Zinc_expect_ptr_equal(test, sym, t1, "t1");
 
-    sym = Ake_EnvironmentGetStr(env1, "t2", 0);
+    sym = Ake_EnvironmentGetStr(st, st->top2, "t2");
     Zinc_expect_ptr_equal(test, sym, t2, "t2");
 
-    Ake_EnvironmentDestroy(env1);
+    Ake_EnvironmentDestroy(st->top2);
+    Ake_symbol_table_destroy(st);
 }
 
 void AkeUnit_Environment(Zinc_test* test)
