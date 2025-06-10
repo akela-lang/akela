@@ -132,7 +132,7 @@ void Zinc_test_print(Zinc_test_stat* stat)
         pct = (double)stat->passed / ((double)stat->passed + (double)stat->failed) * 100.0;
     }
     printf(
-        "%.1f%% (%zu/%zu test cases) (%zu/%zu checks) (%zu skipped)\n",
+        "\n%.1f%% (%zu/%zu test cases) (%zu/%zu checks) (%zu skipped)\n",
         pct,
         stat->passed,
         stat->passed + stat->failed,
