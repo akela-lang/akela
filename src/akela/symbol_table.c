@@ -241,7 +241,6 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 	Zinc_malloc_safe((void**)&env, sizeof(struct Ake_environment));
 	Ake_environment_init(env, NULL);
 	st->top = env;
-	st->initial = env;
 	Ake_symbol_table_init_reserved(env);
 	Ake_symbol_table_init_builtin_types(st, env);
 	Ake_symbol_table_numeric_pool_init(st);
@@ -250,7 +249,6 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 	Zinc_malloc_safe((void**)&env, sizeof(struct Ake_environment));
 	Ake_environment_init(env, st->top);
 	st->top = env;
-	st->global = env;
     st->deactivated = NULL;
 	st->deactivated2 = NULL;
     st->id_count = 0;
@@ -279,11 +277,20 @@ void Ake_symbol_table_destroy(Ake_symbol_table* st)
         env = prev;
     }
     Ake_type_use_destroy(st->numeric_pool);
-}
 
-bool Ake_symbol_table_is_global(struct Ake_symbol_table* st)
-{
-	return st->top == st->global;
+	Ake_Environment* env2 = st->top2;
+	while (env2) {
+		Ake_Environment* prev = env2->prev;
+		Ake_EnvironmentDestroy(env2);
+		env2 = prev;
+	}
+
+	env2 = st->deactivated2;
+	while (env2) {
+		Ake_Environment* prev = env2->prev;
+		Ake_EnvironmentDestroy(env2);
+		env2 = prev;
+	}
 }
 
 bool Ake_is_numeric(struct Ake_type_def* td)

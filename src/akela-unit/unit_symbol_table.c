@@ -47,23 +47,6 @@ void AkeUnit_symbol_table_env(Zinc_test* test)
 	Zinc_string_destroy(&value);
 }
 
-void AkeUnit_symbol_table_global(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_symbol_table st;
-	Ake_symbol_table_init(&st);
-
-	Zinc_expect_true(test, Ake_symbol_table_is_global(&st), "is global");
-
-	Ake_symbol_table_destroy(&st);
-}
-
 void AkeUnit_symbol_table(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -72,7 +55,6 @@ void AkeUnit_symbol_table(Zinc_test* test)
 		test->solo = false;
 
 		Zinc_test_register(test, AkeUnit_symbol_table_env);
-		Zinc_test_register(test, AkeUnit_symbol_table_global);
 
 		return;
 	}

@@ -37,7 +37,9 @@ Ake_ast* Ake_parse_stmts(struct Ake_parse_state* ps, bool suppress_env)
 
 	struct Ake_environment* saved = NULL;
 	struct Ake_environment* env = NULL;
-	if (!suppress_env) {
+	if (suppress_env) {
+		ps->st->top->is_global = true;
+	} else {
         Ake_environment_begin(ps->st);
 	}
 
@@ -157,7 +159,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
     }
 
     if (n->type != Ake_ast_type_error) {
-        if (ps->st->top != ps->st->global) {
+        if (!ps->st->top->is_global) {
             Zinc_error_list_set(ps->el, &n->loc, "extern only allowed at top level scope");
             n->type = Ake_ast_type_error;
         }

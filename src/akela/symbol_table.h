@@ -14,8 +14,6 @@ typedef struct Ake_type_use Ake_type_use;
 typedef struct Ake_ast Ake_ast;
 
 typedef struct Ake_symbol_table {
-	Ake_environment* initial;
-	Ake_environment* global;
 	Ake_environment* top;
 	Ake_type_use* numeric_pool;
     Ake_environment* deactivated;
@@ -31,7 +29,6 @@ AKELA_API void Ake_environment_end(struct Ake_symbol_table* st);
 AKELA_API void Ake_symbol_table_init(struct Ake_symbol_table* st);
 AKELA_API void Ake_symbol_table_create(struct Ake_symbol_table** st);
 AKELA_API void Ake_symbol_table_destroy(struct Ake_symbol_table* st);
-AKELA_API bool Ake_symbol_table_is_global(struct Ake_symbol_table* st);
 AKELA_API bool Ake_is_numeric(struct Ake_type_def* td);
 AKELA_API bool Ake_type_find_whole(struct Ake_symbol_table* st, Ake_type_use* a, Ake_type_use* b);
 AKELA_API bool Ake_type_def_can_cast(struct Ake_type_def* a, struct Ake_type_def* b);

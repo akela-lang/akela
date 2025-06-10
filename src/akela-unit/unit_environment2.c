@@ -80,7 +80,6 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     sym = Ake_EnvironmentGetStr(st, st->top2, "t2");
     Zinc_expect_ptr_equal(test, sym, t2, "t2");
 
-    Ake_EnvironmentDestroy(st->top2);
     Ake_symbol_table_destroy(st);
 }
 

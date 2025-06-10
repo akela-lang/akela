@@ -9,7 +9,8 @@
 
 typedef struct Ake_environment {
     Zinc_hash_map_string ht;
-    struct Ake_environment* prev;
+    Ake_environment* prev;
+    bool is_global;
 } Ake_environment;
 
 struct Ake_symbol;

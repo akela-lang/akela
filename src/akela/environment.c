@@ -8,6 +8,7 @@ void Ake_environment_init(struct Ake_environment* env, struct Ake_environment* p
 {
     Zinc_hash_map_string_init(&env->ht, ENVIRONMENT_HASH_TABLE_SIZE);
     env->prev = p;
+    env->is_global = false;
 }
 
 void Ake_environment_create(struct Ake_environment** env, struct Ake_environment* p)
