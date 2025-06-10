@@ -24,9 +24,9 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     Ake_symbol_create(&t2);
 
     Ake_EnvironmentBegin(st);
-    Ake_EnvironmentAddStr(st, st->top2, "t0", t0);
-    Ake_EnvironmentAddStr(st, st->top2, "t1", t1);
-    Ake_EnvironmentAddStr(st, st->top2, "t2", t2);
+    Ake_EnvironmentAddStr(st, "t0", t0);
+    Ake_EnvironmentAddStr(st, "t1", t1);
+    Ake_EnvironmentAddStr(st, "t2", t2);
 
     Ake_symbol* sym0 = NULL;
     Ake_symbol_create(&sym0);
@@ -38,46 +38,46 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     Ake_symbol_create(&sym2);
 
     Ake_EnvironmentBegin(st);
-    Ake_EnvironmentAddStr(st, st->top2, "sym0", sym0);
-    Ake_EnvironmentAddStr(st, st->top2, "sym1", sym1);
-    Ake_EnvironmentAddStr(st, st->top2, "sym2", sym2);
+    Ake_EnvironmentAddStr(st, "sym0", sym0);
+    Ake_EnvironmentAddStr(st, "sym1", sym1);
+    Ake_EnvironmentAddStr(st, "sym2", sym2);
 
     Ake_symbol* sym = NULL;
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym0");
+    sym = Ake_EnvironmentGetStr(st, "sym0");
     Zinc_expect_ptr_equal(test, sym, sym0, "sym0 seq 9");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym0");
+    sym = Ake_EnvironmentGetStr(st, "sym0");
     Zinc_expect_ptr_equal(test, sym, sym0, "sym0 seq 10");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym0");
+    sym = Ake_EnvironmentGetStr(st, "sym0");
     Zinc_expect_ptr_equal(test, sym, sym0, "sym0 seq 11");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym1");
+    sym = Ake_EnvironmentGetStr(st, "sym1");
     Zinc_expect_ptr_equal(test, sym, sym1, "sym1 seq 19");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym1");
+    sym = Ake_EnvironmentGetStr(st, "sym1");
     Zinc_expect_ptr_equal(test, sym, sym1, "sym1 seq 20");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym1");
+    sym = Ake_EnvironmentGetStr(st, "sym1");
     Zinc_expect_ptr_equal(test, sym, sym1, "sym1 seq 21");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym2");
+    sym = Ake_EnvironmentGetStr(st, "sym2");
     Zinc_expect_ptr_equal(test, sym, sym2, "sym1 seq 29");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym2");
+    sym = Ake_EnvironmentGetStr(st, "sym2");
     Zinc_expect_ptr_equal(test, sym, sym2, "sym1 seq 30");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "sym2");
+    sym = Ake_EnvironmentGetStr(st, "sym2");
     Zinc_expect_ptr_equal(test, sym, sym2, "sym1 seq 31");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "t0");
+    sym = Ake_EnvironmentGetStr(st, "t0");
     Zinc_expect_ptr_equal(test, sym, t0, "t0");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "t1");
+    sym = Ake_EnvironmentGetStr(st, "t1");
     Zinc_expect_ptr_equal(test, sym, t1, "t1");
 
-    sym = Ake_EnvironmentGetStr(st, st->top2, "t2");
+    sym = Ake_EnvironmentGetStr(st, "t2");
     Zinc_expect_ptr_equal(test, sym, t2, "t2");
 
     Ake_symbol_table_destroy(st);
