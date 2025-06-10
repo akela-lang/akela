@@ -70,6 +70,7 @@ void Ake_EnvironmentInit(Ake_Environment* env, Ake_Environment* prev)
     }
 
     env->prev = prev;
+    env->is_global = false;
 }
 
 void Ake_EnvironmentCreate(Ake_Environment** env, Ake_Environment* prev)

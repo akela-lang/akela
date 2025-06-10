@@ -35,6 +35,7 @@ struct Ake_Environment {
     size_t size;
     Ake_EnvironmentEntryList buckets[AKE_ENVIRONMENT_SIZE];
     Ake_Environment* prev;
+    bool is_global;
 };
 
 typedef void (*Ake_EnvironmentEntryFunc)(void*);
