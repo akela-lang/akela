@@ -91,7 +91,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
         n->type = Ake_ast_type_error;
     }
 
-    Ake_environment_begin(ps->st);
+    Ake_begin_environment(ps->st);
     Ake_declare_params(ps, proto, struct_type);
     Ake_set_current_function(ps->st, n);
     Ake_type_use* tu = Ake_proto2type_use(ps->st, proto, struct_type);
@@ -108,7 +108,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
         Ake_ast_add(n, stmts_node);
     }
 
-    Ake_environment_end(ps->st);
+    Ake_end_environment(ps->st);
 
     struct Ake_token* end = NULL;
 	if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {

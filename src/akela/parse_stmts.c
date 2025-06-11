@@ -39,7 +39,7 @@ Ake_ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 	struct Ake_environment* env = NULL;
 
 	if (!suppress_env) {
-        Ake_environment_begin(ps->st);
+        Ake_begin_environment(ps->st);
 		if (is_global) {
 			ps->st->top->is_global = true;
 		}
@@ -80,7 +80,7 @@ Ake_ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 	}
 
 	if (!suppress_env) {
-        Ake_environment_end(ps->st);
+        Ake_end_environment(ps->st);
 	}
 
 	if (n->type != Ake_ast_type_error) {
@@ -270,7 +270,7 @@ Ake_ast* Ake_parse_for(struct Ake_parse_state* ps)
         n->type = Ake_ast_type_error;
     }
 
-    Ake_environment_begin(ps->st);
+    Ake_begin_environment(ps->st);
 
     Ake_consume_newline(ps, n);
 
@@ -328,7 +328,7 @@ Ake_ast* Ake_parse_for(struct Ake_parse_state* ps)
 	Ake_token_destroy(end);
 	free(end);
 
-    Ake_environment_end(ps->st);
+    Ake_end_environment(ps->st);
 
 	return n;
 }
