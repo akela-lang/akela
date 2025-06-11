@@ -247,7 +247,6 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 	Ake_symbol_table_init_reserved(st->top);
 	Ake_symbol_table_init_builtin_types(st, st->top);
 	Ake_symbol_table_numeric_pool_init(st);
-	Ake_environment_begin(st);
 }
 
 void Ake_symbol_table_create(Ake_symbol_table** st)

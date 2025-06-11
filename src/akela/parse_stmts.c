@@ -30,17 +30,19 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps);
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_stmts(struct Ake_parse_state* ps, bool suppress_env)
+Ake_ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 {
 	Ake_ast* n = NULL;
 	Ake_ast* last = NULL;
 
 	struct Ake_environment* saved = NULL;
 	struct Ake_environment* env = NULL;
-	if (suppress_env) {
-		ps->st->top->is_global = true;
-	} else {
+
+	if (!suppress_env) {
         Ake_environment_begin(ps->st);
+		if (is_global) {
+			ps->st->top->is_global = true;
+		}
 	}
 
     Ake_ast_create(&n);
@@ -233,7 +235,7 @@ Ake_ast* Ake_parse_while(struct Ake_parse_state* ps)
 	}
 
 	Ake_ast* b = NULL;
-    b = Ake_parse_stmts(ps, false);
+    b = Ake_parse_stmts(ps, false, false);
 	if (b && b->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -306,7 +308,7 @@ Ake_ast* Ake_parse_for(struct Ake_parse_state* ps)
 	}
 
 	Ake_ast* c = NULL;
-    c = Ake_parse_stmts(ps, true);
+    c = Ake_parse_stmts(ps, true, false);
 	if (c && c->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
