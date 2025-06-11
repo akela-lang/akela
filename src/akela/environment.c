@@ -202,3 +202,56 @@ Ake_symbol* Ake_EnvironmentGetStr(Ake_symbol_table* st, char* str)
     Zinc_string_destroy(&name);
     return sym;
 }
+
+Ake_symbol* Ake_RelativeGetLocal(Ake_Environment* env, Zinc_string* name, size_t seq)
+{
+    Ake_EnvironmentEntry* ent;
+
+    size_t val = Ake_HashCalcString(name, env->size);
+
+    ent = env->buckets[val].tail;
+    while (ent) {
+        if (Zinc_string_compare(&ent->name, name)) {
+            if (ent->seq <= seq) {
+                return ent->sym;
+            }
+        }
+        ent = ent->prev;
+    }
+
+    return NULL;
+}
+
+Ake_symbol* Ake_RelativeGetLocalStr(Ake_Environment* env, char* str, size_t seq)
+{
+    Zinc_string name;
+    Zinc_string_init(&name);
+    Zinc_string_add_str(&name, str);
+    Ake_symbol* sym = Ake_RelativeGetLocal(env, &name, seq);
+    Zinc_string_destroy(&name);
+    return sym;
+}
+
+Ake_symbol* Ake_RelativeGet(Ake_Environment* env, Zinc_string* name, size_t seq)
+{
+    Ake_Environment* p = env;
+    while (p) {
+        Ake_symbol* sym = Ake_RelativeGetLocal(p, name, seq);
+        if (sym) {
+            return sym;
+        }
+        p = p->prev;
+    }
+
+    return NULL;
+}
+
+Ake_symbol* Ake_RelativeGetStr(Ake_Environment* env, char* str, size_t seq)
+{
+    Zinc_string name;
+    Zinc_string_init(&name);
+    Zinc_string_add_str(&name, str);
+    Ake_symbol* sym = Ake_RelativeGet(env, &name, seq);
+    Zinc_string_destroy(&name);
+    return sym;
+}

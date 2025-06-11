@@ -63,4 +63,9 @@ Ake_symbol* Ake_EnvironmentGetLocalStr(Ake_symbol_table* st, Ake_Environment* en
 Ake_symbol* Ake_EnvironmentGet(Ake_symbol_table* st, Zinc_string* name);
 Ake_symbol* Ake_EnvironmentGetStr(Ake_symbol_table* st, char* str);
 
+Ake_symbol* Ake_RelativeGetLocal(Ake_Environment* env, Zinc_string* name, size_t seq);
+Ake_symbol* Ake_RelativeGetLocalStr(Ake_Environment* env, char* str, size_t seq);
+Ake_symbol* Ake_RelativeGet(Ake_Environment* env, Zinc_string* name, size_t seq);
+Ake_symbol* Ake_RelativeGetStr(Ake_Environment* env, char* str, size_t seq);
+
 #endif
