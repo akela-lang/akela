@@ -64,6 +64,7 @@ Ake_symbol* Ake_EnvironmentGet(Ake_symbol_table* st, Zinc_string* name);
 Ake_symbol* Ake_EnvironmentGetStr(Ake_symbol_table* st, char* str);
 
 void Ake_EnvironmentBegin(Ake_symbol_table* st);
+void Ake_EnvironmentEnd(Ake_symbol_table* st);
 
 
 #endif

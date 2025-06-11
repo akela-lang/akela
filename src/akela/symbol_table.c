@@ -282,6 +282,7 @@ void Ake_symbol_table_destroy(Ake_symbol_table* st)
 	while (env2) {
 		Ake_Environment* prev = env2->prev;
 		Ake_EnvironmentDestroy(env2);
+		free(env2);
 		env2 = prev;
 	}
 
@@ -289,6 +290,7 @@ void Ake_symbol_table_destroy(Ake_symbol_table* st)
 	while (env2) {
 		Ake_Environment* prev = env2->prev;
 		Ake_EnvironmentDestroy(env2);
+		free(env2);
 		env2 = prev;
 	}
 }
