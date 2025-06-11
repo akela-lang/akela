@@ -35,5 +35,6 @@ AKELA_API void Ake_set_current_function(Ake_symbol_table* st, Ake_ast* fd);
 AKELA_API Ake_ast* Ake_get_current_function(Ake_symbol_table* st);
 AKELA_API size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st);
 AKELA_API size_t Ake_symbol_table_get_seq_num(Ake_symbol_table* st);
+AKELA_API Ake_Environment* Ake_get_current_env(Ake_ast* n);
 
 #endif

@@ -545,3 +545,15 @@ size_t Ake_symbol_table_get_seq_num(Ake_symbol_table* st)
 {
 	return st->count++;
 }
+
+Ake_Environment* Ake_get_current_env(Ake_ast* n)
+{
+	while (n) {
+		if (n->env) {
+			return n->env;
+		}
+		n = n->parent;
+	}
+
+	return NULL;
+}

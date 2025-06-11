@@ -202,18 +202,3 @@ Ake_symbol* Ake_EnvironmentGetStr(Ake_symbol_table* st, char* str)
     Zinc_string_destroy(&name);
     return sym;
 }
-
-void Ake_EnvironmentBegin(Ake_symbol_table* st)
-{
-    Ake_Environment* env = NULL;
-    Ake_EnvironmentCreate(&env, st->top);
-    st->top = env;
-}
-
-void Ake_EnvironmentEnd(Ake_symbol_table* st)
-{
-    Ake_Environment* env = st->top;
-    st->top = env->prev;
-    env->prev = st->deactivated;
-    st->deactivated = env;
-}
