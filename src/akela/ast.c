@@ -25,6 +25,7 @@ void Ake_ast_init(Ake_ast* n)
 	n->prev = NULL;
 	n->head = NULL;
 	n->tail = NULL;
+	n->parent = NULL;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -55,6 +56,7 @@ void Ake_ast_add(Ake_ast* p, Ake_ast* c)
         p->tail = c;
     }
     Zinc_location_combine(&p->loc, &c->loc);
+	c->parent = p;
 }
 
 /* assume parent and child are not NULL */

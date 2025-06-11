@@ -141,15 +141,16 @@ static char const* Ast_type_name(Ake_ast_type type)
 typedef struct Ake_ast {
 	Ake_ast_type type;
 	Zinc_string value;
-	struct Ake_type_use* tu;
+	Ake_type_use* tu;
     bool is_mut;
-    struct Zinc_location loc;
-    struct Ake_symbol* sym;
+    Zinc_location loc;
+    Ake_symbol* sym;
 	Ake_Environment* env;
-	struct Ake_ast* next;
-	struct Ake_ast* prev;
-	struct Ake_ast* head;
-	struct Ake_ast* tail;
+	Ake_ast* next;
+	Ake_ast* prev;
+	Ake_ast* head;
+	Ake_ast* tail;
+	Ake_ast* parent;
 } Ake_ast;
 
 #ifdef __cplusplus
