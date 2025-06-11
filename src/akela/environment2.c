@@ -116,7 +116,7 @@ void Ake_EnvironmentMapName(Ake_Environment* env, Ake_EnvironmentEntryNameFunc f
 // calc hash to get bucket and add to the end of the bucket
 void Ake_EnvironmentAdd(Ake_symbol_table* st, Zinc_string* name, Ake_symbol* sym)
 {
-    Ake_Environment* env = st->top2;
+    Ake_Environment* env = st->top;
     size_t val = Ake_HashCalcString(name, env->size);
 
     Ake_EnvironmentEntry* ent;
@@ -162,7 +162,7 @@ Ake_symbol* Ake_EnvironmentGetLocal(Ake_symbol_table* st, Ake_Environment* env, 
                 return ent->sym;
             }
         }
-        ent = ent->next;
+        ent = ent->prev;
     }
 
     return NULL;
@@ -180,7 +180,7 @@ Ake_symbol* Ake_EnvironmentGetLocalStr(Ake_symbol_table* st, Ake_Environment* en
 
 Ake_symbol* Ake_EnvironmentGet(Ake_symbol_table* st, Zinc_string* name)
 {
-    Ake_Environment* env = st->top2;
+    Ake_Environment* env = st->top;
     Ake_Environment* p = env;
     while (p) {
         Ake_symbol* sym = Ake_EnvironmentGetLocal(st, p, name);
@@ -206,14 +206,14 @@ Ake_symbol* Ake_EnvironmentGetStr(Ake_symbol_table* st, char* str)
 void Ake_EnvironmentBegin(Ake_symbol_table* st)
 {
     Ake_Environment* env = NULL;
-    Ake_EnvironmentCreate(&env, st->top2);
-    st->top2 = env;
+    Ake_EnvironmentCreate(&env, st->top);
+    st->top = env;
 }
 
 void Ake_EnvironmentEnd(Ake_symbol_table* st)
 {
-    Ake_Environment* env = st->top2;
-    st->top2 = env->prev;
-    env->prev = st->deactivated2;
-    st->deactivated2 = env;
+    Ake_Environment* env = st->top;
+    st->top = env->prev;
+    env->prev = st->deactivated;
+    st->deactivated = env;
 }

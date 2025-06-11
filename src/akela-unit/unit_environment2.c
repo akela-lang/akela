@@ -114,7 +114,7 @@ void AkeUnit_EnvironmentAdd2(Zinc_test* test)
     Ake_EnvironmentAddStr(st, "a", sym2);
 
     size_t val = Ake_HashCalcStr("a", AKE_ENVIRONMENT_SIZE);
-    Ake_EnvironmentEntryList* list = &st->top2->buckets[val];
+    Ake_EnvironmentEntryList* list = &st->top->buckets[val];
 
     Ake_EnvironmentEntry* ent0 = list->head;
     if (!Zinc_expect_ptr(test, ent0, "ptr ent0")) {

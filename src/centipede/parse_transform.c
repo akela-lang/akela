@@ -1,8 +1,6 @@
 #include "parse_data.h"
-#include "akela/environment.h"
 #include <assert.h>
 #include "parse_tools.h"
-#include "zinc/hash_map_string.h"
 #include "ast.h"
 #include <assert.h>
 

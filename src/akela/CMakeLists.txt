@@ -16,8 +16,6 @@ set(lib_files
         comp_table.c
         code_gen.c
         symbol.c
-        environment.h
-        environment.c
         struct_element.c
         type_use.c
         parse_data.c

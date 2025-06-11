@@ -219,7 +219,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
         }
 
         if (*done) {
-            struct Ake_symbol* sym = Ake_environment_get(ls->st->top, &t->value);
+            struct Ake_symbol* sym = Ake_EnvironmentGet(ls->st, &t->value);
             if (sym && sym->type == Ake_symbol_type_reserved_word) {
                 t->type = sym->tk_type;
             } else {
@@ -243,7 +243,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
                     Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
-                struct Ake_symbol* sym = Ake_environment_get(ls->st->top, &t->value);
+                struct Ake_symbol* sym = Ake_EnvironmentGet(ls->st, &t->value);
                 if (sym && sym->type == Ake_symbol_type_reserved_word) {
                     t->type = sym->tk_type;
                 } else {
@@ -268,7 +268,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
                     Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
-                struct Ake_symbol* sym = Ake_environment_get(ls->st->top, &t->value);
+                struct Ake_symbol* sym = Ake_EnvironmentGet(ls->st, &t->value);
                 if (sym && sym->type == Ake_symbol_type_reserved_word) {
                     t->type = sym->tk_type;
                 } else {
