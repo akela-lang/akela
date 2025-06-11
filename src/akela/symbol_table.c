@@ -24,7 +24,7 @@ void Ake_environment_end(struct Ake_symbol_table* st)
     st->deactivated = env;
 }
 
-void Ake_symbol_table_add_reserved_word(struct Ake_environment* env, const char* name, enum Ake_token_enum tk_type)
+void Ake_symbol_table_add_reserved_word(Ake_symbol_table* st, const char* name, Ake_token_enum tk_type)
 {
     struct Zinc_string bf;
 
@@ -37,6 +37,7 @@ void Ake_symbol_table_add_reserved_word(struct Ake_environment* env, const char*
     sym->type = Ake_symbol_type_reserved_word;
     sym->tk_type = tk_type;
 
+	Ake_environment* env = st->top;
     Ake_environment_put(env, &bf, sym);
 
     Zinc_string_destroy(&bf);
@@ -60,26 +61,26 @@ void Ake_symbol_table_add_type(struct Ake_environment* env, const char* name, st
 	Zinc_string_destroy(&bf);
 }
 
-void Ake_symbol_table_init_reserved(struct Ake_environment* env)
+void Ake_symbol_table_init_reserved(Ake_symbol_table* st)
 {
-	Ake_symbol_table_add_reserved_word(env, "fn", Ake_token_fn);
-	Ake_symbol_table_add_reserved_word(env, "end", Ake_token_end);
-	Ake_symbol_table_add_reserved_word(env, "if", Ake_token_if);
-	Ake_symbol_table_add_reserved_word(env, "elseif", Ake_token_elseif);
-	Ake_symbol_table_add_reserved_word(env, "else", Ake_token_else);
-	Ake_symbol_table_add_reserved_word(env, "while", Ake_token_while);
-	Ake_symbol_table_add_reserved_word(env, "for", Ake_token_for);
-	Ake_symbol_table_add_reserved_word(env, "in", Ake_token_in);
-	Ake_symbol_table_add_reserved_word(env, "true", Ake_token_boolean);
-	Ake_symbol_table_add_reserved_word(env, "false", Ake_token_boolean);
-	Ake_symbol_table_add_reserved_word(env, "struct", Ake_token_struct);
-	Ake_symbol_table_add_reserved_word(env, "return", Ake_token_return);
-    Ake_symbol_table_add_reserved_word(env, "extern", Ake_token_extern);
-    Ake_symbol_table_add_reserved_word(env, "mut", Ake_token_mut);
-    Ake_symbol_table_add_reserved_word(env, "const", Ake_token_const);
-	Ake_symbol_table_add_reserved_word(env, "var", Ake_token_var);
-    Ake_symbol_table_add_reserved_word(env, "impl", Ake_token_impl);
-    Ake_symbol_table_add_reserved_word(env, "self", Ake_token_self);
+	Ake_symbol_table_add_reserved_word(st, "fn", Ake_token_fn);
+	Ake_symbol_table_add_reserved_word(st, "end", Ake_token_end);
+	Ake_symbol_table_add_reserved_word(st, "if", Ake_token_if);
+	Ake_symbol_table_add_reserved_word(st, "elseif", Ake_token_elseif);
+	Ake_symbol_table_add_reserved_word(st, "else", Ake_token_else);
+	Ake_symbol_table_add_reserved_word(st, "while", Ake_token_while);
+	Ake_symbol_table_add_reserved_word(st, "for", Ake_token_for);
+	Ake_symbol_table_add_reserved_word(st, "in", Ake_token_in);
+	Ake_symbol_table_add_reserved_word(st, "true", Ake_token_boolean);
+	Ake_symbol_table_add_reserved_word(st, "false", Ake_token_boolean);
+	Ake_symbol_table_add_reserved_word(st, "struct", Ake_token_struct);
+	Ake_symbol_table_add_reserved_word(st, "return", Ake_token_return);
+    Ake_symbol_table_add_reserved_word(st, "extern", Ake_token_extern);
+    Ake_symbol_table_add_reserved_word(st, "mut", Ake_token_mut);
+    Ake_symbol_table_add_reserved_word(st, "const", Ake_token_const);
+	Ake_symbol_table_add_reserved_word(st, "var", Ake_token_var);
+    Ake_symbol_table_add_reserved_word(st, "impl", Ake_token_impl);
+    Ake_symbol_table_add_reserved_word(st, "self", Ake_token_self);
 }
 
 void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake_environment* env)
@@ -244,7 +245,7 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 	st->top2 = NULL;
 
 	Ake_environment_begin(st);
-	Ake_symbol_table_init_reserved(st->top);
+	Ake_symbol_table_init_reserved(st);
 	Ake_symbol_table_init_builtin_types(st, st->top);
 	Ake_symbol_table_numeric_pool_init(st);
 }
