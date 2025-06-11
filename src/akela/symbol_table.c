@@ -259,12 +259,14 @@ void Ake_symbol_table_destroy(Ake_symbol_table* st)
 	while (env) {
 		Ake_Environment* prev = env->prev;
 		Ake_EnvironmentDestroy(env);
+		free(env);
 		env = prev;
 	}
     env = st->deactivated;
     while (env) {
         Ake_Environment* prev = env->prev;
         Ake_EnvironmentDestroy(env);
+    	free(env);
         env = prev;
     }
     Ake_type_use_destroy(st->numeric_pool);
