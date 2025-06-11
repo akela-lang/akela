@@ -545,7 +545,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
                 free(a);
                 n->type = Ake_ast_type_error;
                 /* test case: test_parse_error_not_a_type */
-            } else if (sym->td == ps->st->function_type_def) {
+            } else if (sym->td->type == Ake_type_function) {
                 Zinc_error_list_set(
                         ps->el,
                         &name->loc,

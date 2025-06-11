@@ -18,7 +18,6 @@ typedef struct Ake_symbol_table {
 	Ake_type_use* numeric_pool;
     Ake_environment* deactivated;
     size_t id_count;
-    Ake_type_def* function_type_def;
 	size_t count;
 	Ake_Environment* deactivated2;
 	Ake_Environment* top2;

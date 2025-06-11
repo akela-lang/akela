@@ -195,7 +195,6 @@ void Ake_symbol_table_init_builtin_types(struct Ake_symbol_table* st, struct Ake
 	td->type = Ake_type_function;
 	Zinc_string_add_str(&td->name, name);
 	Ake_symbol_table_add_type(env, name, td);
-    st->function_type_def = td;
 
 	name = "Module";
 	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
