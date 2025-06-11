@@ -20,7 +20,7 @@ set(lib_files
         type_use.c
         parse_data.c
         ast_to_cent.c
-        environment2.c
+        environment.c
 )
 
 add_library(akela STATIC ${lib_files})

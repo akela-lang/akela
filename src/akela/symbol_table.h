@@ -7,7 +7,7 @@
 #include "token.h"
 #include <stdlib.h>
 #include "ast.h"
-#include "environment2.h"
+#include "environment.h"
 #include "type_use.h"
 
 typedef struct Ake_type_use Ake_type_use;

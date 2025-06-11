@@ -1,6 +1,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
-#include "akela/environment2.h"
+#include "akela/environment.h"
 
 void AkeUnit_EnvironmentAdd(Zinc_test* test)
 {

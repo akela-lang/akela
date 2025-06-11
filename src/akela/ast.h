@@ -11,7 +11,7 @@
 #include "zinc/vector.h"
 #include "type_use.h"
 #include "zinc/list.h"
-#include "environment2.h"
+#include "environment.h"
 
 typedef enum Ake_ast_type {
 	Ake_ast_type_none,
