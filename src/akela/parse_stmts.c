@@ -38,15 +38,15 @@ Ake_ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 	struct Ake_environment* saved = NULL;
 	struct Ake_environment* env = NULL;
 
+	Ake_ast_create(&n);
+	n->type = Ake_ast_type_stmts;
+
 	if (!suppress_env) {
-        Ake_begin_environment(ps->st);
+        Ake_begin_environment(ps->st, n);
 		if (is_global) {
 			ps->st->top->is_global = true;
 		}
 	}
-
-    Ake_ast_create(&n);
-	n->type = Ake_ast_type_stmts;
 
 	Ake_ast* a = NULL;
 	a = Ake_parse_stmt(ps);
@@ -270,7 +270,7 @@ Ake_ast* Ake_parse_for(struct Ake_parse_state* ps)
         n->type = Ake_ast_type_error;
     }
 
-    Ake_begin_environment(ps->st);
+    Ake_begin_environment(ps->st, n);
 
     Ake_consume_newline(ps, n);
 

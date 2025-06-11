@@ -91,7 +91,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
         n->type = Ake_ast_type_error;
     }
 
-    Ake_begin_environment(ps->st);
+    Ake_begin_environment(ps->st, n);
     Ake_declare_params(ps, proto, struct_type);
     Ake_set_current_function(ps->st, n);
     Ake_type_use* tu = Ake_proto2type_use(ps->st, proto, struct_type);

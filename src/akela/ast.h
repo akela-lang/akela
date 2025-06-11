@@ -156,7 +156,6 @@ typedef struct Ake_ast {
 extern "C" {
 #endif
 
-//AKELA_API enum result Ast_set_names(char const** names);
 void Ake_ast_create(Ake_ast** n);
 AKELA_API void Ake_ast_destroy(Ake_ast* n);
 AKELA_API void Ake_ast_init(Ake_ast* n);
