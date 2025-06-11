@@ -299,7 +299,7 @@ bool Ake_is_numeric(struct Ake_type_def* td)
 	return td->type == Ake_type_integer || td->type == Ake_type_float;
 }
 
-bool Ake_type_find(struct Ake_symbol_table* st, struct Ake_type_def* a, struct Ake_type_def* b, bool *promote, struct Ake_type_def** c)
+bool Ake_type_find(Ake_symbol_table* st, Ake_type_def* a, Ake_type_def* b, bool *promote, Ake_type_def** c)
 {
 	*promote = false;
 	*c = NULL;
@@ -331,7 +331,7 @@ bool Ake_type_find(struct Ake_symbol_table* st, struct Ake_type_def* a, struct A
 		Ake_type_use* tu = st->numeric_pool->head;
 		assert(tu);
 		do {
-			struct Ake_type_def* x = tu->td;
+			Ake_type_def* x = tu->td;
 			assert(x);
 			if (x->type == type && x->is_signed == is_signed && x->bit_count == bit_count) {
 				*promote = true;
