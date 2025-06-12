@@ -1,6 +1,10 @@
 #ifndef AKELA_SYMBOL_H
 #define AKELA_SYMBOL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "token.h"
 #include "ast.h"
 
@@ -29,5 +33,9 @@ AKELA_API void Ake_symbol_init(struct Ake_symbol* sym);
 AKELA_API void Ake_symbol_create(struct Ake_symbol** sym);
 AKELA_API void Ake_symbol_destroy(Ake_symbol* sym);
 AKELA_API struct Ake_symbol* Ake_symbol_copy(struct Ake_symbol* sym);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

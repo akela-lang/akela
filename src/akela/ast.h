@@ -146,6 +146,7 @@ typedef struct Ake_ast {
     Zinc_location loc;
     Ake_symbol* sym;
 	Ake_Environment* env;
+	size_t seq;
 	Ake_ast* next;
 	Ake_ast* prev;
 	Ake_ast* head;

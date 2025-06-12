@@ -1,6 +1,10 @@
 #ifndef AKELA_SYMBOL_TABLE_H
 #define AKELA_SYMBOL_TABLE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "api.h"
 #include <stdbool.h>
 #include "zinc/hash_map_string.h"
@@ -36,5 +40,9 @@ AKELA_API Ake_ast* Ake_get_current_function(Ake_symbol_table* st);
 AKELA_API size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st);
 AKELA_API size_t Ake_symbol_table_get_seq_num(Ake_symbol_table* st);
 AKELA_API Ake_Environment* Ake_get_current_env(Ake_ast* n);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

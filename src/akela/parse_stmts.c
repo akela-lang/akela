@@ -195,6 +195,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
                 new_sym->tu = Ake_type_use_clone(n->tu);
                 Ake_EnvironmentAdd(ps->st, &id_node->value, new_sym);
                 n->sym = new_sym;
+            	n->seq = Ake_symbol_table_get_seq_num(ps->st);
             }
         }
     }
@@ -566,6 +567,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 			sym->td = td;
 			Ake_EnvironmentAdd(ps->st, &id->value, sym);
             n->sym = sym;
+			n->seq = Ake_symbol_table_get_seq_num(ps->st);
 		}
 	}
 

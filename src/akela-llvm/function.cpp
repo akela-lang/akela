@@ -19,6 +19,9 @@ namespace Akela_llvm {
         jd->Builder->SetInsertPoint(last_block);
 
         n->sym->value = f;
+        Ake_Environment* env = Ake_get_current_env(n);
+        Ake_symbol* sym = Ake_RelativeGet(env, &id->value, n->seq);
+        assert(sym == n->sym);
 
         return f;
     }
