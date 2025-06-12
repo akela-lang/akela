@@ -25,7 +25,10 @@ namespace Akela_llvm {
         StructType* struct_type = StructType::create(*jd->TheContext, type_list, n->value.buf);
         assert(n->sym);
         assert(n->sym->td);
-        n->sym->td->composite_type = struct_type;
+        Ake_Environment* env = Ake_get_current_env(n);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &n->value, n->loc.start);
+        assert(sym == n->sym);
+        sym->td->composite_type = struct_type;
         return nullptr;
     }
 

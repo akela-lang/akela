@@ -568,7 +568,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 			Ake_symbol_init(sym);
 			sym->type = Ake_symbol_type_type;
 			sym->td = td;
-			Ake_EnvironmentAdd(ps->st->top, &id->value, sym, seq);
+			Ake_EnvironmentAdd(ps->st->top, &id->value, sym, n->loc.start);
             n->sym = sym;
 			n->seq = Ake_symbol_table_get_seq_num(ps->st);
 		}
