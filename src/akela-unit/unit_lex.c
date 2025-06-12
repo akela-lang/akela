@@ -33,8 +33,8 @@ void AkeUnit_lex_blank(Zinc_test* test)
 	Zinc_expect_string(test, &t->value, "", "(blank)");
     Zinc_expect_size_t_equal(test, t->loc.line, 1, "line 1");
     Zinc_expect_size_t_equal(test, t->loc.col, 1, "col 1");
-    Zinc_expect_size_t_equal(test, t->loc.start_pos, 0, "start_pos 0");
-    Zinc_expect_size_t_equal(test, t->loc.end_pos, 1, "end_pos 0");
+    Zinc_expect_size_t_equal(test, t->loc.start, 0, "start_pos 0");
+    Zinc_expect_size_t_equal(test, t->loc.end, 1, "end_pos 0");
 
 	Ake_token_destroy(t);
 	free(t);
@@ -109,8 +109,8 @@ void AkeUnit_lex_assign(Zinc_test* test)
     Zinc_expect_int_equal(test, t->type, Ake_token_eof, "eof");
     Zinc_expect_size_t_equal(test, t->loc.line, 1, "line 1");
     Zinc_expect_size_t_equal(test, t->loc.col, 6, "col 6");
-    Zinc_expect_size_t_equal(test, t->loc.start_pos, 5, "byte pos 5");
-    Zinc_expect_size_t_equal(test, t->loc.end_pos, 6, "end_pos 3");
+    Zinc_expect_size_t_equal(test, t->loc.start, 5, "byte pos 5");
+    Zinc_expect_size_t_equal(test, t->loc.end, 6, "end_pos 3");
 
 	Ake_token_destroy(t);
 	free(t);

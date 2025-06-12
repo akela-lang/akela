@@ -52,7 +52,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
         if (done) {
             t->type = Json_token_type_eof;
             t->loc = loc;
-            t->loc.end_pos = t->loc.start_pos + 3;
+            t->loc.end = t->loc.start + 3;
             return;
         }
 
@@ -70,7 +70,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             t->loc = loc;
             Json_lex_string(jld, t);
             loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
-            t->loc.end_pos = loc.start_pos;
+            t->loc.end = loc.start;
             return;
         }
 
@@ -80,7 +80,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             Zinc_string_add_char(&t->value, c[0]);
             Json_lex_number(jld, t);
             loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
-            t->loc.end_pos = loc.start_pos;
+            t->loc.end = loc.start;
             return;
         }
 
@@ -89,7 +89,7 @@ void Json_lex_start(Json_lex_data* jld, Json_token* t)
             t->loc = loc;
             if (Json_lex_word(jld, t)) {
                 loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
-                t->loc.end_pos = loc.start_pos;
+                t->loc.end = loc.start;
                 return;
             }
             continue;
@@ -283,7 +283,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
     bool valid = true;
     struct Zinc_location first_loc;
     first_loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
-    first_loc.start_pos -= 2;
+    first_loc.start -= 2;
     first_loc.col -= 2;
 
     /* first four hex digits */
@@ -327,7 +327,7 @@ void Json_lex_string_escape_unicode(Json_lex_data* jld, Json_token* t)
 
     struct Zinc_location end_loc;
     end_loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
-    first_loc.end_pos = end_loc.start_pos;
+    first_loc.end = end_loc.start;
 
     if (valid) {
         unsigned int cp = Zinc_char4_to_hex(bf.buf + 2, (int)bf.size - 2);
@@ -368,8 +368,8 @@ void Json_lex_number(Json_lex_data* jld, Json_token* t)
     size_t digit_count = 0;
     char first_digit;
     struct Zinc_location first_loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
-    first_loc.end_pos = first_loc.start_pos;
-    first_loc.start_pos--;
+    first_loc.end = first_loc.start;
+    first_loc.start--;
     first_loc.col--;
 
     char first = t->value.buf[0];
@@ -588,7 +588,7 @@ bool Json_lex_word(Json_lex_data* jld, Json_token* t)
     }
 
     loc = Zinc_input_unicode_get_location(jld->input_obj, jld->input_vtable);
-    t->loc.end_pos = loc.start_pos;
+    t->loc.end = loc.start;
 
     Zinc_error_list_set(jld->el, &t->loc, "invalid word (%bf), expecting true, false, or null", &t->value);
     t->type = Json_token_type_none;

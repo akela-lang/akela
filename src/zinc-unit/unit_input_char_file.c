@@ -51,10 +51,10 @@ void Zinc_unit_test_input_char_file_next(Zinc_test* test)
         done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
         Zinc_vector_add(text_actual, &c, 1);
-        Zinc_expect_size_t_equal(test, loc.start_pos, start_pos, "start_pos");
+        Zinc_expect_size_t_equal(test, loc.start, start_pos, "start_pos");
         Zinc_expect_size_t_equal(test, loc.line, line, "line");
         Zinc_expect_size_t_equal(test, loc.col, col, "col");
-        Zinc_expect_size_t_equal(test, loc.end_pos, end_pos, "end_pos");
+        Zinc_expect_size_t_equal(test, loc.end, end_pos, "end_pos");
         start_pos++;
         end_pos++;
         col++;
@@ -117,10 +117,10 @@ void Zinc_unit_test_input_char_file_repeat(Zinc_test* test)
         done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);
         if (done) break;
         Zinc_vector_add(text_actual, &c, 1);
-        Zinc_expect_size_t_equal(test, loc.start_pos, start_pos, "start_pos");
+        Zinc_expect_size_t_equal(test, loc.start, start_pos, "start_pos");
         Zinc_expect_size_t_equal(test, loc.line, line, "line");
         Zinc_expect_size_t_equal(test, loc.col, col, "col");
-        Zinc_expect_size_t_equal(test, loc.end_pos, end_pos, "end_pos");
+        Zinc_expect_size_t_equal(test, loc.end, end_pos, "end_pos");
         if (!did_repeat) {
             Zinc_input_char_file_repeat(input);
             did_repeat = true;
@@ -178,7 +178,7 @@ void Zinc_unit_test_input_char_file_seek(Zinc_test* test)
     bool done;
     char c;
     struct Zinc_location loc;
-    loc.start_pos = 6;
+    loc.start = 6;
     Zinc_input_char_seek(input, input->input_vtable, &loc);
     do {
         done = Zinc_input_char_next(input, input->input_vtable, &c, &loc);

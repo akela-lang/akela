@@ -274,7 +274,7 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
     }
 
     Lava_lookahead(pd);
-    n->data.LAVA_DOM_BACKQUOTE.bounds.end = pd->lookahead->loc.start_pos;
+    n->data.LAVA_DOM_BACKQUOTE.bounds.end = pd->lookahead->loc.start;
     Lava_match(pd, Lava_token_kind_backquote, "expected backquote", &bq, n);
     Lava_token_destroy(bq);
     free(bq);

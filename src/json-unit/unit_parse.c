@@ -182,8 +182,8 @@ void Json_unit_parse_array_error_no_right_square_bracket(Zinc_test* test)
     if (!Zinc_expect_ptr(test, e, "ptr e")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_size_t_equal(test, e->loc.start_pos, 13, "start pos e");
-    Zinc_expect_size_t_equal(test, e->loc.end_pos, 16, "end pos e");
+    Zinc_expect_size_t_equal(test, e->loc.start, 13, "start pos e");
+    Zinc_expect_size_t_equal(test, e->loc.end, 16, "end pos e");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "end pos e");
     Zinc_expect_size_t_equal(test, e->loc.col, 14, "end pos e");
 
@@ -205,8 +205,8 @@ void Json_unit_parse_array_error_expected_value_after_comma(Zinc_test* test)
     if (!Zinc_expect_ptr(test, e, "ptr e")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_size_t_equal(test, e->loc.start_pos, 14, "start pos e");
-    Zinc_expect_size_t_equal(test, e->loc.end_pos, 17, "end pos e");
+    Zinc_expect_size_t_equal(test, e->loc.start, 14, "start pos e");
+    Zinc_expect_size_t_equal(test, e->loc.end, 17, "end pos e");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "end pos e");
     Zinc_expect_size_t_equal(test, e->loc.col, 15, "end pos e");
 
@@ -279,8 +279,8 @@ void Json_unit_parse_error_token(Zinc_test* test)
     if (!Zinc_expect_ptr(test, e, "ptr e")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_size_t_equal(test, e->loc.start_pos, 4, "start pos e");
-    Zinc_expect_size_t_equal(test, e->loc.end_pos, 5, "end pos e");
+    Zinc_expect_size_t_equal(test, e->loc.start, 4, "start pos e");
+    Zinc_expect_size_t_equal(test, e->loc.end, 5, "end pos e");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line e");
     Zinc_expect_size_t_equal(test, e->loc.col, 5, "col e");
 

@@ -110,10 +110,10 @@ void CobUnit_compile_union_single_error(Zinc_test* test)
 	if (!e) {
 		return Zinc_assert();
 	}
-    Zinc_expect_size_t_equal(test, e->loc.start_pos, 2, "start pos");
+    Zinc_expect_size_t_equal(test, e->loc.start, 2, "start pos");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(test, e->loc.col, 3, "col");
-    Zinc_expect_size_t_equal(test, e->loc.end_pos, 3, "end_pos");
+    Zinc_expect_size_t_equal(test, e->loc.end, 3, "end_pos");
 
     Cob_re_destroy(&re);
 }
@@ -531,10 +531,10 @@ void CobUnit_compile_repeat_num_error(Zinc_test* test)
 	if (!e) {
 		return Zinc_assert();
 	}
-    Zinc_expect_size_t_equal(test, e->loc.start_pos, 2, "start_pos");
+    Zinc_expect_size_t_equal(test, e->loc.start, 2, "start_pos");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(test, e->loc.col, 3, "col");
-    Zinc_expect_size_t_equal(test, e->loc.end_pos, 3, "end_pos");
+    Zinc_expect_size_t_equal(test, e->loc.end, 3, "end_pos");
 
     Cob_re_destroy(&re);
 }
@@ -602,10 +602,10 @@ void CobUnit_compile_repeat_range_num_error(Zinc_test* test)
 	if (!e) {
 		return Zinc_assert();
 	}
-    Zinc_expect_size_t_equal(test, e->loc.start_pos, 4, "byte_pos");
+    Zinc_expect_size_t_equal(test, e->loc.start, 4, "byte_pos");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(test, e->loc.col, 5, "col");
-    Zinc_expect_size_t_equal(test, e->loc.end_pos, 5, "end_pos");
+    Zinc_expect_size_t_equal(test, e->loc.end, 5, "end_pos");
 
     Cob_re_destroy(&re);
 }

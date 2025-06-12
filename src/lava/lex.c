@@ -15,7 +15,7 @@ Lava_token* Lava_lex(Lava_lex_data* ld)
     Lava_lex_start(ld, t);
     if (t->kind != Lava_token_kind_eof) {
         Zinc_location loc = Zinc_input_unicode_get_location(ld->input, ld->vtable);
-        t->loc.end_pos = loc.start_pos;
+        t->loc.end = loc.start;
     }
     return t;
 }

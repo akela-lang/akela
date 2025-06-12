@@ -89,7 +89,7 @@ void CSVLexField(struct CSVLexData* lex_data, struct CSVToken* token) {
     }
 
     struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
-    token->loc.end_pos = end.start_pos;
+    token->loc.end = end.start;
 }
 
 void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
@@ -125,7 +125,7 @@ void CSVLexFieldQuoted(struct CSVLexData* lex_data, struct CSVToken* token)
     }
 
     struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
-    token->loc.end_pos = end.start_pos;
+    token->loc.end = end.start;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -157,7 +157,7 @@ void CSVLexFieldEndOfQuote(struct CSVLexData* lex_data, struct CSVToken* token)
     }
 
     struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
-    token->loc.end_pos = end.start_pos;
+    token->loc.end = end.start;
 }
 
 void CSVLexEndOfRow(struct CSVLexData* lex_data, struct CSVToken* token)
@@ -181,14 +181,14 @@ void CSVLexEndOfRow(struct CSVLexData* lex_data, struct CSVToken* token)
     }
 
     struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
-    token->loc.end_pos = end.start_pos;
+    token->loc.end = end.start;
 }
 
 void CSVLexEOF(struct CSVLexData* lex_data, struct CSVToken* token)
 {
     token->type = CSVTokenTypeEOF;
     struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
-    token->loc.end_pos = end.start_pos;
+    token->loc.end = end.start;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -223,7 +223,7 @@ void CSVLex(struct CSVLexData* lex_data, struct CSVToken** token)
     CSVTokenCreate(token);
     CSVLexDispatch(lex_data, *token);
     struct Zinc_location end = *Zinc_input_char_location(lex_data->input_data, lex_data->input_vtable);
-    (*token)->loc.end_pos = end.start_pos;
+    (*token)->loc.end = end.start;
 }
 
 enum Zinc_result CSVLoad(const char* filename, Zinc_vector* text)

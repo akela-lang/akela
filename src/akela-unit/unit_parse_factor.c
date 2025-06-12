@@ -438,8 +438,8 @@ void AkeUnit_parse_id_cyrillic(Zinc_test* test)
     if (!Zinc_expect_ptr(test, e, "ptr e")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_size_t_equal(test, e->loc.start_pos, 6, "start_pos");
-    Zinc_expect_size_t_equal(test, e->loc.end_pos, 8, "size");
+    Zinc_expect_size_t_equal(test, e->loc.start, 6, "start_pos");
+    Zinc_expect_size_t_equal(test, e->loc.end, 8, "size");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
     Zinc_expect_size_t_equal(test, e->loc.col, 7, "col");
 
@@ -1045,8 +1045,8 @@ void AkeUnit_parse_paren_error_empty(Zinc_test* test)
     if (e) {
         Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
         Zinc_expect_size_t_equal(test, e->loc.col, 2, "col");
-        Zinc_expect_size_t_equal(test, e->loc.start_pos, 1, "start_pos");
-        Zinc_expect_size_t_equal(test, e->loc.end_pos, 2, "size");
+        Zinc_expect_size_t_equal(test, e->loc.start, 1, "start_pos");
+        Zinc_expect_size_t_equal(test, e->loc.end, 2, "size");
     }
 
     AkeUnit_parse_teardown(&cu);

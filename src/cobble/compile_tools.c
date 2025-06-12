@@ -15,8 +15,8 @@ Cob_token* Cob_lex(Cob_compile_data* cd)
         r = Zinc_string_next(cd->text, &cd->pos, c, &num, &done);
         if (done) break;
         if (r == Zinc_result_ok) {
-            cd->loc.start_pos = cd->pos;
-            cd->loc.end_pos = cd->pos + 1;
+            cd->loc.start = cd->pos;
+            cd->loc.end = cd->pos + 1;
             if (num == 1 && c[0] == '\n') {
                 cd->loc.line++;
                 cd->loc.col = 0;

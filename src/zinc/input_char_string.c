@@ -37,7 +37,7 @@ void Zinc_input_char_string_clear(Zinc_input_char_string* data)
 {
     Zinc_location_init(&data->loc);
     Zinc_location_init(&data->prev_loc);
-    data->loc.end_pos = 1;
+    data->loc.end = 1;
     data->loc.line = 1;
     data->loc.col = 1;
 }
@@ -51,7 +51,7 @@ void Zinc_input_char_string_clear(Zinc_input_char_string* data)
  */
 bool Zinc_input_char_string_next(Zinc_input_char_string* data, char* c, Zinc_location* loc)
 {
-    if (data->loc.start_pos == 0) {
+    if (data->loc.start == 0) {
         Zinc_input_char_string_clear(data);
     }
 
@@ -65,8 +65,8 @@ bool Zinc_input_char_string_next(Zinc_input_char_string* data, char* c, Zinc_loc
     if (data->pos < data->text->count) {
         *c = ZINC_VECTOR_CHAR(data->text, data->pos++);
         *loc = data->loc;
-        data->loc.start_pos++;
-        data->loc.end_pos = data->loc.start_pos + 1;
+        data->loc.start++;
+        data->loc.end = data->loc.start + 1;
         if (*c == '\n') {
             data->loc.line++;
             data->loc.col = 1;
@@ -97,12 +97,12 @@ void Zinc_input_char_string_repeat(Zinc_input_char_string* data)
  */
 void Zinc_input_char_string_seek(Zinc_input_char_string* data, Zinc_location* loc)
 {
-    if (loc->start_pos < data->text->count)
+    if (loc->start < data->text->count)
     {
         Zinc_input_char_string_clear(data);
         data->loc = *loc;
         data->prev_loc = *loc;
-        data->pos = loc->start_pos;
+        data->pos = loc->start;
     }
 }
 

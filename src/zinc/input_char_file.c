@@ -39,7 +39,7 @@ void Zinc_input_char_file_clear(Zinc_input_char_file* input)
     Zinc_location_init(&input->prev_loc);
     input->loc.line = 1;
     input->loc.col = 1;
-    input->loc.end_pos = 1;
+    input->loc.end = 1;
 }
 
 /**
@@ -50,7 +50,7 @@ void Zinc_input_char_file_clear(Zinc_input_char_file* input)
  */
 bool Zinc_input_char_file_next(Zinc_input_char_file* input, char* c, struct Zinc_location* loc)
 {
-    if (input->loc.start_pos == 0) {
+    if (input->loc.start == 0) {
         Zinc_input_char_file_clear(input);
     }
 
@@ -70,8 +70,8 @@ bool Zinc_input_char_file_next(Zinc_input_char_file* input, char* c, struct Zinc
     }
 
     input->prev_loc = input->loc;
-    input->loc.start_pos++;
-    input->loc.end_pos = input->loc.start_pos + 1;
+    input->loc.start++;
+    input->loc.end = input->loc.start + 1;
     if (*c == '\n') {
         input->loc.line++;
         input->loc.col = 1;
@@ -99,7 +99,7 @@ void Zinc_input_char_file_seek(Zinc_input_char_file* input, struct Zinc_location
 {
     input->loc = *loc;
     input->prev_loc = *loc;
-    fseek(input->fp, (long)loc->start_pos, SEEK_SET);
+    fseek(input->fp, (long)loc->start, SEEK_SET);
 }
 
 /**

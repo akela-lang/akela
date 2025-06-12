@@ -280,7 +280,7 @@ bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t)
     /* type id */
     if (t->type == Ake_token_id) {
         Ake_get_lookahead(ps);
-        size_t seq = ps->lookahead->loc.start_pos;
+        size_t seq = ps->lookahead->loc.start;
         Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &t->value, seq);
         if (sym && sym->td) {
             return true;
@@ -533,7 +533,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
         struct Ake_symbol* sym = NULL;
         if (n->type != Ake_ast_type_error) {
             Ake_get_lookahead(ps);
-            size_t seq = ps->lookahead->loc.start_pos;
+            size_t seq = ps->lookahead->loc.start;
             sym = Ake_EnvironmentGet(ps->st->top, &name->value, seq);
             if (!sym) {
                 char* a;
@@ -585,7 +585,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
 void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
 {
     Ake_get_lookahead(ps);
-    size_t seq = ps->lookahead->loc.start_pos;
+    size_t seq = ps->lookahead->loc.start;
     Ake_symbol* dup = Ake_EnvironmentGetLocal(ps->st->top, &id_node->value, seq);
     if (dup) {
         char* a;
@@ -654,7 +654,7 @@ Ake_type_use* Ake_Type_use_add_proto(
     Zinc_string_init(&bf);
     Zinc_string_add_str(&bf, "Function");
     Ake_get_lookahead(ps);
-    size_t seq = ps->lookahead->loc.start_pos;
+    size_t seq = ps->lookahead->loc.start;
     struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &bf, seq);
     Zinc_string_destroy(&bf);
     assert(sym);
@@ -851,7 +851,7 @@ bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct Zinc_locati
                 return false;
             }
             Ake_get_lookahead(ps);
-            size_t seq = ps->lookahead->loc.start_pos;
+            size_t seq = ps->lookahead->loc.start;
             sym = Ake_EnvironmentGet(ps->st->top, &p->value, seq);
             first = p;
         }

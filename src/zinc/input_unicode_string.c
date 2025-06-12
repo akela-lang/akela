@@ -67,7 +67,7 @@ Zinc_result Zinc_input_unicode_string_next(
     Zinc_result r = Zinc_result_ok;
 
     if (data->has_bounds) {
-        if (data->loc.start_pos >= data->bounds.end) {
+        if (data->loc.start >= data->bounds.end) {
             *loc = data->loc;
             *num = 0;
             *done = true;
@@ -82,7 +82,7 @@ Zinc_result Zinc_input_unicode_string_next(
     }
 
     if (data->repeat_char && data->pos > 0) {
-        data->pos = data->prev_loc.start_pos;
+        data->pos = data->prev_loc.start;
         data->repeat_char = false;
         data->loc = data->prev_loc;
         *loc = data->loc;
@@ -94,7 +94,7 @@ Zinc_result Zinc_input_unicode_string_next(
         c[0] = ZINC_VECTOR_CHAR(data->text, data->pos++);
         *num = ZINC_NUM_BYTES(c[0]);
         *loc = data->loc;
-        data->loc.start_pos++;
+        data->loc.start++;
         if (c[0] == '\n') {
             data->loc.line++;
             data->loc.col = 1;
@@ -107,7 +107,7 @@ Zinc_result Zinc_input_unicode_string_next(
         for (int i = 1; i < *num; i++) {
             if (data->pos < data->text->count) {
                 c[i] = ZINC_VECTOR_CHAR(data->text, data->pos++);
-                data->loc.start_pos++;
+                data->loc.start++;
                 if (!ZINC_IS_EXTRA_BYTE(c[i])) {
                     r = Zinc_set_error("invalid utf8 trailing byte");
                 }
@@ -118,10 +118,10 @@ Zinc_result Zinc_input_unicode_string_next(
             }
         }
 
-        loc->end_pos = data->prev_loc.start_pos + *num;
+        loc->end = data->prev_loc.start + *num;
     } else {
         *num = 0;
-        data->loc.end_pos = data->loc.start_pos + 1;
+        data->loc.end = data->loc.start + 1;
         *loc = data->loc;
         *done = true;
     }
@@ -146,11 +146,11 @@ void Zinc_input_unicode_string_repeat(Zinc_input_unicode_string* data)
  */
 void Zinc_input_unicode_string_seek(Zinc_input_unicode_string* data, Zinc_location* loc)
 {
-    if (loc->start_pos < data->text->count)
+    if (loc->start < data->text->count)
     {
         data->loc = *loc;
         data->prev_loc = *loc;
-        data->pos = loc->start_pos;
+        data->pos = loc->start;
     }
 }
 

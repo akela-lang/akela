@@ -8,8 +8,8 @@
 
 void Zinc_location_init(Zinc_location* loc)
 {
-    loc->start_pos = 0;
-    loc->end_pos = 0;
+    loc->start = 0;
+    loc->end = 0;
     loc->line = 0;
     loc->col = 0;
 }
@@ -113,11 +113,11 @@ void Zinc_location_combine(Zinc_location* p, Zinc_location* c)
         *p = *c;
     } else {
         if (c->line && c->col) {
-            if (c->start_pos < p->start_pos) {
-                p->start_pos = c->start_pos;
+            if (c->start < p->start) {
+                p->start = c->start;
             }
-            if (c->end_pos > p->end_pos) {
-                p->end_pos = c->end_pos;
+            if (c->end > p->end) {
+                p->end = c->end;
             }
             if (c->line < p->line) {
                 p->line = c->line;

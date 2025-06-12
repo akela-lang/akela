@@ -112,15 +112,15 @@ void Lava_unit_parse_header_text_backquote(Zinc_test* test)
         "}\n",
         "text header_backquote");
     Zinc_input_bounds bounds = header_backquote->data.LAVA_DOM_BACKQUOTE.bounds;
-    Zinc_expect_size_t_equal(test, bounds.loc.start_pos, 46, "loc start");
-    Zinc_expect_size_t_equal(test, bounds.loc.end_pos, 62, "loc end");
+    Zinc_expect_size_t_equal(test, bounds.loc.start, 46, "loc start");
+    Zinc_expect_size_t_equal(test, bounds.loc.end, 62, "loc end");
     Zinc_expect_size_t_equal(test, bounds.loc.line, 5, "loc line");
     Zinc_expect_size_t_equal(test, bounds.loc.col, 1, "loc col");
     Zinc_expect_size_t_equal(test, bounds.end, 109, "end");
 
     Zinc_string_slice quoted_actual_slice = {
-        .p = s + bounds.loc.start_pos,
-        .size = bounds.end - bounds.loc.start_pos,
+        .p = s + bounds.loc.start,
+        .size = bounds.end - bounds.loc.start,
     };
 
     char* quoted_expected =

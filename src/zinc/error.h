@@ -8,8 +8,8 @@
 #include "zstring.h"
 
 typedef struct Zinc_location {
-    size_t start_pos;
-    size_t end_pos;
+    size_t start;
+    size_t end;
     size_t line;
     size_t col;
 } Zinc_location;

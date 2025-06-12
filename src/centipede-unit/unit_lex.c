@@ -1132,8 +1132,8 @@ void CentUnit_lex_error_invalid_character(Zinc_test* test)
     if (!Zinc_expect_ptr(test, e, "ptr e")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_size_t_equal(test, e->loc.start_pos, 0, "start pos e");
-    Zinc_expect_size_t_equal(test, e->loc.end_pos, 1, "end pos e");
+    Zinc_expect_size_t_equal(test, e->loc.start, 0, "start pos e");
+    Zinc_expect_size_t_equal(test, e->loc.end, 1, "end pos e");
     Zinc_expect_size_t_equal(test, e->loc.line, 1, "line e");
     Zinc_expect_size_t_equal(test, e->loc.col, 1, "col e");
     CentUnit_lex_teardown(&ld);

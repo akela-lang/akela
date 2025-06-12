@@ -531,8 +531,8 @@ void DfUnit_CSVLexErrorQuote(Zinc_test* test)
     Zinc_expect_has_errors(test, lex_data->el);
     struct Zinc_error* e = Zinc_expect_source_error(test, lex_data->el, "quote found in unquoted field");
     if (e) {
-        Zinc_expect_size_t_equal(test, e->loc.start_pos, 3, "byte_pos");
-        Zinc_expect_size_t_equal(test, e->loc.end_pos, 4, "end_pos");
+        Zinc_expect_size_t_equal(test, e->loc.start, 3, "byte_pos");
+        Zinc_expect_size_t_equal(test, e->loc.end, 4, "end_pos");
         Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
         Zinc_expect_size_t_equal(test, e->loc.col, 4, "col");
     }
@@ -575,8 +575,8 @@ void DfUnit_CSVLexErrorExtraCharactersAfterQuote(Zinc_test* test)
     struct Zinc_error* e = Zinc_expect_source_error(test, lex_data->el,
                                           "extra characters after field ending quote");
     if (e) {
-        Zinc_expect_size_t_equal(test, e->loc.start_pos, 5, "byte_pos");
-        Zinc_expect_size_t_equal(test, e->loc.end_pos, 6, "size");
+        Zinc_expect_size_t_equal(test, e->loc.start, 5, "byte_pos");
+        Zinc_expect_size_t_equal(test, e->loc.end, 6, "size");
         Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
         Zinc_expect_size_t_equal(test, e->loc.col, 6, "col");
     }
@@ -620,8 +620,8 @@ void DfUnit_CSVLexErrorEOFBeforeQuote(Zinc_test* test)
     struct Zinc_error* e = Zinc_expect_source_error(test, lex_data->el,
                                           "End of file found before end of quoted field");
     if (e) {
-        Zinc_expect_size_t_equal(test, e->loc.start_pos, 4, "byte_pos");
-        Zinc_expect_size_t_equal(test, e->loc.end_pos, 5, "size");
+        Zinc_expect_size_t_equal(test, e->loc.start, 4, "byte_pos");
+        Zinc_expect_size_t_equal(test, e->loc.end, 5, "size");
         Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
         Zinc_expect_size_t_equal(test, e->loc.col, 5, "col");
     }

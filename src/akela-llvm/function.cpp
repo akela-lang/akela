@@ -18,9 +18,9 @@ namespace Akela_llvm {
         BasicBlock* last_block = Get_last_block(jd, jd->toplevel);
         jd->Builder->SetInsertPoint(last_block);
 
-        n->sym->value = f;
         Ake_Environment* env = Ake_get_current_env(n);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->value, n->loc.end_pos);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->value, n->loc.end);
+        sym->value = f;
         assert(sym == n->sym);
 
         return f;

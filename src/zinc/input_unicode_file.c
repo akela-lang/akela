@@ -70,11 +70,11 @@ enum Zinc_result Zinc_input_unicode_file_next(
 {
     enum Zinc_result r = Zinc_result_ok;
     *done = false;
-    if (input->loc.start_pos == 0) {
+    if (input->loc.start == 0) {
         Zinc_input_unicode_file_clear(input);
     }
 
-    if (input->has_bounds && input->loc.start_pos >= input->bounds.end) {
+    if (input->has_bounds && input->loc.start >= input->bounds.end) {
         *num = 0;
         *done = true;
         *loc = input->loc;
@@ -92,8 +92,8 @@ enum Zinc_result Zinc_input_unicode_file_next(
         int x = getc(input->fp);
         *loc = input->loc;
         if (x == EOF) {
-            input->loc.end_pos = input->loc.start_pos + 1;
-            (*loc).end_pos = (*loc).start_pos + 1;
+            input->loc.end = input->loc.start + 1;
+            (*loc).end = (*loc).start + 1;
             *num = 0;
             *done = true;
             input->prev_num = *num;
@@ -117,7 +117,7 @@ enum Zinc_result Zinc_input_unicode_file_next(
             }
         }
 
-        loc->end_pos = loc->start_pos + *num;
+        loc->end = loc->start + *num;
         input->loc = *loc;
 
         memcpy(input->prev_c, c, *num);
@@ -126,7 +126,7 @@ enum Zinc_result Zinc_input_unicode_file_next(
         input->prev_done = *done;
     }
 
-    input->loc.start_pos += *num;
+    input->loc.start += *num;
     if (*num == 1 && c[0] == '\n') {
         input->loc.line++;
         input->loc.col = 1;
@@ -154,7 +154,7 @@ void Zinc_input_unicode_file_seek(Zinc_input_unicode_file* input, Zinc_location*
 {
     input->loc = *loc;
     input->prev_loc = *loc;
-    fseek(input->fp, (long)loc->start_pos, SEEK_SET);
+    fseek(input->fp, (long)loc->start, SEEK_SET);
 }
 
 /**

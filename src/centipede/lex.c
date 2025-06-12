@@ -102,7 +102,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
 
                 if (c[0] == ':') {
                     t->type = Cent_token_double_colon;
-                    t->loc.end_pos = loc.end_pos;
+                    t->loc.end = loc.end;
                 }
 
                 return;
@@ -217,7 +217,7 @@ void lex_start(Cent_lex_data* ld, Cent_token* t)
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add(&bf, c, num);
-        loc.end_pos = loc.start_pos + num;
+        loc.end = loc.start + num;
         Zinc_error_list_set(ld->errors, &loc, "invalid character: %bf", &bf);
         Zinc_string_destroy(&bf);
     }
@@ -251,7 +251,7 @@ void lex_id(Cent_lex_data* ld, Cent_token* t)
         }
 
         loc = Zinc_input_unicode_get_location(ld->input, ld->input_vtable);
-        t->loc.end_pos = loc.start_pos;
+        t->loc.end = loc.start;
         Zinc_input_unicode_repeat(ld->input, ld->input_vtable);
         return;
     }
@@ -389,7 +389,7 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
     bool valid = true;
     struct Zinc_location first_loc;
     first_loc = Zinc_input_unicode_get_location(ld->input, ld->input_vtable);
-    first_loc.start_pos -= 2;
+    first_loc.start -= 2;
     first_loc.col -= 2;
 
     /* first four hex digits */
@@ -433,7 +433,7 @@ void Cent_lex_string_escape_unicode(Cent_lex_data* ld, Cent_token* t)
 
     struct Zinc_location end_loc;
     end_loc = Zinc_input_unicode_get_location(ld->input, ld->input_vtable);
-    first_loc.end_pos = end_loc.start_pos;
+    first_loc.end = end_loc.start;
 
     if (valid) {
         unsigned int cp = Zinc_char4_to_hex(bf.buf + 2, (int)bf.size - 2);
@@ -472,8 +472,8 @@ void Cent_lex_integer(Cent_lex_data* ld, Cent_token* t)
     size_t digit_count = 0;
     char first_digit;
     struct Zinc_location first_loc = Zinc_input_unicode_get_location(ld->input, ld->input_vtable);
-    first_loc.end_pos = first_loc.start_pos;
-    first_loc.start_pos--;
+    first_loc.end = first_loc.start;
+    first_loc.start--;
     first_loc.col--;
 
     char first = t->value.buf[0];
@@ -674,7 +674,7 @@ void Cent_lex_modifier(Cent_lex_data* ld, Cent_token* t)
         }
 
         if (num == 1 && c[0] == '`') {
-            t->loc.end_pos = loc.end_pos;
+            t->loc.end = loc.end;
             return;
         }
 

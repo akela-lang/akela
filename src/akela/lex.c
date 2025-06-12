@@ -182,7 +182,7 @@ bool Ake_lex_start(struct Ake_lex_state* ls,
             }
             a[i] = '\0';
 
-            loc.end_pos = loc.start_pos + num;
+            loc.end = loc.start + num;
             Zinc_error_list_set(ls->el, &loc, "Unrecognized character: %s", a);
             /* error test case: test_lex_error_unrecognized_character */
             valid = false;
@@ -219,7 +219,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
         }
 
         if (*done) {
-            Ake_symbol* sym = Ake_EnvironmentGet(ls->st->top, &t->value, loc.end_pos);
+            Ake_symbol* sym = Ake_EnvironmentGet(ls->st->top, &t->value, loc.end);
             if (sym && sym->type == Ake_symbol_type_reserved_word) {
                 t->type = sym->tk_type;
             } else {
@@ -243,7 +243,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
                     Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
-                struct Ake_symbol* sym = Ake_EnvironmentGet(ls->st->top, &t->value, loc.end_pos);
+                struct Ake_symbol* sym = Ake_EnvironmentGet(ls->st->top, &t->value, loc.end);
                 if (sym && sym->type == Ake_symbol_type_reserved_word) {
                     t->type = sym->tk_type;
                 } else {
@@ -268,7 +268,7 @@ bool Ake_lex_word(struct Ake_lex_state* ls,
                     Zinc_string_add_char(&t->value, c[i]);
                 }
             } else {
-                struct Ake_symbol* sym = Ake_EnvironmentGet(ls->st->top, &t->value, loc.end_pos);
+                struct Ake_symbol* sym = Ake_EnvironmentGet(ls->st->top, &t->value, loc.end);
                 if (sym && sym->type == Ake_symbol_type_reserved_word) {
                     t->type = sym->tk_type;
                 } else {
@@ -511,7 +511,7 @@ bool Ake_lex_compound_operator(
         if (num == 1 && *c == '=') {
             t->type = Ake_token_double_equal;
             t->loc = loc;
-            t->loc.end_pos = loc2.end_pos;
+            t->loc.end = loc2.end;
             *state = Ake_state_start;
         } else {
             t->type = Ake_token_equal;
@@ -529,7 +529,7 @@ bool Ake_lex_compound_operator(
         if (num == 1 && *c == '=') {
             t->type = Ake_token_not_equal;
             t->loc = loc;
-            t->loc.end_pos = loc2.end_pos;
+            t->loc.end = loc2.end;
             *state = Ake_state_start;
         } else {
             t->type = Ake_token_not;
@@ -547,7 +547,7 @@ bool Ake_lex_compound_operator(
         if (num == 1 && *c == '=') {
             t->type = Ake_token_less_than_or_equal;
             t->loc = loc;
-            t->loc.end_pos = loc2.end_pos;
+            t->loc.end = loc2.end;
             *state = Ake_state_start;
         } else {
             t->type = Ake_token_less_than;
@@ -565,7 +565,7 @@ bool Ake_lex_compound_operator(
         if (num == 1 && *c == '=') {
             t->type = Ake_token_greater_than_or_equal;
             t->loc = loc;
-            t->loc.end_pos = loc2.end_pos;
+            t->loc.end = loc2.end;
             *state = Ake_state_start;
         } else {
             t->type = Ake_token_greater_than;
@@ -583,7 +583,7 @@ bool Ake_lex_compound_operator(
         if (num == 1 && *c == '&') {
             t->type = Ake_token_and;
             t->loc = loc;
-            t->loc.end_pos = loc2.end_pos;;
+            t->loc.end = loc2.end;;
             *state = Ake_state_start;
         } else {
             t->type = Ake_token_ampersand;
@@ -601,7 +601,7 @@ bool Ake_lex_compound_operator(
         if (num == 1 && *c == '|') {
             t->type = Ake_token_or;
             t->loc = loc;
-            t->loc.end_pos = loc2.end_pos;;
+            t->loc.end = loc2.end;;
             *state = Ake_state_start;
         } else {
             t->type = Ake_token_vertical_bar;
@@ -619,7 +619,7 @@ bool Ake_lex_compound_operator(
         if (num == 1 && *c == '>') {
             t->type = Ake_token_arrow;
             t->loc = loc;
-            t->loc.end_pos = loc2.end_pos;
+            t->loc.end = loc2.end;
             *state = Ake_state_start;
         } else {
             t->type = Ake_token_minus;
@@ -644,12 +644,12 @@ bool Ake_lex_compound_operator(
             if (num == 1 && *c == '.') {
                 t->type = Ake_token_ellipsis;
                 t->loc = loc;
-                t->loc.end_pos = loc3.end_pos;
+                t->loc.end = loc3.end;
                 *state = Ake_state_start;
             } else {
                 t->type = Ake_token_range;
                 t->loc = loc;
-                t->loc.end_pos = loc2.end_pos;
+                t->loc.end = loc2.end;
                 *state = Ake_state_start;
                 Zinc_input_unicode_repeat(ls->input, ls->vtable);
             }
@@ -701,9 +701,9 @@ bool Ake_lex(struct Ake_lex_state* ls, struct Ake_token** t)
     *t = tf;
 
     struct Zinc_location end = Zinc_input_unicode_get_location(ls->input, ls->vtable);
-    (*t)->loc.end_pos = end.start_pos;
-    if ((*t)->loc.end_pos == (*t)->loc.start_pos) {
-        (*t)->loc.end_pos++;
+    (*t)->loc.end = end.start;
+    if ((*t)->loc.end == (*t)->loc.start) {
+        (*t)->loc.end++;
     }
 
     return valid;
