@@ -1180,7 +1180,8 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
             } else {
                 struct Ake_type_def* td = left->tu->td;
                 assert(td);
-                struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st, &td->name);
+            	size_t seq = Ake_get_current_seq(ps);
+                struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &td->name, seq);
                 assert(sym);
                 //left->sym = sym;
                 assert(sym->td);

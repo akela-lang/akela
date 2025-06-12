@@ -1,5 +1,6 @@
 # Akela
 * new symbol table
+  * use node end position as get seq for IR generation
 * new type tree
 * new syntax tree
 

@@ -20,7 +20,7 @@ namespace Akela_llvm {
 
         n->sym->value = f;
         Ake_Environment* env = Ake_get_current_env(n);
-        Ake_symbol* sym = Ake_RelativeGet(env, &id->value, n->seq);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->value, n->loc.end_pos);
         assert(sym == n->sym);
 
         return f;

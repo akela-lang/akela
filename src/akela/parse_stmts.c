@@ -151,7 +151,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
         if (proto->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
-        Ake_type_use* tu = Ake_proto2type_use(ps->st, proto, NULL);
+        Ake_type_use* tu = Ake_proto2type_use(ps, proto, NULL);
         n->tu = tu;
     }
 
@@ -168,7 +168,8 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
 
         Ake_ast *id_node = Ast_node_get(proto, 0);
         /* check and save symbol */
-        struct Ake_symbol *search = Ake_EnvironmentGetLocal(ps->st, ps->st->top, &id_node->value);
+    	size_t seq = Ake_get_current_seq(ps);
+        Ake_symbol *search = Ake_EnvironmentGetLocal(ps->st->top, &id_node->value, seq);
         if (search) {
             Zinc_string_finish(&id_node->value);
             Zinc_error_list_set(
@@ -178,7 +179,8 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
                 id_node->value.buf);
             n->type = Ake_ast_type_error;
         } else {
-            struct Ake_symbol *sym = Ake_EnvironmentGet(ps->st, &id_node->value);
+        	seq = Ake_get_current_seq(ps);
+            Ake_symbol *sym = Ake_EnvironmentGet(ps->st->top, &id_node->value, seq);
             if (sym && sym->td) {
                 Zinc_string_finish(&id_node->value);
                 Zinc_error_list_set(
@@ -193,7 +195,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
                 Ake_symbol_init(new_sym);
                 new_sym->type = Ake_symbol_type_variable;
                 new_sym->tu = Ake_type_use_clone(n->tu);
-                Ake_EnvironmentAdd(ps->st, &id_node->value, new_sym);
+                Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start_pos);
                 n->sym = new_sym;
             	n->seq = Ake_symbol_table_get_seq_num(ps->st);
             }
@@ -545,7 +547,8 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
     }
 
 	if (n->type != Ake_ast_type_error) {
-		struct Ake_symbol* search = Ake_EnvironmentGetLocal(ps->st, ps->st->top, &id->value);
+		size_t seq = Ake_get_current_seq(ps);
+		Ake_symbol* search = Ake_EnvironmentGetLocal(ps->st->top, &id->value, seq);
 		if (search) {
 			Zinc_string_finish(&id->value);
 			Zinc_error_list_set(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
@@ -565,7 +568,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 			Ake_symbol_init(sym);
 			sym->type = Ake_symbol_type_type;
 			sym->td = td;
-			Ake_EnvironmentAdd(ps->st, &id->value, sym);
+			Ake_EnvironmentAdd(ps->st->top, &id->value, sym, seq);
             n->sym = sym;
 			n->seq = Ake_symbol_table_get_seq_num(ps->st);
 		}
@@ -767,8 +770,9 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
             Ake_ast* lhs = a->head;
             while (lhs) {
                 assert(lhs->type == Ake_ast_type_id);
-                struct Ake_symbol* sym = NULL;
-                sym = Ake_EnvironmentGet(ps->st, &lhs->value);
+                Ake_symbol* sym = NULL;
+            	size_t seq = Ake_get_current_seq(ps);
+                sym = Ake_EnvironmentGet(ps->st->top, &lhs->value, seq);
                 assert(sym);
                 sym->assign_count++;
                 lhs = lhs->next;
@@ -930,7 +934,8 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
 
     Ake_ast* struct_type = NULL;
     if (id) {
-        struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st, &id->value);
+    	size_t seq = Ake_get_current_seq(ps);
+        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
         if (sym->type == Ake_symbol_type_type) {
             if (sym->td->type == Ake_type_struct) {
                 Ake_ast* type_node = NULL;

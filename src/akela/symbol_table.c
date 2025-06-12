@@ -40,7 +40,7 @@ void Ake_symbol_table_add_reserved_word(Ake_symbol_table* st, const char* name, 
     sym->type = Ake_symbol_type_reserved_word;
     sym->tk_type = tk_type;
 
-    Ake_EnvironmentAdd(st, &bf, sym);
+    Ake_EnvironmentAdd(st->top, &bf, sym, AKE_SEQ_DEFAULT);
 
     Zinc_string_destroy(&bf);
 }
@@ -58,7 +58,7 @@ void Ake_symbol_table_add_type(Ake_symbol_table* st, const char* name, Ake_type_
         sym->type = Ake_symbol_type_type;
 	sym->td = td;
 
-	Ake_EnvironmentAdd(st, &bf, sym);
+	Ake_EnvironmentAdd(st->top, &bf, sym, AKE_SEQ_DEFAULT);
 
 	Zinc_string_destroy(&bf);
 }
@@ -212,7 +212,7 @@ void Ake_symbol_table_add_numeric(struct Ake_symbol_table* st, const char* name)
 	struct Zinc_string bf;
 	Zinc_string_init(&bf);
 	Zinc_string_add_str(&bf, name);
-	struct Ake_symbol* sym = Ake_EnvironmentGet(st, &bf);
+	struct Ake_symbol* sym = Ake_EnvironmentGet(st->top, &bf, AKE_SEQ_ANY);
 	assert(sym);
 	assert(sym->td);
 	Ake_type_use* tu = NULL;
@@ -518,7 +518,7 @@ void Ake_set_current_function(Ake_symbol_table* st, Ake_ast* fd)
 	struct Zinc_string bf;
 	Zinc_string_init(&bf);
 	Zinc_string_add_str(&bf, "|current_function|");
-	Ake_EnvironmentAdd(st, &bf, sym);
+	Ake_EnvironmentAdd(st->top, &bf, sym, AKE_SEQ_DEFAULT);
 	Zinc_string_destroy(&bf);
 }
 
@@ -527,7 +527,7 @@ Ake_ast* Ake_get_current_function(Ake_symbol_table* st)
 	struct Zinc_string bf;
 	Zinc_string_init(&bf);
 	Zinc_string_add_str(&bf, "|current_function|");
-	struct Ake_symbol* sym = Ake_EnvironmentGet(st, &bf);
+	struct Ake_symbol* sym = Ake_EnvironmentGet(st->top, &bf, AKE_SEQ_ANY);
 	Zinc_string_destroy(&bf);
 	if (sym) {
 		return sym->root_ptr;

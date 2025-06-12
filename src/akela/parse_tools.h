@@ -51,5 +51,6 @@ AKELA_API void Ake_parse_separator(
     struct Ake_parse_state* ps,
     Ake_ast* n,
     bool* has_separator);
+size_t Ake_get_current_seq(Ake_parse_state* ps);
 
 #endif

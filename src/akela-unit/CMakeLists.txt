@@ -17,7 +17,7 @@ set(akela_unit_files
         unit_comp_table.c
         unit_parse_function.c
         unit_parse_struct.c
-        unit_environment2.c
+        unit_environment.c
 )
 add_library(akela-unit STATIC ${akela_unit_files})
 target_link_libraries(akela-unit akela zinc ${coverage_lib})

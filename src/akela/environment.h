@@ -56,16 +56,11 @@ void Ake_EnvironmentDestroy(Ake_Environment* env);
 void Ake_EnvironmentMap(Ake_Environment* env, Ake_EnvironmentEntryFunc f);
 void Ake_EnvironmentMapName(Ake_Environment* env, Ake_EnvironmentEntryNameFunc f);
 
-void Ake_EnvironmentAdd(Ake_symbol_table* st, Zinc_string* name, Ake_symbol* sym);
-void Ake_EnvironmentAddStr(Ake_symbol_table* st, char* str, Ake_symbol* sym);
-Ake_symbol* Ake_EnvironmentGetLocal(Ake_symbol_table* st, Ake_Environment* env, Zinc_string* name);
-Ake_symbol* Ake_EnvironmentGetLocalStr(Ake_symbol_table* st, Ake_Environment* env, char* str);
-Ake_symbol* Ake_EnvironmentGet(Ake_symbol_table* st, Zinc_string* name);
-Ake_symbol* Ake_EnvironmentGetStr(Ake_symbol_table* st, char* str);
-
-Ake_symbol* Ake_RelativeGetLocal(Ake_Environment* env, Zinc_string* name, size_t seq);
-Ake_symbol* Ake_RelativeGetLocalStr(Ake_Environment* env, char* str, size_t seq);
-Ake_symbol* Ake_RelativeGet(Ake_Environment* env, Zinc_string* name, size_t seq);
-Ake_symbol* Ake_RelativeGetStr(Ake_Environment* env, char* str, size_t seq);
+void Ake_EnvironmentAdd(Ake_Environment* env, Zinc_string* name, Ake_symbol* sym, size_t seq);
+void Ake_EnvironmentAddStr(Ake_Environment* env, char* str, Ake_symbol* sym, size_t seq);
+Ake_symbol* Ake_EnvironmentGetLocal(Ake_Environment* env, Zinc_string* name, size_t seq);
+Ake_symbol* Ake_EnvironmentGetLocalStr(Ake_Environment* env, char* str, size_t seq);
+Ake_symbol* Ake_EnvironmentGet(Ake_Environment* env, Zinc_string* name, size_t seq);
+Ake_symbol* Ake_EnvironmentGetStr(Ake_Environment* env, char* str, size_t seq);
 
 #endif

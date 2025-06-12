@@ -466,7 +466,7 @@ bool Zinc_expect_no_errors(Zinc_test* test, Zinc_error_list* el)
     Zinc_error* e = el->head;
     while (e) {
         Zinc_string_finish(&e->message);
-        fprintf(stderr, "(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
+        fprintf(stderr, "\t(%zu,%zu): %s\n", e->loc.line, e->loc.col, e->message.buf);
         e = e->next;
     }
 

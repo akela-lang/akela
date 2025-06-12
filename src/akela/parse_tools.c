@@ -169,3 +169,9 @@ void Ake_parse_separator(struct Ake_parse_state* ps, Ake_ast* n, bool* has_separ
     Ake_token_destroy(sep);
     free(sep);
 }
+
+size_t Ake_get_current_seq(Ake_parse_state* ps)
+{
+    Ake_get_lookahead(ps);
+    return ps->lookahead->loc.start_pos;
+}

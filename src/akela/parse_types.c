@@ -13,7 +13,7 @@
 
 bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t);
 Ake_type_use* Ake_Type_use_add_proto(
-        struct Ake_symbol_table* st,
+        Ake_parse_state* ps,
         Ake_type_use* func,
         Ake_ast* proto,
         Ake_ast* struct_type);
@@ -279,7 +279,9 @@ bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t)
 
     /* type id */
     if (t->type == Ake_token_id) {
-        struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st, &t->value);
+        Ake_get_lookahead(ps);
+        size_t seq = ps->lookahead->loc.start_pos;
+        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &t->value, seq);
         if (sym && sym->td) {
             return true;
         }
@@ -517,7 +519,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
         if (proto->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         } else {
-            Ake_Type_use_add_proto(ps->st, n->tu, proto, NULL);
+            Ake_Type_use_add_proto(ps, n->tu, proto, NULL);
         }
         Ake_ast_destroy(proto);
 
@@ -530,7 +532,9 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
 
         struct Ake_symbol* sym = NULL;
         if (n->type != Ake_ast_type_error) {
-            sym = Ake_EnvironmentGet(ps->st, &name->value);
+            Ake_get_lookahead(ps);
+            size_t seq = ps->lookahead->loc.start_pos;
+            sym = Ake_EnvironmentGet(ps->st->top, &name->value, seq);
             if (!sym) {
                 char* a;
                 Zinc_string_create_str(&name->value, &a);
@@ -580,7 +584,9 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
  */
 void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
 {
-    struct Ake_symbol* dup = Ake_EnvironmentGetLocal(ps->st, ps->st->top, &id_node->value);
+    Ake_get_lookahead(ps);
+    size_t seq = ps->lookahead->loc.start_pos;
+    Ake_symbol* dup = Ake_EnvironmentGetLocal(ps->st->top, &id_node->value, seq);
     if (dup) {
         char* a;
         Zinc_string_create_str(&id_node->value, &a);
@@ -589,7 +595,7 @@ void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, 
         type_node->type = Ake_ast_type_error;
         /* test case: test_parse_error_duplicate_declarations */
     } else {
-        struct Ake_symbol* sym2 = Ake_EnvironmentGet(ps->st, &id_node->value);
+        Ake_symbol* sym2 = Ake_EnvironmentGet(ps->st->top, &id_node->value, seq);
         if (sym2 && sym2->td) {
             char* a;
             Zinc_string_create_str(&id_node->value, &a);
@@ -598,12 +604,12 @@ void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, 
             type_node->type = Ake_ast_type_error;
             /* test case: test_parse_types_reserved_type */
         } else {
-            struct Ake_symbol* new_sym = NULL;
+            Ake_symbol* new_sym = NULL;
             Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
             Ake_symbol_init(new_sym);
             new_sym->type = Ake_symbol_type_variable;
             new_sym->tu = Ake_type_use_clone(type_node->tu);
-            Ake_EnvironmentAdd(ps->st, &id_node->value, new_sym);
+            Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, seq);
             id_node->sym = new_sym;
             id_node->seq = Ake_symbol_table_get_seq_num(ps->st);
             /* copy is_mut from id node to type use node */
@@ -632,14 +638,14 @@ void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* i
     }
 }
 
-Ake_type_use* Ake_proto2type_use(struct Ake_symbol_table* st, Ake_ast* proto, Ake_ast* struct_type) {
+Ake_type_use* Ake_proto2type_use(Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_type) {
     Ake_type_use *func = NULL;
     Ake_type_use_create(&func);
-    return Ake_Type_use_add_proto(st, func, proto, struct_type);
+    return Ake_Type_use_add_proto(ps, func, proto, struct_type);
 }
 
 Ake_type_use* Ake_Type_use_add_proto(
-    struct Ake_symbol_table* st,
+    Ake_parse_state* ps,
     Ake_type_use* func,
     Ake_ast* proto,
     Ake_ast* struct_type)
@@ -647,7 +653,9 @@ Ake_type_use* Ake_Type_use_add_proto(
     struct Zinc_string bf;
     Zinc_string_init(&bf);
     Zinc_string_add_str(&bf, "Function");
-    struct Ake_symbol* sym = Ake_EnvironmentGet(st, &bf);
+    Ake_get_lookahead(ps);
+    size_t seq = ps->lookahead->loc.start_pos;
+    struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &bf, seq);
     Zinc_string_destroy(&bf);
     assert(sym);
     assert(sym->td);
@@ -842,7 +850,9 @@ bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct Zinc_locati
                 Zinc_error_list_set(ps->el, loc, "invalid lvalue");
                 return false;
             }
-            sym = Ake_EnvironmentGet(ps->st, &p->value);
+            Ake_get_lookahead(ps);
+            size_t seq = ps->lookahead->loc.start_pos;
+            sym = Ake_EnvironmentGet(ps->st->top, &p->value, seq);
             first = p;
         }
         p = p->head;
