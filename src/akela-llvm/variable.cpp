@@ -60,12 +60,12 @@ namespace Akela_llvm {
                         Value *rhs_value = Dispatch(jd, rhs);
                         Array_copy(jd, tu, rhs->tu, lhs_value, rhs_value);
                     }
-                    lhs->sym->value = lhs_value;
+                    sym->value = lhs_value;
                 } else {
                     Type *t = Get_type(jd, tu);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    lhs->sym->value = lhs_value;
+                    sym->value = lhs_value;
                 }
             } else if (tu->td->type == Ake_type_struct) {
                 if (rhs) {
@@ -74,26 +74,26 @@ namespace Akela_llvm {
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     rhs->tu->lhs_allocation = lhs_value;
                     Value *rhs_value = Dispatch(jd, rhs);
-                    lhs->sym->value = lhs_value;
+                    sym->value = lhs_value;
                 } else {
                     Type *t = Get_type(jd, tu);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    lhs->sym->value = lhs_value;
+                    sym->value = lhs_value;
                 }
             } else {
                 if (rhs) {
                     Type* t = Get_type(jd, tu);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    lhs->sym->reference = lhs_value;
+                    sym->reference = lhs_value;
                     Value *rhs_value = Dispatch(jd, rhs);
                     jd->Builder->CreateStore(rhs_value, lhs_value);
                 } else {
                     Type* t = Get_type(jd, tu);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    lhs->sym->reference = lhs_value;                }
+                    sym->reference = lhs_value;                }
             }
             if (rhs) {
                 rhs = rhs->next;
