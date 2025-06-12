@@ -582,10 +582,9 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
  * @param n type node
  * @param id_node ID node
  */
-void Ake_create_variable_symbol(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
+void Ake_create_variable_symbol(Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
 {
-    Ake_get_lookahead(ps);
-    size_t seq = ps->lookahead->loc.start;
+    size_t seq = type_node->loc.start;
     Ake_symbol* dup = Ake_EnvironmentGetLocal(ps->st->top, &id_node->value, seq);
     if (dup) {
         char* a;

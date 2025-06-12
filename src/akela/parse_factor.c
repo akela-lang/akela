@@ -151,7 +151,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
                     Ake_symbol_init(new_sym);
                     new_sym->type = Ake_symbol_type_variable;
                     new_sym->tu = Ake_type_use_clone(tu);
-                    Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, seq);
+                    Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
                     n->sym = new_sym;
                     n->seq = Ake_symbol_table_get_seq_num(ps->st);
                 }

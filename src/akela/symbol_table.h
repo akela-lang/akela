@@ -20,7 +20,6 @@ typedef struct Ake_ast Ake_ast;
 typedef struct Ake_symbol_table {
 	Ake_Environment* top;
 	Ake_type_use* numeric_pool;
-    Ake_Environment* deactivated;
     size_t id_count;
 	size_t count;
 } Ake_symbol_table;

@@ -21,10 +21,7 @@ void Ake_begin_environment(struct Ake_symbol_table* st, Ake_ast* n)
 
 void Ake_end_environment(struct Ake_symbol_table* st)
 {
-    Ake_Environment* env = st->top;
-    st->top = env->prev;
-    env->prev = st->deactivated;
-    st->deactivated = env;
+    st->top = st->top->prev;
 }
 
 void Ake_symbol_table_add_reserved_word(Ake_symbol_table* st, const char* name, Ake_token_enum tk_type)
@@ -239,7 +236,6 @@ void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
 
 void Ake_symbol_table_init(struct Ake_symbol_table* st)
 {
-	st->deactivated = NULL;
 	st->id_count = 0;
 	st->count = 0;
 	st->top = NULL;
@@ -265,13 +261,6 @@ void Ake_symbol_table_destroy(Ake_symbol_table* st)
 		free(env);
 		env = prev;
 	}
-    env = st->deactivated;
-    while (env) {
-        Ake_Environment* prev = env->prev;
-        Ake_EnvironmentDestroy(env);
-    	free(env);
-        env = prev;
-    }
     Ake_type_use_destroy(st->numeric_pool);
 }
 
