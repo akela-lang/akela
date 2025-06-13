@@ -1,10 +1,17 @@
 # Akela
 * new type tree
+  * create type [x]
+  * use new type
 * new syntax tree
+* move checks into their own functions
+* run IR generation in same pass
+* order independence of global variables
 
 # Akela LLVM
 
 # Akela Parse Test
+* output types into constants
+* combine duplicate constants
 
 # Akela Run Test
 * sub
