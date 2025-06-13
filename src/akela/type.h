@@ -7,7 +7,7 @@
 
 typedef enum Ake_TypeDefKind Ake_TypeDefKind;
 typedef struct Ake_TypeDef Ake_TypeDef;
-typedef enum Ake_TypeUseKind Ake_TypeKind;
+typedef enum Ake_TypeUseKind Ake_TypeUseKind;
 typedef struct Ake_TypeFieldKind Ake_TypeFieldKind;
 typedef struct Ake_TypeUse Ake_TypeUse;
 typedef struct Ake_FieldKind Ake_FieldKind;
@@ -23,6 +23,7 @@ enum Ake_TypeUseKind {
 };
 
 struct Ake_TypeUse {
+    Ake_TypeUseKind kind;
     union {
         struct { Ake_TypeDef* td; } scalar;
         struct { size_t dim; Ake_TypeUse* tu; } array;
@@ -47,6 +48,7 @@ enum Ake_TypeDefKind {
 };
 
 struct Ake_TypeDef {
+    Ake_TypeDefKind kind;
     union {
         struct { uint8_t bit_count; } integer;
         struct { uint8_t bit_count; } natural;
