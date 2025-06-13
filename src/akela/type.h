@@ -5,21 +5,19 @@
 #include "zinc/zstring.h"
 #include <inttypes.h>
 
-typedef enum Ake_TypeDefKind Ake_TypeDefKind;
-typedef struct Ake_TypeDef Ake_TypeDef;
 typedef enum Ake_TypeUseKind Ake_TypeUseKind;
-typedef struct Ake_TypeFieldKind Ake_TypeFieldKind;
+typedef enum Ake_TypeDefKind Ake_TypeDefKind;
 typedef struct Ake_TypeUse Ake_TypeUse;
-typedef struct Ake_FieldKind Ake_FieldKind;
+typedef struct Ake_TypeDef Ake_TypeDef;
 typedef struct Ake_TypeField Ake_TypeField;
 typedef struct Ake_TypeParam Ake_TypeParam;
 
 enum Ake_TypeUseKind {
-    AKE_TYPE_SCALAR,
-    AKE_TYPE_ARRAY,
-    AKE_TYPE_SLICE,
-    AKE_TYPE_POINTER,
-    AKE_TYPE_FUNCTION,
+    AKE_TYPE_USE_SCALAR,
+    AKE_TYPE_USE_ARRAY,
+    AKE_TYPE_USE_SLICE,
+    AKE_TYPE_USE_POINTER,
+    AKE_TYPE_USE_FUNCTION,
 };
 
 struct Ake_TypeUse {
