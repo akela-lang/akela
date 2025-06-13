@@ -13,8 +13,10 @@ typedef struct Ake_TypeField Ake_TypeField;
 typedef struct Ake_TypeParam Ake_TypeParam;
 
 enum Ake_TypeUseKind {
+    AKE_TYPE_USE_NONE,
     AKE_TYPE_USE_SCALAR,
     AKE_TYPE_USE_ARRAY,
+    AKE_TYPE_USE_ARRAY_CONST,
     AKE_TYPE_USE_SLICE,
     AKE_TYPE_USE_POINTER,
     AKE_TYPE_USE_FUNCTION,
@@ -29,16 +31,16 @@ struct Ake_TypeUse {
         struct { Ake_TypeUse* tu; } slice;
         struct { Ake_TypeUse* tu; } pointer;
         struct {
-            Zinc_string* name;
+            Zinc_string name;
             Ake_TypeParam* input_head;
             Ake_TypeParam* input_tail;
-            Ake_TypeParam* output_head;
-            Ake_TypeParam* output_tail;
+            Ake_TypeUse* output;
         } function;
     } data;
 };
 
 enum Ake_TypeDefKind {
+    AKE_TYPE_DEF_NONE,
     AKE_TYPE_DEF_INTEGER,
     AKE_TYPE_DEF_NATURAL,
     AKE_TYPE_DEF_REAL,
@@ -55,6 +57,13 @@ struct Ake_TypeDef {
     } data;
 };
 
+struct Ake_TypeParam {
+    Zinc_string name;
+    Ake_TypeUse* tu;
+    Ake_TypeParam* next;
+    Ake_TypeParam* prev;
+};
+
 struct Ake_TypeField {
     Zinc_string name;
     Ake_TypeUse* tu;
@@ -62,11 +71,22 @@ struct Ake_TypeField {
     Ake_TypeField* prev;
 };
 
-struct Ake_TypeParam {
-    Zinc_string name;
-    Ake_TypeUse* tu;
-    Ake_TypeField* next;
-    Ake_TypeField* prev;
-};
+void Ake_TypeUseInit(Ake_TypeUse* tu);
+void Ake_TypeUseCreate(Ake_TypeUse** tu);
+void Ake_TypeUseSet(Ake_TypeUse* tu, Ake_TypeUseKind kind);
+void Ake_TypeUseDestroy(Ake_TypeUse* tu);
+
+void Ake_TypeDefInit(Ake_TypeDef* td);
+void Ake_TypeDefCreate(Ake_TypeDef** td);
+void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind);
+void Ake_TypeDefDestroy(Ake_TypeDef* td);
+
+void Ake_TypeParamInit(Ake_TypeParam* tp);
+void Ake_TypeParamCreate(Ake_TypeParam** tp);
+void Ake_TypeParamDestroy(Ake_TypeParam* tp);
+
+void Ake_TypeFieldInit(Ake_TypeField* tf);
+void Ake_TypeFieldCreate(Ake_TypeField** tf);
+void Ake_TypeFieldDestroy(Ake_TypeField* tf);
 
 #endif
