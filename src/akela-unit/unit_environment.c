@@ -80,9 +80,6 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     sym = Ake_EnvironmentGetStr(st->top, "t2", AKE_SEQ_DEFAULT);
     Zinc_expect_ptr_equal(test, sym, t2, "t2");
 
-    Ake_end_environment(st);
-    Ake_end_environment(st);
-
     Ake_symbol_table_destroy(st);
     free(st);
 }
@@ -146,8 +143,6 @@ void AkeUnit_EnvironmentAdd2(Zinc_test* test)
     Zinc_expect_ptr_equal(test, ent2->next, NULL, "next ent2");
 
     Zinc_expect_ptr_equal(test, list->tail, ent2, "tail list");
-
-    Ake_end_environment(st);
 
     Ake_symbol_table_destroy(st);
     free(st);
