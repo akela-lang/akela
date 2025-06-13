@@ -196,7 +196,6 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
                 new_sym->type = Ake_symbol_type_variable;
                 new_sym->tu = Ake_type_use_clone(n->tu);
                 Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
-                n->sym = new_sym;
             }
         }
     }
@@ -568,7 +567,6 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
 			sym->type = Ake_symbol_type_type;
 			sym->td = td;
 			Ake_EnvironmentAdd(ps->st->top, &id->value, sym, n->loc.start);
-            n->sym = sym;
 		}
 	}
 

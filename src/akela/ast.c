@@ -19,7 +19,6 @@ void Ake_ast_init(Ake_ast* n)
 	n->tu = NULL;
     n->is_mut = false;
     Zinc_location_init(&n->loc);
-    n->sym = NULL;
 	n->env = NULL;
 	n->next = NULL;
 	n->prev = NULL;

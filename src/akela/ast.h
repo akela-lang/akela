@@ -144,7 +144,6 @@ typedef struct Ake_ast {
 	Ake_type_use* tu;
     bool is_mut;
     Zinc_location loc;
-    Ake_symbol* sym;
 	Ake_Environment* env;
 	Ake_ast* next;
 	Ake_ast* prev;

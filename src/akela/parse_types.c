@@ -609,7 +609,6 @@ void Ake_create_variable_symbol(Ake_parse_state* ps, Ake_ast* type_node, Ake_ast
             new_sym->type = Ake_symbol_type_variable;
             new_sym->tu = Ake_type_use_clone(type_node->tu);
             Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, seq);
-            id_node->sym = new_sym;
             /* copy is_mut from id node to type use node */
             new_sym->tu->is_mut = id_node->is_mut;
             new_sym->tu->original_is_mut = id_node->is_mut;

@@ -23,8 +23,7 @@ namespace Akela_llvm {
         while (lhs) {
             Ake_Environment* env = Ake_get_current_env(type_node);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
-            assert(lhs->sym);
-            assert(sym == lhs->sym);
+            assert(sym);
             if (tu->td->type == Ake_type_function) {
                 if (rhs) {
                     FunctionType *func_type = Get_function_type(jd, tu);
@@ -139,7 +138,6 @@ namespace Akela_llvm {
     {
         Ake_Environment* env = Ake_get_current_env(lhs);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, lhs->loc.end);
-        assert(sym == lhs->sym);
         if (lhs->tu->td->type == Ake_type_function) {
             if (lhs->type == Ake_ast_type_id) {
                 AllocaInst *lhs_value;
@@ -185,7 +183,6 @@ namespace Akela_llvm {
     {
         Ake_Environment* env = Ake_get_current_env(n);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &n->value, n->loc.end);
-        assert(sym == n->sym);
         if (sym->value) {
             return (Value*)sym->value;
         } else if (sym->reference) {

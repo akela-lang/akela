@@ -23,11 +23,8 @@ namespace Akela_llvm {
             element_dec = element_dec->next;
         }
         StructType* struct_type = StructType::create(*jd->TheContext, type_list, n->value.buf);
-        assert(n->sym);
-        assert(n->sym->td);
         Ake_Environment* env = Ake_get_current_env(n);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &n->value, n->loc.start);
-        assert(sym == n->sym);
         sym->td->composite_type = struct_type;
         return nullptr;
     }

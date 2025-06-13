@@ -20,7 +20,6 @@ namespace Akela_llvm {
 
         Ake_Environment* env = Ake_get_current_env(n);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &id->value, n->loc.end);
-        assert(sym == n->sym);
         sym->value = f;
 
         return f;
@@ -57,7 +56,6 @@ namespace Akela_llvm {
 
             Ake_Environment* env = Ake_get_current_env(n);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &dec_id->value, dec->loc.end);
-            assert(sym == dec_id->sym);
             sym->reference = lhs;
 
             dec = dec->next;
@@ -79,7 +77,6 @@ namespace Akela_llvm {
 
         Ake_Environment* env = Ake_get_current_env(n);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &id->value, n->loc.start);
-        assert(sym == n->sym);
         sym->value = f;
 
         return f;
