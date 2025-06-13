@@ -137,19 +137,22 @@ namespace Akela_llvm {
 /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Assign_lhs_rhs_value(Jit_data* jd, Ake_ast* lhs, Ake_ast* rhs, Value* rhs_value)
     {
+        Ake_Environment* env = Ake_get_current_env(lhs);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, lhs->loc.end);
+        assert(sym == lhs->sym);
         if (lhs->tu->td->type == Ake_type_function) {
             if (lhs->type == Ake_ast_type_id) {
                 AllocaInst *lhs_value;
-                if (lhs->sym->reference) {
-                    lhs_value = (AllocaInst *) lhs->sym->reference;
+                if (sym->reference) {
+                    lhs_value = (AllocaInst *) sym->reference;
                 } else {
-                    lhs->sym->value = nullptr;
+                    sym->value = nullptr;
                     FunctionType *func_type = Get_function_type(jd, rhs->tu);
                     //PointerType *pt = func_type->getPointerTo();
                     PointerType *pt = PointerType::get(func_type, 0);
                     Zinc_string_finish(&rhs->value);
                     lhs_value = jd->Builder->CreateAlloca(pt, nullptr, rhs->value.buf);
-                    lhs->sym->reference = lhs_value;
+                    sym->reference = lhs_value;
                 }
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else if (lhs->type == Ake_ast_type_array_subscript) {
@@ -166,7 +169,7 @@ namespace Akela_llvm {
         } else {
             if (lhs->type == Ake_ast_type_id) {
                 AllocaInst* lhs_value;
-                lhs_value = (AllocaInst*)lhs->sym->reference;
+                lhs_value = (AllocaInst*)sym->reference;
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
                 lhs->tu->context = Ake_type_context_ptr;
