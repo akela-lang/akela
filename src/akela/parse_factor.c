@@ -153,7 +153,6 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
                     new_sym->tu = Ake_type_use_clone(tu);
                     Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
                     n->sym = new_sym;
-                    n->seq = Ake_symbol_table_get_seq_num(ps->st);
                 }
             }
         }
@@ -519,7 +518,6 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
         tu->td = sym->td;
         n->tu = tu;
         n->sym = sym;
-        n->seq = Ake_symbol_table_get_seq_num(ps->st);
 
         Ake_parse_struct_literal_elements(ps, n, sym->td);
 
@@ -555,7 +553,6 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
         } else {
             n->tu = Ake_type_use_clone(sym->tu);
             n->sym = sym;
-            n->seq = Ake_symbol_table_get_seq_num(ps->st);
         }
 
         Ake_token_destroy(id);
