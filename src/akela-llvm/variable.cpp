@@ -183,7 +183,9 @@ namespace Akela_llvm {
 
     Value* Handle_identifier(Jit_data* jd, Ake_ast* n)
     {
-        struct Ake_symbol* sym = n->sym;
+        Ake_Environment* env = Ake_get_current_env(n);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &n->value, n->loc.end);
+        assert(sym == n->sym);
         if (sym->value) {
             return (Value*)sym->value;
         } else if (sym->reference) {
