@@ -1,7 +1,12 @@
 # Akela
 * new type tree
   * create type [x]
-  * use new type
+  * symbol table ntd []
+  * symbol ntd []
+  * symbol ntu []
+  * ast ntd []
+  * ast ntu []
+  * use new type []
 * new syntax tree
 * move checks into their own functions
 * run IR generation in same pass

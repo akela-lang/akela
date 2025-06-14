@@ -933,6 +933,46 @@ void AkeUnit_parse_array_literal_mixed_error(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
+void AkeUnit_parse_array_literal_bool(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_comp_unit cu;
+
+	AkeUnit_parse_setup("[false,true,false]", &cu);
+	Zinc_expect_no_errors(test, &cu.errors);
+	Zinc_expect_true(test, cu.valid, "valid");
+
+	Zinc_expect_ptr(test, cu.root, "ptr root");
+	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "type stmts");
+
+	Ake_ast* array = Ast_node_get(cu.root, 0);
+	Zinc_expect_ptr(test, array, "ptr array");
+	Zinc_expect_int_equal(test, array->type, Ake_ast_type_array_literal, "array literal");
+
+	Ake_ast* a0 = Ast_node_get(array, 0);
+	Zinc_expect_ptr(test, a0, "ptr a0");
+	Zinc_expect_int_equal(test, a0->type, Ake_ast_type_boolean, "type a0");
+	Zinc_expect_string(test, &a0->value, "false", "value a0");
+
+	Ake_ast* a1 = Ast_node_get(array, 1);
+	Zinc_expect_ptr(test, a1, "ptr a1");
+	Zinc_expect_int_equal(test, a1->type, Ake_ast_type_boolean, "type a1");
+	Zinc_expect_string(test, &a1->value, "true", "value a1");
+
+	Ake_ast* a2 = Ast_node_get(array, 2);
+	Zinc_expect_ptr(test, a2, "ptr a2");
+	Zinc_expect_int_equal(test, a2->type, Ake_ast_type_boolean, "type a2");
+	Zinc_expect_string(test, &a2->value, "false", "value a2");
+
+	AkeUnit_parse_teardown(&cu);
+}
+
 void AkeUnit_parse_array_literal_empty_error(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1433,6 +1473,7 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_parse_array_literal_float);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_numeric);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_mixed_error);
+		Zinc_test_register(test, AkeUnit_parse_array_literal_bool);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_empty_error);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_error_right_square_bracket);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_error_expected_expr);

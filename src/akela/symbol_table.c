@@ -279,7 +279,7 @@ bool Ake_type_find(Ake_symbol_table* st, Ake_type_def* a, Ake_type_def* b, bool 
 	}
 
 	if (Ake_is_numeric(a) && Ake_is_numeric(b)) {
-		enum Ake_type type = a->type;
+		Ake_type type = a->type;
 
 		if (b->type == Ake_type_float) {
 			type = b->type;
@@ -315,12 +315,18 @@ bool Ake_type_find(Ake_symbol_table* st, Ake_type_def* a, Ake_type_def* b, bool 
 	return false;
 }
 
+
+/**
+* Check if types are compatible
+* Updates td's in 'a' if it needs to promote type
+* Only numeric types can be promoted
+* return true if compatible
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Ake_type_find_whole(struct Ake_symbol_table* st, Ake_type_use* a, Ake_type_use* b)
+bool Ake_type_find_whole(Ake_symbol_table* st, Ake_type_use* a, Ake_type_use* b)
 {
 	if (a && b) {
 		bool promote;
-		struct Ake_type_def* td = NULL;
+		Ake_type_def* td = NULL;
 		if (!Ake_type_find(st, a->td, b->td, &promote, &td)) {
 			return false;
 		}
@@ -338,19 +344,18 @@ bool Ake_type_find_whole(struct Ake_symbol_table* st, Ake_type_use* a, Ake_type_
                 if (x) x = x->next;
                 if (y) y = y->next;
             } while (x || y);
-        } else if (a->head) {
-            return false;
-        } else if (b->head) {
+        } else if (a->head || b->head) {
             return false;
         }
 
 		return true;
-
-	} else if (!a && !b) {
-		return true;
-	} else {
-		return false;
 	}
+
+	if (!a && !b) {
+		return true;
+	}
+
+	return false;
 }
 
 bool Ake_type_def_can_cast(struct Ake_type_def* a, struct Ake_type_def* b)
