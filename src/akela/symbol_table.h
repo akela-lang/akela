@@ -22,7 +22,6 @@ typedef struct Ake_symbol_table {
 	Ake_Environment* top;
 	Zinc_list numeric_pool;
     size_t id_count;
-	size_t count;
 } Ake_symbol_table;
 
 AKELA_API void Ake_begin_environment(struct Ake_symbol_table* st, Ake_ast* n);
@@ -38,7 +37,6 @@ AKELA_API bool Ake_type_use_can_cast(Ake_type_use* a, Ake_type_use* b);
 AKELA_API void Ake_set_current_function(Ake_symbol_table* st, Ake_ast* fd);
 AKELA_API Ake_ast* Ake_get_current_function(Ake_symbol_table* st);
 AKELA_API size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st);
-AKELA_API size_t Ake_symbol_table_get_seq_num(Ake_symbol_table* st);
 AKELA_API Ake_Environment* Ake_get_current_env(Ake_ast* n);
 
 #ifdef __cplusplus

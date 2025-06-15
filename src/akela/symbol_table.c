@@ -234,7 +234,6 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 {
 	Zinc_list_init(&st->numeric_pool);
 	st->id_count = 0;
-	st->count = 0;
 	st->top = NULL;
 
 	Ake_begin_environment(st, NULL);
@@ -532,11 +531,6 @@ Ake_ast* Ake_get_current_function(Ake_symbol_table* st)
 size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st)
 {
     return st->id_count++;
-}
-
-size_t Ake_symbol_table_get_seq_num(Ake_symbol_table* st)
-{
-	return st->count++;
 }
 
 Ake_Environment* Ake_get_current_env(Ake_ast* n)
