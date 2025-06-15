@@ -5,6 +5,7 @@
 #include "zinc/zstring.h"
 #include <inttypes.h>
 #include "type_def.h"
+#include "type_use.h"
 
 typedef enum Ake_TypeUseKind Ake_TypeUseKind;
 typedef enum Ake_TypeDefKind Ake_TypeDefKind;
@@ -15,6 +16,7 @@ typedef struct Ake_TypeParam Ake_TypeParam;
 
 enum Ake_TypeUseKind {
     AKE_TYPE_USE_NONE,
+    AKE_TYPE_USE_OLD,
     AKE_TYPE_USE_SCALAR,
     AKE_TYPE_USE_ARRAY,
     AKE_TYPE_USE_ARRAY_CONST,
@@ -26,6 +28,7 @@ enum Ake_TypeUseKind {
 struct Ake_TypeUse {
     Ake_TypeUseKind kind;
     union {
+        Ake_type_use old;
         struct { Ake_TypeDef* td; } scalar;
         struct { size_t dim; Ake_TypeUse* tu; } array;
         struct { size_t dim; Ake_TypeUse* tu; } array_const;
