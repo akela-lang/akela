@@ -13,13 +13,14 @@ extern "C" {
 #include "ast.h"
 #include "environment.h"
 #include "type_use.h"
+#include "zinc/list.h"
 
 typedef struct Ake_type_use Ake_type_use;
 typedef struct Ake_ast Ake_ast;
 
 typedef struct Ake_symbol_table {
 	Ake_Environment* top;
-	Ake_type_use* numeric_pool;
+	Zinc_list numeric_pool;
     size_t id_count;
 	size_t count;
 } Ake_symbol_table;

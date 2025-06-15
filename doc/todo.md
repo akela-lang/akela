@@ -6,7 +6,7 @@
   * use new type without old []
 * new type use:
   * create type [x]
-  * type old []
+  * type old [x]
   * use new type with old []
   * use new type without old []
 * new syntax tree

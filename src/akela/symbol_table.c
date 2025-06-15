@@ -204,27 +204,23 @@ void Ake_symbol_table_init_builtin_types(Ake_symbol_table* st)
 	Ake_symbol_table_add_type(st, name, td);
 }
 
-void Ake_symbol_table_add_numeric(struct Ake_symbol_table* st, const char* name)
+void Ake_symbol_table_add_numeric(Ake_symbol_table* st, const char* name)
 {
-	struct Zinc_string bf;
+	Zinc_string bf;
 	Zinc_string_init(&bf);
 	Zinc_string_add_str(&bf, name);
-	struct Ake_symbol* sym = Ake_EnvironmentGet(st->top, &bf, AKE_SEQ_ANY);
+	Ake_symbol* sym = Ake_EnvironmentGet(st->top, &bf, AKE_SEQ_ANY);
 	assert(sym);
 	assert(sym->td);
 	Ake_type_use* tu = NULL;
     Ake_type_use_create(&tu);
 	tu->td = sym->td;
-    Ake_type_use_add(st->numeric_pool, tu);
+    Zinc_list_add_item(&st->numeric_pool, tu);
     Zinc_string_destroy(&bf);
 }
 
-void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
+void Ake_symbol_table_numeric_pool_init(Ake_symbol_table* st)
 {
-	Ake_type_use* pool = NULL;
-	Ake_type_use_create(&pool);
-	st->numeric_pool = pool;
-
 	Ake_symbol_table_add_numeric(st, "Int32");
 	Ake_symbol_table_add_numeric(st, "Int64");
     Ake_symbol_table_add_numeric(st, "Nat8");
@@ -236,6 +232,7 @@ void Ake_symbol_table_numeric_pool_init(struct Ake_symbol_table* st)
 
 void Ake_symbol_table_init(struct Ake_symbol_table* st)
 {
+	Zinc_list_init(&st->numeric_pool);
 	st->id_count = 0;
 	st->count = 0;
 	st->top = NULL;
@@ -261,7 +258,8 @@ void Ake_symbol_table_destroy(Ake_symbol_table* st)
 		free(env);
 		env = prev;
 	}
-    Ake_type_use_destroy(st->numeric_pool);
+
+    Zinc_list_destroy(&st->numeric_pool, NULL);
 }
 
 bool Ake_is_numeric(struct Ake_type_def* td)
@@ -298,9 +296,10 @@ bool Ake_type_find(Ake_symbol_table* st, Ake_type_def* a, Ake_type_def* b, bool 
 			bit_count = b->bit_count;
 		}
 
-		Ake_type_use* tu = st->numeric_pool->head;
-		assert(tu);
-		do {
+		Zinc_list_node* node = st->numeric_pool.head;
+		while (node) {
+			Ake_type_use* tu = node->item;
+			assert(tu);
 			Ake_type_def* x = tu->td;
 			assert(x);
 			if (x->type == type && x->is_signed == is_signed && x->bit_count == bit_count) {
@@ -308,8 +307,8 @@ bool Ake_type_find(Ake_symbol_table* st, Ake_type_def* a, Ake_type_def* b, bool 
 				*c = x;
 				return true;
 			}
-            tu = tu->next;
-		} while (tu);
+            node = node->next;
+		}
 	}
 
 	return false;
