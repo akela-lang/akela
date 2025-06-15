@@ -102,6 +102,9 @@ void Ake_TypeDefCreate(Ake_TypeDef** td)
 void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
 {
     switch (kind) {
+        case AKE_TYPE_DEF_OLD:
+            Ake_type_def_init(&td->data.old);
+            break;
         case AKE_TYPE_DEF_INTEGER:
             td->data.integer.bit_count = 0;
             break;
@@ -124,6 +127,9 @@ void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
 void Ake_TypeDefDestroy(Ake_TypeDef* td)
 {
     switch (td->kind) {
+        case AKE_TYPE_DEF_OLD:
+            Ake_type_def_destroy(&td->data.old);
+            break;
         case AKE_TYPE_DEF_NONE:
         case AKE_TYPE_DEF_INTEGER:
         case AKE_TYPE_DEF_NATURAL:

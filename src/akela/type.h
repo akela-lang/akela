@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include "zinc/zstring.h"
 #include <inttypes.h>
+#include "type_def.h"
 
 typedef enum Ake_TypeUseKind Ake_TypeUseKind;
 typedef enum Ake_TypeDefKind Ake_TypeDefKind;
@@ -41,6 +42,7 @@ struct Ake_TypeUse {
 
 enum Ake_TypeDefKind {
     AKE_TYPE_DEF_NONE,
+    AKE_TYPE_DEF_OLD,
     AKE_TYPE_DEF_INTEGER,
     AKE_TYPE_DEF_NATURAL,
     AKE_TYPE_DEF_REAL,
@@ -50,6 +52,7 @@ enum Ake_TypeDefKind {
 struct Ake_TypeDef {
     Ake_TypeDefKind kind;
     union {
+        Ake_type_def old;
         struct { uint8_t bit_count; } integer;
         struct { uint8_t bit_count; } natural;
         struct { uint8_t bit_count; } real;

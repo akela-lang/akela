@@ -1,12 +1,14 @@
 # Akela
-* new type tree
+* new type def:
   * create type [x]
-  * symbol table ntd []
-  * symbol ntd []
-  * symbol ntu []
-  * ast ntd []
-  * ast ntu []
-  * use new type []
+  * type old [x]
+  * use new type with old []
+  * use new type without old []
+* new type use:
+  * create type [x]
+  * type old []
+  * use new type with old []
+  * use new type without old []
 * new syntax tree
 * move checks into their own functions
 * run IR generation in same pass
