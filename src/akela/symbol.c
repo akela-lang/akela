@@ -8,7 +8,6 @@ void Ake_symbol_init(struct Ake_symbol* sym)
     sym->tk_type = Ake_token_none;
     sym->td = NULL;
     sym->tu = NULL;
-    sym->constructor = NULL;
     sym->root = NULL;
     sym->root_ptr = NULL;
     sym->value = NULL;
@@ -23,10 +22,6 @@ void Ake_symbol_destroy(Ake_symbol* sym)
     Ake_type_use_destroy(sym->tu);
     Ake_TypeDefDestroy(sym->td);
     free(sym->td);
-    if (sym->constructor) {
-        Ake_symbol_destroy(sym->constructor);
-        free(sym->constructor);
-    }
     Ake_ast_destroy(sym->root);
 }
 
@@ -45,7 +40,6 @@ Ake_symbol* Ake_symbol_clone_shallow(struct Ake_symbol* sym)
         new_sym->tk_type = sym->tk_type;
         new_sym->tu = sym->tu;
         new_sym->td = sym->td;
-        new_sym->constructor = sym->constructor;
         new_sym->root = sym->root;
         new_sym->root_ptr = sym->root_ptr;
     }
