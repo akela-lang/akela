@@ -549,7 +549,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
                 free(a);
                 n->type = Ake_ast_type_error;
                 /* test case: test_parse_error_not_a_type */
-            } else if (sym->td->type == Ake_type_function) {
+            } else if (sym->td->data.old->type == Ake_type_function) {
                 Zinc_error_list_set(
                         ps->el,
                         &name->loc,
@@ -557,7 +557,7 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
                 n->type = Ake_ast_type_error;
             } else {
                 if (n->type != Ake_ast_type_error) {
-                    n->tu->td = sym->td;
+                    n->tu->td = sym->td->data.old;
                 }
             }
         }
@@ -656,7 +656,7 @@ Ake_type_use* Ake_Type_use_add_proto(
     Zinc_string_destroy(&bf);
     assert(sym);
     assert(sym->td);
-    func->td = sym->td;
+    func->td = sym->td->data.old;
 
     Ake_ast* id = Ast_node_get(proto, 0);
     Ake_ast* dseq = Ast_node_get(proto, 1);

@@ -463,7 +463,7 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
         assert(sym->td);
         Ake_type_use* tu = NULL;
         Ake_type_use_create(&tu);
-        tu->td = sym->td;
+        tu->td = sym->td->data.old;
         n->tu = tu;
         Zinc_string_destroy(&bf);
 
@@ -482,14 +482,14 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
 	return n;
 }
 
-Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
+Ake_ast* Ake_parse_id(Ake_parse_state* ps)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
 
-    struct Ake_token* t = Ake_get_lookahead(ps);
+    Ake_token* t = Ake_get_lookahead(ps);
 
-    struct Ake_token* id = NULL;
+    Ake_token* id = NULL;
 
     if (t->type == Ake_token_id) {
         if (!Ake_match(ps, Ake_token_id, "expecting identifier", &id, n)) {
@@ -505,7 +505,7 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
 
     size_t seq = Ake_get_current_seq(ps);
     Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
-    if (sym && sym->td && sym->td->type == Ake_type_struct) {
+    if (sym && sym->td && sym->td->data.old->type == Ake_type_struct) {
         /* struct literal */
 
         Ake_consume_newline(ps, n);
@@ -514,10 +514,10 @@ Ake_ast* Ake_parse_id(struct Ake_parse_state* ps)
 
         Ake_type_use* tu = NULL;
         Ake_type_use_create(&tu);
-        tu->td = sym->td;
+        tu->td = sym->td->data.old;
         n->tu = tu;
 
-        Ake_parse_struct_literal_elements(ps, n, sym->td);
+        Ake_parse_struct_literal_elements(ps, n, sym->td->data.old);
 
         struct Ake_token* end = NULL;
         if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {

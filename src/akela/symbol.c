@@ -14,12 +14,15 @@ void Ake_symbol_init(struct Ake_symbol* sym)
     sym->value = NULL;
     sym->reference = NULL;
     sym->assign_count = 0;
+    sym->is_copy = false;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_symbol_destroy(Ake_symbol* sym)
 {
     Ake_type_use_destroy(sym->tu);
-    Ake_type_def_destroy(sym->td);
+    Ake_TypeDefDestroy(sym->td);
+    free(sym->td);
     if (sym->constructor) {
         Ake_symbol_destroy(sym->constructor);
         free(sym->constructor);
@@ -33,18 +36,17 @@ void Ake_symbol_create(struct Ake_symbol** sym)
     Ake_symbol_init(*sym);
 }
 
-struct Ake_symbol* Ake_symbol_copy(struct Ake_symbol* sym)
+Ake_symbol* Ake_symbol_clone_shallow(struct Ake_symbol* sym)
 {
-    struct Ake_symbol* new_sym = NULL;
+    Ake_symbol* new_sym = NULL;
     if (sym) {
-        Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
-        Ake_symbol_init(new_sym);
+        Ake_symbol_create(&new_sym);
         new_sym->type = sym->type;
         new_sym->tk_type = sym->tk_type;
-        new_sym->tu = Ake_type_use_clone(sym->tu);
-        new_sym->td = Ake_type_def_copy(sym->td);
-        new_sym->constructor = Ake_symbol_copy(sym->constructor);
-        new_sym->root = Ake_ast_clone(sym->root);
+        new_sym->tu = sym->tu;
+        new_sym->td = sym->td;
+        new_sym->constructor = sym->constructor;
+        new_sym->root = sym->root;
         new_sym->root_ptr = sym->root_ptr;
     }
     return new_sym;

@@ -554,16 +554,19 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
             n->type = Ake_ast_type_error;
 		} else {
 			Ake_ast* tu = Ake_ast_clone(n);
-			struct Ake_type_def* td = NULL;
-			Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-			Ake_type_def_init(td);
-			td->type = Ake_type_struct;
-			Zinc_string_copy(&id->value, &td->name);
-			td->composite = tu;
+			Ake_type_def* old = NULL;
+			Ake_type_def_create(&old);
+			old->type = Ake_type_struct;
+			Zinc_string_copy(&id->value, &old->name);
+			old->composite = tu;
 
-			struct Ake_symbol* sym = NULL;
-			Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
-			Ake_symbol_init(sym);
+			Ake_TypeDef* td = NULL;
+			Ake_TypeDefCreate(&td);
+			Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+			td->data.old = old;
+
+			Ake_symbol* sym = NULL;
+			Ake_symbol_create(&sym);
 			sym->type = Ake_symbol_type_type;
 			sym->td = td;
 			Ake_EnvironmentAdd(ps->st->top, &id->value, sym, n->loc.start);
@@ -869,7 +872,7 @@ Ake_ast* Ake_parse_let_rseq(struct Ake_parse_state* ps)
     Ake_ast_create(&n);
     n->type = Ake_ast_type_let_rseq;
 
-    if (a && a->type == Ake_ast_type_error) {
+    if (a->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
 
@@ -933,13 +936,13 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
     	size_t seq = Ake_get_current_seq(ps);
         Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
         if (sym->type == Ake_symbol_type_type) {
-            if (sym->td->type == Ake_type_struct) {
+            if (sym->td->data.old->type == Ake_type_struct) {
                 Ake_ast* type_node = NULL;
                 Ake_ast_create(&type_node);
                 type_node->type = Ake_ast_type_type;
                 Ake_type_use* tu = NULL;
                 Ake_type_use_create(&tu);
-                tu->td = sym->td;
+                tu->td = sym->td->data.old;
                 type_node->tu = tu;
                 struct_type = type_node;
             }

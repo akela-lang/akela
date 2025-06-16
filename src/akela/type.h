@@ -1,20 +1,14 @@
 #ifndef AKELA_TYPE_H
 #define AKELA_TYPE_H
 
+#include "forward.h"
 #include <stddef.h>
 #include "zinc/zstring.h"
 #include <inttypes.h>
 #include "type_def.h"
 #include "type_use.h"
 
-typedef enum Ake_TypeUseKind Ake_TypeUseKind;
-typedef enum Ake_TypeDefKind Ake_TypeDefKind;
-typedef struct Ake_TypeUse Ake_TypeUse;
-typedef struct Ake_TypeDef Ake_TypeDef;
-typedef struct Ake_TypeField Ake_TypeField;
-typedef struct Ake_TypeParam Ake_TypeParam;
-
-enum Ake_TypeUseKind {
+typedef enum Ake_TypeUseKind {
     AKE_TYPE_USE_NONE,
     AKE_TYPE_USE_OLD,
     AKE_TYPE_USE_SCALAR,
@@ -23,12 +17,12 @@ enum Ake_TypeUseKind {
     AKE_TYPE_USE_SLICE,
     AKE_TYPE_USE_POINTER,
     AKE_TYPE_USE_FUNCTION,
-};
+} Ake_TypeUseKind;
 
 struct Ake_TypeUse {
     Ake_TypeUseKind kind;
     union {
-        Ake_type_use old;
+        Ake_type_use* old;
         struct { Ake_TypeDef* td; } scalar;
         struct { size_t dim; Ake_TypeUse* tu; } array;
         struct { size_t dim; Ake_TypeUse* tu; } array_const;
@@ -43,19 +37,19 @@ struct Ake_TypeUse {
     } data;
 };
 
-enum Ake_TypeDefKind {
+typedef enum Ake_TypeDefKind {
     AKE_TYPE_DEF_NONE,
     AKE_TYPE_DEF_OLD,
     AKE_TYPE_DEF_INTEGER,
     AKE_TYPE_DEF_NATURAL,
     AKE_TYPE_DEF_REAL,
     AKE_TYPE_DEF_STRUCT,
-};
+} Ake_TypeDefKind;
 
 struct Ake_TypeDef {
     Ake_TypeDefKind kind;
     union {
-        Ake_type_def old;
+        Ake_type_def* old;
         struct { uint8_t bit_count; } integer;
         struct { uint8_t bit_count; } natural;
         struct { uint8_t bit_count; } real;

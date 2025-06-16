@@ -9,4 +9,9 @@ typedef struct Ake_ast Ake_ast;
 typedef struct Ake_type_def Ake_type_def;
 typedef struct Ake_type_use Ake_type_use;
 
+typedef struct Ake_TypeUse Ake_TypeUse;
+typedef struct Ake_TypeDef Ake_TypeDef;
+typedef struct Ake_TypeField Ake_TypeField;
+typedef struct Ake_TypeParam Ake_TypeParam;
+
 #endif

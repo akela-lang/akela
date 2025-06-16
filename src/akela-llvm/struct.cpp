@@ -25,7 +25,7 @@ namespace Akela_llvm {
         StructType* struct_type = StructType::create(*jd->TheContext, type_list, n->value.buf);
         Ake_Environment* env = Ake_get_current_env(n);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &n->value, n->loc.start);
-        sym->td->composite_type = struct_type;
+        sym->td->data.old->composite_type = struct_type;
         return nullptr;
     }
 

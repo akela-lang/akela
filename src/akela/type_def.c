@@ -2,6 +2,7 @@ typedef struct Ake_type_def Ake_type_def;
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "type_def.h"
 #include "zinc/memory.h"
 #include "ast.h"
@@ -49,6 +50,31 @@ Ake_type_def* Ake_type_def_copy(Ake_type_def* n)
 		Zinc_string_copy(&n->name, &copy->name);
 		copy->is_signed = n->is_signed;
 		copy->bit_count = n->bit_count;
+	}
+
+	return copy;
+}
+
+Ake_TypeDef* Ake_TypeDefCopy(Ake_TypeDef* td)
+{
+	Ake_TypeDef* copy = NULL;
+
+	if (td) {
+		Ake_TypeDefCreate(&copy);
+		Ake_TypeDefSet(copy, td->kind);
+		switch (td->kind) {
+			case AKE_TYPE_DEF_OLD:
+				Ake_type_def* old = Ake_type_def_copy(td->data.old);
+				copy->data.old = old;
+				break;
+			case AKE_TYPE_DEF_NONE:
+			case AKE_TYPE_DEF_INTEGER:
+			case AKE_TYPE_DEF_NATURAL:
+			case AKE_TYPE_DEF_REAL:
+			case AKE_TYPE_DEF_STRUCT:
+			default:
+				assert(false && "type not supported");
+		}
 	}
 
 	return copy;

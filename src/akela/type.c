@@ -17,6 +17,8 @@ void Ake_TypeUseSet(Ake_TypeUse* tu, Ake_TypeUseKind kind)
 {
     tu->kind = kind;
     switch (kind) {
+        case AKE_TYPE_USE_OLD:
+            tu->data.old = NULL;
         case AKE_TYPE_USE_SCALAR:
             tu->kind = AKE_TYPE_USE_SCALAR;
             tu->data.scalar.td = NULL;
@@ -55,6 +57,9 @@ void Ake_TypeUseSet(Ake_TypeUse* tu, Ake_TypeUseKind kind)
 void Ake_TypeUseDestroy(Ake_TypeUse* tu)
 {
     switch (tu->kind) {
+        case AKE_TYPE_USE_OLD:
+            Ake_type_use_destroy(tu->data.old);
+            break;
         case AKE_TYPE_USE_NONE:
         case AKE_TYPE_USE_SCALAR:
             break;
@@ -101,9 +106,10 @@ void Ake_TypeDefCreate(Ake_TypeDef** td)
 
 void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
 {
+    td->kind = kind;
     switch (kind) {
         case AKE_TYPE_DEF_OLD:
-            Ake_type_def_init(&td->data.old);
+            td->data.old = NULL;
             break;
         case AKE_TYPE_DEF_INTEGER:
             td->data.integer.bit_count = 0;
@@ -126,26 +132,28 @@ void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
 
 void Ake_TypeDefDestroy(Ake_TypeDef* td)
 {
-    switch (td->kind) {
-        case AKE_TYPE_DEF_OLD:
-            Ake_type_def_destroy(&td->data.old);
-            break;
-        case AKE_TYPE_DEF_NONE:
-        case AKE_TYPE_DEF_INTEGER:
-        case AKE_TYPE_DEF_NATURAL:
-        case AKE_TYPE_DEF_REAL:
-            break;
-        case AKE_TYPE_DEF_STRUCT:
-            Ake_TypeField* tf = td->data.fields.head;
-            while (tf) {
-                Ake_TypeField* temp = tf;
-                tf = tf->next;
-                Ake_TypeFieldDestroy(temp);
-                free(temp);
-            }
-            break;
-        default:
-            assert(false && "invalid kind");
+    if (td) {
+        switch (td->kind) {
+            case AKE_TYPE_DEF_OLD:
+                Ake_type_def_destroy(td->data.old);
+                break;
+            case AKE_TYPE_DEF_NONE:
+            case AKE_TYPE_DEF_INTEGER:
+            case AKE_TYPE_DEF_NATURAL:
+            case AKE_TYPE_DEF_REAL:
+                break;
+            case AKE_TYPE_DEF_STRUCT:
+                Ake_TypeField* tf = td->data.fields.head;
+                while (tf) {
+                    Ake_TypeField* temp = tf;
+                    tf = tf->next;
+                    Ake_TypeFieldDestroy(temp);
+                    free(temp);
+                }
+                break;
+            default:
+                assert(false && "invalid kind");
+        }
     }
 }
 

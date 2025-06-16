@@ -3,11 +3,14 @@
   * create type [x]
   * type old [x]
   * use new type with old []
+    * symbol [x]
   * use new type without old []
 * new type use:
   * create type [x]
   * type old [x]
   * use new type with old []
+    * symbol []
+    * ast []
   * use new type without old []
 * new syntax tree
 * move checks into their own functions

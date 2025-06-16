@@ -42,17 +42,17 @@ void Ake_symbol_table_add_reserved_word(Ake_symbol_table* st, const char* name, 
     Zinc_string_destroy(&bf);
 }
 
-void Ake_symbol_table_add_type(Ake_symbol_table* st, const char* name, Ake_type_def* td)
+void Ake_symbol_table_add_type(Ake_symbol_table* st, const char* name, Ake_TypeDef* td)
 {
-	struct Zinc_string bf;
+	Zinc_string bf;
 
 	Zinc_string_init(&bf);
 	Zinc_string_add_str(&bf, name);
 
-	struct Ake_symbol* sym = NULL;
-	Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
+	Ake_symbol* sym = NULL;
+	Zinc_malloc_safe((void**)&sym, sizeof(Ake_symbol));
 	Ake_symbol_init(sym);
-        sym->type = Ake_symbol_type_type;
+    sym->type = Ake_symbol_type_type;
 	sym->td = td;
 
 	Ake_EnvironmentAdd(st->top, &bf, sym, AKE_SEQ_DEFAULT);
@@ -85,122 +85,151 @@ void Ake_symbol_table_init_reserved(Ake_symbol_table* st)
 void Ake_symbol_table_init_builtin_types(Ake_symbol_table* st)
 {
 	const char* name;
-	Ake_type_def* td = NULL;
+	Ake_TypeDef* td = NULL;
+	Ake_type_def* old = NULL;
 
 	name = "Int8";
-	Zinc_malloc_safe((void**)&td, sizeof(Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_integer;
-	Zinc_string_add_str(&td->name, name);
-	td->is_signed = true;
-	td->bit_count = 8;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_integer;
+	Zinc_string_add_str(&old->name, name);
+	old->is_signed = true;
+	old->bit_count = 8;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Int16";
-	Zinc_malloc_safe((void**)&td, sizeof(Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_integer;
-	Zinc_string_add_str(&td->name, name);
-	td->is_signed = true;
-	td->bit_count = 16;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_integer;
+	Zinc_string_add_str(&old->name, name);
+	old->is_signed = true;
+	old->bit_count = 16;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Int32";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_integer;
-	Zinc_string_add_str(&td->name, name);
-	td->is_signed = true;
-	td->bit_count = 32;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_integer;
+	Zinc_string_add_str(&old->name, name);
+	old->is_signed = true;
+	old->bit_count = 32;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Int64";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_integer;
-	Zinc_string_add_str(&td->name, name);
-	td->is_signed = true;
-	td->bit_count = 64;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_integer;
+	Zinc_string_add_str(&old->name, name);
+	old->is_signed = true;
+	old->bit_count = 64;
 	Ake_symbol_table_add_type(st, name, td);
 
     name = "Nat8";
-    Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-    Ake_type_def_init(td);
-    td->type = Ake_type_integer;
-    Zinc_string_add_str(&td->name, name);
-    td->bit_count = 8;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_integer;
+    Zinc_string_add_str(&old->name, name);
+    old->bit_count = 8;
     Ake_symbol_table_add_type(st, name, td);
 
 	name = "Nat16";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_integer;
-	Zinc_string_add_str(&td->name, name);
-	td->bit_count = 16;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_integer;
+	Zinc_string_add_str(&old->name, name);
+	old->bit_count = 16;
 	Ake_symbol_table_add_type(st, name, td);
 
     name = "Nat32";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_integer;
-	Zinc_string_add_str(&td->name, name);
-	td->bit_count = 32;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_integer;
+	Zinc_string_add_str(&old->name, name);
+	old->bit_count = 32;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Nat64";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_integer;
-	Zinc_string_add_str(&td->name, name);
-	td->bit_count = 64;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_integer;
+	Zinc_string_add_str(&old->name, name);
+	old->bit_count = 64;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Real16";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_float;
-	Zinc_string_add_str(&td->name, name);
-	td->bit_count = 16;
-	td->is_signed = false;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_float;
+	Zinc_string_add_str(&old->name, name);
+	old->bit_count = 16;
+	old->is_signed = false;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Real32";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_float;
-	Zinc_string_add_str(&td->name, name);
-	td->bit_count = 32;
-	td->is_signed = false;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_float;
+	Zinc_string_add_str(&old->name, name);
+	old->bit_count = 32;
+	old->is_signed = false;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Real64";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_float;
-	Zinc_string_add_str(&td->name, name);
-	td->bit_count = 64;
-	td->is_signed = false;
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_float;
+	Zinc_string_add_str(&old->name, name);
+	old->bit_count = 64;
+	old->is_signed = false;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Bool";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_boolean;
-	Zinc_string_add_str(&td->name, name);
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_boolean;
+	Zinc_string_add_str(&old->name, name);
 	Ake_symbol_table_add_type(st, name, td);
 
     name = "Function";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_function;
-	Zinc_string_add_str(&td->name, name);
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_function;
+	Zinc_string_add_str(&old->name, name);
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Module";
-	Zinc_malloc_safe((void**)&td, sizeof(struct Ake_type_def));
-	Ake_type_def_init(td);
-	td->type = Ake_type_module;
-	Zinc_string_add_str(&td->name, name);
+	Ake_TypeDefCreate(&td);
+	Ake_type_def_create(&old);
+	Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
+	td->data.old = old;
+	old->type = Ake_type_module;
+	Zinc_string_add_str(&old->name, name);
 	Ake_symbol_table_add_type(st, name, td);
 }
 
@@ -211,11 +240,9 @@ void Ake_symbol_table_add_numeric(Ake_symbol_table* st, const char* name)
 	Zinc_string_add_str(&bf, name);
 	Ake_symbol* sym = Ake_EnvironmentGet(st->top, &bf, AKE_SEQ_ANY);
 	assert(sym);
+	assert(sym->type == Ake_symbol_type_type);
 	assert(sym->td);
-	Ake_type_use* tu = NULL;
-    Ake_type_use_create(&tu);
-	tu->td = sym->td;
-    Zinc_list_add_item(&st->numeric_pool, tu);
+    Zinc_list_add_item(&st->numeric_pool, sym->td);
     Zinc_string_destroy(&bf);
 }
 
@@ -297,9 +324,10 @@ bool Ake_type_find(Ake_symbol_table* st, Ake_type_def* a, Ake_type_def* b, bool 
 
 		Zinc_list_node* node = st->numeric_pool.head;
 		while (node) {
-			Ake_type_use* tu = node->item;
-			assert(tu);
-			Ake_type_def* x = tu->td;
+			Ake_TypeDef* td = node->item;
+			assert(td);
+			assert(td->kind == AKE_TYPE_DEF_OLD);
+			Ake_type_def* x = td->data.old;
 			assert(x);
 			if (x->type == type && x->is_signed == is_signed && x->bit_count == bit_count) {
 				*promote = true;

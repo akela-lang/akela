@@ -14,6 +14,7 @@ typedef struct Ake_type_use Ake_type_use;
 #include "ast.h"
 #include "zinc/hash_map_string.h"
 #include "ast.h"
+#include "type.h"
 
 typedef enum Ake_type {
 	Ake_type_none,
@@ -45,5 +46,6 @@ AKELA_API void Ake_type_def_destroy(Ake_type_def* n);
 AKELA_API void Ake_type_def_init(Ake_type_def* n);
 AKELA_API Ake_type_def* Ake_type_def_copy(Ake_type_def* n);
 AKELA_API bool Ake_type_def_match(Ake_type_def* a, Ake_type_def* b);
+Ake_TypeDef* Ake_TypeDefCopy(Ake_TypeDef* td);
 
 #endif

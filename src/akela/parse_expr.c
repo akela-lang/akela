@@ -1185,9 +1185,9 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
                 assert(sym);
                 //left->sym = sym;
                 assert(sym->td);
-                assert(sym->td->composite);
+                assert(sym->td->data.old->composite);
                 bool found = false;
-                struct Ake_ast* dec = sym->td->composite->head;
+                struct Ake_ast* dec = sym->td->data.old->composite->head;
                 struct Ake_ast* dec_id = NULL;
                 struct Ake_ast* dec_type = NULL;
                 while (dec) {
