@@ -42,6 +42,7 @@ Ake_symbol* Ake_symbol_clone_shallow(struct Ake_symbol* sym)
         new_sym->td = sym->td;
         new_sym->root = sym->root;
         new_sym->root_ptr = sym->root_ptr;
+        new_sym->is_copy = true;
     }
     return new_sym;
 }
