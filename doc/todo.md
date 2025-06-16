@@ -9,7 +9,7 @@
   * create type [x]
   * type old [x]
   * use new type with old []
-    * symbol []
+    * symbol [x]
     * ast []
   * use new type without old []
 * new syntax tree

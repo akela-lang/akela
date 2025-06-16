@@ -150,7 +150,12 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
                     Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
                     Ake_symbol_init(new_sym);
                     new_sym->type = Ake_symbol_type_variable;
-                    new_sym->tu = Ake_type_use_clone(tu);
+                    Ake_type_use* old = Ake_type_use_clone(tu);
+                    Ake_TypeUse* tu2 = NULL;
+                    Ake_TypeUseCreate(&tu2);
+                    Ake_TypeUseSet(tu2, AKE_TYPE_USE_OLD);
+                    tu2->data.old = old;
+                    new_sym->tu = tu2;
                     Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
                 }
             }
@@ -505,7 +510,7 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
 
     size_t seq = Ake_get_current_seq(ps);
     Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
-    if (sym && sym->td && sym->td->data.old->type == Ake_type_struct) {
+    if (sym && sym->type == Ake_symbol_type_type && sym->td && sym->td->data.old->type == Ake_type_struct) {
         /* struct literal */
 
         Ake_consume_newline(ps, n);
@@ -549,7 +554,9 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
             /* test case: test_parse_types_missing_declaration */
             n->type = Ake_ast_type_error;
         } else {
-            n->tu = Ake_type_use_clone(sym->tu);
+            assert(sym->tu->kind == AKE_TYPE_USE_OLD);
+            Ake_type_use* old = Ake_type_use_clone(sym->tu->data.old);
+            n->tu = old;
         }
 
         Ake_token_destroy(id);

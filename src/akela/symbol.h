@@ -22,7 +22,7 @@ typedef struct Ake_symbol {
     Ake_symbol_type type;
     Ake_token_enum tk_type;
     Ake_TypeDef* td;
-    Ake_type_use* tu;
+    Ake_TypeUse* tu;
     Ake_ast* root;
     Ake_ast* root_ptr;
     void* value;
@@ -31,8 +31,8 @@ typedef struct Ake_symbol {
     bool is_copy;
 } Ake_symbol;
 
-AKELA_API void Ake_symbol_init(struct Ake_symbol* sym);
-AKELA_API void Ake_symbol_create(struct Ake_symbol** sym);
+AKELA_API void Ake_symbol_init(Ake_symbol* sym);
+AKELA_API void Ake_symbol_create(Ake_symbol** sym);
 AKELA_API void Ake_symbol_destroy(Ake_symbol* sym);
 AKELA_API Ake_symbol* Ake_symbol_clone_shallow(Ake_symbol* sym);
 
