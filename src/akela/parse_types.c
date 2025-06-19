@@ -8,7 +8,7 @@
 #include "symbol.h"
 #include "zinc/memory.h"
 #include "parse_types.h"
-#include "type_def.h"
+#include "type.h"
 #include <assert.h>
 
 bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t);
@@ -549,15 +549,9 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
                 free(a);
                 n->type = Ake_ast_type_error;
                 /* test case: test_parse_error_not_a_type */
-            } else if (sym->td->data.old->type == Ake_type_function) {
-                Zinc_error_list_set(
-                        ps->el,
-                        &name->loc,
-                        "can not directly use Function to declare a function; use fn syntax to declare a function");
-                n->type = Ake_ast_type_error;
             } else {
                 if (n->type != Ake_ast_type_error) {
-                    n->tu->td = sym->td->data.old;
+                    n->tu->td = sym->td;
                 }
             }
         }
@@ -657,11 +651,8 @@ Ake_type_use* Ake_Type_use_add_proto(
     Zinc_string_add_str(&bf, "Function");
     Ake_get_lookahead(ps);
     size_t seq = ps->lookahead->loc.start;
-    struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &bf, seq);
     Zinc_string_destroy(&bf);
-    assert(sym);
-    assert(sym->td);
-    func->td = sym->td->data.old;
+    func->type = Ake_type_use_function;
 
     Ake_ast* id = Ast_node_get(proto, 0);
     Ake_ast* dseq = Ast_node_get(proto, 1);
@@ -800,7 +791,7 @@ bool Ake_check_input_type(
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_Override_rhs(Ake_type_use* tu, Ake_ast* rhs)
 {
-    if (tu->td->type == Ake_type_integer || tu->td->type == Ake_type_float) {
+    if (tu->td && Ake_is_numeric(tu->td)) {
         rhs->tu->td = tu->td;
         if (rhs->type == Ake_ast_type_sign) {
             Ake_ast* p = Ast_node_get(rhs, 1);
@@ -907,4 +898,35 @@ bool Ake_is_placeholder_token(struct Ake_token* t)
     } else {
         return false;
     }
+}
+
+Ake_TypeDef* Ake_StructToType(Ake_ast* n)
+{
+    Ake_TypeDef* td = NULL;
+    Ake_TypeDefCreate(&td);
+    Ake_TypeDefSet(td, AKE_TYPE_DEF_STRUCT);
+    Zinc_string_add_string(&td->name, &n->value);
+    Ake_ast* dec = n->head;
+    while (dec) {
+        Ake_TypeField* tf = NULL;
+        Ake_TypeFieldCreate(&tf);
+
+        Ake_ast* id_node = dec->head;
+        assert(id_node);
+
+        Zinc_string_add_string(&tf->name, &id_node->value);
+
+        Ake_ast* type_node = id_node->next;
+        assert(type_node);
+
+        Ake_TypeUse* tu = NULL;
+        Ake_TypeUseCreate(&tu);
+        Ake_TypeUseSet(tu, AKE_TYPE_USE_OLD);
+        tu->data.old = Ake_type_use_clone(type_node->tu);
+        tf->tu = tu;
+        Ake_TypeDefStructAdd(td, tf);
+
+        dec = dec->next;
+    }
+    return td;
 }

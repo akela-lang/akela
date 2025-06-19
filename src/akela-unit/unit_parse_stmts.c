@@ -1,7 +1,7 @@
 #include "akela/parse_tools.h"
 #include "akela/ast.h"
 #include "unit_parse.h"
-#include "akela/type_def.h"
+#include "akela/type.h"
 #include "akela/comp_unit.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"
@@ -538,11 +538,11 @@ void AkeUnit_parse_stmts_type(Zinc_test* test)
 		return Zinc_assert();
 	}
 	
-	Ake_type_def* td = tu->td;
+	Ake_TypeDef* td = tu->td;
 	if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, td->type, Ake_type_integer, "type td");
+	Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_NATURAL, "type td");
 	Zinc_expect_string(test, &td->name, "Nat8", "name td");
 
     AkeUnit_parse_teardown(&cu);
@@ -1459,11 +1459,11 @@ void AkeUnit_parse_for_iteration(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-	struct Ake_type_def* i_td = i_tu->td;
+	Ake_TypeDef* i_td = i_tu->td;
 	if (!Zinc_expect_ptr(test, i_td, "ptr i_td")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, i_td->type, Ake_type_integer, "integer i_td");
+	Zinc_expect_int_equal(test, i_td->kind, AKE_TYPE_DEF_INTEGER, "integer i_td");
 	Zinc_expect_string(test, &i_td->name, "Int32", "Int32 i_td");
 
 	/* expr */
@@ -1847,7 +1847,7 @@ void AkeUnit_parse_const(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
@@ -1908,7 +1908,7 @@ void AkeUnit_parse_let2(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
@@ -1983,7 +1983,7 @@ void AkeUnit_parse_let3(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
@@ -2076,13 +2076,7 @@ void AkeUnit_parse_extern(Zinc_test* test)
     if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-
-    struct Ake_type_def* td = tu->td;
-    if (!Zinc_expect_ptr(test, td, "ptr td")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_function, "type td");
-    Zinc_expect_string(test, &td->name, "Function", "name td");
+	Zinc_expect_int_equal(test, tu->type, Ake_type_use_function, "tu type");
 
     Ake_ast* proto = Ast_node_get(f, 0);
     if (!Zinc_expect_ptr(test, proto, "ptr proto")) {

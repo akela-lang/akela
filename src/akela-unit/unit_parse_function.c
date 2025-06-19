@@ -37,13 +37,7 @@ void AkeUnit_parse_function_no_inputs_no_outputs(Zinc_test* test)
     if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-
-    struct Ake_type_def* td = tu->td;
-    if (!Zinc_expect_ptr(test, td, "ptr td")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_function, "function td");
-    Zinc_expect_string(test, &td->name, "Function", "Function td");
+    Zinc_expect_int_equal(test, tu->type, Ake_type_use_function, "function td");
 
     Ake_ast* proto = Ast_node_get(f, 0);
     if (!Zinc_expect_ptr(test, proto, "ptr proto")) {
@@ -189,7 +183,7 @@ void AkeUnit_parse_function_input(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* x_td = x_tu->td;
+    Ake_TypeDef* x_td = x_tu->td;
     if (!Zinc_expect_ptr(test, x_td, "ptr x_td")) {
 		return Zinc_assert();
 	}
@@ -412,13 +406,7 @@ void AkeUnit_parse_function_three_inputs(Zinc_test* test)
 		return Zinc_assert();
 	}
     Zinc_expect_string(test, &tu->name, "foo", "name tu");
-
-    struct Ake_type_def* td = tu->td;
-    if (!Zinc_expect_ptr(test, td, "ptr td")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_function, "function td");
-    Zinc_expect_string(test, &td->name, "Function", "Function td");
+    Zinc_expect_int_equal(test, tu->type, Ake_type_use_function, "function td");
 
     Ake_type_use* inputs = tu->head;
     if (!Zinc_expect_ptr(test, inputs, "ptr inputs")) {
@@ -1113,12 +1101,7 @@ void AkeUnit_parse_function_proto(Zinc_test* test)
     if (!Zinc_expect_ptr(test, let_tu, "ptr let_tu")) {
 		return Zinc_assert();
 	}
-
-    struct Ake_type_def* let_td = let_tu->td;
-    if (!Zinc_expect_ptr(test, let_td, "ptr let_td")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, let_td->type, Ake_type_function, "type let_td");
+    Zinc_expect_int_equal(test, let_tu->type, Ake_type_use_function, "type let_td");
 
     Ake_type_use* inputs = let_tu->head;
     if (!Zinc_expect_ptr(test, inputs, "ptr inputs")) {
@@ -1300,11 +1283,11 @@ void AkeUnit_parse_call_return_type(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* add_td = add_tu->td;
+    Ake_TypeDef* add_td = add_tu->td;
     if (!Zinc_expect_ptr(test, add_td, "ptr add_td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, add_td->type, Ake_type_integer, "integer add_td");
+    Zinc_expect_int_equal(test, add_td->kind, AKE_TYPE_DEF_INTEGER, "integer add_td");
     Zinc_expect_string(test, &add_td->name, "Int32", "Int32 add_td");
 
     AkeUnit_parse_teardown(&cu);
@@ -1403,11 +1386,11 @@ void AkeUnit_parse_call2(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_integer, "integer td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_INTEGER, "integer td");
     Zinc_expect_string(test, &td->name, "Int32", "Int32 td");
 
     Ake_ast* dret = Ast_node_get(proto, 2);
@@ -1969,27 +1952,6 @@ void AkeUnit_parse_factor_newline_anonymous_function_const(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
-void AkeUnit_parse_function_error_use_fn(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: Function = fn(x: Int32) end", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "parse valid");
-    Zinc_expect_source_error(test, 
-            &cu.errors,
-            "can not directly use Function to declare a function; use fn syntax to declare a function");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_function_error_require_params_name(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -2136,7 +2098,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_parse_call_error_expected_expression);
         Zinc_test_register(test, AkeUnit_parse_factor_newline_anonymous_function);
         Zinc_test_register(test, AkeUnit_parse_factor_newline_anonymous_function_const);
-        Zinc_test_register(test, AkeUnit_parse_function_error_use_fn);
         Zinc_test_register(test, AkeUnit_parse_function_error_require_params_name);
         Zinc_test_register(test, AkeUnit_parse_function_error_input_type_non_numeric);
         Zinc_test_register(test, AkeUnit_parse_function_error_output_type_non_numeric);

@@ -16,6 +16,7 @@
 * move checks into their own functions
 * run IR generation in same pass
 * order independence of global variables
+* check if default integer 32 is used as an array index
 
 # Akela LLVM
 

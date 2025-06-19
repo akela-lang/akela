@@ -1,4 +1,4 @@
-#include "akela/type_def.h"
+#include "akela/type.h"
 #include "akela/ast.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"

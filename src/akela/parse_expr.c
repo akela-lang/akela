@@ -6,7 +6,7 @@
 #include "lex.h"
 #include "parse_types.h"
 #include "parse_expr.h"
-#include "type_def.h"
+#include "type.h"
 #include <assert.h>
 #include "symbol.h"
 
@@ -17,7 +17,6 @@ Ake_ast* Ake_parse_comparison(struct Ake_parse_state* ps);
 Ake_ast* Ake_parse_add(struct Ake_parse_state* ps);
 Ake_ast* Ake_parse_mult(struct Ake_parse_state* ps);
 Ake_ast* Ake_parse_power(struct Ake_parse_state* ps);
-Ake_ast* Ake_parse_complex_operators(struct Ake_parse_state* ps);
 void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n);
 void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n);
 Ake_ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_ast* left);
@@ -335,10 +334,10 @@ Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 				Zinc_error_list_set(ps->el, &b->loc, "operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_right_no_value */
                 n->type = Ake_ast_type_error;
-			} else if (left->tu->td->type != Ake_type_boolean) {
+			} else if (left->tu->td->kind != AKE_TYPE_DEF_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &left->loc, "left-side expression of boolean operator is not boolean");
                 n->type = Ake_ast_type_error;
-			} else if (b->tu->td->type != Ake_type_boolean) {
+			} else if (b->tu->td->kind != AKE_TYPE_DEF_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &b->loc, "expression of boolean operator is not boolean");
                 n->type = Ake_ast_type_error;
 			} else {
@@ -983,9 +982,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
     if (n->type != Ake_ast_type_error) {
         Ake_type_use *tu = left->tu;
         assert(tu);
-        assert(tu->td);
-        struct Ake_type_def *td = tu->td;
-        if (td->type != Ake_type_function) {
+        if (tu->type != Ake_type_use_function) {
             Zinc_error_list_set(ps->el, &left->loc, "not a function type");
             /* test case: test_parse_call_error_not_function */
             n->type = Ake_ast_type_error;
@@ -1040,13 +1037,13 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_ast* left)
+Ake_ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_ast* left)
 {
     Ake_ast* n = NULL;
     Ake_ast_create(&n);
     n->type = Ake_ast_type_cseq;
 
-    if (!left->tu || !left->tu->td || left->tu->td->type != Ake_type_function) {
+    if (!left->tu || left->tu->type != Ake_type_use_function) {
         Zinc_error_list_set(ps->el, &left->loc, "not a function type");
         /* test case: no test case needed */
         n->type = Ake_ast_type_error;
@@ -1173,31 +1170,30 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
                 Zinc_error_list_set(ps->el, &left->loc, "dot operand has no value");
                 /* test case: no test case necessary */
                 n->type = Ake_ast_type_error;
-            } else if (left->tu->td->type != Ake_type_struct) {
+            } else if (left->tu->td->kind != AKE_TYPE_DEF_STRUCT) {
                 Zinc_error_list_set(ps->el, &left->loc, "dot operand is not a struct");
                 /* test case: test_parse_dot_error_left_non_module */
                 n->type = Ake_ast_type_error;
             } else {
-                struct Ake_type_def* td = left->tu->td;
+                Ake_TypeDef* td = left->tu->td;
                 assert(td);
             	size_t seq = Ake_get_current_seq(ps);
                 struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &td->name, seq);
                 assert(sym);
                 //left->sym = sym;
                 assert(sym->td);
-                assert(sym->td->data.old->composite);
+                assert(sym->td->data.fields.head);
                 bool found = false;
-                struct Ake_ast* dec = sym->td->data.old->composite->head;
-                struct Ake_ast* dec_id = NULL;
-                struct Ake_ast* dec_type = NULL;
-                while (dec) {
-                    dec_id = Ast_node_get(dec, 0);
-                    dec_type = Ast_node_get(dec, 1);
-                    if (Zinc_string_compare(&dec_id->value, &b->value)) {
+                Ake_TypeField* tf = sym->td->data.fields.head;
+            	Ake_type_use* found_tu = NULL;
+                while (tf) {
+                    if (Zinc_string_compare(&tf->name, &b->value)) {
+                    	assert(tf->tu->kind == AKE_TYPE_USE_OLD);
+                    	found_tu = tf->tu->data.old;
                         found = true;
                         break;
                     }
-                    dec = dec->next;
+                    tf = tf->next;
                 }
                 if (!found) {
                     Zinc_error_list_set(
@@ -1206,7 +1202,7 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
                             "identifier not a field of struct: %bf", &id->value);
                     n->type = Ake_ast_type_error;
                 } else {
-                    n->tu = Ake_type_use_clone(dec_type->tu);
+                    n->tu = Ake_type_use_clone(found_tu);
                 }
             }
 

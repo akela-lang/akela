@@ -29,6 +29,7 @@ typedef struct Ake_symbol {
     void* reference;
     size_t assign_count;
     bool is_copy;
+    void* struct_type;
 } Ake_symbol;
 
 AKELA_API void Ake_symbol_init(Ake_symbol* sym);

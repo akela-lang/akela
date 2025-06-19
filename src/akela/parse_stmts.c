@@ -10,7 +10,7 @@
 #include "symbol.h"
 #include "parse_stmts.h"
 #include "parse_factor.h"
-#include "type_def.h"
+#include "type.h"
 #include <assert.h>
 
 Ake_ast* Ake_parse_stmt(struct Ake_parse_state* ps);
@@ -499,7 +499,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
     Ake_ast_create(&n);
     n->type = Ake_ast_type_struct;
 
-    struct Ake_token* st = NULL;
+    Ake_token* st = NULL;
 	if (!Ake_match(ps, Ake_token_struct, "expected struct", &st, n)) {
         /* test case: no test case needed */
         assert(false);
@@ -558,18 +558,7 @@ Ake_ast* Ake_parse_struct(struct Ake_parse_state* ps)
             /* test case: test_parse_struct_error_duplicate */
             n->type = Ake_ast_type_error;
 		} else {
-			Ake_ast* tu = Ake_ast_clone(n);
-			Ake_type_def* old = NULL;
-			Ake_type_def_create(&old);
-			old->type = Ake_type_struct;
-			Zinc_string_copy(&id->value, &old->name);
-			old->composite = tu;
-
-			Ake_TypeDef* td = NULL;
-			Ake_TypeDefCreate(&td);
-			Ake_TypeDefSet(td, AKE_TYPE_DEF_OLD);
-			td->data.old = old;
-
+			Ake_TypeDef* td = Ake_StructToType(n);
 			Ake_symbol* sym = NULL;
 			Ake_symbol_create(&sym);
 			sym->type = Ake_symbol_type_type;
@@ -941,13 +930,13 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
     	size_t seq = Ake_get_current_seq(ps);
         Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
         if (sym->type == Ake_symbol_type_type) {
-            if (sym->td->data.old->type == Ake_type_struct) {
+            if (sym->td->kind == AKE_TYPE_DEF_STRUCT) {
                 Ake_ast* type_node = NULL;
                 Ake_ast_create(&type_node);
                 type_node->type = Ake_ast_type_type;
                 Ake_type_use* tu = NULL;
                 Ake_type_use_create(&tu);
-                tu->td = sym->td->data.old;
+                tu->td = sym->td;
                 type_node->tu = tu;
                 struct_type = type_node;
             }

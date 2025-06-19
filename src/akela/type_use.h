@@ -1,7 +1,7 @@
 #ifndef AKELA_TYPE_USE_H
 #define AKELA_TYPE_USE_H
 
-#include "type_def.h"
+#include "type.h"
 #include "zinc/vector.h"
 #include <stdbool.h>
 #include "zinc/memory.h"
@@ -23,6 +23,7 @@ typedef enum Ake_type_context {
 
 typedef enum Ake_type_use_type {
     Ake_type_use_type_def,
+    Ake_type_use_function,
     Ake_type_use_function_inputs,
     Ake_type_use_function_outputs,
     Ake_type_use_function_ellipsis,
@@ -39,7 +40,7 @@ void static Ake_type_use_names(char const* names[])
 
 typedef struct Ake_type_use {
     Ake_type_use_type type;
-    Ake_type_def* td;
+    Ake_TypeDef* td;
     Zinc_string name;
     Zinc_vector dim;
     bool is_ref;

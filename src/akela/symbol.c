@@ -1,6 +1,6 @@
 #include "symbol.h"
 #include "zinc/memory.h"
-#include "type_def.h"
+#include "type.h"
 
 void Ake_symbol_init(struct Ake_symbol* sym)
 {
@@ -14,6 +14,7 @@ void Ake_symbol_init(struct Ake_symbol* sym)
     sym->reference = NULL;
     sym->assign_count = 0;
     sym->is_copy = false;
+    sym->struct_type = NULL;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

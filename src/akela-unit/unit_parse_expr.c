@@ -2,7 +2,7 @@
 #include "unit_parse.h"
 #include "akela/ast.h"
 #include "akela/parse_tools.h"
-#include "akela/type_def.h"
+#include "akela/type.h"
 #include "akela/comp_unit.h"
 #include "akela/comp_table.h"
 #include "zinc/test.h"
@@ -77,11 +77,11 @@ void AkeUnit_parse_add(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_integer, "integer td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_INTEGER, "integer td");
     Zinc_expect_string(test, &td->name, "Int32", "Int32 td");
 
     Ake_ast* left = Ast_node_get(add, 0);
@@ -241,12 +241,12 @@ void AkeUnit_parse_add_mixed_types(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* add_td = add_tu->td;
+    Ake_TypeDef* add_td = add_tu->td;
     if (!Zinc_expect_ptr(test, add_td, "ptr add_td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, add_td->type, Ake_type_float, "float add_td");
-    Zinc_expect_string(test, &add_td->name, "Real64", "Real64 add_td");
+    Zinc_expect_int_equal(test, add_td->kind, AKE_TYPE_DEF_INTEGER, "kind add_td");
+    Zinc_expect_string(test, &add_td->name, "Int32", "name add_td");
 
     Ake_ast* left = Ast_node_get(add, 0);
     if (!Zinc_expect_ptr(test, left, "left")) {
@@ -599,11 +599,11 @@ void AkeUnit_parse_mult(Zinc_test* test)
 		return Zinc_assert();
 	}
     
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_integer, "integer td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_INTEGER, "integer td");
     Zinc_expect_string(test, &td->name, "Int32", "Int32 td");
 
     Ake_ast* left = Ast_node_get(mult, 0);
@@ -1181,11 +1181,11 @@ void AkeUnit_parse_power(Zinc_test* test)
 		return Zinc_assert();
 	}
     
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_integer, "integer td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_INTEGER, "integer td");
     Zinc_expect_string(test, &td->name, "Int32", "Int32 td");
 
     Ake_ast* number0 = Ast_node_get(pow, 0);
@@ -1816,11 +1816,11 @@ void AkeUnit_parse_comparison(Zinc_test* test)
 		return Zinc_assert();
 	}
     
-    struct Ake_type_def* cond0_td = cond0_tu->td;
+    Ake_TypeDef* cond0_td = cond0_tu->td;
     if (!Zinc_expect_ptr(test, cond0_td, "ptr cond0_td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, cond0_td->type, Ake_type_integer, "integer cond0_td");
+    Zinc_expect_int_equal(test, cond0_td->kind, AKE_TYPE_DEF_INTEGER, "integer cond0_td");
     Zinc_expect_string(test, &cond0_td->name, "Int32", "Int32 cond0_td");
 
     Ake_ast* left0 = Ast_node_get(cond0, 0);
@@ -1848,12 +1848,12 @@ void AkeUnit_parse_comparison(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* cond1_td = cond1_tu->td;
+    Ake_TypeDef* cond1_td = cond1_tu->td;
     if (!Zinc_expect_ptr(test, cond1_td, "ptr cond0_td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, cond1_td->type, Ake_type_float, "float cond1_td");
-    Zinc_expect_string(test, &cond1_td->name, "Real64", "Real64 cond1_td");
+    Zinc_expect_int_equal(test, cond1_td->kind, AKE_TYPE_DEF_INTEGER, "kind cond1_td");
+    Zinc_expect_string(test, &cond1_td->name, "Int32", "name cond1_td");
 
     Ake_ast* left1 = Ast_node_get(cond1, 0);
     if (!Zinc_expect_ptr(test, left1, "ptr left1")) {
@@ -1941,7 +1941,7 @@ void AkeUnit_parse_comparison_identity(Zinc_test* test)
     if (!Zinc_expect_ptr(test, comp0->tu->td, "ptr comp0->tu->td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, comp0->tu->td->type, Ake_type_boolean, "boolean comp0->tu->td->type");
+    Zinc_expect_int_equal(test, comp0->tu->td->kind, AKE_TYPE_DEF_BOOLEAN, "boolean comp0->tu->td->type");
     Zinc_expect_string(test, &comp0->tu->td->name, "Bool", "Bool comp0->tu->td->name");
 
     Ake_ast* comp1 = Ast_node_get(cu.root, 1);
@@ -1954,7 +1954,7 @@ void AkeUnit_parse_comparison_identity(Zinc_test* test)
     if (!Zinc_expect_ptr(test, comp1->tu->td, "ptr comp1->tu->td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, comp1->tu->td->type, Ake_type_boolean, "boolean comp1->tu->td->type");
+    Zinc_expect_int_equal(test, comp1->tu->td->kind, AKE_TYPE_DEF_BOOLEAN, "boolean comp1->tu->td->type");
     Zinc_expect_string(test, &comp1->tu->td->name, "Bool", "Bool comp1->tu->td->name");
 
     AkeUnit_parse_teardown(&cu);
@@ -2132,11 +2132,11 @@ void AkeUnit_parse_or(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_boolean, "boolean td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_BOOLEAN, "boolean td");
     Zinc_expect_string(test, &td->name, "Bool", "Bool td");
 
     Ake_ast* a = Ast_node_get(or, 0);
@@ -2379,11 +2379,11 @@ void AkeUnit_parse_array_subscript(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_integer, "integer td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_INTEGER, "integer td");
     Zinc_expect_string(test, &td->name, "Int32", "Int32 td");
 
     Ake_ast* name = Ast_node_get(as, 0);
@@ -2434,11 +2434,11 @@ void AkeUnit_parse_array_subscript2(Zinc_test* test)
 	}
     Zinc_expect_false(test, a_tu->is_array, "is array to");
 
-    struct Ake_type_def* td = a_tu->td;
+    Ake_TypeDef* td = a_tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_integer, "integer td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_INTEGER, "integer td");
     Zinc_expect_string(test, &td->name, "Int32", "Int32 td");
 
     Ake_ast* b = Ast_node_get(a, 0);
@@ -2499,11 +2499,11 @@ void AkeUnit_parse_array_subscript3(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_integer, "integer td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_INTEGER, "integer td");
     Zinc_expect_string(test, &td->name, "Int32", "Int32 td");
 
     Ake_ast* b = Ast_node_get(a, 0);
@@ -2576,11 +2576,11 @@ void AkeUnit_parse_expr_array_subscript_3d(Zinc_test* test)
     Zinc_expect_false(test, a_tu->is_array, "is_array a_tu");
     Zinc_expect_size_t_equal(test, a_tu->dim.count, 0, "dim.count a_tu");
 
-    struct Ake_type_def* a_td = a_tu->td;
+    Ake_TypeDef* a_td = a_tu->td;
     if (!Zinc_expect_ptr(test, a_td, "ptr a_td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, a_td->type, Ake_type_integer, "type a_td");
+    Zinc_expect_int_equal(test, a_td->kind, AKE_TYPE_DEF_INTEGER, "type a_td");
     Zinc_expect_string(test, &a_td->name, "Int32", "name a_td");
 
     Ake_ast* b = Ast_node_get(a, 0);
@@ -2771,11 +2771,11 @@ void AkeUnit_parse_assign_string(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, td->type, Ake_type_integer, "type td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_NATURAL, "type td");
     Zinc_expect_string(test, &td->name, "Nat8", "name td");
          
     Ake_ast* lhv = Ast_node_get(assign, 0);
@@ -2828,11 +2828,11 @@ void AkeUnit_parse_assign_multiple(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    struct Ake_type_def* assign_td = assign_tu->td;
+    Ake_TypeDef* assign_td = assign_tu->td;
     if (!Zinc_expect_ptr(test, assign_td, "ptr assign_td")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, assign_td->type, Ake_type_integer, "integer assign_td");
+    Zinc_expect_int_equal(test, assign_td->kind, AKE_TYPE_DEF_INTEGER, "integer assign_td");
     Zinc_expect_string(test, &assign_td->name, "Int32", "Int32 assign_td");
 
     Ake_ast* assign0 = Ast_node_get(assign, 0);

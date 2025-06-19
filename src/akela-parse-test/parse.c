@@ -81,6 +81,7 @@ void Apt_parse_suite(
 
     Lava_result pr = Lava_parse_file(fp);
     if (pr.errors->head) {
+        fprintf(stderr, "%s\n", Zinc_string_c_str(path));
         Zinc_error_list_print(pr.errors);
         Lava_result_destroy(&pr);
         return;
@@ -97,6 +98,7 @@ void Apt_parse_suite(
 
     if (pr.root->kind != LAVA_DOM_HEADER) {
         Zinc_error_list_set(pr.errors, &pr.root->loc, "expected header");
+        fprintf(stderr, "%s\n", Zinc_string_c_str(path));
         Zinc_error_list_print(pr.errors);
         Lava_result_destroy(&pr);
         return;
@@ -106,6 +108,7 @@ void Apt_parse_suite(
 
     if (header->data.LAVA_DOM_HEADER.level != 1) {
         Zinc_error_list_set(pr.errors, &pr.root->loc, "expected level 1 header");
+        fprintf(stderr, "%s\n", Zinc_string_c_str(path));
         Zinc_error_list_print(pr.errors);
         Lava_result_destroy(&pr);
         return;
@@ -117,6 +120,7 @@ void Apt_parse_suite(
 
     if (!Zinc_string_slice_compare(&title, &test_suite_slice)) {
         Zinc_error_list_set(pr.errors, &pr.root->loc, "expected test suite");
+        fprintf(stderr, "%s\n", Zinc_string_c_str(path));
         Zinc_error_list_print(pr.errors);
         Lava_result_destroy(&pr);
         return;
@@ -138,6 +142,7 @@ void Apt_parse_suite(
                 Zinc_string_slice cent = Zinc_string_slice_from_str("cent");
                 if (!Zinc_string_slice_compare(&format, &cent)) {
                     Zinc_error_list_set(pr.errors, &pr.root->loc, "expected cent format");
+                    fprintf(stderr, "%s\n", Zinc_string_c_str(path));
                     Zinc_error_list_print(pr.errors);
                     Lava_result_destroy(&pr);
                     return;
@@ -149,9 +154,11 @@ void Apt_parse_suite(
                 Cent_comp_unit_parse(ct->primary);
                 Cent_comp_unit_build(ct->primary);
                 if (ct->primary->errors.head) {
+                    fprintf(stderr, "%s\n", Zinc_string_c_str(path));
                     Zinc_error_list_print(&ct->primary->errors);
+                } else {
+                    Apt_parse_suite_meta(top_test, suite_test, ct->primary->value);
                 }
-                Apt_parse_suite_meta(top_test, suite_test, ct->primary->value);
                 Cent_comp_table_destroy(ct);
                 free(ct);
             } else if (item->kind == LAVA_DOM_HEADER) {

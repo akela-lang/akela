@@ -126,24 +126,8 @@ element TypeDef(TypeDefType) {
 enum TypeDefType {
   None
   Integer
-  Float
+  Natural
+  Real
   Boolean
   Struct
-  Function
-  Enum
-  Tuple
-  Module
 }
-
-# built-in element defs
-const Int32 = TypeDef::Integer {
-  .name = "Int32"
-  .bit_count = 32
-  .is_signed = true
-};
-
-const Real64 = TypeDef::Float {
-  .name = "Real64"
-  .bit_count = 64
-  .is_signed = false
-};

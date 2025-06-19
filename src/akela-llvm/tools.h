@@ -4,7 +4,6 @@
 extern "C" {
 #include "zinc/memory.h"
 #include "akela/code_gen.h"
-#include "akela/type_def.h"
 #include "zinc/error.h"
 #include "zinc/list.h"
 #include "zinc/vector.h"

@@ -100,7 +100,7 @@ a
 use lib::base::*
 Ast::Stmts {
   .tu = TypeUse::TypeDef {
-    .td = TypeDef::Float {
+    .td = TypeDef::Real {
       .name = "Real64"
       .bit_count = 64
       .is_signed = false
@@ -114,7 +114,7 @@ Ast::Stmts {
     }
     Ast::Type {
       .tu = TypeUse::TypeDef {
-        .td = TypeDef::Float {
+        .td = TypeDef::Real {
           .name = "Real64"
           .bit_count = 64
           .is_signed = false
@@ -125,7 +125,7 @@ Ast::Stmts {
       Ast::Number {
         .value = "1.5"
         .tu = TypeUse::TypeDef {
-          .td = TypeDef::Float {
+          .td = TypeDef::Real {
             .name = "Real64"
             .bit_count = 64
             .is_signed = false
@@ -137,7 +137,7 @@ Ast::Stmts {
   Ast::Id {
     .value = "a"
     .tu = TypeUse::TypeDef {
-      .td = TypeDef::Float {
+      .td = TypeDef::Real {
         .name = "Real64"
         .bit_count = 64
         .is_signed = false

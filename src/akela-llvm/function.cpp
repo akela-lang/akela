@@ -1,5 +1,4 @@
 #include <akela/parse_types.h>
-
 #include "tools.h"
 #include "cg.h"
 
@@ -88,7 +87,7 @@ namespace Akela_llvm {
         Ake_ast* callee = Ast_node_get(n, 0);
         Ake_ast* cseq = Ast_node_get(n, 1);
 
-        assert(callee && callee->tu && callee->tu->td && callee->tu->td->type == Ake_type_function);
+        assert(callee && callee->tu && callee->tu->type == Ake_type_use_function);
         Value* callee_value = Dispatch(jd, callee);
 
         std::vector<Value*> arg_list;
@@ -104,10 +103,9 @@ namespace Akela_llvm {
         while (arg) {
             Ake_type_use* arg_tu = arg->tu;
             if (arg->type == Ake_ast_type_number) {
-                if (arg_tu->td->type == Ake_type_integer && param_tu->td->type == Ake_type_integer) {
-                    if (arg_tu->td->bit_count == 32 && param_tu->td->bit_count == 64) {
+                if ((arg_tu->td->kind == AKE_TYPE_DEF_INTEGER && arg_tu->td->data.integer.bit_count == 32)
+                    && (param_tu->td->kind == AKE_TYPE_DEF_NATURAL && param_tu->td->data.natural.bit_count == 64)) {
                         arg_tu->td = param_tu->td;
-                    }
                 }
             }
 

@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include "zinc/zstring.h"
 #include <inttypes.h>
-#include "type_def.h"
+#include "type.h"
 #include "type_use.h"
 
 typedef enum Ake_TypeUseKind {
@@ -39,21 +39,21 @@ struct Ake_TypeUse {
 
 typedef enum Ake_TypeDefKind {
     AKE_TYPE_DEF_NONE,
-    AKE_TYPE_DEF_OLD,
     AKE_TYPE_DEF_INTEGER,
     AKE_TYPE_DEF_NATURAL,
     AKE_TYPE_DEF_REAL,
+    AKE_TYPE_DEF_BOOLEAN,
     AKE_TYPE_DEF_STRUCT,
 } Ake_TypeDefKind;
 
 struct Ake_TypeDef {
     Ake_TypeDefKind kind;
+    Zinc_string name;
     union {
-        Ake_type_def* old;
         struct { uint8_t bit_count; } integer;
         struct { uint8_t bit_count; } natural;
         struct { uint8_t bit_count; } real;
-        struct { Ake_TypeField* head; Ake_TypeField* tail; } fields;
+        struct { Ake_TypeField* head; Ake_TypeField* tail; void* backend_type; } fields;
     } data;
 };
 
@@ -80,6 +80,7 @@ void Ake_TypeDefInit(Ake_TypeDef* td);
 void Ake_TypeDefCreate(Ake_TypeDef** td);
 void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind);
 void Ake_TypeDefDestroy(Ake_TypeDef* td);
+void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf);
 
 void Ake_TypeParamInit(Ake_TypeParam* tp);
 void Ake_TypeParamCreate(Ake_TypeParam** tp);

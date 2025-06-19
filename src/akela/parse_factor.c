@@ -9,16 +9,16 @@
 #include "zinc/memory.h"
 #include "symbol_table.h"
 #include "parse_factor.h"
-#include "type_def.h"
+#include "type.h"
 #include "symbol.h"
 
 Ake_ast* Ake_parse_not(struct Ake_parse_state* ps);
 Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps);
 Ake_ast* Ake_parse_id(struct Ake_parse_state* ps);
 void Ake_parse_struct_literal_elements(
-        struct Ake_parse_state* ps,
-        struct Ake_ast* parent,
-        struct Ake_type_def* td);
+        Ake_parse_state* ps,
+        Ake_ast* parent,
+        Ake_TypeDef* td);
 Ake_ast* Ake_parse_sign(struct Ake_parse_state* ps);
 Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps);
 void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_ast* parent);
@@ -400,7 +400,7 @@ Ake_ast* Ake_parse_not(struct Ake_parse_state* ps)
             n->type = Ake_ast_type_error;
 		} else {
 			assert(tu->td);
-			if (tu->td->type != Ake_type_boolean) {
+			if (tu->td->kind != AKE_TYPE_DEF_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = Ake_ast_type_error;
@@ -468,7 +468,7 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
         assert(sym->td);
         Ake_type_use* tu = NULL;
         Ake_type_use_create(&tu);
-        tu->td = sym->td->data.old;
+        tu->td = sym->td;
         n->tu = tu;
         Zinc_string_destroy(&bf);
 
@@ -510,7 +510,7 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
 
     size_t seq = Ake_get_current_seq(ps);
     Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
-    if (sym && sym->type == Ake_symbol_type_type && sym->td && sym->td->data.old->type == Ake_type_struct) {
+    if (sym && sym->type == Ake_symbol_type_type && sym->td && sym->td->kind == AKE_TYPE_DEF_STRUCT) {
         /* struct literal */
 
         Ake_consume_newline(ps, n);
@@ -519,10 +519,10 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
 
         Ake_type_use* tu = NULL;
         Ake_type_use_create(&tu);
-        tu->td = sym->td->data.old;
+        tu->td = sym->td;
         n->tu = tu;
 
-        Ake_parse_struct_literal_elements(ps, n, sym->td->data.old);
+        Ake_parse_struct_literal_elements(ps, n, sym->td);
 
         struct Ake_token* end = NULL;
         if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
@@ -569,61 +569,52 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
 typedef struct Ake_struct_field_result {
     bool found;
     size_t index;
-    Ake_ast* id;
-    Ake_type_use* tu;
+    Ake_TypeUse* tu;
 } Ake_struct_field_result;
 
-Ake_struct_field_result Ake_get_struct_field(struct Ake_type_def* td, struct Zinc_string* name) {
-    assert(td->type == Ake_type_struct);
-    assert(td->composite);
+Ake_struct_field_result Ake_get_struct_field(Ake_TypeDef* td, Zinc_string* name) {
+    assert(td->kind == AKE_TYPE_DEF_STRUCT);
     size_t index = 0;
-    Ake_ast* dec = td->composite->head;
-    while (dec) {
-        assert(dec->type == Ake_ast_type_declaration);
-        Ake_ast* id = Ast_node_get(dec, 0);
-        Ake_ast* type_node = Ast_node_get(dec, 1);
-        if (Zinc_string_compare(&id->value, name)) {
-            Ake_struct_field_result res = {true, index, id, type_node->tu};
-            return res;
+    Ake_TypeField* tf = td->data.fields.head;
+    while (tf) {
+        if (Zinc_string_compare(&tf->name, name)) {
+            return (Ake_struct_field_result) {true, index, tf->tu};
         }
-        dec = dec->next;
+        tf = tf->next;
         index++;
     }
 
-    Ake_struct_field_result res = {false, 0, NULL, NULL};
-    return res;
+    return (Ake_struct_field_result) {false, 0, NULL};
 }
 
-void Ake_find_missing_fields(struct Ake_parse_state* ps, struct Ake_type_def* td, Ake_ast* n) {
-    assert(td->type == Ake_type_struct);
-    assert(td->composite);
-    Ake_ast *dec = td->composite->head;
-    while (dec) {
-        Ake_ast *id = Ast_node_get(dec, 0);
+void Ake_find_missing_fields(Ake_parse_state* ps, Ake_TypeDef* td, Ake_ast* n) {
+    assert(td->kind == AKE_TYPE_DEF_STRUCT);
+    Ake_TypeField *tf = td->data.fields.head;
+    while (tf) {
         bool found = false;
         Ake_ast *field = n->head;
         while (field) {
             Ake_ast *id2 = Ast_node_get(field, 0);
-            if (Zinc_string_compare(&id2->value, &id->value)) {
+            if (Zinc_string_compare(&id2->value, &tf->name)) {
                 found = true;
                 break;
             }
             field = field->next;
         }
         if (!found) {
-            Zinc_error_list_set(ps->el, &id->loc, "struct field missing: %bf", &id->value);
+            Zinc_error_list_set(ps->el, &n->loc, "struct field missing: %bf", &tf->name);
             n->type = Ake_ast_type_error;
         }
-        dec = dec->next;
+        tf = tf->next;
     }
 }
 
 void Ake_parse_struct_literal_elements(
-        struct Ake_parse_state* ps,
-        struct Ake_ast* parent,
-        struct Ake_type_def* td)
+        Ake_parse_state* ps,
+        Ake_ast* parent,
+        Ake_TypeDef* td)
 {
-    struct Ake_token* t0;
+    Ake_token* t0;
 
     while (true) {
         struct Ake_token* name = NULL;
@@ -665,7 +656,8 @@ void Ake_parse_struct_literal_elements(
             Ake_ast_add(field, expr);
 
             if (parent->type != Ake_ast_type_error) {
-                if (!Ake_type_use_can_cast(sfr.tu, expr->tu)) {
+                assert(sfr.tu->kind == AKE_TYPE_USE_OLD);
+                if (!Ake_type_use_can_cast(sfr.tu->data.old, expr->tu)) {
                     Zinc_error_list_set(ps->el, &expr->loc, "invalid type for field");
                     parent->type = Ake_ast_type_error;
                 }

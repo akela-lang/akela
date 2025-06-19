@@ -94,6 +94,7 @@ void Ake_TypeUseDestroy(Ake_TypeUse* tu)
 void Ake_TypeDefInit(Ake_TypeDef* td)
 {
     td->kind = AKE_TYPE_DEF_NONE;
+    Zinc_string_init(&td->name);
 }
 
 void Ake_TypeDefCreate(Ake_TypeDef** td)
@@ -106,9 +107,6 @@ void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
 {
     td->kind = kind;
     switch (kind) {
-        case AKE_TYPE_DEF_OLD:
-            td->data.old = NULL;
-            break;
         case AKE_TYPE_DEF_INTEGER:
             td->data.integer.bit_count = 0;
             break;
@@ -117,6 +115,8 @@ void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
             break;
         case AKE_TYPE_DEF_REAL:
             td->data.real.bit_count = 0;
+            break;
+        case AKE_TYPE_DEF_BOOLEAN:
             break;
         case AKE_TYPE_DEF_STRUCT:
             td->data.fields.head = NULL;
@@ -131,14 +131,13 @@ void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
 void Ake_TypeDefDestroy(Ake_TypeDef* td)
 {
     if (td) {
+        Zinc_string_destroy(&td->name);
         switch (td->kind) {
-            case AKE_TYPE_DEF_OLD:
-                Ake_type_def_destroy(td->data.old);
-                break;
             case AKE_TYPE_DEF_NONE:
             case AKE_TYPE_DEF_INTEGER:
             case AKE_TYPE_DEF_NATURAL:
             case AKE_TYPE_DEF_REAL:
+            case AKE_TYPE_DEF_BOOLEAN:
                 break;
             case AKE_TYPE_DEF_STRUCT:
                 Ake_TypeField* tf = td->data.fields.head;
@@ -155,10 +154,26 @@ void Ake_TypeDefDestroy(Ake_TypeDef* td)
     }
 }
 
+void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf)
+{
+    assert(td->kind == AKE_TYPE_DEF_STRUCT);
+
+    if (td->data.fields.head && td->data.fields.tail) {
+        tf->prev = td->data.fields.tail;
+        td->data.fields.tail->next = tf;
+        td->data.fields.tail = tf;
+    } else {
+        td->data.fields.head = tf;
+        td->data.fields.tail = tf;
+    }
+}
+
 void Ake_TypeParamInit(Ake_TypeParam* tp)
 {
     Zinc_string_init(&tp->name);
     tp->tu = NULL;
+    tp->next = NULL;
+    tp->prev = NULL;
 }
 
 void Ake_TypeParamCreate(Ake_TypeParam** tp)
@@ -178,6 +193,8 @@ void Ake_TypeFieldInit(Ake_TypeField* tf)
 {
     Zinc_string_init(&tf->name);
     tf->tu = NULL;
+    tf->next = NULL;
+    tf->prev = NULL;
 }
 
 void Ake_TypeFieldCreate(Ake_TypeField** tf)

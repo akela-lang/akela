@@ -1,14 +1,14 @@
 #include "ast.h"
 #include "type_use.h"
-#include "type_def.h"
+#include "type.h"
 #include <assert.h>
 
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_ast_type type);
 void Ake_type_use_cent_print(Ake_type_use* tu, size_t level, bool is_property);
 char* Ake_type_use_cent_name(Ake_type_use_type type);
-void Ake_type_def_cent_print(Ake_type_def* td, size_t level, bool is_property);
-char* Ake_type_def_cent_name(Ake_type type);
+void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property);
+char* Ake_type_def_cent_name(Ake_TypeDefKind type);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_cent_print(Ake_ast* n, size_t level)
@@ -273,6 +273,7 @@ char* Ake_ast_cent_name(Ake_ast_type type)
     assert(false && "unknown type");
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_type_use_cent_print(Ake_type_use* tu, size_t level, bool is_property)
 {
     if (!is_property) {
@@ -330,12 +331,12 @@ char* Ake_type_use_cent_name(Ake_type_use_type type)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_type_def_cent_print(Ake_type_def* td, size_t level, bool is_property)
+void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
 {
     if (!is_property) {
         Ake_indent_print(level);
     }
-    printf("%s {\n", Ake_type_def_cent_name(td->type));
+    printf("%s {\n", Ake_type_def_cent_name(td->kind));
 
     level++;
 
@@ -344,14 +345,33 @@ void Ake_type_def_cent_print(Ake_type_def* td, size_t level, bool is_property)
         printf(".name = \"%s\"\n", Zinc_string_c_str(&td->name));
     }
 
-    Ake_indent_print(level);
-    printf(".bit_count = %d\n", td->bit_count);
-
-    Ake_indent_print(level);
-    printf(".is_signed = %s\n", td->is_signed ? "true": "false");
-
-    if (td->composite) {
-        Ake_ast_cent_print(td->composite, level);
+    switch (td->kind) {
+        case AKE_TYPE_DEF_INTEGER:
+            Ake_indent_print(level);
+            printf(".bit_count = %d\n", td->data.integer.bit_count);
+            break;
+        case AKE_TYPE_DEF_NATURAL:
+            Ake_indent_print(level);
+            printf(".bit_count = %d\n", td->data.natural.bit_count);
+            break;
+        case AKE_TYPE_DEF_REAL:
+            Ake_indent_print(level);
+            printf(".bit_count = %d\n", td->data.real.bit_count);
+            break;
+        case AKE_TYPE_DEF_BOOLEAN:
+            break;
+        case AKE_TYPE_DEF_STRUCT:
+            Ake_TypeField* field = td->data.fields.head;
+            while (field) {
+                Ake_indent_print(level);
+                printf(".name = \"%s\"\n", Zinc_string_c_str(&field->name));
+                printf(".tu = ");
+                assert(field->tu->kind == AKE_TYPE_USE_OLD);
+                Ake_type_use_cent_print(field->tu->data.old, level, true);
+            }
+            break;
+        default:
+            assert(false && "invalid kind");
     }
 
     level--;
@@ -360,42 +380,30 @@ void Ake_type_def_cent_print(Ake_type_def* td, size_t level, bool is_property)
     printf("}\n");
 }
 
-char* Ake_type_def_cent_name(Ake_type type)
+char* Ake_type_def_cent_name(Ake_TypeDefKind type)
 {
-    if (type == Ake_type_none) {
+    if (type == AKE_TYPE_DEF_NONE) {
         return "TypeDef::None";
     }
 
-    if (type == Ake_type_integer) {
+    if (type == AKE_TYPE_DEF_INTEGER) {
         return "TypeDef::Integer";
     }
 
-    if (type == Ake_type_float) {
-        return "TypeDef::Float";
+    if (type == AKE_TYPE_DEF_NATURAL) {
+        return "TypeDef::Natural";
     }
 
-    if (type == Ake_type_boolean) {
+    if (type == AKE_TYPE_DEF_REAL) {
+        return "TypeDef::Real";
+    }
+
+    if (type == AKE_TYPE_DEF_BOOLEAN) {
         return "TypeDef::Boolean";
     }
 
-    if (type == Ake_type_struct) {
+    if (type == AKE_TYPE_DEF_STRUCT) {
         return "TypeDef::Struct";
-    }
-
-    if (type == Ake_type_function) {
-        return "TypeDef::Function";
-    }
-
-    if (type == Ake_type_enum) {
-        return "TypeDef::Enum";
-    }
-
-    if (type == Ake_type_tuple) {
-        return "TypeDef::Tuple";
-    }
-
-    if (type == Ake_type_module) {
-        return "TypeDef::Module";
     }
 
     assert(false && "unknown type");

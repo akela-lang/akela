@@ -26,7 +26,7 @@ bool Apt_compare_type_def(
     Apt_top_data* top_data,
     Zinc_test* case_test,
     Zinc_location* loc,
-    Ake_type_def* td,
+    Ake_TypeDef* td,
     Cent_value* value);
 bool Apt_check_errors(
     Zinc_test* top_test,
@@ -43,6 +43,7 @@ void Apt_suite_run(Zinc_test* suite_test)
 {
     Apt_suite_data* suite_data = suite_test->data;
     if (suite_data->errors.head) {
+        Zinc_test_print_unseen(suite_test);
         Zinc_error_list_print(&suite_data->errors);
     }
     Zinc_test_perform(suite_test);
@@ -55,8 +56,6 @@ void Apt_case_run(Zinc_test* case_test)
     Apt_top_data* top_data = top_test->data;
     Apt_suite_data* suite_data = suite_test->data;
     Apt_case_data* case_data = case_test->data;
-
-    bool pass = true;
 
     case_test->ran = true;
     FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
@@ -482,7 +481,7 @@ bool Apt_compare_type_use(
     }
 
     /* properties */
-    Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     Cent_value* td_value = Cent_value_get_str(value, "td");
     pass = Apt_compare_type_def(top_data, case_test, loc, td, td_value) && pass;
 
@@ -513,7 +512,7 @@ bool Apt_compare_type_def(
     Apt_top_data* top_data,
     Zinc_test* case_test,
     Zinc_location* loc,
-    Ake_type_def* td,
+    Ake_TypeDef* td,
     Cent_value* value)
 {
     bool pass = true;
@@ -582,14 +581,14 @@ bool Apt_compare_type_def(
             "type not set");
     } else {
         assert(type_value->type == Cent_value_type_enum);
-        if (td->type != type_value->data.enumeration.enum_value->value) {
+        if (td->kind != type_value->data.enumeration.enum_value->value) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 loc,
                 &value_n->loc,
                 "type def type does not match (%d) (%d)",
-                td->type,
+                td->kind,
                 type_value->data.enumeration.enum_value->value);
             pass = false;
         }
@@ -598,18 +597,18 @@ bool Apt_compare_type_def(
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_integer);
-        if (td->bit_count != bit_count_value->data.integer) {
+        if (td->data.integer.bit_count != bit_count_value->data.integer) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 loc,
                 &value_n->loc,
                 "type def bit_count does not match (%d) (%d)",
-                td->bit_count,
+                td->data.integer.bit_count,
                 bit_count_value->data.integer);
             pass = false;
         }
-    } else if (td->bit_count > 0) {
+    } else if (td->data.integer.bit_count > 0) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -617,22 +616,6 @@ bool Apt_compare_type_def(
             &value_n->loc,
             "bit_count not set");
         pass = false;
-    }
-
-    Cent_value* is_signed_value = Cent_value_get_str(value, "is_signed");
-    if (is_signed_value) {
-        assert(is_signed_value->type == Cent_value_type_boolean);
-        if (td->is_signed != is_signed_value->data.boolean) {
-            Zinc_spec_error_list_set(
-                &case_data->spec_errors,
-                case_test,
-                loc,
-                &value_n->loc,
-                "type def is_signed does not match (%d) (%d)",
-                td->is_signed,
-                is_signed_value->data.boolean);
-            pass = false;
-        }
     }
 
     return pass;

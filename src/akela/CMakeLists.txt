@@ -11,7 +11,6 @@ set(lib_files
         parse_tools.c
         parse_types.c
         symbol_table.c
-        type_def.c
         comp_unit.c
         comp_table.c
         code_gen.c

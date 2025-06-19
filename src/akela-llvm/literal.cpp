@@ -8,22 +8,35 @@ namespace Akela_llvm {
     Value* Handle_number(Jit_data* jd, Ake_ast* n)
     {
         Ake_type_use* tu = n->tu;
-        Ake_type_def *td = tu->td;
-        if (td->type == Ake_type_integer) {
+        Ake_TypeDef *td = tu->td;
+        if (td->kind == AKE_TYPE_DEF_INTEGER) {
             Type* t = Get_type(jd, n->tu);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
-            return ConstantInt::get(t, APInt(td->bit_count, v, n->tu->td->is_signed));
-        } else if (td->type == Ake_type_float) {
+            return ConstantInt::get(t, APInt(td->data.integer.bit_count, v, true));
+        }
+
+        if (td->kind == AKE_TYPE_DEF_NATURAL) {
+            Type* t = Get_type(jd, n->tu);
             Zinc_string_finish(&n->value);
-            if (td->bit_count == 64) {
+            long v = strtol(n->value.buf, nullptr, 10);
+            return ConstantInt::get(t, APInt(td->data.natural.bit_count, v, false));
+        }
+
+        if (td->kind == AKE_TYPE_DEF_REAL) {
+            Zinc_string_finish(&n->value);
+            if (td->data.real.bit_count == 64) {
                 double v = strtod(n->value.buf, nullptr);
                 Type* t = Get_type(jd, n->tu);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
-            } else if (td->bit_count == 32) {
+            }
+
+            if (td->data.real.bit_count == 32) {
                 float v = strtof(n->value.buf, nullptr);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
-            } else if (td->bit_count == 16) {
+            }
+
+            if (td->data.real.bit_count == 16) {
 #if IS_UNIX
                 _Float16 v = (_Float16)strtof(n->value.buf, nullptr);
                 Type* t = Type::getHalfTy(*jd->TheContext);
@@ -31,10 +44,11 @@ namespace Akela_llvm {
 #elif IS_WIN
 				assert(false && "16-bit float not supported");
 #endif
-            } else {
-                assert(false && "unhandled floating point value");
             }
+
+            assert(false && "unhandled floating point value");
         }
+
         assert(false);
     }
 

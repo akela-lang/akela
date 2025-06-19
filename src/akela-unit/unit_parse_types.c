@@ -1,5 +1,5 @@
 #include "unit_parse.h"
-#include "akela/type_def.h"
+#include "akela/type.h"
 #include "akela/comp_unit.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"

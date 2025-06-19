@@ -10,6 +10,10 @@
 #define AKE_SEQ_DEFAULT 0
 #define AKE_SEQ_ANY SIZE_MAX
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct Ake_Sequence Ake_Sequence;
 struct Ake_Sequence {
     size_t count;
@@ -62,5 +66,9 @@ Ake_symbol* Ake_EnvironmentGetLocal(Ake_Environment* env, Zinc_string* name, siz
 Ake_symbol* Ake_EnvironmentGetLocalStr(Ake_Environment* env, char* str, size_t seq);
 Ake_symbol* Ake_EnvironmentGet(Ake_Environment* env, Zinc_string* name, size_t seq);
 Ake_symbol* Ake_EnvironmentGetStr(Ake_Environment* env, char* str, size_t seq);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

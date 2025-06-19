@@ -24,7 +24,7 @@ namespace Akela_llvm {
             Ake_Environment* env = Ake_get_current_env(type_node);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
             assert(sym);
-            if (tu->td->type == Ake_type_function) {
+            if (tu->type == Ake_type_use_function) {
                 if (rhs) {
                     FunctionType *func_type = Get_function_type(jd, tu);
                     //PointerType *pt = func_type->getPointerTo();
@@ -66,7 +66,7 @@ namespace Akela_llvm {
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     sym->value = lhs_value;
                 }
-            } else if (tu->td->type == Ake_type_struct) {
+            } else if (tu->td->kind == AKE_TYPE_DEF_STRUCT) {
                 if (rhs) {
                     Type *t = Get_type(jd, tu);
                     Zinc_string_finish(&lhs->value);
@@ -138,7 +138,7 @@ namespace Akela_llvm {
     {
         Ake_Environment* env = Ake_get_current_env(lhs);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, lhs->loc.end);
-        if (lhs->tu->td->type == Ake_type_function) {
+        if (lhs->tu->type == Ake_type_use_function) {
             if (lhs->type == Ake_ast_type_id) {
                 AllocaInst *lhs_value;
                 if (sym->reference) {
@@ -251,7 +251,7 @@ namespace Akela_llvm {
     Value* Handle_subscript(Jit_data* jd, Ake_ast* n)
     {
         Type* element_type = Get_type(jd, n->tu);
-        if (n->tu->td->type == Ake_type_function) {
+        if (n->tu->type == Ake_type_use_function) {
             //element_type = element_type->getPointerTo();
             element_type = PointerType::get(element_type, 0);
         }

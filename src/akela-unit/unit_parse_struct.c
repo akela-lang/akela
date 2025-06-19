@@ -1,7 +1,7 @@
 #include "akela/parse_tools.h"
 #include "akela/ast.h"
 #include "unit_parse.h"
-#include "akela/type_def.h"
+#include "akela/type.h"
 #include "akela/comp_unit.h"
 #include "zinc/test.h"
 #include "zinc/expect.h"
@@ -15,7 +15,7 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
         return;
     }
 
-    struct Ake_comp_unit cu;
+    Ake_comp_unit cu;
     AkeUnit_parse_setup("struct Person\n"
                 "  firstName: [100 const]Nat8\n"
                 "  lastName: [100 const]Nat8\n"
@@ -64,11 +64,11 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
         return Zinc_assert();
     }
 
-    struct Ake_type_def* td0 = tu0->td;
+    Ake_TypeDef* td0 = tu0->td;
     if (!Zinc_expect_ptr(test, td0, "ptr td0")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, td0->type, Ake_type_integer, "type td0");
+    Zinc_expect_int_equal(test, td0->kind, AKE_TYPE_DEF_NATURAL, "type td0");
     Zinc_expect_string(test, &td0->name, "Nat8", "name td0");
 
     /* lastName */
@@ -96,11 +96,11 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
         return Zinc_assert();
     }
 
-    struct Ake_type_def* td1 = tu1->td;
+    Ake_TypeDef* td1 = tu1->td;
     if (!Zinc_expect_ptr(test, td1, "ptr td1")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, td1->type, Ake_type_integer, "type td1");
+    Zinc_expect_int_equal(test, td1->kind, AKE_TYPE_DEF_NATURAL, "type td1");
     Zinc_expect_string(test, &td1->name, "Nat8", "name td1");
 
     /* age */
@@ -128,11 +128,11 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
         return Zinc_assert();
     }
 
-    struct Ake_type_def* td2 = tu2->td;
+    Ake_TypeDef* td2 = tu2->td;
     if (!Zinc_expect_ptr(test, td2, "ptr td2")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, td2->type, Ake_type_integer, "integer td2");
+    Zinc_expect_int_equal(test, td2->kind, AKE_TYPE_DEF_INTEGER, "integer td2");
     Zinc_expect_string(test, &td2->name, "Int32", "Int32 td2");
 
     /* let */
@@ -159,11 +159,11 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
         return Zinc_assert();
     }
 
-    struct Ake_type_def* td = tu->td;
+    Ake_TypeDef* td = tu->td;
     if (!Zinc_expect_ptr(test, td, "ptr td")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, td->type, Ake_type_struct, "struct td");
+    Zinc_expect_int_equal(test, td->kind, AKE_TYPE_DEF_STRUCT, "struct td");
     Zinc_expect_string(test, &td->name, "Person", "Person td");
 
     Ake_ast* p = Ast_node_get(let_lseq, 0);
