@@ -91,6 +91,54 @@ void Ake_TypeUseDestroy(Ake_TypeUse* tu)
     }
 }
 
+bool Ake_TypeUseMatch(Ake_TypeUse* a, Ake_TypeUse* b)
+{
+    if (a->kind != b->kind) {
+        return false;
+    }
+
+    switch (a->kind) {
+        case AKE_TYPE_USE_SCALAR:
+            return Ake_TypeDefMatch(a->data.scalar.td, b->data.scalar.td);
+        case AKE_TYPE_USE_ARRAY:
+            if (a->data.array.dim != b->data.array.dim) {
+                return false;
+            }
+            return Ake_TypeUseMatch(a->data.array.tu, b->data.array.tu);
+        case AKE_TYPE_USE_ARRAY_CONST:
+            if (a->data.array_const.dim != b->data.array_const.dim) {
+                return false;
+            }
+            return Ake_TypeUseMatch(a->data.array_const.tu, b->data.array_const.tu);
+        case AKE_TYPE_USE_SLICE:
+            return Ake_TypeUseMatch(a->data.slice.tu, b->data.slice.tu);
+        case AKE_TYPE_USE_POINTER:
+            return Ake_TypeUseMatch(a->data.pointer.tu, b->data.pointer.tu);
+        case AKE_TYPE_USE_FUNCTION:
+            Ake_TypeParam* a_tp = a->data.function.input_head;
+            Ake_TypeParam* b_tp = b->data.function.input_head;
+            while (a_tp || b_tp) {
+                if (!a_tp || !b_tp) {
+                    return false;
+                }
+                if (!Ake_TypeUseMatch(a_tp->tu, b_tp->tu)) {
+                    return false;
+                }
+                a_tp = a_tp->next;
+                b_tp = b_tp->next;
+            }
+
+            if (!Ake_TypeUseMatch(a->data.function.output, b->data.function.output)) {
+                return false;
+            }
+            break;
+        default:
+            assert(false && "invalid kind");
+    }
+
+    return true;
+}
+
 void Ake_TypeDefInit(Ake_TypeDef* td)
 {
     td->kind = AKE_TYPE_DEF_NONE;
@@ -152,6 +200,51 @@ void Ake_TypeDefDestroy(Ake_TypeDef* td)
                 assert(false && "invalid kind");
         }
     }
+}
+
+bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b)
+{
+    if (a->kind != b->kind) {
+        return false;
+    }
+
+    switch (a->kind) {
+        case AKE_TYPE_DEF_INTEGER:
+            if (a->data.integer.bit_count != b->data.integer.bit_count) {
+                return false;
+            }
+            break;
+        case AKE_TYPE_DEF_NATURAL:
+            if (a->data.natural.bit_count != b->data.natural.bit_count) {
+                return false;
+            }
+            break;
+        case AKE_TYPE_DEF_REAL:
+            if (a->data.real.bit_count != b->data.real.bit_count) {
+                return false;
+            }
+            break;
+        case AKE_TYPE_DEF_BOOLEAN:
+            break;
+        case AKE_TYPE_DEF_STRUCT:
+            Ake_TypeField* a_tf = a->data.fields.head;
+            Ake_TypeField* b_tf = b->data.fields.head;
+            while (a_tf || b_tf) {
+                if (!a_tf || !b_tf) {
+                    return false;
+                }
+                if (!Ake_TypeUseMatch(a_tf->tu, b_tf->tu)) {
+                    return false;
+                }
+                a_tf = a_tf->next;
+                b_tf = b_tf->next;
+            }
+            break;
+        default:
+            assert(false && "invalid kind");
+    }
+
+    return true;
 }
 
 void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf)

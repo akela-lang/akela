@@ -1,17 +1,9 @@
 # Akela
-* new type def:
-  * create type [x]
-  * type old [x]
-  * use new type with old []
-    * symbol [x]
-  * use new type without old []
-* new type use:
-  * create type [x]
-  * type old [x]
-  * use new type with old []
-    * symbol [x]
-    * ast []
-  * use new type without old []
+* new type:
+  * type use match
+  * type def match
+  * use new type def
+  * combine type use and def
 * new syntax tree
 * move checks into their own functions
 * run IR generation in same pass
