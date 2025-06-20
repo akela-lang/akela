@@ -116,24 +116,60 @@ void Ake_TypeDefDestroy(Ake_TypeDef* td)
     }
 }
 
-bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b)
+bool Ake_TypeIsNumeric(Ake_TypeDefKind kind)
+{
+    if (kind == AKE_TYPE_DEF_INTEGER) {
+        return true;
+    }
+
+    if (kind == AKE_TYPE_DEF_NATURAL) {
+        return true;
+    }
+
+    if (kind == AKE_TYPE_DEF_REAL) {
+        return true;
+    }
+
+    return false;
+}
+
+bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
 {
     if (a->kind != b->kind) {
+        if (cast && Ake_TypeIsNumeric(a->kind) && Ake_TypeIsNumeric(b->kind)) {
+            if (!*cast) {
+                *cast = true;
+            }
+            return true;
+        }
+
         return false;
     }
 
     switch (a->kind) {
         case AKE_TYPE_DEF_INTEGER:
+            if (cast && a->data.integer.bit_count != b->data.integer.bit_count) {
+                *cast = true;
+                return true;
+            }
             if (a->data.integer.bit_count != b->data.integer.bit_count) {
                 return false;
             }
             break;
         case AKE_TYPE_DEF_NATURAL:
+            if (cast && a->data.natural.bit_count != b->data.natural.bit_count) {
+                *cast = true;
+                return true;
+            }
             if (a->data.natural.bit_count != b->data.natural.bit_count) {
                 return false;
             }
             break;
         case AKE_TYPE_DEF_REAL:
+            if (cast && a->data.real.bit_count != b->data.real.bit_count) {
+                *cast = true;
+                return true;
+            }
             if (a->data.real.bit_count != b->data.real.bit_count) {
                 return false;
             }
@@ -147,7 +183,7 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b)
                 if (!a_tf || !b_tf) {
                     return false;
                 }
-                if (!Ake_TypeDefMatch(a_tf->td, b_tf->td)) {
+                if (!Ake_TypeDefMatch(a_tf->td, b_tf->td, NULL)) {
                     return false;
                 }
                 a_tf = a_tf->next;
@@ -158,16 +194,16 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b)
             if (a->data.array.dim != b->data.array.dim) {
                 return false;
             }
-            return Ake_TypeDefMatch(a->data.array.td, b->data.array.td);
+            return Ake_TypeDefMatch(a->data.array.td, b->data.array.td, NULL);
         case AKE_TYPE_DEF_ARRAY_CONST:
             if (a->data.array_const.dim != b->data.array_const.dim) {
                 return false;
             }
-            return Ake_TypeDefMatch(a->data.array_const.td, b->data.array_const.td);
+            return Ake_TypeDefMatch(a->data.array_const.td, b->data.array_const.td, NULL);
         case AKE_TYPE_DEF_SLICE:
-            return Ake_TypeDefMatch(a->data.slice.td, b->data.slice.td);
+            return Ake_TypeDefMatch(a->data.slice.td, b->data.slice.td, NULL);
         case AKE_TYPE_DEF_POINTER:
-            return Ake_TypeDefMatch(a->data.pointer.td, b->data.pointer.td);
+            return Ake_TypeDefMatch(a->data.pointer.td, b->data.pointer.td, cast);
         case AKE_TYPE_DEF_FUNCTION:
             Ake_TypeParam* a_tp = a->data.function.input_head;
             Ake_TypeParam* b_tp = b->data.function.input_head;
@@ -175,7 +211,7 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b)
                 if (!a_tp || !b_tp) {
                     return false;
                 }
-                if (!Ake_TypeDefMatch(a_tp->td, b_tp->td)) {
+                if (!Ake_TypeDefMatch(a_tp->td, b_tp->td, NULL)) {
                     return false;
                 }
                 a_tp = a_tp->next;
@@ -187,7 +223,7 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b)
                     return false;
                 }
 
-                if (!Ake_TypeDefMatch(a->data.function.output, b->data.function.output)) {
+                if (!Ake_TypeDefMatch(a->data.function.output, b->data.function.output, NULL)) {
                     return false;
                 }
             }

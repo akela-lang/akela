@@ -1,6 +1,5 @@
 # Akela
 * new type:
-  * type match
   * use new type
   * change type def to type
 * new syntax tree
