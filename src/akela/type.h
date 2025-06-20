@@ -65,6 +65,7 @@ void Ake_TypeDefDestroy(Ake_TypeDef* td);
 void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf);
 void Ake_TypeDefInputAdd(Ake_TypeDef* td, Ake_TypeParam* tp);
 bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast);
+Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td);
 
 void Ake_TypeParamInit(Ake_TypeParam* tp);
 void Ake_TypeParamCreate(Ake_TypeParam** tp);

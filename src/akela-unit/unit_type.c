@@ -809,6 +809,18 @@ void AkeUnit_TypeDefMatchCastTrue5(Zinc_test* test)
 	Ake_TypeDefDestroy(td0);
 }
 
+void AkeUnit_TypeCloneInteger(Zinc_test* test)
+{
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_INTEGER);
+	td0->data.integer.bit_count = 32;
+
+	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -841,6 +853,7 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeDefMatchCastTrue3);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchCastTrue4);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchCastTrue5);
+		Zinc_test_register(test, AkeUnit_TypeCloneInteger);
 
 		return;
 	}
