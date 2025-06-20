@@ -503,6 +503,74 @@ void AkeUnit_TypeDefMatchSliceFalse(Zinc_test* test)
 	Ake_TypeDefDestroy(td0);
 }
 
+void AkeUnit_TypeDefMatchPointerTrue(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_POINTER);
+
+	Ake_TypeDef* td00 = NULL;
+	Ake_TypeDefCreate(&td00);
+	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
+	td00->data.integer.bit_count = 32;
+	td0->data.pointer.td = td00;
+
+	Ake_TypeDef* td1 = NULL;
+	Ake_TypeDefCreate(&td1);
+	Ake_TypeDefSet(td1, AKE_TYPE_DEF_POINTER);
+
+	Ake_TypeDef* td10 = NULL;
+	Ake_TypeDefCreate(&td10);
+	Ake_TypeDefSet(td10, AKE_TYPE_DEF_INTEGER);
+	td10->data.integer.bit_count = 32;
+	td1->data.pointer.td = td10;
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1), "match");
+
+	Ake_TypeDefDestroy(td0);
+}
+
+void AkeUnit_TypeDefMatchPointerFalse(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_POINTER);
+
+	Ake_TypeDef* td00 = NULL;
+	Ake_TypeDefCreate(&td00);
+	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
+	td00->data.integer.bit_count = 32;
+	td0->data.pointer.td = td00;
+
+	Ake_TypeDef* td1 = NULL;
+	Ake_TypeDefCreate(&td1);
+	Ake_TypeDefSet(td1, AKE_TYPE_DEF_POINTER);
+
+	Ake_TypeDef* td10 = NULL;
+	Ake_TypeDefCreate(&td10);
+	Ake_TypeDefSet(td10, AKE_TYPE_DEF_INTEGER);
+	td10->data.integer.bit_count = 64;
+	td1->data.pointer.td = td10;
+
+	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1), "match");
+
+	Ake_TypeDefDestroy(td0);
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -526,6 +594,8 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeDefMatchArrayConstFalse);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchSliceTrue);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchSliceFalse);
+		Zinc_test_register(test, AkeUnit_TypeDefMatchPointerTrue);
+		Zinc_test_register(test, AkeUnit_TypeDefMatchPointerFalse);
 
 		return;
 	}
