@@ -1,5 +1,6 @@
 # Akela
 * new type:
+  * test clone
   * use new type
   * change type def to type
 * new syntax tree

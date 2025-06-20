@@ -25,7 +25,7 @@ software engineers more than dynamically typed or gradually typed
 * Meta programming: compile time expressions
 * Object-Oriented programming: methods and static or runtime dispatch
 * Option data types
-* Memory management with allocators including arena allocators, garbage collection, and user-defined allocators
+* Memory management with allocators including an arena allocator, a reference counting allocator, and user-defined allocators
 * Series / Vector data types for financial data
 * Support for trading indicators, screeners, and simulations
 

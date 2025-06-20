@@ -51,7 +51,6 @@ void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
             td->data.pointer.td = NULL;
             break;
         case AKE_TYPE_DEF_FUNCTION:
-            Zinc_string_init(&td->data.function.name);
             td->data.function.input_head = NULL;
             td->data.function.input_tail = NULL;
             td->data.function.output = NULL;
@@ -98,8 +97,6 @@ void Ake_TypeDefDestroy(Ake_TypeDef* td)
                 Ake_TypeDefDestroy(td->data.pointer.td);
                 break;
             case AKE_TYPE_DEF_FUNCTION:
-                Zinc_string_destroy(&td->data.function.name);
-
                 Ake_TypeParam* tp = td->data.function.input_head;
                 while (tp) {
                     Ake_TypeParam* temp = tp;
@@ -233,6 +230,63 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
     }
 
     return true;
+}
+
+Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
+{
+    Ake_TypeDef* new_td = NULL;
+    if (td) {
+        Ake_TypeDefCreate(&new_td);
+        Zinc_string_add_string(&new_td->name, &td->name);
+        switch (td->kind) {
+            case AKE_TYPE_DEF_INTEGER:
+            case AKE_TYPE_DEF_NATURAL:
+            case AKE_TYPE_DEF_REAL:
+            case AKE_TYPE_DEF_BOOLEAN:
+                new_td = td;
+                break;
+            case AKE_TYPE_DEF_STRUCT:
+                Ake_TypeField* tf = td->data.fields.head;
+                while (tf) {
+                    Ake_TypeField* new_tf = NULL;
+                    Ake_TypeFieldCreate(&new_tf);
+                    Zinc_string_add_string(&new_tf->name, &tf->name);
+                    new_tf->td = Ake_TypeDefClone(tf->td);
+                    Ake_TypeDefStructAdd(new_td, new_tf);
+                    tf = tf->next;
+                }
+                break;
+            case AKE_TYPE_DEF_ARRAY:
+                new_td->data.array.dim = td->data.array.dim;
+                new_td->data.array.td = Ake_TypeDefClone(td->data.array.td);
+                break;
+            case AKE_TYPE_DEF_ARRAY_CONST:
+                new_td->data.array_const.dim = td->data.array_const.dim;
+                new_td->data.array_const.td = Ake_TypeDefClone(td->data.array_const.td);
+                break;
+            case AKE_TYPE_DEF_SLICE:
+                new_td->data.slice.td = Ake_TypeDefClone(td->data.slice.td);
+                break;
+            case AKE_TYPE_DEF_POINTER:
+                new_td->data.pointer.td = Ake_TypeDefClone(td->data.pointer.td);
+                break;
+            case AKE_TYPE_DEF_FUNCTION:
+                Ake_TypeParam* tp = td->data.function.input_head;
+                while (tp) {
+                    Ake_TypeParam* new_tp = NULL;
+                    Ake_TypeParamCreate(&new_tp);
+                    Zinc_string_add_string(&new_td->name, &td->name);
+                    new_tp->td = Ake_TypeDefClone(tp->td);
+                    tp = tp->next;
+                }
+                new_td->data.function.output = Ake_TypeDefClone(td->data.function.output);
+                break;
+            default:
+                assert(false && "invalid kind");
+        }
+    }
+
+    return new_td;
 }
 
 void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf)

@@ -37,7 +37,6 @@ struct Ake_TypeDef {
         struct { Ake_TypeDef* td; } slice;
         struct { Ake_TypeDef* td; } pointer;
         struct {
-            Zinc_string name;
             Ake_TypeParam* input_head;
             Ake_TypeParam* input_tail;
             Ake_TypeDef* output;
