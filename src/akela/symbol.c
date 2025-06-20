@@ -20,7 +20,7 @@ void Ake_symbol_init(struct Ake_symbol* sym)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_symbol_destroy(Ake_symbol* sym)
 {
-    Ake_TypeUseDestroy(sym->tu);
+    Ake_TypeDefDestroy(sym->tu);
     free(sym->tu);
     Ake_TypeDefDestroy(sym->td);
     free(sym->td);

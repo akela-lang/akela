@@ -151,9 +151,9 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
                     Ake_symbol_init(new_sym);
                     new_sym->type = Ake_symbol_type_variable;
                     Ake_type_use* old = Ake_type_use_clone(tu);
-                    Ake_TypeUse* tu2 = NULL;
-                    Ake_TypeUseCreate(&tu2);
-                    Ake_TypeUseSet(tu2, AKE_TYPE_USE_OLD);
+                    Ake_TypeDef* tu2 = NULL;
+                    Ake_TypeDefCreate(&tu2);
+                    Ake_TypeDefSet(tu2, AKE_TYPE_DEF_OLD);
                     tu2->data.old = old;
                     new_sym->tu = tu2;
                     Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
@@ -554,7 +554,7 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
             /* test case: test_parse_types_missing_declaration */
             n->type = Ake_ast_type_error;
         } else {
-            assert(sym->tu->kind == AKE_TYPE_USE_OLD);
+            assert(sym->tu->kind == AKE_TYPE_DEF_OLD);
             Ake_type_use* old = Ake_type_use_clone(sym->tu->data.old);
             n->tu = old;
         }
@@ -569,7 +569,7 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
 typedef struct Ake_struct_field_result {
     bool found;
     size_t index;
-    Ake_TypeUse* tu;
+    Ake_TypeDef* td;
 } Ake_struct_field_result;
 
 Ake_struct_field_result Ake_get_struct_field(Ake_TypeDef* td, Zinc_string* name) {
@@ -578,7 +578,7 @@ Ake_struct_field_result Ake_get_struct_field(Ake_TypeDef* td, Zinc_string* name)
     Ake_TypeField* tf = td->data.fields.head;
     while (tf) {
         if (Zinc_string_compare(&tf->name, name)) {
-            return (Ake_struct_field_result) {true, index, tf->tu};
+            return (Ake_struct_field_result) {true, index, tf->td};
         }
         tf = tf->next;
         index++;
@@ -656,8 +656,8 @@ void Ake_parse_struct_literal_elements(
             Ake_ast_add(field, expr);
 
             if (parent->type != Ake_ast_type_error) {
-                assert(sfr.tu->kind == AKE_TYPE_USE_OLD);
-                if (!Ake_type_use_can_cast(sfr.tu->data.old, expr->tu)) {
+                assert(sfr.td->kind == AKE_TYPE_DEF_OLD);
+                if (!Ake_type_use_can_cast(sfr.td->data.old, expr->tu)) {
                     Zinc_error_list_set(ps->el, &expr->loc, "invalid type for field");
                     parent->type = Ake_ast_type_error;
                 }

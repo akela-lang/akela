@@ -1,9 +1,7 @@
 # Akela
 * new type:
-  * type use match
-  * type def match
-  * use new type def
-  * combine type use and def
+  * type match
+  * use new type
 * new syntax tree
 * move checks into their own functions
 * run IR generation in same pass

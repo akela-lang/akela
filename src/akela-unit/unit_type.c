@@ -231,12 +231,7 @@ void AkeUnit_TypeDefMatchStructTrue(Zinc_test* test)
 	Ake_TypeDefCreate(&td00);
 	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
 	td00->data.integer.bit_count = 32;
-
-	Ake_TypeUse* tu00 = NULL;
-	Ake_TypeUseCreate(&tu00);
-	Ake_TypeUseSet(tu00, AKE_TYPE_USE_SCALAR);
-	tu00->data.scalar.td = td00;
-	tf00->tu = tu00;
+	tf00->td = td00;
 
 	Ake_TypeDefStructAdd(td0, tf00);
 
@@ -251,12 +246,7 @@ void AkeUnit_TypeDefMatchStructTrue(Zinc_test* test)
 	Ake_TypeDefCreate(&td10);
 	Ake_TypeDefSet(td10, AKE_TYPE_DEF_INTEGER);
 	td10->data.integer.bit_count = 32;
-
-	Ake_TypeUse* tu10 = NULL;
-	Ake_TypeUseCreate(&tu10);
-	Ake_TypeUseSet(tu10, AKE_TYPE_USE_SCALAR);
-	tu10->data.scalar.td = td10;
-	tf10->tu = tu10;
+	tf10->td = td10;
 
 	Ake_TypeDefStructAdd(td1, tf10);
 
@@ -285,12 +275,7 @@ void AkeUnit_TypeDefMatchStructFalse(Zinc_test* test)
 	Ake_TypeDefCreate(&td00);
 	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
 	td00->data.integer.bit_count = 32;
-
-	Ake_TypeUse* tu00 = NULL;
-	Ake_TypeUseCreate(&tu00);
-	Ake_TypeUseSet(tu00, AKE_TYPE_USE_SCALAR);
-	tu00->data.scalar.td = td00;
-	tf00->tu = tu00;
+	tf00->td = td00;
 
 	Ake_TypeDefStructAdd(td0, tf00);
 
@@ -305,12 +290,7 @@ void AkeUnit_TypeDefMatchStructFalse(Zinc_test* test)
 	Ake_TypeDefCreate(&td10);
 	Ake_TypeDefSet(td10, AKE_TYPE_DEF_INTEGER);
 	td10->data.integer.bit_count = 64;
-
-	Ake_TypeUse* tu10 = NULL;
-	Ake_TypeUseCreate(&tu10);
-	Ake_TypeUseSet(tu10, AKE_TYPE_USE_SCALAR);
-	tu10->data.scalar.td = td10;
-	tf10->tu = tu10;
+	tf10->td = td10;
 
 	Ake_TypeDefStructAdd(td1, tf10);
 

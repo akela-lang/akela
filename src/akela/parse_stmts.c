@@ -195,9 +195,9 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
                 Ake_symbol_init(new_sym);
                 new_sym->type = Ake_symbol_type_variable;
             	Ake_type_use* old = Ake_type_use_clone(n->tu);
-            	Ake_TypeUse* tu = NULL;
-            	Ake_TypeUseCreate(&tu);
-            	Ake_TypeUseSet(tu, AKE_TYPE_USE_OLD);
+            	Ake_TypeDef* tu = NULL;
+            	Ake_TypeDefCreate(&tu);
+            	Ake_TypeDefSet(tu, AKE_TYPE_DEF_OLD);
             	tu->data.old = old;
                 new_sym->tu = tu;
                 Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);

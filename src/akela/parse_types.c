@@ -605,9 +605,9 @@ void Ake_create_variable_symbol(Ake_parse_state* ps, Ake_ast* type_node, Ake_ast
             /* copy is_mut from id node to type use node */
             old->is_mut = id_node->is_mut;
             old->original_is_mut = id_node->is_mut;
-            Ake_TypeUse* tu = NULL;
-            Ake_TypeUseCreate(&tu);
-            Ake_TypeUseSet(tu, AKE_TYPE_USE_OLD);
+            Ake_TypeDef* tu = NULL;
+            Ake_TypeDefCreate(&tu);
+            Ake_TypeDefSet(tu, AKE_TYPE_DEF_OLD);
             tu->data.old = old;
             new_sym->tu = tu;
             Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, seq);
@@ -919,11 +919,11 @@ Ake_TypeDef* Ake_StructToType(Ake_ast* n)
         Ake_ast* type_node = id_node->next;
         assert(type_node);
 
-        Ake_TypeUse* tu = NULL;
-        Ake_TypeUseCreate(&tu);
-        Ake_TypeUseSet(tu, AKE_TYPE_USE_OLD);
+        Ake_TypeDef* tu = NULL;
+        Ake_TypeDefCreate(&tu);
+        Ake_TypeDefSet(tu, AKE_TYPE_DEF_OLD);
         tu->data.old = Ake_type_use_clone(type_node->tu);
-        tf->tu = tu;
+        tf->td = tu;
         Ake_TypeDefStructAdd(td, tf);
 
         dec = dec->next;

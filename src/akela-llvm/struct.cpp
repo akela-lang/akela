@@ -31,9 +31,9 @@ namespace Akela_llvm {
         assert(td->kind == AKE_TYPE_DEF_STRUCT);
         Ake_TypeField* tf = td->data.fields.head;
         while (tf) {
-            assert(tf->tu->kind == AKE_TYPE_USE_OLD);
-            Type* element_type = Get_type(jd, tf->tu->data.old);
-            if (tf->tu->data.old->type == Ake_type_use_function) {
+            assert(tf->td->kind == AKE_TYPE_DEF_OLD);
+            Type* element_type = Get_type(jd, tf->td->data.old);
+            if (tf->td->data.old->type == Ake_type_use_function) {
                 //element_type = element_type->getPointerTo();
                 element_type = PointerType::get(element_type, 0);
             }
@@ -70,8 +70,8 @@ namespace Akela_llvm {
         Ake_type_use* dec_tu = nullptr;
         bool found = false;
         while (tf) {
-            assert(tf->tu->kind == AKE_TYPE_USE_OLD);
-            dec_tu = tf->tu->data.old;
+            assert(tf->td->kind == AKE_TYPE_DEF_OLD);
+            dec_tu = tf->td->data.old;
             if (Zinc_string_compare(&tf->name, &right->value)) {
                 found = true;
                 break;

@@ -125,9 +125,15 @@ element TypeDef(TypeDefType) {
 
 enum TypeDefType {
   None
+  Old
   Integer
   Natural
   Real
   Boolean
   Struct
+  Array
+  ArrayConst
+  Slice
+  Pointer
+  Function
 }

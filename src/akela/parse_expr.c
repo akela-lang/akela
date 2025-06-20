@@ -1188,8 +1188,8 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
             	Ake_type_use* found_tu = NULL;
                 while (tf) {
                     if (Zinc_string_compare(&tf->name, &b->value)) {
-                    	assert(tf->tu->kind == AKE_TYPE_USE_OLD);
-                    	found_tu = tf->tu->data.old;
+                    	assert(tf->td->kind == AKE_TYPE_DEF_OLD);
+                    	found_tu = tf->td->data.old;
                         found = true;
                         break;
                     }

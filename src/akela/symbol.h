@@ -22,7 +22,7 @@ typedef struct Ake_symbol {
     Ake_symbol_type type;
     Ake_token_enum tk_type;
     Ake_TypeDef* td;
-    Ake_TypeUse* tu;
+    Ake_TypeDef* tu;
     Ake_ast* root;
     Ake_ast* root_ptr;
     void* value;

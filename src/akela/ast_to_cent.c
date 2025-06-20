@@ -366,8 +366,8 @@ void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
                 Ake_indent_print(level);
                 printf(".name = \"%s\"\n", Zinc_string_c_str(&field->name));
                 printf(".tu = ");
-                assert(field->tu->kind == AKE_TYPE_USE_OLD);
-                Ake_type_use_cent_print(field->tu->data.old, level, true);
+                assert(field->td->kind == AKE_TYPE_DEF_OLD);
+                Ake_type_use_cent_print(field->td->data.old, level, true);
             }
             break;
         default:
